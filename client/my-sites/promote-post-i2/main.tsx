@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
-import { formatNumber } from '@automattic/number-formatters';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
@@ -23,7 +22,6 @@ import {
 } from 'calypso/data/promote-post/types';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
-import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import { usePaymentsQuery } from 'calypso/data/promote-post/use-promote-post-payments-query';
 import usePostsQueryPaged, {
 	usePostsQueryStats,
@@ -120,8 +118,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 	const isSelfHosted = useSelector( ( state ) =>
 		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
 	);
-
-	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
@@ -365,29 +361,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 
 			{ ! showRegularBanner && showTspBanner && (
 				<TspBanner onToggle={ toggleTspBanner } isCollapsed={ isTspBannerCollapsed } />
-			) }
-
-			{ parseFloat( creditBalance ) > 0 && (
-				<div className="blaze-credits-container">
-					<div className="blaze-credits-container__item">
-						<div className="blaze-credits-container__label">
-							{ translate( 'Credits' ) }
-							<InlineSupportLink
-								showIcon
-								className="credits-inline-support-link"
-								iconSize={ 18 }
-								showText={ false }
-								supportPostId={ 240330 }
-								supportLink={ localizeUrl(
-									'https://wordpress.com/support/promote-a-post/blaze-credits/'
-								) }
-							/>
-						</div>
-						<div className="blaze-credits-container__result">
-							{ '$' + formatNumber( parseFloat( creditBalance ), { decimals: 2 } ) }
-						</div>
-					</div>
-				</div>
 			) }
 
 			{

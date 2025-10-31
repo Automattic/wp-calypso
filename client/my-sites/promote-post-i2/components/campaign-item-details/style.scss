@@ -227,6 +227,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		.campaign-item-details__payment {
 			display: flex;
 			flex-direction: column;
+			background: var(--studio-white);
 		}
 
 		.campaign-item-details__payment {
@@ -238,8 +239,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		.campaign-item-details__payment-links-container,
 		.campaign-item-details__payment-container {
 			border: 1px solid #ddd;
-			border-radius: 4px;
 			margin-bottom: 24px;
+			background: var(--studio-white);
+			border-radius: calc(8px);
+			overflow: hidden;
 
 			@media (max-width: 660px) {
 				border: 1px solid #ddd;

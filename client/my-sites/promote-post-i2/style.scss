@@ -62,7 +62,6 @@
 	.search-component {
 		border: 1px solid #ddd;
 		border-radius: 4px;
-		margin-bottom: 32px;
 
 		&.is-open {
 			width: 100%;
@@ -197,9 +196,14 @@ body.is-section-promote-post-i2 {
 				.blaze-credits-container,
 				.promote-post-i2__table,
 				.campaigns-list__loading-container {
-					margin: 0 64px;
+					margin: 16px 64px;
+					padding: 16px;
 					max-width: 1040px;
-					width: calc(100% - 128px);
+					background-color: var(--studio-white);
+					width: calc(100% - 160px);
+					box-sizing: border-box;
+					border-radius: 8px;
+					border: 1px solid var(--studio-gray-5);
 				}
 				.campaigns-list__table {
 					td > div {
@@ -336,6 +340,7 @@ body.is-section-promote-post-i2 {
 	.section-nav {
 		margin-bottom: 32px;
 		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+		background-color: transparent;
 
 		.is-selected .section-nav-tab__link {
 			background-color: transparent;
@@ -407,11 +412,6 @@ body.is-section-promote-post-i2 {
 	.section-nav-tab {
 		@media (min-width: 481px) {
 			margin-right: 16px;
-
-			&.payments {
-				margin-right: 0;
-				margin-left: auto;
-			}
 		}
 
 		&__link {
@@ -766,7 +766,6 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 	&__item {
 		font-size: 1.75rem;
 		color: $studio-gray-100;
-		font-family: $font-recoleta;
 		font-weight: 400;
 		margin-top: 8px;
 		margin-bottom: 42px;
