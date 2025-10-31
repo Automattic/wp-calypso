@@ -196,7 +196,7 @@ function SiteOverview( {
 					variant="primary"
 					href={ site.options.admin_url }
 				>
-					{ __( 'Store dashboard' ) }
+					{ __( 'Manage store' ) }
 				</Button>
 			);
 		}
