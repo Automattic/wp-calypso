@@ -91,10 +91,15 @@ export interface ProductFeature {
 export interface ProductWithFeatures {
 	product_id: number;
 	product_slug: string;
-	feature_ids: string[];
+	feature_group: string;
 }
 
 export interface ProductsFeaturesResponse {
 	products: ProductWithFeatures[];
 	features: ProductFeature[];
+
+	/**
+	 * A map of feature_group ID to feature_id
+	 */
+	feature_groups: Record< string, ProductFeature[ 'feature_id' ][] >;
 }
