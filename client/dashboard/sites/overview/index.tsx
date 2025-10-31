@@ -150,7 +150,7 @@ function SiteOverviewSecondaryCards( {
 					{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
 					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 						<>
-							<DomainsCard site={ site } />
+							<DomainsCard site={ site } isCompact={ isSmallViewport } />
 							<DIFMUpsellCard site={ site } />
 						</>
 					) }

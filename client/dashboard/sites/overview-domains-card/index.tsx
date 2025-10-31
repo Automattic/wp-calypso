@@ -1,11 +1,14 @@
 import { DomainSubtype, type DomainSummary, type Site } from '@automattic/api-core';
 import { domainsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import { siteDomainsRoute } from '../../app/router/sites';
 import { CalloutSkeleton } from '../../components/callout-skeleton';
 import { Card, CardHeader, CardBody } from '../../components/card';
+import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
@@ -18,21 +21,30 @@ const getDomainId = ( domain: DomainSummary ): string => {
 	return `${ domain.domain }-${ domain.blog_id }`;
 };
 
-const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSummary[] } ) => {
+const SiteDomainDataViews = ( {
+	site,
+	domains,
+	type,
+}: {
+	site: Site;
+	domains: DomainSummary[];
+	type: DomainsView[ 'type' ];
+} ) => {
+	const router = useRouter();
 	const fields = useFields( { site, inOverview: true } );
 
 	const [ initialView, setView ] = useState< DomainsView >( {
 		...DEFAULT_VIEW,
-		type: 'table',
+		type,
 	} );
 
 	const view = useMemo(
 		() => ( {
 			...initialView,
-			type: 'table',
-			fields: [ 'domain_status', 'ssl_status' ],
+			type,
+			fields: [ 'ssl_status', 'domain_status' ],
 		} ),
-		[ initialView ]
+		[ initialView, type ]
 	);
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
@@ -49,7 +61,24 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 					alignItems: 'stretch',
 				} }
 			>
-				<SectionHeader title={ __( 'Domains' ) } level={ 3 } />
+				<SectionHeader
+					title={ __( 'Domains' ) }
+					level={ 3 }
+					actions={
+						<RouterLinkButton
+							variant="secondary"
+							size="compact"
+							to={
+								router.buildLocation( {
+									to: siteDomainsRoute.fullPath,
+									params: { siteSlug: site.slug },
+								} ).href
+							}
+						>
+							{ __( 'Manage domains' ) }
+						</RouterLinkButton>
+					}
+				/>
 			</CardHeader>
 			<CardBody>
 				<DataViews< DomainSummary >
@@ -71,7 +100,7 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 	);
 };
 
-export default function DomainsCard( { site }: { site: Site } ) {
+export default function DomainsCard( { site, isCompact }: { site: Site; isCompact: boolean } ) {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: siteDomains } = useQuery( {
 		...domainsQuery(),
@@ -99,5 +128,11 @@ export default function DomainsCard( { site }: { site: Site } ) {
 		return <DomainUpsellCard site={ site } />;
 	}
 
-	return <SiteDomainDataViews site={ site } domains={ siteDomains } />;
+	return (
+		<SiteDomainDataViews
+			type={ isCompact ? 'list' : 'table' }
+			site={ site }
+			domains={ siteDomains }
+		/>
+	);
 }
