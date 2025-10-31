@@ -17,16 +17,21 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
+import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 import {
 	getProductSlugFromContext,
 	isContextSourceMyJetpack,
 } from 'calypso/my-sites/checkout/utils';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	isUserLoggedIn,
+	getCurrentUser,
+	getCurrentUserId,
+} from 'calypso/state/current-user/selectors';
 import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
@@ -142,10 +147,7 @@ export function redirectLoggedOut( context, next ) {
 		return next();
 	}
 
-	if (
-		isUserLoggedIn( state ) &&
-		( ! config.isEnabled( 'cookie-missing-redirect' ) || ! isCookieAuthMissing() )
-	) {
+	if ( isUserLoggedIn( state ) && ! isCookieAuthMissing() ) {
 		next();
 		return;
 	}
@@ -180,15 +182,28 @@ export function redirectLoggedOut( context, next ) {
 		loginParameters.redirectTo = 'https://wordpress.com' + loginParameters.redirectTo;
 	}
 
-	// If there is an issue with the auth cookie then we need to do more than
-	// just redirect to the login page. Otherwise that page may just detect that
-	// the user has already logged in. We fully log out to get fresh cookies.
-	if (
-		config.isEnabled( 'cookie-missing-redirect' ) &&
-		state.currentUser &&
-		isCookieAuthMissing()
-	) {
-		context.store.dispatch( redirectToLogout( login( loginParameters ) ) );
+	// Log if there is anything wrong with the auth cookie. We may add logout code in this scenario.
+	// See #106394
+	if ( isCookieAuthMissing() ) {
+		// Logic used by redirectToLogout() to get the path to redirect to
+		const userData = getCurrentUser( state );
+		const logoutUrl = getLogoutUrl( userData, login( loginParameters ) );
+
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'Proxy iframe has cookie-auth-missing error',
+			severity: 'debug',
+			user_id: getCurrentUserId( state ), // isUserLoggedIn() might be true, in which case we can match the ID with other records.
+			properties: {
+				env: config( 'env_id' ),
+				logout_url: logoutUrl.replace( /(nonce=)\w*/, '$1SECRET' ),
+				pathname: context.pathname,
+			},
+		} );
+	}
+
+	if ( isUserLoggedIn( state ) ) {
+		next();
 		return;
 	}
 
