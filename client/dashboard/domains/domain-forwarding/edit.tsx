@@ -26,7 +26,7 @@ export default function EditDomainForwarding() {
 		meta: {
 			snackbar: {
 				success: __( 'Domain forwarding rule saved.' ),
-				errorSource: 'server',
+				error: { source: 'server' },
 			},
 		},
 	} );

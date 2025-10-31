@@ -26,7 +26,7 @@ const DomainForwardingDeleteModal = ( {
 		meta: {
 			snackbar: {
 				success: __( 'Domain forwarding rule deleted.' ),
-				errorSource: 'server',
+				error: { source: 'server' },
 			},
 		},
 	} );

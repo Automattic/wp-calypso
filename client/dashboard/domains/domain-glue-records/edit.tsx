@@ -2,9 +2,7 @@ import { DomainGlueRecord } from '@automattic/api-core';
 import { domainGlueRecordsQuery, domainGlueRecordUpdateMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router/domains';
@@ -21,10 +19,10 @@ export default function EditDomainGlueRecords() {
 		meta: {
 			snackbar: {
 				success: __( 'Glue record saved.' ),
+				error: { source: 'server' },
 			},
 		},
 	} );
-	const { createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const glueRecord = glueRecordsData.find(
 		( glueRecord: DomainGlueRecord ) => glueRecord.nameserver === nameServer
@@ -50,10 +48,6 @@ export default function EditDomainGlueRecords() {
 					nameserver: updatedGlueRecord.nameserver,
 					address: updatedGlueRecord.ip_addresses[ 0 ],
 					error_message: error.message,
-				} );
-
-				createErrorNotice( error.message, {
-					type: 'snackbar',
 				} );
 			},
 		} );
