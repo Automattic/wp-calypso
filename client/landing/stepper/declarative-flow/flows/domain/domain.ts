@@ -18,6 +18,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { useQuery } from '../../../hooks/use-query';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -71,6 +72,9 @@ const domain: FlowV2< typeof initialize > = {
 			[]
 		);
 
+		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
+		const defaultRedirect = `/v2/sites/${ siteSlug }/domains`;
+
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
@@ -109,10 +113,10 @@ const domain: FlowV2< typeof initialize > = {
 					// replace the location to delete processing step from history.
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-							redirect_to: `/v2/sites/${ siteSlug }/domains`,
+							redirect_to: redirectTo || defaultRedirect,
 							signup: 0,
 							cancel_to: new URL(
-								addQueryArgs( '/setup/domain', { siteSlug } ),
+								addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
 								window.location.href
 							).href,
 						} )
