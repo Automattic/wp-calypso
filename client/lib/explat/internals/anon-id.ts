@@ -14,7 +14,10 @@ declare const window: undefined | ( Window & typeof globalThis );
  * @param f The callback function
  * @param intervalMs The interval in milliseconds
  */
-const immediateStartSetInterval = ( f: () => void, intervalMs: number ) => {
+const immediateStartSetInterval = (
+	f: () => void,
+	intervalMs: number
+): ReturnType< typeof setInterval > => {
 	f();
 	return setInterval( f, intervalMs );
 };
@@ -47,7 +50,7 @@ export const initializeAnonId = async (): Promise< string | null > => {
 
 	let attempt = 0;
 	initializeAnonIdPromise = new Promise( ( res ) => {
-		let anonIdPollingInterval: NodeJS.Timeout;
+		let anonIdPollingInterval: ReturnType< typeof setInterval >;
 		// eslint-disable-next-line prefer-const
 		anonIdPollingInterval = immediateStartSetInterval( () => {
 			const anonId = getTracksAnonymousUserId();
