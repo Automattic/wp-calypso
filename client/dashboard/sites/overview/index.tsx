@@ -190,12 +190,7 @@ function SiteOverview( {
 
 		if ( isCommerceGardenSite ) {
 			return (
-				<Button
-					ref={ wpAdminButtonRef }
-					__next40pxDefaultSize
-					variant="primary"
-					href={ site.options.admin_url }
-				>
+				<Button __next40pxDefaultSize variant="primary" href={ site.options.admin_url }>
 					{ __( 'Manage store' ) }
 				</Button>
 			);
