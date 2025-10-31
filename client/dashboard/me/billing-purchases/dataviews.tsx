@@ -181,7 +181,7 @@ function OwnerInfo( {
 	return <BillingPurchaseInfoPopover>{ tooltipContent }</BillingPurchaseInfoPopover>;
 }
 
-export function PurchaseSettingLink( {
+function PurchaseSettingLink( {
 	purchase,
 	disabled,
 	...props
