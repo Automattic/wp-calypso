@@ -7,6 +7,7 @@ export interface AgentUIInputProps {
 	disabled?: boolean;
 	customActions?: ActionButton[];
 	actionOrder?: 'before-submit' | 'after-submit';
+	onKeyDown?: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 }
 
 export function AgentUIInput( {
@@ -14,6 +15,7 @@ export function AgentUIInput( {
 	disabled,
 	customActions,
 	actionOrder,
+	onKeyDown,
 }: AgentUIInputProps = {} ) {
 	const {
 		inputValue,
@@ -30,12 +32,24 @@ export function AgentUIInput( {
 		focusOnMount,
 	} = useAgentUIContext();
 
+	const onKeyDownHandler = (
+		e: React.KeyboardEvent< HTMLTextAreaElement >
+	) => {
+		onKeyDown?.( e );
+
+		if ( e.defaultPrevented ) {
+			return;
+		}
+
+		handleKeyDown( e );
+	};
+
 	return (
 		<ChatInput
 			value={ inputValue }
 			onChange={ setInputValue }
 			onSubmit={ handleSubmit }
-			onKeyDown={ handleKeyDown }
+			onKeyDown={ onKeyDownHandler }
 			textareaRef={ textareaRef }
 			placeholder={ placeholder }
 			isProcessing={ isProcessing }
