@@ -100,7 +100,7 @@ const DomainSearchSkipSuggestion = ( {
 					{ title }
 				</Heading>
 			}
-			subtitle={ <Text>{ subtitle }</Text> }
+			subtitle={ subtitle && <Text>{ subtitle }</Text> }
 			right={
 				<Button
 					className="domain-search-skip-suggestion__btn"
