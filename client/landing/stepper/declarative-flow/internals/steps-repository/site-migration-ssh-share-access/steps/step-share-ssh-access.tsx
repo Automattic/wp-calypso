@@ -24,6 +24,8 @@ interface StepShareSSHAccessProps {
 	onGenerateSSHKey: () => void;
 	onEditUsername: () => void;
 	helpLink: ReactNode;
+	isTransferring: boolean;
+	shouldGenerateKey: boolean;
 }
 
 export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
@@ -42,6 +44,8 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 	onGenerateSSHKey,
 	onEditUsername,
 	helpLink,
+	isTransferring,
+	shouldGenerateKey,
 } ) => {
 	const translate = useTranslate();
 	const [ copied, setCopied ] = useState( false );
@@ -165,8 +169,10 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 								<Button
 									variant="secondary"
 									onClick={ onGenerateSSHKey }
-									disabled={ ! username || isGeneratingKey }
-									isBusy={ isGeneratingKey }
+									disabled={
+										! username || isGeneratingKey || ( isTransferring && shouldGenerateKey )
+									}
+									isBusy={ isGeneratingKey || ( isTransferring && shouldGenerateKey ) }
 								>
 									{ translate( 'Generate SSH key' ) }
 								</Button>

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useGenerateSSHKey } from '../hooks/use-generate-ssh-key';
 import { HelpLink } from './help-link';
 import { getSSHHostDisplayName, getSSHSupportDoc } from './ssh-host-support-urls';
@@ -39,6 +39,8 @@ interface StepsDataOptions {
 	onFindSSHDetailsSuccess: () => void;
 	host?: string;
 	onNoSSHAccess: () => void;
+	isTransferring: boolean;
+	shouldGenerateKey: boolean;
 }
 
 interface StepData {
@@ -74,6 +76,7 @@ interface UseStepsOptions {
 	host?: string;
 	onNoSSHAccess: () => void;
 	migrationStatus?: 'queued' | 'in-progress' | 'migrating' | 'completed' | 'failed';
+	isTransferring: boolean;
 }
 
 interface SSHFormState {
@@ -143,6 +146,8 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					onGenerateSSHKey={ options.onGenerateSSHKey }
 					onEditUsername={ options.onEditUsername }
 					helpLink={ helpLink }
+					isTransferring={ options.isTransferring }
+					shouldGenerateKey={ options.shouldGenerateKey }
 				/>
 			),
 		},
@@ -158,10 +163,12 @@ export const useSteps = ( {
 	onNoSSHAccess,
 	host,
 	migrationStatus,
+	isTransferring,
 }: UseStepsOptions ): StepsObject => {
 	const [ currentStep, setCurrentStep ] = useState( -1 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
 	const [ migrationError, setMigrationError ] = useState< Error | null >( null );
+	const [ shouldGenerateKey, setShouldGenerateKey ] = useState( false );
 
 	// SSH Form State
 	const [ formState, setFormState ] = useState< SSHFormState >( {
@@ -242,7 +249,7 @@ export const useSteps = ( {
 		setFormState( ( prev ) => ( { ...prev, migrationStarted: true } ) );
 	};
 
-	const handleGenerateSSHKey = () => {
+	const triggerGenerateSSHKey = useCallback( () => {
 		generateSSHKey(
 			{
 				siteId,
@@ -256,7 +263,24 @@ export const useSteps = ( {
 				},
 			}
 		);
+	}, [ generateSSHKey, siteId, formState.username, formState.serverAddress, fromUrl ] );
+
+	const handleGenerateSSHKey = () => {
+		if ( isTransferring ) {
+			setShouldGenerateKey( true );
+			return;
+		}
+
+		triggerGenerateSSHKey();
 	};
+
+	// Auto-generate SSH key when transfer completes
+	useEffect( () => {
+		if ( ! isTransferring && shouldGenerateKey ) {
+			setShouldGenerateKey( false );
+			triggerGenerateSSHKey();
+		}
+	}, [ isTransferring, shouldGenerateKey, triggerGenerateSSHKey ] );
 
 	const handleEditUsername = () => {
 		setFormState( ( prev ) => ( { ...prev, sshPublicKey: '' } ) );
@@ -291,6 +315,8 @@ export const useSteps = ( {
 		onFindSSHDetailsSuccess: handleFindSSHDetailsSuccess,
 		onNoSSHAccess,
 		host,
+		isTransferring,
+		shouldGenerateKey,
 	} );
 
 	const isComplete = ( stepKey: string ) => {
