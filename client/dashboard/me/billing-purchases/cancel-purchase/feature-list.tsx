@@ -44,10 +44,7 @@ const CancelPurchaseFeatureList = ( {
 									size={ 24 }
 									icon={ close }
 								/>
-								<span>
-									{ feature.title }
-									{ feature.description && ' - ' + feature.description }
-								</span>
+								<span>{ feature.title }</span>
 							</li>
 						);
 					} ) }
