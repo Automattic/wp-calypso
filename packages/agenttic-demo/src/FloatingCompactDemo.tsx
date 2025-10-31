@@ -101,6 +101,14 @@ const FloatingCompactDemo: React.FC = () => {
 					prompt: 'Add an image here',
 				},
 				{
+					id: '8',
+					label: 'Replace with uploaded image',
+					action: () => {
+						return true;
+					},
+					prompt: 'Replace the current image with an uploaded image',
+				},
+				{
 					id: '9',
 					label: 'Add gallery with three images',
 					prompt: 'Add a new gallery pattern to the page with three images, right below the currently selected pattern.',

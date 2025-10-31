@@ -6,7 +6,7 @@ export interface Suggestion {
 	id: string;
 	label: string;
 	prompt?: string;
-	action?: () => void | Promise< void >;
+	action?: () => boolean | Promise< boolean >;
 }
 
 export interface Message {

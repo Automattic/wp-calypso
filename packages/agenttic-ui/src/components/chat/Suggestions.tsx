@@ -30,14 +30,17 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	onMouseLeave,
 	translateY = '-100%',
 } ) => {
-	const handleSuggestionClick = (
+	const handleSuggestionClick = async (
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => {
-		if ( onSubmit && selectedSuggestion.prompt ) {
+		let shouldSubmit = true;
+		if ( selectedSuggestion.action ) {
+			shouldSubmit = await selectedSuggestion.action();
+		}
+
+		if ( shouldSubmit && onSubmit && selectedSuggestion.prompt ) {
 			onSubmit( selectedSuggestion, availableSuggestions );
-		} else if ( selectedSuggestion.action ) {
-			selectedSuggestion.action();
 		}
 	};
 

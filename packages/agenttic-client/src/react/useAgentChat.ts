@@ -22,7 +22,7 @@ export interface Suggestion {
 	id: string;
 	label: string;
 	prompt?: string;
-	action?: () => void | Promise< void >;
+	action?: () => boolean | Promise< boolean >;
 }
 
 // Extra options for submitting a message
