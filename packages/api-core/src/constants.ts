@@ -7,6 +7,9 @@ export const DotcomPlans = {
 	BUSINESS_2_YEARS: 'business-bundle-2y',
 	BUSINESS_3_YEARS: 'business-bundle-3y',
 	ECOMMERCE: 'ecommerce-bundle',
+	ECOMMERCE_2_YEARS: 'ecommerce-bundle-2y',
+	ECOMMERCE_3_YEARS: 'ecommerce-bundle-3y',
+	ECOMMERCE_MONTHLY: 'ecommerce-bundle-monthly',
 	ECOMMERCE_TRIAL_MONTHLY: 'ecommerce-trial-bundle-monthly',
 	FREE_PLAN: 'free_plan',
 	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
@@ -17,6 +20,21 @@ export const DotcomPlans = {
 	PREMIUM_2_YEARS: 'value_bundle-2y',
 	PREMIUM_3_YEARS: 'value_bundle-3y',
 } as const;
+
+export const BusinessPlans = [
+	DotcomPlans.BUSINESS_MONTHLY,
+	DotcomPlans.BUSINESS,
+	DotcomPlans.BUSINESS_2_YEARS,
+	DotcomPlans.BUSINESS_3_YEARS,
+];
+
+export const EcommercePlans = [
+	DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
+	DotcomPlans.ECOMMERCE_MONTHLY,
+	DotcomPlans.ECOMMERCE,
+	DotcomPlans.ECOMMERCE_2_YEARS,
+	DotcomPlans.ECOMMERCE_3_YEARS,
+];
 
 export type DotcomPlanSlug = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
 
