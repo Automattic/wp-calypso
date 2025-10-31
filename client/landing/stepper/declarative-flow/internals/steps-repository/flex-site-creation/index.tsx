@@ -2,9 +2,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Step } from '@automattic/onboarding';
 import { TextControl, Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { useSiteData } from '../../../../hooks/use-site-data';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
@@ -15,9 +16,17 @@ const FlexSiteCreation: StepType< {
 } > = function FlexSiteCreation( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
+	const { site } = useSiteData();
 
 	const [ siteName, setSiteName ] = useState( '' );
 	const [ isLoading, setIsLoading ] = useState( false );
+
+	// Pre-populate site name from existing site
+	useEffect( () => {
+		if ( site?.name ) {
+			setSiteName( site.name );
+		}
+	}, [ site ] );
 
 	const handleSubmit = ( event: FormEvent ) => {
 		event.preventDefault();
@@ -48,8 +57,12 @@ const FlexSiteCreation: StepType< {
 				}
 				heading={
 					<Step.Heading
-						text={ __( 'Create a new site' ) }
-						subText={ __( 'No-hassle WordPress install in one click.' ) }
+						text={ site ? __( 'Customize your site' ) : __( 'Create a new site' ) }
+						subText={
+							site
+								? __( 'Update your site title to personalize your flex site.' )
+								: __( 'No-hassle WordPress install in one click.' )
+						}
 					/>
 				}
 			>
@@ -73,7 +86,7 @@ const FlexSiteCreation: StepType< {
 							type="submit"
 							disabled={ isLoading }
 						>
-							{ __( 'Create a site' ) }
+							{ site ? __( 'Continue' ) : __( 'Create a site' ) }
 						</Button>
 					</div>
 

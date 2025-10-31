@@ -318,13 +318,10 @@ export default function getThankYouPageUrl( {
 			return `/checkout/thank-you/${ siteId }/${ receiptIdOrPlaceholder }`;
 		}
 
-		// Get the post-checkout destination URL from cookie (set during onboarding-unified plans step)
+		// Get the post-checkout destination URL from cookie (set during flows using post-checkout-onboarding)
 		const urlFromCookie = getUrlFromCookie();
 
-		if (
-			urlFromCookie &&
-			urlFromCookie.includes( '/setup/onboarding-unified/post-checkout-onboarding' )
-		) {
+		if ( urlFromCookie && urlFromCookie.includes( '/post-checkout-onboarding' ) ) {
 			debug( 'redirecting to the saved post-checkout destination' );
 			return addQueryArgs( { siteId }, urlFromCookie );
 		}
