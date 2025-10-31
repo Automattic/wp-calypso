@@ -18,7 +18,7 @@ import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payme
 import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.png';
 import { useAnalytics } from '../../../../../app/analytics';
 import { useHelpCenter } from '../../../../../app/help-center';
-import type { PlanProduct, Site, Purchase } from '@automattic/api-core';
+import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 // This type represents things that React can render, but which also exist. (E.g.
 // not nullable, not undefined, etc.)
@@ -96,25 +96,23 @@ function getLiveChatUrl( type: string, purchase: Purchase ) {
 }
 
 type StepProps = {
-	upsell: string;
-	site?: Site;
-	purchase: Purchase;
-	currencyCode: string;
-	plans: PlanProduct[];
-	refundAmount?: string;
-	downgradePlanPrice?: number | null;
-	closeDialog?: () => void;
 	cancelBundledDomain?: boolean;
-	includedDomainPurchase?: object;
-	onDeclineUpsell?: () => void;
-	onClickFreeMonthOffer?: () => void;
-	onClickDowngrade?: ( upsell: string ) => void;
 	cancellationReason?: string;
+	closeDialog?: () => void;
+	currencyCode: string;
+	downgradePlanPrice?: number | null;
+	includedDomainPurchase?: object;
+	onClickDowngrade?: ( upsell: string ) => void;
+	onClickFreeMonthOffer?: () => void;
+	onDeclineUpsell?: () => void;
+	plans: PlanProduct[];
+	purchase: Purchase;
+	refundAmount?: string;
+	upsell: string;
 };
 
 export default function UpsellStep( {
 	upsell,
-	site,
 	purchase,
 	currencyCode,
 	plans,

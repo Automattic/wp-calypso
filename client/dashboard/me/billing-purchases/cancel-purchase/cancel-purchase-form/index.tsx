@@ -1,11 +1,7 @@
-import { WPCOM_FEATURES_BACKUPS } from '@automattic/api-core';
-import { siteFeaturesQuery, siteLatestAtomicTransferQuery } from '@automattic/api-queries';
-import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
-import { useMemo } from 'react';
 import { ButtonStack } from '../../../../components/button-stack';
 import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
@@ -24,7 +20,7 @@ import {
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './steps';
-import type { CancellationOffer, PlanProduct, Purchase, Site } from '@automattic/api-core';
+import type { CancellationOffer, PlanProduct, Purchase } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -44,8 +40,8 @@ export interface CancelPurchaseFormProps {
 	closeDialog?: () => void;
 	disableButtons?: boolean;
 	downgradeClick?: ( upsell: string ) => void;
-	downgradePlanToMonthlyPrice?: number; //TODO: maybe delete
-	downgradePlanToPersonalPrice?: number; //TODO: maybe delete
+	downgradePlanToMonthlyPrice?: number;
+	downgradePlanToPersonalPrice?: number;
 	flowType?: string;
 	freeMonthOfferClick?: () => void;
 	getAllSurveySteps?: () => string[];
@@ -78,9 +74,7 @@ export interface CancelPurchaseFormProps {
 	onTextThreeChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onTextTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	plans: PlanProduct[];
-	// products?: Product[];
 	purchase: Purchase;
-	// purchases: Purchase[];
 	questionOneOrder: string[];
 	questionOneRadio?: string;
 	questionOneText?: string;
@@ -88,33 +82,15 @@ export interface CancelPurchaseFormProps {
 	questionTwoRadio?: string;
 	questionTwoText?: string;
 	refundAmount?: string;
-	site?: Site;
-	// sitePlans?: SiteSpecificPlanProduct[];
-	// sitePurchases: Purchase[];
+	siteSlug: string;
 	solution?: string;
 	surveyStep?: string;
 	upsell?: string;
 	willAtomicSiteRevert?: boolean;
 }
 
-export default function CancelPurchaseForm( providedProps: CancelPurchaseFormProps ) {
-	const { purchase, site } = providedProps;
-	const { data: siteFeatures } = useSuspenseQuery( siteFeaturesQuery( purchase.blog_id ) );
-	const { data: atomicTransfer } = useQuery( siteLatestAtomicTransferQuery( purchase.blog_id ) );
-	const props = useMemo(
-		() => ( {
-			...providedProps,
-			isAtomicSite: providedProps.isAtomicSite ?? site?.is_wpcom_atomic,
-			isImport:
-				providedProps.isImport ?? Boolean( site && ( site?.options?.import_engine ?? false ) ),
-			site: providedProps.site,
-			atomicTransfer: providedProps.atomicTransfer ?? atomicTransfer,
-			hasBackupsFeature:
-				providedProps.hasBackupsFeature ??
-				siteFeatures?.active?.indexOf( WPCOM_FEATURES_BACKUPS ) >= 0,
-		} ),
-		[ atomicTransfer, providedProps, site, siteFeatures?.active ]
-	);
+export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
+	const { purchase, siteSlug } = props;
 	/**
 	 * Get possible steps for the survey
 	 */
@@ -150,7 +126,6 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 			questionOneText,
 			questionTwoOrder,
 			refundAmount,
-			site,
 			surveyStep,
 			upsell,
 		} = props;
@@ -159,7 +134,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 			return (
 				<FeedbackStep
 					cancellationReasonCodes={ questionOneOrder }
-					isImport={ isImport }
+					isImport={ isImport ?? false }
 					onChangeCancellationReason={ onRadioOneChange }
 					onChangeCancellationReasonDetails={ onTextOneChange }
 					onChangeImportFeedback={ onImportRadioChange }
@@ -178,7 +153,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 					<EducationContentStep
 						cancellationReason={ questionOneText }
 						onDecline={ isLastStep ? onSubmit : clickNext }
-						siteSlug={ site?.slug ?? purchase.site_slug ?? '' }
+						siteSlug={ siteSlug }
 						type={ upsell }
 					/>
 				);
@@ -202,7 +177,6 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 					plans={ plans }
 					purchase={ purchase }
 					refundAmount={ refundAmount }
-					site={ site }
 					upsell={ upsell ?? '' }
 				/>
 			);
@@ -228,12 +202,12 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 					atomicRevertCheckOne={ atomicRevertCheckOne ?? false }
 					atomicRevertCheckTwo={ atomicRevertCheckTwo ?? false }
 					atomicTransfer={ atomicTransfer }
-					hasBackupsFeature={ hasBackupsFeature }
+					hasBackupsFeature={ hasBackupsFeature ?? false }
 					isRemovePlan={ flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_plan }
 					onClickCheckOne={ atomicRevertOnClickCheckOne }
 					onClickCheckTwo={ atomicRevertOnClickCheckTwo }
 					purchase={ purchase }
-					siteSlug={ purchase.site_slug ?? site?.slug ?? '' }
+					siteSlug={ siteSlug }
 				/>
 			);
 		}
@@ -285,7 +259,6 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 					onGetDiscount={ onGetDiscount }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
 					purchase={ purchase }
-					siteId={ purchase.blog_id }
 				/>
 			);
 		}
@@ -298,7 +271,6 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 					isAkismet={ !! props?.isAkismet }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
 					productName={ productName }
-					siteId={ purchase.blog_id }
 				/>
 			);
 		}
@@ -455,8 +427,6 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 	};
 
 	// FIXME: find a way to determine these prices.
-	props.downgradePlanToPersonalPrice = 0;
-	props.downgradePlanToMonthlyPrice = 0;
 
 	return (
 		props.isVisible && (

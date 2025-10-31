@@ -6,7 +6,6 @@ import JetpackDecorativeCard from '../../jetpack-decorative-card';
 import type { FC } from 'react';
 
 interface Props {
-	siteId: number;
 	percentDiscount: number;
 	productName: string;
 	isAkismet?: boolean;

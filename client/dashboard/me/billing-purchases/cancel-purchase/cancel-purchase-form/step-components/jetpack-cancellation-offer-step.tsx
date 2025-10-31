@@ -13,7 +13,6 @@ import type { FC } from 'react';
 
 interface Props {
 	purchase: Purchase;
-	siteId: number;
 	offer: Pick<
 		CancellationOffer,
 		'discounted_periods' | 'raw_price' | 'currency_code' | 'original_price'
