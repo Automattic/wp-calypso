@@ -643,7 +643,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 							| 'migration-started'
 							| 'migration-completed'
 							| 'no-ssh-access'
-							| 'back-to-verification';
+							| 'back-to-verification'
+							| 'do-it-for-me';
 					};
 
 					// Missing transferId, redirect back to verification
@@ -668,6 +669,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return exitFlow(
 							paths.dashboardSiteSSHMigration( { 'ssh-migration': 'completed' }, { siteSlug } )
 						);
+					}
+
+					if ( destination === 'do-it-for-me' ) {
+						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 					}
 
 					return navigate( paths.sshInProgressPath( { siteId, siteSlug } ) );
