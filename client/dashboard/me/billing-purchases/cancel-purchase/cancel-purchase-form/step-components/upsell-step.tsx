@@ -107,7 +107,7 @@ type StepProps = {
 	onDeclineUpsell?: () => void;
 	plans: PlanProduct[];
 	purchase: Purchase;
-	refundAmount?: string;
+	refundAmount?: number;
 	upsell: string;
 };
 
@@ -274,14 +274,14 @@ export default function UpsellStep( {
 								'You will lose your free domain registration since that feature is only included in annual/biannual plans.'
 							) }
 						{ refundAmount && <br /> }
-						{ Number( refundAmount )
+						{ refundAmount
 							? sprintf(
 									/* translators: %(refundAmount)s is a monetary amount in the form of a refund */
 									__(
 										'You can downgrade immediately and get a partial refund of %(refundAmount)s.'
 									),
 									{
-										refundAmount: formatCurrency( parseFloat( refundAmount ?? '0' ), currencyCode ),
+										refundAmount: formatCurrency( refundAmount, currencyCode ),
 									}
 							  )
 							: null }
@@ -326,7 +326,7 @@ export default function UpsellStep( {
 										'continue to the next step and cancel the plan.'
 								),
 								{
-									amount: formatCurrency( parseFloat( refundAmount ), currencyCode ),
+									amount: formatCurrency( refundAmount, currencyCode ),
 								}
 							) }
 					</>

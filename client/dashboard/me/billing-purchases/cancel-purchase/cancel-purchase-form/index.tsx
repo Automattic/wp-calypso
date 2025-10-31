@@ -81,7 +81,7 @@ export interface CancelPurchaseFormProps {
 	questionTwoOrder?: string[];
 	questionTwoRadio?: string;
 	questionTwoText?: string;
-	refundAmount?: string;
+	refundAmount?: number;
 	siteSlug: string;
 	solution?: string;
 	surveyStep?: string;

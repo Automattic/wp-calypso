@@ -730,19 +730,3 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 		isAtomicSupportedProduct( sitePurchase.product_slug )
 	);
 };
-
-export const getRefundAmount = ( purchase: Purchase ) => {
-	const { refund_options: refundOptions, currency_code: currencyCode } = purchase;
-	// TODO clk numberFormat pass through numberFormat if it stays
-	const defaultFormatter = new Intl.NumberFormat( 'en-US', {
-		style: 'currency',
-		currency: currencyCode,
-	} );
-	const precision = defaultFormatter.resolvedOptions().maximumFractionDigits;
-	const refundAmount =
-		purchase.is_refundable && refundOptions?.[ 0 ]?.refund_amount
-			? refundOptions[ 0 ].refund_amount
-			: 0;
-
-	return refundAmount.toFixed( precision );
-};

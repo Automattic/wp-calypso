@@ -50,7 +50,6 @@ import {
 	CANCEL_FLOW_TYPE,
 	getIncludedDomainPurchase,
 	getPurchaseCancellationFlowType,
-	getRefundAmount,
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
@@ -1619,7 +1618,7 @@ export default function CancelPurchase() {
 							questionTwoOrder={ state.questionTwoOrder }
 							questionTwoRadio={ state.questionTwoRadio }
 							questionTwoText={ state.questionTwoText }
-							refundAmount={ getRefundAmount( purchase ) }
+							refundAmount={ purchase.total_refund_amount }
 							siteSlug={ siteSlug }
 							solution={ state.solution }
 							surveyStep={ state.surveyStep }
