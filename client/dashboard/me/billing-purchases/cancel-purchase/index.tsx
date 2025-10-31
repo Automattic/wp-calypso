@@ -1,4 +1,4 @@
-import { DomainProductSlugs } from '@automattic/api-core';
+import { DomainProductSlugs, SubscriptionBillPeriod } from '@automattic/api-core';
 import {
 	applyCancellationOfferMutation,
 	cancelAndRefundPurchaseMutation,
@@ -46,7 +46,6 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { shuffleArray } from '../../../utils/collection';
 import { getGSuiteSubscriptionStatus, getGoogleMailServiceFamily } from '../../../utils/gsuite';
-import { isWpComMonthlyPlan } from '../../../utils/plans';
 import {
 	CANCEL_FLOW_TYPE,
 	getIncludedDomainPurchase,
@@ -974,7 +973,7 @@ export default function CancelPurchase() {
 		if ( didRunEffect.current ) {
 			return;
 		}
-		if ( purchase.ID && isWpComMonthlyPlan( purchase.product_slug ) ) {
+		if ( purchase.ID && purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
 			setStateBasedOnExtendedStatus();
 		}
 		if ( ! isDataValid() ) {
@@ -987,6 +986,7 @@ export default function CancelPurchase() {
 		setStateBasedOnExtendedStatus,
 		isDataValid,
 		purchase.ID,
+		purchase.bill_period_days,
 		purchase.product_slug,
 		redirect,
 		track,
