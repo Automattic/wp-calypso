@@ -330,7 +330,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.13, @automattic/agenttic-ui@npm:^0.1.9":
+"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.9":
   version: 0.1.13
   resolution: "@automattic/agenttic-ui@npm:0.1.13"
   dependencies:
@@ -351,6 +351,36 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
   checksum: 3a27517c5c1b17638a7735e01ff3c695cd833855a055c2406e75123e9074ae4b0728a202c444530e44a2e5d42956e320c6861504fac7742565ed749a0350b7ac
+  languageName: node
+  linkType: hard
+
+"@automattic/agenttic-ui@npm:^0.1.20":
+  version: 0.1.22
+  resolution: "@automattic/agenttic-ui@npm:0.1.22"
+  dependencies:
+    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
+    "@radix-ui/react-scroll-area": "npm:^1.2.9"
+    "@radix-ui/react-slot": "npm:^1.2.3"
+    "@visx/xychart": "npm:^3.12.0"
+    "@wordpress/i18n": "npm:^6.1.0"
+    class-variance-authority: "npm:^0.7.1"
+    clsx: "npm:^2.1.1"
+    framer-motion: "npm:^12.23.0"
+    lucide-react: "npm:^0.525.0"
+    marked: "npm:^16.2.1"
+    react: "npm:^18.0.0"
+    react-dom: "npm:^18.0.0"
+    react-markdown: "npm:^10.1.0"
+    react-textarea-autosize: "npm:^8.5.9"
+    remark-gfm: "npm:^4.0.1"
+    unified: "npm:^11.0.5"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  dependenciesMeta:
+    marked:
+      optional: true
+  checksum: 9f19a653c99a9f09ecfd8448b6aae8ab9d2aa1404ac6f5a7443bfa5d6acbfead27699f70137109137b31640c136fd88ecc6354d564ccfe5853b4776a789a2391
   languageName: node
   linkType: hard
 
@@ -1830,7 +1860,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.13"
+    "@automattic/agenttic-ui": "npm:^0.1.20"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -26881,6 +26911,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"marked@npm:^16.2.1":
+  version: 16.4.1
+  resolution: "marked@npm:16.4.1"
+  bin:
+    marked: bin/marked.js
+  checksum: 2b5bc04db3453e493ea78758f1fe5006d725ec90aab9bf991242b0820a069d9748e2ac26fb0e2603848a409649c77900e599f3f66d251d0f7e5f606576090a54
+  languageName: node
+  linkType: hard
+
 "marked@npm:^4.0.0":
   version: 4.0.10
   resolution: "marked@npm:4.0.10"
@@ -38112,7 +38151,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unified@npm:^11.0.0, unified@npm:^11.0.3, unified@npm:^11.0.4":
+"unified@npm:^11.0.0, unified@npm:^11.0.3, unified@npm:^11.0.4, unified@npm:^11.0.5":
   version: 11.0.5
   resolution: "unified@npm:11.0.5"
   dependencies:
