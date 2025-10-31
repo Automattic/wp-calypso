@@ -70,7 +70,6 @@
 		"google-drive": true,
 		"google-my-business": true,
 		"help": true,
-		"help-center-menu-panel": false,
 		"help/gpt-response": true,
 		"help-center/workflow": false,
 		"home/layout-dev": true,

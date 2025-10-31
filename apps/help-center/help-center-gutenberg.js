@@ -1,7 +1,6 @@
 /* global helpCenterData, __i18n_text_domain__ */
 import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -32,15 +31,16 @@ function HelpCenterContent() {
 	const canvasMode = useCanvasMode();
 
 	// Check if the new menu panel feature is enabled
-	const isMenuPanelEnabled = config.isEnabled( 'help-center-menu-panel' );
+	const urlParams = new URLSearchParams( window.location.search );
+	const hasHelpCenterMenuPanel = urlParams.get( 'flags' ) === 'help-center-menu-panel';
 
 	const trackIconInteraction = useCallback( () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown,
 			section: helpCenterData.sectionName || 'wp-admin',
-			is_menu_panel_enabled: isMenuPanelEnabled,
+			is_menu_panel_enabled: hasHelpCenterMenuPanel,
 		} );
-	}, [ isShown, isMenuPanelEnabled ] );
+	}, [ isShown, hasHelpCenterMenuPanel ] );
 
 	const handleToggleHelpCenter = useCallback( () => {
 		trackIconInteraction();
@@ -147,7 +147,7 @@ function HelpCenterContent() {
 		[ handleMenuClick ]
 	);
 
-	const content = isMenuPanelEnabled ? (
+	const content = hasHelpCenterMenuPanel ? (
 		<DropdownMenu
 			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
 			icon={ <HelpIcon /> }
