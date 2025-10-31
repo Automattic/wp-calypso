@@ -7,7 +7,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { type Field } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import PhoneNumberInput from '../../components/phone-number-input';
@@ -68,7 +68,20 @@ export const getContactFormFields = (
 					( country ) => country.numeric_code === countryNumericCode
 				);
 
-				const validationMessage = field.isValid?.custom?.( data, field );
+				// Handle both sync and async validators
+				const [ validationMessage, setValidationMessage ] = useState< string | null >( null );
+
+				useEffect( () => {
+					const result = field.isValid?.custom?.( data, field );
+
+					// Check if the result is a Promise (async validator)
+					if ( result instanceof Promise ) {
+						result.then( setValidationMessage );
+					} else {
+						// Sync validator - set the result directly
+						setValidationMessage( result ?? null );
+					}
+				}, [ data, field ] );
 
 				return (
 					<PhoneNumberInput

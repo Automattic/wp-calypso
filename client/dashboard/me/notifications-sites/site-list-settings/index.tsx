@@ -1,22 +1,23 @@
 import { Site } from '@automattic/api-core';
-import { sitesQuery } from '@automattic/api-queries';
 import { useFuzzySearch } from '@automattic/search';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, SearchControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useDeferredValue, useState } from 'react';
+import { useAppContext } from '../../../app/context';
 import { Card, CardBody } from '../../../components/card';
-import { CollapsibleCard } from '../collapsible-card';
+import { CollapsibleCard } from '../../../components/collapsible-card';
 import { SitePreview } from '../site-preview';
 import { SiteSettings } from '../site-settings';
 
 import './index.scss';
 
 export const SiteListSettings = () => {
+	const { queries } = useAppContext();
 	const [ search, setSearch ] = useState< string | undefined >();
 	const { data: sites } = useSuspenseQuery( {
-		...sitesQuery( { include_a8c_owned: true, site_visibility: 'visible' } ),
+		...queries.sitesQuery( { include_a8c_owned: true, site_visibility: 'visible' } ),
 	} );
 
 	const deferredSearch = useDeferredValue( search );

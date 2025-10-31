@@ -77,6 +77,18 @@ export function ThreatDescription( { threat, site }: { threat: Threat; site: Sit
 		);
 	};
 
+	const getFixMessage = () => {
+		if ( threat.fixable?.fixer === 'delete' ) {
+			return __(
+				'Jetpack Scan is able to automatically fix this threat for you. Since it will delete the affected file or directory the site’s look-and-feel or features can be compromised. We recommend that you check if your latest backup was performed successfully in case a restore is needed.'
+			);
+		}
+
+		return __(
+			'Jetpack Scan is able to automatically fix this threat for you. Since it will replace the affected file or directory the site’s look-and-feel or features can be compromised. We recommend that you check if your latest backup was performed successfully in case a restore is needed.'
+		);
+	};
+
 	const renderFix = () => {
 		if ( threat.status === 'fixed' ) {
 			return;
@@ -124,11 +136,7 @@ export function ThreatDescription( { threat, site }: { threat: Threat; site: Sit
 
 		return (
 			<>
-				<Text variant="muted">
-					{ __(
-						'Jetpack Scan is able to automatically fix this threat for you. Since it will replace the affected file or directory the site’s look-and-feel or features can be compromised. We recommend that you check if your latest backup was performed successfully in case a restore is needed.'
-					) }
-				</Text>
+				<Text variant="muted">{ getFixMessage() }</Text>
 				<Text variant="muted">{ threat.fix_description }</Text>
 			</>
 		);
@@ -136,10 +144,8 @@ export function ThreatDescription( { threat, site }: { threat: Threat; site: Sit
 
 	return (
 		<VStack spacing={ 4 }>
-			<Text size="large" weight={ 500 }>
-				{ __( 'What did Jetpack find?' ) }
-			</Text>
-			<Text variant="muted">{ threat.description }</Text>
+			{ /* Do not show the threat summarized description if the source is present, it's redundant */ }
+			{ ! threat.source && <Text variant="muted">{ threat.description }</Text> }
 			{ threat.payload_description && <Text>{ threat.payload_description }</Text> }
 			{ threat.source && (
 				<ExternalLink href={ threat.source }>
@@ -147,7 +153,7 @@ export function ThreatDescription( { threat, site }: { threat: Threat; site: Sit
 				</ExternalLink>
 			) }
 			{ ( threat.filename || threat.context || threat.diff || threat.rows ) && (
-				<Text size="large" weight={ 500 }>
+				<Text size="medium" weight={ 500 }>
 					{ __( 'The technical details' ) }
 				</Text>
 			) }
@@ -155,7 +161,7 @@ export function ThreatDescription( { threat, site }: { threat: Threat; site: Sit
 			{ renderDatabaseRows() }
 			{ threat.context && <MarkedLines context={ threat.context } /> }
 			{ threat.status !== 'fixed' && (
-				<Text size="large" weight={ 500 }>
+				<Text size="medium" weight={ 500 }>
 					{ renderFixTitle() }
 				</Text>
 			) }

@@ -2,6 +2,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { seen } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { canViewSiteVisibilitySettings } from '../features';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -12,6 +13,10 @@ export default function SiteVisibilitySettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
+	if ( ! canViewSiteVisibilitySettings( site ) ) {
+		return null;
+	}
+
 	let badges = [];
 	if ( site.launch_status === 'unlaunched' || site.is_coming_soon ) {
 		badges = [ { text: __( 'Coming soon' ), intent: 'warning' as const } ];

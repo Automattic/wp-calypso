@@ -1,6 +1,7 @@
 @import '@wordpress/base-styles/colors';
 
 .dashboard-menu__item.dashboard-menu__item {
+	flex-shrink: 0;
 	color: var( --dashboard-menu-item__color );
 
 	&.active {

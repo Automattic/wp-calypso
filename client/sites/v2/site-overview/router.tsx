@@ -1,11 +1,13 @@
 import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
+import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import siteSettingsRouter from '../site-settings/router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
+import type { AppConfig } from 'calypso/dashboard/app/context';
 
 const siteOverviewRoute = createRoute( {
 	...appRouterSites.siteOverviewRoute.options,
@@ -49,18 +51,18 @@ const createRouteTree = () =>
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
 	createBrowserHistoryAndMemoryRouterSync();
 
-export const getRouter = ( { basePath }: { basePath: string } ) => {
+export const getRouter = ( config: AppConfig ) => {
 	const routeTree = createRouteTree();
 	const router = createRouter( {
-		...getRouterOptions(),
+		...getRouterOptions( config ),
 		routeTree,
-		basepath: basePath,
 	} );
 
 	return router;
 };
 
 export const routerConfig = {
+	...APP_CONTEXT_DEFAULT_CONFIG,
 	basePath: '/',
 };
 

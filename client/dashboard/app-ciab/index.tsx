@@ -1,6 +1,8 @@
+import { sitesQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
 import boot from '../app/boot';
 import Logo from './logo';
 import './translations';
+import type { FetchSitesOptions } from '@automattic/api-core';
 import './style.scss';
 
 boot( {
@@ -44,5 +46,9 @@ boot( {
 	components: {
 		sites: () => import( '../sites-ciab' ),
 		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
+	},
+	queries: {
+		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
+			sitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
 	},
 } );

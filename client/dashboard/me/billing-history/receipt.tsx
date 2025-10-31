@@ -74,7 +74,7 @@ export default function Receipt() {
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader title={ __( 'Receipt' ) } prefix={ <Breadcrumbs length={ 2 } /> } /> }
+			header={ <PageHeader title={ __( 'Receipt' ) } prefix={ <Breadcrumbs length={ 3 } /> } /> }
 		>
 			<Card>
 				<CardBody>

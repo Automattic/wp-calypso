@@ -13,6 +13,7 @@ import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
 import PHPSettingsSummary from '../settings-php/summary';
+import PlanSettingsSummary from '../settings-plan/summary';
 import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/summary';
 import SiteRedirectSettingsSummary from '../settings-redirect/summary';
 import RepositoriesSettingsSummary from '../settings-repositories/summary';
@@ -50,6 +51,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 						<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
 						<AgencySettingsSummary site={ site } />
 						<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
+						<PlanSettingsSummary site={ site } />
 					</SummaryButtonList>
 				</VStack>
 			) }

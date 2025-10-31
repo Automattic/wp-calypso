@@ -68,7 +68,7 @@ export function isDomainUpdatable( domain: DomainSummary ) {
 }
 
 export function isDomainInGracePeriod( domain: DomainSummary ) {
-	if ( ! domain.expiry ) {
+	if ( domain.expiry === null ) {
 		return true;
 	}
 

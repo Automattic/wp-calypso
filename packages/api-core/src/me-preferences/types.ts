@@ -39,4 +39,5 @@ export interface UserPreferences {
 	 * CIAB Preferences.
 	 */
 	'ciab-sites-view'?: SitesViewPreferences;
+	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
 }

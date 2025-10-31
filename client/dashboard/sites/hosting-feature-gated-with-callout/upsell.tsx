@@ -19,6 +19,7 @@ export interface UpsellCalloutProps {
 	upsellTitle?: CalloutProps[ 'title' ];
 	upsellTitleAs?: CalloutProps[ 'titleAs' ];
 	upsellDescription?: CalloutProps[ 'description' ];
+	upsellPlanRequirement?: 'any' | 'business-or-commerce';
 	feature?: HostingFeatureSlug;
 }
 
@@ -31,6 +32,7 @@ export default function UpsellCallout( {
 	upsellTitle,
 	upsellTitleAs,
 	upsellDescription,
+	upsellPlanRequirement = 'business-or-commerce',
 	feature,
 }: UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
@@ -67,16 +69,18 @@ export default function UpsellCallout( {
 						<Text variant="muted">{ upsellDescription ?? defaultProps.description }</Text>
 					) }
 					<Text variant="muted">
-						{ sprintf(
-							// translators: %(businessPlanName)s is the name of the Business plan, %(commercePlanName)s is the name of the Commerce plan
-							__(
-								'Available on the WordPress.com %(businessPlanName)s and %(commercePlanName)s plans.'
-							),
-							{
-								businessPlanName: getPlanNames()[ DotcomPlans.BUSINESS ],
-								commercePlanName: getPlanNames()[ DotcomPlans.ECOMMERCE ],
-							}
-						) }
+						{ upsellPlanRequirement === 'any'
+							? __( 'Available on WordPress.com paid plans.' )
+							: sprintf(
+									// translators: %(businessPlanName)s is the name of the Business plan, %(commercePlanName)s is the name of the Commerce plan
+									__(
+										'Available on the WordPress.com %(businessPlanName)s and %(commercePlanName)s plans.'
+									),
+									{
+										businessPlanName: getPlanNames()[ DotcomPlans.BUSINESS ],
+										commercePlanName: getPlanNames()[ DotcomPlans.ECOMMERCE ],
+									}
+							  ) }
 					</Text>
 				</>
 			}

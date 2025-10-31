@@ -23,13 +23,12 @@ import {
 	siteByIdQuery,
 	sitePreviewLinksQuery,
 	sitePrimaryDataCenterQuery,
-	sitePurchaseQuery,
+	purchaseQuery,
 	sitePurchasesQuery,
 	siteRedirectQuery,
 	siteScanQuery,
 	siteSettingsQuery,
 	siteSftpUsersQuery,
-	sitesQuery,
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
@@ -38,7 +37,11 @@ import {
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
+import {
+	canViewHundredYearPlanSettings,
+	canViewSiteVisibilitySettings,
+	canViewWordPressSettings,
+} from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
@@ -59,9 +62,9 @@ export const sitesRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		// Preload the default sites list response without blocking.
-		queryClient.ensureQueryData( sitesQuery() );
+		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
@@ -161,7 +164,7 @@ export const siteOverviewRoute = createRoute( {
 				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
 			] ).then( ( [ currentPlan ] ) => {
 				if ( currentPlan.id ) {
-					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, parseInt( currentPlan.id ) ) );
+					queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
 				}
 			} );
 		}
@@ -563,8 +566,15 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'site-visibility',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! canViewSiteVisibilitySettings( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }/settings` } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),
@@ -966,9 +976,9 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'repositories',
-	validateSearch: ( search ): { from?: 'deployments' } => {
+	validateSearch: ( search ): { back_to?: 'deployments' } => {
 		return {
-			from: search.from === 'deployments' ? 'deployments' : undefined,
+			back_to: search.back_to === 'deployments' ? 'deployments' : undefined,
 		};
 	},
 } );
@@ -1023,9 +1033,9 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
-	validateSearch: ( search ): { from?: 'deployments' } => {
+	validateSearch: ( search ): { back_to?: 'deployments' } => {
 		return {
-			from: search.from === 'deployments' ? 'deployments' : undefined,
+			back_to: search.back_to === 'deployments' ? 'deployments' : undefined,
 		};
 	},
 	loader: async ( { params: { siteSlug, deploymentId } } ) => {

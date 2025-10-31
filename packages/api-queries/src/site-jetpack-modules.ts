@@ -6,7 +6,7 @@ import {
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
-import { sitesQuery } from './sites';
+import { sitesQueryKey } from './sites';
 
 export const siteJetpackModulesQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -34,6 +34,6 @@ export const siteJetpackModulesMutation = ( siteId: number ) =>
 			} );
 			queryClient.invalidateQueries( { queryKey: siteJetpackModulesQuery( siteId ).queryKey } );
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
-			queryClient.invalidateQueries( { queryKey: sitesQuery().queryKey } );
+			queryClient.invalidateQueries( { queryKey: sitesQueryKey } );
 		},
 	} );

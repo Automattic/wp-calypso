@@ -40,6 +40,7 @@ export function ActivityLogsCallout( {
 	return (
 		<UpsellCallout
 			{ ...getActivityLogsCalloutProps() }
+			upsellPlanRequirement="any"
 			upsellTitleAs={ titleAs }
 			site={ { slug: siteSlug } as Site }
 		/>

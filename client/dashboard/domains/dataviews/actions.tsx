@@ -3,10 +3,8 @@ import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/ap
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
-import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, Suspense, lazy } from 'react';
 import {
@@ -53,8 +51,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			{
 				id: 'renew',
 				isPrimary: true,
-				icon: <Icon icon={ payment } />,
-				label: __( 'Renew now' ),
+				label: __( 'Renew' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					const purchase = purchases?.find(
@@ -72,8 +69,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			{
 				id: 'setup',
 				isPrimary: true,
-				icon: <Icon icon={ tool } />,
-				label: __( 'Set up connection' ),
+				label: __( 'Set up' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 

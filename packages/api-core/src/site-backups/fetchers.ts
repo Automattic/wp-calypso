@@ -4,6 +4,8 @@ import type {
 	BackupContentsResponse,
 	BackupPathInfoResponse,
 	BackupItemUrl,
+	SiteRewindPoliciesResponse,
+	SiteRewindSizeResponse,
 } from './types';
 
 /**
@@ -103,4 +105,18 @@ export function fetchBackupExtensionUrl(
 			extension_version: extensionVersion,
 		}
 	);
+}
+
+export async function fetchBackupPolicies( siteId: number ): Promise< SiteRewindPoliciesResponse > {
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/rewind/policies`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function fetchBackupSize( siteId: number ): Promise< SiteRewindSizeResponse > {
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/rewind/size`,
+		apiNamespace: 'wpcom/v2',
+	} );
 }

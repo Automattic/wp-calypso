@@ -1,17 +1,15 @@
-import {
-	hostingUpdateSchedulesQuery,
-	siteCorePluginsQuery,
-	sitesQuery,
-} from '@automattic/api-queries';
+import { hostingUpdateSchedulesQuery, siteCorePluginsQuery } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { ScheduledUpdateRow } from '../types';
+import { useAppContext } from '../../../app/context';
+import type { ScheduledUpdateRow } from '../types';
 
 export function useScheduledUpdates() {
+	const { queries } = useAppContext();
 	const { data: scheduledUpdates, isLoading: isLoadingSchedules } = useQuery(
 		hostingUpdateSchedulesQuery()
 	);
-	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
 	const siteIds = Object.keys( scheduledUpdates?.sites ?? [] );
 	const pluginQueries = useQueries( {
 		queries: siteIds.map( ( id ) => siteCorePluginsQuery( Number( id ) ) ),

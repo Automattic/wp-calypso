@@ -48,7 +48,7 @@ export function useDeploymentFields( {
 						<Link
 							to={ siteSettingsRepositoriesManageRoute.fullPath }
 							params={ { siteSlug, deploymentId: item.code_deployment_id } }
-							search={ { from: 'deployments' } }
+							search={ { back_to: 'deployments' } }
 						>
 							{ repo }
 						</Link>

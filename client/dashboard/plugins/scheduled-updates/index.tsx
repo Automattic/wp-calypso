@@ -1,4 +1,3 @@
-// no imports from api-queries needed here
 import { useLocale } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import { FormToggle, Icon, Tooltip } from '@wordpress/components';
@@ -7,7 +6,7 @@ import { DataViews, type Field, filterSortAndPaginate, View } from '@wordpress/d
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import {
 	pluginsScheduledUpdatesEditRoute,
 	pluginsScheduledUpdatesNewRoute,
@@ -23,6 +22,7 @@ import { formatDate } from '../../utils/datetime';
 import { prepareScheduleName } from './helpers';
 import { useDeleteSchedules } from './hooks/use-delete-schedules';
 import { useScheduledUpdates } from './hooks/use-scheduled-updates';
+import { useToggleScheduleActive } from './hooks/use-toggle-schedule-active';
 import { ScheduledUpdateRow } from './types';
 
 // Create stable mapping for unique schedule names with invisible suffixes
@@ -40,7 +40,10 @@ const getUniqueScheduleName = ( () => {
 	};
 } )();
 
-const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => {
+const getFields = (
+	locale: string,
+	onToggleActive: ( item: ScheduledUpdateRow, active: boolean ) => void
+): Field< ScheduledUpdateRow >[] => {
 	return [
 		{
 			id: 'site',
@@ -105,7 +108,14 @@ const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => {
 			id: 'active',
 			type: 'text',
 			label: __( 'Active' ),
-			render: ( { item } ) => <FormToggle checked={ item.active } onChange={ () => {} } />,
+			render: ( { item } ) => (
+				<FormToggle
+					checked={ item.active }
+					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
+						onToggleActive( item, e.target.checked )
+					}
+				/>
+			),
 		},
 		{
 			id: 'actions',
@@ -148,7 +158,18 @@ export default function PluginsScheduledUpdates() {
 	const [ isDeletingSchedule, setIsDeletingSchedule ] = useState( false );
 	const locale = useLocale();
 	const navigate = useNavigate();
-	const fields = useMemo( () => getFields( locale ), [ locale ] );
+	const { mutateAsync: toggleActive } = useToggleScheduleActive();
+	const handleToggleActive = useCallback(
+		( item: ScheduledUpdateRow, active: boolean ) => {
+			void toggleActive( { siteId: item.site.ID, scheduleId: item.scheduleId, active } );
+		},
+		[ toggleActive ]
+	);
+
+	const fields = useMemo(
+		() => getFields( locale, handleToggleActive ),
+		[ locale, handleToggleActive ]
+	);
 
 	const { isLoading, scheduledUpdates } = useScheduledUpdates();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );

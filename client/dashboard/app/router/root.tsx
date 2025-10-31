@@ -1,4 +1,9 @@
-import { createRootRoute } from '@tanstack/react-router';
+import { createRootRouteWithContext } from '@tanstack/react-router';
 import Root from '../root';
+import type { AppConfig } from '../context';
 
-export const rootRoute = createRootRoute( { component: Root } );
+export type RootRouterContext = {
+	config: AppConfig;
+};
+
+export const rootRoute = createRootRouteWithContext< RootRouterContext >()( { component: Root } );

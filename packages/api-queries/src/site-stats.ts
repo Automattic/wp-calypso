@@ -1,4 +1,4 @@
-import { fetchSiteEngagementStats } from '@automattic/api-core';
+import { fetchSiteEngagementStats, fetchSiteEngagementMonthlyStats } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
 export interface EngagementStatsDataPoint {
@@ -40,5 +40,32 @@ export const siteEngagementStatsQuery = ( siteId: number ) =>
 			const currentData = calculateStats( stats.slice( Math.max( 0, dataLength - 7 ) ) );
 			const previousData = calculateStats( stats.slice( 0, Math.max( 0, dataLength - 7 ) ) );
 			return { previousData, currentData };
+		},
+	} );
+
+export const siteEngagementMonthlyAverageStatsQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'engagement-stats' ],
+		queryFn: () => fetchSiteEngagementMonthlyStats( siteId ),
+		select: ( { data: stats } ) => {
+			const calculateStats = ( data: typeof stats ) =>
+				data.reduce(
+					( accumulator, [ , visitors, views, likes, comments ] ) => {
+						accumulator.visitors += Number( visitors );
+						accumulator.views += Number( views );
+						accumulator.likes += Number( likes );
+						accumulator.comments += Number( comments );
+						return accumulator;
+					},
+					{ visitors: 0, views: 0, likes: 0, comments: 0 } as EngagementStatsDataPoint
+				);
+			const average = ( data: EngagementStatsDataPoint, quantity: number ) => ( {
+				visitors: data.visitors / quantity,
+				views: data.views / quantity,
+				likes: data.likes / quantity,
+				comments: data.comments / quantity,
+			} );
+
+			return average( calculateStats( stats.slice( Math.max( 0, 24 ) ) ), 24 );
 		},
 	} );

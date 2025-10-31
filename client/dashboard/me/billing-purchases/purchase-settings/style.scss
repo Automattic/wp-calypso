@@ -4,3 +4,12 @@
 div.components-modal__screen-overlay.upcoming-renewals-dialog {
 	z-index: 500;
 }
+
+.purchase-settings__toggle-control {
+	.components-form-toggle {
+		order: 2;
+	}
+	.components-toggle-control__help {
+		margin-inline-start: 0;
+	}
+}

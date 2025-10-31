@@ -12,14 +12,10 @@ import { useMemo, useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
-import { AppProvider, type AppConfig } from './context';
+import { AppProvider } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
-
-function RouterProviderWithAuth( { config, router }: { config: AppConfig; router: AnyRouter } ) {
-	const auth = useAuth();
-	return <RouterProvider router={ router } context={ { auth, config } } />;
-}
+import type { AppConfig } from './context';
 
 function AnalyticsProviderWithClient( {
 	children,
@@ -70,7 +66,7 @@ function Layout( { config }: { config: AppConfig } ) {
 				<AuthProvider>
 					<I18nProvider>
 						<AnalyticsProviderWithClient router={ router }>
-							<RouterProviderWithAuth router={ router } config={ config } />
+							<RouterProvider router={ router } context={ { config } } />
 						</AnalyticsProviderWithClient>
 					</I18nProvider>
 				</AuthProvider>

@@ -12,7 +12,7 @@ import {
 	Button,
 	Modal,
 } from '@wordpress/components';
-import { DataForm, isItemValid } from '@wordpress/dataviews';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -87,7 +87,8 @@ export default function TransferDomainToAnyUser() {
 
 	const hasEmailWithUs = hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain );
 
-	const isSaveDisabled = ! isItemValid( formData, fields, form );
+	const { isValid } = useFormValidity( formData, fields, form );
+	const isSaveDisabled = ! isValid;
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();

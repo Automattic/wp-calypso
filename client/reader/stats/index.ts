@@ -1,3 +1,4 @@
+import { Railcar } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { pick } from 'lodash';
@@ -196,19 +197,28 @@ export function recordTrack(
 
 const allowedTracksRailcarEventNames = new Set();
 allowedTracksRailcarEventNames
-	.add( 'calypso_reader_related_post_from_same_site_clicked' )
-	.add( 'calypso_reader_related_post_from_other_site_clicked' )
-	.add( 'calypso_reader_related_post_site_clicked' )
-	.add( 'calypso_reader_article_liked' )
 	.add( 'calypso_reader_article_commented_on' )
+	.add( 'calypso_reader_article_engaged_time' )
+	.add( 'calypso_reader_article_liked' )
 	.add( 'calypso_reader_article_opened' )
-	.add( 'calypso_reader_searchcard_clicked' )
+	.add( 'calypso_reader_article_unliked' )
 	.add( 'calypso_reader_author_link_clicked' )
+	.add( 'calypso_reader_conversations_post_followed' )
+	.add( 'calypso_reader_conversations_post_muted' )
+	.add( 'calypso_reader_liked_comment' )
 	.add( 'calypso_reader_permalink_click' )
 	.add( 'calypso_reader_recommended_post_clicked' )
-	.add( 'calypso_reader_recommended_site_clicked' )
 	.add( 'calypso_reader_recommended_post_dismissed' )
-	.add( 'calypso_reader_article_engaged_time' );
+	.add( 'calypso_reader_recommended_site_clicked' )
+	.add( 'calypso_reader_related_post_from_other_site_clicked' )
+	.add( 'calypso_reader_related_post_from_same_site_clicked' )
+	.add( 'calypso_reader_related_post_site_clicked' )
+	.add( 'calypso_reader_searchcard_clicked' )
+	.add( 'calypso_reader_share_action_picked' )
+	.add( 'calypso_reader_share_comment_to_site' )
+	.add( 'calypso_reader_share_to_site' )
+	.add( 'calypso_reader_share_to_site_comment' )
+	.add( 'calypso_reader_unliked_comment' );
 
 export function recordTracksRailcar(
 	action: string,
@@ -226,6 +236,22 @@ export function recordTracksRailcar(
 		)
 	);
 }
+
+export const isRailcarEligibleForEvent = ( eventName: string ) => {
+	return allowedTracksRailcarEventNames.has( eventName );
+};
+
+export const buildRailcarEventProps = (
+	eventName: string,
+	railcar: Railcar,
+	overrides: Record< string, unknown > = {}
+) => {
+	return {
+		...railcar,
+		action: eventName.replace( 'calypso_reader_', '' ),
+		...overrides,
+	};
+};
 
 export function recordTracksRailcarRender(
 	eventName: string,
@@ -254,7 +280,7 @@ export function recordTrackForPost(
 		// check for overrides for the railcar
 		recordTracksRailcarInteract(
 			eventName,
-			pick( post, [ 'railcar' ] ),
+			post.railcar,
 			pick( additionalProps, [ 'ui_position', 'ui_algo' ] )
 		);
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
@@ -270,6 +296,7 @@ export function getTracksPropertiesForPost( post: TrackPostData ) {
 		feed_id: post.feed_ID > 0 ? post.feed_ID : undefined,
 		feed_item_id: post.feed_item_ID > 0 ? post.feed_item_ID : undefined,
 		is_jetpack: post.is_jetpack,
+		...( post.railcar && { ...post.railcar } ),
 	};
 }
 
