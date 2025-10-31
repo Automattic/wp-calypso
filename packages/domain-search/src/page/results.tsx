@@ -14,11 +14,16 @@ import { useDomainSearch } from './context';
 export const ResultsPage = () => {
 	const { slots, config } = useDomainSearch();
 
-	const { isLoading, featuredSuggestions, regularSuggestions } = useSuggestionsList();
+	const {
+		isLoading: isLoadingSuggestions,
+		featuredSuggestions,
+		regularSuggestions,
+	} = useSuggestionsList();
 	const numberOfInitialVisibleSuggestions =
 		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
-
 	const [ isLoadingExperiment, experimentVariation ] = useDomainSearchEscapeHatch();
+	const isLoading = isLoadingSuggestions || isLoadingExperiment;
+
 	const showSkipSuggestionsAfterSearchBar =
 		! isLoadingExperiment && experimentVariation === 'treatment_above_paid_domain_area';
 	const showSkipSuggestionsBeforeFeaturedResults =

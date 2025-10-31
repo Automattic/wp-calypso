@@ -27,6 +27,9 @@ const DomainSearchSkipSuggestion = ( {
 	isBusy,
 }: Props ) => {
 	const [ isLoadingExperiment, experimentVariation ] = useDomainSearchEscapeHatch();
+	if ( isLoadingExperiment ) {
+		return null;
+	}
 
 	let title;
 	let subtitle;
@@ -53,14 +56,10 @@ const DomainSearchSkipSuggestion = ( {
 	} else if ( freeSuggestion ) {
 		const [ domain, ...tld ] = freeSuggestion.split( '.' );
 
-		if (
-			! isLoadingExperiment &&
-			experimentVariation === 'treatment_paid_domain_area_skip_emphasis'
-		) {
+		if ( experimentVariation === 'treatment_paid_domain_area_skip_emphasis' ) {
 			title = __( 'Prefer to skip for now?' );
 			buttonText = __( 'Skip this step' );
 		} else if (
-			! isLoadingExperiment &&
 			[
 				'treatment_paid_domain_area_free_emphasis',
 				'treatment_paid_domain_area_free_emphasis_extra_cta',
