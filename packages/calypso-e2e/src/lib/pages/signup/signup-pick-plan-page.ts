@@ -74,7 +74,7 @@ export class SignupPickPlanPage {
 
 		const responsePromise = this.captureNewSiteResponse();
 
-		this.plansPage.selectPlan( name );
+		await this.plansPage.selectPlan( name );
 		await this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } );
 
 		return responsePromise;
