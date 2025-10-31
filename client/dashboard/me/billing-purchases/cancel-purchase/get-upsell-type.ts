@@ -1,17 +1,13 @@
-import config from '@automattic/calypso-config';
 import {
-	isWpComMonthlyPlan,
-	isWpComBusinessPlan,
-	isWpComPremiumPlan,
-	isWpComAnnualPlan,
-	isWpComBiennialPlan,
-	isWpComTriennialPlan,
-	isWpComEcommercePlan,
-} from '../../../utils/plans';
+	BusinessPlans,
+	DotcomPlans,
+	EcommercePlans,
+	SubscriptionBillPeriod,
+} from '@automattic/api-core';
+import config from '@automattic/calypso-config';
+import type { Purchase } from '@automattic/api-core';
 
 type UpsellOptions = {
-	productSlug: string;
-	canRefund: boolean;
 	canDowngrade: boolean;
 	canOfferFreeMonth: boolean;
 };
@@ -34,18 +30,16 @@ export type UpsellType =
 
 /**
  * Get a relevant upsell nudge for the chosen reason if exists.
- * @param {string} reason The chosen reason for cancellation
- * @param {UpsellOptions} opts The options for the upsell nudge
- * @returns {UpsellType} The upsell nudge type
  */
 //used
-export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType {
-	const { productSlug, canDowngrade, canOfferFreeMonth } = opts;
+export function getUpsellType(
+	reason: string,
+	purchase: Purchase,
+	opts: UpsellOptions
+): UpsellType {
+	const { canDowngrade, canOfferFreeMonth } = opts;
 	const liveChatSupported = config.isEnabled( 'livechat_solution' );
-
-	if ( ! productSlug ) {
-		return '';
-	}
+	const productSlug = purchase.product_slug;
 
 	switch ( reason ) {
 		case 'tooExpensive':
@@ -54,14 +48,14 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 				return '';
 			}
 
-			if ( isWpComPremiumPlan( productSlug ) && isWpComAnnualPlan( productSlug ) ) {
+			if ( productSlug === DotcomPlans.PREMIUM ) {
 				return 'downgrade-personal';
 			}
 
 			if (
-				isWpComAnnualPlan( productSlug ) ||
-				isWpComBiennialPlan( productSlug ) ||
-				isWpComTriennialPlan( productSlug )
+				purchase.bill_period_days === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD ||
+				purchase.bill_period_days === SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD ||
+				purchase.bill_period_days === SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD
 			) {
 				return 'downgrade-monthly';
 			}
@@ -72,7 +66,10 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 		case 'foundBetterValue':
 		case 'tooMuchTimeToLearn':
 		case 'inadequateOnboarding':
-			if ( isWpComMonthlyPlan( productSlug ) && canOfferFreeMonth ) {
+			if (
+				purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD &&
+				canOfferFreeMonth
+			) {
 				return 'free-month-offer';
 			}
 			return 'built-by';
@@ -88,14 +85,18 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 			return liveChatSupported ? 'live-chat:plans' : '';
 
 		case 'cannotInstallPlugins':
-		case 'cannotUploadThemes':
-			if ( isWpComBusinessPlan( productSlug ) || isWpComEcommercePlan( productSlug ) ) {
+		case 'cannotUploadThemes': {
+			if (
+				( BusinessPlans as readonly string[] ).includes( productSlug ) ||
+				( EcommercePlans as readonly string[] ).includes( productSlug )
+			) {
 				if ( liveChatSupported ) {
 					return reason === 'cannotInstallPlugins' ? 'live-chat:plugins' : 'live-chat:themes';
 				}
 				return '';
 			}
 			return 'upgrade-atomic';
+		}
 		case 'tooSlow':
 		case 'downtime':
 			return 'education:loading-time';

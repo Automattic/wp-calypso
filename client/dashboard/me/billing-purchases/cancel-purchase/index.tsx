@@ -682,9 +682,7 @@ export default function CancelPurchase() {
 			questionOneText: value,
 			questionOneDetails: detailsValue || questionOneDetails,
 			upsell:
-				getUpsellType( value, {
-					productSlug: purchase.product_slug || '',
-					canRefund: !! parseFloat( getRefundAmount( purchase ) ),
+				getUpsellType( value, purchase, {
 					canDowngrade: !! downgradeClick,
 					canOfferFreeMonth:
 						!! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
