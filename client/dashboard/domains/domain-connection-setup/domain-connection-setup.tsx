@@ -3,18 +3,10 @@ import {
 	DomainMappingSetupInfo,
 	type DomainConnectionSetupModeValue,
 } from '@automattic/api-core';
-import {
-	Button,
-	RadioControl,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody, CardHeader, CardDivider } from '../../components/card';
-import SetupStep from './setup-step';
+import ConnectionModeCard from './connection-mode-card';
 
 interface DomainConnectionSetupProps {
 	domainName: string;
@@ -98,125 +90,45 @@ export default function DomainConnectionSetup( {
 	return (
 		<div className="domain-connection-setup">
 			<VStack spacing={ 4 }>
-				{ /* Suggested mode */ }
-				<Card>
-					<CardHeader>
-						<HStack spacing={ 2 } justify="flex-start">
-							<RadioControl
-								selected={ connectionMode }
-								options={ [ { label: '', value: DomainConnectionSetupMode.SUGGESTED } ] }
-								onChange={ ( value: string ) =>
-									setConnectionMode( value as DomainConnectionSetupModeValue )
-								}
-							/>
-							<VStack spacing={ 2 }>
-								<Text size="medium" weight={ 500 }>
-									{ __( 'I only use this domain name for my website' ) }
-								</Text>
-								<Text variant="muted">
-									{ __( 'You’ll update your name servers to point to WordPress.com' ) }
-								</Text>
-							</VStack>
-						</HStack>
-					</CardHeader>
-					{ connectionMode === 'suggested' && (
-						<CardBody>
-							<Text>
-								{ sprintf(
-									// translators: %s is the domain name
-									__(
-										'Name servers connect your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
-									),
-									domainName
-								) }
-							</Text>
-							{ suggestedModeSteps.map( ( step, index ) => (
-								<>
-									<SetupStep
-										className="domain-connection-setup__step"
-										initiallyExpanded={ false }
-										completed={ suggestedStepsCompleted[ index ] }
-										onCheckboxChange={ ( checked ) => handleSuggestedStepChange( index, checked ) }
-										key={ step.title }
-										title={ step.title }
-										label={ step.label }
-									>
-										<Text>{ step.content }</Text>
-									</SetupStep>
-									{ index < suggestedModeSteps.length - 1 && <CardDivider /> }
-								</>
-							) ) }
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									onClick={ () => onVerifyConnection( DomainConnectionSetupMode.SUGGESTED ) }
-									isBusy={ isUpdatingConnectionMode }
-								>
-									{ __( 'Verify Connection' ) }
-								</Button>
-							</ButtonStack>
-						</CardBody>
+				<ConnectionModeCard
+					mode={ DomainConnectionSetupMode.SUGGESTED }
+					title={ __( 'I only use this domain name for my website' ) }
+					description={ __( "You'll update your name servers to point to WordPress.com" ) }
+					infoText={ sprintf(
+						// translators: %s is the domain name
+						__(
+							"Name servers connect your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We'll email you when it's done."
+						),
+						domainName
 					) }
-				</Card>
+					steps={ suggestedModeSteps }
+					stepsCompleted={ suggestedStepsCompleted }
+					selectedMode={ connectionMode }
+					onModeChange={ setConnectionMode }
+					onStepChange={ handleSuggestedStepChange }
+					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.SUGGESTED ) }
+					isUpdatingConnectionMode={ isUpdatingConnectionMode }
+				/>
 
-				{ /* Advanced mode */ }
-				<Card>
-					<CardHeader>
-						<HStack spacing={ 2 } justify="flex-start">
-							<RadioControl
-								selected={ connectionMode }
-								options={ [ { label: '', value: DomainConnectionSetupMode.ADVANCED } ] }
-								onChange={ ( value: string ) =>
-									setConnectionMode( value as DomainConnectionSetupModeValue )
-								}
-							/>
-							<VStack spacing={ 2 }>
-								<Text size="medium" weight={ 500 }>
-									{ __( 'I use this domain name for email or other services' ) }
-								</Text>
-								<Text variant="muted">{ __( 'You’ll update DNS records (CNAME and A)' ) }</Text>
-							</VStack>
-						</HStack>
-					</CardHeader>
-					{ connectionMode === 'advanced' && (
-						<CardBody>
-							<Text>
-								{ sprintf(
-									// translators: %s is the domain name
-									__(
-										'DNS records point your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
-									),
-									domainName
-								) }
-							</Text>
-							{ advancedModeSteps.map( ( step, index ) => (
-								<>
-									<SetupStep
-										className="domain-connection-setup__step"
-										initiallyExpanded={ false }
-										completed={ advancedStepsCompleted[ index ] }
-										onCheckboxChange={ ( checked ) => handleAdvancedStepChange( index, checked ) }
-										key={ step.title }
-										title={ step.title }
-										label={ step.label }
-									>
-										<Text>{ step.content }</Text>
-									</SetupStep>
-									{ index < advancedModeSteps.length - 1 && <CardDivider /> }
-								</>
-							) ) }
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									onClick={ () => onVerifyConnection( DomainConnectionSetupMode.SUGGESTED ) }
-									isBusy={ isUpdatingConnectionMode }
-								>
-									{ __( 'Verify Connection' ) }
-								</Button>
-							</ButtonStack>
-						</CardBody>
+				<ConnectionModeCard
+					mode={ DomainConnectionSetupMode.ADVANCED }
+					title={ __( 'I use this domain name for email or other services' ) }
+					description={ __( "You'll update DNS records (CNAME and A)" ) }
+					infoText={ sprintf(
+						// translators: %s is the domain name
+						__(
+							"DNS records point your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We'll email you when it's done."
+						),
+						domainName
 					) }
-				</Card>
+					steps={ advancedModeSteps }
+					stepsCompleted={ advancedStepsCompleted }
+					selectedMode={ connectionMode }
+					onModeChange={ setConnectionMode }
+					onStepChange={ handleAdvancedStepChange }
+					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.ADVANCED ) }
+					isUpdatingConnectionMode={ isUpdatingConnectionMode }
+				/>
 			</VStack>
 		</div>
 	);
