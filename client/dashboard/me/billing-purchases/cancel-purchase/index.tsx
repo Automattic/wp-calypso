@@ -9,7 +9,7 @@ import {
 	marketingSurveyMutation,
 	plansQuery,
 	productsQuery,
-	productsFeaturesQuery,
+	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	siteByIdQuery,
 	sitePurchasesQuery,
@@ -62,7 +62,6 @@ import {
 	isPartnerPurchase,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from '../../../utils/purchase';
-import { isValueTruthy } from '../payment-methods';
 import BackupRetentionOptionOnCancelPurchase from './backup-retention-management/retention-option-on-cancel-purchase';
 import CancelPurchaseForm from './cancel-purchase-form';
 import {
@@ -123,7 +122,7 @@ export default function CancelPurchase() {
 		siteFeaturesQuery( purchase.blog_id )
 	);
 	const { data: plans } = useSuspenseQuery( plansQuery( '', locale ) );
-	const { data: productsFeatures } = useSuspenseQuery( productsFeaturesQuery() );
+	const { data: purchaseCancelFeatures } = useQuery( purchaseCancelFeaturesQuery( purchaseId ) );
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
 	const { data: hasBeenExtended } = useQuery( hasPurchaseBeenExtendedQuery( purchase.blog_id ) );
@@ -300,33 +299,8 @@ export default function CancelPurchase() {
 		state.willAtomicSiteRevert,
 	] );
 
-	const getFeaturesFromApiForProduct = ( productId: number ) => {
-		if ( ! productsFeatures ) {
-			return [];
-		}
-
-		// Find the product in the productsFeatures data
-		const product = productsFeatures.products.find(
-			( p: { product_id: number } ) => p.product_id === productId
-		);
-
-		if ( ! product || ! product.feature_group ) {
-			return [];
-		}
-
-		// Get the feature IDs from the feature group
-		const featureIds = productsFeatures.feature_groups[ product.feature_group ];
-
-		if ( ! featureIds || featureIds.length === 0 ) {
-			return [];
-		}
-
-		// Map the feature_ids to the actual features with their titles and descriptions
-		return featureIds
-			.map( ( featureId: string ) => {
-				return productsFeatures.features.find( ( f ) => f.feature_id === featureId );
-			} )
-			.filter( isValueTruthy );
+	const getFeaturesFromApiForProduct = () => {
+		return purchaseCancelFeatures?.features ?? [];
 	};
 
 	const initSurveyState = () => {
@@ -1377,7 +1351,7 @@ export default function CancelPurchase() {
 		}
 
 		// Get features from the API endpoint for this product
-		const cancellationFeatures = getFeaturesFromApiForProduct( purchase.product_id );
+		const cancellationFeatures = getFeaturesFromApiForProduct();
 
 		let showDefaultChanges = false;
 		if ( ! isJetpack && ! isAkismet && ! isGSuite && ! isDomainRegistrationPurchase ) {
@@ -1410,7 +1384,7 @@ export default function CancelPurchase() {
 				) }
 
 				<BackupRetentionOptionOnCancelPurchase
-					productFeatures={ getFeaturesFromApiForProduct( purchase.product_id ) }
+					productFeatures={ getFeaturesFromApiForProduct() }
 					siteId={ purchase.blog_id }
 					purchase={ purchase }
 				/>
