@@ -182,7 +182,7 @@ export default function CancelPurchase() {
 
 		createErrorNotice( 'test', { type: 'snackbar' } );
 		navigate( { to: purchasesRoute.to } );
-	}, [ purchase, navigate ] );
+	}, [ purchase, navigate, createErrorNotice ] );
 
 	const track = useCallback( () => {
 		if ( productSlug ) {
@@ -1041,7 +1041,14 @@ export default function CancelPurchase() {
 				isLoading: isDataLoading,
 			} ) );
 		}
-	}, [ isDataLoading, isDataValid, state.surveyShown, redirect, state.isLoading ] );
+	}, [
+		isDataLoading,
+		isDataValid,
+		state.surveyShown,
+		redirect,
+		state.isLoading,
+		createErrorNotice,
+	] );
 
 	if ( ! isDataValid() ) {
 		return null;

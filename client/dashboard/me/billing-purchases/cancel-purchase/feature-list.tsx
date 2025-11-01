@@ -2,7 +2,6 @@ import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
-import type { FeatureObject } from '../../../utils/site-features';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 // This type represents things that React can render, but which also exist. (E.g.

@@ -55,6 +55,10 @@ export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiry_status;
 }
 
+export function isIncludedWithPlan( purchase: Purchase ) {
+	return 'included' === purchase.expiry_status;
+}
+
 export function isOneTimePurchase( purchase: Purchase ) {
 	return 'one-time-purchase' === purchase.expiry_status;
 }
