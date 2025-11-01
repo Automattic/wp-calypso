@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { ProgressBar, ExternalLink, Notice } from '@wordpress/components';
@@ -87,11 +86,12 @@ export default function Summary( {
 				setImportStepsResults( steps );
 			}
 
-			// Reset the importer if it's completed and the Summary page is exited.
-			page.exit( '/import/newsletter/substack/:site?/summary', ( context, next ) => {
-				resetImporter();
-				next();
-			} );
+			// Reset the importer if it's completed and the page is exited.
+			window.addEventListener( 'beforeunload', () => resetImporter() );
+
+			return () => {
+				window.removeEventListener( 'beforeunload', () => resetImporter() );
+			};
 		}
 	}, [ importerStatus, importStepsResults, isImportCompleted, steps, resetImporter ] );
 
