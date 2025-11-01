@@ -23,7 +23,6 @@ import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
-import { isSiteAutomatedTransfer } from './site-types';
 import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase, Site } from '@automattic/api-core';
 
@@ -695,7 +694,7 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 	}
 
 	// Bail if the site not Atomic.
-	if ( ! isSiteAutomatedTransfer( site ) ) {
+	if ( ! site?.is_wpcom_atomic ) {
 		return false;
 	}
 

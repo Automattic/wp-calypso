@@ -25,19 +25,3 @@ export function isCommerceGarden( site: Site ) {
 export function isStagingSite( site: Site ) {
 	return site.is_wpcom_staging_site;
 }
-
-/**
- * Returns true if site is a Automated Transfer site, false if not and null if unknown
- */
-//used
-export function isSiteAutomatedTransfer( site: Site | undefined | null ): boolean | null {
-	if ( ! site ) {
-		return null;
-	}
-
-	return site?.is_wpcom_atomic;
-}
-
-export function isAtomicSite( site: Site | undefined | null ): boolean | null {
-	return isSiteAutomatedTransfer( site );
-}

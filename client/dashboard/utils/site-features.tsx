@@ -11,11 +11,11 @@ import {
 } from '@automattic/api-core';
 import { isJetpackPlanSlug, isJetpackBackupSlug } from './purchase';
 import type {
-	ProductFeature,
 	DotcomFeatureSlug,
 	HostingFeatureSlug,
 	JetpackFeatureSlug,
 	JetpackModuleSlug,
+	CancellationFeature,
 	Site,
 } from '@automattic/api-core';
 
@@ -67,7 +67,7 @@ export function hasJetpackModule( site: Site, module: `${ JetpackModuleSlug }` )
  * Determine if a plan has at least one of several features.
  */
 function planHasAtLeastOneFeature(
-	productFeatures: ProductFeature[],
+	productFeatures: CancellationFeature[],
 	plan: string,
 	features: string[]
 ): boolean {
@@ -77,7 +77,7 @@ function planHasAtLeastOneFeature(
 
 //used
 export const productHasBackups = (
-	productFeatures: ProductFeature[],
+	productFeatures: CancellationFeature[],
 	productSlug: string
 ): boolean => {
 	const BACKUP_FEATURES = [

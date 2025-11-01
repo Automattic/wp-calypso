@@ -3,7 +3,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
 import type { FeatureObject } from '../../../utils/site-features';
-import type { Purchase, ProductFeature } from '@automattic/api-core';
+import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 const CancelPurchaseFeatureList = ( {
 	purchase,
@@ -11,7 +11,7 @@ const CancelPurchaseFeatureList = ( {
 	cancellationChanges,
 }: {
 	purchase: Purchase;
-	cancellationFeatures: ProductFeature[];
+	cancellationFeatures: CancellationFeature[];
 	cancellationChanges: FeatureObject[];
 } ) => {
 	if ( ! cancellationFeatures.length && ! cancellationChanges.length ) {

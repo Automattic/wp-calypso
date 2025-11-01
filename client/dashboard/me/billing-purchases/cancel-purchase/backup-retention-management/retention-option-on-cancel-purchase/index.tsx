@@ -14,7 +14,11 @@ import { Card, CardBody } from '../../../../../components/card';
 import { settingsPath } from '../../../../../utils/jetpack';
 import { productHasBackups } from '../../../../../utils/site-features';
 import RetentionConfirmationDialog from '../retention-confirmation-dialog';
-import type { SiteRewindPoliciesResponse, Purchase, ProductFeature } from '@automattic/api-core';
+import type {
+	SiteRewindPoliciesResponse,
+	Purchase,
+	CancellationFeature,
+} from '@automattic/api-core';
 
 import './style.scss';
 
@@ -26,7 +30,7 @@ const BACKUP_RETENTION_UPDATE_REQUEST = {
 } as const;
 
 interface BackupRetentionOptionOnCancelPurchaseProps {
-	productFeatures: ProductFeature[];
+	productFeatures: CancellationFeature[];
 	purchase: Purchase;
 	siteId: number;
 }
@@ -86,8 +90,6 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 	);
 
 	const isFetching = fetchingSize || fetchingPolicies;
-	const policiesStatus = isFetching ? '' : 'success'; //TODO: replace with real logic or remove
-	const hasLoaded = policiesStatus === 'success';
 	const storageLimitBytes = siteBackupPolicies?.policies?.storage_limit_bytes ?? 0;
 
 	// Retention period included in customer plan
@@ -126,11 +128,11 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 		return null;
 	}
 
-	if ( ! hasLoaded || isFetching ) {
+	if ( isFetching ) {
 		return null;
 	}
 
-	if ( hasLoaded && ! ( storageLimitBytes > 0 ) ) {
+	if ( ! ( storageLimitBytes > 0 ) ) {
 		return null;
 	}
 

@@ -449,7 +449,7 @@ export default function CancelPurchase() {
 		recordEvent( 'calypso_purchases_cancel_get_discount' );
 	}, [ changeSurveyStep, recordEvent ] );
 
-	const onClickAccept = useCallback( () => {
+	const onClickAcceptForCancellationOffer = useCallback( () => {
 		// is the offer being claimed/ is there already a success or error
 		if ( ! isApplyingOffer && offerApplySuccess === false && ! offerApplyError ) {
 			applyCancellationOffer();
@@ -988,7 +988,6 @@ export default function CancelPurchase() {
 		}
 		if ( ! isDataValid() ) {
 			redirect();
-			//createErrorNotice( __( 'Invalid data!' ), { type: 'snackbar' } );
 			return;
 		}
 		track();
@@ -1018,7 +1017,13 @@ export default function CancelPurchase() {
 			redirect();
 			return;
 		}
-	}, [ isDataValid, state.surveyShown, redirect ] );
+		if ( state.isLoading && ! isDataLoading ) {
+			setState( ( state ) => ( {
+				...state,
+				isLoading: isDataLoading,
+			} ) );
+		}
+	}, [ isDataLoading, isDataValid, state.surveyShown, redirect, state.isLoading ] );
 
 	if ( ! isDataValid() ) {
 		return null;
@@ -1122,7 +1127,10 @@ export default function CancelPurchase() {
 		const isDisabled =
 			propOverrides?.disabled ||
 			( state.cancelBundledDomain && ! state.confirmCancelBundledDomain ) ||
-			( needsAtomicRevertConfirmation && ! state.atomicRevertConfirmed && purchase.is_plan ) ||
+			( state.surveyStep === ATOMIC_REVERT_STEP &&
+				needsAtomicRevertConfirmation &&
+				! state.atomicRevertConfirmed &&
+				purchase.is_plan ) ||
 			( isDomainRegistrationPurchase && ! state.domainConfirmationConfirmed ) ||
 			! ( state?.customerConfirmedUnderstanding || false );
 
@@ -1183,37 +1191,9 @@ export default function CancelPurchase() {
 		);
 	};
 
-	const renderProductRevertContent = () => {
-		return (
-			<Card className="cancel-purchase__footer">
-				{ isDomainRegistrationPurchase && ! state.surveyShown && (
-					<div className="cancel-purchase__domain-confirmation">
-						<CheckboxControl
-							checked={ state.domainConfirmationConfirmed }
-							onChange={ onDomainConfirmationChange }
-						/>
-						<span>
-							{ createInterpolateElement(
-								__(
-									'I understand that canceling means that I may <strong>lose this domain forever</strong>.'
-								),
-								{
-									strong: <strong />,
-								}
-							) }
-						</span>
-					</div>
-				) }
-				<div className="cancel-purchase__footer-text-wrapper">{ renderCancelButton() }</div>
-			</Card>
-		);
-	};
-
-	const renderPlanRevertContent = () => {
+	const renderConfirmCheckbox = () => {
 		return (
 			<>
-				{ ! includedDomainPurchase && <p>{ renderFullText() }</p> }
-
 				<b>{ __( 'Have a question before cancelling?' ) }</b>
 				<p>
 					{ createInterpolateElement(
@@ -1234,7 +1214,6 @@ export default function CancelPurchase() {
 							if ( atomicTransfer?.created_at ) {
 								setState( ( state ) => ( {
 									...state,
-									atomicRevertConfirmed: checked,
 									customerConfirmedUnderstanding: checked,
 								} ) );
 								return;
@@ -1244,6 +1223,69 @@ export default function CancelPurchase() {
 						} }
 					/>
 				</div>
+			</>
+		);
+	};
+
+	const renderProductRevertContent = () => {
+		return (
+			<>
+				{ ! includedDomainPurchase && <p>{ renderFullText() }</p> }
+
+				{ isDomainRegistrationPurchase && ! state.surveyShown && (
+					<div className="cancel-purchase__domain-confirmation">
+						<CheckboxControl
+							checked={ state.domainConfirmationConfirmed }
+							onChange={ onDomainConfirmationChange }
+						/>
+						<span>
+							{ createInterpolateElement(
+								__(
+									'I understand that canceling means that I may <strong>lose this domain forever</strong>.'
+								),
+								{
+									strong: <strong />,
+								}
+							) }
+						</span>
+					</div>
+				) }
+
+				{ ! state.surveyShown && renderConfirmCheckbox() }
+
+				<ButtonStack>
+					{ renderCancelButton() }
+					{ renderKeepSubscriptionButton() }
+				</ButtonStack>
+			</>
+		);
+	};
+
+	const renderPlanRevertContent = () => {
+		return (
+			<>
+				{ ! includedDomainPurchase && <p>{ renderFullText() }</p> }
+
+				{ isDomainRegistrationPurchase && ! state.surveyShown && (
+					<div className="cancel-purchase__domain-confirmation">
+						<CheckboxControl
+							checked={ state.domainConfirmationConfirmed }
+							onChange={ onDomainConfirmationChange }
+						/>
+						<span>
+							{ createInterpolateElement(
+								__(
+									'I understand that canceling means that I may <strong>lose this domain forever</strong>.'
+								),
+								{
+									strong: <strong />,
+								}
+							) }
+						</span>
+					</div>
+				) }
+
+				{ renderConfirmCheckbox() }
 
 				<ButtonStack>
 					{ renderCancelButton() }
@@ -1384,7 +1426,7 @@ export default function CancelPurchase() {
 				) }
 
 				<BackupRetentionOptionOnCancelPurchase
-					productFeatures={ getFeaturesFromApiForProduct() }
+					productFeatures={ cancellationFeatures }
 					siteId={ purchase.blog_id }
 					purchase={ purchase }
 				/>
@@ -1562,6 +1604,7 @@ export default function CancelPurchase() {
 			>
 				<VStack>
 					{ ! state.surveyShown && renderTimeRemainingString( purchase ) }
+
 					<Card className="cancel-purchase__wrapper-card">
 						<CancelPurchaseForm
 							atomicRevertCheckOne={ state.atomicRevertCheckOne }
@@ -1588,10 +1631,11 @@ export default function CancelPurchase() {
 							isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
 							isSubmitting={ state.isSubmitting }
 							isVisible={ state.surveyShown }
+							isAkismet={ isAkismet }
+							isApplyingOffer={ isApplyingOffer }
 							offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
-							onClickAccept={ onClickAccept }
-							onClose={ () => setState( ( state ) => ( { ...state, surveyShown: false } ) ) }
-							onGetDiscount={ onGetCancellationOffer }
+							onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
+							onGetCancellationOffer={ onGetCancellationOffer }
 							onImportRadioChange={ onImportRadioChange }
 							onNextAdventureValidationChange={ onNextAdventureValidationChange }
 							onRadioOneChange={ onRadioOneChange }

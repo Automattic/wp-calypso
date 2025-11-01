@@ -54,19 +54,17 @@ export interface CancelPurchaseFormProps {
 	importQuestionRadio?: string;
 	includedDomainPurchase?: Purchase;
 	isAkismet?: boolean;
-	isApplyingOffer?: boolean; //TODO: maybe delete
-	isAtomicSite?: boolean; //TODO: maybe delete
-	isImport?: boolean; //TODO: maybe delete
+	isApplyingOffer?: boolean;
+	isImport?: boolean;
 	isNextAdventureValid?: boolean;
 	isShowing?: boolean;
 	isSubmitting?: boolean;
 	isVisible?: boolean;
 	offerApplyError?: Error | null;
-	offerDiscountBasedFromPurchasePrice: number; //TODO: maybe delete
-	onClickAccept?: () => void; //TODO: maybe delete
-	onClose?: () => void; //TODO: maybe delete
-	onGetDiscount: () => void; //TODO: maybe delete
-	onImportRadioChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void; //TODO: maybe delete
+	offerDiscountBasedFromPurchasePrice: number;
+	onClickAcceptForCancellationOffer?: () => void;
+	onGetCancellationOffer: () => void;
+	onImportRadioChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onNextAdventureValidationChange?: ( isValid: boolean ) => void;
 	onRadioOneChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onRadioTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
@@ -116,7 +114,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 			hasBackupsFeature,
 			isImport,
 			offerDiscountBasedFromPurchasePrice,
-			onGetDiscount,
+			onGetCancellationOffer,
 			onImportRadioChange,
 			onNextAdventureValidationChange,
 			onRadioOneChange,
@@ -261,7 +259,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 				<JetpackCancellationOfferStep
 					isAkismet={ props?.isAkismet }
 					offer={ cancellationOffer }
-					onGetDiscount={ onGetDiscount }
+					onGetCancellationOffer={ onGetCancellationOffer }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
 					purchase={ purchase }
 				/>
@@ -338,7 +336,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 			isApplyingOffer,
 			isSubmitting,
 			offerApplyError,
-			onClickAccept,
+			onClickAcceptForCancellationOffer,
 			onSubmit,
 			solution,
 			surveyStep,
@@ -407,7 +405,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 						disabled={ isApplyingOffer ?? ( false || Boolean( offerApplyError ) ) ?? false }
 						isBusy={ isApplyingOffer ?? false }
 						onClick={ () => {
-							onClickAccept && onClickAccept();
+							onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
 						} }
 						variant="primary"
 					>
