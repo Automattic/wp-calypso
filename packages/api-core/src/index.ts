@@ -76,6 +76,7 @@ export * from './site-automated-transfers-eligibility';
 export * from './site-backup-download';
 export * from './site-backup-restore';
 export * from './site-backups';
+export * from './site-rewind';
 export * from './site-do-it-for-me';
 export * from './site-domains';
 export * from './site-flex-usage';
