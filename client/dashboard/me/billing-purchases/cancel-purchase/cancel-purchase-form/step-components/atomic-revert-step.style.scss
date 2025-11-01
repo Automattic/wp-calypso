@@ -2,6 +2,10 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/components/src/styles/typography";
 
+.purchase-payment-method__backup-icon {
+	vertical-align: top;
+}
+
 .downgrade-plan-form__atomic-revert {
 
 	max-width: 600px;

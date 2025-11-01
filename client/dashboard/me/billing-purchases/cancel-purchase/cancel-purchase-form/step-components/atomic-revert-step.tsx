@@ -141,7 +141,8 @@ export function AtomicRevertStep( props: Props ) {
 
 	return (
 		<div className={ `${ action }-form__atomic-revert` }>
-			<Heading>{ __( 'Proceed With Caution' ) }</Heading>
+			<Heading level={ 4 }>{ __( 'Proceed With Caution' ) }</Heading>
+			<br />
 			<div>{ subHeaderText }</div>
 			<p>
 				{ createInterpolateElement(

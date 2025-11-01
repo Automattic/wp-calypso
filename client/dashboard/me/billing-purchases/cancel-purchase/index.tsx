@@ -180,6 +180,7 @@ export default function CancelPurchase() {
 			return;
 		}
 
+		createErrorNotice( 'test', { type: 'snackbar' } );
 		navigate( { to: purchasesRoute.to } );
 	}, [ purchase, navigate ] );
 
@@ -637,7 +638,7 @@ export default function CancelPurchase() {
 		setState( ( state ) => ( {
 			...state,
 			domainConfirmationConfirmed: checked,
-			customerConfirmedUnderstanding: checked,
+			// customerConfirmedUnderstanding: checked,
 		} ) );
 
 		// Record tracks event for domain confirmation checkbox
@@ -963,18 +964,33 @@ export default function CancelPurchase() {
 		}
 
 		if ( ! purchase ) {
+			createErrorNotice( __( 'Something went wrong. Please contact support.' ), {
+				type: 'snackbar',
+			} );
 			return false;
 		}
 
-		const isValidForCancellation = purchase.can_disable_auto_renew && purchase.is_cancelable;
-		const isValidForRemoval = ! purchase.is_cancelable && purchase.is_removable;
+		const isValidForDisablingAutoRenew = purchase.can_disable_auto_renew;
+		const isValidForCancellation = purchase.is_cancelable;
+		// const isValidForRemoval = ! purchase.is_cancelable && purchase.is_removable;
+		const isValidForRemoval = purchase.is_removable;
 
 		if ( ! isValidForCancellation && state.surveyShown ) {
 			return true;
 		}
 
-		return isValidForCancellation || isValidForRemoval;
-	}, [ isDataLoading, purchase, state.surveyShown ] );
+		if ( ! isValidForDisablingAutoRenew && isValidForCancellation && isValidForRemoval ) {
+			createErrorNotice(
+				__(
+					'This purchase has already been removed. Please contact support if you believe this to be in error.'
+				),
+				{ type: 'snackbar' }
+			);
+			return false;
+		}
+
+		return true;
+	}, [ createErrorNotice, isDataLoading, purchase, state.surveyShown ] );
 
 	const didRunEffect = useRef< boolean >( false );
 
@@ -987,6 +1003,7 @@ export default function CancelPurchase() {
 			setStateBasedOnExtendedStatus();
 		}
 		if ( ! isDataValid() ) {
+			createErrorNotice( '1', { type: 'snackbar' } );
 			redirect();
 			return;
 		}
@@ -1014,6 +1031,7 @@ export default function CancelPurchase() {
 			return;
 		}
 		if ( ! isDataValid() ) {
+			createErrorNotice( '2', { type: 'snackbar' } );
 			redirect();
 			return;
 		}
@@ -1206,10 +1224,21 @@ export default function CancelPurchase() {
 
 				<hr />
 
+				{ isDomainRegistrationPurchase && ! state.surveyShown && (
+					<div>
+						<CheckboxControl
+							label={ __(
+								'I understand that canceling means that I may lose this domain forever.'
+							) }
+							checked={ state.domainConfirmationConfirmed }
+							onChange={ onDomainConfirmationChange }
+						/>
+					</div>
+				) }
+
 				<div>
 					<CheckboxControl
 						label={ __( 'I understand my site will change when my plan expires.' ) }
-						// checked={ atomicRevertCheckOne }
 						onChange={ ( checked ) => {
 							if ( atomicTransfer?.created_at ) {
 								setState( ( state ) => ( {
@@ -1232,25 +1261,6 @@ export default function CancelPurchase() {
 			<>
 				{ ! includedDomainPurchase && <p>{ renderFullText() }</p> }
 
-				{ isDomainRegistrationPurchase && ! state.surveyShown && (
-					<div className="cancel-purchase__domain-confirmation">
-						<CheckboxControl
-							checked={ state.domainConfirmationConfirmed }
-							onChange={ onDomainConfirmationChange }
-						/>
-						<span>
-							{ createInterpolateElement(
-								__(
-									'I understand that canceling means that I may <strong>lose this domain forever</strong>.'
-								),
-								{
-									strong: <strong />,
-								}
-							) }
-						</span>
-					</div>
-				) }
-
 				{ ! state.surveyShown && renderConfirmCheckbox() }
 
 				<ButtonStack>
@@ -1265,25 +1275,6 @@ export default function CancelPurchase() {
 		return (
 			<>
 				{ ! includedDomainPurchase && <p>{ renderFullText() }</p> }
-
-				{ isDomainRegistrationPurchase && ! state.surveyShown && (
-					<div className="cancel-purchase__domain-confirmation">
-						<CheckboxControl
-							checked={ state.domainConfirmationConfirmed }
-							onChange={ onDomainConfirmationChange }
-						/>
-						<span>
-							{ createInterpolateElement(
-								__(
-									'I understand that canceling means that I may <strong>lose this domain forever</strong>.'
-								),
-								{
-									strong: <strong />,
-								}
-							) }
-						</span>
-					</div>
-				) }
 
 				{ renderConfirmCheckbox() }
 
@@ -1532,6 +1523,7 @@ export default function CancelPurchase() {
 	};
 
 	if ( isHundredYearDomain ) {
+		createErrorNotice( '3', { type: 'snackbar' } );
 		redirect();
 		return null;
 	}
@@ -1626,13 +1618,13 @@ export default function CancelPurchase() {
 							hasBackupsFeature={ hasBackupsFeature }
 							importQuestionRadio={ state.importQuestionRadio }
 							includedDomainPurchase={ includedDomainPurchase }
+							isAkismet={ isAkismet }
+							isApplyingOffer={ isApplyingOffer }
 							isImport={ isImport }
 							isNextAdventureValid={ state.isNextAdventureValid }
 							isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
 							isSubmitting={ state.isSubmitting }
 							isVisible={ state.surveyShown }
-							isAkismet={ isAkismet }
-							isApplyingOffer={ isApplyingOffer }
 							offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
 							onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
 							onGetCancellationOffer={ onGetCancellationOffer }
@@ -1672,22 +1664,20 @@ export default function CancelPurchase() {
 						) }
 						{ shouldHandleMarketplaceSubscriptions() && (
 							<MarketPlaceSubscriptionsDialog
-								isDialogVisible
-								closeDialog={ closeMarketplaceSubscriptionsDialog }
-								removePlan={ handleMarketplaceDialogContinue }
-								planName={ planName ?? '' }
 								activeSubscriptions={ activeSubscriptions }
-								// Translators: %(plan)s is the name of the plan being cancelled
-								sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), {
-									plan: planName,
-								} ) }
-								// Translators: This button cancels the active plan and all active Marketplace subscriptions on the site
-								primaryButtonText={ __( 'Continue' ) }
 								bodyParagraphText={ _n(
 									'This subscription will be cancelled. It will be removed when it expires.',
 									'These subscriptions will be cancelled. They will be removed when they expire.',
 									activeSubscriptions.length
 								) }
+								closeDialog={ closeMarketplaceSubscriptionsDialog }
+								isDialogVisible
+								planName={ planName ?? '' }
+								/* Translators: This button cancels the active plan and all active Marketplace subscriptions on the site */
+								primaryButtonText={ __( 'Continue' ) }
+								removePlan={ handleMarketplaceDialogContinue }
+								/* Translators: %(plan)s is the name of the plan being cancelled */
+								sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
 							/>
 						) }
 					</Card>
