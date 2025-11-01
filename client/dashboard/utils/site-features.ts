@@ -19,23 +19,6 @@ import type {
 	Site,
 } from '@automattic/api-core';
 
-// This type represents things that React can render, but which also exist. (E.g.
-// not nullable, not undefined, etc.)
-type ExistingReactNode = React.ReactElement | string | number;
-
-// Translate hooks, like component interpolation or highlighting untranslated strings,
-// force us to declare the return type as a generic React node, not as just string.
-type TranslateResult = ExistingReactNode;
-
-export type FeatureObject = {
-	getSlug: () => string;
-	getTitle: ( params?: { domainName?: string } ) => TranslateResult;
-	getDescription?: ( params?: { domainName?: string } ) => TranslateResult;
-	getFeatureGroup?: () => string;
-	getStoreSlug?: () => string;
-	isPlan?: boolean;
-};
-
 // Returns whether the plan supports a specific feature.
 export function hasPlanFeature(
 	site: Site,
@@ -52,7 +35,8 @@ export function hasPlanFeature(
 // which is a feature that requires Atomic or self-hosted infrastructure.
 export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
 	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) ) {
-		if ( site.plan?.expired || ! site.is_wpcom_atomic ) {
+		const isWoAOrFlexSite = site.is_wpcom_atomic || site.is_wpcom_flex;
+		if ( site.plan?.expired || ! isWoAOrFlexSite ) {
 			return false;
 		}
 	}
@@ -75,7 +59,6 @@ function planHasAtLeastOneFeature(
 	return features.some( ( feature ) => productFeatureIds.includes( feature ) );
 }
 
-//used
 export const productHasBackups = (
 	productFeatures: CancellationFeature[],
 	productSlug: string

@@ -5,6 +5,23 @@ import { intlFormat } from 'date-fns';
 import type { FeatureObject } from '../../../utils/site-features';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
+// This type represents things that React can render, but which also exist. (E.g.
+// not nullable, not undefined, etc.)
+type ExistingReactNode = React.ReactElement | string | number;
+
+// Translate hooks, like component interpolation or highlighting untranslated strings,
+// force us to declare the return type as a generic React node, not as just string.
+type TranslateResult = ExistingReactNode;
+
+type FeatureObject = {
+	getSlug: () => string;
+	getTitle: ( params?: { domainName?: string } ) => TranslateResult;
+	getDescription?: ( params?: { domainName?: string } ) => TranslateResult;
+	getFeatureGroup?: () => string;
+	getStoreSlug?: () => string;
+	isPlan?: boolean;
+};
+
 const CancelPurchaseFeatureList = ( {
 	purchase,
 	cancellationFeatures,
