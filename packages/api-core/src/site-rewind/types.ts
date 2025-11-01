@@ -8,14 +8,14 @@ export type RewindStateType =
 	| 'provisioning';
 
 export interface RestoreInfo {
-	restoreId: number;
-	rewindId: string;
+	restore_id: number;
+	rewind_id: string;
 	status: RestoreStatus;
-	startedAt: string;
-	siteId: number;
+	started_at: string;
+	site_id: number;
 	progress?: number; // Only present when status is 'running'
 	message?: string; // Only present when status is 'running'
-	currentEntry?: string; // Only present when status is 'running'
+	current_entry?: string | null; // Only present when status is 'running'
 	reason?: string; // Only present when status is 'failed'
 	links?: {
 		dismiss?: {
