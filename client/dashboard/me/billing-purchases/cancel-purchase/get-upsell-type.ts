@@ -12,7 +12,7 @@ type UpsellOptions = {
 	canOfferFreeMonth: boolean;
 };
 
-export type UpsellType =
+type UpsellType =
 	| ''
 	| 'downgrade-monthly'
 	| 'downgrade-personal'
@@ -31,7 +31,6 @@ export type UpsellType =
 /**
  * Get a relevant upsell nudge for the chosen reason if exists.
  */
-//used
 export function getUpsellType(
 	reason: string,
 	purchase: Purchase,

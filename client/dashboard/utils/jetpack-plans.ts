@@ -3,7 +3,6 @@ import { JetpackPlans } from '@automattic/api-core';
 /**
  * Matrix of available dowgradable plans for each plan.
  */
-//used
 export const DOWNGRADEABLE_PLANS_FROM_PLAN: Record< string, string[] > = {
 	[ JetpackPlans.PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: [],
 	[ JetpackPlans.PLAN_JETPACK_SECURITY_DAILY ]: [

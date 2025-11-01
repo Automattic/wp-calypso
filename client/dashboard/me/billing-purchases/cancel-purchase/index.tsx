@@ -304,6 +304,18 @@ export default function CancelPurchase() {
 		return purchaseCancelFeatures?.features ?? [];
 	};
 
+	const getActiveMarketplaceSubscriptions = (): Purchase[] => {
+		if ( ! purchase.is_plan || ! productsList ) {
+			return [];
+		}
+
+		const subs =
+			purchases.filter( ( _purchase ) =>
+				hasMarketplaceProduct( Object.values( productsList ), _purchase.product_slug )
+			) ?? [];
+		return subs;
+	};
+
 	const initSurveyState = () => {
 		if ( state.initialized ) {
 			return;
@@ -320,7 +332,7 @@ export default function CancelPurchase() {
 		const allSteps = getAllSurveySteps();
 		const [ firstStep ] = allSteps;
 
-		const linkedPurchases: Purchase[] = []; // FIXME: what is this for?
+		const linkedPurchases: Purchase[] = getActiveMarketplaceSubscriptions();
 
 		const newState: CancelPurchaseState = {
 			...initialSurveyState(),
@@ -763,18 +775,6 @@ export default function CancelPurchase() {
 				} );
 			},
 		} );
-
-	const getActiveMarketplaceSubscriptions = (): Purchase[] => {
-		if ( ! purchase.is_plan || ! productsList ) {
-			return [];
-		}
-
-		const subs =
-			purchases.filter( ( _purchase ) =>
-				hasMarketplaceProduct( Object.values( productsList ), _purchase.product_slug )
-			) ?? [];
-		return subs;
-	};
 
 	const activeSubscriptions = getActiveMarketplaceSubscriptions();
 	const shouldHandleMarketplaceSubscriptions = () => {
@@ -1285,13 +1285,6 @@ export default function CancelPurchase() {
 			</>
 		);
 	};
-
-	// const mediaQueryOptions = { mime_type: 'video/videopress', number: 1 }; // we only want the total count, no actual media items returned. Set to 1 to keep response size small (0 is not a valid value).
-	// const mediaFound = useSelector( ( state ) =>
-	// 	getMediaFound( state, String( props.siteId ), mediaQueryOptions )
-	// );
-	// const { data: mediaStorageInfo } = useSuspenseQuery( siteMediaStorageQuery( props.siteId ) );
-	//TODO: use the correct query
 
 	const renderGSuiteAccessMessage = () => {
 		const { meta: domainName, product_slug: productSlug } = purchase;

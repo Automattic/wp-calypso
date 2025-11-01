@@ -8,7 +8,6 @@ import {
 } from './cancellation-reasons';
 import type { Purchase } from '@automattic/api-core';
 
-//used
 export const cancellationOptionsForPurchase = ( purchase: Purchase ) => {
 	if ( isGSuiteOrGoogleWorkspaceProductSlug( purchase?.product_slug ) ) {
 		return [
@@ -34,7 +33,6 @@ export const cancellationOptionsForPurchase = ( purchase: Purchase ) => {
 	return CANCELLATION_REASONS.map( ( { value } ) => value );
 };
 
-//used
 export const nextAdventureOptionsForPurchase = ( purchase: Purchase ) => {
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return [ 'stayingHere', 'otherPlugin', 'leavingWP', 'noNeed' ];

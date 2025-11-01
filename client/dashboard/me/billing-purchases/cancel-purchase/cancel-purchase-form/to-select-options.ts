@@ -12,7 +12,6 @@ type OptionLike = {
 	value: string | number;
 };
 
-//used
 export function toSelectOption( { label, value }: OptionLike ) {
 	return {
 		label: String( label ),

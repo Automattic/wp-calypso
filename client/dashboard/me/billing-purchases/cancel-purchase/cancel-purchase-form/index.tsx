@@ -429,8 +429,6 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 		);
 	};
 
-	// FIXME: find a way to determine these prices.
-
 	return (
 		props.isVisible && (
 			<>
