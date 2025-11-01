@@ -4,7 +4,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { SiteLink } from '../site-fields';
 import { DEFAULT_LAYOUTS, DEFAULT_PER_PAGE_SIZES } from './views';
-import type { Site, SitesView } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 import type { Action, Field, View } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
@@ -17,7 +17,7 @@ export const SitesDataViews = ( {
 	empty,
 	handleViewChange,
 }: {
-	view: SitesView;
+	view: View;
 	sites: Site[];
 	fields: Field< Site >[];
 	actions: Action< Site >[];

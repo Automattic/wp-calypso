@@ -1,15 +1,8 @@
-import {
-	isAutomatticianQuery,
-	userPreferenceQuery,
-	userPreferenceMutation,
-	siteBySlugQuery,
-	siteByIdQuery,
-} from '@automattic/api-queries';
+import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
 import {
 	useQuery,
 	useQueryClient,
 	useSuspenseQuery,
-	useMutation,
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -22,6 +15,7 @@ import { Experiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
+import { useView } from '../app/dataviews';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
@@ -31,13 +25,12 @@ import {
 	SitesDataViews,
 	useActions,
 	getFields,
-	getView,
-	mergeViews,
+	getDefaultFields,
+	getDefaultView,
 	recordViewChanges,
 } from './dataviews';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
-import type { ViewSearchParams } from './dataviews/views';
 import type { FetchSitesOptions, Site } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -67,20 +60,21 @@ export default function Sites() {
 	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
 	const currentSearchParams = sitesRoute.useSearch();
-	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
 	const isRestoringAccount = !! currentSearchParams.restored;
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'sites-view' ) );
-	const { mutate: updateViewPreferences } = useMutation( userPreferenceMutation( 'sites-view' ) );
 
-	const { defaultView, view } = getView( {
+	const defaultView = getDefaultView( {
 		user,
 		isAutomattician,
 		isRestoringAccount,
-		viewPreferences,
-		viewSearchParams,
+	} );
+
+	const { view, updateView } = useView( {
+		slug: 'sites',
+		defaultView,
+		defaultFields: getDefaultFields(),
 	} );
 
 	const {
@@ -104,21 +98,7 @@ export default function Sites() {
 
 		recordViewChanges( view, nextView, recordTracksEvent );
 
-		const { updatedViewPreferences, updatedViewSearchParams } = mergeViews( {
-			defaultView,
-			view,
-			viewPreferences,
-			nextView,
-		} );
-
-		navigate( {
-			search: {
-				...currentSearchParams,
-				view: updatedViewSearchParams,
-			},
-		} );
-
-		updateViewPreferences( updatedViewPreferences );
+		updateView( nextView );
 	};
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;

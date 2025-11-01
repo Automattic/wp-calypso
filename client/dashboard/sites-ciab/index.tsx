@@ -1,15 +1,8 @@
-import {
-	isAutomatticianQuery,
-	userPreferenceQuery,
-	userPreferenceMutation,
-	siteBySlugQuery,
-	siteByIdQuery,
-} from '@automattic/api-queries';
+import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
 import {
 	useQuery,
 	useQueryClient,
 	useSuspenseQuery,
-	useMutation,
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -21,22 +14,22 @@ import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
+import { useView } from '../app/dataviews';
 import { useHelpCenter } from '../app/help-center';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import {
+	getDefaultFields,
 	SitesDataViews,
 	useActions,
 	getFields,
-	getView,
-	mergeViews,
+	getDefaultView,
 	recordViewChanges,
 } from '../sites/dataviews';
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
 import { SitesNotices } from '../sites/notices';
-import type { ViewSearchParams } from '../sites/dataviews/views';
 import type { FetchSitesOptions, Site } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -60,24 +53,23 @@ export default function CIABSites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
-	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
 	const isRestoringAccount = !! currentSearchParams.restored;
 
 	const { user } = useAuth();
 	const { queries } = useAppContext();
 	const { setShowHelpCenter } = useHelpCenter();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'ciab-sites-view' ) );
-	const { mutate: updateViewPreferences } = useMutation(
-		userPreferenceMutation( 'ciab-sites-view' )
-	);
 
-	const { defaultView, view } = getView( {
+	const defaultView = getDefaultView( {
 		user,
 		isAutomattician,
 		isRestoringAccount,
-		viewPreferences,
-		viewSearchParams,
+	} );
+
+	const { view, updateView } = useView( {
+		slug: 'sites-ciab',
+		defaultView,
+		defaultFields: getDefaultFields(),
 	} );
 
 	const {
@@ -106,21 +98,7 @@ export default function CIABSites() {
 
 		recordViewChanges( view, nextView, recordTracksEvent );
 
-		const { updatedViewPreferences, updatedViewSearchParams } = mergeViews( {
-			defaultView,
-			view,
-			viewPreferences,
-			nextView,
-		} );
-
-		navigate( {
-			search: {
-				...currentSearchParams,
-				view: updatedViewSearchParams,
-			},
-		} );
-
-		updateViewPreferences( updatedViewPreferences );
+		updateView( nextView );
 	};
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
