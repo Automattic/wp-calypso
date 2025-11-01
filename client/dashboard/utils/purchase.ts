@@ -2,19 +2,10 @@ import {
 	AkismetPlans,
 	JetpackPlans,
 	GoogleWorkspaceSlugs,
-	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS,
-	JETPACK_BOOST_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
-	JETPACK_STATS_PRODUCTS,
-	JETPACK_VIDEOPRESS_PRODUCTS,
 	PRODUCT_1GB_SPACE,
-	PRODUCT_JETPACK_STATS_BI_YEARLY,
-	PRODUCT_JETPACK_STATS_MONTHLY,
-	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-	PRODUCT_JETPACK_STATS_YEARLY,
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
@@ -26,7 +17,6 @@ import { isGSuiteProductSlug } from './gsuite';
 import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase, Site } from '@automattic/api-core';
 
-//used
 export const CANCEL_FLOW_TYPE = {
 	REMOVE: 'remove',
 	CANCEL_WITH_REFUND: 'cancel_with_refund',
@@ -43,7 +33,6 @@ export function isJetpackProductSlug( productSlug: string ): boolean {
 	return ( JETPACK_PRODUCTS_LIST as ReadonlyArray< string > ).includes( productSlug );
 }
 
-//used
 export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { domain } = purchase;
 	// Currently only Jetpack, Akismet, A4A, and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
@@ -62,17 +51,10 @@ export function isExpiring( purchase: Purchase ) {
 	return [ 'manual-renew', 'expiring' ].includes( purchase.expiry_status );
 }
 
-//used
 export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiry_status;
 }
 
-//used
-export function isIncludedWithPlan( purchase: Purchase ) {
-	return 'included' === purchase.expiry_status;
-}
-
-//used
 export function isOneTimePurchase( purchase: Purchase ) {
 	return 'one-time-purchase' === purchase.expiry_status;
 }
@@ -87,7 +69,6 @@ export function isAkismetFreeProduct( product: Purchase ): boolean {
 	);
 }
 
-//used
 export function isAkismetProduct( product: Purchase ): boolean {
 	return Object.values( AkismetPlans ).includes(
 		product.product_slug as ( typeof AkismetPlans )[ keyof typeof AkismetPlans ]
@@ -116,7 +97,6 @@ export function isRecentMonthlyPurchase( purchase: Purchase ): boolean {
  * subscriptions (i.e., one billing period) and within three months of
  * expiration for everything else.
  */
-//used
 export function isCloseToExpiration( purchase: Purchase ): boolean {
 	if ( ! purchase.expiry_date ) {
 		return false;
@@ -128,7 +108,6 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 	return isWithinNext( new Date( purchase.expiry_date ), threshold, 'days' );
 }
 
-//used
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
 	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
 		return false;
@@ -197,48 +176,16 @@ export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolea
 	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin';
 }
 
-//used
-export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'jetpack';
-}
-
-//used
-export function isJetpackStatsSlug( productSlug: string ) {
-	return ( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
-}
-
-//used
-export function isJetpackAntiSpamSlug( productSlug: string ): boolean {
-	return ( JETPACK_ANTI_SPAM_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
-}
-
-//used
 export function isJetpackPlanSlug( productSlug: string ): boolean {
 	return ( Object.keys( JetpackPlans ) as ReadonlyArray< string > ).includes( productSlug );
 }
-//used
+
 export function isJetpackBackupSlug( productSlug: string ): boolean {
 	return ( JETPACK_BACKUP_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
 }
 
-//used
-export function isJetpackBoostSlug( productSlug: string ): boolean {
-	return ( JETPACK_BOOST_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
-}
-
-//used
-export function isJetpackScanSlug( productSlug: string ): boolean {
-	return ( JETPACK_SCAN_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
-}
-
-//used
-export function isJetpackSearchSlug( productSlug: string ): boolean {
-	return ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
-}
-
-//used
-export function isJetpackVideoPressSlug( productSlug: string ): boolean {
-	return ( JETPACK_VIDEOPRESS_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
+export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
+	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'jetpack';
 }
 
 /**
@@ -284,7 +231,6 @@ export function getBillPeriodLabel( purchase: Purchase ): string {
  * differently. For example, domains are displayed with the domain name as the
  * title and the product name as the subtitle (see `getSubtitleForDisplay`).
  */
-//used
 export function getTitleForDisplay( purchase: Purchase ): string {
 	if ( purchase.is_hundred_year_domain ) {
 		return __( '100-Year Domain Registration' );
@@ -431,17 +377,6 @@ export function isTitanMail( purchase: Purchase | ObjectWithProductSlug ): boole
 		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
 	);
 }
-//used
-export function isJetpackStatsPaidProductSlug( productSlug: string ) {
-	return (
-		[
-			PRODUCT_JETPACK_STATS_BI_YEARLY,
-			PRODUCT_JETPACK_STATS_YEARLY,
-			PRODUCT_JETPACK_STATS_MONTHLY,
-			PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-		] as ReadonlyArray< string >
-	 ).includes( productSlug );
-}
 
 export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ): boolean {
 	return (
@@ -450,7 +385,6 @@ export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ):
 	);
 }
 
-//used
 export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === 'offsite_redirect';
 }
@@ -506,7 +440,6 @@ function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
 	return checkoutProductSlug;
 }
 
-//used
 export function getRenewalUrlFromPurchase(
 	purchase: Purchase,
 	checkoutSiteSlugForUrl?: string
@@ -567,14 +500,9 @@ export function isAgencyPartnerType( partnerType: string ) {
 	return [ 'agency', 'a4a_agency' ].includes( partnerType );
 }
 
-export function isThemePurchase( purchase: Purchase ): boolean {
-	return 'theme' === purchase.product_type;
-}
-
 /**
  * Determines whether the specified product slug refers to either G Suite or Google Workspace.
  */
-//used
 export function isGSuiteOrGoogleWorkspaceProductSlug( productSlug: string ): boolean {
 	return isGSuiteProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 }
@@ -589,10 +517,6 @@ function isGoogleWorkspaceProductSlug( productSlug: string ): boolean {
 			GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 		] as readonly string[]
 	 ).includes( productSlug );
-}
-
-export function hasIncludedDomain( purchase: Purchase ) {
-	return Boolean( purchase.included_domain );
 }
 
 export function isNonDomainSubscription( purchase: Purchase ): boolean {
