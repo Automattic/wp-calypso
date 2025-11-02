@@ -2,11 +2,17 @@ import { addEmailForwarderMutation } from '@automattic/api-queries';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	Button,
+	FormTokenField,
+	Spinner,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import emailValidator from 'email-validator';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
@@ -67,13 +73,17 @@ function AddEmailForwarder() {
 		domain: '',
 		forwardingAddresses: [],
 	} );
+	const [ untokenizedInput, setUntokenizedInput ] = useState< string >( '' );
+	const isUntokenizedInputValidEmail = emailValidator.validate( untokenizedInput );
 	const {
 		isLoading: isLoadingNewForwardingAddresses,
 		forwardsByMailbox,
 		newForwardingAddresses,
 	} = useForwardingAddresses( {
 		domains: eligibleDomains,
-		forwardingAddresses: formData.forwardingAddresses,
+		forwardingAddresses: formData.forwardingAddresses.concat(
+			isUntokenizedInputValidEmail ? [ untokenizedInput ] : []
+		),
 	} );
 	const {
 		isLoading: isLoadingDomainMaxForwards,
@@ -100,11 +110,6 @@ function AddEmailForwarder() {
 				label: __( 'Domain' ),
 				type: 'text',
 			},
-			{
-				id: 'forwardingAddresses',
-				label: __( 'Forward to' ),
-				type: 'array',
-			},
 		],
 		[ eligibleDomains ]
 	);
@@ -128,8 +133,10 @@ function AddEmailForwarder() {
 		isLoadingDomains ||
 		isLoadingDomainMaxForwards ||
 		isLoadingNewForwardingAddresses;
-	const allFieldsSet = formData.localPart && formData.domain && formData.forwardingAddresses.length;
-
+	const allFieldsSet =
+		!! formData.localPart &&
+		!! formData.domain &&
+		( !! formData.forwardingAddresses.length || isUntokenizedInputValidEmail );
 	const isDomainMaxForwardsReached =
 		( forwards?.length ?? 0 ) >= ( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
 	const willDomainMaxForwardsBeReached =
@@ -143,6 +150,7 @@ function AddEmailForwarder() {
 	const { isValid: isFormValid } = useFormValidity( formData, fields, form );
 	const isValid =
 		isFormValid &&
+		( isUntokenizedInputValidEmail || untokenizedInput.trim() === '' ) &&
 		! isDomainMaxForwardsReached &&
 		! willDomainMaxForwardsBeReached &&
 		! duplicateForwardAddress;
@@ -167,7 +175,9 @@ function AddEmailForwarder() {
 			{
 				domain,
 				mailbox: `${ localPart }@${ domain }`,
-				destinations: forwardingAddresses,
+				destinations: forwardingAddresses.concat(
+					isUntokenizedInputValidEmail ? [ untokenizedInput ] : []
+				),
 				redirectUrl,
 			},
 			{
@@ -216,6 +226,22 @@ function AddEmailForwarder() {
 		);
 	};
 
+	if ( isLoadingDomains ) {
+		return (
+			<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
+				<Spinner
+					style={ {
+						alignSelf: 'center',
+						width: 24,
+						height: 24,
+						padding: '44px 4px 4px',
+						margin: 0,
+					} }
+				/>
+			</PageLayout>
+		);
+	}
+
 	return (
 		<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
 			{ eligibleDomains.length === 0 ? (
@@ -238,6 +264,31 @@ function AddEmailForwarder() {
 										form={ form }
 										onChange={ ( edits: Partial< FormData > ) => {
 											setFormData( ( data ) => ( { ...data, ...edits } ) );
+										} }
+									/>
+
+									<FormTokenField
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom
+										label={ __( 'Forward to' ) }
+										onInputChange={ ( val ) => {
+											setUntokenizedInput( val );
+										} }
+										value={ formData.forwardingAddresses }
+										onChange={ ( newTokens ) => {
+											// Clear the untokenized input if a new token was added (the value added is what was in the untokenized input)
+											// A token is removed by clicking on Token component's X, so in that case we keep the untokenized input as-is
+											const shouldClearUntokenizedInput =
+												newTokens.length > formData.forwardingAddresses.length;
+
+											if ( shouldClearUntokenizedInput ) {
+												setUntokenizedInput( '' );
+											}
+
+											setFormData( ( data ) => ( {
+												...data,
+												forwardingAddresses: newTokens as string[],
+											} ) );
 										} }
 									/>
 

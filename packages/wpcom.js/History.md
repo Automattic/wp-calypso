@@ -1,5 +1,9 @@
 # History
 
+## 7.1.1 / 2025-10-31
+
+- Added missing `@babel/runtime` dependency.
+
 ## 7.1.0 / 2025-10-28
 
 - Added type declarations for APIs provided in the library.

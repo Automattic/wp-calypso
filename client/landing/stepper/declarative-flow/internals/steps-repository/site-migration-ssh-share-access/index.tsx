@@ -62,17 +62,6 @@ const SiteMigrationSshShareAccess: StepType< {
 		enabled: migrationStarted && siteId > 0,
 	} );
 
-	const { steps, formState, canStartMigration, onMigrationStarted, setMigrationError } = useSteps( {
-		fromUrl,
-		siteId,
-		siteName: site?.name ?? '',
-		host,
-		onNoSSHAccess: handleNoSSHAccess,
-		migrationStatus: migrationStatus?.status,
-	} );
-
-	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
-
 	// Poll SSH migration atomic transfer status
 	const { transferStatus, isTransferring } = usePollSSHMigrationAtomicTransfer(
 		siteId,
@@ -82,6 +71,18 @@ const SiteMigrationSshShareAccess: StepType< {
 			refetchInterval: 2000, // Poll every 2 seconds
 		}
 	);
+
+	const { steps, formState, canStartMigration, onMigrationStarted, setMigrationError } = useSteps( {
+		fromUrl,
+		siteId,
+		siteName: site?.name ?? '',
+		host,
+		onNoSSHAccess: handleNoSSHAccess,
+		migrationStatus: migrationStatus?.status,
+		isTransferring,
+	} );
+
+	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
 
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
 	useEffect( () => {
