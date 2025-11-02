@@ -7,7 +7,6 @@ import { UrlData } from 'calypso/blocks/import/types';
 import DocumentHead from 'calypso/components/data/document-head';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
-import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -17,7 +16,6 @@ import {
 	recordMigrationRequestSubmittedFacebookEvent,
 } from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { urlToDomain } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
 import { isHostingSupportedForSSHMigration } from '../site-migration-ssh-share-access/utils/hosting-provider-validation';
@@ -74,10 +72,6 @@ const SiteMigrationCredentials: StepType< {
 	const dispatch = useDispatch();
 	const fromUrl = useQuery().get( 'from' ) || '';
 
-	// Fetch hosting provider based on the from URL
-	const domain = fromUrl ? urlToDomain( fromUrl ) : '';
-	const { data: hostingProviderData } = useHostingProviderQuery( domain, !! domain );
-
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	const locale = useLocale();
@@ -106,9 +100,9 @@ const SiteMigrationCredentials: StepType< {
 
 	const handleSubmit = (
 		siteInfo?: UrlData | undefined,
-		applicationPasswordsInfo?: ApplicationPasswordsInfo
+		applicationPasswordsInfo?: ApplicationPasswordsInfo,
+		hostingProviderSlug?: string
 	) => {
-		const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
 		const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 		const isHostingSupported = isHostingSupportedForSSHMigration( hostingProviderSlug );
 
