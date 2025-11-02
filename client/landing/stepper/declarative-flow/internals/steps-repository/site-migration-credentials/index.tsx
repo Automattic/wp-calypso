@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -6,6 +7,7 @@ import { UrlData } from 'calypso/blocks/import/types';
 import DocumentHead from 'calypso/components/data/document-head';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
+import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -15,8 +17,10 @@ import {
 	recordMigrationRequestSubmittedFacebookEvent,
 } from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToDomain } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
+import { isHostingSupportedForSSHMigration } from '../site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { CredentialsForm } from './components/credentials-form';
 import { NeedHelpLink } from './components/need-help-link';
 import { ApplicationPasswordsInfo } from './types';
@@ -56,22 +60,28 @@ const SiteMigrationCredentials: StepType< {
 			| 'credentials-required'
 			| 'already-wpcom'
 			| 'site-is-not-using-wordpress'
+			| 'redirect-to-ssh'
 			| 'skip';
 		from?: string;
 		platform?: ImporterPlatform;
 		authorizationUrl?: string;
 		hasError?: 'ticket-creation';
+		host?: string;
 	};
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
 	const dispatch = useDispatch();
+	const fromUrl = useQuery().get( 'from' ) || '';
+
+	// Fetch hosting provider based on the from URL
+	const domain = fromUrl ? urlToDomain( fromUrl ) : '';
+	const { data: hostingProviderData } = useHostingProviderQuery( domain, !! domain );
 
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	const locale = useLocale();
 	const siteSlugParam = useSiteSlugParam();
-	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
 	const { sendTicketAsync } = useSubmitMigrationTicket( {
 		onSuccess: () => {
@@ -98,6 +108,29 @@ const SiteMigrationCredentials: StepType< {
 		siteInfo?: UrlData | undefined,
 		applicationPasswordsInfo?: ApplicationPasswordsInfo
 	) => {
+		const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
+		const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
+		const isHostingSupported = isHostingSupportedForSSHMigration( hostingProviderSlug );
+
+		// Track hosting provider detection
+		recordTracksEvent( 'calypso_site_migration_hosting_detected', {
+			hosting_provider: hostingProviderSlug || 'unknown',
+			is_ssh_supported: isHostingSupported,
+			ssh_feature_enabled: isSSHMigrationAvailable,
+			redirected_to_ssh: isSSHMigrationAvailable && isHostingSupported,
+			step: 'credentials',
+		} );
+
+		// If SSH migration is available and hosting is supported, redirect to SSH flow
+		if ( isSSHMigrationAvailable && isHostingSupported ) {
+			siteId && dispatch( resetSite( siteId ) );
+			return navigation.submit?.( {
+				action: 'redirect-to-ssh',
+				from: siteInfo?.url || fromUrl,
+				host: hostingProviderSlug,
+			} );
+		}
+
 		const action = getAction( siteInfo, applicationPasswordsInfo );
 
 		// Fire Google Ads tracking event when credentials are submitted

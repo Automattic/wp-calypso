@@ -530,10 +530,22 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, from, authorizationUrl, platform } = providedDependencies;
+					const { action, from, authorizationUrl, platform, host } = providedDependencies;
 
 					if ( action === 'skip' ) {
 						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
+					}
+
+					if ( action === 'redirect-to-ssh' ) {
+						// Redirect to SSH verification step
+						return navigate(
+							paths.sshVerificationPath( {
+								siteId,
+								siteSlug,
+								from: from || fromQueryParam,
+								host,
+							} )
+						);
 					}
 
 					if ( action === 'already-wpcom' ) {
