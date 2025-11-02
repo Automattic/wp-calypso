@@ -16,6 +16,7 @@ import {
 	domainAvailabilityQuery,
 	domainInboundTransferStatusQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import {
 	createRoute,
 	createLazyRoute,
@@ -553,11 +554,17 @@ export const domainConnectionSetupRoute = createRoute( {
 		);
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-connection-setup' ).then( ( d ) =>
-		createLazyRoute( 'domain-connection-setup' )( {
-			component: d.default,
-		} )
-	)
+	config.isEnabled( 'domain-connection-redesign' )
+		? import( '../../domains/domain-connection-setup' ).then( ( d ) =>
+				createLazyRoute( 'domain-connection-setup' )( {
+					component: d.default,
+				} )
+		  )
+		: import( '../../domains/domain-connection-setup/legacy-connection-flow' ).then( ( d ) =>
+				createLazyRoute( 'domain-connection-setup' )( {
+					component: d.default,
+				} )
+		  )
 );
 
 export const domainTransferSetupRoute = createRoute( {

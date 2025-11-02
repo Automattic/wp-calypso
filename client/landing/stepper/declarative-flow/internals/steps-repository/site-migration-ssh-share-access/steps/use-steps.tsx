@@ -1,7 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useGenerateSSHKey } from '../hooks/use-generate-ssh-key';
 import { HelpLink } from './help-link';
-import { getSSHHostDisplayName, getSSHSupportUrl } from './ssh-host-support-urls';
+import { getSSHHostDisplayName, getSSHSupportDoc } from './ssh-host-support-urls';
 import { StepAddServerAddress } from './step-add-server-address';
 import { StepFindSSHDetails } from './step-find-ssh-details';
 import { StepShareSSHAccess } from './step-share-ssh-access';
@@ -21,6 +22,11 @@ interface StepsDataOptions {
 	authMethod: 'password' | 'key';
 	username: string;
 	password: string;
+	sshPublicKey: string;
+	isGeneratingKey: boolean;
+	isUsernameLockedForKey: boolean;
+	hostDisplayName?: string;
+	generateKeyError?: Error | null;
 	migrationError?: Error | null;
 	onServerAddressChange: ( address: string ) => void;
 	onPortChange: ( port: number ) => void;
@@ -28,6 +34,8 @@ interface StepsDataOptions {
 	onAuthMethodChange: ( method: 'password' | 'key' ) => void;
 	onUsernameChange: ( username: string ) => void;
 	onPasswordChange: ( password: string ) => void;
+	onGenerateSSHKey: () => void;
+	onEditUsername: () => void;
 	onFindSSHDetailsSuccess: () => void;
 	host?: string;
 	onNoSSHAccess: () => void;
@@ -76,14 +84,15 @@ interface SSHFormState {
 	authMethod: 'password' | 'key';
 	username: string;
 	password: string;
+	sshPublicKey: string;
 	migrationStarted: boolean;
 }
 
 const useStepsData = ( options: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 	const hostDisplayName = getSSHHostDisplayName( options.host );
-	const supportUrl = getSSHSupportUrl( options.host );
-	const helpLink = <HelpLink href={ supportUrl } />;
+	const supportDoc = getSSHSupportDoc( options.host );
+	const helpLink = <HelpLink supportLink={ supportDoc.url } supportPostId={ supportDoc.postId } />;
 
 	const stepsData: StepsData = [
 		{
@@ -122,10 +131,17 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					authMethod={ options.authMethod }
 					username={ options.username }
 					password={ options.password }
+					sshPublicKey={ options.sshPublicKey }
+					isGeneratingKey={ options.isGeneratingKey }
+					isUsernameLockedForKey={ options.isUsernameLockedForKey }
+					hostDisplayName={ options.hostDisplayName }
+					generateError={ options.generateKeyError }
 					error={ options.migrationError }
 					onAuthMethodChange={ options.onAuthMethodChange }
 					onUsernameChange={ options.onUsernameChange }
 					onPasswordChange={ options.onPasswordChange }
+					onGenerateSSHKey={ options.onGenerateSSHKey }
+					onEditUsername={ options.onEditUsername }
 					helpLink={ helpLink }
 				/>
 			),
@@ -156,8 +172,16 @@ export const useSteps = ( {
 		authMethod: 'password',
 		username: '',
 		password: '',
+		sshPublicKey: '',
 		migrationStarted: false,
 	} );
+
+	// SSH Key generation hook
+	const {
+		mutate: generateSSHKey,
+		isPending: isGeneratingKey,
+		error: generateKeyError,
+	} = useGenerateSSHKey();
 
 	// State update handlers
 	const handleServerAddressChange = ( address: string ) => {
@@ -199,7 +223,7 @@ export const useSteps = ( {
 	};
 
 	const handleUsernameChange = ( username: string ) => {
-		setFormState( ( prev ) => ( { ...prev, username } ) );
+		setFormState( ( prev ) => ( { ...prev, username, sshPublicKey: '' } ) );
 	};
 
 	const handlePasswordChange = ( password: string ) => {
@@ -218,6 +242,28 @@ export const useSteps = ( {
 		setFormState( ( prev ) => ( { ...prev, migrationStarted: true } ) );
 	};
 
+	const handleGenerateSSHKey = () => {
+		generateSSHKey(
+			{
+				siteId,
+				remoteUser: formState.username,
+				remoteHost: formState.serverAddress,
+				remoteDomain: fromUrl,
+			},
+			{
+				onSuccess: ( data ) => {
+					setFormState( ( prev ) => ( { ...prev, sshPublicKey: data.ssh_public_key } ) );
+				},
+			}
+		);
+	};
+
+	const handleEditUsername = () => {
+		setFormState( ( prev ) => ( { ...prev, sshPublicKey: '' } ) );
+	};
+
+	const hostDisplayName = getSSHHostDisplayName( host );
+
 	const stepsData = useStepsData( {
 		fromUrl,
 		siteId,
@@ -228,6 +274,11 @@ export const useSteps = ( {
 		authMethod: formState.authMethod,
 		username: formState.username,
 		password: formState.password,
+		sshPublicKey: formState.sshPublicKey,
+		isGeneratingKey,
+		isUsernameLockedForKey: !! formState.sshPublicKey,
+		hostDisplayName,
+		generateKeyError,
 		migrationError,
 		onServerAddressChange: handleServerAddressChange,
 		onPortChange: handlePortChange,
@@ -235,6 +286,8 @@ export const useSteps = ( {
 		onAuthMethodChange: handleAuthMethodChange,
 		onUsernameChange: handleUsernameChange,
 		onPasswordChange: handlePasswordChange,
+		onGenerateSSHKey: handleGenerateSSHKey,
+		onEditUsername: handleEditUsername,
 		onFindSSHDetailsSuccess: handleFindSSHDetailsSuccess,
 		onNoSSHAccess,
 		host,
@@ -290,7 +343,7 @@ export const useSteps = ( {
 		formState.isServerVerified &&
 		formState.username.length > 0 &&
 		( ( formState.authMethod === 'password' && formState.password.length > 0 ) ||
-			( formState.authMethod === 'key' && false ) );
+			( formState.authMethod === 'key' && formState.sshPublicKey.length > 0 ) );
 
 	return {
 		steps,

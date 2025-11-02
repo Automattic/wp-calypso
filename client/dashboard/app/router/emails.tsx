@@ -1,17 +1,17 @@
-import { Domain, DomainSubtype, EmailBox, isWpError } from '@automattic/api-core';
+import { EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
+	domainsQuery,
 	mailboxAccountsQuery,
 	productsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
 	siteByIdQuery,
-	siteDomainsQuery,
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
-import { MailboxProvider, IntervalLength } from '../../emails/types';
-import { domainHasEmail } from '../../utils/domain';
+import { userMailboxesQuery } from '../../../../packages/api-queries/src/me-mailboxes';
+import { IntervalLength, MailboxProvider } from '../../emails/types';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
 import { rootRoute } from './root';
 
@@ -25,31 +25,9 @@ export const emailsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails',
-	loader: async ( { context } ) => {
-		// Preload user prefs used broadly
-		const prefsPromise = queryClient.ensureQueryData( rawUserPreferencesQuery() );
-
-		// 1) Preload sites
-		const sites = await queryClient.ensureQueryData( context.config.queries.sitesQuery() );
-		const managedSites = ( sites ?? [] ).filter( ( site ) => site.capabilities?.manage_options );
-
-		// 2) Preload domains for each managed site
-		const domainsArrays = await Promise.all(
-			managedSites.map( ( site ) => queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ) )
-		);
-
-		// 3) From those domains, identify ones with email capability and preload their mailboxes
-		const allDomains = domainsArrays
-			.flat()
-			.filter( ( d: Domain ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
-		const domainsWithEmails = allDomains.filter( ( d ) => domainHasEmail( d ) );
-
-		await Promise.all( [
-			prefsPromise,
-			...domainsWithEmails.map( ( domain ) =>
-				queryClient.ensureQueryData( mailboxAccountsQuery( domain.blog_id, domain.domain ) )
-			),
-		] );
+	loader: async () => {
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		queryClient.ensureQueryData( userMailboxesQuery() );
 	},
 	validateSearch: ( search ): { domainName: string | undefined } => {
 		return {
@@ -98,15 +76,8 @@ export const chooseDomainRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails/choose-domain',
-	loader: async ( { context } ) => {
-		// 1) Preload sites
-		const sites = await queryClient.ensureQueryData( context.config.queries.sitesQuery() );
-		const managedSites = ( sites ?? [] ).filter( ( site ) => site.capabilities?.manage_options );
-
-		// 2) Preload domains for each managed site
-		await Promise.all(
-			managedSites.map( ( site ) => queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ) )
-		);
+	loader: async () => {
+		queryClient.ensureQueryData( domainsQuery() );
 	},
 } ).lazy( () =>
 	import( '../../emails/choose-domain' ).then( ( d ) =>
@@ -213,9 +184,8 @@ export const setUpMailboxRoute = createRoute( {
 
 		const unusedMailboxesCount = existingMailboxes?.some(
 			( mailbox ) =>
-				mailbox.warnings.some(
-					( w ) => w.warning_slug === 'unused_mailboxes' && w.warning_type === 'notice'
-				) && mailbox.maximum_mailboxes - ( mailbox.emails.length || 0 )
+				mailbox.warnings.some( ( w ) => w.warning_slug === 'unused_mailboxes' ) &&
+				mailbox.maximum_mailboxes - ( mailbox.emails.length || 0 )
 		);
 
 		const hasUnusedMailbox = !! unusedMailboxesCount;

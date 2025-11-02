@@ -37,3 +37,16 @@ export async function deleteSiteUpdateSchedule(
 		apiNamespace: 'wpcom/v2',
 	} );
 }
+
+// Single-site active toggle
+export async function setSiteUpdateScheduleActive(
+	siteId: number,
+	scheduleId: string,
+	active: boolean
+): Promise< unknown > {
+	return await wpcom.req.post( {
+		path: `/sites/${ siteId }/update-schedules/${ scheduleId }/active`,
+		apiNamespace: 'wpcom/v2',
+		body: { active },
+	} );
+}

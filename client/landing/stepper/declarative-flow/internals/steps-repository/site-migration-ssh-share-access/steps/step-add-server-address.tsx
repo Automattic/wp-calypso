@@ -113,7 +113,7 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 			</p>
 
 			<Button
-				variant="secondary"
+				variant="primary"
 				onClick={ handleVerify }
 				disabled={ ! canVerify }
 				isBusy={ isPending }

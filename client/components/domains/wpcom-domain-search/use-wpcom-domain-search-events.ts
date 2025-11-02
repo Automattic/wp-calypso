@@ -117,8 +117,8 @@ export const useWPCOMDomainSearchEvents = ( {
 			onExternalDomainClick: () => {
 				dispatch( recordUseYourDomainButtonClick( analyticsSection, null, flowName ) );
 			},
-			onSubmitButtonClick: () => {
-				dispatch( recordSearchFormSubmitButtonClick( analyticsSection, flowName ) );
+			onSubmitButtonClick: ( query ) => {
+				dispatch( recordSearchFormSubmitButtonClick( query, analyticsSection, flowName ) );
 			},
 			onQueryAvailabilityCheck: ( status, domainName, responseTime ) => {
 				dispatch(

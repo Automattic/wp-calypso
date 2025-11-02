@@ -26,6 +26,7 @@ export async function fetchSiteScan( siteId: number ): Promise< SiteScan > {
 export async function fetchSiteScanHistory( siteId: number ): Promise< SiteScanHistory > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/scan/history`,
+		apiNamespace: 'wpcom/v2',
 	} );
 }
 

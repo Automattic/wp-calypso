@@ -7,8 +7,10 @@ import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { urlToDomain } from 'calypso/lib/url';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -50,7 +52,7 @@ const HostingDetailsWithIcons: FC< HostingDetailsWithIconsProps > = ( { items } 
 
 interface Props {
 	hasError?: boolean;
-	onComplete: ( siteInfo: UrlData ) => void;
+	onComplete: ( siteInfo: UrlData, hostingProviderSlug?: string ) => void;
 	onSkip: () => void;
 	hideImporterListLink: boolean;
 	flowName: string;
@@ -72,13 +74,26 @@ export const Analyzer: FC< Props > = ( {
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
-	const isScanning = isFetching || ( isFetched && ! hasError );
+	// Fetch hosting provider after we get site info
+	const domain = siteInfo ? urlToDomain( siteInfo.url ) : '';
+	const {
+		data: hostingProviderData,
+		isFetching: isFetchingHosting,
+		isError: hasHostingError,
+	} = useHostingProviderQuery( domain, !! domain );
+
+	// Update loading state to include hosting check
+	const isScanning =
+		isFetching ||
+		isFetchingHosting ||
+		( isFetched && ! hasError && ! hostingProviderData && ! hasHostingError );
 
 	useEffect( () => {
-		if ( siteInfo ) {
-			onComplete( siteInfo );
+		// Only complete when we have both site info AND hosting info (or hosting check failed)
+		if ( siteInfo && ( hostingProviderData || hasHostingError ) ) {
+			onComplete( siteInfo, hostingProviderData?.hosting_provider?.slug );
 		}
-	}, [ onComplete, siteInfo ] );
+	}, [ onComplete, siteInfo, hostingProviderData, hasHostingError ] );
 
 	useEffect( () => {
 		onVisibilityChange?.( ! isScanning );
@@ -146,6 +161,7 @@ const SiteMigrationIdentify: StepType< {
 				action: SiteMigrationIdentifyAction;
 				platform?: string;
 				from?: string;
+				host?: string;
 		  }
 		| undefined;
 } > = function ( { navigation, flow } ) {
@@ -154,7 +170,10 @@ const SiteMigrationIdentify: StepType< {
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
 
 	const handleSubmit = useCallback(
-		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
+		async (
+			action: SiteMigrationIdentifyAction,
+			data?: { platform: string; from: string; host?: string }
+		) => {
 			// If we have a URL of the source, we send requests to the mShots API to create screenshots
 			// early in the flow to avoid long loading times in the migration instructions step.
 			// Because mShots API can often take a long time to generate screenshots.
@@ -164,7 +183,7 @@ const SiteMigrationIdentify: StepType< {
 
 			navigation?.submit?.( { action, ...data } );
 		},
-		[ navigation, siteSlug ]
+		[ navigation, siteSlug, createScreenshots ]
 	);
 
 	const urlQueryParams = useQuery();
@@ -173,7 +192,9 @@ const SiteMigrationIdentify: StepType< {
 
 	const stepContent = (
 		<Analyzer
-			onComplete={ ( { platform, url } ) => handleSubmit( 'continue', { platform, from: url } ) }
+			onComplete={ ( { platform, url }, hostingProviderSlug ) =>
+				handleSubmit( 'continue', { platform, from: url, host: hostingProviderSlug } )
+			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
 			onSkip={ () => {
 				handleSubmit( 'skip_platform_identification' );

@@ -1,13 +1,9 @@
-import { EmailAccount, EmailBox, Domain } from '@automattic/api-core';
+import { EmailAccount, EmailBox } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
 import type { Email } from '../types';
 
-export const mapMailboxToEmail = (
-	box: EmailBox,
-	emailAccount: EmailAccount,
-	domain: Domain
-): Email => {
+export const mapMailboxToEmail = ( box: EmailBox, emailAccount: EmailAccount ): Email => {
 	const provider = emailAccount.account_type;
 
 	let providerDisplayName = __( 'Email Forwarding' );
@@ -22,7 +18,8 @@ export const mapMailboxToEmail = (
 	const id: string = box.domain + box.mailbox + box?.target;
 
 	// Infer status from known subscriptions or warnings
-	let status: Email[ 'status' ] = 'active';
+	let status: Email[ 'status' ] = emailAccount.status;
+
 	if ( box.warnings.length > 0 || emailAccount.warnings.length > 0 ) {
 		status = 'pending';
 		if ( accountHasWarningWithSlug( 'google_pending_tos_acceptance', emailAccount ) ) {
@@ -32,10 +29,6 @@ export const mapMailboxToEmail = (
 		} else if ( accountHasWarningWithSlug( 'unused_mailboxes', emailAccount ) ) {
 			status = 'unused_mailboxes';
 		}
-	} else if ( provider === 'titan' && domain.titan_mail_subscription?.status ) {
-		status = domain.titan_mail_subscription.status;
-	} else if ( provider === 'google_workspace' && domain.google_apps_subscription?.status ) {
-		status = domain.google_apps_subscription.status;
 	}
 
 	return {
@@ -47,9 +40,7 @@ export const mapMailboxToEmail = (
 		forwardingTo: box.target,
 		providerDisplayName,
 		domainName: box.domain,
-		siteId: String( domain.blog_id ),
-		siteName: domain.blog_name,
 		status,
-		canUserManage: domain.current_user_can_add_email,
+		canUserManage: emailAccount.can_user_add_email,
 	};
 };

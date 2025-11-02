@@ -37,7 +37,11 @@ import {
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
+import {
+	canViewHundredYearPlanSettings,
+	canViewSiteVisibilitySettings,
+	canViewWordPressSettings,
+} from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
@@ -562,8 +566,15 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'site-visibility',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! canViewSiteVisibilitySettings( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }/settings` } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),

@@ -12,19 +12,28 @@ import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { isMappingVerificationSuccess } from './utils';
 import VerificationInProgressNextSteps from './verification-in-progress-next-steps';
+import type { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 
 interface DomainConnectionVerificationProps {
 	domainName: string;
 	siteSlug: string;
-	status: 'verifying' | 'connected';
+	domainConnectionSetupInfo: DomainMappingSetupInfo;
+	domainMappingStatus: DomainMappingStatus;
+	queryError: string | null;
+	queryErrorDescription: string | null;
 }
 
 export default function DomainConnectionVerification( {
 	domainName,
 	siteSlug,
-	status,
+	domainMappingStatus,
 }: DomainConnectionVerificationProps ) {
+	const status = isMappingVerificationSuccess( domainMappingStatus.mode, domainMappingStatus )
+		? 'connected'
+		: 'verifying';
+
 	return (
 		<Card
 			className={ `dashboard-domain-connection-verification dashboard-domain-connection-verification--${ status }` }

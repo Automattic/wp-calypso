@@ -6,7 +6,7 @@ import {
 	PanelRow,
 	RadioControl,
 } from '@wordpress/components';
-import { DataForm } from '@wordpress/dataviews';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
@@ -197,6 +197,8 @@ export default function DomainForwardingForm( {
 		onSubmit( formData );
 	};
 
+	const { validity } = useFormValidity( formData, fields, form );
+
 	return (
 		<Card>
 			<CardBody>
@@ -205,6 +207,7 @@ export default function DomainForwardingForm( {
 						<DataForm< FormData >
 							data={ formData }
 							fields={ fields }
+							validity={ validity }
 							form={ form }
 							onChange={ ( edits: Partial< FormData > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );

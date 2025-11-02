@@ -37,6 +37,7 @@ export * from './me-billing-history';
 export * from './me-blocked-sites';
 export * from './me-connected-applications';
 export * from './me-dpa';
+export * from './me-mailboxes';
 export * from './me-memberships';
 export * from './me-notification-devices';
 export * from './me-notification-settings';

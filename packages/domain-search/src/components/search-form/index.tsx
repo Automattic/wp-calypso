@@ -55,7 +55,7 @@ export const SearchForm = () => {
 						autoFocus
 					/>
 					{ activeQuery === 'large' && (
-						<DomainSearchControls.Submit onClick={ onSubmitButtonClick } />
+						<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
 					) }
 				</HStack>
 				{ showSearchHint && (

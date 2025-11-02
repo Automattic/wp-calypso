@@ -227,37 +227,41 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
 	const upgradeUrl = getUpgradeUrl( purchase );
 	const { recordTracksEvent } = useAnalytics();
+	const menuItems = [
+		canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
+			<MenuItem
+				onClick={ () => {
+					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
+						status: isExpired( purchase ) ? 'expired' : 'active',
+						plan: purchase.product_name,
+					} );
+					upgradePurchase( upgradeUrl );
+				} }
+			>
+				{ __( 'Upgrade' ) }
+			</MenuItem>
+		),
+		canBeRenewed && (
+			<MenuItem
+				onClick={ () => {
+					recordTracksEvent( 'calypso_purchases_renew_now_click', {
+						product_slug: purchase.product_slug,
+					} );
+					renewPurchase( purchase );
+				} }
+			>
+				{ __( 'Renew' ) }
+			</MenuItem>
+		),
+	].filter( Boolean );
+
+	if ( menuItems.length === 0 ) {
+		return null;
+	}
+
 	return (
 		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
-			{ () => (
-				<MenuGroup>
-					{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
-						<MenuItem
-							onClick={ () => {
-								recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-									status: isExpired( purchase ) ? 'expired' : 'active',
-									plan: purchase.product_name,
-								} );
-								upgradePurchase( upgradeUrl );
-							} }
-						>
-							{ __( 'Upgrade' ) }
-						</MenuItem>
-					) }
-					{ canBeRenewed && (
-						<MenuItem
-							onClick={ () => {
-								recordTracksEvent( 'calypso_purchases_renew_now_click', {
-									product_slug: purchase.product_slug,
-								} );
-								renewPurchase( purchase );
-							} }
-						>
-							{ __( 'Renew' ) }
-						</MenuItem>
-					) }
-				</MenuGroup>
-			) }
+			{ () => <MenuGroup>{ menuItems }</MenuGroup> }
 		</DropdownMenu>
 	);
 }

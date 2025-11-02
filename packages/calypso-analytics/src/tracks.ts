@@ -36,7 +36,7 @@ const EVENT_NAME_EXCEPTIONS = [
 	'wpcom_launchbar_button_click',
 	// Request for free migration
 	'wpcom_support_free_migration_request_click',
-	// Help Center
+	// Help Center Menu Panel
 	'wpcom_help_center_icon_interaction',
 ];
 
