@@ -9,6 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import ConnectionModeCard from './connection-mode-card';
 import DNSRecordsDataView from './dns-records-dataview';
+import NameserversDataView from './nameservers-dataview';
 
 interface DomainConnectionSetupProps {
 	domainName: string;
@@ -62,7 +63,12 @@ export default function DomainConnectionSetup( {
 		{
 			title: __( '3. Update DNS records' ),
 			label: __( 'I have updated the DNS settings' ),
-			content: __( 'Replace all name server records with the values below.' ),
+			content: (
+				<NameserversDataView
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			),
 		},
 	];
 
