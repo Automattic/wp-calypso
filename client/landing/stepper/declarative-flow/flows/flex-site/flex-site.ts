@@ -4,6 +4,7 @@ import { FLEX_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import wpcomRequest from 'wpcom-proxy-request';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { setSignupCompleteFlowName, persistSignupDestination } from 'calypso/signup/storageUtils';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -110,16 +111,45 @@ const flexSite: FlowV2< typeof initialize > = {
 
 				case 'flex-site-creation':
 					// Store site title and set up pending action to update it
-					if ( providedDependencies?.siteName && site?.ID ) {
+					if ( providedDependencies?.siteName ) {
 						setSiteTitle( providedDependencies.siteName );
 
-						// Set pending action to update site title
-						setPendingAction( async () => {
-							await saveSiteSettings( site.ID, { blogname: providedDependencies.siteName } );
-							return {
-								siteSlug: siteSlug || site.slug,
-							};
-						} );
+						if ( site?.ID ) {
+							const currentSiteId = site.ID;
+							const currentSiteSlug = siteSlug || site.slug;
+							const selectedSiteName = providedDependencies.siteName;
+							const isFlexSite = Boolean(
+								( site as { is_wpcom_flex?: boolean } | null )?.is_wpcom_flex
+							);
+
+							// Set pending action to update site title on both the shadow site and the Atomic site.
+							setPendingAction( async () => {
+								const requests: Array< Promise< unknown > > = [
+									saveSiteSettings( currentSiteId, { blogname: selectedSiteName } ),
+								];
+
+								if ( isFlexSite ) {
+									const formData: Array< [ string, string ] > = [
+										[ 'settings', JSON.stringify( { blogname: selectedSiteName } ) ],
+									];
+
+									requests.push(
+										wpcomRequest( {
+											path: `/sites/${ currentSiteId }/onboarding-customization`,
+											apiNamespace: 'wpcom/v2',
+											method: 'POST',
+											formData,
+										} )
+									);
+								}
+
+								await Promise.all( requests );
+
+								return {
+									siteSlug: currentSiteSlug,
+								};
+							} );
+						}
 					}
 					// Navigate to processing step to update site title
 					return navigate( STEPS.PROCESSING.slug, undefined, true );
