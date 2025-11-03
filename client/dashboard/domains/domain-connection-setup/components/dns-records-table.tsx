@@ -13,6 +13,9 @@ const view: ViewTable = {
 	type: 'table',
 	page: 1,
 	fields: [ 'type', 'name', 'currentValue', 'expectedValue', 'status' ],
+	layout: {
+		enableMoving: false,
+	},
 };
 
 interface DnsRecordVerification {
@@ -29,30 +32,45 @@ const fields: Field< DnsRecordVerification >[] = [
 		label: __( 'Type' ),
 		type: 'text' as const,
 		readOnly: true,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
 	},
 	{
 		id: 'name',
 		label: __( 'Name' ),
 		type: 'text' as const,
 		readOnly: true,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
 	},
 	{
 		id: 'currentValue',
 		label: __( 'Current Value' ),
 		type: 'text' as const,
 		readOnly: true,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
 	},
 	{
 		id: 'expectedValue',
 		label: __( 'Expected Value' ),
 		type: 'text' as const,
 		readOnly: true,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
 	},
 	{
 		id: 'status',
 		label: __( 'Status' ),
 		type: 'text' as const,
 		readOnly: true,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
 	},
 ];
 
