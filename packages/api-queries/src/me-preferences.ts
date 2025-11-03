@@ -55,7 +55,7 @@ export const userPreferenceOptimisticMutation = < P extends keyof UserPreference
 	preferenceName: P
 ) =>
 	mutationOptions( {
-		...userPreferenceMutation( preferenceName ),
+		mutationFn: userPreferenceMutation( preferenceName ).mutationFn,
 		onMutate: async ( value ) => {
 			await queryClient.cancelQueries( { queryKey: rawUserPreferencesQuery().queryKey } );
 			const previous = queryClient.getQueryData( rawUserPreferencesQuery().queryKey );
