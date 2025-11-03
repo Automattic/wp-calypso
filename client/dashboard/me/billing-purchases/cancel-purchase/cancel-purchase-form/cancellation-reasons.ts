@@ -1,9 +1,5 @@
-import { JETPACK_PRODUCTS_LIST } from '@automattic/api-core';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import * as React from 'react';
-import { DOWNGRADEABLE_PLANS_FROM_PLAN } from '../../../../utils/jetpack-plans';
-import { isValueTruthy } from '../../payment-methods';
-import type { PlanProduct } from '@automattic/api-core';
 
 // This type represents things that React can render, but which also exist. (E.g.
 // not nullable, not undefined, etc.)
@@ -552,82 +548,13 @@ export const GSUITE_CANCELLATION_REASONS: CancellationReason[] = [
 	},
 ];
 
-interface CancellationReasonsOptions {
-	/**
-	 * The slug of the product being removed.
-	 */
-	productSlug?: string;
-
-	/**
-	 * Previously selected sub value.
-	 */
-	prevSelectedSubOption?: string;
-}
-
-function getExtraJetpackReasons(
-	plans: PlanProduct[],
-	options: CancellationReasonsOptions = {}
-): CancellationReason[] {
-	if ( ! options.productSlug ) {
-		return [];
-	}
-
-	// get all downgradable plans and products for downgrade question dropdown
-	const downgradablePlans = DOWNGRADEABLE_PLANS_FROM_PLAN[ options.productSlug ];
-	const downgradablePlansAndProductsSlug = [
-		...( downgradablePlans || [] ),
-		...JETPACK_PRODUCTS_LIST,
-	];
-	const slugToPlanProduct = ( slug: string ): PlanProduct | undefined => {
-		const item = plans.find( ( plan ) => plan.product_slug === slug );
-		if ( ! item ) {
-			return;
-		}
-
-		return item;
-	};
-	const downgradableSelectorProduct = downgradablePlansAndProductsSlug
-		.map( slugToPlanProduct )
-		.filter( isValueTruthy );
-
-	const selectOptions = downgradableSelectorProduct.map( ( product ) => {
-		return {
-			value: product.product_slug,
-			label: sprintf(
-				/* translators: %(planName)s is the name of the plan */
-				__( 'Jetpack %(planName)s' ),
-				{
-					planName: product.product_name,
-				}
-			),
-		};
-	} );
-
-	return [
-		{
-			value: 'downgradeToAnotherPlan',
-			label: __( "I'd like to downgrade to another plan." ),
-			selectInitialValue: 'select_a_product',
-			selectLabel: __( 'Mind telling us which one?' ),
-			selectOptions,
-		},
-	];
-}
-export function getCancellationReasons(
-	reasonValues: string[],
-	options: CancellationReasonsOptions = {},
-	plans: PlanProduct[]
-): CancellationReason[] {
-	const opts: CancellationReasonsOptions = {
-		...options,
-	};
+export function getCancellationReasons( reasonValues: string[] ): CancellationReason[] {
 	const reasons = [
 		...CANCELLATION_REASONS,
 		...JETPACK_CANCELLATION_REASONS,
 		...GSUITE_CANCELLATION_REASONS,
 		...DOMAIN_TRANSFER_CANCELLATION_REASONS,
 		...DOMAIN_REGISTRATION_CANCELLATION_REASONS,
-		...getExtraJetpackReasons( plans, opts ),
 	];
 
 	return [ ...reasons.filter( ( { value } ) => reasonValues.includes( value ) ), LAST_REASON ];
