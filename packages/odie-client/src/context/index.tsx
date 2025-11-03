@@ -78,7 +78,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	forceEmailSupport = false,
 	isChatRestricted = false,
-	flow = 'wpcom',
 	children,
 } ) => {
 	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded } = useSelect(
@@ -110,8 +109,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 */
 	const { mainChatState, setMainChatState } = useGetCombinedChat(
 		isUserEligibleForPaidSupport && canConnectToZendesk,
-		isLoadingCanConnectToZendesk,
-		flow
+		isLoadingCanConnectToZendesk
 	);
 
 	/**
@@ -215,7 +213,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				version: overriddenVersion,
 				forceEmailSupport,
 				isChatRestricted,
-				flow,
 			} }
 		>
 			{ children }

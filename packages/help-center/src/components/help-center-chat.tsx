@@ -60,7 +60,6 @@ export function HelpCenterChat( {
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }
-			flow={ isCommerceGarden ? 'commerce-garden' : 'wpcom' }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

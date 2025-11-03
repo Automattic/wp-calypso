@@ -4,6 +4,7 @@ import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../consta
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
+import type { OdieAllBotSlugs } from '../types';
 
 export const useCreateZendeskConversation = (): ( ( {
 	avoidTransfer,
@@ -24,7 +25,6 @@ export const useCreateZendeskConversation = (): ( ( {
 		setChat,
 		chat,
 		trackEvent,
-		flow,
 	} = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
@@ -71,7 +71,9 @@ export const useCreateZendeskConversation = (): ( ( {
 				? prevChat.messages
 				: [
 						...prevChat.messages,
-						...( isFromError ? getOdieOnErrorTransferMessage() : getOdieTransferMessage( flow ) ),
+						...( isFromError
+							? getOdieOnErrorTransferMessage()
+							: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs ) ),
 				  ],
 			status: 'transfer',
 		} ) );

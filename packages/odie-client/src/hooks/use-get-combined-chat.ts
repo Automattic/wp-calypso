@@ -15,7 +15,7 @@ import {
 	getOdieIdFromInteraction,
 	getIsRequestingHumanSupport,
 } from '../utils';
-import type { Chat, Message, FlowType, OdieAllBotSlugs } from '../types';
+import type { Chat, Message, OdieAllBotSlugs } from '../types';
 
 function isEqual( message1: Message, message2: Message ) {
 	const message1Id = getMessageUniqueIdentifier( message1 );
@@ -44,8 +44,7 @@ export function deduplicateZDMessages( messages: Message[] ) {
  */
 export const useGetCombinedChat = (
 	canConnectToZendesk: boolean,
-	isLoadingCanConnectToZendesk: boolean,
-	flow: FlowType = 'wpcom'
+	isLoadingCanConnectToZendesk: boolean
 ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
@@ -179,7 +178,6 @@ export const useGetCombinedChat = (
 		getZendeskConversation,
 		startNewInteraction,
 		isLoadingCanConnectToZendesk,
-		flow,
 	] );
 
 	return { mainChatState, setMainChatState };
