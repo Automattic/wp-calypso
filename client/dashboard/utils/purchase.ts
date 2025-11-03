@@ -2,8 +2,6 @@ import {
 	AkismetPlans,
 	JetpackPlans,
 	GoogleWorkspaceSlugs,
-	JETPACK_BACKUP_PRODUCTS,
-	JETPACK_PRODUCTS_LIST,
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_1GB_SPACE,
 	SubscriptionBillPeriod,
@@ -28,10 +26,6 @@ export const CANCEL_FLOW_TYPE = {
 	// cancelling a subscription out of the refund window
 	CANCEL_AUTORENEW: 'cancel_autorenew',
 };
-
-export function isJetpackProductSlug( productSlug: string ): boolean {
-	return ( JETPACK_PRODUCTS_LIST as ReadonlyArray< string > ).includes( productSlug );
-}
 
 export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { domain } = purchase;
@@ -178,14 +172,6 @@ export function isMarketplacePlugin( purchase: Purchase ): boolean {
 
 export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
 	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin';
-}
-
-export function isJetpackPlanSlug( productSlug: string ): boolean {
-	return ( Object.keys( JetpackPlans ) as ReadonlyArray< string > ).includes( productSlug );
-}
-
-export function isJetpackBackupSlug( productSlug: string ): boolean {
-	return ( JETPACK_BACKUP_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
 }
 
 export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
