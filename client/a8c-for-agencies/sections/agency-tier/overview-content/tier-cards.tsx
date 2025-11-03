@@ -10,16 +10,16 @@ import {
 import { __ } from '@wordpress/i18n';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import { ALL_TIERS } from './constants';
-import type { AgencyTier } from './types';
+import type { AgencyTierType } from './types';
 
 export default function TierCards( {
-	currentAgencyTier,
+	currentAgencyTierId,
 	isSmallViewport,
 }: {
-	currentAgencyTier?: AgencyTier;
+	currentAgencyTierId?: AgencyTierType;
 	isSmallViewport: boolean;
 } ) {
-	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTier );
+	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId );
 
 	const content = ALL_TIERS.map( ( tier ) => {
 		const hasLowerTier = currentTier && currentTier.level > tier.level;

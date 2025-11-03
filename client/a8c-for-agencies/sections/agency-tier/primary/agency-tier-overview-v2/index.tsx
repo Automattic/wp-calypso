@@ -17,7 +17,7 @@ export default function AgencyTierOverviewV2() {
 	const agency = useSelector( getActiveAgency );
 
 	const title = translate( 'Your agency tier and benefits' );
-	const currentAgencyTier = agency?.tier?.id;
+	const currentAgencyTierId = agency?.tier?.id;
 
 	// FIXME: Replace with actual influenced revenue
 	const totalInfluencedRevenue = 2000;
@@ -35,7 +35,7 @@ export default function AgencyTierOverviewV2() {
 
 			<LayoutBody>
 				<AgencyTierOverviewContent
-					currentAgencyTier={ currentAgencyTier }
+					currentAgencyTierId={ currentAgencyTierId }
 					totalInfluencedRevenue={ totalInfluencedRevenue }
 				/>
 			</LayoutBody>

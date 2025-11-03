@@ -2,16 +2,16 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { __ } from '@wordpress/i18n';
 import { Stat } from 'calypso/dashboard/components/stat';
 import { ALL_TIERS } from './constants';
-import type { AgencyTier } from './types';
+import type { AgencyTierType } from './types';
 
 export default function InfluencedRevenue( {
-	currentAgencyTier,
+	currentAgencyTierId,
 	totalInfluencedRevenue,
 }: {
-	currentAgencyTier?: AgencyTier;
+	currentAgencyTierId?: AgencyTierType;
 	totalInfluencedRevenue: number;
 } ) {
-	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTier );
+	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId );
 
 	if ( ! currentTier ) {
 		return null;

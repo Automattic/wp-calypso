@@ -1,4 +1,4 @@
-export type AgencyTier =
+export type AgencyTierType =
 	| 'emerging-partner'
 	| 'agency-partner'
 	| 'pro-agency-partner'

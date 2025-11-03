@@ -2,13 +2,13 @@ import { Card, CardBody, __experimentalVStack as VStack } from '@wordpress/compo
 import { useViewportMatch } from '@wordpress/compose';
 import InfluencedRevenue from './influenced-revenue';
 import TierCards from './tier-cards';
-import type { AgencyTier } from './types';
+import type { AgencyTierType } from './types';
 
 export default function AgencyTierOverviewContent( {
-	currentAgencyTier,
+	currentAgencyTierId,
 	totalInfluencedRevenue,
 }: {
-	currentAgencyTier?: AgencyTier;
+	currentAgencyTierId?: AgencyTierType;
 	totalInfluencedRevenue: number;
 } ) {
 	const isSmallViewport = useViewportMatch( 'huge', '<' );
@@ -18,12 +18,12 @@ export default function AgencyTierOverviewContent( {
 			<Card>
 				<CardBody>
 					<InfluencedRevenue
-						currentAgencyTier={ currentAgencyTier }
+						currentAgencyTierId={ currentAgencyTierId }
 						totalInfluencedRevenue={ totalInfluencedRevenue }
 					/>
 				</CardBody>
 			</Card>
-			<TierCards currentAgencyTier={ currentAgencyTier } isSmallViewport={ isSmallViewport } />
+			<TierCards currentAgencyTierId={ currentAgencyTierId } isSmallViewport={ isSmallViewport } />
 		</VStack>
 	);
 }
