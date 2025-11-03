@@ -413,7 +413,7 @@ export default function () {
 	);
 
 	page(
-		paths.domainManagementOverviewRoot() + '/:domain/:site',
+		paths.domainManagementOverviewRoot() + '/:domain/v2/:site',
 		siteSelection,
 		navigation,
 		domainManagementController.domainManagementV2,
@@ -424,13 +424,19 @@ export default function () {
 	);
 
 	page(
-		paths.domainManagementV2Root() + '/*',
-		noSite,
+		paths.domainManagementOverviewRoot() + '/v2/*',
 		siteSelection,
 		navigation,
-		domainManagementController.dashboardBackportDomains,
+		domainManagementController.domainManagementV2,
+		domainManagementController.dashboardBackportDomains( DOMAIN_OVERVIEW ),
+		domainManagementController.domainDashboardLayout,
 		makeLayout,
 		clientRender
+		// noSite,
+		// navigation,
+		// domainManagementController.dashboardBackportDomains,
+		// makeLayout,
+		// clientRender
 	);
 
 	page(

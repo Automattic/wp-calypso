@@ -2,28 +2,34 @@ import { queryClient } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
 import { useEffect } from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import { AuthProvider, useAuth } from 'calypso/dashboard/app/auth';
+import {
+	AppProvider,
+	APP_CONTEXT_DEFAULT_CONFIG,
+	type AppConfig,
+} from 'calypso/dashboard/app/context';
 import router, {
 	routerConfig,
 	syncBrowserHistoryToRouter,
 	syncMemoryRouterToBrowserHistory,
 } from './router';
+import type { Store } from 'redux';
 
-function RouterProviderWithAuth() {
+function RouterProviderWithAuth( { siteSlug, feature }: { siteSlug?: string; feature?: string } ) {
 	const auth = useAuth();
 
 	useEffect( () => {
 		syncBrowserHistoryToRouter( router );
-	}, [] );
+	}, [ siteSlug, feature ] );
 
 	useEffect( () => {
-		const unsubscribe = syncMemoryRouterToBrowserHistory( router );
-
 		const handlePopstate = () => {
 			syncBrowserHistoryToRouter( router );
 		};
 
+		const unsubscribe = syncMemoryRouterToBrowserHistory( router );
 		window.addEventListener( 'popstate', handlePopstate );
 
 		return () => {
@@ -35,14 +41,44 @@ function RouterProviderWithAuth() {
 	return <RouterProvider router={ router } context={ { auth, config: routerConfig } } />;
 }
 
-export default function DomainLayout( { analyticsClient }: { analyticsClient: AnalyticsClient } ) {
+export default function DomainLayout( {
+	store,
+	analyticsClient,
+	siteSlug,
+	feature,
+}: {
+	store: Store;
+	analyticsClient: AnalyticsClient;
+	siteSlug?: string;
+	feature?: string;
+} ) {
+	console.log( 'DomainLayout rendered for site:', siteSlug, 'and feature:', feature );
+	const APP_CONFIG = {
+		...APP_CONTEXT_DEFAULT_CONFIG,
+		supports: {
+			sites: {
+				settings: {
+					general: {
+						redirect: true,
+					},
+					server: true,
+					security: true,
+				},
+			},
+		},
+	};
+
 	return (
-		<QueryClientProvider client={ queryClient }>
-			<AuthProvider>
-				<AnalyticsProvider client={ analyticsClient }>
-					<RouterProviderWithAuth />
-				</AnalyticsProvider>
-			</AuthProvider>
-		</QueryClientProvider>
+		<AppProvider config={ APP_CONFIG as AppConfig }>
+			<QueryClientProvider client={ queryClient }>
+				<AuthProvider>
+					<AnalyticsProvider client={ analyticsClient }>
+						<ReduxProvider store={ store }>
+							<RouterProviderWithAuth siteSlug={ siteSlug } feature={ feature } />
+						</ReduxProvider>
+					</AnalyticsProvider>
+				</AuthProvider>
+			</QueryClientProvider>
+		</AppProvider>
 	);
 }

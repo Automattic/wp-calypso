@@ -1,8 +1,10 @@
 export const DOMAIN_OVERVIEW = 'domain-overview';
+export const DOMAIN_OVERVIEW2 = 'domain-overview2';
 export const EMAIL_MANAGEMENT = 'email-management';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ DOMAIN_OVERVIEW ]: 'domains/manage/all/overview/:domain/:site',
+	// [ DOMAIN_OVERVIEW2 ]: 'domains/manage/all/overview/v2/:domain/:site',
 	[ EMAIL_MANAGEMENT ]: 'domains/manage/all/email/:domain/:site',
 };
 

@@ -27,12 +27,13 @@ import {
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
+import DashboardBackportDomains from 'calypso/sites/v2/domains';
 import { getSite } from 'calypso/state/sites/selectors';
+import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getQueryParams } from './dataviews/query-params';
 import { getSubpageParams } from './subpage-wrapper/subpages';
 import DomainManagement from '.';
-import DashboardBackportDomains from 'calypso/sites/v2/domains';
 
 const sitesDashboardGlobalStyles = css`
 	body.is-bulk-all-domains-page {
@@ -382,9 +383,22 @@ export default {
 		next();
 	},
 
-	dashboardBackportDomains( pageContext, next ) {
-		pageContext.primary = <DashboardBackportDomains />;
-		next();
+	dashboardBackportDomains( feature ) {
+		return ( pageContext, next ) => {
+			// pageContext.store.dispatch( setAllSitesSelected() );
+			const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+			pageContext.primary = (
+				<DashboardBackportDomains
+					store={ pageContext.store }
+					siteSlug={ pageContext.params.site }
+					feature={ feature }
+					selectedDomain={ selectedDomainName }
+					selectedFeature={ feature }
+				/>
+			);
+			next();
+		};
 	},
 
 	// The domain overview pane. Has a tabbed layout with the domain overview and email management.

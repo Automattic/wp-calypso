@@ -8,8 +8,18 @@ import { useAnalyticsClient } from '../hooks/use-analytics-client';
 import DomainLayout from './layout';
 import router from './router';
 import './style.scss';
+import type { Store } from 'redux';
 
-export default function DashboardBackportDomains() {
+export default function DashboardBackportDomains( {
+	store,
+	siteSlug,
+	feature,
+}: {
+	store: Store;
+	siteSlug?: string;
+	feature?: string;
+} ) {
+	// return <div>DashboardBackportDomains</div>;
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const user = useSelector( ( state ) => getCurrentUser( state ) );
@@ -32,16 +42,31 @@ export default function DashboardBackportDomains() {
 
 	useEffect( () => {
 		if ( ! rootInstanceRef.current ) {
+			console.log( 'rootInstanceRef.current is null' );
 			return;
 		}
 
+		// Promise.all( [
+		// 	persistQueryClientPromise,
+		// 	queryClient.ensureQueryData( domainsQuery() ),
+		// ] ).then( () => {
 		Promise.all( [
 			persistQueryClientPromise,
-			queryClient.ensureQueryData( domainsQuery() ),
+			router.preloadRoute( {
+				to: `/domains/${ siteSlug }`,
+			} ),
 		] ).then( () => {
-			rootInstanceRef.current?.render( <DomainLayout analyticsClient={ analyticsClient } /> );
+			console.log( 'rendering DomainLayout' );
+			rootInstanceRef.current?.render(
+				<DomainLayout
+					store={ store }
+					analyticsClient={ analyticsClient }
+					siteSlug={ siteSlug }
+					feature={ feature }
+				/>
+			);
 		} );
-	}, [ analyticsClient ] );
+	}, [ analyticsClient, user, siteSlug ] );
 
 	useEffect( () => {
 		if ( user ) {

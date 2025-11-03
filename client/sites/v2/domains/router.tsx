@@ -24,6 +24,7 @@ import {
 	notFound,
 	lazyRouteComponent,
 } from '@tanstack/react-router';
+import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { StepName } from 'calypso/dashboard/domains/domain-connection-setup/types';
 import {
@@ -67,8 +68,9 @@ const domainRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => rootRoute,
-	path: 'domain/$domainName',
+	path: '$domain',
 	loader: async ( { params: { domainName }, location } ) => {
+		console.log( '### domainRoute loader for domain:', domainName );
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
 		const isTransferSubRoute = location.pathname.includes( '/transfer' );
@@ -110,6 +112,7 @@ const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: '/',
 	loader: async ( { params: { domainName } } ) => {
+		console.log( '### domainOverviewRoute loader for domain:', domainName );
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const [ site, mailboxes ] = await Promise.all( [
 			queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) ),
@@ -570,6 +573,20 @@ const domainTransferSetupRoute = createRoute( {
 	)
 );
 
+const DummyRouteComponent = () =>
+	createElement( 'div', null, createElement( 'h3', null, "it's working" ) );
+
+const domainSiteRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: '$domain/$site',
+} );
+
+const dummyRoute = createRoute( {
+	getParentRoute: () => domainSiteRoute,
+	path: 'dummy',
+	component: DummyRouteComponent,
+} );
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		domainsListRoute,
@@ -597,6 +614,7 @@ const createRouteTree = () =>
 			domainTransferToOtherSiteRoute,
 			domainSecurityRoute,
 		] ),
+		domainSiteRoute.addChildren( [ dummyRoute ] ),
 	] );
 
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
