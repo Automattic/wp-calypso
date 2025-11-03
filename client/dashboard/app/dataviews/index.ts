@@ -1,6 +1,6 @@
 import { userPreferenceQuery, userPreferenceOptimisticMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate, useRouterState } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { useCallback, useMemo } from 'react';
 import type { Field, View } from '@wordpress/dataviews';
@@ -38,10 +38,7 @@ export function useView( { slug, defaultView, defaultFields }: UseViewOptions ):
 	const { data: persistedView } = useSuspenseQuery( userPreferenceQuery( preferenceName ) );
 	const { mutate: persistView } = useMutation( userPreferenceOptimisticMutation( preferenceName ) );
 
-	const {
-		location: { search: queryParams },
-	} = useRouterState();
-
+	const { search: queryParams } = useLocation();
 	const navigate = useNavigate();
 
 	const baseView: View = sanitizeView( persistedView ?? defaultView, defaultFields );
