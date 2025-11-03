@@ -29,7 +29,7 @@ import PageLayout from '../components/page-layout';
 import {
 	SitesDataViews,
 	useActions,
-	getFields,
+	useFields,
 	getView,
 	mergeViews,
 	recordViewChanges,
@@ -89,7 +89,7 @@ export default function CIABSites() {
 		placeholderData: keepPreviousData,
 	} );
 
-	const fields = getFields( { isAutomattician, viewType: view.type } );
+	const fields = useFields( { isAutomattician, viewType: view.type, sites: sites ?? [] } );
 	const actions = useActions();
 
 	const handleAddNewStore = () => {

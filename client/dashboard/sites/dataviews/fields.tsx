@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import SiteIcon from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
@@ -59,6 +60,9 @@ export const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Plan' ),
 		getValue: ( { item } ) => getSitePlanDisplayName( item ) ?? '',
 		render: ( { item } ) => <Plan site={ item } />,
+		filterBy: {
+			operators: [ 'isAny' as Operator ],
+		},
 	},
 	{
 		id: 'status',
@@ -148,26 +152,64 @@ export const DEFAULT_FIELDS: Field< Site >[] = [
 	},
 ];
 
-export function getFields( {
+function getPlanFilterElements( sites: Site[] ) {
+	if ( ! sites || sites.length === 0 ) {
+		return [];
+	}
+
+	const uniquePlans = new Map< string, string >();
+
+	for ( const site of sites ) {
+		const planDisplayName = getSitePlanDisplayName( site );
+		if ( planDisplayName ) {
+			// Use the display name as both value and label for consistency
+			uniquePlans.set( planDisplayName, planDisplayName );
+		}
+	}
+
+	return Array.from( uniquePlans.entries() )
+		.map( ( [ value, label ] ) => ( { value, label } ) )
+		.sort( ( a, b ) => a.label.localeCompare( b.label ) );
+}
+
+export function useFields( {
 	isAutomattician,
 	viewType,
+	sites,
 }: {
 	isAutomattician?: boolean;
 	viewType?: string;
-} ) {
-	return DEFAULT_FIELDS.filter( ( field ) => {
-		if ( field.id === 'is_a8c' && ! isAutomattician ) {
-			return false;
-		}
+	sites?: Site[];
+} ): Field< Site >[] {
+	return useMemo( () => {
+		const fields = DEFAULT_FIELDS.map( ( field ) => {
+			if ( field.id === 'plan' && sites ) {
+				const planElements = getPlanFilterElements( sites );
+				if ( planElements.length > 0 ) {
+					return {
+						...field,
+						elements: planElements,
+					};
+				}
+			}
 
-		if ( field.id === 'icon.ico' && viewType === 'grid' ) {
-			return false;
-		}
+			return field;
+		} );
 
-		if ( field.id === 'preview' && viewType === 'table' ) {
-			return false;
-		}
+		return fields.filter( ( field ) => {
+			if ( field.id === 'is_a8c' && ! isAutomattician ) {
+				return false;
+			}
 
-		return true;
-	} );
+			if ( field.id === 'icon.ico' && viewType === 'grid' ) {
+				return false;
+			}
+
+			if ( field.id === 'preview' && viewType === 'table' ) {
+				return false;
+			}
+
+			return true;
+		} );
+	}, [ isAutomattician, viewType, sites ] );
 }
