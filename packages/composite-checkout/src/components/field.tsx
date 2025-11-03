@@ -18,6 +18,7 @@ const Label = styled.label< { disabled?: boolean } & LabelHTMLAttributes< HTMLLa
 const Input = styled.input<
 	{ isError?: boolean; icon?: React.ReactNode } & InputHTMLAttributes< HTMLInputElement >
 >`
+	color: ${ ( props ) => props.theme.colors.textColorDark };
 	display: block;
 	width: 100%;
 	box-sizing: border-box;

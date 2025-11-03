@@ -27,7 +27,7 @@ const BillingFormFields = styled.div< BillingFormFieldsProps >`
 	.form-select,
 	.form-fieldset.contact-details-form-fields select {
 		border-radius: 3px;
-		color: ${ ( props ) => props.theme.colors.textColor };
+		color: ${ ( props ) => props.theme.colors.textColorDark };
 	}
 
 	& .form-input-validation {
