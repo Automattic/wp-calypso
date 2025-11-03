@@ -73,12 +73,12 @@ export interface User {
 	localeVariant?: string;
 
 	/**
-	 * The subkey for Subscription Management
+	 * The subkey for Subscription Management.
 	 */
 	subscriptionManagementSubkey?: string;
 
 	/**
-	 * Whether the user is bootstrapped user
+	 * Whether the user was bootstrapped (injected server-side).
 	 */
 	bootstrapped?: boolean;
 }
