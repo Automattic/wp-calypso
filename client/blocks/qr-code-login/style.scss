@@ -66,6 +66,26 @@
 	margin-bottom: 0;
 }
 
+.qr-code-login.is-error {
+	align-items: center;
+	text-align: center;
+
+	.qr-code-login__token-error {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.qr-code-login__token-error p {
+		margin-bottom: 0;
+	}
+}
+
+.qr-code-login__error-message {
+	max-width: 24rem;
+}
+
 .qr-code-login__placeholder {
 	width: 100%;
 	height: 100%;
