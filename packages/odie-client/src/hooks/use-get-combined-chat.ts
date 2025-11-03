@@ -15,7 +15,7 @@ import {
 	getOdieIdFromInteraction,
 	getIsRequestingHumanSupport,
 } from '../utils';
-import type { Chat, Message, FlowType } from '../types';
+import type { Chat, Message, FlowType, OdieAllBotSlugs } from '../types';
 
 function isEqual( message1: Message, message2: Message ) {
 	const message1Id = getMessageUniqueIdentifier( message1 );
@@ -136,7 +136,9 @@ export const useGetCombinedChat = (
 							conversationId: conversation.id,
 							messages: [
 								...( odieChat ? filteredOdieMessages : [] ),
-								...( odieChat ? getOdieTransferMessage( flow ) : [] ),
+								...( odieChat
+									? getOdieTransferMessage( currentSupportInteraction.bot_slug as OdieAllBotSlugs )
+									: [] ),
 								...( deduplicateZDMessages( [
 									// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 									...mainChatState.messages.filter( ( message ) => message.role === 'user' ),

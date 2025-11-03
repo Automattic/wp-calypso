@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
-import type { Context, Message, OdieAllowedBots, FlowType } from './types';
+import type { Context, Message, OdieAllowedBots, FlowType, OdieAllBotSlugs } from './types';
 declare const __i18n_text_domain__: string;
 
 export const getOdieErrorMessage = (): string =>
@@ -40,8 +40,16 @@ export const getOdieForwardToZendeskMessage = (): string =>
 		__i18n_text_domain__
 	);
 
-export const getOdieTransferMessage = ( flow: FlowType = 'wpcom' ): Message[] => {
+export function getFlowFromBotSlug( botSlug: OdieAllBotSlugs ): FlowType {
+	if ( botSlug === 'ciab-workflow-support_chat' ) {
+		return 'commerce-garden';
+	}
+	return 'wpcom';
+}
+
+export const getOdieTransferMessage = ( botSlug: OdieAllBotSlugs ): Message[] => {
 	const isTestMode = isTestModeEnvironment();
+	const flow = getFlowFromBotSlug( botSlug );
 
 	// Commerce garden has a simplified, single-message flow
 	if ( flow === 'commerce-garden' ) {
@@ -277,3 +285,5 @@ export const ODIE_ALLOWED_BOTS = [
 	'wpcom-plan-support',
 	'wpcom-workflow-support_chat',
 ];
+
+export const ODIE_ALL_BOT_SLUGS = [ ...ODIE_ALLOWED_BOTS, 'ciab-workflow-support_chat' ];
