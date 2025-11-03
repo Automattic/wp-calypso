@@ -79,6 +79,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 						<FormRadio
 							name="auth-method"
 							value="password"
+							disabled={ isInputDisabled }
 							checked={ authMethod === 'password' }
 							onChange={ () => onAuthMethodChange( 'password' ) }
 							label={ translate( 'Username and password' ) }
@@ -89,6 +90,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 						<FormRadio
 							name="auth-method"
 							value="key"
+							disabled={ isInputDisabled }
 							checked={ authMethod === 'key' }
 							onChange={ () => onAuthMethodChange( 'key' ) }
 							label={ translate( 'SSH key' ) }
@@ -112,6 +114,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 								}
 								placeholder={ translate( 'Enter your SSH username' ) }
 								disabled={ isInputDisabled }
+								className={ isInputDisabled ? 'is-disabled' : '' }
 							/>
 						</div>
 
@@ -127,6 +130,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 								}
 								placeholder={ translate( 'Enter your SSH password' ) }
 								disabled={ isInputDisabled }
+								className={ isInputDisabled ? 'is-disabled' : '' }
 							/>
 						</div>
 					</>
