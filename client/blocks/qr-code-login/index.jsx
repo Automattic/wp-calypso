@@ -188,7 +188,7 @@ function QRCodeLogin( { redirectToAfterLoginUrl, isJetpack = false } ) {
 	// Fetch QR code data.
 	useEffect( () => {
 		fetchQRCodeData( tokenState, anonymousUserId );
-	}, [ tokenState, anonymousUserId ] );
+	}, [ tokenState, anonymousUserId, fetchQRCodeData ] );
 
 	// Fetch the Auth Data.
 	useInterval( () => {
