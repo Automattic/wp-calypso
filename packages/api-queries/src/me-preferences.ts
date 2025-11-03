@@ -40,7 +40,7 @@ export const userPreferenceQuery = < P extends keyof UserPreferences >( preferen
 
 export const userPreferenceMutation = < P extends keyof UserPreferences >( preferenceName: P ) =>
 	mutationOptions( {
-		mutationFn: ( data: Required< UserPreferences >[ P ] ) =>
+		mutationFn: ( data: Required< UserPreferences >[ P ] | null ) =>
 			updatePreferences( {
 				[ preferenceName ]: data,
 			} as Partial< UserPreferences > ),
