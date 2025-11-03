@@ -44,6 +44,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
+import { domainRoute } from '../../../app/router/domains';
 import { emailsRoute } from '../../../app/router/emails';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
@@ -208,9 +209,12 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 		purchase.site_slug &&
 		purchase.meta
 	) {
-		const url = domainManagementEdit( purchase.site_slug, purchase.meta );
 		const text = __( 'Domain settings' );
-		return <a href={ url }>{ text }</a>;
+		return (
+			<Link to={ domainRoute.fullPath } params={ { domainName: purchase.meta } }>
+				{ text }
+			</Link>
+		);
 	}
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
