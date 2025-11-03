@@ -1,6 +1,6 @@
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Popover, Icon } from '@wordpress/components';
+import { __experimentalHStack as HStack, Popover, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
@@ -23,7 +23,7 @@ import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
 import type { StoredPaymentMethod, Purchase, Site } from '@automattic/api-core';
 import type { SortDirection, View, Fields } from '@wordpress/dataviews';
-import type { ReactNode } from 'react';
+import type { ReactNode, ComponentProps } from 'react';
 
 import './style.scss';
 
@@ -53,9 +53,15 @@ export const purchasesDataView: View = {
 
 function BillingPurchaseInfoPopover( { children }: { children: ReactNode } ) {
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
+	const handleClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
+		event.preventDefault();
+		event.stopPropagation();
+		setIsTooltipVisible( ( val ) => ! val );
+	};
+
 	return (
-		<span className="purchase-payment-method__backup-icon">
-			<Icon icon={ info } onClick={ () => setIsTooltipVisible( ( val ) => ! val ) } />
+		<span style={ { display: 'inline-flex', pointerEvents: 'auto' } }>
+			<Button icon={ info } iconSize={ 24 } size="small" onClick={ handleClick } />
 			{ isTooltipVisible && (
 				<Popover className="billing-purchase-info-popover">{ children }</Popover>
 			) }
@@ -156,7 +162,7 @@ function OwnerInfo( {
 			{ createInterpolateElement(
 				// translators: domain is a domain name
 				__(
-					"This license was activated on <domain /> by another user. If you haven't given the license to them on purpose, <link>contact our support team</link> for more assistance."
+					'This license was activated on <domain /> by another user. If you haven’t given the license to them on purpose, <link>contact our support team</link> for more assistance.'
 				),
 				{
 					domain: <strong>{ purchase.domain || purchase.site_slug || __( 'a site' ) }</strong>,
@@ -173,6 +179,29 @@ function OwnerInfo( {
 	);
 
 	return <BillingPurchaseInfoPopover>{ tooltipContent }</BillingPurchaseInfoPopover>;
+}
+
+function PurchaseSettingLink( {
+	purchase,
+	disabled,
+	...props
+}: ComponentProps< typeof Link > & { purchase: Purchase; disabled: boolean } ) {
+	return (
+		<Link
+			{ ...props }
+			to={ purchaseSettingsRoute.fullPath }
+			params={ Object.assign( {}, props.params, { purchaseId: purchase.ID } ) }
+			title={ __( 'Manage purchase' ) }
+			disabled={ disabled }
+			style={ {
+				width: 'auto',
+				minWidth: 'unset',
+				textDecoration: 'none',
+				pointerEvents: disabled ? 'none' : undefined,
+				...props.style,
+			} }
+		/>
+	);
 }
 
 export function getFields( {
@@ -215,14 +244,11 @@ export function getFields( {
 			// Render the site icon
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
+				const isTransferred = isTransferredOwnership( item.ID, transferredPurchases );
 				return (
-					<Link
-						to={ purchaseSettingsRoute.fullPath }
-						params={ { purchaseId: item.ID } }
-						title={ __( 'Manage purchase' ) }
-					>
+					<PurchaseSettingLink purchase={ item } disabled={ isTransferred } style={ { zIndex: 1 } }>
 						<PurchaseItemSiteIcon purchase={ item } site={ site } />
-					</Link>
+					</PurchaseSettingLink>
 				);
 			},
 		},
@@ -250,20 +276,12 @@ export function getFields( {
 			render: ( { item }: { item: Purchase } ) => {
 				const isTransferred = isTransferredOwnership( item.ID, transferredPurchases );
 				return (
-					<div>
-						{ isTransferred ? (
-							getTitleForDisplay( item ) + '&nbsp;'
-						) : (
-							<Link
-								to={ purchaseSettingsRoute.fullPath }
-								params={ { purchaseId: item.ID } }
-								title={ __( 'Manage purchase' ) }
-							>
-								{ getTitleForDisplay( item ) }
-							</Link>
-						) }
+					<HStack justify="flex-start" spacing={ 1 }>
+						<PurchaseSettingLink purchase={ item } disabled={ isTransferred }>
+							{ getTitleForDisplay( item ) }
+						</PurchaseSettingLink>
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
-					</div>
+					</HStack>
 				);
 			},
 		},
@@ -422,10 +440,10 @@ export function getFields( {
 				}
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<>
+					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchasePaymentMethod purchase={ item } isDisconnectedSite={ ! site } />
 						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
-					</>
+					</HStack>
 				);
 			},
 		},

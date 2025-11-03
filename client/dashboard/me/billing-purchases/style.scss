@@ -16,14 +16,6 @@ img.payment-method-image {
 	width: fit-content;
 }
 
-.purchase-payment-method__backup-icon {
-	height: 24px;
-
-	& path {
-		fill: #757575;
-	}
-}
-
 button.purchase-payment-method__update {
 	// This button is inside a flexbox (HStack) which has `min-width: 0` set on
 	// all its children, but this overrides the default of `min-width: auto`
