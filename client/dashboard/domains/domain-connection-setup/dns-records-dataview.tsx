@@ -4,7 +4,7 @@ import { DataViews, filterSortAndPaginate, type Field, type View } from '@wordpr
 import { __ } from '@wordpress/i18n';
 import { Icon, arrowRight } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { Card } from '../../components/card';
+import { DataViewsCard } from '../../components/dataviews-card';
 
 interface DNSRecord {
 	id: string;
@@ -29,35 +29,65 @@ export default function DNSRecordsDataView( {
 	const records = useMemo( () => {
 		const dnsRecords: DNSRecord[] = [];
 
-		// Add A records
+		// Process A records with matching logic
 		const hostIpAddresses = domainMappingStatus.host_ip_addresses || [];
 		const defaultIpAddresses = domainConnectionSetupInfo.default_ip_addresses || [];
 
-		hostIpAddresses.forEach( ( currentIp, index ) => {
-			// Use the corresponding default IP or the first one if there aren't enough
-			const targetIp =
-				index < defaultIpAddresses.length ? defaultIpAddresses[ index ] : defaultIpAddresses[ 0 ];
+		// Create a set of target IPs for easy lookup
+		const targetIpSet = new Set( defaultIpAddresses );
 
-			if ( targetIp ) {
-				dnsRecords.push( {
-					id: `a-record-${ index }`,
-					type: 'A',
-					name: '@',
-					currentValue: currentIp,
-					updateTo: targetIp,
-				} );
+		// Separate current IPs into matched and unmatched
+		const matchedCurrentIps: string[] = [];
+		const unmatchedCurrentIps: string[] = [];
+
+		hostIpAddresses.forEach( ( ip ) => {
+			if ( targetIpSet.has( ip ) ) {
+				matchedCurrentIps.push( ip );
+			} else {
+				unmatchedCurrentIps.push( ip );
 			}
+		} );
+
+		// Create A records by matching target IPs
+		let unmatchedIpIndex = 0;
+
+		defaultIpAddresses.forEach( ( targetIp, index ) => {
+			let currentValue: string;
+
+			// Check if this target IP is already in use
+			if ( matchedCurrentIps.includes( targetIp ) ) {
+				currentValue = targetIp;
+				// Remove from matched list to handle duplicates
+				matchedCurrentIps.splice( matchedCurrentIps.indexOf( targetIp ), 1 );
+			} else if ( unmatchedIpIndex < unmatchedCurrentIps.length ) {
+				// Use an unmatched current IP
+				currentValue = unmatchedCurrentIps[ unmatchedIpIndex ];
+				unmatchedIpIndex++;
+			} else {
+				// No more current IPs, use BLANK
+				currentValue = 'BLANK';
+			}
+
+			dnsRecords.push( {
+				id: `a-record-${ index }`,
+				type: 'A',
+				name: '@',
+				currentValue,
+				updateTo: targetIp,
+			} );
 		} );
 
 		// Add CNAME record
 		const currentCname = domainMappingStatus.www_cname_record_target;
+		const targetCname = `www.${ domainName }`;
+
 		if ( currentCname ) {
 			dnsRecords.push( {
 				id: 'cname-record',
 				type: 'CNAME',
 				name: 'www',
 				currentValue: currentCname,
-				updateTo: `www.${ domainName }`,
+				updateTo: targetCname,
 			} );
 		}
 
@@ -142,7 +172,7 @@ export default function DNSRecordsDataView( {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( records, view, fields );
 
 	return (
-		<Card>
+		<DataViewsCard>
 			<DataViews< DNSRecord >
 				data={ filteredData ?? [] }
 				fields={ fields }
@@ -153,6 +183,6 @@ export default function DNSRecordsDataView( {
 			>
 				<DataViews.Layout />
 			</DataViews>
-		</Card>
+		</DataViewsCard>
 	);
 }
