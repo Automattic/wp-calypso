@@ -90,7 +90,7 @@ export default function NameserversDataView( {
 				enableSorting: false,
 				header: '',
 				render: () => {
-					return <Icon icon={ arrowRight } fill="#757575" size={ 24 } />;
+					return <Icon icon={ arrowRight } fill="#CCCCCC" size={ 24 } />;
 				},
 			},
 			{
