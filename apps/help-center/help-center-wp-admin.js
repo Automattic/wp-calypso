@@ -88,12 +88,27 @@ function AdminHelpCenterContent() {
 
 	const handleMenuPanelClick = () => {
 		trackIconInteraction();
-		if ( button.classList.contains( 'open-click' ) ) {
-			button.classList.remove( 'open-click' );
-		} else {
-			button.classList.add( 'open-click' );
-		}
+		// Toggle submenu visibility by toggling the hover class
+		button.classList.toggle( 'open-click' );
 	};
+
+	// Close submenu when clicking outside
+	useEffect( () => {
+		if ( ! hasHelpCenterMenuPanel ) {
+			return;
+		}
+
+		const handleClickOutside = ( event ) => {
+			if ( ! button.contains( event.target ) && button.classList.contains( 'open-click' ) ) {
+				button.classList.remove( 'open-click' );
+			}
+		};
+
+		document.addEventListener( 'click', handleClickOutside );
+		return () => {
+			document.removeEventListener( 'click', handleClickOutside );
+		};
+	}, [ button, hasHelpCenterMenuPanel ] );
 
 	const handleToggleHelpCenter = () => {
 		trackIconInteraction();
