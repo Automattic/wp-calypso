@@ -2,6 +2,7 @@ import {
 	DomainConnectionSetupMode,
 	DomainMappingSetupInfo,
 	type DomainConnectionSetupModeValue,
+	DomainMappingStatus,
 } from '@automattic/api-core';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -14,15 +15,19 @@ interface DomainConnectionSetupProps {
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
 	onVerifyConnection: ( mode: DomainConnectionSetupModeValue ) => void;
 	isUpdatingConnectionMode: boolean;
+	domainMappingStatus: DomainMappingStatus;
 }
 
 export default function DomainConnectionSetup( {
 	onVerifyConnection,
 	isUpdatingConnectionMode,
+	domainMappingStatus,
 	domainName,
 }: DomainConnectionSetupProps ) {
 	const [ connectionMode, setConnectionMode ] = useState< DomainConnectionSetupModeValue >(
-		DomainConnectionSetupMode.SUGGESTED
+		domainMappingStatus.has_mx_records
+			? DomainConnectionSetupMode.ADVANCED
+			: DomainConnectionSetupMode.SUGGESTED
 	);
 	const [ suggestedStepsCompleted, setSuggestedStepsCompleted ] = useState< boolean[] >( [
 		false,

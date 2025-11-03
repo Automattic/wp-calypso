@@ -101,6 +101,7 @@ export default function DomainConnection() {
 					domainName={ domainName }
 					siteSlug={ siteSlug }
 					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					domainMappingStatus={ domainMappingStatus }
 					onVerifyConnection={ onVerifyConnection }
 					isUpdatingConnectionMode={ isUpdatingConnectionMode }
 				/>
