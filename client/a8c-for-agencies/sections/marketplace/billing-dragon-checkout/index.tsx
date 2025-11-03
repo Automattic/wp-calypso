@@ -26,9 +26,11 @@ const debug = debugFactory( 'a4a:bd-checkout' );
 function BillingDragonCheckoutContent( {
 	cartItems,
 	withA8cLogo = true,
+	onClearCart,
 }: {
 	cartItems: ShoppingCartItem[];
 	withA8cLogo?: boolean;
+	onClearCart?: () => void;
 } ) {
 	const translate = useTranslate();
 	const [ isReady, setIsReady ] = useState( false );
@@ -138,6 +140,8 @@ function BillingDragonCheckoutContent( {
 				sitelessCheckoutType="a4a"
 				redirectTo={ window.location.origin + '/purchases/licenses' }
 				customizedPreviousPath="/marketplace"
+				onCheckoutSuccess={ onClearCart }
+				disabledThankYouPage
 				siteSlug=""
 				siteId={ 0 }
 			/>
@@ -148,9 +152,11 @@ function BillingDragonCheckoutContent( {
 export default function BillingDragonCheckout( {
 	cartItems,
 	withA8cLogo = true,
+	onClearCart,
 }: {
 	cartItems: ShoppingCartItem[];
 	withA8cLogo?: boolean;
+	onClearCart?: () => void;
 } ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -162,7 +168,11 @@ export default function BillingDragonCheckout( {
 			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-						<BillingDragonCheckoutContent cartItems={ cartItems } withA8cLogo={ withA8cLogo } />
+						<BillingDragonCheckoutContent
+							cartItems={ cartItems }
+							withA8cLogo={ withA8cLogo }
+							onClearCart={ onClearCart }
+						/>
 					</RazorpayHookProvider>
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>

@@ -105,6 +105,7 @@ export interface CheckoutMainProps {
 	fromSiteSlug?: string;
 	adminUrl?: string;
 	hostingIntent?: string | undefined;
+	onCheckoutSuccess?: () => void;
 }
 
 export default function CheckoutMain( {
@@ -133,6 +134,7 @@ export default function CheckoutMain( {
 	fromSiteSlug,
 	adminUrl,
 	hostingIntent,
+	onCheckoutSuccess,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -702,6 +704,7 @@ export default function CheckoutMain( {
 		connectAfterCheckout,
 		adminUrl,
 		fromSiteSlug,
+		onCheckoutSuccess,
 	} );
 
 	const handleStepChanged = useCallback(

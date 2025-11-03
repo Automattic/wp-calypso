@@ -63,6 +63,7 @@ export default function useCreatePaymentCompleteCallback( {
 	connectAfterCheckout,
 	adminUrl: wpAdminUrl,
 	fromSiteSlug,
+	onCheckoutSuccess,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
@@ -84,6 +85,7 @@ export default function useCreatePaymentCompleteCallback( {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
+	onCheckoutSuccess?: () => void;
 } ): PaymentEventCallback {
 	const cartKey = useCartKey();
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
@@ -178,6 +180,7 @@ export default function useCreatePaymentCompleteCallback( {
 			debug( 'transactionResult was', transactionResult );
 
 			reduxDispatch( clearPurchases() );
+			onCheckoutSuccess?.();
 
 			// Removes the destination cookie only if redirecting to the signup destination.
 			// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
@@ -296,6 +299,7 @@ export default function useCreatePaymentCompleteCallback( {
 			sitePlanSlug,
 			connectAfterCheckout,
 			fromSiteSlug,
+			onCheckoutSuccess,
 		]
 	);
 }

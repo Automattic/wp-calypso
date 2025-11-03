@@ -17,7 +17,7 @@ import './style-v2.scss';
 function CheckoutV2() {
 	const translate = useTranslate();
 
-	const { selectedCartItems } = useShoppingCart();
+	const { selectedCartItems, onClearCart } = useShoppingCart();
 
 	const title = translate( 'Checkout' );
 
@@ -46,7 +46,11 @@ function CheckoutV2() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<BillingDragonCheckout withA8cLogo={ false } cartItems={ selectedCartItems } />
+				<BillingDragonCheckout
+					withA8cLogo={ false }
+					cartItems={ selectedCartItems }
+					onClearCart={ onClearCart }
+				/>
 			</LayoutBody>
 		</Layout>
 	);
