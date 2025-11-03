@@ -362,6 +362,7 @@ __metadata:
     "@automattic/shopping-cart": "workspace:^"
     "@wordpress/dataviews": "npm:10.1.0"
     "@wordpress/i18n": "npm:^5.23.0"
+    he: "npm:^1.2.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
