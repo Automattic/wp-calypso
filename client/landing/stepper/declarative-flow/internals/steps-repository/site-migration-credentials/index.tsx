@@ -106,15 +106,6 @@ const SiteMigrationCredentials: StepType< {
 		const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 		const isHostingSupported = isHostingSupportedForSSHMigration( hostingProviderSlug );
 
-		// Track hosting provider detection
-		recordTracksEvent( 'calypso_site_migration_hosting_detected', {
-			hosting_provider: hostingProviderSlug || 'unknown',
-			is_ssh_supported: isHostingSupported,
-			ssh_feature_enabled: isSSHMigrationAvailable,
-			redirected_to_ssh: isSSHMigrationAvailable && isHostingSupported,
-			step: 'credentials',
-		} );
-
 		// If SSH migration is available and hosting is supported, redirect to SSH flow
 		if ( isSSHMigrationAvailable && isHostingSupported ) {
 			siteId && dispatch( resetSite( siteId ) );
