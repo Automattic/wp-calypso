@@ -24,8 +24,6 @@ const defaultView: View = {
 	type: 'table',
 	layout: { density: 'compact' },
 	sort: { field: 'name', direction: 'asc' },
-	page: 1,
-	search: '',
 };
 const slug = 'sites';
 
@@ -84,7 +82,13 @@ describe( 'useView', () => {
 			} );
 
 			await waitFor( () => {
-				expect( result.current.view ).toEqual( defaultView );
+				expect( result.current.view ).toEqual( {
+					type: 'table',
+					layout: { density: 'compact' },
+					sort: { field: 'name', direction: 'asc' },
+					page: 1,
+					search: '',
+				} );
 			} );
 		} );
 

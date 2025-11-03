@@ -76,7 +76,7 @@ export function useView( { slug, defaultView, defaultFields }: UseViewOptions ):
 			const viewToPersist = removeQueryParamsFromView( newView );
 			if ( ! fastDeepEqual( viewToPersist, baseView ) ) {
 				if ( fastDeepEqual( viewToPersist, defaultView ) ) {
-					persistView( undefined );
+					persistView( null );
 				} else {
 					persistView( viewToPersist );
 				}

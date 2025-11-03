@@ -4,12 +4,14 @@ import type { Operator, SortDirection, SupportedLayouts, View } from '@wordpress
 
 export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	table: {
+		showLevels: false,
 		showMedia: true,
 		mediaField: 'icon.ico',
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
 	grid: {
+		showLevels: false,
 		showMedia: true,
 		mediaField: 'preview',
 		titleField: 'name',
@@ -22,7 +24,6 @@ export const DEFAULT_PER_PAGE_SIZES: [ number, number, number, number ] = [ 12, 
 const DEFAULT_PER_PAGE = 12;
 
 const DEFAULT_VIEW: Partial< View > = {
-	page: 1,
 	perPage: DEFAULT_PER_PAGE,
 	fields: [ 'status', 'visitors', 'subscribers_count', 'plan' ],
 	sort: { field: 'name', direction: 'asc' as SortDirection },
