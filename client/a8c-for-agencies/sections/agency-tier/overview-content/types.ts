@@ -1,3 +1,5 @@
+import type { IconType } from '@wordpress/components';
+
 export type AgencyTierType =
 	| 'emerging-partner'
 	| 'agency-partner'
@@ -15,8 +17,8 @@ export interface Benefit {
 	}[];
 	status?: string;
 }
-export interface TIER_ITEM {
-	id: string;
+export interface TierItem {
+	id: AgencyTierType;
 	level: number;
 	name: string;
 	description: string;

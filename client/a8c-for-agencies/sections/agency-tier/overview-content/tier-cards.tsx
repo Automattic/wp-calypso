@@ -19,11 +19,9 @@ import type { AgencyTierType } from './types';
 
 export default function TierCards( {
 	currentAgencyTierId,
-	isSmallViewport,
 	isEarlyAccess,
 }: {
 	currentAgencyTierId?: AgencyTierType;
-	isSmallViewport: boolean;
 	isEarlyAccess: boolean;
 } ) {
 	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId );

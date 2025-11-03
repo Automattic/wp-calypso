@@ -13,7 +13,7 @@ import {
 	payment,
 	trendingUp,
 } from '@wordpress/icons';
-import type { TIER_ITEM } from './types';
+import type { TierItem } from './types';
 
 const TARGET_INFLUENCED_REVENUE = {
 	'emerging-partner': 0,
@@ -22,7 +22,7 @@ const TARGET_INFLUENCED_REVENUE = {
 	'premier-partner': 250000,
 };
 
-export const ALL_TIERS: TIER_ITEM[] = [
+export const ALL_TIERS: TierItem[] = [
 	{
 		level: 0,
 		id: 'emerging-partner',

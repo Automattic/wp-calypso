@@ -8,7 +8,6 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	type IconType,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataViews } from '@wordpress/dataviews';
@@ -16,24 +15,17 @@ import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import { ALL_TIERS } from './constants';
-import type { AgencyTier } from './types';
+import type { AgencyTierType, Benefit } from './types';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
-type Benefit = {
-	icon: IconType;
-	title: string;
-	description: string;
-	actions?: {
-		label: string;
-		href: string;
-	}[];
-	status?: string;
-};
-
-export default function TierBenefits( { currentAgencyTier }: { currentAgencyTier?: AgencyTier } ) {
-	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTier );
+export default function TierBenefits( {
+	currentAgencyTierId,
+}: {
+	currentAgencyTierId?: AgencyTierType;
+} ) {
+	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId );
 
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 	const isMediumViewport = useViewportMatch( 'huge', '<' );
@@ -121,7 +113,7 @@ export default function TierBenefits( { currentAgencyTier }: { currentAgencyTier
 	return (
 		<VStack spacing={ 6 } style={ { alignItems: 'center' } } alignment="stretch">
 			{ allTiersToShow.map( ( tier ) => {
-				const isCurrentTier = tier.id === currentAgencyTier;
+				const isCurrentTier = tier.id === currentAgencyTierId;
 				const isLowerTier = tier.level < currentTier.level;
 				const isHigherTier = tier.level > currentTier.level;
 
