@@ -1416,11 +1416,7 @@ export default function CancelPurchase() {
 					</h2>
 				) }
 
-				<BackupRetentionOptionOnCancelPurchase
-					productFeatures={ cancellationFeatures }
-					siteId={ purchase.blog_id }
-					purchase={ purchase }
-				/>
+				<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
 
 				{ isGSuite && renderGSuiteAccessMessage() }
 
