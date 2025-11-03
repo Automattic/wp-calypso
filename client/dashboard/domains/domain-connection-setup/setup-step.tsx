@@ -9,22 +9,24 @@ import { published, swatch } from '@wordpress/icons';
 import { CollapsibleCard } from '../../components/collapsible-card';
 
 interface SetupStepProps {
-	initiallyExpanded: boolean;
+	expanded: boolean;
 	completed: boolean;
 	title: string;
 	label: string;
 	children: React.ReactNode;
 	onCheckboxChange: ( checked: boolean ) => void;
+	onToggle: ( expanded: boolean ) => void;
 	className?: string;
 }
 
 export default function SetupStep( {
-	initiallyExpanded,
+	expanded,
 	completed,
 	title,
 	label,
 	children,
 	onCheckboxChange,
+	onToggle,
 	className,
 }: SetupStepProps ) {
 	return (
@@ -46,7 +48,8 @@ export default function SetupStep( {
 					</Text>
 				</HStack>
 			}
-			initialExpanded={ initiallyExpanded }
+			expanded={ expanded }
+			onToggle={ onToggle }
 			isBorderless
 		>
 			<VStack spacing={ 4 }>

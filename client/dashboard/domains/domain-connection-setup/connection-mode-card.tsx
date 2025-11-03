@@ -7,6 +7,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardHeader, CardDivider } from '../../components/card';
 import SetupStep from './setup-step';
@@ -48,6 +49,36 @@ export default function ConnectionModeCard( {
 }: ConnectionModeCardProps ) {
 	const isSelected = selectedMode === mode;
 
+	// Track which steps are expanded
+	const [ stepsExpanded, setStepsExpanded ] = useState< boolean[] >( steps.map( () => false ) );
+
+	const handleStepChange = ( index: number, checked: boolean ) => {
+		onStepChange( index, checked );
+
+		// When a step is checked, collapse all steps and expand the next one
+		if ( checked ) {
+			const newStepsExpanded = steps.map( () => false );
+
+			// If not the last step, expand the next one
+			if ( index < steps.length - 1 ) {
+				newStepsExpanded[ index + 1 ] = true;
+			} else {
+				// If it's the last step, keep it expanded
+				newStepsExpanded[ index ] = true;
+			}
+
+			setStepsExpanded( newStepsExpanded );
+		}
+	};
+
+	const handleStepToggle = ( index: number, expanded: boolean ) => {
+		setStepsExpanded( ( prev ) => {
+			const newState = [ ...prev ];
+			newState[ index ] = expanded;
+			return newState;
+		} );
+	};
+
 	return (
 		<Card>
 			<CardHeader>
@@ -74,9 +105,10 @@ export default function ConnectionModeCard( {
 						<>
 							<SetupStep
 								className="domain-connection-setup__step"
-								initiallyExpanded={ false }
+								expanded={ stepsExpanded[ index ] }
 								completed={ stepsCompleted[ index ] }
-								onCheckboxChange={ ( checked ) => onStepChange( index, checked ) }
+								onCheckboxChange={ ( checked ) => handleStepChange( index, checked ) }
+								onToggle={ ( expanded ) => handleStepToggle( index, expanded ) }
 								key={ step.title }
 								title={ step.title }
 								label={ step.label }
