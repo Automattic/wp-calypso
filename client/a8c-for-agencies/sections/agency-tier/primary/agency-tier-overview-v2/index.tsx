@@ -7,14 +7,23 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import AgencyTierOverviewContent from '../../overview-content';
 
-export default function AgencyTierOverviewRevamped() {
+export default function AgencyTierOverviewV2() {
 	const translate = useTranslate();
 
+	const agency = useSelector( getActiveAgency );
+
 	const title = translate( 'Your agency tier and benefits' );
+	const currentAgencyTierId = agency?.tier?.id;
+
+	// FIXME: Replace with actual influenced revenue
+	const totalInfluencedRevenue = 2000;
 
 	return (
-		<Layout className="agency-tier-overview-revamped" title={ title } wide>
+		<Layout title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>
@@ -24,7 +33,12 @@ export default function AgencyTierOverviewRevamped() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>Content</LayoutBody>
+			<LayoutBody>
+				<AgencyTierOverviewContent
+					currentAgencyTierId={ currentAgencyTierId }
+					totalInfluencedRevenue={ totalInfluencedRevenue }
+				/>
+			</LayoutBody>
 		</Layout>
 	);
 }
