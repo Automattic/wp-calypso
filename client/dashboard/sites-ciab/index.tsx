@@ -66,7 +66,7 @@ export default function CIABSites() {
 		isRestoringAccount,
 	} );
 
-	const { view, updateView } = useView( {
+	const { view, updateView, isViewModified, resetView } = useView( {
 		slug: 'sites-ciab',
 		defaultView,
 		defaultFields: getDefaultFields(),
@@ -197,7 +197,9 @@ export default function CIABSites() {
 							}
 						/>
 					}
-					handleViewChange={ handleViewChange }
+					onChangeView={ handleViewChange }
+					isViewModified={ isViewModified }
+					onResetView={ resetView }
 				/>
 			</PageLayout>
 		</>
