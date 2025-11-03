@@ -76,17 +76,17 @@ export default function PreferencesOptInForm() {
 				updated_at: new Date().toISOString(),
 			},
 			{
-				onSuccess( _, { value } ) {
-					if ( value === 'opt-in' ) {
+				onSuccess( _, data ) {
+					if ( data?.value === 'opt-in' ) {
 						createSuccessNotice( __( 'New Hosting Dashboard enabled.' ), { type: 'snackbar' } );
 					} else {
 						setIsRedirecting( true );
 						window.location.href = '/me/account?flash=dashboard';
 					}
 				},
-				onError( _, { value } ) {
+				onError( _, data ) {
 					createErrorNotice(
-						value === 'opt-in'
+						data?.value === 'opt-in'
 							? __( 'Failed to enable new Hosting Dashboard.' )
 							: __( 'Failed to disable new Hosting Dashboard.' ),
 						{

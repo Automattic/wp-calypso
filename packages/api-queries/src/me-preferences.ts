@@ -40,9 +40,9 @@ export const userPreferenceQuery = < P extends keyof UserPreferences >( preferen
 
 export const userPreferenceMutation = < P extends keyof UserPreferences >( preferenceName: P ) =>
 	mutationOptions( {
-		mutationFn: ( data: Required< UserPreferences >[ P ] | null ) =>
+		mutationFn: ( data: UserPreferences[ P ] ) =>
 			updatePreferences( {
-				[ preferenceName ]: data,
+				[ preferenceName ]: data ?? null, // null means deleting the preference
 			} as Partial< UserPreferences > ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) => {
