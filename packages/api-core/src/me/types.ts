@@ -39,7 +39,7 @@ export interface User {
 	lasagna_jwt: string;
 	locale_variant: string;
 	logout_URL: string;
-	meta: UserMetaData;
+	meta?: UserMetaData;
 	newest_note_type: string;
 	phone_account: boolean;
 	primary_blog: number;
@@ -58,19 +58,19 @@ export interface User {
 	 * The bootstraped user's primary site slug.
 	 * @deprecated Use `primary_blog_url` instead.
 	 */
-	primarySiteSlug: string;
+	primarySiteSlug?: string;
 
 	/**
 	 * The bootstraped user's locale slug, e.g. `es`.
 	 * @deprecated Use `language` instead.
 	 */
-	localeSlug: string;
+	localeSlug?: string;
 
 	/**
 	 * The bootstrapped user's locale variant, e.g. `es-mx`.
 	 * @deprecated Use `locale_variant` instead.
 	 */
-	localeVariant: string;
+	localeVariant?: string;
 
 	/**
 	 * The subkey for Subscription Management

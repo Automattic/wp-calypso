@@ -99,7 +99,7 @@ async function main() {
 	accessibleFocus();
 
 	const user = await initializeCurrentUser();
-	const userId = user ? ( user as CurrentUser ).ID : 0;
+	const userId = user ? user.ID : 0;
 	let queryClient;
 
 	let { default: flow } = await flowPromise;
@@ -113,7 +113,7 @@ async function main() {
 	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
 	if ( user ) {
-		initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+		initializeCalypsoUserStore( reduxStore, user );
 		receiveCurrentUser( user as UserStore.CurrentUser );
 	}
 
