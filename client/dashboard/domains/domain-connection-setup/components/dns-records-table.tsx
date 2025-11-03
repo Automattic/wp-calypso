@@ -1,3 +1,6 @@
+import { domainMappingStatusQuery, domainQuery } from '@automattic/api-queries';
+import { Badge } from '@automattic/ui';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
@@ -9,7 +12,7 @@ interface FormData {
 	name: string;
 	currentValue: string;
 	expectedValue: string;
-	status: string;
+	status: React.ReactNode;
 }
 
 const DEFAULT_VIEW: ViewTable = {
@@ -20,84 +23,93 @@ const DEFAULT_VIEW: ViewTable = {
 		direction: 'asc',
 	},
 	fields: [ 'type', 'name', 'currentValue', 'expectedValue', 'status' ],
-	layout: {
-		styles: {
-			type: {
-				width: '10%',
-			},
-			name: {
-				width: '10%',
-			},
-			currentValue: {
-				width: '30%',
-			},
-			expectedValue: {
-				width: '30%',
-			},
-			status: {
-				width: '10%',
-			},
-		},
-	},
 };
 
-export default function DnsRecordsTable() {
-	const formData = [
-		{
-			type: 'A',
-			name: '@',
-			currentValue: '192.168.1.2',
-			expectedValue: '192.168.1.1',
-			status: 'verifying',
-		},
-		{
-			type: 'CNAME',
-			name: 'www',
-			currentValue: 'foo.com',
-			expectedValue: 'bar.com',
-			status: 'verifying',
-		},
-	];
+const fields: Field< FormData >[] = [
+	{
+		id: 'type',
+		label: __( 'Type' ),
+		type: 'text' as const,
+		readOnly: true,
+	},
+	{
+		id: 'name',
+		label: __( 'Name' ),
+		type: 'text' as const,
+		readOnly: true,
+	},
+	{
+		id: 'currentValue',
+		label: __( 'Current Value' ),
+		type: 'text' as const,
+		readOnly: true,
+	},
+	{
+		id: 'expectedValue',
+		label: __( 'Expected Value' ),
+		type: 'text' as const,
+		readOnly: true,
+	},
+	{
+		id: 'status',
+		label: __( 'Status' ),
+		type: 'text' as const,
+		readOnly: true,
+	},
+];
 
-	const fields: Field< FormData >[] = useMemo(
-		() => [
-			{
-				id: 'type',
-				label: __( 'Type' ),
-				type: 'text' as const,
-				readOnly: true,
-			},
-			{
-				id: 'name',
-				label: __( 'Name' ),
-				type: 'text' as const,
-				readOnly: true,
-			},
-			{
-				id: 'currentValue',
-				label: __( 'Current Value' ),
-				type: 'text' as const,
-				readOnly: true,
-			},
-			{
-				id: 'expectedValue',
-				label: __( 'Expected Value' ),
-				type: 'text' as const,
-				readOnly: true,
-			},
-			{
-				id: 'status',
-				label: __( 'Status' ),
-				type: 'text' as const,
-				readOnly: true,
-			},
-		],
-		[]
-	);
+const VerifiedBadge = () => {
+	return <Badge intent="success">{ __( 'Verified' ) }</Badge>;
+};
+
+const VerifyingBadge = () => {
+	return <Badge intent="warning">{ __( 'Verifying' ) }</Badge>;
+};
+
+export default function DnsRecordsTable( { domainName }: { domainName: string } ) {
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const { data: domainMappingStatus } = useSuspenseQuery( domainMappingStatusQuery( domainName ) );
+
+	const formData = useMemo( (): FormData[] => {
+		const data: FormData[] = [];
+
+		const hostIpAddresses = ( domainMappingStatus?.host_ip_addresses || [] ).sort();
+		const expectedIpAddresses = ( domain?.a_records_required_for_mapping || [] ).sort();
+		const longestArray = Math.max( hostIpAddresses.length, expectedIpAddresses.length );
+
+		for ( let i = 0; i < longestArray; i++ ) {
+			const isVerified = hostIpAddresses[ i ] === expectedIpAddresses[ i ];
+
+			data.push( {
+				type: 'A',
+				name: '@',
+				currentValue: hostIpAddresses[ i ] || '-',
+				expectedValue: expectedIpAddresses[ i ] || '-',
+				status: isVerified ? <VerifiedBadge /> : <VerifyingBadge />,
+			} );
+		}
+
+		if ( domainMappingStatus.www_cname_record_target ) {
+			const isVerified = domainMappingStatus.www_cname_record_target === domainName;
+
+			data.push( {
+				type: 'CNAME',
+				name: 'www',
+				currentValue: domainMappingStatus.www_cname_record_target,
+				expectedValue: domainName,
+				status: isVerified ? <VerifiedBadge /> : <VerifyingBadge />,
+			} );
+		}
+
+		return data;
+	}, [ domain, domainName, domainMappingStatus ] );
 
 	const [ view, setView ] = useState< ViewTable >( DEFAULT_VIEW );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( formData, view, fields );
+	const { data: filteredData, paginationInfo } = useMemo(
+		() => filterSortAndPaginate( formData, view, fields ),
+		[ formData, view ]
+	);
 
 	return (
 		<DataViewsCard>
@@ -108,7 +120,9 @@ export default function DnsRecordsTable() {
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ paginationInfo }
 				onChangeView={ ( view: View ) => setView( view as ViewTable ) }
-				getItemId={ ( item: FormData ) => `${ item.type }-${ item.name }` }
+				getItemId={ ( item: FormData ) =>
+					`${ item.type }-${ item.name }-${ item.currentValue }-${ item.expectedValue }`
+				}
 			>
 				<>
 					<DataViews.Layout />

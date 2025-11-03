@@ -66,7 +66,7 @@ export default function DomainConnectionVerification( {
 						{ __( 'DNS record verification' ) }
 					</Text>
 
-					<DnsRecordsTable />
+					<DnsRecordsTable domainName={ domainName } />
 
 					{ status === 'verifying' && (
 						<Text size="medium" weight={ 500 }>
