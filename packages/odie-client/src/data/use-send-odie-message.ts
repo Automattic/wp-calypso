@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import getMostRecentOpenLiveInteraction from '../components/notices/get-most-recent-open-live-interaction';
 import {
@@ -15,7 +16,7 @@ import { useCreateZendeskConversation } from '../hooks';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
-import type { Chat, Message, ReturnedChat } from '../types';
+import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
 
 const getErrorMessageForSiteIdAndInternalMessageId = (
 	selectedSiteId: number | null | undefined,
@@ -48,11 +49,13 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
-	const { addEventToInteraction } = useManageSupportInteraction();
+	const { addEventToInteraction, startNewInteraction } = useManageSupportInteraction();
 	const createZendeskConversation = useCreateZendeskConversation();
 
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [ shouldCreateConversation, setShouldCreateConversation ] = useState< {
 		createdFrom?: string;
 		isFromError?: boolean;
@@ -80,6 +83,22 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		canConnectToZendesk,
 		forceEmailSupport,
 	} = useOdieAssistantContext();
+
+	const updateInteractionContext = useCallback(
+		( interaction: SupportInteraction ) => {
+			setChat( ( prevChat ) => ( {
+				...prevChat,
+				supportInteractionId: interaction.uuid,
+			} ) );
+
+			const params = new URLSearchParams( location.search );
+			if ( params.get( 'id' ) !== interaction.uuid ) {
+				params.set( 'id', interaction.uuid );
+				navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+			}
+		},
+		[ location.pathname, location.search, navigate, setChat ]
+	);
 
 	const hasBeenWarnedAboutExistingConversation = chat?.messages?.some(
 		( message ) =>
@@ -179,7 +198,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		onMutate: () => {
 			setChatStatus( 'sending' );
 		},
-		onSuccess: ( returnedChat ) => {
+		onSuccess: async ( returnedChat ) => {
 			if (
 				! returnedChat.messages ||
 				returnedChat.messages.length === 0 ||
@@ -208,14 +227,34 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				return;
 			}
 
-			if ( ! odieId ) {
-				addEventToInteraction.mutate( {
-					interactionId: currentSupportInteraction!.uuid,
-					eventData: {
-						event_external_id: returnedChat.chat_id.toString(),
+			const chatIdString = returnedChat.chat_id?.toString?.() ?? String( returnedChat.chat_id );
+			let supportInteraction = currentSupportInteraction;
+			let interactionOdieId = odieId;
+
+			try {
+				if ( ! supportInteraction && chatIdString ) {
+					const newInteraction = await startNewInteraction( {
+						event_external_id: chatIdString,
 						event_source: 'odie',
-					},
-				} );
+					} );
+					supportInteraction = newInteraction;
+					interactionOdieId = getOdieIdFromInteraction( newInteraction );
+					updateInteractionContext( newInteraction );
+				} else if ( supportInteraction && ! interactionOdieId && chatIdString ) {
+					const updatedInteraction = await addEventToInteraction.mutateAsync( {
+						interactionId: supportInteraction.uuid,
+						eventData: {
+							event_external_id: chatIdString,
+							event_source: 'odie',
+						},
+					} );
+					supportInteraction = updatedInteraction;
+					interactionOdieId = getOdieIdFromInteraction( updatedInteraction );
+					updateInteractionContext( updatedInteraction );
+				}
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to ensure support interaction for Odie message', error );
 			}
 
 			const botMessage: Message = {

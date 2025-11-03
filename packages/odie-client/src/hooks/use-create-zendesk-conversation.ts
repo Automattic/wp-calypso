@@ -1,10 +1,12 @@
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
+import { useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
 import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
-import type { OdieAllBotSlugs } from '../types';
+import type { OdieAllBotSlugs, SupportInteraction } from '../types';
 
 export const useCreateZendeskConversation = () => {
 	const {
@@ -19,8 +21,26 @@ export const useCreateZendeskConversation = () => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
-	const { addEventToInteraction } = useManageSupportInteraction();
+	const { addEventToInteraction, startNewInteraction } = useManageSupportInteraction();
 	const chatId = chat.odieId;
+	const navigate = useNavigate();
+	const location = useLocation();
+
+	const updateInteractionContext = useCallback(
+		( interaction: SupportInteraction ) => {
+			setChat( ( prevChat ) => ( {
+				...prevChat,
+				supportInteractionId: interaction.uuid,
+			} ) );
+
+			const params = new URLSearchParams( location.search );
+			if ( params.get( 'id' ) !== interaction.uuid ) {
+				params.set( 'id', interaction.uuid );
+				navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+			}
+		},
+		[ location.pathname, location.search, navigate, setChat ]
+	);
 
 	const createConversation = async ( {
 		interactionId = '',
@@ -33,14 +53,14 @@ export const useCreateZendeskConversation = () => {
 		isFromError?: boolean;
 		errorReason?: string;
 	} ) => {
-		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
+		const initialInteractionId = interactionId || currentSupportInteraction?.uuid || '';
 
 		trackEvent( 'create_zendesk_conversation', {
 			is_submitting_zendesk_user_fields: isSubmittingZendeskUserFields,
 			chat_conversation_id: chat.conversationId,
 			chat_status: chat.status,
 			chat_provider: chat.provider,
-			interaction_id: currentInteractionID,
+			interaction_id: initialInteractionId || null,
 			created_from: createdFrom,
 			is_from_error: isFromError,
 			error_reason: errorReason || 'Unknown error',
@@ -96,30 +116,54 @@ export const useCreateZendeskConversation = () => {
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),
-				supportInteractionId: currentInteractionID,
+				...( initialInteractionId ? { supportInteractionId: initialInteractionId } : {} ),
 				...( chatId ? { odieChatId: chatId } : {} ),
 			},
 		} );
 
+		let activeInteractionId = initialInteractionId;
+
+		try {
+			if ( activeInteractionId ) {
+				const interaction = await addEventToInteraction.mutateAsync( {
+					interactionId: activeInteractionId,
+					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
+				} );
+				if ( interaction.uuid !== activeInteractionId ) {
+					await Smooch.updateConversation( conversation.id, {
+						metadata: {
+							...conversation.metadata,
+							supportInteractionId: interaction.uuid,
+						},
+					} );
+				}
+				activeInteractionId = interaction.uuid;
+				updateInteractionContext( interaction );
+			} else {
+				const interaction = await startNewInteraction( {
+					event_source: 'zendesk',
+					event_external_id: conversation.id,
+				} );
+				activeInteractionId = interaction.uuid;
+				updateInteractionContext( interaction );
+				await Smooch.updateConversation( conversation.id, {
+					metadata: {
+						...conversation.metadata,
+						supportInteractionId: interaction.uuid,
+					},
+				} );
+			}
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Failed to sync support interaction during Zendesk escalation', error );
+		}
+
 		trackEvent( 'new_zendesk_conversation', {
-			support_interaction: currentInteractionID,
+			support_interaction: activeInteractionId || null,
 			created_from: createdFrom,
 			messaging_site_id: selectedSiteId || null,
 			messaging_url: selectedSiteURL || null,
 		} );
-
-		const updatedInteraction = await addEventToInteraction.mutateAsync( {
-			interactionId: currentInteractionID,
-			eventData: { event_source: 'zendesk', event_external_id: conversation.id },
-		} );
-		const eventAddedToNewInteraction = updatedInteraction.uuid !== currentInteractionID;
-		if ( eventAddedToNewInteraction ) {
-			await Smooch.updateConversation( conversation.id, {
-				metadata: {
-					supportInteractionId: updatedInteraction.uuid,
-				},
-			} );
-		}
 
 		// We need to load the conversation to get typing events. Load simply means "focus on"..
 		Smooch.loadConversation( conversation.id );

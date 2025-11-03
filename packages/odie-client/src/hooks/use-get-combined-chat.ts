@@ -80,9 +80,22 @@ export const useGetCombinedChat = (
 	}, [ connectionStatus, setRefreshingAfterReconnect ] );
 
 	useEffect( () => {
+		if ( ! currentSupportInteraction?.uuid ) {
+			setMainChatState( ( prevChat ) => {
+				if ( prevChat.supportInteractionId || prevChat.status === 'loaded' ) {
+					return prevChat;
+				}
+				return {
+					...emptyChat,
+					status: 'loaded',
+				};
+			} );
+			previousUuidRef.current = undefined;
+			return;
+		}
+
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
 		if (
-			! currentSupportInteraction?.uuid ||
 			isOdieChatLoading ||
 			isUploadingUnsentMessages ||
 			isLoadingCanConnectToZendesk ||
@@ -129,7 +142,7 @@ export const useGetCombinedChat = (
 					if ( conversation ) {
 						// We need to load the conversation to get typing events. Load simply means "focus on".
 						Smooch.loadConversation( conversation.id );
-						setMainChatState( {
+						setMainChatState( ( prevChat ) => ( {
 							...( odieChat ? odieChat : {} ),
 							supportInteractionId: currentSupportInteraction.uuid,
 							conversationId: conversation.id,
@@ -140,13 +153,13 @@ export const useGetCombinedChat = (
 									: [] ),
 								...( deduplicateZDMessages( [
 									// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
-									...mainChatState.messages.filter( ( message ) => message.role === 'user' ),
+									...prevChat.messages.filter( ( message ) => message.role === 'user' ),
 									...conversation.messages,
 								] ) as Message[] ),
 							],
 							provider: 'zendesk',
 							status: currentSupportInteraction.status === 'closed' ? 'closed' : 'loaded',
-						} );
+						} ) );
 					}
 				} );
 			} catch ( error ) {
