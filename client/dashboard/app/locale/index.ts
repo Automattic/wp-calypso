@@ -1,12 +1,12 @@
 import { useAuth } from '../auth';
 
-type BootstrappedLocaleFields = {
+type ComputedAttributes = {
 	localeSlug?: string;
 	localeVariant?: string;
 };
 
 export function useLocale() {
 	const { user } = useAuth();
-	const u = user as typeof user & BootstrappedLocaleFields;
+	const u = user as typeof user & ComputedAttributes;
 	return u.localeVariant || u.localeSlug || user.locale_variant || user.language || 'en';
 }

@@ -134,8 +134,11 @@ async function switchWebpackCSS( isRTL: boolean ) {
 // slug in the route path.
 function useLocaleSlug() {
 	const { user } = useAuth();
-	type BootstrappedLocaleFields = { localeSlug?: string; localeVariant?: string };
-	const u = user as typeof user & BootstrappedLocaleFields;
+	type ComputedAttributes = {
+		localeSlug?: string;
+		localeVariant?: string;
+	};
+	const u = user as typeof user & ComputedAttributes;
 	return u.localeVariant || u.localeSlug || user.locale_variant || user.language || 'en';
 }
 
