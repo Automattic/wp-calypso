@@ -179,8 +179,7 @@ export default function DnsRecordsTable( { domainName }: { domainName: string } 
 				);
 			}
 		} else {
-			// const currentIpAddresses = ( domainMappingStatus?.host_ip_addresses || [] ).sort();
-			const currentIpAddresses = [ '1.1.1.1' ];
+			const currentIpAddresses = ( domainMappingStatus?.host_ip_addresses || [] ).sort();
 			const expectedIpAddresses = ( domain?.a_records_required_for_mapping || [] ).sort();
 			const longestLength = Math.max( currentIpAddresses.length, expectedIpAddresses.length );
 
