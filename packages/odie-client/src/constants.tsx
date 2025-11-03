@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
-import type { Context, Message, OdieAllowedBots } from './types';
+import type { Context, Message, OdieAllowedBots, FlowType } from './types';
 declare const __i18n_text_domain__: string;
 
 export const getOdieErrorMessage = (): string =>
@@ -40,8 +40,36 @@ export const getOdieForwardToZendeskMessage = (): string =>
 		__i18n_text_domain__
 	);
 
-export const getOdieTransferMessage = (): Message[] => {
+export const getOdieTransferMessage = ( flow: FlowType = 'wpcom' ): Message[] => {
 	const isTestMode = isTestModeEnvironment();
+
+	// Commerce garden has a simplified, single-message flow
+	if ( flow === 'commerce-garden' ) {
+		return [
+			{
+				content: isTestMode
+					? __(
+							"(STAGING VERSION OF ZENDESK) Yes, of course! A Happiness Engineer is jumping in to help you now. They can see your chat with our assistant, so feel free to share any extra details; we'll take it from there.",
+							__i18n_text_domain__
+					  )
+					: __(
+							"Yes, of course! A Happiness Engineer is jumping in to help you now. They can see your chat with our assistant, so feel free to share any extra details; we'll take it from there.",
+							__i18n_text_domain__
+					  ),
+				role: 'bot' as const,
+				type: 'message' as const,
+				context: {
+					flags: {
+						hide_disclaimer_content: true,
+						show_contact_support_msg: true,
+						show_ai_avatar: false,
+					},
+					site_id: null,
+				},
+			},
+		];
+	}
+
 	const baseMessage = {
 		content: isTestMode
 			? __( 'No problem. Help is on the way! (staging)', __i18n_text_domain__ )

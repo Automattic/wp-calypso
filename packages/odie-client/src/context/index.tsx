@@ -52,6 +52,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	trackEvent: noop,
 	forceEmailSupport: false,
 	isChatRestricted: false,
+	flow: 'wpcom',
 } );
 
 // Custom hook to access the OdieAssistantContext
@@ -77,6 +78,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	forceEmailSupport = false,
 	isChatRestricted = false,
+	flow = 'wpcom',
 	children,
 } ) => {
 	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded } = useSelect(
@@ -108,7 +110,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 */
 	const { mainChatState, setMainChatState } = useGetCombinedChat(
 		isUserEligibleForPaidSupport && canConnectToZendesk,
-		isLoadingCanConnectToZendesk
+		isLoadingCanConnectToZendesk,
+		flow
 	);
 
 	/**
@@ -212,6 +215,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				version: overriddenVersion,
 				forceEmailSupport,
 				isChatRestricted,
+				flow,
 			} }
 		>
 			{ children }

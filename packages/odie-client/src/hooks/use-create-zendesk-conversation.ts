@@ -24,6 +24,7 @@ export const useCreateZendeskConversation = (): ( ( {
 		setChat,
 		chat,
 		trackEvent,
+		flow,
 	} = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
@@ -70,7 +71,7 @@ export const useCreateZendeskConversation = (): ( ( {
 				? prevChat.messages
 				: [
 						...prevChat.messages,
-						...( isFromError ? getOdieOnErrorTransferMessage() : getOdieTransferMessage() ),
+						...( isFromError ? getOdieOnErrorTransferMessage() : getOdieTransferMessage( flow ) ),
 				  ],
 			status: 'transfer',
 		} ) );

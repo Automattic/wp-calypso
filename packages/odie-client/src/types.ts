@@ -1,6 +1,8 @@
 import { ODIE_ALLOWED_BOTS } from './constants';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
+export type FlowType = 'wpcom' | 'commerce-garden';
+
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
 	canConnectToZendesk: boolean;
@@ -22,6 +24,7 @@ export type OdieAssistantContextInterface = {
 	userFieldFlowName?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
+	flow: FlowType;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
@@ -45,6 +48,7 @@ export type OdieAssistantProviderProps = {
 	version?: string | null;
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
+	flow?: FlowType;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
 } & PropsWithChildren;

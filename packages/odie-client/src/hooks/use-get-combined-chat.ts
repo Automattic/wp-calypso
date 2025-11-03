@@ -15,7 +15,7 @@ import {
 	getOdieIdFromInteraction,
 	getIsRequestingHumanSupport,
 } from '../utils';
-import type { Chat, Message } from '../types';
+import type { Chat, Message, FlowType } from '../types';
 
 function isEqual( message1: Message, message2: Message ) {
 	const message1Id = getMessageUniqueIdentifier( message1 );
@@ -44,7 +44,8 @@ export function deduplicateZDMessages( messages: Message[] ) {
  */
 export const useGetCombinedChat = (
 	canConnectToZendesk: boolean,
-	isLoadingCanConnectToZendesk: boolean
+	isLoadingCanConnectToZendesk: boolean,
+	flow: FlowType = 'wpcom'
 ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
@@ -135,7 +136,7 @@ export const useGetCombinedChat = (
 							conversationId: conversation.id,
 							messages: [
 								...( odieChat ? filteredOdieMessages : [] ),
-								...( odieChat ? getOdieTransferMessage() : [] ),
+								...( odieChat ? getOdieTransferMessage( flow ) : [] ),
 								...( deduplicateZDMessages( [
 									// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 									...mainChatState.messages.filter( ( message ) => message.role === 'user' ),
@@ -176,6 +177,7 @@ export const useGetCombinedChat = (
 		getZendeskConversation,
 		startNewInteraction,
 		isLoadingCanConnectToZendesk,
+		flow,
 	] );
 
 	return { mainChatState, setMainChatState };
