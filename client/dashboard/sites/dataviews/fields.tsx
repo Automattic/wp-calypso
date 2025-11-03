@@ -153,22 +153,21 @@ export const DEFAULT_FIELDS: Field< Site >[] = [
 ];
 
 function getPlanFilterElements( sites: Site[] ) {
-	if ( ! sites || sites.length === 0 ) {
+	if ( sites.length === 0 ) {
 		return [];
 	}
 
-	const uniquePlans = new Map< string, string >();
+	const uniquePlans = new Set< string >();
 
 	for ( const site of sites ) {
 		const planDisplayName = getSitePlanDisplayName( site );
 		if ( planDisplayName ) {
-			// Use the display name as both value and label for consistency
-			uniquePlans.set( planDisplayName, planDisplayName );
+			uniquePlans.add( planDisplayName );
 		}
 	}
 
-	return Array.from( uniquePlans.entries() )
-		.map( ( [ value, label ] ) => ( { value, label } ) )
+	return Array.from( uniquePlans )
+		.map( ( planName ) => ( { value: planName, label: planName } ) )
 		.sort( ( a, b ) => a.label.localeCompare( b.label ) );
 }
 
