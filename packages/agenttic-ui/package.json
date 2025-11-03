@@ -86,7 +86,8 @@
 		"react-markdown": "^10.1.0",
 		"react-textarea-autosize": "^8.5.9",
 		"remark-gfm": "^4.0.1",
-		"unified": "^11.0.5"
+		"unified": "^11.0.5",
+		"use-debounce": "^10.0.6"
 	},
 	"optionalDependencies": {
 		"marked": "^16.2.1"

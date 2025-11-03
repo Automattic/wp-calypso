@@ -1,11 +1,12 @@
 import { AnimatePresence } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { ComponentType } from 'react';
 import type { Message as MessageType } from '../../types';
 import { Message } from './Message';
 import styles from './Messages.module.css';
 import { ThinkingMessage } from './ThinkingMessage';
 import { getVisibleMessages } from '../../utils/message-helpers';
+import { useDebounce } from 'use-debounce';
 
 interface MessagesProps {
 	messages: MessageType[];
@@ -22,24 +23,34 @@ export function Messages( {
 	error,
 	emptyView,
 	messageRenderer,
-	className,
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
 	const previousMessagesRef = useRef< MessageType[] >( [] );
 	const isFirstRender = useRef( true );
-	const liveRegionRef = useRef< HTMLDivElement >( null );
-	const lastAnnouncedTextRef = useRef< string >( '' );
-
-	// Clear the live region when there are no messages
-	useEffect( () => {
-		if ( ! messages.length && liveRegionRef.current ) {
-			liveRegionRef.current.textContent = '';
-			lastAnnouncedTextRef.current = '';
-		}
-	}, [ messages.length ] );
 
 	// Filter out context messages (type: 'context' should not be displayed in UI)
 	const visibleMessages = getVisibleMessages( messages );
+
+	const liveRegionText = useMemo( () => {
+		// Find the last agent message
+		const agentMessages = visibleMessages.filter(
+			( msg ) => msg.role === 'agent'
+		);
+
+		if ( ! agentMessages.length ) {
+			return '';
+		}
+
+		const latestAgentMessage = agentMessages[ agentMessages.length - 1 ];
+
+		return latestAgentMessage.content
+			.filter( ( block ) => block.type === 'text' )
+			.map( ( block ) => block.text )
+			.join( ' ' );
+	}, [ visibleMessages ] );
+
+	// Debounce live region updates to prevent repeated announcements during streaming
+	const [ announcedText ] = useDebounce( liveRegionText, 1000 );
 
 	useEffect( () => {
 		// Check if a new message was added
@@ -65,33 +76,6 @@ export function Messages( {
 				top: scrollAreaRef.current.scrollHeight,
 				behavior: 'smooth',
 			} );
-		}
-
-		// Update live region with the latest agent message content
-		// This should work for both new messages and streaming updates
-		if ( liveRegionRef.current ) {
-			// Find the last agent message
-			const agentMessages = visibleMessages.filter(
-				( msg ) => msg.role === 'agent'
-			);
-
-			if ( agentMessages.length > 0 ) {
-				const latestAgentMessage =
-					agentMessages[ agentMessages.length - 1 ];
-				const messageText = latestAgentMessage.content
-					.filter( ( block ) => block.type === 'text' )
-					.map( ( block ) => block.text )
-					.join( ' ' );
-
-				// Only update if the text has changed to trigger screen reader announcement
-				if (
-					messageText &&
-					messageText !== lastAnnouncedTextRef.current
-				) {
-					liveRegionRef.current.textContent = messageText;
-					lastAnnouncedTextRef.current = messageText;
-				}
-			}
 		}
 
 		if ( isFirstRender.current ) {
@@ -120,7 +104,6 @@ export function Messages( {
 		<>
 			{ /* Live region for announcing AI responses - hidden from view */ }
 			<div
-				ref={ liveRegionRef }
 				aria-live="polite"
 				aria-atomic="true"
 				style={ {
@@ -130,7 +113,9 @@ export function Messages( {
 					height: '1px',
 					overflow: 'hidden',
 				} }
-			/>
+			>
+				{ announcedText }
+			</div>
 			<div
 				data-slot="messages"
 				className={ styles.container }
