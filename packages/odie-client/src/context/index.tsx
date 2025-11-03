@@ -52,7 +52,6 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	trackEvent: noop,
 	forceEmailSupport: false,
 	isChatRestricted: false,
-	flow: 'wpcom',
 } );
 
 // Custom hook to access the OdieAssistantContext

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
-import type { Context, Message, OdieAllowedBots, FlowType, OdieAllBotSlugs } from './types';
+import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
 declare const __i18n_text_domain__: string;
 
 export const getOdieErrorMessage = (): string =>
@@ -40,7 +40,7 @@ export const getOdieForwardToZendeskMessage = (): string =>
 		__i18n_text_domain__
 	);
 
-export function getFlowFromBotSlug( botSlug: OdieAllBotSlugs ): FlowType {
+export function getFlowFromBotSlug( botSlug: OdieAllBotSlugs ): string {
 	if ( botSlug === 'ciab-workflow-support_chat' ) {
 		return 'commerce-garden';
 	}
