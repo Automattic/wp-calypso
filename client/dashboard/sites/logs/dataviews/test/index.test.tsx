@@ -114,6 +114,11 @@ function mockServerLogsOnce() {
 		} );
 }
 
+const fixedDateRange = {
+	start: new Date( '2025-01-01T00:00:00Z' ),
+	end: new Date( '2025-01-02T00:00:00Z' ),
+};
+
 afterEach( () => {
 	nock.cleanAll();
 	jest.clearAllMocks();
@@ -137,7 +142,7 @@ describe( 'SiteLogsDataViews', () => {
 				gmtOffset={ -8 }
 				timezoneString="America/Los_Angeles"
 				site={ mockSite as Site }
-				dateRange={ { start: new Date(), end: new Date() } }
+				dateRange={ fixedDateRange }
 				autoRefresh={ false }
 				setAutoRefresh={ jest.fn() }
 				logType={ LogType.PHP }
@@ -161,7 +166,7 @@ describe( 'SiteLogsDataViews', () => {
 				gmtOffset={ -8 }
 				timezoneString="America/Los_Angeles"
 				site={ mockSite as Site }
-				dateRange={ { start: new Date(), end: new Date() } }
+				dateRange={ fixedDateRange }
 				autoRefresh={ false }
 				setAutoRefresh={ jest.fn() }
 				logType={ LogType.SERVER }
@@ -179,16 +184,17 @@ describe( 'SiteLogsDataViews', () => {
 	test( 'auto-refresh toggle blocked by onAutoRefreshRequest', async () => {
 		mockPhpLogsOnce();
 		const user = userEvent.setup();
+		const autoRefresh = jest.fn();
 
 		render(
 			<SiteLogsDataViews
 				gmtOffset={ -8 }
 				timezoneString="America/Los_Angeles"
 				site={ mockSite as Site }
-				dateRange={ { start: new Date(), end: new Date() } }
+				dateRange={ fixedDateRange }
 				autoRefresh={ false }
 				onAutoRefreshRequest={ () => false }
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ autoRefresh }
 				logType={ LogType.PHP }
 			/>
 		);
@@ -197,6 +203,7 @@ describe( 'SiteLogsDataViews', () => {
 		const toggle = screen.getByRole( 'checkbox', { name: 'Auto-refresh' } );
 		await user.click( toggle );
 		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
+		expect( autoRefresh ).not.toHaveBeenCalled();
 	} );
 
 	// When the parent supplies 'autoRefreshDisabledReason', the toggle control must be disabled to prevent interaction.
@@ -208,7 +215,7 @@ describe( 'SiteLogsDataViews', () => {
 				gmtOffset={ -8 }
 				timezoneString="America/Los_Angeles"
 				site={ mockSite as Site }
-				dateRange={ { start: new Date(), end: new Date() } }
+				dateRange={ fixedDateRange }
 				autoRefresh={ false }
 				autoRefreshDisabledReason="blocked"
 				setAutoRefresh={ jest.fn() }

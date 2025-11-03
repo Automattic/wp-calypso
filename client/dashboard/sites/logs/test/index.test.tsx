@@ -76,25 +76,11 @@ jest.mock( '../../logs-activity/dataviews', () => () => null );
 
 // DateRangePicker: stub with controls
 jest.mock( '../../../components/date-range-picker', () => ( {
-	DateRangePicker: ( { onChange }: any ) => (
+	DateRangePicker: () => (
 		<div>
-			<button
-				onClick={ () =>
-					onChange( { start: new Date( '2025-01-01' ), end: new Date( '2025-01-02' ) } )
-				}
-			>
-				Set non-last7 (yesterday)
-			</button>
-			<button
-				onClick={ () => {
-					const end = new Date();
-					const start = new Date( end );
-					start.setDate( end.getDate() - 6 );
-					onChange( { start, end } );
-				} }
-			>
-				Set last7
-			</button>
+			{ /* Keep the buttons in the DOM so tests find them, but remove onClick handlers */ }
+			<button>Set non-last7 (yesterday)</button>
+			<button>Set last7</button>
 		</div>
 	),
 } ) );
@@ -168,89 +154,116 @@ afterAll( () => {
 	nock.enableNetConnect();
 } );
 
-test( 'navigates on tab select for PHP errors/Web server/Activity', async () => {
-	const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
-		__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
-	};
-	featureMocks.hasHostingFeatureMock.mockReturnValue( true );
-	featureMocks.hasPlanFeatureMock.mockReturnValue( false );
-	nockSiteAndSettings();
+describe( 'SiteLogs page', () => {
+	test( 'navigates on tab select for PHP errors/Web server/Activity', async () => {
+		const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
+			__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
+		};
+		featureMocks.hasHostingFeatureMock.mockReturnValue( true );
+		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
+		nockSiteAndSettings();
 
-	render( <SiteLogs logType={ LogType.PHP } /> );
+		render( <SiteLogs logType={ LogType.PHP } /> );
 
-	// Wait for data and TabPanel to render
-	await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
+		// Wait for data and TabPanel to render
+		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
 
-	// Click web server and activity tabs
-	await userEvent.click( await screen.findByRole( 'button', { name: 'Web server' } ) );
-	const { __mocks: routerMocks } = jest.requireMock( '@tanstack/react-router' ) as {
-		__mocks: { navigate: jest.Mock };
-	};
-	expect( routerMocks.navigate ).toHaveBeenCalledWith( { to: '/sites/test-site/logs/server' } );
+		// Click web server and activity tabs
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Web server' } ) );
+		const { __mocks: routerMocks } = jest.requireMock( '@tanstack/react-router' ) as {
+			__mocks: { navigate: jest.Mock };
+		};
+		expect( routerMocks.navigate ).toHaveBeenCalledWith( { to: '/sites/test-site/logs/server' } );
 
-	await userEvent.click( await screen.findByRole( 'button', { name: 'Activity' } ) );
-	expect( routerMocks.navigate ).toHaveBeenCalledWith( { to: '/sites/test-site/logs/activity' } );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Activity' } ) );
+		expect( routerMocks.navigate ).toHaveBeenCalledWith( { to: '/sites/test-site/logs/activity' } );
 
-	await userEvent.click( await screen.findByRole( 'button', { name: 'PHP errors' } ) );
-	expect( routerMocks.navigate ).toHaveBeenCalledWith( { to: '/sites/test-site/logs/php' } );
-} );
-
-test( 'URL from/to params are normalized from ms to seconds', async () => {
-	const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
-		__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
-	};
-	featureMocks.hasHostingFeatureMock.mockReturnValue( true );
-	featureMocks.hasPlanFeatureMock.mockReturnValue( false );
-	nockSiteAndSettings();
-
-	const replaceSpy = jest.spyOn( window.history, 'replaceState' );
-	const msFrom = 1730000000000; // ms
-	const msTo = 1730086400000; // ms
-	const originalHref = window.location.href;
-	Object.defineProperty( window, 'location', {
-		value: { href: `https://example.com?from=${ msFrom }&to=${ msTo }` },
-		writable: true,
+		await userEvent.click( await screen.findByRole( 'button', { name: 'PHP errors' } ) );
+		expect( routerMocks.navigate ).toHaveBeenCalledWith( { to: '/sites/test-site/logs/php' } );
 	} );
 
-	render( <SiteLogs logType={ LogType.PHP } /> );
+	test( 'URL from/to params are normalized from ms to seconds', async () => {
+		const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
+			__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
+		};
+		featureMocks.hasHostingFeatureMock.mockReturnValue( true );
+		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
+		nockSiteAndSettings();
 
-	await waitFor( () => expect( replaceSpy ).toHaveBeenCalled() );
-	const hrefArgs = replaceSpy.mock.calls
-		.map( ( call ) => call?.[ 2 ] )
-		.filter( ( v ): v is string => typeof v === 'string' );
-	expect( hrefArgs.some( ( h ) => h.includes( `from=${ Math.floor( msFrom / 1000 ) }` ) ) ).toBe(
-		true
-	);
-	expect( hrefArgs.some( ( h ) => h.includes( `to=${ Math.floor( msTo / 1000 ) }` ) ) ).toBe(
-		true
-	);
+		const replaceSpy = jest.spyOn( window.history, 'replaceState' );
+		const msFrom = 1730000000000; // ms
+		const msTo = 1730086400000; // ms
+		const originalHref = window.location.href;
+		Object.defineProperty( window, 'location', {
+			value: { href: `https://example.com?from=${ msFrom }&to=${ msTo }` },
+			writable: true,
+		} );
 
-	// restore
-	Object.defineProperty( window, 'location', { value: { href: originalHref } } );
-	replaceSpy.mockRestore();
-} );
+		render( <SiteLogs logType={ LogType.PHP } /> );
 
-test( 'auto-refresh is blocked for non-last-7 (yesterday) range and shows warning notice', async () => {
-	const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
-		__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
-	};
-	featureMocks.hasHostingFeatureMock.mockImplementation(
-		( _site: unknown, feature: unknown ) => feature === HostingFeatures.LOGS
-	);
-	featureMocks.hasPlanFeatureMock.mockReturnValue( false );
-	nockSiteAndSettings();
+		await waitFor( () => expect( replaceSpy ).toHaveBeenCalled() );
+		const hrefArgs = replaceSpy.mock.calls
+			.map( ( call ) => call?.[ 2 ] )
+			.filter( ( v ): v is string => typeof v === 'string' );
+		expect( hrefArgs.some( ( h ) => h.includes( `from=${ Math.floor( msFrom / 1000 ) }` ) ) ).toBe(
+			true
+		);
+		expect( hrefArgs.some( ( h ) => h.includes( `to=${ Math.floor( msTo / 1000 ) }` ) ) ).toBe(
+			true
+		);
 
-	render( <SiteLogs logType={ LogType.PHP } /> );
+		// restore
+		Object.defineProperty( window, 'location', { value: { href: originalHref } } );
+		replaceSpy.mockRestore();
+	} );
 
-	await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
+	test( 'auto-refresh is blocked for non-last-7 (yesterday) range and shows warning notice', async () => {
+		const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
+			__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
+		};
+		featureMocks.hasHostingFeatureMock.mockImplementation(
+			( _site: unknown, feature: unknown ) => feature === HostingFeatures.LOGS
+		);
+		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
+		nockSiteAndSettings();
 
-	// Set a non-last-7 range, then attempt to enable auto-refresh via stub button
-	await userEvent.click(
-		await screen.findByRole( 'button', { name: 'Set non-last7 (yesterday)' } )
-	);
-	await userEvent.click( await screen.findByRole( 'button', { name: 'Toggle auto' } ) );
+		// Mock the last-7 check to return false
+		const dateRangeUtils = jest.requireActual( '../../../components/date-range-picker/utils' ) as {
+			isLast7Days: ( range: any ) => boolean;
+		};
+		jest.spyOn( dateRangeUtils, 'isLast7Days' ).mockReturnValue( false );
 
-	expect(
-		screen.getByText( 'Auto-refresh only works with "Last 7 days" preset' )
-	).toBeInTheDocument();
+		render( <SiteLogs logType={ LogType.PHP } /> );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Toggle auto' } ) );
+
+		expect(
+			screen.getByText( 'Auto-refresh only works with "Last 7 days" preset' )
+		).toBeInTheDocument();
+	} );
+
+	test( 'auto-refresh is allowed for last-7 range and does not show warning notice', async () => {
+		const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
+			__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
+		};
+		featureMocks.hasHostingFeatureMock.mockReturnValue( true );
+		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
+		nockSiteAndSettings();
+
+		// Mock the last-7 check to always allow auto-refresh
+		const dateRangeUtils = jest.requireActual( '../../../components/date-range-picker/utils' ) as {
+			isLast7Days: ( range: any ) => boolean;
+		};
+		jest.spyOn( dateRangeUtils, 'isLast7Days' ).mockReturnValue( true );
+
+		render( <SiteLogs logType={ LogType.PHP } /> );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Toggle auto' } ) );
+
+		expect(
+			screen.queryByText( 'Auto-refresh only works with "Last 7 days" preset' )
+		).not.toBeInTheDocument();
+	} );
 } );
