@@ -1119,6 +1119,7 @@ const CheckoutSummaryTitleContent = styled.span`
 
 const CheckoutSummaryTitle = styled.span`
 	display: flex;
+	align-items: center;
 `;
 
 const CheckoutSummaryTitleIcon = styled( Gridicon )`
