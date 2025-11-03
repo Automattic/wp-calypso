@@ -98,7 +98,7 @@ const flexSite: FlowV2< typeof initialize > = {
 	useStepNavigation( currentStep, navigate ) {
 		const { setSiteTitle, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings } = useDispatch( SITE_STORE );
-		const { site, siteSlug } = useSiteData();
+		const { site, siteSlug, siteId } = useSiteData();
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep as any;
@@ -114,41 +114,51 @@ const flexSite: FlowV2< typeof initialize > = {
 					if ( providedDependencies?.siteName ) {
 						setSiteTitle( providedDependencies.siteName );
 
-						if ( site?.ID ) {
-							const currentSiteId = site.ID;
-							const currentSiteSlug = siteSlug || site.slug;
-							const selectedSiteName = providedDependencies.siteName;
-							const isFlexSite = Boolean(
-								( site as { is_wpcom_flex?: boolean } | null )?.is_wpcom_flex
-							);
+						const currentSiteId = site?.ID ?? siteId;
+						const currentSiteSlug =
+							siteSlug || site?.slug || ( providedDependencies?.siteSlug as string | undefined );
+						const siteIdentifierForApi = currentSiteId ?? currentSiteSlug;
+						const selectedSiteName = providedDependencies.siteName;
+						const isFlexSite = Boolean(
+							( site as { is_wpcom_flex?: boolean } | null )?.is_wpcom_flex
+						);
 
+						if ( siteIdentifierForApi && ( currentSiteId || isFlexSite ) ) {
 							// Set pending action to update site title on both the shadow site and the Atomic site.
 							setPendingAction( async () => {
-								const requests: Array< Promise< unknown > > = [
-									saveSiteSettings( currentSiteId, { blogname: selectedSiteName } ),
-								];
+								const requests: Array< Promise< unknown > > = [];
+
+								if ( currentSiteId ) {
+									requests.push(
+										saveSiteSettings( currentSiteId, { blogname: selectedSiteName } )
+									);
+								}
 
 								if ( isFlexSite ) {
-									const formData: Array< [ string, string ] > = [
-										[ 'settings', JSON.stringify( { blogname: selectedSiteName } ) ],
-									];
+									const encodedSiteIdentifier = encodeURIComponent(
+										String( siteIdentifierForApi )
+									);
 
 									requests.push(
 										wpcomRequest( {
-											path: `/sites/${ currentSiteId }/onboarding-customization`,
-											apiNamespace: 'wpcom/v2',
+											path: `/sites/${ encodedSiteIdentifier }/settings`,
+											apiNamespace: 'wp/v2',
 											method: 'POST',
-											formData,
+											body: { title: selectedSiteName },
 										} )
 									);
 								}
 
 								await Promise.all( requests );
 
-								return {
-									siteSlug: currentSiteSlug,
-								};
+								return currentSiteSlug
+									? {
+											siteSlug: currentSiteSlug,
+									  }
+									: {};
 							} );
+						} else {
+							setPendingAction( undefined );
 						}
 					}
 					// Navigate to processing step to update site title
