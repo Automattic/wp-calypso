@@ -52,7 +52,7 @@ export default function SetupStep( {
 			onToggle={ onToggle }
 			isBorderless
 		>
-			<VStack spacing={ 4 }>
+			<VStack spacing={ 4 } style={ { paddingLeft: '32px' } }>
 				{ children }
 				<CheckboxControl checked={ completed } onChange={ onCheckboxChange } label={ label } />
 			</VStack>

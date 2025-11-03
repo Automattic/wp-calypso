@@ -4,7 +4,7 @@ import {
 	type DomainConnectionSetupModeValue,
 	DomainMappingStatus,
 } from '@automattic/api-core';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import ConnectionModeCard from './connection-mode-card';
@@ -64,10 +64,13 @@ export default function DomainConnectionSetup( {
 			title: __( '3. Update DNS records' ),
 			label: __( 'I have updated the DNS settings' ),
 			content: (
-				<NameserversDataView
-					domainMappingStatus={ domainMappingStatus }
-					domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				/>
+				<VStack spacing={ 6 }>
+					<Text>{ __( 'Replace all name server records with the values below.' ) }</Text>
+					<NameserversDataView
+						domainMappingStatus={ domainMappingStatus }
+						domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					/>
+				</VStack>
 			),
 		},
 	];
@@ -93,11 +96,14 @@ export default function DomainConnectionSetup( {
 			title: __( '3. Update name servers' ),
 			label: __( 'I have updated the name servers' ),
 			content: (
-				<DNSRecordsDataView
-					domainName={ domainName }
-					domainMappingStatus={ domainMappingStatus }
-					domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				/>
+				<VStack spacing={ 6 }>
+					<Text>{ __( 'Replace all name server records with the values below.' ) }</Text>
+					<DNSRecordsDataView
+						domainName={ domainName }
+						domainMappingStatus={ domainMappingStatus }
+						domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					/>
+				</VStack>
 			),
 		},
 	];
