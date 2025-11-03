@@ -7,9 +7,9 @@ export interface SocialLoginConnection {
 }
 
 export interface UserMetaData {
-	links: Record< 'self' | 'help' | 'site' | 'flags', string >;
+	links: Partial< Record< 'self' | 'help' | 'site' | 'flags', string > >;
 	data: {
-		flags: {
+		flags?: {
 			active_flags: string[];
 		};
 	};
@@ -39,7 +39,7 @@ export interface User {
 	lasagna_jwt: string;
 	locale_variant: string;
 	logout_URL: string;
-	meta?: UserMetaData;
+	meta: UserMetaData;
 	newest_note_type: string;
 	phone_account: boolean;
 	primary_blog: number;

@@ -38,6 +38,10 @@ const defaultContext: HelpCenterRequiredInformation = {
 		lasagna_jwt: '',
 		locale_variant: '',
 		logout_URL: '',
+		meta: {
+			links: {},
+			data: {},
+		},
 		newest_note_type: '',
 		phone_account: false,
 		primary_blog: 0,
