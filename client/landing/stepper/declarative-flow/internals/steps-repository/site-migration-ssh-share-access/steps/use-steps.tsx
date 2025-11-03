@@ -41,6 +41,7 @@ interface StepsDataOptions {
 	onNoSSHAccess: () => void;
 	isTransferring: boolean;
 	shouldGenerateKey: boolean;
+	isInputDisabled: boolean;
 }
 
 interface StepData {
@@ -77,6 +78,7 @@ interface UseStepsOptions {
 	onNoSSHAccess: () => void;
 	migrationStatus?: 'queued' | 'in-progress' | 'migrating' | 'completed' | 'failed';
 	isTransferring: boolean;
+	isInputDisabled: boolean;
 }
 
 interface SSHFormState {
@@ -148,6 +150,7 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					helpLink={ helpLink }
 					isTransferring={ options.isTransferring }
 					shouldGenerateKey={ options.shouldGenerateKey }
+					isInputDisabled={ options.isInputDisabled }
 				/>
 			),
 		},
@@ -164,6 +167,7 @@ export const useSteps = ( {
 	host,
 	migrationStatus,
 	isTransferring,
+	isInputDisabled,
 }: UseStepsOptions ): StepsObject => {
 	const [ currentStep, setCurrentStep ] = useState( -1 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
@@ -317,6 +321,7 @@ export const useSteps = ( {
 		host,
 		isTransferring,
 		shouldGenerateKey,
+		isInputDisabled,
 	} );
 
 	const isComplete = ( stepKey: string ) => {

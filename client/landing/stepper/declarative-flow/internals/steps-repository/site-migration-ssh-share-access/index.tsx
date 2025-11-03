@@ -78,6 +78,8 @@ const SiteMigrationSshShareAccess: StepType< {
 		}
 	);
 
+	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
+
 	const { steps, formState, canStartMigration, onMigrationStarted, setMigrationError } = useSteps( {
 		fromUrl,
 		siteId,
@@ -86,9 +88,8 @@ const SiteMigrationSshShareAccess: StepType< {
 		onNoSSHAccess: handleNoSSHAccess,
 		migrationStatus: migrationStatus?.status,
 		isTransferring,
+		isInputDisabled: isStartingMigration || migrationStarted || shouldStartMigration,
 	} );
-
-	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
 
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
 	useEffect( () => {

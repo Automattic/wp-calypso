@@ -26,6 +26,7 @@ interface StepShareSSHAccessProps {
 	helpLink: ReactNode;
 	isTransferring: boolean;
 	shouldGenerateKey: boolean;
+	isInputDisabled: boolean;
 }
 
 export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
@@ -46,6 +47,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 	helpLink,
 	isTransferring,
 	shouldGenerateKey,
+	isInputDisabled,
 } ) => {
 	const translate = useTranslate();
 	const [ copied, setCopied ] = useState( false );
@@ -109,6 +111,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 									onUsernameChange( e.target.value )
 								}
 								placeholder={ translate( 'Enter your SSH username' ) }
+								disabled={ isInputDisabled }
 							/>
 						</div>
 
@@ -123,6 +126,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 									onPasswordChange( e.target.value )
 								}
 								placeholder={ translate( 'Enter your SSH password' ) }
+								disabled={ isInputDisabled }
 							/>
 						</div>
 					</>
