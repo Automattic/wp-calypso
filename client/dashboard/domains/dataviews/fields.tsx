@@ -47,7 +47,7 @@ export const useFields = ( {
 		() => [
 			{
 				id: 'domain',
-				label: __( 'Domain' ),
+				label: __( 'Domain name' ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,

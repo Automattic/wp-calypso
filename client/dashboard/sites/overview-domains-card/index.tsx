@@ -12,6 +12,7 @@ import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
 import DomainUpsellCard from '../overview-domain-upsell-card';
@@ -42,7 +43,7 @@ const SiteDomainDataViews = ( {
 		() => ( {
 			...initialView,
 			type,
-			fields: [ 'ssl_status', 'domain_status' ],
+			fields: [ 'expiry', 'domain_status' ],
 		} ),
 		[ initialView, type ]
 	);
@@ -62,7 +63,7 @@ const SiteDomainDataViews = ( {
 				} }
 			>
 				<SectionHeader
-					title={ __( 'Domains' ) }
+					title={ __( 'Domain names' ) }
 					level={ 3 }
 					actions={
 						<RouterLinkButton
@@ -126,6 +127,10 @@ export default function DomainsCard( { site, isCompact }: { site: Site; isCompac
 
 	if ( ! siteDomains.find( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS ) ) {
 		return <DomainUpsellCard site={ site } />;
+	}
+
+	if ( isDashboardBackport() ) {
+		return null;
 	}
 
 	return (
