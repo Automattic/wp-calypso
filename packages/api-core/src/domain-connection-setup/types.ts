@@ -16,6 +16,7 @@ export type DomainMappingStatus = {
 	has_wpcom_ip_addresses: boolean;
 	has_cloudflare_ip_addresses: boolean;
 	has_mx_records: boolean;
+	www_cname_record_target: string | null;
 	resolves_to_wpcom: boolean;
 	host_ip_addresses: string[];
 	name_servers: string[];

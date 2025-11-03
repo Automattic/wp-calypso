@@ -1,0 +1,21 @@
+.dns-records-dataview {
+	// Remove default search and filters from DataViews
+	.dataviews-wrapper .dataviews-view-config,
+	.dataviews-wrapper .dataviews-search,
+	.dataviews-wrapper .dataviews-filters__container {
+		display: none;
+	}
+
+	.dns-records-dataview__type,
+	.dns-records-dataview__name,
+	.dns-records-dataview__current-value,
+	.dns-records-dataview__update-to {
+		font-size: 14px;
+	}
+
+	.dns-records-dataview__arrow {
+		flex-shrink: 0;
+		margin-inline-start: 8px;
+	}
+}
+

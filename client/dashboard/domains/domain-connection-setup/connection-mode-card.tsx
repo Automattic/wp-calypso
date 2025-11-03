@@ -15,7 +15,7 @@ import SetupStep from './setup-step';
 interface ConnectionModeStep {
 	title: string;
 	label: string;
-	content: string;
+	content: React.ReactNode;
 }
 
 interface ConnectionModeCardProps {
@@ -113,7 +113,7 @@ export default function ConnectionModeCard( {
 								title={ step.title }
 								label={ step.label }
 							>
-								<Text>{ step.content }</Text>
+								{ step.content }
 							</SetupStep>
 							{ index < steps.length - 1 && <CardDivider /> }
 						</>

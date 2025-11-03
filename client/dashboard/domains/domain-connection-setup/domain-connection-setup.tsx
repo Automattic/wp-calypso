@@ -8,6 +8,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import ConnectionModeCard from './connection-mode-card';
+import DNSRecordsDataView from './dns-records-dataview';
 
 interface DomainConnectionSetupProps {
 	domainName: string;
@@ -23,6 +24,7 @@ export default function DomainConnectionSetup( {
 	isUpdatingConnectionMode,
 	domainMappingStatus,
 	domainName,
+	domainConnectionSetupInfo,
 }: DomainConnectionSetupProps ) {
 	const [ connectionMode, setConnectionMode ] = useState< DomainConnectionSetupModeValue >(
 		domainMappingStatus.has_mx_records
@@ -84,7 +86,13 @@ export default function DomainConnectionSetup( {
 		{
 			title: __( '3. Update name servers' ),
 			label: __( 'I have updated the name servers' ),
-			content: __( 'Content placeholder' ),
+			content: (
+				<DNSRecordsDataView
+					domainName={ domainName }
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			),
 		},
 	];
 
