@@ -181,7 +181,7 @@ export class SidebarComponent {
 	 */
 	async addSite(): Promise< void > {
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForURL( /.*/ ),
 			this.page.click( selectors.linkWithText( 'Add New Site' ) ),
 		] );
 	}

@@ -49,7 +49,7 @@ export class SiteSelectComponent {
 		await this.page.waitForSelector( '.is-loading', { state: 'hidden', timeout: 60 * 1000 } );
 
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForURL( /.*/ ),
 			this.page.click( `${ selectors.siteList } :text("${ url }")`, { timeout: 60 * 1000 } ),
 		] );
 

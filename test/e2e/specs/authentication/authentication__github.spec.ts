@@ -63,13 +63,9 @@ test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () =>
 		await test.step( 'And I handle GitHub device verification if needed', async function () {
 			// GitHub may show a device verification screen in CI
 			const verificationUrl = 'https://github.com/sessions/verified-device';
-			const response = await page.waitForNavigation();
+			await page.waitForURL( /.*/ );
 
-			if ( ! response ) {
-				throw new Error( 'Navigation failed - no response received' );
-			}
-
-			if ( response.url() === verificationUrl ) {
+			if ( page.url() === verificationUrl ) {
 				// If we're on the verification screen, click the verify button
 				await pageGitHubLogin.clickButtonWithExactText( 'Verify' );
 			}
@@ -78,13 +74,9 @@ test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () =>
 		await test.step( 'And I skip GitHub trust device if needed', async function () {
 			// GitHub may show a device verification screen in CI
 			const verificationUrl = 'https://github.com/sessions/trusted-device';
-			const response = await page.waitForNavigation();
+			await page.waitForURL( /.*/ );
 
-			if ( ! response ) {
-				throw new Error( 'Navigation failed - no response received' );
-			}
-
-			if ( response.url() === verificationUrl ) {
+			if ( page.url() === verificationUrl ) {
 				// If we're on the trusted device screen, skip it
 				await pageGitHubLogin.clickButtonWithExactText( "Don't ask again for this browser" );
 			}

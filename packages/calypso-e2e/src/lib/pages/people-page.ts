@@ -70,7 +70,7 @@ export class PeoplePage {
 		// For Invites tab, wait for the full request to be completed.
 		if ( name === 'Invites' ) {
 			await Promise.all( [
-				this.page.waitForNavigation( { url: '**/people/invites/**', waitUntil: 'networkidle' } ),
+				this.page.waitForURL( '**/people/invites/**', { waitUntil: 'networkidle' } ),
 				clickNavTab( this.page, name ),
 			] );
 			return;
@@ -87,7 +87,7 @@ export class PeoplePage {
 	 */
 	async selectUser( username: string ): Promise< void > {
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForURL( /.*/ ),
 			this.page.click( selectors.teamUser( username ) ),
 		] );
 	}
@@ -123,7 +123,7 @@ export class PeoplePage {
 		await this.waitUntilLoaded();
 
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForURL( /.*/ ),
 			this.page.click( selectors.invitePeopleButton ),
 		] );
 	}
@@ -165,7 +165,7 @@ export class PeoplePage {
 		await reloadAndRetry( this.page, waitForInviteToAppear );
 
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForURL( /.*/ ),
 			this.page.click( selectors.invitedUser( emailAddress ) ),
 		] );
 	}

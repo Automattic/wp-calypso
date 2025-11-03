@@ -46,7 +46,7 @@ export class MyHomePage {
 	 */
 	async visitSite(): Promise< void > {
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForURL( /.*/ ),
 			this.page.click( selectors.visitSiteButton ),
 		] );
 	}
@@ -106,7 +106,7 @@ export class MyHomePage {
 	 */
 	async clickBuySuggestedDomain( buyDomainButton: string ): Promise< void > {
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForURL( /.*/ ),
 			this.page.click( selectors.domainUpsellBuyDomain( buyDomainButton ) ),
 		] );
 	}

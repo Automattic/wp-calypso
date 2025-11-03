@@ -63,7 +63,7 @@ export class AccountSettingsPage {
 
 		// Wait for the async navigation after clicking on the initial `Close Account` link at /me/account.
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForURL( /.*/ ),
 			this.page.click( selectors.closeAccountLink ),
 		] );
 

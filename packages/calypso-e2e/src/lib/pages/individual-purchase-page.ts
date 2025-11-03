@@ -70,7 +70,7 @@ export class IndividualPurchasePage {
 	async clickRenewNowCardButton(): Promise< void > {
 		// This triggers a real navigation to the `/checkout/<site_name>` endpoint.
 		await Promise.all( [
-			this.page.waitForNavigation( { url: /.*\/checkout.*/ } ),
+			this.page.waitForURL( /.*\/checkout.*/ ),
 			await Promise.race( [
 				this.page.click( selectors.renewNowCardButton ),
 				this.page.click( selectors.renewAnnuallyCardButton ),
@@ -120,7 +120,7 @@ export class IndividualPurchasePage {
 		await Promise.all( [
 			// Extended timeout here due to this process often taking long time for
 			// domain-only accounts.
-			this.page.waitForNavigation( { timeout: 60000 } ),
+			this.page.waitForURL( /.*/, { timeout: 60000 } ),
 			this.page.click( selectors.button( 'Cancel Domain' ) ),
 		] );
 	}
@@ -132,7 +132,7 @@ export class IndividualPurchasePage {
 	 */
 	async cancelPurchase(): Promise< void > {
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForURL( /.*/ ),
 			this.page.click( selectors.cancelAndRefundButton ),
 		] );
 

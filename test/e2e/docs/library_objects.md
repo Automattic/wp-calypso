@@ -62,7 +62,7 @@ export class SomeComponent {
 	 */
 	async clickOnMenu( menu: string ): Promise< void > {
 		await this.page.click( selectors.myHome );
-		await this.page.waitForNavigation();
+		await this.page.waitForURL( /.*/ );
 	}
 }
 

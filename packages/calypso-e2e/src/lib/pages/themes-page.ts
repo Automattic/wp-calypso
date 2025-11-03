@@ -57,7 +57,7 @@ export class ThemesPage {
 
 		const searchInput = await this.page.waitForSelector( selectors.searchInput );
 		await searchInput.fill( keyword );
-		await Promise.all( [ this.page.waitForNavigation(), searchInput.press( 'Enter' ) ] );
+		await Promise.all( [ this.page.waitForURL( /.*/ ), searchInput.press( 'Enter' ) ] );
 		await this.page.waitForSelector( selectors.placeholder, { state: 'detached' } );
 	}
 
@@ -104,7 +104,7 @@ export class ThemesPage {
 		// Wait for the fade-in animation to complete.
 		await selectedTheme.waitForElementState( 'stable' );
 		// Clicking on the INFO button will always result in navigation to a new page.
-		await Promise.all( [ this.page.waitForNavigation(), selectedTheme.click() ] );
+		await Promise.all( [ this.page.waitForURL( /.*/ ), selectedTheme.click() ] );
 	}
 
 	/**

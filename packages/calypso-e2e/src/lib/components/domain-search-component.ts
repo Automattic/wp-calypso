@@ -235,7 +235,7 @@ export class DomainSearchComponent {
 		} );
 
 		// Now click the enabled button using dispatchEvent to handle issues with the environment badge staying on top of the button.
-		await Promise.all( [ continueButton.dispatchEvent( 'click' ), this.page.waitForNavigation() ] );
+		await Promise.all( [ this.page.waitForURL( /.*/ ), continueButton.dispatchEvent( 'click' ) ] );
 	}
 
 	/**
