@@ -1,3 +1,4 @@
+import { DomainConnectionSetupMode } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import {
 	Icon,
@@ -63,7 +64,9 @@ export default function DomainConnectionVerification( {
 					) }
 
 					<Text size="medium" weight={ 500 }>
-						{ __( 'DNS record verification' ) }
+						{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
+							? __( 'Name server verification' )
+							: __( 'DNS record verification' ) }
 					</Text>
 
 					<DnsRecordsTable domainName={ domainName } />

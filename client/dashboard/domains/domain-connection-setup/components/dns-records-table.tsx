@@ -1,3 +1,4 @@
+import { DomainConnectionSetupMode } from '@automattic/api-core';
 import { domainMappingStatusQuery, domainQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -9,7 +10,16 @@ import type { Field, ViewTable } from '@wordpress/dataviews';
 
 import './dns-records-table-style.scss';
 
-const view: ViewTable = {
+const viewSuggested: ViewTable = {
+	type: 'table',
+	page: 1,
+	fields: [ 'currentValue', 'expectedValue', 'status' ],
+	layout: {
+		enableMoving: false,
+	},
+};
+
+const viewAdvanced: ViewTable = {
 	type: 'table',
 	page: 1,
 	fields: [ 'type', 'name', 'currentValue', 'expectedValue', 'status' ],
@@ -18,7 +28,13 @@ const view: ViewTable = {
 	},
 };
 
-interface DnsRecordVerification {
+interface DnsRecordSuggestedVerification {
+	currentValue: string;
+	expectedValue: string;
+	status: React.ReactNode;
+}
+
+interface DnsRecordAdvancedVerification {
 	type: string;
 	name: string;
 	currentValue: string;
@@ -26,7 +42,37 @@ interface DnsRecordVerification {
 	status: React.ReactNode;
 }
 
-const fields: Field< DnsRecordVerification >[] = [
+const fieldsSuggested: Field< DnsRecordSuggestedVerification >[] = [
+	{
+		id: 'currentValue',
+		label: __( 'Current Value' ),
+		type: 'text' as const,
+		readOnly: true,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
+	},
+	{
+		id: 'expectedValue',
+		label: __( 'Expected Value' ),
+		type: 'text' as const,
+		readOnly: true,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
+	},
+	{
+		id: 'status',
+		label: __( 'Status' ),
+		type: 'text' as const,
+		readOnly: true,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
+	},
+];
+
+const fieldsAdvanced: Field< DnsRecordAdvancedVerification >[] = [
 	{
 		id: 'type',
 		label: __( 'Type' ),
@@ -102,41 +148,84 @@ const wwwCnameRecordData = ( currentValue: string, expectedValue: string ) => {
 	};
 };
 
+const nameServerRecordData = ( currentValue: string, expectedValue: string ) => {
+	return {
+		currentValue: currentValue,
+		expectedValue: expectedValue,
+		status: currentValue === expectedValue ? <VerifiedBadge /> : <VerifyingBadge />,
+	};
+};
+
 export default function DnsRecordsTable( { domainName }: { domainName: string } ) {
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: domainMappingStatus } = useSuspenseQuery( domainMappingStatusQuery( domainName ) );
 
-	const dnsRecords = useMemo( (): DnsRecordVerification[] => {
-		const data: DnsRecordVerification[] = [];
+	const isSuggestedMode = domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED;
 
-		const currentIpAddresses = ( domainMappingStatus?.host_ip_addresses || [] ).sort();
-		const expectedIpAddresses = ( domain?.a_records_required_for_mapping || [] ).sort();
+	const dnsRecords = useMemo( (): (
+		| DnsRecordAdvancedVerification
+		| DnsRecordSuggestedVerification
+	)[] => {
+		const data: ( DnsRecordAdvancedVerification | DnsRecordSuggestedVerification )[] = [];
 
-		for ( let i = 0; i < Math.max( currentIpAddresses.length, expectedIpAddresses.length ); i++ ) {
-			data.push( aRecordData( currentIpAddresses[ i ], expectedIpAddresses[ i ] ) );
+		if ( isSuggestedMode ) {
+			const currentNameServers = ( domainMappingStatus?.name_servers || [] ).sort();
+			const expectedNameServers = [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ];
+			const longestLength = Math.max( currentNameServers.length, expectedNameServers.length );
+
+			for ( let i = 0; i < longestLength; i++ ) {
+				data.push(
+					nameServerRecordData( currentNameServers[ i ] || '-', expectedNameServers[ i ] || '-' )
+				);
+			}
+		} else {
+			// const currentIpAddresses = ( domainMappingStatus?.host_ip_addresses || [] ).sort();
+			const currentIpAddresses = [ '1.1.1.1' ];
+			const expectedIpAddresses = ( domain?.a_records_required_for_mapping || [] ).sort();
+			const longestLength = Math.max( currentIpAddresses.length, expectedIpAddresses.length );
+
+			for ( let i = 0; i < longestLength; i++ ) {
+				data.push( aRecordData( currentIpAddresses[ i ] || '-', expectedIpAddresses[ i ] || '-' ) );
+			}
+
+			const wwwCnameRecordTarget = domainMappingStatus.www_cname_record_target || '-';
+			data.push( wwwCnameRecordData( wwwCnameRecordTarget, domainName ) );
 		}
 
-		const wwwCnameRecordTarget = domainMappingStatus.www_cname_record_target || '-';
-		data.push( wwwCnameRecordData( wwwCnameRecordTarget, domainName ) );
-
 		return data;
-	}, [ domain, domainName, domainMappingStatus ] );
+	}, [ domain, domainName, domainMappingStatus, isSuggestedMode ] );
 
 	return (
 		<DataViewsCard className="dns-records-table">
-			<DataViews< DnsRecordVerification >
-				data={ dnsRecords }
-				fields={ fields }
-				view={ view }
-				defaultLayouts={ { table: {} } }
-				paginationInfo={ { totalItems: dnsRecords.length, totalPages: 1 } }
-				onChangeView={ () => {} }
-				getItemId={ ( item: DnsRecordVerification ) =>
-					`${ item.type }-${ item.name }-${ item.currentValue }`
-				}
-			>
-				<DataViews.Layout />
-			</DataViews>
+			{ isSuggestedMode ? (
+				<DataViews< DnsRecordSuggestedVerification >
+					data={ dnsRecords as DnsRecordSuggestedVerification[] }
+					fields={ fieldsSuggested }
+					view={ viewSuggested }
+					defaultLayouts={ { table: {} } }
+					paginationInfo={ { totalItems: dnsRecords.length, totalPages: 1 } }
+					onChangeView={ () => {} }
+					getItemId={ ( item: DnsRecordSuggestedVerification ) =>
+						`${ item.currentValue }-${ item.expectedValue }`
+					}
+				>
+					<DataViews.Layout />
+				</DataViews>
+			) : (
+				<DataViews< DnsRecordAdvancedVerification >
+					data={ dnsRecords as DnsRecordAdvancedVerification[] }
+					fields={ fieldsAdvanced }
+					view={ viewAdvanced }
+					defaultLayouts={ { table: {} } }
+					paginationInfo={ { totalItems: dnsRecords.length, totalPages: 1 } }
+					onChangeView={ () => {} }
+					getItemId={ ( item: DnsRecordAdvancedVerification ) =>
+						`${ item.type }-${ item.name }-${ item.currentValue }`
+					}
+				>
+					<DataViews.Layout />
+				</DataViews>
+			) }
 		</DataViewsCard>
 	);
 }
