@@ -7,6 +7,8 @@ import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../../components/dataviews-card';
 import type { Field, ViewTable, View } from '@wordpress/dataviews';
 
+import './dns-records-table-style.scss';
+
 interface FormData {
 	type: string;
 	name: string;
@@ -112,7 +114,7 @@ export default function DnsRecordsTable( { domainName }: { domainName: string } 
 	);
 
 	return (
-		<DataViewsCard>
+		<DataViewsCard className="update-dns-records-table">
 			<DataViews< FormData >
 				data={ filteredData }
 				fields={ fields }
