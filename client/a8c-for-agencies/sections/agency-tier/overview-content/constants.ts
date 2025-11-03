@@ -30,7 +30,7 @@ export const ALL_TIERS: TierItem[] = [
 		description: 'Joining the program',
 		heading: __( 'Essential benefits' ),
 		subheading: __( 'Tools, earning opportunities, support & training and more' ),
-		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'emerging-partner' ],
+		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],
 		benefits: [
 			{
 				icon: tool,
@@ -118,7 +118,7 @@ export const ALL_TIERS: TierItem[] = [
 		),
 		heading: __( '2 additional benefits unlocked' ),
 		subheading: __( 'Directory visibility, early access' ),
-		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],
+		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ],
 		benefits: [
 			{
 				icon: commentAuthorAvatar,
@@ -126,6 +126,17 @@ export const ALL_TIERS: TierItem[] = [
 				description: __(
 					'Eligible for inclusion in Automattic’s agency directories and increased exposure to potential clients.'
 				),
+				actions: [
+					{
+						id: 'manage-profile',
+						label: __( 'Manage your profile' ),
+						href: '/partner-directory/dashboard',
+					},
+					{
+						id: 'download-badge',
+						label: __( 'Download your badges' ),
+					},
+				],
 			},
 			{
 				icon: store,
@@ -147,7 +158,7 @@ export const ALL_TIERS: TierItem[] = [
 		),
 		heading: __( '3 additional benefits unlocked' ),
 		subheading: __( 'Co-marketing, qualified leads, partner manager & more' ),
-		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ],
+		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
 		benefits: [
 			{
 				icon: starHalf,
@@ -169,6 +180,12 @@ export const ALL_TIERS: TierItem[] = [
 				description: __(
 					'Pro partners receive access to an assigned agency partner manager for strategic guidance.'
 				),
+				actions: [
+					{
+						id: 'schedule-call',
+						label: __( 'Book time with your partner manager' ),
+					},
+				],
 			},
 		],
 	},
