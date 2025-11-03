@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
 import { Fragment } from 'react';
 import ChatMessage from '..';
-import { getZendeskInitialGreetingMessages } from '../../../constants';
 import { useOdieAssistantContext } from '../../../context';
 import { isCSATMessage } from '../../../utils';
 import {
@@ -15,6 +14,9 @@ import ChatWithSupportLabel from '../../chat-with-support';
 import { getMessageUniqueIdentifier } from '../utils/get-message-unique-identifier';
 import type { Message, MessageRole } from '../../../types';
 import './style.scss';
+
+// Message roles that should be excluded from rendering
+const EXCLUDED_MESSAGE_ROLES = [ 'zendesk-intro' ] as const;
 
 /**
  * Returns the presented role of a message. Replace CSAT messages's role with 'csat' role.
@@ -86,6 +88,10 @@ function clusterMessagesBySender( messages: Message[] ) {
 	const groups = [ currentGroup ];
 
 	for ( const message of sortMessagesByTimestamp( messages ) ) {
+		if ( EXCLUDED_MESSAGE_ROLES.includes( getPresentedRole( message ) as any ) ) {
+			continue;
+		}
+
 		if ( getPresentedRole( message ) !== currentGroup.role ) {
 			currentGroup = {
 				id: crypto.randomUUID(),
@@ -109,9 +115,6 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 		const startingHumanSupport = group.messages.some( isTransitionToSupportMessage );
 		const endingHumanSupport = group.messages.some( isCSATMessage );
 
-		const messagesToRender =
-			group.role === 'zendesk-intro' ? getZendeskInitialGreetingMessages() : group.messages;
-
 		const messageHeader = () => {
 			// Only business messages have a header.
 			if ( group.role === 'business' ) {
@@ -132,7 +135,7 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 					/>
 				) }
 				<div className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }>
-					{ messagesToRender.map( ( message, index ) => (
+					{ group.messages.map( ( message, index ) => (
 						<ChatMessage
 							key={ getMessageUniqueIdentifier( message ) }
 							message={ message }
