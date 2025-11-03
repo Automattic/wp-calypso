@@ -211,7 +211,7 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	) {
 		const text = __( 'Domain settings' );
 		return (
-			<Link to={ domainRoute.fullPath } params={ { domainName: purchase.meta } }>
+			<Link to={ domainRoute.to } params={ { domainName: purchase.meta } }>
 				{ text }
 			</Link>
 		);
