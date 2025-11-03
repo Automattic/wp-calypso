@@ -15,6 +15,10 @@ const isWordPressComProvider = ( site: Site ) => {
 };
 
 export function getSiteProviderName( site: Site ) {
+	/**
+	 * `hosting_provider_guess` frequently returns 'unknown'.
+	 * Use site properties to determine if we are the provider.
+	 */
 	const provider = site.hosting_provider_guess;
 
 	let providerName;
