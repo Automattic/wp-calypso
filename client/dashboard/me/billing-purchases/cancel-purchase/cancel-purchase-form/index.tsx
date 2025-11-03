@@ -29,7 +29,7 @@ import type {
 
 import './style.scss';
 
-export interface CancelPurchaseFormProps {
+interface CancelPurchaseFormProps {
 	atomicRevertCheckOne?: boolean;
 	atomicRevertCheckTwo?: boolean;
 	atomicRevertOnClickCheckOne: ( isChecked: boolean ) => void;

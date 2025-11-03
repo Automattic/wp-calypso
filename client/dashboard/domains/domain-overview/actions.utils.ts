@@ -8,6 +8,18 @@ export const transferableTypes: DomainSubtype[] = [
 ];
 export const disconnectableTypes: DomainSubtype[] = [ DomainSubtype.DOMAIN_REGISTRATION ];
 
+export const canAutoRenewBeTurnedOff = ( purchase: Purchase ) => {
+	if ( [ 'included', 'expired' ].includes( purchase.expiry_status ) ) {
+		return false;
+	}
+
+	if ( purchase.is_refundable && purchase.refund_amount > 0 ) {
+		return true;
+	}
+
+	return purchase.is_auto_renew_enabled;
+};
+
 export const shouldShowTransferAction = ( domain: Domain ) => {
 	if (
 		! domain.current_user_is_owner ||
@@ -56,7 +68,7 @@ export const shouldShowRemoveAction = ( domain: Domain, purchase?: Purchase ) =>
 		return false;
 	}
 
-	if ( purchase.can_disable_auto_renew ) {
+	if ( canAutoRenewBeTurnedOff( purchase ) ) {
 		return false;
 	}
 
@@ -82,7 +94,7 @@ export const shouldShowCancelAction = ( domain: Domain, purchase?: Purchase ) =>
 		return false;
 	}
 
-	if ( ! purchase.can_disable_auto_renew ) {
+	if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 		return false;
 	}
 
