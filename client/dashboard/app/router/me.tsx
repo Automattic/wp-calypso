@@ -307,6 +307,17 @@ export const addPaymentMethodRoute = createRoute( {
 	)
 );
 
+export const cancelPurchaseRoute = createRoute( {
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'cancel',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
+		createLazyRoute( 'cancel-purchase' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const monetizeSubscriptionsRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -771,6 +782,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				purchaseSettingsRoute.addChildren( [
 					purchaseSettingsIndexRoute,
 					changePaymentMethodRoute,
+					cancelPurchaseRoute,
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),

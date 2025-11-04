@@ -598,7 +598,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		mutate: setAutoRenew,
 		error,
 		isPending: isMutationPending,
-	} = useMutation( userPurchaseSetAutoRenewQuery( purchase.ID ) );
+	} = useMutation( userPurchaseSetAutoRenewQuery() );
 	const { user } = useAuth();
 	return (
 		<Card>
@@ -609,7 +609,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 					form={ form }
 					onChange={ ( newData ) => {
 						if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
-							setAutoRenew( newData.is_auto_renew_enabled );
+							setAutoRenew( { purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled } );
 						}
 					} }
 				/>
