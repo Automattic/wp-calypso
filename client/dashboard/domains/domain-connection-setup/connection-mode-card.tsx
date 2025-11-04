@@ -1,4 +1,7 @@
-import { type DomainConnectionSetupModeValue } from '@automattic/api-core';
+import {
+	DomainConnectionSetupMode,
+	type DomainConnectionSetupModeValue,
+} from '@automattic/api-core';
 import {
 	Button,
 	RadioControl,
@@ -7,9 +10,10 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState, Fragment } from 'react';
+import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardHeader, CardDivider } from '../../components/card';
+import Notice from '../../components/notice';
 import SetupStep from './setup-step';
 
 interface ConnectionModeStep {
@@ -100,9 +104,26 @@ export default function ConnectionModeCard( {
 			</CardHeader>
 			{ isSelected && (
 				<CardBody>
-					<Text>{ infoText }</Text>
+					<VStack spacing={ 6 }>
+						{ mode === DomainConnectionSetupMode.SUGGESTED ? (
+							<Notice variant="info" title="No email or other services detected ">
+								<Text>
+									{ __( 'You can safely connect your domain without affecting anything else.' ) }
+								</Text>
+							</Notice>
+						) : (
+							<Notice variant="info" title="Email or other services detected">
+								<Text>
+									{ __(
+										'To avoid disruption, this is the safest way to connect your domain name.'
+									) }
+								</Text>
+							</Notice>
+						) }
+						<Text>{ infoText }</Text>
+					</VStack>
 					{ steps.map( ( step, index ) => (
-						<Fragment key={ step.title }>
+						<div key={ step.title }>
 							<SetupStep
 								className="domain-connection-setup__step"
 								expanded={ stepsExpanded[ index ] }
@@ -115,7 +136,7 @@ export default function ConnectionModeCard( {
 								{ step.content }
 							</SetupStep>
 							{ index < steps.length - 1 && <CardDivider /> }
-						</Fragment>
+						</div>
 					) ) }
 					<ButtonStack justify="flex-start">
 						<Button
