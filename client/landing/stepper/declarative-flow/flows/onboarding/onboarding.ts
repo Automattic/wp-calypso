@@ -23,7 +23,7 @@ import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
-import { ONBOARD_STORE } from '../../../stores';
+import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
@@ -74,6 +74,13 @@ const onboarding: FlowV2< typeof initialize > = {
 			} ),
 			[]
 		);
+
+		// Read previous step from Stepper internal store so Back from Plans can return
+		// to either 'domains' or 'use-my-domain' depending on where the user came from.
+		const previousStep = useSelect( ( select ) => {
+			const data = ( select( STEPPER_INTERNAL_STORE ) as any ).getStepData?.();
+			return data?.previousStep as string | undefined;
+		}, [] );
 		const coupon = useQuery().get( 'coupon' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
@@ -264,7 +271,34 @@ const onboarding: FlowV2< typeof initialize > = {
 					return;
 			}
 		};
-		return { submit };
+
+		/**
+		 * This is a special case for the Plans step because it can be directly re-entered
+		 * without prior in-flow navigation (e.g. returning from Checkout).
+		 * When on the Plans step, the canonical previous step in this flow is the domains
+		 * step, so we send users there instead of relying on browser history or
+		 * transient post-submit steps.
+		 */
+		const plansGoBack = () => {
+			// Prefer the actual previously visited step when available.
+			if ( previousStep === 'use-my-domain' || previousStep === 'domains' ) {
+				return navigate( previousStep );
+			}
+
+			// Fallback: infer from onboarding state when returning from checkout.
+			if ( signupDomainOrigin === SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN ) {
+				return navigate( 'use-my-domain' );
+			}
+
+			return navigate( 'domains' );
+		};
+
+		return {
+			submit,
+			...( currentStepSlug === 'plans' && {
+				goBack: plansGoBack,
+			} ),
+		};
 	},
 	useSideEffect( currentStepSlug ) {
 		const reduxDispatch = useReduxDispatch();
