@@ -4,19 +4,15 @@ import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 
 interface FlashMessageProps {
-	id?: string;
-	value: string;
+	id: string;
 	message: string;
 	type?: 'success' | 'error';
 }
 
-const DEFAULT_PARAM_NAME = 'updated';
+const PARAM_NAME = 'flash';
 
-export function reloadWithFlashMessage( {
-	id = DEFAULT_PARAM_NAME,
-	value,
-}: Omit< FlashMessageProps, 'message' | 'type' > ) {
-	const newUrl = addQueryArgs( window.location.href, { [ id ]: value } );
+export function reloadWithFlashMessage( messageId: string ) {
+	const newUrl = addQueryArgs( window.location.href, { [ PARAM_NAME ]: messageId } );
 	window.location.replace( newUrl );
 }
 
@@ -24,12 +20,7 @@ export function reloadWithFlashMessage( {
  * Allows a snackbar to be shown on page load based on a query parameter.
  * Clears the query parameter when done.
  */
-export default function FlashMessage( {
-	id = DEFAULT_PARAM_NAME,
-	value,
-	message,
-	type = 'success',
-}: FlashMessageProps ) {
+export default function FlashMessage( { id, message, type = 'success' }: FlashMessageProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {
@@ -37,7 +28,7 @@ export default function FlashMessage( {
 			return;
 		}
 		const params = new URLSearchParams( window.location.search );
-		if ( params.get( id ) === value ) {
+		if ( params.get( PARAM_NAME ) === id ) {
 			switch ( type ) {
 				case 'error':
 					createErrorNotice( message, { type: 'snackbar' } );
@@ -47,7 +38,7 @@ export default function FlashMessage( {
 					break;
 			}
 
-			params.delete( id );
+			params.delete( PARAM_NAME );
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );

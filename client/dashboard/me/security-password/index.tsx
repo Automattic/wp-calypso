@@ -48,7 +48,7 @@ export default function SecurityPassword() {
 			{
 				onSuccess: () => {
 					setIsReloading( true );
-					reloadWithFlashMessage( { value: 'password' } );
+					reloadWithFlashMessage( 'password' );
 				},
 				onError: ( error: Error ) => {
 					createErrorNotice( error.message || __( 'Failed to save password.' ), {
@@ -126,7 +126,7 @@ export default function SecurityPassword() {
 				/>
 			}
 		>
-			<FlashMessage value="password" message={ __( 'Your password was saved successfully.' ) } />
+			<FlashMessage id="password" message={ __( 'Your password was saved successfully.' ) } />
 			<Card className="security-password-card">
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

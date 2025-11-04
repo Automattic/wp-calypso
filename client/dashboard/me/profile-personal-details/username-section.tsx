@@ -49,7 +49,7 @@ export default function UsernameSection( {
 	const { mutate: updateUsername, isPending } = useMutation( {
 		...updateUsernameMutation(),
 		onSuccess: () => {
-			reloadWithFlashMessage( { value: 'username' } );
+			reloadWithFlashMessage( 'username' );
 		},
 		meta: {
 			snackbar: {

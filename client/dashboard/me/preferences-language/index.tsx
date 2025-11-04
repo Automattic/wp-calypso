@@ -62,7 +62,7 @@ export default function PreferencesLanguageForm() {
 		const mutationData = formData;
 		mutation.mutate( mutationData, {
 			onSuccess: () => {
-				reloadWithFlashMessage( { value: 'language' } );
+				reloadWithFlashMessage( 'language' );
 			},
 			onError: ( error ) => {
 				// Prepend previous attempted data back into local edits
@@ -209,7 +209,7 @@ export default function PreferencesLanguageForm() {
 
 	return (
 		<form onSubmit={ handleSubmit }>
-			<FlashMessage value="language" message={ __( 'Language setting saved.' ) } />
+			<FlashMessage id="language" message={ __( 'Language setting saved.' ) } />
 			<Card>
 				<CardBody>
 					<VStack spacing={ 3 } className="dasboard-preferences__vstack">
