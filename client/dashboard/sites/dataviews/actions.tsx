@@ -24,7 +24,7 @@ export function useActions(): Action< Site >[] {
 			id: 'admin',
 			isPrimary: true,
 			icon: <Icon icon={ wordpress } />,
-			label: __( 'WP admin ↗' ),
+			label: __( 'WP Admin ↗' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
 				if ( site.options?.admin_url ) {
