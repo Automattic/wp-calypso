@@ -15,6 +15,7 @@ type SiteDataExtraInfo = SiteDetails & {
 	};
 	title: string;
 	capabilities?: Record< string, boolean >;
+	is_garden?: boolean;
 };
 
 // props passed to the component
