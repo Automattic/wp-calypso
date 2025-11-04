@@ -1,5 +1,6 @@
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 
 interface FlashMessageProps {
@@ -10,6 +11,14 @@ interface FlashMessageProps {
 }
 
 const DEFAULT_PARAM_NAME = 'updated';
+
+export function reloadWithFlashMessage( {
+	id = DEFAULT_PARAM_NAME,
+	value,
+}: Omit< FlashMessageProps, 'message' | 'type' > ) {
+	const newUrl = addQueryArgs( window.location.href, { [ id ]: value } );
+	window.location.replace( newUrl );
+}
 
 /**
  * Allows a snackbar to be shown on page load based on a query parameter.

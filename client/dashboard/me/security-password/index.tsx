@@ -17,7 +17,7 @@ import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
-import FlashMessage from '../../components/flash-message';
+import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import type { Field } from '@wordpress/dataviews';
@@ -48,8 +48,7 @@ export default function SecurityPassword() {
 			{
 				onSuccess: () => {
 					setIsReloading( true );
-					// Since changing a user's password invalidates the session, we reload.
-					window.location.replace( '?updated=password' );
+					reloadWithFlashMessage( { value: 'password' } );
 				},
 				onError: ( error: Error ) => {
 					createErrorNotice( error.message || __( 'Failed to save password.' ), {

@@ -148,7 +148,7 @@ function StopSubscriptionButton( {
 	isProduct: boolean;
 	subscription: MonetizeSubscription;
 } ) {
-	const { createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
 	const title = isProduct
 		? // translators: %s is the product title
@@ -166,10 +166,8 @@ function StopSubscriptionButton( {
 					onClick={ () => {
 						stopSubscription( null, {
 							onSuccess: () => {
-								navigate( {
-									to: monetizeSubscriptionsRoute.fullPath,
-									search: { updated: true },
-								} );
+								createSuccessNotice( __( 'This item has been removed.' ), { type: 'snackbar' } );
+								navigate( { to: monetizeSubscriptionsRoute.fullPath } );
 							},
 							onError: () => {
 								if ( isProduct ) {
