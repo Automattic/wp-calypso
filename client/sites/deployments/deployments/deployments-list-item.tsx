@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
+import { getDeploymentTypeFromPath } from '../deployment-creation/deployment-creation-form';
 import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
 import { formatDate } from '../utils/dates';
 import { DeleteDeploymentDialog } from './delete-deployment-dialog';
@@ -137,6 +138,30 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 		setProductionDeploymentModalVisibility( false );
 	};
 
+	const getDeploymentConfirmationMessage = () => {
+		const deploymentType = getDeploymentTypeFromPath( deployment.target_dir );
+
+		switch ( deploymentType ) {
+			case 'plugin':
+				return __(
+					'You are about to deploy changes to your production site. This will replace the plugin in your selected deployment location. The rest of your site will remain unchanged.'
+				);
+			case 'theme':
+				return __(
+					'You are about to deploy changes to your production site. This will replace the theme in your selected deployment location. The rest of your site will remain unchanged.'
+				);
+			case 'wp-content':
+				return __(
+					'You are about to deploy changes to your production site. This will replace the contents of your wp-content directory with the selected repository.'
+				);
+			case 'root':
+			default:
+				return __(
+					'You are about to deploy changes to your production site. This will replace contents of your live site with the selected repository.'
+				);
+		}
+	};
+
 	return (
 		<>
 			<tr>
@@ -186,11 +211,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 			>
 				<div className="github-deployments-production-deployment-dialog">
 					<h1>{ __( 'Deploy to production' ) }</h1>
-					<p>
-						{ __(
-							'You are about to deploy changes to your production site. This will replace contents of your live site with the selected repository.'
-						) }
-					</p>
+					<p>{ getDeploymentConfirmationMessage() }</p>
 					<p>{ __( 'Are you sure you want to continue?' ) }</p>
 				</div>
 			</Dialog>
