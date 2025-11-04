@@ -125,6 +125,10 @@ jest.mock( '../../../components/notice', () => ( {
 	default: ( { children }: any ) => <div>{ children }</div>,
 } ) );
 
+const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
+	__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
+};
+
 function nockSiteAndSettings( {
 	gmtOffset = 0,
 	timezoneString = '',
@@ -156,9 +160,6 @@ afterAll( () => {
 
 describe( 'SiteLogs page', () => {
 	test( 'navigates on tab select for PHP errors/Web server/Activity', async () => {
-		const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
-			__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
-		};
 		featureMocks.hasHostingFeatureMock.mockReturnValue( true );
 		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
 		nockSiteAndSettings();
@@ -183,9 +184,6 @@ describe( 'SiteLogs page', () => {
 	} );
 
 	test( 'URL from/to params are normalized from ms to seconds', async () => {
-		const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
-			__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
-		};
 		featureMocks.hasHostingFeatureMock.mockReturnValue( true );
 		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
 		nockSiteAndSettings();
@@ -218,9 +216,6 @@ describe( 'SiteLogs page', () => {
 	} );
 
 	test( 'auto-refresh is blocked for non-last-7 (yesterday) range and shows warning notice', async () => {
-		const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
-			__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
-		};
 		featureMocks.hasHostingFeatureMock.mockImplementation(
 			( _site: unknown, feature: unknown ) => feature === HostingFeatures.LOGS
 		);
@@ -244,9 +239,6 @@ describe( 'SiteLogs page', () => {
 	} );
 
 	test( 'auto-refresh is allowed for last-7 range and does not show warning notice', async () => {
-		const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
-			__mocks: { hasHostingFeatureMock: jest.Mock; hasPlanFeatureMock: jest.Mock };
-		};
 		featureMocks.hasHostingFeatureMock.mockReturnValue( true );
 		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
 		nockSiteAndSettings();
