@@ -7,12 +7,10 @@ import { useCurrentSupportInteraction } from '../data/use-current-support-intera
 import type { OdieAllBotSlugs } from '../types';
 
 export const useCreateZendeskConversation = (): ( ( {
-	avoidTransfer,
 	interactionId,
 	createdFrom,
 	isFromError,
 }: {
-	avoidTransfer?: boolean;
 	interactionId?: string;
 	createdFrom?: string;
 	isFromError?: boolean;
@@ -33,12 +31,10 @@ export const useCreateZendeskConversation = (): ( ( {
 	const chatId = chat.odieId;
 
 	const createConversation = async ( {
-		avoidTransfer = false,
 		interactionId = '',
 		createdFrom = '',
 		isFromError = false,
 	}: {
-		avoidTransfer?: boolean;
 		interactionId?: string;
 		createdFrom?: string;
 		isFromError?: boolean;
@@ -52,7 +48,6 @@ export const useCreateZendeskConversation = (): ( ( {
 			chat_provider: chat.provider,
 			interaction_id: currentInteractionID,
 			created_from: createdFrom,
-			avoid_transfer: avoidTransfer,
 			is_from_error: isFromError,
 		} );
 
@@ -67,14 +62,12 @@ export const useCreateZendeskConversation = (): ( ( {
 
 		setChat( ( prevChat ) => ( {
 			...prevChat,
-			messages: avoidTransfer
-				? prevChat.messages
-				: [
-						...prevChat.messages,
-						...( isFromError
-							? getOdieOnErrorTransferMessage()
-							: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs ) ),
-				  ],
+			messages: [
+				...prevChat.messages,
+				...( isFromError
+					? getOdieOnErrorTransferMessage()
+					: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs ) ),
+			],
 			status: 'transfer',
 		} ) );
 
