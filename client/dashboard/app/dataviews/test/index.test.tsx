@@ -154,7 +154,7 @@ describe( 'useView', () => {
 				},
 			} );
 
-			const { Wrapper } = createTestWrapper( '/?page=2&search=test' );
+			const { Wrapper } = createTestWrapper( '/?current-param=current-value&page=2&search=test' );
 			const { result } = renderHook( () => useView( { slug, defaultView, defaultFields } ), {
 				wrapper: Wrapper,
 			} );
@@ -211,7 +211,7 @@ describe( 'useView', () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
-			const { Wrapper, getRouter } = createTestWrapper();
+			const { Wrapper, getRouter } = createTestWrapper( '/?current-param=current-value' );
 			const { result } = renderHook( () => useView( { slug, defaultView, defaultFields } ), {
 				wrapper: Wrapper,
 			} );
@@ -232,7 +232,11 @@ describe( 'useView', () => {
 
 			await waitFor( () => {
 				const router = getRouter();
-				expect( router?.state.location.search ).toEqual( { page: 2, search: 'test' } );
+				expect( router?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
+					page: 2,
+					search: 'test',
+				} );
 			} );
 		} );
 	} );
