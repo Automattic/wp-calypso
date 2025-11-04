@@ -2,21 +2,16 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 
 interface UseRotatingLoadingMessagesOptions {
-	isStartingMigration: boolean;
-	migrationStarted: boolean;
-	shouldStartMigration: boolean;
+	isBusy: boolean;
 	rotationInterval?: number;
 }
 
 export const useRotatingLoadingMessages = ( {
-	isStartingMigration,
-	migrationStarted,
-	shouldStartMigration,
+	isBusy,
 	rotationInterval = 3000,
 }: UseRotatingLoadingMessagesOptions ) => {
 	const translate = useTranslate();
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
-	const isBusy = isStartingMigration || migrationStarted || shouldStartMigration;
 
 	const loadingMessages = useMemo(
 		() => [
@@ -45,8 +40,6 @@ export const useRotatingLoadingMessages = ( {
 	const currentMessage = loadingMessages[ currentMessageIndex ];
 
 	return {
-		isBusy,
-		currentMessage,
 		buttonText: isBusy ? currentMessage : translate( 'Continue' ),
 	};
 };

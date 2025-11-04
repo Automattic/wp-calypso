@@ -183,11 +183,11 @@ const SiteMigrationSshShareAccess: StepType< {
 	const displaySiteName = urlToDomain( fromUrl );
 	const hostDisplayName = getSSHHostDisplayName( host );
 
+	const isBusy = isStartingMigration || migrationStarted || shouldStartMigration;
+
 	// Rotating loading messages for continue button
-	const { isBusy, buttonText } = useRotatingLoadingMessages( {
-		shouldStartMigration,
-		isStartingMigration,
-		migrationStarted,
+	const { buttonText } = useRotatingLoadingMessages( {
+		isBusy,
 	} );
 
 	const title = translate( 'Securely share your access' );
