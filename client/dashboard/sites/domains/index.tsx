@@ -53,12 +53,14 @@ function SiteDomains() {
 		fields
 	);
 
+	const redirectTo = `/ciab/sites/${ site.slug }/domains`;
+
 	return (
 		<PageLayout
 			header={
 				<PageHeader
 					title={ __( 'Domains' ) }
-					actions={ <AddDomainButton siteSlug={ site.slug } /> }
+					actions={ <AddDomainButton siteSlug={ site.slug } redirectTo={ redirectTo } /> }
 				/>
 			}
 		>
