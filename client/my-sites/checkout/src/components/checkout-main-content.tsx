@@ -1108,6 +1108,7 @@ const CheckoutSummaryTitleContent = styled.span`
 	font-size: 16px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	justify-content: space-between;
+	align-items: center;
 	margin: 0 auto;
 	padding: 24px;
 	max-width: 600px;
