@@ -5,7 +5,27 @@ import { TestAccount } from '../lib/test-account';
 import pwConfig from './playwright-config';
 
 export default async (): Promise< void > => {
-	const { AUTHENTICATE_ACCOUNTS } = envVariables;
+	const { AUTHENTICATE_ACCOUNTS, CALYPSO_BASE_URL } = envVariables;
+
+	try {
+		const response = await fetch( CALYPSO_BASE_URL, {
+			method: 'HEAD',
+			signal: AbortSignal.timeout( 5000 ),
+		} );
+		if ( ! response.ok ) {
+			throw new Error( `Server responded with status ${ response.status }` );
+		}
+	} catch ( e ) {
+		console.error( `Failed to ping a Calypso server running at ${ CALYPSO_BASE_URL }` );
+		if ( e instanceof Error ) {
+			console.error( `Error: ${ e.message }` );
+		}
+		console.error( 'Either:' );
+		console.error( '  make sure the Calypso development server is running with: `yarn start`, or' );
+		console.error( '  set the CALYPSO_BASE_URL environment variable to the appropriate value.' );
+		console.error( 'Refer to the documentation in `test/e2e/docs/environment_variables.md`.' );
+		process.exit( 1 );
+	}
 
 	// If PWDEBUG mode is enabled (stepping through each step)
 	// don't execute the cookie refresh.
