@@ -69,8 +69,8 @@ export default function DomainConnectionSetup( {
 			),
 		},
 		{
-			title: __( '3. Update DNS records' ),
-			label: __( 'I have updated the DNS settings' ),
+			title: __( '3. Update name servers' ),
+			label: __( 'I have updated the name servers' ),
 			content: (
 				<VStack spacing={ 6 }>
 					<Text>{ __( 'Replace all name server records with the values below.' ) }</Text>
@@ -109,11 +109,15 @@ export default function DomainConnectionSetup( {
 			),
 		},
 		{
-			title: __( '3. Update name servers' ),
-			label: __( 'I have updated the name servers' ),
+			title: __( '3. Update DNS records' ),
+			label: __( 'I have updated the DNS settings' ),
 			content: (
 				<VStack spacing={ 6 }>
-					<Text>{ __( 'Replace all name server records with the values below.' ) }</Text>
+					<Text>
+						{ __(
+							'Replace all A and CNAME records with the values below. You can leave other records (like MX) as they are.'
+						) }
+					</Text>
 					<DNSRecordsDataView
 						domainName={ domainName }
 						domainMappingStatus={ domainMappingStatus }
