@@ -1,5 +1,9 @@
-import { DomainConnectionSetupMode, DomainMappingSetupInfo } from '@automattic/api-core';
-import { domainMappingStatusQuery, domainQuery } from '@automattic/api-queries';
+import {
+	DomainConnectionSetupMode,
+	DomainMappingSetupInfo,
+	DomainMappingStatus,
+} from '@automattic/api-core';
+import { domainQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { DataViews } from '@wordpress/dataviews';
@@ -120,21 +124,22 @@ const nameServerRecordData = ( currentValue: string, expectedValue: string ) => 
 
 export default function DnsRecordsTable( {
 	domainName,
+	domainConnectionStatus,
 	domainConnectionSetupInfo,
 }: {
 	domainName: string;
+	domainConnectionStatus: DomainMappingStatus;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
 } ) {
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: domainMappingStatus } = useSuspenseQuery( domainMappingStatusQuery( domainName ) );
 
-	const isSuggestedMode = domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED;
+	const isSuggestedMode = domainConnectionStatus.mode === DomainConnectionSetupMode.SUGGESTED;
 
 	const dnsRecords = useMemo( () => {
 		const data: DnsRecordVerification[] = [];
 
 		if ( isSuggestedMode ) {
-			const currentNameServers = ( domainMappingStatus?.name_servers || [] ).sort();
+			const currentNameServers = ( domainConnectionStatus?.name_servers || [] ).sort();
 			const expectedNameServers = domainConnectionSetupInfo.wpcom_name_servers;
 			const longestLength = Math.max( currentNameServers.length, expectedNameServers.length );
 
@@ -144,7 +149,7 @@ export default function DnsRecordsTable( {
 				);
 			}
 		} else {
-			const currentIpAddresses = ( domainMappingStatus?.host_ip_addresses || [] ).sort();
+			const currentIpAddresses = ( domainConnectionStatus?.host_ip_addresses || [] ).sort();
 			const expectedIpAddresses = ( domain?.a_records_required_for_mapping || [] ).sort();
 			const longestLength = Math.max( currentIpAddresses.length, expectedIpAddresses.length );
 
@@ -152,12 +157,12 @@ export default function DnsRecordsTable( {
 				data.push( aRecordData( currentIpAddresses[ i ] || '-', expectedIpAddresses[ i ] || '-' ) );
 			}
 
-			const wwwCnameRecordTarget = domainMappingStatus.www_cname_record_target || '-';
+			const wwwCnameRecordTarget = domainConnectionStatus.www_cname_record_target || '-';
 			data.push( wwwCnameRecordData( wwwCnameRecordTarget, domainName ) );
 		}
 
 		return data;
-	}, [ domain, domainName, domainMappingStatus, domainConnectionSetupInfo, isSuggestedMode ] );
+	}, [ domain, domainName, domainConnectionStatus, domainConnectionSetupInfo, isSuggestedMode ] );
 
 	return (
 		<DataViewsCard className="dns-records-table">
