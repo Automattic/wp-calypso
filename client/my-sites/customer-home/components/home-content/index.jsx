@@ -297,7 +297,7 @@ const HomeContent = ( {
 		return (
 			<Notice
 				className="customer-home__studio-sync-notice"
-				text={ translate( 'Open your site in Studio to start syncing.' ) }
+				text={ translate( 'Open your Studio site to start syncing.' ) }
 				icon="sync"
 				showDismiss={ false }
 				status="is-info"
@@ -309,7 +309,7 @@ const HomeContent = ( {
 					} }
 					external
 				>
-					{ translate( 'Open in Studio' ) }
+					{ translate( 'Open Studio' ) }
 				</NoticeAction>
 			</Notice>
 		);
