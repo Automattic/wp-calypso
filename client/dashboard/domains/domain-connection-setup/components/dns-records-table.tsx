@@ -33,8 +33,15 @@ interface DnsRecordVerification {
 	name?: string; // only present in advanced mode
 	currentValue: string;
 	expectedValue: string;
-	status: React.ReactNode;
 }
+
+const VerificationBadge = ( { isVerified }: { isVerified: boolean } ) => {
+	return (
+		<Badge intent={ isVerified ? 'success' : 'warning' }>
+			{ isVerified ? __( 'Verified' ) : __( 'Verifying' ) }
+		</Badge>
+	);
+};
 
 const fieldsSuggested: Field< DnsRecordVerification >[] = [
 	{
@@ -63,6 +70,8 @@ const fieldsSuggested: Field< DnsRecordVerification >[] = [
 		enableHiding: false,
 		enableSorting: false,
 		filterBy: false,
+		getValue: ( { item } ) => item.currentValue === item.expectedValue,
+		render: ( { field, item } ) => <VerificationBadge isVerified={ field.getValue( { item } ) } />,
 	},
 ];
 
@@ -88,21 +97,12 @@ const fieldsAdvanced: Field< DnsRecordVerification >[] = [
 	...fieldsSuggested,
 ];
 
-const VerifiedBadge = () => {
-	return <Badge intent="success">{ __( 'Verified' ) }</Badge>;
-};
-
-const VerifyingBadge = () => {
-	return <Badge intent="warning">{ __( 'Verifying' ) }</Badge>;
-};
-
 const aRecordData = ( currentValue: string, expectedValue: string ) => {
 	return {
 		type: 'A',
 		name: '@',
 		currentValue: currentValue,
 		expectedValue: expectedValue,
-		status: currentValue === expectedValue ? <VerifiedBadge /> : <VerifyingBadge />,
 	};
 };
 
@@ -112,7 +112,6 @@ const wwwCnameRecordData = ( currentValue: string, expectedValue: string ) => {
 		name: 'www',
 		currentValue: currentValue,
 		expectedValue: expectedValue,
-		status: currentValue === expectedValue ? <VerifiedBadge /> : <VerifyingBadge />,
 	};
 };
 
@@ -120,7 +119,6 @@ const nameServerRecordData = ( currentValue: string, expectedValue: string ) => 
 	return {
 		currentValue: currentValue,
 		expectedValue: expectedValue,
-		status: currentValue === expectedValue ? <VerifiedBadge /> : <VerifyingBadge />,
 	};
 };
 
