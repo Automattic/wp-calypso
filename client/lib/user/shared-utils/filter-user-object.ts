@@ -1,9 +1,9 @@
-import { type UserData } from '../user';
 import { getComputedAttributes } from './get-computed-attributes';
+import type { User } from '@automattic/api-core';
 
 const requiredKeys = [ 'ID' ];
 
-export function filterUserObject( user: UserData ): UserData {
+export function filterUserObject( user: User ): User {
 	if ( typeof user !== 'object' ) {
 		throw new Error( 'the /me response is not an object' );
 	}
