@@ -115,8 +115,8 @@ function mockServerLogsOnce() {
 }
 
 const fixedDateRange = {
-	start: new Date( '2025-01-01T00:00:00Z' ),
-	end: new Date( '2025-01-02T00:00:00Z' ),
+	start: new Date( Date.UTC( 2025, 0, 1, 0, 0, 0 ) ),
+	end: new Date( Date.UTC( 2025, 0, 2, 0, 0, 0 ) ),
 };
 
 afterEach( () => {
@@ -149,8 +149,8 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
-		expect( screen.getByText( 'Auto-refresh' ) ).toBeInTheDocument();
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		expect( await screen.findByText( 'Auto-refresh', {} ) ).toBeVisible(); // remove timeout
 		// Also verify PHP logs content renders
 		expect( await screen.findByText( 'Hello', {}, { timeout: 5000 } ) ).toBeVisible();
 		expect( await screen.findByText( 'User', {}, { timeout: 5000 } ) ).toBeVisible();
@@ -173,8 +173,8 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
-		expect( screen.getByText( 'Auto-refresh' ) ).toBeInTheDocument();
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		expect( await screen.findByText( 'Auto-refresh', {} ) ).toBeVisible();
 		// Also verify Server logs content renders
 		expect( await screen.findByText( 'GET', {}, { timeout: 5000 } ) ).toBeVisible();
 		expect( await screen.findByText( '/index', {}, { timeout: 5000 } ) ).toBeVisible();
@@ -199,7 +199,7 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		const toggle = screen.getByRole( 'checkbox', { name: 'Auto-refresh' } );
 		await user.click( toggle );
 		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
@@ -223,7 +223,7 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		const toggle = screen.getByRole( 'checkbox', { name: 'Auto-refresh' } );
 		expect( toggle ).toBeDisabled();
 	} );

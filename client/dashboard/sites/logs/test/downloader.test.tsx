@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { LogType } from '@automattic/api-core';
+import { LogType, FilterType } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
@@ -14,12 +14,29 @@ jest.mock( '@wordpress/i18n', () => ( {
 	sprintf: ( s: string ) => s,
 } ) );
 
+type VStackProps = {
+	children: React.ReactNode;
+	as?: keyof JSX.IntrinsicElements;
+};
+
+type HStackProps = {
+	children: React.ReactNode;
+	as?: keyof JSX.IntrinsicElements;
+};
+
+type ChildrenProps = { children?: React.ReactNode };
+
+interface MockButtonProps {
+	onClick?: () => void;
+	'aria-label'?: string;
+}
+
 jest.mock( '@wordpress/components', () => ( {
-	__experimentalVStack: ( { children }: any ) => <div>{ children }</div>,
-	__experimentalHStack: ( { children }: any ) => <div>{ children }</div>,
-	Tooltip: ( { children }: any ) => <div>{ children }</div>,
+	__experimentalVStack: ( { children }: VStackProps ) => <div>{ children }</div>,
+	__experimentalHStack: ( { children }: HStackProps ) => <div>{ children }</div>,
+	Tooltip: ( { children }: ChildrenProps ) => <div>{ children }</div>,
 	Spinner: () => null,
-	Button: ( { onClick, 'aria-label': ariaLabel }: any ) => (
+	Button: ( { onClick, 'aria-label': ariaLabel }: MockButtonProps ) => (
 		<button aria-label={ ariaLabel ?? 'Button' } onClick={ onClick }>
 			button
 		</button>
@@ -50,6 +67,10 @@ let createObjectURLMock: jest.Mock;
 let revokeObjectURLMock: jest.Mock;
 let anchorClickSpy: jest.SpyInstance;
 
+const { __mocks } = jest.requireMock( '@automattic/api-core' ) as {
+	__mocks: { fetchSiteLogsBatchMock: jest.Mock };
+};
+
 beforeAll( () => {
 	createObjectURLMock = jest.fn( () => 'blob:mock' );
 	revokeObjectURLMock = jest.fn();
@@ -76,9 +97,6 @@ afterAll( () => {
 } );
 
 test( 'downloads logs and records analytics', async () => {
-	const { __mocks } = jest.requireMock( '@automattic/api-core' ) as {
-		__mocks: { fetchSiteLogsBatchMock: jest.Mock };
-	};
 	__mocks.fetchSiteLogsBatchMock.mockResolvedValueOnce( {
 		logs: [
 			{
@@ -110,17 +128,15 @@ test( 'downloads logs and records analytics', async () => {
 	const onSuccess = jest.fn();
 
 	render(
-		(
-			<LogsDownloader
-				siteId={ 123 }
-				siteSlug="test-site"
-				logType={ LogType.SERVER }
-				startSec={ 1 }
-				endSec={ 2 }
-				filter={ {} }
-				onSuccess={ onSuccess }
-			/>
-		 ) as any
+		<LogsDownloader
+			siteId={ 123 }
+			siteSlug="test-site"
+			logType={ LogType.SERVER }
+			startSec={ 1 }
+			endSec={ 2 }
+			filter={ {} as FilterType }
+			onSuccess={ onSuccess }
+		/>
 	);
 
 	await userEvent.click( screen.getByRole( 'button', { name: 'Download logs' } ) );

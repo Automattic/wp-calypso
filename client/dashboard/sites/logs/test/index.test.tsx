@@ -3,12 +3,13 @@
  */
 
 import '@testing-library/jest-dom';
-import { HostingFeatures, LogType } from '@automattic/api-core';
+import { LogType } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SiteLogs from '../index';
+import type { SiteLogsDataViewsProps } from '../dataviews';
 
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
@@ -69,7 +70,7 @@ jest.mock( '../../../utils/site-features', () => {
 } );
 
 // Child heavy components: stub to avoid additional network
-jest.mock( '../dataviews', () => ( props: any ) => (
+jest.mock( '../dataviews', () => ( props: SiteLogsDataViewsProps ) => (
 	<button onClick={ () => props.onAutoRefreshRequest?.( true ) }>Toggle auto</button>
 ) );
 jest.mock( '../../logs-activity/dataviews', () => () => null );
@@ -85,12 +86,21 @@ jest.mock( '../../../components/date-range-picker', () => ( {
 	),
 } ) );
 
+type VStackProps = {
+	children: React.ReactNode;
+	as?: keyof JSX.IntrinsicElements;
+};
+
+type TabPanelProps = {
+	onSelect: ( tab: string ) => void;
+};
+
 jest.mock( '@wordpress/components', () => ( {
-	__experimentalVStack: ( { children, as = 'div', ...rest }: any ) => {
-		const Tag = as as any;
+	__experimentalVStack: ( { children, as = 'div', ...rest }: VStackProps ) => {
+		const Tag = as;
 		return <Tag { ...rest }>{ children }</Tag>;
 	},
-	TabPanel: ( { onSelect }: any ) => (
+	TabPanel: ( { onSelect }: TabPanelProps ) => (
 		<div>
 			<button onClick={ () => onSelect( 'php' ) }>PHP errors</button>
 			<button onClick={ () => onSelect( 'server' ) }>Web server</button>
@@ -99,16 +109,27 @@ jest.mock( '@wordpress/components', () => ( {
 	),
 } ) );
 
+type ChildrenProps = { children?: React.ReactNode };
+
 // Minimal stubs for app components used by the page
 jest.mock( '../../../components/card', () => ( {
-	Card: ( { children }: any ) => <div>{ children }</div>,
-	CardBody: ( { children }: any ) => <div>{ children }</div>,
-	CardHeader: ( { children }: any ) => <div>{ children }</div>,
+	Card: ( { children }: ChildrenProps ) => <div>{ children }</div>,
+	CardBody: ( { children }: ChildrenProps ) => <div>{ children }</div>,
+	CardHeader: ( { children }: ChildrenProps ) => <div>{ children }</div>,
 } ) );
+
+interface PageLayoutMockProps {
+	children?: React.ReactNode;
+	header?: React.ReactNode;
+}
+
+interface PageHeaderMockProps {
+	actions?: React.ReactNode;
+}
 
 jest.mock( '../../../components/page-layout', () => ( {
 	__esModule: true,
-	default: ( { children, header }: any ) => (
+	default: ( { children, header }: PageLayoutMockProps ) => (
 		<div>
 			<div>{ header }</div>
 			<div>{ children }</div>
@@ -117,12 +138,12 @@ jest.mock( '../../../components/page-layout', () => ( {
 } ) );
 
 jest.mock( '../../../components/page-header', () => ( {
-	PageHeader: ( { actions }: any ) => <div>{ actions }</div>,
+	PageHeader: ( { actions }: PageHeaderMockProps ) => <div>{ actions }</div>,
 } ) );
 
 jest.mock( '../../../components/notice', () => ( {
 	__esModule: true,
-	default: ( { children }: any ) => <div>{ children }</div>,
+	default: ( { children }: ChildrenProps ) => <div>{ children }</div>,
 } ) );
 
 const { __mocks: featureMocks } = jest.requireMock( '../../../utils/site-features' ) as {
@@ -146,6 +167,11 @@ function nockSiteAndSettings( {
 		.reply( 200, { settings: { gmt_offset: gmtOffset, timezone_string: timezoneString } } );
 }
 
+beforeEach( () => {
+	featureMocks.hasHostingFeatureMock.mockReturnValue( true );
+	nockSiteAndSettings();
+} );
+
 afterEach( () => {
 	nock.cleanAll();
 	jest.clearAllMocks();
@@ -160,14 +186,10 @@ afterAll( () => {
 
 describe( 'SiteLogs page', () => {
 	test( 'navigates on tab select for PHP errors/Web server/Activity', async () => {
-		featureMocks.hasHostingFeatureMock.mockReturnValue( true );
-		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
-		nockSiteAndSettings();
-
 		render( <SiteLogs logType={ LogType.PHP } /> );
 
 		// Wait for data and TabPanel to render
-		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 
 		// Click web server and activity tabs
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Web server' } ) );
@@ -184,10 +206,6 @@ describe( 'SiteLogs page', () => {
 	} );
 
 	test( 'URL from/to params are normalized from ms to seconds', async () => {
-		featureMocks.hasHostingFeatureMock.mockReturnValue( true );
-		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
-		nockSiteAndSettings();
-
 		const replaceSpy = jest.spyOn( window.history, 'replaceState' );
 		const msFrom = 1730000000000; // ms
 		const msTo = 1730086400000; // ms
@@ -216,41 +234,43 @@ describe( 'SiteLogs page', () => {
 	} );
 
 	test( 'auto-refresh is blocked for non-last-7 (yesterday) range and shows warning notice', async () => {
-		featureMocks.hasHostingFeatureMock.mockImplementation(
-			( _site: unknown, feature: unknown ) => feature === HostingFeatures.LOGS
-		);
-		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
-		nockSiteAndSettings();
-
 		// Mock the last-7 check to return false
 		const dateRangeUtils = jest.requireActual( '../../../components/date-range-picker/utils' ) as {
-			isLast7Days: ( range: any ) => boolean;
+			isLast7Days: (
+				range: { start: Date; end: Date },
+				timezoneString?: string,
+				gmtOffset?: number
+			) => boolean;
 		};
 		jest.spyOn( dateRangeUtils, 'isLast7Days' ).mockReturnValue( false );
 
 		render( <SiteLogs logType={ LogType.PHP } /> );
-		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Toggle auto' } ) );
 
 		expect(
-			screen.getByText( 'Auto-refresh only works with "Last 7 days" preset' )
-		).toBeInTheDocument();
+			await screen.findByText(
+				'Auto-refresh only works with "Last 7 days" preset',
+				{},
+				{ timeout: 5000 }
+			)
+		).toBeVisible();
 	} );
 
 	test( 'auto-refresh is allowed for last-7 range and does not show warning notice', async () => {
-		featureMocks.hasHostingFeatureMock.mockReturnValue( true );
-		featureMocks.hasPlanFeatureMock.mockReturnValue( false );
-		nockSiteAndSettings();
-
 		// Mock the last-7 check to always allow auto-refresh
 		const dateRangeUtils = jest.requireActual( '../../../components/date-range-picker/utils' ) as {
-			isLast7Days: ( range: any ) => boolean;
+			isLast7Days: (
+				range: { start: Date; end: Date },
+				timezoneString?: string,
+				gmtOffset?: number
+			) => boolean;
 		};
 		jest.spyOn( dateRangeUtils, 'isLast7Days' ).mockReturnValue( true );
 
 		render( <SiteLogs logType={ LogType.PHP } /> );
-		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 5000 } );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Toggle auto' } ) );
 
