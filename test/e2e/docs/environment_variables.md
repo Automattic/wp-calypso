@@ -10,7 +10,7 @@ Environment Variables control much of the runtime configuration for E2E tests.
 | --------------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | -------- |
 | ARTIFACTS_PATH        | Path on disk to test artifacts (screenshots, logs, etc).                                                             | `./results/`                                        | Optional |
 | AUTHENTICATE_ACCOUNTS | Comma-delimited list of accounts to pre-authenticate for later use.                                                  | `simpleSitePersonalPlanUser,atomicUser,defaultUser` | Optional |
-| CALYPSO_BASE_URL      | The base URL to use for Calypso e.g. https://wordpress.com, http://calypso.localhost:3000, etc.                      | `http://calypso.localhost:3000`                     | Optional |
+| CALYPSO_BASE_URL      | The base URL to use for Calypso e.g. https://wordpress.com, http://calypso.localhost:3000, etc.                      | <http://calypso.localhost:3000>                     | Optional |
 | COBLOCKS_EDGE         | Use the bleeding edge CoBlocks build.                                                                                | `false`                                             | Optional |
 | COOKIES_PATH          | Path on disk to the saved authenticated cookies.                                                                     | `./cookies/`                                        | Optional |
 | GUTENBERG_EDGE        | Use the bleeding edge Gutenberg build.                                                                               | `false`                                             | Optional |
@@ -20,5 +20,5 @@ Environment Variables control much of the runtime configuration for E2E tests.
 | TEST_LOCALES          | The locales to target for I18N testing (see more: [supported locales](../../../packages/i18n-utils/src/locales.ts)). | `en, es, fr`                                        | Optional |
 | TEST_ON_ATOMIC        | Use a user with an Atomic site.                                                                                      | `false`                                             | Optional |
 | VIEWPORT_NAME         | Specify the viewport to be used.                                                                                     | `desktop`                                           | Optional |
-| WOO_BASE_URL          | The base URL to use for WooCommerce.com marketing pages, typically accessed when not logged in.                      | `https://woocommerce.com`                           | Optional |
-| WPCOM_BASE_URL        | The base URL to use for WordPress.com marketing pages, typically accessed when not logged in.                        | `https://wordpress.com`                             | Optional |
+| WOO_BASE_URL          | The base URL to use for WooCommerce.com marketing pages, typically accessed when not logged in.                      | <https://woocommerce.com>                           | Optional |
+| WPCOM_BASE_URL        | The base URL to use for WordPress.com marketing pages, typically accessed when not logged in.                        | <https://wordpress.com>                             | Optional |
