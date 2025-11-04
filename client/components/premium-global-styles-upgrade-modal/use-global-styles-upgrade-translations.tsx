@@ -43,16 +43,16 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 		} ),
 		features: useSiteGlobalStylesOnPersonal() ? personalFeatures : premiumFeatures,
 		description: translate(
-			'You’ve selected a premium style that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',
-			'You’ve selected premium styles that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',
+			'You’ve selected a style variation that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',
+			'You’ve selected style variations that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',
 			{
 				count: numOfSelectedGlobalStyles,
 				args: { planTitle },
 			}
 		),
 		promotion: translate(
-			'Upgrade now to unlock your premium style and get access to tons of other features. Or you can decide later and try it out first.',
-			'Upgrade now to unlock your premium styles and get access to tons of other features. Or you can decide later and try them out first.',
+			'Upgrade now to unlock your style variation and get access to tons of other features. Or you can decide later and try it out first.',
+			'Upgrade now to unlock your style variations and get access to tons of other features. Or you can decide later and try them out first.',
 			{ count: numOfSelectedGlobalStyles }
 		),
 		try: translate( 'Decide later' ),
