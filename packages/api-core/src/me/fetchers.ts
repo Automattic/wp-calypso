@@ -15,7 +15,7 @@ function decodeEntities( text: string ) {
 
 export async function fetchUser(): Promise< User > {
 	const user = await wpcom.req.get( '/me', { meta: 'flags' } );
-	for ( const key of user ) {
+	for ( const key in user ) {
 		if ( ! decodedKeys.includes( key ) ) {
 			continue;
 		}
