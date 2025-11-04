@@ -2,7 +2,7 @@ import {
 	AkismetPlans,
 	JetpackPlans,
 	GoogleWorkspaceSlugs,
-	JETPACK_SEARCH_PRODUCTS,
+	JetpackSearchProducts,
 	PRODUCT_1GB_SPACE,
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
@@ -391,7 +391,9 @@ export function isTieredVolumeSpaceAddon( product: ObjectWithProductSlug ): bool
  * Checks if a product is a Jetpack Search product.
  */
 export function isJetpackSearch( product: ObjectWithProductSlug ): boolean {
-	return product.product_slug ? JETPACK_SEARCH_PRODUCTS.includes( product.product_slug ) : false;
+	return product.product_slug
+		? Object.keys( JetpackSearchProducts ).includes( product.product_slug )
+		: false;
 }
 
 export function isJetpackT1SecurityPlan( purchase: Purchase ): boolean {

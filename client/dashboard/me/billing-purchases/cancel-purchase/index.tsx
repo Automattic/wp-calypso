@@ -950,6 +950,8 @@ export default function CancelPurchase() {
 		recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
 
+	const createdErrorNoticeForRedirect = useRef< boolean >();
+
 	const isDataLoading =
 		siteFeaturesQueryIsPending ||
 		( ! lastSiteQueryIsError.current && siteQueryIsPending ) ||
@@ -964,9 +966,12 @@ export default function CancelPurchase() {
 		}
 
 		if ( ! purchase ) {
-			createErrorNotice( __( 'Something went wrong. Please contact support.' ), {
-				type: 'snackbar',
-			} );
+			if ( ! createdErrorNoticeForRedirect.current ) {
+				createErrorNotice( __( 'Something went wrong. Please contact support.' ), {
+					type: 'snackbar',
+				} );
+				createdErrorNoticeForRedirect.current = true;
+			}
 			return false;
 		}
 
@@ -980,12 +985,15 @@ export default function CancelPurchase() {
 		}
 
 		if ( ! isValidForDisablingAutoRenew && isValidForCancellation && isValidForRemoval ) {
-			createErrorNotice(
-				__(
-					'This purchase has already been removed. Please contact support if you believe this to be in error.'
-				),
-				{ type: 'snackbar' }
-			);
+			if ( ! createdErrorNoticeForRedirect.current ) {
+				createErrorNotice(
+					__(
+						'This purchase has already been removed. Please contact support if you believe this to be in error.'
+					),
+					{ type: 'snackbar' }
+				);
+				createdErrorNoticeForRedirect.current = true;
+			}
 			return false;
 		}
 

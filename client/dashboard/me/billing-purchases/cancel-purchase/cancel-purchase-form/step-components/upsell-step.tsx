@@ -1,4 +1,3 @@
-import { PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/api-core';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import {
@@ -124,9 +123,9 @@ export default function UpsellStep( {
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
 	const { setSubject, setShowHelpCenter } = useHelpCenter();
-	const businessPlan = plans?.find( ( plan ) => PLAN_BUSINESS === plan.product_slug );
+	const businessPlan = plans?.find( ( plan ) => 'business-bundle' === plan.product_slug );
 	const businessPlanName = businessPlan?.product_name;
-	const personalPlan = plans?.find( ( plan ) => PLAN_PERSONAL === plan.product_slug );
+	const personalPlan = plans?.find( ( plan ) => 'personal-bundle' === plan.product_slug );
 	const personalPlanName = personalPlan?.product_name ?? '';
 	const thePlan = plans?.find( ( plan ) => purchase.product_slug === plan.product_slug );
 	const planName = thePlan?.product_name ?? '';

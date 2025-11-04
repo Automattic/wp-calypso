@@ -197,10 +197,6 @@ export const JetpackPlans = {
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 
 export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
-export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
-export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
-export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
-export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
 
 export const OFFSITE_REDIRECT = 'offsite_redirect';
 
@@ -308,19 +304,11 @@ export const PaymentPartners = {
 	RAZORPAY: 'razorpay',
 } as const;
 
-const PRODUCT_JETPACK_SEARCH_FREE = 'jetpack_search_free';
-const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
-const PRODUCT_JETPACK_SEARCH_BI_YEARLY = 'jetpack_search_bi_yearly';
-const PRODUCT_JETPACK_SEARCH_MONTHLY = 'jetpack_search_monthly';
-
-export const JETPACK_SEARCH_PRODUCTS = [
-	PRODUCT_JETPACK_SEARCH_BI_YEARLY,
-	PRODUCT_JETPACK_SEARCH,
-	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_JETPACK_SEARCH_FREE,
-	PRODUCT_WPCOM_SEARCH,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
-];
-
-export const PLAN_BUSINESS = 'business-bundle';
-export const PLAN_PERSONAL = 'personal-bundle';
+export const JetpackSearchProducts = {
+	PRODUCT_JETPACK_SEARCH_BI_YEARLY: 'jetpack_search_bi_yearly',
+	PRODUCT_JETPACK_SEARCH: 'jetpack_search',
+	PRODUCT_JETPACK_SEARCH_MONTHLY: 'jetpack_search_monthly',
+	PRODUCT_JETPACK_SEARCH_FREE: 'jetpack_search_free',
+	PRODUCT_WPCOM_SEARCH: 'wpcom_search',
+	PRODUCT_WPCOM_SEARCH_MONTHLY: 'wpcom_search_monthly',
+};
