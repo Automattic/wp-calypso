@@ -33,13 +33,12 @@ type UpsellProps = {
 	title: TranslateResult;
 	acceptButtonText: TranslateResult;
 	acceptButtonUrl?: string;
-	declineButtonText?: TranslateResult;
 	onAccept?: () => void;
 	onDecline?: () => void;
 };
 
 function Upsell( { image, ...props }: UpsellProps ) {
-	const declineButtonText = props.declineButtonText || __( 'Cancel my current plan' );
+	const declineButtonText = __( 'Cancel my current plan' );
 	const [ busyButton, setBusyButton ] = useState( '' );
 
 	return (

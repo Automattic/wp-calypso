@@ -22,24 +22,16 @@ import imgSEO from 'calypso/assets/images/cancellation/seo.png';
 import { useHelpCenter } from '../../../../../app/help-center';
 import { PageHeader } from '../../../../../components/page-header';
 
-// This type represents things that React can render, but which also exist. (E.g.
-// not nullable, not undefined, etc.)
-type ExistingReactNode = React.ReactElement | string | number;
-// Translate hooks, like component interpolation or highlighting untranslated strings,
-// force us to declare the return type as a generic React node, not as just string.
-type TranslateResult = ExistingReactNode;
-
 type ContentProps = {
 	children: React.ReactNode[];
 	image: string;
-	title: TranslateResult;
-	declineButtonText?: TranslateResult;
+	title: string;
 	onAccept?: () => void;
 	onDecline?: () => void;
 };
 
 function Content( { image, ...props }: ContentProps ) {
-	const declineButtonText = props.declineButtonText || __( 'Cancel my current plan' );
+	const declineButtonText = __( 'Cancel my current plan' );
 	const [ isBusy, setIsBusy ] = useState( false );
 	const styles: Record< string, string > = {};
 
