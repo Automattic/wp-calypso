@@ -195,13 +195,13 @@ describe( 'DNSRecordsDataView', () => {
 		expect( within( row3Cells[ 0 ] ).getByText( 'CNAME' ) ).toBeInTheDocument();
 		expect( within( row3Cells[ 1 ] ).getByText( 'www' ) ).toBeInTheDocument();
 		expect( within( row3Cells[ 2 ] ).getByText( 'initial.winxdns.net' ) ).toBeInTheDocument();
-		expect( within( row3Cells[ 4 ] ).getByText( 'www.example.com' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 4 ] ).getByText( 'example.com' ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders CNAME record when it matches the target', async () => {
 		const domainMappingStatus = createMockDomainMappingStatus(
 			[ '192.0.78.24', '192.0.78.25' ],
-			'www.example.com'
+			'example.com'
 		);
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
 
@@ -222,12 +222,12 @@ describe( 'DNSRecordsDataView', () => {
 
 		const dataRows = rows.slice( 1 ); // Skip header row
 
-		// Row 3: CNAME www www.example.com -> www.example.com (MATCHED!)
+		// Row 3: CNAME www example.com -> example.com (MATCHED!)
 		const row3Cells = within( dataRows[ 2 ] ).getAllByRole( 'cell' );
 		expect( within( row3Cells[ 0 ] ).getByText( 'CNAME' ) ).toBeInTheDocument();
 		expect( within( row3Cells[ 1 ] ).getByText( 'www' ) ).toBeInTheDocument();
-		expect( within( row3Cells[ 2 ] ).getByText( 'www.example.com' ) ).toBeInTheDocument();
-		expect( within( row3Cells[ 4 ] ).getByText( 'www.example.com' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 2 ] ).getByText( 'example.com' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 4 ] ).getByText( 'example.com' ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders column headers correctly', async () => {
@@ -359,6 +359,6 @@ describe( 'DNSRecordsDataView', () => {
 		expect( within( row3Cells[ 0 ] ).getByText( 'CNAME' ) ).toBeInTheDocument();
 		expect( within( row3Cells[ 1 ] ).getByText( 'www' ) ).toBeInTheDocument();
 		expect( within( row3Cells[ 2 ] ).getByText( 'BLANK' ) ).toBeInTheDocument();
-		expect( within( row3Cells[ 4 ] ).getByText( 'www.example.com' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 4 ] ).getByText( 'example.com' ) ).toBeInTheDocument();
 	} );
 } );

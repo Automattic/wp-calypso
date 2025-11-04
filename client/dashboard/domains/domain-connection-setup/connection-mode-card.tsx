@@ -7,7 +7,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardHeader, CardDivider } from '../../components/card';
 import SetupStep from './setup-step';
@@ -102,21 +102,20 @@ export default function ConnectionModeCard( {
 				<CardBody>
 					<Text>{ infoText }</Text>
 					{ steps.map( ( step, index ) => (
-						<>
+						<Fragment key={ step.title }>
 							<SetupStep
 								className="domain-connection-setup__step"
 								expanded={ stepsExpanded[ index ] }
 								completed={ stepsCompleted[ index ] }
 								onCheckboxChange={ ( checked ) => handleStepChange( index, checked ) }
 								onToggle={ ( expanded ) => handleStepToggle( index, expanded ) }
-								key={ step.title }
 								title={ step.title }
 								label={ step.label }
 							>
 								{ step.content }
 							</SetupStep>
 							{ index < steps.length - 1 && <CardDivider /> }
-						</>
+						</Fragment>
 					) ) }
 					<ButtonStack justify="flex-start">
 						<Button

@@ -79,14 +79,13 @@ export default function DNSRecordsDataView( {
 
 		// Add CNAME record - always show it, even if not currently configured
 		const currentCname = domainMappingStatus.www_cname_record_target;
-		const targetCname = `www.${ domainName }`;
 
 		dnsRecords.push( {
 			id: 'cname-record',
 			type: 'CNAME',
 			name: 'www',
 			currentValue: currentCname || 'BLANK',
-			updateTo: targetCname,
+			updateTo: domainName,
 		} );
 
 		return dnsRecords;
