@@ -22,7 +22,7 @@ export const ResultsPage = () => {
 	const numberOfInitialVisibleSuggestions =
 		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
 	const [ isLoadingExperiment, experimentVariation ] = useDomainSearchEscapeHatch();
-	const isLoading = isLoadingSuggestions || isLoadingExperiment;
+	const isLoadingSuggestionsOrExperiment = isLoadingSuggestions || isLoadingExperiment;
 
 	const showSkipSuggestionsAfterSearchBar =
 		! isLoadingExperiment && experimentVariation === 'treatment_above_paid_domain_area';
@@ -43,26 +43,40 @@ export const ResultsPage = () => {
 		<VStack spacing={ 8 } className="domain-search--results">
 			<VStack spacing={ 4 }>
 				<SearchBar />
-				{ ! isLoading && <SearchNotice /> }
+				{ ! isLoadingSuggestions && <SearchNotice /> }
 			</VStack>
 			{ config.skippable && showSkipSuggestionsAfterSearchBar && (
-				<> { isLoading ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> } </>
+				<>
+					{ isLoadingSuggestionsOrExperiment ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> }
+				</>
 			) }
 			{ slots?.BeforeResults && <slots.BeforeResults /> }
 			<VStack spacing={ 4 }>
 				{ config.skippable && showSkipSuggestionsBeforeFeaturedResults && (
-					<> { isLoading ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> } </>
+					<>
+						{ isLoadingSuggestionsOrExperiment ? (
+							<SkipSuggestion.Placeholder />
+						) : (
+							<SkipSuggestion />
+						) }
+					</>
 				) }
-				{ ! isLoading && <UnavailableSearchResult /> }
-				{ isLoading ? (
+				{ ! isLoadingSuggestions && <UnavailableSearchResult /> }
+				{ isLoadingSuggestions ? (
 					<FeaturedSearchResults.Placeholder />
 				) : (
 					<FeaturedSearchResults suggestions={ featuredSuggestions } />
 				) }
 				{ config.skippable && showSkipSuggestionsAfterFeaturedResults && (
-					<> { isLoading ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> } </>
+					<>
+						{ isLoadingSuggestionsOrExperiment ? (
+							<SkipSuggestion.Placeholder />
+						) : (
+							<SkipSuggestion />
+						) }
+					</>
 				) }
-				{ isLoading ? (
+				{ isLoadingSuggestions ? (
 					<SearchResults.Placeholder />
 				) : (
 					<SearchResults
