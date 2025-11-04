@@ -139,9 +139,6 @@ export class EditorToolbarComponent {
 			name: translatedButtonNameNew,
 			exact: true,
 		} );
-
-		console.log( 'blockInserterButton', blockInserterButton );
-
 		if ( await this.targetIsOpen( blockInserterButton ) ) {
 			await blockInserterButton.click();
 		}
