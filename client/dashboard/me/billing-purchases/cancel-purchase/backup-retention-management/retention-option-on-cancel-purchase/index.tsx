@@ -100,7 +100,7 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 		) {
 			setConfirmationDialogVisible( false );
 			if ( updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS ) {
-				window.location.href = settingsPath( siteSlug );
+				window.location.href = settingsPath( siteSlug ?? '' );
 			}
 		}
 	}, [ siteSlug, updateRetentionRequestStatus ] );

@@ -20,7 +20,7 @@ interface CancellationReasonBase {
 	/**
 	 * A string that will be displayed to the user.
 	 */
-	label: TranslateResult;
+	label: string;
 
 	/**
 	 * Whether this option is disabled.

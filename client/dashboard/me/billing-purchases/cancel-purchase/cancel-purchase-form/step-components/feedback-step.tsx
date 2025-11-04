@@ -88,7 +88,7 @@ function CancellationReason( {
 			{ ! selectedReason?.textPlaceholder && selectedReason?.selectOptions && (
 				<div className="cancel-purchase-form__feedback-question">
 					<RadioControl
-						label={ selectedReason?.selectLabel ?? __( 'Why is that?' ) }
+						label={ __( 'Why is that?' ) }
 						selected={ details }
 						options={ selectedReason.selectOptions.map( toSelectOption ) }
 						onChange={ onDetailsChange }
