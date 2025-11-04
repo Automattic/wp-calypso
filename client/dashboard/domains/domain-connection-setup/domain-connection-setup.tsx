@@ -47,17 +47,25 @@ export default function DomainConnectionSetup( {
 		{
 			title: __( '1. Login to your domain name provider' ),
 			label: __( 'I have opened the DNS settings' ),
-			content: sprintf(
-				// translators: %s is the domain name
-				__( 'Log in to your domain name provider and open DNS management for %s.' ),
-				domainName
+			content: (
+				<Text>
+					{ sprintf(
+						// translators: %s is the domain name
+						__( 'Log in to your domain name provider and open DNS management for %s.' ),
+						domainName
+					) }
+				</Text>
 			),
 		},
 		{
 			title: __( '2. Back up DNS records' ),
 			label: __( 'I have downloaded the DNS records' ),
-			content: __(
-				'It’s rare, but things can go sideways. Download your DNS records as a fallback, just in case.'
+			content: (
+				<Text>
+					{ __(
+						'It’s rare, but things can go sideways. Download your DNS records as a fallback, just in case.'
+					) }
+				</Text>
 			),
 		},
 		{
@@ -79,17 +87,25 @@ export default function DomainConnectionSetup( {
 		{
 			title: __( '1. Login to your domain name provider' ),
 			label: __( 'I have opened the DNS settings' ),
-			content: sprintf(
-				// translators: %s is the domain name
-				__( 'Log in to your domain name provider and open DNS management for %s.' ),
-				domainName
+			content: (
+				<Text>
+					{ sprintf(
+						// translators: %s is the domain name
+						__( 'Log in to your domain name provider and open DNS management for %s.' ),
+						domainName
+					) }
+				</Text>
 			),
 		},
 		{
 			title: __( '2. Back up DNS records' ),
 			label: __( 'I have downloaded the DNS records' ),
-			content: __(
-				'It’s rare, but things can go sideways. Download your DNS records as a fallback, just in case.'
+			content: (
+				<Text>
+					{ __(
+						'It’s rare, but things can go sideways. Download your DNS records as a fallback, just in case.'
+					) }
+				</Text>
 			),
 		},
 		{

@@ -49,8 +49,8 @@ describe( 'DNSRecordsDataView', () => {
 		const table = await screen.findByRole( 'table' );
 		const rows = within( table ).getAllByRole( 'row' );
 
-		// 3 rows total: 1 header + 2 A record rows
-		expect( rows ).toHaveLength( 3 );
+		// 4 rows total: 1 header + 2 A record rows + 1 CNAME row
+		expect( rows ).toHaveLength( 4 );
 
 		const dataRows = rows.slice( 1 ); // Skip header row
 
@@ -67,6 +67,12 @@ describe( 'DNSRecordsDataView', () => {
 		expect( within( row2Cells[ 1 ] ).getByText( '@' ) ).toBeInTheDocument();
 		expect( within( row2Cells[ 2 ] ).getByText( '192.0.78.25' ) ).toBeInTheDocument();
 		expect( within( row2Cells[ 4 ] ).getByText( '192.0.78.25' ) ).toBeInTheDocument();
+
+		// Row 3: CNAME www BLANK -> www.example.com (no current CNAME)
+		const row3Cells = within( dataRows[ 2 ] ).getAllByRole( 'cell' );
+		expect( within( row3Cells[ 0 ] ).getByText( 'CNAME' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 1 ] ).getByText( 'www' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 2 ] ).getByText( 'BLANK' ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders A records with BLANK when only 1 current IP exists', async () => {
@@ -85,8 +91,8 @@ describe( 'DNSRecordsDataView', () => {
 		const table = await screen.findByRole( 'table' );
 		const rows = within( table ).getAllByRole( 'row' );
 
-		// 3 rows total: 1 header + 2 A record rows
-		expect( rows ).toHaveLength( 3 );
+		// 4 rows total: 1 header + 2 A record rows + 1 CNAME row
+		expect( rows ).toHaveLength( 4 );
 
 		const dataRows = rows.slice( 1 ); // Skip header row
 
@@ -103,6 +109,11 @@ describe( 'DNSRecordsDataView', () => {
 		expect( within( row2Cells[ 1 ] ).getByText( '@' ) ).toBeInTheDocument();
 		expect( within( row2Cells[ 2 ] ).getByText( 'BLANK' ) ).toBeInTheDocument();
 		expect( within( row2Cells[ 4 ] ).getByText( '192.0.78.25' ) ).toBeInTheDocument();
+
+		// Row 3: CNAME www BLANK -> www.example.com
+		const row3Cells = within( dataRows[ 2 ] ).getAllByRole( 'cell' );
+		expect( within( row3Cells[ 0 ] ).getByText( 'CNAME' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 2 ] ).getByText( 'BLANK' ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders A records when current IPs are different from targets', async () => {
@@ -124,8 +135,8 @@ describe( 'DNSRecordsDataView', () => {
 		const table = await screen.findByRole( 'table' );
 		const rows = within( table ).getAllByRole( 'row' );
 
-		// 3 rows total: 1 header + 2 A record rows
-		expect( rows ).toHaveLength( 3 );
+		// 4 rows total: 1 header + 2 A record rows + 1 CNAME row
+		expect( rows ).toHaveLength( 4 );
 
 		const dataRows = rows.slice( 1 ); // Skip header row
 
@@ -140,6 +151,11 @@ describe( 'DNSRecordsDataView', () => {
 		expect( within( row2Cells[ 0 ] ).getByText( 'A' ) ).toBeInTheDocument();
 		expect( within( row2Cells[ 2 ] ).getByText( '185.230.63.186' ) ).toBeInTheDocument();
 		expect( within( row2Cells[ 4 ] ).getByText( '192.0.78.25' ) ).toBeInTheDocument();
+
+		// Row 3: CNAME www BLANK -> www.example.com
+		const row3Cells = within( dataRows[ 2 ] ).getAllByRole( 'cell' );
+		expect( within( row3Cells[ 0 ] ).getByText( 'CNAME' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 2 ] ).getByText( 'BLANK' ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders CNAME record with A records', async () => {
@@ -249,8 +265,8 @@ describe( 'DNSRecordsDataView', () => {
 		const table = await screen.findByRole( 'table' );
 		const rows = within( table ).getAllByRole( 'row' );
 
-		// 3 rows total: 1 header + 2 A record rows
-		expect( rows ).toHaveLength( 3 );
+		// 4 rows total: 1 header + 2 A record rows + 1 CNAME row
+		expect( rows ).toHaveLength( 4 );
 
 		const dataRows = rows.slice( 1 ); // Skip header row
 
@@ -265,6 +281,11 @@ describe( 'DNSRecordsDataView', () => {
 		expect( within( row2Cells[ 0 ] ).getByText( 'A' ) ).toBeInTheDocument();
 		expect( within( row2Cells[ 2 ] ).getByText( 'BLANK' ) ).toBeInTheDocument();
 		expect( within( row2Cells[ 4 ] ).getByText( '192.0.78.25' ) ).toBeInTheDocument();
+
+		// Row 3: CNAME www BLANK -> www.example.com
+		const row3Cells = within( dataRows[ 2 ] ).getAllByRole( 'cell' );
+		expect( within( row3Cells[ 0 ] ).getByText( 'CNAME' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 2 ] ).getByText( 'BLANK' ) ).toBeInTheDocument();
 	} );
 
 	test( 'matches IPs correctly when one IP matches target', async () => {
@@ -286,8 +307,8 @@ describe( 'DNSRecordsDataView', () => {
 		const table = await screen.findByRole( 'table' );
 		const rows = within( table ).getAllByRole( 'row' );
 
-		// 3 rows total: 1 header + 2 A record rows
-		expect( rows ).toHaveLength( 3 );
+		// 4 rows total: 1 header + 2 A record rows + 1 CNAME row
+		expect( rows ).toHaveLength( 4 );
 
 		const dataRows = rows.slice( 1 ); // Skip header row
 
@@ -302,9 +323,14 @@ describe( 'DNSRecordsDataView', () => {
 		expect( within( row2Cells[ 0 ] ).getByText( 'A' ) ).toBeInTheDocument();
 		expect( within( row2Cells[ 2 ] ).getByText( '185.230.63.186' ) ).toBeInTheDocument();
 		expect( within( row2Cells[ 4 ] ).getByText( '192.0.78.25' ) ).toBeInTheDocument();
+
+		// Row 3: CNAME www BLANK -> www.example.com
+		const row3Cells = within( dataRows[ 2 ] ).getAllByRole( 'cell' );
+		expect( within( row3Cells[ 0 ] ).getByText( 'CNAME' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 2 ] ).getByText( 'BLANK' ) ).toBeInTheDocument();
 	} );
 
-	test( 'does not render CNAME record when www_cname_record_target is null', async () => {
+	test( 'renders CNAME record with BLANK when www_cname_record_target is null', async () => {
 		const domainMappingStatus = createMockDomainMappingStatus(
 			[ '192.0.78.24', '192.0.78.25' ],
 			null
@@ -323,11 +349,16 @@ describe( 'DNSRecordsDataView', () => {
 		const table = await screen.findByRole( 'table' );
 		const rows = within( table ).getAllByRole( 'row' );
 
-		// 3 rows total: 1 header + 2 A record rows (no CNAME)
-		expect( rows ).toHaveLength( 3 );
+		// 4 rows total: 1 header + 2 A record rows + 1 CNAME record (always shown!)
+		expect( rows ).toHaveLength( 4 );
 
-		// Verify no CNAME record
-		expect( screen.queryByText( 'CNAME' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'www' ) ).not.toBeInTheDocument();
+		const dataRows = rows.slice( 1 ); // Skip header row
+
+		// Row 3: CNAME www BLANK -> www.example.com
+		const row3Cells = within( dataRows[ 2 ] ).getAllByRole( 'cell' );
+		expect( within( row3Cells[ 0 ] ).getByText( 'CNAME' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 1 ] ).getByText( 'www' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 2 ] ).getByText( 'BLANK' ) ).toBeInTheDocument();
+		expect( within( row3Cells[ 4 ] ).getByText( 'www.example.com' ) ).toBeInTheDocument();
 	} );
 } );
