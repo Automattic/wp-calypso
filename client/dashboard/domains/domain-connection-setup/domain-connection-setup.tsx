@@ -166,6 +166,7 @@ export default function DomainConnectionSetup( {
 					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.SUGGESTED ) }
 					isUpdatingConnectionMode={ isUpdatingConnectionMode }
 					verificationDisabled={ ! suggestedStepsCompleted.every( ( completed ) => completed ) }
+					hasEmailOrOtherServices={ domainMappingStatus.has_mx_records }
 				/>
 
 				<ConnectionModeCard
@@ -187,6 +188,7 @@ export default function DomainConnectionSetup( {
 					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.ADVANCED ) }
 					isUpdatingConnectionMode={ isUpdatingConnectionMode }
 					verificationDisabled={ ! advancedStepsCompleted.every( ( completed ) => completed ) }
+					hasEmailOrOtherServices={ domainMappingStatus.has_mx_records }
 				/>
 			</VStack>
 		</div>

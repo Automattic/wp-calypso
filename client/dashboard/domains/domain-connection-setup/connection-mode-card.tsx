@@ -35,6 +35,7 @@ interface ConnectionModeCardProps {
 	onVerifyConnection: () => void;
 	isUpdatingConnectionMode: boolean;
 	verificationDisabled: boolean;
+	hasEmailOrOtherServices: boolean;
 }
 
 export default function ConnectionModeCard( {
@@ -50,6 +51,7 @@ export default function ConnectionModeCard( {
 	onVerifyConnection,
 	isUpdatingConnectionMode,
 	verificationDisabled,
+	hasEmailOrOtherServices,
 }: ConnectionModeCardProps ) {
 	const isSelected = selectedMode === mode;
 
@@ -105,13 +107,14 @@ export default function ConnectionModeCard( {
 			{ isSelected && (
 				<CardBody>
 					<VStack spacing={ 6 }>
-						{ mode === DomainConnectionSetupMode.SUGGESTED ? (
+						{ mode === DomainConnectionSetupMode.SUGGESTED && ! hasEmailOrOtherServices && (
 							<Notice variant="info" title="No email or other services detected ">
 								<Text>
 									{ __( 'You can safely connect your domain without affecting anything else.' ) }
 								</Text>
 							</Notice>
-						) : (
+						) }
+						{ mode === DomainConnectionSetupMode.ADVANCED && hasEmailOrOtherServices && (
 							<Notice variant="info" title="Email or other services detected">
 								<Text>
 									{ __(
@@ -120,7 +123,7 @@ export default function ConnectionModeCard( {
 								</Text>
 							</Notice>
 						) }
-						<Text>{ infoText }</Text>
+						)<Text>{ infoText }</Text>
 					</VStack>
 					{ steps.map( ( step, index ) => (
 						<div key={ step.title }>
