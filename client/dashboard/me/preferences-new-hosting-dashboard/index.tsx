@@ -100,7 +100,11 @@ export default function PreferencesOptInForm() {
 
 	return (
 		<Card>
-			<FlashMessage value="dashboard" message={ __( 'New Hosting Dashboard enabled.' ) } />
+			<FlashMessage
+				id="flash"
+				value="dashboard"
+				message={ __( 'New Hosting Dashboard enabled.' ) }
+			/>
 			<CardBody>
 				<VStack as="form" onSubmit={ handleSubmit } spacing={ 3 } alignment="flex-start">
 					<SectionHeader title={ __( 'Try the new Hosting Dashboard' ) } level={ 3 } />

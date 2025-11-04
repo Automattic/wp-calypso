@@ -102,7 +102,7 @@ function MonetizeSubscriptions() {
 			}
 		>
 			<div ref={ ref }>
-				{ /* Show a flash message if the URL contains ?showSuccessRemoved=true when a subscription is removed */ }
+				{ /* Show a flash message if the URL contains ?updated=true when a subscription is removed */ }
 				<FlashMessage value="true" message={ __( 'This item has been removed.' ) } />
 				<DataViewsCard>
 					<DataViews

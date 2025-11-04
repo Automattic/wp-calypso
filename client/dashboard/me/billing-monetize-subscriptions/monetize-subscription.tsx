@@ -23,10 +23,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { calendar, currencyDollar, rotateRight, siteLogo } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { monetizeSubscriptionRoute } from '../../app/router/me';
+import { monetizeSubscriptionRoute, monetizeSubscriptionsRoute } from '../../app/router/me';
 import ActionList from '../../components/action-list';
 import { Card, CardBody } from '../../components/card';
-import { addFlashMessage } from '../../components/flash-message';
 import { useFormattedTime } from '../../components/formatted-time';
 import OverviewCard from '../../components/overview-card';
 import { PageHeader } from '../../components/page-header';
@@ -167,11 +166,10 @@ function StopSubscriptionButton( {
 					onClick={ () => {
 						stopSubscription( null, {
 							onSuccess: () => {
-								navigate(
-									addFlashMessage( {
-										to: monetizeSubscriptionRoute.fullPath,
-									} )
-								);
+								navigate( {
+									to: monetizeSubscriptionsRoute.fullPath,
+									search: { updated: true },
+								} );
 							},
 							onError: () => {
 								if ( isProduct ) {
