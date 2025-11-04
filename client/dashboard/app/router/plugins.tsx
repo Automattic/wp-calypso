@@ -4,6 +4,7 @@ import {
 	rawUserPreferencesQuery,
 	marketplacePluginsQuery,
 	wpOrgPluginQuery,
+	userSettingsQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -84,7 +85,8 @@ export const pluginRoute = createRoute( {
 	loader: async ( { params: { pluginId } } ) => {
 		queryClient.ensureQueryData( marketplacePluginsQuery() );
 		queryClient.ensureQueryData( pluginsQuery() );
-		await queryClient.ensureQueryData( wpOrgPluginQuery( pluginId, 'en' ) );
+		const settings = await queryClient.ensureQueryData( userSettingsQuery() );
+		await queryClient.ensureQueryData( wpOrgPluginQuery( pluginId, settings.language || '' ) );
 	},
 } ).lazy( () =>
 	import( '../../plugins/plugin' ).then( ( d ) =>
