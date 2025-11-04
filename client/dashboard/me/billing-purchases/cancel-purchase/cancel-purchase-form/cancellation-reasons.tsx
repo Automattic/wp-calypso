@@ -32,17 +32,7 @@ interface CancellationReason extends CancellationReasonBase {
 	/**
 	 * placeholder text for the additional input
 	 */
-	textPlaceholder?: TranslateResult;
-
-	/**
-	 * Default value for the sub category select
-	 */
-	selectInitialValue?: string;
-
-	/**
-	 * Default label for the sub category select
-	 */
-	selectLabel?: TranslateResult;
+	textPlaceholder?: string;
 
 	/**
 	 * Options for the sub category select
