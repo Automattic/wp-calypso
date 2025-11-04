@@ -81,7 +81,7 @@ export default function PreferencesOptInForm() {
 						createSuccessNotice( __( 'New Hosting Dashboard enabled.' ), { type: 'snackbar' } );
 					} else {
 						setIsRedirecting( true );
-						window.location.href = '/me/account?updated=dashboard';
+						window.location.href = '/me/account?flash=dashboard';
 					}
 				},
 				onError( _, { value } ) {
