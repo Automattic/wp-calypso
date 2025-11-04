@@ -6,10 +6,6 @@ import { getSelectedDomain } from '../../../utils/domain';
 import { hasAmountAvailableToRefund, isOneTimePurchase } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
-interface CancelPurchaseRefundInformationConnectedProps {
-	isGravatarRestrictedDomain?: boolean | unknown;
-}
-
 interface CancelPurchaseRefundInformationProps {
 	purchase: Purchase;
 	isJetpackPurchase: boolean;
@@ -17,15 +13,13 @@ interface CancelPurchaseRefundInformationProps {
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
-	isGravatarRestrictedDomain,
 	isJetpackPurchase,
-}: CancelPurchaseRefundInformationProps & CancelPurchaseRefundInformationConnectedProps ) => {
+}: CancelPurchaseRefundInformationProps ) => {
 	const { data: domains } = useSuspenseQuery( siteDomainsQuery( purchase.blog_id ) );
 	const selectedDomainName = purchase.product_name;
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 
-	isGravatarRestrictedDomain =
-		isGravatarRestrictedDomain ?? selectedDomain?.is_gravatar_restricted_domain;
+	const isGravatarRestrictedDomain = selectedDomain?.is_gravatar_restricted_domain;
 	const { refund_period_in_days: refundPeriodInDays } = purchase;
 	let text;
 

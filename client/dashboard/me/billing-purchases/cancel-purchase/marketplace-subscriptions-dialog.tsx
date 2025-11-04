@@ -4,13 +4,6 @@ import * as React from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import type { Purchase } from '@automattic/api-core';
 
-// This type represents things that React can render, but which also exist. (E.g.
-// not nullable, not undefined, etc.)
-type ExistingReactNode = React.ReactElement | string | number;
-// Translate hooks, like component interpolation or highlighting untranslated strings,
-// force us to declare the return type as a generic React node, not as just string.
-type TranslateResult = ExistingReactNode;
-
 interface MarketPlaceSubscriptionsDialogProps {
 	planName: string;
 	closeDialog: () => void;
@@ -18,9 +11,9 @@ interface MarketPlaceSubscriptionsDialogProps {
 	isDialogVisible: boolean;
 	isRemoving?: boolean;
 	activeSubscriptions: Purchase[];
-	sectionHeadingText?: TranslateResult;
-	primaryButtonText?: TranslateResult;
-	bodyParagraphText?: TranslateResult;
+	sectionHeadingText?: string;
+	primaryButtonText?: string;
+	bodyParagraphText?: string;
 }
 
 const MarketPlaceSubscriptionsWarning = ( {

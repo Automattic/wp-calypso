@@ -7,8 +7,6 @@ interface Props {
 	iconPath: string;
 }
 
-import './style.scss';
-
 const JetpackDecorativeCard: FC< Props > = ( props ) => {
 	const { iconPath } = props;
 

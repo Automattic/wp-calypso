@@ -1003,7 +1003,6 @@ export default function CancelPurchase() {
 			setStateBasedOnExtendedStatus();
 		}
 		if ( ! isDataValid() ) {
-			createErrorNotice( '1', { type: 'snackbar' } );
 			redirect();
 			return;
 		}
@@ -1031,7 +1030,6 @@ export default function CancelPurchase() {
 			return;
 		}
 		if ( ! isDataValid() ) {
-			createErrorNotice( '2', { type: 'snackbar' } );
 			redirect();
 			return;
 		}
@@ -1519,7 +1517,6 @@ export default function CancelPurchase() {
 	};
 
 	if ( isHundredYearDomain ) {
-		createErrorNotice( '3', { type: 'snackbar' } );
 		redirect();
 		return null;
 	}
@@ -1602,6 +1599,7 @@ export default function CancelPurchase() {
 							atomicTransfer={ atomicTransfer }
 							cancelBundledDomain={ state.cancelBundledDomain }
 							cancellationInProgress={ state.isLoading }
+							cancellationOffer={ cancellationOffer }
 							clickNext={ clickNext }
 							closeDialog={ closeDialog }
 							disableButtons={ state.isLoading }

@@ -9,8 +9,6 @@ const BACKUP_RETENTION_UPDATE_REQUEST = {
 	FAILED: 'failed',
 } as const;
 
-import './style.scss';
-
 interface RetentionConfirmationDialogProps {
 	confirmationDialogVisible: boolean;
 	retentionSelected: number;

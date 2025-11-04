@@ -73,7 +73,7 @@ function Upsell( { image, ...props }: UpsellProps ) {
 					</Button>
 				</div>
 			</div>
-			<div className="cancel-purchase-form__upsell-image-container">
+			<div>
 				<img className="cancel-purchase-form__upsell-image" src={ image } alt="" />
 			</div>
 		</VStack>

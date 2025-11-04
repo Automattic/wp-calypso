@@ -1,49 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.is-section-me.is-global-sidebar-visible .purchases__cancel.main,
-.is-section-me.is-global-sidebar-visible .purchases__cancel-domain.main {
-	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
-}
-
 .cancel-purchase__wrapper-card {
 	padding: 32px;
 	margin-top: 12px;
-
-	.purchases__cancel & {
-		box-shadow: none;
-		padding: 0;
-	}
-}
-
-.cancel-purchase__back .header-cake__back,
-.confirm-cancel-domain__back .header-cake__back {
-	padding: 24px 0;
-	text-align: start;
-}
-
-.cancel-purchase__right .purchases-site__header.card {
-	background: var(--studio-gray-0);
-	border-radius: 2px;
-
-	.site .site__content {
-		padding: 24px 18px;
-
-		@include break-mobile {
-			padding: 12px;
-		}
-	}
-}
-
-.cancel-purchase__support-link {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
-	margin-top: 12px;
-
-	.is-link {
-		font-size: $font-body-small;
-		text-decoration: none;
-	}
 }
 
 .cancel-purchase__domain-options {
@@ -70,26 +30,7 @@
 	}
 }
 
-.cancel-purchase__inner-wrapper {
-	display: flex;
-	flex-direction: column-reverse;
-	margin-bottom: 24px;
-	font-size: $font-body-small;
-
-	@include break-large {
-		display: grid;
-		grid-template-columns: 7fr 3fr;
-		gap: 32px;
-	}
-
-	.formatted-header__title--cancellation-flow {
-		margin-bottom: 8px;
-		padding: 0;
-	}
-}
-
-.confirm-cancel-domain__formatted-header.formatted-header,
-.cancel-purchase__formatted-header.formatted-header {
+.confirm-cancel-domain__formatted-header.formatted-header {
 	margin: 16px 0 8px;
 }
 
@@ -127,24 +68,9 @@
 	}
 }
 
-.cancel-purchase__features-link {
-	text-align: end;
-
-	a {
-		color: var(--color-text-subtle);
-		font-size: $font-body-small;
-		text-decoration: underline;
-	}
-}
-
 .cancel-purchase__refund-string {
 	color: var(--color-success);
 	font-weight: 600;
-}
-
-.cancel-purchase__site-title {
-	font-size: $font-body-extra-small;
-	text-transform: uppercase;
 }
 
 .cancel-purchase__warning-string {
@@ -164,119 +90,13 @@
 	}
 }
 
-.cancel-purchase__purchase-name {
-	font-size: $font-body;
-	font-weight: 600;
-}
-
-.cancel-purchase__product-information .product-link,
-.cancel-purchase__refund-information,
-.cancel-purchase__plan-description {
+.cancel-purchase__refund-information {
 	font-size: $font-body-small;
-}
-
-.cancel-purchase__footer-text-wrapper {
-	align-items: center;
-	display: flex;
-	justify-content: space-between;
-	gap: 8px;
-
-	.cancel-purchase__footer-text {
-		flex-grow: 1;
-	}
-
-	.cancel-purchase__button-wrapper {
-		flex-shrink: 0;
-	}
-
-	&::after {
-		display: none;
-	}
-}
-
-.cancel-purchase__footer-text p {
-	font-size: $font-body-small;
-	margin: 0;
-
-	&.cancel-purchase__refund-amount {
-		color: var(--color-success);
-	}
-
-	&.cancel-purchase__expiration-text {
-		color: var(--color-error);
-	}
 }
 
 .cancel-purchase__button {
 	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
-	}
-}
-
-.purchases__cancel .cancel-purchase__inner-wrapper.card {
-	box-shadow: none;
-}
-
-.cancel-purchase-loading-placeholder__header {
-	height: 36px;
-	margin-bottom: 15px;
-	width: 70%;
-}
-
-.cancel-purchase-loading-placeholder__reason {
-	height: 12px;
-	margin-bottom: 5px;
-	width: 60%;
-}
-
-.cancel-purchase-loading-placeholder__subheader {
-	height: 24px;
-	margin-bottom: 10px;
-	width: 50%;
-}
-
-.cancel-purchase__atomic-revert-changes {
-	line-height: 1.4;
-
-	p {
-		margin: 16px 0 8px 0;
-		font-size: $font-body-small;
-		line-height: 1.4;
-	}
-
-	ul.cancel-purchase__atomic-revert-changes-list {
-		list-style: none;
-		margin: 0 0 1.5em;
-		padding: 0;
-
-		li {
-			list-style: none;
-			display: flex;
-			font-size: $font-body-small;
-
-			span {
-				margin: auto 0;
-				flex: 1;
-			}
-
-			.gridicon {
-				flex-shrink: 0;
-				margin-inline-end: 8px;
-				margin-top: 2px;
-				color: var(--color-warning);
-			}
-		}
-	}
-
-	.cancel-purchase__atomic-revert-checkbox-label {
-		display: inline-block;
-		font-size: $font-body-small;
-		line-height: 1.4;
-		margin-bottom: 8px;
-
-		.form-label {
-			margin: 1.5em 0;
-		}
 	}
 }
 

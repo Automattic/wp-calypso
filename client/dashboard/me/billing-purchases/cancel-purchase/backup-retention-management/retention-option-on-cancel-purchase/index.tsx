@@ -15,8 +15,6 @@ import { settingsPath } from '../../../../../utils/jetpack';
 import RetentionConfirmationDialog from '../retention-confirmation-dialog';
 import type { SiteRewindPoliciesResponse, Purchase } from '@automattic/api-core';
 
-import './style.scss';
-
 const BACKUP_RETENTION_UPDATE_REQUEST = {
 	UNSUBMITTED: 'unsubmitted',
 	PENDING: 'pending',

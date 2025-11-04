@@ -11,8 +11,6 @@ import { intlFormat } from 'date-fns';
 import { BillingPurchaseInfoPopover } from '../../../dataviews';
 import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 
-import './atomic-revert-step.style.scss';
-
 type Props = {
 	atomicTransfer?: Pick< AtomicTransfer, 'created_at' >;
 	purchase: Purchase | undefined;
@@ -156,7 +154,7 @@ export function AtomicRevertStep( props: Props ) {
 				className={ checkBox1ClassName }
 				label={
 					isPlanPurchase && ! isRemovePlan && ! isDowngradePlan
-						? ( sprintf(
+						? sprintf(
 								/* translators: %(purchaseRenewalDate)s is the date that the purchase renews */
 								__(
 									'Any themes/plugins you have installed on the site will be removed on %(purchaseRenewalDate)s, along with their data.'
@@ -164,10 +162,10 @@ export function AtomicRevertStep( props: Props ) {
 								{
 									purchaseRenewalDate: intlFormat( purchase.expiry_date, { dateStyle: 'medium' } ),
 								}
-						  ) as string )
-						: ( __(
+						  )
+						: __(
 								'Any themes/plugins you have installed on the site will be removed, along with their data.'
-						  ) as string )
+						  )
 				}
 				checked={ atomicRevertCheckOne }
 				onChange={ onClickCheckOne }
@@ -176,7 +174,7 @@ export function AtomicRevertStep( props: Props ) {
 				className={ checkBox2ClassName }
 				label={
 					isPlanPurchase && ! isRemovePlan && ! isDowngradePlan
-						? ( sprintf(
+						? sprintf(
 								/* translators: %(purchaseRenewalDate)s is the date that the purchase renews */
 								__(
 									'On %(purchaseRenewalDate)s, your site will return to its original settings and theme right before the first plugin or custom theme was installed.'
@@ -184,10 +182,10 @@ export function AtomicRevertStep( props: Props ) {
 								{
 									purchaseRenewalDate: intlFormat( purchase.expiry_date, { dateStyle: 'medium' } ),
 								}
-						  ) as string )
-						: ( __(
+						  )
+						: __(
 								'Your site will return to its original settings and theme right before the first plugin or custom theme was installed.'
-						  ) as string )
+						  )
 				}
 				checked={ atomicRevertCheckTwo }
 				onChange={ onClickCheckTwo }
