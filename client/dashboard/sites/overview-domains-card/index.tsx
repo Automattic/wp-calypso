@@ -115,6 +115,12 @@ export default function DomainsCard( { site, isCompact }: { site: Site; isCompac
 	}
 
 	if ( ! sitePlan || ! siteDomains ) {
+		// Given that the SiteDomainsDataViews is disabled for the backport,
+		// we skip rendering the skeleton here as it might not result in any component being rendered at all.
+		if ( isDashboardBackport() ) {
+			return null;
+		}
+
 		return <CalloutSkeleton />;
 	}
 
