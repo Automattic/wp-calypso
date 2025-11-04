@@ -123,7 +123,7 @@ export default function ConnectionModeCard( {
 								</Text>
 							</Notice>
 						) }
-						)<Text>{ infoText }</Text>
+						<Text>{ infoText }</Text>
 					</VStack>
 					{ steps.map( ( step, index ) => (
 						<div key={ step.title }>
