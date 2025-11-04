@@ -1,3 +1,6 @@
+import { localizeUrl } from '@automattic/i18n-utils';
+import { UPDATE_NAMESERVERS, TRANSFER_DOMAIN_REGISTRATION } from '@automattic/urls';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import * as React from 'react';
 
@@ -45,6 +48,11 @@ interface CancellationReason extends CancellationReasonBase {
 	 * Options for the sub category select
 	 */
 	selectOptions?: CancellationReason[];
+
+	/**
+	 * Help links shown for the selection
+	 */
+	helpMessage?: TranslateResult;
 }
 
 /**
@@ -478,22 +486,50 @@ export const DOMAIN_REGISTRATION_CANCELLATION_REASONS: CancellationReason[] = [
 		get label() {
 			return __( 'I want to use the domain with another service or host' );
 		},
-		// linkUrl: UPDATE_NAMESERVERS,
-		// linkText: __( 'update your name servers' ),
+		helpMessage: createInterpolateElement(
+			__(
+				'Canceling a domain name causes the domain to become unavailable for a brief period. ' +
+					'Afterward, anyone can repurchase. If you wish to use the domain with another service, ' +
+					'you’ll want to <a>update your name servers</a> instead.'
+			),
+			{
+				a: (
+					<a href={ localizeUrl( UPDATE_NAMESERVERS ) } target="_blank" rel="noopener noreferrer" />
+				),
+			}
+		),
 	},
 	{
 		value: 'transfer',
 		get label() {
 			return __( 'I want to transfer my domain to another registrar' );
 		},
-		// linkUrl: TRANSFER_DOMAIN_REGISTRATION,
-		// linkText: __( 'use our transfer out feature' ),
+		helpMessage: createInterpolateElement(
+			__(
+				'Canceling a domain name may cause the domain to become unavailable for a long time before it ' +
+					'can be purchased again, and someone may purchase it before you get a chance. Instead, ' +
+					'please <a>use our transfer out feature</a> if you want to use this domain again in the future.'
+			),
+			{
+				a: (
+					<a
+						href={ localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			}
+		),
 	},
 	{
 		value: 'expectations',
 		get label() {
 			return __( "The service isn't what I expected" );
 		},
+		helpMessage: __(
+			'If you misspelled the domain name you were attempting to purchase, it’s likely that others will as well, ' +
+				'and you might want to consider keeping the misspelled domain.'
+		),
 	},
 	{
 		value: 'wantedFree',

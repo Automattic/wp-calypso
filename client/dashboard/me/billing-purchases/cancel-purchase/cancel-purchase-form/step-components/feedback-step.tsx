@@ -1,6 +1,7 @@
 import { RadioControl, TextareaControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { Notice } from '../../../../../components/notice';
 import { getCancellationReasons } from '../cancellation-reasons';
 import { toSelectOption } from '../to-select-options';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
@@ -26,11 +27,7 @@ function CancellationReason( {
 	const [ value, setValue ] = useState( '' );
 	const [ details, setDetails ] = useState( '' );
 	const [ feedbackValue, setFeedbackValue ] = useState( '' );
-	const reasons = getCancellationReasons(
-		reasonCodes,
-		{ productSlug: purchase?.product_slug },
-		plans
-	);
+	const reasons = getCancellationReasons( reasonCodes );
 	const selectedReason = reasons.find( ( reason ) => reason.value === value );
 	const selectedSubOption = selectedReason?.selectOptions?.find(
 		( option ) => option.value === details
@@ -47,6 +44,20 @@ function CancellationReason( {
 		props.onDetailsChange( val, details );
 	};
 
+	const renderHelpMessage = () => {
+		if ( ! selectedReason || ! selectedReason?.helpMessage ) {
+			return null;
+		}
+
+		return (
+			<p>
+				<Notice variant="warning">
+					<span>{ selectedReason.helpMessage }</span>
+				</Notice>
+			</p>
+		);
+	};
+
 	return (
 		<>
 			<div className="cancel-purchase-form__feedback-question">
@@ -61,6 +72,9 @@ function CancellationReason( {
 					} }
 				/>
 			</div>
+
+			{ renderHelpMessage() }
+
 			{ selectedReason?.textPlaceholder && (
 				<div className="cancel-purchase-form__feedback-question">
 					<TextareaControl
