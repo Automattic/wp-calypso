@@ -1,12 +1,15 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
@@ -28,8 +31,8 @@ const SiteMigrationSshShareAccess: StepType< {
 			| 'migration-started'
 			| 'migration-completed'
 			| 'no-ssh-access'
-			| 'back-to-verification';
-		how?: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ];
+			| 'back-to-verification'
+			| 'do-it-for-me';
 	};
 } > = function ( { navigation } ) {
 	const site = useSite();
@@ -41,6 +44,9 @@ const SiteMigrationSshShareAccess: StepType< {
 	const transferId = transferIdParam ? parseInt( transferIdParam, 10 ) : null;
 	const [ migrationStarted, setMigrationStarted ] = useState( false );
 	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
+	const locale = useLocale();
+	const siteSlug = useSiteSlugParam() ?? '';
+	const { sendTicketAsync } = useSubmitMigrationTicket();
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -145,9 +151,33 @@ const SiteMigrationSshShareAccess: StepType< {
 		}
 	}, [ transferStatus, shouldStartMigration ] );
 
+	const handleSkip = useCallback( async () => {
+		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
+			path: window.location.pathname,
+			automated_migration: true,
+		} );
+
+		try {
+			await sendTicketAsync( {
+				locale,
+				from_url: fromUrl,
+				blog_url: siteSlug,
+			} );
+
+			// Reset the site in the state to ensure the correct overview screen is shown.
+			siteId && dispatch( resetSite( siteId ) );
+
+			return navigation.submit?.( {
+				destination: 'do-it-for-me',
+			} );
+		} catch ( error ) {
+			// TODO: Handle error
+		}
+	}, [ locale, fromUrl, siteSlug, siteId, dispatch, navigation, sendTicketAsync ] );
+
 	const navigateToDoItForMe = useCallback( () => {
-		navigation.submit?.( { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME } );
-	}, [ navigation ] );
+		handleSkip();
+	}, [ handleSkip ] );
 
 	const displaySiteName = urlToDomain( fromUrl );
 	const hostDisplayName = getSSHHostDisplayName( host );

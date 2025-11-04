@@ -78,7 +78,9 @@ import {
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
 	isTemporarySitePurchase,
+	isWpcomFlexSubscription,
 } from '../../../utils/purchase';
+import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
@@ -1149,6 +1151,9 @@ export default function PurchaseSettings() {
 					/>
 				</Grid>
 				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
+				{ isWpcomFlexSubscription( purchase ) && (
+					<BillingFlexUsageCard purchaseId={ purchase.ID } />
+				) }
 				<ManageSubscriptionCard purchase={ purchase } />
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

@@ -530,10 +530,22 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, from, authorizationUrl, platform } = providedDependencies;
+					const { action, from, authorizationUrl, platform, host } = providedDependencies;
 
 					if ( action === 'skip' ) {
 						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
+					}
+
+					if ( action === 'redirect-to-ssh' ) {
+						// Redirect to SSH verification step
+						return navigate(
+							paths.sshVerificationPath( {
+								siteId,
+								siteSlug,
+								from: from || fromQueryParam,
+								host,
+							} )
+						);
 					}
 
 					if ( action === 'already-wpcom' ) {
@@ -643,7 +655,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 							| 'migration-started'
 							| 'migration-completed'
 							| 'no-ssh-access'
-							| 'back-to-verification';
+							| 'back-to-verification'
+							| 'do-it-for-me';
 					};
 
 					// Missing transferId, redirect back to verification
@@ -668,6 +681,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return exitFlow(
 							paths.dashboardSiteSSHMigration( { 'ssh-migration': 'completed' }, { siteSlug } )
 						);
+					}
+
+					if ( destination === 'do-it-for-me' ) {
+						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 					}
 
 					return navigate( paths.sshInProgressPath( { siteId, siteSlug } ) );
