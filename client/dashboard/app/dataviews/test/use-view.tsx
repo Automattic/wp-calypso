@@ -13,7 +13,7 @@ import {
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Suspense } from 'react';
-import { useView } from '../index';
+import { useView } from '../use-view';
 import type { Field, View } from '@wordpress/dataviews';
 
 const defaultFields: Field< any >[] = [
