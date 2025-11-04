@@ -1077,13 +1077,11 @@ __metadata:
     "@automattic/design-picker": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
-    "@automattic/load-script": "workspace:^"
     "@automattic/number-formatters": "npm:^1.0.1"
     "@automattic/oauth-token": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@remix-run/router": "npm:^1.5.0"
     "@tanstack/react-query": "npm:^5.83.0"
-    "@types/validator": "npm:^13.7.1"
     "@wordpress/api-fetch": "npm:^7.23.0"
     "@wordpress/data-controls": "npm:^4.23.0"
     "@wordpress/deprecated": "npm:^4.23.0"
@@ -1092,7 +1090,6 @@ __metadata:
     "@wordpress/primitives": "npm:^4.23.0"
     "@wordpress/url": "npm:^4.23.0"
     debug: "npm:^4.4.1"
-    fast-json-stable-stringify: "npm:^2.1.0"
     i18n-calypso: "workspace:^"
     jest-fetch-mock: "npm:^3.0.3"
     nock: "npm:^13.5.6"
@@ -1102,9 +1099,7 @@ __metadata:
     redux: "npm:^5.0.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.3"
-    use-debounce: "npm:^3.1.0"
     utility-types: "npm:^3.10.0"
-    validator: "npm:^13.5.2"
     wait-for-expect: "npm:^3.0.2"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -1494,6 +1489,7 @@ __metadata:
     react-draggable: "npm:^4.4.6"
     smooch: "npm:5.6.0"
     typescript: "npm:^5.8.3"
+    use-debounce: "npm:^3.1.0"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.23.0
@@ -38866,13 +38862,6 @@ __metadata:
   version: 5.0.1
   resolution: "validate-npm-package-name@npm:5.0.1"
   checksum: 903e738f7387404bb72f7ac34e45d7010c877abd2803dc2d614612527927a40a6d024420033132e667b1bade94544b8a1f65c9431a4eb30d0ce0d80093cd1f74
-  languageName: node
-  linkType: hard
-
-"validator@npm:^13.5.2":
-  version: 13.11.0
-  resolution: "validator@npm:13.11.0"
-  checksum: 0107da3add5a4ebc6391dac103c55f6d8ed055bbcc29a4c9cbf89eacfc39ba102a5618c470bdc33c6487d30847771a892134a8c791f06ef0962dd4b7a60ae0f5
   languageName: node
   linkType: hard
 
