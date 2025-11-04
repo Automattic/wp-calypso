@@ -72,9 +72,9 @@ export function useFlexUsageCosts( purchaseId?: number | string ): FlexUsageCost
 	const flexPurchase = purchase as FlexPurchaseWithCosts;
 
 	// Placeholders until the endpoint is wired
-	const storage = flexPurchase.flex_storage_cost ?? 4.1;
-	const bandwidth = flexPurchase.flex_bandwidth_cost ?? 0.78;
-	const compute = flexPurchase.flex_compute_cost ?? 0.25;
+	const storage = flexPurchase.flex_storage_cost ?? 0;
+	const bandwidth = flexPurchase.flex_bandwidth_cost ?? 0;
+	const compute = flexPurchase.flex_compute_cost ?? 0;
 	const currency = currencyFromPurchase;
 
 	const parts: FlexUsageCostPart[] = [
