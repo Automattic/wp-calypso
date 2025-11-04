@@ -31,6 +31,9 @@ export const ALL_TIERS: TierItem[] = [
 		heading: __( 'Essential benefits' ),
 		subheading: __( 'Tools, earning opportunities, support & training and more' ),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],
+		progressCardDescription: __(
+			'You’re just getting started. Explore your benefits and learn how to grow your influenced revenue.'
+		),
 		benefits: [
 			{
 				icon: tool,
@@ -118,6 +121,9 @@ export const ALL_TIERS: TierItem[] = [
 		),
 		heading: __( '2 additional benefits unlocked' ),
 		subheading: __( 'Directory visibility, early access' ),
+		progressCardDescription: __(
+			'You’re making great progress! Keep growing your influenced revenue to unlock Pro Partner benefits.'
+		),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ],
 		benefits: [
 			{
@@ -158,6 +164,9 @@ export const ALL_TIERS: TierItem[] = [
 		),
 		heading: __( '3 additional benefits unlocked' ),
 		subheading: __( 'Co-marketing, qualified leads, partner manager & more' ),
+		progressCardDescription: __(
+			'Congratulations! You’ve unlocked all Pro Partner benefits including co-marketing opportunities and your dedicated partner manager.'
+		),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
 		benefits: [
 			{
@@ -200,6 +209,9 @@ export const ALL_TIERS: TierItem[] = [
 		),
 		heading: __( '3 premium benefits' ),
 		subheading: __( 'Annual credits, Parse.ly trial, marketing funds' ),
+		progressCardDescription: __(
+			'You’ve reached the highest tier! Enjoy all Premier Partner benefits including annual credits, Parse.ly trial, and marketing development funds.'
+		),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
 		benefits: [
 			{
