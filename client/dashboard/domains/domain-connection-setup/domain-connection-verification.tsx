@@ -31,6 +31,7 @@ export default function DomainConnectionVerification( {
 	domainName,
 	siteSlug,
 	domainMappingStatus,
+	domainConnectionSetupInfo,
 }: DomainConnectionVerificationProps ) {
 	const status = isMappingVerificationSuccess( domainMappingStatus.mode, domainMappingStatus )
 		? 'connected'
@@ -69,7 +70,10 @@ export default function DomainConnectionVerification( {
 							: __( 'DNS record verification' ) }
 					</Text>
 
-					<DnsRecordsTable domainName={ domainName } />
+					<DnsRecordsTable
+						domainName={ domainName }
+						domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					/>
 
 					{ status === 'verifying' && (
 						<Text size="medium" weight={ 500 }>

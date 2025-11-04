@@ -1,4 +1,4 @@
-import { DomainConnectionSetupMode } from '@automattic/api-core';
+import { DomainConnectionSetupMode, DomainMappingSetupInfo } from '@automattic/api-core';
 import { domainMappingStatusQuery, domainQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -156,7 +156,13 @@ const nameServerRecordData = ( currentValue: string, expectedValue: string ) => 
 	};
 };
 
-export default function DnsRecordsTable( { domainName }: { domainName: string } ) {
+export default function DnsRecordsTable( {
+	domainName,
+	domainConnectionSetupInfo,
+}: {
+	domainName: string;
+	domainConnectionSetupInfo: DomainMappingSetupInfo;
+} ) {
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: domainMappingStatus } = useSuspenseQuery( domainMappingStatusQuery( domainName ) );
 
@@ -170,7 +176,7 @@ export default function DnsRecordsTable( { domainName }: { domainName: string } 
 
 		if ( isSuggestedMode ) {
 			const currentNameServers = ( domainMappingStatus?.name_servers || [] ).sort();
-			const expectedNameServers = [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ];
+			const expectedNameServers = domainConnectionSetupInfo.wpcom_name_servers;
 			const longestLength = Math.max( currentNameServers.length, expectedNameServers.length );
 
 			for ( let i = 0; i < longestLength; i++ ) {
