@@ -4,7 +4,7 @@ import { translateFromPage } from '../utils';
 import { EditorComponent } from './editor-component';
 import type { EditorPreviewOptions, EditorToolbarSettingsButton } from './types';
 
-const panel = '[class*="navigable-region"][class*="header"]';
+const panel = '[aria-label="Editor top bar"]';
 const moreOptionsLabel = 'Options';
 const selectors = {
 	// Block Inserter
