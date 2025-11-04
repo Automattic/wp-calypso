@@ -28,21 +28,15 @@ const viewAdvanced: ViewTable = {
 	},
 };
 
-interface DnsRecordSuggestedVerification {
+interface DnsRecordVerification {
+	type?: string; // only present in advanced mode
+	name?: string; // only present in advanced mode
 	currentValue: string;
 	expectedValue: string;
 	status: React.ReactNode;
 }
 
-interface DnsRecordAdvancedVerification {
-	type: string;
-	name: string;
-	currentValue: string;
-	expectedValue: string;
-	status: React.ReactNode;
-}
-
-const fieldsSuggested: Field< DnsRecordSuggestedVerification >[] = [
+const fieldsSuggested: Field< DnsRecordVerification >[] = [
 	{
 		id: 'currentValue',
 		label: __( 'Current Value' ),
@@ -72,7 +66,7 @@ const fieldsSuggested: Field< DnsRecordSuggestedVerification >[] = [
 	},
 ];
 
-const fieldsAdvanced: Field< DnsRecordAdvancedVerification >[] = [
+const fieldsAdvanced: Field< DnsRecordVerification >[] = [
 	{
 		id: 'type',
 		label: __( 'Type' ),
@@ -91,33 +85,7 @@ const fieldsAdvanced: Field< DnsRecordAdvancedVerification >[] = [
 		enableSorting: false,
 		filterBy: false,
 	},
-	{
-		id: 'currentValue',
-		label: __( 'Current Value' ),
-		type: 'text' as const,
-		readOnly: true,
-		enableHiding: false,
-		enableSorting: false,
-		filterBy: false,
-	},
-	{
-		id: 'expectedValue',
-		label: __( 'Expected Value' ),
-		type: 'text' as const,
-		readOnly: true,
-		enableHiding: false,
-		enableSorting: false,
-		filterBy: false,
-	},
-	{
-		id: 'status',
-		label: __( 'Status' ),
-		type: 'text' as const,
-		readOnly: true,
-		enableHiding: false,
-		enableSorting: false,
-		filterBy: false,
-	},
+	...fieldsSuggested,
 ];
 
 const VerifiedBadge = () => {
@@ -168,11 +136,8 @@ export default function DnsRecordsTable( {
 
 	const isSuggestedMode = domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED;
 
-	const dnsRecords = useMemo( (): (
-		| DnsRecordAdvancedVerification
-		| DnsRecordSuggestedVerification
-	)[] => {
-		const data: ( DnsRecordAdvancedVerification | DnsRecordSuggestedVerification )[] = [];
+	const dnsRecords = useMemo( () => {
+		const data: DnsRecordVerification[] = [];
 
 		if ( isSuggestedMode ) {
 			const currentNameServers = ( domainMappingStatus?.name_servers || [] ).sort();
@@ -198,39 +163,23 @@ export default function DnsRecordsTable( {
 		}
 
 		return data;
-	}, [ domain, domainName, domainMappingStatus, isSuggestedMode ] );
+	}, [ domain, domainName, domainMappingStatus, domainConnectionSetupInfo, isSuggestedMode ] );
 
 	return (
 		<DataViewsCard className="dns-records-table">
-			{ isSuggestedMode ? (
-				<DataViews< DnsRecordSuggestedVerification >
-					data={ dnsRecords as DnsRecordSuggestedVerification[] }
-					fields={ fieldsSuggested }
-					view={ viewSuggested }
-					defaultLayouts={ { table: {} } }
-					paginationInfo={ { totalItems: dnsRecords.length, totalPages: 1 } }
-					onChangeView={ () => {} }
-					getItemId={ ( item: DnsRecordSuggestedVerification ) =>
-						`${ item.currentValue }-${ item.expectedValue }`
-					}
-				>
-					<DataViews.Layout />
-				</DataViews>
-			) : (
-				<DataViews< DnsRecordAdvancedVerification >
-					data={ dnsRecords as DnsRecordAdvancedVerification[] }
-					fields={ fieldsAdvanced }
-					view={ viewAdvanced }
-					defaultLayouts={ { table: {} } }
-					paginationInfo={ { totalItems: dnsRecords.length, totalPages: 1 } }
-					onChangeView={ () => {} }
-					getItemId={ ( item: DnsRecordAdvancedVerification ) =>
-						`${ item.type }-${ item.name }-${ item.currentValue }`
-					}
-				>
-					<DataViews.Layout />
-				</DataViews>
-			) }
+			<DataViews< DnsRecordVerification >
+				data={ dnsRecords }
+				fields={ isSuggestedMode ? fieldsSuggested : fieldsAdvanced }
+				view={ isSuggestedMode ? viewSuggested : viewAdvanced }
+				defaultLayouts={ { table: {} } }
+				paginationInfo={ { totalItems: dnsRecords.length, totalPages: 1 } }
+				onChangeView={ () => {} }
+				getItemId={ ( item: DnsRecordVerification ) =>
+					`${ item.currentValue }-${ item.expectedValue }`
+				}
+			>
+				<DataViews.Layout />
+			</DataViews>
 		</DataViewsCard>
 	);
 }
