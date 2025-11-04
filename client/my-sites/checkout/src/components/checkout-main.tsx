@@ -32,9 +32,9 @@ import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import useCountryList from '../hooks/use-country-list';
-import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
+import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
@@ -689,7 +689,7 @@ export default function CheckoutMain( {
 	// `getThankYouUrl` after passing through the pending page.
 	//
 	// DO NOT PUT POST-CHECKOUT BEHAVIOR IN HERE! IT'S NOT WHAT YOU THINK!
-	const onPaymentSubmittedAndProcessing = useCreatePaymentCompleteCallback( {
+	const onPaymentSubmittedAndProcessing = useCreatePaymentSubmittedAndProcessingCallback( {
 		createUserAndSiteBeforeTransaction,
 		productAliasFromUrl,
 		redirectTo,
