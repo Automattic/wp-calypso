@@ -40,46 +40,49 @@
 	.site-migration-application-password-authorization__authorization {
 		display: flex;
 		flex-direction: column;
-		gap: 1em;
+		gap: 0.5rem;
 		align-items: center;
+		.action_buttons__button {
+			width: 300px;
+		}
+		.checklist-card {
+			margin-top: 1rem;
+		}
+		.navigation-link {
+			color: var(--color-neutral-70, #1d2327);
+			font-weight: 500;
+			text-decoration: underline;
+		}
 	}
 	.site-migration-application-password-authorization__benefits-container {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 1em;
-		h3 {
-			font-size: $font-title-small;
-			margin-bottom: 0.75em;
-		}
+		max-width: 440px;
+		margin-top: 3rem;
+	}
+	.site-migration-application-password-authorization__benefits-title {
+		font-weight: 500;
+		margin: 0.5rem 0 1.5rem;
+		color: var(--studio-gray-100);
 	}
 	.site-migration-application-password-authorization__benefits {
-		padding: 2em;
-		background-color: var(--color-border-shadow);
-		border-radius: 4px;
-		@include break-small {
-			width: 350px;
-		}
 		display: flex;
 		flex-direction: column;
-		gap: 1em;
+		gap: 0.75rem;
+		margin-bottom: 0.75rem;
 	}
 	.site-migration-application-password-authorization__benefits-item {
 		display: flex;
-		flex-direction: row;
-		gap: 0.5em;
-		font-size: $font-body-small;
+		align-items: center;
+		gap: 1rem;
+		font-size: 0.875rem;
+		color: var(--studio-gray-50);
 		.site-migration-application-password-authorization__benefits-item-icon {
-			width: 42px;
-			height: 42px;
-			background-color: var(--studio-gray-5);
+			border: 1px solid var(--studio-gray-5);
 			border-radius: 4px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
+			padding: 0.75rem;
+			line-height: 0;
 			flex-shrink: 0;
 			svg {
-				fill: var(--studio-gray-70);
+				margin: 0;
 			}
 		}
 	}
