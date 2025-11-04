@@ -125,7 +125,7 @@ export default function DNSRecordsDataView( {
 				label: '',
 				enableHiding: false,
 				enableSorting: false,
-				header: '',
+				header: <></>,
 				render: () => {
 					return <Icon icon={ arrowRight } fill="#CCCCCC" size={ 24 } />;
 				},
