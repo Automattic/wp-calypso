@@ -20,12 +20,8 @@ const viewSuggested: ViewTable = {
 };
 
 const viewAdvanced: ViewTable = {
-	type: 'table',
-	page: 1,
+	...viewSuggested,
 	fields: [ 'type', 'name', 'currentValue', 'expectedValue', 'status' ],
-	layout: {
-		enableMoving: false,
-	},
 };
 
 interface DnsRecordVerification {
