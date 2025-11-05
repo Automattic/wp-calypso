@@ -1,8 +1,8 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
-import { Icon, next, published, shield } from '@wordpress/icons';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
+import { next, published, shield } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,44 +11,12 @@ import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { urlToDomain } from 'calypso/lib/url';
+import { ChecklistCard } from '../../components/checklist-card';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
-
-interface HostingDetailsWithIconsProps {
-	items: {
-		icon: ReactElement;
-		description: TranslateResult;
-	}[];
-}
-
-const HostingDetailsWithIcons: FC< HostingDetailsWithIconsProps > = ( { items } ) => {
-	const translate = useTranslate();
-
-	return (
-		<div className="import__site-identify-hosting-details-experiment">
-			<p className="import__site-identify-hosting-details-experiment-title">
-				{ translate( 'Why should you host with us?' ) }
-			</p>
-			<ul className="import__site-identify-hosting-details-experiment-list">
-				{ items.map( ( item, index ) => (
-					<li key={ index } className="import__site-identify-hosting-details-experiment-list-item">
-						<Icon
-							className="import__site-identify-hosting-details-experiment-icon"
-							icon={ item.icon }
-							size={ 24 }
-						/>
-						<p className="import__site-identify-hosting-details-experiment-description">
-							{ item.description }
-						</p>
-					</li>
-				) ) }
-			</ul>
-		</div>
-	);
-};
 
 interface Props {
 	hasError?: boolean;
@@ -103,16 +71,16 @@ export const Analyzer: FC< Props > = ( {
 		return <ScanningStep />;
 	}
 
-	const hostingDetailItems = {
-		'blazing-fast-speed': {
+	const hostingDetailItems = [
+		{
 			icon: next,
-			description: translate(
+			text: translate(
 				'Blazing fast speeds with lightning-fast load times for a seamless experience.'
 			),
 		},
-		'unmatched-uptime': {
+		{
 			icon: published,
-			description: translate(
+			text: translate(
 				'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
 				{
 					args: {
@@ -124,11 +92,11 @@ export const Analyzer: FC< Props > = ( {
 				}
 			),
 		},
-		security: {
+		{
 			icon: shield,
-			description: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
+			text: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
 		},
-	};
+	];
 
 	return (
 		<>
@@ -148,7 +116,10 @@ export const Analyzer: FC< Props > = ( {
 					nextLabelText={ translate( 'Check my site' ) }
 				/>
 			</div>
-			<HostingDetailsWithIcons items={ Object.values( hostingDetailItems ) } />
+			<ChecklistCard
+				title={ translate( 'Why should you host with us?' ) }
+				items={ hostingDetailItems }
+			/>
 		</>
 	);
 };
