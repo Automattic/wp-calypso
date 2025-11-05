@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import { UserData } from 'calypso/lib/user/user';
+import { UserProfileData } from 'calypso/lib/user/user';
 import { List } from 'calypso/reader/list-manage/types';
 import { requestUserLists } from 'calypso/state/reader/lists/actions';
 
@@ -17,7 +17,7 @@ interface AppState {
 }
 
 interface UserListsProps {
-	user: UserData;
+	user: UserProfileData;
 	requestUserLists?: ( userLogin: string ) => void;
 	lists?: List[];
 	isLoading?: boolean;

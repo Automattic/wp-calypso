@@ -17,7 +17,7 @@ import {
 import clsx from 'clsx';
 import { useState, useMemo, useEffect, type PropsWithChildren } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/src/hooks/use-create-payment-complete-callback';
+import useCreatePaymentSubmittedAndProcessingCallback from 'calypso/my-sites/checkout/src/hooks/use-create-payment-submitted-and-processing-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -122,7 +122,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		showFeatureList,
 	} = props;
 
-	const paymentCompleteCallback = useCreatePaymentCompleteCallback( {
+	const onPaymentSubmittedAndProcessing = useCreatePaymentSubmittedAndProcessingCallback( {
 		isComingFromUpsell: true,
 		siteSlug: siteSlug,
 		isInModal: disabledThankYouPage,
@@ -130,7 +130,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	} );
 
 	const handlePaymentComplete = ( args: PaymentEventCallbackArguments ) => {
-		paymentCompleteCallback( args );
+		onPaymentSubmittedAndProcessing( args );
 		onPurchaseSuccess?.();
 	};
 

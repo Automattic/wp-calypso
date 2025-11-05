@@ -78,7 +78,9 @@ import {
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
 	isTemporarySitePurchase,
+	isWpcomFlexSubscription,
 } from '../../../utils/purchase';
+import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
@@ -596,7 +598,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		mutate: setAutoRenew,
 		error,
 		isPending: isMutationPending,
-	} = useMutation( userPurchaseSetAutoRenewQuery( purchase.ID ) );
+	} = useMutation( userPurchaseSetAutoRenewQuery() );
 	const { user } = useAuth();
 	return (
 		<Card>
@@ -607,7 +609,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 					form={ form }
 					onChange={ ( newData ) => {
 						if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
-							setAutoRenew( newData.is_auto_renew_enabled );
+							setAutoRenew( { purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled } );
 						}
 					} }
 				/>
@@ -1149,6 +1151,9 @@ export default function PurchaseSettings() {
 					/>
 				</Grid>
 				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
+				{ isWpcomFlexSubscription( purchase ) && (
+					<BillingFlexUsageCard purchaseId={ purchase.ID } />
+				) }
 				<ManageSubscriptionCard purchase={ purchase } />
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

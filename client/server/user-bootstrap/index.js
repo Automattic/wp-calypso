@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import superagent from 'superagent';
-import { filterUserObject } from 'calypso/lib/user/shared-utils';
+import { decodeUserObject, filterUserObject } from 'calypso/lib/user/shared-utils';
 
 const debug = debugFactory( 'calypso:bootstrap' );
 const AUTH_COOKIE_NAME = 'wordpress_logged_in';
@@ -88,7 +88,7 @@ export default async function getBootstrappedUser( request ) {
 		const res = await req;
 		debug( '%o -> %o status code', url, res.status );
 		return {
-			...( request.originalUrl.startsWith( '/v2' ) ? res.body : filterUserObject( res.body ) ),
+			...filterUserObject( decodeUserObject( res.body ) ),
 			bootstrapped: true,
 		};
 	} catch ( err ) {
