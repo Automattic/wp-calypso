@@ -49,11 +49,13 @@ const FlowCard = ( {
 						</FlexItem>
 					) }
 					<FlexBlock>
-						<h3 className={ clsx( 'flow-question__heading', bem( 'heading' ) ) }>
-							{ title }
-							{ badge && <Badge type={ badge.type }>{ badge.text }</Badge> }
-						</h3>
+						<h3 className={ clsx( 'flow-question__heading', bem( 'heading' ) ) }>{ title }</h3>
 						<p className={ clsx( 'flow-question__description', bem( 'description' ) ) }>{ text }</p>
+						{ badge && (
+							<div className={ clsx( 'flow-question__badge', bem( 'badge' ) ) }>
+								<Badge type={ badge.type }>{ badge.text }</Badge>
+							</div>
+						) }
 					</FlexBlock>
 					<FlexItem>
 						<Icon icon={ chevronRight } size={ 24 } />
