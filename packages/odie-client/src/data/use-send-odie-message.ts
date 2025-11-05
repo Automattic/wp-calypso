@@ -250,8 +250,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				trackEvent( 'error_updating_support_interaction', {
 					error_message:
 						error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
-					has_existing_interaction: Boolean( supportInteraction?.uuid ),
-					has_chat_id: Boolean( chatId ),
+					existing_interaction_id: supportInteraction?.uuid ?? null,
+					chat_id: chatId ?? null,
 				} );
 			}
 
