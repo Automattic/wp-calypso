@@ -80,15 +80,6 @@ export const useGetCombinedChat = (
 	}, [ connectionStatus, setRefreshingAfterReconnect ] );
 
 	useEffect( () => {
-		if ( ! currentSupportInteraction?.uuid ) {
-			setMainChatState( {
-				...emptyChat,
-				status: 'loaded',
-			} );
-			previousUuidRef.current = undefined;
-			return;
-		}
-
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
 		if (
 			isOdieChatLoading ||
@@ -101,12 +92,14 @@ export const useGetCombinedChat = (
 
 		previousUuidRef.current = currentSupportInteraction?.uuid;
 
+		const supportInteractionId = currentSupportInteraction?.uuid ?? null;
+
 		// We don't have a conversation id, so our chat is simply the odie chat
 		if ( ! conversationId ) {
 			setMainChatState( {
 				...( odieChat ? odieChat : emptyChat ),
 				conversationId: null,
-				supportInteractionId: currentSupportInteraction.uuid,
+				supportInteractionId,
 				status: 'loaded',
 				provider: 'odie',
 			} );
@@ -121,7 +114,7 @@ export const useGetCombinedChat = (
 			setMainChatState( {
 				messages: [ ...( odieChat ? filteredOdieMessages : [] ) ],
 				conversationId,
-				supportInteractionId: currentSupportInteraction.uuid,
+				supportInteractionId,
 				status: 'loaded',
 				provider: 'zendesk',
 			} );
@@ -139,11 +132,11 @@ export const useGetCombinedChat = (
 						Smooch.loadConversation( conversation.id );
 						setMainChatState( ( prevChat ) => ( {
 							...( odieChat ? odieChat : {} ),
-							supportInteractionId: currentSupportInteraction.uuid,
+							supportInteractionId,
 							conversationId: conversation.id,
 							messages: [
 								...( odieChat ? filteredOdieMessages : [] ),
-								...getOdieTransferMessage( currentSupportInteraction.bot_slug as OdieAllBotSlugs ),
+								...getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs ),
 								...( deduplicateZDMessages( [
 									// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 									...prevChat.messages.filter( ( message ) => message.role === 'user' ),
@@ -151,7 +144,7 @@ export const useGetCombinedChat = (
 								] ) as Message[] ),
 							],
 							provider: 'zendesk',
-							status: currentSupportInteraction.status === 'closed' ? 'closed' : 'loaded',
+							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
 						} ) );
 					}
 				} );
@@ -163,7 +156,7 @@ export const useGetCombinedChat = (
 				} );
 
 				startNewInteraction( {
-					event_source: 'help-center',
+					event_source: 'odie',
 					event_external_id: crypto.randomUUID(),
 				} );
 			} finally {

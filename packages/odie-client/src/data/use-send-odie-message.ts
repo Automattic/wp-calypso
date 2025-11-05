@@ -93,10 +93,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			} ) );
 
 			const params = new URLSearchParams( location.search );
-			if ( params.get( 'id' ) !== interaction.uuid ) {
-				params.set( 'id', interaction.uuid );
-				navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
-			}
+			params.set( 'id', interaction.uuid );
+			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
 		},
 		[ location.pathname, location.search, navigate, setChat ]
 	);
