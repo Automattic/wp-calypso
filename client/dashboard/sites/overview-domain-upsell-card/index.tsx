@@ -147,15 +147,23 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 		);
 	}
 
+	let description = __(
+		'<domain /> is a perfect domain for your site. Grab it now or <link>choose your own</link>.'
+	);
+	let upsellCTAButtonText = __( 'Get this domain' );
+
+	if ( site.plan?.is_free ) {
+		description = __( 'Get <domain /> free for one year with an annual paid plan.' );
+		upsellCTAButtonText = __( 'Select a plan' );
+	}
+
 	return (
 		<DomainUpsellCardContent
 			site={ site }
 			title={ __( 'The perfect domain awaits' ) }
-			description={ __(
-				'<domain /> is a perfect domain for your site. Grab it now or <link>choose your own</link>.'
-			) }
+			description={ description }
 			upsellId="site-overview-get-this-domain"
-			upsellCTAButtonText={ __( 'Get this domain' ) }
+			upsellCTAButtonText={ upsellCTAButtonText }
 		/>
 	);
 };
