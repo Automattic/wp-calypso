@@ -227,21 +227,21 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				return;
 			}
 
-			const chatIdString = returnedChat.chat_id?.toString?.() ?? String( returnedChat.chat_id );
+			const chatId = returnedChat.chat_id;
 			let supportInteraction = currentSupportInteraction;
 
 			try {
-				if ( ! supportInteraction && chatIdString ) {
+				if ( ! supportInteraction && chatId ) {
 					supportInteraction = await startNewInteraction( {
-						event_external_id: chatIdString,
+						event_external_id: chatId.toString(),
 						event_source: 'odie',
 					} );
 					updateInteractionContext( supportInteraction );
-				} else if ( supportInteraction && ! odieId && chatIdString ) {
+				} else if ( supportInteraction && ! odieId && chatId ) {
 					const updatedInteraction = await addEventToInteraction.mutateAsync( {
 						interactionId: supportInteraction.uuid,
 						eventData: {
-							event_external_id: chatIdString,
+							event_external_id: chatId.toString(),
 							event_source: 'odie',
 						},
 					} );
