@@ -122,10 +122,11 @@ export const useCreateZendeskConversation = () => {
 		} );
 
 		let activeInteractionId = initialInteractionId;
+		let interaction = null;
 
 		try {
 			if ( activeInteractionId ) {
-				const interaction = await addEventToInteraction.mutateAsync( {
+				interaction = await addEventToInteraction.mutateAsync( {
 					interactionId: activeInteractionId,
 					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 				} );
@@ -137,15 +138,11 @@ export const useCreateZendeskConversation = () => {
 						},
 					} );
 				}
-				activeInteractionId = interaction.uuid;
-				updateInteractionContext( interaction );
 			} else {
-				const interaction = await startNewInteraction( {
+				interaction = await startNewInteraction( {
 					event_source: 'zendesk',
 					event_external_id: conversation.id,
 				} );
-				activeInteractionId = interaction.uuid;
-				updateInteractionContext( interaction );
 				await Smooch.updateConversation( conversation.id, {
 					metadata: {
 						...conversation.metadata,
@@ -153,9 +150,15 @@ export const useCreateZendeskConversation = () => {
 					},
 				} );
 			}
+
+			activeInteractionId = interaction.uuid;
 		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Failed to sync support interaction during Zendesk escalation', error );
+			trackEvent( 'error_updating_interaction_and_smooch', {
+				error_message:
+					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
+				active_interaction_id: activeInteractionId || null,
+				conversation_id: conversation.id,
+			} );
 		}
 
 		trackEvent( 'new_zendesk_conversation', {
@@ -174,6 +177,10 @@ export const useCreateZendeskConversation = () => {
 			provider: 'zendesk',
 			status: 'loaded',
 		} ) );
+
+		if ( interaction ) {
+			updateInteractionContext( interaction );
+		}
 
 		return conversation.id;
 	};
