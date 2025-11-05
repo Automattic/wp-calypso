@@ -151,11 +151,12 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 		);
 	}
 
-	if ( ! pages || pages.length === 0 ) {
+	const homePage = pages?.[ 0 ] ?? null;
+	if ( ! homePage || ! homePage.wpcom_performance_report_hash ) {
 		return <PerformanceCardContentWithoutTests site={ site } />;
 	}
 
-	return <PerformanceCardContentWithTests site={ site } page={ pages[ 0 ] } />;
+	return <PerformanceCardContentWithTests site={ site } page={ homePage } />;
 }
 
 export default function PerformanceCard( { site }: { site: Site } ) {
