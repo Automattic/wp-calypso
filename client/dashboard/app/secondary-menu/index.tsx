@@ -270,6 +270,7 @@ function UserProfile() {
 				render={
 					<Button
 						className="dashboard-secondary-menu__item"
+						label={ __( 'My profile' ) }
 						variant="tertiary"
 						icon={
 							user.avatar_URL ? (
@@ -285,7 +286,7 @@ function UserProfile() {
 					/>
 				}
 			/>
-			<Menu.Popover>
+			<Menu.Popover style={ { minWidth: '250px' } }>
 				<Menu.Item disabled>
 					<Text>{ user.display_name }</Text>
 					<Text variant="muted">@{ user.username }</Text>
