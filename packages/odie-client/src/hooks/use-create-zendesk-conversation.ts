@@ -1,14 +1,21 @@
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
-import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
 import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
-import type { OdieAllBotSlugs, SupportInteraction } from '../types';
+import type { OdieAllBotSlugs } from '../types';
 
-export const useCreateZendeskConversation = () => {
+export const useCreateZendeskConversation = (): ( ( {
+	avoidTransfer,
+	createdFrom,
+	isFromError,
+}: {
+	avoidTransfer?: boolean;
+	createdFrom?: string;
+	isFromError?: boolean;
+} ) => Promise< string > ) => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
@@ -26,41 +33,23 @@ export const useCreateZendeskConversation = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	const updateInteractionContext = useCallback(
-		( interaction: SupportInteraction ) => {
-			setChat( ( prevChat ) => ( {
-				...prevChat,
-				supportInteractionId: interaction.uuid,
-			} ) );
-
-			const params = new URLSearchParams( location.search );
-			if ( params.get( 'id' ) !== interaction.uuid ) {
-				params.set( 'id', interaction.uuid );
-				navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
-			}
-		},
-		[ location.pathname, location.search, navigate, setChat ]
-	);
-
 	const createConversation = async ( {
-		interactionId = '',
 		createdFrom = '',
 		isFromError = false,
 		errorReason = '',
 	}: {
-		interactionId?: string;
 		createdFrom?: string;
 		isFromError?: boolean;
 		errorReason?: string;
 	} ) => {
-		const initialInteractionId = interactionId || currentSupportInteraction?.uuid || '';
+		let activeInteractionId = currentSupportInteraction?.uuid;
 
 		trackEvent( 'create_zendesk_conversation', {
 			is_submitting_zendesk_user_fields: isSubmittingZendeskUserFields,
 			chat_conversation_id: chat.conversationId,
 			chat_status: chat.status,
 			chat_provider: chat.provider,
-			interaction_id: initialInteractionId || null,
+			interaction_id: activeInteractionId,
 			created_from: createdFrom,
 			is_from_error: isFromError,
 			error_reason: errorReason || 'Unknown error',
@@ -116,12 +105,11 @@ export const useCreateZendeskConversation = () => {
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),
-				...( initialInteractionId ? { supportInteractionId: initialInteractionId } : {} ),
+				...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
 				...( chatId ? { odieChatId: chatId } : {} ),
 			},
 		} );
 
-		let activeInteractionId = initialInteractionId;
 		let interaction = null;
 
 		try {
@@ -130,28 +118,22 @@ export const useCreateZendeskConversation = () => {
 					interactionId: activeInteractionId,
 					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 				} );
-				if ( interaction.uuid !== activeInteractionId ) {
-					await Smooch.updateConversation( conversation.id, {
-						metadata: {
-							...conversation.metadata,
-							supportInteractionId: interaction.uuid,
-						},
-					} );
-				}
 			} else {
 				interaction = await startNewInteraction( {
 					event_source: 'zendesk',
 					event_external_id: conversation.id,
 				} );
+			}
+
+			if ( interaction.uuid !== activeInteractionId ) {
 				await Smooch.updateConversation( conversation.id, {
 					metadata: {
 						...conversation.metadata,
 						supportInteractionId: interaction.uuid,
 					},
 				} );
+				activeInteractionId = interaction.uuid;
 			}
-
-			activeInteractionId = interaction.uuid;
 		} catch ( error ) {
 			trackEvent( 'error_updating_interaction_and_smooch', {
 				error_message:
@@ -176,10 +158,16 @@ export const useCreateZendeskConversation = () => {
 			conversationId: conversation.id,
 			provider: 'zendesk',
 			status: 'loaded',
+			supportInteractionId: activeInteractionId || null,
 		} ) );
 
-		if ( interaction ) {
-			updateInteractionContext( interaction );
+		// If the interaction id has changed, update the URL.
+		if ( activeInteractionId && currentSupportInteraction?.uuid !== activeInteractionId ) {
+			const params = new URLSearchParams( location.search );
+			if ( params.get( 'id' ) !== activeInteractionId ) {
+				params.set( 'id', activeInteractionId );
+				navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+			}
 		}
 
 		return conversation.id;

@@ -1,5 +1,4 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -32,7 +31,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
-	const { resetSupportInteraction } = useResetSupportInteraction();
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const navigate = useNavigate();
 	const isForwardingToZendesk =
@@ -116,13 +114,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				searchParams.set( 'id', alreadyHasActiveZendeskChatId );
 				return navigate( '/odie?' + searchParams.toString() );
 			}
-			resetSupportInteraction().then( ( interaction ) => {
-				createZendeskConversation( {
-					interactionId: interaction?.uuid,
-					createdFrom: 'direct_url',
-				} ).then( () => {
-					setChatMessagesLoaded( true );
-				} );
+
+			searchParams.delete( 'id' );
+			createZendeskConversation( {
+				createdFrom: 'direct_url',
+			} ).then( () => {
+				setChatMessagesLoaded( true );
 			} );
 		}
 	}, [
@@ -132,7 +129,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		hasForwardedToZendesk,
 		isChatLoaded,
 		chat?.conversationId,
-		resetSupportInteraction,
 		createZendeskConversation,
 		alreadyHasActiveZendeskChatId,
 		forceEmailSupport,
