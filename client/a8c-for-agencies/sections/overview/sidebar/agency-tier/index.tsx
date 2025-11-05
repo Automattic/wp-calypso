@@ -42,7 +42,7 @@ export default function OverviewSidebarAgencyTier() {
 				<AgencyTierProgressCard
 					currentAgencyTierId={ currentAgencyTierId }
 					influencedRevenue={ influencedRevenue ?? 0 }
-					isEarlyAccess={ isEarlyAccess }
+					isEarlyAccess={ !! isEarlyAccess }
 				/>
 			) : (
 				<Card className="agency-tier__card">
