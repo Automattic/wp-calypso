@@ -3,6 +3,13 @@ export interface PlanProductFeatureHighlight {
 	items: string[];
 }
 
+export interface PlanProductDowngrade {
+	product_id: number;
+	bill_period: number;
+	product_slug: string;
+	product_name: string;
+}
+
 export interface PlanProduct {
 	// Core product properties
 	product_id: number;
@@ -34,6 +41,9 @@ export interface PlanProduct {
 	description: string;
 	tagline: string | null;
 	features_highlight?: PlanProductFeatureHighlight[];
+
+	// Downgrade options
+	downgrade_paths: PlanProductDowngrade[];
 
 	// Introductory offer properties (conditional - only present when has_introductory_offer is true)
 	has_introductory_offer?: boolean;

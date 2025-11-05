@@ -13,10 +13,15 @@ import { useViewportMatch } from '@wordpress/compose';
 import { DataViews } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
+import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import DownloadBadges from '../download-badges';
 import { ALL_TIERS } from './constants';
 import type { AgencyTierType, Benefit } from './types';
 import type { Field } from '@wordpress/dataviews';
+import type { ComponentProps } from 'react';
 
 import './style.scss';
 
@@ -25,10 +30,32 @@ export default function TierBenefits( {
 }: {
 	currentAgencyTierId?: AgencyTierType;
 } ) {
+	const dispatch = useDispatch();
+
 	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId );
 
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 	const isMediumViewport = useViewportMatch( 'huge', '<' );
+
+	const { scheduleCall, isLoading } = useScheduleCall();
+
+	const handleScheduleCall = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agency_tier_benefits_schedule_call_click', {
+				agency_tier: currentAgencyTierId,
+			} )
+		);
+		scheduleCall();
+	};
+
+	const handleActionClick = ( actionId: string ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agency_tier_benefits_action_click', {
+				agency_tier: currentAgencyTierId,
+				action_id: actionId,
+			} )
+		);
+	};
 
 	if ( ! currentTier ) {
 		return null;
@@ -39,7 +66,7 @@ export default function TierBenefits( {
 		( a, b ) => b.level - a.level
 	);
 	const higherTiers = ALL_TIERS.filter( ( tier ) => tier.level > currentTier.level ).sort(
-		( a, b ) => b.level - a.level
+		( a, b ) => a.level - b.level
 	);
 
 	// Combine all tiers in the desired order
@@ -76,16 +103,47 @@ export default function TierBenefits( {
 				if ( ! item.actions ) {
 					return null;
 				}
-				const buttons = item.actions.map( ( action ) => (
-					<Button
-						size={ isSmallViewport ? 'default' : 'small' }
-						variant={ isSmallViewport ? 'secondary' : 'tertiary' }
-						key={ action.label }
-						href={ action.href }
-					>
-						{ action.label }
-					</Button>
-				) );
+				const buttons = item.actions.map( ( action ) => {
+					const buttonProps = {
+						size: ( isSmallViewport ? 'default' : 'small' ) as ComponentProps<
+							typeof Button
+						>[ 'size' ],
+						variant: ( isSmallViewport ? 'secondary' : 'tertiary' ) as ComponentProps<
+							typeof Button
+						>[ 'variant' ],
+					};
+
+					if ( action.id === 'download-badge' ) {
+						return (
+							<DownloadBadges key={ action.id } buttonProps={ { ...buttonProps, icon: null } } />
+						);
+					}
+					if ( action.id === 'schedule-call' ) {
+						return (
+							<Button
+								{ ...buttonProps }
+								key={ action.id }
+								onClick={ handleScheduleCall }
+								isBusy={ isLoading }
+								disabled={ isLoading }
+							>
+								{ action.label }
+							</Button>
+						);
+					}
+					if ( action.href ) {
+						return (
+							<Button
+								{ ...buttonProps }
+								key={ action.id }
+								href={ action.href }
+								onClick={ () => handleActionClick( action.id ) }
+							>
+								{ action.label }
+							</Button>
+						);
+					}
+				} );
 				if ( isSmallViewport ) {
 					return (
 						<VStack spacing={ 2 } style={ { paddingBlockStart: '8px', width: '100%' } }>
@@ -152,7 +210,13 @@ export default function TierBenefits( {
 						<CardBody style={ { padding: '0', opacity: isHigherTier ? 0.5 : 1 } }>
 							<DataViews< Benefit >
 								data={ tier.benefits as Benefit[] }
-								fields={ fields }
+								fields={ fields.map( ( field ) => {
+									// Remove actions from higher tiers as they are not available yet
+									if ( isHigherTier && field.id === 'actions' ) {
+										return { ...field, render: () => null };
+									}
+									return field;
+								} ) }
 								view={ view }
 								onChangeView={ () => {} }
 								getItemId={ ( item ) => item.title }

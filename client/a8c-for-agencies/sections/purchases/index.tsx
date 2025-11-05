@@ -1,4 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import {
+	EXTERNAL_WPCOM_PAYMENT_METHODS_URL,
+	EXTERNAL_WPCOM_BILLING_HISTORY_URL,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
@@ -12,6 +17,8 @@ import {
 } from './controller';
 
 export default function () {
+	const isBillingDragonCheckoutEnabled = isEnabled( 'a4a-bd-checkout' );
+
 	// Purchases
 	page( '/purchases', requireAccessContext, purchasesContext, makeLayout, clientRender );
 
@@ -26,27 +33,39 @@ export default function () {
 
 	page( '/purchases/licenses/*', '/purchases/licenses' ); // Redirect invalid license list filters back to the main portal page.
 
-	// Billing
-	page( '/purchases/billing', requireAccessContext, billingContext, makeLayout, clientRender );
+	if ( isBillingDragonCheckoutEnabled ) {
+		const redirectToWpcomPaymentMethods = () => page.redirect( EXTERNAL_WPCOM_PAYMENT_METHODS_URL );
+		const redirectToWpcomInvoices = () => page.redirect( EXTERNAL_WPCOM_BILLING_HISTORY_URL );
 
-	// Payment methods
-	page(
-		'/purchases/payment-methods',
-		requireAccessContext,
-		paymentMethodsContext,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/purchases/payment-methods/add',
-		requireAccessContext,
-		paymentMethodsAddContext,
-		makeLayout,
-		clientRender
-	);
+		// Payment methods (redirect to WPCOM)
+		page( '/purchases/payment-methods', requireAccessContext, redirectToWpcomPaymentMethods );
+		page( '/purchases/payment-methods/add', requireAccessContext, redirectToWpcomPaymentMethods );
 
-	// Invoices
-	page( '/purchases/invoices', requireAccessContext, invoicesContext, makeLayout, clientRender );
+		// Invoices (redirect to WPCOM)
+		page( '/purchases/invoices', requireAccessContext, redirectToWpcomInvoices );
+	} else {
+		// Billing
+		page( '/purchases/billing', requireAccessContext, billingContext, makeLayout, clientRender );
+
+		// Payment methods
+		page(
+			'/purchases/payment-methods',
+			requireAccessContext,
+			paymentMethodsContext,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/purchases/payment-methods/add',
+			requireAccessContext,
+			paymentMethodsAddContext,
+			makeLayout,
+			clientRender
+		);
+
+		// Invoices
+		page( '/purchases/invoices', requireAccessContext, invoicesContext, makeLayout, clientRender );
+	}
 
 	// CRM Downloads
 	page(
