@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import { Card, CardBody, ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
