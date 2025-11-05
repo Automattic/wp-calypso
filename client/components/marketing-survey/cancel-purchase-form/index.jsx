@@ -3,9 +3,11 @@ import {
 	isPlan,
 	isWpComMonthlyPlan,
 	WPCOM_FEATURES_BACKUPS,
+	isDomainRegistration,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { Button as GutenbergButton } from '@wordpress/components';
+import { hasTranslation } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
@@ -22,7 +24,6 @@ import {
 	isRefundable,
 	hasAmountAvailableToRefund,
 	isOneTimePurchase,
-	isDomainRegistration,
 	isSubscription,
 } from 'calypso/lib/purchases';
 import { cancelPurchaseSurveyCompleted, submitSurvey } from 'calypso/lib/purchases/actions';
@@ -690,7 +691,16 @@ class CancelPurchaseForm extends Component {
 			if ( isDomainRegistration( purchase ) ) {
 				return translate( 'Cancel domain and refund' );
 			}
+			if ( isPlan( purchase ) ) {
+				if ( hasTranslation( 'Cancel plan and refund' ) ) {
+					return translate( 'Cancel plan and refund' );
+				}
+				return translate( 'Cancel plan' );
+			}
 			if ( isSubscription( purchase ) ) {
+				if ( hasTranslation( 'Cancel subscription and refund' ) ) {
+					return translate( 'Cancel subscription and refund' );
+				}
 				return translate( 'Cancel subscription' );
 			}
 			if ( isOneTimePurchase( purchase ) ) {
@@ -699,6 +709,9 @@ class CancelPurchaseForm extends Component {
 		}
 
 		if ( isDomainRegistration( purchase ) ) {
+			if ( hasTranslation( 'Cancel domain subscription' ) ) {
+				return translate( 'Cancel domain subscription' );
+			}
 			return translate( 'Cancel domain' );
 		}
 

@@ -54,6 +54,7 @@ import {
 import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
+import { hasTranslation } from '@wordpress/i18n';
 import {
 	column,
 	download,
@@ -950,7 +951,7 @@ class ManagePurchase extends Component<
 			recordTracksEvent( 'calypso_purchases_manage_purchase_cancel_click', {
 				product_slug: purchase.productSlug,
 				is_atomic: isAtomicSite,
-				link_text: getCancelPurchaseNavText( purchase, translate ),
+				link_text: getCancelPurchaseNavText( purchase, translate, canRefund ),
 			} );
 
 			if ( this.shouldShowWordAdsEligibilityWarning() ) {
@@ -967,7 +968,7 @@ class ManagePurchase extends Component<
 		return (
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				<Icon icon={ trash } className="card__icon" />
-				{ getCancelPurchaseNavText( purchase, translate ) }
+				{ getCancelPurchaseNavText( purchase, translate, canRefund ) }
 				{ this.renderRefundText() }
 			</CompactCard>
 		);
@@ -1815,16 +1816,45 @@ function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 
 function getCancelPurchaseNavText(
 	purchase: Purchase,
-	translate: LocalizeProps[ 'translate' ]
+	translate: LocalizeProps[ 'translate' ],
+	refundAvailable: boolean
 ): string {
 	let text = '';
 
+	if ( refundAvailable ) {
+		if ( isDomainRegistration( purchase ) ) {
+			if ( hasTranslation( 'Remove domain subscription' ) ) {
+				text = translate( 'Remove domain subscription' );
+			} else {
+				text = translate( 'Cancel domain' );
+			}
+		} else if ( isPlan( purchase ) ) {
+			if ( hasTranslation( 'Remove plan' ) ) {
+				text = translate( 'Remove plan' );
+			} else {
+				text = translate( 'Cancel plan' );
+			}
+		} else if ( isSubscription( purchase ) ) {
+			if ( hasTranslation( 'Remove subscription' ) ) {
+				text = translate( 'Remove subscription' );
+			} else {
+				text = translate( 'Cancel subscription' );
+			}
+		} else if ( isOneTimePurchase( purchase ) ) {
+			if ( hasTranslation( 'Remove' ) ) {
+				text = translate( 'Remove' );
+			} else {
+				text = translate( 'Cancel' );
+			}
+		}
+		return text;
+	}
 	if ( isDomainRegistration( purchase ) ) {
 		text = translate( 'Cancel domain' );
-	} else if ( isSubscription( purchase ) ) {
-		text = translate( 'Cancel subscription' );
 	} else if ( isPlan( purchase ) ) {
 		text = translate( 'Cancel plan' );
+	} else if ( isSubscription( purchase ) ) {
+		text = translate( 'Cancel subscription' );
 	} else if ( isOneTimePurchase( purchase ) ) {
 		text = translate( 'Cancel' );
 	}
