@@ -82,6 +82,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
 		forceEmailSupport,
+		trackEvent,
 	} = useOdieAssistantContext();
 
 	const updateInteractionContext = useCallback(
@@ -249,8 +250,12 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					updateInteractionContext( updatedInteraction );
 				}
 			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to ensure support interaction for Odie message', error );
+				trackEvent( 'error_updating_support_interaction', {
+					error_message:
+						error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
+					has_existing_interaction: Boolean( supportInteraction?.uuid ),
+					has_chat_id: Boolean( chatId ),
+				} );
 			}
 
 			const botMessage: Message = {
