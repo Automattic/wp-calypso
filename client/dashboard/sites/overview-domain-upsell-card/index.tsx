@@ -13,6 +13,13 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
+/**
+ * Returns true if the site requires a plan upgrade.
+ */
+const requiresPlanUpgrade = ( site: Site ) => {
+	return site.plan?.is_free || site.plan?.billing_period === 'Monthly';
+};
+
 const useDomainSuggestion = ( site: Site ) => {
 	const search = site.slug.split( '.' )[ 0 ];
 	const { data: allDomainSuggestions } = useQuery(
@@ -61,7 +68,7 @@ const DomainUpsellCardContent = ( {
 			] );
 		}
 
-		if ( site.plan?.is_free || site.plan?.billing_period === 'Monthly' ) {
+		if ( requiresPlanUpgrade( site ) ) {
 			window.location.href = getDomainAndPlanUpsellUrl( {
 				siteSlug: site.slug,
 				backUrl,
@@ -147,23 +154,31 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	let description = __(
-		'<domain /> is a perfect domain for your site. Grab it now or <link>choose your own</link>.'
-	);
-	let upsellCTAButtonText = __( 'Get this domain' );
-
-	if ( site.plan?.is_free ) {
-		description = __( 'Get <domain /> free for one year with an annual paid plan.' );
-		upsellCTAButtonText = __( 'Select a plan' );
+	if ( requiresPlanUpgrade( site ) ) {
+		return (
+			<DomainUpsellCardContent
+				site={ site }
+				title={ __( 'The perfect domain awaits' ) }
+				description={ __( 'Get <domain /> free for one year with an annual paid plan.' ) }
+				upsellId="site-overview-get-this-domain"
+				upsellCTAButtonText={ __( 'Choose a plan' ) }
+			/>
+		);
 	}
 
+	/**
+	 * A site may have used their domain credit but detached the domain from the site (for whatever reason).
+	 * In this case, we should show the domain upsell card.
+	 */
 	return (
 		<DomainUpsellCardContent
 			site={ site }
 			title={ __( 'The perfect domain awaits' ) }
-			description={ description }
+			description={ __(
+				'<domain /> is a perfect domain for your site. Grab it now or <link>choose your own</link>.'
+			) }
 			upsellId="site-overview-get-this-domain"
-			upsellCTAButtonText={ upsellCTAButtonText }
+			upsellCTAButtonText={ __( 'Get this domain' ) }
 		/>
 	);
 };
