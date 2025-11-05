@@ -73,7 +73,7 @@ export const profileRoute = createRoute( {
 	)
 );
 
-const preferencesRoute = createRoute( {
+export const preferencesRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
