@@ -415,6 +415,7 @@ export default function CheckoutMain( {
 				paymentMethodObjects,
 				allowedPaymentMethods,
 		  } );
+	debug( 'filtered payment method objects', paymentMethods );
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,

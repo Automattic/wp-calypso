@@ -4,6 +4,7 @@ import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../consta
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
+import type { OdieAllBotSlugs } from '../types';
 
 export const useCreateZendeskConversation = () => {
 	const {
@@ -22,13 +23,11 @@ export const useCreateZendeskConversation = () => {
 	const chatId = chat.odieId;
 
 	const createConversation = async ( {
-		avoidTransfer = false,
 		interactionId = '',
 		createdFrom = '',
 		isFromError = false,
 		errorReason = '',
 	}: {
-		avoidTransfer?: boolean;
 		interactionId?: string;
 		createdFrom?: string;
 		isFromError?: boolean;
@@ -43,7 +42,6 @@ export const useCreateZendeskConversation = () => {
 			chat_provider: chat.provider,
 			interaction_id: currentInteractionID,
 			created_from: createdFrom,
-			avoid_transfer: avoidTransfer,
 			is_from_error: isFromError,
 			error_reason: errorReason || 'Unknown error',
 		} );
@@ -59,12 +57,12 @@ export const useCreateZendeskConversation = () => {
 
 		setChat( ( prevChat ) => ( {
 			...prevChat,
-			messages: avoidTransfer
-				? prevChat.messages
-				: [
-						...prevChat.messages,
-						...( isFromError ? getOdieOnErrorTransferMessage() : getOdieTransferMessage() ),
-				  ],
+			messages: [
+				...prevChat.messages,
+				...( isFromError
+					? getOdieOnErrorTransferMessage()
+					: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs ) ),
+			],
 			status: 'transfer',
 		} ) );
 
