@@ -695,7 +695,12 @@ export const ConnectRepositoryForm = ( {
 					onChange={ handleChange }
 				/>
 
-				<div>
+				<div
+					style={ {
+						opacity: selectedRepository ? 1 : 0.5,
+						pointerEvents: selectedRepository ? 'auto' : 'none',
+					} }
+				>
 					<SectionHeader
 						level={ 3 }
 						title={ __( 'Pick your deployment mode' ) }
