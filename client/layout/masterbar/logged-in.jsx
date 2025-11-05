@@ -493,7 +493,7 @@ class MasterbarLoggedIn extends Component {
 		if ( ! site?.is_wpcom_staging_site ) {
 			menuItems.push( {
 				label: (
-					<div className="masterbar__site-info">
+					<div className="masterbar__site-info masterbar__site-plan">
 						<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 						<div className="masterbar__info-badges">
 							<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
@@ -511,11 +511,9 @@ class MasterbarLoggedIn extends Component {
 		if ( siteBadges && siteBadges.length > 0 ) {
 			menuItems.push( {
 				label: (
-					<div className="masterbar__site-infos">
-						<div className="masterbar__site-info">
-							<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
-							<div className="masterbar__info-badges">{ siteBadges }</div>
-						</div>
+					<div className="masterbar__site-info masterbar__site-status">
+						<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
+						<div className="masterbar__info-badges">{ siteBadges }</div>
 					</div>
 				),
 			} );
