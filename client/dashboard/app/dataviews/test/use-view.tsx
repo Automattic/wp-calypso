@@ -94,7 +94,7 @@ describe( 'useView', () => {
 
 		it( 'should return the persisted view if exists', async () => {
 			mockGetCalypsoPreferences( {
-				'dashboard-dataviews-view-sites': {
+				'hosting-dashboard-dataviews-view-sites': {
 					type: 'grid',
 					layout: { previewSize: 120 },
 					sort: { field: 'name', direction: 'asc' },
@@ -119,7 +119,7 @@ describe( 'useView', () => {
 
 		it( 'should sanitize the persisted view', async () => {
 			mockGetCalypsoPreferences( {
-				'dashboard-dataviews-view-sites': {
+				'hosting-dashboard-dataviews-view-sites': {
 					type: 'grid',
 
 					// invalid preview size
@@ -147,7 +147,7 @@ describe( 'useView', () => {
 
 		it( 'should return the persisted view with synced transient properties from the current URL query params', async () => {
 			mockGetCalypsoPreferences( {
-				'dashboard-dataviews-view-sites': {
+				'hosting-dashboard-dataviews-view-sites': {
 					type: 'grid',
 					layout: { previewSize: 120 },
 					sort: { field: 'name', direction: 'asc' },
@@ -176,7 +176,7 @@ describe( 'useView', () => {
 			mockGetCalypsoPreferences( {} );
 
 			const expectedUpdatePreferences = mockUpdateCalypsoPreferences( {
-				'dashboard-dataviews-view-sites': {
+				'hosting-dashboard-dataviews-view-sites': {
 					type: 'grid',
 					layout: { previewSize: 120 },
 					sort: { field: 'name', direction: 'asc' },

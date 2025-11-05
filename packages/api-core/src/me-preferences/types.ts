@@ -18,8 +18,8 @@ export interface ReaderLandingPage extends LandingPagePreference {
 }
 
 export interface UserPreferences {
-	[ key: `dashboard-dataviews-view-${ string }` ]: View | undefined;
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
+	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice

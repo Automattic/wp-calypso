@@ -35,7 +35,7 @@ export function useView( { slug, defaultView, defaultFields }: UseViewOptions ):
 	isViewModified: boolean;
 	resetView: () => void;
 } {
-	const preferenceName = `dashboard-dataviews-view-${ slug }` as const;
+	const preferenceName = `hosting-dashboard-dataviews-view-${ slug }` as const;
 
 	const { data: persistedView } = useSuspenseQuery( userPreferenceQuery( preferenceName ) );
 	const { mutate: persistView } = useMutation( userPreferenceOptimisticMutation( preferenceName ) );
