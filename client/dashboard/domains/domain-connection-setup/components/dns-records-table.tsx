@@ -42,7 +42,25 @@ const VerificationBadge = ( { isVerified }: { isVerified: boolean } ) => {
 	);
 };
 
-const fieldsSuggested: Field< DnsRecordVerification >[] = [
+const fields: Field< DnsRecordVerification >[] = [
+	{
+		id: 'type',
+		label: __( 'Type' ),
+		type: 'text' as const,
+		readOnly: true,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
+	},
+	{
+		id: 'name',
+		label: __( 'Name' ),
+		type: 'text' as const,
+		readOnly: true,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
+	},
 	{
 		id: 'currentValue',
 		label: __( 'Current Value' ),
@@ -74,28 +92,6 @@ const fieldsSuggested: Field< DnsRecordVerification >[] = [
 		getValue: ( { item } ) => item.currentValue === item.expectedValue,
 		render: ( { field, item } ) => <VerificationBadge isVerified={ field.getValue( { item } ) } />,
 	},
-];
-
-const fieldsAdvanced: Field< DnsRecordVerification >[] = [
-	{
-		id: 'type',
-		label: __( 'Type' ),
-		type: 'text' as const,
-		readOnly: true,
-		enableHiding: false,
-		enableSorting: false,
-		filterBy: false,
-	},
-	{
-		id: 'name',
-		label: __( 'Name' ),
-		type: 'text' as const,
-		readOnly: true,
-		enableHiding: false,
-		enableSorting: false,
-		filterBy: false,
-	},
-	...fieldsSuggested,
 ];
 
 const aRecordData = ( currentValue: string | null, expectedValue: string | null ) => {
@@ -167,7 +163,7 @@ export default function DnsRecordsTable( {
 		<DataViewsCard className="dns-records-table">
 			<DataViews< DnsRecordVerification >
 				data={ dnsRecords }
-				fields={ isSuggestedMode ? fieldsSuggested : fieldsAdvanced }
+				fields={ fields }
 				view={ isSuggestedMode ? viewSuggested : viewAdvanced }
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ { totalItems: dnsRecords.length, totalPages: 1 } }
