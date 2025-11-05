@@ -106,13 +106,8 @@ export default function SecurityPassword() {
 						/>
 					);
 				},
-				isValid: {
-					custom: ( item ) => {
-						return item.password.length >= 6
-							? null
-							: __( 'Password must be at least 6 characters long.' );
-					},
-				},
+				// TODO: Add validation via isValid.custom.
+				// There is currently a bug that prevents it from working.
 			},
 		],
 		[ isPasswordVisible, isLoading ]
