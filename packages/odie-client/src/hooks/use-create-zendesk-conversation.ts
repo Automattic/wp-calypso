@@ -7,15 +7,7 @@ import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import type { OdieAllBotSlugs } from '../types';
 
-export const useCreateZendeskConversation = (): ( ( {
-	avoidTransfer,
-	createdFrom,
-	isFromError,
-}: {
-	avoidTransfer?: boolean;
-	createdFrom?: string;
-	isFromError?: boolean;
-} ) => Promise< string > ) => {
+export const useCreateZendeskConversation = () => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
