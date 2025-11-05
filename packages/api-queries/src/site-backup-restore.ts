@@ -40,6 +40,8 @@ export const siteBackupRestoreInitiateMutation = ( siteId: number ) =>
 		onSuccess: ( restoreId ) => {
 			// Start polling restore progress
 			queryClient.prefetchQuery( siteBackupRestoreProgressQuery( siteId, restoreId ) );
+			// Invalidate rewind state to pick up new restore
+			queryClient.invalidateQueries( siteRewindStateQuery( siteId ) );
 		},
 	} );
 
@@ -60,6 +62,8 @@ export const siteBackupGranularRestoreMutation = ( siteId: number ) =>
 		onSuccess: ( restoreId ) => {
 			// Start polling restore progress
 			queryClient.prefetchQuery( siteBackupRestoreProgressQuery( siteId, restoreId ) );
+			// Invalidate rewind state to pick up new restore
+			queryClient.invalidateQueries( siteRewindStateQuery( siteId ) );
 		},
 	} );
 
