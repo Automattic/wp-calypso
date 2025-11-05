@@ -1,8 +1,4 @@
-import {
-	__experimentalHStack as HStack,
-	Button,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chevronUp } from '@wordpress/icons';
@@ -60,24 +56,22 @@ export const CollapsibleCard = ( {
 			isBorderless={ isBorderless }
 		>
 			<CardBody>
-				<VStack spacing={ 2 }>
-					<HStack justify="space-between" className="collapsible-card__header">
-						{ header }
-						<Button
-							icon={ chevronUp }
-							className={ clsx( 'collapsible-card__toggle', { collapsed: ! isExpanded } ) }
-							onClick={ handleCollapsedChange }
-							aria-expanded={ isExpanded }
-							aria-controls={ id }
-							aria-label={ label }
-						/>
-					</HStack>
-					{ isExpanded && (
-						<div className="collapsible-card__content" id={ id }>
-							{ children }
-						</div>
-					) }
-				</VStack>
+				<HStack justify="space-between" className="collapsible-card__header">
+					{ header }
+					<Button
+						icon={ chevronUp }
+						className={ clsx( 'collapsible-card__toggle', { collapsed: ! isExpanded } ) }
+						onClick={ handleCollapsedChange }
+						aria-expanded={ isExpanded }
+						aria-controls={ id }
+						aria-label={ label }
+					/>
+				</HStack>
+				{ isExpanded && (
+					<div className="collapsible-card__content" id={ id }>
+						{ children }
+					</div>
+				) }
 			</CardBody>
 		</Card>
 	);
