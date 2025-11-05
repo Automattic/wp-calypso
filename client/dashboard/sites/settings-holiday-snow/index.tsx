@@ -55,7 +55,7 @@ export default function HolidaySnowSettings( { siteSlug }: { siteSlug: string } 
 	} );
 
 	const [ formData, setFormData ] = useState( {
-		jetpack_holiday_snow_enabled: data?.jetpack_holiday_snow_enabled,
+		jetpack_holiday_snow_enabled: !! data?.jetpack_holiday_snow_enabled,
 	} );
 
 	if ( ! data ) {
