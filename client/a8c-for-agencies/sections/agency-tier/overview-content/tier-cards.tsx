@@ -134,11 +134,14 @@ export default function TierCards( {
 						<Text>
 							{ createInterpolateElement(
 								sprintf(
-									'To make the most of your early access and stay on track toward your %s Influenced Automattic Revenue goal, <b>stay connected with your Partner Manager</b>. Your manager is here to help you reach that goal by providing strategic guidance, growth opportunities, and ensure you maximize every advantage during this phase.',
+									/* translators: %s is the influenced revenue */
+									__(
+										'To make the most of your early access and stay on track toward your %s Influenced Automattic Revenue goal, <b>stay connected with your Partner Manager</b>. Your manager is here to help you reach that goal by providing strategic guidance, growth opportunities, and ensure you maximize every advantage during this phase.'
+									),
 									formatCurrency( 5000, 'USD' )
 								),
 								{
-									b: <b />,
+									b: <strong />,
 								}
 							) }
 						</Text>
