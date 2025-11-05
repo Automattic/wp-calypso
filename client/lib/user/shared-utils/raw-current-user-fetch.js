@@ -1,4 +1,4 @@
-import { fetchUser } from '@automattic/api-core';
+import wpcom from 'calypso/lib/wp';
 
 const MAX_TRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
@@ -14,7 +14,7 @@ export async function rawCurrentUserFetch( { retry = false } = {} ) {
 
 	while ( retryCount <= maxRetries ) {
 		try {
-			const response = await fetchUser();
+			const response = await wpcom.req.get( '/me', { meta: 'flags' } );
 
 			if ( isErrorResponse( response ) ) {
 				throw response;
