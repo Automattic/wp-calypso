@@ -81,14 +81,9 @@ export const useGetCombinedChat = (
 
 	useEffect( () => {
 		if ( ! currentSupportInteraction?.uuid ) {
-			setMainChatState( ( prevChat ) => {
-				if ( prevChat.supportInteractionId || prevChat.status === 'loaded' ) {
-					return prevChat;
-				}
-				return {
-					...emptyChat,
-					status: 'loaded',
-				};
+			setMainChatState( {
+				...emptyChat,
+				status: 'loaded',
 			} );
 			previousUuidRef.current = undefined;
 			return;
