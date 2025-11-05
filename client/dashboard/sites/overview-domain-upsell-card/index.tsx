@@ -159,7 +159,9 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 			<DomainUpsellCardContent
 				site={ site }
 				title={ __( 'The perfect domain awaits' ) }
-				description={ __( 'Get <domain /> free for one year with an annual paid plan.' ) }
+				description={ __(
+					'Upgrade to an annual paid plan to get <domain /> free for one year. You can also <link>choose your own domain name</link>.'
+				) }
 				upsellId="site-overview-get-this-domain"
 				upsellCTAButtonText={ __( 'Choose a plan' ) }
 			/>
