@@ -32,6 +32,8 @@ interface UseViewOptions {
 export function useView( { slug, defaultView, defaultFields }: UseViewOptions ): {
 	view: View;
 	updateView: ( newView: View ) => void;
+	isViewModified: boolean;
+	resetView: () => void;
 } {
 	const preferenceName = `dashboard-dataviews-view-${ slug }` as const;
 
@@ -82,7 +84,13 @@ export function useView( { slug, defaultView, defaultFields }: UseViewOptions ):
 		[ page, search, queryParams, navigate, baseView, defaultView, persistView ]
 	);
 
-	return { view, updateView };
+	const isViewModified = !! persistedView;
+
+	const resetView = useCallback( () => {
+		persistView( undefined );
+	}, [ persistView ] );
+
+	return { view, updateView, isViewModified, resetView };
 }
 
 function removeQueryParamsFromView( view: View ): Omit< View, 'page' | 'search' > {

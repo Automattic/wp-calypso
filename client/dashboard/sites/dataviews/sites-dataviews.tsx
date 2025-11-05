@@ -1,5 +1,6 @@
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { ResetViewAction } from '../../app/dataviews/reset-view-action';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { SiteLink } from '../site-fields';
@@ -15,7 +16,9 @@ export const SitesDataViews = ( {
 	actions,
 	isLoading,
 	empty,
-	handleViewChange,
+	onChangeView,
+	isViewModified,
+	onResetView,
 }: {
 	view: View;
 	sites: Site[];
@@ -23,7 +26,9 @@ export const SitesDataViews = ( {
 	actions: Action< Site >[];
 	isLoading: boolean;
 	empty: ReactNode;
-	handleViewChange: ( view: View ) => void;
+	onChangeView: ( view: View ) => void;
+	isViewModified: boolean;
+	onResetView: () => void;
 } ) => {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
@@ -37,12 +42,13 @@ export const SitesDataViews = ( {
 					actions={ actions }
 					view={ view }
 					isLoading={ isLoading }
-					onChangeView={ handleViewChange }
+					onChangeView={ onChangeView }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }
 					config={ { perPageSizes: DEFAULT_PER_PAGE_SIZES } }
 					empty={ empty }
 					renderItemLink={ ( { item, ...props } ) => <SiteLink { ...props } site={ item } /> }
+					header={ isViewModified && <ResetViewAction onResetView={ onResetView } /> }
 				/>
 			</DataViewsCard>
 			<GuidedTourContextProvider

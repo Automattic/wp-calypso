@@ -71,7 +71,7 @@ export default function Sites() {
 		isRestoringAccount,
 	} );
 
-	const { view, updateView } = useView( {
+	const { view, updateView, isViewModified, resetView } = useView( {
 		slug: 'sites',
 		defaultView,
 		defaultFields: getDefaultFields(),
@@ -196,7 +196,9 @@ export default function Sites() {
 							}
 						/>
 					}
-					handleViewChange={ handleViewChange }
+					onChangeView={ handleViewChange }
+					isViewModified={ isViewModified }
+					onResetView={ resetView }
 				/>
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
