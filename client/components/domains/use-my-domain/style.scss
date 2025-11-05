@@ -9,6 +9,26 @@
 	flex-direction: column;
 	padding: 36px 24px;
 	background-color: inherit;
+
+	& &--redesign {
+		padding: 0;
+		background: transparent;
+
+		.use-my-domain {
+			&__domain-input {
+				max-width: none;
+
+				@include break-small {
+					max-width: 464px;
+				}
+			}
+
+			&__domain-input-fieldset {
+				margin: 0;
+			}
+		}
+	}
+
 	& .card, &.card {
 		box-shadow: none;
 	}

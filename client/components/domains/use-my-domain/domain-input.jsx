@@ -1,6 +1,8 @@
+import config from '@automattic/calypso-config';
 import { Card, Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useId } from 'react';
 import { connect } from 'react-redux';
@@ -25,6 +27,8 @@ function UseMyDomainInput( {
 } ) {
 	const domainNameInput = useRef( null );
 	const inputId = 'use-my-domain-input-' + useId();
+	const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
+	const classNameModifier = isDomainConnectionRedesign ? baseClassName + '--redesign' : '';
 
 	useEffect( () => {
 		shouldSetFocus && domainNameInput.current.focus();
@@ -47,14 +51,18 @@ function UseMyDomainInput( {
 	};
 
 	return (
-		<Card className={ baseClassName }>
+		<Card className={ clsx( baseClassName, classNameModifier ) }>
 			{ ! isSignupStep && (
 				<div className={ baseClassName + '__domain-illustration' }>
 					<img src={ illustration } alt="" width={ 160 } />
 				</div>
 			) }
 			<div className={ baseClassName + '__domain-input' }>
-				<label htmlFor={ inputId }>{ __( 'Enter the domain you would like to use:' ) }</label>
+				<label htmlFor={ inputId }>
+					{ isDomainConnectionRedesign
+						? __( 'Domain name' )
+						: __( 'Enter the domain you would like to use:' ) }
+				</label>
 				<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
 					<FormTextInput
 						id={ inputId }
@@ -83,14 +91,16 @@ function UseMyDomainInput( {
 					{ validationError && <FormInputValidation isError text={ validationError } icon="" /> }
 				</FormFieldset>
 
-				<p className={ baseClassName + '__domain-input-note' }>
-					<Icon
-						className={ baseClassName + '__domain-input-note-icon' }
-						icon={ bulb }
-						size={ 14 }
-					/>
-					{ __( 'This won’t affect your existing site.' ) }
-				</p>
+				{ ! isDomainConnectionRedesign && (
+					<p className={ baseClassName + '__domain-input-note' }>
+						<Icon
+							className={ baseClassName + '__domain-input-note-icon' }
+							icon={ bulb }
+							size={ 14 }
+						/>
+						{ __( 'This won’t affect your existing site.' ) }
+					</p>
+				) }
 
 				<FormButton
 					className={ baseClassName + '__domain-input-button' }
