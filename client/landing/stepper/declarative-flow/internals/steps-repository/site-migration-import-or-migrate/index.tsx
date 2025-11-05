@@ -35,7 +35,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 
 	const options = useMemo( () => {
 		const upgradeRequiredLabel = translate(
-			'Available on %(planName)s with %(discountPercentage)s off',
+			'Available on %(planName)s plan with %(discountPercentage)s off',
 			{
 				args: {
 					planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
