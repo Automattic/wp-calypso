@@ -14,7 +14,7 @@ import type { ReactNode } from 'react';
  * Meant to stand in for the dataview's filterSortAndPaginate function when
  * the filtering has already been done on the backend by elasticsearch.
  */
-function esFilterSortAndPaginate( sites: Site[], view: View, totalItems: number = 0 ) {
+function esFilterSortAndPaginate( sites: Site[], view: View, totalItems: number ) {
 	return {
 		data: sites,
 		paginationInfo: {
@@ -48,8 +48,8 @@ export const SitesDataViews = ( {
 	onResetView: () => void;
 } ) => {
 	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/es-site-list' )
-		? esFilterSortAndPaginate( sites ?? [], view, totalItems )
-		: filterSortAndPaginate( sites ?? [], view, fields );
+		? esFilterSortAndPaginate( sites, view, totalItems )
+		: filterSortAndPaginate( sites, view, fields );
 
 	return (
 		<>
