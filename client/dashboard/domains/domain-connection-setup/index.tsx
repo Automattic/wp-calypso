@@ -83,6 +83,7 @@ export default function DomainConnection() {
 		>
 			{ isVerificationStep ? (
 				<DomainConnectionVerification
+					domainData={ domain }
 					domainName={ domainName }
 					siteSlug={ siteSlug }
 					domainConnectionSetupInfo={ domainConnectionSetupInfo }
