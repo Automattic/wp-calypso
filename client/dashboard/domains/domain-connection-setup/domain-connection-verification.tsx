@@ -1,4 +1,4 @@
-import { DomainConnectionSetupMode } from '@automattic/api-core';
+import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import {
 	Icon,
@@ -19,6 +19,7 @@ import VerificationInProgressNextSteps from './verification-in-progress-next-ste
 import type { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 
 interface DomainConnectionVerificationProps {
+	domainData: Domain;
 	domainName: string;
 	siteSlug: string;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
@@ -28,6 +29,7 @@ interface DomainConnectionVerificationProps {
 }
 
 export default function DomainConnectionVerification( {
+	domainData,
 	domainName,
 	siteSlug,
 	domainMappingStatus,
@@ -71,7 +73,7 @@ export default function DomainConnectionVerification( {
 					</Text>
 
 					<DnsRecordsTable
-						domainName={ domainName }
+						domainData={ domainData }
 						domainConnectionStatus={ domainMappingStatus }
 						domainConnectionSetupInfo={ domainConnectionSetupInfo }
 					/>

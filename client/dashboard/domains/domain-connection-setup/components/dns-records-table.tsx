@@ -1,11 +1,10 @@
 import {
+	Domain,
 	DomainConnectionSetupMode,
 	DomainMappingSetupInfo,
 	DomainMappingStatus,
 } from '@automattic/api-core';
-import { domainQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -124,17 +123,17 @@ const nameServerRecordData = ( currentValue: string | null, expectedValue: strin
 	};
 };
 
-export default function DnsRecordsTable( {
-	domainName,
-	domainConnectionStatus,
-	domainConnectionSetupInfo,
-}: {
-	domainName: string;
+interface DnsRecordVerificationProps {
+	domainData: Domain;
 	domainConnectionStatus: DomainMappingStatus;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
-} ) {
-	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+}
 
+export default function DnsRecordsTable( {
+	domainData,
+	domainConnectionStatus,
+	domainConnectionSetupInfo,
+}: DnsRecordVerificationProps ) {
 	const isSuggestedMode = domainConnectionStatus.mode === DomainConnectionSetupMode.SUGGESTED;
 
 	const dnsRecords = useMemo( () => {
@@ -150,7 +149,7 @@ export default function DnsRecordsTable( {
 			}
 		} else {
 			const currentIpAddresses = ( domainConnectionStatus?.host_ip_addresses || [] ).sort();
-			const expectedIpAddresses = ( domain?.a_records_required_for_mapping || [] ).sort();
+			const expectedIpAddresses = ( domainData?.a_records_required_for_mapping || [] ).sort();
 			const longestLength = Math.max( currentIpAddresses.length, expectedIpAddresses.length );
 
 			for ( let i = 0; i < longestLength; i++ ) {
@@ -158,11 +157,11 @@ export default function DnsRecordsTable( {
 			}
 
 			const wwwCnameRecordTarget = domainConnectionStatus.www_cname_record_target;
-			data.push( wwwCnameRecordData( wwwCnameRecordTarget, domainName ) );
+			data.push( wwwCnameRecordData( wwwCnameRecordTarget, domainData.domain ) );
 		}
 
 		return data;
-	}, [ domain, domainName, domainConnectionStatus, domainConnectionSetupInfo, isSuggestedMode ] );
+	}, [ domainData, domainConnectionStatus, domainConnectionSetupInfo, isSuggestedMode ] );
 
 	return (
 		<DataViewsCard className="dns-records-table">
