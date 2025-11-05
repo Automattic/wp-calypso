@@ -31,8 +31,8 @@ const viewAdvanced: ViewTable = {
 interface DnsRecordVerification {
 	type?: string; // only present in advanced mode
 	name?: string; // only present in advanced mode
-	currentValue: string;
-	expectedValue: string;
+	currentValue: string | null;
+	expectedValue: string | null;
 }
 
 const VerificationBadge = ( { isVerified }: { isVerified: boolean } ) => {
@@ -52,6 +52,7 @@ const fieldsSuggested: Field< DnsRecordVerification >[] = [
 		enableHiding: false,
 		enableSorting: false,
 		filterBy: false,
+		render: ( { field, item } ) => field.getValue( { item } ) || '-',
 	},
 	{
 		id: 'expectedValue',
@@ -61,6 +62,7 @@ const fieldsSuggested: Field< DnsRecordVerification >[] = [
 		enableHiding: false,
 		enableSorting: false,
 		filterBy: false,
+		render: ( { field, item } ) => field.getValue( { item } ) || '-',
 	},
 	{
 		id: 'status',
@@ -97,7 +99,7 @@ const fieldsAdvanced: Field< DnsRecordVerification >[] = [
 	...fieldsSuggested,
 ];
 
-const aRecordData = ( currentValue: string, expectedValue: string ) => {
+const aRecordData = ( currentValue: string | null, expectedValue: string | null ) => {
 	return {
 		type: 'A',
 		name: '@',
@@ -106,7 +108,7 @@ const aRecordData = ( currentValue: string, expectedValue: string ) => {
 	};
 };
 
-const wwwCnameRecordData = ( currentValue: string, expectedValue: string ) => {
+const wwwCnameRecordData = ( currentValue: string | null, expectedValue: string | null ) => {
 	return {
 		type: 'CNAME',
 		name: 'www',
@@ -115,7 +117,7 @@ const wwwCnameRecordData = ( currentValue: string, expectedValue: string ) => {
 	};
 };
 
-const nameServerRecordData = ( currentValue: string, expectedValue: string ) => {
+const nameServerRecordData = ( currentValue: string | null, expectedValue: string | null ) => {
 	return {
 		currentValue: currentValue,
 		expectedValue: expectedValue,
@@ -144,9 +146,7 @@ export default function DnsRecordsTable( {
 			const longestLength = Math.max( currentNameServers.length, expectedNameServers.length );
 
 			for ( let i = 0; i < longestLength; i++ ) {
-				data.push(
-					nameServerRecordData( currentNameServers[ i ] || '-', expectedNameServers[ i ] || '-' )
-				);
+				data.push( nameServerRecordData( currentNameServers[ i ], expectedNameServers[ i ] ) );
 			}
 		} else {
 			const currentIpAddresses = ( domainConnectionStatus?.host_ip_addresses || [] ).sort();
@@ -154,10 +154,10 @@ export default function DnsRecordsTable( {
 			const longestLength = Math.max( currentIpAddresses.length, expectedIpAddresses.length );
 
 			for ( let i = 0; i < longestLength; i++ ) {
-				data.push( aRecordData( currentIpAddresses[ i ] || '-', expectedIpAddresses[ i ] || '-' ) );
+				data.push( aRecordData( currentIpAddresses[ i ], expectedIpAddresses[ i ] ) );
 			}
 
-			const wwwCnameRecordTarget = domainConnectionStatus.www_cname_record_target || '-';
+			const wwwCnameRecordTarget = domainConnectionStatus.www_cname_record_target;
 			data.push( wwwCnameRecordData( wwwCnameRecordTarget, domainName ) );
 		}
 
