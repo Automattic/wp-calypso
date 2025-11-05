@@ -52,7 +52,7 @@ export function getSiteEditUrl( site: Site, isSiteUsingBlockTheme?: boolean ) {
 /**
  * Returns the URL for the site visibility settings page.
  */
-export function getVisibilityURL( site: Site ) {
+export function getSiteVisibilityURL( site: Site ) {
 	if ( isSelfHostedJetpackConnected( site ) ) {
 		return undefined;
 	}
