@@ -104,7 +104,7 @@ const SiteMigrationSshInProgress: StepType< {
 							{
 								icon: 'checkmark',
 								text: translate(
-									'Your visitors can still access {{strong}}%(siteDomain)s{{/strong}} without interruptions while we migrate.',
+									'{{strong}}%(siteDomain)s{{/strong}} will still be accessible without\u00A0interruptions.',
 									{
 										args: { siteDomain },
 										components: { strong: <strong /> },
