@@ -20,7 +20,7 @@ export const AccessMethodPicker: FC< CredentialsFormFieldProps > = ( { control }
 						<FormRadio
 							id="site-migration-credentials__radio-credentials"
 							htmlFor="site-migration-credentials__radio-credentials"
-							label={ translate( 'WordPress site credentials' ) }
+							label={ translate( 'Site address' ) }
 							checked={ value === 'credentials' }
 							{ ...props }
 							value="credentials"
