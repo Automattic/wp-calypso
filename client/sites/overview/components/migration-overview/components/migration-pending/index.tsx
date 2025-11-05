@@ -130,7 +130,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 				onConfirm={ cancelMigration }
 				title={ translate( 'Cancel migration' ) }
 				text={ translate(
-					"When you cancel your migration your original site will stay as is. You can always restart the migration when you're ready."
+					"When you cancel your migration, your original site will remain unchanged on your current hosting provider. You can always restart the migration when you're ready."
 				) }
 				confirmButtonLabel={ translate( 'Cancel migration' ) }
 				cancelButtonLabel={ translate( "Don't cancel migration" ) }
