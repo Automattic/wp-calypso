@@ -19,10 +19,10 @@ export const TimeMismatchNotice = ( {
 }: TimeMismatchNoticeProps ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: dismissedPref } = useSuspenseQuery(
-		userPreferenceQuery( `time-mismatch-warning-dismissed-${ siteId }` )
+		userPreferenceQuery( `hosting-dashboard-time-mismatch-warning-dismissed-${ siteId }` )
 	);
 	const { mutate: dismiss, isPending: isDismissing } = useMutation(
-		userPreferenceMutation( `time-mismatch-warning-dismissed-${ siteId }` )
+		userPreferenceMutation( `hosting-dashboard-time-mismatch-warning-dismissed-${ siteId }` )
 	);
 
 	const date = new Date();
