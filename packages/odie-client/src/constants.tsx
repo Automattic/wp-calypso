@@ -76,9 +76,9 @@ export const getOdieTransferMessage = ( botSlug: OdieAllBotSlugs ): Message[] =>
 	}
 
 	const baseMessage = {
-		content: isTestMode
-			? __( 'No problem. Help is on the way! (staging)', __i18n_text_domain__ )
-			: __( 'No problem. Help is on the way!', __i18n_text_domain__ ),
+		content:
+			__( 'No problem. Help is on the way!', __i18n_text_domain__ ) +
+			( isTestMode ? ' (staging)' : '' ),
 		role: 'bot' as const,
 		type: 'message' as const,
 		context: {
