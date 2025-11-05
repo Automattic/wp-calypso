@@ -118,7 +118,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			}
 			resetSupportInteraction().then( ( interaction ) => {
 				createZendeskConversation( {
-					avoidTransfer: true,
 					interactionId: interaction?.uuid,
 					createdFrom: 'direct_url',
 				} ).then( () => {

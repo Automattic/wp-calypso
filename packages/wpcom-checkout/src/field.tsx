@@ -113,6 +113,7 @@ const Input = styled.input< {
 	line-height: 1.5;
 	font-size: 14px;
 	padding: 7px 14px;
+	max-width: 100%;
 
 	::-webkit-inner-spin-button,
 	::-webkit-outer-spin-button {
