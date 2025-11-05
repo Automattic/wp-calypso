@@ -229,18 +229,15 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 			const chatIdString = returnedChat.chat_id?.toString?.() ?? String( returnedChat.chat_id );
 			let supportInteraction = currentSupportInteraction;
-			let interactionOdieId = odieId;
 
 			try {
 				if ( ! supportInteraction && chatIdString ) {
-					const newInteraction = await startNewInteraction( {
+					supportInteraction = await startNewInteraction( {
 						event_external_id: chatIdString,
 						event_source: 'odie',
 					} );
-					supportInteraction = newInteraction;
-					interactionOdieId = getOdieIdFromInteraction( newInteraction );
-					updateInteractionContext( newInteraction );
-				} else if ( supportInteraction && ! interactionOdieId && chatIdString ) {
+					updateInteractionContext( supportInteraction );
+				} else if ( supportInteraction && ! odieId && chatIdString ) {
 					const updatedInteraction = await addEventToInteraction.mutateAsync( {
 						interactionId: supportInteraction.uuid,
 						eventData: {
@@ -249,7 +246,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						},
 					} );
 					supportInteraction = updatedInteraction;
-					interactionOdieId = getOdieIdFromInteraction( updatedInteraction );
 					updateInteractionContext( updatedInteraction );
 				}
 			} catch ( error ) {
