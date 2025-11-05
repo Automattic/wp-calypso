@@ -13,9 +13,9 @@ import DownloadLink from './download-link';
 import './style.scss';
 
 export default function DownloadBadges( {
-	buttonProps,
+	buttonProps = {},
 }: {
-	buttonProps: ComponentProps< typeof Button >;
+	buttonProps?: ComponentProps< typeof Button >;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
