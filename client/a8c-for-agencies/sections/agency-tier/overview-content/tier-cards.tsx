@@ -44,12 +44,17 @@ export default function TierCards( {
 		setShowEarlyAccessModal( true );
 	};
 
-	const handleViewBenefits = () => {
+	const handleViewBenefits = ( tierId: string ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_agency_tier_view_benefits_click', {
 				agency_tier: currentAgencyTierId,
 			} )
 		);
+
+		const element = document.getElementById( tierId );
+		if ( element ) {
+			element.scrollIntoView( { behavior: 'smooth' } );
+		}
 	};
 
 	const content = (
@@ -107,8 +112,7 @@ export default function TierCards( {
 								<Text style={ { color: '#757575' } }>{ tier.subheading }</Text>
 							</VStack>
 							<Button
-								onClick={ handleViewBenefits }
-								href={ `#${ tier.id }` }
+								onClick={ () => handleViewBenefits( tier.id as string ) }
 								variant={ isSecondary ? 'secondary' : 'primary' }
 								style={ { marginTop: '24px', alignSelf: 'flex-start' } }
 							>
