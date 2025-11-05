@@ -46,16 +46,24 @@ const SitePickerStep: Step< {
 	// Fetch hosting provider when ref=move-lp and we have a from URL
 	const domain = sourceSiteSlug ? urlToDomain( sourceSiteSlug ) : '';
 	const shouldFetchHosting = ref === 'move-lp' && !! domain;
-	const { data: hostingProviderData } = useHostingProviderQuery( domain, shouldFetchHosting );
+	const { data: hostingProviderData, isFetching: isFetchingHosting } = useHostingProviderQuery(
+		domain,
+		shouldFetchHosting
+	);
 
 	useEffect( () => {
 		// If the user has no sites, we should skip the site picker and go straight to the site creation step
 		if ( siteCount === 0 ) {
+			// If we're fetching hosting data for move-lp, wait for it to complete
+			if ( shouldFetchHosting && isFetchingHosting ) {
+				return;
+			}
+
 			const host = hostingProviderData?.hosting_provider?.slug;
 			navigation.submit?.( { action: 'create-site', host } );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteCount, hostingProviderData ] );
+	}, [ siteCount, shouldFetchHosting, isFetchingHosting ] );
 
 	const onQueryParamChange = ( params: Partial< SitesDashboardQueryParams > ) => {
 		recordTracksEvent( 'calypso_import_site_picker_query_param_change', params );
