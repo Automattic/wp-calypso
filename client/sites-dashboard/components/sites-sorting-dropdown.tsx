@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Button, Dropdown, MenuItemsChoice, NavigableMenu } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
+import { useEffect } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import {
@@ -11,7 +12,6 @@ import {
 	ALPHABETICAL_SORTING,
 	MAGIC_SORTING,
 	LAST_PUBLISHED_SORTING,
-	PLAN_SORTING,
 } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { SMALL_MEDIA_QUERY } from '../utils';
 
@@ -40,10 +40,6 @@ export const SitesSortingDropdown = ( {
 	const isSmallScreen = useMediaQuery( SMALL_MEDIA_QUERY );
 	const { __ } = useI18n();
 
-	if ( ! hasSitesSortingPreferenceLoaded ) {
-		return null;
-	}
-
 	const choices = [
 		{
 			...ALPHABETICAL_SORTING,
@@ -61,20 +57,28 @@ export const SitesSortingDropdown = ( {
 			value: stringifySitesSorting( LAST_PUBLISHED_SORTING ),
 			label: __( 'Last published' ),
 		},
-		{
-			...PLAN_SORTING,
-			value: stringifySitesSorting( PLAN_SORTING ),
-			label: __( 'Plan' ),
-		},
 	];
 
-	const currentSortingValue = stringifySitesSorting( sitesSorting );
 	const currentSortingLabel = choices.find( ( { sortKey } ) => sortKey === sitesSorting.sortKey )
 		?.label;
 
-	if ( currentSortingLabel === undefined ) {
-		throw new Error( `invalid sort value ${ sitesSorting }` );
+	// Use ALPHABETICAL_SORTING as fallback if current value doesn't match any dropdown option
+	const validSorting = currentSortingLabel === undefined ? ALPHABETICAL_SORTING : sitesSorting;
+
+	// Reset preference if it was invalid
+	useEffect( () => {
+		if ( hasSitesSortingPreferenceLoaded && currentSortingLabel === undefined ) {
+			onSitesSortingChange( ALPHABETICAL_SORTING );
+		}
+	}, [ hasSitesSortingPreferenceLoaded, currentSortingLabel, onSitesSortingChange ] );
+
+	if ( ! hasSitesSortingPreferenceLoaded ) {
+		return null;
 	}
+
+	const currentSortingValue = stringifySitesSorting( validSorting );
+	const validSortingLabel = choices.find( ( { sortKey } ) => sortKey === validSorting.sortKey )
+		?.label;
 
 	return (
 		<Dropdown
@@ -84,7 +88,7 @@ export const SitesSortingDropdown = ( {
 					icon={ <SortingButtonIcon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
 					iconSize={ 16 }
 					// translators: %s is the current sorting mode.
-					aria-label={ sprintf( __( 'Sorting by %s. Switch sorting mode' ), currentSortingLabel ) }
+					aria-label={ sprintf( __( 'Sorting by %s. Switch sorting mode' ), validSortingLabel ) }
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
 					onKeyDown={ ( event: React.KeyboardEvent ) => {
@@ -96,7 +100,7 @@ export const SitesSortingDropdown = ( {
 				>
 					{
 						// translators: %s is the current sorting mode.
-						sprintf( __( 'Sort: %s' ), currentSortingLabel )
+						sprintf( __( 'Sort: %s' ), validSortingLabel )
 					}
 				</SortingButton>
 			) }
