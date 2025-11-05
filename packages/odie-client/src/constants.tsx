@@ -55,15 +55,12 @@ export const getOdieTransferMessage = ( botSlug: OdieAllBotSlugs ): Message[] =>
 	if ( flow === 'commerce-garden' ) {
 		return [
 			{
-				content: isTestMode
-					? __(
-							"(STAGING VERSION OF ZENDESK) Yes, of course! A Happiness Engineer is jumping in to help you now. They can see your chat with our assistant, so feel free to share any extra details; we'll take it from there.",
-							__i18n_text_domain__
-					  )
-					: __(
-							"Yes, of course! A Happiness Engineer is jumping in to help you now. They can see your chat with our assistant, so feel free to share any extra details; we'll take it from there.",
-							__i18n_text_domain__
-					  ),
+				content:
+					( isTestMode ? '(STAGING VERSION OF ZENDESK) ' : '' ) +
+					__(
+						"Yes, of course! A Happiness Engineer is jumping in to help you now. They can see your chat with our assistant, so feel free to share any extra details; we'll take it from there.",
+						__i18n_text_domain__
+					),
 				role: 'bot' as const,
 				type: 'message' as const,
 				context: {
