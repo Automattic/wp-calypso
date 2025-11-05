@@ -252,6 +252,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				// User is eligible for premium support - transfer to Zendesk
 				createZendeskConversation( {
 					createdFrom: 'api_error',
+					errorReason: error.message || error.toString?.(),
 					isFromError: true,
 				} );
 			} else {

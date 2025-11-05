@@ -5,17 +5,7 @@ import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 
-export const useCreateZendeskConversation = (): ( ( {
-	avoidTransfer,
-	interactionId,
-	createdFrom,
-	isFromError,
-}: {
-	avoidTransfer?: boolean;
-	interactionId?: string;
-	createdFrom?: string;
-	isFromError?: boolean;
-} ) => Promise< string > ) => {
+export const useCreateZendeskConversation = () => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
@@ -36,11 +26,13 @@ export const useCreateZendeskConversation = (): ( ( {
 		interactionId = '',
 		createdFrom = '',
 		isFromError = false,
+		errorReason = '',
 	}: {
 		avoidTransfer?: boolean;
 		interactionId?: string;
 		createdFrom?: string;
 		isFromError?: boolean;
+		errorReason?: string;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
 
@@ -53,6 +45,7 @@ export const useCreateZendeskConversation = (): ( ( {
 			created_from: createdFrom,
 			avoid_transfer: avoidTransfer,
 			is_from_error: isFromError,
+			error_reason: errorReason || 'Unknown error',
 		} );
 
 		if (
