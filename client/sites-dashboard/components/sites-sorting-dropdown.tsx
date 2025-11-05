@@ -11,6 +11,7 @@ import {
 	ALPHABETICAL_SORTING,
 	MAGIC_SORTING,
 	LAST_PUBLISHED_SORTING,
+	PLAN_SORTING,
 } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { SMALL_MEDIA_QUERY } from '../utils';
 
@@ -59,6 +60,11 @@ export const SitesSortingDropdown = ( {
 			...LAST_PUBLISHED_SORTING,
 			value: stringifySitesSorting( LAST_PUBLISHED_SORTING ),
 			label: __( 'Last published' ),
+		},
+		{
+			...PLAN_SORTING,
+			value: stringifySitesSorting( PLAN_SORTING ),
+			label: __( 'Plan' ),
 		},
 	];
 

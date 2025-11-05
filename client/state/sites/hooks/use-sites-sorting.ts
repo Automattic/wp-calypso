@@ -23,6 +23,11 @@ export const LAST_PUBLISHED_SORTING = {
 	sortOrder: 'desc',
 } as const;
 
+export const PLAN_SORTING = {
+	sortKey: 'plan',
+	sortOrder: 'asc',
+} as const;
+
 export const parseSitesSorting = ( serializedSorting: SitesSorting | 'none' ) => {
 	const [ sortKey, sortOrder ] = serializedSorting.split( SEPARATOR );
 
