@@ -362,7 +362,7 @@ export const ConnectRepositoryForm = ( {
 
 			if ( 'selectedRepositoryId' in updates ) {
 				newFormData.branch = '';
-				newFormData.targetDir = '';
+				newFormData.targetDir = '/';
 
 				// If repository is unselected, reset to simple mode since advanced requires a repo
 				if ( updates.selectedRepositoryId === '' ) {
@@ -394,12 +394,15 @@ export const ConnectRepositoryForm = ( {
 	};
 
 	useEffect( () => {
-		if ( ! repositoryChecks?.suggested_directory || formData.targetDir ) {
+		if ( formData.targetDir && formData.targetDir !== '/' ) {
 			return;
 		}
 
-		// Only update target directory when repository changes, not when branch changes
-		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
+		const targetDir = repositoryChecks?.suggested_directory || '/';
+
+		if ( formData.targetDir !== targetDir ) {
+			setFormData( ( prev ) => ( { ...prev, targetDir } ) );
+		}
 	}, [ repositoryChecks?.suggested_directory, formData.targetDir ] );
 
 	const handleSubmit = async () => {
@@ -604,7 +607,6 @@ export const ConnectRepositoryForm = ( {
 			},
 		];
 
-		// Only include dependent fields when a repository is selected
 		if ( selectedRepository ) {
 			baseFields.push(
 				{
