@@ -237,17 +237,14 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						event_external_id: chatId.toString(),
 						event_source: 'odie',
 					} );
-					updateInteractionContext( supportInteraction );
 				} else if ( supportInteraction && ! odieId && chatId ) {
-					const updatedInteraction = await addEventToInteraction.mutateAsync( {
+					supportInteraction = await addEventToInteraction.mutateAsync( {
 						interactionId: supportInteraction.uuid,
 						eventData: {
 							event_external_id: chatId.toString(),
 							event_source: 'odie',
 						},
 					} );
-					supportInteraction = updatedInteraction;
-					updateInteractionContext( updatedInteraction );
 				}
 			} catch ( error ) {
 				trackEvent( 'error_updating_support_interaction', {
@@ -273,6 +270,10 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				props: { odieId: returnedChat.chat_id },
 				isFromError: false,
 			} );
+
+			if ( supportInteraction ) {
+				updateInteractionContext( supportInteraction );
+			}
 		},
 		onSettled: () => {
 			setChatStatus( 'loaded' );
