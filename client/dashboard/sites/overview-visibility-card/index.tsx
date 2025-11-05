@@ -4,21 +4,13 @@ import { __ } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { getVisibilityURL } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	title: __( 'Visibility' ),
 	trackId: 'site-overview-visibility',
 };
-
-function getVisibilityURL( site: Site ) {
-	if ( isSelfHostedJetpackConnected( site ) ) {
-		return undefined;
-	}
-
-	return `/sites/${ site.slug }/settings/site-visibility`;
-}
 
 function getLaunchpadChecklistSlug( site: Site ) {
 	const intent = site.options?.site_intent;
