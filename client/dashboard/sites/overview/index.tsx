@@ -151,7 +151,7 @@ function SiteOverviewSecondaryCards( {
 					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 						<>
 							<DIFMUpsellCard site={ site } />
-							<DomainsCard site={ site } />
+							<DomainsCard site={ site } isCompact={ isSmallViewport } />
 						</>
 					) }
 				</VStack>

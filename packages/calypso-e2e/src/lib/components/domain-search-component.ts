@@ -12,6 +12,7 @@ import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
 export class DomainSearchComponent {
 	private page: Page;
 	private container?: Locator;
+	readonly claimYourSpaceHeading: Locator;
 	/**
 	 * Constructs an instance of the component.
 	 *
@@ -20,6 +21,9 @@ export class DomainSearchComponent {
 	constructor( page: Page, container?: Locator ) {
 		this.page = page;
 		this.container = container;
+		this.claimYourSpaceHeading = this.getContainer().getByRole( 'heading', {
+			name: 'Claim your space on the web',
+		} );
 	}
 
 	/**

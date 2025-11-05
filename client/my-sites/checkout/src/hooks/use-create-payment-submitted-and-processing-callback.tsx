@@ -49,7 +49,7 @@ const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete'
  * PayPal. They will redirect directly to the post-checkout page decided by
  * `getThankYouUrl`.
  */
-export default function useCreatePaymentCompleteCallback( {
+export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	createUserAndSiteBeforeTransaction,
 	productAliasFromUrl,
 	redirectTo,
@@ -166,7 +166,7 @@ export default function useCreatePaymentCompleteCallback( {
 				reduxDispatch(
 					recordCompositeCheckoutErrorDuringAnalytics( {
 						errorObject: err as Error,
-						failureDescription: 'useCreatePaymentCompleteCallback',
+						failureDescription: 'useCreatePaymentSubmittedAndProcessingCallback',
 					} )
 				);
 			}
@@ -338,7 +338,7 @@ async function recordPaymentCompleteAnalytics( {
 		reduxDispatch(
 			recordCompositeCheckoutErrorDuringAnalytics( {
 				errorObject: err as Error,
-				failureDescription: 'useCreatePaymentCompleteCallback',
+				failureDescription: 'useCreatePaymentSubmittedAndProcessingCallback',
 			} )
 		);
 	}

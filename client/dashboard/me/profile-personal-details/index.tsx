@@ -142,7 +142,7 @@ export default function PersonalDetailsSection( {
 
 	return (
 		<form onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
-			<FlashMessage value="username" id="updated" message={ __( 'Username saved.' ) } />
+			<FlashMessage id="username" message={ __( 'Username saved.' ) } />
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>

@@ -2,9 +2,15 @@ import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
 import { Fragment } from 'react';
 import ChatMessage from '..';
+import { getZendeskInitialGreetingMessages } from '../../../constants';
 import { useOdieAssistantContext } from '../../../context';
 import { isCSATMessage } from '../../../utils';
-import { hasFeedbackForm, isAttachment, isTransitionToSupportMessage } from '../../../utils/csat';
+import {
+	hasFeedbackForm,
+	isAttachment,
+	isTransitionToSupportMessage,
+	isZendeskIntroMessage,
+} from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
 import { getMessageUniqueIdentifier } from '../utils/get-message-unique-identifier';
 import type { Message, MessageRole } from '../../../types';
@@ -22,6 +28,8 @@ function getPresentedRole( message: Message ) {
 		return 'attachment';
 	} else if ( hasFeedbackForm( message ) ) {
 		return 'feedback';
+	} else if ( isZendeskIntroMessage( message ) ) {
+		return 'zendesk-intro';
 	}
 	return message.role;
 }
@@ -67,7 +75,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 
 	let currentGroup: {
 		id: string;
-		role: MessageRole | 'csat' | 'attachment' | 'feedback';
+		role: MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro';
 		messages: Message[];
 	} = {
 		id: crypto.randomUUID(),
@@ -101,6 +109,9 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 		const startingHumanSupport = group.messages.some( isTransitionToSupportMessage );
 		const endingHumanSupport = group.messages.some( isCSATMessage );
 
+		const messagesToRender =
+			group.role === 'zendesk-intro' ? getZendeskInitialGreetingMessages() : group.messages;
+
 		const messageHeader = () => {
 			// Only business messages have a header.
 			if ( group.role === 'business' ) {
@@ -121,7 +132,7 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 					/>
 				) }
 				<div className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }>
-					{ group.messages.map( ( message, index ) => (
+					{ messagesToRender.map( ( message, index ) => (
 						<ChatMessage
 							key={ getMessageUniqueIdentifier( message ) }
 							message={ message }

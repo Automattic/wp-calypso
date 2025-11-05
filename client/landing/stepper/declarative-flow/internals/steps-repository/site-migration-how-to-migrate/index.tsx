@@ -1,6 +1,6 @@
 import { PLAN_BUSINESS, getPlan, isWpComBusinessPlan } from '@automattic/calypso-products';
 import { NextButton, Step } from '@automattic/onboarding';
-import { Icon, copy, globe, lockOutline, scheduled } from '@wordpress/icons';
+import { Icon, copy, globe, lockOutline } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -42,12 +42,6 @@ const SiteMigrationHowToMigrate: StepType< {
 				icon: copy,
 				description: translate(
 					"We'll bring over a copy of your site, without affecting the current live version."
-				),
-			},
-			{
-				icon: scheduled,
-				description: translate(
-					"You'll get an update on the progress of your migration within 2-3 business days."
 				),
 			},
 			{

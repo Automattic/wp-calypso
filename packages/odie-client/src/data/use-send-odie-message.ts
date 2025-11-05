@@ -49,7 +49,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
 	const { addEventToInteraction } = useManageSupportInteraction();
-	const newConversation = useCreateZendeskConversation();
+	const createZendeskConversation = useCreateZendeskConversation();
 
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
@@ -63,10 +63,10 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		const { createdFrom, isFromError, trigger } = shouldCreateConversation;
 
 		if ( trigger ) {
-			newConversation( { createdFrom, isFromError } );
+			createZendeskConversation( { createdFrom, isFromError } );
 			setShouldCreateConversation( { createdFrom: undefined, isFromError: false, trigger: false } );
 		}
-	}, [ newConversation, shouldCreateConversation ] );
+	}, [ createZendeskConversation, shouldCreateConversation ] );
 
 	const {
 		selectedSiteId,
@@ -189,7 +189,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
 					// User is eligible for premium support - transfer to Zendesk
 					// Note: newConversation will add the ODIE_ON_ERROR_TRANSFER_MESSAGE automatically
-					newConversation( {
+					createZendeskConversation( {
 						createdFrom: 'empty_response_error',
 						isFromError: true,
 					} );
@@ -250,7 +250,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				addMessage( { message, props: {}, isFromError: true } );
 			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
 				// User is eligible for premium support - transfer to Zendesk
-				newConversation( {
+				createZendeskConversation( {
 					createdFrom: 'api_error',
 					isFromError: true,
 				} );

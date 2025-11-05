@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots } from './types';
 declare const __i18n_text_domain__: string;
@@ -39,21 +40,28 @@ export const getOdieForwardToZendeskMessage = (): string =>
 		__i18n_text_domain__
 	);
 
-export const getOdieTransferMessage = (): Message[] => [
-	{
-		content: __( 'No problem. Help is on the way!', __i18n_text_domain__ ),
-		role: 'bot',
-		type: 'message',
-		context: {
-			flags: {
-				hide_disclaimer_content: true,
-				show_contact_support_msg: false,
-				show_ai_avatar: false,
+export const getOdieTransferMessage = (): Message[] => {
+	const isTestMode = isTestModeEnvironment();
+	const content = isTestMode
+		? __( 'No problem. Help is on the way! (staging)', __i18n_text_domain__ )
+		: __( 'No problem. Help is on the way!', __i18n_text_domain__ );
+
+	return [
+		{
+			content,
+			role: 'bot',
+			type: 'message',
+			context: {
+				flags: {
+					hide_disclaimer_content: true,
+					show_contact_support_msg: false,
+					show_ai_avatar: false,
+				},
+				site_id: null,
 			},
-			site_id: null,
 		},
-	},
-];
+	];
+};
 
 export const getOdieOnErrorTransferMessage = (): Message[] => [
 	{
@@ -160,6 +168,69 @@ export const getOdieInitialMessage = (
 		type: 'introduction',
 		context: getOdieInitialPromptContext( botNameSlug ),
 	};
+};
+
+export const getZendeskInitialGreetingMessages = (): Message[] => {
+	const isTestMode = isTestModeEnvironment();
+
+	if ( isTestMode ) {
+		return [
+			{
+				content: __(
+					'This is the Sandbox version of Zendesk. You will not be redirected to a support agent. If you want to test the real experience and be connected to a support agent, you need to be unproxied.',
+					__i18n_text_domain__
+				),
+				role: 'bot',
+				type: 'message',
+				internal_message_id: 'zendesk-initial-greeting',
+				context: {
+					flags: {
+						hide_disclaimer_content: true,
+						show_contact_support_msg: false,
+						show_ai_avatar: false,
+					},
+					site_id: null,
+				},
+			},
+		];
+	}
+
+	return [
+		{
+			content: __(
+				'We’re connecting you with our support team. A Happiness Engineer will join the chat as soon as they’re available.',
+				__i18n_text_domain__
+			),
+			role: 'bot',
+			type: 'message',
+			internal_message_id: 'zendesk-initial-greeting-1',
+			context: {
+				flags: {
+					hide_disclaimer_content: true,
+					show_contact_support_msg: false,
+					show_ai_avatar: false,
+				},
+				site_id: null,
+			},
+		},
+		{
+			content: __(
+				'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+				__i18n_text_domain__
+			),
+			role: 'bot',
+			type: 'message',
+			internal_message_id: 'zendesk-initial-greeting-2',
+			context: {
+				flags: {
+					hide_disclaimer_content: true,
+					show_contact_support_msg: false,
+					show_ai_avatar: false,
+				},
+				site_id: null,
+			},
+		},
+	];
 };
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;

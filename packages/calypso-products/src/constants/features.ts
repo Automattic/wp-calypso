@@ -281,9 +281,12 @@ export const WPCOM_FEATURES_INSTALL_PLUGINS = 'install-plugins';
 export const WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS = 'install-purchased-plugins';
 export const WPCOM_FEATURES_INSTANT_SEARCH = 'instant-search';
 export const WPCOM_FEATURES_LIVE_SUPPORT = 'live_support';
+export const WPCOM_FEATURES_LOGS = 'logs';
 export const WPCOM_FEATURES_MANAGE_PLUGINS = 'manage-plugins';
+export const WPCOM_FEATURES_MONITORING = 'monitoring';
 export const WPCOM_FEATURES_NO_ADVERTS = 'no-adverts/no-adverts.php';
 export const WPCOM_FEATURES_NO_WPCOM_BRANDING = 'no-wpcom-branding';
+export const WPCOM_FEATURES_PERFORMANCE = 'performance';
 /*
  * TODO: This constant value should be renamed (here and in `class-wpcom-features.php` in
  * WPCOM) to `premium-themes-unlimited` so it's not confused with `FEATURE_PREMIUM_THEMES`.

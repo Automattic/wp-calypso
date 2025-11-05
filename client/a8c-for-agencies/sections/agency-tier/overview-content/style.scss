@@ -1,0 +1,40 @@
+@import "@wordpress/base-styles/colors";
+
+.agency-tier-overview-revamped {
+	// Hacks to make DataViews look non-interactive
+	// Upstream issue: https://github.com/WordPress/gutenberg/issues/71127
+	.dataviews-view-list {
+		button.dataviews-view-list__item {
+			display: none;
+		}
+
+		div[role="row"]:not(.is-selected) {
+			&, &:hover {
+				background-color: $white;
+				.dataviews-view-list__fields {
+						color: $gray-700;
+					}
+				}
+
+		}
+	}
+	&.is-small-viewport {
+		.dataviews-view-list__field {
+			width: 100%;
+		}
+	}
+	// Since we are using ItemsDataViews, we need to override the visited color for the tertiary button.
+	// TODO: Remove this once we start using DataViews from the WordPress core throughout A4A.
+	.dataviews-wrapper .components-button.is-tertiary:visited {
+		color: var(--color-primary-60);
+	}
+}
+
+.agency-tier-overview-revamped__icon {
+	display: block;
+	position: relative;
+	top: 50%;
+	inset-inline-start: 50%;
+	transform: translate(-50%, -50%);
+	fill: $gray-700;
+}

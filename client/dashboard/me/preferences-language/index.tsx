@@ -16,7 +16,7 @@ import { useMemo, useState, createInterpolateElement } from '@wordpress/element'
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { Card, CardBody } from '../../components/card';
-import FlashMessage from '../../components/flash-message';
+import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
 import { languagesAsOptions, shouldDisplayCommunityTranslator, CalypsoLanguage } from './languages';
 import ThanksToCommunityTranslator from './thanks-to-community-translator';
@@ -62,12 +62,7 @@ export default function PreferencesLanguageForm() {
 		const mutationData = formData;
 		mutation.mutate( mutationData, {
 			onSuccess: () => {
-				// Ensure the UI picks up the new language by reloading the page.
-				// Add a transient query param so we can show a success notice after reload.
-				const url = new URL( window.location.href );
-				url.searchParams.set( 'updated', 'language' );
-				// Replace to avoid adding an extra history entry.
-				window.location.replace( url.toString() );
+				reloadWithFlashMessage( 'language' );
 			},
 			onError: ( error ) => {
 				// Prepend previous attempted data back into local edits
@@ -214,7 +209,7 @@ export default function PreferencesLanguageForm() {
 
 	return (
 		<form onSubmit={ handleSubmit }>
-			<FlashMessage value="language" message={ __( 'Language setting saved.' ) } />
+			<FlashMessage id="language" message={ __( 'Language setting saved.' ) } />
 			<Card>
 				<CardBody>
 					<VStack spacing={ 3 } className="dasboard-preferences__vstack">
