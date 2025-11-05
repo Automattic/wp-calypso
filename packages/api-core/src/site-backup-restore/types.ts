@@ -53,3 +53,11 @@ export interface RestoreStatusResponse {
 		failure_reason: string;
 	};
 }
+
+/**
+ * Dismiss restore response.
+ */
+export interface DismissRestoreResponse {
+	restore_id: number;
+	is_dismissed: boolean;
+}

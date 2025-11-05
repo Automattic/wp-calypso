@@ -2,12 +2,14 @@ import {
 	fetchSiteBackupRestoreProgress,
 	initiateSiteBackupRestore,
 	initiateSiteGranularRestore,
+	dismissSiteRestore,
 	type RestoreConfig,
 	type GranularRestoreConfig,
 } from '@automattic/api-core';
 import configApi from '@automattic/calypso-config';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import { siteRewindStateQuery } from './site-rewind';
 
 /**
  * Fetch the restore progress for a site.
@@ -58,5 +60,19 @@ export const siteBackupGranularRestoreMutation = ( siteId: number ) =>
 		onSuccess: ( restoreId ) => {
 			// Start polling restore progress
 			queryClient.prefetchQuery( siteBackupRestoreProgressQuery( siteId, restoreId ) );
+		},
+	} );
+
+/**
+ * Dismiss a restore operation notice.
+ * @param siteId - The ID of the site.
+ * @returns Mutation options for dismissing a restore.
+ */
+export const dismissSiteRestoreMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( restoreId: number ) => dismissSiteRestore( siteId, restoreId ),
+		onSuccess: () => {
+			// Invalidate to refetch without the dismissed restore
+			queryClient.invalidateQueries( siteRewindStateQuery( siteId ) );
 		},
 	} );

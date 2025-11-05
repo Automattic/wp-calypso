@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { RestoreConfig, GranularRestoreConfig } from './types';
+import type { RestoreConfig, GranularRestoreConfig, DismissRestoreResponse } from './types';
 
 /**
  * Initiate a restore operation for a site to a specific timestamp.
@@ -55,4 +55,21 @@ export async function initiateSiteGranularRestore(
 	} );
 
 	return Number( data.restore_id );
+}
+
+/**
+ * Dismiss a restore operation notice.
+ * @param siteId - The ID of the site.
+ * @param restoreId - The ID of the restore to dismiss.
+ * @returns A promise that resolves to the dismiss response.
+ */
+export async function dismissSiteRestore(
+	siteId: number,
+	restoreId: number
+): Promise< DismissRestoreResponse > {
+	return wpcom.req.post( {
+		apiNamespace: 'wpcom/v2',
+		path: `/sites/${ siteId }/rewind/restores/${ restoreId }`,
+		body: { dismissed: true },
+	} );
 }
