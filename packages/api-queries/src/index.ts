@@ -1,6 +1,7 @@
 export * from './query-client';
 
 export * from './cancellation-offers';
+export * from './dashboard-site-list';
 export * from './domain-availability';
 export * from './domain-can-redirect';
 export * from './domain-connection-setup';
@@ -21,7 +22,6 @@ export * from './domains';
 export * from './emails';
 export * from './geo';
 export * from './github';
-export * from './hosting-dashboard-site-list';
 export * from './hosting-update-schedules';
 export * from './marketplace-search';
 export * from './marketing-survey';

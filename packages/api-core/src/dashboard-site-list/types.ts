@@ -21,12 +21,12 @@ export interface SiteProfileSite {
 	deleted?: boolean;
 }
 
-export interface HostingDashboardSiteListResponse {
+export interface DashboardSiteListResponse {
 	sites: SiteProfileSite[];
 	total: number;
 }
 
-export interface HostingDashboardSiteListParams {
+export interface DashboardSiteListParams {
 	fields?: ( keyof SiteProfileSite )[];
 	s?: string;
 	sort_by?: keyof SiteProfileSite;

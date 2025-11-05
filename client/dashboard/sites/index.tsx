@@ -2,7 +2,7 @@ import {
 	isAutomatticianQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
-	hostingDashboardSiteListQuery,
+	dashboardSiteListQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import {
@@ -41,7 +41,7 @@ import { SitesNotices } from './notices';
 import type {
 	FetchSitesOptions,
 	Site,
-	HostingDashboardSiteListParams,
+	DashboardSiteListParams,
 	SiteProfileSite,
 } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
@@ -69,7 +69,7 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 function getFetchSiteListParams(
 	view: View
 	// isRestoringAccount: boolean TODO: Add site visibility filtering
-): HostingDashboardSiteListParams {
+): DashboardSiteListParams {
 	const dataviewFieldToSiteProfileField: Record< string, keyof SiteProfileSite > = {
 		name: 'blogname',
 		URL: 'url',
@@ -168,7 +168,7 @@ function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 	const { queries } = useAppContext();
 
 	const siteProfilesQueryResult = useQuery( {
-		...hostingDashboardSiteListQuery( getFetchSiteListParams( view ) ),
+		...dashboardSiteListQuery( getFetchSiteListParams( view ) ),
 		placeholderData: keepPreviousData,
 		enabled: isEnabled( 'dashboard/v2/es-site-list' ),
 		meta: {
