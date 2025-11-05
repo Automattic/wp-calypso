@@ -1,5 +1,5 @@
 import fastDeepEqual from 'fast-deep-equal/es6';
-import { DEFAULT_FIELDS } from './fields';
+import { getDefaultFields } from './fields';
 import type { AnalyticsClient } from '../../app/analytics';
 import type { User, SitesView, SitesViewPreferences } from '@automattic/api-core';
 import type { Operator, SortDirection, SupportedLayouts } from '@wordpress/dataviews';
@@ -282,7 +282,8 @@ function sanitizeView( view: SitesView ) {
 	}
 
 	if ( sanitized.sort?.field ) {
-		const field = DEFAULT_FIELDS.find( ( field ) => field.id === sanitized.sort?.field );
+		const defaultFields = getDefaultFields();
+		const field = defaultFields.find( ( field ) => field.id === sanitized.sort?.field );
 		if ( ! field || field.enableSorting === false ) {
 			const { sort, ...rest } = sanitized;
 			sanitized = rest;

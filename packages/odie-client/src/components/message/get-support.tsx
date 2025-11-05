@@ -107,7 +107,6 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							onClickAdditionalEvent?.( 'chat' );
 							if ( isChatLoaded ) {
 								createZendeskConversation( {
-									avoidTransfer: true,
 									createdFrom: 'chat_support_button',
 								} );
 							}

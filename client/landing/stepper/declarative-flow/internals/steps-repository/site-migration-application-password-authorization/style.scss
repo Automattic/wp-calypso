@@ -40,47 +40,18 @@
 	.site-migration-application-password-authorization__authorization {
 		display: flex;
 		flex-direction: column;
-		gap: 1em;
+		gap: 0.5rem;
 		align-items: center;
-	}
-	.site-migration-application-password-authorization__benefits-container {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 1em;
-		h3 {
-			font-size: $font-title-small;
-			margin-bottom: 0.75em;
+		.action_buttons__button {
+			width: 300px;
 		}
-	}
-	.site-migration-application-password-authorization__benefits {
-		padding: 2em;
-		background-color: var(--color-border-shadow);
-		border-radius: 4px;
-		@include break-small {
-			width: 350px;
+		.checklist-card {
+			margin-top: 1rem;
 		}
-		display: flex;
-		flex-direction: column;
-		gap: 1em;
-	}
-	.site-migration-application-password-authorization__benefits-item {
-		display: flex;
-		flex-direction: row;
-		gap: 0.5em;
-		font-size: $font-body-small;
-		.site-migration-application-password-authorization__benefits-item-icon {
-			width: 42px;
-			height: 42px;
-			background-color: var(--studio-gray-5);
-			border-radius: 4px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-shrink: 0;
-			svg {
-				fill: var(--studio-gray-70);
-			}
+		.navigation-link {
+			color: var(--color-neutral-70, #1d2327);
+			font-weight: 500;
+			text-decoration: underline;
 		}
 	}
 	.site-migration-application-password-authorization__contact-me-button {

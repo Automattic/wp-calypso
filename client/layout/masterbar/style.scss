@@ -110,17 +110,13 @@ body.is-mobile-app-view {
 		background-color: var(--studio-white);
 		border-bottom: none 0;
 		color: var(--color-checkout-masterbar-text);
-		height: var(--masterbar-height);
+		height: var(--masterbar-checkout-height);
 		position: absolute;
 		padding-inline-end: 1.5em;
 
 		&.masterbar--is-akismet,
 		&.masterbar--is-jetpack {
 			padding-inline-start: 1.5em;
-		}
-
-		@include break-mobile {
-			height: var(--masterbar-checkout-height);
 		}
 
 		@include breakpoint-deprecated( ">960px" ) {
