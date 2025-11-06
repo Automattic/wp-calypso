@@ -20,7 +20,7 @@ import { VgsCreditCardFields } from './vgs-credit-card-fields';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, StripeFieldChangeInput } from './types';
 
-const StripeFields = styled.div`
+const CreditCardFormFields = styled.div`
 	position: relative;
 `;
 
@@ -141,38 +141,58 @@ export default function CreditCardFields( {
 	// Render VGS form if enabled (let VgsCreditCardFields handle its own loading state)
 	if ( shouldUseVgsForm && ! vgsFormError ) {
 		return (
-			<StripeFields className="credit-card-form-fields">
-				<VgsCreditCardFields
-					styles={ { input: stripeElementStyle.base } }
-					showFutureChargeNotice
-					onVgsFormError={ setVgsFormError }
-				/>
+			<CreditCardFormFields className="vgs-credit-card-form-fields">
+				<CreditCardFieldsWrapper isLoaded>
+					<div className="credit-card-fields-inner-wrapper">
+						<VgsCreditCardFields
+							styles={ {
+								input: stripeElementStyle.base,
+							} }
+							labels={ {
+								cardholderName: __( 'Cardholder name', 'calypso' ),
+								cardNumber: __( 'Card number', 'calypso' ),
+								expiryDate: __( 'Expiry date', 'calypso' ),
+								cvc: __( 'Security code', 'calypso' ),
+							} }
+							descriptions={ {
+								cardholderName: __( "Enter your name as it's written on the card", 'calypso' ),
+							} }
+							placeholders={ {
+								cardholderName: '',
+								cardNumber: __( '•••• •••• •••• ••••', 'calypso' ),
+								expiryDate: __( 'MM/YY', 'calypso' ),
+								cvc: __( 'CVC', 'calypso' ),
+							} }
+							onVgsFormError={ setVgsFormError }
+						/>
 
-				{ shouldShowContactFields && (
-					<ContactFields
-						getFieldValue={ getFieldValue }
-						setFieldValue={ setFieldValue }
-						setForBusinessUse={ setForBusinessUse }
-						getErrorMessagesForField={ getErrorMessagesForField }
-						shouldUseEbanx={ shouldUseEbanx }
-						shouldShowTaxFields={ shouldShowTaxFields }
-					/>
-				) }
+						{ shouldShowContactFields && (
+							<ContactFields
+								getFieldValue={ getFieldValue }
+								setFieldValue={ setFieldValue }
+								setForBusinessUse={ setForBusinessUse }
+								getErrorMessagesForField={ getErrorMessagesForField }
+								shouldUseEbanx={ shouldUseEbanx }
+								shouldShowTaxFields={ shouldShowTaxFields }
+							/>
+						) }
 
-				{ allowUseForAllSubscriptions && (
-					<AssignToAllPaymentMethods
-						isChecked={ useForAllSubscriptions }
-						isDisabled={ isDisabled }
-						onChange={ setUseForAllSubscriptions }
-					/>
-				) }
-			</StripeFields>
+						{ allowUseForAllSubscriptions && (
+							<AssignToAllPaymentMethods
+								isChecked={ useForAllSubscriptions }
+								isDisabled={ isDisabled }
+								onChange={ setUseForAllSubscriptions }
+							/>
+						) }
+					</div>
+				</CreditCardFieldsWrapper>
+			</CreditCardFormFields>
 		);
 	}
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<StripeFields className="credit-card-form-fields">
+		<CreditCardFormFields className="credit-card-form-fields">
 			{ ! isLoaded && <LoadingFields /> }
 
 			<CreditCardFieldsWrapper isLoaded={ isLoaded }>
@@ -245,7 +265,7 @@ export default function CreditCardFields( {
 					) }
 				</div>
 			</CreditCardFieldsWrapper>
-		</StripeFields>
+		</CreditCardFormFields>
 	);
 }
 
