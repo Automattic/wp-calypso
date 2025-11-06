@@ -1,5 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { ActivityLogResponse } from '../site-activity-log/types';
+import type {
+	ActivityLogResponse,
+	ActivityLogGroupCountResponse,
+} from '../site-activity-log/types';
 
 export async function fetchSiteBackupActivityLog(
 	siteId: number,
@@ -23,6 +26,22 @@ export async function fetchSiteBackupActivityLog(
 		{
 			number,
 			aggregate,
+			after,
+			before,
+		}
+	);
+}
+
+export async function fetchSiteBackupActivityLogGroupCounts(
+	siteId: number,
+	{ after, before }: { after?: string; before?: string }
+): Promise< ActivityLogGroupCountResponse > {
+	return wpcom.req.get(
+		{
+			path: `/sites/${ siteId }/activity/rewindable/count/group`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
 			after,
 			before,
 		}
