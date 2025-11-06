@@ -124,6 +124,7 @@
 		"marketing-force-facebook-display": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
+		"marketplace-redesign": false,
 		"marketplace-reviews-notification": false,
 		"marketplace-test": true,
 		"me/account-close": true,
