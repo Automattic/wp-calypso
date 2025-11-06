@@ -9,7 +9,7 @@ interface RenderCallbackProps {
 	onClose: () => void;
 }
 
-type SwitcherProps< T > = {
+export type SwitcherProps< T > = {
 	items?: T[];
 	value: T;
 	searchableFields: Field< T >[];
