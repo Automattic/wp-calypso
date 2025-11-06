@@ -137,13 +137,13 @@ export const useGetCombinedChat = (
 
 							return {
 								...( odieChat ? odieChat : {} ),
-                supportInteractionId,
+								supportInteractionId,
 								conversationId: conversation.id,
 								messages: [
 									...( odieChat ? filteredOdieMessages : [] ),
 									...( odieChat
 										? getOdieTransferMessage(
-												currentSupportInteraction.bot_slug as OdieAllBotSlugs
+												currentSupportInteraction?.bot_slug as OdieAllBotSlugs
 										  )
 										: [] ),
 									...( deduplicateZDMessages( [
@@ -157,7 +157,7 @@ export const useGetCombinedChat = (
 								provider: 'zendesk',
 								status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
 							};
-						} ) );
+						} );
 					}
 				} );
 			} catch ( error ) {
