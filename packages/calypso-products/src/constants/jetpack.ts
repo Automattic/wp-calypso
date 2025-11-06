@@ -86,6 +86,9 @@ export const PRODUCT_JETPACK_MONITOR = PRODUCT_JETPACK_MONITOR_YEARLY;
 export const PRODUCT_JETPACK_CREATOR_BI_YEARLY = 'jetpack_creator_bi_yearly';
 export const PRODUCT_JETPACK_CREATOR_YEARLY = 'jetpack_creator_yearly';
 export const PRODUCT_JETPACK_CREATOR_MONTHLY = 'jetpack_creator_monthly';
+// A4A Jetpack Products
+export const A4A_PRODUCT_JETPACK_STATS_YEARLY = 'a4a_jetpack_stats_yearly';
+export const A4A_PRODUCT_JETPACK_STATS_MONTHLY = 'a4a_jetpack_stats_monthly';
 
 //add-on products
 export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY =
