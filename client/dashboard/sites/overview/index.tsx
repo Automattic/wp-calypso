@@ -197,7 +197,7 @@ function SiteOverview( {
 		}
 
 		return (
-			<HStack justify="space-between" className="site-overview-actions">
+			<HStack justify="space-between">
 				<HStack justify="flex-start">
 					<StagingSiteSyncDropdown siteSlug={ siteSlug } />
 					<Button
