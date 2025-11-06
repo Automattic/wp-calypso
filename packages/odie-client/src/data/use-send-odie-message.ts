@@ -10,7 +10,7 @@ import {
 	getOdieErrorMessageNonEligible,
 	getExistingConversationMessage,
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
-	getOdieErrorMessageUnknownError,
+	getErrorMessageUnknownError,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
@@ -34,21 +34,6 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
 				forward_to_human_support: true,
 				hide_disclaimer_content: false,
 				show_contact_support_msg: true,
-				show_ai_avatar: true,
-				is_error_message: true,
-			},
-		},
-	};
-};
-
-const getErrorMessageUnknownError = (): Message => {
-	return {
-		content: getOdieErrorMessageUnknownError(),
-		role: 'bot',
-		type: 'message',
-		context: {
-			site_id: null,
-			flags: {
 				show_ai_avatar: true,
 				is_error_message: true,
 			},

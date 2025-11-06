@@ -260,6 +260,21 @@ export const getOdieInitialMessage = (
 	};
 };
 
+export const getErrorMessageUnknownError = (): Message => {
+	return {
+		content: getOdieErrorMessageUnknownError(),
+		role: 'bot',
+		type: 'message',
+		context: {
+			site_id: null,
+			flags: {
+				show_ai_avatar: true,
+				is_error_message: true,
+			},
+		},
+	};
+};
+
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 
