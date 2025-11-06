@@ -1,9 +1,9 @@
 import { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 import { __experimentalText as Text } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate, type Field, type View } from '@wordpress/dataviews';
+import { DataViews, type Field, type ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, arrowRight } from '@wordpress/icons';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Card } from '../../components/card';
 
 interface NameserverRecord {
@@ -106,7 +106,7 @@ export default function NameserversDataView( {
 		[]
 	);
 
-	const [ view, setView ] = useState< View >( {
+	const view: ViewTable = {
 		type: 'table',
 		page: 1,
 		perPage: 10,
@@ -119,18 +119,16 @@ export default function NameserversDataView( {
 				},
 			},
 		},
-	} );
-
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( records, view, fields );
+	};
 
 	return (
 		<Card>
 			<DataViews< NameserverRecord >
-				data={ filteredData ?? [] }
+				data={ records }
 				fields={ fields }
 				view={ view }
-				onChangeView={ setView }
-				paginationInfo={ paginationInfo }
+				onChangeView={ () => {} }
+				paginationInfo={ { totalItems: records.length, totalPages: 1 } }
 				defaultLayouts={ { table: {} } }
 			>
 				<DataViews.Layout />

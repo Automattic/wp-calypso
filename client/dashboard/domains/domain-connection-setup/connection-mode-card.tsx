@@ -108,9 +108,18 @@ export default function ConnectionModeCard( {
 				<CardBody>
 					<VStack spacing={ 6 }>
 						{ mode === DomainConnectionSetupMode.SUGGESTED && ! hasEmailOrOtherServices && (
-							<Notice variant="info" title="No email or other services detected ">
+							<Notice variant="info" title="No email or other services detected">
 								<Text>
 									{ __( 'You can safely connect your domain without affecting anything else.' ) }
+								</Text>
+							</Notice>
+						) }
+						{ mode === DomainConnectionSetupMode.SUGGESTED && hasEmailOrOtherServices && (
+							<Notice variant="warning" title="Email or other services detected">
+								<Text>
+									{ __(
+										'Warning: the services attached to your domain might be interrupted if you use this connection method'
+									) }
 								</Text>
 							</Notice>
 						) }
