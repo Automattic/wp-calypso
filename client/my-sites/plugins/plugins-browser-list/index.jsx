@@ -1,4 +1,6 @@
 import { Card, DotPager } from '@automattic/components';
+import { useViewportMatch } from '@wordpress/compose';
+import clsx from 'clsx';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
@@ -51,6 +53,9 @@ const PluginsBrowserList = ( {
 	const extendedVariant = extended
 		? PluginsBrowserElementVariant.Extended
 		: PluginsBrowserElementVariant.Compact;
+	const isBelowCarouselBreakpoint = useViewportMatch( 'medium', '<' );
+	const shouldUseCarousel = useCarousel && ! isBelowCarouselBreakpoint;
+	const shouldUseHorizontalScroll = useCarousel && ! shouldUseCarousel;
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
@@ -116,7 +121,7 @@ const PluginsBrowserList = ( {
 	const pageSize = Math.max( 1, carouselPageSize );
 
 	const renderViews = () => {
-		if ( useCarousel ) {
+		if ( shouldUseCarousel ) {
 			const slides = chunkItems( items, pageSize );
 
 			if ( ! slides.length ) {
@@ -144,8 +149,12 @@ const PluginsBrowserList = ( {
 			);
 		}
 
+		const listClassName = clsx( 'plugins-browser-list__elements', {
+			'plugins-browser-list__elements--horizontal-scroll': shouldUseHorizontalScroll,
+		} );
+
 		return (
-			<Card tagName="ul" className="plugins-browser-list__elements">
+			<Card tagName="ul" className={ listClassName }>
 				{ items }
 			</Card>
 		);
