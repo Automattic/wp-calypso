@@ -142,7 +142,7 @@ export function TriggerDeploymentModalForm( {
 			case 'root':
 			default:
 				return __(
-					"You're about to deploy changes from the selected repository to your production site. This will replace contents of your live site with the selected repository."
+					"You're about to deploy changes from the selected repository to your production site. This will replace the contents of your live site with the selected repository."
 				);
 		}
 	};
