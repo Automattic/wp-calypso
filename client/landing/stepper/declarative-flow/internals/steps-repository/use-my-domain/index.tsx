@@ -118,11 +118,11 @@ const UseMyDomain: StepType< {
 		let headingText;
 
 		if ( useMyDomainMode === 'domain-input' ) {
+			columnWidth = 4 as const;
+
 			if ( isDomainConnectionRedesign ) {
-				columnWidth = 5 as const;
 				headingText = __( 'Your domain name' );
 			} else {
-				columnWidth = 4 as const;
 				headingText = __( 'Use a domain I own' );
 			}
 		} else {

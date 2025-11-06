@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
-import { Card, Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -49,56 +50,58 @@ function UseMyDomainInput( {
 	};
 
 	return (
-		<Card className={ clsx( baseClassName, classNameModifier ) }>
-			{ ! isSignupStep && (
-				<div className={ baseClassName + '__domain-illustration' }>
-					<img src={ illustration } alt="" width={ 160 } />
-				</div>
-			) }
-			<div className={ baseClassName + '__domain-input' }>
-				<label htmlFor={ inputId }>
-					{ isDomainConnectionRedesign
-						? __( 'Domain name' )
-						: __( 'Enter the domain you would like to use:' ) }
-				</label>
-				<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
-					<FormTextInput
-						id={ inputId }
-						placeholder={ __( 'yourgroovydomain.com' ) }
-						value={ domainName }
-						onChange={ onChange }
-						onKeyDown={ keyDown }
-						isError={ !! validationError }
-						ref={ domainNameInput }
-						autoCapitalize="none"
-						autoCorrect="off"
-					/>
-					{ domainName && (
-						<Button
-							className={ baseClassName + '__domain-input-clear' }
-							borderless
-							onClick={ onClear }
-						>
-							<Gridicon
-								className={ baseClassName + '__domain-input-clear-icon' }
-								icon="cross"
-								size={ 12 }
-							/>
-						</Button>
-					) }
-					{ validationError && <FormInputValidation isError text={ validationError } icon="" /> }
-				</FormFieldset>
+		<Card className={ clsx( baseClassName, classNameModifier ) } isBorderless>
+			<CardBody size="none">
+				{ ! isSignupStep && (
+					<div className={ baseClassName + '__domain-illustration' }>
+						<img src={ illustration } alt="" width={ 160 } />
+					</div>
+				) }
+				<div className={ baseClassName + '__domain-input' }>
+					<label htmlFor={ inputId }>
+						{ isDomainConnectionRedesign
+							? __( 'Domain name' )
+							: __( 'Enter the domain you would like to use:' ) }
+					</label>
+					<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
+						<FormTextInput
+							id={ inputId }
+							placeholder={ __( 'yourgroovydomain.com' ) }
+							value={ domainName }
+							onChange={ onChange }
+							onKeyDown={ keyDown }
+							isError={ !! validationError }
+							ref={ domainNameInput }
+							autoCapitalize="none"
+							autoCorrect="off"
+						/>
+						{ domainName && (
+							<Button
+								className={ baseClassName + '__domain-input-clear' }
+								borderless
+								onClick={ onClear }
+							>
+								<Gridicon
+									className={ baseClassName + '__domain-input-clear-icon' }
+									icon="cross"
+									size={ 12 }
+								/>
+							</Button>
+						) }
+						{ validationError && <FormInputValidation isError text={ validationError } icon="" /> }
+					</FormFieldset>
 
-				<FormButton
-					className={ baseClassName + '__domain-input-button' }
-					primary
-					busy={ isBusy }
-					disabled={ isBusy }
-					onClick={ onNext }
-				>
-					{ __( 'Continue' ) }
-				</FormButton>
-			</div>
+					<FormButton
+						className={ baseClassName + '__domain-input-button' }
+						primary
+						busy={ isBusy }
+						disabled={ isBusy }
+						onClick={ onNext }
+					>
+						{ __( 'Continue' ) }
+					</FormButton>
+				</div>
+			</CardBody>
 		</Card>
 	);
 }
