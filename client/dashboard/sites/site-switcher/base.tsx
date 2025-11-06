@@ -42,6 +42,7 @@ export const SiteSwitcherBase = ( props: Pick< SwitcherProps< Site >, 'children'
 			renderItemTitle={ ( { item } ) => (
 				<span
 					style={ {
+						fontWeight: 500,
 						overflow: 'hidden',
 						textOverflow: 'ellipsis',
 						whiteSpace: 'nowrap',
