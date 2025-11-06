@@ -22,8 +22,11 @@ import './style.scss';
 export default function DomainConnection() {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const { domainName } = domainRoute.useParams();
-	const { error: queryError, error_description: queryErrorDescription } = domainRoute.useSearch();
-
+	const {
+		error: queryError,
+		error_description: queryErrorDescription,
+		// domain_connect: domainConnect,
+	} = domainRoute.useSearch();
 	// Load domain data
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const siteSlug = domain.site_slug;
@@ -34,7 +37,8 @@ export default function DomainConnection() {
 		to: domainConnectionSetupRoute.fullPath,
 		params: { domainName },
 	} ).href;
-	const returnUrl = new URL( relativePath, window.location.origin ).href + '?step=dc_return';
+	const returnUrl = new URL( relativePath, window.location.origin ).href;
+	// const returnUrl = new URL( relativePath, window.location.origin ).href + '?domain-connect';
 	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
 		domainConnectionSetupInfoQuery( domainName, domain.blog_id, returnUrl )
 	);
@@ -86,15 +90,13 @@ export default function DomainConnection() {
 				/>
 			}
 		>
-			{ isVerificationStep ? (
+			{ isVerificationStep && ! queryError ? (
 				<DomainConnectionVerification
 					domainData={ domain }
 					domainName={ domainName }
 					siteSlug={ siteSlug }
 					domainConnectionSetupInfo={ domainConnectionSetupInfo }
 					domainMappingStatus={ domainMappingStatus }
-					queryError={ queryError }
-					queryErrorDescription={ queryErrorDescription }
 				/>
 			) : (
 				<DomainConnectionSetup
@@ -104,6 +106,8 @@ export default function DomainConnection() {
 					domainMappingStatus={ domainMappingStatus }
 					onVerifyConnection={ onVerifyConnection }
 					isUpdatingConnectionMode={ isUpdatingConnectionMode }
+					queryError={ queryError }
+					queryErrorDescription={ queryErrorDescription }
 				/>
 			) }
 		</PageLayout>
