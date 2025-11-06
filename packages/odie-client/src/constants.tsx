@@ -10,6 +10,9 @@ export const getOdieErrorMessage = (): string =>
 		__i18n_text_domain__
 	);
 
+export const getOdieErrorMessageUnknownError = (): string =>
+	__( 'Sorry, an unknown error occurred. Please try again later.', __i18n_text_domain__ );
+
 export const getOdieErrorMessageNonEligible = (): string =>
 	__(
 		'Sorry, I am offline right now. Come back later or ask for help in our forums:',
