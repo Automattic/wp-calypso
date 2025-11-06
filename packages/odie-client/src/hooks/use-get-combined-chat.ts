@@ -141,11 +141,9 @@ export const useGetCombinedChat = (
 								conversationId: conversation.id,
 								messages: [
 									...( odieChat ? filteredOdieMessages : [] ),
-									...( odieChat
-										? getOdieTransferMessage(
-												currentSupportInteraction?.bot_slug as OdieAllBotSlugs
-										  )
-										: [] ),
+									...getOdieTransferMessage(
+										currentSupportInteraction?.bot_slug as OdieAllBotSlugs
+									),
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 										...( isSameConversation
