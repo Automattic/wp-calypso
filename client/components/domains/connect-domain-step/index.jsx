@@ -317,8 +317,6 @@ function ConnectDomainStep( {
 						{ __( 'Back' ) }
 					</BackButton>
 				) }
-
-				<div>cucucucuc</div>
 				<ConnectDomainSteps
 					baseClassName={ baseClassName }
 					domain={ domain }
