@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Card, Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useId } from 'react';
@@ -10,7 +9,6 @@ import illustration from 'calypso/assets/images/domains/domain.svg';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { bulb } from 'calypso/signup/icons';
 
 import './style.scss';
 
@@ -90,17 +88,6 @@ function UseMyDomainInput( {
 					) }
 					{ validationError && <FormInputValidation isError text={ validationError } icon="" /> }
 				</FormFieldset>
-
-				{ ! isDomainConnectionRedesign && (
-					<p className={ baseClassName + '__domain-input-note' }>
-						<Icon
-							className={ baseClassName + '__domain-input-note-icon' }
-							icon={ bulb }
-							size={ 14 }
-						/>
-						{ __( 'This won’t affect your existing site.' ) }
-					</p>
-				) }
 
 				<FormButton
 					className={ baseClassName + '__domain-input-button' }
