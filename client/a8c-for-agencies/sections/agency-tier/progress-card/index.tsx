@@ -27,7 +27,9 @@ export default function AgencyTierProgressCard( {
 } ) {
 	const dispatch = useDispatch();
 
-	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId );
+	const currentTier =
+		ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId ) ??
+		ALL_TIERS.find( ( tier ) => tier.level === 0 );
 
 	if ( ! currentTier ) {
 		return null;

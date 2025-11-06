@@ -32,7 +32,9 @@ export default function TierBenefits( {
 } ) {
 	const dispatch = useDispatch();
 
-	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId );
+	const currentTier =
+		ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId ) ??
+		ALL_TIERS.find( ( tier ) => tier.level === 0 );
 
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 	const isMediumViewport = useViewportMatch( 'huge', '<' );

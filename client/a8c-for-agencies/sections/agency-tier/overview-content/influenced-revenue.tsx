@@ -11,7 +11,9 @@ export default function InfluencedRevenue( {
 	currentAgencyTierId?: AgencyTierType;
 	totalInfluencedRevenue: number;
 } ) {
-	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId );
+	const currentTier =
+		ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId ) ??
+		ALL_TIERS.find( ( tier ) => tier.level === 0 );
 
 	if ( ! currentTier ) {
 		return null;
