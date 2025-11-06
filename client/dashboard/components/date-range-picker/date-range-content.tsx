@@ -79,6 +79,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 	const timeZoneForCalendar = isValidIanaTimeZone( timezoneString ) ? timezoneString : undefined;
 	const [ isTyping, setIsTyping ] = useState( false );
+	const [ inputsVersion, setInputsVersion ] = useState( 0 );
 
 	const clear = () => {
 		setFromDraft( undefined );
@@ -86,6 +87,8 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		setFromStr( '' );
 		setToStr( '' );
 		setIsTyping( false );
+		// Force controlled inputs to remount so any internal buffers are reset
+		setInputsVersion( ( version ) => version + 1 );
 	};
 
 	const canDefaultApply = ! fromDraft && ! toDraft && ! fromStr && ! toStr && ! isTyping;
@@ -169,17 +172,20 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 					/>
 
 					<DateInputs
+						key={ `inputs-${ inputsVersion }-mobile` }
 						fromStr={ fromStr }
 						toStr={ toStr }
 						onFromChange={ ( value ) => {
 							setFromStr( value );
 							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
 							setFromDraft( parsed );
+							setIsTyping( Boolean( value || toStr ) );
 						} }
 						onToChange={ ( value ) => {
 							setToStr( value );
 							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
 							setToDraft( parsed );
+							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
 						onInteract={ () => setIsTyping( true ) }
@@ -198,17 +204,20 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 					style={ { width: '100%' } }
 				>
 					<DateInputs
+						key={ `inputs-${ inputsVersion }-desktop` }
 						fromStr={ fromStr }
 						toStr={ toStr }
 						onFromChange={ ( value ) => {
 							setFromStr( value );
 							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
 							setFromDraft( parsed );
+							setIsTyping( Boolean( value || toStr ) );
 						} }
 						onToChange={ ( value ) => {
 							setToStr( value );
 							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
 							setToDraft( parsed );
+							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
 						onInteract={ () => setIsTyping( true ) }
@@ -256,6 +265,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 									setToStr( formatYmd( to, timezoneString, gmtOffset ) );
 								}
 							}
+							setIsTyping( false );
 						} }
 					/>
 				</div>
