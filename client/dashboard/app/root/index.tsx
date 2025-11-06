@@ -12,14 +12,6 @@ import Header from '../header';
 import Snackbars from '../snackbars';
 import './style.scss';
 
-declare module '@tanstack/react-query' {
-	interface Register {
-		queryMeta: {
-			fullPageLoader?: boolean;
-		};
-	}
-}
-
 const WebpackBuildMonitor = lazy(
 	() =>
 		import(

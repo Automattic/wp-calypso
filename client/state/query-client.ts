@@ -27,6 +27,15 @@ type CreateQueryClientReturn = {
 	unsubscribePersister: () => void;
 };
 
+declare module '@tanstack/react-query' {
+	interface Register {
+		queryMeta: {
+			persist?: boolean | ( ( data: any ) => boolean );
+			fullPageLoader?: boolean;
+		};
+	}
+}
+
 export async function createQueryClient(
 	persistenceKey?: string | number
 ): Promise< CreateQueryClientReturn > {
