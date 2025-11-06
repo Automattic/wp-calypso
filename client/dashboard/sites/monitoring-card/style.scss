@@ -60,6 +60,10 @@
 	padding: 13px;
 	line-height: 16px;
 
+	.visx-tooltip:has(&) {
+		z-index: 1;
+	}
+
 	.dashboard-monitoring-card__line-chart--tooltip-lines {
 		margin-top: 12px;
 
@@ -99,6 +103,7 @@
 			background: #FFF;
 			padding: 16px;
 			text-wrap: nowrap;
+			z-index: 1;
 		}
 	}
 
