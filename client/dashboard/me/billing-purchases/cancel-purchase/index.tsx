@@ -975,16 +975,15 @@ export default function CancelPurchase() {
 			return false;
 		}
 
-		const isValidForDisablingAutoRenew = purchase.can_disable_auto_renew;
-		const isValidForCancellation = purchase.is_cancelable;
-		// const isValidForRemoval = ! purchase.is_cancelable && purchase.is_removable;
-		const isValidForRemoval = purchase.is_removable;
-
-		if ( ! isValidForCancellation && state.surveyShown ) {
+		if ( ! purchase.is_cancelable && state.surveyShown ) {
 			return true;
 		}
 
-		if ( ! isValidForDisablingAutoRenew && isValidForCancellation && isValidForRemoval ) {
+		if (
+			! purchase.can_disable_auto_renew &&
+			! purchase.is_cancelable &&
+			! purchase.is_removable
+		) {
 			if ( ! createdErrorNoticeForRedirect.current ) {
 				createErrorNotice(
 					__(
