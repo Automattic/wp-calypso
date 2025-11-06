@@ -109,16 +109,16 @@ export default function DomainForwardingForm( {
 		() => [
 			{
 				id: 'sourceType',
-				label: __( 'Source URL' ),
+				label: __( 'Type' ),
 				type: 'text' as const,
 				Edit: 'select',
 				elements: [
 					{
-						label: `${ domainName } subdomain`,
+						label: 'Subdomain',
 						value: '',
 					},
 					{
-						label: `${ domainName } root domain`,
+						label: 'Domain',
 						value: 'root',
 					},
 				],
@@ -128,12 +128,13 @@ export default function DomainForwardingForm( {
 			},
 			{
 				id: 'subdomain',
-				label: __( 'Subdomain' ),
+				label: __( 'Source URL' ),
 				help: __( 'Enter the subdomain (e.g., "blog")' ),
 				type: 'text' as const,
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
-					const suffix = `.${ domainName }`;
+					const isDisabled = field.isDisabled( data );
+					const suffix = isDisabled ? '' : `.${ domainName }`;
 					const value = getValue( { item: data } );
 					const validationMessage = field.isValid?.custom?.( data, field );
 
@@ -142,7 +143,8 @@ export default function DomainForwardingForm( {
 							required={ !! field.isValid?.required }
 							label={ field.label }
 							placeholder={ field.placeholder }
-							value={ value }
+							disabled={ isDisabled }
+							value={ isDisabled ? domainName : value }
 							onChange={ ( value: string ) => {
 								return onChange( { [ id ]: value } );
 							} }
@@ -164,8 +166,8 @@ export default function DomainForwardingForm( {
 						return null;
 					},
 				},
-				isVisible: ( item: FormData ) => {
-					return item.sourceType === '';
+				isDisabled: ( item: FormData ) => {
+					return item.sourceType !== '';
 				},
 			},
 			{
@@ -189,7 +191,21 @@ export default function DomainForwardingForm( {
 
 	const form = {
 		layout: { type: 'regular' as const },
-		fields: [ 'sourceType', 'subdomain', 'targetUrl' ],
+		fields: [
+			{
+				id: 'source',
+				children: [ 'sourceType', 'subdomain' ],
+				layout: {
+					type: 'row',
+					alignment: 'top',
+					styles: {
+						sourceType: { flex: 1 },
+						subdomain: { flex: 3 },
+					},
+				},
+			},
+			'targetUrl',
+		],
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
