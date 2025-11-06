@@ -114,9 +114,36 @@ describe( 'DateRangePicker (new)', () => {
 		const apply = getByRole( 'button', { name: /^Apply$/i } );
 		expect( apply ).toBeDisabled();
 
+		// Type end date and expect Apply to be enabled
 		const to = getByLabelText( 'End date' ) as HTMLInputElement;
 		await userEvent.type( to, '2025-08-10' );
 		expect( apply ).toBeEnabled();
+	} );
+
+	test( 'Clear after typing resets inputs and enables Apply default', async () => {
+		const { getByRole, getByLabelText, findByRole, findByLabelText } = renderDateRangePicker();
+
+		// Open and start typing a date
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+		const from = getByLabelText( 'Start date' ) as HTMLInputElement;
+		const to = getByLabelText( 'End date' ) as HTMLInputElement;
+
+		await userEvent.type( from, '2025-08-01' );
+		await userEvent.type( to, '2025-08-10' );
+
+		// Click Clear
+		await userEvent.click( getByRole( 'button', { name: /Clear/i } ) );
+
+		// Re-query fresh inputs by label
+		const from2 = ( await findByLabelText( 'Start date' ) ) as HTMLInputElement;
+		const to2 = ( await findByLabelText( 'End date' ) ) as HTMLInputElement;
+
+		expect( from2 ).toHaveValue( '' );
+		expect( to2 ).toHaveValue( '' );
+
+		// Re-query the default-apply button and wait for enable
+		const applyDefault = await findByRole( 'button', { name: /Apply default/i } );
+		expect( applyDefault ).toBeEnabled();
 	} );
 
 	test( 'disableFuture prevents selecting a future date', async () => {
