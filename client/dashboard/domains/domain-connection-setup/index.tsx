@@ -1,4 +1,8 @@
-import { DomainMappingStatus, type DomainConnectionSetupModeValue } from '@automattic/api-core';
+import {
+	DomainMappingStatus,
+	type DomainConnectionSetupModeValue,
+	DomainConnectionSetupMode,
+} from '@automattic/api-core';
 import {
 	domainConnectionSetupInfoQuery,
 	domainMappingStatusQuery,
@@ -63,6 +67,12 @@ export default function DomainConnection() {
 						!! domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting,
 					domain_connect_provider_id: domainConnectionSetupInfo.domain_connect_provider_id,
 				} );
+				if (
+					mode === DomainConnectionSetupMode.DC &&
+					domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting
+				) {
+					window.location.href = domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting;
+				}
 			},
 			onError: () => {
 				createErrorNotice(

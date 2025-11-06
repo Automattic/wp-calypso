@@ -29,7 +29,6 @@ interface DomainConnectionSetupProps {
 	domainMappingStatus: DomainMappingStatus;
 	queryError?: string | null;
 	queryErrorDescription?: string | null;
-	domainConnectUrl?: string;
 }
 
 export default function DomainConnectionSetup( {
@@ -171,11 +170,10 @@ export default function DomainConnectionSetup( {
 			<div className="domain-connection-setup">
 				<DomainConnectCard
 					onChangeSetupMode={ () => setConnectionMode( recommendedMode ) }
-					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.SUGGESTED ) }
+					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.DC ) }
 					isUpdatingConnectionMode={ isUpdatingConnectionMode }
 					error={ queryError }
 					errorDescription={ queryErrorDescription }
-					domainConnectUrl={ domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting }
 				/>
 			</div>
 		);

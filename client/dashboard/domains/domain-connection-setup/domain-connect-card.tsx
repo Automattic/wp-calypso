@@ -1,8 +1,4 @@
 import {
-	DomainConnectionSetupMode,
-	type DomainConnectionSetupModeValue,
-} from '@automattic/api-core';
-import {
 	Button,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -18,9 +14,8 @@ interface DomainConnectCardProps {
 	onChangeSetupMode: () => void;
 	error?: string | null;
 	errorDescription?: string | null;
-	onVerifyConnection: ( mode: DomainConnectionSetupModeValue ) => void;
+	onVerifyConnection: () => void;
 	isUpdatingConnectionMode: boolean;
-	domainConnectUrl: string;
 }
 
 export default function DomainConnectCard( {
@@ -29,7 +24,6 @@ export default function DomainConnectCard( {
 	isUpdatingConnectionMode,
 	error,
 	errorDescription,
-	domainConnectUrl,
 }: DomainConnectCardProps ) {
 	const renderErrorMessage = () => {
 		const noticeText =
@@ -82,11 +76,6 @@ export default function DomainConnectCard( {
 		);
 	};
 
-	const startSetup = () => {
-		onVerifyConnection( DomainConnectionSetupMode.DC );
-		window.location.href = domainConnectUrl;
-	};
-
 	return (
 		<Card>
 			<CardBody>
@@ -98,7 +87,7 @@ export default function DomainConnectCard( {
 							variant="primary"
 							isBusy={ isUpdatingConnectionMode }
 							disabled={ isUpdatingConnectionMode }
-							onClick={ startSetup }
+							onClick={ onVerifyConnection }
 						>
 							{ __( 'Start setup' ) }
 						</Button>
