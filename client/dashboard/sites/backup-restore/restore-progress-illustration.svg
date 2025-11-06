@@ -1,21 +1,21 @@
-<svg width="408" height="280" viewBox="0 0 408 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="408" height="280" fill="white"/>
-<rect x="95" y="63" width="189" height="126" rx="6" fill="white" stroke="#F0F0F0"/>
-<rect x="109" y="77" width="189" height="126" rx="6" fill="white" stroke="#DDDDDD"/>
-<rect x="123" y="91" width="189" height="126" rx="6" fill="white" stroke="url(#paint0_linear_5621_10723)"/>
-<circle cx="137" cy="105" r="3" stroke="#3858E9"/>
-<circle cx="149" cy="105" r="3" stroke="#3858E9"/>
-<circle cx="161" cy="105" r="3" stroke="#3858E9"/>
-<circle cx="218" cy="154" r="32" fill="white" stroke="url(#paint1_linear_5621_10723)"/>
-<circle cx="187" cy="154" r="8" fill="#3858E9"/>
-<rect x="245" y="148" width="22" height="15" fill="white"/>
-<path d="M234.202 167.343L248.691 163.46C249.225 163.318 249.773 163.634 249.916 164.168L253.798 178.656" stroke="#069E08" stroke-linecap="round"/>
+<svg width="354" height="172" viewBox="0 0 354 172" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="408" height="172" transform="translate(-27)" fill="white"/>
+<rect x="68" y="9" width="189" height="126" rx="6" fill="white" stroke="#F0F0F0"/>
+<rect x="82" y="23" width="189" height="126" rx="6" fill="white" stroke="#DDDDDD"/>
+<rect x="96" y="37" width="189" height="126" rx="6" fill="white" stroke="url(#paint0_linear_6528_44432)"/>
+<circle cx="110" cy="51" r="3" stroke="#3858E9"/>
+<circle cx="122" cy="51" r="3" stroke="#3858E9"/>
+<circle cx="134" cy="51" r="3" stroke="#3858E9"/>
+<circle cx="191" cy="100" r="32" fill="white" stroke="url(#paint1_linear_6528_44432)"/>
+<circle cx="160" cy="100" r="8" fill="#3858E9"/>
+<rect x="218" y="94" width="22" height="15" fill="white"/>
+<path d="M207.202 113.343L221.691 109.46C222.225 109.318 222.773 109.634 222.916 110.168L226.798 124.656" stroke="#069E08" stroke-linecap="round"/>
 <defs>
-<linearGradient id="paint0_linear_5621_10723" x1="136.263" y1="141.4" x2="295.468" y2="142.198" gradientUnits="userSpaceOnUse">
+<linearGradient id="paint0_linear_6528_44432" x1="109.263" y1="87.4" x2="268.468" y2="88.1981" gradientUnits="userSpaceOnUse">
 <stop stop-color="#3858E9"/>
 <stop offset="1" stop-color="#069E08"/>
 </linearGradient>
-<linearGradient id="paint1_linear_5621_10723" x1="190.491" y1="147.6" x2="244.402" y2="147.78" gradientUnits="userSpaceOnUse">
+<linearGradient id="paint1_linear_6528_44432" x1="163.491" y1="93.6" x2="217.402" y2="93.7802" gradientUnits="userSpaceOnUse">
 <stop stop-color="#3858E9"/>
 <stop offset="1" stop-color="#069E08"/>
 </linearGradient>

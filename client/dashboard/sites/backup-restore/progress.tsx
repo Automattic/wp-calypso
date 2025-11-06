@@ -51,8 +51,8 @@ function SiteBackupRestoreProgress( {
 
 	return (
 		<>
-			<VStack spacing={ 4 } alignment="center">
-				<img src={ progressIllustration } alt="" width={ 408 } height={ 280 } />
+			<VStack spacing={ 4 } alignment="center" style={ { overflow: 'hidden' } }>
+				<img src={ progressIllustration } alt="" width={ 408 } height={ 172 } />
 				<Text size={ 20 }>
 					{ isRunning ? restoreProgress?.message : __( 'Initializing the restore process' ) }
 				</Text>
@@ -68,7 +68,7 @@ function SiteBackupRestoreProgress( {
 					value={ restoreProgress?.percent ?? 0 }
 				/>
 			</VStack>
-			<Spacer marginTop={ 12 }>
+			<Spacer marginTop={ 4 }>
 				<Notice variant="info" title={ __( 'Check your email' ) }>
 					{ __(
 						'Don’t want to wait? For your convenience, we’ll email you when your site has been fully restored.'
