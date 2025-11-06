@@ -54,7 +54,7 @@ export default function DomainConnection() {
 		updateConnectionMode( mode, {
 			onSuccess: ( data: DomainMappingStatus ) => {
 				setConnectionMode( data.mode );
-				recordTracksEvent( 'calypso_dashboard_domain_glue_records_update_record', {
+				recordTracksEvent( 'calypso_dashboard_domain_connection_setup', {
 					domain: domainName,
 					mode,
 					query_error: queryError,
