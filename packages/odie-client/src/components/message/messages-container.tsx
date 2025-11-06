@@ -116,6 +116,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			}
 
 			searchParams.delete( 'id' );
+			setSearchParams( searchParams );
 			createZendeskConversation( {
 				createdFrom: 'direct_url',
 			} ).then( () => {
