@@ -198,7 +198,7 @@ function SiteOverview( {
 
 		return (
 			<HStack justify="space-between">
-				<HStack justify="flex-start">
+				<HStack justify={ isSmallViewport ? 'flex-start' : 'flex-end' }>
 					<StagingSiteSyncDropdown siteSlug={ siteSlug } />
 					<Button
 						ref={ wpAdminButtonRef }
