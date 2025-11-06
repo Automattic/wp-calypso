@@ -1,7 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { __ } from '@wordpress/i18n';
 import { Stat } from 'calypso/dashboard/components/stat';
-import { ALL_TIERS } from './constants';
+import getCurrentAgencyTier from '../lib/get-current-agency-tier';
 import type { AgencyTierType } from './types';
 
 export default function InfluencedRevenue( {
@@ -11,9 +11,7 @@ export default function InfluencedRevenue( {
 	currentAgencyTierId?: AgencyTierType;
 	totalInfluencedRevenue: number;
 } ) {
-	const currentTier =
-		ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId ) ??
-		ALL_TIERS.find( ( tier ) => tier.level === 0 );
+	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
 
 	if ( ! currentTier ) {
 		return null;

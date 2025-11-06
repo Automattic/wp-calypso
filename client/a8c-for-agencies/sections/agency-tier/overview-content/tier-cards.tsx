@@ -17,6 +17,7 @@ import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentAgencyTier from '../lib/get-current-agency-tier';
 import { ALL_TIERS } from './constants';
 import type { AgencyTierType } from './types';
 
@@ -31,9 +32,7 @@ export default function TierCards( {
 } ) {
 	const dispatch = useDispatch();
 
-	const currentTier =
-		ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId ) ??
-		ALL_TIERS.find( ( tier ) => tier.level === 0 );
+	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
 
 	const isSmallViewport = useViewportMatch( 'huge', '<' );
 
