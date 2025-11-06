@@ -22,6 +22,7 @@ type DateInputsProps = {
 		| 'space-around'
 		| 'space-evenly';
 	containerStyle?: React.CSSProperties;
+	onInteract?: () => void;
 };
 
 export function DateInputs( {
@@ -35,6 +36,7 @@ export function DateInputs( {
 	stack = false,
 	justify = 'flex-start',
 	containerStyle,
+	onInteract,
 }: DateInputsProps ) {
 	if ( stack ) {
 		return (
@@ -43,7 +45,11 @@ export function DateInputs( {
 					type="date"
 					label={ __( 'Start date' ) }
 					value={ fromStr }
-					onChange={ ( value?: string ) => onFromChange( value ?? '' ) }
+					onFocus={ () => onInteract?.() }
+					onChange={ ( value?: string ) => {
+						onInteract?.();
+						onFromChange( value ?? '' );
+					} }
 					autoComplete="off"
 					max={ toStr || todayStr }
 					style={ { width: '100%', ...( fromStyle || {} ) } }
@@ -53,7 +59,11 @@ export function DateInputs( {
 					type="date"
 					label={ __( 'End date' ) }
 					value={ toStr }
-					onChange={ ( value?: string ) => onToChange( value ?? '' ) }
+					onFocus={ () => onInteract?.() }
+					onChange={ ( value?: string ) => {
+						onInteract?.();
+						onToChange( value ?? '' );
+					} }
 					autoComplete="off"
 					min={ fromStr || undefined }
 					style={ { width: '100%', ...( toStyle || {} ) } }
@@ -76,7 +86,11 @@ export function DateInputs( {
 				type="date"
 				label={ __( 'Start date' ) }
 				value={ fromStr }
-				onChange={ ( value?: string ) => onFromChange( value ?? '' ) }
+				onFocus={ () => onInteract?.() }
+				onChange={ ( value?: string ) => {
+					onInteract?.();
+					onFromChange( value ?? '' );
+				} }
 				autoComplete="off"
 				max={ toStr || todayStr }
 				style={ fromStyle }
@@ -86,7 +100,11 @@ export function DateInputs( {
 				type="date"
 				label={ __( 'End date' ) }
 				value={ toStr }
-				onChange={ ( value?: string ) => onToChange( value ?? '' ) }
+				onFocus={ () => onInteract?.() }
+				onChange={ ( value?: string ) => {
+					onInteract?.();
+					onToChange( value ?? '' );
+				} }
 				autoComplete="off"
 				min={ fromStr || undefined }
 				style={ toStyle }

@@ -5,6 +5,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { startOfMonth, subMonths } from 'date-fns';
 import { ButtonStack } from '../../components/button-stack';
@@ -77,22 +78,33 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	};
 
 	const timeZoneForCalendar = isValidIanaTimeZone( timezoneString ) ? timezoneString : undefined;
+	const [ isTyping, setIsTyping ] = useState( false );
 
 	const clear = () => {
 		setFromDraft( undefined );
 		setToDraft( undefined );
 		setFromStr( '' );
 		setToStr( '' );
+		setIsTyping( false );
 	};
 
+	const canDefaultApply = ! fromDraft && ! toDraft && ! fromStr && ! toStr && ! isTyping;
+
 	const apply = () => {
-		if ( ! fromDraft || ! toDraft ) {
+		if ( fromDraft && toDraft ) {
+			const [ startPoint, endPoint ] =
+				fromDraft <= toDraft ? [ fromDraft, toDraft ] : [ toDraft, fromDraft ];
+			onChange( { start: startPoint, end: endPoint } );
+			onClose?.();
 			return;
 		}
-		const [ startPoint, endPoint ] =
-			fromDraft <= toDraft ? [ fromDraft, toDraft ] : [ toDraft, fromDraft ];
-		onChange( { start: startPoint, end: endPoint } );
-		onClose?.();
+		if ( canDefaultApply ) {
+			const range = computePresetRange( 'last-7-days', today );
+			if ( range ) {
+				onChange( { start: range.from, end: range.to } );
+				onClose?.();
+			}
+		}
 	};
 
 	const setPreset = ( id: PresetId ) => {
@@ -170,6 +182,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setToDraft( parsed );
 						} }
 						todayStr={ todayStr }
+						onInteract={ () => setIsTyping( true ) }
 						stack
 						fromStyle={ { minWidth: 140 } }
 						toStyle={ { minWidth: 140 } }
@@ -198,6 +211,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setToDraft( parsed );
 						} }
 						todayStr={ todayStr }
+						onInteract={ () => setIsTyping( true ) }
 						fromStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						toStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						justify="flex-end"
@@ -251,8 +265,12 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 				<Button variant="secondary" onClick={ clear }>
 					{ __( 'Clear' ) }
 				</Button>
-				<Button variant="primary" onClick={ apply } disabled={ ! fromDraft || ! toDraft }>
-					{ __( 'Apply' ) }
+				<Button
+					variant="primary"
+					onClick={ apply }
+					disabled={ ( ! fromDraft || ! toDraft ) && ! canDefaultApply }
+				>
+					{ canDefaultApply ? __( 'Apply default' ) : __( 'Apply' ) }
 				</Button>
 			</ButtonStack>
 		</VStack>
