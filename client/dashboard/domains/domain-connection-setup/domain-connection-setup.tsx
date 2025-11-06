@@ -163,7 +163,6 @@ export default function DomainConnectionSetup( {
 
 	if (
 		connectionMode === DomainConnectionSetupMode.DC &&
-		domainMappingStatus.mode === null &&
 		domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting !== null
 	) {
 		return (

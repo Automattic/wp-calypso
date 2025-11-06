@@ -295,7 +295,7 @@ describe( 'DomainConnectionSetup', () => {
 	} );
 
 	describe( 'Mode Already Set', () => {
-		test( 'does not show Domain Connect card when mode is already set', () => {
+		test( 'shows Domain Connect card when DC is available, even if server mode is set', () => {
 			const domainMappingStatus = createMockDomainMappingStatus( {
 				mode: DomainConnectionSetupMode.SUGGESTED,
 			} );
@@ -311,14 +311,9 @@ describe( 'DomainConnectionSetup', () => {
 				/>
 			);
 
-			// Should show manual cards, not DC card, even though DC is available
-			expect( screen.queryByText( 'Domain Connect available' ) ).not.toBeInTheDocument();
-			expect( screen.getByText( 'I only use this domain name for my website' ) ).toBeVisible();
-
-			// Should still show the banner to switch to DC
-			expect(
-				screen.getByText( 'This domain name can be automatically connected.' )
-			).toBeVisible();
+			// Should show DC card because local state initializes to DC when available
+			expect( screen.getByText( 'Domain Connect available' ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Start setup' } ) ).toBeVisible();
 		} );
 	} );
 

@@ -57,7 +57,6 @@ export default function DomainConnection() {
 	const onVerifyConnection = ( mode: DomainConnectionSetupModeValue ) => {
 		updateConnectionMode( mode, {
 			onSuccess: ( data: DomainMappingStatus ) => {
-				setConnectionMode( data.mode );
 				recordTracksEvent( 'calypso_dashboard_domain_connection_setup', {
 					domain: domainName,
 					mode,
@@ -67,12 +66,19 @@ export default function DomainConnection() {
 						!! domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting,
 					domain_connect_provider_id: domainConnectionSetupInfo.domain_connect_provider_id,
 				} );
+
+				// Check if we need to redirect for Domain Connect
 				if (
 					mode === DomainConnectionSetupMode.DC &&
 					domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting
 				) {
+					// Redirect immediately without updating local state to avoid flash of verification step
 					window.location.href = domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting;
+					return;
 				}
+
+				// Only set connection mode if we're not redirecting
+				setConnectionMode( data.mode );
 			},
 			onError: () => {
 				createErrorNotice(
