@@ -201,11 +201,11 @@ export default function DomainConnectionSetup( {
 				<ConnectionModeCard
 					mode={ DomainConnectionSetupMode.SUGGESTED }
 					title={ __( 'I only use this domain name for my website' ) }
-					description={ __( "You'll update your name servers to point to WordPress.com" ) }
+					description={ __( 'You’ll update your name servers to point to WordPress.com' ) }
 					infoText={ sprintf(
 						// translators: %s is the domain name
 						__(
-							"Name servers connect your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We'll email you when it's done."
+							'Name servers connect your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
 						),
 						domainName
 					) }
@@ -227,7 +227,7 @@ export default function DomainConnectionSetup( {
 					infoText={ sprintf(
 						// translators: %s is the domain name
 						__(
-							"DNS records point your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We'll email you when it's done."
+							'DNS records point your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
 						),
 						domainName
 					) }
