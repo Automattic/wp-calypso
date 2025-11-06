@@ -25,6 +25,7 @@ import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
@@ -48,7 +49,26 @@ function LoadingIndicator( { label }: { label: string } ) {
 
 export function getSiteManagementUrl( site: Site ) {
 	if ( canManageSite( site ) ) {
-		return `/sites/${ site.slug }`;
+		const path = `/sites/${ site.slug }`;
+
+		if ( isDashboardBackport() ) {
+			const currentParams = new window.URL( window.location.href ).searchParams;
+			const newUrl = new window.URL( path, window.location.origin );
+
+			const supportedParams = [ 'page', 'per-page', 'search', 'status', 'siteType' ];
+			supportedParams.forEach( ( param ) => {
+				if ( currentParams.has( param ) ) {
+					const value = currentParams.get( param );
+					if ( value ) {
+						newUrl.searchParams.set( param, value );
+					}
+				}
+			} );
+
+			return newUrl.toString().replace( window.origin, '' );
+		}
+
+		return path;
 	}
 	return site.options?.admin_url;
 }

@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo } from 'react';
 import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { DEFAULT_CONFIG } from 'calypso/dashboard/sites/dataviews';
 import { navigate } from 'calypso/lib/navigate';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { isSitePreviewPaneEligible } from 'calypso/sites-dashboard/utils';
@@ -227,6 +228,7 @@ const DotcomSitesDataViews = ( {
 				fields={ fields }
 				onChangeView={ ( newView ) => setDataViewsState( () => newView ) }
 				view={ dataViewsState }
+				config={ DEFAULT_CONFIG }
 				actions={ actions }
 				search
 				searchLabel={ __( 'Search sites…' ) }
