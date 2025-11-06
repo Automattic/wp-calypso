@@ -133,7 +133,7 @@ export default function DomainForwardingForm( {
 				type: 'text' as const,
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
-					const isDisabled = field.isDisabled( data );
+					const isDisabled = data.sourceType !== '';
 					const suffix = isDisabled ? '' : `.${ domainName }`;
 					const value = getValue( { item: data } );
 					const validationMessage = field.isValid?.custom?.( data, field );
@@ -165,9 +165,6 @@ export default function DomainForwardingForm( {
 						}
 						return null;
 					},
-				},
-				isDisabled: ( item: FormData ) => {
-					return item.sourceType !== '';
 				},
 			},
 			{
