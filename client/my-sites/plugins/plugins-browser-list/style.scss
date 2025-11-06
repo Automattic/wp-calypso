@@ -51,6 +51,16 @@
 	.dot-pager__control-choose-page {
 		display: none;
 	}
+	.dot-pager__control-prev,
+	.dot-pager__control-next {
+		width: 32px;
+		height: 32px;
+		border-radius: 100%;
+		border: 1px solid var(--studio-gray-5);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
 
 .card.plugins-browser-list__elements--carousel {

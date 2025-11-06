@@ -1,5 +1,6 @@
 import { Card, DotPager } from '@automattic/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -134,6 +135,7 @@ const PluginsBrowserList = ( {
 						className="plugins-browser-list__carousel-pager"
 						hasDynamicHeight
 						navArrowSize={ 20 }
+						navArrowIcon={ chevronRight }
 					>
 						{ slides.map( ( slideItems, index ) => (
 							<Card
