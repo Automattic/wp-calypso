@@ -4,6 +4,7 @@ import debugFactory from 'debug';
 import WPCOM from 'wpcom';
 import wpcomProxyRequest from 'wpcom-proxy-request';
 import wpcomSupport from 'calypso/lib/wp/support';
+import { captureErrorForAPIFailureLogoutTrigger } from 'calypso/lib/wpcom-api-error-monitor';
 import wpcomXhrWrapper, { jetpack_site_xhr_wrapper } from 'calypso/lib/wpcom-xhr-wrapper';
 import { injectFingerprint } from './handlers/fingerprint';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
@@ -13,12 +14,34 @@ const debug = debugFactory( 'calypso:wp' );
 
 let wpcom;
 
+const monitoredWpcomProxyRequest = ( params, callback ) => {
+	if ( typeof callback === 'function' ) {
+		return wpcomProxyRequest( params, ( error, response, headers ) => {
+			if ( error ) {
+				captureErrorForAPIFailureLogoutTrigger( params, error );
+			}
+			callback( error, response, headers );
+		} );
+	}
+
+	const requestPromise = wpcomProxyRequest( params );
+
+	if ( requestPromise && typeof requestPromise.then === 'function' ) {
+		return requestPromise.catch( ( error ) => {
+			captureErrorForAPIFailureLogoutTrigger( params, error );
+			throw error;
+		} );
+	}
+
+	return requestPromise;
+};
+
 if ( config.isEnabled( 'oauth' ) ) {
 	wpcom = new WPCOM( oauthToken.getToken(), wpcomXhrWrapper );
 } else if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
 	wpcom = new WPCOM( jetpack_site_xhr_wrapper );
 } else {
-	wpcom = new WPCOM( wpcomProxyRequest );
+	wpcom = new WPCOM( monitoredWpcomProxyRequest );
 
 	// Upgrade to "access all users blogs" mode
 	wpcom.request(
