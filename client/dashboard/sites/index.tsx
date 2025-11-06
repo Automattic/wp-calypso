@@ -1,15 +1,9 @@
-import {
-	isAutomatticianQuery,
-	userPreferenceQuery,
-	userPreferenceMutation,
-	siteBySlugQuery,
-	siteByIdQuery,
-} from '@automattic/api-queries';
+import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	useQuery,
 	useQueryClient,
 	useSuspenseQuery,
-	useMutation,
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -22,23 +16,29 @@ import { Experiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
+import { useView } from '../app/dataviews/use-view';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { urlToSlug } from '../utils/url';
 import AddNewSite from './add-new-site';
 import {
 	SitesDataViews,
 	useActions,
 	getFields,
-	getView,
-	mergeViews,
+	getDefaultFields,
+	getDefaultView,
 	recordViewChanges,
 } from './dataviews';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
-import type { ViewSearchParams } from './dataviews/views';
-import type { FetchSitesOptions, Site } from '@automattic/api-core';
+import type {
+	FetchSitesOptions,
+	Site,
+	FetchDashboardSiteListParams,
+	SiteProfileSite,
+} from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
 const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {
@@ -61,36 +61,165 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 	};
 };
 
+function getFetchSiteListParams(
+	view: View
+	// isRestoringAccount: boolean TODO: Add site visibility filtering
+): FetchDashboardSiteListParams {
+	const dataviewFieldToSiteProfileField: Record< string, keyof SiteProfileSite > = {
+		name: 'blogname',
+		URL: 'url',
+		'icon.ico': 'site_icon',
+		backup: 'has_backup',
+		views: 'stats_visitors',
+		// plan
+		// wp_version
+		// is_a8c
+		// preview
+		// last_published
+		// uptime
+		// visitors
+		// subscribers_count
+		// links
+		// php_version
+		// storage
+		// host
+	};
+
+	const fields = new Set< keyof SiteProfileSite >( [ 'blog_id', 'url' ] ); // Always include ID and URL (to calculate site slug).
+	if ( view.showTitle && view.titleField ) {
+		fields.add( dataviewFieldToSiteProfileField[ view.titleField ] );
+	}
+	if ( view.showMedia && view.mediaField ) {
+		fields.add( dataviewFieldToSiteProfileField[ view.mediaField ] );
+	}
+	if ( view.showDescription && view.descriptionField ) {
+		fields.add( dataviewFieldToSiteProfileField[ view.descriptionField ] );
+	}
+	// Status is a composite field that comes from a number of different SiteProfile fields.
+	if ( view.fields?.includes( 'status' ) ) {
+		fields.add( 'wpcom_status' );
+		fields.add( 'private' );
+		fields.add( 'deleted' );
+	}
+	view.fields?.forEach( ( field ) => {
+		const mappedField = dataviewFieldToSiteProfileField[ field ];
+		if ( mappedField ) {
+			fields.add( mappedField );
+		}
+	} );
+
+	return {
+		fields: Array.from( fields ),
+		s: view.search || undefined,
+		sort_by: dataviewFieldToSiteProfileField[ view.sort?.field ?? '' ],
+		sort_direction: view.sort?.direction,
+		page: view.page,
+		per_page: view.perPage,
+	};
+}
+
+function siteProfileSiteToSite( site: SiteProfileSite ): Site {
+	return {
+		ID: site.blog_id ?? 0,
+		slug: urlToSlug( site.url ?? '' ),
+		name: site.blogname ?? '',
+		URL: site.url ?? '',
+		icon: site.site_icon ?? undefined,
+		is_deleted: Boolean( site.deleted ),
+		is_coming_soon: Boolean( site.wpcom_status?.is_coming_soon ),
+		is_private: Boolean( site.private ),
+		is_wpcom_staging_site: Boolean( site.wpcom_status?.is_staging ),
+		capabilities: {
+			manage_options: false, // TODO
+			update_plugins: false, // TODO
+		},
+		garden_is_provisioned: null, // TODO
+		garden_name: null, // TODO
+		garden_partner: null, // TODO
+		is_a4a_dev_site: false, // TODO
+		is_a8c: false, // TODO
+		is_garden: false, // TODO
+		is_wpcom_atomic: false, // TODO
+		is_wpcom_flex: false, // TODO
+		is_vip: false, // TODO
+		lang: 'en', // TODO
+		launch_status: false, // TODO
+		site_migration: { in_progress: false, is_complete: false }, // TODO
+		site_owner: 0, // TODO
+		jetpack: false, // TODO
+		jetpack_connection: false, // TODO
+		jetpack_modules: null, // TODO
+		was_ecommerce_trial: false, // TODO
+		was_migration_trial: false, // TODO
+		was_hosting_trial: false, // TODO
+		was_upgraded_from_trial: false, // TODO
+	};
+}
+
+/**
+ * Enables the correct site query based on the dataviews/v2/es-site-list feature flag.
+ */
+function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
+	const { queries } = useAppContext();
+
+	const siteProfilesQueryResult = useQuery( {
+		...queries.dashboardSiteListQuery( getFetchSiteListParams( view ) ),
+		placeholderData: keepPreviousData,
+		enabled: isEnabled( 'dashboard/v2/es-site-list' ),
+		meta: {
+			fullPageLoader: true,
+		},
+	} );
+
+	const sitesQueryResult = useQuery( {
+		...queries.sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
+		placeholderData: keepPreviousData,
+		enabled: ! isEnabled( 'dashboard/v2/es-site-list' ),
+	} );
+
+	if ( isEnabled( 'dashboard/v2/es-site-list' ) ) {
+		return {
+			sites: siteProfilesQueryResult.data?.sites.map( siteProfileSiteToSite ),
+			isLoadingSites: siteProfilesQueryResult.isLoading,
+			isPlaceholderData: siteProfilesQueryResult.isPlaceholderData,
+			totalItems: siteProfilesQueryResult.data?.total,
+		};
+	}
+
+	return {
+		sites: sitesQueryResult.data,
+		isLoadingSites: sitesQueryResult.isLoading,
+		isPlaceholderData: sitesQueryResult.isPlaceholderData,
+		totalItems: sitesQueryResult.data?.length,
+	};
+}
+
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const queryClient = useQueryClient();
-	const { queries } = useAppContext();
 	const currentSearchParams = sitesRoute.useSearch();
-	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
 	const isRestoringAccount = !! currentSearchParams.restored;
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'sites-view' ) );
-	const { mutate: updateViewPreferences } = useMutation( userPreferenceMutation( 'sites-view' ) );
 
-	const { defaultView, view } = getView( {
+	const defaultView = getDefaultView( {
 		user,
 		isAutomattician,
 		isRestoringAccount,
-		viewPreferences,
-		viewSearchParams,
 	} );
 
-	const {
-		data: sites,
-		isLoading: isLoadingSites,
-		isPlaceholderData,
-	} = useQuery( {
-		...queries.sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
-		placeholderData: keepPreviousData,
+	const { view, updateView, isViewModified, resetView } = useView( {
+		slug: 'sites',
+		defaultView,
+		defaultFields: getDefaultFields(),
 	} );
+
+	const { sites, isLoadingSites, isPlaceholderData, totalItems } = useSiteListQuery(
+		view,
+		isRestoringAccount
+	);
 
 	const fields = getFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
@@ -104,21 +233,7 @@ export default function Sites() {
 
 		recordViewChanges( view, nextView, recordTracksEvent );
 
-		const { updatedViewPreferences, updatedViewSearchParams } = mergeViews( {
-			defaultView,
-			view,
-			viewPreferences,
-			nextView,
-		} );
-
-		navigate( {
-			search: {
-				...currentSearchParams,
-				view: updatedViewSearchParams,
-			},
-		} );
-
-		updateViewPreferences( updatedViewPreferences );
+		updateView( nextView );
 	};
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
@@ -139,7 +254,7 @@ export default function Sites() {
 	}
 
 	useEffect( () => {
-		if ( sites ) {
+		if ( sites && ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
 			sites.forEach( ( site ) => {
 				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
 				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
@@ -175,9 +290,10 @@ export default function Sites() {
 				<SitesDataViews
 					view={ view }
 					sites={ sites ?? [] }
+					totalItems={ totalItems ?? 0 }
 					fields={ fields }
 					actions={ actions }
-					isLoading={ isLoadingSites || ( isPlaceholderData && sites.length === 0 ) }
+					isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
 					empty={
 						<DataViewsEmptyState
 							title={ emptyTitle }
@@ -216,7 +332,9 @@ export default function Sites() {
 							}
 						/>
 					}
-					handleViewChange={ handleViewChange }
+					onChangeView={ handleViewChange }
+					isViewModified={ isViewModified }
+					onResetView={ resetView }
 				/>
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:

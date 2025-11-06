@@ -34,6 +34,7 @@ import {
 	siteWordPressVersionQuery,
 	queryClient,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -64,25 +65,14 @@ export const sitesRoute = createRoute( {
 	path: 'sites',
 	loader: async ( { context } ) => {
 		// Preload the default sites list response without blocking.
-		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+		if ( ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
+			queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+		}
 
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
-	},
-	validateSearch: ( search ) => {
-		// Deserialize the view search param if it exists on the first page load.
-		if ( typeof search.view === 'string' ) {
-			let parsedView;
-			try {
-				parsedView = JSON.parse( search.view );
-			} catch ( e ) {
-				// pass
-			}
-			return { ...search, view: parsedView };
-		}
-		return search;
 	},
 } );
 
@@ -1050,6 +1040,28 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	)
 );
 
+export const siteSettingsHolidaySnowRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Holiday snow' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'holiday-snow',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-holiday-snow' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-holiday-snow' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1275,6 +1287,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 				siteSettingsSubscriptionGiftingRoute,
 				siteSettingsAgencyRoute,
 				siteSettingsHundredYearPlanRoute,
+				siteSettingsHolidaySnowRoute,
 			];
 
 			if ( config.supports.sites.settings.general.redirect ) {

@@ -1,6 +1,7 @@
 export * from './query-client';
 
 export * from './cancellation-offers';
+export * from './dashboard-site-list';
 export * from './domain-availability';
 export * from './domain-can-redirect';
 export * from './domain-connection-setup';

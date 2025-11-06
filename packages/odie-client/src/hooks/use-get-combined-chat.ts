@@ -130,21 +130,33 @@ export const useGetCombinedChat = (
 					if ( conversation ) {
 						// We need to load the conversation to get typing events. Load simply means "focus on".
 						Smooch.loadConversation( conversation.id );
-						setMainChatState( ( prevChat ) => ( {
-							...( odieChat ? odieChat : {} ),
-							supportInteractionId,
-							conversationId: conversation.id,
-							messages: [
-								...( odieChat ? filteredOdieMessages : [] ),
-								...getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs ),
-								...( deduplicateZDMessages( [
-									// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
-									...prevChat.messages.filter( ( message ) => message.role === 'user' ),
-									...conversation.messages,
-								] ) as Message[] ),
-							],
-							provider: 'zendesk',
-							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
+						setMainChatState( ( prevChat ) => {
+							const isSameConversation =
+								prevChat.odieId?.toString() === odieId?.toString() &&
+								prevChat.conversationId === conversation.id;
+
+							return {
+								...( odieChat ? odieChat : {} ),
+                supportInteractionId,
+								conversationId: conversation.id,
+								messages: [
+									...( odieChat ? filteredOdieMessages : [] ),
+									...( odieChat
+										? getOdieTransferMessage(
+												currentSupportInteraction.bot_slug as OdieAllBotSlugs
+										  )
+										: [] ),
+									...( deduplicateZDMessages( [
+										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
+										...( isSameConversation
+											? prevChat.messages.filter( ( message ) => message.role === 'user' )
+											: [] ),
+										...conversation.messages,
+									] ) as Message[] ),
+								],
+								provider: 'zendesk',
+								status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
+							};
 						} ) );
 					}
 				} );
