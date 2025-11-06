@@ -77,7 +77,9 @@ export default function TierBenefits( {
 			id: 'icon',
 			render: ( { item } ) =>
 				item.icon ? (
-					<Icon icon={ item.icon } size={ 32 } className="agency-tier-overview-revamped__icon" />
+					<div className="agency-tier-overview-revamped__icon-container">
+						<Icon icon={ item.icon } size={ 32 } />
+					</div>
 				) : null,
 		},
 		{
