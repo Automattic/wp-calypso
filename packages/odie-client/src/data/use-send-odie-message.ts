@@ -87,16 +87,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	const updateInteractionContext = useCallback(
 		( interaction: SupportInteraction ) => {
-			setChat( ( prevChat ) => ( {
-				...prevChat,
-				supportInteractionId: interaction.uuid,
-			} ) );
-
 			const params = new URLSearchParams( location.search );
 			params.set( 'id', interaction.uuid );
 			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
 		},
-		[ location.pathname, location.search, navigate, setChat ]
+		[ location.pathname, location.search, navigate ]
 	);
 
 	const hasBeenWarnedAboutExistingConversation = chat?.messages?.some(
