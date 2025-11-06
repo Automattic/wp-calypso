@@ -67,6 +67,16 @@ export default function DomainConnection() {
 					domain_connect_provider_id: domainConnectionSetupInfo.domain_connect_provider_id,
 				} );
 
+				// Clear error query params from URL after successful mutation
+				if ( queryError || queryErrorDescription ) {
+					router.navigate( {
+						to: domainConnectionSetupRoute.fullPath,
+						params: { domainName },
+						search: {},
+						replace: true,
+					} );
+				}
+
 				// Check if we need to redirect for Domain Connect
 				if (
 					mode === DomainConnectionSetupMode.DC &&
