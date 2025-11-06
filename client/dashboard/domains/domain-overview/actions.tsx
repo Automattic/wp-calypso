@@ -222,9 +222,7 @@ export default function Actions() {
 						__( 'Detach domain %s' ),
 						domainName
 					) }
-				/>
-				<p>
-					{ createInterpolateElement(
+					description={ createInterpolateElement(
 						__( 'Are you sure you want to detach this domain? <link />' ),
 						{
 							link: (
@@ -235,7 +233,7 @@ export default function Actions() {
 							),
 						}
 					) }
-				</p>
+				/>
 			</ConfirmDialog>
 
 			<RemoveDomainDialog
