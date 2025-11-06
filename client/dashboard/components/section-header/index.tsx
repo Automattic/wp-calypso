@@ -36,7 +36,7 @@ export const SectionHeader = ( {
 				{ decoration && (
 					<span className="dashboard-section-header__decoration">{ decoration }</span>
 				) }
-				<HStack justify="space-between" alignment="center" spacing={ 4 } wrap>
+				<HStack justify="space-between" alignment="center" spacing={ 7 } wrap>
 					<VStack>
 						<HeadingTag className="dashboard-section-header__heading" id={ headingId }>
 							{ title }
