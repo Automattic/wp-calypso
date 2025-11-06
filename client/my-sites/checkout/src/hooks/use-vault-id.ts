@@ -7,9 +7,9 @@ interface VaultIdResponse {
 	environment: VGSCollectVaultEnvironment;
 }
 
-export const useVaultId = ( testMode: boolean = true ) => {
+export const useVaultId = () => {
 	return useQuery< VaultIdResponse >( {
-		queryKey: [ 'vault-id', testMode ],
+		queryKey: [ 'vault-id' ],
 		queryFn: async () => {
 			return await wpcom.req.get( {
 				path: '/transact/vgs/wpcom/vault-id',
