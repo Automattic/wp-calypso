@@ -65,7 +65,7 @@ export default function DomainConnectCard( {
 				<Text>
 					{ createInterpolateElement(
 						__(
-							"Your domain name provider supports a quick and easy connection to WordPress.com. Select <b>Start setup</b> below, sign in to you registrar platform when prompted, and we'll handle the rest."
+							'Your domain name provider supports a quick and easy connection to WordPress.com. Select <b>Start setup</b> below, sign in to your registrar platform when prompted, and we’ll handle the rest.'
 						),
 						{
 							b: <b />,
