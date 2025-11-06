@@ -75,6 +75,7 @@ export default function Sites() {
 		slug: 'sites',
 		defaultView,
 		defaultFields: getDefaultFields(),
+		queryParams: currentSearchParams,
 	} );
 
 	const {

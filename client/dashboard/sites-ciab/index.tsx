@@ -70,6 +70,7 @@ export default function CIABSites() {
 		slug: 'sites-ciab',
 		defaultView,
 		defaultFields: getDefaultFields(),
+		queryParams: currentSearchParams,
 	} );
 
 	const {

@@ -1,11 +1,11 @@
 import { userPreferenceQuery, userPreferenceOptimisticMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useLocation, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { useCallback, useMemo } from 'react';
 import type { Field, View } from '@wordpress/dataviews';
 
-interface UseViewOptions {
+interface UseViewOptions< T > {
 	/**
 	 * Unique slug to identify the view.
 	 * Used as the suffix for the Calypso preference name.
@@ -21,7 +21,12 @@ interface UseViewOptions {
 	 * Possible fields that could be displayed in the view.
 	 * Used to sanitize the persisted view.
 	 */
-	defaultFields: Field< any >[];
+	defaultFields: Field< T >[];
+
+	/**
+	 * The transient properties (e.g.: `page` and `search`) from the URL query params.
+	 */
+	queryParams: any;
 }
 
 /**
@@ -29,7 +34,12 @@ interface UseViewOptions {
  * Transient properties (`page` and `search`) are synced to the URL query params,
  * while the rest of the properties is persisted to Calypso preferences.
  */
-export function useView( { slug, defaultView, defaultFields }: UseViewOptions ): {
+export function useView< T >( {
+	slug,
+	defaultView,
+	defaultFields,
+	queryParams,
+}: UseViewOptions< T > ): {
 	view: View;
 	updateView: ( newView: View ) => void;
 	isViewModified: boolean;
@@ -39,8 +49,6 @@ export function useView( { slug, defaultView, defaultFields }: UseViewOptions ):
 
 	const { data: persistedView } = useSuspenseQuery( userPreferenceQuery( preferenceName ) );
 	const { mutate: persistView } = useMutation( userPreferenceOptimisticMutation( preferenceName ) );
-
-	const { search: queryParams } = useLocation();
 	const navigate = useNavigate();
 
 	const baseView: View = sanitizeView( persistedView ?? defaultView, defaultFields );
