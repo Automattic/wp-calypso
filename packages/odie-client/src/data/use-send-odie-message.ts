@@ -192,6 +192,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					createZendeskConversation( {
 						createdFrom: 'empty_response_error',
 						isFromError: true,
+						errorReason: `messages: ${ returnedChat.messages
+							?.map( ( message ) => message.content )
+							.join( '|' ) }`,
 					} );
 				} else {
 					// User is not eligible for premium support - show error message with support buttons
@@ -252,6 +255,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				// User is eligible for premium support - transfer to Zendesk
 				createZendeskConversation( {
 					createdFrom: 'api_error',
+					errorReason: error.message || error.toString?.(),
 					isFromError: true,
 				} );
 			} else {

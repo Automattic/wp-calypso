@@ -1,3 +1,4 @@
+import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import {
 	Icon,
@@ -12,11 +13,13 @@ import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import DnsRecordsTable from './components/dns-records-table';
 import { isMappingVerificationSuccess } from './utils';
 import VerificationInProgressNextSteps from './verification-in-progress-next-steps';
 import type { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 
 interface DomainConnectionVerificationProps {
+	domainData: Domain;
 	domainName: string;
 	siteSlug: string;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
@@ -26,9 +29,11 @@ interface DomainConnectionVerificationProps {
 }
 
 export default function DomainConnectionVerification( {
+	domainData,
 	domainName,
 	siteSlug,
 	domainMappingStatus,
+	domainConnectionSetupInfo,
 }: DomainConnectionVerificationProps ) {
 	const status = isMappingVerificationSuccess( domainMappingStatus.mode, domainMappingStatus )
 		? 'connected'
@@ -52,18 +57,33 @@ export default function DomainConnectionVerification( {
 							{ status === 'connected' ? __( 'Active' ) : __( 'Verifying' ) }
 						</Badge>
 					</HStack>
+
 					{ status === 'verifying' && (
-						<>
-							<Notice variant="info">
-								{ __(
-									'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
-								) }
-							</Notice>
-							<Text size="medium" weight={ 500 }>
-								{ __( 'While you wait' ) }
-							</Text>
-						</>
+						<Notice variant="info">
+							{ __(
+								'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
+							) }
+						</Notice>
 					) }
+
+					<Text size="medium" weight={ 500 }>
+						{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
+							? __( 'Name server verification' )
+							: __( 'DNS record verification' ) }
+					</Text>
+
+					<DnsRecordsTable
+						domainData={ domainData }
+						domainConnectionStatus={ domainMappingStatus }
+						domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					/>
+
+					{ status === 'verifying' && (
+						<Text size="medium" weight={ 500 }>
+							{ __( 'While you wait' ) }
+						</Text>
+					) }
+
 					{ status === 'connected' && (
 						<RouterLinkSummaryButton
 							to={ siteDomainsRoute.fullPath }

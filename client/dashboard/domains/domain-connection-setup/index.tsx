@@ -76,13 +76,19 @@ export default function DomainConnection() {
 					title={
 						isVerificationStep
 							? __( 'Domain connection verification' )
-							: __( 'Domain connection setup' )
+							: __( 'Connect your domain name' )
+					}
+					description={
+						isVerificationStep
+							? null
+							: __( 'We’ll tailor the next steps based on how your domain name is currently used.' )
 					}
 				/>
 			}
 		>
 			{ isVerificationStep ? (
 				<DomainConnectionVerification
+					domainData={ domain }
 					domainName={ domainName }
 					siteSlug={ siteSlug }
 					domainConnectionSetupInfo={ domainConnectionSetupInfo }
@@ -95,6 +101,7 @@ export default function DomainConnection() {
 					domainName={ domainName }
 					siteSlug={ siteSlug }
 					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					domainMappingStatus={ domainMappingStatus }
 					onVerifyConnection={ onVerifyConnection }
 					isUpdatingConnectionMode={ isUpdatingConnectionMode }
 				/>

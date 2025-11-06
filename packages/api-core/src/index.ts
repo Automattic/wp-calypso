@@ -4,6 +4,7 @@ export * from './error';
 
 export * from './agency';
 export * from './cancellation-offers';
+export * from './dashboard-site-list';
 export * from './domain';
 export * from './domain-availability';
 export * from './domain-can-redirect';

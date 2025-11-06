@@ -6,9 +6,13 @@ export const getSeverityLabel = ( severity: number ): string => {
 		/** translators: severity label for critical threats */
 		return __( 'Critical' );
 	}
-	if ( severity >= 3 ) {
+	if ( severity >= 4 ) {
 		/** translators: severity label for high threats */
 		return __( 'High' );
+	}
+	if ( severity >= 3 ) {
+		/** translators: severity label for medium threats */
+		return __( 'Medium' );
 	}
 
 	/** translators: severity label for low threats */
@@ -19,7 +23,7 @@ export const getSeverityIntent = ( severity: number ): 'default' | 'error' | 'wa
 	if ( severity >= 5 ) {
 		return 'error';
 	}
-	if ( severity >= 3 ) {
+	if ( severity >= 4 ) {
 		return 'warning';
 	}
 	return 'default';

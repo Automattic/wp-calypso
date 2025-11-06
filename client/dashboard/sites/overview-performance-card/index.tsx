@@ -8,6 +8,7 @@ import OverviewCard from '../../components/overview-card';
 import { useTimeSince } from '../../components/time-since';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getPerformanceStatus, getStatusIntent, getStatusText } from '../../utils/site-performance';
+import { getSiteVisibilityURL } from '../../utils/site-url';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import { useSitePerformanceData } from '../performance/use-site-performance-data';
 import type { SitePerformanceReport, Site } from '@automattic/api-core';
@@ -134,7 +135,7 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 				{ ...CARD_PROPS }
 				heading={ __( 'No results' ) }
 				description={ __( 'Launch your site to test performance.' ) }
-				disabled
+				link={ getSiteVisibilityURL( site ) }
 			/>
 		);
 	}
@@ -145,7 +146,7 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 				{ ...CARD_PROPS }
 				heading={ __( 'No results' ) }
 				description={ __( 'Make your site public to test performance.' ) }
-				disabled
+				link={ getSiteVisibilityURL( site ) }
 			/>
 		);
 	}

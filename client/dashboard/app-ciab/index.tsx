@@ -1,8 +1,8 @@
-import { sitesQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
+import { sitesQuery, dashboardSiteListQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
 import boot from '../app/boot';
 import Logo from './logo';
 import './translations';
-import type { FetchSitesOptions } from '@automattic/api-core';
+import type { FetchSitesOptions, FetchDashboardSiteListParams } from '@automattic/api-core';
 import './style.scss';
 
 boot( {
@@ -50,5 +50,9 @@ boot( {
 	queries: {
 		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
 			sitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
+		dashboardSiteListQuery: ( params?: FetchDashboardSiteListParams ) => {
+			// TODO: Add a filter for commerce garden types to the params.
+			return dashboardSiteListQuery( params );
+		},
 	},
 } );

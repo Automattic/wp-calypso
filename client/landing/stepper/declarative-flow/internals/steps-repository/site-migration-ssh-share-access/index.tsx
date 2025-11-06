@@ -18,6 +18,7 @@ import { useSSHMigrationStatus } from '../site-migration-ssh-in-progress/hooks/u
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
 import { usePollSSHMigrationAtomicTransfer } from './hooks/use-poll-ssh-migration-atomic-transfer';
+import { useRotatingLoadingMessages } from './hooks/use-rotating-loading-messages';
 import { useStartSSHMigration } from './hooks/use-start-ssh-migration';
 import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
@@ -78,6 +79,8 @@ const SiteMigrationSshShareAccess: StepType< {
 		}
 	);
 
+	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
+
 	const { steps, formState, canStartMigration, onMigrationStarted, setMigrationError } = useSteps( {
 		fromUrl,
 		siteId,
@@ -86,9 +89,8 @@ const SiteMigrationSshShareAccess: StepType< {
 		onNoSSHAccess: handleNoSSHAccess,
 		migrationStatus: migrationStatus?.status,
 		isTransferring,
+		isInputDisabled: isStartingMigration || migrationStarted || shouldStartMigration,
 	} );
-
-	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
 
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
 	useEffect( () => {
@@ -182,6 +184,13 @@ const SiteMigrationSshShareAccess: StepType< {
 	const displaySiteName = urlToDomain( fromUrl );
 	const hostDisplayName = getSSHHostDisplayName( host );
 
+	const isBusy = isStartingMigration || migrationStarted || shouldStartMigration;
+
+	// Rotating loading messages for continue button
+	const { buttonText } = useRotatingLoadingMessages( {
+		isBusy,
+	} );
+
 	const title = translate( 'Securely share your access' );
 	const subtitle = hostDisplayName
 		? translate(
@@ -222,9 +231,9 @@ const SiteMigrationSshShareAccess: StepType< {
 								migrationStarted ||
 								shouldStartMigration
 							}
-							isBusy={ isStartingMigration || migrationStarted || shouldStartMigration }
+							isBusy={ isBusy }
 						>
-							{ translate( 'Continue' ) }
+							{ buttonText }
 						</Button>
 					</div>
 				</SshMigrationContainer>
