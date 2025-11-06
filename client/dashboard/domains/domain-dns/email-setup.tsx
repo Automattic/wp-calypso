@@ -20,10 +20,10 @@ export default function EmailSetup() {
 					key="google-workspace"
 					description={ createInterpolateElement(
 						__(
-							'Paste the verification token provided by Google Workspace for the TXT record. <link />'
+							'Paste the verification token provided by Google Workspace for the TXT record. <learnMoreLink />'
 						),
 						{
-							link: <InlineSupportLink supportContext="domain-email-google" />,
+							learnMoreLink: <InlineSupportLink supportContext="domain-email-google" />,
 						}
 					) }
 					pattern={ /^google-site-verification=[A-Za-z0-9_-]{43}$/ }
@@ -58,10 +58,10 @@ export default function EmailSetup() {
 					key="office-365"
 					description={ createInterpolateElement(
 						__(
-							'Paste the verification token provided by Office 365 for the TXT record. <link />'
+							'Paste the verification token provided by Office 365 for the TXT record. <learnMoreLink />'
 						),
 						{
-							link: <InlineSupportLink supportContext="domain-email-o365" />,
+							learnMoreLink: <InlineSupportLink supportContext="domain-email-o365" />,
 						}
 					) }
 					label="Office 365"
@@ -84,9 +84,11 @@ export default function EmailSetup() {
 				<EmailSetupForm
 					key="zoho-mail"
 					description={ createInterpolateElement(
-						__( 'Paste the verification token provided by Zoho Mail for the TXT record. <link />' ),
+						__(
+							'Paste the verification token provided by Zoho Mail for the TXT record. <learnMoreLink />'
+						),
 						{
-							link: <InlineSupportLink supportContext="domain-email-zoho" />,
+							learnMoreLink: <InlineSupportLink supportContext="domain-email-zoho" />,
 						}
 					) }
 					label="Zoho Mail"

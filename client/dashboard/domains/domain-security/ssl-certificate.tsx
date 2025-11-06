@@ -70,9 +70,9 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 
 		// If we get here, there is an issue with the certificate that can be fixed by the user.
 		return createInterpolateElement(
-			__( 'There is an issue with your certificate. Contact us to <link>learn more</link>.' ),
+			__( 'There is an issue with your certificate. Contact us to <learnMoreLink />.' ),
 			{
-				link: <InlineSupportLink supportLink={ CONTACT } />,
+				learnMoreLink: <InlineSupportLink supportLink={ CONTACT } />,
 			}
 		);
 	};

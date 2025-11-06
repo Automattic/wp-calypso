@@ -61,9 +61,9 @@ export default function NameServers() {
 			header={
 				<PageHeader
 					description={ createInterpolateElement(
-						__( 'Change the name servers for your domain. <link />' ),
+						__( 'Change the name servers for your domain. <learnMoreLink />' ),
 						{
-							link: <InlineSupportLink supportContext="nameservers" />,
+							learnMoreLink: <InlineSupportLink supportContext="nameservers" />,
 						}
 					) }
 					prefix={ <Breadcrumbs length={ 2 } /> }

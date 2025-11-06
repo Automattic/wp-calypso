@@ -223,9 +223,9 @@ export default function Actions() {
 						domainName
 					) }
 					description={ createInterpolateElement(
-						__( 'Are you sure you want to detach this domain? <link />' ),
+						__( 'Are you sure you want to detach this domain? <learnMoreLink />' ),
 						{
-							link: (
+							learnMoreLink: (
 								<InlineSupportLink
 									onClick={ () => setIsDisconnectDialogOpen( false ) }
 									supportContext="domain-detach-from-site"

@@ -126,9 +126,9 @@ function DomainGlueRecords() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					description={ createInterpolateElement(
-						__( 'Edit your private name server records. <link />' ),
+						__( 'Edit your private name server records. <learnMoreLink />' ),
 						{
-							link: <InlineSupportLink supportContext="domain-glue-records" />,
+							learnMoreLink: <InlineSupportLink supportContext="domain-glue-records" />,
 						}
 					) }
 					actions={

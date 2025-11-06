@@ -42,8 +42,10 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 				<SectionHeader
 					title={ __( 'DNSSEC' ) }
 					description={ createInterpolateElement(
-						__( 'A security feature that helps protect your domain from DNS hijacking. <link />' ),
-						{ link: <InlineSupportLink supportContext="domain-dnssec" /> }
+						__(
+							'A security feature that helps protect your domain from DNS hijacking. <learnMoreLink />'
+						),
+						{ learnMoreLink: <InlineSupportLink supportContext="domain-dnssec" /> }
 					) }
 					level={ 3 }
 				/>
