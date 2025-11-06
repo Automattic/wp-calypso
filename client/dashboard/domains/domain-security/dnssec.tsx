@@ -6,8 +6,11 @@ import {
 	__experimentalVStack as VStack,
 	ToggleControl,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Card, CardBody } from '../../components/card';
+import InlineSupportLink from '../../components/inline-support-link';
+import { SectionHeader } from '../../components/section-header';
 import { DnsSecRecordTextarea } from './dnssec-record-textarea';
 import type { Domain } from '@automattic/api-core';
 
@@ -36,6 +39,13 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 	return (
 		<Card>
 			<CardBody>
+				<SectionHeader title={ __( 'DNSSEC' ) } level={ 3 } />
+				<p>
+					{ createInterpolateElement(
+						__( 'A security feature that helps protect your domain from DNS hijacking. <link />' ),
+						{ link: <InlineSupportLink supportContext="domain-dnssec" /> }
+					) }
+				</p>
 				{ ! domain.is_dnssec_supported ? (
 					<Text>{ __( 'DNSSEC is not supported for this domain.' ) }</Text>
 				) : (

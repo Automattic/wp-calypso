@@ -43,7 +43,7 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		if ( sslDetails.certificate_provisioned ) {
 			return createInterpolateElement(
 				__(
-					/* translators: <link> will be replaced with an a support link */
+					/* translators: <learnMoreLink> will be replaced with an a support link */
 					'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. <learnMoreLink />'
 				),
 				{
