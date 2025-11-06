@@ -1252,6 +1252,7 @@ export default function CancelPurchase() {
 				<div>
 					<CheckboxControl
 						label={ __( 'I understand my site will change when my plan expires.' ) }
+						checked={ state.customerConfirmedUnderstanding }
 						onChange={ ( checked ) => {
 							if ( atomicTransfer?.created_at ) {
 								setState( ( state ) => ( {
