@@ -7,7 +7,11 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	Button,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -286,7 +290,7 @@ export default function DomainDns() {
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
-							<>
+							<HStack>
 								<ImportBindFileButton
 									domainName={ domainName }
 									onRecordsImported={ ( data ) => {
@@ -304,7 +308,7 @@ export default function DomainDns() {
 									} }
 									__next40pxDefaultSize
 								>
-									{ __( 'Add DNS Record' ) }
+									{ __( 'Add Record' ) }
 								</Button>
 								<DnsActionsMenu
 									hasDefaultARecords={ hasDefaultARecordsValue }
@@ -318,7 +322,7 @@ export default function DomainDns() {
 										setIsRestoreDefaultEmailRecordsDialogOpen( true )
 									}
 								/>
-							</>
+							</HStack>
 						}
 						description={ <DnsDescription /> }
 					/>
