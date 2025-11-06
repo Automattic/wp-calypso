@@ -6,6 +6,7 @@ import {
 	GoogleSocialButton,
 	AppleLoginButton,
 	GithubSocialButton,
+	PayPalSocialButton,
 	MagicLoginButton,
 	QrCodeLoginButton,
 	UsernameOrEmailButton,
@@ -54,6 +55,18 @@ class SocialLoginForm extends Component {
 			service: 'github',
 			button: (
 				<GithubSocialButton
+					responseHandler={ this.props.handleLogin }
+					onClick={ this.props.trackLoginAndRememberRedirect }
+					socialServiceResponse={ this.props.socialServiceResponse }
+					key={ 3 }
+					isLogin
+				/>
+			),
+		},
+		{
+			service: 'paypal',
+			button: (
+				<PayPalSocialButton
 					responseHandler={ this.props.handleLogin }
 					onClick={ this.props.trackLoginAndRememberRedirect }
 					socialServiceResponse={ this.props.socialServiceResponse }

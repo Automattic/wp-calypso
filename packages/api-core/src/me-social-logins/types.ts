@@ -21,7 +21,7 @@ export interface ConnectSocialUserArgs {
 }
 
 export interface PostLoginRequestBodyObj {
-	service: 'github' | 'google' | 'apple';
+	service: 'github' | 'google' | 'apple' | 'paypal';
 	redirect_uri?: string;
 	state?: string;
 	auth_code: string;

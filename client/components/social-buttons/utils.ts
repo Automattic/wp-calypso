@@ -27,7 +27,7 @@ export const getUxMode = ( state: AppState ) => {
 };
 
 export const getRedirectUri = (
-	socialService: 'google' | 'apple' | 'github',
+	socialService: 'google' | 'apple' | 'github' | 'paypal',
 	state: AppState,
 	isLogin: boolean
 ) => {
