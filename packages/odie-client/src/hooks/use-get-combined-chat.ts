@@ -99,7 +99,6 @@ export const useGetCombinedChat = (
 			setMainChatState( {
 				...( odieChat ? odieChat : emptyChat ),
 				conversationId: null,
-				supportInteractionId,
 				status: 'loaded',
 				provider: 'odie',
 			} );
@@ -114,7 +113,6 @@ export const useGetCombinedChat = (
 			setMainChatState( {
 				messages: [ ...( odieChat ? filteredOdieMessages : [] ) ],
 				conversationId,
-				supportInteractionId,
 				status: 'loaded',
 				provider: 'zendesk',
 			} );
