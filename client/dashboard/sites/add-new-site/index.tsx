@@ -115,7 +115,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 				<MenuItem
 					icon={ reusableBlock }
 					title={ __( 'Migrate' ) }
-					description={ __( "Bring your site to the world's best WordPress host." ) }
+					description={ __( 'Bring your site to the world’s best WordPress host.' ) }
 					onClick={ migrateClick }
 					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover` }
 					aria-label={ __( 'Migrate an existing WordPress site' ) }
