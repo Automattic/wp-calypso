@@ -45,10 +45,10 @@ When running Playwright Test specs (`.spec.ts` files):
 
 ```bash
 # Good - process exits immediately after test completion
-yarn playwright test specs/path/to/test.spec.ts --reporter=list
+yarn test:pw specs/path/to/test.spec.ts --reporter=list
 
 # Bad - hangs on failure waiting for HTML report to close
-yarn playwright test specs/path/to/test.spec.ts
+yarn test:pw specs/path/to/test.spec.ts
 ```
 
 For legacy tests (`*.ts` without `.spec.`), use the Jest runner:
