@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, DotPager } from '@automattic/components';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
@@ -13,6 +13,21 @@ import { PluginsBrowserListVariant } from './types';
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
+const DEFAULT_CAROUSEL_PAGE_SIZE = 3;
+
+function chunkItems( items, chunkSize ) {
+	if ( ! chunkSize || chunkSize <= 0 ) {
+		return [];
+	}
+
+	const chunks = [];
+
+	for ( let index = 0; index < items.length; index += chunkSize ) {
+		chunks.push( items.slice( index, index + chunkSize ) );
+	}
+
+	return chunks;
+}
 
 const PluginsBrowserList = ( {
 	plugins,
@@ -30,6 +45,8 @@ const PluginsBrowserList = ( {
 	size,
 	search,
 	noHeader = false,
+	useCarousel = false,
+	carouselPageSize = DEFAULT_CAROUSEL_PAGE_SIZE,
 } ) => {
 	const extendedVariant = extended
 		? PluginsBrowserElementVariant.Extended
@@ -73,7 +90,7 @@ const PluginsBrowserList = ( {
 		) );
 	};
 
-	const renderViews = () => {
+	const getRenderableItems = () => {
 		if ( ! plugins.length ) {
 			return renderPlaceholdersViews();
 		}
@@ -93,6 +110,45 @@ const PluginsBrowserList = ( {
 			default:
 				return renderPluginsViewList();
 		}
+	};
+
+	const items = ( getRenderableItems() || [] ).filter( Boolean );
+	const pageSize = Math.max( 1, carouselPageSize );
+
+	const renderViews = () => {
+		if ( useCarousel ) {
+			const slides = chunkItems( items, pageSize );
+
+			if ( ! slides.length ) {
+				return null;
+			}
+
+			return (
+				<div className="plugins-browser-list__carousel">
+					<DotPager
+						className="plugins-browser-list__carousel-pager"
+						hasDynamicHeight
+						navArrowSize={ 20 }
+					>
+						{ slides.map( ( slideItems, index ) => (
+							<Card
+								tagName="ul"
+								className="plugins-browser-list__elements plugins-browser-list__elements--carousel"
+								key={ `plugins-carousel-slide-${ index }` }
+							>
+								{ slideItems }
+							</Card>
+						) ) }
+					</DotPager>
+				</div>
+			);
+		}
+
+		return (
+			<Card tagName="ul" className="plugins-browser-list__elements">
+				{ items }
+			</Card>
+		);
 	};
 
 	const SpotlightPlaceholder = (
@@ -147,9 +203,7 @@ const PluginsBrowserList = ( {
 					messagePath={ `calypso:${ sectionJitmPath }:spotlight` }
 				/>
 			) }
-			<Card tagName="ul" className="plugins-browser-list__elements">
-				{ renderViews() }
-			</Card>
+			{ renderViews() }
 		</div>
 	);
 };
@@ -158,6 +212,8 @@ PluginsBrowserList.propTypes = {
 	plugins: PropTypes.array.isRequired,
 	variant: PropTypes.oneOf( Object.values( PluginsBrowserListVariant ) ).isRequired,
 	extended: PropTypes.bool,
+	useCarousel: PropTypes.bool,
+	carouselPageSize: PropTypes.number,
 };
 
 export default PluginsBrowserList;

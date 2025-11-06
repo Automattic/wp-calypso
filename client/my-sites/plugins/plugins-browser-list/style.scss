@@ -42,3 +42,23 @@
 		display: none;
 	}
 }
+
+.plugins-browser-list__carousel .dot-pager__controls {
+	justify-content: flex-end;
+	margin-block-end: 24px;
+
+	.dot-pager__control-choose-page {
+		display: none;
+	}
+}
+
+.card.plugins-browser-list__elements--carousel {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 24px;
+}
+
+.card.plugins-browser-list__elements--carousel .plugins-browser-item {
+	margin: 0;
+	width: 100%;
+}
