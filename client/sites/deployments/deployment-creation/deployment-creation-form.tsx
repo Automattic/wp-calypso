@@ -162,6 +162,8 @@ export function getDeploymentTypeFromPath( path: string ) {
 		return 'wp-content';
 	} else if ( path.includes( 'wp-content/plugins' ) ) {
 		return 'plugin';
+	} else if ( path.includes( 'wp-content/themes' ) ) {
+		return 'theme';
 	}
-	return 'theme';
+	return 'unknown';
 }

@@ -140,6 +140,7 @@ export function TriggerDeploymentModalForm( {
 					"You're about to deploy changes from the selected repository to your production site. This will replace the contents of your wp-content directory with the selected repository."
 				);
 			case 'root':
+			case 'unknown':
 			default:
 				return __(
 					"You're about to deploy changes from the selected repository to your production site. This will replace the contents of your live site with the selected repository."
