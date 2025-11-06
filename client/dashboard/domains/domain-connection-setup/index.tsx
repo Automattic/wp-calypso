@@ -11,6 +11,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { domainRoute, domainConnectionSetupRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -21,12 +22,9 @@ import './style.scss';
 
 export default function DomainConnection() {
 	const { createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 	const { domainName } = domainRoute.useParams();
-	const {
-		error: queryError,
-		error_description: queryErrorDescription,
-		// domain_connect: domainConnect,
-	} = domainRoute.useSearch();
+	const { error: queryError, error_description: queryErrorDescription } = domainRoute.useSearch();
 	// Load domain data
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const siteSlug = domain.site_slug;
@@ -38,7 +36,6 @@ export default function DomainConnection() {
 		params: { domainName },
 	} ).href;
 	const returnUrl = new URL( relativePath, window.location.origin ).href;
-	// const returnUrl = new URL( relativePath, window.location.origin ).href + '?domain-connect';
 	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
 		domainConnectionSetupInfoQuery( domainName, domain.blog_id, returnUrl )
 	);
@@ -57,6 +54,15 @@ export default function DomainConnection() {
 		updateConnectionMode( mode, {
 			onSuccess: ( data: DomainMappingStatus ) => {
 				setConnectionMode( data.mode );
+				recordTracksEvent( 'calypso_dashboard_domain_glue_records_update_record', {
+					domain: domainName,
+					mode,
+					query_error: queryError,
+					query_error_description: queryErrorDescription,
+					supports_our_domain_connect_template:
+						!! domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting,
+					domain_connect_provider_id: domainConnectionSetupInfo.domain_connect_provider_id,
+				} );
 			},
 			onError: () => {
 				createErrorNotice(
