@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
 
 .dashboard-section-header {
 	position: relative;
@@ -16,9 +17,13 @@
 
 	.dashboard-section-header.is-level-1 & {
 		font-family: var( --dashboard-h1__font-family );
-		font-size: var( --dashboard-h1__font-size, $font-size-2x-large );
+		font-size: $font-size-2x-large;
 		font-weight: var( --dashboard-h1__font-weight ) !important;
 		line-height: var( --dashboard-h1__line-height, $font-line-height-2x-large );
+
+		@include break-medium {
+			font-size: var( --dashboard-h1__font-size );
+		}
 	}
 
 	.dashboard-section-header.is-level-2 & {
