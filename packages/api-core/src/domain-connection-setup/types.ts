@@ -21,7 +21,6 @@ export type DomainMappingStatus = {
 	host_ip_addresses: string[];
 	name_servers: string[];
 	mode: DomainConnectionSetupModeValue;
-	www_cname_record_target: string | null;
 };
 
 export type DomainMappingSetupInfo = {
