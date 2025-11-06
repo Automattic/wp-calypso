@@ -129,23 +129,33 @@ export const useGetCombinedChat = (
 					if ( conversation ) {
 						// We need to load the conversation to get typing events. Load simply means "focus on".
 						Smooch.loadConversation( conversation.id );
-						setMainChatState( {
-							...( odieChat ? odieChat : {} ),
-							supportInteractionId: currentSupportInteraction.uuid,
-							conversationId: conversation.id,
-							messages: [
-								...( odieChat ? filteredOdieMessages : [] ),
-								...( odieChat
-									? getOdieTransferMessage( currentSupportInteraction.bot_slug as OdieAllBotSlugs )
-									: [] ),
-								...( deduplicateZDMessages( [
-									// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
-									...mainChatState.messages.filter( ( message ) => message.role === 'user' ),
-									...conversation.messages,
-								] ) as Message[] ),
-							],
-							provider: 'zendesk',
-							status: currentSupportInteraction.status === 'closed' ? 'closed' : 'loaded',
+						setMainChatState( ( mainChatState ) => {
+							const isSameConversation =
+								mainChatState.odieId?.toString() === odieId?.toString() &&
+								mainChatState.conversationId === conversation.id;
+
+							return {
+								...( odieChat ? odieChat : {} ),
+								supportInteractionId: currentSupportInteraction.uuid,
+								conversationId: conversation.id,
+								messages: [
+									...( odieChat ? filteredOdieMessages : [] ),
+									...( odieChat
+										? getOdieTransferMessage(
+												currentSupportInteraction.bot_slug as OdieAllBotSlugs
+										  )
+										: [] ),
+									...( deduplicateZDMessages( [
+										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
+										...( isSameConversation
+											? mainChatState.messages.filter( ( message ) => message.role === 'user' )
+											: [] ),
+										...conversation.messages,
+									] ) as Message[] ),
+								],
+								provider: 'zendesk',
+								status: currentSupportInteraction.status === 'closed' ? 'closed' : 'loaded',
+							};
 						} );
 					}
 				} );

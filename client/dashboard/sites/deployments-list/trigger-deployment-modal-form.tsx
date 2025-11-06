@@ -11,6 +11,7 @@ import { DataForm, Field, NormalizedField } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { getDeploymentTypeFromPath } from '../../../sites/deployments/deployment-creation/deployment-creation-form';
 import { CodeDeploymentData } from '../../../sites/deployments/deployments/use-code-deployments-query';
 import { ButtonStack } from '../../components/button-stack';
 
@@ -116,14 +117,41 @@ export function TriggerDeploymentModalForm( {
 		);
 	};
 
+	const getDeploymentMessage = () => {
+		if ( ! selectedDeployment ) {
+			return __(
+				"You're about to deploy changes from the selected repository to your production site. This will replace the contents of your live site with the contents from the selected repository."
+			);
+		}
+
+		const deploymentType = getDeploymentTypeFromPath( selectedDeployment.target_dir );
+
+		switch ( deploymentType ) {
+			case 'plugin':
+				return __(
+					"You're about to deploy changes from the selected repository to your production site. This will replace the plugin in your selected deployment location. The rest of your site will remain unchanged."
+				);
+			case 'theme':
+				return __(
+					"You're about to deploy changes from the selected repository to your production site. This will replace the theme in your selected deployment location. The rest of your site will remain unchanged."
+				);
+			case 'wp-content':
+				return __(
+					"You're about to deploy changes from the selected repository to your production site. This will replace the contents of your wp-content directory with the selected repository."
+				);
+			case 'root':
+			case 'unknown':
+			default:
+				return __(
+					"You're about to deploy changes from the selected repository to your production site. This will replace the contents of your live site with the selected repository."
+				);
+		}
+	};
+
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<Text as="p">
-					{ __(
-						'You’re about to deploy changes from the selected repository to your production site. This will update the deployed files and may affect your live site.'
-					) }
-				</Text>
+				<Text as="p">{ getDeploymentMessage() }</Text>
 
 				<DataForm< DeploymentFormData >
 					data={ deploymentFormData }
