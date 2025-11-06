@@ -1,4 +1,6 @@
 import {
+	A4A_PRODUCT_JETPACK_STATS_MONTHLY,
+	A4A_PRODUCT_JETPACK_STATS_YEARLY,
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_GROWTH_PLANS,
 	JETPACK_SECURITY_PLANS,
@@ -80,6 +82,8 @@ const isCommercialPurchaseOwned = ( ownedPurchases: Purchase[] ) => {
 		PRODUCT_JETPACK_STATS_MONTHLY,
 		PRODUCT_JETPACK_STATS_YEARLY,
 		PRODUCT_JETPACK_STATS_BI_YEARLY,
+		A4A_PRODUCT_JETPACK_STATS_MONTHLY,
+		A4A_PRODUCT_JETPACK_STATS_YEARLY,
 	] );
 };
 
@@ -194,8 +198,13 @@ export default function useStatsPurchases( siteId: number | null ) {
 	};
 }
 
-export const withStatsPurchases =
-	( WrappedComponent: ComponentClass ) => ( props: { siteId: number | null } ) => {
+export const withStatsPurchases = ( WrappedComponent: ComponentClass ) => {
+	const WithStatsPurchases = ( props: { siteId: number | null } ) => {
 		const statsPurchases = useStatsPurchases( props.siteId );
 		return <WrappedComponent { ...props } { ...statsPurchases } />;
 	};
+	const wrappedComponentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
+	WithStatsPurchases.displayName = `withStatsPurchases(${ wrappedComponentName })`;
+
+	return WithStatsPurchases;
+};
