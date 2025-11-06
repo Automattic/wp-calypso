@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
@@ -11,7 +12,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Module variables
  */
-export const SHORT_LIST_LENGTH = 6;
+export const SHORT_LIST_LENGTH = isEnabled( 'marketplace-redesign' ) ? 9 : 6;
 
 const PLUGIN_SLUGS_BLOCKLIST = [];
 
@@ -75,6 +76,7 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 			variant={ PluginsBrowserListVariant.Fixed }
 			extended
 			noHeader={ noHeader }
+			useCarousel={ isEnabled( 'marketplace-redesign' ) }
 		/>
 	);
 };

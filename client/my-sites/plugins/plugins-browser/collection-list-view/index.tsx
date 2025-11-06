@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ReactElement } from 'react';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { useGetCategoryUrl } from 'calypso/my-sites/plugins/categories/use-get-category-url';
@@ -7,6 +8,8 @@ import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+const COLLECTION_LIST_LENGTH = isEnabled( 'marketplace-redesign' ) ? 18 : 6;
 
 export default function CollectionListView( {
 	category,
@@ -25,7 +28,7 @@ export default function CollectionListView( {
 	const getCategoryUrl = useGetCategoryUrl();
 	const categories = useCategories( [ category ] );
 
-	const plugins = categories[ category ].preview.slice( 0, 6 );
+	const plugins = categories[ category ].preview.slice( 0, COLLECTION_LIST_LENGTH );
 
 	if ( isJetpackSelfHosted ) {
 		return null;
@@ -47,6 +50,8 @@ export default function CollectionListView( {
 			resultCount={ false }
 			search=""
 			extended={ false }
+			useCarousel={ isEnabled( 'marketplace-redesign' ) }
+			carouselPageSize={ 6 }
 		/>
 	);
 }
