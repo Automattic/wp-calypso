@@ -129,11 +129,9 @@ function SiteMonitoring() {
 						wrap
 						spacing={ isSmallViewport ? 5 : 10 }
 					>
-						<VStack spacing={ 2 }>
-							<PageHeader
-								description={ <Text variant="muted">{ getDateRange( timeRange, locale ) }</Text> }
-							/>
-						</VStack>
+						<PageHeader
+							description={ <Text variant="muted">{ getDateRange( timeRange, locale ) }</Text> }
+						/>
 
 						<div>
 							<ToggleGroupControl
