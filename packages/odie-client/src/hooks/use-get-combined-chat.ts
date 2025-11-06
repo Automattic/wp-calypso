@@ -132,7 +132,7 @@ export const useGetCombinedChat = (
 						setMainChatState( ( mainChatState ) => {
 							const isSameConversation =
 								mainChatState.odieId?.toString() === odieId?.toString() &&
-								mainChatState.conversationId === conversationId;
+								mainChatState.conversationId === conversation.id;
 
 							return {
 								...( odieChat ? odieChat : {} ),
