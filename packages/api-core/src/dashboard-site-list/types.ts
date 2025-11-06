@@ -26,7 +26,7 @@ export interface DashboardSiteListResponse {
 	total: number;
 }
 
-export interface DashboardSiteListParams {
+export interface FetchDashboardSiteListParams {
 	fields?: ( keyof SiteProfileSite )[];
 	s?: string;
 	sort_by?: keyof SiteProfileSite;

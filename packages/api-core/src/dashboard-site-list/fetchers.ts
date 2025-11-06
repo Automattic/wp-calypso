@@ -1,8 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { DashboardSiteListParams, DashboardSiteListResponse } from './types';
+import type { FetchDashboardSiteListParams, DashboardSiteListResponse } from './types';
 
 export async function fetchDashboardSiteList(
-	params: DashboardSiteListParams = {}
+	params: FetchDashboardSiteListParams = {}
 ): Promise< DashboardSiteListResponse > {
 	return wpcom.req.get(
 		{ path: '/dashboard/site-list', apiNamespace: 'wpcom/v2' },
