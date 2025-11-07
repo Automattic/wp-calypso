@@ -1,5 +1,4 @@
 import { Card, DotPager } from '@automattic/components';
-import { chevronRight } from '@wordpress/icons';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
@@ -127,12 +126,7 @@ const PluginsBrowserList = ( {
 
 			return (
 				<div className="plugins-browser-list__carousel">
-					<DotPager
-						className="plugins-browser-list__carousel-pager"
-						hasDynamicHeight
-						navArrowSize={ 20 }
-						navArrowIcon={ chevronRight }
-					>
+					<DotPager className="plugins-browser-list__carousel-pager" hasDynamicHeight>
 						{ slides.map( ( slideItems, index ) => (
 							<Card
 								tagName="ul"
