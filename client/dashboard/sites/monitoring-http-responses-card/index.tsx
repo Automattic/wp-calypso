@@ -207,6 +207,7 @@ export default function MonitoringHttpResponsesCard( {
 				maxWidth={ 1400 }
 				showLegend
 				withLegendGlyph
+				margin={ { bottom: 30 } }
 				glyphStyle={ {
 					radius: 8,
 				} }
