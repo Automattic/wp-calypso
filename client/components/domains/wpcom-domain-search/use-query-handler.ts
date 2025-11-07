@@ -36,12 +36,15 @@ export const useQueryHandler = ( {
 		}
 
 		if ( currentSiteUrl ) {
-			return new URL( currentSiteUrl ).host.replace( /\.(wordpress|wpcomstaging)\.com$/, '' );
+			const currentSiteHost = new URL( currentSiteUrl ).host;
+			if ( /\.(wordpress|wpcomstaging)\.com$/.test( currentSiteHost ) ) {
+				return currentSiteHost.replace( /\.(wordpress|wpcomstaging)\.com$/, '' );
+			}
 		}
 
 		// If there's no stored query and the current site URL is not a free WPCOM subdomain, that
-		// means the site slug is probably a custom domain. In that case, the initial search query
-		// should be empty
+		// means we're either not in a site context, or the site slug is probably a custom domain.
+		// In that case, the initial search query should be empty.
 		return '';
 	} );
 
