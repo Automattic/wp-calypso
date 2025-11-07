@@ -975,16 +975,15 @@ export default function CancelPurchase() {
 			return false;
 		}
 
-		const isValidForDisablingAutoRenew = purchase.can_disable_auto_renew;
-		const isValidForCancellation = purchase.is_cancelable;
-		// const isValidForRemoval = ! purchase.is_cancelable && purchase.is_removable;
-		const isValidForRemoval = purchase.is_removable;
-
-		if ( ! isValidForCancellation && state.surveyShown ) {
+		if ( ! purchase.is_cancelable && state.surveyShown ) {
 			return true;
 		}
 
-		if ( ! isValidForDisablingAutoRenew && isValidForCancellation && isValidForRemoval ) {
+		if (
+			! purchase.can_disable_auto_renew &&
+			! purchase.is_cancelable &&
+			! purchase.is_removable
+		) {
 			if ( ! createdErrorNoticeForRedirect.current ) {
 				createErrorNotice(
 					__(
@@ -1252,6 +1251,7 @@ export default function CancelPurchase() {
 				<div>
 					<CheckboxControl
 						label={ __( 'I understand my site will change when my plan expires.' ) }
+						checked={ state.customerConfirmedUnderstanding }
 						onChange={ ( checked ) => {
 							if ( atomicTransfer?.created_at ) {
 								setState( ( state ) => ( {

@@ -17,8 +17,11 @@ import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentAgencyTier from '../lib/get-current-agency-tier';
 import { ALL_TIERS } from './constants';
 import type { AgencyTierType } from './types';
+
+const TEXT_COLOR = 'var(--color-gray-700)';
 
 export default function TierCards( {
 	currentAgencyTierId,
@@ -29,7 +32,7 @@ export default function TierCards( {
 } ) {
 	const dispatch = useDispatch();
 
-	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId );
+	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
 
 	const isSmallViewport = useViewportMatch( 'huge', '<' );
 
@@ -94,9 +97,9 @@ export default function TierCards( {
 										children={ __( 'Your Tier — Early Access' ) }
 									/>
 								) }
-								<Text style={ { color: '#757575' } }>{ tier.description }</Text>
+								<Text color={ TEXT_COLOR }>{ tier.description }</Text>
 								{ isCurrentTier && isEarlyAccess && (
-									<Text style={ { color: '#757575', fontStyle: 'italic' } } weight={ 700 }>
+									<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
 										{ createInterpolateElement( __( 'You’re in early. <a>Learn more</a>' ), {
 											a: (
 												<Button onClick={ handleLearnMore } variant="link">
@@ -106,10 +109,10 @@ export default function TierCards( {
 										} ) }
 									</Text>
 								) }
-								<Text style={ { color: '#757575' } } weight={ 700 }>
+								<Text color={ TEXT_COLOR } weight={ 700 }>
 									{ tier.heading }
 								</Text>
-								<Text style={ { color: '#757575' } }>{ tier.subheading }</Text>
+								<Text color={ TEXT_COLOR }>{ tier.subheading }</Text>
 							</VStack>
 							<Button
 								onClick={ () => handleViewBenefits( tier.id as string ) }

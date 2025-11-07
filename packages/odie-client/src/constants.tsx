@@ -40,14 +40,14 @@ export const getOdieForwardToZendeskMessage = (): string =>
 		__i18n_text_domain__
 	);
 
-export function getFlowFromBotSlug( botSlug: OdieAllBotSlugs ): string {
+export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
 	if ( botSlug === 'ciab-workflow-support_chat' ) {
 		return 'commerce-garden';
 	}
 	return 'wpcom';
 }
 
-export const getOdieTransferMessage = ( botSlug: OdieAllBotSlugs ): Message[] => {
+export const getOdieTransferMessage = ( botSlug?: OdieAllBotSlugs ): Message[] => {
 	const isTestMode = isTestModeEnvironment();
 	const flow = getFlowFromBotSlug( botSlug );
 

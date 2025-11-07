@@ -241,16 +241,25 @@ const siteMigration: FlowV2< typeof initialize > = {
 							const selectedSite = providedDependencies.site as SiteExcerptData;
 							const selectedSiteCanInstallPlugins =
 								selectedSite?.plan?.features?.active.includes( 'install-plugins' ) ?? false;
+							const detectedHost = providedDependencies.host as string | undefined;
+							const host = detectedHost || hostQueryParam;
 
 							// Check if this is an SSH migration flow
-							if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
+							// Either from ssh=true param OR from move-lp with supported hosting
+							const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
+							const isHostingSupported = isHostingSupportedForSSHMigration( host );
+							const shouldUseSSH =
+								urlQueryParams.get( 'ssh' ) === 'true' ||
+								( entryPoint === 'move-lp' && isSSHMigrationAvailable && isHostingSupported );
+
+							if ( shouldUseSSH ) {
 								if ( selectedSiteCanInstallPlugins ) {
 									return navigate(
 										paths.sshVerificationPath( {
 											siteId,
 											siteSlug,
 											from: fromQueryParam,
-											host: hostQueryParam,
+											host,
 										} )
 									);
 								}
@@ -260,7 +269,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 										siteSlug,
 										from: fromQueryParam,
 										ssh: 'true',
-										host: hostQueryParam,
+										host,
 									} )
 								);
 							}
@@ -296,17 +305,34 @@ const siteMigration: FlowV2< typeof initialize > = {
 							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
 						}
 						case 'create-site': {
+							const detectedHost = providedDependencies.host as string | undefined;
+							const host = detectedHost || hostQueryParam;
+
+							// Check if SSH migration should be enabled
+							const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
+							const isHostingSupported = isHostingSupportedForSSHMigration( host );
+							const shouldUseSSH =
+								urlQueryParams.get( 'ssh' ) === 'true' ||
+								( entryPoint === 'move-lp' && isSSHMigrationAvailable && isHostingSupported );
+
 							const queryParams: {
 								from: string | null;
 								platform: ImporterPlatform;
 								ssh?: string;
+								host?: string;
 							} = {
 								from: fromQueryParam,
 								platform: platformQueryParam,
 							};
-							if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
+
+							// Add SSH params if applicable
+							if ( shouldUseSSH ) {
 								queryParams.ssh = 'true';
+								if ( host ) {
+									queryParams.host = host;
+								}
 							}
+
 							return navigate( paths.siteCreationPath( queryParams ) );
 						}
 					}
@@ -318,6 +344,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							from: fromQueryParam,
 							platform: platformQueryParam,
 							action: actionQueryParam,
+							host: hostQueryParam,
 						} )
 					);
 				}
@@ -337,7 +364,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					recordSignupComplete( { siteId } );
 
-					// Check if this is an SSH migration flow
+					// Check if this is an SSH migration flow (ssh=true is already set in URL from PICK_SITE)
 					if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
 						return replace(
 							paths.upgradePlanPath( {
@@ -345,6 +372,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								from: fromQueryParam,
 								siteSlug,
 								ssh: 'true',
+								host: hostQueryParam,
 							} )
 						);
 					}

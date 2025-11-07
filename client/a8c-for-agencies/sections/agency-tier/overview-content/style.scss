@@ -1,5 +1,9 @@
 @import "@wordpress/base-styles/colors";
 
+:root {
+	--color-gray-700: #{$gray-700};
+}
+
 .agency-tier-overview-revamped {
 	// Hacks to make DataViews look non-interactive
 	// Upstream issue: https://github.com/WordPress/gutenberg/issues/71127
@@ -12,10 +16,9 @@
 			&, &:hover {
 				background-color: $white;
 				.dataviews-view-list__fields {
-						color: $gray-700;
-					}
+					color: $gray-700;
 				}
-
+			}
 		}
 	}
 	&.is-small-viewport {
@@ -30,11 +33,14 @@
 	}
 }
 
-.agency-tier-overview-revamped__icon {
-	display: block;
-	position: relative;
-	top: 50%;
-	inset-inline-start: 50%;
-	transform: translate(-50%, -50%);
-	fill: $gray-700;
+.agency-tier-overview-revamped__icon-container {
+	align-items: center;
+	background: $gray-100;
+	display: flex;
+	height: 100%;
+	justify-content: center;
+
+	svg {
+		fill: $gray-700;
+	}
 }

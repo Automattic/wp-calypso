@@ -217,10 +217,11 @@ function SiteOverview( {
 		<PageLayout
 			size={ isCommerceGardenSite ? 'small' : 'large' }
 			header={
-				<VStack>
-					<PageHeader title={ getSiteDisplayName( site ) } actions={ renderActions() } />
-					<SiteOverviewFields site={ site } />
-				</VStack>
+				<PageHeader
+					title={ getSiteDisplayName( site ) }
+					description={ <SiteOverviewFields site={ site } /> }
+					actions={ renderActions() }
+				/>
 			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
