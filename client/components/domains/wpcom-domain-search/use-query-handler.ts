@@ -27,7 +27,7 @@ export const useQueryHandler = ( {
 } ) => {
 	const [ localQuery, setLocalQuery ] = useState< string | undefined >( () => {
 		if ( externalInitialQuery ) {
-			return externalInitialQuery;
+			return externalInitialQuery.toLowerCase();
 		}
 
 		if ( currentSiteUrl ) {
