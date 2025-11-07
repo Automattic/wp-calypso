@@ -159,6 +159,7 @@ export const usePersistedHistory = () => {
 
 	useEffect( () => {
 		const urlParams = new URLSearchParams( window.location.search );
+		// Skip persisted history if help-center=happiness-engineer to allow escalation to live chat, otherwise the location is overwritten.
 		const helpCenterParam = urlParams.get( 'help-center' );
 
 		if ( persistedHistory && helpCenterParam !== 'happiness-engineer' ) {
