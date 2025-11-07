@@ -86,6 +86,7 @@ export interface DomainSearchConfig {
 	allowedTlds: string[];
 	includeOwnedDomainInSuggestions: boolean;
 	numberOfDomainsResultsPerPage: number;
+	showAlreadyOwnDomainCTAInInitialState: boolean;
 }
 
 export interface DomainSearchProps {

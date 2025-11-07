@@ -58,6 +58,7 @@ export default function DomainSearch() {
 			skippable: false,
 			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain: true,
+			showAlreadyOwnDomainCTAInInitialState: false,
 		};
 	}, [ tldQuery ] );
 
