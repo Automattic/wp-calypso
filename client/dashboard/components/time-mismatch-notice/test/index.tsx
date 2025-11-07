@@ -87,9 +87,7 @@ describe( 'TimeMismatchNotice', () => {
 
 		expect( await screen.findByRole( 'button', { name: /dismiss/i } ) ).toBeVisible();
 
-		expect(
-			await screen.findByRole( 'link', { name: /update your site timezone here/i } )
-		).toBeVisible();
+		expect( await screen.findByRole( 'link', { name: /update it if needed/i } ) ).toBeVisible();
 	} );
 
 	test( 'does not render when previously dismissed with same offset', () => {
@@ -123,9 +121,7 @@ describe( 'TimeMismatchNotice', () => {
 			/>
 		);
 
-		await user.click(
-			await screen.findByRole( 'link', { name: /update your site timezone here/i } )
-		);
+		await user.click( await screen.findByRole( 'link', { name: /update it if needed/i } ) );
 
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_time_mismatch_banner_settings_link_click',
