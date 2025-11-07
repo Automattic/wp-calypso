@@ -30,11 +30,19 @@ export const useQueryHandler = ( {
 			return externalInitialQuery;
 		}
 
+		const storedQuery = getSessionStorageQuery();
+		if ( storedQuery ) {
+			return storedQuery;
+		}
+
 		if ( currentSiteUrl ) {
 			return new URL( currentSiteUrl ).host.replace( /\.(wordpress|wpcomstaging)\.com$/, '' );
 		}
 
-		return getSessionStorageQuery();
+		// If there's no stored query and the current site URL is not a free WPCOM subdomain, that
+		// means the site slug is probably a custom domain. In that case, the initial search query
+		// should be empty
+		return '';
 	} );
 
 	const setQuery = useCallback( ( query: string ) => {
