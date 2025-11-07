@@ -27,7 +27,7 @@ export function ThreatsDetailCard( { threats }: { threats: Threat[] } ) {
 						</Text>
 					</VStack>
 				</HStack>
-				<SeverityBadge severity={ threat.severity } />
+				<SeverityBadge severity={ threat.severity } severityLabel={ threat.severity_label } />
 			</HStack>
 		);
 	};

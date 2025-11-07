@@ -28,6 +28,7 @@ export interface Threat {
 	payload_description?: string | null;
 	first_detected: string;
 	severity: number;
+	severity_label: string;
 	fixer?: ThreatFixer | null;
 	fixed_on?: string;
 	status: 'current' | 'fixed' | 'ignored' | 'in_progress';

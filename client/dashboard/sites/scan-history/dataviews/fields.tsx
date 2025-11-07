@@ -7,7 +7,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { FormattedTime } from '../../../components/formatted-time';
 import { formatYmd } from '../../../utils/datetime';
-import { SeverityBadge, getSeverityLabel } from '../../scan/severity-badge';
+import { SeverityBadge } from '../../scan/severity-badge';
 import { getThreatIcon, sortSeverity } from '../../scan/utils';
 import type { Threat } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -105,10 +105,13 @@ export function getFields( timezoneString?: string, gmtOffset?: number ): Field<
 			elements: [
 				{ value: 'Critical', label: __( 'Critical' ) },
 				{ value: 'High', label: __( 'High' ) },
+				{ value: 'Medium', label: __( 'Medium' ) },
 				{ value: 'Low', label: __( 'Low' ) },
 			],
-			getValue: ( { item } ) => getSeverityLabel( item.severity ),
-			render: ( { item } ) => <SeverityBadge severity={ item.severity } />,
+			getValue: ( { item } ) => item.severity_label,
+			render: ( { item } ) => (
+				<SeverityBadge severity={ item.severity } severityLabel={ item.severity_label } />
+			),
 			sort: sortSeverity,
 		},
 	];
