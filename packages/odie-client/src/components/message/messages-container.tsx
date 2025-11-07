@@ -55,7 +55,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	useZendeskMessageListener();
 	const isScrolling = useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
-	useHelpCenterChatScroll( chat?.supportInteractionId, scrollParentRef, ! shouldEnableAutoScroll );
+	useHelpCenterChatScroll( supportInteraction?.uuid, scrollParentRef, ! shouldEnableAutoScroll );
 
 	useEffect( () => {
 		if ( navType === 'POP' && ( isChatLoaded || ! isUserEligibleForPaidSupport ) ) {
@@ -105,10 +105,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			setHasForwardedToZendesk( true );
 
 			// when forwarding to zd avoid creating new chats
-			if (
-				alreadyHasActiveZendeskChatId &&
-				alreadyHasActiveZendeskChatId !== chat.supportInteractionId
-			) {
+			if ( alreadyHasActiveZendeskChatId ) {
 				setChatMessagesLoaded( true );
 				// Redirect to the existing Zendesk chat.
 				searchParams.set( 'id', alreadyHasActiveZendeskChatId );
@@ -124,7 +121,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			} );
 		}
 	}, [
-		chat.supportInteractionId,
 		navigate,
 		isForwardingToZendesk,
 		hasForwardedToZendesk,
@@ -133,6 +129,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		createZendeskConversation,
 		alreadyHasActiveZendeskChatId,
 		forceEmailSupport,
+		supportInteraction?.uuid,
 		searchParams,
 		setSearchParams,
 	] );

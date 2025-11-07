@@ -7,7 +7,11 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	Button,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -203,10 +207,10 @@ export default function DomainDns() {
 				<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
 					{ createInterpolateElement(
 						__(
-							'This means it may not be pointing to your Gravatar profile correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <defaultRecordsLink>Learn more</defaultRecordsLink>'
+							'This means it may not be pointing to your Gravatar profile correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <learnMoreLink />'
 						),
 						{
-							defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
+							learnMoreLink: <InlineSupportLink supportContext="dns_default_records" />,
 						}
 					) }
 				</Notice>
@@ -216,10 +220,10 @@ export default function DomainDns() {
 			<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
 				{ createInterpolateElement(
 					__(
-						'This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <defaultRecordsLink>Learn more</defaultRecordsLink>'
+						'This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <learnMoreLink />'
 					),
 					{
-						defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
+						learnMoreLink: <InlineSupportLink supportContext="dns_default_records" />,
 					}
 				) }
 			</Notice>
@@ -238,10 +242,10 @@ export default function DomainDns() {
 			>
 				{ createInterpolateElement(
 					__(
-						'This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select “Restore default CNAME record”. <defaultRecordsLink>Learn more</defaultRecordsLink>'
+						'This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select “Restore default CNAME record”. <learnMoreLink />'
 					),
 					{
-						defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
+						learnMoreLink: <InlineSupportLink supportContext="dns_default_records" />,
 					}
 				) }
 			</Notice>
@@ -253,10 +257,10 @@ export default function DomainDns() {
 			<Notice title={ __( 'What are DNS records used for?' ) }>
 				{ createInterpolateElement(
 					__(
-						'Custom DNS records allow you to connect your domain to third-party services that are not hosted on WordPress.com, such as an email provider. <link>Learn more</link>'
+						'Custom DNS records allow you to connect your domain to third-party services that are not hosted on WordPress.com, such as an email provider. <learnMoreLink />'
 					),
 					{
-						link: <InlineSupportLink supportContext="manage-your-dns-records" />,
+						learnMoreLink: <InlineSupportLink supportContext="manage-your-dns-records" />,
 					}
 				) }
 			</Notice>
@@ -286,7 +290,7 @@ export default function DomainDns() {
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
-							<>
+							<HStack>
 								<ImportBindFileButton
 									domainName={ domainName }
 									onRecordsImported={ ( data ) => {
@@ -304,7 +308,7 @@ export default function DomainDns() {
 									} }
 									__next40pxDefaultSize
 								>
-									{ __( 'Add DNS Record' ) }
+									{ __( 'Add Record' ) }
 								</Button>
 								<DnsActionsMenu
 									hasDefaultARecords={ hasDefaultARecordsValue }
@@ -318,7 +322,7 @@ export default function DomainDns() {
 										setIsRestoreDefaultEmailRecordsDialogOpen( true )
 									}
 								/>
-							</>
+							</HStack>
 						}
 						description={ <DnsDescription /> }
 					/>

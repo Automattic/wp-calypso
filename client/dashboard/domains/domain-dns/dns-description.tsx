@@ -4,9 +4,9 @@ import InlineSupportLink from '../../components/inline-support-link';
 
 export default function DnsDescription() {
 	return createInterpolateElement(
-		__( 'DNS records change how your domain works. <link>Learn more</link>' ),
+		__( 'DNS records change how your domain works. <learnMoreLink />' ),
 		{
-			link: <InlineSupportLink supportContext="manage-your-dns-records" />,
+			learnMoreLink: <InlineSupportLink supportContext="manage-your-dns-records" />,
 		}
 	);
 }

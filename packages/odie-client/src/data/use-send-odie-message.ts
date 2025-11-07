@@ -10,6 +10,7 @@ import {
 	getOdieErrorMessageNonEligible,
 	getExistingConversationMessage,
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
+	getErrorMessageUnknownError,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
@@ -87,16 +88,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	const updateInteractionContext = useCallback(
 		( interaction: SupportInteraction ) => {
-			setChat( ( prevChat ) => ( {
-				...prevChat,
-				supportInteractionId: interaction.uuid,
-			} ) );
-
 			const params = new URLSearchParams( location.search );
 			params.set( 'id', interaction.uuid );
 			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
 		},
-		[ location.pathname, location.search, navigate, setChat ]
+		[ location.pathname, location.search, navigate ]
 	);
 
 	const hasBeenWarnedAboutExistingConversation = chat?.messages?.some(
@@ -291,11 +287,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				const message: Message = { ...getOdieRateLimitMessage(), internal_message_id };
 				addMessage( { message, props: {}, isFromError: true } );
 			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
-				// User is eligible for premium support - transfer to Zendesk
-				createZendeskConversation( {
-					createdFrom: 'api_error',
-					errorReason: error.message || error.toString?.(),
-					isFromError: true,
+				const errorMessage = getErrorMessageUnknownError();
+				addMessage( { message: errorMessage, props: {}, isFromError: true } );
+
+				trackEvent( 'error_sending_odie_message', {
+					error_message: error instanceof Error ? error.toString() : 'unknown_error',
 				} );
 			} else {
 				// User is not eligible for premium support - show error message with support buttons

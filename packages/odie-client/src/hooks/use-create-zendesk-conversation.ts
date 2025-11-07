@@ -150,7 +150,6 @@ export const useCreateZendeskConversation = () => {
 			conversationId: conversation.id,
 			provider: 'zendesk',
 			status: 'loaded',
-			supportInteractionId: activeInteractionId || null,
 		} ) );
 
 		// If the interaction id has changed, update the URL.
