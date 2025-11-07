@@ -34,6 +34,7 @@ import {
 	Notice,
 	ExternalLink,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -43,6 +44,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
+import { domainRoute } from '../../../app/router/domains';
 import { emailsRoute } from '../../../app/router/emails';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
@@ -76,13 +78,20 @@ import {
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
 	isTemporarySitePurchase,
+	isWpcomFlexSubscription,
 } from '../../../utils/purchase';
+import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
+
+const SPACING = {
+	DEFAULT: 6,
+	SMALL: 4,
+};
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
@@ -202,9 +211,12 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 		purchase.site_slug &&
 		purchase.meta
 	) {
-		const url = domainManagementEdit( purchase.site_slug, purchase.meta );
 		const text = __( 'Domain settings' );
-		return <a href={ url }>{ text }</a>;
+		return (
+			<Link to={ domainRoute.to } params={ { domainName: purchase.meta } }>
+				{ text }
+			</Link>
+		);
 	}
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
@@ -221,37 +233,41 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
 	const upgradeUrl = getUpgradeUrl( purchase );
 	const { recordTracksEvent } = useAnalytics();
+	const menuItems = [
+		canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
+			<MenuItem
+				onClick={ () => {
+					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
+						status: isExpired( purchase ) ? 'expired' : 'active',
+						plan: purchase.product_name,
+					} );
+					upgradePurchase( upgradeUrl );
+				} }
+			>
+				{ __( 'Upgrade' ) }
+			</MenuItem>
+		),
+		canBeRenewed && (
+			<MenuItem
+				onClick={ () => {
+					recordTracksEvent( 'calypso_purchases_renew_now_click', {
+						product_slug: purchase.product_slug,
+					} );
+					renewPurchase( purchase );
+				} }
+			>
+				{ __( 'Renew' ) }
+			</MenuItem>
+		),
+	].filter( Boolean );
+
+	if ( menuItems.length === 0 ) {
+		return null;
+	}
+
 	return (
 		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
-			{ () => (
-				<MenuGroup>
-					{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
-						<MenuItem
-							onClick={ () => {
-								recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-									status: isExpired( purchase ) ? 'expired' : 'active',
-									plan: purchase.product_name,
-								} );
-								upgradePurchase( upgradeUrl );
-							} }
-						>
-							{ __( 'Upgrade' ) }
-						</MenuItem>
-					) }
-					{ canBeRenewed && (
-						<MenuItem
-							onClick={ () => {
-								recordTracksEvent( 'calypso_purchases_renew_now_click', {
-									product_slug: purchase.product_slug,
-								} );
-								renewPurchase( purchase );
-							} }
-						>
-							{ __( 'Renew' ) }
-						</MenuItem>
-					) }
-				</MenuGroup>
-			) }
+			{ () => <MenuGroup>{ menuItems }</MenuGroup> }
 		</DropdownMenu>
 	);
 }
@@ -541,6 +557,7 @@ function getFields( {
 				return (
 					<ToggleControl
 						__nextHasNoMarginBottom
+						className="purchase-settings__toggle-control"
 						label={
 							shouldAllowExpiredAutoRenewToggle( purchase )
 								? __( 'Re-activate subscription' )
@@ -554,6 +571,12 @@ function getFields( {
 				);
 			},
 		},
+		{
+			id: 'purchase_payment_method',
+			Edit: ( { data: purchase } ) => {
+				return <PurchasePaymentMethod purchase={ purchase } showUpdateButton />;
+			},
+		},
 	];
 }
 
@@ -565,7 +588,7 @@ const form = {
 		{
 			id: 'autoRenew',
 			label: __( 'Manage subscription' ),
-			children: [ 'is_auto_renew_enabled' ],
+			children: [ 'is_auto_renew_enabled', 'purchase_payment_method' ],
 		},
 	],
 };
@@ -575,31 +598,27 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		mutate: setAutoRenew,
 		error,
 		isPending: isMutationPending,
-	} = useMutation( userPurchaseSetAutoRenewQuery( purchase.ID ) );
+	} = useMutation( userPurchaseSetAutoRenewQuery() );
 	const { user } = useAuth();
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 4 } alignment="left">
-					<DataForm< Purchase >
-						data={ purchase }
-						fields={ getFields( { isMutationPending, user } ) }
-						form={ form }
-						onChange={ ( newData ) => {
-							if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
-								setAutoRenew( newData.is_auto_renew_enabled );
-							}
-						} }
-					/>
+				<DataForm< Purchase >
+					data={ purchase }
+					fields={ getFields( { isMutationPending, user } ) }
+					form={ form }
+					onChange={ ( newData ) => {
+						if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
+							setAutoRenew( { purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled } );
+						}
+					} }
+				/>
 
-					{ error && (
-						<Notice status="error" isDismissible={ false }>
-							{ error.message }
-						</Notice>
-					) }
-
-					<PurchasePaymentMethod purchase={ purchase } showUpdateButton />
-				</VStack>
+				{ error && (
+					<Notice status="error" isDismissible={ false }>
+						{ error.message }
+					</Notice>
+				) }
 			</CardBody>
 		</Card>
 	);
@@ -1036,6 +1055,10 @@ export default function PurchaseSettings() {
 		return __( 'Expires' );
 	} )();
 
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const columns = isSmallViewport ? 1 : 2;
+	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+
 	return (
 		<PageLayout
 			size="small"
@@ -1071,7 +1094,7 @@ export default function PurchaseSettings() {
 		>
 			<VStack spacing={ 6 }>
 				<PurchaseNotice purchase={ purchase } />
-				<Grid columns={ 2 } rows={ 2 } gap={ 6 }>
+				<Grid columns={ columns } gap={ spacing }>
 					<OverviewCard
 						icon={ calendar }
 						title={ expiryDateTitle }
@@ -1128,6 +1151,9 @@ export default function PurchaseSettings() {
 					/>
 				</Grid>
 				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
+				{ isWpcomFlexSubscription( purchase ) && (
+					<BillingFlexUsageCard purchaseId={ purchase.ID } />
+				) }
 				<ManageSubscriptionCard purchase={ purchase } />
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

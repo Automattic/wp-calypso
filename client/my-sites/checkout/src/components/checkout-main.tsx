@@ -10,6 +10,7 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from '@automattic/wpcom-checkout';
+import { VGSCollectProvider } from '@vgs/collect-js-react';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
@@ -31,9 +32,9 @@ import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import useCountryList from '../hooks/use-country-list';
-import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
+import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
@@ -689,7 +690,7 @@ export default function CheckoutMain( {
 	// `getThankYouUrl` after passing through the pending page.
 	//
 	// DO NOT PUT POST-CHECKOUT BEHAVIOR IN HERE! IT'S NOT WHAT YOU THINK!
-	const onPaymentSubmittedAndProcessing = useCreatePaymentCompleteCallback( {
+	const onPaymentSubmittedAndProcessing = useCreatePaymentSubmittedAndProcessingCallback( {
 		createUserAndSiteBeforeTransaction,
 		productAliasFromUrl,
 		redirectTo,
@@ -821,52 +822,56 @@ export default function CheckoutMain( {
 					useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
 				} }
 			/>
-			<CheckoutProvider
-				onPaymentComplete={ handlePaymentSubmitted }
-				onPaymentError={ handlePaymentError }
-				onPaymentRedirect={ handlePaymentRedirect }
-				onPageLoadError={ onPageLoadError }
-				onPaymentMethodChanged={ handlePaymentMethodChanged }
-				paymentMethods={ paymentMethods }
-				paymentProcessors={ paymentProcessors }
-				isLoading={ isCheckoutPageLoading }
-				isValidating={ isCartPendingUpdate }
-				theme={ theme }
-				selectFirstAvailablePaymentMethod
-				initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
-			>
-				<CheckoutMainContent
-					loadingHeader={
-						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
-					}
-					onStepChanged={ handleStepChanged }
-					customizedPreviousPath={ customizedPreviousPath }
-					isRemovingProductFromCart={ isRemovingProductFromCart }
-					areThereErrors={ areThereErrors }
-					isInitialCartLoading={ isInitialCartLoading }
-					addItemToCart={ addItemAndLog }
-					changeSelection={ changeSelection }
-					countriesList={ countriesList }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					infoMessage={ <PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } /> }
-					isLoggedOutCart={ !! isLoggedOutCart }
+			<VGSCollectProvider>
+				<CheckoutProvider
+					onPaymentComplete={ handlePaymentSubmitted }
+					onPaymentError={ handlePaymentError }
+					onPaymentRedirect={ handlePaymentRedirect }
 					onPageLoadError={ onPageLoadError }
+					onPaymentMethodChanged={ handlePaymentMethodChanged }
 					paymentMethods={ paymentMethods }
-					areStoredCardsFiltered={ areStoredCardsFiltered }
-					isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
-				/>
-				{
-					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
-					<JetpackProRedirectModal
-						redirectTo={ redirectTo }
-						productSourceFromUrl={ productSourceFromUrl }
+					paymentProcessors={ paymentProcessors }
+					isLoading={ isCheckoutPageLoading }
+					isValidating={ isCartPendingUpdate }
+					theme={ theme }
+					selectFirstAvailablePaymentMethod
+					initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
+				>
+					<CheckoutMainContent
+						loadingHeader={
+							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
+						}
+						onStepChanged={ handleStepChanged }
+						customizedPreviousPath={ customizedPreviousPath }
+						isRemovingProductFromCart={ isRemovingProductFromCart }
+						areThereErrors={ areThereErrors }
+						isInitialCartLoading={ isInitialCartLoading }
+						addItemToCart={ addItemAndLog }
+						changeSelection={ changeSelection }
+						countriesList={ countriesList }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						infoMessage={
+							<PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } />
+						}
+						isLoggedOutCart={ !! isLoggedOutCart }
+						onPageLoadError={ onPageLoadError }
+						paymentMethods={ paymentMethods }
+						areStoredCardsFiltered={ areStoredCardsFiltered }
+						isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+						removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+						showErrorMessageBriefly={ showErrorMessageBriefly }
+						siteId={ updatedSiteId }
+						siteUrl={ updatedSiteSlug }
 					/>
-				}
-			</CheckoutProvider>
+					{
+						// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
+						<JetpackProRedirectModal
+							redirectTo={ redirectTo }
+							productSourceFromUrl={ productSourceFromUrl }
+						/>
+					}
+				</CheckoutProvider>
+			</VGSCollectProvider>
 		</Fragment>
 	);
 }

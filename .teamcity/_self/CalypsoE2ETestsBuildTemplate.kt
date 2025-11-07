@@ -22,7 +22,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.LOCALE", "en")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
-		param("env.CI", "true")
 		param("PROJECT", "desktop")
 		text("TEST_GROUP", "")
 		text("CALYPSO_BASE_URL", "")

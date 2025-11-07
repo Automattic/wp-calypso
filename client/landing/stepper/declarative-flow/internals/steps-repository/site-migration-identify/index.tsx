@@ -1,56 +1,26 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
-import { Icon, next, published, shield } from '@wordpress/icons';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
+import { next, published, shield } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { urlToDomain } from 'calypso/lib/url';
+import { ChecklistCard } from '../../components/checklist-card';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
 
-interface HostingDetailsWithIconsProps {
-	items: {
-		icon: ReactElement;
-		description: TranslateResult;
-	}[];
-}
-
-const HostingDetailsWithIcons: FC< HostingDetailsWithIconsProps > = ( { items } ) => {
-	const translate = useTranslate();
-
-	return (
-		<div className="import__site-identify-hosting-details-experiment">
-			<p className="import__site-identify-hosting-details-experiment-title">
-				{ translate( 'Why should you host with us?' ) }
-			</p>
-			<ul className="import__site-identify-hosting-details-experiment-list">
-				{ items.map( ( item, index ) => (
-					<li key={ index } className="import__site-identify-hosting-details-experiment-list-item">
-						<Icon
-							className="import__site-identify-hosting-details-experiment-icon"
-							icon={ item.icon }
-							size={ 24 }
-						/>
-						<p className="import__site-identify-hosting-details-experiment-description">
-							{ item.description }
-						</p>
-					</li>
-				) ) }
-			</ul>
-		</div>
-	);
-};
-
 interface Props {
 	hasError?: boolean;
-	onComplete: ( siteInfo: UrlData ) => void;
+	onComplete: ( siteInfo: UrlData, hostingProviderSlug?: string ) => void;
 	onSkip: () => void;
 	hideImporterListLink: boolean;
 	flowName: string;
@@ -72,13 +42,26 @@ export const Analyzer: FC< Props > = ( {
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
-	const isScanning = isFetching || ( isFetched && ! hasError );
+	// Fetch hosting provider after we get site info
+	const domain = siteInfo ? urlToDomain( siteInfo.url ) : '';
+	const {
+		data: hostingProviderData,
+		isFetching: isFetchingHosting,
+		isError: hasHostingError,
+	} = useHostingProviderQuery( domain, !! domain );
+
+	// Update loading state to include hosting check
+	const isScanning =
+		isFetching ||
+		isFetchingHosting ||
+		( isFetched && ! hasError && ! hostingProviderData && ! hasHostingError );
 
 	useEffect( () => {
-		if ( siteInfo ) {
-			onComplete( siteInfo );
+		// Only complete when we have both site info AND hosting info (or hosting check failed)
+		if ( siteInfo && ( hostingProviderData || hasHostingError ) ) {
+			onComplete( siteInfo, hostingProviderData?.hosting_provider?.slug );
 		}
-	}, [ onComplete, siteInfo ] );
+	}, [ onComplete, siteInfo, hostingProviderData, hasHostingError ] );
 
 	useEffect( () => {
 		onVisibilityChange?.( ! isScanning );
@@ -88,16 +71,16 @@ export const Analyzer: FC< Props > = ( {
 		return <ScanningStep />;
 	}
 
-	const hostingDetailItems = {
-		'blazing-fast-speed': {
+	const hostingDetailItems = [
+		{
 			icon: next,
-			description: translate(
+			text: translate(
 				'Blazing fast speeds with lightning-fast load times for a seamless experience.'
 			),
 		},
-		'unmatched-uptime': {
+		{
 			icon: published,
-			description: translate(
+			text: translate(
 				'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
 				{
 					args: {
@@ -109,11 +92,11 @@ export const Analyzer: FC< Props > = ( {
 				}
 			),
 		},
-		security: {
+		{
 			icon: shield,
-			description: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
+			text: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
 		},
-	};
+	];
 
 	return (
 		<>
@@ -133,7 +116,10 @@ export const Analyzer: FC< Props > = ( {
 					nextLabelText={ translate( 'Check my site' ) }
 				/>
 			</div>
-			<HostingDetailsWithIcons items={ Object.values( hostingDetailItems ) } />
+			<ChecklistCard
+				title={ translate( 'Why should you host with us?' ) }
+				items={ hostingDetailItems }
+			/>
 		</>
 	);
 };
@@ -146,6 +132,7 @@ const SiteMigrationIdentify: StepType< {
 				action: SiteMigrationIdentifyAction;
 				platform?: string;
 				from?: string;
+				host?: string;
 		  }
 		| undefined;
 } > = function ( { navigation, flow } ) {
@@ -154,7 +141,10 @@ const SiteMigrationIdentify: StepType< {
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
 
 	const handleSubmit = useCallback(
-		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
+		async (
+			action: SiteMigrationIdentifyAction,
+			data?: { platform: string; from: string; host?: string }
+		) => {
 			// If we have a URL of the source, we send requests to the mShots API to create screenshots
 			// early in the flow to avoid long loading times in the migration instructions step.
 			// Because mShots API can often take a long time to generate screenshots.
@@ -164,7 +154,7 @@ const SiteMigrationIdentify: StepType< {
 
 			navigation?.submit?.( { action, ...data } );
 		},
-		[ navigation, siteSlug ]
+		[ navigation, siteSlug, createScreenshots ]
 	);
 
 	const urlQueryParams = useQuery();
@@ -173,7 +163,9 @@ const SiteMigrationIdentify: StepType< {
 
 	const stepContent = (
 		<Analyzer
-			onComplete={ ( { platform, url } ) => handleSubmit( 'continue', { platform, from: url } ) }
+			onComplete={ ( { platform, url }, hostingProviderSlug ) =>
+				handleSubmit( 'continue', { platform, from: url, host: hostingProviderSlug } )
+			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
 			onSkip={ () => {
 				handleSubmit( 'skip_platform_identification' );

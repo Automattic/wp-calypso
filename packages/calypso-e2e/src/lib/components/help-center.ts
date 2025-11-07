@@ -196,7 +196,9 @@ export class HelpCenterComponent {
 		await Promise.all( [
 			this.page.waitForResponse(
 				( response ) =>
-					response.url().includes( '/odie/chat/wpcom-support-chat' ) && response.status() === 200
+					( response.url().includes( '/odie/chat/wpcom-workflow-support_chat' ) ||
+						response.url().includes( '/odie/chat/wpcom-support-chat' ) ) &&
+					response.status() === 200
 			),
 			sendMessageForm
 				.locator( 'textarea' )

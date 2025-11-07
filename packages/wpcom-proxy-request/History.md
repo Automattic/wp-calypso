@@ -1,5 +1,9 @@
 # History
 
+## 7.0.7 / 2025-10-31
+
+- Added missing `@babel/runtime` dependency.
+
 ## 7.0.6 / 2024-10-16
 
 - Update dependencies

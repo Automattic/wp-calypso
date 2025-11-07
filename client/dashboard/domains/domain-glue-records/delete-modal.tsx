@@ -5,7 +5,9 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import type { DomainGlueRecord } from '@automattic/api-core';
@@ -26,10 +28,10 @@ const DomainGlueRecordDeleteModal = ( {
 		meta: {
 			snackbar: {
 				success: __( 'Glue record deleted.' ),
-				error: __( 'Failed to delete glue record.' ),
 			},
 		},
 	} );
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 
 	const onConfirm = () => {
@@ -43,12 +45,16 @@ const DomainGlueRecordDeleteModal = ( {
 
 				onClose?.();
 			},
-			onError: ( error ) => {
+			onError: ( error: Error ) => {
 				recordTracksEvent( 'calypso_dashboard_domain_glue_records_delete_record_failure', {
 					domain: domainName,
 					nameserver: glueRecord.nameserver,
 					address: glueRecord.ip_addresses[ 0 ],
 					error_message: error.message,
+				} );
+
+				createErrorNotice( error.message, {
+					type: 'snackbar',
 				} );
 
 				onClose?.();

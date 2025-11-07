@@ -15,4 +15,5 @@ export type AtomicTransferStatus =
 
 export interface AtomicTransfer {
 	status: AtomicTransferStatus;
+	created_at: string;
 }

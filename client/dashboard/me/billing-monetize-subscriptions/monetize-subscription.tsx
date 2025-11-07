@@ -23,15 +23,16 @@ import { __, sprintf } from '@wordpress/i18n';
 import { calendar, currencyDollar, rotateRight, siteLogo } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { monetizeSubscriptionRoute } from '../../app/router/me';
+import { monetizeSubscriptionRoute, monetizeSubscriptionsRoute } from '../../app/router/me';
 import ActionList from '../../components/action-list';
 import { Card, CardBody } from '../../components/card';
-import { addFlashMessage } from '../../components/flash-message';
 import { useFormattedTime } from '../../components/formatted-time';
 import OverviewCard from '../../components/overview-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
+
+import './style.scss';
 
 function AutoRenewButton( {
 	disableAutoRenew,
@@ -92,6 +93,7 @@ function AutoRenewButton( {
 				return (
 					<ToggleControl
 						__nextHasNoMarginBottom
+						className="purchase-settings__toggle-control"
 						label={ title }
 						checked={ isAutoRenewing }
 						disabled={ isUpdating }
@@ -122,18 +124,16 @@ function AutoRenewButton( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 4 } alignment="left">
-					<DataForm
-						fields={ fields }
-						data={ subscription }
-						form={ form }
-						onChange={ () => {
-							isAutoRenewing
-								? disableAutoRenew( null, { onError: onError } )
-								: enableAutoRenew( null, { onError: onError } );
-						} }
-					/>
-				</VStack>
+				<DataForm
+					fields={ fields }
+					data={ subscription }
+					form={ form }
+					onChange={ () => {
+						isAutoRenewing
+							? disableAutoRenew( null, { onError: onError } )
+							: enableAutoRenew( null, { onError: onError } );
+					} }
+				/>
 			</CardBody>
 		</Card>
 	);
@@ -148,7 +148,7 @@ function StopSubscriptionButton( {
 	isProduct: boolean;
 	subscription: MonetizeSubscription;
 } ) {
-	const { createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
 	const title = isProduct
 		? // translators: %s is the product title
@@ -166,11 +166,8 @@ function StopSubscriptionButton( {
 					onClick={ () => {
 						stopSubscription( null, {
 							onSuccess: () => {
-								navigate(
-									addFlashMessage( {
-										to: monetizeSubscriptionRoute.fullPath,
-									} )
-								);
+								createSuccessNotice( __( 'This item has been removed.' ), { type: 'snackbar' } );
+								navigate( { to: monetizeSubscriptionsRoute.fullPath } );
 							},
 							onError: () => {
 								if ( isProduct ) {

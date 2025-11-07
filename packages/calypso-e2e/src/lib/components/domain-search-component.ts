@@ -12,6 +12,7 @@ import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
 export class DomainSearchComponent {
 	private page: Page;
 	private container?: Locator;
+	readonly claimYourSpaceHeading: Locator;
 	/**
 	 * Constructs an instance of the component.
 	 *
@@ -20,6 +21,9 @@ export class DomainSearchComponent {
 	constructor( page: Page, container?: Locator ) {
 		this.page = page;
 		this.container = container;
+		this.claimYourSpaceHeading = this.getContainer().getByRole( 'heading', {
+			name: 'Claim your space on the web',
+		} );
 	}
 
 	/**
@@ -175,11 +179,12 @@ export class DomainSearchComponent {
 	/**
 	 * Select the first domain suggestion.
 	 *
+	 * @param {boolean} waitForContinueButton Whether to wait for the continue button to be enabled.
 	 * @returns {string} Domain that was selected.
 	 */
-	async selectFirstSuggestion(): Promise< string > {
+	async selectFirstSuggestion( waitForContinueButton: boolean = true ): Promise< string > {
 		const targetRow = this.getContainer().getByRole( 'listitem' ).first();
-		const suggestion = await this.selectSuggestion( targetRow );
+		const suggestion = await this.selectSuggestion( targetRow, waitForContinueButton );
 
 		if ( ! suggestion ) {
 			throw new Error( 'No domain found for first suggestion' );
@@ -192,9 +197,13 @@ export class DomainSearchComponent {
 	 * Select a domain suggestion.
 	 *
 	 * @param {Locator} row The row to select.
+	 * @param {boolean} waitForContinueButton Whether to wait for the continue button to be enabled.
 	 * @returns {string | null} Domain that was selected.
 	 */
-	private async selectSuggestion( row: Locator ): Promise< string | null > {
+	private async selectSuggestion(
+		row: Locator,
+		waitForContinueButton: boolean = true
+	): Promise< string | null > {
 		await row.waitFor();
 
 		const selectedDomain = await row.getAttribute( 'title' );
@@ -209,8 +218,10 @@ export class DomainSearchComponent {
 		await addToCartButton.click();
 		await addToCartButton.waitFor( { state: 'detached', timeout: 30000 } );
 
-		const continueButton = row.getByRole( 'button', { name: 'Continue' } );
-		await continueButton.waitFor();
+		if ( waitForContinueButton ) {
+			const continueButton = row.getByRole( 'button', { name: 'Continue' } );
+			await continueButton.waitFor();
+		}
 
 		return selectedDomain;
 	}

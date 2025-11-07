@@ -41,11 +41,11 @@ export const MonetizeSubscriptionTerms = ( {
 };
 
 export const MonetizeSiteLink = ( { subscription }: { subscription: MonetizeSubscription } ) => {
-	const siteUrl = subscription.site_url.replace( /^https?:\/\//, '' );
+	const displayUrl = subscription.site_url.replace( /^https?:\/\//, '' );
 
 	return (
-		<ExternalLink href={ siteUrl } rel="noreferrer" title={ siteUrl }>
-			{ siteUrl }
+		<ExternalLink href={ subscription.site_url } rel="noreferrer" title={ subscription.site_url }>
+			{ displayUrl }
 		</ExternalLink>
 	);
 };

@@ -1,10 +1,9 @@
 import languages, { Language } from '@automattic/languages';
-import { find } from 'lodash';
 import { stringify as stringifyQs } from 'qs';
 import { WpOrgPlugin } from './types';
 
 function getWporgLocaleCode( currentUserLocale: string ) {
-	const result = find( languages, { langSlug: currentUserLocale } ) as Language;
+	const result = languages.find( ( item ) => item.langSlug === currentUserLocale ) as Language;
 	let wpOrgLocaleCode = result?.wpLocale || '';
 
 	if ( wpOrgLocaleCode === '' ) {

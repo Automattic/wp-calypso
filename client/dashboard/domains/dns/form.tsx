@@ -4,7 +4,6 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
-import RequiredSelect from '../../components/required-select';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
 import type { DnsRecord, DnsRecordType } from '@automattic/api-core';
@@ -82,7 +81,7 @@ export default function DNSRecordForm( {
 		{
 			id: 'type',
 			label: __( 'Type' ),
-			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
+			Edit: 'select',
 			elements: [
 				{ label: 'A', value: 'A' },
 				{ label: 'AAAA', value: 'AAAA' },

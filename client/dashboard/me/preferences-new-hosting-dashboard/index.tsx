@@ -76,17 +76,17 @@ export default function PreferencesOptInForm() {
 				updated_at: new Date().toISOString(),
 			},
 			{
-				onSuccess( _, { value } ) {
-					if ( value === 'opt-in' ) {
+				onSuccess( _, data ) {
+					if ( data?.value === 'opt-in' ) {
 						createSuccessNotice( __( 'New Hosting Dashboard enabled.' ), { type: 'snackbar' } );
 					} else {
 						setIsRedirecting( true );
-						window.location.href = '/me/account?updated=dashboard';
+						window.location.href = '/me/account?flash=dashboard';
 					}
 				},
-				onError( _, { value } ) {
+				onError( _, data ) {
 					createErrorNotice(
-						value === 'opt-in'
+						data?.value === 'opt-in'
 							? __( 'Failed to enable new Hosting Dashboard.' )
 							: __( 'Failed to disable new Hosting Dashboard.' ),
 						{
@@ -100,7 +100,7 @@ export default function PreferencesOptInForm() {
 
 	return (
 		<Card>
-			<FlashMessage value="dashboard" message={ __( 'Successfully saved preference.' ) } />
+			<FlashMessage id="dashboard" message={ __( 'New Hosting Dashboard enabled.' ) } />
 			<CardBody>
 				<VStack as="form" onSubmit={ handleSubmit } spacing={ 3 } alignment="flex-start">
 					<SectionHeader title={ __( 'Try the new Hosting Dashboard' ) } level={ 3 } />

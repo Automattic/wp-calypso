@@ -10,4 +10,5 @@ export interface TrackPostData {
 	feed_ID: number;
 	feed_item_ID: number;
 	is_jetpack: boolean;
+	railcar?: Record< string, unknown >;
 }

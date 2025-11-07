@@ -6,7 +6,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, isItemValid } from '@wordpress/dataviews';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -50,7 +50,8 @@ export function ConfirmNewOwnerForm( {
 
 	const { createErrorNotice } = useDispatch( noticesStore );
 
-	const isSaveDisabled = ! isItemValid( formData, fields, form );
+	const { isValid } = useFormValidity( formData, fields, form );
+	const isSaveDisabled = ! isValid;
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();

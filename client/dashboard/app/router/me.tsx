@@ -5,7 +5,6 @@ import {
 	userReceiptsQuery,
 	purchaseQuery,
 	receiptQuery,
-	sitesQuery,
 	queryClient,
 	accountRecoveryQuery,
 	smsCountryCodesQuery,
@@ -74,7 +73,7 @@ export const profileRoute = createRoute( {
 	)
 );
 
-const preferencesRoute = createRoute( {
+export const preferencesRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -180,10 +179,10 @@ export const purchasesRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => billingRoute,
-	loader: async () => {
+	loader: async ( { context } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userPurchasesQuery() ),
-			queryClient.ensureQueryData( sitesQuery() ),
+			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
 		] );
 	},
 	validateSearch: ( search ): { site: string | undefined } => {
@@ -303,6 +302,17 @@ export const addPaymentMethodRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/billing-purchases/add-payment-method' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings-add-payment-method' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const cancelPurchaseRoute = createRoute( {
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'cancel',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
+		createLazyRoute( 'cancel-purchase' )( {
 			component: d.default,
 		} )
 	)
@@ -772,6 +782,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				purchaseSettingsRoute.addChildren( [
 					purchaseSettingsIndexRoute,
 					changePaymentMethodRoute,
+					cancelPurchaseRoute,
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),

@@ -73,13 +73,16 @@ export function FixThreatModal( { items, closeModal, site }: FixThreatModalProps
 			<ThreatsDetailCard threats={ items } />
 
 			{ isExtensionDeleteFixer ? (
-				<FixThreatConfirmation
-					threat={ threat }
-					onCancel={ closeModal }
-					onConfirm={ handleFixThreat }
-					disabled={ isFixing }
-					isLoading={ isFixing }
-				/>
+				<>
+					<ThreatDescription threat={ items[ 0 ] } site={ site } />
+					<FixThreatConfirmation
+						threat={ threat }
+						onCancel={ closeModal }
+						onConfirm={ handleFixThreat }
+						disabled={ isFixing }
+						isLoading={ isFixing }
+					/>
+				</>
 			) : (
 				<>
 					<ThreatDescription threat={ items[ 0 ] } site={ site } />

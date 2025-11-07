@@ -5,7 +5,7 @@ import {
 	__experimentalInputControl as InputControl,
 	ToggleControl,
 } from '@wordpress/components';
-import { Field, DataForm, NormalizedField, isItemValid } from '@wordpress/dataviews';
+import { Field, DataForm, NormalizedField, useFormValidity } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback, useMemo } from 'react';
@@ -204,10 +204,9 @@ export default function NameServersForm( {
 		[ onSubmit, formData ]
 	);
 
-	const canSubmit =
-		! isBusy &&
-		isItemValid( formData, fields, form ) &&
-		isNameServersChanged( formData, nameServers );
+	const { isValid } = useFormValidity( formData, fields, form );
+
+	const canSubmit = ! isBusy && isValid && isNameServersChanged( formData, nameServers );
 
 	return (
 		<form onSubmit={ handleSubmit }>

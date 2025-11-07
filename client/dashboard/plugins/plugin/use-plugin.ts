@@ -1,13 +1,13 @@
 import { PluginItem, Site, SitePlugin } from '@automattic/api-core';
 import {
 	pluginsQuery,
-	sitesQuery,
 	wpOrgPluginQuery,
 	sitePluginQuery,
 	marketplacePluginsQuery,
 } from '@automattic/api-queries';
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { useAppContext } from '../../app/context';
 import { useLocale } from '../../app/locale';
 
 export interface SiteWithPluginData extends Site {
@@ -17,13 +17,14 @@ export interface SiteWithPluginData extends Site {
 
 export const usePlugin = ( pluginSlug: string ) => {
 	const queryClient = useQueryClient();
+	const { queries } = useAppContext();
 	const locale = useLocale();
 	const {
 		data: sitesPlugins,
 		isLoading: isLoadingSitesPlugins,
 		isFetching: isFetchingSitePlugins,
 	} = useQuery( pluginsQuery() );
-	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
 	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
 		marketplacePluginsQuery()
 	);

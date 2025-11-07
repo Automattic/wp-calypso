@@ -1,3 +1,4 @@
+import { Railcar } from '@automattic/calypso-analytics';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -7,9 +8,8 @@ import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
-import { TrackPostData } from 'calypso/state/reader/analytics/types';
+import { type TrackPostData } from 'calypso/state/reader/analytics/types';
 import AuthorCompactProfilePlaceholder from './placeholder';
-
 import './style.scss';
 
 interface AuthorCompactProfileProps {
@@ -105,7 +105,11 @@ export default function AuthorCompactProfile( props: AuthorCompactProfileProps )
 				) : null }
 
 				{ followUrl && (
-					<ReaderFollowButton siteUrl={ followUrl } onFollowToggle={ onFollowToggle } />
+					<ReaderFollowButton
+						siteUrl={ followUrl }
+						onFollowToggle={ onFollowToggle }
+						railcar={ post?.railcar as Railcar }
+					/>
 				) }
 			</div>
 		</div>

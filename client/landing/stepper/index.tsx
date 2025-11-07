@@ -1,7 +1,6 @@
 import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -43,6 +42,7 @@ import { DEFAULT_FLOW, getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
+import type { CurrentUser } from '@automattic/data-stores';
 import type { AnyAction } from 'redux';
 
 declare const window: AppWindow;
@@ -99,7 +99,7 @@ async function main() {
 	accessibleFocus();
 
 	const user = await initializeCurrentUser();
-	const userId = ( user as CurrentUser ).ID;
+	const userId = user ? user.ID : 0;
 	let queryClient;
 
 	let { default: flow } = await flowPromise;
@@ -113,7 +113,7 @@ async function main() {
 	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
 	if ( user ) {
-		initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+		initializeCalypsoUserStore( reduxStore, user );
 		receiveCurrentUser( user as UserStore.CurrentUser );
 	}
 

@@ -2,9 +2,14 @@ import pagejs from '@automattic/calypso-router';
 import { createMemoryHistory } from '@tanstack/react-router';
 import { getQueryArgs } from '@wordpress/url';
 import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
+import type { AppConfig } from 'calypso/dashboard/app/context';
 
-export function getRouterOptions() {
+export function getRouterOptions( config: AppConfig ) {
 	return {
+		basepath: config.basePath,
+		context: {
+			config,
+		},
 		defaultPreload: 'intent' as const,
 		defaultPreloadStaleTime: 0,
 		defaultNotFoundComponent: () => null,

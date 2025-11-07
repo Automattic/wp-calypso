@@ -36,8 +36,12 @@ export const StepFindSSHDetails: FC< StepFindSSHDetailsProps > = ( {
 				<Button variant="primary" onClick={ onSuccess }>
 					{ translate( 'I found my SSH details' ) }
 				</Button>
-				<Button variant="link" onClick={ onNoSSHAccess }>
-					{ translate( "I don't have SSH access" ) }
+				<Button
+					variant="link"
+					onClick={ onNoSSHAccess }
+					className="migration-site-ssh__no-ssh-link"
+				>
+					{ translate( "I don't have SSH" ) }
 				</Button>
 			</div>
 		</div>

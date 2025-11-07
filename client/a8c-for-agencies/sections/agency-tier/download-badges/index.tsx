@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { Icon, download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 import A4AThemedModal from 'calypso/a8c-for-agencies/components/a4a-themed-modal';
 import AgencyTierLevels from 'calypso/assets/images/a8c-for-agencies/agency-tier/agency-tier-levels.svg';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -12,7 +12,11 @@ import DownloadLink from './download-link';
 
 import './style.scss';
 
-export default function DownloadBadges() {
+export default function DownloadBadges( {
+	buttonProps = {},
+}: {
+	buttonProps?: ComponentProps< typeof Button >;
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -44,9 +48,12 @@ export default function DownloadBadges() {
 				className="agency-tier-download-badge__button"
 				variant="secondary"
 				onClick={ handleDownloadBadgeClick }
+				icon={ <Icon icon={ download } /> }
+				iconPosition="right"
+				iconSize={ 18 }
+				{ ...buttonProps }
 			>
 				{ translate( 'Download your badges' ) }
-				<Icon icon={ download } size={ 18 } />
 			</Button>
 			{ showDownloadModal && (
 				<A4AThemedModal

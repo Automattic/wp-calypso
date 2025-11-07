@@ -28,16 +28,29 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 
-	const { helpCenterVisible, unreadCount } = useDateStoreSelect( ( select ) => ( {
-		helpCenterVisible: select( HELP_CENTER_STORE ).isHelpCenterShown(),
-		unreadCount: select( HELP_CENTER_STORE ).getUnreadCount(),
-	} ) );
+	const { helpCenterVisible, unreadCount } = useDateStoreSelect(
+		( select ) => ( {
+			helpCenterVisible: select( HELP_CENTER_STORE ).isHelpCenterShown(),
+			unreadCount: select( HELP_CENTER_STORE ).getUnreadCount(),
+		} ),
+		[]
+	);
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Check if the new menu panel feature is enabled (both feature flag AND query param must be true)
 	const isMenuPanelEnabled = config.isEnabled( 'help-center-menu-panel' );
 
+	const trackIconInteraction = () => {
+		recordTracksEvent( `wpcom_help_center_icon_interaction`, {
+			is_help_center_visible: helpCenterVisible,
+			section: sectionName,
+			is_menu_panel_enabled: isMenuPanelEnabled,
+		} );
+	};
+
 	const handleToggleHelpCenter = () => {
+		trackIconInteraction();
+
 		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'help-center',
@@ -158,7 +171,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	return (
 		<>
 			<Item
-				onClick={ isMenuPanelEnabled ? undefined : handleToggleHelpCenter }
+				onClick={ isMenuPanelEnabled ? trackIconInteraction : handleToggleHelpCenter }
 				className={ clsx( 'masterbar__item-help', {
 					'is-active': helpCenterVisible,
 					'is-menu-panel': isMenuPanelEnabled,
@@ -169,6 +182,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 				tooltip={ tooltip }
 				icon={ <HelpCenterIcon hasUnread={ unreadCount > 0 } /> }
 				subItems={ isMenuPanelEnabled ? menuItems : undefined }
+				openSubMenuOnClick={ isMenuPanelEnabled }
 			/>
 		</>
 	);

@@ -1,5 +1,7 @@
+import config from '@automattic/calypso-config';
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
-import type { Context, Message, OdieAllowedBots } from './types';
+import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
 declare const __i18n_text_domain__: string;
 
 export const getOdieErrorMessage = (): string =>
@@ -38,11 +40,47 @@ export const getOdieForwardToZendeskMessage = (): string =>
 		__i18n_text_domain__
 	);
 
-export const getOdieTransferMessage = (): Message[] => [
-	{
-		content: __( 'No problem. Help is on the way!', __i18n_text_domain__ ),
-		role: 'bot',
-		type: 'message',
+export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
+	if ( botSlug === 'ciab-workflow-support_chat' ) {
+		return 'commerce-garden';
+	}
+	return 'wpcom';
+}
+
+export const getOdieTransferMessage = ( botSlug?: OdieAllBotSlugs ): Message[] => {
+	const isTestMode = isTestModeEnvironment();
+	const flow = getFlowFromBotSlug( botSlug );
+
+	// Commerce garden has a simplified, single-message flow
+	if ( flow === 'commerce-garden' ) {
+		return [
+			{
+				content:
+					( isTestMode ? '(STAGING VERSION OF ZENDESK) ' : '' ) +
+					__(
+						"Yes, of course! A Happiness Engineer is jumping in to help you now. They can see your chat with our assistant, so feel free to share any extra details; we'll take it from there.",
+						__i18n_text_domain__
+					),
+				role: 'bot' as const,
+				type: 'message' as const,
+				context: {
+					flags: {
+						hide_disclaimer_content: true,
+						show_contact_support_msg: true,
+						show_ai_avatar: false,
+					},
+					site_id: null,
+				},
+			},
+		];
+	}
+
+	const baseMessage = {
+		content:
+			__( 'No problem. Help is on the way!', __i18n_text_domain__ ) +
+			( isTestMode ? ' (staging)' : '' ),
+		role: 'bot' as const,
+		type: 'message' as const,
 		context: {
 			flags: {
 				hide_disclaimer_content: true,
@@ -51,8 +89,66 @@ export const getOdieTransferMessage = (): Message[] => [
 			},
 			site_id: null,
 		},
-	},
-];
+	};
+
+	if ( isTestMode ) {
+		return [
+			baseMessage,
+			{
+				content: __(
+					'This is the Sandbox version of Zendesk. You will not be redirected to a support agent. If you want to test the real experience and be connected to a support agent, you need to be unproxied.',
+					__i18n_text_domain__
+				),
+				role: 'bot' as const,
+				type: 'message' as const,
+				context: {
+					flags: {
+						hide_disclaimer_content: true,
+						show_contact_support_msg: true,
+						show_ai_avatar: false,
+					},
+					site_id: null,
+				},
+			},
+		];
+	}
+
+	return [
+		baseMessage,
+		{
+			content: __(
+				"We're connecting you with our support team. A Happiness Engineer will join the chat as soon as they're available.",
+				__i18n_text_domain__
+			),
+			role: 'bot' as const,
+			type: 'message' as const,
+			context: {
+				flags: {
+					hide_disclaimer_content: true,
+					show_contact_support_msg: true,
+					show_ai_avatar: false,
+				},
+				site_id: null,
+			},
+		},
+		{
+			content: __(
+				'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+				__i18n_text_domain__
+			),
+			role: 'bot' as const,
+			type: 'message' as const,
+			context: {
+				flags: {
+					hide_disclaimer_content: true,
+					show_contact_support_msg: true,
+					show_ai_avatar: false,
+				},
+				site_id: null,
+			},
+		},
+	];
+};
 
 export const getOdieOnErrorTransferMessage = (): Message[] => [
 	{
@@ -163,4 +259,28 @@ export const getOdieInitialMessage = (
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
-export const ODIE_ALLOWED_BOTS = [ 'wpcom-support-chat', 'wpcom-plan-support' ];
+
+/**
+ * NOTE: NEVER CHANGE THIS VALUE.
+ * This value should never be changed. Otherwise the old interactions will be broken and users will not be able to continue their conversations.
+ * Before October 2025, the botSlug was an attribute of the Help Center > Odie Client. So interactions did not have a botSlug property.
+ * But since #106790, interactions have their own botSlug property. The value below is used as a fallback for legacy interactions that don't have it.
+ * If you change it, legacy interactions will target a new bot (not their original one) and users will not be able to continue their conversations.
+ * The reason we use 'wpcom-support-chat' as fallback, because it was the only bot available in the Help Center up to October 2025.
+ */
+export const ODIE_DEFAULT_BOT_SLUG_LEGACY = 'wpcom-support-chat';
+
+/**
+ * New interactions will target this bot slug and store it in the interaction object. All future events of those interactions will use this bot slug.
+ */
+export const ODIE_NEW_INTERACTIONS_BOT_SLUG = config.isEnabled( 'help-center/workflow' )
+	? 'wpcom-workflow-support_chat'
+	: 'wpcom-support-chat';
+
+export const ODIE_ALLOWED_BOTS = [
+	ODIE_DEFAULT_BOT_SLUG_LEGACY,
+	'wpcom-plan-support',
+	'wpcom-workflow-support_chat',
+];
+
+export const ODIE_ALL_BOT_SLUGS = [ ...ODIE_ALLOWED_BOTS, 'ciab-workflow-support_chat' ];

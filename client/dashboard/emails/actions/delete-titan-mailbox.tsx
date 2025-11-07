@@ -18,7 +18,6 @@ export const useDeleteTitanMailboxAction = (): Action< Email > => {
 	return {
 		id: 'delete-titan-mailbox',
 		label: __( 'Delete mailbox' ),
-		isDestructive: true,
 		// Using a modal to confirm deletion
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {

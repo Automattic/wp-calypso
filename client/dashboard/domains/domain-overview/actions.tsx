@@ -3,7 +3,7 @@ import {
 	domainQuery,
 	disconnectDomainMutation,
 	removePurchaseMutation,
-	sitePurchaseQuery,
+	purchaseQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -40,7 +40,7 @@ export default function Actions() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: purchase } = useQuery(
-		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id ?? '0', 10 ) )
+		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
 	const { mutate: disconnectDomain, isPending: isDisconnecting } = useMutation(
 		disconnectDomainMutation( domainName )
@@ -62,6 +62,9 @@ export default function Actions() {
 						}
 					),
 				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+				onSettled: () => {
+					setIsDisconnectDialogOpen( false );
+				},
 			} ),
 		[ disconnectDomain, createSuccessNotice, createErrorNotice ]
 	);
@@ -77,6 +80,9 @@ export default function Actions() {
 					router.navigate( { to: domainsRoute.fullPath } );
 				},
 				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+				onSettled: () => {
+					setIsDeleteDialogOpen( false );
+				},
 			} ),
 		[ purchase, deleteDomain, createSuccessNotice, createErrorNotice, router ]
 	);

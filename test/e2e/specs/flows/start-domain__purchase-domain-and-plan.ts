@@ -91,11 +91,13 @@ describe( DataHelper.createSuiteTitle( 'Domain-only flow: Purchase domain and pl
 			newUserDetails.body.bearer_token
 		);
 
-		await apiDeleteSite( restAPIClient, {
-			url: newSiteDetails.blog_details.url,
-			id: newSiteDetails.blog_details.blogid,
-			name: newSiteDetails.blog_details.blogname,
-		} );
+		if ( newSiteDetails ) {
+			await apiDeleteSite( restAPIClient, {
+				url: newSiteDetails.blog_details.url,
+				id: newSiteDetails.blog_details.blogid,
+				name: newSiteDetails.blog_details.blogname,
+			} );
+		}
 
 		await apiCloseAccount( restAPIClient, {
 			userID: newUserDetails.body.user_id,
