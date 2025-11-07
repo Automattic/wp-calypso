@@ -24,7 +24,7 @@ import {
 	commentAuthorAvatar,
 } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { Suspense, lazy, useCallback, useState } from 'react';
+import { Suspense, lazy, useCallback, useState, useEffect } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
@@ -105,6 +105,19 @@ function Help() {
 			} );
 		}
 	};
+
+	// Close the Help Center app on unmount.
+	// The Help Center is loaded only when opened, so we shouldn't restore its open state after a page refresh.
+	useEffect( () => {
+		const handleBeforeUnload = () => {
+			handleCloseHelpCenterApp();
+		};
+
+		window.addEventListener( 'beforeunload', handleBeforeUnload );
+		return () => {
+			window.removeEventListener( 'beforeunload', handleBeforeUnload );
+		};
+	}, [ handleCloseHelpCenterApp ] );
 
 	if ( isMenuPanelEnabled ) {
 		return (
