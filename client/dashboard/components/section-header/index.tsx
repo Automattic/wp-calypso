@@ -41,11 +41,6 @@ export const SectionHeader = ( {
 						<HeadingTag className="dashboard-section-header__heading" id={ headingId }>
 							{ title }
 						</HeadingTag>
-						{ description && (
-							<Text variant="muted" className="dashboard-section-header__description">
-								{ description }
-							</Text>
-						) }
 					</VStack>
 
 					{ /* The wrapper is always needed for view transitions. */ }
@@ -59,6 +54,11 @@ export const SectionHeader = ( {
 					</ButtonStack>
 				</HStack>
 			</HStack>
+			{ description && (
+				<Text variant="muted" className="dashboard-section-header__description">
+					{ description }
+				</Text>
+			) }
 		</VStack>
 	);
 };
