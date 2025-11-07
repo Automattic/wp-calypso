@@ -117,12 +117,9 @@ export class IndividualPurchasePage {
 		await this.page.fill( selectors.cancelDomainReasonTextArea, 'e2e testing' );
 		await this.page.check( selectors.cancelDomainCheckbox );
 
-		await Promise.all( [
-			// Extended timeout here due to this process often taking long time for
-			// domain-only accounts.
-			this.page.waitForURL( /.*/, { timeout: 60000 } ),
-			this.page.click( selectors.button( 'Cancel Domain' ) ),
-		] );
+		// Extended timeout here due to this process often taking long time for
+		// domain-only accounts.
+		await this.page.click( selectors.button( 'Cancel Domain' ), { timeout: 60000 } );
 	}
 
 	/* Cancellations */
@@ -131,10 +128,7 @@ export class IndividualPurchasePage {
 	 * Cancel the purchase.
 	 */
 	async cancelPurchase(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( selectors.cancelAndRefundButton ),
-		] );
+		await this.page.click( selectors.cancelAndRefundButton );
 
 		await this.page.click( selectors.cancelSubscriptionButton );
 

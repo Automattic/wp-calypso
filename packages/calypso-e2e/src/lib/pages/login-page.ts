@@ -47,10 +47,7 @@ export class LoginPage {
 		await this.fillUsername( username );
 		await this.clickSubmit();
 		await this.fillPassword( password );
-		await Promise.all( [
-			this.page.waitForURL( /.*/, { timeout: 20 * 1000 } ),
-			this.clickSubmit(),
-		] );
+		await this.clickSubmit();
 	}
 
 	/**
@@ -58,7 +55,7 @@ export class LoginPage {
 	 */
 	async submitVerificationCode( code: string ): Promise< void > {
 		await this.fillVerificationCode( code );
-		await Promise.all( [ this.page.waitForURL( /.*/ ), this.clickSubmit() ] );
+		await this.clickSubmit();
 	}
 
 	/**

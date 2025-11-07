@@ -49,10 +49,7 @@ export class GeneralSettingsPage {
 	 * Start the site launch process.
 	 */
 	async launchSite(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( selectors.launchSiteButton ),
-		] );
+		await this.page.click( selectors.launchSiteButton );
 	}
 
 	/**
@@ -69,7 +66,6 @@ export class GeneralSettingsPage {
 		//	- site deletion confirmation toast is shown.
 		//	- navigation to a new page, entering state where no site is selected.
 		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
 			this.page.waitForSelector( selectors.deleteSiteConfirmationSpan ),
 			this.page.click( selectors.button( 'Delete this site' ) ),
 		] );

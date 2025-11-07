@@ -86,10 +86,7 @@ export class PeoplePage {
 	 * @param {string} username Username of the user.
 	 */
 	async selectUser( username: string ): Promise< void > {
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( selectors.teamUser( username ) ),
-		] );
+		await this.page.click( selectors.teamUser( username ) );
 	}
 
 	/**
@@ -121,11 +118,7 @@ export class PeoplePage {
 	 */
 	async clickInviteUser(): Promise< void > {
 		await this.waitUntilLoaded();
-
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( selectors.invitePeopleButton ),
-		] );
+		await this.page.click( selectors.invitePeopleButton );
 	}
 
 	/**
@@ -163,11 +156,7 @@ export class PeoplePage {
 		}
 
 		await reloadAndRetry( this.page, waitForInviteToAppear );
-
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( selectors.invitedUser( emailAddress ) ),
-		] );
+		await this.page.click( selectors.invitedUser( emailAddress ) );
 	}
 
 	/**

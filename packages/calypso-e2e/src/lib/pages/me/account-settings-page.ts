@@ -61,11 +61,7 @@ export class AccountSettingsPage {
 			await page.waitForSelector( selectors.closeAccountButton );
 		}
 
-		// Wait for the async navigation after clicking on the initial `Close Account` link at /me/account.
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( selectors.closeAccountLink ),
-		] );
+		await this.page.click( selectors.closeAccountLink );
 
 		// This page is tricky. All the text and the close account button load in and are "visible",
 		// except they are then covered over with gray boxes. The button is still "clickable", but doesn't do anything.

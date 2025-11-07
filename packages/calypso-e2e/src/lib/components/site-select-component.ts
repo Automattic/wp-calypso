@@ -48,10 +48,7 @@ export class SiteSelectComponent {
 		// For some accounts with many sites, the search process takes a looooong time.
 		await this.page.waitForSelector( '.is-loading', { state: 'hidden', timeout: 60 * 1000 } );
 
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( `${ selectors.siteList } :text("${ url }")`, { timeout: 60 * 1000 } ),
-		] );
+		await this.page.click( `${ selectors.siteList } :text("${ url }")`, { timeout: 60 * 1000 } );
 
 		if ( navigatesHome ) {
 			// Assert the resulting URL is in the form of <protocol><calypsoBaseURL>/home/<url>.

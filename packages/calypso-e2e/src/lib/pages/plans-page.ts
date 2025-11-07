@@ -224,6 +224,6 @@ export class PlansPage {
 			buttonText: buttonText,
 		} );
 		// These action buttons trigger real page navigations.
-		await Promise.all( [ this.page.waitForURL( /.*/ ), this.page.click( selector ) ] );
+		await this.page.click( selector );
 	}
 }

@@ -270,6 +270,6 @@ export class StartImportFlow {
 	 * Navigate back one screen in the flow.
 	 */
 	async goBackOneScreen(): Promise< void > {
-		await Promise.all( [ this.page.waitForURL( /.*/ ), this.clickBack() ] );
+		await this.clickBack();
 	}
 }

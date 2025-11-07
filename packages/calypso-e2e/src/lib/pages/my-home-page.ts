@@ -45,10 +45,7 @@ export class MyHomePage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async visitSite(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( selectors.visitSiteButton ),
-		] );
+		await this.page.click( selectors.visitSiteButton );
 	}
 
 	/**
@@ -105,10 +102,7 @@ export class MyHomePage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickBuySuggestedDomain( buyDomainButton: string ): Promise< void > {
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( selectors.domainUpsellBuyDomain( buyDomainButton ) ),
-		] );
+		await this.page.click( selectors.domainUpsellBuyDomain( buyDomainButton ) );
 	}
 
 	/**

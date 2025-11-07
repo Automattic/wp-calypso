@@ -180,10 +180,7 @@ export class SidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async addSite(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( selectors.linkWithText( 'Add New Site' ) ),
-		] );
+		await this.page.click( selectors.linkWithText( 'Add New Site' ) );
 	}
 
 	/**

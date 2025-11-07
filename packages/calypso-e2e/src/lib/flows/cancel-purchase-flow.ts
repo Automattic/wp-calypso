@@ -29,10 +29,7 @@ export async function cancelPurchaseFlow(
 
 	await page.getByRole( 'button', { name: 'Submit' } ).click();
 
-	await Promise.all( [
-		page.waitForURL( /.*/, { timeout: 30 * 1000 } ),
-		page.getByRole( 'button', { name: 'Submit' } ).click(),
-	] );
+	await page.getByRole( 'button', { name: 'Submit' } ).click();
 }
 
 /**
@@ -77,7 +74,6 @@ export async function cancelAtomicPurchaseFlow(
 		.or( page.getByRole( 'button', { name: 'Continue' } ) );
 
 	await Promise.all( [
-		page.waitForURL( /.*/, { timeout: 30 * 1000 } ),
 		finalButton.waitFor( { state: 'visible' } ),
 		// Wait for button to be enabled
 		page.waitForFunction(

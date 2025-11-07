@@ -25,9 +25,6 @@ export class PublishedPostsListPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async visitPost( postNumber = 1 ): Promise< void > {
-		await Promise.all( [
-			this.page.waitForURL( /.*/ ),
-			this.page.click( `:nth-match(${ selectors.posts }, ${ postNumber })` ),
-		] );
+		await this.page.click( `:nth-match(${ selectors.posts }, ${ postNumber })` );
 	}
 }
