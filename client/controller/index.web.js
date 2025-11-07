@@ -147,9 +147,8 @@ export async function redirectLoggedOut( context, next ) {
 		return next();
 	}
 
-	// Handle the cookie-auth-missing case with re-check
 	// When wpcom-user-bootstrap is enabled, the user is loaded from the cached object on the window.
-	// This case confirms the user exists and is logged in when we suspect that may not be the case (given the missing auth cookie)
+	// This case confirms the user exists and is logged in when we suspect that may not be the case (given a missing auth cookie)
 	if ( isCookieAuthMissing() && config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		try {
 			const userData = await rawCurrentUserFetch();
