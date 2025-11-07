@@ -161,7 +161,7 @@ export const usePersistedHistory = () => {
 		const urlParams = new URLSearchParams( window.location.search );
 		const helpCenterParam = urlParams.get( 'help-center' );
 
-		if ( persistedHistory ) {
+		if ( persistedHistory && helpCenterParam !== 'happiness-engineer' ) {
 			const history = new MemoryHistory( persistedHistory.entries, persistedHistory.index );
 			setHistory( history );
 
