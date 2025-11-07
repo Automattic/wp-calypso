@@ -1,5 +1,6 @@
 import { fetchSiteDomains, setPrimaryDomain } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { domainsQuery } from './domains';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
 
@@ -15,6 +16,6 @@ export const siteSetPrimaryDomainMutation = () =>
 			setPrimaryDomain( siteId, domain ),
 		onSuccess: ( data, { siteId } ) => {
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
-			queryClient.invalidateQueries( siteDomainsQuery( siteId ) );
+			queryClient.invalidateQueries( domainsQuery() );
 		},
 	} );
