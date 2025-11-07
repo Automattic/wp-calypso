@@ -44,66 +44,6 @@
 }
 
 .plugins-browser-list__carousel .dot-pager__controls {
-	justify-content: flex-end;
-	margin-block-end: 24px;
-	margin-block-start: -20px;
-
-	.dot-pager__control-choose-page {
-		display: none;
-	}
-	.dot-pager__control-prev,
-	.dot-pager__control-next {
-		width: 32px;
-		height: 32px;
-		border-radius: 100%;
-		border: 1px solid var(--studio-gray-5);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-}
-
-.card.plugins-browser-list__elements--carousel {
-	display: grid;
-	grid-template-columns: repeat( 3, 1fr );
-	gap: 24px;
-}
-
-.card.plugins-browser-list__elements--horizontal-scroll {
-	flex-wrap: nowrap;
-	overflow-x: auto;
-	gap: 0 18px;
-	padding-block-end: 12px;
-	scroll-snap-type: x proximity;
-	-webkit-overflow-scrolling: touch;
-	margin-inline: 0;
-	padding-inline: 0;
-	scroll-padding-inline: 0;
-
-	@media ( max-width: $break-medium ) {
-		margin-inline: -56px;
-		padding-inline: 56px;
-		scroll-padding-inline: 56px;
-	}
-
-	@media ( max-width: $break-small ) {
-		margin-inline: -16px;
-		padding-inline: 56px;
-		scroll-padding-inline: 16px;
-	}
-
-	.plugins-browser-item {
-		flex: 0 0 clamp( 260px, 75vw, 480px );
-		width: clamp( 260px, 75vw, 480px );
-		scroll-snap-align: start;
-	}
-}
-
-.card.plugins-browser-list__elements--carousel .plugins-browser-item {
-	margin: 0;
-	width: 100%;
-}
-
-.plugins-results-header:has(+ .plugins-browser-list__carousel .plugins-browser-list__carousel-pager) .plugins-results-header__actions{
-	margin-inline-end: 90px;
+	margin-top: 16px;
+	margin-bottom: 0;
 }

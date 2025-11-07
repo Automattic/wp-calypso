@@ -3,7 +3,7 @@ import { Icon, arrowRight, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
-import { Children, useState, useEffect, ReactNode, ReactElement } from 'react';
+import { Children, useState, useEffect, ReactNode } from 'react';
 import { Swipeable } from '../swipeable';
 
 import './style.scss';
