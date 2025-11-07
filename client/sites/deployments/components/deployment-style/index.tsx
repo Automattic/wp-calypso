@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import { HostingCardHeading, HostingCardDescription } from 'calypso/components/hosting-card';
@@ -61,9 +62,10 @@ export const DeploymentStyle = ( {
 				<SupportInfo
 					popoverClassName="github-deployments-deployments-style-popover"
 					// @todo Move to contextLinks
-					link="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/"
-					supportPostId={ 99879 }
-					supportBlogId={ 33534099 }
+					link={ localizeUrl(
+						'https://wordpress.com/support/github-deployments/workflow-recipes/'
+					) }
+					supportPostId={ 421265 }
 					privacyLink={ false }
 				>
 					{ supportMessage }

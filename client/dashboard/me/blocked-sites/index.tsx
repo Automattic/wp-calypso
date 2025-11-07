@@ -1,4 +1,5 @@
 import { blockedSitesInfiniteQuery, unblockSiteMutation } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useInfiniteQuery } from '@tanstack/react-query';
 import { ExternalLink, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -130,14 +131,15 @@ export default function BlockedSites() {
 					title={ __( 'Blocked sites' ) }
 					description={ createInterpolateElement(
 						__(
-							'Blocked sites will not appear in your Reader and will not be recommended to you. <link>Learn more</link>'
+							'Blocked sites will not appear in your Reader and will not be recommended to you. <learnMoreLink />'
 						),
 						{
-							link: (
+							learnMoreLink: (
 								<InlineSupportLink
 									supportPostId={ 32011 }
-									// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-									supportLink="https://wordpress.com/support/reader/#interact-with-posts"
+									supportLink={ localizeUrl(
+										'https://wordpress.com/support/reader/#interact-with-posts'
+									) }
 								/>
 							),
 						}
