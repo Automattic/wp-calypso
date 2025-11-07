@@ -254,7 +254,7 @@ export default function DomainForwardingForm( {
 									initialOpen={ hasNonDefaultAdvancedValues }
 								>
 									<PanelRow>
-										<VStack spacing={ 6 }>
+										<VStack spacing={ 6 } style={ { marginTop: '12px' } }>
 											<RadioControl
 												label={ isPermanentField.label }
 												selected={ formData.isPermanent ? 'true' : 'false' }
