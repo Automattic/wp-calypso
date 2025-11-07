@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { ResetViewAction } from '../../app/dataviews/reset-view-action';
+import { DataViews } from '../../app/dataviews';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { SiteLink } from '../site-fields';
@@ -33,7 +33,6 @@ export const SitesDataViews = ( {
 	isLoading,
 	empty,
 	onChangeView,
-	isViewModified,
 	onResetView,
 }: {
 	view: View;
@@ -44,8 +43,7 @@ export const SitesDataViews = ( {
 	isLoading: boolean;
 	empty: ReactNode;
 	onChangeView: ( view: View ) => void;
-	isViewModified: boolean;
-	onResetView: () => void;
+	onResetView?: () => void;
 } ) => {
 	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/es-site-list' )
 		? esFilterSortAndPaginate( sites, view, totalItems )
@@ -62,12 +60,12 @@ export const SitesDataViews = ( {
 					view={ view }
 					isLoading={ isLoading }
 					onChangeView={ onChangeView }
+					onResetView={ onResetView }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }
 					config={ { perPageSizes: DEFAULT_PER_PAGE_SIZES } }
 					empty={ empty }
 					renderItemLink={ ( { item, ...props } ) => <SiteLink { ...props } site={ item } /> }
-					header={ isViewModified && <ResetViewAction onResetView={ onResetView } /> }
 				/>
 			</DataViewsCard>
 			<GuidedTourContextProvider
