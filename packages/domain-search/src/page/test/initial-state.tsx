@@ -17,7 +17,7 @@ describe( 'InitialState', () => {
 		render(
 			<TestDomainSearch
 				events={ { onExternalDomainClick: jest.fn() } }
-				config={ { allowsUsingOwnDomain: true } }
+				config={ { allowsUsingOwnDomain: true, showAlreadyOwnDomainCTAInInitialState: true } }
 			>
 				<InitialState />
 			</TestDomainSearch>
@@ -36,12 +36,24 @@ describe( 'InitialState', () => {
 		expect( screen.queryByText( /already have a domain/i ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'does not render the already own domain CTA when config.showAlreadyOwnDomainCTAInInitialState is false', () => {
+		render(
+			<TestDomainSearch
+				config={ { allowsUsingOwnDomain: true, showAlreadyOwnDomainCTAInInitialState: false } }
+			>
+				<InitialState />
+			</TestDomainSearch>
+		);
+
+		expect( screen.queryByText( /already have a domain/i ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'calls onExternalDomainClick when CTA is clicked', () => {
 		const onExternalDomainClick = jest.fn();
 
 		render(
 			<TestDomainSearch
-				config={ { allowsUsingOwnDomain: true } }
+				config={ { allowsUsingOwnDomain: true, showAlreadyOwnDomainCTAInInitialState: true } }
 				events={ { onExternalDomainClick } }
 			>
 				<InitialState />
