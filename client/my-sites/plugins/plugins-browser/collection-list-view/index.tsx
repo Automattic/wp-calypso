@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useViewportMatch } from '@wordpress/compose';
 import { ReactElement } from 'react';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { useGetCategoryUrl } from 'calypso/my-sites/plugins/categories/use-get-category-url';
@@ -28,6 +29,17 @@ export default function CollectionListView( {
 	const getCategoryUrl = useGetCategoryUrl();
 	const categories = useCategories( [ category ] );
 
+	const isUseCarousel = isEnabled( 'marketplace-redesign' );
+	const isLessThanLargeViewport = useViewportMatch( 'large', '<' );
+	const isLessThanWideViewport = useViewportMatch( 'wide', '<' );
+
+	let carouselPageSize = 6;
+	if ( isLessThanLargeViewport ) {
+		carouselPageSize = 1;
+	} else if ( isLessThanWideViewport ) {
+		carouselPageSize = 4;
+	}
+
 	const plugins = categories[ category ].preview.slice( 0, COLLECTION_LIST_LENGTH );
 
 	if ( isJetpackSelfHosted ) {
@@ -50,8 +62,8 @@ export default function CollectionListView( {
 			resultCount={ false }
 			search=""
 			extended={ false }
-			useCarousel={ isEnabled( 'marketplace-redesign' ) }
-			carouselPageSize={ 6 }
+			useCarousel={ isUseCarousel }
+			carouselPageSize={ carouselPageSize }
 		/>
 	);
 }
