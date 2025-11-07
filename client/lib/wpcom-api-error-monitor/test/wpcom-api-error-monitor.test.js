@@ -8,6 +8,9 @@ jest.mock( 'calypso/lib/user/store', () => ( {
 jest.mock( 'calypso/lib/user/shared-utils', () => ( {
 	getLogoutUrl: jest.fn( () => 'https://example.com/logout' ),
 } ) );
+jest.mock( 'calypso/lib/paths', () => ( {
+	login: jest.fn( () => '/log-in' ),
+} ) );
 
 import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 import { clearStore } from 'calypso/lib/user/store';
@@ -24,7 +27,7 @@ describe( 'WPCOMApiErrorMonitor', () => {
 	beforeEach( () => {
 		// Reset window.location before each test
 		delete window.location;
-		window.location = { href: '' };
+		window.location = { href: '', origin: 'https://wordpress.com' };
 
 		jest.clearAllMocks();
 
@@ -126,10 +129,13 @@ describe( 'WPCOMApiErrorMonitor', () => {
 			await flushPromises();
 
 			expect( clearStore ).toHaveBeenCalled();
-			expect( getLogoutUrl ).toHaveBeenCalledWith( {
-				logout_URL: 'https://example.com/logout?_wpnonce=nonce',
-				localeSlug: 'en',
-			} );
+			expect( getLogoutUrl ).toHaveBeenCalledWith(
+				{
+					logout_URL: 'https://example.com/logout?_wpnonce=nonce',
+					localeSlug: 'en',
+				},
+				'/log-in'
+			);
 			expect( window.location.href ).toBe( 'https://example.com/logout' );
 		} );
 	} );
