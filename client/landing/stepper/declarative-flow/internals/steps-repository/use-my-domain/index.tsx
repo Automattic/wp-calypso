@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useLocation } from 'react-router';
@@ -11,9 +11,12 @@ import {
 	UseMyDomainInputMode,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { useDispatch } from 'calypso/state';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 
@@ -32,10 +35,20 @@ const UseMyDomain: StepType< {
 	const { goNext, goBack, submit } = navigation;
 	const location = useLocation();
 	const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
+	const reduxDispatch = useDispatch();
+	const { siteId } = useSiteData();
 
 	const [ useMyDomainMode, setUseMyDomainMode ] = useState< UseMyDomainInputMode >(
 		inputMode.domainInput
 	);
+
+	// Sync site ID from stepper context to Redux store
+	// This ensures components using Redux connect() can access the selected site
+	useEffect( () => {
+		if ( siteId ) {
+			reduxDispatch( setSelectedSiteId( siteId ) );
+		}
+	}, [ siteId, reduxDispatch ] );
 
 	const handleGoBack = () => {
 		if ( String( getQueryArg( window.location.search, 'step' ) ?? '' ) === 'transfer-or-connect' ) {

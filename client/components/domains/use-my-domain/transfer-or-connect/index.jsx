@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -126,6 +127,7 @@ function DomainTransferOrConnect( {
 	return (
 		<>
 			<QueryProductsList />
+			{ selectedSite?.ID && <QuerySitePlans siteId={ selectedSite.ID } /> }
 			<Card className={ baseClassName + '__content' }>
 				{ content.map( ( optionProps, index ) => (
 					<OptionContent
