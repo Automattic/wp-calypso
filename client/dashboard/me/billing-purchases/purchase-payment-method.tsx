@@ -39,7 +39,7 @@ export function PurchasePaymentMethod( {
 		return null;
 	}
 
-	if ( ! purchase.is_rechargable && purchase.is_auto_renew_enabled ) {
+	if ( ! purchase.is_rechargable ) {
 		return (
 			<div>
 				<Link to={ changePaymentMethodRoute.fullPath } params={ { purchaseId: purchase.ID } }>
