@@ -10,9 +10,9 @@ describe( 'useQueryHandler', () => {
 		sessionStorage.clear();
 	} );
 
-	it( 'should initialize with undefined query when no initial values provided', () => {
+	it( 'should initialize with empty string when no initial values provided', () => {
 		const { result } = renderHook( () => useQueryHandler( {} ) );
-		expect( result.current.query ).toBeUndefined();
+		expect( result.current.query ).toBe( '' );
 	} );
 
 	it( 'should initialize with provided initialQuery', () => {
@@ -39,9 +39,24 @@ describe( 'useQueryHandler', () => {
 		expect( result.current.query ).toBe( 'test-site' );
 	} );
 
+	it( 'should initialize with empty string when currentSiteUrl is a custom domain', () => {
+		const { result } = renderHook( () =>
+			useQueryHandler( { currentSiteUrl: 'https://test-site.com' } )
+		);
+		expect( result.current.query ).toBe( '' );
+	} );
+
 	it( 'should initialize with query from sessionStorage when available', () => {
 		sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
 		const { result } = renderHook( () => useQueryHandler( {} ) );
+		expect( result.current.query ).toBe( 'stored-domain' );
+	} );
+
+	it( 'should initialize with query from sessionStorage when available even if currentSiteUrl is present', () => {
+		sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
+		const { result } = renderHook( () =>
+			useQueryHandler( { currentSiteUrl: 'https://test-site.wordpress.com' } )
+		);
 		expect( result.current.query ).toBe( 'stored-domain' );
 	} );
 
@@ -78,7 +93,7 @@ describe( 'useQueryHandler', () => {
 		} );
 
 		const { result } = renderHook( () => useQueryHandler( {} ) );
-		expect( result.current.query ).toBeUndefined();
+		expect( result.current.query ).toBe( '' );
 
 		Storage.prototype.getItem = originalGetItem;
 	} );
