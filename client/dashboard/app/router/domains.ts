@@ -101,14 +101,6 @@ export const domainRoute = createRoute( {
 
 		return domain;
 	},
-	validateSearch: ( search ): { error?: string; error_description?: string } => {
-		// Validate query parameters for Domain Connect flow
-		return {
-			error: typeof search.error === 'string' ? search.error : undefined,
-			error_description:
-				typeof search.error_description === 'string' ? search.error_description : undefined,
-		};
-	},
 } ).lazy( () =>
 	import( '../../domains/domain' ).then( ( d ) =>
 		createLazyRoute( 'domain' )( {
@@ -556,9 +548,18 @@ export const domainConnectionSetupRoute = createRoute( {
 			domainConnectionSetupInfoQuery(
 				domainName,
 				domain.blog_id,
-				`${ location.origin + location.pathname }`
+				`${ location.origin + location.pathname }?step=dc_return`
 			)
 		);
+	},
+	validateSearch: ( search ): { error?: string; error_description?: string; step?: string } => {
+		// Validate query parameters for Domain Connect flow
+		return {
+			error: typeof search.error === 'string' ? search.error : undefined,
+			error_description:
+				typeof search.error_description === 'string' ? search.error_description : undefined,
+			step: typeof search.step === 'string' ? search.step : undefined,
+		};
 	},
 } ).lazy( () =>
 	config.isEnabled( 'domain-connection-redesign' )
