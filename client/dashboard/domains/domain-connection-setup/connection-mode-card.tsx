@@ -55,8 +55,10 @@ export default function ConnectionModeCard( {
 }: ConnectionModeCardProps ) {
 	const isSelected = selectedMode === mode;
 
-	// Track which steps are expanded
-	const [ stepsExpanded, setStepsExpanded ] = useState< boolean[] >( steps.map( () => false ) );
+	// Track which steps are expanded (first step expanded by default)
+	const [ stepsExpanded, setStepsExpanded ] = useState< boolean[] >(
+		steps.map( ( _, index ) => index === 0 )
+	);
 
 	const handleStepChange = ( index: number, checked: boolean ) => {
 		onStepChange( index, checked );

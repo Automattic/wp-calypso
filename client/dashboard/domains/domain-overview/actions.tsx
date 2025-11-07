@@ -13,12 +13,14 @@ import {
 	__experimentalConfirmDialog as ConfirmDialog,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { domainRoute, domainsRoute, domainTransferRoute } from '../../app/router/domains';
 import { ActionList } from '../../components/action-list';
+import InlineSupportLink from '../../components/inline-support-link';
 import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
@@ -214,7 +216,24 @@ export default function Actions() {
 				onCancel={ () => setIsDisconnectDialogOpen( false ) }
 				onConfirm={ onDisconnectConfirm }
 			>
-				{ __( 'Are you sure you want to detach this domain?' ) }
+				<SectionHeader
+					title={ sprintf(
+						/* translators: %s is the domain name */
+						__( 'Detach domain %s' ),
+						domainName
+					) }
+					description={ createInterpolateElement(
+						__( 'Are you sure you want to detach this domain? <learnMoreLink />' ),
+						{
+							learnMoreLink: (
+								<InlineSupportLink
+									onClick={ () => setIsDisconnectDialogOpen( false ) }
+									supportContext="domain-detach-from-site"
+								/>
+							),
+						}
+					) }
+				/>
 			</ConfirmDialog>
 
 			<RemoveDomainDialog

@@ -591,6 +591,34 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/custom-dns/edit-or-delete-dns-records/',
 		post_id: 386584,
 	},
+	'domain-forwarding': {
+		link: 'https://wordpress.com/support/domains/domain-forwarding/',
+		post_id: 258498,
+	},
+	'domain-dnssec': {
+		link: 'https://wordpress.com/support/domains/dnssec-on-wordpress-com/',
+		post_id: 369656,
+	},
+	'domain-glue-records': {
+		link: 'https://wordpress.com/support/domains/manage-your-domains-glue-records/',
+		post_id: 318606,
+	},
+	'domain-detach-from-site': {
+		link: 'https://wordpress.com/support/domains/disconnect-a-domain-from-a-site/',
+		post_id: 318512,
+	},
+	'domain-email-google': {
+		link: 'https://wordpress.com/support/add-email/add-email-through-google-workspace/',
+		post_id: 49342,
+	},
+	'domain-email-zoho': {
+		link: 'https://wordpress.com/support/add-email/add-email-through-zoho-mail/',
+		post_id: 50985,
+	},
+	'domain-email-o365': {
+		link: 'https://wordpress.com/support/add-email/add-email-through-office-365/',
+		post_id: 78065,
+	},
 	'domain-designated-agent': {
 		link: 'https://wordpress.com/support/domains/update-contact-information/#designated-agent',
 		post_id: 3441,

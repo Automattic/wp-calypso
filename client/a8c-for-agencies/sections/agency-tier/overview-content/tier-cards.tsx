@@ -8,13 +8,13 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
-import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentAgencyTier from '../lib/get-current-agency-tier';
@@ -81,7 +81,9 @@ export default function TierCards( {
 						<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 							<VStack spacing={ 2 } style={ { flex: 1, justifyContent: 'flex-start' } }>
 								<HStack>
-									<SectionHeader title={ tier.name } />
+									<Heading level={ 3 } weight={ 500 }>
+										{ tier.name }
+									</Heading>
 									{ isCurrentTier && ! isEarlyAccess && (
 										<Badge
 											style={ { minWidth: 'fit-content' } }

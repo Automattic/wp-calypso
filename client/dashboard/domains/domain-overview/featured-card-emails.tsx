@@ -7,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
 import { emailsRoute } from '../../app/router/emails';
 import OverviewCard from '../../components/overview-card';
+import { Truncate } from '../../components/truncate';
 import type { EmailProvider, Mailbox } from '@automattic/api-core';
 
 const getAccountTypeLabel = ( accountType: EmailProvider ) => {
@@ -63,7 +64,11 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 	return (
 		<OverviewCard
 			title={ __( 'Emails' ) }
-			heading={ <span style={ { wordBreak: 'break-all' } }>{ email }</span> }
+			heading={
+				<Truncate tooltip={ email } numberOfLines={ 1 }>
+					{ email }
+				</Truncate>
+			}
 			link={
 				router.buildLocation( {
 					to: emailsRoute.fullPath,

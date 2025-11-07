@@ -178,7 +178,6 @@ export type OdieChat = {
 };
 
 export type Chat = OdieChat & {
-	supportInteractionId: string | null;
 	conversationId: string | null;
 	clientId?: string;
 	provider: SupportProvider;

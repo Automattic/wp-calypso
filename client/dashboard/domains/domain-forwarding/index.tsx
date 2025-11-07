@@ -2,6 +2,7 @@ import { domainForwardingQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -11,6 +12,7 @@ import {
 	domainForwardingEditRoute,
 } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews-card';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -150,6 +152,12 @@ function DomainForwarding() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
+					description={ createInterpolateElement(
+						__( 'Forward your domain or subdomain to another address. <learnMoreLink />' ),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="domain-forwarding" />,
+						}
+					) }
 					actions={
 						<RouterLinkButton
 							to={ domainForwardingAddRoute.fullPath }
