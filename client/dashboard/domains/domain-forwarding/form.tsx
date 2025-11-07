@@ -193,8 +193,8 @@ export default function DomainForwardingForm( {
 				id: 'source',
 				children: [ 'sourceType', 'subdomain' ],
 				layout: {
-					type: 'row',
-					alignment: 'top',
+					type: 'row' as const,
+					alignment: 'start' as const,
 					styles: {
 						sourceType: { flex: 1 },
 						subdomain: { flex: 3 },
