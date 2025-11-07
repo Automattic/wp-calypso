@@ -158,13 +158,19 @@ export const usePersistedHistory = () => {
 	}, [ history ] );
 
 	useEffect( () => {
+		const urlParams = new URLSearchParams( window.location.search );
+		const helpCenterParam = urlParams.get( 'help-center' );
+
 		if ( persistedHistory ) {
 			const history = new MemoryHistory( persistedHistory.entries, persistedHistory.index );
 			setHistory( history );
-			setState( {
-				action: history.action,
-				location: history.location,
-			} );
+
+			if ( helpCenterParam !== 'happiness-engineer' ) {
+				setState( {
+					action: history.action,
+					location: history.location,
+				} );
+			}
 		}
 	}, [ persistedHistory ] );
 
