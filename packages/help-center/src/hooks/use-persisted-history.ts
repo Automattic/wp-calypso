@@ -165,12 +165,10 @@ export const usePersistedHistory = () => {
 			const history = new MemoryHistory( persistedHistory.entries, persistedHistory.index );
 			setHistory( history );
 
-			if ( helpCenterParam !== 'happiness-engineer' ) {
-				setState( {
-					action: history.action,
-					location: history.location,
-				} );
-			}
+			setState( {
+				action: history.action,
+				location: history.location,
+			} );
 		}
 	}, [ persistedHistory ] );
 
