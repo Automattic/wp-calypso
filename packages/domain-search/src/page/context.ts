@@ -63,6 +63,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		deemphasizedTlds: [],
 		includeDotBlogSubdomain: false,
 		allowsUsingOwnDomain: false,
+		showAlreadyOwnDomainCTAInInitialState: true,
 		includeOwnedDomainInSuggestions: false,
 		allowedTlds: [],
 		numberOfDomainsResultsPerPage: 10,
