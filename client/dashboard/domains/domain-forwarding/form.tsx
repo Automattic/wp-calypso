@@ -213,13 +213,14 @@ export default function DomainForwardingForm( {
 
 	const [ currentForm, setForm ] = useState( form );
 
+	// Reflow the form based on the width of the container for mobile/desktop
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
 		if ( firstEntry ) {
-			if ( firstEntry.contentRect.width <= 535 ) {
-				setForm( mobileForm );
-			} else {
+			if ( firstEntry.contentRect.width > 535 ) {
 				setForm( form );
+			} else {
+				setForm( mobileForm );
 			}
 		}
 	} );
