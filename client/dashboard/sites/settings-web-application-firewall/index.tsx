@@ -45,10 +45,12 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 					title={ __( 'Web Application Firewall (WAF)' ) }
 					description={ createInterpolateElement(
 						__(
-							'Our web application firewall (WAF) examines incoming traffic to your website and decides to allow or block it based on various rules. <link>Learn more</link>'
+							'Our web application firewall (WAF) examines incoming traffic to your website and decides to allow or block it based on various rules. <learnMoreLink />'
 						),
 						{
-							link: <InlineSupportLink supportContext="security-web-application-firewall" />,
+							learnMoreLink: (
+								<InlineSupportLink supportContext="security-web-application-firewall" />
+							),
 						}
 					) }
 				/>

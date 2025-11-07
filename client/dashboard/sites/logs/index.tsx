@@ -132,9 +132,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				<PageHeader
 					title={ __( 'Logs' ) }
 					description={ createInterpolateElement(
-						__(
-							'View and download various server logs. <learnMoreLink>Learn more</learnMoreLink>'
-						),
+						__( 'View and download various server logs. <learnMoreLink />' ),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="site-monitoring-logs" />,
 						}
