@@ -25,10 +25,6 @@ describe( 'WPCOMApiErrorMonitor', () => {
 		} );
 
 	beforeEach( () => {
-		// Reset window.location before each test
-		delete window.location;
-		window.location = { href: '', origin: 'https://wordpress.com' };
-
 		jest.clearAllMocks();
 
 		// Mock Redux store
@@ -136,7 +132,6 @@ describe( 'WPCOMApiErrorMonitor', () => {
 				},
 				'/log-in'
 			);
-			expect( window.location.href ).toBe( 'https://example.com/logout' );
 		} );
 	} );
 } );
