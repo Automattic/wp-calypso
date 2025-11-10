@@ -4,17 +4,14 @@ export type DomainsView = ViewTable | ViewList | ViewPickerGrid;
 
 // Base properties that are common to all view types
 const BASE_VIEW_PROPS = {
-	filters: [] as any[],
+	type: 'table' as const,
 	sort: {
 		field: 'domain',
 		direction: 'asc' as const,
 	},
-	page: 1,
 	perPage: 10,
-	search: '',
 	showMedia: false,
 	titleField: 'domain',
-	// descriptionField: 'domain_type',
 	fields: [
 		// 'owner',
 		'blog_name',

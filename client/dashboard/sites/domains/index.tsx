@@ -1,12 +1,12 @@
 import { domainsQuery, siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
+import { usePersistentView, DataViews } from '../../app/dataviews';
+import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -14,7 +14,6 @@ import PageLayout from '../../components/page-layout';
 import { AddDomainButton } from '../../domains/add-domain-button';
 import { useActions, useFields, DEFAULT_LAYOUTS, SITE_CONTEXT_VIEW } from '../../domains/dataviews';
 import PrimaryDomainSelector from './primary-domain-selector';
-import type { DomainsView } from '../../domains/dataviews';
 import type { DomainSummary } from '@automattic/api-core';
 
 function getDomainId( domain: DomainSummary ) {
@@ -40,10 +39,13 @@ function SiteDomains() {
 
 	const actions = useActions( { user, sites: [ site ] } );
 
-	const [ view, setView ] = useState< DomainsView >( () => ( {
-		...SITE_CONTEXT_VIEW,
-		type: 'table',
-	} ) );
+	const searchParams = siteDomainsRoute.useSearch();
+
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'site-domains',
+		defaultView: SITE_CONTEXT_VIEW,
+		queryParams: searchParams,
+	} );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		siteDomains ?? [],
@@ -86,7 +88,8 @@ function SiteDomains() {
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }
-					onChangeView={ ( nextView ) => setView( () => nextView as DomainsView ) }
+					onChangeView={ updateView }
+					onResetView={ resetView }
 					view={ view }
 					actions={ actions }
 					search
