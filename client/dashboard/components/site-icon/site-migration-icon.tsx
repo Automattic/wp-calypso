@@ -6,7 +6,13 @@ export default function SiteMigrationIcon( {
 	size?: number;
 } ) {
 	return (
-		<svg className={ className } height={ size } width={ size } viewBox="0 0 56 56">
+		<svg
+			className={ className }
+			style={ { color: '#3858E9' } }
+			height={ size }
+			width={ size }
+			viewBox="0 0 56 56"
+		>
 			<g clipPath="url(#clip0_3923_15349)">
 				<path
 					d="M0 4C0 1.79086 1.79086 0 4 0H52C54.2091 0 56 1.79086 56 4V52C56 54.2091 54.2091 56 52 56H4C1.79086 56 0 54.2091 0 52V4Z"

@@ -4,11 +4,20 @@ import {
 	type DomainConnectionSetupModeValue,
 	DomainMappingStatus,
 } from '@automattic/api-core';
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	__experimentalHStack as HStack,
+	Button,
+	Icon,
+} from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { globe } from '@wordpress/icons';
 import { useState } from 'react';
+import { Card, CardBody } from '../../components/card';
 import ConnectionModeCard from './connection-mode-card';
 import DNSRecordsDataView from './dns-records-dataview';
+import DomainConnectCard from './domain-connect-card';
 import NameserversDataView from './nameservers-dataview';
 
 interface DomainConnectionSetupProps {
@@ -18,6 +27,8 @@ interface DomainConnectionSetupProps {
 	onVerifyConnection: ( mode: DomainConnectionSetupModeValue ) => void;
 	isUpdatingConnectionMode: boolean;
 	domainMappingStatus: DomainMappingStatus;
+	queryError?: string | null;
+	queryErrorDescription?: string | null;
 }
 
 export default function DomainConnectionSetup( {
@@ -26,11 +37,17 @@ export default function DomainConnectionSetup( {
 	domainMappingStatus,
 	domainName,
 	domainConnectionSetupInfo,
+	queryError,
+	queryErrorDescription,
 }: DomainConnectionSetupProps ) {
+	const domainConnectAvailable =
+		domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting !== null;
+	const recommendedMode = domainMappingStatus.has_mx_records
+		? DomainConnectionSetupMode.ADVANCED
+		: DomainConnectionSetupMode.SUGGESTED;
+
 	const [ connectionMode, setConnectionMode ] = useState< DomainConnectionSetupModeValue >(
-		domainMappingStatus.has_mx_records
-			? DomainConnectionSetupMode.ADVANCED
-			: DomainConnectionSetupMode.SUGGESTED
+		domainConnectAvailable ? DomainConnectionSetupMode.DC : recommendedMode
 	);
 	const [ suggestedStepsCompleted, setSuggestedStepsCompleted ] = useState< boolean[] >( [
 		false,
@@ -144,17 +161,50 @@ export default function DomainConnectionSetup( {
 		} );
 	};
 
+	if (
+		connectionMode === DomainConnectionSetupMode.DC &&
+		domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting !== null
+	) {
+		return (
+			<div className="domain-connection-setup">
+				<DomainConnectCard
+					onChangeSetupMode={ () => setConnectionMode( recommendedMode ) }
+					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.DC ) }
+					isUpdatingConnectionMode={ isUpdatingConnectionMode }
+					error={ queryError }
+					errorDescription={ queryErrorDescription }
+				/>
+			</div>
+		);
+	}
+
 	return (
 		<div className="domain-connection-setup">
 			<VStack spacing={ 4 }>
+				{ domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting !== null && (
+					<Card>
+						<CardBody>
+							<HStack spacing={ 2 } justify="flex-start">
+								<Icon icon={ globe } />
+								<Text>{ __( 'This domain name can be automatically connected.' ) }</Text>
+								<Button
+									variant="link"
+									onClick={ () => setConnectionMode( DomainConnectionSetupMode.DC ) }
+								>
+									{ __( 'Use domain connect' ) }
+								</Button>
+							</HStack>
+						</CardBody>
+					</Card>
+				) }
 				<ConnectionModeCard
 					mode={ DomainConnectionSetupMode.SUGGESTED }
 					title={ __( 'I only use this domain name for my website' ) }
-					description={ __( "You'll update your name servers to point to WordPress.com" ) }
+					description={ __( 'You’ll update your name servers to point to WordPress.com' ) }
 					infoText={ sprintf(
 						// translators: %s is the domain name
 						__(
-							"Name servers connect your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We'll email you when it's done."
+							'Name servers connect your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
 						),
 						domainName
 					) }
@@ -176,7 +226,7 @@ export default function DomainConnectionSetup( {
 					infoText={ sprintf(
 						// translators: %s is the domain name
 						__(
-							"DNS records point your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We'll email you when it's done."
+							'DNS records point your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
 						),
 						domainName
 					) }

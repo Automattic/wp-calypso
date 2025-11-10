@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import getMostRecentOpenLiveInteraction from '../components/notices/get-most-recent-open-live-interaction';
 import {
@@ -9,13 +10,14 @@ import {
 	getOdieErrorMessageNonEligible,
 	getExistingConversationMessage,
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
+	getErrorMessageUnknownError,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
-import type { Chat, Message, ReturnedChat } from '../types';
+import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
 
 const getErrorMessageForSiteIdAndInternalMessageId = (
 	selectedSiteId: number | null | undefined,
@@ -48,11 +50,13 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
-	const { addEventToInteraction } = useManageSupportInteraction();
+	const { addEventToInteraction, startNewInteraction } = useManageSupportInteraction();
 	const createZendeskConversation = useCreateZendeskConversation();
 
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [ shouldCreateConversation, setShouldCreateConversation ] = useState< {
 		createdFrom?: string;
 		isFromError?: boolean;
@@ -79,7 +83,17 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
 		forceEmailSupport,
+		trackEvent,
 	} = useOdieAssistantContext();
+
+	const updateInteractionContext = useCallback(
+		( interaction: SupportInteraction ) => {
+			const params = new URLSearchParams( location.search );
+			params.set( 'id', interaction.uuid );
+			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+		},
+		[ location.pathname, location.search, navigate ]
+	);
 
 	const hasBeenWarnedAboutExistingConversation = chat?.messages?.some(
 		( message ) =>
@@ -179,7 +193,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		onMutate: () => {
 			setChatStatus( 'sending' );
 		},
-		onSuccess: ( returnedChat ) => {
+		onSuccess: async ( returnedChat ) => {
 			if (
 				! returnedChat.messages ||
 				returnedChat.messages.length === 0 ||
@@ -208,13 +222,30 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				return;
 			}
 
-			if ( ! odieId ) {
-				addEventToInteraction.mutate( {
-					interactionId: currentSupportInteraction!.uuid,
-					eventData: {
-						event_external_id: returnedChat.chat_id.toString(),
+			const chatId = returnedChat.chat_id;
+			let supportInteraction = currentSupportInteraction;
+
+			try {
+				if ( ! supportInteraction && chatId ) {
+					supportInteraction = await startNewInteraction( {
+						event_external_id: chatId.toString(),
 						event_source: 'odie',
-					},
+					} );
+				} else if ( supportInteraction && ! odieId && chatId ) {
+					supportInteraction = await addEventToInteraction.mutateAsync( {
+						interactionId: supportInteraction.uuid,
+						eventData: {
+							event_external_id: chatId.toString(),
+							event_source: 'odie',
+						},
+					} );
+				}
+			} catch ( error ) {
+				trackEvent( 'error_updating_support_interaction', {
+					error_message:
+						error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
+					existing_interaction_id: supportInteraction?.uuid ?? null,
+					chat_id: chatId ?? null,
 				} );
 			}
 
@@ -233,6 +264,10 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				props: { odieId: returnedChat.chat_id },
 				isFromError: false,
 			} );
+
+			if ( supportInteraction ) {
+				updateInteractionContext( supportInteraction );
+			}
 		},
 		onSettled: () => {
 			setChatStatus( 'loaded' );
@@ -252,11 +287,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				const message: Message = { ...getOdieRateLimitMessage(), internal_message_id };
 				addMessage( { message, props: {}, isFromError: true } );
 			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
-				// User is eligible for premium support - transfer to Zendesk
-				createZendeskConversation( {
-					createdFrom: 'api_error',
-					errorReason: error.message || error.toString?.(),
-					isFromError: true,
+				const errorMessage = getErrorMessageUnknownError();
+				addMessage( { message: errorMessage, props: {}, isFromError: true } );
+
+				trackEvent( 'error_sending_odie_message', {
+					error_message: error instanceof Error ? error.toString() : 'unknown_error',
 				} );
 			} else {
 				// User is not eligible for premium support - show error message with support buttons

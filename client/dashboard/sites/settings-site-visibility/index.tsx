@@ -43,9 +43,9 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Site visibility' ) }
 					description={ createInterpolateElement(
-						__( 'Control who can view your site. <link>Learn more</link>' ),
+						__( 'Control who can view your site. <learnMoreLink />' ),
 						{
-							link: <InlineSupportLink supportContext="privacy" />,
+							learnMoreLink: <InlineSupportLink supportContext="privacy" />,
 						}
 					) }
 				/>

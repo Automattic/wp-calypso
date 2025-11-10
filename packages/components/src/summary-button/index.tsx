@@ -6,7 +6,8 @@ import {
 	Button,
 	Icon,
 } from '@wordpress/components';
-import { chevronRight } from '@wordpress/icons';
+import { isRTL } from '@wordpress/i18n';
+import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import React, { forwardRef } from 'react';
 import { SummaryButtonProps } from './types';
@@ -76,7 +77,12 @@ function UnforwardedSummaryButton(
 					</VStack>
 					{ ! hasLowDensity && <BadgesList badges={ badges } /> }
 				</HStack>
-				{ showArrow && <Icon icon={ chevronRight } className="summary-button-navigation-icon" /> }
+				{ showArrow && (
+					<Icon
+						icon={ isRTL() ? chevronLeft : chevronRight }
+						className="summary-button-navigation-icon"
+					/>
+				) }
 			</HStack>
 		</Button>
 	);

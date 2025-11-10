@@ -9,8 +9,10 @@ import { defer } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToDomain } from 'calypso/lib/url';
 import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -25,6 +27,7 @@ const SitePickerStep: Step< {
 		action: 'update-query' | 'create-site' | 'select-site';
 		queryParams?: Partial< SitesDashboardQueryParams >;
 		site?: SiteExcerptData;
+		host?: string;
 	};
 } > = function SitePickerStep( { navigation } ) {
 	const { __ } = useI18n();
@@ -35,17 +38,32 @@ const SitePickerStep: Step< {
 		( urlQueryParams.get( 'status' ) as GroupableSiteLaunchStatuses ) ||
 		DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE;
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
+	const ref = urlQueryParams.get( 'ref' );
 	const [ destinationSite, setDestinationSite ] = useState< SiteExcerptData >();
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const siteCount = useSelector( getCurrentUserSiteCount );
 
+	// Fetch hosting provider when ref=move-lp and we have a from URL
+	const domain = sourceSiteSlug ? urlToDomain( sourceSiteSlug ) : '';
+	const shouldFetchHosting = ref === 'move-lp' && !! domain;
+	const { data: hostingProviderData, isFetching: isFetchingHosting } = useHostingProviderQuery(
+		domain,
+		shouldFetchHosting
+	);
+
 	useEffect( () => {
 		// If the user has no sites, we should skip the site picker and go straight to the site creation step
 		if ( siteCount === 0 ) {
-			navigation.submit?.( { action: 'create-site' } );
+			// If we're fetching hosting data for move-lp, wait for it to complete
+			if ( shouldFetchHosting && isFetchingHosting ) {
+				return;
+			}
+
+			const host = hostingProviderData?.hosting_provider?.slug;
+			navigation.submit?.( { action: 'create-site', host } );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteCount ] );
+	}, [ siteCount, shouldFetchHosting, isFetchingHosting ] );
 
 	const onQueryParamChange = ( params: Partial< SitesDashboardQueryParams > ) => {
 		recordTracksEvent( 'calypso_import_site_picker_query_param_change', params );
@@ -54,7 +72,8 @@ const SitePickerStep: Step< {
 
 	const createNewSite = () => {
 		recordTracksEvent( 'calypso_import_site_picker_create_new_site' );
-		navigation.submit?.( { action: 'create-site' } );
+		const host = hostingProviderData?.hosting_provider?.slug;
+		navigation.submit?.( { action: 'create-site', host } );
 	};
 
 	const selectSite = ( site: SiteExcerptData ) => {
@@ -63,7 +82,8 @@ const SitePickerStep: Step< {
 			slug: site?.slug,
 			title: site?.title,
 		} );
-		navigation.submit?.( { action: 'select-site', site } );
+		const host = hostingProviderData?.hosting_provider?.slug;
+		navigation.submit?.( { action: 'select-site', site, host } );
 	};
 
 	const onSelectSite = ( site: SiteExcerptData ) => {

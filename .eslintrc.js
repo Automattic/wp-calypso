@@ -524,6 +524,7 @@ module.exports = {
 					'__experimentalNavigatorScreen',
 					'__experimentalUseNavigator',
 					'__experimentalNumberControl',
+					'__experimentalTruncate',
 					'__unstableComposite',
 					'__unstableCompositeItem',
 					'__unstableUseCompositeState',

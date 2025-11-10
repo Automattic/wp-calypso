@@ -1,9 +1,17 @@
-import { MenuGroup, NavigableMenu, SearchControl } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	MenuGroup,
+	NavigableMenu,
+	SearchControl,
+} from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { type PropsWithChildren, type ReactNode, useMemo, useState } from 'react';
+import { useState, useMemo } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
+import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
 import type { View, Field } from '@wordpress/dataviews';
+import type { PropsWithChildren } from 'react';
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -12,43 +20,32 @@ const DEFAULT_VIEW: View = {
 	sort: { field: 'name', direction: 'asc' },
 };
 
-export type RenderItemIcon< T > = ( props: {
-	item: T;
-	context: 'dropdown' | 'list';
-	size: number;
-} ) => ReactNode;
-
 export default function SwitcherContent< T >( {
 	items,
-	searchableFields = [],
-	getItemName,
+	searchableFields,
 	getItemUrl,
-	renderItemIcon,
+	renderItemMedia,
+	renderItemTitle,
+	renderItemDescription,
 	children,
 	onClose,
 }: PropsWithChildren< {
 	items?: T[];
-	searchableFields?: Field< T >[];
-	getItemName: ( item: T ) => string;
+	searchableFields: Field< T >[];
 	getItemUrl: ( item: T ) => string;
-	renderItemIcon: RenderItemIcon< T >;
+	renderItemMedia: RenderItemMedia< T >;
+	renderItemTitle: RenderItemTitle< T >;
+	renderItemDescription?: RenderItemDescription< T >;
 	onClose: () => void;
 } > ) {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
 	const fields = useMemo( () => {
-		return [
-			{
-				id: 'name',
-				getValue: ( { item }: { item: T } ) => getItemName( item ),
-				enableGlobalSearch: true,
-			},
-			...searchableFields.map( ( searchableField ) => ( {
-				...searchableField,
-				enableGlobalSearch: true,
-			} ) ),
-		];
-	}, [ searchableFields, getItemName ] );
+		return searchableFields.map( ( searchableField ) => ( {
+			...searchableField,
+			enableGlobalSearch: true,
+		} ) );
+	}, [ searchableFields ] );
 
 	if ( ! items ) {
 		return __( 'Loading…' );
@@ -71,15 +68,19 @@ export default function SwitcherContent< T >( {
 				{ filteredData.map( ( item ) => {
 					const itemUrl = getItemUrl( item );
 					return (
-						<RouterLinkMenuItem key={ itemUrl } to={ itemUrl } onClick={ onClose }>
-							<div style={ { display: 'flex', gap: '8px', alignItems: 'center', width: '100%' } }>
-								{ renderItemIcon( { item, context: 'list', size: 24 } ) }
-								<span
-									style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
-								>
-									{ getItemName( item ) }
-								</span>
-							</div>
+						<RouterLinkMenuItem
+							key={ itemUrl }
+							to={ itemUrl }
+							style={ { height: 'fit-content', minHeight: '40px' } }
+							onClick={ onClose }
+						>
+							<HStack justify="flex-start" alignment="center" expanded>
+								{ renderItemMedia( { item, context: 'list', size: 32 } ) }
+								<VStack spacing={ 0 }>
+									{ renderItemTitle( { item, context: 'list' } ) }
+									{ renderItemDescription?.( { item, context: 'list' } ) }
+								</VStack>
+							</HStack>
 						</RouterLinkMenuItem>
 					);
 				} ) }

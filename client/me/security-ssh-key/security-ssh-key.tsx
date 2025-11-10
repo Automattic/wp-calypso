@@ -1,7 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { PLAN_BUSINESS, PLAN_ECOMMERCE, getPlan } from '@automattic/calypso-products';
 import { Button, CompactCard, Dialog, LoadingPlaceholder } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -212,15 +211,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 							),
 							{
 								br: <br />,
-								a: (
-									<InlineSupportLink
-										supportPostId={ 100385 }
-										supportLink={ localizeUrl(
-											'https://developer.wordpress.com/docs/developer-tools/ssh/'
-										) }
-										showIcon={ false }
-									/>
-								),
+								a: <InlineSupportLink supportContext="generate-ssh-key" showIcon={ false } />,
 							}
 						) }
 					</p>
