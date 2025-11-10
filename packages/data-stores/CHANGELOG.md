@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 3.2.0
+
+- Update dependencies (#106861).
 - New `useAllDomainsQuery` which fetches all the current user's domains
 
 ### Breaking changes
@@ -17,6 +20,18 @@
   - `useUpdateZendeskUserFieldsMutation`
   - `useUserSites`
   - `useWpcomSite`
+
+## 3.1.2
+
+- Update dependencies (#104846).
+
+## 3.1.1
+
+- Add missing SCSS import (#101952).
+
+## 3.1.0
+
+- Update dependencies (#95431).
 
 ## 3.0.1
 
