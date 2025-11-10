@@ -2,8 +2,9 @@ import { Button } from '@wordpress/components';
 import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { sanitizeView } from './sanitize-view';
+import type { ComponentProps } from 'react';
 
-type WPDataViewsProps< Item > = Parameters< typeof WPDataViews< Item > >[ 0 ];
+type WPDataViewsProps< Item > = ComponentProps< typeof WPDataViews< Item > >;
 
 export type DataViewsProps< Item > = WPDataViewsProps< Item > & {
 	onResetView?: () => void;
