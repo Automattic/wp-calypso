@@ -1,6 +1,8 @@
-import { Card, Button, FormInputValidation, Gridicon } from '@automattic/components';
+import config from '@automattic/calypso-config';
+import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/icons';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useId } from 'react';
 import { connect } from 'react-redux';
@@ -8,7 +10,6 @@ import illustration from 'calypso/assets/images/domains/domain.svg';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { bulb } from 'calypso/signup/icons';
 
 import './style.scss';
 
@@ -25,6 +26,8 @@ function UseMyDomainInput( {
 } ) {
 	const domainNameInput = useRef( null );
 	const inputId = 'use-my-domain-input-' + useId();
+	const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
+	const classNameModifier = isDomainConnectionRedesign ? baseClassName + '--redesign' : '';
 
 	useEffect( () => {
 		shouldSetFocus && domainNameInput.current.focus();
@@ -47,61 +50,58 @@ function UseMyDomainInput( {
 	};
 
 	return (
-		<Card className={ baseClassName }>
-			{ ! isSignupStep && (
-				<div className={ baseClassName + '__domain-illustration' }>
-					<img src={ illustration } alt="" width={ 160 } />
+		<Card className={ clsx( baseClassName, classNameModifier ) } isBorderless>
+			<CardBody size="none">
+				{ ! isSignupStep && (
+					<div className={ baseClassName + '__domain-illustration' }>
+						<img src={ illustration } alt="" width={ 160 } />
+					</div>
+				) }
+				<div className={ baseClassName + '__domain-input' }>
+					<label htmlFor={ inputId }>
+						{ isDomainConnectionRedesign
+							? __( 'Domain name' )
+							: __( 'Enter the domain you would like to use:' ) }
+					</label>
+					<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
+						<FormTextInput
+							id={ inputId }
+							placeholder={ __( 'yourgroovydomain.com' ) }
+							value={ domainName }
+							onChange={ onChange }
+							onKeyDown={ keyDown }
+							isError={ !! validationError }
+							ref={ domainNameInput }
+							autoCapitalize="none"
+							autoCorrect="off"
+						/>
+						{ domainName && (
+							<Button
+								className={ baseClassName + '__domain-input-clear' }
+								borderless
+								onClick={ onClear }
+							>
+								<Gridicon
+									className={ baseClassName + '__domain-input-clear-icon' }
+									icon="cross"
+									size={ 12 }
+								/>
+							</Button>
+						) }
+						{ validationError && <FormInputValidation isError text={ validationError } icon="" /> }
+					</FormFieldset>
+
+					<FormButton
+						className={ baseClassName + '__domain-input-button' }
+						primary
+						busy={ isBusy }
+						disabled={ isBusy }
+						onClick={ onNext }
+					>
+						{ __( 'Continue' ) }
+					</FormButton>
 				</div>
-			) }
-			<div className={ baseClassName + '__domain-input' }>
-				<label htmlFor={ inputId }>{ __( 'Enter the domain you would like to use:' ) }</label>
-				<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
-					<FormTextInput
-						id={ inputId }
-						placeholder={ __( 'yourgroovydomain.com' ) }
-						value={ domainName }
-						onChange={ onChange }
-						onKeyDown={ keyDown }
-						isError={ !! validationError }
-						ref={ domainNameInput }
-						autoCapitalize="none"
-						autoCorrect="off"
-					/>
-					{ domainName && (
-						<Button
-							className={ baseClassName + '__domain-input-clear' }
-							borderless
-							onClick={ onClear }
-						>
-							<Gridicon
-								className={ baseClassName + '__domain-input-clear-icon' }
-								icon="cross"
-								size={ 12 }
-							/>
-						</Button>
-					) }
-					{ validationError && <FormInputValidation isError text={ validationError } icon="" /> }
-				</FormFieldset>
-
-				<p className={ baseClassName + '__domain-input-note' }>
-					<Icon
-						className={ baseClassName + '__domain-input-note-icon' }
-						icon={ bulb }
-						size={ 14 }
-					/>
-					{ __( 'This won’t affect your existing site.' ) }
-				</p>
-
-				<FormButton
-					className={ baseClassName + '__domain-input-button' }
-					primary
-					busy={ isBusy }
-					disabled={ isBusy }
-					onClick={ onNext }
-				>
-					{ __( 'Continue' ) }
-				</FormButton>
-			</div>
+			</CardBody>
 		</Card>
 	);
 }
