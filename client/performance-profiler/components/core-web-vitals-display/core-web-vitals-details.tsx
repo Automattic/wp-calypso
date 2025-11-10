@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
@@ -136,17 +135,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						recommendationsQuantity={ numberOfAuditsForMetric }
 					/>
 				</div>
-				<p>
-					{ getMetricValuations( translate )[ activeTab ].explanation }
-					&nbsp;
-					<a
-						href={ localizeUrl( getMetricValuations( translate )[ activeTab ].docsUrl ) }
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ translate( 'Learn more ↗' ) }
-					</a>
-				</p>
+				<p>{ getMetricValuations( translate )[ activeTab ].explanation }</p>
 				<div className="core-web-vitals-display__ranges">
 					<div className="range">
 						<StatusIndicator speed="good" />
