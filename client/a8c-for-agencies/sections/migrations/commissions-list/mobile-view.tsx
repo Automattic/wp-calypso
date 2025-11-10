@@ -21,8 +21,7 @@ export default function MigrationsCommissionsListMobileView( {
 		<div className="migrations-commissions-list-mobile-view">
 			<ListItemCards>
 				{ commissions.map( ( commission ) => {
-					const tags = commission.tags.map( ( tag ) => tag.name );
-					const status = getSiteReviewStatus( tags );
+					const status = getSiteReviewStatus( commission.incentive_status );
 
 					return (
 						<ListItemCard key={ commission.id }>

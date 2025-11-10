@@ -1,29 +1,21 @@
-import {
-	A4A_MIGRATED_SITE_REJECTED,
-	A4A_MIGRATED_SITE_VERIFIED,
-	A4A_MIGRATED_STATUS_PAID,
-} from './constants';
-
 /**
- * Determines the review status of a migrated site based on its tags.
+ * Determines the review status of a migrated site based on its incentive_status.
  *
- * @param tags - An array of tag names associated with the site.
+ * @param incentiveStatus - The incentive_status value from the site object.
  * @returns The review status: 'paid', 'confirmed', 'rejected', or 'pending'.
  */
 export const getSiteReviewStatus = (
-	tags: string[]
+	incentiveStatus: string
 ): 'pending' | 'confirmed' | 'rejected' | 'paid' => {
-	// Check for paid status first
-	if ( tags.includes( A4A_MIGRATED_STATUS_PAID ) ) {
+	if ( incentiveStatus === 'paid' ) {
 		return 'paid';
 	}
-	if ( tags.includes( A4A_MIGRATED_SITE_VERIFIED ) ) {
+	if ( incentiveStatus === 'verified' ) {
 		return 'confirmed';
 	}
-	if ( tags.includes( A4A_MIGRATED_SITE_REJECTED ) ) {
-		return 'rejected';
+	if ( incentiveStatus === 'pending' ) {
+		return 'pending';
 	}
-	// If none of the above tags are present, assume pending.
-	// The presence of A4A_MIGRATED_SITE_TAG is implicitly assumed for sites passed to this function.
+	// Fallback to pending if status is empty or unknown
 	return 'pending';
 };

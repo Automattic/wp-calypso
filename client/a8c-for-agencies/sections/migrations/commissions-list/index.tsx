@@ -57,8 +57,7 @@ export default function MigrationsCommissionsList( {
 				label: translate( 'Review status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: TaggedSite } ): ReactNode => {
-					const tags = item.tags.map( ( tag ) => tag.name );
-					const status = getSiteReviewStatus( tags );
+					const status = getSiteReviewStatus( item.incentive_status );
 					return <ReviewStatusColumn reviewStatus={ status } />;
 				},
 				enableHiding: false,

@@ -9,4 +9,5 @@ export interface TaggedSite {
 	url: string;
 	state: string;
 	tags: Tag[];
+	incentive_status: string;
 }

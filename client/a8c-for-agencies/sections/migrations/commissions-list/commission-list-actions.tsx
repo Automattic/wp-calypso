@@ -27,9 +27,8 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 	const { mutate, isPending } = useUpdateSiteTagsMutation();
 
 	const isPendingReview = useMemo( () => {
-		const tags = site.tags.map( ( tag ) => tag.name );
-		return getSiteReviewStatus( tags ) === 'pending';
-	}, [ site.tags ] );
+		return getSiteReviewStatus( site.incentive_status ) === 'pending';
+	}, [ site.incentive_status ] );
 
 	const showActions = useCallback( () => {
 		setIsOpen( true );
