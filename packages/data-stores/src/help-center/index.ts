@@ -1,12 +1,12 @@
-import { registerStore } from '@wordpress/data';
+import { registerStore, dispatch } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
 import { registerPlugins } from '../plugins';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
-import { isHelpCenterShown } from './resolvers';
 import * as selectors from './selectors';
+import type { Dispatch } from './types';
 export type { State };
 
 declare const helpCenterData: { isProxied: boolean; isSU: boolean; isSSP: boolean } | undefined;
@@ -40,9 +40,9 @@ export const isInSupportSession = () => {
 	return false;
 };
 
-export function register(): typeof STORE_KEY {
-	const enabledPersistedOpenState = ! isE2ETest() && ! isInSupportSession();
-
+export function register( {
+	skipPersistedOpenState,
+}: { skipPersistedOpenState?: boolean } = {} ): typeof STORE_KEY {
 	registerPlugins();
 
 	if ( ! isRegistered ) {
@@ -52,13 +52,22 @@ export function register(): typeof STORE_KEY {
 			controls: { ...controls, ...wpcomRequestControls },
 			selectors,
 			persist: [ 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
-			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
-			resolvers: enabledPersistedOpenState ? { isHelpCenterShown } : undefined,
 		} );
 		isRegistered = true;
+
+		// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
+		if ( ! skipPersistedOpenState && ! isE2ETest() && ! isInSupportSession() ) {
+			( dispatch( STORE_KEY ) as Dispatch ).loadHelpCenterPreference();
+		}
 	}
 
 	return STORE_KEY;
+}
+
+export function registerAsync(): ReturnType< typeof register > {
+	// Skip persisted state here to avoid a race condition between restoring persisted data
+	// and setting the support doc data. Persisted values could overwrite freshly fetched data.
+	return register( { skipPersistedOpenState: true } );
 }
 
 export type { HelpCenterSite } from './types';

@@ -32,7 +32,7 @@ export function useHelpCenter() {
 		setIsLoading( true );
 		loadingPromiseRef.current = import( '@automattic/data-stores' ).then(
 			( { HelpCenter: HelpCenterStore } ) => {
-				HelpCenterStore.register();
+				HelpCenterStore.registerAsync();
 				setIsLoading( false );
 				loadingPromiseRef.current = undefined;
 			}

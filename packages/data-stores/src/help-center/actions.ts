@@ -1,9 +1,10 @@
-import { default as apiFetchPromise } from '@wordpress/api-fetch';
+import { default as apiFetch } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
+import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
 import { isE2ETest } from '.';
 import type {
@@ -44,7 +45,7 @@ export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolea
 		} ).catch( () => {} );
 	} else {
 		// Use the promise version to do that action without waiting for the result.
-		apiFetchPromise( {
+		apiFetch( {
 			global: true,
 			path: '/help-center/open-state',
 			method: 'PUT',
@@ -283,6 +284,45 @@ export const setShowSupportDoc = function* ( link: string, postId?: number, blog
 	yield setIsMinimized( false );
 };
 
+export const loadHelpCenterPreference = function* () {
+	try {
+		const {
+			calypso_preferences: preferences,
+		}: {
+			calypso_preferences: {
+				help_center_open: boolean;
+				help_center_minimized: boolean;
+				help_center_router_history: {
+					entries: Location[];
+					index: number;
+				};
+			};
+		} = canAccessWpcomApis()
+			? yield wpcomRequest( {
+					path: '/me/preferences?s=1',
+					apiNamespace: 'wpcom/v2',
+			  } )
+			: yield apiFetch( {
+					global: true,
+					path: '/help-center/open-state',
+			  } as APIFetchOptions );
+
+		if ( preferences.help_center_router_history ) {
+			yield setHelpCenterRouterHistory( preferences.help_center_router_history );
+		}
+
+		yield setIsMinimized( preferences.help_center_minimized );
+
+		// We only want to auto-open, we don't want to auto-close (and potentially overrule the user's action).
+		if ( preferences.help_center_open ) {
+			return {
+				type: 'HELP_CENTER_SET_SHOW',
+				show: true,
+			} as const;
+		}
+	} catch {}
+};
+
 export type HelpCenterAction =
 	| ReturnType<
 			| typeof setShowMessagingLauncher
@@ -307,4 +347,5 @@ export type HelpCenterAction =
 			| typeof setHelpCenterOptions
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >
-	| GeneratorReturnType< typeof setIsMinimized >;
+	| GeneratorReturnType< typeof setIsMinimized >
+	| GeneratorReturnType< typeof loadHelpCenterPreference >;

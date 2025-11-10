@@ -22,7 +22,8 @@ const loadHelpCenterDispatch = async () => {
 		const { HelpCenter: HelpCenterStore } = await import(
 			/* webpackChunkName: "async-load-automattic-data-stores" */ '@automattic/data-stores'
 		);
-		HelpCenterStore.register();
+
+		HelpCenterStore.registerAsync();
 	}
 
 	return dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch[ 'dispatch' ];
