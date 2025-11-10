@@ -1,3 +1,4 @@
+import { useDomainSearchEscapeHatch } from '@automattic/domain-search';
 import {
 	isAIBuilderFlow,
 	isCopySiteFlow,
@@ -18,6 +19,7 @@ import { useSelector } from 'react-redux';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import { useWPCOMDomainSearchEvents } from 'calypso/components/domains/wpcom-domain-search/use-wpcom-domain-search-events';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -91,6 +93,8 @@ const DomainSearchStep: StepType< {
 		currentSiteUrl,
 	} );
 
+	const [ isLoadingExperiment, experimentVariation ] = useDomainSearchEscapeHatch();
+
 	const config = useMemo( () => {
 		const allowedTlds = tldQuery?.split( ',' ) ?? [];
 
@@ -123,6 +127,13 @@ const DomainSearchStep: StepType< {
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
 	}, [ flow, tldQuery, query ] );
+
+	const analyticsEvents = useWPCOMDomainSearchEvents( {
+		vendor: config.vendor,
+		flowName: flow,
+		analyticsSection: 'signup',
+		query: query,
+	} );
 
 	const { submit } = navigation;
 
@@ -359,14 +370,30 @@ const DomainSearchStep: StepType< {
 		};
 
 		const getTopBarRightElement = () => {
-			if ( ! query || ! config.allowsUsingOwnDomain ) {
+			if ( ! query ) {
 				return;
 			}
 
 			return (
-				<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-					{ __( 'Use a domain I already own' ) }
-				</Step.LinkButton>
+				<>
+					{ config.allowsUsingOwnDomain && (
+						<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
+							{ __( 'Use a domain I already own' ) }
+						</Step.LinkButton>
+					) }
+
+					{ ! isLoadingExperiment &&
+						experimentVariation === 'treatment_paid_domain_area_free_emphasis_extra_cta' && (
+							<Step.LinkButton
+								onClick={ () => {
+									analyticsEvents.onSkip?.();
+									events.onSkip();
+								} }
+							>
+								{ __( 'Skip this step' ) }
+							</Step.LinkButton>
+						) }
+				</>
 			);
 		};
 

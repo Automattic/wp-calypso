@@ -1222,6 +1222,8 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/explat-client": "workspace:^"
+    "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/urls": "workspace:^"
     "@storybook/addon-a11y": "npm:^8.6.14"
