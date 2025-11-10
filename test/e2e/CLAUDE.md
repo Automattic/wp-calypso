@@ -56,4 +56,3 @@ For legacy tests (`*.ts` without `.spec.`), use the Jest runner:
 yarn test specs/path/to/test.ts
 ```
 - run `yarn build` if `calypso-e2e` package was changed
-- if tests fail with a login setup failure try clearing the test/e2e/cookies folder
