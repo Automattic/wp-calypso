@@ -1,6 +1,7 @@
 import { Card } from '@automattic/components';
 import { useOpenArticleInHelpCenter } from '@automattic/help-center/src/hooks';
 import { useTranslate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { GitHubDeploymentCard } from './github-deployment-card';
 import { StudioCard } from './studio-card';
 import { useFeaturesList } from './use-features-list';
@@ -46,25 +47,31 @@ export const DeveloperFeatures = () => {
 
 			<h2 className="developer-features-sub-title">{ translate( 'Popular features' ) }</h2>
 			<div className="developer-features-list">
-				{ features.map( ( { id, title, description, linkLearnMore, linkTarget = '_blank' } ) => (
-					<Card className="developer-features-list__item" key={ id }>
-						<div className="developer-features-list__item-title">{ title }</div>
-						<div className="developer-features-list__item-description">{ description }</div>
-						{ linkLearnMore && (
-							<div className="developer-features-list__item-learn-more">
-								<a
-									id={ id }
-									href={ linkLearnMore }
-									target={ linkTarget }
-									rel="noopener noreferrer"
-									onClick={ handleFeatureClickLink }
-								>
-									{ translate( 'Learn more' ) }
-								</a>
-							</div>
-						) }
-					</Card>
-				) ) }
+				{ features.map(
+					( { id, title, description, linkLearnMore, linkTarget = '_blank', supportContext } ) => (
+						<Card className="developer-features-list__item" key={ id }>
+							<div className="developer-features-list__item-title">{ title }</div>
+							<div className="developer-features-list__item-description">{ description }</div>
+							{ ( linkLearnMore || supportContext ) && (
+								<div className="developer-features-list__item-learn-more">
+									{ supportContext ? (
+										<InlineSupportLink showIcon={ false } supportContext={ supportContext } />
+									) : (
+										<a
+											id={ id }
+											href={ linkLearnMore }
+											target={ linkTarget }
+											rel="noopener noreferrer"
+											onClick={ handleFeatureClickLink }
+										>
+											{ translate( 'Learn more' ) }
+										</a>
+									) }
+								</div>
+							) }
+						</Card>
+					)
+				) }
 			</div>
 		</>
 	);

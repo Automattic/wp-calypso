@@ -14,14 +14,13 @@ import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
-import { useView } from '../app/dataviews/use-view';
+import { usePersistentView } from '../app/dataviews';
 import { useHelpCenter } from '../app/help-center';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import {
-	getDefaultFields,
 	SitesDataViews,
 	useActions,
 	getFields,
@@ -66,10 +65,10 @@ export default function CIABSites() {
 		isRestoringAccount,
 	} );
 
-	const { view, updateView, isViewModified, resetView } = useView( {
+	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'sites-ciab',
 		defaultView,
-		defaultFields: getDefaultFields(),
+		queryParams: currentSearchParams,
 	} );
 
 	const {
@@ -199,7 +198,6 @@ export default function CIABSites() {
 						/>
 					}
 					onChangeView={ handleViewChange }
-					isViewModified={ isViewModified }
 					onResetView={ resetView }
 				/>
 			</PageLayout>

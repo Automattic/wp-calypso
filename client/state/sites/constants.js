@@ -7,6 +7,7 @@ export const SITE_REQUEST_FIELDS = [
 	'is_private',
 	'is_coming_soon',
 	'is_vip',
+	'is_garden',
 	'jetpack',
 	'jetpack_connection',
 	'jetpack_modules',
