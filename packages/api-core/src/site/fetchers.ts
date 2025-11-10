@@ -42,6 +42,7 @@ export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 
 export const SITE_OPTIONS = [
 	'admin_url',
+	'big_sky_site_metadata',
 	'created_at',
 	'unmapped_url',
 	'is_difm_lite_in_progress',

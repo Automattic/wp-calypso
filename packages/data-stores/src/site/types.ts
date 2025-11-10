@@ -231,6 +231,7 @@ export interface SiteDetailsOptions {
 	allowed_file_types?: string[];
 	anchor_podcast?: boolean;
 	background_color?: boolean;
+	big_sky_site_metadata?: unknown;
 	blog_public?: number;
 	created_at?: string;
 	default_category?: number;

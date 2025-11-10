@@ -35,6 +35,7 @@ export const SITE_REQUEST_FIELDS = [
 	'is_a4a_dev_site',
 	'is_a8c',
 	'is_wpcom_flex',
+	'big_sky_site_metadata',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [
@@ -43,6 +44,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'advanced_seo_title_formats',
 	'allowed_file_types',
 	'anchor_podcast',
+	'big_sky_site_metadata',
 	'created_at',
 	'default_category',
 	'default_comment_status',

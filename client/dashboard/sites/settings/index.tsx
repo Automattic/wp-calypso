@@ -8,6 +8,7 @@ import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import AgencySettingsSummary from '../settings-agency/summary';
+import AISiteAssistantSettingsSummary from '../settings-ai-assistant/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
@@ -79,6 +80,14 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 						<WebApplicationFirewallSettingsSummary site={ site } />
 						<WpcomLoginSettingsSummary site={ site } />
 						<DefensiveModeSettingsSummary site={ site } />
+					</SummaryButtonList>
+				</VStack>
+			) }
+			{ supportsSettings.experimental && (
+				<VStack spacing={ 3 }>
+					<SectionHeader title={ __( 'Experimental' ) } level={ 3 } />
+					<SummaryButtonList>
+						<AISiteAssistantSettingsSummary site={ site } />
 					</SummaryButtonList>
 				</VStack>
 			) }
