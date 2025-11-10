@@ -20,7 +20,10 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useContactFormValidation from './hooks/use-contact-form-validation';
+
 import './style.scss';
 
 type Props = {
@@ -31,6 +34,8 @@ type Props = {
 
 const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const { validate, validationError, updateValidationError } = useContactFormValidation( {
 		withEmail,
 	} );
@@ -97,6 +102,17 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 
 				if ( ! duplicateAgencyName && ! duplicateURL ) {
 					onContinue( formData );
+				} else {
+					// Fire track event to track the view of the duplicate agency warning dialog
+					dispatch(
+						recordTracksEvent(
+							'calypso_a4a_agency_signup_form_duplicate_agency_warning_dialog_view',
+							{
+								agencyName: formData.agencyName ?? '',
+								agencyUrl: formData.agencyUrl ?? '',
+							}
+						)
+					);
 				}
 			} catch ( error ) {
 				// In case the verification fails, we just let the user continue with the form submission.
@@ -105,7 +121,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				setIsProceeding( false );
 			}
 		},
-		[ formData, onContinue, validate, setDuplicateAgencyFields ]
+		[ validate, formData, onContinue, dispatch ]
 	);
 
 	return (
