@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 import './style.scss';
 
@@ -15,13 +16,9 @@ export const Disclaimer = () => {
 					) }
 				</div>
 				<div className="link">
-					<a
-						href="https://developer.wordpress.com/docs/site-performance/speed-test/#accessing-the-speed-test-tool"
-						target="_blank"
-						rel="noreferrer"
-					>
+					<InlineSupportLink supportContext="site-performance">
 						{ translate( 'Learn more about the Chrome UX Report ↗' ) }
-					</a>
+					</InlineSupportLink>
 				</div>
 			</div>
 		</div>
