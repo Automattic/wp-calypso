@@ -2,7 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import { FormToggle, Icon, Tooltip } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataViews, type Field, filterSortAndPaginate, View } from '@wordpress/dataviews';
+import { DataViews, type Field, filterSortAndPaginate, Operator, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -47,13 +47,14 @@ const getFields = (
 	return [
 		{
 			id: 'site',
-			type: 'text',
 			label: __( 'Site' ),
 			getValue: ( { item } ) => item.site.name,
+			enableSorting: false,
+			enableGlobalSearch: true,
 		},
 		{
 			id: 'lastUpdate',
-			type: 'integer',
+			type: 'datetime',
 			label: __( 'Last update' ),
 			render: ( { item } ) =>
 				item.lastUpdate
@@ -62,27 +63,37 @@ const getFields = (
 							timeStyle: 'short',
 					  } )
 					: '-',
+			filterBy: { operators: [] },
 		},
 		{
 			id: 'nextUpdate',
-			type: 'integer',
+			type: 'datetime',
 			label: __( 'Next update' ),
 			render: ( { item } ) =>
 				formatDate( new Date( item.nextUpdate * 1000 ), locale, {
 					dateStyle: 'medium',
 					timeStyle: 'short',
 				} ),
+			filterBy: { operators: [] },
 		},
 		{
 			id: 'schedule',
 			type: 'text',
 			label: __( 'Frequency' ),
+			elements: [
+				{ value: 'daily', label: __( 'Daily' ) },
+				{ value: 'weekly', label: __( 'Weekly' ) },
+			],
+			filterBy: {
+				operators: [ 'isAny' as Operator ],
+			},
 			render: ( { item } ) => ( item.schedule === 'daily' ? __( 'Daily' ) : __( 'Weekly' ) ),
 		},
 		{
 			id: 'plugins',
-			type: 'text',
+			type: 'integer',
 			label: __( 'Plugins' ),
+			getValue: ( { item } ) => item.plugins.length,
 			render: ( { item } ) => (
 				<span
 					style={ {
@@ -103,11 +114,19 @@ const getFields = (
 					</Tooltip>
 				</span>
 			),
+			filterBy: { operators: [] },
 		},
 		{
 			id: 'active',
-			type: 'text',
+			type: 'boolean',
 			label: __( 'Active' ),
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
 			render: ( { item } ) => (
 				<FormToggle
 					checked={ item.active }
@@ -118,15 +137,10 @@ const getFields = (
 			),
 		},
 		{
-			id: 'actions',
-			type: 'text',
-			label: __( 'Actions' ),
-		},
-		{
 			id: 'scheduleId',
-			type: 'text',
 			label: __( 'Schedule' ),
 			getValue: ( { item } ) => getUniqueScheduleName( locale, item ),
+			filterBy: { operators: [] },
 		},
 		{
 			id: 'icon.ico',
