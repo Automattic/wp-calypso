@@ -26,7 +26,7 @@ export const SectionHeader = ( {
 	level = 2,
 }: SectionHeaderProps ) => {
 	const HeadingTag = `h${ level }` as keyof JSX.IntrinsicElements;
-	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const isSmallViewport = useViewportMatch( 'small', '<' );
 
 	return (
 		<VStack className={ clsx( 'dashboard-section-header', `is-level-${ level }`, className ) }>
