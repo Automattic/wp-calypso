@@ -321,6 +321,8 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOO_HOSTED_FREE,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	PLAN_WOO_HOSTED_BASIC_MONTHLY,
 	PLAN_WOO_HOSTED_BASIC,
 	PLAN_WOO_HOSTED_PRO_MONTHLY,
@@ -3107,12 +3109,40 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_WOOEXPRESS_PLUS,
 	},
 
-	// CIAB Plans. Features are a placeholder.
+	// CIAB Plans. Features and translation strings are a placeholder.
+	[ PLAN_WOO_HOSTED_FREE ]: {
+		...getPlanFreeDetails(),
+		...getAnnualTimeframe(),
+		getTitle: () => i18n.translate( 'Free subscription' ),
+		getTagline: () => 'Learn more about everything included with Woo Free Trial.',
+		getProductId: () => 4005,
+		getStoreSlug: () => PLAN_WOO_HOSTED_FREE,
+		getPathSlug: () => 'woo-hosted-free',
+	},
+
+	[ PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ]: {
+		...getPlanFreeDetails(),
+		...getMonthlyTimeframe(),
+		getTitle: () => 'Free Trial',
+		getPlanTagline: () => "Get a taste of the world's most popular eCommerce software.",
+		getDescription: () =>
+			i18n.translate(
+				'Try Woo Hosted for free and explore all the features before committing to a plan.'
+			),
+		getTagline: () => 'Learn more about everything included with Woo Free Trial.',
+		availableFor: ( plan ) =>
+			[ PLAN_WOO_HOSTED_FREE, PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ].includes( plan ),
+		getProductId: () => 4006,
+		getStoreSlug: () => PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+		getPathSlug: () => 'woo-hosted-free-trial-monthly',
+	},
+
 	[ PLAN_WOO_HOSTED_BASIC_MONTHLY ]: {
 		...getPlanWooHostedBasicDetails(),
 		...getMonthlyTimeframe(),
 		type: TYPE_WOO_HOSTED_BASIC,
-		getBillingTimeFrame: () => translate( 'per month' ),
+		availableFor: ( plan ) =>
+			[ PLAN_WOO_HOSTED_FREE, PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ].includes( plan ),
 		getProductId: () => 4001,
 		getStoreSlug: () => PLAN_WOO_HOSTED_BASIC_MONTHLY,
 		getPathSlug: () => 'woo-hosted-basic-monthly',
@@ -3120,10 +3150,14 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_WOO_HOSTED_BASIC ]: {
 		...getPlanWooHostedBasicDetails(),
+		...getAnnualTimeframe(),
 		type: TYPE_WOO_HOSTED_BASIC,
-		term: TERM_ANNUALLY,
-		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: ( plan ) => [ PLAN_WOO_HOSTED_BASIC_MONTHLY ].includes( plan ),
+		availableFor: ( plan ) =>
+			[
+				PLAN_WOO_HOSTED_FREE,
+				PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+				PLAN_WOO_HOSTED_BASIC_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 4002,
 		getStoreSlug: () => PLAN_WOO_HOSTED_BASIC,
 		getPathSlug: () => 'woo-hosted-basic',
@@ -3133,7 +3167,13 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanWooHostedProDetails(),
 		...getMonthlyTimeframe(),
 		type: TYPE_WOO_HOSTED_PRO,
-		getBillingTimeFrame: () => translate( 'per month' ),
+		availableFor: ( plan ) =>
+			[
+				PLAN_WOO_HOSTED_FREE,
+				PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+				PLAN_WOO_HOSTED_BASIC_MONTHLY,
+				PLAN_WOO_HOSTED_BASIC,
+			].includes( plan ),
 		getProductId: () => 4003,
 		getStoreSlug: () => PLAN_WOO_HOSTED_PRO_MONTHLY,
 		getPathSlug: () => 'woo-hosted-pro-monthly',
@@ -3141,11 +3181,12 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_WOO_HOSTED_PRO ]: {
 		...getPlanWooHostedProDetails(),
-		term: TERM_ANNUALLY,
-		getBillingTimeFrame: WPComGetBillingTimeframe,
+		...getAnnualTimeframe(),
 		type: TYPE_WOO_HOSTED_PRO,
 		availableFor: ( plan ) =>
 			[
+				PLAN_WOO_HOSTED_FREE,
+				PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 				PLAN_WOO_HOSTED_BASIC_MONTHLY,
 				PLAN_WOO_HOSTED_BASIC,
 				PLAN_WOO_HOSTED_PRO_MONTHLY,

@@ -64,6 +64,8 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_WOO_HOSTED_BASIC,
 	PLAN_WOO_HOSTED_BASIC_MONTHLY,
+	PLAN_WOO_HOSTED_FREE,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	PLAN_WOO_HOSTED_PRO,
 	PLAN_WOO_HOSTED_PRO_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
@@ -140,6 +142,7 @@ describe( 'isFreePlan', () => {
 	test( 'should return true for free plans', () => {
 		expect( isFreePlan( PLAN_FREE ) ).toEqual( true );
 		expect( isFreePlan( PLAN_JETPACK_FREE ) ).toEqual( true );
+		expect( isFreePlan( PLAN_WOO_HOSTED_FREE ) ).toEqual( true );
 	} );
 	test( 'should return false for non-free plans', () => {
 		expect( isFreePlan( PLAN_PERSONAL ) ).toEqual( false );
@@ -1107,6 +1110,7 @@ describe( 'findPlansKeys', () => {
 				PLAN_P2_FREE,
 				PLAN_PERSONAL,
 				PLAN_PREMIUM,
+				PLAN_WOO_HOSTED_FREE,
 				PLAN_WOO_HOSTED_BASIC,
 				PLAN_WOO_HOSTED_PRO,
 				PLAN_WOOEXPRESS_MEDIUM,
@@ -1138,6 +1142,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PERSONAL_MONTHLY,
 			PLAN_PREMIUM_MONTHLY,
 			PLAN_WOO_HOSTED_BASIC_MONTHLY,
+			PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 			PLAN_WOO_HOSTED_PRO_MONTHLY,
 			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
@@ -1150,11 +1155,15 @@ describe( 'findPlansKeys', () => {
 	} );
 
 	test( 'all matching plans keys - by type', () => {
-		expect( findPlansKeys( { type: TYPE_FREE } ) ).toEqual( [
-			PLAN_FREE,
-			PLAN_JETPACK_FREE,
-			PLAN_P2_FREE,
-		] );
+		expect( findPlansKeys( { type: TYPE_FREE } ).sort() ).toEqual(
+			[
+				PLAN_FREE,
+				PLAN_JETPACK_FREE,
+				PLAN_P2_FREE,
+				PLAN_WOO_HOSTED_FREE,
+				PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+			].sort()
+		);
 		expect( findPlansKeys( { type: TYPE_BLOGGER } ) ).toEqual( [
 			PLAN_BLOGGER,
 			PLAN_BLOGGER_2_YEARS,
@@ -1218,6 +1227,8 @@ describe( 'findPlansKeys', () => {
 				PLAN_PREMIUM_MONTHLY,
 				PLAN_WOO_HOSTED_BASIC,
 				PLAN_WOO_HOSTED_BASIC_MONTHLY,
+				PLAN_WOO_HOSTED_FREE,
+				PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 				PLAN_WOO_HOSTED_PRO,
 				PLAN_WOO_HOSTED_PRO_MONTHLY,
 				PLAN_WOOEXPRESS_MEDIUM,
