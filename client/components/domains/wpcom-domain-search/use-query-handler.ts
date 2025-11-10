@@ -37,15 +37,15 @@ export const useQueryHandler = ( {
 
 		if ( currentSiteUrl ) {
 			const currentSiteHost = new URL( currentSiteUrl ).host;
-			if ( /\.(wordpress|wpcomstaging)\.com$/.test( currentSiteHost ) ) {
-				return currentSiteHost.replace( /\.(wordpress|wpcomstaging)\.com$/, '' );
-			}
+
+			// Remove the current site host's TLD or any WPCOM subdomain suffixes
+			// (e.g. `.wordpress.com`, `.wpcomstaging.com`, `.w.link`, `.tech.blog`, etc)
+			return currentSiteHost.split( '.' )[ 0 ];
 		}
 
-		// If there's no stored query and the current site URL is not a free WPCOM subdomain, that
-		// means we're either not in a site context, or the site slug is probably a custom domain.
-		// In that case, the initial search query should be empty.
-		return '';
+		// If there's no stored query and there's no current site URL, that means we're not in
+		// a site context (e.g. onboarding). In that case, the initial search query should be undefined.
+		return undefined;
 	} );
 
 	const setQuery = useCallback( ( query: string ) => {
