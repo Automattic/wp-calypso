@@ -6,7 +6,7 @@ import { SSH_HOST_DISPLAY_NAMES } from '../steps/ssh-host-support-urls';
 const ENABLED_SSH_HOSTS: string[] = [
 	'hostinger-international-limited',
 	'ionos',
-	'ovh',
+	'ovh-sas',
 	'bluehost',
 	'namecheap',
 ];

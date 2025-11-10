@@ -14,7 +14,7 @@ export const SSH_HOST_DISPLAY_NAMES: Record< string, string > = {
 	digitalocean: 'DigitalOcean',
 	hetzner: 'Hetzner',
 	namecheap: 'Namecheap',
-	ovh: 'OVHcloud',
+	'ovh-sas': 'OVHcloud',
 	dreamhost: 'DreamHost',
 };
 
@@ -71,7 +71,7 @@ const SSH_HOST_SUPPORT_DOCS: Record< string, SSHSupportDoc > = {
 		url: localizeUrl( 'https://wordpress.com/support/migrate-a-site-from-namecheap-using-ssh/' ),
 		postId: 445547,
 	},
-	ovh: {
+	'ovh-sas': {
 		url: localizeUrl( 'https://wordpress.com/support/migrate-a-site-from-ovhcloud-using-ssh/' ),
 		postId: 445548,
 	},
