@@ -3,7 +3,6 @@
 
 .qr-code-login-page {
 	margin: 0 auto;
-	max-width: 700px;
 	text-align: center;
 
 	&.is-jetpack {
@@ -11,32 +10,8 @@
 	}
 }
 
-.layout:has(.qr-code-login-page:not(.is-jetpack)) {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.qr-code-login-page__heading {
-	@include onboarding-heading-text-mobile;
-	margin-bottom: 16px;
-	text-align: left !important;
-}
-
-.qr-code-login-page__footer {
-	a {
-		display: block;
-		font-size: $font-body-small;
-		color: var(--color-text);
-		font-weight: 600;
-		padding: 0 24px;
-		text-align: center;
-		text-decoration: underline;
-
-		&:hover {
-			color: var(--color-primary);
-		}
-	}
+.qr-code-login-page__form {
+	margin-block-end: 2em;
 }
 
 .qr-code-login-page__placeholder {

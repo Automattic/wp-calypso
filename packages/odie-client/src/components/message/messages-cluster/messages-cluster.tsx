@@ -4,11 +4,19 @@ import { Fragment } from 'react';
 import ChatMessage from '..';
 import { useOdieAssistantContext } from '../../../context';
 import { isCSATMessage } from '../../../utils';
-import { hasFeedbackForm, isAttachment, isTransitionToSupportMessage } from '../../../utils/csat';
+import {
+	hasFeedbackForm,
+	isAttachment,
+	isTransitionToSupportMessage,
+	isZendeskIntroMessage,
+} from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
 import { getMessageUniqueIdentifier } from '../utils/get-message-unique-identifier';
 import type { Message, MessageRole } from '../../../types';
 import './style.scss';
+
+// Message roles that should be excluded from rendering
+const EXCLUDED_MESSAGE_ROLES = [ 'zendesk-intro' ] as const;
 
 /**
  * Returns the presented role of a message. Replace CSAT messages's role with 'csat' role.
@@ -22,6 +30,8 @@ function getPresentedRole( message: Message ) {
 		return 'attachment';
 	} else if ( hasFeedbackForm( message ) ) {
 		return 'feedback';
+	} else if ( isZendeskIntroMessage( message ) ) {
+		return 'zendesk-intro';
 	}
 	return message.role;
 }
@@ -67,7 +77,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 
 	let currentGroup: {
 		id: string;
-		role: MessageRole | 'csat' | 'attachment' | 'feedback';
+		role: MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro';
 		messages: Message[];
 	} = {
 		id: crypto.randomUUID(),
@@ -78,6 +88,10 @@ function clusterMessagesBySender( messages: Message[] ) {
 	const groups = [ currentGroup ];
 
 	for ( const message of sortMessagesByTimestamp( messages ) ) {
+		if ( EXCLUDED_MESSAGE_ROLES.includes( getPresentedRole( message ) as any ) ) {
+			continue;
+		}
+
 		if ( getPresentedRole( message ) !== currentGroup.role ) {
 			currentGroup = {
 				id: crypto.randomUUID(),

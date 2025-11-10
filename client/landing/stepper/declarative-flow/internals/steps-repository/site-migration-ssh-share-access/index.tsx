@@ -1,12 +1,15 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
@@ -15,6 +18,7 @@ import { useSSHMigrationStatus } from '../site-migration-ssh-in-progress/hooks/u
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
 import { usePollSSHMigrationAtomicTransfer } from './hooks/use-poll-ssh-migration-atomic-transfer';
+import { useRotatingLoadingMessages } from './hooks/use-rotating-loading-messages';
 import { useStartSSHMigration } from './hooks/use-start-ssh-migration';
 import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
@@ -28,8 +32,8 @@ const SiteMigrationSshShareAccess: StepType< {
 			| 'migration-started'
 			| 'migration-completed'
 			| 'no-ssh-access'
-			| 'back-to-verification';
-		how?: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ];
+			| 'back-to-verification'
+			| 'do-it-for-me';
 	};
 } > = function ( { navigation } ) {
 	const site = useSite();
@@ -41,6 +45,9 @@ const SiteMigrationSshShareAccess: StepType< {
 	const transferId = transferIdParam ? parseInt( transferIdParam, 10 ) : null;
 	const [ migrationStarted, setMigrationStarted ] = useState( false );
 	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
+	const locale = useLocale();
+	const siteSlug = useSiteSlugParam() ?? '';
+	const { sendTicketAsync } = useSubmitMigrationTicket();
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -62,17 +69,6 @@ const SiteMigrationSshShareAccess: StepType< {
 		enabled: migrationStarted && siteId > 0,
 	} );
 
-	const { steps, formState, canStartMigration, onMigrationStarted, setMigrationError } = useSteps( {
-		fromUrl,
-		siteId,
-		siteName: site?.name ?? '',
-		host,
-		onNoSSHAccess: handleNoSSHAccess,
-		migrationStatus: migrationStatus?.status,
-	} );
-
-	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
-
 	// Poll SSH migration atomic transfer status
 	const { transferStatus, isTransferring } = usePollSSHMigrationAtomicTransfer(
 		siteId,
@@ -82,6 +78,19 @@ const SiteMigrationSshShareAccess: StepType< {
 			refetchInterval: 2000, // Poll every 2 seconds
 		}
 	);
+
+	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
+
+	const { steps, formState, canStartMigration, onMigrationStarted, setMigrationError } = useSteps( {
+		fromUrl,
+		siteId,
+		siteName: site?.name ?? '',
+		host,
+		onNoSSHAccess: handleNoSSHAccess,
+		migrationStatus: migrationStatus?.status,
+		isTransferring,
+		isInputDisabled: isStartingMigration || migrationStarted || shouldStartMigration,
+	} );
 
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
 	useEffect( () => {
@@ -144,12 +153,43 @@ const SiteMigrationSshShareAccess: StepType< {
 		}
 	}, [ transferStatus, shouldStartMigration ] );
 
+	const handleSkip = useCallback( async () => {
+		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
+			path: window.location.pathname,
+			automated_migration: true,
+		} );
+
+		try {
+			await sendTicketAsync( {
+				locale,
+				from_url: fromUrl,
+				blog_url: siteSlug,
+			} );
+
+			// Reset the site in the state to ensure the correct overview screen is shown.
+			siteId && dispatch( resetSite( siteId ) );
+
+			return navigation.submit?.( {
+				destination: 'do-it-for-me',
+			} );
+		} catch ( error ) {
+			// TODO: Handle error
+		}
+	}, [ locale, fromUrl, siteSlug, siteId, dispatch, navigation, sendTicketAsync ] );
+
 	const navigateToDoItForMe = useCallback( () => {
-		navigation.submit?.( { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME } );
-	}, [ navigation ] );
+		handleSkip();
+	}, [ handleSkip ] );
 
 	const displaySiteName = urlToDomain( fromUrl );
 	const hostDisplayName = getSSHHostDisplayName( host );
+
+	const isBusy = isStartingMigration || migrationStarted || shouldStartMigration;
+
+	// Rotating loading messages for continue button
+	const { buttonText } = useRotatingLoadingMessages( {
+		isBusy,
+	} );
 
 	const title = translate( 'Securely share your access' );
 	const subtitle = hostDisplayName
@@ -191,9 +231,9 @@ const SiteMigrationSshShareAccess: StepType< {
 								migrationStarted ||
 								shouldStartMigration
 							}
-							isBusy={ isStartingMigration || migrationStarted || shouldStartMigration }
+							isBusy={ isBusy }
 						>
-							{ translate( 'Continue' ) }
+							{ buttonText }
 						</Button>
 					</div>
 				</SshMigrationContainer>

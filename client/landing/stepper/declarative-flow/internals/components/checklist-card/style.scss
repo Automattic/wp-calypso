@@ -1,0 +1,36 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.checklist-card {
+	max-width: 440px;
+}
+
+.checklist-card__title {
+	font-weight: 500;
+	margin: 0.5rem 0 1.5rem;
+	color: var(--studio-gray-100);
+}
+
+.checklist-card__items {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	margin-bottom: 0.75rem;
+}
+
+.checklist-card__item-icon {
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 4px;
+	padding: 0.75rem;
+	line-height: 0;
+	svg {
+		margin: 0;
+	}
+}
+
+.checklist-card__item {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	font-size: 0.875rem;
+	color: var(--studio-gray-50);
+}

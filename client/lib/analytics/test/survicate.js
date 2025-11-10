@@ -137,9 +137,11 @@ describe( 'survicate', () => {
 		test.each( [
 			// Anonymous paths should return true
 			[ '/log-in', true ],
-			[ '/setup/onboarding/user', true ],
 			[ '/log-in/lostpassword', true ],
 			[ '/account/user-social', true ],
+			[ '/setup/onboarding/user', true ],
+			[ '/setup/onboarding/user/pt-br', true ],
+			[ '/log-in/two-factor', true ],
 			// Non-anonymous paths should return false
 			[ '/sites', false ],
 			[ '/home', false ],

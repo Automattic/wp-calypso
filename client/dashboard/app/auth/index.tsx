@@ -27,16 +27,8 @@ async function initializeCurrentUser(): Promise< User > {
 	const useBootstrap = ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
 
 	if ( useBootstrap ) {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		if ( ( window as any ).currentUser ) {
-			// TODO: align the various `currentUser` types. The different types have
-			// different opinions on which fields are required and optional.
-			// - packages/api-core/src/me/types.ts
-			// - packages/data-stores/src/user/types.ts
-			// - client/lib/user/user.d.ts
-
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			return ( window as any ).currentUser;
+		if ( window.currentUser ) {
+			return window.currentUser;
 		}
 		throw new Error( 'Failed to bootstrap user object' );
 	}

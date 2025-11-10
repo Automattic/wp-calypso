@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -7,7 +8,9 @@ import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param'
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToDomain } from 'calypso/lib/url';
 import wp from 'calypso/lib/wp';
+import { isHostingSupportedForSSHMigration } from '../../site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { CredentialsFormData, ApplicationPasswordsInfo, ApiError } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useRequestAutomatedMigration } from './use-request-automated-migration';
@@ -18,6 +21,18 @@ export const analyzeUrl = async ( domain: string ): Promise< UrlData | undefined
 			path: '/imports/analyze-url?site_url=' + encodeURIComponent( domain ),
 			apiNamespace: 'wpcom/v2',
 		} );
+	} catch ( error ) {
+		return undefined;
+	}
+};
+
+export const getHostingProvider = async ( domain: string ): Promise< string | undefined > => {
+	try {
+		const response = await wp.req.get( {
+			path: '/site-profiler/hosting-provider/' + encodeURIComponent( domain ),
+			apiNamespace: 'wpcom/v2',
+		} );
+		return response?.hosting_provider?.slug;
 	} catch ( error ) {
 		return undefined;
 	}
@@ -69,7 +84,11 @@ const removeEndingSlash = ( url: string ) => {
 };
 
 export const useCredentialsForm = (
-	onSubmit: ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPasswordsInfo ) => void
+	onSubmit: (
+		siteInfo?: UrlData,
+		applicationPasswordsInfo?: ApplicationPasswordsInfo,
+		hostingProviderSlug?: string
+	) => void
 ) => {
 	const siteSlug = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
@@ -169,7 +188,22 @@ export const useCredentialsForm = (
 				onSubmit( siteInfoResult, applicationPasswordsInfoResult );
 			}
 		},
-		[ onSubmit, siteSlug, sendTicketAsync ]
+		[ locale, onSubmit, siteSlug, sendTicketAsync ]
+	);
+
+	const submitToSSHMigrationFlow = useCallback(
+		( siteInfoResult: UrlData, hostingProviderSlug: string ) => {
+			recordTracksEvent( 'calypso_site_migration_hosting_detected', {
+				hosting_provider: hostingProviderSlug,
+				is_ssh_supported: true,
+				ssh_feature_enabled: true,
+				redirected_to_ssh: true,
+				step: 'credentials',
+			} );
+
+			onSubmit( siteInfoResult, undefined, hostingProviderSlug );
+		},
+		[ onSubmit ]
 	);
 
 	const submitHandler = handleSubmit( async ( data: CredentialsFormData ) => {
@@ -177,6 +211,21 @@ export const useCredentialsForm = (
 
 		const siteInfoResult = shouldAnalyzeUrl ? await analyzeUrl( data.from_url ) : siteInfo;
 		setSiteInfo( siteInfoResult );
+
+		// Fetch hosting provider after analyzing the URL
+		let hostingProviderSlug: string | undefined;
+		if ( siteInfoResult?.url ) {
+			const domain = urlToDomain( siteInfoResult.url );
+			hostingProviderSlug = await getHostingProvider( domain );
+		}
+
+		// Check if SSH migration is available and hosting is supported
+		const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
+		const isHostingSupported = isHostingSupportedForSSHMigration( hostingProviderSlug );
+
+		if ( isSSHMigrationAvailable && isHostingSupported && hostingProviderSlug && siteInfoResult ) {
+			return submitToSSHMigrationFlow( siteInfoResult, hostingProviderSlug );
+		}
 
 		if ( accessMethod === 'credentials' && siteInfoResult ) {
 			await submitWithApplicationPassword( siteId, data.from_url, siteInfoResult );

@@ -1,4 +1,5 @@
-import { restoreDatabasePassword } from '@automattic/api-core';
+import { siteDatabaseMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -22,19 +23,21 @@ export default function ResetPasswordModal( {
 	onSuccess,
 	onError,
 }: ResetPasswordModalProps ) {
+	const mutation = useMutation( siteDatabaseMutation( siteId ) );
 	const [ isRestoring, setIsRestoring ] = useState( false );
 
 	const handleRestore = () => {
 		setIsRestoring( true );
-		restoreDatabasePassword( siteId )
-			.then( () => {
+		mutation.mutate( undefined, {
+			onSuccess: () => {
 				setIsRestoring( false );
 				onSuccess();
-			} )
-			.catch( () => {
+			},
+			onError: () => {
 				setIsRestoring( false );
 				onError();
-			} );
+			},
+		} );
 	};
 
 	return (

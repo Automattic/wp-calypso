@@ -144,10 +144,10 @@ export default function SecurityConnectedApps() {
 					title={ __( 'Connected applications' ) }
 					description={ createInterpolateElement(
 						__(
-							'Connect with third-party applications that extend your site in new and cool ways. <link>Learn more</link>'
+							'Connect with third-party applications that extend your site in new and cool ways. <learnMoreLink />'
 						),
 						{
-							link: (
+							learnMoreLink: (
 								<InlineSupportLink
 									supportPostId={ 17288 }
 									supportLink={ localizeUrl(

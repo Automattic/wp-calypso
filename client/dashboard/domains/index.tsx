@@ -3,7 +3,7 @@ import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { DataViewsCard } from '../components/dataviews-card';
@@ -13,7 +13,7 @@ import PageLayout from '../components/page-layout';
 import { AddDomainButton } from './add-domain-button';
 import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
 import type { DomainsView } from './dataviews';
-import type { DomainSummary, Site } from '@automattic/api-core';
+import type { DomainSummary } from '@automattic/api-core';
 
 export function getDomainId( domain: DomainSummary ): string {
 	return `${ domain.domain }-${ domain.blog_id }`;
@@ -37,23 +37,10 @@ function Domains() {
 		],
 	} ) );
 
-	const sitesById = useMemo( () => {
-		if ( ! sites ) {
-			return {};
-		}
-		return sites.reduce( ( acc: Record< number, Site >, site ) => {
-			acc[ site.ID ] = site;
-			return acc;
-		}, {} );
-	}, [ sites ] );
-
 	const { data: domains, isLoading } = useQuery( {
 		...domainsQuery(),
 		select: ( data ) => {
-			return data.filter(
-				( domain ) =>
-					domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS && !! sitesById[ domain.blog_id ]
-			);
+			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
 		},
 	} );
 

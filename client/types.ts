@@ -1,4 +1,5 @@
-import { StyleVariation } from '@automattic/design-picker';
+import type { User } from '@automattic/api-core';
+import type { StyleVariation } from '@automattic/design-picker';
 import type { NonUndefined } from 'utility-types';
 
 // Web stuff
@@ -135,6 +136,7 @@ declare global {
 			isDebug?: boolean;
 			clientIp?: string;
 		};
+		currentUser?: User;
 		__REDUX_DEVTOOLS_EXTENSION__?: () => void;
 	}
 }

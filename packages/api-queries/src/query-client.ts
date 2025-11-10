@@ -3,6 +3,15 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 
+declare module '@tanstack/react-query' {
+	interface Register {
+		queryMeta: {
+			persist?: boolean | ( ( data: any ) => boolean );
+			fullPageLoader?: boolean;
+		};
+	}
+}
+
 // Key used to store the query cache in local storage.
 // This is the default key used by React Query, but making it explicit in case
 // of breaking changes to the default key in the future.

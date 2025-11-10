@@ -1,0 +1,32 @@
+export interface CancelPurchaseState {
+	atomicRevertCheckOne?: boolean;
+	atomicRevertCheckTwo?: boolean;
+	atomicRevertConfirmed?: boolean;
+	cancelBundledDomain?: boolean;
+	confirmCancelBundledDomain?: boolean;
+	customerConfirmedUnderstanding?: boolean;
+	domainConfirmationConfirmed?: boolean;
+	importQuestionRadio?: string;
+	initialized?: boolean;
+	isLoading?: boolean;
+	isNextAdventureValid?: boolean;
+	isShowingMarketplaceSubscriptionsDialog?: boolean;
+	isSubmitting?: boolean;
+	questionOneOrder: string[];
+	questionOneRadio?: string;
+	questionOneText?: string;
+	questionOneDetails?: string;
+	questionThreeRadio?: string;
+	questionThreeText?: string;
+	questionTwoOrder?: string[];
+	questionTwoRadio?: string;
+	questionTwoText?: string;
+	showDomainOptionsStep?: boolean;
+	siteId?: number;
+	skipRemovePlanSurvey?: boolean;
+	solution?: string;
+	surveyShown?: boolean;
+	surveyStep?: string;
+	upsell?: string;
+	willAtomicSiteRevert?: boolean;
+}

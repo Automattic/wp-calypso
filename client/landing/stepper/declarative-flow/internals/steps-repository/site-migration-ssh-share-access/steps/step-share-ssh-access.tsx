@@ -24,6 +24,9 @@ interface StepShareSSHAccessProps {
 	onGenerateSSHKey: () => void;
 	onEditUsername: () => void;
 	helpLink: ReactNode;
+	isTransferring: boolean;
+	shouldGenerateKey: boolean;
+	isInputDisabled: boolean;
 }
 
 export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
@@ -42,6 +45,9 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 	onGenerateSSHKey,
 	onEditUsername,
 	helpLink,
+	isTransferring,
+	shouldGenerateKey,
+	isInputDisabled,
 } ) => {
 	const translate = useTranslate();
 	const [ copied, setCopied ] = useState( false );
@@ -73,6 +79,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 						<FormRadio
 							name="auth-method"
 							value="password"
+							disabled={ isInputDisabled }
 							checked={ authMethod === 'password' }
 							onChange={ () => onAuthMethodChange( 'password' ) }
 							label={ translate( 'Username and password' ) }
@@ -83,6 +90,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 						<FormRadio
 							name="auth-method"
 							value="key"
+							disabled={ isInputDisabled }
 							checked={ authMethod === 'key' }
 							onChange={ () => onAuthMethodChange( 'key' ) }
 							label={ translate( 'SSH key' ) }
@@ -105,6 +113,8 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 									onUsernameChange( e.target.value )
 								}
 								placeholder={ translate( 'Enter your SSH username' ) }
+								disabled={ isInputDisabled }
+								className={ isInputDisabled ? 'is-disabled' : '' }
 							/>
 						</div>
 
@@ -119,6 +129,8 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 									onPasswordChange( e.target.value )
 								}
 								placeholder={ translate( 'Enter your SSH password' ) }
+								disabled={ isInputDisabled }
+								className={ isInputDisabled ? 'is-disabled' : '' }
 							/>
 						</div>
 					</>
@@ -165,8 +177,10 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 								<Button
 									variant="secondary"
 									onClick={ onGenerateSSHKey }
-									disabled={ ! username || isGeneratingKey }
-									isBusy={ isGeneratingKey }
+									disabled={
+										! username || isGeneratingKey || ( isTransferring && shouldGenerateKey )
+									}
+									isBusy={ isGeneratingKey || ( isTransferring && shouldGenerateKey ) }
 								>
 									{ translate( 'Generate SSH key' ) }
 								</Button>

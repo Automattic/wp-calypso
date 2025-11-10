@@ -7,6 +7,9 @@ export const DotcomPlans = {
 	BUSINESS_2_YEARS: 'business-bundle-2y',
 	BUSINESS_3_YEARS: 'business-bundle-3y',
 	ECOMMERCE: 'ecommerce-bundle',
+	ECOMMERCE_2_YEARS: 'ecommerce-bundle-2y',
+	ECOMMERCE_3_YEARS: 'ecommerce-bundle-3y',
+	ECOMMERCE_MONTHLY: 'ecommerce-bundle-monthly',
 	ECOMMERCE_TRIAL_MONTHLY: 'ecommerce-trial-bundle-monthly',
 	FREE_PLAN: 'free_plan',
 	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
@@ -17,6 +20,21 @@ export const DotcomPlans = {
 	PREMIUM_2_YEARS: 'value_bundle-2y',
 	PREMIUM_3_YEARS: 'value_bundle-3y',
 } as const;
+
+export const BusinessPlans = [
+	DotcomPlans.BUSINESS_MONTHLY,
+	DotcomPlans.BUSINESS,
+	DotcomPlans.BUSINESS_2_YEARS,
+	DotcomPlans.BUSINESS_3_YEARS,
+];
+
+export const EcommercePlans = [
+	DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
+	DotcomPlans.ECOMMERCE_MONTHLY,
+	DotcomPlans.ECOMMERCE,
+	DotcomPlans.ECOMMERCE_2_YEARS,
+	DotcomPlans.ECOMMERCE_3_YEARS,
+];
 
 export type DotcomPlanSlug = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
 
@@ -29,6 +47,9 @@ export const DotcomFeatures = {
 	GITHUB_DEPLOYMENTS: 'github-deployments',
 	LEGACY_CONTACT: 'legacy-contact',
 	LOCKED_MODE: 'locked-mode',
+	LOGS: 'logs',
+	MONITORING: 'monitoring',
+	PERFORMANCE: 'performance',
 	SCAN: 'scan',
 	SECURITY_SETTINGS: 'security-settings',
 	SET_PRIMARY_CUSTOM_DOMAIN: 'set-primary-custom-domain',
@@ -74,10 +95,10 @@ export const HostingFeatures = {
 	DATABASE: DotcomFeatures.SFTP,
 	DEFENSIVE_MODE: DotcomFeatures.SFTP,
 	DEPLOYMENT: DotcomFeatures.GITHUB_DEPLOYMENTS,
-	LOGS: DotcomFeatures.ATOMIC,
+	LOGS: DotcomFeatures.LOGS,
 	ACTIVITY_LOG: DotcomFeatures.FULL_ACTIVITY_LOG,
-	MONITOR: DotcomFeatures.ATOMIC,
-	PERFORMANCE: DotcomFeatures.ATOMIC,
+	MONITOR: DotcomFeatures.MONITORING,
+	PERFORMANCE: DotcomFeatures.PERFORMANCE,
 	PHP: DotcomFeatures.SFTP,
 	PRIMARY_DATA_CENTER: DotcomFeatures.SFTP,
 	SCAN: DotcomFeatures.SCAN,
@@ -167,17 +188,15 @@ export const JetpackPlans = {
 	PLAN_JETPACK_GROWTH_MONTHLY: 'jetpack_growth_monthly',
 	PLAN_JETPACK_GROWTH_YEARLY: 'jetpack_growth_yearly',
 	PLAN_JETPACK_GROWTH_BI_YEARLY: 'jetpack_growth_bi_yearly',
-	PRODUCT_JETPACK_SEARCH_BI_YEARLY: 'jetpack_search_bi_yearly',
-	PRODUCT_JETPACK_SEARCH: 'jetpack_search',
-	PRODUCT_JETPACK_SEARCH_MONTHLY: 'jetpack_search_monthly',
-	PRODUCT_JETPACK_SEARCH_FREE: 'jetpack_search_free',
+	PLAN_JETPACK_SECURITY_DAILY: 'jetpack_security_daily',
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY: 'jetpack_security_daily_monthly',
+	PLAN_JETPACK_SECURITY_REALTIME: 'jetpack_security_realtime',
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY: 'jetpack_security_realtime_monthly',
 } as const;
 
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 
 export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
-export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
-export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
 
 export const OFFSITE_REDIRECT = 'offsite_redirect';
 
@@ -285,11 +304,11 @@ export const PaymentPartners = {
 	RAZORPAY: 'razorpay',
 } as const;
 
-export const JETPACK_SEARCH_PRODUCTS = [
-	JetpackPlans.PRODUCT_JETPACK_SEARCH_BI_YEARLY,
-	JetpackPlans.PRODUCT_JETPACK_SEARCH,
-	JetpackPlans.PRODUCT_JETPACK_SEARCH_MONTHLY,
-	JetpackPlans.PRODUCT_JETPACK_SEARCH_FREE,
-	PRODUCT_WPCOM_SEARCH,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
-];
+export const JetpackSearchProducts = {
+	PRODUCT_JETPACK_SEARCH_BI_YEARLY: 'jetpack_search_bi_yearly',
+	PRODUCT_JETPACK_SEARCH: 'jetpack_search',
+	PRODUCT_JETPACK_SEARCH_MONTHLY: 'jetpack_search_monthly',
+	PRODUCT_JETPACK_SEARCH_FREE: 'jetpack_search_free',
+	PRODUCT_WPCOM_SEARCH: 'wpcom_search',
+	PRODUCT_WPCOM_SEARCH_MONTHLY: 'wpcom_search_monthly',
+};

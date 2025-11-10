@@ -60,6 +60,7 @@ project {
 	template(CalypsoE2ETestsBuildTemplate)
 
 	params {
+		param("env.CI", "true")
 		// Force color support in chalk. For some reason it doesn't detect TeamCity
 		// as supported (even though both TeamCity and chalk support that.)
 		param("env.FORCE_COLOR", "1")

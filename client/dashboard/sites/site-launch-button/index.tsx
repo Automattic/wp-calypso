@@ -1,5 +1,5 @@
 import { DotcomPlans } from '@automattic/api-core';
-import { siteDomainsQuery, siteLaunchMutation } from '@automattic/api-queries';
+import { domainsQuery, siteLaunchMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -16,7 +16,10 @@ import type { Site } from '@automattic/api-core';
 
 export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksContext: string } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { data: domains = [], isLoading } = useQuery( siteDomainsQuery( site.ID ) );
+	const { data: domains = [], isLoading } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
+	} );
 	const launchMutation = useMutation( {
 		...siteLaunchMutation( site.ID ),
 		meta: {

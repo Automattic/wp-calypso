@@ -219,10 +219,10 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 					title={ __( 'Defensive mode' ) }
 					description={ createInterpolateElement(
 						__(
-							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <link>Learn more</link>'
+							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <learnMoreLink />'
 						),
 						{
-							link: <InlineSupportLink supportContext="hosting-defensive-mode" />,
+							learnMoreLink: <InlineSupportLink supportContext="hosting-defensive-mode" />,
 						}
 					) }
 				/>
