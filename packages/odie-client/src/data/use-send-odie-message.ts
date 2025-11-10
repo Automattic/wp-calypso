@@ -22,7 +22,7 @@ import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
 
 function getBotSlug( supportInteraction?: SupportInteraction ): string {
 	if ( supportInteraction ) {
-		// Legacy support interactions have their botSlug set to `''`. We need to use the default bot slug for them.
+		// Legacy support interactions have their botSlug set to `''`. We need to use the legacy bot slug for them.
 		return supportInteraction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
 	}
 
