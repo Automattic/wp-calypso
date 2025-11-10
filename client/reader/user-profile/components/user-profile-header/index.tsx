@@ -6,13 +6,13 @@ import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { UserData } from 'calypso/lib/user/user';
+import { UserProfileData } from 'calypso/lib/user/user';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 
 import './style.scss';
 
 interface UserProfileHeaderProps {
-	user: UserData;
+	user: UserProfileData;
 	view: string;
 }
 

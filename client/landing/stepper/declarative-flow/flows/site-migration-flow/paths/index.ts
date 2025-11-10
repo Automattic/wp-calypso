@@ -87,6 +87,7 @@ export const processingPath = buildPathHelper<
 			from?: string | null;
 			platform: ImporterPlatform;
 			action: string | null;
+			host?: string | null;
 		};
 	},
 	typeof STEPS.PROCESSING.slug

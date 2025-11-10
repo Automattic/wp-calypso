@@ -1,65 +1,38 @@
-import { Page } from 'playwright';
-import { DataHelper } from '../..';
+import { Locator, Page } from 'playwright';
+import { BrowserManager, envVariables } from '../..';
 
 /**
- * Represents the WPCOM LOHP.
+ * Represents the WordPress.com Logged Out Home Page (LOHP).
  */
 export class LoggedOutHomePage {
 	private page: Page;
+	readonly logInMenuItem: Locator;
+	readonly exploreThemesLink: Locator;
+	readonly heading: Locator;
 
 	/**
 	 * Constructs an instance of the LOHP.
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.logInMenuItem = this.page.getByRole( 'menuitem', { name: 'Log In' } );
+		this.exploreThemesLink = this.page.getByRole( 'link', { name: 'Explore themes' } );
+		this.heading = this.page.getByRole( 'heading', { name: 'WordPress' } ).first();
 	}
 
 	/**
-	 * Selects the first visible theme on the LOHP.
+	 * Navigates to the logged out home page.
+	 * returns {Promise<void>}
 	 */
-	async selectFirstTheme() {
-		// Hovering over the container to stop the carousel scrolling
-		// The force is necessary as the container is not considered stable due to the scrolling
-		const themeContainer = this.page.locator( '.lp-content.lp-content-area--scrolling' ).first();
-		await themeContainer.hover( { force: true } );
-
-		// Hovering over the theme card is necessary to make the "Start with this theme" button visible.
-		const themeCard = themeContainer.locator( '.lp-image-top-row' ).last();
-		await themeCard.hover();
-
-		const themeButton = themeCard.getByText( 'Start with this theme' );
-		const calypsoUrl = new URL( DataHelper.getCalypsoURL() );
-		const themeButtonUrl = new URL( ( await themeButton.getAttribute( 'href' ) ) || '' );
-
-		if ( calypsoUrl.hostname !== 'wordpress.com' ) {
-			// Reroute the click to the current Calypso URL.
-			await this.page.route( themeButtonUrl.href, async ( route ) => {
-				themeButtonUrl.host = calypsoUrl.host;
-				themeButtonUrl.protocol = calypsoUrl.protocol;
-
-				await route.abort();
-				await this.page.unrouteAll( { behavior: 'ignoreErrors' } );
-				await this.page.goto( themeButtonUrl.href, { waitUntil: 'load' } );
-			} );
-		}
-		// Get theme slug
-		const pageMatch = new URL( themeButtonUrl.href ).search.match( 'theme=([a-z]*)?&' );
-		const themeSlug = pageMatch?.[ 1 ] || null;
-
-		// Hover, otherwise the element isn't considered stable, and is out of the viewport.
-		await themeCard.hover( { force: true } );
-		await themeCard.getByText( 'Start with this theme' ).click( { force: true } );
-
-		return themeSlug;
+	async visit(): Promise< void > {
+		await this.page.goto( envVariables.WPCOM_BASE_URL );
 	}
 
 	/**
-	 * Clicks the "Explore themes" button.
+	 * Sets the store cookie for the specified currency.
+	 * @param currency
 	 */
-	async clickExploreThemes() {
-		return Promise.all( [
-			this.page.waitForNavigation( { waitUntil: 'load' } ),
-			this.page.getByRole( 'link', { name: 'Explore themes' } ).click(),
-		] );
+	async setStoreCookie( currency: string ): Promise< void > {
+		await BrowserManager.setStoreCookie( this.page, { currency } );
 	}
 }

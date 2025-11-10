@@ -12,7 +12,7 @@ export const validateHostname = ( hostname: string ) => {
 export const shouldShowUpsellNudge = ( user: User, domain: Domain, site?: Site ): boolean => {
 	if (
 		! site?.plan?.is_free || // hide nudge for paid plans
-		! user.meta.data.flags.active_flags.includes(
+		! user.meta.data.flags?.active_flags.includes(
 			'calypso_allow_nonprimary_domains_without_plan'
 		) ||
 		domain.primary_domain ||

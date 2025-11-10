@@ -1,4 +1,5 @@
-import { siteDomainsQuery, siteSettingsMutation } from '@automattic/api-queries';
+import { DomainSubtype } from '@automattic/api-core';
+import { domainsQuery, siteSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
@@ -93,10 +94,12 @@ const robotFields: Field< PrivacyFormData & { isPrimaryDomainStaging: boolean } 
 				} }
 				help={ createInterpolateElement(
 					__(
-						'This will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. <a>Learn more</a>'
+						'This will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. <learnMoreLink />'
 					),
 					{
-						a: <InlineSupportLink supportContext="privacy-prevent-third-party-sharing" />,
+						learnMoreLink: (
+							<InlineSupportLink supportContext="privacy-prevent-third-party-sharing" />
+						),
 					}
 				) }
 			/>
@@ -112,7 +115,13 @@ const robotForm = {
 } satisfies Form;
 
 export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
-	const { data: domains = [] } = useQuery( siteDomainsQuery( site.ID ) );
+	const { data: domains = [] } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.blog_id === site.ID );
+		},
+	} );
+
 	const mutation = useMutation( {
 		...siteSettingsMutation( site.ID ),
 		meta: {
@@ -124,8 +133,13 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 	} );
 
 	const primaryDomain = domains.find( ( domain ) => domain.primary_domain );
-	const isPrimaryDomainStaging = Boolean( primaryDomain?.is_wpcom_staging_domain );
-	const hasNonWpcomDomain = domains.some( ( domain ) => ! domain.wpcom_domain );
+	const isPrimaryDomainStaging = Boolean(
+		primaryDomain?.subtype.id === DomainSubtype.DEFAULT_ADDRESS &&
+			primaryDomain?.tags.includes( 'wpcom_staging' )
+	);
+	const hasNonWpcomDomain = domains.some(
+		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+	);
 
 	const initialData = fromSiteSettings( settings );
 	const [ formData, setFormData ] = useState( () => ( {

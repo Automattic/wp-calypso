@@ -6,6 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useCallback } from 'react';
@@ -13,6 +14,7 @@ import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { Card, CardBody } from '../../components/card';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getDomainSiteSlug } from '../../utils/domain';
@@ -54,7 +56,20 @@ export default function NameServers() {
 	);
 
 	return (
-		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					description={ createInterpolateElement(
+						__( 'Change the name servers for your domain. <learnMoreLink />' ),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="nameservers" />,
+						}
+					) }
+					prefix={ <Breadcrumbs length={ 2 } /> }
+				/>
+			}
+		>
 			<Card>
 				<CardBody>
 					<NameServersForm

@@ -140,7 +140,7 @@ export default function SshKeyForm( {
 								level={ 3 }
 								description={ createInterpolateElement(
 									__(
-										'Once added, attach the SSH key to a site with a Business or Commerce plan to enable SSH key authentication for that site. <learnMoreLink>Learn more</learnMoreLink>'
+										'Once added, attach the SSH key to a site with a Business or Commerce plan to enable SSH key authentication for that site. <learnMoreLink />'
 									),
 									{
 										learnMoreLink: (

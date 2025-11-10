@@ -44,10 +44,10 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 					title={ __( 'WordPress.com login' ) }
 					description={ createInterpolateElement(
 						__(
-							'Allow registered users to log in to your site with their WordPress.com accounts. <link>Learn more</link>'
+							'Allow registered users to log in to your site with their WordPress.com accounts. <learnMoreLink />'
 						),
 						{
-							link: <InlineSupportLink supportContext="security-wpcom-login" />,
+							learnMoreLink: <InlineSupportLink supportContext="security-wpcom-login" />,
 						}
 					) }
 				/>
@@ -66,8 +66,12 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 									'The WordPress.com login feature is disabled because your site is in offline mode. <link>Learn more</link>'
 								),
 								{
-									// @ts-ignore - ExternalLink's children is not missing but is provided by the createInterpolateElement above.
-									link: <ExternalLink href="https://jetpack.com/support/offline-mode/" />,
+									link: (
+										<ExternalLink
+											href="https://jetpack.com/support/offline-mode/"
+											children={ null }
+										/>
+									),
 								}
 							) }
 						</Text>

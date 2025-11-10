@@ -20,7 +20,7 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl( 'https://developer.wordpress.com/docs/developer-tools/wp-cli/' ),
+			supportContext: 'connect-to-ssh-on-wordpress-com',
 		},
 		{
 			id: 'how-to-create-a-staging-site',
@@ -33,9 +33,7 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl(
-				'https://developer.wordpress.com/docs/developer-tools/staging-sites/'
-			),
+			supportContext: 'hosting-staging-site',
 		},
 		{
 			id: 'multi-site-management',
@@ -101,7 +99,7 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl( 'https://developer.wordpress.com/docs/glance/support/' ),
+			supportContext: 'general-support-options',
 		},
 		{
 			id: 'malware-scanning-removal',
@@ -115,24 +113,21 @@ export const useFeaturesList = () => {
 					components: {
 						backupsLink: (
 							<InlineSupportLink
-								supportPostId={ 99415 }
-								supportLink="https://developer.wordpress.com/docs/platform-features/real-time-backup-restore/"
+								supportContext="real-time-backups"
 								showIcon={ false }
 								onClick={ handleClickLink }
 							/>
 						),
 						malwareScanningLink: (
 							<InlineSupportLink
-								supportPostId={ 99380 }
-								supportLink="https://developer.wordpress.com/docs/platform-features/jetpack-scan/"
+								supportContext="jetpack-scan"
 								showIcon={ false }
 								onClick={ handleClickLink }
 							/>
 						),
 						siteMonitoringLink: (
 							<InlineSupportLink
-								supportPostId={ 99421 }
-								supportLink="https://developer.wordpress.com/docs/troubleshooting/site-monitoring/"
+								supportContext="site-monitoring"
 								showIcon={ false }
 								onClick={ handleClickLink }
 							/>

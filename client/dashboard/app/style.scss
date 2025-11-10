@@ -36,3 +36,10 @@ body {
 a {
 	color: var( --wp-admin-theme-color );
 }
+
+// This is a temporary fix to ensure the tooltip has a box-shadow.
+// Currently, there is an issue with @automattic/charts where svgLabelSmall.fill is defined with var().
+// This causes the visx tooltip to render a malformed box-shadow value, given that it interpolates the color. e.g: `${theme?.color}55`.
+.visx-tooltip:has(div[role="tooltip"]) {
+	box-shadow: 0 1px 2px $gray-300 !important;
+}

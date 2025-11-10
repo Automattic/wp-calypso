@@ -20,6 +20,11 @@ describe( 'useQueryHandler', () => {
 		expect( result.current.query ).toBe( 'test-domain' );
 	} );
 
+	it( 'should initialize with provided initialQuery in lowercase', () => {
+		const { result } = renderHook( () => useQueryHandler( { initialQuery: 'TEST-DOMAIN' } ) );
+		expect( result.current.query ).toBe( 'test-domain' );
+	} );
+
 	it( 'should initialize with domain from currentSiteUrl when provided', () => {
 		const { result } = renderHook( () =>
 			useQueryHandler( { currentSiteUrl: 'https://test-site.wordpress.com' } )

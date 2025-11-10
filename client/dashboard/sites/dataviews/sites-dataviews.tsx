@@ -1,43 +1,66 @@
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { isEnabled } from '@automattic/calypso-config';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { DataViews } from '../../app/dataviews';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { SiteLink } from '../site-fields';
 import { DEFAULT_LAYOUTS, DEFAULT_PER_PAGE_SIZES } from './views';
-import type { Site, SitesView } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 import type { Action, Field, View } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
+
+/**
+ * Meant to stand in for the dataview's filterSortAndPaginate function when
+ * the filtering has already been done on the backend by elasticsearch.
+ */
+function esFilterSortAndPaginate( sites: Site[], view: View, totalItems: number ) {
+	return {
+		data: sites,
+		paginationInfo: {
+			totalItems,
+			totalPages: view.perPage ? Math.ceil( totalItems / view.perPage ) : 1,
+		},
+	};
+}
 
 export const SitesDataViews = ( {
 	view,
 	sites,
+	totalItems,
 	fields,
 	actions,
 	isLoading,
 	empty,
-	handleViewChange,
+	onChangeView,
+	onResetView,
 }: {
-	view: SitesView;
+	view: View;
 	sites: Site[];
+	totalItems: number;
 	fields: Field< Site >[];
 	actions: Action< Site >[];
 	isLoading: boolean;
 	empty: ReactNode;
-	handleViewChange: ( view: View ) => void;
+	onChangeView: ( view: View ) => void;
+	onResetView?: () => void;
 } ) => {
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
+	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/es-site-list' )
+		? esFilterSortAndPaginate( sites, view, totalItems )
+		: filterSortAndPaginate( sites, view, fields );
 
 	return (
 		<>
 			<DataViewsCard>
 				<DataViews< Site >
-					getItemId={ ( item ) => item.ID.toString() }
+					getItemId={ ( item ) => item.ID.toString() + item.URL }
 					data={ filteredData }
 					fields={ fields }
 					actions={ actions }
 					view={ view }
 					isLoading={ isLoading }
-					onChangeView={ handleViewChange }
+					onChangeView={ onChangeView }
+					onResetView={ onResetView }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }
 					config={ { perPageSizes: DEFAULT_PER_PAGE_SIZES } }

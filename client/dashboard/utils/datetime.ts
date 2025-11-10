@@ -51,7 +51,7 @@ export function isWithinNext( date: Date, count: number, unit: 'hours' | 'days' 
 }
 
 /**
- * Return a string like "2 days from now" or "1 month ago" for a given date.
+ * Return a string like "in 2 days" or "1 month ago" for a given date.
  *
  * Note that given the imprecision of date math and time zones, this may not be
  * totally accurate. Use it only in places where precision is not required.
@@ -146,27 +146,27 @@ export function getRelativeTimeString( date: Date ): string {
 	switch ( unit ) {
 		case 'year':
 			// translators: value is a number
-			return sprintf( _n( '%(value)s year from now', '%(value)s years from now', value ), {
+			return sprintf( _n( 'in %(value)s year', 'in %(value)s years', value ), {
 				value,
 			} );
 		case 'month':
 			// translators: value is a number
-			return sprintf( _n( '%(value)s month from now', '%(value)s months from now', value ), {
+			return sprintf( _n( 'in %(value)s month', 'in %(value)s months', value ), {
 				value,
 			} );
 		case 'day':
 			// translators: value is a number
-			return sprintf( _n( '%(value)s day from now', '%(value)s days from now', value ), {
+			return sprintf( _n( 'in %(value)s day', 'in %(value)s days', value ), {
 				value,
 			} );
 		case 'hour':
 			// translators: value is a number
-			return sprintf( _n( '%(value)s hour from now', '%(value)s hours from now', value ), {
+			return sprintf( _n( 'in %(value)s hour', 'in %(value)s hours', value ), {
 				value,
 			} );
 		case 'minute':
 			// translators: value is a number
-			return sprintf( _n( '%(value)s minute from now', '%(value)s minutes from now', value ), {
+			return sprintf( _n( 'in %(value)s minute', 'in %(value)s minutes', value ), {
 				value,
 			} );
 		default:

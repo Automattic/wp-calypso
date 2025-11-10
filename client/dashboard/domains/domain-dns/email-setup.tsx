@@ -1,8 +1,10 @@
 import { DnsTemplates } from '@automattic/api-core';
 import { __experimentalVStack as VStack, TabPanel } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Card, CardBody } from '../../components/card';
+import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import EmailSetupForm from './email-setup-form';
 
@@ -16,8 +18,13 @@ export default function EmailSetup() {
 				<EmailSetupForm
 					label="Google Workspace"
 					key="google-workspace"
-					description={ __(
-						'Paste the verification token provided by Google Workspace for the TXT record.'
+					description={ createInterpolateElement(
+						__(
+							'Paste the verification token provided by Google Workspace for the TXT record. <learnMoreLink />'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="domain-email-google" />,
+						}
 					) }
 					pattern={ /^google-site-verification=[A-Za-z0-9_-]{43}$/ }
 					placeholder="google-site-verification=…"
@@ -49,8 +56,13 @@ export default function EmailSetup() {
 			content: (
 				<EmailSetupForm
 					key="office-365"
-					description={ __(
-						'Paste the verification token provided by Office 365 for the TXT record.'
+					description={ createInterpolateElement(
+						__(
+							'Paste the verification token provided by Office 365 for the TXT record. <learnMoreLink />'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="domain-email-o365" />,
+						}
 					) }
 					label="Office 365"
 					transformVariables={ ( variables ) =>
@@ -71,8 +83,13 @@ export default function EmailSetup() {
 			content: (
 				<EmailSetupForm
 					key="zoho-mail"
-					description={ __(
-						'Paste the verification token provided by Zoho Mail for the TXT record.'
+					description={ createInterpolateElement(
+						__(
+							'Paste the verification token provided by Zoho Mail for the TXT record. <learnMoreLink />'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="domain-email-zoho" />,
+						}
 					) }
 					label="Zoho Mail"
 					pattern={ /^zb\w{1,100}$/ }
@@ -94,7 +111,7 @@ export default function EmailSetup() {
 						level={ 3 }
 					/>
 					<TabPanel tabs={ tabs } orientation={ isMobile ? 'horizontal' : 'vertical' }>
-						{ ( tab ) => tab.content }
+						{ ( tab ) => <p>{ tab.content }</p> }
 					</TabPanel>
 				</VStack>
 			</CardBody>
