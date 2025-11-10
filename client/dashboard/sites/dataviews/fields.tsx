@@ -23,7 +23,7 @@ import {
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
-export function getDefaultFields(): Field< Site >[] {
+function getDefaultFields(): Field< Site >[] {
 	return [
 		{
 			id: 'name',

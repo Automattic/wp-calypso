@@ -8,8 +8,8 @@ import {
 	__experimentalHeading as Heading,
 	Icon,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { chevronRight } from '@wordpress/icons';
+import { isRTL, __ } from '@wordpress/i18n';
+import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
@@ -126,7 +126,10 @@ export default function OverviewCard( {
 						</Text>
 					</HStack>
 					{ relativeLink && ! progress && (
-						<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
+						<Icon
+							className="dashboard-overview-card__link-icon"
+							icon={ isRTL() ? chevronLeft : chevronRight }
+						/>
 					) }
 					{ externalLink && ! progress && (
 						<span
