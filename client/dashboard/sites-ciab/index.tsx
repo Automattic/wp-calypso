@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
-import { useViewPersistence } from '../app/dataviews';
+import { usePersistentView } from '../app/dataviews';
 import { useHelpCenter } from '../app/help-center';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
@@ -65,7 +65,7 @@ export default function CIABSites() {
 		isRestoringAccount,
 	} );
 
-	const { view, updateView, resetView } = useViewPersistence( {
+	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'sites-ciab',
 		defaultView,
 		queryParams: currentSearchParams,

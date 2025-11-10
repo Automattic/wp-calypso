@@ -7,7 +7,7 @@ import { createRouter, RouterProvider, createRootRoute, createRoute } from '@tan
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Suspense } from 'react';
-import { useViewPersistence } from '../use-view-persistence';
+import { usePersistentView } from '../use-persistent-view';
 import type { View } from '@wordpress/dataviews';
 
 const defaultView: View = {
@@ -60,13 +60,13 @@ function mockUpdateCalypsoPreferences( preferences?: any ) {
 		.reply( 200 );
 }
 
-describe( 'useViewPersistence', () => {
+describe( 'usePersistentView', () => {
 	describe( 'view', () => {
 		it( 'should return the default view if there is no persisted view yet', async () => {
 			mockGetCalypsoPreferences( {} );
 
 			const { Wrapper } = createTestWrapper();
-			const { result } = renderHook( () => useViewPersistence( { slug, defaultView } ), {
+			const { result } = renderHook( () => usePersistentView( { slug, defaultView } ), {
 				wrapper: Wrapper,
 			} );
 
@@ -91,7 +91,7 @@ describe( 'useViewPersistence', () => {
 			} );
 
 			const { Wrapper } = createTestWrapper();
-			const { result } = renderHook( () => useViewPersistence( { slug, defaultView } ), {
+			const { result } = renderHook( () => usePersistentView( { slug, defaultView } ), {
 				wrapper: Wrapper,
 			} );
 
@@ -119,7 +119,7 @@ describe( 'useViewPersistence', () => {
 
 			const queryParams = { 'current-param': 'current-value', page: 2, search: 'test' };
 			const { result } = renderHook(
-				() => useViewPersistence( { slug, defaultView, queryParams } ),
+				() => usePersistentView( { slug, defaultView, queryParams } ),
 				{
 					wrapper: Wrapper,
 				}
@@ -150,7 +150,7 @@ describe( 'useViewPersistence', () => {
 			} );
 
 			const { Wrapper } = createTestWrapper();
-			const { result } = renderHook( () => useViewPersistence( { slug, defaultView } ), {
+			const { result } = renderHook( () => usePersistentView( { slug, defaultView } ), {
 				wrapper: Wrapper,
 			} );
 
@@ -181,7 +181,7 @@ describe( 'useViewPersistence', () => {
 
 			const queryParams = { 'current-param': 'current-value' };
 			const { result } = renderHook(
-				() => useViewPersistence( { slug, defaultView, queryParams } ),
+				() => usePersistentView( { slug, defaultView, queryParams } ),
 				{
 					wrapper: Wrapper,
 				}

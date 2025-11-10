@@ -29,7 +29,7 @@ interface UseViewOptions {
  * Transient properties (`page` and `search`) are synced to the URL query params,
  * while the rest of the properties is persisted to Calypso preferences.
  */
-export function useViewPersistence( { slug, defaultView, queryParams }: UseViewOptions ): {
+export function usePersistentView( { slug, defaultView, queryParams }: UseViewOptions ): {
 	view: View;
 	updateView: ( newView: View ) => void;
 	resetView?: () => void;

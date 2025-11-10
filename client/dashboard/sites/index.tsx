@@ -16,7 +16,7 @@ import { Experiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
-import { useViewPersistence } from '../app/dataviews';
+import { usePersistentView } from '../app/dataviews';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
@@ -209,7 +209,7 @@ export default function Sites() {
 		isRestoringAccount,
 	} );
 
-	const { view, updateView, resetView } = useViewPersistence( {
+	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'sites',
 		defaultView,
 		queryParams: currentSearchParams,
