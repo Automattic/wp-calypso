@@ -12,6 +12,7 @@ export type { State };
 declare const helpCenterData: { isProxied: boolean; isSU: boolean; isSSP: boolean } | undefined;
 declare const isSupportSession: boolean;
 declare const isSSP: boolean;
+declare const process: { env: { NODE_ENV?: string } };
 
 let isRegistered = false;
 
@@ -55,8 +56,12 @@ export function register( {
 		} );
 		isRegistered = true;
 
-		// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
-		if ( ! skipPersistedOpenState && ! isE2ETest() && ! isInSupportSession() ) {
+		// Don't persist the open state for tests, because parallel tests will start interfering with each other.
+		if (
+			! skipPersistedOpenState &&
+			! ( process.env.NODE_ENV === 'test' || isE2ETest() ) &&
+			! isInSupportSession()
+		) {
 			( dispatch( STORE_KEY ) as Dispatch[ 'dispatch' ] ).loadHelpCenterPreference();
 		}
 	}
