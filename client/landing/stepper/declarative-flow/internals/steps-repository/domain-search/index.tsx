@@ -206,14 +206,23 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 			onSkip: ( suggestion?: FreeDomainSuggestion ) => {
+				let signupDomainOrigin = suggestion
+					? SIGNUP_DOMAIN_ORIGIN.FREE
+					: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER;
+
+				if (
+					! isLoadingExperiment &&
+					experimentVariation === 'treatment_paid_domain_area_skip_emphasis'
+				) {
+					signupDomainOrigin = SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER;
+				}
+
 				submit( {
 					siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
 					domainItem: undefined,
 					domainCart: [],
 					suggestion,
-					signupDomainOrigin: suggestion
-						? SIGNUP_DOMAIN_ORIGIN.FREE
-						: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER,
+					signupDomainOrigin,
 				} );
 			},
 		};
