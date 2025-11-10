@@ -1,5 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useMemo, useState } from 'react';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import {
@@ -16,6 +18,7 @@ import { useCreateSchedules } from '../hooks/use-create-schedules';
 
 function ScheduledUpdatesNew() {
 	const navigate = useNavigate( { from: pluginsScheduledUpdatesNewRoute.fullPath } );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const siteIdsAsNumbers = useMemo(
 		() => selectedSiteIds.map( ( id ) => Number( id ) ),
@@ -26,9 +29,10 @@ function ScheduledUpdatesNew() {
 	const handleSave: ScheduledUpdatesFormOnSubmit = useCallback(
 		async ( inputs ) => {
 			await runCreate( inputs );
+			createSuccessNotice( __( 'Schedule created successfully.' ), { type: 'snackbar' } );
 			navigate( { to: pluginsScheduledUpdatesRoute.to } );
 		},
-		[ navigate, runCreate ]
+		[ navigate, runCreate, createSuccessNotice ]
 	);
 
 	return (

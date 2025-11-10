@@ -7,6 +7,8 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 	getPlan,
+	getPlanPath,
+	getYearlyPlanByMonthly,
 	isMonthly,
 	planMatches,
 } from '@automattic/calypso-products';
@@ -387,9 +389,8 @@ const Home = () => {
 			return;
 		}
 
-		const isEligible =
-			planMatches( sitePlanSlug ?? '', { group: GROUP_WPCOM } ) &&
-			! isMonthly( sitePlanSlug ?? '' );
+		const isMonthlyPlan = isMonthly( sitePlanSlug ?? '' );
+		const isEligible = planMatches( sitePlanSlug ?? '', { group: GROUP_WPCOM } ) && ! isMonthlyPlan;
 
 		const cta: CtaButton = isEligible
 			? {
@@ -405,6 +406,14 @@ const Home = () => {
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'peer-referral' );
+						if ( isMonthlyPlan && site?.slug && sitePlanSlug ) {
+							const annualPlanSlug = getYearlyPlanByMonthly( sitePlanSlug );
+							const planPath = annualPlanSlug ? getPlanPath( annualPlanSlug ) : undefined;
+							if ( planPath ) {
+								page( `/checkout/${ site.slug }/${ planPath }` );
+								return;
+							}
+						}
 						page( `/plans/${ site?.slug }` );
 					},
 			  };
@@ -415,6 +424,13 @@ const Home = () => {
 
 		const defaultBody = translate(
 			'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits.'
+		);
+		const notEligibleBody = isMonthlyPlan ? (
+			<>
+				{ defaultBody } <em>{ translate( 'This feature requires an annual plan.' ) }</em>
+			</>
+		) : (
+			defaultBody
 		);
 		const eligibleBody = peerReferralLink
 			? translate(
@@ -436,7 +452,7 @@ const Home = () => {
 			  );
 		return {
 			title: translate( 'Refer a friend' ),
-			body: isEligible ? eligibleBody : defaultBody,
+			body: isEligible ? eligibleBody : notEligibleBody,
 			icon: 'user-add',
 			variation: PromoCardVariation.Compact,
 			actions: {

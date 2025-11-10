@@ -1,7 +1,7 @@
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
-import { useIsFetching } from '@tanstack/react-query';
+import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
-import { Suspense, lazy, useEffect, useState, useMemo } from 'react';
+import { Suspense, lazy, useEffect, useState, useMemo, useSyncExternalStore } from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
@@ -26,6 +26,19 @@ function Root() {
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const router = useRouter();
+	const queryClient = useQueryClient();
+	const queryCache = queryClient.getQueryCache();
+
+	const loadingQueryRequestedFullPageLoader = useSyncExternalStore(
+		( onStoreChange ) => queryCache.subscribe( onStoreChange ),
+		() => {
+			const runningQueries = queryClient.getQueryCache().findAll( { fetchStatus: 'fetching' } );
+			return runningQueries.some(
+				( query ) => query.meta?.fullPageLoader && query.state.status === 'pending'
+			);
+		}
+	);
+
 	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
 		select: ( state ) => ( {
 			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
@@ -88,7 +101,9 @@ function Root() {
 		<div className="dashboard-root__layout">
 			{ ( isFetching > 0 || isSlowNavigation ) && (
 				<LoadingLine
-					variant={ isSlowNavigation ? 'progress' : 'spinner' }
+					variant={
+						isSlowNavigation || loadingQueryRequestedFullPageLoader ? 'progress' : 'spinner'
+					}
 					progressDuration={ `${ VERY_SLOW_THRESHOLD_MS }ms` }
 				/>
 			) }

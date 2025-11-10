@@ -93,10 +93,12 @@ const robotFields: Field< PrivacyFormData & { isPrimaryDomainStaging: boolean } 
 				} }
 				help={ createInterpolateElement(
 					__(
-						'This will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. <a>Learn more</a>'
+						'This will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. <learnMoreLink />'
 					),
 					{
-						a: <InlineSupportLink supportContext="privacy-prevent-third-party-sharing" />,
+						learnMoreLink: (
+							<InlineSupportLink supportContext="privacy-prevent-third-party-sharing" />
+						),
 					}
 				) }
 			/>

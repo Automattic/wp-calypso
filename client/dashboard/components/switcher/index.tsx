@@ -1,6 +1,7 @@
-import { Dropdown, Button } from '@wordpress/components';
+import { __experimentalHStack as HStack, Dropdown, Button } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
-import SwitcherContent, { type RenderItemIcon } from './switcher-content';
+import SwitcherContent from './switcher-content';
+import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
 import type { Field } from '@wordpress/dataviews';
 import type { ComponentProps } from 'react';
 
@@ -8,14 +9,15 @@ interface RenderCallbackProps {
 	onClose: () => void;
 }
 
-type SwitcherProps< T > = {
+export type SwitcherProps< T > = {
 	items?: T[];
 	value: T;
-	searchableFields?: Field< T >[];
+	searchableFields: Field< T >[];
 	children?: ( props: RenderCallbackProps ) => React.ReactNode;
-	getItemName: ( item: T ) => string;
 	getItemUrl: ( item: T ) => string;
-	renderItemIcon: RenderItemIcon< T >;
+	renderItemMedia: RenderItemMedia< T >;
+	renderItemTitle: RenderItemTitle< T >;
+	renderItemDescription?: RenderItemDescription< T >;
 } & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' >; // For controlled usage of the switcher
 
 export default function Switcher< T >( {
@@ -23,9 +25,10 @@ export default function Switcher< T >( {
 	value,
 	searchableFields,
 	children,
-	getItemName,
 	getItemUrl,
-	renderItemIcon,
+	renderItemMedia,
+	renderItemTitle,
+	renderItemDescription,
 	open,
 	onToggle,
 	defaultOpen,
@@ -50,19 +53,20 @@ export default function Switcher< T >( {
 					aria-haspopup="true"
 					aria-expanded={ isOpen }
 				>
-					<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
-						{ renderItemIcon( { item: value, context: 'dropdown', size: 16 } ) }
-						{ getItemName( value ) }
-					</div>
+					<HStack alignment="center">
+						{ renderItemMedia( { item: value, context: 'dropdown', size: 16 } ) }
+						{ renderItemTitle( { item: value, context: 'dropdown' } ) }
+					</HStack>
 				</Button>
 			) }
 			renderContent={ ( { onClose } ) => (
 				<SwitcherContent
 					items={ items }
 					searchableFields={ searchableFields }
-					getItemName={ getItemName }
 					getItemUrl={ getItemUrl }
-					renderItemIcon={ renderItemIcon }
+					renderItemMedia={ renderItemMedia }
+					renderItemTitle={ renderItemTitle }
+					renderItemDescription={ renderItemDescription }
 					onClose={ onClose }
 				>
 					{ children?.( { onClose } ) }

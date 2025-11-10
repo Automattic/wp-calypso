@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useHandleClickLink } from './use-handle-click-link';
@@ -23,11 +22,8 @@ export const GitHubDeploymentCard = () => {
 			</div>
 			<div className="developer-features-list__item-learn-more">
 				<InlineSupportLink
-					supportPostId={ 170164 }
+					supportContext="github-deployments"
 					showIcon={ false }
-					supportLink={ localizeUrl(
-						'https://developer.wordpress.com/docs/developer-tools/github-deployments/'
-					) }
 					onClick={ handleClickLink }
 				/>
 			</div>

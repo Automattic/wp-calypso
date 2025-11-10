@@ -27,7 +27,8 @@ export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix, act
 	const severityClassNames = ( severity: number ) => {
 		return {
 			'is-critical': severity >= 5,
-			'is-high': severity >= 3 && severity < 5,
+			'is-high': severity >= 4 && severity < 5,
+			'is-medium': severity >= 3 && severity < 4,
 			'is-low': severity < 3,
 		};
 	};

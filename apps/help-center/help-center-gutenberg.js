@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, DropdownMenu, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect, dispatch, select } from '@wordpress/data';
-import domReady from '@wordpress/dom-ready';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, backup, page, video, rss } from '@wordpress/icons';
@@ -197,9 +196,12 @@ function HelpCenterContent() {
 }
 
 if ( helpCenterData.isNextAdmin ) {
-	domReady( () => {
-		dispatch( 'next-admin' ).unregisterSiteHubHelpMenuItem( 'wp-logo-external' );
-		dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'wp-logo' );
+	const observer = new PerformanceObserver( function () {
+		select( 'next-admin' )
+			.getMetaMenuItems( 'wp-logo' )
+			.forEach( ( item ) => {
+				dispatch( 'next-admin' ).unregisterSiteHubHelpMenuItem( item.id );
+			} );
 		dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'help-center', {
 			label: __( 'Help Center', __i18n_text_domain__ ),
 			parent: 'wp-logo',
@@ -232,6 +234,8 @@ if ( helpCenterData.isNextAdmin ) {
 			document.getElementById( 'jetpack-help-center' )
 		);
 	} );
+	// Render after the largest contentful paint. This is proxy for the CIAB admin load event.
+	observer.observe( { type: 'largest-contentful-paint', buffered: true } );
 } else {
 	registerPlugin( 'jetpack-help-center', {
 		render: () => {

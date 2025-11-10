@@ -169,6 +169,7 @@ export function ScheduledUpdatesForm( {
 						<Button
 							variant="primary"
 							disabled={ ! isValid || isSubmitting || isPrecheckLoading }
+							isBusy={ isSubmitting }
 							onClick={ handleSave }
 							__next40pxDefaultSize
 						>

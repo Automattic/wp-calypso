@@ -15,6 +15,7 @@ export interface SiteSettings {
 	wpcom_legacy_contact?: string;
 	wpcom_locked_mode?: boolean;
 	mcp_abilities?: SiteMcpAbilities;
+	jetpack_holiday_snow_enabled?: boolean;
 }
 
 export type SiteMcpAbilities = Record<

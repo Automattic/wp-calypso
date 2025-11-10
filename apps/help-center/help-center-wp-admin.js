@@ -86,6 +86,30 @@ function AdminHelpCenterContent() {
 		} );
 	}, [ isShown, hasHelpCenterMenuPanel ] );
 
+	const handleMenuPanelClick = () => {
+		trackIconInteraction();
+		// Toggle submenu visibility by toggling the hover class
+		button.classList.toggle( 'open-click' );
+	};
+
+	// Close submenu when clicking outside
+	useEffect( () => {
+		if ( ! hasHelpCenterMenuPanel ) {
+			return;
+		}
+
+		const handleClickOutside = ( event ) => {
+			if ( ! button.contains( event.target ) && button.classList.contains( 'open-click' ) ) {
+				button.classList.remove( 'open-click' );
+			}
+		};
+
+		document.addEventListener( 'click', handleClickOutside );
+		return () => {
+			document.removeEventListener( 'click', handleClickOutside );
+		};
+	}, [ button, hasHelpCenterMenuPanel ] );
+
 	const handleToggleHelpCenter = () => {
 		trackIconInteraction();
 		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
@@ -97,7 +121,7 @@ function AdminHelpCenterContent() {
 		setShowHelpCenter( ! isShown );
 	};
 
-	button.onclick = hasHelpCenterMenuPanel ? trackIconInteraction : handleToggleHelpCenter;
+	button.onclick = hasHelpCenterMenuPanel ? handleMenuPanelClick : handleToggleHelpCenter;
 
 	const handleMenuClick = useCallback(
 		( destination, isExternal = false ) => {

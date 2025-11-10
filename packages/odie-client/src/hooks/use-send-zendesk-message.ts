@@ -39,7 +39,7 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 	const currentConversationId = getConversationIdFromInteraction( currentSupportInteraction );
 
 	const { chat, setChat } = useOdieAssistantContext();
-	const newConversation = useCreateZendeskConversation();
+	const createZendeskConversation = useCreateZendeskConversation();
 
 	// < void, Error, { message: Message; signal: AbortSignal } >
 	let conversationId = currentConversationId || chat.conversationId;
@@ -49,7 +49,7 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 			if ( ! conversationId ) {
 				// Start a new conversation if it doesn't exist
 				// TODO: this can create excess tickets. We should track down the real issue.
-				conversationId = await newConversation( { createdFrom: 'send_zendesk_message' } );
+				conversationId = await createZendeskConversation( { createdFrom: 'send_zendesk_message' } );
 				setChat( {
 					...chat,
 					conversationId,

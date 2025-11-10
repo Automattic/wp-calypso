@@ -7,6 +7,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import { useState, useCallback } from 'react';
+import { reloadWithFlashMessage } from '../../components/flash-message';
 import UsernameUpdateForm from './update-username';
 import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
 import {
@@ -48,10 +49,7 @@ export default function UsernameSection( {
 	const { mutate: updateUsername, isPending } = useMutation( {
 		...updateUsernameMutation(),
 		onSuccess: () => {
-			// Reload the page to refresh cookies and user object
-			const currentUrl = new URL( window.location.href );
-			currentUrl.searchParams.set( 'updated', 'username' );
-			window.location.href = currentUrl.toString();
+			reloadWithFlashMessage( 'username' );
 		},
 		meta: {
 			snackbar: {
