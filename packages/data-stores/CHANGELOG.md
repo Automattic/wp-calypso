@@ -1,7 +1,5 @@
 # Changelog
 
-## Unreleased
-
 ## 3.2.0
 
 - Update dependencies (#106861).
