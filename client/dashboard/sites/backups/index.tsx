@@ -179,6 +179,7 @@ export function BackupsListPage() {
 					gmtOffset={ gmtOffset }
 					timezoneString={ timezoneString }
 					locale={ locale }
+					defaultFallbackPreset="last-30-days"
 					onChange={ handleDateRangeChangeWrapper }
 				/>
 			</div>

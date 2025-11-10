@@ -11,6 +11,7 @@ import type { ComponentProps } from 'react';
 function renderDateRangePicker( {
 	start = new Date( 2025, 7, 19 ),
 	end = new Date( 2025, 7, 25 ),
+	defaultFallbackPreset,
 	...props
 }: Partial< ComponentProps< typeof DateRangePicker > > & {
 	start?: Date;
@@ -26,6 +27,7 @@ function renderDateRangePicker( {
 				timezoneString={ props.timezoneString || '' }
 				gmtOffset={ props.gmtOffset || 0 }
 				locale="en-US"
+				defaultFallbackPreset={ defaultFallbackPreset }
 				{ ...props }
 				{ ...harnessProps }
 			/>
@@ -76,7 +78,7 @@ describe( 'DateRangePicker (new)', () => {
 		expect( span ).toBeVisible();
 	} );
 
-	test( 'Clear → Apply default switches to Last 7 days', async () => {
+	test( 'Clear → shows “Apply last 7 days”; click applies and closes', async () => {
 		const { getByRole, findByRole, getByLabelText } = renderDateRangePicker( {
 			start: new Date( 2025, 7, 1 ),
 			end: new Date( 2025, 7, 3 ),
@@ -89,13 +91,33 @@ describe( 'DateRangePicker (new)', () => {
 		expect( getByLabelText( 'End date' ) ).toHaveValue( '' );
 
 		// “Apply default” is enabled
-		const applyDefault = await findByRole( 'button', { name: /Apply default/i } );
+		const applyDefault = await findByRole( 'button', { name: /Apply Last 7 days/i } );
 		expect( applyDefault ).toBeEnabled();
 
 		// Click and assert Last 7 days (Aug 19–25 with MockDate 2025‑08‑25)
 		await userEvent.click( applyDefault );
 		const toggle = await findByRole( 'button', { name: /Date range:/i } );
 		expect( toggle ).toHaveAccessibleName( expect.stringContaining( 'Aug 19, 2025' ) );
+		expect( toggle ).toHaveAccessibleName( expect.stringContaining( 'Aug 25, 2025' ) );
+	} );
+
+	test( 'Clear → shows “Apply last 30 days” when defaultFallbackPreset=last-30-days; click applies and closes', async () => {
+		const { findByRole, getByRole } = renderDateRangePicker( {
+			defaultFallbackPreset: 'last-30-days',
+		} );
+
+		// Open picker
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		// Clear then re-query
+		await userEvent.click( getByRole( 'button', { name: /Clear/i } ) );
+		const applyDefault = await findByRole( 'button', { name: /^Apply last 30 days$/i } );
+		expect( applyDefault ).toBeEnabled();
+
+		// Apply default
+		await userEvent.click( applyDefault );
+		const toggle = await findByRole( 'button', { name: /Date range:/i } );
+		expect( toggle ).toHaveAccessibleName( expect.stringContaining( 'Jul 27, 2025' ) );
 		expect( toggle ).toHaveAccessibleName( expect.stringContaining( 'Aug 25, 2025' ) );
 	} );
 
@@ -142,7 +164,7 @@ describe( 'DateRangePicker (new)', () => {
 		expect( to2 ).toHaveValue( '' );
 
 		// Re-query the default-apply button and wait for enable
-		const applyDefault = await findByRole( 'button', { name: /Apply default/i } );
+		const applyDefault = await findByRole( 'button', { name: /Apply Last 7 days/i } );
 		expect( applyDefault ).toBeEnabled();
 	} );
 

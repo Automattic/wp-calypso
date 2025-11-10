@@ -6,13 +6,13 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { startOfMonth, subMonths } from 'date-fns';
 import { ButtonStack } from '../../components/button-stack';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
 import { DateInputs } from './date-inputs';
 import { PresetsListbox } from './presets-listbox';
-import { computePresetRange, getActivePresetId, PresetId } from './utils';
+import { computePresetRange, getActivePresetId, PresetId, presetDefs } from './utils';
 
 type DateRangeContentProps = {
 	isSmall: boolean;
@@ -36,6 +36,7 @@ type DateRangeContentProps = {
 	mobileLabelId: string;
 	desktopLabelId: string;
 	disableFuture?: boolean;
+	defaultFallbackPreset?: PresetId;
 };
 
 export function DateRangeContent( props: DateRangeContentProps ) {
@@ -61,6 +62,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		mobileLabelId,
 		desktopLabelId,
 		disableFuture = true,
+		defaultFallbackPreset = 'last-7-days',
 	} = props;
 
 	// Avoid passing invalid or empty time zones to Intl consumers
@@ -92,6 +94,8 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	};
 
 	const canDefaultApply = ! fromDraft && ! toDraft && ! fromStr && ! toStr && ! isTyping;
+	const defaultPresetLabel =
+		presetDefs.find( ( p ) => p.id === defaultFallbackPreset )?.label || __( 'default range' );
 
 	const apply = () => {
 		if ( fromDraft && toDraft ) {
@@ -102,7 +106,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 			return;
 		}
 		if ( canDefaultApply ) {
-			const range = computePresetRange( 'last-7-days', today );
+			const range = computePresetRange( defaultFallbackPreset, today );
 			if ( range ) {
 				onChange( { start: range.from, end: range.to } );
 				onClose?.();
@@ -279,8 +283,15 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 					variant="primary"
 					onClick={ apply }
 					disabled={ ( ! fromDraft || ! toDraft ) && ! canDefaultApply }
+					aria-label={
+						/* translators: %s is the preset label, e.g. 'Last 30 days' */
+						canDefaultApply ? sprintf( __( 'Apply %s' ), defaultPresetLabel ) : __( 'Apply' )
+					}
 				>
-					{ canDefaultApply ? __( 'Apply default' ) : __( 'Apply' ) }
+					{
+						/* translators: %s is the preset label, e.g. 'Last 30 days' */
+						canDefaultApply ? sprintf( __( 'Apply %s' ), defaultPresetLabel ) : __( 'Apply' )
+					}
 				</Button>
 			</ButtonStack>
 		</VStack>

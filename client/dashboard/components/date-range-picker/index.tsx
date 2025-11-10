@@ -6,6 +6,7 @@ import { calendar } from '@wordpress/icons';
 import { parseYmdLocal, formatYmd, formatSiteYmd } from '../../utils/datetime';
 import { DateRangeContent } from './date-range-content';
 import { formatLabel } from './utils';
+import type { PresetId } from './utils';
 import './style.scss';
 
 type DateRangePickerProps = {
@@ -16,6 +17,7 @@ type DateRangePickerProps = {
 	gmtOffset?: number;
 	locale: string;
 	disableFuture?: boolean;
+	defaultFallbackPreset?: PresetId; // preset to apply when inputs are empty and user presses Apply
 };
 
 export function DateRangePicker( {
@@ -26,6 +28,7 @@ export function DateRangePicker( {
 	timezoneString,
 	locale,
 	disableFuture = true,
+	defaultFallbackPreset = 'last-7-days',
 }: DateRangePickerProps ) {
 	const isSmall = useMediaQuery( '(max-width: 600px)' );
 	// Use a wider breakpoint to decide when two calendars can fit comfortably
@@ -87,6 +90,7 @@ export function DateRangePicker( {
 						mobileLabelId={ mobileLabelId }
 						desktopLabelId={ desktopLabelId }
 						disableFuture={ disableFuture }
+						defaultFallbackPreset={ defaultFallbackPreset }
 					/>
 				) }
 			/>
@@ -106,6 +110,7 @@ function DateRangePickerInner( {
 	mobileLabelId,
 	desktopLabelId,
 	disableFuture,
+	defaultFallbackPreset,
 }: {
 	isSmall: boolean;
 	showTwoMonths: boolean;
@@ -118,6 +123,7 @@ function DateRangePickerInner( {
 	mobileLabelId: string;
 	desktopLabelId: string;
 	disableFuture: boolean;
+	defaultFallbackPreset: PresetId;
 } ) {
 	const [ fromDraft, setFromDraft ] = useState< Date | undefined >( () => start );
 	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
@@ -159,6 +165,7 @@ function DateRangePickerInner( {
 			desktopLabelId={ desktopLabelId }
 			disableFuture={ disableFuture }
 			showTwoMonths={ showTwoMonths }
+			defaultFallbackPreset={ defaultFallbackPreset }
 		/>
 	);
 }
