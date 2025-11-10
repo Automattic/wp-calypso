@@ -4,6 +4,9 @@ import { domainsQuery } from './domains';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
 
+/**
+ * @deprecated use either domainQuery or domainsQuery or something else (we'll need separate endpoint to get emails)
+ */
 export const siteDomainsQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'domains' ],
