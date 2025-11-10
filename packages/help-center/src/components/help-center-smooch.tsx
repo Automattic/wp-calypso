@@ -198,10 +198,6 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 						success: true,
 						error: '',
 					} );
-
-					if ( smoochRef.current ) {
-						Smooch.render( smoochRef.current );
-					}
 				} )
 				.catch( ( error ) => {
 					setIsChatLoaded( false );
@@ -214,6 +210,10 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		};
 
 		initializeSmooch();
+
+		if ( smoochRef.current ) {
+			Smooch.render( smoochRef.current );
+		}
 
 		return () => {
 			clearTimeout( retryTimeout );
