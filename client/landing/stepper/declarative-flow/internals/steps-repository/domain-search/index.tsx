@@ -188,7 +188,6 @@ const DomainSearchStep: StepType< {
 				submit( {
 					navigateToUseMyDomain: true,
 					lastQuery: domainName,
-					shouldSkipSubmitTracking: true,
 				} );
 			},
 			onContinue: ( domainCart: MinimalRequestCartProduct[] ) => {
