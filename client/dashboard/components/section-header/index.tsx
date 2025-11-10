@@ -25,7 +25,6 @@ export const SectionHeader = ( {
 	level = 2,
 }: SectionHeaderProps ) => {
 	const HeadingTag = `h${ level }` as keyof JSX.IntrinsicElements;
-
 	return (
 		<VStack className={ clsx( 'dashboard-section-header', `is-level-${ level }`, className ) }>
 			{ prefix && <div className="dashboard-section-header__prefix">{ prefix }</div> }
