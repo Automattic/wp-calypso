@@ -49,16 +49,17 @@ export const SectionHeader = ( {
 						) }
 					</VStack>
 
-					{ /* The wrapper is always needed for view transitions. */ }
-					<ButtonStack
-						justify="flex-start"
-						expanded={ false }
-						alignment="flex-start"
-						className="dashboard-section-header__actions"
-						style={ { flex: '1 1 auto' } }
-					>
-						{ actions }
-					</ButtonStack>
+					{ !! actions && (
+						<ButtonStack
+							justify="flex-start"
+							expanded={ false }
+							alignment="flex-start"
+							className="dashboard-section-header__actions"
+							style={ { flex: '1 1 auto' } }
+						>
+							{ actions }
+						</ButtonStack>
+					) }
 				</HStack>
 			</HStack>
 		</VStack>
