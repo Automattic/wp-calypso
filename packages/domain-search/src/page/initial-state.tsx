@@ -11,13 +11,11 @@ export const InitialState = () => {
 	return (
 		<div className="domain-search--initial-state">
 			<SearchForm />
-			{ config.allowsUsingOwnDomain &&
-				config.showAlreadyOwnDomainCTAInInitialState &&
-				onExternalDomainClick && (
-					<div className="domain-search--initial-state__already-own-domain-cta">
-						<DomainSearchAlreadyOwnDomainCTA onClick={ () => onExternalDomainClick() } />
-					</div>
-				) }
+			{ config.allowsUsingOwnDomain && onExternalDomainClick && (
+				<div className="domain-search--initial-state__already-own-domain-cta">
+					<DomainSearchAlreadyOwnDomainCTA onClick={ () => onExternalDomainClick() } />
+				</div>
+			) }
 		</div>
 	);
 };
