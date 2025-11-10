@@ -9,7 +9,7 @@ export const marketplaceSearchQuery = ( {
 	slugs: string[];
 } ) =>
 	queryOptions( {
-		queryKey: [ 'marketplace-search', slugs, perPage ],
+		queryKey: [ 'marketplace-search', ...slugs, perPage ],
 		queryFn: () =>
 			fetchMarketplaceSearch( {
 				category: 'all',

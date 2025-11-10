@@ -1,4 +1,4 @@
-import { PluginItem, Site, SitePlugin } from '@automattic/api-core';
+import { MarketplaceSearch, PluginItem, Site, SitePlugin } from '@automattic/api-core';
 import {
 	pluginsQuery,
 	wpOrgPluginQuery,
@@ -15,8 +15,25 @@ export interface SiteWithPluginData extends Site {
 	isPluginActive: boolean;
 }
 
+/**
+ * Search for an icon on the cached marketplace search query results for a given plugin slug.
+ */
+const useMarketplaceSearchIcon = ( pluginSlug: string ) => {
+	const queryClient = useQueryClient();
+	const marketplaceSearchPluginData = queryClient
+		.getQueriesData< MarketplaceSearch >( {
+			queryKey: [ 'marketplace-search' ],
+			predicate: ( query ) => query.queryKey.includes( pluginSlug ),
+		} )
+		.flatMap( ( [ , data ] ) => data?.data.results || [] )
+		.find( ( result ) => result.fields.slug === pluginSlug );
+
+	return marketplaceSearchPluginData?.fields.plugin.icons;
+};
+
 export const usePlugin = ( pluginSlug: string ) => {
 	const queryClient = useQueryClient();
+	const availableIcon = useMarketplaceSearchIcon( pluginSlug );
 	const { queries } = useAppContext();
 	const locale = useLocale();
 	const {
@@ -29,9 +46,10 @@ export const usePlugin = ( pluginSlug: string ) => {
 		marketplacePluginsQuery()
 	);
 	const isMarketplacePlugin = !! marketplacePlugins?.results[ pluginSlug ];
-	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery(
-		wpOrgPluginQuery( pluginSlug, locale )
-	);
+	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery( {
+		...wpOrgPluginQuery( pluginSlug, locale ),
+		enabled: ! availableIcon,
+	} );
 	// Query needed to get the action_links
 	const sitePluginQueryResults = useQueries( {
 		queries: Object.keys( sitesPlugins?.sites || {} ).map( ( id ) =>
@@ -90,7 +108,9 @@ export const usePlugin = ( pluginSlug: string ) => {
 		: [ [], [] ];
 
 	let icon;
-	if ( isMarketplacePlugin ) {
+	if ( availableIcon ) {
+		icon = availableIcon;
+	} else if ( isMarketplacePlugin ) {
 		icon = marketplacePlugins?.results[ pluginSlug ]?.icons;
 	} else if ( wpOrgPlugin?.icons ) {
 		if ( '1x' in wpOrgPlugin.icons ) {

@@ -31,10 +31,10 @@ export default function Plugin() {
 
 	let decoration;
 
-	if ( isLoading ) {
-		decoration = <div className="plugin-icon-placeholder" aria-hidden="true" />;
-	} else if ( icon ) {
+	if ( icon ) {
 		decoration = <img src={ icon } alt={ plugin?.name } />;
+	} else if ( isLoading ) {
+		decoration = <div className="plugin-icon-placeholder" aria-hidden="true" />;
 	} else {
 		decoration = null;
 	}
