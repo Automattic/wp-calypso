@@ -57,7 +57,7 @@ export function register( {
 
 		// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
 		if ( ! skipPersistedOpenState && ! isE2ETest() && ! isInSupportSession() ) {
-			( dispatch( STORE_KEY ) as Dispatch ).loadHelpCenterPreference();
+			( dispatch( STORE_KEY ) as Dispatch[ 'dispatch' ] ).loadHelpCenterPreference();
 		}
 	}
 

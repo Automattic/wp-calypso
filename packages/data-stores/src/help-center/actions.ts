@@ -163,6 +163,11 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 	options,
 } );
 
+export const setIsShow = ( show: boolean ) => ( {
+	type: 'HELP_CENTER_SET_SHOW' as const,
+	show,
+} );
+
 export const setShowHelpCenter = function* (
 	show: boolean,
 	options: HelpCenterShowOptions = {
@@ -176,7 +181,7 @@ export const setShowHelpCenter = function* (
 	 * `forceClose` listens to the show value always. Which the (x) button sets to true.
 	 */
 	forceClose = false
-): Generator< unknown, { type: 'HELP_CENTER_SET_SHOW'; show: boolean }, unknown > {
+): Generator< unknown, ReturnType< typeof setIsShow >, unknown > {
 	let isMinimized = ( select( STORE_KEY ) as HelpCenterSelect ).getIsMinimized();
 
 	// Opening or closing the Help Center should reset the minimized state.
@@ -184,10 +189,7 @@ export const setShowHelpCenter = function* (
 		yield setIsMinimized( false );
 		isMinimized = false;
 
-		return {
-			type: 'HELP_CENTER_SET_SHOW',
-			show: true,
-		} as const;
+		return setIsShow( true );
 	}
 
 	if ( ! isE2ETest() ) {
@@ -213,10 +215,7 @@ export const setShowHelpCenter = function* (
 		yield setHelpCenterOptions( options );
 	}
 
-	return {
-		type: 'HELP_CENTER_SET_SHOW',
-		show,
-	} as const;
+	return setIsShow( show );
 };
 
 export const setSubject = ( subject: string ) =>
@@ -284,20 +283,13 @@ export const setShowSupportDoc = function* ( link: string, postId?: number, blog
 	yield setIsMinimized( false );
 };
 
-export const loadHelpCenterPreference = function* () {
+export const loadHelpCenterPreference = function* (): Generator<
+	unknown,
+	{ type: 'HELP_CENTER_LOAD_PREFERENCE_DONE' },
+	unknown
+> {
 	try {
-		const {
-			calypso_preferences: preferences,
-		}: {
-			calypso_preferences: {
-				help_center_open: boolean;
-				help_center_minimized: boolean;
-				help_center_router_history: {
-					entries: Location[];
-					index: number;
-				};
-			};
-		} = canAccessWpcomApis()
+		const response = canAccessWpcomApis()
 			? yield wpcomRequest( {
 					path: '/me/preferences?s=1',
 					apiNamespace: 'wpcom/v2',
@@ -307,6 +299,17 @@ export const loadHelpCenterPreference = function* () {
 					path: '/help-center/open-state',
 			  } as APIFetchOptions );
 
+		const { calypso_preferences: preferences } = response as {
+			calypso_preferences: {
+				help_center_open: boolean;
+				help_center_minimized: boolean;
+				help_center_router_history: {
+					entries: Location[];
+					index: number;
+				};
+			};
+		};
+
 		if ( preferences.help_center_router_history ) {
 			yield setHelpCenterRouterHistory( preferences.help_center_router_history );
 		}
@@ -315,12 +318,13 @@ export const loadHelpCenterPreference = function* () {
 
 		// We only want to auto-open, we don't want to auto-close (and potentially overrule the user's action).
 		if ( preferences.help_center_open ) {
-			return {
-				type: 'HELP_CENTER_SET_SHOW',
-				show: true,
-			} as const;
+			yield setIsShow( true );
 		}
 	} catch {}
+
+	return {
+		type: 'HELP_CENTER_LOAD_PREFERENCE_DONE',
+	};
 };
 
 export type HelpCenterAction =
