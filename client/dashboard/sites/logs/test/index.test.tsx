@@ -18,6 +18,11 @@ jest.mock( '../../../app/auth', () => ( {
 	useAuth: () => ( { user: { id: 'test-user' } } ),
 } ) );
 
+jest.mock( '../../../components/time-mismatch-notice', () => ( {
+	__esModule: true,
+	default: () => null,
+} ) );
+
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_x: ( text: string ) => text,
