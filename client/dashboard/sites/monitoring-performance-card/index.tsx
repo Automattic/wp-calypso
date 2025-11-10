@@ -155,7 +155,6 @@ export default function MonitoringPerformanceCard( {
 					maxWidth={ 1400 }
 					showLegend
 					withLegendGlyph
-					margin={ { bottom: 30 } }
 					renderGlyph={ ( glyphProps ) => getLegendIcon( glyphProps.key ) }
 					renderTooltip={ ( tooltipProps ) => {
 						if ( ! tooltipProps?.tooltipData?.nearestDatum?.datum?.date ) {
@@ -209,6 +208,7 @@ export default function MonitoringPerformanceCard( {
 							x: xAxisOptions,
 						},
 					} }
+					legendPosition="top"
 				/>
 			) : (
 				<VStack alignment="center">
