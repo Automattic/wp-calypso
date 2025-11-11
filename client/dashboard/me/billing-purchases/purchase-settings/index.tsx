@@ -51,6 +51,7 @@ import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
+import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -203,7 +204,11 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.is_plan && purchase.site_slug ) {
 		const url = '/plans/my-plan/' + purchase.site_slug;
 		const text = __( 'Plan features' );
-		return <a href={ url }>{ text }</a>;
+		return (
+			<MetadataItem>
+				<a href={ url }>{ text }</a>
+			</MetadataItem>
+		);
 	}
 
 	if (
@@ -213,15 +218,21 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	) {
 		const text = __( 'Domain settings' );
 		return (
-			<Link to={ domainRoute.to } params={ { domainName: purchase.meta } }>
-				{ text }
-			</Link>
+			<MetadataItem>
+				<Link to={ domainRoute.to } params={ { domainName: purchase.meta } }>
+					{ text }
+				</Link>
+			</MetadataItem>
 		);
 	}
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
 		const text = __( 'Email settings' );
-		return <Link to={ emailsRoute.to }>{ text }</Link>;
+		return (
+			<MetadataItem>
+				<Link to={ emailsRoute.to }>{ text }</Link>
+			</MetadataItem>
+		);
 	}
 
 	return null;
@@ -667,9 +678,11 @@ function DomainRegistrationAgreement( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 	return (
-		<ExternalLink rel="noreferrer" href={ purchase.domain_registration_agreement_url }>
-			{ __( 'Domain Registration Agreement' ) }
-		</ExternalLink>
+		<MetadataItem>
+			<ExternalLink rel="noreferrer" href={ purchase.domain_registration_agreement_url }>
+				{ __( 'Domain Registration Agreement' ) }
+			</ExternalLink>
+		</MetadataItem>
 	);
 }
 
@@ -1029,7 +1042,8 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 	if ( ! subtitle ) {
 		return null;
 	}
-	return <Text variant="muted">{ subtitle }</Text>;
+
+	return <MetadataItem title={ subtitle } />;
 }
 
 export default function PurchaseSettings() {
@@ -1079,15 +1093,21 @@ export default function PurchaseSettings() {
 								</>
 							)
 						}
+						description={
+							<MetadataList>
+								<PurchaseSubtitle purchase={ purchase } />
+								<ProductLink purchase={ purchase } />
+								<DomainRegistrationAgreement purchase={ purchase } />
+							</MetadataList>
+						}
 					/>
-					<PurchaseSubtitle purchase={ purchase } />
+
 					<PurchaseSecondSubtitle purchase={ purchase } />
 
 					{ purchase.product_slug === DomainProductSlugs.TRANSFER_IN && (
 						<DomainTransferInfo purchase={ purchase } />
 					) }
-					<ProductLink purchase={ purchase } />
-					<DomainRegistrationAgreement purchase={ purchase } />
+
 					{ ! purchase.partner_name && <PluginList purchase={ purchase } /> }
 				</VStack>
 			}

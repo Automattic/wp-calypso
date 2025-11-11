@@ -1,0 +1,20 @@
+.dashboard-metadata-list {
+	flex-wrap: wrap;
+}
+
+.dashboard-metadata-list-item {
+	width: auto;
+	flex-shrink: 0;
+}
+
+.dashboard-metadata-list-item:not(:last-child) {
+	&::after {
+		display: block;
+		content: '•';
+	}
+}
+
+.dashboard-metadata-list-item-children {
+	flex: 1;
+}
+

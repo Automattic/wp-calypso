@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { FieldList, Field } from '../../components/field-list';
+import { MetadataList, MetadataItem } from '../../components/metadata-list';
 import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
@@ -50,16 +50,16 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 	const hasSiteRedirect = site.options?.is_redirect;
 
 	const fields: React.ReactElement[] = [
-		<Field key="url">
+		<MetadataItem key="url">
 			<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
 				{ getSiteDisplayUrl( site ) }
 			</ExternalLink>
-		</Field>,
+		</MetadataItem>,
 	];
 
 	if ( hasSiteRedirect ) {
 		fields.push(
-			<Field key="redirect">
+			<MetadataItem key="redirect">
 				<Text variant="muted">
 					{ sprintf(
 						/* translators: %s: the URL this site is redirected to, e.g.: http://example.com */
@@ -67,41 +67,41 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 						site.URL
 					) }
 				</Text>
-			</Field>
+			</MetadataItem>
 		);
 	}
 
 	if ( wpVersion ) {
 		fields.push(
-			<Field key="wp-version" title={ __( 'WordPress' ) }>
+			<MetadataItem key="wp-version" title={ __( 'WordPress' ) }>
 				{ isSelfHostedJetpackConnected( site ) ? (
 					<Text variant="muted">{ wpVersion }</Text>
 				) : (
 					<Link to={ `/sites/${ site.slug }/settings/wordpress` }>{ wpVersion }</Link>
 				) }
-			</Field>
+			</MetadataItem>
 		);
 	}
 
 	if ( hasPHPFeature ) {
 		fields.push(
-			<Field key="php" title={ __( 'PHP' ) }>
+			<MetadataItem key="php" title={ __( 'PHP' ) }>
 				<Link to={ `/sites/${ site.slug }/settings/php` }>
 					<PHPVersion site={ site } />
 				</Link>
-			</Field>
+			</MetadataItem>
 		);
 	}
 
 	if ( ! isCommerceGarden( site ) ) {
 		fields.push(
-			<Field key="hosting">
+			<MetadataItem key="hosting">
 				<HostingProvider site={ site } />
-			</Field>
+			</MetadataItem>
 		);
 	}
 
-	return <FieldList fields={ fields } className="site-overview-fields" />;
+	return <MetadataList fields={ fields } className="site-overview-fields" />;
 };
 
 export default SiteOverviewFields;
