@@ -23,7 +23,6 @@ type DateInputsProps = {
 		| 'space-around'
 		| 'space-evenly';
 	containerStyle?: React.CSSProperties;
-	onInteract?: () => void;
 	onFromFocus?: ( e: FocusEvent< HTMLInputElement > ) => void;
 	onToFocus?: ( e: FocusEvent< HTMLInputElement > ) => void;
 	onFromBlur?: ( e: FocusEvent< HTMLInputElement > ) => void;
@@ -41,7 +40,6 @@ export function DateInputs( {
 	stack = false,
 	justify = 'flex-start',
 	containerStyle,
-	onInteract,
 	onFromFocus,
 	onToFocus,
 	onFromBlur,
@@ -55,14 +53,12 @@ export function DateInputs( {
 					label={ __( 'Start date' ) }
 					value={ fromStr }
 					onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
-						onInteract?.();
 						onFromFocus?.( e );
 					} }
 					onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
 						onFromBlur?.( e );
 					} }
 					onChange={ ( value?: string ) => {
-						onInteract?.();
 						onFromChange( value ?? '' );
 					} }
 					autoComplete="off"
@@ -75,14 +71,12 @@ export function DateInputs( {
 					label={ __( 'End date' ) }
 					value={ toStr }
 					onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
-						onInteract?.();
 						onToFocus?.( e );
 					} }
 					onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
 						onToBlur?.( e );
 					} }
 					onChange={ ( value?: string ) => {
-						onInteract?.();
 						onToChange( value ?? '' );
 					} }
 					autoComplete="off"
@@ -108,14 +102,12 @@ export function DateInputs( {
 				label={ __( 'Start date' ) }
 				value={ fromStr }
 				onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
-					onInteract?.();
 					onFromFocus?.( e );
 				} }
 				onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
 					onFromBlur?.( e );
 				} }
 				onChange={ ( value?: string ) => {
-					onInteract?.();
 					onFromChange( value ?? '' );
 				} }
 				autoComplete="off"
@@ -128,14 +120,12 @@ export function DateInputs( {
 				label={ __( 'End date' ) }
 				value={ toStr }
 				onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
-					onInteract?.();
 					onToFocus?.( e );
 				} }
 				onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
 					onToBlur?.( e );
 				} }
 				onChange={ ( value?: string ) => {
-					onInteract?.();
 					onToChange( value ?? '' );
 				} }
 				autoComplete="off"

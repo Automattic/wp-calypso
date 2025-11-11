@@ -210,9 +210,6 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
-						onInteract={ () => {
-							setIsTyping( true );
-						} }
 						onFromFocus={ ( e ) => {
 							setIsTyping( true );
 							inputsProps?.onStartFocus?.( e );
@@ -264,9 +261,6 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
-						onInteract={ () => {
-							setIsTyping( true );
-						} }
 						onFromFocus={ ( e ) => {
 							setIsTyping( true );
 							inputsProps?.onStartFocus?.( e );
