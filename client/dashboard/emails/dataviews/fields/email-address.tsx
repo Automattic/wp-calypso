@@ -5,9 +5,9 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { next, wordpress } from '@wordpress/icons';
-import { Text } from '../../components/text';
-import GoogleLogo from '../resources/google-logo';
-import type { Email } from '../types';
+import { Text } from '../../../components/text';
+import GoogleLogo from '../../resources/google-logo';
+import type { Email } from '../../types';
 import type { Field } from '@wordpress/dataviews';
 
 export const emailAddressField: Field< Email > = {
