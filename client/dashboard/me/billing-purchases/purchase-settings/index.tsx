@@ -1107,7 +1107,6 @@ export default function PurchaseSettings() {
 					{ purchase.product_slug === DomainProductSlugs.TRANSFER_IN && (
 						<DomainTransferInfo purchase={ purchase } />
 					) }
-
 					{ ! purchase.partner_name && <PluginList purchase={ purchase } /> }
 				</VStack>
 			}
