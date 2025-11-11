@@ -4,6 +4,7 @@ import {
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import type { FocusEvent } from 'react';
 
 type DateInputsProps = {
 	fromStr: string;
@@ -23,6 +24,10 @@ type DateInputsProps = {
 		| 'space-evenly';
 	containerStyle?: React.CSSProperties;
 	onInteract?: () => void;
+	onFromFocus?: ( e: FocusEvent< HTMLInputElement > ) => void;
+	onToFocus?: ( e: FocusEvent< HTMLInputElement > ) => void;
+	onFromBlur?: ( e: FocusEvent< HTMLInputElement > ) => void;
+	onToBlur?: ( e: FocusEvent< HTMLInputElement > ) => void;
 };
 
 export function DateInputs( {
@@ -37,6 +42,10 @@ export function DateInputs( {
 	justify = 'flex-start',
 	containerStyle,
 	onInteract,
+	onFromFocus,
+	onToFocus,
+	onFromBlur,
+	onToBlur,
 }: DateInputsProps ) {
 	if ( stack ) {
 		return (
@@ -45,7 +54,13 @@ export function DateInputs( {
 					type="date"
 					label={ __( 'Start date' ) }
 					value={ fromStr }
-					onFocus={ () => onInteract?.() }
+					onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
+						onInteract?.();
+						onFromFocus?.( e );
+					} }
+					onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
+						onFromBlur?.( e );
+					} }
 					onChange={ ( value?: string ) => {
 						onInteract?.();
 						onFromChange( value ?? '' );
@@ -59,7 +74,13 @@ export function DateInputs( {
 					type="date"
 					label={ __( 'End date' ) }
 					value={ toStr }
-					onFocus={ () => onInteract?.() }
+					onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
+						onInteract?.();
+						onToFocus?.( e );
+					} }
+					onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
+						onToBlur?.( e );
+					} }
 					onChange={ ( value?: string ) => {
 						onInteract?.();
 						onToChange( value ?? '' );
@@ -86,7 +107,13 @@ export function DateInputs( {
 				type="date"
 				label={ __( 'Start date' ) }
 				value={ fromStr }
-				onFocus={ () => onInteract?.() }
+				onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
+					onInteract?.();
+					onFromFocus?.( e );
+				} }
+				onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
+					onFromBlur?.( e );
+				} }
 				onChange={ ( value?: string ) => {
 					onInteract?.();
 					onFromChange( value ?? '' );
@@ -100,7 +127,13 @@ export function DateInputs( {
 				type="date"
 				label={ __( 'End date' ) }
 				value={ toStr }
-				onFocus={ () => onInteract?.() }
+				onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
+					onInteract?.();
+					onToFocus?.( e );
+				} }
+				onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
+					onToBlur?.( e );
+				} }
 				onChange={ ( value?: string ) => {
 					onInteract?.();
 					onToChange( value ?? '' );

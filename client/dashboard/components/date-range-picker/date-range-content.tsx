@@ -37,6 +37,12 @@ type DateRangeContentProps = {
 	desktopLabelId: string;
 	disableFuture?: boolean;
 	defaultFallbackPreset?: PresetId;
+	inputsProps?: {
+		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onStartBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onEndBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+	};
 };
 
 export function DateRangeContent( props: DateRangeContentProps ) {
@@ -63,6 +69,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		desktopLabelId,
 		disableFuture = true,
 		defaultFallbackPreset = 'last-7-days',
+		inputsProps,
 	} = props;
 
 	// Avoid passing invalid or empty time zones to Intl consumers
@@ -192,7 +199,29 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
-						onInteract={ () => setIsTyping( true ) }
+						onInteract={ () => {
+							setIsTyping( true );
+						} }
+						onFromFocus={ ( e ) => {
+							setIsTyping( true );
+							inputsProps?.onStartFocus?.( e );
+						} }
+						onToFocus={ ( e ) => {
+							setIsTyping( true );
+							inputsProps?.onEndFocus?.( e );
+						} }
+						onFromBlur={ ( e ) => {
+							if ( ! fromStr && ! toStr ) {
+								setIsTyping( false );
+							}
+							inputsProps?.onStartBlur?.( e );
+						} }
+						onToBlur={ ( e ) => {
+							if ( ! fromStr && ! toStr ) {
+								setIsTyping( false );
+							}
+							inputsProps?.onEndBlur?.( e );
+						} }
 						stack
 						fromStyle={ { minWidth: 140 } }
 						toStyle={ { minWidth: 140 } }
@@ -224,7 +253,29 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
-						onInteract={ () => setIsTyping( true ) }
+						onInteract={ () => {
+							setIsTyping( true );
+						} }
+						onFromFocus={ ( e ) => {
+							setIsTyping( true );
+							inputsProps?.onStartFocus?.( e );
+						} }
+						onToFocus={ ( e ) => {
+							setIsTyping( true );
+							inputsProps?.onEndFocus?.( e );
+						} }
+						onFromBlur={ ( e ) => {
+							if ( ! fromStr && ! toStr ) {
+								setIsTyping( false );
+							}
+							inputsProps?.onStartBlur?.( e );
+						} }
+						onToBlur={ ( e ) => {
+							if ( ! fromStr && ! toStr ) {
+								setIsTyping( false );
+							}
+							inputsProps?.onEndBlur?.( e );
+						} }
 						fromStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						toStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						justify="flex-end"
