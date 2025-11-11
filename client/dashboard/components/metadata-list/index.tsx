@@ -7,7 +7,7 @@ interface MetadataListProps {
 
 const MetadataList = ( { children }: MetadataListProps ) => {
 	return (
-		<HStack className="dashboard-metadata-list" spacing={ 1 } justify="flex-start">
+		<HStack className="dashboard-metadata-list" spacing={ 1 } justify="flex-start" wrap>
 			{ children }
 		</HStack>
 	);

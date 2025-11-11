@@ -101,7 +101,13 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	return <MetadataList fields={ fields } className="site-overview-fields" />;
+	return (
+		<MetadataList>
+			{ fields.map( ( field ) => (
+				<MetadataItem key={ field.key }>{ field }</MetadataItem>
+			) ) }
+		</MetadataList>
+	);
 };
 
 export default SiteOverviewFields;
