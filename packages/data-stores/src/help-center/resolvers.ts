@@ -37,7 +37,7 @@ export function* isHelpCenterShown() {
 
 		// Don't use the history from the preferences if it has been set to avoid a race condition between restoring
 		// persisted data and setting the support doc data. Persisted values could overwrite freshly fetched data.
-		if ( typeof route !== 'undefined' && preferences.help_center_router_history ) {
+		if ( typeof route === 'undefined' && preferences.help_center_router_history ) {
 			yield setHelpCenterRouterHistory( preferences.help_center_router_history );
 		}
 
