@@ -19,20 +19,44 @@ function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
 				backgroundColor: propagated ? '#048015' : '#dcdcde',
 			} }
 			aria-label={ propagated ? __( 'Propagated' ) : __( 'Not propagated' ) }
+			role="status"
 		/>
 	);
 }
 
 function formatLastUpdated( lastUpdated: string ): string {
+	// Handle empty or null-like values
+	if ( ! lastUpdated || typeof lastUpdated !== 'string' ) {
+		return '';
+	}
+
 	try {
 		const date = new Date( lastUpdated );
-		return date.toLocaleTimeString( undefined, {
+
+		// Check if date is valid (new Date() can return Invalid Date without throwing)
+		if ( isNaN( date.getTime() ) ) {
+			return '';
+		}
+
+		const formattedTime = date.toLocaleTimeString( undefined, {
 			hour: 'numeric',
 			minute: '2-digit',
 			hour12: true,
 		} );
-	} catch {
-		return lastUpdated;
+
+		// Additional check in case toLocaleTimeString returns unexpected result
+		if ( ! formattedTime || formattedTime === 'Invalid Date' ) {
+			return '';
+		}
+
+		return formattedTime;
+	} catch ( error ) {
+		// Log error in development for debugging
+		if ( process.env.NODE_ENV === 'development' ) {
+			// eslint-disable-next-line no-console
+			console.warn( 'Failed to format date:', lastUpdated, error );
+		}
+		return '';
 	}
 }
 

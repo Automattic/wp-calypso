@@ -283,8 +283,50 @@ describe( 'DomainPropagationStatus', () => {
 
 			// Should still render without crashing
 			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
-			// Should show the raw date string when parsing fails
-			expect( screen.getByText( /Last checked at/i ) ).toBeVisible();
+			// Should show "Last checked at" text but no timestamp
+			expect( screen.getByText( 'Last checked at' ) ).toBeVisible();
+		} );
+
+		test( 'handles empty string in last_updated', () => {
+			const mockData = createMockPropagationStatus( {
+				last_updated: '',
+			} );
+			mockUseQuery.mockReturnValue( {
+				data: mockData,
+				isLoading: false,
+				isError: false,
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			} as any );
+
+			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+
+			// Should still render without crashing
+			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
+			// Should show "Last checked at" text but no timestamp
+			expect( screen.getByText( 'Last checked at' ) ).toBeVisible();
+		} );
+
+		test( 'handles various invalid date formats', () => {
+			const invalidDates = [ 'not-a-date', '0000-00-00', '99/99/9999', 'null', 'undefined' ];
+
+			invalidDates.forEach( ( invalidDate ) => {
+				const mockData = createMockPropagationStatus( {
+					last_updated: invalidDate,
+				} );
+				mockUseQuery.mockReturnValue( {
+					data: mockData,
+					isLoading: false,
+					isError: false,
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				} as any );
+
+				const { unmount } = render( <DomainPropagationStatusComponent domainName="example.com" /> );
+
+				// Should render without crashing for any invalid date
+				expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
+
+				unmount();
+			} );
 		} );
 	} );
 
