@@ -248,7 +248,7 @@ export default function SiteDeleteModal( { site, onClose }: { site: Site; onClos
 		siteHasCancelablePurchasesQuery( site.ID, user.ID )
 	);
 
-	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesCancelable;
+	const canBeDeleted = site.is_garden || ( canDeleteSite( site ) && ! hasPurchasesCancelable );
 	const title = canBeDeleted ? __( 'Delete site' ) : __( 'Unable to delete site' );
 
 	if ( isLoading ) {
