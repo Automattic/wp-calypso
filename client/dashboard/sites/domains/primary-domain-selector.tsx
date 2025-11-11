@@ -138,9 +138,10 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 					setShowForm( false );
 					setFormData( { primaryDomain: '' } );
 				},
-				onError: () => {
+				onError: ( error ) => {
 					createErrorNotice(
-						__( 'Something went wrong and we couldn’t change your primary site address.' ),
+						error.message ||
+							__( 'Something went wrong and we couldn’t change your primary site address.' ),
 						{
 							type: 'snackbar',
 						}
