@@ -4,7 +4,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useLocale } from '../locale';
@@ -19,14 +19,16 @@ export default function Notifications( { className }: { className: string } ) {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
+	const toggleRef = useRef< HTMLButtonElement | null >( null );
+	const contentRef = useRef< HTMLDivElement | null >( null );
 
-	const handleToggle = ( willOpen: boolean ) => {
+	const handleToggle = useCallback( ( willOpen: boolean ) => {
 		setIsOpen( willOpen );
-	};
+	}, [] );
 
-	const handleClose = () => {
+	const handleClose = useCallback( () => {
 		handleToggle( false );
-	};
+	}, [ handleToggle ] );
 
 	const actionHandlers = {
 		APP_RENDER_NOTES: [
@@ -72,7 +74,37 @@ export default function Notifications( { className }: { className: string } ) {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [] );
+	}, [ handleToggle ] );
+
+	// Capture-phase outside click fallback to ensure the popover closes even if focus remains inside.
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		const handlePointerDownCapture = ( event: Event ) => {
+			const target = event.target as Node | null;
+			if ( ! target ) {
+				return;
+			}
+
+			// Ignore interactions within the dropdown content or the toggle button
+			if (
+				( contentRef.current && contentRef.current.contains( target ) ) ||
+				( toggleRef.current && toggleRef.current.contains( target ) )
+			) {
+				return;
+			}
+
+			handleClose();
+		};
+
+		// Prefer pointerdown to catch interactions before focus/blur changes; use capture to avoid bubbles blocked by stopPropagation.
+		document.addEventListener( 'pointerdown', handlePointerDownCapture, true );
+		return () => {
+			document.removeEventListener( 'pointerdown', handlePointerDownCapture, true );
+		};
+	}, [ isOpen, handleClose ] );
 
 	return (
 		<Dropdown
@@ -87,6 +119,7 @@ export default function Notifications( { className }: { className: string } ) {
 			onToggle={ handleToggle }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
+					ref={ toggleRef }
 					className={ clsx( className, 'dashboard-notifications__icon' ) }
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
@@ -97,6 +130,7 @@ export default function Notifications( { className }: { className: string } ) {
 			) }
 			renderContent={ () => (
 				<div
+					ref={ contentRef }
 					style={ {
 						width: '100vw',
 						height: '100vh',
