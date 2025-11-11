@@ -179,7 +179,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			const botSlug = getBotSlug( currentSupportInteraction );
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 			const url = window.location.href;
-			const pathName = window.location.pathname;
+			const pathname = window.location.pathname;
 
 			return canAccessWpcomApis()
 				? wpcomRequest< ReturnedChat >( {
@@ -190,7 +190,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						body: {
 							message: message.content,
 							...( version && { version } ),
-							context: { selectedSiteId, url, pathName },
+							context: { selectedSiteId, url, pathname },
 						},
 				  } )
 				: apiFetch< ReturnedChat >( {
@@ -200,7 +200,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						data: {
 							message: message.content,
 							...( version && { version } ),
-							context: { selectedSiteId, url, pathName },
+							context: { selectedSiteId, url, pathname },
 						},
 				  } );
 		},
