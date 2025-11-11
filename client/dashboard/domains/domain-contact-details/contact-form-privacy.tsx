@@ -84,13 +84,15 @@ export default function ContactFormPrivacy( { domainName }: ContactFormPrivacyPr
 						{ createInterpolateElement(
 							domain.private_domain
 								? __(
-										'Privacy protection must be enabled due to the registry’s policies. <link>Learn more</link>'
+										'Privacy protection must be enabled due to the registry’s policies. <learnMoreLink />'
 								  )
 								: __(
-										'Privacy protection is not available due to the registry’s policies. <link>Learn more</link>'
+										'Privacy protection is not available due to the registry’s policies. <learnMoreLink />'
 								  ),
 							{
-								link: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
+								learnMoreLink: (
+									<InlineSupportLink supportContext="domain-registrations-and-privacy" />
+								),
 							}
 						) }
 					</Text>
@@ -170,9 +172,11 @@ export default function ContactFormPrivacy( { domainName }: ContactFormPrivacyPr
 			{ domain.privacy_available && (
 				<Text as="p" variant="muted">
 					{ createInterpolateElement(
-						__( 'We recommend keeping privacy protection on. <link>Learn more</link>' ),
+						__( 'We recommend keeping privacy protection on. <learnMoreLink />' ),
 						{
-							link: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
+							learnMoreLink: (
+								<InlineSupportLink supportContext="domain-registrations-and-privacy" />
+							),
 						}
 					) }
 				</Text>

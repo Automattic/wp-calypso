@@ -1,0 +1,4 @@
+/* The Type and Name columns should be narrow */
+.dns-records-table .dataviews-view-table__cell-content-wrapper {
+	min-width: initial;
+}

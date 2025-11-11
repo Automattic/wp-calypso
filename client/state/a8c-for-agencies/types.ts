@@ -110,7 +110,9 @@ export interface Agency {
 		id: AgencyTier;
 		label: string;
 		features: string[];
+		is_early_access: boolean;
 	};
+	influenced_revenue: number;
 	approval_status: ApprovalStatus | '';
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';

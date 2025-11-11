@@ -118,6 +118,17 @@
 			color: #7b90ff;
 			cursor: pointer;
 		}
+
+		// Disable hover behavior for submenu - require click instead
+		&.menupop.hover > .ab-sub-wrapper,
+		&.menupop > .ab-sub-wrapper {
+			display: none !important;
+		}
+
+		// Only show submenu when the hover class is applied via click
+		&.menupop.open-click > .ab-sub-wrapper {
+			display: block !important;
+		}
 	}
 
 	.ab-icon:hover {

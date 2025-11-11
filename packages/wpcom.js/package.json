@@ -53,8 +53,7 @@
 	"dependencies": {
 		"@babel/runtime": "^7.27.1",
 		"debug": "^4.4.1",
-		"qs": "^6.5.2",
-		"tus-js-client": "2.3.2"
+		"qs": "^6.5.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",

@@ -33,14 +33,12 @@ const UpsellWrapper = styled.div`
 	.cart__upsell-header {
 		border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		box-shadow: none;
-		padding-left: 20px;
-		padding-right: 20px;
+		padding-left: 24px;
+		padding-right: 24px;
 
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			border-top: none;
 			border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-			padding-left: 24px;
-			padding-right: 24px;
 		}
 
 		.section-header__label {
@@ -51,7 +49,7 @@ const UpsellWrapper = styled.div`
 	}
 
 	.cart__upsell-body {
-		padding: 0 20px 20px;
+		padding: 0 24px 24px;
 		font-size: 14px;
 
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {

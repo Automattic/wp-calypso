@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { ProgressBar, ExternalLink, Notice } from '@wordpress/components';
@@ -6,7 +5,7 @@ import { useReducedMotion } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { fixMe, translate } from 'i18n-calypso';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.png';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useSelector } from 'calypso/state';
@@ -79,6 +78,9 @@ export default function Summary( {
 	 * We have a state to manage the Summary page after we reset the importer.
 	 * Otherwise when we reset the importer we lose the returned data.
 	 */
+	const handleResetImporter = useCallback( () => resetImporter(), [ resetImporter ] );
+
+	// Manage the import completed state.
 	useEffect( () => {
 		if ( ! isImportCompleted && ( importerStatus === 'done' || importerStatus === 'skipped' ) ) {
 			setIsImportCompleted( true );
@@ -86,14 +88,18 @@ export default function Summary( {
 			if ( ! importStepsResults && steps ) {
 				setImportStepsResults( steps );
 			}
-
-			// Reset the importer if it's completed and the Summary page is exited.
-			page.exit( '/import/newsletter/substack/:site?/summary', ( context, next ) => {
-				resetImporter();
-				next();
-			} );
 		}
-	}, [ importerStatus, importStepsResults, isImportCompleted, steps, resetImporter ] );
+	}, [ importerStatus, importStepsResults, isImportCompleted, steps ] );
+
+	// Reset the importer if it's completed and the page is exited.
+	useEffect( () => {
+		if ( isImportCompleted ) {
+			window.addEventListener( 'beforeunload', handleResetImporter );
+			return () => {
+				window.removeEventListener( 'beforeunload', handleResetImporter );
+			};
+		}
+	}, [ isImportCompleted, handleResetImporter ] );
 
 	// Either content- or subscriber-import is still in progress
 	if ( importerStatus === 'importing' ) {

@@ -270,15 +270,20 @@ function UnifiedPlansStep( {
 
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
-	const { siteUrl, domainItem, siteTitle, username, coupon, selectedThemeType } =
-		signupDependencies;
+	const { domainItem, siteTitle, username, coupon, selectedThemeType } = signupDependencies;
 
-	const { domainCartItem } = useSelect( ( select: ( key: string ) => OnboardSelect ) => {
-		const { getDomainCartItem } = select( ONBOARD_STORE );
-		return {
-			domainCartItem: getDomainCartItem(),
-		};
-	}, [] );
+	const { domainCartItem, siteUrl: onboardingStoreSiteUrl } = useSelect(
+		( select: ( key: string ) => OnboardSelect ) => {
+			const { getDomainCartItem, getSiteUrl } = select( ONBOARD_STORE );
+			return {
+				domainCartItem: getDomainCartItem(),
+				siteUrl: getSiteUrl(),
+			};
+		},
+		[]
+	);
+
+	const siteUrl = onboardingStoreSiteUrl ?? signupDependencies.siteUrl;
 
 	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
 

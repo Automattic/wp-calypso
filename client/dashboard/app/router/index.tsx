@@ -4,7 +4,6 @@ import UnknownError from '../500';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
-import { createOverviewRoutes } from './overview';
 import { createPluginsRoutes } from './plugins';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
@@ -28,10 +27,6 @@ const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
 	children.push( indexRoute );
-
-	if ( config.supports.overview ) {
-		children.push( ...createOverviewRoutes() );
-	}
 
 	if ( config.supports.sites ) {
 		children.push( ...createSitesRoutes( config ) );

@@ -14,6 +14,10 @@ export function areHostingFeaturesSupported( site?: SiteExcerptData | null ) {
 	return isWoAOrStagingOrFlexSite && ! isPlanExpired;
 }
 
+export function isHostingFeatureSupported( site: SiteExcerptData, feature: string ) {
+	return areHostingFeaturesSupported( site ) && site.plan?.features.active.includes( feature );
+}
+
 export function useAreHostingFeaturesSupported() {
 	const site = useSelector( getSelectedSite );
 	return areHostingFeaturesSupported( site );

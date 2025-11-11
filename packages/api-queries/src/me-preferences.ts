@@ -14,12 +14,6 @@ const defaultValues: Required< UserPreferences > = {
 		useSitesAsLandingPage: false,
 		updatedAt: 0,
 	},
-	'sites-view': {},
-
-	/**
-	 * CIAB Preferences.
-	 */
-	'ciab-sites-view': {},
 };
 
 // Returns all user preferences, without applying any defaults.
@@ -46,25 +40,37 @@ export const userPreferenceQuery = < P extends keyof UserPreferences >( preferen
 
 export const userPreferenceMutation = < P extends keyof UserPreferences >( preferenceName: P ) =>
 	mutationOptions( {
-		mutationFn: ( data: Required< UserPreferences >[ P ] ) =>
+		mutationFn: ( data: UserPreferences[ P ] ) =>
 			updatePreferences( {
-				[ preferenceName ]: data,
+				[ preferenceName ]: data ?? null, // null means deleting the preference
 			} as Partial< UserPreferences > ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) => {
-				if ( ! oldData ) {
-					return newData;
-				}
-
-				// If newData doesn't contain the preference key, it means it was unset.
-				// We need to remove it from oldData.
-				if ( ! ( preferenceName in newData ) ) {
-					const { [ preferenceName ]: _, ...rest } = oldData;
-					return { ...rest, ...newData };
-				}
-
-				return { ...oldData, ...newData };
+				return mergePreferences( oldData, preferenceName, newData );
 			} );
+		},
+	} );
+
+export const userPreferenceOptimisticMutation = < P extends keyof UserPreferences >(
+	preferenceName: P
+) =>
+	mutationOptions( {
+		mutationFn: userPreferenceMutation( preferenceName ).mutationFn,
+		onMutate: async ( value ) => {
+			await queryClient.cancelQueries( { queryKey: rawUserPreferencesQuery().queryKey } );
+			const previous = queryClient.getQueryData( rawUserPreferencesQuery().queryKey );
+
+			const newData = { [ preferenceName ]: value } as UserPreferences;
+			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) => {
+				return mergePreferences( oldData, preferenceName, newData );
+			} );
+
+			return { previous };
+		},
+		onError: ( _err, _variables, context ) => {
+			if ( context?.previous ) {
+				queryClient.setQueryData( rawUserPreferencesQuery().queryKey, context.previous );
+			}
 		},
 	} );
 
@@ -77,3 +83,22 @@ export const userPreferencesMutation = () =>
 			);
 		},
 	} );
+
+function mergePreferences< P extends keyof UserPreferences >(
+	oldData: UserPreferences | undefined,
+	newPreferenceName: P,
+	newData: UserPreferences
+) {
+	if ( ! oldData ) {
+		return newData;
+	}
+
+	// If newData doesn't contain the preference name, it means it was unset.
+	// We need to remove it from oldData.
+	if ( ! ( newPreferenceName in newData ) ) {
+		const { [ newPreferenceName ]: _, ...rest } = oldData;
+		return { ...rest, ...newData };
+	}
+
+	return { ...oldData, ...newData };
+}

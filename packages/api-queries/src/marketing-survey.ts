@@ -14,7 +14,7 @@ export const cancelPurchaseSurveyCompletedMutation = ( purchaseId: string | numb
 		mutationFn: () =>
 			updatePreferences( {
 				[ preferenceName ]: 'true',
-			} as Partial< UserPreferences > ),
+			} as unknown as Partial< UserPreferences > ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) =>
 				oldData ? { ...oldData, ...newData } : newData

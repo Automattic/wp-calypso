@@ -99,10 +99,10 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 					title={ __( 'Accept a gift subscription' ) }
 					description={ createInterpolateElement(
 						__(
-							'Allow a site visitor to cover the full cost of your site’s WordPress.com plan. <link>Learn more</link>'
+							'Allow a site visitor to cover the full cost of your site’s WordPress.com plan. <learnMoreLink />'
 						),
 						{
-							link: <InlineSupportLink supportContext="gift-a-subscription" />,
+							learnMoreLink: <InlineSupportLink supportContext="gift-a-subscription" />,
 						}
 					) }
 				/>

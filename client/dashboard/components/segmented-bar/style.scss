@@ -1,11 +1,12 @@
 .dashboard-segmented-bar-wrapper {
 	// Define shared palette so both the labels and the bar can use the same colors
 	--segmented-bar-bg: var(--color-surface-backdrop, #f0f0f0);
-	--segmented-bar-color-1: var(--studio-blue-50);
-	--segmented-bar-color-2: var(--studio-green-50);
-	--segmented-bar-color-3: var(--studio-orange-40);
-	--segmented-bar-color-4: var(--studio-purple-50);
-	--segmented-bar-color-5: var(--studio-teal-50);
+	// Provide fallbacks in case design tokens are unavailable in the context
+	--segmented-bar-color-1: var(--studio-blue-50, #3858e9);
+	--segmented-bar-color-2: var(--studio-green-50, #1ea97c);
+	--segmented-bar-color-3: var(--studio-orange-40, #ff8a00);
+	--segmented-bar-color-4: var(--studio-purple-50, #6a5acd);
+	--segmented-bar-color-5: var(--studio-teal-50, #2bb3b1);
 
 	display: flex;
 	flex-direction: column;

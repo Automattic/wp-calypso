@@ -8,7 +8,7 @@ import { getRouteFromContext } from 'calypso/utils';
 import { useAnalyticsClient } from '../v2/hooks/use-analytics-client';
 import { HostingActivationCallout, HostingUpsellCallout } from './components/hosting-callout';
 import HostingFeatures from './components/hosting-features';
-import { areHostingFeaturesSupported } from './features';
+import { isHostingFeatureSupported } from './features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
 import type { ComponentType } from 'react';
 
@@ -68,18 +68,19 @@ export function hostingFeaturesCallout(
 	CalloutComponent: ComponentType< {
 		siteSlug: string;
 		titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
-	} >
+	} >,
+	feature: string
 ) {
 	return ( context: Context, next: () => void ) => {
 		const state = context.store.getState();
 		const site = getSelectedSite( state );
 		const path = getRouteFromContext( context );
 
-		if ( site && ! areHostingFeaturesSupported( site ) ) {
+		if ( site && ! isHostingFeatureSupported( site, feature ) ) {
 			const callout =
 				! site.is_wpcom_atomic &&
 				! site.plan?.expired &&
-				site.plan?.features.active.includes( FEATURE_SFTP ) ? (
+				site.plan?.features.active.includes( feature ) ? (
 					<HostingActivationCallout siteId={ site.ID } />
 				) : (
 					<HostingFeatureCallout path={ path }>

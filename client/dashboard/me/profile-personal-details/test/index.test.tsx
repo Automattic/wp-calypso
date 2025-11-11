@@ -203,8 +203,8 @@ describe( 'PersonalDetailsSection', () => {
 		it( 'shows success notice on successful username change', async () => {
 			Object.defineProperty( window, 'location', {
 				value: {
-					search: '?updated=username',
-					href: 'http://localhost/?updated=username',
+					search: '?flash=username',
+					href: 'http://localhost/?flash=username',
 				},
 				writable: true,
 			} );
@@ -275,8 +275,8 @@ describe( 'PersonalDetailsSection', () => {
 		it( 'has proper ARIA attributes for success notice', async () => {
 			Object.defineProperty( window, 'location', {
 				value: {
-					search: '?updated=username',
-					href: 'http://localhost/?updated=username',
+					search: '?flash=username',
+					href: 'http://localhost/?flash=username',
 				},
 				writable: true,
 			} );
