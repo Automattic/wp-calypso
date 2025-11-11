@@ -11,6 +11,7 @@ import {
 	GoogleSocialButton,
 	AppleLoginButton,
 	GithubSocialButton,
+	PayPalSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
 import { isWpccFlow } from 'calypso/signup/is-flow';
@@ -123,6 +124,13 @@ class SocialSignupForm extends Component {
 							onClick={ this.trackSignupAndRememberRedirect }
 							socialServiceResponse={ socialServiceResponse }
 						/>
+
+						<PayPalSocialButton
+							responseHandler={ this.handleSignup }
+							onClick={ this.trackSignupAndRememberRedirect }
+							socialServiceResponse={ socialServiceResponse }
+						/>
+
 						{ isSocialFirst && (
 							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
 						) }

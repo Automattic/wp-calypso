@@ -41,7 +41,7 @@ export const getRedirectUri = (
 
 	let flow = 'start';
 	// TODO: I am restricting this to certain flows for testing sake, but I think this should be the default behavior.
-	if ( flowName === 'ai-site-builder' && socialService === 'github' ) {
+	if ( flowName === 'ai-site-builder' && [ 'github', 'paypal' ].indexOf( socialService ) !== -1 ) {
 		flow = `setup/${ flowName }`;
 	}
 
