@@ -1,11 +1,11 @@
 import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import './style.scss';
 
-interface MetadataListProps {
-	children: React.ReactElement[];
-}
+const MetadataList = ( { children }: React.ReactNode[] ) => {
+	if ( ! children ) {
+		return null;
+	}
 
-const MetadataList = ( { children }: MetadataListProps ) => {
 	return (
 		<HStack className="dashboard-metadata-list" spacing={ 1 } justify="flex-start" wrap>
 			{ children }
