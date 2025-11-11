@@ -6,7 +6,7 @@ import type { Purchase, Domain } from '@automattic/api-core';
 interface CancelPurchaseRefundInformationProps {
 	purchase: Purchase;
 	isJetpackPurchase: boolean;
-	selectedDomain: Domain | null;
+	selectedDomain: Domain | null | undefined;
 }
 
 const CancelPurchaseRefundInformation = ( {
