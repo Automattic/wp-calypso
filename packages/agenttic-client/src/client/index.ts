@@ -1,5 +1,4 @@
 import type {
-	Ability,
 	Client,
 	ClientConfig,
 	DataPart,
@@ -186,7 +185,7 @@ async function hasMatchingToolCallbacks(
 				return true;
 			}
 		}
-	} catch ( error ) {
+	} catch {
 		return false;
 	}
 
@@ -305,7 +304,7 @@ async function executeToolCallBatch(
  * @param message - The A2A message to extract conversation history from
  * @return Array of conversation messages reconstructed from data parts
  */
-function extractConversationHistory( message: Message ): Message[] {
+export function extractConversationHistory( message: Message ): Message[] {
 	const conversationMessages: Message[] = [];
 	let currentMessage: Partial< Message > | null = null;
 
@@ -551,10 +550,7 @@ async function* processAgentResponseStream(
 					toolCallId as string
 				).catch( ( error: any ) => {
 					// Log error but don't block stream
-					console.error(
-						`Tool execution failed for ${ toolId }:`,
-						error
-					);
+					logger( 'Tool execution failed for %s: %O', toolId, error );
 				} );
 			}
 
@@ -643,8 +639,9 @@ async function* processAgentResponseStream(
 									promiseEntry.resolvedValue = resolvedValue;
 								} )
 								.catch( ( error: any ) => {
-									console.error(
-										`Promise rejected for tool call ${ toolCallId }:`,
+									logger(
+										'Promise rejected for tool call %s: %O',
+										toolCallId,
 										error
 									);
 									promiseEntry.resolvedValue = {
@@ -1004,7 +1001,7 @@ export function createClient( config: ClientConfig ): Client {
 
 	return {
 		async sendMessage( params: SendMessageParams ): Promise< TaskUpdate > {
-			const { withHistory = true, abortSignal } = params;
+			const { abortSignal } = params;
 			const sessionId = params.sessionId || defaultSessionId || undefined;
 
 			// Track new conversation parts since the initial message for tool result context
@@ -1315,12 +1312,12 @@ export function createClient( config: ClientConfig ): Client {
 			};
 		},
 
-		async getTask( taskId: string ): Promise< Task > {
+		async getTask(): Promise< Task > {
 			// TODO: Implement task retrieval
 			throw new Error( 'getTask not implemented yet' );
 		},
 
-		async cancelTask( taskId: string ): Promise< void > {
+		async cancelTask(): Promise< void > {
 			// TODO: Implement task cancellation
 			throw new Error( 'cancelTask not implemented yet' );
 		},

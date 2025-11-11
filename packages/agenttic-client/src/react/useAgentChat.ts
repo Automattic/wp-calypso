@@ -11,6 +11,7 @@ import type {
 } from '../client/types/index';
 import { useMessageActions } from '../message-actions/useMessageActions';
 import { resolveActionsForMessage } from '../message-actions/resolver';
+import { logger } from '../client/utils/logger';
 
 // Utility function to sort UI messages by timestamp
 const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
@@ -549,7 +550,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			} catch ( error ) {
 				// Handle AbortError specially - it's not really an error, just user cancellation
 				if ( error instanceof Error && error.name === 'AbortError' ) {
-					console.log( 'Request was aborted by user' );
+					logger( 'Request was aborted by user' );
 					setState( ( prev ) => ( {
 						...prev,
 						isProcessing: false,

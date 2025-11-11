@@ -1,4 +1,5 @@
 import type { Ability } from '../client/types/index';
+import { logger } from '../client/utils/logger';
 
 export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 	// Define abilities with their callbacks
@@ -100,7 +101,7 @@ export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 			messageId: string,
 			toolCallId: string
 		) => {
-			console.log( `Executing tool: ${ toolId }`, {
+			logger( 'Executing tool: %s with args: %O', toolId, {
 				args,
 				messageId,
 				toolCallId,

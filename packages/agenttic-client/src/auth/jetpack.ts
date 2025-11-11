@@ -14,6 +14,7 @@ import apiFetch from '@wordpress/api-fetch';
  * Internal dependencies
  */
 import type { AuthProvider } from '../client/types/index';
+import { logger } from '../client/utils/logger';
 
 export const JWT_TOKEN_ID = 'jetpack-ai-jwt-token';
 export const JWT_TOKEN_EXPIRATION_TIME = 30 * 60 * 1000; // 30 minutes
@@ -83,7 +84,7 @@ export async function requestJetpackToken(
 			tokenData = JSON.parse( token ) as TokenData;
 		} catch ( error ) {
 			// Invalid cached token, continue to fetch new one
-			console.warn( 'Invalid cached Jetpack token:', error );
+			logger( 'Invalid cached Jetpack token: %O', error );
 		}
 	}
 
@@ -124,7 +125,7 @@ export async function requestJetpackToken(
 			} );
 		}
 	} catch ( error ) {
-		console.log( 'Failed to fetch Jetpack token:', error );
+		logger( 'Failed to fetch Jetpack token: %O', error );
 		throw new Error( errorHandler( error as JetpackApiError ) );
 	}
 
@@ -144,7 +145,7 @@ export async function requestJetpackToken(
 	try {
 		localStorage.setItem( JWT_TOKEN_ID, JSON.stringify( newTokenData ) );
 	} catch ( storageError ) {
-		console.log( 'Error storing token in localStorage:', storageError );
+		logger( 'Error storing token in localStorage: %O', storageError );
 		// Continue without caching
 	}
 
@@ -192,7 +193,7 @@ export const createJetpackAuthProvider = (
 				headers.Authorization = `${ tokenData.token }`;
 			}
 		} catch ( error ) {
-			console.error( 'Failed to get Jetpack token for auth:', error );
+			logger( 'Failed to get Jetpack token for auth: %O', error );
 			// Rethrow auth errors so they can be handled properly by the client
 			throw error;
 		}
