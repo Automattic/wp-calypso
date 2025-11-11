@@ -1,10 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
+	clearStepPersistedState,
 	ONBOARDING_FLOW,
 	SITE_MIGRATION_FLOW,
 	SITE_SETUP_FLOW,
-	clearStepPersistedState,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
