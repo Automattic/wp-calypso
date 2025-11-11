@@ -3,7 +3,6 @@ import {
 	domainDnsMutation,
 	domainDnsQuery,
 	domainDnsEmailMutation,
-	domainNameServersQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -79,9 +78,6 @@ export default function DomainDns() {
 	} );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const {
-		data: { nameServers, isUsingDefaultNameServers },
-	} = useSuspenseQuery( domainNameServersQuery( domainName ) );
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
 	const [ isRestoreDefaultARecordsDialogOpen, setIsRestoreDefaultARecordsDialogOpen ] =
 		useState( false );
@@ -198,7 +194,7 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultARecordsNotice = () => {
-		if ( ! isUsingDefaultNameServers || hasDefaultARecordsValue ) {
+		if ( ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
 			return null;
 		}
 
@@ -231,7 +227,7 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultCnameRecordNotice = () => {
-		if ( ! isUsingDefaultNameServers || hasDefaultCnameRecordValue ) {
+		if ( ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
 			return null;
 		}
 
@@ -268,7 +264,7 @@ export default function DomainDns() {
 	};
 
 	const renderExternalNameserversNotice = () => {
-		if ( isUsingDefaultNameServers || ! nameServers || ! nameServers.length ) {
+		if ( domain.has_wpcom_nameservers ) {
 			return null;
 		}
 
