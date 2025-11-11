@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import { FREE_PLAN_PRODUCT_ID } from '@automattic/data-stores/src/plans';
+import { State } from '@automattic/data-stores/src/plans/reducer';
+import { isPlanProductFree } from '@automattic/data-stores/src/plans/selectors';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -97,7 +98,8 @@ const onboarding: FlowV2< typeof initialize > = {
 
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				// Check if the user selected the free plan
-				const isFree = ! planCartItem || planCartItem.product_id === FREE_PLAN_PRODUCT_ID;
+				const isFree =
+					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
 
 				if ( isFree ) {
 					// Redirect free plan users to a home page
