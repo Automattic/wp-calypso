@@ -1,6 +1,6 @@
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { globe, commentAuthorAvatar, envelope, bell, wordpress, home } from '@wordpress/icons';
+import { globe, commentAuthorAvatar, envelope, bell, wordpress } from '@wordpress/icons';
 import { useAppContext } from '../context';
 import type { AppConfig } from '../context';
 
@@ -15,14 +15,6 @@ export interface Command {
 }
 
 export const navigationCommands: Command[] = [
-	{
-		name: 'dashboard-go-to-overview',
-		label: __( 'Go to Overview' ),
-		searchLabel: __( 'Navigate to Dashboard Overview page' ),
-		path: '/overview',
-		icon: home,
-		feature: 'overview',
-	},
 	{
 		name: 'dashboard-go-to-sites',
 		label: __( 'Go to Sites' ),

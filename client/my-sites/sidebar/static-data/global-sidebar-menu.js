@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { category, Icon, brush, globe } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
+import { addTransientViewPropertiesToQueryParams } from 'calypso/dashboard/utils/dashboard-v1-sync';
 import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
 
 export const SidebarIconPlugins = () => (
@@ -31,7 +32,7 @@ export default function globalSidebarMenu( { showP2s = false, hasOptIn = false }
 			title: translate( 'Sites' ),
 			navigationLabel: translate( 'Manage all my sites' ),
 			type: 'menu-item',
-			url: '/sites',
+			url: addTransientViewPropertiesToQueryParams( '/sites' ),
 		},
 		...( showP2s
 			? [
