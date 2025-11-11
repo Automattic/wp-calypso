@@ -45,7 +45,8 @@ export class PublishedPostPage {
 		const iframeLocator = this.page.locator( 'iframe[title="Like or Reblog"]' );
 		await iframeLocator.waitFor();
 
-		const locator = iframeLocator.getByRole( 'link', { name: 'Like', exact: true } );
+		const iframe = this.page.frameLocator( 'iframe[title="Like or Reblog"]' );
+		const locator = iframe.getByRole( 'link', { name: 'Like', exact: true } );
 		await locator.waitFor();
 
 		// On AT sites Playwright is not able to scroll directly to the iframe
@@ -57,7 +58,7 @@ export class PublishedPostPage {
 		await locator.click();
 
 		// The button should now read "Liked".
-		await iframeLocator.getByRole( 'link', { name: 'Liked', exact: true } ).waitFor();
+		await iframe.getByRole( 'link', { name: 'Liked', exact: true } ).waitFor();
 	}
 
 	/**
@@ -70,7 +71,8 @@ export class PublishedPostPage {
 		const iframeLocator = this.page.locator( 'iframe[title="Like or Reblog"]' );
 		await iframeLocator.waitFor();
 
-		const locator = iframeLocator.getByRole( 'link', { name: 'Liked', exact: true } );
+		const iframe = this.page.frameLocator( 'iframe[title="Like or Reblog"]' );
+		const locator = iframe.getByRole( 'link', { name: 'Liked', exact: true } );
 		await locator.waitFor();
 
 		// On AT sites Playwright is not able to scroll directly to the iframe
@@ -82,7 +84,7 @@ export class PublishedPostPage {
 		await locator.click();
 
 		// The button should now read "Like".
-		await iframeLocator.getByRole( 'link', { name: 'Like', exact: true } ).waitFor();
+		await iframe.getByRole( 'link', { name: 'Like', exact: true } ).waitFor();
 	}
 
 	/**
