@@ -124,6 +124,10 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		[ validate, formData, onContinue, dispatch ]
 	);
 
+	const closeDuplicateAgencyWarning = () => {
+		setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } );
+	};
+
 	return (
 		<Form
 			className="signup-contact-form"
@@ -313,19 +317,14 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 							</Text>
 						) }
 						<ButtonStack justify="flex-end">
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } );
-								} }
-							>
+							<Button variant="secondary" onClick={ closeDuplicateAgencyWarning }>
 								{ translate( 'Cancel' ) }
 							</Button>
 							<Button
 								variant="primary"
 								onClick={ () => {
 									onContinue( formData );
-									setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } );
+									closeDuplicateAgencyWarning();
 								} }
 							>
 								{ translate( 'Continue creating new agency account' ) }
