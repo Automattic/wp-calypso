@@ -183,10 +183,13 @@ export const purchasesRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( userPurchasesQuery() ),
 			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
-	validateSearch: ( search ): { site: string | undefined } => {
+	validateSearch: ( search ): { page?: number; search?: string; site?: string } => {
 		return {
+			page: typeof search.page === 'number' ? search.page : undefined,
+			search: typeof search.search === 'string' ? search.search : undefined,
 			site: typeof search.site === 'string' ? search.site : undefined,
 		};
 	},
