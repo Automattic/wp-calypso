@@ -10,4 +10,8 @@
     padding: var(--spacing-2);
     position: relative;
     z-index: 10;
+
+    p {
+        margin: 0;
+    }
 }
