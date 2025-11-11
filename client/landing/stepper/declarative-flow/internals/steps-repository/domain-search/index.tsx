@@ -54,6 +54,7 @@ type UseMyDomain = {
 	siteUrl?: string;
 	domainItem?: MinimalRequestCartProduct;
 	lastQuery?: string;
+	signupDomainOrigin?: string;
 };
 
 type StepSubmission = {
@@ -188,6 +189,7 @@ const DomainSearchStep: StepType< {
 				submit( {
 					navigateToUseMyDomain: true,
 					lastQuery: domainName,
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 				} );
 			},
 			onContinue: ( domainCart: MinimalRequestCartProduct[] ) => {
