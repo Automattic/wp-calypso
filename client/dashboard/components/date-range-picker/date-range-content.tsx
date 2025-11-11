@@ -134,7 +134,18 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		onClose?.();
 	};
 
-	const activePresetId = getActivePresetId( fromDraft, toDraft, today );
+	const activePresetId: PresetId | undefined = ( () => {
+		const preset = getActivePresetId( fromDraft, toDraft, today );
+		if ( preset ) {
+			return preset;
+		}
+		// Only mark "custom" when both dates are present and do not match a known preset
+		if ( fromDraft && toDraft ) {
+			return 'custom';
+		}
+		// When cleared or incomplete, highlight nothing
+		return undefined;
+	} )();
 
 	// Site “today” as a site-day Date
 	const siteToday =
