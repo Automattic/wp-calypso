@@ -29,6 +29,8 @@ import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FREE_PLAN_PRODUCT_ID } from '../../../../../../packages/data-stores/src/plans';
+import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
+import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
@@ -103,7 +105,8 @@ const onboarding: FlowV2< typeof initialize > = {
 
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				// Check if the user selected the free plan
-				const isFree = ! planCartItem || planCartItem.product_id === FREE_PLAN_PRODUCT_ID;
+				const isFree =
+					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
 
 				if ( isFree ) {
 					// Redirect free plan users to a home page
