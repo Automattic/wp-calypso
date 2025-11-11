@@ -174,10 +174,6 @@ const domain: FlowV2< typeof initialize > = {
 								setPendingAction( async () => {
 									const domain = providedDependencies.domainCartItem.meta;
 
-									if ( ! domain ) {
-										throw new Error( 'No domain found' );
-									}
-
 									await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
 
 									return {
@@ -258,6 +254,24 @@ const domain: FlowV2< typeof initialize > = {
 
 					setPendingAction( async () => {
 						if ( domainCartItems ) {
+							const hasOnlyDomainMappingInCart =
+								domainCartItems.length === 1 && isDomainMapping( domainCartItems[ 0 ] );
+
+							if ( hasOnlyDomainMappingInCart ) {
+								const domain = domainCartItems[ 0 ].meta;
+
+								await wpcom.req.post(
+									`/sites/${ providedDependencies.site.ID }/add-domain-mapping`,
+									{
+										domain,
+									}
+								);
+
+								return {
+									redirectTo: `/v2/domains/${ domain }/domain-connection-setup`,
+								};
+							}
+
 							await addProductsToCart( providedDependencies.siteSlug, this.name, domainCartItems );
 						}
 
