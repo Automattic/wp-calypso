@@ -1,11 +1,15 @@
 import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import './style.scss';
 
+interface MetadataListProps {
+	children?: React.ReactNode;
+}
+
 type MetadataItemProps =
 	| { title: React.ReactNode; children?: React.ReactNode }
 	| { title?: React.ReactNode; children: React.ReactNode };
 
-const MetadataList = ( { children }: React.ReactNode ) => {
+const MetadataList = ( { children }: MetadataListProps ) => {
 	if ( ! children ) {
 		return null;
 	}
