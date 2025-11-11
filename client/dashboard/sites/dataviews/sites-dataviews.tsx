@@ -5,7 +5,7 @@ import { DataViews } from '../../app/dataviews';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { SiteLink } from '../site-fields';
-import { DEFAULT_LAYOUTS, DEFAULT_PER_PAGE_SIZES } from './views';
+import { DEFAULT_LAYOUTS, DEFAULT_CONFIG } from './views';
 import type { Site } from '@automattic/api-core';
 import type { Action, Field, View } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
@@ -63,7 +63,7 @@ export const SitesDataViews = ( {
 					onResetView={ onResetView }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }
-					config={ { perPageSizes: DEFAULT_PER_PAGE_SIZES } }
+					config={ DEFAULT_CONFIG }
 					empty={ empty }
 					renderItemLink={ ( { item, ...props } ) => <SiteLink { ...props } site={ item } /> }
 				/>

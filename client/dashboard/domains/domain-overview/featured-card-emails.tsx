@@ -36,7 +36,7 @@ const getDescription = ( mailboxes: Mailbox[] ) => {
 	const additionalMailboxes = mailboxes.length - 1;
 
 	if ( mailboxes.length === 0 ) {
-		return __( 'Add professional email' );
+		return __( 'Stand out with professional email.' );
 	}
 
 	return additionalMailboxes > 0
@@ -59,11 +59,11 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 	const email = mailboxes.length
 		? `${ mailboxes[ 0 ].mailbox }@${ domain.domain }`
 		: // translators: %s is the mailbox name: youremail@example.com
-		  sprintf( __( 'youremail@%s' ), domain.domain );
+		  __( 'No email address' );
 
 	return (
 		<OverviewCard
-			title={ __( 'Emails' ) }
+			title={ mailboxes.length > 0 ? __( 'Emails' ) : __( 'Add mailbox' ) }
 			heading={
 				<Truncate tooltip={ email } numberOfLines={ 1 }>
 					{ email }
