@@ -26,7 +26,7 @@ export default function SecuritySshKey() {
 				sprintf(
 					/* translators: %(businessPlan)s is the name of the Business plan, %(commercePlan)s is the name of the Commerce plan */
 					__(
-						'Attach the SSH key to a site with a %(businessPlan)s or %(commercePlan)s plan to enable SSH key authentication for that site. If the SSH key is removed, it will also be removed from all attached sites. <learnMoreLink>Learn more</learnMoreLink>'
+						'Attach the SSH key to a site with a %(businessPlan)s or %(commercePlan)s plan to enable SSH key authentication for that site. If the SSH key is removed, it will also be removed from all attached sites. <learnMoreLink />'
 					),
 					{
 						businessPlan: getPlanNames()[ DotcomPlans.BUSINESS ],

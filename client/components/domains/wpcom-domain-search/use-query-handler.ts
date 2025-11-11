@@ -43,7 +43,7 @@ export const useQueryHandler = ( {
 	}, [] );
 
 	return {
-		query: localQuery,
+		query: localQuery?.trim().toLowerCase(),
 		setQuery,
 		clearQuery: clearSessionStorageQuery,
 	};

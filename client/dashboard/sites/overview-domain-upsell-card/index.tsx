@@ -13,6 +13,13 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
+/**
+ * Returns true if the site requires a plan upgrade.
+ */
+const requiresPlanUpgrade = ( site: Site ) => {
+	return site.plan?.is_free || site.plan?.billing_period === 'Monthly';
+};
+
 const useDomainSuggestion = ( site: Site ) => {
 	const search = site.slug.split( '.' )[ 0 ];
 	const { data: allDomainSuggestions } = useQuery(
@@ -61,7 +68,7 @@ const DomainUpsellCardContent = ( {
 			] );
 		}
 
-		if ( site.plan?.is_free || site.plan?.billing_period === 'Monthly' ) {
+		if ( requiresPlanUpgrade( site ) ) {
 			window.location.href = getDomainAndPlanUpsellUrl( {
 				siteSlug: site.slug,
 				backUrl,
@@ -147,6 +154,24 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 		);
 	}
 
+	if ( requiresPlanUpgrade( site ) ) {
+		return (
+			<DomainUpsellCardContent
+				site={ site }
+				title={ __( 'The perfect domain awaits' ) }
+				description={ __(
+					'Upgrade to an annual paid plan to get <domain /> free for one year. You can also <link>choose your own domain name</link>.'
+				) }
+				upsellId="site-overview-get-this-domain"
+				upsellCTAButtonText={ __( 'Choose a plan' ) }
+			/>
+		);
+	}
+
+	/**
+	 * A site may have used their domain credit but detached the domain from the site (for whatever reason).
+	 * In this case, we should show the domain upsell card.
+	 */
 	return (
 		<DomainUpsellCardContent
 			site={ site }

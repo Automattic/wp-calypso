@@ -31,7 +31,8 @@
 		}
 	}
 
-	&.role-bot {
+	&.role-bot,
+	&.role-zendesk-intro {
 		padding: 0 16px;
 
 		// Bot messages should be separated

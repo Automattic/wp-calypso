@@ -1,4 +1,4 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../components/text';
 
@@ -16,13 +16,9 @@ export default function ReportFooter() {
 				) }
 			</Text>
 			<Text as="p">
-				<a
-					href="https://developer.wordpress.com/docs/site-performance/speed-test/#accessing-the-speed-test-tool"
-					target="_blank"
-					rel="noreferrer"
-				>
-					{ __( 'Learn more about the Chrome UX Report ↗' ) }
-				</a>
+				<ExternalLink href="https://developer.wordpress.com/docs/site-performance/speed-test/#accessing-the-speed-test-tool">
+					{ __( 'Learn more about the Chrome UX Report' ) }
+				</ExternalLink>
 			</Text>
 		</VStack>
 	);

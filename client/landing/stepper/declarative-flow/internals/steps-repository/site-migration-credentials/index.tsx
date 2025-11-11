@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -17,6 +18,7 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
+import { isHostingSupportedForSSHMigration } from '../site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { CredentialsForm } from './components/credentials-form';
 import { NeedHelpLink } from './components/need-help-link';
 import { ApplicationPasswordsInfo } from './types';
@@ -56,22 +58,24 @@ const SiteMigrationCredentials: StepType< {
 			| 'credentials-required'
 			| 'already-wpcom'
 			| 'site-is-not-using-wordpress'
+			| 'redirect-to-ssh'
 			| 'skip';
 		from?: string;
 		platform?: ImporterPlatform;
 		authorizationUrl?: string;
 		hasError?: 'ticket-creation';
+		host?: string;
 	};
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
 	const dispatch = useDispatch();
+	const fromUrl = useQuery().get( 'from' ) || '';
 
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	const locale = useLocale();
 	const siteSlugParam = useSiteSlugParam();
-	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
 	const { sendTicketAsync } = useSubmitMigrationTicket( {
 		onSuccess: () => {
@@ -96,8 +100,22 @@ const SiteMigrationCredentials: StepType< {
 
 	const handleSubmit = (
 		siteInfo?: UrlData | undefined,
-		applicationPasswordsInfo?: ApplicationPasswordsInfo
+		applicationPasswordsInfo?: ApplicationPasswordsInfo,
+		hostingProviderSlug?: string
 	) => {
+		const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
+		const isHostingSupported = isHostingSupportedForSSHMigration( hostingProviderSlug );
+
+		// If SSH migration is available and hosting is supported, redirect to SSH flow
+		if ( isSSHMigrationAvailable && isHostingSupported ) {
+			siteId && dispatch( resetSite( siteId ) );
+			return navigation.submit?.( {
+				action: 'redirect-to-ssh',
+				from: siteInfo?.url || fromUrl,
+				host: hostingProviderSlug,
+			} );
+		}
+
 		const action = getAction( siteInfo, applicationPasswordsInfo );
 
 		// Fire Google Ads tracking event when credentials are submitted

@@ -255,7 +255,6 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 					tooltipPosition="top left"
 					icon={ close }
 					onClick={ onDismiss }
-					onTouchStart={ onDismiss }
 				/>
 			</Flex>
 		</CardHeader>

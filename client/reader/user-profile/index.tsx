@@ -3,7 +3,7 @@ import { useTranslate, fixMe } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import { UserData } from 'calypso/lib/user/user';
+import { UserProfileData } from 'calypso/lib/user/user';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
 import UserLists from 'calypso/reader/user-profile/views/lists';
@@ -16,7 +16,7 @@ import './style.scss';
 export interface UserProfileProps {
 	userLogin: string;
 	userId: string;
-	user: UserData | undefined;
+	user: UserProfileData | undefined;
 	path: string;
 	isLoading: boolean;
 	requestUser: ( userLogin: string, findById?: boolean ) => Promise< void >;
@@ -26,7 +26,7 @@ export interface UserProfileProps {
 type UserProfileState = {
 	reader: {
 		users: {
-			items: Record< string, UserData >;
+			items: Record< string, UserProfileData >;
 			requesting: Record< string, boolean >;
 		};
 	};

@@ -10,8 +10,8 @@ import {
 	FlexBlock,
 	SearchControl,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { chevronRight, Icon } from '@wordpress/icons';
+import { isRTL, __ } from '@wordpress/i18n';
+import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { chooseEmailSolutionRoute } from '../../app/router/emails';
@@ -87,7 +87,10 @@ export default function ChooseDomain() {
 									<Item key={ d.blog_id + '-' + d.domain } onClick={ () => handleDomainClick( d ) }>
 										<HStack justify="flex-start">
 											<FlexBlock>{ d.domain }</FlexBlock>
-											<Icon className="choose-domain__icon" icon={ chevronRight } />
+											<Icon
+												className="choose-domain__icon"
+												icon={ isRTL() ? chevronLeft : chevronRight }
+											/>
 										</HStack>
 									</Item>
 								) ) }
@@ -97,7 +100,10 @@ export default function ChooseDomain() {
 									<Item key={ d.blog_id + '-' + d.domain } onClick={ () => handleDomainClick( d ) }>
 										<HStack justify="flex-start">
 											<FlexBlock>{ d.domain }</FlexBlock>
-											<Icon className="choose-domain__icon" icon={ chevronRight } />
+											<Icon
+												className="choose-domain__icon"
+												icon={ isRTL() ? chevronLeft : chevronRight }
+											/>
 										</HStack>
 									</Item>
 								) ) }

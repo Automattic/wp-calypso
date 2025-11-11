@@ -9,7 +9,6 @@ import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews-card';
-import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
@@ -102,8 +101,6 @@ function MonetizeSubscriptions() {
 			}
 		>
 			<div ref={ ref }>
-				{ /* Show a flash message if the URL contains ?showSuccessRemoved=true when a subscription is removed */ }
-				<FlashMessage value="true" message={ __( 'This item has been removed.' ) } />
 				<DataViewsCard>
 					<DataViews
 						data={ adjustedMonetizeSubscriptions }

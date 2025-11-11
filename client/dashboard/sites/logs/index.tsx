@@ -16,6 +16,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import TimeMismatchNotice from '../../components/time-mismatch-notice';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SiteActivityLogsDataViews from '../logs-activity/dataviews';
@@ -29,6 +30,10 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const settingsUrl = site.options?.admin_url
+		? `${ site.options.admin_url }options-general.php`
+		: '';
 	const [ autoRefresh, setAutoRefresh ] = useState( false );
 	const [ autoRefreshDisabledReason, setAutoRefreshDisabledReason ] = useState< string | null >(
 		null
@@ -132,9 +137,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				<PageHeader
 					title={ __( 'Logs' ) }
 					description={ createInterpolateElement(
-						__(
-							'View and download various server logs. <learnMoreLink>Learn more</learnMoreLink>'
-						),
+						__( 'View and download various server logs. <learnMoreLink />' ),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="site-monitoring-logs" />,
 						}
@@ -158,6 +161,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				{ autoRefreshDisabledReason && (
 					<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 				) }
+				<TimeMismatchNotice settingsUrl={ settingsUrl } siteTime={ gmtOffset } siteId={ siteId } />
 				<Card className={ `site-logs-card site-logs-card--${ logType }` }>
 					<CardHeader style={ { paddingBottom: '0' } }>
 						<TabPanel

@@ -1,7 +1,6 @@
 import { userSettingsMutation } from '@automattic/api-queries';
 import { generatePassword } from '@automattic/generate-password';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
@@ -18,7 +17,7 @@ import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
-import FlashMessage, { addFlashMessage } from '../../components/flash-message';
+import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import type { Field } from '@wordpress/dataviews';
@@ -31,8 +30,6 @@ type SecurityPasswordFormData = {
 
 export default function SecurityPassword() {
 	const { recordTracksEvent } = useAnalytics();
-
-	const router = useRouter();
 
 	const mutation = useMutation( userSettingsMutation() );
 	const { createErrorNotice } = useDispatch( noticesStore );
@@ -51,8 +48,7 @@ export default function SecurityPassword() {
 			{
 				onSuccess: () => {
 					setIsReloading( true );
-					// Since changing a user's password invalidates the session, we reload.
-					router.navigate( addFlashMessage( { to: '', replace: true }, 'password', 'updated' ) );
+					reloadWithFlashMessage( 'password' );
 				},
 				onError: ( error: Error ) => {
 					createErrorNotice( error.message || __( 'Failed to save password.' ), {
@@ -130,11 +126,7 @@ export default function SecurityPassword() {
 				/>
 			}
 		>
-			<FlashMessage
-				value="password"
-				id="updated"
-				message={ __( 'Your password was saved successfully.' ) }
-			/>
+			<FlashMessage id="password" message={ __( 'Your password was saved successfully.' ) } />
 			<Card className="security-password-card">
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

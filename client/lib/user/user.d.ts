@@ -1,56 +1,17 @@
-import { URL } from '../../types';
+import type { User } from '@automattic/api-core';
 
-export type UserMetaData = {
-	links: Record< 'self' | 'help' | 'site' | 'flags', URL >;
-	data?: {
-		flags: {
-			active_flags: string[];
-		};
-	};
-};
+export type UserMetaData = User[ 'meta' ];
 
-export type UserData = { ID: number } & Partial< OptionalUserData >;
+// Returned by the `/me` endpoint
+export type UserData = User;
 
-export type OptionalUserData = {
-	abtests: Record< string, string >;
+// Returned by the `/users/:user` endpoint
+export type UserProfileData = {
+	ID: number;
 	avatar_URL: string;
-	bio: string;
-	date: string;
-	description: string;
+	bio?: string;
 	display_name: string;
-	email: string;
-	email_verified: boolean;
-	has_unseen_notes: boolean;
-	i18n_empathy_mode: boolean;
-	is_new_reader: boolean;
-	is_valid_google_apps_country: boolean;
-	lasagna_jwt: string;
-	localeSlug: string;
-	localeVariant: string;
-	logout_URL: string;
-	meta: UserMetaData;
-	newest_note_type: string;
-	phone_account: boolean;
-	primarySiteSlug: string;
-	primary_blog: number;
-	primary_blog_is_jetpack: boolean;
-	primary_blog_url: string;
-	site_count: number;
-	jetpack_site_count?: number;
-	atomic_site_count?: number;
-	has_jetpack_partner_access?: boolean;
-	jetpack_partner_types?: string[];
-	social_login_connections: unknown;
-	use_fallback_for_incomplete_languages: boolean;
+	primary_blog?: number;
+	profile_URL?: string;
 	user_login: string;
-	user_ip_country_code: string;
-	user_URL: string;
-	username: string;
-	profile_URL: string;
-	visible_site_count: number;
-	jetpack_visible_site_count?: number;
-	atomic_visible_site_count?: number;
-	is_google_domain_owner: boolean;
-	had_hosting_trial: boolean;
-	is_subscription_only: boolean;
 };

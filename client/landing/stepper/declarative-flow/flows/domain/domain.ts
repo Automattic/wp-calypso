@@ -1,5 +1,10 @@
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import { DOMAIN_FLOW, addProductsToCart, clearStepPersistedState } from '@automattic/onboarding';
+import {
+	DOMAIN_FLOW,
+	addPlanToCart,
+	addProductsToCart,
+	clearStepPersistedState,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
@@ -23,7 +28,7 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import { type FlowV2, type SubmitHandler } from '../../internals/types';
+import { AssertConditionState, type FlowV2, type SubmitHandler } from '../../internals/types';
 
 function initialize() {
 	const steps = [
@@ -49,6 +54,15 @@ const domain: FlowV2< typeof initialize > = {
 	isSignupFlow: false,
 	__experimentalUseBuiltinAuth: true,
 	initialize,
+	useAssertConditions() {
+		const { site, siteSlug } = useSiteData();
+
+		if ( ! siteSlug ) {
+			return { state: AssertConditionState.SUCCESS };
+		}
+
+		return { state: site ? AssertConditionState.SUCCESS : AssertConditionState.CHECKING };
+	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const {
 			setDomainCartItem,
@@ -71,6 +85,20 @@ const domain: FlowV2< typeof initialize > = {
 			[]
 		);
 
+		const goToCheckout = ( siteSlug: string ) => {
+			const destination = `/v2/sites/${ siteSlug }/domains`;
+
+			// replace the location to delete processing step from history.
+			return window.location.replace(
+				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
+					redirect_to: destination,
+					signup: 1,
+					cancel_to: new URL( addQueryArgs( '/setup/domain', { siteSlug } ), window.location.href )
+						.href,
+				} )
+			);
+		};
+
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
@@ -90,7 +118,7 @@ const domain: FlowV2< typeof initialize > = {
 						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
 
-					setSiteUrl( providedDependencies.siteUrl as string );
+					setSiteUrl( siteSlug ?? ( providedDependencies.siteUrl as string ) );
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
@@ -154,6 +182,12 @@ const domain: FlowV2< typeof initialize > = {
 						setHideFreePlan( true );
 						setSignupCompleteFlowName( this.name );
 						setSignupCompleteSlug( siteSlug );
+						setDomainCartItem( providedDependencies.domainCartItem );
+						setDomainCartItems( [ providedDependencies.domainCartItem ] );
+
+						if ( ! siteHasPaidPlan( site ) ) {
+							return navigate( STEPS.UNIFIED_PLANS.slug );
+						}
 
 						setPendingAction( async () => {
 							await addProductsToCart( siteSlug, this.name, [
@@ -173,7 +207,8 @@ const domain: FlowV2< typeof initialize > = {
 					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
-						setDomainCartItem( providedDependencies.domainCartItem as MinimalRequestCartProduct );
+						setDomainCartItem( providedDependencies.domainCartItem );
+						setDomainCartItems( [ providedDependencies.domainCartItem ] );
 					}
 
 					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
@@ -205,7 +240,9 @@ const domain: FlowV2< typeof initialize > = {
 
 				case STEPS.SITE_PICKER.slug: {
 					if ( ! siteHasPaidPlan( providedDependencies.site ) ) {
-						return navigate( STEPS.UNIFIED_PLANS.slug );
+						return navigate(
+							`${ STEPS.UNIFIED_PLANS.slug }?siteSlug=${ providedDependencies.siteSlug }`
+						);
 					}
 
 					setPendingAction( async () => {
@@ -227,7 +264,11 @@ const domain: FlowV2< typeof initialize > = {
 					const cartItems = providedDependencies.cartItems;
 					const [ pickedPlan, ...products ] = cartItems ?? [];
 
+					const addOns = products.filter( ( product ) => product !== null );
+
 					setPlanCartItem( pickedPlan );
+					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
+					setProductCartItems( addOns );
 
 					if ( ! pickedPlan ) {
 						// Since we're removing the paid domain, it means that the user chose to continue
@@ -239,10 +280,33 @@ const domain: FlowV2< typeof initialize > = {
 						} else {
 							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
 						}
-					}
 
-					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
-					setProductCartItems( products.filter( ( product ) => product !== null ) );
+						if ( siteSlug ) {
+							return goToCheckout( siteSlug );
+						}
+					} else if ( siteSlug ) {
+						setPendingAction( async () => {
+							if ( pickedPlan ) {
+								await addPlanToCart( siteSlug, this.name, true, '', pickedPlan );
+							}
+
+							if ( addOns.length > 0 ) {
+								await addProductsToCart( siteSlug, this.name, addOns );
+							}
+
+							if ( domainCartItems ) {
+								await addProductsToCart( siteSlug, this.name, domainCartItems );
+							}
+
+							return {
+								siteSlug,
+								goToCheckout: true,
+								siteCreated: false,
+							};
+						} );
+
+						return navigate( STEPS.PROCESSING.slug );
+					}
 
 					setSignupCompleteFlowName( this.name );
 					return navigate( STEPS.SITE_CREATION_STEP.slug, undefined, false );
@@ -258,23 +322,11 @@ const domain: FlowV2< typeof initialize > = {
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 
 						if ( providedDependencies.goToCheckout ) {
-							const siteSlug = providedDependencies.siteSlug as string;
-
-							// replace the location to delete processing step from history.
-							window.location.replace(
-								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									redirect_to: destination,
-									signup: 1,
-									cancel_to: new URL(
-										addQueryArgs( '/setup/domain', { siteSlug } ),
-										window.location.href
-									).href,
-								} )
-							);
-						} else {
-							// replace the location to delete processing step from history.
-							window.location.replace( destination );
+							return goToCheckout( providedDependencies.siteSlug as string );
 						}
+
+						// replace the location to delete processing step from history.
+						window.location.replace( destination );
 					} else {
 						// TODO: Handle errors
 						// navigate( 'error' );

@@ -76,6 +76,12 @@ let buffered;
 const requests = {};
 
 /**
+ * A flag which stores whether the iframe has sent a cookie-auth-missing event.
+ * @type boolean
+ */
+let _isCookieAuthMissing = false;
+
+/**
  * Performs a "proxied REST API request". This happens by calling
  * `iframe.postMessage()` on the proxy iframe instance, which from there
  * takes care of WordPress.com user authentication (via the currently
@@ -392,6 +398,13 @@ function onmessage( e ) {
 		return;
 	}
 
+	// Allows packages consumers to check whether the iframe had a cookie
+	// error. See the isCookieAuthMissing() function.
+	if ( data === 'cookie-auth-missing' ) {
+		_isCookieAuthMissing = true;
+		return;
+	}
+
 	if ( postStrings && 'string' === typeof data ) {
 		data = JSON.parse( data );
 	}
@@ -554,7 +567,16 @@ function canAccessWpcomApis() {
 }
 
 /**
+ * Returns whether the iframe has ever sent the "cookie-auth-missing" event, signalling
+ * that something is wrong with the user's cookie.
+ * @returns {boolean}
+ */
+function isCookieAuthMissing() {
+	return _isCookieAuthMissing;
+}
+
+/**
  * Export `request` function.
  */
 export default request;
-export { reloadProxy, canAccessWpcomApis };
+export { reloadProxy, canAccessWpcomApis, isCookieAuthMissing };

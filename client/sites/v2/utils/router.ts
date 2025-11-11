@@ -1,6 +1,5 @@
 import pagejs from '@automattic/calypso-router';
 import { createMemoryHistory } from '@tanstack/react-router';
-import { getQueryArgs } from '@wordpress/url';
 import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
 import type { AppConfig } from 'calypso/dashboard/app/context';
 
@@ -39,8 +38,7 @@ export function createBrowserHistoryAndMemoryRouterSync( {
 
 		if ( currentPath !== lastPath ) {
 			router.navigate( {
-				to: window.location.pathname,
-				search: getQueryArgs( window.location.search ),
+				to: currentPath,
 				replace: true,
 			} );
 			lastPath = currentPath;

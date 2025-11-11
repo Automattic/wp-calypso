@@ -296,7 +296,8 @@ const HomeContent = ( {
 
 		return (
 			<Notice
-				text={ translate( 'Connect to your Studio site to start syncing.' ) }
+				className="customer-home__studio-sync-notice"
+				text={ translate( 'Open your Studio site to start syncing.' ) }
 				icon="sync"
 				showDismiss={ false }
 				status="is-info"
@@ -306,8 +307,9 @@ const HomeContent = ( {
 						trackStudioSyncConnectSite( true );
 						window.location.href = studioSiteUrl;
 					} }
+					external
 				>
-					{ translate( 'Connect Studio' ) }
+					{ translate( 'Open Studio' ) }
 				</NoticeAction>
 			</Notice>
 		);

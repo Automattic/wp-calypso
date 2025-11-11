@@ -15,6 +15,7 @@ const selectors = {
 export class MyHomePage {
 	private page: Page;
 	private anchor: Locator;
+	readonly heading: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -24,6 +25,7 @@ export class MyHomePage {
 	constructor( page: Page ) {
 		this.page = page;
 		this.anchor = page.getByRole( 'main' );
+		this.heading = this.page.getByRole( 'heading', { name: 'My Home' } );
 	}
 
 	/**

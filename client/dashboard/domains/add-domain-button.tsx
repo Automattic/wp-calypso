@@ -7,7 +7,7 @@ export function AddDomainButton( { siteSlug }: { siteSlug?: string } ) {
 	const onSearchClick = () => {
 		window.location.href = siteSlug
 			? addQueryArgs( '/setup/domain', { siteSlug } )
-			: '/start/domain';
+			: '/setup/domain';
 		return false;
 	};
 

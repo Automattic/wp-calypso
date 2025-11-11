@@ -32,10 +32,10 @@ const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNo
 					title={ __( 'Transfer site' ) }
 					description={ createInterpolateElement(
 						__(
-							'Transfer this site to a new or existing site member with just a few clicks. <link>Learn more</link>'
+							'Transfer this site to a new or existing site member with just a few clicks. <learnMoreLink />'
 						),
 						{
-							link: <InlineSupportLink supportContext="site-transfer" />,
+							learnMoreLink: <InlineSupportLink supportContext="site-transfer" />,
 						}
 					) }
 				/>
