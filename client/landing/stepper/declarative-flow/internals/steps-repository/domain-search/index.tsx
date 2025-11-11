@@ -227,7 +227,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery, clearQuery, flow, siteSlug ] );
+	}, [ submit, setQuery, clearQuery, flow, siteSlug, isLoadingExperiment, experimentVariation ] );
 
 	const slots = useMemo( () => {
 		return {
