@@ -11,6 +11,7 @@ boot( {
 	mainRoute: '/sites',
 	Logo,
 	supports: {
+		overview: false,
 		sites: {
 			deployments: false,
 			performance: false,

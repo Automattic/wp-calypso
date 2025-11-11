@@ -36,6 +36,7 @@ export type AppConfig = {
 	Logo: React.FC | null;
 	LoadingLogo?: React.FC;
 	supports: {
+		overview: boolean;
 		sites: SiteFeatureSupports | false;
 		plugins: boolean;
 		domains: boolean;
@@ -64,6 +65,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	Logo: null,
 	LoadingLogo: undefined,
 	supports: {
+		overview: false,
 		sites: false,
 		plugins: false,
 		domains: false,

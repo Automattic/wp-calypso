@@ -1,47 +1,48 @@
 import { sitesQuery, dashboardSiteListQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
 import boot from '../app/boot';
-import Logo from './logo';
+import { Logo, LoadingLogo } from './logo';
 import type { FetchSitesOptions } from '@automattic/api-core';
 import './style.scss';
 
 boot( {
-	name: 'WordPress.com',
-	basePath: '/v2',
-	mainRoute: '/sites',
+	name: 'Automattic for Agencies',
+	basePath: '/v2-a4a',
+	mainRoute: '/overview',
+	LoadingLogo,
 	Logo,
 	supports: {
-		overview: false,
+		overview: true,
 		sites: {
-			deployments: true,
+			deployments: false,
 			performance: true,
 			monitoring: true,
 			logs: true,
 			backups: true,
 			scan: true,
-			domains: true,
-			emails: true,
+			domains: false,
+			emails: false,
 			settings: {
 				general: {
-					redirect: true,
+					redirect: false,
 				},
-				server: true,
-				security: true,
+				server: false,
+				security: false,
 			},
 		},
-		domains: true,
-		emails: true,
-		themes: true,
-		reader: true,
+		domains: false,
+		emails: false,
+		themes: false,
+		reader: false,
 		help: true,
-		notifications: true,
+		notifications: false,
 		me: {
-			privacy: true,
-			apps: true,
+			privacy: false,
+			apps: false,
 		},
 		plugins: true,
 		commandPalette: false,
 	},
-	optIn: true,
+	optIn: false,
 	components: {
 		sites: () => import( '../sites' ),
 		siteSwitcher: () => import( '../sites/site-switcher' ),
