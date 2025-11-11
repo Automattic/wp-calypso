@@ -25,7 +25,6 @@ import {
 	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { StepName } from '../../domains/domain-connection-setup/types';
 import {
 	checkDomainNameServersPermissions,
 	checkDomainTransferPermissions,
@@ -549,9 +548,18 @@ export const domainConnectionSetupRoute = createRoute( {
 			domainConnectionSetupInfoQuery(
 				domainName,
 				domain.blog_id,
-				`${ window.location.href }?step=${ StepName.DC_RETURN }`
+				`${ location.origin + location.pathname }?step=dc_return`
 			)
 		);
+	},
+	validateSearch: ( search ): { error?: string; error_description?: string; step?: string } => {
+		// Validate query parameters for Domain Connect flow
+		return {
+			error: typeof search.error === 'string' ? search.error : undefined,
+			error_description:
+				typeof search.error_description === 'string' ? search.error_description : undefined,
+			step: typeof search.step === 'string' ? search.step : undefined,
+		};
 	},
 } ).lazy( () =>
 	config.isEnabled( 'domain-connection-redesign' )

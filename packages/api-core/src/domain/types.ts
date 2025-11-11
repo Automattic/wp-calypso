@@ -35,6 +35,7 @@ export interface TitanEmailSubscription extends EmailSubscription {
 }
 
 export interface Domain extends DomainSummary {
+	a_records_required_for_mapping?: string[];
 	auth_code_required: boolean;
 	aftermarket_auction: boolean;
 	auto_renewal_date: string;

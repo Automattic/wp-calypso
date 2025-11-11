@@ -55,14 +55,19 @@ export function mayWeLoadSurvicateScript() {
  * @returns {boolean} True if the user is on an anonymous path, false otherwise
  */
 export function isUserOnAnonymousPaths() {
-	return [
+	const pathname = window.location.pathname;
+	const anonymousPaths = [
 		'/log-in',
 		'/setup/onboarding/user',
 		'/log-in/lostpassword',
 		'/account/user-social',
 		'/log-in/link',
 		'/log-in/qr',
-	].includes( window.location.pathname );
+	];
+
+	return anonymousPaths.some(
+		( path ) => pathname === path || pathname.startsWith( `${ path }/` )
+	);
 }
 
 export function addSurvicate() {

@@ -74,10 +74,10 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 	const description = hasPlanFeature( site, HostingFeatures.DATABASE )
 		? createInterpolateElement(
 				__(
-					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL. <link>Learn more</link>'
+					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL. <learnMoreLink />'
 				),
 				{
-					link: <InlineSupportLink supportContext="hosting-mysql" />,
+					learnMoreLink: <InlineSupportLink supportContext="hosting-mysql" />,
 				}
 		  )
 		: undefined;

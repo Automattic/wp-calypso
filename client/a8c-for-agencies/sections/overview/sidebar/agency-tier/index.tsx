@@ -32,62 +32,61 @@ export default function OverviewSidebarAgencyTier() {
 
 	const isTiersRevampEnabled = isEnabled( 'tiers-revamp' );
 
-	return (
+	return isTiersRevampEnabled ? (
+		<AgencyTierProgressCard
+			currentAgencyTierId={ currentAgencyTierId }
+			influencedRevenue={ influencedRevenue ?? 0 }
+			isEarlyAccess={ !! isEarlyAccess }
+		/>
+	) : (
 		<>
 			<AgencyTierCelebrationModal
 				agencyTierInfo={ currentAgencyTierInfo }
 				currentAgencyTier={ currentAgencyTierId }
 			/>
-			{ isTiersRevampEnabled ? (
-				<AgencyTierProgressCard
-					currentAgencyTierId={ currentAgencyTierId }
-					influencedRevenue={ influencedRevenue ?? 0 }
-					isEarlyAccess={ !! isEarlyAccess }
-				/>
-			) : (
-				<Card className="agency-tier__card">
-					<FoldableCard
-						className="foldable-nav"
-						header={ translate( 'Your progress' ) }
-						expanded
-						compact
-						iconSize={ 18 }
-					>
-						<div className="agency-tier__bottom-content">
-							<div
-								className={ clsx( 'agency-tier__current-agency-tier-header', {
-									'is-default': ! currentAgencyTierId,
-								} ) }
-							>
-								<span className="agency-tier__current-agency-tier-icon">
-									<img src={ currentAgencyTierInfo.logo } alt={ currentAgencyTierInfo.id } />
-								</span>
-								<span className="agency-tier__current-agency-tier-title">
-									{ preventWidows( currentAgencyTierInfo.title ) }
-								</span>
-							</div>
-							{ currentAgencyTierInfo && (
-								<div className="agency-tier__current-agency-tier-description">
-									{ currentAgencyTierInfo.description }
-								</div>
-							) }
-							<Button
-								href={ A4A_AGENCY_TIER_LINK }
-								onClick={ () =>
-									dispatch(
-										recordTracksEvent( 'calypso_a4a_agency_tier_explore_tiers_and_benefits_click', {
-											agency_tier: currentAgencyTierId,
-										} )
-									)
-								}
-							>
-								<Icon icon={ arrowRight } size={ 18 } />
-								{ translate( 'Explore Tiers and benefits' ) }
-							</Button>
+
+			<Card className="agency-tier__card">
+				<FoldableCard
+					className="foldable-nav"
+					header={ translate( 'Your progress' ) }
+					expanded
+					compact
+					iconSize={ 18 }
+				>
+					<div className="agency-tier__bottom-content">
+						<div
+							className={ clsx( 'agency-tier__current-agency-tier-header', {
+								'is-default': ! currentAgencyTierId,
+							} ) }
+						>
+							<span className="agency-tier__current-agency-tier-icon">
+								<img src={ currentAgencyTierInfo.logo } alt={ currentAgencyTierInfo.id } />
+							</span>
+							<span className="agency-tier__current-agency-tier-title">
+								{ preventWidows( currentAgencyTierInfo.title ) }
+							</span>
 						</div>
-					</FoldableCard>
-				</Card>
-			) }
+						{ currentAgencyTierInfo && (
+							<div className="agency-tier__current-agency-tier-description">
+								{ currentAgencyTierInfo.description }
+							</div>
+						) }
+						<Button
+							href={ A4A_AGENCY_TIER_LINK }
+							onClick={ () =>
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_agency_tier_explore_tiers_and_benefits_click', {
+										agency_tier: currentAgencyTierId,
+									} )
+								)
+							}
+						>
+							<Icon icon={ arrowRight } size={ 18 } />
+							{ translate( 'Explore Tiers and benefits' ) }
+						</Button>
+					</div>
+				</FoldableCard>
+			</Card>
 		</>
 	);
 }

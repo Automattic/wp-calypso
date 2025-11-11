@@ -17,7 +17,7 @@ import type { TierItem } from './types';
 
 const TARGET_INFLUENCED_REVENUE = {
 	'emerging-partner': 0,
-	'agency-partner': 1000,
+	'agency-partner': 1200,
 	'pro-agency-partner': 5000,
 	'premier-partner': 250000,
 };
@@ -204,7 +204,7 @@ export const ALL_TIERS: TierItem[] = [
 		name: __( 'Premier Partner' ),
 		description: sprintf(
 			/* translators: %s is the influenced revenue */
-			__( '%s+ influenced revenue' ),
+			__( '%s+ influenced revenue and invitation to the tier.' ),
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD' )
 		),
 		heading: __( '3 premium benefits' ),

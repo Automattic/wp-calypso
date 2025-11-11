@@ -20,7 +20,6 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 const noop = () => {};
 
 export const emptyChat: Chat = {
-	supportInteractionId: null,
 	odieId: null,
 	conversationId: null,
 	messages: [],

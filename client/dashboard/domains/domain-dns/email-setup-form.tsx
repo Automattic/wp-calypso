@@ -1,7 +1,11 @@
 import { type DnsTemplateVariables } from '@automattic/api-core';
 import { domainDnsApplyTemplateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	Button,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { DataForm, Field, useFormValidity } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -22,7 +26,7 @@ const defaultFormData: EmailSetupFormData = {
 };
 
 interface EmailSetupFormProps {
-	description: string;
+	description: React.ReactNode;
 	label: string;
 	transformVariables?: ( variables: DnsTemplateVariables ) => DnsTemplateVariables;
 	pattern: RegExp;
@@ -88,7 +92,6 @@ export default function EmailSetupForm( {
 			id: 'record',
 			type: 'text',
 			label: __( 'Verification token' ),
-			description,
 			placeholder,
 			isValid: {
 				custom: ( item ) => {
@@ -106,7 +109,7 @@ export default function EmailSetupForm( {
 	const canSubmit = formData.record && isValid;
 
 	return (
-		<div style={ { marginTop: '28px' } }>
+		<div>
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 5 }>
 					<DataForm< EmailSetupFormData >
@@ -117,6 +120,7 @@ export default function EmailSetupForm( {
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }
 					/>
+					<Text variant="muted">{ description }</Text>
 					<ButtonStack justify="flex-start">
 						<Button
 							type="submit"

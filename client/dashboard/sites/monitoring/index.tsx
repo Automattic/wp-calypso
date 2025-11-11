@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
@@ -129,10 +128,7 @@ function SiteMonitoring() {
 						wrap
 						spacing={ isSmallViewport ? 5 : 10 }
 					>
-						<VStack spacing={ 2 }>
-							<PageHeader />
-							<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
-						</VStack>
+						<PageHeader description={ getDateRange( timeRange, locale ) } />
 
 						<div>
 							<ToggleGroupControl

@@ -1,5 +1,3 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	MenuGroup,
@@ -10,44 +8,15 @@ import {
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
-import { useAppContext } from '../../app/context';
-import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
-import { siteRoute } from '../../app/router/sites';
-import SiteIcon from '../../components/site-icon';
-import Switcher from '../../components/switcher';
-import { getSiteDisplayName } from '../../utils/site-name';
-import { getSiteDisplayUrl } from '../../utils/site-url';
 import AddNewSite from '../add-new-site';
-import type { Site } from '@automattic/api-core';
-
-const searchableFields = [
-	{
-		id: 'URL',
-		getValue: ( { item }: { item: Site } ) => getSiteDisplayUrl( item ),
-	},
-];
+import { SiteSwitcherBase } from './base';
 
 const SiteSwitcher = () => {
-	const { queries } = useAppContext();
-	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
-	const { data: sites } = useQuery( { ...queries.sitesQuery(), enabled: isSwitcherOpen } );
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
-	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 
 	return (
 		<>
-			<Switcher
-				items={ sites }
-				value={ site }
-				searchableFields={ searchableFields }
-				getItemName={ getSiteDisplayName }
-				getItemUrl={ ( site ) => buildCurrentRouteLink( { params: { siteSlug: site.slug } } ) }
-				renderItemIcon={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
-				open={ isSwitcherOpen }
-				onToggle={ setIsSwitcherOpen }
-			>
+			<SiteSwitcherBase>
 				{ ( { onClose } ) => (
 					<MenuGroup>
 						<MenuItem
@@ -63,7 +32,7 @@ const SiteSwitcher = () => {
 						</MenuItem>
 					</MenuGroup>
 				) }
-			</Switcher>
+			</SiteSwitcherBase>
 			{ isAddSiteModalOpen && (
 				<Modal
 					title={ __( 'Add new site' ) }

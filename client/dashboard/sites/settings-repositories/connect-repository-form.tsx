@@ -362,7 +362,7 @@ export const ConnectRepositoryForm = ( {
 
 			if ( 'selectedRepositoryId' in updates ) {
 				newFormData.branch = '';
-				newFormData.targetDir = '';
+				newFormData.targetDir = '/';
 
 				// If repository is unselected, reset to simple mode since advanced requires a repo
 				if ( updates.selectedRepositoryId === '' ) {
@@ -394,12 +394,15 @@ export const ConnectRepositoryForm = ( {
 	};
 
 	useEffect( () => {
-		if ( ! repositoryChecks?.suggested_directory || formData.targetDir ) {
+		if ( formData.targetDir && formData.targetDir !== '/' ) {
 			return;
 		}
 
-		// Only update target directory when repository changes, not when branch changes
-		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
+		const targetDir = repositoryChecks?.suggested_directory || '/';
+
+		if ( formData.targetDir !== targetDir ) {
+			setFormData( ( prev ) => ( { ...prev, targetDir } ) );
+		}
 	}, [ repositoryChecks?.suggested_directory, formData.targetDir ] );
 
 	const handleSubmit = async () => {
@@ -573,7 +576,7 @@ export const ConnectRepositoryForm = ( {
 	};
 
 	const fields: Field< ConnectRepositoryFormData >[] = useMemo( () => {
-		return [
+		const baseFields: Field< ConnectRepositoryFormData >[] = [
 			{
 				id: 'selectedInstallationId',
 				label: __( 'GitHub account' ),
@@ -602,37 +605,44 @@ export const ConnectRepositoryForm = ( {
 				elements: repositoryOptions,
 				description: repositoryHelpText as string,
 			},
-			{
-				id: 'branch',
-				label: __( 'Deployment branch' ),
-				type: 'text' as const,
-				Edit: 'select',
-				elements: branchOptions,
-				description: ( () => {
-					if ( isLoadingBranches ) {
-						return __( 'Loading branches…' );
-					}
-					if ( allBranchesConnected ) {
-						return __(
-							'All branches for this repository are already connected. Please create a new branch or select a different repository.'
-						);
-					}
-					return __( 'Select the branch to deploy from this repository.' );
-				} )(),
-			},
-			{
-				id: 'targetDir',
-				label: __( 'Destination directory' ),
-				type: 'text' as const,
-				description: __( 'This path is relative to the server root.' ),
-			},
-			{
-				id: 'isAutomated',
-				label: __( 'Automated deployments' ),
-				type: 'text' as const,
-				Edit: AutomatedToggle,
-			},
 		];
+
+		if ( selectedRepository ) {
+			baseFields.push(
+				{
+					id: 'branch',
+					label: __( 'Deployment branch' ),
+					type: 'text' as const,
+					Edit: 'select',
+					elements: branchOptions,
+					description: ( () => {
+						if ( isLoadingBranches ) {
+							return __( 'Loading branches…' );
+						}
+						if ( allBranchesConnected ) {
+							return __(
+								'All branches for this repository are already connected. Please create a new branch or select a different repository.'
+							);
+						}
+						return __( 'Select the branch to deploy from this repository.' );
+					} )(),
+				},
+				{
+					id: 'targetDir',
+					label: __( 'Destination directory' ),
+					type: 'text' as const,
+					description: __( 'This path is relative to the server root.' ),
+				},
+				{
+					id: 'isAutomated',
+					label: __( 'Automated deployments' ),
+					type: 'text' as const,
+					Edit: AutomatedToggle,
+				}
+			);
+		}
+
+		return baseFields;
 	}, [
 		installationOptions,
 		installationHelpText,
@@ -644,6 +654,7 @@ export const ConnectRepositoryForm = ( {
 		shouldRestoreRepositoryFocus,
 		isLoadingBranches,
 		allBranchesConnected,
+		selectedRepository,
 	] );
 
 	if ( isLoadingInstallations ) {
@@ -684,38 +695,41 @@ export const ConnectRepositoryForm = ( {
 					fields={ fields }
 					form={ {
 						layout: { type: 'regular' as const },
-						fields: [
-							'selectedInstallationId',
-							'selectedRepositoryId',
-							'branch',
-							'targetDir',
-							'isAutomated',
-						],
+						fields: selectedRepository
+							? [
+									'selectedInstallationId',
+									'selectedRepositoryId',
+									'branch',
+									'targetDir',
+									'isAutomated',
+							  ]
+							: [ 'selectedInstallationId', 'selectedRepositoryId' ],
 					} }
 					onChange={ handleChange }
 				/>
 
-				<div>
-					<SectionHeader
-						level={ 3 }
-						title={ __( 'Pick your deployment mode' ) }
-						description={ __(
-							'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
-						) }
-					/>
+				{ selectedRepository && (
+					<div>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Pick your deployment mode' ) }
+							description={ __(
+								'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
+							) }
+						/>
 
-					<RadioControl
-						selected={ formData.deploymentMode }
-						onChange={ ( value ) =>
-							handleChange( { deploymentMode: value as 'simple' | 'advanced' } )
-						}
-						options={ [
-							{ label: __( 'Simple' ), value: 'simple' },
-							{ label: __( 'Advanced' ), value: 'advanced' },
-						] }
-						disabled={ ! selectedRepository }
-					/>
-				</div>
+						<RadioControl
+							selected={ formData.deploymentMode }
+							onChange={ ( value ) =>
+								handleChange( { deploymentMode: value as 'simple' | 'advanced' } )
+							}
+							options={ [
+								{ label: __( 'Simple' ), value: 'simple' },
+								{ label: __( 'Advanced' ), value: 'advanced' },
+							] }
+						/>
+					</div>
+				) }
 
 				{ isAdvancedSelected && renderAdvancedWorkflow() }
 

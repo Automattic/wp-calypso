@@ -1,7 +1,4 @@
-import {
-	FEATURE_INSTALL_THEMES,
-	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-} from '@automattic/calypso-products';
+import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import pageRouter from '@automattic/calypso-router';
 import { compact } from 'lodash';
 import PropTypes from 'prop-types';
@@ -13,7 +10,6 @@ import ThemesList from 'calypso/components/themes-list';
 import { getThemeShowcaseEventRecorder } from 'calypso/my-sites/themes/events/theme-showcase-tracks';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
@@ -325,14 +321,8 @@ export const ConnectedThemesSelection = connect(
 		state,
 		{ filter, page, search, tier, vertical, siteId, source, forceWpOrgSearch, tabFilter }
 	) => {
-		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
 		const hiddenFilters = getThemeHiddenFilters( state, siteId, tabFilter );
-		const hasUnlimitedPremiumThemes = siteHasFeature(
-			state,
-			siteId,
-			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
-		);
 		const canInstallThemes = siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 
 		let sourceSiteId;
@@ -340,10 +330,6 @@ export const ConnectedThemesSelection = connect(
 			sourceSiteId = source;
 		} else {
 			sourceSiteId = siteId ? siteId : 'wpcom';
-		}
-
-		if ( isAtomic && ! hasUnlimitedPremiumThemes ) {
-			sourceSiteId = 'wpcom';
 		}
 
 		// number calculation is just a hack for Jetpack sites. Jetpack themes endpoint does not paginate the

@@ -45,7 +45,7 @@ export class ImportLetsFindYourSitePage {
 	 * @param url The site URL to enter.
 	 */
 	async enterSiteURLAndCheck( url: string ): Promise< void > {
-		await this.page.getByRole( 'textbox', { name: 'Enter your site address:' } ).fill( url );
+		await this.page.getByRole( 'textbox', { name: 'Site address' } ).fill( url );
 		await this.page.getByRole( 'button', { name: 'Check my site' } ).click();
 	}
 

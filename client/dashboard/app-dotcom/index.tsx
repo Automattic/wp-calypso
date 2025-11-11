@@ -1,4 +1,4 @@
-import { sitesQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
+import { sitesQuery, dashboardSiteListQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
 import boot from '../app/boot';
 import Logo from './logo';
 import type { FetchSitesOptions } from '@automattic/api-core';
@@ -10,7 +10,6 @@ boot( {
 	mainRoute: '/sites',
 	Logo,
 	supports: {
-		overview: false,
 		sites: {
 			deployments: true,
 			performance: true,
@@ -48,5 +47,6 @@ boot( {
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
+		dashboardSiteListQuery,
 	},
 } );

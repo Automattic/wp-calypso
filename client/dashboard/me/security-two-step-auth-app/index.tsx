@@ -26,7 +26,7 @@ export default function SecurityTwoStepAuthApp() {
 					<Notice variant="info" title={ __( 'Before you continue' ) }>
 						{ createInterpolateElement(
 							__(
-								'You‘ll need an authenticator app like Google Authenticator or Authy installed on your device to enable two-step authentication. <learnMoreLink>Learn more</learnMoreLink>'
+								'You‘ll need an authenticator app like Google Authenticator or Authy installed on your device to enable two-step authentication. <learnMoreLink />'
 							),
 							{
 								learnMoreLink: (

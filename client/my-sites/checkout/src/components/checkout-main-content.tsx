@@ -1108,6 +1108,7 @@ const CheckoutSummaryTitleContent = styled.span`
 	font-size: 16px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	justify-content: space-between;
+	align-items: center;
 	margin: 0 auto;
 	padding: 24px;
 	max-width: 600px;
@@ -1119,6 +1120,7 @@ const CheckoutSummaryTitleContent = styled.span`
 
 const CheckoutSummaryTitle = styled.span`
 	display: flex;
+	align-items: center;
 `;
 
 const CheckoutSummaryTitleIcon = styled( Gridicon )`
@@ -1531,7 +1533,7 @@ const WPCheckoutCompletedMainContent = styled.div`
 const WPCheckoutSidebarContent = styled.div`
 	background: ${ ( props ) => props.theme.colors.background };
 	grid-area: sidebar-content;
-	margin-top: var( --masterbar-height );
+	margin-top: var( --masterbar-checkout-height );
 
 	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
 		margin-top: var( --masterbar-checkout-height );

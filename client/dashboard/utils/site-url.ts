@@ -1,4 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
+import { isSelfHostedJetpackConnected } from './site-types';
 import type { Site } from '@automattic/api-core';
 
 /**
@@ -46,4 +47,15 @@ export function getSiteEditUrl( site: Site, isSiteUsingBlockTheme?: boolean ) {
 	}
 
 	return addQueryArgs( `${ siteAdminUrl }customize.php`, queryArgs );
+}
+
+/**
+ * Returns the URL for the site visibility settings page.
+ */
+export function getSiteVisibilityURL( site: Site ) {
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return undefined;
+	}
+
+	return `/sites/${ site.slug }/settings/site-visibility`;
 }

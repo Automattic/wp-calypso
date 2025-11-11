@@ -4,21 +4,13 @@ import { __ } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { getSiteVisibilityURL } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	title: __( 'Visibility' ),
 	trackId: 'site-overview-visibility',
 };
-
-function getVisibilityURL( site: Site ) {
-	if ( isSelfHostedJetpackConnected( site ) ) {
-		return undefined;
-	}
-
-	return `/sites/${ site.slug }/settings/site-visibility`;
-}
 
 function getLaunchpadChecklistSlug( site: Site ) {
 	const intent = site.options?.site_intent;
@@ -54,7 +46,7 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 				? {
 						heading: __( 'Launch site' ),
 						description: __( 'Ready to go public?' ),
-						link: getVisibilityURL( site ),
+						link: getSiteVisibilityURL( site ),
 				  }
 				: {
 						heading: __( 'Coming soon' ),
@@ -82,7 +74,7 @@ function VisibilityCardComingSoon( { site }: { site: Site } ) {
 					? __( 'Visitors will see a coming soon page.' )
 					: __( 'Ready to go public?' )
 			}
-			link={ getVisibilityURL( site ) }
+			link={ getSiteVisibilityURL( site ) }
 		/>
 	);
 }
@@ -94,7 +86,7 @@ function VisibilityCardPrivate( { site }: { site: Site } ) {
 			icon={ lockOutline }
 			heading={ __( 'Private' ) }
 			description={ __( 'Only invited users can view your site.' ) }
-			link={ getVisibilityURL( site ) }
+			link={ getSiteVisibilityURL( site ) }
 		/>
 	);
 }
@@ -110,7 +102,7 @@ function VisibilityCardPublic( { site }: { site: Site } ) {
 			icon={ published }
 			heading={ __( 'Public' ) }
 			description={ description }
-			link={ getVisibilityURL( site ) }
+			link={ getSiteVisibilityURL( site ) }
 			intent="success"
 		/>
 	);
