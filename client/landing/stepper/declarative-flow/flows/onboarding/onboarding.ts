@@ -246,7 +246,8 @@ const onboarding: FlowV2< typeof initialize > = {
 							 */
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
 							const redirectTo: string =
-								playgroundId && planCartItem?.product_id !== FREE_PLAN_PRODUCT_ID
+								playgroundId &&
+								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
 									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 											siteSlug,
 											siteId: providedDependencies.siteId,
