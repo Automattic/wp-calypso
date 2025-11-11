@@ -176,8 +176,12 @@ export default function DomainForwardingForm( {
 				isValid: {
 					required: true,
 					custom: ( item ) => {
-						if ( ! isTargetUrlValid( item.targetUrl, domainName ) ) {
-							return __( 'Please enter a valid URL.' );
+						const validationError = isTargetUrlValid(
+							item.targetUrl,
+							item.subdomain ? `${ item.subdomain }.${ domainName }` : domainName
+						);
+						if ( validationError !== null ) {
+							return validationError;
 						}
 						return null;
 					},
