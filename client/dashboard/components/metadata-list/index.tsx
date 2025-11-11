@@ -1,7 +1,11 @@
 import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import './style.scss';
 
-const MetadataList = ( { children }: React.ReactNode[] ) => {
+type MetadataItemProps =
+	| { title: React.ReactNode; children?: React.ReactNode }
+	| { title?: React.ReactNode; children: React.ReactNode };
+
+const MetadataList = ( { children }: React.ReactNode ) => {
 	if ( ! children ) {
 		return null;
 	}
@@ -13,13 +17,11 @@ const MetadataList = ( { children }: React.ReactNode[] ) => {
 	);
 };
 
-const MetadataItem = ( {
-	children,
-	title,
-}: {
-	children?: React.ReactNode;
-	title?: React.ReactNode;
-} ) => {
+const MetadataItem = ( { children, title }: MetadataItemProps ) => {
+	if ( ! children && ! title ) {
+		return null;
+	}
+
 	return (
 		<HStack
 			className="dashboard-metadata-list-item"
