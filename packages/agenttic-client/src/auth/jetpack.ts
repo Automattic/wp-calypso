@@ -24,7 +24,7 @@ declare global {
 		JP_CONNECTION_INITIAL_STATE?: {
 			apiNonce: string;
 			siteSuffix: string;
-			connectionStatus: { isActive: boolean };
+			connectionStatus: { isActive: boolean; isRegistered: boolean };
 		};
 		Jetpack_Editor_Initial_State?: {
 			wpcomBlogId: string;
@@ -53,12 +53,12 @@ export type JetpackErrorHandler = ( error: JetpackApiError ) => string;
  * Check if this is a simple site (WordPress.com)
  */
 function isSimpleSite(): boolean {
-	// If we have JP_CONNECTION_INITIAL_STATE, it's a Jetpack site (not simple)
-	const hasJetpackConnection = Boolean( window.JP_CONNECTION_INITIAL_STATE );
-	if ( hasJetpackConnection ) {
-		return false;
+	// WordPress.com sites have JP_CONNECTION_INITIAL_STATE but are NOT registered with Jetpack.com
+	const isJetpackRegistered =
+		window.JP_CONNECTION_INITIAL_STATE?.connectionStatus?.isRegistered;
+	if ( isJetpackRegistered ) {
+		return false; // It's a connected JP site
 	}
-
 	// Otherwise check for wpcomBlogId - simple sites have this without JP_CONNECTION_INITIAL_STATE
 	const isSimple = Boolean(
 		window.Jetpack_Editor_Initial_State?.wpcomBlogId
