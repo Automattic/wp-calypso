@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useGenerateSSHKey } from '../hooks/use-generate-ssh-key';
 import { HelpLink } from './help-link';
 import { getSSHHostDisplayName, getSSHSupportDoc } from './ssh-host-support-urls';
@@ -97,7 +98,6 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 	const hostDisplayName = getSSHHostDisplayName( options.host );
 	const supportDoc = getSSHSupportDoc( options.host );
-	const helpLink = <HelpLink supportLink={ supportDoc.url } supportPostId={ supportDoc.postId } />;
 
 	const stepsData: StepsData = [
 		{
@@ -108,7 +108,13 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					onSuccess={ options.onFindSSHDetailsSuccess }
 					onNoSSHAccess={ options.onNoSSHAccess }
 					hostDisplayName={ hostDisplayName }
-					helpLink={ helpLink }
+					helpLink={
+						<HelpLink
+							supportLink={ supportDoc.url }
+							supportPostId={ supportDoc.postId }
+							stepKey={ FIND_SSH_DETAILS }
+						/>
+					}
 					isInputDisabled={ options.isInputDisabled }
 				/>
 			),
@@ -122,7 +128,13 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					serverAddress={ options.serverAddress }
 					port={ options.port }
 					hostDisplayName={ hostDisplayName }
-					helpLink={ helpLink }
+					helpLink={
+						<HelpLink
+							supportLink={ supportDoc.url }
+							supportPostId={ supportDoc.postId }
+							stepKey={ ADD_SERVER_ADDRESS }
+						/>
+					}
 					onServerAddressChange={ options.onServerAddressChange }
 					onPortChange={ options.onPortChange }
 					onVerify={ options.onServerVerify }
@@ -149,7 +161,13 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					onPasswordChange={ options.onPasswordChange }
 					onGenerateSSHKey={ options.onGenerateSSHKey }
 					onEditUsername={ options.onEditUsername }
-					helpLink={ helpLink }
+					helpLink={
+						<HelpLink
+							supportLink={ supportDoc.url }
+							supportPostId={ supportDoc.postId }
+							stepKey={ SHARE_SSH_ACCESS }
+						/>
+					}
 					isTransferring={ options.isTransferring }
 					shouldGenerateKey={ options.shouldGenerateKey }
 					isInputDisabled={ options.isInputDisabled }
@@ -347,7 +365,13 @@ export const useSteps = ( {
 		const canClick = index === 0 || index <= lastCompleteStep + 1;
 		const onItemClick = canClick
 			? () => {
-					setCurrentStep( ( prev ) => ( prev === index ? -1 : index ) );
+					const newStepState = currentStep === index ? -1 : index;
+					const isOpening = newStepState !== -1;
+					recordTracksEvent( 'calypso_site_migration_ssh_action', {
+						step: step.key,
+						action: isOpening ? 'expand_accordion' : 'collapse_accordion',
+					} );
+					setCurrentStep( newStepState );
 			  }
 			: undefined;
 
