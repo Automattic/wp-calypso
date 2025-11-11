@@ -14,7 +14,7 @@ const CancelPurchaseRefundInformation = ( {
 	purchase,
 	isJetpackPurchase,
 }: CancelPurchaseRefundInformationProps ) => {
-	const { data: selectedDomain } = useSuspenseQuery( domainQuery( purchase.product_name ) );
+	const { data: selectedDomain } = useSuspenseQuery( domainQuery( purchase.meta ?? '' ) );
 
 	const isGravatarRestrictedDomain = selectedDomain?.is_gravatar_restricted_domain;
 	const { refund_period_in_days: refundPeriodInDays } = purchase;
