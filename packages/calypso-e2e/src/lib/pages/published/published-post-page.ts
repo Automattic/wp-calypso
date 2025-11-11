@@ -76,7 +76,7 @@ export class PublishedPostPage {
 		// On AT sites Playwright is not able to scroll directly to the iframe
 		// containing the Like/Unlike button (similar to Post Comments).
 		await iframeLocator.scrollIntoViewIfNeeded();
-		// Use evaluate to scroll the button into view since it's inside an iframe
+		// Use evaluate to scroll the button into view since it's inside an iframe.
 		await locator.evaluate( ( element ) => element.scrollIntoView() );
 
 		await locator.click();
