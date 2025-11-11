@@ -125,6 +125,7 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					onServerAddressChange={ options.onServerAddressChange }
 					onPortChange={ options.onPortChange }
 					onVerify={ options.onServerVerify }
+					isInputDisabled={ options.isInputDisabled }
 				/>
 			),
 		},
