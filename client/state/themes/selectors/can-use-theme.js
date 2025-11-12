@@ -16,6 +16,52 @@ const extraFeatureChecks = {
 	'woo-on-plans': [ FEATURE_WOOP ],
 };
 
+const getThemeTierFeatureChecks = ( state, siteId, themeId ) => {
+	const themeTier = getThemeTierForTheme( state, themeId );
+
+	switch ( themeTier.slug ) {
+		case 'free': {
+			return [];
+		}
+
+		case 'personal': {
+			return [ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ];
+		}
+
+		case 'premium': {
+			return [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
+		}
+
+		// is this exactly the same as type DOT_ORG?
+		case 'community': {
+			return [ FEATURE_INSTALL_THEMES, WPCOM_FEATURES_COMMUNITY_THEMES ];
+		}
+
+		case 'sensei': {
+			return [ WPCOM_FEATURES_SENSEI_THEMES, WPCOM_FEATURES_ATOMIC ];
+		}
+
+		case 'woocommerce': {
+			const themeSoftwareSet = getThemeSoftwareSet( state, themeId );
+			const themeSoftware = themeSoftwareSet[ 0 ];
+
+			return [
+				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+				WPCOM_FEATURES_ATOMIC,
+				...( extraFeatureChecks[ themeSoftware ] || [] ),
+			];
+		}
+
+		case 'partner': {
+			return [ WPCOM_FEATURES_ATOMIC ];
+		}
+
+		default: {
+			return null;
+		}
+	}
+};
+
 /**
  * Checks whether the given theme is included in the current plan of the site.
  * @param  {Object}  state   Global state tree
@@ -24,49 +70,11 @@ const extraFeatureChecks = {
  * @returns {boolean}         Whether the theme is included in the site plan.
  */
 export function canUseTheme( state, siteId, themeId ) {
-	const themeTier = getThemeTierForTheme( state, themeId );
+	const featureChecks = getThemeTierFeatureChecks( state, siteId, themeId );
 
-	if ( themeTier.slug === 'free' ) {
-		return true;
+	if ( featureChecks === null ) {
+		return false;
 	}
 
-	if ( themeTier.slug === 'personal' ) {
-		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_LIMITED );
-	}
-
-	if ( themeTier.slug === 'premium' ) {
-		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED );
-	}
-
-	// is this exactly the same as type DOT_ORG?
-	if ( themeTier.slug === 'community' ) {
-		return (
-			siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_COMMUNITY_THEMES )
-		);
-	}
-
-	if ( themeTier.slug === 'sensei' ) {
-		const featureChecks = [ WPCOM_FEATURES_SENSEI_THEMES, WPCOM_FEATURES_ATOMIC ];
-		return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
-	}
-
-	if ( themeTier.slug === 'woocommerce' ) {
-		const themeSoftwareSet = getThemeSoftwareSet( state, themeId );
-		const themeSoftware = themeSoftwareSet[ 0 ];
-
-		const featureChecks = [
-			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-			WPCOM_FEATURES_ATOMIC,
-			...( extraFeatureChecks[ themeSoftware ] || [] ),
-		];
-
-		return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
-	}
-
-	if ( themeTier.slug === 'partner' ) {
-		return siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
-	}
-
-	return false;
+	return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
 }
