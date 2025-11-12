@@ -1,4 +1,5 @@
-import { Badge, Button, Gridicon } from '@automattic/components';
+import config from '@automattic/calypso-config';
+import { Badge, Button, Gridicon, SummaryButton } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';

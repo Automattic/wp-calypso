@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { Icon } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
@@ -116,15 +117,21 @@ const UseMyDomain: StepType< {
 	if ( shouldUseStepContainerV2( flow ) ) {
 		let columnWidth;
 		let headingText;
+		let subText;
 
 		if ( useMyDomainMode === 'domain-input' ) {
 			columnWidth = 4 as const;
 
 			if ( isDomainConnectionRedesign ) {
 				headingText = __( 'Your domain name' );
+				subText = __( 'Enter the domain name your visitors already know.' );
 			} else {
 				headingText = __( 'Use a domain I own' );
 			}
+		} else if ( isDomainConnectionRedesign ) {
+			columnWidth = 6 as const;
+			headingText = __( 'Use a domain name I own' );
+			subText = __( 'Make your domain name part of something bigger.' );
 		} else {
 			columnWidth = 10 as const;
 			headingText = (
@@ -148,16 +155,7 @@ const UseMyDomain: StepType< {
 						/>
 					}
 					columnWidth={ columnWidth }
-					heading={
-						<Step.Heading
-							text={ headingText }
-							subText={
-								isDomainConnectionRedesign
-									? __( 'Enter the domain name your visitors already know.' )
-									: undefined
-							}
-						/>
-					}
+					heading={ <Step.Heading text={ headingText } subText={ subText } /> }
 					verticalAlign={ isDomainConnectionRedesign ? 'center' : undefined }
 				>
 					{ getBlogOnboardingFlowStepContent() }

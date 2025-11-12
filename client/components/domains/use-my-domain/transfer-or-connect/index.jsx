@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -22,6 +23,7 @@ import {
 	getOptionInfo,
 	connectDomainAction,
 } from '../utilities';
+import Option from './option';
 import OptionContent from './option-content';
 
 import './style.scss';
@@ -51,6 +53,7 @@ function DomainTransferOrConnect( {
 		domainInboundTransferStatusInfo
 	);
 	const [ isFetching, setIsFetching ] = useState( false );
+	const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 
@@ -127,15 +130,28 @@ function DomainTransferOrConnect( {
 		<>
 			<QueryProductsList />
 			<Card className={ baseClassName + '__content' }>
-				{ content.map( ( optionProps, index ) => (
-					<OptionContent
-						isPlaceholder={ isFetching }
-						key={ 'option-' + index }
-						disabled={ actionClicked }
-						{ ...optionProps }
-					/>
-				) ) }
-				{ ! isFetching && (
+				{ content.map( ( optionProps, index ) => {
+					if ( isDomainConnectionRedesign ) {
+						return (
+							<Option
+								isPlaceholder={ isFetching }
+								key={ 'option-' + index }
+								disabled={ actionClicked }
+								{ ...optionProps }
+							/>
+						);
+					}
+
+					return (
+						<OptionContent
+							isPlaceholder={ isFetching }
+							key={ 'option-' + index }
+							disabled={ actionClicked }
+							{ ...optionProps }
+						/>
+					);
+				} ) }
+				{ ! isDomainConnectionRedesign && ! isFetching && (
 					<div className={ baseClassName + '__support-link' }>
 						{ createInterpolateElement(
 							__( "Not sure what's best for you? <a>We're happy to help!</a>" ),

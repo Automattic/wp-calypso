@@ -1,7 +1,23 @@
+import config from '@automattic/calypso-config';
 import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from '@automattic/urls';
+import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import connectIllustration from 'calypso/assets/images/domains/connect.svg';
-import transferIllustration from 'calypso/assets/images/domains/transfer.svg';
+import connectImage from 'calypso/assets/images/domains/connect.svg';
+import transferImage from 'calypso/assets/images/domains/transfer.svg';
+import ConnectIcon from '../transfer-or-connect/icons/connect';
+import TransferIcon from '../transfer-or-connect/icons/transfer';
+
+const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
+const connectIllustration = isDomainConnectionRedesign ? (
+	<Icon icon={ ConnectIcon } />
+) : (
+	connectImage
+);
+const transferIllustration = isDomainConnectionRedesign ? (
+	<Icon icon={ TransferIcon } />
+) : (
+	transferImage
+);
 
 const optionTitleText = {
 	get transfer() {
