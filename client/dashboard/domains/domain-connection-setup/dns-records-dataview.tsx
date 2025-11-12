@@ -105,8 +105,8 @@ export default function DNSRecordsDataView( {
 					currentValue = unmatchedCurrent[ unmatchedIndex ];
 					unmatchedIndex++;
 				} else {
-					// No more current nameservers, use BLANK
-					currentValue = 'BLANK';
+					// No more current nameservers, use -
+					currentValue = '-';
 				}
 
 				dnsRecords.push( {
@@ -151,8 +151,8 @@ export default function DNSRecordsDataView( {
 					currentValue = unmatchedCurrentIps[ unmatchedIpIndex ];
 					unmatchedIpIndex++;
 				} else {
-					// No more current IPs, use BLANK
-					currentValue = 'BLANK';
+					// No more current IPs, use -
+					currentValue = '-';
 				}
 
 				dnsRecords.push( {
@@ -171,7 +171,7 @@ export default function DNSRecordsDataView( {
 				id: 'cname-record',
 				type: 'CNAME',
 				name: 'www',
-				currentValue: currentCname || 'BLANK',
+				currentValue: currentCname || '-',
 				updateTo: domainName,
 			} );
 		}
