@@ -4,26 +4,40 @@
  * This algorithm ensures optimal display of DNS record changes by:
  * 1. Showing values that are already correct (matched) on the same row
  * 2. Pairing incorrect values with their suggested replacements
- * 3. Marking missing values with '-' to indicate they need to be added
+ * 3. Marking missing values with '-' in currentValue (need to be added)
+ * 4. Marking extra values with '-' in updateTo (should be removed)
  *
  * Algorithm Steps:
  * 1. Create a Set of target values for O(1) lookup performance
  * 2. Separate current values into two arrays:
  * - matched: values that exist in targets (already correct)
- * - unmatched: values that need to be changed
+ * - unmatched: values that need to be changed or removed
  * 3. For each target value, pair it with:
  * - The same value if it exists in current (shows user it's correct)
  * - An unmatched current value (shows user what needs to change)
  * - '-' if no current values remain (shows user it needs to be added)
+ * 4. Add any remaining unmatched current values with '-' as updateTo
+ * - This shows users which records aren't needed and can be removed
  *
- * Example:
+ * Example 1 - Basic matching:
  * ```
  * Current:  ['ns1.other.com', 'ns2.wordpress.com', 'ns3.other.com']
  * Target:   ['ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com']
  * Result:
- * ns2.wordpress.com → ns1.wordpress.com (matched, shown as correct)
+ * ns2.wordpress.com → ns1.wordpress.com (matched, already correct)
  * ns1.other.com     → ns2.wordpress.com (unmatched, needs change)
  * ns3.other.com     → ns3.wordpress.com (unmatched, needs change)
+ * ```
+ *
+ * Example 2 - Extra current values:
+ * ```
+ * Current:  ['ns1.other.com', 'ns2.other.com', 'ns3.other.com', 'ns4.other.com']
+ * Target:   ['ns1.wordpress.com', 'ns2.wordpress.com']
+ * Result:
+ * ns1.other.com → ns1.wordpress.com (needs change)
+ * ns2.other.com → ns2.wordpress.com (needs change)
+ * ns3.other.com → -                  (extra, should be removed)
+ * ns4.other.com → -                  (extra, should be removed)
  * ```
  * @param currentValues - Array of current DNS record values
  * @param targetValues - Array of desired target values
@@ -50,8 +64,7 @@ export function matchCurrentToTargetValues(
 
 	// Step 3: Create records by pairing each target with appropriate current value
 	let unmatchedIndex = 0;
-
-	return targetValues.map( ( targetValue ) => {
+	const results = targetValues.map( ( targetValue ) => {
 		let currentValue: string;
 
 		// Check if this target value is already in use (correct value)
@@ -70,4 +83,15 @@ export function matchCurrentToTargetValues(
 
 		return { currentValue, updateTo: targetValue };
 	} );
+
+	// Step 4: Add any remaining unmatched current values with '-' as updateTo
+	// This shows users which records should be removed
+	for ( let i = unmatchedIndex; i < unmatchedCurrent.length; i++ ) {
+		results.push( {
+			currentValue: unmatchedCurrent[ i ],
+			updateTo: '-',
+		} );
+	}
+
+	return results;
 }

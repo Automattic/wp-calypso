@@ -98,10 +98,12 @@ describe( 'matchCurrentToTargetValues', () => {
 
 		const result = matchCurrentToTargetValues( current, target );
 
-		// Only first two current values should be used (extras are ignored)
+		// First two current values are paired with targets, extras shown with '-' in updateTo
 		expect( result ).toEqual( [
 			{ currentValue: 'ns1.other.com', updateTo: 'ns1.wordpress.com' },
 			{ currentValue: 'ns2.other.com', updateTo: 'ns2.wordpress.com' },
+			{ currentValue: 'ns3.other.com', updateTo: '-' },
+			{ currentValue: 'ns4.other.com', updateTo: '-' },
 		] );
 	} );
 
@@ -111,8 +113,11 @@ describe( 'matchCurrentToTargetValues', () => {
 
 		const result = matchCurrentToTargetValues( current, target );
 
-		// Should return empty array as there are no targets to match
-		expect( result ).toEqual( [] );
+		// All current values should be shown with '-' as updateTo (should be removed)
+		expect( result ).toEqual( [
+			{ currentValue: 'ns1.other.com', updateTo: '-' },
+			{ currentValue: 'ns2.other.com', updateTo: '-' },
+		] );
 	} );
 
 	test( 'works with IP addresses (A records)', () => {
@@ -139,6 +144,21 @@ describe( 'matchCurrentToTargetValues', () => {
 			{ currentValue: 'ns1.other.com', updateTo: 'ns1.wordpress.com' },
 			{ currentValue: 'ns2.wordpress.com', updateTo: 'ns2.wordpress.com' },
 			{ currentValue: 'ns3.wordpress.com', updateTo: 'ns3.wordpress.com' },
+		] );
+	} );
+
+	test( 'shows extra values with "-" even when some values match', () => {
+		const current = [ 'ns1.wordpress.com', 'ns2.other.com', 'ns3.other.com', 'ns4.extra.com' ];
+		const target = [ 'ns1.wordpress.com', 'ns2.wordpress.com' ];
+
+		const result = matchCurrentToTargetValues( current, target );
+
+		// First value matches, second is paired, extras shown with '-'
+		expect( result ).toEqual( [
+			{ currentValue: 'ns1.wordpress.com', updateTo: 'ns1.wordpress.com' },
+			{ currentValue: 'ns2.other.com', updateTo: 'ns2.wordpress.com' },
+			{ currentValue: 'ns3.other.com', updateTo: '-' },
+			{ currentValue: 'ns4.extra.com', updateTo: '-' },
 		] );
 	} );
 } );
