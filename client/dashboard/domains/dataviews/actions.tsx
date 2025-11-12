@@ -17,6 +17,7 @@ import {
 } from '../../app/router/domains';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
+import { AutoRenewModal } from './auto-renew-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
@@ -261,9 +262,15 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				label: __( 'Manage auto-renew' ),
 				supportsBulk: true,
 				callback: () => {},
-				RenderModal: ( { items, closeModal = noop } ) => {
-					return <p>TODO: Bulk manage auto-renew</p>;
-				},
+				RenderModal: ( { items, closeModal = noop, onActionPerformed = noop } ) => (
+					<AutoRenewModal
+						items={ items }
+						onSuccess={ () => {
+							onActionPerformed( items );
+							closeModal();
+						} }
+					/>
+				),
 				isEligible: ( item ) => isDomainRenewable( item ),
 			},
 		],
