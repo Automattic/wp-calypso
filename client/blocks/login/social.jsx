@@ -70,7 +70,7 @@ class SocialLoginForm extends Component {
 					responseHandler={ this.props.handleLogin }
 					onClick={ this.props.trackLoginAndRememberRedirect }
 					socialServiceResponse={ this.props.socialServiceResponse }
-					key={ 3 }
+					key={ 4 }
 					isLogin
 				/>
 			),
@@ -80,7 +80,7 @@ class SocialLoginForm extends Component {
 			button: this.props.isSocialFirst && this.props.magicLoginLink && (
 				<MagicLoginButton
 					loginUrl={ this.props.magicLoginLink }
-					key={ 4 }
+					key={ 5 }
 					isJetpack={ this.props.isJetpack }
 				/>
 			),
@@ -88,7 +88,7 @@ class SocialLoginForm extends Component {
 		{
 			service: 'qr-code',
 			button: this.props.isSocialFirst && this.props.qrLoginLink && (
-				<QrCodeLoginButton loginUrl={ this.props.qrLoginLink } key={ 5 } />
+				<QrCodeLoginButton loginUrl={ this.props.qrLoginLink } key={ 6 } />
 			),
 		},
 	];

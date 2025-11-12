@@ -21,7 +21,7 @@ const PayPalIcon = ( { isDisabled = false, width = 20, height = 20 }: PayPalIcon
 			} ) }
 		>
 			<g
-				clip-path="url(#paypal-full-svg-a)"
+				clipPath="url(#paypal-full-svg-a)"
 				transform="matrix(2.07674825 0 0 -2.07674825 -11.15320125 92.76968175)"
 			>
 				<path
