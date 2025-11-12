@@ -147,13 +147,7 @@ export default function PrintBackupCodes( {
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<SectionHeader
-						title={ __( 'Print or download your backup codes' ) }
-						level={ 3 }
-						description={ __(
-							'Backup codes let you access your account if you lose your phone or can‘t use your authenticator app. Each code can only be used once. Store them in a safe place.'
-						) }
-					/>
+					<SectionHeader title={ __( 'Print or download your backup codes' ) } level={ 3 } />
 					<Notice variant="warning">
 						{ __(
 							'Without access to the app, your phone, or a backup code, you will lose access to your account.'
