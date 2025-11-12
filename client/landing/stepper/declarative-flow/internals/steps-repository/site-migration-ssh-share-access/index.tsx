@@ -47,7 +47,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
 	const locale = useLocale();
 	const siteSlug = useSiteSlugParam() ?? '';
-	const { sendTicketAsync } = useSubmitMigrationTicket();
+	const { sendTicketAsync, isPending: isSubmittingTicket } = useSubmitMigrationTicket();
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -208,7 +208,11 @@ const SiteMigrationSshShareAccess: StepType< {
 				}
 		  );
 	const topBar = (
-		<Step.TopBar rightElement={ <SupportNudge onAskForHelp={ navigateToDoItForMe } /> } />
+		<Step.TopBar
+			rightElement={
+				<SupportNudge onAskForHelp={ navigateToDoItForMe } isLoading={ isSubmittingTicket } />
+			}
+		/>
 	);
 
 	return (
