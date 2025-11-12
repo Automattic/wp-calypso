@@ -109,6 +109,7 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					onNoSSHAccess={ options.onNoSSHAccess }
 					hostDisplayName={ hostDisplayName }
 					helpLink={ helpLink }
+					isInputDisabled={ options.isInputDisabled }
 				/>
 			),
 		},
@@ -125,6 +126,7 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					onServerAddressChange={ options.onServerAddressChange }
 					onPortChange={ options.onPortChange }
 					onVerify={ options.onServerVerify }
+					isInputDisabled={ options.isInputDisabled }
 				/>
 			),
 		},

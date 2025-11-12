@@ -54,13 +54,20 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const isAtomic = site?.options?.is_automated_transfer ?? false;
 		const isWpcomStagingSite = site?.is_wpcom_staging_site ?? false;
 
-		return Boolean(
-			site?.capabilities?.manage_options &&
-				! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
+		const hasManageOptions = site?.capabilities?.manage_options;
+		const isJetpackNonAtomic = site.jetpack && ! isAtomic && ! site?.is_garden;
+		const isDomainOnly = site?.options?.is_domain_only ?? false;
+		const isSameSite = site.ID === this.props.selectedSite?.ID;
+
+		const eligible = Boolean(
+			hasManageOptions &&
+				! isJetpackNonAtomic && // Simple, Garden, and Atomic sites. Not Jetpack sites.
 				! isWpcomStagingSite &&
-				! ( site?.options?.is_domain_only ?? false ) &&
-				site.ID !== this.props.selectedSite?.ID
+				! isDomainOnly &&
+				! isSameSite
 		);
+
+		return eligible;
 	};
 
 	handleSiteSelect = ( targetSiteId: number ) => {

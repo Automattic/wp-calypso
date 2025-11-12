@@ -120,7 +120,7 @@ export default function CommissionOverview() {
 							summary={ false }
 						>
 							{ translate(
-								'Get a 20% revenue share when you refer your clients to WordPress.com and Pressable until June 30th, 2025 (and renewals on those subscriptions).'
+								'Get a 20% revenue share when you refer your clients to WordPress.com and Pressable (and renewals on those subscriptions).'
 							) }
 						</FoldableCard>
 
@@ -147,7 +147,7 @@ export default function CommissionOverview() {
 							summary={ false }
 						>
 							{ translate(
-								'Get a 50% revenue share on Jetpack products and Woo-owned extensions until June 30th, 2025 (and renewals on those subscriptions).'
+								'Get a 50% revenue share on Jetpack products and Woo-owned extensions (and renewals on those subscriptions).'
 							) }
 						</FoldableCard>
 					</StepSection>

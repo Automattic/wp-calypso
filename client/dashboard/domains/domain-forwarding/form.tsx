@@ -6,6 +6,7 @@ import {
 	PanelRow,
 	RadioControl,
 } from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -109,16 +110,16 @@ export default function DomainForwardingForm( {
 		() => [
 			{
 				id: 'sourceType',
-				label: __( 'Source URL' ),
+				label: __( 'Type' ),
 				type: 'text' as const,
 				Edit: 'select',
 				elements: [
 					{
-						label: `${ domainName } subdomain`,
+						label: 'Subdomain',
 						value: '',
 					},
 					{
-						label: `${ domainName } root domain`,
+						label: 'Domain',
 						value: 'root',
 					},
 				],
@@ -128,12 +129,13 @@ export default function DomainForwardingForm( {
 			},
 			{
 				id: 'subdomain',
-				label: __( 'Subdomain' ),
+				label: __( 'Source URL' ),
 				help: __( 'Enter the subdomain (e.g., "blog")' ),
 				type: 'text' as const,
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
-					const suffix = `.${ domainName }`;
+					const isDisabled = data.sourceType !== '';
+					const suffix = isDisabled ? '' : `.${ domainName }`;
 					const value = getValue( { item: data } );
 					const validationMessage = field.isValid?.custom?.( data, field );
 
@@ -142,7 +144,8 @@ export default function DomainForwardingForm( {
 							required={ !! field.isValid?.required }
 							label={ field.label }
 							placeholder={ field.placeholder }
-							value={ value }
+							disabled={ isDisabled }
+							value={ isDisabled ? domainName : value }
 							onChange={ ( value: string ) => {
 								return onChange( { [ id ]: value } );
 							} }
@@ -163,9 +166,6 @@ export default function DomainForwardingForm( {
 						}
 						return null;
 					},
-				},
-				isVisible: ( item: FormData ) => {
-					return item.sourceType === '';
 				},
 			},
 			{
@@ -189,8 +189,41 @@ export default function DomainForwardingForm( {
 
 	const form = {
 		layout: { type: 'regular' as const },
+		fields: [
+			{
+				id: 'source',
+				children: [ 'sourceType', 'subdomain' ],
+				layout: {
+					type: 'row' as const,
+					alignment: 'start' as const,
+					styles: {
+						sourceType: { flex: 1 },
+						subdomain: { flex: 3 },
+					},
+				},
+			},
+			'targetUrl',
+		],
+	};
+
+	const mobileForm = {
+		layout: { type: 'regular' as const },
 		fields: [ 'sourceType', 'subdomain', 'targetUrl' ],
 	};
+
+	const [ currentForm, setForm ] = useState( form );
+
+	// Reflow the form based on the width of the container for mobile/desktop
+	const ref = useResizeObserver( ( entries ) => {
+		const firstEntry = entries[ 0 ];
+		if ( firstEntry ) {
+			if ( firstEntry.contentRect.width > 535 ) {
+				setForm( form );
+			} else {
+				setForm( mobileForm );
+			}
+		}
+	} );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -202,63 +235,65 @@ export default function DomainForwardingForm( {
 	return (
 		<Card>
 			<CardBody>
-				<form onSubmit={ handleSubmit }>
-					<VStack spacing={ 4 }>
-						<DataForm< FormData >
-							data={ formData }
-							fields={ fields }
-							validity={ validity }
-							form={ form }
-							onChange={ ( edits: Partial< FormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
+				<div ref={ ref }>
+					<form onSubmit={ handleSubmit }>
+						<VStack spacing={ 4 }>
+							<DataForm< FormData >
+								data={ formData }
+								fields={ fields }
+								validity={ validity }
+								form={ currentForm }
+								onChange={ ( edits: Partial< FormData > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
 
-						<Panel>
-							<PanelBody
-								title={ __( 'Advanced settings' ) }
-								initialOpen={ hasNonDefaultAdvancedValues }
-							>
-								<PanelRow>
-									<VStack spacing={ 6 }>
-										<RadioControl
-											label={ isPermanentField.label }
-											selected={ formData.isPermanent ? 'true' : 'false' }
-											options={ isPermanentField.elements }
-											onChange={ ( value: string ) => {
-												setFormData( ( data ) => ( {
-													...data,
-													isPermanent: value === 'true',
-												} ) );
-											} }
-										/>
-										<RadioControl
-											label={ forwardPathsField.label }
-											selected={ formData.forwardPaths ? 'true' : 'false' }
-											options={ forwardPathsField.elements }
-											onChange={ ( value: string ) => {
-												setFormData( ( data ) => ( {
-													...data,
-													forwardPaths: value === 'true',
-												} ) );
-											} }
-										/>
-									</VStack>
-								</PanelRow>
-							</PanelBody>
-						</Panel>
-						<ButtonStack justify="start">
-							<Button
-								variant="primary"
-								type="submit"
-								isBusy={ isSubmitting }
-								disabled={ isSubmitting }
-							>
-								{ submitButtonText }
-							</Button>
-						</ButtonStack>
-					</VStack>
-				</form>
+							<Panel>
+								<PanelBody
+									title={ __( 'Advanced settings' ) }
+									initialOpen={ hasNonDefaultAdvancedValues }
+								>
+									<PanelRow>
+										<VStack spacing={ 6 } style={ { marginTop: '12px' } }>
+											<RadioControl
+												label={ isPermanentField.label }
+												selected={ formData.isPermanent ? 'true' : 'false' }
+												options={ isPermanentField.elements }
+												onChange={ ( value: string ) => {
+													setFormData( ( data ) => ( {
+														...data,
+														isPermanent: value === 'true',
+													} ) );
+												} }
+											/>
+											<RadioControl
+												label={ forwardPathsField.label }
+												selected={ formData.forwardPaths ? 'true' : 'false' }
+												options={ forwardPathsField.elements }
+												onChange={ ( value: string ) => {
+													setFormData( ( data ) => ( {
+														...data,
+														forwardPaths: value === 'true',
+													} ) );
+												} }
+											/>
+										</VStack>
+									</PanelRow>
+								</PanelBody>
+							</Panel>
+							<ButtonStack justify="start">
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isSubmitting }
+									disabled={ isSubmitting }
+								>
+									{ submitButtonText }
+								</Button>
+							</ButtonStack>
+						</VStack>
+					</form>
+				</div>
 			</CardBody>
 		</Card>
 	);

@@ -50,7 +50,7 @@ export class TestAccount {
 	 */
 	async authenticate(
 		page: Page,
-		{ url, waitUntilStable }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
+		{ url, waitUntilStable = true }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
 	): Promise< void > {
 		const browserContext = page.context();
 		await browserContext.clearCookies();

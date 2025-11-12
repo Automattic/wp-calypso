@@ -7,6 +7,7 @@ interface StepFindSSHDetailsProps {
 	onNoSSHAccess?: () => void;
 	hostDisplayName?: string;
 	helpLink: ReactNode;
+	isInputDisabled: boolean;
 }
 
 export const StepFindSSHDetails: FC< StepFindSSHDetailsProps > = ( {
@@ -14,6 +15,7 @@ export const StepFindSSHDetails: FC< StepFindSSHDetailsProps > = ( {
 	onNoSSHAccess,
 	hostDisplayName,
 	helpLink,
+	isInputDisabled,
 } ) => {
 	const translate = useTranslate();
 
@@ -40,6 +42,7 @@ export const StepFindSSHDetails: FC< StepFindSSHDetailsProps > = ( {
 					variant="link"
 					onClick={ onNoSSHAccess }
 					className="migration-site-ssh__no-ssh-link"
+					disabled={ isInputDisabled }
 				>
 					{ translate( "I don't have SSH" ) }
 				</Button>

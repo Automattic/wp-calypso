@@ -26,12 +26,12 @@ const createNameServerField = ( index: number, formData: FormData, isBusy?: bool
 		type: 'text' as const,
 		label: sprintf(
 			// translators: %s is the name server number (1-4)
-			__( 'Custom name server %s' ),
+			__( 'Name server %s' ),
 			index
 		),
 		placeholder: sprintf(
 			// translators: %s is the name server number (1-4)
-			__( 'ns%s.domain.com' ),
+			__( 'ns%s.example.com' ),
 			index
 		),
 		isValid: {

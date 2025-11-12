@@ -16,7 +16,7 @@ import { Experiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
-import { useView } from '../app/dataviews/use-view';
+import { usePersistentView } from '../app/dataviews';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
@@ -27,7 +27,6 @@ import {
 	SitesDataViews,
 	useActions,
 	getFields,
-	getDefaultFields,
 	getDefaultView,
 	recordViewChanges,
 } from './dataviews';
@@ -210,10 +209,10 @@ export default function Sites() {
 		isRestoringAccount,
 	} );
 
-	const { view, updateView, isViewModified, resetView } = useView( {
+	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'sites',
 		defaultView,
-		defaultFields: getDefaultFields(),
+		queryParams: currentSearchParams,
 	} );
 
 	const { sites, isLoadingSites, isPlaceholderData, totalItems } = useSiteListQuery(
@@ -333,7 +332,6 @@ export default function Sites() {
 						/>
 					}
 					onChangeView={ handleViewChange }
-					isViewModified={ isViewModified }
 					onResetView={ resetView }
 				/>
 			</PageLayout>

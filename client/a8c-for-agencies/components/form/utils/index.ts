@@ -38,3 +38,29 @@ export async function isSiteActive( url: string ) {
 		return false;
 	}
 }
+
+export async function isAgencyNameExists( agencyName: string ) {
+	const response = await wpcom.req.get( {
+		path: `/agency/exists/name?value=${ encodeURIComponent( agencyName ) }`,
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	if ( response?.exists ) {
+		return true;
+	}
+
+	return false;
+}
+
+export async function isAgencyUrlExists( url: string ) {
+	const response = await wpcom.req.get( {
+		path: `/agency/exists/url?value=${ encodeURIComponent( url ) }`,
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	if ( response?.exists ) {
+		return true;
+	}
+
+	return false;
+}
