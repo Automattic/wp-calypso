@@ -1,4 +1,8 @@
-import { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
+import {
+	DomainConnectionSetupMode,
+	DomainMappingSetupInfo,
+	DomainMappingStatus,
+} from '@automattic/api-core';
 import { __experimentalText as Text } from '@wordpress/components';
 import { DataViews, type Field, type ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -55,7 +59,7 @@ interface DNSRecordsDataViewProps {
 	domainName: string;
 	domainMappingStatus: DomainMappingStatus;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
-	mode: 'suggested' | 'advanced';
+	mode: typeof DomainConnectionSetupMode.SUGGESTED | typeof DomainConnectionSetupMode.ADVANCED;
 }
 
 export default function DNSRecordsDataView( {
@@ -64,7 +68,7 @@ export default function DNSRecordsDataView( {
 	domainConnectionSetupInfo,
 	mode,
 }: DNSRecordsDataViewProps ) {
-	const isSuggestedMode = mode === 'suggested';
+	const isSuggestedMode = mode === DomainConnectionSetupMode.SUGGESTED;
 
 	// Build the DNS records data
 	const records = useMemo( () => {

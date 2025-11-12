@@ -1,7 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
+import {
+	DomainConnectionSetupMode,
+	DomainMappingSetupInfo,
+	DomainMappingStatus,
+} from '@automattic/api-core';
 import { screen, within } from '@testing-library/react';
 import { render } from '../../../test-utils';
 import DNSRecordsDataView from '../dns-records-dataview';
@@ -43,7 +47,7 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="suggested"
+				mode={ DomainConnectionSetupMode.SUGGESTED }
 			/>
 		);
 
@@ -85,7 +89,7 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="suggested"
+				mode={ DomainConnectionSetupMode.SUGGESTED }
 			/>
 		);
 
@@ -128,7 +132,7 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="suggested"
+				mode={ DomainConnectionSetupMode.SUGGESTED }
 			/>
 		);
 
@@ -170,7 +174,7 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="suggested"
+				mode={ DomainConnectionSetupMode.SUGGESTED }
 			/>
 		);
 
@@ -188,7 +192,7 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="suggested"
+				mode={ DomainConnectionSetupMode.SUGGESTED }
 			/>
 		);
 
@@ -231,7 +235,7 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="suggested"
+				mode={ DomainConnectionSetupMode.SUGGESTED }
 			/>
 		);
 
@@ -270,7 +274,7 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="suggested"
+				mode={ DomainConnectionSetupMode.SUGGESTED }
 			/>
 		);
 
@@ -329,7 +333,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="advanced"
+				mode={ DomainConnectionSetupMode.ADVANCED }
 			/>
 		);
 
@@ -372,7 +376,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="advanced"
+				mode={ DomainConnectionSetupMode.ADVANCED }
 			/>
 		);
 
@@ -417,7 +421,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="advanced"
+				mode={ DomainConnectionSetupMode.ADVANCED }
 			/>
 		);
 
@@ -460,7 +464,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="advanced"
+				mode={ DomainConnectionSetupMode.ADVANCED }
 			/>
 		);
 
@@ -501,7 +505,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="advanced"
+				mode={ DomainConnectionSetupMode.ADVANCED }
 			/>
 		);
 
@@ -531,7 +535,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="advanced"
+				mode={ DomainConnectionSetupMode.ADVANCED }
 			/>
 		);
 
@@ -551,7 +555,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="advanced"
+				mode={ DomainConnectionSetupMode.ADVANCED }
 			/>
 		);
 
@@ -594,7 +598,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="advanced"
+				mode={ DomainConnectionSetupMode.ADVANCED }
 			/>
 		);
 
@@ -637,7 +641,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="advanced"
+				mode={ DomainConnectionSetupMode.ADVANCED }
 			/>
 		);
 
@@ -667,7 +671,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				mode="advanced"
+				mode={ DomainConnectionSetupMode.ADVANCED }
 			/>
 		);
 

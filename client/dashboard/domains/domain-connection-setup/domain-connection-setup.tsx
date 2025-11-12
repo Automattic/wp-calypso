@@ -94,7 +94,7 @@ export default function DomainConnectionSetup( {
 						domainName={ domainName }
 						domainMappingStatus={ domainMappingStatus }
 						domainConnectionSetupInfo={ domainConnectionSetupInfo }
-						mode="suggested"
+						mode={ DomainConnectionSetupMode.SUGGESTED }
 					/>
 				</VStack>
 			),
@@ -140,7 +140,7 @@ export default function DomainConnectionSetup( {
 						domainName={ domainName }
 						domainMappingStatus={ domainMappingStatus }
 						domainConnectionSetupInfo={ domainConnectionSetupInfo }
-						mode="advanced"
+						mode={ DomainConnectionSetupMode.ADVANCED }
 					/>
 				</VStack>
 			),
