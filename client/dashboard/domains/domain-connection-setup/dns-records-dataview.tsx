@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, arrowRight } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { matchCurrentToTargetValues } from './utils/match-records';
 
 const viewSuggested: ViewTable = {
 	type: 'table',
@@ -74,45 +75,12 @@ export default function DNSRecordsDataView( {
 			const currentNameservers = domainMappingStatus.name_servers || [];
 			const targetNameservers = domainConnectionSetupInfo.wpcom_name_servers || [];
 
-			// Create a set of target nameservers for easy lookup
-			const targetSet = new Set( targetNameservers );
+			const matchedRecords = matchCurrentToTargetValues( currentNameservers, targetNameservers );
 
-			// Separate current nameservers into matched and unmatched
-			const matchedCurrent: string[] = [];
-			const unmatchedCurrent: string[] = [];
-
-			currentNameservers.forEach( ( ns ) => {
-				if ( targetSet.has( ns ) ) {
-					matchedCurrent.push( ns );
-				} else {
-					unmatchedCurrent.push( ns );
-				}
-			} );
-
-			// Create records by matching target nameservers
-			let unmatchedIndex = 0;
-
-			targetNameservers.forEach( ( targetNs, index ) => {
-				let currentValue: string;
-
-				// Check if this target nameserver is already in use
-				if ( matchedCurrent.includes( targetNs ) ) {
-					currentValue = targetNs;
-					// Remove from matched list to handle duplicates
-					matchedCurrent.splice( matchedCurrent.indexOf( targetNs ), 1 );
-				} else if ( unmatchedIndex < unmatchedCurrent.length ) {
-					// Use an unmatched current nameserver
-					currentValue = unmatchedCurrent[ unmatchedIndex ];
-					unmatchedIndex++;
-				} else {
-					// No more current nameservers, use -
-					currentValue = '-';
-				}
-
+			matchedRecords.forEach( ( record, index ) => {
 				dnsRecords.push( {
 					id: `ns-record-${ index }`,
-					currentValue,
-					updateTo: targetNs,
+					...record,
 				} );
 			} );
 		} else {
@@ -120,47 +88,14 @@ export default function DNSRecordsDataView( {
 			const hostIpAddresses = domainMappingStatus.host_ip_addresses || [];
 			const defaultIpAddresses = domainConnectionSetupInfo.default_ip_addresses || [];
 
-			// Create a set of target IPs for easy lookup
-			const targetIpSet = new Set( defaultIpAddresses );
+			const matchedIps = matchCurrentToTargetValues( hostIpAddresses, defaultIpAddresses );
 
-			// Separate current IPs into matched and unmatched
-			const matchedCurrentIps: string[] = [];
-			const unmatchedCurrentIps: string[] = [];
-
-			hostIpAddresses.forEach( ( ip ) => {
-				if ( targetIpSet.has( ip ) ) {
-					matchedCurrentIps.push( ip );
-				} else {
-					unmatchedCurrentIps.push( ip );
-				}
-			} );
-
-			// Create A records by matching target IPs
-			let unmatchedIpIndex = 0;
-
-			defaultIpAddresses.forEach( ( targetIp, index ) => {
-				let currentValue: string;
-
-				// Check if this target IP is already in use
-				if ( matchedCurrentIps.includes( targetIp ) ) {
-					currentValue = targetIp;
-					// Remove from matched list to handle duplicates
-					matchedCurrentIps.splice( matchedCurrentIps.indexOf( targetIp ), 1 );
-				} else if ( unmatchedIpIndex < unmatchedCurrentIps.length ) {
-					// Use an unmatched current IP
-					currentValue = unmatchedCurrentIps[ unmatchedIpIndex ];
-					unmatchedIpIndex++;
-				} else {
-					// No more current IPs, use -
-					currentValue = '-';
-				}
-
+			matchedIps.forEach( ( record, index ) => {
 				dnsRecords.push( {
 					id: `a-record-${ index }`,
 					type: 'A',
 					name: '@',
-					currentValue,
-					updateTo: targetIp,
+					...record,
 				} );
 			} );
 

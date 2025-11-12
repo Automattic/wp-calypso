@@ -260,6 +260,37 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 		expect( within( row3Cells[ 0 ] ).getByText( 'ns3.other.com' ) ).toBeInTheDocument();
 		expect( within( row3Cells[ 2 ] ).getByText( 'ns3.wordpress.com' ) ).toBeInTheDocument();
 	} );
+
+	test( 'renders only 3 columns in suggested mode (no type/name columns)', async () => {
+		const domainMappingStatus = createMockDomainMappingStatus( [ 'ns1.wordpress.com' ] );
+		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
+
+		render(
+			<DNSRecordsDataView
+				domainName="example.com"
+				domainMappingStatus={ domainMappingStatus }
+				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				mode="suggested"
+			/>
+		);
+
+		// Wait for DataViews to render
+		const table = await screen.findByRole( 'table' );
+
+		// Should NOT have Type or Name columns in suggested mode
+		expect( screen.queryByText( 'Type' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Name' ) ).not.toBeInTheDocument();
+
+		// Should have the basic columns
+		expect( screen.getByText( 'Current values' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Update to' ) ).toBeInTheDocument();
+
+		// Verify column count in header row
+		const rows = within( table ).getAllByRole( 'row' );
+		const headerCells = within( rows[ 0 ] ).getAllByRole( 'columnheader' );
+		// Should have 3 columns: Current values, arrow (empty header), Update to
+		expect( headerCells ).toHaveLength( 3 );
+	} );
 } );
 
 describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
@@ -625,5 +656,34 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 		expect( within( row3Cells[ 1 ] ).getByText( 'www' ) ).toBeInTheDocument();
 		expect( within( row3Cells[ 2 ] ).getByText( '-' ) ).toBeInTheDocument();
 		expect( within( row3Cells[ 4 ] ).getByText( 'example.com' ) ).toBeInTheDocument();
+	} );
+
+	test( 'renders all 5 columns in advanced mode (including type/name)', async () => {
+		const domainMappingStatus = createMockDomainMappingStatus( [ '192.0.78.24' ] );
+		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
+
+		render(
+			<DNSRecordsDataView
+				domainName="example.com"
+				domainMappingStatus={ domainMappingStatus }
+				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				mode="advanced"
+			/>
+		);
+
+		// Wait for DataViews to render
+		const table = await screen.findByRole( 'table' );
+
+		// Should have ALL columns in advanced mode
+		expect( await screen.findByText( 'Type' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Name' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Current values' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Update to' ) ).toBeInTheDocument();
+
+		// Verify column count in header row
+		const rows = within( table ).getAllByRole( 'row' );
+		const headerCells = within( rows[ 0 ] ).getAllByRole( 'columnheader' );
+		// Should have 5 columns: Type, Name, Current values, arrow (empty header), Update to
+		expect( headerCells ).toHaveLength( 5 );
 	} );
 } );
