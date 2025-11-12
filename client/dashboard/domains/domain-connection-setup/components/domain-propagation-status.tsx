@@ -8,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Card, CardBody } from '../../../components/card';
+import { useTimeSince } from '../../../components/time-since';
 
 function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
 	return (
@@ -16,7 +17,7 @@ function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
 				width: '8px',
 				height: '8px',
 				borderRadius: '50%',
-				backgroundColor: propagated ? '#048015' : '#dcdcde',
+				backgroundColor: propagated ? 'var(--dashboard__foreground-color-success)' : '#dcdcde',
 			} }
 			aria-label={ propagated ? __( 'Propagated' ) : __( 'Not propagated' ) }
 			role="status"
@@ -24,44 +25,9 @@ function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
 	);
 }
 
-function formatLastUpdated( lastUpdated: string ): string {
-	// Handle empty or null-like values
-	if ( ! lastUpdated || typeof lastUpdated !== 'string' ) {
-		return '';
-	}
-
-	try {
-		const date = new Date( lastUpdated );
-
-		// Check if date is valid (new Date() can return Invalid Date without throwing)
-		if ( isNaN( date.getTime() ) ) {
-			return '';
-		}
-
-		const formattedTime = date.toLocaleTimeString( undefined, {
-			hour: 'numeric',
-			minute: '2-digit',
-			hour12: true,
-		} );
-
-		// Additional check in case toLocaleTimeString returns unexpected result
-		if ( ! formattedTime || formattedTime === 'Invalid Date' ) {
-			return '';
-		}
-
-		return formattedTime;
-	} catch ( error ) {
-		// Log error in development for debugging
-		if ( process.env.NODE_ENV === 'development' ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Failed to format date:', lastUpdated, error );
-		}
-		return '';
-	}
-}
-
 export default function DomainPropagationStatus( { domainName }: { domainName: string } ) {
 	const { data, isLoading, isError } = useQuery( domainPropagationStatusQuery( domainName ) );
+	const lastChecked = useTimeSince( data?.last_updated ?? '' );
 
 	if ( isError || isLoading || ! data ) {
 		return null;
@@ -72,7 +38,7 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 			<Text size="medium" weight={ 500 }>
 				{ __( 'Global propagation status' ) }
 			</Text>
-			<Card className="domain-propagation-status">
+			<Card>
 				<CardBody>
 					<Grid columns={ 3 } gap={ 4 }>
 						{ data.propagation_status.map( ( area ) => (
@@ -86,7 +52,7 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 			</Card>
 			<Text variant="muted" size={ 12 }>
 				{ /* translators: %s is the time the status was last checked */ }
-				{ __( 'Last checked at' ) } { formatLastUpdated( data.last_updated ) }
+				{ __( 'Last checked' ) } { lastChecked }
 			</Text>
 		</VStack>
 	);

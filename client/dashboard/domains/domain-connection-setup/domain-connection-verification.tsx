@@ -19,6 +19,8 @@ import { isMappingVerificationSuccess } from './utils';
 import VerificationInProgressNextSteps from './verification-in-progress-next-steps';
 import type { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 
+type DomainConnectionStatus = 'connected' | 'verifying';
+
 interface DomainConnectionVerificationProps {
 	domainData: Domain;
 	domainName: string;
@@ -34,7 +36,10 @@ export default function DomainConnectionVerification( {
 	domainMappingStatus,
 	domainConnectionSetupInfo,
 }: DomainConnectionVerificationProps ) {
-	const status = isMappingVerificationSuccess( domainMappingStatus.mode, domainMappingStatus )
+	const status: DomainConnectionStatus = isMappingVerificationSuccess(
+		domainMappingStatus.mode,
+		domainMappingStatus
+	)
 		? 'connected'
 		: 'verifying';
 
