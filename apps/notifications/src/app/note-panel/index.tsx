@@ -91,7 +91,6 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 						activeClass="is-active"
 						tabs={ NOTIFICATION_TABS }
 						initialTabName={ filterName as string }
-						key={ filterName as string }
 						onSelect={ ( tabName ) => {
 							goTo( `/${ tabName }`, { replace: true } );
 						} }
