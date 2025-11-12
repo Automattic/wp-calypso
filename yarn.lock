@@ -7487,6 +7487,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@playwright/browser-chromium@npm:1.56.1":
+  version: 1.56.1
+  resolution: "@playwright/browser-chromium@npm:1.56.1"
+  dependencies:
+    playwright-core: "npm:1.56.1"
+  checksum: 6025a9afbc8312f9b94bdf2b6431384236d7d253328ec2392aa3991803fc62d3ddfcd5882a06d202fc8f4a49c3b1fc110a2d9620994b28893378d594b1f0ad86
+  languageName: node
+  linkType: hard
+
 "@playwright/browser-firefox@npm:1.48.2":
   version: 1.48.2
   resolution: "@playwright/browser-firefox@npm:1.48.2"
@@ -7496,14 +7505,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:1.48.2":
-  version: 1.48.2
-  resolution: "@playwright/test@npm:1.48.2"
+"@playwright/test@npm:1.56.1":
+  version: 1.56.1
+  resolution: "@playwright/test@npm:1.56.1"
   dependencies:
-    playwright: "npm:1.48.2"
+    playwright: "npm:1.56.1"
   bin:
     playwright: cli.js
-  checksum: 68bab3bee8d716111e9a166785e6c3c406b6a184fc46d03b5468fcbb92b6242e5628f6a75f9d286e2491ec0e9e59af67542a1f114b6659d790b5a1f41e4d305b
+  checksum: 2b5b0e1f2e6a18f6e5ce6897c7440ca78f64e0b004834e9808e93ad2b78b96366b562ae4366602669cf8ad793a43d85481b58541e74be71e905e732d833dd691
   languageName: node
   linkType: hard
 
@@ -39866,8 +39875,8 @@ __metadata:
     "@automattic/jest-circus-allure-reporter": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@babel/core": "npm:^7.16.0"
-    "@playwright/browser-chromium": "npm:1.48.2"
-    "@playwright/test": "npm:1.48.2"
+    "@playwright/browser-chromium": "npm:1.56.1"
+    "@playwright/test": "npm:1.56.1"
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
     asana-phrase: "npm:^0.0.8"
@@ -39885,7 +39894,6 @@ __metadata:
     jest-teamcity: "npm:^1.12.0"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
-    playwright: "npm:1.56.1"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"
   languageName: unknown
