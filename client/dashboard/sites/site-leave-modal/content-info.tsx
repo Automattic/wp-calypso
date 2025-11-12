@@ -48,10 +48,11 @@ function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
 				</Text>
 			</VStack>
 			<ButtonStack justify="flex-end" expanded={ false }>
-				<Button variant="tertiary" onClick={ onClose }>
+				<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 					{ __( 'Cancel' ) }
 				</Button>
 				<Button
+					__next40pxDefaultSize
 					variant="primary"
 					href={ `/purchases/subscriptions/${ site.slug }` }
 					onClick={ () =>
@@ -78,10 +79,11 @@ function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
 				</Text>
 			</VStack>
 			<ButtonStack justify="flex-end" expanded={ false }>
-				<Button variant="tertiary" onClick={ onClose }>
+				<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 					{ __( 'Cancel' ) }
 				</Button>
 				<RouterLinkButton
+					__next40pxDefaultSize
 					variant="primary"
 					to={ `/sites/${ site.slug }/settings/transfer-site` }
 					onClick={ () =>
@@ -179,10 +181,11 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 					} }
 				/>
 				<ButtonStack justify="flex-end" expanded={ false }>
-					<Button variant="tertiary" onClick={ onClose }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
 						type="submit"
 						disabled={ ! isConfirmed }

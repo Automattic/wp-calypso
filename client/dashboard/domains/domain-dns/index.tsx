@@ -308,7 +308,7 @@ export default function DomainDns() {
 									} }
 									__next40pxDefaultSize
 								>
-									{ __( 'Add Record' ) }
+									{ __( 'Add record' ) }
 								</Button>
 								<DnsActionsMenu
 									hasDefaultARecords={ hasDefaultARecordsValue }

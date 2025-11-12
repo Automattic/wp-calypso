@@ -104,13 +104,15 @@ export default function DomainTransferToOtherSite() {
 						) }
 						<ButtonStack justify="flex-end">
 							<Button
-								variant="secondary"
+								__next40pxDefaultSize
+								variant="tertiary"
 								disabled={ isTransferringDomain }
 								onClick={ () => setIsConfirmDialogOpen( false ) }
 							>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button
+								__next40pxDefaultSize
 								variant="primary"
 								isBusy={ isTransferringDomain }
 								disabled={ isTransferringDomain }

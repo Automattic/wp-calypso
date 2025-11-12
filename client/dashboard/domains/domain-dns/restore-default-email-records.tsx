@@ -30,7 +30,7 @@ export default function RestoreDefaultEmailRecords( {
 					{ __( 'This will restore SPF, DKIM and DMARC records to their default configurations.' ) }
 				</Text>
 				<ButtonStack justify="flex-end">
-					<Button __next40pxDefaultSize onClick={ onCancel }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onCancel }>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button __next40pxDefaultSize variant="primary" isBusy={ isBusy } onClick={ onConfirm }>

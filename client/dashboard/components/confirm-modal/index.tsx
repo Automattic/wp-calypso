@@ -65,6 +65,7 @@ export default function ConfirmModal( {
 				<Text>{ children }</Text>
 				<ButtonStack justify="flex-end">
 					<Button
+						__next40pxDefaultSize
 						variant="tertiary"
 						onClick={ onCancel }
 						ref={ cancelButtonRef }
@@ -73,6 +74,7 @@ export default function ConfirmModal( {
 						{ closeButtonLabel }
 					</Button>
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
 						onClick={ handleOnConfirm }
 						isBusy={ confirmButtonProps?.isBusy }
