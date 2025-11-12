@@ -24,6 +24,7 @@ import {
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { useSelector } from 'calypso/state';
@@ -447,6 +448,9 @@ export function CouponCostOverride( {
 	const isDisabled = formStatus !== FormStatus.READY;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
+	const isBFref =
+		typeof window !== 'undefined' &&
+		getQueryArg( window.location.href, 'ref' ) === 'black-friday-2025-lp';
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
@@ -458,7 +462,9 @@ export function CouponCostOverride( {
 	} );
 
 	const label =
-		isOnboardingAffiliateFlow || isOnboardingUnifiedFlow ? getAffiliateCouponLabel() : couponLabel;
+		isBFref || isOnboardingAffiliateFlow || isOnboardingUnifiedFlow
+			? getAffiliateCouponLabel()
+			: couponLabel;
 	return (
 		<CostOverridesListStyle>
 			<WPCheckoutCheckIcon />
