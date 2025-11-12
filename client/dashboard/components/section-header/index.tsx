@@ -54,7 +54,6 @@ export const SectionHeader = ( {
 							expanded={ false }
 							alignment="flex-start"
 							className="dashboard-section-header__actions"
-							style={ { flex: '1 1 auto' } }
 						>
 							{ actions }
 						</ButtonStack>
