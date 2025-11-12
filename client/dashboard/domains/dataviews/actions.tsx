@@ -130,27 +130,6 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 			},
 			{
-				id: 'manage-contact-info',
-				label: __( 'Manage contact information' ),
-				supportsBulk: false,
-				callback: ( items: DomainSummary[] ) => {
-					const domain = items[ 0 ];
-
-					router.navigate( {
-						to: domainContactInfoRoute.fullPath,
-						params: {
-							domainName: domain.domain,
-						},
-					} );
-				},
-				isEligible: ( item: DomainSummary ) => {
-					return (
-						item.current_user_is_owner === true &&
-						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
-					);
-				},
-			},
-			{
 				id: 'set-primary-site-address',
 				label: __( 'Make primary site address' ),
 				supportsBulk: false,
@@ -251,11 +230,41 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 			},
 			{
+				id: 'manage-contact-info',
+				label: __( 'Manage contact information' ),
+				supportsBulk: true,
+				callback: ( domains ) => {
+					if ( domains.length === 0 ) {
+						return;
+					}
+
+					if ( domains.length === 1 ) {
+						return router.navigate( {
+							to: domainContactInfoRoute.fullPath,
+							params: {
+								domainName: domains[ 0 ].domain,
+							},
+						} );
+					}
+
+					alert( 'TODO: Bulk manage contact information' );
+				},
+				isEligible: ( item ) => {
+					return (
+						item.current_user_is_owner === true &&
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
+					);
+				},
+			},
+			{
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
-				supportsBulk: false,
+				supportsBulk: true,
 				callback: () => {},
-				isEligible: () => false,
+				RenderModal: ( { items, closeModal = noop } ) => {
+					return <p>TODO: Bulk manage auto-renew</p>;
+				},
+				isEligible: ( item ) => isDomainRenewable( item ),
 			},
 		],
 		[
