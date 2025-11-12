@@ -49,7 +49,7 @@ describe( 'canUseTheme', () => {
 
 			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
 
-			expect( canUseTheme( state, siteId, 'course' ) ).toBe( true );
+			expect( canUseTheme( state, siteId, 'crafted' ) ).toBe( true );
 		} );
 
 		it( 'returns false otherwise', () => {
@@ -57,7 +57,7 @@ describe( 'canUseTheme', () => {
 
 			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
 
-			expect( canUseTheme( state, siteId, 'course' ) ).toBe( false );
+			expect( canUseTheme( state, siteId, 'crafted' ) ).toBe( false );
 		} );
 	} );
 
@@ -75,7 +75,7 @@ describe( 'canUseTheme', () => {
 
 			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
 
-			expect( canUseTheme( state, siteId, 'course' ) ).toBe( true );
+			expect( canUseTheme( state, siteId, 'launchit' ) ).toBe( true );
 		} );
 
 		it( 'returns false otherwise', () => {
@@ -83,7 +83,7 @@ describe( 'canUseTheme', () => {
 
 			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
 
-			expect( canUseTheme( state, siteId, 'course' ) ).toBe( false );
+			expect( canUseTheme( state, siteId, 'launchit' ) ).toBe( false );
 		} );
 	} );
 
