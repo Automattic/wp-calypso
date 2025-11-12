@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useState } from '@wordpress/element';
@@ -30,6 +31,7 @@ const UseMyDomain: StepType< {
 	const { __ } = useI18n();
 	const { goNext, goBack, submit } = navigation;
 	const location = useLocation();
+	const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
 
 	const [ useMyDomainMode, setUseMyDomainMode ] = useState< UseMyDomainInputMode >(
 		inputMode.domainInput
@@ -112,17 +114,27 @@ const UseMyDomain: StepType< {
 	const shouldHideButtons = isStartWritingFlow( flow );
 
 	if ( shouldUseStepContainerV2( flow ) ) {
-		const [ columnWidth, headingText ] =
-			useMyDomainMode === 'domain-input'
-				? [ 4 as const, __( 'Use a domain I own' ) ]
-				: [
-						10 as const,
-						<>
-							{ __( 'Use a domain I own' ) }
-							<br />
-							{ getInitialQuery() }
-						</>,
-				  ];
+		let columnWidth;
+		let headingText;
+
+		if ( useMyDomainMode === 'domain-input' ) {
+			columnWidth = 4 as const;
+
+			if ( isDomainConnectionRedesign ) {
+				headingText = __( 'Your domain name' );
+			} else {
+				headingText = __( 'Use a domain I own' );
+			}
+		} else {
+			columnWidth = 10 as const;
+			headingText = (
+				<>
+					{ __( 'Use a domain I own' ) }
+					<br />
+					{ getInitialQuery() }
+				</>
+			);
+		}
 
 		return (
 			<>
@@ -136,7 +148,17 @@ const UseMyDomain: StepType< {
 						/>
 					}
 					columnWidth={ columnWidth }
-					heading={ <Step.Heading text={ headingText } /> }
+					heading={
+						<Step.Heading
+							text={ headingText }
+							subText={
+								isDomainConnectionRedesign
+									? __( 'Enter the domain name your visitors already know.' )
+									: undefined
+							}
+						/>
+					}
+					verticalAlign={ isDomainConnectionRedesign ? 'center' : undefined }
 				>
 					{ getBlogOnboardingFlowStepContent() }
 				</Step.CenteredColumnLayout>

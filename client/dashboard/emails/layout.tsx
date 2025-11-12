@@ -20,7 +20,7 @@ export const Layout = ( { children }: PropsWithChildren ) => {
 						<>
 							<Button
 								className="emails__add-email-forwarder"
-								variant="link"
+								variant="secondary"
 								__next40pxDefaultSize
 								onClick={ () => navigate( { to: addEmailForwarderRoute.to } ) }
 							>

@@ -69,7 +69,7 @@ test( 'renders edit form with pre-filled root domain forwarding data', async () 
 	} );
 
 	// For root domain forwarding, source type should be 'root'
-	expect( screen.getByText( 'Source URL' ) ).toBeInTheDocument();
+	expect( screen.getByText( 'Type' ) ).toBeInTheDocument();
 } );
 
 test( 'forces subdomain mode when forceSubdomain is true for existing subdomain forwarding', async () => {
@@ -92,8 +92,8 @@ test( 'forces subdomain mode when forceSubdomain is true for existing subdomain 
 	} );
 
 	// Should not show the source type selector when forceSubdomain is true
-	expect( screen.queryByText( 'Source URL' ) ).not.toBeInTheDocument();
-	expect( screen.getByText( /Subdomain/ ) ).toBeInTheDocument();
+	expect( screen.queryByText( 'Type' ) ).not.toBeInTheDocument();
+	expect( screen.getByText( /Source URL/ ) ).toBeInTheDocument();
 } );
 
 test( 'calls onSubmit with updated data when form is submitted', async () => {

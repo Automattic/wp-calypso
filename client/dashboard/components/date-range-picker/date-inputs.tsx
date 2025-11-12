@@ -4,6 +4,7 @@ import {
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import type { FocusEvent } from 'react';
 
 type DateInputsProps = {
 	fromStr: string;
@@ -22,6 +23,10 @@ type DateInputsProps = {
 		| 'space-around'
 		| 'space-evenly';
 	containerStyle?: React.CSSProperties;
+	onFromFocus?: ( e: FocusEvent< HTMLInputElement > ) => void;
+	onToFocus?: ( e: FocusEvent< HTMLInputElement > ) => void;
+	onFromBlur?: ( e: FocusEvent< HTMLInputElement > ) => void;
+	onToBlur?: ( e: FocusEvent< HTMLInputElement > ) => void;
 };
 
 export function DateInputs( {
@@ -35,6 +40,10 @@ export function DateInputs( {
 	stack = false,
 	justify = 'flex-start',
 	containerStyle,
+	onFromFocus,
+	onToFocus,
+	onFromBlur,
+	onToBlur,
 }: DateInputsProps ) {
 	if ( stack ) {
 		return (
@@ -43,7 +52,15 @@ export function DateInputs( {
 					type="date"
 					label={ __( 'Start date' ) }
 					value={ fromStr }
-					onChange={ ( value?: string ) => onFromChange( value ?? '' ) }
+					onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
+						onFromFocus?.( e );
+					} }
+					onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
+						onFromBlur?.( e );
+					} }
+					onChange={ ( value?: string ) => {
+						onFromChange( value ?? '' );
+					} }
 					autoComplete="off"
 					max={ toStr || todayStr }
 					style={ { width: '100%', ...( fromStyle || {} ) } }
@@ -53,7 +70,15 @@ export function DateInputs( {
 					type="date"
 					label={ __( 'End date' ) }
 					value={ toStr }
-					onChange={ ( value?: string ) => onToChange( value ?? '' ) }
+					onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
+						onToFocus?.( e );
+					} }
+					onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
+						onToBlur?.( e );
+					} }
+					onChange={ ( value?: string ) => {
+						onToChange( value ?? '' );
+					} }
 					autoComplete="off"
 					min={ fromStr || undefined }
 					style={ { width: '100%', ...( toStyle || {} ) } }
@@ -76,7 +101,15 @@ export function DateInputs( {
 				type="date"
 				label={ __( 'Start date' ) }
 				value={ fromStr }
-				onChange={ ( value?: string ) => onFromChange( value ?? '' ) }
+				onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
+					onFromFocus?.( e );
+				} }
+				onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
+					onFromBlur?.( e );
+				} }
+				onChange={ ( value?: string ) => {
+					onFromChange( value ?? '' );
+				} }
 				autoComplete="off"
 				max={ toStr || todayStr }
 				style={ fromStyle }
@@ -86,7 +119,15 @@ export function DateInputs( {
 				type="date"
 				label={ __( 'End date' ) }
 				value={ toStr }
-				onChange={ ( value?: string ) => onToChange( value ?? '' ) }
+				onFocus={ ( e: FocusEvent< HTMLInputElement > ) => {
+					onToFocus?.( e );
+				} }
+				onBlur={ ( e: FocusEvent< HTMLInputElement > ) => {
+					onToBlur?.( e );
+				} }
+				onChange={ ( value?: string ) => {
+					onToChange( value ?? '' );
+				} }
 				autoComplete="off"
 				min={ fromStr || undefined }
 				style={ toStyle }

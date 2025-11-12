@@ -1432,7 +1432,11 @@ export default function CancelPurchase() {
 					cancellationChanges={ cancellationChanges }
 				/>
 
-				<CancelPurchaseRefundInformation purchase={ purchase } isJetpackPurchase={ isJetpack } />
+				<CancelPurchaseRefundInformation
+					purchase={ purchase }
+					isJetpackPurchase={ isJetpack }
+					selectedDomain={ selectedDomain }
+				/>
 
 				{ ! cancellationFeatures.length ? renderProductRevertContent() : renderPlanRevertContent() }
 			</>
