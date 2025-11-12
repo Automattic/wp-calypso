@@ -654,8 +654,9 @@ __metadata:
     "@automattic/zendesk-client": "workspace:^"
     "@jest/globals": "npm:^29.7.0"
     "@jest/types": "npm:^29.6.3"
-    "@playwright/browser-chromium": "npm:1.48.2"
-    "@playwright/browser-firefox": "npm:1.48.2"
+    "@playwright/browser-chromium": "npm:1.56.1"
+    "@playwright/browser-firefox": "npm:1.56.1"
+    "@playwright/test": "npm:1.56.1"
     "@types/node": "npm:^22.7.5"
     "@types/totp-generator": "npm:^0.0.8"
     "@wordpress/i18n": "npm:^5.23.0"
@@ -664,7 +665,6 @@ __metadata:
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
     nock: "npm:^14.0.10"
-    playwright: "npm:1.56.1"
     totp-generator: "npm:^0.0.14"
     typescript: "npm:^5.8.3"
   languageName: unknown
@@ -7496,12 +7496,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/browser-firefox@npm:1.48.2":
-  version: 1.48.2
-  resolution: "@playwright/browser-firefox@npm:1.48.2"
+"@playwright/browser-firefox@npm:1.56.1":
+  version: 1.56.1
+  resolution: "@playwright/browser-firefox@npm:1.56.1"
   dependencies:
-    playwright-core: "npm:1.48.2"
-  checksum: a6df172b1d74918b11399398a8f444f10df5431818eadb25fd248c6cda708bac121d487e18f8541f9a0c43c6a427c223c0a2b62cf954c2dbce6c343ca2949555
+    playwright-core: "npm:1.56.1"
+  checksum: e1117ac1b21f9d1cde63ad87a5fb4730dea6f08bc0c58516e1ad736e734795160cecd28f68bd5100f769300e1f93ad5283371ee34dc52a2b9919690ab73b90f5
   languageName: node
   linkType: hard
 
