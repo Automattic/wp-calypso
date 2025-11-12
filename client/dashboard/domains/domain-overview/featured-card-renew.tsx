@@ -21,7 +21,7 @@ export default function FeaturedCardRenew( { domain }: Props ) {
 		return null;
 	}
 
-	let intent = 'warning';
+	let intent: 'error' | 'success' | 'warning' | 'upsell' = 'warning';
 
 	if ( domain.expired ) {
 		intent = 'error';
