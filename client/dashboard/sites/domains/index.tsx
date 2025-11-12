@@ -61,6 +61,7 @@ function SiteDomains() {
 			header={
 				<PageHeader
 					title={ __( 'Domains' ) }
+					description={ __( 'Manage domains associated with this site.' ) }
 					actions={ <AddDomainButton siteSlug={ site.slug } redirectTo={ redirectTo } /> }
 				/>
 			}
