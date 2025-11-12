@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { EditorComponent } from './editor-component';
 
 const parentSelector = '.block-editor-color-gradient-control__fieldset';

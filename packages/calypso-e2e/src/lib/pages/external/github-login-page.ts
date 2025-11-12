@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 
 /**
  * Represents the login screens shown by GitHub.

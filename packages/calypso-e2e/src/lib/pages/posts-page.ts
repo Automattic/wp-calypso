@@ -1,4 +1,4 @@
-import { Page, Response } from 'playwright';
+import { Page, Response } from '@playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 

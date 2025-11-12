@@ -1,4 +1,4 @@
-import { Frame, Page } from 'playwright';
+import { Frame, Page } from '@playwright/test';
 
 const selectors = {
 	previewPane: '.web-preview',

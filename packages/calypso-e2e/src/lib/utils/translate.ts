@@ -1,4 +1,4 @@
-import { Locator } from 'playwright';
+import { Locator } from '@playwright/test';
 
 /**
  * Translate string by evaluating the `wp.i18n__` translate function from the page.

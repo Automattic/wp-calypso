@@ -14,7 +14,7 @@ import {
 	envToFeatureKey,
 	TestFile,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser } from '@playwright/test';
 import { ALT_TEST_IMAGE_PATH, TEST_IMAGE_PATH } from '../constants';
 
 declare const browser: Browser;

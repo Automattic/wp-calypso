@@ -1,4 +1,4 @@
-import { Page, Locator } from 'playwright';
+import { Page, Locator } from '@playwright/test';
 import { EditorComponent } from './editor-component';
 
 const popoverParentSelector = '.block-editor-inserter__quick-inserter';

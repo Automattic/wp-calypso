@@ -1,4 +1,4 @@
-import { Page, Locator } from 'playwright';
+import { Page, Locator } from '@playwright/test';
 
 const EDITOR_TIMEOUT = 60 * 1000;
 

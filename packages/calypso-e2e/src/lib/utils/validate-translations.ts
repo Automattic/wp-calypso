@@ -1,5 +1,5 @@
+import { Page, ElementHandle } from '@playwright/test';
 import { sprintf } from '@wordpress/i18n';
-import { Page, ElementHandle } from 'playwright';
 
 const GLOTPRESS_ORIGINALS_ENDPOINT =
 	'https://translate.wordpress.com/api/translations/-query-by-originals';

@@ -1,5 +1,5 @@
 import { TestAccount, TestAccountName } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 
 /**
  * Retrieves a `TestAccount` instance for the specified account name, ensuring it has fresh authentication cookies.

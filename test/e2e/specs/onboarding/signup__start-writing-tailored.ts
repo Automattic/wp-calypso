@@ -11,7 +11,7 @@ import {
 	EditorPage,
 	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser } from '@playwright/test';
 import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;

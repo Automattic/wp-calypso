@@ -13,7 +13,7 @@ import {
 	TestAccount,
 	TestAccountName,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { Browser, Page } from '@playwright/test';
 import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;

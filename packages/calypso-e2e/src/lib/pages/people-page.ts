@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { clickNavTab, reloadAndRetry } from '../../element-helper';
 import { NoticeComponent } from '../components';
 

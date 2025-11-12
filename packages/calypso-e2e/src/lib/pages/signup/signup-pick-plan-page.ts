@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page } from '@playwright/test';
 import { PlansPage, Plans } from '../plans-page';
 import type { NewSiteResponse } from '../../../types/rest-api-client.types';
 

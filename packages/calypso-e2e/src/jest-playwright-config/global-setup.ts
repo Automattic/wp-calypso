@@ -1,5 +1,5 @@
 /* eslint-disable require-jsdoc */
-import { Browser, chromium } from 'playwright';
+import { Browser, chromium } from '@playwright/test';
 import envVariables from '../env-variables';
 import { TestAccount } from '../lib/test-account';
 import pwConfig from './playwright-config';

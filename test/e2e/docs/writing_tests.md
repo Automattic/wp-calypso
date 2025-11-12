@@ -117,7 +117,7 @@ test/e2e/specs/<major_feature>/<major_feature>__<sub_feature>.ts
 
 ```typescript
 import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser } from '@playwright/test';
 ```
 
 3. Assign test group(s). See [Feature/Test groups](./tests_ci.md#featuretest-groups)

@@ -9,7 +9,7 @@ import {
 	ParagraphBlock,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { ElementHandle, Page, Browser } from 'playwright';
+import { ElementHandle, Page, Browser } from '@playwright/test';
 
 declare const browser: Browser;
 

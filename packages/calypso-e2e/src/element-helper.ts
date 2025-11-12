@@ -1,4 +1,4 @@
-import { Locator, Page, Frame } from 'playwright';
+import { Locator, Page, Frame } from '@playwright/test';
 import envVariables from './env-variables';
 
 const coreNavTabParent = 'div.components-tab-panel__tabs';

@@ -1,4 +1,4 @@
-import { Page, Locator } from 'playwright';
+import { Page, Locator } from '@playwright/test';
 
 const selectors = {
 	passwordInput: 'input[type="password"]',

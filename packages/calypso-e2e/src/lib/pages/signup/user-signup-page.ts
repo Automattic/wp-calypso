@@ -1,4 +1,4 @@
-import { Page, Locator, Frame } from 'playwright';
+import { Page, Locator, Frame } from '@playwright/test';
 import { getCalypsoURL } from '../../../data-helper';
 import type { NewSiteResponse, NewUserResponse } from '../../../types/rest-api-client.types';
 const selectors = {

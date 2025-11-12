@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 
 const selectors = {
 	actionButton: ( text: string ) => `button:has-text("${ text }")`,

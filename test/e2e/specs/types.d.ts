@@ -1,4 +1,4 @@
-import { Browser } from 'playwright';
+import { Browser } from '@playwright/test';
 
 declare global {
 	namespace NodeJS {

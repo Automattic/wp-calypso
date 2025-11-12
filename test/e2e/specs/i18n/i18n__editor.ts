@@ -12,7 +12,7 @@ import {
 	EditorWelcomeTourComponent,
 	EditorComponent,
 } from '@automattic/calypso-e2e';
-import { Page, Browser, Locator } from 'playwright';
+import { Page, Browser, Locator } from '@playwright/test';
 import type { LanguageSlug } from '@automattic/languages';
 
 type Translations = {

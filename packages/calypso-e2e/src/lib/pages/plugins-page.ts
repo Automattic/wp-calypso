@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {

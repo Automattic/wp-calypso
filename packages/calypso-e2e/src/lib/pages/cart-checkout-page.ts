@@ -1,4 +1,4 @@
-import { Frame, Page } from 'playwright';
+import { Frame, Page } from '@playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';

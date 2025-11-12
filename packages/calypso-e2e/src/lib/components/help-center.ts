@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page } from '@playwright/test';
 
 export type ResultsCategory = 'Docs' | 'Links';
 

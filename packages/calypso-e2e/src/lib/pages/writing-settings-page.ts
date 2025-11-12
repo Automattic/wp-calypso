@@ -1,4 +1,4 @@
-import { Page, Locator } from 'playwright';
+import { Page, Locator } from '@playwright/test';
 
 type Sections =
 	| 'Composing'

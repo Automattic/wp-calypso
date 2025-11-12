@@ -13,7 +13,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
-import { Page, Browser, Response } from 'playwright';
+import { Page, Browser, Response } from '@playwright/test';
 import { skipDescribeIf, skipItIf } from '../../jest-helpers';
 
 const quote =

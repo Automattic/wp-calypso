@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page } from '@playwright/test';
 import { DataHelper, DomainSearchComponent, EditorPage } from '../..';
 import { UserSignupPage } from '../pages/signup/user-signup-page';
 

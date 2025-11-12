@@ -1,4 +1,4 @@
-import { Locator } from 'playwright';
+import { Locator } from '@playwright/test';
 import { EditorComponent, EditorSettingsSidebarComponent } from '../../..';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 

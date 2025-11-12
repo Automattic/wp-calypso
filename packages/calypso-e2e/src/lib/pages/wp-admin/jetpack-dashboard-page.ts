@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 
 export type DashboardTabs = 'At a Glance' | 'My Plan';
 export type SettingsTabs =

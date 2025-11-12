@@ -3,7 +3,7 @@
  */
 
 import { DataHelper, envVariables } from '@automattic/calypso-e2e';
-import { Browser } from 'playwright';
+import { Browser } from '@playwright/test';
 
 declare const browser: Browser;
 

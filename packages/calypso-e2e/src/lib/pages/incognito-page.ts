@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Browser, Page } from 'playwright';
+import { Browser, Page } from '@playwright/test';
 
 /**
  * Represents an incognito browser context and page for testing purposes.

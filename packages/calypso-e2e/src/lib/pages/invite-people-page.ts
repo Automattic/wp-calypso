@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 
 export type Roles = 'Administrator' | 'Editor' | 'Author' | 'Contributor' | 'Follower';
 

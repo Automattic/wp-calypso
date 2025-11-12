@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
 import { NavbarComponent } from './navbar-component';

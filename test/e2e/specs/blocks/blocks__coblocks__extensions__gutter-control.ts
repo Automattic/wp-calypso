@@ -9,7 +9,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser } from '@playwright/test';
 import { skipItIf } from '../../jest-helpers';
 
 declare const browser: Browser;

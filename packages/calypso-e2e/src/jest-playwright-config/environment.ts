@@ -7,8 +7,6 @@ import {
 	AllureConfig,
 } from '@automattic/jest-circus-allure-reporter';
 import { EnvironmentContext, JestEnvironmentConfig } from '@jest/environment';
-import { parse as parseDocBlock } from 'jest-docblock';
-import NodeEnvironment from 'jest-environment-node';
 import {
 	Browser,
 	BrowserContext,
@@ -17,7 +15,9 @@ import {
 	Page,
 	firefox,
 	chromium,
-} from 'playwright';
+} from '@playwright/test';
+import { parse as parseDocBlock } from 'jest-docblock';
+import NodeEnvironment from 'jest-environment-node';
 import env from '../env-variables';
 import config from './playwright-config';
 import type { Config, Circus } from '@jest/types';

@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page } from '@playwright/test';
 import { TracksEvent, TracksEventProperties } from './types';
 
 // Exporting just for unit testing

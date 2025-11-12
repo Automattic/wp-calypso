@@ -1,4 +1,4 @@
-import { Page, ElementHandle, Response, Locator } from 'playwright';
+import { Page, ElementHandle, Response, Locator } from '@playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';

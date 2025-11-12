@@ -1,5 +1,5 @@
 import { DataHelper, GoogleLoginPage, TOTPClient } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Authentication: Google', { tag: [ tags.AUTHENTICATION ] }, () => {

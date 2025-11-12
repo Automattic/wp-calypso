@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { DimensionsSettings, EditorDimensionsComponent } from './editor-dimensions-component';
 import {
 	ColorSettings,

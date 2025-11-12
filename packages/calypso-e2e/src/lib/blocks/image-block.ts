@@ -1,4 +1,4 @@
-import { Page, ElementHandle } from 'playwright';
+import { Page, ElementHandle } from '@playwright/test';
 import { EditorComponent } from '../..';
 
 type Sources = 'Media Library' | 'Google Photos' | 'Pexels';

@@ -14,7 +14,7 @@ import {
 	NewUserResponse,
 	PlansPage,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser } from '@playwright/test';
 import { apiCloseAccount } from '../shared/api-close-account';
 
 declare const browser: Browser;

@@ -3,7 +3,7 @@
  */
 
 import { DataHelper } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { Browser, Page } from '@playwright/test';
 import { expect } from '../../lib/pw-base';
 
 declare const browser: Browser;

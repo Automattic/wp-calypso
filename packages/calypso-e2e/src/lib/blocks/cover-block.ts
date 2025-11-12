@@ -1,4 +1,4 @@
-import { Page, Locator } from 'playwright';
+import { Page, Locator } from '@playwright/test';
 import { EditorComponent } from '../components';
 
 const coverStylesArray = [ 'Default', 'Bottom Wave', 'Top Wave' ] as const;

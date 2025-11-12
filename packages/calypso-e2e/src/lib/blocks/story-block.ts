@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { TestFile } from '../../types';
 import { EditorComponent } from '../components';
 

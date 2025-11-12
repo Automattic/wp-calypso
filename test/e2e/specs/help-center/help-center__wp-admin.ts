@@ -3,7 +3,7 @@
  */
 
 import { HelpCenterComponent, TestAccount } from '@automattic/calypso-e2e';
-import { Browser, Page, Locator } from 'playwright';
+import { Browser, Page, Locator } from '@playwright/test';
 
 declare const browser: Browser;
 

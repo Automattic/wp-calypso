@@ -19,7 +19,7 @@ import {
 	TestFile,
 	MediaPage,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser } from '@playwright/test';
 import { TEST_IMAGE_PATH } from '../constants';
 import { apiDeleteSite } from '../shared';
 

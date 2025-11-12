@@ -1,4 +1,4 @@
-import { Locator } from 'playwright';
+import { Locator } from '@playwright/test';
 
 export type OpenInlineInserter = ( editorCanvas: Locator ) => Promise< void >;
 export interface BlockInserter {

@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 
 /**
  * Represents the free user signup flow at setup/free/freeSetup.

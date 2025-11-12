@@ -1,4 +1,4 @@
-import { ElementHandle, Page } from 'playwright';
+import { ElementHandle, Page } from '@playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {

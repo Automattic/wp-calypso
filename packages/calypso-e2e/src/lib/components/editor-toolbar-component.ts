@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page } from '@playwright/test';
 import envVariables from '../../env-variables';
 import { translateFromPage } from '../utils';
 import { EditorComponent } from './editor-component';

@@ -1,4 +1,4 @@
-import { Locator, Page, Response } from 'playwright';
+import { Locator, Page, Response } from '@playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {

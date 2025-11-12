@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 
 const selectors = {
 	ownedDomainInput: '.use-my-domain__domain-input-fieldset input',

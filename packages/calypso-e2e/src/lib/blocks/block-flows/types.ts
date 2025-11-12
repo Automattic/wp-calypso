@@ -1,4 +1,4 @@
-import { Browser, Locator, Page } from 'playwright';
+import { Browser, Locator, Page } from '@playwright/test';
 import { EditorPage } from '../../pages';
 
 /**

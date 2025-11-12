@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
+import { BrowserContext, Page } from '@playwright/test';
 import chalk from 'chalk';
-import { BrowserContext, Page } from 'playwright';
 import { TestAccountName } from '..';
 import { getAccountSiteURL, getCalypsoURL } from '../data-helper';
 import { EmailClient } from '../email-client';

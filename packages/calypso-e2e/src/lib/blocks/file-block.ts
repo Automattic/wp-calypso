@@ -1,4 +1,4 @@
-import { Page, ElementHandle, Response } from 'playwright';
+import { Page, ElementHandle, Response } from '@playwright/test';
 
 const selectors = {
 	block: '.wp-block-file',

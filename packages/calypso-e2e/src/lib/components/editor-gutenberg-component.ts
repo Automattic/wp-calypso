@@ -1,4 +1,4 @@
-import { Page, ElementHandle } from 'playwright';
+import { Page, ElementHandle } from '@playwright/test';
 import { envVariables } from '../..';
 import { CookieBannerComponent } from './cookie-banner-component';
 import { EditorComponent } from './editor-component';

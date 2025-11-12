@@ -2,7 +2,7 @@
  * @group legal
  */
 import { DataHelper, LoginPage } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser } from '@playwright/test';
 import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
 
 const selectors = {

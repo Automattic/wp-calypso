@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page } from '@playwright/test';
 
 /**
  * Represents the Subscription Management page, accessed under

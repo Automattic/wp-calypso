@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 
 /**
  * Page representing the WP-ADMIN page for media settings, which we use on WPCOM sites.

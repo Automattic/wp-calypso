@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Locator, Page } from 'playwright';
+import { Locator, Page } from '@playwright/test';
 import {
 	BlockInserter,
 	EditorSidebarBlockInserterComponent,

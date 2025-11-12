@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { DomainSearchComponent } from '../../components';
 
 /**

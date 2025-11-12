@@ -12,7 +12,7 @@ import {
 	RestAPIClient,
 	PostResponse,
 } from '@automattic/calypso-e2e';
-import { Page, Browser, Locator } from 'playwright';
+import { Page, Browser, Locator } from '@playwright/test';
 
 const formData1 = {
 	name: `${ DataHelper.getRandomPhrase() }`,

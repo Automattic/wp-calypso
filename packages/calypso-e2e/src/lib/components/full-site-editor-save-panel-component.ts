@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { EditorComponent } from './editor-component';
 
 const panel = '.entities-saved-states__panel';

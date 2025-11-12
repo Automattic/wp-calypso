@@ -8,7 +8,7 @@ import {
 	TestAccount,
 	envVariables,
 } from '@automattic/calypso-e2e';
-import { Browser, Page, Locator } from 'playwright';
+import { Browser, Page, Locator } from '@playwright/test';
 import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;

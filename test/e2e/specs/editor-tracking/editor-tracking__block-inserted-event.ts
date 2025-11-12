@@ -16,7 +16,7 @@ import {
 	OpenInlineInserter,
 	HeaderBlock,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { Browser, Page } from '@playwright/test';
 import type { TracksEventProperties } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;

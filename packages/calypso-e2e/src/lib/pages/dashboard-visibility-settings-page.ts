@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 
 /**
  * Dashboard visibility settings page class.

@@ -1,4 +1,4 @@
-import { Page, Request } from 'playwright';
+import { Page, Request } from '@playwright/test';
 
 // Modify global Window interface to include _tkAllowE2ETests
 declare global {

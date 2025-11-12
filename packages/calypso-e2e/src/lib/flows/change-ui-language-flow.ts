@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { NavbarComponent, MeSidebarComponent } from '../components';
 import { AccountSettingsPage } from '../pages';
 import type { LanguageSlug } from '@automattic/languages';

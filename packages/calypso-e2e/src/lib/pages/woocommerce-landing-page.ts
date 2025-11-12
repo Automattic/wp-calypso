@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 
 const selectors = {
 	start: '.woocommerce .empty-content button:text("Start a new store")',

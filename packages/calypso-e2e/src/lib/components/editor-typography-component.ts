@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { EditorComponent } from './editor-component';
 
 type FontSize = 'Small' | 'Medium' | 'Large' | 'Extra Large'; // expand as needed.

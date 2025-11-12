@@ -1,4 +1,4 @@
-import { Page, ElementHandle } from 'playwright';
+import { Page, ElementHandle } from '@playwright/test';
 
 /**
  * Represents the Paragraph block.

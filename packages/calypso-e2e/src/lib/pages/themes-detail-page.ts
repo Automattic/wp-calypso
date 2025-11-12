@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page } from '@playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 import { PreviewComponent } from '../components';
 

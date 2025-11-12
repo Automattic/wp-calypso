@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page } from '@playwright/test';
 
 /**
  * Component representing the notifications panel and notifications themselves.

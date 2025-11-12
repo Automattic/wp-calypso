@@ -1,4 +1,4 @@
-import { Browser } from 'playwright';
+import { Browser } from '@playwright/test';
 import type { TracksEvent } from './types/editor-tracks.types';
 
 // Expose global browser initialized in jest-playwright-config/test-environment.ts

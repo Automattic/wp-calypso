@@ -1,4 +1,4 @@
-import { Page, ElementHandle } from 'playwright';
+import { Page, ElementHandle } from '@playwright/test';
 
 const selectors = {
 	block: '.wp-block-coblocks-click-to-tweet',

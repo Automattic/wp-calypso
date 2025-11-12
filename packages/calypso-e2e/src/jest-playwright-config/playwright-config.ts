@@ -1,4 +1,4 @@
-import { LaunchOptions, BrowserContextOptions, devices } from 'playwright';
+import { LaunchOptions, BrowserContextOptions, devices } from '@playwright/test';
 import envVariables from '../env-variables';
 
 const getTargetDeviceOptions = () => {
