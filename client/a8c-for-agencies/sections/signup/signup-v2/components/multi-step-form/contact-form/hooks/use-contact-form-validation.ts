@@ -26,9 +26,7 @@ const useContactFormValidation = ( { withEmail }: Props ) => {
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
 	const [ isValidating, setIsValidating ] = useState( false );
 
-	const skipURLValidation = new URLSearchParams( window.location.search ).has(
-		'skip-url-validation'
-	);
+	const skipURLValidation = new URLSearchParams( window.location.search ).has( '_nvc' );
 
 	const updateValidationError = ( newState: ValidationState ) => {
 		return setValidationError( ( prev ) => ( { ...prev, ...newState } ) );
