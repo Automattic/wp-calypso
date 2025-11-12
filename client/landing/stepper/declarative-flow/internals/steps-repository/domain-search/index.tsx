@@ -55,6 +55,7 @@ type UseMyDomain = {
 	siteUrl?: string;
 	domainItem?: MinimalRequestCartProduct;
 	lastQuery?: string;
+	signupDomainOrigin?: string;
 };
 
 type StepSubmission = {
@@ -189,7 +190,7 @@ const DomainSearchStep: StepType< {
 				submit( {
 					navigateToUseMyDomain: true,
 					lastQuery: domainName,
-					shouldSkipSubmitTracking: true,
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 				} );
 			},
 			onContinue: ( domainCart: MinimalRequestCartProduct[] ) => {
@@ -207,18 +208,27 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 			onSkip: ( suggestion?: FreeDomainSuggestion ) => {
+				let signupDomainOrigin = suggestion
+					? SIGNUP_DOMAIN_ORIGIN.FREE
+					: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER;
+
+				if (
+					! isLoadingExperiment &&
+					experimentVariation === 'treatment_paid_domain_area_skip_emphasis'
+				) {
+					signupDomainOrigin = SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER;
+				}
+
 				submit( {
 					siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
 					domainItem: undefined,
 					domainCart: [],
 					suggestion,
-					signupDomainOrigin: suggestion
-						? SIGNUP_DOMAIN_ORIGIN.FREE
-						: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER,
+					signupDomainOrigin,
 				} );
 			},
 		};
-	}, [ submit, setQuery, clearQuery, flow, siteSlug ] );
+	}, [ submit, setQuery, clearQuery, flow, siteSlug, isLoadingExperiment, experimentVariation ] );
 
 	// For /setup flows, we want to show the free domain for a year discount for all flows
 	// except if we're in a site context or in the 100-year plan or domain flow

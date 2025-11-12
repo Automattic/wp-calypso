@@ -151,8 +151,10 @@ class Layout extends Component {
 
 		refreshColorScheme( undefined, this.props.colorScheme );
 
-		// Load Survicate survey on all pages
-		this.props.dispatch( loadTrackingTool( 'Survicate' ) );
+		// Load Survicate survey on all pages when the user is logged in
+		if ( this.props.isLoggedIn ) {
+			this.props.dispatch( loadTrackingTool( 'Survicate' ) );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {

@@ -33,8 +33,30 @@
 		}
 	}
 
-	.dot-pager__control-gap {
-		margin-left: auto;
+	.dot-pager__controls-spacer {
+		flex: 1;
+		justify-content: flex-end;
+		text-align: right;
+	}
+}
+
+.dot-pager__control-button {
+	background-color: var(--studio-white, #fff);
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	justify-content: center;
+	align-items: center;
+	margin-inline-start: 9px;
+
+	&:hover {
+		background-color: var(--studio-white, #fff);
+	}
+
+	&[disabled] {
+		border-color: var(--studio-gray-0);
 	}
 }
 

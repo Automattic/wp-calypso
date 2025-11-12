@@ -30,11 +30,22 @@ export const useQueryHandler = ( {
 			return externalInitialQuery;
 		}
 
-		if ( currentSiteUrl ) {
-			return new URL( currentSiteUrl ).host.replace( /\.(wordpress|wpcomstaging)\.com$/, '' );
+		const storedQuery = getSessionStorageQuery();
+		if ( storedQuery ) {
+			return storedQuery;
 		}
 
-		return getSessionStorageQuery();
+		if ( currentSiteUrl ) {
+			const currentSiteHost = new URL( currentSiteUrl ).host;
+
+			// Remove the current site host's TLD or any WPCOM subdomain suffixes
+			// (e.g. `.wordpress.com`, `.wpcomstaging.com`, `.w.link`, `.tech.blog`, etc)
+			return currentSiteHost.split( '.' )[ 0 ];
+		}
+
+		// If there's no stored query and there's no current site URL, that means we're not in
+		// a site context (e.g. onboarding). In that case, the initial search query should be undefined.
+		return undefined;
 	} );
 
 	const setQuery = useCallback( ( query: string ) => {

@@ -82,7 +82,7 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 	const renderPrimaryButton = () => {
 		if ( isAtomicRemovalInProgress ) {
 			return (
-				<Button variant="primary" onClick={ onClose }>
+				<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
 					{ __( 'OK' ) }
 				</Button>
 			);
@@ -90,20 +90,28 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 
 		if ( p2HubP2Count ) {
 			return (
-				<Button variant="primary" href={ site.URL }>
+				<Button __next40pxDefaultSize variant="primary" href={ site.URL }>
 					{ __( 'Manage P2s' ) }
 				</Button>
 			);
 		}
 
 		if ( isTrialSite( site ) ) {
-			<Button variant="primary" href={ `/purchases/subscriptions/${ site.slug }` }>
+			<Button
+				__next40pxDefaultSize
+				variant="primary"
+				href={ `/purchases/subscriptions/${ site.slug }` }
+			>
 				{ __( 'Cancel trial' ) }
 			</Button>;
 		}
 
 		return (
-			<Button variant="primary" href={ `/purchases/subscriptions/${ site.slug }` }>
+			<Button
+				__next40pxDefaultSize
+				variant="primary"
+				href={ `/purchases/subscriptions/${ site.slug }` }
+			>
 				{ __( 'Manage purchases' ) }
 			</Button>
 		);
@@ -114,7 +122,7 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 			<Text as="p">{ renderWarningContent() }</Text>
 			<ButtonStack justify="flex-end">
 				{ ! isAtomicRemovalInProgress && (
-					<Button variant="tertiary" onClick={ onClose }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
 				) }
@@ -208,10 +216,16 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 						} }
 					/>
 					<ButtonStack justify="flex-end">
-						<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onClose }>
+						<Button
+							__next40pxDefaultSize
+							variant="tertiary"
+							disabled={ mutation.isPending }
+							onClick={ onClose }
+						>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							type="submit"
 							isDestructive

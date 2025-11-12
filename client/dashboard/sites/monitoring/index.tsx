@@ -99,7 +99,6 @@ function SiteMonitoring() {
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 	const locale = useLocale();
 
-	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const [ timeRange, setTimeRange ] = useState( '24-hours' );
 
 	if ( ! site ) {
@@ -122,15 +121,9 @@ function SiteMonitoring() {
 		>
 			<PageLayout
 				header={
-					<HStack
-						justify="space-between"
-						alignment="stretch"
-						wrap
-						spacing={ isSmallViewport ? 5 : 10 }
-					>
-						<PageHeader description={ getDateRange( timeRange, locale ) } />
-
-						<div>
+					<PageHeader
+						description={ getDateRange( timeRange, locale ) }
+						actions={
 							<ToggleGroupControl
 								value={ timeRange }
 								isBlock
@@ -146,8 +139,8 @@ function SiteMonitoring() {
 								<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
 								<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
 							</ToggleGroupControl>
-						</div>
-					</HStack>
+						}
+					/>
 				}
 			>
 				<SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } />

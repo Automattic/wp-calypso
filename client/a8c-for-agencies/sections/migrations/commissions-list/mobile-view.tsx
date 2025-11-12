@@ -4,7 +4,6 @@ import {
 	ListItemCard,
 	ListItemCardContent,
 } from 'calypso/a8c-for-agencies/components/list-item-cards';
-import { getSiteReviewStatus } from '../lib/utils';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import type { TaggedSite } from '../types';
 
@@ -21,9 +20,6 @@ export default function MigrationsCommissionsListMobileView( {
 		<div className="migrations-commissions-list-mobile-view">
 			<ListItemCards>
 				{ commissions.map( ( commission ) => {
-					const tags = commission.tags.map( ( tag ) => tag.name );
-					const status = getSiteReviewStatus( tags );
-
 					return (
 						<ListItemCard key={ commission.id }>
 							<ListItemCardContent title={ translate( 'Site' ) }>
@@ -41,7 +37,7 @@ export default function MigrationsCommissionsListMobileView( {
 								</ListItemCardContent>
 							}
 							<ListItemCardContent title={ translate( 'Review status' ) }>
-								<ReviewStatusColumn reviewStatus={ status } />
+								<ReviewStatusColumn reviewStatus={ commission.incentive_status } />
 							</ListItemCardContent>
 						</ListItemCard>
 					);
