@@ -101,7 +101,6 @@ export const credentialsPath = buildPathHelper<
 			from?: string | null;
 			authorizationUrl?: string;
 			backTo?: string;
-			skipSSH?: string;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_CREDENTIALS.slug

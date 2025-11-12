@@ -678,13 +678,20 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug: {
-					const { destination } = providedDependencies as {
+					const { destination, from, authorizationUrl, platform } = providedDependencies as {
 						destination?:
 							| 'migration-started'
 							| 'migration-completed'
 							| 'no-ssh-access'
 							| 'back-to-verification'
-							| 'do-it-for-me';
+							| 'do-it-for-me'
+							| 'application-passwords-approval'
+							| 'fallback-credentials'
+							| 'already-wpcom'
+							| 'site-is-not-using-wordpress';
+						from?: string;
+						authorizationUrl?: string;
+						platform?: string;
 					};
 
 					// Missing transferId, redirect back to verification
@@ -701,8 +708,52 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					// User doesn't have SSH access, redirect to credentials flow
 					if ( destination === 'no-ssh-access' ) {
+						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
+					}
+
+					// Application passwords are enabled, go to authorization step
+					if ( destination === 'application-passwords-approval' ) {
 						return navigate(
-							paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug, skipSSH: 'true' } )
+							paths.applicationPasswordAuthorizationPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+								authorizationUrl,
+							} )
+						);
+					}
+
+					// Application passwords are disabled, go to fallback credentials
+					if ( destination === 'fallback-credentials' ) {
+						return navigate(
+							paths.fallbackCredentialsPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+							} )
+						);
+					}
+
+					// Site is already on wpcom
+					if ( destination === 'already-wpcom' ) {
+						return navigate(
+							paths.alreadyWpcomPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+							} )
+						);
+					}
+
+					// Site is not using WordPress
+					if ( destination === 'site-is-not-using-wordpress' ) {
+						return navigate(
+							paths.otherPlatformDetectedImportPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+								platform,
+							} )
 						);
 					}
 

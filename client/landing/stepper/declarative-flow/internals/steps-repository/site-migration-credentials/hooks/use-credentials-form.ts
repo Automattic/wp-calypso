@@ -88,14 +88,12 @@ export const useCredentialsForm = (
 		siteInfo?: UrlData,
 		applicationPasswordsInfo?: ApplicationPasswordsInfo,
 		hostingProviderSlug?: string
-	) => void,
-	options?: { autoSubmit?: boolean }
+	) => void
 ) => {
 	const siteSlug = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
 	const [ isBusy, setIsBusy ] = useState( false );
-	const [ hasAutoSubmitted, setHasAutoSubmitted ] = useState( false );
 	const siteId = parseInt( useSiteIdParam() ?? '' );
 	const locale = useLocale();
 	const { sendTicketAsync, isPending: isSendingTicket } = useSubmitMigrationTicket();
@@ -248,14 +246,6 @@ export const useCredentialsForm = (
 		} );
 		return () => unsubscribe();
 	}, [ watch, clearErrors, reset ] );
-
-	// Auto-submit form when skipSSH is enabled and we have a fromUrl
-	useEffect( () => {
-		if ( options?.autoSubmit && fromUrl && ! hasAutoSubmitted && ! isBusy ) {
-			setHasAutoSubmitted( true );
-			submitHandler();
-		}
-	}, [ options?.autoSubmit, fromUrl, hasAutoSubmitted, isBusy, submitHandler ] );
 
 	return {
 		errors,
