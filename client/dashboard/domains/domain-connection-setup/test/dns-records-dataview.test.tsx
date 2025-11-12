@@ -314,15 +314,21 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 		mode: 'advanced',
 	} );
 
-	const createMockDomainConnectionSetupInfo = (): DomainMappingSetupInfo => ( {
-		connection_mode: null,
-		domain_connect_apply_wpcom_hosting: null,
-		domain_connect_provider_id: null,
-		default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
-		wpcom_name_servers: [],
-		is_subdomain: false,
-		root_domain: 'example.com',
-	} );
+	const createMockDomainConnectionSetupInfo = (): DomainMappingSetupInfo => {
+		return {
+			connection_mode: null,
+			domain_connect_apply_wpcom_hosting: null,
+			domain_connect_provider_id: null,
+			default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
+			wpcom_name_servers: [],
+			is_subdomain: false,
+			root_domain: 'example.com',
+			registrar_url: null,
+			registrar: '',
+			registrar_iana_id: null,
+			reseller: null,
+		} as DomainMappingSetupInfo;
+	};
 
 	test( 'renders A records when current IPs match target IPs exactly', async () => {
 		const domainMappingStatus = createMockDomainMappingStatus( [ '192.0.78.24', '192.0.78.25' ] );

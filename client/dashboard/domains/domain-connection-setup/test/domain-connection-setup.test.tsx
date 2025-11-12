@@ -35,16 +35,22 @@ const createMockDomainMappingStatus = (
 
 const createMockDomainConnectionSetupInfo = (
 	overrides?: Partial< DomainMappingSetupInfo >
-): DomainMappingSetupInfo => ( {
-	connection_mode: null,
-	domain_connect_apply_wpcom_hosting: null,
-	domain_connect_provider_id: null,
-	default_ip_addresses: [ '192.0.2.1' ],
-	wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
-	is_subdomain: false,
-	root_domain: 'example.com',
-	...overrides,
-} );
+): DomainMappingSetupInfo => {
+	return {
+		connection_mode: null,
+		domain_connect_apply_wpcom_hosting: null,
+		domain_connect_provider_id: null,
+		default_ip_addresses: [ '192.0.2.1' ],
+		wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+		is_subdomain: false,
+		root_domain: 'example.com',
+		registrar_url: null,
+		registrar: '',
+		registrar_iana_id: null,
+		reseller: null,
+		...overrides,
+	} as DomainMappingSetupInfo;
+};
 
 describe( 'DomainConnectionSetup', () => {
 	const defaultProps = {
