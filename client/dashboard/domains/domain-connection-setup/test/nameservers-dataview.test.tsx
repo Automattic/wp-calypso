@@ -4,7 +4,7 @@
 import { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 import { screen, within } from '@testing-library/react';
 import { render } from '../../../test-utils';
-import NameserversDataView from '../nameservers-dataview';
+import DNSRecordsDataView from '../dns-records-dataview';
 
 const createMockDomainMappingStatus = ( nameServers: string[] ): DomainMappingStatus => ( {
 	has_mapping_records: false,
@@ -39,9 +39,11 @@ describe( 'NameserversDataView', () => {
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
 
 		render(
-			<NameserversDataView
+			<DNSRecordsDataView
+				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				mode="suggested"
 			/>
 		);
 
@@ -79,9 +81,11 @@ describe( 'NameserversDataView', () => {
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
 
 		render(
-			<NameserversDataView
+			<DNSRecordsDataView
+				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				mode="suggested"
 			/>
 		);
 
@@ -120,9 +124,11 @@ describe( 'NameserversDataView', () => {
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
 
 		render(
-			<NameserversDataView
+			<DNSRecordsDataView
+				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				mode="suggested"
 			/>
 		);
 
@@ -160,9 +166,11 @@ describe( 'NameserversDataView', () => {
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
 
 		render(
-			<NameserversDataView
+			<DNSRecordsDataView
+				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				mode="suggested"
 			/>
 		);
 
@@ -176,9 +184,11 @@ describe( 'NameserversDataView', () => {
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
 
 		render(
-			<NameserversDataView
+			<DNSRecordsDataView
+				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				mode="suggested"
 			/>
 		);
 
@@ -217,9 +227,11 @@ describe( 'NameserversDataView', () => {
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
 
 		render(
-			<NameserversDataView
+			<DNSRecordsDataView
+				domainName="example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				mode="suggested"
 			/>
 		);
 
