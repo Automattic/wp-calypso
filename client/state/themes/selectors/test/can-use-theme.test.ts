@@ -1,7 +1,9 @@
 import {
 	FEATURE_INSTALL_THEMES,
+	FEATURE_WOOP,
 	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_COMMUNITY_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_SENSEI_THEMES,
 } from '@automattic/calypso-products';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -25,7 +27,7 @@ describe( 'canUseTheme', () => {
 			platform: 'atomic',
 		};
 
-		it( 'returns true if the site has Sensei and Atomic features', () => {
+		it( 'returns true if the site has the Sensei and Atomic features', () => {
 			mockedSiteHasFeature.mockImplementation( ( _state, _siteId, feature ) =>
 				[ WPCOM_FEATURES_SENSEI_THEMES, WPCOM_FEATURES_ATOMIC ].includes( feature )
 			);
@@ -65,6 +67,48 @@ describe( 'canUseTheme', () => {
 			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
 
 			expect( canUseTheme( state, siteId, 'kadence' ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'woo', () => {
+		const themeTier = {
+			slug: 'woocommerce',
+			platform: 'simple',
+			feature: null,
+			featureList: [ 'woocommerce-themes', 'ecommerce-managed-plugins' ],
+		};
+
+		it( 'returns true if the site has the Premium Themes and Atomic features, as well as any extra feature checks depending on the theme software set', () => {
+			mockedSiteHasFeature.mockImplementation( ( _state, _siteId, feature ) =>
+				[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED, WPCOM_FEATURES_ATOMIC, FEATURE_WOOP ].includes(
+					feature
+				)
+			);
+
+			mockedThemeSelectors.getThemeSoftwareSet.mockReturnValue( [ 'woo-on-plans' ] );
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'kiosko' ) ).toBe( true );
+		} );
+
+		it( 'returns false if the site has the Premium Themes and Atomic features, but not the extra feature checks depending on the theme software set', () => {
+			mockedSiteHasFeature.mockImplementation( ( _state, _siteId, feature ) =>
+				[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED, WPCOM_FEATURES_ATOMIC ].includes( feature )
+			);
+
+			mockedThemeSelectors.getThemeSoftwareSet.mockReturnValue( [ 'woo-on-plans' ] );
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'kiosko' ) ).toBe( false );
+		} );
+
+		it( 'returns false otherwise', () => {
+			mockedSiteHasFeature.mockReturnValue( false );
+
+			mockedThemeSelectors.getThemeSoftwareSet.mockReturnValue( [ 'woo-on-plans' ] );
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'kiosko' ) ).toBe( false );
 		} );
 	} );
 } );

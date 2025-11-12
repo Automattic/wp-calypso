@@ -40,18 +40,7 @@ export function canUseTheme( state, siteId, themeId ) {
 	// console.debug( 'type', type );
 	// console.debug( 'themeTier', themeTier );
 
-	if ( type === FREE_THEME ) {
-		return true;
-	}
-
-	if ( type === PERSONAL_THEME ) {
-		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_LIMITED );
-	}
-
-	if ( type === PREMIUM_THEME ) {
-		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED );
-	}
-
+	// is this exactly the same as type DOT_ORG?
 	if ( themeTier.slug === 'community' ) {
 		return (
 			siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ) &&
@@ -62,6 +51,33 @@ export function canUseTheme( state, siteId, themeId ) {
 	if ( themeTier.slug === 'sensei' ) {
 		const featureChecks = [ WPCOM_FEATURES_SENSEI_THEMES, WPCOM_FEATURES_ATOMIC ];
 		return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
+	}
+
+	if ( themeTier.slug === 'woocommerce' ) {
+		const themeSoftwareSet = getThemeSoftwareSet( state, themeId );
+		const themeSoftware = themeSoftwareSet[ 0 ];
+
+		const featureChecks = [
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+			WPCOM_FEATURES_ATOMIC,
+			...( extraFeatureChecks[ themeSoftware ] || [] ),
+		];
+
+		return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
+	}
+
+	// debugger;
+
+	if ( type === FREE_THEME ) {
+		return true;
+	}
+
+	if ( type === PERSONAL_THEME ) {
+		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_LIMITED );
+	}
+
+	if ( type === PREMIUM_THEME ) {
+		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED );
 	}
 
 	if ( type === BUNDLED_THEME ) {
