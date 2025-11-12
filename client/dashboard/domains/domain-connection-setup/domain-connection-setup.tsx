@@ -10,6 +10,7 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 	Icon,
+	ExternalLink,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
@@ -163,85 +164,118 @@ export default function DomainConnectionSetup( {
 		} );
 	};
 
+	const renderDomainBanner = () => {
+		const registrar = domainConnectionSetupInfo.registrar || domainConnectionSetupInfo.reseller;
+		return (
+			<Card>
+				<CardBody>
+					<HStack spacing={ 2 } justify="space-between">
+						<Text size="medium">{ domainName }</Text>
+						{ registrar && (
+							<HStack spacing={ 1 } justify="flex-end">
+								<Text variant="muted" size="small">
+									{ __( 'Registered by' ) }
+								</Text>
+								{ domainConnectionSetupInfo.registrar_url ? (
+									<ExternalLink href={ domainConnectionSetupInfo.registrar_url }>
+										{ registrar }
+									</ExternalLink>
+								) : (
+									<Text size="small">{ registrar }</Text>
+								) }
+							</HStack>
+						) }
+					</HStack>
+				</CardBody>
+			</Card>
+		);
+	};
+
 	if (
 		connectionMode === DomainConnectionSetupMode.DC &&
 		domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting !== null
 	) {
 		return (
 			<div className="domain-connection-setup">
-				<DomainConnectCard
-					onChangeSetupMode={ () => setConnectionMode( recommendedMode ) }
-					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.DC ) }
-					isUpdatingConnectionMode={ isUpdatingConnectionMode }
-					error={ queryError }
-					errorDescription={ queryErrorDescription }
-				/>
+				<VStack spacing={ 6 }>
+					{ renderDomainBanner() }
+					<DomainConnectCard
+						onChangeSetupMode={ () => setConnectionMode( recommendedMode ) }
+						onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.DC ) }
+						isUpdatingConnectionMode={ isUpdatingConnectionMode }
+						error={ queryError }
+						errorDescription={ queryErrorDescription }
+					/>
+				</VStack>
 			</div>
 		);
 	}
 
 	return (
 		<div className="domain-connection-setup">
-			<VStack spacing={ 4 }>
-				{ domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting !== null && (
-					<Card>
-						<CardBody>
-							<HStack spacing={ 2 } justify="flex-start">
-								<Icon icon={ globe } />
-								<Text>{ __( 'This domain name can be automatically connected.' ) }</Text>
-								<Button
-									variant="link"
-									onClick={ () => setConnectionMode( DomainConnectionSetupMode.DC ) }
-								>
-									{ __( 'Use domain connect' ) }
-								</Button>
-							</HStack>
-						</CardBody>
-					</Card>
-				) }
-				<ConnectionModeCard
-					mode={ DomainConnectionSetupMode.SUGGESTED }
-					title={ __( 'I only use this domain name for my website' ) }
-					description={ __( 'You’ll update your name servers to point to WordPress.com' ) }
-					infoText={ sprintf(
-						// translators: %s is the domain name
-						__(
-							'Name servers connect your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
-						),
-						domainName
+			<VStack spacing={ 6 }>
+				{ renderDomainBanner() }
+				<VStack spacing={ 4 }>
+					{ domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting !== null && (
+						<Card>
+							<CardBody>
+								<HStack spacing={ 2 } justify="flex-start">
+									<Icon icon={ globe } />
+									<Text>{ __( 'This domain name can be automatically connected.' ) }</Text>
+									<Button
+										variant="link"
+										onClick={ () => setConnectionMode( DomainConnectionSetupMode.DC ) }
+									>
+										{ __( 'Use domain connect' ) }
+									</Button>
+								</HStack>
+							</CardBody>
+						</Card>
 					) }
-					steps={ suggestedModeSteps }
-					stepsCompleted={ suggestedStepsCompleted }
-					selectedMode={ connectionMode }
-					onModeChange={ setConnectionMode }
-					onStepChange={ handleSuggestedStepChange }
-					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.SUGGESTED ) }
-					isUpdatingConnectionMode={ isUpdatingConnectionMode }
-					verificationDisabled={ ! suggestedStepsCompleted.every( ( completed ) => completed ) }
-					hasEmailOrOtherServices={ domainMappingStatus.has_mx_records }
-				/>
+					<ConnectionModeCard
+						mode={ DomainConnectionSetupMode.SUGGESTED }
+						title={ __( 'I only use this domain name for my website' ) }
+						description={ __( 'You’ll update your name servers to point to WordPress.com' ) }
+						infoText={ sprintf(
+							// translators: %s is the domain name
+							__(
+								'Name servers connect your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
+							),
+							domainName
+						) }
+						steps={ suggestedModeSteps }
+						stepsCompleted={ suggestedStepsCompleted }
+						selectedMode={ connectionMode }
+						onModeChange={ setConnectionMode }
+						onStepChange={ handleSuggestedStepChange }
+						onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.SUGGESTED ) }
+						isUpdatingConnectionMode={ isUpdatingConnectionMode }
+						verificationDisabled={ ! suggestedStepsCompleted.every( ( completed ) => completed ) }
+						hasEmailOrOtherServices={ domainMappingStatus.has_mx_records }
+					/>
 
-				<ConnectionModeCard
-					mode={ DomainConnectionSetupMode.ADVANCED }
-					title={ __( 'I use this domain name for email or other services' ) }
-					description={ __( "You'll update DNS records (CNAME and A)" ) }
-					infoText={ sprintf(
-						// translators: %s is the domain name
-						__(
-							'DNS records point your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
-						),
-						domainName
-					) }
-					steps={ advancedModeSteps }
-					stepsCompleted={ advancedStepsCompleted }
-					selectedMode={ connectionMode }
-					onModeChange={ setConnectionMode }
-					onStepChange={ handleAdvancedStepChange }
-					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.ADVANCED ) }
-					isUpdatingConnectionMode={ isUpdatingConnectionMode }
-					verificationDisabled={ ! advancedStepsCompleted.every( ( completed ) => completed ) }
-					hasEmailOrOtherServices={ domainMappingStatus.has_mx_records }
-				/>
+					<ConnectionModeCard
+						mode={ DomainConnectionSetupMode.ADVANCED }
+						title={ __( 'I use this domain name for email or other services' ) }
+						description={ __( "You'll update DNS records (CNAME and A)" ) }
+						infoText={ sprintf(
+							// translators: %s is the domain name
+							__(
+								'DNS records point your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
+							),
+							domainName
+						) }
+						steps={ advancedModeSteps }
+						stepsCompleted={ advancedStepsCompleted }
+						selectedMode={ connectionMode }
+						onModeChange={ setConnectionMode }
+						onStepChange={ handleAdvancedStepChange }
+						onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.ADVANCED ) }
+						isUpdatingConnectionMode={ isUpdatingConnectionMode }
+						verificationDisabled={ ! advancedStepsCompleted.every( ( completed ) => completed ) }
+						hasEmailOrOtherServices={ domainMappingStatus.has_mx_records }
+					/>
+				</VStack>
 			</VStack>
 		</div>
 	);
