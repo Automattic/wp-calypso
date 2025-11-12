@@ -13,6 +13,11 @@ jest.mock( '@tanstack/react-query', () => ( {
 	useQuery: jest.fn(),
 } ) );
 
+// Mock the useTimeSince hook
+jest.mock( '../../../components/time-since', () => ( {
+	useTimeSince: jest.fn( () => '2m ago' ),
+} ) );
+
 const createMockPropagationStatus = (
 	overrides?: Partial< DomainPropagationStatus >
 ): DomainPropagationStatus => ( {
@@ -105,8 +110,9 @@ describe( 'DomainPropagationStatus', () => {
 
 			render( <DomainPropagationStatusComponent domainName="example.com" /> );
 
-			// Should show "Last checked at" text
-			expect( screen.getByText( /Last checked at/i ) ).toBeVisible();
+			// Should show "Last checked" text with relative time
+			expect( screen.getByText( /Last checked/i ) ).toBeVisible();
+			expect( screen.getByText( /2m ago/i ) ).toBeVisible();
 		} );
 
 		test( 'renders with all areas propagated', () => {
@@ -248,7 +254,7 @@ describe( 'DomainPropagationStatus', () => {
 
 			// Should still render the component structure
 			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
-			expect( screen.getByText( /Last checked at/i ) ).toBeVisible();
+			expect( screen.getByText( /Last checked/i ) ).toBeVisible();
 		} );
 
 		test( 'renders with single propagation area', () => {
@@ -283,8 +289,8 @@ describe( 'DomainPropagationStatus', () => {
 
 			// Should still render without crashing
 			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
-			// Should show "Last checked at" text but no timestamp
-			expect( screen.getByText( 'Last checked at' ) ).toBeVisible();
+			// Should show "Last checked" text with mocked relative time
+			expect( screen.getByText( /Last checked/i ) ).toBeVisible();
 		} );
 
 		test( 'handles empty string in last_updated', () => {
@@ -302,8 +308,8 @@ describe( 'DomainPropagationStatus', () => {
 
 			// Should still render without crashing
 			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
-			// Should show "Last checked at" text but no timestamp
-			expect( screen.getByText( 'Last checked at' ) ).toBeVisible();
+			// Should show "Last checked" text with mocked relative time
+			expect( screen.getByText( /Last checked/i ) ).toBeVisible();
 		} );
 
 		test( 'handles various invalid date formats', () => {
@@ -331,7 +337,7 @@ describe( 'DomainPropagationStatus', () => {
 	} );
 
 	describe( 'Component structure', () => {
-		test( 'renders Card component', () => {
+		test( 'renders Card component with propagation status grid', () => {
 			const mockData = createMockPropagationStatus();
 			mockUseQuery.mockReturnValue( {
 				data: mockData,
@@ -340,10 +346,11 @@ describe( 'DomainPropagationStatus', () => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
 
-			const { container } = render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			render( <DomainPropagationStatusComponent domainName="example.com" /> );
 
-			const cardElement = container.querySelector( '.domain-propagation-status' );
-			expect( cardElement ).toBeInTheDocument();
+			// Verify Card component structure exists with title and content
+			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
+			expect( screen.getByText( 'North America' ) ).toBeVisible();
 		} );
 
 		test( 'renders indicators with correct styling attributes', () => {
