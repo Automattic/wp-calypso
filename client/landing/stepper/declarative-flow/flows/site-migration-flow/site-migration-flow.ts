@@ -691,7 +691,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							| 'site-is-not-using-wordpress';
 						from?: string;
 						authorizationUrl?: string;
-						platform?: string;
+						platform?: ImporterPlatform;
 					};
 
 					// Missing transferId, redirect back to verification
