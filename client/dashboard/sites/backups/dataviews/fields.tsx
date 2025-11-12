@@ -32,8 +32,8 @@ export function getFields(
 	const activityLogTypeElements = activityLogTypes
 		? Object.entries( activityLogTypes )
 				.map( ( [ value, { name, count } ] ) => {
-					// Override "Backups and Restores" to just "Backups" for backup list context
-					const displayName = name === 'Backups and Restores' ? __( 'Backups' ) : name;
+					// Override "Backups and Restores" (rewind) to just "Backups" for backup list context
+					const displayName = value === 'rewind' ? __( 'Backups' ) : name;
 					return {
 						value,
 						label: `${ displayName } (${ count })`,
