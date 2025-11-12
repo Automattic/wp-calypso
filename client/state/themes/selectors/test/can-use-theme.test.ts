@@ -87,6 +87,30 @@ describe( 'canUseTheme', () => {
 		} );
 	} );
 
+	describe( 'community', () => {
+		const themeTier = {
+			slug: 'community',
+		};
+
+		it( 'returns true if the site has the Install Themes and Community Themes features', () => {
+			mockedSiteHasFeature.mockImplementation( ( _state, _siteId, feature ) =>
+				[ FEATURE_INSTALL_THEMES, WPCOM_FEATURES_COMMUNITY_THEMES ].includes( feature )
+			);
+
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'kadence' ) ).toBe( true );
+		} );
+
+		it( 'returns false otherwise', () => {
+			mockedSiteHasFeature.mockReturnValue( false );
+
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'kadence' ) ).toBe( false );
+		} );
+	} );
+
 	describe( 'sensei', () => {
 		const themeTier = {
 			slug: 'sensei',
@@ -110,30 +134,6 @@ describe( 'canUseTheme', () => {
 			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
 
 			expect( canUseTheme( state, siteId, 'course' ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'community', () => {
-		const themeTier = {
-			slug: 'community',
-		};
-
-		it( 'returns true if the site has the Install Themes and Community Themes features', () => {
-			mockedSiteHasFeature.mockImplementation( ( _state, _siteId, feature ) =>
-				[ FEATURE_INSTALL_THEMES, WPCOM_FEATURES_COMMUNITY_THEMES ].includes( feature )
-			);
-
-			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
-
-			expect( canUseTheme( state, siteId, 'kadence' ) ).toBe( true );
-		} );
-
-		it( 'returns false otherwise', () => {
-			mockedSiteHasFeature.mockReturnValue( false );
-
-			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
-
-			expect( canUseTheme( state, siteId, 'kadence' ) ).toBe( false );
 		} );
 	} );
 
@@ -176,6 +176,32 @@ describe( 'canUseTheme', () => {
 			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
 
 			expect( canUseTheme( state, siteId, 'kiosko' ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'partner', () => {
+		const themeTier = {
+			slug: 'partner',
+			feature: 'partner-themes',
+			platform: 'atomic',
+		};
+
+		it( 'returns true if the site has the Atomic feature', () => {
+			mockedSiteHasFeature.mockImplementation( ( _state, _siteId, feature ) =>
+				[ WPCOM_FEATURES_ATOMIC ].includes( feature )
+			);
+
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'organic-stax' ) ).toBe( true );
+		} );
+
+		it( 'returns false otherwise', () => {
+			mockedSiteHasFeature.mockReturnValue( false );
+
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'organic-stax' ) ).toBe( false );
 		} );
 	} );
 } );

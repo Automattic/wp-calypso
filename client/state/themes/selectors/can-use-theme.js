@@ -7,13 +7,8 @@ import {
 	WPCOM_FEATURES_COMMUNITY_THEMES,
 	WPCOM_FEATURES_SENSEI_THEMES,
 } from '@automattic/calypso-products';
-import { MARKETPLACE_THEME } from '@automattic/design-picker';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import {
-	getThemeType,
-	getThemeSoftwareSet,
-	getThemeTierForTheme,
-} from 'calypso/state/themes/selectors';
+import { getThemeSoftwareSet, getThemeTierForTheme } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
 
@@ -29,10 +24,7 @@ const extraFeatureChecks = {
  * @returns {boolean}         Whether the theme is included in the site plan.
  */
 export function canUseTheme( state, siteId, themeId ) {
-	const type = getThemeType( state, themeId );
 	const themeTier = getThemeTierForTheme( state, themeId );
-	// console.debug( 'type', type );
-	// console.debug( 'themeTier', themeTier );
 
 	if ( themeTier.slug === 'free' ) {
 		return true;
@@ -72,9 +64,7 @@ export function canUseTheme( state, siteId, themeId ) {
 		return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
 	}
 
-	// debugger;
-
-	if ( type === MARKETPLACE_THEME ) {
+	if ( themeTier.slug === 'partner' ) {
 		return siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 	}
 
