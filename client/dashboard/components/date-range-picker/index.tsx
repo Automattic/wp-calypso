@@ -45,52 +45,50 @@ export function DateRangePicker( {
 	].join( '|' );
 
 	return (
-		<div className="daterange-container">
-			<Dropdown
-				popoverProps={ { className: 'daterange-popover' } }
-				renderToggle={ ( { onToggle, isOpen } ) => (
-					<Tooltip text={ __( 'Select a date range' ) } placement="top">
-						<div className="daterange-input__toggle">
-							<Button
-								type="button"
-								variant="tertiary"
-								onClick={ onToggle }
-								aria-haspopup="dialog"
-								aria-expanded={ isOpen }
-								aria-label={ sprintf(
-									/* Translators: %s: date range label */
-									__( 'Date range: %s. Activate to open calendar.' ),
-									label
-								) }
-								className="daterange-input__field"
-								icon={ calendar }
-								iconPosition="right"
-							>
-								<span aria-hidden="true" className="daterange-input__text">
-									{ label }
-								</span>
-							</Button>
-						</div>
-					</Tooltip>
-				) }
-				renderContent={ ( { onClose } ) => (
-					<DateRangePickerInner
-						key={ resetKey }
-						isSmall={ isSmall }
-						showTwoMonths={ showTwoMonths }
-						start={ start }
-						end={ end }
-						timezoneString={ timezoneString }
-						gmtOffset={ gmtOffset }
-						onChange={ onChange }
-						onClose={ onClose }
-						mobileLabelId={ mobileLabelId }
-						desktopLabelId={ desktopLabelId }
-						disableFuture={ disableFuture }
-					/>
-				) }
-			/>
-		</div>
+		<Dropdown
+			popoverProps={ { className: 'daterange-popover' } }
+			renderToggle={ ( { onToggle, isOpen } ) => (
+				<Tooltip text={ __( 'Select a date range' ) } placement="top">
+					<div className="daterange-input__toggle">
+						<Button
+							type="button"
+							variant="tertiary"
+							onClick={ onToggle }
+							aria-haspopup="dialog"
+							aria-expanded={ isOpen }
+							aria-label={ sprintf(
+								/* Translators: %s: date range label */
+								__( 'Date range: %s. Activate to open calendar.' ),
+								label
+							) }
+							className="daterange-input__field"
+							icon={ calendar }
+							iconPosition="right"
+						>
+							<span aria-hidden="true" className="daterange-input__text">
+								{ label }
+							</span>
+						</Button>
+					</div>
+				</Tooltip>
+			) }
+			renderContent={ ( { onClose } ) => (
+				<DateRangePickerInner
+					key={ resetKey }
+					isSmall={ isSmall }
+					showTwoMonths={ showTwoMonths }
+					start={ start }
+					end={ end }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+					onChange={ onChange }
+					onClose={ onClose }
+					mobileLabelId={ mobileLabelId }
+					desktopLabelId={ desktopLabelId }
+					disableFuture={ disableFuture }
+				/>
+			) }
+		/>
 	);
 }
 

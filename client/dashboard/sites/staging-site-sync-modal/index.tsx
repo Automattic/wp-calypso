@@ -9,7 +9,6 @@ import {
 	ExternalLink,
 	Modal,
 	Icon,
-	CardDivider,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -32,6 +31,7 @@ import {
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
+import { CardDivider } from '../../components/card';
 import Environment, { EnvironmentType } from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
@@ -595,6 +595,7 @@ function StagingSiteSyncModalInner( {
 
 						<ButtonStack justify="flex-end">
 							<Button
+								__next40pxDefaultSize
 								variant="tertiary"
 								onClick={ handleClose }
 								disabled={ pullMutation.isPending || pushMutation.isPending }
@@ -602,6 +603,7 @@ function StagingSiteSyncModalInner( {
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button
+								__next40pxDefaultSize
 								variant="primary"
 								onClick={ handleConfirm }
 								disabled={ isSubmitDisabled }
