@@ -101,7 +101,7 @@ describe(
 			it( `Select ${ domainAdditionPlan } plan`, async function () {
 				const plansPage = new PlansPage( page );
 
-				await plansPage.selectPlan( domainAdditionPlan );
+				await plansPage.selectPlanWithoutSiteCreation( domainAdditionPlan );
 			} );
 
 			it( 'See plan and domain at checkout', async function () {

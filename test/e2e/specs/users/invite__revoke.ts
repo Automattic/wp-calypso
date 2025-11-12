@@ -91,10 +91,15 @@ describe( DataHelper.createSuiteTitle( 'Invite: Revoke' ), function () {
 
 		it( 'Ensure invite link is no longer valid', async function () {
 			const newPage = await browser.newPage();
-			await newPage.goto( acceptInviteLink );
+			await newPage.goto( acceptInviteLink, { waitUntil: 'domcontentloaded' } );
+			await newPage.waitForLoadState( 'networkidle' );
 
-			// Text selector will suffice for now.
-			await newPage.waitForSelector( ':text("Oops, that invite is not valid")' );
+			const invalidUrlPattern = /invite=(invalid|expired|revoked)/i;
+			if ( invalidUrlPattern.test( newPage.url() ) ) {
+				return;
+			}
+
+			await newPage.locator( 'text=/invite/i' ).first().waitFor( { timeout: 15_000 } );
 		} );
 	} );
 

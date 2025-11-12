@@ -12,7 +12,6 @@ import {
 	SignupPickPlanPage,
 	UserSignupPage,
 	NewUserResponse,
-	PlansPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared/api-close-account';
@@ -78,12 +77,9 @@ describe(
 			} );
 
 			it( `Select ${ planName } plan`, async function () {
-				const plansPage = new PlansPage( page );
+				const plansPage = new SignupPickPlanPage( page );
 
-				await Promise.all( [
-					plansPage.selectPlan( planName ),
-					page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
-				] );
+				await plansPage.selectPlanWithoutSiteCreation( planName );
 			} );
 
 			it( 'See plan and domain at checkout', async function () {
