@@ -20,6 +20,20 @@ describe( 'canUseTheme', () => {
 	const state = {};
 	const siteId = 1;
 
+	describe( 'free', () => {
+		const themeTier = {
+			slug: 'free',
+			feature: null,
+			platform: 'simple',
+		};
+
+		it( 'returns true', () => {
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'strand' ) ).toBe( true );
+		} );
+	} );
+
 	describe( 'sensei', () => {
 		const themeTier = {
 			slug: 'sensei',

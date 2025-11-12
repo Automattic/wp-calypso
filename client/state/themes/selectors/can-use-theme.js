@@ -8,7 +8,6 @@ import {
 	WPCOM_FEATURES_SENSEI_THEMES,
 } from '@automattic/calypso-products';
 import {
-	FREE_THEME,
 	PREMIUM_THEME,
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
@@ -40,6 +39,10 @@ export function canUseTheme( state, siteId, themeId ) {
 	// console.debug( 'type', type );
 	// console.debug( 'themeTier', themeTier );
 
+	if ( themeTier.slug === 'free' ) {
+		return true;
+	}
+
 	// is this exactly the same as type DOT_ORG?
 	if ( themeTier.slug === 'community' ) {
 		return (
@@ -67,10 +70,6 @@ export function canUseTheme( state, siteId, themeId ) {
 	}
 
 	// debugger;
-
-	if ( type === FREE_THEME ) {
-		return true;
-	}
 
 	if ( type === PERSONAL_THEME ) {
 		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_LIMITED );
