@@ -7,7 +7,7 @@ import {
 	WPCOM_FEATURES_COMMUNITY_THEMES,
 	WPCOM_FEATURES_SENSEI_THEMES,
 } from '@automattic/calypso-products';
-import { BUNDLED_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
+import { MARKETPLACE_THEME } from '@automattic/design-picker';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getThemeType,
@@ -73,19 +73,6 @@ export function canUseTheme( state, siteId, themeId ) {
 	}
 
 	// debugger;
-
-	if ( type === BUNDLED_THEME ) {
-		const themeSoftwareSet = getThemeSoftwareSet( state, themeId );
-		const themeSoftware = themeSoftwareSet[ 0 ];
-
-		const featureChecks = [
-			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-			WPCOM_FEATURES_ATOMIC,
-			...( extraFeatureChecks[ themeSoftware ] || [] ),
-		];
-
-		return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
-	}
 
 	if ( type === MARKETPLACE_THEME ) {
 		return siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
