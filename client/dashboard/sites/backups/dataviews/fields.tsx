@@ -10,7 +10,7 @@ const getActivityLogTypeSlugFromName = ( name?: string ): string => {
 		return '';
 	}
 	const [ group ] = name.split( '__' );
-	return group ?? '';
+	return group ?? name;
 };
 
 const getActivityLogTypeDescriptionFromName = (
