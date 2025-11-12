@@ -6,6 +6,7 @@ import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
 import { bumpStat } from '../analytics';
+import { BreadcrumbsProvider } from '../breadcrumbs';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
@@ -97,7 +98,7 @@ function Root() {
 		document.title = title ? `${ title } – ${ name }` : name;
 	}, [ name, title ] );
 
-	return (
+	const root = (
 		<div className="dashboard-root__layout">
 			{ ( isFetching > 0 || isSlowNavigation ) && (
 				<LoadingLine
@@ -126,6 +127,8 @@ function Root() {
 			) }
 		</div>
 	);
+
+	return <BreadcrumbsProvider>{ root }</BreadcrumbsProvider>;
 }
 
 export default Root;
