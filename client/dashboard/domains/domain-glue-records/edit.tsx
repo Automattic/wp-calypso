@@ -59,7 +59,7 @@ export default function EditDomainGlueRecords() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
-					description={ __( "Edit a glue record for your domain's name servers." ) }
+					description={ __( 'Edit a glue record for your domain’s name servers.' ) }
 				/>
 			}
 		>

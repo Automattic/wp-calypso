@@ -45,7 +45,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			header={
 				<PageHeader
 					title={ __( 'Settings' ) }
-					description={ __( "Configure your site's general, server, and security settings." ) }
+					description={ __( 'Configure your site’s general, server, and security settings.' ) }
 				/>
 			}
 		>

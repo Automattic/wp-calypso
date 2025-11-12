@@ -185,7 +185,7 @@ export default function DomainContactVerification() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Contact Verification' ) }
+					title={ __( 'Contact verification' ) }
 					description={ __(
 						'Verify your domain contact information to comply with ICANN requirements.'
 					) }

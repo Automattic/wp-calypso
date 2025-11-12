@@ -55,7 +55,7 @@ export default function AddDomainGlueRecords() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
-					description={ __( "Add a glue record for your domain's name servers." ) }
+					description={ __( 'Add a glue record for your domain’s name servers.' ) }
 				/>
 			}
 		>
