@@ -48,7 +48,7 @@ function getIndividualConfig( options = {} ) {
 					// The extraction logic will only extract a package if requestToExternal
 					// explicitly returns undefined for the given request. Null
 					// shortcuts the logic such that react-i18n will be bundled.
-					if ( request === '@wordpress/react-i18n' ) {
+					if ( request === '@wordpress/react-i18n' || request === '@wordpress/data-controls' ) {
 						return null;
 					}
 				},
@@ -82,6 +82,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	return [
 		getIndividualConfig( { env, argv, name: 'help-center-gutenberg' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-wp-admin' } ),
+		getIndividualConfig( { env, argv, name: 'help-center-embedded-chat' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-gutenberg-disconnected' } ),
 		getIndividualConfig( {
 			env,

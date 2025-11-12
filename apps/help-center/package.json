@@ -47,7 +47,8 @@
 		"@wordpress/plugins": "^7.23.0",
 		"@wordpress/private-apis": "^1.23.0",
 		"@wordpress/router": "^1.23.0",
-		"postcss-prefix-selector": "^1.16.1"
+		"postcss-prefix-selector": "^1.16.1",
+		"react-router-dom": "^6.23.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",

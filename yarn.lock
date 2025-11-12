@@ -1453,6 +1453,7 @@ __metadata:
     "@wordpress/router": "npm:^1.23.0"
     copy-webpack-plugin: "npm:^10.2.4"
     postcss-prefix-selector: "npm:^1.16.1"
+    react-router-dom: "npm:^6.23.1"
     typescript: "npm:^5.8.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
