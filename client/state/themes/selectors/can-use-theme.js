@@ -16,7 +16,11 @@ import {
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getThemeType, getThemeSoftwareSet } from 'calypso/state/themes/selectors';
+import {
+	getThemeType,
+	getThemeSoftwareSet,
+	getThemeTierForTheme,
+} from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
 
@@ -33,7 +37,9 @@ const extraFeatureChecks = {
  */
 export function canUseTheme( state, siteId, themeId ) {
 	const type = getThemeType( state, themeId );
-
+	const themeTier = getThemeTierForTheme( state, themeId );
+	// console.debug( 'type', type );
+	// console.debug( 'themeTier', themeTier );
 	if ( type === FREE_THEME ) {
 		return true;
 	}
@@ -53,16 +59,16 @@ export function canUseTheme( state, siteId, themeId ) {
 		);
 	}
 
+	// e.g. Course theme
+	const features = themeTier?.featureList ?? [ themeTier?.feature ];
+	if ( features.includes( WPCOM_FEATURES_SENSEI_THEMES ) ) {
+		const featureChecks = [ WPCOM_FEATURES_SENSEI_THEMES, WPCOM_FEATURES_ATOMIC ];
+		return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
+	}
+
 	if ( type === BUNDLED_THEME ) {
 		const themeSoftwareSet = getThemeSoftwareSet( state, themeId );
 		const themeSoftware = themeSoftwareSet[ 0 ];
-
-		// Add a special case for Sensei themes to ensure they are limited to the Business plan.
-		// @todo refactor this whole file using theme tiers.
-		if ( themeSoftware === 'sensei' ) {
-			const featureChecks = [ WPCOM_FEATURES_SENSEI_THEMES, WPCOM_FEATURES_ATOMIC ];
-			return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
-		}
 
 		const featureChecks = [
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
