@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { AccordionNotice } from '../components/accordion-notice';
 import { useVerifySSHConnection } from '../hooks/use-verify-ssh-connection';
 import { validatePort } from '../utils/validation';
@@ -15,6 +16,7 @@ interface StepAddServerAddressProps {
 	onServerAddressChange: ( address: string ) => void;
 	onPortChange: ( port: number ) => void;
 	onVerify: () => void;
+	isInputDisabled: boolean;
 }
 
 export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
@@ -26,12 +28,18 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 	onServerAddressChange,
 	onPortChange,
 	onVerify,
+	isInputDisabled,
 } ) => {
 	const translate = useTranslate();
 
 	const { mutate: verifyConnection, isPending, error } = useVerifySSHConnection();
 
 	const handleVerify = () => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'add-server-address',
+			action: 'click_button',
+			button: 'verify_server',
+		} );
 		verifyConnection(
 			{
 				siteId,
@@ -46,7 +54,8 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 		);
 	};
 
-	const canVerify = serverAddress.length > 0 && validatePort( port ) && ! isPending;
+	const canVerify =
+		serverAddress.length > 0 && validatePort( port ) && ! isPending && ! isInputDisabled;
 
 	const instructionText = hostDisplayName
 		? translate(
@@ -88,6 +97,7 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 							onServerAddressChange( e.target.value )
 						}
 						placeholder="ssh.wp.example-host.net"
+						disabled={ isInputDisabled }
 					/>
 				</div>
 
@@ -104,6 +114,7 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 							const newPort = Number.isNaN( parsedPort ) ? 22 : parsedPort;
 							onPortChange( newPort );
 						} }
+						disabled={ isInputDisabled }
 					/>
 				</div>
 			</div>

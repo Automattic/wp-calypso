@@ -6,9 +6,10 @@ import './style.scss';
 
 type SupportNudgeProps = {
 	onAskForHelp: () => void;
+	isLoading?: boolean;
 };
 
-export const SupportNudge: FC< SupportNudgeProps > = ( { onAskForHelp } ) => {
+export const SupportNudge: FC< SupportNudgeProps > = ( { onAskForHelp, isLoading = false } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -24,6 +25,7 @@ export const SupportNudge: FC< SupportNudgeProps > = ( { onAskForHelp } ) => {
 							} }
 							type="button"
 							className="site-migration-instructions-support-nudge__button"
+							disabled={ isLoading }
 						/>
 					),
 				},
