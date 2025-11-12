@@ -10,7 +10,6 @@ import {
 import {
 	FREE_THEME,
 	PREMIUM_THEME,
-	DOT_ORG_THEME,
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 	PERSONAL_THEME,
@@ -40,6 +39,7 @@ export function canUseTheme( state, siteId, themeId ) {
 	const themeTier = getThemeTierForTheme( state, themeId );
 	// console.debug( 'type', type );
 	// console.debug( 'themeTier', themeTier );
+
 	if ( type === FREE_THEME ) {
 		return true;
 	}
@@ -52,7 +52,7 @@ export function canUseTheme( state, siteId, themeId ) {
 		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED );
 	}
 
-	if ( type === DOT_ORG_THEME ) {
+	if ( themeTier.slug === 'community' ) {
 		return (
 			siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ) &&
 			siteHasFeature( state, siteId, WPCOM_FEATURES_COMMUNITY_THEMES )
