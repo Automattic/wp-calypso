@@ -61,6 +61,32 @@ describe( 'canUseTheme', () => {
 		} );
 	} );
 
+	describe( 'premium', () => {
+		const themeTier = {
+			slug: 'premium',
+			feature: 'premium-themes',
+			platform: 'simple',
+		};
+
+		it( 'returns true if the site has the Premium Themes feature', () => {
+			mockedSiteHasFeature.mockImplementation( ( _state, _siteId, feature ) =>
+				[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ].includes( feature )
+			);
+
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'course' ) ).toBe( true );
+		} );
+
+		it( 'returns false otherwise', () => {
+			mockedSiteHasFeature.mockReturnValue( false );
+
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'course' ) ).toBe( false );
+		} );
+	} );
+
 	describe( 'sensei', () => {
 		const themeTier = {
 			slug: 'sensei',

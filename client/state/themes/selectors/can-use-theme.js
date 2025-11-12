@@ -7,7 +7,7 @@ import {
 	WPCOM_FEATURES_COMMUNITY_THEMES,
 	WPCOM_FEATURES_SENSEI_THEMES,
 } from '@automattic/calypso-products';
-import { PREMIUM_THEME, BUNDLED_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
+import { BUNDLED_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getThemeType,
@@ -42,6 +42,10 @@ export function canUseTheme( state, siteId, themeId ) {
 		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_LIMITED );
 	}
 
+	if ( themeTier.slug === 'premium' ) {
+		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED );
+	}
+
 	// is this exactly the same as type DOT_ORG?
 	if ( themeTier.slug === 'community' ) {
 		return (
@@ -69,10 +73,6 @@ export function canUseTheme( state, siteId, themeId ) {
 	}
 
 	// debugger;
-
-	if ( type === PREMIUM_THEME ) {
-		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED );
-	}
 
 	if ( type === BUNDLED_THEME ) {
 		const themeSoftwareSet = getThemeSoftwareSet( state, themeId );
