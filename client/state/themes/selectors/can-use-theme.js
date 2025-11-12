@@ -32,7 +32,6 @@ const getThemeTierFeatureChecks = ( state, siteId, themeId ) => {
 			return [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 		}
 
-		// is this exactly the same as type DOT_ORG?
 		case 'community': {
 			return [ FEATURE_INSTALL_THEMES, WPCOM_FEATURES_COMMUNITY_THEMES ];
 		}
