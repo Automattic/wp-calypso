@@ -12,6 +12,7 @@ import {
 	Icon,
 	ExternalLink,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
 import { useState } from 'react';
@@ -60,16 +61,33 @@ export default function DomainConnectionSetup( {
 		false,
 	] );
 
-	const suggestedModeSteps = [
+	const registrar = domainConnectionSetupInfo.registrar || domainConnectionSetupInfo.reseller;
+	const registrar_url = domainConnectionSetupInfo.registrar_url;
+
+	const commonSteps = [
 		{
-			title: __( '1. Login to your domain name provider' ),
+			title: registrar
+				? sprintf(
+						// translators: %s is the registrar name
+						__( '1. Login to %s' ),
+						registrar
+				  )
+				: __( '1. Login to your domain name provider' ),
 			label: __( 'I have opened the DNS settings' ),
 			content: (
 				<Text>
-					{ sprintf(
+					{ createInterpolateElement(
 						// translators: %s is the domain name
-						__( 'Log in to your domain name provider and open DNS management for %s.' ),
-						domainName
+						__( 'Log in to <registrar/> and open DNS management for <domain/>.' ),
+
+						{
+							registrar: registrar_url ? (
+								<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
+							) : (
+								<>{ registrar || __( 'your domain name provider' ) }</>
+							),
+							domain: <>{ domainName }</>,
+						}
 					) }
 				</Text>
 			),
@@ -85,6 +103,10 @@ export default function DomainConnectionSetup( {
 				</Text>
 			),
 		},
+	];
+
+	const suggestedModeSteps = [
+		...commonSteps,
 		{
 			title: __( '3. Update name servers' ),
 			label: __( 'I have updated the name servers' ),
@@ -103,30 +125,7 @@ export default function DomainConnectionSetup( {
 	];
 
 	const advancedModeSteps = [
-		{
-			title: __( '1. Login to your domain name provider' ),
-			label: __( 'I have opened the DNS settings' ),
-			content: (
-				<Text>
-					{ sprintf(
-						// translators: %s is the domain name
-						__( 'Log in to your domain name provider and open DNS management for %s.' ),
-						domainName
-					) }
-				</Text>
-			),
-		},
-		{
-			title: __( '2. Back up DNS records' ),
-			label: __( 'I have downloaded the DNS records' ),
-			content: (
-				<Text>
-					{ __(
-						'It’s rare, but things can go sideways. Download your DNS records as a fallback, just in case.'
-					) }
-				</Text>
-			),
-		},
+		...commonSteps,
 		{
 			title: __( '3. Update DNS records' ),
 			label: __( 'I have updated the DNS settings' ),
@@ -165,7 +164,6 @@ export default function DomainConnectionSetup( {
 	};
 
 	const renderDomainBanner = () => {
-		const registrar = domainConnectionSetupInfo.registrar || domainConnectionSetupInfo.reseller;
 		return (
 			<Card>
 				<CardBody>
@@ -176,10 +174,8 @@ export default function DomainConnectionSetup( {
 								<Text variant="muted" size="small">
 									{ __( 'Registered by' ) }
 								</Text>
-								{ domainConnectionSetupInfo.registrar_url ? (
-									<ExternalLink href={ domainConnectionSetupInfo.registrar_url }>
-										{ registrar }
-									</ExternalLink>
+								{ registrar_url ? (
+									<ExternalLink href={ registrar_url }>{ registrar }</ExternalLink>
 								) : (
 									<Text size="small">{ registrar }</Text>
 								) }
