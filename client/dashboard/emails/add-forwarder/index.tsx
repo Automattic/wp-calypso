@@ -243,7 +243,15 @@ function AddEmailForwarder() {
 	}
 
 	return (
-		<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
+		<PageLayout
+			header={
+				<PageHeader
+					prefix={ <BackToEmailsPrefix /> }
+					description={ __( 'Create an email forwarder to redirect emails to another address.' ) }
+				/>
+			}
+			size="small"
+		>
 			{ eligibleDomains.length === 0 ? (
 				<>
 					<Text size={ 16 }>

@@ -13,7 +13,17 @@ export default function DomainSecurity() {
 	const { data: sslDetails } = useSuspenseQuery( sslDetailsQuery( domainName ) );
 
 	return (
-		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					description={ __(
+						'Manage security settings for your domain, including SSL certificates.'
+					) }
+				/>
+			}
+		>
 			<SslCertificate domainName={ domainName } domain={ domain } sslDetails={ sslDetails } />
 			<DnsSec domainName={ domainName } domain={ domain } />
 		</PageLayout>

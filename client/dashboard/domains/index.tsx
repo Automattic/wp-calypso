@@ -59,7 +59,13 @@ function Domains() {
 
 	return (
 		<PageLayout
-			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
+			header={
+				<PageHeader
+					title={ __( 'Domains' ) }
+					description={ __( 'Manage all your domains in one place.' ) }
+					actions={ <AddDomainButton /> }
+				/>
+			}
 			notices={ <OptInWelcome tracksContext="domains" /> }
 		>
 			<DataViewsCard>

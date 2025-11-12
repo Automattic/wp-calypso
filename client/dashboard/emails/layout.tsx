@@ -16,6 +16,7 @@ export const Layout = ( { children }: PropsWithChildren ) => {
 		<PageLayout
 			header={
 				<PageHeader
+					description={ __( 'Manage email accounts and mailboxes for your domains.' ) }
 					actions={
 						<>
 							<Button
