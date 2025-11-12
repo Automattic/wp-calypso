@@ -51,7 +51,7 @@ const API_RESPONSE_WITH_OTHER_PLATFORM: UrlData = {
 };
 
 const MOCK_WORDPRESS_SITE_SLUG = 'test-example.wordpress.com';
-const getInput = () => screen.getByLabelText( /Enter your site address/ );
+const getInput = () => screen.getByLabelText( /Site address/ );
 
 describe( 'SiteMigrationIdentify', () => {
 	beforeAll( () => nock.disableNetConnect() );

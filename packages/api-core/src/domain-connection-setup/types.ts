@@ -20,7 +20,7 @@ export type DomainMappingStatus = {
 	resolves_to_wpcom: boolean;
 	host_ip_addresses: string[];
 	name_servers: string[];
-	mode: DomainConnectionSetupModeValue;
+	mode: DomainConnectionSetupModeValue | null;
 };
 
 export type DomainMappingSetupInfo = {

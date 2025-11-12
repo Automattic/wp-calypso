@@ -24,8 +24,6 @@ interface DomainConnectionVerificationProps {
 	siteSlug: string;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
 	domainMappingStatus: DomainMappingStatus;
-	queryError: string | null;
-	queryErrorDescription: string | null;
 }
 
 export default function DomainConnectionVerification( {

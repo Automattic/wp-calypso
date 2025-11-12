@@ -10,6 +10,9 @@ export const getOdieErrorMessage = (): string =>
 		__i18n_text_domain__
 	);
 
+export const getOdieErrorMessageUnknownError = (): string =>
+	__( 'Sorry, an unknown error occurred. Please try again later.', __i18n_text_domain__ );
+
 export const getOdieErrorMessageNonEligible = (): string =>
 	__(
 		'Sorry, I am offline right now. Come back later or ask for help in our forums:',
@@ -40,14 +43,14 @@ export const getOdieForwardToZendeskMessage = (): string =>
 		__i18n_text_domain__
 	);
 
-export function getFlowFromBotSlug( botSlug: OdieAllBotSlugs ): string {
+export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
 	if ( botSlug === 'ciab-workflow-support_chat' ) {
 		return 'commerce-garden';
 	}
 	return 'wpcom';
 }
 
-export const getOdieTransferMessage = ( botSlug: OdieAllBotSlugs ): Message[] => {
+export const getOdieTransferMessage = ( botSlug?: OdieAllBotSlugs ): Message[] => {
 	const isTestMode = isTestModeEnvironment();
 	const flow = getFlowFromBotSlug( botSlug );
 
@@ -254,6 +257,21 @@ export const getOdieInitialMessage = (
 		role: 'bot',
 		type: 'introduction',
 		context: getOdieInitialPromptContext( botNameSlug ),
+	};
+};
+
+export const getErrorMessageUnknownError = (): Message => {
+	return {
+		content: getOdieErrorMessageUnknownError(),
+		role: 'bot',
+		type: 'message',
+		context: {
+			site_id: null,
+			flags: {
+				show_ai_avatar: true,
+				is_error_message: true,
+			},
+		},
 	};
 };
 

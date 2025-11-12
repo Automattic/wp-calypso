@@ -1,5 +1,4 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -32,7 +31,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
-	const { resetSupportInteraction } = useResetSupportInteraction();
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const navigate = useNavigate();
 	const isForwardingToZendesk =
@@ -57,7 +55,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	useZendeskMessageListener();
 	const isScrolling = useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
-	useHelpCenterChatScroll( chat?.supportInteractionId, scrollParentRef, ! shouldEnableAutoScroll );
+	useHelpCenterChatScroll( supportInteraction?.uuid, scrollParentRef, ! shouldEnableAutoScroll );
 
 	useEffect( () => {
 		if ( navType === 'POP' && ( isChatLoaded || ! isUserEligibleForPaidSupport ) ) {
@@ -107,35 +105,31 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			setHasForwardedToZendesk( true );
 
 			// when forwarding to zd avoid creating new chats
-			if (
-				alreadyHasActiveZendeskChatId &&
-				alreadyHasActiveZendeskChatId !== chat.supportInteractionId
-			) {
+			if ( alreadyHasActiveZendeskChatId ) {
 				setChatMessagesLoaded( true );
 				// Redirect to the existing Zendesk chat.
 				searchParams.set( 'id', alreadyHasActiveZendeskChatId );
 				return navigate( '/odie?' + searchParams.toString() );
 			}
-			resetSupportInteraction().then( ( interaction ) => {
-				createZendeskConversation( {
-					interactionId: interaction?.uuid,
-					createdFrom: 'direct_url',
-				} ).then( () => {
-					setChatMessagesLoaded( true );
-				} );
+
+			searchParams.delete( 'id' );
+			setSearchParams( searchParams );
+			createZendeskConversation( {
+				createdFrom: 'direct_url',
+			} ).then( () => {
+				setChatMessagesLoaded( true );
 			} );
 		}
 	}, [
-		chat.supportInteractionId,
 		navigate,
 		isForwardingToZendesk,
 		hasForwardedToZendesk,
 		isChatLoaded,
 		chat?.conversationId,
-		resetSupportInteraction,
 		createZendeskConversation,
 		alreadyHasActiveZendeskChatId,
 		forceEmailSupport,
+		supportInteraction?.uuid,
 		searchParams,
 		setSearchParams,
 	] );

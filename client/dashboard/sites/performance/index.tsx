@@ -184,9 +184,7 @@ function SitePerformance() {
 					header={
 						<PageHeader
 							description={ createInterpolateElement(
-								__(
-									'Optimize your site for lightning-fast performance. <learnMoreLink>Learn more</learnMoreLink>'
-								),
+								__( 'Optimize your site for lightning-fast performance. <learnMoreLink />' ),
 								{
 									learnMoreLink: <InlineSupportLink supportContext="site-performance" />,
 								}

@@ -482,55 +482,42 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
-		const siteHomeOrAdminItem = isClassicView
-			? {
-					label: translate( 'Dashboard' ),
-					url: siteAdminUrl,
-			  }
-			: {
-					label: translate( 'My Home' ),
-					url: siteHomeUrl,
-			  };
+		const menuItems = [ { label: translate( 'Visit Site' ), url: siteUrl } ];
 
-		// Get site badges
-		const siteBadges = this.renderSiteBadges();
+		if ( isClassicView ) {
+			menuItems.push( { label: translate( 'Dashboard' ), url: siteAdminUrl } );
+		} else {
+			menuItems.push( { label: translate( 'My Home' ), url: siteHomeUrl } );
+		}
 
-		// Create a site status item for the dropdown if we have badges
-		const menuItems = [
-			[ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ],
-			[
-				...( ! site?.is_wpcom_staging_site
-					? [
-							{
-								label: (
-									<div className="masterbar__site-info">
-										<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
-										<div className="masterbar__info-badges">
-											<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
-										</div>
-									</div>
-								),
-								onClick: () => {
-									this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
-									page( `/plans/${ siteSlug }` );
-								},
-							},
-					  ]
-					: [] ),
-				{
-					label: (
-						<div className="masterbar__site-infos">
-							{ siteBadges && siteBadges.length > 0 && (
-								<div className="masterbar__site-info">
-									<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
-									<div className="masterbar__info-badges">{ siteBadges }</div>
-								</div>
-							) }
+		if ( ! site?.is_wpcom_staging_site ) {
+			menuItems.push( {
+				label: (
+					<div className="masterbar__site-info masterbar__site-plan">
+						<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
+						<div className="masterbar__info-badges">
+							<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
 						</div>
-					),
+					</div>
+				),
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
+					page( `/plans/${ siteSlug }` );
 				},
-			],
-		];
+			} );
+		}
+
+		const siteBadges = this.renderSiteBadges();
+		if ( siteBadges && siteBadges.length > 0 ) {
+			menuItems.push( {
+				label: (
+					<div className="masterbar__site-info masterbar__site-status">
+						<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
+						<div className="masterbar__info-badges">{ siteBadges }</div>
+					</div>
+				),
+			} );
+		}
 
 		return (
 			<Item
@@ -538,7 +525,7 @@ class MasterbarLoggedIn extends Component {
 				url={ siteUrl }
 				icon={ <span className="dashicons-before dashicons-admin-home" /> }
 				tipTarget="visit-site"
-				subItems={ menuItems }
+				subItems={ [ menuItems ] }
 			>
 				{ siteTitle.length > 40 ? `${ siteTitle.substring( 0, 40 ) }\u2026` : siteTitle }
 			</Item>

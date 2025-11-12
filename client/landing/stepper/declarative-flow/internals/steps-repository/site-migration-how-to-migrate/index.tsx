@@ -1,6 +1,6 @@
 import { PLAN_BUSINESS, getPlan, isWpComBusinessPlan } from '@automattic/calypso-products';
 import { NextButton, Step } from '@automattic/onboarding';
-import { Icon, copy, globe, lockOutline } from '@wordpress/icons';
+import { copy, lockOutline } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -8,6 +8,7 @@ import { useMigrationCancellation } from 'calypso/data/site-migration/landing/us
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
+import { ChecklistCard } from '../../components/checklist-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
@@ -28,26 +29,16 @@ const SiteMigrationHowToMigrate: StepType< {
 
 	usePresalesChat( 'wpcom' );
 
-	// Extract the display of items to a separate component if we keep this version post-experiment,
-	// as this format is also used on the site identification page and further into the DIFM flow.
-	const experimentalOptions = useMemo(
+	const checklistItems = useMemo(
 		() => [
 			{
 				icon: lockOutline,
-				description: translate(
-					'Upgrade your site and securely share access to your current site.'
-				),
+				text: translate( 'Upgrade your site and securely share access to your current site.' ),
 			},
 			{
 				icon: copy,
-				description: translate(
+				text: translate(
 					"We'll bring over a copy of your site, without affecting the current live version."
-				),
-			},
-			{
-				icon: globe,
-				description: translate(
-					"We'll help you switch your domain over after the migration's completed."
 				),
 			},
 		],
@@ -106,23 +97,7 @@ const SiteMigrationHowToMigrate: StepType< {
 				<NextButton onClick={ () => handleClick( HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) }>
 					{ translate( 'Get started' ) }
 				</NextButton>
-				<div className="how-to-migrate__process-details">
-					<p className="how-to-migrate__process-details-title">{ translate( 'How it works' ) }</p>
-					<ul className="how-to-migrate__process-details-list">
-						{ experimentalOptions.map( ( option, index ) => (
-							<li key={ index } className="how-to-migrate__process-details-list-item">
-								<Icon
-									className="how-to-migrate__process-details-icon"
-									icon={ option.icon }
-									size={ 24 }
-								/>
-								<p className="how-to-migrate__process-details-description">
-									{ option.description }
-								</p>
-							</li>
-						) ) }
-					</ul>
-				</div>
+				<ChecklistCard title={ translate( 'How it works' ) } items={ checklistItems } />
 			</div>
 		);
 	};

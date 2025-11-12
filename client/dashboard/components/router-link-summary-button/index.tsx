@@ -1,11 +1,11 @@
-import SummaryButton from '@automattic/components/src/summary-button';
 import { createLink } from '@tanstack/react-router';
+import DashboardSummaryButton from '../summary-button';
 
 /**
- * This component is a wrapper of `SummaryButton` component and acts as a
- * navigational element. It uses `createLink` from `@tanstack/react-router` to create a
- * link that can be used to navigate to a different route when the button is clicked.
- * It's separate from `SummaryButton` to allow for better separation of concerns, as
- * `SummaryButton` is a pure UI component.
+ * This component wraps `DashboardSummaryButton` (which itself wraps `SummaryButton`)
+ * and transforms it into a navigational element using `createLink` from `@tanstack/react-router`.
+ * When the button is clicked, it navigates to a different route instead of performing
+ * a standard action. This separation allows `SummaryButton` to remain a pure UI component
+ * while providing routing functionality when needed.
  */
-export default createLink( SummaryButton );
+export default createLink( DashboardSummaryButton );

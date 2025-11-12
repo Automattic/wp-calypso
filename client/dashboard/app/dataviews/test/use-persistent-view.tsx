@@ -3,23 +3,13 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-	createRouter,
-	createMemoryHistory,
-	RouterProvider,
-	createRootRoute,
-	createRoute,
-} from '@tanstack/react-router';
+import { createRouter, RouterProvider, createRootRoute, createRoute } from '@tanstack/react-router';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Suspense } from 'react';
-import { useView } from '../use-view';
-import type { Field, View } from '@wordpress/dataviews';
+import { usePersistentView } from '../use-persistent-view';
+import type { View } from '@wordpress/dataviews';
 
-const defaultFields: Field< any >[] = [
-	{ id: 'name', enableSorting: true },
-	{ id: 'date', enableSorting: false },
-];
 const defaultView: View = {
 	type: 'table',
 	layout: { density: 'compact' },
@@ -27,7 +17,7 @@ const defaultView: View = {
 };
 const slug = 'sites';
 
-function createTestWrapper( path = '/' ) {
+function createTestWrapper() {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	let router: ReturnType< typeof createRouter > | undefined;
 
@@ -41,7 +31,6 @@ function createTestWrapper( path = '/' ) {
 
 		router = createRouter( {
 			routeTree: rootRoute.addChildren( [ indexRoute ] ),
-			history: createMemoryHistory( { initialEntries: [ path ] } ),
 		} );
 
 		return (
@@ -71,13 +60,13 @@ function mockUpdateCalypsoPreferences( preferences?: any ) {
 		.reply( 200 );
 }
 
-describe( 'useView', () => {
+describe( 'usePersistentView', () => {
 	describe( 'view', () => {
 		it( 'should return the default view if there is no persisted view yet', async () => {
 			mockGetCalypsoPreferences( {} );
 
 			const { Wrapper } = createTestWrapper();
-			const { result } = renderHook( () => useView( { slug, defaultView, defaultFields } ), {
+			const { result } = renderHook( () => usePersistentView( { slug, defaultView } ), {
 				wrapper: Wrapper,
 			} );
 
@@ -102,7 +91,7 @@ describe( 'useView', () => {
 			} );
 
 			const { Wrapper } = createTestWrapper();
-			const { result } = renderHook( () => useView( { slug, defaultView, defaultFields } ), {
+			const { result } = renderHook( () => usePersistentView( { slug, defaultView } ), {
 				wrapper: Wrapper,
 			} );
 
@@ -111,34 +100,6 @@ describe( 'useView', () => {
 					type: 'grid',
 					layout: { previewSize: 120 },
 					sort: { field: 'name', direction: 'asc' },
-					page: 1,
-					search: '',
-				} );
-			} );
-		} );
-
-		it( 'should sanitize the persisted view', async () => {
-			mockGetCalypsoPreferences( {
-				'hosting-dashboard-dataviews-view-sites': {
-					type: 'grid',
-
-					// invalid preview size
-					layout: { previewSize: 100 },
-
-					// non-sortable field
-					sort: { field: 'date', direction: 'asc' },
-				},
-			} );
-
-			const { Wrapper } = createTestWrapper();
-			const { result } = renderHook( () => useView( { slug, defaultView, defaultFields } ), {
-				wrapper: Wrapper,
-			} );
-
-			await waitFor( () => {
-				expect( result.current.view ).toEqual( {
-					type: 'grid',
-					layout: {},
 					page: 1,
 					search: '',
 				} );
@@ -154,10 +115,15 @@ describe( 'useView', () => {
 				},
 			} );
 
-			const { Wrapper } = createTestWrapper( '/?current-param=current-value&page=2&search=test' );
-			const { result } = renderHook( () => useView( { slug, defaultView, defaultFields } ), {
-				wrapper: Wrapper,
-			} );
+			const { Wrapper } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value', page: 2, search: 'test' };
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView, queryParams } ),
+				{
+					wrapper: Wrapper,
+				}
+			);
 
 			await waitFor( () => {
 				expect( result.current.view ).toEqual( {
@@ -184,7 +150,7 @@ describe( 'useView', () => {
 			} );
 
 			const { Wrapper } = createTestWrapper();
-			const { result } = renderHook( () => useView( { slug, defaultView, defaultFields } ), {
+			const { result } = renderHook( () => usePersistentView( { slug, defaultView } ), {
 				wrapper: Wrapper,
 			} );
 
@@ -211,10 +177,15 @@ describe( 'useView', () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
-			const { Wrapper, getRouter } = createTestWrapper( '/?current-param=current-value' );
-			const { result } = renderHook( () => useView( { slug, defaultView, defaultFields } ), {
-				wrapper: Wrapper,
-			} );
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value' };
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView, queryParams } ),
+				{
+					wrapper: Wrapper,
+				}
+			);
 
 			await waitFor( () => {
 				expect( result.current.updateView ).toBeTruthy();

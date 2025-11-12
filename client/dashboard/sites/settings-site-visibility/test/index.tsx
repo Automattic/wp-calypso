@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+
+import { DomainSubtype } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -35,8 +37,14 @@ function mockTestSite( options: TestSiteOptions ) {
 		return {
 			domain,
 			blog_id: siteId,
-			wpcom_domain: domain.endsWith( '.wordpress.com' ) || domain.endsWith( '.wpcomstaging.com' ),
-			is_wpcom_staging_domain: domain.endsWith( '.wpcomstaging.com' ),
+			subtype: {
+				id:
+					domain.endsWith( '.wordpress.com' ) || domain.endsWith( '.wpcomstaging.com' )
+						? DomainSubtype.DEFAULT_ADDRESS
+						: DomainSubtype.DOMAIN_REGISTRATION,
+				label: 'Does not matter',
+			},
+			tags: domain.endsWith( '.wpcomstaging.com' ) ? [ 'wpcom_staging' ] : [],
 			primary_domain: domain === primary_domain,
 		};
 	} );
@@ -63,7 +71,7 @@ function mockTestSite( options: TestSiteOptions ) {
 		.get( `/rest/v1.4/sites/${ site.ID }/settings` )
 		.query( true )
 		.reply( 200, settings )
-		.get( `/rest/v1.2/sites/${ site.ID }/domains` )
+		.get( '/rest/v1.2/all-domains' )
 		.query( true )
 		.reply( 200, { domains: domainObjects } );
 
