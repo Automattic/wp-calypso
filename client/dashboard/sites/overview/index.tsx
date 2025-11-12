@@ -197,19 +197,21 @@ function SiteOverview( {
 		}
 
 		return (
-			<>
-				<StagingSiteSyncDropdown siteSlug={ siteSlug } />
-				<Button
-					ref={ wpAdminButtonRef }
-					__next40pxDefaultSize
-					variant="primary"
-					href={ site.options.admin_url }
-					icon={ wordpress }
-				>
-					{ __( 'WP Admin' ) }
-				</Button>
+			<HStack justify="space-between">
+				<HStack justify={ isSmallViewport ? 'flex-start' : 'flex-end' } style={ { width: 'auto' } }>
+					<StagingSiteSyncDropdown siteSlug={ siteSlug } />
+					<Button
+						ref={ wpAdminButtonRef }
+						__next40pxDefaultSize
+						variant="primary"
+						href={ site.options.admin_url }
+						icon={ wordpress }
+					>
+						{ __( 'WP Admin' ) }
+					</Button>
+				</HStack>
 				<SiteActionMenu site={ site } />
-			</>
+			</HStack>
 		);
 	};
 
