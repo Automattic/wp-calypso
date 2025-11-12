@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
@@ -139,7 +140,7 @@ export default function LicensePreview( {
 		const redirectUrl = isWPCOMLicense
 			? A4A_SITES_LINK_NEEDS_SETUP
 			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
-		if ( paymentMethodRequired && ! referral ) {
+		if ( paymentMethodRequired && ! referral && ! isEnabled( 'a4a-bd-checkout' ) ) {
 			const noticeLinkHref = addQueryArgs(
 				{
 					return: redirectUrl,
