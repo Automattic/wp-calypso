@@ -59,9 +59,7 @@ export function canUseTheme( state, siteId, themeId ) {
 		);
 	}
 
-	// e.g. Course theme
-	const features = themeTier?.featureList ?? [ themeTier?.feature ];
-	if ( features.includes( WPCOM_FEATURES_SENSEI_THEMES ) ) {
+	if ( themeTier.slug === 'sensei' ) {
 		const featureChecks = [ WPCOM_FEATURES_SENSEI_THEMES, WPCOM_FEATURES_ATOMIC ];
 		return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
 	}
