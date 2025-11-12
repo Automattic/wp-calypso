@@ -18,6 +18,7 @@ import type { Email } from './types';
 import './style.scss';
 
 function Emails() {
+	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
 	const { data: allDomains, isLoading: isLoadingDomains } = useQuery( domainsQuery() );
 	const domains = ( allDomains ?? [] ).filter(
 		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
@@ -81,11 +82,12 @@ function Emails() {
 		slug: 'emails',
 		defaultView: DEFAULT_VIEW,
 		queryParams: searchParams,
+		queryParamFilterFields: [ 'domainName' ],
 	} );
 
 	const actions = useActions();
 
-	const emailFields = getFields( domainsWithEmails );
+	const emailFields = getFields( domainsWithEmails, domainNameFilter );
 
 	const { data: filteredData, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( emails, view, emailFields );
