@@ -1,14 +1,17 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
+import { securityTwoStepAuthBackupCodesRoute } from '../../../../app/router/me';
 import { ActionList } from '../../../../components/action-list';
+import ConfirmModal from '../../../../components/confirm-modal';
 import DisableTwoStepDialog from './disable-two-step-dialog';
-import GenerateBackupCodesDialog from './generate-backup-codes-dialog';
 
 export default function TwoStepAuthActions() {
+	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const { two_step_enhanced_security_forced } = userSettings;
@@ -69,9 +72,19 @@ export default function TwoStepAuthActions() {
 			{ showDisableDialog && (
 				<DisableTwoStepDialog onClose={ () => setShowDisableDialog( false ) } />
 			) }
-			{ showGenerateBackupCodesDialog && (
-				<GenerateBackupCodesDialog onClose={ () => setShowGenerateBackupCodesDialog( false ) } />
-			) }
+			<ConfirmModal
+				__experimentalHideHeader={ false }
+				title={ __( 'Generate new backup codes' ) }
+				size="medium"
+				isOpen={ showGenerateBackupCodesDialog }
+				onCancel={ () => setShowGenerateBackupCodesDialog( false ) }
+				onConfirm={ () => router.navigate( { to: securityTwoStepAuthBackupCodesRoute.fullPath } ) }
+				confirmButtonProps={ { label: __( 'Continue' ) } }
+			>
+				{ __(
+					'When you generate new backup codes, you must print or download the new codes. Your previous codes will no longer work.'
+				) }
+			</ConfirmModal>
 		</>
 	);
 }
