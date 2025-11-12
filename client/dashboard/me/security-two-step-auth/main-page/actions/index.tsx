@@ -38,7 +38,7 @@ export default function TwoStepAuthActions() {
 							variant="secondary"
 							size="compact"
 						>
-							{ __( 'Generate backup codes' ) }
+							{ __( 'Generate new codes' ) }
 						</Button>
 					}
 				/>
