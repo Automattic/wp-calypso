@@ -3,6 +3,7 @@ import {
 	FEATURE_WOOP,
 	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_COMMUNITY_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_SENSEI_THEMES,
 } from '@automattic/calypso-products';
@@ -31,6 +32,32 @@ describe( 'canUseTheme', () => {
 			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
 
 			expect( canUseTheme( state, siteId, 'strand' ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'personal', () => {
+		const themeTier = {
+			slug: 'personal',
+			feature: 'personal-themes',
+			platform: 'simple',
+		};
+
+		it( 'returns true if the site has the Personal Themes feature', () => {
+			mockedSiteHasFeature.mockImplementation( ( _state, _siteId, feature ) =>
+				[ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ].includes( feature )
+			);
+
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'course' ) ).toBe( true );
+		} );
+
+		it( 'returns false otherwise', () => {
+			mockedSiteHasFeature.mockReturnValue( false );
+
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'course' ) ).toBe( false );
 		} );
 	} );
 
