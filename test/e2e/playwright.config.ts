@@ -1,4 +1,4 @@
-import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
+import { defineConfig, devices, type ReporterDescription } from '@playwright/test';
 import { tags } from './lib/pw-base';
 
 const outputPath = './output';

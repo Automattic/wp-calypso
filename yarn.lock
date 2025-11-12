@@ -664,7 +664,7 @@ __metadata:
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
     nock: "npm:^14.0.10"
-    playwright: "npm:1.48.2"
+    playwright: "npm:1.56.1"
     totp-generator: "npm:^0.0.14"
     typescript: "npm:^5.8.3"
   languageName: unknown
@@ -30280,6 +30280,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright-core@npm:1.56.1"
+  bin:
+    playwright-core: cli.js
+  checksum: ffd40142b99c68678b387445d5b42f1fee4ab0b65d983058c37f342e5629f9cdbdac0506ea80a0dfd41a8f9f13345bad54e9a8c35826ef66dc765f4eb3db8da7
+  languageName: node
+  linkType: hard
+
 "playwright@npm:1.48.2":
   version: 1.48.2
   resolution: "playwright@npm:1.48.2"
@@ -30292,6 +30301,21 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: ecde4ee4767556868b24d7700f3502692a3cb14c8ef127052b51b48833ffcce80942954fb188a9b72505122b48b1b625d1bb486721e1c4f2e980215328ba1ad5
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright@npm:1.56.1"
+  dependencies:
+    fsevents: "npm:2.3.2"
+    playwright-core: "npm:1.56.1"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    playwright: cli.js
+  checksum: 8e9965aede86df0f4722063385748498977b219630a40a10d1b82b8bd8d4d4e9b6b65ecbfa024331a30800163161aca292fb6dd7446c531a1ad25f4155625ab4
   languageName: node
   linkType: hard
 
@@ -39861,7 +39885,7 @@ __metadata:
     jest-teamcity: "npm:^1.12.0"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
-    playwright: "npm:1.48.2"
+    playwright: "npm:1.56.1"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"
   languageName: unknown
