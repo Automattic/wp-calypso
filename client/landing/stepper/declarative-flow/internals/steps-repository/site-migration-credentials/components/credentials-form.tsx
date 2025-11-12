@@ -18,9 +18,10 @@ interface CredentialsFormProps {
 		applicationPasswordsInfo?: ApplicationPasswordsInfo,
 		hostingProviderSlug?: string
 	) => void;
+	autoSubmit?: boolean;
 }
 
-export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
+export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, autoSubmit = false } ) => {
 	const translate = useTranslate();
 
 	const {
@@ -31,7 +32,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		submitHandler,
 		canBypassVerification,
 		clearErrors,
-	} = useCredentialsForm( onSubmit );
+	} = useCredentialsForm( onSubmit, { autoSubmit } );
 
 	const queryError = useQuery().get( 'error' ) || null;
 

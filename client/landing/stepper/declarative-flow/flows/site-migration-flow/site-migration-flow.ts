@@ -701,7 +701,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					// User doesn't have SSH access, redirect to credentials flow
 					if ( destination === 'no-ssh-access' ) {
-						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
+						return navigate(
+							paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug, skipSSH: 'true' } )
+						);
 					}
 
 					// Migration completed during polling, go to overview

@@ -70,7 +70,9 @@ const SiteMigrationCredentials: StepType< {
 	const translate = useTranslate();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
 	const dispatch = useDispatch();
-	const fromUrl = useQuery().get( 'from' ) || '';
+	const queryParams = useQuery();
+	const fromUrl = queryParams.get( 'from' ) || '';
+	const skipSSH = queryParams.get( 'skipSSH' ) === 'true';
 
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
@@ -107,7 +109,8 @@ const SiteMigrationCredentials: StepType< {
 		const isHostingSupported = isHostingSupportedForSSHMigration( hostingProviderSlug );
 
 		// If SSH migration is available and hosting is supported, redirect to SSH flow
-		if ( isSSHMigrationAvailable && isHostingSupported ) {
+		// Skip if user explicitly chose not to use SSH (skipSSH flag)
+		if ( isSSHMigrationAvailable && isHostingSupported && ! skipSSH ) {
 			siteId && dispatch( resetSite( siteId ) );
 			return navigation.submit?.( {
 				action: 'redirect-to-ssh',
@@ -169,7 +172,7 @@ const SiteMigrationCredentials: StepType< {
 	const subHeaderText = translate(
 		'Help us get started by providing some basic details about your current website.'
 	);
-	const mainForm = <CredentialsForm onSubmit={ handleSubmit } />;
+	const mainForm = <CredentialsForm onSubmit={ handleSubmit } autoSubmit={ skipSSH } />;
 	const skipButton = <NeedHelpLink onHelpLinkClicked={ handleSkip } />;
 
 	return (
