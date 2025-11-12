@@ -109,6 +109,7 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					onNoSSHAccess={ options.onNoSSHAccess }
 					hostDisplayName={ hostDisplayName }
 					helpLink={ helpLink }
+					isInputDisabled={ options.isInputDisabled }
 				/>
 			),
 		},
