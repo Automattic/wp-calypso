@@ -125,8 +125,9 @@ export default function DomainConnectionVerification( {
 						<InlineSupportLink supportContext="general-support-options">
 							{ __( 'Contact support' ) }
 						</InlineSupportLink>
-						{ /* TODO: Add additional help resources or links here in the future */ }
-						{ /* <ExternalLink href="#" children={ __( 'Registrar instructions' ) } /> */ }
+						<InlineSupportLink supportContext="transfer-domain-registrar-login">
+							{ __( 'Registrar instructions' ) }
+						</InlineSupportLink>
 					</VStack>
 				</VStack>
 			</CardBody>
