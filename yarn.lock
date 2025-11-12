@@ -656,7 +656,6 @@ __metadata:
     "@jest/types": "npm:^29.6.3"
     "@playwright/browser-chromium": "npm:1.56.1"
     "@playwright/browser-firefox": "npm:1.56.1"
-    "@playwright/test": "npm:1.56.1"
     "@types/node": "npm:^22.7.5"
     "@types/totp-generator": "npm:^0.0.8"
     "@wordpress/i18n": "npm:^5.23.0"
@@ -665,6 +664,7 @@ __metadata:
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
     nock: "npm:^14.0.10"
+    playwright: "npm:1.56.1"
     totp-generator: "npm:^0.0.14"
     typescript: "npm:^5.8.3"
   languageName: unknown
