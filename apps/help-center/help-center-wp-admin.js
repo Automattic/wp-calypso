@@ -28,8 +28,7 @@ function AdminHelpCenterContent() {
 
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
 	const supportLinks = document.querySelectorAll( '[data-target="wpcom-help-center"]' );
-	const urlParams = new URLSearchParams( window.location.search );
-	const hasHelpCenterMenuPanel = urlParams.get( 'flags' ) === 'help-center-menu-panel';
+	const hasHelpCenterMenuPanel = helpCenterData.isMenuPanelEnabled;
 
 	const closeHelpCenterWhenNotificationsPanelIsOpened = useCallback( () => {
 		const helpCenterContainerIsVisible = document.querySelector( '.help-center__container' );

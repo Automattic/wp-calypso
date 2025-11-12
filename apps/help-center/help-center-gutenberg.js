@@ -29,9 +29,7 @@ function HelpCenterContent() {
 
 	const canvasMode = useCanvasMode();
 
-	// Check if the new menu panel feature is enabled
-	const urlParams = new URLSearchParams( window.location.search );
-	const hasHelpCenterMenuPanel = urlParams.get( 'flags' ) === 'help-center-menu-panel';
+	const hasHelpCenterMenuPanel = helpCenterData.isMenuPanelEnabled;
 
 	const trackIconInteraction = useCallback( () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
