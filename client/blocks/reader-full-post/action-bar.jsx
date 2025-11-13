@@ -16,7 +16,7 @@ const ReaderFullPostActionBar = ( {
 	showComments,
 	renderMarkAsSeenButton,
 } ) => {
-	const canEdit = userCan( 'edit_post', post );
+	const canEdit = site && userCan( 'edit_post', post );
 	const showLikes = shouldShowLikes( post );
 
 	return (

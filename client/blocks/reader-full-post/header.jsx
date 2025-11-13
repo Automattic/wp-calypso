@@ -7,9 +7,23 @@ import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import AutoDirection from 'calypso/components/auto-direction';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import { recordPermalinkClick } from 'calypso/reader/stats';
+import ReaderFullPostHeaderMeta from './header-meta';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
-const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => {
+const ReaderFullPostHeader = ( {
+	post,
+	authorProfile,
+	layout = 'default',
+	author,
+	siteIcon,
+	feedIcon,
+	siteName,
+	siteUrl,
+	feedUrl,
+	feedId,
+	siteId,
+	onFollowToggle,
+} ) => {
 	const handlePermalinkClick = () => {
 		recordPermalinkClick( 'full_post_title', post );
 	};
@@ -31,10 +45,11 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 	}
 
 	// Rather than pass in additional props for the `recent` layout, we extract the props we need from authorProfile.
-	const { props: { siteName, followCount } = {} } = authorProfile || {};
+	const { props: { siteName: recentSiteName, followCount } = {} } = authorProfile || {};
 
 	const isDefaultLayout = layout === 'default';
 	const iconSrc = getPostIcon( post );
+	const displaySiteName = layout === 'recent' ? recentSiteName : siteName;
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
@@ -48,7 +63,11 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 						post={ post }
 					>
 						{ iconSrc ? (
-							<img src={ iconSrc } alt={ siteName } className="reader-full-post__site-icon" />
+							<img
+								src={ iconSrc }
+								alt={ displaySiteName }
+								className="reader-full-post__site-icon"
+							/>
 						) : (
 							<Gridicon
 								icon="globe"
@@ -73,11 +92,24 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 					</h1>
 				</AutoDirection>
 			) : null }
-			{ isDefaultLayout && <div className="reader-full-post__author-block">{ authorProfile }</div> }
+			{ isDefaultLayout && (
+				<ReaderFullPostHeaderMeta
+					post={ post }
+					author={ author }
+					siteIcon={ siteIcon }
+					feedIcon={ feedIcon }
+					siteName={ siteName }
+					siteUrl={ siteUrl }
+					feedUrl={ feedUrl }
+					feedId={ feedId }
+					siteId={ siteId }
+					onFollowToggle={ onFollowToggle }
+				/>
+			) }
 			<div className="reader-full-post__header-meta">
 				{ layout === 'recent' && (
 					<>
-						{ siteName && (
+						{ displaySiteName && (
 							<span className="reader-full-post__header-site-name">
 								<ReaderSiteStreamLink
 									className="reader-full-post__header-site-name-link"
@@ -85,7 +117,7 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 									siteId={ post.blog_ID }
 									post={ post }
 								>
-									{ siteName }
+									{ displaySiteName }
 								</ReaderSiteStreamLink>
 							</span>
 						) }
@@ -124,6 +156,16 @@ ReaderFullPostHeader.propTypes = {
 	post: PropTypes.object.isRequired,
 	children: PropTypes.node,
 	layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
+	authorProfile: PropTypes.node,
+	author: PropTypes.object,
+	siteIcon: PropTypes.string,
+	feedIcon: PropTypes.string,
+	siteName: PropTypes.string,
+	siteUrl: PropTypes.string,
+	feedUrl: PropTypes.string,
+	feedId: PropTypes.number,
+	siteId: PropTypes.number,
+	onFollowToggle: PropTypes.func,
 };
 
 export default ReaderFullPostHeader;
