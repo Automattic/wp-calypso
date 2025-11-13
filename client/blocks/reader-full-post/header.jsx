@@ -3,7 +3,6 @@ import { formatNumberCompact } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import AutoDirection from 'calypso/components/auto-direction';
 import { getPostIcon } from 'calypso/reader/get-helpers';
@@ -116,7 +115,6 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 					</span>
 				) : null }
 			</div>
-			{ isDefaultLayout && <TagsList post={ post } tagsToShow={ 5 } /> }
 		</div>
 	);
 	/* eslint-enable react/jsx-no-target-blank */
