@@ -31,6 +31,7 @@ import DnsImportDialog from './dns-import-dialog';
 import EmailSetup from './email-setup';
 import { useDnsFields } from './fields';
 import ImportBindFileButton from './import-bind-file-button';
+import { DomainDnsNameserversNotice } from './notice';
 import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
@@ -263,21 +264,6 @@ export default function DomainDns() {
 		);
 	};
 
-	const renderExternalNameserversNotice = () => {
-		if ( domain.has_wpcom_nameservers ) {
-			return null;
-		}
-
-		// TODO: Add a link to the name servers page or connection setup, once we have the pages
-		return (
-			<Notice variant="warning" title={ __( 'Your domain is using external name servers' ) }>
-				{ __(
-					'This means the DNS records you are editing will not be in effect until you switch to use WordPress.com name servers.'
-				) }
-			</Notice>
-		);
-	};
-
 	return (
 		<PageLayout
 			size="small"
@@ -326,7 +312,7 @@ export default function DomainDns() {
 			}
 		>
 			{ renderDnsRecordsExplanationNotice() }
-			{ renderExternalNameserversNotice() }
+			<DomainDnsNameserversNotice domainName={ domainName } domain={ domain } />
 			{ renderDefaultARecordsNotice() }
 			{ renderDefaultCnameRecordNotice() }
 			<DataViewsCard>
