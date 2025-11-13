@@ -390,7 +390,9 @@ const ConnectedTheme = connect(
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
 )( localize( Theme ) );
 
-export default ( props ) => {
+const ThemeWithGlobalStyles = ( props ) => {
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( props.siteId );
 	return <ConnectedTheme { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
 };
+
+export default ThemeWithGlobalStyles;
