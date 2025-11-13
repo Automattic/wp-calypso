@@ -159,6 +159,10 @@ export default function DomainForwardingForm( {
 				isValid: {
 					required: true,
 					custom: ( item ) => {
+						// Only validate subdomain when in subdomain mode
+						if ( item.sourceType === 'root' ) {
+							return null;
+						}
 						if ( ! isSubdomainValid( item.subdomain ) ) {
 							return __(
 								'Subdomain should be a valid domain label - up to 63 characters, starting with a letter or number, and containing only letters, numbers, and hyphens.'
@@ -176,8 +180,13 @@ export default function DomainForwardingForm( {
 				isValid: {
 					required: true,
 					custom: ( item ) => {
-						if ( ! isTargetUrlValid( item.targetUrl, domainName ) ) {
-							return __( 'Please enter a valid URL.' );
+						const sourceWithSubdomain = item.subdomain
+							? `${ item.subdomain }.${ domainName }`
+							: domainName;
+						const sourceDomain = item.sourceType === 'root' ? domainName : sourceWithSubdomain;
+						const validationError = isTargetUrlValid( item.targetUrl, sourceDomain );
+						if ( validationError !== null ) {
+							return validationError;
 						}
 						return null;
 					},

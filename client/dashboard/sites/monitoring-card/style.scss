@@ -39,10 +39,6 @@
 }
 
 .dashboard-monitoring-card__line-chart {
-	flex-direction: column-reverse !important;
-	gap: 20px;
-	justify-content: start;
-
 	svg {
 		/* Ensure the chart numbers are not clipped. */
 		overflow: visible;
