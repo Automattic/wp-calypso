@@ -388,8 +388,13 @@ class ThemeSheet extends Component {
 	}
 
 	shouldRenderPreviewButton() {
-		const { isWPForTeamsSite } = this.props;
-		return this.isThemeAvailable() && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
+		const { isWPForTeamsSite, demoUrl, isActive, retired } = this.props;
+
+		if ( retired && ! isActive ) {
+			return false;
+		}
+
+		return demoUrl && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 	}
 
 	shouldRenderUnlockStyleButton() {
