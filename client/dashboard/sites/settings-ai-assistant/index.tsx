@@ -1,19 +1,18 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalText as Text } from '@wordpress/components';
+import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { AIAssistantForm } from './ai-assistant-form';
 
 export default function AISiteAssistantSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
 
-	if ( ! site ) {
+	if ( ! settings ) {
 		return null;
 	}
-
-	// console.log( 'site', site );
 
 	return (
 		<PageLayout
@@ -26,9 +25,7 @@ export default function AISiteAssistantSettings( { siteSlug }: { siteSlug: strin
 				/>
 			}
 		>
-			<Text as="p">
-				{ __( 'There are no AI Site Assistant settings available for this site yet.' ) }
-			</Text>
+			<AIAssistantForm site={ site } settings={ settings } />
 		</PageLayout>
 	);
 }
