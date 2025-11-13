@@ -1,4 +1,9 @@
-import { __experimentalHStack as HStack, Dropdown, Button } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	Dropdown,
+	Button,
+	ScrollLock,
+} from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
 import SwitcherContent from './switcher-content';
 import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
@@ -60,17 +65,20 @@ export default function Switcher< T >( {
 				</Button>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<SwitcherContent
-					items={ items }
-					searchableFields={ searchableFields }
-					getItemUrl={ getItemUrl }
-					renderItemMedia={ renderItemMedia }
-					renderItemTitle={ renderItemTitle }
-					renderItemDescription={ renderItemDescription }
-					onClose={ onClose }
-				>
-					{ children?.( { onClose } ) }
-				</SwitcherContent>
+				<>
+					<ScrollLock />
+					<SwitcherContent
+						items={ items }
+						searchableFields={ searchableFields }
+						getItemUrl={ getItemUrl }
+						renderItemMedia={ renderItemMedia }
+						renderItemTitle={ renderItemTitle }
+						renderItemDescription={ renderItemDescription }
+						onClose={ onClose }
+					>
+						{ children?.( { onClose } ) }
+					</SwitcherContent>
+				</>
 			) }
 		/>
 	);

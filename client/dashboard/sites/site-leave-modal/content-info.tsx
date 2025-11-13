@@ -18,8 +18,10 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
+import { purchasesRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import type { Site, User } from '@automattic/api-core';
 
 interface ContentInfoProps {
@@ -38,6 +40,15 @@ function isSiteOwner( user: User, site: Site ) {
 function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
 	const { recordTracksEvent } = useAnalytics();
 
+	const managePurchasesButtonProps = {
+		__next40pxDefaultSize: true,
+		text: __( 'Manage purchases' ),
+		variant: 'primary' as const,
+		onClick: () => {
+			recordTracksEvent( 'calypso_dashboard_site_leave_modal_manage_purchases_click' );
+		},
+	};
+
 	return (
 		<>
 			<VStack spacing={ 0 }>
@@ -51,16 +62,18 @@ function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
 				<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 					{ __( 'Cancel' ) }
 				</Button>
-				<Button
-					__next40pxDefaultSize
-					variant="primary"
-					href={ `/purchases/subscriptions/${ site.slug }` }
-					onClick={ () =>
-						recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_manage_purchases_click' )
-					}
-				>
-					{ __( 'Manage purchases' ) }
-				</Button>
+				{ isDashboardBackport() ? (
+					<Button
+						{ ...managePurchasesButtonProps }
+						href={ `/purchases/subscriptions/${ site.slug }` }
+					/>
+				) : (
+					<RouterLinkButton
+						{ ...managePurchasesButtonProps }
+						to={ purchasesRoute.fullPath }
+						search={ { site: site.slug } }
+					/>
+				) }
 			</ButtonStack>
 		</>
 	);
