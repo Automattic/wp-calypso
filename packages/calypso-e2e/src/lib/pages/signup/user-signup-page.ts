@@ -1,21 +1,6 @@
 import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
 import type { NewSiteResponse, NewUserResponse } from '../../../types/rest-api-client.types';
-const selectors = {
-	// Fields
-	emailInput: 'input[name="email"]',
-	usernameInput: 'input[name="username"]',
-	passwordInput: 'input[name="password"]',
-
-	// WPCC specific fields
-	createWPCOMAccountButton: 'button:text("Create a WordPress.com Account"):visible',
-	firstNameInput: 'input[name="firstName"]',
-	lastNameInput: 'input[name="lastName"]',
-
-	// Buttons
-	submitButton: 'button[type="submit"]',
-	createAccountButton: 'button:text("Create an account")',
-};
 
 /**
  * This object represents multiple pages on WordPress.com:
@@ -26,8 +11,16 @@ const selectors = {
  */
 export class UserSignupPage {
 	private page: Page;
+
 	readonly createYourAccountHeading: Locator;
-	private readonly emailInputLocator: Locator;
+	readonly emailInput: Locator;
+	readonly usernameInput: Locator;
+	readonly passwordInput: Locator;
+	readonly firstNameInput: Locator;
+	readonly lastNameInput: Locator;
+	readonly submitButton: Locator;
+	readonly continueButton: Locator;
+	readonly createWPCOMAccountButton: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -36,10 +29,20 @@ export class UserSignupPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+
 		this.createYourAccountHeading = this.page.getByRole( 'heading', {
 			name: 'Create your account',
 		} );
-		this.emailInputLocator = this.page.locator( selectors.emailInput );
+		this.emailInput = this.page.locator( 'input[name="email"]' );
+		this.usernameInput = this.page.locator( 'input[name="username"]' );
+		this.passwordInput = this.page.locator( 'input[name="password"]' );
+		this.firstNameInput = this.page.locator( 'input[name="firstName"]' );
+		this.lastNameInput = this.page.locator( 'input[name="lastName"]' );
+		this.submitButton = this.page.locator( 'button[type="submit"]' );
+		this.continueButton = this.page.locator( 'button:text("Continue")' );
+		this.createWPCOMAccountButton = this.page.locator(
+			'button:text("Create a WordPress.com Account"):visible'
+		);
 	}
 
 	/**
@@ -54,7 +57,6 @@ export class UserSignupPage {
 		const useEmailInsteadButton = this.page.getByRole( 'button', {
 			name: /use email/i,
 		} );
-		const createWpcomAccountButton = this.page.locator( selectors.createWPCOMAccountButton );
 		const waitForAttached = ( locator: Locator ) =>
 			locator.waitFor( { state: 'attached', timeout: 30_000 } ).catch( () => null );
 
@@ -63,20 +65,20 @@ export class UserSignupPage {
 			this.createYourAccountHeading
 				.waitFor( { state: 'visible', timeout: 30_000 } )
 				.catch( () => null ),
-			waitForAttached( this.emailInputLocator ),
+			waitForAttached( this.emailInput ),
 			waitForAttached( continueWithEmailButton ),
 			waitForAttached( useEmailInsteadButton ),
-			waitForAttached( createWpcomAccountButton ),
+			waitForAttached( this.createWPCOMAccountButton ),
 		] );
 
 		const ensureEmailVisible = async () => {
-			await this.emailInputLocator.waitFor( { state: 'visible', timeout: 30_000 } );
+			await this.emailInput.waitFor( { state: 'visible', timeout: 30_000 } );
 		};
 
 		let emailVisible = false;
 		try {
-			await this.emailInputLocator.waitFor( { state: 'attached', timeout: 5_000 } );
-			emailVisible = await this.emailInputLocator.isVisible();
+			await this.emailInput.waitFor( { state: 'attached', timeout: 5_000 } );
+			emailVisible = await this.emailInput.isVisible();
 		} catch {
 			emailVisible = false;
 		}
@@ -85,7 +87,7 @@ export class UserSignupPage {
 			const candidateButtons = [
 				continueWithEmailButton,
 				useEmailInsteadButton,
-				createWpcomAccountButton,
+				this.createWPCOMAccountButton,
 			];
 
 			for ( const button of candidateButtons ) {
@@ -100,13 +102,13 @@ export class UserSignupPage {
 				}
 			}
 
-			await this.emailInputLocator.waitFor( { state: 'attached', timeout: 30_000 } );
+			await this.emailInput.waitFor( { state: 'attached', timeout: 30_000 } );
 			await ensureEmailVisible();
 		} else {
 			await ensureEmailVisible();
 		}
 
-		await this.emailInputLocator.scrollIntoViewIfNeeded();
+		await this.emailInput.scrollIntoViewIfNeeded();
 	}
 
 	/**
@@ -153,14 +155,14 @@ export class UserSignupPage {
 	 */
 	async signup( email: string, username: string, password: string ): Promise< NewUserResponse > {
 		await this.waitForSignupForm();
-		await this.page.fill( selectors.emailInput, email );
-		await this.page.fill( selectors.usernameInput, username );
-		await this.page.fill( selectors.passwordInput, password );
+		await this.emailInput.fill( email );
+		await this.usernameInput.fill( username );
+		await this.passwordInput.fill( password );
 
 		const responsePromise = this.captureNewUserResponse();
 
 		// Trigger the signup and wait for the captured response.
-		await this.page.click( selectors.submitButton );
+		await this.submitButton.click();
 		return responsePromise;
 	}
 
@@ -175,12 +177,12 @@ export class UserSignupPage {
 	 */
 	async signupWithEmail( email: string ): Promise< NewUserResponse > {
 		await this.waitForSignupForm();
-		await this.page.fill( selectors.emailInput, email );
+		await this.emailInput.fill( email );
 
 		const responsePromise = this.captureNewUserResponse();
 
 		// Trigger the signup.
-		await this.page.click( selectors.submitButton );
+		await this.submitButton.click();
 
 		// Wait for the promise to be resolved by the route handler.
 		return responsePromise;
@@ -277,7 +279,7 @@ export class UserSignupPage {
 	 */
 	async signupWoo( email: string ): Promise< NewUserResponse > {
 		await this.waitForSignupForm();
-		await this.page.fill( selectors.emailInput, email );
+		await this.emailInput.fill( email );
 
 		// Detect redirection without keeping the listener around
 		const redirectDetected = new Promise< string >( ( resolve ) => {
@@ -293,7 +295,7 @@ export class UserSignupPage {
 
 		// Ensure response is captured correctly
 		const responsePromise = this.page.waitForResponse( /\/users\/new\?[^?]*$/ );
-		await this.page.click( selectors.submitButton );
+		await this.submitButton.click();
 
 		const [ response ] = await Promise.all( [ responsePromise, redirectDetected ] );
 
@@ -312,12 +314,11 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupThroughInvite( email: string ): Promise< NewUserResponse > {
-		await this.page.fill( selectors.emailInput, email );
+		await this.emailInput.fill( email );
 
-		const [ response ] = await Promise.all( [
-			this.page.waitForResponse( /\/users\/new\?[^?]*$/ ),
-			this.page.click( selectors.createAccountButton ),
-		] );
+		const responsePromise = this.page.waitForResponse( /\/users\/new\?[^?]*$/ );
+		await this.continueButton.click();
+		const response = await responsePromise;
 
 		if ( ! response ) {
 			throw new Error( 'Failed to create new user through invite.' );
