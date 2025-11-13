@@ -30,6 +30,7 @@ export class ImportContentFromSubstackPage {
 				siteSlug,
 			} )
 		);
+		await this.dismissCookieBanner();
 	}
 
 	/**
@@ -77,7 +78,6 @@ export class ImportContentFromSubstackPage {
 	 */
 	async enterSubstackSiteAddressAndContinue( url: string ): Promise< void > {
 		await this.page.getByPlaceholder( 'https://example.substack.com' ).fill( url );
-		await this.dismissCookieBanner();
 		await this.page.getByRole( 'button', { name: 'Continue' } ).click();
 	}
 
@@ -102,7 +102,6 @@ export class ImportContentFromSubstackPage {
 	 * Click the "Continue" button.
 	 */
 	async clickContinue(): Promise< void > {
-		await this.dismissCookieBanner();
 		await this.page.getByRole( 'button', { name: 'Continue' } ).click();
 	}
 
