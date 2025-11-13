@@ -27,7 +27,7 @@ export class AudioBlock {
 	}
 
 	/**
-	 * Uplaods the target file at the supplied path to WPCOM.
+	 * Uploads the target file at the supplied path to WPCOM.
 	 *
 	 * @param {string} path Path to the file on disk.
 	 */
