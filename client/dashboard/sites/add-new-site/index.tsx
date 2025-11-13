@@ -83,14 +83,14 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 				) }
 				<MenuItem
 					icon={ <WordPressLogo /> }
-					title="WordPress.com"
+					title="Create a blank site"
 					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
 					onClick={ wordpressClick }
 					href={ addQueryArgs( '/start', {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }
-					aria-label={ __( 'Add WordPress.com site' ) }
+					aria-label={ __( 'Create a blank site on WordPress.com' ) }
 				/>
 				<MenuItem
 					icon={ <BigSkyLogo.Mark /> }
