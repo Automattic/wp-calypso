@@ -15,7 +15,6 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
-import { HelpCenterBigSky } from './help-center-big-sky';
 import { HelpCenterChat } from './help-center-chat';
 import { HelpCenterChatHistory } from './help-center-chat-history';
 import { HelpCenterContactForm } from './help-center-contact-form';
@@ -137,7 +136,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 							/>
 						}
 					/>
-					<Route path="/bigsky" element={ <HelpCenterBigSky /> } />
 					<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />
 				</Routes>
 			</Wrapper>

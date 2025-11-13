@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-imports */
 import { __ } from '@wordpress/i18n';
-import { useNavigate } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useHelpCenterSearch } from '../hooks';
@@ -24,14 +23,12 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	const isSiteOwner = site?.site_owner === currentUser?.ID;
 	const launchpadEnabled = site?.options?.launchpad_screen === 'full' && isSiteOwner;
-	const navigate = useNavigate();
 
 	return (
 		<div className="inline-help__search">
 			<HelpCenterRecentConversations />
 			<BlockedZendeskNotice />
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
-			<button onClick={ () => navigate( '/bigsky' ) }>Big Sky</button>
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }
 				onSearch={ setSearchQueryAndEmailSubject }

@@ -9,5 +9,3 @@ export { default as Mail } from './icons/mail';
 export { useHelpSearchQuery } from './hooks/use-help-search-query';
 export { HelpCenterChat } from './components/help-center-chat';
 export { HelpCenterRequiredContextProvider } from './contexts/HelpCenterContext';
-export { default as HelpCenterContent } from './components/help-center-content';
-export { PersistentRouter } from './components/persistent-router';

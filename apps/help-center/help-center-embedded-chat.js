@@ -1,10 +1,10 @@
 import './config';
 import {
+	HelpCenterChat as EmbeddedChat,
 	HelpCenterRequiredContextProvider,
-	HelpCenterContent,
-	PersistentRouter,
 } from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import './help-center.scss';
 
 const queryClient = new QueryClient();
@@ -19,20 +19,28 @@ export default function HelpCenterEmbeddedChat( {
 	isCommerceGarden,
 } ) {
 	return (
-		<PersistentRouter>
-			<QueryClientProvider client={ queryClient }>
-				<HelpCenterRequiredContextProvider
-					locale={ locale }
-					sectionName={ sectionName || 'wp-admin' }
-					currentUser={ currentUser }
-					site={ site }
-					hasPurchases={ hasPurchases }
-					onboardingUrl={ onboardingUrl }
-					isCommerceGarden={ isCommerceGarden }
-				>
-					<HelpCenterContent currentRoute="/bigsky" />
-				</HelpCenterRequiredContextProvider>
-			</QueryClientProvider>
-		</PersistentRouter>
+		<MemoryRouter>
+			<Routes>
+				<Route path="/odie" element={ <div>Hello</div> } />
+				<Route
+					path="/"
+					element={
+						<QueryClientProvider client={ queryClient }>
+							<HelpCenterRequiredContextProvider
+								locale={ locale }
+								sectionName={ sectionName || 'wp-admin' }
+								currentUser={ currentUser }
+								site={ site }
+								hasPurchases={ hasPurchases }
+								onboardingUrl={ onboardingUrl }
+								isCommerceGarden={ isCommerceGarden }
+							>
+								<EmbeddedChat isLoadingStatus={ false } isUserEligibleForPaidSupport={ false } />
+							</HelpCenterRequiredContextProvider>
+						</QueryClientProvider>
+					}
+				/>
+			</Routes>
+		</MemoryRouter>
 	);
 }

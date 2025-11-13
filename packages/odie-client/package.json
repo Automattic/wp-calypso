@@ -41,8 +41,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.22",
-		"@automattic/agenttic-ui": "^0.1.22",
+		"@automattic/agenttic-ui": "^0.1.13",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
