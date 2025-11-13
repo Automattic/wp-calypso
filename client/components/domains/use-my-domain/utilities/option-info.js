@@ -47,6 +47,14 @@ const transferSupported = {
 	},
 	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 	get benefits() {
+		if ( isDomainConnectionRedesign ) {
+			return [
+				__( 'Free domain name renewal for 1 year' ),
+				__( 'Manage everything in one place' ),
+				__( 'Private domain registration and SSL included' ),
+			];
+		}
+
 		return [
 			__( "We'll renew your domain for another year" ),
 			__( 'Manage everything you need in one place' ),
@@ -81,6 +89,14 @@ const connectSupported = {
 	},
 	learnMoreLink: MAP_EXISTING_DOMAIN,
 	get benefits() {
+		if ( isDomainConnectionRedesign ) {
+			return [
+				__( 'Keep your current domain name provider' ),
+				__( "Your existing services won't be interrupted" ),
+				__( 'Privacy protection and SSL included' ),
+			];
+		}
+
 		return [ __( 'Keep your current provider' ), __( 'SSL certificate included for free' ) ];
 	},
 };
