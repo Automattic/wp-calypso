@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import { useAnalytics } from '../../app/analytics';
-import { buildGoogleManageWorkspaceLink } from '../../utils/email-utils';
-import type { Email } from '../types';
+import { useAnalytics } from '../../../app/analytics';
+import { buildGoogleManageWorkspaceLink } from '../../../utils/email-utils';
+import type { Email } from '../../types';
 import type { Action } from '@wordpress/dataviews';
 
 export const useManageGoogleWorkspaceAction = (): Action< Email > => {

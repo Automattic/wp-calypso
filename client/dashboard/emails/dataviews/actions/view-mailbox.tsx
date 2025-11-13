@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
-import { useAnalytics } from '../../app/analytics';
-import { buildTitanMailboxLink, buildGoogleMailboxLink } from '../../utils/email-utils';
-import MailboxIcon from '../resources/mailbox-icon';
-import type { Email } from '../types';
+import { useAnalytics } from '../../../app/analytics';
+import { buildTitanMailboxLink, buildGoogleMailboxLink } from '../../../utils/email-utils';
+import MailboxIcon from '../../resources/mailbox-icon';
+import type { Email } from '../../types';
 import type { Action } from '@wordpress/dataviews';
 
 export const useViewMailboxAction = (): Action< Email > => {

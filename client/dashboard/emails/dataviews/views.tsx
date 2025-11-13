@@ -1,15 +1,13 @@
 import type { View } from '@wordpress/dataviews';
 
-export { getEmailFields } from './fields';
-
-export const DEFAULT_EMAILS_VIEW: View = {
+export const DEFAULT_VIEW: View = {
 	type: 'table',
-	page: 1,
+	layout: {
+		density: 'balanced',
+	},
 	perPage: 10,
 	sort: { field: 'emailAddress', direction: 'asc' },
 	fields: [ 'domainName', 'type', 'status' ],
 	titleField: 'emailAddress',
-	search: '',
+	showLevels: false,
 };
-
-export { useEmailActions } from './actions';
