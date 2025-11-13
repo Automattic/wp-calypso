@@ -73,6 +73,7 @@ function BillingDragonCheckoutContent( {
 				// When using the wpcom checkout we use alternative a4a-specific billing product ids for wpcom and jetpack products.
 				product_id: product.alternative_product_id || product.product_id,
 				product_slug: product.slug,
+				volume: product.quantity > 0 ? product.quantity : 1,
 				extra: {
 					isA4ASitelessCheckout: true,
 					agency_id: agency.id,
