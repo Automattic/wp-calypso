@@ -15,8 +15,6 @@ const ReaderFullPostHeader = ( {
 	authorProfile,
 	layout = 'default',
 	author,
-	siteIcon,
-	feedIcon,
 	siteName,
 	siteUrl,
 	feedUrl,
@@ -96,8 +94,6 @@ const ReaderFullPostHeader = ( {
 				<ReaderFullPostHeaderMeta
 					post={ post }
 					author={ author }
-					siteIcon={ siteIcon }
-					feedIcon={ feedIcon }
 					siteName={ siteName }
 					siteUrl={ siteUrl }
 					feedUrl={ feedUrl }
@@ -156,8 +152,6 @@ ReaderFullPostHeader.propTypes = {
 	layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 	authorProfile: PropTypes.node,
 	author: PropTypes.object,
-	siteIcon: PropTypes.string,
-	feedIcon: PropTypes.string,
 	siteName: PropTypes.string,
 	siteUrl: PropTypes.string,
 	feedUrl: PropTypes.string,

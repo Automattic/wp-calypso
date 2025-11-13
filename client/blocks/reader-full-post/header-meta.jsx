@@ -11,8 +11,6 @@ import { recordPermalinkClick } from 'calypso/reader/stats';
 const ReaderFullPostHeaderMeta = ( {
 	post,
 	author,
-	siteIcon,
-	feedIcon,
 	siteName,
 	siteUrl,
 	feedUrl,
@@ -37,10 +35,9 @@ const ReaderFullPostHeaderMeta = ( {
 		<div className="reader-full-post__header-meta-wrapper">
 			<ReaderAvatar
 				author={ author }
-				siteIcon={ siteIcon }
-				feedIcon={ feedIcon }
 				siteUrl={ streamUrl }
-				iconSize={ 36 }
+				iconSize={ 40 }
+				preferGravatar
 				className="reader-full-post__header-meta-avatars"
 			/>
 			<div className="reader-full-post__header-meta-info">
@@ -83,7 +80,6 @@ const ReaderFullPostHeaderMeta = ( {
 									<TimeSince date={ post.date } />
 								</a>
 							</span>
-							<span className="reader-full-post__header-meta-separator"> • </span>
 						</>
 					) }
 					{ followUrl && (
@@ -103,8 +99,6 @@ const ReaderFullPostHeaderMeta = ( {
 ReaderFullPostHeaderMeta.propTypes = {
 	post: PropTypes.object.isRequired,
 	author: PropTypes.object,
-	siteIcon: PropTypes.string,
-	feedIcon: PropTypes.string,
 	siteName: PropTypes.string,
 	siteUrl: PropTypes.string,
 	feedUrl: PropTypes.string,

@@ -731,8 +731,6 @@ export class FullPostView extends Component {
 									/>
 								}
 								author={ post.author }
-								siteIcon={ siteIcon }
-								feedIcon={ feedIcon }
 								siteName={ siteName }
 								siteUrl={ post.site_URL }
 								feedUrl={ feedUrl }

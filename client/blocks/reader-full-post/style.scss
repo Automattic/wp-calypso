@@ -76,27 +76,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .reader-full-post__header-meta-avatars {
 	flex-shrink: 0;
 
-	.site-icon,
 	.gravatar {
 		border-radius: 50%;
-	}
-
-	&.has-site-and-author-icon {
-		.site-icon {
-			height: 36px;
-			width: 36px;
-		}
-
-		.gravatar {
-			height: 28px;
-			width: 28px;
-			border: 2px solid var( --color-surface );
-			position: relative;
-			left: 6px;
-			top: -28px;
-			margin-bottom: -28px;
-			background-color: var( --color-surface );
-		}
+		width: 40px;
+		height: 40px;
 	}
 
 	.gridicons-globe {
@@ -109,6 +92,8 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	min-width: 0;
 	font-size: $font-body-small;
 	line-height: 1.5;
+	position: relative;
+	top: -2px;
 }
 
 .reader-full-post__header-meta-line-1,
@@ -122,7 +107,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .reader-full-post__header-meta-author,
 .reader-full-post__header-meta-site-link {
 	color: var( --color-text );
-	font-weight: 600;
+	font-weight: 500;
 	text-decoration: none;
 
 	&:hover {
