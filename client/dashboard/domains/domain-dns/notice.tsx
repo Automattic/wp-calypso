@@ -24,7 +24,7 @@ export const DomainDnsNameserversNotice = ( {
 			<Notice variant="warning" title={ __( 'Your domain is using external name servers' ) }>
 				{ createInterpolateElement(
 					__(
-						'This means the DNS records you are editing will not be in effect until you switch to use WordPress.com name servers. <learnMoreLink />'
+						'This means the DNS records you are editing you’re editing won’t be in effect until you switch to use WordPress.com name servers. <learnMoreLink />'
 					),
 					{
 						learnMoreLink: <InlineSupportLink supportContext="map-domain-update-name-servers" />,
