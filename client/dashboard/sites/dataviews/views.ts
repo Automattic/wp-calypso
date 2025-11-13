@@ -4,6 +4,9 @@ import type { Operator, SortDirection, SupportedLayouts, View } from '@wordpress
 
 export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	table: {
+		layout: {
+			density: 'balanced',
+		},
 		showLevels: false,
 		showMedia: true,
 		mediaField: 'icon.ico',
@@ -11,6 +14,9 @@ export const DEFAULT_LAYOUTS: SupportedLayouts = {
 		descriptionField: 'URL',
 	},
 	grid: {
+		layout: {
+			previewSize: 230,
+		},
 		showLevels: false,
 		showMedia: true,
 		mediaField: 'preview',
