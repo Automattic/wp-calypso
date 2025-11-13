@@ -10,7 +10,6 @@ The dashboard architecture is designed to support multiple entry points, where e
 Currently, during the prototyping phase, the dashboard supports two main entry points:
 
 - WordPress.com (dotcom) at `/v2`
-- Automattic for Agencies (a4a) at `/v2-a4a`
 - CIAB at `/ciab`
 
 This multi-entry point approach allows us to reuse the same codebase while tailoring the user experience to specific products and user types.

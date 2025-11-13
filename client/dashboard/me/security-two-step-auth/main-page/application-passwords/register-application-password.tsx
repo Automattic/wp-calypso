@@ -135,6 +135,7 @@ export default function RegisterApplicationPassword( { onClose }: { onClose: () 
 						/>
 						<ButtonStack justify="flex-end">
 							<Button
+								__next40pxDefaultSize
 								variant="tertiary"
 								onClick={ onClose }
 								disabled={ isRegisteringApplicationPassword }
@@ -142,6 +143,7 @@ export default function RegisterApplicationPassword( { onClose }: { onClose: () 
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button
+								__next40pxDefaultSize
 								variant="primary"
 								type="submit"
 								isBusy={ isRegisteringApplicationPassword }

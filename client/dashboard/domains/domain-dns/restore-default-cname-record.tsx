@@ -28,7 +28,7 @@ export default function RestoreDefaultCnameRecord( {
 			<VStack spacing={ 6 }>
 				<Text>{ __( 'In case a www CNAME record already exists, it will be deleted.' ) }</Text>
 				<ButtonStack justify="flex-end">
-					<Button __next40pxDefaultSize onClick={ onCancel }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onCancel }>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button __next40pxDefaultSize variant="primary" isBusy={ isBusy } onClick={ onConfirm }>

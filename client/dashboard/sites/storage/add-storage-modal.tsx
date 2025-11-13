@@ -158,10 +158,15 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 				</VStack>
 
 				<VStack spacing={ 2 } direction="row" justify="flex-end">
-					<Button variant="tertiary" onClick={ onClose }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
-					<Button variant="primary" onClick={ handleBuyStorage } disabled={ ! selectedTier }>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						onClick={ handleBuyStorage }
+						disabled={ ! selectedTier }
+					>
 						{ __( 'Buy storage' ) }
 					</Button>
 				</VStack>

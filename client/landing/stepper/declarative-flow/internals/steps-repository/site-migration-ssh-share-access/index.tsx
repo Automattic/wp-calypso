@@ -47,7 +47,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
 	const locale = useLocale();
 	const siteSlug = useSiteSlugParam() ?? '';
-	const { sendTicketAsync } = useSubmitMigrationTicket();
+	const { sendTicketAsync, isPending: isSubmittingTicket } = useSubmitMigrationTicket();
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -135,6 +135,11 @@ const SiteMigrationSshShareAccess: StepType< {
 	};
 
 	const handleContinue = () => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share_access',
+			action: 'click_button',
+			button: 'continue',
+		} );
 		setMigrationError( null );
 
 		if ( isTransferring ) {
@@ -154,6 +159,10 @@ const SiteMigrationSshShareAccess: StepType< {
 	}, [ transferStatus, shouldStartMigration ] );
 
 	const handleSkip = useCallback( async () => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share_access',
+			action: 'click_assisted_migration',
+		} );
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
 			path: window.location.pathname,
 			automated_migration: true,
@@ -208,7 +217,11 @@ const SiteMigrationSshShareAccess: StepType< {
 				}
 		  );
 	const topBar = (
-		<Step.TopBar rightElement={ <SupportNudge onAskForHelp={ navigateToDoItForMe } /> } />
+		<Step.TopBar
+			rightElement={
+				<SupportNudge onAskForHelp={ navigateToDoItForMe } isLoading={ isSubmittingTicket } />
+			}
+		/>
 	);
 
 	return (

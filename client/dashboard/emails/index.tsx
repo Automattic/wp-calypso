@@ -1,25 +1,23 @@
 import { DomainSubtype, EmailBox } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
 import { userMailboxesQuery } from '../../../packages/api-queries/src/me-mailboxes';
+import { usePersistentView, DataViews } from '../app/dataviews';
 import { emailsRoute } from '../app/router/emails';
 import { DataViewsCard } from '../components/dataviews-card';
-import { persistViewToUrl, useSetInitialViewFromUrl } from '../utils/persist-view-to-url';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
-import { DEFAULT_EMAILS_VIEW, getEmailFields, useEmailActions } from './dataviews';
+import { DEFAULT_VIEW, getFields, useActions } from './dataviews';
 import { Layout } from './layout';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
 import type { Email } from './types';
-import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
 
 function Emails() {
-	const { domainName }: { domainName?: string } = emailsRoute.useSearch();
 	const { data: allDomains, isLoading: isLoadingDomains } = useQuery( domainsQuery() );
 	const domains = ( allDomains ?? [] ).filter(
 		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
@@ -76,21 +74,18 @@ function Emails() {
 	}, [ domainsWithEmails, allEmailAccounts ] );
 
 	const [ selection, setSelection ] = useState< Email[] >( [] );
-	const [ view, setView ] = useState< View >( DEFAULT_EMAILS_VIEW );
-	useSetInitialViewFromUrl( {
-		fieldName: 'domainName',
-		fieldValue: domainName,
-		setView,
+
+	const searchParams = emailsRoute.useSearch();
+
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'emails',
+		defaultView: DEFAULT_VIEW,
+		queryParams: searchParams,
 	} );
 
-	const actions = useEmailActions();
+	const actions = useActions();
 
-	const emailFields = getEmailFields( domainsWithEmails );
-
-	const onChangeView = ( newView: View ) => {
-		persistViewToUrl( newView, 'domainName' );
-		setView( newView );
-	};
+	const emailFields = getFields( domainsWithEmails );
 
 	const { data: filteredData, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( emails, view, emailFields );
@@ -116,7 +111,8 @@ function Emails() {
 					isLoading={ isLoadingDomains || isLoadingEmailAccounts }
 					fields={ emailFields }
 					view={ view }
-					onChangeView={ onChangeView }
+					onChangeView={ updateView }
+					onResetView={ resetView }
 					selection={ selection.map( ( item ) => item.id ) }
 					onChangeSelection={ ( ids ) =>
 						setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )

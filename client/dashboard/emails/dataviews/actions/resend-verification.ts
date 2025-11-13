@@ -3,8 +3,8 @@ import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useAnalytics } from '../../app/analytics';
-import type { Email } from '../types';
+import { useAnalytics } from '../../../app/analytics';
+import type { Email } from '../../types';
 import type { Action } from '@wordpress/dataviews';
 
 export const useResendVerificationAction = (): Action< Email > => {

@@ -1,9 +1,7 @@
 import { domainQuery, domainForwardingSaveMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
@@ -22,10 +20,10 @@ export default function AddDomainForwarding() {
 		meta: {
 			snackbar: {
 				success: __( 'Domain forwarding rule saved.' ),
+				error: { source: 'server' },
 			},
 		},
 	} );
-	const { createErrorNotice } = useDispatch( noticesStore );
 	const { data: domainData } = useSuspenseQuery( domainQuery( domainName ) );
 	const forceSubdomainsOnly = domainData?.primary_domain && ! domainData?.is_domain_only_site;
 
@@ -37,11 +35,6 @@ export default function AddDomainForwarding() {
 				router.navigate( {
 					to: domainForwardingRoute.fullPath,
 					params: { domainName },
-				} );
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message, {
-					type: 'snackbar',
 				} );
 			},
 		} );

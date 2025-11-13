@@ -3,10 +3,10 @@ import { getDomainNameField } from './domain-name';
 import { emailAddressField } from './email-address';
 import { statusField } from './status';
 import { typeField } from './type';
-import type { Email } from '../types';
+import type { Email } from '../../types';
 import type { Field } from '@wordpress/dataviews';
 
-export const getEmailFields = ( domains: DomainSummary[] ): Field< Email >[] => [
+export const getFields = ( domains: DomainSummary[] ): Field< Email >[] => [
 	emailAddressField,
 	getDomainNameField( domains ),
 	typeField,

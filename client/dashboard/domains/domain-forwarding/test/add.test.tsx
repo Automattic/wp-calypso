@@ -40,8 +40,8 @@ test( 'renders domain forwarding form with correct fields', async () => {
 		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
-	expect( screen.getByText( 'Source URL' ) ).toBeInTheDocument();
-	expect( screen.getByText( /Subdomain/ ) ).toBeInTheDocument();
+	expect( screen.getByText( 'Type' ) ).toBeInTheDocument();
+	expect( screen.getByText( /Source URL/ ) ).toBeInTheDocument();
 	expect( screen.getByRole( 'button', { name: 'Add' } ) ).toBeInTheDocument();
 } );
 
@@ -53,8 +53,8 @@ test( 'hides source URL selector when forceSubdomain is true', async () => {
 	} );
 
 	// Should not show the source type selector when forceSubdomain is true
-	expect( screen.queryByText( 'Source URL' ) ).not.toBeInTheDocument();
-	expect( screen.getByText( /Subdomain/ ) ).toBeInTheDocument();
+	expect( screen.queryByText( 'Type' ) ).not.toBeInTheDocument();
+	expect( screen.getByText( /Source URL/ ) ).toBeInTheDocument();
 } );
 
 test( 'shows both root domain and subdomain options when forceSubdomain is false', async () => {
@@ -65,7 +65,7 @@ test( 'shows both root domain and subdomain options when forceSubdomain is false
 	} );
 
 	// Should show the source type selector when forceSubdomain is false
-	expect( screen.getByText( 'Source URL' ) ).toBeInTheDocument();
+	expect( screen.getByText( 'Type' ) ).toBeInTheDocument();
 } );
 
 test( 'calls onSubmit with correct data when form is submitted', async () => {
@@ -79,7 +79,7 @@ test( 'calls onSubmit with correct data when form is submitted', async () => {
 	} );
 
 	// Fill in the subdomain field (default sourceType is empty '' meaning subdomain)
-	const subdomainInput = screen.getByRole( 'textbox', { name: /subdomain/i } );
+	const subdomainInput = screen.getByRole( 'textbox', { name: /source url/i } );
 	await user.type( subdomainInput, 'blog' );
 
 	// Fill in the target URL
@@ -142,7 +142,7 @@ test( 'shows validation error when subdomain starts with dash and is blurred', a
 	} );
 
 	// Fill in an invalid subdomain starting with dash and blur
-	const subdomainInput = screen.getByRole( 'textbox', { name: /subdomain/i } );
+	const subdomainInput = screen.getByRole( 'textbox', { name: /source url/i } );
 	await user.type( subdomainInput, '-invalid' );
 	await user.tab(); // This will blur the field
 
@@ -162,7 +162,7 @@ test( 'shows validation error when target URL is empty and blurred', async () =>
 	} );
 
 	// Fill in a valid subdomain
-	const subdomainInput = screen.getByRole( 'textbox', { name: /subdomain/i } );
+	const subdomainInput = screen.getByRole( 'textbox', { name: /source url/i } );
 	await user.type( subdomainInput, 'blog' );
 
 	// Focus on target URL field but leave it empty, then blur
@@ -187,7 +187,7 @@ test( 'shows validation error when target URL is invalid and blurred', async () 
 	} );
 
 	// Fill in a valid subdomain
-	const subdomainInput = screen.getByRole( 'textbox', { name: /subdomain/i } );
+	const subdomainInput = screen.getByRole( 'textbox', { name: /source url/i } );
 	await user.type( subdomainInput, 'blog' );
 
 	// Fill in an invalid target URL and blur
@@ -211,7 +211,7 @@ test( 'shows validation error when target URL redirects to same domain without p
 	} );
 
 	// Fill in a valid subdomain
-	const subdomainInput = screen.getByRole( 'textbox', { name: /subdomain/i } );
+	const subdomainInput = screen.getByRole( 'textbox', { name: /source url/i } );
 	await user.type( subdomainInput, 'blog' );
 
 	// Fill in target URL that points to same domain (which is not allowed) and blur
@@ -236,7 +236,7 @@ test( 'allows target URL that redirects to same domain with path', async () => {
 	} );
 
 	// Fill in a valid subdomain
-	const subdomainInput = screen.getByRole( 'textbox', { name: /subdomain/i } );
+	const subdomainInput = screen.getByRole( 'textbox', { name: /source url/i } );
 	await user.type( subdomainInput, 'blog' );
 
 	// Fill in target URL that points to same domain with path (which is allowed)
@@ -270,7 +270,7 @@ test( 'allows target URL without protocol (normalizes input)', async () => {
 	} );
 
 	// Fill in a valid subdomain
-	const subdomainInput = screen.getByRole( 'textbox', { name: /subdomain/i } );
+	const subdomainInput = screen.getByRole( 'textbox', { name: /source url/i } );
 	await user.type( subdomainInput, 'blog' );
 
 	// Fill in target URL without protocol

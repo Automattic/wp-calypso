@@ -105,8 +105,9 @@ describe( 'Onboarding Flow', () => {
 		} );
 
 		describe( 'Survicate side effect', () => {
-			it( 'calls addSurvicate on step changes', () => {
+			it( 'calls addSurvicate when logged in on step changes', () => {
 				const { addSurvicate } = require( 'calypso/lib/analytics/survicate' );
+				const loggedInState = { currentUser: { id: 123 } };
 
 				const TestSideEffect = ( { step }: { step: string } ) => {
 					onboarding.useSideEffect( step );
@@ -116,7 +117,8 @@ describe( 'Onboarding Flow', () => {
 				const { rerender } = renderWithProvider(
 					<MemoryRouter initialEntries={ [ '/setup/onboarding/domains' ] }>
 						<TestSideEffect step={ STEPS.DOMAIN_SEARCH.slug } />
-					</MemoryRouter>
+					</MemoryRouter>,
+					{ initialState: loggedInState }
 				);
 
 				expect( addSurvicate ).toHaveBeenCalledTimes( 1 );
