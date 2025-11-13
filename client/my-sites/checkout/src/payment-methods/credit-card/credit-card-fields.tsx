@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -15,10 +16,11 @@ import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardLoading from './credit-card-loading';
 import CreditCardNumberField from './credit-card-number-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
+import { VgsCreditCardFields } from './vgs-credit-card-fields';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, StripeFieldChangeInput } from './types';
 
-const StripeFields = styled.div`
+const CreditCardFormFields = styled.div`
 	position: relative;
 `;
 
@@ -45,6 +47,11 @@ export default function CreditCardFields( {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
+	const [ vgsFormError, setVgsFormError ] = useState< string | null >( null );
+
+	// Check if VGS form should be used
+	const isVgsEbanxEnabled = isEnabled( 'checkout/vgs-ebanx' );
+	const shouldUseVgsForm = isVgsEbanxEnabled && shouldUseEbanx;
 	const fields: CardFieldState = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
 		[]
@@ -131,9 +138,61 @@ export default function CreditCardFields( {
 
 	const isLoaded = shouldShowContactFields ? true : isStripeFullyLoaded;
 
+	// Render VGS form if enabled (let VgsCreditCardFields handle its own loading state)
+	if ( shouldUseVgsForm && ! vgsFormError ) {
+		return (
+			<CreditCardFormFields className="vgs-credit-card-form-fields">
+				<CreditCardFieldsWrapper isLoaded>
+					<div className="credit-card-fields-inner-wrapper">
+						<VgsCreditCardFields
+							styles={ {
+								input: stripeElementStyle.base,
+							} }
+							labels={ {
+								cardholderName: __( 'Cardholder name', 'calypso' ),
+								cardNumber: __( 'Card number', 'calypso' ),
+								expiryDate: __( 'Expiry date', 'calypso' ),
+								cvc: __( 'Security code', 'calypso' ),
+							} }
+							descriptions={ {
+								cardholderName: __( "Enter your name as it's written on the card", 'calypso' ),
+							} }
+							placeholders={ {
+								cardholderName: '',
+								cardNumber: __( '•••• •••• •••• ••••', 'calypso' ),
+								expiryDate: __( 'MM/YY', 'calypso' ),
+								cvc: __( 'CVC', 'calypso' ),
+							} }
+							onVgsFormError={ setVgsFormError }
+						/>
+
+						{ shouldShowContactFields && (
+							<ContactFields
+								getFieldValue={ getFieldValue }
+								setFieldValue={ setFieldValue }
+								setForBusinessUse={ setForBusinessUse }
+								getErrorMessagesForField={ getErrorMessagesForField }
+								shouldUseEbanx={ shouldUseEbanx }
+								shouldShowTaxFields={ shouldShowTaxFields }
+							/>
+						) }
+
+						{ allowUseForAllSubscriptions && (
+							<AssignToAllPaymentMethods
+								isChecked={ useForAllSubscriptions }
+								isDisabled={ isDisabled }
+								onChange={ setUseForAllSubscriptions }
+							/>
+						) }
+					</div>
+				</CreditCardFieldsWrapper>
+			</CreditCardFormFields>
+		);
+	}
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<StripeFields className="credit-card-form-fields">
+		<CreditCardFormFields className="credit-card-form-fields">
 			{ ! isLoaded && <LoadingFields /> }
 
 			<CreditCardFieldsWrapper isLoaded={ isLoaded }>
@@ -206,7 +265,7 @@ export default function CreditCardFields( {
 					) }
 				</div>
 			</CreditCardFieldsWrapper>
-		</StripeFields>
+		</CreditCardFormFields>
 	);
 }
 
