@@ -18,7 +18,6 @@ import DashboardBackportSiteSettingsRenderer from '../v2/site-settings';
 import DeleteSite from './administration/tools/delete-site';
 import ResetSite from './administration/tools/reset-site';
 import TransferSite from './administration/tools/transfer-site';
-import AIAssistantSettings from './ai-assistant';
 import DatabaseSettings from './database';
 import PerformanceSettings from './performance';
 import ServerSettings from './server';
@@ -202,20 +201,6 @@ export function performanceSettings( context: PageJSContext, next: () => void ) 
 			/>
 			<SettingsSidebar />
 			<PerformanceSettings />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function aiAssistantSettings( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<PageViewTracker
-				title="Sites > Settings > AI Site Assistant"
-				path={ getRouteFromContext( context ) }
-			/>
-			<SettingsSidebar />
-			<AIAssistantSettings />
 		</PanelWithSidebar>
 	);
 	next();

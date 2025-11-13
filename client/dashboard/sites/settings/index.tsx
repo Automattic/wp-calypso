@@ -37,8 +37,6 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { supports } = useAppContext();
 	const supportsSettings = supports.sites && supports.sites.settings;
 
-	console.log( 'supportsSettings', supportsSettings );
-
 	if ( ! supportsSettings ) {
 		return null;
 	}
@@ -86,7 +84,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					</SummaryButtonList>
 				</VStack>
 			) }
-			{ config.isEnabled( 'ai-site-assistant' ) && supportsSettings.experimental && (
+			{ config.isEnabled( 'ai-site-assistant' ) && (
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'Experimental' ) } level={ 3 } />
 					<SummaryButtonList>
