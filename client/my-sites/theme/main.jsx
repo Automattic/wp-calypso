@@ -17,6 +17,7 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Notice } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
 import { hasQueryArg } from '@wordpress/url';
@@ -37,6 +38,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
@@ -722,6 +724,37 @@ class ThemeSheet extends Component {
 		return <div>{ this.props.description }</div>;
 	};
 
+	renderRetiredNotice = () => {
+		const { retired, isActive } = this.props;
+		if ( ! retired ) {
+			return null;
+		}
+
+		const description = isActive
+			? this.props.translate(
+					'This theme has been retired and will only receive security updates. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="themes-retired" />,
+						},
+					}
+			  )
+			: this.props.translate(
+					'This theme has been retired and will only receive security updates. It is no longer available to sites that are not already using it. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="themes-retired" />,
+						},
+					}
+			  );
+
+		return (
+			<Notice status="warning" isDismissible={ false }>
+				{ description }
+			</Notice>
+		);
+	};
+
 	renderNotice = () => {
 		const { activeThemeId, themeId, name, siteIntent, translate } = this.props;
 		const isAIAssembler = siteIntent === SiteIntent.AIAssembler && activeThemeId === 'assembler';
@@ -1090,6 +1123,7 @@ class ThemeSheet extends Component {
 					navigationItems={ navigationItems }
 					compactBreadcrumb={ ! this.state.isWide }
 				/>
+				{ this.renderRetiredNotice() }
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-header">
 						{ this.renderStagingPaidThemeNotice() }

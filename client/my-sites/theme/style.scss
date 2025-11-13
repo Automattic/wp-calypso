@@ -69,6 +69,11 @@ $button-border: 4px;
 				border: 1px solid $gray-200;
 			}
 		}
+
+		.theme__sheet > .components-notice {
+			margin-left: 20px;
+			margin-right: 20px;
+		}
 	}
 
 	.theme__sheet .navigation-header {
