@@ -1268,7 +1268,7 @@ export default function CancelPurchase() {
 
 				{ ! state.surveyShown && renderConfirmCheckbox() }
 
-				<ButtonStack justify="flex-end">
+				<ButtonStack>
 					{ renderCancelButton() }
 					{ renderKeepSubscriptionButton() }
 				</ButtonStack>
@@ -1450,7 +1450,7 @@ export default function CancelPurchase() {
 					onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 					isLoading={ false }
 				/>
-				<div className="cancel-purchase__confirm-buttons">
+				<ButtonStack>
 					{ renderCancelButton( {
 						disabled: ! canContinue(),
 						onClick: () => {
@@ -1458,7 +1458,7 @@ export default function CancelPurchase() {
 						},
 					} ) }
 					{ renderKeepSubscriptionButton() }
-				</div>
+				</ButtonStack>
 			</>
 		);
 	};
