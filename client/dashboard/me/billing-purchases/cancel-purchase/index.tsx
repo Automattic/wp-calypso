@@ -1183,16 +1183,15 @@ export default function CancelPurchase() {
 			}
 		} )();
 
-		const onClickFn =
-			propOverrides?.onClick ??
-			( shouldHandleMarketplaceSubscriptions() ? showMarketplaceDialog : onCancellationStart );
-
 		return (
 			<Button
 				className="cancel-purchase__button"
 				disabled={ isDisabled }
 				isBusy={ propOverrides?.isBusy ?? state.isLoading ?? false }
-				onClick={ onClickFn }
+				onClick={
+					propOverrides?.onClick ??
+					( shouldHandleMarketplaceSubscriptions() ? showMarketplaceDialog : onCancellationStart )
+				}
 				variant="primary"
 			>
 				{ cancelButtonText }
@@ -1269,7 +1268,7 @@ export default function CancelPurchase() {
 
 				{ ! state.surveyShown && renderConfirmCheckbox() }
 
-				<ButtonStack>
+				<ButtonStack justify="flex-end">
 					{ renderCancelButton() }
 					{ renderKeepSubscriptionButton() }
 				</ButtonStack>
