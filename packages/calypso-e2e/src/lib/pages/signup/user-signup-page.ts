@@ -14,6 +14,7 @@ export class UserSignupPage {
 
 	// Headings
 	readonly createYourAccountHeading: Locator;
+	private readonly emailInputLocator: Locator;
 
 	// Fields
 	readonly emailInput: Locator;
@@ -39,20 +40,74 @@ export class UserSignupPage {
 		this.createYourAccountHeading = this.page.getByRole( 'heading', {
 			name: 'Create your account',
 		} );
+		this.emailInputLocator = this.page.locator( selectors.emailInput );
+	}
 
-		// Fields
-		this.emailInput = this.page.locator( 'input[name="email"]' );
-		this.usernameInput = this.page.locator( 'input[name="username"]' );
-		this.passwordInput = this.page.locator( 'input[name="password"]' );
-		this.firstNameInput = this.page.locator( 'input[name="firstName"]' );
-		this.lastNameInput = this.page.locator( 'input[name="lastName"]' );
+	/**
+	 * Waits for the signup form to be ready for interaction.
+	 * We consider the form ready when either the "Create your account" heading
+	 * or the email input is visible and actionable.
+	 */
+	private async waitForSignupForm(): Promise< void > {
+		const continueWithEmailButton = this.page.getByRole( 'button', {
+			name: /continue with email/i,
+		} );
+		const useEmailInsteadButton = this.page.getByRole( 'button', {
+			name: /use email/i,
+		} );
+		const createWpcomAccountButton = this.page.locator( selectors.createWPCOMAccountButton );
+		const waitForAttached = ( locator: Locator ) =>
+			locator.waitFor( { state: 'attached', timeout: 30_000 } ).catch( () => null );
 
-		// Buttons
-		this.submitButton = this.page.locator( 'button[type="submit"]' );
-		this.continueButton = this.page.locator( 'button:text("Continue")' );
-		this.createWPCOMAccountButton = this.page.locator(
-			'button:text("Create a WordPress.com Account"):visible'
-		);
+		// Race heading vs input availability to be resilient to layout variants.
+		await Promise.race( [
+			this.createYourAccountHeading
+				.waitFor( { state: 'visible', timeout: 30_000 } )
+				.catch( () => null ),
+			waitForAttached( this.emailInputLocator ),
+			waitForAttached( continueWithEmailButton ),
+			waitForAttached( useEmailInsteadButton ),
+			waitForAttached( createWpcomAccountButton ),
+		] );
+
+		const ensureEmailVisible = async () => {
+			await this.emailInputLocator.waitFor( { state: 'visible', timeout: 30_000 } );
+		};
+
+		let emailVisible = false;
+		try {
+			await this.emailInputLocator.waitFor( { state: 'attached', timeout: 5_000 } );
+			emailVisible = await this.emailInputLocator.isVisible();
+		} catch {
+			emailVisible = false;
+		}
+
+		if ( ! emailVisible ) {
+			const candidateButtons = [
+				continueWithEmailButton,
+				useEmailInsteadButton,
+				createWpcomAccountButton,
+			];
+
+			for ( const button of candidateButtons ) {
+				try {
+					if ( await button.isVisible() ) {
+						await button.scrollIntoViewIfNeeded();
+						await button.click();
+						break;
+					}
+				} catch {
+					// Ignore button interaction failures; another button may be present instead.
+				}
+			}
+
+			await this.emailInputLocator.waitFor( { state: 'attached', timeout: 30_000 } );
+			await ensureEmailVisible();
+		} else {
+			await ensureEmailVisible();
+		}
+
+		await this.emailInputLocator.scrollIntoViewIfNeeded();
 	}
 
 	/**
@@ -98,9 +153,10 @@ export class UserSignupPage {
 	 * @returns Response from the REST API.
 	 */
 	async signup( email: string, username: string, password: string ): Promise< NewUserResponse > {
-		await this.emailInput.fill( email );
-		await this.usernameInput.fill( username );
-		await this.passwordInput.fill( password );
+		await this.waitForSignupForm();
+		await this.page.fill( selectors.emailInput, email );
+		await this.page.fill( selectors.usernameInput, username );
+		await this.page.fill( selectors.passwordInput, password );
 
 		const responsePromise = this.captureNewUserResponse();
 
@@ -119,7 +175,8 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWithEmail( email: string ): Promise< NewUserResponse > {
-		await this.emailInput.fill( email );
+		await this.waitForSignupForm();
+		await this.page.fill( selectors.emailInput, email );
 
 		const responsePromise = this.captureNewUserResponse();
 
@@ -187,10 +244,12 @@ export class UserSignupPage {
 			name: 'Continue with email',
 		} );
 
-		// The "Continue with email" button is only shown on certain flows
-		await this.page.addLocatorHandler( continueWithEmailButton, async () => {
+		// The "Continue with email" button is only shown on certain flows.
+		// If present, click it explicitly (avoid relying on LocatorHandler timing).
+		if ( await continueWithEmailButton.isVisible() ) {
+			await continueWithEmailButton.scrollIntoViewIfNeeded();
 			await continueWithEmailButton.click();
-		} );
+		}
 
 		return this.signupWithEmail( email );
 	}
@@ -218,7 +277,8 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWoo( email: string ): Promise< NewUserResponse > {
-		await this.emailInput.fill( email );
+		await this.waitForSignupForm();
+		await this.page.fill( selectors.emailInput, email );
 
 		// Detect redirection without keeping the listener around
 		const redirectDetected = new Promise< string >( ( resolve ) => {
@@ -275,6 +335,7 @@ export class UserSignupPage {
 		const locator = this.page.getByRole( 'button', { name: 'Continue with Google' } );
 
 		await locator.waitFor();
+		await locator.scrollIntoViewIfNeeded();
 
 		// Intercept the popup that appears when Login with Google button
 		// is clicked.
