@@ -1,6 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .domain-transfer-or-connect {
 	& header.domain-transfer-or-connect__page-heading {
@@ -22,6 +23,34 @@
 			&__button.summary-button.components-button {
 				& .summary-button-decoration svg, &:hover .summary-button-decoration svg {
 					fill: none;
+				}
+			}
+
+			&__title {
+				.badge {
+					border-radius: $radius-small;
+					font-size: $font-body-extra-small;
+					font-weight: 500;
+					margin-top: 8px;
+					border: 1px solid #b8e5be;
+
+					@include break-mobile {
+						margin-top: 0;
+						margin-left: 12px;
+					}
+				}
+			}
+
+			&__benefits {
+				padding: 20px 64px 12px;
+
+				&-item {
+					display: flex;
+
+					.gridicon {
+						margin-right: 18px;
+						fill: var(--studio-green-50);
+					}
 				}
 			}
 		}

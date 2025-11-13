@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { Icon } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
@@ -157,6 +156,7 @@ const UseMyDomain: StepType< {
 					columnWidth={ columnWidth }
 					heading={ <Step.Heading text={ headingText } subText={ subText } /> }
 					verticalAlign={ isDomainConnectionRedesign ? 'center' : undefined }
+					className={ isDomainConnectionRedesign ? 'use-my-domain--redesign' : undefined }
 				>
 					{ getBlogOnboardingFlowStepContent() }
 				</Step.CenteredColumnLayout>

@@ -13,6 +13,14 @@
 			max-width: none;
 			margin: 0;
 		}
+
+		a, .card a {
+			text-decoration: underline;
+		}
+
+		a, a:visited {
+			color: $gray-900;
+		}
 	}
 
 	.components-card__body {
