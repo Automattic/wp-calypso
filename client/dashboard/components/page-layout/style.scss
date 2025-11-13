@@ -1,6 +1,10 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 
+// Page layout max-width variables
+$page-layout-max-width-large: 1344px;
+$page-layout-max-width-small: 660px;
+
 .dashboard-page-layout {
 	--page-layout-block-padding: #{$grid-unit-20};
 	--page-layout-inline-padding: #{$grid-unit-20};
@@ -13,6 +17,15 @@
 	margin: auto;
 	padding: var( --page-layout-block-padding ) var( --page-layout-inline-padding );
 	max-width: var( --page-layout-max-width );
+
+	// Set max-width based on size class
+	&.is-large {
+		--page-layout-max-width: #{$page-layout-max-width-large};
+	}
+
+	&.is-small {
+		--page-layout-max-width: #{$page-layout-max-width-small};
+	}
 
 	// Creates a positioning context for CalloutOverlay components. It needs to
 	// be on the PageLayout so that the blurred overlay can cover the entire

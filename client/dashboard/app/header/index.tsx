@@ -1,4 +1,4 @@
-import { useViewportMatch } from '@wordpress/compose';
+import { useMediaQuery, useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import HeaderBar from '../../components/header-bar';
 import RouterLinkButton from '../../components/router-link-button';
@@ -9,13 +9,19 @@ import SecondaryMenu from '../secondary-menu';
 function Header() {
 	const { Logo, name } = useAppContext();
 	const isDesktop = useViewportMatch( 'medium' );
+	const isReallySmall = useMediaQuery( '(max-width: 350px)' );
 
 	return (
 		<HeaderBar as="header">
 			{ ! isDesktop && <PrimaryMenu /> }
-
 			{ Logo && (
-				<div style={ { display: 'flex', alignItems: 'center' } }>
+				<div
+					style={ {
+						display: 'flex',
+						alignItems: 'center',
+						paddingInlineEnd: isReallySmall ? '20px' : '0',
+					} }
+				>
 					<RouterLinkButton
 						/* translators: Screen reader text for link to root of the hosting dashboard. "name" is the product of whose hosting dashboard this is: e.g. WordPress.com */
 						aria-label={ sprintf( __( '%(name)s home' ), { name } ) }

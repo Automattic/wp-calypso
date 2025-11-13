@@ -1,3 +1,7 @@
+.dashboard-secondary-menu > * {
+	flex-shrink: 0;
+}
+
 .dashboard-secondary-menu__item.dashboard-secondary-menu__item {
 	color: var( --dashboard-secondary-menu-item__color );
 }
