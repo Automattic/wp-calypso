@@ -74,7 +74,7 @@
 		"marketplace-redesign": false,
 		"me/account-close": true,
 		"migration-flow/introductory-offer": true,
-		"migration/ssh-migration": false,
+		"migration/ssh-migration": true,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,

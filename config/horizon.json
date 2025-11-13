@@ -81,7 +81,7 @@
 		"marketplace-test": false,
 		"me/account/color-scheme-picker": true,
 		"migration-flow/introductory-offer": true,
-		"migration/ssh-migration": false,
+		"migration/ssh-migration": true,
 		"onboarding/create-course": false,
 		"p2/p2-plus": true,
 		"plans/hosting-trial": true,
