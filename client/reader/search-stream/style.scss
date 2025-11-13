@@ -329,7 +329,7 @@ div.is-section-reader:not(.is-logged-in) {
 	display: flex;
 
 	.section-nav-tab.is-selected {
-		border-bottom: 2px solid var(--color-neutral-70);
+		border-bottom: 2px solid var(--color-accent);
 	}
 
 	.is-selected .section-nav-tab__link {

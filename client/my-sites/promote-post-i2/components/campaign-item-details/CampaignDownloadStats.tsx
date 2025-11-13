@@ -160,7 +160,7 @@ export default function CampaignDownloadStats( props: Props ) {
 					) : (
 						<Button
 							variant="secondary"
-							className="campaign-item-details__stats-button"
+							className="posts-list-banner__border-button"
 							onClick={ () => {
 								downloadStatsInit();
 							} }
