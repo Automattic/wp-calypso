@@ -5,6 +5,6 @@
 
 	/* Change the progress bar color to the theme color */
 	& > div {
-		background-color: var( --wp-admin-theme-color );
+		--wp-components-color-foreground: var(--wp-admin-theme-color);
 	}
 }
