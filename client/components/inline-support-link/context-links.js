@@ -463,8 +463,8 @@ const contextLinks = {
 		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#harnessing-utm-stats-for-precision-tracking',
 	},
 	'stats-videos': {
-		link: 'https://wordpress.com/support/stats/analyze-content-performance/#see-video-traffic',
-		post_id: 404034,
+		link: 'https://wordpress.com/support/stats/video-stats/',
+		post_id: 418571,
 	},
 	'stats-videos-jetpack': {
 		link: 'https://jetpack.com/support/jetpack-videopress/add-video-block-editor/video-stats/',
