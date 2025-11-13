@@ -95,9 +95,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 				<MenuItem
 					icon={ <BigSkyLogo.Mark /> }
 					title={ __( 'Build with AI' ) }
-					description={ __(
-						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
-					) }
+					description={ __( 'Prompt, edit, and launch your WordPress site with AI.' ) }
 					onClick={ () => {
 						setShowHelpCenter( false );
 						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
