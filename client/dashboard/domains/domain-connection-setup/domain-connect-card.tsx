@@ -112,7 +112,12 @@ export default function DomainConnectCard( {
 						<InlineSupportLink supportContext="general-support-options">
 							{ __( 'Contact support' ) }
 						</InlineSupportLink>
-						<Button variant="link" onClick={ onChangeSetupMode } style={ { lineHeight: '20px' } }>
+						<Button
+							variant="link"
+							onClick={ onChangeSetupMode }
+							disabled={ isUpdatingConnectionMode }
+							style={ { lineHeight: '20px' } }
+						>
 							{ __( 'Use manual setup' ) }
 						</Button>
 					</VStack>
