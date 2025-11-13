@@ -37,6 +37,8 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { supports } = useAppContext();
 	const supportsSettings = supports.sites && supports.sites.settings;
 
+	console.log( 'supportsSettings', supportsSettings );
+
 	if ( ! supportsSettings ) {
 		return null;
 	}
