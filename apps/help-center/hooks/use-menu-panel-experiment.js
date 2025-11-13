@@ -20,8 +20,10 @@ const useMenuPanelExperiment = (
 						},
 				  } )
 				: await apiFetch( {
-						path: addQueryArgs( '/help-center/experiment', {
+						path: addQueryArgs( 'jetpack/v4/explat/assignments', {
 							experiment_name: experimentName,
+							platform: 'calypso',
+							as_connected_user: 'true',
 						} ),
 						global: true,
 				  } );
