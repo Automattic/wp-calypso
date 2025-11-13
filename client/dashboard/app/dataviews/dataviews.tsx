@@ -28,3 +28,6 @@ export function DataViews< Item >( { view, onResetView, ...props }: DataViewsPro
 		/>
 	);
 }
+
+DataViews.Layout = WPDataViews.Layout;
+DataViews.Pagination = WPDataViews.Pagination;

@@ -1,20 +1,19 @@
-import type { ViewTable, ViewList, ViewPickerGrid } from '@wordpress/dataviews';
-
-export type DomainsView = ViewTable | ViewList | ViewPickerGrid;
+import type { View } from '@wordpress/dataviews';
 
 // Base properties that are common to all view types
-const BASE_VIEW_PROPS = {
-	filters: [] as any[],
+const BASE_VIEW_PROPS: View = {
+	type: 'table',
+	layout: {
+		density: 'balanced',
+	},
 	sort: {
 		field: 'domain',
-		direction: 'asc' as const,
+		direction: 'asc',
 	},
-	page: 1,
 	perPage: 10,
-	search: '',
+	showLevels: false,
 	showMedia: false,
 	titleField: 'domain',
-	// descriptionField: 'domain_type',
 	fields: [
 		// 'owner',
 		'blog_name',
@@ -34,5 +33,4 @@ export const SITE_CONTEXT_VIEW = {
 // Default layouts
 export const DEFAULT_LAYOUTS = {
 	table: {},
-	list: {},
 };

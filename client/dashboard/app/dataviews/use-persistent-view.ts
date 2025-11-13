@@ -2,8 +2,8 @@ import { userPreferenceQuery, userPreferenceOptimisticMutation } from '@automatt
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import fastDeepEqual from 'fast-deep-equal/es6';
-import { useCallback, useMemo } from 'react';
-import type { View } from '@wordpress/dataviews';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { Filter, View } from '@wordpress/dataviews';
 
 interface UseViewOptions {
 	/**
@@ -22,6 +22,12 @@ interface UseViewOptions {
 	 * If passed, transient properties (`page` and `search`) are synced to the URL query params.
 	 */
 	queryParams?: any;
+
+	/**
+	 * Fields that should become transient filters when present in the URL query params.
+	 * The returned view's `filters` will be merged with the transient filters.
+	 */
+	queryParamFilterFields?: string[];
 }
 
 /**
@@ -29,7 +35,12 @@ interface UseViewOptions {
  * Transient properties (`page` and `search`) are synced to the URL query params,
  * while the rest of the properties is persisted to Calypso preferences.
  */
-export function usePersistentView( { slug, defaultView, queryParams }: UseViewOptions ): {
+export function usePersistentView( {
+	slug,
+	defaultView,
+	queryParams,
+	queryParamFilterFields = [],
+}: UseViewOptions ): {
 	view: View;
 	updateView: ( newView: View ) => void;
 	resetView?: () => void;
@@ -46,33 +57,81 @@ export function usePersistentView( { slug, defaultView, queryParams }: UseViewOp
 	const page = parseInt( queryParams?.page ) || baseView.page || 1;
 	const search = queryParams?.search || baseView.search || '';
 
-	// Merge transient properties from query params into the view.
+	const transientProperties = useMemo( () => ( { page, search } ), [ page, search ] );
+
+	const transientFilterFields = queryParamFilterFields.filter(
+		( field ) => queryParams && queryParams[ field ] !== undefined
+	);
+
+	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( [] );
+
+	useEffect( () => {
+		setTransientFilters(
+			transientFilterFields.map(
+				( field ) =>
+					( {
+						field,
+						operator: 'is',
+						value: queryParams[ field ],
+					} ) as Filter
+			)
+		);
+
+		// Set transient filters once on initial page load.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ JSON.stringify( transientFilterFields ) ] );
+
+	// Merge transient properties and filters from query params into the view.
 	const view: View = useMemo(
 		() => ( {
 			...baseView,
-			page,
-			search,
+			...transientProperties,
+			...( transientFilters.length > 0 && {
+				filters: [
+					...( baseView.filters || [] ).filter(
+						( filter ) => ! transientFilterFields.includes( filter.field )
+					),
+					...transientFilters,
+				],
+			} ),
 		} ),
-		[ baseView, page, search ]
+		[ baseView, transientProperties, transientFilterFields, transientFilters ]
 	);
 
 	const updateView = useCallback(
 		( newView: View ) => {
+			const newTransientFilterFields = transientFilterFields.filter(
+				( field ) =>
+					newView.filters?.some(
+						( filter ) => filter.field === field && filter.value === queryParams[ field ]
+					)
+			);
+
 			if ( queryParams ) {
-				// Sync transient properties to the URL query params.
-				const newQueryParams = {
+				const newTransientProperties = {
 					page: newView.page,
 					search: newView.search,
 				};
-				if ( ! fastDeepEqual( newQueryParams, { page, search } ) ) {
+
+				if ( ! fastDeepEqual( newTransientFilterFields, transientFilterFields ) ) {
+					setTransientFilters( [] );
 					navigate( {
-						search: mergeQueryParams( queryParams, newQueryParams ),
+						search: clearQueryParamsFromTransientFilters( queryParams, transientFilterFields ),
+						replace: true,
+					} );
+				} else if ( ! fastDeepEqual( newTransientProperties, transientProperties ) ) {
+					navigate( {
+						search: mergeQueryParamsWithTransientProperties( queryParams, newTransientProperties ),
 					} );
 				}
 			}
 
+			let viewToPersist = newView;
+			viewToPersist = removeTransientPropertiesFromView( viewToPersist );
+			viewToPersist = removeTransientFiltersFromView( viewToPersist, newTransientFilterFields );
+			viewToPersist = removeEmptyFiltersFromView( viewToPersist );
+
 			// Persist view if different from baseView.
-			const viewToPersist = removeQueryParamsFromView( newView );
 			if ( ! fastDeepEqual( viewToPersist, baseView ) ) {
 				if ( fastDeepEqual( viewToPersist, defaultView ) ) {
 					persistView( undefined );
@@ -81,7 +140,15 @@ export function usePersistentView( { slug, defaultView, queryParams }: UseViewOp
 				}
 			}
 		},
-		[ page, search, queryParams, navigate, baseView, defaultView, persistView ]
+		[
+			queryParams,
+			transientProperties,
+			transientFilterFields,
+			navigate,
+			baseView,
+			defaultView,
+			persistView,
+		]
 	);
 
 	const isViewModified = !! persistedView;
@@ -93,7 +160,7 @@ export function usePersistentView( { slug, defaultView, queryParams }: UseViewOp
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
 }
 
-function removeQueryParamsFromView( view: View ): Omit< View, 'page' | 'search' > {
+function removeTransientPropertiesFromView( view: View ): Omit< View, 'page' | 'search' > {
 	const viewToPersist = { ...view };
 
 	delete viewToPersist.page;
@@ -102,7 +169,31 @@ function removeQueryParamsFromView( view: View ): Omit< View, 'page' | 'search' 
 	return viewToPersist;
 }
 
-function mergeQueryParams(
+function removeTransientFiltersFromView( view: View, transientFilterFields: string[] ): View {
+	return {
+		...view,
+		filters: view.filters?.filter( ( filter ) => ! transientFilterFields.includes( filter.field ) ),
+	};
+}
+
+function removeEmptyFiltersFromView( view: View ): View {
+	if ( ( view.filters || [] ).length === 0 ) {
+		delete view.filters;
+	}
+	return view;
+}
+
+function clearQueryParamsFromTransientFilters( queryParams: any, transientFilterFields: string[] ) {
+	const newQueryParams = { ...queryParams };
+
+	transientFilterFields.forEach( ( field ) => {
+		delete newQueryParams[ field ];
+	} );
+
+	return newQueryParams;
+}
+
+function mergeQueryParamsWithTransientProperties(
 	queryParams: any,
 	{ page, search }: { page?: number; search?: string }
 ): any {

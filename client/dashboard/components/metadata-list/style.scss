@@ -1,0 +1,6 @@
+.dashboard-metadata-list-item:not(:last-child) {
+	&::after {
+		display: block;
+		content: '•';
+	}
+}

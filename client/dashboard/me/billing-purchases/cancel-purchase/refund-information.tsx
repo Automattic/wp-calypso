@@ -1,24 +1,19 @@
-import { siteDomainsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
-import { getSelectedDomain } from '../../../utils/domain';
 import { hasAmountAvailableToRefund, isOneTimePurchase } from '../../../utils/purchase';
-import type { Purchase } from '@automattic/api-core';
+import type { Purchase, Domain } from '@automattic/api-core';
 
 interface CancelPurchaseRefundInformationProps {
 	purchase: Purchase;
 	isJetpackPurchase: boolean;
+	selectedDomain: Domain | null | undefined;
 }
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
 	isJetpackPurchase,
+	selectedDomain,
 }: CancelPurchaseRefundInformationProps ) => {
-	const { data: domains } = useSuspenseQuery( siteDomainsQuery( purchase.blog_id ) );
-	const selectedDomainName = purchase.product_name;
-	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
-
 	const isGravatarRestrictedDomain = selectedDomain?.is_gravatar_restricted_domain;
 	const { refund_period_in_days: refundPeriodInDays } = purchase;
 	let text;

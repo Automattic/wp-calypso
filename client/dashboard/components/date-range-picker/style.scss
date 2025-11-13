@@ -1,15 +1,3 @@
-/* Container */
-.daterange-container {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	width: 100%;
-
-	> * {
-		flex: 0 0 auto;
-	}
-}
-
 /* Popover sizing */
 .daterange-popover .components-popover__content {
 	overflow: visible;
