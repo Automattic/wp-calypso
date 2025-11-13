@@ -38,7 +38,9 @@ const transferSupported = {
 		return optionTitleText.transfer;
 	},
 	get topText() {
-		return __( 'Manage your domain directly on WordPress.com' );
+		return isDomainConnectionRedesign
+			? __( 'Manage everything in one place, including domain name renewals.' )
+			: __( 'Manage your domain directly on WordPress.com' );
 	},
 	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 	get benefits() {
@@ -67,7 +69,9 @@ const connectSupported = {
 		return optionTitleText.connect;
 	},
 	get topText() {
-		return __( 'Keep your domain with your current provider and point it to WordPress.com' );
+		return isDomainConnectionRedesign
+			? __( 'Connect your existing domain name to WordPress.com.' )
+			: __( 'Keep your domain with your current provider and point it to WordPress.com' );
 	},
 	learnMoreLink: MAP_EXISTING_DOMAIN,
 	get benefits() {
