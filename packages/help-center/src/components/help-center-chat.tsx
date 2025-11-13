@@ -12,17 +12,17 @@ import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldUseWapuu } from '../hooks';
 import './help-center-chat.scss';
 
-export function HelpCenterChat( {
-	isLoadingStatus,
-	isUserEligibleForPaidSupport,
-}: {
-	isLoadingStatus: boolean;
-	isUserEligibleForPaidSupport: boolean;
-} ): JSX.Element {
+export function HelpCenterChat(): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	// Before issuing a redirect, make sure the status is loaded.
-	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
+	const {
+		forceEmailSupport,
+		isEligibleForChat,
+		isLoading: isLoadingStatus,
+		isChatRestricted,
+	} = useChatStatus();
+	const preventOdieAccess = ! shouldUseWapuu && ! isEligibleForChat && ! isLoadingStatus;
 	const { currentUser, site, isCommerceGarden, newInteractionsBotSlug } = useHelpCenterContext();
 	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging();
 	const { search } = useLocation();
@@ -34,8 +34,6 @@ export function HelpCenterChat( {
 
 	const commerceGardenFlowName = isCommerceGarden ? 'messaging_flow_commerce_in_a_box' : null;
 	const userFieldFlowName = commerceGardenFlowName || data?.eligibility?.user_field_flow_name;
-
-	const { forceEmailSupport, isChatRestricted } = useChatStatus();
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -57,7 +55,7 @@ export function HelpCenterChat( {
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
-			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+			isUserEligibleForPaidSupport={ isEligibleForChat }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }
 		>

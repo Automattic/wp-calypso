@@ -22,6 +22,7 @@ export const useGetSupportInteractionById = ( interactionId: string | null ) => 
 		refetchOnReconnect: false,
 		enabled: !! interactionId,
 		staleTime: 1000 * 10, // 10 seconds,
+		experimental_prefetchInRender: true,
 		select: ( interaction ) => {
 			const env = isTestMode ? 'staging' : 'production';
 			// getting a support interaction by ID doesn't honor the isTestMode flag, so we need to throw an error if the interaction is in staging and we're not in test mode.

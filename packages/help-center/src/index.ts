@@ -8,4 +8,5 @@ export { default as HelpCenterInlineButton } from './components/help-center-inli
 export { default as Mail } from './icons/mail';
 export { useHelpSearchQuery } from './hooks/use-help-search-query';
 export { HelpCenterChat } from './components/help-center-chat';
+export { default as HelpCenterSmooch } from './components/help-center-smooch';
 export { HelpCenterRequiredContextProvider } from './contexts/HelpCenterContext';

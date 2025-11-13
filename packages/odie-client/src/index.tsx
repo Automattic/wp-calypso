@@ -9,7 +9,7 @@ import { hasCSATMessage, interactionHasEnded } from './utils';
 import './style.scss';
 
 export const OdieAssistant: React.FC = () => {
-	const { trackEvent, currentUser, chat } = useOdieAssistantContext();
+	const { trackEvent, chat } = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const chatHasCSATMessage = hasCSATMessage( chat );
 	const showClosedConversationFooter =
@@ -23,7 +23,7 @@ export const OdieAssistant: React.FC = () => {
 	return (
 		<div className="chatbox">
 			<div className="chat-box-message-container" id="odie-messages-container">
-				<MessagesContainer currentUser={ currentUser } />
+				<MessagesContainer />
 			</div>
 			{ showClosedConversationFooter ? <ClosedConversationFooter /> : <OdieSendMessageButton /> }
 		</div>

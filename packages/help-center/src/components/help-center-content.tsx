@@ -127,15 +127,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						path="/support-guides"
 						element={ <HelpCenterSupportGuides currentRoute={ currentRoute } /> }
 					/>
-					<Route
-						path="/odie"
-						element={
-							<HelpCenterChat
-								isLoadingStatus={ isLoadingSupportStatus }
-								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
-							/>
-						}
-					/>
+					<Route path="/odie" element={ <HelpCenterChat /> } />
 					<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />
 				</Routes>
 			</Wrapper>
