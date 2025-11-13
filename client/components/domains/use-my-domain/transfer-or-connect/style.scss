@@ -18,6 +18,14 @@
 			box-shadow: none;
 		}
 
+		.option-content-v2 {
+			&__button.summary-button.components-button {
+				& .summary-button-decoration svg, &:hover .summary-button-decoration svg {
+					fill: none;
+				}
+			}
+		}
+
 		.option-content {
 			+ .option-content {
 				border-top: 1px solid var(--studio-gray-5);
