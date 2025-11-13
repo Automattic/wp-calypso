@@ -106,8 +106,8 @@ const SiteMigrationCredentials: StepType< {
 		const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 		const isHostingSupported = isHostingSupportedForSSHMigration( hostingProviderSlug );
 
-		// If SSH migration is available and hosting is supported, redirect to SSH flow
-		if ( isSSHMigrationAvailable && isHostingSupported ) {
+		// If SSH migration is available and hosting is supported and locale is English, redirect to SSH flow
+		if ( isSSHMigrationAvailable && isHostingSupported && locale === 'en' ) {
 			siteId && dispatch( resetSite( siteId ) );
 			return navigation.submit?.( {
 				action: 'redirect-to-ssh',
