@@ -160,14 +160,20 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	justify-content: space-between;
 	padding: 16px 0;
 	margin-bottom: 24px;
-	border-top: 1px solid var( --color-border-subtle );
-	border-bottom: 1px solid var( --color-border-subtle );
+	border-top: 1px solid var( --color-neutral-5 );
+	border-bottom: 1px solid var( --color-neutral-5 );
 
 	.comment-button,
 	.like-button,
 	.post-edit-button,
 	.reader-full-post__seen-button {
 		margin: 0;
+	}
+
+	.comment-button svg,
+	.like-button svg {
+		width: 24px;
+		height: 24px;
 	}
 
 	.comment-button.is-active,

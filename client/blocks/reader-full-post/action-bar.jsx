@@ -28,7 +28,7 @@ const ReaderFullPostActionBar = ( {
 						commentCount={ commentCount }
 						onClick={ onCommentClick }
 						tagName="div"
-						icon={ ReaderCommentIcon( { iconSize: 20 } ) }
+						icon={ ReaderCommentIcon( { iconSize: 24 } ) }
 					/>
 				) }
 
@@ -39,6 +39,7 @@ const ReaderFullPostActionBar = ( {
 						fullPost
 						tagName="div"
 						likeSource="reader"
+						iconSize={ 24 }
 					/>
 				) }
 
