@@ -4,8 +4,8 @@ import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 const useMenuPanelExperiment = (
-	experimentName = 'international_pricing_2025',
-	treatmentVariation = 'treatment'
+	experimentName = 'calypso_help_center_menu_popover',
+	treatmentVariation = 'menu_popover'
 ) => {
 	const [ isMenuPanelExperimentEnabled, setIsMenuPanelExperimentEnabled ] = useState( false );
 
