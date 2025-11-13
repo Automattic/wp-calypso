@@ -259,7 +259,7 @@ export default function DomainConnectionSetup( {
 					<ConnectionModeCard
 						mode={ DomainConnectionSetupMode.ADVANCED }
 						title={ __( 'I use this domain name for email or other services' ) }
-						description={ __( "You'll update DNS records (CNAME and A)" ) }
+						description={ __( 'You’ll update DNS records (CNAME and A)' ) }
 						infoText={ sprintf(
 							// translators: %s is the domain name
 							__(
