@@ -63,13 +63,9 @@ export function usePersistentView( {
 		( field ) => queryParams && queryParams[ field ] !== undefined
 	);
 
-	const [ transientFilters, setTransientFilters ] = useState< Filter[] | undefined >( undefined );
+	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( [] );
 
 	useEffect( () => {
-		if ( transientFilterFields.length === 0 ) {
-			return;
-		}
-
 		setTransientFilters(
 			transientFilterFields.map(
 				( field ) =>
@@ -90,7 +86,7 @@ export function usePersistentView( {
 		() => ( {
 			...baseView,
 			...transientProperties,
-			...( transientFilters && {
+			...( transientFilters.length > 0 && {
 				filters: [
 					...( baseView.filters || [] ).filter(
 						( filter ) => ! transientFilterFields.includes( filter.field )
@@ -104,21 +100,21 @@ export function usePersistentView( {
 
 	const updateView = useCallback(
 		( newView: View ) => {
-			if ( queryParams ) {
-				const newTransientFilterFields = transientFilterFields.filter(
-					( field ) =>
-						newView.filters?.some(
-							( filter ) => filter.field === field && filter.value === queryParams[ field ]
-						)
-				);
+			const newTransientFilterFields = transientFilterFields.filter(
+				( field ) =>
+					newView.filters?.some(
+						( filter ) => filter.field === field && filter.value === queryParams[ field ]
+					)
+			);
 
+			if ( queryParams ) {
 				const newTransientProperties = {
 					page: newView.page,
 					search: newView.search,
 				};
 
 				if ( ! fastDeepEqual( newTransientFilterFields, transientFilterFields ) ) {
-					setTransientFilters( undefined );
+					setTransientFilters( [] );
 					navigate( {
 						search: clearQueryParamsFromTransientFilters( queryParams, transientFilterFields ),
 						replace: true,
@@ -132,7 +128,7 @@ export function usePersistentView( {
 
 			let viewToPersist = newView;
 			viewToPersist = removeTransientPropertiesFromView( viewToPersist );
-			viewToPersist = removeTransientFiltersFromView( viewToPersist, transientFilterFields );
+			viewToPersist = removeTransientFiltersFromView( viewToPersist, newTransientFilterFields );
 			viewToPersist = removeEmptyFiltersFromView( viewToPersist );
 
 			// Persist view if different from baseView.
