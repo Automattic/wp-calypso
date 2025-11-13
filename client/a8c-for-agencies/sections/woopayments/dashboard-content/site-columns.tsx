@@ -11,8 +11,34 @@ import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { WooPaymentsData } from '../types';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
+
+const getIneligibleReasonMessage = (
+	reason: string,
+	translate: ( text: string ) => TranslateResult
+): TranslateResult => {
+	switch ( reason ) {
+		case 'rejected_stripe_account':
+			return translate(
+				"This WooPayments site isn't eligible for commission because its Stripe account was rejected."
+			);
+		case 'internal_account_owner':
+			return translate(
+				"This WooPayments site isn't eligible for commission because it's owned by an internal account."
+			);
+		case 'existing_merchant_after_30_days':
+			return translate(
+				"This WooPayments site isn't eligible for commission because it's an existing site that was connected to the agency account more than 30 days after the account was created."
+			);
+		// Add more error code mappings here as needed
+		default:
+			return translate(
+				"This WooPayments site isn't eligible for commission under the current program criteria."
+			);
+	}
+};
 
 export const SiteColumn = ( { site }: { site: string } ) => {
 	return urlToSlug( site );
@@ -72,12 +98,18 @@ export const WooPaymentsStatusColumn = ( {
 		const siteExistsInWooPaymentsData =
 			woopaymentsData?.data?.commission_eligible_sites?.includes( siteId );
 
+		// Find ineligibility reason if site is in commission_ineligible_sites
+		const ineligibleSite = woopaymentsData?.data?.commission_ineligible_sites?.find(
+			( site ) => site.blog_id === siteId
+		);
+
 		// If site is active but not commission eligible, show "Not eligible" status.
 		if ( state === 'active' && ! siteExistsInWooPaymentsData ) {
 			return {
 				statusText: translate( 'Not eligible' ),
 				statusType: 'error',
 				showInfoIcon: true,
+				ineligibleReason: ineligibleSite?.ineligible_reason,
 			};
 		}
 
@@ -108,9 +140,7 @@ export const WooPaymentsStatusColumn = ( {
 	const popoverContent = (
 		<div className="woopayments-status-popover">
 			<p className="woopayments-status-popover__text">
-				{ translate(
-					'This WooPayments site is not eligible for commission since it was connected after the incentive expiration date.'
-				) }
+				{ getIneligibleReasonMessage( statusProps.ineligibleReason ?? '', translate ) }
 			</p>
 			<Button
 				variant="link"
