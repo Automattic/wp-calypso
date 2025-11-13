@@ -53,7 +53,6 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 	};
 
 	const isDesktop = useViewportMatch( 'medium' );
-	const isSmallViewport = useViewportMatch( 'small', '<' );
 	const Wrapper = isDesktop ? HStack : VStack;
 	const offer = sprintf(
 		// translators: %s is a percentage like 55% off
@@ -67,7 +66,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 
 	return (
 		<Wrapper alignment="flex-start" spacing={ 6 }>
-			<Column title={ __( 'Start a new site' ) } hideTitle={ isSmallViewport }>
+			<Column title={ __( 'Start a new site' ) }>
 				{ isFlexEligible && (
 					<MenuItem
 						icon={ <WordPressLogo /> }

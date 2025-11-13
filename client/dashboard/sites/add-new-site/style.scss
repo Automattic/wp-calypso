@@ -7,6 +7,7 @@
 	height: auto;
 	text-align: start;
 	padding: $grid-unit-10;
+	margin-inline: -$grid-unit-10;
 	color: inherit !important; // avoid changing the color on hover
 
 	&:hover {

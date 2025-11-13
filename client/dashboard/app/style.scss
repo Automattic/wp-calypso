@@ -43,15 +43,3 @@ a {
 .visx-tooltip:has(div[role="tooltip"]) {
 	box-shadow: 0 1px 2px $gray-300 !important;
 }
-
-.screen-reader-text {
-	border: 0;
-	clip-path: inset(50%);
-	height: 1px;
-	margin: -1px;
-	overflow: hidden;
-	padding: 0;
-	position: absolute;
-	width: 1px;
-	word-wrap: normal !important;
-}
