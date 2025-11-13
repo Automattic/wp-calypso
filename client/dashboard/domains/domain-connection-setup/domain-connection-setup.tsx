@@ -78,7 +78,7 @@ export default function DomainConnectionSetup( {
 			content: (
 				<Text>
 					{ createInterpolateElement(
-						// translators: %s is the domain name
+						// translators: <registrar/> is the domain name provider, <domain/> is the domain name
 						__( 'Log in to <registrar/> and open DNS management for <domain/>.' ),
 
 						{
