@@ -16,7 +16,7 @@ export interface SectionHeaderProps {
 	 */
 	actions?: React.ReactNode;
 	/**
-	 * Whether the section header has an action dropdown.
+	 * Whether the section header has a dropdown in the actions section.
 	 */
 	hasActionDropdown?: boolean;
 	/**
