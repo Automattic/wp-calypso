@@ -106,47 +106,45 @@ const ReaderFullPostHeader = ( {
 					onFollowToggle={ onFollowToggle }
 				/>
 			) }
-			<div className="reader-full-post__header-meta">
-				{ layout === 'recent' && (
-					<>
-						{ displaySiteName && (
-							<span className="reader-full-post__header-site-name">
-								<ReaderSiteStreamLink
-									className="reader-full-post__header-site-name-link"
-									feedId={ post.feed_ID }
-									siteId={ post.blog_ID }
-									post={ post }
-								>
-									{ displaySiteName }
-								</ReaderSiteStreamLink>
-							</span>
-						) }
-						{ followCount && (
-							<span className="reader-full-post__header-follow-count">
-								{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
-									count: followCount,
-									args: {
-										followCount: formatNumberCompact( followCount ),
-									},
-								} ) }
-							</span>
-						) }
-					</>
-				) }
-				{ post.date ? (
-					<span className="reader-full-post__header-date">
-						<a
-							className="reader-full-post__header-date-link"
-							onClick={ recordDateClick }
-							href={ post.URL }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							<TimeSince date={ post.date } />
-						</a>
-					</span>
-				) : null }
-			</div>
+			{ layout === 'recent' && (
+				<div className="reader-full-post__header-meta">
+					{ displaySiteName && (
+						<span className="reader-full-post__header-site-name">
+							<ReaderSiteStreamLink
+								className="reader-full-post__header-site-name-link"
+								feedId={ post.feed_ID }
+								siteId={ post.blog_ID }
+								post={ post }
+							>
+								{ displaySiteName }
+							</ReaderSiteStreamLink>
+						</span>
+					) }
+					{ followCount && (
+						<span className="reader-full-post__header-follow-count">
+							{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
+								count: followCount,
+								args: {
+									followCount: formatNumberCompact( followCount ),
+								},
+							} ) }
+						</span>
+					) }
+					{ post.date && (
+						<span className="reader-full-post__header-date">
+							<a
+								className="reader-full-post__header-date-link"
+								onClick={ recordDateClick }
+								href={ post.URL }
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<TimeSince date={ post.date } />
+							</a>
+						</span>
+					) }
+				</div>
+			) }
 		</div>
 	);
 	/* eslint-enable react/jsx-no-target-blank */
