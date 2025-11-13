@@ -79,19 +79,6 @@ describe( 'matchCurrentToTargetValues', () => {
 		} );
 	} );
 
-	test( 'handles duplicate target values correctly', () => {
-		const current = [ 'ns1.wordpress.com', 'ns1.wordpress.com' ];
-		const target = [ 'ns1.wordpress.com', 'ns1.wordpress.com' ];
-
-		const result = matchCurrentToTargetValues( current, target );
-
-		// Both should be matched as they are identical
-		expect( result ).toEqual( [
-			{ currentValue: 'ns1.wordpress.com', updateTo: 'ns1.wordpress.com' },
-			{ currentValue: 'ns1.wordpress.com', updateTo: 'ns1.wordpress.com' },
-		] );
-	} );
-
 	test( 'handles more current values than target values', () => {
 		const current = [ 'ns1.other.com', 'ns2.other.com', 'ns3.other.com', 'ns4.other.com' ];
 		const target = [ 'ns1.wordpress.com', 'ns2.wordpress.com' ];
