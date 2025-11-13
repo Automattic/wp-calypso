@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch } from '@wordpress/data';
@@ -112,6 +113,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const variantSlug = this.variantSlug;
 		const flowPath = variantSlug ?? flowName;
 		const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
+		const locale = useLocale();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
 		const actionQueryParam = urlQueryParams.get( 'action' );
@@ -163,11 +165,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 						hosting_provider: host || 'unknown',
 						is_ssh_supported: isHostingSupported,
 						ssh_feature_enabled: isSSHMigrationAvailable,
-						redirected_to_ssh: isSSHMigrationAvailable && isHostingSupported,
+						is_english_locale: locale === 'en',
+						redirected_to_ssh: isSSHMigrationAvailable && isHostingSupported && locale === 'en',
 					} );
 
-					// SSH migration is ONLY available if feature flag is enabled AND hosting is supported
-					const canUseSSHMigration = isSSHMigrationAvailable && isHostingSupported;
+					// SSH migration is ONLY available if feature flag is enabled AND hosting is supported AND locale is English
+					const canUseSSHMigration =
+						isSSHMigrationAvailable && isHostingSupported && locale === 'en';
 
 					if ( canUseSSHMigration ) {
 						if ( hasDestinationSite && canInstallPlugins ) {
@@ -245,12 +249,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 							const host = detectedHost || hostQueryParam;
 
 							// Check if this is an SSH migration flow
-							// Either from ssh=true param OR from move-lp with supported hosting
+							// Either from ssh=true param OR from move-lp with supported hosting and English locale
 							const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 							const isHostingSupported = isHostingSupportedForSSHMigration( host );
 							const shouldUseSSH =
 								urlQueryParams.get( 'ssh' ) === 'true' ||
-								( entryPoint === 'move-lp' && isSSHMigrationAvailable && isHostingSupported );
+								( entryPoint === 'move-lp' &&
+									isSSHMigrationAvailable &&
+									isHostingSupported &&
+									locale === 'en' );
 
 							if ( shouldUseSSH ) {
 								if ( selectedSiteCanInstallPlugins ) {
@@ -313,7 +320,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 							const isHostingSupported = isHostingSupportedForSSHMigration( host );
 							const shouldUseSSH =
 								urlQueryParams.get( 'ssh' ) === 'true' ||
-								( entryPoint === 'move-lp' && isSSHMigrationAvailable && isHostingSupported );
+								( entryPoint === 'move-lp' &&
+									isSSHMigrationAvailable &&
+									isHostingSupported &&
+									locale === 'en' );
 
 							const queryParams: {
 								from: string | null;
