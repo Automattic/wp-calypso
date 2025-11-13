@@ -180,9 +180,8 @@ export default function CancelPurchase() {
 			return;
 		}
 
-		createErrorNotice( 'test', { type: 'snackbar' } );
 		navigate( { to: purchasesRoute.to } );
-	}, [ purchase, navigate, createErrorNotice ] );
+	}, [ purchase, navigate ] );
 
 	const track = useCallback( () => {
 		if ( productSlug ) {
@@ -851,6 +850,10 @@ export default function CancelPurchase() {
 								type: 'snackbar',
 							}
 						);
+						navigate( {
+							to: purchaseSettingsRoute.fullPath,
+							params: { purchaseId: purchase.ID },
+						} );
 					},
 					onError: ( error: Error ) => {
 						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
@@ -883,7 +886,10 @@ export default function CancelPurchase() {
 						),
 						{ type: 'snackbar' }
 					);
-					setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+					navigate( {
+						to: purchaseSettingsRoute.fullPath,
+						params: { purchaseId: purchase.ID },
+					} );
 				},
 				onError: () => {
 					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
