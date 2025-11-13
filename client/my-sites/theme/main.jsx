@@ -609,7 +609,7 @@ class ThemeSheet extends Component {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
-		const shouldRenderButton = ! retired && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
+		const shouldRenderButton = ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 
 		return (
 			<div className="theme__sheet-header">
@@ -871,7 +871,14 @@ class ThemeSheet extends Component {
 			siteCount,
 			siteId,
 			themeTier,
+			retired,
 		} = this.props;
+
+		// For retired themes, don't allow any action except if the theme is active, when customising it is allowed.
+		const shouldHideButton = retired && ( ! isActive || key !== 'customize' );
+		if ( shouldHideButton ) {
+			return null;
+		}
 
 		return (
 			<Button
