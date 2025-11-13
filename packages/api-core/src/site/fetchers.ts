@@ -7,6 +7,7 @@ export const SITE_FIELDS = [
 	'slug',
 	'URL',
 	'name',
+	'description',
 	'icon',
 	'subscribers_count',
 	'plan',
