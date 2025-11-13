@@ -35,7 +35,7 @@ const SidebarHelpCenter = ( { onClick }: { onClick: () => void } ) => {
 	// Set Odie Bot to use A4A bot slug
 	useEffect( () => {
 		setOdieBotNameSlug( 'automattic-chat-support_a4a' );
-	}, [ setOdieBotNameSlug, show ] );
+	}, [ setOdieBotNameSlug ] );
 
 	return (
 		<>
