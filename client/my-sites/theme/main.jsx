@@ -597,6 +597,7 @@ class ThemeSheet extends Component {
 			themeId,
 			siteId,
 			siteSlug,
+			isActive,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -615,6 +616,8 @@ class ThemeSheet extends Component {
 								themeId={ themeId }
 								siteId={ siteId }
 								siteSlug={ siteSlug }
+								isThemeRetired={ retired }
+								isThemeActiveForSite={ isActive }
 							/>
 
 							{ title }
