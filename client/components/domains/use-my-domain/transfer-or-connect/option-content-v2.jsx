@@ -19,6 +19,7 @@ export default function OptionContentV2( {
 	recommended,
 	titleText,
 	topText,
+	etaText,
 } ) {
 	const localizeUrl = useLocalizeUrl();
 
@@ -38,7 +39,7 @@ export default function OptionContentV2( {
 				}
 				description={
 					<div className="option-content-v2__description">
-						<div className="option-content-v2__top-text">
+						<p className="option-content-v2__top-text">
 							{ topText }{ ' ' }
 							{ learnMoreLink && (
 								<a
@@ -51,7 +52,8 @@ export default function OptionContentV2( {
 									{ __( 'Learn more' ) }
 								</a>
 							) }
-						</div>
+						</p>
+						<p className="option-content-v2__eta-text">{ etaText }</p>
 					</div>
 				}
 				decoration={ illustration }
@@ -86,4 +88,5 @@ OptionContentV2.propTypes = {
 	recommended: PropTypes.bool,
 	titleText: PropTypes.string.isRequired,
 	topText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
+	etaText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
 };

@@ -21,9 +21,17 @@
 
 		.option-content-v2 {
 			&__button.summary-button.components-button {
+				text-align: initial;
+
 				& .summary-button-decoration svg, &:hover .summary-button-decoration svg {
 					fill: none;
 				}
+			}
+
+			&__description {
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
 			}
 
 			&__title {
@@ -39,6 +47,10 @@
 						margin-left: 12px;
 					}
 				}
+			}
+
+			&__eta-text {
+				color: $gray-900;
 			}
 
 			&__benefits {

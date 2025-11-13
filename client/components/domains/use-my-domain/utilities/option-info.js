@@ -42,6 +42,9 @@ const transferSupported = {
 			? __( 'Manage everything in one place, including domain name renewals.' )
 			: __( 'Manage your domain directly on WordPress.com' );
 	},
+	get etaText() {
+		return __( 'May take 5–7 days' );
+	},
 	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 	get benefits() {
 		return [
@@ -72,6 +75,9 @@ const connectSupported = {
 		return isDomainConnectionRedesign
 			? __( 'Connect your existing domain name to WordPress.com.' )
 			: __( 'Keep your domain with your current provider and point it to WordPress.com' );
+	},
+	get etaText() {
+		return __( 'May take up to 72 hours' );
 	},
 	learnMoreLink: MAP_EXISTING_DOMAIN,
 	get benefits() {
