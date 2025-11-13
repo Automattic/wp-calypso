@@ -63,7 +63,11 @@ export default function DomainEditDNS() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 3 } /> } description={ <DnsDescription /> } />
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					description={ <DnsDescription /> }
+					hasActionDropdown
+				/>
 			}
 		>
 			<DNSRecordForm

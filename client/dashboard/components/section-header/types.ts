@@ -16,6 +16,10 @@ export interface SectionHeaderProps {
 	 */
 	actions?: React.ReactNode;
 	/**
+	 * Whether the section header has an action dropdown.
+	 */
+	hasActionDropdown?: boolean;
+	/**
 	 * An optional visual element like an icon or small illustration
 	 * to enhance recognition or provide visual interest.
 	 */

@@ -325,6 +325,7 @@ export default function DomainDns() {
 							</HStack>
 						}
 						description={ <DnsDescription /> }
+						hasActionDropdown
 					/>
 				</VStack>
 			}

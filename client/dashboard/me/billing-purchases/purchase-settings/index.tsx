@@ -25,7 +25,6 @@ import { Link } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	DropdownMenu,
 	MenuGroup,
@@ -1084,16 +1083,17 @@ export default function PurchaseSettings() {
 						title={ getTitleForDisplay( purchase ) }
 						actions={
 							site?.options?.admin_url && (
-								<HStack justify="space-between">
+								<>
 									{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
 											{ __( 'Upgrade' ) }
 										</Button>
 									) }
 									<PurchaseActionMenu purchase={ purchase } />
-								</HStack>
+								</>
 							)
 						}
+						hasActionDropdown
 						description={
 							<MetadataList>
 								<PurchaseSubtitle purchase={ purchase } />

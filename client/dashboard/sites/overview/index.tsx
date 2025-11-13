@@ -197,21 +197,19 @@ function SiteOverview( {
 		}
 
 		return (
-			<HStack justify="space-between">
-				<HStack justify={ isSmallViewport ? 'flex-start' : 'flex-end' } style={ { width: 'auto' } }>
-					<StagingSiteSyncDropdown siteSlug={ siteSlug } />
-					<Button
-						ref={ wpAdminButtonRef }
-						__next40pxDefaultSize
-						variant="primary"
-						href={ site.options.admin_url }
-						icon={ wordpress }
-					>
-						{ __( 'WP Admin' ) }
-					</Button>
-				</HStack>
+			<>
+				<StagingSiteSyncDropdown siteSlug={ siteSlug } />
+				<Button
+					ref={ wpAdminButtonRef }
+					__next40pxDefaultSize
+					variant="primary"
+					href={ site.options.admin_url }
+					icon={ wordpress }
+				>
+					{ __( 'WP Admin' ) }
+				</Button>
 				<SiteActionMenu site={ site } />
-			</HStack>
+			</>
 		);
 	};
 
@@ -223,6 +221,7 @@ function SiteOverview( {
 					title={ getSiteDisplayName( site ) }
 					description={ <SiteOverviewFields site={ site } /> }
 					actions={ renderActions() }
+					hasActionDropdown
 				/>
 			}
 		>

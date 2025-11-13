@@ -23,6 +23,7 @@ export const SectionHeader = ( {
 	prefix,
 	className,
 	level = 2,
+	hasActionDropdown = false,
 }: SectionHeaderProps ) => {
 	const HeadingTag = `h${ level }` as keyof JSX.IntrinsicElements;
 	return (
@@ -53,7 +54,9 @@ export const SectionHeader = ( {
 							justify="flex-start"
 							expanded={ false }
 							alignment="flex-start"
-							className="dashboard-section-header__actions"
+							className={ clsx( 'dashboard-section-header__actions', {
+								'has-action-dropdown': !! hasActionDropdown,
+							} ) }
 							style={ { flex: '1 1 auto' } }
 						>
 							{ actions }

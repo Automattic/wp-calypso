@@ -68,3 +68,10 @@
 	flex-shrink: 0;
 	align-self: stretch;
 }
+
+.dashboard-section-header__actions.has-action-dropdown {
+	:last-child {
+		margin-inline-start: auto;
+		min-width: fit-content;
+	}
+}
