@@ -5,6 +5,8 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import type { AppState } from 'calypso/types';
 
+export type SocialService = 'google' | 'apple' | 'github' | 'paypal';
+
 export const getUxMode = ( state: AppState ) => {
 	const currentRoute = getCurrentRoute( state );
 	const oauth2Client = getCurrentOAuth2Client( state );
@@ -27,7 +29,7 @@ export const getUxMode = ( state: AppState ) => {
 };
 
 export const getRedirectUri = (
-	socialService: 'google' | 'apple' | 'github' | 'paypal',
+	socialService: SocialService,
 	state: AppState,
 	isLogin: boolean
 ) => {
