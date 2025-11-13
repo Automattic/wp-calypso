@@ -1,5 +1,9 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { FetchDashboardSiteListParams, DashboardSiteListResponse } from './types';
+import type {
+	FetchDashboardSiteListParams,
+	DashboardSiteListResponse,
+	DashboardFilters,
+} from './types';
 
 export async function fetchDashboardSiteList(
 	params: FetchDashboardSiteListParams = {}
@@ -7,5 +11,14 @@ export async function fetchDashboardSiteList(
 	return wpcom.req.get(
 		{ path: '/dashboard/site-list', apiNamespace: 'wpcom/v2' },
 		{ ...params, fields: params.fields?.join( ',' ) }
+	);
+}
+
+export async function fetchDashboardSiteFilters(
+	field: keyof DashboardFilters
+): Promise< DashboardFilters > {
+	return wpcom.req.get(
+		{ path: '/dashboard/site-filters', apiNamespace: 'wpcom/v2' },
+		{ fields: field }
 	);
 }

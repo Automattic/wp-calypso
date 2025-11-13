@@ -26,7 +26,7 @@ import AddNewSite from './add-new-site';
 import {
 	SitesDataViews,
 	useActions,
-	getFields,
+	useFields,
 	getDefaultView,
 	recordViewChanges,
 } from './dataviews';
@@ -220,7 +220,7 @@ export default function Sites() {
 		isRestoringAccount
 	);
 
-	const fields = getFields( { isAutomattician, viewType: view.type } );
+	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );

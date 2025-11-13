@@ -34,3 +34,7 @@ export interface FetchDashboardSiteListParams {
 	page?: number;
 	per_page?: number;
 }
+
+export interface DashboardFilters {
+	plan?: Array< { product_id: number; product_slug: string; product_name_short: string } >;
+}
