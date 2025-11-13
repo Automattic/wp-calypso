@@ -453,6 +453,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	font-size: $font-title-medium;
 	font-weight: 700;
 	line-height: 34px;
+	margin-bottom: 20px;
 	max-width: 750px;
 
 	@include breakpoint-deprecated( '>960px' ) {
