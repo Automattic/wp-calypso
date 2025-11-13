@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
 import { clickNavTab, reloadAndRetry } from '../../element-helper';
-import { NoticeComponent } from '../components';
+import { NoticeComponent, HelpCenterComponent } from '../components';
 
 export type PeoplePageTabs = 'Users' | 'Followers' | 'Email Followers' | 'Invites';
 
@@ -163,6 +163,12 @@ export class PeoplePage {
 		}
 
 		await reloadAndRetry( this.page, waitForInviteToAppear );
+
+		// Close the help center if it's open to prevent it from blocking clicks
+		const helpCenter = new HelpCenterComponent( this.page );
+		if ( await helpCenter.isVisible() ) {
+			await helpCenter.closePopover();
+		}
 
 		await Promise.all( [
 			this.page.waitForNavigation(),
