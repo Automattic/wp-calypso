@@ -2,7 +2,7 @@ import { userPreferenceQuery, userPreferenceOptimisticMutation } from '@automatt
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import fastDeepEqual from 'fast-deep-equal/es6';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Filter, View } from '@wordpress/dataviews';
 
 interface UseViewOptions {
@@ -65,17 +65,11 @@ export function usePersistentView( {
 
 	const [ transientFilters, setTransientFilters ] = useState< Filter[] | undefined >( undefined );
 
-	const didAddTransientFilters = useRef( false );
 	useEffect( () => {
-		if ( didAddTransientFilters.current ) {
-			return;
-		}
 		if ( transientFilterFields.length === 0 ) {
 			return;
 		}
-		didAddTransientFilters.current = true;
 
-		// This is done only on the initial page load.
 		setTransientFilters(
 			transientFilterFields.map(
 				( field ) =>
@@ -86,7 +80,10 @@ export function usePersistentView( {
 					} ) as Filter
 			)
 		);
-	}, [ transientFilterFields, queryParams ] );
+
+		// Set transient filters once on initial page load.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ JSON.stringify( transientFilterFields ) ] );
 
 	// Merge transient properties and filters from query params into the view.
 	const view: View = useMemo(
