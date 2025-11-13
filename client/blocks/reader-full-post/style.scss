@@ -200,10 +200,14 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.post-edit-button {
 		color: var( --color-text-subtle );
 
+		svg {
+			fill: var( --color-text-subtle );
+		}
+
 		&:hover {
 			color: var( --color-link );
 
-			.gridicon {
+			svg {
 				fill: var( --color-link );
 			}
 		}

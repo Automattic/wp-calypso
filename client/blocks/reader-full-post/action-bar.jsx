@@ -48,7 +48,7 @@ const ReaderFullPostActionBar = ( {
 
 			<div className="reader-full-post__action-bar-right">
 				{ canEdit && (
-					<PostEditButton post={ post } site={ site } iconSize={ 20 } onClick={ onEditClick } />
+					<PostEditButton post={ post } site={ site } iconSize={ 24 } onClick={ onEditClick } />
 				) }
 			</div>
 		</div>
