@@ -38,18 +38,20 @@ export default function OptionContentV2( {
 				}
 				description={
 					<div className="option-content-v2__description">
-						<div className="option-content-v2__top-text">{ topText }</div>
-						{ learnMoreLink && (
-							<a
-								className="option-content-v2__learn-more"
-								target="_blank"
-								href={ localizeUrl( learnMoreLink ) }
-								onClick={ ( event ) => event.stopPropagation() }
-								rel="noopener noreferrer"
-							>
-								{ __( 'Learn more' ) }
-							</a>
-						) }
+						<div className="option-content-v2__top-text">
+							{ topText }{ ' ' }
+							{ learnMoreLink && (
+								<a
+									className="option-content-v2__learn-more"
+									target="_blank"
+									href={ localizeUrl( learnMoreLink ) }
+									onClick={ ( event ) => event.stopPropagation() }
+									rel="noopener noreferrer"
+								>
+									{ __( 'Learn more' ) }
+								</a>
+							) }
+						</div>
 					</div>
 				}
 				decoration={ illustration }
