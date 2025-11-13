@@ -32,6 +32,10 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 		wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
 		is_subdomain: false,
 		root_domain: 'example.com',
+		registrar_url: null,
+		registrar: '',
+		registrar_iana_id: null,
+		reseller: null,
 	} );
 
 	test( 'renders 3 rows when current nameservers match target nameservers exactly', async () => {
