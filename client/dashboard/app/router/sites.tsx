@@ -1347,7 +1347,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 			);
 		}
 
-		if ( config.supports.sites.settings.experimental ) {
+		if ( config.supports.sites.settings.experimental && isEnabled( 'ai-site-assistant' ) ) {
 			settingsRoutes.push( siteSettingsExperimentalRoute );
 		}
 

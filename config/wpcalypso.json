@@ -20,6 +20,7 @@
 		"100-year-domain": true,
 		"ad-tracking": false,
 		"a4a-dev-sites": true,
+		"ai-site-assistant": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"calypso/ai-blogging-prompts": true,
 		"calypso/ai-site-builder-flow": true,

@@ -1,4 +1,5 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -83,7 +84,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					</SummaryButtonList>
 				</VStack>
 			) }
-			{ supportsSettings.experimental && (
+			{ config.isEnabled( 'ai-site-assistant' ) && supportsSettings.experimental && (
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'Experimental' ) } level={ 3 } />
 					<SummaryButtonList>
