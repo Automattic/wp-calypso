@@ -138,7 +138,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					display: 'block',
 					height: 'auto',
 					textAlign: 'left',
-					width: '260px',
+					width: isDesktop ? '260px' : '100%',
 					padding: 0,
 				} }
 				aria-label={ __( 'Get special offer: Free domain and up to 55% off annual plans' ) }
