@@ -59,17 +59,15 @@ export const StepFindSSHDetails: FC< StepFindSSHDetailsProps > = ( {
 				<Button variant="primary" onClick={ handleFoundDetails } disabled={ isInputDisabled }>
 					{ translate( 'I found my SSH details' ) }
 				</Button>
-				<div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-					<Button
-						variant="link"
-						onClick={ handleNoSSH }
-						className="migration-site-ssh__no-ssh-link"
-						disabled={ isInputDisabled }
-					>
-						{ translate( "I don't have SSH" ) }
-						{ isProcessingNoSSH && <Spinner /> }
-					</Button>
-				</div>
+				<Button
+					variant="link"
+					onClick={ handleNoSSH }
+					className="migration-site-ssh__no-ssh-link"
+					disabled={ isInputDisabled }
+				>
+					{ translate( "I don't have SSH" ) }
+					{ isProcessingNoSSH && <Spinner /> }
+				</Button>
 			</div>
 		</div>
 	);
