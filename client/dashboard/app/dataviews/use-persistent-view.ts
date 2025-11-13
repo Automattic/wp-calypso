@@ -1,8 +1,9 @@
 import { userPreferenceQuery, userPreferenceOptimisticMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useMatches } from '@tanstack/react-router';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { setTransientQueryParamsAtPathname } from './transient-query-params';
 import type { Filter, View } from '@wordpress/dataviews';
 
 interface UseViewOptions {
@@ -51,6 +52,7 @@ export function usePersistentView( {
 	const { mutate: persistView } = useMutation( userPreferenceOptimisticMutation( preferenceName ) );
 
 	const navigate = useNavigate();
+	const matches = useMatches();
 
 	const baseView = persistedView ?? defaultView;
 
@@ -80,6 +82,21 @@ export function usePersistentView( {
 		// Set transient filters once on initial page load.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ JSON.stringify( transientFilterFields ) ] );
+
+	useEffect( () => {
+		let transientQueryParams: Record< string, unknown > = {};
+		transientFilters.forEach( ( { field, value } ) => {
+			transientQueryParams[ field ] = value;
+		} );
+		transientQueryParams = mergeQueryParamsWithTransientProperties(
+			transientQueryParams,
+			transientProperties
+		);
+		setTransientQueryParamsAtPathname(
+			matches[ matches.length - 1 ].pathname.replace( /\/$/, '' ),
+			transientQueryParams
+		);
+	}, [ matches, transientProperties, transientFilters ] );
 
 	// Merge transient properties and filters from query params into the view.
 	const view: View = useMemo(
