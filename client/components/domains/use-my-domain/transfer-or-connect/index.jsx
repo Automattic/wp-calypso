@@ -5,6 +5,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -125,32 +126,24 @@ function DomainTransferOrConnect( {
 	}, [ availabilityData, domain, inboundTransferStatusInfo, isFetching, selectedSite?.ID ] );
 
 	const baseClassName = 'domain-transfer-or-connect';
+	const OptionContentComponent = isDomainConnectionRedesign ? OptionContentV2 : OptionContent;
 
 	return (
-		<>
+		<div
+			className={ clsx( baseClassName, {
+				[ baseClassName + '--redesign' ]: isDomainConnectionRedesign,
+			} ) }
+		>
 			<QueryProductsList />
 			<Card className={ baseClassName + '__content' }>
-				{ content.map( ( optionProps, index ) => {
-					if ( isDomainConnectionRedesign ) {
-						return (
-							<OptionContentV2
-								isPlaceholder={ isFetching }
-								key={ 'option-' + index }
-								disabled={ actionClicked }
-								{ ...optionProps }
-							/>
-						);
-					}
-
-					return (
-						<OptionContent
-							isPlaceholder={ isFetching }
-							key={ 'option-' + index }
-							disabled={ actionClicked }
-							{ ...optionProps }
-						/>
-					);
-				} ) }
+				{ content.map( ( optionProps, index ) => (
+					<OptionContentComponent
+						isPlaceholder={ isFetching }
+						key={ 'option-' + index }
+						disabled={ actionClicked }
+						{ ...optionProps }
+					/>
+				) ) }
 				{ ! isDomainConnectionRedesign && ! isFetching && (
 					<div className={ baseClassName + '__support-link' }>
 						{ createInterpolateElement(
@@ -167,7 +160,7 @@ function DomainTransferOrConnect( {
 					</div>
 				) }
 			</Card>
-		</>
+		</div>
 	);
 }
 

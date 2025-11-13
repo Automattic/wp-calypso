@@ -12,10 +12,7 @@ export default function OptionContentV2( {
 	illustration,
 	learnMoreLink,
 	onSelect,
-	onSelectText,
 	isPlaceholder,
-	pricing,
-	primary,
 	recommended,
 	titleText,
 	topText,
@@ -53,11 +50,12 @@ export default function OptionContentV2( {
 								</a>
 							) }
 						</p>
-						<p className="option-content-v2__eta-text">{ etaText }</p>
+						{ etaText && <p className="option-content-v2__eta-text">{ etaText }</p> }
 					</div>
 				}
 				decoration={ illustration }
 				onClick={ onSelect }
+				disabled={ disabled }
 			/>
 			{ benefits && (
 				<div className="option-content-v2__benefits">
@@ -65,7 +63,7 @@ export default function OptionContentV2( {
 						return (
 							<div key={ 'benefit-' + index } className="option-content-v2__benefits-item">
 								{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }
-								<Gridicon size={ 16 } icon="checkmark" />
+								<Gridicon size={ 18 } icon="checkmark" />
 								<span className="option-content-v2__benefits-item-text">{ benefit }</span>
 							</div>
 						);
@@ -88,5 +86,5 @@ OptionContentV2.propTypes = {
 	recommended: PropTypes.bool,
 	titleText: PropTypes.string.isRequired,
 	topText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
-	etaText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
+	etaText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
 };

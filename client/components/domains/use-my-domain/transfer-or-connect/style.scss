@@ -4,6 +4,17 @@
 @import "@wordpress/base-styles/variables";
 
 .domain-transfer-or-connect {
+	&--redesign {
+		max-width: 600px;
+		margin: 0 auto;
+
+		.domain-transfer-or-connect__content {
+			display: flex;
+			flex-direction: column;
+			gap: 24px;
+		}
+	}
+
 	& header.domain-transfer-or-connect__page-heading {
 		margin-bottom: 24px;
 	}
@@ -22,6 +33,10 @@
 		.option-content-v2 {
 			&__button.summary-button.components-button {
 				text-align: initial;
+
+				&:has(+ .option-content-v2__benefits) {
+					border-radius: $radius-large $radius-large 0 0;
+				}
 
 				& .summary-button-decoration svg, &:hover .summary-button-decoration svg {
 					fill: none;
@@ -50,14 +65,23 @@
 			}
 
 			&__eta-text {
-				color: $gray-900;
+				color: initial;
 			}
 
 			&__benefits {
-				padding: 20px 64px 12px;
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+				padding: 20px 64px;
+				background-color: #fafafa;
+				border: 1px solid $gray-200;
+				border-top: none;
+				border-radius: 0 0 $radius-large $radius-large;
+				font-size: $font-size-medium;
 
 				&-item {
 					display: flex;
+					align-items: center;
 
 					.gridicon {
 						margin-right: 18px;
