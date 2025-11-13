@@ -193,7 +193,8 @@ const CancelPurchaseDomainOptions = ( {
 
 	if (
 		! includedDomainPurchase ||
-		( 'one-time-purchase' !== purchase.expiry_status && ! purchase.is_domain_registration )
+		'one-time-purchase' === purchase.expiry_status ||
+		purchase.is_domain_registration
 	) {
 		return null;
 	}
