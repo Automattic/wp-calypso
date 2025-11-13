@@ -211,23 +211,25 @@ function AdminHelpCenterContent() {
 		: {};
 
 	return (
-		<QueryClientProvider client={ queryClient }>
-			<HelpCenter
-				locale={ helpCenterData.locale }
-				sectionName={ helpCenterData.sectionName || 'wp-admin' }
-				currentUser={ helpCenterData.currentUser }
-				site={ helpCenterData.site }
-				hasPurchases={ false }
-				onboardingUrl="https://wordpress.com/start"
-				handleClose={ closeCallback }
-				isCommerceGarden={ helpCenterData.isCommerceGarden }
-				{ ...botProps }
-			/>
-		</QueryClientProvider>
+		<HelpCenter
+			locale={ helpCenterData.locale }
+			sectionName={ helpCenterData.sectionName || 'wp-admin' }
+			currentUser={ helpCenterData.currentUser }
+			site={ helpCenterData.site }
+			hasPurchases={ false }
+			onboardingUrl="https://wordpress.com/start"
+			handleClose={ closeCallback }
+			isCommerceGarden={ helpCenterData.isCommerceGarden }
+			{ ...botProps }
+		/>
 	);
 }
 
 const target = document.getElementById( 'help-center-masterbar' );
 if ( target ) {
-	createRoot( target ).render( <AdminHelpCenterContent /> );
+	createRoot( target ).render(
+		<QueryClientProvider client={ queryClient }>
+			<AdminHelpCenterContent />
+		</QueryClientProvider>
+	);
 }

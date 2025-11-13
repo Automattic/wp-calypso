@@ -195,6 +195,14 @@ function HelpCenterContent() {
 	);
 }
 
+function HelpCenterContentWithProvider() {
+	return (
+		<QueryClientProvider client={ queryClient }>
+			<HelpCenterContent />
+		</QueryClientProvider>
+	);
+}
+
 if ( helpCenterData.isNextAdmin ) {
 	const observer = new PerformanceObserver( function () {
 		select( 'next-admin' )
@@ -238,12 +246,6 @@ if ( helpCenterData.isNextAdmin ) {
 	observer.observe( { type: 'largest-contentful-paint', buffered: true } );
 } else {
 	registerPlugin( 'jetpack-help-center', {
-		render: () => {
-			return (
-				<QueryClientProvider client={ queryClient }>
-					<HelpCenterContent />
-				</QueryClientProvider>
-			);
-		},
+		render: HelpCenterContentWithProvider,
 	} );
 }
