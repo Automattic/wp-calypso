@@ -866,3 +866,14 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		}
 	}
 }
+
+// Add one-off block styles
+.coblocks-gallery {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-left: 0;
+}
+.coblocks-gallery--item {
+	list-style: none;
+}
