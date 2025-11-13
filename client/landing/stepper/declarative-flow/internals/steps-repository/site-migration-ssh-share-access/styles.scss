@@ -123,6 +123,9 @@
 
 .migration-site-ssh__no-ssh-link {
 	text-decoration: none !important;
+	.components-spinner {
+		margin-top: 0;
+	}
 }
 
 .migration-site-ssh__help-link {
