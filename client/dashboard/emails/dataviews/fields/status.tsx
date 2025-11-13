@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { Text } from '../../components/text';
-import type { Email } from '../types';
+import { Text } from '../../../components/text';
+import type { Email } from '../../types';
 import type { Field } from '@wordpress/dataviews';
 
 export const statusField: Field< Email > = {
