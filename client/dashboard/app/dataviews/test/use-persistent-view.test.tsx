@@ -72,9 +72,7 @@ describe( 'usePersistentView', () => {
 
 			await waitFor( () => {
 				expect( result.current.view ).toEqual( {
-					type: 'table',
-					layout: { density: 'compact' },
-					sort: { field: 'name', direction: 'asc' },
+					...defaultView,
 					page: 1,
 					search: '',
 				} );
@@ -82,12 +80,13 @@ describe( 'usePersistentView', () => {
 		} );
 
 		it( 'should return the persisted view if exists', async () => {
+			const persistedView = {
+				type: 'grid',
+				layout: { previewSize: 120 },
+				sort: { field: 'name', direction: 'asc' },
+			};
 			mockGetCalypsoPreferences( {
-				'hosting-dashboard-dataviews-view-sites': {
-					type: 'grid',
-					layout: { previewSize: 120 },
-					sort: { field: 'name', direction: 'asc' },
-				},
+				'hosting-dashboard-dataviews-view-sites': persistedView,
 			} );
 
 			const { Wrapper } = createTestWrapper();
@@ -97,9 +96,7 @@ describe( 'usePersistentView', () => {
 
 			await waitFor( () => {
 				expect( result.current.view ).toEqual( {
-					type: 'grid',
-					layout: { previewSize: 120 },
-					sort: { field: 'name', direction: 'asc' },
+					...persistedView,
 					page: 1,
 					search: '',
 				} );
@@ -107,12 +104,13 @@ describe( 'usePersistentView', () => {
 		} );
 
 		it( 'should return the persisted view with synced transient properties from the current URL query params', async () => {
+			const persistedView = {
+				type: 'grid',
+				layout: { previewSize: 120 },
+				sort: { field: 'name', direction: 'asc' },
+			};
 			mockGetCalypsoPreferences( {
-				'hosting-dashboard-dataviews-view-sites': {
-					type: 'grid',
-					layout: { previewSize: 120 },
-					sort: { field: 'name', direction: 'asc' },
-				},
+				'hosting-dashboard-dataviews-view-sites': persistedView,
 			} );
 
 			const { Wrapper } = createTestWrapper();
@@ -127,9 +125,53 @@ describe( 'usePersistentView', () => {
 
 			await waitFor( () => {
 				expect( result.current.view ).toEqual( {
-					type: 'grid',
-					layout: { previewSize: 120 },
-					sort: { field: 'name', direction: 'asc' },
+					...persistedView,
+					page: 2,
+					search: 'test',
+				} );
+			} );
+		} );
+
+		it( 'should return the persisted view merged with transient filters from the current URL query params', async () => {
+			const persistedView = {
+				type: 'grid',
+				layout: { previewSize: 120 },
+				sort: { field: 'status', direction: 'asc' },
+				filters: [ { field: 'status', operator: 'isAny', value: 'active' } ],
+			};
+			mockGetCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': persistedView,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const queryParams = {
+				'current-param': 'current-value',
+				page: 2,
+				search: 'test',
+				domainName: 'example.com',
+			};
+			const queryParamFilterFields = [ 'domainName' ];
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields,
+					} ),
+				{
+					wrapper: Wrapper,
+				}
+			);
+
+			await waitFor( () => {
+				expect( result.current.view ).toEqual( {
+					...persistedView,
+					filters: [
+						{ field: 'status', operator: 'isAny', value: 'active' },
+						{ field: 'domainName', operator: 'is', value: 'example.com' },
+					],
 					page: 2,
 					search: 'test',
 				} );
@@ -141,12 +183,13 @@ describe( 'usePersistentView', () => {
 		it( 'should persist the new view', async () => {
 			mockGetCalypsoPreferences( {} );
 
+			const viewToPersist: View = {
+				type: 'grid',
+				layout: { previewSize: 120 },
+				sort: { field: 'name', direction: 'asc' },
+			};
 			const expectedUpdatePreferences = mockUpdateCalypsoPreferences( {
-				'hosting-dashboard-dataviews-view-sites': {
-					type: 'grid',
-					layout: { previewSize: 120 },
-					sort: { field: 'name', direction: 'asc' },
-				},
+				'hosting-dashboard-dataviews-view-sites': viewToPersist,
 			} );
 
 			const { Wrapper } = createTestWrapper();
@@ -160,9 +203,7 @@ describe( 'usePersistentView', () => {
 
 			act( () => {
 				result.current.updateView( {
-					type: 'grid',
-					layout: { previewSize: 120 },
-					sort: { field: 'name', direction: 'asc' },
+					...viewToPersist,
 					page: 1,
 					search: '',
 				} );
@@ -207,6 +248,40 @@ describe( 'usePersistentView', () => {
 					'current-param': 'current-value',
 					page: 2,
 					search: 'test',
+				} );
+			} );
+		} );
+
+		it( 'should remove transient filters from the current URL query params if no longer in the view', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value', domainName: 'active' };
+			const queryParamFilterFields = [ 'domainName' ];
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView, queryParams, queryParamFilterFields } ),
+				{
+					wrapper: Wrapper,
+				}
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					filters: [ { field: 'status', operator: 'isAny', value: 'active' } ],
+				} );
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
 				} );
 			} );
 		} );

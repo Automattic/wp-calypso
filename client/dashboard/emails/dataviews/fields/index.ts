@@ -6,9 +6,12 @@ import { typeField } from './type';
 import type { Email } from '../../types';
 import type { Field } from '@wordpress/dataviews';
 
-export const getFields = ( domains: DomainSummary[] ): Field< Email >[] => [
+export const getFields = (
+	domains: DomainSummary[],
+	domainNameFilter?: string
+): Field< Email >[] => [
 	emailAddressField,
-	getDomainNameField( domains ),
+	getDomainNameField( domains, domainNameFilter ),
 	typeField,
 	statusField,
 ];
