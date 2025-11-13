@@ -3,13 +3,7 @@ import { SSH_HOST_DISPLAY_NAMES } from '../steps/ssh-host-support-urls';
 /**
  * List of hosting providers currently enabled for SSH migration
  */
-const ENABLED_SSH_HOSTS: string[] = [
-	'hostinger-international-limited',
-	'ionos',
-	'ovh-sas',
-	'bluehost',
-	'namecheap',
-];
+const ENABLED_SSH_HOSTS: string[] = [ 'ionos', 'ovh-sas', 'bluehost', 'digitalocean', 'hostgator' ];
 
 /**
  * Checks if a hosting provider is supported for SSH migration

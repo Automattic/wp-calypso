@@ -44,7 +44,7 @@ export const useCreateZendeskConversation = () => {
 			interaction_id: activeInteractionId,
 			created_from: createdFrom,
 			is_from_error: isFromError,
-			error_reason: errorReason || 'Unknown error',
+			error_reason: isFromError ? errorReason ?? 'Unknown error' : '',
 		} );
 
 		if (

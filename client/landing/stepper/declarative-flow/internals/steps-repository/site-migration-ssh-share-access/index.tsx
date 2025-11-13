@@ -13,6 +13,10 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
+import {
+	analyzeUrl,
+	getApplicationPasswordsInfo,
+} from '../site-migration-credentials/hooks/use-credentials-form';
 import { SupportNudge } from '../site-migration-instructions/support-nudge';
 import { useSSHMigrationStatus } from '../site-migration-ssh-in-progress/hooks/use-ssh-migration-status';
 import { Accordion } from './components/accordion';
@@ -23,6 +27,7 @@ import { useStartSSHMigration } from './hooks/use-start-ssh-migration';
 import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 import './styles.scss';
 
@@ -33,7 +38,14 @@ const SiteMigrationSshShareAccess: StepType< {
 			| 'migration-completed'
 			| 'no-ssh-access'
 			| 'back-to-verification'
-			| 'do-it-for-me';
+			| 'do-it-for-me'
+			| 'application-passwords-approval'
+			| 'fallback-credentials'
+			| 'already-wpcom'
+			| 'site-is-not-using-wordpress';
+		from?: string;
+		platform?: ImporterPlatform;
+		authorizationUrl?: string;
 	};
 } > = function ( { navigation } ) {
 	const site = useSite();
@@ -56,9 +68,60 @@ const SiteMigrationSshShareAccess: StepType< {
 		}
 	}, [ transferId, navigation ] );
 
-	const handleNoSSHAccess = useCallback( () => {
-		navigation.submit?.( { destination: 'no-ssh-access' } );
-	}, [ navigation ] );
+	const handleNoSSHAccess = useCallback( async () => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share_access',
+			action: 'no_ssh_access',
+		} );
+
+		try {
+			// Analyze the source URL to get site information
+			const siteInfo = await analyzeUrl( fromUrl );
+
+			// Check for special cases first
+			if ( siteInfo?.platform_data?.is_wpcom ) {
+				return navigation.submit?.( {
+					destination: 'already-wpcom',
+					from: siteInfo.url,
+				} );
+			}
+
+			if ( siteInfo?.platform && siteInfo.platform !== 'wordpress' ) {
+				return navigation.submit?.( {
+					destination: 'site-is-not-using-wordpress',
+					from: siteInfo.url,
+					platform: siteInfo.platform,
+				} );
+			}
+
+			// Check if application passwords are enabled
+			const applicationPasswordsInfo = await getApplicationPasswordsInfo( siteId, fromUrl );
+
+			if ( applicationPasswordsInfo?.application_passwords_enabled ) {
+				// Navigate to authorization step
+				return navigation.submit?.( {
+					destination: 'application-passwords-approval',
+					from: siteInfo?.url || fromUrl,
+					authorizationUrl: applicationPasswordsInfo.authorization_url,
+				} );
+			} else if ( applicationPasswordsInfo?.application_passwords_enabled === false ) {
+				// Navigate to fallback credentials step
+				return navigation.submit?.( {
+					destination: 'fallback-credentials',
+					from: siteInfo?.url || fromUrl,
+				} );
+			}
+
+			// Default fallback - go to credentials step
+			return navigation.submit?.( { destination: 'no-ssh-access' } );
+		} catch ( error ) {
+			// On error, fallback to credentials step
+			recordTracksEvent( 'calypso_site_migration_ssh_fallback_error', {
+				error: error instanceof Error ? error.message : 'Unknown error',
+			} );
+			return navigation.submit?.( { destination: 'no-ssh-access' } );
+		}
+	}, [ navigation, fromUrl, siteId ] );
 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
