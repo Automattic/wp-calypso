@@ -21,10 +21,14 @@ const transferIllustration = isDomainConnectionRedesign ? (
 
 const optionTitleText = {
 	get transfer() {
-		return __( 'Transfer your domain' );
+		return isDomainConnectionRedesign
+			? __( 'Transfer your domain name' )
+			: __( 'Transfer your domain' );
 	},
 	get connect() {
-		return __( 'Connect your domain' );
+		return isDomainConnectionRedesign
+			? __( 'Connect your site address' )
+			: __( 'Connect your domain' );
 	},
 };
 
