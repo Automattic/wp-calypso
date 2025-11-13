@@ -14,6 +14,7 @@ import {
 	domainConnectionSetupRoute,
 	domainTransferToAnyUserRoute,
 	domainTransferToOtherSiteRoute,
+	domainsContactInfoRoute,
 } from '../../app/router/domains';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
@@ -248,7 +249,12 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 						} );
 					}
 
-					alert( 'TODO: Bulk manage contact information' );
+					return router.navigate( {
+						to: domainsContactInfoRoute.fullPath,
+						search: {
+							selected: domains.map( ( domain ) => domain.domain ).join( ',' ),
+						},
+					} );
 				},
 				isEligible: ( item ) => {
 					return (

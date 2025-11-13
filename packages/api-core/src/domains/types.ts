@@ -91,5 +91,5 @@ export type BulkDomainsAction =
 			type: 'update-contact-info';
 			domains: string[];
 			transfer_lock: boolean;
-			whois: Record< string, string >;
+			whois: Record< string, string | undefined >;
 	  };

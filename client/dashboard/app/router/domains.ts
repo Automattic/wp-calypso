@@ -58,6 +58,23 @@ export const domainsRoute = createRoute( {
 	)
 );
 
+export const domainsContactInfoRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'domains/contact-info',
+	loader: async ( { context } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../domains/domains-contact-details' ).then( ( d ) =>
+		createLazyRoute( 'domains-contact-info' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // Domain management root route
 export const domainRoute = createRoute( {
 	head: ( { params } ) => ( {
@@ -601,7 +618,7 @@ export const domainTransferSetupRoute = createRoute( {
 
 export const createDomainsRoutes = () => {
 	return [
-		domainsRoute,
+		domainsRoute.addChildren( [ domainsContactInfoRoute ] ),
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
