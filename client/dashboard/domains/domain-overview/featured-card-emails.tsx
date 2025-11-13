@@ -77,6 +77,7 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 			}
 			icon={ <Icon icon={ envelope } /> }
 			description={ getDescription( mailboxes ) }
+			intent={ mailboxes.length > 0 ? 'success' : 'upsell' }
 		/>
 	);
 }
