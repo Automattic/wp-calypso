@@ -18,7 +18,6 @@ import { Card, CardBody } from '../../components/card';
 import ConnectionModeCard from './connection-mode-card';
 import DNSRecordsDataView from './dns-records-dataview';
 import DomainConnectCard from './domain-connect-card';
-import NameserversDataView from './nameservers-dataview';
 
 interface DomainConnectionSetupProps {
 	domainName: string;
@@ -91,9 +90,11 @@ export default function DomainConnectionSetup( {
 			content: (
 				<VStack spacing={ 6 }>
 					<Text>{ __( 'Replace all name server records with the values below.' ) }</Text>
-					<NameserversDataView
+					<DNSRecordsDataView
+						domainName={ domainName }
 						domainMappingStatus={ domainMappingStatus }
 						domainConnectionSetupInfo={ domainConnectionSetupInfo }
+						mode={ DomainConnectionSetupMode.SUGGESTED }
 					/>
 				</VStack>
 			),
@@ -139,6 +140,7 @@ export default function DomainConnectionSetup( {
 						domainName={ domainName }
 						domainMappingStatus={ domainMappingStatus }
 						domainConnectionSetupInfo={ domainConnectionSetupInfo }
+						mode={ DomainConnectionSetupMode.ADVANCED }
 					/>
 				</VStack>
 			),
