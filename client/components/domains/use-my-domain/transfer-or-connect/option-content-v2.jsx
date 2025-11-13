@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import '../style.scss';
 
-export default function Option( {
+export default function OptionContentV2( {
 	benefits,
 	disabled,
 	illustration,
@@ -24,24 +24,24 @@ export default function Option( {
 
 	return (
 		<div
-			className={ clsx( 'option', {
-				'option--is-placeholder': isPlaceholder,
+			className={ clsx( 'option-content-v2', {
+				'option-content-v2--is-placeholder': isPlaceholder,
 			} ) }
 		>
 			<SummaryButton
-				className="option__button"
+				className="option-content-v2__button"
 				title={
-					<div className="option__title">
+					<div className="option-content-v2__title">
 						{ titleText }
 						{ recommended && <Badge type="info-green">{ __( 'Recommended' ) }</Badge> }
 					</div>
 				}
 				description={
-					<div className="option__description">
-						<div className="option__top-text">{ topText }</div>
+					<div className="option-content-v2__description">
+						<div className="option-content-v2__top-text">{ topText }</div>
 						{ learnMoreLink && (
 							<a
-								className="option__learn-more"
+								className="option-content-v2__learn-more"
 								target="_blank"
 								href={ localizeUrl( learnMoreLink ) }
 								onClick={ ( event ) => event.stopPropagation() }
@@ -56,13 +56,13 @@ export default function Option( {
 				onClick={ onSelect }
 			/>
 			{ benefits && (
-				<div className="option__benefits">
+				<div className="option-content-v2__benefits">
 					{ benefits.map( ( benefit, index ) => {
 						return (
-							<div key={ 'benefit-' + index } className="option__benefits-item">
+							<div key={ 'benefit-' + index } className="option-content-v2__benefits-item">
 								{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }
 								<Gridicon size={ 16 } icon="checkmark" />
-								<span className="option__benefits-item-text">{ benefit }</span>
+								<span className="option-content-v2__benefits-item-text">{ benefit }</span>
 							</div>
 						);
 					} ) }
@@ -72,7 +72,7 @@ export default function Option( {
 	);
 }
 
-Option.propTypes = {
+OptionContentV2.propTypes = {
 	benefits: PropTypes.array,
 	disabled: PropTypes.bool,
 	illustration: PropTypes.node.isRequired,

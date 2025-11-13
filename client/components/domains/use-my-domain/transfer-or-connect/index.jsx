@@ -23,8 +23,8 @@ import {
 	getOptionInfo,
 	connectDomainAction,
 } from '../utilities';
-import Option from './option';
 import OptionContent from './option-content';
+import OptionContentV2 from './option-content-v2';
 
 import './style.scss';
 
@@ -133,7 +133,7 @@ function DomainTransferOrConnect( {
 				{ content.map( ( optionProps, index ) => {
 					if ( isDomainConnectionRedesign ) {
 						return (
-							<Option
+							<OptionContentV2
 								isPlaceholder={ isFetching }
 								key={ 'option-' + index }
 								disabled={ actionClicked }
