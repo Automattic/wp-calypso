@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -125,11 +126,13 @@ class SocialSignupForm extends Component {
 							socialServiceResponse={ socialServiceResponse }
 						/>
 
-						<PayPalSocialButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-							socialServiceResponse={ socialServiceResponse }
-						/>
+						{ config.isEnabled( 'sign-in-with-paypal' ) && (
+							<PayPalSocialButton
+								responseHandler={ this.handleSignup }
+								onClick={ this.trackSignupAndRememberRedirect }
+								socialServiceResponse={ socialServiceResponse }
+							/>
+						) }
 
 						{ isSocialFirst && (
 							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />

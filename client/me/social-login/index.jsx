@@ -73,16 +73,17 @@ class SocialLogin extends Component {
 					}
 				/>
 
-				{ /* @todo config() */ }
-				<SocialLoginService
-					service="paypal"
-					label="PayPal"
-					icon={ <PayPalIcon /> }
-					redirectUri={ redirectUri }
-					socialServiceResponse={
-						this.props.socialService === 'paypal' ? this.props.socialServiceResponse : null
-					}
-				/>
+				{ config.isEnabled( 'sign-in-with-paypal' ) && (
+					<SocialLoginService
+						service="paypal"
+						label="PayPal"
+						icon={ <PayPalIcon /> }
+						redirectUri={ redirectUri }
+						socialServiceResponse={
+							this.props.socialService === 'paypal' ? this.props.socialServiceResponse : null
+						}
+					/>
+				) }
 			</div>
 		);
 	}
