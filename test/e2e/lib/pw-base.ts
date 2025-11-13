@@ -36,6 +36,7 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	GitHubLoginPage,
+	HelpCenterComponent,
 	ImportContentFromAnotherPlatformOrFilePage,
 	ImportContentFromMediumPage,
 	ImportContentFromSquarespacePage,
@@ -116,6 +117,10 @@ export const test = base.extend< {
 	 * Component for interacting with the block widget editor.
 	 */
 	componentBlockWidgetEditor: BlockWidgetEditorComponent;
+	/**
+	 * Component for interacting with the Help Center.
+	 */
+	componentHelpCenter: HelpCenterComponent;
 	/**
 	 * Component for interacting with the preview functionality.
 	 */
@@ -321,6 +326,10 @@ export const test = base.extend< {
 	componentBlockWidgetEditor: async ( { page }, use ) => {
 		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
 		await use( blockWidgetEditorComponent );
+	},
+	componentHelpCenter: async ( { page }, use ) => {
+		const helpCenterComponent = new HelpCenterComponent( page );
+		await use( helpCenterComponent );
 	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
