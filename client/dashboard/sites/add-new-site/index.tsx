@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
-import { download, reusableBlock, Icon } from '@wordpress/icons';
+import { reusableBlock } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useContext } from 'react';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
@@ -46,12 +46,6 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 			action: 'migrate',
 		} );
 	};
-	const importClick = () => {
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-			action: 'import',
-		} );
-	};
 	const offerClick = () => {
 		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 			action: 'offer',
@@ -72,7 +66,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 
 	return (
 		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 6 }>
-			<Column title={ __( 'Add new site' ) }>
+			<Column title={ __( 'Start a new site' ) }>
 				{ isFlexEligible && (
 					<MenuItem
 						icon={ <WordPressLogo /> }
@@ -116,6 +110,16 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					} ) }
 					aria-label={ __( 'Build a new site with AI' ) }
 				/>
+			</Column>
+			<Column title={ __( 'Bring an existing site' ) }>
+				<MenuItem
+					icon={ reusableBlock }
+					title={ __( 'Migrate' ) }
+					description={ __( 'Bring your site to the world’s best WordPress host.' ) }
+					onClick={ migrateClick }
+					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover` }
+					aria-label={ __( 'Migrate an existing WordPress site' ) }
+				/>
 				<MenuItem
 					icon={ <JetpackLogo /> }
 					title={ __( 'Via the Jetpack plugin' ) }
@@ -123,24 +127,6 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					onClick={ jetpackClick }
 					href={ `/jetpack/connect?cta_from=${ context }&cta_id=add-site` }
 					aria-label={ __( 'Add site via the Jetpack plugin' ) }
-				/>
-			</Column>
-			<Column title={ __( 'Migrate and import' ) }>
-				<MenuItem
-					icon={ reusableBlock }
-					title={ __( 'Migrate' ) }
-					description={ __( 'Bring your entire WordPress site to WordPress.com.' ) }
-					onClick={ migrateClick }
-					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover&action=migrate` }
-					aria-label={ __( 'Migrate an existing WordPress site' ) }
-				/>
-				<MenuItem
-					icon={ <Icon icon={ download } size={ 18 } /> }
-					title={ __( 'Import' ) }
-					description={ __( 'Use a backup to only import content from other platforms.' ) }
-					onClick={ importClick }
-					href={ `/setup/site-migration/create-site?source=${ context }&ref=new-site-popover&action=import` }
-					aria-label={ __( 'Import content from other platforms' ) }
 				/>
 			</Column>
 

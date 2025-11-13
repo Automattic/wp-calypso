@@ -40,10 +40,11 @@ const RetentionConfirmationDialog: React.FC< RetentionConfirmationDialogProps > 
 						) }
 					</p>
 					<ButtonStack>
-						<Button key="cancel" onClick={ onClose }>
+						<Button __next40pxDefaultSize variant="tertiary" key="cancel" onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							__next40pxDefaultSize
 							key="confirm"
 							onClick={ onConfirmation }
 							variant="primary"

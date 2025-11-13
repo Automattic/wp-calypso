@@ -1300,7 +1300,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.sites.settings ) {
-		const settingsRoutes: AnyRoute[] = [ siteSettingsIndexRoute ];
+		const settingsRoutes: AnyRoute[] = [ siteSettingsIndexRoute, siteSettingsTransferSiteRoute ];
 
 		if ( config.supports.sites.settings.general ) {
 			const settingsGeneralRoutes: AnyRoute[] = [

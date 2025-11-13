@@ -53,7 +53,7 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 		const registrar = ipsTagList.find( ( item ) => item.tag === ipsTag );
 		return (
 			<Modal
-				title={ __( 'Transfer Confirmation' ) }
+				title={ __( 'Transfer confirmation' ) }
 				onRequestClose={ () => setIsDialogOpen( false ) }
 			>
 				<VStack spacing={ 6 }>
@@ -78,12 +78,15 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 					</Text>
 					<ButtonStack justify="flex-end">
 						<Button
+							__next40pxDefaultSize
+							variant="tertiary"
 							onClick={ () => setIsDialogOpen( false ) }
 							disabled={ saveIpsTagMutation.isPending }
 						>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							isBusy={ saveIpsTagMutation.isPending }
 							isDestructive

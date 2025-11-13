@@ -18,6 +18,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
 import { useCurrentRoute } from 'calypso/components/route';
+import { DEFAULT_PER_PAGE } from 'calypso/dashboard/sites/dataviews';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
@@ -37,7 +38,6 @@ import { shouldShowSiteDashboard } from 'calypso/state/global-sidebar/selectors'
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
 import { useTracksEventOnFilterChange } from '../hooks/use-tracks-event-on-filter-change';
@@ -79,7 +79,6 @@ const siteSortingKeys = [
 	{ dataView: 'status', sortKey: 'status' },
 ];
 
-const DEFAULT_PER_PAGE = 50;
 const DEFAULT_SITE_TYPE = 'non-p2';
 
 const desktopFields = [ 'plan', 'status', 'last-publish', 'stats' ];
@@ -329,8 +328,6 @@ const SitesDashboard = ( {
 			: filteredSites;
 
 	const onboardingTours = useOnboardingTours();
-
-	useInitializeDataViewsPage( dataViewsState, setDataViewsState );
 
 	// Update URL with view control params on change.
 	useEffect( () => {
