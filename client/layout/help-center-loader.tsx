@@ -5,6 +5,7 @@ import { useDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -54,6 +55,7 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
+			newInteractionsBotSlug={ isA8CForAgencies() ? 'automattic-chat-support_a4a' : undefined }
 		/>
 	);
 }
