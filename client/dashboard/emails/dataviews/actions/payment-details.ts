@@ -1,8 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { useAnalytics } from '../../app/analytics';
-import { purchasesRoute } from '../../app/router/me';
-import type { Email } from '../types';
+import { useAnalytics } from '../../../app/analytics';
+import { purchasesRoute } from '../../../app/router/me';
+import type { Email } from '../../types';
 import type { Action } from '@wordpress/dataviews';
 
 export const usePaymentDetailsAction = (): Action< Email > => {

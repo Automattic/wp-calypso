@@ -5,10 +5,10 @@ import { useManageGoogleWorkspaceAction } from './manage-google-workspace';
 import { usePaymentDetailsAction } from './payment-details';
 import { useResendVerificationAction } from './resend-verification';
 import { useViewMailboxAction } from './view-mailbox';
-import type { Email } from '../types';
+import type { Email } from '../../types';
 import type { Action } from '@wordpress/dataviews';
 
-export function useEmailActions(): Action< Email >[] {
+export function useActions(): Action< Email >[] {
 	return [
 		useViewMailboxAction(),
 		useFinishSetupAction(),
