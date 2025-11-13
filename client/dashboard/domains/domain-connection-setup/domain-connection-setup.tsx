@@ -61,7 +61,8 @@ export default function DomainConnectionSetup( {
 		false,
 	] );
 
-	const registrar = domainConnectionSetupInfo.registrar || domainConnectionSetupInfo.reseller;
+	const isReseller = !! domainConnectionSetupInfo.reseller;
+	const registrar = domainConnectionSetupInfo.reseller || domainConnectionSetupInfo.registrar;
 	const registrar_url = domainConnectionSetupInfo.registrar_url;
 
 	const commonSteps = [
@@ -81,11 +82,12 @@ export default function DomainConnectionSetup( {
 						__( 'Log in to <registrar/> and open DNS management for <domain/>.' ),
 
 						{
-							registrar: registrar_url ? (
-								<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
-							) : (
-								<>{ registrar || __( 'your domain name provider' ) }</>
-							),
+							registrar:
+								! isReseller && registrar_url ? (
+									<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
+								) : (
+									<>{ registrar || __( 'your domain name provider' ) }</>
+								),
 							domain: <>{ domainName }</>,
 						}
 					) }
@@ -168,13 +170,15 @@ export default function DomainConnectionSetup( {
 			<Card>
 				<CardBody>
 					<HStack spacing={ 2 } justify="space-between">
-						<Text size="medium">{ domainName }</Text>
+						<Text size="medium" style={ { whiteSpace: 'nowrap' } }>
+							{ domainName }
+						</Text>
 						{ registrar && (
 							<HStack spacing={ 1 } justify="flex-end">
 								<Text variant="muted" size="small">
 									{ __( 'Registered by' ) }
 								</Text>
-								{ registrar_url ? (
+								{ ! isReseller && registrar_url ? (
 									<ExternalLink href={ registrar_url }>{ registrar }</ExternalLink>
 								) : (
 									<Text size="small">{ registrar }</Text>
@@ -199,6 +203,8 @@ export default function DomainConnectionSetup( {
 						onChangeSetupMode={ () => setConnectionMode( recommendedMode ) }
 						onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.DC ) }
 						isUpdatingConnectionMode={ isUpdatingConnectionMode }
+						registrar={ registrar }
+						registrar_url={ isReseller ? null : registrar_url }
 						error={ queryError }
 						errorDescription={ queryErrorDescription }
 					/>

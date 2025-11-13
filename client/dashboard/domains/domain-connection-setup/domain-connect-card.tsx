@@ -1,5 +1,6 @@
 import {
 	Button,
+	ExternalLink,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -16,9 +17,13 @@ interface DomainConnectCardProps {
 	errorDescription?: string | null;
 	onVerifyConnection: () => void;
 	isUpdatingConnectionMode: boolean;
+	registrar: string | null;
+	registrar_url: string | null;
 }
 
 export default function DomainConnectCard( {
+	registrar,
+	registrar_url,
 	onChangeSetupMode,
 	onVerifyConnection,
 	isUpdatingConnectionMode,
@@ -65,10 +70,15 @@ export default function DomainConnectCard( {
 				<Text>
 					{ createInterpolateElement(
 						__(
-							'Your domain name provider supports a quick and easy connection to WordPress.com. Select <b>Start setup</b> below, sign in to your registrar platform when prompted, and we’ll handle the rest.'
+							'<registrar/> supports a quick and easy connection to WordPress.com. Select <b>Start setup</b> below, sign in to your registrar platform when prompted, and we’ll handle the rest.'
 						),
 						{
 							b: <b />,
+							registrar: registrar_url ? (
+								<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
+							) : (
+								<>{ registrar || __( 'Your domain name provider' ) }</>
+							),
 						}
 					) }
 				</Text>
