@@ -173,8 +173,8 @@ const CancelPurchaseDomainOptions = ( {
 	const dispatch = useDispatch();
 
 	const onCancelBundledDomainChange = useCallback(
-		( event: { currentTarget: { value: string } } ) => {
-			const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
+		( event: { target: { value: string } } ) => {
+			const newCancelBundledDomainValue = event.target.value === 'cancel';
 			onCancelConfirmationStateChange( {
 				cancelBundledDomain: newCancelBundledDomainValue,
 				confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancel,

@@ -207,7 +207,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 		this.setState( ( state ) => ( {
 			...state,
-			newState,
+			...newState,
 		} ) );
 	};
 
@@ -773,7 +773,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 			this.setState( ( state ) => ( {
 				...state,
-				newState,
+				...newState,
 			} ) );
 		};
 
@@ -799,7 +799,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						includedDomainPurchase={ includedDomainPurchase }
 						disabled={ ! canContinue() }
 						siteSlug={ this.props.siteSlug }
-						cancelBundledDomain={ cancelBundledDomain }
+						cancelBundledDomain={ this.state.cancelBundledDomain }
 						purchaseListUrl={ this.props.purchaseListUrl ?? purchasesRoot }
 						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 						onCancellationComplete={ this.onCancellationComplete }
