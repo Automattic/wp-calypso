@@ -1,5 +1,3 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/colors';
 
@@ -19,10 +17,6 @@
 .dashboard-add-new-site__menu-item-icon {
 	width: 24px;
 	height: auto;
-
-	@include break-medium {
-		display: block;
-	}
 }
 
 .dashboard-add-new-site__banner {
