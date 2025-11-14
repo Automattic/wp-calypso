@@ -1,5 +1,6 @@
 import switchLocale from 'calypso/lib/i18n-utils/switch-locale';
 import { LOCALE_SET } from 'calypso/state/action-types';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 import 'calypso/state/ui/init';
 
@@ -11,13 +12,13 @@ export const setLocale = (
 	localeVariant: string | null | undefined = null
 ) => {
 	const newLocale = localeVariant || localeSlug;
+	return async ( dispatch: CalypsoDispatch ) => {
+		dispatch( {
+			type: LOCALE_SET,
+			localeSlug,
+			localeVariant,
+		} );
 
-	// Side effect: change the current translation locale.
-	switchLocale( newLocale );
-
-	return {
-		type: LOCALE_SET,
-		localeSlug,
-		localeVariant,
+		await switchLocale( newLocale );
 	};
 };

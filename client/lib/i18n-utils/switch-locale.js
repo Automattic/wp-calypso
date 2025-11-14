@@ -3,6 +3,7 @@ import { captureException } from '@automattic/calypso-sentry';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
 import { isDefaultLocale, getLanguage } from '@automattic/i18n-utils';
 import { setLocale as setLocaleNumberFormatters } from '@automattic/number-formatters';
+import { defaultI18n } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
@@ -370,6 +371,7 @@ export default async function switchLocale( localeSlug ) {
 			}
 
 			i18n.setLocale( locale );
+			defaultI18n.setLocaleData( i18n.getLocale() );
 			setLocaleInDOM();
 			removeRequireChunkTranslationsHandler();
 			addRequireChunkTranslationsHandler( localeSlug, { translatedChunks } );
@@ -423,7 +425,7 @@ export default async function switchLocale( localeSlug ) {
 			debug( error );
 		}
 	} else {
-		getLanguageFile( localeSlug ).then(
+		await getLanguageFile( localeSlug ).then(
 			// Success.
 			( body ) => {
 				if ( body ) {
@@ -434,6 +436,7 @@ export default async function switchLocale( localeSlug ) {
 					}
 
 					i18n.setLocale( body );
+					defaultI18n.setLocaleData( i18n.getLocale() );
 					setLocaleInDOM();
 					loadUserUndeployedTranslations( localeSlug );
 				}
