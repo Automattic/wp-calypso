@@ -93,20 +93,29 @@
 				display: flex;
 				flex-direction: column;
 				gap: 4px;
-				padding: 20px 64px;
+				padding: 20px 28px;
 				background-color: #fafafa;
 				border: 1px solid $gray-200;
 				border-top: none;
 				border-radius: 0 0 $radius-large $radius-large;
 				font-size: $font-size-medium;
 
+				@include break-mobile {
+					padding: 20px 64px;
+				}
+
 				&-item {
 					display: flex;
 					align-items: center;
 
 					.gridicon {
-						margin-right: 18px;
+						margin-right: 12px;
 						fill: var(--studio-green-50);
+						flex-shrink: 0;
+
+						@include break-mobile {
+							margin-right: 18px;
+						}
 					}
 				}
 			}
