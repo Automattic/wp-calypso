@@ -137,7 +137,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title="WordPress"
-					description={ __( 'Manage your WordPress version and update settings.' ) }
+					description={ __( 'Manage your WordPress version.' ) }
 				/>
 			}
 		>

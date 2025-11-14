@@ -63,7 +63,7 @@ function Domains() {
 				<PageHeader
 					title={ __( 'Domains' ) }
 					description={ __(
-						'Configure DNS, forwarding, and domain settings across all your domains.'
+						'Manage settings and configuration for all your domains.'
 					) }
 					actions={ <AddDomainButton /> }
 				/>

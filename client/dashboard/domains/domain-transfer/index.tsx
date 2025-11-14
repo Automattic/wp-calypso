@@ -216,7 +216,7 @@ export default function DomainTransfer() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Transfer' ) }
-					description={ __( 'Transfer your domain to another owner or registrar.' ) }
+					description={ __( 'Transfer this domain to another site or WordPress.com user.' ) }
 				/>
 			}
 		>

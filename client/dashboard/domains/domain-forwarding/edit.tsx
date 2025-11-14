@@ -73,7 +73,7 @@ export default function EditDomainForwarding() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
-					description={ __( 'Edit your domain forwarding configuration.' ) }
+					description={ __( 'Update where your domain redirects visitors.' ) }
 				/>
 			}
 		>
