@@ -5,21 +5,23 @@ import {
 	HelpCenterSmooch,
 } from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './embedded-chat.scss';
 import './help-center.scss';
 
 const queryClient = new QueryClient();
 
-export default function HelpCenterEmbeddedChat( props ) {
+export default function HelpCenterEmbeddedChat( { target = 'odie', ...rest } ) {
+	const initialRoute = target === 'odie' ? '/odie' : '/odie?provider=zendesk';
+
 	return (
 		<QueryClientProvider client={ queryClient }>
-			<HelpCenterRequiredContextProvider value={ props }>
+			<HelpCenterRequiredContextProvider value={ rest }>
 				<HelpCenterSmooch enableAuth />
-				<MemoryRouter>
+				<MemoryRouter initialEntries={ [ initialRoute ] } initialIndex={ 0 }>
 					<Routes>
-						<Route path="/odie" element={ <div>Hello</div> } />
-						<Route path="/" element={ <EmbeddedChat /> } />
+						<Route path="/odie" element={ <EmbeddedChat /> } />
+						<Route path="*" element={ <Navigate to={ initialRoute } replace /> } />
 					</Routes>
 				</MemoryRouter>
 			</HelpCenterRequiredContextProvider>

@@ -1,4 +1,7 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
+import { useSelect } from '@wordpress/data';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
 import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
@@ -6,9 +9,6 @@ import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import type { OdieAllBotSlugs } from '../types';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
 
 export const useCreateZendeskConversation = () => {
 	const {
@@ -31,7 +31,6 @@ export const useCreateZendeskConversation = () => {
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getIsChatLoaded(),
 		[]
 	);
-	console.log( 'chatLoaded', chatLoaded );
 
 	const createConversation = async ( {
 		createdFrom = '',
@@ -55,7 +54,6 @@ export const useCreateZendeskConversation = () => {
 			error_reason: errorReason || 'Unknown error',
 		} );
 
-		console.log( 'chatLoaded', chatLoaded );
 		if (
 			isSubmittingZendeskUserFields ||
 			chat.conversationId ||
@@ -104,9 +102,6 @@ export const useCreateZendeskConversation = () => {
 			} );
 		}
 
-		debugger;
-		const omar = Smooch === window.omarSmooch;
-		debugger;
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),

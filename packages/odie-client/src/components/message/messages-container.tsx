@@ -22,9 +22,13 @@ import { ThinkingPlaceholder } from './thinking-placeholder';
 import { TypingPlaceholder } from './typing-placeholder';
 import { getMessageUniqueIdentifier } from './utils/get-message-unique-identifier';
 import ChatMessage from '.';
+import type { CurrentUser } from '../../types';
+interface ChatMessagesProps {
+	currentUser: CurrentUser;
+}
 
-export const MessagesContainer = () => {
-	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport, currentUser } =
+export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
+	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const [ searchParams, setSearchParams ] = useSearchParams();
