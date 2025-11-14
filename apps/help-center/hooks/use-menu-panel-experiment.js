@@ -24,17 +24,35 @@ const fetchExperimentAssignment = async ( experimentName ) => {
 	return result;
 };
 
-const useMenuPanelExperiment = (
-	experimentName = 'calypso_help_center_menu_popover',
-	treatmentVariation = 'menu_popover'
-) => {
-	const { data } = useQuery( {
-		queryKey: [ 'experimentAssignmentt', experimentName ],
-		queryFn: () => fetchExperimentAssignment( experimentName ),
-		staleTime: 5 * 60 * 1000, // 5 minutes
+const useMenuPanelExperiment = ( experimentName, treatmentVariation ) => {
+	const cacheKey = `experiment-assignment-${ experimentName }-${ treatmentVariation }`;
+
+	const { data: isInTreatment } = useQuery( {
+		queryKey: [ 'experiment-assignment', experimentName, treatmentVariation ],
+		queryFn: async () => {
+			const result = await fetchExperimentAssignment( experimentName );
+			const isMatch = result?.variations?.[ experimentName ] === treatmentVariation;
+			try {
+				window.localStorage.setItem( cacheKey, JSON.stringify( isMatch ) );
+			} catch ( e ) {
+				// Silent fail if localStorage is unavailable
+			}
+			return isMatch;
+		},
+		staleTime: 10 * 60 * 1000, // 10 minutes
+		refetchOnWindowFocus: false,
+		refetchOnMount: false,
+		initialData: () => {
+			try {
+				const cached = window.localStorage.getItem( cacheKey );
+				return cached ? JSON.parse( cached ) : undefined;
+			} catch ( e ) {
+				return undefined;
+			}
+		},
 	} );
 
-	return data?.variations?.[ experimentName ] === treatmentVariation;
+	return isInTreatment;
 };
 
 export { useMenuPanelExperiment };
