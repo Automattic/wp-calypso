@@ -84,6 +84,10 @@ export function usePersistentView( {
 	}, [ JSON.stringify( transientFilterFields ) ] );
 
 	useEffect( () => {
+		if ( matches.length === 0 ) {
+			return;
+		}
+
 		let transientQueryParams: Record< string, unknown > = {};
 		transientFilters.forEach( ( { field, value } ) => {
 			transientQueryParams[ field ] = value;
@@ -92,12 +96,10 @@ export function usePersistentView( {
 			transientQueryParams,
 			transientProperties
 		);
-		if ( matches.length > 0 ) {
-			setTransientQueryParamsAtPathname(
-				matches[ matches.length - 1 ].pathname.replace( /\/$/, '' ),
-				transientQueryParams
-			);
-		}
+		setTransientQueryParamsAtPathname(
+			matches[ matches.length - 1 ].pathname.replace( /\/$/, '' ),
+			transientQueryParams
+		);
 	}, [ matches, transientProperties, transientFilters ] );
 
 	// Merge transient properties and filters from query params into the view.
