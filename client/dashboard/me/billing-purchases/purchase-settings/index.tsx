@@ -1059,8 +1059,13 @@ export default function PurchaseSettings() {
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const upgradeUrl = getUpgradeUrl( purchase );
-	const willRenew = Boolean( purchase.renew_date && ! isExpiring( purchase ) );
+	const willRenew = Boolean(
+		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
+	);
 	const expiryDateTitle = ( () => {
+		if ( isExpired( purchase ) ) {
+			return __( 'Expired' );
+		}
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
 			return __( 'Paid until' );
 		}
@@ -1124,6 +1129,9 @@ export default function PurchaseSettings() {
 							}
 							if ( willRenew ) {
 								return formattedRenewal;
+							}
+							if ( purchase.subscription_status !== 'active' ) {
+								return __( 'Inactive' );
 							}
 							return formattedExpiry;
 						} )() }
