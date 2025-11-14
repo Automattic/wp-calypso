@@ -193,7 +193,7 @@ export function BackupsListPage() {
 				<PageHeader
 					title={ isMobileDetailsView ? __( 'Backup details' ) : __( 'Backups' ) }
 					description={ __(
-						'Access and restore your site backups — powered by Jetpack VaultPress Backup.'
+						'Access and restore your site backups, powered by Jetpack VaultPress Backup.'
 					) }
 					prefix={ isMobileDetailsView && rewindId ? <Breadcrumbs length={ 2 } /> : undefined }
 					actions={ shouldShowActions ? actions : undefined }
