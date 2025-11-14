@@ -12,6 +12,8 @@ import {
 	REDDIT_TAB,
 	RECOMMENDED_TAB,
 	FRESHLY_PRESSED_TAB,
+	TAGS_TAB,
+	LATEST_TAB,
 } from '../../helper';
 
 export interface DiscoverHeaderAndNavigationProps {
@@ -39,6 +41,13 @@ export default function DiscoverHeaderAndNavigation(
 				'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
 			);
 			break;
+		case TAGS_TAB:
+			subHeaderText = fixMe( {
+				text: 'Browse posts by popular tags',
+				newCopy: translate( 'Browse posts by popular tags' ),
+				oldCopy: '', // No previous translation available.
+			} );
+			break;
 		case ADD_NEW_TAB:
 			subHeaderText = translate( 'Subscribe to new blogs, newsletters, and RSS feeds.' );
 			break;
@@ -46,15 +55,16 @@ export default function DiscoverHeaderAndNavigation(
 			subHeaderText = translate( 'Follow your favorite subreddits inside the Reader.' );
 			break;
 		case RECOMMENDED_TAB:
+			subHeaderText = translate( 'Explore popular blogs that inspire, educate, and entertain.' );
+			break;
+		case LATEST_TAB:
 			subHeaderText = fixMe( {
-				text: 'Explore popular blogs that inspire, educate, and entertain.',
-				newCopy: translate( 'Explore popular blogs that inspire, educate, and entertain.' ),
-				oldCopy: translate( 'Explore %s blogs that inspire, educate, and entertain.', {
-					args: [ 'popular' ],
-					comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-				} ),
+				text: 'Explore recent posts related to the tags you follow.',
+				newCopy: translate( 'Explore recent posts related to the tags you follow.' ),
+				oldCopy: '', // No previous translation available.
 			} );
 			break;
+
 		case FRESHLY_PRESSED_TAB:
 			subHeaderText = translate( "Our team's favorite blog posts." );
 			break;
