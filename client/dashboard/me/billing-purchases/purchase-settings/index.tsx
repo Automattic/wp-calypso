@@ -1090,7 +1090,9 @@ export default function PurchaseSettings() {
 											{ __( 'Upgrade' ) }
 										</Button>
 									) }
-									<PurchaseActionMenu purchase={ purchase } />
+									<PageHeader.ActionMenu>
+										<PurchaseActionMenu purchase={ purchase } />
+									</PageHeader.ActionMenu>
 								</HStack>
 							)
 						}
