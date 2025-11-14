@@ -62,9 +62,7 @@ function Domains() {
 			header={
 				<PageHeader
 					title={ __( 'Domains' ) }
-					description={ __(
-						'Manage settings and configuration for all your domains.'
-					) }
+					description={ __( 'Manage settings and configuration for your domains.' ) }
 					actions={ <AddDomainButton /> }
 				/>
 			}
