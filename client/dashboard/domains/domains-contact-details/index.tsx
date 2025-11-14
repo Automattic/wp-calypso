@@ -8,7 +8,7 @@ import { bulkDomainsActionMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, sprintf, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -114,6 +114,14 @@ export default function DomainsContactInfo() {
 		);
 	};
 
+	const editingMessage =
+		/* translators: %(domainCount) is the number of domains */
+		_n(
+			'Editing contact details for %(domainCount)d domain:',
+			'Editing contact details for %(domainCount)d domains:',
+			selectedDomains.length
+		);
+
 	return (
 		<PageLayout
 			size="small"
@@ -125,13 +133,7 @@ export default function DomainsContactInfo() {
 			}
 		>
 			<div>
-				<span>
-					{ sprintf(
-						/* translators: %(domainCount) is the number of domains */
-						__( 'Editing contact details for %(domainCount)d domains:' ),
-						{ domainCount: selectedDomains.length }
-					) }
-				</span>
+				<span>{ sprintf( editingMessage, { domainCount: selectedDomains.length } ) }</span>
 				<ul>
 					{ selectedDomains.map( ( domain ) => (
 						<li key={ domain }>{ domain }</li>
