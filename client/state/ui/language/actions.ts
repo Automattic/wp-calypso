@@ -13,12 +13,11 @@ export const setLocale = (
 ) => {
 	const newLocale = localeVariant || localeSlug;
 	return async ( dispatch: CalypsoDispatch ) => {
+		await switchLocale( newLocale );
 		dispatch( {
 			type: LOCALE_SET,
 			localeSlug,
 			localeVariant,
 		} );
-
-		await switchLocale( newLocale );
 	};
 };
