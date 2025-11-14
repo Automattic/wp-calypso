@@ -137,7 +137,7 @@ describe( 'usePersistentView', () => {
 				type: 'grid',
 				layout: { previewSize: 120 },
 				sort: { field: 'status', direction: 'asc' },
-				filters: [ { field: 'status', operator: 'isAny', value: 'active' } ],
+				filters: [ { field: 'status', operator: 'isAny', value: [ 'active' ] } ],
 			};
 			mockGetCalypsoPreferences( {
 				'hosting-dashboard-dataviews-view-sites': persistedView,
@@ -169,8 +169,8 @@ describe( 'usePersistentView', () => {
 				expect( result.current.view ).toEqual( {
 					...persistedView,
 					filters: [
-						{ field: 'status', operator: 'isAny', value: 'active' },
-						{ field: 'domainName', operator: 'is', value: 'example.com' },
+						{ field: 'status', operator: 'isAny', value: [ 'active' ] },
+						{ field: 'domainName', operator: 'isAny', value: [ 'example.com' ] },
 					],
 					page: 2,
 					search: 'test',
@@ -274,7 +274,7 @@ describe( 'usePersistentView', () => {
 			act( () => {
 				result.current.updateView( {
 					...defaultView,
-					filters: [ { field: 'status', operator: 'isAny', value: 'active' } ],
+					filters: [ { field: 'status', operator: 'isAny', value: [ 'active' ] } ],
 				} );
 			} );
 

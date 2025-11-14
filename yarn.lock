@@ -621,8 +621,8 @@ __metadata:
     "@automattic/zendesk-client": "workspace:^"
     "@jest/globals": "npm:^29.7.0"
     "@jest/types": "npm:^29.6.3"
-    "@playwright/browser-chromium": "npm:1.48.2"
-    "@playwright/browser-firefox": "npm:1.48.2"
+    "@playwright/browser-chromium": "npm:1.56.1"
+    "@playwright/browser-firefox": "npm:1.56.1"
     "@types/node": "npm:^22.7.5"
     "@types/totp-generator": "npm:^0.0.8"
     "@wordpress/i18n": "npm:^5.23.0"
@@ -631,7 +631,7 @@ __metadata:
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
     nock: "npm:^14.0.10"
-    playwright: "npm:1.48.2"
+    playwright: "npm:1.56.1"
     totp-generator: "npm:^0.0.14"
     typescript: "npm:^5.8.3"
   languageName: unknown
@@ -7373,23 +7373,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/browser-firefox@npm:1.48.2":
-  version: 1.48.2
-  resolution: "@playwright/browser-firefox@npm:1.48.2"
+"@playwright/browser-chromium@npm:1.56.1":
+  version: 1.56.1
+  resolution: "@playwright/browser-chromium@npm:1.56.1"
   dependencies:
-    playwright-core: "npm:1.48.2"
-  checksum: a6df172b1d74918b11399398a8f444f10df5431818eadb25fd248c6cda708bac121d487e18f8541f9a0c43c6a427c223c0a2b62cf954c2dbce6c343ca2949555
+    playwright-core: "npm:1.56.1"
+  checksum: 6025a9afbc8312f9b94bdf2b6431384236d7d253328ec2392aa3991803fc62d3ddfcd5882a06d202fc8f4a49c3b1fc110a2d9620994b28893378d594b1f0ad86
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:1.48.2":
-  version: 1.48.2
-  resolution: "@playwright/test@npm:1.48.2"
+"@playwright/browser-firefox@npm:1.56.1":
+  version: 1.56.1
+  resolution: "@playwright/browser-firefox@npm:1.56.1"
   dependencies:
-    playwright: "npm:1.48.2"
+    playwright-core: "npm:1.56.1"
+  checksum: e1117ac1b21f9d1cde63ad87a5fb4730dea6f08bc0c58516e1ad736e734795160cecd28f68bd5100f769300e1f93ad5283371ee34dc52a2b9919690ab73b90f5
+  languageName: node
+  linkType: hard
+
+"@playwright/test@npm:1.56.1":
+  version: 1.56.1
+  resolution: "@playwright/test@npm:1.56.1"
+  dependencies:
+    playwright: "npm:1.56.1"
   bin:
     playwright: cli.js
-  checksum: 68bab3bee8d716111e9a166785e6c3c406b6a184fc46d03b5468fcbb92b6242e5628f6a75f9d286e2491ec0e9e59af67542a1f114b6659d790b5a1f41e4d305b
+  checksum: 2b5b0e1f2e6a18f6e5ce6897c7440ca78f64e0b004834e9808e93ad2b78b96366b562ae4366602669cf8ad793a43d85481b58541e74be71e905e732d833dd691
   languageName: node
   linkType: hard
 
@@ -29198,6 +29207,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright-core@npm:1.56.1"
+  bin:
+    playwright-core: cli.js
+  checksum: ffd40142b99c68678b387445d5b42f1fee4ab0b65d983058c37f342e5629f9cdbdac0506ea80a0dfd41a8f9f13345bad54e9a8c35826ef66dc765f4eb3db8da7
+  languageName: node
+  linkType: hard
+
 "playwright@npm:1.48.2":
   version: 1.48.2
   resolution: "playwright@npm:1.48.2"
@@ -29210,6 +29228,21 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: ecde4ee4767556868b24d7700f3502692a3cb14c8ef127052b51b48833ffcce80942954fb188a9b72505122b48b1b625d1bb486721e1c4f2e980215328ba1ad5
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright@npm:1.56.1"
+  dependencies:
+    fsevents: "npm:2.3.2"
+    playwright-core: "npm:1.56.1"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    playwright: cli.js
+  checksum: 8e9965aede86df0f4722063385748498977b219630a40a10d1b82b8bd8d4d4e9b6b65ecbfa024331a30800163161aca292fb6dd7446c531a1ad25f4155625ab4
   languageName: node
   linkType: hard
 
@@ -38538,8 +38571,8 @@ __metadata:
     "@automattic/jest-circus-allure-reporter": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@babel/core": "npm:^7.16.0"
-    "@playwright/browser-chromium": "npm:1.48.2"
-    "@playwright/test": "npm:1.48.2"
+    "@playwright/browser-chromium": "npm:1.56.1"
+    "@playwright/test": "npm:1.56.1"
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
     asana-phrase: "npm:^0.0.8"
@@ -38557,7 +38590,7 @@ __metadata:
     jest-teamcity: "npm:^1.12.0"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
-    playwright: "npm:1.48.2"
+    playwright: "npm:1.56.1"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"
   languageName: unknown

@@ -12,6 +12,8 @@ import { SitesWithThisPlugin } from './sites-with-this-plugin';
 import { SitesWithoutThisPlugin } from './sites-without-this-plugin';
 import { usePlugin } from './use-plugin';
 
+import './style.scss';
+
 export default function Plugin() {
 	const { pluginId: pluginSlug } = pluginRoute.useParams();
 	const { icon, isLoading, sitesWithThisPlugin, plugin } = usePlugin( pluginSlug );
@@ -27,6 +29,14 @@ export default function Plugin() {
 		);
 	}
 
+	let decoration = null;
+
+	if ( icon ) {
+		decoration = <img src={ icon } alt={ plugin?.name } />;
+	} else if ( isLoading ) {
+		decoration = <div className="plugin-icon-placeholder" aria-hidden="true" />;
+	}
+
 	return (
 		<PageLayout
 			size="large"
@@ -34,7 +44,7 @@ export default function Plugin() {
 				<VStack spacing={ 2 }>
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 2 } /> }
-						decoration={ icon && <img src={ icon } alt={ plugin?.name } /> }
+						decoration={ decoration }
 						title={
 							plugin ? (
 								// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.

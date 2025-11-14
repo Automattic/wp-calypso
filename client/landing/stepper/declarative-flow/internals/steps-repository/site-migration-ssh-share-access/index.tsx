@@ -57,6 +57,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	const transferId = transferIdParam ? parseInt( transferIdParam, 10 ) : null;
 	const [ migrationStarted, setMigrationStarted ] = useState( false );
 	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
+	const [ isProcessingNoSSH, setIsProcessingNoSSH ] = useState( false );
 	const locale = useLocale();
 	const siteSlug = useSiteSlugParam() ?? '';
 	const { sendTicketAsync, isPending: isSubmittingTicket } = useSubmitMigrationTicket();
@@ -69,6 +70,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	}, [ transferId, navigation ] );
 
 	const handleNoSSHAccess = useCallback( async () => {
+		setIsProcessingNoSSH( true );
 		recordTracksEvent( 'calypso_site_migration_ssh_action', {
 			step: 'share_access',
 			action: 'no_ssh_access',
@@ -120,6 +122,8 @@ const SiteMigrationSshShareAccess: StepType< {
 				error: error instanceof Error ? error.message : 'Unknown error',
 			} );
 			return navigation.submit?.( { destination: 'no-ssh-access' } );
+		} finally {
+			setIsProcessingNoSSH( false );
 		}
 	}, [ navigation, fromUrl, siteId ] );
 
@@ -152,7 +156,9 @@ const SiteMigrationSshShareAccess: StepType< {
 		onNoSSHAccess: handleNoSSHAccess,
 		migrationStatus: migrationStatus?.status,
 		isTransferring,
-		isInputDisabled: isStartingMigration || migrationStarted || shouldStartMigration,
+		isInputDisabled:
+			isStartingMigration || migrationStarted || shouldStartMigration || isProcessingNoSSH,
+		isProcessingNoSSH,
 	} );
 
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
@@ -282,7 +288,10 @@ const SiteMigrationSshShareAccess: StepType< {
 	const topBar = (
 		<Step.TopBar
 			rightElement={
-				<SupportNudge onAskForHelp={ navigateToDoItForMe } isLoading={ isSubmittingTicket } />
+				<SupportNudge
+					onAskForHelp={ navigateToDoItForMe }
+					isLoading={ isSubmittingTicket || isProcessingNoSSH }
+				/>
 			}
 		/>
 	);
@@ -305,7 +314,8 @@ const SiteMigrationSshShareAccess: StepType< {
 								! canStartMigration ||
 								isStartingMigration ||
 								migrationStarted ||
-								shouldStartMigration
+								shouldStartMigration ||
+								isProcessingNoSSH
 							}
 							isBusy={ isBusy }
 						>
