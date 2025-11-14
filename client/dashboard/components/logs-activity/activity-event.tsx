@@ -26,7 +26,9 @@ export function ActivityEvent( { activity }: { activity: Activity } ) {
 				className="site-activity-logs__event-content"
 			>
 				<strong className="site-activity-logs__event-title">{ activityTitle }</strong>
-				{ formattedContent && <span>{ formattedContent }</span> }
+				{ formattedContent && (
+					<span className="site-activity-logs__event-description">{ formattedContent }</span>
+				) }
 			</HStack>
 		</HStack>
 	);
