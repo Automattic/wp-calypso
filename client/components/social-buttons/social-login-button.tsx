@@ -22,12 +22,12 @@ import type { AppState } from 'calypso/types';
 import '@automattic/components/styles/wp-button-override.scss';
 import './style.scss';
 
-export type ExchangeCodeForTokenResponse = {
+type ExchangeCodeForTokenResponse = {
 	service: string;
 	access_token: string;
 };
 
-type Props = {
+export type SocialLoginButtonProps = {
 	children?: ReactNode;
 	service: SocialService;
 	label: string;
@@ -52,7 +52,7 @@ export const SocialLoginButton = ( {
 	userHasDisconnected,
 	isLogin,
 	overrideRedirectUri,
-}: Props ) => {
+}: SocialLoginButtonProps ) => {
 	const translate = useTranslate();
 	const redirectUri = useSelector(
 		( state: AppState ) => overrideRedirectUri || getRedirectUri( service, state, isLogin )
