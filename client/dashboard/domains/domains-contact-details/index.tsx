@@ -9,15 +9,13 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { arrowLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
-import { domainsContactInfoRoute, domainsRoute } from '../../app/router/domains';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { domainsContactInfoRoute, domainsIndexRoute } from '../../app/router/domains';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
-import { Text } from '../../components/text';
 import { mostCommonValueInArray } from '../../utils/collection';
 import { omit } from '../../utils/object';
 
@@ -105,7 +103,7 @@ export default function DomainsContactInfo() {
 			{
 				onSuccess: () => {
 					createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
-					router.navigate( { to: domainsRoute.fullPath } );
+					router.navigate( { to: domainsIndexRoute.fullPath } );
 				},
 				onError: ( error: Error ) => {
 					createErrorNotice( error.message, {
@@ -121,11 +119,7 @@ export default function DomainsContactInfo() {
 			size="small"
 			header={
 				<PageHeader
-					prefix={
-						<RouterLinkButton icon={ arrowLeft } iconSize={ 12 } to={ domainsRoute.to }>
-							<Text variant="muted">{ __( 'Domains' ) }</Text>
-						</RouterLinkButton>
-					}
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Domain contact details' ) }
 				/>
 			}

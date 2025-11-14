@@ -35,8 +35,7 @@ import {
 import { queryParamToArray } from '../../utils/url';
 import { rootRoute } from './root';
 
-// Standalone domains route - requires rootRoute
-export const domainsRoute = createRoute( {
+const domainsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -46,6 +45,12 @@ export const domainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
+} );
+
+// Standalone domains route - requires rootRoute
+export const domainsIndexRoute = createRoute( {
+	getParentRoute: () => domainsRoute,
+	path: '/',
 	loader: async ( { context } ) => {
 		queryClient.ensureQueryData( domainsQuery() );
 		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
@@ -60,8 +65,15 @@ export const domainsRoute = createRoute( {
 );
 
 export const domainsContactInfoRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'domains/contact-info',
+	getParentRoute: () => domainsRoute,
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domain contact details' ),
+			},
+		],
+	} ),
+	path: 'contact-info',
 	beforeLoad: async ( { search } ) => {
 		const selected = queryParamToArray( ( search as { selected: unknown } ).selected );
 
@@ -637,7 +649,7 @@ export const domainTransferSetupRoute = createRoute( {
 
 export const createDomainsRoutes = () => {
 	return [
-		domainsRoute.addChildren( [ domainsContactInfoRoute ] ),
+		domainsRoute.addChildren( [ domainsIndexRoute, domainsContactInfoRoute ] ),
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
