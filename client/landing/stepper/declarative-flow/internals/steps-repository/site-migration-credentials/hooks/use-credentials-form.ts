@@ -219,11 +219,17 @@ export const useCredentialsForm = (
 			hostingProviderSlug = await getHostingProvider( domain );
 		}
 
-		// Check if SSH migration is available and hosting is supported
+		// Check if SSH migration is available and hosting is supported and locale is English
 		const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 		const isHostingSupported = isHostingSupportedForSSHMigration( hostingProviderSlug );
 
-		if ( isSSHMigrationAvailable && isHostingSupported && hostingProviderSlug && siteInfoResult ) {
+		if (
+			isSSHMigrationAvailable &&
+			isHostingSupported &&
+			locale === 'en' &&
+			hostingProviderSlug &&
+			siteInfoResult
+		) {
 			return submitToSSHMigrationFlow( siteInfoResult, hostingProviderSlug );
 		}
 

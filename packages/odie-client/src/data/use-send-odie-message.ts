@@ -11,7 +11,6 @@ import {
 	getExistingConversationMessage,
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
 	getErrorMessageUnknownError,
-	ODIE_NEW_INTERACTIONS_BOT_SLUG,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
@@ -20,7 +19,10 @@ import { useCurrentSupportInteraction } from './use-current-support-interaction'
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
 
-function getBotSlug( supportInteraction?: SupportInteraction ): string {
+function getBotSlug(
+	supportInteraction: SupportInteraction | undefined,
+	newInteractionsBotSlug: string
+): string {
 	if ( supportInteraction ) {
 		// Legacy support interactions have their botSlug set to `''`. We need to use the legacy bot slug for them.
 		return supportInteraction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
@@ -28,7 +30,7 @@ function getBotSlug( supportInteraction?: SupportInteraction ): string {
 
 	// When the interaction is undefined, it means we're sending the first message to Odie, which is done before the interaction is created.
 	// In this case, we use the new interactions bot slug.
-	return ODIE_NEW_INTERACTIONS_BOT_SLUG;
+	return newInteractionsBotSlug;
 }
 
 const getErrorMessageForSiteIdAndInternalMessageId = (
@@ -96,6 +98,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		canConnectToZendesk,
 		forceEmailSupport,
 		trackEvent,
+		newInteractionsBotSlug,
 	} = useOdieAssistantContext();
 
 	const updateInteractionContext = useCallback(
@@ -176,7 +179,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
-			const botSlug = getBotSlug( currentSupportInteraction );
+			const botSlug = getBotSlug( currentSupportInteraction, newInteractionsBotSlug );
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 			const url = window.location.href;
 			const pathname = window.location.pathname;

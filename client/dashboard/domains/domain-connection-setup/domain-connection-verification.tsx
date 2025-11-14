@@ -13,6 +13,7 @@ import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import DnsPropagationProgressBar from './components/dns-propagation-progress-bar';
 import DnsRecordsTable from './components/dns-records-table';
 import DomainPropagationStatus from './components/domain-propagation-status';
 import { isMappingVerificationSuccess } from './utils';
@@ -61,6 +62,8 @@ export default function DomainConnectionVerification( {
 							{ status === 'connected' ? __( 'Active' ) : __( 'Verifying' ) }
 						</Badge>
 					</HStack>
+
+					<DnsPropagationProgressBar domainName={ domainName } />
 
 					{ status === 'verifying' && (
 						<Notice variant="info">
@@ -125,8 +128,9 @@ export default function DomainConnectionVerification( {
 						<InlineSupportLink supportContext="general-support-options">
 							{ __( 'Contact support' ) }
 						</InlineSupportLink>
-						{ /* TODO: Add additional help resources or links here in the future */ }
-						{ /* <ExternalLink href="#" children={ __( 'Registrar instructions' ) } /> */ }
+						<InlineSupportLink supportContext="transfer-domain-registrar-login">
+							{ __( 'Registrar instructions' ) }
+						</InlineSupportLink>
 					</VStack>
 				</VStack>
 			</CardBody>
