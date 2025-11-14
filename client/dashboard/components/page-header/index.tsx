@@ -17,7 +17,6 @@ const PageTitle = () => {
 
 /**
  * ActionMenu is a specialized wrapper around DropdownMenu for use in PageHeader actions.
- * It applies special styling when it's the last action in the actions list on small screens.
  */
 const ActionMenu = ( { children }: { children: React.ReactNode } ) => {
 	if ( ! isValidElement( children ) ) {
