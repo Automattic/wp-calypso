@@ -1,7 +1,7 @@
 import { sitesQuery, dashboardSiteListQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
 import boot from '../app/boot';
 import Logo from './logo';
-import type { FetchSitesOptions } from '@automattic/api-core';
+import type { FetchSitesOptions, FetchDashboardSiteListParams } from '@automattic/api-core';
 import './style.scss';
 
 boot( {
@@ -47,6 +47,7 @@ boot( {
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteListQuery,
+		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
+			dashboardSiteListQuery( 'all', fetchDashboardSiteListParams ),
 	},
 } );

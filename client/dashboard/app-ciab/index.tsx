@@ -49,9 +49,7 @@ boot( {
 	queries: {
 		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
 			sitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
-		dashboardSiteListQuery: ( params?: FetchDashboardSiteListParams ) => {
-			// TODO: Add a filter for commerce garden types to the params.
-			return dashboardSiteListQuery( params );
-		},
+		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
+			dashboardSiteListQuery( [ 'commerce-garden' ], fetchDashboardSiteListParams ),
 	},
 } );

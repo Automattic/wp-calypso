@@ -2,7 +2,7 @@ import { JOINED_SITE_FIELDS, JOINED_SITE_OPTIONS } from '../site';
 import { wpcom } from '../wpcom-fetcher';
 import type { Site } from '../site';
 
-type FetchSitesFilter = 'atomic' | 'jetpack' | 'wpcom' | 'jetpack-full' | 'commerce-garden';
+export type FetchSitesFilter = 'atomic' | 'jetpack' | 'wpcom' | 'jetpack-full' | 'commerce-garden';
 
 /**
  * This option is required to ensure consumers explicitly specify which types of sites they want.

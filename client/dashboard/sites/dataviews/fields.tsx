@@ -66,7 +66,7 @@ function getDefaultFields(): Field< Site >[] {
 			render: ( { item } ) => <Plan site={ item } />,
 			getElements: async () => {
 				const { plan = [] } = await queryClient.fetchQuery( {
-					...dashboardSiteFiltersQuery( 'plan' ),
+					...dashboardSiteFiltersQuery( { field: 'plan', site_type_filters: 'all' } ),
 					staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
 				} );
 
@@ -75,9 +75,7 @@ function getDefaultFields(): Field< Site >[] {
 				// As a result, it seems better to use the name as value for filters.
 				return [
 					...Array.from( new Set( plan.map( ( plan ) => plan.product_name_short ) ) ),
-					// Not sure how to deal with these values...
 					__( 'Staging site' ),
-					__( 'Woo Free' ),
 				].map( ( name ) => ( {
 					label: name,
 					value: name,

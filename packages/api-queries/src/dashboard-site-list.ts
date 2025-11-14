@@ -1,15 +1,25 @@
 import { fetchDashboardSiteList, fetchDashboardSiteFilters } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import type { FetchDashboardSiteListParams, DashboardFilters } from '@automattic/api-core';
+import type {
+	FetchSitesFilters,
+	FetchDashboardSiteListParams,
+	FetchDashboardSiteFiltersParams,
+} from '@automattic/api-core';
 
-export const dashboardSiteListQuery = ( params?: FetchDashboardSiteListParams ) =>
+export const dashboardSiteListQuery = (
+	siteTypeFilters: FetchSitesFilters,
+	params?: FetchDashboardSiteListParams
+) =>
 	queryOptions( {
-		queryKey: [ 'dashboard-site-list', params ],
-		queryFn: () => fetchDashboardSiteList( params ),
+		queryKey: [ 'dashboard-site-list', siteTypeFilters, params ],
+		queryFn: () => fetchDashboardSiteList( siteTypeFilters, params ),
 	} );
 
-export const dashboardSiteFiltersQuery = ( field: keyof DashboardFilters ) =>
+export const dashboardSiteFiltersQuery = (
+	siteTypeFilters: FetchSitesFilters,
+	field: FetchDashboardSiteFiltersParams[ 'field' ]
+) =>
 	queryOptions( {
-		queryKey: [ 'dashboard-site-filters', field ],
-		queryFn: () => fetchDashboardSiteFilters( field ),
+		queryKey: [ 'dashboard-site-filters', siteTypeFilters, field ],
+		queryFn: () => fetchDashboardSiteFilters( siteTypeFilters, field ),
 	} );
