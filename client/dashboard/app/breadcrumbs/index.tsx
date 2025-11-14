@@ -1,6 +1,6 @@
 import { Breadcrumbs as BreadcrumbsComponent } from '@automattic/components/src/breadcrumbs';
 import { useMatches, Link } from '@tanstack/react-router';
-import { getTransientQueryParamsAtPathname } from '../dataviews/transient-query-params';
+import { getTransientQueryParamsAtPathname } from '../transient-query-params';
 import type { BreadcrumbItemProps } from '@automattic/components/src/breadcrumbs/types';
 
 interface BreadcrumbsProps {

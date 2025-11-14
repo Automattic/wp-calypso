@@ -3,7 +3,7 @@ import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useMatches } from '@tanstack/react-router';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { setTransientQueryParamsAtPathname } from './transient-query-params';
+import { setTransientQueryParamsAtPathname } from '../transient-query-params';
 import type { Filter, View } from '@wordpress/dataviews';
 
 interface UseViewOptions {
