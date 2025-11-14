@@ -192,12 +192,9 @@ export class ReaderSidebar extends Component {
 					</li>
 
 					<SidebarItem
-						className={
-							( clsx( 'sidebar-streams__discover' ),
-							{
-								selected: window.location.pathname.startsWith( '/discover' ),
-							} )
-						}
+						className={ clsx( 'sidebar-streams__discover', {
+							selected: path.startsWith( '/discover' ),
+						} ) }
 						label={ translate( 'Discover' ) }
 						onNavigate={ this.handleReaderSidebarDiscoverClicked }
 						customIcon={ <ReaderDiscoverIcon viewBox="0 0 24 24" /> }
