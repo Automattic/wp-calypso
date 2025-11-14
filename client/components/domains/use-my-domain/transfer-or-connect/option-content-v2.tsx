@@ -2,9 +2,22 @@ import { Badge, Gridicon, SummaryButton } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
+import type { ReactNode, ReactElement } from 'react';
 
 import '../style.scss';
+
+type OptionContentV2Props = {
+	benefits?: ReadonlyArray< ReactNode >;
+	disabled?: boolean;
+	illustration: ReactElement;
+	learnMoreLink?: string;
+	onSelect?: React.MouseEventHandler;
+	isPlaceholder?: boolean;
+	recommended?: boolean;
+	titleText: string;
+	topText: ReactNode;
+	etaText?: ReactNode;
+};
 
 export default function OptionContentV2( {
 	benefits,
@@ -17,7 +30,7 @@ export default function OptionContentV2( {
 	titleText,
 	topText,
 	etaText,
-} ) {
+}: OptionContentV2Props ) {
 	const localizeUrl = useLocalizeUrl();
 
 	return (
@@ -37,17 +50,20 @@ export default function OptionContentV2( {
 				description={
 					<div className="option-content-v2__description">
 						<p className="option-content-v2__top-text">
-							{ topText }{ ' ' }
+							{ topText }
 							{ learnMoreLink && (
-								<a
-									className="option-content-v2__learn-more"
-									target="_blank"
-									href={ localizeUrl( learnMoreLink ) }
-									onClick={ ( event ) => event.stopPropagation() }
-									rel="noopener noreferrer"
-								>
-									{ __( 'Learn more' ) }
-								</a>
+								<>
+									{ ' ' }
+									<a
+										className="option-content-v2__learn-more"
+										target="_blank"
+										href={ localizeUrl( learnMoreLink ) }
+										onClick={ ( event ) => event.stopPropagation() }
+										rel="noopener noreferrer"
+									>
+										{ __( 'Learn more' ) }
+									</a>
+								</>
 							) }
 						</p>
 						{ etaText && <p className="option-content-v2__eta-text">{ etaText }</p> }
@@ -73,16 +89,3 @@ export default function OptionContentV2( {
 		</div>
 	);
 }
-
-OptionContentV2.propTypes = {
-	benefits: PropTypes.array,
-	disabled: PropTypes.bool,
-	isPlaceholder: PropTypes.bool,
-	illustration: PropTypes.node.isRequired,
-	learnMoreLink: PropTypes.string,
-	onSelect: PropTypes.func,
-	recommended: PropTypes.bool,
-	titleText: PropTypes.string.isRequired,
-	topText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
-	etaText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
-};
