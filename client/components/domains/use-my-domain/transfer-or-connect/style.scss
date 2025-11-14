@@ -59,6 +59,10 @@
 					border-radius: $radius-large $radius-large 0 0;
 				}
 
+				&:focus {
+					box-shadow: none;
+				}
+
 				& .summary-button-decoration svg, &:hover .summary-button-decoration svg {
 					fill: none;
 				}
