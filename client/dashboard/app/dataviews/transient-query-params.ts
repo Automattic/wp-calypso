@@ -10,6 +10,8 @@ export function setTransientQueryParamsAtPathname(
 ) {
 	if ( Object.keys( queryParams ).length > 0 ) {
 		transientQueryParamsMap.set( pathname, queryParams );
+	} else {
+		transientQueryParamsMap.delete( pathname );
 	}
 }
 

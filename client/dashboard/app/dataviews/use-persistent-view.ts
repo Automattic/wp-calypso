@@ -92,10 +92,12 @@ export function usePersistentView( {
 			transientQueryParams,
 			transientProperties
 		);
-		setTransientQueryParamsAtPathname(
-			matches[ matches.length - 1 ].pathname.replace( /\/$/, '' ),
-			transientQueryParams
-		);
+		if ( matches.length > 0 ) {
+			setTransientQueryParamsAtPathname(
+				matches[ matches.length - 1 ].pathname.replace( /\/$/, '' ),
+				transientQueryParams
+			);
+		}
 	}, [ matches, transientProperties, transientFilters ] );
 
 	// Merge transient properties and filters from query params into the view.
