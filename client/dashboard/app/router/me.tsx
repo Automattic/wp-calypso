@@ -132,7 +132,7 @@ export const billingHistoryRoute = createRoute( {
 	loader: async () => {
 		await queryClient.ensureQueryData( userReceiptsQuery() );
 	},
-	path: '/billing-history',
+	path: '/history',
 } );
 
 export const billingHistoryIndexRoute = createRoute( {
