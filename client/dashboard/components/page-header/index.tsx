@@ -1,6 +1,8 @@
 import { useMatches } from '@tanstack/react-router';
+import { isValidElement } from 'react';
 import { SectionHeader } from '../section-header';
 import type { PageHeaderProps } from './types';
+import './style.scss';
 
 const PageTitle = () => {
 	const title = useMatches( {
@@ -11,6 +13,18 @@ const PageTitle = () => {
 	} );
 
 	return title;
+};
+
+/**
+ * ActionMenu is a specialized wrapper around DropdownMenu for use in PageHeader actions.
+ * It applies special styling when it's the last action in the actions list.
+ */
+const ActionMenu = ( { children }: { children: React.ReactNode } ) => {
+	if ( ! isValidElement( children ) ) {
+		return null;
+	}
+
+	return <div className="dashboard-page-header__action-menu">{ children }</div>;
 };
 
 /**
@@ -35,3 +49,5 @@ export const PageHeader = ( props: PageHeaderProps ) => {
 		/>
 	);
 };
+
+PageHeader.ActionMenu = ActionMenu;
