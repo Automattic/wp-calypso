@@ -2,7 +2,6 @@ import { useMatches } from '@tanstack/react-router';
 import { isValidElement } from 'react';
 import { SectionHeader } from '../section-header';
 import type { PageHeaderProps } from './types';
-import './style.scss';
 
 const PageTitle = () => {
 	const title = useMatches( {
@@ -18,12 +17,12 @@ const PageTitle = () => {
 /**
  * ActionMenu is a specialized wrapper around DropdownMenu for use in PageHeader actions.
  */
-const ActionMenu = ( { children }: { children: React.ReactNode } ) => {
+const ActionMenu = ( { children }: { children: React.ReactElement | null } ) => {
 	if ( ! isValidElement( children ) ) {
 		return null;
 	}
 
-	return <div className="dashboard-page-header__action-menu">{ children }</div>;
+	return <div style={ { marginInlineStart: 'auto' } }>{ children }</div>;
 };
 
 /**
