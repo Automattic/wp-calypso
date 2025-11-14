@@ -38,6 +38,6 @@ export const getIncludedDomainPurchase = (
 				isDomainRegistration( purchase ) ||
 				isDomainTransfer( purchase ) ) &&
 			includedDomain === purchase.meta &&
-			parseFloat( purchase.costToUnbundleText ) > 0
+			purchase.costToUnbundleText
 	);
 };
