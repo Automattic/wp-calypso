@@ -97,7 +97,7 @@ function MonetizeSubscriptions() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ getMonetizeSubscriptionsPageTitle() }
-					description={ __( 'Manage your Monetize subscriptions and revenue.' ) }
+					description={ __( 'Manage your Monetize subscriptions.' ) }
 				/>
 			}
 		>
