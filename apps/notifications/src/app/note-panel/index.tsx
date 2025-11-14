@@ -27,7 +27,7 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
-const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
+export const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
 	name,
 	title: label,
 } ) );
