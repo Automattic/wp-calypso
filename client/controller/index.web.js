@@ -139,72 +139,13 @@ export const redirectInvalidLanguage = ( context, next ) => {
 	next();
 };
 
-export async function redirectLoggedOut( context, next ) {
-	const state = context.store.getState();
-	// Allow logged-out users to access account deleted page for self-restore.
-	// This is an exception because /me should not allow enableLoggedOut.
-	if ( context.pathname === '/me/account/closed' ) {
-		return next();
-	}
-
-	// When wpcom-user-bootstrap is enabled, the user is loaded from the cached object on the window.
-	// This case confirms the user exists and is logged in when we suspect that may not be the case (given a missing auth cookie)
-	if ( isCookieAuthMissing() && config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		try {
-			const userData = await rawCurrentUserFetch();
-
-			if ( userData ) {
-				logToLogstash( {
-					feature: 'calypso_client',
-					message: 'Cookie-auth-missing but user fetch succeeded',
-					severity: 'info',
-					user_id: userData.ID,
-					properties: {
-						env: config( 'env_id' ),
-						pathname: context.pathname,
-					},
-				} );
-				// Continue normally since we have valid user data
-				next();
-				return;
-			}
-		} catch ( error ) {
-			// User fetch failed, proceed with logout
-			logToLogstash( {
-				feature: 'calypso_client',
-				message: 'Cookie-auth-missing and user re-fetch failed',
-				severity: 'warning',
-				user_id: getCurrentUserId( state ),
-				properties: {
-					env: config( 'env_id' ),
-					pathname: context.pathname,
-					error: error.message || 'Unknown error',
-				},
-			} );
-
-			// Get redirect URL to /log-in
-			const { site, blog, blog_id } = context.params;
-			const siteFragment = site || blog || blog_id || getSiteFragment( context.path );
-			const loginParameters = {
-				redirectTo: context.path,
-				site: siteFragment,
-			};
-
-			// Perform logout with redirect to login page
-			const userData = getCurrentUser( state );
-			const logoutUrl = getLogoutUrl( userData, login( loginParameters ) );
-
-			// Clear any data and redirect to logout
-			window.location = logoutUrl;
-			return;
-		}
-	}
-
-	if ( isUserLoggedIn( state ) && ! isCookieAuthMissing() ) {
-		next();
-		return;
-	}
-
+/**
+ * Builds login parameters from context and state for redirecting to the login page.
+ * @param {Object} context Middleware context object
+ * @param {Object} state Redux state
+ * @returns {Object} Login parameters object
+ */
+function buildLoginParameters( context, state ) {
 	const { site, blog, blog_id } = context.params;
 	const siteFragment = site || blog || blog_id || getSiteFragment( context.path );
 
@@ -235,13 +176,86 @@ export async function redirectLoggedOut( context, next ) {
 		loginParameters.redirectTo = 'https://wordpress.com' + loginParameters.redirectTo;
 	}
 
+	return loginParameters;
+}
+
+/**
+ * Middleware to redirect logged-out users to the login page or fully log users out if they are missing an auth cookie
+ * Note: This function is async to handle the user re-fetch operation when needed,
+ * but it uses the callback-style `next()` parameter to maintain compatibility
+ * with the page.js routing system. The async/await is only used internally for
+ * the `rawCurrentUserFetch()` call; all control flow still uses the `next()` callback.
+ * @param {Object}   context Context object
+ * @param {Function} next    Calls next middleware
+ * @returns {Promise<void>} Promise that resolves when middleware completes (not awaited by router)
+ */
+export async function redirectLoggedOut( context, next ) {
+	const state = context.store.getState();
+	// Allow logged-out users to access account deleted page for self-restore.
+	// This is an exception because /me should not allow enableLoggedOut.
+	if ( context.pathname === '/me/account/closed' ) {
+		return next();
+	}
+
+	if ( isUserLoggedIn( state ) && ! isCookieAuthMissing() ) {
+		next();
+		return;
+	} else if ( isCookieAuthMissing() && config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+		try {
+			const userData = await rawCurrentUserFetch();
+
+			if ( userData ) {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Cookie-auth-missing but user fetch succeeded',
+					severity: 'info',
+					user_id: userData.ID,
+					properties: {
+						env: config( 'env_id' ),
+						pathname: context.pathname,
+					},
+				} );
+				// Continue normally since we have valid user data
+				next();
+				return;
+			}
+		} catch ( error ) {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: 'Cookie-auth-missing and user re-fetch failed',
+				severity: 'warning',
+				user_id: getCurrentUserId( state ),
+				properties: {
+					env: config( 'env_id' ),
+					pathname: context.pathname,
+					error: error.message || 'Unknown error',
+					error_status: error.status,
+				},
+			} );
+
+			// Only for 401 and 403 errors, perform logout and redirect to login page
+			// If the response is in the 500 range, there could be a transient connection issue or a different server issue
+			if ( [ 401, 403 ].contains( error.status ) ) {
+				// Perform logout with redirect to login page
+				const userData = getCurrentUser( state );
+				const logoutUrl = getLogoutUrl( userData, login( buildLoginParameters( context, state ) ) );
+
+				window.location = logoutUrl;
+				return;
+			}
+		}
+	}
+
+	// Fallback logged in check
+	// This check would allow a user with a missing auth cookie to continue in the event that the user re-fetch operation
+	// does not return a 401 or 403 - this prevents redirecting them to login if some other error is affecting the user re-fetch operation
 	if ( isUserLoggedIn( state ) ) {
 		next();
 		return;
 	}
 
 	// force full page reload to avoid SSR hydration issues.
-	window.location = login( loginParameters );
+	window.location = login( buildLoginParameters( context, state ) );
 	return;
 }
 
