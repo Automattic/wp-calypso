@@ -1,4 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Navigator } from '@wordpress/components';
 import { renderWithProvider } from '../../../testing-library';
 import NodePanel, { NOTIFICATION_TABS } from '../index';
 
@@ -40,5 +42,28 @@ describe( 'NotePanel', () => {
 		NOTIFICATION_TABS.forEach( ( { title }: { title: string } ) => {
 			expect( getByText( title ) ).toBeInTheDocument();
 		} );
+	} );
+
+	it( 'should select tab on click', async () => {
+		renderWithProvider(
+			<Navigator initialPath="/all">
+				<Navigator.Screen path="/:filterName">
+					<NodePanel />
+				</Navigator.Screen>
+			</Navigator>
+		);
+
+		await waitForComponentToBeInitializedWithSelectedTab( NOTIFICATION_TABS[ 0 ].title );
+
+		const nextSelectedTab = NOTIFICATION_TABS[ 1 ];
+		await userEvent.click( screen.getByRole( 'tab', { name: nextSelectedTab.title } ) );
+		await waitFor( () =>
+			expect(
+				screen.getByRole( 'tab', {
+					selected: true,
+					name: nextSelectedTab.title,
+				} )
+			).toBeVisible()
+		);
 	} );
 } );
