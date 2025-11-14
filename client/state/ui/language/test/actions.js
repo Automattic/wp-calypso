@@ -7,9 +7,9 @@ describe( 'actions', () => {
 	describe( 'setLocale', () => {
 		const middlewares = [ thunk ];
 		const mockStore = configureStore( middlewares );
-		test( 'dispatches an appropriate action', () => {
+		test( 'dispatches an appropriate action', async () => {
 			const store = mockStore();
-			store.dispatch( setLocale( 'he' ) );
+			await store.dispatch( setLocale( 'he' ) );
 			const actions = store.getActions();
 			expect( actions[ 0 ] ).toEqual( {
 				type: LOCALE_SET,
@@ -18,9 +18,9 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'dispatches an action with localeVariant set', () => {
+		test( 'dispatches an action with localeVariant set', async () => {
 			const store = mockStore();
-			store.dispatch( setLocale( 'he', 'he_formal' ) );
+			await store.dispatch( setLocale( 'he', 'he_formal' ) );
 			const actions = store.getActions();
 			expect( actions[ 0 ] ).toEqual( {
 				type: LOCALE_SET,
