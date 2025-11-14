@@ -1178,11 +1178,15 @@ export default function PurchaseSettings() {
 						}
 					/>
 				</Grid>
-				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
+				{ site && purchase.subscription_status === 'active' && (
+					<WPComResourceMeters purchase={ purchase } site={ site } />
+				) }
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				<ManageSubscriptionCard purchase={ purchase } />
+				{ purchase.subscription_status === 'active' && (
+					<ManageSubscriptionCard purchase={ purchase } />
+				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
 		</PageLayout>
