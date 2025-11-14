@@ -131,7 +131,9 @@ export default function CIABSites() {
 					view={ view }
 					sites={ sites ?? [] }
 					totalItems={ totalItems ?? 0 }
+					sites__ES={ [] }
 					fields={ fields }
+					fields__ES={ [] }
 					actions={ actions }
 					isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
 					empty={
