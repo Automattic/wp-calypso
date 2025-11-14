@@ -2,16 +2,14 @@ import { siteSettingsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	Button,
 	CheckboxControl,
 	ExternalLink,
-	Icon,
+	TextControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -22,6 +20,57 @@ interface AIAssistantFormData {
 	bigSkyEnabled: boolean;
 }
 
+type UseCaseOption = 'redesign' | 'content' | 'questions' | 'images' | 'other';
+
+const USE_CASE_OPTIONS: Array< { value: UseCaseOption; label: string } > = [
+	{ value: 'questions', label: __( 'General help and questions' ) },
+	{ value: 'content', label: __( 'Make changes to my site content' ) },
+	{ value: 'redesign', label: __( 'Redesign my site' ) },
+	{ value: 'images', label: __( 'Create and edit images' ) },
+	{ value: 'other', label: __( 'Other' ) },
+];
+
+const getUseCaseDescription = (
+	useCase: UseCaseOption,
+	siteEditorUrl: string,
+	blockEditorUrl: string,
+	mediaLibraryUrl: string
+) => {
+	switch ( useCase ) {
+		case 'redesign':
+			return createInterpolateElement(
+				__(
+					'Head over to the <siteEditorLink>site editor</siteEditorLink> to start redesigning your site.'
+				),
+				{
+					siteEditorLink: <ExternalLink href={ siteEditorUrl } children={ null } />,
+				}
+			);
+		case 'content':
+			return createInterpolateElement(
+				__(
+					'Use the AI assistant in the <blockEditorLink>block editor</blockEditorLink> to get help building or editing content.'
+				),
+				{
+					blockEditorLink: <ExternalLink href={ blockEditorUrl } children={ null } />,
+				}
+			);
+		case 'questions':
+			return __( 'Ask questions in the AI assistant chat interface.' );
+		case 'images':
+			return createInterpolateElement(
+				__(
+					'Access Image Studio from the <mediaLibraryLink>media library</mediaLibraryLink> to create and edit images.'
+				),
+				{
+					mediaLibraryLink: <ExternalLink href={ mediaLibraryUrl } children={ null } />,
+				}
+			);
+		case 'other':
+			return __( 'Explore AI features throughout your WordPress dashboard.' );
+	}
+};
+
 export function AIAssistantForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
 	const [ initialData, setInitialData ] = useState< AIAssistantFormData >( () =>
 		fromSiteSettings( settings )
@@ -29,10 +78,17 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 	const [ formData, setFormData ] = useState< AIAssistantFormData >( () => ( {
 		...initialData,
 	} ) );
-	const [ showOnboardingNotice, setShowOnboardingNotice ] = useState( false );
+	const [ selectedUseCases, setSelectedUseCases ] = useState< Set< UseCaseOption > >(
+		() => new Set()
+	);
+	const [ otherText, setOtherText ] = useState( '' );
 
-	const isOnboarded = settings?.big_sky_site_metadata?.isOnboarded;
+	const isAlreadyEnabled = initialData.bigSkyEnabled;
+	const isEnabled = formData.bigSkyEnabled || isAlreadyEnabled;
+
 	const siteEditorUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit';
+	const blockEditorUrl = site?.URL + '/wp-admin/post-new.php';
+	const mediaLibraryUrl = site?.URL + '/wp-admin/upload.php';
 
 	const mutation = useMutation( {
 		...siteSettingsMutation( site.ID ),
@@ -44,145 +100,139 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 		},
 	} );
 
-	const isDirty = Object.entries( initialData ).some(
-		( [ key, value ] ) => formData[ key as keyof AIAssistantFormData ] !== value
-	);
+	const hasSelection = selectedUseCases.size > 0;
 	const { isPending } = mutation;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( toSiteSettings( formData ), {
-			onSuccess: () => {
-				// Check if Big Sky was just enabled (changed from disabled to enabled)
-				const wasPreviouslyDisabled = ! initialData.bigSkyEnabled;
-				const isNowEnabled = formData.bigSkyEnabled;
-				const wasJustEnabled = wasPreviouslyDisabled && isNowEnabled;
 
-				if ( wasJustEnabled ) {
-					setShowOnboardingNotice( true );
+		const settingsUpdate = toSiteSettings( { bigSkyEnabled: true }, selectedUseCases );
+
+		mutation.mutate( settingsUpdate, {
+			onSuccess: () => {
+				// Update initialData to reflect that Big Sky is now enabled
+				setInitialData( { bigSkyEnabled: true } );
+				setFormData( { bigSkyEnabled: true } );
+			},
+		} );
+	};
+
+	const handleUseCaseChange = ( value: UseCaseOption, checked: boolean ) => {
+		setSelectedUseCases( ( prev ) => {
+			const newSet = new Set( prev );
+			if ( checked ) {
+				newSet.add( value );
+			} else {
+				newSet.delete( value );
+				if ( value === 'other' ) {
+					setOtherText( '' );
 				}
-
-				// Update initialData to match the saved formData so the form knows it's clean
-				setInitialData( { ...formData } );
-			},
-		} );
-	};
-
-	const handleChange = ( edits: Partial< AIAssistantFormData > ) => {
-		setFormData( ( data ) => {
-			const newData = { ...data, ...edits };
-			// Hide notice if Big Sky is disabled
-			if ( edits.bigSkyEnabled === false ) {
-				setShowOnboardingNotice( false );
 			}
-			return newData;
+			return newSet;
 		} );
 	};
 
-	const handleRedesignSite = () => {
-		// TODO: Implement redirect to redesign flow
-		window.location.href = siteEditorUrl;
-	};
+	const handleDisable = () => {
+		const settingsUpdate = toSiteSettings( { bigSkyEnabled: false }, new Set() );
 
-	const onboardingMutation = useMutation( {
-		...siteSettingsMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Onboarding status updated.' ),
-				error: __( 'Failed to update onboarding status.' ),
-			},
-		},
-	} );
-
-	const handleContinueWithDesign = () => {
-		// Update big_sky_site_metadata to mark as onboarded
-		const metadataUpdate = {
-			big_sky_site_metadata: {
-				isOnboarded: true,
-			},
-		};
-		onboardingMutation.mutate( metadataUpdate, {
+		mutation.mutate( settingsUpdate, {
 			onSuccess: () => {
-				// Redirect to site editor after successful save
-				window.location.href = siteEditorUrl;
+				setInitialData( { bigSkyEnabled: false } );
+				setFormData( { bigSkyEnabled: false } );
+				setSelectedUseCases( new Set() );
+				setOtherText( '' );
 			},
 		} );
 	};
 
-	return (
-		<>
+	// Show all descriptions whenever Big Sky is enabled
+	if ( isEnabled ) {
+		return (
 			<Card>
 				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							{ showOnboardingNotice && isOnboarded && (
-								<Notice variant="success" density="medium">
-									{ createInterpolateElement(
-										__(
-											'Enabled! Head over to the <siteEditorLink>site editor</siteEditorLink> to start using it.'
-										),
-										{
-											siteEditorLink: <ExternalLink href={ siteEditorUrl } children={ null } />,
-										}
-									) }
-								</Notice>
-							) }
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label={ __( 'Enable Big Sky' ) }
-								checked={ formData.bigSkyEnabled }
-								onChange={ ( checked ) => handleChange( { bigSkyEnabled: checked } ) }
-								help={ __( 'Enable Big Sky features for this site.' ) }
-							/>
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									__next40pxDefaultSize
-									type="submit"
-									isBusy={ isPending }
-									disabled={ isPending || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</ButtonStack>
+					<VStack spacing={ 4 }>
+						<Notice variant="success" density="medium">
+							{ __( 'AI Site Assistant is enabled! You have access to a lot of cool stuff.' ) }
+						</Notice>
+						<VStack spacing={ 3 }>
+							{ USE_CASE_OPTIONS.map( ( option ) => (
+								<div key={ option.value }>
+									<strong>{ option.label }</strong>
+									<p style={ { marginTop: '8px', marginBottom: 0 } }>
+										{ getUseCaseDescription(
+											option.value,
+											siteEditorUrl,
+											blockEditorUrl,
+											mediaLibraryUrl
+										) }
+									</p>
+								</div>
+							) ) }
 						</VStack>
-					</form>
+						<ButtonStack justify="flex-start">
+							<Button
+								variant="secondary"
+								__next40pxDefaultSize
+								onClick={ handleDisable }
+								isBusy={ isPending }
+								disabled={ isPending }
+							>
+								{ __( 'Disable AI Site Assistant' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
 				</CardBody>
 			</Card>
-			{ ! isOnboarded && formData.bigSkyEnabled && (
-				<Card>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<HStack spacing={ 2 }>
-								<Icon icon={ check } style={ { color: '#00A32A' } } />
-								<Text as="p" weight={ 500 }>
-									{ __( 'Enabled!' ) }
-								</Text>
-							</HStack>
-							<Text as="p">
-								{ __(
-									'It looks like this is your first time using the site assistant on this site. Would you like to redesign your site or continue with your own design?'
-								) }
-							</Text>
-							<ButtonStack justify="flex-start">
-								<Button variant="primary" __next40pxDefaultSize onClick={ handleRedesignSite }>
-									{ __( 'Redesign my site' ) }
-								</Button>
-								<Button
-									variant="secondary"
-									__next40pxDefaultSize
-									onClick={ handleContinueWithDesign }
-									isBusy={ onboardingMutation.isPending }
-									disabled={ onboardingMutation.isPending }
-								>
-									{ __( 'Continue with my own design' ) }
-								</Button>
-							</ButtonStack>
+		);
+	}
+
+	return (
+		<Card>
+			<CardBody>
+				<form onSubmit={ handleSubmit }>
+					<VStack spacing={ 4 }>
+						<Text weight={ 500 }>{ __( 'How do you plan to use the AI Site Assistant?' ) }</Text>
+						<Text variant="muted" lineHeight="20px">
+							{ __(
+								'Your choices help to personalize setup. You’ll still have access to everything.'
+							) }
+						</Text>
+						<VStack spacing={ 3 }>
+							{ USE_CASE_OPTIONS.map( ( option ) => (
+								<div key={ option.value }>
+									<CheckboxControl
+										__nextHasNoMarginBottom
+										label={ option.label }
+										checked={ selectedUseCases.has( option.value ) }
+										onChange={ ( checked ) => handleUseCaseChange( option.value, checked ) }
+									/>
+									{ option.value === 'other' && selectedUseCases.has( 'other' ) && (
+										<div style={ { marginInlineStart: '32px', marginTop: '8px' } }>
+											<TextControl
+												value={ otherText }
+												onChange={ setOtherText }
+												placeholder={ __( 'Type your own use case' ) }
+											/>
+										</div>
+									) }
+								</div>
+							) ) }
 						</VStack>
-					</CardBody>
-				</Card>
-			) }
-		</>
+						<ButtonStack justify="flex-start">
+							<Button
+								variant="primary"
+								__next40pxDefaultSize
+								type="submit"
+								isBusy={ isPending }
+								disabled={ isPending || ! hasSelection }
+							>
+								{ __( 'Enable AI Site Assistant' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
+				</form>
+			</CardBody>
+		</Card>
 	);
 }
 
@@ -192,15 +242,23 @@ function fromSiteSettings( settings: SiteSettings ): AIAssistantFormData {
 	};
 }
 
-function toSiteSettings( formData: AIAssistantFormData ): Partial< SiteSettings > {
+function toSiteSettings(
+	formData: AIAssistantFormData,
+	selectedUseCases: Set< UseCaseOption >
+): Partial< SiteSettings > {
 	const settings: Partial< SiteSettings > = {
 		big_sky_enable: formData.bigSkyEnabled,
 	};
 
-	// Set isOnboarded to false when Big Sky is disabled
 	if ( ! formData.bigSkyEnabled ) {
+		// Set isOnboarded to false when Big Sky is disabled
 		settings.big_sky_site_metadata = {
 			isOnboarded: false,
+		};
+	} else if ( ! selectedUseCases.has( 'redesign' ) ) {
+		// If "Redesign my site" is NOT selected, set isOnboarded to true
+		settings.big_sky_site_metadata = {
+			isOnboarded: true,
 		};
 	}
 
