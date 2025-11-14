@@ -16,19 +16,21 @@ export async function fetchDashboardSiteList(
 		{
 			...params,
 			fields: fields?.join( ',' ),
-			site_type_filters: siteTypeFilters !== 'all' ? siteTypeFilters.join( ',' ) : undefined,
+			filters: {
+				site_type_filters: siteTypeFilters !== 'all' ? siteTypeFilters : undefined,
+			},
 		}
 	);
 }
 
 export async function fetchDashboardSiteFilters(
 	siteTypeFilters: FetchSitesFilters,
-	field: FetchDashboardSiteFiltersParams[ 'field' ]
+	fields: FetchDashboardSiteFiltersParams[ 'fields' ]
 ): Promise< DashboardFilters > {
 	return wpcom.req.get(
 		{ path: '/dashboard/site-filters', apiNamespace: 'wpcom/v2' },
 		{
-			fields: field,
+			fields,
 			site_type_filters: siteTypeFilters !== 'all' ? siteTypeFilters : undefined,
 		}
 	);

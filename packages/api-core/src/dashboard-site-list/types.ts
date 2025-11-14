@@ -36,7 +36,7 @@ export interface FetchDashboardSiteListParams {
 }
 
 export interface FetchDashboardSiteFiltersParams {
-	field: keyof DashboardFilters;
+	fields: ( keyof DashboardFilters )[];
 }
 
 export interface DashboardFilters {

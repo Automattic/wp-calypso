@@ -158,7 +158,7 @@ function siteProfileSiteToSite( site: SiteProfileSite ): Site {
 /**
  * Enables the correct site query based on the dataviews/v2/es-site-list feature flag.
  */
-function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
+export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 	const { queries } = useAppContext();
 
 	const siteProfilesQueryResult = useQuery( {

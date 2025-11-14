@@ -17,9 +17,9 @@ export const dashboardSiteListQuery = (
 
 export const dashboardSiteFiltersQuery = (
 	siteTypeFilters: FetchSitesFilters,
-	field: FetchDashboardSiteFiltersParams[ 'field' ]
+	fields: FetchDashboardSiteFiltersParams[ 'fields' ]
 ) =>
 	queryOptions( {
-		queryKey: [ 'dashboard-site-filters', siteTypeFilters, field ],
-		queryFn: () => fetchDashboardSiteFilters( siteTypeFilters, field ),
+		queryKey: [ 'dashboard-site-filters', siteTypeFilters, fields ],
+		queryFn: () => fetchDashboardSiteFilters( siteTypeFilters, fields ),
 	} );
