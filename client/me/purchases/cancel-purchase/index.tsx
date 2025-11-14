@@ -799,7 +799,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						includedDomainPurchase={ includedDomainPurchase }
 						disabled={ ! canContinue() }
 						siteSlug={ this.props.siteSlug }
-						cancelBundledDomain={ this.state.cancelBundledDomain }
+						cancelBundledDomain={ cancelBundledDomain }
 						purchaseListUrl={ this.props.purchaseListUrl ?? purchasesRoot }
 						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 						onCancellationComplete={ this.onCancellationComplete }
