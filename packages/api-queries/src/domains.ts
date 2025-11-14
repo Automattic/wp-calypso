@@ -45,6 +45,9 @@ export const bulkDomainsActionMutation = () =>
 	mutationOptions( {
 		mutationFn: ( action: BulkDomainsAction ) => bulkDomainsAction( action ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( domainsQuery() );
+			queryClient.invalidateQueries( {
+				queryKey: domainsQuery().queryKey,
+				exact: true,
+			} );
 		},
 	} );
