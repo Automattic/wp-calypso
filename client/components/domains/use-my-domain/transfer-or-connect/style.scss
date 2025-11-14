@@ -31,6 +31,27 @@
 		}
 
 		.option-content-v2 {
+			&--is-placeholder {
+				.option-content-v2__title,
+				.option-content-v2__title *,
+				.option-content-v2__description *,
+				.option-content-v2__benefits-item *,
+				.summary-button-decoration {
+					@include placeholder();
+					border-color: transparent;
+				}
+
+				.option-content-v2__button svg,
+				.option-content-v2__benefits-item svg,
+				.summary-button-decoration svg {
+					fill: transparent;
+
+					path {
+						stroke: transparent;
+					}
+				}
+			}
+
 			&__button.summary-button.components-button {
 				text-align: initial;
 

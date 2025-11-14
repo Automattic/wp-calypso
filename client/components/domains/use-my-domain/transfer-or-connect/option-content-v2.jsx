@@ -55,7 +55,7 @@ export default function OptionContentV2( {
 				}
 				decoration={ illustration }
 				onClick={ onSelect }
-				disabled={ disabled }
+				disabled={ disabled || isPlaceholder }
 			/>
 			{ benefits && (
 				<div className="option-content-v2__benefits">
@@ -77,12 +77,10 @@ export default function OptionContentV2( {
 OptionContentV2.propTypes = {
 	benefits: PropTypes.array,
 	disabled: PropTypes.bool,
+	isPlaceholder: PropTypes.bool,
 	illustration: PropTypes.node.isRequired,
 	learnMoreLink: PropTypes.string,
 	onSelect: PropTypes.func,
-	onSelectText: PropTypes.string,
-	pricing: PropTypes.object,
-	primary: PropTypes.bool,
 	recommended: PropTypes.bool,
 	titleText: PropTypes.string.isRequired,
 	topText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
