@@ -667,25 +667,12 @@ export default function CancelPurchase() {
 		} );
 	};
 
-	const handleCancelPurchaseClick = async () => {
-		// For all purchases, including domain registrations, show the survey first
-		// The API call will happen at the end of the survey flow
-
-		// For other purchases, determine if we need domain options step
-		// If onCancellationStart is null, we're already in the domain options step
-		if ( ! onCancellationStart ) {
-			// We're in the domain options step, show survey directly
-			onCancellationComplete();
-		} else {
-			onCancellationStart();
-		}
-	};
 	const handleMarketplaceDialogContinue = () => {
 		// Close the marketplace dialog
 		closeMarketplaceSubscriptionsDialog();
 
 		// Show the appropriate survey based on purchase type
-		handleCancelPurchaseClick();
+		onCancellationStart();
 	};
 
 	const onTextOneChange = (
@@ -1202,9 +1189,8 @@ export default function CancelPurchase() {
 				disabled={ isDisabled }
 				isBusy={ propOverrides?.isBusy ?? state.isLoading ?? false }
 				onClick={
-					propOverrides?.onClick ?? shouldHandleMarketplaceSubscriptions()
-						? showMarketplaceDialog
-						: handleCancelPurchaseClick
+					propOverrides?.onClick ??
+					( shouldHandleMarketplaceSubscriptions() ? showMarketplaceDialog : onCancellationStart )
 				}
 				variant="primary"
 			>
@@ -1275,27 +1261,12 @@ export default function CancelPurchase() {
 		);
 	};
 
-	const renderProductRevertContent = () => {
+	const renderPlanProductRevertContent = () => {
 		return (
 			<>
 				{ ! includedDomainPurchase && <p>{ renderFullText() }</p> }
 
 				{ ! state.surveyShown && renderConfirmCheckbox() }
-
-				<ButtonStack>
-					{ renderCancelButton() }
-					{ renderKeepSubscriptionButton() }
-				</ButtonStack>
-			</>
-		);
-	};
-
-	const renderPlanRevertContent = () => {
-		return (
-			<>
-				{ ! includedDomainPurchase && <p>{ renderFullText() }</p> }
-
-				{ renderConfirmCheckbox() }
 
 				<ButtonStack>
 					{ renderCancelButton() }
@@ -1444,7 +1415,7 @@ export default function CancelPurchase() {
 					selectedDomain={ selectedDomain }
 				/>
 
-				{ ! cancellationFeatures.length ? renderProductRevertContent() : renderPlanRevertContent() }
+				{ renderPlanProductRevertContent() }
 			</>
 		);
 	};
@@ -1479,10 +1450,15 @@ export default function CancelPurchase() {
 					onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 					isLoading={ false }
 				/>
-				<div className="cancel-purchase__confirm-buttons">
-					{ renderCancelButton( { disabled: ! canContinue(), onClick: onSurveyComplete } ) }
+				<ButtonStack>
+					{ renderCancelButton( {
+						disabled: ! canContinue(),
+						onClick: () => {
+							onCancellationComplete();
+						},
+					} ) }
 					{ renderKeepSubscriptionButton() }
-				</div>
+				</ButtonStack>
 			</>
 		);
 	};

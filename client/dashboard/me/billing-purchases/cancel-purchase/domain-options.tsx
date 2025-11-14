@@ -193,7 +193,8 @@ const CancelPurchaseDomainOptions = ( {
 
 	if (
 		! includedDomainPurchase ||
-		( 'one-time-purchase' !== purchase.expiry_status && ! purchase.is_domain_registration )
+		'one-time-purchase' === purchase.expiry_status ||
+		purchase.is_domain_registration
 	) {
 		return null;
 	}
@@ -250,7 +251,7 @@ const CancelPurchaseDomainOptions = ( {
 	}
 
 	return (
-		<div className="cancel-purchase__domain-options">
+		<>
 			<p>
 				{ createInterpolateElement(
 					sprintf(
@@ -267,60 +268,62 @@ const CancelPurchaseDomainOptions = ( {
 					}
 				) }
 			</p>
-			<RadioControl
-				name="keep_bundled_domain_false"
-				id="keep_bundled_domain_false_control"
-				options={ [
-					{
-						label: sprintf(
-							/* translators: %(domain)s is a domain name */
-							__( 'Cancel the plan, but keep "%(domain)s"' ),
-							{
-								domain: includedDomainPurchase.meta,
-							}
-						),
-						value: 'keep',
-						description: sprintf(
-							/* translators: %(refundAmount)s and %(domainCost)s are both monetary amounts. %(productName)s is the name of the product */
-							__(
-								"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
-									'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
-									"registration, and you're free to use it on WordPress.com or transfer it elsewhere."
+			<p>
+				<RadioControl
+					name="keep_bundled_domain_false"
+					id="keep_bundled_domain_false_control"
+					options={ [
+						{
+							label: sprintf(
+								/* translators: %(domain)s is a domain name */
+								__( 'Cancel the plan, but keep "%(domain)s"' ),
+								{
+									domain: includedDomainPurchase.meta,
+								}
 							),
-							{
-								productName: purchase.product_name,
-								domainCost: includedDomainPurchase.cost_to_unbundle_display,
-								refundAmount: purchase.refund_text,
-							}
-						),
-					},
-					{
-						label: sprintf(
-							/* translators: %(domain)s is the domain name */
-							__( 'Cancel the plan and the domain "%(domain)s"' ),
-							{
-								domain: includedDomainPurchase.meta,
-							}
-						),
-						value: 'cancel',
-						description: sprintf(
-							/* translators: %(planCost)s is the monetary amount that the customer will receive in the form of a refund */
-							__(
-								"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
-									"you'll lose it permanently."
+							value: 'keep',
+							description: sprintf(
+								/* translators: %(refundAmount)s and %(domainCost)s are both monetary amounts. %(productName)s is the name of the product */
+								__(
+									"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
+										'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
+										"registration, and you're free to use it on WordPress.com or transfer it elsewhere."
+								),
+								{
+									productName: purchase.product_name,
+									domainCost: includedDomainPurchase.cost_to_unbundle_display,
+									refundAmount: purchase.refund_text,
+								}
 							),
-							{
-								planCost: purchase.total_refund_text,
-							}
-						),
-					},
-				] }
-				selected={ cancelBundledDomain ? 'cancel' : 'keep' }
-				onChange={ onCancelBundledDomainChange }
-				disabled={ isLoading }
-			/>
+						},
+						{
+							label: sprintf(
+								/* translators: %(domain)s is the domain name */
+								__( 'Cancel the plan and the domain "%(domain)s"' ),
+								{
+									domain: includedDomainPurchase.meta,
+								}
+							),
+							value: 'cancel',
+							description: sprintf(
+								/* translators: %(planCost)s is the monetary amount that the customer will receive in the form of a refund */
+								__(
+									"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
+										"you'll lose it permanently."
+								),
+								{
+									planCost: purchase.total_refund_text,
+								}
+							),
+						},
+					] }
+					selected={ cancelBundledDomain ? 'cancel' : 'keep' }
+					onChange={ onCancelBundledDomainChange }
+					disabled={ isLoading }
+				/>
+			</p>
 			{ cancelBundledDomain && (
-				<span className="cancel-purchase__domain-warning">
+				<p>
 					{ createInterpolateElement(
 						__(
 							"When you cancel a domain, it becomes unavailable for a while. Anyone may register it once it's " +
@@ -356,9 +359,9 @@ const CancelPurchaseDomainOptions = ( {
 							) }
 						</span>
 					</label>
-				</span>
+				</p>
 			) }
-		</div>
+		</>
 	);
 };
 
