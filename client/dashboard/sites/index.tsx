@@ -273,7 +273,7 @@ export default function Sites() {
 				header={
 					<PageHeader
 						title={ __( 'Sites' ) }
-						description={ __( 'View and manage all your WordPress sites in one place.' ) }
+						description={ __( 'View and manage your WordPress sites.' ) }
 						actions={
 							<Button
 								variant="primary"
