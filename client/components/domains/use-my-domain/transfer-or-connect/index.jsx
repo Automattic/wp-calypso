@@ -165,7 +165,7 @@ function DomainTransferOrConnect( {
 }
 
 DomainTransferOrConnect.propTypes = {
-	availability: PropTypes.object.isRequired,
+	availability: PropTypes.object,
 	defaultConnectHandler: PropTypes.func,
 	defaultTransferHandler: PropTypes.func,
 	domain: PropTypes.string.isRequired,
