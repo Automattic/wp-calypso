@@ -54,7 +54,7 @@ test( 'shows warning notice when domain registration uses external name servers'
 		has_wpcom_nameservers: false, // External name servers
 		primary_domain: false,
 		is_domain_only_site: true,
-		subtype: { id: DomainSubtype.DOMAIN_REGISTRATION },
+		subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
 	} );
 
 	const TestWrapper = () => {
@@ -80,7 +80,7 @@ test( 'shows warning notice when domain connection uses external name servers', 
 		has_wpcom_nameservers: false, // External name servers
 		primary_domain: false,
 		is_domain_only_site: true,
-		subtype: { id: DomainSubtype.DOMAIN_CONNECTION },
+		subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
 	} );
 
 	const TestWrapper = () => {
