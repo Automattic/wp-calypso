@@ -22,13 +22,24 @@ import type { Step as StepType } from '../../types';
 
 import './style.scss';
 
+type OwnershipVerificationData = {
+	ownership_verification_data: {
+		verification_type: 'auth_code';
+		verification_data: string;
+	};
+};
+
 const UseMyDomain: StepType< {
 	submits:
 		| {
 				mode: 'transfer' | 'connect';
 				domain: string;
 		  }
-		| { domainCartItem: MinimalRequestCartProduct }
+		| {
+				domainCartItem: MinimalRequestCartProduct;
+				verificationData?: OwnershipVerificationData;
+				onDone?: ( error?: Error ) => void;
+		  }
 		| undefined;
 } > = function UseMyDomain( { navigation, flow } ) {
 	const { __ } = useI18n();
@@ -77,11 +88,14 @@ const UseMyDomain: StepType< {
 		submit?.( { domainCartItem } );
 	};
 
-	const handleOnConnect = async ( domain: string ) => {
+	const handleOnConnect = async (
+		{ domain, verificationData }: { domain: string; verificationData?: OwnershipVerificationData },
+		onDone?: ( error?: Error ) => void
+	) => {
 		const domainCartItem = domainMapping( { domain } );
 
 		clearQueryParams();
-		submit?.( { domainCartItem } );
+		submit?.( { domainCartItem, verificationData, onDone } );
 	};
 
 	const getInitialQuery = function () {
@@ -111,7 +125,7 @@ const UseMyDomain: StepType< {
 					initialMode={ getInitialMode() }
 					isSignupStep
 					onTransfer={ handleOnTransfer }
-					onConnect={ ( { domain } ) => handleOnConnect( domain ) }
+					onConnect={ handleOnConnect }
 					useMyDomainMode={ useMyDomainMode }
 					setUseMyDomainMode={ setUseMyDomainMode }
 					onNextStep={ handleOnNext }

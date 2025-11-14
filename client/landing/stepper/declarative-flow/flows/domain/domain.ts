@@ -175,9 +175,39 @@ const domain: FlowV2< typeof initialize > = {
 							const hasPaidPlan = siteHasPaidPlan( site );
 
 							if ( isGardenSite || hasPaidPlan ) {
-								setPendingAction( async () => {
-									const domain = providedDependencies.domainCartItem.meta;
+								const domain = providedDependencies.domainCartItem.meta;
 
+								// If there's verification data (auth code), handle it synchronously to show errors on the current step
+								if ( providedDependencies.verificationData ) {
+									try {
+										await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, {
+											domain,
+											...providedDependencies.verificationData,
+										} );
+
+										// Success - navigate to setup page
+										const redirectTo = isGardenSite
+											? `/ciab/sites/${ domain }/domains`
+											: `/v2/domains/${ domain }/domain-connection-setup`;
+
+										return window.location.replace( redirectTo );
+									} catch ( error ) {
+										// Call onDone callback to display error in the UI
+										if ( providedDependencies.onDone ) {
+											// Convert unknown error to Error type for the callback
+											const errorObj =
+												error instanceof Error
+													? error
+													: new Error( typeof error === 'string' ? error : 'An error occurred' );
+											providedDependencies.onDone( errorObj );
+										}
+										// Return early to stay on current step
+										return;
+									}
+								}
+
+								// No verification data - use the pending action flow
+								setPendingAction( async () => {
 									await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
 
 									return {
