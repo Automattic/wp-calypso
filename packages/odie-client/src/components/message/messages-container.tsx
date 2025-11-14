@@ -147,8 +147,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				aria-atomic="false"
 				aria-relevant="additions"
 			>
-				{ chat.messages.map( ( message ) => (
-					<div key={ getMessageUniqueIdentifier( message ) }>
+				{ chat.messages.map( ( message, index ) => (
+					<div key={ getMessageUniqueIdentifier( message, `chat-message-${ index }` ) }>
 						{ [ 'bot', 'business' ].includes( message.role ) && message.content }
 					</div>
 				) ) }

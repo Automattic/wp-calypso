@@ -15,12 +15,13 @@ export const MigratedOnColumn = ( { migratedOn }: { migratedOn: number } ) => {
 	return <FormattedDate date={ date } format={ DETAILS_DATE_FORMAT_SHORT } />;
 };
 
-export const ReviewStatusColumn = ( {
-	reviewStatus,
-}: {
-	reviewStatus: 'pending' | 'confirmed' | 'rejected' | 'paid';
-} ) => {
+export const ReviewStatusColumn = ( { reviewStatus }: { reviewStatus: string } ) => {
 	const translate = useTranslate();
+
+	// Don't show a badge if status is empty
+	if ( ! reviewStatus ) {
+		return null;
+	}
 
 	const getStatusProps = () => {
 		switch ( reviewStatus ) {
@@ -29,7 +30,7 @@ export const ReviewStatusColumn = ( {
 					statusText: translate( 'Paid' ),
 					statusType: 'success',
 				};
-			case 'confirmed':
+			case 'verified':
 				return {
 					statusText: translate( 'Confirmed' ),
 					statusType: 'success',
@@ -39,11 +40,14 @@ export const ReviewStatusColumn = ( {
 					statusText: translate( 'Rejected' ),
 					statusType: 'error',
 				};
-			default:
+			case 'pending':
 				return {
 					statusText: translate( 'Pending' ),
 					statusType: 'warning',
 				};
+			default:
+				// Unknown status - don't show a badge
+				return null;
 		}
 	};
 

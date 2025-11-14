@@ -1,3 +1,4 @@
+import { useDomainSearchEscapeHatch } from '@automattic/domain-search';
 import {
 	isAIBuilderFlow,
 	isCopySiteFlow,
@@ -18,6 +19,7 @@ import { useSelector } from 'react-redux';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import { useWPCOMDomainSearchEvents } from 'calypso/components/domains/wpcom-domain-search/use-wpcom-domain-search-events';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -31,6 +33,7 @@ import {
 	domainManagementTransferToOtherSite,
 	domainMapping,
 } from 'calypso/my-sites/domains/paths';
+import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { useQuery } from '../../../../hooks/use-query';
@@ -52,6 +55,7 @@ type UseMyDomain = {
 	siteUrl?: string;
 	domainItem?: MinimalRequestCartProduct;
 	lastQuery?: string;
+	signupDomainOrigin?: string;
 };
 
 type StepSubmission = {
@@ -91,6 +95,8 @@ const DomainSearchStep: StepType< {
 		currentSiteUrl,
 	} );
 
+	const [ isLoadingExperiment, experimentVariation ] = useDomainSearchEscapeHatch();
+
 	const config = useMemo( () => {
 		const allowedTlds = tldQuery?.split( ',' ) ?? [];
 
@@ -123,6 +129,13 @@ const DomainSearchStep: StepType< {
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
 	}, [ flow, tldQuery, query ] );
+
+	const analyticsEvents = useWPCOMDomainSearchEvents( {
+		vendor: config.vendor,
+		flowName: flow,
+		analyticsSection: 'signup',
+		query: query,
+	} );
 
 	const { submit } = navigation;
 
@@ -177,7 +190,7 @@ const DomainSearchStep: StepType< {
 				submit( {
 					navigateToUseMyDomain: true,
 					lastQuery: domainName,
-					shouldSkipSubmitTracking: true,
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 				} );
 			},
 			onContinue: ( domainCart: MinimalRequestCartProduct[] ) => {
@@ -195,37 +208,60 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 			onSkip: ( suggestion?: FreeDomainSuggestion ) => {
+				let signupDomainOrigin = suggestion
+					? SIGNUP_DOMAIN_ORIGIN.FREE
+					: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER;
+
+				if (
+					! isLoadingExperiment &&
+					experimentVariation === 'treatment_paid_domain_area_skip_emphasis'
+				) {
+					signupDomainOrigin = SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER;
+				}
+
 				submit( {
 					siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
 					domainItem: undefined,
 					domainCart: [],
 					suggestion,
-					signupDomainOrigin: suggestion
-						? SIGNUP_DOMAIN_ORIGIN.FREE
-						: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER,
+					signupDomainOrigin,
 				} );
 			},
 		};
-	}, [ submit, setQuery, clearQuery, flow, siteSlug ] );
+	}, [ submit, setQuery, clearQuery, flow, siteSlug, isLoadingExperiment, experimentVariation ] );
+
+	// For /setup flows, we want to show the free domain for a year discount for all flows
+	// except if we're in a site context or in the 100-year plan or domain flow
+	const isFirstDomainFreeForFirstYear = useMemo( () => {
+		if ( isDomainFlow( flow ) ) {
+			return ! site || ! siteHasPaidPlan( site );
+		}
+
+		if ( site || sourceSlug || isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
+			return false;
+		}
+
+		return true;
+	}, [ flow, site, sourceSlug ] );
 
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
+				if ( ! isFirstDomainFreeForFirstYear ) {
 					return null;
 				}
 
 				return <FreeDomainForAYearPromo />;
 			},
 			BeforeFullCartItems: () => {
-				if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
+				if ( ! isFirstDomainFreeForFirstYear ) {
 					return null;
 				}
 
 				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
-	}, [ flow ] );
+	}, [ isFirstDomainFreeForFirstYear ] );
 
 	const headerText = useMemo( () => {
 		if ( isNewsletterFlow( flow ) ) {
@@ -253,21 +289,6 @@ const DomainSearchStep: StepType< {
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flow, __ ] );
-
-	// For /setup flows, we want to show the free domain for a year discount for all flows
-	// except if we're in a site context or in the 100-year plan or domain flow
-	const isFirstDomainFreeForFirstYear = useMemo( () => {
-		if (
-			siteSlug ||
-			siteId ||
-			sourceSlug ||
-			isHundredYearPlanFlow( flow ) ||
-			isHundredYearDomainFlow( flow )
-		) {
-			return false;
-		}
-		return true;
-	}, [ flow, siteSlug, siteId, sourceSlug ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
@@ -359,14 +380,30 @@ const DomainSearchStep: StepType< {
 		};
 
 		const getTopBarRightElement = () => {
-			if ( ! query || ! config.allowsUsingOwnDomain ) {
+			if ( ! query ) {
 				return;
 			}
 
 			return (
-				<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-					{ __( 'Use a domain I already own' ) }
-				</Step.LinkButton>
+				<>
+					{ config.allowsUsingOwnDomain && (
+						<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
+							{ __( 'Use a domain I already own' ) }
+						</Step.LinkButton>
+					) }
+
+					{ ! isLoadingExperiment &&
+						experimentVariation === 'treatment_paid_domain_area_free_emphasis_extra_cta' && (
+							<Step.LinkButton
+								onClick={ () => {
+									analyticsEvents.onSkip?.();
+									events.onSkip();
+								} }
+							>
+								{ __( 'Skip this step' ) }
+							</Step.LinkButton>
+						) }
+				</>
 			);
 		};
 

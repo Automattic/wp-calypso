@@ -36,7 +36,7 @@ function ErrorContent( { message, onClose }: { message: string; onClose: () => v
 		<VStack spacing={ 6 }>
 			<Text>{ message }</Text>
 			<ButtonStack justify="flex-end">
-				<Button variant="primary" onClick={ onClose }>
+				<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
 					{ __( 'OK' ) }
 				</Button>
 			</ButtonStack>
@@ -132,10 +132,11 @@ function SiteResetContent( {
 						} }
 					/>
 					<HStack spacing={ 4 } justify="flex-end">
-						<Button variant="tertiary" onClick={ onClose }>
+						<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							type="submit"
 							isBusy={ isBusy }

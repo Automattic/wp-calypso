@@ -14,8 +14,6 @@
 /* Chevron icon color */
 .choose-domain__icon {
 	color: #757575;
-	fill: #757575; /* fallback for SVGs not using currentColor */
-	stroke: #757575; /* extra safety for stroke-based icons */
 }
 
 /* Ensure SearchControl input spans full width */

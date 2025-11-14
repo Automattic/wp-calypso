@@ -61,10 +61,16 @@ const MarketPlaceSubscriptionsWarning = ( {
 							) }
 					</p>
 					<ButtonStack justify="flex-end">
-						<Button onClick={ closeDialog } disabled={ false /*updateDnsMutation.isPending*/ }>
+						<Button
+							__next40pxDefaultSize
+							variant="tertiary"
+							onClick={ closeDialog }
+							disabled={ false /*updateDnsMutation.isPending*/ }
+						>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							isBusy={ /*updateDnsMutation.isPending*/ false }
 							onClick={ removePlan }

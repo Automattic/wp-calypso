@@ -1,5 +1,6 @@
 // Validation helpers for domain forwarding form
 
+import { __ } from '@wordpress/i18n';
 import type { FormData } from './form';
 import type { DomainForwarding, DomainForwardingSaveData } from '@automattic/api-core';
 
@@ -46,39 +47,45 @@ function isSubdomain(
 	return true;
 }
 
-export function isTargetUrlValid( value: string, fullDomain: string ): boolean {
-	const input = value?.trim() || '';
-	if ( ! input ) {
-		return false;
+export function isTargetUrlValid( targetUrl: string, sourceDomain: string ): string | null {
+	const input = targetUrl.trim();
+	if ( input === '' ) {
+		return __( 'Please enter target URL.' );
 	}
+
 	const normalized = normalizeUrlWithDefaultProtocol( input );
 	if ( ! SOFT_URL_REGEX.test( normalized ) ) {
-		return false;
+		return __( 'Please enter a valid URL.' );
 	}
-	try {
-		const url = new URL( normalized );
-		const [ domainParts, domainLevel ] = getDomainPartsAndLevel( fullDomain );
-		const [ targetHostParts, targetHostLevel ] = getDomainPartsAndLevel( url.hostname );
 
-		if ( domainLevel > targetHostLevel ) {
-			return true;
-		}
-		if ( domainLevel === targetHostLevel ) {
-			if ( isSameDomain( domainParts, targetHostParts, domainLevel ) ) {
-				const targetPath = url.pathname + url.search + url.hash;
-				if ( ! targetPath || /^\/+$/.test( targetPath ) ) {
-					return false; // same domain root disallowed
-				}
-			}
-			return true;
-		}
-		if ( isSubdomain( domainParts, targetHostParts, domainLevel, targetHostLevel ) ) {
-			return false; // further nested subdomain disallowed
-		}
-		return true;
+	let url: URL;
+
+	try {
+		url = new URL( normalized );
 	} catch {
-		return false;
+		return __( 'Please enter a valid URL.' );
 	}
+
+	const [ domainParts, domainLevel ] = getDomainPartsAndLevel( sourceDomain );
+	const [ targetHostParts, targetHostLevel ] = getDomainPartsAndLevel( url.hostname );
+
+	if ( domainLevel > targetHostLevel ) {
+		return null;
+	}
+
+	if ( domainLevel === targetHostLevel ) {
+		if ( isSameDomain( domainParts, targetHostParts, domainLevel ) ) {
+			const targetPath = url.pathname + url.search + url.hash;
+			if ( ! targetPath || /^\/+$/.test( targetPath ) ) {
+				return __( 'Forwarding to the same domain is not allowed.' ); // same domain root disallowed
+			}
+		}
+		return null;
+	}
+	if ( ! isSubdomain( domainParts, targetHostParts, domainLevel, targetHostLevel ) ) {
+		return null;
+	}
+	return __( 'Forwarding to a further nested domain is not allowed.' );
 }
 
 export function isSubdomainValid( value: string ): boolean {

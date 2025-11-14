@@ -83,10 +83,16 @@ export default function FinalConfirmationModal( {
 						} }
 					/>
 					<ButtonStack justify="flex-end">
-						<Button variant="tertiary" onClick={ onClose } disabled={ isDeleting }>
+						<Button
+							__next40pxDefaultSize
+							variant="tertiary"
+							onClick={ onClose }
+							disabled={ isDeleting }
+						>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							isDestructive
 							type="submit"
