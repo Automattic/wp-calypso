@@ -75,9 +75,16 @@ export const domainsContactInfoRoute = createRoute( {
 		};
 	},
 	loader: async ( { deps: { selectedDomains } } ) => {
-		return Promise.all(
-			selectedDomains.map( ( domain ) => queryClient.ensureQueryData( domainWhoisQuery( domain ) ) )
-		);
+		return {
+			domainDetails: await Promise.all(
+				selectedDomains.map( ( domain ) => queryClient.ensureQueryData( domainQuery( domain ) ) )
+			),
+			whoisData: await Promise.all(
+				selectedDomains.map( ( domain ) =>
+					queryClient.ensureQueryData( domainWhoisQuery( domain ) )
+				)
+			),
+		};
 	},
 } ).lazy( () =>
 	import( '../../domains/domains-contact-details' ).then( ( d ) =>

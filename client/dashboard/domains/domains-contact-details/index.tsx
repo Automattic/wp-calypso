@@ -1,4 +1,9 @@
-import { type DomainContactDetails, type WhoisDataEntry, WhoisType } from '@automattic/api-core';
+import {
+	type DomainContactDetails,
+	type WhoisDataEntry,
+	WhoisType,
+	type Domain,
+} from '@automattic/api-core';
 import { bulkDomainsActionMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -38,6 +43,22 @@ const aggregateWhoisDataWithMostCommonValues = (
 	return result;
 };
 
+const getFieldMapping = ( field: string ) => {
+	const fieldMapping: Record< string, string > = {
+		first_name: __( 'First name' ),
+		last_name: __( 'Last name' ),
+		organization: __( 'Organization' ),
+		country_code: __( 'Country' ),
+	};
+
+	if ( fieldMapping[ field ] ) {
+		return fieldMapping[ field ];
+	}
+
+	// Unrecognized field so we don't have a translation, but fallback to something readable in English at least.
+	return field.replace( /_/, ' ' ).replace( /^(.)/, ( match ) => match.toUpperCase() );
+};
+
 export default function DomainsContactInfo() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
@@ -46,7 +67,10 @@ export default function DomainsContactInfo() {
 		selectedDomains: string[];
 	};
 
-	const whoisData = domainsContactInfoRoute.useLoaderData() as WhoisDataEntry[][];
+	const { domainDetails, whoisData } = domainsContactInfoRoute.useLoaderData() as {
+		domainDetails: Domain[];
+		whoisData: WhoisDataEntry[][];
+	};
 
 	const initialData = useMemo( () => {
 		if ( ! whoisData?.length ) {
@@ -57,6 +81,15 @@ export default function DomainsContactInfo() {
 			whoisData.flat().filter( ( whois ) => whois.type === WhoisType.REGISTRANT )
 		);
 	}, [ whoisData ] );
+
+	const domainsWithUnmodifiableContactInfo = useMemo( () => {
+		return domainDetails
+			.map( ( domain ) => ( {
+				domain: domain.domain,
+				whois_update_unmodifiable_fields: domain.whois_update_unmodifiable_fields,
+			} ) )
+			.filter( ( domain ) => domain.whois_update_unmodifiable_fields.length > 0 );
+	}, [ domainDetails ] );
 
 	const { mutate: bulkDomainsAction, isPending } = useMutation( bulkDomainsActionMutation() );
 
@@ -111,6 +144,25 @@ export default function DomainsContactInfo() {
 					) ) }
 				</ul>
 			</div>
+			{ domainsWithUnmodifiableContactInfo.length > 0 && (
+				<div>
+					<span>
+						<strong>{ __( 'The following domain fields will not be updated:' ) }</strong>
+					</span>
+					<ul>
+						{ domainsWithUnmodifiableContactInfo.map( ( domain ) => (
+							<li key={ domain.domain }>
+								<strong>{ domain.domain }</strong>
+								<ul style={ { listStylePosition: 'inside' } }>
+									{ domain.whois_update_unmodifiable_fields.map( ( field: string ) => (
+										<li key={ field }>{ getFieldMapping( field ) }</li>
+									) ) }
+								</ul>
+							</li>
+						) ) }
+					</ul>
+				</div>
+			) }
 			<ContactForm
 				initialData={ initialData }
 				isSubmitting={ isPending }
