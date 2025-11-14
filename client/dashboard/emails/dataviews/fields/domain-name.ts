@@ -11,5 +11,8 @@ export const getDomainNameField = (
 	label: __( 'Domain' ),
 	getValue: ( { item }: { item: Email } ) => item.domainName,
 	elements: domains.map( ( { domain } ) => ( { value: domain, label: domain } ) ),
-	...( domainNameFilter && { filterBy: { isPrimary: true } } ),
+	filterBy: {
+		operators: [ 'isAny' ],
+		...( domainNameFilter && { isPrimary: true } ),
+	},
 } );

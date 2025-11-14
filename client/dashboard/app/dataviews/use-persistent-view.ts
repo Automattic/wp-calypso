@@ -73,8 +73,8 @@ export function usePersistentView( {
 				( field ) =>
 					( {
 						field,
-						operator: 'is',
-						value: queryParams[ field ],
+						operator: 'isAny',
+						value: [ queryParams[ field ] ],
 					} ) as Filter
 			)
 		);
@@ -124,7 +124,8 @@ export function usePersistentView( {
 			const newTransientFilterFields = transientFilterFields.filter(
 				( field ) =>
 					newView.filters?.some(
-						( filter ) => filter.field === field && filter.value === queryParams[ field ]
+						( filter ) =>
+							filter.field === field && fastDeepEqual( filter.value, [ queryParams[ field ] ] )
 					)
 			);
 
