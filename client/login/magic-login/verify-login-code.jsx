@@ -251,7 +251,7 @@ const VerifyLoginCode = ( {
 			<div className="magic-login__successfully-jetpack-actions">
 				<p>
 					{ translate(
-						"Didn't get the code? Check your spam folder or {{button}}resend the email{{/button}}",
+						"Didn't get the code? Check spam, or {{button}}resend the email{{/button}}",
 						{
 							components: {
 								button: (
