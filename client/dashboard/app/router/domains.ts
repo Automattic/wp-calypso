@@ -32,6 +32,7 @@ import {
 	checkDomainDnsRecordsPermissions,
 	checkDomainContactVerificationPermissions,
 } from '../../utils/domain-permissions';
+import { queryParamToArray } from '../../utils/url';
 import { rootRoute } from './root';
 
 // Standalone domains route - requires rootRoute
@@ -61,11 +62,22 @@ export const domainsRoute = createRoute( {
 export const domainsContactInfoRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/contact-info',
-	loader: async ( { context } ) => {
-		await Promise.all( [
-			queryClient.ensureQueryData( domainsQuery() ),
-			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
-		] );
+	beforeLoad: async ( { search } ) => {
+		const selected = queryParamToArray( ( search as { selected: unknown } ).selected );
+
+		if ( selected.length === 0 ) {
+			throw redirect( { to: '/domains' } );
+		}
+	},
+	loaderDeps: ( { search } ) => {
+		return {
+			selectedDomains: queryParamToArray( ( search as { selected: unknown } ).selected ),
+		};
+	},
+	loader: async ( { deps: { selectedDomains } } ) => {
+		return Promise.all(
+			selectedDomains.map( ( domain ) => queryClient.ensureQueryData( domainWhoisQuery( domain ) ) )
+		);
 	},
 } ).lazy( () =>
 	import( '../../domains/domains-contact-details' ).then( ( d ) =>
