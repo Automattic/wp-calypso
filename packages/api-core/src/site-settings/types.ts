@@ -17,6 +17,9 @@ export interface SiteSettings {
 	mcp_abilities?: SiteMcpAbilities;
 	jetpack_holiday_snow_enabled?: boolean;
 	big_sky_enable?: boolean;
+	big_sky_site_metadata?: {
+		isOnboarded?: boolean;
+	};
 }
 
 export type SiteMcpAbilities = Record<

@@ -31,12 +31,7 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 	} ) );
 	const [ showOnboardingNotice, setShowOnboardingNotice ] = useState( false );
 
-	// Access big_sky_site_metadata from settings (not yet in SiteSettings type)
-	const bigSkyMetadata = ( settings as unknown as Record< string, unknown > )[
-		'big_sky_site_metadata'
-	] as { isOnboarded?: boolean } | undefined;
-	const isOnboarded = bigSkyMetadata?.isOnboarded;
-
+	const isOnboarded = settings?.big_sky_site_metadata?.isOnboarded;
 	const siteEditorUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit';
 
 	const mutation = useMutation( {
@@ -47,19 +42,6 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 				error: __( 'Failed to save AI Site Assistant settings.' ),
 			},
 		},
-		onSuccess: () => {
-			// Check if Big Sky was just enabled (changed from disabled to enabled)
-			const wasPreviouslyDisabled = ! initialData.bigSkyEnabled;
-			const isNowEnabled = formData.bigSkyEnabled;
-			const wasJustEnabled = wasPreviouslyDisabled && isNowEnabled;
-
-			if ( wasJustEnabled ) {
-				setShowOnboardingNotice( true );
-			}
-
-			// Update initialData to match the saved formData so the form knows it's clean
-			setInitialData( { ...formData } );
-		},
 	} );
 
 	const isDirty = Object.entries( initialData ).some(
@@ -69,7 +51,21 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( toSiteSettings( formData ) );
+		mutation.mutate( toSiteSettings( formData ), {
+			onSuccess: () => {
+				// Check if Big Sky was just enabled (changed from disabled to enabled)
+				const wasPreviouslyDisabled = ! initialData.bigSkyEnabled;
+				const isNowEnabled = formData.bigSkyEnabled;
+				const wasJustEnabled = wasPreviouslyDisabled && isNowEnabled;
+
+				if ( wasJustEnabled ) {
+					setShowOnboardingNotice( true );
+				}
+
+				// Update initialData to match the saved formData so the form knows it's clean
+				setInitialData( { ...formData } );
+			},
+		} );
 	};
 
 	const handleChange = ( edits: Partial< AIAssistantFormData > ) => {
@@ -96,10 +92,6 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 				error: __( 'Failed to update onboarding status.' ),
 			},
 		},
-		onSuccess: () => {
-			// Redirect to site editor after successful save
-			window.location.href = siteEditorUrl;
-		},
 	} );
 
 	const handleContinueWithDesign = () => {
@@ -109,15 +101,19 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 				isOnboarded: true,
 			},
 		};
-		// Cast to Partial<SiteSettings> since big_sky_site_metadata isn't in the type yet
-		onboardingMutation.mutate( metadataUpdate as unknown as Partial< SiteSettings > );
+		onboardingMutation.mutate( metadataUpdate, {
+			onSuccess: () => {
+				// Redirect to site editor after successful save
+				window.location.href = siteEditorUrl;
+			},
+		} );
 	};
 
 	return (
 		<>
 			<Card>
 				<CardBody>
-					<form onSubmit={ handleSubmit } className="dashboard-site-settings-ai-assistant-form">
+					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
 							{ showOnboardingNotice && isOnboarded && (
 								<Notice variant="success" density="medium">
@@ -197,7 +193,16 @@ function fromSiteSettings( settings: SiteSettings ): AIAssistantFormData {
 }
 
 function toSiteSettings( formData: AIAssistantFormData ): Partial< SiteSettings > {
-	return {
+	const settings: Partial< SiteSettings > = {
 		big_sky_enable: formData.bigSkyEnabled,
 	};
+
+	// Set isOnboarded to false when Big Sky is disabled
+	if ( ! formData.bigSkyEnabled ) {
+		settings.big_sky_site_metadata = {
+			isOnboarded: false,
+		};
+	}
+
+	return settings;
 }
