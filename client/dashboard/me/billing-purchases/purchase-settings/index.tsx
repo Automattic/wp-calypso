@@ -1059,8 +1059,13 @@ export default function PurchaseSettings() {
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const upgradeUrl = getUpgradeUrl( purchase );
-	const willRenew = Boolean( purchase.renew_date && ! isExpiring( purchase ) );
+	const willRenew = Boolean(
+		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
+	);
 	const expiryDateTitle = ( () => {
+		if ( isExpired( purchase ) ) {
+			return __( 'Expired' );
+		}
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
 			return __( 'Paid until' );
 		}
@@ -1125,6 +1130,9 @@ export default function PurchaseSettings() {
 							if ( willRenew ) {
 								return formattedRenewal;
 							}
+							if ( purchase.subscription_status !== 'active' ) {
+								return __( 'Inactive' );
+							}
 							return formattedExpiry;
 						} )() }
 						description={ ( () => {
@@ -1170,11 +1178,15 @@ export default function PurchaseSettings() {
 						}
 					/>
 				</Grid>
-				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
+				{ site && purchase.subscription_status === 'active' && (
+					<WPComResourceMeters purchase={ purchase } site={ site } />
+				) }
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				<ManageSubscriptionCard purchase={ purchase } />
+				{ purchase.subscription_status === 'active' && (
+					<ManageSubscriptionCard purchase={ purchase } />
+				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
 		</PageLayout>
