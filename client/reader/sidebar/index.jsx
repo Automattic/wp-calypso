@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
@@ -191,9 +192,12 @@ export class ReaderSidebar extends Component {
 					</li>
 
 					<SidebarItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
-							'sidebar-streams__discover': true,
-						} ) }
+						className={
+							( clsx( 'sidebar-streams__discover' ),
+							{
+								selected: window.location.pathname.startsWith( '/discover' ),
+							} )
+						}
 						label={ translate( 'Discover' ) }
 						onNavigate={ this.handleReaderSidebarDiscoverClicked }
 						customIcon={ <ReaderDiscoverIcon viewBox="0 0 24 24" /> }
