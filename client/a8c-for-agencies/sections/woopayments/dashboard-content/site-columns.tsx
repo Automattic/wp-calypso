@@ -15,28 +15,54 @@ import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
-const getIneligibleReasonMessage = (
+interface IneligibleReasonInfo {
+	message: TranslateResult;
+	link: string;
+	linkText: TranslateResult;
+}
+
+const getIneligibleReasonInfo = (
 	reason: string,
 	translate: ( text: string ) => TranslateResult
-): TranslateResult => {
+): IneligibleReasonInfo => {
+	const defaultLink =
+		'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
+	const defaultLinkText = translate( 'Learn more about the incentive ↗' );
+
 	switch ( reason ) {
 		case 'rejected_stripe_account':
-			return translate(
-				"This WooPayments site isn't eligible for commission because its Stripe account was rejected."
-			);
+			return {
+				message: translate(
+					"This WooPayments site isn't eligible for commission because its Stripe account was rejected."
+				),
+				link: 'https://support.stripe.com/',
+				linkText: translate( 'Contact Stripe support ↗' ),
+			};
 		case 'internal_account_owner':
-			return translate(
-				"This WooPayments site isn't eligible for commission because it's owned by an internal account."
-			);
+			return {
+				message: translate(
+					"This WooPayments site isn't eligible for commission because it's owned by an internal account."
+				),
+				link: defaultLink,
+				linkText: defaultLinkText,
+			};
 		case 'existing_merchant_after_30_days':
-			return translate(
-				"This WooPayments site isn't eligible for commission because it's an existing site that was connected to the agency account more than 30 days after the account was created."
-			);
+			return {
+				message: translate(
+					"This WooPayments site isn't eligible for commission because it's an existing site that was connected to the agency account more than 30 days after the account was created."
+				),
+				link: defaultLink,
+				linkText: defaultLinkText,
+			};
 		// Add more error code mappings here as needed
 		default:
-			return translate(
-				"This WooPayments site isn't eligible for commission under the current program criteria."
-			);
+			return {
+				message: translate(
+					"This WooPayments site isn't eligible for commission under the current program criteria."
+				),
+				link: defaultLink,
+				linkText: defaultLinkText,
+			};
 	}
 };
 
@@ -137,20 +163,18 @@ export const WooPaymentsStatusColumn = ( {
 		return null;
 	}
 
+	const reasonInfo = getIneligibleReasonInfo( statusProps.ineligibleReason ?? '', translate );
+
 	const popoverContent = (
 		<div className="woopayments-status-popover">
-			<p className="woopayments-status-popover__text">
-				{ getIneligibleReasonMessage( statusProps.ineligibleReason ?? '', translate ) }
-			</p>
+			<p className="woopayments-status-popover__text">{ reasonInfo.message }</p>
 			<Button
 				variant="link"
 				className="woopayments-status-popover__link"
-				href={ localizeUrl(
-					'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/'
-				) }
+				href={ localizeUrl( reasonInfo.link ) }
 				target="_blank"
 			>
-				{ translate( 'Learn more about the incentive ↗' ) }
+				{ reasonInfo.linkText }
 			</Button>
 		</div>
 	);
