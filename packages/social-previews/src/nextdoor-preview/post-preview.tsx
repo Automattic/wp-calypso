@@ -6,7 +6,7 @@ import {
 	getTitleFromDescription,
 	preparePreviewText,
 } from '../helpers';
-import { FEED_TEXT_MAX_LENGTH, FEED_TEXT_MAX_LINES } from './constants';
+import { FEED_TEXT_MAX_LENGTH } from './constants';
 import { FooterActions } from './footer-actions';
 import { ChevronIcon } from './icons/chevron-icon';
 import { DefaultAvatar } from './icons/default-avatar';
@@ -56,7 +56,6 @@ export function NextdoorPostPreview( {
 								{ preparePreviewText( description, {
 									platform: 'nextdoor',
 									maxChars: FEED_TEXT_MAX_LENGTH,
-									maxLines: FEED_TEXT_MAX_LINES,
 								} ) }
 							</div>
 						) : null }
