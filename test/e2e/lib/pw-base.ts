@@ -48,6 +48,7 @@ import {
 	ImportPlansPage,
 	IncognitoPage,
 	InvitePeoplePage,
+	IsolatedBlockEditorComponent,
 	JetpackTrafficPage,
 	LoginPage,
 	LOHPThemeSignupFlow,
@@ -121,6 +122,10 @@ export const test = base.extend< {
 	 * Component for interacting with the block widget editor.
 	 */
 	componentBlockWidgetEditor: BlockWidgetEditorComponent;
+	/**
+	 * Component for interacting with the isolated block editor.
+	 */
+	componentIsolatedBlockEditor: IsolatedBlockEditorComponent;
 	/**
 	 * Component for interacting with the preview functionality.
 	 */
@@ -334,6 +339,10 @@ export const test = base.extend< {
 	componentBlockWidgetEditor: async ( { page }, use ) => {
 		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
 		await use( blockWidgetEditorComponent );
+	},
+	componentIsolatedBlockEditor: async ( { page }, use ) => {
+		const isolatedBlockEditorComponent = new IsolatedBlockEditorComponent( page );
+		await use( isolatedBlockEditorComponent );
 	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
