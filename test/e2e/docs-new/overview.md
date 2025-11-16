@@ -4,6 +4,7 @@ This documentation supports the migration of Playwright Test specifications from
 
 ## Documentation Pages
 
+- [AI Agents](./ai_agents.md)
 - [Creating Reliable Tests](./creating_reliable_tests.md)
 - [Custom Fixtures](./custom_fixtures.md)
 - [Flowcharts](./flowcharts.md)
