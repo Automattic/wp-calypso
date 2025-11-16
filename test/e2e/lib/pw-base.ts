@@ -54,6 +54,7 @@ import {
 	MarketingPage,
 	MediaHelper,
 	NewSiteResponse,
+	P2Page,
 	PeoplePage,
 	PreviewComponent,
 	RestAPIClient,
@@ -92,6 +93,10 @@ export const test = base.extend< {
 	 * Test account used for i18n locale switching.
 	 */
 	accounti18n: TestAccount;
+	/**
+	 * Test account used for P2 testing.
+	 */
+	accountP2User: TestAccount;
 	/**
 	 * Test account used for pre-release testing.
 	 */
@@ -241,6 +246,10 @@ export const test = base.extend< {
 	 */
 	pageInvitePeople: InvitePeoplePage;
 	/**
+	 * Page object representing the WordPress.com P2 page.
+	 */
+	pageP2: P2Page;
+	/**
 	 * Page object representing the WordPress.com People management page.
 	 */
 	pagePeople: PeoplePage;
@@ -296,6 +305,10 @@ export const test = base.extend< {
 	},
 	accounti18n: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'i18nUser' );
+		await use( testAccount );
+	},
+	accountP2User: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'p2User' );
 		await use( testAccount );
 	},
 	accountPreRelease: async ( { page }, use ) => {
@@ -378,6 +391,10 @@ export const test = base.extend< {
 	pageGitHubLogin: async ( { page }, use ) => {
 		const gitHubLoginPage = new GitHubLoginPage( page );
 		await use( gitHubLoginPage );
+	},
+	pageP2: async ( { page }, use ) => {
+		const p2Page = new P2Page( page );
+		await use( p2Page );
 	},
 	pageImportContent: async ( { page }, use ) => {
 		const importContentPage = new ImportContentPage( page );
