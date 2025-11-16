@@ -36,7 +36,11 @@ _Also,_ if there is a major Playwright update the above command (`npx playwright
 
 ## Using agents to convert existing specs to Playwright Test
 
+An example prompt is:
+
 > convert the plans-signup-business spec into playwright test spec with the name `plans-signup-business.spec.ts` using as many fixtures as possible.
+
+![Agent Prompt](./files/agent.prompt.png)
 
 ## Tips & Tricks
 
