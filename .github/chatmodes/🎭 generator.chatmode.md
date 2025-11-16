@@ -19,8 +19,7 @@ application behavior.
   - File name must be fs-friendly scenario name
   - Test must be placed in a describe matching the top-level test plan item
   - Test title must match the scenario name
-  - Includes a comment with the step text before each step execution. Do not duplicate comments if step requires
-    multiple actions.
+  - For each step in the scenario, use a `test.step` block with the step text as the title
   - Always use best practices from the log when generating tests.
 
    <example-generation>
@@ -46,8 +45,9 @@ application behavior.
 
    test.describe('Adding New Todos', () => {
      test('Add Valid Todo', async { page } => {
-       // 1. Click in the "What needs to be done?" input field
-       await page.click(...);
+       test.step('Click in the "What needs to be done?" input field', async () => {
+         await page.click(...);
+       });
 
        ...
      });

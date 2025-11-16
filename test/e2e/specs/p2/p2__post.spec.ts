@@ -1,44 +1,40 @@
 import { IsolatedBlockEditorComponent, ParagraphBlock } from '@automattic/calypso-e2e';
 import { test } from '../../lib/pw-base';
 
-/**
- * Converted from Jest-style p2__post.ts to Playwright Test fixtures.
- * Tests P2 post creation using the isolated block editor.
- */
 test.describe( 'P2: Post', () => {
-	test( 'Create and publish a P2 post with paragraph block', async ( {
-		page,
-		accountP2User,
-		pageP2,
-		helperData,
-	} ) => {
-		// Generate unique post content using timestamp
-		const postContent = helperData.getTimestamp();
+	let postContent: string;
 
-		// Step 1: Authenticate and navigate to P2 site
-		await accountP2User.authenticate( page );
-		await page.goto( accountP2User.getSiteURL(), { waitUntil: 'networkidle' } );
+	test( 'Create and publish a post', async ( { page, accountP2User, pageP2, helperData } ) => {
+		postContent = helperData.getTimestamp();
 
-		// Step 2: Open the new post editor
-		await pageP2.clickNewPost();
+		await test.step( 'View P2', async () => {
+			await accountP2User.authenticate( page );
+			await page.goto( accountP2User.getSiteURL(), { waitUntil: 'networkidle' } );
+		} );
 
-		// Step 3: Add a Paragraph block using IsolatedBlockEditorComponent
-		const isolatedBlockEditorComponent = new IsolatedBlockEditorComponent( page );
-		const blockHandle = await isolatedBlockEditorComponent.addBlock(
-			ParagraphBlock.blockName,
-			ParagraphBlock.blockEditorSelector
-		);
+		await test.step( 'Add a Paragraph block', async () => {
+			await pageP2.clickNewPost();
 
-		// Step 4: Enter text into the paragraph block
-		const paragraphBlock = new ParagraphBlock( blockHandle );
-		await paragraphBlock.enterParagraph( postContent );
+			const isolatedBlockEditorComponent = new IsolatedBlockEditorComponent( page );
+			const blockHandle = await isolatedBlockEditorComponent.addBlock(
+				ParagraphBlock.blockName,
+				ParagraphBlock.blockEditorSelector
+			);
 
-		// Step 5: Submit/publish the post
-		// Note: First click opens publish confirmation, second click publishes
-		await isolatedBlockEditorComponent.submitPost();
-		await isolatedBlockEditorComponent.submitPost();
+			await test.step( 'Enter text', async () => {
+				const paragraphBlock = new ParagraphBlock( blockHandle );
+				await paragraphBlock.enterParagraph( postContent );
+			} );
 
-		// Step 6: Validate post submission was successful
-		await pageP2.validatePostContent( postContent );
+			await test.step( 'Submit post', async () => {
+				await isolatedBlockEditorComponent.submitPost();
+				// Click twice since the first "Publish" click will open the publish confirmation sidebar
+				await isolatedBlockEditorComponent.submitPost();
+			} );
+		} );
+
+		await test.step( 'Validate post submission was successful', async () => {
+			await pageP2.validatePostContent( postContent );
+		} );
 	} );
 } );
