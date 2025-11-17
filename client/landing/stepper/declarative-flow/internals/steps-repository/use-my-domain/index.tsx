@@ -37,7 +37,6 @@ const UseMyDomain: StepType< {
 		  }
 		| {
 				domainCartItem: MinimalRequestCartProduct;
-				verificationData?: OwnershipVerificationData;
 		  }
 		| {
 				skipToPlan: true;
@@ -122,7 +121,7 @@ const UseMyDomain: StepType< {
 		}
 
 		clearQueryParams();
-		submit?.( { domainCartItem, verificationData } );
+		submit?.( { domainCartItem } );
 	};
 
 	const getInitialQuery = function () {
