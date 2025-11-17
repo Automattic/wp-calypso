@@ -13,7 +13,7 @@ import React, { forwardRef } from 'react';
 import { SummaryButtonProps } from './types';
 import './style.scss';
 
-function BadgesList( { badges }: { badges: SummaryButtonProps[ 'badges' ] } ) {
+function BadgeList( { badges }: { badges: SummaryButtonProps[ 'badges' ] } ) {
 	if ( ! badges?.length ) {
 		return null;
 	}
@@ -80,9 +80,9 @@ function UnforwardedSummaryButton(
 								</Text>
 							) }
 						</VStack>
-						{ hasLowDensity && <BadgesList badges={ badges } /> }
+						{ hasLowDensity && <BadgeList badges={ badges } /> }
 					</VStack>
-					{ ! hasLowDensity && <BadgesList badges={ badges } /> }
+					{ ! hasLowDensity && <BadgeList badges={ badges } /> }
 				</HStack>
 				{ showArrow && (
 					<Icon
