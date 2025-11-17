@@ -15,10 +15,10 @@ import {
 	connectedApplicationsQuery,
 	siteBySlugQuery,
 	siteMediaStorageQuery,
+	userNotificationsDevicesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import { isTemporarySitePurchase, getTitleForDisplay, isDotcomPlan } from '../../utils/purchase';
 import { rootRoute } from './root';
