@@ -25,9 +25,10 @@ import ChatMessage from '.';
 import type { CurrentUser } from '../../types';
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
+	newInteractionsBotSlug: string;
 }
 
-export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
+export const MessagesContainer = ( { currentUser, newInteractionsBotSlug }: ChatMessagesProps ) => {
 	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
@@ -164,7 +165,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				{ ( chat.odieId || chat.provider === 'odie' ) && (
 					<ChatMessage
 						message={ getOdieInitialMessage(
-							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,
+							supportInteraction?.bot_slug ||
+								newInteractionsBotSlug ||
+								ODIE_DEFAULT_BOT_SLUG_LEGACY,
 							currentUser?.display_name
 						) }
 						key={ 0 }
