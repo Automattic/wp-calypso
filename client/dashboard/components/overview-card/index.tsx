@@ -11,6 +11,7 @@ import {
 import { isRTL, __ } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
 import { isRelativeUrl } from '../../utils/url';
@@ -104,6 +105,47 @@ export default function OverviewCard( {
 		externalLink = link;
 	}
 
+	// Align the icon's leftmost edge with the title.
+	// The visible part of the icon might not start at the leftmost edge of the viewBox,
+	// so we add a negative margin to the icon.
+	const iconRef = useRef< HTMLDivElement >( null );
+	useEffect( () => {
+		if ( ! iconRef.current ) {
+			return;
+		}
+
+		const svg = iconRef.current.querySelector( 'svg' );
+		if ( ! svg ) {
+			return;
+		}
+
+		// Get the viewBox coordinate
+		const viewBox = svg.getAttribute( 'viewBox' );
+		let viewBoxMinX = 0;
+		if ( viewBox ) {
+			const viewBoxValues = viewBox.split( /\s+|,/ );
+			viewBoxMinX = parseFloat( viewBoxValues[ 0 ] ) || 0;
+		}
+
+		// Find the leftmost path edge coordinate
+		const paths = svg.querySelectorAll( 'path' );
+		let minX = Infinity;
+		paths.forEach( ( path ) => {
+			// getBBox is not available in test environments (jsdom)
+			if ( typeof path.getBBox !== 'function' ) {
+				return;
+			}
+			const bbox = path.getBBox();
+			minX = Math.min( minX, bbox.x );
+		} );
+
+		// Move the icon to the left by the offset
+		if ( minX !== Infinity ) {
+			const offset = minX - viewBoxMinX;
+			iconRef.current.style.marginLeft = `-${ offset - 1 }px`;
+		}
+	}, [ icon, isLoading ] );
+
 	const topContent = (
 		<HStack
 			className="dashboard-overview-card__content"
@@ -112,7 +154,7 @@ export default function OverviewCard( {
 		>
 			<VStack spacing={ 4 } style={ { flexGrow: 1 } }>
 				<HStack justify="space-between">
-					<HStack spacing={ 2 } alignment="center" expanded={ false }>
+					<HStack ref={ iconRef } spacing={ 2 } alignment="center" expanded={ false }>
 						{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
 						<Text
 							className="dashboard-overview-card__title"
