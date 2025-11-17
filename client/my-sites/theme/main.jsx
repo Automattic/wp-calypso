@@ -730,7 +730,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderRetiredNotice = () => {
-		const { retired, isActive } = this.props;
+		const { retired, isActive, isLoggedIn } = this.props;
 		if ( ! retired ) {
 			return null;
 		}
@@ -748,7 +748,12 @@ class ThemeSheet extends Component {
 					'This theme has been retired and will only receive security updates. It is no longer available to sites that are not already using it. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 					{
 						components: {
-							learnMoreLink: <InlineSupportLink supportContext="themes-retired" />,
+							learnMoreLink: (
+								<InlineSupportLink
+									supportContext="themes-retired"
+									showSupportModal={ isLoggedIn }
+								/>
+							),
 						},
 					}
 			  );
