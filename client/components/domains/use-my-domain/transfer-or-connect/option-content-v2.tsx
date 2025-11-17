@@ -45,7 +45,9 @@ export default function OptionContentV2( {
 				}
 				description={
 					<div className="option-content-v2__description">
-						<Text className="option-content-v2__top-text">{ topText }</Text>
+						<Text variant="muted" className="option-content-v2__top-text">
+							{ topText }
+						</Text>
 						{ etaText && <Text className="option-content-v2__eta-text">{ etaText }</Text> }
 					</div>
 				}
