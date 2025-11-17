@@ -15,6 +15,11 @@ if ( process.env.CI ) {
 	reporter.push( [ 'blob' ] );
 }
 
+// All end-to-end tests use a custom user agent containing this string.
+const E2E_USER_AGENT_SUFFIX = 'wp-e2e-tests';
+
+const appendE2EUserAgent = ( userAgent: string ) => `${ userAgent } ${ E2E_USER_AGENT_SUFFIX }`;
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -54,29 +59,47 @@ export default defineConfig( {
 	projects: [
 		{
 			name: 'chrome',
-			use: { ...devices[ 'Desktop Chrome HiDPI' ] },
+			use: {
+				...devices[ 'Desktop Chrome HiDPI' ],
+				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
+			},
 		},
 		{
 			name: 'firefox',
-			use: { ...devices[ 'Desktop Firefox' ] },
+			use: {
+				...devices[ 'Desktop Firefox' ],
+				userAgent: appendE2EUserAgent( devices[ 'Desktop Firefox' ].userAgent ),
+			},
 		},
 		{
 			name: 'webkit',
-			use: { ...devices[ 'Desktop Safari' ] },
+			use: {
+				...devices[ 'Desktop Safari' ],
+				userAgent: appendE2EUserAgent( devices[ 'Desktop Safari' ].userAgent ),
+			},
 		},
 		{
 			name: 'pixel',
-			use: { ...devices[ 'Pixel 7' ] },
+			use: {
+				...devices[ 'Pixel 7' ],
+				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
+			},
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'galaxy',
-			use: { ...devices[ 'Galaxy S24' ] },
+			use: {
+				...devices[ 'Galaxy S24' ],
+				userAgent: appendE2EUserAgent( devices[ 'Galaxy S24' ].userAgent ),
+			},
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'iphone',
-			use: { ...devices[ 'iPhone 15 Pro' ] },
+			use: {
+				...devices[ 'iPhone 15 Pro' ],
+				userAgent: appendE2EUserAgent( devices[ 'iPhone 15 Pro' ].userAgent ),
+			},
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
