@@ -1,5 +1,6 @@
 import { Badge, Gridicon, SummaryButton } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import type { ReactNode, ReactElement } from 'react';
@@ -49,7 +50,7 @@ export default function OptionContentV2( {
 				}
 				description={
 					<div className="option-content-v2__description">
-						<p className="option-content-v2__top-text">
+						<Text className="option-content-v2__top-text">
 							{ topText }
 							{ learnMoreLink && (
 								<>
@@ -65,8 +66,8 @@ export default function OptionContentV2( {
 									</a>
 								</>
 							) }
-						</p>
-						{ etaText && <p className="option-content-v2__eta-text">{ etaText }</p> }
+						</Text>
+						{ etaText && <Text className="option-content-v2__eta-text">{ etaText }</Text> }
 					</div>
 				}
 				decoration={ illustration }
@@ -80,7 +81,7 @@ export default function OptionContentV2( {
 							<div key={ 'benefit-' + index } className="option-content-v2__benefits-item">
 								{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }
 								<Gridicon size={ 18 } icon="checkmark" />
-								<span className="option-content-v2__benefits-item-text">{ benefit }</span>
+								<Text className="option-content-v2__benefits-item-text">{ benefit }</Text>
 							</div>
 						);
 					} ) }
