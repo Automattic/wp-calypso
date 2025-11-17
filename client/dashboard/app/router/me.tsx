@@ -183,7 +183,6 @@ export const purchasesRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( userPurchasesQuery() ),
 			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
 	validateSearch: ( search ): { page?: number; search?: string; site?: string } => {
