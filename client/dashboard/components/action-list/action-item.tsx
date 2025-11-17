@@ -1,43 +1,32 @@
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
 import { forwardRef } from 'react';
 import { ButtonStack } from '../button-stack';
+import { IconListItem } from '../icon-list/icon-list-item';
 import type { ActionItemProps } from './types';
+
 import './action-item.scss';
 
 function UnforwardedActionItem(
 	{ title, description, decoration, actions }: ActionItemProps,
-	ref: React.ForwardedRef< HTMLSpanElement >
+	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	return (
-		<VStack className="action-item" ref={ ref } as="span">
-			<HStack spacing={ 3 } justify="flex-start" alignment="center" as="span">
-				{ !! decoration && <span className="action-item__decoration">{ decoration }</span> }
-				<HStack spacing={ 3 } as="span">
-					<VStack spacing={ 1 } as="span">
-						<Text weight={ 500 } lineHeight="20px">
-							{ title }
-						</Text>
-						{ description && (
-							<Text variant="muted" lineHeight="20px">
-								{ description }
-							</Text>
-						) }
-					</VStack>
-					<ButtonStack
-						className="action-item__actions"
-						justify="flex-end"
-						expanded={ false }
-						as="span"
-					>
-						{ actions }
-					</ButtonStack>
-				</HStack>
-			</HStack>
-		</VStack>
+		<IconListItem
+			className="action-item"
+			title={ title }
+			description={ description }
+			decoration={ decoration }
+			suffix={
+				<ButtonStack
+					className="action-item__actions"
+					justify="flex-end"
+					expanded={ false }
+					as="span"
+				>
+					{ actions }
+				</ButtonStack>
+			}
+			ref={ ref }
+		/>
 	);
 }
 
