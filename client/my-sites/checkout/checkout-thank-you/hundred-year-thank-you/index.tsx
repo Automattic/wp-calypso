@@ -236,11 +236,7 @@ export default function HundredYearThankYou( {
 		</StyledLightButton>
 	);
 	const hundredYearDomainCta = (
-		<StyledLightButton
-			onClick={ () =>
-				page( ` /domains/manage/all/overview/${ targetDomain?.name }/${ targetDomain?.name }` )
-			}
-		>
+		<StyledLightButton onClick={ () => page( ` /domains/manage/${ siteSlug }` ) }>
 			{ translate( 'Manage your domain' ) }
 		</StyledLightButton>
 	);
