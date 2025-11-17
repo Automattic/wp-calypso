@@ -1,7 +1,6 @@
 import { useOdieAssistantContext } from '../../../context';
 import { useSendChatMessage } from '../../../hooks';
 import type { Message } from '../../../types';
-import './quick-reply-options.scss';
 
 export const QuickReplyOptions = ( { options }: { options: string[] } ) => {
 	const { trackEvent, chat } = useOdieAssistantContext();
@@ -32,11 +31,10 @@ export const QuickReplyOptions = ( { options }: { options: string[] } ) => {
 	};
 
 	return (
-		<ul className="odie-quick-reply-options">
+		<ul className="odie-introduction-quick-reply-options">
 			{ options.map( ( option ) => (
-				<li key={ option } className="odie-quick-reply-option-item">
+				<li key={ option } className="odie-introduction-quick-reply-option">
 					<button
-						className="odie-quick-reply-option"
 						onClick={ () => handleOptionClick( option ) }
 						disabled={ isChatBusy }
 						type="button"
