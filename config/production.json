@@ -41,6 +41,7 @@
 		"dashboard/v2/backport/site-overview": true,
 		"domain-search-rewrite": true,
 		"domain-connection-redesign": false,
+		"domain-transfer-redesign": false,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": true,
 		"help": true,

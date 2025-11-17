@@ -31,6 +31,7 @@
 		"devdocs": false,
 		"domain-search-rewrite": true,
 		"domain-connection-redesign": false,
+		"domain-transfer-redesign": false,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": false,
 		"help": true,
