@@ -114,25 +114,6 @@ describe( 'OptionContentV2', () => {
 		expect( onSelect ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'localizes the learn more link and prevents triggering the summary button click', async () => {
-		const onSelect = jest.fn();
-		const user = userEvent.setup();
-		const learnMoreLink = 'https://example.com/learn-more';
-		const { getByRole } = renderOptionContent( {
-			onSelect,
-			learnMoreLink,
-		} );
-
-		const link = getByRole( 'link', { name: 'Learn more' } );
-
-		expect( localizeUrlMock ).toHaveBeenCalledWith( learnMoreLink );
-		expect( link ).toHaveAttribute( 'href', `localized-${ learnMoreLink }` );
-
-		await user.click( link );
-
-		expect( onSelect ).not.toHaveBeenCalled();
-	} );
-
 	it( 'disables the summary button when disabled prop is true', () => {
 		const { getByTestId } = renderOptionContent( { disabled: true } );
 

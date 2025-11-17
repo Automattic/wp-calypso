@@ -1,5 +1,4 @@
 import { Badge, Gridicon, SummaryButton } from '@automattic/components';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
@@ -11,7 +10,6 @@ type OptionContentV2Props = {
 	benefits?: ReadonlyArray< ReactNode >;
 	disabled?: boolean;
 	illustration: ReactElement;
-	learnMoreLink?: string;
 	onSelect?: React.MouseEventHandler;
 	isPlaceholder?: boolean;
 	recommended?: boolean;
@@ -24,7 +22,6 @@ export default function OptionContentV2( {
 	benefits,
 	disabled,
 	illustration,
-	learnMoreLink,
 	onSelect,
 	isPlaceholder,
 	recommended,
@@ -32,8 +29,6 @@ export default function OptionContentV2( {
 	topText,
 	etaText,
 }: OptionContentV2Props ) {
-	const localizeUrl = useLocalizeUrl();
-
 	return (
 		<div
 			className={ clsx( 'option-content-v2', {
@@ -50,23 +45,7 @@ export default function OptionContentV2( {
 				}
 				description={
 					<div className="option-content-v2__description">
-						<Text className="option-content-v2__top-text">
-							{ topText }
-							{ learnMoreLink && (
-								<>
-									{ ' ' }
-									<a
-										className="option-content-v2__learn-more"
-										target="_blank"
-										href={ localizeUrl( learnMoreLink ) }
-										onClick={ ( event ) => event.stopPropagation() }
-										rel="noopener noreferrer"
-									>
-										{ __( 'Learn more' ) }
-									</a>
-								</>
-							) }
-						</Text>
+						<Text className="option-content-v2__top-text">{ topText }</Text>
 						{ etaText && <Text className="option-content-v2__eta-text">{ etaText }</Text> }
 					</div>
 				}
