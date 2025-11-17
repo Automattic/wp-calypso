@@ -24,7 +24,7 @@ export function isPlanFeatureAvailable( site: Site, feature: HostingFeatureSlug 
 		return false;
 	}
 
-	return !! site.plan.features.available[ feature ];
+	return !! site.plan.features.available?.[ feature ];
 }
 
 // Returns whether the plan supports a specific "hosting feature",
