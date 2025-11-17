@@ -6,8 +6,7 @@
 	width: calc( 100% - 2 * $grid-unit-20 );
 	top: 0;
 	inset-inline-start: 0;
-	padding-top:max(7vh, 40px);
-	padding-top: max(7dvh, 40px);
+	padding-top: 72px;
 	padding-inline: $grid-unit-20;
 	background: linear-gradient(180deg, rgba(252, 252, 252, 0.65) 0%, #FCFCFC 100%);
 	backdrop-filter: blur(3px);
