@@ -4,7 +4,7 @@ import { translateFromPage } from '../utils';
 import { EditorComponent } from './editor-component';
 import type { EditorPreviewOptions, EditorToolbarSettingsButton } from './types';
 
-const panel = '.interface-navigable-region[class*="header"]';
+const panel = '[aria-label="Editor top bar"]';
 const moreOptionsLabel = 'Options';
 const selectors = {
 	// Block Inserter
@@ -109,17 +109,12 @@ export class EditorToolbarComponent {
 	async openBlockInserter(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the old name.
-		const translatedButtonNameOld = await this.translateFromPage(
-			'Toggle block inserter',
-			'Generic label for block inserter button'
-		);
 		const translatedButtonNameNew = await this.translateFromPage(
 			'Block Inserter',
 			'Generic label for block inserter button'
 		);
 		const blockInserterButton = editorParent.getByRole( 'button', {
-			name: new RegExp( `^(${ translatedButtonNameOld }|${ translatedButtonNameNew })` ),
+			name: translatedButtonNameNew,
 			exact: true,
 		} );
 
@@ -136,27 +131,16 @@ export class EditorToolbarComponent {
 	async closeBlockInserter(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the old name.
-		const translatedButtonNameOld = await this.translateFromPage(
-			'Toggle block inserter',
-			'Generic label for block inserter button'
-		);
 		const translatedButtonNameNew = await this.translateFromPage(
 			'Block Inserter',
 			'Generic label for block inserter button'
 		);
 		const blockInserterButton = editorParent.getByRole( 'button', {
-			name: new RegExp( `^(${ translatedButtonNameOld }|${ translatedButtonNameNew })` ),
+			name: translatedButtonNameNew,
 			exact: true,
 		} );
-
 		if ( await this.targetIsOpen( blockInserterButton ) ) {
-			// We click on the panel instead of on the block inserter button as a workaround for an issue
-			// that disables the block inserter button after inserting a block using the block API V2.
-			// See https://github.com/WordPress/gutenberg/issues/43090.
-			const editorParent = await this.editor.parent();
-			const locator = editorParent.locator( panel ).locator( 'button[class*="inserter-toggle"]' );
-			await locator.click();
+			await blockInserterButton.click();
 		}
 	}
 

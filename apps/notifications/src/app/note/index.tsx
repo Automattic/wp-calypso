@@ -16,8 +16,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
+import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
-import getIsNoteHidden from '../../panel/state/selectors/get-is-note-hidden';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import { getFilters } from '../../panel/templates/filters';
 import ActionDropdown from '../templates/action-dropdown';
@@ -76,16 +76,11 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const { filterName, noteId } = params;
 
 	const filter = getFilters()[ filterName as keyof ReturnType< typeof getFilters > ];
-
-	const isNoteHidden = useSelector(
-		( state ) => ( noteId: number ) => getIsNoteHidden( state, noteId )
-	);
-
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
 	const note = notes.find( ( note ) => String( note.id ) === noteId );
-
+	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const visibleNotes = notes.filter(
-		( note ) => filter.filter( note ) && ! isNoteHidden( note.id )
+		( note ) => filter.filter( note ) && hiddenNoteIds[ note.id ] !== true
 	);
 
 	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );

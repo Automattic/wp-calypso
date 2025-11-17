@@ -115,7 +115,7 @@ module.exports = {
 					},
 					{
 						name: '@automattic/api-queries',
-						importNames: [ 'sitesQuery' ],
+						importNames: [ 'sitesQuery', 'dashboardSiteListQuery' ],
 						message: 'Use local queries exported from either context or useAppContext instead.',
 					},
 				],

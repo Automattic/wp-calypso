@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { Purchase, RawPurchase } from './types';
+import type { Purchase, RawPurchase, UpgradesCancelFeaturesResponse } from './types';
 
 /**
  * Some data from the purchases endpoints are currently numeric strings but we
@@ -57,7 +57,16 @@ export async function fetchPurchase( purchaseId: number ): Promise< Purchase > {
 
 export async function hasExtendedPurchase( purchaseId: number ): Promise< boolean > {
 	return await wpcom.req.get( {
-		path: `/purchases/${ purchaseId }/has-extended`,
+		path: `/upgrades/${ purchaseId }/has-extended`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function fetchCancellationFeatures(
+	purchaseId: number
+): Promise< UpgradesCancelFeaturesResponse > {
+	return await wpcom.req.get( {
+		path: `/upgrades/${ purchaseId }/cancel-features`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }

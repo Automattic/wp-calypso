@@ -183,8 +183,14 @@ const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: s
 									} }
 								/>
 								<ButtonStack justify="flex-end">
-									<Button onClick={ handleCloseFeedbackModal }>{ __( 'Cancel' ) }</Button>
-									<Button variant="primary" type="submit">
+									<Button
+										__next40pxDefaultSize
+										variant="tertiary"
+										onClick={ handleCloseFeedbackModal }
+									>
+										{ __( 'Cancel' ) }
+									</Button>
+									<Button __next40pxDefaultSize variant="primary" type="submit">
 										{ __( 'Submit' ) }
 									</Button>
 								</ButtonStack>

@@ -38,7 +38,7 @@ export const BackupFileField: React.FC< CredentialsFormFieldProps > = ( { contro
 			<ErrorMessage error={ errors?.backupFileLocation } />
 			<div className="site-migration-credentials__form-note site-migration-credentials__backup-note">
 				{ translate(
-					"Upload your file to a service like Dropbox or Google Drive to get a link. Don't forget to make sure that anyone with the link can access it."
+					"Upload your file to a service like Dropbox or Google Drive. Don't forget to make sure that anyone with the link can access it."
 				) }
 			</div>
 		</div>

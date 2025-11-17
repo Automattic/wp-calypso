@@ -51,7 +51,7 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
-function BillingPurchaseInfoPopover( { children }: { children: ReactNode } ) {
+export function BillingPurchaseInfoPopover( { children }: { children: ReactNode } ) {
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
 	const handleClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.preventDefault();

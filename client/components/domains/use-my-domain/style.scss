@@ -5,16 +5,19 @@
 
 .use-my-domain {
 	display: flex;
-	align-items: center;
 	flex-direction: column;
-	padding: 36px 24px;
 	background-color: inherit;
-	& .card, &.card {
-		box-shadow: none;
+
+	& &--redesign {
+		.components-card__body {
+			max-width: none;
+			margin: 0;
+		}
 	}
 
-	&.card {
-		display: flex; // NOTE: To increase specificity
+	.components-card__body {
+		max-width: 370px;
+		margin: 36px auto 0;
 	}
 
 	& &__page-heading {
@@ -68,8 +71,6 @@
 		display: flex;
 		flex-direction: column;
 		row-gap: 8px;
-		width: 100%;
-		max-width: 370px;
 
 		.form-text-input {
 			padding: 9px 28px 9px 10px;

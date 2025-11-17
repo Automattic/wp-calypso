@@ -21,6 +21,12 @@ export function PurchaseProduct( {
 
 	if ( site ) {
 		if ( productType && site.name && site.slug ) {
+			const linkTitle =
+				site.name === site.slug
+					? __( 'View site' )
+					: // translators: the siteName is the name of the site
+					  sprintf( __( 'View %(siteName)s' ), { siteName: site.name } );
+			const linkText = site.name === site.slug ? __( 'View site' ) : site.slug;
 			return (
 				<div>
 					{ createInterpolateElement(
@@ -47,17 +53,8 @@ export function PurchaseProduct( {
 								</Button>
 							),
 							siteDomain: (
-								<ExternalLink
-									href={ 'https://' + site.slug }
-									rel="noreferrer"
-									title={
-										// translators: the siteName is the name of the site
-										sprintf( __( 'View %(siteName)s' ), {
-											siteName: site.name,
-										} )
-									}
-								>
-									{ site.slug }
+								<ExternalLink href={ 'https://' + site.slug } rel="noreferrer" title={ linkTitle }>
+									{ linkText }
 								</ExternalLink>
 							),
 						}
@@ -70,8 +67,8 @@ export function PurchaseProduct( {
 			return (
 				<div>
 					{ createInterpolateElement(
-						// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
-						sprintf( __( '%(purchaseType)s for <siteDomain />' ), {
+						// translators: The string contains the product name, the URL of the site, and a link to visit the site (e.g. "Premium plan for blockstore.com (view site)")
+						sprintf( __( '%(purchaseType)s for <siteDomain /> (<viewSite />)' ), {
 							purchaseType: productType,
 						} ),
 						{
@@ -89,6 +86,15 @@ export function PurchaseProduct( {
 									{ site.slug }
 								</Button>
 							),
+							viewSite: (
+								<ExternalLink
+									href={ 'https://' + site.slug }
+									rel="noreferrer"
+									title={ __( 'View site' ) }
+								>
+									{ __( 'View site' ) }
+								</ExternalLink>
+							),
 						}
 					) }
 				</div>
@@ -96,11 +102,17 @@ export function PurchaseProduct( {
 		}
 
 		if ( site.name && site.slug ) {
+			const linkTitle =
+				site.name === site.slug
+					? __( 'View site' )
+					: // translators: the siteName is the name of the site
+					  sprintf( __( 'View %(siteName)s' ), { siteName: site.name } );
+			const linkText = site.name === site.slug ? __( 'View site' ) : site.slug;
 			return (
 				<div>
 					{ createInterpolateElement(
 						// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
-						__( 'for <siteName /> (<siteDomain />)' ),
+						__( 'for <siteName /> (<viewSite />)' ),
 						{
 							siteName: (
 								<Button
@@ -116,18 +128,9 @@ export function PurchaseProduct( {
 									{ site.name }
 								</Button>
 							),
-							siteDomain: (
-								<ExternalLink
-									href={ 'https://' + site.slug }
-									rel="noreferrer"
-									title={
-										// translators: the siteName is the name of the site
-										sprintf( __( 'View %(siteName)s' ), {
-											siteName: site.name,
-										} )
-									}
-								>
-									{ site.slug }
+							viewSite: (
+								<ExternalLink href={ 'https://' + site.slug } rel="noreferrer" title={ linkTitle }>
+									{ linkText }
 								</ExternalLink>
 							),
 						}
@@ -140,12 +143,25 @@ export function PurchaseProduct( {
 	if ( ! site && productType ) {
 		return (
 			<div>
-				{ sprintf(
-					// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
-					__( '%(purchaseType)s for %(site)s' ),
+				{ createInterpolateElement(
+					sprintf(
+						// translators: The string contains the product name, the URL of the site, and a link to view the site (e.g. "Premium plan for blockstore.com (view site)")
+						__( '%(purchaseType)s for %(site)s (<viewSite />)' ),
+						{
+							purchaseType: productType,
+							site: purchase.domain,
+						}
+					),
 					{
-						purchaseType: productType,
-						site: purchase.domain,
+						viewSite: (
+							<ExternalLink
+								href={ 'https://' + purchase.domain }
+								rel="noreferrer"
+								title={ __( 'View site' ) }
+							>
+								{ __( 'View site' ) }
+							</ExternalLink>
+						),
 					}
 				) }
 			</div>

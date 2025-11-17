@@ -294,22 +294,19 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	const description = hasPlanFeature( site, HostingFeatures.CACHING )
-		? createInterpolateElement(
-				__( 'Manage your site’s server-side caching. <link>Learn more</link>' ),
-				{
-					link: <InlineSupportLink supportContext="hosting-edge-cache" />,
-				}
-		  )
+		? createInterpolateElement( __( 'Manage your site’s server-side caching. <learnMoreLink />' ), {
+				learnMoreLink: <InlineSupportLink supportContext="hosting-edge-cache" />,
+		  } )
 		: createInterpolateElement(
 				sprintf(
 					/* translators: %s: plan name. Eg. 'Personal' */
 					__(
-						'Caching is managed for you on the %s plan. The cache is cleared automatically as you make changes to your site. <link>Learn more</link>'
+						'Caching is managed for you on the %s plan. The cache is cleared automatically as you make changes to your site. <learnMoreLink />'
 					),
 					getSitePlanDisplayName( site )
 				),
 				{
-					link: <InlineSupportLink supportContext="hosting-edge-cache" />,
+					learnMoreLink: <InlineSupportLink supportContext="hosting-edge-cache" />,
 				}
 		  );
 

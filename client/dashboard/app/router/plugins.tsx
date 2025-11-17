@@ -82,7 +82,7 @@ export const pluginRoute = createRoute( {
 	path: '$pluginId',
 	loader: async () => {
 		queryClient.ensureQueryData( marketplacePluginsQuery() );
-		await queryClient.ensureQueryData( pluginsQuery() );
+		queryClient.ensureQueryData( pluginsQuery() );
 	},
 } ).lazy( () =>
 	import( '../../plugins/plugin' ).then( ( d ) =>

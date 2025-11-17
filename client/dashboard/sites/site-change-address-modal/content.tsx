@@ -1,8 +1,8 @@
-import { FreeSiteAddressType } from '@automattic/api-core';
+import { DomainSubtype, FreeSiteAddressType } from '@automattic/api-core';
 import {
 	validateSiteAddressChangeMutation,
 	changeSiteAddressChangeMutation,
-	siteDomainsQuery,
+	domainsQuery,
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -65,7 +65,12 @@ const NewSiteAddressForm = ( {
 	onCancel: () => void;
 } ) => {
 	const { createErrorNotice } = useDispatch( noticesStore );
-	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
+	const { data: siteDomains } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.blog_id === site.ID );
+		},
+	} );
 	const mutation = useMutation( validateSiteAddressChangeMutation() );
 	const [ formData, setFormData ] = useState( {
 		subdomain: '',
@@ -87,10 +92,14 @@ const NewSiteAddressForm = ( {
 	};
 
 	const wpcomDomain = siteDomains?.find(
-		( domain ) => domain.wpcom_domain && ! domain.is_wpcom_staging_domain
+		( domain ) =>
+			domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS &&
+			! domain.tags.includes( 'wpcom_staging' )
 	);
 
-	const hasCustomDomain = !! siteDomains?.find( ( domain ) => ! domain.wpcom_domain );
+	const hasCustomDomain = !! siteDomains?.find(
+		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+	);
 
 	const isDisabled = ! formData.subdomain || formData.subdomain === currentSubdomain;
 

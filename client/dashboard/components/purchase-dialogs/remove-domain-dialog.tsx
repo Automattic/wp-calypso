@@ -161,16 +161,17 @@ export default function RemoveDomainDialog( {
 					</>
 				) }
 				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" onClick={ onCancel }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onCancel }>
 						{ __( 'Cancel' ) }
 					</Button>
 					{ step === 'intro' && (
-						<Button variant="primary" onClick={ onConfirmStep }>
+						<Button __next40pxDefaultSize variant="primary" onClick={ onConfirmStep }>
 							{ __( 'Continue' ) }
 						</Button>
 					) }
 					{ step === 'confirm' && (
 						<Button
+							__next40pxDefaultSize
 							isDestructive={ domainConfirmed }
 							variant="primary"
 							disabled={ ! domainConfirmed }

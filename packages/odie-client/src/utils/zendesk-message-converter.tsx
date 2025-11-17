@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import DOMPurify from 'dompurify';
-import type { Context, Message, MessageRole, MessageType, ZendeskMessage } from '../types';
+import type { Message, MessageRole, MessageType, ZendeskMessage } from '../types';
 import type { ReactNode } from 'react';
 
 // Format markdown to support images attachments that open in a new tab.
@@ -96,31 +96,16 @@ function getContentMessage( message: ZendeskMessage ): Message[ 'content' ] {
 }
 
 export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = ( message ) => {
-	let type = message.type as MessageType;
-	let context: Context = { site_id: null };
-	let role = (
+	const role = (
 		[ 'user', 'business' ].includes( message.role ) ? message.role : 'user'
 	) as MessageRole;
-
-	if ( message?.source?.type === 'zd:answerBot' ) {
-		type = 'message';
-		role = 'bot';
-		context = {
-			...context,
-			flags: {
-				hide_disclaimer_content: true,
-				show_contact_support_msg: true,
-				show_ai_avatar: false,
-			},
-		};
-	}
 
 	return {
 		...message,
 		content: getContentMessage( message ),
-		context,
+		context: { site_id: null },
 		role,
-		type,
+		type: message.type as MessageType,
 		quotedMessageId: message.id,
 		metadata: message.metadata,
 		feedbackOptions: message.actions,

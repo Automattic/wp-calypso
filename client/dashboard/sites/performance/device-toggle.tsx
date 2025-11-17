@@ -16,7 +16,7 @@ type DeviceToggleProps = {
 };
 
 export default function DeviceToggle( { value, onChange, disabled }: DeviceToggleProps ) {
-	const isDesktop = useViewportMatch( 'medium' );
+	const isMobileViewPort = useViewportMatch( 'mobile', '<' );
 	const options: { value: DeviceToggleType; label: string; icon: React.ReactElement }[] = [
 		{
 			value: 'mobile',
@@ -42,18 +42,18 @@ export default function DeviceToggle( { value, onChange, disabled }: DeviceToggl
 			onChange={ ( value ) => onChange( value as DeviceToggleType ) }
 		>
 			{ options.map( ( option ) => {
-				return isDesktop ? (
-					<ToggleGroupControlOption
-						key={ option.value }
-						value={ option.value }
-						label={ option.label }
-					/>
-				) : (
+				return isMobileViewPort ? (
 					<ToggleGroupControlOptionIcon
 						key={ option.value }
 						value={ option.value }
 						label={ option.label }
 						icon={ option.icon }
+					/>
+				) : (
+					<ToggleGroupControlOption
+						key={ option.value }
+						value={ option.value }
+						label={ option.label }
 					/>
 				);
 			} ) }

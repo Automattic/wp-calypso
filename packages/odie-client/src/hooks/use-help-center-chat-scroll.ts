@@ -6,7 +6,7 @@ import { useEffect, useRef } from '@wordpress/element';
 const cachedScrollPositions: Record< string, number > = {};
 
 export const useHelpCenterChatScroll = (
-	id: number | string | null,
+	id: number | string | undefined,
 	scrollParentRef: React.RefObject< HTMLElement >,
 	isEnabled: boolean
 ) => {

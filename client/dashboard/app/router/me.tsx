@@ -73,7 +73,7 @@ export const profileRoute = createRoute( {
 	)
 );
 
-const preferencesRoute = createRoute( {
+export const preferencesRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -132,7 +132,7 @@ export const billingHistoryRoute = createRoute( {
 	loader: async () => {
 		await queryClient.ensureQueryData( userReceiptsQuery() );
 	},
-	path: '/billing-history',
+	path: '/history',
 } );
 
 export const billingHistoryIndexRoute = createRoute( {
@@ -302,6 +302,17 @@ export const addPaymentMethodRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/billing-purchases/add-payment-method' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings-add-payment-method' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const cancelPurchaseRoute = createRoute( {
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'cancel',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
+		createLazyRoute( 'cancel-purchase' )( {
 			component: d.default,
 		} )
 	)
@@ -771,6 +782,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				purchaseSettingsRoute.addChildren( [
 					purchaseSettingsIndexRoute,
 					changePaymentMethodRoute,
+					cancelPurchaseRoute,
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),

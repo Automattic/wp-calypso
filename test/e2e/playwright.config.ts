@@ -15,6 +15,11 @@ if ( process.env.CI ) {
 	reporter.push( [ 'blob' ] );
 }
 
+// All end-to-end tests use a custom user agent containing this string.
+const E2E_USER_AGENT_SUFFIX = 'wp-e2e-tests';
+
+const appendE2EUserAgent = ( userAgent: string ) => `${ userAgent } ${ E2E_USER_AGENT_SUFFIX }`;
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -25,7 +30,7 @@ export default defineConfig( {
 	/* Fail the build on CI if you accidentally left test.only in the source code. */
 	forbidOnly: !! process.env.CI,
 	/* Retry on CI only */
-	retries: process.env.CI ? 2 : 1,
+	retries: process.env.CI ? 1 : 0,
 	/* Workers should use what is available locally, and half on CI*/
 	workers: process.env.CI ? '50%' : '100%',
 	/* Global timeout for each test */
@@ -44,9 +49,9 @@ export default defineConfig( {
 		actionTimeout: 10000, // 10 seconds
 
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-		trace: 'on-first-retry',
-		screenshot: 'only-on-failure',
-		video: 'on-first-retry',
+		trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
+		screenshot: { mode: 'only-on-failure', fullPage: true },
+		video: 'retain-on-failure',
 	},
 
 	/* Configure projects for major browsers */
@@ -54,29 +59,47 @@ export default defineConfig( {
 	projects: [
 		{
 			name: 'chrome',
-			use: { ...devices[ 'Desktop Chrome HiDPI' ] },
+			use: {
+				...devices[ 'Desktop Chrome HiDPI' ],
+				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
+			},
 		},
 		{
 			name: 'firefox',
-			use: { ...devices[ 'Desktop Firefox' ] },
+			use: {
+				...devices[ 'Desktop Firefox' ],
+				userAgent: appendE2EUserAgent( devices[ 'Desktop Firefox' ].userAgent ),
+			},
 		},
 		{
 			name: 'webkit',
-			use: { ...devices[ 'Desktop Safari' ] },
+			use: {
+				...devices[ 'Desktop Safari' ],
+				userAgent: appendE2EUserAgent( devices[ 'Desktop Safari' ].userAgent ),
+			},
 		},
 		{
 			name: 'pixel',
-			use: { ...devices[ 'Pixel 7' ] },
+			use: {
+				...devices[ 'Pixel 7' ],
+				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
+			},
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'galaxy',
-			use: { ...devices[ 'Galaxy S24' ] },
+			use: {
+				...devices[ 'Galaxy S24' ],
+				userAgent: appendE2EUserAgent( devices[ 'Galaxy S24' ].userAgent ),
+			},
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'iphone',
-			use: { ...devices[ 'iPhone 15 Pro' ] },
+			use: {
+				...devices[ 'iPhone 15 Pro' ],
+				userAgent: appendE2EUserAgent( devices[ 'iPhone 15 Pro' ].userAgent ),
+			},
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{

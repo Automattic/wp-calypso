@@ -23,6 +23,8 @@
 	display: flex;
 	flex-direction: column;
 	gap: 1em;
+	padding: 16px;
+	min-width: 300px;
 
 	@include break-large {
 		flex-direction: row;

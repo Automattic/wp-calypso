@@ -36,8 +36,8 @@ export const SectionHeader = ( {
 				{ decoration && (
 					<span className="dashboard-section-header__decoration">{ decoration }</span>
 				) }
-				<HStack justify="space-between" alignment="center" spacing={ 4 } wrap>
-					<VStack>
+				<HStack justify="space-between" alignment="center" spacing={ 6 } wrap>
+					<VStack style={ { flex: '1000 1 auto' } }>
 						<HeadingTag className="dashboard-section-header__heading" id={ headingId }>
 							{ title }
 						</HeadingTag>
@@ -48,15 +48,17 @@ export const SectionHeader = ( {
 						) }
 					</VStack>
 
-					{ /* The wrapper is always needed for view transitions. */ }
-					<ButtonStack
-						justify="flex-end"
-						expanded={ false }
-						alignment="flex-start"
-						className="dashboard-section-header__actions"
-					>
-						{ actions }
-					</ButtonStack>
+					{ !! actions && (
+						<ButtonStack
+							justify="flex-start"
+							expanded={ false }
+							alignment="flex-start"
+							className="dashboard-section-header__actions"
+							style={ { flex: '1 1 auto' } }
+						>
+							{ actions }
+						</ButtonStack>
+					) }
 				</HStack>
 			</HStack>
 		</VStack>

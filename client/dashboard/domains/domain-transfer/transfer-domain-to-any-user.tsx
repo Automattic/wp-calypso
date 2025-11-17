@@ -187,7 +187,7 @@ export default function TransferDomainToAnyUser() {
 	const renderConfirmationDialog = () => {
 		return (
 			<Modal
-				title={ __( 'Confirm Transfer' ) }
+				title={ __( 'Confirm transfer' ) }
 				onRequestClose={ () => setIsTransferDialogOpen( false ) }
 			>
 				<VStack spacing={ 6 }>
@@ -203,7 +203,7 @@ export default function TransferDomainToAnyUser() {
 					<ButtonStack justify="flex-end">
 						<Button
 							__next40pxDefaultSize
-							variant="secondary"
+							variant="tertiary"
 							onClick={ () => setIsTransferDialogOpen( false ) }
 							disabled={ isUpdatingDomainTransferRequest }
 						>
@@ -228,7 +228,7 @@ export default function TransferDomainToAnyUser() {
 	const renderCancelConfirmationDialog = () => {
 		return (
 			<Modal
-				title={ __( 'Confirm Cancel Transfer' ) }
+				title={ __( 'Confirm cancel transfer' ) }
 				onRequestClose={ () => setIsCancelDialogOpen( false ) }
 			>
 				<VStack spacing={ 6 }>
@@ -243,7 +243,7 @@ export default function TransferDomainToAnyUser() {
 					<ButtonStack justify="flex-end">
 						<Button
 							__next40pxDefaultSize
-							variant="secondary"
+							variant="tertiary"
 							onClick={ () => setIsCancelDialogOpen( false ) }
 							disabled={ isDeletingDomainTransferRequest }
 						>

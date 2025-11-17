@@ -31,13 +31,15 @@ export function PurchasePaymentMethod( {
 	}
 
 	if (
-		purchase.is_auto_renew_enabled &&
-		! isExpired( purchase ) &&
-		( ! purchase.payment_type || purchase.payment_type === 'credits' ) &&
-		! purchase.partner_name &&
-		! isAkismetFreeProduct( purchase ) &&
-		! isDisconnectedSite
+		isExpired( purchase ) ||
+		purchase.partner_name ||
+		isAkismetFreeProduct( purchase ) ||
+		isDisconnectedSite
 	) {
+		return null;
+	}
+
+	if ( ! purchase.is_rechargable ) {
 		return (
 			<div>
 				<Link to={ changePaymentMethodRoute.fullPath } params={ { purchaseId: purchase.ID } }>
@@ -47,87 +49,77 @@ export function PurchasePaymentMethod( {
 		);
 	}
 
-	if (
-		! isAkismetFreeProduct( purchase ) &&
-		! purchase.is_rechargable &&
-		purchase.is_auto_renew_enabled
-	) {
+	if ( ! isRenewing( purchase ) ) {
+		return null;
+	}
+
+	if ( purchase.payment_type === 'credit_card' && purchase.payment_card_id ) {
+		const paymentMethodType = purchase.payment_card_display_brand
+			? purchase.payment_card_display_brand
+			: purchase.payment_card_type || purchase.payment_card_processor || '';
+
+		const maskedCardNumber = sprintf(
+			/** Translators: %s is last four digits of card number */
+			_x( '**** **** **** %s', 'Long-form masked credit card number.' ),
+			purchase.payment_details
+		);
+
 		return (
-			<div>
-				<span>{ __( 'You don’t have a payment method to renew this subscription' ) }</span>
-			</div>
+			<HStack className="purchase-payment-method__wrapper">
+				<HStack justify="flex-start">
+					<PaymentMethodImage paymentMethodType={ paymentMethodType } />
+					<span>{ maskedCardNumber }</span>
+				</HStack>
+				{ showUpdateButton && (
+					<Button
+						className="purchase-payment-method__update"
+						aria-label={ __( 'Update payment method' ) }
+						variant="secondary"
+						size="compact"
+						onClick={ () => {
+							navigate( {
+								to: changePaymentMethodRoute.fullPath,
+								params: { purchaseId: purchase.ID },
+							} );
+						} }
+					>
+						{ __( 'Update' ) }
+					</Button>
+				) }
+			</HStack>
 		);
 	}
 
-	if ( isRenewing( purchase ) ) {
-		if ( purchase.payment_type === 'credit_card' && purchase.payment_card_id ) {
-			const paymentMethodType = purchase.payment_card_display_brand
-				? purchase.payment_card_display_brand
-				: purchase.payment_card_type || purchase.payment_card_processor || '';
-
-			const maskedCardNumber = sprintf(
-				/** Translators: %s is last four digits of card number */
-				_x( '**** **** **** %s', 'Long-form masked credit card number.' ),
-				purchase.payment_details
-			);
-
-			return (
-				<HStack className="purchase-payment-method__wrapper">
-					<HStack justify="flex-start">
-						<PaymentMethodImage paymentMethodType={ paymentMethodType } />
-						<span>{ maskedCardNumber }</span>
-					</HStack>
-					{ showUpdateButton && (
-						<Button
-							className="purchase-payment-method__update"
-							aria-label={ __( 'Update payment method' ) }
-							variant="secondary"
-							size="compact"
-							onClick={ () => {
-								navigate( {
-									to: changePaymentMethodRoute.fullPath,
-									params: { purchaseId: purchase.ID },
-								} );
-							} }
-						>
-							{ __( 'Update' ) }
-						</Button>
-					) }
+	if ( purchase.payment_type === 'paypal' ) {
+		return (
+			<HStack>
+				<HStack justify="flex-start">
+					<PaymentMethodImage paymentMethodType={ purchase.payment_type } />
+					<span>PayPal { purchase.payment_name }</span>
 				</HStack>
-			);
-		}
-
-		if ( purchase.payment_type === 'paypal' ) {
-			return (
-				<HStack>
-					<HStack justify="flex-start">
-						<PaymentMethodImage paymentMethodType={ purchase.payment_type } />
-						<span>PayPal { purchase.payment_name }</span>
-					</HStack>
-					{ showUpdateButton && (
-						<Button
-							className="purchase-payment-method__update"
-							aria-label={ __( 'Update payment method' ) }
-							variant="secondary"
-							size="compact"
-							onClick={ () => {
-								navigate( {
-									to: changePaymentMethodRoute.fullPath,
-									params: { purchaseId: purchase.ID },
-								} );
-							} }
-						>
-							{ __( 'Update' ) }
-						</Button>
-					) }
-				</HStack>
-			);
-		}
-
-		if ( purchase.payment_type === 'upi' ) {
-			return <PaymentMethodImage paymentMethodType={ purchase.payment_type } />;
-		}
-
-		return null;
+				{ showUpdateButton && (
+					<Button
+						className="purchase-payment-method__update"
+						aria-label={ __( 'Update payment method' ) }
+						variant="secondary"
+						size="compact"
+						onClick={ () => {
+							navigate( {
+								to: changePaymentMethodRoute.fullPath,
+								params: { purchaseId: purchase.ID },
+							} );
+						} }
+					>
+						{ __( 'Update' ) }
+					</Button>
+				) }
+			</HStack>
+		);
 	}
+
+	if ( purchase.payment_type === 'upi' ) {
+		return <PaymentMethodImage paymentMethodType={ purchase.payment_type } />;
+	}
+
+	return null;
 }

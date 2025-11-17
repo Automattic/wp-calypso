@@ -6,10 +6,15 @@
 	width: calc( 100% - 2 * $grid-unit-20 );
 	top: 0;
 	inset-inline-start: 0;
-	padding: 161px $grid-unit-20;
+	padding-top: 72px;
+	padding-inline: $grid-unit-20;
 	background: linear-gradient(180deg, rgba(252, 252, 252, 0.65) 0%, #FCFCFC 100%);
 	backdrop-filter: blur(3px);
 	z-index: 2;
+
+	@include break-medium {
+		padding-top: 161px;
+	}
 
 	.dashboard-callout {
 		max-width: 600px;

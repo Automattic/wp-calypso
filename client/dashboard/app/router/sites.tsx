@@ -14,6 +14,7 @@ import {
 	siteDefensiveModeSettingsQuery,
 	siteDifmWebsiteContentQuery,
 	siteDomainsQuery,
+	domainsQuery,
 	siteJetpackModulesQuery,
 	siteJetpackSettingsQuery,
 	siteMediaStorageQuery,
@@ -34,6 +35,7 @@ import {
 	siteWordPressVersionQuery,
 	queryClient,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -42,7 +44,11 @@ import {
 	canViewSiteVisibilitySettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
-import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import {
+	hasHostingFeature,
+	hasPlanFeature,
+	isPlanFeatureAvailable,
+} from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
@@ -64,25 +70,14 @@ export const sitesRoute = createRoute( {
 	path: 'sites',
 	loader: async ( { context } ) => {
 		// Preload the default sites list response without blocking.
-		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+		if ( ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
+			queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+		}
 
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
-	},
-	validateSearch: ( search ) => {
-		// Deserialize the view search param if it exists on the first page load.
-		if ( typeof search.view === 'string' ) {
-			let parsedView;
-			try {
-				parsedView = JSON.parse( search.view );
-			} catch ( e ) {
-				// pass
-			}
-			return { ...search, view: parsedView };
-		}
-		return search;
 	},
 } );
 
@@ -192,6 +187,12 @@ export const siteDeploymentsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.DEPLOYMENT ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
@@ -225,6 +226,12 @@ export const siteMonitoringRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'monitoring',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.MONITOR ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/monitoring' ).then( ( d ) =>
 		createLazyRoute( 'site-monitoring' )( {
@@ -243,6 +250,12 @@ export const siteLogsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.LOGS ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } );
 
 export const siteLogsIndexRoute = createRoute( {
@@ -329,6 +342,12 @@ export const siteScanRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'scan',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.SCAN ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } );
 
 export const siteScanIndexRoute = createRoute( {
@@ -397,6 +416,12 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.BACKUPS ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries.
@@ -516,6 +541,12 @@ export const sitePerformanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.PERFORMANCE ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
@@ -577,7 +608,7 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
@@ -1050,6 +1081,28 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	)
 );
 
+export const siteSettingsHolidaySnowRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Holiday snow' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'holiday-snow',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-holiday-snow' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-holiday-snow' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1267,7 +1320,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.sites.settings ) {
-		const settingsRoutes: AnyRoute[] = [ siteSettingsIndexRoute ];
+		const settingsRoutes: AnyRoute[] = [ siteSettingsIndexRoute, siteSettingsTransferSiteRoute ];
 
 		if ( config.supports.sites.settings.general ) {
 			const settingsGeneralRoutes: AnyRoute[] = [
@@ -1275,6 +1328,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 				siteSettingsSubscriptionGiftingRoute,
 				siteSettingsAgencyRoute,
 				siteSettingsHundredYearPlanRoute,
+				siteSettingsHolidaySnowRoute,
 			];
 
 			if ( config.supports.sites.settings.general.redirect ) {

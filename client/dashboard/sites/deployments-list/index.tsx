@@ -170,9 +170,7 @@ function DeploymentsList() {
 				<PageHeader
 					title={ __( 'Deployments' ) }
 					description={ createInterpolateElement(
-						__(
-							'Automate updates from GitHub to streamline workflows. <learnMoreLink>Learn more</learnMoreLink>'
-						),
+						__( 'Automate updates from GitHub to streamline workflows. <learnMoreLink />' ),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="github-deployments" />,
 						}

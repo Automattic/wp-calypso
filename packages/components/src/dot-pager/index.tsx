@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { Icon, arrowRight } from '@wordpress/icons';
+import { Icon, arrowRight, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -10,22 +10,28 @@ import './style.scss';
 
 type ControlsProps = {
 	showControlLabels?: boolean;
+	showDots?: boolean;
 	currentPage: number;
 	numberOfPages: number;
 	setCurrentPage: ( page: number ) => void;
 	navArrowSize: number;
 	tracksPrefix: string;
-	tracksFn: ( eventName: string, data?: any ) => void;
+	tracksFn: ( eventName: string, data?: Record< string, unknown > ) => void;
+	controlsAction?: ReactNode;
+	navigationVariant: 'default' | 'button';
 };
 
 const Controls = ( {
 	showControlLabels = false,
+	showDots = true,
 	currentPage,
 	numberOfPages,
 	setCurrentPage,
 	navArrowSize,
 	tracksPrefix,
 	tracksFn,
+	controlsAction,
+	navigationVariant,
 }: ControlsProps ) => {
 	const translate = useTranslate();
 	const isRtl = useRtl();
@@ -34,34 +40,47 @@ const Controls = ( {
 	}
 	const canGoBack = currentPage > 0;
 	const canGoForward = currentPage < numberOfPages - 1;
+	const hasControlsAction = Boolean( controlsAction );
+	const navIcon = navigationVariant === 'button' ? chevronRight : arrowRight;
+
 	return (
 		<ul className="dot-pager__controls" aria-label={ translate( 'Pager controls' ) }>
-			{ times( numberOfPages, ( page ) => (
-				<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
-					<button
-						key={ page.toString() }
-						className={ clsx( 'dot-pager__control-choose-page', {
-							'dot-pager__control-current': page === currentPage,
-						} ) }
-						disabled={ page === currentPage }
-						aria-label={
-							translate( 'Page %(page)d of %(numberOfPages)d', {
-								args: { page: page + 1, numberOfPages },
-							} ) as string
-						}
-						onClick={ () => {
-							tracksFn( tracksPrefix + '_dot_click', {
-								current_page: currentPage,
-								destination_page: page,
-							} );
-							setCurrentPage( page );
-						} }
-					/>
-				</li>
-			) ) }
-			<li key="dot-pager-prev" className="dot-pager__control-gap">
+			{ showDots &&
+				times( numberOfPages, ( page ) => (
+					<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
+						<button
+							key={ page.toString() }
+							className={ clsx( 'dot-pager__control-choose-page', {
+								'dot-pager__control-current': page === currentPage,
+							} ) }
+							disabled={ page === currentPage }
+							aria-label={
+								translate( 'Page %(page)d of %(numberOfPages)d', {
+									args: { page: page + 1, numberOfPages },
+								} ) as string
+							}
+							onClick={ () => {
+								tracksFn( tracksPrefix + '_dot_click', {
+									current_page: currentPage,
+									destination_page: page,
+								} );
+								setCurrentPage( page );
+							} }
+						/>
+					</li>
+				) ) }
+			<li
+				key="dot-pager-controls-spacer"
+				className="dot-pager__controls-spacer"
+				aria-hidden={ hasControlsAction ? undefined : true }
+			>
+				{ hasControlsAction ? controlsAction : null }
+			</li>
+			<li key="dot-pager-prev">
 				<button
-					className="dot-pager__control-prev"
+					className={ clsx( 'dot-pager__control-prev', {
+						'dot-pager__control-button': navigationVariant === 'button',
+					} ) }
 					disabled={ ! canGoBack }
 					aria-label={ translate( 'Previous' ) }
 					onClick={ () => {
@@ -75,7 +94,7 @@ const Controls = ( {
 				>
 					{ /* The arrowLeft icon isn't as bold as arrowRight, so using the same icon and flipping to make sure they match */ }
 					<Icon
-						icon={ arrowRight }
+						icon={ navIcon }
 						size={ navArrowSize }
 						fill="currentColor"
 						style={
@@ -88,7 +107,9 @@ const Controls = ( {
 			</li>
 			<li key="dot-pager-next">
 				<button
-					className="dot-pager__control-next"
+					className={ clsx( 'dot-pager__control-next', {
+						'dot-pager__control-button': navigationVariant === 'button',
+					} ) }
 					disabled={ ! canGoForward }
 					aria-label={ translate( 'Next' ) }
 					onClick={ () => {
@@ -102,7 +123,7 @@ const Controls = ( {
 				>
 					{ showControlLabels && translate( 'Next' ) }
 					<Icon
-						icon={ arrowRight }
+						icon={ navIcon }
 						size={ navArrowSize }
 						fill="currentColor"
 						style={
@@ -118,6 +139,7 @@ const Controls = ( {
 
 type DotPagerProps = {
 	showControlLabels?: boolean;
+	showDots?: boolean;
 	hasDynamicHeight?: boolean;
 	children: ReactNode;
 	className?: string;
@@ -131,10 +153,13 @@ type DotPagerProps = {
 	includeNextButton?: boolean;
 	includeFinishButton?: boolean;
 	onFinish?: () => void;
+	controlsAction?: ReactNode;
+	navigationVariant?: 'default' | 'button';
 };
 
 const DotPager = ( {
 	showControlLabels = false,
+	showDots = true,
 	hasDynamicHeight = false,
 	children,
 	className = '',
@@ -148,6 +173,8 @@ const DotPager = ( {
 	includeNextButton = false,
 	includeFinishButton = false,
 	onFinish = () => {},
+	controlsAction,
+	navigationVariant = 'default',
 	...props
 }: DotPagerProps ) => {
 	const translate = useTranslate();
@@ -184,12 +211,15 @@ const DotPager = ( {
 		<div className={ clsx( 'dot-pager', className ) } { ...props }>
 			<Controls
 				showControlLabels={ showControlLabels }
+				showDots={ showDots }
 				currentPage={ currentPage }
 				numberOfPages={ numPages }
 				setCurrentPage={ handleSelectPage }
 				navArrowSize={ navArrowSize }
 				tracksPrefix={ tracksPrefix }
 				tracksFn={ tracksFn }
+				controlsAction={ controlsAction }
+				navigationVariant={ navigationVariant }
 			/>
 			<Swipeable
 				hasDynamicHeight={ hasDynamicHeight }

@@ -123,6 +123,9 @@
 
 .migration-site-ssh__no-ssh-link {
 	text-decoration: none !important;
+	.components-spinner {
+		margin-top: 0;
+	}
 }
 
 .migration-site-ssh__help-link {
@@ -180,6 +183,14 @@
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
+
+		input.is-disabled {
+			background-color: var(--studio-gray-0, #f0f0f0);
+			border: 1px solid var(--color-neutral-5, #dcdcde) !important;
+			border-color: var(--color-neutral-5, #dcdcde) !important;
+			color: var(--color-neutral-70, #1d2327);
+			cursor: default;
+		}
 	}
 
 	&-label {
@@ -228,7 +239,6 @@
 		right: 0.5rem;
 		padding: 0.25rem;
 		background: transparent;
-		border: none;
 		box-shadow: none;
 
 		&:hover,
@@ -237,6 +247,10 @@
 			background: transparent;
 			border: none;
 			box-shadow: none;
+		}
+
+		&.button.is-transparent {
+			border: none;
 		}
 	}
 

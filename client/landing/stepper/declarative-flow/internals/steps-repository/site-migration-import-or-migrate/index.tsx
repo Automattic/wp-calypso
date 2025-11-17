@@ -3,6 +3,7 @@ import { BadgeType } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
+import { shuffle, upload } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
@@ -33,13 +34,17 @@ const SiteMigrationImportOrMigrate: StepType< {
 	const isUpgradeRequired = ! siteCanInstallPlugins;
 
 	const options = useMemo( () => {
-		const upgradeRequiredLabel = translate( '%(discountPercentage)s off %(planName)s', {
-			args: {
-				planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-				discountPercentage: formatNumber( 0.5, { numberFormatOptions: { style: 'percent' } } ),
-			},
-			comment: 'discountPercentage is a number between 0 and 100 followed or preceded by a % sign',
-		} );
+		const upgradeRequiredLabel = translate(
+			'Available on %(planName)s plan with %(discountPercentage)s off',
+			{
+				args: {
+					planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+					discountPercentage: formatNumber( 0.5, { numberFormatOptions: { style: 'percent' } } ),
+				},
+				comment:
+					'discountPercentage is a number between 0 and 100 followed or preceded by a % sign',
+			}
+		);
 
 		const migrateOptionDescription = translate(
 			"For WordPress sites. Move all your site's content, themes, plugins, and users to WordPress.com."
@@ -47,6 +52,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 
 		return [
 			{
+				icon: shuffle,
 				label: translate( 'Migrate site' ),
 				description: migrateOptionDescription,
 				value: 'migrate' as const,
@@ -57,6 +63,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 				selected: true,
 			},
 			{
+				icon: upload,
 				label: translate( 'Import content only' ),
 				description: translate( 'Import just posts, pages, comments and media.' ),
 				value: 'import' as const,
@@ -95,6 +102,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 			<div className="import-or-migrate__list">
 				{ options.map( ( option, i ) => (
 					<FlowCard
+						icon={ option.icon }
 						key={ i }
 						title={ option.label }
 						badge={ option.badge }

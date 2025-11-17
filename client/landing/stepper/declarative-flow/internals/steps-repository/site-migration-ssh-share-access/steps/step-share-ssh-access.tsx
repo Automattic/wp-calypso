@@ -6,6 +6,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { AccordionNotice } from '../components/accordion-notice';
 
 interface StepShareSSHAccessProps {
@@ -26,6 +27,7 @@ interface StepShareSSHAccessProps {
 	helpLink: ReactNode;
 	isTransferring: boolean;
 	shouldGenerateKey: boolean;
+	isInputDisabled: boolean;
 }
 
 export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
@@ -46,9 +48,46 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 	helpLink,
 	isTransferring,
 	shouldGenerateKey,
+	isInputDisabled,
 } ) => {
 	const translate = useTranslate();
 	const [ copied, setCopied ] = useState( false );
+
+	const handleAuthMethodChange = ( method: 'password' | 'key' ) => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share-ssh-access',
+			action: 'change_auth_method',
+			auth_method: method,
+		} );
+		onAuthMethodChange( method );
+	};
+
+	const handleGenerateSSHKey = () => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share-ssh-access',
+			action: 'click_button',
+			button: 'generate_ssh_key',
+		} );
+		onGenerateSSHKey();
+	};
+
+	const handleEditUsername = () => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share-ssh-access',
+			action: 'click_button',
+			button: 'edit_username',
+		} );
+		onEditUsername();
+	};
+
+	const handleCopyKey = () => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share-ssh-access',
+			action: 'copy_ssh_key',
+		} );
+		setCopied( true );
+		setTimeout( () => setCopied( false ), 2000 );
+	};
 
 	return (
 		<div className="site-migration-ssh__step-share-ssh">
@@ -77,8 +116,9 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 						<FormRadio
 							name="auth-method"
 							value="password"
+							disabled={ isInputDisabled }
 							checked={ authMethod === 'password' }
-							onChange={ () => onAuthMethodChange( 'password' ) }
+							onChange={ () => handleAuthMethodChange( 'password' ) }
 							label={ translate( 'Username and password' ) }
 						/>
 					</div>
@@ -87,8 +127,9 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 						<FormRadio
 							name="auth-method"
 							value="key"
+							disabled={ isInputDisabled }
 							checked={ authMethod === 'key' }
-							onChange={ () => onAuthMethodChange( 'key' ) }
+							onChange={ () => handleAuthMethodChange( 'key' ) }
 							label={ translate( 'SSH key' ) }
 						/>
 					</div>
@@ -109,6 +150,8 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 									onUsernameChange( e.target.value )
 								}
 								placeholder={ translate( 'Enter your SSH username' ) }
+								disabled={ isInputDisabled }
+								className={ isInputDisabled ? 'is-disabled' : '' }
 							/>
 						</div>
 
@@ -123,6 +166,8 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 									onPasswordChange( e.target.value )
 								}
 								placeholder={ translate( 'Enter your SSH password' ) }
+								disabled={ isInputDisabled }
+								className={ isInputDisabled ? 'is-disabled' : '' }
 							/>
 						</div>
 					</>
@@ -151,7 +196,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 									icon={ edit }
 									label={ translate( 'Edit username' ) }
 									className="site-migration-ssh__step-share-ssh-edit-button"
-									onClick={ onEditUsername }
+									onClick={ handleEditUsername }
 								/>
 							) }
 						</div>
@@ -168,7 +213,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 							<div>
 								<Button
 									variant="secondary"
-									onClick={ onGenerateSSHKey }
+									onClick={ handleGenerateSSHKey }
 									disabled={
 										! username || isGeneratingKey || ( isTransferring && shouldGenerateKey )
 									}
@@ -199,10 +244,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 										text={ sshPublicKey }
 										transparent
 										className="site-migration-ssh__step-share-ssh-copy-button"
-										onCopy={ () => {
-											setCopied( true );
-											setTimeout( () => setCopied( false ), 2000 );
-										} }
+										onCopy={ handleCopyKey }
 									>
 										<Icon icon={ copied ? check : copy } />
 									</ClipboardButton>

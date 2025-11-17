@@ -73,6 +73,8 @@
 }
 
 .step-container-v2__top-bar-right-element {
+	display: flex;
+	gap: 1.5rem;
 	margin-left: auto;
 	font-size: 0.875rem;
 	line-height: 1;

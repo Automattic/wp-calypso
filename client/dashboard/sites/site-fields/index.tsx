@@ -25,6 +25,8 @@ import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
+import { addTransientViewPropertiesToQueryParams } from '../../utils/dashboard-v1-sync';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
@@ -48,7 +50,13 @@ function LoadingIndicator( { label }: { label: string } ) {
 
 export function getSiteManagementUrl( site: Site ) {
 	if ( canManageSite( site ) ) {
-		return `/sites/${ site.slug }`;
+		const path = `/sites/${ site.slug }`;
+
+		if ( isDashboardBackport() ) {
+			return addTransientViewPropertiesToQueryParams( path );
+		}
+
+		return path;
 	}
 	return site.options?.admin_url;
 }

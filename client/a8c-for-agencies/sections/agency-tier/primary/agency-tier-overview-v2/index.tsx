@@ -19,10 +19,10 @@ export default function AgencyTierOverviewV2() {
 	const agency = useSelector( getActiveAgency );
 
 	const title = translate( 'Your agency tier and benefits' );
-	const currentAgencyTierId = agency?.tier?.id;
 
-	// FIXME: Replace with actual influenced revenue
-	const totalInfluencedRevenue = 2000;
+	const currentAgencyTierId = agency?.tier?.id;
+	const totalInfluencedRevenue = agency?.influenced_revenue ?? 0;
+	const isEarlyAccess = agency?.tier?.is_early_access ?? false;
 
 	return (
 		<Layout title={ title } wide>
@@ -39,6 +39,7 @@ export default function AgencyTierOverviewV2() {
 				<AgencyTierOverviewContent
 					currentAgencyTierId={ currentAgencyTierId }
 					totalInfluencedRevenue={ totalInfluencedRevenue }
+					isEarlyAccess={ isEarlyAccess }
 				/>
 			</LayoutBody>
 		</Layout>
