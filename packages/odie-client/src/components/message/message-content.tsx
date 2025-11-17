@@ -69,7 +69,9 @@ export const MessageContent = ( {
 					isMessageWithEscalationOption={ isMessageWithEscalationOption }
 				/>
 			) }
-			{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
+			{ message.type === 'introduction' && (
+				<IntroductionMessage content={ message.content } metadata={ message.metadata } />
+			) }
 			{ displayCSAT && isFeedbackMessage && message.feedbackOptions && (
 				<FeedbackForm chatFeedbackOptions={ message?.feedbackOptions } />
 			) }

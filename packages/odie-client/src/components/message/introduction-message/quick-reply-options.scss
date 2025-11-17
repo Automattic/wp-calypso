@@ -1,0 +1,40 @@
+.odie-quick-reply-options {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+.odie-quick-reply-option {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	color: #2c3338;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 400;
+	padding: 16px;
+	text-align: left;
+	transition: all 0.2s ease;
+	width: 100%;
+
+	&:hover:not(:disabled) {
+		background: #f6f7f7;
+		border-color: #8c8f94;
+	}
+
+	&:active:not(:disabled) {
+		background: #f0f0f1;
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+		opacity: 0.6;
+	}
+
+	&:focus {
+		outline: 2px solid #2271b1;
+		outline-offset: 2px;
+	}
+}
+
