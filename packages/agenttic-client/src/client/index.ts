@@ -74,8 +74,19 @@ async function executeToolOrAbility(
 					// client side callback, execute it
 					if ( ability.callback ) {
 						try {
-							const result = await ability.callback( args );
-							return { result, returnToAgent: true };
+							// Pass messageId and toolCallId to callback for context
+							const enhancedArgs = {
+								...args,
+								...( messageId && { messageId } ),
+							};
+							const result =
+								await ability.callback( enhancedArgs );
+							// Respect returnToAgent from callback if present, otherwise default to true
+							const returnToAgent =
+								result?.returnToAgent !== undefined
+									? result.returnToAgent
+									: true;
+							return { result, returnToAgent };
 						} catch ( error ) {
 							logger(
 								'Error executing ability %s: %O',
