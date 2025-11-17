@@ -109,7 +109,7 @@ export default function DomainsContactInfo() {
 							type: 'update-contact-info',
 							domains: selectedDomains,
 							transfer_lock: optOutTransferLock,
-							// Should bulk domains allow extra fields?
+							// FIXME: In DOTMSD-865 we should allow the extra field to be updated
 							whois: omit( whois, [ 'extra' ] as const ),
 						},
 						{
