@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, useEffect } from 'react';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
+import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import { useDispatch } from 'calypso/state';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -60,25 +61,21 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 				/>
 			) }
 			<p>{ preventWidows( translate( "Only one step left—we'll connect your site next." ) ) }</p>
-			<div className="magic-login__successfully-jetpack-actions">
-				<p>
-					{ translate(
-						"Didn't get the email? Check your spam folder, or {{button}}resend the email{{/button}}. Wrong email or account? {{link}}Use a different account{{/link}}.",
-						{
-							components: {
-								button: (
-									<Button
-										className="magic-login__resend-button"
-										variant="link"
-										onClick={ onResendEmail }
-									/>
-								),
-								link: <a className="magic-login__log-in-link" href="/log-in/jetpack" />,
-							},
-						}
-					) }
-				</p>
-			</div>
+			<OneLoginFooter
+				loginLink={
+					<p className="magic-login__footer-text">
+						{ translate(
+							"Didn't get the email? Check your spam folder, or {{button}}resend the email{{/button}}. Wrong email or account? {{link}}Use a different account{{/link}}.",
+							{
+								components: {
+									button: <Button variant="link" onClick={ onResendEmail } />,
+									link: <a href="/log-in/jetpack" />,
+								},
+							}
+						) }
+					</p>
+				}
+			/>
 		</div>
 	);
 };
