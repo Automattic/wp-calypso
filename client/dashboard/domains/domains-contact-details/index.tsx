@@ -16,6 +16,7 @@ import { domainsContactInfoRoute, domainsIndexRoute } from '../../app/router/dom
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { Text } from '../../components/text';
 import { mostCommonValueInArray } from '../../utils/collection';
 import { omit } from '../../utils/object';
 
@@ -155,6 +156,11 @@ export default function DomainsContactInfo() {
 				/>
 			}
 		>
+			<div>
+				<Text variant="muted">
+					{ __( 'Note: Changes may take a few minutes to appear on the dashboard' ) }
+				</Text>
+			</div>
 			<div>
 				<span>{ sprintf( editingMessage, { domainCount: selectedDomains.length } ) }</span>
 				<ul>
