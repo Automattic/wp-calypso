@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
-import getIsNoteHidden from '../../panel/state/selectors/get-is-note-hidden';
+import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import getLastSelectedNoteId from '../../panel/state/selectors/get-last-selected-note-id';
 import type { Note } from '../types';
@@ -25,11 +25,8 @@ export function useNoteListFocusToLastSelectedNote( {
 	noteListRef: React.RefObject< HTMLObjectElement >;
 	notes: Note[];
 } ) {
-	const isNoteHidden = useSelector(
-		( state ) => ( noteId: number ) => getIsNoteHidden( state, noteId )
-	);
-
 	const lastSelectedNoteId = useSelector( getLastSelectedNoteId );
+	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 
 	useEffect(
 		() => {
@@ -41,12 +38,12 @@ export function useNoteListFocusToLastSelectedNote( {
 					return;
 				}
 
-				if ( isNoteHidden( notes[ noteIndex ].id ) ) {
+				if ( hiddenNoteIds[ notes[ noteIndex ].id ] === true ) {
 					// The last selected note is no longer visible.
 
 					// Find the nearest visible note forwards.
 					for ( let i = noteIndex + 1; i < notes.length; i++ ) {
-						if ( ! isNoteHidden( notes[ i ].id ) ) {
+						if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
 							noteToFocus = notes[ i ];
 							break;
 						}
@@ -55,7 +52,7 @@ export function useNoteListFocusToLastSelectedNote( {
 					if ( ! noteToFocus ) {
 						// Find the nearest visible note backwards.
 						for ( let i = noteIndex - 1; i >= 0; i-- ) {
-							if ( ! isNoteHidden( notes[ i ].id ) ) {
+							if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
 								noteToFocus = notes[ i ];
 								break;
 							}

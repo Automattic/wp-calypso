@@ -14,6 +14,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { useCanvasMode } from './hooks/use-canvas-mode';
+import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
 import { getEditorType } from './utils';
 import './help-center.scss';
 
@@ -24,22 +25,21 @@ function HelpCenterContent() {
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
-
+	const isMenuPanelExperimentEnabled = useMenuPanelExperiment(
+		'calypso_help_center_menu_popover',
+		'menu_popover'
+	);
 	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown(), [] );
 
 	const canvasMode = useCanvasMode();
-
-	// Check if the new menu panel feature is enabled
-	const urlParams = new URLSearchParams( window.location.search );
-	const hasHelpCenterMenuPanel = urlParams.get( 'flags' ) === 'help-center-menu-panel';
 
 	const trackIconInteraction = useCallback( () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown,
 			section: helpCenterData.sectionName || 'wp-admin',
-			is_menu_panel_enabled: hasHelpCenterMenuPanel,
+			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
 		} );
-	}, [ isShown, hasHelpCenterMenuPanel ] );
+	}, [ isShown, isMenuPanelExperimentEnabled ] );
 
 	const handleToggleHelpCenter = useCallback( () => {
 		trackIconInteraction();
@@ -146,7 +146,7 @@ function HelpCenterContent() {
 		[ handleMenuClick ]
 	);
 
-	const content = hasHelpCenterMenuPanel ? (
+	const content = isMenuPanelExperimentEnabled ? (
 		<DropdownMenu
 			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
 			icon={ <HelpIcon /> }
@@ -192,6 +192,14 @@ function HelpCenterContent() {
 				{ ...botProps }
 			/>
 		</>
+	);
+}
+
+function HelpCenterContentWithProvider() {
+	return (
+		<QueryClientProvider client={ queryClient }>
+			<HelpCenterContent />
+		</QueryClientProvider>
 	);
 }
 
@@ -243,12 +251,6 @@ if ( helpCenterData.isNextAdmin ) {
 	} );
 } else {
 	registerPlugin( 'jetpack-help-center', {
-		render: () => {
-			return (
-				<QueryClientProvider client={ queryClient }>
-					<HelpCenterContent />
-				</QueryClientProvider>
-			);
-		},
+		render: HelpCenterContentWithProvider,
 	} );
 }

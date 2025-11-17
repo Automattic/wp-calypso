@@ -89,7 +89,7 @@ export default function NextAdventureStep( props: Props ) {
 						options={ options }
 						onChange={ ( value: string ) => {
 							// For plans, require a selection from the adventure dropdown (not the placeholder)
-							const isValid = nextAdventure !== '';
+							const isValid = value !== '';
 							onValidationChange?.( isValid );
 							onDetailsChange( '' );
 							setNextAdventure( value );

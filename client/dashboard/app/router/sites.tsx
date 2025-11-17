@@ -44,7 +44,11 @@ import {
 	canViewSiteVisibilitySettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
-import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import {
+	hasHostingFeature,
+	hasPlanFeature,
+	isPlanFeatureAvailable,
+} from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
@@ -183,6 +187,12 @@ export const siteDeploymentsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.DEPLOYMENT ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
@@ -216,6 +226,12 @@ export const siteMonitoringRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'monitoring',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.MONITOR ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/monitoring' ).then( ( d ) =>
 		createLazyRoute( 'site-monitoring' )( {
@@ -234,6 +250,12 @@ export const siteLogsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.LOGS ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } );
 
 export const siteLogsIndexRoute = createRoute( {
@@ -320,6 +342,12 @@ export const siteScanRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'scan',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.SCAN ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } );
 
 export const siteScanIndexRoute = createRoute( {
@@ -388,6 +416,12 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.BACKUPS ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries.
@@ -507,6 +541,12 @@ export const sitePerformanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isPlanFeatureAvailable( site, HostingFeatures.PERFORMANCE ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {

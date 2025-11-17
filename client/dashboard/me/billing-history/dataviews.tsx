@@ -19,21 +19,20 @@ import type { Fields, Operator, SortDirection, View } from '@wordpress/dataviews
 
 import './styles.scss';
 
-export const billingHistoryWideFields = [ 'date', 'service', 'type', 'amount' ];
-export const billingHistoryDesktopFields = [ 'date', 'service' ];
-export const billingHistoryMobileFields: string[] = [ 'service' ];
+export const WIDE_FIELDS = [ 'date', 'service', 'type', 'amount' ];
+export const DESKTOP_FIELDS = [ 'date', 'service' ];
+export const MOBILE_FIELDS: string[] = [ 'service' ];
 
-export const defaultBillingHistoryView: View = {
+export const DEFAULT_VIEW: View = {
 	type: 'table',
-	page: 1,
-	search: '',
 	perPage: 10,
-	fields: billingHistoryWideFields,
+	fields: WIDE_FIELDS,
 	sort: {
 		field: 'date',
 		direction: 'desc' as SortDirection,
 	},
 	layout: {
+		density: 'balanced',
 		styles: {
 			date: {
 				width: '14%',
@@ -51,7 +50,7 @@ export const defaultBillingHistoryView: View = {
 	},
 };
 
-export function useBillingHistoryActions() {
+export function useActions() {
 	const navigate = useNavigate();
 	const sendEmailMutation = useMutation( {
 		...sendReceiptEmailMutation(),
@@ -93,7 +92,7 @@ export function useBillingHistoryActions() {
 	);
 }
 
-export function getFieldDefinitions( receipts: Receipt[] ): Fields< Receipt > {
+export function getFields( receipts: Receipt[] ): Fields< Receipt > {
 	return [
 		{
 			id: 'date',
