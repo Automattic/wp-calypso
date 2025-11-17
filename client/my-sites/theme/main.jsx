@@ -754,9 +754,11 @@ class ThemeSheet extends Component {
 			  );
 
 		return (
-			<Notice status="warning" isDismissible={ false }>
-				{ description }
-			</Notice>
+			<div className="theme__sheet-retired-notice">
+				<Notice status="warning" isDismissible={ false }>
+					{ description }
+				</Notice>
+			</div>
 		);
 	};
 
