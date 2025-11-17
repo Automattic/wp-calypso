@@ -30,7 +30,7 @@ export class ImportContentFromSubstackPage {
 				siteSlug,
 			} )
 		);
-		await this.dismissCookieBanner();
+		await this.importFileContentPage.dismissCookieBanner();
 	}
 
 	/**
@@ -86,16 +86,6 @@ export class ImportContentFromSubstackPage {
 	 */
 	async clickCheckMySiteButton(): Promise< void > {
 		await this.page.getByRole( 'button', { name: 'Check my site' } ).click();
-	}
-
-	/**
-	 * Dismisses the cookie banner if it's present.
-	 */
-	private async dismissCookieBanner(): Promise< void > {
-		const acceptAllButton = this.page.getByRole( 'button', { name: 'Accept all' } );
-		if ( await acceptAllButton.isVisible() ) {
-			await acceptAllButton.click();
-		}
 	}
 
 	/**
