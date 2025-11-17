@@ -1,40 +1,70 @@
-.odie-quick-reply-options {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	margin-top: 16px;
+@import "@automattic/typography/styles/variables";
+
+$hover-blue: #3858e9;
+
+ul.odie-quick-reply-options {
+	list-style: none;
+	padding: 0!important;
+	text-align: left;
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 8px;
+	margin: 16px 0 0 0;
+	overflow: hidden;
+}
+
+.odie-quick-reply-option-item {
+	border-bottom: 1px solid var(--studio-gray-5);
+	display: block;
+	line-height: 1.3;
+	margin-bottom: 0;
+
+	&:first-child {
+		.odie-quick-reply-option:focus {
+			border-radius: 8px 8px 0 0;
+		}
+	}
+
+	&:last-child {
+		border-bottom: 0;
+
+		.odie-quick-reply-option:focus {
+			border-radius: 0 0 8px 8px;
+		}
+	}
 }
 
 .odie-quick-reply-option {
-	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 4px;
-	color: #2c3338;
-	cursor: pointer;
-	font-size: 14px;
-	font-weight: 400;
+	all: unset;
 	padding: 16px;
-	text-align: left;
-	transition: all 0.2s ease;
+	display: flex;
+	text-decoration: none;
+	color: var(--studio-gray-100);
+	font-size: $font-body-small;
+	border-radius: 2px;
+	font-weight: normal;
+	align-items: center;
+	transition: background-color 0.3s ease;
+	line-height: 1.4;
 	width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
+	text-align: left;
 
 	&:hover:not(:disabled) {
-		background: #f6f7f7;
-		border-color: #8c8f94;
+		background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, $hover-blue));
+		color: var(--wp-components-color-accent, var(--wp-admin-theme-color, $hover-blue));
+		cursor: pointer;
 	}
 
-	&:active:not(:disabled) {
-		background: #f0f0f1;
+	&:focus {
+		color: var(--studio-gray-100);
+		outline: $hover-blue solid 2px;
+		outline-offset: -2px;
 	}
 
 	&:disabled {
 		cursor: not-allowed;
 		opacity: 0.6;
-	}
-
-	&:focus {
-		outline: 2px solid #2271b1;
-		outline-offset: 2px;
 	}
 }
 

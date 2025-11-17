@@ -32,18 +32,19 @@ export const QuickReplyOptions = ( { options }: { options: string[] } ) => {
 	};
 
 	return (
-		<div className="odie-quick-reply-options">
+		<ul className="odie-quick-reply-options">
 			{ options.map( ( option ) => (
-				<button
-					key={ option }
-					className="odie-quick-reply-option"
-					onClick={ () => handleOptionClick( option ) }
-					disabled={ isChatBusy }
-					type="button"
-				>
-					{ option }
-				</button>
+				<li key={ option } className="odie-quick-reply-option-item">
+					<button
+						className="odie-quick-reply-option"
+						onClick={ () => handleOptionClick( option ) }
+						disabled={ isChatBusy }
+						type="button"
+					>
+						{ option }
+					</button>
+				</li>
 			) ) }
-		</div>
+		</ul>
 	);
 };
