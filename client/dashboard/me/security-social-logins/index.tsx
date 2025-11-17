@@ -1,4 +1,5 @@
 import { connectSocialUserMutation, disconnectSocialUserMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
@@ -207,19 +208,22 @@ export default function SecuritySocialLogins() {
 						/>
 					) }
 				/>
-				<SocialLoginItem
-					service="PayPal"
-					decoration={ PayPalIcon }
-					renderButton={ ( { isConnected, responseHandler, handleDisconnect, isLoading } ) => (
-						<PayPalLogin
-							isConnected={ isConnected }
-							responseHandler={ responseHandler }
-							redirectUri={ redirectUri }
-							handleDisconnect={ handleDisconnect }
-							isLoading={ isLoading }
-						/>
-					) }
-				/>
+
+				{ config.isEnabled( 'sign-in-with-paypal' ) && (
+					<SocialLoginItem
+						service="PayPal"
+						decoration={ PayPalIcon }
+						renderButton={ ( { isConnected, responseHandler, handleDisconnect, isLoading } ) => (
+							<PayPalLogin
+								isConnected={ isConnected }
+								responseHandler={ responseHandler }
+								redirectUri={ redirectUri }
+								handleDisconnect={ handleDisconnect }
+								isLoading={ isLoading }
+							/>
+						) }
+					/>
+				) }
 			</ActionList>
 		</PageLayout>
 	);
