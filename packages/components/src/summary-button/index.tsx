@@ -18,7 +18,14 @@ function BadgesList( { badges }: { badges: SummaryButtonProps[ 'badges' ] } ) {
 		return null;
 	}
 	return (
-		<HStack spacing={ 1 } justify="flex-start" as="span" wrap expanded={ false }>
+		<HStack
+			spacing={ 1 }
+			justify="flex-start"
+			as="span"
+			wrap
+			expanded={ false }
+			className="summary-button-badge-list"
+		>
 			{ badges?.map( ( badge ) => (
 				<Badge key={ badge.text } intent={ badge.intent }>
 					{ badge.text }
