@@ -4,7 +4,7 @@ import {
 	WhoisType,
 	type Domain,
 } from '@automattic/api-core';
-import { bulkDomainsActionMutation } from '@automattic/api-queries';
+import { bulkDomainsActionMutation, domainWhoisValidateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
@@ -89,29 +89,52 @@ export default function DomainsContactInfo() {
 			.filter( ( domain ) => domain.whois_update_unmodifiable_fields.length > 0 );
 	}, [ domainDetails ] );
 
-	const { mutate: bulkDomainsAction, isPending } = useMutation( bulkDomainsActionMutation() );
+	const { mutate: validateBulkDomains, isPending: isValidatePending } = useMutation(
+		domainWhoisValidateMutation( selectedDomains )
+	);
 
-	const handleSubmit = ( { optOutTransferLock, ...whois }: DomainContactDetails ) => {
-		bulkDomainsAction(
-			{
-				type: 'update-contact-info',
-				domains: selectedDomains,
-				transfer_lock: optOutTransferLock,
-				// Should bulk domains allow extra fields?
-				whois: omit( whois, [ 'extra' ] as const ),
-			},
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
-					router.navigate( { to: domainsIndexRoute.fullPath } );
-				},
-				onError: ( error: Error ) => {
-					createErrorNotice( error.message, {
+	const { mutate: bulkDomainsAction, isPending: isUpdatePending } = useMutation(
+		bulkDomainsActionMutation()
+	);
+
+	const handleSubmit = ( originalData: DomainContactDetails ) => {
+		validateBulkDomains( originalData, {
+			onSuccess: ( data ) => {
+				if ( data.success ) {
+					const { optOutTransferLock, ...whois } = originalData;
+
+					bulkDomainsAction(
+						{
+							type: 'update-contact-info',
+							domains: selectedDomains,
+							transfer_lock: optOutTransferLock,
+							// Should bulk domains allow extra fields?
+							whois: omit( whois, [ 'extra' ] as const ),
+						},
+						{
+							onSuccess: () => {
+								createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
+								router.navigate( { to: domainsIndexRoute.fullPath } );
+							},
+							onError: ( error: Error ) => {
+								createErrorNotice( error.message, {
+									type: 'snackbar',
+								} );
+							},
+						}
+					);
+				} else {
+					createErrorNotice( data.messages_simple.join( ' ' ), {
 						type: 'snackbar',
 					} );
-				},
-			}
-		);
+				}
+			},
+			onError: ( error: Error ) => {
+				createErrorNotice( error.message, {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	const editingMessage =
@@ -161,7 +184,7 @@ export default function DomainsContactInfo() {
 			) }
 			<ContactForm
 				initialData={ initialData }
-				isSubmitting={ isPending }
+				isSubmitting={ isValidatePending || isUpdatePending }
 				onSubmit={ handleSubmit }
 			/>
 		</PageLayout>

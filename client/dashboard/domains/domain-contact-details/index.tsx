@@ -26,7 +26,7 @@ export default function DomainContactInfo() {
 	const { data: whoisData } = useQuery( domainWhoisQuery( domainName ) );
 	const registrantWhoisData = findRegistrantWhois( whoisData );
 
-	const validateMutation = useMutation( domainWhoisValidateMutation( domainName ) );
+	const validateMutation = useMutation( domainWhoisValidateMutation( [ domainName ] ) );
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
 
 	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
