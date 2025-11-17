@@ -70,9 +70,9 @@ const SkipLink = styled.a< { disabled?: boolean } >`
 `;
 
 const RequiredLabel = styled.span`
-	background: var( --studio-gray-0 );
+	background: var( --studio-gray-5 );
 	border-radius: 4px;
-	color: var( --studio-gray-50 );
+	color: var( --studio-gray-80 );
 	font-weight: 500;
 	font-size: 11px;
 	line-height: 13px;
