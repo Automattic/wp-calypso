@@ -65,7 +65,7 @@ export type AppConfig = {
 			params?: FetchDashboardSiteListParams
 		) => ReturnType< typeof dashboardSiteListQuery >;
 		dashboardSiteFiltersQuery: (
-			field: FetchDashboardSiteFiltersParams[ 'field' ]
+			field: FetchDashboardSiteFiltersParams[ 'fields' ]
 		) => ReturnType< typeof dashboardSiteFiltersQuery >;
 	};
 };
