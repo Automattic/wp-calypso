@@ -56,6 +56,8 @@ jest.mock( '@automattic/i18n-utils', () => ( {
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
+	_x: ( text: string ) => text,
+	isRTL: () => false,
 } ) );
 
 const useLocalizeUrlMock = useLocalizeUrl as jest.MockedFunction< typeof useLocalizeUrl >;
