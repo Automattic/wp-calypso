@@ -1,13 +1,12 @@
-import { HostingFeatures, type Site } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
-import { isPlanFeatureAvailable } from '../../utils/site-features';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { AppConfig, SiteFeatureSupports } from '../../app/context';
+import type { Site } from '@automattic/api-core';
 
 const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof SiteFeatureSupports ) => {
 	return supports.sites && supports.sites[ feature ];
@@ -22,6 +21,22 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
 					{ __( 'Overview' ) }
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
+		);
+	}
+
+	if ( isCommerceGarden( site ) ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
+					{ __( 'Overview' ) }
+				</ResponsiveMenu.Item>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
+					{ __( 'Domains' ) }
+				</ResponsiveMenu.Item>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
+					{ __( 'Settings' ) }
 				</ResponsiveMenu.Item>
 			</ResponsiveMenu>
 		);
@@ -62,42 +77,36 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
 				{ __( 'Overview' ) }
 			</ResponsiveMenu.Item>
-			{ hasAppSupport( supports, 'deployments' ) &&
-				isPlanFeatureAvailable( site, HostingFeatures.DEPLOYMENT ) && (
-					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/deployments` }>
-						{ __( 'Deployments' ) }
-					</ResponsiveMenu.Item>
-				) }
-			{ hasAppSupport( supports, 'performance' ) &&
-				isPlanFeatureAvailable( site, HostingFeatures.PERFORMANCE ) && (
-					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
-						{ __( 'Performance' ) }
-					</ResponsiveMenu.Item>
-				) }
-			{ hasAppSupport( supports, 'monitoring' ) &&
-				isPlanFeatureAvailable( site, HostingFeatures.MONITOR ) && (
-					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/monitoring` }>
-						{ __( 'Monitoring' ) }
-					</ResponsiveMenu.Item>
-				) }
-			{ hasAppSupport( supports, 'logs' ) &&
-				isPlanFeatureAvailable( site, HostingFeatures.LOGS ) && (
-					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/logs` }>
-						{ __( 'Logs' ) }
-					</ResponsiveMenu.Item>
-				) }
-			{ hasAppSupport( supports, 'scan' ) &&
-				isPlanFeatureAvailable( site, HostingFeatures.SCAN ) && (
-					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/scan` }>
-						{ __( 'Scan' ) }
-					</ResponsiveMenu.Item>
-				) }
-			{ hasAppSupport( supports, 'backups' ) &&
-				isPlanFeatureAvailable( site, HostingFeatures.BACKUPS ) && (
-					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
-						{ __( 'Backups' ) }
-					</ResponsiveMenu.Item>
-				) }
+			{ hasAppSupport( supports, 'deployments' ) && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/deployments` }>
+					{ __( 'Deployments' ) }
+				</ResponsiveMenu.Item>
+			) }
+			{ hasAppSupport( supports, 'performance' ) && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
+					{ __( 'Performance' ) }
+				</ResponsiveMenu.Item>
+			) }
+			{ hasAppSupport( supports, 'monitoring' ) && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/monitoring` }>
+					{ __( 'Monitoring' ) }
+				</ResponsiveMenu.Item>
+			) }
+			{ hasAppSupport( supports, 'logs' ) && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/logs` }>
+					{ __( 'Logs' ) }
+				</ResponsiveMenu.Item>
+			) }
+			{ hasAppSupport( supports, 'scan' ) && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/scan` }>
+					{ __( 'Scan' ) }
+				</ResponsiveMenu.Item>
+			) }
+			{ hasAppSupport( supports, 'backups' ) && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
+					{ __( 'Backups' ) }
+				</ResponsiveMenu.Item>
+			) }
 			{ hasAppSupport( supports, 'domains' ) && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 					{ __( 'Domains' ) }
