@@ -81,7 +81,6 @@ export default function PurchasesList() {
 		paymentMethods: paymentMethods ?? [],
 		transferredPurchases: transferredPurchases ?? [],
 		filterViewBySite: ( site: Site ) => {
-			// Just update the view directly, don't worry about URL sync for now
 			const newView: View = {
 				...viewWithFields,
 				filters: [
