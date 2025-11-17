@@ -9,6 +9,7 @@ export interface SitePlan {
 	billing_period: 'Yearly' | 'Monthly';
 	features: {
 		active: string[];
+		available: Record< string, string[] >;
 	};
 }
 

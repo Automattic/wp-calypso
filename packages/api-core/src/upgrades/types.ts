@@ -116,8 +116,25 @@ export interface Purchase {
 	can_disable_auto_renew: boolean;
 	can_reenable_auto_renewal: boolean;
 	async_pending_payment_block_is_set: boolean;
+
+	/**
+	 * Similar to `is_renewable` except that this determines if the user is
+	 * allowed to manually renew this subscription right now, whereas
+	 * `is_renewable` only determines if the subscription is the kind of
+	 * subscription that can be manually renewed.
+	 */
 	can_explicit_renew: boolean;
+
+	/**
+	 * If this upgrade is a plan and its domain credit was used to purchase a
+	 * domain registration, and the plan is within its refund period, then
+	 * `cost_to_unbundle_display` will be the formatted amount of the amount that
+	 * would be withheld to keep the domain if the plan is cancelled.
+	 *
+	 * If there is nothing that would be withheld, this will be null.
+	 */
 	cost_to_unbundle_display: undefined | string;
+
 	price_text: string;
 	price_tier_list: Array< PriceTierEntry >;
 	currency_code: string;
@@ -189,7 +206,16 @@ export interface Purchase {
 	is_locked: boolean;
 	is_plan: boolean;
 	is_rechargable: boolean;
+
+	/**
+	 * Determine if this is a kind of subscription that can currently be manually
+	 * renewed by the user, even if it cannot be renewed by the user right now.
+	 *
+	 * `can_explicit_renew` instead checks if the subscription can be manually
+	 * renewed right now.
+	 */
 	is_renewable: boolean;
+
 	is_renewal: boolean;
 	is_titan_mail_product: boolean;
 	is_woo_express_trial: boolean;
@@ -276,7 +302,26 @@ export interface Purchase {
 	blog_id: number;
 
 	blogname: string;
+
+	/**
+	 * The domain of the purchase's site. Sites can have multiple domains but
+	 * this one will usually be the "cannonical" one as far as the user-facing
+	 * domain, with a few caveats.
+	 *
+	 * If the site has a domain mapping or a custom domain registration, the
+	 * primary one will be shown here.
+	 *
+	 * Note that if the domain name includes a path (eg: 'example.com/blog'), it
+	 * will be included in this value!!
+	 *
+	 * If the site has a site redirect active, this will be the *.wordpress.com
+	 * subdomain.
+	 *
+	 * If there is an active Jetpack site using a domain that is mapped to the
+	 * given site, this will be the *.wordpress.com subdomain.
+	 */
 	site_slug: string;
+
 	subscribed_date: string;
 	subscription_status: 'active' | 'inactive';
 	renewal_price_tier_usage_quantity: number | undefined | null;

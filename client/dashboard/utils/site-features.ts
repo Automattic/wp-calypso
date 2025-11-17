@@ -19,6 +19,14 @@ export function hasPlanFeature(
 	return site.plan.features.active.includes( feature );
 }
 
+export function isPlanFeatureAvailable( site: Site, feature: HostingFeatureSlug ) {
+	if ( ! site.plan ) {
+		return false;
+	}
+
+	return !! site.plan.features.available[ feature ];
+}
+
 // Returns whether the plan supports a specific "hosting feature",
 // which is a feature that requires Atomic or self-hosted infrastructure.
 export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
