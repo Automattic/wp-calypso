@@ -293,7 +293,7 @@ export default function UpsellStep( {
 				>
 					<>
 						{ sprintf(
-							/* Translators: %(plan)s is WordPress.com Personal or another plan */
+							/* translators: %(plan)s is WordPress.com Personal or another plan */
 							__(
 								'%(plan)s still gives you access to fast support, removal of ads, and more — and for 50%% of the cost of your current plan.'
 							),
