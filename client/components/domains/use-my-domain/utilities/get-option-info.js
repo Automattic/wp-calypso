@@ -207,7 +207,6 @@ export function getOptionInfo( {
 
 			connectContent = {
 				...connectContent,
-				benefits: [],
 				topText: createInterpolateElement(
 					sprintf(
 						/* translators: %s - the domain the user wanted to connect */
