@@ -243,6 +243,33 @@ export const getOdieInitialMessage = (
 	botNameSlug: OdieAllowedBots,
 	displayName: string
 ): Message => {
+	if ( botNameSlug === 'automattic-chat-support_a4a' ) {
+		return {
+			content: `**${ sprintf(
+				/* translators: %(name)s: the user's display name */
+				__( 'Howdy %(name)s 👋', __i18n_text_domain__ ),
+				{
+					name: displayName || 'there',
+				}
+			) }** \n\n ${ __(
+				"I'll get your chat started and then pass you to a human. What do you need help with today?",
+				__i18n_text_domain__
+			) }`,
+			role: 'bot',
+			type: 'introduction',
+			context: getOdieInitialPromptContext( botNameSlug ),
+			metadata: {
+				quick_replies: [
+					__( 'WordPress.com', __i18n_text_domain__ ),
+					__( 'WooCommerce', __i18n_text_domain__ ),
+					__( 'Jetpack', __i18n_text_domain__ ),
+					__( 'Automattic for Agencies', __i18n_text_domain__ ),
+					__( 'Pressable', __i18n_text_domain__ ),
+				],
+			},
+		};
+	}
+
 	return {
 		content: `**${ sprintf(
 			/* translators: %(name)s: the user's display name */
