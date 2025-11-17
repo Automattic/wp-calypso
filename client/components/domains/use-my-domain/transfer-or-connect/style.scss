@@ -32,10 +32,10 @@
 
 		.option-content-v2 {
 			&--is-placeholder {
-				.option-content-v2__title,
-				.option-content-v2__title *,
 				.option-content-v2__description *,
 				.option-content-v2__benefits-item *,
+				.summary-button-title,
+				.summary-button-badge-list *,
 				.summary-button-decoration {
 					@include placeholder();
 					border-color: transparent;
@@ -69,21 +69,6 @@
 				display: flex;
 				flex-direction: column;
 				gap: 8px;
-			}
-
-			&__title {
-				.badge {
-					border-radius: $radius-small;
-					font-size: $font-body-extra-small;
-					font-weight: 500;
-					margin-top: 8px;
-					border: 1px solid #b8e5be;
-
-					@include break-mobile {
-						margin-top: 0;
-						margin-left: 12px;
-					}
-				}
 			}
 
 			&__benefits {

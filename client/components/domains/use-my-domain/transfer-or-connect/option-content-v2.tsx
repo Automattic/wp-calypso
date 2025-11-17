@@ -1,4 +1,4 @@
-import { Badge, Gridicon, SummaryButton } from '@automattic/components';
+import { Gridicon, SummaryButton } from '@automattic/components';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
@@ -37,12 +37,7 @@ export default function OptionContentV2( {
 		>
 			<SummaryButton
 				className="option-content-v2__button"
-				title={
-					<div className="option-content-v2__title">
-						{ titleText }
-						{ recommended && <Badge type="info-green">{ __( 'Recommended' ) }</Badge> }
-					</div>
-				}
+				title={ titleText }
 				description={
 					<div className="option-content-v2__description">
 						<Text variant="muted" className="option-content-v2__top-text">
@@ -54,6 +49,7 @@ export default function OptionContentV2( {
 				decoration={ illustration }
 				onClick={ onSelect }
 				disabled={ disabled || isPlaceholder }
+				badges={ recommended ? [ { text: __( 'Recommended' ), intent: 'success' } ] : undefined }
 			/>
 			{ benefits && (
 				<div className="option-content-v2__benefits">
