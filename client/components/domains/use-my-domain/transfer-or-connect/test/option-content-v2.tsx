@@ -9,16 +9,22 @@ import OptionContentV2 from '../option-content-v2';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
 type OptionContentV2Props = Parameters< typeof OptionContentV2 >[ 0 ];
+type SummaryButtonMockBadge = {
+	text?: ReactNode;
+	intent?: string;
+};
+
 type SummaryButtonMockProps = ComponentPropsWithoutRef< 'button' > & {
 	title?: ReactNode;
 	description?: ReactNode;
 	decoration?: ReactNode;
+	badges?: SummaryButtonMockBadge[];
 };
 
 jest.mock( '@automattic/components', () => {
 	const ReactNamespace = require( 'react' );
 	const SummaryButton = jest.fn(
-		( { title, description, decoration, ...buttonProps }: SummaryButtonMockProps ) =>
+		( { title, description, decoration, badges, ...buttonProps }: SummaryButtonMockProps ) =>
 			ReactNamespace.createElement(
 				'button',
 				{ type: 'button', 'data-testid': 'summary-button', ...buttonProps },
@@ -32,6 +38,17 @@ jest.mock( '@automattic/components', () => {
 					'div',
 					{ 'data-testid': 'summary-button-decoration' },
 					decoration
+				),
+				ReactNamespace.createElement(
+					'div',
+					{ 'data-testid': 'summary-button-badges' },
+					badges?.map( ( badge, index ) =>
+						ReactNamespace.createElement(
+							'span',
+							{ 'data-testid': 'summary-button-badge', key: `badge-${ index }` },
+							badge.text
+						)
+					)
 				)
 			)
 	);
