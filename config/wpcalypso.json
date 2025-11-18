@@ -45,7 +45,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"domain-search-rewrite": true,
-		"domain-connection-redesign": false,
+		"domain-connection-redesign": true,
 		"domain-transfer-redesign": false,
 		"email-accounts/enabled": true,
 		"cookie-banner": true,
