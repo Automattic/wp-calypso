@@ -1,4 +1,9 @@
-import { PLAN_100_YEARS, getPlan, domainProductSlugs } from '@automattic/calypso-products';
+import {
+	PLAN_100_YEARS,
+	getPlan,
+	domainProductSlugs,
+	is100Year,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, WordPressLogo } from '@automattic/components';
 import { FLOWS_ZENDESK_FLOWNAME } from '@automattic/help-center/src/constants';
@@ -157,8 +162,15 @@ export default function HundredYearThankYou( {
 	const isReceiptLoading = ! receipt.hasLoadedFromServer || receipt.isRequesting;
 
 	// Infer whether this is a 100-year domain registration/transfer or the 100-year plan
+	// If both are purchased, prioritize showing the plan variant
 	const resolvedProductSlug = useMemo( () => {
 		const purchases = receipt?.data?.purchases || [];
+		// First check if there's a 100-year plan purchase - this takes precedence
+		const hundredYearPlanPurchase = purchases.find( ( p ) => is100Year( p ) );
+		if ( hundredYearPlanPurchase ) {
+			return PLAN_100_YEARS;
+		}
+		// Otherwise, check for 100-year domain purchase
 		const hundredYearDomainPurchase = purchases.find( ( p ) => p.isHundredYearDomain );
 		if ( hundredYearDomainPurchase ) {
 			return hundredYearDomainPurchase.isDomainRegistration
