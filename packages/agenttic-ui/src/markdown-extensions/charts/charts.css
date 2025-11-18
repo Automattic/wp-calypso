@@ -38,10 +38,10 @@
 
 .chart-error {
 	padding: var(--spacing-4);
-	border: 1px solid var(--color-destructive);
+	border: 1px solid var(--color-error);
 	border-radius: var(--radius-sm);
 	background-color: var(--color-muted);
-	color: var(--color-destructive);
+	color: var(--color-error);
 	font-size: var(--text-sm);
 }
 

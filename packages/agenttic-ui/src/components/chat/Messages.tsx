@@ -134,7 +134,7 @@ export function Messages( {
 						<div
 							className="error-message"
 							style={ {
-								color: 'var(--color-destructive)',
+								color: 'var(--color-error)',
 								padding: '1rem',
 								textAlign: 'center',
 							} }

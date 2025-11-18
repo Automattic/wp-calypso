@@ -1,7 +1,7 @@
 .container {
     background-color: var(--color-background);
     border-radius: calc( var(--radius-lg) + 1px); /* Accounts for the 1px shadow */
-    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-muted);
     color: var(--color-foreground);
     display: flex;
     flex-direction: column;

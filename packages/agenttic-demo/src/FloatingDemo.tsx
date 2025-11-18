@@ -24,7 +24,7 @@ import {
 // Import chart styles from UI package source
 import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
 
-const FloatingDemo: React.FC = () => {
+const FloatingDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTheme } ) => {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
 		getClientContext,
 	} ) );
@@ -314,6 +314,7 @@ const FloatingDemo: React.FC = () => {
 				</button>
 			</div>
 			<AgentUI
+				className={ `agenttic ${ currentTheme }` }
 				messages={ messages }
 				isProcessing={ isProcessing }
 				error={ error }

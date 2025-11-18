@@ -2,21 +2,20 @@
   
   /* === COLORS === */
 
-  --color-background: oklch(0.99 0 0);
-  --color-foreground: oklch(0.241 0 0);
-  --color-primary: oklch(0.53 0.22 268.05);
-  --color-primary-foreground: oklch(1 0 0);
+  --color-white: #FFFFFF;
+  --color-background: #FCFCFC;
+  --color-foreground: #1F1F1F;
+  --color-primary: #2D5AF2;
+  --color-muted: #E9E9E9;
+  --color-muted-foreground: #757575;
+  --color-primary-foreground: var(--color-white);
   --color-ring: var(--color-primary);
-  --color-destructive: oklch(0.492 0.2095 28.09);
-  --color-muted: color-mix(in srgb, var(--color-foreground) 10%, var(--color-background));
-  --color-muted-foreground: color-mix(in srgb, var(--color-background) 40%, var(--color-foreground));
   --color-success-background: #F1F7F1;
   --color-success: var(--color-foreground);
   --color-warning-background: #F8F3E7;
   --color-warning: var(--color-foreground);
   --color-error-background: #FCF1F1;
   --color-error: #E7000B;
-;
 
   /* === TYPOGRAPHY === */
 
@@ -68,4 +67,16 @@
   /* === TRANSITIONS === */
   
   --transition-colors: color 150ms cubic-bezier(0.4, 0, 0.2, 1), background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), border-color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), fill 150ms cubic-bezier(0.4, 0, 0.2, 1), stroke 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode */
+.agenttic.dark {
+  --color-background: #1F1F1F;
+  --color-foreground: #FFFFFF;
+  --color-muted: #464646;
+  --color-muted-foreground: #E9E9E9;
+  --color-success-background: #1F2E1F;
+  --color-warning-background: #2E281F;
+  --color-error-background: #2E1F1F;
+  --color-error: #FFDDDF;
 }
