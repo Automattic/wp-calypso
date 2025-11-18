@@ -1,0 +1,18 @@
+.discounts-coming-soon-message {
+	display: flex;
+	align-items: center;
+
+	&__text {
+		font-size: 14px;
+	}
+
+	&__link {
+		color: var(--color-primary);
+		text-decoration: underline;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--color-primary-70);
+		}
+	}
+}

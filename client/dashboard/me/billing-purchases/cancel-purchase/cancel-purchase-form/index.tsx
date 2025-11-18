@@ -317,7 +317,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 			}
 
 			// For plan cancellations, require a valid selection from the adventure dropdown
-			if ( ! isNextAdventureValid ) {
+			if ( purchase.is_plan && ! isNextAdventureValid ) {
 				return false;
 			}
 

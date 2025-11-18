@@ -8,8 +8,8 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
+import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
-import getIsNoteHidden from '../../panel/state/selectors/get-is-note-hidden';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields, getActions } from './dataviews';
@@ -30,17 +30,11 @@ const DEFAULT_LAYOUTS = {
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();
 	const filter = getFilters()[ filterName ];
-
-	const isNoteHidden = useSelector(
-		( state ) => ( noteId: number ) => getIsNoteHidden( state, noteId )
-	);
-
-	const notes = useSelector( ( state ) =>
-		( ( getAllNotes( state ) || [] ) as Note[] ).filter( ( note ) => filter.filter( note ) )
-	);
-
+	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
+	const notes = allNotes.filter( ( note ) => filter.filter( note ) );
 	// Filter out hidden notes, i.e. notes that have been just marked as spam or moved to the trash.
-	const visibleNotes = notes.filter( ( note ) => ! isNoteHidden( note.id ) );
+	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
+	const visibleNotes = notes.filter( ( note ) => hiddenNoteIds[ note.id ] !== true );
 
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const { client } = useAppContext();

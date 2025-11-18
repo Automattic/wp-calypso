@@ -165,6 +165,13 @@ const domain: FlowV2< typeof initialize > = {
 						return navigate( destination as typeof currentStepSlug );
 					}
 
+					// Handle skip to plan when user needs paid plan for ownership verification
+					if ( providedDependencies && 'skipToPlan' in providedDependencies ) {
+						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+						setHideFreePlan( true );
+						return navigate( STEPS.UNIFIED_PLANS.slug );
+					}
+
 					if ( ! providedDependencies || ! ( 'domainCartItem' in providedDependencies ) ) {
 						throw new Error( 'No domain cart item found' );
 					}
@@ -175,9 +182,11 @@ const domain: FlowV2< typeof initialize > = {
 							const hasPaidPlan = siteHasPaidPlan( site );
 
 							if ( isGardenSite || hasPaidPlan ) {
-								setPendingAction( async () => {
-									const domain = providedDependencies.domainCartItem.meta;
+								const domain = providedDependencies.domainCartItem.meta;
 
+								// Use pending action for domain mapping
+								// Note: Verification (if required) is handled in the step before submission
+								setPendingAction( async () => {
 									await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
 
 									return {
@@ -377,6 +386,17 @@ const domain: FlowV2< typeof initialize > = {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const { siteId } = useSiteData();
+
+		/**
+		 * Sync site ID from stepper context to Redux store
+		 * This ensures components using Redux connect() can access the selected site
+		 */
+		useEffect( () => {
+			if ( siteId ) {
+				reduxDispatch( setSelectedSiteId( siteId ) );
+			}
+		}, [ siteId, reduxDispatch ] );
+
 		/**
 		 * Clears every state we're persisting during the flow
 		 * when entering it. This is to ensure that the user
@@ -385,7 +405,6 @@ const domain: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			if ( ! currentStepSlug ) {
 				resetOnboardStore();
-				reduxDispatch( setSelectedSiteId( siteId ) );
 				clearStepPersistedState( this.name );
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();

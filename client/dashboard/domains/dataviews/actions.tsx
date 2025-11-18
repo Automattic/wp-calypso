@@ -86,6 +86,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			},
 			{
 				id: 'manage-domain',
+				isPrimary: true,
 				label: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					return domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER

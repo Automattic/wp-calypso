@@ -77,6 +77,7 @@ function CancellationModal( { site, onClose }: { site: Site; onClose: () => void
 				</Text>
 				<ButtonStack justify="flex-end">
 					<Button
+						__next40pxDefaultSize
 						variant="tertiary"
 						onClick={ () => {
 							onClose();
@@ -87,7 +88,12 @@ function CancellationModal( { site, onClose }: { site: Site; onClose: () => void
 					>
 						{ __( 'Don’t cancel migration' ) }
 					</Button>
-					<Button variant="primary" isBusy={ mutation.isPending } onClick={ handleConfirmCancel }>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						isBusy={ mutation.isPending }
+						onClick={ handleConfirmCancel }
+					>
 						{ __( 'Cancel migration' ) }
 					</Button>
 				</ButtonStack>

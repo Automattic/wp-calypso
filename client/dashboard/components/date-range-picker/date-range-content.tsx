@@ -5,13 +5,14 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useState } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { startOfMonth, subMonths } from 'date-fns';
 import { ButtonStack } from '../../components/button-stack';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
 import { DateInputs } from './date-inputs';
 import { PresetsListbox } from './presets-listbox';
-import { computePresetRange, getActivePresetId, PresetId } from './utils';
+import { computePresetRange, getActivePresetId, PresetId, presetDefs } from './utils';
 
 type DateRangeContentProps = {
 	isSmall: boolean;
@@ -35,6 +36,13 @@ type DateRangeContentProps = {
 	mobileLabelId: string;
 	desktopLabelId: string;
 	disableFuture?: boolean;
+	defaultFallbackPreset?: PresetId;
+	inputsProps?: {
+		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onStartBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onEndBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+	};
 };
 
 export function DateRangeContent( props: DateRangeContentProps ) {
@@ -60,6 +68,8 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		mobileLabelId,
 		desktopLabelId,
 		disableFuture = true,
+		defaultFallbackPreset = 'last-7-days',
+		inputsProps,
 	} = props;
 
 	// Avoid passing invalid or empty time zones to Intl consumers
@@ -77,22 +87,38 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	};
 
 	const timeZoneForCalendar = isValidIanaTimeZone( timezoneString ) ? timezoneString : undefined;
+	const [ isTyping, setIsTyping ] = useState( false );
+	const [ inputsVersion, setInputsVersion ] = useState( 0 );
 
 	const clear = () => {
 		setFromDraft( undefined );
 		setToDraft( undefined );
 		setFromStr( '' );
 		setToStr( '' );
+		setIsTyping( false );
+		// Force controlled inputs to remount so any internal buffers are reset
+		setInputsVersion( ( version ) => version + 1 );
 	};
 
+	const canDefaultApply = ! fromDraft && ! toDraft && ! fromStr && ! toStr && ! isTyping;
+	const defaultPresetLabel =
+		presetDefs.find( ( p ) => p.id === defaultFallbackPreset )?.label || __( 'default range' );
+
 	const apply = () => {
-		if ( ! fromDraft || ! toDraft ) {
+		if ( fromDraft && toDraft ) {
+			const [ startPoint, endPoint ] =
+				fromDraft <= toDraft ? [ fromDraft, toDraft ] : [ toDraft, fromDraft ];
+			onChange( { start: startPoint, end: endPoint } );
+			onClose?.();
 			return;
 		}
-		const [ startPoint, endPoint ] =
-			fromDraft <= toDraft ? [ fromDraft, toDraft ] : [ toDraft, fromDraft ];
-		onChange( { start: startPoint, end: endPoint } );
-		onClose?.();
+		if ( canDefaultApply ) {
+			const range = computePresetRange( defaultFallbackPreset, today );
+			if ( range ) {
+				onChange( { start: range.from, end: range.to } );
+				onClose?.();
+			}
+		}
 	};
 
 	const setPreset = ( id: PresetId ) => {
@@ -108,7 +134,18 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		onClose?.();
 	};
 
-	const activePresetId = getActivePresetId( fromDraft, toDraft, today );
+	const activePresetId: PresetId | undefined = ( () => {
+		const preset = getActivePresetId( fromDraft, toDraft, today );
+		if ( preset ) {
+			return preset;
+		}
+		// Only mark "custom" when both dates are present and do not match a known preset
+		if ( fromDraft && toDraft ) {
+			return 'custom';
+		}
+		// When cleared or incomplete, highlight nothing
+		return undefined;
+	} )();
 
 	// Site “today” as a site-day Date
 	const siteToday =
@@ -157,19 +194,42 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 					/>
 
 					<DateInputs
+						key={ `inputs-${ inputsVersion }-mobile` }
 						fromStr={ fromStr }
 						toStr={ toStr }
 						onFromChange={ ( value ) => {
 							setFromStr( value );
 							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
 							setFromDraft( parsed );
+							setIsTyping( Boolean( value || toStr ) );
 						} }
 						onToChange={ ( value ) => {
 							setToStr( value );
 							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
 							setToDraft( parsed );
+							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
+						onFromFocus={ ( e ) => {
+							setIsTyping( true );
+							inputsProps?.onStartFocus?.( e );
+						} }
+						onToFocus={ ( e ) => {
+							setIsTyping( true );
+							inputsProps?.onEndFocus?.( e );
+						} }
+						onFromBlur={ ( e ) => {
+							if ( ! fromStr && ! toStr ) {
+								setIsTyping( false );
+							}
+							inputsProps?.onStartBlur?.( e );
+						} }
+						onToBlur={ ( e ) => {
+							if ( ! fromStr && ! toStr ) {
+								setIsTyping( false );
+							}
+							inputsProps?.onEndBlur?.( e );
+						} }
 						stack
 						fromStyle={ { minWidth: 140 } }
 						toStyle={ { minWidth: 140 } }
@@ -185,19 +245,42 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 					style={ { width: '100%' } }
 				>
 					<DateInputs
+						key={ `inputs-${ inputsVersion }-desktop` }
 						fromStr={ fromStr }
 						toStr={ toStr }
 						onFromChange={ ( value ) => {
 							setFromStr( value );
 							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
 							setFromDraft( parsed );
+							setIsTyping( Boolean( value || toStr ) );
 						} }
 						onToChange={ ( value ) => {
 							setToStr( value );
 							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
 							setToDraft( parsed );
+							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
+						onFromFocus={ ( e ) => {
+							setIsTyping( true );
+							inputsProps?.onStartFocus?.( e );
+						} }
+						onToFocus={ ( e ) => {
+							setIsTyping( true );
+							inputsProps?.onEndFocus?.( e );
+						} }
+						onFromBlur={ ( e ) => {
+							if ( ! fromStr && ! toStr ) {
+								setIsTyping( false );
+							}
+							inputsProps?.onStartBlur?.( e );
+						} }
+						onToBlur={ ( e ) => {
+							if ( ! fromStr && ! toStr ) {
+								setIsTyping( false );
+							}
+							inputsProps?.onEndBlur?.( e );
+						} }
 						fromStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						toStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						justify="flex-end"
@@ -242,6 +325,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 									setToStr( formatYmd( to, timezoneString, gmtOffset ) );
 								}
 							}
+							setIsTyping( false );
 						} }
 					/>
 				</div>
@@ -251,8 +335,19 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 				<Button variant="secondary" onClick={ clear }>
 					{ __( 'Clear' ) }
 				</Button>
-				<Button variant="primary" onClick={ apply } disabled={ ! fromDraft || ! toDraft }>
-					{ __( 'Apply' ) }
+				<Button
+					variant="primary"
+					onClick={ apply }
+					disabled={ ( ! fromDraft || ! toDraft ) && ! canDefaultApply }
+					aria-label={
+						/* translators: %s is the preset label, e.g. 'Last 30 days' */
+						canDefaultApply ? sprintf( __( 'Apply %s' ), defaultPresetLabel ) : __( 'Apply' )
+					}
+				>
+					{
+						/* translators: %s is the preset label, e.g. 'Last 30 days' */
+						canDefaultApply ? sprintf( __( 'Apply %s' ), defaultPresetLabel ) : __( 'Apply' )
+					}
 				</Button>
 			</ButtonStack>
 		</VStack>

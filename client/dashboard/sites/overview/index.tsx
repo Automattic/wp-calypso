@@ -208,7 +208,9 @@ function SiteOverview( {
 				>
 					{ __( 'WP Admin' ) }
 				</Button>
-				<SiteActionMenu site={ site } />
+				<PageHeader.ActionMenu>
+					<SiteActionMenu site={ site } />
+				</PageHeader.ActionMenu>
 			</>
 		);
 	};

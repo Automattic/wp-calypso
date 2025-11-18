@@ -68,6 +68,8 @@ $breakpoint-mobile: 660px;
 		font-size: 0.75rem;
 		z-index: 1;
 		color: var(--studio-gray-50);
+		white-space: nowrap;
+		word-break: keep-all;
 	}
 }
 

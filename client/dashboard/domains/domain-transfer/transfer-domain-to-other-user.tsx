@@ -191,7 +191,7 @@ export default function TransferDomainToOtherUser() {
 		const selectedUser = availableUsers.find( ( user ) => user.id.toString() === formData.user );
 
 		return (
-			<Modal title={ __( 'Confirm Transfer' ) } onRequestClose={ () => setIsDialogOpen( false ) }>
+			<Modal title={ __( 'Confirm transfer' ) } onRequestClose={ () => setIsDialogOpen( false ) }>
 				<VStack spacing={ 6 }>
 					<Text>
 						{ createInterpolateElement(
@@ -211,7 +211,7 @@ export default function TransferDomainToOtherUser() {
 					<ButtonStack justify="flex-end">
 						<Button
 							__next40pxDefaultSize
-							variant="secondary"
+							variant="tertiary"
 							onClick={ () => setIsDialogOpen( false ) }
 							disabled={ isDomainTransferringToOtherUser }
 						>
@@ -225,7 +225,7 @@ export default function TransferDomainToOtherUser() {
 							onClick={ onConfirm }
 							disabled={ isDomainTransferringToOtherUser }
 						>
-							{ __( 'Confirm Transfer' ) }
+							{ __( 'Confirm transfer' ) }
 						</Button>
 					</ButtonStack>
 				</VStack>
@@ -254,7 +254,7 @@ export default function TransferDomainToOtherUser() {
 								type="submit"
 								disabled={ formData.user === '' }
 							>
-								{ isMapping ? __( 'Transfer Domain Connection' ) : __( 'Transfer Domain' ) }
+								{ isMapping ? __( 'Transfer domain connection' ) : __( 'Transfer domain' ) }
 							</Button>
 						</HStack>
 					</VStack>

@@ -11,6 +11,13 @@ The dashboard prototype follows a component-based architecture with a strong foc
 3. **TypeScript**: All components are written in TypeScript with proper typing
 4. **Translation-ready**: All user-facing strings use the `@wordpress/i18n` package
 
+## Placeholders
+
+Consider using asynchronous data fetching to reduce initial load time. Use placeholder components such as `TextBlur`, `TextSkeleton`, or `CalloutSkeleton` instead of spinners.
+
+Layout shifts or flashes of default or fallback content should be avoided as much as possible.
+
+
 ## DataViews and DataForm
 
 The dashboard relies heavily on two core components for data display and interaction:

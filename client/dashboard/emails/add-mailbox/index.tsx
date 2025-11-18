@@ -2,13 +2,7 @@ import { createTitanMailboxMutation, mailboxAccountsQuery } from '@automattic/ap
 import { formatCurrency } from '@automattic/number-formatters';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useMatch, useParams } from '@tanstack/react-router';
-import {
-	__experimentalVStack as VStack,
-	Button,
-	Card,
-	CardBody,
-	Notice,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Notice } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -17,6 +11,7 @@ import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { addMailboxRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';

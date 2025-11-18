@@ -207,6 +207,7 @@ export default function MonitoringHttpResponsesCard( {
 				maxWidth={ 1400 }
 				showLegend
 				withLegendGlyph
+				curveType="monotone"
 				glyphStyle={ {
 					radius: 8,
 				} }
@@ -263,6 +264,7 @@ export default function MonitoringHttpResponsesCard( {
 						x: xAxisOptions,
 					},
 				} }
+				legendPosition="top"
 			/>
 		</MonitoringCard>
 	);

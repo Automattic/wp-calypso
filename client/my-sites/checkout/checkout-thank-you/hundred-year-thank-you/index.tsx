@@ -9,7 +9,7 @@ import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';
 import { getRegisteredDomains, getTransferredInDomains } from 'calypso/lib/domains';
@@ -158,16 +158,28 @@ export default function HundredYearThankYou( {
 	const receipt = useSelector( ( state ) => getReceiptById( state, receiptId ) );
 	const isReceiptLoading = ! receipt.hasLoadedFromServer || receipt.isRequesting;
 
+	// Infer whether this is a 100-year domain registration/transfer or the 100-year plan
+	const resolvedProductSlug = useMemo( () => {
+		const purchases = receipt?.data?.purchases || [];
+		const hundredYearDomainPurchase = purchases.find( ( p ) => p.isHundredYearDomain );
+		if ( hundredYearDomainPurchase ) {
+			return hundredYearDomainPurchase.isDomainRegistration
+				? domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
+				: domainProductSlugs.TRANSFER_IN;
+		}
+		return productSlug;
+	}, [ receipt, productSlug ] );
+
 	const siteDomains = useSelector( ( state ) =>
 		siteId ? getDomainsBySiteId( state, siteId ) : []
 	);
 	const isLoadingDomains = useSelector( ( state ) =>
-		siteId && productSlug !== PLAN_100_YEARS
+		siteId && resolvedProductSlug !== PLAN_100_YEARS
 			? isRequestingSite( state, siteId ) || isRequestingSiteDomains( state, siteId )
 			: false
 	);
 	let targetDomain: ResponseDomain | null = null;
-	switch ( productSlug ) {
+	switch ( resolvedProductSlug ) {
 		case domainProductSlugs.TRANSFER_IN:
 			targetDomain = getTransferredInDomains( siteDomains )[ 0 ] ?? null;
 			break;
@@ -188,24 +200,26 @@ export default function HundredYearThankYou( {
 	}, [ dispatch, isReceiptLoading, receiptId ] );
 
 	useEffect( () => {
-		if ( productSlug && submitUserFields && siteId ) {
+		if ( resolvedProductSlug && submitUserFields && siteId ) {
 			submitUserFields( {
 				messaging_flow:
 					FLOWS_ZENDESK_FLOWNAME[
-						productSlug === PLAN_100_YEARS ? HUNDRED_YEAR_PLAN_FLOW : HUNDRED_YEAR_DOMAIN_FLOW
+						resolvedProductSlug === PLAN_100_YEARS
+							? HUNDRED_YEAR_PLAN_FLOW
+							: HUNDRED_YEAR_DOMAIN_FLOW
 					],
 				messaging_site_id: siteId,
 				messaging_url: window.location.href,
 			} );
 		}
-	}, [ siteId, submitUserFields, productSlug ] );
+	}, [ siteId, submitUserFields, resolvedProductSlug ] );
 
 	if (
 		! isReceiptLoading &&
 		( ! receipt.data?.purchases?.length || receipt.data?.purchases[ 0 ].blogId !== siteId ) &&
 		// For transfers, the current siteId might be different - purchase performed with no site (siteId = null)
 		// and blog created after the purchase (siteId != null).
-		productSlug !== domainProductSlugs.TRANSFER_IN
+		resolvedProductSlug !== domainProductSlugs.TRANSFER_IN
 	) {
 		page( '/' );
 	}
@@ -215,24 +229,20 @@ export default function HundredYearThankYou( {
 	const isPageLoading =
 		isReceiptLoading ||
 		isLoadingDomains ||
-		( productSlug !== PLAN_100_YEARS && ! isDomainDataLoaded );
+		( resolvedProductSlug !== PLAN_100_YEARS && ! isDomainDataLoaded );
 	const hundredYearPlanCta = (
 		<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
 			{ translate( 'Manage your site' ) }
 		</StyledLightButton>
 	);
 	const hundredYearDomainCta = (
-		<StyledLightButton
-			onClick={ () =>
-				page( ` /domains/manage/all/overview/${ targetDomain?.name }/${ targetDomain?.name }` )
-			}
-		>
+		<StyledLightButton onClick={ () => page( ` /domains/manage/${ siteSlug }` ) }>
 			{ translate( 'Manage your domain' ) }
 		</StyledLightButton>
 	);
-	const cta = productSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
+	const cta = resolvedProductSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
 	const domainSpecificDescription =
-		productSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
+		resolvedProductSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
 			? translate( 'Your 100-Year Domain %(domain)s has been registered.', {
 					args: {
 						domain: targetDomain?.domain || siteSlug, // though targetDomain?.domain should be defined here, right?
@@ -268,7 +278,7 @@ export default function HundredYearThankYou( {
 	);
 
 	const description =
-		productSlug === PLAN_100_YEARS ? (
+		resolvedProductSlug === PLAN_100_YEARS ? (
 			`${ hundredYearPlanDescription } ${ helpAndSupportDescription }`
 		) : (
 			<>
