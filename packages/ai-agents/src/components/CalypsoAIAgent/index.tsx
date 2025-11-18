@@ -60,9 +60,11 @@ export default function CalypsoAIAgent( {
 	}, [ sectionName, site, currentRoute ] );
 
 	// Create chrome adapter for Calypso
+	// Uses 'body' as the actual container selector for portal rendering,
+	// but targets #wpcom for chrome framing
 	const chromeAdapter = useMemo( () => {
-		return new CalypsoChromeAdapter( containerSelector );
-	}, [ containerSelector ] );
+		return new CalypsoChromeAdapter();
+	}, [] );
 
 	// Create agent configuration
 	const agentConfig = useMemo< UseAgentChatConfig >(

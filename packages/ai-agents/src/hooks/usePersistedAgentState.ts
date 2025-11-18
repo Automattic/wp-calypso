@@ -3,7 +3,7 @@
  * Persists session ID, open/closed state, and dock/undock state
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * Agent state that gets persisted
@@ -148,7 +148,7 @@ export function usePersistedAgentState(
 
 	const [ state, setState ] = useState< PersistedAgentState >( {} );
 	const [ isLoading, setIsLoading ] = useState( true );
-	const [ saveTimeout, setSaveTimeout ] = useState< number | null >( null );
+	const saveTimeoutRef = useRef< number | null >( null );
 
 	// Load initial state from preferences
 	useEffect( () => {
@@ -180,8 +180,8 @@ export function usePersistedAgentState(
 	// Debounced save function
 	const debouncedSave = useCallback(
 		( newState: PersistedAgentState ) => {
-			if ( saveTimeout !== null ) {
-				clearTimeout( saveTimeout );
+			if ( saveTimeoutRef.current !== null ) {
+				clearTimeout( saveTimeoutRef.current );
 			}
 
 			const timeout = window.setTimeout( () => {
@@ -194,9 +194,9 @@ export function usePersistedAgentState(
 				} );
 			}, debounceMs );
 
-			setSaveTimeout( timeout );
+			saveTimeoutRef.current = timeout;
 		},
-		[ saveTimeout, preferenceKey, savePreference, debounceMs ]
+		[ preferenceKey, savePreference, debounceMs ]
 	);
 
 	// Update functions
@@ -247,11 +247,11 @@ export function usePersistedAgentState(
 	// Cleanup timeout on unmount
 	useEffect(
 		() => () => {
-			if ( saveTimeout !== null ) {
-				clearTimeout( saveTimeout );
+			if ( saveTimeoutRef.current !== null ) {
+				clearTimeout( saveTimeoutRef.current );
 			}
 		},
-		[ saveTimeout ]
+		[]
 	);
 
 	return {
