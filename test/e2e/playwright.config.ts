@@ -8,6 +8,13 @@ const reporter: ReporterDescription[] = [
 		'html',
 		{ outputFolder: `${ outputPath }/html`, open: process.env.CI ? 'never' : 'on-failure' },
 	],
+	[
+		'playwright-ctrf-json-reporter',
+		{
+			outputDir: outputPath,
+			outputFile: `ctrf-report-${ Date.now() }.json`,
+		},
+	],
 ];
 
 if ( process.env.CI ) {

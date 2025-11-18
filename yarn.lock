@@ -29218,6 +29218,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-ctrf-json-reporter@npm:^0.0.26":
+  version: 0.0.26
+  resolution: "playwright-ctrf-json-reporter@npm:0.0.26"
+  checksum: a22fb31fb5ecd1fef885854916fa501b429c27b7bb7bd60fdfc6ce3dfbcfcc369f84cc8a90a01dae82b93d0330657b199909c71221b8c19530ac3b573497abf7
+  languageName: node
+  linkType: hard
+
 "playwright@npm:1.48.2":
   version: 1.48.2
   resolution: "playwright@npm:1.48.2"
@@ -38593,6 +38600,7 @@ __metadata:
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
     playwright: "npm:1.56.1"
+    playwright-ctrf-json-reporter: "npm:^0.0.26"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"
   languageName: unknown
