@@ -6,8 +6,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Fragment, useState } from 'react';
+import InlineSupportLink from '../../../components/inline-support-link';
 import { TaxLocationForm, defaultTaxLocation } from '../../../components/tax-location-form';
 import { PaymentMethodImage } from '../payment-method-image';
 import { CreditCardFields } from './credit-card-fields';
@@ -155,7 +157,14 @@ function CreditCardFieldsWrapper( {
 						checked={ formData.useForAllSubscriptions }
 						onChange={ ( e ) => handleFieldChange( { useForAllSubscriptions: e.target.checked } ) }
 					/>
-					{ __( 'Use this card for all my subscriptions' ) }
+					{ createInterpolateElement(
+						__(
+							'Use this payment method for all subscriptions on my account. <link>Learn more.</link>'
+						),
+						{
+							link: <InlineSupportLink supportContext="payment_method_all_subscriptions" />,
+						}
+					) }
 				</label>
 			) }
 		</VStack>
