@@ -20,6 +20,7 @@ const ReaderFullPostHeader = ( {
 	feedUrl,
 	feedId,
 	siteId,
+	tags,
 } ) => {
 	const handlePermalinkClick = () => {
 		recordPermalinkClick( 'full_post_title', post );
@@ -90,15 +91,18 @@ const ReaderFullPostHeader = ( {
 				</AutoDirection>
 			) : null }
 			{ isDefaultLayout && (
-				<ReaderFullPostHeaderMeta
-					post={ post }
-					author={ author }
-					siteName={ siteName }
-					siteUrl={ siteUrl }
-					feedUrl={ feedUrl }
-					feedId={ feedId }
-					siteId={ siteId }
-				/>
+				<div className="reader-full-post__header-meta-and-tags">
+					<ReaderFullPostHeaderMeta
+						post={ post }
+						author={ author }
+						siteName={ siteName }
+						siteUrl={ siteUrl }
+						feedUrl={ feedUrl }
+						feedId={ feedId }
+						siteId={ siteId }
+					/>
+					{ tags && <div className="reader-full-post__header-tags">{ tags }</div> }
+				</div>
 			) }
 			{ layout === 'recent' && (
 				<div className="reader-full-post__header-meta">
@@ -155,6 +159,7 @@ ReaderFullPostHeader.propTypes = {
 	feedUrl: PropTypes.string,
 	feedId: PropTypes.number,
 	siteId: PropTypes.number,
+	tags: PropTypes.node,
 };
 
 export default ReaderFullPostHeader;

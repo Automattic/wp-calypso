@@ -736,6 +736,7 @@ export class FullPostView extends Component {
 								feedUrl={ feedUrl }
 								feedId={ +post.feed_ID }
 								siteId={ +post.site_ID }
+								tags={ isDefaultLayout ? <TagsList post={ post } tagsToShow={ 5 } /> : null }
 							/>
 
 							{ isDefaultLayout && (
@@ -782,8 +783,6 @@ export class FullPostView extends Component {
 							) }
 
 							{ post.use_excerpt && <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> }
-
-							{ isDefaultLayout && <TagsList post={ post } tagsToShow={ 5 } /> }
 
 							<ReaderPostActions
 								post={ post }
