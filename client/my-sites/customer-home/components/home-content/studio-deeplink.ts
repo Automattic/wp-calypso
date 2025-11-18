@@ -10,14 +10,14 @@ const openSyncUrlInStudio = ( studioSiteId: string, siteId: number ) => {
 	const legacySchemeUrl = `${ STUDIO_URL_SCHEME_LEGACY }://${ path }`;
 
 	// Use new scheme for new Studio app versions.
-	try {
-		window.location.href = newSchemeUrl;
-	} catch ( error ) {}
+	window.location.href = newSchemeUrl;
 
 	// Fallback to legacy scheme for old Studio app versions. It will be blocked by the browser
 	// if scheme is not registered.
 	setTimeout( () => {
-		window.location.href = legacySchemeUrl;
+		if ( document.hasFocus() ) {
+			window.location.href = legacySchemeUrl;
+		}
 	}, 1000 );
 };
 
