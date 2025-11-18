@@ -1,0 +1,399 @@
+@import "@wordpress/base-styles/colors";
+
+$layout-spacing: 16px;
+$sidebar-width: 350px;
+$chat-header-height: 38px;
+$main-border-radius: 8px;
+$transition-duration: 0.2s;
+$transition-timing: $transition-duration cubic-bezier(0.4, 0, 0.2, 1);
+
+@mixin sidebar-base($main-container-selector) {
+	background-color: $gray-900 !important;
+
+	#{$main-container-selector} {
+		will-change: width, margin, border-radius;
+		transition:
+			width $transition-timing,
+			margin $transition-timing,
+			border-radius $transition-timing;
+	}
+}
+
+@mixin sidebar-open-base($main-container-selector) {
+	#{$main-container-selector} {
+		width: calc(100% - $sidebar-width - $layout-spacing) !important;
+		margin: $layout-spacing;
+		border-radius: $main-border-radius;
+		overflow: hidden;
+	}
+
+	.ai-agent-sidebar {
+		visibility: visible;
+		// Prevent the embedded chat from overlapping the main container during transition
+		animation: ai-agent-delay-visibility $transition-duration;
+		z-index: unset;
+	}
+
+	.ai-agent-sidebar__fab {
+		display: none;
+	}
+}
+
+@keyframes ai-agent-delay-visibility {
+	from,
+	99% {
+		visibility: hidden;
+	}
+	to {
+		visibility: visible;
+	}
+}
+
+// Reposition the editor's template save confirmation panel
+@mixin editor-save-panel-open($save-panel-selector) {
+	#{$save-panel-selector} {
+		margin: $layout-spacing 0;
+		right: $sidebar-width;
+		overflow: hidden;
+		border-radius: 0 $main-border-radius $main-border-radius 0;
+
+		.editor-layout__toggle-entities-saved-states-panel {
+			right: $sidebar-width;
+			margin-bottom: $layout-spacing;
+			border-bottom-right-radius: $main-border-radius;
+		}
+	}
+}
+
+/* WP Admin */
+#wpwrap.ai-agent-sidebar-container {
+	@include sidebar-base("#wpbody");
+	background-color: #f0f0f1 !important;
+
+	&.ai-agent-sidebar-container--sidebar-open {
+		@include sidebar-open-base("#wpbody");
+
+		#wpbody {
+			margin: 0 !important;
+			width: 100% !important;
+		}
+	}
+}
+
+/* Next Admin editor (CIAB) */
+.next-admin.ai-agent-sidebar-container {
+	@include sidebar-base(".next-admin-layout__canvas.is-full-canvas");
+
+	&.ai-agent-sidebar-container--sidebar-open {
+		@include sidebar-open-base(".next-admin-layout__canvas.is-full-canvas");
+		@include editor-save-panel-open(
+			".admin-ui-navigable-region.interface-interface-skeleton__actions"
+		);
+	}
+}
+
+/* Site editor */
+#site-editor .ai-agent-sidebar-container {
+	@include sidebar-base(".edit-site-layout__canvas");
+
+	// Delay to prevent flickering when closing the left navigation sidebar
+	&:not(.ai-agent-sidebar-container--sidebar-open) .edit-site-layout__canvas {
+		transition-delay: 0.1s;
+	}
+
+	&.ai-agent-sidebar-container--sidebar-open {
+		@include sidebar-open-base(".edit-site-layout__canvas");
+		@include editor-save-panel-open(
+			".interface-navigable-region.interface-interface-skeleton__actions"
+		);
+	}
+}
+
+/* Page/Post editor (Block editor) */
+.block-editor .ai-agent-sidebar-container {
+	@include sidebar-base(".edit-post-layout");
+
+	.edit-post-layout {
+		width: 100%;
+	}
+
+	&.ai-agent-sidebar-container--sidebar-open {
+		@include sidebar-open-base(".edit-post-layout");
+		@include editor-save-panel-open(
+			".interface-navigable-region.interface-interface-skeleton__actions"
+		);
+	}
+}
+
+/* Calypso context (help-center) */
+.help-center.ai-agent-sidebar-container {
+	@include sidebar-base(".help-center__container");
+
+	&.ai-agent-sidebar-container--sidebar-open {
+		@include sidebar-open-base(".help-center__container");
+	}
+}
+
+/* Generic fallback */
+body.ai-agent-sidebar-container {
+	@include sidebar-base("main");
+
+	&.ai-agent-sidebar-container--sidebar-open {
+		@include sidebar-open-base("main");
+	}
+}
+
+.ai-agent-sidebar {
+	visibility: hidden;
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	padding: $layout-spacing;
+	width: $sidebar-width;
+	box-sizing: border-box;
+	z-index: 999999;
+
+	.ai-agent-chat-header {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: $chat-header-height;
+		margin: 0;
+		padding: 0;
+	}
+
+	.ai-agent-chat-header__title {
+		color: $gray-100;
+	}
+
+	.ai-agent-chat-header__more-options,
+	.ai-agent-chat-header__close-btn {
+		svg {
+			fill: $gray-100;
+		}
+
+		& .components-dropdown-menu__toggle.has-icon,
+		&.has-icon {
+			min-width: unset;
+			width: 32px;
+			height: 32px;
+			padding: 0;
+		}
+	}
+
+	.ai-agent-sidebar__fab {
+		visibility: visible;
+		position: fixed;
+		bottom: 16px;
+		right: 16px;
+		width: 56px;
+		height: 56px;
+		border-radius: 24px;
+		background-color: #fcfcfc;
+		color: #3858e8;
+		box-shadow:
+			0 0 0 1px rgba(0, 0, 0, 0.075),
+			0 2px 24px rgba(0, 0, 0, 0.075);
+
+		svg {
+			width: 32px;
+			height: 32px;
+		}
+	}
+}
+
+/* Styles for the embedded and floating chat (agenttic-ui integration) */
+.agenttic {
+	.Messages-module_container {
+		padding-bottom: 24px;
+
+		&.Messages-module_emptyState {
+			justify-content: start;
+		}
+
+		.EmptyView-module_container {
+			height: auto;
+			padding-block: 8px;
+		}
+	}
+
+	.ChatFooter-module_container:has(.Suggestions-module_container) {
+		margin-top: 48px;
+	}
+}
+
+/* Styles for the embedded chat */
+.ai-agent-sidebar .agenttic {
+	.ConversationView-module_container {
+		position: relative;
+	}
+
+	.Messages-module_container {
+		margin-top: $chat-header-height;
+		padding-top: 0;
+
+		// Intentional overflow to keep the scrollbar at the edge of the screen
+		width: calc(100% + $layout-spacing);
+		padding-right: $layout-spacing;
+		scrollbar-gutter: stable;
+
+		// Push messages to the bottom while maintaining scroll functionality in a dynamic height container
+		> *:first-child {
+			margin-top: auto;
+		}
+	}
+
+	.Message-module_message {
+		color: $white;
+		font-size: 0.875rem;
+		line-height: 1.6;
+
+		p {
+			font-size: inherit;
+			line-height: inherit;
+		}
+
+		ul {
+			list-style: disc;
+		}
+
+		a {
+			color: $white;
+		}
+	}
+
+	// Prevent item picker content overflow
+	.Message-module_content {
+		width: 100%;
+
+		// Fix extra top margin on the first paragraph
+		.Message-module_bubble > p:first-of-type {
+			margin-top: 0;
+		}
+	}
+
+	.Message-module_user {
+		padding: 0;
+
+		.Message-module_bubble {
+			border-radius: 24px 24px 8px 24px;
+			background: #484848;
+
+			p {
+				color: $gray-100;
+				margin: 0;
+			}
+		}
+	}
+
+	.EmptyView-module {
+		&_container {
+			width: 100%;
+			height: auto;
+			align-items: start;
+			padding: 0;
+		}
+
+		&_icon {
+			width: 40px;
+			height: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-left: 12px;
+
+			svg {
+				width: 32px;
+				height: 32px;
+				color: $white;
+			}
+		}
+
+		&_heading,
+		&_help {
+			font-size: 0.875rem;
+			line-height: 1.6;
+			color: $white;
+			padding: 0 12px;
+		}
+
+		&_suggestionsWrapper .Suggestions-module_container {
+			flex-direction: column;
+			gap: 0;
+			padding: 0;
+
+			.button-module_button {
+				width: 100%;
+				height: unset;
+				justify-content: start;
+				border-radius: 0;
+				background-color: unset;
+				padding: 14px 16px;
+				color: $gray-200;
+				font-size: 13px;
+				line-height: 20px;
+				border: 1px solid #545454;
+
+				&:hover {
+					background-color: $gray-800;
+				}
+
+				&:focus-visible {
+					outline-offset: -3px;
+					outline-color: var(--wp-admin-theme-color);
+				}
+			}
+
+			> div + div .button-module_button {
+				margin-top: -1px;
+			}
+
+			> div:only-of-type .button-module_button {
+				border-radius: 8px;
+			}
+
+			> div:first-of-type:not(:only-of-type) .button-module_button {
+				border-radius: 8px 8px 0 0;
+			}
+
+			> div:last-of-type:not(:only-of-type) .button-module_button {
+				border-radius: 0 0 8px 8px;
+			}
+		}
+	}
+
+	.ChatFooter-module_container {
+		background-color: $gray-800;
+		transition: margin-top 0.3s ease;
+
+		.Suggestions-module_container .button-module_outline {
+			color: $gray-100;
+			background-color: #484848;
+		}
+
+		.Notice-module_container {
+			background-color: $gray-900;
+
+			.Notice-module_content {
+				color: $gray-100;
+
+				p {
+					margin: 0;
+				}
+			}
+		}
+	}
+
+	.Textarea-module_textarea {
+		color: $gray-200;
+		font-size: 0.875rem;
+		line-height: 1.625;
+		box-shadow: none;
+	}
+
+	.ChatInput-module_button:disabled {
+		background-color: $gray-700;
+		color: $gray-400;
+	}
+}

@@ -291,6 +291,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/agenttic-client@npm:^0.1.23":
+  version: 0.1.24
+  resolution: "@automattic/agenttic-client@npm:0.1.24"
+  dependencies:
+    "@types/react": "npm:^18.0.0"
+    marked: "npm:^16.2.1"
+    react: "npm:^18.0.0"
+  peerDependencies:
+    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
+    react: ^18.0.0
+  dependenciesMeta:
+    marked:
+      optional: true
+  peerDependenciesMeta:
+    "@wordpress/api-fetch":
+      optional: true
+  checksum: 648092778a50126a480f2f2444f872011598670370ff17bb08b3ec5c288eff8042a87807117bffac7d36574b0239b841839242a129bcfcedcd6ac2ef7e2ddad3
+  languageName: node
+  linkType: hard
+
 "@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.20, @automattic/agenttic-ui@npm:^0.1.9":
   version: 0.1.22
   resolution: "@automattic/agenttic-ui@npm:0.1.22"
@@ -320,6 +340,64 @@ __metadata:
   checksum: 9f19a653c99a9f09ecfd8448b6aae8ab9d2aa1404ac6f5a7443bfa5d6acbfead27699f70137109137b31640c136fd88ecc6354d564ccfe5853b4776a789a2391
   languageName: node
   linkType: hard
+
+"@automattic/agenttic-ui@npm:^0.1.23":
+  version: 0.1.24
+  resolution: "@automattic/agenttic-ui@npm:0.1.24"
+  dependencies:
+    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
+    "@radix-ui/react-scroll-area": "npm:^1.2.9"
+    "@radix-ui/react-slot": "npm:^1.2.3"
+    "@visx/xychart": "npm:^3.12.0"
+    "@wordpress/i18n": "npm:^6.1.0"
+    class-variance-authority: "npm:^0.7.1"
+    clsx: "npm:^2.1.1"
+    framer-motion: "npm:^12.23.0"
+    lucide-react: "npm:^0.525.0"
+    marked: "npm:^16.2.1"
+    react: "npm:^18.0.0"
+    react-dom: "npm:^18.0.0"
+    react-markdown: "npm:^10.1.0"
+    react-textarea-autosize: "npm:^8.5.9"
+    remark-gfm: "npm:^4.0.1"
+    unified: "npm:^11.0.5"
+    use-debounce: "npm:^10.0.6"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  dependenciesMeta:
+    marked:
+      optional: true
+  checksum: 15ee6ecd41ef6b3353c28946bf0455ffc4b37612b4379f3b33ec5791953446d6688cef800ba9cbf6904081a927f6166a52ab1f0191f053ea8f085360f58f9ed9
+  languageName: node
+  linkType: hard
+
+"@automattic/ai-agents@workspace:^, @automattic/ai-agents@workspace:packages/ai-agents":
+  version: 0.0.0-use.local
+  resolution: "@automattic/ai-agents@workspace:packages/ai-agents"
+  dependencies:
+    "@automattic/agenttic-client": "npm:^0.1.23"
+    "@automattic/agenttic-ui": "npm:^0.1.23"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.1"
+    "@wordpress/base-styles": "npm:^5.23.0"
+    "@wordpress/components": "npm:30.6.0"
+    "@wordpress/compose": "npm:^7.2.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    clsx: "npm:^2.1.1"
+    nanoid: "npm:^5.0.7"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@wordpress/data": ^10.23.0
+    "@wordpress/element": ^6.23.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
 
 "@automattic/api-core@workspace:^, @automattic/api-core@workspace:packages/api-core":
   version: 0.0.0-use.local
@@ -1397,6 +1475,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/help-center-app@workspace:apps/help-center"
   dependencies:
+    "@automattic/ai-agents": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
@@ -27703,6 +27782,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^5.0.7":
+  version: 5.1.6
+  resolution: "nanoid@npm:5.1.6"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 27b5b055ad8332cf4f0f9f6e2a494aa7e5ded89df4cab8c8490d4eabefe72c4423971d2745d22002868b1d50576a5e42b7b05214733b19f576382323282dd26e
+  languageName: node
+  linkType: hard
+
 "nanospinner@npm:^1.1.0":
   version: 1.1.0
   resolution: "nanospinner@npm:1.1.0"
@@ -37411,6 +37499,15 @@ __metadata:
     "@types/react":
       optional: true
   checksum: c77e0cba9579b7746d52feaf3ce77d8c345f266c9c1ef46584ae68f54646537c87b2ad97f5219a4b1db52f97ec2905e88e5b146add1f28f7e457bd52ca1b93cf
+  languageName: node
+  linkType: hard
+
+"use-debounce@npm:^10.0.6":
+  version: 10.0.6
+  resolution: "use-debounce@npm:10.0.6"
+  peerDependencies:
+    react: "*"
+  checksum: f0745de48fc344e6f90ea24384f3c79bf0733d06649827241135847abd67ee8db32f523d490c3276bce9f5a6867194ab1c0187bf6b84cabe1dd679037f4a527e
   languageName: node
   linkType: hard
 

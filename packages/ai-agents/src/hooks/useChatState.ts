@@ -1,0 +1,98 @@
+/**
+ * Hook for managing floating chat state (collapsed/compact/expanded)
+ * State is persisted to localStorage
+ */
+
+import { useCallback, useState } from 'react';
+
+const DEFAULT_STORAGE_KEY = 'ai-agent-chat-state';
+
+export type ChatState = 'collapsed' | 'compact' | 'expanded';
+
+/**
+ * Load chat state from localStorage
+ */
+const loadChatState = ( storageKey: string ): ChatState => {
+	try {
+		const saved = localStorage.getItem( storageKey );
+		if ( saved === 'collapsed' || saved === 'compact' || saved === 'expanded' ) {
+			return saved;
+		}
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.warn( '[AgentDock] Failed to read chat state from localStorage:', error );
+	}
+	return 'compact';
+};
+
+/**
+ * Save chat state to localStorage
+ *
+ * @param {string} storageKey - The localStorage key to use
+ * @param {ChatState} state - The chat state to save
+ */
+const saveChatState = ( storageKey: string, state: ChatState ): void => {
+	try {
+		localStorage.setItem( storageKey, state );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.warn( '[AgentDock] Failed to save chat state to localStorage:', error );
+	}
+};
+
+export interface UseChatStateResult {
+	chatState: ChatState;
+	toggleExpand: () => void;
+	collapse: () => void;
+	expand: () => void;
+}
+
+export interface UseChatStateOptions {
+	/**
+	 * localStorage key for persisting chat state
+	 * @default 'ai-agent-chat-state'
+	 */
+	storageKey?: string;
+	/**
+	 * Initial chat state if none is found in localStorage
+	 * @default 'compact'
+	 */
+	initialState?: ChatState;
+}
+
+/**
+ * Hook for managing floating chat state
+ *
+ * @param {UseChatStateOptions} options - Configuration options
+ */
+export function useChatState( options: UseChatStateOptions = {} ): UseChatStateResult {
+	const { storageKey = DEFAULT_STORAGE_KEY, initialState = 'compact' } = options;
+
+	const [ chatState, setChatState ] = useState< ChatState >( () => {
+		const loaded = loadChatState( storageKey );
+		return loaded !== 'compact' ? loaded : initialState;
+	} );
+
+	const toggleExpand = useCallback( () => {
+		const newState = chatState === 'expanded' ? 'collapsed' : 'expanded';
+		setChatState( newState );
+		saveChatState( storageKey, newState );
+	}, [ chatState, storageKey ] );
+
+	const collapse = useCallback( () => {
+		setChatState( 'collapsed' );
+		saveChatState( storageKey, 'collapsed' );
+	}, [ storageKey ] );
+
+	const expand = useCallback( () => {
+		setChatState( 'expanded' );
+		saveChatState( storageKey, 'expanded' );
+	}, [ storageKey ] );
+
+	return {
+		chatState,
+		toggleExpand,
+		collapse,
+		expand,
+	};
+}
