@@ -178,14 +178,25 @@ export default function HundredYearThankYou( {
 			? isRequestingSite( state, siteId ) || isRequestingSiteDomains( state, siteId )
 			: false
 	);
+
 	let targetDomain: ResponseDomain | null = null;
 	switch ( resolvedProductSlug ) {
-		case domainProductSlugs.TRANSFER_IN:
-			targetDomain = getTransferredInDomains( siteDomains )[ 0 ] ?? null;
+		case domainProductSlugs.TRANSFER_IN: {
+			const transferredDomains = getTransferredInDomains( siteDomains );
+			targetDomain =
+				transferredDomains.find( ( domain ) => domain.isHundredYearDomain ) ??
+				transferredDomains[ 0 ] ??
+				null;
 			break;
-		case domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION:
-			targetDomain = getRegisteredDomains( siteDomains )[ 0 ] ?? null;
+		}
+		case domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION: {
+			const registeredDomains = getRegisteredDomains( siteDomains );
+			targetDomain =
+				registeredDomains.find( ( domain ) => domain.isHundredYearDomain ) ??
+				registeredDomains[ 0 ] ??
+				null;
 			break;
+		}
 		default:
 			targetDomain = null;
 	}
