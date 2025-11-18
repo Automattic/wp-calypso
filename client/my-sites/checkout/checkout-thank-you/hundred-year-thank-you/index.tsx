@@ -1,4 +1,9 @@
-import { PLAN_100_YEARS, getPlan, domainProductSlugs } from '@automattic/calypso-products';
+import {
+	PLAN_100_YEARS,
+	getPlan,
+	domainProductSlugs,
+	is100Year,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, WordPressLogo } from '@automattic/components';
 import { FLOWS_ZENDESK_FLOWNAME } from '@automattic/help-center/src/constants';
@@ -12,14 +17,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';
-import { getRegisteredDomains, getTransferredInDomains } from 'calypso/lib/domains';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
-import { getSiteId, getSiteOptions, isRequestingSite } from 'calypso/state/sites/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSiteId, getSiteOptions } from 'calypso/state/sites/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
-import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 const VideoContainer = styled.div< { isMobile: boolean } >`
 	overflow: hidden;
@@ -159,8 +162,15 @@ export default function HundredYearThankYou( {
 	const isReceiptLoading = ! receipt.hasLoadedFromServer || receipt.isRequesting;
 
 	// Infer whether this is a 100-year domain registration/transfer or the 100-year plan
+	// If both are purchased, prioritize showing the plan variant
 	const resolvedProductSlug = useMemo( () => {
 		const purchases = receipt?.data?.purchases || [];
+		// First check if there's a 100-year plan purchase - this takes precedence
+		const hundredYearPlanPurchase = purchases.find( ( p ) => is100Year( p ) );
+		if ( hundredYearPlanPurchase ) {
+			return PLAN_100_YEARS;
+		}
+		// Otherwise, check for 100-year domain purchase
 		const hundredYearDomainPurchase = purchases.find( ( p ) => p.isHundredYearDomain );
 		if ( hundredYearDomainPurchase ) {
 			return hundredYearDomainPurchase.isDomainRegistration
@@ -173,22 +183,12 @@ export default function HundredYearThankYou( {
 	const siteDomains = useSelector( ( state ) =>
 		siteId ? getDomainsBySiteId( state, siteId ) : []
 	);
-	const isLoadingDomains = useSelector( ( state ) =>
-		siteId && resolvedProductSlug !== PLAN_100_YEARS
-			? isRequestingSite( state, siteId ) || isRequestingSiteDomains( state, siteId )
-			: false
-	);
-	let targetDomain: ResponseDomain | null = null;
-	switch ( resolvedProductSlug ) {
-		case domainProductSlugs.TRANSFER_IN:
-			targetDomain = getTransferredInDomains( siteDomains )[ 0 ] ?? null;
-			break;
-		case domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION:
-			targetDomain = getRegisteredDomains( siteDomains )[ 0 ] ?? null;
-			break;
-		default:
-			targetDomain = null;
-	}
+
+	const purchasedDomainName = useMemo( () => {
+		const purchases = receipt?.data?.purchases || [];
+		const hundredYearDomainPurchase = purchases.find( ( p ) => p.isHundredYearDomain );
+		return hundredYearDomainPurchase?.meta || null;
+	}, [ receipt ] );
 
 	const { mutateAsync: submitUserFields } = useUpdateZendeskUserFields();
 
@@ -225,11 +225,7 @@ export default function HundredYearThankYou( {
 	}
 
 	const isMobile = useMobileBreakpoint();
-	const isDomainDataLoaded = ! isLoadingDomains && targetDomain !== null;
-	const isPageLoading =
-		isReceiptLoading ||
-		isLoadingDomains ||
-		( resolvedProductSlug !== PLAN_100_YEARS && ! isDomainDataLoaded );
+	const isPageLoading = isReceiptLoading;
 	const hundredYearPlanCta = (
 		<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
 			{ translate( 'Manage your site' ) }
@@ -241,16 +237,21 @@ export default function HundredYearThankYou( {
 		</StyledLightButton>
 	);
 	const cta = resolvedProductSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
+	const primaryDomainFromState = siteDomains.find( ( domain ) => domain.isPrimary )?.domain;
+	const displayDomain =
+		resolvedProductSlug === PLAN_100_YEARS
+			? primaryDomainFromState || siteSlug
+			: purchasedDomainName || siteSlug;
 	const domainSpecificDescription =
 		resolvedProductSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
 			? translate( 'Your 100-Year Domain %(domain)s has been registered.', {
 					args: {
-						domain: targetDomain?.domain || siteSlug, // though targetDomain?.domain should be defined here, right?
+						domain: displayDomain,
 					},
 			  } )
 			: translate( 'Your 100-Year Domain %(domain)s is being transferred.', {
 					args: {
-						domain: targetDomain?.domain || siteSlug,
+						domain: displayDomain,
 					},
 			  } );
 	const hundredYearPlanDescription = translate( 'Your %(planTitle)s is now active.', {
