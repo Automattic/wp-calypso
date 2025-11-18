@@ -13,6 +13,7 @@ function Header() {
 	return (
 		<HeaderBar as="header">
 			{ ! isDesktop && <PrimaryMenu /> }
+
 			{ Logo && (
 				<div
 					style={ {
