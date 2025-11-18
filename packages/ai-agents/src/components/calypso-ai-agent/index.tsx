@@ -6,6 +6,7 @@
 import { useCallback, useMemo } from 'react';
 import { CalypsoChromeAdapter } from '../../adapters/chrome/calypso-chrome-adapter';
 import { CalypsoContextAdapter } from '../../adapters/context/calypso-context-adapter';
+import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import AgentDock from '../agent-dock';
 import BigSkyIcon from '../shared/big-sky-icon';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
@@ -73,7 +74,9 @@ export default function CalypsoAIAgent( {
 			agentId: 'wp-orchestrator',
 			agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
 			sessionId: `calypso-${ currentUser?.ID || 'anonymous' }-${ Date.now() }`,
-			// TODO: Add abilities and other configuration
+			authProvider: createCalypsoAuthProvider(),
+			enableStreaming: true,
+			// TODO: Add context provider and abilities
 		} ),
 		[ currentUser ]
 	);
