@@ -1,5 +1,6 @@
-import { siteSettingsMutation } from '@automattic/api-queries';
+import { bigSkyPluginMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
+import type { BigSkyPluginUpdateRequest } from '@automattic/api-core';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -91,7 +92,7 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 	const mediaLibraryUrl = site?.URL + '/wp-admin/upload.php';
 
 	const mutation = useMutation( {
-		...siteSettingsMutation( site.ID ),
+		...bigSkyPluginMutation( site.ID ),
 		meta: {
 			snackbar: {
 				success: __( 'AI Site Assistant settings saved.' ),
@@ -106,9 +107,9 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		const settingsUpdate = toSiteSettings( { bigSkyEnabled: true }, selectedUseCases );
+		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: true }, selectedUseCases );
 
-		mutation.mutate( settingsUpdate, {
+		mutation.mutate( pluginUpdate, {
 			onSuccess: () => {
 				// Update initialData to reflect that Big Sky is now enabled
 				setInitialData( { bigSkyEnabled: true } );
@@ -133,9 +134,9 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 	};
 
 	const handleDisable = () => {
-		const settingsUpdate = toSiteSettings( { bigSkyEnabled: false }, new Set() );
+		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: false }, new Set() );
 
-		mutation.mutate( settingsUpdate, {
+		mutation.mutate( pluginUpdate, {
 			onSuccess: () => {
 				setInitialData( { bigSkyEnabled: false } );
 				setFormData( { bigSkyEnabled: false } );
@@ -242,25 +243,25 @@ function fromSiteSettings( settings: SiteSettings ): AIAssistantFormData {
 	};
 }
 
-function toSiteSettings(
+function toBigSkyPluginUpdate(
 	formData: AIAssistantFormData,
 	selectedUseCases: Set< UseCaseOption >
-): Partial< SiteSettings > {
-	const settings: Partial< SiteSettings > = {
-		big_sky_enable: formData.bigSkyEnabled,
+): BigSkyPluginUpdateRequest {
+	const update: BigSkyPluginUpdateRequest = {
+		enable: formData.bigSkyEnabled,
 	};
 
 	if ( ! formData.bigSkyEnabled ) {
 		// Set isOnboarded to false when Big Sky is disabled
-		settings.big_sky_site_metadata = {
+		update.metadata = {
 			isOnboarded: false,
 		};
 	} else if ( ! selectedUseCases.has( 'redesign' ) ) {
 		// If "Redesign my site" is NOT selected, set isOnboarded to true
-		settings.big_sky_site_metadata = {
+		update.metadata = {
 			isOnboarded: true,
 		};
 	}
 
-	return settings;
+	return update;
 }
