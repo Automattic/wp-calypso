@@ -1,4 +1,4 @@
-import { useMediaQuery, useViewportMatch } from '@wordpress/compose';
+import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import HeaderBar from '../../components/header-bar';
 import RouterLinkButton from '../../components/router-link-button';
@@ -9,7 +9,6 @@ import SecondaryMenu from '../secondary-menu';
 function Header() {
 	const { Logo, name } = useAppContext();
 	const isDesktop = useViewportMatch( 'medium' );
-	const isReallySmall = useMediaQuery( '(max-width: 350px)' );
 
 	return (
 		<HeaderBar as="header">
@@ -19,7 +18,7 @@ function Header() {
 					style={ {
 						display: 'flex',
 						alignItems: 'center',
-						paddingInlineEnd: isReallySmall ? '20px' : '0',
+						paddingInlineEnd: isDesktop ? '16px' : '0',
 					} }
 				>
 					<RouterLinkButton
