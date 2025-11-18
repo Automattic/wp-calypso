@@ -7,7 +7,9 @@ export interface BigSkyPluginMetadata {
 
 export interface BigSkyPluginUpdateRequest {
 	enable: boolean;
-	metadata?: BigSkyPluginMetadata;
+	site_description?: string;
+	topic?: string;
+	site_title?: string;
 }
 
 export interface BigSkyPluginResponse {

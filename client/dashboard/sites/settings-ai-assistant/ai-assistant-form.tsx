@@ -105,7 +105,7 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: true }, selectedUseCases );
+		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: true } );
 
 		mutation.mutate( pluginUpdate, {
 			onSuccess: () => {
@@ -132,7 +132,7 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 	};
 
 	const handleDisable = () => {
-		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: false }, new Set() );
+		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: false } );
 
 		mutation.mutate( pluginUpdate, {
 			onSuccess: () => {
@@ -241,25 +241,16 @@ function fromSiteSettings( settings: SiteSettings ): AIAssistantFormData {
 	};
 }
 
-function toBigSkyPluginUpdate(
-	formData: AIAssistantFormData,
-	selectedUseCases: Set< UseCaseOption >
-): BigSkyPluginUpdateRequest {
+function toBigSkyPluginUpdate( formData: AIAssistantFormData ): BigSkyPluginUpdateRequest {
 	const update: BigSkyPluginUpdateRequest = {
 		enable: formData.bigSkyEnabled,
 	};
 
-	if ( ! formData.bigSkyEnabled ) {
-		// Set isOnboarded to false when Big Sky is disabled
-		update.metadata = {
-			isOnboarded: false,
-		};
-	} else if ( ! selectedUseCases.has( 'redesign' ) ) {
-		// If "Redesign my site" is NOT selected, set isOnboarded to true
-		update.metadata = {
-			isOnboarded: true,
-		};
-	}
+	// Note: isOnboarded is now stored in metadata in the response,
+	// but we don't send it in the request. The server manages this
+	// based on whether the plugin is being enabled or disabled.
+	// The flattened metadata fields (site_description, topic, site_title)
+	// can be added here if needed in the future.
 
 	return update;
 }
