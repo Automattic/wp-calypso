@@ -21,6 +21,7 @@ export function HelpCenterChat(): JSX.Element {
 		isEligibleForChat,
 		isLoading: isLoadingStatus,
 		isChatRestricted,
+		isLoadingSupportStatus,
 	} = useChatStatus();
 	const preventOdieAccess = ! shouldUseWapuu && ! isEligibleForChat && ! isLoadingStatus;
 	const { currentUser, site, isCommerceGarden, newInteractionsBotSlug } = useHelpCenterContext();
@@ -36,14 +37,14 @@ export function HelpCenterChat(): JSX.Element {
 	const userFieldFlowName = commerceGardenFlowName || data?.eligibility?.user_field_flow_name;
 
 	useEffect( () => {
-		if ( preventOdieAccess ) {
+		if ( preventOdieAccess && ! isLoadingSupportStatus ) {
 			recordTracksEvent( 'calypso_helpcenter_redirect_not_eligible_user_to_homepage', {
 				pathname: window.location.pathname,
 				search: window.location.search,
 			} );
 			navigate( '/' );
 		}
-	}, [ navigate, preventOdieAccess ] );
+	}, [ navigate, preventOdieAccess, isLoadingSupportStatus ] );
 
 	return (
 		<OdieAssistantProvider

@@ -3,7 +3,7 @@ import { useSupportActivity } from '../data/use-support-activity';
 import { useSupportStatus } from '../data/use-support-status';
 
 export default function useChatStatus() {
-	const { data: supportStatus } = useSupportStatus();
+	const { data: supportStatus, isFetching: isLoadingSupportStatus } = useSupportStatus();
 	const availability = supportStatus?.availability;
 
 	// All paying customers are eligible for chat.
@@ -24,6 +24,7 @@ export default function useChatStatus() {
 		hasActiveChats,
 		isEligibleForChat,
 		isLoading: isLoadingSupportActivity,
+		isLoadingSupportStatus: isLoadingSupportStatus,
 		isPresalesChatOpen: Boolean( availability?.is_presales_chat_open ),
 		isPrecancellationChatOpen: Boolean( availability?.is_precancellation_chat_open ),
 		supportActivity,
