@@ -1,7 +1,4 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
 import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
@@ -27,10 +24,6 @@ export const useCreateZendeskConversation = () => {
 	const chatId = chat.odieId;
 	const navigate = useNavigate();
 	const location = useLocation();
-	const chatLoaded = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getIsChatLoaded(),
-		[]
-	);
 
 	const createConversation = async ( {
 		createdFrom = '',
@@ -58,8 +51,7 @@ export const useCreateZendeskConversation = () => {
 			isSubmittingZendeskUserFields ||
 			chat.conversationId ||
 			chat.status === 'transfer' ||
-			chat.provider === 'zendesk' ||
-			! chatLoaded
+			chat.provider === 'zendesk'
 		) {
 			return chat.conversationId || '';
 		}

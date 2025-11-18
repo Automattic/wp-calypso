@@ -28,7 +28,8 @@
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './dist' --dir './dist/strings' --output './dist/help-center.pot' && build-app-languages --stringsFilePath='./dist/help-center.pot' --outputPath='./dist/languages' --outputFormat='JS'"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
@@ -47,9 +48,9 @@
 		"@wordpress/plugins": "^7.23.0",
 		"@wordpress/private-apis": "^1.23.0",
 		"@wordpress/router": "^1.23.0",
-		"postcss-prefix-selector": "^1.16.1",
+		"@wordpress/url": "^4.35.0",
 		"react-router-dom": "^6.23.1",
-		"@wordpress/url": "^4.35.0"
+		"postcss-prefix-selector": "^1.16.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",

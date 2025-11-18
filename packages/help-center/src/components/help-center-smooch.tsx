@@ -205,7 +205,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 					} );
 				} )
 				.catch( ( error ) => {
-					queueMicrotask( () => setIsChatLoaded( false ) );
+					setIsChatLoaded( false );
 					retryTimeout = setTimeout( initializeSmooch, 30000 );
 					recordTracksEvent( 'calypso_smooch_messenger_init', {
 						success: false,
