@@ -206,6 +206,7 @@ export interface Purchase {
 	is_locked: boolean;
 	is_plan: boolean;
 	is_rechargable: boolean;
+	is_woo_hosted_product: boolean;
 
 	/**
 	 * Determine if this is a kind of subscription that can currently be manually
