@@ -291,9 +291,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.20, @automattic/agenttic-ui@npm:^0.1.9":
-  version: 0.1.22
-  resolution: "@automattic/agenttic-ui@npm:0.1.22"
+"@automattic/agenttic-ui@npm:^0.1.25":
+  version: 0.1.25
+  resolution: "@automattic/agenttic-ui@npm:0.1.25"
   dependencies:
     "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
@@ -311,13 +311,14 @@ __metadata:
     react-textarea-autosize: "npm:^8.5.9"
     remark-gfm: "npm:^4.0.1"
     unified: "npm:^11.0.5"
+    use-debounce: "npm:^10.0.6"
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 9f19a653c99a9f09ecfd8448b6aae8ab9d2aa1404ac6f5a7443bfa5d6acbfead27699f70137109137b31640c136fd88ecc6354d564ccfe5853b4776a789a2391
+  checksum: e2a691340f5a66aebc5d1e4d682edb2fe041d3586a8905a9199cbbfcda57d662af2ce653d54a72df7e6fb6791ba345ab64481f62e1b9cdc7cdf0cc65cacea79f
   languageName: node
   linkType: hard
 
@@ -1798,7 +1799,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.20"
+    "@automattic/agenttic-ui": "npm:^0.1.25"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -15203,7 +15204,7 @@ __metadata:
   resolution: "calypso@workspace:client"
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.9"
+    "@automattic/agenttic-ui": "npm:^0.1.25"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
@@ -37421,6 +37422,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"use-debounce@npm:^10.0.6":
+  version: 10.0.6
+  resolution: "use-debounce@npm:10.0.6"
+  peerDependencies:
+    react: "*"
+  checksum: f0745de48fc344e6f90ea24384f3c79bf0733d06649827241135847abd67ee8db32f523d490c3276bce9f5a6867194ab1c0187bf6b84cabe1dd679037f4a527e
+  languageName: node
+  linkType: hard
+
 "use-debounce@npm:^3.1.0":
   version: 3.1.0
   resolution: "use-debounce@npm:3.1.0"
@@ -38383,7 +38393,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.10"
+    "@automattic/agenttic-ui": "npm:^0.1.25"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
