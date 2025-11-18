@@ -38,9 +38,13 @@
 			justify-content: flex-end;
 			align-items: center;
 			flex-grow: 4;
+			text-decoration: underline;
 			svg {
 				margin-left: 2px;
 			}
 		}
 	}
+}
+.plugins-results-header__action {
+	text-decoration: none;
 }
