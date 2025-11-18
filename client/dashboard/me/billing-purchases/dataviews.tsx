@@ -464,7 +464,6 @@ export function usePurchasesListActions( {
 		() => [
 			{
 				id: 'manage-purchase',
-				isPrimary: true,
 				label: __( 'Manage purchase' ),
 				isEligible: ( item: Purchase ) => {
 					// Hide manage button for transferred ownership purchases

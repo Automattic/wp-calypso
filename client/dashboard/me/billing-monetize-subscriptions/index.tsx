@@ -63,7 +63,6 @@ function MonetizeSubscriptions() {
 		() => [
 			{
 				id: 'manage-purchase',
-				isPrimary: true,
 				label: __( 'Manage purchase' ),
 				isEligible: ( item: MonetizeSubscription ) => Boolean( item.ID ),
 				callback: ( items: MonetizeSubscription[] ) => {
