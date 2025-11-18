@@ -37,7 +37,7 @@ export const AutoRenewModal = ( { items, onSuccess }: AutoRenewModalProps ) => {
 			{
 				type: 'set-auto-renew',
 				domains: items.map( ( item ) => item.domain ),
-				auto_renew: autoRenewalStatus === 'all-enabled',
+				auto_renew: autoRenewalStatus !== 'all-disabled',
 			},
 			{ onSuccess }
 		);
