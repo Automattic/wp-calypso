@@ -21,5 +21,18 @@ export const useShouldUseUnifiedAgent = () => {
 	// Unified agent can be enabled via config
 	const isConfigEnabled = config.isEnabled( 'unified-agent' );
 
-	return isEligibleViaAPI || isFlagSetInURL || isConfigEnabled;
+	const shouldUse = isEligibleViaAPI || isFlagSetInURL || isConfigEnabled;
+
+	// Debug logging
+	// eslint-disable-next-line no-console
+	console.log( '[useShouldUseUnifiedAgent]', {
+		isEligibleViaAPI,
+		isFlagSetInURL,
+		isConfigEnabled,
+		shouldUse,
+		supportStatus,
+		configData: typeof window !== 'undefined' ? ( window as any ).configData : null,
+	} );
+
+	return shouldUse;
 };

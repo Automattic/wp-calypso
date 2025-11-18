@@ -29,6 +29,15 @@ export function HelpCenterAIAssistant( {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const { currentUser, site, sectionName } = useHelpCenterContext();
 
+	// Debug logging
+	// eslint-disable-next-line no-console
+	console.log( '[HelpCenterAIAssistant]', {
+		shouldUseUnifiedAgent,
+		currentUser,
+		site,
+		sectionName,
+	} );
+
 	// Save/load preferences using wpcom-proxy-request
 	const savePreference = useCallback( async ( key: string, value: any ) => {
 		if ( canAccessWpcomApis() ) {
@@ -69,6 +78,8 @@ export function HelpCenterAIAssistant( {
 
 	// Use unified agent if feature flag is enabled
 	if ( shouldUseUnifiedAgent ) {
+		// eslint-disable-next-line no-console
+		console.log( '[HelpCenterAIAssistant] Rendering CalypsoAIAgent' );
 		return (
 			<CalypsoAIAgent
 				containerSelector=".help-center"
@@ -82,6 +93,8 @@ export function HelpCenterAIAssistant( {
 	}
 
 	// Fall back to legacy HelpCenterGPT
+	// eslint-disable-next-line no-console
+	console.log( '[HelpCenterAIAssistant] Rendering HelpCenterGPT (legacy)' );
 	return (
 		<HelpCenterGPT
 			onResponseReceived={ onResponseReceived }
