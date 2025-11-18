@@ -1,5 +1,10 @@
-import { domainQuery, domainConnectionSetupInfoQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import {
+	domainQuery,
+	domainConnectionSetupInfoQuery,
+	startDomainInboundTransferMutation,
+} from '@automattic/api-queries';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -8,10 +13,12 @@ import {
 	ExternalLink,
 	TextControl,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainTransferSetupRoute } from '../../app/router/domains';
+import { domainTransferSetupRoute, domainsIndexRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -21,6 +28,8 @@ import SetupStep from './setup-step';
 
 export default function DomainTransferSetup() {
 	const { domainName } = domainTransferSetupRoute.useParams();
+	const navigate = useNavigate();
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
@@ -34,6 +43,11 @@ export default function DomainTransferSetup() {
 	const [ stepsCompleted, setStepsCompleted ] = useState< boolean[] >( [ false, false ] );
 	const [ stepsExpanded, setStepsExpanded ] = useState< boolean[] >( [ false, false ] );
 	const [ authorizationCode, setAuthorizationCode ] = useState( '' );
+	const [ error, setError ] = useState< string | null >( null );
+
+	const { mutate: startTransfer, isPending } = useMutation(
+		startDomainInboundTransferMutation( domainName, domain.blog_id )
+	);
 
 	const steps = [
 		{
@@ -83,9 +97,13 @@ export default function DomainTransferSetup() {
 						<TextControl
 							label={ __( 'Authorization code' ) }
 							value={ authorizationCode }
-							onChange={ setAuthorizationCode }
+							onChange={ ( value ) => {
+								setAuthorizationCode( value || '' );
+								setError( null );
+							} }
 						/>
 					</div>
+					{ error && <Text style={ { color: 'var(--color-error)' } }>{ error }</Text> }
 				</VStack>
 			),
 		},
@@ -210,8 +228,30 @@ export default function DomainTransferSetup() {
 							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
-									onClick={ () => {} }
-									isBusy={ false }
+									onClick={ () => {
+										setError( null );
+										startTransfer( authorizationCode, {
+											onSuccess: () => {
+												createSuccessNotice(
+													sprintf(
+														// translators: %s is a domain name
+														__( 'Domain transfer for %s has started successfully.' ),
+														domainName
+													),
+													{ type: 'snackbar' }
+												);
+												navigate( { to: domainsIndexRoute.fullPath } );
+											},
+											onError: ( err ) => {
+												const errorMessage =
+													err instanceof Error
+														? err.message
+														: __( 'An unexpected error occurred. Please try again.' );
+												setError( errorMessage );
+											},
+										} );
+									} }
+									isBusy={ isPending }
 									disabled={ ! stepsCompleted[ 0 ] || authorizationCode.length === 0 }
 								>
 									{ __( 'Transfer domain' ) }
