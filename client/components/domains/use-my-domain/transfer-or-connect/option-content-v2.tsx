@@ -1,5 +1,10 @@
 import { Gridicon, SummaryButton } from '@automattic/components';
-import { __experimentalText as Text } from '@wordpress/components';
+import { useBreakpoint } from '@automattic/viewport-react';
+import {
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import type { ReactNode, ReactElement } from 'react';
@@ -29,22 +34,25 @@ export default function OptionContentV2( {
 	topText,
 	etaText,
 }: OptionContentV2Props ) {
+	const isMobile = useBreakpoint( '<480px' );
+
 	return (
-		<div
+		<VStack
 			className={ clsx( 'option-content-v2', {
 				'option-content-v2--is-placeholder': isPlaceholder,
 			} ) }
+			spacing={ 0 }
 		>
 			<SummaryButton
 				className="option-content-v2__button"
 				title={ titleText }
 				description={
-					<div className="option-content-v2__description">
+					<VStack className="option-content-v2__description">
 						<Text variant="muted" className="option-content-v2__top-text">
 							{ topText }
 						</Text>
 						{ etaText && <Text className="option-content-v2__eta-text">{ etaText }</Text> }
-					</div>
+					</VStack>
 				}
 				decoration={ illustration }
 				onClick={ onSelect }
@@ -52,18 +60,23 @@ export default function OptionContentV2( {
 				badges={ recommended ? [ { text: __( 'Recommended' ), intent: 'success' } ] : undefined }
 			/>
 			{ benefits && (
-				<div className="option-content-v2__benefits">
+				<VStack spacing={ 1 } className="option-content-v2__benefits">
 					{ benefits.map( ( benefit, index ) => {
 						return (
-							<div key={ 'benefit-' + index } className="option-content-v2__benefits-item">
+							<HStack
+								className="option-content-v2__benefits-item"
+								alignment="left"
+								spacing={ isMobile ? 3 : 4 }
+								key={ 'benefit-' + index }
+							>
 								{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }
 								<Gridicon size={ 18 } icon="checkmark" />
 								<Text className="option-content-v2__benefits-item-text">{ benefit }</Text>
-							</div>
+							</HStack>
 						);
 					} ) }
-				</div>
+				</VStack>
 			) }
-		</div>
+		</VStack>
 	);
 }

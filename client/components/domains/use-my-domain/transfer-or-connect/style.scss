@@ -65,16 +65,7 @@
 				}
 			}
 
-			&__description {
-				display: flex;
-				flex-direction: column;
-				gap: 8px;
-			}
-
 			&__benefits {
-				display: flex;
-				flex-direction: column;
-				gap: 4px;
 				padding: 20px 28px;
 				background-color: #fafafa;
 				border: 1px solid $gray-200;
@@ -87,17 +78,9 @@
 				}
 
 				&-item {
-					display: flex;
-					align-items: center;
-
 					.gridicon {
-						margin-right: 12px;
 						fill: var(--studio-green-50);
 						flex-shrink: 0;
-
-						@include break-mobile {
-							margin-right: 18px;
-						}
 					}
 				}
 			}
