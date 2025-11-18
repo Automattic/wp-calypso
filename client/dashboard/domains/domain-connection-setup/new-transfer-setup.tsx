@@ -49,6 +49,8 @@ export default function DomainTransferSetup() {
 		startDomainInboundTransferMutation( domainName, domain.blog_id )
 	);
 
+	const buttonIsDisabled = isPending || ! stepsCompleted[ 0 ] || authorizationCode.length === 0;
+
 	const steps = [
 		{
 			title: sprintf(
@@ -250,7 +252,7 @@ export default function DomainTransferSetup() {
 									variant="primary"
 									onClick={ handleStartTransferClick }
 									isBusy={ isPending }
-									disabled={ ! stepsCompleted[ 0 ] || authorizationCode.length === 0 }
+									disabled={ buttonIsDisabled }
 								>
 									{ __( 'Transfer domain' ) }
 								</Button>
