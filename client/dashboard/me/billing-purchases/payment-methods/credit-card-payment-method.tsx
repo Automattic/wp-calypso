@@ -26,7 +26,7 @@ export interface CreditCardFormData {
 const defaultFormData: CreditCardFormData = {
 	cardholderName: '',
 	taxLocation: defaultTaxLocation,
-	useForAllSubscriptions: false,
+	useForAllSubscriptions: true,
 };
 
 export function createCreditCardMethod( {
