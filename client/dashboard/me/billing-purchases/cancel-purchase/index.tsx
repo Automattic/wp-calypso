@@ -922,10 +922,6 @@ export default function CancelPurchase() {
 					} );
 				}
 				if ( purchase.is_domain_registration ) {
-					// if ( isDomainOnlySite ) {
-					// 	this.props.receiveDeletedSite( purchase.siteId );
-					// 	this.props.setAllSitesSelected();
-					// }
 					successMessage = sprintf(
 						/* translators: %(domain)s is a domain name */
 						__( 'The domain %(domain)s was removed from your account.' ),
