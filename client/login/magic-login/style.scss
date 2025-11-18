@@ -137,25 +137,6 @@
 	}
 }
 
-.magic-login__footer-text {
-	font-size: $font-body-small;
-	color: var( --studio-gray-50, #646970 );
-	text-align: center;
-	margin: 24px auto 0;
-	max-width: 400px;
-	line-height: 20px;
-
-	a,
-	.components-button.is-link {
-		color: var( --studio-wordpress-blue, #3858e9 );
-		font-size: inherit;
-		font-weight: 600;
-		height: auto;
-		padding: 0;
-		text-decoration: underline;
-	}
-}
-
 .layout:not( .is-grav-powered-client ) .magic-login__handle-link,
 .layout:not( .is-grav-powered-client ) .magic-login__link-expired {
 	.empty-content__title {
@@ -263,6 +244,15 @@
 			line-height: 20px;
 			padding-left: 4px;
 		}
+	}
+
+	.components-button.is-link {
+		color: var( --studio-wordpress-blue, #3858e9 );
+		font-size: inherit;
+		font-weight: 600;
+		height: auto;
+		padding: 0;
+		text-decoration: underline;
 	}
 }
 

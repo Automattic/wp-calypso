@@ -63,7 +63,7 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 			<p>{ preventWidows( translate( "Only one step left—we'll connect your site next." ) ) }</p>
 			<OneLoginFooter
 				loginLink={
-					<p className="magic-login__footer-text">
+					<p>
 						{ translate(
 							"Didn't get the email? Check your spam folder, or {{button}}resend the email{{/button}}. Wrong email or account? {{link}}Use a different account{{/link}}.",
 							{

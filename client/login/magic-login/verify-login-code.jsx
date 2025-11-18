@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { navigate } from 'calypso/lib/navigate';
-import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
@@ -253,27 +252,21 @@ const VerifyLoginCode = ( {
 				</div>
 			</div>
 
-			<OneLoginFooter
-				loginLink={
-					<p className="magic-login__footer-text">
-						{ translate(
-							"Didn't get the code? Check your spam folder, or {{button}}resend the email{{/button}}. Wrong email or account? {{link}}Use a different account{{/link}}.",
-							{
-								components: {
-									button: (
-										<Button
-											variant="link"
-											onClick={ handleResendEmail }
-											disabled={ isRedirecting }
-										/>
-									),
-									link: <a href="/log-in/jetpack" />,
-								},
-							}
-						) }
-					</p>
-				}
-			/>
+			<div className="magic-login__footer">
+				<p>
+					{ translate(
+						"Didn't get the code? Check your spam folder, or {{button}}resend the email{{/button}}. Wrong email or account? {{link}}Use a different account{{/link}}.",
+						{
+							components: {
+								button: (
+									<Button variant="link" onClick={ handleResendEmail } disabled={ isRedirecting } />
+								),
+								link: <a href="/log-in/jetpack" />,
+							},
+						}
+					) }
+				</p>
+			</div>
 		</>
 	);
 };
