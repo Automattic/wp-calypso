@@ -69,8 +69,8 @@ export default function CalypsoAIAgent( {
 	// Create agent configuration
 	const agentConfig = useMemo< UseAgentChatConfig >(
 		() => ( {
-			agentId: 'calypso-assistant',
-			agentUrl: '/api/ai/chat', // This will need to be configured
+			agentId: 'wp-orchestrator',
+			agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
 			sessionId: `calypso-${ currentUser?.ID || 'anonymous' }-${ Date.now() }`,
 			// TODO: Add abilities and other configuration
 		} ),

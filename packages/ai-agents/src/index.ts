@@ -12,6 +12,7 @@ export { default } from './components/CalypsoAIAgent';
 export { default as AgentsManager } from './components/AgentsManager';
 export { default as AgentDock } from './components/AgentDock';
 export { default as CalypsoAIAgent } from './components/CalypsoAIAgent';
+export { default as ChatHeader } from './components/shared/ChatHeader';
 
 // Hooks
 export { useChatState, useAgentSession } from './hooks';
@@ -57,3 +58,4 @@ export type {
 	AgentDockProps,
 } from './types';
 export type { CalypsoAIAgentProps } from './components/CalypsoAIAgent';
+export type { ChatHeaderProps, ChatHeaderMenuItem } from './components/shared/ChatHeader';

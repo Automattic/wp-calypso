@@ -10,13 +10,16 @@ import {
 } from '@automattic/agenttic-client';
 import { AgentUI, createMessageRenderer, EmptyView } from '@automattic/agenttic-ui';
 import { __ } from '@wordpress/i18n';
+import { drawerRight, login, rotateRight } from '@wordpress/icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAgentSession } from '../../hooks/useAgentSession';
 import { useChatState } from '../../hooks/useChatState';
 import { usePersistedAgentState } from '../../hooks/usePersistedAgentState';
 import AgentsManager from '../AgentsManager';
+import ChatHeader from '../shared/ChatHeader';
 import type { ChromeAdapter } from '../../adapters/chrome/ChromeAdapter';
 import type { ContextAdapter } from '../../adapters/context/ContextAdapter';
+import type { ChatHeaderMenuItem } from '../shared/ChatHeader';
 
 export interface AgentDockProps {
 	/**
@@ -252,6 +255,8 @@ export default function AgentDock( {
 		( {
 			isDocked: isDockedFromManager,
 			closeSidebar,
+			dock,
+			undock,
 		}: {
 			isDocked: boolean;
 			isDesktop: boolean;
@@ -259,6 +264,34 @@ export default function AgentDock( {
 			dock: () => void;
 			undock: () => void;
 		} ) => {
+			// Create menu items for chat header
+			const menuItems: ChatHeaderMenuItem[] = [];
+
+			// Add dock/undock menu item
+			if ( isDockedFromManager ) {
+				menuItems.push( {
+					id: 'undock',
+					icon: login,
+					title: __( 'Pop out sidebar', 'ai-agents' ),
+					onClick: undock,
+				} );
+			} else {
+				menuItems.push( {
+					id: 'dock',
+					icon: drawerRight,
+					title: __( 'Move to sidebar', 'ai-agents' ),
+					onClick: dock,
+				} );
+			}
+
+			// Add reset chat menu item
+			menuItems.push( {
+				id: 'reset',
+				icon: rotateRight,
+				title: __( 'Reset chat', 'ai-agents' ),
+				onClick: handleClearChat,
+			} );
+
 			return (
 				<AgentUI.Container
 					messages={ messages }
@@ -280,7 +313,11 @@ export default function AgentDock( {
 					}
 				>
 					<AgentUI.ConversationView>
-						{ /* TODO: Add custom chat header with menu items */ }
+						<ChatHeader
+							isChatDocked={ isDockedFromManager }
+							onClose={ isDockedFromManager ? closeSidebar : toggleExpand }
+							options={ menuItems }
+						/>
 						<AgentUI.Messages />
 						<AgentUI.Footer>
 							<AgentUI.Suggestions />
@@ -302,6 +339,7 @@ export default function AgentDock( {
 			emptyViewHeading,
 			emptyViewHelp,
 			suggestions,
+			handleClearChat,
 		]
 	);
 
