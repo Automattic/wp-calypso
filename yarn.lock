@@ -38454,6 +38454,7 @@ __metadata:
     "@wordpress/commands": "npm:^1.23.0"
     "@wordpress/components": "npm:^30.8.0"
     "@wordpress/data": "npm:^10.23.0"
+    "@wordpress/dataviews": "npm:^10.3.0"
     "@wordpress/element": "npm:^6.23.0"
     "@wordpress/eslint-plugin": "npm:^22.9.0"
     "@wordpress/format-library": "npm:^5.23.0"
