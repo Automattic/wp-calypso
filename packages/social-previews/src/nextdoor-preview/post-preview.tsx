@@ -53,10 +53,21 @@ export function NextdoorPostPreview( {
 					<div className="nextdoor-preview__body">
 						{ description ? (
 							<div className="nextdoor-preview__caption">
-								{ preparePreviewText( description, {
-									platform: 'nextdoor',
-									maxChars: FEED_TEXT_MAX_LENGTH,
-								} ) }
+								<span>
+									{ preparePreviewText( description, {
+										platform: 'nextdoor',
+										maxChars: FEED_TEXT_MAX_LENGTH,
+									} ) }
+								</span>
+								{ ! hasMedia && url && (
+									<>
+										<br />
+										<br />
+										<a href={ url } rel="nofollow noopener noreferrer" target="_blank">
+											{ url }
+										</a>
+									</>
+								) }
 							</div>
 						) : null }
 						{ hasMedia ? (
