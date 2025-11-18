@@ -23,22 +23,34 @@ export interface CreditCardFormData {
 	useForAllSubscriptions: boolean;
 }
 
-const defaultFormData: CreditCardFormData = {
-	cardholderName: '',
-	taxLocation: defaultTaxLocation,
-	useForAllSubscriptions: true,
-};
+function getDefaultFormData( {
+	defaultToUseForAllSubscriptions,
+}: {
+	defaultToUseForAllSubscriptions?: boolean;
+} ): CreditCardFormData {
+	const defaultFormData: Omit< CreditCardFormData, 'useForAllSubscriptions' > = {
+		cardholderName: '',
+		taxLocation: defaultTaxLocation,
+	};
+
+	return {
+		...defaultFormData,
+		useForAllSubscriptions: defaultToUseForAllSubscriptions ?? false,
+	};
+}
 
 export function createCreditCardMethod( {
 	currency,
 	hasExistingCardMethods,
 	allowUseForAllSubscriptions,
+	defaultToUseForAllSubscriptions,
 }: {
 	currency?: string | null | undefined;
 	hasExistingCardMethods?: boolean;
 	allowUseForAllSubscriptions?: boolean;
+	defaultToUseForAllSubscriptions?: boolean;
 } ): PaymentMethod {
-	let sharedFormData = defaultFormData;
+	let sharedFormData = getDefaultFormData( { defaultToUseForAllSubscriptions } );
 	let sharedCardNumberElement: StripeCardNumberElement | undefined;
 
 	const CreditCardFieldsWithData = () => (
@@ -46,6 +58,7 @@ export function createCreditCardMethod( {
 			allowUseForAllSubscriptions={ allowUseForAllSubscriptions }
 			onDataChange={ ( data ) => ( sharedFormData = data ) }
 			onCardElementReady={ ( element ) => ( sharedCardNumberElement = element ) }
+			defaultToUseForAllSubscriptions={ defaultToUseForAllSubscriptions }
 		/>
 	);
 
@@ -118,12 +131,16 @@ function CreditCardFieldsWrapper( {
 	allowUseForAllSubscriptions,
 	onDataChange,
 	onCardElementReady,
+	defaultToUseForAllSubscriptions,
 }: {
 	allowUseForAllSubscriptions?: boolean;
 	onDataChange: ( data: CreditCardFormData ) => void;
 	onCardElementReady: ( element: StripeCardNumberElement | undefined ) => void;
+	defaultToUseForAllSubscriptions?: boolean;
 } ) {
-	const [ formData, setFormData ] = useState< CreditCardFormData >( defaultFormData );
+	const [ formData, setFormData ] = useState< CreditCardFormData >(
+		getDefaultFormData( { defaultToUseForAllSubscriptions } )
+	);
 	const elements = useElements();
 
 	// Notify parent of card element when available
