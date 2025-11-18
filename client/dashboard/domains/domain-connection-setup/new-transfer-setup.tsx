@@ -102,6 +102,7 @@ export default function DomainTransferSetup() {
 								setError( null );
 							} }
 							__nextHasNoMarginBottom
+							__next40pxDefaultSize
 						/>
 					</div>
 					{ error && (
@@ -114,29 +115,15 @@ export default function DomainTransferSetup() {
 		},
 	];
 
-	const onStepChange = ( index: number, checked: boolean ) => {
+	// Only the first step has a checkbox, so the index is omitted here
+	const handleCheckboxChange = ( checked: boolean ) => {
 		setStepsCompleted( ( prev ) => {
 			const newState = [ ...prev ];
-			newState[ index ] = checked;
+			newState[ 0 ] = checked;
 			return newState;
 		} );
-	};
-
-	const handleStepChange = ( index: number, checked: boolean ) => {
-		onStepChange( index, checked );
-
-		// When a step is checked, collapse all steps and expand the next one
 		if ( checked ) {
-			const newStepsExpanded = steps.map( () => false );
-
-			// If not the last step, expand the next one
-			if ( index < steps.length - 1 ) {
-				newStepsExpanded[ index + 1 ] = true;
-			} else {
-				// If it's the last step, keep it expanded
-				newStepsExpanded[ index ] = true;
-			}
-
+			const newStepsExpanded = [ false, true ];
 			setStepsExpanded( newStepsExpanded );
 		}
 	};
@@ -146,6 +133,30 @@ export default function DomainTransferSetup() {
 			const newState = [ ...prev ];
 			newState[ index ] = expanded;
 			return newState;
+		} );
+	};
+
+	const handleStartTransferClick = () => {
+		setError( null );
+		startTransfer( authorizationCode, {
+			onSuccess: () => {
+				createSuccessNotice(
+					sprintf(
+						// translators: %s is a domain name
+						__( 'Domain transfer for %s has started successfully.' ),
+						domainName
+					),
+					{ type: 'snackbar' }
+				);
+				navigate( { to: domainsIndexRoute.fullPath } );
+			},
+			onError: ( err ) => {
+				const errorMessage =
+					err instanceof Error
+						? err.message
+						: __( 'An unexpected error occurred. Please try again.' );
+				setError( errorMessage );
+			},
 		} );
 	};
 
@@ -213,7 +224,7 @@ export default function DomainTransferSetup() {
 								className="domain-connection-setup__step"
 								expanded={ stepsExpanded[ 0 ] }
 								completed={ stepsCompleted[ 0 ] }
-								onCheckboxChange={ ( checked ) => handleStepChange( 0, checked ) }
+								onCheckboxChange={ ( checked ) => handleCheckboxChange( checked ) }
 								onToggle={ ( expanded ) => handleStepToggle( 0, expanded ) }
 								title={ steps[ 0 ].title }
 								label={ steps[ 0 ].label }
@@ -225,7 +236,7 @@ export default function DomainTransferSetup() {
 								className="domain-connection-setup__step"
 								expanded={ stepsExpanded[ 1 ] }
 								completed={ authorizationCode.length > 0 }
-								onCheckboxChange={ ( checked ) => handleStepChange( 1, checked ) }
+								onCheckboxChange={ () => {} }
 								onToggle={ ( expanded ) => handleStepToggle( 1, expanded ) }
 								title={ steps[ 1 ].title }
 							>
@@ -237,29 +248,7 @@ export default function DomainTransferSetup() {
 							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
-									onClick={ () => {
-										setError( null );
-										startTransfer( authorizationCode, {
-											onSuccess: () => {
-												createSuccessNotice(
-													sprintf(
-														// translators: %s is a domain name
-														__( 'Domain transfer for %s has started successfully.' ),
-														domainName
-													),
-													{ type: 'snackbar' }
-												);
-												navigate( { to: domainsIndexRoute.fullPath } );
-											},
-											onError: ( err ) => {
-												const errorMessage =
-													err instanceof Error
-														? err.message
-														: __( 'An unexpected error occurred. Please try again.' );
-												setError( errorMessage );
-											},
-										} );
-									} }
+									onClick={ handleStartTransferClick }
 									isBusy={ isPending }
 									disabled={ ! stepsCompleted[ 0 ] || authorizationCode.length === 0 }
 								>
