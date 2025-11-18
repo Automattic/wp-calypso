@@ -194,8 +194,6 @@ export default function DomainTransferSetup() {
 								{ steps[ 0 ].content }
 							</SetupStep>
 							<CardDivider />
-						</div>
-						<div>
 							<SetupStep
 								className="domain-connection-setup__step"
 								expanded={ stepsExpanded[ 1 ] }
@@ -203,7 +201,6 @@ export default function DomainTransferSetup() {
 								onCheckboxChange={ ( checked ) => handleStepChange( 1, checked ) }
 								onToggle={ ( expanded ) => handleStepToggle( 1, expanded ) }
 								title={ steps[ 1 ].title }
-								label={ steps[ 1 ].label }
 							>
 								{ steps[ 1 ].content }
 							</SetupStep>
@@ -215,7 +212,7 @@ export default function DomainTransferSetup() {
 									variant="primary"
 									onClick={ () => {} }
 									isBusy={ false }
-									disabled={ authorizationCode.length === 0 }
+									disabled={ ! stepsCompleted[ 0 ] || authorizationCode.length === 0 }
 								>
 									{ __( 'Transfer domain' ) }
 								</Button>
