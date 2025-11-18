@@ -15,12 +15,7 @@ function Header() {
 			{ ! isDesktop && <PrimaryMenu /> }
 
 			{ Logo && (
-				<div
-					style={ {
-						display: 'flex',
-						alignItems: 'center',
-					} }
-				>
+				<div style={ { display: 'flex', alignItems: 'center' } }>
 					<RouterLinkButton
 						/* translators: Screen reader text for link to root of the hosting dashboard. "name" is the product of whose hosting dashboard this is: e.g. WordPress.com */
 						aria-label={ sprintf( __( '%(name)s home' ), { name } ) }
