@@ -158,11 +158,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 }
 
-.reader-full-post__header-meta-follow {
-	.follow-button__label {
-		font-size: $font-body-small;
-	}
-}
 
 // Action Bar Component Styles
 .reader-full-post__action-bar {
@@ -218,49 +213,33 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.follow-button {
 		background: transparent;
 
-		.gridicon {
-			width: 24px;
-			height: 24px;
-		}
-
+		svg,
+		.gridicon,
 		.reader-following-feed,
 		.reader-follow-feed {
 			width: 24px;
 			height: 24px;
-			fill: var( --color-text-subtle ) !important;
 		}
 
+		// Override default green color from follow button component
+		.reader-following-feed,
 		.reader-following-feed path,
+		.reader-follow-feed,
 		.reader-follow-feed path {
 			fill: var( --color-text-subtle ) !important;
 		}
 
-		&.is-following {
-			background: transparent;
-
-			.follow-button__label {
-				color: var( --color-text-subtle ) !important;
-			}
-
-			&:hover {
-				background: var( --color-primary-0 );
-
-				.reader-following-feed,
-				.reader-following-feed path {
-					fill: var( --color-link ) !important;
-					opacity: 1;
-				}
-
-				.follow-button__label {
-					color: var( --color-link ) !important;
-				}
-			}
+		// Override green text color when following
+		&.is-following .follow-button__label {
+			color: var( --color-text-subtle ) !important;
 		}
 
-		&:hover:not(.is-following) {
+		// Hover state
+		&:hover {
 			background: var( --color-primary-0 );
 
-			.gridicon,
+			.reader-following-feed,
+			.reader-following-feed path,
 			.reader-follow-feed,
 			.reader-follow-feed path {
 				fill: var( --color-link ) !important;
@@ -268,7 +247,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			}
 
 			.follow-button__label {
-				color: var( --color-link );
+				color: var( --color-link ) !important;
 			}
 		}
 	}
@@ -282,6 +261,12 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	.like-button__label {
 		cursor: pointer;
+	}
+
+	// Hide label when there's no count (0 likes)
+	.like-button__label:has(.like-button__label-count:empty),
+	.like-button__label-count:empty {
+		display: none;
 	}
 
 	// Reset SVG icon that has like-button class to not be affected by container styles
@@ -324,15 +309,23 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		height: 24px;
 	}
 
+	// Active/hover states for interactive buttons
 	.comment-button.is-active,
-	.comment-button:hover {
+	.comment-button:hover,
+	.like-button:hover,
+	.like-button.is-active,
+	.like-button.is-liked,
+	.post-edit-button:hover {
 		background: var( --color-primary-0 );
 		border-color: var( --color-primary-10 );
 
 		svg {
 			opacity: 1;
 		}
+	}
 
+	.comment-button.is-active,
+	.comment-button:hover {
 		svg.reader-comment path {
 			stroke: var( --color-link );
 		}
@@ -345,13 +338,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.like-button:hover,
 	.like-button.is-active,
 	.like-button.is-liked {
-		background: var( --color-primary-0 );
-		border-color: var( --color-primary-10 );
-
-		svg {
-			opacity: 1;
-		}
-
 		svg.reader-star path {
 			stroke: var( --color-link );
 		}
@@ -367,24 +353,13 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		}
 	}
 
-	.post-edit-button {
+	.post-edit-button:hover {
 		svg {
-			opacity: 0.6;
+			fill: var( --color-link );
 		}
 
-		&:hover {
-			background: var( --color-primary-0 );
-			border-color: var( --color-primary-10 );
+		.post-edit-button__label {
 			color: var( --color-link );
-
-			svg {
-				fill: var( --color-link );
-				opacity: 1;
-			}
-
-			.post-edit-button__label {
-				color: var( --color-link );
-			}
 		}
 	}
 }

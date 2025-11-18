@@ -16,8 +16,6 @@ const ReaderFullPostHeader = ( {
 	layout = 'default',
 	author,
 	siteName,
-	siteUrl,
-	feedUrl,
 	feedId,
 	siteId,
 	tags,
@@ -96,8 +94,6 @@ const ReaderFullPostHeader = ( {
 						post={ post }
 						author={ author }
 						siteName={ siteName }
-						siteUrl={ siteUrl }
-						feedUrl={ feedUrl }
 						feedId={ feedId }
 						siteId={ siteId }
 					/>
@@ -155,8 +151,6 @@ ReaderFullPostHeader.propTypes = {
 	authorProfile: PropTypes.node,
 	author: PropTypes.object,
 	siteName: PropTypes.string,
-	siteUrl: PropTypes.string,
-	feedUrl: PropTypes.string,
 	feedId: PropTypes.number,
 	siteId: PropTypes.number,
 	tags: PropTypes.node,

@@ -732,8 +732,6 @@ export class FullPostView extends Component {
 								}
 								author={ post.author }
 								siteName={ siteName }
-								siteUrl={ post.site_URL }
-								feedUrl={ feedUrl }
 								feedId={ +post.feed_ID }
 								siteId={ +post.site_ID }
 								tags={ isDefaultLayout ? <TagsList post={ post } tagsToShow={ 5 } /> : null }
