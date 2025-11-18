@@ -1,14 +1,17 @@
 import { Card, DotPager } from '@automattic/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Spotlight from 'calypso/components/spotlight';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginsBrowserListVariant } from './types';
 import './style.scss';
 
@@ -48,10 +51,34 @@ const PluginsBrowserList = ( {
 	useCarousel = false,
 	carouselPageSize = DEFAULT_CAROUSEL_PAGE_SIZE,
 } ) => {
+	const { __ } = useI18n();
 	const extendedVariant = extended
 		? PluginsBrowserElementVariant.Extended
 		: PluginsBrowserElementVariant.Compact;
 	const shouldUseCarousel = useCarousel;
+	const selectedSite = useSelector( getSelectedSite );
+
+	const handleBrowseAllClick = () => {
+		if ( ! browseAllLink ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_plugin_browser_all_click', {
+			site: selectedSite?.domain,
+			list_name: listName,
+			blog_id: selectedSite?.ID,
+		} );
+	};
+
+	const browseAllAction = browseAllLink ? (
+		<a
+			className="plugins-results-header__action"
+			href={ browseAllLink }
+			onClick={ handleBrowseAllClick }
+		>
+			{ __( 'Browse all' ) }
+		</a>
+	) : null;
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
@@ -126,7 +153,13 @@ const PluginsBrowserList = ( {
 
 			return (
 				<div className="plugins-browser-list__carousel">
-					<DotPager className="plugins-browser-list__carousel-pager" hasDynamicHeight>
+					<DotPager
+						className="plugins-browser-list__carousel-pager"
+						hasDynamicHeight
+						showDots={ false }
+						controlsAction={ browseAllAction }
+						navigationVariant="button"
+					>
 						{ slides.map( ( slideItems, index ) => (
 							<Card
 								tagName="ul"
@@ -170,7 +203,7 @@ const PluginsBrowserList = ( {
 					title={ title }
 					subtitle={ subtitle }
 					resultCount={ resultCount }
-					browseAllLink={ browseAllLink }
+					browseAllLink={ ! useCarousel ? browseAllLink : undefined }
 					listName={ listName }
 					isRootPage={ listType !== 'browse' }
 				/>
