@@ -20,9 +20,20 @@ export interface TopBarProps {
 	 * - Confirm with Design before changing functionality around this
 	 */
 	compactLogo?: 'always';
+
+	/**
+	 * Hide the logo entirely.
+	 */
+	hideLogo?: boolean;
 }
 
-export const TopBar = ( { leftElement, rightElement, logo, compactLogo }: TopBarProps ) => {
+export const TopBar = ( {
+	leftElement,
+	rightElement,
+	logo,
+	compactLogo,
+	hideLogo = false,
+}: TopBarProps ) => {
 	const defaultLogo = (
 		<div
 			className={ clsx( 'step-container-v2__top-bar-wordpress-logo-wrapper', {
@@ -43,9 +54,9 @@ export const TopBar = ( { leftElement, rightElement, logo, compactLogo }: TopBar
 	);
 	return (
 		<div className="step-container-v2__top-bar">
-			{ logo || logo === null ? logo : defaultLogo }
+			{ ! hideLogo && ( logo ?? defaultLogo ) }
 
-			{ logo !== null && leftElement && <div className="step-container-v2__top-bar-divider" /> }
+			{ ! hideLogo && leftElement && <div className="step-container-v2__top-bar-divider" /> }
 
 			{ leftElement && (
 				<div className="step-container-v2__top-bar-left-element">{ leftElement }</div>
