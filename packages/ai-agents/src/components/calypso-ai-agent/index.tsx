@@ -155,7 +155,7 @@ export default function CalypsoAIAgent( {
 			emptyViewSuggestions={ suggestions }
 			emptyViewHeading="How can I help you today?"
 			emptyViewHelp="Ask me anything about WordPress and your site."
-			fabIcon={ <BigSkyIcon color="blue" width={ 32 } height={ 32 } /> }
+			fabIcon={ <BigSkyIcon color="blue" width={ 48 } height={ 48 } /> }
 			onClearChat={ handleClearChat }
 			sessionStorageKey="calypso-ai-agent-session"
 			chatStateStorageKey="calypso-ai-agent-chat-state"

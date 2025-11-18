@@ -242,12 +242,9 @@ export default function AgentsManager( {
 	return createPortal(
 		<>
 			{ children( { ...commonArgs, isDocked: true } ) }
-			<Button
-				className={ fabClass }
-				icon={ fabIcon }
-				onClick={ handleOpenSidebar }
-				label={ fabLabel }
-			/>
+			<Button className={ fabClass } onClick={ handleOpenSidebar } label={ fabLabel }>
+				{ fabIcon }
+			</Button>
 		</>,
 		sidebar
 	);

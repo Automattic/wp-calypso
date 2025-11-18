@@ -196,10 +196,12 @@ body.ai-agent-sidebar-container {
 		box-shadow:
 			0 0 0 1px rgba(0, 0, 0, 0.075),
 			0 2px 24px rgba(0, 0, 0, 0.075);
+		padding: 0;
+		min-width: 56px;
 
 		svg {
-			width: 32px;
-			height: 32px;
+			width: 48px;
+			height: 48px;
 		}
 	}
 }
