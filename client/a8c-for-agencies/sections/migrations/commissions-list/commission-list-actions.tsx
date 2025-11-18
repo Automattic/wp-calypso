@@ -9,7 +9,6 @@ import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import useUpdateSiteTagsMutation from '../../sites/site-preview-pane/hooks/use-update-site-tags-mutation';
 import { A4A_MIGRATED_SITE_TAG } from '../lib/constants';
-import { getSiteReviewStatus } from '../lib/utils';
 import { TaggedSite } from '../types';
 
 type Props = {
@@ -27,9 +26,8 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 	const { mutate, isPending } = useUpdateSiteTagsMutation();
 
 	const isPendingReview = useMemo( () => {
-		const tags = site.tags.map( ( tag ) => tag.name );
-		return getSiteReviewStatus( tags ) === 'pending';
-	}, [ site.tags ] );
+		return site.incentive_status === 'pending';
+	}, [ site.incentive_status ] );
 
 	const showActions = useCallback( () => {
 		setIsOpen( true );

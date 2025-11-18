@@ -1,21 +1,23 @@
 import { userReceiptsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { DataViews, usePersistentView } from '../../app/dataviews';
+import { billingHistoryRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import {
-	billingHistoryWideFields,
-	billingHistoryDesktopFields,
-	billingHistoryMobileFields,
-	defaultBillingHistoryView,
-	getFieldDefinitions,
-	useBillingHistoryActions,
+	WIDE_FIELDS,
+	DESKTOP_FIELDS,
+	MOBILE_FIELDS,
+	DEFAULT_VIEW,
+	getFields,
+	useActions,
 } from './dataviews';
 import type { Receipt } from '@automattic/api-core';
 
@@ -25,28 +27,34 @@ export default function BillingHistory() {
 	const { data } = useSuspenseQuery( userReceiptsQuery() );
 	const receipts = data ?? emptyReceipts;
 
-	const [ currentView, setView ] = useState( defaultBillingHistoryView );
+	const searchParams = billingHistoryRoute.useSearch();
+	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'me-billing-history',
+		defaultView,
+		queryParams: searchParams,
+	} );
 
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
 		if ( firstEntry ) {
 			adjustDataViewFieldsForWidth( {
 				width: firstEntry.contentRect.width,
-				setView,
-				wideFields: billingHistoryWideFields,
-				desktopFields: billingHistoryDesktopFields,
-				mobileFields: billingHistoryMobileFields,
+				setView: setDefaultView,
+				wideFields: WIDE_FIELDS,
+				desktopFields: DESKTOP_FIELDS,
+				mobileFields: MOBILE_FIELDS,
 			} );
 		}
 	} );
 
-	const billingFields = getFieldDefinitions( receipts );
+	const fields = getFields( receipts );
 
 	const { data: filteredReceipts, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( receipts, currentView, billingFields );
-	}, [ receipts, currentView, billingFields ] );
+		return filterSortAndPaginate( receipts, view, fields );
+	}, [ receipts, view, fields ] );
 
-	const actions = useBillingHistoryActions();
+	const actions = useActions();
 
 	const getItemId = ( receipt: Receipt ) => {
 		return receipt.id.toString();
@@ -63,9 +71,10 @@ export default function BillingHistory() {
 				<DataViewsCard>
 					<DataViews
 						data={ filteredReceipts }
-						fields={ billingFields }
-						view={ currentView }
-						onChangeView={ setView }
+						fields={ fields }
+						view={ view }
+						onChangeView={ updateView }
+						onResetView={ resetView }
 						defaultLayouts={ { table: {} } }
 						actions={ actions }
 						getItemId={ getItemId }

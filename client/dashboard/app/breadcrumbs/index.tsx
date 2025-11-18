@@ -1,5 +1,6 @@
 import { Breadcrumbs as BreadcrumbsComponent } from '@automattic/components/src/breadcrumbs';
 import { useMatches, Link } from '@tanstack/react-router';
+import { getTransientQueryParamsAtPathname } from '../transient-query-params';
 import type { BreadcrumbItemProps } from '@automattic/components/src/breadcrumbs/types';
 
 interface BreadcrumbsProps {
@@ -30,7 +31,7 @@ export default function Breadcrumbs( { length }: BreadcrumbsProps ) {
 		<BreadcrumbsComponent
 			items={ items }
 			renderItemLink={ ( { href, label, ...rest } ) => (
-				<Link to={ href } { ...rest }>
+				<Link to={ href } search={ getTransientQueryParamsAtPathname( href ) } { ...rest }>
 					{ label }
 				</Link>
 			) }

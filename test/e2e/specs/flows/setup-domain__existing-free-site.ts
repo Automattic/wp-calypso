@@ -14,7 +14,6 @@ import {
 	NewUserResponse,
 	NewSiteResponse,
 	RestAPIClient,
-	PlansPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared/api-close-account';
@@ -99,9 +98,8 @@ describe(
 			} );
 
 			it( `Select ${ domainAdditionPlan } plan`, async function () {
-				const plansPage = new PlansPage( page );
-
-				await plansPage.selectPlan( domainAdditionPlan );
+				const plansPage = new SignupPickPlanPage( page );
+				await plansPage.selectPlanWithoutSiteCreation( domainAdditionPlan );
 			} );
 
 			it( 'See plan and domain at checkout', async function () {

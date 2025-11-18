@@ -27,7 +27,7 @@ export function useActions( {
 		if ( logType === LogType.PHP ) {
 			const commonDetailsAction: Action< PHPLog > = {
 				id: 'details-modal',
-				label: __( 'View log details' ),
+				label: __( 'View details' ),
 				modalHeader: __( 'Log details' ),
 				isPrimary: true,
 				icon: details,

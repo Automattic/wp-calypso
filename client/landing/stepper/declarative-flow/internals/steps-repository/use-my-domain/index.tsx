@@ -11,13 +11,23 @@ import {
 	UseMyDomainInputMode,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
+import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
+
+type OwnershipVerificationData = {
+	ownership_verification_data: {
+		verification_type: 'auth_code';
+		verification_data: string;
+	};
+};
 
 const UseMyDomain: StepType< {
 	submits:
@@ -25,13 +35,19 @@ const UseMyDomain: StepType< {
 				mode: 'transfer' | 'connect';
 				domain: string;
 		  }
-		| { domainCartItem: MinimalRequestCartProduct }
+		| {
+				domainCartItem: MinimalRequestCartProduct;
+		  }
+		| {
+				skipToPlan: true;
+		  }
 		| undefined;
 } > = function UseMyDomain( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const { goNext, goBack, submit } = navigation;
 	const location = useLocation();
 	const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
+	const { site } = useSiteData();
 
 	const [ useMyDomainMode, setUseMyDomainMode ] = useState< UseMyDomainInputMode >(
 		inputMode.domainInput
@@ -64,8 +80,45 @@ const UseMyDomain: StepType< {
 		submit?.( { domainCartItem } );
 	};
 
-	const handleOnConnect = async ( domain: string ) => {
+	const handleOnConnect = async (
+		{ domain, verificationData }: { domain: string; verificationData?: OwnershipVerificationData },
+		onDone?: ( error?: Error ) => void
+	) => {
 		const domainCartItem = domainMapping( { domain } );
+
+		// If there's verification data and the site has a paid plan, validate it before submitting
+		if ( verificationData && site ) {
+			const isGardenSite = ( site as { is_garden?: boolean } ).is_garden;
+			const hasPaidPlan = siteHasPaidPlan( site );
+
+			if ( isGardenSite || hasPaidPlan ) {
+				try {
+					// Validate the auth code by making the API call
+					await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, {
+						domain,
+						...verificationData,
+					} );
+
+					// Success - redirect to setup page
+					const redirectTo = isGardenSite
+						? `/ciab/sites/${ domain }/domains`
+						: `/v2/domains/${ domain }/domain-connection-setup`;
+
+					return window.location.replace( redirectTo );
+				} catch ( error ) {
+					// Validation failed - call onDone to display error and stay on current step
+					if ( onDone ) {
+						const errorObj =
+							error instanceof Error
+								? error
+								: new Error( typeof error === 'string' ? error : 'An error occurred' );
+						onDone( errorObj );
+					}
+					// Don't submit the step - stay on current step to allow retry
+					return;
+				}
+			}
+		}
 
 		clearQueryParams();
 		submit?.( { domainCartItem } );
@@ -89,6 +142,11 @@ const UseMyDomain: StepType< {
 		submit?.( { mode, domain, shouldSkipSubmitTracking: true } );
 	};
 
+	const handleOnSkip = () => {
+		// When user needs to purchase a plan to connect domain with ownership verification
+		submit?.( { skipToPlan: true } );
+	};
+
 	const getBlogOnboardingFlowStepContent = () => {
 		return (
 			<CalypsoShoppingCartProvider>
@@ -98,7 +156,8 @@ const UseMyDomain: StepType< {
 					initialMode={ getInitialMode() }
 					isSignupStep
 					onTransfer={ handleOnTransfer }
-					onConnect={ ( { domain } ) => handleOnConnect( domain ) }
+					onConnect={ handleOnConnect }
+					onSkip={ handleOnSkip }
 					useMyDomainMode={ useMyDomainMode }
 					setUseMyDomainMode={ setUseMyDomainMode }
 					onNextStep={ handleOnNext }

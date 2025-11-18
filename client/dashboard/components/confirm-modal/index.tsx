@@ -6,27 +6,29 @@ import { ButtonStack } from '../button-stack';
 import type { ButtonProps } from '@wordpress/components/build-types/button/types';
 
 interface Props {
-	onCancel: () => void;
+	__experimentalHideHeader?: boolean;
 	title?: string;
-	children: React.ReactNode;
+	size?: 'small' | 'medium' | 'large';
 	cancelButtonText?: string;
 	confirmButtonProps: ButtonProps;
-	onConfirm?: () => void;
+	children: React.ReactNode;
 	isOpen: boolean;
-	__experimentalHideHeader?: boolean;
 	isDismissible?: boolean;
+	onCancel: () => void;
+	onConfirm?: () => void;
 }
 
 export default function ConfirmModal( {
-	onCancel,
+	__experimentalHideHeader = true,
 	title,
-	children,
+	size = 'large',
 	cancelButtonText,
 	confirmButtonProps,
-	onConfirm,
+	children,
 	isOpen,
-	__experimentalHideHeader = true,
 	isDismissible = true,
+	onCancel,
+	onConfirm,
 }: Props ) {
 	const cancelButtonRef = useRef();
 	const confirmButtonRef = useRef();
@@ -55,11 +57,12 @@ export default function ConfirmModal( {
 	return (
 		<Modal
 			__experimentalHideHeader={ __experimentalHideHeader }
+			title={ title }
+			size={ size }
+			closeButtonLabel={ closeButtonLabel }
 			isDismissible={ isDismissible }
 			onKeyDown={ handleEnter }
 			onRequestClose={ onCancel }
-			closeButtonLabel={ closeButtonLabel }
-			title={ title }
 		>
 			<VStack spacing={ 8 }>
 				<Text>{ children }</Text>

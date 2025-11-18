@@ -1,0 +1,28 @@
+{
+	"permissions": {
+		"deny": [
+			"node_modules/**",
+			"vendor/**",
+			"build/**",
+			"public/**",
+			"**/dist/**",
+			"coverage/**",
+			".webpack-cache/**",
+			".cache/**",
+			".tsc-cache/**",
+			"**/*.tsbuildinfo",
+			"yarn.lock",
+			"composer.lock",
+			"config/secrets.json",
+			"config/*.local.json",
+			"**/*.log",
+			"playwright-report/**",
+			"test-results*.xml",
+			"*xunit_*.xml",
+			"desktop/e2e/logs/**",
+			"desktop/e2e/screenshots/**",
+			"*.rdb",
+			"*.db"
+		]
+	}
+}

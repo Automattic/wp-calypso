@@ -1,0 +1,13 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.discounts-coming-soon-modal {
+	@include break-large {
+		max-width: 420px;
+	}
+
+	p {
+		@include body-large;
+		margin: 0;
+	}
+}

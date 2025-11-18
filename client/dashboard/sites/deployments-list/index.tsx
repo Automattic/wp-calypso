@@ -206,8 +206,8 @@ function DeploymentsList() {
 				<DataViews
 					actions={ [
 						{
-							id: 'open-logs',
-							label: __( 'Open logs' ),
+							id: 'view-logs',
+							label: __( 'View logs' ),
 							isPrimary: true,
 							icon: <Icon icon={ seen } />,
 							RenderModal: ( { items, closeModal } ) => (

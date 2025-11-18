@@ -16,7 +16,7 @@ function UnforwardedActionItem(
 		<VStack className="action-item" ref={ ref } as="span">
 			<HStack spacing={ 3 } justify="flex-start" alignment="center" as="span">
 				{ !! decoration && <span className="action-item__decoration">{ decoration }</span> }
-				<HStack as="span">
+				<HStack spacing={ 3 } as="span">
 					<VStack spacing={ 1 } as="span">
 						<Text weight={ 500 } lineHeight="20px">
 							{ title }
