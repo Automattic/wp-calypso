@@ -1,4 +1,4 @@
-import { domainQuery } from '@automattic/api-queries';
+import { domainQuery, domainConnectionSetupInfoQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -22,10 +22,13 @@ export default function DomainTransferSetup() {
 	const { domainName } = domainTransferSetupRoute.useParams();
 
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
+		domainConnectionSetupInfoQuery( domainName, domain.blog_id )
+	);
 
-	const registrar = 'test';
-	const registrar_url = 'https://example.com';
-	const isReseller = false;
+	const registrar = domainConnectionSetupInfo?.registrar || null;
+	const registrar_url = domainConnectionSetupInfo?.registrar_url || null;
+	const isReseller = !! domainConnectionSetupInfo?.reseller;
 
 	const [ stepsCompleted, setStepsCompleted ] = useState< boolean[] >( [ false, false ] );
 	const [ stepsExpanded, setStepsExpanded ] = useState< boolean[] >( [ false, false ] );
