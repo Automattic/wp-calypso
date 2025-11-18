@@ -9,6 +9,10 @@
 @import './dataforms-overrides.scss';
 @import './dataviews-overrides.scss';
 
+// Page layout max-width variables
+$page-layout-max-width-large: 1344px;
+$page-layout-max-width-small: 660px;
+
 // Global Styles
 html,
 body,

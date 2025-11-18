@@ -1,9 +1,6 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/breakpoints';
-
-// Page layout max-width variables
-$page-layout-max-width-large: 1344px;
-$page-layout-max-width-small: 660px;
+@import '../../app/style.scss';
 
 .dashboard-page-layout {
 	--page-layout-block-padding: #{$grid-unit-20};
