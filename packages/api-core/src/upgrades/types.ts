@@ -193,6 +193,7 @@ export interface Purchase {
 	 */
 	is_domain_registration: boolean;
 
+	is_trial_plan: boolean;
 	is_pending_registration: boolean;
 	is_free_jetpack_stats_product: boolean;
 	is_jetpack_backup_t1: boolean;
