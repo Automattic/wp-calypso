@@ -12,9 +12,6 @@ export interface BigSkyPluginUpdateRequest {
 
 export interface BigSkyPluginResponse {
 	blog_id: number;
-	plugin: string;
-	status: string;
-	active: boolean;
-	name: string;
-	version: string;
+	enabled: boolean;
+	metadata?: BigSkyPluginMetadata;
 }

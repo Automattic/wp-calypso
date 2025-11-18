@@ -1,6 +1,5 @@
 import { bigSkyPluginMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import type { BigSkyPluginUpdateRequest } from '@automattic/api-core';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -15,8 +14,7 @@ import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
-import type { Site, SiteSettings } from '@automattic/api-core';
-
+import type { BigSkyPluginUpdateRequest, Site, SiteSettings } from '@automattic/api-core';
 interface AIAssistantFormData {
 	bigSkyEnabled: boolean;
 }
