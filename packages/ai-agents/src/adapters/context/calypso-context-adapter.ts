@@ -1,4 +1,4 @@
-import type { ClientContext, ContextAdapter } from './ContextAdapter';
+import type { ClientContext, ContextAdapter } from './context-adapter';
 
 /**
  * Calypso Context Adapter

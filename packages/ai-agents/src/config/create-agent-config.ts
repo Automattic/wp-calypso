@@ -2,8 +2,8 @@
  * Agent Configuration Utilities
  */
 
-import type { Ability } from '../abilities/AbilityRegistry';
-import type { ContextAdapter } from '../adapters/context/ContextAdapter';
+import type { Ability } from '../abilities/ability-registry';
+import type { ContextAdapter } from '../adapters/context/context-adapter';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 export interface CreateAgentConfigOptions {

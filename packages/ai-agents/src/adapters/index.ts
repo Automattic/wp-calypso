@@ -1,11 +1,11 @@
 // Context Adapters
-export type { ContextAdapter, ClientContext } from './context/ContextAdapter';
-export { GenericContextAdapter } from './context/GenericContextAdapter';
-export { WordPressContextAdapter } from './context/WordPressContextAdapter';
-export { CalypsoContextAdapter } from './context/CalypsoContextAdapter';
+export type { ContextAdapter, ClientContext } from './context/context-adapter';
+export { GenericContextAdapter } from './context/generic-context-adapter';
+export { WordPressContextAdapter } from './context/wordpress-context-adapter';
+export { CalypsoContextAdapter } from './context/calypso-context-adapter';
 
 // Chrome Adapters
-export type { ChromeAdapter } from './chrome/ChromeAdapter';
-export { GenericChromeAdapter } from './chrome/GenericChromeAdapter';
-export { WordPressChromeAdapter } from './chrome/WordPressChromeAdapter';
-export { CalypsoChromeAdapter } from './chrome/CalypsoChromeAdapter';
+export type { ChromeAdapter } from './chrome/chrome-adapter';
+export { GenericChromeAdapter } from './chrome/generic-chrome-adapter';
+export { WordPressChromeAdapter } from './chrome/wordpress-chrome-adapter';
+export { CalypsoChromeAdapter } from './chrome/calypso-chrome-adapter';

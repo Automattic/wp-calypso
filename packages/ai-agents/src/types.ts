@@ -3,10 +3,10 @@
  */
 
 export type { Ability, AbilityLoader } from './abilities';
-export type { ContextAdapter, ClientContext } from './adapters/context/ContextAdapter';
-export type { ChromeAdapter } from './adapters/chrome/ChromeAdapter';
-export type { CreateAgentConfigOptions } from './config/createAgentConfig';
-export type { ChatState, UseChatStateOptions, UseChatStateResult } from './hooks/useChatState';
-export type { UseAgentSessionOptions, UseAgentSessionResult } from './hooks/useAgentSession';
-export type { AgentsManagerProps, AgentsManagerRenderProps } from './components/AgentsManager';
-export type { AgentDockProps } from './components/AgentDock';
+export type { ContextAdapter, ClientContext } from './adapters/context/context-adapter';
+export type { ChromeAdapter } from './adapters/chrome/chrome-adapter';
+export type { CreateAgentConfigOptions } from './config/create-agent-config';
+export type { ChatState, UseChatStateOptions, UseChatStateResult } from './hooks/use-chat-state';
+export type { UseAgentSessionOptions, UseAgentSessionResult } from './hooks/use-agent-session';
+export type { AgentsManagerProps, AgentsManagerRenderProps } from './components/agents-manager';
+export type { AgentDockProps } from './components/agent-dock';

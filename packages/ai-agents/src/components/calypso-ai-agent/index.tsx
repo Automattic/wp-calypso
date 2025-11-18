@@ -4,9 +4,10 @@
  */
 
 import { useCallback, useMemo } from 'react';
-import { CalypsoChromeAdapter } from '../../adapters/chrome/CalypsoChromeAdapter';
-import { CalypsoContextAdapter } from '../../adapters/context/CalypsoContextAdapter';
-import AgentDock from '../AgentDock';
+import { CalypsoChromeAdapter } from '../../adapters/chrome/calypso-chrome-adapter';
+import { CalypsoContextAdapter } from '../../adapters/context/calypso-context-adapter';
+import AgentDock from '../agent-dock';
+import BigSkyIcon from '../shared/big-sky-icon';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 export interface CalypsoAIAgentProps {
@@ -151,6 +152,7 @@ export default function CalypsoAIAgent( {
 			emptyViewSuggestions={ suggestions }
 			emptyViewHeading="How can I help you today?"
 			emptyViewHelp="Ask me anything about WordPress and your site."
+			fabIcon={ <BigSkyIcon color="blue" width={ 32 } height={ 32 } /> }
 			onClearChat={ handleClearChat }
 			sessionStorageKey="calypso-ai-agent-session"
 			chatStateStorageKey="calypso-ai-agent-chat-state"

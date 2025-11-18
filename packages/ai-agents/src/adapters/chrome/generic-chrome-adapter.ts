@@ -1,4 +1,4 @@
-import type { ChromeAdapter } from './ChromeAdapter';
+import type { ChromeAdapter } from './chrome-adapter';
 
 /**
  * Generic Chrome Adapter

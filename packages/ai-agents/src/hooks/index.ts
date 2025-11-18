@@ -1,5 +1,5 @@
-export { useChatState } from './useChatState';
-export type { UseChatStateResult, UseChatStateOptions, ChatState } from './useChatState';
+export { useChatState } from './use-chat-state';
+export type { UseChatStateResult, UseChatStateOptions, ChatState } from './use-chat-state';
 
-export { useAgentSession } from './useAgentSession';
-export type { UseAgentSessionResult, UseAgentSessionOptions } from './useAgentSession';
+export { useAgentSession } from './use-agent-session';
+export type { UseAgentSessionResult, UseAgentSessionOptions } from './use-agent-session';

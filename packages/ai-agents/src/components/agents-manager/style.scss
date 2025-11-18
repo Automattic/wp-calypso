@@ -136,7 +136,8 @@ $transition-timing: $transition-duration cubic-bezier(0.4, 0, 0.2, 1);
 
 /* Generic fallback */
 body.ai-agent-sidebar-container {
-	@include sidebar-base("main");
+	// Don't set background color on body - causes issues in Calypso
+	// Individual contexts (WP Admin, etc.) should handle their own backgrounds
 
 	&.ai-agent-sidebar-container--sidebar-open {
 		@include sidebar-open-base("main");

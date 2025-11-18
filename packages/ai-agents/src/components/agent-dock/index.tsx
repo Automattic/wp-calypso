@@ -12,14 +12,14 @@ import { AgentUI, createMessageRenderer, EmptyView } from '@automattic/agenttic-
 import { __ } from '@wordpress/i18n';
 import { drawerRight, login, rotateRight } from '@wordpress/icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAgentSession } from '../../hooks/useAgentSession';
-import { useChatState } from '../../hooks/useChatState';
-import { usePersistedAgentState } from '../../hooks/usePersistedAgentState';
-import AgentsManager from '../AgentsManager';
-import ChatHeader from '../shared/ChatHeader';
-import type { ChromeAdapter } from '../../adapters/chrome/ChromeAdapter';
-import type { ContextAdapter } from '../../adapters/context/ContextAdapter';
-import type { ChatHeaderMenuItem } from '../shared/ChatHeader';
+import { useAgentSession } from '../../hooks/use-agent-session';
+import { useChatState } from '../../hooks/use-chat-state';
+import { usePersistedAgentState } from '../../hooks/use-persisted-agent-state';
+import AgentsManager from '../agents-manager';
+import ChatHeader from '../shared/chat-header';
+import type { ChromeAdapter } from '../../adapters/chrome/chrome-adapter';
+import type { ContextAdapter } from '../../adapters/context/context-adapter';
+import type { ChatHeaderMenuItem } from '../shared/chat-header';
 
 export interface AgentDockProps {
 	/**
@@ -58,6 +58,10 @@ export interface AgentDockProps {
 	 * Custom markdown extensions
 	 */
 	markdownExtensions?: any;
+	/**
+	 * Custom icon for FAB button
+	 */
+	fabIcon?: JSX.Element;
 	/**
 	 * Callback when chat is cleared
 	 */
@@ -103,6 +107,7 @@ export default function AgentDock( {
 	emptyViewHelp = __( 'Ask me anything.', 'ai-agents' ),
 	markdownComponents = {},
 	markdownExtensions,
+	fabIcon,
 	onClearChat,
 	sessionStorageKey = 'ai-agent-session',
 	chatStateStorageKey = 'ai-agent-chat-state',
@@ -200,17 +205,11 @@ export default function AgentDock( {
 
 	const handleCollapse = useCallback( () => {
 		collapse();
-		if ( chromeAdapter && isDocked ) {
-			chromeAdapter.applyChrome( isDocked, true ); // collapsed
-		}
-	}, [ collapse, chromeAdapter, isDocked ] );
+	}, [ collapse ] );
 
 	const handleExpand = useCallback( () => {
 		expand();
-		if ( chromeAdapter && isDocked ) {
-			chromeAdapter.applyChrome( isDocked, false ); // expanded
-		}
-	}, [ expand, chromeAdapter, isDocked ] );
+	}, [ expand ] );
 
 	const handleDock = useCallback( () => {
 		setIsDocked( true );
@@ -352,6 +351,7 @@ export default function AgentDock( {
 			onUndock={ handleUndock }
 			defaultOpen={ chatState === 'expanded' }
 			defaultUndocked={ ! isDocked }
+			fabIcon={ fabIcon }
 		>
 			{ renderAgentUI }
 		</AgentsManager>

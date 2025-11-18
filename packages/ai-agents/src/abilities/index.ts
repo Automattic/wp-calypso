@@ -1,2 +1,2 @@
-export { AbilityRegistry, defaultAbilityRegistry } from './AbilityRegistry';
-export type { Ability, AbilityLoader } from './AbilityRegistry';
+export { AbilityRegistry, defaultAbilityRegistry } from './ability-registry';
+export type { Ability, AbilityLoader } from './ability-registry';
