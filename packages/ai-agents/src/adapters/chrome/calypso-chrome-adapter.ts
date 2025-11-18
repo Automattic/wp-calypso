@@ -33,6 +33,7 @@ export class CalypsoChromeAdapter implements ChromeAdapter {
 	private getChromeCSS(): string {
 		const sidebarRight = this.sidebarWidth + this.spacing;
 		const isWpAdmin = this.containerSelector === '#wpbody';
+		const adminMenuWidth = 272;
 
 		if ( isWpAdmin ) {
 			// WordPress admin chrome styles
@@ -59,25 +60,29 @@ export class CalypsoChromeAdapter implements ChromeAdapter {
 					left: ${ this.spacing }px;
 					bottom: ${ this.spacing }px;
 					height: calc(100vh - 32px - ${ this.spacing * 2 }px) !important;
+					border-left: 1px solid #545454;
 					border-right: 1px solid #545454;
+					border-bottom: 1px solid #545454;
+					border-radius: 0 0 0 8px;
 				}
 
 				#wpcontent {
-					margin-left: calc(160px + ${ this.spacing }px) !important;
+					margin-left: calc(${ adminMenuWidth }px + ${ this.spacing }px) !important;
 					margin-right: ${ sidebarRight }px !important;
 				}
 
 				${ this.containerSelector } {
 					position: fixed !important;
 					top: calc(32px + ${ this.spacing }px);
-					left: calc(160px + ${ this.spacing }px);
+					left: calc(${ adminMenuWidth }px + ${ this.spacing }px);
 					right: ${ sidebarRight }px;
 					bottom: ${ this.spacing }px;
-					width: calc(100% - 160px - ${ this.sidebarWidth }px - ${ this.spacing * 2 }px) !important;
+					width: calc(100% - ${ adminMenuWidth + this.spacing }px - ${ sidebarRight }px) !important;
 					height: calc(100vh - 32px - ${ this.spacing * 2 }px) !important;
 					max-height: calc(100vh - 32px - ${ this.spacing * 2 }px) !important;
 					min-height: 0;
 					box-sizing: border-box;
+					padding-left: ${ this.spacing }px;
 					border-radius: 0 0 8px 8px;
 					border: 1px solid #545454;
 					border-top: none;
