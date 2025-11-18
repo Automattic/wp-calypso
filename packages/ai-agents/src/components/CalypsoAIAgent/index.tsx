@@ -4,6 +4,7 @@
  */
 
 import { useCallback, useMemo } from 'react';
+import { CalypsoChromeAdapter } from '../../adapters/chrome/CalypsoChromeAdapter';
 import { CalypsoContextAdapter } from '../../adapters/context/CalypsoContextAdapter';
 import AgentDock from '../AgentDock';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
@@ -57,6 +58,11 @@ export default function CalypsoAIAgent( {
 			currentRoute,
 		} ) );
 	}, [ sectionName, site, currentRoute ] );
+
+	// Create chrome adapter for Calypso
+	const chromeAdapter = useMemo( () => {
+		return new CalypsoChromeAdapter( containerSelector );
+	}, [ containerSelector ] );
 
 	// Create agent configuration
 	const agentConfig = useMemo< UseAgentChatConfig >(
@@ -138,6 +144,7 @@ export default function CalypsoAIAgent( {
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
+			chromeAdapter={ chromeAdapter }
 			containerSelector={ containerSelector }
 			emptyViewSuggestions={ suggestions }
 			emptyViewHeading="How can I help you today?"
