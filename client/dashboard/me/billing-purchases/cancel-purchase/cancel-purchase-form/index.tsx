@@ -418,14 +418,21 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 		const variant = surveyStep !== UPSELL_STEP ? 'primary' : 'secondary';
 
 		return (
-			<Button
-				disabled={ ! canGoNext() }
-				isBusy={ isCancelling }
-				onClick={ onSubmit }
-				variant={ variant }
-			>
-				{ __( 'Submit' ) }
-			</Button>
+			<ButtonStack justify="flex-start">
+				<Button
+					disabled={ ! canGoNext() }
+					isBusy={ isCancelling }
+					onClick={ onSubmit }
+					variant={ variant }
+				>
+					{ __( 'Submit' ) }
+				</Button>
+				{ ! canGoNext() && ! isCancelling && (
+					<Button variant="link" onClick={ onSubmit }>
+						{ __( 'Skip' ) }
+					</Button>
+				) }
+			</ButtonStack>
 		);
 	};
 
