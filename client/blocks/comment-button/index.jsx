@@ -16,12 +16,13 @@ function CommentButton( {
 	target,
 	icon,
 	defaultLabel,
+	alwaysShowTooltip = false,
 } ) {
 	const translate = useTranslate();
 	const showLabel = commentCount > 0 || defaultLabel;
 	const label = commentCount || defaultLabel;
 	// Show a tooltip only when we are showing the number of existing comments.
-	const showTooltip = commentCount > 0;
+	const showTooltip = commentCount > 0 || alwaysShowTooltip;
 
 	return (
 		<TagName
@@ -50,6 +51,7 @@ CommentButton.propTypes = {
 	target: PropTypes.string,
 	icon: PropTypes.object,
 	defaultLabel: PropTypes.string,
+	alwaysShowTooltip: PropTypes.bool,
 };
 
 const mapStateToProps = ( state, ownProps ) => {

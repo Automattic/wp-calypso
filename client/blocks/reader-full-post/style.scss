@@ -153,6 +153,82 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.post-edit-button,
 	.reader-full-post__seen-button {
 		margin: 0;
+		padding: 8px 16px;
+		background: var( --color-surface );
+		border: 1px solid var( --color-neutral-10 );
+		border-radius: 24px;
+		transition: all 0.2s ease;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		height: auto;
+		min-height: 40px;
+		color: var( --color-neutral-20 );
+
+		&:hover {
+			background: var( --color-neutral-0 );
+			border-color: var( --color-neutral-20 );
+		}
+
+		svg {
+			flex-shrink: 0;
+			display: block;
+			opacity: 0.6;
+		}
+
+		&:hover svg {
+			opacity: 1;
+		}
+
+		.like-button__like-icons {
+			display: flex;
+			align-items: center;
+			line-height: 1;
+		}
+	}
+
+	.comment-button.tooltip,
+	.like-button.tooltip {
+		@include tooltip-base;
+		@include tooltip-top;
+	}
+
+	.like-button__label {
+		cursor: pointer;
+	}
+
+	// Reset SVG icon that has like-button class to not be affected by container styles
+	svg.like-button {
+		padding: 0;
+		margin: 0;
+		background: none;
+		border: none;
+		border-radius: 0;
+		min-height: auto;
+		height: auto;
+		width: 24px;
+		flex-shrink: 0;
+		display: block;
+		cursor: inherit;
+		transition: none;
+	}
+
+	.comment-button__label,
+	.like-button__label,
+	.post-edit-button__label {
+		font-size: $font-body-small;
+		color: var( --color-neutral-20 );
+	}
+
+	.post-edit-button__label {
+		margin-inline-start: 0;
+	}
+
+	.comment-button:hover .comment-button__label,
+	.like-button:hover .like-button__label,
+	.post-edit-button:hover .post-edit-button__label {
+		color: var( --color-text-subtle );
 	}
 
 	.comment-button svg,
@@ -163,16 +239,38 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	.comment-button.is-active,
 	.comment-button:hover {
+		background: var( --color-primary-0 );
+		border-color: var( --color-primary-10 );
+
+		svg {
+			opacity: 1;
+		}
+
 		svg.reader-comment path {
 			stroke: var( --color-link );
+		}
+
+		.comment-button__label {
+			color: var( --color-link );
 		}
 	}
 
 	.like-button:hover,
 	.like-button.is-active,
 	.like-button.is-liked {
+		background: var( --color-primary-0 );
+		border-color: var( --color-primary-10 );
+
+		svg {
+			opacity: 1;
+		}
+
 		svg.reader-star path {
 			stroke: var( --color-link );
+		}
+
+		.like-button__label {
+			color: var( --color-link );
 		}
 	}
 
@@ -183,17 +281,22 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 
 	.post-edit-button {
-		color: var( --color-text-subtle );
-
 		svg {
-			fill: var( --color-text-subtle );
+			opacity: 0.6;
 		}
 
 		&:hover {
+			background: var( --color-primary-0 );
+			border-color: var( --color-primary-10 );
 			color: var( --color-link );
 
 			svg {
 				fill: var( --color-link );
+				opacity: 1;
+			}
+
+			.post-edit-button__label {
+				color: var( --color-link );
 			}
 		}
 	}
@@ -203,7 +306,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .reader-full-post__action-bar-right {
 	display: flex;
 	align-items: center;
-	gap: 20px;
+	gap: 12px;
 }
 
 .reader-full-post__story {

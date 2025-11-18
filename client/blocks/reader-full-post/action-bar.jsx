@@ -29,6 +29,7 @@ const ReaderFullPostActionBar = ( {
 						onClick={ onCommentClick }
 						tagName="div"
 						icon={ ReaderCommentIcon( { iconSize: 24 } ) }
+						alwaysShowTooltip
 					/>
 				) }
 
