@@ -13,6 +13,7 @@ import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAgentSession } from '../../hooks/useAgentSession';
 import { useChatState } from '../../hooks/useChatState';
+import { usePersistedAgentState } from '../../hooks/usePersistedAgentState';
 import AgentsManager from '../AgentsManager';
 import type { ChromeAdapter } from '../../adapters/chrome/ChromeAdapter';
 import type { ContextAdapter } from '../../adapters/context/ContextAdapter';
@@ -70,13 +71,24 @@ export interface AgentDockProps {
 	 * Storage key for dock state persistence
 	 */
 	dockStateStorageKey?: string;
+	/**
+	 * Storage key for /me/preferences persistence
+	 */
+	preferenceKey?: string;
+	/**
+	 * Function to save preferences to server
+	 */
+	savePreference?: ( key: string, value: any ) => Promise< void >;
+	/**
+	 * Function to load preferences from server
+	 */
+	loadPreference?: ( key: string ) => Promise< any >;
 }
 
 /**
  * AgentDock Component
  *
  * Full-featured AI agent chat with docking/floating modes and context awareness.
- *
  * @param {AgentDockProps} props - Component props
  */
 export default function AgentDock( {
@@ -92,16 +104,38 @@ export default function AgentDock( {
 	sessionStorageKey = 'ai-agent-session',
 	chatStateStorageKey = 'ai-agent-chat-state',
 	dockStateStorageKey = 'ai-agent-docked',
+	preferenceKey = 'ai_agent_state',
+	savePreference,
+	loadPreference,
 }: AgentDockProps ) {
+	// Persisted state for /me/preferences
+	const {
+		state: persistedState,
+		setSessionId: setPersistedSessionId,
+		setIsOpen: setPersistedIsOpen,
+		setIsDocked: setPersistedIsDocked,
+		isLoading: isLoadingPersistedState,
+	} = usePersistedAgentState( {
+		preferenceKey,
+		savePreference,
+		loadPreference,
+	} );
+
 	const { sessionId, resetSession } = useAgentSession( {
 		storageKey: sessionStorageKey,
 	} );
+
 	const { chatState, toggleExpand, collapse, expand } = useChatState( {
 		storageKey: chatStateStorageKey,
 	} );
 
-	// Dock state from localStorage
+	// Dock state from localStorage (fallback) and persisted state
 	const [ isDocked, setIsDocked ] = useState( () => {
+		// Use persisted state if available
+		if ( persistedState.isDocked !== undefined ) {
+			return persistedState.isDocked;
+		}
+		// Fallback to localStorage
 		try {
 			const stored = localStorage.getItem( dockStateStorageKey );
 			return stored !== 'false'; // Default to docked
@@ -109,6 +143,28 @@ export default function AgentDock( {
 			return true;
 		}
 	} );
+
+	// Sync sessionId with persisted state
+	useEffect( () => {
+		if ( ! isLoadingPersistedState && sessionId ) {
+			setPersistedSessionId( sessionId );
+		}
+	}, [ sessionId, setPersistedSessionId, isLoadingPersistedState ] );
+
+	// Sync chatState with persisted isOpen
+	useEffect( () => {
+		if ( ! isLoadingPersistedState ) {
+			const isOpen = chatState === 'expanded';
+			setPersistedIsOpen( isOpen );
+		}
+	}, [ chatState, setPersistedIsOpen, isLoadingPersistedState ] );
+
+	// Sync isDocked with persisted state
+	useEffect( () => {
+		if ( ! isLoadingPersistedState ) {
+			setPersistedIsDocked( isDocked );
+		}
+	}, [ isDocked, setPersistedIsDocked, isLoadingPersistedState ] );
 
 	const { messages, isProcessing, error, onSubmit } = useAgentChat( agentConfig );
 
@@ -125,6 +181,8 @@ export default function AgentDock( {
 		};
 	}, [ chromeAdapter, isDocked, chatState ] );
 
+	// TODO: Use this when adding custom chat header with clear chat menu item
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleClearChat = useCallback( async () => {
 		const agentManager = getAgentManager();
 		const agentKey = `${ agentConfig.agentId }-${ sessionId }`;
@@ -244,9 +302,6 @@ export default function AgentDock( {
 			emptyViewHeading,
 			emptyViewHelp,
 			suggestions,
-			handleClearChat,
-			handleDock,
-			handleUndock,
 		]
 	);
 
