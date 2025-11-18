@@ -36,6 +36,14 @@ export interface CalypsoAIAgentProps {
 	 * Handle close callback
 	 */
 	handleClose?: () => void;
+	/**
+	 * Save preference callback (optional, uses wpcomRequest if not provided)
+	 */
+	savePreference?: ( key: string, value: any ) => Promise< void >;
+	/**
+	 * Load preference callback (optional, uses wpcomRequest if not provided)
+	 */
+	loadPreference?: ( key: string ) => Promise< any >;
 }
 
 /**
@@ -50,6 +58,8 @@ export default function CalypsoAIAgent( {
 	sectionName,
 	site,
 	currentUser,
+	savePreference: externalSavePreference,
+	loadPreference: externalLoadPreference,
 }: CalypsoAIAgentProps ) {
 	// Create context adapter for Calypso
 	// TODO: Pass this to AgentDock once context integration is needed
@@ -107,8 +117,8 @@ export default function CalypsoAIAgent( {
 		// Clear chat handler
 	}, [] );
 
-	// Save/load preferences using wpcomRequest
-	const savePreference = useCallback( async ( key: string, value: any ) => {
+	// Save/load preferences - use provided callbacks or fall back to wpcomRequest
+	const defaultSavePreference = useCallback( async ( key: string, value: any ) => {
 		if ( typeof window !== 'undefined' && ( window as any ).wpcomRequest ) {
 			const wpcomRequest = ( window as any ).wpcomRequest;
 			try {
@@ -129,7 +139,7 @@ export default function CalypsoAIAgent( {
 		}
 	}, [] );
 
-	const loadPreference = useCallback( async ( key: string ) => {
+	const defaultLoadPreference = useCallback( async ( key: string ) => {
 		if ( typeof window !== 'undefined' && ( window as any ).wpcomRequest ) {
 			const wpcomRequest = ( window as any ).wpcomRequest;
 			try {
@@ -146,6 +156,9 @@ export default function CalypsoAIAgent( {
 		}
 		return null;
 	}, [] );
+
+	const savePreference = externalSavePreference || defaultSavePreference;
+	const loadPreference = externalLoadPreference || defaultLoadPreference;
 
 	return (
 		<AgentDock
