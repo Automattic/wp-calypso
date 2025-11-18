@@ -85,7 +85,7 @@ export function getJetpackProductsForSite( site: Site ) {
 
 export function getSitePlanDisplayName( site: Site ) {
 	if ( site.is_wpcom_staging_site ) {
-		return __( 'Staging site' );
+		return __( 'Staging Site' );
 	}
 
 	const plan = site.plan;
