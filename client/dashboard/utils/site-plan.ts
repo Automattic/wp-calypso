@@ -129,13 +129,9 @@ export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
 		return `https://agencies.automattic.com/sites/overview/${ site.slug }`;
 	}
 
-	if ( isCommerceGarden( site ) ) {
-		return `${ protocol }//${ host }/setup/woo-hosted-plans?siteSlug=${ site.slug }`;
-	}
-
 	if ( site.plan?.is_free ) {
 		return isCommerceGarden( site )
-			? `${ protocol }//${ host }/plans/${ site.slug }`
+			? `${ protocol }//${ host }/setup/woo-hosted-plans?siteSlug=${ site.slug }`
 			: `${ protocol }//${ host }/setup/plan-upgrade?siteSlug=${ site.slug }`;
 	}
 
