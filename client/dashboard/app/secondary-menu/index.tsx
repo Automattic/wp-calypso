@@ -337,7 +337,7 @@ function SecondaryMenu() {
 	const isDesktop = useViewportMatch( 'medium' );
 
 	return (
-		<HStack className="dashboard-secondary-menu" spacing={ isDesktop ? 2 : 0 } justify="flex-end">
+		<HStack spacing={ isDesktop ? 2 : 0 } justify="flex-end">
 			{ supports.reader && (
 				<Button
 					className="dashboard-secondary-menu__item"
