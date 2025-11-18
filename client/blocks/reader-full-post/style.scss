@@ -90,12 +90,12 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	align-items: flex-start;
 	justify-content: flex-end;
 	flex: 0 1 auto;
-	max-width: 400px;
+	min-width: 0;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	// When tags wrap to their own row, make them full-width
+	@media ( max-width: 1200px ) {
 		flex: 1 0 100%;
 		justify-content: flex-start;
-		max-width: none;
 	}
 }
 
