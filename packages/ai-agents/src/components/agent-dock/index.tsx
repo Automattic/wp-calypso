@@ -90,6 +90,14 @@ export interface AgentDockProps {
 	 * Function to load preferences from server
 	 */
 	loadPreference?: ( key: string ) => Promise< any >;
+	/**
+	 * Start with dock open (overrides saved state)
+	 */
+	defaultOpen?: boolean;
+	/**
+	 * Media query for desktop breakpoint (default: '(min-width: 960px)')
+	 */
+	desktopMediaQuery?: string;
 }
 
 /**
@@ -115,6 +123,8 @@ export default function AgentDock( {
 	preferenceKey = 'ai_agent_state',
 	savePreference,
 	loadPreference,
+	defaultOpen = false,
+	desktopMediaQuery = '(min-width: 960px)',
 }: AgentDockProps ) {
 	// Persisted state for /me/preferences
 	const {
@@ -139,6 +149,10 @@ export default function AgentDock( {
 
 	// Dock state from localStorage (fallback) and persisted state
 	const [ isDocked, setIsDocked ] = useState( () => {
+		// Force docked mode if defaultOpen is true
+		if ( defaultOpen ) {
+			return true;
+		}
 		// Use persisted state if available
 		if ( persistedState.isDocked !== undefined ) {
 			return persistedState.isDocked;
@@ -343,6 +357,10 @@ export default function AgentDock( {
 		]
 	);
 
+	// Determine if sidebar should be open by default
+	// Priority: defaultOpen prop > chatState from storage
+	const shouldBeOpen = defaultOpen || chatState === 'expanded';
+
 	return (
 		<AgentsManager
 			sidebarContainer={ containerSelector }
@@ -350,8 +368,9 @@ export default function AgentDock( {
 			onCloseSidebar={ handleCollapse }
 			onDock={ handleDock }
 			onUndock={ handleUndock }
-			defaultOpen={ chatState === 'expanded' }
+			defaultOpen={ shouldBeOpen }
 			defaultUndocked={ ! isDocked }
+			desktopMediaQuery={ desktopMediaQuery }
 			fabIcon={ fabIcon }
 		>
 			{ renderAgentUI }

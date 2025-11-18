@@ -44,6 +44,10 @@ export interface CalypsoAIAgentProps {
 	 * Load preference callback (optional, uses wpcomRequest if not provided)
 	 */
 	loadPreference?: ( key: string ) => Promise< any >;
+	/**
+	 * Start with agent open (overrides saved state)
+	 */
+	defaultOpen?: boolean;
 }
 
 /**
@@ -60,6 +64,7 @@ export default function CalypsoAIAgent( {
 	currentUser,
 	savePreference: externalSavePreference,
 	loadPreference: externalLoadPreference,
+	defaultOpen = false,
 }: CalypsoAIAgentProps ) {
 	// Create context adapter for Calypso
 	// TODO: Pass this to AgentDock once context integration is needed
@@ -71,10 +76,19 @@ export default function CalypsoAIAgent( {
 		} ) );
 	}, [ sectionName, site, currentRoute ] );
 
-	// Create chrome adapter for Calypso
-	// Uses 'body' as the actual container selector for portal rendering,
-	// but targets #wpcom for chrome framing
+	// Create chrome adapter based on environment
+	// In wp-admin: frame #wpbody
+	// In Calypso: frame #wpcom
 	const chromeAdapter = useMemo( () => {
+		// Detect if we're in wp-admin
+		const isWpAdmin = !! document.getElementById( 'wpwrap' );
+
+		if ( isWpAdmin ) {
+			// In wp-admin, frame the #wpbody container
+			return new CalypsoChromeAdapter( '#wpbody', 350, 16 );
+		}
+
+		// Default: Calypso with #wpcom container
 		return new CalypsoChromeAdapter();
 	}, [] );
 
@@ -84,11 +98,11 @@ export default function CalypsoAIAgent( {
 			agentId: 'wp-orchestrator',
 			agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
 			sessionId: `calypso-${ currentUser?.ID || 'anonymous' }-${ Date.now() }`,
-			authProvider: createCalypsoAuthProvider(),
+			authProvider: createCalypsoAuthProvider( site?.ID ),
 			enableStreaming: true,
 			// TODO: Add context provider and abilities
 		} ),
-		[ currentUser ]
+		[ currentUser, site?.ID ]
 	);
 
 	// Empty suggestions for now - can be customized per section
@@ -176,6 +190,8 @@ export default function CalypsoAIAgent( {
 			preferenceKey="calypso_ai_agent_state"
 			savePreference={ savePreference }
 			loadPreference={ loadPreference }
+			defaultOpen={ defaultOpen }
+			desktopMediaQuery="(min-width: 600px)"
 		/>
 	);
 }

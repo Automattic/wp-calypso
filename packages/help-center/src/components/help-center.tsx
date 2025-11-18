@@ -2,11 +2,13 @@
 /**
  * External Dependencies
  */
+import { CalypsoAIAgent } from '@automattic/ai-agents';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
-import { createPortal, useEffect, useRef } from '@wordpress/element';
+import { createPortal, useCallback, useEffect, useRef } from '@wordpress/element';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 /**
  * Internal Dependencies
  */
@@ -15,6 +17,7 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
+import { useShouldUseUnifiedAgent } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -27,13 +30,26 @@ const HelpCenter: React.FC< Container > = ( {
 	hidden,
 	currentRoute = window.location.pathname + window.location.search + window.location.hash,
 } ) => {
-	const portalParent = useRef( document.createElement( 'div' ) ).current;
+	// Create portal parent and append to DOM immediately (only once)
+	const portalParentRef = useRef< HTMLDivElement >();
+	if ( ! portalParentRef.current ) {
+		const div = document.createElement( 'div' );
+		div.classList.add( 'help-center' );
+		div.setAttribute( 'role', 'dialog' );
+		div.setAttribute( 'aria-modal', 'true' );
+		div.setAttribute( 'aria-labelledby', 'header-text' );
+		document.body.appendChild( div );
+		portalParentRef.current = div;
+	}
+	const portalParent = portalParentRef.current;
+
+	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	const isHelpCenterShown = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
-	const { currentUser } = useHelpCenterContext();
+	const { currentUser, site, sectionName } = useHelpCenterContext();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
@@ -42,27 +58,79 @@ const HelpCenter: React.FC< Container > = ( {
 			? supportInteractionsOpen?.length > 0
 			: false;
 
+	// Save/load preferences using wpcom-proxy-request
+	const savePreference = useCallback( async ( key: string, value: any ) => {
+		if ( canAccessWpcomApis() ) {
+			try {
+				await wpcomRequest( {
+					path: '/me/preferences',
+					apiNamespace: 'wpcom/v2',
+					method: 'PUT',
+					body: {
+						calypso_preferences: {
+							[ key ]: value,
+						},
+					},
+				} );
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[HelpCenter] Failed to save preferences:', error );
+			}
+		}
+	}, [] );
+
+	const loadPreference = useCallback( async ( key: string ) => {
+		if ( canAccessWpcomApis() ) {
+			try {
+				const response = await wpcomRequest< {
+					calypso_preferences?: Record< string, any >;
+				} >( {
+					path: '/me/preferences',
+					apiNamespace: 'wpcom/v2',
+					method: 'GET',
+				} );
+				return response?.calypso_preferences?.[ key ] || null;
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[HelpCenter] Failed to load preferences:', error );
+			}
+		}
+		return null;
+	}, [] );
+
 	useEffect( () => {
 		if ( currentUser ) {
 			initializeAnalytics( currentUser, null );
 		}
 	}, [ currentUser ] );
 
+	// Cleanup: remove portal parent when component unmounts
 	useEffect( () => {
-		const classes = [ 'help-center' ];
-		portalParent.classList.add( ...classes );
-
-		portalParent.setAttribute( 'role', 'dialog' );
-		portalParent.setAttribute( 'aria-modal', 'true' );
-		portalParent.setAttribute( 'aria-labelledby', 'header-text' );
-
-		document.body.appendChild( portalParent );
-
 		return () => {
-			document.body.removeChild( portalParent );
+			if ( portalParent && portalParent.parentNode ) {
+				document.body.removeChild( portalParent );
+			}
 		};
 	}, [ portalParent ] );
 
+	// Render unified agent if flag is enabled
+	if ( shouldUseUnifiedAgent ) {
+		return createPortal(
+			<CalypsoAIAgent
+				containerSelector=".help-center"
+				currentUser={ currentUser }
+				site={ site }
+				sectionName={ sectionName }
+				savePreference={ savePreference }
+				loadPreference={ loadPreference }
+				handleClose={ handleClose }
+				defaultOpen
+			/>,
+			portalParent
+		);
+	}
+
+	// Default: render traditional help center
 	return createPortal(
 		<>
 			<HelpCenterContainer

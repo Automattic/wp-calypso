@@ -226,10 +226,20 @@ function AdminHelpCenterContent() {
 }
 
 const target = document.getElementById( 'help-center-masterbar' );
+// eslint-disable-next-line no-console
+console.log( '[help-center-wp-admin] Mounting help center widget:', {
+	target,
+	found: !! target,
+	configData: window.configData,
+} );
+
 if ( target ) {
 	createRoot( target ).render(
 		<QueryClientProvider client={ queryClient }>
 			<AdminHelpCenterContent />
 		</QueryClientProvider>
 	);
+} else {
+	// eslint-disable-next-line no-console
+	console.error( '[help-center-wp-admin] Target element #help-center-masterbar not found!' );
 }

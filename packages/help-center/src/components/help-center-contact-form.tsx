@@ -373,7 +373,20 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
+	// Debug: Log when we're about to show GPT response
+	// eslint-disable-next-line no-console
+	console.log( '[HelpCenterContactForm] GPT Response conditions:', {
+		enableGPTResponse,
+		showingGPTResponse,
+		willRender: enableGPTResponse && showingGPTResponse,
+		urlParams: Object.fromEntries( params.entries() ),
+	} );
+
 	if ( enableGPTResponse && showingGPTResponse ) {
+		// eslint-disable-next-line no-console
+		console.log(
+			'[HelpCenterContactForm] Rendering GPT response section with HelpCenterAIAssistant'
+		);
 		return (
 			<>
 				<div className="help-center-contact-form__wrapper">

@@ -62,7 +62,9 @@ export function HelpCenterAIAssistant( {
 	const loadPreference = useCallback( async ( key: string ) => {
 		if ( canAccessWpcomApis() ) {
 			try {
-				const response = await wpcomRequest( {
+				const response = await wpcomRequest< {
+					calypso_preferences?: Record< string, any >;
+				} >( {
 					path: '/me/preferences',
 					apiNamespace: 'wpcom/v2',
 					method: 'GET',

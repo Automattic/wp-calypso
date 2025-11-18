@@ -28,9 +28,72 @@ export class CalypsoChromeAdapter implements ChromeAdapter {
 	/**
 	 * Get the chrome CSS styles
 	 * Adapted from big-sky-plugin chrome styles for Calypso's #wpcom container
+	 * or wp-admin's #wpbody container
 	 */
 	private getChromeCSS(): string {
 		const sidebarRight = this.sidebarWidth + this.spacing;
+		const isWpAdmin = this.containerSelector === '#wpbody';
+
+		if ( isWpAdmin ) {
+			// WordPress admin chrome styles
+			return `
+				body {
+					background-color: #1e1e1e;
+				}
+
+				#wpadminbar {
+					position: fixed !important;
+					top: ${ this.spacing }px;
+					left: ${ this.spacing }px;
+					right: ${ sidebarRight }px;
+					width: auto !important;
+					border-radius: 8px 8px 0 0;
+					border: 1px solid #545454;
+					border-bottom: none;
+				}
+
+				#adminmenuback,
+				#adminmenuwrap {
+					position: fixed !important;
+					top: calc(32px + ${ this.spacing }px);
+					left: ${ this.spacing }px;
+					bottom: ${ this.spacing }px;
+					height: calc(100vh - 32px - ${ this.spacing * 2 }px) !important;
+					border-right: 1px solid #545454;
+				}
+
+				#wpcontent {
+					margin-left: calc(160px + ${ this.spacing }px) !important;
+					margin-right: ${ sidebarRight }px !important;
+				}
+
+				${ this.containerSelector } {
+					position: fixed !important;
+					top: calc(32px + ${ this.spacing }px);
+					left: calc(160px + ${ this.spacing }px);
+					right: ${ sidebarRight }px;
+					bottom: ${ this.spacing }px;
+					width: calc(100% - 160px - ${ this.sidebarWidth }px - ${ this.spacing * 2 }px) !important;
+					height: calc(100vh - 32px - ${ this.spacing * 2 }px) !important;
+					max-height: calc(100vh - 32px - ${ this.spacing * 2 }px) !important;
+					min-height: 0;
+					box-sizing: border-box;
+					border-radius: 0 0 8px 8px;
+					border: 1px solid #545454;
+					border-top: none;
+					overflow-y: auto;
+					overflow-x: hidden;
+					background-color: #ffffff;
+					margin: 0 !important;
+				}
+
+				#wpfooter {
+					margin-right: ${ sidebarRight }px !important;
+				}
+			`;
+		}
+
+		// Calypso chrome styles
 		return `
 			body {
 				background-color: #1e1e1e;
