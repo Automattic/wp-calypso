@@ -52,7 +52,7 @@ export default function DomainTransferSetup() {
 					{ createInterpolateElement(
 						// translators: <registrar/> is the domain name provider, <domain/> is the domain name
 						__(
-							'Log in to <registrar/> and open DNS management for <domain/>. Go to Transfer, then switch off Domain Lock. Need help? <link>Follow our guide</link>'
+							'Log in to <registrar/>, open the management page for <domain/>. and switch off the domain lock. Need help? <link>Follow our guide</link>'
 						),
 
 						{
@@ -180,44 +180,58 @@ export default function DomainTransferSetup() {
 								) }
 							</Text>
 						</VStack>
-						{ steps.map( ( step, index ) => (
-							<div key={ step.title }>
-								<SetupStep
-									className="domain-connection-setup__step"
-									expanded={ stepsExpanded[ index ] }
-									completed={ stepsCompleted[ index ] }
-									onCheckboxChange={ ( checked ) => handleStepChange( index, checked ) }
-									onToggle={ ( expanded ) => handleStepToggle( index, expanded ) }
-									title={ step.title }
-									label={ step.label }
-								>
-									{ step.content }
-								</SetupStep>
-								{ index < steps.length - 1 && <CardDivider /> }
-							</div>
-						) ) }
 
-						<ButtonStack justify="flex-start">
-							<Button
-								variant="primary"
-								onClick={ () => {} }
-								isBusy={ false }
-								disabled={ authorizationCode.length === 0 }
+						<div>
+							<SetupStep
+								className="domain-connection-setup__step"
+								expanded={ stepsExpanded[ 0 ] }
+								completed={ stepsCompleted[ 0 ] }
+								onCheckboxChange={ ( checked ) => handleStepChange( 0, checked ) }
+								onToggle={ ( expanded ) => handleStepToggle( 0, expanded ) }
+								title={ steps[ 0 ].title }
+								label={ steps[ 0 ].label }
 							>
-								{ __( 'Transfer domain' ) }
-							</Button>
-						</ButtonStack>
+								{ steps[ 0 ].content }
+							</SetupStep>
+							<CardDivider />
+						</div>
+						<div>
+							<SetupStep
+								className="domain-connection-setup__step"
+								expanded={ stepsExpanded[ 1 ] }
+								completed={ authorizationCode.length > 0 }
+								onCheckboxChange={ ( checked ) => handleStepChange( 1, checked ) }
+								onToggle={ ( expanded ) => handleStepToggle( 1, expanded ) }
+								title={ steps[ 1 ].title }
+								label={ steps[ 1 ].label }
+							>
+								{ steps[ 1 ].content }
+							</SetupStep>
+						</div>
 
-						<Text size="medium" weight={ 500 }>
-							{ __( 'Need help?' ) }
-						</Text>
-						<VStack spacing={ 2 }>
-							<InlineSupportLink supportContext="transfer-domain-registration">
-								{ __( 'Domain name transfer guide' ) }
-							</InlineSupportLink>
-							<InlineSupportLink supportContext="general-support-options">
-								{ __( 'Contact support' ) }
-							</InlineSupportLink>
+						<VStack spacing={ 6 }>
+							<ButtonStack justify="flex-start">
+								<Button
+									variant="primary"
+									onClick={ () => {} }
+									isBusy={ false }
+									disabled={ authorizationCode.length === 0 }
+								>
+									{ __( 'Transfer domain' ) }
+								</Button>
+							</ButtonStack>
+
+							<Text size="medium" weight={ 500 }>
+								{ __( 'Need help?' ) }
+							</Text>
+							<VStack spacing={ 2 }>
+								<InlineSupportLink supportContext="transfer-domain-registration">
+									{ __( 'Domain name transfer guide' ) }
+								</InlineSupportLink>
+								<InlineSupportLink supportContext="general-support-options">
+									{ __( 'Contact support' ) }
+								</InlineSupportLink>
+							</VStack>
 						</VStack>
 					</CardBody>
 				</Card>
