@@ -12290,24 +12290,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dataviews@npm:^10.1.0":
-  version: 10.1.0
-  resolution: "@wordpress/dataviews@npm:10.1.0"
+"@wordpress/dataviews@npm:^10.3.0":
+  version: 10.3.0
+  resolution: "@wordpress/dataviews@npm:10.3.0"
   dependencies:
     "@ariakit/react": "npm:^0.4.15"
-    "@wordpress/base-styles": "npm:^6.9.0"
-    "@wordpress/components": "npm:^30.6.0"
-    "@wordpress/compose": "npm:^7.33.0"
-    "@wordpress/data": "npm:^10.33.0"
-    "@wordpress/date": "npm:^5.33.0"
-    "@wordpress/element": "npm:^6.33.0"
-    "@wordpress/i18n": "npm:^6.6.0"
-    "@wordpress/icons": "npm:^11.0.0"
-    "@wordpress/keycodes": "npm:^4.33.0"
-    "@wordpress/primitives": "npm:^4.33.0"
-    "@wordpress/private-apis": "npm:^1.33.0"
-    "@wordpress/url": "npm:^4.33.0"
-    "@wordpress/warning": "npm:^3.33.0"
+    "@wordpress/base-styles": "npm:^6.11.0"
+    "@wordpress/components": "npm:^30.8.0"
+    "@wordpress/compose": "npm:^7.35.0"
+    "@wordpress/data": "npm:^10.35.0"
+    "@wordpress/date": "npm:^5.35.0"
+    "@wordpress/element": "npm:^6.35.0"
+    "@wordpress/i18n": "npm:^6.8.0"
+    "@wordpress/icons": "npm:^11.2.0"
+    "@wordpress/keycodes": "npm:^4.35.0"
+    "@wordpress/primitives": "npm:^4.35.0"
+    "@wordpress/private-apis": "npm:^1.35.0"
+    "@wordpress/url": "npm:^4.35.0"
+    "@wordpress/warning": "npm:^3.35.0"
     clsx: "npm:^2.1.1"
     colord: "npm:^2.7.0"
     date-fns: "npm:^4.1.0"
@@ -12317,7 +12317,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 75cf66a60a20b6ebd056ee3885a2f269f75f1f13cc7337fe0d437b1c0960750e2c6d40a3e4f0b67eec5d0bb26a1546a1c728d650b7eee0ccb62aa33275b119ec
+  checksum: aeb420b6204a1bc5327864adb9e83095b968cf2ae59af4b5b124acac10de8e544998aa1b26d9847b699674294abb3212be6928f8351904ba964da5f6e9577402
   languageName: node
   linkType: hard
 
