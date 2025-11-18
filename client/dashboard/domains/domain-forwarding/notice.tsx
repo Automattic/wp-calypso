@@ -35,7 +35,7 @@ export const DomainForwardingNotice = ( {
 			<Notice variant="warning" title={ __( 'Your domain is using external name servers' ) }>
 				{ createInterpolateElement(
 					__(
-						'This means that the Domain Forwarding records you’re editing won’t be in effect until you switch to use WordPress.com name servers. <link>You can update your name servers here</link>.'
+						'This means that the Domain Forwarding records you’re editing won’t be in effect until you switch to use WordPress.com name servers. <link>You can update your name servers here</link>'
 					),
 					{
 						link: <Link to={ domainNameServersRoute.fullPath } params={ { domainName } } />,
