@@ -81,12 +81,17 @@ async function executeToolOrAbility(
 							};
 							const result =
 								await ability.callback( enhancedArgs );
-							// Respect returnToAgent from callback if present, otherwise default to true
-							const returnToAgent =
-								result?.returnToAgent !== undefined
-									? result.returnToAgent
-									: true;
-							return { result, returnToAgent };
+							// Respect returnToAgent and agentMessage from callback if present
+							return {
+								result,
+								returnToAgent:
+									result?.returnToAgent !== undefined
+										? result.returnToAgent
+										: true,
+								...( result?.agentMessage && {
+									agentMessage: result.agentMessage,
+								} ),
+							};
 						} catch ( error ) {
 							logger(
 								'Error executing ability %s: %O',
