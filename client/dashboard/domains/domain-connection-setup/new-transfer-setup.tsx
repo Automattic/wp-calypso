@@ -6,6 +6,7 @@ import {
 	__experimentalText as Text,
 	Button,
 	ExternalLink,
+	TextControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -32,6 +33,7 @@ export default function DomainTransferSetup() {
 
 	const [ stepsCompleted, setStepsCompleted ] = useState< boolean[] >( [ false, false ] );
 	const [ stepsExpanded, setStepsExpanded ] = useState< boolean[] >( [ false, false ] );
+	const [ authorizationCode, setAuthorizationCode ] = useState( '' );
 
 	const steps = [
 		{
@@ -76,6 +78,14 @@ export default function DomainTransferSetup() {
 							'Once domain is unlocked, enter your unique authorization code below. It may also be called a transfer key, auth code, or EPP.'
 						) }
 					</Text>
+
+					<div style={ { width: '50%' } }>
+						<TextControl
+							label={ __( 'Authorization code' ) }
+							value={ authorizationCode }
+							onChange={ setAuthorizationCode }
+						/>
+					</div>
 				</VStack>
 			),
 		},
@@ -188,7 +198,12 @@ export default function DomainTransferSetup() {
 						) ) }
 
 						<ButtonStack justify="flex-start">
-							<Button variant="primary" onClick={ () => {} } isBusy={ false } disabled={ false }>
+							<Button
+								variant="primary"
+								onClick={ () => {} }
+								isBusy={ false }
+								disabled={ authorizationCode.length === 0 }
+							>
 								{ __( 'Transfer domain' ) }
 							</Button>
 						</ButtonStack>
