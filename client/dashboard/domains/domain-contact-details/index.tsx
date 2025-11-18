@@ -8,6 +8,7 @@ import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { Card, CardBody } from '../../components/card';
@@ -23,8 +24,28 @@ export default function DomainContactInfo() {
 
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: whoisData } = useQuery( domainWhoisQuery( domainName ) );
+	const { data: whoisData } = useQuery( { ...domainWhoisQuery( domainName ), staleTime: 0 } );
 	const registrantWhoisData = findRegistrantWhois( whoisData );
+
+	const { initialData, key } = useMemo( () => {
+		const initialData = {
+			firstName: registrantWhoisData?.fname ?? '',
+			lastName: registrantWhoisData?.lname ?? '',
+			organization: registrantWhoisData?.org ?? '',
+			email: registrantWhoisData?.email ?? '',
+			phone: registrantWhoisData?.phone ?? '',
+			address1: registrantWhoisData?.sa1 ?? '',
+			address2: registrantWhoisData?.sa2 ?? '',
+			city: registrantWhoisData?.city ?? '',
+			state: registrantWhoisData?.state ?? '',
+			countryCode: registrantWhoisData?.country_code ?? '',
+			postalCode: registrantWhoisData?.pc ?? '',
+			fax: registrantWhoisData?.fax ?? '',
+			optOutTransferLock: false,
+		};
+
+		return { initialData, key: JSON.stringify( initialData ) };
+	}, [ registrantWhoisData ] );
 
 	const validateMutation = useMutation( domainWhoisValidateMutation( [ domainName ] ) );
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
@@ -79,22 +100,8 @@ export default function DomainContactInfo() {
 						</Card>
 					)
 				}
-				initialData={
-					{
-						firstName: registrantWhoisData?.fname ?? '',
-						lastName: registrantWhoisData?.lname ?? '',
-						organization: registrantWhoisData?.org ?? '',
-						email: registrantWhoisData?.email ?? '',
-						phone: registrantWhoisData?.phone ?? '',
-						address1: registrantWhoisData?.sa1 ?? '',
-						address2: registrantWhoisData?.sa2 ?? '',
-						city: registrantWhoisData?.city ?? '',
-						state: registrantWhoisData?.state ?? '',
-						countryCode: registrantWhoisData?.country_code ?? '',
-						postalCode: registrantWhoisData?.pc ?? '',
-						fax: registrantWhoisData?.fax ?? '',
-					} as DomainContactDetails
-				}
+				key={ key }
+				initialData={ initialData }
 			/>
 		</PageLayout>
 	);
