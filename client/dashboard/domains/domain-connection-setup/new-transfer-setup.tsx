@@ -101,9 +101,14 @@ export default function DomainTransferSetup() {
 								setAuthorizationCode( value || '' );
 								setError( null );
 							} }
+							__nextHasNoMarginBottom
 						/>
 					</div>
-					{ error && <Text style={ { color: 'var(--color-error)' } }>{ error }</Text> }
+					{ error && (
+						<Text intent="error">
+							{ __( 'Error:' ) } { error }
+						</Text>
+					) }
 				</VStack>
 			),
 		},
@@ -193,8 +198,12 @@ export default function DomainTransferSetup() {
 								) }
 							</Text>
 							<Text>
-								{ __(
-									'Domain name transfers typically take 5–7 days. If you want to use it quicker, connect your domain name first, then initiate the transfer from GoDaddy later.'
+								{ sprintf(
+									// translators: %s is a domain registrar
+									__(
+										'Domain name transfers typically take 5–7 days. If you want to use it quicker, connect your domain name first, then initiate the transfer from %s later.'
+									),
+									registrar || __( 'your domain name provider' )
 								) }
 							</Text>
 						</VStack>
