@@ -18,7 +18,6 @@ function Header() {
 					style={ {
 						display: 'flex',
 						alignItems: 'center',
-						paddingInlineEnd: isDesktop ? '16px' : '0',
 					} }
 				>
 					<RouterLinkButton
