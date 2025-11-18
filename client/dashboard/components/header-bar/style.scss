@@ -20,13 +20,6 @@ $component-icon-padding: 6px;
 		padding-inline: calc(#{$grid-unit-30} - #{$component-icon-padding});
 	}
 
-	/**
-	 * We don't need to match container padding when the layout is larger than max-width.
-	 **/
-	@media (min-width: $page-layout-max-width-large ) {
-		padding-inline: $grid-unit-15;
-	}
-
 	&.is-support-user-session {
 		background-color: var( --dashboard-header__support-background-color );
 	}
