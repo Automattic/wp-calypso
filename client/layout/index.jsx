@@ -57,6 +57,7 @@ import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
 import HelpCenterLoader from './help-center-loader';
+import AIAgentLoader from './ai-agent-loader';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
 
@@ -263,6 +264,10 @@ class Layout extends Component {
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
+					currentRoute={ this.props.currentRoute }
+				/>
+				<AIAgentLoader
+					sectionName={ this.props.sectionName }
 					currentRoute={ this.props.currentRoute }
 				/>
 				{ ! shouldDisableSidebarScrollSynchronizer && (

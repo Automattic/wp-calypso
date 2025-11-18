@@ -5,9 +5,13 @@
  * Includes flexible adapters for different environments (WordPress, Calypso, generic).
  */
 
+// Default export for AsyncLoad integration in Calypso
+export { default } from './components/CalypsoAIAgent';
+
 // Main Components
 export { default as AgentsManager } from './components/AgentsManager';
 export { default as AgentDock } from './components/AgentDock';
+export { default as CalypsoAIAgent } from './components/CalypsoAIAgent';
 
 // Hooks
 export { useChatState, useAgentSession } from './hooks';
@@ -52,3 +56,4 @@ export type {
 	AgentsManagerRenderProps,
 	AgentDockProps,
 } from './types';
+export type { CalypsoAIAgentProps } from './components/CalypsoAIAgent';
