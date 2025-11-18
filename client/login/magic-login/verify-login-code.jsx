@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { navigate } from 'calypso/lib/navigate';
+import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
@@ -252,8 +253,8 @@ const VerifyLoginCode = ( {
 				</div>
 			</div>
 
-			<div className="magic-login__footer">
-				<p>
+			<OneLoginFooter>
+				<p className="one-login__footer-text">
 					{ translate(
 						"Didn't get the code? Check your spam folder, or {{button}}resend the email{{/button}}. Wrong email or account? {{link}}Use a different account{{/link}}.",
 						{
@@ -266,7 +267,7 @@ const VerifyLoginCode = ( {
 						}
 					) }
 				</p>
-			</div>
+			</OneLoginFooter>
 		</>
 	);
 };

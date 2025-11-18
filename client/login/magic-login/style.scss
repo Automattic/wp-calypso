@@ -66,6 +66,10 @@
 
 		.magic-login__successfully-jetpack {
 			padding: 0 24px 0 24px;
+			// Matches .form-fieldset default margin overwritten in Jetpack view
+			margin-bottom: rem( 20px );
+			// Matches .card.logged-out-form padding-bottom overridden by Jetpack styles
+			padding-bottom: rem( 16px );
 		}
 
 		&__loading-spinner--jetpack {

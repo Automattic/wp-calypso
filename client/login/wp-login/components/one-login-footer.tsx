@@ -13,6 +13,7 @@ interface OneLoginFooterProps {
 	 * when `isLoginView` is false, this is the "back to login" link
 	 */
 	loginLink?: JSX.Element;
+	children?: React.ReactNode;
 	/**
 	 * when `isLoginView` is false, this is the "support" link
 	 */
@@ -32,6 +33,7 @@ const OneLoginFooter = ( {
 	loginLink,
 	isLoginView,
 	supportLink,
+	children,
 }: OneLoginFooterProps ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 
@@ -58,10 +60,14 @@ const OneLoginFooter = ( {
 
 	return (
 		<div className="one-login__footer">
-			<div className="one-login__footer-links-wrapper">
-				{ loginLink }
-				{ supportLink }
-			</div>
+			{ children ? (
+				children
+			) : (
+				<div className="one-login__footer-links-wrapper">
+					{ loginLink }
+					{ supportLink }
+				</div>
+			) }
 		</div>
 	);
 };

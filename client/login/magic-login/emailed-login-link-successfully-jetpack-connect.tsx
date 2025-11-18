@@ -61,21 +61,25 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 				/>
 			) }
 			<p>{ preventWidows( translate( "Only one step left—we'll connect your site next." ) ) }</p>
-			<OneLoginFooter
-				loginLink={
-					<p>
-						{ translate(
-							"Didn't get the email? Check your spam folder, or {{button}}resend the email{{/button}}. Wrong email or account? {{link}}Use a different account{{/link}}.",
-							{
-								components: {
-									button: <Button variant="link" onClick={ onResendEmail } />,
-									link: <a href="/log-in/jetpack" />,
-								},
-							}
-						) }
-					</p>
-				}
-			/>
+			<OneLoginFooter>
+				<p className="one-login__footer-text">
+					{ translate(
+						"Didn't get the email? Check your spam folder, or {{button}}resend the email{{/button}}. Wrong email or account? {{link}}Use a different account{{/link}}.",
+						{
+							components: {
+								button: (
+									<Button
+										variant="link"
+										onClick={ onResendEmail }
+										className="one-login__footer-link"
+									/>
+								),
+								link: <a href="/log-in/jetpack" />,
+							},
+						}
+					) }
+				</p>
+			</OneLoginFooter>
 		</div>
 	);
 };
