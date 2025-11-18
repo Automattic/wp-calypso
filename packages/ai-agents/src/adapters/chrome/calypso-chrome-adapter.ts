@@ -55,6 +55,8 @@ export class CalypsoChromeAdapter implements ChromeAdapter {
 				right: ${ sidebarRight }px;
 				bottom: ${ this.spacing }px;
 				width: calc(100% - ${ this.sidebarWidth }px - ${ this.spacing * 2 }px) !important;
+				height: calc(100vh - 47px - ${ this.spacing * 2 }px) !important;
+				max-height: calc(100vh - 47px - ${ this.spacing * 2 }px) !important;
 				min-height: 0;
 				box-sizing: border-box;
 				border-radius: 0 0 8px 8px;
@@ -68,6 +70,16 @@ export class CalypsoChromeAdapter implements ChromeAdapter {
 
 			.layout__content {
 				background-color: #ffffff;
+			}
+
+			.layout__secondary {
+				top: calc(var(--masterbar-height) + ${ this.spacing }px) !important;
+				left: ${ this.spacing }px !important;
+				bottom: ${ this.spacing }px !important;
+				height: calc(100vh - var(--masterbar-height) - ${ this.spacing * 2 }px) !important;
+				max-height: calc(100vh - var(--masterbar-height) - ${ this.spacing * 2 }px) !important;
+				outline: none !important;
+				border-right: 1px solid #545454 !important;
 			}
 		`;
 	}

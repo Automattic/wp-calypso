@@ -283,12 +283,13 @@ export default function AgentDock( {
 				} );
 			}
 
-			// Add reset chat menu item
+			// Add reset chat menu item (disabled if no messages or processing)
 			menuItems.push( {
 				id: 'reset',
 				icon: rotateRight,
 				title: __( 'Reset chat', 'ai-agents' ),
 				onClick: handleClearChat,
+				isDisabled: ! messages.length || isProcessing,
 			} );
 
 			return (

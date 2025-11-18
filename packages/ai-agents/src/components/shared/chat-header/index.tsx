@@ -25,6 +25,10 @@ export interface ChatHeaderMenuItem {
 	 * Click handler
 	 */
 	onClick: () => void;
+	/**
+	 * Whether the menu item is disabled
+	 */
+	isDisabled?: boolean;
 }
 
 export interface ChatHeaderProps {
