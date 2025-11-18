@@ -20,7 +20,6 @@ const ReaderFullPostHeader = ( {
 	feedUrl,
 	feedId,
 	siteId,
-	onFollowToggle,
 } ) => {
 	const handlePermalinkClick = () => {
 		recordPermalinkClick( 'full_post_title', post );
@@ -99,7 +98,6 @@ const ReaderFullPostHeader = ( {
 					feedUrl={ feedUrl }
 					feedId={ feedId }
 					siteId={ siteId }
-					onFollowToggle={ onFollowToggle }
 				/>
 			) }
 			{ layout === 'recent' && (
@@ -157,7 +155,6 @@ ReaderFullPostHeader.propTypes = {
 	feedUrl: PropTypes.string,
 	feedId: PropTypes.number,
 	siteId: PropTypes.number,
-	onFollowToggle: PropTypes.func,
 };
 
 export default ReaderFullPostHeader;

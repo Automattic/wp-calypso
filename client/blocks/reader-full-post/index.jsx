@@ -736,7 +736,6 @@ export class FullPostView extends Component {
 								feedUrl={ feedUrl }
 								feedId={ +post.feed_ID }
 								siteId={ +post.site_ID }
-								onFollowToggle={ this.openSuggestedFollowsModal }
 							/>
 
 							{ isDefaultLayout && (
@@ -751,6 +750,9 @@ export class FullPostView extends Component {
 									renderMarkAsSeenButton={
 										shouldShowMarkAsSeen ? this.renderMarkAsSenButton : null
 									}
+									feedUrl={ feedUrl }
+									siteUrl={ post.site_URL }
+									onFollowToggle={ this.openSuggestedFollowsModal }
 								/>
 							) }
 

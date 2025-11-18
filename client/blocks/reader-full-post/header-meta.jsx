@@ -4,26 +4,15 @@ import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
-import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 
-const ReaderFullPostHeaderMeta = ( {
-	post,
-	author,
-	siteName,
-	siteUrl,
-	feedUrl,
-	feedId,
-	siteId,
-	onFollowToggle,
-} ) => {
+const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) => {
 	const recordDateClick = () => {
 		recordPermalinkClick( 'timestamp_full_post', post );
 	};
 
 	const streamUrl = getStreamUrl( feedId, siteId );
-	const followUrl = feedUrl || siteUrl;
 
 	const hasAuthorName = author?.name;
 	const hasMatchingAuthorAndSiteNames =
@@ -82,14 +71,6 @@ const ReaderFullPostHeaderMeta = ( {
 							</span>
 						</>
 					) }
-					{ followUrl && (
-						<ReaderFollowButton
-							siteUrl={ followUrl }
-							onFollowToggle={ onFollowToggle }
-							railcar={ post?.railcar }
-							className="reader-full-post__header-meta-follow"
-						/>
-					) }
 				</div>
 			</div>
 		</div>
@@ -100,11 +81,8 @@ ReaderFullPostHeaderMeta.propTypes = {
 	post: PropTypes.object.isRequired,
 	author: PropTypes.object,
 	siteName: PropTypes.string,
-	siteUrl: PropTypes.string,
-	feedUrl: PropTypes.string,
 	feedId: PropTypes.number,
 	siteId: PropTypes.number,
-	onFollowToggle: PropTypes.func,
 };
 
 export default ReaderFullPostHeaderMeta;

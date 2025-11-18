@@ -151,7 +151,8 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.comment-button,
 	.like-button,
 	.post-edit-button,
-	.reader-full-post__seen-button {
+	.reader-full-post__seen-button,
+	.follow-button {
 		margin: 0;
 		padding: 8px 16px;
 		background: var( --color-surface );
@@ -188,8 +189,67 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		}
 	}
 
+	.follow-button {
+		background: transparent;
+
+		.gridicon {
+			width: 24px;
+			height: 24px;
+		}
+
+		.reader-following-feed,
+		.reader-follow-feed {
+			width: 24px;
+			height: 24px;
+			fill: var( --color-text-subtle ) !important;
+		}
+
+		.reader-following-feed path,
+		.reader-follow-feed path {
+			fill: var( --color-text-subtle ) !important;
+		}
+
+		&.is-following {
+			background: transparent;
+
+			.follow-button__label {
+				color: var( --color-text-subtle ) !important;
+			}
+
+			&:hover {
+				background: var( --color-primary-0 );
+
+				.reader-following-feed,
+				.reader-following-feed path {
+					fill: var( --color-link ) !important;
+					opacity: 1;
+				}
+
+				.follow-button__label {
+					color: var( --color-link ) !important;
+				}
+			}
+		}
+
+		&:hover:not(.is-following) {
+			background: var( --color-primary-0 );
+
+			.gridicon,
+			.reader-follow-feed,
+			.reader-follow-feed path {
+				fill: var( --color-link ) !important;
+				opacity: 1;
+			}
+
+			.follow-button__label {
+				color: var( --color-link );
+			}
+		}
+	}
+
 	.comment-button.tooltip,
-	.like-button.tooltip {
+	.like-button.tooltip,
+	.follow-button.tooltip {
 		@include tooltip-base;
 		@include tooltip-top;
 	}
@@ -216,9 +276,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	.comment-button__label,
 	.like-button__label,
-	.post-edit-button__label {
+	.post-edit-button__label,
+	.follow-button__label {
 		font-size: $font-body-small;
-		color: var( --color-neutral-20 );
+		color: var( --color-text-subtle );
 	}
 
 	.post-edit-button__label {
