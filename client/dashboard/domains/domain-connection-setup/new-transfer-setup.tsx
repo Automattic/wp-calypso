@@ -40,7 +40,7 @@ export default function DomainTransferSetup() {
 	const registrar_url = domainConnectionSetupInfo?.registrar_url || null;
 	const isReseller = !! domainConnectionSetupInfo?.reseller;
 
-	const [ stepsCompleted, setStepsCompleted ] = useState< boolean[] >( [ false, false ] );
+	const [ firstStepCompleted, setFirstStepCompleted ] = useState( false );
 	const [ stepsExpanded, setStepsExpanded ] = useState< boolean[] >( [ false, false ] );
 	const [ authorizationCode, setAuthorizationCode ] = useState( '' );
 	const [ error, setError ] = useState< string | null >( null );
@@ -49,7 +49,7 @@ export default function DomainTransferSetup() {
 		startDomainInboundTransferMutation( domainName, domain.blog_id )
 	);
 
-	const buttonIsDisabled = isPending || ! stepsCompleted[ 0 ] || authorizationCode.length === 0;
+	const buttonIsDisabled = isPending || ! firstStepCompleted || authorizationCode.length === 0;
 
 	const steps = [
 		{
@@ -119,11 +119,7 @@ export default function DomainTransferSetup() {
 
 	// Only the first step has a checkbox, so the index is omitted here
 	const handleCheckboxChange = ( checked: boolean ) => {
-		setStepsCompleted( ( prev ) => {
-			const newState = [ ...prev ];
-			newState[ 0 ] = checked;
-			return newState;
-		} );
+		setFirstStepCompleted( checked );
 		if ( checked ) {
 			const newStepsExpanded = [ false, true ];
 			setStepsExpanded( newStepsExpanded );
@@ -200,30 +196,28 @@ export default function DomainTransferSetup() {
 							</Text>
 						</VStack>
 
-						<div>
-							<SetupStep
-								className="domain-connection-setup__step"
-								expanded={ stepsExpanded[ 0 ] }
-								completed={ stepsCompleted[ 0 ] }
-								onCheckboxChange={ ( checked ) => handleCheckboxChange( checked ) }
-								onToggle={ ( expanded ) => handleStepToggle( 0, expanded ) }
-								title={ steps[ 0 ].title }
-								label={ steps[ 0 ].label }
-							>
-								{ steps[ 0 ].content }
-							</SetupStep>
-							<CardDivider />
-							<SetupStep
-								className="domain-connection-setup__step"
-								expanded={ stepsExpanded[ 1 ] }
-								completed={ authorizationCode.length > 0 }
-								onCheckboxChange={ () => {} }
-								onToggle={ ( expanded ) => handleStepToggle( 1, expanded ) }
-								title={ steps[ 1 ].title }
-							>
-								{ steps[ 1 ].content }
-							</SetupStep>
-						</div>
+						<SetupStep
+							className="domain-connection-setup__step"
+							expanded={ stepsExpanded[ 0 ] }
+							completed={ firstStepCompleted }
+							onCheckboxChange={ ( checked ) => handleCheckboxChange( checked ) }
+							onToggle={ ( expanded ) => handleStepToggle( 0, expanded ) }
+							title={ steps[ 0 ].title }
+							label={ steps[ 0 ].label }
+						>
+							{ steps[ 0 ].content }
+						</SetupStep>
+						<CardDivider />
+						<SetupStep
+							className="domain-connection-setup__step"
+							expanded={ stepsExpanded[ 1 ] }
+							completed={ authorizationCode.length > 0 }
+							onCheckboxChange={ () => {} }
+							onToggle={ ( expanded ) => handleStepToggle( 1, expanded ) }
+							title={ steps[ 1 ].title }
+						>
+							{ steps[ 1 ].content }
+						</SetupStep>
 
 						<VStack spacing={ 6 }>
 							<ButtonStack justify="flex-start">
