@@ -30,7 +30,7 @@ function AdminHelpCenterContent() {
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
 	const supportLinks = document.querySelectorAll( '[data-target="wpcom-help-center"]' );
 	const isMenuPanelExperimentEnabled = useMenuPanelExperiment(
-		'calypso_help_center_menu_popover',
+		'calypso_help_center_menu_popover_full_treatment_group',
 		'menu_popover'
 	);
 

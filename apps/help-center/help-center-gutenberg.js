@@ -26,7 +26,7 @@ function HelpCenterContent() {
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
 	const isMenuPanelExperimentEnabled = useMenuPanelExperiment(
-		'calypso_help_center_menu_popover',
+		'calypso_help_center_menu_popover_full_treatment_group',
 		'menu_popover'
 	);
 	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown(), [] );
