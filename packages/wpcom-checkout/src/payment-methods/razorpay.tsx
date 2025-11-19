@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode } from 'react';
+import { Fragment, ReactNode, useEffect } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -13,6 +13,7 @@ import type {
 	StoreSelectorsWithState,
 	StoreActions,
 	StoreState,
+	PossiblyCompleteDomainContactDetails,
 } from '../payment-method-store';
 import type { AnyAction } from '../types';
 import type { RazorpayConfiguration } from '@automattic/calypso-razorpay';
@@ -166,7 +167,11 @@ const RazorpayField = styled( Field )`
 	}
 `;
 
-function RazorpayFields() {
+function RazorpayFields( {
+	contactDetails,
+}: {
+	contactDetails?: PossiblyCompleteDomainContactDetails;
+} ) {
 	const { __ } = useI18n();
 
 	const { customerName, address1, address2, city, state, postalCode, country } = useRazorpayData();
@@ -182,13 +187,36 @@ function RazorpayFields() {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
+	// Prefill state, postalCode, and country from cached contact details
+	useEffect( () => {
+		if ( contactDetails ) {
+			if ( contactDetails.state && ! state.isTouched ) {
+				changeState( contactDetails.state );
+			}
+			if ( contactDetails.postalCode && ! postalCode.isTouched ) {
+				changePostalCode( contactDetails.postalCode );
+			}
+			if ( contactDetails.countryCode && ! country.isTouched ) {
+				changeCountry( contactDetails.countryCode );
+			}
+		}
+	}, [
+		contactDetails,
+		changeState,
+		changePostalCode,
+		changeCountry,
+		state.isTouched,
+		postalCode.isTouched,
+		country.isTouched,
+	] );
+
 	return (
 		<RazorpayFormWrapper>
 			<RazorpayField
 				id="razorpay-cardholder-name"
 				type="Text"
 				autoComplete="name"
-				label={ __( 'Cardholder name' ) }
+				label={ __( 'Your name' ) }
 				value={ customerName.value }
 				onChange={ changeCustomerName }
 				isError={ customerName.isTouched && customerName.value.length === 0 }
@@ -237,7 +265,7 @@ function RazorpayFields() {
 				onChange={ changeState }
 				isError={ state.isTouched && state.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
+				disabled
 			/>
 			<RazorpayField
 				id="razorpay-postal-code"
@@ -248,7 +276,7 @@ function RazorpayFields() {
 				onChange={ changePostalCode }
 				isError={ postalCode.isTouched && postalCode.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
+				disabled
 			/>
 			<RazorpayField
 				id="razorpay-country"
@@ -259,7 +287,7 @@ function RazorpayFields() {
 				onChange={ changeCountry }
 				isError={ country.isTouched && country.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
+				disabled
 			/>
 		</RazorpayFormWrapper>
 	);
@@ -270,18 +298,20 @@ export function createRazorpayMethod( {
 	cartKey,
 	submitButtonContent,
 	store,
+	contactDetails,
 }: {
 	razorpayConfiguration: RazorpayConfiguration;
 	cartKey: CartKey;
 	submitButtonContent: ReactNode;
 	store: RazorpayStore;
+	contactDetails?: PossiblyCompleteDomainContactDetails;
 } ): PaymentMethod {
 	return {
 		id: 'razorpay',
 		hasRequiredFields: true,
 		paymentProcessorId: 'razorpay',
 		label: <RazorpayLabel />,
-		activeContent: <RazorpayFields />,
+		activeContent: <RazorpayFields contactDetails={ contactDetails } />,
 		submitButton: (
 			<RazorpaySubmitButton
 				razorpayConfiguration={ razorpayConfiguration }
