@@ -68,7 +68,7 @@ export default function DomainTransferSetup() {
 					{ createInterpolateElement(
 						// translators: <registrar/> is the domain name provider, <domain/> is the domain name
 						__(
-							'Log in to <registrar/>, open the management page for <domain/>. and switch off the domain lock. Need help? <link>Follow our guide</link>'
+							'Log in to <registrar/>, open the management page for <domain/>, and switch off the domain lock. Need help? <link>Follow our guide</link>'
 						),
 
 						{
@@ -90,8 +90,10 @@ export default function DomainTransferSetup() {
 			content: (
 				<VStack spacing={ 6 }>
 					<Text>
-						{ __(
-							'Once domain is unlocked, enter your unique authorization code below. It may also be called a transfer key, auth code, or EPP.'
+						{ sprintf(
+							// translators: %s is a domain name
+							'Once %s is unlocked, enter your unique authorization code below. It may also be called a transfer key, auth code, or EPP.',
+							domainName
 						) }
 					</Text>
 
@@ -186,12 +188,15 @@ export default function DomainTransferSetup() {
 								) }
 							</Text>
 							<Text>
-								{ sprintf(
-									// translators: %s is a domain registrar
+								{ createInterpolateElement(
 									__(
-										'Domain name transfers typically take 5–7 days. If you want to use it quicker, connect your domain name first, then initiate the transfer from %s later.'
+										// translators: <registrar/> is the domain's registrar
+										'Domain name transfers typically take 5–7 days. If you want to use it quicker, <link>connect your domain name</link> first, then initiate the transfer from <registrar/> later.'
 									),
-									registrar || __( 'your domain name provider' )
+									{
+										link: <InlineSupportLink supportContext="map-domain-setup-instructions" />,
+										registrar: <>{ registrar || __( 'your domain name provider' ) }</>,
+									}
 								) }
 							</Text>
 						</VStack>
