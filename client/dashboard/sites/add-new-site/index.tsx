@@ -83,8 +83,8 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 				) }
 				<MenuItem
 					icon={ <WordPressLogo /> }
-					title="Create a blank site"
-					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
+					title="Create it yourself"
+					description={ __( 'Start with a clean WordPress site and make it yours.' ) }
 					onClick={ wordpressClick }
 					href={ addQueryArgs( '/start', {
 						source: context,
@@ -94,8 +94,8 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 				/>
 				<MenuItem
 					icon={ <BigSkyLogo.Mark /> }
-					title={ __( 'Build with AI' ) }
-					description={ __( 'Prompt, edit, and launch your WordPress site with AI.' ) }
+					title={ __( 'Create with AI' ) }
+					description={ __( 'Describe your idea and let AI help you refine your site.' ) }
 					onClick={ () => {
 						setShowHelpCenter( false );
 						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
@@ -112,7 +112,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 			<Column title={ __( 'Bring an existing site' ) }>
 				<MenuItem
 					icon={ reusableBlock }
-					title={ __( 'Migrate' ) }
+					title={ __( 'Migrate to WordPress.com' ) }
 					description={ __( 'Bring your site to the world’s best WordPress host.' ) }
 					onClick={ migrateClick }
 					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover` }
