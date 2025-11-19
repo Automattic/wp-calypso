@@ -3,6 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
 	DropdownMenu,
@@ -293,10 +294,10 @@ function UserProfile() {
 				}
 			/>
 			<Menu.Popover style={ { minWidth: '250px' } }>
-				<Menu.Item disabled>
+				<VStack style={ { gridColumn: '1 / -1', padding: '8px 12px' } } spacing={ 1 }>
 					<Text>{ user.display_name }</Text>
 					<Text variant="muted">@{ user.username }</Text>
-				</Menu.Item>
+				</VStack>
 				<Menu.Separator />
 				<Menu.Group>
 					<Menu.GroupLabel>{ __( 'Account' ) }</Menu.GroupLabel>
