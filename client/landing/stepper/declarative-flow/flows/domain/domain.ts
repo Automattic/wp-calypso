@@ -1,3 +1,5 @@
+import { DotcomFeatures } from '@automattic/api-core';
+import { isDomainMapping } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	DOMAIN_FLOW,
@@ -9,6 +11,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
@@ -23,6 +26,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { useQuery } from '../../../hooks/use-query';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -85,6 +89,9 @@ const domain: FlowV2< typeof initialize > = {
 			[]
 		);
 
+		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
+		const defaultRedirect = `/v2/sites/${ siteSlug }/domains`;
+
 		const goToCheckout = ( siteSlug: string ) => {
 			const destination = `/v2/sites/${ siteSlug }/domains`;
 
@@ -137,10 +144,10 @@ const domain: FlowV2< typeof initialize > = {
 					// replace the location to delete processing step from history.
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-							redirect_to: `/v2/sites/${ siteSlug }/domains`,
+							redirect_to: redirectTo || defaultRedirect,
 							signup: 0,
 							cancel_to: new URL(
-								addQueryArgs( '/setup/domain', { siteSlug } ),
+								addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
 								window.location.href
 							).href,
 						} )
@@ -160,24 +167,51 @@ const domain: FlowV2< typeof initialize > = {
 						return navigate( destination as typeof currentStepSlug );
 					}
 
-					if ( siteSlug && providedDependencies && 'domainCartItem' in providedDependencies ) {
-						// For garden sites with domain mapping, skip plans and map directly
-						if (
-							site &&
-							( site as { is_garden?: boolean } ).is_garden &&
-							providedDependencies.domainCartItem &&
-							providedDependencies.domainCartItem?.product_slug === 'domain_map'
-						) {
-							const domain = providedDependencies.domainCartItem.meta as string;
+					// Handle skip to plan when user needs paid plan for ownership verification
+					if ( providedDependencies && 'skipToPlan' in providedDependencies ) {
+						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+						setHideFreePlan( true );
+						return navigate( STEPS.UNIFIED_PLANS.slug );
+					}
 
-							try {
+					if ( ! providedDependencies || ! ( 'domainCartItem' in providedDependencies ) ) {
+						throw new Error( 'No domain cart item found' );
+					}
+
+					if (
+						site &&
+						siteSlug &&
+						providedDependencies &&
+						'domainCartItem' in providedDependencies
+					) {
+						const isDomainMapping =
+							providedDependencies.domainCartItem?.product_slug === 'domain_map';
+						const mappingIsFree = hasPlanFeature( site, DotcomFeatures.DOMAIN_MAPPING );
+						const hasPaidPlan = siteHasPaidPlan( site );
+
+						if ( ( isDomainMapping && mappingIsFree ) || hasPaidPlan ) {
+							const queryArgs = getQueryArgs( window.location.href );
+							const redirectTo = queryArgs.redirect_to as string | undefined;
+
+							// Use pending action for domain mapping
+							// Note: Verification (if required) is handled in the step before submission
+							setPendingAction( async () => {
+								const domain = providedDependencies.domainCartItem.meta;
+
 								await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
-								return window.location.assign( `/ciab/sites/${ domain }/domains` );
-							} catch ( error ) {
-								// If mapping fails, fall through to original flow
-							}
+
+								/// Redirect to appropriate domains page based on redirect_to parameter
+								const redirectUrl = redirectTo || `/domains/manage/${ siteSlug }`;
+
+								return {
+									redirectTo: redirectUrl,
+								};
+							} );
+
+							return navigate( STEPS.PROCESSING.slug );
 						}
 
+						// Regular flow: add to cart and go through checkout
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
 						setSignupCompleteFlowName( this.name );
@@ -204,12 +238,10 @@ const domain: FlowV2< typeof initialize > = {
 						return navigate( STEPS.PROCESSING.slug );
 					}
 
-					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
-						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
-						setHideFreePlan( true );
-						setDomainCartItem( providedDependencies.domainCartItem );
-						setDomainCartItems( [ providedDependencies.domainCartItem ] );
-					}
+					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+					setHideFreePlan( true );
+					setDomainCartItem( providedDependencies.domainCartItem );
+					setDomainCartItems( [ providedDependencies.domainCartItem ] );
 
 					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
 
@@ -247,6 +279,24 @@ const domain: FlowV2< typeof initialize > = {
 
 					setPendingAction( async () => {
 						if ( domainCartItems ) {
+							const hasOnlyDomainMappingInCart =
+								domainCartItems.length === 1 && isDomainMapping( domainCartItems[ 0 ] );
+
+							if ( hasOnlyDomainMappingInCart ) {
+								const domain = domainCartItems[ 0 ].meta;
+
+								await wpcom.req.post(
+									`/sites/${ providedDependencies.site.ID }/add-domain-mapping`,
+									{
+										domain,
+									}
+								);
+
+								return {
+									redirectTo: `/v2/domains/${ domain }/domain-connection-setup`,
+								};
+							}
+
 							await addProductsToCart( providedDependencies.siteSlug, this.name, domainCartItems );
 						}
 
@@ -315,6 +365,10 @@ const domain: FlowV2< typeof initialize > = {
 					return navigate( STEPS.PROCESSING.slug, undefined, true );
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						if ( providedDependencies.redirectTo ) {
+							return window.location.replace( providedDependencies.redirectTo );
+						}
+
 						const destination = `/v2/sites/${ providedDependencies.siteSlug }/domains`;
 
 						persistSignupDestination( destination );
@@ -344,6 +398,17 @@ const domain: FlowV2< typeof initialize > = {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const { siteId } = useSiteData();
+
+		/**
+		 * Sync site ID from stepper context to Redux store
+		 * This ensures components using Redux connect() can access the selected site
+		 */
+		useEffect( () => {
+			if ( siteId ) {
+				reduxDispatch( setSelectedSiteId( siteId ) );
+			}
+		}, [ siteId, reduxDispatch ] );
+
 		/**
 		 * Clears every state we're persisting during the flow
 		 * when entering it. This is to ensure that the user
@@ -352,7 +417,6 @@ const domain: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			if ( ! currentStepSlug ) {
 				resetOnboardStore();
-				reduxDispatch( setSelectedSiteId( siteId ) );
 				clearStepPersistedState( this.name );
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();

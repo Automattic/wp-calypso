@@ -17,6 +17,7 @@ export * from './domain-forwarding';
 export * from './domain-glue-records';
 export * from './domain-name-servers';
 export * from './domain-privacy';
+export * from './domain-propagation-status';
 export * from './domain-ssl';
 export * from './domain-suggestions';
 export * from './domain-supported-countries';

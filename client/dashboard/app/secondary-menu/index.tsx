@@ -26,6 +26,7 @@ import {
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Suspense, lazy, useCallback, useState } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 import { useAppContext } from '../context';
@@ -48,14 +49,19 @@ function Help() {
 	const { user } = useAuth();
 	const { isLoading, isShown, setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
-	const isMenuPanelEnabled = config.isEnabled( 'help-center-menu-panel' );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( '' );
+
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'calypso_help_center_menu_popover'
+	);
+	const isMenuPanelExperimentEnabled =
+		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
 
 	const trackIconInteraction = () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown,
 			section: 'dashboard',
-			is_menu_panel_enabled: isMenuPanelEnabled,
+			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
 		} );
 	};
 
@@ -106,7 +112,7 @@ function Help() {
 		}
 	};
 
-	if ( isMenuPanelEnabled ) {
+	if ( isMenuPanelExperimentEnabled ) {
 		return (
 			<>
 				<DropdownMenu
@@ -337,7 +343,7 @@ function SecondaryMenu() {
 	const isDesktop = useViewportMatch( 'medium' );
 
 	return (
-		<HStack spacing={ 2 } justify="flex-end">
+		<HStack spacing={ isDesktop ? 2 : 0 } justify="flex-end">
 			{ supports.reader && (
 				<Button
 					className="dashboard-secondary-menu__item"

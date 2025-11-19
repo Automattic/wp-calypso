@@ -117,10 +117,10 @@ export default function AlternativesModal( {
 					) ) }
 				</ActionList>
 				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" onClick={ onClose }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
-					<Button variant="primary" onClick={ onContinue }>
+					<Button __next40pxDefaultSize variant="primary" onClick={ onContinue }>
 						{ __( 'Continue' ) }
 					</Button>
 				</ButtonStack>

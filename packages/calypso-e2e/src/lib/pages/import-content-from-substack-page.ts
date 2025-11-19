@@ -30,6 +30,7 @@ export class ImportContentFromSubstackPage {
 				siteSlug,
 			} )
 		);
+		await this.importFileContentPage.dismissCookieBanner();
 	}
 
 	/**

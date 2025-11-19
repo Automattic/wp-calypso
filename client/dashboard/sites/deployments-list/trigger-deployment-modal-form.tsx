@@ -163,14 +163,14 @@ export function TriggerDeploymentModalForm( {
 				/>
 
 				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" onClick={ onClose } __next40pxDefaultSize>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
 						type="submit"
 						disabled={ ! selectedDeployment || isCreatingCodeDeploymentRun }
-						__next40pxDefaultSize
 					>
 						{ __( 'Deploy to production' ) }
 					</Button>

@@ -162,6 +162,100 @@ export const getCategories: () => Record< string, Category > = () => ( {
 				icon: 'https://ps.w.org/woocommerce-paypal-payments/assets/icon-256x256.png?rev=3234615',
 				short_description: __( 'Accept PayPal payments' ),
 			},
+			{
+				slug: 'woocommerce',
+				name: __( 'WooCommerce' ),
+				icon: 'https://ps.w.org/woocommerce/assets/icon-256x256.png?rev=3234504',
+				short_description: __(
+					'Everything you need to launch an online store in days and keep it growing for years. From your first sale to millions in revenue, Woo is with you.'
+				),
+			},
+			{
+				slug: 'woocommerce-analytics',
+				name: __( 'WooCommerce Analytics' ),
+				icon: 'https://woocommerce.com/wp-content/uploads/2024/12/Storefront_Parallax_Hero_icon-order-attribution-160x160-1.png',
+				short_description: __(
+					"WooCommerce Analytics has advanced order attribution reporting that provides powerful insights into each order's last-touch data, whether you're just launching or have thousands of products in your catalog."
+				),
+			},
+			{
+				slug: 'woocommerce-bookings',
+				name: __( 'WooCommerce Bookings' ),
+				icon: 'https://woocommerce.com/wp-content/uploads/2014/05/Bookings_icon-marketplace-160x160-2.png',
+				short_description: __(
+					'Allow customers to book appointments, make reservations or rent equipment without leaving your site.'
+				),
+			},
+			{
+				slug: 'woocommerce-payments',
+				name: __( 'WooPayments: Integrated WooCommerce Payments' ),
+				icon: 'https://ps.w.org/woocommerce-payments/assets/icon-256x256.png?rev=3234740',
+				short_description: __(
+					'Securely accept credit and debit cards on your WooCommerce store. Manage payments without leaving your WordPress dashboard. Only with WooPayments.'
+				),
+			},
+			{
+				slug: 'woocommerce-gateway-stripe',
+				name: __( 'WooCommerce Stripe Payment Gateway' ),
+				icon: 'https://ps.w.org/woocommerce-gateway-stripe/assets/icon-256x256.png?rev=3177277',
+				short_description: __(
+					'Accept debit and credit cards in 135+ currencies, many local methods like Alipay, ACH, and SEPA, and express checkout with Apple Pay and Google Pay.'
+				),
+			},
+			{
+				slug: 'woocommerce-services',
+				name: __( 'WooCommerce Tax (formerly WooCommerce Shipping & Tax)' ),
+				icon: 'https://ps.w.org/woocommerce-services/assets/icon-256x256.png?rev=3234419',
+				short_description: __(
+					"We're here to help with tax rates: collect accurate sales tax, automatically."
+				),
+			},
+			{
+				slug: 'woocommerce-one-page-checkout',
+				name: __( 'WooCommerce One Page Checkout' ),
+				icon: 'https://woocommerce.com/wp-content/uploads/2014/10/One_Page_Checkout_icon-marketplace-80x80-1.png',
+				short_description: __(
+					'Create special pages where customers can choose products, checkout & pay all on the one page.'
+				),
+			},
+			{
+				slug: 'woocommerce-product-filters',
+				name: __( 'Product Filters for WooCommerce' ),
+				icon: 'https://woocommerce.com/wp-content/uploads/2018/10/Product_Filters_icon-marketplace-80x80-1.png',
+				short_description: __(
+					'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast'
+				),
+			},
+			{
+				slug: 'woocommerce-additional-variation-images',
+				name: __( 'WooCommerce Additional Variation Images' ),
+				icon: 'https://woocommerce.com/wp-content/uploads/2014/08/Additional_Variation_Images_icon-marketplace-160x160-2.png',
+				short_description: __( 'Unlimited images for your product variations.' ),
+			},
+			{
+				slug: 'woocommerce-shipping-per-product',
+				name: __( 'Per Product Shipping' ),
+				icon: 'https://woocommerce.com/wp-content/uploads/2013/04/Per_product_shipping_icon-marketplace-160x160-1.png',
+				short_description: __(
+					'Define separate shipping costs per product which are combined at checkout to provide a total shipping cost.'
+				),
+			},
+			{
+				slug: 'automatewoo-referrals',
+				name: __( 'AutomateWoo - Refer A Friend add-on' ),
+				icon: 'https://woocommerce.com/wp-content/uploads/2019/10/woo-AutomateWoo-m4jpva.png ',
+				short_description: __(
+					'Boost your organic sales by adding a customer referral program to your WooCommerce store.'
+				),
+			},
+			{
+				slug: 'warranty-requests',
+				name: __( 'Returns and Warranty Requests' ),
+				icon: 'https://woocommerce.com/wp-content/uploads/2013/07/Returns_and_Warranty_Woo.png',
+				short_description: __(
+					'Manage the RMA process, add warranties to products, and let customers request and manage returns/exchanges from their account.'
+				),
+			},
 		],
 	},
 	booking: {
@@ -375,6 +469,98 @@ export const getCategories: () => Record< string, Category > = () => ( {
 				icon: 'https://ps.w.org/elementor/assets/icon-256x256.gif?rev=3111597',
 				short_description: __( 'Drag and drop page builder' ),
 			},
+			{
+				slug: 'ads-txt',
+				name: __( 'Ads.txt Manager' ),
+				icon: 'https://ps.w.org/ads-txt/assets/icon-256x256.png?rev=2834081',
+				short_description: __(
+					'Create, manage, and validate your ads.txt and app-ads.txt from within WordPress, like any other content asset.'
+				),
+			},
+			{
+				slug: 'advanced-popups',
+				name: __( 'Advanced Popups' ),
+				icon: 'https://ps.w.org/advanced-popups/assets/icon-256x256.png?rev=2690535',
+				short_description: __(
+					'Display high-converting newsletter popups, a cookie notice, or a notification with the light-weight yet feature-rich plugin.'
+				),
+			},
+			{
+				slug: 'kliken-marketing-for-google',
+				name: __( 'AI Powered Marketing' ),
+				icon: 'https://ps.w.org/kliken-marketing-for-google/assets/icon-256x256.png?rev=2832456',
+				short_description: __(
+					"Kliken's all-in-one marketing helps businesses reach high-intent customers, beat the competition and see sales growth while lowering conversion costs"
+				),
+			},
+			{
+				slug: 'website-monetization-by-magenet',
+				name: __( 'Website Monetization by MageNet' ),
+				icon: 'https://ps.w.org/website-monetization-by-magenet/assets/icon-256x256.jpg?rev=1630832',
+				short_description: __(
+					'Get additional income from your website or blog by placing text ads automatically.'
+				),
+			},
+			{
+				slug: 'website-article-monetization-by-magenet',
+				name: __( 'Website Article Monetization By MageNet' ),
+				icon: 'https://ps.w.org/website-article-monetization-by-magenet/assets/icon-256x256.jpg?rev=2300741',
+				short_description: __(
+					'Get additional income from your website or blog by placing text ads automatically.'
+				),
+			},
+			{
+				slug: 'affiliatex',
+				name: __( 'AffiliateX – Affiliate Block Plugin' ),
+				icon: 'https://ps.w.org/affiliatex/assets/icon-256x256.jpg?rev=2636351',
+				short_description: __(
+					'AffiliateX is the best WordPress Affiliate Block Plugin. Create professional affiliate websites with customizable WordPress Affiliate Blocks.'
+				),
+			},
+			{
+				slug: 'mediavine-control-panel',
+				name: __( 'Mediavine Control Panel' ),
+				icon: 'https://ps.w.org/mediavine-control-panel/assets/icon-128x128.png?rev=1605431',
+				short_description: __( 'Manage your ads, analytics and more with our lightweight plugin!' ),
+			},
+			{
+				slug: 'content-egg',
+				name: __( 'Content Egg – Affiliate Product Importer & Price Comparison' ),
+				icon: 'https://ps.w.org/content-egg/assets/icon-128x128.png?rev=1236433',
+				short_description: __(
+					'Import affiliate products, compare prices, sync to WooCommerce, and auto-generate SEO content with AI — all in one toolkit.'
+				),
+			},
+			{
+				slug: 'affiliates-manager',
+				name: __( 'Affiliates Manager' ),
+				icon: 'https://ps.w.org/affiliates-manager/assets/icon-128x128.png?rev=981249',
+				short_description: __(
+					'Affiliates Manager plugin can help you manage an affiliate marketing program to drive more traffic and more sales to your site.'
+				),
+			},
+			{
+				slug: 'meks-easy-ads-widget',
+				name: __( 'Meks Easy Ads Widget' ),
+				icon: 'https://ps.w.org/meks-easy-ads-widget/assets/icon-256x256.png?rev=1522332',
+				short_description: __( 'Display unlimited number of ads inside your WordPress widget.' ),
+			},
+			{
+				slug: 'callrail-phone-call-tracking',
+				name: __( 'CallRail Phone Call Tracking' ),
+				icon: 'https://ps.w.org/callrail-phone-call-tracking/assets/icon-256x256.png?rev=2227520',
+				short_description: __(
+					"Dynamically swap CallRail tracking phone numbers based on the visitor's referring source."
+				),
+			},
+			{
+				slug: 'yith-woocommerce-affiliates',
+				name: __( 'YITH WooCommerce Affiliates' ),
+				icon: 'https://ps.w.org/yith-woocommerce-affiliates/assets/icon-256x256.jpg?rev=3089234',
+				short_description: __(
+					'YITH WooCommerce Affiliates allows you to create affiliate profiles and grant your affiliates earnings each time someone purchases from their link.'
+				),
+			},
 		],
 	},
 	business: {
@@ -419,6 +605,106 @@ export const getCategories: () => Record< string, Category > = () => ( {
 				name: __( 'All-in-One WP Migration' ),
 				icon: 'https://ps.w.org/all-in-one-wp-migration/assets/icon-256x256.png',
 				short_description: __( 'Move websites between hosts with ease' ),
+			},
+			{
+				slug: 'google-site-kit',
+				name: __( 'Site Kit by Google - Analytics, Search Console, AdSense, Speed' ),
+				icon: 'https://ps.w.org/google-site-kit/assets/icon-256x256.png?rev=3141863',
+				short_description: __(
+					'Site Kit is a one-stop solution for WordPress users to use everything Google has to offer to make them successful on the web.'
+				),
+			},
+			{
+				slug: 'google-listings-and-ads',
+				name: __( 'Google for WooCommerce' ),
+				icon: 'https://ps.w.org/google-listings-and-ads/assets/icon-256x256.png?rev=2775988',
+				short_description: __(
+					"Native integration with Google that allows merchants to easily display their products across Google's network."
+				),
+			},
+			{
+				slug: 'wp-reviews-plugin-for-google',
+				name: __( 'Widgets for Google Reviews' ),
+				icon: 'https://ps.w.org/wp-reviews-plugin-for-google/assets/icon-256x256.png?rev=2721569',
+				short_description: __(
+					'Embed Google reviews fast and easily into your WordPress site. Increase SEO, trust and sales using Google reviews.'
+				),
+			},
+			{
+				slug: 'flamingo',
+				name: __( 'Flamingo' ),
+				icon: 'https://ps.w.org/flamingo/assets/icon-128x128.png?rev=1540977',
+				short_description: __( 'A trustworthy message storage plugin for Contact Form 7.' ),
+			},
+			{
+				slug: 'ga-google-analytics',
+				name: __( 'GA Google Analytics – Connect Google Analytics to WordPress' ),
+				icon: 'https://ps.w.org/ga-google-analytics/assets/icon-256x256.png?rev=2053004',
+				short_description: __(
+					'Adds Google Analytics 4 tracking code to your WordPress site. Supports many tracking features.'
+				),
+			},
+			{
+				slug: 'leadin',
+				name: __( 'HubSpot - CRM, Email Marketing, Live Chat, Forms & Analytics' ),
+				icon: 'https://ps.w.org/leadin/assets/icon-256x256.png?rev=3041936',
+				short_description: __(
+					'The CRM, Sales, and Marketing WordPress plugin to grow your business better. Capture, organize, and engage web visitors with free live chat, forms, CR …'
+				),
+			},
+			{
+				slug: 'reviews-feed',
+				name: __(
+					'Reviews Feed – Add Testimonials and Customer Reviews From Google Reviews, Yelp, TripAdvisor, and More'
+				),
+				icon: 'https://ps.w.org/reviews-feed/assets/icon-256x256.png?rev=2885733',
+				short_description: __(
+					'No API key required. Display Yelp and Google reviews for any business in a clean, customizable feed on your site.'
+				),
+			},
+			{
+				slug: 'event-tickets',
+				name: __( 'Event Tickets and Registration' ),
+				icon: 'https://ps.w.org/event-tickets/assets/icon-256x256.png?rev=2259359',
+				short_description: __(
+					'Event Tickets allows your visitors to RSVP and buy tickets to events on your site. Also works seamlessly with The Events Calendar.'
+				),
+			},
+			{
+				slug: 'wp-job-manager',
+				name: __( 'WP Job Manager' ),
+				icon: 'https://ps.w.org/wp-job-manager/assets/icon-256x256.gif?rev=2975257',
+				short_description: __(
+					'Create a careers page for your company website, or build a public job board for your community.'
+				),
+			},
+			{
+				slug: 'auto-terms-of-service-and-privacy-policy',
+				name: __(
+					'TermsFeed AutoTerms: Privacy Policy Generator, Cookie Consent, GDPR, CCPA, Terms & Conditions, Disclaimers, Cookies Policy, EULA'
+				),
+				icon: 'https://ps.w.org/auto-terms-of-service-and-privacy-policy/assets/icon-256x256.png?rev=3300987',
+				short_description: __(
+					'All-in-One compliance solution from TermsFeed: Generator of Privacy Policy, T&Cs, Affiliate Disclaimers and Cookie Consent Notice Banner.'
+				),
+			},
+			{
+				slug: 'fluent-crm',
+				name: __(
+					'FluentCRM - Email Newsletter, Automation, Email Marketing, Email Campaigns, Optins, Leads, and CRM Solution'
+				),
+				icon: 'https://ps.w.org/fluent-crm/assets/icon-256x256.png?rev=2390407',
+				short_description: __(
+					'The easiest and fastest Email Marketing, Newsletter, Marketing Automation Plugin & CRM Solution for WordPress'
+				),
+			},
+			{
+				slug: 'site-reviews',
+				name: __( 'Site Reviews' ),
+				icon: 'https://ps.w.org/site-reviews/assets/icon-256x256.gif?rev=3307009',
+				short_description: __(
+					'Site Reviews is a complete review management solution for your website that is designed to work in a similar way to Amazon, Tripadvisor, and Yelp.'
+				),
 			},
 		],
 	},

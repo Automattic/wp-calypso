@@ -198,10 +198,11 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 					) }
 
 					<ButtonStack justify="flex-end">
-						<Button variant="tertiary" onClick={ onClose }>
+						<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							__next40pxDefaultSize
 							isDestructive
 							variant="primary"
 							onClick={ handleSubmit }

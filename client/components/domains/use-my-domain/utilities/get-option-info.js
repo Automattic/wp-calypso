@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getTld } from '@automattic/domain-search';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -204,11 +205,25 @@ export function getOptionInfo( {
 			! siteIsOnPaidPlan
 		) {
 			const action = isSignupStep ? () => onSkip() : () => page( `/plans/${ selectedSite?.slug }` );
+			const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
 
-			connectContent = {
-				...connectContent,
-				benefits: [],
-				topText: createInterpolateElement(
+			let topText;
+			if ( isDomainConnectionRedesign ) {
+				topText = createInterpolateElement(
+					sprintf(
+						/* translators: %s - the domain the user wanted to connect */
+						__(
+							"We need to verify you are the owner of <strong>%s</strong> before connecting it, but we're not able to do that without a plan.<br /><br />Please purchase a plan first in order to connect your domain."
+						),
+						domain
+					),
+					{
+						strong: createElement( 'strong' ),
+						br: createElement( 'br' ),
+					}
+				);
+			} else {
+				topText = createInterpolateElement(
 					sprintf(
 						/* translators: %s - the domain the user wanted to connect */
 						__(
@@ -221,7 +236,12 @@ export function getOptionInfo( {
 						br: createElement( 'br' ),
 						a: createElement( 'a', { onClick: action } ),
 					}
-				),
+				);
+			}
+
+			connectContent = {
+				...connectContent,
+				topText: topText,
 				pricing: null,
 				learnMoreLink: null,
 				onSelect: action,

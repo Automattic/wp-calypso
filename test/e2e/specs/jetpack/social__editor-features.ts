@@ -118,7 +118,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				const section = await editorPage.expandSection( 'Share this post' );
 
 				// Verify that the toggle is enabled.
-				const toggle = section.getByLabel( 'Share when publishing' );
+				const toggle = section.getByLabel( 'Auto-share post' );
 				expect( await toggle.isChecked() ).toBe( true );
 
 				// Verify that the message box is editable.
@@ -181,7 +181,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				section = await editorPage.expandSection( 'Share this post' );
 
 				// Verify whether the auto-share toggle is no longer visible.
-				const toggle = section.getByLabel( 'Share when publishing' );
+				const toggle = section.getByLabel( 'Auto-share post' );
 				expect( await toggle.isVisible() ).toBe( false );
 
 				// Check if the Preview & Share button is visible based on resharing feature

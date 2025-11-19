@@ -19,7 +19,8 @@ import {
 	clearSignupDestinationCookie,
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
@@ -269,6 +270,7 @@ const onboarding: FlowV2< typeof initialize > = {
 	useSideEffect( currentStepSlug ) {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+		const isLoggedIn = useSelector( isUserLoggedIn );
 
 		/**
 		 * Clears every state we're persisting during the flow
@@ -296,8 +298,10 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * - Analytics tracking works correctly throughout the onboarding flow
 		 */
 		useEffect( () => {
-			addSurvicate();
-		}, [ currentStepSlug ] );
+			if ( isLoggedIn ) {
+				addSurvicate();
+			}
+		}, [ isLoggedIn, currentStepSlug ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {

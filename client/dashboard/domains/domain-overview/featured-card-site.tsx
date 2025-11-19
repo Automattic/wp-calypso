@@ -51,6 +51,7 @@ export default function FeaturedCardSite( { domain }: Props ) {
 					</Truncate>
 				)
 			}
+			intent={ shouldShowAddAttachSite ? 'upsell' : 'success' }
 		/>
 	);
 }

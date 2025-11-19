@@ -12,29 +12,29 @@ const selectors = {
 export class AudioBlock {
 	static blockName = 'Audio';
 	static blockEditorSelector = '[aria-label="Block: Audio"]';
+	page: Page;
 	block: ElementHandle;
 
 	/**
 	 * Constructs an instance of this block.
 	 *
+	 * @param {Page} page The underlying page object.
 	 * @param {ElementHandle} block Handle referencing the block as inserted on the Gutenberg editor.
 	 */
-	constructor( block: ElementHandle ) {
+	constructor( page: Page, block: ElementHandle ) {
+		this.page = page;
 		this.block = block;
 	}
 
 	/**
-	 * Uplaods the target file at the supplied path to WPCOM.
+	 * Uploads the target file at the supplied path to WPCOM.
 	 *
 	 * @param {string} path Path to the file on disk.
 	 */
 	async upload( path: string ): Promise< void > {
 		const input = await this.block.waitForSelector( selectors.fileInput, { state: 'attached' } );
 		await input.setInputFiles( path );
-		await Promise.all( [
-			this.block.waitForSelector( selectors.spinner, { state: 'hidden' } ),
-			this.block.waitForElementState( 'stable' ),
-		] );
+		await this.page.locator( selectors.spinner ).waitFor( { state: 'hidden' } );
 	}
 
 	/**

@@ -52,6 +52,7 @@ const ProcessingStep: StepType< {
 				intent?: SiteIntent;
 				previousStep?: string;
 				nextStep?: string;
+				redirectTo?: string;
 				// The processing step is impossible to type precisely because it submits whatever the pendingAction resolves to.
 		  } & Record< string, unknown > );
 	accepts: {

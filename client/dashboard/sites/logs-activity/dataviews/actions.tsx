@@ -24,10 +24,10 @@ export function useActivityActions( {
 	return useMemo( () => {
 		const backupAction: Action< Activity > = {
 			id: 'backup',
-			label: __( 'See restore point' ),
+			isPrimary: true,
+			label: __( 'Manage backup' ),
 			icon: <Icon icon={ backup } />,
 			disabled: isLoading,
-			isPrimary: true,
 			isEligible: ( item ) => item.activityIsRewindable,
 			callback: async ( items ) => {
 				const [ item ] = items;

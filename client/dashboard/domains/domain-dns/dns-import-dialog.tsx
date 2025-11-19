@@ -151,7 +151,7 @@ export default function DnsImportDialog( {
 	};
 
 	return (
-		<Modal title={ __( 'Import DNS Records' ) } onRequestClose={ onCancel }>
+		<Modal title={ __( 'Import DNS records' ) } onRequestClose={ onCancel }>
 			<VStack spacing={ 6 }>
 				<Text>
 					{ __(
@@ -172,6 +172,7 @@ export default function DnsImportDialog( {
 				<ButtonStack justify="flex-end">
 					<Button
 						__next40pxDefaultSize
+						variant="tertiary"
 						onClick={ onCancel }
 						disabled={ updateDnsMutation.isPending }
 					>

@@ -92,7 +92,7 @@ export class DomainSearchComponent {
 	 */
 	async fillUseDomainIOwnInput( domainName: string ): Promise< void > {
 		const searchAndPressEnter = async () => {
-			const input = await this.page.getByText( 'Enter the domain you would like to use:' );
+			const input = this.page.locator( '.use-my-domain__domain-input input' );
 			await input.fill( domainName );
 			await input.press( 'Enter' );
 		};
@@ -114,7 +114,9 @@ export class DomainSearchComponent {
 	 * Click on the "Transfer your domain" option in the "Transfer or Connect" page
 	 */
 	async selectTransferYourDomain(): Promise< void > {
-		const button = await this.getContainer().getByRole( 'button', { name: 'Select' } ).nth( 0 );
+		const button = this.getContainer()
+			.locator( '.domain-transfer-or-connect__content button' )
+			.nth( 0 );
 		await button.waitFor();
 		await button.click();
 	}

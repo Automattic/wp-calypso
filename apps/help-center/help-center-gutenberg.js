@@ -6,7 +6,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, DropdownMenu, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
-import { useDispatch, useSelect, dispatch, select } from '@wordpress/data';
+import { useDispatch, useSelect, dispatch, select, subscribe } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, backup, page, video, rss } from '@wordpress/icons';
@@ -14,6 +14,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { useCanvasMode } from './hooks/use-canvas-mode';
+import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
 import { getEditorType } from './utils';
 import './help-center.scss';
 
@@ -24,22 +25,21 @@ function HelpCenterContent() {
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
-
+	const isMenuPanelExperimentEnabled = useMenuPanelExperiment(
+		'calypso_help_center_menu_popover',
+		'menu_popover'
+	);
 	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown(), [] );
 
 	const canvasMode = useCanvasMode();
 
-	// Check if the new menu panel feature is enabled
-	const urlParams = new URLSearchParams( window.location.search );
-	const hasHelpCenterMenuPanel = urlParams.get( 'flags' ) === 'help-center-menu-panel';
-
 	const trackIconInteraction = useCallback( () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
-			is_help_center_visible: isShown,
+			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
-			is_menu_panel_enabled: hasHelpCenterMenuPanel,
+			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
 		} );
-	}, [ isShown, hasHelpCenterMenuPanel ] );
+	}, [ isShown, isMenuPanelExperimentEnabled ] );
 
 	const handleToggleHelpCenter = useCallback( () => {
 		trackIconInteraction();
@@ -146,7 +146,7 @@ function HelpCenterContent() {
 		[ handleMenuClick ]
 	);
 
-	const content = hasHelpCenterMenuPanel ? (
+	const content = isMenuPanelExperimentEnabled ? (
 		<DropdownMenu
 			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
 			icon={ <HelpIcon /> }
@@ -195,55 +195,62 @@ function HelpCenterContent() {
 	);
 }
 
-if ( helpCenterData.isNextAdmin ) {
-	const observer = new PerformanceObserver( function () {
-		select( 'next-admin' )
-			.getMetaMenuItems( 'wp-logo' )
-			.forEach( ( item ) => {
-				dispatch( 'next-admin' ).unregisterSiteHubHelpMenuItem( item.id );
-			} );
-		dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'help-center', {
-			label: __( 'Help Center', __i18n_text_domain__ ),
-			parent: 'wp-logo',
-			callback: () => {
-				const state = select( 'automattic/help-center' ).isHelpCenterShown();
-				dispatch( 'automattic/help-center' ).setShowHelpCenter( ! state );
-			},
-		} );
-		const container = document.createElement( 'div' );
-		container.id = 'jetpack-help-center';
-		document.body.appendChild( container );
-		const botProps = helpCenterData.isCommerceGarden
-			? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-			: {};
+function HelpCenterContentWithProvider() {
+	return (
+		<QueryClientProvider client={ queryClient }>
+			<HelpCenterContent />
+		</QueryClientProvider>
+	);
+}
 
-		createRoot( container ).render(
-			<QueryClientProvider client={ queryClient }>
-				<HelpCenter
-					locale={ helpCenterData.locale }
-					sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
-					currentUser={ helpCenterData.currentUser }
-					site={ helpCenterData.site }
-					hasPurchases={ false }
-					onboardingUrl="https://wordpress.com/start"
-					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
-					isCommerceGarden={ helpCenterData.isCommerceGarden }
-					{ ...botProps }
-				/>
-			</QueryClientProvider>,
-			document.getElementById( 'jetpack-help-center' )
-		);
+if ( helpCenterData.isNextAdmin ) {
+	const unsubscribe = subscribe( () => {
+		// Make sure the wp-logo menu item is registered before unregistering its default items.
+		if ( select( 'next-admin' ).getMetaMenuItems?.( 'wp-logo' ).length > 1 ) {
+			unsubscribe();
+			// wait for the next tick to ensure the menu items are registered
+			queueMicrotask( () => {
+				select( 'next-admin' )
+					.getMetaMenuItems( 'wp-logo' )
+					.forEach( ( item ) => {
+						dispatch( 'next-admin' ).unregisterSiteHubHelpMenuItem( item.id );
+					} );
+				dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'help-center', {
+					label: __( 'Help Center', __i18n_text_domain__ ),
+					parent: 'wp-logo',
+					callback: () => {
+						const state = select( 'automattic/help-center' ).isHelpCenterShown();
+						dispatch( 'automattic/help-center' ).setShowHelpCenter( ! state );
+					},
+				} );
+				const container = document.createElement( 'div' );
+				container.id = 'jetpack-help-center';
+				document.body.appendChild( container );
+				const botProps = helpCenterData.isCommerceGarden
+					? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
+					: {};
+
+				createRoot( container ).render(
+					<QueryClientProvider client={ queryClient }>
+						<HelpCenter
+							locale={ helpCenterData.locale }
+							sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
+							currentUser={ helpCenterData.currentUser }
+							site={ helpCenterData.site }
+							hasPurchases={ false }
+							onboardingUrl="https://wordpress.com/start"
+							handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
+							isCommerceGarden={ helpCenterData.isCommerceGarden }
+							{ ...botProps }
+						/>
+					</QueryClientProvider>,
+					document.getElementById( 'jetpack-help-center' )
+				);
+			} );
+		}
 	} );
-	// Render after the largest contentful paint. This is proxy for the CIAB admin load event.
-	observer.observe( { type: 'largest-contentful-paint', buffered: true } );
 } else {
 	registerPlugin( 'jetpack-help-center', {
-		render: () => {
-			return (
-				<QueryClientProvider client={ queryClient }>
-					<HelpCenterContent />
-				</QueryClientProvider>
-			);
-		},
+		render: HelpCenterContentWithProvider,
 	} );
 }

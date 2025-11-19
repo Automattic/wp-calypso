@@ -216,12 +216,14 @@ test( 'shows validation error when target URL redirects to same domain without p
 
 	// Fill in target URL that points to same domain (which is not allowed) and blur
 	const targetUrlInput = screen.getByRole( 'textbox', { name: /target url/i } );
-	await user.type( targetUrlInput, 'https://example.com' );
+	await user.type( targetUrlInput, 'https://blog.example.com' );
 	await user.tab(); // This will blur the field
 
 	// Validation error should appear after blur
 	await waitFor( () => {
-		expect( screen.getByText( /please enter a valid url/i ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( /Forwarding to the same domain is not allowed/i )
+		).toBeInTheDocument();
 	} );
 } );
 

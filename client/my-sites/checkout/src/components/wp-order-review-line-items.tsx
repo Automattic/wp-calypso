@@ -16,6 +16,7 @@ import {
 	RemovedFromCartItem,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { getQueryArg } from '@wordpress/url';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -98,11 +99,14 @@ export function WPOrderReviewLineItems( {
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
+	const isBFref =
+		typeof window !== 'undefined' &&
+		getQueryArg( window.location.href, 'ref' ) === 'black-friday-2025-lp';
 	const [ restorableProducts ] = useRestorableProducts();
 
 	if ( couponLineItem ) {
 		couponLineItem.label =
-			isOnboardingAffiliateFlow || isOnboardingUnifiedFlow
+			isBFref || isOnboardingAffiliateFlow || isOnboardingUnifiedFlow
 				? getAffiliateCouponLabel()
 				: couponLineItem.label;
 	}

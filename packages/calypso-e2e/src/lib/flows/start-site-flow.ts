@@ -96,7 +96,12 @@ export class StartSiteFlow {
 	 * @param {string} goal The goal to select
 	 */
 	async selectGoal( goal: string ): Promise< void > {
-		await this.page.click( selectors.goalButton( goal ) );
+		await this.page.waitForSelector( selectors.goalsStepContainer, { timeout: 30_000 } );
+
+		const goalLocator = this.page.locator( selectors.goalButton( goal ) );
+		await goalLocator.waitFor( { state: 'visible', timeout: 30_000 } );
+		await goalLocator.scrollIntoViewIfNeeded();
+		await goalLocator.click();
 		await this.page.waitForSelector( selectors.selectedGoalButton( goal ) );
 	}
 

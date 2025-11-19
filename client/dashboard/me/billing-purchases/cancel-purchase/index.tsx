@@ -17,6 +17,7 @@ import {
 	hasPurchaseBeenExtendedQuery,
 	siteLatestAtomicTransferQuery,
 	siteFeaturesQuery,
+	removePurchaseMutation,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -54,6 +55,7 @@ import {
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
 	isAkismetProduct,
+	isAkismetTemporarySitePurchase,
 	isExpired,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackTemporarySitePurchase,
@@ -153,6 +155,7 @@ export default function CancelPurchase() {
 	const cancelAndRefundPurchaseMutate = useMutation( cancelAndRefundPurchaseMutation() );
 	const setPurchaseAutoRenewMutation = useMutation( userPurchaseSetAutoRenewQuery() );
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
+	const removePurchaseMutator = useMutation( removePurchaseMutation() );
 	const extendWithFreeMonthMutation = useMutation( extendPurchaseWithFreeMonthMutation() );
 	const userPreferences = useMutation( userPreferencesMutation() );
 	const {
@@ -180,9 +183,8 @@ export default function CancelPurchase() {
 			return;
 		}
 
-		createErrorNotice( 'test', { type: 'snackbar' } );
 		navigate( { to: purchasesRoute.to } );
-	}, [ purchase, navigate, createErrorNotice ] );
+	}, [ purchase, navigate ] );
 
 	const track = useCallback( () => {
 		if ( productSlug ) {
@@ -668,25 +670,12 @@ export default function CancelPurchase() {
 		} );
 	};
 
-	const handleCancelPurchaseClick = async () => {
-		// For all purchases, including domain registrations, show the survey first
-		// The API call will happen at the end of the survey flow
-
-		// For other purchases, determine if we need domain options step
-		// If onCancellationStart is null, we're already in the domain options step
-		if ( ! onCancellationStart ) {
-			// We're in the domain options step, show survey directly
-			onCancellationComplete();
-		} else {
-			onCancellationStart();
-		}
-	};
 	const handleMarketplaceDialogContinue = () => {
 		// Close the marketplace dialog
 		closeMarketplaceSubscriptionsDialog();
 
 		// Show the appropriate survey based on purchase type
-		handleCancelPurchaseClick();
+		onCancellationStart();
 	};
 
 	const onTextOneChange = (
@@ -851,6 +840,10 @@ export default function CancelPurchase() {
 								type: 'snackbar',
 							}
 						);
+						navigate( {
+							to: purchaseSettingsRoute.fullPath,
+							params: { purchaseId: purchase.ID },
+						} );
 					},
 					onError: ( error: Error ) => {
 						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
@@ -883,7 +876,10 @@ export default function CancelPurchase() {
 						),
 						{ type: 'snackbar' }
 					);
-					setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+					navigate( {
+						to: purchaseSettingsRoute.fullPath,
+						params: { purchaseId: purchase.ID },
+					} );
 				},
 				onError: () => {
 					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
@@ -903,10 +899,72 @@ export default function CancelPurchase() {
 		);
 	};
 
+	const submitRemovePurchase = ( purchase: Purchase ) => {
+		if ( CANCEL_FLOW_TYPE.REMOVE !== flowType ) {
+			return;
+		}
+
+		removePurchaseMutator.mutate( purchase.ID, {
+			onSuccess: () => {
+				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+				/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") and %(siteName)s is a domain name */
+				let successMessage = sprintf( __( '%(productName)s was removed from %(siteName)s.' ), {
+					productName: purchaseName,
+					siteName: purchase.domain,
+				} );
+				if (
+					isAkismetTemporarySitePurchase( purchase ) ||
+					isJetpackTemporarySitePurchase( purchase )
+				) {
+					/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") */
+					successMessage = sprintf( __( '%(productName)s was removed from your account.' ), {
+						productName: purchaseName,
+					} );
+				}
+				if ( purchase.is_domain_registration ) {
+					successMessage = sprintf(
+						/* translators: %(domain)s is a domain name */
+						__( 'The domain %(domain)s was removed from your account.' ),
+						{
+							domain: purchaseName,
+						}
+					);
+				}
+				createSuccessNotice( successMessage, { type: 'snackbar' } );
+				navigate( {
+					to: purchaseSettingsRoute.fullPath,
+					params: { purchaseId: purchase.ID },
+				} );
+			},
+			onError: () => {
+				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+				createErrorNotice(
+					sprintf(
+						/* translators: %(purchaseName)s is the name of the product that was purchased. */
+						__(
+							'There was a problem removing %(purchaseName)s. Please try again later or contact support.'
+						),
+						{ purchaseName }
+					),
+					{ type: 'snackbar' }
+				);
+				setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+			},
+		} );
+	};
+
 	const onSurveyComplete = () => {
 		// Set loading state to show busy button
 		setState( ( state ) => ( { ...state, isLoading: true } ) );
-		submitCancelAndRefundPurchase( purchase );
+		switch ( flowType ) {
+			case CANCEL_FLOW_TYPE.REMOVE:
+				submitRemovePurchase( purchase );
+				break;
+			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW:
+			case CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND:
+				submitCancelAndRefundPurchase( purchase );
+				break;
+		}
 	};
 
 	const onSubmit = () => {
@@ -1196,9 +1254,8 @@ export default function CancelPurchase() {
 				disabled={ isDisabled }
 				isBusy={ propOverrides?.isBusy ?? state.isLoading ?? false }
 				onClick={
-					propOverrides?.onClick ?? shouldHandleMarketplaceSubscriptions()
-						? showMarketplaceDialog
-						: handleCancelPurchaseClick
+					propOverrides?.onClick ??
+					( shouldHandleMarketplaceSubscriptions() ? showMarketplaceDialog : onCancellationStart )
 				}
 				variant="primary"
 			>
@@ -1269,27 +1326,12 @@ export default function CancelPurchase() {
 		);
 	};
 
-	const renderProductRevertContent = () => {
+	const renderPlanProductRevertContent = () => {
 		return (
 			<>
 				{ ! includedDomainPurchase && <p>{ renderFullText() }</p> }
 
 				{ ! state.surveyShown && renderConfirmCheckbox() }
-
-				<ButtonStack>
-					{ renderCancelButton() }
-					{ renderKeepSubscriptionButton() }
-				</ButtonStack>
-			</>
-		);
-	};
-
-	const renderPlanRevertContent = () => {
-		return (
-			<>
-				{ ! includedDomainPurchase && <p>{ renderFullText() }</p> }
-
-				{ renderConfirmCheckbox() }
 
 				<ButtonStack>
 					{ renderCancelButton() }
@@ -1438,7 +1480,7 @@ export default function CancelPurchase() {
 					selectedDomain={ selectedDomain }
 				/>
 
-				{ ! cancellationFeatures.length ? renderProductRevertContent() : renderPlanRevertContent() }
+				{ renderPlanProductRevertContent() }
 			</>
 		);
 	};
@@ -1473,10 +1515,15 @@ export default function CancelPurchase() {
 					onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 					isLoading={ false }
 				/>
-				<div className="cancel-purchase__confirm-buttons">
-					{ renderCancelButton( { disabled: ! canContinue(), onClick: onSurveyComplete } ) }
+				<ButtonStack>
+					{ renderCancelButton( {
+						disabled: ! canContinue(),
+						onClick: () => {
+							onCancellationComplete();
+						},
+					} ) }
 					{ renderKeepSubscriptionButton() }
-				</div>
+				</ButtonStack>
 			</>
 		);
 	};

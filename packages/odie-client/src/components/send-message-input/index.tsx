@@ -46,9 +46,9 @@ export const OdieSendMessageButton = () => {
 	useEffect( () => {
 		if ( isLiveChat ) {
 			if ( inputValue.length > 0 ) {
-				Smooch.startTyping();
+				Smooch?.startTyping?.();
 			} else {
-				Smooch.stopTyping();
+				Smooch?.stopTyping?.();
 			}
 		}
 	}, [ inputValue, isLiveChat ] );
@@ -64,12 +64,14 @@ export const OdieSendMessageButton = () => {
 		badFormatNotice,
 	} = useAttachmentHandler();
 
+	const hasAttachments = !! attachmentPreviews;
+
 	// Prioritize connection status notice over message size notice
 	const notice = connectionNotice || messageSizeNotice || badFormatNotice;
 
 	useEffect( () => {
 		function handleBlur() {
-			Smooch.stopTyping();
+			Smooch?.stopTyping?.();
 		}
 		if ( isLiveChat ) {
 			const textarea = textareaRef.current;
@@ -89,7 +91,9 @@ export const OdieSendMessageButton = () => {
 
 	const sendMessageHandler = useCallback( async () => {
 		const message = inputValue.trim().substring( 0, 4096 );
-		if ( message === '' || isChatBusy ) {
+
+		// Allow submission if there's either a message or attachments
+		if ( ( message === '' && ! hasAttachments ) || isChatBusy ) {
 			return;
 		}
 
@@ -97,8 +101,13 @@ export const OdieSendMessageButton = () => {
 		if ( chat?.provider === 'odie' ) {
 			setInputValue( '' );
 		} else if ( chat.conversationId ) {
-			Smooch.stopTyping();
+			Smooch?.stopTyping?.();
 			sendAttachments();
+		}
+
+		if ( ! message ) {
+			textareaRef.current?.focus();
+			return;
 		}
 
 		try {
@@ -151,6 +160,7 @@ export const OdieSendMessageButton = () => {
 		trackEvent,
 		chat.conversationId,
 		sendAttachments,
+		hasAttachments,
 	] );
 
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
@@ -167,7 +177,12 @@ export const OdieSendMessageButton = () => {
 		[ sendMessageHandler, handleImagePaste ]
 	);
 
-	const isDisabled = !! messageSizeNotice;
+	const isInputEmpty = inputValue.trim() === '';
+
+	// Disable if:
+	// 1. Message is too long (messageSizeNotice)
+	// 2. Input is empty AND no attachments
+	const isDisabled = !! messageSizeNotice || ( isInputEmpty && ! hasAttachments );
 	// When there is a reason to disable the input, we should not convey a processing state.
 	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
 
