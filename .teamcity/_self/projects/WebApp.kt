@@ -979,9 +979,6 @@ object PlaywrightTestPRMatrix : BuildType({
 				REPORT_URL="https://automattic.github.io/wp-calypso-test-results/r"
 				echo "##teamcity[notification notifier='slack' message='Report available: ${'$'}{REPORT_URL}/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
 			""".trimIndent()
-			conditions {
-				matches("teamcity.build.branch", ".*e2e.*")
-			}
 			dockerImage = "%docker_image_e2e%"
 		}
 	}
