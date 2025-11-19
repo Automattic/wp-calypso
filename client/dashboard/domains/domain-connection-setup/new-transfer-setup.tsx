@@ -27,6 +27,8 @@ import PageLayout from '../../components/page-layout';
 import DomainRegistrarBanner from './domain-registrar-banner';
 import SetupStep from './setup-step';
 
+import './transfer-setup-style.scss';
+
 export default function DomainTransferSetup() {
 	const { domainName } = domainTransferSetupRoute.useParams();
 	const navigate = useNavigate();
@@ -199,7 +201,7 @@ export default function DomainTransferSetup() {
 						</VStack>
 
 						<SetupStep
-							className="domain-connection-setup__step"
+							className="domain-transfer-setup__step"
 							expanded={ stepsExpanded[ 0 ] }
 							completed={ firstStepCompleted }
 							onCheckboxChange={ ( checked ) => handleCheckboxChange( checked ) }
@@ -211,7 +213,7 @@ export default function DomainTransferSetup() {
 						</SetupStep>
 						<CardDivider />
 						<SetupStep
-							className="domain-connection-setup__step"
+							className="domain-transfer-setup__step"
 							expanded={ stepsExpanded[ 1 ] }
 							completed={ authorizationCode.length > 0 }
 							onCheckboxChange={ () => {} }
