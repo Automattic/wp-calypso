@@ -113,16 +113,6 @@ export default async function razorpayProcessor(
 							)
 						);
 						return resolve( {} );
-					},
-					( error ) => {
-						debug( 'Razorpay modal error', error );
-						transactionOptions.reduxDispatch(
-							recordTracksEvent(
-								'calypso_checkout_razorpay_modal_error',
-								constructTracksProps( formattedTransactionData, { error } )
-							)
-						);
-						return resolve( {} );
 					}
 				);
 				debug( 'Opening Razorpay modal with options', razorpayOptions );
@@ -204,8 +194,7 @@ function combineRazorpayOptions(
 	contactDetails: ManagedContactDetails | undefined,
 	txnResponse: WPCOMTransactionEndpointResponseRedirect,
 	handler: ( response: RazorpayModalResponse ) => void,
-	ondismiss: () => void,
-	onerror: ( error: unknown ) => void
+	ondismiss: () => void
 ): RazorpayOptions {
 	debug( 'Transaction response in combineRazorpayOptions', txnResponse );
 	if ( ! txnResponse.razorpay_order_id ) {
@@ -223,7 +212,6 @@ function combineRazorpayOptions(
 	options.handler = handler;
 	const modal = options.modal ?? {};
 	modal.ondismiss = ondismiss;
-	modal.onerror = onerror;
 	options.modal = modal;
 
 	debug( 'Constructing Razorpay prefill object using contact details', contactDetails );
