@@ -110,11 +110,7 @@ export default function DomainTransferSetup() {
 							__next40pxDefaultSize
 						/>
 					</div>
-					{ error && (
-						<Notice variant="error">
-							{ __( 'Error:' ) } { error }
-						</Notice>
-					) }
+					{ error && <Notice variant="error">{ error }</Notice> }
 				</VStack>
 			),
 		},
