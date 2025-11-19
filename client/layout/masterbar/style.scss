@@ -116,7 +116,8 @@ body.is-mobile-app-view {
 
 		&.masterbar--is-akismet,
 		&.masterbar--is-jetpack,
-		&.masterbar--is-a4a {
+		&.masterbar--is-a4a,
+		&.masterbar--is-passport {
 			padding-inline-start: 1.5em;
 		}
 
@@ -1087,7 +1088,8 @@ a.masterbar__quick-language-switcher {
 
 	.masterbar--is-akismet &,
 	.masterbar--is-jetpack &,
-	.masterbar--is-a4a & {
+	.masterbar--is-a4a &,
+	.masterbar--is-passport & {
 		column-gap: 1em;
 	}
 
