@@ -1,8 +1,9 @@
-import { type StatesListItem, type DomainContactDetails } from '@automattic/api-core';
+import { type DomainContactDetails, type StatesListItem } from '@automattic/api-core';
 import { __experimentalInputControl as InputControl, SelectControl } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { type Field, type DataFormControlProps } from '@wordpress/dataviews';
+import { type DataFormControlProps, type Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { createFieldAsyncValidator, type AsyncValidator } from './contact-validation-utils';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -79,7 +80,8 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined, country
 
 export function RegionAddressFieldsets(
 	statesList: StatesListItem[] | undefined,
-	countryCode: string
+	countryCode: string,
+	asyncValidator?: AsyncValidator
 ): Field< DomainContactDetails >[] {
 	const StateFieldEdit = createStateFieldEdit( statesList, countryCode );
 
@@ -90,12 +92,20 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			isValid: {
 				required: true,
+				...( asyncValidator && {
+					custom: createFieldAsyncValidator( 'address1', asyncValidator ),
+				} ),
 			},
 		},
 		{
 			id: 'address2',
 			label: __( 'Address line 2' ),
 			type: 'text',
+			...( asyncValidator && {
+				isValid: {
+					custom: createFieldAsyncValidator( 'address2', asyncValidator ),
+				},
+			} ),
 		},
 		{
 			id: 'city',
@@ -103,6 +113,9 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			isValid: {
 				required: true,
+				...( asyncValidator && {
+					custom: createFieldAsyncValidator( 'city', asyncValidator ),
+				} ),
 			},
 		},
 		{
@@ -110,6 +123,11 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			getValue: ( { item }: { item: DomainContactDetails } ) => item.state ?? '',
 			Edit: StateFieldEdit,
+			...( asyncValidator && {
+				isValid: {
+					custom: createFieldAsyncValidator( 'state', asyncValidator ),
+				},
+			} ),
 		},
 		{
 			id: 'postalCode',
@@ -117,6 +135,9 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			isValid: {
 				required: true,
+				...( asyncValidator && {
+					custom: createFieldAsyncValidator( 'postalCode', asyncValidator ),
+				} ),
 			},
 		},
 	];
