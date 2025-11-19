@@ -34,6 +34,9 @@ function HelpCenterContent() {
 	const canvasMode = useCanvasMode();
 
 	const trackIconInteraction = useCallback( () => {
+		if ( isMenuPanelExperimentEnabled === undefined ) {
+			return;
+		}
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
