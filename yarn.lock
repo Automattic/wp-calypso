@@ -292,8 +292,8 @@ __metadata:
   linkType: soft
 
 "@automattic/agenttic-client@npm:^0.1.23":
-  version: 0.1.24
-  resolution: "@automattic/agenttic-client@npm:0.1.24"
+  version: 0.1.26
+  resolution: "@automattic/agenttic-client@npm:0.1.26"
   dependencies:
     "@types/react": "npm:^18.0.0"
     marked: "npm:^16.2.1"
@@ -307,43 +307,13 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 648092778a50126a480f2f2444f872011598670370ff17bb08b3ec5c288eff8042a87807117bffac7d36574b0239b841839242a129bcfcedcd6ac2ef7e2ddad3
+  checksum: 731031b01e86be6c9fc41ce612e8d4e0804e550df127cf81d5ee46e85003eaaf58195dbafa552aca30dab93b2f990144cda9e47ff642191946bc95e43d13ca2b
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.20, @automattic/agenttic-ui@npm:^0.1.9":
-  version: 0.1.22
-  resolution: "@automattic/agenttic-ui@npm:0.1.22"
-  dependencies:
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
-    "@radix-ui/react-scroll-area": "npm:^1.2.9"
-    "@radix-ui/react-slot": "npm:^1.2.3"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/i18n": "npm:^6.1.0"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    framer-motion: "npm:^12.23.0"
-    lucide-react: "npm:^0.525.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
-    react-markdown: "npm:^10.1.0"
-    react-textarea-autosize: "npm:^8.5.9"
-    remark-gfm: "npm:^4.0.1"
-    unified: "npm:^11.0.5"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  checksum: 9f19a653c99a9f09ecfd8448b6aae8ab9d2aa1404ac6f5a7443bfa5d6acbfead27699f70137109137b31640c136fd88ecc6354d564ccfe5853b4776a789a2391
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-ui@npm:^0.1.23":
-  version: 0.1.24
-  resolution: "@automattic/agenttic-ui@npm:0.1.24"
+"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.20, @automattic/agenttic-ui@npm:^0.1.23, @automattic/agenttic-ui@npm:^0.1.9":
+  version: 0.1.26
+  resolution: "@automattic/agenttic-ui@npm:0.1.26"
   dependencies:
     "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
@@ -368,7 +338,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 15ee6ecd41ef6b3353c28946bf0455ffc4b37612b4379f3b33ec5791953446d6688cef800ba9cbf6904081a927f6166a52ab1f0191f053ea8f085360f58f9ed9
+  checksum: 1124d7cb33823a86254cda6f0216822c3d4b07315d85c76373ff452577be9c8078c0a57089ca312a7b059bfbf139ed21d58fbb4c9caad1ac0d71c5dd259f7be6
   languageName: node
   linkType: hard
 
@@ -1520,6 +1490,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/help-center@workspace:packages/help-center"
   dependencies:
+    "@automattic/ai-agents": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -25994,16 +25965,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:^16.2.1":
-  version: 16.4.1
-  resolution: "marked@npm:16.4.1"
-  bin:
-    marked: bin/marked.js
-  checksum: 2b5bc04db3453e493ea78758f1fe5006d725ec90aab9bf991242b0820a069d9748e2ac26fb0e2603848a409649c77900e599f3f66d251d0f7e5f606576090a54
-  languageName: node
-  linkType: hard
-
-"marked@npm:^4.0.0":
+"marked@npm:4.0.10":
   version: 4.0.10
   resolution: "marked@npm:4.0.10"
   bin:

@@ -37,10 +37,7 @@ export { AbilityRegistry, defaultAbilityRegistry } from './abilities';
 export { createAgentConfig, createSimpleAgentConfig } from './config';
 
 // Authentication
-export {
-	createCalypsoAuthProvider,
-	defaultCalypsoErrorHandler,
-} from './auth/calypso-auth-provider';
+export { createCalypsoAuthProvider } from './auth/calypso-auth-provider';
 
 // Types
 export type {
@@ -67,4 +64,3 @@ export type {
 export type { CalypsoAIAgentProps } from './components/calypso-ai-agent';
 export type { ChatHeaderProps, ChatHeaderMenuItem } from './components/shared/chat-header';
 export type { BigSkyIconProps } from './components/shared/big-sky-icon';
-export type { CalypsoAuthError, CalypsoErrorHandler } from './auth/calypso-auth-provider';

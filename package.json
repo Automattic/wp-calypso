@@ -423,7 +423,8 @@
 		"@wordpress/viewport": "^6.23.0",
 		"@wordpress/warning": "3.23.0",
 		"@wordpress/widgets": "4.23.0",
-		"@wordpress/wordcount": "4.23.0"
+		"@wordpress/wordcount": "4.23.0",
+		"marked": "4.0.10"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {
