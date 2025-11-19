@@ -348,6 +348,15 @@ function HelpSearchResults( {
 						/>
 					) ) }
 				</ul>
+				{ type === SUPPORT_TYPE_API_HELP && results.length > visibleResults && (
+					<Button
+						variant="secondary"
+						onClick={ () => setVisibleResults( visibleResults + MAX_VISIBLE_RESULTS ) }
+						className="show-more-button"
+					>
+						{ __( 'Show more', __i18n_text_domain__ ) }
+					</Button>
+				) }
 			</Fragment>
 		) : null;
 	};
