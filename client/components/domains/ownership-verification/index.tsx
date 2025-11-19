@@ -61,9 +61,6 @@ export default function OwnershipVerification( {
 		fields: [ 'authCode' ],
 		layout: {
 			type: 'regular' as const,
-			styles: {
-				maxWidth: '360px',
-			},
 		},
 	};
 
