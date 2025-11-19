@@ -200,30 +200,32 @@ export default function DomainTransferSetup() {
 							</Text>
 						</VStack>
 
-						<SetupStep
-							className="domain-transfer-setup__step"
-							expanded={ stepsExpanded[ 0 ] }
-							completed={ firstStepCompleted }
-							onCheckboxChange={ ( checked ) => handleCheckboxChange( checked ) }
-							onToggle={ ( expanded ) => handleStepToggle( 0, expanded ) }
-							title={ steps[ 0 ].title }
-							label={ steps[ 0 ].label }
-						>
-							{ steps[ 0 ].content }
-						</SetupStep>
-						<CardDivider />
-						<SetupStep
-							className="domain-transfer-setup__step"
-							expanded={ stepsExpanded[ 1 ] }
-							completed={ authorizationCode.length > 0 }
-							onCheckboxChange={ () => {} }
-							onToggle={ ( expanded ) => handleStepToggle( 1, expanded ) }
-							title={ steps[ 1 ].title }
-						>
-							{ steps[ 1 ].content }
-						</SetupStep>
-
 						<VStack spacing={ 6 }>
+							<div>
+								<SetupStep
+									className="domain-transfer-setup__step"
+									expanded={ stepsExpanded[ 0 ] }
+									completed={ firstStepCompleted }
+									onCheckboxChange={ ( checked ) => handleCheckboxChange( checked ) }
+									onToggle={ ( expanded ) => handleStepToggle( 0, expanded ) }
+									title={ steps[ 0 ].title }
+									label={ steps[ 0 ].label }
+								>
+									{ steps[ 0 ].content }
+								</SetupStep>
+								<CardDivider />
+								<SetupStep
+									className="domain-transfer-setup__step"
+									expanded={ stepsExpanded[ 1 ] }
+									completed={ authorizationCode.length > 0 }
+									onCheckboxChange={ () => {} }
+									onToggle={ ( expanded ) => handleStepToggle( 1, expanded ) }
+									title={ steps[ 1 ].title }
+								>
+									{ steps[ 1 ].content }
+								</SetupStep>
+							</div>
+
 							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
