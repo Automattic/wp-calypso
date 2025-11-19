@@ -1,3 +1,1 @@
-import AIChat from './components/ai-chat';
-
-export default AIChat;
+export { default as AIChat } from './components/ai-chat';

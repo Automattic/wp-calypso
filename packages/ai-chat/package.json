@@ -36,6 +36,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/agenttic-client": "^0.1.25",
+		"@automattic/agenttic-ui": "^0.1.25",
 		"@wordpress/components": "^28.8.0",
 		"@wordpress/compose": "^7.8.0",
 		"@wordpress/dom-ready": "^4.8.0",
