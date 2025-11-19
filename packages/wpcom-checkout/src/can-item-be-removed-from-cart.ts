@@ -41,9 +41,8 @@ export function canItemBeRemovedFromCart(
 		return false;
 	}
 
-	// If the item is an A4A client checkout (has referral_id), it cannot be removed from the cart
-	// Agency checkouts (without referral_id) can remove items
-	if ( item.extra?.isA4ASitelessCheckout && item.extra?.referral_id ) {
+	// If the item is an A4A siteless checkout, it cannot be removed from the cart
+	if ( item.extra?.isA4ASitelessCheckout ) {
 		return false;
 	}
 
