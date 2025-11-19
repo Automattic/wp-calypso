@@ -147,7 +147,7 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 
 					// Support sites add `target="_blank"` to Calypso links.
 					// We should remove that in the context of Calypso.
-					if ( isSameOrigin( href ) ) {
+					if ( ensureProtocolAndParse( href ) && isSameOrigin( href ) ) {
 						element.removeAttribute( 'target' );
 						// On mobile, clicking a local link in the Help Center means the user wants to
 						// interact with that linked page, the Help Center should tuck itself away
