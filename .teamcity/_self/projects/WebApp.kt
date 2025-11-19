@@ -961,12 +961,12 @@ object PlaywrightTestPRMatrix : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			conditions {
 				matches("teamcity.build.branch", ".*e2e.*")
-				equals("teamcity.build.step.status.run_tests", "failure")
+				moreThan("FailedTestCount", "0")
 			}
 			scriptContent = """
 				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%PROJECT%"
 				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
-				
+
 				# Need to use -C to avoid creation of an unnecessary top level directory.
 				tar cvfz - -C test/e2e/output/html . | openssl enc -aes-256-cbc -salt -out ${'$'}{ARCHIVE_NAME}.tgz.enc -pass env:E2E_SECRETS_KEY
 
