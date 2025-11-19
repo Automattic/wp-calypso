@@ -45,6 +45,7 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
+		STEPS.POST_CHECKOUT_SETUP_YOUR_SITE_STEP,
 	];
 
 	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
