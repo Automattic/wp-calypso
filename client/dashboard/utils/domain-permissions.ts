@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Domain } from '@automattic/api-core';
@@ -43,7 +44,8 @@ const checkNominetPendingOrSuspended: DomainCheckFunction = ( domain: Domain ) =
 	domain.nominet_pending_contact_verification_request || domain.nominet_domain_suspended;
 
 export const PermissionCheck = {
-	TRANSFER: 'transfer',
+	INBOUND_TRANSFER: 'inbound-transfer',
+	OUTBOUND_TRANSFER: 'outbound-transfer',
 	NAME_SERVERS: 'name-servers',
 	CONTACT_INFO: 'contact-info',
 	DNS_RECORDS: 'dns-records',
@@ -55,7 +57,18 @@ export const PermissionCheck = {
  * Each permission type defines which checks are required and their corresponding error messages
  */
 const DOMAIN_PERMISSION_CHECKS = {
-	[ PermissionCheck.TRANSFER ]: [
+	[ PermissionCheck.INBOUND_TRANSFER ]: [
+		{
+			check: checkCurrentUserIsOwner,
+			getErrorMessage: ( domain: Domain ) =>
+				sprintf(
+					/* translators: domain is the domain name, owner is the owner of the domain */
+					__( '%(domain)s transfers can be managed only by the user %(owner)s.' ),
+					{ domain: domain.domain, owner: domain.owner }
+				),
+		},
+	],
+	[ PermissionCheck.OUTBOUND_TRANSFER ]: [
 		{
 			check: checkNotInSupportSession,
 			getErrorMessage: () =>
@@ -188,7 +201,11 @@ function checkDomainPermissions(
 }
 
 export function checkDomainTransferPermissions( domain: Domain ): void {
-	checkDomainPermissions( domain, PermissionCheck.TRANSFER );
+	if ( domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) {
+		checkDomainPermissions( domain, PermissionCheck.INBOUND_TRANSFER );
+	} else {
+		checkDomainPermissions( domain, PermissionCheck.OUTBOUND_TRANSFER );
+	}
 }
 
 export function checkDomainNameServersPermissions( domain: Domain ): void {
