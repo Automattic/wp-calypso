@@ -43,6 +43,7 @@ export class Theme extends Component {
 			update: PropTypes.object,
 			soft_launched: PropTypes.bool,
 			isCustomGeneratedTheme: PropTypes.bool,
+			retired: PropTypes.bool,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
@@ -318,7 +319,8 @@ export class Theme extends Component {
 	};
 
 	renderBadge = () => {
-		const { selectedStyleVariation, shouldLimitGlobalStyles, theme, siteId, siteSlug } = this.props;
+		const { selectedStyleVariation, shouldLimitGlobalStyles, theme, siteId, siteSlug, active } =
+			this.props;
 
 		const isPremiumTheme = theme.theme_tier?.slug === PREMIUM_THEME;
 
@@ -335,6 +337,8 @@ export class Theme extends Component {
 				themeId={ theme.id }
 				isLockedStyleVariation={ isLocked }
 				isThemeList
+				isThemeRetired={ theme.retired }
+				isThemeActiveForSite={ active }
 			/>
 		);
 	};
@@ -390,7 +394,9 @@ const ConnectedTheme = connect(
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
 )( localize( Theme ) );
 
-export default ( props ) => {
+const ThemeWithGlobalStyles = ( props ) => {
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( props.siteId );
 	return <ConnectedTheme { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
 };
+
+export default ThemeWithGlobalStyles;

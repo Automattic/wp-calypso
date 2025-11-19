@@ -33,7 +33,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickResponseRowByText( text: string ): Promise< void > {
 		const responseRowLocator = this.page
-			.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row' )
+			.locator( '.dataviews-view-table__row' )
 			.filter( { hasText: text } )
 			.first();
 		await responseRowLocator.waitFor();
@@ -47,7 +47,7 @@ export class FeedbackInboxPage {
 				await responseRowLocator.click();
 			}
 			await this.page
-				.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row.is-selected' )
+				.locator( '.dataviews-view-table__row.is-selected' )
 				.filter( { hasText: text } )
 				.waitFor();
 		} else {
@@ -308,7 +308,7 @@ export class FeedbackInboxPage {
 	 */
 	async verifyActionExistsInMenu( text: string, actionName: string ): Promise< void > {
 		const responseRowLocator = this.page
-			.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row' )
+			.locator( '.dataviews-view-table__row' )
 			.filter( { hasText: text } )
 			.first();
 

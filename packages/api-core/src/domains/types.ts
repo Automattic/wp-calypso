@@ -80,3 +80,16 @@ export interface DomainSummary {
 	subscription_id: string | null;
 	tags: string[];
 }
+
+export type BulkDomainsAction =
+	| {
+			type: 'set-auto-renew';
+			domains: string[];
+			auto_renew: boolean;
+	  }
+	| {
+			type: 'update-contact-info';
+			domains: string[];
+			transfer_lock: boolean;
+			whois: Record< string, string | undefined >;
+	  };

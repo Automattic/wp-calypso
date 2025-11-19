@@ -71,7 +71,8 @@ $button-border: 4px;
 		}
 	}
 
-	.theme__sheet .navigation-header {
+	.theme__sheet .navigation-header,
+	.theme__sheet .theme__sheet-retired-notice {
 		margin: 0 auto;
 		max-width: $theme-sheet-content-max-width;
 		padding: 24px 44px;

@@ -292,23 +292,13 @@ export default function UpsellStep( {
 					image={ imgSwitchPlan }
 				>
 					<>
-						{ hasEnTranslation(
-							'%(plan)s still gives you access to fast support, removal of ads, and more — and for 50% of the cost of your current plan.'
-						)
-							? sprintf(
-									/* Translators: %(plan)s is WordPress.com Personal or another plan */
-									__(
-										'%(plan)s still gives you access to fast support, removal of ads, and more — and for 50% of the cost of your current plan.'
-									),
-									{ plan: personalPlanName }
-							  )
-							: sprintf(
-									/* Translators: %(plan)s is WordPress.com Personal or another plan */
-									__(
-										'%(plan)s still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.'
-									),
-									{ plan: personalPlanName }
-							  ) }{ ' ' }
+						{ sprintf(
+							/* translators: %(plan)s is WordPress.com Personal or another plan */
+							__(
+								'%(plan)s still gives you access to fast support, removal of ads, and more — and for 50%% of the cost of your current plan.'
+							),
+							{ plan: personalPlanName }
+						) }{ ' ' }
 						{ refundAmount &&
 							sprintf(
 								/* translators: %(amount)s is a monetary amount in the form of a refund */

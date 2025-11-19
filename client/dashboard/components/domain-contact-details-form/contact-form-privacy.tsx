@@ -15,8 +15,8 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import InlineSupportLink from '../../components/inline-support-link';
-import { SectionHeader } from '../../components/section-header';
+import InlineSupportLink from '../inline-support-link';
+import { SectionHeader } from '../section-header';
 
 interface ContactFormPrivacyProps {
 	domainName: string;
