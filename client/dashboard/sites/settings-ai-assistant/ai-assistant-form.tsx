@@ -242,15 +242,7 @@ function fromSiteSettings( settings: SiteSettings ): AIAssistantFormData {
 }
 
 function toBigSkyPluginUpdate( formData: AIAssistantFormData ): BigSkyPluginUpdateRequest {
-	const update: BigSkyPluginUpdateRequest = {
+	return {
 		enable: formData.bigSkyEnabled,
 	};
-
-	// Note: isOnboarded is now stored in metadata in the response,
-	// but we don't send it in the request. The server manages this
-	// based on whether the plugin is being enabled or disabled.
-	// The flattened metadata fields (site_description, topic, site_title)
-	// can be added here if needed in the future.
-
-	return update;
 }
