@@ -958,10 +958,9 @@ object PlaywrightTestPRMatrix : BuildType({
 	steps {
 		bashNodeScript {
 			name = "Upload report and send Slack notification"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
 			conditions {
 				matches("teamcity.build.branch", ".*e2e.*")
-				moreThan("FailedTestCount", "0")
 			}
 			scriptContent = """
 				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%PROJECT%"
