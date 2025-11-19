@@ -56,7 +56,6 @@ import {
 	getCampaignStatusBadgeColor,
 } from '../../utils';
 import TargetLocations from './target-locations';
-import FormattedHeader from 'calypso/components/formatted-header';
 
 interface Props {
 	isLoading?: boolean;
@@ -880,80 +879,55 @@ export default function CampaignItemDetails( props: Props ) {
 
 			<div className="promote-post-i2__top-bar-container">
 				<div className="promote-post-i2__top-bar">
-					<h1 className="promote-post-i2__top-bar-title formatted-header__title">
-						{ ! isLoading ? (
-							<Button
-								className="campaign-item-details-back-button"
-								onClick={ () =>
-									page.show( getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ) )
-								}
-								target="_blank"
-								variant="link"
-							>
-								<Icon icon={ chevronLeft } size={ 16 } />
-								{ translate( 'Go Back' ) }
-							</Button>
-						) : (
-							<FlexibleSkeleton />
-						) }
-					</h1>
-					<div className="promote-post-i2__top-bar-buttons">
-						{ ! isLoading && status && (
-							<div className="campaign-item-details__support-buttons-container">
-								<div className="campaign-item-details__support-buttons">
-									{ status &&
-										canGetCampaignStats( status ) &&
-										campaign?.campaign_stats?.impressions_total > 0 && (
-											<CampaignDownloadStats
-												siteId={ siteId }
-												campaign={ campaign }
-												isLoading={ isLoading }
-												setStatsError={ () => setShowReportErrorDialog( true ) }
-											/>
-										) }
-									{ ! isLoading && status ? (
-										<>
-											{ canPromoteAgainCampaign( status ) && (
-												<Button
-													variant="primary"
-													className="promote-again-button"
-													disabled={ ! isLoadingBillingSummary && paymentBlocked }
-													onClick={ onClickPromote }
-												>
-													{ translate( 'Promote Again' ) }
-												</Button>
-											) }
-										</>
-									) : (
-										<FlexibleSkeleton />
-									) }
-								</div>
-							</div>
-						) }
+					<div className="advertising__page-header">
+						<Button
+							className="formatted-header__title"
+							onClick={ () =>
+								page.show( getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ) )
+							}
+							target="_blank"
+							variant="link"
+						>
+							<Icon icon={ chevronLeft } size={ 16 } />
+							{ translate( 'Go Back' ) }
+						</Button>
 					</div>
+
+					{ ! isLoading && status && (
+						<div className="promote-post-i2__top-bar-buttons">
+							{ status &&
+								canGetCampaignStats( status ) &&
+								campaign?.campaign_stats?.impressions_total > 0 && (
+									<CampaignDownloadStats
+										siteId={ siteId }
+										campaign={ campaign }
+										isLoading={ isLoading }
+										setStatsError={ () => setShowReportErrorDialog( true ) }
+									/>
+								) }
+							{ ! isLoading && status ? (
+								<>
+									{ canPromoteAgainCampaign( status ) && (
+										<Button
+											variant="primary"
+											className="promote-again-button"
+											disabled={ ! isLoadingBillingSummary && paymentBlocked }
+											onClick={ onClickPromote }
+										>
+											{ translate( 'Promote Again' ) }
+										</Button>
+									) }
+								</>
+							) : (
+								<FlexibleSkeleton />
+							) }
+						</div>
+					) }
 				</div>
 			</div>
 
 			<header className="campaign-item-header">
 				<div>
-					<div className="campaign-item-breadcrumb">
-						{ ! isLoading ? (
-							<Button
-								className="campaign-item-details-back-button"
-								onClick={ () =>
-									page.show( getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ) )
-								}
-								target="_blank"
-								variant="link"
-							>
-								<Icon icon={ chevronLeft } size={ 16 } />
-								{ translate( 'Go Back' ) }
-							</Button>
-						) : (
-							<FlexibleSkeleton />
-						) }
-					</div>
-
 					<div className="campaign-item-details__header-title">
 						{ isLoading ? <FlexibleSkeleton /> : campaignTitleFormatted }
 					</div>

@@ -92,6 +92,8 @@
 	}
 }
 
+
+
 @mixin blazepress-animated-skeleton {
 	background-color: hsl(200, 20%, 90%);
 	animation: skeleton-loading 1s linear infinite alternate;
@@ -218,7 +220,7 @@ body.is-section-promote-post-i2 {
 				.formatted-header__title {
 					color: $studio-gray-100;
 					font-weight: 500;
-					font-size: 14px;
+					font-size: .875rem;
 				}
 			}
 		}
@@ -231,7 +233,7 @@ body.is-section-promote-post-i2 {
 		display: flex;
 		font-family: $font-sf-pro-text;
 		justify-content: space-between;
-		margin: 0 64px;
+		margin: 0 50px;
 
 		.formatted-header.is-left-align,
 		.formatted-header.is-right-align {
@@ -487,12 +489,15 @@ body.is-section-promote-post-i2 {
 			margin-bottom: 0;
 		}
 	}
-}
 
-.promote-post-i2 {
 	&__top-bar-container {
 		background: var(--studio-white);
 		padding: 16px;
+
+		@media (max-width: 985px) {
+			padding: 4px;
+			margin-bottom: 16px;
+		}
 	}
 
 	.promote-post-i2__top-bar-title {
@@ -500,13 +505,14 @@ body.is-section-promote-post-i2 {
 		align-items: center;
 		height: 60px;
 		font-weight: 600;
-		font-size: 14px;
+		font-size: 0.875rem;
 
 		.campaign-item-details-back-button {
 			color: var(--studio-gray-100);
 		}
 	}
 }
+
 
 .promote-post-i2__loading-container {
 	text-align: center;
@@ -627,7 +633,7 @@ body.is-section-promote-post-i2 {
 			.advertising__page-header {
 				.formatted-header__title,
 				&_has-banner .formatted-header__title {
-					font-size: 1.25rem;
+					font-size: 0.875rem;
 					line-height: 1;
 				}
 			}
@@ -636,7 +642,7 @@ body.is-section-promote-post-i2 {
 
 	.promote-post-i2 {
 		&__top-bar {
-			margin: 16px;
+			margin: 8px;
 
 			.posts-list-banner__border-button {
 				display: none;
@@ -700,7 +706,8 @@ $break-medium-expanded-menu: $break-medium + 272px;
 }
 
 @media screen and (max-width: 782px) {
-	.theme-default.is-section-promote-post-i2 .focus-content .layout__content {
+	.theme-default.is-section-promote-post-i2 .focus-content .layout__content,
+	.theme-default .focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content{
 		padding-left: 0;
 		padding-right: 0;
 		padding-top: 47px;
