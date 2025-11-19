@@ -35,9 +35,9 @@ function HelpCenterContent() {
 
 	const trackIconInteraction = useCallback( () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
-			is_help_center_visible: isShown,
+			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
-			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
+			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
 		} );
 	}, [ isShown, isMenuPanelExperimentEnabled ] );
 

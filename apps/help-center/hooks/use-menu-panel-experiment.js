@@ -45,9 +45,9 @@ const useMenuPanelExperiment = ( experimentName, treatmentVariation ) => {
 		initialData: () => {
 			try {
 				const cached = window.localStorage.getItem( cacheKey );
-				return cached ? JSON.parse( cached ) : undefined;
+				return cached ? JSON.parse( cached ) : false;
 			} catch ( e ) {
-				return undefined;
+				return false;
 			}
 		},
 	} );

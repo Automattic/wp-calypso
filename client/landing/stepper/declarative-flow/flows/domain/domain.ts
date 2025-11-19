@@ -1,3 +1,4 @@
+import { DotcomFeatures } from '@automattic/api-core';
 import { isDomainMapping } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
@@ -10,6 +11,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
@@ -176,30 +178,40 @@ const domain: FlowV2< typeof initialize > = {
 						throw new Error( 'No domain cart item found' );
 					}
 
-					if ( site ) {
-						if ( isDomainMapping( providedDependencies.domainCartItem ) ) {
-							const isGardenSite = ( site as { is_garden?: boolean } ).is_garden;
-							const hasPaidPlan = siteHasPaidPlan( site );
+					if (
+						site &&
+						siteSlug &&
+						providedDependencies &&
+						'domainCartItem' in providedDependencies
+					) {
+						const isDomainMapping =
+							providedDependencies.domainCartItem?.product_slug === 'domain_map';
+						const mappingIsFree = hasPlanFeature( site, DotcomFeatures.DOMAIN_MAPPING );
+						const hasPaidPlan = siteHasPaidPlan( site );
 
-							if ( isGardenSite || hasPaidPlan ) {
+						if ( ( isDomainMapping && mappingIsFree ) || hasPaidPlan ) {
+							const queryArgs = getQueryArgs( window.location.href );
+							const redirectTo = queryArgs.redirect_to as string | undefined;
+
+							// Use pending action for domain mapping
+							// Note: Verification (if required) is handled in the step before submission
+							setPendingAction( async () => {
 								const domain = providedDependencies.domainCartItem.meta;
 
-								// Use pending action for domain mapping
-								// Note: Verification (if required) is handled in the step before submission
-								setPendingAction( async () => {
-									await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
+								await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
 
-									return {
-										redirectTo: isGardenSite
-											? `/ciab/sites/${ domain }/domains`
-											: `/v2/domains/${ domain }/domain-connection-setup`,
-									};
-								} );
+								/// Redirect to appropriate domains page based on redirect_to parameter
+								const redirectUrl = redirectTo || `/domains/manage/${ siteSlug }`;
 
-								return navigate( STEPS.PROCESSING.slug );
-							}
+								return {
+									redirectTo: redirectUrl,
+								};
+							} );
+
+							return navigate( STEPS.PROCESSING.slug );
 						}
 
+						// Regular flow: add to cart and go through checkout
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
 						setSignupCompleteFlowName( this.name );

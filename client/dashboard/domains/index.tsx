@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView, DataViews } from '../app/dataviews';
-import { domainsRoute } from '../app/router/domains';
+import { domainsIndexRoute } from '../app/router/domains';
 import { DataViewsCard } from '../components/dataviews-card';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
@@ -36,7 +36,7 @@ function Domains() {
 	const fields = useFields();
 	const { data: sites } = useQuery( queries.sitesQuery() );
 	const actions = useActions( { user, sites } );
-	const searchParams = domainsRoute.useSearch();
+	const searchParams = domainsIndexRoute.useSearch();
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'domains',
