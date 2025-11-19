@@ -72,9 +72,14 @@ export default function ContactForm( {
 			reject: ( reason: unknown ) => void;
 		};
 
-		const debounced = debounce( ( item: DomainContactDetails, callbacks: ValidationCallbacks ) => {
+		const debouncedFn = ( item: DomainContactDetails, callbacks: ValidationCallbacks ) => {
 			validateAsync( item ).then( callbacks.resolve ).catch( callbacks.reject );
-		}, 800 ) as ( item: DomainContactDetails, callbacks: ValidationCallbacks ) => void;
+		};
+
+		const debounced = debounce( debouncedFn as ( ...args: unknown[] ) => unknown, 800 ) as (
+			item: DomainContactDetails,
+			callbacks: ValidationCallbacks
+		) => void;
 
 		let pendingReject: ValidationCallbacks[ 'reject' ] | undefined;
 
