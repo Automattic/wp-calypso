@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	clearStepPersistedState,
@@ -12,7 +11,7 @@ import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
@@ -40,6 +39,12 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
+const withLocale = ( url: string, locale: string ) => {
+	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
+};
+
+const POST_CHECKOUT_SETUP_YOUR_SITE_EXPERIMENT_SLUG = 'calypso_post_checkout_setup_your_site_step';
+
 function initialize() {
 	const steps = [
 		STEPS.DOMAIN_SEARCH,
@@ -61,6 +66,12 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+
+		const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+			POST_CHECKOUT_SETUP_YOUR_SITE_EXPERIMENT_SLUG
+		);
+		const shouldShowNewStep =
+			! isLoadingExperiment && experimentAssignment?.variationName === 'treatment';
 
 		const {
 			setDomain,
@@ -203,10 +214,10 @@ const onboarding: FlowV2< typeof initialize > = {
 					setShouldShowNotification( providedDependencies?.siteId as number );
 
 					/*
-					 * If the post-checkout ai step feature flag is enabled,
+					 * If the post-checkout ai step should be shown,
 					 * redirect the user to the relevant step.
 					 */
-					if ( isEnabled( 'onboarding/post-checkout-ai-step' ) ) {
+					if ( shouldShowNewStep ) {
 						return navigate( 'setup-your-site-ai' );
 					}
 
@@ -340,9 +351,10 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 		}, [ isLoggedIn, currentStepSlug ] );
 
-		// Preload the visual split experiment
+		// Preload experiments
 		useEffect( () => {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
+			loadExperimentAssignment( POST_CHECKOUT_SETUP_YOUR_SITE_EXPERIMENT_SLUG );
 		}, [] );
 	},
 };
