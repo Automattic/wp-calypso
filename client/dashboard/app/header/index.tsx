@@ -26,7 +26,7 @@ function Header() {
 			) }
 
 			<div style={ { flexGrow: 1 } }>{ isDesktop && <PrimaryMenu /> }</div>
-			<div>
+			<div style={ { flexShrink: 0 } }>
 				<SecondaryMenu />
 			</div>
 		</HeaderBar>

@@ -9,7 +9,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import type { Site, SiteSettings } from '@automattic/api-core';
-import type { Field, SimpleFormField } from '@wordpress/dataviews';
+import type { Field, FormField } from '@wordpress/dataviews';
 
 const fields: Field< SiteSettings >[] = [
 	{
@@ -21,7 +21,7 @@ const fields: Field< SiteSettings >[] = [
 
 const form = {
 	layout: { type: 'regular' as const },
-	fields: [ { id: 'wpcom_legacy_contact' } ] as SimpleFormField[],
+	fields: [ { id: 'wpcom_legacy_contact' } ] as FormField[],
 };
 
 export default function ContactForm( { site, settings }: { site: Site; settings: SiteSettings } ) {

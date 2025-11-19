@@ -1,12 +1,24 @@
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+@import '../page-layout/style.scss';
+
+/**
+* Size of padding added to .components-button.has-icon.
+*/
+$component-icon-padding: 6px;
 
 .dashboard-header-bar {
 	box-sizing: border-box;
-	padding: $grid-unit-15;
+	padding-block: $grid-unit-15;
+	padding-inline: calc(#{$grid-unit-20} - #{$component-icon-padding}); // Adjust for 6px padding on icons.
 	border-bottom: $border-width solid var( --dashboard-header__border-color );
 	background-color: var( --dashboard-header__background-color );
 	backdrop-filter: blur(4px);
 	color: var( --dashboard-header__color );
+
+	@include break-medium {
+		padding-inline: calc(#{$grid-unit-30} - #{$component-icon-padding});
+	}
 
 	&.is-support-user-session {
 		background-color: var( --dashboard-header__support-background-color );
