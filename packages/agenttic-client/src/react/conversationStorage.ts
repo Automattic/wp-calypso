@@ -1,6 +1,7 @@
 import type {
 	ContentType,
 	DataPart,
+	FilePart,
 	Message,
 	TextPart,
 } from '../client/types/index';
@@ -18,6 +19,11 @@ interface StoredMessage {
 	contentType?: ContentType;
 	timestamp: number;
 	archived?: boolean;
+	files?: Array< {
+		name: string;
+		mimeType: string;
+		uri?: string;
+	} >;
 	toolCalls?: Array< {
 		toolCallId: string;
 		toolId: string;
@@ -86,6 +92,15 @@ function extractStorableContent( message: Message ): StoredMessage {
 			error: part.data.error as string | undefined,
 		} ) );
 
+	// Extract file parts (images, etc.)
+	const files = message.parts
+		.filter( ( part ): part is FilePart => part.type === 'file' )
+		.map( ( part ) => ( {
+			name: part.file.name,
+			mimeType: part.file.mimeType,
+			uri: part.file.uri,
+		} ) );
+
 	// Determine the role - if this message contains tool interactions, store as "agent"
 	// regardless of the original message role
 	const hasToolInteractions = toolCalls.length > 0 || toolResults.length > 0;
@@ -103,6 +118,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 		timestamp,
 		...( archived !== undefined && { archived } ),
 		...( contentType && { contentType } ),
+		...( files.length > 0 && { files } ),
 		...( toolCalls.length > 0 && { toolCalls } ),
 		...( toolResults.length > 0 && { toolResults } ),
 	};
@@ -126,6 +142,20 @@ function restoreMessage( stored: StoredMessage ): Message {
 				},
 			} ),
 		} );
+	}
+
+	// Add file parts (images, etc.)
+	if ( stored.files ) {
+		for ( const file of stored.files ) {
+			parts.push( {
+				type: 'file',
+				file: {
+					name: file.name,
+					mimeType: file.mimeType,
+					uri: file.uri,
+				},
+			} );
+		}
 	}
 
 	// Add tool call parts

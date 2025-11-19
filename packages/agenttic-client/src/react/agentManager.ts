@@ -1,6 +1,7 @@
 import type {
 	Client,
 	ClientConfig,
+	FilePart,
 	Message,
 	SendMessageParams,
 	Task,
@@ -216,7 +217,11 @@ function createAgentManager(): AgentManager {
 
 			const messageObj: Message =
 				options.message ||
-				createTextMessageWithHistory( message, conversationHistory );
+				createTextMessageWithHistory(
+					message,
+					conversationHistory,
+					options.imageUrls
+				);
 
 			const task = await client.sendMessage( {
 				message: messageObj,
@@ -352,7 +357,8 @@ function createAgentManager(): AgentManager {
 				options.message ||
 				createTextMessageWithHistory(
 					message,
-					resolvedConversationHistory
+					resolvedConversationHistory,
+					options.imageUrls
 				);
 
 			// Add metadata to the message object that will be sent to the agent
@@ -383,6 +389,21 @@ function createAgentManager(): AgentManager {
 			// Add user message to local conversation history before streaming (always)
 			// createTextMessage automatically splits contentType into TextPart metadata
 			const userMessage = createTextMessage( message, options.metadata );
+
+			// Add image parts if present
+			if ( options.imageUrls && options.imageUrls.length > 0 ) {
+				const imageParts: FilePart[] = options.imageUrls.map(
+					( url ) => ( {
+						type: 'file',
+						file: {
+							name: 'image',
+							mimeType: 'image/jpeg',
+							uri: url,
+						},
+					} )
+				);
+				userMessage.parts.push( ...imageParts );
+			}
 			currentConversationHistory = [
 				...currentConversationHistory,
 				userMessage,

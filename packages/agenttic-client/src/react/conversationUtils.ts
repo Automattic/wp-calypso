@@ -1,4 +1,9 @@
-import type { DataPart, Message, TextPart } from '../client/types/index';
+import type {
+	DataPart,
+	FilePart,
+	Message,
+	TextPart,
+} from '../client/types/index';
 import { generateMessageId } from '../client/utils/core';
 
 /**
@@ -101,14 +106,25 @@ export function conversationMessagesToDataParts(
  *
  * @param text                 - The user text message to send
  * @param conversationMessages - Array of previous conversation messages
+ * @param imageUrls
  * @return A2A Message with history and current text
  */
 export function createTextMessageWithHistory(
 	text: string,
-	conversationMessages: Message[] = []
+	conversationMessages: Message[] = [],
+	imageUrls: string[] = []
 ): Message {
 	const historyParts =
 		conversationMessagesToDataParts( conversationMessages );
+
+	const imageParts: FilePart[] = imageUrls.map( ( url ) => ( {
+		type: 'file',
+		file: {
+			name: 'image',
+			mimeType: 'image/jpeg', // Default to jpeg, or detect from URL if possible
+			uri: url,
+		},
+	} ) );
 
 	return {
 		role: 'user',
@@ -118,6 +134,7 @@ export function createTextMessageWithHistory(
 				type: 'text',
 				text,
 			} as TextPart,
+			...imageParts,
 		],
 		kind: 'message',
 		messageId: generateMessageId(),

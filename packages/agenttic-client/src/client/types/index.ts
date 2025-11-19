@@ -288,6 +288,7 @@ export interface SendMessageParams {
 	withHistory?: boolean; // Default: true - whether to include conversation history
 	abortSignal?: AbortSignal; // Optional: abort signal for canceling inflight requests
 	enableStreaming?: boolean; // Override client's default streaming setting for this request
+	imageUrls?: string[]; // Optional: array of image URLs to include in the message
 }
 
 export interface TaskUpdate {
@@ -300,18 +301,20 @@ export interface TaskUpdate {
 }
 
 export interface Client {
-	sendMessage( params: SendMessageParams ): Promise< TaskUpdate >;
-	sendMessageStream( params: SendMessageParams ): AsyncIterable< TaskUpdate >;
+	sendMessage: ( params: SendMessageParams ) => Promise< TaskUpdate >;
+	sendMessageStream: (
+		params: SendMessageParams
+	) => AsyncIterable< TaskUpdate >;
 
 	// Continue an existing task (useful for human input after input-required state)
-	continueTask(
+	continueTask: (
 		taskId: string,
 		userInput: string,
 		sessionId?: string
-	): Promise< TaskUpdate >;
+	) => Promise< TaskUpdate >;
 
-	getTask( taskId: string ): Promise< Task >;
-	cancelTask( taskId: string ): Promise< void >;
+	getTask: ( taskId: string ) => Promise< Task >;
+	cancelTask: ( taskId: string ) => Promise< void >;
 }
 
 // Tool system types
@@ -333,13 +336,13 @@ export interface ToolExecutionResult {
 }
 
 export interface ToolProvider {
-	getAvailableTools?(): Promise< Tool[] >;
-	executeTool?(
+	getAvailableTools?: () => Promise< Tool[] >;
+	executeTool?: (
 		toolId: string,
 		args: any,
 		messageId?: string,
 		toolCallId?: string
-	): Promise< any | ToolExecutionResult >;
+	) => Promise< any | ToolExecutionResult >;
 	getAbilities?: () => Promise< Ability[] >;
 	executeAbility?: ( name: string, args: any ) => Promise< any >;
 }
@@ -363,5 +366,5 @@ export type ExecuteAbilityFunction = (
 export type ClientContext = Record< string, unknown >;
 
 export interface ContextProvider {
-	getClientContext(): ClientContext;
+	getClientContext: () => ClientContext;
 }

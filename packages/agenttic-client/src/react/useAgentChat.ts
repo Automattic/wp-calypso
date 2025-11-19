@@ -1,6 +1,5 @@
-import type React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAgentManager } from './agentManager';
 import type {
 	AuthProvider,
@@ -18,6 +17,28 @@ const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
 	return [ ...messages ].sort( ( a, b ) => a.timestamp - b.timestamp );
 };
 
+/**
+ * Create an image component for display in messages
+ * @param url      - The image URL
+ * @param maxWidth - Maximum width (defaults to 40% so 2 images fit in a row)
+ */
+const createImageComponent = ( url: string, maxWidth = '40%' ) => ( {
+	type: 'component' as const,
+	component: () =>
+		React.createElement( 'img', {
+			src: url,
+			alt: 'Uploaded image',
+			style: {
+				maxWidth,
+				height: 'auto',
+				borderRadius: '8px',
+				marginTop: '8px',
+				marginRight: '8px',
+				display: 'inline-block',
+			},
+		} ),
+} );
+
 // Re-export types that will be used by consumers
 export interface Suggestion {
 	id: string;
@@ -30,6 +51,7 @@ export interface Suggestion {
 export interface SubmitOptions {
 	type?: ContentType; // Content type: 'text' for normal visible text (default), 'context' for hidden context content
 	archived?: boolean;
+	imageUrls?: string[]; // Array of image URLs to include in the message (converted to component parts for UI)
 }
 
 // UI Message format (simplified for UI components)
@@ -37,9 +59,8 @@ export interface UIMessage {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component' | 'context';
+		type: 'text' | 'component' | 'context';
 		text?: string;
-		image_url?: string;
 		component?: React.ComponentType;
 		componentProps?: any;
 	} >;
@@ -124,12 +145,11 @@ const transformClientMessageToUI = (
 			};
 		}
 		if ( part.type === 'file' ) {
-			return {
-				type: 'image_url' as const,
-				image_url:
-					part.file.uri ||
-					`data:${ part.file.mimeType };base64,${ part.file.bytes }`,
-			};
+			// Convert file parts to component for rendering
+			const imageUrl =
+				part.file.uri ||
+				`data:${ part.file.mimeType };base64,${ part.file.bytes }`;
+			return createImageComponent( imageUrl );
 		}
 		if ( part.type === 'data' ) {
 			// Handle data parts that might contain component information
@@ -375,7 +395,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const userMessage: UIMessage = {
 				id: `user-${ messageTimestamp }`,
 				role: 'user',
-				content: [ { type: contentType, text: message } ],
+				content: [
+					{ type: contentType, text: message },
+					// Map image URLs to component content parts
+					...( options?.imageUrls?.map( ( url ) =>
+						createImageComponent( url )
+					) ?? [] ),
+				],
 				timestamp: messageTimestamp,
 				archived: options?.archived ?? false,
 				showIcon: false,
@@ -401,6 +427,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						...( options?.archived && { archived: true } ),
 						...( options?.type && { contentType: options.type } ),
 					};
+				}
+
+				if ( options?.imageUrls ) {
+					messageOptions.imageUrls = options.imageUrls;
 				}
 
 				for await ( const update of agentManager.sendMessageStream(
