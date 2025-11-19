@@ -123,29 +123,32 @@ export default function DomainConnectionVerification( {
 					</VStack>
 					{ status === 'verifying' && <VerificationInProgressNextSteps /> }
 
-					<Text size="medium" weight={ 500 }>
-						{ __( 'Need help?' ) }
-					</Text>
-					<VStack spacing={ 2 }>
-						<HStack>
-							<Button
-								variant="link"
-								onClick={ onRestartConnection }
-								isBusy={ isRestartingConnection }
-								disabled={ isRestartingConnection }
-							>
-								{ __( 'Restart connection' ) }
-							</Button>
-						</HStack>
-						<InlineSupportLink supportContext="map-domain-setup-instructions">
-							{ __( 'Domain connection guide' ) }
-						</InlineSupportLink>
-						<InlineSupportLink supportContext="general-support-options">
-							{ __( 'Contact support' ) }
-						</InlineSupportLink>
-						<InlineSupportLink supportContext="transfer-domain-registrar-login">
-							{ __( 'Registrar instructions' ) }
-						</InlineSupportLink>
+					<VStack spacing={ 4 }>
+						<Text size="medium" weight={ 500 }>
+							{ __( 'Need help?' ) }
+						</Text>
+						<VStack spacing={ 2 }>
+							<HStack>
+								<Button
+									variant="link"
+									onClick={ onRestartConnection }
+									isBusy={ isRestartingConnection }
+									disabled={ isRestartingConnection }
+									style={ { lineHeight: '20px' } }
+								>
+									{ __( 'Restart connection' ) }
+								</Button>
+							</HStack>
+							<InlineSupportLink supportContext="map-domain-setup-instructions">
+								{ __( 'Domain connection guide' ) }
+							</InlineSupportLink>
+							<InlineSupportLink supportContext="general-support-options">
+								{ __( 'Contact support' ) }
+							</InlineSupportLink>
+							<InlineSupportLink supportContext="transfer-domain-registrar-login">
+								{ __( 'Registrar instructions' ) }
+							</InlineSupportLink>
+						</VStack>
 					</VStack>
 				</VStack>
 			</CardBody>
