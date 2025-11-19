@@ -104,7 +104,9 @@ export function useSitePerformanceData(
 		getReport,
 		hasCompleted: !! getReport( 'desktop' ) && !! getReport( 'mobile' ),
 		hasError: ( type: ReportType ) =>
-			isReportFailed( getReport( type ) ) || isBasicMetricsError || isInsightsError,
+			isReportFailed( performanceData?.pagespeed?.[ type ] ) ||
+			isBasicMetricsError ||
+			isInsightsError,
 		isLoadingExistingReport,
 		isLoadingNewReport,
 	};

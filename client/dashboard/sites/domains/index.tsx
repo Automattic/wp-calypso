@@ -1,6 +1,6 @@
 import { domainsQuery, siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useRouterState } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -53,12 +53,15 @@ function SiteDomains() {
 		fields
 	);
 
+	const routerState = useRouterState();
+	const redirectTo = routerState.location.pathname;
+
 	return (
 		<PageLayout
 			header={
 				<PageHeader
 					title={ __( 'Domains' ) }
-					actions={ <AddDomainButton siteSlug={ site.slug } /> }
+					actions={ <AddDomainButton siteSlug={ site.slug } redirectTo={ redirectTo } /> }
 				/>
 			}
 		>

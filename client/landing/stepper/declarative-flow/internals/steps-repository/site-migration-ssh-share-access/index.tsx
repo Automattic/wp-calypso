@@ -186,6 +186,7 @@ const SiteMigrationSshShareAccess: StepType< {
 			{
 				siteId,
 				remoteHost: formState.serverAddress,
+				remotePort: formState.port,
 				remoteUser: formState.username,
 				remoteDomain: fromUrl,
 				remotePass: formState.authMethod === 'key' ? '' : formState.password,

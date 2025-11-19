@@ -102,15 +102,21 @@ const PlansStepAdaptor: StepType< {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
-	const { siteTitle, domainItem, domainItems, selectedDesign } = useSelect(
+	const { siteTitle, domainItem, domainItems, selectedDesign, hideFreePlan } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
-			const { getSelectedSiteTitle, getDomainCartItem, getDomainCartItems, getSelectedDesign } =
-				select( ONBOARD_STORE );
+			const {
+				getSelectedSiteTitle,
+				getDomainCartItem,
+				getDomainCartItems,
+				getSelectedDesign,
+				getHideFreePlan,
+			} = select( ONBOARD_STORE );
 			return {
 				siteTitle: getSelectedSiteTitle(),
 				domainItem: getDomainCartItem(),
 				domainItems: getDomainCartItems(),
 				selectedDesign: getSelectedDesign(),
+				hideFreePlan: getHideFreePlan(),
 			};
 		},
 		[]
@@ -194,6 +200,7 @@ const PlansStepAdaptor: StepType< {
 	return (
 		<UnifiedPlansStep
 			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
+			hideFreePlan={ hideFreePlan }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );

@@ -31,6 +31,7 @@ export class ImportContentFromWordPressPage {
 				isUploadInProgress: 'false',
 			} )
 		);
+		await this.importFileContentPage.dismissCookieBanner();
 	}
 
 	/**

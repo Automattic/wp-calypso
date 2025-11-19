@@ -43,5 +43,6 @@ export class ImportContentPage {
 	 */
 	async visit( siteSlug: string ): Promise< void > {
 		await this.page.goto( DataHelper.getCalypsoURL( `import/${ siteSlug }` ) );
+		await this.importFileContentPage.dismissCookieBanner();
 	}
 }

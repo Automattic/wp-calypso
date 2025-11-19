@@ -20,7 +20,7 @@ const reactQueryCacheKey = 'REACT_QUERY_OFFLINE_CACHE';
 const queryClient = new QueryClient( {
 	defaultOptions: {
 		queries: {
-			staleTime: 0,
+			staleTime: 60_000, // 1 minute
 			refetchOnWindowFocus: true,
 			refetchOnMount: true,
 			retry: ( failureCount: number, error: Error ) => {
