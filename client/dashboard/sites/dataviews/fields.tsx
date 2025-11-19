@@ -75,12 +75,10 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 				// A plan may have different product_slugs due to the period.
 				// However, a filter can only represent one value.
 				// As a result, it seems better to use the name as value for filters.
-				return Array.from( new Set( plan.map( ( plan ) => plan.product_name_short ) ) ).map(
-					( name ) => ( {
-						label: name,
-						value: name,
-					} )
-				);
+				return Array.from( new Set( plan.map( ( plan ) => plan.name ) ) ).map( ( name ) => ( {
+					label: name,
+					value: name,
+				} ) );
 			},
 			filterBy: {
 				operators: [ 'isAny' ],

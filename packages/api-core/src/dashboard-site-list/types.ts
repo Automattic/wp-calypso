@@ -40,5 +40,5 @@ export interface FetchDashboardSiteFiltersParams {
 }
 
 export interface DashboardFilters {
-	plan?: Array< { product_id: number; product_slug: string; product_name_short: string } >;
+	plan?: Array< { name: string; value: string } >;
 }
