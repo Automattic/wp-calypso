@@ -192,6 +192,7 @@ export async function* parseSSEStream(
 
 						const update: TaskUpdate = {
 							id: event.result.id,
+							sessionId: event.result.sessionId,
 							status: event.result.status,
 							final:
 								event.result.status.state === 'completed' ||
@@ -214,6 +215,7 @@ export async function* parseSSEStream(
 						if ( event.result.status ) {
 							const update: TaskUpdate = {
 								id: event.result.id,
+								sessionId: event.result.sessionId,
 								status: event.result.status,
 								final:
 									event.result.status.state === 'completed' ||

@@ -30,6 +30,7 @@ export interface Suggestion {
 export interface SubmitOptions {
 	type?: ContentType; // Content type: 'text' for normal visible text (default), 'context' for hidden context content
 	archived?: boolean;
+	sessionId?: string; // Optional sessionId to use for this message (overrides agent's sessionId)
 }
 
 // UI Message format (simplified for UI components)
@@ -205,7 +206,9 @@ const validateAgentConfig = ( config: {
 	agentUrl: string;
 	sessionId: string;
 } ): boolean => {
-	const required = [ 'agentId', 'agentUrl', 'sessionId' ];
+	// Only agentId and agentUrl are required
+	// sessionId can be empty string for new chats (server generates UUID on first message)
+	const required = [ 'agentId', 'agentUrl' ];
 	return required.every( ( key ) => {
 		const value = config[ key as keyof typeof config ];
 		return typeof value === 'string' && value.trim().length > 0;
@@ -217,10 +220,12 @@ export interface UseAgentChatConfig {
 	agentId: string;
 	agentUrl: string;
 	sessionId: string;
+	sessionIdStorageKey?: string;
 	contextProvider?: ContextProvider;
 	toolProvider?: ToolProvider;
 	authProvider?: AuthProvider;
 	enableStreaming?: boolean; // Enable token-by-token streaming
+	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 }
 
 // Hook return interface
@@ -248,6 +253,9 @@ export interface UseAgentChatReturn {
 
 	// Abort control
 	abortCurrentRequest: () => void;
+
+	// Conversation loading
+	loadMessages: ( messages: ClientMessage[] ) => Promise< void >;
 }
 
 // Internal state interface
@@ -271,6 +279,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		agentId: config.agentId,
 		agentUrl: config.agentUrl,
 		sessionId: config.sessionId,
+		sessionIdStorageKey: config.sessionIdStorageKey,
 	};
 
 	// Validate configuration
@@ -299,6 +308,18 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		registrationsRef.current = registrations;
 	}, [ registrations ] );
 
+	// Transform client messages to UI messages
+	const transformMessages = useCallback(
+		( messages: ClientMessage[] ): UIMessage[] => {
+			return messages
+				.map( ( msg ) =>
+					transformClientMessageToUI( msg, registrationsRef.current )
+				)
+				.filter( ( msg ): msg is UIMessage => msg !== null );
+		},
+		[] // registrationsRef is stable, so no deps needed
+	);
+
 	// Initialize agent
 	useEffect( () => {
 		if ( ! isValidConfig ) {
@@ -306,43 +327,69 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		}
 
 		const initializeAgent = async () => {
-			if ( agentConfig.sessionId ) {
-				const agentManager = getAgentManager();
-				const agentKey = `${ agentConfig.agentId }-${ agentConfig.sessionId }`;
+			const agentManager = getAgentManager();
+			const agentKey = agentConfig.agentId;
 
-				if ( ! agentManager.hasAgent( agentKey ) ) {
-					await agentManager.createAgent( agentKey, {
-						agentId: agentConfig.agentId,
-						agentUrl: agentConfig.agentUrl,
-						sessionId: agentConfig.sessionId,
-						contextProvider:
-							config.contextProvider ||
-							createNoOpContextProvider(),
-						toolProvider:
-							config.toolProvider || createNoOpToolProvider(),
-						authProvider: config.authProvider,
-						enableStreaming: config.enableStreaming,
-					} );
-				}
+			const hasAgent = agentManager.hasAgent( agentKey );
 
-				const clientHistory =
-					agentManager.getConversationHistory( agentKey );
-				setState( ( prev ) => {
-					const uiHistory = clientHistory
-						.map( ( msg ) =>
-							transformClientMessageToUI(
-								msg,
-								registrationsRef.current
-							)
-						)
-						.filter( ( msg ): msg is UIMessage => msg !== null );
-
-					return {
-						...prev,
-						clientMessages: clientHistory,
-						uiMessages: uiHistory,
-					};
+			// Always ensure agent exists, even for new chats with empty sessionId
+			if ( ! hasAgent ) {
+				await agentManager.createAgent( agentKey, {
+					agentId: agentConfig.agentId,
+					agentUrl: agentConfig.agentUrl,
+					sessionId: agentConfig.sessionId, // Can be empty for new chats
+					sessionIdStorageKey: agentConfig.sessionIdStorageKey,
+					contextProvider:
+						config.contextProvider || createNoOpContextProvider(),
+					toolProvider:
+						config.toolProvider || createNoOpToolProvider(),
+					authProvider: config.authProvider,
+					enableStreaming: config.enableStreaming,
+					odieBotId: config.odieBotId,
 				} );
+
+				// Only load messages when creating a new agent (initial mount or after removeAgent)
+				if ( agentConfig.sessionId ) {
+					const clientHistory =
+						agentManager.getConversationHistory( agentKey );
+					setState( ( prev ) => {
+						const uiHistory = transformMessages( clientHistory );
+
+						return {
+							...prev,
+							clientMessages: clientHistory,
+							uiMessages: uiHistory,
+						};
+					} );
+				} else {
+					setState( ( prev ) => ( {
+						...prev,
+						clientMessages: [],
+						uiMessages: [],
+					} ) );
+				}
+			} else if ( agentConfig.sessionId ) {
+				agentManager.updateSessionId( agentKey, agentConfig.sessionId );
+
+				// However, clear state if there are no messages yet (fresh load)
+				const currentHistory =
+					agentManager.getConversationHistory( agentKey );
+				if ( currentHistory.length === 0 ) {
+					setState( ( prev ) => ( {
+						...prev,
+						clientMessages: [],
+						uiMessages: [],
+					} ) );
+				}
+			} else {
+				// Agent already exists - new chat, clear everything
+				agentManager.updateSessionId( agentKey, '' );
+				await agentManager.replaceMessages( agentKey, [] );
+				setState( ( prev ) => ( {
+					...prev,
+					clientMessages: [],
+					uiMessages: [],
+				} ) );
 			}
 		};
 		initializeAgent();
@@ -350,10 +397,12 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		agentConfig.sessionId,
 		agentConfig.agentId,
 		agentConfig.agentUrl,
+		agentConfig.sessionIdStorageKey,
 		config.contextProvider,
 		config.toolProvider,
 		config.authProvider,
 		config.enableStreaming,
+		config.odieBotId,
 		isValidConfig,
 	] );
 
@@ -365,7 +414,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			}
 
 			const agentManager = getAgentManager();
-			const agentKey = `${ agentConfig.agentId }-${ agentConfig.sessionId }`;
+			const agentKey = agentConfig.agentId;
 
 			// Capture timestamp once for consistency
 			const messageTimestamp = Date.now();
@@ -401,6 +450,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						...( options?.archived && { archived: true } ),
 						...( options?.type && { contentType: options.type } ),
 					};
+				}
+				// Pass sessionId if provided (overrides agent's default sessionId)
+				if ( options?.sessionId ) {
+					messageOptions.sessionId = options.sessionId;
 				}
 
 				for await ( const update of agentManager.sendMessageStream(
@@ -571,7 +624,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw error;
 			}
 		},
-		[ agentConfig.agentId, agentConfig.sessionId, isValidConfig ]
+		[ agentConfig.agentId, isValidConfig ]
 	);
 
 	// Add message function - for tools to directly add UI messages
@@ -606,11 +659,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			}
 
 			// Re-transform all messages with current registrations
-			const updatedUIMessages = prev.clientMessages
-				.map( ( msg ) =>
-					transformClientMessageToUI( msg, registrationsRef.current )
-				)
-				.filter( ( msg ): msg is UIMessage => msg !== null );
+			const updatedUIMessages = transformMessages( prev.clientMessages );
 
 			// Find UI-only messages
 			const clientMessageIds = new Set(
@@ -638,9 +687,35 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			return;
 		}
 		const agentManager = getAgentManager();
-		const agentKey = `${ agentConfig.agentId }-${ agentConfig.sessionId }`;
+		const agentKey = agentConfig.agentId;
 		agentManager.abortCurrentRequest( agentKey );
-	}, [ agentConfig.agentId, agentConfig.sessionId, isValidConfig ] );
+	}, [ agentConfig.agentId, isValidConfig ] );
+
+	// Load messages externally (for conversation history switching)
+	// This updates both AgentManager and React state
+	const loadMessages = useCallback(
+		async ( messages: ClientMessage[] ) => {
+			if ( ! isValidConfig ) {
+				return;
+			}
+
+			const agentManager = getAgentManager();
+			const agentKey = agentConfig.agentId;
+
+			// Replace agent's conversation history
+			await agentManager.replaceMessages( agentKey, messages );
+
+			// Transform to UI messages and update React state
+			const uiMessages = transformMessages( messages );
+
+			setState( ( prev ) => ( {
+				...prev,
+				clientMessages: messages,
+				uiMessages,
+			} ) );
+		},
+		[ agentConfig.agentId, isValidConfig ]
+	);
 
 	return {
 		// AgentUI props
@@ -664,6 +739,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 		// Abort control
 		abortCurrentRequest,
+
+		// Conversation loading
+		loadMessages,
 	};
 }
 

@@ -127,7 +127,7 @@ describe( 'agentManager', () => {
 				},
 			} )
 		);
-		vi.mocked( loadConversation ).mockResolvedValue( [] );
+		vi.mocked( loadConversation ).mockResolvedValue( { messages: [] } );
 		vi.mocked( storeConversation ).mockResolvedValue();
 		vi.mocked( clearConversation ).mockResolvedValue();
 		vi.mocked( extractToolCallsFromMessage ).mockReturnValue( [] );
@@ -165,7 +165,9 @@ describe( 'agentManager', () => {
 
 		it( 'should load conversation history when sessionId is provided', async () => {
 			const mockHistory = [ mockUserMessage, mockAgentMessage ];
-			vi.mocked( loadConversation ).mockResolvedValue( mockHistory );
+			vi.mocked( loadConversation ).mockResolvedValue( {
+				messages: mockHistory,
+			} );
 
 			const configWithSession = {
 				...testConfig,
@@ -175,7 +177,11 @@ describe( 'agentManager', () => {
 
 			expect( loadConversation ).toHaveBeenCalledWith(
 				'session-123',
-				undefined
+				undefined,
+				expect.objectContaining( {
+					authProvider: undefined,
+					odieBotId: undefined,
+				} )
 			);
 			const history = agentManager.getConversationHistory( 'test-key' );
 			expect( history ).toEqual( mockHistory );
@@ -598,9 +604,9 @@ describe( 'agentManager', () => {
 						messageId: 'user-1',
 					} as Message,
 				];
-				vi.mocked( loadConversation ).mockResolvedValue(
-					conversationWithoutPromises
-				);
+				vi.mocked( loadConversation ).mockResolvedValue( {
+					messages: conversationWithoutPromises,
+				} );
 
 				// Mock streaming updates
 				const mockUpdates: TaskUpdate[] = [
@@ -695,9 +701,9 @@ describe( 'agentManager', () => {
 						messageId: 'user-1',
 					} as Message,
 				];
-				vi.mocked( loadConversation ).mockResolvedValue(
-					conversationWithoutPromises
-				);
+				vi.mocked( loadConversation ).mockResolvedValue( {
+					messages: conversationWithoutPromises,
+				} );
 
 				// Mock streaming updates
 				const mockUpdates: TaskUpdate[] = [
@@ -780,9 +786,9 @@ describe( 'agentManager', () => {
 					} as Message,
 				];
 
-				vi.mocked( loadConversation ).mockResolvedValue(
-					originalConversation
-				);
+				vi.mocked( loadConversation ).mockResolvedValue( {
+					messages: originalConversation,
+				} );
 				vi.mocked(
 					updateToolResultsWithResolvedPromises
 				).mockReturnValue( resolvedConversation[ 0 ].parts );

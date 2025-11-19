@@ -278,6 +278,7 @@ export interface ClientConfig {
 	contextProvider?: ContextProvider;
 	conversationStorageKey?: string;
 	enableStreaming?: boolean; // Enable token-by-token streaming (requires server support)
+	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage via WordPress.com public API.
 }
 
 export interface SendMessageParams {
@@ -292,6 +293,7 @@ export interface SendMessageParams {
 
 export interface TaskUpdate {
 	id: string;
+	sessionId?: string; // Session ID from server
 	status: TaskStatus;
 	final?: boolean;
 	artifact?: Artifact;
@@ -300,18 +302,20 @@ export interface TaskUpdate {
 }
 
 export interface Client {
-	sendMessage( params: SendMessageParams ): Promise< TaskUpdate >;
-	sendMessageStream( params: SendMessageParams ): AsyncIterable< TaskUpdate >;
+	sendMessage: ( params: SendMessageParams ) => Promise< TaskUpdate >;
+	sendMessageStream: (
+		params: SendMessageParams
+	) => AsyncIterable< TaskUpdate >;
 
 	// Continue an existing task (useful for human input after input-required state)
-	continueTask(
+	continueTask: (
 		taskId: string,
 		userInput: string,
 		sessionId?: string
-	): Promise< TaskUpdate >;
+	) => Promise< TaskUpdate >;
 
-	getTask( taskId: string ): Promise< Task >;
-	cancelTask( taskId: string ): Promise< void >;
+	getTask: ( taskId: string ) => Promise< Task >;
+	cancelTask: ( taskId: string ) => Promise< void >;
 }
 
 // Tool system types
@@ -333,13 +337,13 @@ export interface ToolExecutionResult {
 }
 
 export interface ToolProvider {
-	getAvailableTools?(): Promise< Tool[] >;
-	executeTool?(
+	getAvailableTools?: () => Promise< Tool[] >;
+	executeTool?: (
 		toolId: string,
 		args: any,
 		messageId?: string,
 		toolCallId?: string
-	): Promise< any | ToolExecutionResult >;
+	) => Promise< any | ToolExecutionResult >;
 	getAbilities?: () => Promise< Ability[] >;
 	executeAbility?: ( name: string, args: any ) => Promise< any >;
 }
@@ -363,5 +367,5 @@ export type ExecuteAbilityFunction = (
 export type ClientContext = Record< string, unknown >;
 
 export interface ContextProvider {
-	getClientContext(): ClientContext;
+	getClientContext: () => ClientContext;
 }

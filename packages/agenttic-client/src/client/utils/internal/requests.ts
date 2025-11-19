@@ -196,13 +196,22 @@ export async function prepareRequest(
 
 	// Create request payload with token streaming flag
 	// Use message/stream for SSE, add tokenStreaming: true for token streaming
+	// Build params object, only including sessionId if it has a value
+	const requestParams: any = {
+		id: taskId,
+		message: enhancedMessage,
+		metadata,
+	};
+
+	// Only include sessionId if it's defined and not null/empty
+	// This prevents sending null/undefined values which could have different server-side
+	// behavior than omitting the field entirely.
+	if ( effectiveSessionId ) {
+		requestParams.sessionId = effectiveSessionId;
+	}
+
 	const request = createSendMessageRequest(
-		{
-			id: taskId,
-			sessionId: effectiveSessionId,
-			message: enhancedMessage,
-			metadata,
-		},
+		requestParams,
 		isStreaming ? 'message/stream' : 'message/send',
 		enableTokenStreaming && isStreaming // Only enable token streaming if using SSE
 	);
