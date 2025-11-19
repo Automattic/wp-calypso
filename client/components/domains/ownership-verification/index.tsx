@@ -18,6 +18,8 @@ interface OwnershipVerificationFormData {
 	authCode: string;
 }
 
+type OwnershipVerificationError = Error | { message?: string; error?: string } | null | undefined;
+
 interface OwnershipVerificationProps {
 	domainName: string;
 	onConnect: (
@@ -27,7 +29,7 @@ interface OwnershipVerificationProps {
 			};
 			domain: string;
 		},
-		callback: ( error: { message?: string } | null ) => void
+		callback: ( error: OwnershipVerificationError ) => void
 	) => void;
 }
 
@@ -82,7 +84,13 @@ export default function OwnershipVerification( {
 			( error ) => {
 				setIsSubmitting( false );
 				if ( error ) {
-					setError( error.message || __( 'An error occurred while connecting the domain.' ) );
+					const errorMessage =
+						error instanceof Error
+							? error.message
+							: error.message ||
+							  error.error ||
+							  __( 'An error occurred while connecting the domain.' );
+					setError( errorMessage );
 				}
 			}
 		);
