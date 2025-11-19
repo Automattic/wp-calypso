@@ -484,6 +484,7 @@ function setUpLoggedInRoute( req, res, next ) {
  * Security approach:
  * - Uses cryptographic nonces for inline scripts (generated per request)
  * - Allows specific trusted third-party domains (payment providers, analytics, fonts)
+ * - Environment-aware: allows 'unsafe-eval' only in dev (for webpack eval source maps)
  * - Reports violations to /cspreport endpoint for monitoring
  *
  * Required for compliance on pages handling credit card information.
@@ -502,18 +503,31 @@ function setUpCSP( req, res, next ) {
 	// and calculating SHA256 hash on it, encoded in base64, example:
 	// `sha256-${ base64( sha256( 'window.AppBoot();' ) ) }` === sha256-3yiQswl88knA3EhjrG5tj5gmV6EUdLYFvn2dygc0xUQ
 	// you can also just run it in Chrome, chrome will give you the hash of the violating scripts
-	const inlineScripts = [ 'sha256-ZKTuGaoyrLu2lwYpcyzib+xE4/2mCN8PKv31uXS3Eg4=' ];
+	const inlineScripts = [
+		'sha256-ZKTuGaoyrLu2lwYpcyzib+xE4/2mCN8PKv31uXS3Eg4=',
+		'sha256-Ab4XY87C+5uFAaNDtQ+4UTgs8t6MTnQmMtSsZCvmoiw=', // Additional inline script
+		'sha256-ehBD9wGNfnN0flaZIjbVClW1//FJFsATigcdVB4VdMQ=', // Additional inline script
+	];
 
 	req.context.inlineScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
+
+	// Development environments that need webpack eval-based source maps
+	const isDevelopmentEnv = [
+		'development',
+		'wpcalypso',
+		'jetpack-cloud-development',
+		'a8c-for-agencies-development',
+	].includes( calypsoEnv );
 
 	const policy = {
 		'default-src': [ "'self'" ],
 		'script-src': [
 			"'self'",
 			"'report-sample'",
-			// Note: 'unsafe-eval' has been removed to improve security. Calypso's codebase
-			// doesn't use eval() or new Function() directly. If violations are reported,
-			// they may indicate webpack config issues or third-party libraries that need review.
+			// Allow eval only in development for webpack's eval-based source maps (devtool: 'eval')
+			// which enable fast rebuilds and hot module reloading. Production uses 'hidden-source-map'
+			// which doesn't require eval, maintaining strict CSP in production environments.
+			...( isDevelopmentEnv ? [ "'unsafe-eval'" ] : [] ),
 			'stats.wp.com',
 			'https://widgets.wp.com',
 			'*.wordpress.com',
@@ -527,6 +541,10 @@ function setUpCSP( req, res, next ) {
 			'js.verygoodvault.com', // VGS for EBANX credit card tokenization
 			'www.paypal.com', // PayPal SDK
 			'www.paypalobjects.com', // PayPal assets
+			'cdn.siftscience.com', // Sift Science fraud detection for checkout
+			// User feedback and support tools
+			'survey.survicate.com', // Survicate survey tool
+			'surveys-static-prd.survicate-cdn.com', // Survicate CDN
 			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
@@ -535,6 +553,7 @@ function setUpCSP( req, res, next ) {
 			'*.wp.com',
 			'https://fonts.googleapis.com',
 			'use.typekit.net',
+			'surveys-static-prd.survicate-cdn.com', // Survicate survey styles
 			// per https://helpx.adobe.com/ca/fonts/using/content-security-policy.html
 			"'unsafe-inline'",
 		],
@@ -542,12 +561,14 @@ function setUpCSP( req, res, next ) {
 		'object-src': [ "'none'" ],
 		'img-src': [
 			"'self'",
-			'data',
+			'data:', // data: URI scheme (e.g., data:image/svg+xml;base64,...)
 			'*.wp.com',
+			'https://wordpress.com', // WordPress.com assets (mu-plugins, etc.)
 			'*.files.wordpress.com',
 			'*.gravatar.com',
 			'https://www.google-analytics.com',
 			'https://amplifypixel.outbrain.com',
+			'https://hexagon-analytics.com', // Hexagon analytics tracking pixels
 			'https://img.youtube.com',
 			'localhost:8888',
 			'p.typekit.net',
@@ -557,6 +578,7 @@ function setUpCSP( req, res, next ) {
 			'https://public-api.wordpress.com',
 			'https://accounts.google.com/',
 			'https://jetpack.com',
+			'*.wordpress.com', // User WordPress.com sites (site previews, embeds)
 			// Payment provider iframes (secure card input elements)
 			'js.stripe.com', // Stripe Elements iframes
 			'*.stripe.com', // Stripe 3D Secure and other payment flows
@@ -570,12 +592,14 @@ function setUpCSP( req, res, next ) {
 			'https://fonts.gstatic.com',
 			'use.typekit.net',
 			'https://woocommerce.com',
+			'surveys-static-prd.survicate-cdn.com', // Survicate fonts
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
 		'connect-src': [
 			"'self'",
 			'https://*.wordpress.com/',
+			'wss://*.wordpress.com', // WebSocket connections (realtime API, notifications)
 			'https://*.wp.com',
 			'https://wordpress.com',
 			// Payment provider APIs (for tokenization and payment processing)
@@ -583,6 +607,8 @@ function setUpCSP( req, res, next ) {
 			'api.stripe.com', // Stripe API endpoint
 			'*.verygoodsecurity.com', // VGS API calls
 			'*.paypal.com', // PayPal API calls
+			// Support and feedback tools
+			'*.zendesk.com', // Zendesk support chat
 		],
 		'report-uri': [ '/cspreport' ],
 	};
