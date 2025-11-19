@@ -33,7 +33,10 @@ const useMenuPanelExperiment = ( experimentName, treatmentVariation ) => {
 			const result = await fetchExperimentAssignment( experimentName );
 			const isMatch = result?.variations?.[ experimentName ] === treatmentVariation;
 			try {
-				window.localStorage.setItem( cacheKey, JSON.stringify( isMatch ) );
+				window.localStorage.setItem(
+					cacheKey,
+					JSON.stringify( { value: isMatch, timestamp: Date.now() } )
+				);
 			} catch ( e ) {
 				// Silent fail if localStorage is unavailable
 			}
@@ -45,7 +48,13 @@ const useMenuPanelExperiment = ( experimentName, treatmentVariation ) => {
 		initialData: () => {
 			try {
 				const cached = window.localStorage.getItem( cacheKey );
-				return cached ? JSON.parse( cached ) : undefined;
+				if ( ! cached ) {
+					return undefined;
+				}
+				const { value, timestamp } = JSON.parse( cached );
+				const age = Date.now() - timestamp;
+				const maxAge = 10 * 60 * 1000; // 10 minutes
+				return age < maxAge ? value : undefined;
 			} catch ( e ) {
 				return undefined;
 			}
