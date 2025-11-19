@@ -993,7 +993,7 @@ class ThemeSheet extends Component {
 							<MenuItem
 								onClick={ ( e ) => {
 									onClose();
-									this.previewAction( e, 'link', 'preview', 'regular' );
+									this.previewAction( e, 'link', 'preview', 'dropdown' );
 								} }
 							>
 								{ translate( 'Preview with demo content' ) }
