@@ -12,7 +12,7 @@ import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
-	const { currentThemeId, siteId } = props;
+	const { currentThemeId, siteId, siteSlug } = props;
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
 	return (
@@ -22,7 +22,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 				<QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } />
 			) }
 
-			<ThemeShowcase { ...props } siteId={ siteId } />
+			<ThemeShowcase { ...props } upsellUrl={ `/plans/${ siteSlug }` } siteId={ siteId } />
 		</Main>
 	);
 } );
