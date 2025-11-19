@@ -139,7 +139,7 @@ export default function ContactForm( {
 		],
 	};
 
-	const { isValid: canSave } = useFormValidity( normalizedFormData, fields, form );
+	const { validity, isValid: canSave } = useFormValidity( normalizedFormData, fields, form );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -189,6 +189,7 @@ export default function ContactForm( {
 							data={ normalizedFormData }
 							fields={ fields }
 							form={ form }
+							validity={ validity }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
