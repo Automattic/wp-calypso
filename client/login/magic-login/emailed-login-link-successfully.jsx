@@ -61,7 +61,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 		const { translate, emailAddress } = this.props;
 
 		return (
-			<div className="magic-login__form">
+			<>
 				<RedirectWhenLoggedIn
 					redirectTo="/help"
 					replaceCurrentLocation
@@ -92,7 +92,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 						) }
 					</p>
 				</OneLoginFooter>
-			</div>
+			</>
 		);
 	}
 }
