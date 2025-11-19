@@ -1,12 +1,12 @@
 import config from '@automattic/calypso-config';
 import { FoldableCard } from '@automattic/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
-import QuickPost from 'calypso/reader/components/quick-post';
 import { focusEditor } from 'calypso/reader/components/quick-post/utils';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
@@ -15,11 +15,23 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
+import Skeleton from '../components/skeleton';
 import Recent from '../recent';
 import { useSiteSubscriptions } from './use-site-subscriptions';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
+
+function QuickPostPlaceholder() {
+	return (
+		<div className="quick-post-placeholder">
+			<VStack spacing="4">
+				<Skeleton height="52px" width="264px" />
+				<Skeleton height="136px" width="100%" />
+			</VStack>
+		</div>
+	);
+}
 
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
@@ -90,7 +102,10 @@ function FollowingStream( { ...props } ) {
 								recordReaderTracksEvent( 'calypso_reader_editor_card_closed' );
 							} }
 						>
-							<QuickPost />
+							<AsyncLoad
+								fallback={ <QuickPostPlaceholder /> }
+								require="calypso/reader/components/quick-post"
+							/>
 						</FoldableCard>
 					) }
 					<ReaderOnboarding />
