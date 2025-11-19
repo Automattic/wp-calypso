@@ -13,9 +13,8 @@ import type {
 	StoreSelectorsWithState,
 	StoreActions,
 	StoreState,
-	PossiblyCompleteDomainContactDetails,
 } from '../payment-method-store';
-import type { AnyAction } from '../types';
+import type { AnyAction, PossiblyCompleteDomainContactDetails } from '../types';
 import type { RazorpayConfiguration } from '@automattic/calypso-razorpay';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
