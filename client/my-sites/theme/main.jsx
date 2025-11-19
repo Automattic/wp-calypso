@@ -183,6 +183,7 @@ class ThemeSheet extends Component {
 	state = {
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
+		isRedirectingToEditorWebPreview: false,
 		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
 		isWide: isWithinBreakpoint( '>960px' ),
@@ -263,7 +264,11 @@ class ThemeSheet extends Component {
 	};
 
 	isLoading = () => {
-		return this.props.isLoading || this.isRequestingActivatingTheme();
+		return (
+			this.props.isLoading ||
+			this.state.isRedirectingToEditorWebPreview ||
+			this.isRequestingActivatingTheme()
+		);
 	};
 
 	isRequestingActivatingTheme = () => {
@@ -934,10 +939,9 @@ class ThemeSheet extends Component {
 	handleEditorWebPreview = async () => {
 		const { isAtomic, siteEditorUrl, siteId, themeInstallId } = this.props;
 
-		// TODO: handle
-		this.setState( { isRedirecting: true } );
+		this.setState( { isRedirectingToEditorWebPreview: true } );
 
-		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
+		this.props.recordTracksEvent( 'calypso_theme_sheet_editor_preview_click' );
 
 		// For atomic sites, we need to install theme before navigating to site editor
 		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.
@@ -947,7 +951,7 @@ class ThemeSheet extends Component {
 			}
 			window.location.href = siteEditorUrl;
 		} catch ( error ) {
-			this.setState( { isRedirecting: false } );
+			this.setState( { isRedirectingToEditorWebPreview: false } );
 		}
 	};
 
@@ -975,20 +979,32 @@ class ThemeSheet extends Component {
 							className="theme__sheet-demo-toggle"
 							onClick={ onToggle }
 							aria-expanded={ isOpen }
+							busy={ this.state.isRedirectingToEditorWebPreview }
+							disabled={ this.isLoading() }
 						>
 							{ translate( 'Preview', {
 								context: 'Button to preview a theme',
 							} ) }
-							<Icon icon={ isOpen ? chevronUp : chevronDown } />
+							<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 16 } />
 						</Button>
 					) }
-					renderContent={ () => (
+					renderContent={ ( { onClose } ) => (
 						<NavigableMenu role="menu">
-							<MenuItem onClick={ ( e ) => this.previewAction( e, 'link', 'preview', 'regular' ) }>
+							<MenuItem
+								onClick={ ( e ) => {
+									onClose();
+									this.previewAction( e, 'link', 'preview', 'regular' );
+								} }
+							>
 								{ translate( 'Preview with demo content' ) }
 								{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
 							</MenuItem>
-							<MenuItem onClick={ this.handleEditorWebPreview }>
+							<MenuItem
+								onClick={ () => {
+									onClose();
+									this.handleEditorWebPreview();
+								} }
+							>
 								{ translate( 'Preview with your content' ) }
 							</MenuItem>
 						</NavigableMenu>
