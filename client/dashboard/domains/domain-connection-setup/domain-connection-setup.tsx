@@ -20,6 +20,7 @@ import { Card, CardBody } from '../../components/card';
 import ConnectionModeCard from './connection-mode-card';
 import DNSRecordsDataView from './dns-records-dataview';
 import DomainConnectCard from './domain-connect-card';
+import DomainRegistrarBanner from './domain-registrar-banner';
 
 interface DomainConnectionSetupProps {
 	domainName: string;
@@ -165,32 +166,6 @@ export default function DomainConnectionSetup( {
 		} );
 	};
 
-	const renderDomainBanner = () => {
-		return (
-			<Card>
-				<CardBody>
-					<HStack spacing={ 2 } justify="space-between">
-						<Text size="medium" style={ { whiteSpace: 'nowrap' } }>
-							{ domainName }
-						</Text>
-						{ registrar && (
-							<HStack spacing={ 1 } justify="flex-end">
-								<Text variant="muted" size="small">
-									{ __( 'Registered by' ) }
-								</Text>
-								{ ! isReseller && registrar_url ? (
-									<ExternalLink href={ registrar_url }>{ registrar }</ExternalLink>
-								) : (
-									<Text size="small">{ registrar }</Text>
-								) }
-							</HStack>
-						) }
-					</HStack>
-				</CardBody>
-			</Card>
-		);
-	};
-
 	if (
 		connectionMode === DomainConnectionSetupMode.DC &&
 		domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting !== null
@@ -198,7 +173,12 @@ export default function DomainConnectionSetup( {
 		return (
 			<div className="domain-connection-setup">
 				<VStack spacing={ 6 }>
-					{ renderDomainBanner() }
+					<DomainRegistrarBanner
+						domainName={ domainName }
+						registrar={ registrar }
+						registrar_url={ registrar_url }
+						isReseller={ isReseller }
+					/>
 					<DomainConnectCard
 						onChangeSetupMode={ () => setConnectionMode( recommendedMode ) }
 						onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.DC ) }
@@ -216,7 +196,12 @@ export default function DomainConnectionSetup( {
 	return (
 		<div className="domain-connection-setup">
 			<VStack spacing={ 6 }>
-				{ renderDomainBanner() }
+				<DomainRegistrarBanner
+					domainName={ domainName }
+					registrar={ registrar }
+					registrar_url={ registrar_url }
+					isReseller={ isReseller }
+				/>
 				<VStack spacing={ 4 }>
 					{ domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting !== null && (
 						<Card>

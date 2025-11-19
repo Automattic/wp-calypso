@@ -283,6 +283,7 @@ export const useSteps = ( {
 				siteId,
 				remoteUser: formState.username,
 				remoteHost: formState.serverAddress,
+				remotePort: formState.port,
 				remoteDomain: fromUrl,
 			},
 			{
@@ -291,7 +292,14 @@ export const useSteps = ( {
 				},
 			}
 		);
-	}, [ generateSSHKey, siteId, formState.username, formState.serverAddress, fromUrl ] );
+	}, [
+		generateSSHKey,
+		siteId,
+		formState.username,
+		formState.serverAddress,
+		formState.port,
+		fromUrl,
+	] );
 
 	const handleGenerateSSHKey = () => {
 		if ( isTransferring ) {

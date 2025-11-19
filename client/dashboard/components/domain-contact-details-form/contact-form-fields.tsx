@@ -9,9 +9,9 @@ import {
 import { type Field } from '@wordpress/dataviews';
 import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import InlineSupportLink from '../../components/inline-support-link';
-import PhoneNumberInput from '../../components/phone-number-input';
 import { validatePhone } from '../../utils/phone-number';
+import InlineSupportLink from '../inline-support-link';
+import PhoneNumberInput from '../phone-number-input';
 import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
@@ -61,7 +61,7 @@ export const getContactFormFields = (
 				const phoneValue = getValue( { item: data } );
 
 				// Our backend stores phone number in the format: +country_code.phone_number
-				const [ countryNumericCode, phoneNumber ] = phoneValue.split( '.' ) ?? [ '', '' ];
+				const [ countryNumericCode, phoneNumber ] = phoneValue?.split( '.' ) ?? [ '', '' ];
 
 				// Find country code from the numeric code using SMS country codes
 				const smsCountry = smsCountryCodes?.find(
