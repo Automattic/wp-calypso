@@ -2,12 +2,17 @@ import { useOdieAssistantContext } from '../../../context';
 import { useSendChatMessage } from '../../../hooks';
 import type { Message } from '../../../types';
 
-export const QuickReplyOptions = ( { options }: { options: string[] } ) => {
+export type QuickReply = {
+	id: string;
+	text: string;
+};
+
+export const QuickReplyOptions = ( { options }: { options: QuickReply[] } ) => {
 	const { trackEvent, chat } = useOdieAssistantContext();
 	const { sendMessage } = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 
-	const handleOptionClick = async ( option: string ) => {
+	const handleOptionClick = ( option: QuickReply ) => {
 		if ( isChatBusy ) {
 			return;
 		}
@@ -18,28 +23,24 @@ export const QuickReplyOptions = ( { options }: { options: string[] } ) => {
 		} );
 
 		const messageObj: Message = {
-			content: option,
+			content: option.text,
 			role: 'user',
 			type: 'message',
 		};
 
-		try {
-			await sendMessage( messageObj );
-		} catch ( error ) {
-			// Error handling is done in the sendMessage hook
-		}
+		return sendMessage( messageObj );
 	};
 
 	return (
 		<ul className="odie-introduction-quick-reply-options">
 			{ options.map( ( option ) => (
-				<li key={ option } className="odie-introduction-quick-reply-option">
+				<li key={ option.id } className="odie-introduction-quick-reply-option">
 					<button
 						onClick={ () => handleOptionClick( option ) }
 						disabled={ isChatBusy }
 						type="button"
 					>
-						{ option }
+						{ option.text }
 					</button>
 				</li>
 			) ) }

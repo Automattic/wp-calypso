@@ -1,6 +1,6 @@
 import { BigSkyLogo } from '@automattic/components';
 import { MarkdownOrChildren } from '../mardown-or-children';
-import { QuickReplyOptions } from './quick-reply-options';
+import { QuickReply, QuickReplyOptions } from './quick-reply-options';
 import type { Message } from '../../../types';
 import './style.scss';
 
@@ -11,7 +11,7 @@ export const IntroductionMessage = ( {
 	content: Message[ 'content' ];
 	metadata: Message[ 'metadata' ];
 } ) => {
-	const quickReplies = ( metadata?.[ 'quick_replies' ] as string[] ) || [];
+	const quickReplies = ( metadata?.[ 'quick_replies' ] as QuickReply[] ) || [];
 
 	return (
 		<div className="odie-introduction-message-content">

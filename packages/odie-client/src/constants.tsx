@@ -260,11 +260,14 @@ export const getOdieInitialMessage = (
 			context: getOdieInitialPromptContext( botNameSlug ),
 			metadata: {
 				quick_replies: [
-					__( 'WordPress.com', __i18n_text_domain__ ),
-					__( 'WooCommerce', __i18n_text_domain__ ),
-					__( 'Jetpack', __i18n_text_domain__ ),
-					__( 'Automattic for Agencies', __i18n_text_domain__ ),
-					__( 'Pressable', __i18n_text_domain__ ),
+					{ id: 'wpcom', text: __( 'WordPress.com', __i18n_text_domain__ ) },
+					{ id: 'woocommerce', text: __( 'WooCommerce', __i18n_text_domain__ ) },
+					{ id: 'jetpack', text: __( 'Jetpack', __i18n_text_domain__ ) },
+					{
+						id: 'a4a',
+						text: __( 'Automattic for Agencies', __i18n_text_domain__ ),
+					},
+					{ id: 'pressable', text: __( 'Pressable', __i18n_text_domain__ ) },
 				],
 			},
 		};
