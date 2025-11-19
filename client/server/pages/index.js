@@ -511,7 +511,9 @@ function setUpCSP( req, res, next ) {
 		'script-src': [
 			"'self'",
 			"'report-sample'",
-			"'unsafe-eval'",
+			// Note: 'unsafe-eval' has been removed to improve security. Calypso's codebase
+			// doesn't use eval() or new Function() directly. If violations are reported,
+			// they may indicate webpack config issues or third-party libraries that need review.
 			'stats.wp.com',
 			'https://widgets.wp.com',
 			'*.wordpress.com',
