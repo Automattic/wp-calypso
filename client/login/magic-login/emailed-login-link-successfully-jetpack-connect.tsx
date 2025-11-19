@@ -74,7 +74,7 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 										className="one-login__footer-link"
 									/>
 								),
-								link: <a href="/log-in/jetpack" />,
+								link: <a className="one-login__footer-link" href="/log-in/jetpack" />,
 							},
 						}
 					) }

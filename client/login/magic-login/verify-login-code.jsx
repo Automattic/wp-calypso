@@ -260,9 +260,14 @@ const VerifyLoginCode = ( {
 						{
 							components: {
 								button: (
-									<Button variant="link" onClick={ handleResendEmail } disabled={ isRedirecting } />
+									<Button
+										className="one-login__footer-link"
+										variant="link"
+										onClick={ handleResendEmail }
+										disabled={ isRedirecting }
+									/>
 								),
-								link: <a href="/log-in/jetpack" />,
+								link: <a className="one-login__footer-link" href="/log-in/jetpack" />,
 							},
 						}
 					) }
