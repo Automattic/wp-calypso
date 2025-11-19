@@ -21,6 +21,7 @@ import { domainTransferSetupRoute, domainsIndexRoute } from '../../app/router/do
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DomainRegistrarBanner from './domain-registrar-banner';
@@ -110,9 +111,9 @@ export default function DomainTransferSetup() {
 						/>
 					</div>
 					{ error && (
-						<Text intent="error">
+						<Notice variant="error">
 							{ __( 'Error:' ) } { error }
-						</Text>
+						</Notice>
 					) }
 				</VStack>
 			),
