@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch } from '@wordpress/data';
@@ -112,6 +113,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const variantSlug = this.variantSlug;
 		const flowPath = variantSlug ?? flowName;
 		const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
+		const locale = useLocale();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
 		const actionQueryParam = urlQueryParams.get( 'action' );
@@ -163,11 +165,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 						hosting_provider: host || 'unknown',
 						is_ssh_supported: isHostingSupported,
 						ssh_feature_enabled: isSSHMigrationAvailable,
-						redirected_to_ssh: isSSHMigrationAvailable && isHostingSupported,
+						is_english_locale: locale === 'en',
+						redirected_to_ssh: isSSHMigrationAvailable && isHostingSupported && locale === 'en',
 					} );
 
-					// SSH migration is ONLY available if feature flag is enabled AND hosting is supported
-					const canUseSSHMigration = isSSHMigrationAvailable && isHostingSupported;
+					// SSH migration is ONLY available if feature flag is enabled AND hosting is supported AND locale is English
+					const canUseSSHMigration =
+						isSSHMigrationAvailable && isHostingSupported && locale === 'en';
 
 					if ( canUseSSHMigration ) {
 						if ( hasDestinationSite && canInstallPlugins ) {
@@ -245,12 +249,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 							const host = detectedHost || hostQueryParam;
 
 							// Check if this is an SSH migration flow
-							// Either from ssh=true param OR from move-lp with supported hosting
+							// Either from ssh=true param OR from move-lp with supported hosting and English locale
 							const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 							const isHostingSupported = isHostingSupportedForSSHMigration( host );
 							const shouldUseSSH =
 								urlQueryParams.get( 'ssh' ) === 'true' ||
-								( entryPoint === 'move-lp' && isSSHMigrationAvailable && isHostingSupported );
+								( entryPoint === 'move-lp' &&
+									isSSHMigrationAvailable &&
+									isHostingSupported &&
+									locale === 'en' );
 
 							if ( shouldUseSSH ) {
 								if ( selectedSiteCanInstallPlugins ) {
@@ -313,7 +320,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 							const isHostingSupported = isHostingSupportedForSSHMigration( host );
 							const shouldUseSSH =
 								urlQueryParams.get( 'ssh' ) === 'true' ||
-								( entryPoint === 'move-lp' && isSSHMigrationAvailable && isHostingSupported );
+								( entryPoint === 'move-lp' &&
+									isSSHMigrationAvailable &&
+									isHostingSupported &&
+									locale === 'en' );
 
 							const queryParams: {
 								from: string | null;
@@ -678,13 +688,20 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug: {
-					const { destination } = providedDependencies as {
+					const { destination, from, authorizationUrl, platform } = providedDependencies as {
 						destination?:
 							| 'migration-started'
 							| 'migration-completed'
 							| 'no-ssh-access'
 							| 'back-to-verification'
-							| 'do-it-for-me';
+							| 'do-it-for-me'
+							| 'application-passwords-approval'
+							| 'fallback-credentials'
+							| 'already-wpcom'
+							| 'site-is-not-using-wordpress';
+						from?: string;
+						authorizationUrl?: string;
+						platform?: ImporterPlatform;
 					};
 
 					// Missing transferId, redirect back to verification
@@ -702,6 +719,52 @@ const siteMigration: FlowV2< typeof initialize > = {
 					// User doesn't have SSH access, redirect to credentials flow
 					if ( destination === 'no-ssh-access' ) {
 						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
+					}
+
+					// Application passwords are enabled, go to authorization step
+					if ( destination === 'application-passwords-approval' ) {
+						return navigate(
+							paths.applicationPasswordAuthorizationPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+								authorizationUrl,
+							} )
+						);
+					}
+
+					// Application passwords are disabled, go to fallback credentials
+					if ( destination === 'fallback-credentials' ) {
+						return navigate(
+							paths.fallbackCredentialsPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+							} )
+						);
+					}
+
+					// Site is already on wpcom
+					if ( destination === 'already-wpcom' ) {
+						return navigate(
+							paths.alreadyWpcomPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+							} )
+						);
+					}
+
+					// Site is not using WordPress
+					if ( destination === 'site-is-not-using-wordpress' ) {
+						return navigate(
+							paths.otherPlatformDetectedImportPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+								platform,
+							} )
+						);
 					}
 
 					// Migration completed during polling, go to overview

@@ -91,11 +91,12 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 		} );
 
 		it( 'search returns proper results', async () => {
-			await helpCenterComponent.search( 'Change a Domain Name Address' );
+			await helpCenterComponent.search( 'Change a domain name address' );
 			const resultTitles = await helpCenterComponent.getArticles().allTextContents();
+
 			expect(
 				resultTitles.some(
-					( title ) => normalizeString( title )?.includes( 'Change a Domain Name Address' )
+					( title ) => normalizeString( title )?.includes( 'Change a domain name address' )
 				)
 			).toBeTruthy();
 		} );

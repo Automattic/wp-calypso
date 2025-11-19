@@ -32,7 +32,7 @@ function PerformanceCardContentWithoutTests( { site }: { site: Site } ) {
 		<OverviewCard
 			{ ...CARD_PROPS }
 			heading={ __( 'Run a test' ) }
-			description={ __( 'Your site hasn’t been tested yet.' ) }
+			description={ __( 'We don’t have performance data for your site.' ) }
 			link={ getPerformanceUrl( site ) }
 		/>
 	);
@@ -84,10 +84,15 @@ function PerformanceCardContentWithTests( {
 	site: Site;
 	page: SitePerformancePage;
 } ) {
-	const { getReport, hasCompleted } = useSitePerformanceData(
+	const { getReport, hasCompleted, hasError } = useSitePerformanceData(
 		page.link,
 		page.wpcom_performance_report_hash
 	);
+
+	// If we have an error, show the without tests card so they can navigate and try again.
+	if ( hasError( 'desktop' ) || hasError( 'mobile' ) ) {
+		return <PerformanceCardContentWithoutTests site={ site } />;
+	}
 
 	if ( ! hasCompleted ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
@@ -151,11 +156,12 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 		);
 	}
 
-	if ( ! pages || pages.length === 0 ) {
+	const homePage = pages?.[ 0 ] ?? null;
+	if ( ! homePage || ! homePage.wpcom_performance_report_hash ) {
 		return <PerformanceCardContentWithoutTests site={ site } />;
 	}
 
-	return <PerformanceCardContentWithTests site={ site } page={ pages[ 0 ] } />;
+	return <PerformanceCardContentWithTests site={ site } page={ homePage } />;
 }
 
 export default function PerformanceCard( { site }: { site: Site } ) {

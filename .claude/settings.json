@@ -1,0 +1,28 @@
+{
+	"permissions": {
+		"deny": [
+			"Read(node_modules/**)",
+			"Read(vendor/**)",
+			"Read(build/**)",
+			"Read(public/**)",
+			"Read(**/dist/**)",
+			"Read(coverage/**)",
+			"Read(.webpack-cache/**)",
+			"Read(.cache/**)",
+			"Read(.tsc-cache/**)",
+			"Read(**/*.tsbuildinfo)",
+			"Read(yarn.lock)",
+			"Read(composer.lock)",
+			"Read(config/secrets.json)",
+			"Read(config/*.local.json)",
+			"Read(**/*.log)",
+			"Read(playwright-report/**)",
+			"Read(test-results*.xml)",
+			"Read(*xunit_*.xml)",
+			"Read(desktop/e2e/logs/**)",
+			"Read(desktop/e2e/screenshots/**)",
+			"Read(*.rdb)",
+			"Read(*.db)"
+		]
+	}
+}

@@ -8,12 +8,12 @@ export const siteHasCancelablePurchasesQuery = ( siteId: number, userId: number 
 		select: ( purchases ) => {
 			const cancelables = purchases
 				.filter( ( purchase ) => {
-					// Exclude inactive purchases and legacy premium theme purchases.
-					if ( purchase.expiry_status === 'expired' || purchase.product_slug === 'premium_theme' ) {
-						return false;
+					if ( purchase.is_refundable ) {
+						return true;
 					}
 
-					return purchase.is_cancelable;
+					// Exclude legacy premium theme purchases.
+					return purchase.product_slug !== 'premium_theme';
 				} )
 				.filter( ( purchase ) => purchase.user_id === userId );
 

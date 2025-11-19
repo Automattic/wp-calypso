@@ -1,15 +1,56 @@
-import { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
+import {
+	DomainConnectionSetupMode,
+	DomainMappingSetupInfo,
+	DomainMappingStatus,
+} from '@automattic/api-core';
 import { __experimentalText as Text } from '@wordpress/components';
 import { DataViews, type Field, type ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, arrowRight } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { matchCurrentToTargetValues } from './utils/match-records';
+
+const viewSuggested: ViewTable = {
+	type: 'table',
+	page: 1,
+	perPage: 10,
+	fields: [ 'currentValue', 'arrow', 'updateTo' ],
+	layout: {
+		styles: {
+			arrow: {
+				width: '30px',
+				maxWidth: '30px',
+			},
+		},
+	},
+};
+
+const viewAdvanced: ViewTable = {
+	...viewSuggested,
+	fields: [ 'type', 'name', 'currentValue', 'arrow', 'updateTo' ],
+	layout: {
+		styles: {
+			type: {
+				width: '50px',
+				maxWidth: '50px',
+			},
+			name: {
+				width: '50px',
+				maxWidth: '50px',
+			},
+			arrow: {
+				width: '30px',
+				maxWidth: '30px',
+			},
+		},
+	},
+};
 
 interface DNSRecord {
 	id: string;
-	type: 'A' | 'CNAME';
-	name: string;
+	type?: 'A' | 'CNAME';
+	name?: string;
 	currentValue: string;
 	updateTo: string;
 }
@@ -18,78 +59,64 @@ interface DNSRecordsDataViewProps {
 	domainName: string;
 	domainMappingStatus: DomainMappingStatus;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
+	mode: typeof DomainConnectionSetupMode.SUGGESTED | typeof DomainConnectionSetupMode.ADVANCED;
 }
 
 export default function DNSRecordsDataView( {
 	domainName,
 	domainMappingStatus,
 	domainConnectionSetupInfo,
+	mode,
 }: DNSRecordsDataViewProps ) {
+	const isSuggestedMode = mode === DomainConnectionSetupMode.SUGGESTED;
+
 	// Build the DNS records data
 	const records = useMemo( () => {
 		const dnsRecords: DNSRecord[] = [];
 
-		// Process A records with matching logic
-		const hostIpAddresses = domainMappingStatus.host_ip_addresses || [];
-		const defaultIpAddresses = domainConnectionSetupInfo.default_ip_addresses || [];
+		if ( isSuggestedMode ) {
+			// Process nameserver records for suggested mode
+			const currentNameservers = domainMappingStatus.name_servers || [];
+			const targetNameservers = domainConnectionSetupInfo.wpcom_name_servers || [];
 
-		// Create a set of target IPs for easy lookup
-		const targetIpSet = new Set( defaultIpAddresses );
+			const matchedRecords = matchCurrentToTargetValues( currentNameservers, targetNameservers );
 
-		// Separate current IPs into matched and unmatched
-		const matchedCurrentIps: string[] = [];
-		const unmatchedCurrentIps: string[] = [];
+			matchedRecords.forEach( ( record, index ) => {
+				dnsRecords.push( {
+					id: `ns-record-${ index }`,
+					...record,
+				} );
+			} );
+		} else {
+			// Process A records with matching logic for advanced mode
+			const hostIpAddresses = domainMappingStatus.host_ip_addresses || [];
+			const defaultIpAddresses = domainConnectionSetupInfo.default_ip_addresses || [];
 
-		hostIpAddresses.forEach( ( ip ) => {
-			if ( targetIpSet.has( ip ) ) {
-				matchedCurrentIps.push( ip );
-			} else {
-				unmatchedCurrentIps.push( ip );
-			}
-		} );
+			const matchedIps = matchCurrentToTargetValues( hostIpAddresses, defaultIpAddresses );
 
-		// Create A records by matching target IPs
-		let unmatchedIpIndex = 0;
+			matchedIps.forEach( ( record, index ) => {
+				dnsRecords.push( {
+					id: `a-record-${ index }`,
+					type: 'A',
+					name: '@',
+					...record,
+				} );
+			} );
 
-		defaultIpAddresses.forEach( ( targetIp, index ) => {
-			let currentValue: string;
-
-			// Check if this target IP is already in use
-			if ( matchedCurrentIps.includes( targetIp ) ) {
-				currentValue = targetIp;
-				// Remove from matched list to handle duplicates
-				matchedCurrentIps.splice( matchedCurrentIps.indexOf( targetIp ), 1 );
-			} else if ( unmatchedIpIndex < unmatchedCurrentIps.length ) {
-				// Use an unmatched current IP
-				currentValue = unmatchedCurrentIps[ unmatchedIpIndex ];
-				unmatchedIpIndex++;
-			} else {
-				// No more current IPs, use BLANK
-				currentValue = 'BLANK';
-			}
+			// Add CNAME record - always show it, even if not currently configured
+			const currentCname = domainMappingStatus.www_cname_record_target;
 
 			dnsRecords.push( {
-				id: `a-record-${ index }`,
-				type: 'A',
-				name: '@',
-				currentValue,
-				updateTo: targetIp,
+				id: 'cname-record',
+				type: 'CNAME',
+				name: 'www',
+				currentValue: currentCname || '-',
+				updateTo: domainName,
 			} );
-		} );
-
-		// Add CNAME record - always show it, even if not currently configured
-		const currentCname = domainMappingStatus.www_cname_record_target;
-
-		dnsRecords.push( {
-			id: 'cname-record',
-			type: 'CNAME',
-			name: 'www',
-			currentValue: currentCname || 'BLANK',
-			updateTo: domainName,
-		} );
+		}
 
 		return dnsRecords;
-	}, [ domainName, domainMappingStatus, domainConnectionSetupInfo ] );
+	}, [ domainName, domainMappingStatus, domainConnectionSetupInfo, isSuggestedMode ] );
 
 	const fields = useMemo< Field< DNSRecord >[] >(
 		() => [
@@ -143,35 +170,12 @@ export default function DNSRecordsDataView( {
 		[]
 	);
 
-	const view: ViewTable = {
-		type: 'table',
-		page: 1,
-		perPage: 10,
-		fields: [ 'type', 'name', 'currentValue', 'arrow', 'updateTo' ],
-		layout: {
-			styles: {
-				type: {
-					width: '50px',
-					maxWidth: '50px',
-				},
-				name: {
-					width: '50px',
-					maxWidth: '50px',
-				},
-				arrow: {
-					width: '30px',
-					maxWidth: '30px',
-				},
-			},
-		},
-	};
-
 	return (
 		<DataViewsCard>
 			<DataViews< DNSRecord >
 				data={ records }
 				fields={ fields }
-				view={ view }
+				view={ isSuggestedMode ? viewSuggested : viewAdvanced }
 				onChangeView={ () => {} }
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ { totalItems: records.length, totalPages: 1 } }

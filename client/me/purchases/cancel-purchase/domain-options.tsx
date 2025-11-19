@@ -15,6 +15,7 @@ import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { CancelPurchaseState } from './index';
 import type { Purchases } from '@automattic/data-stores';
+import type { FormEvent } from 'react';
 
 // Helper function to determine if radio buttons will be shown
 export const willShowDomainOptionsRadioButtons = (
@@ -173,7 +174,7 @@ const CancelPurchaseDomainOptions = ( {
 	const dispatch = useDispatch();
 
 	const onCancelBundledDomainChange = useCallback(
-		( event: { currentTarget: { value: string } } ) => {
+		( event: FormEvent< HTMLInputElement > ) => {
 			const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
 			onCancelConfirmationStateChange( {
 				cancelBundledDomain: newCancelBundledDomainValue,

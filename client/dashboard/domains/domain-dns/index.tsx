@@ -310,18 +310,20 @@ export default function DomainDns() {
 								>
 									{ __( 'Add record' ) }
 								</Button>
-								<DnsActionsMenu
-									hasDefaultARecords={ hasDefaultARecordsValue }
-									hasDefaultCnameRecord={ hasDefaultCnameRecordValue }
-									hasDefaultEmailRecords={ hasDefaultEmailRecordsValue }
-									onRestoreDefaultARecords={ () => setIsRestoreDefaultARecordsDialogOpen( true ) }
-									onRestoreDefaultCnameRecord={ () =>
-										setIsRestoreDefaultCnameRecordDialogOpen( true )
-									}
-									onRestoreDefaultEmailRecords={ () =>
-										setIsRestoreDefaultEmailRecordsDialogOpen( true )
-									}
-								/>
+								<PageHeader.ActionMenu>
+									<DnsActionsMenu
+										hasDefaultARecords={ hasDefaultARecordsValue }
+										hasDefaultCnameRecord={ hasDefaultCnameRecordValue }
+										hasDefaultEmailRecords={ hasDefaultEmailRecordsValue }
+										onRestoreDefaultARecords={ () => setIsRestoreDefaultARecordsDialogOpen( true ) }
+										onRestoreDefaultCnameRecord={ () =>
+											setIsRestoreDefaultCnameRecordDialogOpen( true )
+										}
+										onRestoreDefaultEmailRecords={ () =>
+											setIsRestoreDefaultEmailRecordsDialogOpen( true )
+										}
+									/>
+								</PageHeader.ActionMenu>
 							</HStack>
 						}
 						description={ <DnsDescription /> }
