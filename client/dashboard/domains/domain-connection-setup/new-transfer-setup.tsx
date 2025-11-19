@@ -218,7 +218,7 @@ export default function DomainTransferSetup() {
 									className="domain-transfer-setup__step"
 									expanded={ stepsExpanded[ 1 ] }
 									completed={ authorizationCode.length > 0 }
-									onCheckboxChange={ () => {} }
+									onCheckboxChange={ () => {} } // This step doesn't have a checkbox
 									onToggle={ ( expanded ) => handleStepToggle( 1, expanded ) }
 									title={ steps[ 1 ].title }
 								>
