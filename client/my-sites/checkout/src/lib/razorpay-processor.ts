@@ -219,7 +219,6 @@ function combineRazorpayOptions(
 	prefill.contact =
 		prefill.contact ?? ( contactDetails ? contactDetails.phone?.value.replace( '.', '' ) : '' );
 	prefill.email = prefill.email ?? ( contactDetails ? contactDetails.email?.value : '' );
-	prefill.name = prefill.name ?? ( contactDetails ? contactDetails.name?.value : '' );
 	options.prefill = prefill;
 
 	return options;
