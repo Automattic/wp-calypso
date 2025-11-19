@@ -6,7 +6,6 @@ import {
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
@@ -24,6 +23,7 @@ import { Card, CardBody, CardDivider } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import DomainRegistrarBanner from './domain-registrar-banner';
 import SetupStep from './setup-step';
 
 export default function DomainTransferSetup() {
@@ -162,32 +162,6 @@ export default function DomainTransferSetup() {
 		} );
 	};
 
-	const renderDomainBanner = () => {
-		return (
-			<Card>
-				<CardBody>
-					<HStack spacing={ 2 } justify="space-between">
-						<Text size="medium" style={ { whiteSpace: 'nowrap' } }>
-							{ domainName }
-						</Text>
-						{ registrar && (
-							<HStack spacing={ 1 } justify="flex-end">
-								<Text variant="muted" size="small">
-									{ __( 'Registered by' ) }
-								</Text>
-								{ ! isReseller && registrar_url ? (
-									<ExternalLink href={ registrar_url }>{ registrar }</ExternalLink>
-								) : (
-									<Text size="small">{ registrar }</Text>
-								) }
-							</HStack>
-						) }
-					</HStack>
-				</CardBody>
-			</Card>
-		);
-	};
-
 	return (
 		<PageLayout
 			size="small"
@@ -198,7 +172,12 @@ export default function DomainTransferSetup() {
 				/>
 			}
 		>
-			{ renderDomainBanner() }
+			<DomainRegistrarBanner
+				domainName={ domainName }
+				registrar={ registrar }
+				registrar_url={ registrar_url }
+				isReseller={ isReseller }
+			/>
 			<VStack spacing={ 6 }>
 				<Card>
 					<CardBody>
