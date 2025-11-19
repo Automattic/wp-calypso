@@ -69,7 +69,7 @@ export default function DomainTransferSetup() {
 			content: (
 				<Text>
 					{ createInterpolateElement(
-						// translators: <registrar/> is the domain name provider, <domain/> is the domain name
+						// translators: <registrar/> is the domain's registrar, <domain/> is the domain name
 						__(
 							'Log in to <registrar/>, open the management page for <domain/>, and switch off the domain lock. Need help? <link>Follow our guide</link>'
 						),
@@ -118,7 +118,7 @@ export default function DomainTransferSetup() {
 		},
 	];
 
-	// Only the first step has a checkbox, so the index is omitted here
+	// Only the first step has a checkbox
 	const handleCheckboxChange = ( checked: boolean ) => {
 		setFirstStepCompleted( checked );
 		if ( checked ) {
