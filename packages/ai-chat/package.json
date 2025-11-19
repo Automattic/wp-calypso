@@ -1,0 +1,54 @@
+{
+	"name": "@automattic/ai-chat",
+	"version": "1.0.0",
+	"description": "Automattic AI Chat.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"types": "dist/types",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.tsx",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		}
+	},
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@wordpress/components": "^28.8.0",
+		"@wordpress/compose": "^7.8.0",
+		"@wordpress/dom-ready": "^4.8.0",
+		"@wordpress/element": "^6.8.0",
+		"@wordpress/i18n": "^5.8.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/jest-dom": "^6.1.5",
+		"@testing-library/react": "^14.0.0",
+		"@types/react": "^18.3.0",
+		"@types/react-dom": "^18.3.0",
+		"typescript": "^5.3.3"
+	},
+	"peerDependencies": {
+		"react": "^18.3.0",
+		"react-dom": "^18.3.0"
+	}
+}

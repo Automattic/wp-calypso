@@ -53,6 +53,7 @@ import {
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
+import AIChatLoader from './ai-chat-loader';
 import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
@@ -265,6 +266,7 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
+				<AIChatLoader />
 				{ ! shouldDisableSidebarScrollSynchronizer && (
 					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				) }

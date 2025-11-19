@@ -62,6 +62,7 @@
 		{ "path": "./wpcom-checkout" },
 		{ "path": "./verbum-block-editor" },
 		{ "path": "./wpcom-template-parts" },
-		{ "path": "./zendesk-client" }
+		{ "path": "./zendesk-client" },
+		{ "path": "./ai-chat" }
 	]
 }
