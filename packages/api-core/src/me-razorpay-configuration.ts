@@ -19,6 +19,7 @@ export interface RazorpayOptions {
 	prefill?: {
 		contact?: string;
 		email?: string;
+		name?: string;
 	};
 	modal?: {
 		ondismiss?: ( response: RazorpayModalResponse ) => void;
