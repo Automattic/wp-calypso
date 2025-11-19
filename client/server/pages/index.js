@@ -476,20 +476,27 @@ function setUpLoggedInRoute( req, res, next ) {
 }
 
 /**
- * Sets up a Content Security Policy header
+ * Sets up a Content Security Policy header for all Calypso routes
+ *
+ * This CSP is currently in REPORT-ONLY mode, which means violations are logged but not blocked.
+ * This allows us to identify issues before enforcing the policy.
+ *
+ * Security approach:
+ * - Uses cryptographic nonces for inline scripts (generated per request)
+ * - Allows specific trusted third-party domains (payment providers, analytics, fonts)
+ * - Reports violations to /cspreport endpoint for monitoring
+ *
+ * Required for compliance on pages handling credit card information.
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
  * @param {Object} req Express request object
  * @param {Object} res Express response object
  * @param {Function} next a callback to call when done
  */
 function setUpCSP( req, res, next ) {
-	const originalUrlPathname = req.originalUrl.split( '?' )[ 0 ];
-
-	// We only setup CSP for /log-in* for now
-	if ( ! /^\/log-in/.test( originalUrlPathname ) ) {
-		next();
-		return;
-	}
+	// CSP is now applied to all routes for security compliance (previously only /log-in*).
+	// This is necessary because Calypso is an SPA - the initial page load's CSP applies
+	// to the entire session, so we need CSP protection on all entry points, especially
+	// pages that handle credit card information (checkout, payment methods, billing).
 
 	// This is calculated by taking the contents of the script text from between the tags,
 	// and calculating SHA256 hash on it, encoded in base64, example:
@@ -513,6 +520,11 @@ function setUpCSP( req, res, next ) {
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
 			'use.typekit.net',
+			// Payment provider scripts (required for credit card processing)
+			'js.stripe.com', // Stripe payment processing
+			'js.verygoodvault.com', // VGS for EBANX credit card tokenization
+			'www.paypal.com', // PayPal SDK
+			'www.paypalobjects.com', // PayPal assets
 			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
@@ -543,6 +555,12 @@ function setUpCSP( req, res, next ) {
 			'https://public-api.wordpress.com',
 			'https://accounts.google.com/',
 			'https://jetpack.com',
+			// Payment provider iframes (secure card input elements)
+			'js.stripe.com', // Stripe Elements iframes
+			'*.stripe.com', // Stripe 3D Secure and other payment flows
+			'*.verygoodsecurity.com', // VGS Collect secure iframes
+			'www.paypal.com', // PayPal checkout flow
+			'*.paypal.com', // PayPal additional flows
 		],
 		'font-src': [
 			"'self'",
@@ -558,6 +576,11 @@ function setUpCSP( req, res, next ) {
 			'https://*.wordpress.com/',
 			'https://*.wp.com',
 			'https://wordpress.com',
+			// Payment provider APIs (for tokenization and payment processing)
+			'*.stripe.com', // Stripe API calls
+			'api.stripe.com', // Stripe API endpoint
+			'*.verygoodsecurity.com', // VGS API calls
+			'*.paypal.com', // PayPal API calls
 		],
 		'report-uri': [ '/cspreport' ],
 	};
