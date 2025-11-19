@@ -2,6 +2,7 @@ import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import {
 	Icon,
+	Button,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -28,6 +29,8 @@ interface DomainConnectionVerificationProps {
 	siteSlug: string;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
 	domainMappingStatus: DomainMappingStatus;
+	onRestartConnection: () => void;
+	isRestartingConnection: boolean;
 }
 
 export default function DomainConnectionVerification( {
@@ -36,6 +39,8 @@ export default function DomainConnectionVerification( {
 	siteSlug,
 	domainMappingStatus,
 	domainConnectionSetupInfo,
+	onRestartConnection,
+	isRestartingConnection,
 }: DomainConnectionVerificationProps ) {
 	const status: DomainConnectionStatus = isMappingVerificationSuccess(
 		domainMappingStatus.mode,
@@ -122,6 +127,16 @@ export default function DomainConnectionVerification( {
 						{ __( 'Need help?' ) }
 					</Text>
 					<VStack spacing={ 2 }>
+						<HStack>
+							<Button
+								variant="link"
+								onClick={ onRestartConnection }
+								isBusy={ isRestartingConnection }
+								disabled={ isRestartingConnection }
+							>
+								{ __( 'Restart connection' ) }
+							</Button>
+						</HStack>
 						<InlineSupportLink supportContext="map-domain-setup-instructions">
 							{ __( 'Domain connection guide' ) }
 						</InlineSupportLink>
