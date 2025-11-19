@@ -17,13 +17,7 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import {
-	Button as WpButton,
-	MenuItem,
-	Dropdown,
-	Notice,
-	NavigableMenu,
-} from '@wordpress/components';
+import { MenuItem, Dropdown, Notice, NavigableMenu } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { chevronDown, chevronUp, Icon, external } from '@wordpress/icons';
 import { hasQueryArg } from '@wordpress/url';
@@ -977,14 +971,16 @@ class ThemeSheet extends Component {
 				<Dropdown
 					popoverProps={ { placement: 'bottom-start' } }
 					renderToggle={ ( { isOpen, onToggle } ) => (
-						<WpButton
+						<Button
+							className="theme__sheet-demo-toggle"
 							onClick={ onToggle }
 							aria-expanded={ isOpen }
-							icon={ isOpen ? chevronUp : chevronDown }
-							iconPosition="right"
 						>
-							{ translate( 'Preview' ) }
-						</WpButton>
+							{ translate( 'Preview', {
+								context: 'Button to preview a theme',
+							} ) }
+							<Icon icon={ isOpen ? chevronUp : chevronDown } />
+						</Button>
 					) }
 					renderContent={ () => (
 						<NavigableMenu role="menu">

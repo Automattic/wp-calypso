@@ -167,6 +167,10 @@ $button-border: 4px;
 			fill: currentColor;
 		}
 	}
+
+	.theme__sheet-demo-toggle {
+		display: flex;
+	}
 }
 
 .theme__sheet-columns.is-removed {
