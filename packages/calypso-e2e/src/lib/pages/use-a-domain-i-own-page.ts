@@ -3,8 +3,8 @@ import { Page } from 'playwright';
 const selectors = {
 	ownedDomainInput: '.use-my-domain__domain-input-fieldset input',
 	continueButton: 'button:text("Continue")',
-	connectDomainButton: '.option-content:has-text("Connect your domain") button:text("Select")',
-	transferDomainButton: '.option-content:has-text("Transfer your domain") button:text("Select")',
+	connectDomainButton: '.domain-transfer-or-connect__content button:nth-child(2)',
+	transferDomainButton: '.domain-transfer-or-connect__content button:nth-child(1)',
 };
 
 /**

@@ -9,7 +9,7 @@ import type {
 
 // Returns whether the plan supports a specific feature.
 export function hasPlanFeature(
-	site: Site,
+	site: { plan?: { features: { active: string[] } } },
 	feature: `${ DotcomFeatureSlug | JetpackFeatureSlug }`
 ) {
 	if ( ! site.plan ) {

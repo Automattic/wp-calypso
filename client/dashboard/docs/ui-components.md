@@ -13,9 +13,11 @@ The dashboard prototype follows a component-based architecture with a strong foc
 
 ## Placeholders
 
-Consider using asynchronous data fetching to reduce initial load time. Use placeholder components such as `TextBlur`, `TextSkeleton`, or `CalloutSkeleton` instead of spinners.
+Use placeholder components such as `TextBlur`, `TextSkeleton`, or `CalloutSkeleton` instead of spinners.
 
-Layout shifts or flashes of default or fallback content should be avoided as much as possible.
+Placeholders for asynchronous data fetching should be used judiciously. Some dashboard pages are "heavy" and asynchronous fetching may be needed to prevent multi-second load times. On the other hand, layout shifts or flashes of default or fallback content should be avoided as much as possible. A good strategy is to use a router's `loader` function to fetch just enough data to allow a component's layout to be rendered definitively. Asynchronous fetching can then fill in the details without causing layout shifts. Note: when `loader` functions are slow, their loading state is handled by the `Root` component (`client/dashboard/app/root`).
+
+See this post on loaders: p58i-kIo-p2
 
 
 ## DataViews and DataForm
