@@ -5,6 +5,7 @@ import {
 	domainWhoisQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { debounce } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -17,7 +18,7 @@ import ContactFormPrivacy from '../../components/domain-contact-details-form/con
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { findRegistrantWhois } from '../../utils/domain';
-import type { DomainContactDetails } from '@automattic/api-core';
+import type { DomainContactValidationResponse, DomainContactDetails } from '@automattic/api-core';
 
 export default function DomainContactInfo() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -86,6 +87,52 @@ export default function DomainContactInfo() {
 		} );
 	};
 
+	// Create debounced async validator for field-level validation (triggered on change)
+	const validateAsync = validateMutation.mutateAsync;
+
+	const asyncValidator = useMemo( () => {
+		type ValidationCallbacks = {
+			resolve: ( value: DomainContactValidationResponse ) => void;
+			reject: ( reason: unknown ) => void;
+		};
+
+		const debouncedFn = ( item: DomainContactDetails, callbacks: ValidationCallbacks ) => {
+			validateAsync( item ).then( callbacks.resolve ).catch( callbacks.reject );
+		};
+
+		const debounced = debounce( debouncedFn as ( ...args: unknown[] ) => unknown, 800 ) as (
+			item: DomainContactDetails,
+			callbacks: ValidationCallbacks
+		) => void;
+
+		let pendingReject: ValidationCallbacks[ 'reject' ] | undefined;
+
+		return ( item: DomainContactDetails ) =>
+			new Promise< DomainContactValidationResponse >( ( resolve, reject ) => {
+				if ( pendingReject ) {
+					pendingReject( new Error( 'Validation request aborted' ) );
+				}
+
+				const callbacks: ValidationCallbacks = {
+					resolve: ( response ) => {
+						if ( pendingReject === reject ) {
+							pendingReject = undefined;
+						}
+						resolve( response );
+					},
+					reject: ( error ) => {
+						if ( pendingReject === reject ) {
+							pendingReject = undefined;
+						}
+						reject( error );
+					},
+				};
+
+				pendingReject = callbacks.reject;
+				debounced( item, callbacks );
+			} );
+	}, [ validateAsync ] );
+
 	return (
 		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> }>
 			<ContactForm
@@ -102,6 +149,7 @@ export default function DomainContactInfo() {
 				}
 				key={ key }
 				initialData={ initialData }
+				asyncValidator={ asyncValidator }
 			/>
 		</PageLayout>
 	);

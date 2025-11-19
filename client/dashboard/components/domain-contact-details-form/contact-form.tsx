@@ -1,7 +1,4 @@
-import {
-	type DomainContactDetails,
-	type DomainContactValidationResponse,
-} from '@automattic/api-core';
+import { type DomainContactDetails } from '@automattic/api-core';
 import { countryListQuery, statesListQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -10,7 +7,6 @@ import {
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
-import { debounce } from '@wordpress/compose';
 import { DataForm, Field, useFormValidity, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -21,12 +17,14 @@ import InlineSupportLink from '../inline-support-link';
 import Notice from '../notice';
 import { getContactFormFields } from './contact-form-fields';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
+import type { AsyncValidator } from './contact-validation-utils';
 
 interface ContactFormProps {
 	initialData?: DomainContactDetails;
 	beforeForm?: React.ReactNode;
 	isSubmitting: boolean;
 	onSubmit: ( normalizedFormData: DomainContactDetails ) => void;
+	asyncValidator?: AsyncValidator;
 }
 
 export default function ContactForm( {
@@ -34,6 +32,7 @@ export default function ContactForm( {
 	isSubmitting,
 	beforeForm,
 	onSubmit,
+	asyncValidator,
 }: ContactFormProps ) {
 	const { data: countryList } = useQuery( countryListQuery() );
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
@@ -62,52 +61,6 @@ export default function ContactForm( {
 		e.preventDefault();
 		onSubmit( normalizedFormData );
 	};
-
-	// Create debounced async validator for field-level validation (triggered on change)
-	const validateAsync = validateMutation.mutateAsync;
-
-	const asyncValidator = useMemo( () => {
-		type ValidationCallbacks = {
-			resolve: ( value: DomainContactValidationResponse ) => void;
-			reject: ( reason: unknown ) => void;
-		};
-
-		const debouncedFn = ( item: DomainContactDetails, callbacks: ValidationCallbacks ) => {
-			validateAsync( item ).then( callbacks.resolve ).catch( callbacks.reject );
-		};
-
-		const debounced = debounce( debouncedFn as ( ...args: unknown[] ) => unknown, 800 ) as (
-			item: DomainContactDetails,
-			callbacks: ValidationCallbacks
-		) => void;
-
-		let pendingReject: ValidationCallbacks[ 'reject' ] | undefined;
-
-		return ( item: DomainContactDetails ) =>
-			new Promise< DomainContactValidationResponse >( ( resolve, reject ) => {
-				if ( pendingReject ) {
-					pendingReject( new Error( 'Validation request aborted' ) );
-				}
-
-				const callbacks: ValidationCallbacks = {
-					resolve: ( response ) => {
-						if ( pendingReject === reject ) {
-							pendingReject = undefined;
-						}
-						resolve( response );
-					},
-					reject: ( error ) => {
-						if ( pendingReject === reject ) {
-							pendingReject = undefined;
-						}
-						reject( error );
-					},
-				};
-
-				pendingReject = callbacks.reject;
-				debounced( item, callbacks );
-			} );
-	}, [ validateAsync ] );
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
 		() =>
