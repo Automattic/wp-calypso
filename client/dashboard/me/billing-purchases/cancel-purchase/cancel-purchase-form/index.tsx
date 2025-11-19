@@ -304,7 +304,10 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 				return false;
 			}
 
-			return Boolean( questionOneRadio && ( ! purchase.is_plan || questionOneText ) );
+			return Boolean(
+				questionOneRadio &&
+					( purchase.is_jetpack_plan_or_product || ! purchase.is_plan || questionOneText )
+			);
 		}
 
 		if ( surveyStep === ATOMIC_REVERT_STEP ) {
