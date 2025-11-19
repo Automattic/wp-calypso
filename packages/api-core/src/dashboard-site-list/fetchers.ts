@@ -8,7 +8,7 @@ import type {
 } from './types';
 
 export async function fetchDashboardSiteList(
-	siteTypes: FetchSiteTypes,
+	site_types: FetchSiteTypes,
 	{ fields, ...params }: FetchDashboardSiteListParams = {}
 ): Promise< DashboardSiteListResponse > {
 	return wpcom.req.get(
@@ -17,21 +17,21 @@ export async function fetchDashboardSiteList(
 			...params,
 			fields: fields?.join( ',' ),
 			filters: {
-				site_types: siteTypes !== 'all' ? siteTypes : undefined,
+				site_types: site_types !== 'all' ? site_types : undefined,
 			},
 		}
 	);
 }
 
 export async function fetchDashboardSiteFilters(
-	siteTypes: FetchSiteTypes,
+	site_types: FetchSiteTypes,
 	fields: FetchDashboardSiteFiltersParams[ 'fields' ]
 ): Promise< DashboardFilters > {
 	return wpcom.req.get(
 		{ path: '/dashboard/site-filters', apiNamespace: 'wpcom/v2' },
 		{
 			fields,
-			site_types: siteTypes !== 'all' ? siteTypes : undefined,
+			site_types: site_types !== 'all' ? site_types : undefined,
 		}
 	);
 }

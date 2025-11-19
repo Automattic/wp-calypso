@@ -16,7 +16,7 @@ export interface FetchSitesOptions {
 }
 
 export async function fetchSites(
-	siteTypes: FetchSiteTypes,
+	site_types: FetchSiteTypes,
 	{ include_a8c_owned, site_visibility }: FetchSitesOptions
 ): Promise< Site[] > {
 	const { sites } = await wpcom.req.get(
@@ -31,7 +31,7 @@ export async function fetchSites(
 			site_visibility,
 			fields: JOINED_SITE_FIELDS,
 			options: JOINED_SITE_OPTIONS,
-			filters: siteTypes !== 'all' ? siteTypes.join( ',' ) : undefined,
+			filters: site_types !== 'all' ? site_types.join( ',' ) : undefined,
 		}
 	);
 	return sites;
