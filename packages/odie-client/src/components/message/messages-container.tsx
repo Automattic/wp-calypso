@@ -25,12 +25,16 @@ import ChatMessage from '.';
 import type { CurrentUser } from '../../types';
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
-	newInteractionsBotSlug: string;
 }
 
-export const MessagesContainer = ( { currentUser, newInteractionsBotSlug }: ChatMessagesProps ) => {
-	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
-		useOdieAssistantContext();
+export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
+	const {
+		chat,
+		isChatLoaded,
+		isUserEligibleForPaidSupport,
+		forceEmailSupport,
+		newInteractionsBotSlug,
+	} = useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const navigate = useNavigate();
