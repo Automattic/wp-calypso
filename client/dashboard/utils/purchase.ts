@@ -536,17 +536,14 @@ export const getIncludedDomainPurchase = (
 	sitePurchases: Purchase[],
 	subscriptionPurchase: Purchase | undefined
 ): Purchase | undefined => {
-	if (
-		! subscriptionPurchase ||
-		! isNonDomainSubscription( subscriptionPurchase ) ||
-		subscriptionPurchase.included_domain_purchase_amount
-	) {
+	if ( ! subscriptionPurchase || ! isNonDomainSubscription( subscriptionPurchase ) ) {
 		return;
 	}
 
 	const { included_domain: includedDomain } = subscriptionPurchase;
 	const found = sitePurchases.find(
-		( purchase ) => purchase.is_domain && includedDomain === purchase.meta
+		( purchase ) =>
+			purchase.is_domain && includedDomain === purchase.meta && purchase.cost_to_unbundle_display
 	);
 	return found;
 };

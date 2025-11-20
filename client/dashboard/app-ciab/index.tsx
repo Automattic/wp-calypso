@@ -1,8 +1,18 @@
-import { sitesQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
+/* eslint-disable no-restricted-imports */
+import {
+	sitesQuery,
+	dashboardSiteListQuery,
+	dashboardSiteFiltersQuery,
+} from '@automattic/api-queries';
+/* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import Logo from './logo';
 import './translations';
-import type { FetchSitesOptions } from '@automattic/api-core';
+import type {
+	FetchSitesOptions,
+	FetchDashboardSiteListParams,
+	FetchDashboardSiteFiltersParams,
+} from '@automattic/api-core';
 import './style.scss';
 
 boot( {
@@ -11,7 +21,6 @@ boot( {
 	mainRoute: '/sites',
 	Logo,
 	supports: {
-		overview: false,
 		sites: {
 			deployments: false,
 			performance: false,
@@ -50,5 +59,9 @@ boot( {
 	queries: {
 		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
 			sitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
+		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
+			dashboardSiteListQuery( [ 'commerce-garden' ], fetchDashboardSiteListParams ),
+		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
+			dashboardSiteFiltersQuery( [ 'commerce-garden' ], fields ),
 	},
 } );

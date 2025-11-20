@@ -27,8 +27,8 @@ export async function initializeCurrentUser(): Promise< UserData | false > {
 	}
 
 	if ( ! skipBootstrap && config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		if ( ( window as any ).currentUser ) {
-			return ( window as any ).currentUser;
+		if ( window.currentUser ) {
+			return window.currentUser;
 		}
 		return false;
 	}

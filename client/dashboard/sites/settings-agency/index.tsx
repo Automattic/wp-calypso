@@ -23,7 +23,7 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import type { Site, SiteSettings } from '@automattic/api-core';
-import type { Field, SimpleFormField } from '@wordpress/dataviews';
+import type { Field, FormField } from '@wordpress/dataviews';
 
 export function canUpdateA4AFullyManagedSetting( site: Site ) {
 	return site.is_wpcom_atomic;
@@ -54,7 +54,7 @@ const fields: Field< SiteSettings >[] = [
 
 const form = {
 	layout: { type: 'regular' as const },
-	fields: [ { id: 'is_fully_managed_agency_site' } as SimpleFormField ],
+	fields: [ { id: 'is_fully_managed_agency_site' } as FormField ],
 };
 
 export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {

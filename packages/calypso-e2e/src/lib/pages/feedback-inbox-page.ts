@@ -33,7 +33,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickResponseRowByText( text: string ): Promise< void > {
 		const responseRowLocator = this.page
-			.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row' )
+			.locator( '.dataviews-view-table__row' )
 			.filter( { hasText: text } )
 			.first();
 		await responseRowLocator.waitFor();
@@ -47,11 +47,14 @@ export class FeedbackInboxPage {
 				await responseRowLocator.click();
 			}
 			await this.page
-				.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row.is-selected' )
+				.locator( '.dataviews-view-table__row.is-selected' )
 				.filter( { hasText: text } )
 				.waitFor();
 		} else {
-			await responseRowLocator.getByRole( 'button', { name: 'View response' } ).click();
+			await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();
+			// The menu item is on a popover portal, so outside of the response row locator
+			const viewMenuItem = this.page.getByRole( 'menuitem', { name: 'View' } ).first();
+			await viewMenuItem.click();
 			await this.page
 				.getByRole( 'dialog' )
 				.filter( { has: this.page.getByRole( 'heading', { name: 'Response' } ) } )
@@ -142,11 +145,8 @@ export class FeedbackInboxPage {
 	 * @param {string} folderName The name of the folder to click (e.g., 'Inbox', 'Spam', 'Trash').
 	 */
 	async clickFolderTab( folderName: string ): Promise< void > {
-		await this.page
-			.getByRole( 'radio', {
-				name: folderName,
-			} )
-			.click();
+		const tablist = this.page.getByRole( 'tablist' );
+		await tablist.getByRole( 'tab', { name: folderName } ).click();
 		await this.page.waitForTimeout( 500 ); // Wait for the data to load
 	}
 
@@ -173,7 +173,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickMarkAsSpamAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
-		await this.page.getByRole( 'button', { name: 'Mark as spam' } ).last().click();
+		await this.page.getByRole( 'button', { name: 'Spam' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			// On mobile, the modal closes after the action
 			await this.page.waitForTimeout( 1000 );
@@ -227,7 +227,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickMoveToTrashAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
-		await this.page.getByRole( 'button', { name: 'Move to trash' } ).last().click();
+		await this.page.getByRole( 'button', { name: 'Trash' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			// On mobile, the modal closes after the action
 			await this.page.waitForTimeout( 1000 );
@@ -308,7 +308,7 @@ export class FeedbackInboxPage {
 	 */
 	async verifyActionExistsInMenu( text: string, actionName: string ): Promise< void > {
 		const responseRowLocator = this.page
-			.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row' )
+			.locator( '.dataviews-view-table__row' )
 			.filter( { hasText: text } )
 			.first();
 

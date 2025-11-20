@@ -128,10 +128,11 @@ export function BulkFixThreatsModal( { items, closeModal, site }: BulkFixThreats
 			{ canBulkFix && bulkFixableSection }
 			{ remainingThreats.length > 0 && remainingThreatsSection }
 			<ButtonStack justify="flex-end">
-				<Button variant="tertiary" onClick={ closeModal }>
+				<Button __next40pxDefaultSize variant="tertiary" onClick={ closeModal }>
 					{ __( 'Cancel' ) }
 				</Button>
 				<Button
+					__next40pxDefaultSize
 					variant="primary"
 					onClick={ handleFixThreats }
 					isBusy={ isFixing }

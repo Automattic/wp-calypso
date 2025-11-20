@@ -20,7 +20,12 @@ import { getClientId, getZendeskConversations } from './utils';
 import type { ZendeskMessage } from '@automattic/odie-client';
 
 const destroy = () => {
-	Smooch.destroy();
+	try {
+		Smooch.destroy();
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Error destroying Smooch', error );
+	}
 };
 
 const initSmooch = (

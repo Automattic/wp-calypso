@@ -9,7 +9,7 @@ import type {
 
 // Returns whether the plan supports a specific feature.
 export function hasPlanFeature(
-	site: Site,
+	site: { plan?: { features: { active: string[] } } },
 	feature: `${ DotcomFeatureSlug | JetpackFeatureSlug }`
 ) {
 	if ( ! site.plan ) {
@@ -17,6 +17,14 @@ export function hasPlanFeature(
 	}
 
 	return site.plan.features.active.includes( feature );
+}
+
+export function isPlanFeatureAvailable( site: Site, feature: HostingFeatureSlug ) {
+	if ( ! site.plan ) {
+		return false;
+	}
+
+	return !! site.plan.features.available?.[ feature ];
 }
 
 // Returns whether the plan supports a specific "hosting feature",

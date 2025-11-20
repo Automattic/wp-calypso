@@ -41,8 +41,7 @@ export function PresetsListbox( {
 			>
 				<VStack justify="flex-start" alignment="stretch" spacing={ 1 }>
 					{ items.map( ( preset ) => {
-						const isSelected =
-							preset.id === 'custom' ? ! activePresetId : activePresetId === preset.id;
+						const isSelected = activePresetId === preset.id;
 						return (
 							<Composite.Item
 								key={ preset.id }

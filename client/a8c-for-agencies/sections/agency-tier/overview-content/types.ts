@@ -24,6 +24,7 @@ export interface TierItem {
 	description: string;
 	heading: string;
 	subheading: string;
+	progressCardDescription: string;
 	influencedRevenue: number;
 	benefits: Benefit[];
 }

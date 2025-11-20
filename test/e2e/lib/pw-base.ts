@@ -22,6 +22,7 @@
  */
 /* eslint-disable no-empty-pattern */
 import {
+	AddPeoplePage,
 	AdvertisingPage,
 	AppleLoginPage,
 	BlazeCampaignPage,
@@ -46,12 +47,14 @@ import {
 	ImportLetUsMigrateYourSitePage,
 	ImportPlansPage,
 	IncognitoPage,
+	InvitePeoplePage,
 	JetpackTrafficPage,
 	LoginPage,
 	LOHPThemeSignupFlow,
 	MarketingPage,
 	MediaHelper,
 	NewSiteResponse,
+	PeoplePage,
 	PreviewComponent,
 	RestAPIClient,
 	Secrets,
@@ -78,6 +81,10 @@ export const test = base.extend< {
 	 */
 	accountGivenByEnvironment: TestAccount;
 	/**
+	 * Default test account.
+	 */
+	accountDefaultUser: TestAccount;
+	/**
 	 * Test account with a simple Gutenberg site.
 	 */
 	accountGutenbergSimple: TestAccount;
@@ -85,6 +92,10 @@ export const test = base.extend< {
 	 * Test account used for i18n locale switching.
 	 */
 	accounti18n: TestAccount;
+	/**
+	 * Test account used for pre-release testing.
+	 */
+	accountPreRelease: TestAccount;
 	/**
 	 * Test account used to test atomic sites (Business plans)
 	 */
@@ -222,6 +233,18 @@ export const test = base.extend< {
 	 */
 	pageMarketing: MarketingPage;
 	/**
+	 * Page object representing the WordPress.com Add People page.
+	 */
+	pageAddPeople: AddPeoplePage;
+	/**
+	 * Page object representing the WordPress.com Invite People page.
+	 */
+	pageInvitePeople: InvitePeoplePage;
+	/**
+	 * Page object representing the WordPress.com People management page.
+	 */
+	pagePeople: PeoplePage;
+	/**
 	 * Page object representing the WordPress.com themes detail page.
 	 */
 	pageThemeDetails: ThemesDetailPage;
@@ -263,12 +286,20 @@ export const test = base.extend< {
 		const testAccount = await getAccount( page, accountName );
 		await use( testAccount );
 	},
+	accountDefaultUser: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'defaultUser' );
+		await use( testAccount );
+	},
 	accountGutenbergSimple: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'gutenbergSimpleSiteUser' );
 		await use( testAccount );
 	},
 	accounti18n: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'i18nUser' );
+		await use( testAccount );
+	},
+	accountPreRelease: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'calypsoPreReleaseUser' );
 		await use( testAccount );
 	},
 	accountSimpleSiteFreePlan: async ( { page }, use ) => {
@@ -406,6 +437,18 @@ export const test = base.extend< {
 	pageMarketing: async ( { page }, use ) => {
 		const marketingPage = new MarketingPage( page );
 		await use( marketingPage );
+	},
+	pageAddPeople: async ( { page }, use ) => {
+		const addPeoplePage = new AddPeoplePage( page );
+		await use( addPeoplePage );
+	},
+	pageInvitePeople: async ( { page }, use ) => {
+		const invitePeoplePage = new InvitePeoplePage( page );
+		await use( invitePeoplePage );
+	},
+	pagePeople: async ( { page }, use ) => {
+		const peoplePage = new PeoplePage( page );
+		await use( peoplePage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );

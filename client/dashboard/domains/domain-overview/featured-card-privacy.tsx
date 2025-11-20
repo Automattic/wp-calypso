@@ -2,7 +2,7 @@ import { Domain } from '@automattic/api-core';
 import { PRIVACY_PROTECTION } from '@automattic/urls';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { unseen } from '@wordpress/icons';
+import { seen, unseen } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
 
 interface Props {
@@ -19,9 +19,10 @@ export default function FeaturedCardPrivacy( { domain }: Props ) {
 		<OverviewCard
 			title={ __( 'Privacy' ) }
 			heading={ __( 'WHOIS Privacy' ) }
-			icon={ <Icon icon={ unseen } /> }
+			icon={ <Icon icon={ domain.private_domain ? unseen : seen } /> }
 			externalLink={ ! domain.privacy_available ? PRIVACY_PROTECTION : undefined }
-			description={ ! domain.private_domain ? privacyWarning : privacyProtectionNote }
+			description={ ! domain.privacy_available ? privacyWarning : privacyProtectionNote }
+			intent={ domain.private_domain ? 'success' : 'warning' }
 		/>
 	);
 }

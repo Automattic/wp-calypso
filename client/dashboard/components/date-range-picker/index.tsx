@@ -6,6 +6,7 @@ import { calendar } from '@wordpress/icons';
 import { parseYmdLocal, formatYmd, formatSiteYmd } from '../../utils/datetime';
 import { DateRangeContent } from './date-range-content';
 import { formatLabel } from './utils';
+import type { PresetId } from './utils';
 import './style.scss';
 
 type DateRangePickerProps = {
@@ -16,6 +17,13 @@ type DateRangePickerProps = {
 	gmtOffset?: number;
 	locale: string;
 	disableFuture?: boolean;
+	defaultFallbackPreset?: PresetId; // preset to apply when inputs are empty and user presses Apply
+	inputsProps?: {
+		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onStartBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onEndBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+	};
 };
 
 export function DateRangePicker( {
@@ -26,6 +34,8 @@ export function DateRangePicker( {
 	timezoneString,
 	locale,
 	disableFuture = true,
+	defaultFallbackPreset = 'last-7-days',
+	inputsProps,
 }: DateRangePickerProps ) {
 	const isSmall = useMediaQuery( '(max-width: 600px)' );
 	// Use a wider breakpoint to decide when two calendars can fit comfortably
@@ -45,52 +55,52 @@ export function DateRangePicker( {
 	].join( '|' );
 
 	return (
-		<div className="daterange-container">
-			<Dropdown
-				popoverProps={ { className: 'daterange-popover' } }
-				renderToggle={ ( { onToggle, isOpen } ) => (
-					<Tooltip text={ __( 'Select a date range' ) } placement="top">
-						<div className="daterange-input__toggle">
-							<Button
-								type="button"
-								variant="tertiary"
-								onClick={ onToggle }
-								aria-haspopup="dialog"
-								aria-expanded={ isOpen }
-								aria-label={ sprintf(
-									/* Translators: %s: date range label */
-									__( 'Date range: %s. Activate to open calendar.' ),
-									label
-								) }
-								className="daterange-input__field"
-								icon={ calendar }
-								iconPosition="right"
-							>
-								<span aria-hidden="true" className="daterange-input__text">
-									{ label }
-								</span>
-							</Button>
-						</div>
-					</Tooltip>
-				) }
-				renderContent={ ( { onClose } ) => (
-					<DateRangePickerInner
-						key={ resetKey }
-						isSmall={ isSmall }
-						showTwoMonths={ showTwoMonths }
-						start={ start }
-						end={ end }
-						timezoneString={ timezoneString }
-						gmtOffset={ gmtOffset }
-						onChange={ onChange }
-						onClose={ onClose }
-						mobileLabelId={ mobileLabelId }
-						desktopLabelId={ desktopLabelId }
-						disableFuture={ disableFuture }
-					/>
-				) }
-			/>
-		</div>
+		<Dropdown
+			popoverProps={ { className: 'daterange-popover' } }
+			renderToggle={ ( { onToggle, isOpen } ) => (
+				<Tooltip text={ __( 'Select a date range' ) } placement="top">
+					<div className="daterange-input__toggle">
+						<Button
+							type="button"
+							variant="tertiary"
+							onClick={ onToggle }
+							aria-haspopup="dialog"
+							aria-expanded={ isOpen }
+							aria-label={ sprintf(
+								/* Translators: %s: date range label */
+								__( 'Date range: %s. Activate to open calendar.' ),
+								label
+							) }
+							className="daterange-input__field"
+							icon={ calendar }
+							iconPosition="right"
+						>
+							<span aria-hidden="true" className="daterange-input__text">
+								{ label }
+							</span>
+						</Button>
+					</div>
+				</Tooltip>
+			) }
+			renderContent={ ( { onClose } ) => (
+				<DateRangePickerInner
+					key={ resetKey }
+					isSmall={ isSmall }
+					showTwoMonths={ showTwoMonths }
+					start={ start }
+					end={ end }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+					onChange={ onChange }
+					onClose={ onClose }
+					mobileLabelId={ mobileLabelId }
+					desktopLabelId={ desktopLabelId }
+					disableFuture={ disableFuture }
+					defaultFallbackPreset={ defaultFallbackPreset }
+					inputsProps={ inputsProps }
+				/>
+			) }
+		/>
 	);
 }
 
@@ -106,6 +116,7 @@ function DateRangePickerInner( {
 	mobileLabelId,
 	desktopLabelId,
 	disableFuture,
+	defaultFallbackPreset,
 }: {
 	isSmall: boolean;
 	showTwoMonths: boolean;
@@ -118,6 +129,13 @@ function DateRangePickerInner( {
 	mobileLabelId: string;
 	desktopLabelId: string;
 	disableFuture: boolean;
+	defaultFallbackPreset: PresetId;
+	inputsProps?: {
+		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onStartBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+		onEndBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
+	};
 } ) {
 	const [ fromDraft, setFromDraft ] = useState< Date | undefined >( () => start );
 	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
@@ -159,6 +177,7 @@ function DateRangePickerInner( {
 			desktopLabelId={ desktopLabelId }
 			disableFuture={ disableFuture }
 			showTwoMonths={ showTwoMonths }
+			defaultFallbackPreset={ defaultFallbackPreset }
 		/>
 	);
 }

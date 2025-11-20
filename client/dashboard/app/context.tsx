@@ -1,6 +1,16 @@
-import { sitesQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
+/* eslint-disable no-restricted-imports */
+import {
+	sitesQuery,
+	dashboardSiteListQuery,
+	dashboardSiteFiltersQuery,
+} from '@automattic/api-queries';
+/* eslint-enable no-restricted-imports */
 import { createContext, useContext } from 'react';
-import type { FetchSitesOptions } from '@automattic/api-core';
+import type {
+	FetchSitesOptions,
+	FetchDashboardSiteListParams,
+	FetchDashboardSiteFiltersParams,
+} from '@automattic/api-core';
 
 export type SiteSettingsGeneralSupports = {
 	redirect: boolean;
@@ -36,7 +46,6 @@ export type AppConfig = {
 	Logo: React.FC | null;
 	LoadingLogo?: React.FC;
 	supports: {
-		overview: boolean;
 		sites: SiteFeatureSupports | false;
 		plugins: boolean;
 		domains: boolean;
@@ -52,6 +61,12 @@ export type AppConfig = {
 	components: Record< string, () => Promise< { default: React.FC } > >;
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
+		dashboardSiteListQuery: (
+			params?: FetchDashboardSiteListParams
+		) => ReturnType< typeof dashboardSiteListQuery >;
+		dashboardSiteFiltersQuery: (
+			field: FetchDashboardSiteFiltersParams[ 'fields' ]
+		) => ReturnType< typeof dashboardSiteFiltersQuery >;
 	};
 };
 
@@ -62,7 +77,6 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	Logo: null,
 	LoadingLogo: undefined,
 	supports: {
-		overview: false,
 		sites: false,
 		plugins: false,
 		domains: false,
@@ -78,6 +92,10 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	components: {},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
+		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
+			dashboardSiteListQuery( 'all', fetchDashboardSiteListParams ),
+		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
+			dashboardSiteFiltersQuery( 'all', fields ),
 	},
 };
 

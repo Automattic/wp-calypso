@@ -1,6 +1,10 @@
 import { setLocale } from '../../state/ui/language/actions';
 import { setLocaleMiddleware } from '../shared';
 
+jest.mock( '../../state/ui/language/actions', () => ( {
+	setLocale: jest.fn( () => jest.fn() ),
+} ) );
+
 describe( 'setLocaleMiddleware', () => {
 	const next = jest.fn();
 	const dispatch = jest.fn();
@@ -10,6 +14,7 @@ describe( 'setLocaleMiddleware', () => {
 	beforeEach( () => {
 		next.mockClear();
 		dispatch.mockClear();
+		setLocale.mockClear();
 		context = { query: {}, params: {}, store: { dispatch } };
 		middleware = setLocaleMiddleware();
 	} );
@@ -25,7 +30,8 @@ describe( 'setLocaleMiddleware', () => {
 		middleware( context, next );
 		expect( next ).toHaveBeenCalledTimes( 1 );
 		expect( context.store.dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( context.store.dispatch ).toHaveBeenCalledWith( setLocale( 'fr' ) );
+		expect( setLocale ).toHaveBeenCalledWith( 'fr' );
+		// expect( context.store.dispatch ).toHaveBeenCalledWith( setLocale( 'fr' ) );
 		expect( context.lang ).toEqual( 'fr' );
 	} );
 
@@ -34,7 +40,8 @@ describe( 'setLocaleMiddleware', () => {
 		middleware( context, next );
 		expect( next ).toHaveBeenCalledTimes( 1 );
 		expect( context.store.dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( context.store.dispatch ).toHaveBeenCalledWith( setLocale( 'fr' ) );
+		expect( setLocale ).toHaveBeenCalledWith( 'fr' );
+		// expect( context.store.dispatch ).toHaveBeenCalledWith( setLocale( 'fr' ) );
 		expect( context.lang ).toEqual( 'fr' );
 	} );
 } );

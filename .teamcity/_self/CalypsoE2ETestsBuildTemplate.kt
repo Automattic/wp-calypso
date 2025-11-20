@@ -22,7 +22,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.LOCALE", "en")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
-		param("env.CI", "true")
 		param("PROJECT", "desktop")
 		text("TEST_GROUP", "")
 		text("CALYPSO_BASE_URL", "")
@@ -151,6 +150,29 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				echo "Running Playwright tests for project: %PROJECT%"
 				yarn test:pw:%PROJECT% ${'$'}GREP_FLAG
 				"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Upload CTRF report"
+			id = "upload_ctrf_report"
+			scriptContent = """
+				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
+				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
+				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
+
+				# Find and upload CTRF report if it exists
+				CTRF_REPORT=${'$'}(find test/e2e/output -name "ctrf-report-*.json" -type f | head -n 1)
+
+				if [[ -n "${'$'}CTRF_REPORT" ]]; then
+					echo "Found CTRF report: ${'$'}CTRF_REPORT"
+					aws s3 cp "${'$'}CTRF_REPORT" %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/reports/ctrf/
+					echo "CTRF report uploaded successfully"
+				else
+					echo "No CTRF report found, skipping upload"
+				fi
+
+			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
   }

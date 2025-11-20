@@ -4,6 +4,7 @@ export * from './error';
 
 export * from './agency';
 export * from './cancellation-offers';
+export * from './dashboard-site-list';
 export * from './domain';
 export * from './domain-availability';
 export * from './domain-can-redirect';
@@ -16,6 +17,7 @@ export * from './domain-forwarding';
 export * from './domain-glue-records';
 export * from './domain-name-servers';
 export * from './domain-privacy';
+export * from './domain-propagation-status';
 export * from './domain-ssl';
 export * from './domain-suggestions';
 export * from './domain-supported-countries';

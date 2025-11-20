@@ -52,6 +52,7 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
 import { FullScreenLaunchpad } from '../full-screen-launchpad';
+import openSyncUrlInStudio from './studio-deeplink';
 
 import './style.scss';
 
@@ -137,9 +138,8 @@ const HomeContent = ( {
 		if ( ! studioSiteId ) {
 			return;
 		}
-		const studioSiteUrl = `wpcom-local-dev://sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
 		trackStudioSyncConnectSite( false );
-		window.location.href = studioSiteUrl;
+		openSyncUrlInStudio( studioSiteId, siteId );
 	}, [ siteId, trackStudioSyncConnectSite ] );
 
 	const isFirstSecondaryCardInPrimaryLocation =
@@ -292,11 +292,11 @@ const HomeContent = ( {
 		if ( ! studioSiteId ) {
 			return null;
 		}
-		const studioSiteUrl = `wpcom-local-dev://sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
 
 		return (
 			<Notice
-				text={ translate( 'Connect to your Studio site to start syncing.' ) }
+				className="customer-home__studio-sync-notice"
+				text={ translate( 'Open your Studio site to start syncing.' ) }
 				icon="sync"
 				showDismiss={ false }
 				status="is-info"
@@ -304,10 +304,11 @@ const HomeContent = ( {
 				<NoticeAction
 					onClick={ () => {
 						trackStudioSyncConnectSite( true );
-						window.location.href = studioSiteUrl;
+						openSyncUrlInStudio( studioSiteId, siteId );
 					} }
+					external
 				>
-					{ translate( 'Connect Studio' ) }
+					{ translate( 'Open Studio' ) }
 				</NoticeAction>
 			</Notice>
 		);

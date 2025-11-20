@@ -33,6 +33,18 @@ export class IncognitoPage {
 	}
 
 	/**
+	 * Gets the underlying Playwright page object.
+	 * @returns The Playwright page object.
+	 * @throws Error if the page has not been initialized.
+	 */
+	getPage(): Page {
+		if ( ! this.page ) {
+			throw new Error( 'Incognito page has not been initialized. Call spawn() first.' );
+		}
+		return this.page;
+	}
+
+	/**
 	 * Navigates to the specified URL in the incognito page.
 	 * @param url The URL to navigate to.
 	 * @throws Error if the page has not been initialized.

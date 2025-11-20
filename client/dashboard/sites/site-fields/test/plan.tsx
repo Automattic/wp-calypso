@@ -19,12 +19,12 @@ function render( ui: React.ReactElement ) {
 }
 
 describe( '<Plan>', () => {
-	test( 'for staging sites, it renders "Staging site"', () => {
+	test( 'for staging sites, it renders "Staging Site"', () => {
 		const site = {
 			is_wpcom_staging_site: true,
 		} as Site;
 		const { container } = render( <Plan site={ site } /> );
-		expect( container.textContent ).toBe( 'Staging site' );
+		expect( container.textContent ).toBe( 'Staging Site' );
 	} );
 
 	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the Jetpack logo and plan name', () => {

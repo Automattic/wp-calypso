@@ -15,10 +15,10 @@ import {
 	connectedApplicationsQuery,
 	siteBySlugQuery,
 	siteMediaStorageQuery,
+	userNotificationsDevicesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import { isTemporarySitePurchase, getTitleForDisplay, isDotcomPlan } from '../../utils/purchase';
 import { rootRoute } from './root';
@@ -73,7 +73,7 @@ export const profileRoute = createRoute( {
 	)
 );
 
-const preferencesRoute = createRoute( {
+export const preferencesRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -132,7 +132,7 @@ export const billingHistoryRoute = createRoute( {
 	loader: async () => {
 		await queryClient.ensureQueryData( userReceiptsQuery() );
 	},
-	path: '/billing-history',
+	path: '/history',
 } );
 
 export const billingHistoryIndexRoute = createRoute( {
@@ -185,8 +185,10 @@ export const purchasesRoute = createRoute( {
 			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
 		] );
 	},
-	validateSearch: ( search ): { site: string | undefined } => {
+	validateSearch: ( search ): { page?: number; search?: string; site?: string } => {
 		return {
+			page: typeof search.page === 'number' ? search.page : undefined,
+			search: typeof search.search === 'string' ? search.search : undefined,
 			site: typeof search.site === 'string' ? search.site : undefined,
 		};
 	},

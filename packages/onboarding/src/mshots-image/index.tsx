@@ -265,19 +265,6 @@ const MShotsImageControl = ( {
 		visible ? 'mshots-image-visible' : 'mshots-image__loader'
 	);
 
-	if ( options?.oldHighResImageLoading ) {
-		return scrollable ? (
-			<div className={ className } style={ style } aria-labelledby={ labelledby }>
-				<img ref={ imgRef } className="mshots-dummy-image" aria-hidden="true" alt="" />
-			</div>
-		) : (
-			<img
-				ref={ imgRef }
-				{ ...{ className, style, src, alt, loading } }
-				aria-labelledby={ labelledby }
-			/>
-		);
-	} // else, prettier doesn't like having an else after a return
 	return scrollable ? (
 		<div className={ className } style={ style } aria-labelledby={ labelledby }>
 			<img
@@ -396,6 +383,7 @@ const MShotsImage = ( {
 			/>
 		);
 	}
+
 	return (
 		<MShotsImageControl
 			url={ url }

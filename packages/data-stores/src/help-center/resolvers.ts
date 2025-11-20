@@ -1,7 +1,9 @@
+import { controls } from '@wordpress/data';
 import { apiFetch } from '@wordpress/data-controls';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { setHelpCenterRouterHistory, setIsMinimized } from './actions';
+import { STORE_KEY } from './constants';
 import type { APIFetchOptions } from './types';
 import type { Location } from 'history';
 
@@ -28,7 +30,14 @@ export function* isHelpCenterShown() {
 					path: '/help-center/open-state',
 			  } as APIFetchOptions );
 
-		if ( preferences.help_center_router_history ) {
+		const route: string | null | undefined = yield controls.select(
+			STORE_KEY,
+			'getNavigateToRoute'
+		);
+
+		// Don't use the history from the preferences if it has been set to avoid a race condition between restoring
+		// persisted data and setting the support doc data. Persisted values could overwrite freshly fetched data.
+		if ( typeof route === 'undefined' && preferences.help_center_router_history ) {
 			yield setHelpCenterRouterHistory( preferences.help_center_router_history );
 		}
 

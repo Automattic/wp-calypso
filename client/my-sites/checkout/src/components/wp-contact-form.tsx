@@ -26,7 +26,8 @@ const BillingFormFields = styled.div< BillingFormFieldsProps >`
 	input[type='search'].form-text-input,
 	.form-select,
 	.form-fieldset.contact-details-form-fields select {
-		border-radius: 3px;
+		border-radius: 2px;
+		color: ${ ( props ) => props.theme.colors.textColorDark };
 	}
 
 	& .form-input-validation {

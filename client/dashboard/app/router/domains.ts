@@ -25,7 +25,6 @@ import {
 	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { StepName } from '../../domains/domain-connection-setup/types';
 import {
 	checkDomainNameServersPermissions,
 	checkDomainTransferPermissions,
@@ -33,10 +32,10 @@ import {
 	checkDomainDnsRecordsPermissions,
 	checkDomainContactVerificationPermissions,
 } from '../../utils/domain-permissions';
+import { queryParamToArray } from '../../utils/url';
 import { rootRoute } from './root';
 
-// Standalone domains route - requires rootRoute
-export const domainsRoute = createRoute( {
+const domainsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -46,6 +45,12 @@ export const domainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
+} );
+
+// Standalone domains route - requires rootRoute
+export const domainsIndexRoute = createRoute( {
+	getParentRoute: () => domainsRoute,
+	path: '/',
 	loader: async ( { context } ) => {
 		queryClient.ensureQueryData( domainsQuery() );
 		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
@@ -54,6 +59,48 @@ export const domainsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainsContactInfoRoute = createRoute( {
+	getParentRoute: () => domainsRoute,
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domain contact details' ),
+			},
+		],
+	} ),
+	path: 'contact-info',
+	beforeLoad: async ( { search } ) => {
+		const selected = queryParamToArray( ( search as { selected: unknown } ).selected );
+
+		if ( selected.length === 0 ) {
+			throw redirect( { to: '/domains' } );
+		}
+	},
+	loaderDeps: ( { search } ) => {
+		return {
+			selectedDomains: queryParamToArray( ( search as { selected: unknown } ).selected ),
+		};
+	},
+	loader: async ( { deps: { selectedDomains } } ) => {
+		return {
+			domainDetails: await Promise.all(
+				selectedDomains.map( ( domain ) => queryClient.ensureQueryData( domainQuery( domain ) ) )
+			),
+			whoisData: await Promise.all(
+				selectedDomains.map( ( domain ) =>
+					queryClient.ensureQueryData( domainWhoisQuery( domain ) )
+				)
+			),
+		};
+	},
+} ).lazy( () =>
+	import( '../../domains/domains-contact-details' ).then( ( d ) =>
+		createLazyRoute( 'domains-contact-info' )( {
 			component: d.default,
 		} )
 	)
@@ -549,9 +596,18 @@ export const domainConnectionSetupRoute = createRoute( {
 			domainConnectionSetupInfoQuery(
 				domainName,
 				domain.blog_id,
-				`${ window.location.href }?step=${ StepName.DC_RETURN }`
+				`${ location.origin + location.pathname }?step=dc_return`
 			)
 		);
+	},
+	validateSearch: ( search ): { error?: string; error_description?: string; step?: string } => {
+		// Validate query parameters for Domain Connect flow
+		return {
+			error: typeof search.error === 'string' ? search.error : undefined,
+			error_description:
+				typeof search.error_description === 'string' ? search.error_description : undefined,
+			step: typeof search.step === 'string' ? search.step : undefined,
+		};
 	},
 } ).lazy( () =>
 	config.isEnabled( 'domain-connection-redesign' )
@@ -593,7 +649,7 @@ export const domainTransferSetupRoute = createRoute( {
 
 export const createDomainsRoutes = () => {
 	return [
-		domainsRoute,
+		domainsRoute.addChildren( [ domainsIndexRoute, domainsContactInfoRoute ] ),
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),

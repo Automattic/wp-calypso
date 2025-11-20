@@ -8,22 +8,32 @@ import { useState } from 'react';
 import { DateRangePicker } from '../index';
 import type { ComponentProps } from 'react';
 
-function TestDateRangePicker( props: Partial< ComponentProps< typeof DateRangePicker > > ) {
-	const [ range, setRange ] = useState( {
-		start: new Date( 2025, 7, 19 ), // August 19, 2025
-		end: new Date( 2025, 7, 25 ), // August 25, 2025
-	} );
-	return (
-		<DateRangePicker
-			start={ range.start }
-			end={ range.end }
-			onChange={ setRange }
-			timezoneString=""
-			gmtOffset={ 0 }
-			locale="en-US"
-			{ ...props }
-		/>
-	);
+function renderDateRangePicker( {
+	start = new Date( 2025, 7, 19 ),
+	end = new Date( 2025, 7, 25 ),
+	defaultFallbackPreset,
+	...props
+}: Partial< ComponentProps< typeof DateRangePicker > > & {
+	start?: Date;
+	end?: Date;
+} = {} ) {
+	function Harness( harnessProps: Partial< ComponentProps< typeof DateRangePicker > > ) {
+		const [ range, setRange ] = useState( { start, end } );
+		return (
+			<DateRangePicker
+				start={ range.start }
+				end={ range.end }
+				onChange={ setRange }
+				timezoneString={ props.timezoneString || '' }
+				gmtOffset={ props.gmtOffset || 0 }
+				locale="en-US"
+				defaultFallbackPreset={ defaultFallbackPreset }
+				{ ...props }
+				{ ...harnessProps }
+			/>
+		);
+	}
+	return render( <Harness /> );
 }
 
 describe( 'DateRangePicker (new)', () => {
@@ -37,7 +47,7 @@ describe( 'DateRangePicker (new)', () => {
 	} );
 
 	test( 'button label reflects normalized site days (offset-only UTC+0)', () => {
-		const { getByRole } = render( <TestDateRangePicker /> );
+		const { getByRole } = renderDateRangePicker();
 		const btn = getByRole( 'button', { name: /Date range:/i } );
 		expect( btn ).toBeVisible();
 		expect( btn ).toHaveAccessibleName( expect.stringContaining( 'Aug 19, 2025' ) );
@@ -45,7 +55,7 @@ describe( 'DateRangePicker (new)', () => {
 	} );
 
 	test( 'open → select two days → Apply updates label', async () => {
-		const { getByRole, findByRole } = render( <TestDateRangePicker /> );
+		const { getByRole, findByRole } = renderDateRangePicker();
 
 		// Open picker
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
@@ -61,44 +71,105 @@ describe( 'DateRangePicker (new)', () => {
 		await userEvent.click( getByRole( 'button', { name: /Apply/i } ) );
 
 		// Assert the visible text inside the toggle button
-		const toggle = getByRole( 'button', { name: /Date range:/i } );
+		const toggle = await findByRole( 'button', { name: /Date range:/i } );
 		const span = await within( toggle ).findByText(
 			( t ) => t.includes( 'Aug 6, 2025' ) && t.includes( 'Aug 8, 2025' )
 		);
 		expect( span ).toBeVisible();
 	} );
 
-	test( 'Clear resets inputs/selection', async () => {
-		const { getByRole, getByLabelText } = render( <TestDateRangePicker /> );
+	test( 'Clear → shows “Apply last 7 days”; click applies and closes', async () => {
+		const { getByRole, findByRole, getByLabelText } = renderDateRangePicker( {
+			start: new Date( 2025, 7, 1 ),
+			end: new Date( 2025, 7, 3 ),
+		} );
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		// Clear resets inputs
+		await userEvent.click( getByRole( 'button', { name: /Clear/i } ) );
+		expect( getByLabelText( 'Start date' ) ).toHaveValue( '' );
+		expect( getByLabelText( 'End date' ) ).toHaveValue( '' );
+
+		// “Apply default” is enabled
+		const applyDefault = await findByRole( 'button', { name: /Apply Last 7 days/i } );
+		expect( applyDefault ).toBeEnabled();
+
+		// Click and assert Last 7 days (Aug 19–25 with MockDate 2025‑08‑25)
+		await userEvent.click( applyDefault );
+		const toggle = await findByRole( 'button', { name: /Date range:/i } );
+		expect( toggle ).toHaveAccessibleName( expect.stringContaining( 'Aug 19, 2025' ) );
+		expect( toggle ).toHaveAccessibleName( expect.stringContaining( 'Aug 25, 2025' ) );
+	} );
+
+	test( 'Clear → shows “Apply last 30 days” when defaultFallbackPreset=last-30-days; click applies and closes', async () => {
+		const { findByRole, getByRole } = renderDateRangePicker( {
+			defaultFallbackPreset: 'last-30-days',
+		} );
 
 		// Open picker
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
 
-		// Inputs start with the current selection
+		// Clear then re-query
+		await userEvent.click( getByRole( 'button', { name: /Clear/i } ) );
+		const applyDefault = await findByRole( 'button', { name: /^Apply last 30 days$/i } );
+		expect( applyDefault ).toBeEnabled();
+
+		// Apply default
+		await userEvent.click( applyDefault );
+		const toggle = await findByRole( 'button', { name: /Date range:/i } );
+		expect( toggle ).toHaveAccessibleName( expect.stringContaining( 'Jul 27, 2025' ) );
+		expect( toggle ).toHaveAccessibleName( expect.stringContaining( 'Aug 25, 2025' ) );
+	} );
+
+	test( 'Typing after Clear hides default and requires both dates', async () => {
+		const { getByRole, getByLabelText, queryByRole } = renderDateRangePicker();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+		await userEvent.click( getByRole( 'button', { name: /Clear/i } ) );
+
+		// Start typing
+		const from = getByLabelText( 'Start date' ) as HTMLInputElement;
+		await userEvent.click( from );
+		await userEvent.type( from, '2025-08-01' );
+
+		// Default label gone; apply disabled until both dates set
+		expect( queryByRole( 'button', { name: /Apply default/i } ) ).toBeNull();
+		const apply = getByRole( 'button', { name: /^Apply$/i } );
+		expect( apply ).toBeDisabled();
+
+		// Type end date and expect Apply to be enabled
+		const to = getByLabelText( 'End date' ) as HTMLInputElement;
+		await userEvent.type( to, '2025-08-10' );
+		expect( apply ).toBeEnabled();
+	} );
+
+	test( 'Clear after typing resets inputs and enables Apply default', async () => {
+		const { getByRole, getByLabelText, findByRole, findByLabelText } = renderDateRangePicker();
+
+		// Open and start typing a date
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
 		const from = getByLabelText( 'Start date' ) as HTMLInputElement;
 		const to = getByLabelText( 'End date' ) as HTMLInputElement;
-		expect( from ).toHaveValue( '2025-08-19' );
-		expect( to ).toHaveValue( '2025-08-25' );
 
-		// Clear only resets the draft inputs
+		await userEvent.type( from, '2025-08-01' );
+		await userEvent.type( to, '2025-08-10' );
+
+		// Click Clear
 		await userEvent.click( getByRole( 'button', { name: /Clear/i } ) );
-		expect( from ).toHaveValue( '' );
-		expect( to ).toHaveValue( '' );
 
-		// Apply should be disabled until a valid draft range exists
-		expect( getByRole( 'button', { name: /Apply/i } ) ).toBeDisabled();
+		// Re-query fresh inputs by label
+		const from2 = ( await findByLabelText( 'Start date' ) ) as HTMLInputElement;
+		const to2 = ( await findByLabelText( 'End date' ) ) as HTMLInputElement;
 
-		// External selection/label is unchanged
-		const toggle = getByRole( 'button', { name: /Date range:/i } );
-		expect(
-			within( toggle ).getByText(
-				( t ) => t.includes( 'Aug 19, 2025' ) && t.includes( 'Aug 25, 2025' )
-			)
-		).toBeVisible();
+		expect( from2 ).toHaveValue( '' );
+		expect( to2 ).toHaveValue( '' );
+
+		// Re-query the default-apply button and wait for enable
+		const applyDefault = await findByRole( 'button', { name: /Apply Last 7 days/i } );
+		expect( applyDefault ).toBeEnabled();
 	} );
 
 	test( 'disableFuture prevents selecting a future date', async () => {
-		const { getByRole, findByRole } = render( <TestDateRangePicker disableFuture /> );
+		const { getByRole, findByRole } = renderDateRangePicker( { disableFuture: true } );
 
 		// Open
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
@@ -115,7 +186,7 @@ describe( 'DateRangePicker (new)', () => {
 		await userEvent.click( getByRole( 'button', { name: /Apply/i } ) );
 
 		// Label should remain unchanged (initial Aug 19–25)
-		const toggle = getByRole( 'button', { name: /Date range:/i } );
+		const toggle = await findByRole( 'button', { name: /Date range:/i } );
 		expect(
 			within( toggle ).getByText(
 				( t ) => t.includes( 'Aug 19, 2025' ) && t.includes( 'Aug 25, 2025' )
@@ -128,7 +199,7 @@ describe( 'DateRangePicker (new)', () => {
 	} );
 
 	test( 'preset selection updates label (Yesterday)', async () => {
-		const { getByRole, findByRole } = render( <TestDateRangePicker /> );
+		const { getByRole, findByRole } = renderDateRangePicker();
 		// Open
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
 
@@ -144,9 +215,10 @@ describe( 'DateRangePicker (new)', () => {
 	} );
 
 	test( 'blank timezoneString with non-zero gmtOffset normalizes and selects correctly', async () => {
-		const { getByRole, findByRole } = render(
-			<TestDateRangePicker timezoneString="" gmtOffset={ -5 } />
-		);
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			timezoneString: '',
+			gmtOffset: -5,
+		} );
 		const btn = getByRole( 'button', { name: /Date range:/i } );
 		expect( btn ).toHaveAccessibleName( expect.stringContaining( 'Aug 19, 2025' ) );
 		expect( btn ).toHaveAccessibleName( expect.stringContaining( 'Aug 25, 2025' ) );
@@ -171,9 +243,10 @@ describe( 'DateRangePicker (new)', () => {
 		// Silence and assert the Moment Timezone warning for invalid zone
 		const errorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		try {
-			const { getByRole, findByRole } = render(
-				<TestDateRangePicker timezoneString="Foo/Bar" gmtOffset={ 0 } />
-			);
+			const { getByRole, findByRole } = renderDateRangePicker( {
+				timezoneString: 'Invalid/Timezone',
+				gmtOffset: 0,
+			} );
 			const btn = getByRole( 'button', { name: /Date range:/i } );
 			expect( btn ).toBeVisible();
 			// Label remains the initial normalized dates

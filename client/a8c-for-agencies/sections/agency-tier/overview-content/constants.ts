@@ -17,7 +17,7 @@ import type { TierItem } from './types';
 
 const TARGET_INFLUENCED_REVENUE = {
 	'emerging-partner': 0,
-	'agency-partner': 1000,
+	'agency-partner': 1200,
 	'pro-agency-partner': 5000,
 	'premier-partner': 250000,
 };
@@ -30,7 +30,10 @@ export const ALL_TIERS: TierItem[] = [
 		description: 'Joining the program',
 		heading: __( 'Essential benefits' ),
 		subheading: __( 'Tools, earning opportunities, support & training and more' ),
-		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'emerging-partner' ],
+		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],
+		progressCardDescription: __(
+			'You’re just getting started. Explore your benefits and learn how to grow your influenced revenue.'
+		),
 		benefits: [
 			{
 				icon: tool,
@@ -118,7 +121,10 @@ export const ALL_TIERS: TierItem[] = [
 		),
 		heading: __( '2 additional benefits unlocked' ),
 		subheading: __( 'Directory visibility, early access' ),
-		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],
+		progressCardDescription: __(
+			'You’re making great progress! Keep growing your influenced revenue to unlock Pro Partner benefits.'
+		),
+		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ],
 		benefits: [
 			{
 				icon: commentAuthorAvatar,
@@ -126,6 +132,17 @@ export const ALL_TIERS: TierItem[] = [
 				description: __(
 					'Eligible for inclusion in Automattic’s agency directories and increased exposure to potential clients.'
 				),
+				actions: [
+					{
+						id: 'manage-profile',
+						label: __( 'Manage your profile' ),
+						href: '/partner-directory/dashboard',
+					},
+					{
+						id: 'download-badge',
+						label: __( 'Download your badges' ),
+					},
+				],
 			},
 			{
 				icon: store,
@@ -147,7 +164,10 @@ export const ALL_TIERS: TierItem[] = [
 		),
 		heading: __( '3 additional benefits unlocked' ),
 		subheading: __( 'Co-marketing, qualified leads, partner manager & more' ),
-		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ],
+		progressCardDescription: __(
+			'Congratulations! You’ve unlocked all Pro Partner benefits including co-marketing opportunities and your dedicated partner manager.'
+		),
+		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
 		benefits: [
 			{
 				icon: starHalf,
@@ -169,6 +189,12 @@ export const ALL_TIERS: TierItem[] = [
 				description: __(
 					'Pro partners receive access to an assigned agency partner manager for strategic guidance.'
 				),
+				actions: [
+					{
+						id: 'schedule-call',
+						label: __( 'Book time with your partner manager' ),
+					},
+				],
 			},
 		],
 	},
@@ -178,11 +204,14 @@ export const ALL_TIERS: TierItem[] = [
 		name: __( 'Premier Partner' ),
 		description: sprintf(
 			/* translators: %s is the influenced revenue */
-			__( '%s+ influenced revenue' ),
+			__( '%s+ influenced revenue and invitation to the tier.' ),
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD' )
 		),
 		heading: __( '3 premium benefits' ),
 		subheading: __( 'Annual credits, Parse.ly trial, marketing funds' ),
+		progressCardDescription: __(
+			'You’ve reached the highest tier! Enjoy all Premier Partner benefits including annual credits, Parse.ly trial, and marketing development funds.'
+		),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
 		benefits: [
 			{

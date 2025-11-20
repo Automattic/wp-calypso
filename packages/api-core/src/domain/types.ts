@@ -35,6 +35,7 @@ export interface TitanEmailSubscription extends EmailSubscription {
 }
 
 export interface Domain extends DomainSummary {
+	a_records_required_for_mapping?: string[];
 	auth_code_required: boolean;
 	aftermarket_auction: boolean;
 	auto_renewal_date: string;
@@ -86,6 +87,7 @@ export interface Domain extends DomainSummary {
 	pending_registration: boolean;
 	pending_registration_at_registry: boolean;
 	pending_transfer: boolean;
+	whois_update_unmodifiable_fields: string[];
 	renewable_until: string;
 	ssl_status: 'active' | 'inactive' | 'newly_registered' | 'pending';
 	subdomain_part: string;

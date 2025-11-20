@@ -1,4 +1,5 @@
-import { restoreDatabasePassword } from '@automattic/api-core';
+import { siteDatabaseMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -22,19 +23,21 @@ export default function ResetPasswordModal( {
 	onSuccess,
 	onError,
 }: ResetPasswordModalProps ) {
+	const mutation = useMutation( siteDatabaseMutation( siteId ) );
 	const [ isRestoring, setIsRestoring ] = useState( false );
 
 	const handleRestore = () => {
 		setIsRestoring( true );
-		restoreDatabasePassword( siteId )
-			.then( () => {
+		mutation.mutate( undefined, {
+			onSuccess: () => {
 				setIsRestoring( false );
 				onSuccess();
-			} )
-			.catch( () => {
+			},
+			onError: () => {
 				setIsRestoring( false );
 				onError();
-			} );
+			},
+		} );
 	};
 
 	return (
@@ -44,8 +47,15 @@ export default function ResetPasswordModal( {
 					{ __( 'Are you sure you want to restore the default password of your database?' ) }
 				</Text>
 				<ButtonStack justify="flex-end">
-					<Button onClick={ onClose }>{ __( 'Cancel' ) }</Button>
-					<Button variant="primary" isBusy={ isRestoring } onClick={ handleRestore }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						isBusy={ isRestoring }
+						onClick={ handleRestore }
+					>
 						{ __( 'Restore' ) }
 					</Button>
 				</ButtonStack>

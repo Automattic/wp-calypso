@@ -8,6 +8,7 @@ import OverviewCard from '../../components/overview-card';
 import { useTimeSince } from '../../components/time-since';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getPerformanceStatus, getStatusIntent, getStatusText } from '../../utils/site-performance';
+import { getSiteVisibilityURL } from '../../utils/site-url';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import { useSitePerformanceData } from '../performance/use-site-performance-data';
 import type { SitePerformanceReport, Site } from '@automattic/api-core';
@@ -31,7 +32,7 @@ function PerformanceCardContentWithoutTests( { site }: { site: Site } ) {
 		<OverviewCard
 			{ ...CARD_PROPS }
 			heading={ __( 'Run a test' ) }
-			description={ __( 'Your site hasn’t been tested yet.' ) }
+			description={ __( 'We don’t have performance data for your site.' ) }
 			link={ getPerformanceUrl( site ) }
 		/>
 	);
@@ -83,10 +84,15 @@ function PerformanceCardContentWithTests( {
 	site: Site;
 	page: SitePerformancePage;
 } ) {
-	const { getReport, hasCompleted } = useSitePerformanceData(
+	const { getReport, hasCompleted, hasError } = useSitePerformanceData(
 		page.link,
 		page.wpcom_performance_report_hash
 	);
+
+	// If we have an error, show the without tests card so they can navigate and try again.
+	if ( hasError( 'desktop' ) || hasError( 'mobile' ) ) {
+		return <PerformanceCardContentWithoutTests site={ site } />;
+	}
 
 	if ( ! hasCompleted ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
@@ -134,7 +140,7 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 				{ ...CARD_PROPS }
 				heading={ __( 'No results' ) }
 				description={ __( 'Launch your site to test performance.' ) }
-				disabled
+				link={ getSiteVisibilityURL( site ) }
 			/>
 		);
 	}
@@ -145,16 +151,17 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 				{ ...CARD_PROPS }
 				heading={ __( 'No results' ) }
 				description={ __( 'Make your site public to test performance.' ) }
-				disabled
+				link={ getSiteVisibilityURL( site ) }
 			/>
 		);
 	}
 
-	if ( ! pages || pages.length === 0 ) {
+	const homePage = pages?.[ 0 ] ?? null;
+	if ( ! homePage || ! homePage.wpcom_performance_report_hash ) {
 		return <PerformanceCardContentWithoutTests site={ site } />;
 	}
 
-	return <PerformanceCardContentWithTests site={ site } page={ pages[ 0 ] } />;
+	return <PerformanceCardContentWithTests site={ site } page={ homePage } />;
 }
 
 export default function PerformanceCard( { site }: { site: Site } ) {

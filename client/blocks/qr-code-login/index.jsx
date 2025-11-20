@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import qrCenter from 'calypso/assets/images/qr-login/app.png';
 import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 import { useInterval } from 'calypso/lib/interval';
+import { useLoginContext } from 'calypso/login/login-context';
 import { postLoginRequest, getErrorFromHTTPError } from 'calypso/state/login/utils';
 import { JetpackQRCodeLogin } from './jetpack';
 
@@ -80,8 +81,9 @@ function QRCodeErrorCard() {
 	return (
 		<div className="qr-code-login is-error">
 			<div className="qr-code-login__token-error">
-				<h1 className="qr-code-login-page__heading">{ translate( 'Log in via Jetpack app' ) }</h1>
-				<p>{ translate( 'Mobile App QR Code login is currently unavailable.' ) }</p>
+				<p className="qr-code-login__error-message">
+					{ translate( 'Please try again later or enter your password instead.' ) }
+				</p>
 			</div>
 		</div>
 	);
@@ -93,6 +95,20 @@ function QRCodeLogin( { redirectToAfterLoginUrl, isJetpack = false } ) {
 	const [ authState, setAuthState ] = useState( false );
 	const [ isErrorState, setIsErrorState ] = useState( false );
 	const [ pullInterval, setPullInterval ] = useState( AUTH_PULL_INTERVAL );
+	const { setHeaders } = useLoginContext();
+
+	const headingText = translate( 'Log in via Jetpack app' );
+	const instructionsSubHeading = translate(
+		'Open the Jetpack app on your phone to scan this code.'
+	);
+	const errorSubHeading = translate( 'Mobile App QR Code login is currently unavailable.' );
+
+	useEffect( () => {
+		setHeaders( {
+			heading: headingText,
+			subHeading: isErrorState ? errorSubHeading : instructionsSubHeading,
+		} );
+	}, [ errorSubHeading, headingText, instructionsSubHeading, isErrorState, setHeaders ] );
 
 	const anonymousUserId = getTracksAnonymousUserId();
 
@@ -172,7 +188,7 @@ function QRCodeLogin( { redirectToAfterLoginUrl, isJetpack = false } ) {
 	// Fetch QR code data.
 	useEffect( () => {
 		fetchQRCodeData( tokenState, anonymousUserId );
-	}, [ tokenState, anonymousUserId ] );
+	}, [ tokenState, anonymousUserId, fetchQRCodeData ] );
 
 	// Fetch the Auth Data.
 	useInterval( () => {
@@ -249,7 +265,6 @@ function QRCodeLogin( { redirectToAfterLoginUrl, isJetpack = false } ) {
 			</div>
 
 			<div className="qr-code-login__instructions">
-				<h1 className="qr-code-login-page__heading">{ translate( 'Log in via Jetpack app' ) }</h1>
 				<Notice isDismissible={ false } status="warning">
 					<p>{ notice }</p>
 				</Notice>

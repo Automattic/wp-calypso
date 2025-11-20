@@ -13,6 +13,10 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
+import {
+	analyzeUrl,
+	getApplicationPasswordsInfo,
+} from '../site-migration-credentials/hooks/use-credentials-form';
 import { SupportNudge } from '../site-migration-instructions/support-nudge';
 import { useSSHMigrationStatus } from '../site-migration-ssh-in-progress/hooks/use-ssh-migration-status';
 import { Accordion } from './components/accordion';
@@ -23,6 +27,7 @@ import { useStartSSHMigration } from './hooks/use-start-ssh-migration';
 import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 import './styles.scss';
 
@@ -33,7 +38,14 @@ const SiteMigrationSshShareAccess: StepType< {
 			| 'migration-completed'
 			| 'no-ssh-access'
 			| 'back-to-verification'
-			| 'do-it-for-me';
+			| 'do-it-for-me'
+			| 'application-passwords-approval'
+			| 'fallback-credentials'
+			| 'already-wpcom'
+			| 'site-is-not-using-wordpress';
+		from?: string;
+		platform?: ImporterPlatform;
+		authorizationUrl?: string;
 	};
 } > = function ( { navigation } ) {
 	const site = useSite();
@@ -45,9 +57,10 @@ const SiteMigrationSshShareAccess: StepType< {
 	const transferId = transferIdParam ? parseInt( transferIdParam, 10 ) : null;
 	const [ migrationStarted, setMigrationStarted ] = useState( false );
 	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
+	const [ isProcessingNoSSH, setIsProcessingNoSSH ] = useState( false );
 	const locale = useLocale();
 	const siteSlug = useSiteSlugParam() ?? '';
-	const { sendTicketAsync } = useSubmitMigrationTicket();
+	const { sendTicketAsync, isPending: isSubmittingTicket } = useSubmitMigrationTicket();
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -56,9 +69,63 @@ const SiteMigrationSshShareAccess: StepType< {
 		}
 	}, [ transferId, navigation ] );
 
-	const handleNoSSHAccess = useCallback( () => {
-		navigation.submit?.( { destination: 'no-ssh-access' } );
-	}, [ navigation ] );
+	const handleNoSSHAccess = useCallback( async () => {
+		setIsProcessingNoSSH( true );
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share_access',
+			action: 'no_ssh_access',
+		} );
+
+		try {
+			// Analyze the source URL to get site information
+			const siteInfo = await analyzeUrl( fromUrl );
+
+			// Check for special cases first
+			if ( siteInfo?.platform_data?.is_wpcom ) {
+				return navigation.submit?.( {
+					destination: 'already-wpcom',
+					from: siteInfo.url,
+				} );
+			}
+
+			if ( siteInfo?.platform && siteInfo.platform !== 'wordpress' ) {
+				return navigation.submit?.( {
+					destination: 'site-is-not-using-wordpress',
+					from: siteInfo.url,
+					platform: siteInfo.platform,
+				} );
+			}
+
+			// Check if application passwords are enabled
+			const applicationPasswordsInfo = await getApplicationPasswordsInfo( siteId, fromUrl );
+
+			if ( applicationPasswordsInfo?.application_passwords_enabled ) {
+				// Navigate to authorization step
+				return navigation.submit?.( {
+					destination: 'application-passwords-approval',
+					from: siteInfo?.url || fromUrl,
+					authorizationUrl: applicationPasswordsInfo.authorization_url,
+				} );
+			} else if ( applicationPasswordsInfo?.application_passwords_enabled === false ) {
+				// Navigate to fallback credentials step
+				return navigation.submit?.( {
+					destination: 'fallback-credentials',
+					from: siteInfo?.url || fromUrl,
+				} );
+			}
+
+			// Default fallback - go to credentials step
+			return navigation.submit?.( { destination: 'no-ssh-access' } );
+		} catch ( error ) {
+			// On error, fallback to credentials step
+			recordTracksEvent( 'calypso_site_migration_ssh_fallback_error', {
+				error: error instanceof Error ? error.message : 'Unknown error',
+			} );
+			return navigation.submit?.( { destination: 'no-ssh-access' } );
+		} finally {
+			setIsProcessingNoSSH( false );
+		}
+	}, [ navigation, fromUrl, siteId ] );
 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
@@ -89,7 +156,9 @@ const SiteMigrationSshShareAccess: StepType< {
 		onNoSSHAccess: handleNoSSHAccess,
 		migrationStatus: migrationStatus?.status,
 		isTransferring,
-		isInputDisabled: isStartingMigration || migrationStarted || shouldStartMigration,
+		isInputDisabled:
+			isStartingMigration || migrationStarted || shouldStartMigration || isProcessingNoSSH,
+		isProcessingNoSSH,
 	} );
 
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
@@ -117,6 +186,7 @@ const SiteMigrationSshShareAccess: StepType< {
 			{
 				siteId,
 				remoteHost: formState.serverAddress,
+				remotePort: formState.port,
 				remoteUser: formState.username,
 				remoteDomain: fromUrl,
 				remotePass: formState.authMethod === 'key' ? '' : formState.password,
@@ -135,6 +205,11 @@ const SiteMigrationSshShareAccess: StepType< {
 	};
 
 	const handleContinue = () => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share_access',
+			action: 'click_button',
+			button: 'continue',
+		} );
 		setMigrationError( null );
 
 		if ( isTransferring ) {
@@ -154,6 +229,10 @@ const SiteMigrationSshShareAccess: StepType< {
 	}, [ transferStatus, shouldStartMigration ] );
 
 	const handleSkip = useCallback( async () => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share_access',
+			action: 'click_assisted_migration',
+		} );
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
 			path: window.location.pathname,
 			automated_migration: true,
@@ -208,7 +287,14 @@ const SiteMigrationSshShareAccess: StepType< {
 				}
 		  );
 	const topBar = (
-		<Step.TopBar rightElement={ <SupportNudge onAskForHelp={ navigateToDoItForMe } /> } />
+		<Step.TopBar
+			rightElement={
+				<SupportNudge
+					onAskForHelp={ navigateToDoItForMe }
+					isLoading={ isSubmittingTicket || isProcessingNoSSH }
+				/>
+			}
+		/>
 	);
 
 	return (
@@ -229,7 +315,8 @@ const SiteMigrationSshShareAccess: StepType< {
 								! canStartMigration ||
 								isStartingMigration ||
 								migrationStarted ||
-								shouldStartMigration
+								shouldStartMigration ||
+								isProcessingNoSSH
 							}
 							isBusy={ isBusy }
 						>

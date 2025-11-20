@@ -190,11 +190,13 @@ export function qrCodeLogin( context, next ) {
 	const isJetpack = context.path.includes( '/jetpack' );
 
 	context.primary = (
-		<QrCodeLoginPage
-			locale={ context.params.lang }
-			redirectTo={ redirect_to }
-			isJetpack={ isJetpack }
-		/>
+		<LoginContextProvider>
+			<QrCodeLoginPage
+				locale={ context.params.lang }
+				redirectTo={ redirect_to }
+				isJetpack={ isJetpack }
+			/>
+		</LoginContextProvider>
 	);
 
 	next();

@@ -1,3 +1,4 @@
+import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import {
 	Icon,
@@ -12,25 +13,34 @@ import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import DnsPropagationProgressBar from './components/dns-propagation-progress-bar';
+import DnsRecordsTable from './components/dns-records-table';
+import DomainPropagationStatus from './components/domain-propagation-status';
 import { isMappingVerificationSuccess } from './utils';
 import VerificationInProgressNextSteps from './verification-in-progress-next-steps';
 import type { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 
+type DomainConnectionStatus = 'connected' | 'verifying';
+
 interface DomainConnectionVerificationProps {
+	domainData: Domain;
 	domainName: string;
 	siteSlug: string;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
 	domainMappingStatus: DomainMappingStatus;
-	queryError: string | null;
-	queryErrorDescription: string | null;
 }
 
 export default function DomainConnectionVerification( {
+	domainData,
 	domainName,
 	siteSlug,
 	domainMappingStatus,
+	domainConnectionSetupInfo,
 }: DomainConnectionVerificationProps ) {
-	const status = isMappingVerificationSuccess( domainMappingStatus.mode, domainMappingStatus )
+	const status: DomainConnectionStatus = isMappingVerificationSuccess(
+		domainMappingStatus.mode,
+		domainMappingStatus
+	)
 		? 'connected'
 		: 'verifying';
 
@@ -39,7 +49,7 @@ export default function DomainConnectionVerification( {
 			className={ `dashboard-domain-connection-verification dashboard-domain-connection-verification--${ status }` }
 		>
 			<CardBody>
-				<VStack spacing={ 4 }>
+				<VStack spacing={ 7 }>
 					<HStack justify="flex-start">
 						<Icon
 							className="dashboard-domain-connection-verification__icon"
@@ -52,38 +62,62 @@ export default function DomainConnectionVerification( {
 							{ status === 'connected' ? __( 'Active' ) : __( 'Verifying' ) }
 						</Badge>
 					</HStack>
+
+					<DnsPropagationProgressBar domainName={ domainName } />
+
 					{ status === 'verifying' && (
-						<>
-							<Notice variant="info">
-								{ __(
-									'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
-								) }
-							</Notice>
+						<Notice variant="info">
+							{ __(
+								'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
+							) }
+						</Notice>
+					) }
+
+					<VStack spacing={ 4 }>
+						<Text size="medium" weight={ 500 }>
+							{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
+								? __( 'Name server verification' )
+								: __( 'DNS record verification' ) }
+						</Text>
+
+						<DnsRecordsTable
+							domainData={ domainData }
+							domainConnectionStatus={ domainMappingStatus }
+							domainConnectionSetupInfo={ domainConnectionSetupInfo }
+						/>
+					</VStack>
+
+					<DomainPropagationStatus domainName={ domainName } />
+
+					<VStack spacing={ 4 }>
+						{ status === 'verifying' && (
 							<Text size="medium" weight={ 500 }>
 								{ __( 'While you wait' ) }
 							</Text>
-						</>
-					) }
-					{ status === 'connected' && (
-						<RouterLinkSummaryButton
-							to={ siteDomainsRoute.fullPath }
-							params={ { siteSlug } }
-							/* Translators: %s is the domain name. */
-							title={ sprintf( __( 'Set %s as your primary site address' ), domainName ) }
-							description={ __( 'It’s the URL visitors see in their browser’s address bar.' ) }
-							decoration={ <Icon icon={ atSymbol } /> }
-						/>
-					) }
-					<RouterLinkSummaryButton
-						to={ siteOverviewRoute.fullPath }
-						params={ { siteSlug } }
-						title={ __( 'Customize your site' ) }
-						description={ __(
-							'While your domain name is connecting, you can still work on your site.'
 						) }
-						decoration={ <Icon icon={ layout } /> }
-					/>
+
+						{ status === 'connected' && (
+							<RouterLinkSummaryButton
+								to={ siteDomainsRoute.fullPath }
+								params={ { siteSlug } }
+								/* Translators: %s is the domain name. */
+								title={ sprintf( __( 'Set %s as your primary site address' ), domainName ) }
+								description={ __( 'It’s the URL visitors see in their browser’s address bar.' ) }
+								decoration={ <Icon icon={ atSymbol } /> }
+							/>
+						) }
+						<RouterLinkSummaryButton
+							to={ siteOverviewRoute.fullPath }
+							params={ { siteSlug } }
+							title={ __( 'Customize your site' ) }
+							description={ __(
+								'While your domain name is connecting, you can still work on your site.'
+							) }
+							decoration={ <Icon icon={ layout } /> }
+						/>
+					</VStack>
 					{ status === 'verifying' && <VerificationInProgressNextSteps /> }
+
 					<Text size="medium" weight={ 500 }>
 						{ __( 'Need help?' ) }
 					</Text>
@@ -94,8 +128,9 @@ export default function DomainConnectionVerification( {
 						<InlineSupportLink supportContext="general-support-options">
 							{ __( 'Contact support' ) }
 						</InlineSupportLink>
-						{ /* TODO: Add additional help resources or links here in the future */ }
-						{ /* <ExternalLink href="#" children={ __( 'Registrar instructions' ) } /> */ }
+						<InlineSupportLink supportContext="transfer-domain-registrar-login">
+							{ __( 'Registrar instructions' ) }
+						</InlineSupportLink>
 					</VStack>
 				</VStack>
 			</CardBody>
