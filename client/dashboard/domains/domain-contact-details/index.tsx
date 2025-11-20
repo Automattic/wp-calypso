@@ -96,40 +96,29 @@ export default function DomainContactInfo() {
 			reject: ( reason: unknown ) => void;
 		};
 
-		const debouncedFn = ( item: DomainContactDetails, callbacks: ValidationCallbacks ) => {
-			validateAsync( item ).then( callbacks.resolve ).catch( callbacks.reject );
+		let pendingCallbacks: ValidationCallbacks[] = [];
+
+		const performValidation = ( item: DomainContactDetails ) => {
+			const callbacks = [ ...pendingCallbacks ];
+			pendingCallbacks = [];
+
+			validateAsync( item )
+				.then( ( result ) => {
+					callbacks.forEach( ( callback ) => callback.resolve( result ) );
+				} )
+				.catch( ( error ) => {
+					callbacks.forEach( ( callback ) => callback.reject( error ) );
+				} );
 		};
 
-		const debounced = debounce( debouncedFn as ( ...args: unknown[] ) => unknown, 800 ) as (
-			item: DomainContactDetails,
-			callbacks: ValidationCallbacks
+		const debounced = debounce( performValidation as ( ...args: unknown[] ) => unknown, 800 ) as (
+			item: DomainContactDetails
 		) => void;
-
-		let pendingReject: ValidationCallbacks[ 'reject' ] | undefined;
 
 		return ( item: DomainContactDetails ) =>
 			new Promise< DomainContactValidationResponse >( ( resolve, reject ) => {
-				if ( pendingReject ) {
-					pendingReject( new Error( 'Validation request aborted' ) );
-				}
-
-				const callbacks: ValidationCallbacks = {
-					resolve: ( response ) => {
-						if ( pendingReject === reject ) {
-							pendingReject = undefined;
-						}
-						resolve( response );
-					},
-					reject: ( error ) => {
-						if ( pendingReject === reject ) {
-							pendingReject = undefined;
-						}
-						reject( error );
-					},
-				};
-
-				pendingReject = callbacks.reject;
-				debounced( item, callbacks );
+				pendingCallbacks.push( { resolve, reject } );
+				debounced( item );
 			} );
 	}, [ validateAsync ] );
 
