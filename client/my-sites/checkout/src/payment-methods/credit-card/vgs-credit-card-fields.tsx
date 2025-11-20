@@ -20,9 +20,10 @@ const VGSCollectFieldStyles: VGS.Css = {
 	boxSizing: 'border-box',
 	fontFamily: 'inherit',
 	fontSize: '16px',
+	fontWeight: 400,
 	lineHeight: '1.5',
-	border: '1px solid #dcdcde',
-	borderRadius: '4px',
+	border: '1px solid #c3c4c7',
+	borderRadius: '2px',
 	display: 'flex',
 	alignItems: 'center',
 	'&::placeholder': {
@@ -30,9 +31,9 @@ const VGSCollectFieldStyles: VGS.Css = {
 		opacity: '1',
 	},
 	'&:focus': {
-		borderColor: '#0675C4',
+		borderColor: '#3858e9',
 		outline: 'none',
-		boxShadow: '0 0 0 1px #0675C4',
+		boxShadow: '0 0 0 1px #3858e9',
 	},
 	'&:focus::placeholder': {
 		color: '#c3c4c7',

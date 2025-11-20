@@ -158,9 +158,6 @@ export default function CreditCardFields( {
 						/>
 
 						<VgsCreditCardFields
-							styles={ {
-								input: stripeElementStyle.base,
-							} }
 							labels={ {
 								cardNumber: __( 'Card number', 'calypso' ),
 								expiryDate: __( 'Expiry date', 'calypso' ),
