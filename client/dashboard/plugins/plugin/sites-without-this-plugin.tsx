@@ -3,6 +3,7 @@ import { ExternalLink } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import { usePlugin } from './use-plugin';
 import type { Field } from '@wordpress/dataviews';
 
@@ -27,8 +28,7 @@ export const SitesWithoutThisPlugin = ( { pluginSlug }: { pluginSlug: string } )
 			{
 				id: 'domain',
 				label: __( 'Site' ),
-				getValue: ( { item }: { item: Site } ) =>
-					item.URL.replace( 'https://', '' ).replace( 'http://', '' ),
+				getValue: ( { item }: { item: Site } ) => getSiteDisplayUrl( item ),
 				render: ( { field, item } ) => field.getValue( { item } ),
 				enableHiding: false,
 				enableSorting: true,
