@@ -32,7 +32,7 @@ $admin-bar-height: 32px;
 		visibility: visible;
 		// Prevent the embedded chat from overlapping the main container during transition
 		animation: ai-manager-delay-visibility $transition-duration;
-		z-index: unset;
+		z-index: 999999;
 	}
 
 	.ai-manager-sidebar__fab {
@@ -292,6 +292,7 @@ body.ai-manager-sidebar-container {
 			0 2px 24px rgba( 0, 0, 0, 0.075 );
 		padding: 0;
 		min-width: 56px;
+		z-index: 999999;
 
 		svg {
 			width: 48px;
@@ -302,6 +303,11 @@ body.ai-manager-sidebar-container {
 
 /* Styles for the embedded and floating chat (agenttic-ui integration) */
 .agenttic {
+	// Override the inline z-index from agenttic-ui for floating chat
+	&.ai-manager-dock.Chat-module_floating {
+		z-index: 999999 !important;
+	}
+
 	.Messages-module_container {
 		padding-bottom: 24px;
 

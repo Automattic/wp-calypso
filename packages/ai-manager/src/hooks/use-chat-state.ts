@@ -22,7 +22,7 @@ const loadChatState = ( storageKey: string ): ChatState => {
 		// eslint-disable-next-line no-console
 		console.warn( '[AgentDock] Failed to read chat state from localStorage:', error );
 	}
-	return 'expanded';
+	return 'collapsed';
 };
 
 /**
