@@ -33,7 +33,11 @@ export { AbilityRegistry, defaultAbilityRegistry } from './abilities';
 export { createAgentConfig, createSimpleAgentConfig } from './config';
 
 // Authentication
-export { createCalypsoAuthProvider } from './auth/calypso-auth-provider';
+export {
+	createCalypsoAuthProvider,
+	defaultCalypsoErrorHandler,
+} from './auth/calypso-auth-provider';
+export type { CalypsoAuthError, CalypsoErrorHandler } from './auth/calypso-auth-provider';
 
 // Types
 export type {
