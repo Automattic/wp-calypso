@@ -220,6 +220,8 @@ export async function redirectLoggedOut( context, next ) {
 				return;
 			}
 		} catch ( error ) {
+			const errorStatus = error.status;
+
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: 'Cookie-auth-missing and user re-fetch failed',
@@ -229,13 +231,13 @@ export async function redirectLoggedOut( context, next ) {
 					env: config( 'env_id' ),
 					pathname: context.pathname,
 					error: error.message || 'Unknown error',
-					error_status: error.status,
+					error_status: errorStatus,
 				},
 			} );
 
 			// Only for 401 and 403 errors, perform logout and redirect to login page
 			// If the response is in the 500 range, there could be a transient connection issue or a different server issue
-			if ( [ 401, 403 ].contains( error.status ) ) {
+			if ( errorStatus && [ 401, 403 ].includes( errorStatus ) ) {
 				// Perform logout with redirect to login page
 				const userData = getCurrentUser( state );
 				const logoutUrl = getLogoutUrl( userData, login( buildLoginParameters( context, state ) ) );
