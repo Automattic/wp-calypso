@@ -14,7 +14,7 @@ import type { ReactNode } from 'react';
  */
 import './style.scss';
 
-export interface AgentsManagerRenderProps {
+export interface ChatLayoutManagerRenderProps {
 	isDocked: boolean;
 	isDesktop: boolean;
 	dock: () => void;
@@ -23,11 +23,11 @@ export interface AgentsManagerRenderProps {
 	closeSidebar: () => void;
 }
 
-export interface AgentsManagerProps {
+export interface ChatLayoutManagerProps {
 	/**
 	 * Render prop that receives sidebar state and control functions
 	 */
-	children: ( props: AgentsManagerRenderProps ) => ReactNode;
+	children: ( props: ChatLayoutManagerRenderProps ) => ReactNode;
 	/**
 	 * Target container for the sidebar (CSS selector or HTMLElement)
 	 */
@@ -48,8 +48,8 @@ export interface AgentsManagerProps {
 	 */
 	desktopMediaQuery?: string;
 	/**
-	 * Custom class name prefix (defaults to 'ai-agent')
-	 * @default 'ai-agent'
+	 * Custom class name prefix (defaults to 'ai-manager')
+	 * @default 'ai-manager'
 	 */
 	classNamePrefix?: string;
 	/**
@@ -81,28 +81,27 @@ export interface AgentsManagerProps {
 }
 
 /**
- * AgentsManager Component
+ * ChatLayoutManager Component
  *
  * Manages a sidebar/dock interface using React Portal.
  * Toggles between docked (embedded) and floating modes based on screen size.
  * Provides render prop pattern for flexible content rendering.
- *
- * @param {AgentsManagerProps} props - Component props
+ * @param {ChatLayoutManagerProps} props - Component props
  */
-export default function AgentsManager( {
+export default function ChatLayoutManager( {
 	children,
 	sidebarContainer,
 	defaultUndocked = false,
 	defaultOpen = false,
 	desktopMediaQuery = '(min-width: 1200px)',
-	classNamePrefix = 'ai-agent',
+	classNamePrefix = 'ai-manager',
 	fabIcon = <Icon icon={ comment } />,
 	fabLabel = __( 'Open Chat', 'ai-agents' ),
 	onOpenSidebar = () => {},
 	onCloseSidebar = () => {},
 	onDock = () => {},
 	onUndock = () => {},
-}: AgentsManagerProps ) {
+}: ChatLayoutManagerProps ) {
 	const [ sidebar, setSidebar ] = useState< HTMLElement | null >( null );
 	const isDesktop = useMediaQuery( desktopMediaQuery );
 	const [ isDocked, setIsDocked ] = useState( ! defaultUndocked );
@@ -226,7 +225,7 @@ export default function AgentsManager( {
 		setIsDocked( false );
 	};
 
-	const commonArgs: AgentsManagerRenderProps = {
+	const commonArgs: ChatLayoutManagerRenderProps = {
 		isDesktop,
 		dock,
 		undock,

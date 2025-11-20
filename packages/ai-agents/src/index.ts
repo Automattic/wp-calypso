@@ -9,7 +9,7 @@
 export { default } from './components/calypso-ai-agent';
 
 // Main Components
-export { default as AgentsManager } from './components/agents-manager';
+export { default as ChatLayoutManager } from './components/chat-layout-manager';
 export { default as AgentDock } from './components/agent-dock';
 export { default as CalypsoAIAgent } from './components/calypso-ai-agent';
 export { default as ChatHeader } from './components/shared/chat-header';
@@ -52,8 +52,8 @@ export type {
 	UseAgentSessionOptions,
 	UseAgentSessionResult,
 	// Component Types
-	AgentsManagerProps,
-	AgentsManagerRenderProps,
+	ChatLayoutManagerProps,
+	ChatLayoutManagerRenderProps,
 	AgentDockProps,
 } from './types';
 export type { CalypsoAIAgentProps } from './components/calypso-ai-agent';

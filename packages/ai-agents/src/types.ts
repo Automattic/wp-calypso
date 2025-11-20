@@ -7,5 +7,8 @@ export type { ContextAdapter, ClientContext } from './adapters/context/context-a
 export type { CreateAgentConfigOptions } from './config/create-agent-config';
 export type { ChatState, UseChatStateOptions, UseChatStateResult } from './hooks/use-chat-state';
 export type { UseAgentSessionOptions, UseAgentSessionResult } from './hooks/use-agent-session';
-export type { AgentsManagerProps, AgentsManagerRenderProps } from './components/agents-manager';
+export type {
+	ChatLayoutManagerProps,
+	ChatLayoutManagerRenderProps,
+} from './components/chat-layout-manager';
 export type { AgentDockProps } from './components/agent-dock';

@@ -4,7 +4,7 @@ AI agent dock and sidebar components with multi-context support for WordPress, C
 
 ## Features
 
-- **AgentsManager**: Flexible sidebar/dock component using React Portal
+- **ChatLayoutManager**: Flexible sidebar/dock component using React Portal
 - **Multi-Context Support**: Works in WordPress (wp-admin, block-editor, site-editor), Calypso, and generic contexts
 - **Adapter System**: Pluggable adapters for context management
 - **Ability Registry**: Async/programmatic API for registering agent abilities
@@ -22,11 +22,11 @@ yarn add @automattic/ai-agents
 ### Basic Usage
 
 ```tsx
-import { AgentsManager, GenericContextAdapter } from '@automattic/ai-agents';
+import { ChatLayoutManager, GenericContextAdapter } from '@automattic/ai-agents';
 
 function MyApp() {
   return (
-    <AgentsManager
+    <ChatLayoutManager
       sidebarContainer="body"
       defaultOpen={ true }
     >
@@ -37,7 +37,7 @@ function MyApp() {
           {/* Your agent UI here */}
         </div>
       ) }
-    </AgentsManager>
+    </ChatLayoutManager>
   );
 }
 ```
@@ -46,23 +46,23 @@ function MyApp() {
 
 ```tsx
 import {
-  AgentsManager,
+  ChatLayoutManager,
   WordPressContextAdapter,
 } from '@automattic/ai-agents';
 
 const contextAdapter = new WordPressContextAdapter( 'wp-admin' );
 
 // Use in your component
-<AgentsManager sidebarContainer="#wpwrap">
+<ChatLayoutManager sidebarContainer="#wpwrap">
   { ( props ) => <YourAgentUI { ...props } /> }
-</AgentsManager>
+</ChatLayoutManager>
 ```
 
 ### Calypso Context
 
 ```tsx
 import {
-  AgentsManager,
+  ChatLayoutManager,
   CalypsoContextAdapter,
 } from '@automattic/ai-agents';
 
@@ -160,7 +160,7 @@ const context = await adapter.getContext();
 
 ## API Reference
 
-### AgentsManager Props
+### ChatLayoutManager Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -177,7 +177,7 @@ const context = await adapter.getContext();
 | `onDock` | `() => void` | - | Callback when docked |
 | `onUndock` | `() => void` | - | Callback when undocked |
 
-### AgentsManager Render Props
+### ChatLayoutManager Render Props
 
 | Prop | Type | Description |
 |------|------|-------------|

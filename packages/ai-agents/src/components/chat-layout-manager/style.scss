@@ -28,19 +28,19 @@ $admin-bar-height: 32px;
 		overflow: hidden;
 	}
 
-	.ai-agent-sidebar {
+	.ai-manager-sidebar {
 		visibility: visible;
 		// Prevent the embedded chat from overlapping the main container during transition
-		animation: ai-agent-delay-visibility $transition-duration;
+		animation: ai-manager-delay-visibility $transition-duration;
 		z-index: unset;
 	}
 
-	.ai-agent-sidebar__fab {
+	.ai-manager-sidebar__fab {
 		display: none;
 	}
 }
 
-@keyframes ai-agent-delay-visibility {
+@keyframes ai-manager-delay-visibility {
 	from,
 	99% {
 		visibility: hidden;
@@ -72,7 +72,7 @@ $admin-content-top: calc( $admin-bar-height + $layout-spacing );
 $admin-content-height: calc( 100vh - $admin-bar-height - ( $layout-spacing * 2 ) );
 $border-color: #545454;
 
-body.wp-admin:has( .ai-agent-sidebar-container--sidebar-open ) {
+body.wp-admin:has( .ai-manager-sidebar-container--sidebar-open ) {
 	background-color: $gray-900;
 
 	#wpadminbar {
@@ -133,18 +133,18 @@ body.wp-admin:has( .ai-agent-sidebar-container--sidebar-open ) {
 }
 
 /* Calypso */
-body:has( #wpcom.ai-agent-sidebar-container--sidebar-open ) {
+body:has( #wpcom.ai-manager-sidebar-container--sidebar-open ) {
 	background-color: $gray-900;
 }
 
-#wpcom.ai-agent-sidebar-container {
+#wpcom.ai-manager-sidebar-container {
 	@include sidebar-base( '#content' );
 
 	#content {
 		background-color: #fcfcfc !important;
 	}
 
-	&.ai-agent-sidebar-container--sidebar-open {
+	&.ai-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '#content' );
 
 		#header {
@@ -177,10 +177,10 @@ body:has( #wpcom.ai-agent-sidebar-container--sidebar-open ) {
 }
 
 /* Next Admin editor (CIAB) */
-.next-admin.ai-agent-sidebar-container {
+.next-admin.ai-manager-sidebar-container {
 	@include sidebar-base( '.next-admin-layout__canvas.is-full-canvas' );
 
-	&.ai-agent-sidebar-container--sidebar-open {
+	&.ai-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.next-admin-layout__canvas.is-full-canvas' );
 		@include editor-save-panel-open(
 			'.admin-ui-navigable-region.interface-interface-skeleton__actions'
@@ -189,15 +189,15 @@ body:has( #wpcom.ai-agent-sidebar-container--sidebar-open ) {
 }
 
 /* Site editor */
-#site-editor .ai-agent-sidebar-container {
+#site-editor .ai-manager-sidebar-container {
 	@include sidebar-base( '.edit-site-layout__canvas' );
 
 	// Delay to prevent flickering when closing the left navigation sidebar
-	&:not( .ai-agent-sidebar-container--sidebar-open ) .edit-site-layout__canvas {
+	&:not( .ai-manager-sidebar-container--sidebar-open ) .edit-site-layout__canvas {
 		transition-delay: 0.1s;
 	}
 
-	&.ai-agent-sidebar-container--sidebar-open {
+	&.ai-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-site-layout__canvas' );
 		@include editor-save-panel-open(
 			'.interface-navigable-region.interface-interface-skeleton__actions'
@@ -206,14 +206,14 @@ body:has( #wpcom.ai-agent-sidebar-container--sidebar-open ) {
 }
 
 /* Page/Post editor (Block editor) */
-.block-editor .ai-agent-sidebar-container {
+.block-editor .ai-manager-sidebar-container {
 	@include sidebar-base( '.edit-post-layout' );
 
 	.edit-post-layout {
 		width: 100%;
 	}
 
-	&.ai-agent-sidebar-container--sidebar-open {
+	&.ai-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-post-layout' );
 		@include editor-save-panel-open(
 			'.interface-navigable-region.interface-interface-skeleton__actions'
@@ -222,25 +222,25 @@ body:has( #wpcom.ai-agent-sidebar-container--sidebar-open ) {
 }
 
 /* Calypso context (help-center) */
-.help-center.ai-agent-sidebar-container {
+.help-center.ai-manager-sidebar-container {
 	@include sidebar-base( '.help-center__container' );
 
-	&.ai-agent-sidebar-container--sidebar-open {
+	&.ai-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.help-center__container' );
 	}
 }
 
 /* Generic fallback */
-body.ai-agent-sidebar-container {
+body.ai-manager-sidebar-container {
 	// Don't set background color on body - causes issues in Calypso
 	// Individual contexts (WP Admin, etc.) should handle their own backgrounds
 
-	&.ai-agent-sidebar-container--sidebar-open {
+	&.ai-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( 'main' );
 	}
 }
 
-.ai-agent-sidebar {
+.ai-manager-sidebar {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
@@ -251,7 +251,7 @@ body.ai-agent-sidebar-container {
 	box-sizing: border-box;
 	z-index: 999999;
 
-	.ai-agent-chat-header {
+	.ai-manager-chat-header {
 		position: absolute;
 		top: 0;
 		width: 100%;
@@ -260,12 +260,12 @@ body.ai-agent-sidebar-container {
 		padding: 0;
 	}
 
-	.ai-agent-chat-header__title {
+	.ai-manager-chat-header__title {
 		color: $gray-100;
 	}
 
-	.ai-agent-chat-header__more-options,
-	.ai-agent-chat-header__close-btn {
+	.ai-manager-chat-header__more-options,
+	.ai-manager-chat-header__close-btn {
 		svg {
 			fill: $gray-100;
 		}
@@ -279,7 +279,7 @@ body.ai-agent-sidebar-container {
 		}
 	}
 
-	.ai-agent-sidebar__fab {
+	.ai-manager-sidebar__fab {
 		visibility: visible;
 		position: fixed;
 		bottom: 16px;
@@ -323,7 +323,7 @@ body.ai-agent-sidebar-container {
 }
 
 /* Styles for the embedded chat */
-.ai-agent-sidebar .agenttic {
+.ai-manager-sidebar .agenttic {
 	.ConversationView-module_container {
 		position: relative;
 	}

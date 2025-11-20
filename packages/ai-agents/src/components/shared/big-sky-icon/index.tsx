@@ -115,7 +115,7 @@ export default function BigSkyIcon( {
 
 	return (
 		<div
-			className="ai-agent-big-sky-icon"
+			className="ai-manager-big-sky-icon"
 			onClick={ onClick }
 			onKeyDown={ handleKeyDown }
 			role="button"

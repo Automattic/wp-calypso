@@ -57,11 +57,11 @@ export default function ChatHeader( {
 	options = [],
 }: ChatHeaderProps ) {
 	return (
-		<div className="ai-agent-chat-header">
-			<div className="ai-agent-chat-header__actions">
+		<div className="ai-manager-chat-header">
+			<div className="ai-manager-chat-header__actions">
 				{ options.length > 0 && (
 					<DropdownMenu
-						className="ai-agent-chat-header__more-options"
+						className="ai-manager-chat-header__more-options"
 						controls={ options }
 						icon={ moreVertical }
 						label={ __( 'More Options', 'ai-agents' ) }
@@ -71,7 +71,7 @@ export default function ChatHeader( {
 					/>
 				) }
 				<Button
-					className="ai-agent-chat-header__close-btn"
+					className="ai-manager-chat-header__close-btn"
 					icon={ close }
 					onClick={ onClose }
 					label={ __( 'Close', 'ai-agents' ) }

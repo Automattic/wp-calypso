@@ -15,7 +15,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAgentSession } from '../../hooks/use-agent-session';
 import { useChatState } from '../../hooks/use-chat-state';
 import { usePersistedAgentState } from '../../hooks/use-persisted-agent-state';
-import AgentsManager from '../agents-manager';
+import ChatLayoutManager from '../chat-layout-manager';
 import ChatHeader from '../shared/chat-header';
 import type { ContextAdapter } from '../../adapters/context/context-adapter';
 import type { ChatHeaderMenuItem } from '../shared/chat-header';
@@ -297,7 +297,7 @@ export default function AgentDock( {
 					floatingChatState={ chatState }
 					onClose={ isDockedFromManager ? closeSidebar : toggleExpand }
 					onExpand={ toggleExpand }
-					className="agenttic ai-agent-dock"
+					className="agenttic ai-manager-dock"
 					messageRenderer={ messageRenderer }
 					emptyView={
 						<EmptyView
@@ -343,7 +343,7 @@ export default function AgentDock( {
 	const shouldBeOpen = defaultOpen || chatState === 'expanded';
 
 	return (
-		<AgentsManager
+		<ChatLayoutManager
 			sidebarContainer={ containerSelector }
 			onOpenSidebar={ handleExpand }
 			onCloseSidebar={ handleCollapse }
@@ -355,6 +355,6 @@ export default function AgentDock( {
 			fabIcon={ fabIcon }
 		>
 			{ renderAgentUI }
-		</AgentsManager>
+		</ChatLayoutManager>
 	);
 }
