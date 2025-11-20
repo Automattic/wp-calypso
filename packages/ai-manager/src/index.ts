@@ -6,12 +6,12 @@
  */
 
 // Default export for AsyncLoad integration in Calypso
-export { default } from './components/calypso-ai-agent';
+export { default } from './components/unified-ai-agent';
 
 // Main Components
 export { default as ChatLayoutManager } from './components/chat-layout-manager';
 export { default as AgentDock } from './components/agent-dock';
-export { default as CalypsoAIAgent } from './components/calypso-ai-agent';
+export { default as UnifiedAIAgent } from './components/unified-ai-agent';
 export { default as ChatHeader } from './components/shared/chat-header';
 export { default as BigSkyIcon } from './components/shared/big-sky-icon';
 
@@ -56,6 +56,6 @@ export type {
 	ChatLayoutManagerRenderProps,
 	AgentDockProps,
 } from './types';
-export type { CalypsoAIAgentProps } from './components/calypso-ai-agent';
+export type { UnifiedAIAgentProps } from './components/unified-ai-agent';
 export type { ChatHeaderProps, ChatHeaderMenuItem } from './components/shared/chat-header';
 export type { BigSkyIconProps } from './components/shared/big-sky-icon';

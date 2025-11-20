@@ -1,7 +1,7 @@
 {
-	"name": "@automattic/ai-agents",
+	"name": "@automattic/ai-manager",
 	"version": "1.0.0",
-	"description": "AI agent dock and sidebar components with multi-context support",
+	"description": "Automattic AI Manager.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -21,12 +21,13 @@
 	},
 	"sideEffects": [
 		"*.css",
-		"*.scss"
+		"*.scss",
+		"./config.js"
 	],
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/ai-agents"
+		"directory": "packages/ai-manager"
 	},
 	"publishConfig": {
 		"access": "public"

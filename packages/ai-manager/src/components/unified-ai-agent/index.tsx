@@ -10,7 +10,7 @@ import AgentDock from '../agent-dock';
 import BigSkyIcon from '../shared/big-sky-icon';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
-export interface CalypsoAIAgentProps {
+export interface UnifiedAIAgentProps {
 	/**
 	 * Container selector for the agent dock
 	 */
@@ -64,7 +64,7 @@ export default function CalypsoAIAgent( {
 	savePreference: externalSavePreference,
 	loadPreference: externalLoadPreference,
 	defaultOpen = false,
-}: CalypsoAIAgentProps ) {
+}: UnifiedAIAgentProps ) {
 	// Create context adapter for Calypso
 	// TODO: Pass this to AgentDock once context integration is needed
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -131,7 +131,7 @@ export default function CalypsoAIAgent( {
 				} );
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
-				console.warn( '[CalypsoAIAgent] Failed to save preferences:', error );
+				console.warn( '[UnifiedAIAgent] Failed to save preferences:', error );
 			}
 		}
 	}, [] );
@@ -148,7 +148,7 @@ export default function CalypsoAIAgent( {
 				return response?.calypso_preferences?.[ key ] || null;
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
-				console.warn( '[CalypsoAIAgent] Failed to load preferences:', error );
+				console.warn( '[UnifiedAIAgent] Failed to load preferences:', error );
 			}
 		}
 		return null;

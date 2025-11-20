@@ -105,8 +105,8 @@ export default function AgentDock( {
 	agentConfig,
 	containerSelector,
 	emptyViewSuggestions = [],
-	emptyViewHeading = __( 'How can I help you today?', 'ai-agents' ),
-	emptyViewHelp = __( 'Ask me anything.', 'ai-agents' ),
+	emptyViewHeading = __( 'How can I help you today?', 'ai-manager' ),
+	emptyViewHelp = __( 'Ask me anything.', 'ai-manager' ),
 	markdownComponents = {},
 	markdownExtensions,
 	fabIcon,
@@ -266,14 +266,14 @@ export default function AgentDock( {
 				menuItems.push( {
 					id: 'undock',
 					icon: login,
-					title: __( 'Pop out sidebar', 'ai-agents' ),
+					title: __( 'Pop out sidebar', 'ai-manager' ),
 					onClick: undock,
 				} );
 			} else {
 				menuItems.push( {
 					id: 'dock',
 					icon: drawerRight,
-					title: __( 'Move to sidebar', 'ai-agents' ),
+					title: __( 'Move to sidebar', 'ai-manager' ),
 					onClick: dock,
 				} );
 			}
@@ -282,7 +282,7 @@ export default function AgentDock( {
 			menuItems.push( {
 				id: 'reset',
 				icon: rotateRight,
-				title: __( 'Reset chat', 'ai-agents' ),
+				title: __( 'Reset chat', 'ai-manager' ),
 				onClick: handleClearChat,
 				isDisabled: ! messages.length || isProcessing,
 			} );

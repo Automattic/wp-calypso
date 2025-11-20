@@ -96,7 +96,7 @@ export default function ChatLayoutManager( {
 	desktopMediaQuery = '(min-width: 1200px)',
 	classNamePrefix = 'ai-manager',
 	fabIcon = <Icon icon={ comment } />,
-	fabLabel = __( 'Open Chat', 'ai-agents' ),
+	fabLabel = __( 'Open Chat', 'ai-manager' ),
 	onOpenSidebar = () => {},
 	onCloseSidebar = () => {},
 	onDock = () => {},

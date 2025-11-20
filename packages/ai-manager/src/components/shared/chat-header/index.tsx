@@ -64,7 +64,7 @@ export default function ChatHeader( {
 						className="ai-manager-chat-header__more-options"
 						controls={ options }
 						icon={ moreVertical }
-						label={ __( 'More Options', 'ai-agents' ) }
+						label={ __( 'More Options', 'ai-manager' ) }
 						toggleProps={ {
 							size: ! isChatDocked ? 'small' : undefined,
 						} }
@@ -74,7 +74,7 @@ export default function ChatHeader( {
 					className="ai-manager-chat-header__close-btn"
 					icon={ close }
 					onClick={ onClose }
-					label={ __( 'Close', 'ai-agents' ) }
+					label={ __( 'Close', 'ai-manager' ) }
 					size={ ! isChatDocked ? 'small' : undefined }
 				/>
 			</div>

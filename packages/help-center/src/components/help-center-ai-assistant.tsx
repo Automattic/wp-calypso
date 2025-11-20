@@ -1,11 +1,11 @@
 /**
  * Help Center AI Assistant Component
  *
- * Conditionally renders either the new unified agent (CalypsoAIAgent)
+ * Conditionally renders either the new unified agent (UnifiedAIAgent)
  * or the legacy HelpCenterGPT based on feature flag.
  */
 
-import { CalypsoAIAgent } from '@automattic/ai-agents';
+import UnifiedAIAgent from '@automattic/ai-manager';
 import { useCallback } from '@wordpress/element';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
@@ -81,9 +81,9 @@ export function HelpCenterAIAssistant( {
 	// Use unified agent if feature flag is enabled
 	if ( shouldUseUnifiedAgent ) {
 		// eslint-disable-next-line no-console
-		console.log( '[HelpCenterAIAssistant] Rendering CalypsoAIAgent' );
+		console.log( '[HelpCenterAIAssistant] Rendering UnifiedAIAgent' );
 		return (
-			<CalypsoAIAgent
+			<UnifiedAIAgent
 				containerSelector=".help-center"
 				currentUser={ currentUser }
 				site={ site }

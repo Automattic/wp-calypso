@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { CalypsoAIAgent } from '@automattic/ai-agents';
+import UnifiedAIAgent from '@automattic/ai-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
@@ -116,7 +116,7 @@ const HelpCenter: React.FC< Container > = ( {
 	// Render unified agent if flag is enabled
 	if ( shouldUseUnifiedAgent ) {
 		return createPortal(
-			<CalypsoAIAgent
+			<UnifiedAIAgent
 				containerSelector=".help-center"
 				currentUser={ currentUser }
 				site={ site }

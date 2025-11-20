@@ -342,9 +342,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/ai-agents@workspace:^, @automattic/ai-agents@workspace:packages/ai-agents":
+"@automattic/ai-manager@workspace:^, @automattic/ai-manager@workspace:packages/ai-manager":
   version: 0.0.0-use.local
-  resolution: "@automattic/ai-agents@workspace:packages/ai-agents"
+  resolution: "@automattic/ai-manager@workspace:packages/ai-manager"
   dependencies:
     "@automattic/agenttic-client": "npm:^0.1.23"
     "@automattic/agenttic-ui": "npm:^0.1.23"
@@ -1447,7 +1447,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/help-center-app@workspace:apps/help-center"
   dependencies:
-    "@automattic/ai-agents": "workspace:^"
+    "@automattic/ai-manager": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
@@ -1490,7 +1490,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/help-center@workspace:packages/help-center"
   dependencies:
-    "@automattic/ai-agents": "workspace:^"
+    "@automattic/ai-manager": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
