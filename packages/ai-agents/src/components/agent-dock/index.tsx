@@ -17,7 +17,6 @@ import { useChatState } from '../../hooks/use-chat-state';
 import { usePersistedAgentState } from '../../hooks/use-persisted-agent-state';
 import AgentsManager from '../agents-manager';
 import ChatHeader from '../shared/chat-header';
-import type { ChromeAdapter } from '../../adapters/chrome/chrome-adapter';
 import type { ContextAdapter } from '../../adapters/context/context-adapter';
 import type { ChatHeaderMenuItem } from '../shared/chat-header';
 
@@ -30,10 +29,6 @@ export interface AgentDockProps {
 	 * Context adapter for providing environment context
 	 */
 	contextAdapter?: ContextAdapter;
-	/**
-	 * Chrome adapter for DOM manipulation
-	 */
-	chromeAdapter?: ChromeAdapter;
 	/**
 	 * Container selector for the sidebar
 	 */
@@ -108,7 +103,6 @@ export interface AgentDockProps {
  */
 export default function AgentDock( {
 	agentConfig,
-	chromeAdapter,
 	containerSelector,
 	emptyViewSuggestions = [],
 	emptyViewHeading = __( 'How can I help you today?', 'ai-agents' ),
@@ -189,19 +183,6 @@ export default function AgentDock( {
 	}, [ isDocked, setPersistedIsDocked, isLoadingPersistedState ] );
 
 	const { messages, isProcessing, error, onSubmit } = useAgentChat( agentConfig );
-
-	// Apply chrome when docked and expanded
-	useEffect( () => {
-		if ( ! chromeAdapter ) {
-			return;
-		}
-
-		chromeAdapter.applyChrome( isDocked, chatState !== 'expanded' );
-
-		return () => {
-			chromeAdapter.removeChrome();
-		};
-	}, [ chromeAdapter, isDocked, chatState ] );
 
 	// TODO: Use this when adding custom chat header with clear chat menu item
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

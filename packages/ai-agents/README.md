@@ -6,7 +6,7 @@ AI agent dock and sidebar components with multi-context support for WordPress, C
 
 - **AgentsManager**: Flexible sidebar/dock component using React Portal
 - **Multi-Context Support**: Works in WordPress (wp-admin, block-editor, site-editor), Calypso, and generic contexts
-- **Adapter System**: Pluggable adapters for context and chrome management
+- **Adapter System**: Pluggable adapters for context management
 - **Ability Registry**: Async/programmatic API for registering agent abilities
 - **Session Management**: Persistent session IDs with configurable expiry
 - **Chat State**: Persistent chat expand/collapse state
@@ -22,7 +22,7 @@ yarn add @automattic/ai-agents
 ### Basic Usage
 
 ```tsx
-import { AgentsManager, GenericContextAdapter, GenericChromeAdapter } from '@automattic/ai-agents';
+import { AgentsManager, GenericContextAdapter } from '@automattic/ai-agents';
 
 function MyApp() {
   return (
@@ -48,11 +48,9 @@ function MyApp() {
 import {
   AgentsManager,
   WordPressContextAdapter,
-  WordPressChromeAdapter,
 } from '@automattic/ai-agents';
 
 const contextAdapter = new WordPressContextAdapter( 'wp-admin' );
-const chromeAdapter = WordPressChromeAdapter.forWpAdmin();
 
 // Use in your component
 <AgentsManager sidebarContainer="#wpwrap">
@@ -66,11 +64,9 @@ const chromeAdapter = WordPressChromeAdapter.forWpAdmin();
 import {
   AgentsManager,
   CalypsoContextAdapter,
-  CalypsoChromeAdapter,
 } from '@automattic/ai-agents';
 
 const contextAdapter = new CalypsoContextAdapter( 'calypso-help-center' );
-const chromeAdapter = new CalypsoChromeAdapter( '.help-center' );
 ```
 
 ## Hooks
@@ -160,21 +156,6 @@ import { WordPressContextAdapter } from '@automattic/ai-agents';
 const adapter = new WordPressContextAdapter( 'block-editor' );
 const context = await adapter.getContext();
 // { url, pathname, environment, additionalData }
-```
-
-### Chrome Adapters
-
-Chrome adapters handle DOM manipulation for docked/undocked states.
-
-- **GenericChromeAdapter**: Minimal DOM manipulation
-- **WordPressChromeAdapter**: WordPress-specific chrome (admin bar, body classes)
-- **CalypsoChromeAdapter**: Calypso-specific chrome
-
-```tsx
-import { WordPressChromeAdapter } from '@automattic/ai-agents';
-
-const adapter = WordPressChromeAdapter.forWpAdmin();
-adapter.applyChrome( true, false ); // docked, not collapsed
 ```
 
 ## API Reference

@@ -24,10 +24,6 @@ export {
 	GenericContextAdapter,
 	WordPressContextAdapter,
 	CalypsoContextAdapter,
-	// Chrome Adapters
-	GenericChromeAdapter,
-	WordPressChromeAdapter,
-	CalypsoChromeAdapter,
 } from './adapters';
 
 // Abilities
@@ -44,7 +40,6 @@ export type {
 	// Adapter Types
 	ContextAdapter,
 	ClientContext,
-	ChromeAdapter,
 	// Ability Types
 	Ability,
 	AbilityLoader,
