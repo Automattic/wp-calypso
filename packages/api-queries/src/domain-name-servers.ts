@@ -3,9 +3,9 @@ import {
 	updateDomainNameServers,
 	DomainNameServersResponse,
 } from '@automattic/api-core';
-import { domainQuery } from '@automattic/api-queries';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import { domainQuery } from '.';
 
 export const domainNameServersQuery = ( domainName: string ) =>
 	queryOptions( {
