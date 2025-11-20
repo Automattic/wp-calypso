@@ -94,7 +94,7 @@ function useNewInteractionsBotConfig() {
 			canAccessWpcomApis()
 				? wpcomRequest< { variations: Record< typeof experimentName, keyof typeof botSlugMap > } >(
 						{
-							path: '/experiments/0.1.0/assignments/calypso',
+							path: '/experiments/0.1.0/assignments/wpcom',
 							apiNamespace: 'wpcom/v2',
 							query: {
 								experiment_name: experimentName,
@@ -104,7 +104,7 @@ function useNewInteractionsBotConfig() {
 				: apiFetch< { variations: Record< typeof experimentName, keyof typeof botSlugMap > } >( {
 						path: addQueryArgs( 'jetpack/v4/explat/assignments', {
 							experiment_name: experimentName,
-							platform: 'calypso',
+							platform: 'wpcom',
 							as_connected_user: 'true',
 						} ),
 				  } ),
