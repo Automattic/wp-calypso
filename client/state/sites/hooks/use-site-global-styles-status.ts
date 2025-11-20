@@ -10,6 +10,7 @@ export type GlobalStylesStatus = {
 	shouldLimitGlobalStyles: boolean;
 	globalStylesInUse: boolean;
 	globalStylesInPersonalPlan?: boolean;
+	variation?: string | null;
 };
 
 // While we are loading the Global Styles Info we can't assume that we should limit global styles, or we would be
@@ -18,6 +19,7 @@ const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
 	shouldLimitGlobalStyles: false,
 	globalStylesInUse: false,
 	globalStylesInPersonalPlan: false,
+	variation: null,
 };
 
 /*
@@ -71,6 +73,7 @@ const getGlobalStylesInfoForSite = (
 			shouldLimitGlobalStyles: true,
 			globalStylesInUse: false,
 			globalStylesInPersonalPlan: false,
+			variation: null,
 		} );
 	}
 
@@ -81,6 +84,7 @@ const getGlobalStylesInfoForSite = (
 					shouldLimitGlobalStyles: true,
 					globalStylesInUse: false,
 					globalStylesInPersonalPlan: !! experimentAssignment?.variationName,
+					variation: experimentAssignment?.variationName,
 				} )
 		);
 	}
