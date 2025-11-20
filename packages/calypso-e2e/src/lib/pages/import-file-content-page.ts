@@ -38,4 +38,14 @@ export class ImportFileContentPage {
 	async uploadExportFile( filePath: string ): Promise< void > {
 		await this.page.locator( 'input[type="file"][name="exportFile"]' ).setInputFiles( filePath );
 	}
+
+	/**
+	 * Dismisses the cookie banner if it's present.
+	 */
+	async dismissCookieBanner(): Promise< void > {
+		const acceptAllButton = this.page.getByRole( 'button', { name: 'Accept all' } );
+		if ( await acceptAllButton.isVisible() ) {
+			await acceptAllButton.click();
+		}
+	}
 }

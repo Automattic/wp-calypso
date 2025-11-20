@@ -331,7 +331,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 		disablePersistHostingDashboardQueryClient();
 		clearHostingDashboardQueryClient();
 	} );
-	setupLocale( currentUser, reduxStore );
+	await setupLocale( currentUser, reduxStore );
 	setupCountryCode();
 	configureReduxStore( currentUser, reduxStore );
 	setupMiddlewares( currentUser, reduxStore, queryClient );

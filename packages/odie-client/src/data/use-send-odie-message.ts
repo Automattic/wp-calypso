@@ -166,6 +166,15 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				}
+
+				trackEvent( 'failed_to_escallate_to_support', {
+					odie_id: chat?.odieId,
+					chat_conversation_id: chat?.conversationId,
+					can_connect_to_zendesk: canConnectToZendesk,
+					is_user_eligible_for_paid_support: isUserEligibleForPaidSupport,
+					warn_about_existing_conversation: warnAboutExistingConversation,
+					has_been_warned_about_existing_conversation: hasBeenWarnedAboutExistingConversation,
+				} );
 			}
 		}
 

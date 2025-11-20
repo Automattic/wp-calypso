@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { Domain } from '@automattic/api-core';
+import { Domain, DomainSubtype } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import { render } from '../../../test-utils';
 
@@ -49,11 +49,12 @@ const getMockedDomainData = ( customProps: Partial< Domain > = {} ) => {
 	};
 };
 
-test( 'shows warning notice when domain uses external name servers', () => {
+test( 'shows warning notice when domain registration uses external name servers', () => {
 	const domainData = getMockedDomainData( {
 		has_wpcom_nameservers: false, // External name servers
 		primary_domain: false,
 		is_domain_only_site: true,
+		subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
 	} );
 
 	const TestWrapper = () => {
@@ -66,7 +67,32 @@ test( 'shows warning notice when domain uses external name servers', () => {
 	expect(
 		screen.getAllByText( /your domain is using external name servers/i ).length
 	).toBeGreaterThan( 0 );
-	expect( screen.getAllByText( /update your name servers now/i ).length ).toBeGreaterThan( 0 );
+	expect( screen.getAllByText( /you can update your name servers here/i ).length ).toBeGreaterThan(
+		0
+	);
+
+	// Should be a warning notice
+	expect( document.querySelector( '.dashboard-notice' ) ).toHaveClass( 'is-warning' );
+} );
+
+test( 'shows warning notice when domain connection uses external name servers', () => {
+	const domainData = getMockedDomainData( {
+		has_wpcom_nameservers: false, // External name servers
+		primary_domain: false,
+		is_domain_only_site: true,
+		subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
+	} );
+
+	const TestWrapper = () => {
+		const { DomainForwardingNotice } = require( '../notice' );
+		return <DomainForwardingNotice domainName={ domainName } domainData={ domainData } />;
+	};
+
+	render( <TestWrapper /> );
+
+	expect(
+		screen.getAllByText( /your domain is using external name servers/i ).length
+	).toBeGreaterThan( 0 );
 
 	// Should be a warning notice
 	expect( document.querySelector( '.dashboard-notice' ) ).toHaveClass( 'is-warning' );

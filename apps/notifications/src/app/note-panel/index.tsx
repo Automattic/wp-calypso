@@ -4,13 +4,14 @@ import {
 	__experimentalHeading as Heading,
 	CardHeader,
 	Icon,
-	TabPanel,
 	useNavigator,
+	privateApis,
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { bell } from '@wordpress/icons';
-import { useEffect } from 'react';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { useEffect, useCallback, useRef } from 'react';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import { getFilters } from '../../panel/templates/filters';
 import NoteList from '../note-list';
@@ -19,7 +20,14 @@ import NotePanelActions from './actions';
 
 type FilterName = keyof ReturnType< typeof getFilters >;
 
-const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+
+const { Tabs } = unlock( privateApis );
+
+export const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
 	name,
 	title: label,
 } ) );
@@ -27,6 +35,14 @@ const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } )
 const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const { params, goTo } = useNavigator();
 	const { filterName = 'all' } = params;
+	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
+
+	const handleSelect = useCallback(
+		( tabId: string ) => {
+			goTo( `/${ tabId }`, { replace: true, skipFocus: true } );
+		},
+		[ goTo ]
+	);
 
 	useEffect( () => {
 		const stopEvent = ( event: KeyboardEvent ) => {
@@ -38,27 +54,23 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 			if ( modifierKeyIsActive( event ) ) {
 				return;
 			}
-			switch ( event.key ) {
-				case 'a':
-					stopEvent( event );
-					goTo( '/all', { replace: true } );
-					break;
-				case 'u':
-					stopEvent( event );
-					goTo( '/unread', { replace: true } );
-					break;
-				case 'c':
-					stopEvent( event );
-					goTo( '/comments', { replace: true } );
-					break;
-				case 'f':
-					stopEvent( event );
-					goTo( '/follows', { replace: true } );
-					break;
-				case 'l':
-					stopEvent( event );
-					goTo( '/likes', { replace: true } );
-					break;
+
+			const shortcutToTabId: Record< string, string > = {
+				a: 'all',
+				u: 'unread',
+				c: 'comments',
+				f: 'follows',
+				s: 'follows', // It’s more intuitive to use s, since we display “Subscribes.”
+				l: 'likes',
+			};
+
+			const tabId = shortcutToTabId[ event.key ];
+			if ( tabId ) {
+				stopEvent( event );
+				handleSelect( tabId );
+
+				// Ensure that keyboard navigation focuses on the selected tab.
+				tabRefs.current[ tabId ]?.focus();
 			}
 		};
 
@@ -66,7 +78,7 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [ goTo ] );
+	}, [ tabRefs, handleSelect ] );
 
 	return (
 		<>
@@ -87,17 +99,22 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 							{ isDismissible && <CloseButton /> }
 						</HStack>
 					</HStack>
-					<TabPanel
-						activeClass="is-active"
-						tabs={ NOTIFICATION_TABS }
-						initialTabName={ filterName as string }
-						key={ filterName as string }
-						onSelect={ ( tabName ) => {
-							goTo( `/${ tabName }`, { replace: true } );
-						} }
-					>
-						{ () => null /* Placeholder div since content is rendered elsewhere */ }
-					</TabPanel>
+					<Tabs selectedTabId={ filterName } onSelect={ handleSelect }>
+						<Tabs.TabList>
+							{ NOTIFICATION_TABS.map( ( { name, title } ) => (
+								<Tabs.Tab
+									key={ name }
+									tabId={ name }
+									style={ { fontFamily: 'inherit', fontWeight: 500, lineHeight: '16px' } }
+									ref={ ( element: HTMLButtonElement ) => {
+										tabRefs.current[ name ] = element;
+									} }
+								>
+									{ title }
+								</Tabs.Tab>
+							) ) }
+						</Tabs.TabList>
+					</Tabs>
 				</VStack>
 			</CardHeader>
 			<NoteList filterName={ filterName as FilterName } />

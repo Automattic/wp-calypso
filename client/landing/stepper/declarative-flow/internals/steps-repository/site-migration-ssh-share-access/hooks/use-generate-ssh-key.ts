@@ -6,6 +6,7 @@ interface GenerateSSHKeyParams {
 	siteId: number;
 	remoteUser: string;
 	remoteHost: string;
+	remotePort: number;
 	remoteDomain: string;
 }
 
@@ -31,6 +32,7 @@ const generateSSHKey = async (
 		const body = {
 			remote_user: params.remoteUser,
 			remote_host: params.remoteHost,
+			remote_port: String( params.remotePort ),
 			remote_domain: remoteDomain,
 		};
 

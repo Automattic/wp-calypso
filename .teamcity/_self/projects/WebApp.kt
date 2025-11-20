@@ -958,15 +958,14 @@ object PlaywrightTestPRMatrix : BuildType({
 	steps {
 		bashNodeScript {
 			name = "Upload report and send Slack notification"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
 			conditions {
 				matches("teamcity.build.branch", ".*e2e.*")
-				equals("teamcity.build.step.status.run_tests", "failure")
 			}
 			scriptContent = """
 				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%PROJECT%"
 				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
-				
+
 				# Need to use -C to avoid creation of an unnecessary top level directory.
 				tar cvfz - -C test/e2e/output/html . | openssl enc -aes-256-cbc -salt -out ${'$'}{ARCHIVE_NAME}.tgz.enc -pass env:E2E_SECRETS_KEY
 
@@ -979,9 +978,6 @@ object PlaywrightTestPRMatrix : BuildType({
 				REPORT_URL="https://automattic.github.io/wp-calypso-test-results/r"
 				echo "##teamcity[notification notifier='slack' message='Report available: ${'$'}{REPORT_URL}/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
 			""".trimIndent()
-			conditions {
-				matches("teamcity.build.branch", ".*e2e.*")
-			}
 			dockerImage = "%docker_image_e2e%"
 		}
 	}

@@ -4,7 +4,7 @@ import { useAppContext } from '../../app/context';
 import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { AppConfig, SiteFeatureSupports } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 
@@ -21,6 +21,22 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
 					{ __( 'Overview' ) }
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
+		);
+	}
+
+	if ( isCommerceGarden( site ) ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
+					{ __( 'Overview' ) }
+				</ResponsiveMenu.Item>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
+					{ __( 'Domains' ) }
+				</ResponsiveMenu.Item>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
+					{ __( 'Settings' ) }
 				</ResponsiveMenu.Item>
 			</ResponsiveMenu>
 		);

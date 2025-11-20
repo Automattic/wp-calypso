@@ -40,6 +40,7 @@ import {
 	hasTitanMail,
 	hasProPlan,
 	hasStarterPlan,
+	has100YearDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
@@ -619,7 +620,8 @@ function getFallbackDestination( {
 	}
 
 	const is100YearPlanProduct = cart?.products?.some( is100Year );
-	if ( is100YearPlanProduct ) {
+	const is100YearDomainProduct = cart ? has100YearDomain( cart ) : false;
+	if ( is100YearPlanProduct || is100YearDomainProduct ) {
 		debug( 'site with 100 year plan' );
 		return `/checkout/100-year/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 	}

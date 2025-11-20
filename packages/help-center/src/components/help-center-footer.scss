@@ -13,9 +13,15 @@
 
 	.button.help-center-contact-page__button {
 		margin: 16px;
-		width: calc(100% - 32px);
+		border: 1px solid var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 		border-radius: 8px;
-		border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 		box-shadow: none;
+		display: inline-block;
+		text-align: center;
+		width: calc(100% - 32px);
+
+		&:hover {
+			box-shadow: none;
+		}
 	}
 }

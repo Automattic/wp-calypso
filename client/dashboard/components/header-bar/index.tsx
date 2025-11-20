@@ -14,7 +14,7 @@ function Header( { as = 'div', children }: { as?: 'div' | 'header'; children?: R
 				'is-support-user-session': isSupportUserSession(),
 			} ) }
 			alignment="left"
-			spacing={ 2 }
+			spacing={ 0 }
 			justify="flex-start"
 		>
 			{ children }

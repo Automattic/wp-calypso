@@ -31,6 +31,7 @@ export class ImportContentFromMediumPage {
 				isUploadInProgress: 'false',
 			} )
 		);
+		await this.importFileContentPage.dismissCookieBanner();
 	}
 
 	/**
