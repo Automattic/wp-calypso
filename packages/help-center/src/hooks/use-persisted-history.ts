@@ -148,9 +148,7 @@ type Props = {
 };
 
 export const usePersistedHistory = ( { routerHistory, persistenceKey }: Props ) => {
-	const [ history, setHistory ] = useState< MemoryHistory >(
-		() => new MemoryHistory( persistenceKey )
-	);
+	const [ history, setHistory ] = useState< MemoryHistory >( new MemoryHistory( persistenceKey ) );
 	const [ state, setState ] = useState< HistoryEvent >( {
 		action: history.action,
 		location: history.location,
