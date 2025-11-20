@@ -9,7 +9,8 @@ export interface TopBarProps {
 	rightElement?: ReactNode;
 
 	/**
-	 * Customize the TopBar logo, or pass `null` to hide the logo entirely.
+	 * Customize the TopBar logo. If this is not passed, the default logo will
+	 * be used unless `hideLogo` is set.
 	 */
 	logo?: ReactNode;
 
