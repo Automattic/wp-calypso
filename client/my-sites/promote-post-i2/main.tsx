@@ -2,11 +2,9 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
-import { formatNumber } from '@automattic/number-formatters';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -23,7 +21,6 @@ import {
 } from 'calypso/data/promote-post/types';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
-import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import { usePaymentsQuery } from 'calypso/data/promote-post/use-promote-post-payments-query';
 import usePostsQueryPaged, {
 	usePostsQueryStats,
@@ -50,7 +47,6 @@ import BlazePluginBanner from './components/blaze-plugin-banner';
 import CampaignsTotalStats from './components/campaigns-total-stats';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
-import TspBanner from './components/tsp-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 
@@ -88,24 +84,11 @@ export type PagedBlazeContentData = {
 	tsp_eligible: boolean;
 };
 
-export type PagedBlazeSearchResponse = {
-	pages: PagedBlazeContentData[];
-};
-
 const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 	order: SORT_OPTIONS_DEFAULT,
 	filter: {
 		postType: isWooStore ? 'product' : '',
 	},
-};
-
-const TSP_BANNER_COLLAPSED_COOKIE = 'blaze-tsp-banner-collapsed';
-
-const setTspBannerCollapsedCookie = ( value: boolean ) => {
-	document.cookie = cookie.serialize( TSP_BANNER_COLLAPSED_COOKIE, ( +value ).toString(), {
-		path: '/',
-		maxAge: 365 * 24 * 60 * 60, // 1 year
-	} );
 };
 
 export default function PromotedPosts( { tab, receiptId }: Props ) {
@@ -120,8 +103,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 	const isSelfHosted = useSelector( ( state ) =>
 		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
 	);
-
-	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
@@ -234,13 +215,8 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		} );
 	}
 
-	const cookies = cookie.parse( document.cookie );
-	const userHasCollapsedTspBanner = ( cookies[ TSP_BANNER_COLLAPSED_COOKIE ] ?? '0' ) === '1';
-
 	const showTspBanner = // TSP Banner has a higher priority than the regular banner
 		( ! campaignsIsLoading && campaignsTspEligible ) || ( ! postsIsLoading && postsTspEligible );
-
-	const [ isTspBannerCollapsed, setIsTspBannerCollapsed ] = useState( userHasCollapsedTspBanner );
 
 	const showRegularBanner =
 		! showTspBanner && ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
@@ -269,32 +245,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 	}
 
 	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
-	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
-
-	const headerSubtitle = ( isMobile: boolean ) => {
-		if ( ! isMobile && showRegularBanner ) {
-			// Do not show subtitle for desktops where banner should be shown
-			return null;
-		}
-
-		const baseClassName = 'promote-post-i2__header-subtitle';
-		return (
-			<div
-				className={ clsx(
-					baseClassName,
-					`${ baseClassName }_${ isMobile ? 'mobile' : 'desktop' }`
-				) }
-			>
-				{ isWooBlaze
-					? translate(
-							'Increase your sales by promoting your products and pages across millions of blogs and sites.'
-					  )
-					: translate(
-							'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
-					  ) }
-			</div>
-		);
-	};
 
 	const renderWarningNotices = ( warnings?: PromotePostWarning[] ) => {
 		const content = [];
@@ -323,73 +273,39 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		) : null;
 	};
 
-	const toggleTspBanner = () => {
-		setTspBannerCollapsedCookie( ! isTspBannerCollapsed );
-		setIsTspBannerCollapsed( ! isTspBannerCollapsed );
-	};
-
 	return (
 		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising' ) } />
 
-			<div className="promote-post-i2__top-bar">
-				<FormattedHeader
-					brandFont
-					className={ clsx( 'advertising__page-header', {
-						'advertising__page-header_has-banner': showRegularBanner,
-					} ) }
-					children={ headerSubtitle( false ) /* for desktop */ }
-					headerText={ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' ) }
-					align="left"
-				/>
-
-				<div className="promote-post-i2__top-bar-buttons">
-					<InlineSupportLink
-						supportContext="advertising"
-						className="button posts-list-banner__learn-more"
-						showIcon={ false }
-						showSupportModal={ ! isSelfHosted }
+			<div className="promote-post-i2__top-bar-container">
+				<div className="promote-post-i2__top-bar">
+					<FormattedHeader
+						brandFont
+						className={ clsx( 'advertising__page-header' ) }
+						headerText={ translate( 'Dashboard' ) }
+						align="left"
 					/>
-					<Button
-						variant="primary"
-						onClick={ onClickPromote }
-						disabled={ isLoadingBillingSummary || paymentBlocked }
-					>
-						{ translate( 'Promote' ) }
-					</Button>
+
+					<div className="promote-post-i2__top-bar-buttons">
+						<InlineSupportLink
+							supportContext="advertising"
+							className="button posts-list-banner__border-button"
+							showIcon={ false }
+							showSupportModal={ ! isSelfHosted }
+						/>
+						<Button
+							variant="primary"
+							onClick={ onClickPromote }
+							disabled={ isLoadingBillingSummary || paymentBlocked }
+						>
+							{ translate( 'Promote' ) }
+						</Button>
+					</div>
 				</div>
 			</div>
-			{ headerSubtitle( true ) /* for mobile */ }
 
 			{ /* Banners */ }
 			{ showRegularBanner && ( isBlazePlugin ? <BlazePluginBanner /> : <PostsListBanner /> ) }
-
-			{ ! showRegularBanner && showTspBanner && (
-				<TspBanner onToggle={ toggleTspBanner } isCollapsed={ isTspBannerCollapsed } />
-			) }
-
-			{ parseFloat( creditBalance ) > 0 && (
-				<div className="blaze-credits-container">
-					<div className="blaze-credits-container__item">
-						<div className="blaze-credits-container__label">
-							{ translate( 'Credits' ) }
-							<InlineSupportLink
-								showIcon
-								className="credits-inline-support-link"
-								iconSize={ 18 }
-								showText={ false }
-								supportPostId={ 240330 }
-								supportLink={ localizeUrl(
-									'https://wordpress.com/support/promote-a-post/blaze-credits/'
-								) }
-							/>
-						</div>
-						<div className="blaze-credits-container__result">
-							{ '$' + formatNumber( parseFloat( creditBalance ), { decimals: 2 } ) }
-						</div>
-					</div>
-				</div>
-			) }
 
 			{
 				// TODO: Uncomment when DebtNotifier is implemented
@@ -398,7 +314,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 			<CampaignsTotalStats
 				totalImpressions={ campaignsStats?.total_impressions }
 				totalClicks={ campaignsStats?.total_clicks }
-				outerContainerClass={ ! showRegularBanner ? 'promote-post-i2__divider' : '' }
 			/>
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
