@@ -97,7 +97,7 @@ export const getContactFormFields = (
 						// Sync validator - set the result directly
 						setValidationMessage( result ?? null );
 					}
-				}, [ data, field ] );
+				}, [ phoneValue ] );
 
 				return (
 					<PhoneNumberInput
