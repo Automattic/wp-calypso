@@ -12,10 +12,10 @@ export interface Purchase {
 	canReenableAutoRenewal: boolean;
 
 	/**
-	 * If this upgrade is a plan and its domain credit was used to purchase a
-	 * domain registration, and the plan is within its refund period, then
-	 * `costToUnbundleText` will be the formatted amount of the amount that
-	 * would be withheld to keep the domain if the plan is cancelled.
+	 * If this upgrade is a domain and a domain credit was used to purchase it,
+	 * and the plan is within its refund period, then `cost_to_unbundle_display`
+	 * will be the formatted amount of the amount that would be withheld to keep
+	 * the domain if the plan is cancelled.
 	 *
 	 * If there is nothing that would be withheld, this will be null.
 	 */
