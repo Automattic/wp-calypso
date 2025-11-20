@@ -4,7 +4,6 @@
  */
 
 import { useCallback, useMemo } from 'react';
-import { CalypsoChromeAdapter } from '../../adapters/chrome/calypso-chrome-adapter';
 import { CalypsoContextAdapter } from '../../adapters/context/calypso-context-adapter';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import AgentDock from '../agent-dock';
@@ -75,22 +74,6 @@ export default function CalypsoAIAgent( {
 			currentRoute,
 		} ) );
 	}, [ sectionName, site, currentRoute ] );
-
-	// Create chrome adapter based on environment
-	// In wp-admin: frame #wpbody
-	// In Calypso: frame #wpcom
-	const chromeAdapter = useMemo( () => {
-		// Detect if we're in wp-admin
-		const isWpAdmin = !! document.getElementById( 'wpwrap' );
-
-		if ( isWpAdmin ) {
-			// In wp-admin, frame the #wpbody container
-			return new CalypsoChromeAdapter( '#wpbody', 350, 16 );
-		}
-
-		// Default: Calypso with #wpcom container
-		return new CalypsoChromeAdapter();
-	}, [] );
 
 	// Create agent configuration
 	const agentConfig = useMemo< UseAgentChatConfig >(
@@ -177,7 +160,6 @@ export default function CalypsoAIAgent( {
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
-			chromeAdapter={ chromeAdapter }
 			containerSelector={ containerSelector }
 			emptyViewSuggestions={ suggestions }
 			emptyViewHeading="How can I help you today?"
