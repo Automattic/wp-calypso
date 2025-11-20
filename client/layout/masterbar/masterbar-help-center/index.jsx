@@ -36,7 +36,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		[]
 	);
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_help_center_menu_popover'
+		'calypso_help_center_menu_popover_v2'
 	);
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
