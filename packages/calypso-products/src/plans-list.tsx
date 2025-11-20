@@ -1606,8 +1606,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getPlanTagline: () =>
 		i18n.fixMe( {
-			text: 'Next-level WordPress with all custom plugins and themes.',
-			newCopy: i18n.translate( 'Next-level WordPress with all custom plugins and themes.' ),
+			text: 'Unlock next-level WordPress with all custom plugins and themes.',
+			newCopy: i18n.translate( 'Unlock next-level WordPress with all custom plugins and themes.' ),
 			oldCopy: i18n.translate( 'Unlock next-level WordPress with custom plugins and themes.' ),
 		} ),
 	getBlogOnboardingTagLine: () =>
