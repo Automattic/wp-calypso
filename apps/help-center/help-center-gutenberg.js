@@ -230,12 +230,6 @@ if ( helpCenterData.isNextAdmin ) {
 				container.id = 'jetpack-help-center';
 				document.body.appendChild( container );
 
-				// eslint-disable-next-line no-console
-				console.log( '[help-center-gutenberg] Mounting help center widget:', {
-					container,
-					configData: window.configData,
-				} );
-
 				const botProps = helpCenterData.isCommerceGarden
 					? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
 					: {};

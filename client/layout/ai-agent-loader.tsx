@@ -1,3 +1,4 @@
+import { useShouldUseUnifiedAgent } from '@automattic/help-center';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -10,12 +11,17 @@ type Props = {
 };
 
 export default function AIAgentLoader( { sectionName, currentRoute }: Props ) {
+	const shouldLoadUnifiedAgent = useShouldUseUnifiedAgent();
 	const selectedSite = useSelector( getSelectedSite );
 	const currentUser = useSelector( getCurrentUser );
 
 	const handleClose = useCallback( () => {
 		// Close handler - can be enhanced with state management later
 	}, [] );
+
+	if ( ! shouldLoadUnifiedAgent ) {
+		return null;
+	}
 
 	return (
 		<AsyncLoad
