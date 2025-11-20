@@ -110,9 +110,7 @@ body.wp-admin:has( .ai-manager-sidebar-container--sidebar-open ) {
 		left: calc( $admin-menu-width + $layout-spacing );
 		right: $sidebar-width;
 		bottom: $layout-spacing;
-		width: calc(
-			100% - $admin-menu-width - $layout-spacing - $sidebar-width - $layout-spacing
-		) !important;
+		width: calc( 100% - $admin-menu-width - $layout-spacing - $sidebar-width ) !important;
 		height: $admin-content-height !important;
 		max-height: $admin-content-height !important;
 		min-height: 0;
