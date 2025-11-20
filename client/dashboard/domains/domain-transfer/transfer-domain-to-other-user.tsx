@@ -18,7 +18,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { domainRoute, domainsRoute } from '../../app/router/domains';
+import { domainRoute, domainsIndexRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -101,7 +101,7 @@ export default function TransferDomainToOtherUser() {
 					)
 				);
 				setIsDialogOpen( false );
-				router.navigate( { to: domainsRoute.fullPath, params: { domainName } } );
+				router.navigate( { to: domainsIndexRoute.fullPath, params: { domainName } } );
 			},
 			onError: () => {
 				createErrorNotice(

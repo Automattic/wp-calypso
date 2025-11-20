@@ -5,6 +5,7 @@ import wpcom from 'calypso/lib/wp';
 interface StartSSHMigrationParams {
 	siteId: number;
 	remoteHost: string;
+	remotePort: number;
 	remoteUser: string;
 	remoteDomain: string;
 	remotePass?: string;
@@ -43,6 +44,7 @@ const startSSHMigration = async (
 
 		const body = {
 			remote_host: params.remoteHost,
+			remote_port: String( params.remotePort ),
 			remote_user: params.remoteUser,
 			remote_domain: remoteDomain,
 			...optionalFields,

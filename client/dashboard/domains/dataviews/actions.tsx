@@ -14,9 +14,11 @@ import {
 	domainConnectionSetupRoute,
 	domainTransferToAnyUserRoute,
 	domainTransferToOtherSiteRoute,
+	domainsContactInfoRoute,
 } from '../../app/router/domains';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
+import { AutoRenewModal } from './auto-renew-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
@@ -130,27 +132,6 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 			},
 			{
-				id: 'manage-contact-info',
-				label: __( 'Manage contact information' ),
-				supportsBulk: false,
-				callback: ( items: DomainSummary[] ) => {
-					const domain = items[ 0 ];
-
-					router.navigate( {
-						to: domainContactInfoRoute.fullPath,
-						params: {
-							domainName: domain.domain,
-						},
-					} );
-				},
-				isEligible: ( item: DomainSummary ) => {
-					return (
-						item.current_user_is_owner === true &&
-						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
-					);
-				},
-			},
-			{
 				id: 'set-primary-site-address',
 				label: __( 'Make primary site address' ),
 				supportsBulk: false,
@@ -251,11 +232,52 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 			},
 			{
+				id: 'manage-contact-info',
+				label: __( 'Manage contact information' ),
+				supportsBulk: true,
+				callback: ( domains ) => {
+					if ( domains.length === 0 ) {
+						return;
+					}
+
+					if ( domains.length === 1 ) {
+						return router.navigate( {
+							to: domainContactInfoRoute.fullPath,
+							params: {
+								domainName: domains[ 0 ].domain,
+							},
+						} );
+					}
+
+					return router.navigate( {
+						to: domainsContactInfoRoute.fullPath,
+						search: {
+							selected: domains.map( ( domain ) => domain.domain ).join( ',' ),
+						},
+					} );
+				},
+				isEligible: ( item ) => {
+					return (
+						item.current_user_is_owner === true &&
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
+					);
+				},
+			},
+			{
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
-				supportsBulk: false,
+				supportsBulk: true,
 				callback: () => {},
-				isEligible: () => false,
+				RenderModal: ( { items, closeModal = noop, onActionPerformed = noop } ) => (
+					<AutoRenewModal
+						items={ items }
+						onSuccess={ () => {
+							onActionPerformed( items );
+							closeModal();
+						} }
+					/>
+				),
+				isEligible: ( item ) => isDomainRenewable( item ),
 			},
 		],
 		[

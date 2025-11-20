@@ -43,8 +43,8 @@ export default function DiscoverHeaderAndNavigation(
 			break;
 		case TAGS_TAB:
 			subHeaderText = fixMe( {
-				text: 'Browse posts by popular tags',
-				newCopy: translate( 'Browse posts by popular tags' ),
+				text: 'Browse posts by popular tags.',
+				newCopy: translate( 'Browse posts by popular tags.' ),
 				oldCopy: '', // No previous translation available.
 			} );
 			break;

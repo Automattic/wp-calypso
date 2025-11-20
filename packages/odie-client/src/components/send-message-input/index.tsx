@@ -46,9 +46,9 @@ export const OdieSendMessageButton = () => {
 	useEffect( () => {
 		if ( isLiveChat ) {
 			if ( inputValue.length > 0 ) {
-				Smooch.startTyping();
+				Smooch?.startTyping?.();
 			} else {
-				Smooch.stopTyping();
+				Smooch?.stopTyping?.();
 			}
 		}
 	}, [ inputValue, isLiveChat ] );
@@ -71,7 +71,7 @@ export const OdieSendMessageButton = () => {
 
 	useEffect( () => {
 		function handleBlur() {
-			Smooch.stopTyping();
+			Smooch?.stopTyping?.();
 		}
 		if ( isLiveChat ) {
 			const textarea = textareaRef.current;
@@ -101,7 +101,7 @@ export const OdieSendMessageButton = () => {
 		if ( chat?.provider === 'odie' ) {
 			setInputValue( '' );
 		} else if ( chat.conversationId ) {
-			Smooch.stopTyping();
+			Smooch?.stopTyping?.();
 			sendAttachments();
 		}
 

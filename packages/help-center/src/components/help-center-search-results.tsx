@@ -21,6 +21,7 @@ import {
 	code,
 	external as externalIcon,
 	Icon,
+	details,
 	page as pageIcon,
 } from '@wordpress/icons';
 import { debounce } from 'lodash';
@@ -55,6 +56,11 @@ const isResultFromDeveloperWordpress = ( url: string ) => {
 	return developerSiteRegex.test( url );
 };
 
+const isResultFromCourses = ( url: string ) => {
+	const coursesRegex: RegExp = /support\.wordpress\.com\/courses/;
+	return coursesRegex.test( url );
+};
+
 const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 	const { result, type, index, onLinkClickHandler, externalLinks } = props;
 	const { link, title, icon } = result;
@@ -75,7 +81,15 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 		return <Icon icon={ pageIcon } />;
 	};
 
-	const DeveloperResourceIndicator = () => <Icon icon={ code } />;
+	const getResultIcon = () => {
+		if ( isResultFromCourses( result.link ) ) {
+			return <Icon icon={ details } />;
+		}
+		if ( isResultFromDeveloperWordpress( result.link ) ) {
+			return <Icon icon={ code } />;
+		}
+		return <LinkIcon />;
+	};
 
 	return (
 		<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
@@ -94,11 +108,7 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 							rel: 'noreferrer',
 						} ) }
 					>
-						{ isResultFromDeveloperWordpress( result.link ) ? (
-							<DeveloperResourceIndicator />
-						) : (
-							<LinkIcon />
-						) }
+						{ getResultIcon() }
 						<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						<Icon
 							width={ 20 }

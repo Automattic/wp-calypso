@@ -17,7 +17,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasPlanFeature } from '../../utils/site-features';
 import type { SiteSettings } from '@automattic/api-core';
-import type { Field, SimpleFormField } from '@wordpress/dataviews';
+import type { Field, FormField } from '@wordpress/dataviews';
 
 const fields: Field< SiteSettings >[] = [
 	{
@@ -41,7 +41,7 @@ const fields: Field< SiteSettings >[] = [
 
 const form = {
 	layout: { type: 'regular' as const },
-	fields: [ { id: 'wpcom_gifting_subscription' } as SimpleFormField ],
+	fields: [ { id: 'wpcom_gifting_subscription' } as FormField ],
 };
 
 export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
