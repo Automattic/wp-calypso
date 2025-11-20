@@ -111,10 +111,10 @@ export default function AgentDock( {
 	markdownExtensions,
 	fabIcon,
 	onClearChat,
-	sessionStorageKey = 'ai-agent-session',
-	chatStateStorageKey = 'ai-agent-chat-state',
-	dockStateStorageKey = 'ai-agent-docked',
-	preferenceKey = 'ai_agent_state',
+	sessionStorageKey = 'ai-manager-session',
+	chatStateStorageKey = 'ai-manager-chat-state',
+	dockStateStorageKey = 'ai-manager-docked',
+	preferenceKey = 'ai_manager_state',
 	savePreference,
 	loadPreference,
 	defaultOpen = false,
@@ -143,10 +143,6 @@ export default function AgentDock( {
 
 	// Dock state from localStorage (fallback) and persisted state
 	const [ isDocked, setIsDocked ] = useState( () => {
-		// Force docked mode if defaultOpen is true
-		if ( defaultOpen ) {
-			return true;
-		}
 		// Use persisted state if available
 		if ( persistedState.isDocked !== undefined ) {
 			return persistedState.isDocked;

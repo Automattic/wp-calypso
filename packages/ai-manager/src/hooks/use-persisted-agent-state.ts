@@ -140,14 +140,17 @@ export function usePersistedAgentState(
 	options: UsePersistedAgentStateOptions = {}
 ): UsePersistedAgentStateResult {
 	const {
-		preferenceKey = 'ai_agent_state',
+		preferenceKey = 'ai_manager_state',
 		savePreference = defaultSavePreference,
 		loadPreference = defaultLoadPreference,
 		debounceMs = 1000,
 	} = options;
 
-	// The default dock state is `false`
-	const [ state, setState ] = useState< PersistedAgentState >( { isDocked: false } );
+	// The default dock state is `false` and default open state is `false`
+	const [ state, setState ] = useState< PersistedAgentState >( {
+		isDocked: false,
+		isOpen: false,
+	} );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const saveTimeoutRef = useRef< number | null >( null );
 

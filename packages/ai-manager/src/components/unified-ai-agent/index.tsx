@@ -166,10 +166,10 @@ export default function CalypsoAIAgent( {
 			emptyViewHelp="Ask me anything about WordPress and your site."
 			fabIcon={ <BigSkyIcon color="blue" width={ 48 } height={ 48 } /> }
 			onClearChat={ handleClearChat }
-			sessionStorageKey="calypso-ai-agent-session"
-			chatStateStorageKey="calypso-ai-agent-chat-state"
-			dockStateStorageKey="calypso-ai-agent-docked"
-			preferenceKey="calypso_ai_agent_state"
+			sessionStorageKey="calypso-ai-manager-session"
+			chatStateStorageKey="calypso-ai-manager-chat-state"
+			dockStateStorageKey="calypso-ai-manager-docked"
+			preferenceKey="calypso_ai_manager_state"
 			savePreference={ savePreference }
 			loadPreference={ loadPreference }
 			defaultOpen={ defaultOpen }
