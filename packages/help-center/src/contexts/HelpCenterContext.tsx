@@ -90,7 +90,6 @@ function useNewInteractionsBotConfig() {
 	const experimentName = 'wpcom_help_center_ai_workflow_and_prompt_changes';
 	const query = useQuery( {
 		queryKey: [ 'new-interactions-bot-slug', experimentName ],
-		staleTime: 1,
 		queryFn: () =>
 			canAccessWpcomApis()
 				? wpcomRequest< { variations: Record< typeof experimentName, keyof typeof botSlugMap > } >(
