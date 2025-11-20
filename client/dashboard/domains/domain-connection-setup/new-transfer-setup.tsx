@@ -2,8 +2,9 @@ import {
 	domainQuery,
 	domainConnectionSetupInfoQuery,
 	startDomainInboundTransferMutation,
+	purchaseQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -18,12 +19,19 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainTransferSetupRoute, domainsIndexRoute } from '../../app/router/domains';
+import { ActionList } from '../../components/action-list';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import {
+	shouldShowRemoveAction,
+	getDeleteTitle,
+	getDeleteLabel,
+	getDeleteDescription,
+} from '../domain-overview/actions.utils';
 import DomainRegistrarBanner from './domain-registrar-banner';
 import SetupStep from './setup-step';
 
@@ -37,6 +45,9 @@ export default function DomainTransferSetup() {
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
 		domainConnectionSetupInfoQuery( domainName, domain.blog_id )
+	);
+	const { data: purchase } = useQuery(
+		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
 
 	const registrar = domainConnectionSetupInfo?.registrar || null;
@@ -252,6 +263,24 @@ export default function DomainTransferSetup() {
 					</CardBody>
 				</Card>
 			</VStack>
+			{ shouldShowRemoveAction( domain, purchase ) && (
+				<ActionList>
+					<ActionList.ActionItem
+						title={ getDeleteTitle( domain ) }
+						description={ getDeleteDescription( domain ) }
+						actions={
+							<Button
+								size="compact"
+								variant="secondary"
+								isDestructive
+								href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }` }
+							>
+								{ getDeleteLabel( domain ) }
+							</Button>
+						}
+					/>
+				</ActionList>
+			) }
 		</PageLayout>
 	);
 }
