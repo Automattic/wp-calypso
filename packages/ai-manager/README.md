@@ -162,31 +162,31 @@ const context = await adapter.getContext();
 
 ### ChatLayoutManager Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `(props: RenderProps) => ReactNode` | required | Render prop function |
-| `sidebarContainer` | `string \| HTMLElement` | required | Target container for sidebar |
-| `defaultUndocked` | `boolean` | `false` | Start in floating mode |
-| `defaultOpen` | `boolean` | `false` | Open sidebar by default |
-| `desktopMediaQuery` | `string` | `'(min-width: 1200px)'` | Desktop breakpoint |
-| `classNamePrefix` | `string` | `'ai-agent'` | CSS class prefix |
-| `fabIcon` | `ReactNode` | AI icon | FAB button icon |
-| `fabLabel` | `string` | `'Open Chat'` | FAB button label |
-| `onOpenSidebar` | `() => void` | - | Callback when opened |
-| `onCloseSidebar` | `() => void` | - | Callback when closed |
-| `onDock` | `() => void` | - | Callback when docked |
-| `onUndock` | `() => void` | - | Callback when undocked |
+| Prop                | Type                              | Default                  | Description                    |
+| ------------------- | --------------------------------- | ------------------------ | ------------------------------ |
+| `children`          | `(props: RenderProps) => ReactNode` | required                 | Render prop function           |
+| `sidebarContainer`  | `string \| HTMLElement`           | required                 | Target container for sidebar   |
+| `defaultUndocked`   | `boolean`                         | `false`                  | Start in floating mode         |
+| `defaultOpen`       | `boolean`                         | `false`                  | Open sidebar by default        |
+| `desktopMediaQuery` | `string`                          | `'(min-width: 1200px)'`  | Desktop breakpoint             |
+| `classNamePrefix`   | `string`                          | `'ai-agent'`             | CSS class prefix               |
+| `fabIcon`           | `ReactNode`                       | AI icon                  | FAB button icon                |
+| `fabLabel`          | `string`                          | `'Open Chat'`            | FAB button label               |
+| `onOpenSidebar`     | `() => void`                      | -                        | Callback when opened           |
+| `onCloseSidebar`    | `() => void`                      | -                        | Callback when closed           |
+| `onDock`            | `() => void`                      | -                        | Callback when docked           |
+| `onUndock`          | `() => void`                      | -                        | Callback when undocked         |
 
 ### ChatLayoutManager Render Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `isDocked` | `boolean` | Whether sidebar is docked |
-| `isDesktop` | `boolean` | Whether viewport is desktop |
-| `dock` | `() => void` | Dock the sidebar |
-| `undock` | `() => void` | Undock to floating |
-| `openSidebar` | `() => void` | Open the sidebar |
-| `closeSidebar` | `() => void` | Close the sidebar |
+| Prop          | Type         | Description                    |
+| ------------- | ------------ | ------------------------------ |
+| `isDocked`    | `boolean`    | Whether sidebar is docked      |
+| `isDesktop`   | `boolean`    | Whether viewport is desktop    |
+| `dock`        | `() => void` | Dock the sidebar               |
+| `undock`      | `() => void` | Undock to floating             |
+| `openSidebar` | `() => void` | Open the sidebar               |
+| `closeSidebar`| `() => void` | Close the sidebar              |
 
 ## Development
 
