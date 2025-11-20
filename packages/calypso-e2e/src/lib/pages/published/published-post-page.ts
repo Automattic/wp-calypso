@@ -1,4 +1,5 @@
 import { Locator, Page } from 'playwright';
+import { waitForWPWidgetsIfNecessary } from '../../../element-helper';
 
 const selectors = {
 	// Post body
@@ -42,21 +43,26 @@ export class PublishedPostPage {
 	 * had the intended effect.
 	 */
 	async likePost(): Promise< void > {
-		const locator = this.page
-			.frameLocator( 'iframe[title="Like or Reblog"]' )
-			.getByRole( 'link', { name: 'Like', exact: true } );
+		const iframeLocator = this.page.locator( 'iframe[title="Like or Reblog"]' );
+		await iframeLocator.waitFor();
+
+		// Wait for widgets.wp.com iframes to finish loading before interacting with them.
+		await waitForWPWidgetsIfNecessary( this.page );
+
+		const iframe = this.page.frameLocator( 'iframe[title="Like or Reblog"]' );
+		const locator = iframe.getByRole( 'link', { name: 'Like', exact: true } );
+		await locator.waitFor();
 
 		// On AT sites Playwright is not able to scroll directly to the iframe
 		// containing the Like/Unlike button (similar to Post Comments).
+		await iframeLocator.scrollIntoViewIfNeeded();
+		// Use evaluate to scroll the button into view since it's inside an iframe.
 		await locator.evaluate( ( element ) => element.scrollIntoView() );
 
 		await locator.click();
 
 		// The button should now read "Liked".
-		await this.page
-			.frameLocator( 'iframe[title="Like or Reblog"]' )
-			.getByRole( 'link', { name: 'Liked', exact: true } )
-			.waitFor();
+		await iframe.getByRole( 'link', { name: 'Liked', exact: true } ).waitFor();
 	}
 
 	/**
@@ -66,21 +72,26 @@ export class PublishedPostPage {
 	 * had the intended effect.
 	 */
 	async unlikePost(): Promise< void > {
-		const locator = this.page
-			.frameLocator( 'iframe[title="Like or Reblog"]' )
-			.getByRole( 'link', { name: 'Liked', exact: true } );
+		const iframeLocator = this.page.locator( 'iframe[title="Like or Reblog"]' );
+		await iframeLocator.waitFor();
+
+		// Wait for widgets.wp.com iframes to finish loading before interacting with them.
+		await waitForWPWidgetsIfNecessary( this.page );
+
+		const iframe = this.page.frameLocator( 'iframe[title="Like or Reblog"]' );
+		const locator = iframe.getByRole( 'link', { name: 'Liked', exact: true } );
+		await locator.waitFor();
 
 		// On AT sites Playwright is not able to scroll directly to the iframe
 		// containing the Like/Unlike button (similar to Post Comments).
+		await iframeLocator.scrollIntoViewIfNeeded();
+		// Use evaluate to scroll the button into view since it's inside an iframe.
 		await locator.evaluate( ( element ) => element.scrollIntoView() );
 
 		await locator.click();
 
 		// The button should now read "Like".
-		await this.page
-			.frameLocator( 'iframe[title="Like or Reblog"]' )
-			.getByRole( 'link', { name: 'Like', exact: true } )
-			.waitFor();
+		await iframe.getByRole( 'link', { name: 'Like', exact: true } ).waitFor();
 	}
 
 	/**

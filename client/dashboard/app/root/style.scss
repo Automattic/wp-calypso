@@ -1,7 +1,3 @@
-.dashboard-root__layout {
-	height: 100%;
-}
-
 // For pages without sub menus, the first header is the sticky header
 // For pages with sub menus, the second header is the sticky header
 .dashboard-root__layout:not(:has(main > .dashboard-header-bar)) > .dashboard-header-bar,

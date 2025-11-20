@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
@@ -100,7 +99,6 @@ function SiteMonitoring() {
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 	const locale = useLocale();
 
-	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const [ timeRange, setTimeRange ] = useState( '24-hours' );
 
 	if ( ! site ) {
@@ -123,18 +121,9 @@ function SiteMonitoring() {
 		>
 			<PageLayout
 				header={
-					<HStack
-						justify="space-between"
-						alignment="stretch"
-						wrap
-						spacing={ isSmallViewport ? 5 : 10 }
-					>
-						<VStack spacing={ 2 }>
-							<PageHeader />
-							<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
-						</VStack>
-
-						<div>
+					<PageHeader
+						description={ getDateRange( timeRange, locale ) }
+						actions={
 							<ToggleGroupControl
 								value={ timeRange }
 								isBlock
@@ -150,8 +139,8 @@ function SiteMonitoring() {
 								<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
 								<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
 							</ToggleGroupControl>
-						</div>
-					</HStack>
+						}
+					/>
 				}
 			>
 				<SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } />

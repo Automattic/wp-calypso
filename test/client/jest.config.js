@@ -12,7 +12,7 @@ module.exports = {
 		'react-markdown': '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
 	},
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!@fnando[\\/\\\\]|.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)',
+		'node_modules[\\/\\\\](?!(@fnando[\\/\\\\]|@vgs[\\/\\\\].*|uuid[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)',
 	],
 	testEnvironmentOptions: {
 		url: 'https://example.com',

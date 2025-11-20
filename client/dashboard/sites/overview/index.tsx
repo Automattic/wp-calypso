@@ -151,7 +151,7 @@ function SiteOverviewSecondaryCards( {
 					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 						<>
 							<DIFMUpsellCard site={ site } />
-							<DomainsCard site={ site } isCompact={ isSmallViewport } />
+							<DomainsCard site={ site } />
 						</>
 					) }
 				</VStack>
@@ -208,7 +208,9 @@ function SiteOverview( {
 				>
 					{ __( 'WP Admin' ) }
 				</Button>
-				<SiteActionMenu site={ site } />
+				<PageHeader.ActionMenu>
+					<SiteActionMenu site={ site } />
+				</PageHeader.ActionMenu>
 			</>
 		);
 	};
@@ -217,10 +219,11 @@ function SiteOverview( {
 		<PageLayout
 			size={ isCommerceGardenSite ? 'small' : 'large' }
 			header={
-				<VStack>
-					<PageHeader title={ getSiteDisplayName( site ) } actions={ renderActions() } />
-					<SiteOverviewFields site={ site } />
-				</VStack>
+				<PageHeader
+					title={ getSiteDisplayName( site ) }
+					description={ <SiteOverviewFields site={ site } /> }
+					actions={ renderActions() }
+				/>
 			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>

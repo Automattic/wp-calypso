@@ -59,10 +59,10 @@ export const getProgressStepList = (
 };
 
 export function isMappingVerificationSuccess(
-	mode: DomainConnectionSetupModeValue,
+	mode: DomainConnectionSetupModeValue | null,
 	verificationStatus: DomainMappingStatus | undefined
 ) {
-	if ( ! verificationStatus ) {
+	if ( ! verificationStatus || ! mode ) {
 		return false;
 	}
 

@@ -5,9 +5,7 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import type { DomainGlueRecord } from '@automattic/api-core';
@@ -28,10 +26,10 @@ const DomainGlueRecordDeleteModal = ( {
 		meta: {
 			snackbar: {
 				success: __( 'Glue record deleted.' ),
+				error: { source: 'server' },
 			},
 		},
 	} );
-	const { createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 
 	const onConfirm = () => {
@@ -51,10 +49,6 @@ const DomainGlueRecordDeleteModal = ( {
 					nameserver: glueRecord.nameserver,
 					address: glueRecord.ip_addresses[ 0 ],
 					error_message: error.message,
-				} );
-
-				createErrorNotice( error.message, {
-					type: 'snackbar',
 				} );
 
 				onClose?.();

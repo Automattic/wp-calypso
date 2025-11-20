@@ -26,11 +26,7 @@ export const getIncludedDomainPurchase = (
 	state: AppState,
 	subscriptionPurchase: Purchase | null | undefined
 ): Purchase | null | undefined => {
-	if (
-		! subscriptionPurchase ||
-		! isSubscription( subscriptionPurchase ) ||
-		subscriptionPurchase.includedDomainPurchaseAmount
-	) {
+	if ( ! subscriptionPurchase || ! isSubscription( subscriptionPurchase ) ) {
 		return null;
 	}
 
@@ -41,6 +37,7 @@ export const getIncludedDomainPurchase = (
 			( isDomainMapping( purchase ) ||
 				isDomainRegistration( purchase ) ||
 				isDomainTransfer( purchase ) ) &&
-			includedDomain === purchase.meta
+			includedDomain === purchase.meta &&
+			purchase.costToUnbundleText
 	);
 };

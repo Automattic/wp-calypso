@@ -7,14 +7,14 @@ export const SSH_HOST_DISPLAY_NAMES: Record< string, string > = {
 	godaddy: 'GoDaddy',
 	bluehost: 'Bluehost',
 	ionos: 'IONOS',
-	hostinger: 'Hostinger',
+	'hostinger-international-limited': 'Hostinger',
 	inmotion: 'InMotion Hosting',
 	aruba: 'Aruba',
 	hostgator: 'HostGator',
 	digitalocean: 'DigitalOcean',
 	hetzner: 'Hetzner',
 	namecheap: 'Namecheap',
-	ovh: 'OVHcloud',
+	'ovh-sas': 'OVHcloud',
 	dreamhost: 'DreamHost',
 };
 
@@ -39,7 +39,7 @@ const SSH_HOST_SUPPORT_DOCS: Record< string, SSHSupportDoc > = {
 		url: localizeUrl( 'https://wordpress.com/support/migrate-a-site-from-ionos-using-ssh/' ),
 		postId: 445543,
 	},
-	hostinger: {
+	'hostinger-international-limited': {
 		url: localizeUrl( 'https://wordpress.com/support/migrate-a-site-from-hostinger-using-ssh/' ),
 		postId: 445542,
 	},
@@ -71,7 +71,7 @@ const SSH_HOST_SUPPORT_DOCS: Record< string, SSHSupportDoc > = {
 		url: localizeUrl( 'https://wordpress.com/support/migrate-a-site-from-namecheap-using-ssh/' ),
 		postId: 445547,
 	},
-	ovh: {
+	'ovh-sas': {
 		url: localizeUrl( 'https://wordpress.com/support/migrate-a-site-from-ovhcloud-using-ssh/' ),
 		postId: 445548,
 	},

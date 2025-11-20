@@ -7,11 +7,9 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
@@ -29,7 +27,6 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 		primaryDomain: '',
 	} );
 	const [ showForm, setShowForm ] = useState( false );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const primaryWithPlanOnly = userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' );
 	const isOnFreePlan = site?.plan?.is_free ?? false;
 	const isFlexSite = site?.is_wpcom_flex ?? false;
@@ -37,7 +34,19 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 		( ! ( primaryWithPlanOnly && isOnFreePlan ) &&
 			( site?.plan?.features?.active.includes( 'set-primary-custom-domain' ) ?? false ) ) ||
 		isFlexSite;
-	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
+	const setPrimaryDomainMutation = useMutation( {
+		...siteSetPrimaryDomainMutation(),
+		meta: {
+			snackbar: {
+				success: sprintf(
+					/* translators: %s is domain */
+					__( 'Primary site address changed: all domains will redirect to %s.' ),
+					formData.primaryDomain
+				),
+				error: { source: 'server' },
+			},
+		},
+	} );
 	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
 	const domainsList = useMemo( () => {
 		if ( ! domains || ! site ) {
@@ -91,7 +100,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 	const renderMessage = () => {
 		if ( ! canUserSetPrimaryDomainOnThisSite ) {
 			return createInterpolateElement(
-				'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink>Learn more</learnMoreLink>.',
+				'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink />',
 				{
 					upgradeLink: <a href={ `/plans/${ site.slug }` } />,
 					br: <br />,
@@ -101,7 +110,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 		}
 		if ( domainsList.length === 0 ) {
 			return createInterpolateElement(
-				'Before changing your primary site address you must register or connect a new custom domain. <learnMoreLink>Learn more</learnMoreLink>.',
+				'Before changing your primary site address you must register or connect a new custom domain. <learnMoreLink />',
 				{
 					learnMoreLink: <InlineSupportLink supportContext="primary-site-address" />,
 				}
@@ -109,7 +118,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 		}
 
 		return createInterpolateElement(
-			'The current primary site address for this site is: <currentPrimaryDomain />. This is the site address your visitors will see while browsing your site. <learnMoreLink>Learn more</learnMoreLink>.',
+			'The current primary site address for this site is: <currentPrimaryDomain />. This is the site address your visitors will see while browsing your site. <learnMoreLink />',
 			{
 				currentPrimaryDomain: <strong>{ currentPrimaryDomain }</strong>,
 				learnMoreLink: <InlineSupportLink supportContext="primary-site-address" />,
@@ -125,26 +134,8 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 			{ siteId: site.ID, domain: formData.primaryDomain },
 			{
 				onSuccess: () => {
-					createSuccessNotice(
-						sprintf(
-							/* translators: %s is domain */
-							__( 'Primary site address changed: all domains will redirect to %s.' ),
-							formData.primaryDomain
-						),
-						{
-							type: 'snackbar',
-						}
-					);
 					setShowForm( false );
 					setFormData( { primaryDomain: '' } );
-				},
-				onError: () => {
-					createErrorNotice(
-						__( 'Something went wrong and we couldn’t change your primary site address.' ),
-						{
-							type: 'snackbar',
-						}
-					);
 				},
 			}
 		);

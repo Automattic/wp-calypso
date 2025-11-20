@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/ui';
 import {
 	Card,
 	CardBody,
@@ -12,7 +13,7 @@ import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sideba
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { ALL_TIERS } from '../overview-content/constants';
+import getCurrentAgencyTier from '../lib/get-current-agency-tier';
 import InfluencedRevenue from '../overview-content/influenced-revenue';
 import type { AgencyTierType } from '../overview-content/types';
 
@@ -27,7 +28,7 @@ export default function AgencyTierProgressCard( {
 } ) {
 	const dispatch = useDispatch();
 
-	const currentTier = ALL_TIERS.find( ( tier ) => tier.id === currentAgencyTierId );
+	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
 
 	if ( ! currentTier ) {
 		return null;
@@ -50,9 +51,15 @@ export default function AgencyTierProgressCard( {
 							{ __( 'Your agency tier and benefits' ) }
 						</Heading>
 						<VStack spacing={ 3 }>
+							{ isEarlyAccess && (
+								<Badge
+									style={ { width: 'fit-content' } }
+									intent="default"
+									children={ __( 'Early access' ) }
+								/>
+							) }
 							<Heading level={ 3 } weight={ 500 }>
 								{ currentTier.name }
-								{ isEarlyAccess && ` (${ __( 'Early access' ) })` }
 							</Heading>
 							<Text color="#757575">
 								{ isEarlyAccess

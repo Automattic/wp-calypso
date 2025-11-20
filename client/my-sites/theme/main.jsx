@@ -17,6 +17,7 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Notice } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
 import { hasQueryArg } from '@wordpress/url';
@@ -37,6 +38,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
@@ -386,8 +388,13 @@ class ThemeSheet extends Component {
 	}
 
 	shouldRenderPreviewButton() {
-		const { isWPForTeamsSite } = this.props;
-		return this.isThemeAvailable() && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
+		const { isWPForTeamsSite, demoUrl, isActive, retired } = this.props;
+
+		if ( retired && ! isActive ) {
+			return false;
+		}
+
+		return demoUrl && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 	}
 
 	shouldRenderUnlockStyleButton() {
@@ -597,11 +604,12 @@ class ThemeSheet extends Component {
 			themeId,
 			siteId,
 			siteSlug,
+			isActive,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
-		const shouldRenderButton = ! retired && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
+		const shouldRenderButton = ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 
 		return (
 			<div className="theme__sheet-header">
@@ -615,6 +623,8 @@ class ThemeSheet extends Component {
 								themeId={ themeId }
 								siteId={ siteId }
 								siteSlug={ siteSlug }
+								isThemeRetired={ retired }
+								isThemeActiveForSite={ isActive }
 							/>
 
 							{ title }
@@ -717,6 +727,44 @@ class ThemeSheet extends Component {
 		}
 		// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
 		return <div>{ this.props.description }</div>;
+	};
+
+	renderRetiredNotice = () => {
+		const { retired, isActive, isLoggedIn } = this.props;
+		if ( ! retired ) {
+			return null;
+		}
+
+		const description = isActive
+			? this.props.translate(
+					'This theme has been retired and will only receive security updates. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="themes-retired" />,
+						},
+					}
+			  )
+			: this.props.translate(
+					'This theme has been retired and will only receive security updates. It is no longer available to sites that are not already using it. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink
+									supportContext="themes-retired"
+									showSupportModal={ isLoggedIn }
+								/>
+							),
+						},
+					}
+			  );
+
+		return (
+			<div className="theme__sheet-retired-notice">
+				<Notice status="warning" isDismissible={ false }>
+					{ description }
+				</Notice>
+			</div>
+		);
 	};
 
 	renderNotice = () => {
@@ -830,7 +878,14 @@ class ThemeSheet extends Component {
 			siteCount,
 			siteId,
 			themeTier,
+			retired,
 		} = this.props;
+
+		// For retired themes, don't allow any action except if the theme is active, when customising it is allowed.
+		const shouldHideButton = retired && ( ! isActive || key !== 'customize' );
+		if ( shouldHideButton ) {
+			return null;
+		}
 
 		return (
 			<Button
@@ -1087,6 +1142,7 @@ class ThemeSheet extends Component {
 					navigationItems={ navigationItems }
 					compactBreadcrumb={ ! this.state.isWide }
 				/>
+				{ this.renderRetiredNotice() }
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-header">
 						{ this.renderStagingPaidThemeNotice() }

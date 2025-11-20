@@ -1,4 +1,5 @@
 import { getDataCenterOptions } from '@automattic/api-core';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, SelectControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -62,14 +63,16 @@ export function DataCenterForm( { value, onChange }: DataCenterFormProps ) {
 					label={ __( 'Pick your primary data center' ) }
 					help={ createInterpolateElement(
 						__(
-							'For redundancy, your site will be replicated in real-time to another region. <link>Learn more</link>'
+							'Your site is automatically backed up in real-time to another region.<br /><learnMoreLink />'
 						),
 						{
-							link: (
+							br: <br />,
+							learnMoreLink: (
 								<InlineSupportLink
 									supportPostId={ 227309 }
-									// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-									supportLink="https://wordpress.com/support/choose-your-sites-primary-data-center/"
+									supportLink={ localizeUrl(
+										'https://wordpress.com/support/choose-your-sites-primary-data-center/'
+									) }
 								/>
 							),
 						}

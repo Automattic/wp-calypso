@@ -190,7 +190,7 @@ test( 'clicking backup action navigates to backup detail page', async () => {
 		{ timeout: 5000 }
 	);
 
-	const backupButton = screen.getByRole( 'button', { name: /See restore point/i } );
+	const backupButton = screen.getByRole( 'button', { name: /Manage backup/i } );
 	await user.click( backupButton );
 
 	expect( mockNavigate ).toHaveBeenCalledWith( {

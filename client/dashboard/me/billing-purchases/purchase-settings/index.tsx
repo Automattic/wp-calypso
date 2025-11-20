@@ -25,6 +25,7 @@ import { Link } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	DropdownMenu,
 	MenuGroup,
@@ -51,6 +52,7 @@ import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
+import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -203,7 +205,11 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.is_plan && purchase.site_slug ) {
 		const url = '/plans/my-plan/' + purchase.site_slug;
 		const text = __( 'Plan features' );
-		return <a href={ url }>{ text }</a>;
+		return (
+			<MetadataItem>
+				<a href={ url }>{ text }</a>
+			</MetadataItem>
+		);
 	}
 
 	if (
@@ -213,15 +219,21 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	) {
 		const text = __( 'Domain settings' );
 		return (
-			<Link to={ domainRoute.to } params={ { domainName: purchase.meta } }>
-				{ text }
-			</Link>
+			<MetadataItem>
+				<Link to={ domainRoute.to } params={ { domainName: purchase.meta } }>
+					{ text }
+				</Link>
+			</MetadataItem>
 		);
 	}
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
 		const text = __( 'Email settings' );
-		return <Link to={ emailsRoute.to }>{ text }</Link>;
+		return (
+			<MetadataItem>
+				<Link to={ emailsRoute.to }>{ text }</Link>
+			</MetadataItem>
+		);
 	}
 
 	return null;
@@ -667,9 +679,11 @@ function DomainRegistrationAgreement( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 	return (
-		<ExternalLink rel="noreferrer" href={ purchase.domain_registration_agreement_url }>
-			{ __( 'Domain Registration Agreement' ) }
-		</ExternalLink>
+		<MetadataItem>
+			<ExternalLink rel="noreferrer" href={ purchase.domain_registration_agreement_url }>
+				{ __( 'Domain Registration Agreement' ) }
+			</ExternalLink>
+		</MetadataItem>
 	);
 }
 
@@ -1029,7 +1043,8 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 	if ( ! subtitle ) {
 		return null;
 	}
-	return <Text variant="muted">{ subtitle }</Text>;
+
+	return <MetadataItem title={ subtitle } />;
 }
 
 export default function PurchaseSettings() {
@@ -1044,8 +1059,13 @@ export default function PurchaseSettings() {
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const upgradeUrl = getUpgradeUrl( purchase );
-	const willRenew = Boolean( purchase.renew_date && ! isExpiring( purchase ) );
+	const willRenew = Boolean(
+		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
+	);
 	const expiryDateTitle = ( () => {
+		if ( isExpired( purchase ) ) {
+			return __( 'Expired' );
+		}
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
 			return __( 'Paid until' );
 		}
@@ -1069,25 +1089,32 @@ export default function PurchaseSettings() {
 						title={ getTitleForDisplay( purchase ) }
 						actions={
 							site?.options?.admin_url && (
-								<>
+								<HStack justify="space-between">
 									{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
 											{ __( 'Upgrade' ) }
 										</Button>
 									) }
-									<PurchaseActionMenu purchase={ purchase } />
-								</>
+									<PageHeader.ActionMenu>
+										<PurchaseActionMenu purchase={ purchase } />
+									</PageHeader.ActionMenu>
+								</HStack>
 							)
 						}
+						description={
+							<MetadataList>
+								<PurchaseSubtitle purchase={ purchase } />
+								<ProductLink purchase={ purchase } />
+								<DomainRegistrationAgreement purchase={ purchase } />
+							</MetadataList>
+						}
 					/>
-					<PurchaseSubtitle purchase={ purchase } />
+
 					<PurchaseSecondSubtitle purchase={ purchase } />
 
 					{ purchase.product_slug === DomainProductSlugs.TRANSFER_IN && (
 						<DomainTransferInfo purchase={ purchase } />
 					) }
-					<ProductLink purchase={ purchase } />
-					<DomainRegistrationAgreement purchase={ purchase } />
 					{ ! purchase.partner_name && <PluginList purchase={ purchase } /> }
 				</VStack>
 			}
@@ -1104,6 +1131,9 @@ export default function PurchaseSettings() {
 							}
 							if ( willRenew ) {
 								return formattedRenewal;
+							}
+							if ( purchase.subscription_status !== 'active' ) {
+								return __( 'Inactive' );
 							}
 							return formattedExpiry;
 						} )() }
@@ -1134,7 +1164,7 @@ export default function PurchaseSettings() {
 							title={ __( 'Site' ) }
 							heading={ site.name }
 							description={ purchase.site_slug }
-							link={ `/v2/sites/${ purchase.site_slug }` }
+							link={ `/sites/${ purchase.site_slug }` }
 						/>
 					) }
 					<OverviewCard
@@ -1150,11 +1180,15 @@ export default function PurchaseSettings() {
 						}
 					/>
 				</Grid>
-				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
+				{ site && purchase.subscription_status === 'active' && (
+					<WPComResourceMeters purchase={ purchase } site={ site } />
+				) }
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				<ManageSubscriptionCard purchase={ purchase } />
+				{ purchase.subscription_status === 'active' && (
+					<ManageSubscriptionCard purchase={ purchase } />
+				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
 		</PageLayout>

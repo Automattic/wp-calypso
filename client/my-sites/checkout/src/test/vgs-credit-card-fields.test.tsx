@@ -164,6 +164,21 @@ describe( 'VgsCreditCardFields', () => {
 		mockLoadVGSCollect.mockImplementation( () => Promise.resolve( {} as any ) );
 	} );
 
+	// Default props for tests
+	const defaultLabels = {
+		cardholderName: 'Cardholder name',
+		cardNumber: 'Card number',
+		expiryDate: 'Expiry date',
+		cvc: 'Security code',
+	};
+
+	const defaultPlaceholders = {
+		cardholderName: '',
+		cardNumber: '•••• •••• •••• ••••',
+		expiryDate: 'MM/YY',
+		cvc: 'CVC',
+	};
+
 	describe( 'Loading State', () => {
 		it( 'should show loading state when vault config is not loaded', () => {
 			mockUseVaultId.mockReturnValue( {
@@ -172,7 +187,12 @@ describe( 'VgsCreditCardFields', () => {
 				error: null,
 			} as any );
 
-			render( <VgsCreditCardFields />, { wrapper: createWrapper() } );
+			render(
+				<VgsCreditCardFields labels={ defaultLabels } placeholders={ defaultPlaceholders } />,
+				{
+					wrapper: createWrapper(),
+				}
+			);
 
 			expect( screen.getByText( 'Loading payment form...' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Loading payment form...' ) ).toHaveClass( 'vgs-loading' );
@@ -185,7 +205,12 @@ describe( 'VgsCreditCardFields', () => {
 				error: null,
 			} as any );
 
-			render( <VgsCreditCardFields />, { wrapper: createWrapper() } );
+			render(
+				<VgsCreditCardFields labels={ defaultLabels } placeholders={ defaultPlaceholders } />,
+				{
+					wrapper: createWrapper(),
+				}
+			);
 
 			expect( screen.getByText( 'Loading payment form...' ) ).toBeInTheDocument();
 		} );
@@ -200,9 +225,16 @@ describe( 'VgsCreditCardFields', () => {
 				error: new Error( 'Vault configuration failed' ),
 			} as any );
 
-			const { container } = render( <VgsCreditCardFields onVgsFormError={ mockOnVgsFormError } />, {
-				wrapper: createWrapper(),
-			} );
+			const { container } = render(
+				<VgsCreditCardFields
+					labels={ defaultLabels }
+					placeholders={ defaultPlaceholders }
+					onVgsFormError={ mockOnVgsFormError }
+				/>,
+				{
+					wrapper: createWrapper(),
+				}
+			);
 
 			expect( container.firstChild ).toBeNull();
 			expect( mockOnVgsFormError ).toHaveBeenCalledWith(
@@ -220,9 +252,16 @@ describe( 'VgsCreditCardFields', () => {
 
 			mockLoadVGSCollect.mockRejectedValue( new Error( 'Script loading failed' ) );
 
-			const { container } = render( <VgsCreditCardFields onVgsFormError={ mockOnVgsFormError } />, {
-				wrapper: createWrapper(),
-			} );
+			const { container } = render(
+				<VgsCreditCardFields
+					labels={ defaultLabels }
+					placeholders={ defaultPlaceholders }
+					onVgsFormError={ mockOnVgsFormError }
+				/>,
+				{
+					wrapper: createWrapper(),
+				}
+			);
 
 			await waitFor( () => {
 				expect( container.firstChild ).toBeNull();
@@ -244,7 +283,10 @@ describe( 'VgsCreditCardFields', () => {
 		} );
 
 		it( 'should render VGS form with correct props when script loads successfully', async () => {
-			await renderWithAct( <VgsCreditCardFields />, { wrapper: createWrapper() } );
+			await renderWithAct(
+				<VgsCreditCardFields labels={ defaultLabels } placeholders={ defaultPlaceholders } />,
+				{ wrapper: createWrapper() }
+			);
 
 			await waitFor( () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
@@ -256,7 +298,10 @@ describe( 'VgsCreditCardFields', () => {
 		} );
 
 		it( 'should render all form fields with correct labels and placeholders', async () => {
-			await renderWithAct( <VgsCreditCardFields />, { wrapper: createWrapper() } );
+			await renderWithAct(
+				<VgsCreditCardFields labels={ defaultLabels } placeholders={ defaultPlaceholders } />,
+				{ wrapper: createWrapper() }
+			);
 
 			await waitFor( () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
@@ -266,7 +311,7 @@ describe( 'VgsCreditCardFields', () => {
 			expect( screen.getByText( 'Cardholder name' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Card number' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Expiry date' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'CVC' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Security code' ) ).toBeInTheDocument();
 
 			// Check form fields
 			expect( screen.getByTestId( 'cardholder-field-card_holder' ) ).toBeInTheDocument();
@@ -275,16 +320,26 @@ describe( 'VgsCreditCardFields', () => {
 			expect( screen.getByTestId( 'card-security-field-card_cvc' ) ).toBeInTheDocument();
 
 			// Check placeholders
-			expect(
-				screen.getByPlaceholderText( "Enter your name as it's written on the card" )
-			).toBeInTheDocument();
-			expect( screen.getByPlaceholderText( '1234 5678 9012 3456' ) ).toBeInTheDocument();
+			expect( screen.getByPlaceholderText( '•••• •••• •••• ••••' ) ).toBeInTheDocument();
 			expect( screen.getByPlaceholderText( 'MM/YY' ) ).toBeInTheDocument();
-			expect( screen.getByPlaceholderText( '123' ) ).toBeInTheDocument();
+			expect( screen.getByPlaceholderText( 'CVC' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should render future charge notice by default', async () => {
-			await renderWithAct( <VgsCreditCardFields />, { wrapper: createWrapper() } );
+		it( 'should render future charge notice when enabled with label', async () => {
+			const labelsWithNotice = {
+				...defaultLabels,
+				futureChargeNotice:
+					'By providing your card information, you allow your card be charged for future payments.',
+			};
+
+			await renderWithAct(
+				<VgsCreditCardFields
+					labels={ labelsWithNotice }
+					placeholders={ defaultPlaceholders }
+					showFutureChargeNotice
+				/>,
+				{ wrapper: createWrapper() }
+			);
 
 			await waitFor( () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
@@ -299,9 +354,35 @@ describe( 'VgsCreditCardFields', () => {
 		} );
 
 		it( 'should not render future charge notice when showFutureChargeNotice is false', async () => {
-			await renderWithAct( <VgsCreditCardFields showFutureChargeNotice={ false } />, {
-				wrapper: createWrapper(),
+			await renderWithAct(
+				<VgsCreditCardFields
+					labels={ defaultLabels }
+					placeholders={ defaultPlaceholders }
+					showFutureChargeNotice={ false }
+				/>,
+				{
+					wrapper: createWrapper(),
+				}
+			);
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
 			} );
+
+			expect( screen.queryByTestId( 'future-use-text' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should not render future charge notice when label is missing', async () => {
+			await renderWithAct(
+				<VgsCreditCardFields
+					labels={ defaultLabels }
+					placeholders={ defaultPlaceholders }
+					showFutureChargeNotice
+				/>,
+				{
+					wrapper: createWrapper(),
+				}
+			);
 
 			await waitFor( () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
@@ -321,7 +402,10 @@ describe( 'VgsCreditCardFields', () => {
 		} );
 
 		it( 'should apply default styles when no custom styles provided', async () => {
-			await renderWithAct( <VgsCreditCardFields />, { wrapper: createWrapper() } );
+			await renderWithAct(
+				<VgsCreditCardFields labels={ defaultLabels } placeholders={ defaultPlaceholders } />,
+				{ wrapper: createWrapper() }
+			);
 
 			await waitFor( () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
@@ -340,21 +424,16 @@ describe( 'VgsCreditCardFields', () => {
 				},
 			};
 
-			await renderWithAct( <VgsCreditCardFields styles={ customStyles } />, {
-				wrapper: createWrapper(),
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
-			} );
-
-			const cardholderField = screen.getByTestId( 'cardholder-field-card_holder' );
-			// VGS library uses CSS-in-JS, so we check for className pattern instead of exact match
-			expect( cardholderField.className ).toMatch( /^css-\w+-VgsCreditCardFields$/ );
-		} );
-
-		it( 'should use default styles when custom styles is null', async () => {
-			await renderWithAct( <VgsCreditCardFields styles={ null } />, { wrapper: createWrapper() } );
+			await renderWithAct(
+				<VgsCreditCardFields
+					labels={ defaultLabels }
+					placeholders={ defaultPlaceholders }
+					styles={ customStyles }
+				/>,
+				{
+					wrapper: createWrapper(),
+				}
+			);
 
 			await waitFor( () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
@@ -374,7 +453,10 @@ describe( 'VgsCreditCardFields', () => {
 				error: null,
 			} as any );
 
-			await renderWithAct( <VgsCreditCardFields />, { wrapper: createWrapper() } );
+			await renderWithAct(
+				<VgsCreditCardFields labels={ defaultLabels } placeholders={ defaultPlaceholders } />,
+				{ wrapper: createWrapper() }
+			);
 
 			await waitFor( () => {
 				expect( mockLoadVGSCollect ).toHaveBeenCalledWith( {
@@ -392,16 +474,102 @@ describe( 'VgsCreditCardFields', () => {
 				error: null,
 			} as any );
 
-			const { rerender } = await renderWithAct( <VgsCreditCardFields />, {
-				wrapper: createWrapper(),
-			} );
+			const { rerender } = await renderWithAct(
+				<VgsCreditCardFields labels={ defaultLabels } placeholders={ defaultPlaceholders } />,
+				{
+					wrapper: createWrapper(),
+				}
+			);
 
 			// Re-render the component
-			rerender( <VgsCreditCardFields /> );
+			await act( async () => {
+				rerender(
+					<VgsCreditCardFields labels={ defaultLabels } placeholders={ defaultPlaceholders } />
+				);
+			} );
 
 			await waitFor( () => {
 				expect( mockLoadVGSCollect ).toHaveBeenCalledTimes( 1 );
 			} );
+		} );
+	} );
+
+	describe( 'Custom Labels, Placeholders, and Descriptions', () => {
+		beforeEach( () => {
+			mockUseVaultId.mockReturnValue( {
+				data: mockVaultConfig,
+				isSuccess: true,
+				error: null,
+			} as any );
+		} );
+
+		it( 'should render custom labels when provided', async () => {
+			const customLabels = {
+				cardholderName: 'Name on Card',
+				cardNumber: 'Card Number',
+				expiryDate: 'Expiration',
+				cvc: 'CVV',
+			};
+
+			await renderWithAct(
+				<VgsCreditCardFields labels={ customLabels } placeholders={ defaultPlaceholders } />,
+				{ wrapper: createWrapper() }
+			);
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
+			} );
+
+			expect( screen.getByText( 'Name on Card' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Card Number' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Expiration' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'CVV' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should render custom placeholders when provided', async () => {
+			const customPlaceholders = {
+				cardholderName: 'John Doe',
+				cardNumber: '1234 5678 9012 3456',
+				expiryDate: '12/25',
+				cvc: '123',
+			};
+
+			await renderWithAct(
+				<VgsCreditCardFields labels={ defaultLabels } placeholders={ customPlaceholders } />,
+				{ wrapper: createWrapper() }
+			);
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
+			} );
+
+			expect( screen.getByPlaceholderText( 'John Doe' ) ).toBeInTheDocument();
+			expect( screen.getByPlaceholderText( '1234 5678 9012 3456' ) ).toBeInTheDocument();
+			expect( screen.getByPlaceholderText( '12/25' ) ).toBeInTheDocument();
+			expect( screen.getByPlaceholderText( '123' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should render descriptions when provided', async () => {
+			const descriptions = {
+				cardholderName: 'Enter name as shown on card',
+				cardNumber: 'Enter card number without spaces',
+			};
+
+			await renderWithAct(
+				<VgsCreditCardFields
+					labels={ defaultLabels }
+					placeholders={ defaultPlaceholders }
+					descriptions={ descriptions }
+				/>,
+				{ wrapper: createWrapper() }
+			);
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
+			} );
+
+			expect( screen.getByText( 'Enter name as shown on card' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Enter card number without spaces' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

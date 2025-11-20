@@ -17,7 +17,7 @@ import type { TierItem } from './types';
 
 const TARGET_INFLUENCED_REVENUE = {
 	'emerging-partner': 0,
-	'agency-partner': 1000,
+	'agency-partner': 1200,
 	'pro-agency-partner': 5000,
 	'premier-partner': 250000,
 };

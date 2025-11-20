@@ -79,7 +79,7 @@ describe(
 			it( `Select ${ planName } plan`, async function () {
 				const plansPage = new SignupPickPlanPage( page );
 
-				await plansPage.selectPlan( planName );
+				await plansPage.selectPlanWithoutSiteCreation( planName );
 			} );
 
 			it( 'See plan and domain at checkout', async function () {

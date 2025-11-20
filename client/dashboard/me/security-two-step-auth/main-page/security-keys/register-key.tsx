@@ -136,10 +136,16 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 							} }
 						/>
 						<ButtonStack justify="flex-end">
-							<Button variant="tertiary" onClick={ onClose } disabled={ isRegisteringSecurityKey }>
+							<Button
+								__next40pxDefaultSize
+								variant="tertiary"
+								onClick={ onClose }
+								disabled={ isRegisteringSecurityKey }
+							>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button
+								__next40pxDefaultSize
 								variant="primary"
 								type="submit"
 								isBusy={ isRegisteringSecurityKey }

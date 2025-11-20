@@ -11,6 +11,8 @@
 	"references": [
 		{ "path": "../components" },
 		{ "path": "../api-core" },
-		{ "path": "../api-queries" }
+		{ "path": "../api-queries" },
+		{ "path": "../explat-client" },
+		{ "path": "../explat-client-react-helpers" }
 	]
 }

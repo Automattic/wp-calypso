@@ -1,11 +1,14 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { SearchControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import LayoutSection from 'calypso/layout/hosting-dashboard/body';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { SelectedFilters } from '../../lib/product-filter';
 import { BundlePriceSelector } from '../bundle-price-selector';
+import DiscountsComingSoonMessage from '../discounts-coming-soon-message';
+import DiscountsComingSoonModal from '../discounts-coming-soon-modal';
 import ProductTypeFilter from '../product-filter';
 
 import './style.scss';
@@ -35,6 +38,8 @@ export default function ProductActionPanel( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const [ showDiscountsModal, setShowDiscountsModal ] = useState( false );
+	const isBdCheckoutEnabled = isEnabled( 'a4a-bd-checkout' );
 
 	const handleSearchQueryChange = useCallback(
 		( searchQuery: string ) => {
@@ -85,29 +90,49 @@ export default function ProductActionPanel( {
 		[ dispatch, setSelectedBundleSize ]
 	);
 
+	const handleLearnMoreClick = useCallback( () => {
+		setShowDiscountsModal( true );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_products_overview_discounts_learn_more_click' )
+		);
+	}, [ dispatch ] );
+
+	const handleCloseModal = useCallback( () => {
+		setShowDiscountsModal( false );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_products_overview_discounts_modal_close' )
+		);
+	}, [ dispatch ] );
+
 	return (
-		<LayoutSection className="product-action-panel">
-			<div className="product-action-panel__filter">
-				<SearchControl
-					label={ translate( 'Search' ) }
-					value={ searchQuery }
-					onChange={ handleSearchQueryChange }
-				/>
+		<>
+			<LayoutSection className="product-action-panel">
+				<div className="product-action-panel__filter">
+					<SearchControl
+						label={ translate( 'Search' ) }
+						value={ searchQuery }
+						onChange={ handleSearchQueryChange }
+					/>
 
-				<ProductTypeFilter
-					selectedFilters={ selectedFilters }
-					setSelectedFilters={ handleSelectedFiltersChange }
-					resetFilters={ handleResetSelectedFilters }
-				/>
-			</div>
+					<ProductTypeFilter
+						selectedFilters={ selectedFilters }
+						setSelectedFilters={ handleSelectedFiltersChange }
+						resetFilters={ handleResetSelectedFilters }
+					/>
+				</div>
+				{ ! isReferralMode &&
+					( isBdCheckoutEnabled ? (
+						<DiscountsComingSoonMessage onLearnMoreClick={ handleLearnMoreClick } />
+					) : (
+						<BundlePriceSelector
+							options={ availableBundleSizes }
+							value={ selectedBundleSize }
+							onChange={ handleSelectedBundleSizeChange }
+						/>
+					) ) }
+			</LayoutSection>
 
-			{ ! isReferralMode && (
-				<BundlePriceSelector
-					options={ availableBundleSizes }
-					value={ selectedBundleSize }
-					onChange={ handleSelectedBundleSizeChange }
-				/>
-			) }
-		</LayoutSection>
+			{ showDiscountsModal && <DiscountsComingSoonModal onClose={ handleCloseModal } /> }
+		</>
 	);
 }

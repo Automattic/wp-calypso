@@ -1,12 +1,11 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/colors';
 
 .dashboard-add-new-site__menu-item {
 	height: auto;
 	text-align: start;
-	padding: 8px;
+	padding: $grid-unit-10;
+	margin-inline: -$grid-unit-10;
 	color: inherit !important; // avoid changing the color on hover
 
 	&:hover {
@@ -18,11 +17,6 @@
 .dashboard-add-new-site__menu-item-icon {
 	width: 24px;
 	height: auto;
-	display: none;
-
-	@include break-medium {
-		display: block;
-	}
 }
 
 .dashboard-add-new-site__banner {

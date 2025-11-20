@@ -4,6 +4,9 @@ import type { Operator, SortDirection, SupportedLayouts, View } from '@wordpress
 
 export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	table: {
+		layout: {
+			density: 'balanced',
+		},
 		showLevels: false,
 		showMedia: true,
 		mediaField: 'icon.ico',
@@ -11,6 +14,9 @@ export const DEFAULT_LAYOUTS: SupportedLayouts = {
 		descriptionField: 'URL',
 	},
 	grid: {
+		layout: {
+			previewSize: 230,
+		},
 		showLevels: false,
 		showMedia: true,
 		mediaField: 'preview',
@@ -19,9 +25,11 @@ export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	},
 };
 
-export const DEFAULT_PER_PAGE_SIZES: [ number, number, number, number ] = [ 12, 24, 48, 96 ];
+export const DEFAULT_CONFIG = {
+	perPageSizes: [ 12, 24, 48, 96 ],
+};
 
-const DEFAULT_PER_PAGE = 12;
+export const DEFAULT_PER_PAGE = 12;
 
 const DEFAULT_VIEW: Partial< View > = {
 	perPage: DEFAULT_PER_PAGE,
