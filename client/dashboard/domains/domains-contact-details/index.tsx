@@ -71,14 +71,18 @@ export default function DomainsContactInfo() {
 		whoisData: WhoisDataEntry[][];
 	};
 
-	const initialData = useMemo( () => {
+	const { initialData, key } = useMemo( () => {
 		if ( ! whoisData?.length ) {
-			return { optOutTransferLock: false };
+			const initialData = { optOutTransferLock: false };
+
+			return { initialData, key: JSON.stringify( initialData ) };
 		}
 
-		return aggregateWhoisDataWithMostCommonValues(
+		const initialData = aggregateWhoisDataWithMostCommonValues(
 			whoisData.flat().filter( ( whois ) => whois.type === WhoisType.REGISTRANT )
 		);
+
+		return { initialData, key: JSON.stringify( initialData ) };
 	}, [ whoisData ] );
 
 	const domainsWithUnmodifiableContactInfo = useMemo( () => {
@@ -188,6 +192,7 @@ export default function DomainsContactInfo() {
 				</div>
 			) }
 			<ContactForm
+				key={ key }
 				initialData={ initialData }
 				isSubmitting={ isValidatePending || isUpdatePending }
 				onSubmit={ handleSubmit }

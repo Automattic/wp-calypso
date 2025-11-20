@@ -1,21 +1,20 @@
-import type { SortDirection, View } from '@wordpress/dataviews';
+import type { SortDirection, SupportedLayouts, View } from '@wordpress/dataviews';
 
 export const DEFAULT_VIEW: View = {
 	type: 'table',
-	perPage: 25,
-	page: 1,
+	perPage: 20,
 	sort: {
 		field: 'created_on',
 		direction: 'desc' as SortDirection,
 	},
-	search: '',
-	filters: [],
-	fields: [ 'repository_name', 'commit', 'status', 'created_on' ],
-	layout: {},
+	fields: [ 'repository', 'commit', 'status', 'created_on' ],
+	layout: {
+		density: 'balanced',
+	},
 };
 
-export const DEFAULT_LAYOUTS = {
+export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	table: {
-		titleField: 'repository_name',
+		titleField: 'repository',
 	},
 };
