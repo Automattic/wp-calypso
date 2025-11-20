@@ -1,5 +1,5 @@
 /**
- * Hook for managing floating chat state (collapsed/compact/expanded)
+ * Hook for managing floating chat state (collapsed/expanded)
  * State is persisted to localStorage
  */
 
@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react';
 
 const DEFAULT_STORAGE_KEY = 'ai-agent-chat-state';
 
-export type ChatState = 'collapsed' | 'compact' | 'expanded';
+export type ChatState = 'collapsed' | 'expanded';
 
 /**
  * Load chat state from localStorage
@@ -15,14 +15,14 @@ export type ChatState = 'collapsed' | 'compact' | 'expanded';
 const loadChatState = ( storageKey: string ): ChatState => {
 	try {
 		const saved = localStorage.getItem( storageKey );
-		if ( saved === 'collapsed' || saved === 'compact' || saved === 'expanded' ) {
+		if ( saved === 'collapsed' || saved === 'expanded' ) {
 			return saved;
 		}
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.warn( '[AgentDock] Failed to read chat state from localStorage:', error );
 	}
-	return 'compact';
+	return 'expanded';
 };
 
 /**
@@ -53,11 +53,6 @@ export interface UseChatStateOptions {
 	 * @default 'ai-agent-chat-state'
 	 */
 	storageKey?: string;
-	/**
-	 * Initial chat state if none is found in localStorage
-	 * @default 'compact'
-	 */
-	initialState?: ChatState;
 }
 
 /**
@@ -66,11 +61,11 @@ export interface UseChatStateOptions {
  * @param {UseChatStateOptions} options - Configuration options
  */
 export function useChatState( options: UseChatStateOptions = {} ): UseChatStateResult {
-	const { storageKey = DEFAULT_STORAGE_KEY, initialState = 'compact' } = options;
+	const { storageKey = DEFAULT_STORAGE_KEY } = options;
 
 	const [ chatState, setChatState ] = useState< ChatState >( () => {
 		const loaded = loadChatState( storageKey );
-		return loaded !== 'compact' ? loaded : initialState;
+		return loaded;
 	} );
 
 	const toggleExpand = useCallback( () => {

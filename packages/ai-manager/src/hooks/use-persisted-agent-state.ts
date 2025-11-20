@@ -146,7 +146,8 @@ export function usePersistedAgentState(
 		debounceMs = 1000,
 	} = options;
 
-	const [ state, setState ] = useState< PersistedAgentState >( {} );
+	// The default dock state is `false`
+	const [ state, setState ] = useState< PersistedAgentState >( { isDocked: false } );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const saveTimeoutRef = useRef< number | null >( null );
 
