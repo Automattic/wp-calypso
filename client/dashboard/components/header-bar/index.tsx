@@ -24,11 +24,7 @@ function Header( { as = 'div', children }: { as?: 'div' | 'header'; children?: R
 
 Header.Title = function HeaderBarTitle( { children }: { children: React.ReactNode } ) {
 	return (
-		<HStack
-			style={ { width: 'auto', flexShrink: 0 } }
-			className="dashboard-header-bar-title"
-			spacing={ 3 }
-		>
+		<HStack className="dashboard-header-bar-title" spacing={ 3 } expanded={ false }>
 			{ children }
 		</HStack>
 	);
