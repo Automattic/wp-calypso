@@ -9,6 +9,7 @@ import {
 	ONBOARDING_UNIFIED_FLOW,
 	PLAN_UPGRADE_FLOW,
 	START_WRITING_FLOW,
+	WOO_HOSTED_PLANS_FLOW,
 	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
@@ -29,7 +30,7 @@ import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { playgroundPlansIntent } from '../playground/lib/plans';
 import UnifiedPlansStep from './unified-plans-step';
-import { getIntervalType, getVisualSplitPlansIntent } from './util';
+import { getIntervalType, getVisualSplitPlansIntent, SupportedIntervalTypes } from './util';
 import type { Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -73,6 +74,8 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return 'plans-affiliate';
 		case PLAN_UPGRADE_FLOW:
 			return 'plans-upgrade';
+		case WOO_HOSTED_PLANS_FLOW:
+			return 'plans-woo-hosted';
 		default:
 			return null;
 	}
@@ -90,6 +93,7 @@ const PlansStepAdaptor: StepType< {
 		isInSignup?: boolean;
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
+		displayedIntervals?: SupportedIntervalTypes[];
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -98,7 +102,8 @@ const PlansStepAdaptor: StepType< {
 		};
 	};
 } > = ( props ) => {
-	const { isInSignup, isStepperUpgradeFlow, selectedFeature, wrapperProps } = props;
+	const { displayedIntervals, isInSignup, isStepperUpgradeFlow, selectedFeature, wrapperProps } =
+		props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -231,6 +236,7 @@ const PlansStepAdaptor: StepType< {
 			onIntentChange={ handleIntentChange }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
+			displayedIntervals={ displayedIntervals }
 			wrapperProps={ {
 				hideBack: wrapperProps?.hideBack ?? false,
 				goBack: wrapperProps?.goBack ?? props.navigation.goBack,

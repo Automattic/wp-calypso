@@ -29,6 +29,7 @@ function AddPaymentMethod() {
 		isStripeLoading,
 		stripeLoadingError,
 		allowUseForAllSubscriptions: true,
+		defaultToUseForAllSubscriptions: true,
 	} );
 
 	if ( stripeLoadingError || ( ! isStripeLoading && ! creditCardMethod ) ) {

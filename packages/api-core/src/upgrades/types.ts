@@ -193,6 +193,7 @@ export interface Purchase {
 	 */
 	is_domain_registration: boolean;
 
+	is_trial_plan: boolean;
 	is_pending_registration: boolean;
 	is_free_jetpack_stats_product: boolean;
 	is_jetpack_backup_t1: boolean;
@@ -206,6 +207,7 @@ export interface Purchase {
 	is_locked: boolean;
 	is_plan: boolean;
 	is_rechargable: boolean;
+	is_woo_hosted_product: boolean;
 
 	/**
 	 * Determine if this is a kind of subscription that can currently be manually
