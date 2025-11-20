@@ -13,7 +13,9 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import ConfirmModal from '../../components/confirm-modal';
 import Notice from '../../components/notice';
+import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import type { BigSkyPluginUpdateRequest, Site } from '@automattic/api-core';
 
 interface AIAssistantFormData {
@@ -76,14 +78,9 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 		() => new Set()
 	);
 	const [ otherText, setOtherText ] = useState( '' );
+	const [ showDisableConfirm, setShowDisableConfirm ] = useState( false );
 
 	const { data: pluginStatus } = useQuery( bigSkyPluginQuery( site.ID ) );
-
-	const isEnabled = pluginStatus?.enabled ?? false;
-
-	const siteEditorUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit';
-	const siteSpecUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit&ai-step=spec';
-	const mediaLibraryUrl = site?.URL + '/wp-admin/upload.php';
 
 	const mutation = useMutation( {
 		...bigSkyPluginMutation( site.ID ),
@@ -94,6 +91,28 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 			},
 		},
 	} );
+
+	const isEnabled = pluginStatus?.enabled ?? false;
+	const isAvailable = pluginStatus?.available ?? false;
+	const isFreeTrial = pluginStatus?.on_free_trial ?? false;
+
+	if ( ! isAvailable ) {
+		return (
+			<UpsellCallout
+				site={ site }
+				upsellId="ai-assistant"
+				upsellTitle={ __( 'AI Site Assistant' ) }
+				upsellPlanRequirement="any"
+				upsellDescription={ __(
+					'Get AI-powered assistance to help you build, edit, and redesign your site with ease.'
+				) }
+			/>
+		);
+	}
+
+	const siteEditorUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit';
+	const siteSpecUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit&ai-step=spec';
+	const mediaLibraryUrl = site?.URL + '/wp-admin/upload.php';
 
 	const hasSelection = selectedUseCases.size > 0;
 	const { isPending } = mutation;
@@ -121,55 +140,85 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 		} );
 	};
 
-	const handleDisable = () => {
+	const performDisable = () => {
 		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: false } );
 
 		mutation.mutate( pluginUpdate, {
 			onSuccess: () => {
 				setSelectedUseCases( new Set() );
 				setOtherText( '' );
+				setShowDisableConfirm( false );
 			},
 		} );
+	};
+
+	const handleDisable = () => {
+		if ( isFreeTrial ) {
+			setShowDisableConfirm( true );
+			return;
+		}
+
+		performDisable();
 	};
 
 	// Show all descriptions whenever Big Sky is enabled
 	if ( isEnabled ) {
 		return (
-			<Card>
-				<CardBody>
-					<VStack spacing={ 4 }>
-						<Notice variant="success" density="medium">
-							{ __( 'AI Site Assistant is enabled! You have access to a lot of cool stuff.' ) }
-						</Notice>
-						<VStack spacing={ 3 }>
-							{ USE_CASE_OPTIONS.map( ( option ) => (
-								<div key={ option.value }>
-									<strong>{ option.label }</strong>
-									<p style={ { marginTop: '8px', marginBottom: 0 } }>
-										{ getUseCaseDescription(
-											option.value,
-											siteEditorUrl,
-											siteSpecUrl,
-											mediaLibraryUrl
-										) }
-									</p>
-								</div>
-							) ) }
+			<>
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<Notice variant="success" density="medium">
+								{ isFreeTrial
+									? __( 'You are on a free trial.' )
+									: __( 'AI Site Assistant is enabled! You have access to a lot of cool stuff.' ) }
+							</Notice>
+							<VStack spacing={ 3 }>
+								{ USE_CASE_OPTIONS.map( ( option ) => (
+									<div key={ option.value }>
+										<strong>{ option.label }</strong>
+										<p style={ { marginTop: '8px', marginBottom: 0 } }>
+											{ getUseCaseDescription(
+												option.value,
+												siteEditorUrl,
+												siteSpecUrl,
+												mediaLibraryUrl
+											) }
+										</p>
+									</div>
+								) ) }
+							</VStack>
+							<ButtonStack justify="flex-start">
+								<Button
+									variant="secondary"
+									__next40pxDefaultSize
+									onClick={ handleDisable }
+									isBusy={ isPending }
+									disabled={ isPending }
+								>
+									{ __( 'Disable AI Site Assistant' ) }
+								</Button>
+							</ButtonStack>
 						</VStack>
-						<ButtonStack justify="flex-start">
-							<Button
-								variant="secondary"
-								__next40pxDefaultSize
-								onClick={ handleDisable }
-								isBusy={ isPending }
-								disabled={ isPending }
-							>
-								{ __( 'Disable AI Site Assistant' ) }
-							</Button>
-						</ButtonStack>
-					</VStack>
-				</CardBody>
-			</Card>
+					</CardBody>
+				</Card>
+				{ isFreeTrial && (
+					<ConfirmModal
+						isOpen={ showDisableConfirm }
+						onCancel={ () => setShowDisableConfirm( false ) }
+						onConfirm={ performDisable }
+						confirmButtonProps={ {
+							label: __( 'Disable AI Site Assistant' ),
+							isBusy: isPending,
+							disabled: isPending,
+						} }
+					>
+						{ __(
+							'If you disable AI Site Assistant, you will not be able to turn it back on without a paid plan.'
+						) }
+					</ConfirmModal>
+				) }
+			</>
 		);
 	}
 

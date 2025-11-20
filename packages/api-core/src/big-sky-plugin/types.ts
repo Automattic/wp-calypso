@@ -12,5 +12,7 @@ export interface BigSkyPluginUpdateRequest {
 export interface BigSkyPluginResponse {
 	blog_id: number;
 	enabled: boolean;
+	available: boolean;
+	on_free_trial: boolean;
 	metadata?: BigSkyPluginMetadata;
 }
