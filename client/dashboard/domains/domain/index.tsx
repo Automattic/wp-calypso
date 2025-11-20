@@ -1,4 +1,3 @@
-import { DomainSubtype } from '@automattic/api-core';
 import { domainQuery, domainsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
@@ -14,14 +13,8 @@ import './style.scss';
 
 function Domain() {
 	const { domainName } = domainRoute.useParams();
-	const domains = useQuery( {
-		...domainsQuery(),
-		select: ( data ) => {
-			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
-		},
-	} ).data;
+	const domains = useQuery( domainsQuery() ).data;
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-
 	const searchableFields = [
 		{
 			id: 'name',

@@ -1,4 +1,4 @@
-import { domainForwardingQuery, domainQuery } from '@automattic/api-queries';
+import { domainForwardingQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -17,7 +17,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import DomainForwardingDeleteModal from './delete-modal';
-import { DomainForwardingNotice } from './notice';
 import type { DomainForwarding as DomainForwardingType } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
@@ -50,7 +49,6 @@ function DomainForwarding() {
 	const router = useRouter();
 
 	const { domainName } = domainRoute.useParams();
-	const { data: domainData } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: forwardingData } = useSuspenseQuery( domainForwardingQuery( domainName ) );
 
 	const actions: Action< DomainForwardingType >[] = useMemo(
@@ -173,7 +171,6 @@ function DomainForwarding() {
 				/>
 			}
 		>
-			<DomainForwardingNotice domainName={ domainName } domainData={ domainData } />
 			<DataViewsCard>
 				<DataViews< DomainForwardingType >
 					data={ filteredData || [] }
