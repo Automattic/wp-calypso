@@ -1,5 +1,6 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -12,6 +13,7 @@ import {
 	domainDnsRoute,
 	domainContactInfoRoute,
 	domainConnectionSetupRoute,
+	domainTransferSetupRoute,
 	domainTransferToAnyUserRoute,
 	domainTransferToOtherSiteRoute,
 	domainsContactInfoRoute,
@@ -99,8 +101,14 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 
+					const targetRoute =
+						domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER &&
+						config.isEnabled( 'domain-transfer-redesign' )
+							? domainTransferSetupRoute
+							: domainOverviewRoute;
+
 					router.navigate( {
-						to: domainOverviewRoute.fullPath,
+						to: targetRoute.fullPath,
 						params: {
 							domainName: domain.domain,
 						},
