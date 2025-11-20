@@ -34,21 +34,6 @@ interface EbanxTokenizeRequest {
 }
 
 /**
- * Raw API response from the EBANX tokenization endpoint
- */
-interface EbanxTokenizeApiResponse {
-	body: {
-		token: string; // EBANX payment token
-		payment_type_code: string; // Card type (e.g., 'visa', 'mastercard')
-	};
-	status: number; // HTTP status code
-	headers: {
-		'X-Request-ID': string; // Request tracking ID
-		Allow: string; // Allowed HTTP methods
-	};
-}
-
-/**
  * Normalized response for use in the application
  * This matches the structure expected by the payment processor
  */
@@ -110,23 +95,23 @@ export async function createEbanxTokenVgs(
 		} );
 
 		// Call the backend endpoint to tokenize with EBANX
-		const apiResponse: EbanxTokenizeApiResponse = await wpcom.req.post( {
-			path: '/transact/vgs/wpcom/ebanx/tokenize?test_mode=true',
+		const apiResponse = await wpcom.req.post( {
+			path: '/transact/vgs/wpcom/ebanx/tokenize',
 			apiNamespace: 'wpcom/v2',
 			body: requestPayload,
 		} );
 
 		debug( 'ebanx tokenization successful', {
-			hasToken: !! apiResponse.body.token,
-			paymentType: apiResponse.body.payment_type_code,
+			hasToken: !! apiResponse.token,
+			paymentType: apiResponse.payment_type_code,
 			status: apiResponse.status,
 		} );
 
 		// Normalize the response to match the expected structure
 		const normalizedResponse: EbanxTokenizeResponse = {
-			token: apiResponse.body.token,
+			token: apiResponse.token,
 			deviceId: undefined, // VGS flow doesn't provide deviceId
-			paymentTypeCode: apiResponse.body.payment_type_code,
+			paymentTypeCode: apiResponse.payment_type_code,
 		};
 
 		return normalizedResponse;

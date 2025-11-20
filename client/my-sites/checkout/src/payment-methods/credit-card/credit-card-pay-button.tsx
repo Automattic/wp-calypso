@@ -144,7 +144,7 @@ export default function CreditCardPayButton( {
 								const vgsTokens = await submitVgsForm();
 								onClick( {
 									...billingDetails,
-									paymentPartner: 'ebanx-vgs',
+									paymentPartner: 'ebanx',
 									vgsTokens,
 								} );
 							} catch ( error ) {

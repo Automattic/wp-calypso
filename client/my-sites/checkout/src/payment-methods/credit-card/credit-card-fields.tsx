@@ -160,7 +160,7 @@ export default function CreditCardFields( {
 							placeholders={ {
 								cardholderName: '',
 								cardNumber: __( '•••• •••• •••• ••••', 'calypso' ),
-								expiryDate: __( 'MM/YY', 'calypso' ),
+								expiryDate: __( 'MM / YY', 'calypso' ),
 								cvc: __( 'CVC', 'calypso' ),
 							} }
 							onVgsFormError={ setVgsFormError }

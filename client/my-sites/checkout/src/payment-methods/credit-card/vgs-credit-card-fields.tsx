@@ -230,6 +230,10 @@ export const VgsCreditCardFields = ( {
 							css={ fieldStyles }
 							name="card_exp"
 							placeholder={ placeholders.expiryDate || '' }
+							// This serializer converts MM/YY to MM/YYYY
+							serializers={ [
+								{ name: 'replace', options: { old: '(\\d{2}) \\/ (\\d{2})', new: '$1/20$2' } },
+							] }
 						/>
 						{ descriptions.expiryDate && (
 							<span style={ defaultDescriptionStyle }>{ descriptions.expiryDate }</span>
