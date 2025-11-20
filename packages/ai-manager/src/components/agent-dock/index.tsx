@@ -150,9 +150,9 @@ export default function AgentDock( {
 		// Fallback to localStorage
 		try {
 			const stored = localStorage.getItem( dockStateStorageKey );
-			return stored !== 'false'; // Default to docked
+			return stored === 'true'; // Default to undocked (floating)
 		} catch {
-			return true;
+			return false;
 		}
 	} );
 
