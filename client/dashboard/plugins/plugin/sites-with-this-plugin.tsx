@@ -62,8 +62,9 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				id: 'domain',
 				label: __( 'Site' ),
 				type: 'text',
-				getValue: ( { item }: { item: SiteWithPluginData } ) => item.URL,
-				render: ( { item }: { item: SiteWithPluginData } ) => item.URL,
+				getValue: ( { item }: { item: SiteWithPluginData } ) =>
+					item.URL.replace( 'https://', '' ).replace( 'http://', '' ),
+				render: ( { field, item } ) => field.getValue( { item } ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
