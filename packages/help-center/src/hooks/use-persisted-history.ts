@@ -1,10 +1,7 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
 import apiFetch from '@wordpress/api-fetch';
-import { useSelect } from '@wordpress/data';
 import { Action, Location } from 'history';
 import { useState, useEffect, useLayoutEffect } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { HELP_CENTER_STORE } from '../stores';
 export interface HistoryEvent {
 	action: Action;
 	location: Location;
@@ -16,11 +13,13 @@ export interface HistoryEvent {
  * It persists the history to the server using user preferences.
  */
 class MemoryHistory {
+	private persistenceKey: string;
 	private entries: Location[] = [];
 	private index: number = -1;
 	private listeners: ( ( event: HistoryEvent ) => void )[] = [];
 
 	constructor(
+		persistenceKey: string = 'help_center_router_history',
 		initialEntries: Location[] = [
 			{ pathname: '/', search: '', hash: '', key: 'default', state: null },
 		],
@@ -35,6 +34,7 @@ class MemoryHistory {
 		this.goForward = this.goForward.bind( this );
 		this.listen = this.listen.bind( this );
 		this.createLocation = this.createLocation.bind( this );
+		this.persistenceKey = persistenceKey;
 	}
 	get length(): number {
 		return this.entries.length;
@@ -125,7 +125,7 @@ class MemoryHistory {
 				method: 'PUT',
 				body: {
 					calypso_preferences: {
-						help_center_router_history: { entries: this.entries, index: this.index },
+						[ this.persistenceKey ]: { entries: this.entries, index: this.index },
 					},
 				},
 			} ).catch( () => {} );
@@ -135,23 +135,26 @@ class MemoryHistory {
 				path: '/help-center/open-state',
 				method: 'PUT',
 				data: {
-					help_center_router_history: { entries: this.entries, index: this.index },
+					[ this.persistenceKey ]: { entries: this.entries, index: this.index },
 				},
 			} as Parameters< typeof apiFetch >[ 0 ] ).catch( () => {} );
 		}
 	}
 }
 
-export const usePersistedHistory = () => {
-	const [ history, setHistory ] = useState< MemoryHistory >( new MemoryHistory() );
+type Props = {
+	routerHistory?: { entries: Location[]; index: number } | undefined;
+	persistenceKey?: string | undefined;
+};
+
+export const usePersistedHistory = ( { routerHistory, persistenceKey }: Props ) => {
+	const [ history, setHistory ] = useState< MemoryHistory >(
+		() => new MemoryHistory( persistenceKey )
+	);
 	const [ state, setState ] = useState< HistoryEvent >( {
 		action: history.action,
 		location: history.location,
 	} );
-	const persistedHistory = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getHelpCenterRouterHistory(),
-		[]
-	);
 
 	useLayoutEffect( () => {
 		return history.listen( setState );
@@ -162,8 +165,12 @@ export const usePersistedHistory = () => {
 		// Skip persisted history if help-center=happiness-engineer to allow escalation to live chat, otherwise the location is overwritten.
 		const helpCenterParam = urlParams.get( 'help-center' );
 
-		if ( persistedHistory && helpCenterParam !== 'happiness-engineer' ) {
-			const history = new MemoryHistory( persistedHistory.entries, persistedHistory.index );
+		if ( routerHistory && helpCenterParam !== 'happiness-engineer' ) {
+			const history = new MemoryHistory(
+				persistenceKey,
+				routerHistory.entries,
+				routerHistory.index
+			);
 			setHistory( history );
 
 			setState( {
@@ -171,7 +178,7 @@ export const usePersistedHistory = () => {
 				location: history.location,
 			} );
 		}
-	}, [ persistedHistory ] );
+	}, [ routerHistory, persistenceKey ] );
 
 	return { history, state };
 };

@@ -1,8 +1,9 @@
 import { apiFetch } from '@wordpress/data-controls';
+import { Location } from 'history';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { setAgentsManagerRouterHistory, setIsDocked, setIsOpen } from './actions';
-import type { APIFetchOptions, Location } from '../shared-types';
+import type { APIFetchOptions } from '../shared-types';
 
 type Preferences = {
 	calypso_preferences: {

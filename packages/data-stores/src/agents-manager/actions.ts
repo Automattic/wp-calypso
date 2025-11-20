@@ -1,21 +1,29 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
+import { Location } from 'history';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
-import type { APIFetchOptions, Location } from '../shared-types';
+import type { APIFetchOptions } from '../shared-types';
 
 /**
  * Save the open state of the agents manager to the remote user preferences.
  * @param isOpen - Whether the agents manager is open.
  * @param isDocked - Whether the agents manager is docked.
  */
-export const saveAgentsManagerState = (
+export function* saveAgentsManagerState(
 	isOpen: boolean | undefined,
 	isDocked: boolean | undefined
-) => {
+) {
 	const saveState: Record< string, boolean | null > = {};
 
 	if ( typeof isOpen === 'boolean' ) {
 		saveState.agents_manager_open = isOpen;
+
+		//TODO: Figure out the trigger to reset the chat on agents manager
+		// Help center resets when closing. But the agents manager might be different.
+		if ( ! isOpen ) {
+			saveState.agents_manager_router_history = null;
+			yield setAgentsManagerRouterHistory( undefined );
+		}
 	}
 
 	if ( typeof isDocked === 'boolean' ) {
@@ -39,7 +47,7 @@ export const saveAgentsManagerState = (
 			data: saveState,
 		} as APIFetchOptions ).catch( () => {} );
 	}
-};
+}
 
 export function setAgentsManagerRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
@@ -50,7 +58,7 @@ export function setAgentsManagerRouterHistory(
 	} as const;
 }
 
-export const setIsOpen = function* ( open: boolean, shouldSave: boolean = true ) {
+export function* setIsOpen( open: boolean, shouldSave: boolean = true ) {
 	if ( shouldSave ) {
 		yield saveAgentsManagerState( open, undefined );
 	}
@@ -59,9 +67,9 @@ export const setIsOpen = function* ( open: boolean, shouldSave: boolean = true )
 		type: 'AGENTS_MANAGER_SET_OPEN',
 		open,
 	} as const;
-};
+}
 
-export const setIsDocked = function* ( docked: boolean, shouldSave: boolean = true ) {
+export function* setIsDocked( docked: boolean, shouldSave: boolean = true ) {
 	if ( shouldSave ) {
 		yield saveAgentsManagerState( undefined, docked );
 	}
@@ -70,7 +78,7 @@ export const setIsDocked = function* ( docked: boolean, shouldSave: boolean = tr
 		type: 'AGENTS_MANAGER_SET_DOCKED',
 		docked,
 	} as const;
-};
+}
 
 export type AgentsManagerAction =
 	| ReturnType< typeof setAgentsManagerRouterHistory >

@@ -1,6 +1,6 @@
 import { combineReducers } from '@wordpress/data';
 import type { AgentsManagerAction } from './actions';
-import type { Location } from '../shared-types';
+import type { Location } from 'history';
 import type { Reducer } from 'redux';
 
 const isOpen: Reducer< boolean | undefined, AgentsManagerAction > = ( state, action ) => {
