@@ -1,9 +1,14 @@
 import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/constants';
+import { useQuery } from '@tanstack/react-query';
+import apiFetch from '@wordpress/api-fetch';
 import { useContext, createContext } from '@wordpress/element';
+import { addQueryArgs } from '@wordpress/url';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
 	newInteractionsBotSlug: string;
+	newInteractionsBotVersion?: string;
 	locale: string;
 	sectionName: string;
 	currentUser: CurrentUser;
@@ -14,6 +19,21 @@ export type HelpCenterRequiredInformation = {
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
 	isCommerceGarden: boolean;
+};
+
+const botSlugMap = {
+	control: {
+		slug: 'wpcom-support-chat',
+		version: undefined, // Get active version
+	},
+	new_workflow: {
+		slug: 'wpcom-workflow-support_chat',
+		version: undefined, // Get active version
+	},
+	updated_legacy: {
+		slug: 'wpcom-support-chat',
+		version: '20.8.2', // Legacy chain assistant with updated prompt
+	},
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -66,15 +86,54 @@ const defaultContext: HelpCenterRequiredInformation = {
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
 
+function useNewInteractionsBotConfig() {
+	const experimentName = 'wpcom_help_center_ai_workflow_and_prompt_changes';
+	const query = useQuery( {
+		queryKey: [ 'new-interactions-bot-slug', experimentName ],
+		staleTime: 1,
+		queryFn: () =>
+			canAccessWpcomApis()
+				? wpcomRequest< { variations: Record< string, string > } >( {
+						path: '/experiments/0.1.0/assignments/calypso',
+						apiNamespace: 'wpcom/v2',
+						query: {
+							experiment_name: experimentName,
+						},
+				  } )
+				: apiFetch< { variations: Record< string, string > } >( {
+						path: addQueryArgs( 'jetpack/v4/explat/assignments', {
+							experiment_name: experimentName,
+							platform: 'calypso',
+							as_connected_user: 'true',
+						} ),
+				  } ),
+	} );
+
+	if ( experimentName in ( query.data?.variations ?? {} ) ) {
+		const variant = query.data?.variations[ experimentName ] ?? 'control';
+		const botSlug = botSlugMap[ variant as keyof typeof botSlugMap ]?.slug;
+		const version = botSlugMap[ variant as keyof typeof botSlugMap ]?.version;
+
+		return {
+			newInteractionsBotSlug: botSlug,
+			newInteractionsBotVersion: version,
+		};
+	}
+
+	return {};
+}
+
 export const HelpCenterRequiredContextProvider: React.FC< {
 	children: JSX.Element;
 	value: Partial< HelpCenterRequiredInformation > &
 		Pick< HelpCenterRequiredInformation, 'currentUser' | 'sectionName' >;
 } > = function ( { children, value } ) {
+	const botConfig = useNewInteractionsBotConfig();
+
 	return (
 		<HelpCenterRequiredContext.Provider
 			value={ {
-				...Object.assign( defaultContext, value ),
+				...Object.assign( {}, defaultContext, botConfig, value ),
 			} }
 		>
 			{ children }

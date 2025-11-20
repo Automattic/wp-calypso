@@ -65,6 +65,7 @@ export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 
 export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	newInteractionsBotSlug,
+	newInteractionsBotVersion,
 	isUserEligibleForPaidSupport = true,
 	canConnectToZendesk = false,
 	isLoadingCanConnectToZendesk = false,
@@ -208,7 +209,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				setExperimentVariationName,
 				setMessageLikedStatus,
 				trackEvent,
-				version: overriddenVersion,
+				version: overriddenVersion || newInteractionsBotVersion,
 				forceEmailSupport,
 				isChatRestricted,
 			} }
