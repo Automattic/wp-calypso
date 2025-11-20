@@ -29,7 +29,6 @@ import type {
 	DeploymentRunWithDeploymentInfo,
 	CodeDeploymentData,
 } from '@automattic/api-core';
-import './style.scss';
 
 function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
@@ -176,7 +175,7 @@ function DeploymentsList() {
 				/>
 			}
 		>
-			<DataViewsCard className="dashboard-site-deployments-list">
+			<DataViewsCard>
 				<DataViews
 					actions={ [
 						{
