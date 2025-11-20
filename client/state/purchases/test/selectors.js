@@ -231,6 +231,8 @@ describe( 'selectors', () => {
 							is_domain_registration: 'true',
 							product_slug: 'dotlive_domain',
 							subsciption_status: 'active',
+							cost_to_unbundle_display: '$500.00',
+							price_text: '$500.00',
 						},
 						{
 							ID: '82867',
@@ -315,6 +317,7 @@ describe( 'selectors', () => {
 							blog_id: '123',
 							product_slug: 'domain_transfer',
 							subsciption_status: 'active',
+							cost_to_unbundle_display: '$15',
 						},
 						{
 							ID: '82867',

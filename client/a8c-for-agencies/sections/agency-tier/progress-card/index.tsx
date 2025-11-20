@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/ui';
 import {
 	Card,
 	CardBody,
@@ -50,9 +51,15 @@ export default function AgencyTierProgressCard( {
 							{ __( 'Your agency tier and benefits' ) }
 						</Heading>
 						<VStack spacing={ 3 }>
+							{ isEarlyAccess && (
+								<Badge
+									style={ { width: 'fit-content' } }
+									intent="default"
+									children={ __( 'Early access' ) }
+								/>
+							) }
 							<Heading level={ 3 } weight={ 500 }>
 								{ currentTier.name }
-								{ isEarlyAccess && ` (${ __( 'Early access' ) })` }
 							</Heading>
 							<Text color="#757575">
 								{ isEarlyAccess

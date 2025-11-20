@@ -3,6 +3,7 @@ import { captureException } from '@automattic/calypso-sentry';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
 import { isDefaultLocale, getLanguage } from '@automattic/i18n-utils';
 import { setLocale as setLocaleNumberFormatters } from '@automattic/number-formatters';
+import { defaultI18n } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
@@ -370,6 +371,7 @@ export default async function switchLocale( localeSlug ) {
 			}
 
 			i18n.setLocale( locale );
+			defaultI18n.setLocaleData( i18n.getLocale() );
 			setLocaleInDOM();
 			removeRequireChunkTranslationsHandler();
 			addRequireChunkTranslationsHandler( localeSlug, { translatedChunks } );
@@ -423,28 +425,27 @@ export default async function switchLocale( localeSlug ) {
 			debug( error );
 		}
 	} else {
-		getLanguageFile( localeSlug ).then(
-			// Success.
-			( body ) => {
-				if ( body ) {
-					// Handle race condition when we're requested to switch to a different
-					// locale while we're in the middle of request, we should abandon result
-					if ( localeSlug !== lastRequestedLocale ) {
-						return;
-					}
-
-					i18n.setLocale( body );
-					setLocaleInDOM();
-					loadUserUndeployedTranslations( localeSlug );
-				}
-			},
-			// Failure.
-			() => {
-				debug(
-					`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`
-				);
+		try {
+			const body = await getLanguageFile( localeSlug );
+			if ( ! body ) {
+				return;
 			}
-		);
+
+			// Handle race condition when we're requested to switch to a different
+			// locale while we're in the middle of request, we should abandon result
+			if ( localeSlug !== lastRequestedLocale ) {
+				return;
+			}
+
+			i18n.setLocale( body );
+			defaultI18n.setLocaleData( i18n.getLocale() );
+			setLocaleInDOM();
+			loadUserUndeployedTranslations( localeSlug );
+		} catch ( error ) {
+			debug(
+				`Encountered an error ${ error } loading locale file for ${ localeSlug }. Falling back to English.`
+			);
+		}
 	}
 }
 

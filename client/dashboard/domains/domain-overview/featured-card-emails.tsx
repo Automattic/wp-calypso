@@ -5,7 +5,7 @@ import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
-import { emailsRoute } from '../../app/router/emails';
+import { emailsRoute, chooseEmailSolutionRoute } from '../../app/router/emails';
 import OverviewCard from '../../components/overview-card';
 import { Truncate } from '../../components/truncate';
 import type { EmailProvider, Mailbox } from '@automattic/api-core';
@@ -70,10 +70,15 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 				</Truncate>
 			}
 			link={
-				router.buildLocation( {
-					to: emailsRoute.fullPath,
-					search: { domainName: domain.domain },
-				} ).href
+				mailboxes.length > 0
+					? router.buildLocation( {
+							to: emailsRoute.fullPath,
+							search: { domainName: domain.domain },
+					  } ).href
+					: router.buildLocation( {
+							to: chooseEmailSolutionRoute.fullPath,
+							params: { domain: domain.domain },
+					  } ).href
 			}
 			icon={ <Icon icon={ envelope } /> }
 			description={ getDescription( mailboxes ) }

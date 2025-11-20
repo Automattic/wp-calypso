@@ -1,5 +1,8 @@
+import { queryClient } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
+import { useAppContext } from '../../app/context';
 import SiteIcon from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
@@ -20,10 +23,11 @@ import {
 	URL,
 	Uptime,
 } from '../site-fields';
+import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
-function getDefaultFields(): Field< Site >[] {
+function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 	return [
 		{
 			id: 'name',
@@ -62,6 +66,29 @@ function getDefaultFields(): Field< Site >[] {
 			label: __( 'Plan' ),
 			getValue: ( { item } ) => getSitePlanDisplayName( item ) ?? '',
 			render: ( { item } ) => <Plan site={ item } />,
+			getElements: async () => {
+				const { plan = [] } = await queryClient.fetchQuery( {
+					...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
+					staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
+				} );
+
+				// A plan may have different product_slugs due to the period.
+				// However, a filter can only represent one value.
+				// As a result, it seems better to use the name as value for filters.
+				return Array.from( new Set( plan.map( ( plan ) => plan.name ) ) ).map( ( name ) => ( {
+					label: name,
+					value: name,
+				} ) );
+			},
+			filterBy: {
+				operators: [ 'isAny' ],
+			},
+			sort: ( a, b, direction ) => {
+				const planA = getSitePlanDisplayName( a ) ?? '';
+				const planB = getSitePlanDisplayName( b ) ?? '';
+
+				return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
+			},
 		},
 		{
 			id: 'status',
@@ -153,27 +180,31 @@ function getDefaultFields(): Field< Site >[] {
 	];
 }
 
-export function getFields( {
+export function useFields( {
 	isAutomattician,
 	viewType,
 }: {
 	isAutomattician?: boolean;
 	viewType?: string;
 } ) {
-	const defaultFields = getDefaultFields();
-	return defaultFields.filter( ( field ) => {
-		if ( field.id === 'is_a8c' && ! isAutomattician ) {
-			return false;
-		}
+	const { queries } = useAppContext();
 
-		if ( field.id === 'icon.ico' && viewType === 'grid' ) {
-			return false;
-		}
+	return useMemo( () => {
+		const defaultFields = getDefaultFields( queries );
+		return defaultFields.filter( ( field ) => {
+			if ( field.id === 'is_a8c' && ! isAutomattician ) {
+				return false;
+			}
 
-		if ( field.id === 'preview' && viewType === 'table' ) {
-			return false;
-		}
+			if ( field.id === 'icon.ico' && viewType === 'grid' ) {
+				return false;
+			}
 
-		return true;
-	} );
+			if ( field.id === 'preview' && viewType === 'table' ) {
+				return false;
+			}
+
+			return true;
+		} );
+	}, [ isAutomattician, viewType, queries ] );
 }

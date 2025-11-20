@@ -10,6 +10,14 @@ import type { Purchase } from '@automattic/api-core';
  * Used to determine if we should render RenewNoticeAction.
  */
 export function shouldShowRenewNoticeAction( purchase: Purchase ): boolean {
+	// If the purchase is fully removed, do not show any actions. Such a
+	// subscription cannot be renewed; it would have to be purchased again.
+	// However, a purchase can be expired without being removed, and those
+	// purchases can be renewed so we want to allow that case.
+	if ( purchase.subscription_status !== 'active' ) {
+		return false;
+	}
+
 	const shouldAddPaymentSourceInsteadOfRenewingNow =
 		isCloseToExpiration( purchase ) ||
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD;

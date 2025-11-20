@@ -1,7 +1,17 @@
-import { sitesQuery, dashboardSiteListQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
+/* eslint-disable no-restricted-imports */
+import {
+	sitesQuery,
+	dashboardSiteListQuery,
+	dashboardSiteFiltersQuery,
+} from '@automattic/api-queries';
+/* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import Logo from './logo';
-import type { FetchSitesOptions } from '@automattic/api-core';
+import type {
+	FetchSitesOptions,
+	FetchDashboardSiteListParams,
+	FetchDashboardSiteFiltersParams,
+} from '@automattic/api-core';
 import './style.scss';
 
 boot( {
@@ -47,6 +57,9 @@ boot( {
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteListQuery,
+		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
+			dashboardSiteListQuery( 'all', fetchDashboardSiteListParams ),
+		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
+			dashboardSiteFiltersQuery( 'all', fields ),
 	},
 } );

@@ -1,11 +1,14 @@
 import {
+	type BulkDomainsAction,
+	bulkDomainsAction,
 	fetchAvailableTlds,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
 	type DomainSuggestionQuery,
 } from '@automattic/api-core';
 import { fetchDomains } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
 
 export const domainsQuery = () =>
 	queryOptions( {
@@ -36,4 +39,15 @@ export const availableTldsQuery = ( query?: string, vendor?: string ) =>
 	queryOptions( {
 		queryKey: [ 'available-tlds', query, vendor ],
 		queryFn: () => fetchAvailableTlds( query, vendor ),
+	} );
+
+export const bulkDomainsActionMutation = () =>
+	mutationOptions( {
+		mutationFn: ( action: BulkDomainsAction ) => bulkDomainsAction( action ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: domainsQuery().queryKey,
+				exact: true,
+			} );
+		},
 	} );

@@ -656,7 +656,10 @@ export default connect(
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: false,
-				...( shouldUseMagicCode( { isJetpack: ownProps.isJetpack } ) && { tokenType: 'code' } ),
+				...( shouldUseMagicCode( {
+					isWooJPC: stateProps.isWooJPC,
+					isJetpack: ownProps.isJetpack,
+				} ) && { tokenType: 'code' } ),
 				source: stateProps.isWooJPC ? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' ) : '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
