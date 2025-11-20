@@ -10,7 +10,7 @@ export function AddDomainButton( {
 	siteSlug?: string;
 	domainConnectionSetupUrl?: string;
 } ) {
-	const onSearchClick = () => {
+	const buildQueryArgs = () => {
 		const queryArgs: Record< string, string > = {};
 		if ( siteSlug ) {
 			queryArgs.siteSlug = siteSlug;
@@ -18,23 +18,19 @@ export function AddDomainButton( {
 		if ( domainConnectionSetupUrl ) {
 			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
 		}
-		window.location.href = siteSlug ? addQueryArgs( '/setup/domain', queryArgs ) : '/start/domain';
+		return queryArgs;
+	};
+
+	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
+		const queryArgs = buildQueryArgs();
+		window.location.href = siteSlug ? addQueryArgs( urlWithSite, queryArgs ) : urlWithoutSite;
 		return false;
 	};
 
-	const onTransferOrConnectClick = () => {
-		const queryArgs: Record< string, string > = {};
-		if ( siteSlug ) {
-			queryArgs.siteSlug = siteSlug;
-		}
-		if ( domainConnectionSetupUrl ) {
-			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
-		}
-		window.location.href = siteSlug
-			? addQueryArgs( '/setup/domain/use-my-domain', queryArgs )
-			: '/setup/domain-transfer';
-		return false;
-	};
+	const onSearchClick = () => navigateTo( '/setup/domain', '/start/domain' );
+
+	const onTransferOrConnectClick = () =>
+		navigateTo( '/setup/domain/use-my-domain', '/setup/domain-transfer' );
 
 	return (
 		<Dropdown
