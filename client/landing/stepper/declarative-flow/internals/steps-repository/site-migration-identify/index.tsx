@@ -108,7 +108,7 @@ export const Analyzer: FC< Props > = ( {
 					skipInitialChecking
 					onDontHaveSiteAddressClick={ onSkip }
 					placeholder={ translate( 'mygreatnewblog.com' ) }
-					label={ translate( 'Enter your site address:' ) }
+					label={ translate( 'Site address' ) }
 					dontHaveSiteAddressLabel={ translate(
 						'Or <button>pick your current platform from a list</button>'
 					) }

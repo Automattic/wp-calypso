@@ -24,6 +24,10 @@ interface OneLoginLayoutProps {
 	loginUrl?: string;
 	isLostPasswordView?: boolean;
 	noThanksRedirectUrl?: string;
+	/**
+	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
+	 */
+	columnWidth?: 4 | 5 | 6 | 8 | 10;
 }
 
 const OneLoginLayout = ( {
@@ -34,6 +38,7 @@ const OneLoginLayout = ( {
 	loginUrl,
 	isLostPasswordView,
 	noThanksRedirectUrl,
+	columnWidth,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const urlLocale = useLocale();
@@ -116,8 +121,14 @@ const OneLoginLayout = ( {
 		return <Step.TopBar rightElement={ rightElement } compactLogo="always" />;
 	};
 
+	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;
+
 	return (
-		<Step.CenteredColumnLayout columnWidth={ 6 } topBar={ topBar() } verticalAlign="center">
+		<Step.CenteredColumnLayout
+			columnWidth={ effectiveColumnWidth }
+			topBar={ topBar() }
+			verticalAlign="center"
+		>
 			<div className="wp-login__one-login-layout-content-wrapper">
 				<div className="wp-login__one-login-layout-heading">
 					<HeadingLogo isJetpack={ isJetpack } />

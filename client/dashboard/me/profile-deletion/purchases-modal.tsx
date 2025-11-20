@@ -30,10 +30,10 @@ export default function PurchasesModal( { onClose }: PurchasesModalProps ) {
 					) }
 				</Text>
 				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" onClick={ onClose }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 						{ __( 'Back' ) }
 					</Button>
-					<RouterLinkButton variant="primary" to={ purchasesRoute.fullPath }>
+					<RouterLinkButton __next40pxDefaultSize variant="primary" to={ purchasesRoute.fullPath }>
 						{ __( 'Manage purchases' ) }
 					</RouterLinkButton>
 				</ButtonStack>

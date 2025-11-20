@@ -20,7 +20,7 @@ export type DomainMappingStatus = {
 	resolves_to_wpcom: boolean;
 	host_ip_addresses: string[];
 	name_servers: string[];
-	mode: DomainConnectionSetupModeValue;
+	mode: DomainConnectionSetupModeValue | null;
 };
 
 export type DomainMappingSetupInfo = {
@@ -31,4 +31,8 @@ export type DomainMappingSetupInfo = {
 	wpcom_name_servers: string[];
 	is_subdomain: boolean;
 	root_domain: string;
+	registrar_url: string | null;
+	registrar: string | null;
+	registrar_iana_id: string | null;
+	reseller: string | null;
 };

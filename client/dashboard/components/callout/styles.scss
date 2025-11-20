@@ -15,15 +15,23 @@
 		}
 
 		.dashboard-callout__content {
-			padding: $grid-unit-30;
+			padding: $grid-unit-20;
+
+			@include break-medium {
+				padding: $grid-unit-30;
+			}
 		}
 	}
 }
 
 .dashboard-callout__h-container {
-	padding: $grid-unit-30;
+	padding: $grid-unit-20;
 	@include body-medium;
 	color: $gray-700;
+
+	@include break-medium {
+		padding: $grid-unit-30;
+	}
 
 	> * {
 		flex: 1 0;

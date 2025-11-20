@@ -55,3 +55,134 @@ For legacy tests (`*.ts` without `.spec.`), use the Jest runner:
 ```bash
 yarn test specs/path/to/test.ts
 ```
+
+## Migration Quick Reference
+
+### File Structure Changes
+
+**Legacy**: `specs/feature/test-name.ts`
+**New**: `specs/feature/test-name.spec.ts`
+
+### Import Changes
+
+```typescript
+// Legacy
+import { DataHelper, LoginPage, TestAccount } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
+declare const browser: Browser;
+
+// New
+import { tags, test, expect } from '../../lib/pw-base';
+```
+
+### Test Structure Changes
+
+```typescript
+// Legacy
+describe( DataHelper.createSuiteTitle( 'Test Suite' ), function () {
+  let page: Page;
+
+  beforeAll( async () => {
+    page = await browser.newPage();
+  } );
+
+  it( 'Step 1', async function () {
+    // test code
+  } );
+
+  afterAll( async () => {
+    await page.close();
+  } );
+} );
+
+// New
+test.describe( 'Test Suite', { tag: [ tags.TAG_NAME ] }, () => {
+  test( 'As a user, I can do something', async ( { page } ) => {
+    await test.step( 'Given precondition', async function () {
+      // test code
+    } );
+  } );
+} );
+```
+
+### Authentication Changes
+
+```typescript
+// Legacy
+const testAccount = new TestAccount( 'accountName' );
+await testAccount.authenticate( page );
+
+// New - use fixtures
+test( 'Test', async ( { accountDefaultUser, page } ) => {
+  await test.step( 'Given I am authenticated', async function () {
+    await accountDefaultUser.authenticate( page );
+  } );
+} );
+```
+
+### Page Objects & Components
+
+```typescript
+// Legacy
+const loginPage = new LoginPage( page );
+const sidebar = new SidebarComponent( page );
+
+// New - use fixtures
+test( 'Test', async ( { pageLogin, componentSidebar } ) => {
+  await pageLogin.visit();
+  await componentSidebar.navigate( 'Menu', 'Item' );
+} );
+```
+
+### Available Fixtures
+
+**Accounts**: `accountDefaultUser`, `accountGivenByEnvironment`, `accountAtomic`, `accountGutenbergSimple`, `accounti18n`, `accountPreRelease`, `accountSimpleSiteFreePlan`, `accountSMS`
+
+**Pages/Components**: Follow naming conventions:
+- `page*` - Pages (e.g., `pageLogin`, `pageEditor`, `pagePeople`)
+- `component*` - Components (e.g., `componentSidebar`, `componentGutenberg`)
+- `flow*` - Flows (e.g., `flowStartWriting`)
+
+**Clients**: `clientEmail`, `clientRestAPI`
+
+**Other**: `secrets`, `environment`, `pageIncognito`, `sitePublic`
+
+### Given/When/Then Pattern
+
+Use `test.step()` with descriptive names:
+- **Given**: Preconditions
+- **When**: Actions
+- **Then**: Assertions
+- **And**: Continuation
+
+```typescript
+await test.step( 'Given I am on the login page', async function () {} );
+await test.step( 'When I enter credentials', async function () {} );
+await test.step( 'Then I am logged in', async function () {} );
+```
+
+### Skip Conditions
+
+```typescript
+// Legacy
+skipDescribeIf( condition )( 'Suite', function () {} );
+
+// New
+test( 'Test', async ( { environment } ) => {
+  test.skip( environment.TEST_ON_ATOMIC, 'Reason' );
+} );
+```
+
+### Multiple Contexts
+
+```typescript
+// Legacy
+const newContext = await browser.newContext();
+const newPage = await newContext.newPage();
+
+// New
+test( 'Test', async ( { page, pageIncognito } ) => {
+  // page = authenticated context
+  // pageIncognito = unauthenticated context
+} );
+```

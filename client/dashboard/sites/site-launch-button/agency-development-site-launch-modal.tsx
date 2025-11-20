@@ -25,10 +25,20 @@ export default function AgencyDevelopmentSiteLaunchModal( {
 					{ __( 'After launch, we’ll bill your agency in the next billing cycle.' ) }
 				</Text>
 				<ButtonStack justify="flex-end">
-					<Button disabled={ isLaunching } onClick={ onClose }>
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						disabled={ isLaunching }
+						onClick={ onClose }
+					>
 						{ __( 'Cancel' ) }
 					</Button>
-					<Button variant="primary" isBusy={ isLaunching } onClick={ onLaunch }>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						isBusy={ isLaunching }
+						onClick={ onLaunch }
+					>
 						{ __( 'Launch site' ) }
 					</Button>
 				</ButtonStack>

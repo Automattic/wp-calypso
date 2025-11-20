@@ -151,7 +151,7 @@ function SiteOverviewSecondaryCards( {
 					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 						<>
 							<DIFMUpsellCard site={ site } />
-							<DomainsCard site={ site } isCompact={ isSmallViewport } />
+							<DomainsCard site={ site } />
 						</>
 					) }
 				</VStack>
@@ -208,7 +208,9 @@ function SiteOverview( {
 				>
 					{ __( 'WP Admin' ) }
 				</Button>
-				<SiteActionMenu site={ site } />
+				<PageHeader.ActionMenu>
+					<SiteActionMenu site={ site } />
+				</PageHeader.ActionMenu>
 			</>
 		);
 	};

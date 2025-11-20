@@ -14,7 +14,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isHolidaySnowAvailable } from './utils';
 import type { SiteSettings } from '@automattic/api-core';
-import type { Field, SimpleFormField } from '@wordpress/dataviews';
+import type { Field, FormField } from '@wordpress/dataviews';
 
 const fields: Field< SiteSettings >[] = [
 	{
@@ -38,7 +38,7 @@ const fields: Field< SiteSettings >[] = [
 
 const form = {
 	layout: { type: 'regular' as const },
-	fields: [ { id: 'jetpack_holiday_snow_enabled' } as SimpleFormField ],
+	fields: [ { id: 'jetpack_holiday_snow_enabled' } as FormField ],
 };
 
 export default function HolidaySnowSettings( { siteSlug }: { siteSlug: string } ) {

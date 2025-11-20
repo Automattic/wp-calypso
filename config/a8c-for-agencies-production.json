@@ -42,7 +42,8 @@
 		"a4a-bd-checkout": false,
 		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
-		"upgrades/redirect-payments": true
+		"upgrades/redirect-payments": true,
+		"tiers-revamp": true
 	},
 	"enable_all_sections": false,
 	"sections": {

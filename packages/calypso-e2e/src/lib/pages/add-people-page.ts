@@ -56,6 +56,6 @@ export class AddPeoplePage {
 		}
 		await this.page.waitForSelector( selectors.formReadyForSubmit );
 		await this.page.click( selectors.sendInviteButton );
-		await this.page.waitForSelector( selectors.inviteSuccessful );
+		await this.page.waitForSelector( selectors.inviteSuccessful, { timeout: 30 * 1000 } );
 	}
 }

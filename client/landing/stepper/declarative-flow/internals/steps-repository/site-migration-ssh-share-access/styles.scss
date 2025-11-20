@@ -123,6 +123,9 @@
 
 .migration-site-ssh__no-ssh-link {
 	text-decoration: none !important;
+	.components-spinner {
+		margin-top: 0;
+	}
 }
 
 .migration-site-ssh__help-link {
@@ -236,7 +239,6 @@
 		right: 0.5rem;
 		padding: 0.25rem;
 		background: transparent;
-		border: none;
 		box-shadow: none;
 
 		&:hover,
@@ -245,6 +247,10 @@
 			background: transparent;
 			border: none;
 			box-shadow: none;
+		}
+
+		&.button.is-transparent {
+			border: none;
 		}
 	}
 

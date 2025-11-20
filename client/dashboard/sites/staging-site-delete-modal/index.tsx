@@ -76,10 +76,16 @@ export default function StagingSiteDeleteModal( {
 					) }
 				</Text>
 				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onClose }>
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						disabled={ mutation.isPending }
+						onClick={ onClose }
+					>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
 						isDestructive
 						isBusy={ mutation.isPending }

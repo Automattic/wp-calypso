@@ -136,13 +136,11 @@ export default function SecurityKeys() {
 					isBrowserSupported
 						? createInterpolateElement(
 								__(
-									'Security keys offer a more robust form of two-step authentication. Your security key may be a physical device, or you can use passkey support built into your browser. <learnMoreLink>Learn more</learnMoreLink>'
+									'Security keys offer a more robust form of two-step authentication. Your security key may be a physical device, or you can use passkey support built into your browser. <learnMoreLink />'
 								),
 								{
 									learnMoreLink: (
-										<InlineSupportLink supportContext="two-step-authentication-security-key">
-											{ __( 'Learn more' ) }
-										</InlineSupportLink>
+										<InlineSupportLink supportContext="two-step-authentication-security-key" />
 									),
 								}
 						  )

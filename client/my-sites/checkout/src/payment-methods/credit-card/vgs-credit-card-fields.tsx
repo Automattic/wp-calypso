@@ -40,16 +40,48 @@ const VGSCollectFieldStyles: VGS.Css = {
 	},
 };
 
+interface VgsCreditCardFieldsStyles {
+	container?: React.CSSProperties;
+	fieldWrapper?: React.CSSProperties;
+	label?: React.CSSProperties;
+	input?: VGS.Css;
+	futureChargeNotice?: React.CSSProperties;
+}
+
 interface VgsCreditCardFieldsProps {
-	styles?: Record< string, unknown > | null;
+	styles?: VgsCreditCardFieldsStyles;
 	showFutureChargeNotice?: boolean;
 	onVgsFormError?: ( error: string | null ) => void;
+	labels?: {
+		cardholderName?: string;
+		cardNumber?: string;
+		expiryDate?: string;
+		cvc?: string;
+		futureChargeNotice?: string;
+	};
+	placeholders?: {
+		cardholderName?: string;
+		cardNumber?: string;
+		expiryDate?: string;
+		cvc?: string;
+	};
+	descriptions?: {
+		cardholderName?: string;
+		cardNumber?: string;
+		expiryDate?: string;
+		cvc?: string;
+	};
+	fieldSpacing?: string;
 }
 
 export const VgsCreditCardFields = ( {
-	styles = null,
-	showFutureChargeNotice = true,
+	styles = {},
+	showFutureChargeNotice = false,
 	onVgsFormError,
+	labels = {},
+	placeholders = {},
+	descriptions = {},
+	fieldSpacing = '1rem',
 }: VgsCreditCardFieldsProps ) => {
 	const hasRun = useRef( false );
 	const [ isVGSCollectScriptLoaded, setCollectScriptLoaded ] = useState( false );
@@ -92,13 +124,45 @@ export const VgsCreditCardFields = ( {
 		}
 	}, [ vaultError, onVgsFormError ] );
 
-	// Apply custom styles if provided
+	// Default styles with ability to override
+	const defaultLabelStyle: React.CSSProperties = {
+		display: 'block',
+		marginBottom: '0.5rem',
+		fontSize: '14px',
+		fontWeight: 500,
+		color: '#50575e',
+		...styles?.label,
+	};
+
+	const defaultDescriptionStyle: React.CSSProperties = {
+		display: 'block',
+		marginTop: '0.5rem',
+		fontSize: '14px',
+		fontStyle: 'italic',
+		color: '#646970',
+		lineHeight: '1.4',
+	};
+
+	const defaultFieldWrapperStyle: React.CSSProperties = {
+		marginBottom: fieldSpacing,
+		...styles?.fieldWrapper,
+	};
+
 	const fieldStyles = styles?.input
 		? {
 				...VGSCollectFieldStyles,
 				...styles.input,
 		  }
 		: VGSCollectFieldStyles;
+
+	// Expiry and CVC are always on the same line since they're short fields
+	const expirySecurityContainerStyle: React.CSSProperties = {
+		display: 'flex',
+		gap: fieldSpacing,
+		marginBottom: fieldSpacing,
+	};
+
+	const expirySecurityFieldStyle: React.CSSProperties = { flex: '1' };
 
 	// Show error state - this will trigger fallback to existing form
 	if ( initializationError ) {
@@ -110,7 +174,7 @@ export const VgsCreditCardFields = ( {
 	// Show loading state
 	if ( ! isVGSCollectScriptLoaded || ! vaultConfig ) {
 		return (
-			<div className="vgs-credit-card-fields">
+			<div className="vgs-credit-card-fields" style={ styles?.container }>
 				<div className="vgs-loading" style={ { padding: '1rem', textAlign: 'center' } }>
 					{ __( 'Loading payment form', 'calypso' ) + '...' }
 				</div>
@@ -119,120 +183,89 @@ export const VgsCreditCardFields = ( {
 	}
 
 	return (
-		<div className="vgs-credit-card-fields">
+		<div className="vgs-credit-card-fields" style={ styles?.container }>
 			<VGSCollectForm
 				vaultId={ vaultConfig.vault_id as string }
 				environment={ vaultConfig.environment as VGSCollectVaultEnvironment }
 			>
-				<div className="vgs-field-wrapper" style={ { marginBottom: '1rem' } }>
-					<label
-						htmlFor="card_holder"
-						style={ {
-							display: 'block',
-							marginBottom: '0.5rem',
-							fontSize: '14px',
-							fontWeight: 500,
-							color: '#1e1e1e',
-						} }
-					>
-						{ __( 'Cardholder name', 'calypso' ) }
+				<div className="vgs-field-wrapper" style={ defaultFieldWrapperStyle }>
+					<label htmlFor="card_holder" style={ defaultLabelStyle }>
+						{ labels.cardholderName || '' }
 					</label>
 					<CardholderField
 						validations={ [ 'required' ] }
 						css={ fieldStyles }
 						name="card_holder"
-						placeholder={ __( "Enter your name as it's written on the card", 'calypso' ) }
+						placeholder={ placeholders.cardholderName || '' }
 					/>
+					{ descriptions.cardholderName && (
+						<span style={ defaultDescriptionStyle }>{ descriptions.cardholderName }</span>
+					) }
 				</div>
 
-				<div className="vgs-field-wrapper" style={ { marginBottom: '1rem' } }>
-					<label
-						htmlFor="card_number"
-						style={ {
-							display: 'block',
-							marginBottom: '0.5rem',
-							fontSize: '14px',
-							fontWeight: 500,
-							color: '#1e1e1e',
-						} }
-					>
-						{ __( 'Card number', 'calypso' ) }
+				<div className="vgs-field-wrapper" style={ defaultFieldWrapperStyle }>
+					<label htmlFor="card_number" style={ defaultLabelStyle }>
+						{ labels.cardNumber || '' }
 					</label>
 					<CardNumberField
 						validations={ [ 'required', 'validCardNumber' ] }
-						showCardIcon={ {
-							right: '1rem',
-						} }
+						showCardIcon={ false }
 						name="card_number"
 						css={ fieldStyles }
-						placeholder={ __( '1234 5678 9012 3456', 'calypso' ) }
+						placeholder={ placeholders.cardNumber || '' }
 					/>
+					{ descriptions.cardNumber && (
+						<span style={ defaultDescriptionStyle }>{ descriptions.cardNumber }</span>
+					) }
 				</div>
 
-				<div style={ { display: 'flex', gap: '1rem', marginBottom: '1rem' } }>
-					<div className="vgs-field-wrapper" style={ { flex: '1' } }>
-						<label
-							htmlFor="card_exp"
-							style={ {
-								display: 'block',
-								marginBottom: '0.5rem',
-								fontSize: '14px',
-								fontWeight: 500,
-								color: '#1e1e1e',
-							} }
-						>
-							{ __( 'Expiry date', 'calypso' ) }
+				<div style={ expirySecurityContainerStyle }>
+					<div className="vgs-field-wrapper" style={ expirySecurityFieldStyle }>
+						<label htmlFor="card_exp" style={ defaultLabelStyle }>
+							{ labels.expiryDate || '' }
 						</label>
 						<CardExpirationDateField
 							validations={ [ 'required', 'validCardExpirationDate' ] }
 							yearLength={ 2 }
 							css={ fieldStyles }
 							name="card_exp"
-							placeholder={ __( 'MM/YY', 'calypso' ) }
+							placeholder={ placeholders.expiryDate || '' }
 						/>
+						{ descriptions.expiryDate && (
+							<span style={ defaultDescriptionStyle }>{ descriptions.expiryDate }</span>
+						) }
 					</div>
 
-					<div className="vgs-field-wrapper" style={ { flex: '1' } }>
-						<label
-							htmlFor="card_cvc"
-							style={ {
-								display: 'block',
-								marginBottom: '0.5rem',
-								fontSize: '14px',
-								fontWeight: 500,
-								color: '#1e1e1e',
-							} }
-						>
-							{ __( 'CVC', 'calypso' ) }
+					<div className="vgs-field-wrapper" style={ expirySecurityFieldStyle }>
+						<label htmlFor="card_cvc" style={ defaultLabelStyle }>
+							{ labels.cvc || '' }
 						</label>
 						<CardSecurityCodeField
 							name="card_cvc"
 							validations={ [ 'required', 'validCardSecurityCode' ] }
 							css={ fieldStyles }
-							showCardIcon={ {
-								right: '1rem',
-							} }
-							placeholder={ __( '123', 'calypso' ) }
+							placeholder={ placeholders.cvc || '' }
 						/>
+						{ descriptions.cvc && (
+							<span style={ defaultDescriptionStyle }>{ descriptions.cvc }</span>
+						) }
 					</div>
 				</div>
 			</VGSCollectForm>
 
-			{ showFutureChargeNotice && (
+			{ showFutureChargeNotice && labels.futureChargeNotice && (
 				<span
 					className="future-use-text"
 					data-testid="future-use-text"
 					style={ {
 						display: 'block',
-						marginTop: '1rem',
+						marginTop: fieldSpacing,
 						fontSize: '14px',
 						color: '#646970',
+						...styles?.futureChargeNotice,
 					} }
 				>
-					{ __(
-						'By providing your card information, you allow your card be charged for future payments.',
-						'calypso'
-					) }
+					{ labels.futureChargeNotice }
 				</span>
 			) }
 		</div>

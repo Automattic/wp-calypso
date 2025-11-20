@@ -21,6 +21,14 @@ export default function FeaturedCardRenew( { domain }: Props ) {
 		return null;
 	}
 
+	let intent: 'error' | 'success' | 'warning' | 'upsell' = 'warning';
+
+	if ( domain.expired ) {
+		intent = 'error';
+	} else if ( domain.auto_renewing ) {
+		intent = 'success';
+	}
+
 	const formattedDate = formatDate( new Date( date ), locale, {
 		day: 'numeric',
 		month: 'long',
@@ -41,6 +49,7 @@ export default function FeaturedCardRenew( { domain }: Props ) {
 			description={
 				domain.auto_renewing ? __( 'Auto-renew is enabled.' ) : __( 'Auto-renew is disabled.' )
 			}
+			intent={ intent }
 		/>
 	);
 }

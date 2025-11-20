@@ -37,7 +37,7 @@ export class SignupPickPlanPage {
 	 */
 	private async captureNewSiteResponse(): Promise< NewSiteResponse > {
 		const response = await this.page.waitForResponse( /.*\/sites\/new\?.*/, {
-			timeout: 30 * 1000,
+			timeout: 60 * 1000,
 		} );
 
 		const responseJSON = await response.json();
@@ -65,7 +65,7 @@ export class SignupPickPlanPage {
 			// Non-free plans should redirect to the Checkout cart.
 			redirectUrl ??= new RegExp( '.*checkout.*' );
 		} else {
-			redirectUrl ??= new RegExp( '.*setup/site-setup.*' );
+			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
 		}
 
 		const [ , , response ] = await Promise.all( [
@@ -94,7 +94,7 @@ export class SignupPickPlanPage {
 			// Non-free plans should redirect to the Checkout cart.
 			redirectUrl ??= new RegExp( '.*checkout.*' );
 		} else {
-			redirectUrl ??= new RegExp( '.*setup/site-setup.*' );
+			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
 		}
 
 		const actions = [

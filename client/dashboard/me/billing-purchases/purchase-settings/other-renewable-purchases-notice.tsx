@@ -32,6 +32,9 @@ export function shouldShowOtherRenewablePurchasesNotice(
 	if ( ! purchase.site_slug ) {
 		return false;
 	}
+	if ( isExpired( purchase ) ) {
+		return false;
+	}
 
 	// For purchases included with a plan, use the plan purchase instead
 	const purchaseIsIncludedInPlan = Boolean(
