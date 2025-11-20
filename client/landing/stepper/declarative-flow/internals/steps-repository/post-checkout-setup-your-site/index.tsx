@@ -1,5 +1,5 @@
 import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
-import { Step } from '@automattic/onboarding';
+import { AI_SITE_BUILDER_FLOW, SITE_MIGRATION_FLOW, Step } from '@automattic/onboarding';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { code } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
@@ -18,6 +18,18 @@ const PostCheckoutSetupYourSiteStep: StepType = ( { navigation } ) => {
 
 	const handleBuildWithAI = () => {
 		recordTracksEvent( 'calypso_onboarding_post_checkout_build_with_ai_click' );
+
+		if ( siteSlug && siteId ) {
+			window.location.assign(
+				addQueryArgs( `/setup/${ AI_SITE_BUILDER_FLOW }/processing`, {
+					siteSlug,
+					siteId,
+					fromPostCheckoutSetupSite: '1',
+				} )
+			);
+			return;
+		}
+
 		submit?.();
 	};
 
@@ -29,10 +41,13 @@ const PostCheckoutSetupYourSiteStep: StepType = ( { navigation } ) => {
 	const handleMigrate = () => {
 		recordTracksEvent( 'calypso_onboarding_post_checkout_migrate_click' );
 		window.location.assign(
-			addQueryArgs( `/setup/site-migration/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`, {
-				siteSlug,
-				siteId,
-			} )
+			addQueryArgs(
+				`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
+				{
+					siteSlug,
+					siteId,
+				}
+			)
 		);
 	};
 
