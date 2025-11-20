@@ -14,6 +14,8 @@ export const bigSkyPluginMutation = ( siteId: number ) =>
 	mutationOptions( {
 		mutationFn: ( data: BigSkyPluginUpdateRequest ) => updateBigSkyPlugin( siteId, data ),
 		onSuccess: () => {
+			// Invalidate the big-sky-plugin query to refresh the UI
+			queryClient.invalidateQueries( { queryKey: bigSkyPluginQuery( siteId ).queryKey } );
 			// Invalidate site and site settings queries to refresh the UI
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 		},
