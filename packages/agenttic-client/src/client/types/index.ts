@@ -278,6 +278,7 @@ export interface ClientConfig {
 	contextProvider?: ContextProvider;
 	conversationStorageKey?: string;
 	enableStreaming?: boolean; // Enable token-by-token streaming (requires server support)
+	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage via WordPress.com public API.
 }
 
 export interface SendMessageParams {
@@ -293,6 +294,7 @@ export interface SendMessageParams {
 
 export interface TaskUpdate {
 	id: string;
+	sessionId?: string; // Session ID from server
 	status: TaskStatus;
 	final?: boolean;
 	artifact?: Artifact;

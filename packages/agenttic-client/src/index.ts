@@ -106,3 +106,23 @@ export {
 	convertAbilitiesToTools,
 	isWordPressAbility,
 } from './utils/wordpressAbilities';
+
+export {
+	listConversationsFromServer,
+	loadChatFromServer,
+	loadAllMessagesFromServer,
+} from './react/odieService';
+export type { OdieServiceConfig } from './react/odieService';
+export type {
+	ServerLoadResult,
+	PaginationMeta,
+	ServerConversationListItem,
+} from './react/serverTypes';
+
+// Odie bot configuration utilities
+export {
+	createOdieBotId,
+	parseOdieBotId,
+	isOdieBotId,
+} from './react/odieConfig';
+export type { OdieBotConfig } from './react/odieConfig';

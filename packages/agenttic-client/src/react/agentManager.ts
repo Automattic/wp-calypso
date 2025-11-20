@@ -20,6 +20,7 @@ import {
 import { log } from '../client/utils/logger';
 import {
 	clearConversation,
+	type ConversationStorageConfig,
 	loadConversation,
 	storeConversation,
 } from './conversationStorage';
@@ -28,6 +29,61 @@ import {
 	extractNewContentFromMessage,
 	extractToolResultsFromMessage,
 } from './conversationUtils';
+
+/**
+ * Update localStorage with new session ID when server returns a stable session ID
+ * @param storageKey   - The localStorage key to update
+ * @param newSessionId - The new stable session ID from the server
+ */
+function updateSessionIdInLocalStorage(
+	storageKey: string,
+	newSessionId: string
+): void {
+	// @ts-ignore - localStorage may not be available in all environments
+	if ( typeof localStorage === 'undefined' ) {
+		log( 'localStorage not available, cannot update session ID' );
+		return;
+	}
+
+	try {
+		// @ts-ignore
+		const stored = localStorage.getItem( storageKey );
+		if ( stored ) {
+			const session = JSON.parse( stored );
+			const oldSessionId = session.sessionId;
+
+			// Update sessionId but preserve timestamp
+			session.sessionId = newSessionId;
+			// @ts-ignore
+			localStorage.setItem( storageKey, JSON.stringify( session ) );
+			log(
+				'Updated localStorage[%s] session ID: %s -> %s',
+				storageKey,
+				oldSessionId,
+				newSessionId
+			);
+		} else {
+			// No existing session - create new entry
+			const session = {
+				sessionId: newSessionId,
+				timestamp: Date.now(),
+			};
+			// @ts-ignore
+			localStorage.setItem( storageKey, JSON.stringify( session ) );
+			log(
+				'Created new session in localStorage[%s]: %s',
+				storageKey,
+				newSessionId
+			);
+		}
+	} catch ( error ) {
+		log(
+			'Failed to update localStorage sessionId to %s: %O',
+			newSessionId,
+			error
+		);
+	}
+}
 
 /**
  * Resolve any promises in conversation history messages
@@ -75,6 +131,8 @@ async function resolvePromisesInConversationHistory(
 export interface AgentManagerConfig extends ClientConfig {
 	key?: string;
 	sessionId?: string;
+	/** localStorage key where sessionId is persisted (for cache) */
+	sessionIdStorageKey?: string;
 }
 
 /**
@@ -84,6 +142,8 @@ interface ManagedAgent {
 	client: Client;
 	sessionId: string | null;
 	conversationStorageKey?: string;
+	sessionIdStorageKey?: string;
+	storageConfig: ConversationStorageConfig;
 	conversationHistory: Message[];
 	currentAbortController: AbortController | null;
 }
@@ -110,7 +170,9 @@ export interface AgentManager {
 		options?: Partial< SendMessageParams >
 	) => AsyncIterable< TaskUpdate >;
 	resetConversation: ( key: string ) => Promise< void >;
+	replaceMessages: ( key: string, messages: Message[] ) => Promise< void >;
 	getConversationHistory: ( key: string ) => Message[];
+	updateSessionId: ( key: string, sessionId: string ) => void;
 	abortCurrentRequest: ( key: string ) => void;
 	clear: () => void;
 }
@@ -160,15 +222,24 @@ function createAgentManager(): AgentManager {
 			const client = createClient( config );
 			const sessionId = config.sessionId || null;
 			const conversationStorageKey = config.conversationStorageKey;
+			const sessionIdStorageKey = config.sessionIdStorageKey;
+
+			// Build storage configuration
+			const storageConfig: ConversationStorageConfig = {
+				odieBotId: config.odieBotId,
+				authProvider: config.authProvider,
+			};
 
 			// Load existing conversation history if sessionId is provided
 			let conversationHistory: Message[] = [];
 			if ( sessionId ) {
 				try {
-					conversationHistory = await loadConversation(
+					const result = await loadConversation(
 						sessionId,
-						conversationStorageKey
+						conversationStorageKey,
+						storageConfig
 					);
+					conversationHistory = result.messages;
 				} catch ( error ) {
 					log(
 						`Failed to load conversation history for agent ${ key } with session ${ sessionId }:`,
@@ -181,6 +252,8 @@ function createAgentManager(): AgentManager {
 				client,
 				sessionId,
 				conversationStorageKey,
+				sessionIdStorageKey,
+				storageConfig,
 				conversationHistory,
 				currentAbortController: null,
 			};
@@ -212,7 +285,7 @@ function createAgentManager(): AgentManager {
 				throw new Error( `Agent with key "${ key }" not found` );
 			}
 
-			const { withHistory = true, ...otherOptions } = options;
+			const { withHistory = true, sessionId, ...otherOptions } = options;
 			const { client, conversationHistory } = managedAgent;
 
 			const messageObj: Message =
@@ -226,8 +299,37 @@ function createAgentManager(): AgentManager {
 			const task = await client.sendMessage( {
 				message: messageObj,
 				withHistory,
+				sessionId: sessionId || managedAgent.sessionId || undefined,
 				...otherOptions,
 			} );
+
+			// Capture sessionId from server response
+			if ( task.sessionId ) {
+				const oldSessionId = managedAgent.sessionId;
+				// Always update the sessionId for consistency, even if unchanged
+				// (this is a simple assignment and keeps code straightforward)
+				managedAgent.sessionId = task.sessionId;
+
+				// Update localStorage only when sessionId actually changes
+				// This handles the temp -> stable session ID transition
+				// Note: We intentionally skip updating storage when IDs are equal
+				if (
+					oldSessionId &&
+					task.sessionId &&
+					oldSessionId !== task.sessionId &&
+					managedAgent.sessionIdStorageKey
+				) {
+					log(
+						'Session ID changed from %s to %s, updating localStorage',
+						oldSessionId,
+						task.sessionId
+					);
+					updateSessionIdInLocalStorage(
+						managedAgent.sessionIdStorageKey,
+						task.sessionId
+					);
+				}
+			}
 
 			// Update conversation history (always)
 			// Create a complete agent message with tool calls and results if present
@@ -308,6 +410,7 @@ function createAgentManager(): AgentManager {
 				withHistory = true,
 				abortSignal,
 				metadata,
+				sessionId,
 				...otherOptions
 			} = options;
 			const { client } = managedAgent;
@@ -422,6 +525,7 @@ function createAgentManager(): AgentManager {
 			for await ( const update of client.sendMessageStream( {
 				message: messageObj,
 				withHistory,
+				sessionId: sessionId || managedAgent.sessionId || undefined,
 				abortSignal: abortController.signal,
 				...otherOptions,
 				...( messageMetadata &&
@@ -429,6 +533,36 @@ function createAgentManager(): AgentManager {
 						metadata: messageMetadata,
 					} ),
 			} ) ) {
+				// Capture sessionId from server response (always trust the server)
+				if ( update.sessionId ) {
+					const oldSessionId = managedAgent.sessionId;
+					// Always update the sessionId for consistency, even if unchanged
+					// (this is a simple assignment and keeps code straightforward)
+					managedAgent.sessionId = update.sessionId;
+
+					// Update localStorage only when sessionId actually changes
+					// This handles two scenarios:
+					// 1. Initial session creation (oldSessionId is null/undefined)
+					// 2. Temporary -> stable session ID transitions
+					// Note: We intentionally skip updating storage when IDs are equal
+					if (
+						update.sessionId &&
+						oldSessionId !== update.sessionId &&
+						managedAgent.sessionIdStorageKey
+					) {
+						log(
+							'Session ID %s, updating localStorage',
+							oldSessionId
+								? `changed from ${ oldSessionId } to ${ update.sessionId }`
+								: `received: ${ update.sessionId }`
+						);
+						updateSessionIdInLocalStorage(
+							managedAgent.sessionIdStorageKey,
+							update.sessionId
+						);
+					}
+				}
+
 				// Save tool interactions when input is required (this saves the agent message with tool calls)
 				if (
 					update.status?.state === 'input-required' &&
@@ -562,6 +696,24 @@ function createAgentManager(): AgentManager {
 			}
 		},
 
+		async replaceMessages(
+			key: string,
+			messages: Message[]
+		): Promise< void > {
+			const managedAgent = agents.get( key );
+			if ( ! managedAgent ) {
+				throw new Error( `Agent with key "${ key }" not found` );
+			}
+
+			// Replace conversation history with new messages
+			managedAgent.conversationHistory = [ ...messages ];
+
+			// Persist to storage
+			if ( managedAgent.sessionId ) {
+				await persistConversationHistory( key, messages );
+			}
+		},
+
 		getConversationHistory( key: string ): Message[] {
 			const managedAgent = agents.get( key );
 			if ( ! managedAgent ) {
@@ -569,6 +721,23 @@ function createAgentManager(): AgentManager {
 			}
 
 			return [ ...managedAgent.conversationHistory ];
+		},
+
+		updateSessionId( key: string, sessionId: string ): void {
+			const managedAgent = agents.get( key );
+			if ( ! managedAgent ) {
+				throw new Error( `Agent with key "${ key }" not found` );
+			}
+
+			managedAgent.sessionId = sessionId;
+
+			// Update localStorage if we have a storage key
+			if ( managedAgent.sessionIdStorageKey ) {
+				updateSessionIdInLocalStorage(
+					managedAgent.sessionIdStorageKey,
+					sessionId
+				);
+			}
 		},
 
 		abortCurrentRequest( key: string ): void {
