@@ -1,5 +1,6 @@
 import pagejs from '@automattic/calypso-router';
 import { createMemoryHistory } from '@tanstack/react-router';
+import UnknownError from '../components/500';
 import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
 import type { AppConfig } from 'calypso/dashboard/app/context';
 
@@ -11,6 +12,7 @@ export function getRouterOptions( config: AppConfig ) {
 		},
 		defaultPreload: 'intent' as const,
 		defaultPreloadStaleTime: 0,
+		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: () => null,
 		defaultViewTransition: true,
 
