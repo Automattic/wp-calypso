@@ -53,6 +53,7 @@ import {
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
+import AgentsManagerLoader from './agents-manager-loader';
 import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
@@ -251,6 +252,8 @@ class Layout extends Component {
 				shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) ) &&
 			this.props.userAllowedToHelpCenter;
 
+		const shouldShowAgentsManager = true;
+
 		const shouldDisableSidebarScrollSynchronizer =
 			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
 
@@ -260,11 +263,19 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<HelpCenterLoader
-					sectionName={ this.props.sectionName }
-					loadHelpCenter={ loadHelpCenter }
-					currentRoute={ this.props.currentRoute }
-				/>
+				{ shouldShowAgentsManager ? (
+					<AgentsManagerLoader
+						sectionName={ this.props.sectionName }
+						loadAgentsManager
+						currentRoute={ this.props.currentRoute }
+					/>
+				) : (
+					<HelpCenterLoader
+						sectionName={ this.props.sectionName }
+						loadHelpCenter={ loadHelpCenter }
+						currentRoute={ this.props.currentRoute }
+					/>
+				) }
 				{ ! shouldDisableSidebarScrollSynchronizer && (
 					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				) }

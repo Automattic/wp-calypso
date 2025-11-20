@@ -4,15 +4,10 @@ import { addQueryArgs } from '@wordpress/url';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
+import { isE2ETest } from '../utils';
 import { STORE_KEY } from './constants';
-import { isE2ETest } from '.';
-import type {
-	APIFetchOptions,
-	HelpCenterOptions,
-	HelpCenterSelect,
-	HelpCenterShowOptions,
-} from './types';
-import type { Location } from 'history';
+import type { HelpCenterOptions, HelpCenterSelect, HelpCenterShowOptions } from './types';
+import type { APIFetchOptions, Location } from '../shared-types';
 
 /**
  * Save the open state of the help center to the remote user preferences.

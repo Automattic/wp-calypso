@@ -1,0 +1,45 @@
+import { apiFetch } from '@wordpress/data-controls';
+import { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { wpcomRequest } from '../wpcom-request-controls';
+import { setAgentsManagerRouterHistory, setIsDocked, setIsOpen } from './actions';
+import type { APIFetchOptions, Location } from '../shared-types';
+
+type Preferences = {
+	calypso_preferences: {
+		agents_manager_open: boolean;
+		agents_manager_docked: boolean;
+		agents_manager_router_history: {
+			entries: Location[];
+			index: number;
+		};
+	};
+};
+
+export function* getAgentsManagerState() {
+	try {
+		const { calypso_preferences: preferences }: Preferences = canAccessWpcomApis()
+			? yield wpcomRequest( {
+					path: '/me/preferences',
+					apiNamespace: 'wpcom/v2',
+			  } )
+			: yield apiFetch( {
+					global: true,
+					path: '/help-center/open-state',
+			  } as APIFetchOptions );
+
+		// Restore the navigation history from preferences
+		if ( preferences.agents_manager_router_history ) {
+			yield setAgentsManagerRouterHistory( preferences.agents_manager_router_history );
+		}
+
+		// Restore the docked state from preferences
+		if ( typeof preferences.agents_manager_docked === 'boolean' ) {
+			yield setIsDocked( preferences.agents_manager_docked, false );
+		}
+
+		// We only want to auto-open, we don't want to auto-close (and potentially overrule the user's action).
+		if ( preferences.agents_manager_open ) {
+			yield setIsOpen( true, false );
+		}
+	} catch {}
+}
