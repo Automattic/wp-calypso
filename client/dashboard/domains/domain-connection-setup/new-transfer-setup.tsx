@@ -19,19 +19,13 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainTransferSetupRoute, domainsIndexRoute } from '../../app/router/domains';
-import { ActionList } from '../../components/action-list';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import {
-	shouldShowRemoveAction,
-	getDeleteTitle,
-	getDeleteLabel,
-	getDeleteDescription,
-} from '../domain-overview/actions.utils';
+import { shouldShowRemoveAction } from '../domain-overview/actions.utils';
 import DomainRegistrarBanner from './domain-registrar-banner';
 import SetupStep from './setup-step';
 
@@ -258,29 +252,16 @@ export default function DomainTransferSetup() {
 								<InlineSupportLink supportContext="general-support-options">
 									{ __( 'Contact support' ) }
 								</InlineSupportLink>
+								{ shouldShowRemoveAction( domain, purchase ) && (
+									<a href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }` }>
+										{ __( 'Cancel transfer' ) }
+									</a>
+								) }
 							</VStack>
 						</VStack>
 					</CardBody>
 				</Card>
 			</VStack>
-			{ shouldShowRemoveAction( domain, purchase ) && (
-				<ActionList>
-					<ActionList.ActionItem
-						title={ getDeleteTitle( domain ) }
-						description={ getDeleteDescription( domain ) }
-						actions={
-							<Button
-								size="compact"
-								variant="secondary"
-								isDestructive
-								href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }` }
-							>
-								{ getDeleteLabel( domain ) }
-							</Button>
-						}
-					/>
-				</ActionList>
-			) }
 		</PageLayout>
 	);
 }
