@@ -1,5 +1,5 @@
-import { bigSkyPluginMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { bigSkyPluginMutation, bigSkyPluginQuery } from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -14,7 +14,8 @@ import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
-import type { BigSkyPluginUpdateRequest, Site, SiteSettings } from '@automattic/api-core';
+import type { BigSkyPluginUpdateRequest, Site } from '@automattic/api-core';
+
 interface AIAssistantFormData {
 	bigSkyEnabled: boolean;
 }
@@ -70,20 +71,15 @@ const getUseCaseDescription = (
 	}
 };
 
-export function AIAssistantForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
-	const [ initialData, setInitialData ] = useState< AIAssistantFormData >( () =>
-		fromSiteSettings( settings )
-	);
-	const [ formData, setFormData ] = useState< AIAssistantFormData >( () => ( {
-		...initialData,
-	} ) );
+export function AIAssistantForm( { site }: { site: Site } ) {
 	const [ selectedUseCases, setSelectedUseCases ] = useState< Set< UseCaseOption > >(
 		() => new Set()
 	);
 	const [ otherText, setOtherText ] = useState( '' );
 
-	const isAlreadyEnabled = initialData.bigSkyEnabled;
-	const isEnabled = formData.bigSkyEnabled || isAlreadyEnabled;
+	const { data: pluginStatus } = useQuery( bigSkyPluginQuery( site.ID ) );
+
+	const isEnabled = pluginStatus?.enabled ?? false;
 
 	const siteEditorUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit';
 	const siteSpecUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit&ai-step=spec';
@@ -107,13 +103,7 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 
 		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: true } );
 
-		mutation.mutate( pluginUpdate, {
-			onSuccess: () => {
-				// Update initialData to reflect that Big Sky is now enabled
-				setInitialData( { bigSkyEnabled: true } );
-				setFormData( { bigSkyEnabled: true } );
-			},
-		} );
+		mutation.mutate( pluginUpdate );
 	};
 
 	const handleUseCaseChange = ( value: UseCaseOption, checked: boolean ) => {
@@ -136,8 +126,6 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 
 		mutation.mutate( pluginUpdate, {
 			onSuccess: () => {
-				setInitialData( { bigSkyEnabled: false } );
-				setFormData( { bigSkyEnabled: false } );
 				setSelectedUseCases( new Set() );
 				setOtherText( '' );
 			},
@@ -233,12 +221,6 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 			</CardBody>
 		</Card>
 	);
-}
-
-function fromSiteSettings( settings: SiteSettings ): AIAssistantFormData {
-	return {
-		bigSkyEnabled: Boolean( settings.big_sky_enable ),
-	};
 }
 
 function toBigSkyPluginUpdate( formData: AIAssistantFormData ): BigSkyPluginUpdateRequest {
