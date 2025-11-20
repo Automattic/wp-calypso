@@ -24,7 +24,7 @@ const form = {
 	fields: [ 'email' ],
 };
 
-const useFields = ( siteId: number ): Field< ConfirmNewOwnerFormData >[] => [
+const getFields = ( siteId: number ): Field< ConfirmNewOwnerFormData >[] => [
 	{
 		id: 'email',
 		label: __( 'Email' ),
@@ -70,7 +70,7 @@ export function ConfirmNewOwnerForm( {
 
 	const mutation = useMutation( siteOwnerTransferEligibilityCheckMutation( site.ID ) );
 
-	const fields = useFields( site.ID );
+	const fields = getFields( site.ID );
 	const { validity, isValid } = useFormValidity( formData, fields, form );
 	const isSaveDisabled = ! isValid;
 
