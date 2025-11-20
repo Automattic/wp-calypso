@@ -12,10 +12,10 @@ const debug = debugFactory( 'calypso:ebanx-vgs-tokenization' );
 /**
  * VGS token data structure
  * These are the secure tokens returned by VGS Collect form fields
+ * Note: Cardholder name is NOT tokenized
  */
 export interface VgsTokens {
 	card_number: string; // VGS token for card number
-	card_holder: string; // VGS token for cardholder name
 	card_exp: string; // VGS token for expiration date (MM/YY format)
 	card_cvc: string; // VGS token for CVV/CVC
 }
@@ -25,7 +25,7 @@ export interface VgsTokens {
  */
 interface EbanxTokenizeRequest {
 	card_number: string; // VGS token
-	card_name: string; // VGS token
+	card_name: string; // Plain text cardholder name (not tokenized)
 	card_due_date: string; // VGS token (MM/YY)
 	card_cvv: string; // VGS token
 	payment_type_code: string; // e.g., 'new_purchase', 'add_card', etc.
@@ -49,25 +49,26 @@ export interface EbanxTokenizeResponse {
  */
 export interface EbanxCardDetails {
 	country: string; // ISO country code
+	name: string; // Plain text cardholder name
 	vgsTokens: VgsTokens; // VGS secure tokens
 }
 
 /**
  * Creates an EBANX payment token using VGS secure tokens
  * @param requestType - Type of request ('new_purchase', 'add_card', etc.)
- * @param cardDetails - Card details including country and VGS tokens
+ * @param cardDetails - Card details including country, name, and VGS tokens
  * @returns Promise resolving to EBANX token and device ID
  * @example
  * ```typescript
  * const vgsTokens = {
  *   card_number: 'tok_vgs_xxxxxxxx',
- *   card_holder: 'tok_vgs_yyyyyyyy',
  *   card_exp: 'tok_vgs_zzzzzzzz',
  *   card_cvc: 'tok_vgs_wwwwwwww'
  * };
  *
  * const token = await createEbanxTokenVgs('new_purchase', {
  *   country: 'BR',
+ *   name: 'John Doe',
  *   vgsTokens
  * });
  * ```
@@ -82,7 +83,7 @@ export async function createEbanxTokenVgs(
 		// Prepare request payload for the backend endpoint
 		const requestPayload: EbanxTokenizeRequest = {
 			card_number: cardDetails.vgsTokens.card_number,
-			card_name: cardDetails.vgsTokens.card_holder,
+			card_name: cardDetails.name,
 			card_due_date: cardDetails.vgsTokens.card_exp,
 			card_cvv: cardDetails.vgsTokens.card_cvc,
 			payment_type_code: requestType,

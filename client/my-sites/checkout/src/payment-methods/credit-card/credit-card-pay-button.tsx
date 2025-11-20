@@ -128,6 +128,7 @@ export default function CreditCardPayButton( {
 
 						// Common billing details for both VGS and traditional flow
 						const billingDetails = {
+							name: cardholderName?.value || '',
 							countryCode: fields?.countryCode?.value || '',
 							state: fields?.state?.value || '',
 							city: fields?.city?.value || '',
@@ -160,7 +161,6 @@ export default function CreditCardPayButton( {
 							onClick( {
 								...billingDetails,
 								paymentPartner: 'ebanx',
-								name: cardholderName?.value || '',
 								number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
 								cvv: fields?.cvv?.value || '',
 								'expiration-date': fields[ 'expiration-date' ]?.value || '',
@@ -238,8 +238,9 @@ function isCreditCardFormValid(
 
 			if ( isUsingVgs ) {
 				// VGS flow: VGS fields are validated by the VGS library itself
-				// We only need to validate the contact/billing fields
+				// We only need to validate the cardholder name and contact/billing fields
 				const requiredFields = [
+					'cardholderName',
 					'state',
 					'city',
 					'postal-code',
@@ -257,7 +258,9 @@ function isCreditCardFormValid(
 					}
 				} );
 
-				debug( 'ebanx validation (VGS mode) - contact details', { isValid } );
+				debug( 'ebanx validation (VGS mode) - cardholder name and contact details', {
+					isValid,
+				} );
 			} else {
 				// Traditional flow: validate all card and contact fields
 				const cardholderName = rawState.cardholderName;

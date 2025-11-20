@@ -53,9 +53,9 @@ type StripeCardTransactionRequest = {
 type EbanxCardTransactionRequest = {
 	name: string;
 	countryCode: string;
-	number: string;
-	cvv: string;
-	'expiration-date': string;
+	number?: string;
+	cvv?: string;
+	'expiration-date'?: string;
 	state: string;
 	city: string;
 	postalCode: string;
@@ -211,17 +211,21 @@ async function ebanxCardProcessor(
 	let ebanxTokenResponse: EbanxToken | EbanxTokenizeResponse;
 	try {
 		if ( isEnabled( 'checkout/vgs-ebanx' ) ) {
+			if ( ! submitData.vgsTokens ) {
+				throw new Error( 'VGS tokens are required for VGS checkout' );
+			}
 			ebanxTokenResponse = await createEbanxTokenVgs( 'new_purchase', {
 				country: submitData.countryCode,
+				name: submitData.name,
 				vgsTokens: submitData.vgsTokens,
 			} );
 		} else {
 			ebanxTokenResponse = await createEbanxToken( 'new_purchase', {
 				country: submitData.countryCode,
 				name: submitData.name,
-				number: submitData.number,
-				cvv: submitData.cvv,
-				'expiration-date': submitData[ 'expiration-date' ],
+				number: submitData.number ?? '',
+				cvv: submitData.cvv ?? '',
+				'expiration-date': submitData[ 'expiration-date' ] ?? '',
 			} );
 		}
 		paymentMethodToken = ebanxTokenResponse;

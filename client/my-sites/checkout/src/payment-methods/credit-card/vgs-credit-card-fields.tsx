@@ -10,8 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useVaultId } from '../../hooks/use-vault-id';
 
-const { CardholderField, CardNumberField, CardExpirationDateField, CardSecurityCodeField } =
-	VGSCollectForm;
+const { CardNumberField, CardExpirationDateField, CardSecurityCodeField } = VGSCollectForm;
 
 // Match existing credit card field styling exactly with proper height and spacing
 const VGSCollectFieldStyles: VGS.Css = {
@@ -53,20 +52,17 @@ interface VgsCreditCardFieldsProps {
 	showFutureChargeNotice?: boolean;
 	onVgsFormError?: ( error: string | null ) => void;
 	labels?: {
-		cardholderName?: string;
 		cardNumber?: string;
 		expiryDate?: string;
 		cvc?: string;
 		futureChargeNotice?: string;
 	};
 	placeholders?: {
-		cardholderName?: string;
 		cardNumber?: string;
 		expiryDate?: string;
 		cvc?: string;
 	};
 	descriptions?: {
-		cardholderName?: string;
 		cardNumber?: string;
 		expiryDate?: string;
 		cvc?: string;
@@ -188,21 +184,6 @@ export const VgsCreditCardFields = ( {
 				vaultId={ vaultConfig.vault_id as string }
 				environment={ vaultConfig.environment as VGSCollectVaultEnvironment }
 			>
-				<div className="vgs-field-wrapper" style={ defaultFieldWrapperStyle }>
-					<label htmlFor="card_holder" style={ defaultLabelStyle }>
-						{ labels.cardholderName || '' }
-					</label>
-					<CardholderField
-						validations={ [ 'required' ] }
-						css={ fieldStyles }
-						name="card_holder"
-						placeholder={ placeholders.cardholderName || '' }
-					/>
-					{ descriptions.cardholderName && (
-						<span style={ defaultDescriptionStyle }>{ descriptions.cardholderName }</span>
-					) }
-				</div>
-
 				<div className="vgs-field-wrapper" style={ defaultFieldWrapperStyle }>
 					<label htmlFor="card_number" style={ defaultLabelStyle }>
 						{ labels.cardNumber || '' }

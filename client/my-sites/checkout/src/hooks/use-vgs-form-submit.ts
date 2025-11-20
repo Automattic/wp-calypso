@@ -48,7 +48,6 @@ export function useVgsFormSubmit() {
 				{
 					data: ( formValues: Record< string, string > ) => ( {
 						card_number: formValues.card_number,
-						card_holder: formValues.card_holder,
 						card_exp: formValues.card_exp,
 						card_cvc: formValues.card_cvc,
 					} ),
@@ -68,13 +67,7 @@ export function useVgsFormSubmit() {
 							}
 						}
 
-						if (
-							tokens &&
-							tokens.card_number &&
-							tokens.card_holder &&
-							tokens.card_exp &&
-							tokens.card_cvc
-						) {
+						if ( tokens && tokens.card_number && tokens.card_exp && tokens.card_cvc ) {
 							resolve( tokens );
 						} else {
 							reject( new Error( 'Incomplete token data received from VGS' ) );
