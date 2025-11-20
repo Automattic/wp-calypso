@@ -5,7 +5,7 @@ import { useSelect } from '@wordpress/data';
 import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
-import { getOdieInitialMessage, ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../../constants';
+import { getOdieInitialMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
 import {
@@ -169,9 +169,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				{ ( chat.odieId || chat.provider === 'odie' ) && (
 					<ChatMessage
 						message={ getOdieInitialMessage(
-							supportInteraction?.bot_slug ||
-								newInteractionsBotSlug ||
-								ODIE_DEFAULT_BOT_SLUG_LEGACY,
+							supportInteraction?.bot_slug || newInteractionsBotSlug,
 							currentUser?.display_name
 						) }
 						key={ 0 }
