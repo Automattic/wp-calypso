@@ -57,8 +57,9 @@ export default function Switcher< T >( {
 					} }
 					aria-haspopup="true"
 					aria-expanded={ isOpen }
+					style={ { width: '100%', justifyContent: 'flex-start' } }
 				>
-					<HStack alignment="center">
+					<HStack alignment="center" style={ { overflow: 'hidden' } }>
 						{ renderItemMedia( { item: value, context: 'dropdown', size: 16 } ) }
 						{ renderItemTitle( { item: value, context: 'dropdown' } ) }
 					</HStack>

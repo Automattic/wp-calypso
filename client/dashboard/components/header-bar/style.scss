@@ -28,3 +28,9 @@ $component-icon-padding: 6px;
 .dashboard-header-bar-title > span {
 	padding-inline: $grid-unit-15;
 }
+
+.dashboard-header-bar-title {
+	@include break-medium {
+		flex-shrink: 0;
+	}
+}
