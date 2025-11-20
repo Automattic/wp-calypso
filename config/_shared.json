@@ -177,6 +177,7 @@
 		"a8c-for-agencies-team": false,
 		"a8c-for-agencies-agency-tier": false,
 		"a8c-for-agencies-woopayments": false,
+		"a8c-for-agencies-express-checkout": false,
 		"jetpack-cloud": false,
 		"jetpack-cloud-overview": false,
 		"jetpack-cloud-agency-dashboard": false,

@@ -874,6 +874,13 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'a8c-for-agencies-express-checkout',
+		paths: [ '/express-checkout' ],
+		module: 'calypso/a8c-for-agencies/sections/express-checkout',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'a8c-for-agencies-client',
 		paths: [
 			'/client/landing',
