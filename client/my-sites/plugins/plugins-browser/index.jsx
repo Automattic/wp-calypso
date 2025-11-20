@@ -179,7 +179,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				}
 			/>
 
-			<FullWidthSection className="plugins-browser__navigation-header">
+			<FullWidthSection className="plugins-browser__navigation-header full-width-section--no-padding">
 				<PluginsNavigationHeader
 					navigationHeaderRef={ navigationHeaderRef }
 					categoryName={ categoryName }

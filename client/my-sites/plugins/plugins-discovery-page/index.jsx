@@ -125,12 +125,12 @@ const PluginsDiscoveryPage = ( props ) => {
 			</FullWidthSection>
 
 			{ ! isLoggedIn && (
-				<FullWidthSection className="plugins-discovery-page__cta">
+				<FullWidthSection className="plugins-discovery-page__cta full-width-section--double-padding">
 					<InPageCTASection />
 				</FullWidthSection>
 			) }
 
-			<FullWidthSection className="plugins-discovery-page__favorites">
+			<FullWidthSection className="plugins-discovery-page__favorites full-width-section--double-padding">
 				<FeaturedPluginsSection
 					{ ...props }
 					pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
@@ -142,7 +142,7 @@ const PluginsDiscoveryPage = ( props ) => {
 				<CollectionListView category="business" { ...props } />
 			</FullWidthSection>
 
-			<FullWidthSection className="plugins-discovery-page__free-essentials">
+			<FullWidthSection className="plugins-discovery-page__free-essentials full-width-section--double-padding">
 				<PopularPluginsSection
 					{ ...props }
 					pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
