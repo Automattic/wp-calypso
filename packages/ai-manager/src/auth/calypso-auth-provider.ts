@@ -200,7 +200,6 @@ function getOAuthToken(): string | null {
  *
  * Uses OAuth Bearer token in Calypso environments (wordpress.com, *.calypso.live),
  * or JWT token via apiFetch in non-Calypso environments (wp-admin, widgets.wp.com).
- *
  * @param siteId - Optional site ID for simple sites (used when requesting JWT tokens)
  * @returns Authentication provider function that returns headers
  */
