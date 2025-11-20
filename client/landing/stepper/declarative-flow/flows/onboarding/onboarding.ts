@@ -214,6 +214,15 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding':
 					setShouldShowNotification( providedDependencies?.siteId as number );
+
+					/*
+					 * If the post-checkout ai step feature flag is enabled,
+					 * redirect the user to the post-checkout setup your site step.
+					 */
+					if ( isEnabled( 'onboarding/post-checkout-ai-step' ) ) {
+						return navigate( 'post-checkout-setup-your-site' );
+					}
+
 					return navigate( 'processing' );
 				case 'processing': {
 					const [ destination, backDestination ] =
