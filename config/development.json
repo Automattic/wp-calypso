@@ -158,6 +158,7 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
+		"rtc-websocket": true,
 		"reader": true,
 		"reader/comment-polling": false,
 		"reader/full-errors": true,

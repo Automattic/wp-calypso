@@ -5,6 +5,7 @@ import fs from 'fs';
 import config from '@automattic/calypso-config';
 import boot from './boot';
 import { getLogger } from './lib/logger';
+import { startRTCWebSocketServer } from './websocket/rtc-websocket-server';
 const logger = getLogger();
 const start = Date.now();
 
@@ -83,4 +84,9 @@ process.on( 'uncaughtExceptionMonitor', ( err ) => {
 server.listen( { port, host: process.env.CALYPSO_IS_FORK ? host : null }, function () {
 	// Tell the parent process that Calypso has booted.
 	sendBootStatus( 'ready' );
+
+	// Start RTC WebSocket server if enabled
+	startRTCWebSocketServer().catch( ( error ) => {
+		logger.error( 'Failed to start RTC WebSocket server:', error );
+	} );
 } );
