@@ -218,7 +218,6 @@ function ResponsiveMenu( {
 			popoverProps={ {
 				placement: dropdownPlacement,
 			} }
-			style={ { flexShrink: 0, justifyContent: 'flex-end' } }
 		>
 			{ ( { onClose } ) => (
 				<>
