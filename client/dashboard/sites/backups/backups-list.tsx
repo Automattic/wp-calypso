@@ -1,7 +1,11 @@
+import { siteBackupActivityLogGroupCountsQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { buildTimeRangeForActivityLog } from '../../utils/site-activity-log';
 import { getFields } from './dataviews/fields';
 import type { ActivityLogEntry } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
@@ -23,6 +27,8 @@ export function BackupsList( {
 	activityLog: ActivityLogEntry[];
 	isLoadingActivityLog: boolean;
 } ) {
+	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		fields: [ 'date', 'content_text' ],
@@ -31,7 +37,24 @@ export function BackupsList( {
 		perPage: 10,
 	} );
 
-	const fields = getFields( timezoneString, gmtOffset );
+	const { after, before } = useMemo( () => {
+		if ( ! dateRange ) {
+			return { after: undefined, before: undefined };
+		}
+
+		return buildTimeRangeForActivityLog(
+			dateRange.start,
+			dateRange.end,
+			timezoneString,
+			gmtOffset
+		);
+	}, [ dateRange, timezoneString, gmtOffset ] );
+
+	const { data: groupCountsData } = useQuery(
+		siteBackupActivityLogGroupCountsQuery( site.ID, after, before )
+	);
+
+	const fields = getFields( groupCountsData?.groups, timezoneString, gmtOffset );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
 
 	useEffect( () => {

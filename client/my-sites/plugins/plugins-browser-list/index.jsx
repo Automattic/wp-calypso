@@ -7,9 +7,12 @@ import Spotlight from 'calypso/components/spotlight';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
-import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
+import PluginsResultsHeader, {
+	BrowseAllAction,
+} from 'calypso/my-sites/plugins/plugins-results-header';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { PluginsBrowserListVariant } from './types';
+
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
@@ -52,6 +55,7 @@ const PluginsBrowserList = ( {
 		? PluginsBrowserElementVariant.Extended
 		: PluginsBrowserElementVariant.Compact;
 	const shouldUseCarousel = useCarousel;
+	const browseAllAction = <BrowseAllAction browseAllLink={ browseAllLink } listName={ listName } />;
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
@@ -126,7 +130,13 @@ const PluginsBrowserList = ( {
 
 			return (
 				<div className="plugins-browser-list__carousel">
-					<DotPager className="plugins-browser-list__carousel-pager" hasDynamicHeight>
+					<DotPager
+						className="plugins-browser-list__carousel-pager"
+						hasDynamicHeight
+						showDots={ false }
+						controlsAction={ browseAllAction }
+						navigationVariant="button"
+					>
 						{ slides.map( ( slideItems, index ) => (
 							<Card
 								tagName="ul"
@@ -170,7 +180,7 @@ const PluginsBrowserList = ( {
 					title={ title }
 					subtitle={ subtitle }
 					resultCount={ resultCount }
-					browseAllLink={ browseAllLink }
+					browseAllLink={ ! useCarousel ? browseAllLink : undefined }
 					listName={ listName }
 					isRootPage={ listType !== 'browse' }
 				/>

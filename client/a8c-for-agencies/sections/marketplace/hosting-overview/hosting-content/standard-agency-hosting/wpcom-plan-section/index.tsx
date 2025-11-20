@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { arrowRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo, useState } from 'react';
@@ -141,31 +142,33 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 					/>
 				</HostingPlanSection.Details>
 
-				<HostingPlanSection.Aside
-					heading={ translate( 'Start building for free' ) }
-					cta={ {
-						label: translate( 'Create a development site' ),
-						variant: 'secondary',
-						icon: arrowRight,
-						disabled: ! availableDevSites,
-						onClick: onClickCreateWPCOMDevSite,
-					} }
-				>
-					<p>
-						{ translate(
-							'Included in your membership to Automattic for Agencies. Develop up to 5 WordPress.com sites with free development licenses. Only pay when you launch.'
-						) }
-					</p>
+				{ ! isEnabled( 'a4a-bd-checkout' ) && (
+					<HostingPlanSection.Aside
+						heading={ translate( 'Start building for free' ) }
+						cta={ {
+							label: translate( 'Create a development site' ),
+							variant: 'secondary',
+							icon: arrowRight,
+							disabled: ! availableDevSites,
+							onClick: onClickCreateWPCOMDevSite,
+						} }
+					>
+						<p>
+							{ translate(
+								'Included in your membership to Automattic for Agencies. Develop up to 5 WordPress.com sites with free development licenses. Only pay when you launch.'
+							) }
+						</p>
 
-					<i>
-						{ translate( '%(pendingSites)d of 5 free licenses available', {
-							args: {
-								pendingSites: availableDevSites,
-							},
-							comment: '%(pendingSites)s is the number of free licenses available.',
-						} ) }
-					</i>
-				</HostingPlanSection.Aside>
+						<i>
+							{ translate( '%(pendingSites)d of 5 free licenses available', {
+								args: {
+									pendingSites: availableDevSites,
+								},
+								comment: '%(pendingSites)s is the number of free licenses available.',
+							} ) }
+						</i>
+					</HostingPlanSection.Aside>
+				) }
 			</HostingPlanSection>
 
 			{ showWPCOMDevSiteConfigurationsModal && (

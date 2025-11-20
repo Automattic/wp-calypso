@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -41,7 +42,7 @@ export default function MigrationsOverviewV2() {
 					<MigrationsBanner />
 					<MigrationsHostingFeatures />
 					<MigrationsTestimonials />
-					<MigrationsHostingOptions />
+					{ ! isEnabled( 'a4a-bd-checkout' ) && <MigrationsHostingOptions /> }
 					<MigrationsProcess />
 					<MigrationsClientRelationship />
 					<MigrationsCTA />

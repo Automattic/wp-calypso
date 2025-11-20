@@ -8,7 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
-import { Onboard } from '@automattic/data-stores';
+import { getThemeIdFromStylesheet, Onboard } from '@automattic/data-stores';
 import {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 	ThemePreview as ThemeWebPreview,
@@ -17,8 +17,9 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { MenuItem, Dropdown, Notice, NavigableMenu } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { Icon, external } from '@wordpress/icons';
+import { chevronDown, chevronUp, Icon, external } from '@wordpress/icons';
 import { hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -37,6 +38,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
@@ -56,8 +58,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getProductionSiteForWpcomStaging from 'calypso/state/selectors/get-production-site-for-wpcom-staging';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -69,9 +73,11 @@ import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-s
 import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
+	installTheme,
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
+import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import {
@@ -160,6 +166,10 @@ class ThemeSheet extends Component {
 		} ),
 		isExternallyManagedTheme: PropTypes.bool,
 		isSiteEligibleForManagedExternalThemes: PropTypes.bool,
+		installTheme: PropTypes.func,
+		canUserEditThemeOptions: PropTypes.bool,
+		siteEditorUrl: PropTypes.string,
+		themeInstallId: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -173,6 +183,7 @@ class ThemeSheet extends Component {
 	state = {
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
+		isRedirectingToEditorWebPreview: false,
 		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
 		isWide: isWithinBreakpoint( '>960px' ),
@@ -253,7 +264,11 @@ class ThemeSheet extends Component {
 	};
 
 	isLoading = () => {
-		return this.props.isLoading || this.isRequestingActivatingTheme();
+		return (
+			this.props.isLoading ||
+			this.state.isRedirectingToEditorWebPreview ||
+			this.isRequestingActivatingTheme()
+		);
 	};
 
 	isRequestingActivatingTheme = () => {
@@ -386,8 +401,13 @@ class ThemeSheet extends Component {
 	}
 
 	shouldRenderPreviewButton() {
-		const { isWPForTeamsSite } = this.props;
-		return this.isThemeAvailable() && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
+		const { isWPForTeamsSite, demoUrl, isActive, retired } = this.props;
+
+		if ( retired && ! isActive ) {
+			return false;
+		}
+
+		return demoUrl && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 	}
 
 	shouldRenderUnlockStyleButton() {
@@ -597,11 +617,12 @@ class ThemeSheet extends Component {
 			themeId,
 			siteId,
 			siteSlug,
+			isActive,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
-		const shouldRenderButton = ! retired && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
+		const shouldRenderButton = ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 
 		return (
 			<div className="theme__sheet-header">
@@ -615,6 +636,8 @@ class ThemeSheet extends Component {
 								themeId={ themeId }
 								siteId={ siteId }
 								siteSlug={ siteSlug }
+								isThemeRetired={ retired }
+								isThemeActiveForSite={ isActive }
 							/>
 
 							{ title }
@@ -717,6 +740,44 @@ class ThemeSheet extends Component {
 		}
 		// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
 		return <div>{ this.props.description }</div>;
+	};
+
+	renderRetiredNotice = () => {
+		const { retired, isActive, isLoggedIn } = this.props;
+		if ( ! retired ) {
+			return null;
+		}
+
+		const description = isActive
+			? this.props.translate(
+					'This theme has been retired and will only receive security updates. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="themes-retired" />,
+						},
+					}
+			  )
+			: this.props.translate(
+					'This theme has been retired and will only receive security updates. It is no longer available to sites that are not already using it. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink
+									supportContext="themes-retired"
+									showSupportModal={ isLoggedIn }
+								/>
+							),
+						},
+					}
+			  );
+
+		return (
+			<div className="theme__sheet-retired-notice">
+				<Notice status="warning" isDismissible={ false }>
+					{ description }
+				</Notice>
+			</div>
+		);
 	};
 
 	renderNotice = () => {
@@ -830,7 +891,14 @@ class ThemeSheet extends Component {
 			siteCount,
 			siteId,
 			themeTier,
+			retired,
 		} = this.props;
+
+		// For retired themes, don't allow any action except if the theme is active, when customising it is allowed.
+		const shouldHideButton = retired && ( ! isActive || key !== 'customize' );
+		if ( shouldHideButton ) {
+			return null;
+		}
 
 		return (
 			<Button
@@ -868,12 +936,81 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	handleEditorWebPreview = async () => {
+		const { isAtomic, siteEditorUrl, siteId, themeInstallId } = this.props;
+
+		this.setState( { isRedirectingToEditorWebPreview: true } );
+
+		this.props.recordTracksEvent( 'calypso_theme_sheet_editor_preview_click' );
+
+		// For atomic sites, we need to install theme before navigating to site editor
+		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.
+		try {
+			if ( isAtomic ) {
+				await this.props.installTheme( themeInstallId, siteId );
+			}
+			window.location.href = siteEditorUrl;
+		} catch ( error ) {
+			this.setState( { isRedirectingToEditorWebPreview: false } );
+		}
+	};
+
 	renderPreviewButton = () => {
-		const { translate, isWpcomTheme, isExternallyManagedTheme } = this.props;
+		const {
+			translate,
+			isWpcomTheme,
+			isExternallyManagedTheme,
+			canUserEditThemeOptions,
+			isLivePreviewSupported,
+		} = this.props;
 		const isExternalLink = ! isWpcomTheme || isExternallyManagedTheme;
+		const hasEditorWebPreview = canUserEditThemeOptions && isLivePreviewSupported;
 
 		if ( ! this.shouldRenderPreviewButton() ) {
 			return null;
+		}
+
+		if ( hasEditorWebPreview ) {
+			return (
+				<Dropdown
+					popoverProps={ { placement: 'bottom-start' } }
+					renderToggle={ ( { isOpen, onToggle } ) => (
+						<Button
+							className="theme__sheet-demo-toggle"
+							onClick={ onToggle }
+							aria-expanded={ isOpen }
+							busy={ this.state.isRedirectingToEditorWebPreview }
+							disabled={ this.isLoading() }
+						>
+							{ translate( 'Preview', {
+								context: 'Button to preview a theme',
+							} ) }
+							<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 16 } />
+						</Button>
+					) }
+					renderContent={ ( { onClose } ) => (
+						<NavigableMenu role="menu">
+							<MenuItem
+								onClick={ ( e ) => {
+									onClose();
+									this.previewAction( e, 'link', 'preview', 'dropdown' );
+								} }
+							>
+								{ translate( 'Preview with demo content' ) }
+								{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
+							</MenuItem>
+							<MenuItem
+								onClick={ () => {
+									onClose();
+									this.handleEditorWebPreview();
+								} }
+							>
+								{ translate( 'Preview with your content' ) }
+							</MenuItem>
+						</NavigableMenu>
+					) }
+				/>
+			);
 		}
 
 		return (
@@ -1087,6 +1224,7 @@ class ThemeSheet extends Component {
 					navigationItems={ navigationItems }
 					compactBreadcrumb={ ! this.state.isWide }
 				/>
+				{ this.renderRetiredNotice() }
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-header">
 						{ this.renderStagingPaidThemeNotice() }
@@ -1243,6 +1381,18 @@ export default connect(
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, themeId );
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const themePreviewId = isAtomic
+			? getThemeIdFromStylesheet( theme?.stylesheet )
+			: theme?.stylesheet;
+		const dashboardLink =
+			typeof window !== 'undefined'
+				? `${ window.location.pathname }${ window.location.search }`.replace( /^\/+/, '/' )
+				: '';
+		const siteEditorUrl = getSiteEditorUrl( state, siteId, {
+			wp_theme_preview: themePreviewId,
+			wpcom_dashboard_link: dashboardLink,
+		} );
+		const themeInstallId = isAtomic ? suffixThemeIdForInstall( state, siteId, themeId ) : null;
 		const currentPlan = getCurrentPlan( state, siteId );
 		const isFreePlan = currentPlan?.productSlug === 'free_plan';
 		const isWpcomStaging = isSiteWpcomStaging( state, siteId );
@@ -1259,6 +1409,7 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
+		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
 		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
 
 		const queryArgs = getCurrentQueryArguments( state );
@@ -1308,6 +1459,9 @@ export default connect(
 			isLoading,
 			isMarketplaceThemeSubscribed,
 			isThemeActivationSyncStarted: getIsThemeActivationSyncStarted( state, siteId, themeId ),
+			canUserEditThemeOptions,
+			siteEditorUrl,
+			themeInstallId,
 			isLivePreviewSupported,
 			themeType: getThemeType( state, themeId ),
 			isActivatingTheme: getIsActivatingTheme( state, siteId ),
@@ -1316,6 +1470,7 @@ export default connect(
 		};
 	},
 	{
+		installTheme,
 		setThemePreviewOptions,
 		successNotice,
 		recordTracksEvent,

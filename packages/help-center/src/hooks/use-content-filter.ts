@@ -140,6 +140,9 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				action: ( element: HTMLAnchorElement ) => {
 					const href = element.getAttribute( 'href' ) as string;
 
+					if ( ! canParse( href ) ) {
+						return;
+					}
 					// Skip support articles
 					if ( href && isThisASupportArticleLink( href ) ) {
 						return;

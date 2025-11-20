@@ -26,7 +26,7 @@ function HelpCenterContent() {
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
 	const isMenuPanelExperimentEnabled = useMenuPanelExperiment(
-		'calypso_help_center_menu_popover',
+		'calypso_help_center_menu_popover_v2',
 		'menu_popover'
 	);
 	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown(), [] );
@@ -34,10 +34,13 @@ function HelpCenterContent() {
 	const canvasMode = useCanvasMode();
 
 	const trackIconInteraction = useCallback( () => {
+		if ( isMenuPanelExperimentEnabled === undefined ) {
+			return;
+		}
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
-			is_help_center_visible: isShown,
+			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
-			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
+			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
 		} );
 	}, [ isShown, isMenuPanelExperimentEnabled ] );
 

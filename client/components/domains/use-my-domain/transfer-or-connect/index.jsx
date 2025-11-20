@@ -1,9 +1,11 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -24,6 +26,7 @@ import {
 	connectDomainAction,
 } from '../utilities';
 import OptionContent from './option-content';
+import OptionContentV2 from './option-content-v2';
 
 import './style.scss';
 
@@ -52,6 +55,7 @@ function DomainTransferOrConnect( {
 		domainInboundTransferStatusInfo
 	);
 	const [ isFetching, setIsFetching ] = useState( false );
+	const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 
@@ -123,21 +127,26 @@ function DomainTransferOrConnect( {
 	}, [ availabilityData, domain, inboundTransferStatusInfo, isFetching, selectedSite?.ID ] );
 
 	const baseClassName = 'domain-transfer-or-connect';
+	const OptionContentComponent = isDomainConnectionRedesign ? OptionContentV2 : OptionContent;
 
 	return (
-		<>
+		<div
+			className={ clsx( baseClassName, {
+				[ baseClassName + '--redesign' ]: isDomainConnectionRedesign,
+			} ) }
+		>
 			<QueryProductsList />
 			{ selectedSite?.ID && <QuerySitePlans siteId={ selectedSite.ID } /> }
 			<Card className={ baseClassName + '__content' }>
 				{ content.map( ( optionProps, index ) => (
-					<OptionContent
+					<OptionContentComponent
 						isPlaceholder={ isFetching }
 						key={ 'option-' + index }
 						disabled={ actionClicked }
 						{ ...optionProps }
 					/>
 				) ) }
-				{ ! isFetching && (
+				{ ! isDomainConnectionRedesign && ! isFetching && (
 					<div className={ baseClassName + '__support-link' }>
 						{ createInterpolateElement(
 							__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
@@ -153,12 +162,12 @@ function DomainTransferOrConnect( {
 					</div>
 				) }
 			</Card>
-		</>
+		</div>
 	);
 }
 
 DomainTransferOrConnect.propTypes = {
-	availability: PropTypes.object.isRequired,
+	availability: PropTypes.object,
 	defaultConnectHandler: PropTypes.func,
 	defaultTransferHandler: PropTypes.func,
 	domain: PropTypes.string.isRequired,

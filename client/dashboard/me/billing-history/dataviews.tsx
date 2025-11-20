@@ -68,6 +68,7 @@ export function useActions() {
 		() => [
 			{
 				id: 'view-receipt',
+				isPrimary: true,
 				label: __( 'View receipt' ),
 				isEligible: ( item: Receipt ) => Boolean( item.id ),
 				callback: ( items: Receipt[] ) => {

@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { preparePreviewText } from '../helpers';
-import { FEED_TEXT_MAX_LENGTH, FEED_TEXT_MAX_LINES } from './constants';
+import { FEED_TEXT_MAX_LENGTH } from './constants';
 import { Bookmark as BookmarkIcon } from './icons/bookmark';
 import { Comment as CommentIcon } from './icons/comment';
 import { DefaultAvatar } from './icons/default-avatar';
@@ -17,6 +17,7 @@ export function InstagramPostPreview( {
 	name,
 	profileImage,
 	caption,
+	url,
 }: InstagramPreviewProps ) {
 	const username = name || 'username';
 
@@ -71,8 +72,14 @@ export function InstagramPostPreview( {
 								{ preparePreviewText( caption, {
 									platform: 'instagram',
 									maxChars: FEED_TEXT_MAX_LENGTH,
-									maxLines: FEED_TEXT_MAX_LINES,
 								} ) }
+								{ media && url && (
+									<>
+										<br />
+										<br />
+										{ url }
+									</>
+								) }
 							</div>
 						) : null }
 					</div>
