@@ -1384,10 +1384,10 @@ export default connect(
 		const themePreviewId = isAtomic
 			? getThemeIdFromStylesheet( theme?.stylesheet )
 			: theme?.stylesheet;
-		const dashboardLink = `${ window.location.pathname }${ window.location.search }`.replace(
-			/^\/+/,
-			'/'
-		);
+		const dashboardLink =
+			typeof window !== 'undefined'
+				? `${ window.location.pathname }${ window.location.search }`.replace( /^\/+/, '/' )
+				: '';
 		const siteEditorUrl = getSiteEditorUrl( state, siteId, {
 			wp_theme_preview: themePreviewId,
 			wpcom_dashboard_link: dashboardLink,
