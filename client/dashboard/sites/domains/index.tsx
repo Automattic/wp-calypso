@@ -1,6 +1,6 @@
 import { domainsQuery, siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Link, useRouterState } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -54,9 +54,8 @@ function SiteDomains() {
 		fields
 	);
 
-	const routerState = useRouterState();
-	const redirectTo = routerState.location.pathname;
 	const { basePath } = useAppContext();
+	const domainConnectionSetupUrl = `${ basePath }/domains/%s/domain-connection-setup`;
 
 	return (
 		<PageLayout
@@ -66,8 +65,7 @@ function SiteDomains() {
 					actions={
 						<AddDomainButton
 							siteSlug={ site.slug }
-							redirectTo={ redirectTo }
-							basePath={ basePath }
+							domainConnectionSetupUrl={ domainConnectionSetupUrl }
 						/>
 					}
 				/>

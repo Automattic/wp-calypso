@@ -153,6 +153,22 @@ const domain: FlowV2< typeof initialize > = {
 						} )
 					);
 				case STEPS.USE_MY_DOMAIN.slug:
+					// Handle ownership verification completed
+					if (
+						providedDependencies &&
+						'ownershipVerificationCompleted' in providedDependencies &&
+						providedDependencies.ownershipVerificationCompleted &&
+						'domain' in providedDependencies
+					) {
+						const queryArgs = getQueryArgs( window.location.href );
+						const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
+							| string
+							| undefined;
+						window.location.href = domainConnectionSetupUrl
+							? domainConnectionSetupUrl.replace( '%s', providedDependencies.domain )
+							: defaultRedirect;
+					}
+
 					if (
 						providedDependencies &&
 						'mode' in providedDependencies &&
@@ -191,21 +207,20 @@ const domain: FlowV2< typeof initialize > = {
 
 						if ( isDomainMapping && ( mappingIsFree || hasPaidPlan ) ) {
 							const queryArgs = getQueryArgs( window.location.href );
-							const redirectTo = queryArgs.redirect_to as string | undefined;
-							const basePath = queryArgs.basePath as string | undefined;
+							const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
+								| string
+								| undefined;
 							const domain = providedDependencies.domainCartItem.meta;
-							const domainConnectionSetupUrl =
-								basePath && `${ basePath }/domains/${ domain }/domain-connection-setup`;
 
 							// Use pending action for domain mapping
 							// Note: Verification (if required) is handled in the step before submission
 							setPendingAction( async () => {
 								await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
-
-								/// Redirect to appropriate domains page based on redirect_to parameter
+								/// Redirect to appropriate domains page
 								const redirectUrl =
-									domainConnectionSetupUrl || redirectTo || `/domains/manage/${ siteSlug }`;
-
+									domainConnectionSetupUrl && domain
+										? domainConnectionSetupUrl.replace( '%s', domain )
+										: defaultRedirect;
 								return {
 									redirectTo: redirectUrl,
 								};

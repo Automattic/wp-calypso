@@ -5,35 +5,30 @@ import { addQueryArgs } from '@wordpress/url';
 
 export function AddDomainButton( {
 	siteSlug,
-	redirectTo,
-	basePath,
+	domainConnectionSetupUrl,
 }: {
 	siteSlug?: string;
-	redirectTo?: string;
-	basePath?: string;
+	domainConnectionSetupUrl?: string;
 } ) {
 	const onSearchClick = () => {
 		const queryArgs: Record< string, string > = {};
 		if ( siteSlug ) {
 			queryArgs.siteSlug = siteSlug;
 		}
-		if ( redirectTo ) {
-			queryArgs.redirect_to = redirectTo;
+		if ( domainConnectionSetupUrl ) {
+			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
 		}
 		window.location.href = siteSlug ? addQueryArgs( '/setup/domain', queryArgs ) : '/start/domain';
 		return false;
 	};
 
-	const onTransferClick = () => {
+	const onTransferOrConnectClick = () => {
 		const queryArgs: Record< string, string > = {};
 		if ( siteSlug ) {
 			queryArgs.siteSlug = siteSlug;
 		}
-		if ( redirectTo ) {
-			queryArgs.redirect_to = redirectTo;
-		}
-		if ( basePath ) {
-			queryArgs.basePath = basePath;
+		if ( domainConnectionSetupUrl ) {
+			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
 		}
 		window.location.href = siteSlug
 			? addQueryArgs( '/setup/domain/use-my-domain', queryArgs )
@@ -60,7 +55,7 @@ export function AddDomainButton( {
 					<MenuItem iconPosition="left" icon={ search } onClick={ onSearchClick }>
 						{ __( 'Search domain names' ) }
 					</MenuItem>
-					<MenuItem iconPosition="left" icon={ globe } onClick={ onTransferClick }>
+					<MenuItem iconPosition="left" icon={ globe } onClick={ onTransferOrConnectClick }>
 						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
 					</MenuItem>
 				</>
