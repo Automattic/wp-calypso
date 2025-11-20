@@ -32,26 +32,26 @@ const USE_CASE_OPTIONS: Array< { value: UseCaseOption; label: string } > = [
 const getUseCaseDescription = (
 	useCase: UseCaseOption,
 	siteEditorUrl: string,
-	blockEditorUrl: string,
+	siteSpecUrl: string,
 	mediaLibraryUrl: string
 ) => {
 	switch ( useCase ) {
 		case 'redesign':
 			return createInterpolateElement(
 				__(
-					'Head over to the <siteEditorLink>site editor</siteEditorLink> to start redesigning your site.'
+					'Head over to the <siteSpecLink>site spec</siteSpecLink> to start redesigning your site.'
 				),
 				{
-					siteEditorLink: <ExternalLink href={ siteEditorUrl } children={ null } />,
+					siteSpecLink: <ExternalLink href={ siteSpecUrl } children={ null } />,
 				}
 			);
 		case 'content':
 			return createInterpolateElement(
 				__(
-					'Use the AI assistant in the <blockEditorLink>block editor</blockEditorLink> to get help building or editing content.'
+					'Use the AI assistant in the <siteEditorLink>site editor</siteEditorLink> to get help building or editing content.'
 				),
 				{
-					blockEditorLink: <ExternalLink href={ blockEditorUrl } children={ null } />,
+					siteEditorLink: <ExternalLink href={ siteEditorUrl } children={ null } />,
 				}
 			);
 		case 'questions':
@@ -86,7 +86,7 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 	const isEnabled = formData.bigSkyEnabled || isAlreadyEnabled;
 
 	const siteEditorUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit';
-	const blockEditorUrl = site?.URL + '/wp-admin/post-new.php';
+	const siteSpecUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit&ai-step=spec';
 	const mediaLibraryUrl = site?.URL + '/wp-admin/upload.php';
 
 	const mutation = useMutation( {
@@ -161,7 +161,7 @@ export function AIAssistantForm( { site, settings }: { site: Site; settings: Sit
 										{ getUseCaseDescription(
 											option.value,
 											siteEditorUrl,
-											blockEditorUrl,
+											siteSpecUrl,
 											mediaLibraryUrl
 										) }
 									</p>
