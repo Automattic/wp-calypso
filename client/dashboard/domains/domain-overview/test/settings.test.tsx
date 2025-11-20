@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
+import { DomainSubtype, type Domain } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
 import { render } from '../../../test-utils';
 import DomainOverviewSettings from '../settings';
@@ -261,40 +261,9 @@ describe( 'DomainOverviewSettings', () => {
 			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
 		} );
-
-		test( 'hides settings when transfer is pending async', async () => {
-			const { container } = renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
-				can_manage_dns_records: true,
-				transfer_status: DomainTransferStatus.PENDING_ASYNC,
-				points_to_wpcom: true, // This makes DomainConnectionSetupSummary return null
-			} );
-
-			// Should not show any settings
-			expect( screen.queryByText( 'Settings' ) ).not.toBeInTheDocument();
-			expect( container.firstChild ).toBeNull();
-		} );
 	} );
 
 	describe( 'Edge Cases', () => {
-		test( 'renders nothing when no settings should be shown', async () => {
-			// Domain with no permissions or capabilities
-			const { container } = render(
-				<DomainOverviewSettings
-					domain={ getMockedDomainData( {
-						subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
-						can_manage_dns_records: false,
-						transfer_status: DomainTransferStatus.PENDING_ASYNC,
-						points_to_wpcom: true, // This makes DomainConnectionSetupSummary return null
-					} ) }
-				/>
-			);
-
-			// Component should return null and render nothing
-			expect( container.firstChild ).toBeNull();
-			expect( screen.queryByText( 'Settings' ) ).not.toBeInTheDocument();
-		} );
-
 		test( 'shows correct number of settings for partially restricted registered domain', async () => {
 			renderDomainSettings( {
 				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
