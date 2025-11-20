@@ -61,6 +61,8 @@ export default async function razorpayProcessor(
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
 		name: submitData.name ?? '',
+		address: submitData.address1 ?? '',
+		streetNumber: submitData.address2 ?? '',
 		country: contactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode( contactDetails ),
 		domainDetails: getDomainDetails( contactDetails, {
