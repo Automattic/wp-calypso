@@ -163,6 +163,11 @@ import {
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_WOO_SHIPPING_TRACKING,
 	FEATURE_GOOGLE_LISTING_ADS,
+	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	FEATURE_PAYMENT_TRANSACTION_FEES_8,
+	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	FEATURE_PAYMENT_TRANSACTION_FEES_2,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -522,6 +527,16 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		getTitle: () => i18n.translate( 'Support' ),
 		getFeatures: () => [ FEATURE_PRIORITY_24_7_SUPPORT ],
 	},
+	[ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES ]: {
+		slug: FEATURE_GROUP_WP_HOSTING_COMMERCE,
+		getTitle: () => i18n.translate( 'Payment transaction fees' ),
+		getFeatures: () => [
+			FEATURE_PAYMENT_TRANSACTION_FEES_8,
+			FEATURE_PAYMENT_TRANSACTION_FEES_4,
+			FEATURE_PAYMENT_TRANSACTION_FEES_2,
+			FEATURE_PAYMENT_TRANSACTION_FEES_0,
+		],
+	},
 	[ FEATURE_GROUP_WP_HOSTING_COMMERCE ]: {
 		slug: FEATURE_GROUP_WP_HOSTING_COMMERCE,
 		getTitle: () => i18n.translate( 'Commerce specific capabilities' ),
@@ -558,6 +573,8 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
 			} ),
 			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
+			[ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES ]:
+				featureGroups[ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
 			...( isUploadVideosTranslated() && {
 				[ FEATURE_GROUP_UPLOAD_VIDEOS ]: featureGroups[ FEATURE_GROUP_UPLOAD_VIDEOS ],

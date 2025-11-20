@@ -374,13 +374,10 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 			);
 
 		default:
-			return i18n.translate(
-				'%(commission)d%% transaction fee for payments {{br}}{{/br}}(+ standard processing fee)',
-				{
-					components: { br: <br /> },
-					args: { commission },
-				}
-			);
+			return i18n.translate( 'Collect payments (%(commission)d%% fee + standard processing fee)', {
+				components: { br: <br /> },
+				args: { commission },
+			} );
 	}
 };
 
@@ -1705,20 +1702,14 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
-		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 2 },
-			} ),
-		getAlternativeTitle: () => '2%',
+		getTitle: () => getTransactionFeeCopy( 2 ),
+		getAlternativeTitle: () => getTransactionFeeCopy( 2 ),
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
-		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 0 },
-			} ),
-		getAlternativeTitle: () => '0%',
+		getTitle: () => getTransactionFeeCopy( 0 ),
+		getAlternativeTitle: () => getTransactionFeeCopy( 0 ),
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO ]: {
