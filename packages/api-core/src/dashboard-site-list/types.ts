@@ -34,11 +34,3 @@ export interface FetchDashboardSiteListParams {
 	page?: number;
 	per_page?: number;
 }
-
-export interface FetchDashboardSiteFiltersParams {
-	fields: ( keyof DashboardFilters )[];
-}
-
-export interface DashboardFilters {
-	plan?: Array< { name: string; value: string } >;
-}

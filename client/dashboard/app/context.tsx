@@ -1,16 +1,6 @@
-/* eslint-disable no-restricted-imports */
-import {
-	sitesQuery,
-	dashboardSiteListQuery,
-	dashboardSiteFiltersQuery,
-} from '@automattic/api-queries';
-/* eslint-enable no-restricted-imports */
+import { sitesQuery, dashboardSiteListQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
 import { createContext, useContext } from 'react';
-import type {
-	FetchSitesOptions,
-	FetchDashboardSiteListParams,
-	FetchDashboardSiteFiltersParams,
-} from '@automattic/api-core';
+import type { FetchSitesOptions, FetchDashboardSiteListParams } from '@automattic/api-core';
 
 export type SiteSettingsGeneralSupports = {
 	redirect: boolean;
@@ -64,9 +54,6 @@ export type AppConfig = {
 		dashboardSiteListQuery: (
 			params?: FetchDashboardSiteListParams
 		) => ReturnType< typeof dashboardSiteListQuery >;
-		dashboardSiteFiltersQuery: (
-			field: FetchDashboardSiteFiltersParams[ 'fields' ]
-		) => ReturnType< typeof dashboardSiteFiltersQuery >;
 	};
 };
 
@@ -92,10 +79,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	components: {},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
-			dashboardSiteListQuery( 'all', fetchDashboardSiteListParams ),
-		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
-			dashboardSiteFiltersQuery( 'all', fields ),
+		dashboardSiteListQuery,
 	},
 };
 
