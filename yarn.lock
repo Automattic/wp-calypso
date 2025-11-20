@@ -353,7 +353,6 @@ __metadata:
     "@rive-app/react-canvas": "npm:^4.15.6"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
-    "@wordpress/api-fetch": "npm:^7.23.0"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/components": "npm:30.6.0"
     "@wordpress/compose": "npm:^7.2.0"
@@ -364,7 +363,6 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^5.8.3"
-    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
