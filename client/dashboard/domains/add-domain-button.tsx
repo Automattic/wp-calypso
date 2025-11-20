@@ -6,9 +6,11 @@ import { addQueryArgs } from '@wordpress/url';
 export function AddDomainButton( {
 	siteSlug,
 	redirectTo,
+	basePath,
 }: {
 	siteSlug?: string;
 	redirectTo?: string;
+	basePath?: string;
 } ) {
 	const onSearchClick = () => {
 		const queryArgs: Record< string, string > = {};
@@ -29,6 +31,9 @@ export function AddDomainButton( {
 		}
 		if ( redirectTo ) {
 			queryArgs.redirect_to = redirectTo;
+		}
+		if ( basePath ) {
+			queryArgs.basePath = basePath;
 		}
 		window.location.href = siteSlug
 			? addQueryArgs( '/setup/domain/use-my-domain', queryArgs )

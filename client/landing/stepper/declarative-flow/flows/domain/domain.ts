@@ -191,13 +191,11 @@ const domain: FlowV2< typeof initialize > = {
 
 						if ( isDomainMapping && ( mappingIsFree || hasPaidPlan ) ) {
 							const queryArgs = getQueryArgs( window.location.href );
-							let redirectTo = queryArgs.redirect_to as string | undefined;
-
-							const isGardenSite = ( site as { is_garden?: boolean } ).is_garden;
+							const redirectTo = queryArgs.redirect_to as string | undefined;
+							const basePath = queryArgs.basePath as string | undefined;
 							const domain = providedDependencies.domainCartItem.meta;
-							if ( ! isGardenSite ) {
-								redirectTo = `/v2/domains/${ domain }/domain-connection-setup`;
-							}
+							const domainConnectionSetupUrl =
+								basePath && `${ basePath }/domains/${ domain }/domain-connection-setup`;
 
 							// Use pending action for domain mapping
 							// Note: Verification (if required) is handled in the step before submission
@@ -205,7 +203,8 @@ const domain: FlowV2< typeof initialize > = {
 								await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
 
 								/// Redirect to appropriate domains page based on redirect_to parameter
-								const redirectUrl = redirectTo || `/domains/manage/${ siteSlug }`;
+								const redirectUrl =
+									domainConnectionSetupUrl || redirectTo || `/domains/manage/${ siteSlug }`;
 
 								return {
 									redirectTo: redirectUrl,

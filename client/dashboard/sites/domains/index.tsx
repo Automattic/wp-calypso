@@ -5,6 +5,7 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
+import { useAppContext } from '../../app/context';
 import { usePersistentView, DataViews } from '../../app/dataviews';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
@@ -55,14 +56,20 @@ function SiteDomains() {
 
 	const routerState = useRouterState();
 	const redirectTo = routerState.location.pathname;
+	const { basePath } = useAppContext();
 
 	return (
 		<PageLayout
 			header={
 				<PageHeader
 					title={ __( 'Domains' ) }
-					description={ __( 'Manage domains associated with this site.' ) }
-					actions={ <AddDomainButton siteSlug={ site.slug } redirectTo={ redirectTo } /> }
+					actions={
+						<AddDomainButton
+							siteSlug={ site.slug }
+							redirectTo={ redirectTo }
+							basePath={ basePath }
+						/>
+					}
 				/>
 			}
 		>
