@@ -851,7 +851,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		}
 
 		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
+			features = [ ...features, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
 		}
 
 		if ( isGlobalStylesOnPersonalEnabled() ) {
@@ -876,7 +876,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		let features = baseFeatures;
 
 		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
+			features = [ ...features, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
 		}
 
 		if ( isGlobalStylesOnPersonalEnabled() ) {
@@ -1066,7 +1066,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		].filter( isValueTruthy );
 
 		return isGlobalStylesGridChangesVariation()
-			? [ ...baseFeatures, FEATURE_PAYMENT_TRANSACTION_FEES_0 ]
+			? [ ...baseFeatures, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_0 ]
 			: baseFeatures;
 	},
 	get2023PricingGridSignupWpcomFeatures: () => {
@@ -1087,7 +1087,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 
 		// When the global styles grid variation is active, surface the payments fee for Commerce
 		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_0 ];
+			features = [ ...features, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_0 ];
 		}
 
 		return features;
@@ -1517,7 +1517,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		].filter( isValueTruthy );
 
 		return isGlobalStylesGridChangesVariation()
-			? [ ...baseFeatures, FEATURE_PAYMENT_TRANSACTION_FEES_4 ]
+			? [ ...baseFeatures, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_4 ]
 			: baseFeatures;
 	},
 	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
@@ -1542,7 +1542,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 		// When the global styles grid variation is active, surface the payments fee for Premium
 		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_4 ];
+			features = [ ...features, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_4 ];
 		}
 
 		return features;
@@ -1731,7 +1731,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		].filter( isValueTruthy );
 
 		return isGlobalStylesGridChangesVariation()
-			? [ ...baseFeatures, FEATURE_PAYMENT_TRANSACTION_FEES_2 ]
+			? [ ...baseFeatures, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_2 ]
 			: baseFeatures;
 	},
 	get2023PricingGridSignupWpcomFeatures: () => {
@@ -1752,7 +1752,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 
 		// When the global styles grid variation is active, surface the payments fee for Business
 		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_2 ];
+			features = [ ...features, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_2 ];
 		}
 
 		return features;

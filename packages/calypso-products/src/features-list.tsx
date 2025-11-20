@@ -341,6 +341,7 @@ import {
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
+	FEATURE_GROUP_WORDADS,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -1862,6 +1863,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Earn with WordAds' ),
 		getDescription: () =>
 			i18n.translate( 'Display ads and earn from premium networks via the WordAds program.' ),
+		getFeatureGroup: () => FEATURE_GROUP_WORDADS,
 	},
 	[ FEATURE_PLUGINS_THEMES ]: {
 		getSlug: () => FEATURE_PLUGINS_THEMES,
