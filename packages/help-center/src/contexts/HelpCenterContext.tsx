@@ -28,7 +28,7 @@ const botSlugMap = {
 	},
 	new_workflow: {
 		slug: 'wpcom-workflow-support_chat',
-		version: undefined, // Get active version
+		version: null, // Get active version
 	},
 	updated_legacy: {
 		slug: 'wpcom-support-chat',
@@ -93,14 +93,16 @@ function useNewInteractionsBotConfig() {
 		staleTime: 1,
 		queryFn: () =>
 			canAccessWpcomApis()
-				? wpcomRequest< { variations: Record< string, string > } >( {
-						path: '/experiments/0.1.0/assignments/calypso',
-						apiNamespace: 'wpcom/v2',
-						query: {
-							experiment_name: experimentName,
-						},
-				  } )
-				: apiFetch< { variations: Record< string, string > } >( {
+				? wpcomRequest< { variations: Record< typeof experimentName, keyof typeof botSlugMap > } >(
+						{
+							path: '/experiments/0.1.0/assignments/calypso',
+							apiNamespace: 'wpcom/v2',
+							query: {
+								experiment_name: experimentName,
+							},
+						}
+				  )
+				: apiFetch< { variations: Record< typeof experimentName, keyof typeof botSlugMap > } >( {
 						path: addQueryArgs( 'jetpack/v4/explat/assignments', {
 							experiment_name: experimentName,
 							platform: 'calypso',
@@ -109,10 +111,11 @@ function useNewInteractionsBotConfig() {
 				  } ),
 	} );
 
-	if ( experimentName in ( query.data?.variations ?? {} ) ) {
-		const variant = query.data?.variations[ experimentName ] ?? 'control';
-		const botSlug = botSlugMap[ variant as keyof typeof botSlugMap ]?.slug;
-		const version = botSlugMap[ variant as keyof typeof botSlugMap ]?.version;
+	if ( query.data?.variations && experimentName in query.data.variations ) {
+		// null -> control
+		const variant = query.data.variations[ experimentName ] ?? 'control';
+		const botSlug = botSlugMap[ variant ]?.slug;
+		const version = botSlugMap[ variant ]?.version;
 
 		return {
 			newInteractionsBotSlug: botSlug,
