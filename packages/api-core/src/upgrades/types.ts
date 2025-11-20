@@ -153,7 +153,14 @@ export interface Purchase {
 		| 'expired'
 		| 'one-time-purchase';
 	iap_purchase_management_link: string | null;
+
+	/**
+	 * If this subscription is for a plan with a bundled domain, this will
+	 * contain the domain name for that domain subscription. Otherwise this will
+	 * be an empty string.
+	 */
 	included_domain: string;
+
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
 
