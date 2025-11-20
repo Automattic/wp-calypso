@@ -122,3 +122,55 @@ body.is-section-plugins #primary .main.is-logged-out {
 		padding-top: 0;
 	}
 }
+
+.plugins-browser__search-header {
+	padding-top: 79px;
+	padding-bottom: 24px;
+
+	.full-width-section__content {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+}
+.plugins-browser__search-header,
+.plugins-discovery-page__favorites,
+.plugins-discovery-page__power-store {
+	background-color: var(--studio-gray-0);
+}
+
+.plugins-browser__categories,
+.plugins-browser__marketplace-footer {
+	background-color: var(--studio-white);
+}
+
+
+body .is-section-plugins .layout__content:has(.plugins-browser.is-full-width-layout) {
+	padding: 0;
+
+	.plugins-browser__content-wrapper {
+		background-color: var(--studio-white);
+	}
+
+	.full-width-section__content {
+		max-width: 1040px;
+		margin: 0 auto;
+		padding-inline: 24px;
+		box-sizing: border-box;
+	}
+}
+
+body.is-section-plugins .is-logged-in main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column).plugins-browser.is-full-width-layout {
+	.plugins-browser__content-wrapper {
+		padding: 0;
+		max-width: 100%;
+	}
+
+	.full-width-section__content {
+		padding-inline-start: calc(var(--sidebar-width-max) + 24px);
+		box-sizing: content-box;
+	}
+
+	.navigation-header__container {
+		padding: 47px 0 0;
+	}
+}

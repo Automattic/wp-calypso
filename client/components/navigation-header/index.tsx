@@ -86,7 +86,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 			style={ style }
 			ref={ ref }
 		>
-			<Container>
+			<Container className="navigation-header__container">
 				<div className="navigation-header__main">
 					{ screenOptionsTab && <ScreenOptionsTab wpAdminPath={ screenOptionsTab } /> }
 					{ showCrumbs && (
