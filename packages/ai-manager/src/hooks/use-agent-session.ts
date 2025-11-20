@@ -3,7 +3,6 @@
  * Sessions are stored in localStorage and expire after a configurable duration
  */
 
-import { nanoid } from 'nanoid';
 import { useCallback, useState } from 'react';
 
 const DEFAULT_STORAGE_KEY = 'ai-agent-session-id';
@@ -22,7 +21,7 @@ interface StoredSession {
  */
 const generateSessionId = ( prefix: string ): string => {
 	const timestamp = Date.now();
-	const random = nanoid( 8 );
+	const random = Math.random().toString( 36 ).substring( 2, 10 );
 	return `${ prefix }-${ timestamp }-${ random }`;
 };
 
