@@ -86,7 +86,7 @@ describe( 'selectors', () => {
 				canExplicitRenew: false,
 				canDisableAutoRenew: false,
 				canReenableAutoRenewal: false,
-				costToUnbundleText: undefined,
+				costToUnbundleText: '',
 				currencyCode: undefined,
 				currencySymbol: undefined,
 				description: undefined,

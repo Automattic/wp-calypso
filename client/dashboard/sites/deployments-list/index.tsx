@@ -4,13 +4,13 @@ import {
 	codeDeploymentRunsQuery,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
+import { DataViews, usePersistentView } from '../../app/dataviews';
 import {
 	siteRoute,
 	siteSettingsRepositoriesRoute,
@@ -21,8 +21,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import { useDeploymentFields } from './dataviews/fields';
-import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
+import { DEFAULT_VIEW, DEFAULT_LAYOUTS, useFields } from './dataviews';
 import { DeploymentLogsModalContent } from './deployment-logs/deployment-logs-modal-content';
 import { TriggerDeploymentModalForm } from './trigger-deployment-modal-form';
 import type {
@@ -30,31 +29,19 @@ import type {
 	DeploymentRunWithDeploymentInfo,
 	CodeDeploymentData,
 } from '@automattic/api-core';
-import type { View } from '@wordpress/dataviews';
 
 function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
-	const navigate = useNavigate( { from: siteDeploymentsListRoute.fullPath } );
 	const currentSearchParams = siteDeploymentsListRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const queryClient = useQueryClient();
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
 	const closeModalTriggerDeployment = () => setIsModalTriggerDeploymentOpen( false );
-	const [ view, setView ] = useState< View >( () => {
-		const repositoryFilter = currentSearchParams?.repository;
-
-		return repositoryFilter
-			? {
-					...DEFAULT_VIEW,
-					filters: [
-						{
-							field: 'repository_name',
-							operator: 'isAny',
-							value: [ repositoryFilter ],
-						},
-					],
-			  }
-			: DEFAULT_VIEW;
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'site-deployments',
+		defaultView: DEFAULT_VIEW,
+		queryParams: currentSearchParams,
+		queryParamFilterFields: [ 'repository' ],
 	} );
 	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
 		codeDeploymentsQuery( site.ID )
@@ -124,7 +111,8 @@ function DeploymentsList() {
 			} ) );
 	}, [ deploymentRuns ] );
 
-	const fields = useDeploymentFields( {
+	const fields = useFields( {
+		repositoryFilter: currentSearchParams?.repository,
 		repositoryOptions,
 		userNameOptions,
 	} );
@@ -134,21 +122,6 @@ function DeploymentsList() {
 		view,
 		fields
 	);
-
-	const handleViewChange = ( nextView: View ) => {
-		const repositoryFilter = nextView.filters?.find(
-			( filter ) => filter.field === 'repository_name'
-		)?.value?.[ 0 ];
-
-		navigate( {
-			search: {
-				...currentSearchParams,
-				repository: repositoryFilter || undefined,
-			},
-		} );
-
-		setView( nextView );
-	};
 
 	const handleDeploymentTriggered = () => {
 		queryClient.invalidateQueries( {
@@ -226,7 +199,8 @@ function DeploymentsList() {
 					data={ filteredData }
 					fields={ fields }
 					view={ view }
-					onChangeView={ handleViewChange }
+					onChangeView={ updateView }
+					onResetView={ resetView }
 					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }

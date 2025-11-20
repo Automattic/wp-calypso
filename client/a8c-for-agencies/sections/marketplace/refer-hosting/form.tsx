@@ -1,7 +1,7 @@
 import { SearchableDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
@@ -123,10 +123,6 @@ export default function ReferHostingForm( {
 
 	const { countryOptions } = useCountriesAndStates();
 
-	const countries = useMemo( () => {
-		return countryOptions.map( ( country ) => country.label );
-	}, [ countryOptions ] );
-
 	const {
 		formData,
 		updateFormData,
@@ -237,7 +233,7 @@ export default function ReferHostingForm( {
 					value={ formData.country }
 					onChange={ ( value: string ) => handleInputChange( 'country', value ) }
 					placeholder={ translate( 'Select country' ) }
-					options={ countries.map( ( country ) => ( { value: country, label: country } ) ) }
+					options={ countryOptions }
 				/>
 
 				<TextField

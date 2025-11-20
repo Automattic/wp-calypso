@@ -875,6 +875,7 @@ export default function CheckoutMainContent( {
 									</Step.LinkButton>
 								</span>
 							}
+							hideLogo
 						/>
 					);
 

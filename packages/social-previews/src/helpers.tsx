@@ -89,6 +89,7 @@ export type Platform =
 	| 'mastodon'
 	| 'nextdoor'
 	| 'threads'
+	| 'tumblr'
 	| 'twitter';
 
 type PreviewTextOptions = {
@@ -108,6 +109,7 @@ export const hashtagUrlMap: Record< Platform, string > = {
 	mastodon: 'https://%2$s/tags/%1$s',
 	nextdoor: 'https://nextdoor.com/hashtag/%1$s',
 	threads: 'https://www.threads.net/search?q=%1$s&serp_type=tags',
+	tumblr: 'https://www.tumblr.com/tagged/%1$s',
 	bluesky: 'https://bsky.app/hashtag/%1$s',
 };
 
