@@ -47,7 +47,6 @@ export interface CreateAgentConfigOptions {
 
 /**
  * Create an agent configuration for @automattic/agenttic-client
- *
  * @param {CreateAgentConfigOptions} options - Configuration options
  * @returns {Promise<UseAgentChatConfig>} Agent configuration
  */
@@ -98,7 +97,6 @@ export async function createAgentConfig( {
 
 /**
  * Create a simple agent config without abilities or context
- *
  * @param {string} agentId - Agent ID
  * @param {string} agentUrl - Agent API URL
  * @param {string} sessionId - Session ID

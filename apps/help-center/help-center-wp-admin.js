@@ -58,7 +58,7 @@ function AdminHelpCenterContent() {
 				} );
 			}
 		};
-	}, [] );
+	}, [ closeHelpCenterWhenNotificationsPanelIsOpened, masterbarNotificationsButton ] );
 
 	useEffect( () => {
 		if ( isShown ) {
@@ -207,7 +207,7 @@ function AdminHelpCenterContent() {
 				link.removeEventListener( 'click', openSupportLinkInHelpCenter );
 			} );
 		};
-	}, [] );
+	}, [ openSupportLinkInHelpCenter, supportLinks ] );
 
 	const botProps = helpCenterData.isCommerceGarden
 		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }

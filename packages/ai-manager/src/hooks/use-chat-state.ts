@@ -27,7 +27,6 @@ const loadChatState = ( storageKey: string ): ChatState => {
 
 /**
  * Save chat state to localStorage
- *
  * @param {string} storageKey - The localStorage key to use
  * @param {ChatState} state - The chat state to save
  */
@@ -57,7 +56,6 @@ export interface UseChatStateOptions {
 
 /**
  * Hook for managing floating chat state
- *
  * @param {UseChatStateOptions} options - Configuration options
  */
 export function useChatState( options: UseChatStateOptions = {} ): UseChatStateResult {

@@ -12,7 +12,6 @@ export class CalypsoContextAdapter implements ContextAdapter {
 
 	/**
 	 * Create a new Calypso Context Adapter
-	 *
 	 * @param {string} environment - Environment identifier (e.g., 'calypso-help-center')
 	 * @param {Function} additionalContextProvider - Optional function to provide additional context
 	 */

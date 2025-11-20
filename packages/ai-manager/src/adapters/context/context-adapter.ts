@@ -29,35 +29,30 @@ export interface ClientContext {
 export interface ContextAdapter {
 	/**
 	 * Get the current context for the AI agent
-	 *
 	 * @returns {Promise<ClientContext>} The current context
 	 */
 	getContext(): Promise< ClientContext >;
 
 	/**
 	 * Get the environment identifier
-	 *
 	 * @returns {string} Environment name (e.g., 'wp-admin', 'calypso', 'block-editor')
 	 */
 	getEnvironment(): string;
 
 	/**
 	 * Optional: Get sitemap data if available
-	 *
 	 * @returns {Promise<unknown> | undefined} Sitemap data
 	 */
 	getSitemap?(): Promise< unknown >;
 
 	/**
 	 * Optional: Get entity data if available
-	 *
 	 * @returns {Promise<unknown> | undefined} Entity data
 	 */
 	getEntityData?(): Promise< unknown >;
 
 	/**
 	 * Optional: Listen for context changes and call the callback when context updates
-	 *
 	 * @param {Function} callback - Callback to call when context changes
 	 * @returns {Function | undefined} Cleanup function
 	 */

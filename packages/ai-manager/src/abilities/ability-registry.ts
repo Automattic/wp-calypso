@@ -8,7 +8,6 @@ export interface Ability {
 	name: string;
 	/**
 	 * Execute the ability with given parameters
-	 *
 	 * @param {any} params - Ability parameters
 	 * @returns {Promise<any>} Ability result
 	 */
@@ -43,7 +42,6 @@ export class AbilityRegistry {
 
 	/**
 	 * Register a single ability
-	 *
 	 * @param {Ability} ability - The ability to register
 	 */
 	registerAbility( ability: Ability ): void {
@@ -58,7 +56,6 @@ export class AbilityRegistry {
 
 	/**
 	 * Register multiple abilities at once
-	 *
 	 * @param {Ability[]} abilities - Array of abilities to register
 	 */
 	registerAbilities( abilities: Ability[] ): void {
@@ -68,7 +65,6 @@ export class AbilityRegistry {
 	/**
 	 * Register an async ability loader
 	 * Loaders are called once during getAbilities() to lazy-load abilities
-	 *
 	 * @param {AbilityLoader} loader - Async function that returns abilities
 	 */
 	registerAbilitiesAsync( loader: AbilityLoader ): void {
@@ -78,7 +74,6 @@ export class AbilityRegistry {
 
 	/**
 	 * Unregister an ability by name
-	 *
 	 * @param {string} name - Name of the ability to remove
 	 * @returns {boolean} True if ability was found and removed
 	 */
@@ -89,7 +84,6 @@ export class AbilityRegistry {
 	/**
 	 * Get all registered abilities
 	 * If async loaders are registered, they will be called once to populate abilities
-	 *
 	 * @returns {Promise<Ability[]>} Array of all abilities
 	 */
 	async getAbilities(): Promise< Ability[] > {
@@ -103,7 +97,6 @@ export class AbilityRegistry {
 
 	/**
 	 * Get a specific ability by name
-	 *
 	 * @param {string} name - Ability name
 	 * @returns {Ability | undefined} The ability or undefined if not found
 	 */
@@ -113,7 +106,6 @@ export class AbilityRegistry {
 
 	/**
 	 * Execute an ability by name
-	 *
 	 * @param {string} name - Ability name
 	 * @param {any} params - Ability parameters
 	 * @returns {Promise<any>} Ability execution result
@@ -136,7 +128,6 @@ export class AbilityRegistry {
 
 	/**
 	 * Check if an ability is registered
-	 *
 	 * @param {string} name - Ability name
 	 * @returns {boolean} True if ability exists
 	 */
@@ -155,7 +146,6 @@ export class AbilityRegistry {
 
 	/**
 	 * Get number of registered abilities
-	 *
 	 * @returns {number} Count of abilities
 	 */
 	size(): number {
@@ -164,7 +154,6 @@ export class AbilityRegistry {
 
 	/**
 	 * Load all async ability loaders
-	 *
 	 * @private
 	 */
 	private async _loadAsyncAbilities(): Promise< void > {

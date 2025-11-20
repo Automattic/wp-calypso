@@ -27,7 +27,6 @@ const generateSessionId = ( prefix: string ): string => {
 
 /**
  * Save session ID to localStorage
- *
  * @param {string} storageKey - The localStorage key to use
  * @param {string} sessionId - The session ID to save
  */
@@ -98,7 +97,6 @@ export interface UseAgentSessionOptions {
 
 /**
  * Hook for managing AI agent session state
- *
  * @param {UseAgentSessionOptions} options - Configuration options
  */
 export function useAgentSession( options: UseAgentSessionOptions = {} ): UseAgentSessionResult {
