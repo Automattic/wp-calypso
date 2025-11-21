@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { useShouldUseUnifiedAgent } from '@automattic/help-center/src/hooks';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
@@ -122,6 +123,22 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	}, [ layoutFocus ] );
 
 	return null;
+}
+
+function HelpCenterOrAgentLoader( { sectionName, loadHelpCenter, currentRoute } ) {
+	const shouldLoadUnifiedAgent = useShouldUseUnifiedAgent();
+
+	if ( ! shouldLoadUnifiedAgent ) {
+		return (
+			<HelpCenterLoader
+				sectionName={ sectionName }
+				loadHelpCenter={ loadHelpCenter }
+				currentRoute={ currentRoute }
+			/>
+		);
+	}
+
+	return <AIAgentLoader sectionName={ sectionName } currentRoute={ currentRoute } />;
 }
 
 class Layout extends Component {
@@ -261,13 +278,9 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<HelpCenterLoader
+				<HelpCenterOrAgentLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
-					currentRoute={ this.props.currentRoute }
-				/>
-				<AIAgentLoader
-					sectionName={ this.props.sectionName }
 					currentRoute={ this.props.currentRoute }
 				/>
 				{ ! shouldDisableSidebarScrollSynchronizer && (
