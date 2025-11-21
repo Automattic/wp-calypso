@@ -62,7 +62,15 @@ export default function ChooseDomain() {
 	};
 
 	return (
-		<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
+		<PageLayout
+			header={
+				<PageHeader
+					prefix={ <BackToEmailsPrefix /> }
+					description={ __( 'Select a domain to set up email for.' ) }
+				/>
+			}
+			size="small"
+		>
 			<Text size={ 16 }>{ __( 'Which domain name would you like to add a mailbox for?' ) }</Text>
 			<VStack spacing={ 6 }>
 				{ isLoading ? (

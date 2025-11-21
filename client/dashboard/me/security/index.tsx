@@ -11,7 +11,15 @@ import SecurityTwoStepAuthSummary from '../security-two-step-auth/summary';
 
 function Security() {
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Security' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Security' ) }
+					description={ __( 'Manage your account security settings and authentication methods.' ) }
+				/>
+			}
+		>
 			<VStack spacing={ 6 }>
 				<SecurityPasswordSummary />
 				<SecurityAccountRecoverySummary />

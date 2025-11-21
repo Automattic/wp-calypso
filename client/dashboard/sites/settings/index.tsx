@@ -40,7 +40,15 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	}
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Settings' ) }
+					description={ __( 'Configure your site’s general, server, and security settings.' ) }
+				/>
+			}
+		>
 			{ supportsSettings.general && (
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'General' ) } level={ 3 } />

@@ -212,7 +212,13 @@ export default function DomainTransfer() {
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Transfer' ) } /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Transfer' ) }
+					description={ __( 'Transfer this domain to another site or WordPress.com user.' ) }
+				/>
+			}
 		>
 			{ renderTransferInfo() }
 			{ isDomainTransferable && <InternalTransferOptions domain={ domain } /> }

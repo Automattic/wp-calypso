@@ -1,0 +1,19 @@
+.agents-manager-chat-header {
+	width: calc(100% + 16px);
+	display: flex;
+	align-items: center;
+	justify-content: end;
+	height: 56px;
+	padding: 16px;
+	margin-top: -8px;
+	margin-left: -8px;
+}
+
+.agents-manager-chat-header__actions {
+	display: flex;
+	gap: 8px;
+}
+
+.agents-manager-chat-header__more-options {
+	line-height: initial;
+}

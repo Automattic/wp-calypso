@@ -25,6 +25,6 @@ export const disableAutoupdateAction: Action< PluginListRow > = {
 		);
 	},
 	isEligible: ( item: PluginListRow ) => {
-		return [ 'some', 'all' ].includes( item.areAutoUpdatesEnabled );
+		return ! item.isManaged && [ 'some', 'all' ].includes( item.areAutoUpdatesEnabled );
 	},
 };

@@ -71,7 +71,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	};
 
 	const description = hasPlanFeature( site, HostingFeatures.PHP )
-		? undefined
+		? __( 'Configure the PHP version for your site.' )
 		: sprintf(
 				/* translators: %s: plan name. Eg. 'Personal' */
 				__( 'Sites on the %s plan run on our recommended PHP version.' ),

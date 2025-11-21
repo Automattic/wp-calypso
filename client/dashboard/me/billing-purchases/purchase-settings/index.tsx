@@ -124,6 +124,10 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 		return `/plans/${ purchase.site_slug }`;
 	}
 
+	if ( purchase.is_woo_hosted_product ) {
+		return `/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug }`;
+	}
+
 	return getWpcomPlanGridUrl( purchase.site_slug );
 }
 
