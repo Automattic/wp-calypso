@@ -29,7 +29,6 @@ export function HelpCenterAIAssistant( {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const { currentUser, site, sectionName } = useHelpCenterContext();
 
-	// TODO: Extract preference storage utilities to avoid duplication with `components/help-center.tsx`
 	// Save/load preferences using wpcom-proxy-request
 	const savePreference = useCallback( async ( key: string, value: unknown ) => {
 		if ( canAccessWpcomApis() ) {
