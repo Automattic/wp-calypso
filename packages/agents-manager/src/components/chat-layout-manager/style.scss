@@ -131,45 +131,68 @@ body.wp-admin:has( .agents-manager-sidebar-container--sidebar-open ) {
 }
 
 /* Calypso */
-body:has( #wpcom.agents-manager-sidebar-container--sidebar-open ) {
+// When the sidebar is open, adjust the Calypso layout to create bordered surfaces
+// The masterbar and sidebar are both fixed positioned elements
+body:has( .help-center.agents-manager-sidebar-container--sidebar-open ) {
 	background-color: $gray-900;
-}
 
-#wpcom.agents-manager-sidebar-container {
-	@include sidebar-base( '#content' );
-
-	#content {
-		background-color: #fcfcfc !important;
-	}
-
-	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base( '#content' );
-
-		#header {
+	#wpcom {
+		// Adjust the masterbar (fixed positioned)
+		.layout__header-section .masterbar {
+			position: fixed !important;
 			top: $layout-spacing;
 			left: $layout-spacing;
-			right: $sidebar-width;
-			width: auto;
-			overflow: hidden;
-			border-top-left-radius: $main-border-radius;
-			border-top-right-radius: $main-border-radius;
+			right: calc( $sidebar-width + $layout-spacing );
+			width: auto !important;
+			border-radius: $main-border-radius $main-border-radius 0 0;
+			border: 1px solid $border-color;
+			border-bottom: none;
+			will-change: right, width, left;
+			transition:
+				right $transition-timing,
+				width $transition-timing,
+				left $transition-timing,
+				border $transition-timing;
 		}
 
-		#content {
-			top: $layout-spacing;
-			left: $layout-spacing;
-			height: calc( 100vh - ( $layout-spacing * 2 ) );
-			min-height: unset;
-			margin: 0 !important;
-		}
-
+		// Adjust the sidebar (fixed positioned)
 		#secondary {
-			top: calc( $layout-spacing + $admin-bar-height );
+			position: fixed !important;
+			top: calc( var(--masterbar-height) + $layout-spacing );
 			left: $layout-spacing;
 			bottom: $layout-spacing;
-			overflow: hidden;
-			border-top-left-radius: $main-border-radius;
-			border-bottom-left-radius: $main-border-radius;
+			border-left: 1px solid $border-color;
+			border-right: 1px solid $border-color;
+			border-bottom: 1px solid $border-color;
+			border-radius: 0 0 0 $main-border-radius;
+			will-change: border;
+			transition: border $transition-timing;
+		}
+
+		// Adjust the content area
+		#content {
+			position: fixed !important;
+			top: calc( var(--masterbar-height) + $layout-spacing );
+			left: calc( var(--sidebar-width-max) + $layout-spacing );
+			right: calc( $sidebar-width + $layout-spacing );
+			bottom: $layout-spacing;
+			height: calc( 100vh - var(--masterbar-height) - ( $layout-spacing * 2 ) );
+			margin: 0 !important;
+			box-sizing: border-box;
+			overflow-y: auto;
+			overflow-x: hidden;
+			will-change: left, right;
+			transition:
+				left $transition-timing,
+				right $transition-timing,
+				border $transition-timing;
+
+			// Use box-shadow for the border to ensure it's always visible
+			box-shadow:
+				0 0 0 1px $border-color,
+				inset 0 0 0 1px #fcfcfc;
+			border-radius: 0 0 $main-border-radius 0;
+			background-color: #fcfcfc !important;
 		}
 	}
 }
