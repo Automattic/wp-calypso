@@ -258,7 +258,7 @@ export default function UpsellStep( {
 							__(
 								'You will lose your free domain registration since that feature is only included in annual/biannual plans.'
 							) }
-						{ refundAmount && <br /> }
+						{ refundAmount ? <br /> : null }
 						{ refundAmount
 							? sprintf(
 									/* translators: %(refundAmount)s is a monetary amount in the form of a refund */
@@ -294,17 +294,18 @@ export default function UpsellStep( {
 							),
 							{ plan: personalPlanName }
 						) }{ ' ' }
-						{ refundAmount &&
-							sprintf(
-								/* translators: %(amount)s is a monetary amount in the form of a refund */
-								__(
-									'You can downgrade and get a partial refund of %(amount)s or ' +
-										'continue to the next step and cancel the plan.'
-								),
-								{
-									amount: formatCurrency( refundAmount, currencyCode ),
-								}
-							) }
+						{ refundAmount
+							? sprintf(
+									/* translators: %(amount)s is a monetary amount in the form of a refund */
+									__(
+										'You can downgrade and get a partial refund of %(amount)s or ' +
+											'continue to the next step and cancel the plan.'
+									),
+									{
+										amount: formatCurrency( refundAmount, currencyCode ),
+									}
+							  )
+							: null }
 					</>
 				</Upsell>
 			);
