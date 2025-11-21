@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { useShouldUseUnifiedAgent } from '@automattic/help-center/src/hooks';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
@@ -54,7 +53,6 @@ import {
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
-import AIAgentLoader from './ai-agent-loader';
 import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
@@ -123,22 +121,6 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	}, [ layoutFocus ] );
 
 	return null;
-}
-
-function HelpCenterOrAgentLoader( { sectionName, loadHelpCenter, currentRoute } ) {
-	const shouldLoadUnifiedAgent = useShouldUseUnifiedAgent();
-
-	if ( ! shouldLoadUnifiedAgent ) {
-		return (
-			<HelpCenterLoader
-				sectionName={ sectionName }
-				loadHelpCenter={ loadHelpCenter }
-				currentRoute={ currentRoute }
-			/>
-		);
-	}
-
-	return <AIAgentLoader sectionName={ sectionName } currentRoute={ currentRoute } />;
 }
 
 class Layout extends Component {
@@ -278,7 +260,7 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<HelpCenterOrAgentLoader
+				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
