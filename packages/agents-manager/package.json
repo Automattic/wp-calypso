@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/agents-manager",
 	"version": "1.0.0",
-	"description": "Automattic AI Manager.",
+	"description": "Automattic Agents Manager.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",

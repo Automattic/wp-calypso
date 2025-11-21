@@ -169,7 +169,7 @@ export default function CalypsoAIAgent( {
 			sessionStorageKey="calypso-agents-manager-session"
 			chatStateStorageKey="calypso-agents-manager-chat-state"
 			dockStateStorageKey="calypso-agents-manager-docked"
-			preferenceKey="calypso_ai_manager_state"
+			preferenceKey="calypso_agents_manager_state"
 			savePreference={ savePreference }
 			loadPreference={ loadPreference }
 			defaultOpen={ defaultOpen }

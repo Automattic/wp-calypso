@@ -140,7 +140,7 @@ export function usePersistedAgentState(
 	options: UsePersistedAgentStateOptions = {}
 ): UsePersistedAgentStateResult {
 	const {
-		preferenceKey = 'ai_manager_state',
+		preferenceKey = 'agents_manager_state',
 		savePreference = defaultSavePreference,
 		loadPreference = defaultLoadPreference,
 		debounceMs = 1000,
