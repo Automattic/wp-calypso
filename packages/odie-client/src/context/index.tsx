@@ -181,7 +181,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 */
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const versionParams = urlSearchParams.get( 'version' );
-	const overriddenVersion = versionParams || version;
+	const overriddenVersion = versionParams || version || newInteractionsBotVersion;
 
 	return (
 		<OdieAssistantContext.Provider
@@ -209,7 +209,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				setExperimentVariationName,
 				setMessageLikedStatus,
 				trackEvent,
-				version: overriddenVersion || newInteractionsBotVersion,
+				version: overriddenVersion,
 				forceEmailSupport,
 				isChatRestricted,
 			} }
