@@ -1665,7 +1665,7 @@ export default function CancelPurchase() {
 				header={
 					<PageHeader
 						title={ getHeaderTitle() }
-						prefix={ <Breadcrumbs length={ 2 } /> }
+						prefix={ <Breadcrumbs length={ 4 } /> }
 						description={ __(
 							'Before you go, please answer a few quick questions to help us improve.'
 						) }
