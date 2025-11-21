@@ -1,9 +1,6 @@
 import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/constants';
-import { useQuery } from '@tanstack/react-query';
-import apiFetch from '@wordpress/api-fetch';
 import { useContext, createContext } from '@wordpress/element';
-import { addQueryArgs } from '@wordpress/url';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { useNewInteractionsBotConfig } from '../hooks/use-new-interaction-bot-config';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
@@ -19,21 +16,6 @@ export type HelpCenterRequiredInformation = {
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
 	isCommerceGarden: boolean;
-};
-
-const botSlugMap = {
-	control: {
-		slug: 'wpcom-support-chat',
-		version: undefined, // Get active version
-	},
-	new_workflow: {
-		slug: 'wpcom-workflow-support_chat',
-		version: undefined, // Get active version
-	},
-	updated_legacy: {
-		slug: 'wpcom-support-chat',
-		version: '20.8.2', // Legacy chain assistant with updated prompt
-	},
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -85,46 +67,6 @@ const defaultContext: HelpCenterRequiredInformation = {
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
-
-function useNewInteractionsBotConfig() {
-	const experimentName = 'wpcom_help_center_ai_workflow_and_prompt_changes';
-	const query = useQuery( {
-		queryKey: [ 'new-interactions-bot-slug', experimentName ],
-		staleTime: 10 * 60 * 1000, // 10 minutes
-		queryFn: () =>
-			canAccessWpcomApis()
-				? wpcomRequest< { variations: Record< typeof experimentName, keyof typeof botSlugMap > } >(
-						{
-							path: '/experiments/0.1.0/assignments/wpcom',
-							apiNamespace: 'wpcom/v2',
-							query: {
-								experiment_name: experimentName,
-							},
-						}
-				  )
-				: apiFetch< { variations: Record< typeof experimentName, keyof typeof botSlugMap > } >( {
-						path: addQueryArgs( 'jetpack/v4/explat/assignments', {
-							experiment_name: experimentName,
-							platform: 'wpcom',
-							as_connected_user: 'true',
-						} ),
-				  } ),
-	} );
-
-	if ( query.data?.variations && experimentName in query.data.variations ) {
-		// null -> control
-		const variant = query.data.variations[ experimentName ] ?? 'control';
-		const botSlug = botSlugMap[ variant ]?.slug;
-		const version = botSlugMap[ variant ]?.version;
-
-		return {
-			newInteractionsBotSlug: botSlug,
-			newInteractionsBotVersion: version,
-		};
-	}
-
-	return {};
-}
 
 export const HelpCenterRequiredContextProvider: React.FC< {
 	children: JSX.Element;
