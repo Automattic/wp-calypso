@@ -13,14 +13,15 @@ interface APIFetchOptions {
 const fetchArticlesAPI = async (
 	search: string,
 	locale: string,
-	sectionName: string
+	sectionName: string,
+	source: string
 ): Promise< SearchResult[] > => {
 	let searchResultResponse: SearchResult[] = [];
 
-	const queryString = buildQueryString( { query: search, locale, section: sectionName } );
+	const queryString = buildQueryString( { query: search, locale, section: sectionName, source } );
 	if ( canAccessWpcomApis() ) {
 		searchResultResponse = ( await wpcomRequest( {
-			path: `/help/search/wpcom?${ queryString }`,
+			path: `/help/search?${ queryString }`,
 			apiNamespace: 'wpcom/v2',
 		} ) ) as SearchResult[];
 	} else {
@@ -49,11 +50,12 @@ export const useHelpSearchQuery = (
 	search: string,
 	locale = 'en',
 	sectionName = '',
+	source = 'wpcom',
 	queryOptions: Record< string, unknown > = {}
 ) => {
 	return useQuery< any >( {
-		queryKey: [ 'help-center-search', search, locale, sectionName ],
-		queryFn: () => fetchArticlesAPI( search, locale, sectionName ),
+		queryKey: [ 'help-center-search', search, locale, sectionName, source ],
+		queryFn: () => fetchArticlesAPI( search, locale, sectionName, source ),
 		refetchOnWindowFocus: false,
 		...queryOptions,
 	} );
