@@ -5,7 +5,8 @@ import { useSupportStatus } from '../data/use-support-status';
 function isUnifiedAgentFlagSetInURL(): boolean {
 	const currentUrl = window.location.href;
 	const urlParams = new URLSearchParams( new URL( currentUrl ).search );
-	return urlParams.get( 'flags' ) === 'unified-agent';
+	const flags = urlParams.get( 'flags' );
+	return flags?.split( ',' ).includes( 'unified-agent' ) ?? false;
 }
 
 export const useShouldUseUnifiedAgent = () => {
@@ -13,7 +14,7 @@ export const useShouldUseUnifiedAgent = () => {
 
 	// Check if user is eligible via support status API
 	// Note: This will need to be added to the backend support-status endpoint
-	const isEligibleViaAPI = Boolean( ( supportStatus?.eligibility as any )?.unified_agent_enabled );
+	const isEligibleViaAPI = Boolean( supportStatus?.eligibility?.unified_agent_enabled );
 
 	// Force unified agent via URL flag (for testing)
 	const isFlagSetInURL = isUnifiedAgentFlagSetInURL();

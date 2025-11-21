@@ -109,6 +109,7 @@ interface Eligibility {
 		| 'jetpack-paid'
 		| 'p2-plus';
 	user_field_flow_name: string;
+	unified_agent_enabled?: boolean;
 }
 
 export interface SupportStatus {
