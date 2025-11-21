@@ -59,13 +59,7 @@ function Domains() {
 
 	return (
 		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Domains' ) }
-					description={ __( 'Manage settings and configuration for your domains.' ) }
-					actions={ <AddDomainButton /> }
-				/>
-			}
+			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
 			notices={ <OptInWelcome tracksContext="domains" /> }
 		>
 			<DataViewsCard>
