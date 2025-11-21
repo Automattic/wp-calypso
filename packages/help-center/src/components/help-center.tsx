@@ -58,8 +58,9 @@ const HelpCenter: React.FC< Container > = ( {
 			? supportInteractionsOpen?.length > 0
 			: false;
 
+	// TODO: Extract preference storage utilities to avoid duplication with `components/help-center-ai-assistant.tsx`
 	// Save/load preferences using wpcom-proxy-request
-	const savePreference = useCallback( async ( key: string, value: any ) => {
+	const savePreference = useCallback( async ( key: string, value: unknown ) => {
 		if ( canAccessWpcomApis() ) {
 			try {
 				await wpcomRequest( {
@@ -83,7 +84,7 @@ const HelpCenter: React.FC< Container > = ( {
 		if ( canAccessWpcomApis() ) {
 			try {
 				const response = await wpcomRequest< {
-					calypso_preferences?: Record< string, any >;
+					calypso_preferences?: Record< string, unknown >;
 				} >( {
 					path: '/me/preferences',
 					apiNamespace: 'wpcom/v2',

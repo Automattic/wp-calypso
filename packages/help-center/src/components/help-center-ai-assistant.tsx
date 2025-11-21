@@ -29,17 +29,9 @@ export function HelpCenterAIAssistant( {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const { currentUser, site, sectionName } = useHelpCenterContext();
 
-	// Debug logging
-	// eslint-disable-next-line no-console
-	console.log( '[HelpCenterAIAssistant]', {
-		shouldUseUnifiedAgent,
-		currentUser,
-		site,
-		sectionName,
-	} );
-
+	// TODO: Extract preference storage utilities to avoid duplication with `components/help-center.tsx`
 	// Save/load preferences using wpcom-proxy-request
-	const savePreference = useCallback( async ( key: string, value: any ) => {
+	const savePreference = useCallback( async ( key: string, value: unknown ) => {
 		if ( canAccessWpcomApis() ) {
 			try {
 				await wpcomRequest( {
@@ -63,7 +55,7 @@ export function HelpCenterAIAssistant( {
 		if ( canAccessWpcomApis() ) {
 			try {
 				const response = await wpcomRequest< {
-					calypso_preferences?: Record< string, any >;
+					calypso_preferences?: Record< string, unknown >;
 				} >( {
 					path: '/me/preferences',
 					apiNamespace: 'wpcom/v2',
@@ -80,8 +72,6 @@ export function HelpCenterAIAssistant( {
 
 	// Use unified agent if feature flag is enabled
 	if ( shouldUseUnifiedAgent ) {
-		// eslint-disable-next-line no-console
-		console.log( '[HelpCenterAIAssistant] Rendering UnifiedAIAgent' );
 		return (
 			<UnifiedAIAgent
 				containerSelector=".help-center"
@@ -95,8 +85,6 @@ export function HelpCenterAIAssistant( {
 	}
 
 	// Fall back to legacy HelpCenterGPT
-	// eslint-disable-next-line no-console
-	console.log( '[HelpCenterAIAssistant] Rendering HelpCenterGPT (legacy)' );
 	return (
 		<HelpCenterGPT
 			onResponseReceived={ onResponseReceived }
