@@ -14,9 +14,5 @@
 	.icon-list__items {
 		margin: -$grid-unit-20 0;
 	}
-
-	&:has(.icon-list__items:empty) {
-		display: none;
-	}
 }
 

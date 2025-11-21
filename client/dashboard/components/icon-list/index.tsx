@@ -1,5 +1,5 @@
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
-import { forwardRef } from 'react';
+import { Children, forwardRef } from 'react';
 import { Card, CardBody } from '../card';
 import IconListItem from './icon-list-item';
 import type { IconListProps } from './types';
@@ -10,6 +10,11 @@ function UnforwardedIconList(
 	{ title, description, children }: IconListProps,
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
+	// Hide component if there are no children
+	if ( ! children || Children.count( children ) === 0 ) {
+		return null;
+	}
+
 	return (
 		<Card className="icon-list" ref={ ref }>
 			<CardBody>
