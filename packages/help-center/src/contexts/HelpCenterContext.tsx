@@ -28,7 +28,7 @@ const botSlugMap = {
 	},
 	new_workflow: {
 		slug: 'wpcom-workflow-support_chat',
-		version: null, // Get active version
+		version: undefined, // Get active version
 	},
 	updated_legacy: {
 		slug: 'wpcom-support-chat',
