@@ -7,8 +7,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
-import { createPortal, useCallback, useEffect, useRef } from '@wordpress/element';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
@@ -58,46 +57,6 @@ const HelpCenter: React.FC< Container > = ( {
 			? supportInteractionsOpen?.length > 0
 			: false;
 
-	// Save/load preferences using wpcom-proxy-request
-	const savePreference = useCallback( async ( key: string, value: unknown ) => {
-		if ( canAccessWpcomApis() ) {
-			try {
-				await wpcomRequest( {
-					path: '/me/preferences',
-					apiNamespace: 'wpcom/v2',
-					method: 'PUT',
-					body: {
-						calypso_preferences: {
-							[ key ]: value,
-						},
-					},
-				} );
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[HelpCenter] Failed to save preferences:', error );
-			}
-		}
-	}, [] );
-
-	const loadPreference = useCallback( async ( key: string ) => {
-		if ( canAccessWpcomApis() ) {
-			try {
-				const response = await wpcomRequest< {
-					calypso_preferences?: Record< string, unknown >;
-				} >( {
-					path: '/me/preferences',
-					apiNamespace: 'wpcom/v2',
-					method: 'GET',
-				} );
-				return response?.calypso_preferences?.[ key ] || null;
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[HelpCenter] Failed to load preferences:', error );
-			}
-		}
-		return null;
-	}, [] );
-
 	useEffect( () => {
 		if ( currentUser ) {
 			initializeAnalytics( currentUser, null );
@@ -121,8 +80,6 @@ const HelpCenter: React.FC< Container > = ( {
 				currentUser={ currentUser }
 				site={ site }
 				sectionName={ sectionName }
-				savePreference={ savePreference }
-				loadPreference={ loadPreference }
 				handleClose={ handleClose }
 				defaultOpen
 			/>,

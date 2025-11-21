@@ -1,4 +1,5 @@
 import { HelpCenter } from '@automattic/data-stores';
+import { useShouldUseUnifiedAgent } from '@automattic/help-center/src/hooks';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
@@ -34,8 +35,9 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const selectedSite = useSelector( getSelectedSite );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
+	const shouldLoadUnifiedAgent = useShouldUseUnifiedAgent();
 
-	if ( ! loadHelpCenter ) {
+	if ( ! loadHelpCenter || shouldLoadUnifiedAgent ) {
 		return null;
 	}
 

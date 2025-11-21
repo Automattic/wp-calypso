@@ -31,7 +31,7 @@ import { useUserSites } from '../data/use-user-sites';
 import { queryClient } from '../query-client';
 import { HELP_CENTER_STORE } from '../stores';
 import { SearchResult } from '../types';
-import { HelpCenterAIAssistant } from './help-center-ai-assistant';
+import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
 import { HelpCenterSitePicker } from './help-center-site-picker';
 import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
@@ -378,7 +378,7 @@ export const HelpCenterContactForm = () => {
 			<>
 				<div className="help-center-contact-form__wrapper">
 					<div className="help-center__articles-page">
-						<HelpCenterAIAssistant
+						<HelpCenterGPT
 							redirectToArticle={ redirectToArticle }
 							onResponseReceived={ setGptResponse }
 						/>
