@@ -41,7 +41,15 @@ export default function AddDomainForwarding() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					description={ __( 'Set up domain forwarding to redirect visitors to another URL.' ) }
+				/>
+			}
+		>
 			<DomainForwardingNotice domainName={ domainName } domainData={ domainData } />
 			<DomainForwardingForm
 				domainName={ domainName }

@@ -126,10 +126,10 @@ export interface Purchase {
 	can_explicit_renew: boolean;
 
 	/**
-	 * If this upgrade is a plan and its domain credit was used to purchase a
-	 * domain registration, and the plan is within its refund period, then
-	 * `cost_to_unbundle_display` will be the formatted amount of the amount that
-	 * would be withheld to keep the domain if the plan is cancelled.
+	 * If this upgrade is a domain and a domain credit was used to purchase it,
+	 * and the plan is within its refund period, then `cost_to_unbundle_display`
+	 * will be the formatted amount of the amount that would be withheld to keep
+	 * the domain if the plan is cancelled.
 	 *
 	 * If there is nothing that would be withheld, this will be null.
 	 */
@@ -153,7 +153,14 @@ export interface Purchase {
 		| 'expired'
 		| 'one-time-purchase';
 	iap_purchase_management_link: string | null;
+
+	/**
+	 * If this subscription is for a plan with a bundled domain, this will
+	 * contain the domain name for that domain subscription. Otherwise this will
+	 * be an empty string.
+	 */
 	included_domain: string;
+
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
 

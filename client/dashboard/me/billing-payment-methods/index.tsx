@@ -174,6 +174,7 @@ export default function PaymentMethods() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Payment methods' ) }
+					description={ __( 'Manage your saved payment methods and billing information.' ) }
 					actions={
 						<Button
 							__next40pxDefaultSize

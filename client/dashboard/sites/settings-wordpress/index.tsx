@@ -133,7 +133,13 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title="WordPress" /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title="WordPress"
+					description={ __( 'Manage your WordPress version.' ) }
+				/>
+			}
 		>
 			{ canView ? renderForm() : renderNotice() }
 		</PageLayout>
