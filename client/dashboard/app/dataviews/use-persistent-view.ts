@@ -74,7 +74,7 @@ export function usePersistentView( {
 					( {
 						field,
 						operator: 'isAny',
-						value: [ queryParams[ field ] ],
+						value: [ queryParams[ field ].toString() ],
 					} ) as Filter
 			)
 		);

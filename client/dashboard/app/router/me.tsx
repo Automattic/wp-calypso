@@ -185,11 +185,11 @@ export const purchasesRoute = createRoute( {
 			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
 		] );
 	},
-	validateSearch: ( search ): { page?: number; search?: string; site?: string } => {
+	validateSearch: ( search ): { page?: number; search?: string; site?: number } => {
 		return {
 			page: typeof search.page === 'number' ? search.page : undefined,
 			search: typeof search.search === 'string' ? search.search : undefined,
-			site: typeof search.site === 'string' ? search.site : undefined,
+			site: typeof search.site === 'number' ? search.site : undefined,
 		};
 	},
 	path: '/purchases',
