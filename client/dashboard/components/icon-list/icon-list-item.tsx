@@ -28,7 +28,7 @@ function UnforwardedIconListItem(
 							</Text>
 						) }
 					</VStack>
-					{ suffix && <span className="icon-list-item__suffix">{ suffix }</span> }
+					{ suffix && <>{ suffix }</> }
 				</HStack>
 			</HStack>
 		</VStack>
