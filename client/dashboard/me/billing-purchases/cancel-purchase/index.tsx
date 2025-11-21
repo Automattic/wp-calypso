@@ -548,12 +548,12 @@ export default function CancelPurchase() {
 		switch ( downgradeType ) {
 			case PurchaseDowngradeType.TermDowngrade:
 				downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
-					path.bill_period !== plan.bill_period;
+					return path.bill_period !== plan.bill_period;
 				} );
 				break;
 			case PurchaseDowngradeType.PlanDowngrade:
 				downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
-					path.bill_period === plan.bill_period;
+					return path.bill_period === plan.bill_period;
 				} );
 				break;
 		}
