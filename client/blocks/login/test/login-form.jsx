@@ -141,4 +141,33 @@ describe( 'LoginForm', () => {
 		const btn = screen.getByRole( 'button', { name: /Log In/i } );
 		expect( btn ).toBeInTheDocument();
 	} );
+
+	test( 'shows the visual email-or-username label for Jetpack logins', async () => {
+		render( <LoginForm isJetpack />, {
+			initialState: {
+				login: { socialAccountLink: { isLinking: false } },
+				route: { query: { current: {}, initial: {} } },
+			},
+		} );
+
+		const label = screen.getByText( 'Email address or username', {
+			selector: 'span[aria-hidden="true"]',
+		} );
+		expect( label ).toBeInTheDocument();
+	} );
+
+	test( 'shows the username-only label when query flag is set', async () => {
+		render( <LoginForm />, {
+			initialState: {
+				route: {
+					query: {
+						current: { username_only: 'true' },
+						initial: {},
+					},
+				},
+			},
+		} );
+
+		expect( screen.getByText( 'Your username' ) ).toBeInTheDocument();
+	} );
 } );
