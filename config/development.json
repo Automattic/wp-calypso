@@ -33,7 +33,6 @@
 		"100-year-domain": true,
 		"100-year-plan/vip": true,
 		"a4a-dev-sites": true,
-		"ai-site-assistant": true,
 		"summer-special-2025": true,
 		"summer-special-2025-banner": false,
 		"ad-tracking": false,
@@ -203,6 +202,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"user-management-revamp": true,
+		"wordpress-ai-assistant": true,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true
 	}

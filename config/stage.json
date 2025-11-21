@@ -21,7 +21,6 @@
 		"100-year-plan/vip": true,
 		"a4a-dev-sites": true,
 		"ad-tracking": false,
-		"ai-site-assistant": true,
 		"akismet/checkout-quantity-dropdown": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-site-builder-flow": true,
@@ -165,6 +164,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
+		"wordpress-ai-assistant": true,
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true
 	},

@@ -20,7 +20,6 @@
 		"100-year-domain": true,
 		"ad-tracking": false,
 		"a4a-dev-sites": true,
-		"ai-site-assistant": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"calypso/ai-blogging-prompts": true,
 		"calypso/ai-site-builder-flow": true,
@@ -172,6 +171,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
+		"wordpress-ai-assistant": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true
 	},

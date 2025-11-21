@@ -1385,7 +1385,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 			);
 		}
 
-		if ( config.supports.sites.settings.experimental && isEnabled( 'ai-site-assistant' ) ) {
+		if ( config.supports.sites.settings.experimental && isEnabled( 'wordpress-ai-assistant' ) ) {
 			settingsRoutes.push( siteSettingsExperimentalRoute );
 		}
 
