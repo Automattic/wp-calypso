@@ -11,27 +11,25 @@ import './icon-list-item.scss';
 
 function UnforwardedIconListItem(
 	{ title, description, decoration, suffix, className }: IconListItemProps,
-	ref: React.ForwardedRef< HTMLDivElement >
+	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
 	return (
-		<div className={ clsx( 'icon-list-item', className ) } ref={ ref }>
+		<VStack className={ clsx( 'icon-list-item', className ) } ref={ ref } as="span">
 			<HStack spacing={ 3 } justify="flex-start" alignment="center" as="span">
 				{ !! decoration && <span className="icon-list-item__decoration">{ decoration }</span> }
-				<HStack spacing={ 3 } as="span">
-					<VStack spacing={ 1 } as="span">
-						<Text weight={ 500 } lineHeight="20px">
-							{ title }
+				<VStack spacing={ 1 } as="span">
+					<Text weight={ 500 } lineHeight="20px">
+						{ title }
+					</Text>
+					{ description && (
+						<Text variant="muted" lineHeight="20px">
+							{ description }
 						</Text>
-						{ description && (
-							<Text variant="muted" lineHeight="20px">
-								{ description }
-							</Text>
-						) }
-					</VStack>
-					{ suffix && <span className="icon-list-item__suffix">{ suffix }</span> }
-				</HStack>
+					) }
+				</VStack>
+				{ suffix && <span className="icon-list-item__suffix">{ suffix }</span> }
 			</HStack>
-		</div>
+		</VStack>
 	);
 }
 
