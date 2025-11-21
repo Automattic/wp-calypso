@@ -291,9 +291,59 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.20, @automattic/agenttic-ui@npm:^0.1.9":
-  version: 0.1.22
-  resolution: "@automattic/agenttic-ui@npm:0.1.22"
+"@automattic/agents-manager@workspace:^, @automattic/agents-manager@workspace:packages/agents-manager":
+  version: 0.0.0-use.local
+  resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
+  dependencies:
+    "@automattic/agenttic-client": "npm:^0.1.23"
+    "@automattic/agenttic-ui": "npm:^0.1.23"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/oauth-token": "workspace:^"
+    "@rive-app/react-canvas": "npm:^4.15.6"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.1"
+    "@wordpress/api-fetch": "npm:^7.23.0"
+    "@wordpress/base-styles": "npm:^5.23.0"
+    "@wordpress/components": "npm:30.6.0"
+    "@wordpress/compose": "npm:^7.2.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    clsx: "npm:^2.1.1"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    typescript: "npm:^5.8.3"
+    wpcom-proxy-request: "workspace:^"
+  peerDependencies:
+    "@wordpress/data": ^10.23.0
+    "@wordpress/element": ^6.23.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
+"@automattic/agenttic-client@npm:^0.1.23":
+  version: 0.1.26
+  resolution: "@automattic/agenttic-client@npm:0.1.26"
+  dependencies:
+    "@types/react": "npm:^18.0.0"
+    marked: "npm:^16.2.1"
+    react: "npm:^18.0.0"
+  peerDependencies:
+    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
+    react: ^18.0.0
+  dependenciesMeta:
+    marked:
+      optional: true
+  peerDependenciesMeta:
+    "@wordpress/api-fetch":
+      optional: true
+  checksum: 731031b01e86be6c9fc41ce612e8d4e0804e550df127cf81d5ee46e85003eaaf58195dbafa552aca30dab93b2f990144cda9e47ff642191946bc95e43d13ca2b
+  languageName: node
+  linkType: hard
+
+"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.20, @automattic/agenttic-ui@npm:^0.1.23, @automattic/agenttic-ui@npm:^0.1.9":
+  version: 0.1.26
+  resolution: "@automattic/agenttic-ui@npm:0.1.26"
   dependencies:
     "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
@@ -311,13 +361,14 @@ __metadata:
     react-textarea-autosize: "npm:^8.5.9"
     remark-gfm: "npm:^4.0.1"
     unified: "npm:^11.0.5"
+    use-debounce: "npm:^10.0.6"
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 9f19a653c99a9f09ecfd8448b6aae8ab9d2aa1404ac6f5a7443bfa5d6acbfead27699f70137109137b31640c136fd88ecc6354d564ccfe5853b4776a789a2391
+  checksum: 1124d7cb33823a86254cda6f0216822c3d4b07315d85c76373ff452577be9c8078c0a57089ca312a7b059bfbf139ed21d58fbb4c9caad1ac0d71c5dd259f7be6
   languageName: node
   linkType: hard
 
@@ -1397,6 +1448,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/help-center-app@workspace:apps/help-center"
   dependencies:
+    "@automattic/agents-manager": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
@@ -1439,6 +1491,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/help-center@workspace:packages/help-center"
   dependencies:
+    "@automattic/agents-manager": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -8228,6 +8281,24 @@ __metadata:
   version: 1.16.1
   resolution: "@remix-run/router@npm:1.16.1"
   checksum: 5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
+  languageName: node
+  linkType: hard
+
+"@rive-app/canvas@npm:2.32.0":
+  version: 2.32.0
+  resolution: "@rive-app/canvas@npm:2.32.0"
+  checksum: 2476c1479e9da1145a12682697c3c78683902b551fa958a4824aa2130c4c1540c377a084cefcf905d7b580fc8ccaff2b06294b50f6ff4c27cd3c25684bd5f918
+  languageName: node
+  linkType: hard
+
+"@rive-app/react-canvas@npm:^4.15.6":
+  version: 4.24.0
+  resolution: "@rive-app/react-canvas@npm:4.24.0"
+  dependencies:
+    "@rive-app/canvas": "npm:2.32.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
+  checksum: e8ae639fe0caff1ffc46d66368846208fff8ffd25e00245e73f302d9e10fdc153733abb0e8f519df10d9d24876ab72b95e06740ece431d7b58ea1dcf2213da75
   languageName: node
   linkType: hard
 
@@ -25895,16 +25966,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:^16.2.1":
-  version: 16.4.1
-  resolution: "marked@npm:16.4.1"
-  bin:
-    marked: bin/marked.js
-  checksum: 2b5bc04db3453e493ea78758f1fe5006d725ec90aab9bf991242b0820a069d9748e2ac26fb0e2603848a409649c77900e599f3f66d251d0f7e5f606576090a54
-  languageName: node
-  linkType: hard
-
-"marked@npm:^4.0.0":
+"marked@npm:4.0.10":
   version: 4.0.10
   resolution: "marked@npm:4.0.10"
   bin:
@@ -37418,6 +37480,15 @@ __metadata:
     "@types/react":
       optional: true
   checksum: c77e0cba9579b7746d52feaf3ce77d8c345f266c9c1ef46584ae68f54646537c87b2ad97f5219a4b1db52f97ec2905e88e5b146add1f28f7e457bd52ca1b93cf
+  languageName: node
+  linkType: hard
+
+"use-debounce@npm:^10.0.6":
+  version: 10.0.6
+  resolution: "use-debounce@npm:10.0.6"
+  peerDependencies:
+    react: "*"
+  checksum: f0745de48fc344e6f90ea24384f3c79bf0733d06649827241135847abd67ee8db32f523d490c3276bce9f5a6867194ab1c0187bf6b84cabe1dd679037f4a527e
   languageName: node
   linkType: hard
 

@@ -48,7 +48,12 @@ export default function PluginsScheduledUpdatesEdit() {
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					description={ __( 'Edit your scheduled plugin update configuration.' ) }
+				/>
+			}
 			notices={
 				error && (
 					<Notice status="error" isDismissible={ false }>

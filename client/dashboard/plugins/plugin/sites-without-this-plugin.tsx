@@ -3,7 +3,9 @@ import { ExternalLink } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import { usePlugin } from './use-plugin';
+import type { Field } from '@wordpress/dataviews';
 
 const defaultView: View = {
 	type: 'table',
@@ -21,13 +23,13 @@ export const SitesWithoutThisPlugin = ( { pluginSlug }: { pluginSlug: string } )
 	const [ view, setView ] = useState< View >( defaultView );
 	const { isLoading, sitesWithoutThisPlugin } = usePlugin( pluginSlug );
 
-	const fields = useMemo(
+	const fields: Field< Site >[] = useMemo(
 		() => [
 			{
 				id: 'domain',
 				label: __( 'Site' ),
-				getValue: ( { item }: { item: Site } ) => item.URL,
-				render: ( { item }: { item: Site } ) => item.URL,
+				getValue: ( { item }: { item: Site } ) => getSiteDisplayUrl( item ),
+				render: ( { field, item } ) => field.getValue( { item } ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,

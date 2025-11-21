@@ -7,7 +7,15 @@ import AppsMobileCard from './apps-mobile-card';
 
 export default function Apps() {
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Apps' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Apps' ) }
+					description={ __( 'Download WordPress.com mobile and desktop apps.' ) }
+				/>
+			}
+		>
 			<VStack spacing={ 8 }>
 				<AppsMobileCard />
 				<AppsDesktopCard appSlug="wordpress" />
