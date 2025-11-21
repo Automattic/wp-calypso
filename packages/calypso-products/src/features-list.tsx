@@ -376,7 +376,6 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 
 		default:
 			return i18n.translate( 'Collect payments (%(commission)d%% fee + standard processing fee)', {
-				components: { br: <br /> },
 				args: { commission },
 			} );
 	}
