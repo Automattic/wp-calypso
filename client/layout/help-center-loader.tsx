@@ -46,6 +46,12 @@ export default function HelpCenterLoader( {
 		return null;
 	}
 
+	const additionalHelpCenterProps = isA8CForAgencies()
+		? {
+				newInteractionsBotSlug: 'automattic-chat-support_a4a',
+		  }
+		: {};
+
 	return (
 		<AsyncLoad
 			require="@automattic/help-center"
@@ -62,7 +68,7 @@ export default function HelpCenterLoader( {
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
 			source={ source }
-			newInteractionsBotSlug={ isA8CForAgencies() ? 'automattic-chat-support_a4a' : undefined }
+			{ ...additionalHelpCenterProps }
 		/>
 	);
 }
