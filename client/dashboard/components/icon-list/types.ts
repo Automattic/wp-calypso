@@ -19,10 +19,6 @@ export interface IconListItemProps {
 	 * Optional content to display at the end of the item (e.g., actions, badges).
 	 */
 	suffix?: React.ReactNode;
-	/**
-	 * Optional CSS class name(s) to apply to the item.
-	 */
-	className?: string;
 }
 
 export interface IconListProps {

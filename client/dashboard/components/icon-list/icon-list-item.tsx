@@ -3,18 +3,17 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import clsx from 'clsx';
 import { forwardRef } from 'react';
 import type { IconListItemProps } from './types';
 
 import './icon-list-item.scss';
 
 function UnforwardedIconListItem(
-	{ title, description, decoration, suffix, className }: IconListItemProps,
+	{ title, description, decoration, suffix }: IconListItemProps,
 	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
 	return (
-		<VStack className={ clsx( 'icon-list-item', className ) } ref={ ref } as="span">
+		<VStack className="icon-list-item" ref={ ref } as="span">
 			<HStack spacing={ 3 } justify="flex-start" alignment="center" as="span">
 				{ !! decoration && <span className="icon-list-item__decoration">{ decoration }</span> }
 				<HStack spacing={ 3 } as="span">
