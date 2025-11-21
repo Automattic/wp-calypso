@@ -229,7 +229,6 @@ if ( helpCenterData.isNextAdmin ) {
 				const container = document.createElement( 'div' );
 				container.id = 'jetpack-help-center';
 				document.body.appendChild( container );
-
 				const botProps = helpCenterData.isCommerceGarden
 					? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
 					: {};
