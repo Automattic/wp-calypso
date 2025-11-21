@@ -114,7 +114,7 @@ export default function AgentDock( {
 	sessionStorageKey = 'agents-manager-session',
 	chatStateStorageKey = 'agents-manager-chat-state',
 	dockStateStorageKey = 'agents-manager-docked',
-	preferenceKey = 'agents_manager_state',
+	preferenceKey = 'agents-manager-state',
 	savePreference,
 	loadPreference,
 	defaultOpen = false,

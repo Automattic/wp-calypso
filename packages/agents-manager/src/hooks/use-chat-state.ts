@@ -5,7 +5,7 @@
 
 import { useCallback, useState } from 'react';
 
-const DEFAULT_STORAGE_KEY = 'ai-agent-chat-state';
+const DEFAULT_STORAGE_KEY = 'agents-manager-chat-state';
 
 export type ChatState = 'collapsed' | 'expanded';
 
@@ -49,7 +49,7 @@ export interface UseChatStateResult {
 export interface UseChatStateOptions {
 	/**
 	 * localStorage key for persisting chat state
-	 * @default 'ai-agent-chat-state'
+	 * @default 'agents-manager-chat-state'
 	 */
 	storageKey?: string;
 }

@@ -169,7 +169,7 @@ const context = await adapter.getContext();
 | `defaultUndocked`    | `boolean`                            | `false`                 | Start in floating mode       |
 | `defaultOpen`        | `boolean`                            | `false`                 | Open sidebar by default      |
 | `desktopMediaQuery`  | `string`                             | `'(min-width: 1200px)'` | Desktop breakpoint           |
-| `classNamePrefix`    | `string`                             | `'ai-agent'`            | CSS class prefix             |
+| `classNamePrefix`    | `string`                             | `'agents-manager'`      | CSS class prefix             |
 | `fabIcon`            | `ReactNode`                          | AI icon                 | FAB button icon              |
 | `fabLabel`           | `string`                             | `'Open Chat'`           | FAB button label             |
 | `onOpenSidebar`      | `() => void`                         | -                       | Callback when opened         |

@@ -5,7 +5,7 @@
 
 import { useCallback, useState } from 'react';
 
-const DEFAULT_STORAGE_KEY = 'ai-agent-session-id';
+const DEFAULT_STORAGE_KEY = 'agents-manager-session-id';
 const DEFAULT_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 /**
@@ -80,7 +80,7 @@ export interface UseAgentSessionResult {
 export interface UseAgentSessionOptions {
 	/**
 	 * localStorage key for persisting session ID
-	 * @default 'ai-agent-session-id'
+	 * @default 'agents-manager-session-id'
 	 */
 	storageKey?: string;
 	/**

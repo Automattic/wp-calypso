@@ -18,7 +18,7 @@ export interface PersistedAgentState {
 export interface UsePersistedAgentStateOptions {
 	/**
 	 * Preference key to use for storage
-	 * @default 'ai_agent_state'
+	 * @default 'agents-manager-state'
 	 */
 	preferenceKey?: string;
 	/**
@@ -140,7 +140,7 @@ export function usePersistedAgentState(
 	options: UsePersistedAgentStateOptions = {}
 ): UsePersistedAgentStateResult {
 	const {
-		preferenceKey = 'agents_manager_state',
+		preferenceKey = 'agents-manager-state',
 		savePreference = defaultSavePreference,
 		loadPreference = defaultLoadPreference,
 		debounceMs = 1000,
