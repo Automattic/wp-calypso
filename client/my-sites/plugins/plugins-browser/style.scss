@@ -134,19 +134,6 @@ body.is-section-plugins #primary .main.is-logged-out {
 	background-color: var(--studio-gray-0);
 }
 
-.full-width-section {
-	padding-top: 24px;
-	padding-bottom: 24px;
-
-	&.full-width-section--double-padding {
-		padding-top: 48px;
-		padding-bottom: 48px;
-	}
-	&.full-width-section--no-padding {
-		padding-top: 0;
-		padding-bottom: 0;
-	}
-}
 
 .plugins-browser__categories {
 	padding-bottom: 0;
