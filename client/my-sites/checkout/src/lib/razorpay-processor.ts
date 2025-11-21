@@ -225,6 +225,11 @@ function combineRazorpayOptions(
 	prefill.email = prefill.email ?? ( contactDetails ? contactDetails.email?.value : '' );
 	options.prefill = prefill;
 
+	// Add notes with invoice number for tracking
+	const notes = options.notes ?? {};
+	notes.invoice_number = txnResponse.order_id?.toString() ?? '';
+	options.notes = notes;
+
 	return options;
 }
 

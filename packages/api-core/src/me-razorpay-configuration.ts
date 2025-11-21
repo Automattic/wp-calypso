@@ -25,6 +25,9 @@ export interface RazorpayOptions {
 		ondismiss?: ( response: RazorpayModalResponse ) => void;
 	};
 	recurring?: string;
+	notes?: {
+		[ key: string ]: string;
+	};
 }
 
 /**
