@@ -14,7 +14,7 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
-import type { AnyAction, PossiblyCompleteDomainContactDetails } from '../types';
+import type { AnyAction, ManagedContactDetails } from '../types';
 import type { RazorpayConfiguration } from '@automattic/calypso-razorpay';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -166,11 +166,7 @@ const RazorpayField = styled( Field )`
 	}
 `;
 
-function RazorpayFields( {
-	contactDetails,
-}: {
-	contactDetails?: PossiblyCompleteDomainContactDetails;
-} ) {
+function RazorpayFields() {
 	const { __ } = useI18n();
 
 	const { customerName, address1, address2, city, state, postalCode, country } = useRazorpayData();
@@ -186,28 +182,29 @@ function RazorpayFields( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
-	// Prefill state, postalCode, and country from cached contact details
+	// Get live contact details from checkout store
+	const checkoutContactDetails = useSelect( ( select ) => {
+		const store = select( 'wpcom-checkout' );
+		return store && typeof store === 'object' && 'getContactInfo' in store
+			? ( store as { getContactInfo: () => ManagedContactDetails } ).getContactInfo()
+			: null;
+	}, [] ) as ManagedContactDetails | null;
+
+	// Keep state, postalCode, and country synced with live checkout contact details
+	// These fields are disabled/readonly, so they should always reflect billing info
 	useEffect( () => {
-		if ( contactDetails ) {
-			if ( contactDetails.state && ! state.isTouched ) {
-				changeState( contactDetails.state );
+		if ( checkoutContactDetails ) {
+			if ( checkoutContactDetails.state?.value ) {
+				changeState( checkoutContactDetails.state.value );
 			}
-			if ( contactDetails.postalCode && ! postalCode.isTouched ) {
-				changePostalCode( contactDetails.postalCode );
+			if ( checkoutContactDetails.postalCode?.value ) {
+				changePostalCode( checkoutContactDetails.postalCode.value );
 			}
-			if ( contactDetails.countryCode && ! country.isTouched ) {
-				changeCountry( contactDetails.countryCode );
+			if ( checkoutContactDetails.countryCode?.value ) {
+				changeCountry( checkoutContactDetails.countryCode.value );
 			}
 		}
-	}, [
-		contactDetails,
-		changeState,
-		changePostalCode,
-		changeCountry,
-		state.isTouched,
-		postalCode.isTouched,
-		country.isTouched,
-	] );
+	}, [ checkoutContactDetails, changeState, changePostalCode, changeCountry ] );
 
 	return (
 		<RazorpayFormWrapper>
@@ -297,20 +294,18 @@ export function createRazorpayMethod( {
 	cartKey,
 	submitButtonContent,
 	store,
-	contactDetails,
 }: {
 	razorpayConfiguration: RazorpayConfiguration;
 	cartKey: CartKey;
 	submitButtonContent: ReactNode;
 	store: RazorpayStore;
-	contactDetails?: PossiblyCompleteDomainContactDetails;
 } ): PaymentMethod {
 	return {
 		id: 'razorpay',
 		hasRequiredFields: true,
 		paymentProcessorId: 'razorpay',
 		label: <RazorpayLabel />,
-		activeContent: <RazorpayFields contactDetails={ contactDetails } />,
+		activeContent: <RazorpayFields />,
 		submitButton: (
 			<RazorpaySubmitButton
 				razorpayConfiguration={ razorpayConfiguration }
