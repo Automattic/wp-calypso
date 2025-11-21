@@ -178,6 +178,18 @@ $breakpoint-mobile: 782px; //Mobile size.
 			color: var(--color-link-dark);
 		}
 	}
+
+}
+
+.login__form-userdata .components-external-link {
+	color: var(--studio-gray-50, #646970);
+	font-weight: 400;
+
+	&:visited,
+	&:hover,
+	&:focus {
+		color: var(--studio-gray-50, #646970);
+	}
 }
 
 .login__form-change-username {
@@ -310,17 +322,5 @@ $breakpoint-mobile: 782px; //Mobile size.
 		.login__lostpassword-form  {
 			padding: 16px 16px 0;
 		}
-	}
-}
-
-.login__lostpassword-form-external-link {
-	font-size: $font-body-small;
-	color: var(--studio-gray-50, #646970);
-	font-weight: 400;
-
-	&:visited,
-	&:hover,
-	&:focus {
-		color: var(--studio-gray-50, #646970);
 	}
 }

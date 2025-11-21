@@ -200,7 +200,6 @@ const LostPasswordForm = ( {
 						'https://wordpress.com/support/account-recovery/#verify-your-account-ownership',
 						locale
 					) }
-					className="login__lostpassword-form-external-link"
 				>
 					{ translate( 'Need more help?' ) }
 				</ExternalLink>
