@@ -37,6 +37,8 @@ type RazorpayTransactionRequest = {
 	razorpay: Razorpay;
 	razorpayConfiguration: RazorpayConfiguration;
 	name: string | undefined;
+	address1: string | undefined;
+	address2: string | undefined;
 };
 
 export default async function razorpayProcessor(
