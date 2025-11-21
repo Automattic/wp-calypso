@@ -1,7 +1,7 @@
 import React from 'react';
 import type { IconListItemProps, IconListProps } from '../icon-list/types';
 
-export interface ActionItemProps extends IconListItemProps {
+export interface ActionItemProps extends Omit< IconListItemProps, 'suffix' | 'className' > {
 	/**
 	 * Renders a button that invokes the related action.
 	 */

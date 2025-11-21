@@ -7,7 +7,7 @@ import './action-item.scss';
 
 function UnforwardedActionItem(
 	{ title, description, decoration, actions }: ActionItemProps,
-	ref: React.ForwardedRef< HTMLDivElement >
+	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
 	return (
 		<IconListItem
