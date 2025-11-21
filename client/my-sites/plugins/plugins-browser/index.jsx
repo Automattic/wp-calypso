@@ -192,7 +192,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
 				{ shouldUseLoggedInView ? (
-					<FullWidthSection className="plugins-browser__search-categories">
+					<FullWidthSection className="plugins-browser__search-categories full-width-section--no-padding">
 						<div ref={ loggedInSearchBoxRef } />
 						<SearchCategories
 							category={ category }
