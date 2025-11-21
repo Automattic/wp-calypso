@@ -291,6 +291,36 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/agents-manager@workspace:^, @automattic/agents-manager@workspace:packages/agents-manager":
+  version: 0.0.0-use.local
+  resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
+  dependencies:
+    "@automattic/agenttic-client": "npm:^0.1.23"
+    "@automattic/agenttic-ui": "npm:^0.1.23"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/oauth-token": "workspace:^"
+    "@rive-app/react-canvas": "npm:^4.15.6"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.1"
+    "@wordpress/api-fetch": "npm:^7.23.0"
+    "@wordpress/base-styles": "npm:^5.23.0"
+    "@wordpress/components": "npm:30.6.0"
+    "@wordpress/compose": "npm:^7.2.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    clsx: "npm:^2.1.1"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    typescript: "npm:^5.8.3"
+    wpcom-proxy-request: "workspace:^"
+  peerDependencies:
+    "@wordpress/data": ^10.23.0
+    "@wordpress/element": ^6.23.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/agenttic-client@npm:^0.1.23":
   version: 0.1.26
   resolution: "@automattic/agenttic-client@npm:0.1.26"
@@ -341,36 +371,6 @@ __metadata:
   checksum: 1124d7cb33823a86254cda6f0216822c3d4b07315d85c76373ff452577be9c8078c0a57089ca312a7b059bfbf139ed21d58fbb4c9caad1ac0d71c5dd259f7be6
   languageName: node
   linkType: hard
-
-"@automattic/agents-manager@workspace:^, @automattic/agents-manager@workspace:packages/agents-manager":
-  version: 0.0.0-use.local
-  resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
-  dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.23"
-    "@automattic/agenttic-ui": "npm:^0.1.23"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/oauth-token": "workspace:^"
-    "@rive-app/react-canvas": "npm:^4.15.6"
-    "@types/react": "npm:^18.3.1"
-    "@types/react-dom": "npm:^18.3.1"
-    "@wordpress/api-fetch": "npm:^7.23.0"
-    "@wordpress/base-styles": "npm:^5.23.0"
-    "@wordpress/components": "npm:30.6.0"
-    "@wordpress/compose": "npm:^7.2.0"
-    "@wordpress/i18n": "npm:^5.23.0"
-    "@wordpress/icons": "npm:^10.23.0"
-    clsx: "npm:^2.1.1"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    typescript: "npm:^5.8.3"
-    wpcom-proxy-request: "workspace:^"
-  peerDependencies:
-    "@wordpress/data": ^10.23.0
-    "@wordpress/element": ^6.23.0
-    react: ^18.3.1
-    react-dom: ^18.3.1
-  languageName: unknown
-  linkType: soft
 
 "@automattic/api-core@workspace:^, @automattic/api-core@workspace:packages/api-core":
   version: 0.0.0-use.local
