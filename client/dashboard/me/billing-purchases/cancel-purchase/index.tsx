@@ -323,6 +323,7 @@ export default function CancelPurchase() {
 
 		return steps;
 	}, [
+		userHasCompletedCancelSurveyForPurchase,
 		purchase,
 		availableJetpackSurveySteps,
 		flowType,
@@ -579,10 +580,12 @@ export default function CancelPurchase() {
 				);
 			}
 
-			setState( ( state ) => ( { ...state, isLoading: true } ) );
 			if ( ! downgradePlan ) {
-				throw new Error( 'Cannot find a plan to downgrade to' );
+				createErrorNotice( 'Cannot find a plan to downgrade to', { type: 'snackbar' } );
+				return;
 			}
+
+			setState( ( state ) => ( { ...state, isLoading: true } ) );
 
 			cancelAndRefundPurchaseMutate.mutate(
 				{
@@ -599,6 +602,7 @@ export default function CancelPurchase() {
 						navigate( { to: purchasesRoute.to } );
 					},
 					onError: ( error ) => {
+						setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
 						createErrorNotice( error.message, { type: 'snackbar' } );
 					},
 				}
