@@ -63,6 +63,8 @@ import {
 	FEATURE_GROUP_WP_HOSTING_DEVELOPER,
 	FEATURE_GROUP_WP_HOSTING_SUPPORT,
 	FEATURE_GROUP_WP_HOSTING_COMMERCE,
+	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	FEATURE_GROUP_WORDADS,
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
@@ -283,6 +285,8 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_WP_HOSTING_MANAGED
 	| typeof FEATURE_GROUP_WP_HOSTING_DEVELOPER
 	| typeof FEATURE_GROUP_WP_HOSTING_SUPPORT
+	| typeof FEATURE_GROUP_PAYMENT_TRANSACTION_FEES
+	| typeof FEATURE_GROUP_WORDADS
 	| typeof FEATURE_GROUP_WP_HOSTING_COMMERCE;
 
 export interface FeatureFootnotes {

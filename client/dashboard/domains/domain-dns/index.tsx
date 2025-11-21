@@ -3,7 +3,6 @@ import {
 	domainDnsMutation,
 	domainDnsQuery,
 	domainDnsEmailMutation,
-	domainNameServersQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -32,6 +31,7 @@ import DnsImportDialog from './dns-import-dialog';
 import EmailSetup from './email-setup';
 import { useDnsFields } from './fields';
 import ImportBindFileButton from './import-bind-file-button';
+import { DomainDnsNameserversNotice } from './notice';
 import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
@@ -79,9 +79,6 @@ export default function DomainDns() {
 	} );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const {
-		data: { nameServers, isUsingDefaultNameServers },
-	} = useSuspenseQuery( domainNameServersQuery( domainName ) );
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
 	const [ isRestoreDefaultARecordsDialogOpen, setIsRestoreDefaultARecordsDialogOpen ] =
 		useState( false );
@@ -198,7 +195,7 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultARecordsNotice = () => {
-		if ( ! isUsingDefaultNameServers || hasDefaultARecordsValue ) {
+		if ( ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
 			return null;
 		}
 
@@ -231,7 +228,7 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultCnameRecordNotice = () => {
-		if ( ! isUsingDefaultNameServers || hasDefaultCnameRecordValue ) {
+		if ( ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
 			return null;
 		}
 
@@ -262,21 +259,6 @@ export default function DomainDns() {
 					{
 						learnMoreLink: <InlineSupportLink supportContext="manage-your-dns-records" />,
 					}
-				) }
-			</Notice>
-		);
-	};
-
-	const renderExternalNameserversNotice = () => {
-		if ( isUsingDefaultNameServers || ! nameServers || ! nameServers.length ) {
-			return null;
-		}
-
-		// TODO: Add a link to the name servers page or connection setup, once we have the pages
-		return (
-			<Notice variant="warning" title={ __( 'Your domain is using external name servers' ) }>
-				{ __(
-					'This means the DNS records you are editing will not be in effect until you switch to use WordPress.com name servers.'
 				) }
 			</Notice>
 		);
@@ -332,7 +314,7 @@ export default function DomainDns() {
 			}
 		>
 			{ renderDnsRecordsExplanationNotice() }
-			{ renderExternalNameserversNotice() }
+			<DomainDnsNameserversNotice domainName={ domainName } domain={ domain } />
 			{ renderDefaultARecordsNotice() }
 			{ renderDefaultCnameRecordNotice() }
 			<DataViewsCard>

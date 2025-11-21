@@ -32,6 +32,7 @@
 		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './dist' --dir './dist/strings' --output './dist/help-center.pot' && build-app-languages --stringsFilePath='./dist/help-center.pot' --outputPath='./dist/languages' --outputFormat='JS'"
 	},
 	"dependencies": {
+		"@automattic/agents-manager": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/help-center": "workspace:^",

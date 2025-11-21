@@ -89,7 +89,12 @@ export default function PluginsList() {
 	return (
 		<PageLayout
 			size="large"
-			header={ <PageHeader title={ __( 'Manage plugins' ) } /> }
+			header={
+				<PageHeader
+					title={ __( 'Manage plugins' ) }
+					description={ __( 'Install, activate, and manage plugins across your sites.' ) }
+				/>
+			}
 			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
 			<DataViewsCard>
