@@ -33,6 +33,7 @@ export const FEATURE_GROUP_ADS = 'feature-group-ads';
 export const FEATURE_GROUP_ANALYTICS = 'feature-group-analytics';
 export const FEATURE_GROUP_CUSTOM_PLUGINS = 'feature-group-custom-plugins';
 export const FEATURE_GROUP_CUSTOMIZE_STYLE = 'feature-group-customize-style';
+export const FEATURE_GROUP_WORDADS = 'feature-group-wordads';
 export const FEATURE_GROUP_DEV_TOOLS = 'feature-group-dev-tools';
 export const FEATURE_GROUP_DOMAIN = 'feature-group-domain';
 export const FEATURE_GROUP_ENTITIES = 'feature-group-entities';
