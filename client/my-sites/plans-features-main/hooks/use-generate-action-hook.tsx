@@ -406,8 +406,10 @@ function getLoggedInPlansAction( {
 } & UseActionHookProps ): GridAction {
 	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
 	// This allows monthly/yearly versions of the same plan to be considered "current"
+	const isUpgradeFlow =
+		plansIntent && [ 'plans-upgrade', 'plans-woo-hosted' ].includes( plansIntent );
 	const current =
-		plansIntent === 'plans-upgrade' && sitePlanSlug
+		isUpgradeFlow && sitePlanSlug
 			? getPlanClass( sitePlanSlug ) === getPlanClass( planSlug )
 			: sitePlanSlug === planSlug;
 	const isTrialPlan =
@@ -448,7 +450,7 @@ function getLoggedInPlansAction( {
 	// All actions for the current plan
 	if ( current ) {
 		// For the plans-upgrade intent, show "Your plan" as a non-clickable indicator
-		if ( plansIntent === 'plans-upgrade' ) {
+		if ( isUpgradeFlow ) {
 			return {
 				primary: {
 					callback: () => {},

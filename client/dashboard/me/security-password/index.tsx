@@ -10,6 +10,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import useDebouncedState from '../../app/hooks/use-debounced-state';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
@@ -53,11 +54,12 @@ export default function SecurityPassword() {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ isReloading, setIsReloading ] = useState( false );
 
-	const [ formData, setFormData ] = useState< SecurityPasswordFormData >( {
-		password: '',
-	} );
+	const [ formData, setFormData, debouncedFormData ] =
+		useDebouncedState< SecurityPasswordFormData >( {
+			password: '',
+		} );
 
-	const { validity, isValid } = useFormValidity( formData, fields, form );
+	const { validity, isValid } = useFormValidity( debouncedFormData, fields, form );
 	const isLoading = mutation.isPending || isReloading;
 
 	const handleSubmit = ( e: React.FormEvent ) => {

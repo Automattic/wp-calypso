@@ -177,6 +177,7 @@ const AddProfessionalEmail = () => {
 							} }
 						/>
 					}
+					description={ __( 'Add a new email mailbox to your domain.' ) }
 				/>
 			}
 			size="small"

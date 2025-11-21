@@ -228,6 +228,7 @@ export default function PluginsScheduledUpdates() {
 				header={
 					<PageHeader
 						title={ __( 'Scheduled updates' ) }
+						description={ __( 'Schedule automatic plugin updates for your sites.' ) }
 						actions={
 							<RouterLinkButton
 								variant="primary"

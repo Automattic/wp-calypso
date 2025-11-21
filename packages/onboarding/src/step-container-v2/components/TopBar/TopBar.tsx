@@ -7,7 +7,13 @@ import './style.scss';
 export interface TopBarProps {
 	leftElement?: ReactNode;
 	rightElement?: ReactNode;
+
+	/**
+	 * Customize the TopBar logo. If this is not passed, the default logo will
+	 * be used unless `hideLogo` is set.
+	 */
 	logo?: ReactNode;
+
 	/**
 	 * Hide the WordPress wordmark when `compactLogo` is set.
 	 * Always show the WordPress logo instead.
@@ -15,9 +21,20 @@ export interface TopBarProps {
 	 * - Confirm with Design before changing functionality around this
 	 */
 	compactLogo?: 'always';
+
+	/**
+	 * Hide the logo entirely.
+	 */
+	hideLogo?: boolean;
 }
 
-export const TopBar = ( { leftElement, rightElement, logo, compactLogo }: TopBarProps ) => {
+export const TopBar = ( {
+	leftElement,
+	rightElement,
+	logo,
+	compactLogo,
+	hideLogo = false,
+}: TopBarProps ) => {
 	const defaultLogo = (
 		<div
 			className={ clsx( 'step-container-v2__top-bar-wordpress-logo-wrapper', {
@@ -38,13 +55,12 @@ export const TopBar = ( { leftElement, rightElement, logo, compactLogo }: TopBar
 	);
 	return (
 		<div className="step-container-v2__top-bar">
-			{ logo ? logo : defaultLogo }
+			{ ! hideLogo && ( logo ?? defaultLogo ) }
+
+			{ ! hideLogo && leftElement && <div className="step-container-v2__top-bar-divider" /> }
 
 			{ leftElement && (
-				<>
-					<div className="step-container-v2__top-bar-divider" />
-					<div className="step-container-v2__top-bar-left-element">{ leftElement }</div>
-				</>
+				<div className="step-container-v2__top-bar-left-element">{ leftElement }</div>
 			) }
 			{ rightElement && (
 				<div className="step-container-v2__top-bar-right-element">{ rightElement }</div>

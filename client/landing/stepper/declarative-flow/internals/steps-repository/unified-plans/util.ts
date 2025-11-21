@@ -11,7 +11,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { UnifiedPlansStepProps } from './unified-plans-step';
 
-type SupportedIntervalTypes = Extract<
+export type SupportedIntervalTypes = Extract<
 	UrlFriendlyTermType,
 	'monthly' | 'yearly' | '2yearly' | '3yearly'
 >;

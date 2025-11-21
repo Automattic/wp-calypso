@@ -9,7 +9,7 @@ import {
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import useDebouncedState from '../../app/hooks/use-debounced-state';
 import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
 import type { Site } from '@automattic/api-core';
@@ -64,14 +64,14 @@ export function ConfirmNewOwnerForm( {
 	newOwnerEmail: string;
 	onSubmit: ( data: ConfirmNewOwnerFormData ) => void;
 } ) {
-	const [ formData, setFormData ] = useState( {
+	const [ formData, setFormData, debouncedFormData ] = useDebouncedState( {
 		email: newOwnerEmail,
 	} );
 
 	const mutation = useMutation( siteOwnerTransferEligibilityCheckMutation( site.ID ) );
 
 	const fields = getFields( site.ID );
-	const { validity, isValid } = useFormValidity( formData, fields, form );
+	const { validity, isValid } = useFormValidity( debouncedFormData, fields, form );
 	const isSaveDisabled = ! isValid;
 
 	const handleSubmit = ( event: React.FormEvent ) => {

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { BackButton } from '@automattic/onboarding';
@@ -19,6 +20,7 @@ import {
 	transferLockedDomainStepsDefinition,
 	transferUnlockedDomainStepsDefinition,
 } from 'calypso/components/domains/connect-domain-step/page-definitions';
+import OwnershipVerification from 'calypso/components/domains/ownership-verification';
 import {
 	getAvailabilityErrorMessage,
 	getDomainNameValidationErrorMessage,
@@ -330,6 +332,10 @@ function UseMyDomain( props ) {
 	};
 
 	const renderOwnershipVerificationFlow = () => {
+		if ( config.isEnabled( 'domain-connection-redesign' ) ) {
+			return <OwnershipVerification domainName={ domainName } onConnect={ onConnect } />;
+		}
+
 		return (
 			<ConnectDomainSteps
 				baseClassName="connect-domain-step"
