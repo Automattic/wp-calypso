@@ -323,43 +323,37 @@ const CancelPurchaseDomainOptions = ( {
 				/>
 			</p>
 			{ cancelBundledDomain && (
-				<p>
-					{ createInterpolateElement(
-						__(
-							"When you cancel a domain, it becomes unavailable for a while. Anyone may register it once it's " +
-								"available again, so it's possible you won't have another chance to register it in the future. " +
-								"If you'd like to use your domain on a site hosted elsewhere, consider <a>updating your name " +
-								'servers</a> instead.'
-						),
-						{
-							a: (
-								<a
-									href={ localizeUrl( UPDATE_NAMESERVERS ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
+				<>
+					<p>
+						{ createInterpolateElement(
+							__(
+								"When you cancel a domain, it becomes unavailable for a while. Anyone may register it once it's " +
+									"available again, so it's possible you won't have another chance to register it in the future. " +
+									"If you'd like to use your domain on a site hosted elsewhere, consider <a>updating your name " +
+									'servers</a> instead.'
 							),
-						}
-					) }
-					<label>
+							{
+								a: (
+									<a
+										href={ localizeUrl( UPDATE_NAMESERVERS ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							}
+						) }
+					</p>
+					<p>
 						<CheckboxControl
 							checked={ confirmCancel }
 							onChange={ onConfirmCancelBundledDomainChange }
 							disabled={ isLoading }
-						/>
-						<span className="cancel-purchase__domain-confirm">
-							{ createInterpolateElement(
-								__(
-									'I understand that canceling my domain means I might <strong>never be able to register it ' +
-										'again</strong>.'
-								),
-								{
-									strong: <strong />,
-								}
+							label={ __(
+								'I understand that canceling my domain means I might never be able to register it again.'
 							) }
-						</span>
-					</label>
-				</p>
+						/>
+					</p>
+				</>
 			) }
 		</>
 	);
