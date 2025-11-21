@@ -178,7 +178,7 @@ const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) 
 				) }
 			</Button>
 
-			{ withHelpCenter && <SidebarHelpCenter onClick={ () => {} } /> }
+			{ withHelpCenter && <SidebarHelpCenter /> }
 			<DropdownMenu isExpanded={ isMenuExpanded } setMenuExpanded={ setMenuExpanded } />
 		</nav>
 	);
