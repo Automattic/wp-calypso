@@ -315,7 +315,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 .login__lostpassword-form-external-link {
 	font-size: $font-body-small;
-	color: var(--studio-gray-90, #1d2327);
+	color: var(--color-neutral-70);
 	font-weight: 500;
 	display: inline-flex;
 	align-items: center;
@@ -324,6 +324,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 	&:visited,
 	&:hover,
 	&:focus {
-		color: var(--studio-gray-90, #1d2327);
+		color: var(--color-neutral-70);
 	}
 }
