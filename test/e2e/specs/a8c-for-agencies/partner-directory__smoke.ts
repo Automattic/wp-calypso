@@ -2,22 +2,22 @@
  * @group gutenberg
  */
 
+import { envVariables } from '@automattic/calypso-e2e';
 import type { Browser, Page } from 'playwright';
-
 declare const browser: Browser;
 
 /**
- * Verify the WordPress.com Partner Directory page loads and is interactive.
+ * Verify the Partner Directory page loads and is interactive.
  */
-describe( 'Automattic For Agencies: WordPress.com Partner Directory', () => {
+describe( 'Automattic For Agencies: Partner Directory', () => {
 	let page: Page;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 	} );
 
-	test( 'Navigate to the WordPress.com Partner Directory', async () => {
-		await page.goto( 'https://wordpress.com/development-services/' );
+	test( 'Navigate to the Partner Directory', async () => {
+		await page.goto( envVariables.PARTNER_DIRECTORY_BASE_URL );
 	} );
 
 	test( 'Click the Industries dropdown', async () => {
@@ -35,7 +35,7 @@ describe( 'Automattic For Agencies: WordPress.com Partner Directory', () => {
 	test( "Visit the first partner's details page", async () => {
 		await Promise.all( [
 			page.getByText( 'Accepting new clients' ).first().click(),
-			page.waitForURL( /https:\/\/wordpress\.com\/development-services\/[^/]+\/[^/]+\//, {
+			page.waitForURL( new RegExp( `^${ envVariables.PARTNER_DIRECTORY_BASE_URL }/[^/]+/[^/]+/` ), {
 				timeout: 10_000,
 			} ),
 		] );
