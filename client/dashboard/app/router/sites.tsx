@@ -8,6 +8,7 @@ import {
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
 	siteBackupActivityLogEntriesQuery,
+	siteBackupActivityLogGroupCountsQuery,
 	siteAgencyBlogQuery,
 	siteLastBackupQuery,
 	siteEdgeCacheStatusQuery,
@@ -44,15 +45,11 @@ import {
 	canViewSiteVisibilitySettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
-import {
-	hasHostingFeature,
-	hasPlanFeature,
-	isPlanFeatureAvailable,
-} from '../../utils/site-features';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site } from '@automattic/api-core';
@@ -189,7 +186,7 @@ export const siteDeploymentsRoute = createRoute( {
 	path: 'deployments',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.DEPLOYMENT ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
@@ -228,7 +225,7 @@ export const siteMonitoringRoute = createRoute( {
 	path: 'monitoring',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.MONITOR ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
@@ -252,7 +249,7 @@ export const siteLogsRoute = createRoute( {
 	path: 'logs',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.LOGS ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
@@ -344,7 +341,7 @@ export const siteScanRoute = createRoute( {
 	path: 'scan',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.SCAN ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
@@ -418,15 +415,16 @@ export const siteBackupsRoute = createRoute( {
 	path: 'backups',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.BACKUPS ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		// Preload activity log backup-related entries.
+		// Preload activity log backup-related entries and group counts.
 		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
 			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
+			queryClient.ensureQueryData( siteBackupActivityLogGroupCountsQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -543,7 +541,7 @@ export const sitePerformanceRoute = createRoute( {
 	path: 'performance',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.PERFORMANCE ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},

@@ -5,6 +5,7 @@ import {
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import { domainQuery } from '.';
 
 export const domainNameServersQuery = ( domainName: string ) =>
 	queryOptions( {
@@ -25,5 +26,6 @@ export const domainNameServersMutation = ( domainName: string ) =>
 				nameServers: data,
 			} );
 			queryClient.invalidateQueries( domainNameServersQuery( domainName ) );
+			queryClient.invalidateQueries( domainQuery( domainName ) );
 		},
 	} );

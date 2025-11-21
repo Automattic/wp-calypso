@@ -7,6 +7,7 @@ import {
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_FLOW,
 	PLAN_UPGRADE_FLOW,
+	WOO_HOSTED_PLANS_FLOW,
 } from '@automattic/onboarding';
 
 const FLOWS_USING_STEP_CONTAINER_V2 = [
@@ -18,6 +19,7 @@ const FLOWS_USING_STEP_CONTAINER_V2 = [
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_FLOW,
 	PLAN_UPGRADE_FLOW,
+	WOO_HOSTED_PLANS_FLOW,
 ];
 
 export const shouldUseStepContainerV2 = ( flow: string ) => {

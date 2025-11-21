@@ -1,8 +1,20 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .domain-transfer-or-connect {
+	&--redesign {
+		max-width: 600px;
+		margin: 0 auto;
+
+		.domain-transfer-or-connect__content {
+			display: flex;
+			flex-direction: column;
+			gap: 24px;
+		}
+	}
+
 	& header.domain-transfer-or-connect__page-heading {
 		margin-bottom: 24px;
 	}
@@ -16,6 +28,62 @@
 		&.domain-transfer-or-connect__content {
 			background-color: transparent;
 			box-shadow: none;
+		}
+
+		.option-content-v2 {
+			&--is-placeholder {
+				.option-content-v2__description *,
+				.option-content-v2__benefits-item *,
+				.summary-button-title,
+				.summary-button-badge-list *,
+				.summary-button-decoration {
+					@include placeholder();
+					border-color: transparent;
+				}
+
+				.option-content-v2__button svg,
+				.option-content-v2__benefits-item svg,
+				.summary-button-decoration svg {
+					fill: transparent;
+
+					path {
+						stroke: transparent;
+					}
+				}
+			}
+
+			&__button.summary-button.components-button {
+				position: relative;
+				text-align: initial;
+
+				&:has(+ .option-content-v2__benefits) {
+					border-radius: $radius-large $radius-large 0 0;
+				}
+
+				& .summary-button-decoration svg, &:hover .summary-button-decoration svg {
+					fill: none;
+				}
+			}
+
+			&__benefits {
+				padding: 20px 28px;
+				background-color: #fafafa;
+				border: 1px solid $gray-200;
+				border-top: none;
+				border-radius: 0 0 $radius-large $radius-large;
+				font-size: $font-size-medium;
+
+				@include break-mobile {
+					padding: 20px 64px;
+				}
+
+				&-item {
+					.gridicon {
+						fill: var(--studio-green-50);
+						flex-shrink: 0;
+					}
+				}
+			}
 		}
 
 		.option-content {

@@ -1,4 +1,4 @@
-import { domainDnsMutation, domainDnsQuery } from '@automattic/api-queries';
+import { domainDnsMutation, domainDnsQuery, domainQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
@@ -9,6 +9,7 @@ import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DnsDescription from '../domain-dns/dns-description';
+import { DomainDnsNameserversNotice } from '../domain-dns/notice';
 import DNSRecordForm from './form';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import { getProcessedRecord } from './utils';
@@ -19,6 +20,7 @@ export default function DomainEditDNS() {
 	const navigate = useNavigate();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { domainName } = domainRoute.useParams();
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { recordId } = domainRoute.useSearch();
 	const mutation = useMutation( domainDnsMutation( domainName ) );
 
@@ -66,6 +68,7 @@ export default function DomainEditDNS() {
 				<PageHeader prefix={ <Breadcrumbs length={ 3 } /> } description={ <DnsDescription /> } />
 			}
 		>
+			<DomainDnsNameserversNotice domainName={ domainName } domain={ domain } />
 			<DNSRecordForm
 				domainName={ domainName }
 				isBusy={ mutation.isPending }

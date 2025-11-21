@@ -239,7 +239,6 @@
 		right: 0.5rem;
 		padding: 0.25rem;
 		background: transparent;
-		border: none;
 		box-shadow: none;
 
 		&:hover,
@@ -248,6 +247,10 @@
 			background: transparent;
 			border: none;
 			box-shadow: none;
+		}
+
+		&.button.is-transparent {
+			border: none;
 		}
 	}
 

@@ -80,6 +80,7 @@ export type PlansIntent =
 	| 'plans-upgrade'
 	| 'plans-wordpress-hosting'
 	| 'plans-website-builder'
+	| 'plans-woo-hosted'
 	| 'default';
 
 export interface PlanActionOverrides {

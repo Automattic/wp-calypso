@@ -18,7 +18,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { domainRoute, domainsRoute, domainTransferRoute } from '../../app/router/domains';
+import { domainRoute, domainsIndexRoute, domainTransferRoute } from '../../app/router/domains';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
@@ -79,7 +79,7 @@ export default function Actions() {
 					createSuccessNotice( __( 'The domain deletion has been completed.' ), {
 						type: 'snackbar',
 					} );
-					router.navigate( { to: domainsRoute.fullPath } );
+					router.navigate( { to: domainsIndexRoute.fullPath } );
 				},
 				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
 				onSettled: () => {

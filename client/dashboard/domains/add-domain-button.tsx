@@ -3,17 +3,35 @@ import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 
-export function AddDomainButton( { siteSlug }: { siteSlug?: string } ) {
+export function AddDomainButton( {
+	siteSlug,
+	redirectTo,
+}: {
+	siteSlug?: string;
+	redirectTo?: string;
+} ) {
 	const onSearchClick = () => {
-		window.location.href = siteSlug
-			? addQueryArgs( '/setup/domain', { siteSlug } )
-			: '/setup/domain';
+		const queryArgs: Record< string, string > = {};
+		if ( siteSlug ) {
+			queryArgs.siteSlug = siteSlug;
+		}
+		if ( redirectTo ) {
+			queryArgs.redirect_to = redirectTo;
+		}
+		window.location.href = siteSlug ? addQueryArgs( '/setup/domain', queryArgs ) : '/start/domain';
 		return false;
 	};
 
 	const onTransferClick = () => {
+		const queryArgs: Record< string, string > = {};
+		if ( siteSlug ) {
+			queryArgs.siteSlug = siteSlug;
+		}
+		if ( redirectTo ) {
+			queryArgs.redirect_to = redirectTo;
+		}
 		window.location.href = siteSlug
-			? addQueryArgs( '/setup/domain/use-my-domain', { siteSlug } )
+			? addQueryArgs( '/setup/domain/use-my-domain', queryArgs )
 			: '/setup/domain-transfer';
 		return false;
 	};

@@ -30,6 +30,7 @@ export class ImportContentFromSquarespacePage {
 				siteSlug,
 			} )
 		);
+		await this.importFileContentPage.dismissCookieBanner();
 	}
 
 	/**
