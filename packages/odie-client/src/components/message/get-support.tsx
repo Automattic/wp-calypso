@@ -112,6 +112,12 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							}
 						},
 					} );
+				} else if ( ! canConnectToZendesk ) {
+					buttons.push( {
+						disabled: true,
+						text: __( 'Get support', __i18n_text_domain__ ),
+						action: async () => {},
+					} );
 				}
 			}
 
