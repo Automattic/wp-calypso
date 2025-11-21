@@ -15,10 +15,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAgentSession } from '../../hooks/use-agent-session';
 import { useChatState } from '../../hooks/use-chat-state';
 import { usePersistedAgentState } from '../../hooks/use-persisted-agent-state';
+import ChatHeader from '../chat-header';
 import ChatLayoutManager from '../chat-layout-manager';
-import ChatHeader from '../shared/chat-header';
 import type { ContextAdapter } from '../../adapters/context/context-adapter';
-import type { ChatHeaderMenuItem } from '../shared/chat-header';
+import type { ChatHeaderMenuItem } from '../chat-header';
 
 export interface AgentDockProps {
 	/**

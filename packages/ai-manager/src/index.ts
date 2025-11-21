@@ -12,8 +12,8 @@ export { default } from './components/unified-ai-agent';
 export { default as ChatLayoutManager } from './components/chat-layout-manager';
 export { default as AgentDock } from './components/agent-dock';
 export { default as UnifiedAIAgent } from './components/unified-ai-agent';
-export { default as ChatHeader } from './components/shared/chat-header';
-export { default as BigSkyIcon } from './components/shared/big-sky-icon';
+export { default as ChatHeader } from './components/chat-header';
+export { default as BigSkyIcon } from './components/big-sky-icon';
 
 // Hooks
 export { useChatState, useAgentSession } from './hooks';
@@ -61,5 +61,5 @@ export type {
 	AgentDockProps,
 } from './types';
 export type { UnifiedAIAgentProps } from './components/unified-ai-agent';
-export type { ChatHeaderProps, ChatHeaderMenuItem } from './components/shared/chat-header';
-export type { BigSkyIconProps } from './components/shared/big-sky-icon';
+export type { ChatHeaderProps, ChatHeaderMenuItem } from './components/chat-header';
+export type { BigSkyIconProps } from './components/big-sky-icon';

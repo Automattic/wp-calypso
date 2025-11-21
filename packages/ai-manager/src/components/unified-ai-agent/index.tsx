@@ -7,7 +7,7 @@ import { useCallback, useMemo } from 'react';
 import { CalypsoContextAdapter } from '../../adapters/context/calypso-context-adapter';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import AgentDock from '../agent-dock';
-import BigSkyIcon from '../shared/big-sky-icon';
+import BigSkyIcon from '../big-sky-icon';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 export interface UnifiedAIAgentProps {
