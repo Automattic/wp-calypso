@@ -529,7 +529,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		getFeatures: () => [ FEATURE_PRIORITY_24_7_SUPPORT ],
 	},
 	[ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES ]: {
-		slug: FEATURE_GROUP_WP_HOSTING_COMMERCE,
+		slug: FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 		getTitle: () => i18n.translate( 'Payment transaction fees' ),
 		getFeatures: () => [
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
