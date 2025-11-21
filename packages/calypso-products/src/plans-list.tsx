@@ -876,7 +876,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		let features = baseFeatures;
 
 		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
+			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
 		}
 
 		if ( isGlobalStylesOnPersonalEnabled() ) {
