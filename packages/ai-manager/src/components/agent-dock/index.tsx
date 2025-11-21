@@ -241,98 +241,83 @@ export default function AgentDock( {
 		[ emptyViewSuggestions ]
 	);
 
-	const renderAgentUI = useCallback(
-		( {
-			isDocked: isDockedFromManager,
-			closeSidebar,
-			dock,
-			undock,
-		}: {
-			isDocked: boolean;
-			isDesktop: boolean;
-			closeSidebar: () => void;
-			dock: () => void;
-			undock: () => void;
-		} ) => {
-			// Create menu items for chat header
-			const menuItems: ChatHeaderMenuItem[] = [];
+	const renderAgentUI = ( {
+		isDocked: isDockedFromManager,
+		closeSidebar,
+		dock,
+		undock,
+	}: {
+		isDocked: boolean;
+		isDesktop: boolean;
+		closeSidebar: () => void;
+		dock: () => void;
+		undock: () => void;
+	} ) => {
+		// Create menu items for chat header
+		const menuItems: ChatHeaderMenuItem[] = [];
 
-			// Add dock/undock menu item
-			if ( isDockedFromManager ) {
-				menuItems.push( {
-					id: 'undock',
-					icon: login,
-					title: __( 'Pop out sidebar', 'ai-manager' ),
-					onClick: undock,
-				} );
-			} else {
-				menuItems.push( {
-					id: 'dock',
-					icon: drawerRight,
-					title: __( 'Move to sidebar', 'ai-manager' ),
-					onClick: dock,
-				} );
-			}
-
-			// Add reset chat menu item (disabled if no messages or processing)
+		// Add dock/undock menu item
+		if ( isDockedFromManager ) {
 			menuItems.push( {
-				id: 'reset',
-				icon: rotateRight,
-				title: __( 'Reset chat', 'ai-manager' ),
-				onClick: handleClearChat,
-				isDisabled: ! messages.length || isProcessing,
+				id: 'undock',
+				icon: login,
+				title: __( 'Pop out sidebar', 'ai-manager' ),
+				onClick: undock,
 			} );
+		} else {
+			menuItems.push( {
+				id: 'dock',
+				icon: drawerRight,
+				title: __( 'Move to sidebar', 'ai-manager' ),
+				onClick: dock,
+			} );
+		}
 
-			return (
-				<AgentUI.Container
-					messages={ messages }
-					isProcessing={ isProcessing }
-					error={ error }
-					onSubmit={ onSubmit }
-					variant={ isDockedFromManager ? 'embedded' : 'floating' }
-					floatingChatState={ chatState }
-					onClose={ isDockedFromManager ? closeSidebar : toggleExpand }
-					onExpand={ toggleExpand }
-					className="agenttic ai-manager-dock"
-					messageRenderer={ messageRenderer }
-					emptyView={
-						<EmptyView
-							heading={ emptyViewHeading }
-							help={ emptyViewHelp }
-							suggestions={ suggestions }
-						/>
-					}
-				>
-					<AgentUI.ConversationView>
-						<ChatHeader
-							isChatDocked={ isDockedFromManager }
-							onClose={ isDockedFromManager ? closeSidebar : toggleExpand }
-							options={ menuItems }
-						/>
-						<AgentUI.Messages />
-						<AgentUI.Footer>
-							<AgentUI.Suggestions />
-							<AgentUI.Notice />
-							<AgentUI.Input />
-						</AgentUI.Footer>
-					</AgentUI.ConversationView>
-				</AgentUI.Container>
-			);
-		},
-		[
-			messages,
-			isProcessing,
-			error,
-			onSubmit,
-			chatState,
-			toggleExpand,
-			messageRenderer,
-			emptyViewHeading,
-			emptyViewHelp,
-			suggestions,
-			handleClearChat,
-		]
-	);
+		// Add reset chat menu item (disabled if no messages or processing)
+		menuItems.push( {
+			id: 'reset',
+			icon: rotateRight,
+			title: __( 'Reset chat', 'ai-manager' ),
+			onClick: handleClearChat,
+			isDisabled: ! messages.length || isProcessing,
+		} );
+
+		return (
+			<AgentUI.Container
+				messages={ messages }
+				isProcessing={ isProcessing }
+				error={ error }
+				onSubmit={ onSubmit }
+				variant={ isDockedFromManager ? 'embedded' : 'floating' }
+				floatingChatState={ chatState }
+				onClose={ isDockedFromManager ? closeSidebar : toggleExpand }
+				onExpand={ toggleExpand }
+				className="agenttic ai-manager-dock"
+				messageRenderer={ messageRenderer }
+				emptyView={
+					<EmptyView
+						heading={ emptyViewHeading }
+						help={ emptyViewHelp }
+						suggestions={ suggestions }
+					/>
+				}
+			>
+				<AgentUI.ConversationView>
+					<ChatHeader
+						isChatDocked={ isDockedFromManager }
+						onClose={ isDockedFromManager ? closeSidebar : toggleExpand }
+						options={ menuItems }
+					/>
+					<AgentUI.Messages />
+					<AgentUI.Footer>
+						<AgentUI.Suggestions />
+						<AgentUI.Notice />
+						<AgentUI.Input />
+					</AgentUI.Footer>
+				</AgentUI.ConversationView>
+			</AgentUI.Container>
+		);
+	};
 
 	// Determine if sidebar should be open by default
 	// Priority: defaultOpen prop > chatState from storage
