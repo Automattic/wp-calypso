@@ -1,4 +1,4 @@
-.ai-manager-chat-header {
+.agents-manager-chat-header {
 	width: calc(100% + 16px);
 	display: flex;
 	align-items: center;
@@ -9,11 +9,11 @@
 	margin-left: -8px;
 }
 
-.ai-manager-chat-header__actions {
+.agents-manager-chat-header__actions {
 	display: flex;
 	gap: 8px;
 }
 
-.ai-manager-chat-header__more-options {
+.agents-manager-chat-header__more-options {
 	line-height: initial;
 }

@@ -25,7 +25,7 @@ export default function AIAgentLoader( { sectionName, currentRoute }: Props ) {
 
 	return (
 		<AsyncLoad
-			require="@automattic/ai-manager"
+			require="@automattic/agents-manager"
 			placeholder={ null }
 			containerSelector="#wpcom"
 			sectionName={ sectionName }

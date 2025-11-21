@@ -105,15 +105,15 @@ export default function AgentDock( {
 	agentConfig,
 	containerSelector,
 	emptyViewSuggestions = [],
-	emptyViewHeading = __( 'How can I help you today?', 'ai-manager' ),
-	emptyViewHelp = __( 'Ask me anything.', 'ai-manager' ),
+	emptyViewHeading = __( 'How can I help you today?', 'agents-manager' ),
+	emptyViewHelp = __( 'Ask me anything.', 'agents-manager' ),
 	markdownComponents = {},
 	markdownExtensions,
 	fabIcon,
 	onClearChat,
-	sessionStorageKey = 'ai-manager-session',
-	chatStateStorageKey = 'ai-manager-chat-state',
-	dockStateStorageKey = 'ai-manager-docked',
+	sessionStorageKey = 'agents-manager-session',
+	chatStateStorageKey = 'agents-manager-chat-state',
+	dockStateStorageKey = 'agents-manager-docked',
 	preferenceKey = 'ai_manager_state',
 	savePreference,
 	loadPreference,
@@ -261,14 +261,14 @@ export default function AgentDock( {
 			menuItems.push( {
 				id: 'undock',
 				icon: login,
-				title: __( 'Pop out sidebar', 'ai-manager' ),
+				title: __( 'Pop out sidebar', 'agents-manager' ),
 				onClick: undock,
 			} );
 		} else {
 			menuItems.push( {
 				id: 'dock',
 				icon: drawerRight,
-				title: __( 'Move to sidebar', 'ai-manager' ),
+				title: __( 'Move to sidebar', 'agents-manager' ),
 				onClick: dock,
 			} );
 		}
@@ -277,7 +277,7 @@ export default function AgentDock( {
 		menuItems.push( {
 			id: 'reset',
 			icon: rotateRight,
-			title: __( 'Reset chat', 'ai-manager' ),
+			title: __( 'Reset chat', 'agents-manager' ),
 			onClick: handleClearChat,
 			isDisabled: ! messages.length || isProcessing,
 		} );
@@ -292,7 +292,7 @@ export default function AgentDock( {
 				floatingChatState={ chatState }
 				onClose={ isDockedFromManager ? closeSidebar : toggleExpand }
 				onExpand={ toggleExpand }
-				className="agenttic ai-manager-dock"
+				className="agenttic agents-manager-dock"
 				messageRenderer={ messageRenderer }
 				emptyView={
 					<EmptyView

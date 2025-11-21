@@ -48,8 +48,8 @@ export interface ChatLayoutManagerProps {
 	 */
 	desktopMediaQuery?: string;
 	/**
-	 * Custom class name prefix (defaults to 'ai-manager')
-	 * @default 'ai-manager'
+	 * Custom class name prefix (defaults to 'agents-manager')
+	 * @default 'agents-manager'
 	 */
 	classNamePrefix?: string;
 	/**
@@ -94,9 +94,9 @@ export default function ChatLayoutManager( {
 	defaultUndocked = false,
 	defaultOpen = false,
 	desktopMediaQuery = '(min-width: 1200px)',
-	classNamePrefix = 'ai-manager',
+	classNamePrefix = 'agents-manager',
 	fabIcon = <Icon icon={ comment } />,
-	fabLabel = __( 'Open Chat', 'ai-manager' ),
+	fabLabel = __( 'Open Chat', 'agents-manager' ),
 	onOpenSidebar = () => {},
 	onCloseSidebar = () => {},
 	onDock = () => {},

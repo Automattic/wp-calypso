@@ -57,24 +57,24 @@ export default function ChatHeader( {
 	options = [],
 }: ChatHeaderProps ) {
 	return (
-		<div className="ai-manager-chat-header">
-			<div className="ai-manager-chat-header__actions">
+		<div className="agents-manager-chat-header">
+			<div className="agents-manager-chat-header__actions">
 				{ options.length > 0 && (
 					<DropdownMenu
-						className="ai-manager-chat-header__more-options"
+						className="agents-manager-chat-header__more-options"
 						controls={ options }
 						icon={ moreVertical }
-						label={ __( 'More Options', 'ai-manager' ) }
+						label={ __( 'More Options', 'agents-manager' ) }
 						toggleProps={ {
 							size: ! isChatDocked ? 'small' : undefined,
 						} }
 					/>
 				) }
 				<Button
-					className="ai-manager-chat-header__close-btn"
+					className="agents-manager-chat-header__close-btn"
 					icon={ close }
 					onClick={ onClose }
-					label={ __( 'Close', 'ai-manager' ) }
+					label={ __( 'Close', 'agents-manager' ) }
 					size={ ! isChatDocked ? 'small' : undefined }
 				/>
 			</div>

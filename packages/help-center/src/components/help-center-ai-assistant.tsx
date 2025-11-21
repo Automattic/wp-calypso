@@ -5,7 +5,7 @@
  * or the legacy HelpCenterGPT based on feature flag.
  */
 
-import UnifiedAIAgent from '@automattic/ai-manager';
+import UnifiedAIAgent from '@automattic/agents-manager';
 import { useCallback } from '@wordpress/element';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';

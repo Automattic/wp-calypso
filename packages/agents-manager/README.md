@@ -1,4 +1,4 @@
-# @automattic/ai-manager
+# @automattic/agents-manager
 
 AI agent dock and sidebar components with multi-context support for WordPress, Calypso, and generic environments.
 
@@ -14,7 +14,7 @@ AI agent dock and sidebar components with multi-context support for WordPress, C
 ## Installation
 
 ```bash
-yarn add @automattic/ai-manager
+yarn add @automattic/agents-manager
 ```
 
 ## Quick Start
@@ -22,7 +22,7 @@ yarn add @automattic/ai-manager
 ### Basic Usage
 
 ```tsx
-import { ChatLayoutManager, GenericContextAdapter } from '@automattic/ai-manager';
+import { ChatLayoutManager, GenericContextAdapter } from '@automattic/agents-manager';
 
 function MyApp() {
   return (
@@ -48,7 +48,7 @@ function MyApp() {
 import {
   ChatLayoutManager,
   WordPressContextAdapter,
-} from '@automattic/ai-manager';
+} from '@automattic/agents-manager';
 
 const contextAdapter = new WordPressContextAdapter( 'wp-admin' );
 
@@ -64,7 +64,7 @@ const contextAdapter = new WordPressContextAdapter( 'wp-admin' );
 import {
   ChatLayoutManager,
   CalypsoContextAdapter,
-} from '@automattic/ai-manager';
+} from '@automattic/agents-manager';
 
 const contextAdapter = new CalypsoContextAdapter( 'calypso-help-center' );
 ```
@@ -76,7 +76,7 @@ const contextAdapter = new CalypsoContextAdapter( 'calypso-help-center' );
 Manages chat expand/collapse state with localStorage persistence.
 
 ```tsx
-import { useChatState } from '@automattic/ai-manager';
+import { useChatState } from '@automattic/agents-manager';
 
 function ChatComponent() {
   const { chatState, toggleExpand, collapse, expand } = useChatState( {
@@ -98,7 +98,7 @@ function ChatComponent() {
 Manages persistent session IDs with expiry.
 
 ```tsx
-import { useAgentSession } from '@automattic/ai-manager';
+import { useAgentSession } from '@automattic/agents-manager';
 
 function AgentComponent() {
   const { sessionId, resetSession } = useAgentSession( {
@@ -116,7 +116,7 @@ function AgentComponent() {
 The ability registry provides a flexible, async API for registering agent abilities.
 
 ```tsx
-import { defaultAbilityRegistry } from '@automattic/ai-manager';
+import { defaultAbilityRegistry } from '@automattic/agents-manager';
 
 // Register abilities synchronously
 defaultAbilityRegistry.registerAbility( {
@@ -151,7 +151,7 @@ Context adapters provide environment-specific context to the AI agent.
 - **CalypsoContextAdapter**: Calypso-specific context
 
 ```tsx
-import { WordPressContextAdapter } from '@automattic/ai-manager';
+import { WordPressContextAdapter } from '@automattic/agents-manager';
 
 const adapter = new WordPressContextAdapter( 'block-editor' );
 const context = await adapter.getContext();

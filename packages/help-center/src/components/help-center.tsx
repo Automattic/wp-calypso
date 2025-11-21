@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import UnifiedAIAgent from '@automattic/ai-manager';
+import UnifiedAIAgent from '@automattic/agents-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
