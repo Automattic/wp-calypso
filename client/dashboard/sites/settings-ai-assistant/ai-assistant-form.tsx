@@ -80,6 +80,7 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 	);
 	const [ otherText, setOtherText ] = useState( '' );
 	const [ showDisableConfirm, setShowDisableConfirm ] = useState( false );
+	const [ lastAction, setLastAction ] = useState< 'enable' | 'disable' | null >( null );
 
 	const { data: pluginStatus } = useQuery( bigSkyPluginQuery( site.ID ) );
 
@@ -117,13 +118,14 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 	const mediaLibraryUrl = site?.URL + '/wp-admin/upload.php';
 
 	const hasSelection = selectedUseCases.size > 0;
-	const { isPending } = mutation;
+	const { isPending, isSuccess } = mutation;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
 		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: true } );
 
+		setLastAction( 'enable' );
 		mutation.mutate( pluginUpdate );
 	};
 
@@ -145,6 +147,7 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 	const performDisable = () => {
 		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: false } );
 
+		setLastAction( 'disable' );
 		mutation.mutate( pluginUpdate, {
 			onSuccess: () => {
 				setSelectedUseCases( new Set() );
@@ -167,16 +170,14 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 	if ( isEnabled ) {
 		return (
 			<>
+				{ isSuccess && lastAction === 'enable' && (
+					<Notice variant="success" density="medium">
+						{ __( 'WordPress AI Assistant is enabled! You have access to a lot of cool stuff.' ) }
+					</Notice>
+				) }
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
-							<Notice variant="success" density="medium">
-								{ isFreeTrial
-									? __( 'You are on a free trial.' )
-									: __(
-											'WordPress AI Assistant is enabled! You have access to a lot of cool stuff.'
-									  ) }
-							</Notice>
 							<VStack spacing={ 3 }>
 								{ USE_CASE_OPTIONS.map( ( option ) => (
 									<div key={ option.value }>
