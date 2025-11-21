@@ -11,26 +11,20 @@ import FlowCard from '../components/flow-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
-const PostCheckoutSetupYourSiteStep: StepType = ( { navigation } ) => {
-	const { submit } = navigation;
+const PostCheckoutSetupYourSiteStep: StepType = () => {
 	const { siteSlug, siteId } = useSiteData();
 	const translate = useTranslate();
 
 	const handleBuildWithAI = () => {
 		recordTracksEvent( 'calypso_onboarding_post_checkout_build_with_ai_click' );
 
-		if ( siteSlug && siteId ) {
-			window.location.assign(
-				addQueryArgs( `/setup/${ AI_SITE_BUILDER_FLOW }/processing`, {
-					siteSlug,
-					siteId,
-					fromPostCheckoutSetupSite: '1',
-				} )
-			);
-			return;
-		}
-
-		submit?.();
+		window.location.assign(
+			addQueryArgs( `/setup/${ AI_SITE_BUILDER_FLOW }/processing`, {
+				siteSlug,
+				siteId,
+				fromPostCheckoutSetupSite: '1',
+			} )
+		);
 	};
 
 	const handleBlankSite = () => {
