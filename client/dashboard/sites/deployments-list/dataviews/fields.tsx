@@ -78,7 +78,7 @@ export function useFields( {
 					return (
 						<VStack spacing={ 1 }>
 							<Text title={ commit_message }>{ commit_message }</Text>
-							<HStack spacing={ 3 } alignment="left">
+							<HStack spacing={ 3 } alignment="left" style={ { width: 'auto' } }>
 								<ExternalLink
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }
 								>

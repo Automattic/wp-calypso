@@ -13,6 +13,8 @@ export function BranchDisplay( { branchName, color = '#3b3b3b' }: BranchDisplayP
 			<Text
 				as="code"
 				size="small"
+				truncate
+				numberOfLines={ 1 }
 				style={ {
 					color,
 				} }
