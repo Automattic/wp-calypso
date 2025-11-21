@@ -15,8 +15,8 @@ export default function AISiteAssistantSettings( { siteSlug }: { siteSlug: strin
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-					title={ __( 'AI Site Assistant' ) }
-					description={ __( 'Early features for testing and feedback.' ) }
+					title={ __( 'WordPress AI Assistant' ) }
+					description={ __( 'There with you where you need it.' ) }
 				/>
 			}
 		>

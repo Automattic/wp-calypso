@@ -1,4 +1,5 @@
 import { bigSkyPluginMutation, bigSkyPluginQuery } from '@automattic/api-queries';
+import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -51,14 +52,14 @@ const getUseCaseDescription = (
 		case 'content':
 			return createInterpolateElement(
 				__(
-					'Use the AI assistant in the <siteEditorLink>site editor</siteEditorLink> to get help building or editing content.'
+					'Use the WordPress AI Assistant in the <siteEditorLink>site editor</siteEditorLink> to get help building or editing content.'
 				),
 				{
 					siteEditorLink: <ExternalLink href={ siteEditorUrl } children={ null } />,
 				}
 			);
 		case 'questions':
-			return __( 'Ask questions in the AI assistant chat interface.' );
+			return __( 'Ask questions in the WordPress AI Assistant chat interface.' );
 		case 'images':
 			return createInterpolateElement(
 				__(
@@ -86,8 +87,8 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 		...bigSkyPluginMutation( site.ID ),
 		meta: {
 			snackbar: {
-				success: __( 'AI Site Assistant settings saved.' ),
-				error: __( 'Failed to save AI Site Assistant settings.' ),
+				success: __( 'WordPress AI Assistant settings saved.' ),
+				error: __( 'Failed to save WordPress AI Assistant settings.' ),
 			},
 		},
 	} );
@@ -101,11 +102,12 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 			<UpsellCallout
 				site={ site }
 				upsellId="ai-assistant"
-				upsellTitle={ __( 'AI Site Assistant' ) }
+				upsellTitle={ __( 'WordPress AI Assistant' ) }
 				upsellPlanRequirement="any"
 				upsellDescription={ __(
 					'Get AI-powered assistance to help you build, edit, and redesign your site with ease.'
 				) }
+				upsellIcon={ <BigSkyLogo.CentralLogo heartless size={ 24 } fill="#1e1e1e" /> }
 			/>
 		);
 	}
@@ -171,7 +173,9 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 							<Notice variant="success" density="medium">
 								{ isFreeTrial
 									? __( 'You are on a free trial.' )
-									: __( 'AI Site Assistant is enabled! You have access to a lot of cool stuff.' ) }
+									: __(
+											'WordPress AI Assistant is enabled! You have access to a lot of cool stuff.'
+									  ) }
 							</Notice>
 							<VStack spacing={ 3 }>
 								{ USE_CASE_OPTIONS.map( ( option ) => (
@@ -196,7 +200,7 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 									isBusy={ isPending }
 									disabled={ isPending }
 								>
-									{ __( 'Disable AI Site Assistant' ) }
+									{ __( 'Disable WordPress AI Assistant' ) }
 								</Button>
 							</ButtonStack>
 						</VStack>
@@ -208,13 +212,13 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 						onCancel={ () => setShowDisableConfirm( false ) }
 						onConfirm={ performDisable }
 						confirmButtonProps={ {
-							label: __( 'Disable AI Site Assistant' ),
+							label: __( 'Disable WordPress AI Assistant' ),
 							isBusy: isPending,
 							disabled: isPending,
 						} }
 					>
 						{ __(
-							'If you disable AI Site Assistant, you will not be able to turn it back on without a paid plan.'
+							'You are on a free trial. If you disable WordPress AI Assistant, you will not be able to turn it back on without a paid plan.'
 						) }
 					</ConfirmModal>
 				) }
@@ -227,7 +231,9 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
 					<VStack spacing={ 4 }>
-						<Text weight={ 500 }>{ __( 'How do you plan to use the AI Site Assistant?' ) }</Text>
+						<Text weight={ 500 }>
+							{ __( 'How do you plan to use the WordPress AI Assistant?' ) }
+						</Text>
 						<Text variant="muted" lineHeight="20px">
 							{ __(
 								'Your choices help to personalize setup. You’ll still have access to everything.'
@@ -262,7 +268,7 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 								isBusy={ isPending }
 								disabled={ isPending || ! hasSelection }
 							>
-								{ __( 'Enable AI Site Assistant' ) }
+								{ __( 'Enable WordPress AI Assistant' ) }
 							</Button>
 						</ButtonStack>
 					</VStack>
