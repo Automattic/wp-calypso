@@ -17,6 +17,7 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 	const { data: agencyBlog, isLoading: isLoadingAgencyBlog } = useQuery( {
 		...siteAgencyBlogQuery( site.ID ),
 		enabled: site.is_wpcom_atomic,
+		refetchOnWindowFocus: false,
 	} );
 
 	if ( isLoadingAgencyBlog ) {
