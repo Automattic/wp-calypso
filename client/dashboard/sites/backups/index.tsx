@@ -14,6 +14,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../app/router/sites';
+import { Card, CardBody } from '../../components/card';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -226,13 +227,17 @@ export function BackupsListPage() {
 								gmtOffset={ gmtOffset }
 							/>
 
-							{ selectedBackup && (
+							{ selectedBackup ? (
 								<BackupDetails
 									backup={ selectedBackup }
 									site={ site }
 									timezoneString={ timezoneString }
 									gmtOffset={ gmtOffset }
 								/>
+							) : (
+								<Card>
+									<CardBody style={ { minHeight: '300px' } } children={ null } />
+								</Card>
 							) }
 						</Grid>
 					) }
