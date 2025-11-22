@@ -16,6 +16,7 @@ import {
 	isJetpackAISlug,
 	isJetpackStatsPaidTieredProductSlug,
 	isAkismetPro5h,
+	getAkismetPro5hProductDisplayName,
 } from '@automattic/calypso-products';
 import { formatNumber } from '@automattic/number-formatters';
 import { translate } from 'i18n-calypso';
@@ -122,16 +123,7 @@ export function getLabel( product: ResponseCartProduct ): string {
 	}
 
 	if ( isAkismetPro5h( product ) ) {
-		if ( quantity > 1 ) {
-			/* translators: %s is the product name "Akismet Pro", %d is a number of requests/month */
-			return translate( '%(productName)s (%(requests)d requests/month)', {
-				args: {
-					productName: product.product_name.replace( /\s*\(.*$/, '' ).trim(),
-					requests: 500 * quantity,
-				},
-				textOnly: true,
-			} );
-		}
+		return getAkismetPro5hProductDisplayName( product.product_name, quantity );
 	}
 
 	return product.product_name || '';
