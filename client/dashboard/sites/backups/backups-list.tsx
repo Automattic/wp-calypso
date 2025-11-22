@@ -87,6 +87,13 @@ export function BackupsList( {
 				searchLabel={ __( 'Search backups' ) }
 				onChangeSelection={ onChangeSelection }
 				selection={ selectedBackup ? [ selectedBackup.activity_id ] : [] }
+				empty={
+					<p>
+						{ view.search
+							? __( 'No results for this search term' )
+							: __( 'No results for this period' ) }
+					</p>
+				}
 			/>
 		</DataViewsCard>
 	);
