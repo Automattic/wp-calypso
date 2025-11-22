@@ -8,10 +8,10 @@
 
 .dashboard-backups__wrapper {
 	.dataviews-loading, .dataviews-no-results {
-		min-height: 300px;
-		display: flex;
 		align-items: center;
+		display: flex;
 		justify-content: center;
+		min-height: 300px;
 	}
 }
 
