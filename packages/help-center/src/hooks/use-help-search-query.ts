@@ -50,7 +50,7 @@ export const useHelpSearchQuery = (
 	search: string,
 	locale = 'en',
 	sectionName = '',
-	source = 'wpcom',
+	source = '',
 	queryOptions: Record< string, unknown > = {}
 ) => {
 	return useQuery< any >( {
