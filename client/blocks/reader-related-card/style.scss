@@ -88,10 +88,10 @@
 	}
 }
 
-.reader-related-card.card {
+:root .reader-related-card.card {
 	z-index: z-index("root", ".reader-related-card.card");
-	padding: 16px;
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
+	padding: 0;
 
 	.reader-related-card__meta {
 		display: grid;
