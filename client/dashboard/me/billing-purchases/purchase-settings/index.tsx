@@ -1205,7 +1205,7 @@ export default function PurchaseSettings() {
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				{ purchase.subscription_status === 'active' && (
+				{ ! purchase.is_trial_plan && purchase.subscription_status === 'active' && (
 					<ManageSubscriptionCard purchase={ purchase } />
 				) }
 				<PurchaseSettingsActions purchase={ purchase } />
