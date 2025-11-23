@@ -195,6 +195,15 @@ export const JetpackPlans = {
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY: 'jetpack_security_realtime_monthly',
 } as const;
 
+export const WooHostedPlans = {
+	WOO_HOSTED_FREE_PLAN: 'woo_hosted_free_plan',
+	WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY: 'woo_hosted_free_trial_plan_monthly',
+	WOO_HOSTED_BASIC_PLAN_MONTHLY: 'woo_hosted_basic_plan_monthly',
+	WOO_HOSTED_BASIC_PLAN_YEARLY: 'woo_hosted_basic_plan_yearly',
+	WOO_HOSTED_PRO_PLAN_MONTHLY: 'woo_hosted_pro_plan_monthly',
+	WOO_HOSTED_PRO_PLAN_YEARLY: 'woo_hosted_pro_plan_yearly',
+} as const;
+
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 
 export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
