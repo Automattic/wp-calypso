@@ -1167,6 +1167,9 @@ export default function PurchaseSettings() {
 									</Link>
 								);
 							}
+							if ( purchase.is_trial_plan ) {
+								return undefined;
+							}
 							if ( purchase.is_auto_renew_enabled ) {
 								return __( 'Will not auto-renew because there is no payment method' );
 							}
