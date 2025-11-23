@@ -265,6 +265,9 @@ export const Swipeable = ( {
 	);
 
 	const getTouchEvents = useCallback( () => {
+		if ( typeof document === 'undefined' ) {
+			return null;
+		}
 		if ( 'onpointerup' in document ) {
 			return {
 				onPointerDown: handleDragStart,

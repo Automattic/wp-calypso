@@ -3,6 +3,7 @@
 
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
+import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import ReactDom from 'react-dom';
@@ -433,7 +434,7 @@ export default class InfiniteList extends Component {
 		}
 
 		return (
-			<div { ...propsToTransfer }>
+			<div { ...omit( propsToTransfer, 'selectedItem' ) }>
 				<div
 					ref={ this.topPlaceholderRef }
 					className={ spacerClassName }

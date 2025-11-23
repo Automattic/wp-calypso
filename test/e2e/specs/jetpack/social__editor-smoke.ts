@@ -51,7 +51,7 @@ skipDescribeIf( isPrivateSite )(
 
 			const editorParent = await editorPage.getEditorParent();
 
-			const toggle = editorParent.getByLabel( 'Share when publishing' );
+			const toggle = editorParent.getByLabel( 'Auto-share post' );
 
 			await toggle.waitFor();
 		} );

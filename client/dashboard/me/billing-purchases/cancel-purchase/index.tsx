@@ -17,6 +17,7 @@ import {
 	hasPurchaseBeenExtendedQuery,
 	siteLatestAtomicTransferQuery,
 	siteFeaturesQuery,
+	removePurchaseMutation,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -54,6 +55,7 @@ import {
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
 	isAkismetProduct,
+	isAkismetTemporarySitePurchase,
 	isExpired,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackTemporarySitePurchase,
@@ -153,6 +155,7 @@ export default function CancelPurchase() {
 	const cancelAndRefundPurchaseMutate = useMutation( cancelAndRefundPurchaseMutation() );
 	const setPurchaseAutoRenewMutation = useMutation( userPurchaseSetAutoRenewQuery() );
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
+	const removePurchaseMutator = useMutation( removePurchaseMutation() );
 	const extendWithFreeMonthMutation = useMutation( extendPurchaseWithFreeMonthMutation() );
 	const userPreferences = useMutation( userPreferencesMutation() );
 	const {
@@ -896,10 +899,72 @@ export default function CancelPurchase() {
 		);
 	};
 
+	const submitRemovePurchase = ( purchase: Purchase ) => {
+		if ( CANCEL_FLOW_TYPE.REMOVE !== flowType ) {
+			return;
+		}
+
+		removePurchaseMutator.mutate( purchase.ID, {
+			onSuccess: () => {
+				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+				/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") and %(siteName)s is a domain name */
+				let successMessage = sprintf( __( '%(productName)s was removed from %(siteName)s.' ), {
+					productName: purchaseName,
+					siteName: purchase.domain,
+				} );
+				if (
+					isAkismetTemporarySitePurchase( purchase ) ||
+					isJetpackTemporarySitePurchase( purchase )
+				) {
+					/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") */
+					successMessage = sprintf( __( '%(productName)s was removed from your account.' ), {
+						productName: purchaseName,
+					} );
+				}
+				if ( purchase.is_domain_registration ) {
+					successMessage = sprintf(
+						/* translators: %(domain)s is a domain name */
+						__( 'The domain %(domain)s was removed from your account.' ),
+						{
+							domain: purchaseName,
+						}
+					);
+				}
+				createSuccessNotice( successMessage, { type: 'snackbar' } );
+				navigate( {
+					to: purchaseSettingsRoute.fullPath,
+					params: { purchaseId: purchase.ID },
+				} );
+			},
+			onError: () => {
+				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+				createErrorNotice(
+					sprintf(
+						/* translators: %(purchaseName)s is the name of the product that was purchased. */
+						__(
+							'There was a problem removing %(purchaseName)s. Please try again later or contact support.'
+						),
+						{ purchaseName }
+					),
+					{ type: 'snackbar' }
+				);
+				setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+			},
+		} );
+	};
+
 	const onSurveyComplete = () => {
 		// Set loading state to show busy button
 		setState( ( state ) => ( { ...state, isLoading: true } ) );
-		submitCancelAndRefundPurchase( purchase );
+		switch ( flowType ) {
+			case CANCEL_FLOW_TYPE.REMOVE:
+				submitRemovePurchase( purchase );
+				break;
+			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW:
+			case CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND:
+				submitCancelAndRefundPurchase( purchase );
+				break;
+		}
 	};
 
 	const onSubmit = () => {

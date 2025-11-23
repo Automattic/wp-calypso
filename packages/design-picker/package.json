@@ -45,7 +45,7 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/components": "30.6.0",
+		"@wordpress/components": "^30.8.0",
 		"@wordpress/react-i18n": "^4.23.0",
 		"@wordpress/url": "^4.23.0",
 		"clsx": "^2.1.1",

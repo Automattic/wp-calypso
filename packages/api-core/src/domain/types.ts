@@ -87,6 +87,7 @@ export interface Domain extends DomainSummary {
 	pending_registration: boolean;
 	pending_registration_at_registry: boolean;
 	pending_transfer: boolean;
+	whois_update_unmodifiable_fields: string[];
 	renewable_until: string;
 	ssl_status: 'active' | 'inactive' | 'newly_registered' | 'pending';
 	subdomain_part: string;

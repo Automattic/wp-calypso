@@ -23,7 +23,7 @@ export interface SummaryButtonProps {
 	/**
 	 * The main label that identifies the setting or feature the button links to.
 	 */
-	title: string;
+	title: React.ReactNode;
 	/**
 	 * If provided, causes the component to render an `<a />` element
 	 * instead of a `<button />` element.
