@@ -64,7 +64,11 @@ export default function BillingHistory() {
 		<PageLayout
 			size="large"
 			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Billing history' ) } />
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Billing history' ) }
+					description={ __( 'View receipts and billing history for your purchases.' ) }
+				/>
 			}
 		>
 			<div ref={ ref }>

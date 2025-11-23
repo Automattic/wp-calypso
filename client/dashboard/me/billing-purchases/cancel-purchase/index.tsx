@@ -18,6 +18,7 @@ import {
 	siteLatestAtomicTransferQuery,
 	siteFeaturesQuery,
 	removePurchaseMutation,
+	userPreferenceQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -77,6 +78,7 @@ import {
 	FEEDBACK_STEP,
 	NEXT_ADVENTURE_STEP,
 	OFFER_ACCEPTED_STEP,
+	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
 import CancelPurchaseDomainOptions from './domain-options';
@@ -88,7 +90,12 @@ import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
 import nextStep from './next-step';
 import CancelPurchaseRefundInformation from './refund-information';
 import type { CancelPurchaseState } from './types';
-import type { Purchase, MarketingSurveyDetails, PlanProduct } from '@automattic/api-core';
+import type {
+	Purchase,
+	MarketingSurveyDetails,
+	PlanProduct,
+	UserPreferences,
+} from '@automattic/api-core';
 import type { ChangeEvent } from 'react';
 import './style.scss';
 
@@ -113,6 +120,11 @@ export default function CancelPurchase() {
 		initialized: false,
 	} );
 	const { purchaseId } = cancelPurchaseRoute.useParams();
+	const getCancelPurchaseSurveyCompletedPreferenceKey = (
+		purchaseId: string | number
+	): keyof UserPreferences => {
+		return `cancel-purchase-survey-completed-${ purchaseId }`;
+	};
 
 	// Queries
 	const { data: purchase, isPending: purchaseQueryIsPending } = useSuspenseQuery(
@@ -150,6 +162,12 @@ export default function CancelPurchase() {
 	const { data: cancellationOffers } = useQuery(
 		cancellationOffersQuery( purchase.blog_id, purchase.ID )
 	);
+	const {
+		data: userHasCompletedCancelSurveyForPurchase,
+		isPending: userPreferencesQueryIsPending,
+	} = useQuery(
+		userPreferenceQuery( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) )
+	);
 
 	// Mutations
 	const cancelAndRefundPurchaseMutate = useMutation( cancelAndRefundPurchaseMutation() );
@@ -157,7 +175,7 @@ export default function CancelPurchase() {
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
 	const removePurchaseMutator = useMutation( removePurchaseMutation() );
 	const extendWithFreeMonthMutation = useMutation( extendPurchaseWithFreeMonthMutation() );
-	const userPreferences = useMutation( userPreferencesMutation() );
+	const userPreferencesMutator = useMutation( userPreferencesMutation() );
 	const {
 		mutate: applyCancellationOffer,
 		isPending: isApplyingOffer,
@@ -199,7 +217,7 @@ export default function CancelPurchase() {
 				[ key ]: value,
 			},
 		};
-		userPreferences.mutate( payload );
+		userPreferencesMutator.mutate( payload );
 	};
 	const flowType = getPurchaseCancellationFlowType( purchase );
 
@@ -266,6 +284,7 @@ export default function CancelPurchase() {
 	const getAllSurveySteps = useCallback( () => {
 		let steps = [ FEEDBACK_STEP ];
 		const isJetpack = purchase.is_jetpack_plan_or_product;
+		const skipRemovePlanSurvey = purchase.is_plan && userHasCompletedCancelSurveyForPurchase;
 
 		if (
 			isPartnerPurchase( purchase ) &&
@@ -292,8 +311,19 @@ export default function CancelPurchase() {
 			steps.push( ATOMIC_REVERT_STEP );
 		}
 
+		if ( skipRemovePlanSurvey ) {
+			if ( steps.includes( FEEDBACK_STEP ) ) {
+				steps = steps.filter( ( step ) => step !== FEEDBACK_STEP );
+			}
+			if ( steps.includes( NEXT_ADVENTURE_STEP ) ) {
+				steps = steps.filter( ( step ) => step !== NEXT_ADVENTURE_STEP );
+			}
+			steps = [ REMOVE_PLAN_STEP, ...steps ];
+		}
+
 		return steps;
 	}, [
+		userHasCompletedCancelSurveyForPurchase,
 		purchase,
 		availableJetpackSurveySteps,
 		flowType,
@@ -346,7 +376,7 @@ export default function CancelPurchase() {
 			customerConfirmedUnderstanding: false,
 			domainConfirmationConfirmed: false,
 			initialized: true,
-			isLoading: true,
+			isLoading: REMOVE_PLAN_STEP !== firstStep,
 			isNextAdventureValid: false,
 			isSubmitting: false,
 			questionOneOrder,
@@ -360,7 +390,7 @@ export default function CancelPurchase() {
 			showDomainOptionsStep: false,
 			siteId: undefined,
 			solution: '',
-			surveyShown: false,
+			surveyShown: REMOVE_PLAN_STEP === firstStep,
 			surveyStep: firstStep,
 			upsell: '',
 			willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(
@@ -391,10 +421,6 @@ export default function CancelPurchase() {
 
 	const showMarketplaceDialog = () => {
 		setState( ( state ) => ( { ...state, isShowingMarketplaceSubscriptionsDialog: true } ) );
-	};
-
-	const getCancelPurchaseSurveyCompletedPreferenceKey = ( purchaseId: string | number ): string => {
-		return `cancel-purchase-survey-completed-${ purchaseId }`;
 	};
 
 	const cancelPurchaseSurveyCompleted = ( purchaseId: number ) => () => {
@@ -523,12 +549,12 @@ export default function CancelPurchase() {
 		switch ( downgradeType ) {
 			case PurchaseDowngradeType.TermDowngrade:
 				downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
-					path.bill_period !== plan.bill_period;
+					return path.bill_period !== plan.bill_period;
 				} );
 				break;
 			case PurchaseDowngradeType.PlanDowngrade:
 				downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
-					path.bill_period === plan.bill_period;
+					return path.bill_period === plan.bill_period;
 				} );
 				break;
 		}
@@ -554,10 +580,12 @@ export default function CancelPurchase() {
 				);
 			}
 
-			setState( ( state ) => ( { ...state, isLoading: true } ) );
 			if ( ! downgradePlan ) {
-				throw new Error( 'Cannot find a plan to downgrade to' );
+				createErrorNotice( 'Cannot find a plan to downgrade to', { type: 'snackbar' } );
+				return;
 			}
+
+			setState( ( state ) => ( { ...state, isLoading: true } ) );
 
 			cancelAndRefundPurchaseMutate.mutate(
 				{
@@ -574,6 +602,7 @@ export default function CancelPurchase() {
 						navigate( { to: purchasesRoute.to } );
 					},
 					onError: ( error ) => {
+						setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
 						createErrorNotice( error.message, { type: 'snackbar' } );
 					},
 				}
@@ -1016,7 +1045,8 @@ export default function CancelPurchase() {
 		purchaseQueryIsPending ||
 		( Boolean( purchase.meta ) && domainQueryIsPending ) ||
 		siteLatestAtomicTransferQueryIsPending ||
-		productsQueryIsPending;
+		productsQueryIsPending ||
+		userPreferencesQueryIsPending;
 
 	const isDataValid = useCallback( () => {
 		if ( isDataLoading ) {
@@ -1639,7 +1669,7 @@ export default function CancelPurchase() {
 				header={
 					<PageHeader
 						title={ getHeaderTitle() }
-						prefix={ <Breadcrumbs length={ 2 } /> }
+						prefix={ <Breadcrumbs length={ 4 } /> }
 						description={ __(
 							'Before you go, please answer a few quick questions to help us improve.'
 						) }

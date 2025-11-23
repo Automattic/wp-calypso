@@ -15,7 +15,15 @@ import { getMonetizeSubscriptionsPageTitle } from '../billing-monetize-subscript
 
 function Billing() {
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Billing' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Billing' ) }
+					description={ __( 'View your billing information and payment methods.' ) }
+				/>
+			}
+		>
 			<VStack spacing={ 4 }>
 				<RouterLinkSummaryButton
 					title={ __( 'Active upgrades' ) }

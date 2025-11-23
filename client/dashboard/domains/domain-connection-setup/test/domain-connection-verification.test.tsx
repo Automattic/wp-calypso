@@ -158,6 +158,8 @@ describe( 'DomainConnectionVerification', () => {
 		siteSlug: 'example.wordpress.com',
 		domainMappingStatus: createMockDomainMappingStatus(),
 		domainConnectionSetupInfo: createMockDomainConnectionSetupInfo(),
+		onRestartConnection: jest.fn(),
+		isRestartingConnection: false,
 	};
 
 	describe( 'Basic Rendering', () => {

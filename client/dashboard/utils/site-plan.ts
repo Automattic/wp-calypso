@@ -85,7 +85,7 @@ export function getJetpackProductsForSite( site: Site ) {
 
 export function getSitePlanDisplayName( site: Site ) {
 	if ( site.is_wpcom_staging_site ) {
-		return __( 'Staging site' );
+		return __( 'Staging Site' );
 	}
 
 	const plan = site.plan;
@@ -131,7 +131,7 @@ export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
 
 	if ( site.plan?.is_free ) {
 		return isCommerceGarden( site )
-			? `${ protocol }//${ host }/plans/${ site.slug }`
+			? `${ protocol }//${ host }/setup/woo-hosted-plans?siteSlug=${ site.slug }`
 			: `${ protocol }//${ host }/setup/plan-upgrade?siteSlug=${ site.slug }`;
 	}
 

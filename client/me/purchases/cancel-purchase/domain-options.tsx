@@ -137,7 +137,7 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 							}
 					  ) }
 			</p>
-			{ isRefundable( planPurchase ) && (
+			{ isRefundable( planPurchase ) && includedDomainPurchase.costToUnbundleText && (
 				<p>
 					{ translate(
 						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +

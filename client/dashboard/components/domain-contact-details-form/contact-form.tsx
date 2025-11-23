@@ -17,12 +17,14 @@ import InlineSupportLink from '../inline-support-link';
 import Notice from '../notice';
 import { getContactFormFields } from './contact-form-fields';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
+import type { AsyncValidator } from './contact-validation-utils';
 
 interface ContactFormProps {
 	initialData?: DomainContactDetails;
 	beforeForm?: React.ReactNode;
 	isSubmitting: boolean;
 	onSubmit: ( normalizedFormData: DomainContactDetails ) => void;
+	asyncValidator?: AsyncValidator;
 }
 
 export default function ContactForm( {
@@ -30,6 +32,7 @@ export default function ContactForm( {
 	isSubmitting,
 	beforeForm,
 	onSubmit,
+	asyncValidator,
 }: ContactFormProps ) {
 	const { data: countryList } = useQuery( countryListQuery() );
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
@@ -60,8 +63,14 @@ export default function ContactForm( {
 	};
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
-		() => getContactFormFields( countryList ?? [], statesList ?? [], selectedCountryCode ),
-		[ countryList, statesList, selectedCountryCode ]
+		() =>
+			getContactFormFields(
+				countryList ?? [],
+				statesList ?? [],
+				selectedCountryCode,
+				asyncValidator
+			),
+		[ countryList, statesList, selectedCountryCode, asyncValidator ]
 	);
 
 	const form = {
@@ -88,7 +97,7 @@ export default function ContactForm( {
 		],
 	};
 
-	const { isValid: canSave } = useFormValidity( normalizedFormData, fields, form );
+	const { validity, isValid: canSave } = useFormValidity( normalizedFormData, fields, form );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -138,6 +147,7 @@ export default function ContactForm( {
 							data={ normalizedFormData }
 							fields={ fields }
 							form={ form }
+							validity={ validity }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }

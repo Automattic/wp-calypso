@@ -50,7 +50,15 @@ export default function AddDomainGlueRecords() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					description={ __( 'Add a glue record for your domain’s name servers.' ) }
+				/>
+			}
+		>
 			<DomainGlueRecordsForm
 				domainName={ domainName }
 				onSubmit={ handleSubmit }

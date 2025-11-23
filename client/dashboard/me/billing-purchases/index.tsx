@@ -109,7 +109,11 @@ export default function PurchasesList() {
 		<PageLayout
 			size="large"
 			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Active upgrades' ) } />
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Active upgrades' ) }
+					description={ __( 'View and manage your active plans and purchases.' ) }
+				/>
 			}
 		>
 			<div ref={ ref }>

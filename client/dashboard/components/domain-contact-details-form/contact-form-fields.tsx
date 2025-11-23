@@ -12,6 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { validatePhone } from '../../utils/phone-number';
 import InlineSupportLink from '../inline-support-link';
 import PhoneNumberInput from '../phone-number-input';
+import { createFieldAsyncValidator, type AsyncValidator } from './contact-validation-utils';
 import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
@@ -19,7 +20,8 @@ import type { DomainContactDetails, StatesListItem } from '@automattic/api-core'
 export const getContactFormFields = (
 	countryList: CountryListItem[] | undefined,
 	statesList: StatesListItem[] | undefined,
-	countryCode: string
+	countryCode: string,
+	asyncValidator?: AsyncValidator
 ): Field< DomainContactDetails >[] => {
 	return [
 		{
@@ -28,6 +30,9 @@ export const getContactFormFields = (
 			type: 'text',
 			isValid: {
 				required: true,
+				...( asyncValidator && {
+					custom: createFieldAsyncValidator( 'firstName', asyncValidator ),
+				} ),
 			},
 		},
 		{
@@ -36,12 +41,20 @@ export const getContactFormFields = (
 			type: 'text',
 			isValid: {
 				required: true,
+				...( asyncValidator && {
+					custom: createFieldAsyncValidator( 'lastName', asyncValidator ),
+				} ),
 			},
 		},
 		{
 			id: 'organization',
 			label: __( 'Organization' ),
 			type: 'text',
+			...( asyncValidator && {
+				isValid: {
+					custom: createFieldAsyncValidator( 'organization', asyncValidator ),
+				},
+			} ),
 		},
 		{
 			id: 'email',
@@ -49,6 +62,9 @@ export const getContactFormFields = (
 			type: 'email',
 			isValid: {
 				required: true,
+				...( asyncValidator && {
+					custom: createFieldAsyncValidator( 'email', asyncValidator ),
+				} ),
 			},
 		},
 		{
@@ -81,7 +97,7 @@ export const getContactFormFields = (
 						// Sync validator - set the result directly
 						setValidationMessage( result ?? null );
 					}
-				}, [ data, field ] );
+				}, [ phoneValue ] );
 
 				return (
 					<PhoneNumberInput
@@ -108,22 +124,54 @@ export const getContactFormFields = (
 			},
 			isValid: {
 				required: true,
-				custom: ( item, field ) => {
-					const raw = field.getValue ? field.getValue( { item } ) : '';
-					if ( ! raw ) {
-						return null;
-					}
-					const fullPhoneNumber = String( raw ).split( '.' ).join( '' );
-					const [ , phoneNumberOnly ] = String( raw ).split( '.' ) ?? [ '', '' ];
-					const result = validatePhone( fullPhoneNumber );
+				custom: asyncValidator
+					? // Async validation (includes sync validation check first)
+					  async ( item, field ) => {
+							// First run sync validation
+							const raw = field.getValue ? field.getValue( { item } ) : '';
+							if ( ! raw ) {
+								return null;
+							}
+							const fullPhoneNumber = String( raw ).split( '.' ).join( '' );
+							const [ , phoneNumberOnly ] = String( raw ).split( '.' ) ?? [ '', '' ];
+							const result = validatePhone( fullPhoneNumber );
 
-					if ( 'error' in result && result.error === 'phone_number_too_short' ) {
-						const resultWithoutCountryCode = validatePhone( phoneNumberOnly );
-						return 'error' in resultWithoutCountryCode ? resultWithoutCountryCode.message : null;
-					}
+							if ( 'error' in result && result.error === 'phone_number_too_short' ) {
+								const resultWithoutCountryCode = validatePhone( phoneNumberOnly );
+								const syncError =
+									'error' in resultWithoutCountryCode ? resultWithoutCountryCode.message : null;
+								if ( syncError ) {
+									return syncError;
+								}
+							}
 
-					return 'error' in result ? result.message : null;
-				},
+							const syncError = 'error' in result ? result.message : null;
+							if ( syncError ) {
+								return syncError;
+							}
+
+							// Then run async validation
+							return createFieldAsyncValidator( 'phone', asyncValidator )( item, field );
+					  }
+					: // Sync validation only (original behavior)
+					  ( item, field ) => {
+							const raw = field.getValue ? field.getValue( { item } ) : '';
+							if ( ! raw ) {
+								return null;
+							}
+							const fullPhoneNumber = String( raw ).split( '.' ).join( '' );
+							const [ , phoneNumberOnly ] = String( raw ).split( '.' ) ?? [ '', '' ];
+							const result = validatePhone( fullPhoneNumber );
+
+							if ( 'error' in result && result.error === 'phone_number_too_short' ) {
+								const resultWithoutCountryCode = validatePhone( phoneNumberOnly );
+								return 'error' in resultWithoutCountryCode
+									? resultWithoutCountryCode.message
+									: null;
+							}
+
+							return 'error' in result ? result.message : null;
+					  },
 			},
 		},
 		{
@@ -137,9 +185,12 @@ export const getContactFormFields = (
 				} ) ) ?? [],
 			isValid: {
 				required: true,
+				...( asyncValidator && {
+					custom: createFieldAsyncValidator( 'countryCode', asyncValidator ),
+				} ),
 			},
 		},
-		...RegionAddressFieldsets( statesList, countryCode ),
+		...RegionAddressFieldsets( statesList, countryCode, asyncValidator ),
 		{
 			id: 'optOutTransferLock',
 			label: __( 'Opt-out of the 60-day transfer lock' ),

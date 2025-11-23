@@ -54,7 +54,15 @@ export default function EditDomainGlueRecords() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					description={ __( 'Edit a glue record for your domain’s name servers.' ) }
+				/>
+			}
+		>
 			<DomainGlueRecordsForm
 				domainName={ domainName }
 				initialData={ glueRecord }

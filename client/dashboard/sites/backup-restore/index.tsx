@@ -113,7 +113,11 @@ function SiteBackupRestore() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Site restore' ) } />
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Site restore' ) }
+					description={ __( 'Restore your site to a previous point in time.' ) }
+				/>
 			}
 		>
 			{ currentStep !== 'success' ? (

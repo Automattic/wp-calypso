@@ -26,7 +26,7 @@ import AddNewSite from './add-new-site';
 import {
 	SitesDataViews,
 	useActions,
-	getFields,
+	useFields,
 	getDefaultView,
 	recordViewChanges,
 } from './dataviews';
@@ -158,7 +158,7 @@ function siteProfileSiteToSite( site: SiteProfileSite ): Site {
 /**
  * Enables the correct site query based on the dataviews/v2/es-site-list feature flag.
  */
-function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
+export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 	const { queries } = useAppContext();
 
 	const siteProfilesQueryResult = useQuery( {
@@ -220,7 +220,7 @@ export default function Sites() {
 		isRestoringAccount
 	);
 
-	const fields = getFields( { isAutomattician, viewType: view.type } );
+	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );

@@ -53,6 +53,7 @@ export default function Plugin() {
 								<TextBlur>{ pluginSlug }</TextBlur>
 							)
 						}
+						description={ __( 'View plugin details and manage installation across your sites.' ) }
 					/>
 				</VStack>
 			}

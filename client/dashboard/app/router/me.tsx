@@ -310,6 +310,13 @@ export const addPaymentMethodRoute = createRoute( {
 );
 
 export const cancelPurchaseRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Cancel' ),
+			},
+		],
+	} ),
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
 } ).lazy( () =>
