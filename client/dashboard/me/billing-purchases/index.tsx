@@ -10,7 +10,7 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { usePersistentView } from '../../app/dataviews';
+import { DataViews, usePersistentView } from '../../app/dataviews';
 import { purchasesRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';

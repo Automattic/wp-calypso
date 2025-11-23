@@ -15,6 +15,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isCloseToExpiration,
+	isRecentMonthlyPurchase,
 	needsToRenewSoon,
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
@@ -304,7 +305,9 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 
 	return (
 		<Notice
-			variant="info"
+			variant={
+				isCloseToExpiration( purchase ) && ! isRecentMonthlyPurchase( purchase ) ? 'error' : 'info'
+			}
 			actions={
 				<Button variant="primary" onClick={ onClickUpgrade }>
 					{ __( 'Upgrade now' ) }
