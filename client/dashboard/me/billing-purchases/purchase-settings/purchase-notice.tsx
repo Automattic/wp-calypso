@@ -1,4 +1,4 @@
-import { DomainProductSlugs, DotcomPlans } from '@automattic/api-core';
+import { DomainProductSlugs, DotcomPlans, WooHostedPlans } from '@automattic/api-core';
 import { purchaseQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -47,11 +47,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	if (
-		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ||
-		purchase.product_slug === DotcomPlans.MIGRATION_TRIAL_MONTHLY ||
-		purchase.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY
-	) {
+	if ( purchase.is_trial_plan ) {
 		return <TrialNotice purchase={ purchase } />;
 	}
 
@@ -243,9 +239,17 @@ function InAppPurchaseNotice( { purchase }: { purchase: Purchase } ) {
 function TrialNotice( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const onClickUpgrade = () => {
-		const isEcommerceTrialMonthly = purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY;
+		if ( purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY ) {
+			recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
+				current_plan_slug: purchase.product_slug,
+				to_checkout: false,
+			} );
 
-		if ( isEcommerceTrialMonthly ) {
+			window.location.href = `/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug ?? '' }`;
+			return;
+		}
+
+		if ( purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ) {
 			recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
 				current_plan_slug: purchase.product_slug,
 				to_checkout: false,
@@ -270,8 +274,9 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 		? 0
 		: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
 	const productType =
-		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY
-			? __( 'Ecommerce' )
+		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ||
+		purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY
+			? __( 'Commerce' )
 			: // translators: Business is a plan name
 			  __( 'Business' );
 	const noticeText = daysToExpiry
