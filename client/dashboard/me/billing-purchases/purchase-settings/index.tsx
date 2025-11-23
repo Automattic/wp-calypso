@@ -657,6 +657,15 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			/>
 		);
 	}
+	if ( purchase.is_trial_plan ) {
+		return (
+			<OverviewCard
+				icon={ currencyDollar }
+				title={ __( 'Price' ) }
+				heading={ __( 'Free Trial' ) }
+			/>
+		);
+	}
 	if ( isOneTimePurchase( purchase ) ) {
 		return (
 			<OverviewCard
