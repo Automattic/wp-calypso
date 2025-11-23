@@ -13,6 +13,7 @@ import {
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import { sitesQuery } from './sites';
 import type {
 	AssignPaymentMethodParams,
 	PurchaseCancelOptions,
@@ -24,6 +25,8 @@ export const userPurchasesQuery = () =>
 		queryKey: [ 'upgrades' ],
 		queryFn: () => fetchUserPurchases(),
 	} );
+
+export const userPurchasesSitesQuery = () => sitesQuery( 'all' );
 
 export function userTransferredPurchasesQuery() {
 	return queryOptions( {
