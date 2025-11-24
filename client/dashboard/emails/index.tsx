@@ -108,7 +108,7 @@ function Emails() {
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
-					isLoading={ isLoadingDomains || isLoadingEmailAccounts }
+					isLoading={ isLoadingEmailAccounts }
 					fields={ emailFields }
 					view={ view }
 					onChangeView={ updateView }
