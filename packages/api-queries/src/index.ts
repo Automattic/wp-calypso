@@ -1,5 +1,6 @@
 export * from './query-client';
 
+export * from './big-sky-plugin';
 export * from './cancellation-offers';
 export * from './dashboard-site-list';
 export * from './domain-availability';
@@ -33,6 +34,7 @@ export * from './me-billing-history';
 export * from './me-blocked-sites';
 export * from './me-connected-applications';
 export * from './me-dpa';
+export * from './me-mailboxes';
 export * from './me-monetize';
 export * from './me-notifications-devices';
 export * from './me-notifications-settings';

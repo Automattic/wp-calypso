@@ -207,7 +207,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 		this.setState( ( state ) => ( {
 			...state,
-			newState,
+			...newState,
 		} ) );
 	};
 
@@ -773,7 +773,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 			this.setState( ( state ) => ( {
 				...state,
-				newState,
+				...newState,
 			} ) );
 		};
 

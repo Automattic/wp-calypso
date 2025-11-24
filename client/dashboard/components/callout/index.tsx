@@ -4,6 +4,7 @@ import {
 	__experimentalText as Text,
 	Icon,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { forwardRef } from 'react';
 import { Card } from '../card';
 import type { CalloutProps } from './types';
@@ -23,6 +24,7 @@ function UnforwardedCallout(
 	}: CalloutProps,
 	ref: React.ForwardedRef< HTMLElement >
 ) {
+	const isMobileViewport = useViewportMatch( 'mobile', '<' );
 	return (
 		<Card ref={ ref } className={ `dashboard-callout is-${ variant } is-image-${ imageVariant }` }>
 			<HStack
@@ -43,7 +45,7 @@ function UnforwardedCallout(
 					{ description }
 					{ actions }
 				</VStack>
-				{ image && (
+				{ image && ! isMobileViewport && (
 					<VStack justify="stretch" alignment="stretch" className="dashboard-callout__image">
 						{ typeof image === 'string' ? <img src={ image } alt={ imageAlt } /> : image }
 					</VStack>

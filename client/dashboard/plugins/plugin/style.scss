@@ -1,0 +1,10 @@
+@import '../../app/pulse';
+
+.plugin-icon-placeholder {
+	width: 40px;
+	height: 40px;
+	background-color: var(--color-neutral-10, #c3c4c7);
+	border-radius: 4px;
+	animation: pulse 1.4s ease-in-out infinite;
+	will-change: opacity, transform;
+}

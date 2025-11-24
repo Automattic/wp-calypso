@@ -19,8 +19,11 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { purchasesRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
+import RouterLinkButton from '../../components/router-link-button';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -80,9 +83,14 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 	};
 
 	const renderPrimaryButton = () => {
+		const buttonProps = {
+			__next40pxDefaultSize: true,
+			variant: 'primary' as const,
+		};
+
 		if ( isAtomicRemovalInProgress ) {
 			return (
-				<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
+				<Button { ...buttonProps } onClick={ onClose }>
 					{ __( 'OK' ) }
 				</Button>
 			);
@@ -90,30 +98,28 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 
 		if ( p2HubP2Count ) {
 			return (
-				<Button __next40pxDefaultSize variant="primary" href={ site.URL }>
+				<Button { ...buttonProps } href={ site.URL }>
 					{ __( 'Manage P2s' ) }
 				</Button>
 			);
 		}
 
-		if ( isTrialSite( site ) ) {
-			<Button
-				__next40pxDefaultSize
-				variant="primary"
-				href={ `/purchases/subscriptions/${ site.slug }` }
-			>
-				{ __( 'Cancel trial' ) }
-			</Button>;
+		if ( isDashboardBackport() ) {
+			return (
+				<Button { ...buttonProps } href={ `/purchases/subscriptions/${ site.slug }` }>
+					{ isTrialSite( site ) ? __( 'Cancel trial' ) : __( 'Manage purchases' ) }
+				</Button>
+			);
 		}
 
 		return (
-			<Button
-				__next40pxDefaultSize
-				variant="primary"
-				href={ `/purchases/subscriptions/${ site.slug }` }
+			<RouterLinkButton
+				{ ...buttonProps }
+				to={ purchasesRoute.fullPath }
+				search={ { site: site.slug } }
 			>
-				{ __( 'Manage purchases' ) }
-			</Button>
+				{ isTrialSite( site ) ? __( 'Cancel trial' ) : __( 'Manage purchases' ) }
+			</RouterLinkButton>
 		);
 	};
 

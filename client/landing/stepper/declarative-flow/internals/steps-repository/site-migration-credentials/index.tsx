@@ -106,8 +106,8 @@ const SiteMigrationCredentials: StepType< {
 		const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 		const isHostingSupported = isHostingSupportedForSSHMigration( hostingProviderSlug );
 
-		// If SSH migration is available and hosting is supported, redirect to SSH flow
-		if ( isSSHMigrationAvailable && isHostingSupported ) {
+		// If SSH migration is available and hosting is supported and locale is English, redirect to SSH flow
+		if ( isSSHMigrationAvailable && isHostingSupported && locale === 'en' ) {
 			siteId && dispatch( resetSite( siteId ) );
 			return navigation.submit?.( {
 				action: 'redirect-to-ssh',
@@ -166,9 +166,7 @@ const SiteMigrationCredentials: StepType< {
 	}, [ siteId, updateMigrationStatus ] );
 
 	const title = translate( 'Tell us about your WordPress site' );
-	const subHeaderText = translate(
-		'Help us get started by providing some basic details about your current website.'
-	);
+	const subHeaderText = translate( 'Provide the following details to get your migration started.' );
 	const mainForm = <CredentialsForm onSubmit={ handleSubmit } />;
 	const skipButton = <NeedHelpLink onHelpLinkClicked={ handleSkip } />;
 
@@ -176,7 +174,7 @@ const SiteMigrationCredentials: StepType< {
 		<>
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
-				columnWidth={ 5 }
+				columnWidth={ 4 }
 				topBar={
 					<Step.TopBar
 						leftElement={

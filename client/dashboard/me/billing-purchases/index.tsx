@@ -5,56 +5,42 @@ import {
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
+import { DataViews, usePersistentView } from '../../app/dataviews';
 import { purchasesRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import {
-	persistViewToUrl,
-	useSetInitialViewFromUrl,
-	updateViewFromField,
-} from '../../utils/persist-view-to-url';
-import {
-	purchasesWideFields,
-	purchasesDesktopFields,
-	purchasesMobileFields,
-	purchasesDataView,
+	WIDE_FIELDS,
+	DESKTOP_FIELDS,
+	MOBILE_FIELDS,
+	DEFAULT_VIEW,
 	getFields,
 	getItemId,
 	usePurchasesListActions,
 } from './dataviews';
-import type { Site } from '@automattic/api-core';
-import type { View } from '@wordpress/dataviews';
-
-function persistPurchasesViewToUrl( view: View, sites: Site[] ): void {
-	persistViewToUrl(
-		view,
-		'site',
-		( siteId ) => sites.find( ( site ) => String( site.ID ) === String( siteId ) )?.slug ?? ''
-	);
-}
 
 export default function PurchasesList() {
 	const { queries } = useAppContext();
-	const { site: siteSlug }: { site?: string } = purchasesRoute.useSearch();
+	const currentSearchParams = purchasesRoute.useSearch();
 	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
 	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
 
-	const [ currentView, setView ] = useState( purchasesDataView );
-	const idFromSiteSlug = siteSlug ? sites?.find( ( site ) => site.slug === siteSlug )?.ID : '';
-	useSetInitialViewFromUrl( {
-		fieldName: 'site',
-		fieldValue: String( idFromSiteSlug ),
-		setView,
+	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'me-billing-purchases',
+		defaultView,
+		queryParams: currentSearchParams,
+		queryParamFilterFields: [ 'site' ],
 	} );
 
 	const ref = useResizeObserver( ( entries ) => {
@@ -62,25 +48,20 @@ export default function PurchasesList() {
 		if ( firstEntry ) {
 			adjustDataViewFieldsForWidth( {
 				width: firstEntry.contentRect.width,
-				setView,
-				wideFields: purchasesWideFields,
-				desktopFields: purchasesDesktopFields,
-				mobileFields: purchasesMobileFields,
+				setView: setDefaultView,
+				wideFields: WIDE_FIELDS,
+				desktopFields: DESKTOP_FIELDS,
+				mobileFields: MOBILE_FIELDS,
 			} );
 		}
 	} );
+
 	const { data: paymentMethods } = useQuery( userPaymentMethodsQuery( {} ) );
 	const purchasesDataFields = getFields( {
 		sites: sites ?? [],
 		paymentMethods: paymentMethods ?? [],
 		transferredPurchases: transferredPurchases ?? [],
-		filterViewBySite: ( site: Site ) => {
-			setView( ( view ) => {
-				const newView = updateViewFromField( view, 'site', String( site.ID ) );
-				persistPurchasesViewToUrl( newView, sites ?? [] );
-				return newView;
-			} );
-		},
+		siteFilter: currentSearchParams.site,
 	} );
 
 	const allSubscriptions = useMemo( () => {
@@ -88,33 +69,33 @@ export default function PurchasesList() {
 	}, [ purchases, transferredPurchases ] );
 
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( allSubscriptions, currentView, purchasesDataFields );
-	}, [ allSubscriptions, currentView, purchasesDataFields ] );
+		return filterSortAndPaginate( allSubscriptions, view, purchasesDataFields );
+	}, [ allSubscriptions, view, purchasesDataFields ] );
 
 	const actions = usePurchasesListActions( {
 		transferredPurchases: transferredPurchases ?? [],
 	} );
 
-	const onChangeView = ( newView: View ) => {
-		persistPurchasesViewToUrl( newView, sites ?? [] );
-		setView( newView );
-	};
-
 	return (
 		<PageLayout
 			size="large"
 			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Active upgrades' ) } />
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Active upgrades' ) }
+					description={ __( 'View and manage your active plans and purchases.' ) }
+				/>
 			}
 		>
 			<div ref={ ref }>
-				<DataViewsCard>
+				<DataViewsCard className="purchases-list__wrapper">
 					<DataViews
 						isLoading={ isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites }
 						data={ filteredSubscriptions ?? [] }
 						fields={ purchasesDataFields }
-						view={ currentView }
-						onChangeView={ onChangeView }
+						view={ view }
+						onChangeView={ updateView }
+						onResetView={ resetView }
 						defaultLayouts={ { table: {} } }
 						actions={ actions }
 						getItemId={ getItemId }

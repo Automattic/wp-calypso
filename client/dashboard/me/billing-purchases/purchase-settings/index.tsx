@@ -21,7 +21,7 @@ import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-tab
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
 import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
@@ -47,7 +47,7 @@ import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { domainRoute } from '../../../app/router/domains';
 import { emailsRoute } from '../../../app/router/emails';
-import { purchaseSettingsRoute } from '../../../app/router/me';
+import { cancelPurchaseRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -122,6 +122,10 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return `/plans/${ purchase.site_slug }`;
+	}
+
+	if ( purchase.is_woo_hosted_product ) {
+		return `/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug }`;
 	}
 
 	return getWpcomPlanGridUrl( purchase.site_slug );
@@ -285,6 +289,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 }
 
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
+	const navigate = useNavigate();
 	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
@@ -298,9 +303,10 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 						variant="secondary"
 						size="compact"
 						onClick={ () =>
-							// FIXME: add refund, cancel, and downgrade action
-							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
-							( window.location.href = `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/cancel` )
+							navigate( {
+								to: cancelPurchaseRoute.fullPath,
+								params: { purchaseId: purchase.ID },
+							} )
 						}
 					>
 						{ __( 'Downgrade or cancel' ) }
@@ -319,9 +325,10 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 						variant="secondary"
 						size="compact"
 						onClick={ () =>
-							// FIXME: add remove action
-							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
-							( window.location.href = `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/remove` )
+							navigate( {
+								to: cancelPurchaseRoute.fullPath,
+								params: { purchaseId: purchase.ID },
+							} )
 						}
 					>
 						{ __( 'Remove subscription' ) }
@@ -1059,8 +1066,13 @@ export default function PurchaseSettings() {
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const upgradeUrl = getUpgradeUrl( purchase );
-	const willRenew = Boolean( purchase.renew_date && ! isExpiring( purchase ) );
+	const willRenew = Boolean(
+		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
+	);
 	const expiryDateTitle = ( () => {
+		if ( isExpired( purchase ) ) {
+			return __( 'Expired' );
+		}
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
 			return __( 'Paid until' );
 		}
@@ -1090,7 +1102,9 @@ export default function PurchaseSettings() {
 											{ __( 'Upgrade' ) }
 										</Button>
 									) }
-									<PurchaseActionMenu purchase={ purchase } />
+									<PageHeader.ActionMenu>
+										<PurchaseActionMenu purchase={ purchase } />
+									</PageHeader.ActionMenu>
 								</HStack>
 							)
 						}
@@ -1125,6 +1139,9 @@ export default function PurchaseSettings() {
 							if ( willRenew ) {
 								return formattedRenewal;
 							}
+							if ( purchase.subscription_status !== 'active' ) {
+								return __( 'Inactive' );
+							}
 							return formattedExpiry;
 						} )() }
 						description={ ( () => {
@@ -1154,7 +1171,7 @@ export default function PurchaseSettings() {
 							title={ __( 'Site' ) }
 							heading={ site.name }
 							description={ purchase.site_slug }
-							link={ `/v2/sites/${ purchase.site_slug }` }
+							link={ `/sites/${ purchase.site_slug }` }
 						/>
 					) }
 					<OverviewCard
@@ -1170,11 +1187,15 @@ export default function PurchaseSettings() {
 						}
 					/>
 				</Grid>
-				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
+				{ site && purchase.subscription_status === 'active' && (
+					<WPComResourceMeters purchase={ purchase } site={ site } />
+				) }
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				<ManageSubscriptionCard purchase={ purchase } />
+				{ purchase.subscription_status === 'active' && (
+					<ManageSubscriptionCard purchase={ purchase } />
+				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
 		</PageLayout>

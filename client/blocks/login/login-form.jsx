@@ -382,17 +382,13 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, loginButtonText, isJetpack } = this.props;
+		const { translate, loginButtonText } = this.props;
 
 		if ( loginButtonText ) {
 			return loginButtonText;
 		}
 
 		if ( this.isUsernameOrEmailView() ) {
-			if ( isJetpack && ! isWoo ) {
-				return translate( 'Continue with email' );
-			}
-
 			return translate( 'Continue' );
 		}
 
@@ -434,8 +430,6 @@ export class LoginForm extends Component {
 			return this.renderChangeUsername();
 		}
 
-		const showLabel = ! this.props.isJetpack || this.props.isWoo;
-
 		return (
 			// Since the input receives focus on page load, screen reader users don't have any context
 			// for what credentials to use. Unlike other users, they won't have seen the informative
@@ -444,9 +438,7 @@ export class LoginForm extends Component {
 				<span className="screen-reader-text">
 					{ this.props.translate( 'WordPress.com email address or username' ) }
 				</span>
-				{ showLabel && (
-					<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
-				) }
+				<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
 			</>
 		);
 	}

@@ -79,8 +79,8 @@ function RepositoriesList() {
 			},
 		},
 		{
-			id: 'see-deployment-runs',
-			label: __( 'See deployment runs' ),
+			id: 'view-deployment-runs',
+			label: __( 'View deployment runs' ),
 			callback: ( items ) => {
 				const repositoryName = items[ 0 ]?.repository_name;
 				router.navigate( {

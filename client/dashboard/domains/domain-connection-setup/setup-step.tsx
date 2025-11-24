@@ -54,7 +54,12 @@ export default function SetupStep( {
 		>
 			<VStack spacing={ 4 } style={ { paddingLeft: '32px' } }>
 				{ children }
-				<CheckboxControl checked={ completed } onChange={ onCheckboxChange } label={ label } />
+				<CheckboxControl
+					checked={ completed }
+					onChange={ onCheckboxChange }
+					label={ label }
+					__nextHasNoMarginBottom
+				/>
 			</VStack>
 		</CollapsibleCard>
 	);

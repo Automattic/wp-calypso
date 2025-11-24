@@ -35,16 +35,22 @@ const createMockDomainMappingStatus = (
 
 const createMockDomainConnectionSetupInfo = (
 	overrides?: Partial< DomainMappingSetupInfo >
-): DomainMappingSetupInfo => ( {
-	connection_mode: null,
-	domain_connect_apply_wpcom_hosting: null,
-	domain_connect_provider_id: null,
-	default_ip_addresses: [ '192.0.2.1' ],
-	wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
-	is_subdomain: false,
-	root_domain: 'example.com',
-	...overrides,
-} );
+): DomainMappingSetupInfo => {
+	return {
+		connection_mode: null,
+		domain_connect_apply_wpcom_hosting: null,
+		domain_connect_provider_id: null,
+		default_ip_addresses: [ '192.0.2.1' ],
+		wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+		is_subdomain: false,
+		root_domain: 'example.com',
+		registrar_url: null,
+		registrar: '',
+		registrar_iana_id: null,
+		reseller: null,
+		...overrides,
+	} as DomainMappingSetupInfo;
+};
 
 describe( 'DomainConnectionSetup', () => {
 	const defaultProps = {
@@ -356,6 +362,222 @@ describe( 'DomainConnectionSetup', () => {
 
 			const startSetupButton = screen.getByRole( 'button', { name: 'Start setup' } );
 			expect( startSetupButton ).toBeDisabled();
+		} );
+	} );
+
+	describe( 'Registrar Information Display', () => {
+		test( 'displays registrar banner with clickable link when registrar info is available', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( { mode: null } );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+				domain_connect_apply_wpcom_hosting: null,
+				registrar: 'GoDaddy',
+				registrar_url: 'https://www.godaddy.com',
+			} );
+
+			render(
+				<DomainConnectionSetup
+					{ ...defaultProps }
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			// Check that "Registered by" text is displayed (unique to banner)
+			expect( screen.getByText( 'Registered by' ) ).toBeVisible();
+
+			// Check that registrar links are present with correct href
+			const registrarLinks = screen.getAllByRole( 'link', { name: /GoDaddy/i } );
+			expect( registrarLinks.length ).toBeGreaterThan( 0 );
+			expect( registrarLinks[ 0 ] ).toHaveAttribute( 'href', 'https://www.godaddy.com' );
+		} );
+
+		test( 'displays registrar banner without link when registrar is a reseller', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( { mode: null } );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+				domain_connect_apply_wpcom_hosting: null,
+				registrar: 'GoDaddy',
+				reseller: 'Reseller Name',
+				registrar_url: 'https://example.com',
+			} );
+
+			render(
+				<DomainConnectionSetup
+					{ ...defaultProps }
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			// Check that reseller name is displayed
+			expect( screen.getByText( 'Reseller Name' ) ).toBeVisible();
+			expect( screen.getByText( 'Registered by' ) ).toBeVisible();
+
+			// Check that there's no clickable link for reseller
+			const registrarLink = screen.queryByRole( 'link', { name: 'Reseller Name' } );
+			expect( registrarLink ).not.toBeInTheDocument();
+		} );
+
+		test( 'does not display registrar banner when registrar info is not available', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( { mode: null } );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+				domain_connect_apply_wpcom_hosting: null,
+				registrar: null,
+				registrar_url: null,
+			} );
+
+			render(
+				<DomainConnectionSetup
+					{ ...defaultProps }
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			// Check that "Registered by" text is not displayed
+			expect( screen.queryByText( 'Registered by' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'displays registrar name in setup instructions when available', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				mode: null,
+				has_mx_records: false,
+			} );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+				domain_connect_apply_wpcom_hosting: null,
+				registrar: 'Namecheap',
+				registrar_url: 'https://www.namecheap.com',
+			} );
+
+			render(
+				<DomainConnectionSetup
+					{ ...defaultProps }
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			// Check that step 1 includes registrar name
+			expect( screen.getByText( '1. Login to Namecheap' ) ).toBeVisible();
+
+			// Check that registrar links exist (they appear in multiple places)
+			const registrarLinks = screen.getAllByRole( 'link', { name: /Namecheap/i } );
+			expect( registrarLinks.length ).toBeGreaterThan( 0 );
+			expect( registrarLinks[ 0 ] ).toHaveAttribute( 'href', 'https://www.namecheap.com' );
+		} );
+
+		test( 'displays fallback text in setup instructions when registrar is not available', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				mode: null,
+				has_mx_records: false,
+			} );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+				domain_connect_apply_wpcom_hosting: null,
+				registrar: null,
+				registrar_url: null,
+			} );
+
+			render(
+				<DomainConnectionSetup
+					{ ...defaultProps }
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			// Check that step 1 uses fallback text
+			expect( screen.getByText( '1. Login to your domain name provider' ) ).toBeVisible();
+		} );
+
+		test( 'does not display clickable registrar link for resellers in setup instructions', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				mode: null,
+				has_mx_records: false,
+			} );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+				domain_connect_apply_wpcom_hosting: null,
+				reseller: 'Reseller Company',
+				registrar: 'GoDaddy',
+				registrar_url: 'https://www.godaddy.com',
+			} );
+
+			render(
+				<DomainConnectionSetup
+					{ ...defaultProps }
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			// When reseller is present, it takes precedence over registrar
+			expect( screen.getByText( '1. Login to Reseller Company' ) ).toBeVisible();
+
+			// Reseller name should not be a clickable link in instructions
+			const resellerLinks = screen.queryAllByRole( 'link', { name: 'Reseller Company' } );
+			expect( resellerLinks ).toHaveLength( 0 );
+		} );
+
+		test( 'displays registrar info in Domain Connect mode', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( { mode: null } );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+				domain_connect_apply_wpcom_hosting: 'https://example.com/domain-connect',
+				registrar: 'GoDaddy',
+				registrar_url: 'https://www.godaddy.com',
+			} );
+
+			render(
+				<DomainConnectionSetup
+					{ ...defaultProps }
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			// Check that registrar banner is displayed in DC mode
+			expect( screen.getByText( 'Registered by' ) ).toBeVisible();
+
+			// Check that registrar links are present (appears in banner and DC card)
+			const registrarLinks = screen.getAllByRole( 'link', { name: /GoDaddy/i } );
+			expect( registrarLinks.length ).toBeGreaterThan( 0 );
+			expect( registrarLinks[ 0 ] ).toHaveAttribute( 'href', 'https://www.godaddy.com' );
+		} );
+
+		test( 'displays registrar info in both Suggested and Advanced modes', async () => {
+			const user = userEvent.setup();
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				mode: null,
+				has_mx_records: false,
+			} );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+				domain_connect_apply_wpcom_hosting: null,
+				registrar: 'Bluehost',
+				registrar_url: 'https://www.bluehost.com',
+			} );
+
+			render(
+				<DomainConnectionSetup
+					{ ...defaultProps }
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			// Check in Suggested mode (default)
+			expect( screen.getByText( '1. Login to Bluehost' ) ).toBeVisible();
+			let registrarLinks = screen.getAllByRole( 'link', { name: /Bluehost/i } );
+			expect( registrarLinks.length ).toBeGreaterThan( 0 );
+			expect( registrarLinks[ 0 ] ).toHaveAttribute( 'href', 'https://www.bluehost.com' );
+
+			// Switch to Advanced mode
+			const advancedModeTitle = screen.getByText(
+				'I use this domain name for email or other services'
+			);
+			await user.click( advancedModeTitle );
+
+			// Check in Advanced mode
+			expect( screen.getByText( '1. Login to Bluehost' ) ).toBeVisible();
+			registrarLinks = screen.getAllByRole( 'link', { name: /Bluehost/i } );
+			expect( registrarLinks.length ).toBeGreaterThan( 0 );
+			expect( registrarLinks[ 0 ] ).toHaveAttribute( 'href', 'https://www.bluehost.com' );
 		} );
 	} );
 } );

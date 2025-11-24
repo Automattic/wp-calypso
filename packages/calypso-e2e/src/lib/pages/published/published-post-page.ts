@@ -1,4 +1,5 @@
 import { Locator, Page } from 'playwright';
+import { waitForWPWidgetsIfNecessary } from '../../../element-helper';
 
 const selectors = {
 	// Post body
@@ -45,6 +46,9 @@ export class PublishedPostPage {
 		const iframeLocator = this.page.locator( 'iframe[title="Like or Reblog"]' );
 		await iframeLocator.waitFor();
 
+		// Wait for widgets.wp.com iframes to finish loading before interacting with them.
+		await waitForWPWidgetsIfNecessary( this.page );
+
 		const iframe = this.page.frameLocator( 'iframe[title="Like or Reblog"]' );
 		const locator = iframe.getByRole( 'link', { name: 'Like', exact: true } );
 		await locator.waitFor();
@@ -70,6 +74,9 @@ export class PublishedPostPage {
 	async unlikePost(): Promise< void > {
 		const iframeLocator = this.page.locator( 'iframe[title="Like or Reblog"]' );
 		await iframeLocator.waitFor();
+
+		// Wait for widgets.wp.com iframes to finish loading before interacting with them.
+		await waitForWPWidgetsIfNecessary( this.page );
 
 		const iframe = this.page.frameLocator( 'iframe[title="Like or Reblog"]' );
 		const locator = iframe.getByRole( 'link', { name: 'Liked', exact: true } );

@@ -14,7 +14,7 @@ import NameServersSettingsSummary from '../name-servers/summary';
 export default function DomainOverviewSettings( { domain }: { domain: Domain } ) {
 	const buttonListItems = [];
 
-	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION && ! domain.points_to_wpcom ) {
+	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
 		buttonListItems.push(
 			<DomainConnectionSetupSummary key="connection-setup" domain={ domain } />
 		);

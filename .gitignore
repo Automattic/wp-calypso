@@ -133,3 +133,8 @@ packages/plans-grid-next/static/mockServiceWorker.js
 playwright-report/
 /cookies
 output/
+
+# Claude settings and rules
+# Allow user-contributed files, but keep Claude.md and main settings under version control
+**/.claude.md
+**/.claude/settings.local.json

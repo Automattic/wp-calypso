@@ -341,6 +341,7 @@ import {
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
+	FEATURE_GROUP_WORDADS,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -374,13 +375,9 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 			);
 
 		default:
-			return i18n.translate(
-				'%(commission)d%% transaction fee for payments {{br}}{{/br}}(+ standard processing fee)',
-				{
-					components: { br: <br /> },
-					args: { commission },
-				}
-			);
+			return i18n.translate( 'Collect payments (%(commission)d%% fee + standard processing fee)', {
+				args: { commission },
+			} );
 	}
 };
 
@@ -1705,20 +1702,14 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
-		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 2 },
-			} ),
-		getAlternativeTitle: () => '2%',
+		getTitle: () => getTransactionFeeCopy( 2 ),
+		getAlternativeTitle: () => getTransactionFeeCopy( 2 ),
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
-		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 0 },
-			} ),
-		getAlternativeTitle: () => '0%',
+		getTitle: () => getTransactionFeeCopy( 0 ),
+		getAlternativeTitle: () => getTransactionFeeCopy( 0 ),
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO ]: {
@@ -1871,6 +1862,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Earn with WordAds' ),
 		getDescription: () =>
 			i18n.translate( 'Display ads and earn from premium networks via the WordAds program.' ),
+		getFeatureGroup: () => FEATURE_GROUP_WORDADS,
 	},
 	[ FEATURE_PLUGINS_THEMES ]: {
 		getSlug: () => FEATURE_PLUGINS_THEMES,

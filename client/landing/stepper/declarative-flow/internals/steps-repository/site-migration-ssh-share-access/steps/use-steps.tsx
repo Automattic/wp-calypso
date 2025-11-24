@@ -43,6 +43,7 @@ interface StepsDataOptions {
 	isTransferring: boolean;
 	shouldGenerateKey: boolean;
 	isInputDisabled: boolean;
+	isProcessingNoSSH: boolean;
 }
 
 interface StepData {
@@ -80,6 +81,7 @@ interface UseStepsOptions {
 	migrationStatus?: 'queued' | 'in-progress' | 'migrating' | 'completed' | 'failed';
 	isTransferring: boolean;
 	isInputDisabled: boolean;
+	isProcessingNoSSH?: boolean;
 }
 
 interface SSHFormState {
@@ -116,6 +118,7 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 						/>
 					}
 					isInputDisabled={ options.isInputDisabled }
+					isProcessingNoSSH={ options.isProcessingNoSSH }
 				/>
 			),
 		},
@@ -188,6 +191,7 @@ export const useSteps = ( {
 	migrationStatus,
 	isTransferring,
 	isInputDisabled,
+	isProcessingNoSSH = false,
 }: UseStepsOptions ): StepsObject => {
 	const [ currentStep, setCurrentStep ] = useState( -1 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
@@ -279,6 +283,7 @@ export const useSteps = ( {
 				siteId,
 				remoteUser: formState.username,
 				remoteHost: formState.serverAddress,
+				remotePort: formState.port,
 				remoteDomain: fromUrl,
 			},
 			{
@@ -287,7 +292,14 @@ export const useSteps = ( {
 				},
 			}
 		);
-	}, [ generateSSHKey, siteId, formState.username, formState.serverAddress, fromUrl ] );
+	}, [
+		generateSSHKey,
+		siteId,
+		formState.username,
+		formState.serverAddress,
+		formState.port,
+		fromUrl,
+	] );
 
 	const handleGenerateSSHKey = () => {
 		if ( isTransferring ) {
@@ -342,6 +354,7 @@ export const useSteps = ( {
 		isTransferring,
 		shouldGenerateKey,
 		isInputDisabled,
+		isProcessingNoSSH,
 	} );
 
 	const isComplete = ( stepKey: string ) => {

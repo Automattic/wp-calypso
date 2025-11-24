@@ -123,14 +123,6 @@ export default ( router ) => {
 	);
 
 	router(
-		paths.removePurchase( ':site', ':purchaseId' ),
-		sidebar,
-		controller.removePurchase,
-		makeLayout,
-		clientRender
-	);
-
-	router(
 		paths.downgradePurchase( ':site', ':purchaseId' ),
 		sidebar,
 		controller.downgradePurchase,

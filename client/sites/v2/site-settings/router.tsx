@@ -186,6 +186,17 @@ const wpcomLoginRoute = createRoute( {
 	)
 );
 
+const experimentalRoute = createRoute( {
+	...appRouterSites.siteSettingsExperimentalRoute.options,
+	getParentRoute: () => settingsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-assistant' ).then( ( d ) =>
+		createLazyRoute( 'ai-assistant' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		siteRoute.addChildren( [
@@ -206,6 +217,7 @@ const createRouteTree = () =>
 				sftpSshRoute,
 				webApplicationFirewallRoute,
 				wpcomLoginRoute,
+				experimentalRoute,
 			] ),
 		] ),
 		dashboardSitesCompatibilityRoute,

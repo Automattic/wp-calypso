@@ -106,7 +106,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 				AudioBlock.blockEditorSelector,
 				{ noSearch: true }
 			);
-			const audioBlock = new AudioBlock( blockHandle );
+			const audioBlock = new AudioBlock( page, blockHandle );
 			await audioBlock.upload( testFiles.audio.fullpath );
 		} );
 

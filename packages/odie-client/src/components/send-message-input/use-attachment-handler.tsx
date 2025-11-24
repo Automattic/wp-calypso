@@ -41,6 +41,10 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 		text: '',
 		id: String( new Date().getTime() ),
 		received: new Date().getTime(),
+		metadata: {
+			temporary_id: crypto.randomUUID(),
+			local_timestamp: Date.now() / 1000,
+		},
 		source: { type: 'web', id: '', integrationId: '' },
 		mediaUrl: URL.createObjectURL( file ),
 	} );

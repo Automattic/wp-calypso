@@ -1,3 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
@@ -11,7 +13,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Module variables
  */
-export const SHORT_LIST_LENGTH = 6;
+export const SHORT_LIST_LENGTH = isEnabled( 'marketplace-redesign' ) ? 9 : 6;
 
 const PLUGIN_SLUGS_BLOCKLIST = [];
 
@@ -41,6 +43,10 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 	const categoryName = categories[ category ]?.title || translate( 'Plugins' );
 	const categoryDescription = categories[ category ]?.description || null;
 
+	const isUseCarousel = isEnabled( 'marketplace-redesign' );
+	const isLessThanLargeViewport = useViewportMatch( 'large', '<' );
+	const isLessThanWideViewport = useViewportMatch( 'wide', '<' );
+
 	const { localizePath } = useLocalizedPlugins();
 
 	const installedPlugins = useSelector( ( state ) =>
@@ -60,6 +66,13 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 		return null;
 	}
 
+	let carouselPageSize = 3;
+	if ( isLessThanLargeViewport ) {
+		carouselPageSize = 1;
+	} else if ( isLessThanWideViewport ) {
+		carouselPageSize = 2;
+	}
+
 	return (
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
@@ -75,6 +88,8 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 			variant={ PluginsBrowserListVariant.Fixed }
 			extended
 			noHeader={ noHeader }
+			useCarousel={ isUseCarousel }
+			carouselPageSize={ carouselPageSize }
 		/>
 	);
 };

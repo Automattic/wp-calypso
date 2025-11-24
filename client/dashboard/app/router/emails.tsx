@@ -7,10 +7,10 @@ import {
 	queryClient,
 	rawUserPreferencesQuery,
 	siteByIdQuery,
+	userMailboxesQuery,
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
-import { userMailboxesQuery } from '../../../../packages/api-queries/src/me-mailboxes';
 import { IntervalLength, MailboxProvider } from '../../emails/types';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
 import { rootRoute } from './root';
@@ -26,8 +26,9 @@ export const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
 	loader: async () => {
+		queryClient.prefetchQuery( userMailboxesQuery() );
+		queryClient.prefetchQuery( domainsQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-		queryClient.ensureQueryData( userMailboxesQuery() );
 	},
 	validateSearch: ( search ): { domainName: string | undefined } => {
 		return {

@@ -225,6 +225,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/connect-existing-domain/#step-2-change-your-domains-name-servers',
 		post_id: 2789,
 	},
+	'map-domain-update-name-servers': {
+		link: 'https://wordpress.com/support/domains/connect-existing-domain/#option-2-manual-setup',
+		post_id: 2789,
+	},
 	'map-domain-update-a-records': {
 		link: 'https://wordpress.com/support/domains/connect-a-domain-alternative-method/',
 		post_id: 219751,
@@ -463,8 +467,8 @@ const contextLinks = {
 		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#harnessing-utm-stats-for-precision-tracking',
 	},
 	'stats-videos': {
-		link: 'https://wordpress.com/support/stats/analyze-content-performance/#see-video-traffic',
-		post_id: 404034,
+		link: 'https://wordpress.com/support/stats/video-stats/',
+		post_id: 418571,
 	},
 	'stats-videos-jetpack': {
 		link: 'https://jetpack.com/support/jetpack-videopress/add-video-block-editor/video-stats/',
@@ -633,6 +637,10 @@ const contextLinks = {
 	'transfer-domain-registration': {
 		link: 'https://wordpress.com/support/domains/transfer-domain-registration/#before-you-get-started',
 		post_id: 41298,
+	},
+	'transfer-domain-registrar-login': {
+		link: 'https://wordpress.com/support/domains/incoming-domain-transfer/#step-3-log-into-your-domain-provider-s-account',
+		post_id: 137759,
 	},
 	'domain-registrations-and-privacy': {
 		link: 'https://wordpress.com/support/domains/private-domain-registration/#what-is-privacy-protection',

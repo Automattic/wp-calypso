@@ -68,18 +68,26 @@ function BillingDragonCheckoutContent( {
 
 		debug( '[A4A Checkout] Cart items inside useEffect: ', cartItems );
 
-		const productsToAdd = cartItems.map( ( product ) => {
-			const product_cart = {
-				// When using the wpcom checkout we use alternative a4a-specific billing product ids for wpcom and jetpack products.
-				product_id: product.alternative_product_id || product.product_id,
-				product_slug: product.slug,
-				extra: {
-					isA4ASitelessCheckout: true,
-					agency_id: agency.id,
-				},
-			};
-			debug( '[A4A Checkout] Processing product to add: ', product_cart );
-			return createRequestCartProduct( product_cart );
+		const productsToAdd = cartItems.flatMap( ( product ) => {
+			const productQuantity = product.quantity > 0 ? product.quantity : 1;
+
+			let cartItemIndex = 0;
+			// Add each product separately instead of using volume
+			// This ensures each site gets the correct tier pricing
+			return Array.from( { length: productQuantity }, () => {
+				const product_cart = {
+					// When using the wpcom checkout we use alternative a4a-specific billing product ids for wpcom and jetpack products.
+					product_id: product.alternative_product_id || product.product_id,
+					product_slug: product.slug,
+					extra: {
+						isA4ASitelessCheckout: true,
+						agency_id: agency.id,
+						cart_item_index: cartItemIndex++,
+					},
+				};
+				debug( '[A4A Checkout] Processing product to add: ', product_cart );
+				return createRequestCartProduct( product_cart );
+			} );
 		} );
 
 		debug( '[A4A Checkout] Products to add', productsToAdd );

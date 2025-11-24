@@ -52,6 +52,36 @@ export const MagicLoginLocaleSuggestions = ( { path, showCheckYourEmail } ) => {
 	return <LocaleSuggestions locale={ locale } path={ path } />;
 };
 
+export const buildEnterPasswordLoginParameters = (
+	{
+		isJetpackLogin,
+		locale,
+		userEmail,
+		query,
+		twoFactorNotificationSent,
+		redirectToOriginal,
+		oauth2Client,
+	},
+	{ forceUsernameOnly = false } = {}
+) => {
+	const loginParameters = {
+		isJetpack: isJetpackLogin,
+		locale,
+		emailAddress: userEmail,
+		signupUrl: query?.signup_url,
+		twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
+		redirectTo: redirectToOriginal,
+		oauth2ClientId: oauth2Client?.id,
+		from: query?.from,
+	};
+
+	if ( forceUsernameOnly || query?.username_only === 'true' ) {
+		loginParameters.usernameOnly = true;
+	}
+
+	return loginParameters;
+};
+
 class MagicLogin extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
@@ -94,26 +124,16 @@ class MagicLogin extends Component {
 		 * at wp.com/log-in
 		 */
 		if ( 'login_link_not_allowed' === emailRequestError?.code && query?.auto_trigger ) {
-			this.onClickEnterPasswordInstead();
+			this.onClickEnterPasswordInstead( undefined, { forceUsernameOnly: true } );
 		}
 	}
 
-	onClickEnterPasswordInstead = ( event ) => {
+	onClickEnterPasswordInstead = ( event, options = {} ) => {
 		event?.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
 
-		const loginParameters = {
-			isJetpack: this.props.isJetpackLogin,
-			locale: this.props.locale,
-			emailAddress: this.props.userEmail,
-			signupUrl: this.props.query?.signup_url,
-			usernameOnly: true,
-			twoFactorAuthType: this.props.twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
-			redirectTo: this.props.redirectToOriginal,
-			oauth2ClientId: this.props.oauth2Client?.id,
-			from: this.props.query?.from,
-		};
+		const loginParameters = buildEnterPasswordLoginParameters( this.props, options );
 
 		page( login( loginParameters ) );
 	};

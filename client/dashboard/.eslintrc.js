@@ -16,12 +16,14 @@ module.exports = {
 							// Allowed: calypso/lib/explat
 							// Allowed: calypso/lib/interval/use-interval (temporary)
 							// Allowed: calypso/lib/load-dev-helpers
+							// Allowed: calypso/lib/logstash
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
 							'!calypso/lib/load-dev-helpers',
+							'!calypso/lib/logstash',
 							'!calypso/lib/wp',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
@@ -115,7 +117,7 @@ module.exports = {
 					},
 					{
 						name: '@automattic/api-queries',
-						importNames: [ 'sitesQuery', 'dashboardSiteListQuery' ],
+						importNames: [ 'sitesQuery', 'dashboardSiteListQuery', 'dashboardSiteFiltersQuery' ],
 						message: 'Use local queries exported from either context or useAppContext instead.',
 					},
 				],

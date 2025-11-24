@@ -19,11 +19,13 @@ import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 interface FilterOptions {
+	repositoryFilter?: string;
 	repositoryOptions: { value: string; label: string }[];
 	userNameOptions: { value: string; label: string }[];
 }
 
-export function useDeploymentFields( {
+export function useFields( {
+	repositoryFilter,
 	repositoryOptions = [],
 	userNameOptions = [],
 }: FilterOptions ): Field< DeploymentRunWithDeploymentInfo >[] {
@@ -32,13 +34,14 @@ export function useDeploymentFields( {
 	return useMemo(
 		() => [
 			{
-				id: 'repository_name',
+				id: 'repository',
 				label: __( 'Repository' ),
 				enableHiding: false,
 				enableGlobalSearch: true,
 				elements: repositoryOptions,
 				filterBy: {
 					operators: [ 'isAny' ],
+					...( repositoryFilter && { isPrimary: true } ),
 				},
 				getValue: ( { item } ) => item.repository_name,
 				render: ( { item } ) => {
