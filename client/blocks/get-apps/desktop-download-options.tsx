@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
@@ -8,6 +9,7 @@ type Props = {
 	appConfig: DesktopAppConfig;
 	currentPlatformConfig?: PlatformConfig;
 	isMobile: boolean;
+	platformDetectionFailed?: boolean;
 };
 
 interface AlsoAvailableConfig {
@@ -35,6 +37,7 @@ export const DesktopDownloadOptions: React.FC< Props > = ( {
 	appConfig,
 	currentPlatformConfig,
 	isMobile,
+	platformDetectionFailed = false,
 } ) => {
 	const translate = useTranslate();
 
@@ -42,6 +45,46 @@ export const DesktopDownloadOptions: React.FC< Props > = ( {
 		return <div className="get-apps__desktop-link">{ appConfig.link }</div>;
 	}
 
+	// Architecture detected successfully - show single button
+	if ( currentPlatformConfig && ! platformDetectionFailed ) {
+		return (
+			<>
+				<div className="get-apps__desktop-button">
+					<Button
+						variant={ appConfig.isPrimary ? 'primary' : 'secondary' }
+						disabled={ false }
+						onClick={ currentPlatformConfig.onClick }
+						href={ currentPlatformConfig.link }
+					>
+						<SVGIcon
+							classes="get-apps__desktop-button-icon"
+							aria-hidden="true"
+							name={ currentPlatformConfig.iconName }
+							size={ 16 }
+							icon={ currentPlatformConfig.icon }
+						/>
+						{ currentPlatformConfig.buttonText }
+					</Button>
+				</div>
+
+				<div className="get-apps__also-available">
+					<div className="get-apps__also-available-title">
+						{ translate( 'Also available for:' ) }
+					</div>
+
+					<div className="get-apps__also-available-list">
+						{ Object.entries( appConfig.platforms )
+							.filter( ( [ , config ] ) => config !== currentPlatformConfig )
+							.map( ( [ key, config ] ) => (
+								<AlsoAvailable key={ key } config={ config } />
+							) ) }
+					</div>
+				</div>
+			</>
+		);
+	}
+
+	// Fallback - show SplitButton with dropdown (existing logic)
 	return (
 		<>
 			<div className="get-apps__desktop-button">
