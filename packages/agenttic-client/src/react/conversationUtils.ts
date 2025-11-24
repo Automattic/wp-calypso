@@ -60,8 +60,8 @@ export function extractNewContentFromMessage( message: Message ): Message {
  */
 export function conversationMessagesToDataParts(
 	conversationMessages: Message[]
-): DataPart[] {
-	const historyParts: DataPart[] = [];
+): ( DataPart | FilePart )[] {
+	const historyParts: ( DataPart | FilePart )[] = [];
 
 	for ( const message of conversationMessages ) {
 		for ( const part of message.parts ) {
@@ -74,6 +74,9 @@ export function conversationMessagesToDataParts(
 						text: ( part as TextPart ).text,
 					},
 				} );
+			} else if ( part.type === 'file' ) {
+				// INCLUDE file parts in history so uploaded files persist across messages
+				historyParts.push( part as FilePart );
 			} else if ( part.type === 'data' ) {
 				// Only pass through tool calls and tool results, NOT conversation history data parts
 				// EXCLUDE conversation history data parts (role + text combinations)
@@ -102,29 +105,49 @@ export function conversationMessagesToDataParts(
 }
 
 /**
+ * Image data with optional metadata (e.g., WordPress attachment ID)
+ */
+export interface ImageData {
+	url: string;
+	metadata?: Record< string, unknown >;
+}
+
+/**
  * Create A2A message with conversation history from Message array
  *
  * @param text                 - The user text message to send
  * @param conversationMessages - Array of previous conversation messages
- * @param imageUrls
+ * @param imageUrls            - Array of image URLs or image objects with metadata
  * @return A2A Message with history and current text
  */
 export function createTextMessageWithHistory(
 	text: string,
 	conversationMessages: Message[] = [],
-	imageUrls: string[] = []
+	imageUrls: ( string | ImageData )[] = []
 ): Message {
 	const historyParts =
 		conversationMessagesToDataParts( conversationMessages );
 
-	const imageParts: FilePart[] = imageUrls.map( ( url ) => ( {
-		type: 'file',
-		file: {
-			name: 'image',
-			mimeType: 'image/jpeg', // Default to jpeg, or detect from URL if possible
-			uri: url,
-		},
-	} ) );
+	const imageParts: FilePart[] = imageUrls.map( ( imageData ) => {
+		// Handle both string URLs and ImageData objects
+		const url = typeof imageData === 'string' ? imageData : imageData.url;
+		const metadata =
+			typeof imageData === 'object' ? imageData.metadata : undefined;
+
+		// Get mimeType from metadata if available, otherwise default to image/jpeg
+		const mimeType = ( metadata?.fileType as string ) || 'image/jpeg';
+		const fileName = ( metadata?.fileName as string ) || 'image';
+
+		return {
+			type: 'file',
+			file: {
+				name: fileName,
+				mimeType,
+				uri: url,
+			},
+			metadata,
+		};
+	} );
 
 	return {
 		role: 'user',

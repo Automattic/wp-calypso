@@ -496,14 +496,33 @@ function createAgentManager(): AgentManager {
 			// Add image parts if present
 			if ( options.imageUrls && options.imageUrls.length > 0 ) {
 				const imageParts: FilePart[] = options.imageUrls.map(
-					( url ) => ( {
-						type: 'file',
-						file: {
-							name: 'image',
-							mimeType: 'image/jpeg',
-							uri: url,
-						},
-					} )
+					( imageData ) => {
+						// Handle both string URLs and ImageData objects
+						const url =
+							typeof imageData === 'string'
+								? imageData
+								: imageData.url;
+						const metadata =
+							typeof imageData === 'string'
+								? undefined
+								: imageData.metadata;
+
+						// Get mimeType from metadata if available, otherwise default to image/jpeg
+						const mimeType =
+							( metadata?.fileType as string ) || 'image/jpeg';
+						const fileName =
+							( metadata?.fileName as string ) || 'image';
+
+						return {
+							type: 'file',
+							file: {
+								name: fileName,
+								mimeType,
+								uri: url,
+							},
+							metadata,
+						};
+					}
 				);
 				userMessage.parts.push( ...imageParts );
 			}

@@ -281,6 +281,12 @@ export interface ClientConfig {
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage via WordPress.com public API.
 }
 
+// Image data with optional metadata (e.g., WordPress attachment ID)
+export interface ImageData {
+	url: string;
+	metadata?: Record< string, unknown >;
+}
+
 export interface SendMessageParams {
 	message: Message;
 	taskId?: string;
@@ -289,7 +295,7 @@ export interface SendMessageParams {
 	withHistory?: boolean; // Default: true - whether to include conversation history
 	abortSignal?: AbortSignal; // Optional: abort signal for canceling inflight requests
 	enableStreaming?: boolean; // Override client's default streaming setting for this request
-	imageUrls?: string[]; // Optional: array of image URLs to include in the message
+	imageUrls?: ( string | ImageData )[]; // Optional: array of image URLs or image objects with metadata
 }
 
 export interface TaskUpdate {

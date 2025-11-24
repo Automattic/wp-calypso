@@ -47,11 +47,17 @@ export interface Suggestion {
 	action?: () => boolean | Promise< boolean >;
 }
 
+// Image data with optional metadata (e.g., WordPress attachment ID)
+export interface ImageData {
+	url: string;
+	metadata?: Record< string, unknown >;
+}
+
 // Extra options for submitting a message
 export interface SubmitOptions {
 	type?: ContentType; // Content type: 'text' for normal visible text (default), 'context' for hidden context content
 	archived?: boolean;
-	imageUrls?: string[]; // Array of image URLs to include in the message (converted to component parts for UI)
+	imageUrls?: ( string | ImageData )[]; // Array of image URLs or image objects with metadata
 	sessionId?: string; // Optional sessionId to use for this message (overrides agent's sessionId)
 }
 
@@ -447,9 +453,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				content: [
 					{ type: contentType, text: message },
 					// Map image URLs to component content parts
-					...( options?.imageUrls?.map( ( url ) =>
-						createImageComponent( url )
-					) ?? [] ),
+					...( options?.imageUrls?.map( ( imageData ) => {
+						const url =
+							typeof imageData === 'string'
+								? imageData
+								: imageData.url;
+						return createImageComponent( url );
+					} ) ?? [] ),
 				],
 				timestamp: messageTimestamp,
 				archived: options?.archived ?? false,
