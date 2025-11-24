@@ -114,10 +114,6 @@ export default function AgentDock( {
 		}
 	}, [ persistedState.isOpen ] );
 
-	const [ chatState, setChatState ] = useState< ChatState >(
-		defaultOpen ? 'expanded' : 'collapsed'
-	);
-
 	const defaultUndocked = useMemo( () => {
 		// Use persisted state if available
 		if ( persistedState.isDocked !== undefined ) {
@@ -179,6 +175,10 @@ export default function AgentDock( {
 			// Ignore errors
 		}
 	}, [ isLoadingPersistedState, setPersistedIsDocked ] );
+
+	const [ chatState, setChatState ] = useState< ChatState >(
+		defaultOpen ? 'expanded' : 'collapsed'
+	);
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager( 'body', {

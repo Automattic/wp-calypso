@@ -50,7 +50,7 @@ export default function useChatLayoutManager(
 	const shouldRenderSidebar = isDesktop && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 
-	// Store callback refs to ensure latest versions are called without triggering re-renders
+	// Store callback refs to avoid stale closures and prevent unnecessary re-renders
 	const onDockRef = useRef( onDock );
 	const onUndockRef = useRef( onUndock );
 	const onOpenSidebarRef = useRef( onOpenSidebar );
@@ -117,7 +117,8 @@ export default function useChatLayoutManager(
 
 			onUndockRef.current();
 		}
-	}, [ container, shouldRenderSidebar, defaultOpen ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- defaultOpen should only apply on initial mount
+	}, [ container, shouldRenderSidebar ] );
 
 	// Cleanup on unmount
 	// Use `useLayoutEffect` to prevent flickering
@@ -163,9 +164,11 @@ export default function useChatLayoutManager(
 		clearTimeout( openSidebarTimeoutRef.current );
 		setIsDocked( true );
 
-		// Wait for the sidebar to be added to the DOM and then open it if not already opened
-		openSidebarTimeoutRef.current = setTimeout( handleOpenSidebar, 100 );
-	}, [ handleOpenSidebar ] );
+		if ( isDesktop ) {
+			// Wait for DOM update to complete before opening the sidebar
+			openSidebarTimeoutRef.current = setTimeout( handleOpenSidebar, 100 );
+		}
+	}, [ isDesktop, handleOpenSidebar ] );
 
 	const undock = useCallback( () => {
 		clearTimeout( openSidebarTimeoutRef.current );
