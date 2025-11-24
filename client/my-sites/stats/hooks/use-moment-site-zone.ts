@@ -34,7 +34,6 @@ export const getMomentSiteZone = createSelector(
 						localeSlug
 					);
 				}
-
 				return moment( dateInput ).locale( localeSlug );
 			}
 

@@ -66,7 +66,7 @@ function StatsRealtime( { context } ) {
 			max: 10,
 			summarize: 1,
 		} ),
-		[ momentSiteZone ]
+		[]
 	);
 
 	useEffect( () => {
