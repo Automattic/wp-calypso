@@ -6,15 +6,15 @@ import type { Reducer } from 'redux';
 const isOpen: Reducer< boolean | undefined, AgentsManagerAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_OPEN':
-			return action.open;
+			return action.isOpen;
 	}
 	return state;
 };
 
-const isDocked: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
+const isDocked: Reducer< boolean | undefined, AgentsManagerAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_DOCKED':
-			return action.docked;
+			return action.isDocked;
 	}
 	return state;
 };
@@ -30,10 +30,28 @@ const agentsManagerRouterHistory: Reducer<
 	return state;
 };
 
+const sessionId: Reducer< string | undefined, AgentsManagerAction > = ( state, action ) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_SESSION_ID':
+			return action.sessionId;
+	}
+	return state;
+};
+
+const isLoading: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_LOADING':
+			return action.isLoading;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	isOpen,
 	isDocked,
 	agentsManagerRouterHistory,
+	sessionId,
+	isLoading,
 } );
 
 export type State = ReturnType< typeof reducer >;

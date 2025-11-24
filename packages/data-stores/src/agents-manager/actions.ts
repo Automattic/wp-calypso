@@ -5,29 +5,45 @@ import { GeneratorReturnType } from '../mapped-types';
 import type { APIFetchOptions } from '../shared-types';
 
 /**
- * Save the open state of the agents manager to the remote user preferences.
- * @param isOpen - Whether the agents manager is open.
- * @param isDocked - Whether the agents manager is docked.
+ * Partial state object for saving agents manager preferences
  */
-export function* saveAgentsManagerState(
-	isOpen: boolean | undefined,
-	isDocked: boolean | undefined
-) {
-	const saveState: Record< string, boolean | null > = {};
+type AgentsManagerState = {
+	isOpen?: boolean;
+	isDocked?: boolean;
+	sessionId?: string | null;
+	routerHistory?: null; // Only used to clear history
+};
 
-	if ( typeof isOpen === 'boolean' ) {
-		saveState.agents_manager_open = isOpen;
+/**
+ * Save the agents manager state to the remote user preferences.
+ * @param state - Partial state object with the properties to save
+ * @yields {Object} Action to set router history if closing
+ */
+export function* saveAgentsManagerState( state: AgentsManagerState ) {
+	const saveState: Record< string, boolean | string | null > = {};
+
+	if ( typeof state.isOpen === 'boolean' ) {
+		saveState.agents_manager_open = state.isOpen;
 
 		//TODO: Figure out the trigger to reset the chat on agents manager
 		// Help center resets when closing. But the agents manager might be different.
-		if ( ! isOpen ) {
+		if ( ! state.isOpen ) {
 			saveState.agents_manager_router_history = null;
 			yield setAgentsManagerRouterHistory( undefined );
 		}
 	}
 
-	if ( typeof isDocked === 'boolean' ) {
-		saveState.agents_manager_docked = isDocked;
+	if ( typeof state.isDocked === 'boolean' ) {
+		saveState.agents_manager_docked = state.isDocked;
+	}
+
+	if ( state.sessionId !== undefined ) {
+		saveState.agents_manager_session_id = state.sessionId;
+	}
+
+	// Only make API call if there's something to save
+	if ( Object.keys( saveState ).length === 0 ) {
+		return;
 	}
 
 	if ( canAccessWpcomApis() ) {
@@ -58,29 +74,49 @@ export function setAgentsManagerRouterHistory(
 	} as const;
 }
 
-export function* setIsOpen( open: boolean, shouldSave: boolean = true ) {
+export function* setIsOpen( isOpen: boolean, shouldSave: boolean = true ) {
 	if ( shouldSave ) {
-		yield saveAgentsManagerState( open, undefined );
+		yield saveAgentsManagerState( { isOpen } );
 	}
 
 	return {
 		type: 'AGENTS_MANAGER_SET_OPEN',
-		open,
+		isOpen,
 	} as const;
 }
 
-export function* setIsDocked( docked: boolean, shouldSave: boolean = true ) {
+export function* setIsDocked( isDocked: boolean, shouldSave: boolean = true ) {
 	if ( shouldSave ) {
-		yield saveAgentsManagerState( undefined, docked );
+		yield saveAgentsManagerState( { isDocked } );
 	}
 
 	return {
 		type: 'AGENTS_MANAGER_SET_DOCKED',
-		docked,
+		isDocked,
+	} as const;
+}
+
+export function* setSessionId( sessionId: string, shouldSave: boolean = true ) {
+	if ( shouldSave ) {
+		yield saveAgentsManagerState( { sessionId } );
+	}
+
+	return {
+		type: 'AGENTS_MANAGER_SET_SESSION_ID',
+		sessionId,
+	} as const;
+}
+
+export function setIsLoading( isLoading: boolean ) {
+	return {
+		type: 'AGENTS_MANAGER_SET_LOADING',
+		isLoading,
 	} as const;
 }
 
 export type AgentsManagerAction =
 	| ReturnType< typeof setAgentsManagerRouterHistory >
+	| ReturnType< typeof setIsLoading >
 	| GeneratorReturnType< typeof setIsOpen >
-	| GeneratorReturnType< typeof setIsDocked >;
+	| GeneratorReturnType< typeof setIsDocked >
+	| GeneratorReturnType< typeof setSessionId >;
