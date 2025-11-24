@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { _x } from '@wordpress/i18n';
 import type { Site } from '@automattic/api-core';
 
 export interface MigrationStatus {
@@ -9,15 +9,17 @@ export interface MigrationStatus {
 const MIGRATION_STATUSES: MigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
 const MIGRATION_TYPES: MigrationStatus[ 'type' ][] = [ 'difm', 'diy' ];
 
-export const STATUS_LABELS = {
-	public: __( 'Public' ),
-	private: __( 'Private' ),
-	coming_soon: __( 'Coming soon' ),
-	deleted: __( 'Deleted' ),
-	difm_lite_in_progress: __( 'Express service' ),
-	migration_pending: __( 'Migration pending' ),
-	migration_started: __( 'Migration started' ),
-};
+export function getStatusLabels() {
+	return {
+		public: _x( 'Public', 'site' ),
+		private: _x( 'Private', 'site' ),
+		coming_soon: _x( 'Coming soon', 'site' ),
+		deleted: _x( 'Deleted', 'site' ),
+		difm_lite_in_progress: _x( 'Express service', 'site' ),
+		migration_pending: _x( 'Migration pending', 'site' ),
+		migration_started: _x( 'Migration started', 'site' ),
+	};
+}
 
 export function getSiteStatus( item: Site ) {
 	if ( item.is_deleted ) {
@@ -82,5 +84,6 @@ export function isSiteMigrationInProgress( item: Site ) {
 }
 
 export function getSiteStatusLabel( item: Site ) {
-	return STATUS_LABELS[ getSiteStatus( item ) ];
+	const statusLabels = getStatusLabels();
+	return statusLabels[ getSiteStatus( item ) ];
 }

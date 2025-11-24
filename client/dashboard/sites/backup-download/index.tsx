@@ -137,7 +137,11 @@ function SiteBackupDownload() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Download backup' ) } />
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Download backup' ) }
+					description={ __( 'Download a backup of your site from a specific point in time.' ) }
+				/>
 			}
 		>
 			{ currentStep !== 'success' ? (

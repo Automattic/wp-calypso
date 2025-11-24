@@ -89,7 +89,11 @@ export default function MailboxesReady() {
 	);
 
 	return (
-		<PageLayout header={ <PageHeader /> } notices={ <MailboxesReadyNotice /> } size="small">
+		<PageLayout
+			header={ <PageHeader description={ __( 'Your email mailboxes are ready to use.' ) } /> }
+			notices={ <MailboxesReadyNotice /> }
+			size="small"
+		>
 			{ status === 'ready' && (
 				<Text size={ 16 }>
 					{ _n(

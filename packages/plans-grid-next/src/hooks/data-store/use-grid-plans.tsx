@@ -8,6 +8,8 @@ import {
 	TYPE_PREMIUM,
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
+	TYPE_WOO_HOSTED_BASIC,
+	TYPE_WOO_HOSTED_PRO,
 	getPlan,
 	isBloggerPlan,
 	applyTestFiltersToPlansList,
@@ -142,6 +144,8 @@ export const usePlanTypesWithIntent = ( {
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 		TYPE_WOOEXPRESS_SMALL,
 		TYPE_WOOEXPRESS_MEDIUM,
+		TYPE_WOO_HOSTED_BASIC,
+		TYPE_WOO_HOSTED_PRO,
 		TYPE_P2_PLUS,
 	];
 
@@ -266,6 +270,9 @@ export const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-website-builder':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			break;
+		case 'plans-woo-hosted':
+			planTypes = [ TYPE_WOO_HOSTED_BASIC, TYPE_WOO_HOSTED_PRO ];
 			break;
 		default:
 			planTypes = availablePlanTypes;

@@ -7,7 +7,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
 import * as React from 'react';
 import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.png';
 import imgBusinessPlan from 'calypso/assets/images/cancellation/business-plan.png';
@@ -27,11 +26,11 @@ type UpsellProps = {
 	acceptButtonUrl?: string;
 	onAccept?: () => void;
 	onDecline?: () => void;
+	isBusy?: boolean;
 };
 
 function Upsell( { image, ...props }: UpsellProps ) {
 	const declineButtonText = __( 'Cancel my current plan' );
-	const [ busyButton, setBusyButton ] = useState( '' );
 
 	return (
 		<VStack>
@@ -43,23 +42,12 @@ function Upsell( { image, ...props }: UpsellProps ) {
 					<Button
 						variant="primary"
 						href={ props.acceptButtonUrl }
-						onClick={ () => {
-							setBusyButton( 'accept' );
-							props.onAccept?.();
-						} }
-						isBusy={ busyButton === 'accept' }
+						onClick={ props.onAccept }
+						isBusy={ props.isBusy }
 					>
 						{ props.acceptButtonText }
 					</Button>
-					<Button
-						variant="secondary"
-						onClick={ () => {
-							setBusyButton( 'decline' );
-							props.onDecline?.();
-						} }
-						isBusy={ busyButton === 'decline' }
-						disabled={ Boolean( busyButton && busyButton !== 'decline' ) }
-					>
+					<Button variant="secondary" onClick={ props.onDecline } disabled={ props.isBusy }>
 						{ declineButtonText }
 					</Button>
 				</div>
@@ -89,6 +77,7 @@ function getLiveChatUrl( type: string, purchase: Purchase ) {
 type StepProps = {
 	cancelBundledDomain?: boolean;
 	cancellationReason?: string;
+	cancellationInProgress?: boolean;
 	closeDialog?: () => void;
 	currencyCode: string;
 	downgradePlanPrice?: number | null;
@@ -106,6 +95,7 @@ export default function UpsellStep( {
 	upsell,
 	purchase,
 	currencyCode,
+	cancellationInProgress,
 	plans,
 	...props
 }: StepProps ) {
@@ -156,6 +146,7 @@ export default function UpsellStep( {
 						props.closeDialog && props.closeDialog();
 					} }
 					onDecline={ props.onDeclineUpsell }
+					isBusy={ cancellationInProgress }
 					image={ imgLiveChat }
 				>
 					{ hasEnTranslation(
@@ -192,6 +183,7 @@ export default function UpsellStep( {
 						window.location.replace( builtByURL );
 					} }
 					onDecline={ props.onDeclineUpsell }
+					isBusy={ cancellationInProgress }
 					image={ imgBuiltBy }
 				>
 					{ __(
@@ -217,6 +209,7 @@ export default function UpsellStep( {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }
 					onDecline={ props.onDeclineUpsell }
+					isBusy={ cancellationInProgress }
 					image={ imgBusinessPlan }
 				>
 					{ createInterpolateElement(
@@ -245,6 +238,7 @@ export default function UpsellStep( {
 					acceptButtonText={ __( 'Switch to monthly payments' ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
 					onDecline={ props.onDeclineUpsell }
+					isBusy={ cancellationInProgress }
 					image={ imgMonthlyPayments }
 				>
 					<>
@@ -264,7 +258,7 @@ export default function UpsellStep( {
 							__(
 								'You will lose your free domain registration since that feature is only included in annual/biannual plans.'
 							) }
-						{ refundAmount && <br /> }
+						{ refundAmount ? <br /> : null }
 						{ refundAmount
 							? sprintf(
 									/* translators: %(refundAmount)s is a monetary amount in the form of a refund */
@@ -289,6 +283,7 @@ export default function UpsellStep( {
 					} ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
 					onDecline={ props.onDeclineUpsell }
+					isBusy={ cancellationInProgress }
 					image={ imgSwitchPlan }
 				>
 					<>
@@ -299,17 +294,18 @@ export default function UpsellStep( {
 							),
 							{ plan: personalPlanName }
 						) }{ ' ' }
-						{ refundAmount &&
-							sprintf(
-								/* translators: %(amount)s is a monetary amount in the form of a refund */
-								__(
-									'You can downgrade and get a partial refund of %(amount)s or ' +
-										'continue to the next step and cancel the plan.'
-								),
-								{
-									amount: formatCurrency( refundAmount, currencyCode ),
-								}
-							) }
+						{ refundAmount
+							? sprintf(
+									/* translators: %(amount)s is a monetary amount in the form of a refund */
+									__(
+										'You can downgrade and get a partial refund of %(amount)s or ' +
+											'continue to the next step and cancel the plan.'
+									),
+									{
+										amount: formatCurrency( refundAmount, currencyCode ),
+									}
+							  )
+							: null }
 					</>
 				</Upsell>
 			);
@@ -320,6 +316,7 @@ export default function UpsellStep( {
 					acceptButtonText={ __( 'Get a free month' ) }
 					onAccept={ () => props.onClickFreeMonthOffer?.() }
 					onDecline={ props.onDeclineUpsell }
+					isBusy={ cancellationInProgress }
 					image={ imgFreeMonth }
 				>
 					{ sprintf(

@@ -13,6 +13,7 @@ const translations = {
 	draft_post_prompt: __( 'Draft post reminders' ),
 	store_order: __( 'New order' ),
 	comment_reply: __( 'Replies to my comments' ),
+	form_response: __( 'Form responses' ),
 } as const;
 
 type TranslationKey = keyof typeof translations;

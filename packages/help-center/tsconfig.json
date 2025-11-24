@@ -14,6 +14,7 @@
 		{ "path": "../viewport" },
 		{ "path": "../odie-client" },
 		{ "path": "../wpcom-checkout" },
-		{ "path": "../zendesk-client" }
+		{ "path": "../zendesk-client" },
+		{ "path": "../agents-manager" }
 	]
 }

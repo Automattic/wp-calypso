@@ -53,7 +53,7 @@ function Help() {
 	const [ helpCenterPage, setHelpCenterPage ] = useState( '' );
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_help_center_menu_popover'
+		'calypso_help_center_menu_popover_v2'
 	);
 	const isMenuPanelExperimentEnabled =
 		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';

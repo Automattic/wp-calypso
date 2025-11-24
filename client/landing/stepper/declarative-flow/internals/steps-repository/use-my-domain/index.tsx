@@ -41,6 +41,10 @@ const UseMyDomain: StepType< {
 		| {
 				skipToPlan: true;
 		  }
+		| {
+				ownershipVerificationCompleted: true;
+				domain: string;
+		  }
 		| undefined;
 } > = function UseMyDomain( { navigation, flow } ) {
 	const { __ } = useI18n();
@@ -88,23 +92,16 @@ const UseMyDomain: StepType< {
 
 		// If there's verification data and the site has a paid plan, validate it before submitting
 		if ( verificationData && site ) {
-			const isGardenSite = ( site as { is_garden?: boolean } ).is_garden;
 			const hasPaidPlan = siteHasPaidPlan( site );
 
-			if ( isGardenSite || hasPaidPlan ) {
+			if ( hasPaidPlan ) {
 				try {
 					// Validate the auth code by making the API call
 					await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, {
 						domain,
 						...verificationData,
 					} );
-
-					// Success - redirect to setup page
-					const redirectTo = isGardenSite
-						? `/ciab/sites/${ domain }/domains`
-						: `/v2/domains/${ domain }/domain-connection-setup`;
-
-					return window.location.replace( redirectTo );
+					submit( { ownershipVerificationCompleted: true, domain } );
 				} catch ( error ) {
 					// Validation failed - call onDone to display error and stay on current step
 					if ( onDone ) {

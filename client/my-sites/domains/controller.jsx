@@ -5,6 +5,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import { connectDomainAction } from 'calypso/components/domains/use-my-domain/utilities';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -174,6 +175,31 @@ const useMyDomain = ( context, next ) => {
 
 		page( path );
 	};
+
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+	const dispatch = context.store.dispatch;
+
+	const handleOnConnect = ( { domain, verificationData }, callback ) => {
+		if ( ! selectedSite ) {
+			callback( new Error( translate( 'No site selected' ) ) );
+			return;
+		}
+
+		const action = connectDomainAction(
+			{
+				domain,
+				selectedSite,
+				verificationData: verificationData?.ownership_verification_data
+					? verificationData
+					: undefined,
+			},
+			callback
+		);
+
+		dispatch( action );
+	};
+
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker
@@ -187,6 +213,7 @@ const useMyDomain = ( context, next ) => {
 					initialQuery={ context.query.initialQuery }
 					initialMode={ context.query.initialMode }
 					goBack={ handleGoBack }
+					onConnect={ handleOnConnect }
 				/>
 			</CalypsoShoppingCartProvider>
 		</Main>

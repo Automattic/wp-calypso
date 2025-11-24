@@ -52,7 +52,7 @@ skipDescribeIf( isPrivateSite )(
 			const editorParent = await editorPage.getEditorParent();
 
 			const toggle = editorParent.getByLabel( 'Auto-share post' );
-			const connectButton = editorParent.getByLabel( 'Connect your accounts' );
+			const connectButton = editorParent.getByRole( 'button', { name: 'Connect your accounts' } );
 
 			// Either "Auto-share post" toggle or "Connect your accounts" button should be visible.
 			expect( ( await toggle.count() ) || ( await connectButton.count() ) ).toBeGreaterThan( 0 );
