@@ -7,6 +7,7 @@ import {
 	queryClient,
 	rawUserPreferencesQuery,
 	siteByIdQuery,
+	userMailboxesQuery,
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
@@ -25,6 +26,7 @@ export const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
 	loader: async () => {
+		queryClient.prefetchQuery( userMailboxesQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 	validateSearch: ( search ): { domainName: string | undefined } => {
