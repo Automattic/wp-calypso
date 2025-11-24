@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isJetpackPlanSlug, isJetpackProductSlug } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import {
 	getLanguage,
 	getLanguageSlugs,
@@ -193,10 +194,15 @@ export async function redirectLoggedOut( context, next ) {
 		return next();
 	}
 
-	if ( isUserLoggedIn( state ) && ! isCookieAuthMissing() ) {
+	// Allow support sessions to continue without a cookie
+	if ( isUserLoggedIn( state ) && ( ! isCookieAuthMissing() || isSupportSession() ) ) {
 		next();
 		return;
-	} else if ( isCookieAuthMissing() && config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+	} else if (
+		isUserLoggedIn( state ) &&
+		isCookieAuthMissing() &&
+		config.isEnabled( 'wpcom-user-bootstrap' )
+	) {
 		// Get the current user data from the state before re-fetching the user
 		// This helps for logging a non zero user ID in the failure condition
 		const existingUserData = getCurrentUser( state );
