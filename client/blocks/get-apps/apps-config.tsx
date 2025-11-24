@@ -48,14 +48,14 @@ const basePlatformConfigs: Record<
 		name: 'Mac (Intel)',
 		icon: Apple,
 		iconName: 'apple-logo',
-		buttonText: translate( 'Download for Mac' ),
+		buttonText: translate( 'Download for Mac (Intel)' ),
 		group: 'mac',
 	} ),
 	[ PlatformType.MacSilicon ]: ( translate ) => ( {
 		name: 'Mac (Apple Silicon)',
 		icon: Apple,
 		iconName: 'apple-logo',
-		buttonText: translate( 'Download for Mac' ),
+		buttonText: translate( 'Download for Mac (Apple Silicon)' ),
 		group: 'mac',
 	} ),
 	[ PlatformType.WindowsX64 ]: ( translate ) => ( {
