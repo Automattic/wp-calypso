@@ -212,12 +212,12 @@ function ResponsiveMenu( {
 
 	return (
 		<DropdownMenu
-			className="dashboard-responsive-menu"
 			icon={ icon }
 			label={ label }
 			popoverProps={ {
 				placement: dropdownPlacement,
 			} }
+			style={ { justifyContent: 'flex-end' } }
 		>
 			{ ( { onClose } ) => (
 				<>
