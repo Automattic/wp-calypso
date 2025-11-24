@@ -105,7 +105,6 @@ export const parseLocalDate = ( dateString ) => {
  * Process the start date and from period to determine the target chart range parameters.
  * @param {string} startDate The start date of the chart range.
  * @param {string} fromPeriod The period of the chart where the action comes from.
- * @param {function} [momentInSite] Optional moment-like function for site-aware timezone handling.
  * @param {Function} [momentInSite] Optional moment-like function for site-aware timezone handling.
  * @returns {ChartRangeParams} The chart range parameters for navigating the chart.
  */

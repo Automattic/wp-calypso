@@ -43,8 +43,8 @@ export const getMomentSiteZone = createSelector(
 		};
 	},
 	[
-		( state, siteId ) => getSiteGmtOffset( state, siteId ),
-		( state, siteId ) => getSiteTimezoneValue( state, siteId ),
+		( state, siteId ) => getSiteGmtOffset( state, siteId as number ),
+		( state, siteId ) => getSiteTimezoneValue( state, siteId as number ),
 		( state, siteId ) => getSiteOption( state, siteId, 'gmt_offset' ),
 		( state, siteId ) => getSiteOption( state, siteId, 'timezone_string' ),
 		() => i18n.getLocaleSlug(),
