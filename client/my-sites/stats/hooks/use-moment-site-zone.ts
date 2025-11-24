@@ -2,16 +2,16 @@ import { createSelector } from '@automattic/state-utils';
 import i18n from 'i18n-calypso';
 import moment from 'moment-timezone';
 import { useSelector } from 'calypso/state';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DATE_FORMAT } from '../constants';
 
 export const getMomentSiteZone = createSelector(
 	( state: object, siteId: number | null, dateFormat = DATE_FORMAT ) => {
 		const localeSlug = i18n.getLocaleSlug() || 'en';
-		const timezoneString = getSiteTimezoneValue( state, siteId );
-		const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' ) as number;
+		const timezoneString = getSiteTimezoneValue( state, siteId as number );
+		const gmtOffset = getSiteGmtOffset( state, siteId as number );
 
 		return ( dateInput?: moment.MomentInput ) => {
 			if ( timezoneString ) {
@@ -45,7 +45,7 @@ export const getMomentSiteZone = createSelector(
 		};
 	},
 	[
-		( state, siteId ) => getSiteOption( state, siteId, 'gmt_offset' ),
+		( state, siteId ) => getSiteGmtOffset( state, siteId ),
 		( state, siteId ) => getSiteTimezoneValue( state, siteId ),
 		() => i18n.getLocaleSlug(),
 	]
