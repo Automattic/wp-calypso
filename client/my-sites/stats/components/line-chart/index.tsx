@@ -8,7 +8,6 @@ import {
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { Moment } from 'moment';
 import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
 import { DATE_FORMAT } from '../../constants';
@@ -42,7 +41,6 @@ function StatsLineChart( {
 	formatTimeTick?: ( value: number ) => string;
 	className?: string;
 	height?: number;
-	moment: Moment;
 	emptyState: JSX.Element;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;

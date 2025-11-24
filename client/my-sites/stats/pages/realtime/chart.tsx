@@ -110,7 +110,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 			chartData: data,
 			maxViews,
 		};
-	}, [ JSON.stringify( viewsData ) ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ viewsData, momentInSite, initialViewsCount ] );
 
 	// Format the time in minute difference from now.
 	const formatTimeTick = ( value: number ) => {

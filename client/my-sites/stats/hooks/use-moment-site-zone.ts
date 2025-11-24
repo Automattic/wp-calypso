@@ -19,7 +19,8 @@ export const getMomentSiteZone = createSelector(
 			( getSiteOption( state, siteId, 'gmt_offset' ) as number );
 
 		return ( dateInput?: moment.MomentInput ) => {
-			if ( timezoneString ) {
+			// Validate timezone string exists and is a valid IANA timezone identifier
+			if ( timezoneString && timezoneString !== '' && moment.tz.zone( timezoneString ) ) {
 				if ( dateInput === undefined ) {
 					return moment.tz( timezoneString ).locale( localeSlug );
 				}
@@ -34,7 +35,7 @@ export const getMomentSiteZone = createSelector(
 						localeSlug
 					);
 				}
-				return moment( dateInput ).locale( localeSlug );
+				return moment( dateInput ).utcOffset( gmtOffset ).locale( localeSlug );
 			}
 
 			// Falls back to the browser's local timezone if no GMT offset is found
