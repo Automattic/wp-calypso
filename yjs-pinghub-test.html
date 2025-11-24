@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YJS-Pinghub Adapter Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.connecting {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        #editor {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            background: #fafafa;
+        }
+        #editor:focus {
+            outline: none;
+            border-color: #0073aa;
+            background: white;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
+            border-left: 4px solid #0073aa;
+            border-radius: 4px;
+        }
+        .info h3 {
+            margin-top: 0;
+            color: #0073aa;
+        }
+        .collaborators {
+            margin-top: 20px;
+        }
+        .collaborator {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 15px;
+            background: #e9ecef;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .debug {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        button {
+            background: #0073aa;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 500;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 YJS-Pinghub Adapter Test</h1>
+        
+        <div id="status" class="status connecting">
+            Connecting to Pinghub...
+        </div>
+
+        <div>
+            <label for="editor"><strong>Collaborative Text Editor:</strong></label>
+            <textarea 
+                id="editor" 
+                placeholder="Start typing... Changes will sync in real-time with other collaborators via Pinghub!"
+            ></textarea>
+        </div>
+
+        <div class="collaborators">
+            <h3>👥 Active Collaborators:</h3>
+            <div id="collaborator-list">
+                <span class="collaborator">Loading...</span>
+            </div>
+        </div>
+
+        <div>
+            <button onclick="testConnection()">Test Connection</button>
+            <button onclick="clearEditor()">Clear Editor</button>
+            <button onclick="simulateUpdate()">Simulate Remote Update</button>
+            <button onclick="toggleDebug()">Toggle Debug Log</button>
+        </div>
+
+        <div class="info">
+            <h3>🧪 How This Test Works</h3>
+            <ul>
+                <li><strong>YJS Document:</strong> Creates a collaborative text document</li>
+                <li><strong>Pinghub Transport:</strong> Uses existing Pinghub WebSocket infrastructure</li>
+                <li><strong>Message Translation:</strong> Converts YJS binary updates to/from JSON for Pinghub</li>
+                <li><strong>Multi-User:</strong> Open this page in multiple tabs to see real-time collaboration</li>
+                <li><strong>Authentication:</strong> Uses WordPress.com cookies (wp_api_sec) automatically</li>
+            </ul>
+        </div>
+
+        <div id="debug" class="debug" style="display: none;">
+            <h4>Debug Log:</h4>
+            <div id="debug-log"></div>
+        </div>
+    </div>
+
+    <!-- YJS Dependencies -->
+    <script src="https://unpkg.com/yjs@13.6.10/dist/yjs.js"></script>
+    
+    <script>
+        // Global state
+        let collaborativeDoc = null;
+        let adapter = null;
+        let debugVisible = false;
+
+        // Simple YJS-Pinghub Adapter (inline for testing)
+        class YjsPinghubAdapter {
+            constructor(channel, doc, options = {}) {
+                this.channel = channel;
+                this.doc = doc;
+                this.options = {
+                    pinghubUrl: options.pinghubUrl || '/pinghub',
+                    reconnectDelay: options.reconnectDelay || 1000,
+                    maxReconnectAttempts: options.maxReconnectAttempts || 5,
+                    ...options
+                };
+
+                this.ws = null;
+                this.isConnected = false;
+                this.reconnectAttempts = 0;
+                this.pendingMessages = [];
+
+                // Create awareness
+                this.awareness = new Y.YAwareness(this.doc);
+                
+                this.setupYjsListeners();
+                this.connect();
+            }
+
+            setupYjsListeners() {
+                this.doc.on('update', (update, origin) => {
+                    if (origin === this) return;
+                    
+                    this.sendToPinghub({
+                        type: 'yjs-update',
+                        update: Array.from(update),
+                        clientId: this.doc.clientID
+                    });
+                });
+
+                this.awareness.on('update', ({ added, updated, removed }) => {
+                    const changedClients = added.concat(updated).concat(removed);
+                    if (changedClients.includes(this.doc.clientID)) {
+                        const update = Y.YAwareness.encodeAwarenessUpdate(this.awareness, changedClients);
+                        this.sendToPinghub({
+                            type: 'yjs-awareness',
+                            awarenessUpdate: Array.from(update),
+                            clientId: this.doc.clientID
+                        });
+                    }
+                });
+
+                // Set user info
+                this.awareness.setLocalStateField('user', {
+                    name: this.options.userName || `User-${this.doc.clientID}`,
+                    color: this.generateUserColor()
+                });
+            }
+
+            generateUserColor() {
+                const hue = Math.floor(Math.random() * 360);
+                return `hsl(${hue}, 70%, 50%)`;
+            }
+
+            connect() {
+                if (this.ws) return;
+
+                const pinghubUrl = `ws://${window.location.host}${this.options.pinghubUrl}${this.channel}`;
+                debugLog(`Connecting to: ${pinghubUrl}`);
+                
+                try {
+                    this.ws = new WebSocket(pinghubUrl);
+                    
+                    this.ws.onopen = () => {
+                        debugLog('✅ Connected to Pinghub');
+                        this.isConnected = true;
+                        this.reconnectAttempts = 0;
+                        updateStatus('connected', 'Connected to Pinghub');
+                        this.flushPendingMessages();
+                        this.sendInitialSync();
+                    };
+
+                    this.ws.onmessage = (event) => {
+                        this.handlePinghubMessage(event);
+                    };
+
+                    this.ws.onclose = (event) => {
+                        debugLog(`❌ Connection closed: ${event.code} - ${event.reason}`);
+                        this.isConnected = false;
+                        this.ws = null;
+                        updateStatus('disconnected', `Disconnected: ${event.reason || 'Connection closed'}`);
+                        
+                        if (event.code !== 1000) {
+                            this.scheduleReconnect();
+                        }
+                    };
+
+                    this.ws.onerror = (error) => {
+                        debugLog(`💥 WebSocket error: ${error}`);
+                        updateStatus('disconnected', 'Connection error');
+                    };
+
+                } catch (error) {
+                    debugLog(`💥 Failed to connect: ${error}`);
+                    updateStatus('disconnected', `Failed to connect: ${error.message}`);
+                    this.scheduleReconnect();
+                }
+            }
+
+            handlePinghubMessage(event) {
+                try {
+                    const message = JSON.parse(event.data);
+                    debugLog(`📨 Received: ${message.type} from client ${message.clientId}`);
+                    
+                    if (message.clientId === this.doc.clientID) {
+                        return; // Ignore our own messages
+                    }
+
+                    switch (message.type) {
+                        case 'yjs-update':
+                            const update = new Uint8Array(message.update);
+                            Y.applyUpdate(this.doc, update, this);
+                            break;
+                        case 'yjs-awareness':
+                            const awarenessUpdate = new Uint8Array(message.awarenessUpdate);
+                            Y.YAwareness.applyAwarenessUpdate(this.awareness, awarenessUpdate, message.clientId);
+                            updateCollaborators();
+                            break;
+                        case 'yjs-sync-request':
+                            this.handleSyncRequest(message);
+                            break;
+                        case 'yjs-sync-response':
+                            this.handleSyncResponse(message);
+                            break;
+                    }
+                } catch (error) {
+                    debugLog(`💥 Failed to parse message: ${error}`);
+                }
+            }
+
+            handleSyncRequest(message) {
+                const stateVector = Y.encodeStateVector(this.doc);
+                this.sendToPinghub({
+                    type: 'yjs-sync-response',
+                    stateVector: Array.from(stateVector),
+                    clientId: this.doc.clientID,
+                    requestId: message.requestId
+                });
+            }
+
+            handleSyncResponse(message) {
+                try {
+                    const stateVector = new Uint8Array(message.stateVector);
+                    const diff = Y.encodeStateAsUpdate(this.doc, stateVector);
+                    
+                    if (diff.length > 0) {
+                        this.sendToPinghub({
+                            type: 'yjs-update',
+                            update: Array.from(diff),
+                            clientId: this.doc.clientID
+                        });
+                    }
+                } catch (error) {
+                    debugLog(`💥 Failed to handle sync response: ${error}`);
+                }
+            }
+
+            sendInitialSync() {
+                this.sendToPinghub({
+                    type: 'yjs-sync-request',
+                    requestId: `sync-${Date.now()}-${Math.random()}`,
+                    clientId: this.doc.clientID
+                });
+            }
+
+            sendToPinghub(message) {
+                const jsonMessage = JSON.stringify(message);
+
+                if (this.isConnected && this.ws) {
+                    this.ws.send(jsonMessage);
+                    debugLog(`📤 Sent: ${message.type}`);
+                } else {
+                    this.pendingMessages.push(jsonMessage);
+                    debugLog(`📦 Queued: ${message.type} (not connected)`);
+                }
+            }
+
+            flushPendingMessages() {
+                while (this.pendingMessages.length > 0) {
+                    const message = this.pendingMessages.shift();
+                    this.ws.send(message);
+                }
+                if (this.pendingMessages.length > 0) {
+                    debugLog(`📤 Sent ${this.pendingMessages.length} pending messages`);
+                }
+            }
+
+            scheduleReconnect() {
+                if (this.reconnectAttempts >= this.options.maxReconnectAttempts) {
+                    updateStatus('disconnected', 'Max reconnection attempts reached');
+                    return;
+                }
+
+                const delay = this.options.reconnectDelay * Math.pow(2, this.reconnectAttempts);
+                this.reconnectAttempts++;
+
+                updateStatus('connecting', `Reconnecting in ${delay}ms... (attempt ${this.reconnectAttempts})`);
+                debugLog(`🔄 Reconnect attempt ${this.reconnectAttempts} in ${delay}ms`);
+
+                setTimeout(() => {
+                    this.connect();
+                }, delay);
+            }
+
+            disconnect() {
+                if (this.ws) {
+                    this.ws.close(1000, 'User disconnected');
+                }
+            }
+        }
+
+        // Utility functions
+        function debugLog(message) {
+            console.log(`[YJS-Pinghub] ${message}`);
+            const debugLog = document.getElementById('debug-log');
+            if (debugLog) {
+                const timestamp = new Date().toLocaleTimeString();
+                debugLog.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+                debugLog.scrollTop = debugLog.scrollHeight;
+            }
+        }
+
+        function updateStatus(type, message) {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            statusEl.textContent = message;
+        }
+
+        function updateCollaborators() {
+            const collaboratorList = document.getElementById('collaborator-list');
+            const states = adapter.awareness.getStates();
+            
+            const collaborators = [];
+            states.forEach((state, clientId) => {
+                if (state.user && clientId !== adapter.doc.clientID) {
+                    collaborators.push(`
+                        <span class="collaborator" style="background-color: ${state.user.color}20; border-left: 3px solid ${state.user.color};">
+                            ${state.user.name}
+                        </span>
+                    `);
+                }
+            });
+
+            if (collaborators.length === 0) {
+                collaboratorList.innerHTML = '<span class="collaborator">No other collaborators</span>';
+            } else {
+                collaboratorList.innerHTML = collaborators.join('');
+            }
+        }
+
+        // Initialize the collaborative document
+        function initializeCollaboration() {
+            const doc = new Y.Doc();
+            const text = doc.getText('content');
+            
+            // Create adapter
+            adapter = new YjsPinghubAdapter('/rtc/site-123/doc-test', doc, {
+                userName: `User-${Math.floor(Math.random() * 1000)}`,
+            });
+
+            // Sync textarea with YJS document
+            const editor = document.getElementById('editor');
+            
+            // YJS -> Textarea
+            text.observe(() => {
+                const currentText = text.toString();
+                if (editor.value !== currentText) {
+                    const cursorPos = editor.selectionStart;
+                    editor.value = currentText;
+                    editor.setSelectionRange(cursorPos, cursorPos);
+                }
+                updateCollaborators();
+            });
+
+            // Textarea -> YJS
+            editor.addEventListener('input', () => {
+                const currentText = text.toString();
+                const editorText = editor.value;
+                
+                if (currentText !== editorText) {
+                    // Calculate diff and apply changes
+                    let i = 0;
+                    while (i < Math.min(currentText.length, editorText.length) && currentText[i] === editorText[i]) {
+                        i++;
+                    }
+                    
+                    let deleteLength = currentText.length - i;
+                    let j = 0;
+                    while (j < Math.min(deleteLength, editorText.length - i) && 
+                           currentText[currentText.length - 1 - j] === editorText[editorText.length - 1 - j]) {
+                        j++;
+                    }
+                    deleteLength -= j;
+                    
+                    const insertText = editorText.slice(i, editorText.length - j);
+                    
+                    if (deleteLength > 0) {
+                        text.delete(i, deleteLength);
+                    }
+                    if (insertText.length > 0) {
+                        text.insert(i, insertText);
+                    }
+                }
+            });
+
+            collaborativeDoc = { doc, text, adapter };
+            updateCollaborators();
+        }
+
+        // Test functions
+        function testConnection() {
+            if (adapter && adapter.isConnected) {
+                debugLog('✅ Connection test: Already connected!');
+                updateStatus('connected', 'Connection test passed!');
+            } else {
+                debugLog('❌ Connection test: Not connected');
+                updateStatus('disconnected', 'Connection test failed - not connected');
+            }
+        }
+
+        function clearEditor() {
+            if (collaborativeDoc) {
+                collaborativeDoc.text.delete(0, collaborativeDoc.text.length);
+                debugLog('🗑️ Editor cleared');
+            }
+        }
+
+        function simulateUpdate() {
+            if (collaborativeDoc) {
+                const messages = [
+                    '🤖 This is a simulated remote update!\n',
+                    '✨ Multiple users can edit simultaneously.\n',
+                    '🚀 All changes sync via Pinghub in real-time.\n'
+                ];
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                collaborativeDoc.text.insert(0, message);
+                debugLog('🤖 Simulated remote update');
+            }
+        }
+
+        function toggleDebug() {
+            debugVisible = !debugVisible;
+            const debugEl = document.getElementById('debug');
+            debugEl.style.display = debugVisible ? 'block' : 'none';
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            debugLog('🚀 Initializing YJS-Pinghub test...');
+            initializeCollaboration();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (adapter) {
+                adapter.disconnect();
+            }
+        });
+    </script>
+</body>
+</html>
