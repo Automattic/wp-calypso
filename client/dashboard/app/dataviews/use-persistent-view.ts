@@ -6,6 +6,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setTransientQueryParamsAtPathname } from '../transient-query-params';
 import type { Filter, View } from '@wordpress/dataviews';
 
+export type QueryParams = { page?: string | number; search?: string } | Record< string, string >;
+
 interface UseViewOptions {
 	/**
 	 * Unique slug to identify the view.
@@ -22,7 +24,7 @@ interface UseViewOptions {
 	 * The URL query params in the current page.
 	 * If passed, transient properties (`page` and `search`) are synced to the URL query params.
 	 */
-	queryParams?: any;
+	queryParams?: QueryParams;
 
 	/**
 	 * Fields that should become transient filters when present in the URL query params.
@@ -56,13 +58,13 @@ export function usePersistentView( {
 
 	const baseView = persistedView ?? defaultView;
 
-	const page = parseInt( queryParams?.page ) || baseView.page || 1;
+	const page = parseInt( String( queryParams?.page ) ) || baseView.page || 1;
 	const search = queryParams?.search || baseView.search || '';
 
 	const transientProperties = useMemo( () => ( { page, search } ), [ page, search ] );
 
 	const transientFilterFields = queryParamFilterFields.filter(
-		( field ) => queryParams && queryParams[ field ] !== undefined
+		( field ) => queryParams && queryParams[ field as keyof typeof queryParams ] !== undefined
 	);
 
 	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( [] );
@@ -74,7 +76,10 @@ export function usePersistentView( {
 					( {
 						field,
 						operator: 'isAny',
-						value: [ queryParams[ field ].toString() ],
+						value:
+							queryParams && queryParams[ field as keyof typeof queryParams ]
+								? [ queryParams[ field as keyof typeof queryParams ].toString() ]
+								: [],
 					} ) as Filter
 			)
 		);
@@ -125,7 +130,10 @@ export function usePersistentView( {
 				( field ) =>
 					newView.filters?.some(
 						( filter ) =>
-							filter.field === field && fastDeepEqual( filter.value, [ queryParams[ field ] ] )
+							filter.field === field &&
+							fastDeepEqual( filter.value, [
+								queryParams ? queryParams[ field as keyof typeof queryParams ] : undefined,
+							] )
 					)
 			);
 
@@ -205,20 +213,23 @@ function removeEmptyFiltersFromView( view: View ): View {
 	return view;
 }
 
-function clearQueryParamsFromTransientFilters( queryParams: any, transientFilterFields: string[] ) {
+function clearQueryParamsFromTransientFilters(
+	queryParams: QueryParams,
+	transientFilterFields: string[]
+) {
 	const newQueryParams = { ...queryParams };
 
 	transientFilterFields.forEach( ( field ) => {
-		delete newQueryParams[ field ];
+		delete newQueryParams[ field as keyof typeof queryParams ];
 	} );
 
 	return newQueryParams;
 }
 
 function mergeQueryParamsWithTransientProperties(
-	queryParams: any,
+	queryParams: QueryParams,
 	{ page, search }: { page?: number; search?: string }
-): any {
+): QueryParams {
 	const newQueryParams = { ...queryParams };
 
 	if ( page === 1 ) {
