@@ -8,6 +8,7 @@ import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import AgentDock from '../agent-dock';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
+import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
 export interface UnifiedAIAgentProps {
 	/**
@@ -44,6 +45,24 @@ export interface UnifiedAIAgentProps {
 	 * Load preference callback (optional, uses wpcomRequest if not provided)
 	 */
 	loadPreference?: ( key: string ) => Promise< any >;
+	/**
+	 * Start with agent open (overrides saved state)
+	 */
+	defaultOpen?: boolean;
+	/**
+	 * Custom suggestions for the empty view (optional)
+	 * Allows plugins to provide context-specific suggestions
+	 */
+	emptyViewSuggestions?: Array< { id: string; label: string; prompt: string } >;
+	/**
+	 * Custom markdown components for message rendering (optional)
+	 * Allows plugins to provide custom renderers for markdown elements
+	 */
+	markdownComponents?: MarkdownComponents;
+	/**
+	 * Custom markdown extensions (optional)
+	 */
+	markdownExtensions?: MarkdownExtensions;
 }
 
 /**
@@ -93,6 +112,10 @@ export default function CalypsoAIAgent( {
 	contextProvider,
 	savePreference: externalSavePreference,
 	loadPreference: externalLoadPreference,
+	defaultOpen = false,
+	emptyViewSuggestions: customSuggestions,
+	markdownComponents,
+	markdownExtensions,
 }: UnifiedAIAgentProps ) {
 	// Create agent configuration
 	const agentConfig = useMemo< UseAgentChatConfig >( () => {
@@ -162,8 +185,8 @@ export default function CalypsoAIAgent( {
 		return config;
 	}, [ currentUser, site, currentRoute, toolProvider, contextProvider ] );
 
-	// Empty suggestions for now - can be customized per section
-	const suggestions = useMemo(
+	// Default suggestions - can be overridden via customSuggestions prop
+	const defaultSuggestions = useMemo(
 		() => [
 			{
 				id: 'getting-started',
@@ -183,6 +206,7 @@ export default function CalypsoAIAgent( {
 		],
 		[]
 	);
+	const suggestions = customSuggestions || defaultSuggestions;
 
 	const handleClearChat = useCallback( () => {
 		// Clear chat handler
@@ -235,6 +259,8 @@ export default function CalypsoAIAgent( {
 		<AgentDock
 			agentConfig={ agentConfig }
 			emptyViewSuggestions={ suggestions }
+			markdownComponents={ markdownComponents }
+			markdownExtensions={ markdownExtensions }
 			onClearChat={ handleClearChat }
 			sessionStorageKey="agents-manager-session"
 			preferenceKey="agents_manager_state"

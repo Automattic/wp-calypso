@@ -8,7 +8,14 @@ import {
 	useAgentChat,
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
-import { AgentUI, createMessageRenderer, EmptyView, type ChatState } from '@automattic/agenttic-ui';
+import {
+	AgentUI,
+	createMessageRenderer,
+	EmptyView,
+	type ChatState,
+	type MarkdownComponents,
+	type MarkdownExtensions,
+} from '@automattic/agenttic-ui';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -36,11 +43,11 @@ export interface AgentDockProps {
 	/**
 	 * Custom message renderer components
 	 */
-	markdownComponents?: Record< string, any >;
+	markdownComponents?: MarkdownComponents;
 	/**
 	 * Custom markdown extensions
 	 */
-	markdownExtensions?: any;
+	markdownExtensions?: MarkdownExtensions;
 	/**
 	 * Callback when chat is cleared
 	 */
