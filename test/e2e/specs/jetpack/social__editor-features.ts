@@ -274,10 +274,13 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
 
-				const section = await editorPage.getSettingsSection( 'Social Image Generator' );
+				// Expand the Publicize panel.
+				const section = await editorPage.expandSection( 'Share to Social Media' );
 
-				// Verify whether the Social Image Generator panel exists.
-				expect( await section.isVisible() ).toBe( features.socialImageGenerator );
+				const toggle = section.getByLabel( 'Enable Social Image' );
+
+				// Verify whether the Social Image Generator exists.
+				expect( await toggle.isVisible() ).toBe( features.socialImageGenerator );
 			} );
 		} );
 	}
