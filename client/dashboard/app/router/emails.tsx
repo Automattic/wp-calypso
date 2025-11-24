@@ -27,6 +27,7 @@ export const emailsRoute = createRoute( {
 	path: 'emails',
 	loader: async () => {
 		queryClient.prefetchQuery( userMailboxesQuery() );
+		queryClient.prefetchQuery( domainsQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 	validateSearch: ( search ): { domainName: string | undefined } => {
