@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setTransientQueryParamsAtPathname } from '../transient-query-params';
 import type { Filter, View } from '@wordpress/dataviews';
 
-export type QueryParams = { page?: string | number; search?: string } | Record< string, string >;
+export type QueryParams = Record< string, string | number | undefined >;
 
 interface UseViewOptions {
 	/**
@@ -59,7 +59,7 @@ export function usePersistentView( {
 	const baseView = persistedView ?? defaultView;
 
 	const page = parseInt( String( queryParams?.page ) ) || baseView.page || 1;
-	const search = queryParams?.search || baseView.search || '';
+	const search = String( queryParams?.search || baseView.search || '' );
 
 	const transientProperties = useMemo( () => ( { page, search } ), [ page, search ] );
 
@@ -78,7 +78,7 @@ export function usePersistentView( {
 						operator: 'isAny',
 						value:
 							queryParams && queryParams[ field as keyof typeof queryParams ]
-								? [ queryParams[ field as keyof typeof queryParams ].toString() ]
+								? [ queryParams[ field as keyof typeof queryParams ]?.toString() ]
 								: [],
 					} ) as Filter
 			)
@@ -93,9 +93,9 @@ export function usePersistentView( {
 			return;
 		}
 
-		let transientQueryParams: Record< string, unknown > = {};
-		transientFilters.forEach( ( { field } ) => {
-			transientQueryParams[ field ] = queryParams[ field ];
+		let transientQueryParams: QueryParams = {};
+		transientFilters.forEach( ( { field, value } ) => {
+			transientQueryParams[ field ] = value as string | number | undefined;
 		} );
 		transientQueryParams = mergeQueryParamsWithTransientProperties(
 			transientQueryParams,
@@ -146,12 +146,29 @@ export function usePersistentView( {
 				if ( ! fastDeepEqual( newTransientFilterFields, transientFilterFields ) ) {
 					setTransientFilters( [] );
 					navigate( {
-						search: clearQueryParamsFromTransientFilters( queryParams, transientFilterFields ),
+						// This hook is used across multiple routes with
+						// different search param types. Each route defines its
+						// own validateSearch to ensure runtime type safety,
+						// but TypeScript can't infer the correct union type at
+						// the hook level so we have to use `as any`.
+						search: ( () =>
+							// eslint-disable-next-line @typescript-eslint/no-explicit-any
+							clearQueryParamsFromTransientFilters( queryParams, transientFilterFields ) ) as any,
 						replace: true,
 					} );
 				} else if ( ! fastDeepEqual( newTransientProperties, transientProperties ) ) {
 					navigate( {
-						search: mergeQueryParamsWithTransientProperties( queryParams, newTransientProperties ),
+						// This hook is used across multiple routes with
+						// different search param types. Each route defines its
+						// own validateSearch to ensure runtime type safety,
+						// but TypeScript can't infer the correct union type at
+						// the hook level so we have to use `as any`.
+						search: ( () =>
+							mergeQueryParamsWithTransientProperties(
+								queryParams,
+								newTransientProperties
+								// eslint-disable-next-line @typescript-eslint/no-explicit-any
+							) ) as any,
 					} );
 				}
 			}
