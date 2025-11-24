@@ -21,42 +21,77 @@ declare global {
 	}
 }
 
+export interface PlatformDetectionResult {
+	platform: string;
+	architecture?: 'arm64' | 'x64';
+	detectionMethod: 'client-hints' | 'navigator-platform';
+}
+
 /**
- * Detects Windows architecture using User-Agent Client Hints API
- * Returns 'arm64', 'x64', or null if detection fails
+ * Detects platform and architecture using User-Agent Client Hints API
+ * Returns platform info with architecture if detected, or null if detection fails
  */
-export const getWindowsArchitecture = async (): Promise< 'arm64' | 'x64' | null > => {
-	// Check if User-Agent Client Hints API is available
-	if ( 'userAgentData' in navigator && navigator.userAgentData ) {
-		try {
-			const uaData = await navigator.userAgentData.getHighEntropyValues( [
-				'architecture',
-				'bitness',
-				'platform',
-			] );
+export const detectPlatformAndArchitecture =
+	async (): Promise< PlatformDetectionResult | null > => {
+		// Try User-Agent Client Hints API first (most reliable)
+		if ( 'userAgentData' in navigator && navigator.userAgentData ) {
+			try {
+				const uaData = await navigator.userAgentData.getHighEntropyValues( [
+					'architecture',
+					'bitness',
+					'platform',
+				] );
 
-			// ARM64 detection
-			if ( uaData.architecture === 'arm' || uaData.architecture === 'arm64' ) {
-				return 'arm64';
+				const platform = uaData.platform?.toLowerCase() || '';
+
+				let architecture: 'arm64' | 'x64' | undefined;
+
+				// Detect architecture for all platforms
+				if ( uaData.architecture === 'arm' || uaData.architecture === 'arm64' ) {
+					architecture = 'arm64';
+				} else if ( uaData.architecture === 'x86' && uaData.bitness === '64' ) {
+					architecture = 'x64';
+				} else if ( uaData.architecture === 'x86' ) {
+					architecture = 'x64'; // Assume x64 for x86 architecture
+				}
+
+				return {
+					platform,
+					architecture,
+					detectionMethod: 'client-hints',
+				};
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.warn( 'Failed to get high entropy values:', error );
 			}
-
-			// x64/x86 detection
-			if ( uaData.architecture === 'x86' && uaData.bitness === '64' ) {
-				return 'x64';
-			}
-
-			// Default to x64 for Windows if architecture is detected but doesn't match above
-			if ( uaData.architecture ) {
-				return 'x64';
-			}
-
-			return null;
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Failed to get high entropy values:', error );
-			return null;
 		}
-	}
 
-	return null; // API not available
-};
+		// Fallback to navigator.platform (unreliable, frozen in modern browsers)
+		const platformName = navigator.platform.toLowerCase();
+
+		if ( platformName.includes( 'mac' ) ) {
+			return {
+				platform: 'macos',
+				architecture: undefined, // Cannot reliably detect Mac architecture
+				detectionMethod: 'navigator-platform',
+			};
+		}
+
+		if ( platformName.includes( 'linux' ) ) {
+			return {
+				platform: 'linux',
+				architecture: undefined,
+				detectionMethod: 'navigator-platform',
+			};
+		}
+
+		if ( platformName.includes( 'win' ) ) {
+			return {
+				platform: 'windows',
+				architecture: undefined, // Cannot detect Windows architecture without Client Hints
+				detectionMethod: 'navigator-platform',
+			};
+		}
+
+		return null; // Unable to detect platform
+	};

@@ -3,7 +3,7 @@ import userAgent from 'calypso/lib/user-agent';
 import { AppsCard } from './apps-card';
 import { PlatformType, type DesktopAppConfig } from './apps-config';
 import { DesktopDownloadOptions } from './desktop-download-options';
-import { getWindowsArchitecture } from './platform-detection';
+import { detectPlatformAndArchitecture } from './platform-detection';
 
 type DesktopDownloadCardProps = {
 	appConfig: DesktopAppConfig;
@@ -13,29 +13,61 @@ const getCurrentPlatform = async (): Promise< {
 	platform: PlatformType;
 	detectionFailed: boolean;
 } > => {
-	const platformName = navigator.platform;
+	// Try User-Agent Client Hints API first (works across all platforms)
+	const detection = await detectPlatformAndArchitecture();
 
-	// Non-Windows platforms (existing logic)
-	switch ( platformName ) {
-		case 'MacIntel':
-			return { platform: PlatformType.MacIntel, detectionFailed: false };
-		case 'MacSilicon':
-			return { platform: PlatformType.MacSilicon, detectionFailed: false };
-		case 'Linux i686':
-		case 'Linux i686 on x86_64':
+	if ( detection && detection.detectionMethod === 'client-hints' ) {
+		const { platform, architecture } = detection;
+
+		// macOS
+		if ( platform === 'macos' ) {
+			if ( architecture === 'arm64' ) {
+				return { platform: PlatformType.MacSilicon, detectionFailed: false };
+			} else if ( architecture === 'x64' ) {
+				return { platform: PlatformType.MacIntel, detectionFailed: false };
+			}
+			// Client Hints available but no architecture - fallback to MacIntel
+			return { platform: PlatformType.MacIntel, detectionFailed: true };
+		}
+
+		// Windows
+		if ( platform === 'windows' ) {
+			if ( architecture === 'arm64' ) {
+				return { platform: PlatformType.WindowsARM64, detectionFailed: false };
+			} else if ( architecture === 'x64' ) {
+				return { platform: PlatformType.WindowsX64, detectionFailed: false };
+			}
+			// Client Hints available but no architecture - fallback
+			return { platform: PlatformType.WindowsX64, detectionFailed: true };
+		}
+
+		// Linux
+		if ( platform === 'linux' ) {
 			return { platform: PlatformType.Linux, detectionFailed: false };
+		}
 	}
 
-	// Windows platform - attempt architecture detection
-	const arch = await getWindowsArchitecture();
+	// Fallback to navigator.platform (Client Hints API not available)
+	// Cannot trust architecture detection here
+	if ( detection && detection.detectionMethod === 'navigator-platform' ) {
+		const { platform } = detection;
 
-	if ( arch === 'arm64' ) {
-		return { platform: PlatformType.WindowsARM64, detectionFailed: false };
-	} else if ( arch === 'x64' ) {
-		return { platform: PlatformType.WindowsX64, detectionFailed: false };
+		if ( platform === 'macos' ) {
+			// Cannot detect Mac architecture reliably - show both options
+			return { platform: PlatformType.MacIntel, detectionFailed: true };
+		}
+
+		if ( platform === 'windows' ) {
+			// Cannot detect Windows architecture - show both options
+			return { platform: PlatformType.WindowsX64, detectionFailed: true };
+		}
+
+		if ( platform === 'linux' ) {
+			return { platform: PlatformType.Linux, detectionFailed: false };
+		}
 	}
 
-	// Fallback: unknown Windows architecture
+	// Ultimate fallback - couldn't detect anything
 	return { platform: PlatformType.WindowsX64, detectionFailed: true };
 };
 
