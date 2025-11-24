@@ -47,14 +47,20 @@ export function RestoreProgressNotices( {
 
 	if ( hasActiveRestore && restoreProgress ) {
 		notices.push(
-			<Notice key="restore-progress" variant="info" title={ __( 'Currently restoring your site' ) }>
-				{ sprintf(
-					/* translators: %1$s is a date, like "Monday, 20 October 2025 18:46". %2$d is the progress percentage. */
-					__(
-						'We’re restoring your site back to %1$s. You’ll be notified once it’s complete. (%2$d%% progress)'
+			<Notice
+				key="restore-progress"
+				variant="info"
+				title={ sprintf(
+					/* translators: %d is the restore progress percentage. */ __(
+						'Restoring your site… (%d%% progress)'
 					),
-					restoreDate,
-					restoreProgress.percent ?? 0
+					restoreProgress?.percent ?? 0
+				) }
+			>
+				{ sprintf(
+					/* translators: %s is a date, like "Monday, 20 October 2025 18:46". */
+					__( 'We’re restoring your site back to %s. You’ll be notified once it’s complete.' ),
+					restoreDate
 				) }
 			</Notice>
 		);
