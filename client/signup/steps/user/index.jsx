@@ -53,6 +53,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { isCIAB } from 'calypso/utils';
 import './style.scss';
 
 // Wrapper component to set headers in login context
@@ -438,6 +439,10 @@ export class UserStep extends Component {
 			isStudioApp,
 			isBlazePro,
 		} = this.props;
+
+		if ( isCIAB( 'paypal' ) ) {
+			return translate( 'Create an account for PayPal Stores' );
+		}
 
 		/**
 		 * BEGIN: Unified create account

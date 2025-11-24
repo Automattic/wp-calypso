@@ -20,6 +20,7 @@ import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isCIAB } from 'calypso/utils';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
@@ -113,12 +114,16 @@ const UserStepComponent: StepType = function UserStep( {
 		</>
 	);
 
+	const headingText = isCIAB( 'paypal' )
+		? translate( 'Create an account for PayPal Stores' )
+		: translate( 'Create your account' );
+
 	if ( isStepContainerV2 ) {
 		const heading = (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading text={ translate( 'Create your account' ) } />
+				<Step.Heading text={ headingText } />
 			</>
 		);
 
@@ -159,11 +164,7 @@ const UserStepComponent: StepType = function UserStep( {
 				goBack={ navigation.goBack }
 				stepContent={
 					<>
-						<FormattedHeader
-							align="center"
-							headerText={ translate( 'Create your account' ) }
-							brandFont
-						/>
+						<FormattedHeader align="center" headerText={ headingText } brandFont />
 						{ stepContent }
 					</>
 				}

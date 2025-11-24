@@ -9,6 +9,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { isCIAB } from 'calypso/utils';
 
 interface Props {
 	twoFactorAuthType: string | null;
@@ -125,6 +126,10 @@ export function getHeaderText( {
 					oldCopy: translate( 'Log in to WordPress.com' ),
 			  } ) as TranslateResult )
 			: translate( 'Log in to WordPress.com' );
+	}
+
+	if ( isCIAB( 'paypal' ) ) {
+		headerText = translate( 'Log in to PayPal Stores' );
 	}
 
 	if ( twoFactorAuthType === 'authenticator' || twoFactorAuthType === 'email' ) {

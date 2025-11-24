@@ -12,6 +12,7 @@ import {
 	QrCodeLoginButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
+import { isCIAB } from 'calypso/utils';
 
 import './social.scss';
 
@@ -69,7 +70,7 @@ class SocialLoginForm extends Component {
 		},
 		{
 			service: 'paypal',
-			enabled: config.isEnabled( 'sign-in-with-paypal' ),
+			enabled: () => config.isEnabled( 'sign-in-with-paypal' ) && isCIAB( 'paypal' ),
 			button: (
 				<PayPalSocialButton
 					responseHandler={ this.props.handleLogin }
@@ -102,8 +103,9 @@ class SocialLoginForm extends Component {
 
 	renderSocialButton( { service, enabled, button } ) {
 		const { isSocialFirst, lastUsedAuthenticationMethod } = this.props;
+		const isEnabled = typeof enabled === 'function' ? enabled() : enabled;
 
-		if ( ! enabled ) {
+		if ( ! isEnabled ) {
 			return null;
 		}
 
@@ -122,13 +124,27 @@ class SocialLoginForm extends Component {
 	render() {
 		const { isSocialFirst } = this.props;
 
+		let buttons = this.socialLoginButtons;
+
+		if ( isCIAB( 'paypal' ) ) {
+			buttons = buttons.toSorted( ( a, b ) => {
+				if ( a.service === 'paypal' ) {
+					return -1;
+				}
+				if ( b.service === 'paypal' ) {
+					return 1;
+				}
+				return 0;
+			} );
+		}
+
 		return (
 			<Card
 				className={ clsx( 'auth-form__social', 'is-login', { 'is-social-first': isSocialFirst } ) }
 			>
 				<div className="auth-form__social-buttons">
 					<div className="auth-form__social-buttons-container">
-						{ this.socialLoginButtons.map( this.renderSocialButton.bind( this ) ) }
+						{ buttons.map( this.renderSocialButton.bind( this ) ) }
 					</div>
 				</div>
 			</Card>

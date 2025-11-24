@@ -20,6 +20,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { isCIAB } from 'calypso/utils';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -96,6 +97,82 @@ class SocialSignupForm extends Component {
 			flowName,
 			setCurrentStep,
 		} = this.props;
+
+		let buttons = [
+			{
+				service: 'google',
+				enabled: true,
+				button: (
+					<GoogleSocialButton
+						key="google"
+						responseHandler={ this.handleSignup }
+						onClick={ this.trackSignupAndRememberRedirect }
+					/>
+				),
+			},
+			{
+				service: 'apple',
+				enabled: true,
+				button: (
+					<AppleLoginButton
+						key="apple"
+						responseHandler={ this.handleSignup }
+						onClick={ this.trackSignupAndRememberRedirect }
+						socialServiceResponse={ socialServiceResponse }
+						queryString={ isWpccFlow( flowName ) ? window?.location?.search?.slice( 1 ) : '' }
+					/>
+				),
+			},
+			{
+				service: 'github',
+				enabled: true,
+				button: (
+					<GithubSocialButton
+						key="github"
+						responseHandler={ this.handleSignup }
+						onClick={ this.trackSignupAndRememberRedirect }
+						socialServiceResponse={ socialServiceResponse }
+					/>
+				),
+			},
+			{
+				service: 'paypal',
+				enabled: config.isEnabled( 'sign-in-with-paypal' ) && isCIAB( 'paypal' ),
+				button: (
+					<PayPalSocialButton
+						key="paypal"
+						responseHandler={ this.handleSignup }
+						onClick={ this.trackSignupAndRememberRedirect }
+						socialServiceResponse={ socialServiceResponse }
+					/>
+				),
+			},
+			{
+				service: 'username-or-email',
+				enabled: isSocialFirst,
+				button: () => (
+					<UsernameOrEmailButton
+						key="username-or-email"
+						onClick={ () => setCurrentStep( 'email' ) }
+					/>
+				),
+			},
+		];
+
+		if ( isCIAB( 'paypal' ) ) {
+			buttons = buttons.toSorted( ( a, b ) => {
+				if ( a.service === 'paypal' ) {
+					return -1;
+				}
+				if ( b.service === 'paypal' ) {
+					return 1;
+				}
+				return 0;
+			} );
+		}
+
+		buttons = buttons.filter( ( button ) => button.enabled );
+
 		return (
 			<Card
 				className={ clsx( 'auth-form__social', 'is-signup', {
@@ -108,35 +185,7 @@ class SocialSignupForm extends Component {
 
 				<div className="auth-form__social-buttons">
 					<div className="auth-form__social-buttons-container">
-						<GoogleSocialButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-						/>
-
-						<AppleLoginButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-							socialServiceResponse={ socialServiceResponse }
-							queryString={ isWpccFlow( flowName ) ? window?.location?.search?.slice( 1 ) : '' }
-						/>
-
-						<GithubSocialButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-							socialServiceResponse={ socialServiceResponse }
-						/>
-
-						{ config.isEnabled( 'sign-in-with-paypal' ) && (
-							<PayPalSocialButton
-								responseHandler={ this.handleSignup }
-								onClick={ this.trackSignupAndRememberRedirect }
-								socialServiceResponse={ socialServiceResponse }
-							/>
-						) }
-
-						{ isSocialFirst && (
-							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
-						) }
+						{ buttons.map( ( item ) => item.button ) }
 					</div>
 					{ ! disableTosText && <SocialToS /> }
 				</div>
