@@ -115,10 +115,10 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			}
 		);
 
-		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Social Previews', function () {
+		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Link Preview', function () {
 			it( 'Open social preview', async function () {
-				await editorPage.expandSection( 'Social Previews' );
-				await editorPage.clickSidebarButton( 'Open Social Previews' );
+				await editorPage.expandSection( 'Link Preview' );
+				await editorPage.clickSidebarButton( 'Open Link Preview' );
 			} );
 
 			it( 'Show social preview for Tumblr', async function () {
