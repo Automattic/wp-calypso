@@ -29,20 +29,8 @@ const HelpCenter: React.FC< Container > = ( {
 	hidden,
 	currentRoute = window.location.pathname + window.location.search + window.location.hash,
 } ) => {
-	// Create portal parent and append to DOM immediately (only once)
-	const portalParentRef = useRef< HTMLDivElement >();
-	if ( ! portalParentRef.current ) {
-		const div = document.createElement( 'div' );
-		div.classList.add( 'help-center' );
-		div.setAttribute( 'role', 'dialog' );
-		div.setAttribute( 'aria-modal', 'true' );
-		div.setAttribute( 'aria-labelledby', 'header-text' );
-		document.body.appendChild( div );
-		portalParentRef.current = div;
-	}
-	const portalParent = portalParentRef.current;
-
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+	const portalParentRef = useRef< HTMLDivElement >();
 
 	const isHelpCenterShown = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -63,28 +51,40 @@ const HelpCenter: React.FC< Container > = ( {
 		}
 	}, [ currentUser ] );
 
-	// Cleanup: remove portal parent when component unmounts
+	// Create portal container on mount, cleanup on unmount
 	useEffect( () => {
+		if ( ! shouldUseUnifiedAgent && ! portalParentRef.current ) {
+			const div = document.createElement( 'div' );
+			div.classList.add( 'help-center' );
+			div.setAttribute( 'role', 'dialog' );
+			div.setAttribute( 'aria-modal', 'true' );
+			div.setAttribute( 'aria-labelledby', 'header-text' );
+			document.body.appendChild( div );
+			portalParentRef.current = div;
+		}
+
 		return () => {
-			if ( portalParent && portalParent.parentNode ) {
-				document.body.removeChild( portalParent );
+			if ( portalParentRef.current?.parentNode ) {
+				document.body.removeChild( portalParentRef.current );
 			}
 		};
-	}, [ portalParent ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	// Render unified agent if flag is enabled
 	if ( shouldUseUnifiedAgent ) {
-		return createPortal(
+		return (
 			<UnifiedAIAgent
-				containerSelector=".help-center"
 				currentUser={ currentUser }
 				site={ site }
 				sectionName={ sectionName }
 				handleClose={ handleClose }
-				defaultOpen
-			/>,
-			portalParent
+			/>
 		);
+	}
+
+	if ( ! portalParentRef.current ) {
+		return null;
 	}
 
 	// Default: render traditional help center
@@ -99,7 +99,7 @@ const HelpCenter: React.FC< Container > = ( {
 				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
 			) }
 		</>,
-		portalParent
+		portalParentRef.current
 	);
 };
 
