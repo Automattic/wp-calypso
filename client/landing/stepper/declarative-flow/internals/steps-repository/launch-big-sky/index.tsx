@@ -121,7 +121,7 @@ const LaunchBigSky: Step = function ( props ) {
 				}
 
 				window.location.replace(
-					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }${ promptParam }&source=${ flow }${ specIdParam }`
+					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ flow }${ promptParam }&source=${ flow }${ specIdParam }`
 				);
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
