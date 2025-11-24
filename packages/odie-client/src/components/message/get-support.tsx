@@ -102,9 +102,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					} );
 				} else if ( canConnectToZendesk || contextCanConnectToZendesk ) {
 					buttons.push( {
-						text: ! supportInteraction
-							? __( 'Get support', __i18n_text_domain__ )
-							: __( 'No thanks, let’s keep it here', __i18n_text_domain__ ),
+						text: supportInteraction
+							? __( 'No thanks, let’s keep it here', __i18n_text_domain__ )
+							: __( 'Get support', __i18n_text_domain__ ),
 						action: async () => {
 							onClickAdditionalEvent?.( 'chat' );
 							if ( isChatLoaded ) {

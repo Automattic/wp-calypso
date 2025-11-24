@@ -38,13 +38,13 @@ export const getOdieForwardToForumsMessage = (): string =>
 	);
 
 export const getOdieForwardToZendeskMessage = ( userHasRecentOpenConversation: boolean ): string =>
-	! userHasRecentOpenConversation
+	userHasRecentOpenConversation
 		? __(
-				'Would you like to continue your conversation with a support agent?',
+				'We noticed you have an ongoing conversation. Would you like to continue it?',
 				__i18n_text_domain__
 		  )
 		: __(
-				'We noticed you have an ongoing conversation. Would you like to continue it?',
+				'Would you like to continue your conversation with a support agent?',
 				__i18n_text_domain__
 		  );
 
