@@ -6,7 +6,6 @@ $chat-header-height: 38px;
 $main-border-radius: 8px;
 $transition-duration: 0.2s;
 $transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
-$admin-bar-height: 32px;
 
 @mixin sidebar-base( $main-container-selector ) {
 	background-color: $gray-900 !important;
@@ -28,14 +27,14 @@ $admin-bar-height: 32px;
 		overflow: hidden;
 	}
 
-	.agents-manager-sidebar {
+	.agents-manager-chat--docked {
 		visibility: visible;
 		// Prevent the embedded chat from overlapping the main container during transition
 		animation: agents-manager-delay-visibility $transition-duration;
-		z-index: 999999;
+		z-index: unset;
 	}
 
-	.agents-manager-sidebar__fab {
+	.agents-manager-sidebar-fab {
 		display: none;
 	}
 }
@@ -66,13 +65,14 @@ $admin-bar-height: 32px;
 	}
 }
 
+// TODO: Refactor it...
 /* WP Admin */
 $admin-menu-width: 272px;
 $admin-content-top: calc( $admin-bar-height + $layout-spacing );
 $admin-content-height: calc( 100vh - $admin-bar-height - ( $layout-spacing * 2 ) );
 $border-color: #545454;
 
-body.wp-admin:has( .agents-manager-sidebar-container--sidebar-open ) {
+body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 	background-color: $gray-900;
 
 	#wpadminbar {
@@ -131,19 +131,17 @@ body.wp-admin:has( .agents-manager-sidebar-container--sidebar-open ) {
 }
 
 /* Calypso */
-body:has( #wpcom.agents-manager-sidebar-container--sidebar-open ) {
+body.agents-manager-sidebar-container {
 	background-color: $gray-900;
-}
 
-#wpcom.agents-manager-sidebar-container {
-	@include sidebar-base( '#content' );
+	@include sidebar-base( '#wpcom #content' );
 
 	#content {
 		background-color: #fcfcfc !important;
 	}
 
 	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base( '#content' );
+		@include sidebar-open-base( '#wpcom #content' );
 
 		#header {
 			top: $layout-spacing;
@@ -174,7 +172,8 @@ body:has( #wpcom.agents-manager-sidebar-container--sidebar-open ) {
 	}
 }
 
-/* Next Admin editor (CIAB) */
+// TODO: Fix it...
+/* Next Admin editor */
 .next-admin.agents-manager-sidebar-container {
 	@include sidebar-base( '.next-admin-layout__canvas.is-full-canvas' );
 
@@ -186,6 +185,7 @@ body:has( #wpcom.agents-manager-sidebar-container--sidebar-open ) {
 	}
 }
 
+// TODO: Fix it...
 /* Site editor */
 #site-editor .agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-site-layout__canvas' );
@@ -203,7 +203,8 @@ body:has( #wpcom.agents-manager-sidebar-container--sidebar-open ) {
 	}
 }
 
-/* Page/Post editor (Block editor) */
+// TODO: Fix it...
+/* Page editor */
 .block-editor .agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-post-layout' );
 
@@ -219,26 +220,7 @@ body:has( #wpcom.agents-manager-sidebar-container--sidebar-open ) {
 	}
 }
 
-/* Calypso context (help-center) */
-.help-center.agents-manager-sidebar-container {
-	@include sidebar-base( '.help-center__container' );
-
-	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base( '.help-center__container' );
-	}
-}
-
-/* Generic fallback */
-body.agents-manager-sidebar-container {
-	// Don't set background color on body - causes issues in Calypso
-	// Individual contexts (WP Admin, etc.) should handle their own backgrounds
-
-	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base( 'main' );
-	}
-}
-
-.agents-manager-sidebar {
+.agents-manager-chat--docked {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
@@ -277,7 +259,7 @@ body.agents-manager-sidebar-container {
 		}
 	}
 
-	.agents-manager-sidebar__fab {
+	.agents-manager-sidebar-fab {
 		visibility: visible;
 		position: fixed;
 		bottom: 16px;
@@ -290,24 +272,16 @@ body.agents-manager-sidebar-container {
 		box-shadow:
 			0 0 0 1px rgba( 0, 0, 0, 0.075 ),
 			0 2px 24px rgba( 0, 0, 0, 0.075 );
-		padding: 0;
-		min-width: 56px;
-		z-index: 999999;
 
 		svg {
-			width: 48px;
-			height: 48px;
+			width: 32px;
+			height: 32px;
 		}
 	}
 }
 
-/* Styles for the embedded and floating chat (agenttic-ui integration) */
+/* Styles for both docked and undocked chat */
 .agenttic {
-	// Override the inline z-index from agenttic-ui for floating chat
-	&.agents-manager-dock.Chat-module_floating {
-		z-index: 999999 !important;
-	}
-
 	.Messages-module_container {
 		padding-bottom: 24px;
 
@@ -326,8 +300,8 @@ body.agents-manager-sidebar-container {
 	}
 }
 
-/* Styles for the embedded chat */
-.agents-manager-sidebar .agenttic {
+/* Styles for the docked chat */
+.agents-manager-chat--docked .agenttic {
 	.ConversationView-module_container {
 		position: relative;
 	}
@@ -359,9 +333,64 @@ body.agents-manager-sidebar-container {
 		a {
 			color: $white;
 		}
+
+		.big-sky__dock__menu__variation-picker {
+			min-height: unset;
+
+			.edit-site-global-styles-variations_item {
+				&.is-active,
+				&:focus-visible {
+					.edit-site-global-styles-variations_item-preview {
+						outline: 1px solid $gray-400;
+						outline-offset: 1px;
+						outline-color: #ccc;
+						outline-width: -wp-admin-border-width-focus;
+					}
+				}
+
+				&:not( .is-active ):hover {
+					.edit-site-global-styles-variations_item-preview {
+						outline-color: $gray-600;
+					}
+				}
+
+				.edit-site-global-styles-variations_item-preview {
+					outline-color: #545454;
+					overflow: hidden;
+				}
+			}
+		}
+
+		.big-sky__item-picker__arrows,
+		.big-sky__completed-plan {
+			.components-button {
+				color: $gray-700;
+
+				&:not( :disabled ):hover {
+					color: $gray-100;
+				}
+
+				&:disabled {
+					opacity: 0.5;
+				}
+
+				&.is-pressed {
+					color: $gray-100;
+					background-color: #484848;
+				}
+			}
+		}
+
+		.big-sky__item-picker__arrows {
+			bottom: -42px;
+		}
+
+		.big-sky__item-picker__pager {
+			color: $gray-400;
+		}
 	}
 
-	// Prevent item picker content overflow
+	// Prevent item picker content overflow (e.g., Patterns)
 	.Message-module_content {
 		width: 100%;
 
@@ -494,4 +523,26 @@ body.agents-manager-sidebar-container {
 		background-color: $gray-700;
 		color: $gray-400;
 	}
+
+	.agents-manager-selected-block {
+		color: $white;
+		border: 1px solid rgba( $white, 0.1 );
+		margin-top: 8px;
+
+		&__divider {
+			border-left: 1px solid rgba( $white, 0.1 );
+		}
+
+		&__remove {
+			&.components-button {
+				color: $white;
+			}
+		}
+	}
+}
+
+/* Styles for the undocked chat */
+.agents-manager-chat--undocked .agenttic {
+	// Fix the undocked chat overlapping with the nav menu
+	z-index: 999999;
 }
