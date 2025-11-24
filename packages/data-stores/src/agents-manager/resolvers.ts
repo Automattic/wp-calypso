@@ -8,6 +8,7 @@ import {
 	setIsOpen,
 	setSessionId,
 	setIsLoading,
+	setHasLoaded,
 } from './actions';
 import type { APIFetchOptions } from '../shared-types';
 
@@ -59,5 +60,6 @@ export function* getAgentsManagerState() {
 		// Ignore errors
 	} finally {
 		yield setIsLoading( false );
+		yield setHasLoaded( true );
 	}
 }

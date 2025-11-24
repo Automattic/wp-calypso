@@ -114,9 +114,17 @@ export function setIsLoading( isLoading: boolean ) {
 	} as const;
 }
 
+export function setHasLoaded( hasLoaded: boolean ) {
+	return {
+		type: 'AGENTS_MANAGER_SET_HAS_LOADED',
+		hasLoaded,
+	} as const;
+}
+
 export type AgentsManagerAction =
 	| ReturnType< typeof setAgentsManagerRouterHistory >
 	| ReturnType< typeof setIsLoading >
+	| ReturnType< typeof setHasLoaded >
 	| GeneratorReturnType< typeof setIsOpen >
 	| GeneratorReturnType< typeof setIsDocked >
 	| GeneratorReturnType< typeof setSessionId >;
