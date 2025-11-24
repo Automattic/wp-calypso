@@ -317,6 +317,7 @@ export default function CancelPurchase() {
 		let steps = [ FEEDBACK_STEP ];
 		const isJetpack = purchase.is_jetpack_plan_or_product;
 		const skipRemovePlanSurvey = purchase.is_plan && userHasCompletedCancelSurveyForPurchase;
+		const isDowngradePlan = [ 'downgrade-monthly', 'downgrade-personal' ].includes( state.upsell );
 
 		if (
 			isPartnerPurchase( purchase ) &&
@@ -333,7 +334,7 @@ export default function CancelPurchase() {
 			! purchase.is_plan
 		) {
 			steps = [ NEXT_ADVENTURE_STEP ];
-		} else if ( state.upsell && downgradePlan ) {
+		} else if ( state.upsell && ( ! isDowngradePlan || ( isDowngradePlan && downgradePlan ) ) ) {
 			steps = [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 		} else if ( questionTwoOrder?.length ) {
 			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
