@@ -66,6 +66,7 @@ function Layout( {
 					},
 					server: true,
 					security: true,
+					experimental: true,
 				},
 			},
 		},

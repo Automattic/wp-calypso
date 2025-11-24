@@ -20,6 +20,7 @@ export type SiteSettingsSupports = {
 	general: SiteSettingsGeneralSupports;
 	server: boolean;
 	security: boolean;
+	experimental: boolean;
 };
 
 export type SiteFeatureSupports = {

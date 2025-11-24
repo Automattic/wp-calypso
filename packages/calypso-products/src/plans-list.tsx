@@ -1637,8 +1637,15 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Unlock next-level WordPress with custom plugins and themes.' ),
+	getPlanTagline: () => {
+		if (
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation( 'Unlock next-level WordPress with all custom plugins and themes.' )
+		) {
+			return i18n.translate( 'Unlock next-level WordPress with all custom plugins and themes.' );
+		}
+		return i18n.translate( 'Unlock next-level WordPress with custom plugins and themes.' );
+	},
 	getBlogOnboardingTagLine: () =>
 		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
 	getDescription: () =>
