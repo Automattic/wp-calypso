@@ -6,6 +6,7 @@ export * from './sidebar-component';
 export * from './help-center';
 export * from './preview-component';
 export * from './notifications-component';
+export * from './partner-directory-component';
 export * from './site-select-component';
 export * from './cookie-banner-component';
 export * from './editor-settings-sidebar-component';
