@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/colors';
 
+$admin-bar-height: 32px;
 $layout-spacing: 16px;
 $sidebar-width: 350px;
 $chat-header-height: 38px;
@@ -65,7 +66,7 @@ $transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
 	}
 }
 
-// TODO: Refactor it...
+// TODO: AI-679 will fix it...
 /* WP Admin */
 $admin-menu-width: 272px;
 $admin-content-top: calc( $admin-bar-height + $layout-spacing );
@@ -128,13 +129,22 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 	#wpfooter {
 		margin-right: $sidebar-width !important;
 	}
+
+	.agents-manager-chat--docked {
+		visibility: visible;
+		// Prevent the embedded chat from overlapping the main container during transition
+		animation: agents-manager-delay-visibility $transition-duration;
+		z-index: unset;
+	}
+
+	.agents-manager-sidebar-fab {
+		display: none;
+	}
 }
 
+// TODO: This solution will impact other pages, we need to find a better way in AI-679...
 /* Calypso */
-body.agents-manager-sidebar-container {
-	// TODO: Check if we need this...
-	background-color: $gray-900;
-
+body:not( .wp-admin ).agents-manager-sidebar-container {
 	@include sidebar-base( '#wpcom #content' );
 
 	#content {
@@ -147,62 +157,33 @@ body.agents-manager-sidebar-container {
 		#header {
 			top: $layout-spacing;
 			left: $layout-spacing;
-			right: calc( $sidebar-width + $layout-spacing );
-			width: auto !important;
-			border-radius: $main-border-radius $main-border-radius 0 0;
-			border: 1px solid $border-color;
-			border-bottom: none;
-			will-change: right, width, left;
-			transition:
-				right $transition-timing,
-				width $transition-timing,
-				left $transition-timing,
-				border $transition-timing;
+			right: $sidebar-width;
+			width: auto;
+			overflow: hidden;
+			border-top-left-radius: $main-border-radius;
+			border-top-right-radius: $main-border-radius;
 		}
 
-		// Adjust the sidebar (fixed positioned)
+		#content {
+			top: $layout-spacing;
+			left: $layout-spacing;
+			height: calc( 100vh - ( $layout-spacing * 2 ) );
+			min-height: unset;
+			margin: 0 !important;
+		}
+
 		#secondary {
-			position: fixed !important;
-			top: calc( var(--masterbar-height) + $layout-spacing );
+			top: calc( $layout-spacing + $admin-bar-height );
 			left: $layout-spacing;
 			bottom: $layout-spacing;
-			border-left: 1px solid $border-color;
-			border-right: 1px solid $border-color;
-			border-bottom: 1px solid $border-color;
-			border-radius: 0 0 0 $main-border-radius;
-			will-change: border;
-			transition: border $transition-timing;
-		}
-
-		// Adjust the content area
-		#content {
-			position: fixed !important;
-			top: calc( var(--masterbar-height) + $layout-spacing );
-			left: calc( var(--sidebar-width-max) + $layout-spacing );
-			right: calc( $sidebar-width + $layout-spacing );
-			bottom: $layout-spacing;
-			height: calc( 100vh - var(--masterbar-height) - ( $layout-spacing * 2 ) );
-			margin: 0 !important;
-			box-sizing: border-box;
-			overflow-y: auto;
-			overflow-x: hidden;
-			will-change: left, right;
-			transition:
-				left $transition-timing,
-				right $transition-timing,
-				border $transition-timing;
-
-			// Use box-shadow for the border to ensure it's always visible
-			box-shadow:
-				0 0 0 1px $border-color,
-				inset 0 0 0 1px #fcfcfc;
-			border-radius: 0 0 $main-border-radius 0;
-			background-color: #fcfcfc !important;
+			overflow: hidden;
+			border-top-left-radius: $main-border-radius;
+			border-bottom-left-radius: $main-border-radius;
 		}
 	}
 }
 
-// TODO: Fix it...
+// TODO: AI-679 will fix it...
 /* Next Admin editor */
 .next-admin.agents-manager-sidebar-container {
 	@include sidebar-base( '.next-admin-layout__canvas.is-full-canvas' );
@@ -215,7 +196,7 @@ body.agents-manager-sidebar-container {
 	}
 }
 
-// TODO: Fix it...
+// TODO: AI-679 will fix it...
 /* Site editor */
 #site-editor .agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-site-layout__canvas' );
@@ -233,7 +214,7 @@ body.agents-manager-sidebar-container {
 	}
 }
 
-// TODO: Fix it...
+// TODO: AI-679 will fix it...
 /* Page editor */
 .block-editor .agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-post-layout' );
@@ -574,5 +555,5 @@ body.agents-manager-sidebar-container {
 /* Styles for the undocked chat */
 .agents-manager-chat--undocked .agenttic {
 	// Fix the undocked chat overlapping with the nav menu
-	z-index: 999999;
+	z-index: 9999;
 }

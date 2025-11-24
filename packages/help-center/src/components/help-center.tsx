@@ -51,7 +51,7 @@ const HelpCenter: React.FC< Container > = ( {
 		}
 	}, [ currentUser ] );
 
-	// Create portal parent and cleanup: remove portal parent when component unmounts
+	// Create portal container on mount, cleanup on unmount
 	useEffect( () => {
 		if ( ! shouldUseUnifiedAgent && ! portalParentRef.current ) {
 			const div = document.createElement( 'div' );
@@ -68,7 +68,8 @@ const HelpCenter: React.FC< Container > = ( {
 				document.body.removeChild( portalParentRef.current );
 			}
 		};
-	}, [ shouldUseUnifiedAgent ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	// Render unified agent if flag is enabled
 	if ( shouldUseUnifiedAgent ) {

@@ -27,7 +27,7 @@ function App() {
 			<AgentUI.ConversationView>
 				<ChatHeader
 					isChatDocked={ isDocked }
-					onClose={ isDocked ? closeSidebar : closeFloatingChat }
+					onClose={ isDocked ? closeSidebar : () => {} /* Handle close */ }
 					options={ [
 						isDocked && undockMenuItem,
 						! isDocked && isDesktop && dockMenuItem,
@@ -54,7 +54,11 @@ The hook manages the sidebar DOM structure and CSS classes. Customize the styles
 ```html
 <div class="agents-manager-sidebar-container agents-manager-sidebar-container--sidebar-open">
 	<div><!-- Main section (e.g., the editor) --></div>
-	<div class="agents-manager-chat agents-manager-chat--docked"><!-- Chat portal rendered here --></div>
+	<div class="agents-manager-chat agents-manager-chat--docked">
+		<!-- Chat portal rendered here -->
+		<!-- Your Chat Component -->
+		<button class="agents-manager-sidebar-fab">Open Chat</button>
+	</div>
 </div>
 ```
 
@@ -65,7 +69,6 @@ The hook automatically manages these CSS classes based on the chat state.
 ```scss
 .agents-manager-sidebar-container {
 	// Base container styles - layout with sidebar space
-	display: flex;
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		// Styles when sidebar is open (e.g., visible sidebar panel)
@@ -80,6 +83,10 @@ The hook automatically manages these CSS classes based on the chat state.
 	&.agents-manager-chat--undocked {
 		// Styles for undocked (floating) mode
 	}
+}
+
+.agents-manager-sidebar-fab {
+	// Styles for the "Open Chat" floating action button (visible when docked but sidebar is closed)
 }
 ```
 
@@ -105,21 +112,21 @@ Configuration options for the hook:
 
 - **`onCloseSidebar`** (`function`, default: `() => {}`) - Callback fired when the sidebar is closed.
 
-- **`onDock`** (`function`, default: `() => {}`) - Callback fired when the sidebar element is added to the DOM.
+- **`onDock`** (`function`, default: `() => {}`) - Callback fired when the chat switches to docked (sidebar) mode.
 
-- **`onUndock`** (`function`, default: `() => {}`) - Callback fired when the sidebar element is removed from the DOM.
+- **`onUndock`** (`function`, default: `() => {}`) - Callback fired when the chat switches to floating (undocked) mode.
 
 ### Return Value
 
 The hook returns an object with the following properties:
 
-- **`isDocked`** (`boolean`) - `true` when the sidebar is actually added to the DOM. This means the viewport is desktop-sized, docked mode is enabled, and the sidebar element exists.
+- **`isDocked`** (`boolean`) - `true` when the chat is in docked (sidebar) mode. This means the viewport is desktop-sized and docked mode is enabled.
 
 - **`isDesktop`** (`boolean`) - `true` when the viewport matches the desktop media query.
 
-- **`dock`** (`() => void`) - Switches to sidebar mode. When on desktop, this adds the sidebar to the DOM and automatically opens it.
+- **`dock`** (`() => void`) - Switches to sidebar mode. When on desktop, this enables the docked layout and automatically opens the sidebar.
 
-- **`undock`** (`() => void`) - Switches to floating mode, which removes the sidebar from the DOM.
+- **`undock`** (`() => void`) - Switches to floating mode. This disables the docked layout.
 
 - **`openSidebar`** (`() => void`) - Opens the sidebar.
 
