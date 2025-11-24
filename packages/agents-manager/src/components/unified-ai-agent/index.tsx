@@ -4,20 +4,16 @@
  */
 
 import { useCallback, useMemo } from 'react';
-import { CalypsoContextAdapter } from '../../adapters/context/calypso-context-adapter';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import AgentDock from '../agent-dock';
-import type { UseAgentChatConfig } from '@automattic/agenttic-client';
+import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
+import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
 export interface UnifiedAIAgentProps {
 	/**
 	 * Current route/path
 	 */
 	currentRoute?: string;
-	/**
-	 * Section name (e.g., 'reader', 'posts', 'pages')
-	 */
-	sectionName?: string;
 	/**
 	 * Selected site object
 	 */
@@ -31,6 +27,16 @@ export interface UnifiedAIAgentProps {
 	 */
 	handleClose?: () => void;
 	/**
+	 * Tool provider for abilities (optional)
+	 * Allows plugins to provide custom abilities to the agent
+	 */
+	toolProvider?: ToolProvider;
+	/**
+	 * Context provider for environment-specific context (optional)
+	 * Allows plugins to provide rich context about current state
+	 */
+	contextProvider?: ContextProvider;
+	/**
 	 * Save preference callback (optional, uses wpcomRequest if not provided)
 	 */
 	savePreference?: ( key: string, value: any ) => Promise< void >;
@@ -41,6 +47,39 @@ export interface UnifiedAIAgentProps {
 }
 
 /**
+ * Resolve context entries by calling getData() closures
+ *
+ * Takes context entries with optional getData() closures and resolves them
+ * by calling getData() to populate the data field. The getData function is
+ * removed from the resolved entries.
+ *
+ * This allows us to fetch live data as needed.
+ */
+function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
+	return entries.map( ( entry ) => {
+		if ( entry.getData ) {
+			try {
+				const data = entry.getData();
+				// Remove getData and add resolved data
+				const { getData: _, ...resolvedEntry } = entry;
+				return {
+					...resolvedEntry,
+					data,
+				};
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.warn( `[UnifiedAIAgent] Failed to resolve context entry "${ entry.id }":`, error );
+				// Return entry without data if resolution fails
+				const { getData: _, ...entryWithoutGetData } = entry;
+				return entryWithoutGetData;
+			}
+		}
+		// Entry already has data or doesn't need resolution
+		return entry;
+	} );
+}
+
+/**
  * CalypsoAIAgent Component
  *
  * Main entry point for AI agent in Calypso.
@@ -48,34 +87,80 @@ export interface UnifiedAIAgentProps {
  */
 export default function CalypsoAIAgent( {
 	currentRoute,
-	sectionName,
 	site,
 	currentUser,
+	toolProvider,
+	contextProvider,
 	savePreference: externalSavePreference,
 	loadPreference: externalLoadPreference,
 }: UnifiedAIAgentProps ) {
-	// Create context adapter for Calypso
-	// TODO: Pass this to AgentDock once context integration is needed
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const _contextAdapter = useMemo( () => {
-		return new CalypsoContextAdapter( sectionName || 'unknown', async () => ( {
-			site,
-			currentRoute,
-		} ) );
-	}, [ sectionName, site, currentRoute ] );
-
 	// Create agent configuration
-	const agentConfig = useMemo< UseAgentChatConfig >(
-		() => ( {
+	const agentConfig = useMemo< UseAgentChatConfig >( () => {
+		const config: UseAgentChatConfig = {
 			agentId: 'wp-orchestrator',
 			agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
 			sessionId: `calypso-${ currentUser?.ID || 'anonymous' }-${ Date.now() }`,
 			authProvider: createCalypsoAuthProvider( site?.ID ),
 			enableStreaming: true,
-			// TODO: Add context provider and abilities
-		} ),
-		[ currentUser, site?.ID ]
-	);
+		};
+
+		// Add tool provider if provided by plugin
+		if ( toolProvider ) {
+			// Wrap toolProvider to filter out null annotation values
+			// WordPress Abilities API uses null, but agenttic-client expects undefined
+			config.toolProvider = {
+				...toolProvider,
+				getAbilities: async (): Promise< AgenticAbility[] > => {
+					const abilities = await toolProvider.getAbilities();
+					return abilities.map( ( ability ) => ( {
+						...ability,
+						meta: ability.meta?.annotations
+							? {
+									...ability.meta,
+									annotations: Object.fromEntries(
+										Object.entries( ability.meta.annotations ).filter(
+											( [ , value ] ) => value !== null
+										)
+									),
+							  }
+							: ability.meta,
+					} ) ) as AgenticAbility[];
+				},
+			};
+		}
+
+		// Add context provider - use plugin's or create default Calypso context
+		if ( contextProvider ) {
+			// Wrap plugin's context provider to resolve contextEntries
+			config.contextProvider = {
+				getClientContext: () => {
+					const pluginContext = contextProvider.getClientContext();
+
+					// Resolve contextEntries if present
+					if ( pluginContext.contextEntries && pluginContext.contextEntries.length > 0 ) {
+						return {
+							...pluginContext,
+							contextEntries: resolveContextEntries( pluginContext.contextEntries ),
+						};
+					}
+
+					return pluginContext;
+				},
+			};
+		} else {
+			// Create default Calypso context
+			config.contextProvider = {
+				getClientContext: () => ( {
+					url: window.location.href,
+					pathname: currentRoute || window.location.pathname,
+					search: window.location.search,
+					environment: 'calypso',
+				} ),
+			};
+		}
+
+		return config;
+	}, [ currentUser, site, currentRoute, toolProvider, contextProvider ] );
 
 	// Empty suggestions for now - can be customized per section
 	const suggestions = useMemo(

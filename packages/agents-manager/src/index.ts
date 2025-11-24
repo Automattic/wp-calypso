@@ -1,2 +1,13 @@
+// Main component exports
 export { default } from './components/unified-ai-agent';
 export type { UnifiedAIAgentProps } from './components/unified-ai-agent';
+
+// Extension API types for other plugins to hook into
+export type {
+	ToolProvider,
+	ContextProvider,
+	ClientContextType,
+	BaseContextEntry,
+	ContextEntry,
+	Ability,
+} from './types';
