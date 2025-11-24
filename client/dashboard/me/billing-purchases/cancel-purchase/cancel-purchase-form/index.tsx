@@ -165,6 +165,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 			return (
 				<UpsellStep
 					cancelBundledDomain={ props.cancelBundledDomain }
+					cancellationInProgress={ props.cancellationInProgress }
 					cancellationReason={ questionOneText }
 					closeDialog={ closeDialog }
 					currencyCode={ purchase.currency_code }

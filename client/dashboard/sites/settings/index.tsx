@@ -1,4 +1,5 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -8,6 +9,7 @@ import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import AgencySettingsSummary from '../settings-agency/summary';
+import AISiteAssistantSettingsSummary from '../settings-ai-assistant/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
@@ -87,6 +89,14 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 						<WebApplicationFirewallSettingsSummary site={ site } />
 						<WpcomLoginSettingsSummary site={ site } />
 						<DefensiveModeSettingsSummary site={ site } />
+					</SummaryButtonList>
+				</VStack>
+			) }
+			{ config.isEnabled( 'wordpress-ai-assistant' ) && (
+				<VStack spacing={ 3 }>
+					<SectionHeader title={ __( 'Experimental (Staging)' ) } level={ 3 } />
+					<SummaryButtonList>
+						<AISiteAssistantSettingsSummary site={ site } />
 					</SummaryButtonList>
 				</VStack>
 			) }

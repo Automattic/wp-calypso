@@ -35,6 +35,7 @@ boot( {
 				},
 				server: true,
 				security: true,
+				experimental: true,
 			},
 		},
 		domains: true,

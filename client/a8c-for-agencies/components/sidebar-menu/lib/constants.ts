@@ -63,6 +63,7 @@ export const A4A_CLIENT_PAYMENT_METHODS_LINK = '/client/payment-methods';
 export const A4A_CLIENT_INVOICES_LINK = '/client/invoices';
 export const A4A_CLIENT_PAYMENT_METHODS_ADD_LINK = `${ A4A_CLIENT_PAYMENT_METHODS_LINK }/add`;
 export const A4A_CLIENT_CHECKOUT = '/client/checkout';
+export const A4A_CLIENT_EXPRESS_CHECKOUT = '/client/express-checkout';
 export const EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE =
 	'https://agencieshelp.automattic.com/knowledge-base/client-billing/';
 
