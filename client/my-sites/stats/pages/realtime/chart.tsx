@@ -61,7 +61,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 		}, UPDATE_INTERVAL_IN_SECONDS * 1000 );
 
 		return () => clearInterval( intervalId );
-	}, [ siteId, momentInSite, initialViewsCount ] );
+	}, [ siteId, initialViewsCount ] );
 
 	const { chartData, maxViews } = useMemo( () => {
 		const allDatetimeKeys = [];

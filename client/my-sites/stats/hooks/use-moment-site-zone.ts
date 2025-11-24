@@ -34,14 +34,7 @@ export const getMomentSiteZone = createSelector(
 						localeSlug
 					);
 				}
-				// If dateInput is provided, we assume it's already in the correct timezone or we just want to apply the locale.
-				// However, if we want to simulate the site's timezone with a fake offset, we might need more complex logic.
-				// But for now, let's stick to the previous behavior of useMomentInSite for defined inputs:
-				// return moment( dateInput ).locale( momentSiteZone.locale() );
-				// Wait, the previous logic for defined input in useMomentInSite was:
-				// return moment( dateInput ).locale( momentSiteZone.locale() );
-				// And momentSiteZone was the fake moment object.
-				// So here we should just return moment(dateInput).locale(localeSlug).
+
 				return moment( dateInput ).locale( localeSlug );
 			}
 
