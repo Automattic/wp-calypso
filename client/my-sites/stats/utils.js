@@ -107,15 +107,15 @@ export const parseLocalDate = ( dateString ) => {
  * @param {string} fromPeriod The period of the chart where the action comes from.
  * @returns {ChartRangeParams} The chart range parameters for navigating the chart.
  */
-export const getChartRangeParams = ( startDate, fromPeriod ) => {
+export const getChartRangeParams = ( startDate, fromPeriod, momentInSite = moment ) => {
 	const chartStart = startDate;
-	let chartEnd = moment( chartStart )
+	let chartEnd = momentInSite( chartStart )
 		.endOf( fromPeriod === 'week' ? 'isoWeek' : fromPeriod )
 		.format( DATE_FORMAT );
 
 	// Do not go beyond the current date.
-	if ( moment().isBefore( chartEnd ) ) {
-		chartEnd = moment().format( DATE_FORMAT );
+	if ( momentInSite().isBefore( chartEnd ) ) {
+		chartEnd = momentInSite().format( DATE_FORMAT );
 	}
 
 	let chartPeriod = 'day';

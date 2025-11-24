@@ -11,8 +11,8 @@ import { translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { DATE_FORMAT } from '../../constants';
+import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 import StatsEmptyState from '../../stats-empty-state';
 
 import './styles.scss';
@@ -49,7 +49,7 @@ function StatsLineChart( {
 	curveType?: 'smooth' | 'linear' | 'monotone';
 	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
-	const moment = useLocalizedMoment();
+	const moment = useMomentInSite();
 
 	const formatTime = formatTimeTick
 		? formatTimeTick

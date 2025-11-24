@@ -62,7 +62,7 @@ function StatsRealtime( { context } ) {
 	const query = useMemo(
 		() => ( {
 			period: 'day',
-			date: momentSiteZone.format( 'YYYY-MM-DD' ),
+			date: momentSiteZone().format( 'YYYY-MM-DD' ),
 			max: 10,
 			summarize: 1,
 		} ),
