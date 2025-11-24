@@ -2,14 +2,24 @@ import { siteRewindStateQuery, siteBackupRestoreProgressQuery } from '@automatti
 import { useQuery } from '@tanstack/react-query';
 
 /**
- * Hook to track rewind state including restore and download progress.
+ * Hook to track rewind state including restore progress.
  * Handles polling automatically when operations are active.
  * @param siteId - The site ID to track
- * @returns Object containing detection flags and full restore/download data
+ * @returns Object containing detection flags and full restore data
  */
 export function useRewindState( siteId: number ) {
-	// Detection: Check if restore/download exists (fetch once to get restoreId)
-	const { data: rewindState } = useQuery( siteRewindStateQuery( siteId ) );
+	// Detection: Check if restore exists and poll when active
+	const { data: rewindState } = useQuery( {
+		...siteRewindStateQuery( siteId ),
+		refetchInterval: ( query ) => {
+			const data = query.state.data;
+			const hasActiveOperation =
+				data?.rewind?.status === 'queued' || data?.rewind?.status === 'running';
+
+			// Poll every 3s if there's an active operation
+			return hasActiveOperation ? 3000 : false;
+		},
+	} );
 
 	const restoreId = rewindState?.rewind?.restore_id;
 
