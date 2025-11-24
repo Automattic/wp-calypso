@@ -30,7 +30,7 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 	useEffect( () => {
 		const enhancedRecordPageView = withEnhancers( recordPageView, [ enhanceWithSiteType ] );
 		dispatch( enhancedRecordPageView( '/log-in/jetpack/link', 'Login > Link > Emailed' ) );
-	}, [] );
+	}, [ dispatch ] );
 
 	useEffect( () => {
 		setHeaders( {
