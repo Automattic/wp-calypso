@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { detectPlatformAndArchitecture } from './platform-detection';
+import { detectPlatformAndArchitecture } from '../platform-detection';
 
 describe( 'detectPlatformAndArchitecture', () => {
 	const originalNavigator = global.navigator;
