@@ -121,6 +121,15 @@ main.get-apps {
 	.get-apps__desktop-button {
 		margin-right: 8px;
 
+		.components-button {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			white-space: nowrap;
+			height: auto;
+			padding: 8px 14px;
+		}
+
 		.split-button__main {
 			display: inline-flex;
 			align-items: center;
