@@ -1,40 +1,39 @@
 import { type DomainContactDetails } from '@automattic/api-core';
-import {
-	countryListQuery,
-	statesListQuery,
-	domainWhoisMutation,
-	domainWhoisValidateMutation,
-	domainQuery,
-} from '@automattic/api-queries';
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { countryListQuery, statesListQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import {
 	ExternalLink,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, useFormValidity, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
-import InlineSupportLink from '../../components/inline-support-link';
-import Notice from '../../components/notice';
+import { ButtonStack } from '../button-stack';
+import { Card, CardBody } from '../card';
+import InlineSupportLink from '../inline-support-link';
+import Notice from '../notice';
 import { getContactFormFields } from './contact-form-fields';
-import ContactFormPrivacy from './contact-form-privacy';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
+import type { AsyncValidator } from './contact-validation-utils';
 
 interface ContactFormProps {
-	domainName: string;
 	initialData?: DomainContactDetails;
+	beforeForm?: React.ReactNode;
+	isSubmitting: boolean;
+	onSubmit: ( normalizedFormData: DomainContactDetails ) => void;
+	asyncValidator?: AsyncValidator;
 }
 
-export default function ContactForm( { domainName, initialData }: ContactFormProps ) {
-	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+export default function ContactForm( {
+	initialData,
+	isSubmitting,
+	beforeForm,
+	onSubmit,
+	asyncValidator,
+}: ContactFormProps ) {
 	const { data: countryList } = useQuery( countryListQuery() );
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? { optOutTransferLock: false }
@@ -56,49 +55,22 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 		return formData;
 	}, [ formData, statesList ] );
 
-	const validateMutation = useMutation( domainWhoisValidateMutation( domainName ) );
-	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
 	const isDirty = ! ( JSON.stringify( normalizedFormData ) === JSON.stringify( initialData ) );
-	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		validateMutation.mutate( normalizedFormData, {
-			onSuccess: ( data ) => {
-				if ( data.success ) {
-					updateMutation.mutate(
-						{
-							domainContactDetails: normalizedFormData,
-							transferLock: normalizedFormData.optOutTransferLock === false,
-						},
-						{
-							onSuccess: () => {
-								createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
-							},
-							onError: ( error: Error ) => {
-								createErrorNotice( error.message, {
-									type: 'snackbar',
-								} );
-							},
-						}
-					);
-				} else {
-					createErrorNotice( data.messages_simple.join( ' ' ), {
-						type: 'snackbar',
-					} );
-				}
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message, {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		onSubmit( normalizedFormData );
 	};
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
-		() => getContactFormFields( countryList ?? [], statesList ?? [], selectedCountryCode ),
-		[ countryList, statesList, selectedCountryCode ]
+		() =>
+			getContactFormFields(
+				countryList ?? [],
+				statesList ?? [],
+				selectedCountryCode,
+				asyncValidator
+			),
+		[ countryList, statesList, selectedCountryCode, asyncValidator ]
 	);
 
 	const form = {
@@ -125,7 +97,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 		],
 	};
 
-	const { isValid: canSave } = useFormValidity( normalizedFormData, fields, form );
+	const { validity, isValid: canSave } = useFormValidity( normalizedFormData, fields, form );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -166,13 +138,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 				</VStack>
 			</Notice>
 
-			{ ! domain.is_hundred_year_domain && (
-				<Card>
-					<CardBody>
-						<ContactFormPrivacy domainName={ domainName } />
-					</CardBody>
-				</Card>
-			) }
+			{ beforeForm }
 
 			<Card>
 				<CardBody>
@@ -181,6 +147,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 							data={ normalizedFormData }
 							fields={ fields }
 							form={ form }
+							validity={ validity }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }

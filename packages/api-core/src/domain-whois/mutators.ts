@@ -21,15 +21,15 @@ export function updateDomainWhois(
 }
 
 export function validateDomainWhois(
-	domainName: string,
-	domainContactDetails: ContactValidationRequestContactInformation
+	domainContactDetails: ContactValidationRequestContactInformation,
+	domainNames: string[]
 ): Promise< DomainContactValidationResponse > {
 	return wpcom.req.post( {
 		path: '/me/domain-contact-information/validate',
 		apiVersion: '1.1',
 		body: {
 			contact_information: domainContactDetails,
-			domain_names: [ domainName ],
+			domain_names: domainNames,
 		},
 	} );
 }

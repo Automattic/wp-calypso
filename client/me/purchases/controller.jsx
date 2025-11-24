@@ -91,34 +91,6 @@ export function addCreditCard( context, next ) {
 	next();
 }
 
-export function removePurchase( context, next ) {
-	const ManagePurchasesWrapper = localize( () => {
-		const classes = 'manage-purchase';
-		const purchaseListUrl = usePreviousUrlIfPurchasesList();
-
-		return (
-			<PurchasesWrapper title={ titles.managePurchase }>
-				<Main wideLayout className={ classes }>
-					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
-					<PageViewTracker
-						path="/me/purchases/:site/:purchaseId"
-						title="Purchases > Manage Purchase"
-					/>
-					<ManagePurchase
-						showRemovePurchaseDialog
-						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-						siteSlug={ context.params.site }
-						purchaseListUrl={ purchaseListUrl }
-					/>
-				</Main>
-			</PurchasesWrapper>
-		);
-	} );
-
-	context.primary = <ManagePurchasesWrapper />;
-	next();
-}
-
 export function cancelPurchase( context, next ) {
 	const CancelPurchaseWrapper = localize( () => {
 		return (

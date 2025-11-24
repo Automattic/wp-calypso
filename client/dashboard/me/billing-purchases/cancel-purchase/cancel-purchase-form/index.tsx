@@ -165,6 +165,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 			return (
 				<UpsellStep
 					cancelBundledDomain={ props.cancelBundledDomain }
+					cancellationInProgress={ props.cancellationInProgress }
 					cancellationReason={ questionOneText }
 					closeDialog={ closeDialog }
 					currencyCode={ purchase.currency_code }
@@ -304,7 +305,10 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 				return false;
 			}
 
-			return Boolean( questionOneRadio && ( ! purchase.is_plan || questionOneText ) );
+			return Boolean(
+				questionOneRadio &&
+					( purchase.is_jetpack_plan_or_product || ! purchase.is_plan || questionOneText )
+			);
 		}
 
 		if ( surveyStep === ATOMIC_REVERT_STEP ) {
@@ -317,7 +321,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 			}
 
 			// For plan cancellations, require a valid selection from the adventure dropdown
-			if ( ! isNextAdventureValid ) {
+			if ( purchase.is_plan && ! isNextAdventureValid ) {
 				return false;
 			}
 
@@ -418,14 +422,21 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 		const variant = surveyStep !== UPSELL_STEP ? 'primary' : 'secondary';
 
 		return (
-			<Button
-				disabled={ ! canGoNext() }
-				isBusy={ isCancelling }
-				onClick={ onSubmit }
-				variant={ variant }
-			>
-				{ __( 'Submit' ) }
-			</Button>
+			<ButtonStack justify="flex-start">
+				<Button
+					disabled={ ! canGoNext() }
+					isBusy={ isCancelling }
+					onClick={ onSubmit }
+					variant={ variant }
+				>
+					{ __( 'Submit' ) }
+				</Button>
+				{ ! canGoNext() && ! isCancelling && (
+					<Button variant="link" onClick={ onSubmit }>
+						{ __( 'Skip' ) }
+					</Button>
+				) }
+			</ButtonStack>
 		);
 	};
 

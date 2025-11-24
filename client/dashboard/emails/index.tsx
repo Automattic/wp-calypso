@@ -1,9 +1,8 @@
 import { DomainSubtype, EmailBox } from '@automattic/api-core';
-import { domainsQuery } from '@automattic/api-queries';
+import { domainsQuery, userMailboxesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
-import { userMailboxesQuery } from '../../../packages/api-queries/src/me-mailboxes';
 import { usePersistentView, DataViews } from '../app/dataviews';
 import { emailsRoute } from '../app/router/emails';
 import { DataViewsCard } from '../components/dataviews-card';

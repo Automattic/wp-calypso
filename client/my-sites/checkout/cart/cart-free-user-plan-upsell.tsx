@@ -20,6 +20,7 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasPlan,
+	has100YearDomain,
 	planItem,
 } from 'calypso/lib/cart-values/cart-items';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
@@ -163,6 +164,7 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
 	const hasPaidPlan = siteHasPaidPlan( selectedSite );
 	const hasPlanInCart = hasPlan( responseCart );
+	const hasHundredYearDomainInCart = has100YearDomain( responseCart );
 	const dispatch = useDispatch();
 	const upsellProductSlug = PLAN_PERSONAL;
 	const upsellPlan = getPlan( upsellProductSlug );
@@ -183,6 +185,9 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 		return null;
 	}
 	if ( hasPaidPlan || hasPlanInCart ) {
+		return null;
+	}
+	if ( hasHundredYearDomainInCart ) {
 		return null;
 	}
 	if ( ! isRegisteringOrTransferringDomain || ! firstDomainInCart ) {

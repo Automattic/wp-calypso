@@ -1,0 +1,295 @@
+---
+description: WordPress imports
+globs: client
+---
+## WordPress imports
+
+- `@wordpress/components` exports these React components:
+  - `AlignmentMatrixControl`
+  - `Animate`
+  - `AnglePickerControl`
+  - `ArrowCircle`
+  - `Autocomplete`
+  - `BaseControl`
+  - `BorderBoxControl`
+  - `BorderControl`
+  - `BoxControl`
+  - `Button`
+  - `ButtonGroup`
+  - `Card`
+  - `CardBody`
+  - `CardDivider`
+  - `CardFooter`
+  - `CardHeader`
+  - `CardMedia`
+  - `CheckboxControl`
+  - `ClipboardButton`
+  - `ColorIndicator`
+  - `ColorPalette`
+  - `ColorPicker`
+  - `ComboboxControl`
+  - `CustomGradientPicker`
+  - `CustomSelectControl`
+  - `Dashicon`
+  - `DatePicker`
+  - `DateTimePicker`
+  - `Disabled`
+  - `Draggable`
+  - `DropZone`
+  - `DropdownMenu`
+  - `Dropdown`
+  - `Droppable`
+  - `DuotonePicker`
+  - `DuotoneSwatch`
+  - `Flex`
+  - `FlexBlock`
+  - `FlexItem`
+  - `FocalPointPicker`
+  - `FocusableIframe`
+  - `FontSizePicker`
+  - `FormFileUpload`
+  - `FormTokenField`
+  - `FormToggle`
+  - `GradientPicker`
+  - `Grid`
+  - `Guide`
+  - `HStack`
+  - `Icon`
+  - `IconButton`
+  - `InputControl`
+  - `IsolatedEventContainer`
+  - `ItemGroup`
+  - `MenuGroup`
+  - `MenuItem`
+  - `Modal`
+  - `NavigableContainer`
+  - `NavigableMenu`
+  - `Notice`
+  - `NoticeList`
+  - `NumberControl`
+  - `Panel`
+  - `PanelBody`
+  - `PanelHeader`
+  - `PanelRow`
+  - `Placeholder`
+  - `Popover`
+  - `QueryControls`
+  - `RadioControl`
+  - `RangeControl`
+  - `ResizableBox`
+  - `ResponsiveWrapper`
+  - `RotateLeft`
+  - `RotateRight`
+  - `SandBox`
+  - `ScrollLock`
+  - `SearchControl`
+  - `SelectControl`
+  - `Shortcut`
+  - `Slot`
+  - `SlotFill`
+  - `SlotFillProvider`
+  - `Snackbar`
+  - `SnackbarList`
+  - `Spacer`
+  - `Spinner`
+  - `Surface`
+  - `TabPanel`
+  - `TabbableContainer`
+  - `TextControl`
+  - `TextareaControl`
+  - `TimePicker`
+  - `ToggleControl`
+  - `ToggleGroupControl`
+  - `Toolbar`
+  - `ToolbarButton`
+  - `ToolbarGroup`
+  - `ToolbarItem`
+  - `Tooltip`
+  - `TreeGrid`
+  - `TreeSelect`
+  - `Truncate`
+  - `UnitControl`
+  - `VStack`
+  - `VisuallyHidden`
+  - `ZStack`
+  - `__experimentalAlignmentMatrixControl`
+  - `__experimentalAnimatePresence`
+  - `__experimentalBorderControl`
+  - `__experimentalConfirmDialog`
+  - `__experimentalContainer`
+  - `__experimentalDimensionControl`
+  - `__experimentalDivider`
+  - `__experimentalDropdownContentWrapper`
+  - `__experimentalHStack`
+  - `__experimentalHeading`
+  - `__experimentalHoverCard`
+  - `__experimentalIframe`
+  - `__experimentalInputControl`
+  - `__experimentalInputControlWrapper`
+  - `__experimentalItemGroup`
+  - `__experimentalMotion`
+  - `__experimentalNavigationBackButton`
+  - `__experimentalNavigationGroup`
+  - `__experimentalNavigationItem`
+  - `__experimentalNavigationMenu`
+  - `__experimentalNumberControl`
+  - `__experimentalPaletteEdit`
+  - `__experimentalParseQuantityAndUnitFromRawValue`
+  - `__experimentalSpacer`
+  - `__experimentalText`
+  - `__experimentalToggleGroupControl`
+  - `__experimentalToggleGroupControlOption`
+  - `__experimentalToolsPanel`
+  - `__experimentalToolsPanelHeader`
+  - `__experimentalToolsPanelItem`
+  - `__experimentalTruncate`
+  - `__experimentalUnitControl`
+  - `__experimentalUseCustomUnits`
+  - `__experimentalVStack`
+  - `__experimentalView`
+  - `__experimentalWarning`
+  - `__experimentalZStack`
+- `@wordpress/block-editor` exports these React components:
+  - `AlignmentControl`
+  - `BlockAlignmentControl` 
+  - `BlockAlignmentMatrixControl`
+  - `BlockBreadcrumb`
+  - `BlockControls`
+  - `BlockEdit`
+  - `BlockEditorKeyboardShortcuts`
+  - `BlockFormatControls`
+  - `BlockIcon`
+  - `BlockInspector`
+  - `BlockList`
+  - `BlockMover`
+  - `BlockNavigationDropdown`
+  - `BlockPreview`
+  - `BlockSelectionClearer`
+  - `BlockSettingsMenu`
+  - `BlockTitle`
+  - `BlockToolbar`
+  - `ColorPaletteControl`
+  - `ContrastChecker`
+  - `CopyHandler`
+  - `DefaultBlockAppender`
+  - `FontSizePicker`
+  - `InnerBlocks`
+  - `InspectorAdvancedControls`
+  - `InspectorControls`
+  - `LineHeightControl`
+  - `MediaPlaceholder`
+  - `MediaUpload`
+  - `MediaUploadCheck`
+  - `NavigableToolbar`
+  - `ObserveTyping`
+  - `PanelColorSettings`
+  - `PlainText`
+  - `RichText`
+  - `RichTextShortcut`
+  - `RichTextToolbarButton`
+  - `SkipToSelectedBlock`
+  - `TableOfContents`
+  - `URLInput`
+  - `URLInputButton`
+  - `URLPopover`
+  - `Warning`
+  - `WritingFlow`
+  - `__experimentalBlockAlignmentMatrixToolbar`
+  - `__experimentalBlockFullHeightAligmentControl`
+  - `__experimentalBlockPatternSetup`
+  - `__experimentalBlockVariationPicker`
+  - `__experimentalBorderRadiusControl`
+  - `__experimentalImageSizeControl`
+  - `__experimentalLinkControl`
+  - `__experimentalPanelColorGradientSettings`
+  - `__experimentalUnitControl`
+  - `__experimentalUseGradient`
+  - `__experimentalUseMultipleOriginColorsAndGradients`
+  - `store` - The block editor data store
+  - `transformStyles` - Transform styles for blocks
+  - `getColorClassName` - Get color class names
+  - `getColorObjectByAttributeValues` - Get color object by values
+  - `getColorObjectByColorValue` - Get color object by value
+  - `getFontSize` - Get font size object
+  - `getFontSizeClass` - Get font size class name
+  - `withColors` - HOC to inject color functionality
+  - `withFontSizes` - HOC to inject font size functionality
+  - `useBlockProps` - Hook to get block props
+  - `useInnerBlocksProps` - Hook for inner blocks props
+  - `__experimentalUseEditorFeature` - Hook for editor features
+  - `__experimentalGetGradientClass` - Get gradient class name
+  - `__experimentalGetGradientValueBySlug` - Get gradient value by slug
+  - `__experimentalUseGradient` - Hook for gradient functionality
+- `@wordpress/data` exports following store management utilities, methods and hooks. They are working roughly as an internal Redux store.
+  - `batch` - Batches multiple dispatch calls to optimize rendering
+  - `combineReducers` - Helper to combine multiple reducers
+  - `controls` - (Deprecated) Control handler system
+  - `createReduxStore` - Creates a data store descriptor
+  - `createRegistry` - Creates a new store registry
+  - `createRegistryControl` - Creates a control with registry access
+  - `createRegistrySelector` - Creates a selector with registry access
+  - `createSelector` - Creates a memoized selector
+  - `dispatch` - Returns store's action creators
+  - `plugins` - Available registry plugins
+  - `register` - Registers a store descriptor
+  - `registerGenericStore` - (Deprecated) Registers generic store
+  - `registerStore` - (Deprecated) Registers standard store
+  - `RegistryConsumer` - React Context consumer for registry
+  - `RegistryProvider` - React Context provider for registry
+  - `resolveSelect` - Returns promise-wrapped selectors
+  - `select` - Returns store's selectors
+  - `subscribe` - Subscribes to store updates
+  - `suspendSelect` - Returns suspense-wrapped selectors
+  - `use` - Extends registry with plugin
+  - `useDispatch` - Hook for dispatch actions
+  - `useRegistry` - Hook for registry access
+  - `useSelect` - Hook for state selection
+  - `useSuspenseSelect` - Suspense-enabled selection hook
+  - `withDispatch` - HOC for dispatch actions
+  - `withRegistry` - HOC for registry access
+  - `withSelect` - HOC for state selection
+- `@wordpress/core-data` exports following higher order data management utilities related to WordPress entity store. Entity store provides an abstraction that automatically retrieves entities like Custom Post Types, general WordPress settings and other API elements:
+  - Entity Record Management:
+    - `getEntityRecord` - Get a single entity record
+    - `getEntityRecords` - Get multiple entity records
+    - `getEditedEntityRecord` - Get entity record with edits
+    - `hasEntityRecords` - Check if records exist
+    - `saveEntityRecord` - Save an entity record
+    - `deleteEntityRecord` - Delete an entity record
+    - `editEntityRecord` - Edit an entity record
+  - Entity Configuration:
+    - `getEntityConfig` - Get entity configuration
+    - `getEntitiesConfig` - Get multiple entities configuration
+  - Revisions & Autosaves:
+    - `getRevisions` - Get entity revisions
+    - `getRevision` - Get a specific revision
+    - `getAutosave` - Get autosave for post/author
+    - `getAutosaves` - Get all autosaves for post
+  - User & Permissions:
+    - `canUser` - Check user permissions
+    - `canUserEditEntityRecord` - Check edit permissions
+    - `getCurrentUser` - Get current user data
+  - State Management:
+    - `hasEditsForEntityRecord` - Check for pending edits
+    - `hasUndo` - Check for available undo
+    - `hasRedo` - Check for available redo
+    - `undo` - Undo last edit
+    - `redo` - Redo last undone edit
+  - React Hooks:
+    - `useEntityRecord` - Hook for single record management
+    - `useEntityRecords` - Hook for multiple records management
+    - `useEntityProp` - Hook for entity property management
+    - `useEntityBlockEditor` - Hook for entity block editor
+    - `useEntityId` - Hook for entity ID access
+    - `useResourcePermissions` - Hook for checking resource permissions
+  - Status & Error Handling:
+    - `isSavingEntityRecord` - Check save status
+    - `isDeletingEntityRecord` - Check delete status
+    - `isAutosavingEntityRecord` - Check autosave status
+    - `getLastEntitySaveError` - Get last save error
+    - `getLastEntityDeleteError` - Get last delete error
+  - Additional Utilities:
+    - `getEntityRecordsTotalItems` - Get total available records
+    - `getEntityRecordsTotalPages` - Get total available pages
+    - `getRawEntityRecord` - Get raw record data
+    - `getEntityRecordNonTransientEdits` - Get non-transient edits

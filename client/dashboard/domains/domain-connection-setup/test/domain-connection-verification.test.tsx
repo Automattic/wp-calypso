@@ -115,6 +115,7 @@ const createMockDomain = (): Domain => ( {
 	registration_date: '',
 	last_transfer_error: '',
 	current_user_can_add_email: true,
+	whois_update_unmodifiable_fields: [],
 } );
 
 const createMockDomainMappingStatus = (
@@ -157,6 +158,8 @@ describe( 'DomainConnectionVerification', () => {
 		siteSlug: 'example.wordpress.com',
 		domainMappingStatus: createMockDomainMappingStatus(),
 		domainConnectionSetupInfo: createMockDomainConnectionSetupInfo(),
+		onRestartConnection: jest.fn(),
+		isRestartingConnection: false,
 	};
 
 	describe( 'Basic Rendering', () => {

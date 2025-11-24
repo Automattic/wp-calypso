@@ -1706,6 +1706,28 @@ describe( 'getThankYouPageUrl', () => {
 			expect( url ).toBe( '/checkout/100-year/thank-you/yourgroovydomain.com/999999' );
 		} );
 
+		it( 'Redirects to the 100 year thank-you page when a 100-year domain was purchased (volume 100)', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'domain_reg',
+						is_domain_registration: true,
+						meta: 'example-100-year.com',
+						volume: 100,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'yourgroovydomain.com',
+				receiptId: 999999,
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/100-year/thank-you/yourgroovydomain.com/999999' );
+		} );
+
 		it( 'redirects with jetpackTemporarySiteId query param when available', () => {
 			const cart = {
 				...getMockCart(),

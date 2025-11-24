@@ -66,6 +66,7 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"domain-search-rewrite": true,
 		"domain-connection-redesign": true,
+		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
 		"global-styles/on-personal-plan": false,
 		"google-drive": true,
@@ -130,7 +131,7 @@
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"migration-flow/introductory-offer": true,
-		"migration/ssh-migration": false,
+		"migration/ssh-migration": true,
 		"oauth": false,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
@@ -201,6 +202,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"user-management-revamp": true,
+		"wordpress-ai-assistant": true,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true
 	}

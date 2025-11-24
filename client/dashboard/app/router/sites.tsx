@@ -8,6 +8,7 @@ import {
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
 	siteBackupActivityLogEntriesQuery,
+	siteBackupActivityLogGroupCountsQuery,
 	siteAgencyBlogQuery,
 	siteLastBackupQuery,
 	siteEdgeCacheStatusQuery,
@@ -48,7 +49,7 @@ import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site } from '@automattic/api-core';
@@ -183,6 +184,12 @@ export const siteDeploymentsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( isCommerceGarden( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
@@ -216,6 +223,12 @@ export const siteMonitoringRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'monitoring',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( isCommerceGarden( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/monitoring' ).then( ( d ) =>
 		createLazyRoute( 'site-monitoring' )( {
@@ -234,6 +247,12 @@ export const siteLogsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( isCommerceGarden( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } );
 
 export const siteLogsIndexRoute = createRoute( {
@@ -320,6 +339,12 @@ export const siteScanRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'scan',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( isCommerceGarden( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } );
 
 export const siteScanIndexRoute = createRoute( {
@@ -388,11 +413,18 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( isCommerceGarden( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		// Preload activity log backup-related entries.
+		// Preload activity log backup-related entries and group counts.
 		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
 			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
+			queryClient.ensureQueryData( siteBackupActivityLogGroupCountsQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -507,6 +539,12 @@ export const sitePerformanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( isCommerceGarden( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
@@ -957,6 +995,26 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	)
 );
 
+export const siteSettingsExperimentalRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'AI Site Assistant' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'ai-assistant',
+	loader: async ( { params: { siteSlug } } ) => {
+		await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-assistant' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-assistant' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
 export const siteSettingsRepositoriesRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1325,6 +1383,10 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 					siteSettingsDefensiveModeRoute,
 				]
 			);
+		}
+
+		if ( config.supports.sites.settings.experimental && isEnabled( 'wordpress-ai-assistant' ) ) {
+			settingsRoutes.push( siteSettingsExperimentalRoute );
 		}
 
 		siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );

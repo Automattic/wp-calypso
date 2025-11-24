@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { preparePreviewText } from '../helpers';
 import { tumblrTitle, tumblrDescription } from './helpers';
 import TumblrPostActions from './post/actions';
 import TumblrPostHeader from './post/header';
@@ -28,7 +29,11 @@ export const TumblrPostPreview: React.FC< TumblrPreviewProps > = ( {
 					<div className="tumblr-preview__title">{ tumblrTitle( title ) }</div>
 					{ customText && <div className="tumblr-preview__custom-text">{ customText }</div> }
 					{ description && (
-						<div className="tumblr-preview__description">{ tumblrDescription( description ) }</div>
+						<div className="tumblr-preview__description">
+							{ preparePreviewText( tumblrDescription( description ), {
+								platform: 'tumblr',
+							} ) }
+						</div>
 					) }
 					{ mediaItem ? (
 						<div className="tumblr-preview__media-item">

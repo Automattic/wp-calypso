@@ -65,7 +65,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 	const { setShowHelpCenter } = useHelpCenter();
 
 	return (
-		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 6 }>
+		<Wrapper alignment="flex-start" spacing={ 6 }>
 			<Column title={ __( 'Start a new site' ) }>
 				{ isFlexEligible && (
 					<MenuItem
@@ -137,7 +137,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					display: 'block',
 					height: 'auto',
 					textAlign: 'left',
-					width: '260px',
+					width: isDesktop ? '260px' : '100%',
 					padding: 0,
 				} }
 				aria-label={ __( 'Get special offer: Free domain and up to 55% off annual plans' ) }

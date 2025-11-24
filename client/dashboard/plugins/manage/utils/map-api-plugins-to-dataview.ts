@@ -11,6 +11,7 @@ type Aggregated = {
 	autoupdateAllowedCount: number;
 	autoupdateCount: number;
 	siteIds: number[];
+	isManaged: boolean;
 };
 
 function mapCountToQuantifier( count: number, total: number ): 'all' | 'some' | 'none' {
@@ -56,6 +57,7 @@ export function mapApiPluginsToDataViewPlugins(
 				updateCount: 0,
 				autoupdateAllowedCount: 0,
 				autoupdateCount: 0,
+				isManaged: false,
 				siteIds: [],
 			};
 
@@ -70,10 +72,16 @@ export function mapApiPluginsToDataViewPlugins(
 			if ( p.autoupdate ) {
 				entry.autoupdateCount += 1;
 			}
+			if ( p.is_managed ) {
+				entry.isManaged = true;
+			}
 
 			const site = sitesById.get( siteId );
 			if ( site ) {
-				const { autoupdate } = getAllowedPluginActions( site, p.slug );
+				const { autoupdate } = getAllowedPluginActions(
+					{ isPluginActive: p.active, ...site, isPluginManaged: entry.isManaged },
+					p.slug
+				);
 				entry.autoupdateAllowedCount += autoupdate ? 1 : 0;
 			}
 			map.set( p.id, entry );
@@ -92,6 +100,7 @@ export function mapApiPluginsToDataViewPlugins(
 				autoupdateAllowedCount,
 				autoupdateCount,
 				siteIds,
+				isManaged,
 			},
 		] ) => ( {
 			id,
@@ -104,6 +113,7 @@ export function mapApiPluginsToDataViewPlugins(
 			areAutoUpdatesAllowed: mapCountToQuantifier( autoupdateAllowedCount, count ),
 			areAutoUpdatesEnabled: mapCountToQuantifier( autoupdateCount, count ),
 			siteIds,
+			isManaged,
 		} )
 	);
 }

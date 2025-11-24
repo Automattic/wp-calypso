@@ -1,9 +1,7 @@
 import {
 	FEATURE_UPLOAD_THEMES,
-	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	getPlan,
 } from '@automattic/calypso-products';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -33,56 +31,26 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	} = props;
 
 	const isWooExpressTrial = PLAN_ECOMMERCE_TRIAL_MONTHLY === currentPlan?.productSlug;
+	const displayUpsellBanner = isAtomic && ! requestingSitePlans && isWooExpressTrial;
 
 	const upsellBanner = () => {
-		if ( isWooExpressTrial ) {
-			return (
-				<UpsellNudge
-					className="themes__showcase-banner"
-					event="calypso_themes_list_install_themes"
-					feature={ FEATURE_UPLOAD_THEMES }
-					title={ translate( 'Upgrade to a plan to upload your own themes!' ) }
-					callToAction={ translate( 'Upgrade now' ) }
-					showIcon
-				/>
-			);
-		}
-
-		return (
+		return displayUpsellBanner ? (
 			<UpsellNudge
 				className="themes__showcase-banner"
 				event="calypso_themes_list_install_themes"
 				feature={ FEATURE_UPLOAD_THEMES }
-				plan={ PLAN_BUSINESS }
-				title={
-					/* translators: %(planName1)s and %(planName2)s are the short-hand version of the Business and Commerce plan names */
-					translate(
-						'Unlock ALL premium themes and upload your own themes with our %(planName1)s and %(planName2)s plans!',
-						{
-							args: {
-								planName1: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-								planName2: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
-							},
-						}
-					)
-				}
+				title={ translate( 'Upgrade to a plan to upload your own themes!' ) }
 				callToAction={ translate( 'Upgrade now' ) }
 				showIcon
 			/>
-		);
+		) : null;
 	};
 
 	const upsellUrl = () => {
-		if ( isWooExpressTrial ) {
-			return `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_ECOMMERCE }`;
-		}
-
-		return (
-			isAtomic && `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_BUSINESS }`
-		);
+		return isWooExpressTrial
+			? `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_ECOMMERCE }`
+			: null;
 	};
-
-	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
 
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
@@ -98,7 +66,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 				upsellUrl={ upsellUrl() }
 				siteId={ siteId }
 				isJetpackSite
-				upsellBanner={ displayUpsellBanner ? upsellBanner() : null }
+				upsellBanner={ upsellBanner() }
 			/>
 		</Main>
 	);

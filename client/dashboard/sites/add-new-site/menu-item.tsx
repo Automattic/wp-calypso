@@ -28,7 +28,7 @@ function MenuItem( {
 			label={ title }
 			showTooltip={ false }
 		>
-			<HStack alignment="start" spacing={ 2 }>
+			<HStack alignment="start" justify="flex-start" spacing={ 2 }>
 				<div style={ { flexShrink: 0 } }>
 					<Icon className="dashboard-add-new-site__menu-item-icon" icon={ icon } />
 				</div>
