@@ -27,11 +27,7 @@ import {
 	getProductSlugFromContext,
 	isContextSourceMyJetpack,
 } from 'calypso/my-sites/checkout/utils';
-import {
-	isUserLoggedIn,
-	getCurrentUser,
-	getCurrentUserId,
-} from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
@@ -201,6 +197,10 @@ export async function redirectLoggedOut( context, next ) {
 		next();
 		return;
 	} else if ( isCookieAuthMissing() && config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+		// Get the current user data from the state before re-fetching the user
+		// This helps for logging a non zero user ID in the failure condition
+		const existingUserData = getCurrentUser( state );
+
 		try {
 			const userData = await rawCurrentUserFetch();
 
@@ -222,27 +222,29 @@ export async function redirectLoggedOut( context, next ) {
 		} catch ( error ) {
 			const errorStatus = error.status;
 
-			logToLogstash( {
-				feature: 'calypso_client',
-				message: 'Cookie-auth-missing and user re-fetch failed',
-				severity: 'warning',
-				user_id: getCurrentUserId( state ),
-				properties: {
-					env: config( 'env_id' ),
-					pathname: context.pathname,
-					error: error.message || 'Unknown error',
-					error_status: errorStatus,
-				},
-			} );
-
 			// Only for 401 and 403 errors, perform logout and redirect to login page
 			// If the response is in the 500 range, there could be a transient connection issue or a different server issue
 			if ( errorStatus && [ 401, 403 ].includes( errorStatus ) ) {
-				// Perform logout with redirect to login page
-				const userData = getCurrentUser( state );
-				const logoutUrl = getLogoutUrl( userData, login( buildLoginParameters( context, state ) ) );
+				const logoutUrl = getLogoutUrl(
+					existingUserData,
+					login( buildLoginParameters( context, state ) )
+				);
 
-				window.location = logoutUrl;
+				// Just logging the logout URL for now to see if it's being set correctly
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Cookie-auth-missing and user re-fetch failed',
+					severity: 'warning',
+					user_id: existingUserData?.ID,
+					properties: {
+						env: config( 'env_id' ),
+						pathname: context.pathname,
+						error: error.message || 'Unknown error',
+						error_status: errorStatus,
+						logout_url: logoutUrl,
+					},
+				} );
+
 				return;
 			}
 		}
