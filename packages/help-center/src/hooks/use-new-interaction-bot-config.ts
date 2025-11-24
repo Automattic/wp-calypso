@@ -14,7 +14,7 @@ const botSlugMap = {
 	},
 	updated_legacy: {
 		slug: 'wpcom-support-chat',
-		version: '20.8.2', // Legacy chain assistant with updated prompt
+		version: '20.8.4', // Legacy chain assistant with updated prompt
 	},
 };
 
