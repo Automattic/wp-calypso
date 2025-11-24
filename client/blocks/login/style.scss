@@ -178,6 +178,21 @@ $breakpoint-mobile: 782px; //Mobile size.
 			color: var(--color-link-dark);
 		}
 	}
+
+}
+
+// Ensure inline support links beside the form inputs inherit the subheader styling
+// without needing bespoke classes on the JSX.
+.login__form-userdata .components-external-link {
+	color: var(--studio-gray-50, #646970);
+	font-weight: 400;
+	font-size: $font-body-small;
+
+	&:visited,
+	&:hover,
+	&:focus {
+		color: var(--studio-gray-50, #646970);
+	}
 }
 
 .login__form-change-username {
@@ -311,8 +326,4 @@ $breakpoint-mobile: 782px; //Mobile size.
 			padding: 16px 16px 0;
 		}
 	}
-}
-
-.login__lostpassword-form-external-link {
-	font-size: 0.875em;
 }
