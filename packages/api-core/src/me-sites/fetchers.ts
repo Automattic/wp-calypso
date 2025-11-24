@@ -2,13 +2,13 @@ import { JOINED_SITE_FIELDS, JOINED_SITE_OPTIONS } from '../site';
 import { wpcom } from '../wpcom-fetcher';
 import type { Site } from '../site';
 
-type FetchSitesFilter = 'atomic' | 'jetpack' | 'wpcom' | 'jetpack-full' | 'commerce-garden';
+export type FetchSiteType = 'atomic' | 'jetpack' | 'wpcom' | 'jetpack-full' | 'commerce-garden';
 
 /**
  * This option is required to ensure consumers explicitly specify which types of sites they want.
  * The `all` option means fetching all types of sites.
  */
-export type FetchSitesFilters = 'all' | FetchSitesFilter[];
+export type FetchSiteTypes = 'all' | FetchSiteType[];
 
 export interface FetchSitesOptions {
 	include_a8c_owned: boolean;
@@ -16,7 +16,7 @@ export interface FetchSitesOptions {
 }
 
 export async function fetchSites(
-	site_filters: FetchSitesFilters,
+	site_types: FetchSiteTypes,
 	{ include_a8c_owned, site_visibility }: FetchSitesOptions
 ): Promise< Site[] > {
 	const { sites } = await wpcom.req.get(
@@ -31,7 +31,7 @@ export async function fetchSites(
 			site_visibility,
 			fields: JOINED_SITE_FIELDS,
 			options: JOINED_SITE_OPTIONS,
-			filters: site_filters !== 'all' ? site_filters.join( ',' ) : undefined,
+			filters: site_types !== 'all' ? site_types.join( ',' ) : undefined,
 		}
 	);
 	return sites;

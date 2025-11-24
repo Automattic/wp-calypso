@@ -13,6 +13,7 @@ import { DataViews, filterSortAndPaginate, View, type Field } from '@wordpress/d
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../manage/utils';
 import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
@@ -62,8 +63,8 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				id: 'domain',
 				label: __( 'Site' ),
 				type: 'text',
-				getValue: ( { item }: { item: SiteWithPluginData } ) => item.URL,
-				render: ( { item }: { item: SiteWithPluginData } ) => item.URL,
+				getValue: ( { item }: { item: SiteWithPluginData } ) => getSiteDisplayUrl( item ),
+				render: ( { field, item } ) => field.getValue( { item } ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,

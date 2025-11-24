@@ -48,12 +48,34 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	requestAllBlogsAccess: jest.fn(),
 } ) );
 
+// Mock @automattic/agenttic-client to resolve dependency issues
+jest.mock(
+	'@automattic/agenttic-client',
+	() => ( {
+		__esModule: true,
+		getAgentManager: jest.fn( () => ( {
+			createAgent: jest.fn(),
+			getAgent: jest.fn(),
+		} ) ),
+		useAgentChat: jest.fn( () => ( {
+			messages: [],
+			isLoading: false,
+			sendMessage: jest.fn(),
+			clearMessages: jest.fn(),
+		} ) ),
+	} ),
+	{ virtual: true }
+);
+
 // Mock @automattic/agenttic-ui to resolve dependency issues
 jest.mock(
 	'@automattic/agenttic-ui',
 	() => ( {
 		__esModule: true,
 		ThinkingMessage: jest.fn( () => 'Thinking...' ),
+		AgentUI: jest.fn( () => null ),
+		createMessageRenderer: jest.fn(),
+		EmptyView: jest.fn( () => null ),
 	} ),
 	{ virtual: true }
 );

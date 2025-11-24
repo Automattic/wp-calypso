@@ -11,6 +11,7 @@ export type PluginListRow = {
 	areAutoUpdatesAllowed: 'all' | 'some' | 'none';
 	areAutoUpdatesEnabled: 'all' | 'some' | 'none';
 	siteIds: number[]; // list of site IDs where this plugin exists
+	isManaged: boolean;
 };
 
 export type SitePluginAction =

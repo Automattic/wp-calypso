@@ -74,6 +74,7 @@ const buildNotificationSettings = ( blogId: number, devices: DeviceNotificationS
 					draft_post_prompt: false,
 					store_order: false,
 					recommended_blog: false,
+					form_response: false,
 				},
 				devices: devices,
 				email: {
@@ -89,6 +90,7 @@ const buildNotificationSettings = ( blogId: number, devices: DeviceNotificationS
 					draft_post_prompt: false,
 					store_order: false,
 					recommended_blog: false,
+					form_response: false,
 				},
 			},
 		],
@@ -123,6 +125,7 @@ const buildDeviceSettings = (
 		draft_post_prompt: false,
 		recommended_blog: false,
 		comment_reply: false,
+		form_response: false,
 		device_id: 0,
 		...settings,
 	} as DeviceNotificationSettings;
@@ -206,6 +209,10 @@ describe( 'DevicesSettings', () => {
 
 		expect(
 			await screen.findByRole( 'checkbox', { name: getFieldLabel( 'new_comment' ) } )
+		).not.toBeChecked();
+
+		expect(
+			await screen.findByRole( 'checkbox', { name: getFieldLabel( 'form_response' ) } )
 		).not.toBeChecked();
 	} );
 

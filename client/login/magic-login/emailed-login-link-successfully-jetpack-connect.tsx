@@ -63,7 +63,7 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 			<div className="magic-login__successfully-jetpack-actions">
 				<p>
 					{ translate(
-						"Didn't get the code? Check your spam folder or {{button}}resend the email{{/button}}",
+						"Didn't get the email? Check your spam folder, or {{button}}resend the email{{/button}}. Wrong email or account? {{link}}Use a different account{{/link}}.",
 						{
 							components: {
 								button: (
@@ -73,16 +73,10 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 										onClick={ onResendEmail }
 									/>
 								),
+								link: <a className="magic-login__log-in-link" href="/log-in/jetpack" />,
 							},
 						}
 					) }
-				</p>
-				<p>
-					{ translate( 'Wrong email or account? {{link}}Use a different account{{/link}}', {
-						components: {
-							link: <a className="magic-login__log-in-link" href="/log-in/jetpack" />,
-						},
-					} ) }
 				</p>
 			</div>
 		</div>

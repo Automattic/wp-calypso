@@ -10,7 +10,17 @@ export interface Purchase {
 	asyncPendingPaymentBlockIsSet: boolean;
 	canExplicitRenew: boolean;
 	canReenableAutoRenewal: boolean;
+
+	/**
+	 * If this upgrade is a domain and a domain credit was used to purchase it,
+	 * and the plan is within its refund period, then `cost_to_unbundle_display`
+	 * will be the formatted amount of the amount that would be withheld to keep
+	 * the domain if the plan is cancelled.
+	 *
+	 * If there is nothing that would be withheld, this will be null.
+	 */
 	costToUnbundleText: string;
+
 	currencyCode: string;
 	currencySymbol: string;
 	description: string;
@@ -31,7 +41,14 @@ export interface Purchase {
 	expiryStatus: string;
 	iapPurchaseManagementLink: string | null;
 	id: number;
+
+	/**
+	 * If this subscription is for a plan with a bundled domain, this will
+	 * contain the domain name for that domain subscription. Otherwise this will
+	 * be an empty string.
+	 */
 	includedDomain: string;
+
 	includedDomainPurchaseAmount: number;
 	introductoryOffer: PurchaseIntroductoryOffer | null;
 	isAutoRenewEnabled: boolean;

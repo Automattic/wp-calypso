@@ -30,7 +30,7 @@ function AdminHelpCenterContent() {
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
 	const supportLinks = document.querySelectorAll( '[data-target="wpcom-help-center"]' );
 	const isMenuPanelExperimentEnabled = useMenuPanelExperiment(
-		'calypso_help_center_menu_popover',
+		'calypso_help_center_menu_popover_v2',
 		'menu_popover'
 	);
 
@@ -82,6 +82,9 @@ function AdminHelpCenterContent() {
 	);
 
 	const trackIconInteraction = useCallback( () => {
+		if ( isMenuPanelExperimentEnabled === undefined ) {
+			return;
+		}
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',

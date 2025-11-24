@@ -40,6 +40,7 @@ export const AI_SITE_BUILDER_SPEC_FLOW = 'ai-site-builder-spec';
 export const PLAYGROUND_FLOW = 'playground';
 export const PLAN_UPGRADE_FLOW = 'plan-upgrade';
 export const FLEX_SITE_FLOW = 'flex-site';
+export const WOO_HOSTED_PLANS_FLOW = 'woo-hosted-plans';
 
 export const isNewsletterFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
@@ -166,4 +167,8 @@ export const isPlaygroundFlow = ( flowName: string | null ) => {
 
 export const isDomainFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ DOMAIN_FLOW ].includes( flowName ) );
+};
+
+export const isWooHostedPlansFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ WOO_HOSTED_PLANS_FLOW ].includes( flowName ) );
 };

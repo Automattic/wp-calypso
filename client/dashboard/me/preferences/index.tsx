@@ -10,7 +10,15 @@ export default function Preferences() {
 	const { optIn } = useAppContext();
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Preferences' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Preferences' ) }
+					description={ __( 'Customize your account preferences and settings.' ) }
+				/>
+			}
+		>
 			{ optIn && <PreferencesNewHostingDashboard /> }
 			<PreferencesLanguageForm />
 			<PreferencesLogin />
