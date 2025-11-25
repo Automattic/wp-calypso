@@ -38,8 +38,8 @@ export default function useChatLayoutManager(
 ): ReturnValue {
 	const { setIsDocked, setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const { isDocked, isOpen } = useSelect( ( select ) => {
-		const agentsManagerSelect: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return agentsManagerSelect.getAgentsManagerState();
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
 	}, [] );
 
 	const portalRef = useRef< HTMLDivElement >();
@@ -77,27 +77,9 @@ export default function useChatLayoutManager(
 			portalRef.current = document.createElement( 'div' );
 			portalRef.current.className = 'agents-manager-chat';
 			container.appendChild( portalRef.current );
-
-			// Apply initial state
-			if ( shouldRenderSidebar ) {
-				container.classList.add( 'agents-manager-sidebar-container' );
-				portalRef.current.classList.add( 'agents-manager-chat--docked' );
-
-				if ( isOpen ) {
-					container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
-				}
-
-				onDockRef.current();
-			} else {
-				portalRef.current.classList.add( 'agents-manager-chat--undocked' );
-
-				onUndockRef.current();
-			}
-
-			return;
 		}
 
-		// Handle state changes after initial setup
+		// Handle dock/undock state changes
 		if ( shouldRenderSidebar ) {
 			container.classList.add( 'agents-manager-sidebar-container' );
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );

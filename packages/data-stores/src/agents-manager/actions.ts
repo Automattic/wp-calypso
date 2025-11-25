@@ -58,7 +58,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 		// Use the promise version to do that action without waiting for the result.
 		apiFetchPromise( {
 			global: true,
-			path: '/help-center/open-state',
+			path: '/agents-manager/open-state',
 			method: 'PUT',
 			data: saveState,
 		} as APIFetchOptions ).catch( () => {} );

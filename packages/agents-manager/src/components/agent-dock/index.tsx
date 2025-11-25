@@ -81,8 +81,8 @@ export default function AgentDock( {
 }: AgentDockProps ) {
 	const { setIsOpen, setSessionId } = useDispatch( AGENTS_MANAGER_STORE );
 	const persistedState = useSelect( ( select ) => {
-		const agentsManagerSelect: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return agentsManagerSelect.getAgentsManagerState();
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
 	}, [] );
 
 	const { sessionId, resetSession } = useAgentSession( {

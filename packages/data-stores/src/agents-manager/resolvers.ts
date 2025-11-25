@@ -34,7 +34,7 @@ export function* getAgentsManagerState() {
 			  } )
 			: yield apiFetch( {
 					global: true,
-					path: '/help-center/open-state',
+					path: '/agents-manager/open-state',
 			  } as APIFetchOptions );
 
 		// Restore the navigation history from preferences
