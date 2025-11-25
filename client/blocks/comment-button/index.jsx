@@ -19,7 +19,7 @@ function CommentButton( {
 	alwaysShowTooltip = false,
 } ) {
 	const translate = useTranslate();
-	const showLabel = commentCount > 0 || defaultLabel;
+	const showLabel = commentCount > 0;
 	const label = commentCount || defaultLabel;
 	// Show a tooltip only when we are showing the number of existing comments.
 	const showTooltip = commentCount > 0 || alwaysShowTooltip;
@@ -35,9 +35,11 @@ function CommentButton( {
 			target={ 'a' === TagName ? target : undefined }
 		>
 			{ icon || <Gridicon icon="comment" size={ size } className="comment-button__icon" /> }
-			<span className="comment-button__label">
-				{ showLabel && <span className="comment-button__label-count">{ label }</span> }
-			</span>
+			{ showLabel && (
+				<span className="comment-button__label">
+					<span className="comment-button__label-count">{ label }</span>
+				</span>
+			) }
 		</TagName>
 	);
 }
