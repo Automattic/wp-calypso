@@ -7,7 +7,9 @@ import { get } from 'lodash';
 
 const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttributes } ) => {
 	const onToggle = () =>
-		updateBlockAttributes( blockId, { align: isBlockJustified ? null : 'justify' } );
+		updateBlockAttributes( blockId, {
+			style: { typography: { textAlign: isBlockJustified ? null : 'justify' } },
+		} );
 
 	return (
 		<RichTextToolbarButton
@@ -28,7 +30,7 @@ const ConnectedRichTextJustifyButton = compose(
 		return {
 			blockId: selectedBlock.clientId,
 			blockName: selectedBlock.name,
-			isBlockJustified: 'justify' === get( selectedBlock, 'attributes.align' ),
+			isBlockJustified: 'justify' === get( selectedBlock, 'attributes.style.typography.textAlign' ),
 		};
 	} ),
 	withDispatch( ( dispatch ) => ( {
