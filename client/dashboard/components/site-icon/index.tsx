@@ -23,7 +23,7 @@ export default function SiteIcon( { site, size }: { site: Site; size?: number } 
 }
 
 /**
- * The SiteIconInner component allows you to render a site icon when you
+ * The SiteIconRenderer component allows you to render a site icon when you
  * don't happen to have a `Site` object on hand.
  */
 export function SiteIconRenderer( {
