@@ -175,7 +175,7 @@ export default function CancelPurchase() {
 	const productSlug = purchase ? purchase.product_slug : null;
 
 	const navigate = useNavigate();
-	const redirect = useCallback( () => {
+	const redirectBack = useCallback( () => {
 		if (
 			purchase &&
 			( ! purchase.can_disable_auto_renew ||
@@ -1063,7 +1063,7 @@ export default function CancelPurchase() {
 			setStateBasedOnExtendedStatus();
 		}
 		if ( ! isDataValid() ) {
-			redirect();
+			redirectBack();
 			return;
 		}
 		track();
@@ -1074,7 +1074,7 @@ export default function CancelPurchase() {
 		purchase.ID,
 		purchase.bill_period_days,
 		purchase.product_slug,
-		redirect,
+		redirectBack,
 		track,
 		createErrorNotice,
 	] );
@@ -1090,7 +1090,7 @@ export default function CancelPurchase() {
 			return;
 		}
 		if ( ! isDataValid() ) {
-			redirect();
+			redirectBack();
 			return;
 		}
 		if ( state.isLoading && ! isDataLoading ) {
@@ -1103,7 +1103,7 @@ export default function CancelPurchase() {
 		isDataLoading,
 		isDataValid,
 		state.surveyShown,
-		redirect,
+		redirectBack,
 		state.isLoading,
 		createErrorNotice,
 	] );
@@ -1131,7 +1131,7 @@ export default function CancelPurchase() {
 	};
 
 	if ( isHundredYearDomain ) {
-		redirect();
+		redirectBack();
 		return null;
 	}
 
