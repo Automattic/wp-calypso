@@ -166,7 +166,7 @@ export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
  * Meant to stand in for the dataview's filterSortAndPaginate function when
  * the filtering has already been done on the backend by elasticsearch.
  */
-function filterSortAndPaginate__ES(
+export function filterSortAndPaginate__ES(
 	sites: DashboardSiteListSite[],
 	view: View,
 	totalItems: number
