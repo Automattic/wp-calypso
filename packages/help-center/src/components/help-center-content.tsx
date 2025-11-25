@@ -122,6 +122,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route path="/" element={ <HelpCenterSearch currentRoute={ currentRoute } /> } />
 					<Route path="/post" element={ <HelpCenterArticle /> } />
 					<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
+					<Route path="/a4a-contact-form" element={ <HelpCenterContactForm /> } />
 					<Route path="/success" element={ <SuccessScreen /> } />
 					<Route
 						path="/support-guides"
