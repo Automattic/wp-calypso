@@ -115,6 +115,10 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			message.internal_message_id === getExistingConversationMessage().internal_message_id
 	);
 
+	const hasTriedToEscalateToSupport = chat?.messages?.some(
+		( message ) => message.context?.flags?.forward_to_human_support
+	);
+
 	/*
 		Adds a message to the chat.
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
@@ -142,7 +146,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					} ) );
 					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
-				} else if ( warnAboutExistingConversation && ! hasBeenWarnedAboutExistingConversation ) {
+				} else if (
+					warnAboutExistingConversation &&
+					! hasBeenWarnedAboutExistingConversation &&
+					! hasTriedToEscalateToSupport
+				) {
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,
