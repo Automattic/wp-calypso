@@ -7,12 +7,12 @@ import {
 } from '../../../utils/purchase';
 import { ATOMIC_REVERT_STEP } from './cancel-purchase-form/steps';
 import type { CancelPurchaseState } from './types';
-import type { Purchase, SiteLatestAtomicTransfer } from '@automattic/api-core';
+import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
 interface CancelButtonProps {
 	purchase: Purchase;
 	includedDomainPurchase?: Purchase;
-	atomicTransfer?: SiteLatestAtomicTransfer;
+	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
 	disabled?: boolean;
 	isBusy?: boolean;

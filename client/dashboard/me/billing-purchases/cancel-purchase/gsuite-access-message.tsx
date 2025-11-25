@@ -1,11 +1,11 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { getGSuiteSubscriptionStatus, getGoogleMailServiceFamily } from '../../../utils/gsuite';
-import type { Purchase, DomainData } from '@automattic/api-core';
+import type { Purchase, Domain } from '@automattic/api-core';
 
 interface GSuiteAccessMessageProps {
 	purchase: Purchase;
-	selectedDomain?: DomainData;
+	selectedDomain?: Domain;
 }
 
 export default function GSuiteAccessMessage( {

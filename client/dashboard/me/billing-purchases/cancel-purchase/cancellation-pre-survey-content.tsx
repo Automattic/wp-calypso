@@ -5,18 +5,18 @@ import DomainOptionsContent from './domain-options-content';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
-	DomainData,
-	SiteLatestAtomicTransfer,
-	PurchaseCancelFeaturesResult,
+	Domain,
+	AtomicTransfer,
+	UpgradesCancelFeaturesResponse,
 } from '@automattic/api-core';
 
 interface CancellationPreSurveyContentProps {
 	purchase: Purchase;
 	includedDomainPurchase?: Purchase;
-	atomicTransfer?: SiteLatestAtomicTransfer;
-	selectedDomain?: DomainData;
+	atomicTransfer?: AtomicTransfer;
+	selectedDomain?: Domain;
 	state: CancelPurchaseState;
-	purchaseCancelFeatures?: PurchaseCancelFeaturesResult;
+	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;

@@ -4,12 +4,12 @@ import CancelButton from './cancel-button';
 import CancelPurchaseDomainOptions from './domain-options';
 import KeepSubscriptionButton from './keep-subscription-button';
 import type { CancelPurchaseState } from './types';
-import type { Purchase, SiteLatestAtomicTransfer } from '@automattic/api-core';
+import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
 interface DomainOptionsContentProps {
 	purchase: Purchase;
 	includedDomainPurchase?: Purchase;
-	atomicTransfer?: SiteLatestAtomicTransfer;
+	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onKeepSubscriptionClick: () => void;

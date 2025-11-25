@@ -4,12 +4,12 @@ import CancellationFullText from './cancellation-full-text';
 import ConfirmCheckbox from './confirm-checkbox';
 import KeepSubscriptionButton from './keep-subscription-button';
 import type { CancelPurchaseState } from './types';
-import type { Purchase, SiteLatestAtomicTransfer } from '@automattic/api-core';
+import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
 interface PlanProductRevertContentProps {
 	purchase: Purchase;
 	includedDomainPurchase?: Purchase;
-	atomicTransfer?: SiteLatestAtomicTransfer;
+	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
