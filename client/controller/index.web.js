@@ -217,9 +217,6 @@ export async function redirectLoggedOut( context, next ) {
 						pathname: context.pathname,
 					},
 				} );
-				// Continue normally since we have valid user data
-				next();
-				return;
 			}
 		} catch ( error ) {
 			const errorStatus = error.status;
@@ -233,7 +230,7 @@ export async function redirectLoggedOut( context, next ) {
 				// Just logging the logout URL for now to see if it's being set correctly
 				logToLogstash( {
 					feature: 'calypso_client',
-					message: 'Cookie-auth-missing and user re-fetch failed',
+					message: 'Cookie-auth-missing and user re-fetch failed.',
 					severity: 'warning',
 					user_id: userData?.ID,
 					properties: {
