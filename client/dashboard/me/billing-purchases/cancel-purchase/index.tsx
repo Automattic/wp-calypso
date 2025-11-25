@@ -96,6 +96,37 @@ const willShowDomainOptionsRadioButtons = (
 	);
 };
 
+const getDowngradePlanForPurchase = (
+	plans: PlanProduct[],
+	purchase: Purchase,
+	upsell: string | undefined
+): PlanProduct | undefined => {
+	if ( ! plans ) {
+		return;
+	}
+	const plan = plans.find( ( plan ) => plan.product_id === purchase.product_id );
+	if ( ! plan ) {
+		return;
+	}
+
+	let downgradePlanInfo;
+	switch ( upsell ) {
+		case 'downgrade-monthly':
+			downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
+				return path.bill_period !== plan.bill_period;
+			} );
+			break;
+		case 'downgrade-personal':
+			downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
+				return path.bill_period === plan.bill_period;
+			} );
+			break;
+	}
+	if ( downgradePlanInfo ) {
+		return plans.find( ( plan ) => plan.product_id === downgradePlanInfo.product_id );
+	}
+};
+
 export default function CancelPurchase() {
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
@@ -266,37 +297,7 @@ export default function CancelPurchase() {
 	let questionOneOrder = [];
 	let questionTwoOrder = [];
 
-	const getDowngradePlanForPurchase = (
-		plans: PlanProduct[],
-		purchase: Purchase
-	): PlanProduct | undefined => {
-		if ( ! plans ) {
-			return;
-		}
-		const plan = plans.find( ( plan ) => plan.product_id === purchase.product_id );
-		if ( ! plan ) {
-			return;
-		}
-
-		let downgradePlanInfo;
-		switch ( state.upsell ) {
-			case 'downgrade-monthly':
-				downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
-					return path.bill_period !== plan.bill_period;
-				} );
-				break;
-			case 'downgrade-personal':
-				downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
-					return path.bill_period === plan.bill_period;
-				} );
-				break;
-		}
-		if ( downgradePlanInfo ) {
-			return plans.find( ( plan ) => plan.product_id === downgradePlanInfo.product_id );
-		}
-	};
-
-	const downgradePlan = getDowngradePlanForPurchase( plans, purchase );
+	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, state.upsell );
 
 	const getAllSurveySteps = useCallback( () => {
 		let steps = [ FEEDBACK_STEP ];
