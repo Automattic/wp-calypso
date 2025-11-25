@@ -481,12 +481,6 @@ function setUpLoggedInRoute( req, res, next ) {
  * This CSP is currently in REPORT-ONLY mode, which means violations are logged but not blocked.
  * This allows us to identify issues before enforcing the policy.
  *
- * Security approach:
- * - Uses cryptographic nonces for inline scripts (generated per request)
- * - Allows specific trusted third-party domains (payment providers, analytics, fonts)
- * - Environment-aware: allows 'unsafe-eval' only in dev (for webpack eval source maps)
- * - Reports violations to /cspreport endpoint for monitoring
- *
  * Required for compliance on pages handling credit card information.
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
  * @param {Object} req Express request object
@@ -498,16 +492,6 @@ function setUpCSP( req, res, next ) {
 	// This is necessary because Calypso is an SPA - the initial page load's CSP applies
 	// to the entire session, so we need CSP protection on all entry points, especially
 	// pages that handle credit card information (checkout, payment methods, billing).
-
-	// This is calculated by taking the contents of the script text from between the tags,
-	// and calculating SHA256 hash on it, encoded in base64, example:
-	// `sha256-${ base64( sha256( 'window.AppBoot();' ) ) }` === sha256-3yiQswl88knA3EhjrG5tj5gmV6EUdLYFvn2dygc0xUQ
-	// you can also just run it in Chrome, chrome will give you the hash of the violating scripts
-	const inlineScripts = [
-		'sha256-ZKTuGaoyrLu2lwYpcyzib+xE4/2mCN8PKv31uXS3Eg4=',
-		'sha256-Ab4XY87C+5uFAaNDtQ+4UTgs8t6MTnQmMtSsZCvmoiw=', // Additional inline script
-		'sha256-ehBD9wGNfnN0flaZIjbVClW1//FJFsATigcdVB4VdMQ=', // Additional inline script
-	];
 
 	req.context.inlineScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
 
@@ -528,12 +512,12 @@ function setUpCSP( req, res, next ) {
 			// which enable fast rebuilds and hot module reloading. Production uses 'hidden-source-map'
 			// which doesn't require eval, maintaining strict CSP in production environments.
 			...( isDevelopmentEnv ? [ "'unsafe-eval'" ] : [] ),
+			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'stats.wp.com',
 			'https://widgets.wp.com',
 			'*.wordpress.com',
 			'https://apis.google.com',
 			'https://appleid.cdn-apple.com',
-			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
 			'use.typekit.net',
 			// Payment provider scripts (required for credit card processing)
@@ -545,7 +529,6 @@ function setUpCSP( req, res, next ) {
 			// User feedback and support tools
 			'survey.survicate.com', // Survicate survey tool
 			'surveys-static-prd.survicate-cdn.com', // Survicate CDN
-			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [
