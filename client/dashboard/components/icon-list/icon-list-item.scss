@@ -2,12 +2,7 @@
 @import "@wordpress/base-styles/variables";
 
 .icon-list-item {
-	padding: $grid-unit-20 0;
-	border-bottom: 1px solid $gray-100;
-
-	&:last-child {
-		border-bottom: none;
-	}
+	padding: $grid-unit-05 0;
 
 	.icon-list-item__decoration {
 		display: inline-flex;

@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/variables";
 
 .action-item {
+	padding: $grid-unit-20 0;
 	.action-item__actions {
 		flex-shrink: 0;
 	}
