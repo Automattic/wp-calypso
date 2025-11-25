@@ -96,9 +96,18 @@ export function setupRedirectRoutes( redirectRouteList: RedirectRouteList[] ): v
 /**
  * Janky placeholder for future behavior that determines whether we are in a CIAB partner flow.
  *
- * @todo this needs to be reimplemented once CIAB is stabilized.
+ * @todo this needs to be reimplemented once CIAB is stabilized - this should NOT be shipped to end users as-is.
  */
 export function isCIAB( partner: string ): boolean {
 	const redirectTo = new URLSearchParams( window.location.search ).get( 'redirect_to' ) || '';
-	return partner === 'paypal' && /\/ciab/.test( redirectTo );
+	const service = new URLSearchParams( window.location.search ).get( 'service' ) || '';
+	const isAuth =
+		/\/log-in\/paypal/.test( window.location.pathname ) ||
+		/\/setup\/onboarding/.test( window.location.pathname );
+
+	if ( partner !== 'paypal' ) {
+		return false;
+	}
+
+	return /\/ciab/.test( redirectTo ) || ( isAuth && service === partner );
 }
