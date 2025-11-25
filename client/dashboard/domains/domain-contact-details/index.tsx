@@ -110,6 +110,7 @@ export default function DomainContactInfo() {
 				}
 				key={ key }
 				initialData={ initialData }
+				validate={ validateMutation.mutateAsync }
 			/>
 		</PageLayout>
 	);

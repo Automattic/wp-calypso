@@ -232,7 +232,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			siteIntent,
 			undefined, // siteGoals
 			gardenName,
-			gardenPartnerName
+			gardenPartnerName,
+			urlQueryParams.get( 'spec_id' )
 		);
 
 		// Poll for garden provisioning status if this is a garden site
