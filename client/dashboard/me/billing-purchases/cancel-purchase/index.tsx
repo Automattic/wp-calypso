@@ -21,33 +21,25 @@ import {
 	userPreferenceQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { localizeUrl } from '@automattic/i18n-utils';
-import { formatCurrency } from '@automattic/number-formatters';
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
-	Button,
-	CheckboxControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
 import { _n, __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { formatDistanceToNow, intervalToDuration, intlFormat } from 'date-fns';
+import { intlFormat } from 'date-fns';
 import { useCallback, useEffect, useRef, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
-import { ButtonStack } from '../../../components/button-stack';
 import { Card } from '../../../components/card';
-import Notice from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { shuffleArray } from '../../../utils/collection';
-import { getGSuiteSubscriptionStatus, getGoogleMailServiceFamily } from '../../../utils/gsuite';
 import {
 	CANCEL_FLOW_TYPE,
 	getIncludedDomainPurchase,
@@ -55,17 +47,16 @@ import {
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
-	isAkismetProduct,
 	isAkismetTemporarySitePurchase,
 	isExpired,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackTemporarySitePurchase,
 	isNonDomainSubscription,
+	isAkismetProduct,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from '../../../utils/purchase';
-import BackupRetentionOptionOnCancelPurchase from './backup-retention-management/retention-option-on-cancel-purchase';
 import CancelPurchaseForm from './cancel-purchase-form';
 import {
 	cancellationOptionsForPurchase,
@@ -81,14 +72,14 @@ import {
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
-import CancelPurchaseDomainOptions from './domain-options';
+import CancellationMainContent from './cancellation-main-content';
+import DomainOptionsContent from './domain-options-content';
 import enrichedSurveyData from './enriched-survey-data';
-import CancelPurchaseFeatureList from './feature-list';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
 import nextStep from './next-step';
-import CancelPurchaseRefundInformation from './refund-information';
+import TimeRemainingNotice from './time-remaining-notice';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -99,7 +90,6 @@ import type {
 import type { ChangeEvent } from 'react';
 import './style.scss';
 
-// Helper function to determine if radio buttons will be shown
 const willShowDomainOptionsRadioButtons = (
 	includedDomainPurchase: Purchase,
 	purchase: Purchase
@@ -367,10 +357,6 @@ export default function CancelPurchase() {
 		state.upsell,
 		state.willAtomicSiteRevert,
 	] );
-
-	const getFeaturesFromApiForProduct = () => {
-		return purchaseCancelFeatures?.features ?? [];
-	};
 
 	const getActiveMarketplaceSubscriptions = (): Purchase[] => {
 		if ( ! purchase.is_plan || ! productsList ) {
@@ -1144,450 +1130,10 @@ export default function CancelPurchase() {
 		return <PageLayout size="small" />;
 	}
 
-	const isJetpack = purchase.is_jetpack_plan_or_product;
-	const isAkismet = isAkismetProduct( purchase );
-	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
-	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug );
 	const isHundredYearDomain = selectedDomain?.is_hundred_year_domain ?? false;
 
-	const renderRefundAmountString = (
-		purchase: Purchase,
-		cancelBundledDomain: boolean,
-		includedDomainPurchase?: Purchase
-	) => {
-		const {
-			refund_integer: refundInteger,
-			total_refund_integer: totalRefundInteger,
-			total_refund_currency: totalRefundCurrency,
-		} = purchase;
-
-		if ( hasAmountAvailableToRefund( purchase ) ) {
-			if ( cancelBundledDomain && includedDomainPurchase ) {
-				return formatCurrency( totalRefundInteger, totalRefundCurrency, {
-					isSmallestUnit: true,
-				} );
-			}
-			return formatCurrency( refundInteger, totalRefundCurrency, {
-				isSmallestUnit: true,
-			} );
-		}
-
-		return null;
-	};
-
-	const renderFullText = () => {
-		const { expiry_date: expiryDate } = purchase;
-		const expirationDate = intlFormat( expiryDate, { dateStyle: 'medium' }, { locale: 'en-US' } );
-
-		const refundAmountString = renderRefundAmountString(
-			purchase,
-			state.cancelBundledDomain ?? false,
-			includedDomainPurchase
-		);
-
-		if ( refundAmountString ) {
-			return createInterpolateElement(
-				sprintf(
-					/* translators: $(refundText)s is of the form "[currency-symbol][amount]" i.e. "$20" */
-					__(
-						'If you confirm this cancellation, you will receive a <span>refund of %(refundText)s</span>, and your subscription will be removed immediately.'
-					),
-					{
-						refundText: refundAmountString,
-					}
-				),
-				{
-					span: <span className="cancel-purchase__refund-string" />,
-				}
-			);
-		}
-
-		return createInterpolateElement(
-			sprintf(
-				/* translators: %(expirationDate)s is the date when the subscription will be removed */
-				__(
-					'If you complete this cancellation, your subscription will be removed on <span>%(expirationDate)s</span>.'
-				),
-				{
-					expirationDate,
-				}
-			),
-			{
-				span: <span className="cancel-purchase__warning-string" />,
-			}
-		);
-	};
-
-	type RenderCancelButtonPropOverrides = {
-		disabled?: boolean;
-		isBusy?: boolean;
-		onClick?: () => void;
-	};
-	const renderCancelButton = ( propOverrides: RenderCancelButtonPropOverrides = {} ) => {
-		// Check if we need atomic revert confirmation
-		const needsAtomicRevertConfirmation = atomicTransfer?.created_at;
-
-		const isDisabled =
-			propOverrides?.disabled ||
-			( state.cancelBundledDomain && ! state.confirmCancelBundledDomain ) ||
-			( state.surveyStep === ATOMIC_REVERT_STEP &&
-				needsAtomicRevertConfirmation &&
-				! state.atomicRevertConfirmed &&
-				purchase.is_plan ) ||
-			( isDomainRegistrationPurchase && ! state.domainConfirmationConfirmed ) ||
-			! ( state?.customerConfirmedUnderstanding || false );
-
-		const cancelButtonText = ( () => {
-			if ( includedDomainPurchase ) {
-				return __( 'Continue with cancellation' );
-			}
-
-			if ( hasAmountAvailableToRefund( purchase ) ) {
-				if ( purchase.is_domain_registration ) {
-					return __( 'Cancel domain and refund' );
-				}
-				if ( isNonDomainSubscription( purchase ) ) {
-					return __( 'Cancel plan' );
-				}
-				if ( isOneTimePurchase( purchase ) ) {
-					return __( 'Cancel and refund' );
-				}
-			}
-
-			if ( purchase.is_domain_registration ) {
-				return __( 'Cancel domain' );
-			}
-
-			if ( isNonDomainSubscription( purchase ) ) {
-				return __( 'Cancel plan' );
-			}
-		} )();
-
-		return (
-			<Button
-				className="cancel-purchase__button"
-				disabled={ isDisabled }
-				isBusy={ propOverrides?.isBusy ?? state.isLoading ?? false }
-				onClick={
-					propOverrides?.onClick ??
-					( shouldHandleMarketplaceSubscriptions() ? showMarketplaceDialog : onCancellationStart )
-				}
-				variant="primary"
-			>
-				{ cancelButtonText }
-			</Button>
-		);
-	};
-
-	const renderKeepSubscriptionButton = () => {
-		return (
-			<Button
-				variant="secondary"
-				onClick={ () => {
-					navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
-					onKeepSubscriptionClick();
-				} }
-			>
-				{ __( 'Keep plan' ) }
-			</Button>
-		);
-	};
-
-	const renderConfirmCheckbox = () => {
-		return (
-			<>
-				<b>{ __( 'Have a question before cancelling?' ) }</b>
-				<p>
-					{ createInterpolateElement(
-						__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
-						{
-							contactLink: <a href={ localizeUrl( 'https://wordpress.com/support' ) } />,
-						}
-					) }
-				</p>
-
-				<hr />
-
-				{ isDomainRegistrationPurchase && ! state.surveyShown && (
-					<div>
-						<CheckboxControl
-							label={ __(
-								'I understand that canceling means that I may lose this domain forever.'
-							) }
-							checked={ state.domainConfirmationConfirmed }
-							onChange={ onDomainConfirmationChange }
-						/>
-					</div>
-				) }
-
-				<div>
-					<CheckboxControl
-						label={ __( 'I understand my site will change when my plan expires.' ) }
-						checked={ state.customerConfirmedUnderstanding }
-						onChange={ ( checked ) => {
-							if ( atomicTransfer?.created_at ) {
-								setState( ( state ) => ( {
-									...state,
-									customerConfirmedUnderstanding: checked,
-								} ) );
-								return;
-							}
-
-							setState( ( state ) => ( { ...state, customerConfirmedUnderstanding: checked } ) );
-						} }
-					/>
-				</div>
-			</>
-		);
-	};
-
-	const renderPlanProductRevertContent = () => {
-		return (
-			<>
-				{ ! includedDomainPurchase && <p>{ renderFullText() }</p> }
-
-				{ ! state.surveyShown && renderConfirmCheckbox() }
-
-				<ButtonStack>
-					{ renderCancelButton() }
-					{ renderKeepSubscriptionButton() }
-				</ButtonStack>
-			</>
-		);
-	};
-
-	const renderGSuiteAccessMessage = () => {
-		const { meta: domainName, product_slug: productSlug } = purchase;
-		if ( ! productSlug || ! selectedDomain ) {
-			return;
-		}
-		const googleMailService = getGoogleMailServiceFamily( productSlug );
-		const googleSubscriptionStatus = getGSuiteSubscriptionStatus( selectedDomain );
-
-		if ( [ 'suspended', '' ].includes( googleSubscriptionStatus ) ) {
-			return (
-				<p>
-					{ createInterpolateElement(
-						sprintf(
-							// Translators: %(domainName) is the name of the domain (e.g. example.com) and %(googleMailService)s can be either "G Suite" or "Google Workspace"
-							__(
-								'If you cancel your subscription for %(domainName)s now, <strong>you will lose access to all of ' +
-									'your %(googleMailService)s features immediately</strong>, and you will ' +
-									'need to purchase a new subscription with Google if you wish to regain access to them.'
-							),
-							{
-								domainName,
-								googleMailService,
-							}
-						),
-						{
-							strong: <strong />,
-						}
-					) }
-				</p>
-			);
-		}
-
-		return (
-			<p>
-				{ createInterpolateElement(
-					sprintf(
-						// Translators: %(domainName) is the name of the domain (e.g. example.com), %(googleMailService)s can be either "G Suite" or "Google Workspace", and %(days)d is a number of days (usually '30')
-						__(
-							'If you cancel your subscription for %(domainName)s now, <strong>you will lose access to all of ' +
-								'your %(googleMailService)s features in %(days)d days</strong>. After that time, ' +
-								'you will need to purchase a new subscription with Google if you wish to regain access to them.'
-						),
-						{
-							domainName,
-							googleMailService,
-							days: 30,
-						}
-					),
-					{
-						strong: <strong />,
-					}
-				) }
-			</p>
-		);
-	};
-
-	const renderMainContent = () => {
-		const atomicRevertChanges = [
-			{
-				getSlug: () => 'primarySite',
-				getTitle: () => __( 'Set your site to private.' ),
-			},
-			{
-				getSlug: () => 'primaryDomain',
-				getTitle: () =>
-					/* translators: %(domainName)s is a domain name */
-					sprintf( __( 'Use %(domainName)s as your primary domain' ), {
-						domainName: purchase.domain,
-					} ),
-			},
-			{
-				getSlug: () => 'removeThemesPluginsData',
-				getTitle: () => __( 'Remove your installed themes, plugins, and their data.' ),
-			},
-			{
-				getSlug: () => 'revertThemesAndSettings',
-				getTitle: () => __( 'Switch to the settings and theme you had before you upgraded.' ),
-			},
-		];
-
-		const defaultChanges = [];
-		if (
-			! isJetpack &&
-			! isAkismet &&
-			! isDomainRegistrationPurchase &&
-			Boolean( atomicTransfer?.created_at )
-		) {
-			defaultChanges.push( ...atomicRevertChanges );
-		}
-
-		// Get features from the API endpoint for this product
-		const cancellationFeatures = getFeaturesFromApiForProduct();
-
-		let showDefaultChanges = false;
-		if ( ! isJetpack && ! isAkismet && ! isGSuite && ! isDomainRegistrationPurchase ) {
-			showDefaultChanges = true;
-		}
-
-		const cancellationChanges = showDefaultChanges ? defaultChanges : [];
-
-		// Check if we should show domain options inline (when they don't need radio buttons)
-		const shouldShowDomainOptionsInline =
-			includedDomainPurchase &&
-			! willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
-
-		return (
-			<>
-				{ shouldShowDomainOptionsInline && (
-					<CancelPurchaseDomainOptions
-						includedDomainPurchase={ includedDomainPurchase }
-						cancelBundledDomain={ false }
-						purchase={ purchase }
-						onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
-						isLoading={ false }
-					/>
-				) }
-
-				{ includedDomainPurchase && atomicTransfer?.created_at && ! purchase.is_refundable && (
-					<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
-						{ __( 'What happens when you cancel' ) }
-					</h2>
-				) }
-
-				<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
-
-				{ isGSuite && renderGSuiteAccessMessage() }
-
-				<CancelPurchaseFeatureList
-					purchase={ purchase }
-					cancellationFeatures={ cancellationFeatures }
-					cancellationChanges={ cancellationChanges }
-				/>
-
-				<CancelPurchaseRefundInformation
-					purchase={ purchase }
-					isJetpackPurchase={ isJetpack }
-					selectedDomain={ selectedDomain }
-				/>
-
-				{ renderPlanProductRevertContent() }
-			</>
-		);
-	};
-
-	const renderDomainOptionsContent = () => {
-		const { cancelBundledDomain, confirmCancelBundledDomain } = state;
-
-		if ( ! includedDomainPurchase || ! isNonDomainSubscription( purchase ) ) {
-			return null;
-		}
-
-		const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
-			setState( ( state ) => ( {
-				...state,
-				...newState,
-			} ) );
-		};
-
-		const canContinue = () => {
-			if ( ! cancelBundledDomain ) {
-				return true;
-			}
-			return confirmCancelBundledDomain;
-		};
-
-		return (
-			<>
-				<CancelPurchaseDomainOptions
-					includedDomainPurchase={ includedDomainPurchase }
-					cancelBundledDomain={ cancelBundledDomain ?? false }
-					purchase={ purchase }
-					onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
-					isLoading={ false }
-				/>
-				<ButtonStack>
-					{ renderCancelButton( {
-						disabled: ! canContinue(),
-						onClick: () => {
-							onCancellationComplete();
-						},
-					} ) }
-					{ renderKeepSubscriptionButton() }
-				</ButtonStack>
-			</>
-		);
-	};
-
-	const getTimeRemainingForSubscription = ( purchase: Purchase ) => {
-		const purchaseExpiryDate = new Date( purchase.expiry_date );
-		return intervalToDuration( { start: new Date(), end: purchaseExpiryDate } );
-	};
-
-	const renderTimeRemainingString = ( purchase: Purchase ) => {
-		// returns early if there's no product or accounting for the edge case that the plan expires today (or somehow already expired)
-		// in this case, do not show the time remaining for the plan
-		const timeRemaining = getTimeRemainingForSubscription( purchase );
-		if ( timeRemaining && ( timeRemaining?.days ?? 0 ) <= 1 ) {
-			return null;
-		}
-
-		// if this product/ plan is partner managed, it won't really "expire" from the user's perspective
-		if ( isPartnerPurchase( purchase ) || ! purchase.expiry_date ) {
-			return (
-				<Notice>
-					{ createInterpolateElement(
-						sprintf(
-							/* translators: %(productName)s is the name of the product */
-							__( 'Your <strong> %(productName)s </strong> subscription is still active. <br/>' ),
-							{ productName: purchase.product_name }
-						),
-						{
-							strong: <strong />,
-							br: <br />,
-						}
-					) }
-				</Notice>
-			);
-		}
-
-		// show how much time is left on the plan
-		return (
-			<Notice>
-				{ sprintf(
-					/* translators: 'timeRemaining' is localized string like "2 months" or "1 year". */
-					__( 'Your plan features will be available for another %(timeRemaining)s.' ),
-					{
-						timeRemaining: formatDistanceToNow( new Date( purchase.expiry_date ) ),
-						productName: purchase.product_name,
-					}
-				) }
-			</Notice>
-		);
+	const onCustomerConfirmedUnderstandingChange = ( checked: boolean ) => {
+		setState( ( state ) => ( { ...state, customerConfirmedUnderstanding: checked } ) );
 	};
 
 	if ( isHundredYearDomain ) {
@@ -1599,6 +1145,7 @@ export default function CancelPurchase() {
 
 	let heading;
 
+	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 	if ( isDomainRegistrationPurchase || isOneTimePurchase( purchase ) ) {
 		/* translators: %(purchaseName)s is the name of the product which was purchased */
 		heading = sprintf( __( 'Manage %(purchaseName)s' ), {
@@ -1624,6 +1171,7 @@ export default function CancelPurchase() {
 		return __( 'Cancel product' );
 	};
 
+	const isAkismet = isAkismetProduct( purchase );
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
 	return (
 		<>
@@ -1640,7 +1188,7 @@ export default function CancelPurchase() {
 				}
 			>
 				<VStack>
-					{ ! state.surveyShown && renderTimeRemainingString( purchase ) }
+					{ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
 
 					<Card className="cancel-purchase__wrapper-card">
 						<CancelPurchaseForm
@@ -1701,9 +1249,37 @@ export default function CancelPurchase() {
 								<Heading level={ 4 }>{ heading }</Heading>
 
 								<p className="cancel-purchase__left">
-									{ state.showDomainOptionsStep
-										? renderDomainOptionsContent()
-										: renderMainContent() }
+									{ state.showDomainOptionsStep ? (
+										<DomainOptionsContent
+											purchase={ purchase }
+											includedDomainPurchase={ includedDomainPurchase }
+											atomicTransfer={ atomicTransfer }
+											state={ state }
+											onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
+											onKeepSubscriptionClick={ onKeepSubscriptionClick }
+											onCancellationComplete={ onCancellationComplete }
+										/>
+									) : (
+										<CancellationMainContent
+											purchase={ purchase }
+											includedDomainPurchase={ includedDomainPurchase }
+											atomicTransfer={ atomicTransfer }
+											selectedDomain={ selectedDomain }
+											state={ state }
+											purchaseCancelFeatures={ purchaseCancelFeatures }
+											onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
+											onDomainConfirmationChange={ onDomainConfirmationChange }
+											onCustomerConfirmedUnderstandingChange={
+												onCustomerConfirmedUnderstandingChange
+											}
+											onKeepSubscriptionClick={ onKeepSubscriptionClick }
+											onCancelClick={
+												shouldHandleMarketplaceSubscriptions()
+													? showMarketplaceDialog
+													: onCancellationStart
+											}
+										/>
+									) }
 								</p>
 							</>
 						) }
