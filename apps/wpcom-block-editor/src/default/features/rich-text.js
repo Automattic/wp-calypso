@@ -4,7 +4,6 @@ import { getBlockType } from '@wordpress/blocks';
 import { compose, ifCondition } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { registerFormatType } from '@wordpress/rich-text';
-import { get } from 'lodash';
 
 const RichTextJustifyButton = ( {
 	blockId,
@@ -13,7 +12,7 @@ const RichTextJustifyButton = ( {
 	styleAttributes,
 	updateBlockAttributes,
 } ) => {
-	const isBlockJustified = 'justify' === get( styleAttributes, 'typography.textAlign' );
+	const isBlockJustified = 'justify' === styleAttributes.typography?.textAlign;
 
 	const onToggle = () => {
 		// TODO: Remove this once we know all Atomic sites are on Gutenberg 22.1 or higher
@@ -56,8 +55,8 @@ const ConnectedRichTextJustifyButton = compose(
 			blockId: selectedBlock.clientId,
 			blockName: selectedBlock.name,
 			isDeprecatedAlignAttribute: getBlockType( 'core/paragraph' ).attributes.align !== undefined,
-			deprecatedIsBlockJustified: 'justify' === get( selectedBlock, 'attributes.align' ),
-			styleAttributes: get( selectedBlock.attributes, 'style', EMPTY_STYLES ),
+			deprecatedIsBlockJustified: 'justify' === selectedBlock.attributes.align,
+			styleAttributes: selectedBlock.attributes.style || EMPTY_STYLES,
 		};
 	} ),
 	withDispatch( ( dispatch ) => ( {
