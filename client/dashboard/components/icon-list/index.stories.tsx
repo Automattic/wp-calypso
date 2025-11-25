@@ -17,17 +17,17 @@ export const Default: Story = {
 	args: {
 		children: (
 			<>
-				<IconList.IconListItem
+				<IconList.Item
 					title="First item"
 					description="First item description"
 					decoration={ <Icon icon={ cog } /> }
 				/>
-				<IconList.IconListItem
+				<IconList.Item
 					title="Second item"
 					description="Second item description"
 					decoration={ <Icon icon={ page } /> }
 				/>
-				<IconList.IconListItem
+				<IconList.Item
 					title="Third item"
 					description="Third item description"
 					decoration={ <Icon icon={ layout } /> }
@@ -42,12 +42,12 @@ export const WithTitle: Story = {
 		title: 'Icon List Title',
 		children: (
 			<>
-				<IconList.IconListItem
+				<IconList.Item
 					title="First item"
 					description="First item description"
 					decoration={ <Icon icon={ cog } /> }
 				/>
-				<IconList.IconListItem
+				<IconList.Item
 					title="Second item"
 					description="Second item description"
 					decoration={ <Icon icon={ page } /> }
@@ -63,17 +63,17 @@ export const WithTitleAndDescription: Story = {
 		description: 'This is a description of the icon list',
 		children: (
 			<>
-				<IconList.IconListItem
+				<IconList.Item
 					title="First item"
 					description="First item description"
 					decoration={ <Icon icon={ cog } /> }
 				/>
-				<IconList.IconListItem
+				<IconList.Item
 					title="Second item"
 					description="Second item description"
 					decoration={ <Icon icon={ page } /> }
 				/>
-				<IconList.IconListItem
+				<IconList.Item
 					title="Third item"
 					description="Third item description"
 					decoration={ <Icon icon={ layout } /> }
@@ -88,9 +88,9 @@ export const WithoutIcons: Story = {
 		title: 'Simple List',
 		children: (
 			<>
-				<IconList.IconListItem title="First item" description="First item description" />
-				<IconList.IconListItem title="Second item" description="Second item description" />
-				<IconList.IconListItem title="Third item" description="Third item description" />
+				<IconList.Item title="First item" description="First item description" />
+				<IconList.Item title="Second item" description="Second item description" />
+				<IconList.Item title="Third item" description="Third item description" />
 			</>
 		),
 	},

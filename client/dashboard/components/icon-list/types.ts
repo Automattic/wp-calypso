@@ -36,7 +36,7 @@ export interface IconListProps {
 	 */
 	description?: string;
 	/**
-	 * The elements, which should include one instance of the `IconList.IconListItem`
+	 * The elements, which should include one instance of the `IconList.Item`
 	 * component.
 	 */
 	children: React.ReactNode;

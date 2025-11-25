@@ -15,7 +15,7 @@ function UnforwardedIconListItem(
 ) {
 	return (
 		<VStack className={ clsx( 'icon-list-item', className ) } ref={ ref } as="span">
-			<HStack spacing={ 3 } justify="flex-start" alignment="center" as="span">
+			<HStack spacing={ 4 } justify="flex-start" alignment="center" as="span">
 				{ !! decoration && <span className="icon-list-item__decoration">{ decoration }</span> }
 				<HStack spacing={ 3 } as="span">
 					<VStack spacing={ 1 } as="span">
@@ -28,7 +28,7 @@ function UnforwardedIconListItem(
 							</Text>
 						) }
 					</VStack>
-					{ suffix && <>{ suffix }</> }
+					{ suffix }
 				</HStack>
 			</HStack>
 		</VStack>

@@ -44,8 +44,8 @@ export const IconList = Object.assign( forwardRef( UnforwardedIconList ), {
 	/**
 	 * Renders an item inside the `IconList` component.
 	 */
-	IconListItem: Object.assign( IconListItem, {
-		displayName: 'IconList.IconListItem',
+	Item: Object.assign( IconListItem, {
+		displayName: 'IconList.Item',
 	} ),
 } );
 
