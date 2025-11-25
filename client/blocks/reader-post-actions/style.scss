@@ -54,6 +54,15 @@
 			}
 		}
 
+		// Hide label on smaller screens
+		.freshly-pressed__button-label {
+			display: none;
+
+			@include break-medium {
+				display: inline;
+			}
+		}
+
 		// Hover states
 		.freshly-pressed:hover {
 			color: var( --color-link );

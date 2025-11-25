@@ -125,7 +125,7 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 			>
 				{ statusIcon && <Icon size={ 24 } icon={ statusIcon } /> }
 				{ isLoading && <Spinner className="freshly-pressed__spinner" /> }
-				{ config?.label }
+				<span className="freshly-pressed__button-label">{ config?.label }</span>
 			</button>
 		</div>
 	);
