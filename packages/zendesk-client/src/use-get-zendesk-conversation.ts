@@ -1,8 +1,8 @@
+import { zendeskMessageConverter } from '@automattic/odie-client/src/utils';
 import { useCallback } from 'react';
 import Smooch from 'smooch';
-import { zendeskMessageConverter } from '../utils';
 import { useGetUnreadConversations } from './use-get-unread-conversations';
-import type { ZendeskMessage } from '../types';
+import type { ZendeskMessage } from '@automattic/odie-client/src/types';
 
 const parseResponse = ( conversation: Conversation ) => {
 	let clientId;

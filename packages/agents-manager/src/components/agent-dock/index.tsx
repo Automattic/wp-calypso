@@ -9,6 +9,7 @@ import {
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
 import { AgentUI, createMessageRenderer, EmptyView, type ChatState } from '@automattic/agenttic-ui';
+import { useZendeskChat } from '@automattic/zendesk-client';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -19,6 +20,9 @@ import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import { AI } from '../icons';
 import type { ContextAdapter } from '../../adapters/context/context-adapter';
+import './style.scss';
+
+const MODE: 'zendesk' | 'bigsky' = 'zendesk';
 
 export interface AgentDockProps {
 	/**
@@ -202,7 +206,26 @@ export default function AgentDock( {
 		}
 	}, [ sessionId, setPersistedSessionId, isLoadingPersistedState ] );
 
-	const { messages, isProcessing, error, onSubmit } = useAgentChat( agentConfig );
+	const {
+		messages: bigskyMessages,
+		isProcessing,
+		error,
+		onSubmit: onBigskySendMessage,
+	} = useAgentChat( agentConfig );
+	const chat = useZendeskChat( MODE === 'zendesk', '6925ee173e0beaf87e86e76a' );
+
+	function onSendMessage( message: string ) {
+		if ( MODE === 'zendesk' ) {
+			chat.sendMessage( {
+				text: message,
+				role: 'user',
+			} );
+		} else {
+			onBigskySendMessage( message );
+		}
+	}
+
+	const messages = MODE === 'zendesk' ? chat.agnetticMessages ?? [] : bigskyMessages;
 
 	// TODO: Use this when adding custom chat header with clear chat menu item
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -220,6 +243,11 @@ export default function AgentDock( {
 
 	// Custom message renderer
 	const messageRenderer = useMemo( () => {
+		if ( MODE === 'zendesk' ) {
+			return function renderMessage( message: any ) {
+				return <div>{ message.children }</div>;
+			};
+		}
 		const options: any = { components: markdownComponents };
 		if ( markdownExtensions ) {
 			options.extensions = markdownExtensions;
@@ -277,7 +305,7 @@ export default function AgentDock( {
 				messages={ messages }
 				isProcessing={ isProcessing }
 				error={ error }
-				onSubmit={ onSubmit }
+				onSubmit={ onSendMessage }
 				variant={ isDocked ? 'embedded' : 'floating' }
 				floatingChatState={ chatState }
 				onClose={ isDocked ? closeSidebar : () => setChatState( 'collapsed' ) }
