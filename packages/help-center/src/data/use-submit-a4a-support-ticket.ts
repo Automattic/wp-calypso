@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { useMutation } from '@tanstack/react-query';
-import wpcom from 'calypso/lib/wp';
+import wpcomRequest from 'wpcom-proxy-request';
 
 type Ticket = {
 	name: string;
@@ -22,9 +22,10 @@ export function useSubmitA4ATicketMutation() {
 				path = '/agency/help/pressable/support';
 			}
 
-			return wpcom.req.post( {
+			return wpcomRequest( {
 				path,
 				apiNamespace: 'wpcom/v2',
+				method: 'POST',
 				body: ticket,
 			} );
 		},

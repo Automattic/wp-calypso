@@ -28,9 +28,11 @@ export const HelpCenterA4AContactForm = () => {
 		pressable_contact: 'sales',
 	} );
 
-	const [ hasSubmitError, setHasSubmitError ] = useState( false );
-
-	const { isPending, mutate: submitA4ATicket } = useSubmitA4ATicketMutation();
+	const {
+		isPending,
+		mutate: submitA4ATicket,
+		isError: hasSubmitError,
+	} = useSubmitA4ATicketMutation();
 
 	const isPressableSelected = formData[ 'product' ] === 'pressable';
 
@@ -42,8 +44,6 @@ export const HelpCenterA4AContactForm = () => {
 		recordTracksEvent( 'calypso_a4a_user_contact_support_form_submit', {
 			data: formData[ 'message' ],
 		} );
-
-		setHasSubmitError( false );
 
 		submitA4ATicket(
 			{
@@ -59,9 +59,6 @@ export const HelpCenterA4AContactForm = () => {
 			{
 				onSuccess: () => {
 					navigate( '/success' );
-				},
-				onError: () => {
-					setHasSubmitError( true );
 				},
 			}
 		);
