@@ -1,3 +1,4 @@
+import { envVariables } from '../..';
 import type { Page } from 'playwright';
 
 /**
@@ -22,6 +23,13 @@ export class PartnerDirectoryComponent {
 	 * @param {string} filterName The name of the filter to apply.
 	 */
 	async applyDropdownFilter( dropdownName: string, filterName: string ): Promise< void > {
+		// On mobile, we need to click the filters toggle button first to open the filters panel.
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// TODO: This button has no accessible name, so we have to use a CSS selector.
+			const filtersToggle = this.page.locator( '.a4a-partner-directory-filters-toggle' );
+			await filtersToggle.waitFor( { state: 'visible' } );
+			await filtersToggle.click();
+		}
 		await this.page.getByRole( 'button', { name: dropdownName } ).click();
 		await this.page.getByRole( 'checkbox', { name: filterName } ).click();
 	}
