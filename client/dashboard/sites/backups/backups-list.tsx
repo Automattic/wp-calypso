@@ -74,7 +74,7 @@ export function BackupsList( {
 	};
 
 	return (
-		<DataViewsCard className="dashboard-backups__wrapper">
+		<DataViewsCard>
 			<DataViews< ActivityLogEntry >
 				getItemId={ ( item ) => item.activity_id }
 				data={ filteredData }

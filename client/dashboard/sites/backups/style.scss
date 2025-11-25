@@ -6,15 +6,6 @@
 	fill: $gray-700;
 }
 
-.dashboard-backups__wrapper {
-	.dataviews-loading, .dataviews-no-results {
-		align-items: center;
-		display: flex;
-		justify-content: center;
-		min-height: 300px;
-	}
-}
-
 .dashboard-backups__progress-bar{
 	--wp-components-color-foreground: var(--wp-admin-theme-color);
 }
