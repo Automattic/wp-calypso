@@ -3,20 +3,21 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { FormInputValidation } from '@automattic/components';
 import { Button, SelectControl, TextareaControl, TextControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import './help-center-a4a-contact-form.scss';
+import { useSubmitA4ATicketMutation } from '../data/use-submit-a4a-support-ticket';
 
 export const HelpCenterA4AContactForm = () => {
-	const dispatch = useDispatch();
-
-	const { currentUser } = useHelpCenterContext();
+	const { currentUser, agency } = useHelpCenterContext();
+	const navigate = useNavigate();
 
 	const [ formData, setFormData ] = useState( {
 		name: currentUser?.display_name ?? '',
@@ -27,19 +28,51 @@ export const HelpCenterA4AContactForm = () => {
 		pressable_contact: 'sales',
 	} );
 
+	const [ hasSubmitError, setHasSubmitError ] = useState( false );
+
+	const { isPending, mutate: submitA4ATicket } = useSubmitA4ATicketMutation();
+
 	const isPressableSelected = formData[ 'product' ] === 'pressable';
 
 	const handleChange = ( key: string, value: string ) => {
 		setFormData( { ...formData, [ key ]: value } );
 	};
 
-	const handleSubmit = () => {
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_user_contact_support_form_submit', {
-				form_data: JSON.stringify( formData ),
-			} )
+	const handleSubmit = useCallback( () => {
+		recordTracksEvent( 'calypso_a4a_user_contact_support_form_submit', {
+			data: formData[ 'message' ],
+		} );
+
+		setHasSubmitError( false );
+
+		submitA4ATicket(
+			{
+				name: formData[ 'name' ],
+				email: formData[ 'email' ],
+				message: formData[ 'message' ],
+				product: formData[ 'product' ],
+				agency_id: agency?.id,
+				pressable_id: agency?.pressableId,
+				site: formData[ 'site' ] ?? undefined,
+				contact_type: isPressableSelected ? formData[ 'pressable_contact' ] : undefined,
+			},
+			{
+				onSuccess: () => {
+					navigate( '/success' );
+				},
+				onError: () => {
+					setHasSubmitError( true );
+				},
+			}
 		);
-	};
+	}, [
+		formData,
+		submitA4ATicket,
+		agency?.id,
+		agency?.pressableId,
+		isPressableSelected,
+		navigate,
+	] );
 
 	useEffect( () => {
 		if ( formData[ 'product' ] === 'pressable' ) {
@@ -160,11 +193,18 @@ export const HelpCenterA4AContactForm = () => {
 			</div>
 
 			<div className="contact-form-submit">
+				{ hasSubmitError && (
+					<FormInputValidation
+						isError
+						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+					/>
+				) }
+
 				<Button
 					__next40pxDefaultSize
 					variant="primary"
-					onClick={ () => handleSubmit() }
-					disabled={ ! isValidForm }
+					onClick={ handleSubmit }
+					disabled={ ! isValidForm || isPending }
 				>
 					{ __( 'Submit form', __i18n_text_domain__ ) }
 				</Button>
