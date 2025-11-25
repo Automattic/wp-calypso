@@ -49,7 +49,7 @@ export default function DomainTransferSetup() {
 	const isReseller = !! domainConnectionSetupInfo?.reseller;
 
 	const [ firstStepCompleted, setFirstStepCompleted ] = useState( false );
-	const [ stepsExpanded, setStepsExpanded ] = useState< boolean[] >( [ false, false ] );
+	const [ stepsExpanded, setStepsExpanded ] = useState< boolean[] >( [ true, false ] );
 	const [ authorizationCode, setAuthorizationCode ] = useState( '' );
 	const [ error, setError ] = useState< string | null >( null );
 
