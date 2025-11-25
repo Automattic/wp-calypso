@@ -29,6 +29,8 @@ const RichTextJustifyButton = ( { blockId, styleAttributes, updateBlockAttribute
 	);
 };
 
+const EMPTY_STYLES = {};
+
 const ConnectedRichTextJustifyButton = compose(
 	withSelect( ( wpSelect ) => {
 		const selectedBlock = wpSelect( 'core/block-editor' ).getSelectedBlock();
@@ -38,7 +40,7 @@ const ConnectedRichTextJustifyButton = compose(
 		return {
 			blockId: selectedBlock.clientId,
 			blockName: selectedBlock.name,
-			styleAttributes: get( selectedBlock.attributes, 'style', {} ),
+			styleAttributes: get( selectedBlock.attributes, 'style', EMPTY_STYLES ),
 		};
 	} ),
 	withDispatch( ( dispatch ) => ( {
