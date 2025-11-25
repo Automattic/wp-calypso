@@ -50,12 +50,11 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 };
 
 const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, currentRoute } ) => {
-	const { show, isMinimized, persistedHistory } = useSelect( ( select ) => {
+	const { show, isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			show: store.isHelpCenterShown(),
 			isMinimized: store.getIsMinimized(),
-			persistedHistory: store.getHelpCenterRouterHistory(),
 		};
 	}, [] );
 	const { sectionName } = useHelpCenterContext();
@@ -101,7 +100,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	}
 
 	return (
-		<PersistentRouter routerHistory={ persistedHistory }>
+		<PersistentRouter>
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }

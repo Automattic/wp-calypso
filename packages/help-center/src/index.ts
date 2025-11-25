@@ -5,7 +5,6 @@ export { SuccessScreen } from './components/ticket-success-screen';
 export { BackButton } from './components/back-button';
 export { HelpCenterContactForm } from './components/help-center-contact-form';
 export { default as HelpCenterInlineButton } from './components/help-center-inline-button';
-export { PersistentRouter } from './components/persistent-router';
 export { default as Mail } from './icons/mail';
 export { useHelpSearchQuery } from './hooks/use-help-search-query';
 export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';
