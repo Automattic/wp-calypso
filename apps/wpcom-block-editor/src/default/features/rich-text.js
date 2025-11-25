@@ -5,10 +5,21 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import { registerFormatType } from '@wordpress/rich-text';
 import { get } from 'lodash';
 
-const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttributes } ) => {
+const RichTextJustifyButton = ( { blockId, attributes, updateBlockAttributes } ) => {
+	const isBlockJustified = 'justify' === get( attributes, 'style.typography.textAlign' );
+
+	const style = attributes.style || {};
+
 	const onToggle = () =>
 		updateBlockAttributes( blockId, {
-			style: { typography: { textAlign: isBlockJustified ? null : 'justify' } },
+			...attributes,
+			style: {
+				...style,
+				typography: {
+					...style.typography,
+					textAlign: isBlockJustified ? null : 'justify',
+				},
+			},
 		} );
 
 	return (
@@ -30,7 +41,7 @@ const ConnectedRichTextJustifyButton = compose(
 		return {
 			blockId: selectedBlock.clientId,
 			blockName: selectedBlock.name,
-			isBlockJustified: 'justify' === get( selectedBlock, 'attributes.style.typography.textAlign' ),
+			attributes: selectedBlock.attributes,
 		};
 	} ),
 	withDispatch( ( dispatch ) => ( {
