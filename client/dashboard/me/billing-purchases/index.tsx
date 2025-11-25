@@ -1,7 +1,7 @@
 import {
 	userPaymentMethodsQuery,
 	userPurchasesQuery,
-	userPurchasesSitesQuery,
+	allSitesQuery,
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
@@ -32,7 +32,7 @@ export default function PurchasesList() {
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
-	const { data: sites, isLoading: isLoadingSites } = useQuery( userPurchasesSitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( allSitesQuery() );
 
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
 	const { view, updateView, resetView } = usePersistentView( {
