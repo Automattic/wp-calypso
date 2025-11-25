@@ -110,7 +110,7 @@ function SiteLogsDataViews( {
 		url.searchParams.set( 'from', String( startSec ) );
 		url.searchParams.set( 'to', String( endSec ) );
 		window.history.replaceState( null, '', url.toString() );
-	}, [ startSec, endSec ] );
+	}, [ startSec, endSec, logType ] );
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
