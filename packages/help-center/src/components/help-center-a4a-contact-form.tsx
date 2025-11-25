@@ -4,7 +4,8 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
-import { Button, SelectControl, TextareaControl, TextControl } from '@wordpress/components';
+import { Button, TextareaControl } from '@wordpress/components';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -14,12 +15,22 @@ import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import './help-center-a4a-contact-form.scss';
 import { useSubmitA4ATicketMutation } from '../data/use-submit-a4a-support-ticket';
+import type { Field } from '@wordpress/dataviews';
+
+type FormData = {
+	name: string;
+	email: string;
+	site: string;
+	product: string;
+	message: string;
+	pressable_contact: string;
+};
 
 export const HelpCenterA4AContactForm = () => {
 	const { currentUser, agency } = useHelpCenterContext();
 	const navigate = useNavigate();
 
-	const [ formData, setFormData ] = useState( {
+	const [ formData, setFormData ] = useState< FormData >( {
 		name: currentUser?.display_name ?? '',
 		email: currentUser?.email ?? '',
 		site: '',
@@ -34,158 +45,181 @@ export const HelpCenterA4AContactForm = () => {
 		isError: hasSubmitError,
 	} = useSubmitA4ATicketMutation();
 
-	const isPressableSelected = formData[ 'product' ] === 'pressable';
+	const isPressableSelected = formData.product === 'pressable';
 
-	const handleChange = ( key: string, value: string ) => {
-		setFormData( { ...formData, [ key ]: value } );
-	};
-
-	const handleSubmit = useCallback( () => {
-		recordTracksEvent( 'calypso_a4a_user_contact_support_form_submit', {
-			data: formData[ 'message' ],
-		} );
-
-		submitA4ATicket(
+	const fields: Field< FormData >[] = useMemo(
+		() => [
 			{
-				name: formData[ 'name' ],
-				email: formData[ 'email' ],
-				message: formData[ 'message' ],
-				product: formData[ 'product' ],
-				agency_id: agency?.id,
-				pressable_id: agency?.pressableId,
-				site: formData[ 'site' ] ?? undefined,
-				contact_type: isPressableSelected ? formData[ 'pressable_contact' ] : undefined,
+				id: 'name',
+				label: __( 'Name', __i18n_text_domain__ ),
+				type: 'text' as const,
+				placeholder: __( 'Your name', __i18n_text_domain__ ),
+				isValid: {
+					required: true,
+				},
 			},
 			{
-				onSuccess: () => {
-					navigate( '/success' );
+				id: 'email',
+				label: __( 'Email address', __i18n_text_domain__ ),
+				type: 'text' as const,
+				placeholder: __( 'Your email', __i18n_text_domain__ ),
+				isValid: {
+					required: true,
 				},
-			}
-		);
-	}, [
-		formData,
-		submitA4ATicket,
-		agency?.id,
-		agency?.pressableId,
-		isPressableSelected,
-		navigate,
-	] );
+			},
+			{
+				id: 'site',
+				label: __( 'Related site', __i18n_text_domain__ ),
+				type: 'text' as const,
+				placeholder: __( 'Add site if necessary', __i18n_text_domain__ ),
+			},
+			{
+				id: 'product',
+				label: __( 'What Automattic product would you like help with?', __i18n_text_domain__ ),
+				type: 'text' as const,
+				Edit: 'select',
+				elements: [
+					{
+						label: __( 'Select a product', __i18n_text_domain__ ),
+						value: '',
+						disabled: true,
+					},
+					{
+						label: __( 'Automattic for Agencies', __i18n_text_domain__ ),
+						value: 'a4a',
+					},
+					{
+						label: __( 'Woo', __i18n_text_domain__ ),
+						value: 'woo',
+					},
+					{
+						label: __( 'WordPress.com', __i18n_text_domain__ ),
+						value: 'wpcom',
+					},
+					{
+						label: __( 'Jetpack', __i18n_text_domain__ ),
+						value: 'jetpack',
+					},
+					{
+						label: __( 'Pressable', __i18n_text_domain__ ),
+						value: 'pressable',
+					},
+				],
+				isValid: {
+					required: true,
+				},
+			},
+			{
+				id: 'pressable_contact',
+				label: __( 'Would you like help with Pressable sales or support?', __i18n_text_domain__ ),
+				type: 'text' as const,
+				Edit: 'select',
+				elements: [
+					{
+						label: __( 'Sales', __i18n_text_domain__ ),
+						value: 'sales',
+					},
+					{
+						label: __( 'Support', __i18n_text_domain__ ),
+						value: 'support',
+					},
+				],
+				isVisible: ( item: FormData ) => item.product === 'pressable',
+			},
+			{
+				id: 'message',
+				label: __( 'How can we help?', __i18n_text_domain__ ),
+				type: 'text' as const,
+				Edit: ( { field, data, onChange } ) => {
+					const { id, getValue } = field;
+					const placeholder =
+						data.product === 'pressable'
+							? __(
+									"Please provide the team with a detailed explanation of the issue you're facing, including steps to reproduce the issue on our end and/or URLs. Providing these details will greatly help us with your support request.",
+									__i18n_text_domain__
+							  )
+							: __( 'Add your message here', __i18n_text_domain__ );
+					return (
+						<TextareaControl
+							__nextHasNoMarginBottom
+							label={ field.label }
+							placeholder={ placeholder }
+							value={ getValue( { item: data } ) }
+							onChange={ ( value ) => {
+								return onChange( { [ id ]: value ?? '' } );
+							} }
+						/>
+					);
+				},
+				isValid: {
+					required: true,
+				},
+			},
+		],
+		[]
+	);
+
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: [ 'name', 'email', 'site', 'product', 'pressable_contact', 'message' ],
+	};
+
+	const { validity } = useFormValidity( formData, fields, form );
+
+	const handleSubmit = useCallback(
+		( e: React.FormEvent ) => {
+			e.preventDefault();
+			recordTracksEvent( 'calypso_a4a_user_contact_support_form_submit', {
+				data: formData.message,
+			} );
+
+			submitA4ATicket(
+				{
+					name: formData.name,
+					email: formData.email,
+					message: formData.message,
+					product: formData.product,
+					agency_id: agency?.id,
+					pressable_id: agency?.pressableId,
+					site: formData.site || undefined,
+					contact_type: isPressableSelected ? formData.pressable_contact : undefined,
+				},
+				{
+					onSuccess: () => {
+						navigate( '/success' );
+					},
+				}
+			);
+		},
+		[ formData, submitA4ATicket, agency?.id, agency?.pressableId, isPressableSelected, navigate ]
+	);
 
 	useEffect( () => {
-		if ( formData[ 'product' ] === 'pressable' ) {
-			setFormData( { ...formData, pressable_contact: 'sales' } );
+		if ( formData.product === 'pressable' && ! formData.pressable_contact ) {
+			setFormData( ( prev ) => ( { ...prev, pressable_contact: 'sales' } ) );
 		}
-	}, [ formData ] );
+	}, [ formData.product, formData.pressable_contact ] );
 
 	const isValidForm = useMemo( () => {
-		return (
-			formData[ 'name' ] && formData[ 'email' ] && formData[ 'product' ] && formData[ 'message' ]
-		);
-	}, [ formData ] );
+		// If validaty is empty, it means we don't have any invalid fields.
+		return ! validity;
+	}, [ validity ] );
 
 	return (
-		<div className="help-center-a4a-contact-form__wrapper">
+		<form onSubmit={ handleSubmit } className="help-center-a4a-contact-form__wrapper">
 			<div className="help-center-a4a-contact-form">
 				<h1 className="help-center-a4a-contact-form__title">
 					{ __( 'Contact sales & support', __i18n_text_domain__ ) }
 				</h1>
 
-				<TextControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					label={ __( 'Name', __i18n_text_domain__ ) }
-					placeholder={ __( 'Your name', __i18n_text_domain__ ) }
-					value={ formData[ 'name' ] }
-					onChange={ ( value ) => handleChange( 'name', value ) }
-				/>
-
-				<TextControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					label={ __( 'Email address', __i18n_text_domain__ ) }
-					value={ formData[ 'email' ] }
-					placeholder={ __( 'Your email', __i18n_text_domain__ ) }
-					onChange={ ( value ) => handleChange( 'email', value ) }
-				/>
-
-				<TextControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					label={ __( 'Related site', __i18n_text_domain__ ) }
-					value={ formData[ 'site' ] }
-					placeholder={ __( 'Add site if necessary', __i18n_text_domain__ ) }
-					onChange={ ( value ) => handleChange( 'site', value ) }
-				/>
-
-				<SelectControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					label={ __( 'What Automattic product would you like help with?', __i18n_text_domain__ ) }
-					onChange={ ( value ) => handleChange( 'product', value ) }
-					options={ [
-						{
-							label: __( 'Select a product', __i18n_text_domain__ ),
-							value: '',
-							disabled: true,
-						},
-						{
-							label: __( 'Automattic for Agencies', __i18n_text_domain__ ),
-							value: 'a4a',
-						},
-						{
-							label: __( 'Woo', __i18n_text_domain__ ),
-							value: 'woo',
-						},
-						{
-							label: __( 'WordPress.com', __i18n_text_domain__ ),
-							value: 'wpcom',
-						},
-						{
-							label: __( 'Jetpack', __i18n_text_domain__ ),
-							value: 'jetpack',
-						},
-						{
-							label: __( 'Pressable', __i18n_text_domain__ ),
-							value: 'pressable',
-						},
-					] }
-				/>
-
-				{ isPressableSelected && (
-					<SelectControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						label={ __(
-							'Would you like help with Pressable sales or support?',
-							__i18n_text_domain__
-						) }
-						onChange={ ( value ) => handleChange( 'pressable_contact', value ) }
-						options={ [
-							{
-								label: __( 'Sales', __i18n_text_domain__ ),
-								value: 'sales',
-							},
-							{
-								label: __( 'Support', __i18n_text_domain__ ),
-								value: 'support',
-							},
-						] }
-					/>
-				) }
-
-				<TextareaControl
-					__nextHasNoMarginBottom
-					label={ __( 'How can we help?', __i18n_text_domain__ ) }
-					value={ formData[ 'message' ] }
-					placeholder={
-						isPressableSelected
-							? __(
-									"Please provide the team with a detailed explanation of the issue you're facing, including steps to reproduce the issue on our end and/or URLs. Providing these details will greatly help us with your support request.",
-									__i18n_text_domain__
-							  )
-							: __( 'Add your message here', __i18n_text_domain__ )
-					}
-					onChange={ ( value ) => handleChange( 'message', value ) }
+				<DataForm< FormData >
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					validity={ validity }
+					onChange={ ( edits: Partial< FormData > ) => {
+						setFormData( ( data ) => ( { ...data, ...edits } ) );
+					} }
 				/>
 			</div>
 
@@ -200,12 +234,12 @@ export const HelpCenterA4AContactForm = () => {
 				<Button
 					__next40pxDefaultSize
 					variant="primary"
-					onClick={ handleSubmit }
+					type="submit"
 					disabled={ ! isValidForm || isPending }
 				>
 					{ __( 'Submit form', __i18n_text_domain__ ) }
 				</Button>
 			</div>
-		</div>
+		</form>
 	);
 };
