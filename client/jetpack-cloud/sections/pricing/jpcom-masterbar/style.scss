@@ -193,6 +193,10 @@ $delay: 0.055s;
 		color: #101517;
 		font-size: 18px;
 		transition: background 0.1s;
+
+		&:has( .sale-banner ) {
+			padding-top: 0;
+		}
 	}
 	@media ( max-width: 900px ) {
 		.header {
@@ -483,9 +487,6 @@ $delay: 0.055s;
 	.header.force-opaque,
 	.header.is-opaque {
 		background-color: #fff;
-	}
-	.header:has( .sale-banner ) {
-		padding-top: 0;
 	}
 	html.with-admin-bar .header {
 		top: 32px;
