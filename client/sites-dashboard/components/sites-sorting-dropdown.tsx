@@ -77,8 +77,9 @@ export const SitesSortingDropdown = ( {
 	}
 
 	const currentSortingValue = stringifySitesSorting( validSorting );
-	const validSortingLabel = choices.find( ( { sortKey } ) => sortKey === validSorting.sortKey )
-		?.label;
+	const validSortingLabel =
+		currentSortingLabel ??
+		choices.find( ( { sortKey } ) => sortKey === validSorting.sortKey )?.label;
 
 	return (
 		<Dropdown
