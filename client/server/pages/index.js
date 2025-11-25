@@ -498,7 +498,6 @@ function setUpCSP( req, res, next ) {
 	// Development environments that need webpack eval-based source maps
 	const isDevelopmentEnv = [
 		'development',
-		'wpcalypso',
 		'jetpack-cloud-development',
 		'a8c-for-agencies-development',
 	].includes( calypsoEnv );
