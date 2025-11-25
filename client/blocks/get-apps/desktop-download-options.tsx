@@ -12,15 +12,7 @@ type Props = {
 	platformDetectionFailed?: boolean;
 };
 
-interface AlsoAvailableConfig {
-	name: string;
-	icon: string;
-	iconName: string;
-	link: string;
-	onClick: () => void;
-}
-
-const AlsoAvailable: React.FC< { config: AlsoAvailableConfig } > = ( { config } ) => (
+const AlsoAvailable: React.FC< { config: PlatformConfig } > = ( { config } ) => (
 	<a href={ config.link } onClick={ config.onClick } className="get-apps__desktop-link">
 		<SVGIcon
 			classes=""
