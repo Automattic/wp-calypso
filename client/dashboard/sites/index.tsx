@@ -145,7 +145,7 @@ export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 		return {
 			sites: [],
 			sites__ES: siteProfilesQueryResult.data?.sites,
-			hasNoData: Boolean( siteProfilesQueryResult.data?.sites.length === 0 ),
+			hasNoData: siteProfilesQueryResult.data?.sites.length === 0,
 			isLoadingSites: siteProfilesQueryResult.isLoading,
 			isPlaceholderData: siteProfilesQueryResult.isPlaceholderData,
 			totalItems: siteProfilesQueryResult.data?.total,
@@ -155,7 +155,7 @@ export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 	return {
 		sites: sitesQueryResult.data,
 		sites__ES: [],
-		hasNoData: Boolean( sitesQueryResult.data?.length === 0 ),
+		hasNoData: sitesQueryResult.data?.length === 0,
 		isLoadingSites: sitesQueryResult.isLoading,
 		isPlaceholderData: sitesQueryResult.isPlaceholderData,
 		totalItems: sitesQueryResult.data?.length,
