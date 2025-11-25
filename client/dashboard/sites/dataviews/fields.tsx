@@ -10,22 +10,23 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { getSiteStatus, getStatusLabels } from '../../utils/site-status';
-import { isP2, isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { getSiteDisplayUrl, getSiteFormattedUrl } from '../../utils/site-url';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
-import { isSitePlanTrial } from '../plans';
 import {
 	AsyncEngagementStat,
 	EngagementStat,
 	LastBackup,
 	MediaStorage,
 	Name,
+	NameRenderer,
 	PHPVersion,
 	Plan,
 	Preview,
 	Status,
 	URL,
 	Uptime,
+	URLRenderer,
 } from '../site-fields';
 import type { AppConfig } from '../../app/context';
 import type { Site, DashboardSiteListSite } from '@automattic/api-core';
@@ -40,28 +41,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			enableHiding: false,
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayName( item ),
-			render: ( { field, item } ) => {
-				const getBadgeType = () => {
-					if ( item.is_wpcom_staging_site ) {
-						return 'staging';
-					}
-					if ( isSitePlanTrial( item ) ) {
-						return 'trial';
-					}
-					if ( isP2( item ) ) {
-						return 'p2';
-					}
-					return null;
-				};
-
-				return (
-					<Name
-						badge={ getBadgeType() }
-						deleted={ item.is_deleted }
-						value={ field.getValue( { item } ) }
-					/>
-				);
-			},
+			render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
 			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{
@@ -69,12 +49,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			label: __( 'URL' ),
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayUrl( item ),
-			render: ( { field, item } ) => {
-				const href = getSiteFormattedUrl( item );
-				return (
-					<URL deleted={ item.is_deleted } href={ href } value={ field.getValue( { item } ) } />
-				);
-			},
+			render: ( { field, item } ) => <URL site={ item } value={ field.getValue( { item } ) } />,
 		},
 		{
 			id: 'icon.ico',
@@ -227,9 +202,9 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			enableGlobalSearch: false, // TODO
 			getValue: ( { item } ) => item.name ?? '',
 			render: ( { field, item } ) => (
-				<Name
+				<NameRenderer
 					badge={ item.badge ?? null }
-					deleted={ item.deleted ?? false }
+					muted={ item.deleted ?? false }
 					value={ field.getValue( { item } ) }
 				/>
 			),
@@ -241,8 +216,8 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => item.url?.value ?? '',
 			render: ( { field, item } ) => (
-				<URL
-					deleted={ item.deleted ?? false }
+				<URLRenderer
+					disabled={ item.deleted ?? false }
 					href={ item.url?.with_scheme ?? '' }
 					value={ field.getValue( { item } ) }
 				/>
@@ -301,8 +276,8 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				operators: [ 'isAny' ],
 			},
 			sort: ( a, b, direction ) => {
-				const planA = getSitePlanDisplayName( a ) ?? '';
-				const planB = getSitePlanDisplayName( b ) ?? '';
+				const planA = a.plan?.product_name_short ?? '';
+				const planB = b.plan?.product_name_short ?? '';
 
 				return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
 			},

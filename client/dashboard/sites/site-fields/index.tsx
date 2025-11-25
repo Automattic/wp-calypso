@@ -30,6 +30,8 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
+import { isP2 } from '../../utils/site-types';
+import { getSiteFormattedUrl } from '../../utils/site-url';
 import { canManageSite } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
@@ -90,13 +92,30 @@ export function SiteLink__ES( {
 	);
 }
 
-export function Name( {
+export function Name( { site, value }: { site: Site; value: string } ) {
+	const getBadgeType = () => {
+		if ( site.is_wpcom_staging_site ) {
+			return 'staging';
+		}
+		if ( isSitePlanTrial( site ) ) {
+			return 'trial';
+		}
+		if ( isP2( site ) ) {
+			return 'p2';
+		}
+		return null;
+	};
+
+	return <NameRenderer badge={ getBadgeType() } muted={ site.is_deleted } value={ value } />;
+}
+
+export function NameRenderer( {
 	badge,
-	deleted,
+	muted,
 	value,
 }: {
 	badge: null | 'staging' | 'trial' | 'p2';
-	deleted: boolean;
+	muted: boolean;
 	value: string;
 } ) {
 	const renderBadge = () => {
@@ -116,7 +135,7 @@ export function Name( {
 
 	return (
 		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
-			{ deleted ? (
+			{ muted ? (
 				<Text variant="muted">{ value }</Text>
 			) : (
 				<span style={ titleFieldTextOverflowStyles }>{ value }</span>
@@ -126,8 +145,26 @@ export function Name( {
 	);
 }
 
-export function URL( { deleted, href, value }: { deleted: boolean; href: string; value: string } ) {
-	return deleted ? (
+export function URL( { site, value }: { site: Site; value: string } ) {
+	return (
+		<URLRenderer
+			disabled={ site.is_deleted }
+			href={ getSiteFormattedUrl( site ) }
+			value={ value }
+		/>
+	);
+}
+
+export function URLRenderer( {
+	disabled,
+	href,
+	value,
+}: {
+	disabled: boolean;
+	href: string;
+	value: string;
+} ) {
+	return disabled ? (
 		<Text variant="muted">{ value }</Text>
 	) : (
 		<ExternalLink
