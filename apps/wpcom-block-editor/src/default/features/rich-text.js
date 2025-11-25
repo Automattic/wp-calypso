@@ -1,14 +1,28 @@
 /* global wpcomGutenberg */
 import { RichTextToolbarButton } from '@wordpress/block-editor';
+import { getBlockType } from '@wordpress/blocks';
 import { compose, ifCondition } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { registerFormatType } from '@wordpress/rich-text';
 import { get } from 'lodash';
 
-const RichTextJustifyButton = ( { blockId, styleAttributes, updateBlockAttributes } ) => {
+const RichTextJustifyButton = ( {
+	blockId,
+	isDeprecatedAlignAttribute,
+	deprecatedIsBlockJustified,
+	styleAttributes,
+	updateBlockAttributes,
+} ) => {
 	const isBlockJustified = 'justify' === get( styleAttributes, 'typography.textAlign' );
 
-	const onToggle = () =>
+	const onToggle = () => {
+		// TODO: Remove this once we know all Atomic sites are on Gutenberg 22.1 or higher
+		if ( isDeprecatedAlignAttribute ) {
+			return updateBlockAttributes( blockId, {
+				align: deprecatedIsBlockJustified ? null : 'justify',
+			} );
+		}
+
 		updateBlockAttributes( blockId, {
 			style: {
 				...styleAttributes,
@@ -18,13 +32,14 @@ const RichTextJustifyButton = ( { blockId, styleAttributes, updateBlockAttribute
 				},
 			},
 		} );
+	};
 
 	return (
 		<RichTextToolbarButton
 			icon="editor-justify"
 			title={ wpcomGutenberg.richTextToolbar.justify }
 			onClick={ onToggle }
-			isActive={ isBlockJustified }
+			isActive={ deprecatedIsBlockJustified || isBlockJustified }
 		/>
 	);
 };
@@ -40,6 +55,8 @@ const ConnectedRichTextJustifyButton = compose(
 		return {
 			blockId: selectedBlock.clientId,
 			blockName: selectedBlock.name,
+			isDeprecatedAlignAttribute: getBlockType( 'core/paragraph' ).attributes.align !== undefined,
+			deprecatedIsBlockJustified: 'justify' === get( selectedBlock, 'attributes.align' ),
 			styleAttributes: get( selectedBlock.attributes, 'style', EMPTY_STYLES ),
 		};
 	} ),
