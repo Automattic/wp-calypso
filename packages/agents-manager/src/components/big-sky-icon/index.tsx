@@ -44,7 +44,7 @@ export interface BigSkyIconProps {
 /**
  * BigSkyIcon Component
  *
- * Renders an animated Big Sky icon using Rive.
+ * Renders an animated Agents Manager icon using Rive.
  * The icon has different states: inactive, thinking, and typing.
  */
 export default function BigSkyIcon( {

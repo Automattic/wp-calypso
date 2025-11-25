@@ -1,88 +1,56 @@
-/**
- * Agent Dock Component
- * Provides floating + docked mode AI chat using @automattic/agenttic-ui
- */
-
 import {
+	createOdieBotId,
 	getAgentManager,
 	useAgentChat,
+	type Message,
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
 import { AgentUI, createMessageRenderer, EmptyView, type ChatState } from '@automattic/agenttic-ui';
+import { useCallback, useEffect, useMemo, useState, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAgentSession } from '../../hooks/use-agent-session';
+import orchestratorConfig, { AGENT_ID, createAgentConfig } from '../../config/agent-config';
 import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
 import { usePersistedAgentState } from '../../hooks/use-persisted-agent-state';
+import { lastConversationCache } from '../../utils/conversation-cache';
 import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import { AI } from '../icons';
+import { getWpAdminEmptyViewSuggestions, getCiabAdminEmptyViewSuggestions } from './suggestions';
+import type { DockViewState } from './types';
 import type { ContextAdapter } from '../../adapters/context/context-adapter';
 
 export interface AgentDockProps {
-	/**
-	 * Agent configuration for @automattic/agenttic-client
-	 */
+	context: 'wp-admin' | 'ciab-admin' | 'block-editor';
 	agentConfig: UseAgentChatConfig;
-	/**
-	 * Context adapter for providing environment context
-	 */
+	siteId?: number;
+	sessionId: string;
+	resetSession: () => string;
+	applySessionId: ( sessionId: string ) => void;
 	contextAdapter?: ContextAdapter;
-	/**
-	 * Custom empty view suggestions
-	 */
-	emptyViewSuggestions?: Array< { id?: string; label: string; prompt: string } >;
-	/**
-	 * Custom message renderer components
-	 */
-	markdownComponents?: Record< string, any >;
-	/**
-	 * Custom markdown extensions
-	 */
-	markdownExtensions?: any;
-	/**
-	 * Callback when chat is cleared
-	 */
-	onClearChat?: () => void;
-	/**
-	 * Storage key for session persistence
-	 */
-	sessionStorageKey?: string;
-	/**
-	 * Storage key for /me/preferences persistence
-	 */
 	preferenceKey?: string;
-	/**
-	 * Function to save preferences to server
-	 */
 	savePreference?: ( key: string, value: any ) => Promise< void >;
-	/**
-	 * Function to load preferences from server
-	 */
 	loadPreference?: ( key: string ) => Promise< any >;
 }
 
 const CHAT_OPEN_STORAGE_KEY = 'agents-manager-chat-is-open';
 const CHAT_DOCKED_STORAGE_KEY = 'agents-manager-chat-is-docked';
 
-/**
- * AgentDock Component
- *
- * Full-featured AI agent chat with docking/floating modes and context awareness.
- * @param {AgentDockProps} props - Component props
- */
 export default function AgentDock( {
+	context,
 	agentConfig,
-	emptyViewSuggestions = [],
-	markdownComponents = {},
-	markdownExtensions,
-	onClearChat,
-	sessionStorageKey = 'agents-manager-session',
+	siteId,
+	sessionId,
+	resetSession,
+	applySessionId,
 	preferenceKey = 'agents-manager-chat-state',
 	savePreference,
 	loadPreference,
 }: AgentDockProps ) {
+	const [ viewState, setViewState ] = useState< DockViewState >( 'chat' );
+	const loadedSessionIdRef = useRef< string | null >( null );
+	const { messages, isProcessing, error, onSubmit, loadMessages } = useAgentChat( agentConfig );
+
 	// Persisted state for /me/preferences
 	const {
 		state: persistedState,
@@ -94,10 +62,6 @@ export default function AgentDock( {
 		preferenceKey,
 		savePreference,
 		loadPreference,
-	} );
-
-	const { sessionId, resetSession } = useAgentSession( {
-		storageKey: sessionStorageKey,
 	} );
 
 	const defaultOpen = useMemo( () => {
@@ -202,48 +166,120 @@ export default function AgentDock( {
 		}
 	}, [ sessionId, setPersistedSessionId, isLoadingPersistedState ] );
 
-	const { messages, isProcessing, error, onSubmit } = useAgentChat( agentConfig );
+	// Update agent's sessionId when sessionId prop changes
+	useEffect( () => {
+		if ( ! sessionId ) {
+			return;
+		}
 
-	// TODO: Use this when adding custom chat header with clear chat menu item
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleClearChat = useCallback( async () => {
 		const agentManager = getAgentManager();
-		const agentKey = `${ agentConfig.agentId }-${ sessionId }`;
+		const agentKey = AGENT_ID;
 
 		if ( agentManager.hasAgent( agentKey ) ) {
-			await agentManager.resetConversation( agentKey );
+			agentManager.updateSessionId( agentKey, sessionId );
+		}
+	}, [ sessionId ] );
+
+	// Update cache whenever messages change
+	useEffect( () => {
+		if ( messages.length === 0 || ! sessionId ) {
+			return;
 		}
 
+		const agentManager = getAgentManager();
+		const agentKey = AGENT_ID;
+
+		if ( ! agentManager.hasAgent( agentKey ) ) {
+			return;
+		}
+
+		// Get Message[] from agentManager and cache it
+		const clientMessages = agentManager.getConversationHistory( agentKey );
+		if ( clientMessages.length > 0 ) {
+			const botId = createOdieBotId( AGENT_ID );
+			lastConversationCache.set( botId, sessionId, clientMessages );
+		}
+	}, [ messages, sessionId ] );
+
+	// Memoized callback for when conversation loads from server
+	const onLoaded = useCallback(
+		async ( loadedMessages: Message[], serverSessionId: string ) => {
+			const agentManager = getAgentManager();
+			const agentKey = AGENT_ID;
+
+			// Agent should already be created by useAgentChat, but check just in case
+			if ( ! agentManager.hasAgent( agentKey ) ) {
+				const newConfig = await createAgentConfig( serverSessionId, siteId );
+				await agentManager.createAgent( agentKey, {
+					...newConfig,
+					sessionId: serverSessionId,
+				} );
+			}
+
+			// Use loadMessages instead of direct replaceMessages to ensure React state updates
+			await loadMessages( loadedMessages );
+
+			// Update the agent's sessionId so future messages use the correct session
+			agentManager.updateSessionId( agentKey, serverSessionId );
+
+			// Only update session if it changed (prevents unnecessary re-renders)
+			if ( sessionId !== serverSessionId ) {
+				try {
+					if ( ! serverSessionId ) {
+						// eslint-disable-next-line no-console
+						console.warn( 'Attempted to apply empty session ID' );
+						return;
+					}
+					applySessionId( serverSessionId );
+				} catch ( _error ) {
+					// eslint-disable-next-line no-console
+					console.error( 'Failed to apply session ID:', _error );
+					return;
+				}
+			}
+
+			// Track that we've loaded this session (after successful validation)
+			loadedSessionIdRef.current = serverSessionId;
+		},
+		[ applySessionId, loadMessages, sessionId, siteId ]
+	);
+
+	const handleNewChat = useCallback( async () => {
+		const agentManager = getAgentManager();
+		const agentKey = AGENT_ID;
+
+		// Remove the agent entirely so it gets recreated fresh
+		if ( agentManager.hasAgent( agentKey ) ) {
+			agentManager.removeAgent( agentKey );
+		}
+
+		// Clear cached messages to prevent old messages from being reloaded
+		lastConversationCache.clear();
+
+		// Reset session to empty (new chat) - this triggers config re-creation
 		resetSession();
-		onClearChat?.();
-	}, [ sessionId, resetSession, agentConfig.agentId, onClearChat ] );
 
-	// Custom message renderer
-	const messageRenderer = useMemo( () => {
-		const options: any = { components: markdownComponents };
-		if ( markdownExtensions ) {
-			options.extensions = markdownExtensions;
-		}
-		return createMessageRenderer( options );
-	}, [ markdownComponents, markdownExtensions ] );
+		// Switch back to chat view
+		setViewState( 'chat' );
+	}, [ resetSession ] );
 
-	// Add IDs to suggestions if not provided
-	const suggestions = useMemo(
+	// Custom message renderer that uses our markdown components
+	const messageRenderer = useMemo(
 		() =>
-			emptyViewSuggestions.map( ( suggestion, index ) => ( {
-				id: suggestion.id || `suggestion-${ index }`,
-				label: suggestion.label,
-				prompt: suggestion.prompt,
-			} ) ),
-		[ emptyViewSuggestions ]
+			createMessageRenderer( {
+				components: orchestratorConfig.markdownComponents(),
+				extensions: orchestratorConfig.markdownExtensions(),
+			} ),
+		[]
 	);
 
 	const renderAgentUI = () => {
-		const resetChatMenuItem = {
+		// TODO: Switch to "New chat"...
+		const newChatMenuItem = {
 			icon: comment,
-			title: __( 'Reset chat', 'agents-manager' ),
+			title: __( 'New chat', 'agents-manager' ),
 			isDisabled: ! messages.length,
-			onClick: handleClearChat,
+			onClick: handleNewChat,
 		};
 		const undockMenuItem = {
 			icon: login,
@@ -264,7 +300,7 @@ export default function AgentDock( {
 			onClick: dock,
 		};
 
-		const chatHeaderOptions: ChatHeaderOptions = [ resetChatMenuItem ];
+		const chatHeaderOptions: ChatHeaderOptions = [ newChatMenuItem ];
 
 		if ( isDocked ) {
 			chatHeaderOptions.push( undockMenuItem );
@@ -288,7 +324,11 @@ export default function AgentDock( {
 					<EmptyView
 						heading={ __( 'Howdy! How can I help you today?', 'agents-manager' ) }
 						help={ __( 'Got a different request? Ask away.', 'agents-manager' ) }
-						suggestions={ suggestions }
+						suggestions={
+							context === 'ciab-admin'
+								? getCiabAdminEmptyViewSuggestions()
+								: getWpAdminEmptyViewSuggestions()
+						}
 						icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
 					/>
 				}

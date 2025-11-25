@@ -295,22 +295,22 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.23"
-    "@automattic/agenttic-ui": "npm:^0.1.23"
+    "@automattic/agenttic-client": "npm:^0.1.26"
+    "@automattic/agenttic-ui": "npm:^0.1.26"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
     "@rive-app/react-canvas": "npm:^4.15.6"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
+    "@wordpress/abilities": "npm:^0.1.1-next.dc3f6d3c1.0"
     "@wordpress/api-fetch": "npm:^7.23.0"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/components": "npm:30.6.0"
     "@wordpress/compose": "npm:^7.2.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/primitives": "npm:^4.35.0"
     clsx: "npm:^2.1.1"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
     typescript: "npm:^5.8.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -321,7 +321,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.23":
+"@automattic/agenttic-client@npm:^0.1.26":
   version: 0.1.26
   resolution: "@automattic/agenttic-client@npm:0.1.26"
   dependencies:
@@ -341,7 +341,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.20, @automattic/agenttic-ui@npm:^0.1.23, @automattic/agenttic-ui@npm:^0.1.9":
+"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.20, @automattic/agenttic-ui@npm:^0.1.26, @automattic/agenttic-ui@npm:^0.1.9":
   version: 0.1.26
   resolution: "@automattic/agenttic-ui@npm:0.1.26"
   dependencies:
@@ -11931,6 +11931,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/abilities@npm:^0.1.1-next.dc3f6d3c1.0":
+  version: 0.1.1-next.dc3f6d3c1.0
+  resolution: "@wordpress/abilities@npm:0.1.1-next.dc3f6d3c1.0"
+  dependencies:
+    "@wordpress/api-fetch": "npm:^7.35.1-next.dc3f6d3c1.0"
+    "@wordpress/core-data": "npm:^7.35.1-next.dc3f6d3c1.0"
+    "@wordpress/data": "npm:^10.35.1-next.dc3f6d3c1.0"
+    "@wordpress/i18n": "npm:^6.8.1-next.dc3f6d3c1.0"
+    "@wordpress/url": "npm:^4.35.1-next.dc3f6d3c1.0"
+    ajv: "npm:^8.17.1"
+    ajv-draft-04: "npm:^1.0.0"
+    ajv-formats: "npm:^3.0.1"
+  checksum: 60aec0c54eba7c6fe23c08151a619426b698c5d1f753bdb4f975148a572ecd36d1813f277275208dd4fb2a9122ca16c63bd404479096791ae78ce708448f9d7e
+  languageName: node
+  linkType: hard
+
 "@wordpress/api-fetch@npm:7.23.0":
   version: 7.23.0
   resolution: "@wordpress/api-fetch@npm:7.23.0"
@@ -13588,7 +13604,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-draft-04@npm:~1.0.0":
+"ajv-draft-04@npm:^1.0.0, ajv-draft-04@npm:~1.0.0":
   version: 1.0.0
   resolution: "ajv-draft-04@npm:1.0.0"
   peerDependencies:
@@ -13623,7 +13639,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-formats@npm:~3.0.1":
+"ajv-formats@npm:^3.0.1, ajv-formats@npm:~3.0.1":
   version: 3.0.1
   resolution: "ajv-formats@npm:3.0.1"
   dependencies:
@@ -13681,7 +13697,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.0, ajv@npm:^8.0.1, ajv@npm:^8.6.3, ajv@npm:^8.9.0":
+"ajv@npm:^8.0.0, ajv@npm:^8.0.1, ajv@npm:^8.17.1, ajv@npm:^8.6.3, ajv@npm:^8.9.0":
   version: 8.17.1
   resolution: "ajv@npm:8.17.1"
   dependencies:

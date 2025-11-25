@@ -1,0 +1,26 @@
+.orchestrator-dock-loading {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+	padding: 16px;
+	box-sizing: border-box;
+}
+
+.orchestrator-history-container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	box-sizing: border-box;
+
+	.agents-manager-chat-header {
+		margin-bottom: 0;
+	}
+
+	.conversation-history-view {
+		flex: 1;
+		min-height: 0;
+	}
+}

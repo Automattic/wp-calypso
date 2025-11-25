@@ -1,6 +1,7 @@
 import { Button, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { close, moreVertical } from '@wordpress/icons';
+import { History as HistoryIcon } from '../icons';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -10,11 +11,24 @@ interface Props {
 	isChatDocked: boolean;
 	onClose: () => void;
 	options: Options;
+	onHistoryToggle?: () => void;
+	viewState?: 'chat' | 'history';
+	title?: string;
+	supportsHistory?: boolean;
 }
 
-export default function ChatHeader( { isChatDocked, onClose, options }: Props ) {
+export default function ChatHeader( {
+	isChatDocked,
+	onClose,
+	options,
+	onHistoryToggle,
+	viewState,
+	title,
+	supportsHistory = true,
+}: Props ) {
 	return (
 		<div className="agents-manager-chat-header">
+			{ title && <div className="agents-manager-chat-header__title">{ title }</div> }
 			<div className="agents-manager-chat-header__actions">
 				<DropdownMenu
 					className="agents-manager-chat-header__more-options"
@@ -25,6 +39,19 @@ export default function ChatHeader( { isChatDocked, onClose, options }: Props ) 
 						size: ! isChatDocked ? 'small' : undefined,
 					} }
 				/>
+				{ supportsHistory && onHistoryToggle && (
+					<Button
+						className="agents-manager-chat-header__history-btn"
+						icon={ HistoryIcon }
+						onClick={ onHistoryToggle }
+						label={
+							viewState === 'history'
+								? __( 'Back to chat', 'agents-manager' )
+								: __( 'View history', 'agents-manager' )
+						}
+						size={ ! isChatDocked ? 'small' : undefined }
+					/>
+				) }
 				<Button
 					className="agents-manager-chat-header__close-btn"
 					icon={ close }
