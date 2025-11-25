@@ -195,18 +195,15 @@ export async function redirectLoggedOut( context, next ) {
 	}
 
 	// Allow support sessions to continue without a cookie
-	if ( isUserLoggedIn( state ) && ( ! isCookieAuthMissing() || isSupportSession() ) ) {
+	if ( isUserLoggedIn( state ) && ! isCookieAuthMissing() ) {
 		next();
 		return;
 	} else if (
-		isUserLoggedIn( state ) &&
+		isUserLoggedIn( state ) && // specific condition where login cookie is present but auth cookie is missing
 		isCookieAuthMissing() &&
+		! isSupportSession() && // skip this check for suppoort sessions
 		config.isEnabled( 'wpcom-user-bootstrap' )
 	) {
-		// Get the current user data from the state before re-fetching the user
-		// This helps for logging a non zero user ID in the failure condition
-		const existingUserData = getCurrentUser( state );
-
 		try {
 			const userData = await rawCurrentUserFetch();
 
@@ -228,20 +225,18 @@ export async function redirectLoggedOut( context, next ) {
 		} catch ( error ) {
 			const errorStatus = error.status;
 
-			// Only for 401 and 403 errors, perform logout and redirect to login page
+			// Only for 401 and 403 errors
 			// If the response is in the 500 range, there could be a transient connection issue or a different server issue
 			if ( errorStatus && [ 401, 403 ].includes( errorStatus ) ) {
-				const logoutUrl = getLogoutUrl(
-					existingUserData,
-					login( buildLoginParameters( context, state ) )
-				);
+				const userData = getCurrentUser( state );
+				const logoutUrl = getLogoutUrl( userData, login( buildLoginParameters( context, state ) ) );
 
 				// Just logging the logout URL for now to see if it's being set correctly
 				logToLogstash( {
 					feature: 'calypso_client',
 					message: 'Cookie-auth-missing and user re-fetch failed',
 					severity: 'warning',
-					user_id: existingUserData?.ID,
+					user_id: userData?.ID,
 					properties: {
 						env: config( 'env_id' ),
 						pathname: context.pathname,
@@ -250,8 +245,6 @@ export async function redirectLoggedOut( context, next ) {
 						logout_url: logoutUrl,
 					},
 				} );
-
-				return;
 			}
 		}
 	}
