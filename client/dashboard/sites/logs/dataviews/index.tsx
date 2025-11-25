@@ -5,12 +5,13 @@ import { useRouter } from '@tanstack/react-router';
 import { ToggleControl, Button } from '@wordpress/components';
 import { throttle } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
-import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
+import { View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { arrowUp } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { DataViews, usePersistentView } from '../../../app/dataviews';
 import { LogsDownloader } from '../downloader';
 import {
 	buildTimeRangeInSeconds,
@@ -21,9 +22,13 @@ import {
 } from '../utils';
 import { useActions } from './actions';
 import { useFields } from './fields';
-import { getInitialFiltersFromSearch, getAllowedFields, filtersSignature } from './filters';
-import { syncFiltersSearchParams } from './url-sync';
-import { useView, toFilterParams } from './views';
+import { getAllowedFields, filtersSignature } from './filters';
+import {
+	DEFAULT_PER_PAGE,
+	DEFAULT_PHP_LOGS_VIEW,
+	DEFAULT_SERVER_LOGS_VIEW,
+	toFilterParams,
+} from './views';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 import './style.scss';
@@ -40,8 +45,6 @@ export type SiteLogsDataViewsProps = {
 	timezoneString: string | undefined;
 	site: Site;
 };
-
-const DEFAULT_PER_PAGE = 50;
 
 function SiteLogsDataViews( {
 	logType,
@@ -64,9 +67,10 @@ function SiteLogsDataViews( {
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
 	const [ showScrollTop, setShowScrollTop ] = useState( false );
 
-	const [ view, setView ] = useView( {
-		logType,
-		initialFilters: getInitialFiltersFromSearch( logType, search ),
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: `site-logs-${ logType }`,
+		defaultView: logType === LogType.PHP ? DEFAULT_PHP_LOGS_VIEW : DEFAULT_SERVER_LOGS_VIEW,
+		queryParams: search,
 	} );
 
 	// We want to parse 'from' and 'to' from the URL.
@@ -99,21 +103,14 @@ function SiteLogsDataViews( {
 	const startSec = parseUrlSeconds ? parseUrlSeconds.from : computed.startSec;
 	const endSec = parseUrlSeconds ? parseUrlSeconds.to : computed.endSec;
 
-	// Sync URL when time or filters change. Guard against first render before filters hydrate.
+	// Sync URL when time change.
 	useEffect( () => {
-		if ( typeof view.filters === 'undefined' ) {
-			return;
-		}
 		const url = new URL( window.location.href );
-		// Re-apply filters currently in view to the URL
-		const allowed = getAllowedFields( logType );
-		const sourceFilters = ( view.filters ?? [] ) as Filter[];
-		syncFiltersSearchParams( url.searchParams, allowed, sourceFilters );
 		// Always set canonical time params (seconds)
 		url.searchParams.set( 'from', String( startSec ) );
 		url.searchParams.set( 'to', String( endSec ) );
 		window.history.replaceState( null, '', url.toString() );
-	}, [ startSec, endSec, view.filters, logType, search ] );
+	}, [ startSec, endSec ] );
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
@@ -151,8 +148,8 @@ function SiteLogsDataViews( {
 	}, [] );
 
 	useEffect( () => {
-		setView( ( value ) => ( { ...value, page: 1 } ) );
-	}, [ dateRangeVersion, setView ] );
+		updateView( { ...view, page: 1 } );
+	}, [ dateRangeVersion, view, updateView ] );
 
 	useLayoutEffect( () => {
 		dataviewsRef.current = document.querySelector< HTMLDivElement >( '.dataviews-wrapper' );
@@ -231,9 +228,7 @@ function SiteLogsDataViews( {
 			next.sort?.direction !== view.sort?.direction ||
 			filtersSignature( sourceFilters, allowed ) !== filtersSignature( view.filters, allowed );
 
-		// Sync allowed filters to URL using sourceFilters and preserve from/to params
 		const url = new URL( window.location.href );
-		syncFiltersSearchParams( url.searchParams, allowed, sourceFilters );
 		// Always keep canonical time range params
 		url.searchParams.set( 'from', String( startSec ) );
 		url.searchParams.set( 'to', String( endSec ) );
@@ -246,13 +241,13 @@ function SiteLogsDataViews( {
 				queryKey: [ 'site', site.ID, 'logs', 'infinite' ],
 				exact: false,
 			} );
-			setView( {
+			updateView( {
 				...next,
 				page: 1,
 				filters: sourceFilters.filter( ( filter: Filter ) => allowed.includes( filter.field ) ),
 			} );
 		} else {
-			setView( {
+			updateView( {
 				...next,
 				filters: sourceFilters.filter( ( filter: Filter ) => allowed.includes( filter.field ) ),
 			} );
@@ -327,13 +322,6 @@ function SiteLogsDataViews( {
 		totalPages: 1,
 	};
 
-	useEffect( () => {
-		setView( ( currentView ) => ( {
-			...currentView,
-			perPage: Math.max( logs.length, currentView.perPage ?? DEFAULT_PER_PAGE ),
-		} ) );
-	}, [ logs.length, setView ] );
-
 	return (
 		<>
 			{ logType === LogType.PHP ? (
@@ -348,6 +336,7 @@ function SiteLogsDataViews( {
 					search={ false }
 					defaultLayouts={ { table: {} } }
 					onChangeView={ onChangeView }
+					onResetView={ resetView }
 					header={ LogsHeader }
 				/>
 			) : (
@@ -362,6 +351,7 @@ function SiteLogsDataViews( {
 					search={ false }
 					defaultLayouts={ { table: {} } }
 					onChangeView={ onChangeView }
+					onResetView={ resetView }
 					header={ LogsHeader }
 				/>
 			) }

@@ -10,7 +10,12 @@ export type DataViewsProps< Item > = WPDataViewsProps< Item > & {
 	onResetView?: () => void;
 };
 
-export function DataViews< Item >( { view, onResetView, ...props }: DataViewsProps< Item > ) {
+export function DataViews< Item >( {
+	view,
+	onResetView,
+	header,
+	...props
+}: DataViewsProps< Item > ) {
 	const sanitizedView = sanitizeView( view, props.fields );
 
 	// TODO: apply local styles if necessary.
@@ -18,10 +23,20 @@ export function DataViews< Item >( { view, onResetView, ...props }: DataViewsPro
 		<WPDataViews< Item >
 			view={ sanitizedView }
 			header={
-				onResetView && (
-					<Button variant="tertiary" size="compact" style={ { order: -1 } } onClick={ onResetView }>
-						{ __( 'Reset view' ) }
-					</Button>
+				( header || onResetView ) && (
+					<>
+						{ header }
+						{ onResetView && (
+							<Button
+								variant="tertiary"
+								size="compact"
+								style={ { order: -1 } }
+								onClick={ onResetView }
+							>
+								{ __( 'Reset view' ) }
+							</Button>
+						) }
+					</>
 				)
 			}
 			{ ...( props as any ) }
