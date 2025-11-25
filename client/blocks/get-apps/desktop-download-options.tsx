@@ -45,7 +45,6 @@ export const DesktopDownloadOptions: React.FC< Props > = ( {
 					<Button
 						className="button"
 						variant={ appConfig.isPrimary ? 'primary' : 'secondary' }
-						disabled={ false }
 						onClick={ currentPlatformConfig.onClick }
 						href={ currentPlatformConfig.link }
 					>
