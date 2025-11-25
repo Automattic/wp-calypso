@@ -8,7 +8,7 @@ import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { STATUS_LABELS, getSiteStatus } from '../../utils/site-status';
+import { getSiteStatus, getStatusLabels } from '../../utils/site-status';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import {
@@ -28,6 +28,7 @@ import type { Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
+	const statusLabels = getStatusLabels();
 	return [
 		{
 			id: 'name',
@@ -94,7 +95,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			id: 'status',
 			label: __( 'Status' ),
 			getValue: ( { item } ) => getSiteStatus( item ),
-			elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
+			elements: Object.entries( statusLabels ).map( ( [ value, label ] ) => ( { value, label } ) ),
 			filterBy: {
 				operators: [ 'isAny' as Operator ],
 			},

@@ -7,14 +7,9 @@ import { useCallback, useMemo } from 'react';
 import { CalypsoContextAdapter } from '../../adapters/context/calypso-context-adapter';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import AgentDock from '../agent-dock';
-import BigSkyIcon from '../big-sky-icon';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 export interface UnifiedAIAgentProps {
-	/**
-	 * Container selector for the agent dock
-	 */
-	containerSelector: string;
 	/**
 	 * Current route/path
 	 */
@@ -43,10 +38,6 @@ export interface UnifiedAIAgentProps {
 	 * Load preference callback (optional, uses wpcomRequest if not provided)
 	 */
 	loadPreference?: ( key: string ) => Promise< any >;
-	/**
-	 * Start with agent open (overrides saved state)
-	 */
-	defaultOpen?: boolean;
 }
 
 /**
@@ -56,14 +47,12 @@ export interface UnifiedAIAgentProps {
  * Configures the agent with Calypso-specific context and settings.
  */
 export default function CalypsoAIAgent( {
-	containerSelector,
 	currentRoute,
 	sectionName,
 	site,
 	currentUser,
 	savePreference: externalSavePreference,
 	loadPreference: externalLoadPreference,
-	defaultOpen = false,
 }: UnifiedAIAgentProps ) {
 	// Create context adapter for Calypso
 	// TODO: Pass this to AgentDock once context integration is needed
@@ -160,20 +149,12 @@ export default function CalypsoAIAgent( {
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
-			containerSelector={ containerSelector }
 			emptyViewSuggestions={ suggestions }
-			emptyViewHeading="How can I help you today?"
-			emptyViewHelp="Ask me anything about WordPress and your site."
-			fabIcon={ <BigSkyIcon color="blue" width={ 48 } height={ 48 } /> }
 			onClearChat={ handleClearChat }
-			sessionStorageKey="calypso-agents-manager-session"
-			chatStateStorageKey="calypso-agents-manager-chat-state"
-			dockStateStorageKey="calypso-agents-manager-docked"
-			preferenceKey="calypso_agents_manager_state"
+			sessionStorageKey="agents-manager-session"
+			preferenceKey="agents_manager_state"
 			savePreference={ savePreference }
 			loadPreference={ loadPreference }
-			defaultOpen={ defaultOpen }
-			desktopMediaQuery="(min-width: 600px)"
 		/>
 	);
 }

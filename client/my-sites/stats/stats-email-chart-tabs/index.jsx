@@ -8,7 +8,6 @@ import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import { isLoadingTabs, getCountRecords } from 'calypso/state/stats/email-chart-tabs/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -131,8 +130,7 @@ const connectComponent = connect(
 
 		const quantity = 'hour' === period ? 24 : 30;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
-		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
+		const date = getQueryDate( queryDate, state, siteId, period, quantity );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const maxBarsForRequest = 'hour' === period ? quantity : maxBars;
 		const isActiveTabLoading = isLoadingTabs(

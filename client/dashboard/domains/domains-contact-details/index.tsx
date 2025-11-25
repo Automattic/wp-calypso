@@ -94,9 +94,11 @@ export default function DomainsContactInfo() {
 			.filter( ( domain ) => domain.whois_update_unmodifiable_fields.length > 0 );
 	}, [ domainDetails ] );
 
-	const { mutate: validateBulkDomains, isPending: isValidatePending } = useMutation(
-		domainWhoisValidateMutation( selectedDomains )
-	);
+	const {
+		mutate: validateBulkDomains,
+		mutateAsync: validateBulkDomainsAsync,
+		isPending: isValidatePending,
+	} = useMutation( domainWhoisValidateMutation( selectedDomains ) );
 
 	const { mutate: bulkDomainsAction, isPending: isUpdatePending } = useMutation(
 		bulkDomainsActionMutation()
@@ -196,6 +198,7 @@ export default function DomainsContactInfo() {
 				initialData={ initialData }
 				isSubmitting={ isValidatePending || isUpdatePending }
 				onSubmit={ handleSubmit }
+				validate={ validateBulkDomainsAsync }
 			/>
 		</PageLayout>
 	);

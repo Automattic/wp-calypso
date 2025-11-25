@@ -8,11 +8,10 @@ import {
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { Moment } from 'moment';
 import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { DATE_FORMAT } from '../../constants';
+import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 import StatsEmptyState from '../../stats-empty-state';
 
 import './styles.scss';
@@ -42,14 +41,13 @@ function StatsLineChart( {
 	formatTimeTick?: ( value: number ) => string;
 	className?: string;
 	height?: number;
-	moment: Moment;
 	emptyState: JSX.Element;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
 	curveType?: 'smooth' | 'linear' | 'monotone';
 	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
-	const moment = useLocalizedMoment();
+	const moment = useMomentInSite();
 
 	const formatTime = formatTimeTick
 		? formatTimeTick

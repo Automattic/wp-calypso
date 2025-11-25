@@ -21,6 +21,7 @@ class EnvVariables implements SupportedEnvVariables {
 		GUTENBERG_NIGHTLY: false,
 		HEADLESS: false,
 		JETPACK_TARGET: 'wpcom-production',
+		PARTNER_DIRECTORY_BASE_URL: 'https://wordpress.com/development-services',
 		RETRY_COUNT: 0,
 		RUN_ID: '',
 		SLOW_MO: 0,
@@ -184,6 +185,10 @@ class EnvVariables implements SupportedEnvVariables {
 			);
 		}
 		return value as JetpackTarget;
+	}
+
+	get PARTNER_DIRECTORY_BASE_URL(): string {
+		return this.getValidatedUrlEnvVar( 'PARTNER_DIRECTORY_BASE_URL' );
 	}
 	/**
 	 * Helper to get and validate a URL environment variable.

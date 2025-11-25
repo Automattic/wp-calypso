@@ -27,6 +27,7 @@ export interface SupportedEnvVariables {
 	readonly GUTENBERG_NIGHTLY: boolean;
 	readonly HEADLESS: boolean;
 	readonly JETPACK_TARGET: JetpackTarget;
+	readonly PARTNER_DIRECTORY_BASE_URL: string;
 	readonly RETRY_COUNT: number;
 	readonly RUN_ID: string;
 	readonly SLOW_MO: number;

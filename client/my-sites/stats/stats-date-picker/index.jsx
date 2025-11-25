@@ -40,13 +40,13 @@ class StatsDatePicker extends Component {
 	};
 
 	dateForSummarize() {
-		const { query, moment, translate } = this.props;
+		const { query, momentSiteZone, translate } = this.props;
 
 		if ( query.start_date ) {
 			return this.dateForCustomRange( query.start_date, query.date );
 		}
 
-		const localizedDate = moment();
+		const localizedDate = momentSiteZone();
 
 		switch ( query.num ) {
 			case '-1':
@@ -65,16 +65,16 @@ class StatsDatePicker extends Component {
 	}
 
 	dateForCustomRange( startDate, endDate, selectedShortcut = null ) {
-		const { moment, momentSiteZone } = this.props;
+		const { momentSiteZone } = this.props;
 
 		// Generate a full date range for the label.
-		const localizedStartDate = moment( startDate );
-		const localizedEndDate = moment( endDate );
+		const localizedStartDate = momentSiteZone( startDate );
+		const localizedEndDate = momentSiteZone( endDate );
 
 		// If it's a partial month but ends today.
 		if (
 			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'month' ), 'day' ) &&
-			localizedEndDate.isSame( momentSiteZone, 'day' ) &&
+			localizedEndDate.isSame( momentSiteZone(), 'day' ) &&
 			localizedStartDate.isSame( localizedEndDate, 'month' ) &&
 			( ! selectedShortcut || selectedShortcut.id === 'month_to_date' )
 		) {
@@ -84,7 +84,7 @@ class StatsDatePicker extends Component {
 		// If it's a partial year but ends today.
 		if (
 			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'year' ), 'day' ) &&
-			localizedEndDate.isSame( momentSiteZone, 'day' ) &&
+			localizedEndDate.isSame( momentSiteZone(), 'day' ) &&
 			localizedStartDate.isSame( localizedEndDate, 'year' ) &&
 			( ! selectedShortcut || selectedShortcut.id === 'year_to_date' )
 		) {
@@ -93,7 +93,7 @@ class StatsDatePicker extends Component {
 
 		// If it's the same day, show single date.
 		if ( localizedStartDate.isSame( localizedEndDate, 'day' ) ) {
-			return localizedStartDate.isSame( moment(), 'year' )
+			return localizedStartDate.isSame( momentSiteZone(), 'year' )
 				? localizedStartDate.format( 'MMM D' )
 				: localizedStartDate.format( 'll' );
 		}
@@ -118,7 +118,9 @@ class StatsDatePicker extends Component {
 
 		if ( localizedStartDate.year() === localizedEndDate.year() ) {
 			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format( `MMM D` ) }${
-				localizedStartDate.isSame( moment(), 'year' ) ? '' : localizedEndDate.format( ', YYYY' ) // Only append year if it's not the current year.
+				localizedStartDate.isSame( momentSiteZone(), 'year' )
+					? ''
+					: localizedEndDate.format( ', YYYY' ) // Only append year if it's not the current year.
 			}`;
 		}
 
@@ -133,7 +135,7 @@ class StatsDatePicker extends Component {
 			return selectedShortcut.label;
 		}
 
-		const { date, moment, period, translate, isShort, dateRange } = this.props;
+		const { date, moment, period, translate, isShort, dateRange, momentSiteZone } = this.props;
 		const weekPeriodFormat = isShort ? 'll' : 'LL';
 
 		// Respect the dateRange if provided.
@@ -142,8 +144,8 @@ class StatsDatePicker extends Component {
 		}
 
 		// Ensure we have a moment instance here to work with.
-		const momentDate = moment.isMoment( date ) ? date : moment( date );
-		const localizedDate = moment( momentDate.format( 'YYYY-MM-DD' ) );
+		const momentDate = moment.isMoment( date ) ? date : momentSiteZone( date );
+		const localizedDate = momentSiteZone( momentDate.format( 'YYYY-MM-DD' ) );
 		let formattedDate;
 
 		switch ( period ) {
@@ -174,12 +176,12 @@ class StatsDatePicker extends Component {
 	}
 
 	renderQueryDate() {
-		const { query, queryDate, moment, translate } = this.props;
+		const { query, queryDate, momentSiteZone, translate } = this.props;
 
 		let content = '';
 		if ( queryDate && isAutoRefreshAllowedForQuery( query ) ) {
-			const today = moment();
-			const date = moment( queryDate );
+			const today = momentSiteZone();
+			const date = momentSiteZone( queryDate );
 			const isToday = today.isSame( date, 'day' );
 
 			content = translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {

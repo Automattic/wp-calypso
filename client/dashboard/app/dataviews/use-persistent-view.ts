@@ -74,7 +74,7 @@ export function usePersistentView( {
 					( {
 						field,
 						operator: 'isAny',
-						value: [ queryParams[ field ] ],
+						value: [ queryParams[ field ].toString() ],
 					} ) as Filter
 			)
 		);
@@ -89,8 +89,8 @@ export function usePersistentView( {
 		}
 
 		let transientQueryParams: Record< string, unknown > = {};
-		transientFilters.forEach( ( { field, value } ) => {
-			transientQueryParams[ field ] = value;
+		transientFilters.forEach( ( { field } ) => {
+			transientQueryParams[ field ] = queryParams[ field ];
 		} );
 		transientQueryParams = mergeQueryParamsWithTransientProperties(
 			transientQueryParams,
@@ -100,7 +100,7 @@ export function usePersistentView( {
 			matches[ matches.length - 1 ].pathname.replace( /\/$/, '' ),
 			transientQueryParams
 		);
-	}, [ matches, transientProperties, transientFilters ] );
+	}, [ matches, transientProperties, transientFilters, queryParams ] );
 
 	// Merge transient properties and filters from query params into the view.
 	const view: View = useMemo(
