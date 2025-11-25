@@ -16,7 +16,7 @@ export const DEFAULT_PHP_LOGS_VIEW: View = {
 		field: 'timestamp',
 		direction: 'desc',
 	},
-	fields: [ 'timestamp', 'severity', 'message' ],
+	fields: [ 'severity', 'timestamp', 'message' ],
 	layout: {
 		density: 'balanced',
 		styles: {
@@ -30,7 +30,7 @@ export const DEFAULT_PHP_LOGS_VIEW: View = {
 
 export const DEFAULT_SERVER_LOGS_VIEW: View = {
 	...DEFAULT_VIEW,
-	fields: [ 'date', 'request_type', 'status', 'request_url' ],
+	fields: [ 'status', 'date', 'request_type', 'request_url' ],
 	sort: {
 		field: 'date',
 		direction: 'desc',
