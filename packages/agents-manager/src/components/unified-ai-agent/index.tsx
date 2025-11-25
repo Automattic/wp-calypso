@@ -12,6 +12,11 @@ import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agentti
 
 export interface UnifiedAIAgentProps {
 	/**
+	 * Container selector for the sidebar layout
+	 * Defaults to 'body'
+	 */
+	containerSelector?: string;
+	/**
 	 * Current route/path
 	 */
 	currentRoute?: string;
@@ -105,6 +110,7 @@ function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
  * Configures the agent with Calypso-specific context and settings.
  */
 export default function CalypsoAIAgent( {
+	containerSelector,
 	currentRoute,
 	site,
 	currentUser,
@@ -112,7 +118,6 @@ export default function CalypsoAIAgent( {
 	contextProvider,
 	savePreference: externalSavePreference,
 	loadPreference: externalLoadPreference,
-	defaultOpen = false,
 	emptyViewSuggestions: customSuggestions,
 	markdownComponents,
 	markdownExtensions,
@@ -258,6 +263,7 @@ export default function CalypsoAIAgent( {
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
+			containerSelector={ containerSelector }
 			emptyViewSuggestions={ suggestions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }

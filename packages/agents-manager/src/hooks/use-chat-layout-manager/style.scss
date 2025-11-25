@@ -73,9 +73,9 @@ $admin-content-top: calc( $admin-bar-height + $layout-spacing );
 $admin-content-height: calc( 100vh - $admin-bar-height - ( $layout-spacing * 2 ) );
 $border-color: #545454;
 
-body.wp-admin.agents-manager-sidebar-container--sidebar-open {
-	background-color: $gray-900;
-
+// Mixin for wp-admin sidebar open styles
+// Used by both body-level and #wpwrap-level containers
+@mixin wp-admin-sidebar-open {
 	#wpadminbar {
 		position: fixed !important;
 		top: $layout-spacing;
@@ -140,6 +140,21 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 	.agents-manager-sidebar-fab {
 		display: none;
 	}
+}
+
+// When container is body (legacy behavior)
+body.wp-admin.agents-manager-sidebar-container--sidebar-open {
+	background-color: $gray-900;
+	@include wp-admin-sidebar-open;
+}
+
+// When container is #wpwrap (used by big-sky-plugin)
+body.wp-admin:has( #wpwrap.agents-manager-sidebar-container--sidebar-open ) {
+	background-color: $gray-900;
+}
+
+#wpwrap.agents-manager-sidebar-container--sidebar-open {
+	@include wp-admin-sidebar-open;
 }
 
 // TODO: This solution will impact other pages, we need to find a better way in AI-679...

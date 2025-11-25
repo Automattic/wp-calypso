@@ -25,7 +25,6 @@ import { usePersistedAgentState } from '../../hooks/use-persisted-agent-state';
 import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import { AI } from '../icons';
-import type { ContextAdapter } from '../../adapters/context/context-adapter';
 
 export interface AgentDockProps {
 	/**
@@ -33,9 +32,10 @@ export interface AgentDockProps {
 	 */
 	agentConfig: UseAgentChatConfig;
 	/**
-	 * Context adapter for providing environment context
+	 * Container selector for the sidebar layout
+	 * Defaults to 'body'
 	 */
-	contextAdapter?: ContextAdapter;
+	containerSelector?: string;
 	/**
 	 * Custom empty view suggestions
 	 */
@@ -81,6 +81,7 @@ const CHAT_DOCKED_STORAGE_KEY = 'agents-manager-chat-is-docked';
  */
 export default function AgentDock( {
 	agentConfig,
+	containerSelector = 'body',
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions,
@@ -188,7 +189,7 @@ export default function AgentDock( {
 	);
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
-		useChatLayoutManager( 'body', {
+		useChatLayoutManager( containerSelector, {
 			onOpenSidebar: setChatIsOpen,
 			onCloseSidebar: setChatIsClosed,
 			onDock: setChatIsDocked,
