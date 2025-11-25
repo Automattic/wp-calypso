@@ -23,12 +23,9 @@ import {
 import config from '@automattic/calypso-config';
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import {
-	__experimentalHeading as Heading,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { _n, __, sprintf } from '@wordpress/i18n';
+import { _n, sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { intlFormat } from 'date-fns';
 import { useCallback, useEffect, useRef, useMemo, useState } from 'react';
@@ -70,8 +67,7 @@ import {
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
-import CancellationMainContent from './cancellation-main-content';
-import DomainOptionsContent from './domain-options-content';
+import CancellationPreSurveyContent from './cancellation-pre-survey-content';
 import enrichedSurveyData from './enriched-survey-data';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
@@ -1227,50 +1223,22 @@ export default function CancelPurchase() {
 							upsell={ state.upsell }
 						/>
 						{ ! state.surveyShown && (
-							<>
-								<Heading level={ 4 }>
-									{
-										/* translators: %(purchaseName)s is the name of the product which was purchased */
-										sprintf( __( 'Manage %(purchaseName)s' ), {
-											purchaseName: purchase.is_domain ? purchase.meta : purchase.product_name,
-										} )
-									}
-								</Heading>
-
-								<p className="cancel-purchase__left">
-									{ state.showDomainOptionsStep ? (
-										<DomainOptionsContent
-											purchase={ purchase }
-											includedDomainPurchase={ includedDomainPurchase }
-											atomicTransfer={ atomicTransfer }
-											state={ state }
-											onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
-											onKeepSubscriptionClick={ onKeepSubscriptionClick }
-											onCancellationComplete={ onCancellationComplete }
-										/>
-									) : (
-										<CancellationMainContent
-											purchase={ purchase }
-											includedDomainPurchase={ includedDomainPurchase }
-											atomicTransfer={ atomicTransfer }
-											selectedDomain={ selectedDomain }
-											state={ state }
-											purchaseCancelFeatures={ purchaseCancelFeatures }
-											onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
-											onDomainConfirmationChange={ onDomainConfirmationChange }
-											onCustomerConfirmedUnderstandingChange={
-												onCustomerConfirmedUnderstandingChange
-											}
-											onKeepSubscriptionClick={ onKeepSubscriptionClick }
-											onCancelClick={
-												shouldHandleMarketplaceSubscriptions()
-													? showMarketplaceDialog
-													: onCancellationStart
-											}
-										/>
-									) }
-								</p>
-							</>
+							<CancellationPreSurveyContent
+								purchase={ purchase }
+								includedDomainPurchase={ includedDomainPurchase }
+								atomicTransfer={ atomicTransfer }
+								selectedDomain={ selectedDomain }
+								state={ state }
+								purchaseCancelFeatures={ purchaseCancelFeatures }
+								onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
+								onDomainConfirmationChange={ onDomainConfirmationChange }
+								onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
+								onKeepSubscriptionClick={ onKeepSubscriptionClick }
+								onCancellationComplete={ onCancellationComplete }
+								onCancellationStart={ onCancellationStart }
+								shouldHandleMarketplaceSubscriptions={ shouldHandleMarketplaceSubscriptions }
+								showMarketplaceDialog={ showMarketplaceDialog }
+							/>
 						) }
 						{ shouldHandleMarketplaceSubscriptions() && (
 							<MarketPlaceSubscriptionsDialog
