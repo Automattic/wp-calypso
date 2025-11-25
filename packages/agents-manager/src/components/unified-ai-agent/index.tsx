@@ -21,6 +21,10 @@ export interface UnifiedAIAgentProps {
 	 */
 	currentRoute?: string;
 	/**
+	 * Section name (e.g., 'reader', 'posts', 'pages')
+	 */
+	sectionName?: string;
+	/**
 	 * Selected site object
 	 */
 	site?: any;
