@@ -52,6 +52,7 @@ import {
 	isPartnerPurchase,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from '../../../utils/purchase';
+import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
 import {
 	cancellationOptionsForPurchase,
@@ -1135,20 +1136,6 @@ export default function CancelPurchase() {
 		return null;
 	}
 
-	const getHeaderTitle = () => {
-		if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
-			if ( purchase.is_plan ) {
-				return __( 'Remove plan' );
-			}
-			return __( 'Remove product' );
-		}
-
-		if ( purchase.is_plan ) {
-			return __( 'Cancel plan' );
-		}
-		return __( 'Cancel product' );
-	};
-
 	const isAkismet = isAkismetProduct( purchase );
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
 	return (
@@ -1157,7 +1144,7 @@ export default function CancelPurchase() {
 				size="small"
 				header={
 					<PageHeader
-						title={ getHeaderTitle() }
+						title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
 						prefix={ <Breadcrumbs length={ 4 } /> }
 						description={ __(
 							'Before you go, please answer a few quick questions to help us improve.'
