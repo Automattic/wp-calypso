@@ -1,103 +1,56 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { DataViews } from '../../app/dataviews';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
-import { SiteLink, SiteLink__ES } from '../site-fields';
 import { DEFAULT_LAYOUTS, DEFAULT_CONFIG } from './views';
-import type { DashboardSiteListSite, Site } from '@automattic/api-core';
 import type { Action, Field, View } from '@wordpress/dataviews';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
-/**
- * Meant to stand in for the dataview's filterSortAndPaginate function when
- * the filtering has already been done on the backend by elasticsearch.
- */
-function filterSortAndPaginate__ES(
-	sites: DashboardSiteListSite[],
-	view: View,
-	totalItems: number
-) {
-	return {
-		data: sites,
-		paginationInfo: {
-			totalItems,
-			totalPages: view.perPage ? Math.ceil( totalItems / view.perPage ) : 1,
-		},
-	};
-}
-
-export const SitesDataViews = ( {
+export function SitesDataViews< SiteType >( {
 	view,
 	sites,
-	sites__ES,
-	totalItems,
 	fields,
-	fields__ES,
 	actions,
 	isLoading,
 	empty,
+	paginationInfo,
+	renderItemLink,
+	getItemId,
 	onChangeView,
 	onResetView,
 }: {
 	view: View;
-	sites: Site[];
-	sites__ES: DashboardSiteListSite[];
-	totalItems: number;
-	fields: Field< Site >[];
-	fields__ES: Field< DashboardSiteListSite >[];
-	actions: Action< Site >[];
+	sites: SiteType[];
+	fields: Field< SiteType >[];
+	actions?: Action< SiteType >[];
 	isLoading: boolean;
 	empty: ReactNode;
+	paginationInfo: ComponentProps< typeof DataViews< SiteType > >[ 'paginationInfo' ];
+	renderItemLink: ComponentProps< typeof DataViews< SiteType > >[ 'renderItemLink' ];
+	getItemId: ComponentProps< typeof DataViews< SiteType > >[ 'getItemId' ];
 	onChangeView: ( view: View ) => void;
 	onResetView?: () => void;
-} ) => {
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
-
-	const { data: filteredData__ES, paginationInfo: paginationInfoES } = filterSortAndPaginate__ES(
-		sites__ES,
-		view,
-		totalItems
-	);
-
-	const dv = isEnabled( 'dashboard/v2/es-site-list' ) ? (
-		<DataViews< DashboardSiteListSite >
-			getItemId={ ( item ) => '' + item.blog_id?.toString() + item.url?.value }
-			data={ filteredData__ES }
-			fields={ fields__ES }
-			// TODO: actions={ actions }
-			view={ view }
-			isLoading={ isLoading }
-			onChangeView={ onChangeView }
-			onResetView={ onResetView }
-			defaultLayouts={ DEFAULT_LAYOUTS }
-			paginationInfo={ paginationInfoES }
-			config={ DEFAULT_CONFIG }
-			empty={ empty }
-			renderItemLink={ ( { item, ...props } ) => <SiteLink__ES { ...props } site={ item } /> }
-		/>
-	) : (
-		<DataViews< Site >
-			getItemId={ ( item ) => item.ID.toString() }
-			data={ filteredData }
-			fields={ fields }
-			actions={ actions }
-			view={ view }
-			isLoading={ isLoading }
-			onChangeView={ onChangeView }
-			onResetView={ onResetView }
-			defaultLayouts={ DEFAULT_LAYOUTS }
-			paginationInfo={ paginationInfo }
-			config={ DEFAULT_CONFIG }
-			empty={ empty }
-			renderItemLink={ ( { item, ...props } ) => <SiteLink { ...props } site={ item } /> }
-		/>
-	);
-
+} ) {
 	return (
 		<>
-			<DataViewsCard>{ dv }</DataViewsCard>
+			<DataViewsCard>
+				{ /* @ts-ignore - TS doesn't seem able to resolve which branch of the DataViewsProps type to go down, either the branch were the row type has an `id`, or the branch where it does not. */ }
+				<DataViews< SiteType >
+					getItemId={ getItemId }
+					data={ sites }
+					fields={ fields }
+					actions={ actions }
+					view={ view }
+					isLoading={ isLoading }
+					onChangeView={ onChangeView }
+					onResetView={ onResetView }
+					defaultLayouts={ DEFAULT_LAYOUTS }
+					paginationInfo={ paginationInfo }
+					config={ DEFAULT_CONFIG }
+					empty={ empty }
+					renderItemLink={ renderItemLink }
+				/>
+			</DataViewsCard>
 			<GuidedTourContextProvider
 				tourId="hosting-dashboard-tours-sites"
 				isSkippable
@@ -136,4 +89,4 @@ export const SitesDataViews = ( {
 			</GuidedTourContextProvider>
 		</>
 	);
-};
+}

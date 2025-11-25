@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
@@ -32,6 +33,7 @@ import {
 } from './dataviews';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
+import { SiteLink, SiteLink__ES } from './site-fields';
 import type {
 	FetchSitesOptions,
 	Site,
@@ -160,6 +162,24 @@ export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 	};
 }
 
+/**
+ * Meant to stand in for the dataview's filterSortAndPaginate function when
+ * the filtering has already been done on the backend by elasticsearch.
+ */
+function filterSortAndPaginate__ES(
+	sites: DashboardSiteListSite[],
+	view: View,
+	totalItems: number
+) {
+	return {
+		data: sites,
+		paginationInfo: {
+			totalItems,
+			totalPages: view.perPage ? Math.ceil( totalItems / view.perPage ) : 1,
+		},
+	};
+}
+
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
@@ -228,6 +248,47 @@ export default function Sites() {
 		}
 	}, [ sites, queryClient ] );
 
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
+
+	const { data: filteredData__ES, paginationInfo: paginationInfo__ES } = filterSortAndPaginate__ES(
+		sites__ES ?? [],
+		view,
+		totalItems ?? 0
+	);
+
+	const emptyState = (
+		<DataViewsEmptyState
+			title={ emptyTitle }
+			description={ emptyDescription }
+			illustration={ <img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } /> }
+			actions={
+				<>
+					{ view.search && (
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							onClick={ () => {
+								navigate( {
+									search: {
+										...currentSearchParams,
+										view: Object.fromEntries(
+											Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
+										),
+									},
+								} );
+							} }
+						>
+							{ __( 'Clear search' ) }
+						</Button>
+					) }
+					<Button __next40pxDefaultSize variant="primary" onClick={ () => setIsModalOpen( true ) }>
+						{ __( 'Add new site' ) }
+					</Button>
+				</>
+			}
+		/>
+	);
+
 	return (
 		<>
 			{ isModalOpen && (
@@ -252,56 +313,35 @@ export default function Sites() {
 				}
 				notices={ <SitesNotices /> }
 			>
-				<SitesDataViews
-					view={ view }
-					sites={ sites ?? [] }
-					sites__ES={ sites__ES ?? [] }
-					totalItems={ totalItems ?? 0 }
-					fields={ fields }
-					fields__ES={ fields__ES }
-					actions={ actions }
-					isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-					empty={
-						<DataViewsEmptyState
-							title={ emptyTitle }
-							description={ emptyDescription }
-							illustration={
-								<img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } />
-							}
-							actions={
-								<>
-									{ view.search && (
-										<Button
-											__next40pxDefaultSize
-											variant="secondary"
-											onClick={ () => {
-												navigate( {
-													search: {
-														...currentSearchParams,
-														view: Object.fromEntries(
-															Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
-														),
-													},
-												} );
-											} }
-										>
-											{ __( 'Clear search' ) }
-										</Button>
-									) }
-									<Button
-										__next40pxDefaultSize
-										variant="primary"
-										onClick={ () => setIsModalOpen( true ) }
-									>
-										{ __( 'Add new site' ) }
-									</Button>
-								</>
-							}
-						/>
-					}
-					onChangeView={ handleViewChange }
-					onResetView={ resetView }
-				/>
+				{ isEnabled( 'dashboard/v2/es-site-list' ) ? (
+					<SitesDataViews< DashboardSiteListSite >
+						getItemId={ ( item ) => '' + item.blog_id?.toString() + item.url?.value }
+						view={ view }
+						sites={ filteredData__ES }
+						fields={ fields__ES }
+						// TODO: actions={ actions }
+						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+						empty={ emptyState }
+						paginationInfo={ paginationInfo__ES }
+						renderItemLink={ ( { item, ...props } ) => <SiteLink__ES { ...props } site={ item } /> }
+						onChangeView={ handleViewChange }
+						onResetView={ resetView }
+					/>
+				) : (
+					<SitesDataViews< Site >
+						getItemId={ ( item ) => item.ID.toString() }
+						view={ view }
+						sites={ filteredData }
+						fields={ fields }
+						actions={ actions }
+						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+						empty={ emptyState }
+						paginationInfo={ paginationInfo }
+						onChangeView={ handleViewChange }
+						onResetView={ resetView }
+						renderItemLink={ ( { item, ...props } ) => <SiteLink { ...props } site={ item } /> }
+					/>
+				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
 			 *
