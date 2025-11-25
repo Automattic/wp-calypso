@@ -194,7 +194,6 @@ export async function redirectLoggedOut( context, next ) {
 		return next();
 	}
 
-	// Allow support sessions to continue without a cookie
 	if ( isUserLoggedIn( state ) && ! isCookieAuthMissing() ) {
 		next();
 		return;
@@ -225,7 +224,7 @@ export async function redirectLoggedOut( context, next ) {
 		} catch ( error ) {
 			const errorStatus = error.status;
 
-			// Only for 401 and 403 errors
+			// Take action only for 401 and 403 errors
 			// If the response is in the 500 range, there could be a transient connection issue or a different server issue
 			if ( errorStatus && [ 401, 403 ].includes( errorStatus ) ) {
 				const userData = getCurrentUser( state );
