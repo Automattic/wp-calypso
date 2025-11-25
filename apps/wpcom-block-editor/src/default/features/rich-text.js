@@ -7,7 +7,6 @@ import { registerFormatType } from '@wordpress/rich-text';
 
 const RichTextJustifyButton = ( {
 	blockId,
-	isDeprecatedAlignAttribute,
 	deprecatedIsBlockJustified,
 	styleAttributes,
 	updateBlockAttributes,
@@ -16,6 +15,9 @@ const RichTextJustifyButton = ( {
 
 	const onToggle = () => {
 		// TODO: Remove this once we know all Atomic sites are on Gutenberg 22.1 or higher
+		const isDeprecatedAlignAttribute =
+			getBlockType( 'core/paragraph' ).attributes.align !== undefined;
+
 		if ( isDeprecatedAlignAttribute ) {
 			return updateBlockAttributes( blockId, {
 				align: deprecatedIsBlockJustified ? null : 'justify',
@@ -54,7 +56,6 @@ const ConnectedRichTextJustifyButton = compose(
 		return {
 			blockId: selectedBlock.clientId,
 			blockName: selectedBlock.name,
-			isDeprecatedAlignAttribute: getBlockType( 'core/paragraph' ).attributes.align !== undefined,
 			deprecatedIsBlockJustified: 'justify' === selectedBlock.attributes.align,
 			styleAttributes: selectedBlock.attributes.style || EMPTY_STYLES,
 		};
