@@ -1,18 +1,8 @@
 @import "@automattic/typography/styles/variables";
 
-.help-center__container-content .help-center-a4a-contact-form__wrapper {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	gap: 16px;
-	padding: 16px;
+.help-center__container-content .help-center-a4a-contact-form {
 	height: 100%;
-
-	.help-center-a4a-contact-form {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
+	padding: 16px;
 
 	.help-center-a4a-contact-form__title {
 		font-size: $root-font-size;

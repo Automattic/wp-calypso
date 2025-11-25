@@ -3,8 +3,12 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { FormInputValidation } from '@automattic/components';
-import { Button, TextareaControl } from '@wordpress/components';
+import {
+	Button,
+	TextareaControl,
+	__experimentalVStack as VStack,
+	Notice,
+} from '@wordpress/components';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -206,8 +210,8 @@ export const HelpCenterA4AContactForm = () => {
 	}, [ validity ] );
 
 	return (
-		<form onSubmit={ handleSubmit } className="help-center-a4a-contact-form__wrapper">
-			<div className="help-center-a4a-contact-form">
+		<form onSubmit={ handleSubmit } className="help-center-a4a-contact-form">
+			<VStack spacing={ 4 } justify="flex-start">
 				<h1 className="help-center-a4a-contact-form__title">
 					{ __( 'Contact sales & support', __i18n_text_domain__ ) }
 				</h1>
@@ -221,15 +225,6 @@ export const HelpCenterA4AContactForm = () => {
 						setFormData( ( data ) => ( { ...data, ...edits } ) );
 					} }
 				/>
-			</div>
-
-			<div className="contact-form-submit">
-				{ hasSubmitError && (
-					<FormInputValidation
-						isError
-						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
-					/>
-				) }
 
 				<Button
 					__next40pxDefaultSize
@@ -239,7 +234,13 @@ export const HelpCenterA4AContactForm = () => {
 				>
 					{ __( 'Submit form', __i18n_text_domain__ ) }
 				</Button>
-			</div>
+
+				{ hasSubmitError && (
+					<Notice status="warning" isDismissible={ false }>
+						{ __( 'Something went wrong. Please try again later.', __i18n_text_domain__ ) }
+					</Notice>
+				) }
+			</VStack>
 		</form>
 	);
 };
