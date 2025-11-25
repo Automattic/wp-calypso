@@ -19,7 +19,6 @@ const getCurrentPlatform = async (): Promise< {
 	if ( detection && detection.detectionMethod === 'client-hints' ) {
 		const { platform, architecture } = detection;
 
-		// macOS
 		if ( platform === 'macos' ) {
 			if ( architecture === 'arm64' ) {
 				return { platform: PlatformType.MacSilicon, detectionFailed: false };
@@ -30,7 +29,6 @@ const getCurrentPlatform = async (): Promise< {
 			return { platform: PlatformType.MacIntel, detectionFailed: true };
 		}
 
-		// Windows
 		if ( platform === 'windows' ) {
 			if ( architecture === 'arm64' ) {
 				return { platform: PlatformType.WindowsARM64, detectionFailed: false };
@@ -41,7 +39,6 @@ const getCurrentPlatform = async (): Promise< {
 			return { platform: PlatformType.WindowsX64, detectionFailed: true };
 		}
 
-		// Linux
 		if ( platform === 'linux' ) {
 			return { platform: PlatformType.Linux, detectionFailed: false };
 		}
