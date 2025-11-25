@@ -21,10 +21,14 @@ import './style.scss';
 
 const debug = debugFactory( 'client:checkout-v2' );
 
+type CheckoutProps = {
+	expressMode?: boolean;
+};
+
 /**
  * Client Checkout Component using the WordPress.com checkout
  */
-function ClientCheckoutContent() {
+function ClientCheckoutContent( { expressMode }: CheckoutProps ) {
 	const translate = useTranslate();
 	const [ isReady, setIsReady ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
@@ -34,7 +38,9 @@ function ClientCheckoutContent() {
 	const { referredProducts } = useProductsById( referral?.products ?? [] );
 
 	// Access the shopping cart API
-	const { replaceProductsInCart, responseCart } = useShoppingCart( 'no-site' );
+	const { replaceProductsInCart, responseCart } = useShoppingCart(
+		expressMode ? 'no-user' : 'no-site'
+	);
 
 	const userEmail = useSelector( ( state ) => getCurrentUser( state )?.email );
 
@@ -116,7 +122,7 @@ function ClientCheckoutContent() {
 		return <ClientCheckoutV2Placeholder />;
 	}
 
-	if ( emailMismatchWithReferralClient ) {
+	if ( ! expressMode && emailMismatchWithReferralClient ) {
 		return (
 			<ClientCheckoutV2Error
 				title={ translate( 'Permission denied' ) }
@@ -161,6 +167,9 @@ function ClientCheckoutContent() {
 export default function ClientCheckoutV2() {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
+	const currentUser = useSelector( getCurrentUser );
+
+	const expressMode = ! currentUser; // If no user is logged in, we are in express mode
 
 	return (
 		<CheckoutErrorBoundary
@@ -169,7 +178,7 @@ export default function ClientCheckoutV2() {
 			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-						<ClientCheckoutContent />
+						<ClientCheckoutContent expressMode={ expressMode } />
 					</RazorpayHookProvider>
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>
