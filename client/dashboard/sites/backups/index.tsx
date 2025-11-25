@@ -21,6 +21,7 @@ import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BackupDetails } from './backup-details';
+import { BackupDetailsSkeleton } from './backup-details-skeleton';
 import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
@@ -166,6 +167,29 @@ export function BackupsListPage() {
 		);
 	};
 
+	const renderDetailsPanel = () => {
+		if ( isLoadingActivityLog ) {
+			return <BackupDetailsSkeleton />;
+		}
+
+		if ( selectedBackup ) {
+			return (
+				<BackupDetails
+					backup={ selectedBackup }
+					site={ site }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			);
+		}
+
+		return (
+			<Card>
+				<CardBody style={ { minHeight: '300px' } } children={ null } />
+			</Card>
+		);
+	};
+
 	const isMobileDetailsView = isSmallViewport && showDetails;
 	const shouldShowActions = hasBackups && ! isMobileDetailsView;
 	const shouldShowNotices = ! isMobileDetailsView;
@@ -226,19 +250,7 @@ export function BackupsListPage() {
 								timezoneString={ timezoneString }
 								gmtOffset={ gmtOffset }
 							/>
-
-							{ selectedBackup ? (
-								<BackupDetails
-									backup={ selectedBackup }
-									site={ site }
-									timezoneString={ timezoneString }
-									gmtOffset={ gmtOffset }
-								/>
-							) : (
-								<Card>
-									<CardBody style={ { minHeight: '300px' } } children={ null } />
-								</Card>
-							) }
+							{ renderDetailsPanel() }
 						</Grid>
 					) }
 				</>
