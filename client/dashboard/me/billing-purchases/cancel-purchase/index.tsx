@@ -281,10 +281,45 @@ export default function CancelPurchase() {
 	let questionOneOrder = [];
 	let questionTwoOrder = [];
 
+	const getDowngradePlanForPurchase = (
+		plans: PlanProduct[],
+		purchase: Purchase
+	): PlanProduct | undefined => {
+		if ( ! plans ) {
+			return;
+		}
+		const plan = plans.find( ( plan ) => plan.product_id === purchase.product_id );
+		if ( ! plan ) {
+			return;
+		}
+
+		let downgradePlanInfo;
+		switch ( state.upsell ) {
+			case 'downgrade-monthly':
+				downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
+					return path.bill_period !== plan.bill_period;
+				} );
+				break;
+			case 'downgrade-personal':
+				downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
+					return path.bill_period === plan.bill_period;
+				} );
+				break;
+		}
+		if ( downgradePlanInfo ) {
+			return plans.find( ( plan ) => plan.product_id === downgradePlanInfo.product_id );
+		}
+	};
+
+	const downgradePlan = getDowngradePlanForPurchase( plans, purchase );
+
 	const getAllSurveySteps = useCallback( () => {
 		let steps = [ FEEDBACK_STEP ];
 		const isJetpack = purchase.is_jetpack_plan_or_product;
 		const skipRemovePlanSurvey = purchase.is_plan && userHasCompletedCancelSurveyForPurchase;
+		const isDowngradePlan = [ 'downgrade-monthly', 'downgrade-personal' ].includes(
+			state.upsell ?? ''
+		);
 
 		if (
 			isPartnerPurchase( purchase ) &&
@@ -301,7 +336,7 @@ export default function CancelPurchase() {
 			! purchase.is_plan
 		) {
 			steps = [ NEXT_ADVENTURE_STEP ];
-		} else if ( state.upsell ) {
+		} else if ( state.upsell && ( ! isDowngradePlan || ( isDowngradePlan && downgradePlan ) ) ) {
 			steps = [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 		} else if ( questionTwoOrder?.length ) {
 			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
@@ -323,6 +358,7 @@ export default function CancelPurchase() {
 
 		return steps;
 	}, [
+		downgradePlan,
 		userHasCompletedCancelSurveyForPurchase,
 		purchase,
 		availableJetpackSurveySteps,
@@ -527,59 +563,8 @@ export default function CancelPurchase() {
 		} ) );
 	};
 
-	enum PurchaseDowngradeType {
-		TermDowngrade = 'downgrade-term', // downgrade-monthly
-		PlanDowngrade = 'downgrade-plan', // downgrade-personal
-	}
-
-	const getDowngradePlanForPurchase = (
-		plans: PlanProduct[],
-		purchase: Purchase,
-		downgradeType: PurchaseDowngradeType
-	): PlanProduct | undefined => {
-		if ( ! plans ) {
-			return;
-		}
-		const plan = plans.find( ( plan ) => plan.product_id === purchase.product_id );
-		if ( ! plan ) {
-			return;
-		}
-
-		let downgradePlanInfo;
-		switch ( downgradeType ) {
-			case PurchaseDowngradeType.TermDowngrade:
-				downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
-					return path.bill_period !== plan.bill_period;
-				} );
-				break;
-			case PurchaseDowngradeType.PlanDowngrade:
-				downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
-					return path.bill_period === plan.bill_period;
-				} );
-				break;
-		}
-		if ( downgradePlanInfo ) {
-			return plans.find( ( plan ) => plan.product_id === downgradePlanInfo.product_id );
-		}
-	};
-
-	const downgradeClick = ( upsell: string ) => {
+	const downgradeClick = () => {
 		if ( ! state.isSubmitting ) {
-			let downgradePlan = undefined;
-			if ( 'downgrade-monthly' === upsell ) {
-				downgradePlan = getDowngradePlanForPurchase(
-					plans,
-					purchase,
-					PurchaseDowngradeType.TermDowngrade
-				);
-			} else if ( 'downgrade-personal' === upsell ) {
-				downgradePlan = getDowngradePlanForPurchase(
-					plans,
-					purchase,
-					PurchaseDowngradeType.PlanDowngrade
-				);
-			}
-
 			if ( ! downgradePlan ) {
 				createErrorNotice( 'Cannot find a plan to downgrade to', { type: 'snackbar' } );
 				return;
@@ -1640,28 +1625,6 @@ export default function CancelPurchase() {
 	};
 
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
-	let downgradePlan;
-	let downgradePlanToPersonalPrice;
-	let downgradePlanToMonthlyPrice;
-	if ( 'downgrade-monthly' === state.upsell ) {
-		downgradePlan = getDowngradePlanForPurchase(
-			plans,
-			purchase,
-			PurchaseDowngradeType.TermDowngrade
-		);
-		if ( downgradePlan ) {
-			downgradePlanToMonthlyPrice = parseFloat( downgradePlan.price );
-		}
-	} else if ( 'downgrade-personal' === state.upsell ) {
-		downgradePlan = getDowngradePlanForPurchase(
-			plans,
-			purchase,
-			PurchaseDowngradeType.PlanDowngrade
-		);
-		if ( downgradePlan ) {
-			downgradePlanToPersonalPrice = parseFloat( downgradePlan.price );
-		}
-	}
 	return (
 		<>
 			<PageLayout
@@ -1693,8 +1656,7 @@ export default function CancelPurchase() {
 							closeDialog={ closeDialog }
 							disableButtons={ state.isLoading }
 							downgradeClick={ downgradeClick }
-							downgradePlanToMonthlyPrice={ downgradePlanToMonthlyPrice }
-							downgradePlanToPersonalPrice={ downgradePlanToPersonalPrice }
+							downgradePlan={ downgradePlan }
 							flowType={ flowType }
 							freeMonthOfferClick={ freeMonthOfferClick }
 							getAllSurveySteps={ getAllSurveySteps }

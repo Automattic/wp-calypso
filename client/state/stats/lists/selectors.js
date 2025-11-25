@@ -214,7 +214,7 @@ export function getSiteStatsViewSummary( state, siteId ) {
 	}
 
 	const viewSummary = {};
-	const currentDate = getMomentSiteZone( state, siteId ).toDate();
+	const currentDate = getMomentSiteZone( state, siteId )().toDate();
 	const currentYear = currentDate.getFullYear();
 	const currentMonth = currentDate.getMonth();
 

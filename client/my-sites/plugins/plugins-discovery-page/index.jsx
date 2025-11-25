@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import FullWidthSection from 'calypso/components/full-width-section';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -107,20 +108,50 @@ const PluginsDiscoveryPage = ( props ) => {
 
 	return (
 		<>
-			<UpgradeNudge { ...props } paidPlugins />
-			{ isWPBeginnerSpecial && <FeaturePartnerBundlePlugins { ...props } category="wpbeginner" /> }
-			<PaidPluginsSection { ...props } />
-			<CollectionListView category="monetization" { ...props } />
-			<EducationFooter />
-			{ ! isLoggedIn && <InPageCTASection /> }
-			<FeaturedPluginsSection
-				{ ...props }
-				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
-				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-			/>
-			<CollectionListView category="business" { ...props } />
-			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
-			<CollectionListView category="ecommerce" { ...props } />
+			<FullWidthSection className="plugins-discovery-page__hero">
+				<UpgradeNudge { ...props } paidPlugins />
+				{ isWPBeginnerSpecial && (
+					<FeaturePartnerBundlePlugins { ...props } category="wpbeginner" />
+				) }
+				<PaidPluginsSection { ...props } />
+			</FullWidthSection>
+
+			<FullWidthSection className="plugins-discovery-page__do-more">
+				<CollectionListView category="monetization" { ...props } />
+			</FullWidthSection>
+
+			<FullWidthSection className="plugins-discovery-page__education-footer">
+				<EducationFooter />
+			</FullWidthSection>
+
+			{ ! isLoggedIn && (
+				<FullWidthSection className="plugins-discovery-page__cta full-width-section--double-padding">
+					<InPageCTASection />
+				</FullWidthSection>
+			) }
+
+			<FullWidthSection className="plugins-discovery-page__favorites full-width-section--double-padding">
+				<FeaturedPluginsSection
+					{ ...props }
+					pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
+					isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
+				/>
+			</FullWidthSection>
+
+			<FullWidthSection className="plugins-discovery-page__business">
+				<CollectionListView category="business" { ...props } />
+			</FullWidthSection>
+
+			<FullWidthSection className="plugins-discovery-page__free-essentials full-width-section--double-padding">
+				<PopularPluginsSection
+					{ ...props }
+					pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
+				/>
+			</FullWidthSection>
+
+			<FullWidthSection className="plugins-discovery-page__power-store">
+				<CollectionListView category="ecommerce" { ...props } />
+			</FullWidthSection>
 		</>
 	);
 };

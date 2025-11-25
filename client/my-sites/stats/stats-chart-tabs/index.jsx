@@ -305,7 +305,7 @@ const connectComponent = connect(
 		// If not provided we compute the value. (maintains previous behaviour)
 		const date = customRange
 			? customRange.chartEnd
-			: getQueryDate( queryDate, timezoneOffset, period, quantity );
+			: getQueryDate( queryDate, state, siteId, period, quantity );
 		const chartStart = customRange?.chartStart || '';
 
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;

@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import FullWidthSection from 'calypso/components/full-width-section';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import NoResults from 'calypso/my-sites/no-results';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
@@ -108,42 +109,46 @@ const PluginsSearchResultPage = ( {
 
 		return (
 			<>
-				<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
-				<PluginsBrowserList
-					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
-					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
-					listType="search"
-					title={ translate( 'Search Results' ) }
-					subtitle={
-						<>
-							{ title }
-							<ClearSearchButton />
-						</>
-					}
-					showReset
-					site={ siteSlug }
-					showPlaceholders={ isFetchingPluginsBySearchTerm }
-					currentSites={ sites }
-					variant={ PluginsBrowserListVariant.Paginated }
-					extended
-					search={ searchTerm }
-				/>
-				<InfiniteScroll nextPageMethod={ fetchNextPage } />
+				<FullWidthSection className="plugins-browser__search-results">
+					<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
+					<PluginsBrowserList
+						plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
+						listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
+						listType="search"
+						title={ translate( 'Search Results' ) }
+						subtitle={
+							<>
+								{ title }
+								<ClearSearchButton />
+							</>
+						}
+						showReset
+						site={ siteSlug }
+						showPlaceholders={ isFetchingPluginsBySearchTerm }
+						currentSites={ sites }
+						variant={ PluginsBrowserListVariant.Paginated }
+						extended
+						search={ searchTerm }
+					/>
+					<InfiniteScroll nextPageMethod={ fetchNextPage } />
+				</FullWidthSection>
 			</>
 		);
 	}
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		<div className="plugins-browser__no-results">
-			<NoResults
-				text={ translate( 'No matches found' ) }
-				subtitle={ translate(
-					'Try using different keywords or check below our must-have premium plugins'
-				) }
-			/>
-			<PaidPluginsSection noHeader />
-		</div>
+		<FullWidthSection>
+			<div className="plugins-browser__no-results">
+				<NoResults
+					text={ translate( 'No matches found' ) }
+					subtitle={ translate(
+						'Try using different keywords or check below our must-have premium plugins'
+					) }
+				/>
+				<PaidPluginsSection noHeader />
+			</div>
+		</FullWidthSection>
 	);
 };
 

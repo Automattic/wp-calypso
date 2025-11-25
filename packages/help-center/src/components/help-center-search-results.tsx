@@ -26,7 +26,7 @@ import {
 } from '@wordpress/icons';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
@@ -37,7 +37,7 @@ import type { SearchResult } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-search-results.scss';
 
-const MAX_VISIBLE_RESULTS = 5;
+const MAX_VISIBLE_RESULTS = 8;
 
 type HelpLinkProps = {
 	result: SearchResult;
@@ -229,8 +229,6 @@ function HelpSearchResults( {
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
-	const [ visibleResults, setVisibleResults ] = useState( MAX_VISIBLE_RESULTS );
-
 	useEffect( () => {
 		// Cancel all queued speak messages.
 		loadingSpeak.cancel();
@@ -239,7 +237,6 @@ function HelpSearchResults( {
 
 		// If there's no query, then we don't need to announce anything.
 		if ( ! searchQuery ) {
-			setVisibleResults( MAX_VISIBLE_RESULTS );
 			return;
 		}
 
@@ -248,7 +245,6 @@ function HelpSearchResults( {
 		} else if ( ! hasAPIResults ) {
 			errorSpeak();
 		} else if ( hasAPIResults ) {
-			setVisibleResults( MAX_VISIBLE_RESULTS );
 			resultsSpeak();
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
@@ -337,7 +333,7 @@ function HelpSearchResults( {
 					className="help-center-search-results__list help-center-articles__list"
 					aria-labelledby={ title ? id : undefined }
 				>
-					{ results.slice( 0, visibleResults ).map( ( result, index ) => (
+					{ results.slice( 0, MAX_VISIBLE_RESULTS ).map( ( result, index ) => (
 						<HelpLink
 							key={ `${ id }-${ index }` }
 							result={ result }
