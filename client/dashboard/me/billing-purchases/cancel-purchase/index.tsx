@@ -51,9 +51,7 @@ import {
 	isExpired,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackTemporarySitePurchase,
-	isNonDomainSubscription,
 	isAkismetProduct,
-	isOneTimePurchase,
 	isPartnerPurchase,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from '../../../utils/purchase';
@@ -1141,22 +1139,6 @@ export default function CancelPurchase() {
 		return null;
 	}
 
-	const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-
-	let heading;
-
-	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
-	if ( isDomainRegistrationPurchase || isOneTimePurchase( purchase ) ) {
-		/* translators: %(purchaseName)s is the name of the product which was purchased */
-		heading = sprintf( __( 'Manage %(purchaseName)s' ), {
-			purchaseName,
-		} );
-	}
-
-	if ( isNonDomainSubscription( purchase ) ) {
-		heading = __( 'Manage plan' );
-	}
-
 	const getHeaderTitle = () => {
 		if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 			if ( purchase.is_plan ) {
@@ -1246,7 +1228,14 @@ export default function CancelPurchase() {
 						/>
 						{ ! state.surveyShown && (
 							<>
-								<Heading level={ 4 }>{ heading }</Heading>
+								<Heading level={ 4 }>
+									{
+										/* translators: %(purchaseName)s is the name of the product which was purchased */
+										sprintf( __( 'Manage %(purchaseName)s' ), {
+											purchaseName: purchase.is_domain ? purchase.meta : purchase.product_name,
+										} )
+									}
+								</Heading>
 
 								<p className="cancel-purchase__left">
 									{ state.showDomainOptionsStep ? (
