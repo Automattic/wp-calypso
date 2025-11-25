@@ -5,7 +5,6 @@ import { Icon, people, starEmpty, commentContent, settings } from '@wordpress/ic
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
-import moment from 'moment';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -33,7 +32,7 @@ import {
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
-import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { useMomentInSite } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
@@ -189,7 +188,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const isSitePrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const slug = useSelector( getSelectedSiteSlug );
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
-	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
+	const momentInSite = useMomentInSite( siteId );
 	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
 	const [ isPageSettingsTooltipDismissed, setIsPageSettingsTooltipDismissed ] = useState(
 		!! localStorage.getItem( 'notices_dismissed__traffic_page_settings' )
@@ -257,16 +256,16 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		// Mark the drilled-down period page should use the go-back action.
 		sessionStorage.setItem( 'jetpack_stats_date_range_is_drilling_down', 1 );
 
-		const chartRangeParams = getChartRangeParams( periodStartDate, currentPeriod );
+		const chartRangeParams = getChartRangeParams( periodStartDate, currentPeriod, momentInSite );
 
 		let { chartStart, chartEnd } = chartRangeParams;
 		// Limit navigation within the currently selected range.
 		const currentChartStart = context.query?.chartStart;
 		const currentChartEnd = context.query?.chartEnd;
-		if ( currentChartStart && moment( chartStart ).isBefore( currentChartStart ) ) {
+		if ( currentChartStart && momentInSite( chartStart ).isBefore( currentChartStart ) ) {
 			chartStart = currentChartStart;
 		}
-		if ( currentChartEnd && moment( chartEnd ).isAfter( currentChartEnd ) ) {
+		if ( currentChartEnd && momentInSite( chartEnd ).isAfter( currentChartEnd ) ) {
 			chartEnd = currentChartEnd;
 		}
 
@@ -321,17 +320,17 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			if ( inputDate === undefined ) {
 				if ( storedShortcut ) {
 					const storedValue = storedShortcut[ inputKey ];
-					const isStoredValueValid = moment( storedValue ).isValid();
+					const isStoredValueValid = momentInSite( storedValue ).isValid();
 
 					return isStoredValueValid ? storedValue : null;
 				}
 			}
 
-			const isValid = moment( inputDate ).isValid();
+			const isValid = momentInSite( inputDate ).isValid();
 
 			return isValid ? inputDate : null;
 		},
-		[ storedShortcut ]
+		[ storedShortcut, momentInSite ]
 	);
 
 	// Note: This is only used in the empty version of the module.
@@ -376,20 +375,20 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	if ( chartEnd ) {
 		customChartRange.chartEnd = chartEnd;
 	} else {
-		customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
+		customChartRange.chartEnd = momentInSite().format( DATE_FORMAT );
 	}
 
-	const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
+	const isSameOrBefore = momentInSite( chartStart ).isSameOrBefore( momentInSite( chartEnd ) );
 	// Find the quantity of bars for the chart.
 	let daysInRange = getDefaultDaysForPeriod( period );
 	if ( chartStart && isSameOrBefore ) {
 		// Add one to calculation to include the start date.
-		daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
+		daysInRange = momentInSite( chartEnd ).diff( momentInSite( chartStart ), 'days' ) + 1;
 		customChartRange.chartStart = chartStart;
 	} else {
 		// if start date is missing let the frequency of data take over to avoid showing one bar
 		// (e.g. months defaulting to 30 days and showing one point)
-		customChartRange.chartStart = momentSiteZone
+		customChartRange.chartStart = momentInSite()
 			.clone()
 			.subtract( daysInRange - 1, 'days' )
 			.format( DATE_FORMAT );
@@ -411,8 +410,10 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	} else if ( momentPeriod === 'hour' ) {
 		momentPeriod = 'day';
 	}
-	const adjustedChartStartDate = moment( customChartRange.chartStart ).startOf( momentPeriod );
-	const adjustedChartEndDate = moment( customChartRange.chartEnd ).endOf( momentPeriod );
+	const adjustedChartStartDate = momentInSite( customChartRange.chartStart ).startOf(
+		momentPeriod
+	);
+	const adjustedChartEndDate = momentInSite( customChartRange.chartEnd ).endOf( momentPeriod );
 
 	let customChartQuantity = Math.ceil(
 		adjustedChartEndDate.diff( adjustedChartStartDate, period, true )
@@ -425,8 +426,8 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 		// For StatsDateControl
 		customChartRange.daysInRange = 7;
-		customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
-		customChartRange.chartStart = moment( customChartRange.chartEnd )
+		customChartRange.chartEnd = momentInSite().format( DATE_FORMAT );
+		customChartRange.chartStart = momentInSite( customChartRange.chartEnd )
 			.subtract( customChartRange.daysInRange - 1, 'days' )
 			.format( DATE_FORMAT );
 	}

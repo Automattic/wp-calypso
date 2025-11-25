@@ -2,10 +2,9 @@ import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
 import clsx from 'clsx';
 import moment from 'moment';
 import { useEffect, useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import { parseChartData } from 'calypso/state/stats/lists/utils';
+import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 
 type Unit = 'hour' | 'day' | 'week' | 'month' | 'year';
 
@@ -28,20 +27,16 @@ const UPDATE_INTERVAL_IN_SECONDS = 5;
 const MINUTE_DATA_LENGTH = 30;
 
 const RealtimeChart = ( { siteId }: { siteId: number } ) => {
-	const gmtOffset = useSelector( ( state: object ) =>
-		getSiteOption( state, siteId, 'gmt_offset' )
-	) as number;
+	const momentInSite = useMomentInSite( siteId );
 	const [ viewsData, setViewsData ] = useState( {} as chartMinuteDataTypes );
 	const [ initialViewsCount, setInitialViewsCount ] = useState< number | undefined >( undefined );
 
 	useEffect( () => {
 		const intervalId = setInterval( () => {
-			// Query the chart data by offset YYYY-MM-DD HH:mm:00.
-			const adjustedDatetimeForQuery = moment()
-				.utcOffset( gmtOffset )
-				.format( 'YYYY-MM-DD HH:mm:00' );
+			// Query the chart data by site timezone YYYY-MM-DD HH:mm:00.
+			const adjustedDatetimeForQuery = momentInSite().format( 'YYYY-MM-DD HH:mm:00' );
 			// Index the chart data by local YYYY-MM-DD HH:mm:00 to compare with local time in X-axis tickFormat.
-			const localDatetimeKey = moment().format( 'YYYY-MM-DD HH:mm:00' );
+			const localDatetimeKey = momentInSite().format( 'YYYY-MM-DD HH:mm:00' );
 
 			queryStatsVisits( siteId, {
 				unit: 'hour',
@@ -66,13 +61,13 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 		}, UPDATE_INTERVAL_IN_SECONDS * 1000 );
 
 		return () => clearInterval( intervalId );
-	}, [ siteId, gmtOffset, initialViewsCount ] );
+	}, [ siteId, initialViewsCount ] );
 
 	const { chartData, maxViews } = useMemo( () => {
 		const allDatetimeKeys = [];
 		// Display all the minutes in the last 30 minutes.
 		for ( let i = 0; i <= MINUTE_DATA_LENGTH; i++ ) {
-			const datetime = moment().subtract( i, 'minute' ).format( 'YYYY-MM-DD HH:mm:00' );
+			const datetime = momentInSite().subtract( i, 'minute' ).format( 'YYYY-MM-DD HH:mm:00' );
 			allDatetimeKeys.unshift( datetime );
 		}
 
@@ -115,7 +110,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 			chartData: data,
 			maxViews,
 		};
-	}, [ JSON.stringify( viewsData ) ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ viewsData, momentInSite, initialViewsCount ] );
 
 	// Format the time in minute difference from now.
 	const formatTimeTick = ( value: number ) => {
