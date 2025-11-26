@@ -12,4 +12,5 @@ export type {
 	ClientContextType,
 	BaseContextEntry,
 	ContextEntry,
+	Suggestion,
 } from './extension-types';

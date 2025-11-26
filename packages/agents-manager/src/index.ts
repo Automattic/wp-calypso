@@ -10,4 +10,5 @@ export type {
 	BaseContextEntry,
 	ContextEntry,
 	Ability,
+	Suggestion,
 } from './types';

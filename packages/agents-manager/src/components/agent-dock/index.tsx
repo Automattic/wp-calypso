@@ -15,6 +15,7 @@ import {
 	type ChatState,
 	type MarkdownComponents,
 	type MarkdownExtensions,
+	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
@@ -34,7 +35,7 @@ export interface AgentDockProps {
 	/**
 	 * Custom empty view suggestions
 	 */
-	emptyViewSuggestions?: Array< { id?: string; label: string; prompt: string } >;
+	emptyViewSuggestions?: Suggestion[];
 	/**
 	 * Custom message renderer components
 	 */

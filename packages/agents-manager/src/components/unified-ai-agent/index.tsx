@@ -8,7 +8,7 @@ import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import AgentDock from '../agent-dock';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
+import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
 
 export interface UnifiedAIAgentProps {
 	/**
@@ -53,7 +53,7 @@ export interface UnifiedAIAgentProps {
 	 * Custom suggestions for the empty view (optional)
 	 * Allows plugins to provide context-specific suggestions
 	 */
-	emptyViewSuggestions?: Array< { id: string; label: string; prompt: string } >;
+	emptyViewSuggestions?: Suggestion[];
 	/**
 	 * Custom markdown components for message rendering (optional)
 	 * Allows plugins to provide custom renderers for markdown elements

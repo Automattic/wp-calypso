@@ -5,7 +5,7 @@
  * PHP filter. Each provider module should export toolProvider and/or contextProvider.
  */
 
-import type { ToolProvider, ContextProvider } from '@automattic/agents-manager';
+import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
 
 // helpCenterData is set as a global const via wp_add_inline_script
 declare const helpCenterData: { agentProviders?: string[] } | undefined;
@@ -13,6 +13,7 @@ declare const helpCenterData: { agentProviders?: string[] } | undefined;
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
+	suggestions?: Suggestion[];
 }
 
 /**
@@ -31,6 +32,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	let mergedToolProvider: ToolProvider | undefined;
 	let mergedContextProvider: ContextProvider | undefined;
+	let mergedSuggestions: Suggestion[] | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -44,6 +46,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.contextProvider ) {
 				mergedContextProvider = module.contextProvider;
 			}
+			if ( module.suggestions ) {
+				mergedSuggestions = module.suggestions;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[HelpCenter] Loaded provider "${ moduleId }"` );
@@ -56,5 +61,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	return {
 		toolProvider: mergedToolProvider,
 		contextProvider: mergedContextProvider,
+		suggestions: mergedSuggestions,
 	};
 }

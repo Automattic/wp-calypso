@@ -1,7 +1,7 @@
 import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/constants';
 import { useContext, createContext } from '@wordpress/element';
 import { useNewInteractionsBotConfig } from '../hooks/use-new-interaction-bot-config';
-import type { ToolProvider, ContextProvider } from '@automattic/agents-manager';
+import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
@@ -27,6 +27,11 @@ export type HelpCenterRequiredInformation = {
 	 * Allows plugins to provide rich context about current state
 	 */
 	contextProvider?: ContextProvider;
+	/**
+	 * Custom suggestions for the AI agent empty view (optional)
+	 * Allows plugins to provide context-specific suggestions
+	 */
+	suggestions?: Suggestion[];
 };
 
 const defaultContext: HelpCenterRequiredInformation = {

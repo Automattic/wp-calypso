@@ -147,3 +147,6 @@ export interface BaseContextEntry {
  * ```
  */
 export type ContextEntry = BaseContextEntry;
+
+// Re-export Suggestion from agenttic-ui for convenience
+export type { Suggestion } from '@automattic/agenttic-ui';

@@ -11,7 +11,7 @@ import { loadExternalProviders } from './src/utils/load-external-providers';
 const queryClient = new QueryClient();
 import './help-center.scss';
 
-function AdminHelpCenterContent( { toolProvider, contextProvider } ) {
+function AdminHelpCenterContent( { toolProvider, contextProvider, suggestions } ) {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDataStoreDispatch( 'automattic/help-center' );
 	const { isShown, unreadCount } = useSelect(
@@ -226,6 +226,7 @@ function AdminHelpCenterContent( { toolProvider, contextProvider } ) {
 			isCommerceGarden={ helpCenterData.isCommerceGarden }
 			toolProvider={ toolProvider }
 			contextProvider={ contextProvider }
+			suggestions={ suggestions }
 			{ ...botProps }
 		/>
 	);
@@ -234,10 +235,14 @@ function AdminHelpCenterContent( { toolProvider, contextProvider } ) {
 const target = document.getElementById( 'help-center-masterbar' );
 if ( target ) {
 	// Load external providers (e.g., from Big Sky plugin) and render
-	loadExternalProviders().then( ( { toolProvider, contextProvider } ) => {
+	loadExternalProviders().then( ( { toolProvider, contextProvider, suggestions } ) => {
 		createRoot( target ).render(
 			<QueryClientProvider client={ queryClient }>
-				<AdminHelpCenterContent toolProvider={ toolProvider } contextProvider={ contextProvider } />
+				<AdminHelpCenterContent
+					toolProvider={ toolProvider }
+					contextProvider={ contextProvider }
+					suggestions={ suggestions }
+				/>
 			</QueryClientProvider>
 		);
 	} );

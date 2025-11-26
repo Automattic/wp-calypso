@@ -235,7 +235,7 @@ if ( helpCenterData.isNextAdmin ) {
 
 				// Load external providers (e.g., from Big Sky plugin)
 				const { loadExternalProviders } = await import( './src/utils/load-external-providers' );
-				const { toolProvider, contextProvider } = await loadExternalProviders();
+				const { toolProvider, contextProvider, suggestions } = await loadExternalProviders();
 
 				createRoot( container ).render(
 					<QueryClientProvider client={ queryClient }>
@@ -250,6 +250,7 @@ if ( helpCenterData.isNextAdmin ) {
 							isCommerceGarden={ helpCenterData.isCommerceGarden }
 							toolProvider={ toolProvider }
 							contextProvider={ contextProvider }
+							suggestions={ suggestions }
 							{ ...botProps }
 						/>
 					</QueryClientProvider>,
