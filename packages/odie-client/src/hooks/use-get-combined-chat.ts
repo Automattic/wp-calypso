@@ -177,7 +177,6 @@ export const useGetCombinedChat = (
 		refreshingAfterReconnect,
 		isUploadingUnsentMessages,
 		isChatLoaded,
-		odieChat,
 		conversationId,
 		odieId,
 		currentSupportInteraction,
