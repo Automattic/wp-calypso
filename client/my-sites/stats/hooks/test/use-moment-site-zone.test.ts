@@ -659,3 +659,62 @@ describe( 'useMomentInSite', () => {
 		expect( secondResult ).not.toBe( firstResult );
 	} );
 } );
+
+describe( 'GMT offset date comparison logic', () => {
+	const mockState = {};
+	const siteId = 123;
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		( i18n.getLocaleSlug as jest.Mock ).mockReturnValue( 'en' );
+		( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+		( getSiteOption as jest.Mock ).mockReturnValue( null );
+	} );
+
+	it( 'should correctly compare dates with isSameOrAfter using GMT offset', () => {
+		( getSiteGmtOffset as jest.Mock ).mockReturnValue( -8 );
+
+		const momentFn = getMomentSiteZone( mockState, siteId );
+		const today = momentFn( '2024-11-27' );
+		const yesterday = momentFn( '2024-11-26' );
+
+		expect( today.isSameOrAfter( yesterday, 'day' ) ).toBe( true );
+		expect( yesterday.isSameOrAfter( today, 'day' ) ).toBe( false );
+	} );
+
+	it( 'should handle midnight edge case correctly', () => {
+		( getSiteGmtOffset as jest.Mock ).mockReturnValue( -8 );
+
+		const momentFn = getMomentSiteZone( mockState, siteId );
+		const lastMinute = momentFn( '2024-11-27 23:59:59' );
+		const nextDay = momentFn( '2024-11-28 00:00:00' );
+
+		expect( lastMinute.isSame( nextDay, 'day' ) ).toBe( false );
+		expect( lastMinute.isBefore( nextDay ) ).toBe( true );
+	} );
+
+	it( 'should produce consistent results between current time and string parsing', () => {
+		( getSiteGmtOffset as jest.Mock ).mockReturnValue( -5 );
+
+		const momentFn = getMomentSiteZone( mockState, siteId );
+		const now = momentFn();
+		const parsed = momentFn( now.format( 'YYYY-MM-DD HH:mm:ss' ) );
+
+		// Both should have the same offset
+		expect( now.utcOffset() ).toBe( parsed.utcOffset() );
+		expect( parsed.utcOffset() ).toBe( -300 );
+
+		// Format-reparse should maintain the same date
+		expect( parsed.isSame( now, 'second' ) ).toBe( true );
+	} );
+
+	it( 'should handle fractional GMT offset correctly', () => {
+		( getSiteGmtOffset as jest.Mock ).mockReturnValue( 5.5 ); // IST
+
+		const momentFn = getMomentSiteZone( mockState, siteId );
+		const date = momentFn( '2024-11-27 00:00:00' );
+
+		expect( date.utcOffset() ).toBe( 330 ); // 5.5 hours in minutes
+		expect( date.format( 'Z' ) ).toBe( '+05:30' );
+	} );
+} );
