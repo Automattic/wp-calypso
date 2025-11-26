@@ -36,16 +36,11 @@ export default function DomainRemovalWarningStep( {
 	return (
 		<VStack spacing={ 8 }>
 			<VStack spacing={ 3 }>
-				<Heading level={ 2 }>
-					{ createInterpolateElement(
-						sprintf(
-							/* translators: %s is the domain name */
-							__( 'Delete <strong>%s</strong>' ),
-							domainName
-						),
-						{
-							strong: <strong />,
-						}
+				<Heading level={ 3 }>
+					{ sprintf(
+						/* translators: %s is the domain name */
+						__( 'Delete %s' ),
+						domainName
 					) }
 				</Heading>
 

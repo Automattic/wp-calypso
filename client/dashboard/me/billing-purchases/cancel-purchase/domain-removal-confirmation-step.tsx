@@ -42,9 +42,9 @@ export default function DomainRemovalConfirmationStep( {
 	return (
 		<VStack spacing={ 8 }>
 			<VStack spacing={ 3 }>
-				<Heading level={ 2 }>{ __( 'Confirm your decision' ) }</Heading>
+				<Heading level={ 3 }>{ __( 'Confirm your decision' ) }</Heading>
 
-				<Text as="p">
+				<Text>
 					{ createInterpolateElement(
 						sprintf(
 							/* translators: %s is the domain name */
