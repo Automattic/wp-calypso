@@ -45,6 +45,9 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
 
 	const trackIconInteraction = () => {
+		if ( isLoadingExperimentAssignment ) {
+			return;
+		}
 		recordTracksEvent( `wpcom_help_center_icon_interaction`, {
 			is_help_center_visible: helpCenterVisible,
 			section: sectionName,
