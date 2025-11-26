@@ -19,7 +19,7 @@ const isDocked: Reducer< boolean | undefined, AgentsManagerAction > = ( state, a
 	return state;
 };
 
-const agentsManagerRouterHistory: Reducer<
+const routerHistory: Reducer<
 	{ entries: Location[]; index: number } | undefined,
 	AgentsManagerAction
 > = ( state, action ) => {
@@ -49,7 +49,7 @@ const hasLoaded: Reducer< boolean, AgentsManagerAction > = ( state = false, acti
 const reducer = combineReducers( {
 	isOpen,
 	isDocked,
-	agentsManagerRouterHistory,
+	routerHistory,
 	isLoading,
 	hasLoaded,
 } );

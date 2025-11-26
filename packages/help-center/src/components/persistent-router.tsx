@@ -4,7 +4,7 @@ import { usePersistedHistory } from '../hooks/use-persisted-history';
 import type { Location } from 'history';
 
 type Props = {
-	children: React.ReactNode;
+	children: React.ReactNode | React.ReactPortal;
 	routerHistory?: { entries: Location[]; index: number } | undefined;
 	persistenceKey?: string | undefined;
 };

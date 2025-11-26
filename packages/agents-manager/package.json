@@ -43,6 +43,7 @@
 	"dependencies": {
 		"@automattic/agenttic-client": "^0.1.23",
 		"@automattic/agenttic-ui": "^0.1.23",
+		"@automattic/help-center": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@rive-app/react-canvas": "^4.15.6",
 		"@wordpress/api-fetch": "^7.23.0",

@@ -3,9 +3,13 @@
  * Main wrapper component for loading AI agent in Calypso
  */
 
+import { AgentsManagerSelect } from '@automattic/data-stores';
+import { PersistentRouter } from '@automattic/help-center';
+import { useSelect } from '@wordpress/data';
 import { useCallback, useMemo } from 'react';
 import { CalypsoContextAdapter } from '../../adapters/context/calypso-context-adapter';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import AgentDock from '../agent-dock';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
@@ -54,6 +58,10 @@ export default function CalypsoAIAgent( {
 	savePreference: externalSavePreference,
 	loadPreference: externalLoadPreference,
 }: UnifiedAIAgentProps ) {
+	const routerHistory = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getRouterHistory();
+	}, [] );
 	// Create context adapter for Calypso
 	// TODO: Pass this to AgentDock once context integration is needed
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -147,14 +155,19 @@ export default function CalypsoAIAgent( {
 	const loadPreference = externalLoadPreference || defaultLoadPreference;
 
 	return (
-		<AgentDock
-			agentConfig={ agentConfig }
-			emptyViewSuggestions={ suggestions }
-			onClearChat={ handleClearChat }
-			sessionStorageKey="agents-manager-session"
-			preferenceKey="agents_manager_state"
-			savePreference={ savePreference }
-			loadPreference={ loadPreference }
-		/>
+		<PersistentRouter
+			routerHistory={ routerHistory }
+			persistenceKey="agents_manager_router_history"
+		>
+			<AgentDock
+				agentConfig={ agentConfig }
+				emptyViewSuggestions={ suggestions }
+				onClearChat={ handleClearChat }
+				sessionStorageKey="agents-manager-session"
+				preferenceKey="agents_manager_state"
+				savePreference={ savePreference }
+				loadPreference={ loadPreference }
+			/>
+		</PersistentRouter>
 	);
 }

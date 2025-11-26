@@ -28,7 +28,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 		// Help center resets when closing. But the agents manager might be different.
 		if ( ! state.isOpen ) {
 			saveState.agents_manager_router_history = null;
-			yield setAgentsManagerRouterHistory( undefined );
+			yield setRouterHistory( undefined );
 		}
 	}
 
@@ -60,9 +60,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 	}
 }
 
-export function setAgentsManagerRouterHistory(
-	history: { entries: Location[]; index: number } | undefined
-) {
+export function setRouterHistory( history: { entries: Location[]; index: number } | undefined ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_ROUTER_HISTORY',
 		history,
@@ -106,7 +104,7 @@ export function setHasLoaded( hasLoaded: boolean ) {
 }
 
 export type AgentsManagerAction =
-	| ReturnType< typeof setAgentsManagerRouterHistory >
+	| ReturnType< typeof setRouterHistory >
 	| ReturnType< typeof setIsLoading >
 	| ReturnType< typeof setHasLoaded >
 	| GeneratorReturnType< typeof setIsOpen >

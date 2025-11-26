@@ -2,13 +2,7 @@ import { apiFetch } from '@wordpress/data-controls';
 import { Location } from 'history';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { wpcomRequest } from '../wpcom-request-controls';
-import {
-	setAgentsManagerRouterHistory,
-	setIsDocked,
-	setIsOpen,
-	setIsLoading,
-	setHasLoaded,
-} from './actions';
+import { setRouterHistory, setIsDocked, setIsOpen, setIsLoading, setHasLoaded } from './actions';
 import type { APIFetchOptions } from '../shared-types';
 
 type Preferences = {
@@ -37,7 +31,7 @@ export function* getAgentsManagerState() {
 
 		// Restore the navigation history from preferences
 		if ( preferences.agents_manager_router_history ) {
-			yield setAgentsManagerRouterHistory( preferences.agents_manager_router_history );
+			yield setRouterHistory( preferences.agents_manager_router_history );
 		}
 
 		// Restore the docked state from preferences

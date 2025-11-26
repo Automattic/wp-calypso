@@ -13,7 +13,8 @@ import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useAgentSession } from '../../hooks/use-agent-session';
 import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -79,6 +80,7 @@ export default function AgentDock( {
 	onClearChat,
 	sessionStorageKey = 'agents-manager-session',
 }: AgentDockProps ) {
+	const navigate = useNavigate();
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const persistedState = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
@@ -172,6 +174,14 @@ export default function AgentDock( {
 			chatHeaderOptions.push( dockMenuItem );
 		}
 
+		chatHeaderOptions.push( {
+			icon: login,
+			title: __( 'Go to test', 'agents-manager' ),
+			onClick: () => {
+				navigate( '/test' );
+			},
+		} );
+
 		return (
 			<AgentUI.Container
 				messages={ messages }
@@ -199,12 +209,31 @@ export default function AgentDock( {
 						onClose={ isDocked ? closeSidebar : setChatIsClosed }
 						options={ chatHeaderOptions }
 					/>
-					<AgentUI.Messages />
-					<AgentUI.Footer>
-						<AgentUI.Suggestions />
-						<AgentUI.Notice />
-						<AgentUI.Input />
-					</AgentUI.Footer>
+					<Routes>
+						<Route
+							path="/"
+							element={
+								<>
+									<AgentUI.Messages />
+									<AgentUI.Footer>
+										<AgentUI.Suggestions />
+										<AgentUI.Notice />
+										<AgentUI.Input />
+									</AgentUI.Footer>
+								</>
+							}
+						/>
+						<Route
+							path="/test"
+							element={
+								<div style={ { display: 'flex', flexDirection: 'column', gap: 20, flex: 1 } }>
+									<h1>This is a test page</h1>
+									<button onClick={ () => navigate( -1 ) }>Go to home</button>
+									<br />
+								</div>
+							}
+						/>
+					</Routes>
 				</AgentUI.ConversationView>
 			</AgentUI.Container>
 		);

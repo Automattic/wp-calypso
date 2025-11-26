@@ -298,6 +298,7 @@ __metadata:
     "@automattic/agenttic-client": "npm:^0.1.23"
     "@automattic/agenttic-ui": "npm:^0.1.23"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/help-center": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
     "@rive-app/react-canvas": "npm:^4.15.6"
     "@types/react": "npm:^18.3.1"
