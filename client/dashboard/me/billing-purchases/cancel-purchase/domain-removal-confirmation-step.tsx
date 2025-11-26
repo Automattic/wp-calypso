@@ -72,20 +72,20 @@ export default function DomainRemovalConfirmationStep( {
 			<ButtonStack>
 				<Button
 					__next40pxDefaultSize
+					variant="tertiary"
+					onClick={ onCancel }
+					disabled={ isLoading }
+				>
+					{ __( 'Cancel' ) }
+				</Button>
+				<Button
+					__next40pxDefaultSize
 					variant="primary"
 					isDestructive
 					onClick={ onConfirm }
 					disabled={ ! domainConfirmed || isLoading }
 				>
 					{ __( 'Delete this domain' ) }
-				</Button>
-				<Button
-					__next40pxDefaultSize
-					variant="tertiary"
-					onClick={ onCancel }
-					disabled={ isLoading }
-				>
-					{ __( 'Cancel' ) }
 				</Button>
 			</ButtonStack>
 		</VStack>

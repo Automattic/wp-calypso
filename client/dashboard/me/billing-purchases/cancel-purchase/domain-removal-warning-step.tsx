@@ -87,20 +87,10 @@ export default function DomainRemovalWarningStep( {
 					) }
 				</Text>
 
-				<Text>
-					<strong>{ __( 'Do you still want to continue with deleting your domain?' ) }</strong>
-				</Text>
+				<Text>{ __( 'Do you still want to continue with deleting your domain?' ) }</Text>
 			</VStack>
 
 			<ButtonStack>
-				<Button
-					__next40pxDefaultSize
-					variant="primary"
-					onClick={ onContinue }
-					disabled={ isLoading }
-				>
-					{ __( 'Continue' ) }
-				</Button>
 				<Button
 					__next40pxDefaultSize
 					variant="tertiary"
@@ -108,6 +98,14 @@ export default function DomainRemovalWarningStep( {
 					disabled={ isLoading }
 				>
 					{ __( 'Cancel' ) }
+				</Button>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					onClick={ onContinue }
+					disabled={ isLoading }
+				>
+					{ __( 'Continue' ) }
 				</Button>
 			</ButtonStack>
 		</VStack>

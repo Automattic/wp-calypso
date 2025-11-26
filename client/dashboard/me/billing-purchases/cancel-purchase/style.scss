@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .cancel-purchase__wrapper-card {
 	padding: 32px;
@@ -12,7 +12,7 @@
 	}
 
 	.cancel-purchase__refund-domain-info {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		display: inline-block;
 		font-size: $font-body-extra-small;
 		line-height: 1.4;
@@ -62,19 +62,19 @@
 				flex-shrink: 0;
 				margin-inline-end: 8px;
 				margin-top: 2px;
-				color: var( --color-error-40 );
+				color: var(--color-error-40);
 			}
 		}
 	}
 }
 
 .cancel-purchase__refund-string {
-	color: var( --color-success );
+	color: var(--color-success);
 	font-weight: 600;
 }
 
 .cancel-purchase__warning-string {
-	color: var( --color-error );
+	color: var(--color-error);
 	font-weight: 600;
 }
 
@@ -86,7 +86,7 @@
 	}
 
 	button.cancel-purchase__button {
-		background-color: #f00;
+		background-color: #F00;
 	}
 }
 
@@ -95,7 +95,7 @@
 }
 
 .cancel-purchase__button {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
 	}
 }
@@ -120,7 +120,7 @@
 				flex-shrink: 0;
 				margin-inline-end: 8px;
 				margin-top: 2px;
-				color: var( --color-warning );
+				color: var(--color-warning);
 			}
 		}
 	}
