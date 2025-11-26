@@ -230,7 +230,9 @@ export default function AgentDock( {
 		[ markdownComponents, markdownExtensions ]
 	);
 
+	// TODO: Check app crash during chatting...
 	const renderAgentUI = () => {
+		// TODO: This not work...
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', 'agents-manager' ),
