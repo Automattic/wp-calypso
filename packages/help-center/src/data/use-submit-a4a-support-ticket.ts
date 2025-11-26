@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-imports */
 import { useMutation } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 

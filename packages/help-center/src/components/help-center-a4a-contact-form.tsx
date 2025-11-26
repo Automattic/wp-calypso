@@ -12,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
@@ -29,6 +29,11 @@ type FormData = {
 	product: string;
 	message: string;
 	pressable_contact: string;
+};
+
+const FORM_CONFIG = {
+	layout: { type: 'regular' as const },
+	fields: [ 'name', 'email', 'site', 'product', 'pressable_contact', 'message' ],
 };
 
 export const HelpCenterA4AContactForm = () => {
@@ -164,12 +169,7 @@ export const HelpCenterA4AContactForm = () => {
 		[]
 	);
 
-	const form = {
-		layout: { type: 'regular' as const },
-		fields: [ 'name', 'email', 'site', 'product', 'pressable_contact', 'message' ],
-	};
-
-	const { validity } = useFormValidity( formData, fields, form );
+	const { validity } = useFormValidity( formData, fields, FORM_CONFIG );
 
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
@@ -199,16 +199,7 @@ export const HelpCenterA4AContactForm = () => {
 		[ formData, submitA4ATicket, agency?.id, agency?.pressableId, isPressableSelected, navigate ]
 	);
 
-	useEffect( () => {
-		if ( formData.product === 'pressable' && ! formData.pressable_contact ) {
-			setFormData( ( prev ) => ( { ...prev, pressable_contact: 'sales' } ) );
-		}
-	}, [ formData.product, formData.pressable_contact ] );
-
-	const isValidForm = useMemo( () => {
-		// If validaty is empty, it means we don't have any invalid fields.
-		return ! validity;
-	}, [ validity ] );
+	const isValidForm = ! validity;
 
 	return (
 		<form onSubmit={ handleSubmit } className="help-center-a4a-contact-form">
@@ -218,7 +209,7 @@ export const HelpCenterA4AContactForm = () => {
 				<DataForm< FormData >
 					data={ formData }
 					fields={ fields }
-					form={ form }
+					form={ FORM_CONFIG }
 					validity={ validity }
 					onChange={ ( edits: Partial< FormData > ) => {
 						setFormData( ( data ) => ( { ...data, ...edits } ) );
