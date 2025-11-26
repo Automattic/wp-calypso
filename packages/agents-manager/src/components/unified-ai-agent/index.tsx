@@ -6,6 +6,7 @@
 
 import { useMemo } from '@wordpress/element';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
+import useAgentSession from '../../hooks/use-agent-session';
 import AgentDock from '../agent-dock';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
@@ -23,11 +24,11 @@ export interface UnifiedAIAgentProps {
 	/**
 	 * The selected site object.
 	 */
-	site?: any;
+	site?: Record< string, any >;
 	/**
 	 * The current user object.
 	 */
-	currentUser?: any;
+	currentUser?: Record< string, any >;
 	/**
 	 * Callback to handle closing the agent.
 	 */
@@ -94,19 +95,21 @@ function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
 export default function UnifiedAIAgent( {
 	currentRoute,
 	site,
-	currentUser,
 	toolProvider,
 	contextProvider,
 	emptyViewSuggestions: customSuggestions,
 	markdownComponents,
 	markdownExtensions,
 }: UnifiedAIAgentProps ) {
+	// TODO: Migrate to the routing solution...
+	const { sessionId, resetSession, applySessionId } = useAgentSession();
+
 	// Create agent configuration
 	const agentConfig = useMemo< UseAgentChatConfig >( () => {
 		const config: UseAgentChatConfig = {
 			agentId: 'wp-orchestrator',
 			agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
-			sessionId: `calypso-${ currentUser?.ID || 'anonymous' }-${ Date.now() }`,
+			sessionId: sessionId,
 			authProvider: createCalypsoAuthProvider( site?.ID ),
 			enableStreaming: true,
 		};
@@ -196,6 +199,9 @@ export default function UnifiedAIAgent( {
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
+			sessionId={ sessionId }
+			resetSession={ resetSession }
+			applySessionId={ applySessionId }
 			emptyViewSuggestions={ suggestions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }

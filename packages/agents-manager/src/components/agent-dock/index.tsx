@@ -22,7 +22,6 @@ import { useCallback, useEffect, useMemo, useState, useRef } from '@wordpress/el
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { API_BASE_URL } from '../../constants';
-import useAgentSession from '../../hooks/use-agent-session';
 import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
 import useLoadConversation from '../../hooks/use-load-conversation';
 import { lastConversationCache } from '../../utils/conversation-cache';
@@ -39,6 +38,18 @@ export interface AgentDockProps {
 	 */
 	agentConfig: UseAgentChatConfig;
 	/**
+	 * Current session ID
+	 */
+	sessionId: string;
+	/**
+	 * Callback to reset the current session
+	 */
+	resetSession: () => string;
+	/**
+	 * Callback to apply a new session ID
+	 */
+	applySessionId: ( sessionId: string ) => void;
+	/**
 	 * Custom empty view suggestions
 	 */
 	emptyViewSuggestions?: Suggestion[];
@@ -54,6 +65,9 @@ export interface AgentDockProps {
 
 export default function AgentDock( {
 	agentConfig,
+	sessionId,
+	resetSession,
+	applySessionId,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions,
@@ -66,8 +80,6 @@ export default function AgentDock( {
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager();
 
-	// TODO: Migrate to the routing solution...
-	const { sessionId, resetSession, applySessionId } = useAgentSession();
 	const { messages, suggestions, isProcessing, error, loadMessages, onSubmit } =
 		useAgentChat( agentConfig );
 
