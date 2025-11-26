@@ -13,6 +13,7 @@ import {
 	getIsRequestingHumanSupport,
 	getIsLastBotMessage,
 } from '../../utils';
+import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
 import { GetSupport } from './get-support';
@@ -21,6 +22,7 @@ import Sources from './sources';
 import type { Message } from '../../types';
 
 const getDisplayMessage = (
+	userHasRecentOpenConversation: boolean,
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
 	forceEmailSupport?: boolean,
@@ -40,7 +42,7 @@ const getDisplayMessage = (
 	}
 
 	const forwardMessage = isUserEligibleForPaidSupport
-		? getOdieForwardToZendeskMessage()
+		? getOdieForwardToZendeskMessage( userHasRecentOpenConversation )
 		: getOdieForwardToForumsMessage();
 
 	return isErrorMessage ? getOdieErrorMessage() : forwardMessage;
@@ -65,12 +67,14 @@ export const UserMessage = ( {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 	const isLastBotMessage = getIsLastBotMessage( chat, message );
+	const hasRecentOpenConversation = getMostRecentOpenLiveInteraction();
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
 	const messageContent = isRequestingHumanSupport
 		? getDisplayMessage(
+				!! hasRecentOpenConversation,
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
 				forceEmailSupport,

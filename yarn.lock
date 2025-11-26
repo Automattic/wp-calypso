@@ -314,10 +314,12 @@ __metadata:
     typescript: "npm:^5.8.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
+    "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
     react: ^18.3.1
     react-dom: ^18.3.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 

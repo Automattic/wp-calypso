@@ -8,13 +8,15 @@ import {
 	useAgentChat,
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
-import { AgentUI, createMessageRenderer, EmptyView, type ChatState } from '@automattic/agenttic-ui';
+import { AgentUI, createMessageRenderer, EmptyView } from '@automattic/agenttic-ui';
+import { AgentsManagerSelect } from '@automattic/data-stores';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAgentSession } from '../../hooks/use-agent-session';
 import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
-import { usePersistedAgentState } from '../../hooks/use-persisted-agent-state';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import { AI } from '../icons';
@@ -63,9 +65,6 @@ export interface AgentDockProps {
 	loadPreference?: ( key: string ) => Promise< any >;
 }
 
-const CHAT_OPEN_STORAGE_KEY = 'agents-manager-chat-is-open';
-const CHAT_DOCKED_STORAGE_KEY = 'agents-manager-chat-is-docked';
-
 /**
  * AgentDock Component
  *
@@ -79,128 +78,29 @@ export default function AgentDock( {
 	markdownExtensions,
 	onClearChat,
 	sessionStorageKey = 'agents-manager-session',
-	preferenceKey = 'agents-manager-chat-state',
-	savePreference,
-	loadPreference,
 }: AgentDockProps ) {
-	// Persisted state for /me/preferences
-	const {
-		state: persistedState,
-		setSessionId: setPersistedSessionId,
-		setIsOpen: setPersistedIsOpen,
-		setIsDocked: setPersistedIsDocked,
-		isLoading: isLoadingPersistedState,
-	} = usePersistedAgentState( {
-		preferenceKey,
-		savePreference,
-		loadPreference,
-	} );
+	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
+	const persistedState = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
 
 	const { sessionId, resetSession } = useAgentSession( {
 		storageKey: sessionStorageKey,
 	} );
 
-	const defaultOpen = useMemo( () => {
-		// Use persisted state if available
-		if ( persistedState.isOpen !== undefined ) {
-			return persistedState.isOpen;
-		}
-		// Fallback to localStorage
-		try {
-			const stored = localStorage.getItem( CHAT_OPEN_STORAGE_KEY );
-			return stored === 'true'; // Default to closed
-		} catch {
-			return false;
-		}
-	}, [ persistedState.isOpen ] );
-
-	const defaultUndocked = useMemo( () => {
-		// Use persisted state if available
-		if ( persistedState.isDocked !== undefined ) {
-			return persistedState.isDocked;
-		}
-		// Fallback to localStorage
-		try {
-			const stored = localStorage.getItem( CHAT_DOCKED_STORAGE_KEY );
-			return stored === 'true'; // Default to undocked (floating)
-		} catch {
-			return false;
-		}
-	}, [ persistedState.isDocked ] );
+	const chatState = persistedState.isOpen ? 'expanded' : 'collapsed';
 
 	const setChatIsOpen = useCallback( () => {
-		if ( ! isLoadingPersistedState ) {
-			setPersistedIsOpen( true );
-		}
-
-		try {
-			localStorage.setItem( CHAT_OPEN_STORAGE_KEY, 'true' );
-		} catch {
-			// Ignore errors
-		}
-	}, [ isLoadingPersistedState, setPersistedIsOpen ] );
+		setIsOpen( true );
+	}, [ setIsOpen ] );
 
 	const setChatIsClosed = useCallback( () => {
-		if ( ! isLoadingPersistedState ) {
-			setPersistedIsOpen( false );
-		}
-
-		try {
-			localStorage.setItem( CHAT_OPEN_STORAGE_KEY, 'false' );
-		} catch {
-			// Ignore errors
-		}
-	}, [ isLoadingPersistedState, setPersistedIsOpen ] );
-
-	const setChatIsDocked = useCallback( () => {
-		if ( ! isLoadingPersistedState ) {
-			setPersistedIsDocked( true );
-		}
-
-		try {
-			localStorage.setItem( CHAT_DOCKED_STORAGE_KEY, 'true' );
-		} catch {
-			// Ignore errors
-		}
-	}, [ isLoadingPersistedState, setPersistedIsDocked ] );
-
-	const setChatIsUndocked = useCallback( () => {
-		if ( ! isLoadingPersistedState ) {
-			setPersistedIsDocked( false );
-		}
-
-		try {
-			localStorage.setItem( CHAT_DOCKED_STORAGE_KEY, 'false' );
-		} catch {
-			// Ignore errors
-		}
-	}, [ isLoadingPersistedState, setPersistedIsDocked ] );
-
-	const [ chatState, setChatState ] = useState< ChatState >(
-		defaultOpen ? 'expanded' : 'collapsed'
-	);
+		setIsOpen( false );
+	}, [ setIsOpen ] );
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
-		useChatLayoutManager( 'body', {
-			onOpenSidebar: setChatIsOpen,
-			onCloseSidebar: setChatIsClosed,
-			onDock: setChatIsDocked,
-			onUndock: () => {
-				setChatIsUndocked();
-				// Ensure chat is open when undocking
-				setChatState( 'expanded' );
-				setChatIsOpen();
-			},
-			defaultOpen,
-			defaultUndocked,
-		} );
-
-	// Sync sessionId with persisted state
-	useEffect( () => {
-		if ( ! isLoadingPersistedState && sessionId ) {
-			setPersistedSessionId( sessionId );
-		}
-	}, [ sessionId, setPersistedSessionId, isLoadingPersistedState ] );
+		useChatLayoutManager( 'body' );
 
 	const { messages, isProcessing, error, onSubmit } = useAgentChat( agentConfig );
 
@@ -280,8 +180,8 @@ export default function AgentDock( {
 				onSubmit={ onSubmit }
 				variant={ isDocked ? 'embedded' : 'floating' }
 				floatingChatState={ chatState }
-				onClose={ isDocked ? closeSidebar : () => setChatState( 'collapsed' ) }
-				onExpand={ () => setChatState( 'expanded' ) }
+				onClose={ isDocked ? closeSidebar : setChatIsClosed }
+				onExpand={ setChatIsOpen }
 				className="agenttic"
 				messageRenderer={ messageRenderer }
 				emptyView={
@@ -296,7 +196,7 @@ export default function AgentDock( {
 				<AgentUI.ConversationView>
 					<ChatHeader
 						isChatDocked={ isDocked }
-						onClose={ isDocked ? closeSidebar : () => setChatState( 'collapsed' ) }
+						onClose={ isDocked ? closeSidebar : setChatIsClosed }
 						options={ chatHeaderOptions }
 					/>
 					<AgentUI.Messages />
@@ -309,6 +209,11 @@ export default function AgentDock( {
 			</AgentUI.Container>
 		);
 	};
+
+	// Wait user's preferences to be loaded
+	if ( ! persistedState.hasLoaded ) {
+		return null;
+	}
 
 	return createChatPortal( renderAgentUI() );
 }
