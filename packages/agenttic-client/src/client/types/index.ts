@@ -49,7 +49,7 @@ export interface FilePart {
 	type: 'file';
 	file: {
 		name: string;
-		mimeType: string;
+		mimeType?: string; // Required for base64 bytes, optional when uri is provided
 		bytes?: string; // Base64 encoded
 		uri?: string;
 	};

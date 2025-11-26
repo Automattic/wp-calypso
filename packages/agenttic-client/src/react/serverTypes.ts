@@ -9,15 +9,12 @@ import { generateMessageId } from '../client/utils/core';
 /**
  * Server-side file part structure from odie-assistant API
  * Represents an attached file/image in the message context
+ * Note: Only essential fields are stored (id, uri).
+ * Full metadata can be fetched from media library if needed.
  */
 export interface ServerFilePart {
-	name?: string;
-	mimeType?: string;
+	id?: number; // WordPress attachment ID
 	uri: string;
-	metadata?: {
-		title?: string;
-		[ key: string ]: unknown;
-	};
 }
 
 /**
@@ -130,14 +127,13 @@ export function serverMessageToMessage(
 				const part: FilePart = {
 					type: 'file',
 					file: {
-						name:
-							serverFilePart.name ??
-							serverFilePart.metadata?.title ??
-							'image',
-						mimeType: serverFilePart.mimeType ?? 'image/jpeg',
+						name: 'image',
 						uri: serverFilePart.uri,
 					},
-					metadata: serverFilePart.metadata,
+					// Pass attachment ID in metadata if available
+					metadata: serverFilePart.id
+						? { id: serverFilePart.id }
+						: undefined,
 				};
 				parts.push( part );
 			}

@@ -153,10 +153,15 @@ const transformClientMessageToUI = (
 		}
 		if ( part.type === 'file' ) {
 			// Convert file parts to component for rendering
+			// Prefer uri; fall back to base64 data URL if mimeType and bytes are available
 			const imageUrl =
 				part.file.uri ||
-				`data:${ part.file.mimeType };base64,${ part.file.bytes }`;
-			return createImageComponent( imageUrl );
+				( part.file.mimeType && part.file.bytes
+					? `data:${ part.file.mimeType };base64,${ part.file.bytes }`
+					: undefined );
+			if ( imageUrl ) {
+				return createImageComponent( imageUrl );
+			}
 		}
 		if ( part.type === 'data' ) {
 			// Handle data parts that might contain component information

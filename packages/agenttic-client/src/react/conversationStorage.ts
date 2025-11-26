@@ -44,7 +44,7 @@ interface StoredMessage {
 	archived?: boolean;
 	files?: Array< {
 		name: string;
-		mimeType: string;
+		mimeType?: string;
 		uri?: string;
 	} >;
 	toolCalls?: Array< {
