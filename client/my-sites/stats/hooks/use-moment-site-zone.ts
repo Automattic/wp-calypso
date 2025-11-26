@@ -6,10 +6,9 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { DATE_FORMAT } from '../constants';
 
 export const getMomentSiteZone = createSelector(
-	( state: object, siteId: number | null, dateFormat = DATE_FORMAT ) => {
+	( state: object, siteId: number | null ) => {
 		const localeSlug = i18n.getLocaleSlug() || 'en';
 		const timezoneString =
 			getSiteTimezoneValue( state, siteId as number ) ||
@@ -21,29 +20,17 @@ export const getMomentSiteZone = createSelector(
 		return ( dateInput?: moment.MomentInput ) => {
 			// Validate timezone string exists and is a valid IANA timezone identifier
 			if ( timezoneString && timezoneString !== '' && moment.tz.zone( timezoneString ) ) {
-				if ( dateInput === undefined ) {
-					return moment.tz( timezoneString ).locale( localeSlug );
-				}
 				return moment.tz( dateInput, timezoneString ).locale( localeSlug );
 			}
 
 			if ( Number.isFinite( gmtOffset ) ) {
-				if ( dateInput === undefined ) {
-					// Get current time in site timezone and format as date string, then create
-					// a moment with the site's UTC offset applied for consistent comparisons.
-					const todayInSiteZone = moment().utcOffset( gmtOffset ).format( dateFormat );
-					return moment
-						.parseZone( todayInSiteZone )
-						.utcOffset( gmtOffset, true )
-						.locale( localeSlug );
-				}
-				// When parsing a date string (e.g., 'YYYY-MM-DD'), we need to interpret it as
-				// that date in the site's timezone, not in the browser's local timezone. Using
-				// parseZone preserves the date as-is without timezone conversion, then we apply
-				// the site's offset while keeping the local time (second argument `true`).
+				// When parsing a date string (e.g., 'YYYY-MM-DD'), we interpret it as being in the site's timezone.
+				// We use keepLocalTime: true to preserve the date/time value while changing the offset.
 				if ( typeof dateInput === 'string' ) {
 					return moment.parseZone( dateInput ).utcOffset( gmtOffset, true ).locale( localeSlug );
 				}
+
+				// For Date objects or undefined (current time), we convert the exact instant to the site's timezone.
 				return moment( dateInput ).utcOffset( gmtOffset ).locale( localeSlug );
 			}
 
