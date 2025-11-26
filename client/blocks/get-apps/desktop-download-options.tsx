@@ -13,7 +13,12 @@ type Props = {
 };
 
 const AlsoAvailable: React.FC< { config: PlatformConfig } > = ( { config } ) => (
-	<a href={ config.link } onClick={ config.onClick } className="get-apps__desktop-link">
+	<a
+		href={ config.link }
+		onClick={ config.onClick }
+		className="get-apps__desktop-link"
+		aria-label={ config.buttonText }
+	>
 		<SVGIcon
 			classes=""
 			aria-hidden="true"
@@ -104,7 +109,12 @@ export const DesktopDownloadOptions: React.FC< Props > = ( {
 					{ Object.entries( appConfig.platforms )
 						.filter( ( [ , config ] ) => config.group === currentPlatformConfig?.group )
 						.map( ( [ key, config ] ) => (
-							<PopoverMenuItem key={ key } href={ config.link } onClick={ config.onClick }>
+							<PopoverMenuItem
+								key={ key }
+								href={ config.link }
+								onClick={ config.onClick }
+								aria-label={ config.buttonText }
+							>
 								{ config.name }
 							</PopoverMenuItem>
 						) ) }
