@@ -66,12 +66,12 @@ export default function AgentDock( {
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager();
 
-	// TODO: Migrate to the API data solution...
+	// TODO: Migrate to the routing solution...
 	const { sessionId, resetSession, applySessionId } = useAgentSession();
 	const { messages, suggestions, isProcessing, error, loadMessages, onSubmit } =
 		useAgentChat( agentConfig );
 
-	// TODO: Migrate to the API data solution...
+	// TODO: Migrate to the routing solution...
 	// Update agent's sessionId when sessionId prop changes
 	useEffect( () => {
 		if ( ! sessionId ) {
@@ -114,6 +114,16 @@ export default function AgentDock( {
 		async ( loadedMessages: Message[], serverSessionId: string ) => {
 			const agentManager = getAgentManager();
 			const agentKey = agentId;
+
+			// TODO: We may need this...
+			// Agent should already be created by useAgentChat, but check just in case
+			/* if ( ! agentManager.hasAgent( agentKey ) ) {
+				const newConfig = await createAgentConfig( serverSessionId );
+				await agentManager.createAgent( agentKey, {
+					...newConfig,
+					sessionId: serverSessionId,
+				} );
+			} */
 
 			// Use loadMessages instead of direct replaceMessages to ensure React state updates
 			await loadMessages( loadedMessages );
@@ -176,21 +186,6 @@ export default function AgentDock( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ sessionId ] );
 
-	const handleToggleHistory = useCallback( () => {
-		setViewState( ( prev ) => ( prev === 'chat' ? 'history' : 'chat' ) );
-	}, [] );
-
-	const handleSelectConversation = useCallback(
-		( newSessionId: string ) => {
-			// Switch to chat view immediately
-			setViewState( 'chat' );
-
-			// Update session with the UUID session_id
-			applySessionId( newSessionId );
-		},
-		[ applySessionId ]
-	);
-
 	const handleNewChat = useCallback( async () => {
 		const agentManager = getAgentManager();
 		const agentKey = agentId;
@@ -209,6 +204,21 @@ export default function AgentDock( {
 		// Switch back to chat view
 		setViewState( 'chat' );
 	}, [ agentId, resetSession ] );
+
+	const handleToggleHistory = useCallback( () => {
+		setViewState( ( prev ) => ( prev === 'chat' ? 'history' : 'chat' ) );
+	}, [] );
+
+	const handleSelectConversation = useCallback(
+		( newSessionId: string ) => {
+			// Switch to chat view immediately
+			setViewState( 'chat' );
+
+			// Update session with the UUID session_id
+			applySessionId( newSessionId );
+		},
+		[ applySessionId ]
+	);
 
 	// Custom message renderer that uses our markdown components
 	const messageRenderer = useMemo(

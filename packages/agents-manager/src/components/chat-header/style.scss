@@ -53,8 +53,11 @@
 		}
 	}
 
-	&__history-btn {
+	&__history-btn.has-icon {
 		line-height: initial;
+		width: 32px;
+		height: 32px;
+		min-width: unset;
 
 		button {
 			padding: 4px;
