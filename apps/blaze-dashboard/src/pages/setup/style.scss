@@ -39,7 +39,6 @@
 		margin-top: 30px;
 		min-height: calc(100vh - 180px); // the size of the top bar and footer
 
-
 		.promote-post-i2__setup-icon {
 			margin: 95px 0 30px;
 
@@ -120,6 +119,286 @@
 				width: 32px;
 			}
 
+		}
+	}
+}
+
+.blaze-disconnected-site {
+		width: 100%;
+		max-width: 100%;
+		margin: 0;
+		padding: 0;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		gap: 0; // manage vertical spacing via margins on sections so we can collapse specific pairs
+
+		// Default vertical spacing between consecutive sections
+		.blaze-disconnected-site__section + .blaze-disconnected-site__section {
+			margin-top: 32px;
+		}
+
+		// Remove gap between the beige hero and the next section so they visually connect
+		.blaze-disconnected-site__hero + .blaze-disconnected-site__features {
+			margin-top: 0;
+		}
+
+	.blaze-disconnected-site__section {
+		background-color: rgb(255, 255, 255);
+		color: rgb(30, 30, 30);
+		position: relative;
+		outline: none;
+		border-radius: calc(7px);
+		padding: 48px 32px;
+
+		@media (max-width: 768px) {
+			padding: 24px;
+		}
+
+			.blaze-disconnected-site__features-list {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 16px 32px;
+				list-style: none;
+				margin: 0 auto 24px;
+				max-width: 520px;
+				padding: 0;
+
+			@media (max-width: 640px) {
+				grid-template-columns: 1fr;
+				gap: 12px;
+			}
+
+				li {
+					color: #1e1e1e;
+					font-size: 15px;
+					font-weight: 600;
+					text-align: start;
+					position: relative;
+					padding-inline-start: 20px;
+
+					&::before {
+						content: '•';
+						position: absolute;
+						inset-inline-start: 0;
+						color: #b99ad3;
+						font-weight: 700;
+					}
+				}
+			}
+
+			.blaze-disconnected-site__features-description {
+				color: #3c434a;
+				font-size: 15px;
+				line-height: 1.7;
+				margin: 0 auto;
+				max-width: 600px;
+			}
+
+			.blaze-disconnected-site__section-title {
+				color: #1e1e1e;
+				font-size: 1.5rem;
+				font-weight: 400;
+				margin: 0 0 16px;
+				text-wrap: balance;
+			}
+
+			.blaze-disconnected-site__section-description {
+				color: #3c434a;
+				font-size: 15px;
+				line-height: 1.7;
+				margin: 0 auto;
+				max-width: 600px;
+
+				a {
+					color: #3858e9;
+					text-decoration: none;
+
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+
+	.blaze-disconnected-site__hero {
+		background-color: #f4ede7;
+		padding: 64px 48px;
+
+		.blaze-disconnected-site__hero-content {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			align-items: flex-start;
+			text-align: left;
+			max-width: 1060px;
+			margin: 0 auto;
+		}
+
+		.blaze-disconnected-site__hero-body { max-width: 900px; }
+
+		.blaze-disconnected-site__title {
+			font-family: 'Recoleta', Georgia, 'Times New Roman', serif;
+			font-size: 3.5rem;
+			line-height: 4rem;
+			font-style: normal;
+			font-weight: 400;
+			margin: 0 0 24px;
+			text-wrap: balance;
+
+			@media (max-width: 768px) {
+				font-size: 40px;
+				line-height: 46px;
+			}
+		}
+
+		// Inline fire logo inside the H1
+		.blaze-title-logo {
+			display: inline-flex;
+			vertical-align: middle;
+			margin-left: 8px;
+		}
+
+		.blaze-title-logo__icon {
+			height: 36px;
+			width: 36px;
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		.blaze-disconnected-site__subtitle {
+			color: #50575e;
+			font-size: 16px;
+			line-height: 1.65;
+			margin-bottom: 16px;
+		}
+
+		.blaze-disconnected-site__description {
+			color: #3c434a;
+			font-size: 15px;
+			line-height: 1.7;
+			margin-bottom: 16px;
+		}
+
+		.is-primary {
+			margin-top: 8px;
+			// Make primary CTA black with white text per design
+			background-color: #000;
+			border-color: #000;
+			color: #fff;
+			&:hover,
+			&:focus,
+			&:active {
+				background-color: #000;
+				border-color: #000;
+				color: #fff;
+			}
+			&:focus-visible {
+				outline: 2px solid #000;
+				outline-offset: 2px;
+			}
+		}
+	}
+
+	.blaze-disconnected-site__connect {
+
+		.blaze-disconnected-site__connect-content {
+			display: flex;
+			flex-direction: row;
+			gap: 20px;
+			align-items: center;
+			text-align: start;
+
+			@media (max-width: 640px) {
+				flex-direction: column;
+				text-align: center;
+			}
+		}
+
+		.blaze-disconnected-site__connect-icon {
+			// Ensure the connect illustration can render at least 150px wide
+			flex: 0 0 150px;
+			min-width: 150px;
+
+			@media (max-width: 640px) {
+				margin: 0 auto; // center icon in stacked layout
+			}
+
+			svg,
+			img {
+				width: 100%;
+				height: auto;
+				max-width: 150px; // guard against oversized intrinsic SVGs
+			}
+		}
+
+		.blaze-disconnected-site__connect-text {
+			flex: 1;
+		}
+
+		.blaze-disconnected-site__connect-title {
+			color: #1e1e1e;
+			font-size: 18px;
+			font-weight: 700;
+			margin: 0 0 9px;
+		}
+
+		.blaze-disconnected-site__connect-description {
+			color: #3c434a;
+			font-size: 15px;
+			line-height: 1.7;
+			margin: 0 0 16px;
+		}
+
+		.is-primary {
+			margin-bottom: 0;
+			// Match CTA styling: black background, white text
+			background-color: #000;
+			border-color: #000;
+			color: #fff;
+			&:hover,
+			&:focus,
+			&:active {
+				background-color: #000;
+				border-color: #000;
+				color: #fff;
+			}
+			&:focus-visible {
+				outline: 2px solid #000;
+				outline-offset: 2px;
+			}
+		}
+	}
+
+	// Features section: image left, content right
+	.blaze-disconnected-site__features {
+		display: flex;
+		flex-direction: row;
+		gap: 24px;
+		align-items: center;
+		text-align: start;
+
+		@media (max-width: 840px) {
+			flex-direction: column;
+			text-align: center;
+		}
+
+		.blaze-disconnected-site__features-graphic {
+			flex: 1 1 40%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			img {
+				width: 100%;
+				height: auto;
+				max-width: 720px;
+			}
+		}
+
+		.blaze-disconnected-site__features-body {
+			flex: 0 1 520px;
+			margin-inline: 0;
 		}
 	}
 }
