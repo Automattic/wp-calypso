@@ -16,18 +16,30 @@ export interface LoginContextType {
 	} ) => void;
 }
 
+export interface LoginContextProviderProps {
+	children: React.ReactNode;
+	initialHeading?: TranslateResult | null;
+	initialSubHeading?: TranslateResult | null;
+	initialSubHeadingSecondary?: TranslateResult | null;
+}
+
 export const LoginContext = createContext< LoginContextType >( {} as LoginContextType );
 
-const LoginContextProvider = ( { children }: { children: React.ReactNode } ) => {
+const LoginContextProvider = ( {
+	children,
+	initialHeading,
+	initialSubHeading,
+	initialSubHeadingSecondary,
+}: LoginContextProviderProps ) => {
 	const [ headingText, setHeadingText ] = useState< TranslateResult | undefined | null >(
-		undefined
+		initialHeading ?? undefined
 	);
 	const [ subHeadingText, setSubHeadingText ] = useState< TranslateResult | undefined | null >(
-		undefined
+		initialSubHeading ?? undefined
 	);
 	const [ subHeadingTextSecondary, setSubHeadingTextSecondary ] = useState<
 		TranslateResult | undefined | null
-	>( undefined );
+	>( initialSubHeadingSecondary ?? undefined );
 
 	const setHeaders = useCallback(
 		( {
