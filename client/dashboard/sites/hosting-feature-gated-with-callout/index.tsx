@@ -69,7 +69,7 @@ export default function HostingFeatureGatedWithCallout( {
 			} }
 			renderActivationComponent={ ( { onClick } ) => (
 				<>
-					<ActivationCallout main={ overlay } onClick={ onClick } />
+					<ActivationCallout site={ site } main={ overlay } onClick={ onClick } />
 					{ backButton }
 				</>
 			) }
