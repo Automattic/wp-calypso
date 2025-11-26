@@ -44,6 +44,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
+import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -107,7 +108,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import ThemeDownloadCard from './theme-download-card';
@@ -396,8 +397,8 @@ class ThemeSheet extends Component {
 
 	shouldRenderForStaging() {
 		// isExternallyManagedTheme determines if a theme is paid or not
-		const { isActive, isExternallyManagedTheme, isWpcomStaging } = this.props;
-		return isExternallyManagedTheme && isWpcomStaging && ! isActive;
+		const { isMarketplaceThemeSubscribed, isExternallyManagedTheme, isWpcomStaging } = this.props;
+		return isExternallyManagedTheme && isWpcomStaging && ! isMarketplaceThemeSubscribed;
 	}
 
 	shouldRenderPreviewButton() {
@@ -1369,7 +1370,8 @@ const ThemeSheetWithOptions = ( props ) => {
 export default connect(
 	( state, { id } ) => {
 		const themeId = id;
-		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
+		const siteId = getProductionSiteId( site );
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, themeId );
 		const backPath = getBackPath( state );
