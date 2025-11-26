@@ -143,41 +143,43 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 						}
 					/>
 				}
+				notices={
+					<VStack spacing={ 3 }>
+						<TimeMismatchNotice
+							settingsUrl={ settingsUrl }
+							siteTime={ gmtOffset }
+							siteId={ site.ID }
+						/>
+						<ScanNotices status={ status } threatCount={ threatCount } />
+					</VStack>
+				}
 			>
-				<VStack spacing={ 3 }>
-					<TimeMismatchNotice
-						settingsUrl={ settingsUrl }
-						siteTime={ gmtOffset }
-						siteId={ site.ID }
-					/>
-					<ScanNotices status={ status } threatCount={ threatCount } />
-					<Card>
-						<CardHeader style={ { paddingBottom: '0' } }>
-							<TabPanel
-								activeClass="is-active"
-								tabs={ SCAN_TABS }
-								onSelect={ ( tabName ) => {
-									if ( tabName === 'active' || tabName === 'history' ) {
-										handleTabChange( tabName );
-									}
-								} }
-								initialTabName={ scanTab }
-							>
-								{ () => null }
-							</TabPanel>
-						</CardHeader>
-						<CardBody>
-							{ scanTab === 'active' && renderActiveTab() }
-							{ scanTab === 'history' && (
-								<ScanHistoryDataViews
-									site={ site }
-									timezoneString={ timezoneString }
-									gmtOffset={ gmtOffset }
-								/>
-							) }
-						</CardBody>
-					</Card>
-				</VStack>
+				<Card>
+					<CardHeader style={ { paddingBottom: '0' } }>
+						<TabPanel
+							activeClass="is-active"
+							tabs={ SCAN_TABS }
+							onSelect={ ( tabName ) => {
+								if ( tabName === 'active' || tabName === 'history' ) {
+									handleTabChange( tabName );
+								}
+							} }
+							initialTabName={ scanTab }
+						>
+							{ () => null }
+						</TabPanel>
+					</CardHeader>
+					<CardBody>
+						{ scanTab === 'active' && renderActiveTab() }
+						{ scanTab === 'history' && (
+							<ScanHistoryDataViews
+								site={ site }
+								timezoneString={ timezoneString }
+								gmtOffset={ gmtOffset }
+							/>
+						) }
+					</CardBody>
+				</Card>
 			</PageLayout>
 			{ showBulkFixModal && (
 				<Modal
