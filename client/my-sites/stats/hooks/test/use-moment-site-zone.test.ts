@@ -258,16 +258,46 @@ describe( 'getMomentSiteZone', () => {
 			expect( result.format( 'YYYY-MM-DD' ) ).toBe( '2024-07-01' );
 		} );
 
-		it( 'should handle non-string date input with GMT offset', () => {
+		it( 'should handle Date object input with GMT offset by converting to site timezone', () => {
 			( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
 			( getSiteOption as jest.Mock ).mockReturnValue( null );
 			( getSiteGmtOffset as jest.Mock ).mockReturnValue( 2 );
 
 			const momentFn = getMomentSiteZone( mockState, siteId );
-			const dateObj = new Date( '2024-09-15T10:30:00Z' );
+			const dateObj = new Date( '2024-09-15T10:30:00Z' ); // 10:30 UTC
 			const result = momentFn( dateObj );
 
 			expect( result.utcOffset() ).toBe( 120 ); // 2 hours in minutes
+			// UTC 10:30 + 2 hours = 12:30 in site timezone
+			expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-09-15 12:30' );
+		} );
+
+		it( 'should handle naive datetime string with GMT offset by interpreting as site timezone', () => {
+			( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+			( getSiteOption as jest.Mock ).mockReturnValue( null );
+			( getSiteGmtOffset as jest.Mock ).mockReturnValue( 2 );
+
+			const momentFn = getMomentSiteZone( mockState, siteId );
+			const dateTimeString = '2024-09-15 10:30:00'; // Naive string, no timezone
+			const result = momentFn( dateTimeString );
+
+			expect( result.utcOffset() ).toBe( 120 ); // 2 hours in minutes
+			// Interprets as 10:30 IN site timezone, not converts
+			expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-09-15 10:30' );
+		} );
+
+		it( 'should handle ISO string with timezone by converting to site timezone', () => {
+			( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+			( getSiteOption as jest.Mock ).mockReturnValue( null );
+			( getSiteGmtOffset as jest.Mock ).mockReturnValue( 2 );
+
+			const momentFn = getMomentSiteZone( mockState, siteId );
+			const isoString = '2024-09-15T10:30:00-05:00'; // 10:30 in EST (UTC-5)
+			const result = momentFn( isoString );
+
+			expect( result.utcOffset() ).toBe( 120 ); // 2 hours in minutes
+			// EST 10:30 = UTC 15:30, converted to GMT+2 = 17:30
+			expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-09-15 17:30' );
 		} );
 
 		it( 'should create current moment with GMT offset when no date input', () => {
@@ -318,6 +348,189 @@ describe( 'getMomentSiteZone', () => {
 			const result = momentFn( '2024-04-10' );
 
 			expect( result.utcOffset() ).toBe( -420 ); // -7 hours in minutes
+		} );
+	} );
+
+	describe( 'naive vs absolute time distinction', () => {
+		describe( 'with IANA timezone', () => {
+			it( 'should interpret naive date string as site timezone', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( 'America/New_York' );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( null );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const result = momentFn( '2024-07-15' ); // Summer, EDT = UTC-4
+
+				expect( result.tz() ).toBe( 'America/New_York' );
+				expect( result.format( 'YYYY-MM-DD HH:mm Z' ) ).toBe( '2024-07-15 00:00 -04:00' );
+			} );
+
+			it( 'should convert Date object to site timezone', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( 'America/New_York' );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( null );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const dateObj = new Date( '2024-07-15T14:30:00Z' ); // 14:30 UTC
+				const result = momentFn( dateObj );
+
+				expect( result.tz() ).toBe( 'America/New_York' );
+				// UTC 14:30 - 4 hours (EDT) = 10:30
+				expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-07-15 10:30' );
+			} );
+
+			it( 'should convert ISO string with Z to site timezone', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( 'America/New_York' );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( null );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const result = momentFn( '2024-07-15T14:30:00Z' ); // 14:30 UTC
+
+				expect( result.tz() ).toBe( 'America/New_York' );
+				// UTC 14:30 - 4 hours (EDT) = 10:30
+				expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-07-15 10:30' );
+			} );
+
+			it( 'should convert ISO string with offset to site timezone', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( 'America/New_York' );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( null );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const result = momentFn( '2024-07-15T10:30:00+02:00' ); // 10:30 GMT+2
+
+				expect( result.tz() ).toBe( 'America/New_York' );
+				// GMT+2 10:30 = UTC 08:30, then to EDT (UTC-4) = 04:30
+				expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-07-15 04:30' );
+			} );
+
+			it( 'should interpret naive datetime string as site timezone', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( 'America/New_York' );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( null );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const result = momentFn( '2024-07-15 10:30:00' ); // No timezone info
+
+				expect( result.tz() ).toBe( 'America/New_York' );
+				// Should be interpreted as 10:30 IN New York time
+				expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-07-15 10:30' );
+			} );
+		} );
+
+		describe( 'with GMT offset', () => {
+			it( 'should interpret naive date string as site timezone', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( 5.5 ); // GMT+5:30
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const result = momentFn( '2024-07-15' );
+
+				expect( result.utcOffset() ).toBe( 330 ); // 5.5 hours in minutes
+				expect( result.format( 'YYYY-MM-DD HH:mm Z' ) ).toBe( '2024-07-15 00:00 +05:30' );
+			} );
+
+			it( 'should convert Date object to site timezone', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( 5.5 );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const dateObj = new Date( '2024-07-15T14:30:00Z' ); // 14:30 UTC
+				const result = momentFn( dateObj );
+
+				expect( result.utcOffset() ).toBe( 330 );
+				// UTC 14:30 + 5:30 = 20:00
+				expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-07-15 20:00' );
+			} );
+
+			it( 'should convert ISO string with Z to site timezone', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( 5.5 );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const result = momentFn( '2024-07-15T14:30:00Z' );
+
+				expect( result.utcOffset() ).toBe( 330 );
+				// UTC 14:30 + 5:30 = 20:00
+				expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-07-15 20:00' );
+			} );
+
+			it( 'should convert ISO string with offset to site timezone', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( 5.5 );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const result = momentFn( '2024-07-15T10:30:00-05:00' ); // 10:30 EST
+
+				expect( result.utcOffset() ).toBe( 330 );
+				// EST 10:30 = UTC 15:30, then to GMT+5:30 = 21:00
+				expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-07-15 21:00' );
+			} );
+
+			it( 'should interpret naive datetime string as site timezone', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( 5.5 );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const result = momentFn( '2024-07-15 10:30:00' );
+
+				expect( result.utcOffset() ).toBe( 330 );
+				// Should be interpreted as 10:30 IN GMT+5:30
+				expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-07-15 10:30' );
+			} );
+
+			it( 'should handle ISO format without seconds as naive', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( -8 );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const result = momentFn( '2024-07-15T10:30' ); // No timezone indicator
+
+				expect( result.utcOffset() ).toBe( -480 );
+				// Should be interpreted as 10:30 IN GMT-8
+				expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-07-15 10:30' );
+			} );
+
+			it( 'should detect uppercase Z as timezone indicator', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( 3 );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+				const result = momentFn( '2024-07-15T14:30:00Z' ); // UTC indicator
+
+				expect( result.utcOffset() ).toBe( 180 );
+				// UTC 14:30 + 3 hours = 17:30
+				expect( result.format( 'YYYY-MM-DD HH:mm' ) ).toBe( '2024-07-15 17:30' );
+			} );
+
+			it( 'should handle various ISO offset formats', () => {
+				( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
+				( getSiteOption as jest.Mock ).mockReturnValue( null );
+				( getSiteGmtOffset as jest.Mock ).mockReturnValue( 0 );
+
+				const momentFn = getMomentSiteZone( mockState, siteId );
+
+				// Test +HH:MM format
+				const result1 = momentFn( '2024-07-15T10:30:00+05:30' );
+				// Check that offset is numerically zero (handles -0 vs 0)
+				expect( result1.utcOffset() === 0 ).toBe( true );
+				// GMT+5:30 10:30 = UTC 05:00, then to GMT+0 = 05:00
+				expect( result1.format( 'HH:mm' ) ).toBe( '05:00' );
+
+				// Test -HH:MM format
+				const result2 = momentFn( '2024-07-15T10:30:00-08:00' );
+				expect( result2.utcOffset() === 0 ).toBe( true );
+				// GMT-8 10:30 = UTC 18:30, then to GMT+0 = 18:30
+				expect( result2.format( 'HH:mm' ) ).toBe( '18:30' );
+			} );
 		} );
 	} );
 

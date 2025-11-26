@@ -22,7 +22,8 @@ export function formatDate( date, period ) {
 
 export function getQueryDate( queryDate, state, siteId, period, quantity ) {
 	const momentSiteZone = getMomentSiteZone( state, siteId );
-	const endOfPeriodDate = rangeOfPeriod( period, momentSiteZone().locale( 'en' ) ).endOf; //??
+	// Get the current moment in site timezone, then find the end of the current period
+	const endOfPeriodDate = rangeOfPeriod( period, momentSiteZone().locale( 'en' ) ).endOf;
 	const periodDifference = moment( endOfPeriodDate ).diff( moment( queryDate ), period );
 	if ( periodDifference >= quantity ) {
 		return moment( endOfPeriodDate )

@@ -144,7 +144,8 @@ class StatsDatePicker extends Component {
 		}
 
 		// Ensure we have a moment instance here to work with.
-		const momentDate = moment.isMoment( date ) ? date : momentSiteZone( date ); // ??
+		const momentDate = moment.isMoment( date ) ? date : momentSiteZone( date );
+		// Convert moment to YYYY-MM-DD string, then parse it in the site's timezone
 		const localizedDate = momentSiteZone( momentDate.format( 'YYYY-MM-DD' ) );
 		let formattedDate;
 
