@@ -77,6 +77,7 @@ export function AgentUIContainer( {
 	maxInputLength = 600, // Default to 600 characters
 	onInputLimitExceeded,
 	expandOnClick,
+	thinkingMessage,
 	...props
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
@@ -527,6 +528,9 @@ export function AgentUIContainer( {
 
 		// Notice
 		notice: computedNotice,
+
+		// Thinking message
+		thinkingMessage,
 
 		// Internal state for components
 		focusOnMount: wasClickedToExpand.current,

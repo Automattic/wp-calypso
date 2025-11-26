@@ -83,6 +83,9 @@ export interface AgentUIProps {
 	// Input validation
 	maxInputLength?: number; // Maximum character limit for input (defaults to 600)
 	onInputLimitExceeded?: () => void; // Callback when input exceeds max length
+
+	// Thinking message customization
+	thinkingMessage?: string; // Custom text to display when the agent is processing (defaults to "Thinking…")
 }
 
 export interface NoticeConfig {

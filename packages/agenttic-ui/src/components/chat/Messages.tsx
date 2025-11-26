@@ -14,6 +14,7 @@ interface MessagesProps {
 	error?: string | null;
 	emptyView?: React.ReactNode;
 	messageRenderer?: ComponentType< { children: string } >;
+	thinkingMessage?: string;
 	className?: string;
 }
 
@@ -23,6 +24,7 @@ export function Messages( {
 	error,
 	emptyView,
 	messageRenderer,
+	thinkingMessage,
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
 	const previousMessagesRef = useRef< MessageType[] >( [] );
@@ -129,7 +131,9 @@ export function Messages( {
 							messageRenderer={ messageRenderer }
 						/>
 					) ) }
-					{ isProcessing && <ThinkingMessage /> }
+					{ isProcessing && (
+						<ThinkingMessage content={ thinkingMessage } />
+					) }
 					{ error && (
 						<div
 							className="error-message"

@@ -50,6 +50,9 @@ export interface AgentUIContextValue {
 	// Notice
 	notice?: NoticeConfig;
 
+	// Thinking message
+	thinkingMessage?: string;
+
 	// Internal state for components
 	focusOnMount?: boolean;
 	fromCompact?: boolean;
