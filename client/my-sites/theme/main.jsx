@@ -1411,7 +1411,7 @@ export default connect(
 
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme &&
-			getIsMarketplaceThemeSubscribed( state, theme?.id, productionSiteId );
+			getIsMarketplaceThemeSubscribed( state, theme?.id, productionSiteId || siteId );
 
 		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
 		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
