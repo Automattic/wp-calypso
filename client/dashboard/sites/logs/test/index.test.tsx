@@ -126,6 +126,7 @@ jest.mock( '../../../components/card', () => ( {
 interface PageLayoutMockProps {
 	children?: React.ReactNode;
 	header?: React.ReactNode;
+	notices?: React.ReactNode;
 }
 
 interface PageHeaderMockProps {
@@ -134,9 +135,10 @@ interface PageHeaderMockProps {
 
 jest.mock( '../../../components/page-layout', () => ( {
 	__esModule: true,
-	default: ( { children, header }: PageLayoutMockProps ) => (
+	default: ( { children, header, notices }: PageLayoutMockProps ) => (
 		<div>
 			<div>{ header }</div>
+			<div>{ notices }</div>
 			<div>{ children }</div>
 		</div>
 	),

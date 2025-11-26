@@ -17,6 +17,7 @@ export default function getMostRecentOpenLiveInteraction() {
 			// having a csat message means the conversation is closed
 			conversation.messages.every(
 				( message ) =>
+					message.type !== 'form' &&
 					message.metadata?.type !== 'csat' &&
 					message.metadata?.type !== 'form' &&
 					! message.metadata?.rated &&

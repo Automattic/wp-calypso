@@ -238,6 +238,31 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				defaultLayouts={ { table: {} } }
 				actions={ [
 					{
+						id: 'update',
+						label: __( 'Update' ),
+						modalHeader: getModalHeader( 'update' ),
+						RenderModal: ( { items, closeModal } ) => {
+							const { mutateAsync } = useMutation( sitePluginUpdateMutation() );
+							const action = buildBulkSitesPluginAction( mutateAsync );
+
+							return (
+								<ActionRenderModal
+									actionId="update"
+									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
+									closeModal={ closeModal }
+									onExecute={ action }
+									onActionPerformed={ invalidatePlugins }
+								/>
+							);
+						},
+						isEligible: ( item ) => {
+							const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+							const pluginItem = pluginBySiteId.get( item.ID );
+							return !! autoupdate && !! pluginItem?.update;
+						},
+						supportsBulk: true,
+					},
+					{
 						id: 'activate',
 						icon: link,
 						label: __( 'Activate' ),
@@ -322,7 +347,11 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 								/>
 							);
 						},
-						isEligible: ( item ) => pluginBySiteId.get( item.ID )?.autoupdate ?? false,
+						isEligible: ( item ) => {
+							const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+
+							return !! autoupdate && ! ( pluginBySiteId.get( item.ID )?.autoupdate ?? false );
+						},
 						supportsBulk: true,
 					},
 					{
@@ -352,7 +381,15 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 								/>
 							);
 						},
-						isEligible: ( item ) => ! item.isPluginActive,
+						isEligible: ( item ) => {
+							const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+
+							return (
+								!! autoupdate &&
+								! ( pluginBySiteId.get( item.ID )?.autoupdate ?? false ) &&
+								! item.isPluginActive
+							);
+						},
 						supportsBulk: true,
 						icon: <Icon icon={ trash } />,
 					},
