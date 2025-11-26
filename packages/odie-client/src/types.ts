@@ -6,6 +6,10 @@ export type OdieAssistantContextInterface = {
 	canConnectToZendesk: boolean;
 	isLoadingCanConnectToZendesk: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
+	updateMessage: (
+		updatedMessage: Message,
+		matchBy?: 'temporary_id' | 'message_id' | 'internal_message_id'
+	) => void;
 	botName?: string;
 	newInteractionsBotSlug: string;
 	chat: Chat;
@@ -24,7 +28,7 @@ export type OdieAssistantContextInterface = {
 	isChatRestricted: boolean;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
-	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
+	setChat: ( chat: SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;

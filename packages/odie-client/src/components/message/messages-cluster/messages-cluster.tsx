@@ -3,7 +3,7 @@ import cx from 'clsx';
 import { Fragment } from 'react';
 import ChatMessage from '..';
 import { useOdieAssistantContext } from '../../../context';
-import { isCSATMessage } from '../../../utils';
+import { isCSATMessage, isOdieMessage } from '../../../utils';
 import {
 	hasFeedbackForm,
 	isAttachment,
@@ -44,24 +44,15 @@ function getPresentedRole( message: Message ) {
  */
 function sortMessagesByTimestamp( messages: Message[] ) {
 	return messages.sort( ( a, b ) => {
-		// Give precedence to the local timestamp, if it exists.
-		// It's more accurate than the server timestamp because it's independent of connection status.
+		// Within same type, sort by timestamp (local_timestamp preferred over received)
 		const aTimestamp = a.metadata?.local_timestamp || a.received;
 		const bTimestamp = b.metadata?.local_timestamp || b.received;
 
-		// If messages don't have a timestamp, keep them in the order they were received.
-		// This is the case for Odie messages.
 		if ( ! aTimestamp || ! bTimestamp ) {
 			return 0;
 		}
 
-		if ( aTimestamp > bTimestamp ) {
-			return 1;
-		}
-		if ( aTimestamp < bTimestamp ) {
-			return -1;
-		}
-		return 0;
+		return aTimestamp - bTimestamp;
 	} );
 }
 

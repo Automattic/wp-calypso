@@ -99,6 +99,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		forceEmailSupport,
 		trackEvent,
 		newInteractionsBotSlug,
+		addMessage: addMessageToChat,
 	} = useOdieAssistantContext();
 
 	const updateInteractionContext = useCallback(
@@ -134,29 +135,14 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
 				if ( forceEmailSupport ) {
-					setChat( ( prevChat ) => ( {
-						...prevChat,
-						...props,
-						messages: [ ...prevChat.messages, getOdieEmailFallbackMessage() ],
-						status: 'loaded',
-					} ) );
+					addMessageToChat( getOdieEmailFallbackMessage() );
 					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				} else if ( warnAboutExistingConversation && ! hasBeenWarnedAboutExistingConversation ) {
-					setChat( ( prevChat ) => ( {
-						...prevChat,
-						...props,
-						messages: [ ...prevChat.messages, getExistingConversationMessage() ],
-						status: 'loaded',
-					} ) );
+					addMessageToChat( getExistingConversationMessage() );
 					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
-					setChat( ( prevChat ) => ( {
-						...prevChat,
-						...props,
-					} ) );
-
 					// Trigger the `newConversation` mutation to be run inside `useEffect`, so the latest `chat` state is used.
 					setShouldCreateConversation( {
 						trigger: true,
@@ -178,12 +164,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			}
 		}
 
-		setChat( ( prevChat ) => ( {
-			...prevChat,
-			...props,
-			messages: [ ...prevChat.messages, ...( Array.isArray( message ) ? message : [ message ] ) ],
-			status: 'loaded',
-		} ) );
+		addMessageToChat( message );
 	};
 
 	return useMutation< ReturnedChat, Error, Message >( {
@@ -283,6 +264,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				simulateTyping: returnedChat.messages[ 0 ].simulateTyping,
 				type: 'message',
 				context: returnedChat.messages[ 0 ].context,
+				metadata: {
+					local_timestamp: Date.now() / 1000,
+				},
 			};
 			setExperimentVariationName( returnedChat.experiment_name );
 			addMessage( {
@@ -296,6 +280,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			}
 		},
 		onSettled: () => {
+			// Clear sending status after message is sent (success or error)
+			setChatStatus( 'loaded' );
 			queryClient.invalidateQueries( {
 				queryKey: [ 'odie-chat', currentSupportInteraction?.bot_slug, odieId ],
 			} );

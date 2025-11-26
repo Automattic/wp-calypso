@@ -16,8 +16,10 @@ export const useAutoScroll = (
 			return;
 		}
 
+		console.log( 'chat', chat );
+		console.log( 'chat.status', chat.status );
 		const messageCount = chat.messages.length;
-		if ( messageCount < 1 || [ 'loading', 'sending' ].includes( chat.status ) ) {
+		if ( messageCount < 1 || [ 'loading' ].includes( chat.status ) ) {
 			return;
 		}
 
@@ -44,7 +46,7 @@ export const useAutoScroll = (
 					lastMessage = messages?.length ? messages[ messages.length - 2 ] : null;
 				}
 
-				lastMessage?.scrollIntoView( { behavior: 'instant', block: 'start', inline: 'nearest' } );
+				lastMessage?.scrollIntoView( { behavior: 'instant', block: 'end', inline: 'nearest' } );
 				setIsScrolling( false );
 			} );
 		}, debounceTimeoutRef.current ) as unknown as number;

@@ -2,9 +2,9 @@ import { useMutation } from '@tanstack/react-query';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
-import { getConversationIdFromInteraction } from '../utils';
+import { getConversationIdFromInteraction, zendeskMessageConverter } from '../utils';
 import { useCreateZendeskConversation } from './use-create-zendesk-conversation';
-import type { Message } from '../types';
+import type { Message, ZendeskMessage } from '../types';
 
 /**
  * Send a message to the Zendesk conversation once.
@@ -38,22 +38,23 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const currentConversationId = getConversationIdFromInteraction( currentSupportInteraction );
 
-	const { chat, setChat } = useOdieAssistantContext();
+	const { chat, setChat, updateMessage } = useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 
 	// < void, Error, { message: Message; signal: AbortSignal } >
 	let conversationId = currentConversationId || chat.conversationId;
-	return useMutation( {
+
+	return useMutation< ZendeskMessage, Error, Message >( {
 		mutationKey: [ 'send-zendesk-messages' ],
-		mutationFn: async ( message: Message ): Promise< Message > => {
+		mutationFn: async ( message: Message ): Promise< ZendeskMessage > => {
 			if ( ! conversationId ) {
 				// Start a new conversation if it doesn't exist
 				// TODO: this can create excess tickets. We should track down the real issue.
 				conversationId = await createZendeskConversation( { createdFrom: 'send_zendesk_message' } );
-				setChat( {
-					...chat,
+				setChat( ( prevChat ) => ( {
+					...prevChat,
 					conversationId,
-				} );
+				} ) );
 			}
 
 			const messageToSend = {
@@ -64,17 +65,17 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 			};
 
 			Smooch.sendMessage( messageToSend, conversationId );
-			return new Promise< Message >( ( resolve, reject ) => {
+			return new Promise< ZendeskMessage >( ( resolve, reject ) => {
 				// If the message is not sent within 5 seconds, reject the promise.
 				// This allows Tanstack Query to retry the request if the user comes back online.
 				const timeout = setTimeout( () => {
 					reject( new Error( 'Message not sent' ) );
 				}, 5000 );
-				function onMessageSent( message: Message ) {
-					if ( message.metadata?.temporary_id === messageToSend.metadata?.temporary_id ) {
+				function onMessageSent( zendeskMessage: ZendeskMessage ) {
+					if ( zendeskMessage.metadata?.temporary_id === messageToSend.metadata?.temporary_id ) {
 						// @ts-expect-error -- 'off' is not part of the def.
 						Smooch.off( 'message:sent', onMessageSent );
-						resolve( message );
+						resolve( zendeskMessage );
 						clearTimeout( timeout );
 					}
 				}
@@ -84,16 +85,12 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 				Smooch.on( 'message:sent', onMessageSent as any );
 			} );
 		},
-		onSuccess: ( data: Message ) => {
-			// Update the chat with the message that was sent
-			setChat( ( chat ) => ( {
-				...chat,
-				messages: chat.messages.map( ( message ) =>
-					message.metadata?.temporary_id === data.metadata?.temporary_id
-						? { ...data, ...message }
-						: message
-				),
-			} ) );
+		onSuccess: ( data: ZendeskMessage ) => {
+			// Convert Zendesk message to our Message format
+			const convertedMessage = zendeskMessageConverter( data );
+			// Update the existing message (matching by temporary_id) with the received version
+			// This will update the message to show it in brighter color (received status)
+			updateMessage( convertedMessage, 'temporary_id' );
 		},
 		retry: true,
 	} );

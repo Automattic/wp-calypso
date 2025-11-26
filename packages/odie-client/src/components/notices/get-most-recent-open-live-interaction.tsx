@@ -2,7 +2,7 @@ import Smooch from 'smooch';
 import { ZendeskConversation } from '../../types';
 
 const AGE_THRESHOLD = 1000 * 60 * 60 * 24 * 3; // 3 days
-
+// const AGE_THRESHOLD = 1; // 3 days
 /**
  * Queries the Smooch SDK and gets the latest open conversation. Try to call as late as possible and don't cache the result.
  * @returns The support interaction ID of the latest open conversation.

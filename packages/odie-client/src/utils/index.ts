@@ -15,6 +15,14 @@ export const getIsRequestingHumanSupport = ( message: Message ) => {
 	return message.context?.flags?.forward_to_human_support ?? false;
 };
 
+/**
+ * Check if a message is from Odie.
+ * Odie messages have both message_id (number) and context object.
+ */
+export const isOdieMessage = ( message: Message ): boolean => {
+	return !! ( message.message_id && message.context );
+};
+
 export const getIsLastBotMessage = ( chat: Chat, message: Message ) => {
 	return (
 		chat?.messages?.length > 0 &&

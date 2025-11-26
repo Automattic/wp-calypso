@@ -5,7 +5,8 @@ import { createContext, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '../constants';
 import { useOdieBroadcastWithCallbacks } from '../data';
-import { useGetCombinedChat } from '../hooks';
+// Use v2 hooks for testing - can easily switch back to old implementation
+import { useGetCombinedChat } from '../hooks/v2';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
 import type {
 	Chat,
@@ -31,6 +32,7 @@ export const emptyChat: Chat = {
 // Create a default new context
 export const OdieAssistantContext = createContext< OdieAssistantContextInterface >( {
 	addMessage: noop,
+	updateMessage: noop,
 	botName: 'Wapuu',
 	newInteractionsBotSlug: ODIE_NEW_INTERACTIONS_BOT_SLUG,
 	chat: emptyChat,
@@ -104,11 +106,21 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	/**
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
+	 * Using v2 hooks with derived state pattern.
 	 */
-	const { mainChatState, setMainChatState } = useGetCombinedChat(
+	const {
+		mainChatState,
+		setMainChatState,
+		statusFlags,
+		messages: messagesStore,
+	} = useGetCombinedChat(
 		isUserEligibleForPaidSupport && canConnectToZendesk,
 		isLoadingCanConnectToZendesk
 	);
+
+	// Note: The sending flag is automatically cleared when the derived state
+	// changes from 'sending' to 'loaded'. The flag should be cleared by the
+	// code that sets it (e.g., in onSettled callbacks), not by watching status.
 
 	/**
 	 * Has the user ever escalated to get human support?
@@ -134,25 +146,74 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 
 	const clearChat = useCallback( () => {
 		trackEvent( 'chat_cleared', {} );
-		navigate( '/odie' );
-	}, [ trackEvent, navigate ] );
+		// Clear status flags
+		statusFlags.setSending( false );
+		statusFlags.setTransferring( false );
+		// Navigate to /odie without the id parameter to reset the interaction
+		navigate( '/odie', { replace: true } );
+	}, [ trackEvent, navigate, statusFlags ] );
 
 	/**
 	 * Add a new message to the chat.
+	 * With v2 hooks, we can use the messages store directly for better performance.
 	 */
-	const addMessage = ( message: Message | Message[] ) => {
-		setMainChatState( ( prevChat ) => ( {
-			...prevChat,
-			messages: [ ...prevChat.messages, ...( Array.isArray( message ) ? message : [ message ] ) ],
-		} ) );
-	};
+	const addMessage = useCallback(
+		( message: Message | Message[] ) => {
+			// Use setMainChatState for backward compatibility
+			// The v2 hook's setMainChatState will handle updating the message store
+			setMainChatState( ( prevChat ) => ( {
+				...prevChat,
+				messages: [ ...prevChat.messages, ...( Array.isArray( message ) ? message : [ message ] ) ],
+			} ) );
+		},
+		[ setMainChatState ]
+	);
+
+	/**
+	 * Update an existing message in the chat (e.g., when a temporary message is confirmed as received).
+	 * Matches by temporary_id, message_id, or internal_message_id.
+	 */
+	const updateMessage = useCallback(
+		(
+			updatedMessage: Message,
+			matchBy: 'temporary_id' | 'message_id' | 'internal_message_id' = 'temporary_id'
+		) => {
+			// Use the messages store directly for better performance
+			messagesStore.updateMessage( updatedMessage, matchBy );
+		},
+		[ messagesStore ]
+	);
 
 	/**
 	 * Set the status of the chat.
+	 * With v2 hooks, status is derived from flags, so we update the flags instead.
+	 * This maintains backward compatibility with the old API.
 	 */
-	const setChatStatus = ( status: ChatStatus ) => {
-		setMainChatState( ( prevChat ) => ( { ...prevChat, status } ) );
-	};
+	const setChatStatus = useCallback(
+		( status: ChatStatus ) => {
+			// Map status to status flags
+			switch ( status ) {
+				case 'sending':
+					statusFlags.setSending( true );
+					break;
+				case 'transfer':
+					statusFlags.setTransferring( true );
+					break;
+				case 'loaded':
+					// Clear both flags when going back to loaded
+					statusFlags.setSending( false );
+					statusFlags.setTransferring( false );
+					break;
+				case 'loading':
+				case 'closed':
+				case 'dislike':
+					// These are derived from other sources (API loading, interaction status, etc.)
+					// We can't directly set them, but the derived state will handle them
+					break;
+			}
+		},
+		[ statusFlags ]
+	);
 
 	/**
 	 * Set the liked status of a message.
@@ -186,6 +247,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		<OdieAssistantContext.Provider
 			value={ {
 				addMessage,
+				updateMessage,
 				botName,
 				newInteractionsBotSlug: dynamicNewInteractionsBotSlug,
 				chat: mainChatState,
