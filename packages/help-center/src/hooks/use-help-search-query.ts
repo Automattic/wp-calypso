@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { buildQueryString } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { SearchResult } from '../types';
+import type { HelpCenterRequiredInformation } from '../contexts/HelpCenterContext';
+import type { SearchResult } from '../types';
 
 interface APIFetchOptions {
 	global: boolean;
@@ -14,7 +15,7 @@ const fetchArticlesAPI = async (
 	search: string,
 	locale: string,
 	sectionName: string,
-	source: string
+	source: HelpCenterRequiredInformation[ 'source' ]
 ): Promise< SearchResult[] > => {
 	let searchResultResponse: SearchResult[] = [];
 

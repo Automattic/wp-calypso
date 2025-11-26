@@ -42,7 +42,7 @@ export type HelpCenterRequiredInformation = {
 	 * Custom markdown extensions (optional)
 	 */
 	markdownExtensions?: MarkdownExtensions;
-	source: string;
+	source: '' | 'wpcom' | 'a4a';
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
