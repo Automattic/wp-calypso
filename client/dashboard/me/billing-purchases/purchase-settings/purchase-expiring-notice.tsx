@@ -1,4 +1,4 @@
-import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -23,12 +23,6 @@ export function shouldShowExpiringNotice(
 	purchase: Purchase,
 	purchaseAttachedTo: Purchase | undefined
 ) {
-	const EXCLUDED_PRODUCTS: string[] = [
-		DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
-		DotcomPlans.MIGRATION_TRIAL_MONTHLY,
-		DotcomPlans.HOSTING_TRIAL_MONTHLY,
-	];
-
 	// For purchases included with a plan (for example, a domain mapping
 	// bundled with the plan), the plan purchase is used on this page when
 	// there are other upcoming renewals to display, so for consistency it
@@ -42,7 +36,7 @@ export function shouldShowExpiringNotice(
 
 	if (
 		! isExpiring( currentPurchase ) ||
-		EXCLUDED_PRODUCTS.includes( currentPurchase?.product_slug ) ||
+		currentPurchase?.is_trial_plan ||
 		isAkismetFreeProduct( currentPurchase )
 	) {
 		return false;
