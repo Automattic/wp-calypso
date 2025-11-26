@@ -204,7 +204,11 @@ export default function UpsellStep( {
 					acceptButtonText={ sprintf( __( 'I want the %(businessPlanName)s plan' ), {
 						businessPlanName,
 					} ) }
-					acceptButtonUrl={ `/checkout/${ purchase.site_slug }/business?coupon=${ couponCode }` }
+					acceptButtonUrl={ `/checkout/${
+						purchase.site_slug
+					}/business?coupon=${ couponCode }&cancel_to=${ window.location.href
+						.replace( window.location.origin, '' )
+						.replace( '/cancel', '' ) }` }
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }
