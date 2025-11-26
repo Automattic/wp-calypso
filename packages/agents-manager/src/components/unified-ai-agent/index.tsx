@@ -167,7 +167,8 @@ export default function UnifiedAIAgent( {
 		}
 
 		return config;
-	}, [ currentUser, site, currentRoute, toolProvider, contextProvider ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- prevents agent reinitialization
+	}, [] );
 
 	// Default suggestions - can be overridden via customSuggestions prop
 	const defaultSuggestions = useMemo(

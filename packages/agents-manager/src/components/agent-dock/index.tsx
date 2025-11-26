@@ -186,7 +186,7 @@ export default function AgentDock( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ sessionId ] );
 
-	const handleNewChat = useCallback( async () => {
+	const handleNewChat = useCallback( () => {
 		const agentManager = getAgentManager();
 		const agentKey = agentId;
 
