@@ -69,6 +69,7 @@ import {
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
 import CancellationPreSurveyContent from './cancellation-pre-survey-content';
+import DomainRemovalFlow from './domain-removal-flow';
 import enrichedSurveyData from './enriched-survey-data';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
@@ -1139,6 +1140,29 @@ export default function CancelPurchase() {
 
 	const isAkismet = isAkismetProduct( purchase );
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
+	const isDomainRemoval = flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_domain_registration;
+
+	if ( isDomainRemoval ) {
+		return (
+			<>
+				<PageLayout
+					size="small"
+					header={
+						<PageHeader
+							title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
+							prefix={ <Breadcrumbs length={ 4 } /> }
+							description={ __( 'Please confirm that you want to remove this domain.' ) }
+						/>
+					}
+				>
+					<Card className="cancel-purchase__wrapper-card">
+						<DomainRemovalFlow purchase={ purchase } onCancel={ redirectBack } />
+					</Card>
+				</PageLayout>
+			</>
+		);
+	}
+
 	return (
 		<>
 			<PageLayout
