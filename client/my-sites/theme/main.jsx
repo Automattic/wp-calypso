@@ -1371,7 +1371,7 @@ export default connect(
 	( state, { id } ) => {
 		const themeId = id;
 		const site = getSelectedSite( state );
-		const productionSiteId = getProductionSiteId( site );
+		const productionSiteId = site ? getProductionSiteId( site ) : null;
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, themeId );
