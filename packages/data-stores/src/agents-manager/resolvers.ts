@@ -6,7 +6,6 @@ import {
 	setAgentsManagerRouterHistory,
 	setIsDocked,
 	setIsOpen,
-	setSessionId,
 	setIsLoading,
 	setHasLoaded,
 } from './actions';
@@ -20,7 +19,6 @@ type Preferences = {
 			entries: Location[];
 			index: number;
 		};
-		agents_manager_session_id?: string;
 	};
 };
 
@@ -45,11 +43,6 @@ export function* getAgentsManagerState() {
 		// Restore the docked state from preferences
 		if ( typeof preferences.agents_manager_docked === 'boolean' ) {
 			yield setIsDocked( preferences.agents_manager_docked, false );
-		}
-
-		// Restore the session ID from preferences
-		if ( preferences.agents_manager_session_id ) {
-			yield setSessionId( preferences.agents_manager_session_id, false );
 		}
 
 		// We only want to auto-open, we don't want to auto-close (and potentially overrule the user's action).

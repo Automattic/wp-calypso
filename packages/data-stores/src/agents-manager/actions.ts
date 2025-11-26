@@ -10,7 +10,6 @@ import type { APIFetchOptions } from '../shared-types';
 type AgentsManagerState = {
 	isOpen?: boolean;
 	isDocked?: boolean;
-	sessionId?: string | null;
 	routerHistory?: null; // Only used to clear history
 };
 
@@ -35,10 +34,6 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 
 	if ( typeof state.isDocked === 'boolean' ) {
 		saveState.agents_manager_docked = state.isDocked;
-	}
-
-	if ( state.sessionId !== undefined ) {
-		saveState.agents_manager_session_id = state.sessionId;
 	}
 
 	// Only make API call if there's something to save
@@ -96,17 +91,6 @@ export function* setIsDocked( isDocked: boolean, shouldSave: boolean = true ) {
 	} as const;
 }
 
-export function* setSessionId( sessionId: string, shouldSave: boolean = true ) {
-	if ( shouldSave ) {
-		yield saveAgentsManagerState( { sessionId } );
-	}
-
-	return {
-		type: 'AGENTS_MANAGER_SET_SESSION_ID',
-		sessionId,
-	} as const;
-}
-
 export function setIsLoading( isLoading: boolean ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_LOADING',
@@ -126,5 +110,4 @@ export type AgentsManagerAction =
 	| ReturnType< typeof setIsLoading >
 	| ReturnType< typeof setHasLoaded >
 	| GeneratorReturnType< typeof setIsOpen >
-	| GeneratorReturnType< typeof setIsDocked >
-	| GeneratorReturnType< typeof setSessionId >;
+	| GeneratorReturnType< typeof setIsDocked >;

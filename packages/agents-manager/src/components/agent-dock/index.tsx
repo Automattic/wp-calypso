@@ -13,7 +13,7 @@ import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAgentSession } from '../../hooks/use-agent-session';
 import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -79,7 +79,7 @@ export default function AgentDock( {
 	onClearChat,
 	sessionStorageKey = 'agents-manager-session',
 }: AgentDockProps ) {
-	const { setIsOpen, setSessionId } = useDispatch( AGENTS_MANAGER_STORE );
+	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const persistedState = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -101,15 +101,6 @@ export default function AgentDock( {
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager( 'body' );
-
-	// Sync sessionId with persisted state
-	useEffect( () => {
-		if ( persistedState.hasLoaded || sessionId ) {
-			return;
-		}
-
-		setSessionId( sessionId );
-	}, [ sessionId, setSessionId, persistedState.hasLoaded ] );
 
 	const { messages, isProcessing, error, onSubmit } = useAgentChat( agentConfig );
 
