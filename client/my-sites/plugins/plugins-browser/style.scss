@@ -126,6 +126,24 @@ body.is-section-plugins #primary .main.is-logged-out {
 .full-width-section.plugins-browser__search-header {
 	padding-top: 100px;
 	padding-bottom: 32px;
+	background-color: var( --studio-gray-0 );
+	background-image: url( /calypso/images/plugins/plugins_hero_2.svg );
+	background-size: auto 380px;
+	background-position: right top;
+	background-repeat: no-repeat;
+
+	body.is-section-plugins #primary & .search-box-header::before {
+		display: none;
+	}
+
+	.search-box-header .search-box-header__header {
+		font-size: 70px;
+		line-height: 1;
+	}
+
+	@media screen and ( max-width: 600px ) {
+		background-image: url( /calypso/images/plugins/plugins_hero_2_m.svg );
+	}
 }
 .plugins-browser__search-header,
 .plugins-discovery-page__favorites,

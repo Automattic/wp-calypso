@@ -213,10 +213,20 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 								isSticky={ isAboveElement }
 								searchTerm={ search }
 								isSearching={ isFetchingPluginsBySearchTerm }
-								title={ __( 'Flex your site’s features with plugins' ) }
-								subtitle={ __(
-									'Add new functionality and integrations to your site with thousands of plugins.'
-								) }
+								title={
+									isMarketplaceRedesignEnabled
+										? __( 'Plug into possibility' )
+										: __( 'Flex your site’s features with plugins' )
+								}
+								subtitle={
+									isMarketplaceRedesignEnabled
+										? __(
+												'Add new features or integrate anything with thousands of flexible plugins.'
+										  )
+										: __(
+												'Add new functionality and integrations to your site with thousands of plugins.'
+										  )
+								}
 								searchTerms={ searchTerms }
 								renderTitleInH1={ ! category }
 							/>
