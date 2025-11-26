@@ -24,6 +24,7 @@ export const updateAction: Action< PluginListRow > = {
 			/>
 		);
 	},
+	supportsBulk: true,
 	isEligible: ( item: PluginListRow ) => {
 		return [ 'some', 'all' ].includes( item.hasUpdate );
 	},
