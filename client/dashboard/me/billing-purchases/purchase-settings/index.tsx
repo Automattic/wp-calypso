@@ -657,6 +657,15 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			/>
 		);
 	}
+	if ( purchase.is_trial_plan ) {
+		return (
+			<OverviewCard
+				icon={ currencyDollar }
+				title={ __( 'Price' ) }
+				heading={ __( 'Free Trial' ) }
+			/>
+		);
+	}
 	if ( isOneTimePurchase( purchase ) ) {
 		return (
 			<OverviewCard
@@ -1158,6 +1167,9 @@ export default function PurchaseSettings() {
 									</Link>
 								);
 							}
+							if ( purchase.is_trial_plan ) {
+								return undefined;
+							}
 							if ( purchase.is_auto_renew_enabled ) {
 								return __( 'Will not auto-renew because there is no payment method' );
 							}
@@ -1193,7 +1205,7 @@ export default function PurchaseSettings() {
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				{ purchase.subscription_status === 'active' && (
+				{ ! purchase.is_trial_plan && purchase.subscription_status === 'active' && (
 					<ManageSubscriptionCard purchase={ purchase } />
 				) }
 				<PurchaseSettingsActions purchase={ purchase } />

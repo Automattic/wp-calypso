@@ -45,14 +45,6 @@ jest.mock( '@wordpress/components', () => ( {
 
 jest.mock( '@wordpress/icons', () => ( { download: 'download' } ) );
 
-const mockRecordTracksEvent = jest.fn();
-
-jest.mock( '../../../app/analytics', () => ( {
-	useAnalytics: jest.fn( () => ( {
-		recordTracksEvent: mockRecordTracksEvent,
-	} ) ),
-} ) );
-
 jest.mock( '@automattic/api-core', () => {
 	const actual = jest.requireActual( '@automattic/api-core' );
 	const fetchSiteLogsBatchMock = jest.fn();
@@ -127,7 +119,7 @@ test( 'downloads logs and records analytics', async () => {
 
 	const onSuccess = jest.fn();
 
-	render(
+	const { recordTracksEvent } = render(
 		<LogsDownloader
 			siteId={ 123 }
 			siteSlug="test-site"
@@ -148,13 +140,13 @@ test( 'downloads logs and records analytics', async () => {
 	// Caller notified
 	expect( onSuccess ).toHaveBeenCalledWith( 'Logs downloaded.' );
 
-	expect( mockRecordTracksEvent ).toHaveBeenNthCalledWith(
+	expect( recordTracksEvent ).toHaveBeenNthCalledWith(
 		2,
 		'calypso_dashboard_site_logs_download_started',
 		expect.objectContaining( { site_id: 123 } )
 	);
 
-	expect( mockRecordTracksEvent ).toHaveBeenNthCalledWith(
+	expect( recordTracksEvent ).toHaveBeenNthCalledWith(
 		1,
 		'calypso_dashboard_site_logs_download_completed',
 		expect.objectContaining( { download_filename: 'test-site-server-logs-1-2.csv' } )

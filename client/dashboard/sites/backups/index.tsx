@@ -14,12 +14,14 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../app/router/sites';
+import { Card, CardBody } from '../../components/card';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BackupDetails } from './backup-details';
+import { BackupDetailsSkeleton } from './backup-details-skeleton';
 import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
@@ -122,26 +124,22 @@ export function BackupsListPage() {
 		if ( ! rewindId && ! backup ) {
 			setSelectedBackupInState( null );
 		}
-	}, [ rewindId, activityLog, setSelectedBackup, isSmallViewport ] );
+	}, [ rewindId, activityLog, setSelectedBackupInState, isSmallViewport ] );
 
 	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
 		handleDateRangeChange( next );
 		setSelectedBackup( null, false );
 	};
-	const [ showDetails, setShowDetails ] = useState( Boolean( rewindId ) );
 	const columns = isSmallViewport ? 1 : 2;
 
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
 
 	const handleBackupSelection = ( backup: ActivityLogEntry | null ) => {
 		setSelectedBackup( backup );
-		if ( isSmallViewport && backup ) {
-			setShowDetails( true );
-		}
 	};
 
 	const renderMobileView = () => {
-		if ( showDetails && selectedBackup ) {
+		if ( selectedBackup ) {
 			return (
 				<BackupDetails
 					backup={ selectedBackup }
@@ -165,7 +163,30 @@ export function BackupsListPage() {
 		);
 	};
 
-	const isMobileDetailsView = isSmallViewport && showDetails;
+	const renderDetailsPanel = () => {
+		if ( isLoadingActivityLog ) {
+			return <BackupDetailsSkeleton />;
+		}
+
+		if ( selectedBackup ) {
+			return (
+				<BackupDetails
+					backup={ selectedBackup }
+					site={ site }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			);
+		}
+
+		return (
+			<Card>
+				<CardBody style={ { minHeight: '300px' } } children={ null } />
+			</Card>
+		);
+	};
+
+	const isMobileDetailsView = isSmallViewport && selectedBackup;
 	const shouldShowActions = hasBackups && ! isMobileDetailsView;
 	const shouldShowNotices = ! isMobileDetailsView;
 
@@ -195,7 +216,7 @@ export function BackupsListPage() {
 					description={ __(
 						'Access and restore your site backups, powered by Jetpack VaultPress Backup.'
 					) }
-					prefix={ isMobileDetailsView && rewindId ? <Breadcrumbs length={ 2 } /> : undefined }
+					prefix={ isMobileDetailsView ? <Breadcrumbs length={ 2 } /> : undefined }
 					actions={ shouldShowActions ? actions : undefined }
 				/>
 			}
@@ -225,15 +246,7 @@ export function BackupsListPage() {
 								timezoneString={ timezoneString }
 								gmtOffset={ gmtOffset }
 							/>
-
-							{ selectedBackup && (
-								<BackupDetails
-									backup={ selectedBackup }
-									site={ site }
-									timezoneString={ timezoneString }
-									gmtOffset={ gmtOffset }
-								/>
-							) }
+							{ renderDetailsPanel() }
 						</Grid>
 					) }
 				</>
