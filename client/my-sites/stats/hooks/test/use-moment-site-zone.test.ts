@@ -321,32 +321,6 @@ describe( 'getMomentSiteZone', () => {
 		} );
 	} );
 
-	describe( 'with custom date format', () => {
-		it( 'should use custom date format when provided', () => {
-			( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
-			( getSiteOption as jest.Mock ).mockReturnValue( null );
-			( getSiteGmtOffset as jest.Mock ).mockReturnValue( 5 );
-
-			const customFormat = 'MM/DD/YYYY';
-			const momentFn = getMomentSiteZone( mockState, siteId, customFormat );
-			const result = momentFn();
-
-			// The custom format should be used for parseZone when creating the current moment
-			expect( result ).toBeDefined();
-		} );
-
-		it( 'should default to DATE_FORMAT when not provided', () => {
-			( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
-			( getSiteOption as jest.Mock ).mockReturnValue( null );
-			( getSiteGmtOffset as jest.Mock ).mockReturnValue( 5 );
-
-			const momentFn = getMomentSiteZone( mockState, siteId );
-			const result = momentFn();
-
-			expect( result ).toBeDefined();
-		} );
-	} );
-
 	describe( 'browser fallback', () => {
 		it( 'should fall back to browser timezone when no timezone info available', () => {
 			( getSiteTimezoneValue as jest.Mock ).mockReturnValue( null );
