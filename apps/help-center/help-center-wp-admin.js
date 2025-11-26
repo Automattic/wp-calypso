@@ -11,7 +11,13 @@ import { loadExternalProviders } from './src/utils/load-external-providers';
 const queryClient = new QueryClient();
 import './help-center.scss';
 
-function AdminHelpCenterContent( { toolProvider, contextProvider, suggestions } ) {
+function AdminHelpCenterContent( {
+	toolProvider,
+	contextProvider,
+	suggestions,
+	markdownComponents,
+	markdownExtensions,
+} ) {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDataStoreDispatch( 'automattic/help-center' );
 	const { isShown, unreadCount } = useSelect(
@@ -227,6 +233,8 @@ function AdminHelpCenterContent( { toolProvider, contextProvider, suggestions } 
 			toolProvider={ toolProvider }
 			contextProvider={ contextProvider }
 			suggestions={ suggestions }
+			markdownComponents={ markdownComponents }
+			markdownExtensions={ markdownExtensions }
 			{ ...botProps }
 		/>
 	);
@@ -235,15 +243,19 @@ function AdminHelpCenterContent( { toolProvider, contextProvider, suggestions } 
 const target = document.getElementById( 'help-center-masterbar' );
 if ( target ) {
 	// Load external providers (e.g., from Big Sky plugin) and render
-	loadExternalProviders().then( ( { toolProvider, contextProvider, suggestions } ) => {
-		createRoot( target ).render(
-			<QueryClientProvider client={ queryClient }>
-				<AdminHelpCenterContent
-					toolProvider={ toolProvider }
-					contextProvider={ contextProvider }
-					suggestions={ suggestions }
-				/>
-			</QueryClientProvider>
-		);
-	} );
+	loadExternalProviders().then(
+		( { toolProvider, contextProvider, suggestions, markdownComponents, markdownExtensions } ) => {
+			createRoot( target ).render(
+				<QueryClientProvider client={ queryClient }>
+					<AdminHelpCenterContent
+						toolProvider={ toolProvider }
+						contextProvider={ contextProvider }
+						suggestions={ suggestions }
+						markdownComponents={ markdownComponents }
+						markdownExtensions={ markdownExtensions }
+					/>
+				</QueryClientProvider>
+			);
+		}
+	);
 }

@@ -6,6 +6,7 @@
  */
 
 import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
+import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
 // helpCenterData is set as a global const via wp_add_inline_script
 declare const helpCenterData: { agentProviders?: string[] } | undefined;
@@ -14,6 +15,8 @@ export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
 	suggestions?: Suggestion[];
+	markdownComponents?: MarkdownComponents;
+	markdownExtensions?: MarkdownExtensions;
 }
 
 /**
@@ -33,6 +36,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedToolProvider: ToolProvider | undefined;
 	let mergedContextProvider: ContextProvider | undefined;
 	let mergedSuggestions: Suggestion[] | undefined;
+	let mergedMarkdownComponents: MarkdownComponents | undefined;
+	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -49,6 +54,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.suggestions ) {
 				mergedSuggestions = module.suggestions;
 			}
+			if ( module.markdownComponents ) {
+				mergedMarkdownComponents = module.markdownComponents;
+			}
+			if ( module.markdownExtensions ) {
+				mergedMarkdownExtensions = module.markdownExtensions;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[HelpCenter] Loaded provider "${ moduleId }"` );
@@ -62,5 +73,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		toolProvider: mergedToolProvider,
 		contextProvider: mergedContextProvider,
 		suggestions: mergedSuggestions,
+		markdownComponents: mergedMarkdownComponents,
+		markdownExtensions: mergedMarkdownExtensions,
 	};
 }

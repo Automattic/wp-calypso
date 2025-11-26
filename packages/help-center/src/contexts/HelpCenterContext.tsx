@@ -2,6 +2,7 @@ import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/cons
 import { useContext, createContext } from '@wordpress/element';
 import { useNewInteractionsBotConfig } from '../hooks/use-new-interaction-bot-config';
 import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
+import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
@@ -32,6 +33,15 @@ export type HelpCenterRequiredInformation = {
 	 * Allows plugins to provide context-specific suggestions
 	 */
 	suggestions?: Suggestion[];
+	/**
+	 * Custom markdown components for message rendering (optional)
+	 * Allows plugins to provide custom renderers for markdown elements
+	 */
+	markdownComponents?: MarkdownComponents;
+	/**
+	 * Custom markdown extensions (optional)
+	 */
+	markdownExtensions?: MarkdownExtensions;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
