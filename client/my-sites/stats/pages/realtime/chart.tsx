@@ -1,6 +1,5 @@
 import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
 import clsx from 'clsx';
-import moment from 'moment';
 import { useEffect, useState, useMemo } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { parseChartData } from 'calypso/state/stats/lists/utils';
@@ -73,7 +72,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 
 		let maxViews = 1;
 		const data = allDatetimeKeys.map( ( eachMinute ) => {
-			const lastMinute = moment( eachMinute )
+			const lastMinute = momentInSite( eachMinute )
 				.subtract( 1, 'minute' )
 				.format( 'YYYY-MM-DD HH:mm:00' );
 
@@ -86,8 +85,8 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 				// The first queried minute data.
 				diffViews = viewsData[ eachMinute ] - ( initialViewsCount || 0 );
 			} else if (
-				moment( lastMinute ).format( 'YYYY-MM-DD HH' ) !==
-				moment( eachMinute ).format( 'YYYY-MM-DD HH' )
+				momentInSite( lastMinute ).format( 'YYYY-MM-DD HH' ) !==
+				momentInSite( eachMinute ).format( 'YYYY-MM-DD HH' )
 			) {
 				// If the previous minute is from a different hour, use the current minute's views.
 				diffViews = viewsData[ eachMinute ];
@@ -101,7 +100,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 			}
 
 			return {
-				date: new Date( eachMinute ),
+				date: momentInSite( eachMinute ).toDate(),
 				value: diffViews,
 			};
 		} );
