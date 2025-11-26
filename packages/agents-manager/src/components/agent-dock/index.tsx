@@ -32,11 +32,6 @@ export interface AgentDockProps {
 	 */
 	agentConfig: UseAgentChatConfig;
 	/**
-	 * Container selector for the sidebar layout
-	 * Defaults to 'body'
-	 */
-	containerSelector?: string;
-	/**
 	 * Custom empty view suggestions
 	 */
 	emptyViewSuggestions?: Array< { id?: string; label: string; prompt: string } >;
@@ -81,7 +76,6 @@ const CHAT_DOCKED_STORAGE_KEY = 'agents-manager-chat-is-docked';
  */
 export default function AgentDock( {
 	agentConfig,
-	containerSelector = 'body',
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions,
@@ -189,7 +183,7 @@ export default function AgentDock( {
 	);
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
-		useChatLayoutManager( containerSelector, {
+		useChatLayoutManager( 'body', {
 			onOpenSidebar: setChatIsOpen,
 			onCloseSidebar: setChatIsClosed,
 			onDock: setChatIsDocked,
