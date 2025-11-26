@@ -2,13 +2,6 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
-export type Location = {
-	pathname: string;
-	search?: string;
-	hash?: string;
-	state?: unknown;
-	key?: string;
-};
 export interface HelpCenterShowOptions {
 	hasPremiumSupport: boolean;
 	hideBackButton: boolean;
@@ -43,11 +36,6 @@ export interface HelpCenterSite {
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< typeof actions >;
-}
-
-export interface APIFetchOptions {
-	global: boolean;
-	path: string;
 }
 
 export type HelpCenterSelect = SelectFromMap< typeof selectors >;
