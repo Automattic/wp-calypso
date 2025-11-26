@@ -21,7 +21,7 @@ import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-tab
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
 import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
@@ -47,7 +47,7 @@ import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { domainRoute } from '../../../app/router/domains';
 import { emailsRoute } from '../../../app/router/emails';
-import { purchaseSettingsRoute } from '../../../app/router/me';
+import { cancelPurchaseRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -289,6 +289,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 }
 
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
+	const navigate = useNavigate();
 	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
@@ -302,9 +303,10 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 						variant="secondary"
 						size="compact"
 						onClick={ () =>
-							// FIXME: add refund, cancel, and downgrade action
-							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
-							( window.location.href = `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/cancel` )
+							navigate( {
+								to: cancelPurchaseRoute.fullPath,
+								params: { purchaseId: purchase.ID },
+							} )
 						}
 					>
 						{ __( 'Downgrade or cancel' ) }
@@ -323,9 +325,10 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 						variant="secondary"
 						size="compact"
 						onClick={ () =>
-							// FIXME: add remove action
-							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
-							( window.location.href = `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/remove` )
+							navigate( {
+								to: cancelPurchaseRoute.fullPath,
+								params: { purchaseId: purchase.ID },
+							} )
 						}
 					>
 						{ __( 'Remove subscription' ) }
@@ -651,6 +654,15 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 						partnerName: purchase.partner_name,
 					} )
 				}
+			/>
+		);
+	}
+	if ( purchase.is_trial_plan ) {
+		return (
+			<OverviewCard
+				icon={ currencyDollar }
+				title={ __( 'Price' ) }
+				heading={ __( 'Free Trial' ) }
 			/>
 		);
 	}
@@ -1155,6 +1167,9 @@ export default function PurchaseSettings() {
 									</Link>
 								);
 							}
+							if ( purchase.is_trial_plan ) {
+								return undefined;
+							}
 							if ( purchase.is_auto_renew_enabled ) {
 								return __( 'Will not auto-renew because there is no payment method' );
 							}
@@ -1190,7 +1205,7 @@ export default function PurchaseSettings() {
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				{ purchase.subscription_status === 'active' && (
+				{ ! purchase.is_trial_plan && purchase.subscription_status === 'active' && (
 					<ManageSubscriptionCard purchase={ purchase } />
 				) }
 				<PurchaseSettingsActions purchase={ purchase } />

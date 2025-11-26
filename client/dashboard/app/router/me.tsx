@@ -2,6 +2,7 @@ import { fetchTwoStep } from '@automattic/api-core';
 import {
 	userSettingsQuery,
 	userPurchasesQuery,
+	allSitesQuery,
 	userReceiptsQuery,
 	purchaseQuery,
 	receiptQuery,
@@ -179,17 +180,17 @@ export const purchasesRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => billingRoute,
-	loader: async ( { context } ) => {
+	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userPurchasesQuery() ),
-			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+			queryClient.ensureQueryData( allSitesQuery() ),
 		] );
 	},
-	validateSearch: ( search ): { page?: number; search?: string; site?: string } => {
+	validateSearch: ( search ): { page?: number; search?: string; site?: number } => {
 		return {
 			page: typeof search.page === 'number' ? search.page : undefined,
 			search: typeof search.search === 'string' ? search.search : undefined,
-			site: typeof search.site === 'string' ? search.site : undefined,
+			site: typeof search.site === 'number' ? search.site : undefined,
 		};
 	},
 	path: '/purchases',
@@ -310,6 +311,13 @@ export const addPaymentMethodRoute = createRoute( {
 );
 
 export const cancelPurchaseRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Cancel' ),
+			},
+		],
+	} ),
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
 } ).lazy( () =>

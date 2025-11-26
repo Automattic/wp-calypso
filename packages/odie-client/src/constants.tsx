@@ -37,11 +37,16 @@ export const getOdieForwardToForumsMessage = (): string =>
 		__i18n_text_domain__
 	);
 
-export const getOdieForwardToZendeskMessage = (): string =>
-	__(
-		'We noticed you have an ongoing conversation. Would you like to continue it?',
-		__i18n_text_domain__
-	);
+export const getOdieForwardToZendeskMessage = ( userHasRecentOpenConversation: boolean ): string =>
+	userHasRecentOpenConversation
+		? __(
+				'We noticed you have an ongoing conversation. Would you like to continue it?',
+				__i18n_text_domain__
+		  )
+		: __(
+				'Would you like to continue your conversation with a support agent?',
+				__i18n_text_domain__
+		  );
 
 export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
 	if ( botSlug === 'ciab-workflow-support_chat' ) {

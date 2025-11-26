@@ -1,5 +1,5 @@
 import {
-	PLAN_BUSINESS,
+	PLAN_PERSONAL,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_PLUGINS,
 	PLAN_ECOMMERCE,
@@ -198,13 +198,13 @@ class Upload extends Component {
 		const { siteSlug, isCommerceTrial, translate } = this.props;
 		const redirectTo = encodeURIComponent( `/themes/upload/${ siteSlug }` );
 
-		let upsellPlan = PLAN_BUSINESS;
+		let upsellPlan = PLAN_PERSONAL;
 		let title =
-			/* translators: %(planName)s the short-hand version of the Business plan name */
+			/* translators: %(planName)s the short-hand version of the Personal plan name */
 			translate( 'Upgrade to the %(planName)s plan to access the theme install features', {
-				args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+				args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 			} );
-		let upgradeUrl = `/checkout/${ siteSlug }/business?redirect_to=${ redirectTo }`;
+		let upgradeUrl = `/checkout/${ siteSlug }/personal?redirect_to=${ redirectTo }`;
 
 		if ( isCommerceTrial ) {
 			upsellPlan = PLAN_ECOMMERCE;

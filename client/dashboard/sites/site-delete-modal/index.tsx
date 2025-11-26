@@ -1,3 +1,4 @@
+import { TrialPlans } from '@automattic/api-core';
 import {
 	p2HubP2sQuery,
 	siteDeleteMutation,
@@ -34,14 +35,8 @@ type SiteDeleteFormData = {
 const canDeleteSite = ( site: Site ) =>
 	( site.is_wpcom_atomic || ! site.jetpack ) && ! site.is_vip && ! site.options?.p2_hub_blog_id;
 
-const TRIAL_PRODUCT_SLUGS = [
-	'wp_bundle_migration_trial_monthly',
-	'wp_bundle_hosting_trial_monthly',
-	'ecommerce-trial-bundle-monthly',
-];
-
 const isTrialSite = ( site: Site ) =>
-	site.plan?.product_slug && TRIAL_PRODUCT_SLUGS.includes( site.plan?.product_slug );
+	site.plan?.product_slug && ( TrialPlans as string[] ).includes( site.plan?.product_slug );
 
 function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const { data: p2HubP2s } = useQuery( {

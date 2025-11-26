@@ -1,0 +1,17 @@
+.full-width-section {
+	padding-top: 24px;
+	padding-bottom: 24px;
+
+	.full-width-section__content {
+		margin-inline: auto;
+	}
+
+	&.full-width-section--double-padding {
+		padding-top: 48px;
+		padding-bottom: 48px;
+	}
+	&.full-width-section--no-padding {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+}

@@ -55,8 +55,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		mostRecentSupportInteractionId || null
 	);
 
-	// Early return if user is already talking to a human
-	if ( chat.provider !== 'odie' ) {
+	// Early return if user is already talking to a human or transferring to Zendesk
+	if ( chat.provider !== 'odie' || chat.status === 'transfer' ) {
 		return null;
 	}
 
@@ -102,7 +102,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					} );
 				} else if ( canConnectToZendesk || contextCanConnectToZendesk ) {
 					buttons.push( {
-						text: __( 'No thanks, let’s keep it here', __i18n_text_domain__ ),
+						text: supportInteraction
+							? __( 'No thanks, let’s keep it here', __i18n_text_domain__ )
+							: __( 'Get support', __i18n_text_domain__ ),
 						action: async () => {
 							onClickAdditionalEvent?.( 'chat' );
 							if ( isChatLoaded ) {

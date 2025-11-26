@@ -112,7 +112,7 @@ describe( 'Region Address Fieldsets', () => {
 			expect( fields.find( ( f ) => f.id === 'address1' ).isValid.required ).toBe( true );
 			expect( fields.find( ( f ) => f.id === 'city' ).isValid.required ).toBe( true );
 			expect( fields.find( ( f ) => f.id === 'postalCode' ).isValid.required ).toBe( true );
-			expect( fields.find( ( f ) => f.id === 'address2' ).isValid ).toBeUndefined();
+			expect( fields.find( ( f ) => f.id === 'address2' ).isValid.required ).toBeUndefined();
 		} );
 	} );
 
