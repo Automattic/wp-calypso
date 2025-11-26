@@ -1,9 +1,10 @@
 /**
- * Calypso AI Agent Component
- * Main wrapper component for loading AI agent in Calypso
+ * Unified AI Agent Component
+ *
+ * Main wrapper component for loading the AI agent.
  */
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from '@wordpress/element';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import AgentDock from '../agent-dock';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
@@ -12,23 +13,23 @@ import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automa
 
 export interface UnifiedAIAgentProps {
 	/**
-	 * Current route/path
+	 * The current route path.
 	 */
 	currentRoute?: string;
 	/**
-	 * Section name (e.g., 'reader', 'posts', 'pages')
+	 * The name of the current section (e.g., 'posts', 'pages').
 	 */
 	sectionName?: string;
 	/**
-	 * Selected site object
+	 * The selected site object.
 	 */
 	site?: any;
 	/**
-	 * Current user object
+	 * The current user object.
 	 */
 	currentUser?: any;
 	/**
-	 * Handle close callback
+	 * Callback to handle closing the agent.
 	 */
 	handleClose?: () => void;
 	/**
@@ -41,14 +42,6 @@ export interface UnifiedAIAgentProps {
 	 * Allows plugins to provide rich context about current state
 	 */
 	contextProvider?: ContextProvider;
-	/**
-	 * Save preference callback (optional, uses wpcomRequest if not provided)
-	 */
-	savePreference?: ( key: string, value: any ) => Promise< void >;
-	/**
-	 * Load preference callback (optional, uses wpcomRequest if not provided)
-	 */
-	loadPreference?: ( key: string ) => Promise< any >;
 	/**
 	 * Custom suggestions for the empty view (optional)
 	 * Allows plugins to provide context-specific suggestions
@@ -98,20 +91,12 @@ function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
 	} );
 }
 
-/**
- * CalypsoAIAgent Component
- *
- * Main entry point for AI agent in Calypso.
- * Configures the agent with Calypso-specific context and settings.
- */
-export default function CalypsoAIAgent( {
+export default function UnifiedAIAgent( {
 	currentRoute,
 	site,
 	currentUser,
 	toolProvider,
 	contextProvider,
-	savePreference: externalSavePreference,
-	loadPreference: externalLoadPreference,
 	emptyViewSuggestions: customSuggestions,
 	markdownComponents,
 	markdownExtensions,
@@ -207,64 +192,12 @@ export default function CalypsoAIAgent( {
 	);
 	const suggestions = customSuggestions || defaultSuggestions;
 
-	const handleClearChat = useCallback( () => {
-		// Clear chat handler
-	}, [] );
-
-	// Save/load preferences - use provided callbacks or fall back to wpcomRequest
-	const defaultSavePreference = useCallback( async ( key: string, value: any ) => {
-		if ( typeof window !== 'undefined' && ( window as any ).wpcomRequest ) {
-			const wpcomRequest = ( window as any ).wpcomRequest;
-			try {
-				await wpcomRequest( {
-					path: '/me/preferences',
-					apiNamespace: 'wpcom/v2',
-					method: 'PUT',
-					body: {
-						calypso_preferences: {
-							[ key ]: value,
-						},
-					},
-				} );
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[UnifiedAIAgent] Failed to save preferences:', error );
-			}
-		}
-	}, [] );
-
-	const defaultLoadPreference = useCallback( async ( key: string ) => {
-		if ( typeof window !== 'undefined' && ( window as any ).wpcomRequest ) {
-			const wpcomRequest = ( window as any ).wpcomRequest;
-			try {
-				const response = await wpcomRequest( {
-					path: '/me/preferences',
-					apiNamespace: 'wpcom/v2',
-					method: 'GET',
-				} );
-				return response?.calypso_preferences?.[ key ] || null;
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[UnifiedAIAgent] Failed to load preferences:', error );
-			}
-		}
-		return null;
-	}, [] );
-
-	const savePreference = externalSavePreference || defaultSavePreference;
-	const loadPreference = externalLoadPreference || defaultLoadPreference;
-
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
 			emptyViewSuggestions={ suggestions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			onClearChat={ handleClearChat }
-			sessionStorageKey="agents-manager-session"
-			preferenceKey="agents_manager_state"
-			savePreference={ savePreference }
-			loadPreference={ loadPreference }
 		/>
 	);
 }

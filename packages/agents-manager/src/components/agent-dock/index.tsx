@@ -1,31 +1,37 @@
 /**
  * Agent Dock Component
- * Provides floating + docked mode AI chat using @automattic/agenttic-ui
+ * Provides floating and docked AI chat, managing sessions and history.
  */
 
 import {
+	createOdieBotId,
 	getAgentManager,
 	useAgentChat,
+	type Message,
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
 import {
 	AgentUI,
 	createMessageRenderer,
 	EmptyView,
-	type ChatState,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
+import { useCallback, useEffect, useMemo, useState, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAgentSession } from '../../hooks/use-agent-session';
+import { API_BASE_URL } from '../../constants';
+import useAgentSession from '../../hooks/use-agent-session';
 import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
-import { usePersistedAgentState } from '../../hooks/use-persisted-agent-state';
+import useLoadConversation from '../../hooks/use-load-conversation';
+import { lastConversationCache } from '../../utils/conversation-cache';
 import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
+import { ChatMessageSkeleton } from '../chat-message-skeleton';
+import ConversationHistoryView from '../conversation-history-view';
 import { AI } from '../icons';
+import type { DockViewState } from './types';
 
 export interface AgentDockProps {
 	/**
@@ -44,209 +50,182 @@ export interface AgentDockProps {
 	 * Custom markdown extensions
 	 */
 	markdownExtensions?: MarkdownExtensions;
-	/**
-	 * Callback when chat is cleared
-	 */
-	onClearChat?: () => void;
-	/**
-	 * Storage key for session persistence
-	 */
-	sessionStorageKey?: string;
-	/**
-	 * Storage key for /me/preferences persistence
-	 */
-	preferenceKey?: string;
-	/**
-	 * Function to save preferences to server
-	 */
-	savePreference?: ( key: string, value: any ) => Promise< void >;
-	/**
-	 * Function to load preferences from server
-	 */
-	loadPreference?: ( key: string ) => Promise< any >;
 }
 
-const CHAT_OPEN_STORAGE_KEY = 'agents-manager-chat-is-open';
-const CHAT_DOCKED_STORAGE_KEY = 'agents-manager-chat-is-docked';
-
-/**
- * AgentDock Component
- *
- * Full-featured AI agent chat with docking/floating modes and context awareness.
- * @param {AgentDockProps} props - Component props
- */
 export default function AgentDock( {
 	agentConfig,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions,
-	onClearChat,
-	sessionStorageKey = 'agents-manager-session',
-	preferenceKey = 'agents-manager-chat-state',
-	savePreference,
-	loadPreference,
 }: AgentDockProps ) {
-	// Persisted state for /me/preferences
-	const {
-		state: persistedState,
-		setSessionId: setPersistedSessionId,
-		setIsOpen: setPersistedIsOpen,
-		setIsDocked: setPersistedIsDocked,
-		isLoading: isLoadingPersistedState,
-	} = usePersistedAgentState( {
-		preferenceKey,
-		savePreference,
-		loadPreference,
-	} );
-
-	const { sessionId, resetSession } = useAgentSession( {
-		storageKey: sessionStorageKey,
-	} );
-
-	const defaultOpen = useMemo( () => {
-		// Use persisted state if available
-		if ( persistedState.isOpen !== undefined ) {
-			return persistedState.isOpen;
-		}
-		// Fallback to localStorage
-		try {
-			const stored = localStorage.getItem( CHAT_OPEN_STORAGE_KEY );
-			return stored === 'true'; // Default to closed
-		} catch {
-			return false;
-		}
-	}, [ persistedState.isOpen ] );
-
-	const defaultUndocked = useMemo( () => {
-		// Use persisted state if available
-		if ( persistedState.isDocked !== undefined ) {
-			return persistedState.isDocked;
-		}
-		// Fallback to localStorage
-		try {
-			const stored = localStorage.getItem( CHAT_DOCKED_STORAGE_KEY );
-			return stored === 'true'; // Default to undocked (floating)
-		} catch {
-			return false;
-		}
-	}, [ persistedState.isDocked ] );
-
-	const setChatIsOpen = useCallback( () => {
-		if ( ! isLoadingPersistedState ) {
-			setPersistedIsOpen( true );
-		}
-
-		try {
-			localStorage.setItem( CHAT_OPEN_STORAGE_KEY, 'true' );
-		} catch {
-			// Ignore errors
-		}
-	}, [ isLoadingPersistedState, setPersistedIsOpen ] );
-
-	const setChatIsClosed = useCallback( () => {
-		if ( ! isLoadingPersistedState ) {
-			setPersistedIsOpen( false );
-		}
-
-		try {
-			localStorage.setItem( CHAT_OPEN_STORAGE_KEY, 'false' );
-		} catch {
-			// Ignore errors
-		}
-	}, [ isLoadingPersistedState, setPersistedIsOpen ] );
-
-	const setChatIsDocked = useCallback( () => {
-		if ( ! isLoadingPersistedState ) {
-			setPersistedIsDocked( true );
-		}
-
-		try {
-			localStorage.setItem( CHAT_DOCKED_STORAGE_KEY, 'true' );
-		} catch {
-			// Ignore errors
-		}
-	}, [ isLoadingPersistedState, setPersistedIsDocked ] );
-
-	const setChatIsUndocked = useCallback( () => {
-		if ( ! isLoadingPersistedState ) {
-			setPersistedIsDocked( false );
-		}
-
-		try {
-			localStorage.setItem( CHAT_DOCKED_STORAGE_KEY, 'false' );
-		} catch {
-			// Ignore errors
-		}
-	}, [ isLoadingPersistedState, setPersistedIsDocked ] );
-
-	const [ chatState, setChatState ] = useState< ChatState >(
-		defaultOpen ? 'expanded' : 'collapsed'
-	);
+	const [ viewState, setViewState ] = useState< DockViewState >( 'chat' );
+	const isLoadingRef = useRef( false );
+	const loadedSessionIdRef = useRef< string | null >( null );
+	const agentId = agentConfig.agentId;
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
-		useChatLayoutManager( 'body', {
-			onOpenSidebar: setChatIsOpen,
-			onCloseSidebar: setChatIsClosed,
-			onDock: setChatIsDocked,
-			onUndock: () => {
-				setChatIsUndocked();
-				// Ensure chat is open when undocking
-				setChatState( 'expanded' );
-				setChatIsOpen();
-			},
-			defaultOpen,
-			defaultUndocked,
-		} );
+		useChatLayoutManager();
 
-	// Sync sessionId with persisted state
+	// TODO: Migrate to the API data solution...
+	const { sessionId, resetSession, applySessionId } = useAgentSession();
+	const { messages, suggestions, isProcessing, error, loadMessages, onSubmit } =
+		useAgentChat( agentConfig );
+
+	// TODO: Migrate to the API data solution...
+	// Update agent's sessionId when sessionId prop changes
 	useEffect( () => {
-		if ( ! isLoadingPersistedState && sessionId ) {
-			setPersistedSessionId( sessionId );
+		if ( ! sessionId ) {
+			return;
 		}
-	}, [ sessionId, setPersistedSessionId, isLoadingPersistedState ] );
 
-	const { messages, isProcessing, error, onSubmit } = useAgentChat( agentConfig );
-
-	// TODO: Use this when adding custom chat header with clear chat menu item
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleClearChat = useCallback( async () => {
 		const agentManager = getAgentManager();
-		const agentKey = `${ agentConfig.agentId }-${ sessionId }`;
+		const agentKey = agentId;
 
 		if ( agentManager.hasAgent( agentKey ) ) {
-			await agentManager.resetConversation( agentKey );
+			agentManager.updateSessionId( agentKey, sessionId );
+		}
+	}, [ agentId, sessionId ] );
+
+	// Update cache whenever messages change
+	useEffect( () => {
+		if ( messages.length === 0 || ! sessionId ) {
+			return;
 		}
 
+		const agentManager = getAgentManager();
+		const agentKey = agentId;
+
+		if ( ! agentManager.hasAgent( agentKey ) ) {
+			return;
+		}
+
+		// Get Message[] from agentManager and cache it
+		const clientMessages = agentManager.getConversationHistory( agentKey );
+		if ( clientMessages.length > 0 ) {
+			const botId = createOdieBotId( agentId );
+			lastConversationCache.set( botId, sessionId, clientMessages );
+		}
+	}, [ agentId, messages.length, sessionId ] );
+
+	// TODO: Implement `useNavigationContinuation()`...
+
+	// Memoized callback for when conversation loads from server
+	const onLoaded = useCallback(
+		async ( loadedMessages: Message[], serverSessionId: string ) => {
+			const agentManager = getAgentManager();
+			const agentKey = agentId;
+
+			// Use loadMessages instead of direct replaceMessages to ensure React state updates
+			await loadMessages( loadedMessages );
+
+			// Update the agent's sessionId so future messages use the correct session
+			agentManager.updateSessionId( agentKey, serverSessionId );
+
+			// Only update session if it changed (prevents unnecessary re-renders)
+			if ( sessionId !== serverSessionId ) {
+				try {
+					if ( ! serverSessionId ) {
+						// eslint-disable-next-line no-console
+						console.warn( 'Attempted to apply empty session ID' );
+						return;
+					}
+					applySessionId( serverSessionId );
+				} catch ( error ) {
+					// eslint-disable-next-line no-console
+					console.error( 'Failed to apply session ID:', error );
+					return;
+				}
+			}
+
+			// Track that we've loaded this session (after successful validation)
+			loadedSessionIdRef.current = serverSessionId;
+		},
+		[ agentId, applySessionId, loadMessages, sessionId ]
+	);
+
+	// Conversation loading hook
+	const { loadConversation, isLoading: isLoadingConversation } = useLoadConversation( {
+		apiBaseUrl: API_BASE_URL,
+		authProvider: agentConfig.authProvider,
+		onLoaded,
+	} );
+
+	// Load conversation when switching to a session
+	// This handles clicking a conversation from the history list
+	useEffect( () => {
+		if ( ! sessionId || isLoadingRef.current ) {
+			return;
+		}
+
+		const agentManager = getAgentManager();
+		const agentKey = agentId;
+
+		// Agent is created by useAgentChat, but might not have messages loaded yet
+		// Check if we need to load messages from server
+		if ( agentManager.hasAgent( agentKey ) ) {
+			// Load if this is a different session than what's currently loaded
+			if ( loadedSessionIdRef.current !== sessionId ) {
+				isLoadingRef.current = true;
+				const botId = createOdieBotId( agentId );
+				loadConversation( sessionId, botId ).finally( () => {
+					isLoadingRef.current = false;
+				} );
+			}
+		}
+		// loadConversation is stable from useCallback
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ sessionId ] );
+
+	const handleToggleHistory = useCallback( () => {
+		setViewState( ( prev ) => ( prev === 'chat' ? 'history' : 'chat' ) );
+	}, [] );
+
+	const handleSelectConversation = useCallback(
+		( newSessionId: string ) => {
+			// Switch to chat view immediately
+			setViewState( 'chat' );
+
+			// Update session with the UUID session_id
+			applySessionId( newSessionId );
+		},
+		[ applySessionId ]
+	);
+
+	const handleNewChat = useCallback( async () => {
+		const agentManager = getAgentManager();
+		const agentKey = agentId;
+
+		// Remove the agent entirely so it gets recreated fresh
+		if ( agentManager.hasAgent( agentKey ) ) {
+			agentManager.removeAgent( agentKey );
+		}
+
+		// Clear cached messages to prevent old messages from being reloaded
+		lastConversationCache.clear();
+
+		// Reset session to empty (new chat) - this triggers config re-creation
 		resetSession();
-		onClearChat?.();
-	}, [ sessionId, resetSession, agentConfig.agentId, onClearChat ] );
 
-	// Custom message renderer
-	const messageRenderer = useMemo( () => {
-		const options: any = { components: markdownComponents };
-		if ( markdownExtensions ) {
-			options.extensions = markdownExtensions;
-		}
-		return createMessageRenderer( options );
-	}, [ markdownComponents, markdownExtensions ] );
+		// Switch back to chat view
+		setViewState( 'chat' );
+	}, [ agentId, resetSession ] );
 
-	// Add IDs to suggestions if not provided
-	const suggestions = useMemo(
+	// Custom message renderer that uses our markdown components
+	const messageRenderer = useMemo(
 		() =>
-			emptyViewSuggestions.map( ( suggestion, index ) => ( {
-				id: suggestion.id || `suggestion-${ index }`,
-				label: suggestion.label,
-				prompt: suggestion.prompt,
-			} ) ),
-		[ emptyViewSuggestions ]
+			createMessageRenderer( {
+				components: markdownComponents,
+				extensions: markdownExtensions,
+			} ),
+		[ markdownComponents, markdownExtensions ]
 	);
 
 	const renderAgentUI = () => {
-		const resetChatMenuItem = {
+		const newChatMenuItem = {
 			icon: comment,
-			title: __( 'Reset chat', 'agents-manager' ),
+			title: __( 'New chat', 'agents-manager' ),
 			isDisabled: ! messages.length,
-			onClick: handleClearChat,
+			onClick: handleNewChat,
 		};
 		const undockMenuItem = {
 			icon: login,
@@ -267,7 +246,7 @@ export default function AgentDock( {
 			onClick: dock,
 		};
 
-		const chatHeaderOptions: ChatHeaderOptions = [ resetChatMenuItem ];
+		const chatHeaderOptions: ChatHeaderOptions = [ newChatMenuItem ];
 
 		if ( isDocked ) {
 			chatHeaderOptions.push( undockMenuItem );
@@ -275,34 +254,79 @@ export default function AgentDock( {
 			chatHeaderOptions.push( dockMenuItem );
 		}
 
+		// Show conversation history view
+		if ( viewState === 'history' ) {
+			return (
+				<AgentUI.Container
+					className="agenttic"
+					messages={ messages }
+					isProcessing={ false }
+					error={ null }
+					onSubmit={ onSubmit }
+					variant={ isDocked ? 'embedded' : 'floating' }
+					floatingChatState="expanded" // TODO: Implement it...
+					onClose={ isDocked ? closeSidebar : () => {} } // TODO: Implement it...
+					onExpand={ () => {} } // TODO: Implement it...
+				>
+					<AgentUI.ConversationView>
+						<ChatHeader
+							isChatDocked={ isDocked }
+							onClose={ isDocked ? closeSidebar : () => {} }
+							options={ chatHeaderOptions }
+							onHistoryToggle={ handleToggleHistory }
+							viewState={ viewState }
+							title={ __( 'Past chats', 'agents-manager' ) }
+						/>
+						<ConversationHistoryView
+							botId={ createOdieBotId( agentId ) }
+							apiBaseUrl={ API_BASE_URL }
+							authProvider={ agentConfig.authProvider }
+							onSelectConversation={ handleSelectConversation }
+							onNewChat={ handleNewChat }
+						/>
+					</AgentUI.ConversationView>
+				</AgentUI.Container>
+			);
+		}
+
 		return (
 			<AgentUI.Container
+				className="agenttic"
 				messages={ messages }
 				isProcessing={ isProcessing }
 				error={ error }
 				onSubmit={ onSubmit }
 				variant={ isDocked ? 'embedded' : 'floating' }
-				floatingChatState={ chatState }
-				onClose={ isDocked ? closeSidebar : () => setChatState( 'collapsed' ) }
-				onExpand={ () => setChatState( 'expanded' ) }
-				className="agenttic"
+				floatingChatState="expanded" // TODO: Implement it...
+				onClose={ isDocked ? closeSidebar : () => {} }
+				onExpand={ () => {} }
+				suggestions={ suggestions }
 				messageRenderer={ messageRenderer }
 				emptyView={
-					<EmptyView
-						heading={ __( 'Howdy! How can I help you today?', 'agents-manager' ) }
-						help={ __( 'Got a different request? Ask away.', 'agents-manager' ) }
-						suggestions={ suggestions }
-						icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
-					/>
+					isLoadingRef.current ||
+					isLoadingConversation ||
+					( sessionId && loadedSessionIdRef.current !== sessionId && messages.length === 0 ) ? (
+						<ChatMessageSkeleton count={ 3 } />
+					) : (
+						<EmptyView
+							heading={ __( 'Howdy! How can I help you today?', 'agents-manager' ) }
+							help={ __( 'Got a different request? Ask away.', 'agents-manager' ) }
+							suggestions={ emptyViewSuggestions }
+							icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
+						/>
+					)
 				}
 			>
 				<AgentUI.ConversationView>
 					<ChatHeader
 						isChatDocked={ isDocked }
-						onClose={ isDocked ? closeSidebar : () => setChatState( 'collapsed' ) }
+						onClose={ isDocked ? closeSidebar : () => {} } // TODO: Implement it...
 						options={ chatHeaderOptions }
+						onHistoryToggle={ handleToggleHistory }
+						viewState={ viewState }
+						supportsHistory
 					/>
-					<AgentUI.Messages />
+					{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 					<AgentUI.Footer>
 						<AgentUI.Suggestions />
 						<AgentUI.Notice />

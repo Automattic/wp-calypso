@@ -13,7 +13,8 @@ import useChatLayoutManager from '@hooks/use-chat-layout-manager';
 
 function App() {
 	const { isDocked, isDesktop, dock, undock, openSidebar, closeSidebar, createChatPortal } =
-		useChatLayoutManager( '.sidebar-container', {
+		useChatLayoutManager( {
+			sidebarContainer: '.sidebar-container',
 			defaultOpen: true,
 			onDock: () => console.log( 'Docked!' ),
 			onUndock: () => console.log( 'Undocked!' ),
@@ -94,13 +95,11 @@ The hook automatically manages these CSS classes based on the chat state.
 
 ### Parameters
 
-#### `sidebarContainer` (`HTMLElement` | `string`, **required**)
-
-The container element where the sidebar will be rendered. This should be the parent of both the main section (e.g., the editor) and the sidebar itself. Can be either a DOM element or a CSS selector string.
-
 #### `options` (`object`, optional)
 
 Configuration options for the hook:
+
+- **`sidebarContainer`** (`HTMLElement` | `string`, default: `'body'`) - The container element where the sidebar will be rendered. This should be the parent of both the main section (e.g., the editor) and the sidebar itself. Can be either a DOM element or a CSS selector string.
 
 - **`defaultUndocked`** (`boolean`, default: `false`) - If `true`, the chat starts in floating (undocked) mode by default.
 

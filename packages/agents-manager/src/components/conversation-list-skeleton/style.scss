@@ -1,0 +1,60 @@
+@keyframes skeleton-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
+}
+
+.agents-manager-conversation-list-skeleton {
+	width: 100%;
+
+	&__item {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		padding: 12px 0;
+		border-top: 1px solid #464646 !important;
+		border-bottom: 1px solid #464646 !important;
+		margin-bottom: -1px;
+		width: 100%;
+		pointer-events: none;
+	}
+
+	&__avatar {
+		width: 38px;
+		height: 38px;
+		border-radius: 50%;
+		background-color: rgba( 255, 255, 255, 0.1 );
+		flex-shrink: 0;
+		animation: skeleton-pulse 1.5s ease-in-out infinite;
+	}
+
+	&__text {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		flex: 1;
+		min-width: 0;
+	}
+
+	&__title {
+		height: 14px;
+		background-color: rgba( 255, 255, 255, 0.1 );
+		border-radius: 4px;
+		width: 70%;
+		animation: skeleton-pulse 1.5s ease-in-out infinite;
+		animation-delay: 0.1s;
+	}
+
+	&__subtitle {
+		height: 11px;
+		background-color: rgba( 255, 255, 255, 0.1 );
+		border-radius: 4px;
+		width: 40%;
+		animation: skeleton-pulse 1.5s ease-in-out infinite;
+		animation-delay: 0.2s;
+	}
+}

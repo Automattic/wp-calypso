@@ -1,19 +1,69 @@
+@import '@wordpress/base-styles/colors';
+
 .agents-manager-chat-header {
-	width: calc( 100% + 16px );
+	width: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: end;
 	height: 56px;
-	padding: 16px;
-	margin-top: -8px;
-	margin-left: -8px;
-}
+	padding: 4px 16px;
 
-.agents-manager-chat-header__actions {
-	display: flex;
-	gap: 8px;
-}
+	&:has( .agents-manager-chat-header__title ) {
+		justify-content: space-between;
+	}
 
-.agents-manager-chat-header__more-options {
-	line-height: initial;
+	&__title {
+		font-size: 14px;
+		font-weight: 600;
+		color: var( --color-foreground, #1f1f1f );
+		flex-grow: 1;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 2px;
+		align-items: center;
+	}
+
+	&__more-options {
+		line-height: initial;
+
+		button {
+			padding: 4px;
+			border-radius: 8px;
+			color: var( --color-foreground-inverted, #eff0f1 );
+
+			svg {
+				fill: var( --color-foreground-inverted, #eff0f1 );
+			}
+		}
+	}
+
+	&__close-btn {
+		line-height: initial;
+
+		button {
+			padding: 4px;
+			border-radius: 8px;
+			color: var( --color-foreground-inverted, #eff0f1 ) !important;
+
+			svg {
+				fill: var( --color-foreground-inverted, #eff0f1 ) !important;
+			}
+		}
+	}
+
+	&__history-btn {
+		line-height: initial;
+
+		button {
+			padding: 4px;
+			border-radius: 8px;
+			color: var( --color-foreground-inverted, #eff0f1 ) !important;
+
+			svg {
+				fill: var( --color-foreground-inverted, #eff0f1 ) !important;
+			}
+		}
+	}
 }

@@ -13,6 +13,7 @@ import { AI } from '../../components/icons';
 import './style.scss';
 
 interface Options {
+	sidebarContainer?: HTMLElement | string;
 	defaultUndocked?: boolean;
 	defaultOpen?: boolean;
 	desktopMediaQuery?: string;
@@ -32,18 +33,16 @@ interface ReturnValue {
 	createChatPortal: ( children: React.ReactNode ) => React.ReactNode | React.ReactPortal;
 }
 
-export default function useChatLayoutManager(
-	sidebarContainer: string | HTMLElement,
-	{
-		defaultUndocked = false,
-		defaultOpen = false,
-		desktopMediaQuery = '(min-width: 1200px)',
-		onOpenSidebar = () => {},
-		onCloseSidebar = () => {},
-		onDock = () => {},
-		onUndock = () => {},
-	}: Options = {}
-): ReturnValue {
+export default function useChatLayoutManager( {
+	sidebarContainer = 'body',
+	defaultUndocked = false,
+	defaultOpen = false,
+	desktopMediaQuery = '(min-width: 1200px)',
+	onOpenSidebar = () => {},
+	onCloseSidebar = () => {},
+	onDock = () => {},
+	onUndock = () => {},
+}: Options = {} ): ReturnValue {
 	const portalRef = useRef< HTMLDivElement >();
 	const isDesktop = useMediaQuery( desktopMediaQuery );
 	const [ isDocked, setIsDocked ] = useState( ! defaultUndocked );
