@@ -2,7 +2,7 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Button, Modal, TabPanel, __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, Modal, TabPanel } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { useState } from 'react';
@@ -144,14 +144,14 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					/>
 				}
 				notices={
-					<VStack spacing={ 3 }>
+					<>
 						<TimeMismatchNotice
 							settingsUrl={ settingsUrl }
 							siteTime={ gmtOffset }
 							siteId={ site.ID }
 						/>
 						<ScanNotices status={ status } threatCount={ threatCount } />
-					</VStack>
+					</>
 				}
 			>
 				<Card>

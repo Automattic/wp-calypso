@@ -2,7 +2,7 @@ import { HostingFeatures, LogType } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, TabPanel } from '@wordpress/components';
+import { TabPanel } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
@@ -157,7 +157,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				/>
 			}
 			notices={
-				<VStack spacing={ 3 }>
+				<>
 					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 					) }
@@ -166,7 +166,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 						siteTime={ gmtOffset }
 						siteId={ siteId }
 					/>
-				</VStack>
+				</>
 			}
 		>
 			<Card className={ `site-logs-card site-logs-card--${ logType }` }>
