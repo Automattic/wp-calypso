@@ -396,8 +396,8 @@ class ThemeSheet extends Component {
 
 	shouldRenderForStaging() {
 		// isExternallyManagedTheme determines if a theme is paid or not
-		const { isExternallyManagedTheme, isWpcomStaging } = this.props;
-		return isExternallyManagedTheme && isWpcomStaging;
+		const { isActive, isExternallyManagedTheme, isWpcomStaging } = this.props;
+		return isExternallyManagedTheme && isWpcomStaging && ! isActive;
 	}
 
 	shouldRenderPreviewButton() {
