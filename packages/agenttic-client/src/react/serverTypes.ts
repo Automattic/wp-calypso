@@ -3,8 +3,30 @@
  * Maps to odie-assistant.php endpoints on WordPress.com
  */
 
-import type { Message, Part, TextPart } from '../client/types/index';
+import type { FilePart, Message, Part, TextPart } from '../client/types/index';
 import { generateMessageId } from '../client/utils/core';
+
+/**
+ * Server-side file part structure from odie-assistant API
+ * Represents an attached file/image in the message context
+ */
+export interface ServerFilePart {
+	name?: string;
+	mimeType?: string;
+	uri: string;
+	metadata?: {
+		title?: string;
+		[ key: string ]: unknown;
+	};
+}
+
+/**
+ * Context structure that may contain file parts
+ */
+export interface ServerMessageContext {
+	file_parts?: ServerFilePart[];
+	[ key: string ]: unknown;
+}
 
 /**
  * Server message format from odie-assistant API
@@ -15,7 +37,7 @@ export interface ServerMessage {
 	chat_id?: number;
 	role: 'user' | 'bot' | 'system' | 'tool_call' | 'tool_result';
 	content: string;
-	context?: Record< string, unknown > | any[];
+	context?: ServerMessageContext | unknown[];
 	created_at: string; // MySQL datetime format: "2025-11-06 14:29:49"
 	ts?: number;
 }
@@ -94,6 +116,32 @@ export function serverMessageToMessage(
 			text: serverMessage.content,
 		};
 		parts.push( textPart );
+	}
+
+	// Add file parts from context (images/attachments)
+	const context = serverMessage.context;
+	if (
+		context &&
+		! Array.isArray( context ) &&
+		Array.isArray( context.file_parts )
+	) {
+		for ( const serverFilePart of context.file_parts ) {
+			if ( serverFilePart?.uri ) {
+				const part: FilePart = {
+					type: 'file',
+					file: {
+						name:
+							serverFilePart.name ??
+							serverFilePart.metadata?.title ??
+							'image',
+						mimeType: serverFilePart.mimeType ?? 'image/jpeg',
+						uri: serverFilePart.uri,
+					},
+					metadata: serverFilePart.metadata,
+				};
+				parts.push( part );
+			}
+		}
 	}
 
 	// Tool calls and tool results are intentionally not included in parts
