@@ -25,8 +25,8 @@ const getCurrentPlatform = async (): Promise< {
 			} else if ( architecture === 'x64' ) {
 				return { platform: PlatformType.MacIntel, detectionFailed: false };
 			}
-			// Client Hints available but no architecture - fallback to MacIntel
-			return { platform: PlatformType.MacIntel, detectionFailed: true };
+			// Client Hints available but no architecture - fallback to MacSilicon
+			return { platform: PlatformType.MacSilicon, detectionFailed: true };
 		}
 
 		if ( platform === 'windows' ) {
