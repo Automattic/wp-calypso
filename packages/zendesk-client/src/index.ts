@@ -27,4 +27,4 @@ export {
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
 } from './constants';
-export type { ZendeskConfigName, MessagingGroup } from './types';
+export type * from './types';

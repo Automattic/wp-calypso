@@ -4,6 +4,7 @@
  */
 
 import { useCallback, useMemo } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { CalypsoContextAdapter } from '../../adapters/context/calypso-context-adapter';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import AgentDock from '../agent-dock';
@@ -147,14 +148,16 @@ export default function CalypsoAIAgent( {
 	const loadPreference = externalLoadPreference || defaultLoadPreference;
 
 	return (
-		<AgentDock
-			agentConfig={ agentConfig }
-			emptyViewSuggestions={ suggestions }
-			onClearChat={ handleClearChat }
-			sessionStorageKey="agents-manager-session"
-			preferenceKey="agents_manager_state"
-			savePreference={ savePreference }
-			loadPreference={ loadPreference }
-		/>
+		<MemoryRouter>
+			<AgentDock
+				agentConfig={ agentConfig }
+				emptyViewSuggestions={ suggestions }
+				onClearChat={ handleClearChat }
+				sessionStorageKey="agents-manager-session"
+				preferenceKey="agents_manager_state"
+				savePreference={ savePreference }
+				loadPreference={ loadPreference }
+			/>
+		</MemoryRouter>
 	);
 }

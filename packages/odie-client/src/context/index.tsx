@@ -20,10 +20,10 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 const noop = () => {};
 
 export const emptyChat: Chat = {
-	odieId: null,
+	chat_id: null,
 	conversationId: null,
 	messages: [],
-	wpcomUserId: null,
+	wpcom_user_id: null,
 	provider: 'odie',
 	status: 'loading',
 };
@@ -126,7 +126,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
 			recordTracksEvent( `calypso_odie_${ eventName }`, {
 				...properties,
-				chat_id: mainChatState?.odieId,
+				chat_id: mainChatState?.chat_id,
 				bot_name_slug: newInteractionsBotSlug,
 			} );
 		},

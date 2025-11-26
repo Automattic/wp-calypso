@@ -161,7 +161,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				>
 					<Spinner />
 				</div>
-				{ ( chat.odieId || chat.provider === 'odie' ) && (
+				{ ( chat.chat_id || chat.provider === 'odie' ) && (
 					<ChatMessage
 						message={ getOdieInitialMessage(
 							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,

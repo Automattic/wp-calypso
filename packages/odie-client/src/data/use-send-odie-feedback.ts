@@ -20,13 +20,13 @@ export const useSendOdieFeedback = () => {
 		mutationFn: ( { messageId, ratingValue }: { messageId: number; ratingValue: number } ) => {
 			return wpcomRequest( {
 				method: 'POST',
-				path: `/odie/chat/${ botSlug }/${ chat.odieId }/${ messageId }/feedback`,
+				path: `/odie/chat/${ botSlug }/${ chat.chat_id }/${ messageId }/feedback`,
 				apiNamespace: 'wpcom/v2',
 				body: { rating_value: ratingValue, ...( version && { version } ) },
 			} );
 		},
 		onSuccess: ( data, { messageId, ratingValue } ) => {
-			const queryKey = [ 'chat', botSlug, chat.odieId, 1, 30, true ];
+			const queryKey = [ 'chat', botSlug, chat.chat_id, 1, 30, true ];
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
 				if ( ! currentChatCache ) {
 					return;

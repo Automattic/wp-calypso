@@ -1,24 +1,21 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import Smooch from 'smooch';
+import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
+import { ZendeskConversation } from './types';
 import {
-	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
-	isTestModeEnvironment,
-	SMOOCH_INTEGRATION_ID,
-	SMOOCH_INTEGRATION_ID_STAGING,
-} from '..';
+} from './use-authenticate-zendesk-messaging';
+import { useLoadZendeskMessaging } from './use-load-zendesk-messaging';
 import {
+	isTestModeEnvironment,
 	convertZendeskMessageToAgentticFormat,
 	getClientId,
 	getZendeskConversations,
 } from './util';
 import type { ZendeskMessage } from '@automattic/odie-client';
-
-type Conversation = Awaited< ReturnType< typeof Smooch.getConversationById > >;
 
 const destroy = () => {
 	try {
@@ -102,7 +99,7 @@ document.body.appendChild( smoochContainer );
 export const useZendeskChat = ( enabled: boolean, conversationId?: string ) => {
 	const queryClient = useQueryClient();
 	const [ isChatLoaded, setIsChatLoaded ] = useState( false );
-	const [ conversation, setConversation ] = useState< Conversation | undefined >( undefined );
+	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ clientId, setClientId ] = useState< string | undefined >( undefined );
 	const [ connectionStatus, setConnectionStatus ] = useState<
@@ -113,17 +110,17 @@ export const useZendeskChat = ( enabled: boolean, conversationId?: string ) => {
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( enabled, enabled );
 
-	const getUnreadNotifications = useGetUnreadConversations();
+	// const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
 		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
 			playNotificationSound();
 			Smooch.getConversationById( data?.conversation?.id ).then( ( conversation ) => {
 				setConversation( conversation );
-				getUnreadNotifications();
+				//getUnreadNotifications();
 			} );
 		},
-		[ getUnreadNotifications ]
+		[]
 	);
 
 	const disconnectedListener = useCallback( () => {
@@ -223,14 +220,14 @@ export const useZendeskChat = ( enabled: boolean, conversationId?: string ) => {
 		};
 	}, [ isMessagingScriptLoaded, authData, setIsChatLoaded, queryClient, enabled, conversationId ] );
 
-	const agnetticMessages = useMemo( () => {
+	const agentticMessages = useMemo( () => {
 		return conversation?.messages.map( convertZendeskMessageToAgentticFormat ) ?? [];
 	}, [ conversation?.messages ] );
 
 	useEffect( () => {
 		if ( isChatLoaded && getZendeskConversations ) {
 			const allConversations = getZendeskConversations();
-			getUnreadNotifications( allConversations );
+			// getUnreadNotifications( allConversations );
 			setClientId( getClientId( allConversations ) );
 			Smooch.on( 'message:received', getUnreadListener );
 			Smooch.on( 'message:sent', clientIdListener );
@@ -264,7 +261,7 @@ export const useZendeskChat = ( enabled: boolean, conversationId?: string ) => {
 		isChatLoaded,
 		typingStartListener,
 		typingStopListener,
-		getUnreadNotifications,
+		//getUnreadNotifications,
 		disconnectedListener,
 		reconnectingListener,
 		connectedListener,
@@ -276,16 +273,16 @@ export const useZendeskChat = ( enabled: boolean, conversationId?: string ) => {
 		clientId,
 		conversation,
 		connectionStatus,
-		agnetticMessages,
+		agentticMessages,
 		sendMessage: ( message: ZendeskMessage ) => {
 			if ( conversation?.id ) {
-				setConversation( ( conversation ) => ( {
+				// Todo: mark the message as `is_sending`.
+				setConversation( {
 					...conversation,
 					messages: [ ...conversation.messages, message ],
-				} ) );
-				Smooch.sendMessage( message, conversation.id ).then( () => {
-					// Smooch.getConversationById( conversation.id ).then( setConversation );
 				} );
+				// Todo: mark the message as sent after the following resolves.
+				Smooch.sendMessage( message, conversation.id );
 			}
 		},
 	};

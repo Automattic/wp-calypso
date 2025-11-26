@@ -11,12 +11,12 @@ import type { OdieChat, ReturnedChat } from '../types';
  * Get the ODIE chat and manage the cache to save on API calls.
  * @param chatId - The chat ID to fetch
  */
-export const useOdieChat = ( chatId: number | null ) => {
+export const useOdieChat = ( chatId: number | null, customBotSlug?: string ) => {
 	const { version } = useOdieAssistantContext();
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 
 	// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
-	const botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
+	const botSlug = customBotSlug || supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
 
 	return useQuery< OdieChat, Error >( {
 		queryKey: [ 'odie-chat', botSlug, chatId, version ],
@@ -46,13 +46,14 @@ export const useOdieChat = ( chatId: number | null ) => {
 					...message,
 					internal_message_id: generateUUID(),
 				} ) ),
-				odieId: Number( data.chat_id ) || chatId,
-				wpcomUserId: data.wpcom_user_id,
+				chat_id: Number( data.chat_id ) || chatId,
+				wpcom_user_id: data.wpcom_user_id,
 			};
 		},
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,
-		enabled: !! chatId && !! supportInteraction,
+		// Enable if customBotSlug is provided even if supportInteraction is not loaded.
+		enabled: !! chatId && ( !! supportInteraction || !! customBotSlug ),
 		staleTime: 3600, // 1 hour
 	} );
 };

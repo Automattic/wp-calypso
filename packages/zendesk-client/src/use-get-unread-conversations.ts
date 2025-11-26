@@ -1,8 +1,8 @@
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { ZendeskConversation } from '@automattic/odie-client/src/types';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import Smooch from 'smooch';
+import type { ZendeskConversation } from './types';
 
 export const calculateUnread = (
 	conversations: Conversation[] | ZendeskConversation[] | undefined | null

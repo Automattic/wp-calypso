@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import DOMPurify from 'dompurify';
-import type { ZendeskMessage } from '@automattic/zendesk-client';
 import type { Message, MessageRole, MessageType } from '../types';
+import type { ZendeskMessage } from '@automattic/zendesk-client';
 import type { ReactNode } from 'react';
 
 // Format markdown to support images attachments that open in a new tab.
@@ -96,19 +96,3 @@ function getContentMessage( message: ZendeskMessage ): Message[ 'content' ] {
 	return messageContent;
 }
 
-export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = ( message ) => {
-	const role = (
-		[ 'user', 'business' ].includes( message.role ) ? message.role : 'user'
-	) as MessageRole;
-
-	return {
-		...message,
-		content: getContentMessage( message ),
-		context: { site_id: null },
-		role,
-		type: message.type as MessageType,
-		quotedMessageId: message.id,
-		metadata: message.metadata,
-		feedbackOptions: message.actions,
-	};
-};

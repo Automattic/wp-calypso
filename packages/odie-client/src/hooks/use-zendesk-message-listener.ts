@@ -6,7 +6,7 @@ import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { zendeskMessageConverter } from '../utils';
 import { deduplicateZDMessages } from './use-get-combined-chat';
-import type { ZendeskMessage } from '../types';
+import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 /**
  * Listens for messages from Zendesk and converts them to Odie messages.

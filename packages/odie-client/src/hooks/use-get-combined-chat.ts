@@ -5,6 +5,7 @@ import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
+import type { ZendeskMessage } from '@automattic/zendesk-client';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
 import { getOdieTransferMessage } from '../constants';
 import { emptyChat } from '../context';
@@ -129,7 +130,7 @@ export const useGetCombinedChat = (
 		if ( isChatLoaded || refreshingAfterReconnect ) {
 			try {
 				getZendeskConversation( {
-					chatId: odieChat?.odieId,
+					chatId: odieChat?.chat_id,
 					conversationId: conversationId?.toString(),
 				} )?.then( ( conversation ) => {
 					if ( conversation ) {
@@ -137,7 +138,7 @@ export const useGetCombinedChat = (
 						Smooch.loadConversation( conversation.id );
 						setMainChatState( ( prevChat ) => {
 							const isSameConversation =
-								prevChat.odieId?.toString() === odieId?.toString() &&
+								prevChat.chat_id?.toString() === odieId?.toString() &&
 								prevChat.conversationId === conversation.id;
 
 							return {
@@ -149,13 +150,13 @@ export const useGetCombinedChat = (
 									...getOdieTransferMessage(
 										currentSupportInteraction?.bot_slug as OdieAllBotSlugs
 									),
-									...( deduplicateZDMessages( [
+									...deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 										...( isSameConversation
 											? prevChat.messages.filter( ( message ) => message.role === 'user' )
 											: [] ),
-										...conversation.messages,
-									] ) as Message[] ),
+										...( conversation.messages as unknown as Message[] ),
+									] ),
 								],
 								provider: 'zendesk',
 								status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',

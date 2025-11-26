@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { isInSupportSession } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
 import Smooch from 'smooch';
-import type { ZendeskConversation, ZendeskMessage } from '@automattic/odie-client/src/types';
+import type { ZendeskConversation, ZendeskMessage } from './types';
 import type React from 'react';
 
 // Re-export MessageAction type for use in this module

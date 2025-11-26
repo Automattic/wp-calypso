@@ -8,9 +8,10 @@ import {
 	useAgentChat,
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
-import { AgentUI, createMessageRenderer, EmptyView, type ChatState } from '@automattic/agenttic-ui';
-import { useZendeskChat } from '@automattic/zendesk-client';
+import { AgentUI, createMessageRenderer, EmptyView } from '@automattic/agenttic-ui';
 import { AgentsManagerSelect } from '@automattic/data-stores';
+import { useManagedOdieChat } from '@automattic/odie-client';
+import { useZendeskChat } from '@automattic/zendesk-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
@@ -24,7 +25,7 @@ import { AI } from '../icons';
 import type { ContextAdapter } from '../../adapters/context/context-adapter';
 import './style.scss';
 
-const MODE: 'zendesk' | 'bigsky' = 'zendesk';
+const MODE: 'zendesk' | 'bigsky' | 'odie' = 'odie';
 
 export interface AgentDockProps {
 	/**
@@ -108,24 +109,60 @@ export default function AgentDock( {
 
 	const {
 		messages: bigskyMessages,
-		isProcessing,
+		isProcessing: bigskyIsProcessing,
 		error,
 		onSubmit: onBigskySendMessage,
 	} = useAgentChat( agentConfig );
-	const chat = useZendeskChat( MODE === 'zendesk', '6925ee173e0beaf87e86e76a' );
+	const { agentticMessages: zendeskMessages, sendMessage: sendZendeskMessage } = useZendeskChat(
+		MODE === 'zendesk',
+		'6925ee173e0beaf87e86e76a'
+	);
+	const {
+		messages: odieMessages,
+		isProcessing: odieIsProcessing,
+		sendMessage: sendOdieMessage,
+	} = useManagedOdieChat( null, 'wpcom-support-chat' );
 
 	function onSendMessage( message: string ) {
 		if ( MODE === 'zendesk' ) {
-			chat.sendMessage( {
+			sendZendeskMessage( {
 				text: message,
 				role: 'user',
+				received: Date.now(),
+				id: crypto.randomUUID(),
+				type: 'text',
+			} );
+		} else if ( MODE === 'odie' ) {
+			sendOdieMessage( {
+				content: message,
+				role: 'user',
+				type: 'message',
 			} );
 		} else {
 			onBigskySendMessage( message );
 		}
 	}
 
-	const messages = MODE === 'zendesk' ? chat.agnetticMessages ?? [] : bigskyMessages;
+	const messages = useMemo( () => {
+		if ( MODE === 'zendesk' ) {
+			return zendeskMessages;
+		} else if ( MODE === 'bigsky' ) {
+			return bigskyMessages;
+		} else if ( MODE === 'odie' ) {
+			return odieMessages;
+		}
+		return [];
+	}, [ zendeskMessages, bigskyMessages, odieMessages ] );
+
+	const isProcessing = useMemo( () => {
+		if ( MODE === 'zendesk' ) {
+			return false;
+		} else if ( MODE === 'bigsky' ) {
+			return bigskyIsProcessing;
+		} else if ( MODE === 'odie' ) {
+			return odieIsProcessing;
+		}
+	}, [ bigskyIsProcessing, odieIsProcessing ] );
 
 	// TODO: Use this when adding custom chat header with clear chat menu item
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
