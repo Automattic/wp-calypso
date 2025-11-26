@@ -96,21 +96,14 @@ export const useGetCombinedChat = (
 
 		// We don't have a conversation id, so our chat is simply the odie chat
 		if ( ! conversationId ) {
-			if ( ! currentSupportInteraction?.uuid ) {
-				setMainChatState( {
-					...emptyChat,
-					conversationId: null,
-					status: 'loaded',
-					provider: 'odie',
-				} );
-			}
-
 			// only load odie chat when we have the data, and status is either loading or the chat was empty
 			const shouldLoadOdieChat =
 				odieChat && ( chatStatus === 'loading' || ! mainChatState.messages.length );
-			if ( shouldLoadOdieChat ) {
+
+			// set chat empty state or with messages
+			if ( ! currentSupportInteraction?.uuid || shouldLoadOdieChat ) {
 				setMainChatState( {
-					...odieChat,
+					...( shouldLoadOdieChat ? odieChat : emptyChat ),
 					conversationId: null,
 					status: 'loaded',
 					provider: 'odie',
