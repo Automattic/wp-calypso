@@ -22,6 +22,7 @@ export function getRouterOptions( config: AppConfig ) {
 				properties: {
 					dashboard_backport: true,
 					env: calypsoConfig( 'env_id' ),
+					message: error.message,
 					stack: errorInfo.componentStack,
 				},
 			} );

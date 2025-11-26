@@ -73,6 +73,7 @@ export const getRouter = ( config: AppConfig ) => {
 				properties: {
 					dashboard_backport: false,
 					env: calypsoConfig( 'env_id' ),
+					message: error.message,
 					stack: errorInfo.componentStack,
 				},
 			} );
