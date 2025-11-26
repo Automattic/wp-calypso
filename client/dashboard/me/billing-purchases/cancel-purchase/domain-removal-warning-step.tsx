@@ -40,7 +40,9 @@ export default function DomainRemovalWarningStep( {
 					{ sprintf(
 						/* translators: %(domainName)s is the domain name */
 						__( 'Delete %(domainName)s' ),
-						domainName
+						{
+							domainName,
+						}
 					) }
 				</Heading>
 
