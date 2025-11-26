@@ -5,7 +5,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useState, useCallback } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
@@ -46,15 +46,12 @@ export default function DomainRemovalConfirmationStep( {
 
 				<Text>
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: %s is the domain name */
-							__(
-								'<strong>%s</strong> will be deleted. Any services related to it will stop working. Are you sure you want to proceed?'
-							),
-							domainName
+						/* translators: <domainName /> is the domain name */
+						__(
+							'<domainName /> will be deleted. Any services related to it will stop working. Are you sure you want to proceed?'
 						),
 						{
-							strong: <strong />,
+							domainName: <strong>{ domainName }</strong>,
 						}
 					) }
 				</Text>

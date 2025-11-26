@@ -38,8 +38,8 @@ export default function DomainRemovalWarningStep( {
 			<VStack spacing={ 3 }>
 				<Heading level={ 3 }>
 					{ sprintf(
-						/* translators: %s is the domain name */
-						__( 'Delete %s' ),
+						/* translators: %(domainName)s is the domain name */
+						__( 'Delete %(domainName)s' ),
 						domainName
 					) }
 				</Heading>
@@ -60,15 +60,12 @@ export default function DomainRemovalWarningStep( {
 
 				<Text>
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: %s is the domain name */
-							__(
-								'If you want to use <strong>%s</strong> with another provider you can <moveLink>move it to another service</moveLink> or <transferLink>transfer it to another provider</transferLink>.'
-							),
-							domainName
+						/* translators: <domainName /> is the domain name */
+						__(
+							'If you want to use <domainName /> with another provider you can <moveLink>move it to another service</moveLink> or <transferLink>transfer it to another provider</transferLink>.'
 						),
 						{
-							strong: <strong />,
+							domainName: <strong>{ domainName }</strong>,
 							moveLink: (
 								<RouterLinkButton
 									variant="link"
