@@ -1,20 +1,14 @@
+import { AgentsManagerSelect } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
-import {
-	createPortal,
-	useCallback,
-	useLayoutEffect,
-	useRef,
-	useState,
-	useMemo,
-} from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { createPortal, useCallback, useLayoutEffect, useRef, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import './style.scss';
 
 interface Options {
-	defaultUndocked?: boolean;
-	defaultOpen?: boolean;
 	desktopMediaQuery?: string;
 	onOpenSidebar?: () => void;
 	onCloseSidebar?: () => void;
@@ -35,8 +29,6 @@ interface ReturnValue {
 export default function useChatLayoutManager(
 	sidebarContainer: string | HTMLElement,
 	{
-		defaultUndocked = false,
-		defaultOpen = false,
 		desktopMediaQuery = '(min-width: 1200px)',
 		onOpenSidebar = () => {},
 		onCloseSidebar = () => {},
@@ -44,9 +36,14 @@ export default function useChatLayoutManager(
 		onUndock = () => {},
 	}: Options = {}
 ): ReturnValue {
+	const { setIsDocked, setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
+	const { isDocked, isOpen } = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
+
 	const portalRef = useRef< HTMLDivElement >();
 	const isDesktop = useMediaQuery( desktopMediaQuery );
-	const [ isDocked, setIsDocked ] = useState( ! defaultUndocked );
 	const shouldRenderSidebar = isDesktop && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 
@@ -80,31 +77,17 @@ export default function useChatLayoutManager(
 			portalRef.current = document.createElement( 'div' );
 			portalRef.current.className = 'agents-manager-chat';
 			container.appendChild( portalRef.current );
-
-			// Apply initial state
-			if ( shouldRenderSidebar ) {
-				container.classList.add( 'agents-manager-sidebar-container' );
-				portalRef.current.classList.add( 'agents-manager-chat--docked' );
-
-				if ( defaultOpen ) {
-					container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
-				}
-
-				onDockRef.current();
-			} else {
-				portalRef.current.classList.add( 'agents-manager-chat--undocked' );
-
-				onUndockRef.current();
-			}
-
-			return;
 		}
 
-		// Handle state changes after initial setup
+		// Handle dock/undock state changes
 		if ( shouldRenderSidebar ) {
 			container.classList.add( 'agents-manager-sidebar-container' );
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--undocked' );
+
+			if ( isOpen ) {
+				container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
+			}
 
 			onDockRef.current();
 		} else {
@@ -118,7 +101,7 @@ export default function useChatLayoutManager(
 			onUndockRef.current();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- defaultOpen should only apply on initial mount
-	}, [ container, shouldRenderSidebar ] );
+	}, [ container, shouldRenderSidebar, isOpen ] );
 
 	// Cleanup on unmount
 	// Use `useLayoutEffect` to prevent flickering
@@ -147,8 +130,9 @@ export default function useChatLayoutManager(
 
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 
+		setIsOpen( true );
 		onOpenSidebarRef.current();
-	}, [ container ] );
+	}, [ container, setIsOpen ] );
 
 	const handleCloseSidebar = useCallback( () => {
 		if ( ! container ) {
@@ -157,8 +141,9 @@ export default function useChatLayoutManager(
 
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 
+		setIsOpen( false );
 		onCloseSidebarRef.current();
-	}, [ container ] );
+	}, [ container, setIsOpen ] );
 
 	const dock = useCallback( () => {
 		clearTimeout( openSidebarTimeoutRef.current );
@@ -168,12 +153,12 @@ export default function useChatLayoutManager(
 			// Wait for DOM update to complete before opening the sidebar
 			openSidebarTimeoutRef.current = setTimeout( handleOpenSidebar, 100 );
 		}
-	}, [ isDesktop, handleOpenSidebar ] );
+	}, [ setIsDocked, isDesktop, handleOpenSidebar ] );
 
 	const undock = useCallback( () => {
 		clearTimeout( openSidebarTimeoutRef.current );
 		setIsDocked( false );
-	}, [] );
+	}, [ setIsDocked ] );
 
 	const createChatPortal = useCallback(
 		( children: React.ReactNode ) => {
@@ -202,7 +187,7 @@ export default function useChatLayoutManager(
 	);
 
 	return {
-		isDocked: shouldRenderSidebar,
+		isDocked: !! shouldRenderSidebar,
 		isDesktop,
 		dock,
 		undock,

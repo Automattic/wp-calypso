@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
@@ -21,22 +22,23 @@ import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { urlToSlug } from '../utils/url';
 import AddNewSite from './add-new-site';
 import {
 	SitesDataViews,
 	useActions,
 	useFields,
+	useFields__ES,
 	getDefaultView,
 	recordViewChanges,
 } from './dataviews';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
+import { SiteLink, SiteLink__ES } from './site-fields';
 import type {
 	FetchSitesOptions,
 	Site,
 	FetchDashboardSiteListParams,
-	SiteProfileSite,
+	DashboardSiteListSite,
 } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -64,29 +66,30 @@ function getFetchSiteListParams(
 	view: View
 	// isRestoringAccount: boolean TODO: Add site visibility filtering
 ): FetchDashboardSiteListParams {
-	const dataviewFieldToSiteProfileField: Record< string, keyof SiteProfileSite > = {
-		name: 'blogname',
+	const dataviewFieldToSiteProfileField: Record< string, keyof DashboardSiteListSite > = {
+		name: 'name',
 		URL: 'url',
-		'icon.ico': 'site_icon',
+		'icon.ico': 'icon',
 		backup: 'has_backup',
-		views: 'stats_visitors',
-		// plan
+		// views: 'stats_views',
+		plan: 'plan',
 		// wp_version
 		// is_a8c
 		// preview
 		// last_published
 		// uptime
-		// visitors
-		// subscribers_count
+		visitors: 'visitors',
+		subscribers_count: 'total_wpcom_subscribers',
 		// links
 		// php_version
 		// storage
 		// host
 	};
 
-	const fields = new Set< keyof SiteProfileSite >( [ 'blog_id', 'url' ] ); // Always include ID and URL (to calculate site slug).
+	const fields = new Set< keyof DashboardSiteListSite >( [ 'blog_id', 'slug', 'deleted' ] ); // Always include ID and slug (for navigation), and deleted (for styling)
 	if ( view.showTitle && view.titleField ) {
 		fields.add( dataviewFieldToSiteProfileField[ view.titleField ] );
+		fields.add( 'badge' );
 	}
 	if ( view.showMedia && view.mediaField ) {
 		fields.add( dataviewFieldToSiteProfileField[ view.mediaField ] );
@@ -117,44 +120,6 @@ function getFetchSiteListParams(
 	};
 }
 
-function siteProfileSiteToSite( site: SiteProfileSite ): Site {
-	return {
-		ID: site.blog_id ?? 0,
-		slug: urlToSlug( site.url ?? '' ),
-		name: site.blogname ?? '',
-		URL: site.url ?? '',
-		icon: site.site_icon ?? undefined,
-		is_deleted: Boolean( site.deleted ),
-		is_coming_soon: Boolean( site.wpcom_status?.is_coming_soon ),
-		is_private: Boolean( site.private ),
-		is_wpcom_staging_site: Boolean( site.wpcom_status?.is_staging ),
-		capabilities: {
-			manage_options: false, // TODO
-			update_plugins: false, // TODO
-		},
-		garden_is_provisioned: null, // TODO
-		garden_name: null, // TODO
-		garden_partner: null, // TODO
-		is_a4a_dev_site: false, // TODO
-		is_a8c: false, // TODO
-		is_garden: false, // TODO
-		is_wpcom_atomic: false, // TODO
-		is_wpcom_flex: false, // TODO
-		is_vip: false, // TODO
-		lang: 'en', // TODO
-		launch_status: false, // TODO
-		site_migration: { in_progress: false, is_complete: false }, // TODO
-		site_owner: 0, // TODO
-		jetpack: false, // TODO
-		jetpack_connection: false, // TODO
-		jetpack_modules: null, // TODO
-		was_ecommerce_trial: false, // TODO
-		was_migration_trial: false, // TODO
-		was_hosting_trial: false, // TODO
-		was_upgraded_from_trial: false, // TODO
-	};
-}
-
 /**
  * Enables the correct site query based on the dataviews/v2/es-site-list feature flag.
  */
@@ -178,7 +143,9 @@ export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 
 	if ( isEnabled( 'dashboard/v2/es-site-list' ) ) {
 		return {
-			sites: siteProfilesQueryResult.data?.sites.map( siteProfileSiteToSite ),
+			sites: [],
+			sites__ES: siteProfilesQueryResult.data?.sites,
+			hasNoData: siteProfilesQueryResult.data?.sites.length === 0,
 			isLoadingSites: siteProfilesQueryResult.isLoading,
 			isPlaceholderData: siteProfilesQueryResult.isPlaceholderData,
 			totalItems: siteProfilesQueryResult.data?.total,
@@ -187,9 +154,29 @@ export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 
 	return {
 		sites: sitesQueryResult.data,
+		sites__ES: [],
+		hasNoData: sitesQueryResult.data?.length === 0,
 		isLoadingSites: sitesQueryResult.isLoading,
 		isPlaceholderData: sitesQueryResult.isPlaceholderData,
 		totalItems: sitesQueryResult.data?.length,
+	};
+}
+
+/**
+ * Meant to stand in for the dataview's filterSortAndPaginate function when
+ * the filtering has already been done on the backend by elasticsearch.
+ */
+export function filterSortAndPaginate__ES(
+	sites: DashboardSiteListSite[],
+	view: View,
+	totalItems: number
+) {
+	return {
+		data: sites,
+		paginationInfo: {
+			totalItems,
+			totalPages: view.perPage ? Math.ceil( totalItems / view.perPage ) : 1,
+		},
 	};
 }
 
@@ -215,12 +202,11 @@ export default function Sites() {
 		queryParams: currentSearchParams,
 	} );
 
-	const { sites, isLoadingSites, isPlaceholderData, totalItems } = useSiteListQuery(
-		view,
-		isRestoringAccount
-	);
+	const { sites, sites__ES, isLoadingSites, isPlaceholderData, hasNoData, totalItems } =
+		useSiteListQuery( view, isRestoringAccount );
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
+	const fields__ES = useFields__ES( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
@@ -262,6 +248,47 @@ export default function Sites() {
 		}
 	}, [ sites, queryClient ] );
 
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
+
+	const { data: filteredData__ES, paginationInfo: paginationInfo__ES } = filterSortAndPaginate__ES(
+		sites__ES ?? [],
+		view,
+		totalItems ?? 0
+	);
+
+	const emptyState = (
+		<DataViewsEmptyState
+			title={ emptyTitle }
+			description={ emptyDescription }
+			illustration={ <img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } /> }
+			actions={
+				<>
+					{ view.search && (
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							onClick={ () => {
+								navigate( {
+									search: {
+										...currentSearchParams,
+										view: Object.fromEntries(
+											Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
+										),
+									},
+								} );
+							} }
+						>
+							{ __( 'Clear search' ) }
+						</Button>
+					) }
+					<Button __next40pxDefaultSize variant="primary" onClick={ () => setIsModalOpen( true ) }>
+						{ __( 'Add new site' ) }
+					</Button>
+				</>
+			}
+		/>
+	);
+
 	return (
 		<>
 			{ isModalOpen && (
@@ -286,54 +313,35 @@ export default function Sites() {
 				}
 				notices={ <SitesNotices /> }
 			>
-				<SitesDataViews
-					view={ view }
-					sites={ sites ?? [] }
-					totalItems={ totalItems ?? 0 }
-					fields={ fields }
-					actions={ actions }
-					isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
-					empty={
-						<DataViewsEmptyState
-							title={ emptyTitle }
-							description={ emptyDescription }
-							illustration={
-								<img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } />
-							}
-							actions={
-								<>
-									{ view.search && (
-										<Button
-											__next40pxDefaultSize
-											variant="secondary"
-											onClick={ () => {
-												navigate( {
-													search: {
-														...currentSearchParams,
-														view: Object.fromEntries(
-															Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
-														),
-													},
-												} );
-											} }
-										>
-											{ __( 'Clear search' ) }
-										</Button>
-									) }
-									<Button
-										__next40pxDefaultSize
-										variant="primary"
-										onClick={ () => setIsModalOpen( true ) }
-									>
-										{ __( 'Add new site' ) }
-									</Button>
-								</>
-							}
-						/>
-					}
-					onChangeView={ handleViewChange }
-					onResetView={ resetView }
-				/>
+				{ isEnabled( 'dashboard/v2/es-site-list' ) ? (
+					<SitesDataViews< DashboardSiteListSite >
+						getItemId={ ( item ) => '' + item.blog_id?.toString() + item.url?.value }
+						view={ view }
+						sites={ filteredData__ES }
+						fields={ fields__ES }
+						// TODO: actions={ actions }
+						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+						empty={ emptyState }
+						paginationInfo={ paginationInfo__ES }
+						renderItemLink={ ( { item, ...props } ) => <SiteLink__ES { ...props } site={ item } /> }
+						onChangeView={ handleViewChange }
+						onResetView={ resetView }
+					/>
+				) : (
+					<SitesDataViews< Site >
+						getItemId={ ( item ) => item.ID.toString() }
+						view={ view }
+						sites={ filteredData }
+						fields={ fields }
+						actions={ actions }
+						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+						empty={ emptyState }
+						paginationInfo={ paginationInfo }
+						onChangeView={ handleViewChange }
+						onResetView={ resetView }
+						renderItemLink={ ( { item, ...props } ) => <SiteLink { ...props } site={ item } /> }
+					/>
+				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
 			 *

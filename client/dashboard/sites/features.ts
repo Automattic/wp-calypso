@@ -57,15 +57,24 @@ export function canViewSiteActions( site: Site ) {
 
 export function canTransferSite( site: Site, user: User ) {
 	const isSiteOwner = site.site_owner === user.ID;
-	return ! site.is_wpcom_staging_site && isSiteOwner;
+	return ! site.is_wpcom_staging_site && isSiteOwner && ! isSelfHostedJetpackConnected( site );
 }
 
 export function canLeaveSite( site: Site ) {
-	return ! site.is_wpcom_staging_site;
+	return (
+		! site.is_wpcom_staging_site &&
+		! site.is_deleted &&
+		! isP2( site ) &&
+		! isSelfHostedJetpackConnected( site )
+	);
 }
 
 export function canResetSite( site: Site ) {
 	return ! site.is_wpcom_staging_site;
+}
+
+export function canRestoreSite( site: Site ) {
+	return site.is_deleted && ! isP2( site ) && ! isSelfHostedJetpackConnected( site );
 }
 
 export function canSwitchEnvironment( site: Site ) {

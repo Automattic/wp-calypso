@@ -1,15 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import { render as testingLibraryRender } from '@testing-library/react';
 import { AuthContext } from '../../../app/auth';
+import { render as testUtilsRender } from '../../../test-utils';
 import { Plan } from '../index';
 import type { User, Site } from '@automattic/api-core';
 
 const userId = 1;
 
 function render( ui: React.ReactElement ) {
-	return testingLibraryRender(
+	return testUtilsRender(
 		<AuthContext.Provider
 			value={ { user: { ID: userId } as User, logout: () => Promise.resolve() } }
 		>
@@ -19,64 +19,47 @@ function render( ui: React.ReactElement ) {
 }
 
 describe( '<Plan>', () => {
-	test( 'for staging sites, it renders "Staging Site"', () => {
-		const site = {
-			is_wpcom_staging_site: true,
-		} as Site;
-		const { container } = render( <Plan site={ site } /> );
-		expect( container.textContent ).toBe( 'Staging Site' );
-	} );
-
 	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the Jetpack logo and plan name', () => {
-		const site = {
-			is_wpcom_atomic: false,
-			jetpack_connection: true,
-			jetpack: true,
-			plan: {
-				product_name_short: 'Free',
-			},
-		} as Site;
-		const { container } = render( <Plan site={ site } /> );
+		const { container } = render(
+			<Plan isJetpack isSelfHostedJetpackConnected value="Free" nag={ { isExpired: false } } />
+		);
 		expect( container.querySelector( 'svg' ) ).toBeInTheDocument();
 		expect( container.textContent ).toBe( 'Free' );
 	} );
 
 	test( 'for self-hosted, Jetpack-connected sites, inactive Jetpack plugin, it renders dash', () => {
-		const site = {
-			is_wpcom_atomic: false,
-			jetpack_connection: true,
-			jetpack: false,
-			plan: {
-				product_name_short: 'Free',
-			},
-		} as Site;
-		const { container } = render( <Plan site={ site } /> );
+		const { container } = render(
+			<Plan
+				isJetpack={ false }
+				isSelfHostedJetpackConnected
+				value="Free"
+				nag={ { isExpired: false } }
+			/>
+		);
 		expect( container.textContent ).toBe( '-' );
 	} );
 
-	test( 'for WordPress.com Simple sites, it renders the plan name', () => {
-		const site = {
-			is_wpcom_atomic: false,
-			jetpack_connection: false,
-			jetpack: false,
-			plan: {
-				product_name_short: 'Premium',
-			},
-		} as Site;
-		const { container } = render( <Plan site={ site } /> );
+	test( 'for WordPress.com Simple sites, it renders the value prop', () => {
+		const { container } = render(
+			<Plan
+				isJetpack={ false }
+				isSelfHostedJetpackConnected={ false }
+				value="Premium"
+				nag={ { isExpired: false } }
+			/>
+		);
 		expect( container.textContent ).toBe( 'Premium' );
 	} );
 
 	test( 'for WordPress.com Atomic sites, it renders the plan name', () => {
-		const site = {
-			is_wpcom_atomic: true,
-			jetpack_connection: true,
-			jetpack: true,
-			plan: {
-				product_name_short: 'Business',
-			},
-		} as Site;
-		const { container } = render( <Plan site={ site } /> );
+		const { container } = render(
+			<Plan
+				isJetpack
+				isSelfHostedJetpackConnected={ false }
+				value="Business"
+				nag={ { isExpired: false } }
+			/>
+		);
 		expect( container.textContent ).toBe( 'Business' );
 	} );
 
@@ -87,7 +70,14 @@ describe( '<Plan>', () => {
 				expired: true,
 			},
 		} as Site;
-		const { container } = render( <Plan site={ site } /> );
+		const { container } = render(
+			<Plan
+				isJetpack={ false }
+				isSelfHostedJetpackConnected={ false }
+				value="Business"
+				nag={ { isExpired: true, site } }
+			/>
+		);
 		expect( container.textContent ).toBe( 'Business-expired' );
 	} );
 
@@ -101,7 +91,14 @@ describe( '<Plan>', () => {
 				expired: true,
 			},
 		} as Site;
-		const { getByText, getByRole } = render( <Plan site={ site } /> );
+		const { getByText, getByRole } = render(
+			<Plan
+				isJetpack={ false }
+				isSelfHostedJetpackConnected={ false }
+				value="Business"
+				nag={ { isExpired: true, site } }
+			/>
+		);
 		expect( getByText( 'Business-expired' ) ).toBeInTheDocument();
 		expect( getByRole( 'link', { name: /Renew plan/ } ) ).toHaveAttribute(
 			'href',
@@ -119,7 +116,14 @@ describe( '<Plan>', () => {
 				expired: true,
 			},
 		} as Site;
-		const { getByText, getByRole } = render( <Plan site={ site } /> );
+		const { getByText, getByRole } = render(
+			<Plan
+				isJetpack={ false }
+				isSelfHostedJetpackConnected={ false }
+				value="Trial"
+				nag={ { isExpired: true, site } }
+			/>
+		);
 		expect( getByText( 'Trial-expired' ) ).toBeInTheDocument();
 		expect( getByRole( 'link', { name: /Upgrade/ } ) ).toHaveAttribute(
 			'href',

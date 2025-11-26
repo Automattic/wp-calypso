@@ -9,12 +9,6 @@ import { render as dashboardRender } from '../../../test-utils';
 import NotificationsExtras from '../index';
 import type { UserNotificationSettings, WpcomNotificationSettings } from '@automattic/api-core';
 
-jest.mock( '../../../app/analytics', () => ( {
-	useAnalytics: jest.fn().mockReturnValue( {
-		recordTracksEvent: jest.fn(),
-	} ),
-} ) );
-
 const defaultWpcomSettings: WpcomNotificationSettings = {
 	marketing: false,
 	research: false,
