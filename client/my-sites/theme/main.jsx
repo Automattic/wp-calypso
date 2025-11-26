@@ -108,7 +108,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import ThemeDownloadCard from './theme-download-card';
@@ -397,7 +397,7 @@ class ThemeSheet extends Component {
 
 	shouldRenderForStaging() {
 		// isExternallyManagedTheme determines if a theme is paid or not
-		const { isMarketplaceThemeSubscribed, isExternallyManagedTheme, isWpcomStaging } = this.props;
+		const { isExternallyManagedTheme, isMarketplaceThemeSubscribed, isWpcomStaging } = this.props;
 		return isExternallyManagedTheme && isWpcomStaging && ! isMarketplaceThemeSubscribed;
 	}
 
@@ -1371,7 +1371,8 @@ export default connect(
 	( state, { id } ) => {
 		const themeId = id;
 		const site = getSelectedSite( state );
-		const siteId = getProductionSiteId( site );
+		const productionSiteId = getProductionSiteId( site );
+		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, themeId );
 		const backPath = getBackPath( state );
@@ -1409,7 +1410,8 @@ export default connect(
 			( isExternallyManagedTheme && Object.values( getProductsList( state ) ).length === 0 );
 
 		const isMarketplaceThemeSubscribed =
-			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
+			isExternallyManagedTheme &&
+			getIsMarketplaceThemeSubscribed( state, theme?.id, productionSiteId );
 
 		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
 		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
