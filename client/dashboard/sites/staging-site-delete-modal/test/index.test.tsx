@@ -12,7 +12,6 @@ const mockMutate = jest.fn();
 const mockCreateErrorNotice = jest.fn();
 const mockCreateSuccessNotice = jest.fn();
 const mockNavigate = jest.fn();
-const mockRecordTracksEvent = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
@@ -48,12 +47,6 @@ jest.mock( '@tanstack/react-query', () => ( {
 		mutate: mockMutate,
 		isPending: false,
 		error: null,
-	} ) ),
-} ) );
-
-jest.mock( '../../../app/analytics', () => ( {
-	useAnalytics: jest.fn( () => ( {
-		recordTracksEvent: mockRecordTracksEvent,
 	} ) ),
 } ) );
 
@@ -172,7 +165,7 @@ describe( 'StagingSiteDeleteModal', () => {
 				error: null,
 			} );
 
-			renderModal( mockStagingSite );
+			const { recordTracksEvent } = renderModal( mockStagingSite );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
@@ -180,7 +173,7 @@ describe( 'StagingSiteDeleteModal', () => {
 				type: 'snackbar',
 			} );
 
-			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_hosting_configuration_staging_site_delete_failure'
 			);
 		} );
@@ -241,7 +234,7 @@ describe( 'StagingSiteDeleteModal', () => {
 			} );
 
 			const mockOnClose = jest.fn();
-			renderModal( mockStagingSite, mockOnClose );
+			const { recordTracksEvent } = renderModal( mockStagingSite, mockOnClose );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
@@ -257,7 +250,7 @@ describe( 'StagingSiteDeleteModal', () => {
 				params: { siteSlug: 'production-site' },
 			} );
 
-			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_hosting_configuration_staging_site_delete_success'
 			);
 		} );

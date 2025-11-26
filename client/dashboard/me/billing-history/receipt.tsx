@@ -439,19 +439,21 @@ function ReceiptItemDiscounts( { item, receiptDate }: { item: ReceiptItem; recei
 				) {
 					return (
 						<li key={ costOverride.humanReadableReason }>
-							<Text>{ costOverride.humanReadableReason }</Text>
-							{ item.introductory_offer_terms?.enabled && (
-								<Text>
-									{ sprintf(
-										/* translators: %s: formatted price */
-										__( 'Amount paid in transaction: %s' ),
-										formatCurrency( item.amount_integer, item.currency, {
-											isSmallestUnit: true,
-											stripZeros: true,
-										} )
-									) }
-								</Text>
-							) }
+							<Flex justify="space-between">
+								<Text>{ costOverride.humanReadableReason }</Text>
+								{ item.introductory_offer_terms?.enabled && (
+									<Text>
+										{ sprintf(
+											/* translators: %s: formatted price */
+											__( 'Amount paid in transaction: %s' ),
+											formatCurrency( item.amount_integer, item.currency, {
+												isSmallestUnit: true,
+												stripZeros: true,
+											} )
+										) }
+									</Text>
+								) }
+							</Flex>
 						</li>
 					);
 				}
@@ -459,8 +461,8 @@ function ReceiptItemDiscounts( { item, receiptDate }: { item: ReceiptItem; recei
 				return (
 					<li key={ costOverride.humanReadableReason }>
 						<Flex justify="space-between">
-							<span>{ costOverride.humanReadableReason }</span>
-							<span>{ formattedDiscountAmount }</span>
+							<Text>{ costOverride.humanReadableReason }</Text>
+							<Text>{ formattedDiscountAmount }</Text>
 						</Flex>
 					</li>
 				);

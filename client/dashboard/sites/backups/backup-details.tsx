@@ -145,7 +145,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 				/>
 				{ isSmallViewport ? actions : null }
 			</CardHeader>
-			<CardBody>
+			<CardBody style={ { minHeight: '300px' } }>
 				<VStack>
 					<Text size={ 14 } weight={ 500 }>
 						{ backup.content.text }
