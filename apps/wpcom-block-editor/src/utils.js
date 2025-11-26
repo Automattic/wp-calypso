@@ -1,8 +1,5 @@
 import { select, subscribe } from '@wordpress/data';
 
-export const objectHasValues = ( object ) =>
-	Object.values( object ).some( ( value ) => value !== undefined );
-
 /**
  * Checks self and top to determine if we are being loaded in an iframe.
  * Can't use window.frameElement because we are being embedded from a different origin.
