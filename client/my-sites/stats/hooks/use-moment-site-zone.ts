@@ -29,11 +29,20 @@ export const getMomentSiteZone = createSelector(
 
 			if ( Number.isFinite( gmtOffset ) ) {
 				if ( dateInput === undefined ) {
-					// In all the components, `moment` is directly used, which defaults to the browser's local timezone.
-					// As a result, we need to convert the moment object to the site's timezone for easier comparison like `isSame`.
-					return moment( moment().utcOffset( gmtOffset ).format( dateFormat ) ).locale(
-						localeSlug
-					);
+					// Get current time in site timezone and format as date string, then create
+					// a moment with the site's UTC offset applied for consistent comparisons.
+					const todayInSiteZone = moment().utcOffset( gmtOffset ).format( dateFormat );
+					return moment
+						.parseZone( todayInSiteZone )
+						.utcOffset( gmtOffset, true )
+						.locale( localeSlug );
+				}
+				// When parsing a date string (e.g., 'YYYY-MM-DD'), we need to interpret it as
+				// that date in the site's timezone, not in the browser's local timezone. Using
+				// parseZone preserves the date as-is without timezone conversion, then we apply
+				// the site's offset while keeping the local time (second argument `true`).
+				if ( typeof dateInput === 'string' ) {
+					return moment.parseZone( dateInput ).utcOffset( gmtOffset, true ).locale( localeSlug );
 				}
 				return moment( dateInput ).utcOffset( gmtOffset ).locale( localeSlug );
 			}
