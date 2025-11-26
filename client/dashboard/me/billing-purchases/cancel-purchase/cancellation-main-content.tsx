@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 import { isAkismetProduct, isGSuiteOrGoogleWorkspaceProductSlug } from '../../../utils/purchase';
 import BackupRetentionOptionOnCancelPurchase from './backup-retention-management/retention-option-on-cancel-purchase';
 import CancelPurchaseDomainOptions from './domain-options';
@@ -65,8 +65,11 @@ export default function CancellationMainContent( {
 		},
 		{
 			getSlug: () => 'primaryDomain',
-			/* translators: %(domainName)s is a domain name */
-			getTitle: () => __( 'Use %(domainName)s as your primary domain' ),
+			getTitle: () =>
+				/* translators: %(domainName)s is a domain name */
+				sprintf( __( 'Use %(domainName)s as your primary domain' ), {
+					domainName: purchase.domain,
+				} ),
 		},
 		{
 			getSlug: () => 'removeThemesPluginsData',
