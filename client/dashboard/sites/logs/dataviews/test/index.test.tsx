@@ -18,14 +18,6 @@ jest.mock( '../../../../app/auth', () => ( {
 	useAuth: () => ( { user: { id: 'test-user' } } ),
 } ) );
 
-const mockRecordTracksEvent = jest.fn();
-
-jest.mock( '../../../../app/analytics', () => ( {
-	useAnalytics: jest.fn( () => ( {
-		recordTracksEvent: mockRecordTracksEvent,
-	} ) ),
-} ) );
-
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
@@ -186,7 +178,7 @@ describe( 'SiteLogsDataViews', () => {
 		const user = userEvent.setup();
 		const autoRefresh = jest.fn();
 
-		render(
+		const { recordTracksEvent } = render(
 			<SiteLogsDataViews
 				gmtOffset={ -8 }
 				timezoneString="America/Los_Angeles"
@@ -202,7 +194,7 @@ describe( 'SiteLogsDataViews', () => {
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		const toggle = screen.getByRole( 'checkbox', { name: 'Auto-refresh' } );
 		await user.click( toggle );
-		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 		expect( autoRefresh ).not.toHaveBeenCalled();
 	} );
 
