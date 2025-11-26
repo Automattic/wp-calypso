@@ -1,4 +1,5 @@
 import * as embed from '@wordpress/block-library/build-module/embed';
+import * as heading from '@wordpress/block-library/build-module/heading';
 import * as image from '@wordpress/block-library/build-module/image';
 import * as list from '@wordpress/block-library/build-module/list';
 import * as listItem from '@wordpress/block-library/build-module/list-item';
@@ -71,7 +72,7 @@ function isImage( url: string ) {
  * We only want to load the blocks that we need to avoid extra bloat.
  */
 export const loadBlocksWithCustomizations = () => {
-	[ paragraph, image, list, listItem, quote, embed ].forEach( ( block ) => {
+	[ paragraph, image, list, listItem, quote, embed, heading ].forEach( ( block ) => {
 		const { metadata, settings, name } = block as any;
 
 		/**
