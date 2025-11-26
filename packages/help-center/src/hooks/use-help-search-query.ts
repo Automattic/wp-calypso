@@ -51,7 +51,7 @@ export const useHelpSearchQuery = (
 	search: string,
 	locale = 'en',
 	sectionName = '',
-	source = '',
+	source: HelpCenterRequiredInformation[ 'source' ] = '',
 	queryOptions: Record< string, unknown > = {}
 ) => {
 	return useQuery< any >( {
