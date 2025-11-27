@@ -154,7 +154,7 @@ export const useGetCombinedChat = (
 										...( isSameConversation
 											? prevChat.messages.filter( ( message ) => message.role === 'user' )
 											: [] ),
-										...conversation.messages,
+										...( conversation.messages as Message[] ),
 									] ) as Message[] ),
 								],
 								provider: 'zendesk',
