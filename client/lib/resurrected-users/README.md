@@ -24,16 +24,16 @@ experiment:
 
 ## Variations & Feature Flags
 
-| Variation Key                                   | Description              | Config Flag                        | Placeholder CTAs                                  |
-|-------------------------------------------------|--------------------------|------------------------------------|---------------------------------------------------|
-| `control`                                       | No modal                 | `welcome-back-modal-control`       | —                                                 |
-| `treatment_ai_only`                             | AI-only CTA              | `welcome-back-modal-ai-only`       | “Create a new site with AI” → `/setup/ai-site-builder` |
-| `treatment_manual_dual`                         | Manual + continue        | `welcome-back-modal-manual`        | Manual onboarding + “Continue where I left”       |
-| `treatment_ai_dual`                             | AI + continue            | `welcome-back-modal-ai-combo`      | AI builder + “Continue where I left”              |
-| `treatment_all_options`                         | Manual + AI + continue   | `welcome-back-modal-all-options`   | Manual onboarding, AI builder, continue           |
+| Variation Key           | Description            | Config Flag                      | Placeholder CTAs                                       |
+| ----------------------- | ---------------------- | -------------------------------- | ------------------------------------------------------ |
+| `control`               | No modal               | `welcome-back-modal-control`     | —                                                      |
+| `treatment_ai_only`     | AI-only CTA            | `welcome-back-modal-ai-only`     | “Create a new site with AI” → `/setup/ai-site-builder` |
+| `treatment_manual_dual` | Manual + continue      | `welcome-back-modal-manual`      | Manual onboarding + “Continue where I left”            |
+| `treatment_ai_dual`     | AI + continue          | `welcome-back-modal-ai-combo`    | AI builder + “Continue where I left”                   |
+| `treatment_all_options` | Manual + AI + continue | `welcome-back-modal-all-options` | Manual onboarding, AI builder, continue                |
 
 All variants are feature-flagged so that we can selectively enable treatments during incremental rollouts. Control
-remains opt-in so we can disable *all* UI safely if necessary.
+remains opt-in so we can disable _all_ UI safely if necessary.
 
 ## Analytics
 
@@ -45,4 +45,3 @@ remains opt-in so we can disable *all* UI safely if necessary.
 - Replace the placeholder modal content with the final Figma designs per variant (request links when starting each task).
 - Wire CTA destinations to the finalized flows (manual onboarding, AI builder, and continue-with-site actions).
 - Hook up the experiment exposure event in ExPlat once the treatment UI ships.
-
