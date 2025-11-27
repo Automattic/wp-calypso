@@ -1,6 +1,7 @@
+import { zendeskMessageConverter } from '@automattic/zendesk-client';
 import clsx from 'clsx';
 import { useOdieAssistantContext } from '../../context';
-import { hasSubmittedCSATRating, isCSATMessage, zendeskMessageConverter } from '../../utils';
+import { hasSubmittedCSATRating, isCSATMessage } from '../../utils';
 import { FeedbackForm } from './feedback-form';
 import { IntroductionMessage } from './introduction-message/introduction-message';
 import MarkdownOrChildren from './mardown-or-children';

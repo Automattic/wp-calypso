@@ -6,7 +6,13 @@
 		"rootDir": "src",
 		"types": [ "jest", "@testing-library/jest-dom" ]
 	},
-	"include": [ "src", "src/*.json", "src/types/index.d.ts", "types" ],
+	"include": [
+		"src",
+		"src/*.json",
+		"src/types/index.d.ts",
+		"types",
+		"../zendesk-client/src/zendesk-message-converter.tsx"
+	],
 	"exclude": [ "**/__tests__/*" ],
 	"references": [ { "path": "../components" }, { "path": "../zendesk-client" } ]
 }

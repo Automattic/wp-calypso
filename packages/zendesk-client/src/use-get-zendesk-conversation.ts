@@ -1,7 +1,7 @@
+import { zendeskMessageConverter } from '@automattic/zendesk-client';
 import { useCallback } from 'react';
 import Smooch from 'smooch';
 import { useGetUnreadConversations } from './use-get-unread-conversations';
-//import { zendeskMessageConverter } from './util';
 import type { ZendeskMessage } from './types';
 
 const parseResponse = ( conversation: Conversation ) => {
@@ -16,8 +16,7 @@ const parseResponse = ( conversation: Conversation ) => {
 			if ( message.source?.id ) {
 				clientId = message.source?.id;
 			}
-			return message;
-			// return zendeskMessageConverter( message );
+			return zendeskMessageConverter( message );
 		} );
 
 	return { ...conversation, clientId, messages };

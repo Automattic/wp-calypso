@@ -28,3 +28,4 @@ export {
 	SMOOCH_INTEGRATION_ID_STAGING,
 } from './constants';
 export type * from './types';
+export { zendeskMessageConverter } from './zendesk-message-converter';
