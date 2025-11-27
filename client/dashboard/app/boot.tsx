@@ -18,7 +18,7 @@ import './style.scss';
 
 function boot( config: AppConfig ) {
 	if ( ! isEnabled( 'dashboard/v2' ) && ! isSupportSession() ) {
-		throw new Error( 'Dashboard v2 is not enabled' );
+		throw new Error( 'Multi-site Dashboard is not enabled' );
 	}
 
 	maybeInitializeSupportSession( wpcom );

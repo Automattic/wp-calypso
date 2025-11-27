@@ -52,12 +52,6 @@ jest.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', ()
 	} ) )
 );
 
-jest.mock( '../../../app/analytics', () => ( {
-	useAnalytics: () => ( {
-		recordTracksEvent: jest.fn(),
-	} ),
-} ) );
-
 jest.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 } ) );

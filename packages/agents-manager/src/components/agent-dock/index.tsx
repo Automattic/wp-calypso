@@ -18,12 +18,15 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
+import { AgentsManagerSelect } from '@automattic/data-stores';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { API_BASE_URL } from '../../constants';
 import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
 import useLoadConversation from '../../hooks/use-load-conversation';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import { lastConversationCache } from '../../utils/conversation-cache';
 import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -72,10 +75,25 @@ export default function AgentDock( {
 	markdownComponents = {},
 	markdownExtensions,
 }: AgentDockProps ) {
+	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
+	const persistedState = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
 	const [ viewState, setViewState ] = useState< DockViewState >( 'chat' );
 	const isLoadingRef = useRef( false );
 	const loadedSessionIdRef = useRef< string | null >( null );
+
 	const agentId = agentConfig.agentId;
+	const chatState = persistedState.isOpen ? 'expanded' : 'collapsed';
+
+	const setChatIsOpen = useCallback( () => {
+		setIsOpen( true );
+	}, [ setIsOpen ] );
+
+	const setChatIsClosed = useCallback( () => {
+		setIsOpen( false );
+	}, [ setIsOpen ] );
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager();
@@ -289,14 +307,14 @@ export default function AgentDock( {
 					error={ null }
 					onSubmit={ onSubmit }
 					variant={ isDocked ? 'embedded' : 'floating' }
-					floatingChatState="expanded" // TODO: Implement it...
-					onClose={ isDocked ? closeSidebar : () => {} } // TODO: Implement it...
-					onExpand={ () => {} } // TODO: Implement it...
+					floatingChatState={ chatState }
+					onClose={ isDocked ? closeSidebar : setChatIsClosed }
+					onExpand={ setChatIsOpen }
 				>
 					<AgentUI.ConversationView>
 						<ChatHeader
 							isChatDocked={ isDocked }
-							onClose={ isDocked ? closeSidebar : () => {} }
+							onClose={ isDocked ? closeSidebar : setChatIsClosed }
 							options={ chatHeaderOptions }
 							onHistoryToggle={ handleToggleHistory }
 							viewState={ viewState }
@@ -322,10 +340,10 @@ export default function AgentDock( {
 				error={ error }
 				onSubmit={ onSubmit }
 				variant={ isDocked ? 'embedded' : 'floating' }
-				floatingChatState="expanded" // TODO: Implement it...
-				onClose={ isDocked ? closeSidebar : () => {} }
-				onExpand={ () => {} }
 				suggestions={ suggestions }
+				floatingChatState={ chatState }
+				onClose={ isDocked ? closeSidebar : setChatIsClosed }
+				onExpand={ setChatIsOpen }
 				messageRenderer={ messageRenderer }
 				emptyView={
 					isLoadingRef.current ||
@@ -345,7 +363,7 @@ export default function AgentDock( {
 				<AgentUI.ConversationView>
 					<ChatHeader
 						isChatDocked={ isDocked }
-						onClose={ isDocked ? closeSidebar : () => {} } // TODO: Implement it...
+						onClose={ isDocked ? closeSidebar : setChatIsClosed }
 						options={ chatHeaderOptions }
 						onHistoryToggle={ handleToggleHistory }
 						viewState={ viewState }
@@ -361,6 +379,11 @@ export default function AgentDock( {
 			</AgentUI.Container>
 		);
 	};
+
+	// Wait user's preferences to be loaded
+	if ( ! persistedState.hasLoaded ) {
+		return null;
+	}
 
 	return createChatPortal( renderAgentUI() );
 }

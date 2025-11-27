@@ -296,7 +296,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			}
 		},
 		onSettled: () => {
-			setChatStatus( 'loaded' );
 			queryClient.invalidateQueries( {
 				queryKey: [ 'odie-chat', currentSupportInteraction?.bot_slug, odieId ],
 			} );

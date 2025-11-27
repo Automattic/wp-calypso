@@ -24,6 +24,7 @@ export const enableAutoupdateAction: Action< PluginListRow > = {
 			/>
 		);
 	},
+	supportsBulk: true,
 	isEligible: ( item: PluginListRow ) => {
 		return ! item.isManaged && [ 'some', 'none' ].includes( item.areAutoUpdatesEnabled );
 	},

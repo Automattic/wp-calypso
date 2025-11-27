@@ -197,7 +197,6 @@ export default function UnifiedAIAgent( {
 		],
 		[]
 	);
-	const suggestions = customSuggestions || defaultSuggestions;
 
 	return (
 		<AgentDock
@@ -205,7 +204,7 @@ export default function UnifiedAIAgent( {
 			sessionId={ sessionId }
 			resetSession={ resetSession }
 			applySessionId={ applySessionId }
-			emptyViewSuggestions={ suggestions }
+			emptyViewSuggestions={ customSuggestions || defaultSuggestions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 		/>

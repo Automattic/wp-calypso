@@ -79,13 +79,11 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		purchase.is_free_jetpack_stats_product
 	) {
 		return (
-			<div>
-				<img
-					src={ jetpackIcon }
-					alt="Jetpack icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ jetpackIcon }
+				alt="Jetpack icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
@@ -94,45 +92,35 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		purchase.product_slug.startsWith( 'passport' )
 	) {
 		return (
-			<div>
-				<img
-					src={ passportIcon }
-					alt="Passport icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ passportIcon }
+				alt="Passport icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
 	if ( isAkismetTemporarySitePurchase( purchase ) ) {
 		return (
-			<div>
-				<img
-					src={ akismetIcon }
-					alt="Akismet icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ akismetIcon }
+				alt="Akismet icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
 	if ( ! site ) {
 		return (
-			<div>
-				<img
-					src={ jetpackIcon }
-					alt="No site icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ jetpackIcon }
+				alt="No site icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
-	return (
-		<div>
-			<SiteIcon site={ site } size={ size } />
-		</div>
-	);
+	return <SiteIcon site={ site } size={ size } />;
 }
 
 function BackupPaymentMethodNotice() {

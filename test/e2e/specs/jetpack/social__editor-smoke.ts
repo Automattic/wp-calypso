@@ -47,7 +47,7 @@ skipDescribeIf( isPrivateSite )(
 			await editorPage.openSettings( 'Jetpack' );
 
 			// Expand the Publicize panel.
-			await editorPage.expandSection( 'Share to Social Media' );
+			await editorPage.expandSection( 'Share to social media' );
 
 			const editorParent = await editorPage.getEditorParent();
 
