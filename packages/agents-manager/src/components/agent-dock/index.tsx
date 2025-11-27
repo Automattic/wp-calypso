@@ -217,6 +217,10 @@ export default function AgentDock( {
 			await abortCurrentRequest();
 			// Clear chat messages
 			await loadMessages( [] );
+
+			// Remove and recreate the agent to ensure all internal state is reset
+			agentManager.removeAgent( agentKey );
+			await agentManager.createAgent( agentKey, agentConfig );
 		}
 
 		// Clear cached messages to prevent old messages from being reloaded
@@ -229,7 +233,7 @@ export default function AgentDock( {
 		if ( viewState === 'history' ) {
 			setViewState( 'chat' );
 		}
-	}, [ abortCurrentRequest, agentId, loadMessages, resetSession, viewState ] );
+	}, [ abortCurrentRequest, agentConfig, agentId, loadMessages, resetSession, viewState ] );
 
 	const handleToggleHistory = () => {
 		setViewState( ( prev ) => ( prev === 'chat' ? 'history' : 'chat' ) );
