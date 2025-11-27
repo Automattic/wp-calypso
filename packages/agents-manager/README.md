@@ -26,21 +26,21 @@ The main component is `UnifiedAIAgent`. It handles the initialization of the age
 import UnifiedAIAgent from '@automattic/agents-manager';
 
 function MyApp() {
-  return (
-    <UnifiedAIAgent
-      currentRoute="/my-route"
-      currentUser={ currentUser }
-      site={ site }
-      // Optional: Provide custom tools
-      toolProvider={ myToolProvider }
-      // Optional: Provide custom context
-      contextProvider={ myContextProvider }
-      // Optional: Custom suggestions for empty view
-      emptyViewSuggestions={ [
-        { label: 'Help me write', prompt: 'Help me write a blog post about...' }
-      ] }
-    />
-  );
+	return (
+		<UnifiedAIAgent
+			currentRoute="/my-route"
+			currentUser={ currentUser }
+			site={ site }
+			// Optional: Provide custom tools
+			toolProvider={ myToolProvider }
+			// Optional: Provide custom context
+			contextProvider={ myContextProvider }
+			// Optional: Custom suggestions for empty view
+			emptyViewSuggestions={ [
+				{ label: 'Help me write', prompt: 'Help me write a blog post about...' },
+			] }
+		/>
+	);
 }
 ```
 
@@ -48,18 +48,18 @@ function MyApp() {
 
 ### UnifiedAIAgent Props
 
-| Prop | Type | Description |
-| --- | --- | --- |
-| `currentRoute` | `string` | The current route path. |
-| `sectionName` | `string` | The name of the current section (e.g., 'posts', 'pages'). |
-| `site` | `object` | The selected site object. |
-| `currentUser` | `object` | The current user object. |
-| `handleClose` | `() => void` | Callback to handle closing the agent. |
-| `toolProvider` | `ToolProvider` | Provider for custom tools/abilities. |
-| `contextProvider` | `ContextProvider` | Provider for environment-specific context. |
-| `emptyViewSuggestions` | `Suggestion[]` | Custom suggestions for the empty view. |
-| `markdownComponents` | `MarkdownComponents` | Custom markdown renderers. |
-| `markdownExtensions` | `MarkdownExtensions` | Custom markdown extensions. |
+| Prop                   | Type                 | Description                                               |
+| ---------------------- | -------------------- | --------------------------------------------------------- |
+| `currentRoute`         | `string`             | The current route path.                                   |
+| `sectionName`          | `string`             | The name of the current section (e.g., 'posts', 'pages'). |
+| `site`                 | `object`             | The selected site object.                                 |
+| `currentUser`          | `object`             | The current user object.                                  |
+| `handleClose`          | `() => void`         | Callback to handle closing the agent.                     |
+| `toolProvider`         | `ToolProvider`       | Provider for custom tools/abilities.                      |
+| `contextProvider`      | `ContextProvider`    | Provider for environment-specific context.                |
+| `emptyViewSuggestions` | `Suggestion[]`       | Custom suggestions for the empty view.                    |
+| `markdownComponents`   | `MarkdownComponents` | Custom markdown renderers.                                |
+| `markdownExtensions`   | `MarkdownExtensions` | Custom markdown extensions.                               |
 
 ## Architecture
 
@@ -68,7 +68,9 @@ The package is built around several key components:
 - **UnifiedAIAgent**: The top-level wrapper that configures the agent.
 - **AgentDock**: Manages the chat UI, docking state, and session logic.
 - **ConversationHistoryView**: Displays past conversations and allows switching between them.
+- **useChatLayoutManager**: Manages the layout state (docked vs floating) and responsive behavior.
 - **useAgentSession**: Manages session persistence and lifecycle.
+- **useConversationList**: Manages fetching and caching the list of past conversations.
 - **useLoadConversation**: Handles loading conversation history from the server.
 
 ## Extension API
@@ -81,17 +83,17 @@ Allows registering custom tools (abilities) that the agent can use.
 
 ```typescript
 const myToolProvider: ToolProvider = {
-    getTools: async () => {
-        return [
-            {
-                name: 'my_custom_tool',
-                description: 'Does something cool',
-                execute: async ( params ) => {
-                    // ...
-                }
-            }
-        ];
-    }
+	getTools: async () => {
+		return [
+			{
+				name: 'my_custom_tool',
+				description: 'Does something cool',
+				execute: async ( params ) => {
+					// ...
+				},
+			},
+		];
+	},
 };
 ```
 
@@ -101,17 +103,17 @@ Allows providing additional context to the agent.
 
 ```typescript
 const myContextProvider: ContextProvider = {
-    getContext: async () => {
-        return [
-            {
-                type: 'application_state',
-                data: {
-                    currentView: 'editor',
-                    // ...
-                }
-            }
-        ];
-    }
+	getContext: async () => {
+		return [
+			{
+				type: 'application_state',
+				data: {
+					currentView: 'editor',
+					// ...
+				},
+			},
+		];
+	},
 };
 ```
 
@@ -131,4 +133,3 @@ yarn clean
 ## License
 
 GPL-2.0-or-later
-
