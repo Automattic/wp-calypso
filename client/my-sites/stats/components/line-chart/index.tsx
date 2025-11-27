@@ -10,7 +10,6 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
-import { DATE_FORMAT } from '../../constants';
 import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 import StatsEmptyState from '../../stats-empty-state';
 
