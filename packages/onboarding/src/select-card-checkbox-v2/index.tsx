@@ -6,15 +6,17 @@ import './style.scss';
 type SelectCardCheckboxProps = {
 	children: React.ReactNode;
 	className?: string;
+	checked?: boolean;
+	disabled?: boolean;
 	onChange: ( checked: boolean ) => void;
-	checked: boolean;
 };
 
 const SelectCardCheckboxV2 = ( {
 	children,
 	className,
 	onChange,
-	checked,
+	disabled = false,
+	checked = false,
 }: SelectCardCheckboxProps ) => {
 	const instanceId = useId();
 	const id = `select-card-checkbox-v2-${ instanceId }`;
@@ -34,6 +36,7 @@ const SelectCardCheckboxV2 = ( {
 				checked={ checked }
 				id={ id }
 				onChange={ onChange }
+				disabled={ disabled }
 			/>
 			<span id={ `select-card-checkbox-v2-label-${ instanceId }` }>{ children }</span>
 		</HStack>
