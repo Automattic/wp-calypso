@@ -90,10 +90,10 @@ const domain: FlowV2< typeof initialize > = {
 		);
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
-		const defaultRedirect = `/manage/sites/${ siteSlug }/domains`;
+		const defaultRedirect = `/v2/sites/${ siteSlug }/domains`;
 
 		const goToCheckout = ( siteSlug: string ) => {
-			const destination = `/manage/sites/${ siteSlug }/domains`;
+			const destination = `/v2/sites/${ siteSlug }/domains`;
 
 			// replace the location to delete processing step from history.
 			return window.location.replace(
@@ -267,7 +267,7 @@ const domain: FlowV2< typeof initialize > = {
 					if ( providedDependencies.newExistingSiteChoice === 'domain' ) {
 						return window.location.assign(
 							addQueryArgs( '/checkout/no-site', {
-								redirect_to: '/manage/domains',
+								redirect_to: '/v2/domains',
 								signup: 0,
 								isDomainOnly: 1,
 								cancel_to: new URL(
@@ -311,7 +311,7 @@ const domain: FlowV2< typeof initialize > = {
 								);
 
 								return {
-									redirectTo: `/manage/domains/${ domain }/domain-connection-setup`,
+									redirectTo: `/v2/domains/${ domain }/domain-connection-setup`,
 								};
 							}
 
@@ -387,7 +387,7 @@ const domain: FlowV2< typeof initialize > = {
 							return window.location.replace( providedDependencies.redirectTo );
 						}
 
-						const destination = `/manage/sites/${ providedDependencies.siteSlug }/domains`;
+						const destination = `/v2/sites/${ providedDependencies.siteSlug }/domains`;
 
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( this.name );

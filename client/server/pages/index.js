@@ -993,7 +993,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	// Set up Multi-site Dashboard routing.
-	handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/manage', 'entry-dashboard-dotcom' );
+	handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom' );
 
 	// Set up CIAB dashboard routing.
 	handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );

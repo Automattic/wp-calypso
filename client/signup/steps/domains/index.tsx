@@ -307,7 +307,7 @@ const DomainSearchUI = (
 		const [ sitesBackLabelText, defaultBackUrl ] =
 			userSiteCount && userSiteCount === 1
 				? [ __( 'Back to My Home' ), '/home' ]
-				: [ __( 'Back to sites' ), hostingDashboardOptIn ? '/manage/sites' : '/sites' ];
+				: [ __( 'Back to sites' ), hostingDashboardOptIn ? '/v2/sites' : '/sites' ];
 
 		if ( isDomainForGravatarFlow( flowName ) ) {
 			backUrl = null;

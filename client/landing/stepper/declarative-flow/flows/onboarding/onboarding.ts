@@ -110,7 +110,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			 */
 			if ( isEnabled( 'dashboard/v2/onboarding' ) ) {
 				return [
-					addQueryArgs( `/manage/sites/${ providedDependencies.siteSlug }`, { ref: flowName } ),
+					addQueryArgs( `/v2/sites/${ providedDependencies.siteSlug }`, { ref: flowName } ),
 					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
 						siteSlug: providedDependencies.siteSlug,
 					} ),

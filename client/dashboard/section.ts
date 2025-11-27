@@ -1,6 +1,6 @@
 export const DASHBOARD_SECTION_DEFINITION = {
 	name: 'dashboard-dotcom',
-	paths: [ '/manage' ],
+	paths: [ '/v2' ],
 	module: 'dashboard/app-dotcom',
 };
 

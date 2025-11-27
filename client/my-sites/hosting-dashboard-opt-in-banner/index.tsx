@@ -43,7 +43,7 @@ export default function HostingDashboardOptInBanner( {
 
 	const handleClick = async () => {
 		if ( hasOptedIn ) {
-			window.location.href = '/manage';
+			window.location.href = '/v2';
 			return;
 		}
 
@@ -66,7 +66,7 @@ export default function HostingDashboardOptInBanner( {
 				} )
 			);
 		} else {
-			window.location.href = '/manage';
+			window.location.href = '/v2';
 		}
 	};
 

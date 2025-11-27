@@ -73,7 +73,7 @@ export default function HostingDashboardOptInForm() {
 			);
 		} else if ( enabled ) {
 			setIsRedirecting( true );
-			window.location.href = '/manage/me/preferences?flash=dashboard';
+			window.location.href = '/v2/me/preferences?flash=dashboard';
 		} else {
 			dispatch(
 				successNotice( translate( 'Successfully saved preference.' ), {

@@ -246,7 +246,7 @@ function UnifiedPlansStep( {
 			return null;
 		}
 
-		return hostingDashboardOptIn ? '/manage/sites' : '/sites/';
+		return hostingDashboardOptIn ? '/v2/sites' : '/sites/';
 	} );
 
 	useSiteGlobalStylesOnPersonal();

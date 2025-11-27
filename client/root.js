@@ -95,7 +95,7 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	if ( useSitesAsLandingPage ) {
 		if ( hostingDashboardOptIn ) {
 			// Use absolute URL to force a hard reload.
-			return window.location.origin + '/manage/sites';
+			return window.location.origin + '/v2/sites';
 		}
 		return '/sites';
 	}
