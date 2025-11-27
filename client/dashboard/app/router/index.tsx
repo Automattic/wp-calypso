@@ -67,10 +67,11 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
-				message: 'Unknown error',
+				message: error.message,
 				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
 				tags: [ 'dashboard' ],
 				properties: {
+					dashboard_backport: false,
 					env: calypsoConfig( 'env_id' ),
 					message: error.message,
 					stack: errorInfo.componentStack,
