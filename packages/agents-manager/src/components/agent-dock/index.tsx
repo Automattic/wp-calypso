@@ -87,14 +87,6 @@ export default function AgentDock( {
 	const agentId = agentConfig.agentId;
 	const chatState = persistedState.isOpen ? 'expanded' : 'collapsed';
 
-	const setChatIsOpen = useCallback( () => {
-		setIsOpen( true );
-	}, [ setIsOpen ] );
-
-	const setChatIsClosed = useCallback( () => {
-		setIsOpen( false );
-	}, [ setIsOpen ] );
-
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager();
 
@@ -212,6 +204,14 @@ export default function AgentDock( {
 		}
 	}, [ agentId, loadConversation, sessionId ] );
 
+	const setChatIsOpen = () => {
+		setIsOpen( true );
+	};
+
+	const setChatIsClosed = () => {
+		setIsOpen( false );
+	};
+
 	const handleNewChat = useCallback( () => {
 		const agentManager = getAgentManager();
 		const agentKey = agentId;
@@ -231,9 +231,9 @@ export default function AgentDock( {
 		setViewState( 'chat' );
 	}, [ agentId, resetSession ] );
 
-	const handleToggleHistory = useCallback( () => {
+	const handleToggleHistory = () => {
 		setViewState( ( prev ) => ( prev === 'chat' ? 'history' : 'chat' ) );
-	}, [] );
+	};
 
 	const handleSelectConversation = useCallback(
 		( newSessionId: string ) => {
