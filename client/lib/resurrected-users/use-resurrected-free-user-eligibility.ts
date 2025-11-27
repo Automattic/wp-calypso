@@ -82,6 +82,22 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 	const variationFlagName = variationName ? WELCOME_BACK_VARIATION_FLAG_MAP[ variationName ] : null;
 	const isVariantFlagEnabled = variationFlagName ? config.isEnabled( variationFlagName ) : true;
 
+	const forcedVariation =
+		( Object.keys( WELCOME_BACK_VARIATION_FLAG_MAP ) as WelcomeBackVariation[] ).find(
+			( candidate ) => config.isEnabled( WELCOME_BACK_VARIATION_FLAG_MAP[ candidate ] )
+		) ?? null;
+
+	if ( forcedVariation ) {
+		return {
+			isLoading: false,
+			isResurrectedSixMonths,
+			hasActivePaidSubscription: hasActiveSubscriptions,
+			isEligible: true,
+			experimentAssignment,
+			variationName: forcedVariation,
+		};
+	}
+
 	const isLoading =
 		isUserSettingsFetching ||
 		! purchasesLoaded ||
