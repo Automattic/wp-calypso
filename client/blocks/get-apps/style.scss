@@ -98,28 +98,38 @@ main.get-apps {
 	.get-apps__also-available {
 		margin-top: 16px;
 		display: flex;
-		flex-direction: column;
+		flex-wrap: wrap;
+		align-items: center;
 		gap: 16px;
 		font-size: $font-body-extra-small;
+	}
 
-		@include break-medium {
-			flex-direction: row;
-		}
+	.get-apps__also-available-title {
+		flex-shrink: 0;
 	}
 
 	.get-apps__also-available-list {
-		display: flex;
-		flex-direction: row;
-		gap: 16px;
+		display: contents;
 
 		> a {
 			display: inline-flex;
+			align-items: center;
 			gap: 2px;
 		}
 	}
 
 	.get-apps__desktop-button {
 		margin-right: 8px;
+
+		.components-button {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			white-space: nowrap;
+			height: auto;
+			padding: 8px 14px;
+			border: 0;
+		}
 
 		.split-button__main {
 			display: inline-flex;

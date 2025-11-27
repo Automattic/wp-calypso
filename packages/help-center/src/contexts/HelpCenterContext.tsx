@@ -1,6 +1,8 @@
 import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/constants';
 import { useContext, createContext } from '@wordpress/element';
 import { useNewInteractionsBotConfig } from '../hooks/use-new-interaction-bot-config';
+import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
+import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
@@ -16,6 +18,30 @@ export type HelpCenterRequiredInformation = {
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
 	isCommerceGarden: boolean;
+	/**
+	 * Tool provider for AI agent abilities (optional)
+	 * Allows plugins to provide custom abilities to the agent
+	 */
+	toolProvider?: ToolProvider;
+	/**
+	 * Context provider for AI agent context (optional)
+	 * Allows plugins to provide rich context about current state
+	 */
+	contextProvider?: ContextProvider;
+	/**
+	 * Custom suggestions for the AI agent empty view (optional)
+	 * Allows plugins to provide context-specific suggestions
+	 */
+	suggestions?: Suggestion[];
+	/**
+	 * Custom markdown components for message rendering (optional)
+	 * Allows plugins to provide custom renderers for markdown elements
+	 */
+	markdownComponents?: MarkdownComponents;
+	/**
+	 * Custom markdown extensions (optional)
+	 */
+	markdownExtensions?: MarkdownExtensions;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {

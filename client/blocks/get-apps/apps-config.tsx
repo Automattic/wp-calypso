@@ -8,9 +8,10 @@ import StudioAppLogo from 'calypso/assets/images/icons/studio-app-logo.svg';
 import Windows from 'calypso/assets/images/icons/windows-logo.svg';
 
 export enum PlatformType {
-	MacIntel = 'MacIntel',
 	MacSilicon = 'MacSilicon',
-	Windows = 'Windows',
+	MacIntel = 'MacIntel',
+	WindowsARM64 = 'WindowsARM64',
+	WindowsX64 = 'WindowsX64',
 	Linux = 'Linux',
 	LinuxDeb = 'LinuxDeb',
 }
@@ -43,25 +44,32 @@ const basePlatformConfigs: Record<
 	PlatformType,
 	( t: ReturnType< typeof useTranslate > ) => BasePlatformConfig
 > = {
-	[ PlatformType.MacIntel ]: ( translate ) => ( {
-		name: 'Mac (Intel)',
-		icon: Apple,
-		iconName: 'apple-logo',
-		buttonText: translate( 'Download for Mac' ),
-		group: 'mac',
-	} ),
 	[ PlatformType.MacSilicon ]: ( translate ) => ( {
 		name: 'Mac (Apple Silicon)',
 		icon: Apple,
 		iconName: 'apple-logo',
-		buttonText: translate( 'Download for Mac' ),
+		buttonText: translate( 'Download for Mac (Apple Silicon)' ),
 		group: 'mac',
 	} ),
-	[ PlatformType.Windows ]: ( translate ) => ( {
-		name: 'Windows',
+	[ PlatformType.MacIntel ]: ( translate ) => ( {
+		name: 'Mac (Intel)',
+		icon: Apple,
+		iconName: 'apple-logo',
+		buttonText: translate( 'Download for Mac (Intel)' ),
+		group: 'mac',
+	} ),
+	[ PlatformType.WindowsX64 ]: ( translate ) => ( {
+		name: 'Windows (x64)',
 		icon: Windows,
 		iconName: 'windows-logo',
-		buttonText: translate( 'Download for Windows' ),
+		buttonText: translate( 'Download for Windows (x64)' ),
+		group: 'windows',
+	} ),
+	[ PlatformType.WindowsARM64 ]: ( translate ) => ( {
+		name: 'Windows on ARM',
+		icon: Windows,
+		iconName: 'windows-logo',
+		buttonText: translate( 'Download for Windows on ARM' ),
 		group: 'windows',
 	} ),
 	[ PlatformType.Linux ]: ( translate ) => ( {
@@ -110,19 +118,24 @@ export const createWordPressDesktopConfig = (
 			},
 		} ),
 		platforms: {
-			[ PlatformType.MacIntel ]: {
-				...platformConfigs[ PlatformType.MacIntel ],
-				onClick: () => recordTracksEvent( 'calypso_app_download_mac_click' ),
-				link: localizeUrl( 'https://apps.wordpress.com/d/osx?ref=getapps' ),
-			},
 			[ PlatformType.MacSilicon ]: {
 				...platformConfigs[ PlatformType.MacSilicon ],
 				onClick: () => recordTracksEvent( 'calypso_app_download_mac_silicon_click' ),
 				link: localizeUrl( 'https://apps.wordpress.com/d/osx-silicon?ref=getapps' ),
 			},
-			[ PlatformType.Windows ]: {
-				...platformConfigs[ PlatformType.Windows ],
-				onClick: () => recordTracksEvent( 'calypso_app_download_windows_click' ),
+			[ PlatformType.MacIntel ]: {
+				...platformConfigs[ PlatformType.MacIntel ],
+				onClick: () => recordTracksEvent( 'calypso_app_download_mac_click' ),
+				link: localizeUrl( 'https://apps.wordpress.com/d/osx?ref=getapps' ),
+			},
+			[ PlatformType.WindowsX64 ]: {
+				...platformConfigs[ PlatformType.WindowsX64 ],
+				onClick: () => recordTracksEvent( 'calypso_app_download_windows_x64_click' ),
+				link: localizeUrl( 'https://apps.wordpress.com/d/windows?ref=getapps' ),
+			},
+			[ PlatformType.WindowsARM64 ]: {
+				...platformConfigs[ PlatformType.WindowsARM64 ],
+				onClick: () => recordTracksEvent( 'calypso_app_download_windows_arm64_click' ),
 				link: localizeUrl( 'https://apps.wordpress.com/d/windows?ref=getapps' ),
 			},
 			[ PlatformType.Linux ]: {
@@ -157,20 +170,25 @@ export const createWordPressStudioConfig = (
 		} ),
 		isPrimary: true,
 		platforms: {
-			[ PlatformType.MacIntel ]: {
-				...platformConfigs[ PlatformType.MacIntel ],
-				onClick: () => recordTracksEvent( 'calypso_studio_download_mac_click' ),
-				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/mac-intel/latest',
-			},
 			[ PlatformType.MacSilicon ]: {
 				...platformConfigs[ PlatformType.MacSilicon ],
 				onClick: () => recordTracksEvent( 'calypso_studio_download_mac_silicon_click' ),
 				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/mac-silicon/latest',
 			},
-			[ PlatformType.Windows ]: {
-				...platformConfigs[ PlatformType.Windows ],
-				onClick: () => recordTracksEvent( 'calypso_studio_download_windows_click' ),
+			[ PlatformType.MacIntel ]: {
+				...platformConfigs[ PlatformType.MacIntel ],
+				onClick: () => recordTracksEvent( 'calypso_studio_download_mac_click' ),
+				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/mac-intel/latest',
+			},
+			[ PlatformType.WindowsX64 ]: {
+				...platformConfigs[ PlatformType.WindowsX64 ],
+				onClick: () => recordTracksEvent( 'calypso_studio_download_windows_x64_click' ),
 				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/windows-x64/latest',
+			},
+			[ PlatformType.WindowsARM64 ]: {
+				...platformConfigs[ PlatformType.WindowsARM64 ],
+				onClick: () => recordTracksEvent( 'calypso_studio_download_windows_arm64_click' ),
+				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/windows-arm64/latest',
 			},
 		},
 	};
