@@ -53,13 +53,13 @@ export default function HostingFeatureActivation( {
 		} );
 	};
 
-	const hostingFeatureActivationModal = isDashboardBackport();
+	const isBackport = isDashboardBackport();
 
 	return (
 		<>
 			{ renderActivationComponent( { onClick: handleClick } ) }
 
-			{ hostingFeatureActivationModal && isModalOpen && (
+			{ ! isBackport && isModalOpen && (
 				<Suspense fallback={ null }>
 					<Modal
 						title={ __( 'Before you continue' ) }
@@ -71,7 +71,7 @@ export default function HostingFeatureActivation( {
 				</Suspense>
 			) }
 
-			{ ! hostingFeatureActivationModal && isModalOpen && (
+			{ isBackport && isModalOpen && (
 				<Suspense fallback={ null }>
 					<Modal
 						title={ __( 'Before you continue' ) }
