@@ -57,7 +57,7 @@ export default function LicenseDetails( {
 		if ( subscription?.status === 'active' ) {
 			return subscription.isAutoRenewEnabled
 				? translate( 'Renews on:' )
-				: translate( 'Auto-renew is OFF | Expires on:' );
+				: translate( 'Auto-renew: OFF | Expires on:' );
 		}
 
 		return translate( 'Expired on:' );
@@ -66,7 +66,7 @@ export default function LicenseDetails( {
 		if (
 			shouldShowSubscription &&
 			subscription?.isRefundable &&
-			subscription.status === 'inactive'
+			subscription.status === 'active'
 		) {
 			return translate( 'Refundable' );
 		}
