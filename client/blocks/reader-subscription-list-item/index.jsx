@@ -58,7 +58,7 @@ function ReaderSubscriptionListItem( {
 	const siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
-	const hasSiteError = site?.is_error;
+	const hasSiteError = site?.is_error || feed?.is_error;
 
 	const recordEvent = useCallback(
 		( name ) => {
