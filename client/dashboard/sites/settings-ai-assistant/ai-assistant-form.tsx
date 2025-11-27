@@ -217,6 +217,7 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 							isBusy: isPending,
 							disabled: isPending,
 						} }
+						size="small"
 					>
 						{ __(
 							'You are on a free trial. If you disable WordPress AI Assistant, you will not be able to turn it back on without a paid plan.'

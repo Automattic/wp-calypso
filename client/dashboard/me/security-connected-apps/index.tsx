@@ -185,6 +185,7 @@ export default function SecurityConnectedApps() {
 				} }
 				onCancel={ () => setSelectedApplicationToRemove( null ) }
 				onConfirm={ handleDisconnect }
+				size="small"
 			>
 				{ createInterpolateElement(
 					/* translators: <applicationName /> is the name of the application */

@@ -108,6 +108,7 @@ export default function SshKey( {
 				} }
 				onCancel={ () => setIsRemoveDialogOpen( false ) }
 				onConfirm={ handleRemove }
+				size="small"
 			>
 				{ __(
 					'Are you sure you want to remove this SSH key? It will be removed from all attached sites.'

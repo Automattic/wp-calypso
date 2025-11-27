@@ -141,6 +141,7 @@ const SocialLoginItem = ( {
 				} }
 				onCancel={ () => setIsRemoveDialogOpen( false ) }
 				onConfirm={ disconnectSocialLogin }
+				size="small"
 			>
 				{ sprintf(
 					/* translators: %s is the name of the social login */

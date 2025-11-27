@@ -300,6 +300,7 @@ export default function PluginsScheduledUpdates() {
 				} }
 				onCancel={ handleDeleteCancel }
 				onConfirm={ handleDeleteConfirm }
+				size="small"
 			>
 				{ __( 'Are you sure you want to delete this schedule?' ) }
 			</ConfirmModal>

@@ -19,6 +19,7 @@ export const ApplySettingsToAllSitesConfirmationModal = ( props: Props ) => {
 			confirmButtonProps={ { label: __( 'Yes, apply to all sites' ), isBusy } }
 			cancelButtonText={ __( 'Cancel' ) }
 			__experimentalHideHeader={ false }
+			size="small"
 		>
 			{ __( 'The selected settings will be applied to all your sites at once.' ) }
 		</ConfirmModal>
