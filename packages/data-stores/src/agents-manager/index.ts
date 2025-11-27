@@ -6,31 +6,32 @@ import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
-import { isHelpCenterShown } from './resolvers';
+import { getAgentsManagerState } from './resolvers';
 import * as selectors from './selectors';
 export type { State };
 
 let isRegistered = false;
 
 export function register(): typeof STORE_KEY {
+	if ( isRegistered ) {
+		return STORE_KEY;
+	}
+
 	const enabledPersistedOpenState = ! isE2ETest() && ! isInSupportSession();
 
 	registerPlugins();
 
-	if ( ! isRegistered ) {
-		registerStore( STORE_KEY, {
-			actions,
-			reducer,
-			controls: { ...controls, ...wpcomRequestControls },
-			selectors,
-			persist: [ 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
-			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
-			resolvers: enabledPersistedOpenState ? { isHelpCenterShown } : undefined,
-		} );
-		isRegistered = true;
-	}
+	registerStore( STORE_KEY, {
+		actions,
+		reducer,
+		controls: { ...controls, ...wpcomRequestControls },
+		selectors,
+		persist: [],
+		// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
+		resolvers: enabledPersistedOpenState ? { getAgentsManagerState } : undefined,
+	} );
+
+	isRegistered = true;
 
 	return STORE_KEY;
 }
-
-export type { HelpCenterSite } from './types';
