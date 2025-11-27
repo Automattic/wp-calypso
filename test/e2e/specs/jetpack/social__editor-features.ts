@@ -271,8 +271,14 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			test( `Should verify that Social Image Generator ${
 				features.socialImageGenerator ? 'IS' : 'is NOT'
 			} available`, async function () {
+				await socialConnectionsManager.interceptRequests();
+
+				const connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
+
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
+
+				await connectionTestPromise;
 
 				// Expand the Publicize panel.
 				const section = await editorPage.expandSection( 'Share to Social Media' );
