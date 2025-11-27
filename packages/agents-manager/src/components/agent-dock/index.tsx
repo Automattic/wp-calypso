@@ -21,9 +21,10 @@ import {
 } from '@automattic/agenttic-ui';
 import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useMemo, useState, useRef } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, drawerRight, login } from '@wordpress/icons';
+import { backup, comment, drawerRight, login } from '@wordpress/icons';
+import { Routes, Route, useNavigate, useParams, useLocation, Navigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../constants';
 import useAgentSession from '../../hooks/use-agent-session';
 import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
@@ -35,7 +36,6 @@ import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import ConversationHistoryView from '../conversation-history-view';
 import { AI } from '../icons';
-import type { DockViewState } from './types';
 
 interface AgentDockProps {
 	/**
@@ -67,7 +67,8 @@ export default function AgentDock( {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-	const [ viewState, setViewState ] = useState< DockViewState >( 'chat' );
+	const navigate = useNavigate();
+	const location = useLocation();
 	const isLoadingRef = useRef( false );
 	const loadedSessionIdRef = useRef< string | null >( null );
 
@@ -230,25 +231,19 @@ export default function AgentDock( {
 		// Reset session to empty (new chat) - this generates a new session ID
 		resetSession();
 
-		// Switch back to chat view
-		if ( viewState === 'history' ) {
-			setViewState( 'chat' );
-		}
-	}, [ abortCurrentRequest, agentConfig, agentId, loadMessages, resetSession, viewState ] );
-
-	const handleToggleHistory = () => {
-		setViewState( ( prev ) => ( prev === 'chat' ? 'history' : 'chat' ) );
-	};
+		// Navigate to root route (chat view)
+		navigate( '/' );
+	}, [ abortCurrentRequest, agentConfig, agentId, loadMessages, resetSession, navigate ] );
 
 	const handleSelectConversation = useCallback(
 		( newSessionId: string ) => {
-			// Switch to chat view immediately
-			setViewState( 'chat' );
+			// Navigate to the chat route with the session ID
+			navigate( `/chat/${ newSessionId }` );
 
 			// Update session with the UUID session_id
 			applySessionId( newSessionId );
 		},
-		[ applySessionId ]
+		[ applySessionId, navigate ]
 	);
 
 	// Custom message renderer that uses our markdown components
@@ -261,12 +256,23 @@ export default function AgentDock( {
 		[ markdownComponents, markdownExtensions ]
 	);
 
-	const renderAgentUI = () => {
+	// Shared menu items creation
+	const createMenuItems = () => {
+		const isHistoryView = location.pathname === '/history';
+		const isRootView = location.pathname === '/';
+
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', 'agents-manager' ),
-			isDisabled: viewState === 'chat' && ! messages.length,
+			isDisabled: isRootView && ! messages.length,
 			onClick: handleNewChat,
+		};
+
+		const historyMenuItem = {
+			icon: backup,
+			title: __( 'View history', 'agents-manager' ),
+			isDisabled: isHistoryView,
+			onClick: () => navigate( '/history' ),
 		};
 		const undockMenuItem = {
 			icon: login,
@@ -282,13 +288,14 @@ export default function AgentDock( {
 				undock();
 			},
 		};
+
 		const dockMenuItem = {
 			icon: drawerRight,
 			title: __( 'Move to sidebar', 'agents-manager' ),
 			onClick: dock,
 		};
 
-		const chatHeaderOptions: ChatHeaderOptions = [ newChatMenuItem ];
+		const chatHeaderOptions: ChatHeaderOptions = [ newChatMenuItem, historyMenuItem ];
 
 		if ( isDocked ) {
 			chatHeaderOptions.push( undockMenuItem );
@@ -296,41 +303,58 @@ export default function AgentDock( {
 			chatHeaderOptions.push( dockMenuItem );
 		}
 
-		// Show conversation history view
-		if ( viewState === 'history' ) {
-			return (
-				<AgentUI.Container
-					className="agenttic"
-					messages={ messages }
-					isProcessing={ false }
-					error={ null }
-					onSubmit={ onSubmit }
-					variant={ isDocked ? 'embedded' : 'floating' }
-					floatingChatState={ chatState }
-					onClose={ isDocked ? closeSidebar : setChatIsClosed }
-					onExpand={ setChatIsOpen }
-					onStop={ abortCurrentRequest }
-				>
-					<AgentUI.ConversationView>
-						<ChatHeader
-							isChatDocked={ isDocked }
-							onClose={ isDocked ? closeSidebar : setChatIsClosed }
-							options={ chatHeaderOptions }
-							onHistoryToggle={ handleToggleHistory }
-							viewState={ viewState }
-							title={ __( 'Past chats', 'agents-manager' ) }
-						/>
-						<ConversationHistoryView
-							botId={ createOdieBotId( agentId ) }
-							apiBaseUrl={ API_BASE_URL }
-							authProvider={ agentConfig.authProvider }
-							onSelectConversation={ handleSelectConversation }
-							onNewChat={ handleNewChat }
-						/>
-					</AgentUI.ConversationView>
-				</AgentUI.Container>
-			);
-		}
+		return chatHeaderOptions;
+	};
+
+	// History view component
+	const HistoryView = () => {
+		const chatHeaderOptions = createMenuItems();
+
+		return (
+			<AgentUI.Container
+				className="agenttic"
+				messages={ messages }
+				isProcessing={ false }
+				error={ null }
+				onSubmit={ onSubmit }
+				variant={ isDocked ? 'embedded' : 'floating' }
+				floatingChatState={ chatState }
+				onClose={ isDocked ? closeSidebar : setChatIsClosed }
+				onExpand={ setChatIsOpen }
+				onStop={ abortCurrentRequest }
+			>
+				<AgentUI.ConversationView>
+					<ChatHeader
+						isChatDocked={ isDocked }
+						onClose={ isDocked ? closeSidebar : setChatIsClosed }
+						options={ chatHeaderOptions }
+						title={ __( 'Past chats', 'agents-manager' ) }
+					/>
+					<ConversationHistoryView
+						botId={ createOdieBotId( agentId ) }
+						apiBaseUrl={ API_BASE_URL }
+						authProvider={ agentConfig.authProvider }
+						onSelectConversation={ handleSelectConversation }
+						onNewChat={ handleNewChat }
+					/>
+				</AgentUI.ConversationView>
+			</AgentUI.Container>
+		);
+	};
+
+	// Chat view component (default route and /chat/:chatId)
+	const ChatView = () => {
+		const { chatId } = useParams< { chatId?: string } >();
+
+		// When route changes to a new chatId, apply that session ID
+		useEffect( () => {
+			if ( chatId && chatId !== sessionId ) {
+				applySessionId( chatId );
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ chatId ] );
+
+		const chatHeaderOptions = createMenuItems();
 
 		return (
 			<AgentUI.Container
@@ -366,9 +390,6 @@ export default function AgentDock( {
 						isChatDocked={ isDocked }
 						onClose={ isDocked ? closeSidebar : setChatIsClosed }
 						options={ chatHeaderOptions }
-						onHistoryToggle={ handleToggleHistory }
-						viewState={ viewState }
-						supportsHistory
 					/>
 					{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 					<AgentUI.Footer>
@@ -386,5 +407,12 @@ export default function AgentDock( {
 		return null;
 	}
 
-	return createChatPortal( renderAgentUI() );
+	return createChatPortal(
+		<Routes>
+			<Route path="/" element={ <ChatView /> } />
+			<Route path="/history" element={ <HistoryView /> } />
+			<Route path="/chat/:chatId" element={ <ChatView /> } />
+			<Route path="*" element={ <Navigate to="/" replace /> } />
+		</Routes>
+	);
 }

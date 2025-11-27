@@ -10,6 +10,7 @@ import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import useAgentSession, { SESSION_STORAGE_KEY } from '../../hooks/use-agent-session';
 import { lastConversationCache } from '../../utils/conversation-cache';
 import AgentDock from '../agent-dock';
+import { PersistentRouter } from '../persistent-router';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
@@ -236,11 +237,13 @@ export default function UnifiedAIAgent( {
 	}
 
 	return (
-		<AgentDock
-			agentConfig={ agentConfig }
-			emptyViewSuggestions={ customSuggestions || defaultSuggestions }
-			markdownComponents={ markdownComponents }
-			markdownExtensions={ markdownExtensions }
-		/>
+		<PersistentRouter>
+			<AgentDock
+				agentConfig={ agentConfig }
+				emptyViewSuggestions={ customSuggestions || defaultSuggestions }
+				markdownComponents={ markdownComponents }
+				markdownExtensions={ markdownExtensions }
+			/>
+		</PersistentRouter>
 	);
 }
