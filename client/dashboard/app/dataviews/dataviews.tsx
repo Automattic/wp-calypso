@@ -44,8 +44,3 @@ export function DataViews< Item >( {
 
 DataViews.Layout = WPDataViews.Layout;
 DataViews.Pagination = WPDataViews.Pagination;
-// Re‑export commonly used header controls so feature code can use
-// `DataViews.ViewSwitcher` and `DataViews.SettingsButton`.
-// These exist on the underlying `@wordpress/dataviews` component.
-( DataViews as any ).ViewSwitcher = ( WPDataViews as any ).ViewSwitcher;
-( DataViews as any ).SettingsButton = ( WPDataViews as any ).SettingsButton;
