@@ -87,6 +87,7 @@ export default function QuickPost() {
 			{ siteId, postContent, status: 'publish' },
 			{
 				onSuccess: ( data ) => {
+					clearEditor();
 					dispatch(
 						successNotice(
 							translate( 'Post successful! Your post will appear in the feed soon.' ),
