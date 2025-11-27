@@ -1,4 +1,8 @@
-import { sitePluginActivateMutation } from '@automattic/api-queries';
+import {
+	invalidatePlugins,
+	invalidateSitePlugins,
+	sitePluginActivateMutation,
+} from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { _n, sprintf } from '@wordpress/i18n';
 import ActionRenderModal, { getModalHeader } from '../components/action-render-modal';
@@ -25,8 +29,28 @@ export const activateAction: Action< PluginListRow > = {
 	},
 	modalHeader: getModalHeader( 'activate' ),
 	RenderModal: ( { items, closeModal, onActionPerformed } ) => {
-		const { mutateAsync } = useMutation( sitePluginActivateMutation() );
-		const action = buildBulkSitesPluginAction( mutateAsync, items[ 0 ].sitesWithPluginActive );
+		const { mutateAsync } = useMutation( {
+			...sitePluginActivateMutation(),
+			onSuccess: () => {},
+		} );
+		const action = async ( items: PluginListRow[] ) => {
+			const bulkActivate = buildBulkSitesPluginAction(
+				mutateAsync,
+				items[ 0 ].sitesWithPluginActive
+			);
+
+			const { successCount, errorCount } = await bulkActivate( items );
+
+			items
+				.flatMap( ( item ) => item.siteIds )
+				.forEach( ( siteId ) => {
+					invalidateSitePlugins( siteId );
+				} );
+
+			invalidatePlugins();
+
+			return { successCount, errorCount };
+		};
 
 		return (
 			<ActionRenderModal

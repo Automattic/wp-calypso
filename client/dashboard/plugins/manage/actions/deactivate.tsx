@@ -1,4 +1,8 @@
-import { sitePluginDeactivateMutation } from '@automattic/api-queries';
+import {
+	invalidatePlugins,
+	invalidateSitePlugins,
+	sitePluginDeactivateMutation,
+} from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { _n, sprintf } from '@wordpress/i18n';
 import ActionRenderModal, { getModalHeader } from '../components/action-render-modal';
@@ -25,8 +29,28 @@ export const deactivateAction: Action< PluginListRow > = {
 	},
 	modalHeader: getModalHeader( 'deactivate' ),
 	RenderModal: ( { items, closeModal, onActionPerformed } ) => {
-		const { mutateAsync } = useMutation( sitePluginDeactivateMutation() );
-		const action = buildBulkSitesPluginAction( mutateAsync, items[ 0 ].sitesWithPluginInactive );
+		const { mutateAsync } = useMutation( {
+			...sitePluginDeactivateMutation(),
+			onSuccess: () => {},
+		} );
+		const action = async ( items: PluginListRow[] ) => {
+			const bulkDeactivate = buildBulkSitesPluginAction(
+				mutateAsync,
+				items[ 0 ].sitesWithPluginInactive
+			);
+
+			const { successCount, errorCount } = await bulkDeactivate( items );
+
+			items
+				.flatMap( ( item ) => item.siteIds )
+				.forEach( ( siteId ) => {
+					invalidateSitePlugins( siteId );
+				} );
+
+			invalidatePlugins();
+
+			return { successCount, errorCount };
+		};
 
 		return (
 			<ActionRenderModal
