@@ -117,11 +117,11 @@ const AddOnsMain = () => {
 			quantity,
 		} );
 
-		page.redirect( `${ checkoutLink( selectedSite?.ID ?? null, addOnSlug, quantity ) }` );
+		page.show( `${ checkoutLink( selectedSite?.ID ?? null, addOnSlug, quantity ) }` );
 	};
 
 	const handleActionSelected = () => {
-		page.redirect( `/purchases/subscriptions/${ selectedSite?.slug }` );
+		page.show( `/purchases/subscriptions/${ selectedSite?.slug }` );
 	};
 
 	return (
