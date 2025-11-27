@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { SelectCardCheckbox } from '@automattic/onboarding';
+import { SelectCardCheckboxV2 } from '@automattic/onboarding';
 import {
 	Modal,
 	Button,
@@ -215,7 +215,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 							<h3 className="interests-modal__section-header">{ category.name }</h3>
 							<div className="interests-modal__topics-list">
 								{ category.topics.map( ( topic ) => (
-									<SelectCardCheckbox
+									<SelectCardCheckboxV2
 										key={ topic.name }
 										onChange={ ( checked ) => handleTopicChange( checked, topic.tag ) }
 										checked={
@@ -225,7 +225,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 										}
 									>
 										{ topic.name }
-									</SelectCardCheckbox>
+									</SelectCardCheckboxV2>
 								) ) }
 							</div>
 						</div>
