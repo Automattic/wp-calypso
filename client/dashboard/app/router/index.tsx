@@ -75,6 +75,7 @@ export const getRouter = ( config: AppConfig ) => {
 					env: calypsoConfig( 'env_id' ),
 					message: error.message,
 					stack: errorInfo.componentStack,
+					path: window.location.href,
 				},
 			} );
 		},
