@@ -9,6 +9,7 @@ import { useEffect, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
+import { useSitesById } from '../hooks/use-sites-by-id';
 import type { PluginListRow } from '../types';
 import type { RenderModalProps } from '@wordpress/dataviews';
 
@@ -189,6 +190,37 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 	}
 }
 
+function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< number, Site > ) {
+	if ( items.length === 1 && [ 'activate', 'deactivate' ].includes( actionId ) ) {
+		const [ plugin ] = items;
+
+		let sites: number[] = [];
+		if ( actionId === 'activate' ) {
+			sites = plugin.sitesWithPluginInactive;
+		} else if ( actionId === 'deactivate' ) {
+			sites = plugin.sitesWithPluginActive;
+		}
+
+		if ( ! sites?.length ) {
+			return null;
+		}
+
+		return (
+			<ul>
+				{ sites.map( ( siteId ) => {
+					const site = sitesById.get( siteId );
+
+					if ( ! site ) {
+						return null;
+					}
+
+					return <li key={ siteId }>{ `${ site.name } (${ site.slug })` }</li>;
+				} ) }
+			</ul>
+		);
+	}
+}
+
 export default function ActionRenderModal( {
 	items,
 	closeModal,
@@ -199,6 +231,7 @@ export default function ActionRenderModal( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isBusy, setIsBusy ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
+	const sitesById = useSitesById();
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_dashboard_plugins_action_click', { action_id: actionId } );
@@ -468,6 +501,7 @@ export default function ActionRenderModal( {
 	return (
 		<VStack spacing={ 4 }>
 			<Text>{ getConfirmText( actionId, items ) }</Text>
+			{ getSiteList( actionId, items, sitesById ) }
 			<HStack justify="right">
 				<Button
 					__next40pxDefaultSize
