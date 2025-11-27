@@ -81,7 +81,7 @@ export default function AgentDock( {
 	onClearChat,
 	sessionStorageKey = 'agents-manager-session',
 }: AgentDockProps ) {
-	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
+	const { setIsOpen, setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const persistedState = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -100,6 +100,13 @@ export default function AgentDock( {
 	const setChatIsClosed = useCallback( () => {
 		setIsOpen( false );
 	}, [ setIsOpen ] );
+
+	const handleChatPositionChange = useCallback(
+		( pos: 'left' | 'right' ) => {
+			setFloatingPosition( pos );
+		},
+		[ setFloatingPosition ]
+	);
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager( 'body' );
@@ -176,6 +183,8 @@ export default function AgentDock( {
 
 		return (
 			<AgentUI.Container
+				initialChatPosition={ persistedState.floatingPosition }
+				onChatPositionChange={ handleChatPositionChange }
 				messages={ messages }
 				isProcessing={ isProcessing }
 				error={ error }
