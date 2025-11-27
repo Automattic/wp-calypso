@@ -6,12 +6,7 @@ export function getViewFilteredByUpdates( view: View, field: string, yesValue: u
 	// If the updates filter is already applied with the same operator and value,
 	// toggle it off by removing it. Otherwise, apply it.
 	const hasUpdateFilterApplied = existingFilters.some( ( filter ) => {
-		return (
-			filter.field === field &&
-			filter.operator === 'is' &&
-			// eslint-disable-next-line eqeqeq
-			filter.value == yesValue
-		);
+		return filter.field === field && filter.operator === 'is' && filter.value === yesValue;
 	} );
 
 	if ( hasUpdateFilterApplied ) {
