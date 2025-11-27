@@ -102,7 +102,7 @@ export default function UnifiedAIAgent( {
 	markdownExtensions,
 }: UnifiedAIAgentProps ) {
 	// TODO: Migrate to the routing solution...
-	const { sessionId, resetSession, applySessionId } = useAgentSession();
+	const { sessionId } = useAgentSession();
 
 	// Create agent configuration
 	const agentConfig = useMemo< UseAgentChatConfig >(
@@ -110,7 +110,7 @@ export default function UnifiedAIAgent( {
 			const config: UseAgentChatConfig = {
 				agentId: 'wp-orchestrator',
 				agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
-				sessionId: sessionId,
+				sessionId,
 				authProvider: createCalypsoAuthProvider( site?.ID ),
 				enableStreaming: true,
 			};
@@ -148,7 +148,7 @@ export default function UnifiedAIAgent( {
 						const pluginContext = contextProvider.getClientContext();
 
 						// Resolve contextEntries if present
-						if ( pluginContext.contextEntries && pluginContext.contextEntries.length > 0 ) {
+						if ( pluginContext.contextEntries && pluginContext.contextEntries.length ) {
 							return {
 								...pluginContext,
 								contextEntries: resolveContextEntries( pluginContext.contextEntries ),
@@ -172,7 +172,7 @@ export default function UnifiedAIAgent( {
 
 			return config;
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- prevents agent reinitialization
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Ensure agent config is stable
 		[]
 	);
 
@@ -201,9 +201,6 @@ export default function UnifiedAIAgent( {
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
-			sessionId={ sessionId }
-			resetSession={ resetSession }
-			applySessionId={ applySessionId }
 			emptyViewSuggestions={ customSuggestions || defaultSuggestions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }

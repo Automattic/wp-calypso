@@ -44,21 +44,21 @@ export default function ConversationHistoryView( {
 		<div className="agents-manager-conversation-history-view">
 			<div className="agents-manager-conversation-history-view__content">
 				{ /* Loading state */ }
-				{ isLoading && conversations.length === 0 && (
+				{ isLoading && ! conversations.length && (
 					<div className="agents-manager-conversation-history-view__loading">
 						<ConversationListSkeleton count={ 5 } />
 					</div>
 				) }
 
 				{ /* Error state - only show if we have no data to display */ }
-				{ error && ! isLoading && conversations.length === 0 && (
+				{ error && ! isLoading && ! conversations.length && (
 					<div className="agents-manager-conversation-history-view__error">
 						<p>{ __( 'Failed to load conversations. Please try again.', 'agents-manager' ) }</p>
 					</div>
 				) }
 
 				{ /* Empty state */ }
-				{ ! isLoading && ! error && conversations.length === 0 && (
+				{ ! isLoading && ! error && ! conversations.length && (
 					<div className="agents-manager-conversation-history-view__empty">
 						<p>{ __( 'No past conversations', 'agents-manager' ) }</p>
 						<p className="agents-manager-conversation-history-view__empty-hint">
@@ -68,7 +68,7 @@ export default function ConversationHistoryView( {
 				) }
 
 				{ /* Conversation list - show whenever we have data, even while refreshing */ }
-				{ conversations.length > 0 && (
+				{ conversations.length && (
 					<div className="agents-manager-conversation-history-view__list">
 						{ conversations.map( ( conversation ) => (
 							<ConversationListItem

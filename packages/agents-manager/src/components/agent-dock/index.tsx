@@ -24,6 +24,7 @@ import { useCallback, useEffect, useMemo, useState, useRef } from '@wordpress/el
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { API_BASE_URL } from '../../constants';
+import useAgentSession from '../../hooks/use-agent-session';
 import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
 import useLoadConversation from '../../hooks/use-load-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -41,18 +42,6 @@ interface AgentDockProps {
 	 */
 	agentConfig: UseAgentChatConfig;
 	/**
-	 * Current session ID
-	 */
-	sessionId: string;
-	/**
-	 * Callback to reset the current session
-	 */
-	resetSession: () => string;
-	/**
-	 * Callback to apply a new session ID
-	 */
-	applySessionId: ( sessionId: string ) => void;
-	/**
 	 * Custom empty view suggestions
 	 */
 	emptyViewSuggestions?: Suggestion[];
@@ -68,9 +57,6 @@ interface AgentDockProps {
 
 export default function AgentDock( {
 	agentConfig,
-	sessionId,
-	resetSession,
-	applySessionId,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions,
@@ -90,11 +76,14 @@ export default function AgentDock( {
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager();
 
+	// TODO: Migrate to the routing solution...
+	const { sessionId, applySessionId, resetSession } = useAgentSession();
+
 	const { messages, suggestions, isProcessing, error, loadMessages, onSubmit } =
 		useAgentChat( agentConfig );
 
 	// TODO: Migrate to the routing solution...
-	// Update agent's sessionId when sessionId prop changes
+	// Update agent's sessionId when sessionId changes
 	useEffect( () => {
 		if ( ! sessionId ) {
 			return;
@@ -110,7 +99,7 @@ export default function AgentDock( {
 
 	// Update cache whenever messages change
 	useEffect( () => {
-		if ( messages.length === 0 || ! sessionId ) {
+		if ( ! messages.length || ! sessionId ) {
 			return;
 		}
 
@@ -123,7 +112,7 @@ export default function AgentDock( {
 
 		// Get Message[] from agentManager and cache it
 		const clientMessages = agentManager.getConversationHistory( agentKey );
-		if ( clientMessages.length > 0 ) {
+		if ( clientMessages.length ) {
 			const botId = createOdieBotId( agentId );
 			lastConversationCache.set( botId, sessionId, clientMessages );
 		}
@@ -228,14 +217,12 @@ export default function AgentDock( {
 			await abortCurrentRequest();
 			// Clear chat messages
 			await loadMessages( [] );
-			// Remove the agent entirely so it gets recreated fresh
-			agentManager.removeAgent( agentKey );
 		}
 
 		// Clear cached messages to prevent old messages from being reloaded
 		lastConversationCache.clear();
 
-		// Reset session to empty (new chat) - this triggers config re-creation
+		// Reset session to empty (new chat) - this generates a new session ID
 		resetSession();
 
 		// Switch back to chat view
@@ -269,7 +256,6 @@ export default function AgentDock( {
 		[ markdownComponents, markdownExtensions ]
 	);
 
-	// TODO: Check app crash during chatting...
 	const renderAgentUI = () => {
 		const newChatMenuItem = {
 			icon: comment,
@@ -281,6 +267,7 @@ export default function AgentDock( {
 			icon: login,
 			title: __( 'Pop out sidebar', 'agents-manager' ),
 			onClick: () => {
+				// TODO: Persist the float position...
 				try {
 					window.localStorage?.setItem( 'agenttic-chat-position', 'right' );
 				} catch ( err ) {
@@ -356,7 +343,7 @@ export default function AgentDock( {
 				emptyView={
 					isLoadingRef.current ||
 					isLoadingConversation ||
-					( sessionId && loadedSessionIdRef.current !== sessionId && messages.length === 0 ) ? (
+					( sessionId && loadedSessionIdRef.current !== sessionId && ! messages.length ) ? (
 						<ChatMessageSkeleton count={ 3 } />
 					) : (
 						<EmptyView

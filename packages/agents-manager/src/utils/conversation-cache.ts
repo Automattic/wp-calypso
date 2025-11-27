@@ -112,7 +112,7 @@ export const lastConversationCache = {
 
 	set: ( botId: string, sessionId: string, messages: Message[] ): void => {
 		// Validate messages
-		if ( ! Array.isArray( messages ) || messages.length === 0 ) {
+		if ( ! Array.isArray( messages ) || ! messages.length ) {
 			return;
 		}
 
@@ -121,7 +121,7 @@ export const lastConversationCache = {
 			( msg ) => msg && typeof msg.role === 'string' && Array.isArray( msg.parts )
 		);
 
-		if ( validMessages.length === 0 ) {
+		if ( ! validMessages.length ) {
 			return;
 		}
 
