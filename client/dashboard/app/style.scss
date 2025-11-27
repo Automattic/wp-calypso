@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/dataviews/build-style/style.css';
 
-// Should be implemented differently once v2 is not loaded via the v1 stack
+// Should be implemented differently once the Multi-site Dashboard is not loaded by the Node server using the Calypso loading screen.
 // I'm tempted to even just replace all this with a display:none on the logo
 @import './loading-screen';
 

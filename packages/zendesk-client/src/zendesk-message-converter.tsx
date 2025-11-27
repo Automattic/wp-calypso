@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import DOMPurify from 'dompurify';
-import type { ZendeskMessage } from '@automattic/zendesk-client';
-import type { Message, MessageRole, MessageType } from '../types';
+import type { ZendeskMessage, MessageType } from './types';
 import type { ReactNode } from 'react';
 
 // Format markdown to support images attachments that open in a new tab.
@@ -43,7 +42,7 @@ function createDownloadableMarkdownLink( url: string, AttachmentTitle: string ):
 	return `[${ AttachmentTitle } ${ fileName }](${ url })`;
 }
 
-function getContentMessage( message: ZendeskMessage ): Message[ 'content' ] {
+function getContentMessage( message: ZendeskMessage ): ReactNode {
 	let messageContent: ReactNode = '';
 	switch ( message.type ) {
 		case 'image':
@@ -96,10 +95,10 @@ function getContentMessage( message: ZendeskMessage ): Message[ 'content' ] {
 	return messageContent;
 }
 
-export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = ( message ) => {
+export const zendeskMessageConverter = ( message: ZendeskMessage ) => {
 	const role = (
 		[ 'user', 'business' ].includes( message.role ) ? message.role : 'user'
-	) as MessageRole;
+	) as ZendeskMessage[ 'role' ];
 
 	return {
 		...message,

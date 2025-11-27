@@ -13,7 +13,6 @@ export { useZendeskChat } from './use-zendesk-chat';
 export { useGetUnreadConversations } from './use-get-unread-conversations';
 export { useGetZendeskConversation } from './use-get-zendesk-conversation';
 export { calculateUnread } from './use-get-unread-conversations';
-
 export {
 	isTestModeEnvironment,
 	getBadRatingReasons,
@@ -28,3 +27,4 @@ export {
 	SMOOCH_INTEGRATION_ID_STAGING,
 } from './constants';
 export type * from './types';
+export { zendeskMessageConverter } from './zendesk-message-converter';

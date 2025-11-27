@@ -82,7 +82,7 @@ export type ZendeskContentType =
 
 export type ZendeskMessage = {
 	received: number;
-	role: string;
+	role: 'user' | 'business';
 	text: string;
 	altText?: string;
 	avatarUrl?: string;

@@ -25,7 +25,7 @@ export default function getMostRecentOpenLiveInteraction() {
 			)
 		);
 
-		return latestOpenConversation?.metadata.supportInteractionId as string | null;
+		return latestOpenConversation?.metadata.supportInteractionId as string;
 	} catch {
 		return null;
 	}
