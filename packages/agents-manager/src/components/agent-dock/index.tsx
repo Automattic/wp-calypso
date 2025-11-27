@@ -35,7 +35,7 @@ import ConversationHistoryView from '../conversation-history-view';
 import { AI } from '../icons';
 import type { DockViewState } from './types';
 
-export interface AgentDockProps {
+interface AgentDockProps {
 	/**
 	 * Agent configuration for @automattic/agenttic-client
 	 */
@@ -210,12 +210,25 @@ export default function AgentDock( {
 		setIsOpen( false );
 	};
 
-	const handleNewChat = useCallback( () => {
+	const abortCurrentRequest = useCallback( async () => {
 		const agentManager = getAgentManager();
 		const agentKey = agentId;
 
-		// Remove the agent entirely so it gets recreated fresh
 		if ( agentManager.hasAgent( agentKey ) ) {
+			await agentManager.abortCurrentRequest( agentKey );
+		}
+	}, [ agentId ] );
+
+	const handleNewChat = useCallback( async () => {
+		const agentManager = getAgentManager();
+		const agentKey = agentId;
+
+		if ( agentManager.hasAgent( agentKey ) ) {
+			// Abort any ongoing requests
+			await abortCurrentRequest();
+			// Clear chat messages
+			await loadMessages( [] );
+			// Remove the agent entirely so it gets recreated fresh
 			agentManager.removeAgent( agentKey );
 		}
 
@@ -226,8 +239,10 @@ export default function AgentDock( {
 		resetSession();
 
 		// Switch back to chat view
-		setViewState( 'chat' );
-	}, [ agentId, resetSession ] );
+		if ( viewState === 'history' ) {
+			setViewState( 'chat' );
+		}
+	}, [ abortCurrentRequest, agentId, loadMessages, resetSession, viewState ] );
 
 	const handleToggleHistory = () => {
 		setViewState( ( prev ) => ( prev === 'chat' ? 'history' : 'chat' ) );
@@ -256,11 +271,10 @@ export default function AgentDock( {
 
 	// TODO: Check app crash during chatting...
 	const renderAgentUI = () => {
-		// TODO: This not work...
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', 'agents-manager' ),
-			isDisabled: ! messages.length,
+			isDisabled: viewState === 'chat' && ! messages.length,
 			onClick: handleNewChat,
 		};
 		const undockMenuItem = {
@@ -337,6 +351,7 @@ export default function AgentDock( {
 				floatingChatState={ chatState }
 				onClose={ isDocked ? closeSidebar : setChatIsClosed }
 				onExpand={ setChatIsOpen }
+				onStop={ abortCurrentRequest }
 				messageRenderer={ messageRenderer }
 				emptyView={
 					isLoadingRef.current ||

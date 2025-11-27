@@ -9,7 +9,7 @@ import { useCallback, useEffect } from '@wordpress/element';
  */
 import './style.scss';
 
-export interface BigSkyIconProps {
+interface BigSkyIconProps {
 	/**
 	 * Icon color variant
 	 * @default 'blue'

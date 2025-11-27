@@ -10,16 +10,11 @@ import { __ } from '@wordpress/i18n';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import type { AuthProvider } from '@automattic/agenttic-client';
 
-export interface CalypsoAuthError {
+interface CalypsoAuthError {
 	code?: string;
 	status?: number;
 	message?: string;
 }
-
-/**
- * Error handler function type for Calypso authentication errors
- */
-export type CalypsoErrorHandler = ( error: CalypsoAuthError ) => string;
 
 const JWT_TOKEN_ID = 'jetpack-ai-jwt-token';
 const JWT_TOKEN_EXPIRATION_TIME = 30 * 60 * 1000; // 30 minutes
