@@ -57,16 +57,18 @@ export default function LicenseDetails( {
 		if ( subscription?.status === 'active' ) {
 			return subscription.isAutoRenewEnabled
 				? translate( 'Renews on:' )
-				: translate( 'Cancellation requested | Expires on:' );
+				: translate( 'Auto-renew is OFF | Expires on:' );
 		}
 
 		return translate( 'Expired on:' );
 	} )();
 	const subscriptionBadgeLabel = ( () => {
-		if ( shouldShowSubscription && subscription?.isRefundable ) {
-			return subscription.status === 'inactive'
-				? translate( 'Refunded' )
-				: translate( 'Refundable' );
+		if (
+			shouldShowSubscription &&
+			subscription?.isRefundable &&
+			subscription.status === 'inactive'
+		) {
+			return translate( 'Refundable' );
 		}
 
 		return '';
@@ -125,11 +127,6 @@ export default function LicenseDetails( {
 
 						{ shouldShowSubscription && (
 							<>
-								<span className="license-details__subscription-id">
-									{ translate( 'Subscription ID: %(subscriptionId)s', {
-										args: { subscriptionId: subscription.id },
-									} ) }
-								</span>
 								<div className="license-details__subscription-row">
 									{ subscriptionBadgeLabel && (
 										<Badge

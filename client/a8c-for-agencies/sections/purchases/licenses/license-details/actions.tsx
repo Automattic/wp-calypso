@@ -62,7 +62,7 @@ export default function LicenseDetailsActions( {
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
 	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
-	const isCancellationScheduled =
+	const isAutoRenewDisabled =
 		subscription?.status === 'active' && ! subscription.isAutoRenewEnabled;
 
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
@@ -147,7 +147,7 @@ export default function LicenseDetailsActions( {
 				licenseState !== LicenseState.Revoked &&
 				! isDevSite &&
 				! isClientLicense &&
-				! isCancellationScheduled && (
+				! isAutoRenewDisabled && (
 					<Button
 						compact
 						href={
@@ -166,7 +166,7 @@ export default function LicenseDetailsActions( {
 					? licenseState === LicenseState.Attached
 					: licenseState !== LicenseState.Revoked ) &&
 				licenseType === LicenseType.Partner &&
-				! isCancellationScheduled && (
+				! isAutoRenewDisabled && (
 					<Button compact onClick={ openRevokeDialog } scary>
 						{ translate( 'Revoke' ) }
 					</Button>
