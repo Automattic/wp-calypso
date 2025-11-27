@@ -178,8 +178,7 @@ export default function AgentDock( {
 			// Track that we've loaded this session (after successful validation)
 			loadedSessionIdRef.current = serverSessionId;
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- Excludes agentConfig and loadMessages which are stable
-		[ agentId, applySessionId, sessionId ]
+		[ agentConfig, agentId, applySessionId, loadMessages, sessionId ]
 	);
 
 	// Conversation loading hook
@@ -191,31 +190,27 @@ export default function AgentDock( {
 
 	// Load conversation when switching to a session
 	// This handles clicking a conversation from the history list
-	useEffect(
-		() => {
-			if ( ! sessionId || isLoadingRef.current ) {
-				return;
-			}
+	useEffect( () => {
+		if ( ! sessionId || isLoadingRef.current ) {
+			return;
+		}
 
-			const agentManager = getAgentManager();
-			const agentKey = agentId;
+		const agentManager = getAgentManager();
+		const agentKey = agentId;
 
-			// Agent is created by useAgentChat, but might not have messages loaded yet
-			// Check if we need to load messages from server
-			if ( agentManager.hasAgent( agentKey ) ) {
-				// Load if this is a different session than what's currently loaded
-				if ( loadedSessionIdRef.current !== sessionId ) {
-					isLoadingRef.current = true;
-					const botId = createOdieBotId( agentId );
-					loadConversation( sessionId, botId ).finally( () => {
-						isLoadingRef.current = false;
-					} );
-				}
+		// Agent is created by useAgentChat, but might not have messages loaded yet
+		// Check if we need to load messages from server
+		if ( agentManager.hasAgent( agentKey ) ) {
+			// Load if this is a different session than what's currently loaded
+			if ( loadedSessionIdRef.current !== sessionId ) {
+				isLoadingRef.current = true;
+				const botId = createOdieBotId( agentId );
+				loadConversation( sessionId, botId ).finally( () => {
+					isLoadingRef.current = false;
+				} );
 			}
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- loadConversation is stable from useCallback
-		[ sessionId ]
-	);
+		}
+	}, [ agentId, loadConversation, sessionId ] );
 
 	const handleNewChat = useCallback( () => {
 		const agentManager = getAgentManager();
