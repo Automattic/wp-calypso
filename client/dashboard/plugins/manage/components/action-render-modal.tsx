@@ -65,6 +65,7 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 	if ( items.length === 1 ) {
 		const pluginName = items[ 0 ].name;
 		const count = items[ 0 ].sitesCount;
+		const activeCount = items[ 0 ].sitesWithPluginActive.length;
 		const inactiveCount = items[ 0 ].sitesWithPluginInactive.length;
 		switch ( actionId ) {
 			case 'activate':
@@ -79,7 +80,7 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
 					__( 'You are about to deactivate the %1$s plugin installed on %2$d sites.' ),
 					pluginName,
-					count
+					activeCount
 				);
 			case 'update':
 				return sprintf(
