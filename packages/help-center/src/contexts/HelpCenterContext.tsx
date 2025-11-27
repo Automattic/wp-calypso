@@ -42,6 +42,7 @@ export type HelpCenterRequiredInformation = {
 	 * Custom markdown extensions (optional)
 	 */
 	markdownExtensions?: MarkdownExtensions;
+	source: '' | 'wpcom' | 'a4a';
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -90,6 +91,7 @@ const defaultContext: HelpCenterRequiredInformation = {
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
 	isCommerceGarden: false,
+	source: 'wpcom',
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
