@@ -10,7 +10,12 @@ export type DataViewsProps< Item > = WPDataViewsProps< Item > & {
 	onResetView?: () => void;
 };
 
-export function DataViews< Item >( { view, onResetView, ...props }: DataViewsProps< Item > ) {
+export function DataViews< Item >( {
+	view,
+	onResetView,
+	header,
+	...props
+}: DataViewsProps< Item > ) {
 	const sanitizedView = sanitizeView( view, props.fields );
 
 	// TODO: apply local styles if necessary.
@@ -18,11 +23,19 @@ export function DataViews< Item >( { view, onResetView, ...props }: DataViewsPro
 		<WPDataViews< Item >
 			view={ sanitizedView }
 			header={
-				onResetView && (
-					<Button variant="tertiary" size="compact" style={ { order: -1 } } onClick={ onResetView }>
-						{ __( 'Reset view' ) }
-					</Button>
-				)
+				<>
+					{ header }
+					{ onResetView && (
+						<Button
+							variant="tertiary"
+							size="compact"
+							style={ { order: -1 } }
+							onClick={ onResetView }
+						>
+							{ __( 'Reset view' ) }
+						</Button>
+					) }
+				</>
 			}
 			{ ...( props as any ) }
 		/>
@@ -31,3 +44,8 @@ export function DataViews< Item >( { view, onResetView, ...props }: DataViewsPro
 
 DataViews.Layout = WPDataViews.Layout;
 DataViews.Pagination = WPDataViews.Pagination;
+// Re‑export commonly used header controls so feature code can use
+// `DataViews.ViewSwitcher` and `DataViews.SettingsButton`.
+// These exist on the underlying `@wordpress/dataviews` component.
+( DataViews as any ).ViewSwitcher = ( WPDataViews as any ).ViewSwitcher;
+( DataViews as any ).SettingsButton = ( WPDataViews as any ).SettingsButton;
