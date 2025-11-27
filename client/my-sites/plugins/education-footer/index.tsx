@@ -1,13 +1,14 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useOpenArticleInHelpCenter } from '@automattic/help-center/src/hooks';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
 import Section, { SectionContainer } from 'calypso/components/section';
-import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/route';
 import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -109,6 +110,7 @@ const CardText = styled.span< { color: string } >`
 
 export const MarketplaceFooter = () => {
 	const { __ } = useI18n();
+	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 	const sectionName = useSelector( getSectionName );
@@ -123,7 +125,13 @@ export const MarketplaceFooter = () => {
 	return (
 		<MarketplaceContainer isloggedIn={ isLoggedIn }>
 			<Section
-				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
+				header={
+					isEnabled( 'marketplace-redesign' )
+						? ( translate( "You pick the plugin,{{br}}{{/br}}we'll take care of the rest", {
+								components: { br: <br /> },
+						  } ) as React.ReactElement )
+						: __( "You pick the plugin. We'll take care of the rest." )
+				}
 			>
 				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
 					<Button className="is-primary marketplace-cta" href={ startUrl }>
