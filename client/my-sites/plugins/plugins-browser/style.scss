@@ -127,6 +127,17 @@ body.is-section-plugins #primary .main.is-logged-out {
 		font-size: $font-body-small;
 	}
 }
+.plugins-browser__marketplace-footer {
+	--scss-font-title-large: 2.5rem;
+	--scss-font-body: 1.375rem;
+
+	.section-header-container {
+		max-width: 575px;
+	}
+	.feature-item-container__header {
+		font-weight: 400;
+	}
+}
 .full-width-section.plugins-browser__search-header {
 	padding-top: 100px;
 	padding-bottom: 32px;
@@ -158,8 +169,10 @@ body.is-section-plugins #primary .main.is-logged-out {
 	background-color: var(--studio-white);
 }
 
-body .is-section-plugins .layout__content:has(.plugins-browser.is-full-width-layout) {
-	padding: 0;
+body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
+	.layout__content {
+		padding: 0;
+	}
 
 	.plugins-browser__content-wrapper {
 		background-color: var(--studio-white);
@@ -172,6 +185,10 @@ body .is-section-plugins .layout__content:has(.plugins-browser.is-full-width-lay
 		@media screen and ( max-width: 600px ) {
 			padding-inline: 16px;
 		}
+	}
+	.lpc-header-nav-wrapper .masterbar {
+		background: var(--studio-gray-0);
+		border-bottom: 1px solid var(--studio-gray-0);
 	}
 }
 
