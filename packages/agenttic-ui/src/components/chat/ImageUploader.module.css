@@ -39,7 +39,7 @@
 	text-align: center;
 	border: 1px dashed var(--agent-ui-border, #d0d0d0);
 	border-radius: 12px;
-	background-color: #f0f0f0;
+	background-color: var(--agent-ui-background-secondary, #f0f0f0);
 	margin-bottom: 8px;
 	position: relative;
 	min-height: 150px;
@@ -78,7 +78,7 @@
 	padding: 8px 8px;
 	border-radius: 8px;
 	border: none;
-	background-color: #f0f0f0;
+	background-color: var(--agent-ui-background-secondary, #f0f0f0);
 	cursor: move;
 	transition:
 		transform 0.2s ease,
@@ -151,7 +151,7 @@
 
 .previewMeta span.previewFilename {
 	font-size: 14px !important;
-	color: #1a1a1a;
+	color: var(--agent-ui-text-primary, #1a1a1a);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -160,7 +160,7 @@
 
 .previewMeta span.previewType {
 	font-size: 12px !important;
-	color: #757575;
+	color: var(--agent-ui-text-secondary, #757575);
 	text-transform: uppercase;
 	font-weight: 400;
 }
