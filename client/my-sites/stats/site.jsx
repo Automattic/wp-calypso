@@ -22,6 +22,7 @@ import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import { useShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
+import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import StickyPanel from 'calypso/components/sticky-panel';
 import version_compare from 'calypso/lib/version-compare';
 import Main from 'calypso/my-sites/stats/components/stats-main';
@@ -802,6 +803,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			) }
 			{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
 			<JetpackColophon />
+			<ResurrectedWelcomeModalGate />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</div>
 	);
