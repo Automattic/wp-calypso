@@ -3,24 +3,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { useCallback, useState } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
-import type { ReturnedChat, Message, MessageAction } from '../types';
-interface AgentticMessage {
-	id: string;
-	role: 'user' | 'agent';
-	content: Array< {
-		type: 'text' | 'image_url' | 'component' | 'context';
-		text?: string;
-		image_url?: string;
-		component?: React.ComponentType;
-		componentProps?: unknown;
-	} >;
-	timestamp: number;
-	archived: boolean;
-	showIcon: boolean;
-	icon?: string;
-	disabled?: boolean;
-	actions?: MessageAction[];
-}
+import type { ReturnedChat, Message, AgentticMessage } from '../types';
 
 function convertMessageToAgentticFormat( message: Message ): AgentticMessage {
 	return {
