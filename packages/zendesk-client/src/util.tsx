@@ -2,17 +2,7 @@ import config from '@automattic/calypso-config';
 import { isInSupportSession } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
 import Smooch from 'smooch';
-import type { ZendeskConversation, ZendeskMessage } from './types';
-import type React from 'react';
-
-// Re-export MessageAction type for use in this module
-export interface MessageAction {
-	id: string;
-	payload: boolean;
-	text: string;
-	type: string;
-	metadata: Record< string, unknown >;
-}
+import type { AgentticMessage, ZendeskConversation, ZendeskMessage } from './types';
 
 const IS_TEST_MODE_ENVIRONMENT = true;
 const IS_PRODUCTION_ENVIRONMENT = false;
@@ -75,28 +65,6 @@ export const getZendeskConversations = () => {
 		return [];
 	}
 };
-
-/**
- * Agenttic-UI Message interface
- * Used for components that require the standardized Message interface
- */
-export interface AgentticMessage {
-	id: string;
-	role: 'user' | 'agent';
-	content: Array< {
-		type: 'text' | 'image_url' | 'component' | 'context';
-		text?: string;
-		image_url?: string;
-		component?: React.ComponentType;
-		componentProps?: unknown;
-	} >;
-	timestamp: number;
-	archived: boolean;
-	showIcon: boolean;
-	icon?: string;
-	actions?: MessageAction[];
-	disabled?: boolean;
-}
 
 /**
  * Converts a ZendeskMessage to the agenttic-ui Message interface format

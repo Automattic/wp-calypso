@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import DOMPurify from 'dompurify';
-import type { ZendeskMessage, MessageType } from './types';
+import type { MessageType, ZendeskMessage } from './types';
 import type { ReactNode } from 'react';
 
 // Format markdown to support images attachments that open in a new tab.
