@@ -20,7 +20,7 @@ const VGSCollectFieldStyles: VGS.Css = {
 	boxSizing: 'border-box',
 	fontFamily: 'inherit',
 	fontSize: '16px',
-	fontWeight: 400,
+	fontWeight: '400',
 	lineHeight: '1.5',
 	border: '1px solid #c3c4c7',
 	borderRadius: '2px',
