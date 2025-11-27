@@ -6,7 +6,7 @@ export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
 	canConnectToZendesk: boolean;
 	isLoadingCanConnectToZendesk: boolean;
-	addMessage: ( message: Message ) => void;
+	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	newInteractionsBotSlug: string;
 	newInteractionsBotVersion?: string;
