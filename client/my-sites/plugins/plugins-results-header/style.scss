@@ -27,7 +27,7 @@
 		.full-width-section & {
 			.plugins-results-header__title {
 				font-family: $brand-serif;
-				font-size: $font-headline-medium;
+				font-size: rem(50px);
 				line-height: 1.32;
 			}
 			.plugins-results-header__subtitle {

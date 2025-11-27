@@ -80,7 +80,7 @@ const Section = ( props: SectionProps ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<SectionContainer dark={ dark }>
-			<SectionHeaderContainer>
+			<SectionHeaderContainer className="section-header-container">
 				<SectionHeader dark={ dark } className="wp-brand-font">
 					{ header }
 				</SectionHeader>
