@@ -26,7 +26,7 @@ type HelpCenterSearchProps = {
 
 export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSearchProps ) => {
 	const locale = useLocale();
-	const { sectionName, site, currentUser } = useHelpCenterContext();
+	const { sectionName, site, currentUser, source } = useHelpCenterContext();
 	const { searchQuery, setSearchQueryAndEmailSubject, redirectToArticle } =
 		useHelpCenterSearch( onSearchChange );
 
@@ -39,7 +39,8 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
 		searchQuery || contextTerm || contextSearch, // If there's a query, we don't context search
 		locale,
-		currentRoute
+		currentRoute,
+		source
 	);
 
 	const isSiteOwner = site?.site_owner === currentUser?.ID;
