@@ -79,7 +79,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		selectorsState.hasLoaded = false;
 		selectorsState.isFetching = false;
 		mockUseExperiment.mockReturnValue( [ false, null ] );
-		mockIsFeatureEnabled.mockReturnValue( true );
+		mockIsFeatureEnabled.mockReturnValue( false );
 		mockFetchUserPurchases.mockImplementation( () => () => Promise.resolve( [] ) );
 		mockFetchUserPurchases.mockClear();
 	} );
@@ -123,6 +123,10 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 			{ variationName: WELCOME_BACK_VARIATIONS.AI_ONLY } as any,
 		] );
 
+		mockIsFeatureEnabled.mockImplementation(
+			( flagName ) => flagName === 'welcome-back-modal-ai-only'
+		);
+
 		const initialState = createState( { lastSeenOffsetDays: 400 } );
 
 		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
@@ -153,5 +157,23 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 
 		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATIONS.AI_ONLY );
 		expect( result.current.isEligible ).toBe( false );
+	} );
+
+	it( 'forces eligibility when a variation flag is enabled', () => {
+		mockIsFeatureEnabled.mockImplementation(
+			( flagName ) => flagName === 'welcome-back-modal-ai-only'
+		);
+		selectorsState.purchases = null;
+		selectorsState.hasLoaded = false;
+
+		const initialState = createState( { lastSeenOffsetDays: 30 } );
+
+		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
+			initialState,
+		} );
+
+		expect( result.current.isEligible ).toBe( true );
+		expect( result.current.isLoading ).toBe( false );
+		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATIONS.AI_ONLY );
 	} );
 } );

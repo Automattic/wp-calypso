@@ -33,7 +33,9 @@ experiment:
 | `treatment_all_options` | Manual + AI + continue | `welcome-back-modal-all-options` | Manual onboarding, AI builder, continue                |
 
 All variants are feature-flagged so that we can selectively enable treatments during incremental rollouts. Control
-remains opt-in so we can disable _all_ UI safely if necessary.
+remains opt-in so we can disable _all_ UI safely if necessary. Enabling any of the variant flags automatically forces
+that experience to render—even if the user would otherwise be ineligible or the experiment assignment has not loaded—
+which makes it easy to test each treatment locally.
 
 ## Analytics
 
