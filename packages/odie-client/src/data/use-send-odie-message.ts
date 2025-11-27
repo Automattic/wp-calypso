@@ -168,7 +168,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				}
 
 				trackEvent( 'failed_to_escallate_to_support', {
-					odie_id: chat?.chat_id,
+					odie_id: chat?.odieId,
 					chat_conversation_id: chat?.conversationId,
 					can_connect_to_zendesk: canConnectToZendesk,
 					is_user_eligible_for_paid_support: isUserEligibleForPaidSupport,
@@ -287,7 +287,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			setExperimentVariationName( returnedChat.experiment_name );
 			addMessage( {
 				message: botMessage,
-				props: { chat_id: returnedChat.chat_id },
+				props: { odieId: returnedChat.chat_id },
 				isFromError: false,
 			} );
 

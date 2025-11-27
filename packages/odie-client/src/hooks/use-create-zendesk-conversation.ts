@@ -21,7 +21,7 @@ export const useCreateZendeskConversation = () => {
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction, startNewInteraction } = useManageSupportInteraction();
-	const chatId = chat.chat_id;
+	const chatId = chat.odieId;
 	const navigate = useNavigate();
 	const location = useLocation();
 

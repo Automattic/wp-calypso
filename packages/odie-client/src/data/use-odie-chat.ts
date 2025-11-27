@@ -46,8 +46,8 @@ export const useOdieChat = ( chatId: number | null, customBotSlug?: string ) => 
 					...message,
 					internal_message_id: generateUUID(),
 				} ) ),
-				chat_id: Number( data.chat_id ) || chatId,
-				wpcom_user_id: data.wpcom_user_id,
+				odieId: Number( data.chat_id ) || chatId,
+				wpcomUserId: data.wpcom_user_id,
 			};
 		},
 		refetchOnMount: true,
