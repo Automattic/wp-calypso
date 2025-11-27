@@ -1,12 +1,7 @@
 import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
+import { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 import Smooch from 'smooch';
-import type {
-	OdieConversation,
-	OdieMessage,
-	SupportInteraction,
-	ZendeskConversation,
-	ZendeskMessage,
-} from '@automattic/odie-client';
+import type { OdieConversation, OdieMessage, SupportInteraction } from '@automattic/odie-client';
 
 const isMatchingInteraction = (
 	supportInteraction: SupportInteraction,
@@ -21,7 +16,7 @@ const filterConversationsBySupportInteractions = (
 ): ZendeskConversation[] => {
 	return conversations.filter( ( conversation ) =>
 		supportInteractions.some( ( interaction ) =>
-			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId as string )
 		)
 	);
 };
@@ -85,7 +80,7 @@ export const filterAndUpdateConversationsWithStatus = (
 
 	const conversationsWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
 		const supportInteraction = supportInteractions.find( ( interaction ) =>
-			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId as string )
 		);
 
 		if ( ! supportInteraction ) {

@@ -32,11 +32,5 @@ export const OdieAssistant: React.FC = () => {
 
 export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';
-export type {
-	Conversations,
-	OdieConversation,
-	OdieMessage,
-	SupportInteraction,
-	ZendeskConversation,
-	ZendeskMessage,
-} from './types';
+export type { Conversations, OdieConversation, OdieMessage, SupportInteraction } from './types';
+export type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';

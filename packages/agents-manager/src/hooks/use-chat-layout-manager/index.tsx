@@ -117,6 +117,8 @@ export default function useChatLayoutManager(
 
 				if ( portalRef.current ) {
 					container.removeChild( portalRef.current );
+					// Reset ref so a new portal is created on remount (e.g., StrictMode)
+					portalRef.current = undefined;
 				}
 			}
 		},

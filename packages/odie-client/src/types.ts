@@ -1,4 +1,5 @@
 import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
+import type { ZendeskConversation } from '@automattic/zendesk-client';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
@@ -175,8 +176,8 @@ export type ReturnedChat = {
 
 export type OdieChat = {
 	messages: Message[];
-	odieId?: number | null | undefined;
-	wpcomUserId?: number | null | undefined;
+	odieId?: number | null;
+	wpcomUserId?: number | null;
 };
 
 export type Chat = OdieChat & {
@@ -190,13 +191,6 @@ export type OdieAllowedBots = ( typeof ODIE_ALLOWED_BOTS )[ number ];
 export type OdieAllBotSlugs = ( typeof ODIE_ALL_BOT_SLUGS )[ number ];
 
 export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging' | 'help-center';
-
-interface ConversationParticipant {
-	id: string;
-	userId: string;
-	unreadCount: number;
-	lastRead: number;
-}
 
 export type MessageAction = {
 	id: string;
@@ -213,33 +207,6 @@ export type OdieMessage = {
 	altText?: string;
 };
 
-export type ZendeskMessage = OdieMessage & {
-	avatarUrl?: string;
-	id: string;
-	actions?: MessageAction[];
-	source?: {
-		type: 'web' | 'slack' | 'zd:surveys' | 'zd:answerBot';
-		id: string;
-		integrationId: string;
-	};
-	type: ZendeskContentType;
-	mediaUrl?: string;
-	metadata?: Record< string, any >;
-	htmlText?: string;
-};
-
-export type ZendeskContentType =
-	| 'text'
-	| 'carousel'
-	| 'file'
-	| 'form'
-	| 'formResponse'
-	| 'image'
-	| 'image-placeholder'
-	| 'list'
-	| 'location'
-	| 'template';
-
 type Metadata = {
 	odieChatId: number;
 	createdAt: number;
@@ -252,19 +219,6 @@ export type OdieConversation = {
 	createdAt: number;
 	messages: OdieMessage[];
 	metadata?: Metadata;
-};
-
-export type ZendeskConversation = {
-	id: string;
-	lastUpdatedAt: number;
-	businessLastRead: number;
-	description: string;
-	displayName: string;
-	iconUrl: string;
-	type: 'sdkGroup' | string;
-	participants: ConversationParticipant[];
-	messages: ZendeskMessage[];
-	metadata: Metadata;
 };
 
 export type SupportInteractionDraft = {

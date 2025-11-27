@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import Smooch from 'smooch';
-import { zendeskMessageConverter } from '../utils';
 import { useGetUnreadConversations } from './use-get-unread-conversations';
-import type { ZendeskMessage } from '../types';
+import { zendeskMessageConverter } from './zendesk-message-converter';
+import type { ZendeskMessage } from './types';
 
 const parseResponse = ( conversation: Conversation ) => {
 	let clientId;
