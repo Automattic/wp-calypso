@@ -79,8 +79,6 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 		}
 	);
 	const variationName = experimentAssignment?.variationName as WelcomeBackVariation | null;
-	const variationFlagName = variationName ? WELCOME_BACK_VARIATION_FLAG_MAP[ variationName ] : null;
-	const isVariantFlagEnabled = variationFlagName ? config.isEnabled( variationFlagName ) : true;
 
 	const forcedVariation =
 		( Object.keys( WELCOME_BACK_VARIATION_FLAG_MAP ) as WelcomeBackVariation[] ).find(
@@ -104,7 +102,7 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 		isUserPurchasesFetching ||
 		( baseEligibility && isExperimentLoading );
 
-	const experimentReady = ! isExperimentLoading && !! variationName && isVariantFlagEnabled;
+	const experimentReady = ! isExperimentLoading && !! variationName;
 
 	return {
 		isLoading,
