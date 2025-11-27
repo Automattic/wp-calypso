@@ -6,7 +6,7 @@
 
 import { useCallback, useState } from '@wordpress/element';
 
-const SESSION_STORAGE_KEY = 'agents-manager-session-id';
+export const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 /**

@@ -7,7 +7,7 @@
 import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
 import { useMemo, useEffect, useState } from '@wordpress/element';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
-import useAgentSession from '../../hooks/use-agent-session';
+import useAgentSession, { SESSION_STORAGE_KEY } from '../../hooks/use-agent-session';
 import { lastConversationCache } from '../../utils/conversation-cache';
 import AgentDock from '../agent-dock';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
@@ -114,6 +114,7 @@ export default function UnifiedAIAgent( {
 				agentId: 'wp-orchestrator',
 				agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
 				sessionId,
+				sessionIdStorageKey: SESSION_STORAGE_KEY,
 				authProvider: createCalypsoAuthProvider( site?.ID ),
 				enableStreaming: true,
 			};
