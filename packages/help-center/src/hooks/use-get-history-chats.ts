@@ -2,13 +2,10 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetOdieConversations } from '@automattic/odie-client/src/data/use-get-odie-conversations';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
+import { getZendeskConversations } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useState } from '@wordpress/element';
-import {
-	filterAndUpdateConversationsWithStatus,
-	getLastMessage,
-	getZendeskConversations,
-} from '../components/utils';
+import { filterAndUpdateConversationsWithStatus, getLastMessage } from '../components/utils';
 import { HELP_CENTER_STORE } from '../stores';
 import type {
 	Conversations,
