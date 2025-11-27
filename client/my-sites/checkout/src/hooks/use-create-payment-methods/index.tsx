@@ -4,7 +4,6 @@ import {
 	createApplePayMethod,
 	createGooglePayMethod,
 	createBancontactMethod,
-	createBancontactPaymentMethodStore,
 	createP24Method,
 	createP24PaymentMethodStore,
 	createEpsMethod,
@@ -189,16 +188,14 @@ function useCreateBancontact( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createBancontactPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createBancontactMethod( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
 	);
 }
 
