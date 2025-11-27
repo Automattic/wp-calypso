@@ -27,7 +27,7 @@ const fetchExperimentAssignment = async ( experimentName ) => {
 const useMenuPanelExperiment = ( experimentName, treatmentVariation ) => {
 	const cacheKey = `menu-panel-experiment-assignment-${ experimentName }-${ treatmentVariation }`;
 
-	const { data: isInTreatment } = useQuery( {
+	const { data: isInTreatment, isLoading } = useQuery( {
 		queryKey: [ 'experiment-assignment', experimentName, treatmentVariation ],
 		queryFn: async () => {
 			const result = await fetchExperimentAssignment( experimentName );
@@ -61,7 +61,7 @@ const useMenuPanelExperiment = ( experimentName, treatmentVariation ) => {
 		},
 	} );
 
-	return isInTreatment;
+	return { isInTreatment, isLoading };
 };
 
 export { useMenuPanelExperiment };

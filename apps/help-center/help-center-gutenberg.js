@@ -25,24 +25,20 @@ function HelpCenterContent() {
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
-	const isMenuPanelExperimentEnabled = useMenuPanelExperiment(
-		'calypso_help_center_menu_popover_v2',
-		'menu_popover'
-	);
+	const { isInTreatment: isMenuPanelExperimentEnabled, isLoading: isLoadingExperimentAssignment } =
+		useMenuPanelExperiment( 'calypso_help_center_menu_popover_v2', 'menu_popover' );
 	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown(), [] );
 
 	const canvasMode = useCanvasMode();
 
 	const trackIconInteraction = useCallback( () => {
-		if ( isMenuPanelExperimentEnabled === undefined ) {
-			return;
-		}
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
+			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
-	}, [ isShown, isMenuPanelExperimentEnabled ] );
+	}, [ isShown, isMenuPanelExperimentEnabled, isLoadingExperimentAssignment ] );
 
 	const handleToggleHelpCenter = useCallback( () => {
 		trackIconInteraction();
