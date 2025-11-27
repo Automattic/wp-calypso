@@ -23,6 +23,17 @@
 			color: var(--studio-gray-80);
 			margin-bottom: 0;
 		}
+
+		.full-width-section & {
+			.plugins-results-header__title {
+				font-family: $brand-serif;
+				font-size: $font-headline-medium;
+				line-height: 1.32;
+			}
+			.plugins-results-header__subtitle {
+				font-size: $font-body-large;
+			}
+		}
 	}
 
 	.plugins-results-header__actions {
@@ -41,6 +52,9 @@
 			text-decoration: underline;
 			svg {
 				margin-left: 2px;
+			}
+			.full-width-section & {
+				font-size: $font-body-small;
 			}
 		}
 	}

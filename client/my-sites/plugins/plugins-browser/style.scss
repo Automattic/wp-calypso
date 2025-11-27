@@ -123,19 +123,13 @@ body.is-section-plugins #primary .main.is-logged-out {
 	}
 }
 .full-width-section {
-	.plugins-results-header .plugins-results-header__titles .plugins-results-header__title {
-		font-family: $brand-serif;
-		font-size: $font-headline-medium;
-		line-height: 1.32;
-	}
-	.plugins-results-header .plugins-results-header__titles .plugins-results-header__subtitle {
-		font-size: $font-body-large;
+	.plugins-results-header__action {
+		font-size: $font-body-small;
 	}
 }
 .full-width-section.plugins-browser__search-header {
 	padding-top: 100px;
 	padding-bottom: 32px;
-	background-color: var( --studio-gray-0 );
 	background-image: url( /calypso/images/plugins/plugins_hero_2.svg );
 	background-size: auto 380px;
 	background-position: right top;
@@ -153,12 +147,6 @@ body.is-section-plugins #primary .main.is-logged-out {
 	@media screen and ( max-width: 600px ) {
 		background-image: url( /calypso/images/plugins/plugins_hero_2_m.svg );
 	}
-}
-.plugins-browser__search-header,
-.plugins-discovery-page__favorites,
-.plugins-discovery-page__do-more,
-.plugins-discovery-page__power-store {
-	background-color: var(--studio-gray-0);
 }
 
 .plugins-browser__categories {

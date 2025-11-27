@@ -205,7 +205,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					</FullWidthSection>
 				) : (
 					<>
-						<FullWidthSection className="plugins-browser__search-header">
+						<FullWidthSection className="plugins-browser__search-header full-width-section--gray">
 							<SearchBoxHeader
 								searchRef={ searchRef }
 								categoriesRef={ categoriesRef }

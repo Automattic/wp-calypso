@@ -129,6 +129,14 @@
 			}
 			width: calc(33% - 10px); // 3 column grid with 20px gutter
 		}
+
+		.full-width-section & {
+			border-radius: 8px;
+
+			.plugins-browser-item__header {
+				min-height: 0;
+			}
+		}
 	}
 
 	&.extended {
@@ -172,6 +180,22 @@
 	&:focus,
 	&:hover {
 		border-color: var(--studio-gray-30);
+	}
+
+	.full-width-section & {
+		background: var(--studio-gray-0);
+		border-color: transparent;
+		border-radius: 8px;
+
+		&:focus,
+		&:hover {
+			border-color: var(--studio-blue-50);
+		}
+
+
+	}
+	.full-width-section--gray & {
+		background: var(--studio-white);
 	}
 }
 
