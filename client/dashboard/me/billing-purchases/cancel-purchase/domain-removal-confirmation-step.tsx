@@ -66,7 +66,7 @@ export default function DomainRemovalConfirmationStep( {
 				/>
 			</VStack>
 
-			<ButtonStack>
+			<ButtonStack justify="flex-end">
 				<Button
 					__next40pxDefaultSize
 					variant="tertiary"
