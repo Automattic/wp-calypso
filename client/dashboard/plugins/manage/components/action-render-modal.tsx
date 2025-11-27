@@ -65,8 +65,7 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 	if ( items.length === 1 ) {
 		const pluginName = items[ 0 ].name;
 		const count = items[ 0 ].sitesCount;
-		const activeCount = items[ 0 ].sitesWithPluginActiveCount;
-		const inactiveCount = count - activeCount;
+		const inactiveCount = items[ 0 ].sitesWithPluginInactive.length;
 		switch ( actionId ) {
 			case 'activate':
 				return sprintf(

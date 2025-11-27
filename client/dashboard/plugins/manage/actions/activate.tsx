@@ -10,7 +10,7 @@ export const activateAction: Action< PluginListRow > = {
 	id: 'activate',
 	label: ( items ) => {
 		const [ plugin ] = items;
-		const inactiveCount = plugin.sitesCount - plugin.sitesWithPluginActiveCount;
+		const inactiveCount = plugin.sitesWithPluginInactive.length;
 
 		return sprintf(
 			// translators: %(count)d is the number of sites the plugin will be activated on.
