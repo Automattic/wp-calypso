@@ -18,7 +18,7 @@ yarn add @automattic/agents-manager
 
 ## Usage
 
-### UnifiedAIAgent
+### Basic Integration
 
 The main component is `UnifiedAIAgent`. It handles the initialization of the agent, session management, and UI rendering.
 
@@ -26,22 +26,96 @@ The main component is `UnifiedAIAgent`. It handles the initialization of the age
 import UnifiedAIAgent from '@automattic/agents-manager';
 
 function MyApp() {
+	const currentUser = { ID: 123, login: 'user' };
+	const site = { ID: 456, URL: 'https://example.com' };
+
 	return (
 		<UnifiedAIAgent
-			currentRoute="/my-route"
+			currentRoute="/dashboard"
+			sectionName="dashboard"
 			currentUser={ currentUser }
 			site={ site }
-			// Optional: Provide custom tools
-			toolProvider={ myToolProvider }
-			// Optional: Provide custom context
-			contextProvider={ myContextProvider }
-			// Optional: Custom suggestions for empty view
-			emptyViewSuggestions={ [
-				{ label: 'Help me write', prompt: 'Help me write a blog post about...' },
-			] }
 		/>
 	);
 }
+```
+
+### Adding Custom Tools
+
+You can extend the agent's capabilities by providing a `toolProvider`. This allows the agent to perform actions specific to your application.
+
+```tsx
+import { ToolProvider } from '@automattic/agents-manager';
+
+const myToolProvider: ToolProvider = {
+	getAbilities: async () => {
+		return [
+			{
+				name: 'get_latest_posts',
+				label: 'Get Latest Posts',
+				description: 'Fetches the latest posts from the site',
+				category: 'content',
+				execute: async ( params ) => {
+					// Implementation to fetch posts
+					return JSON.stringify( posts );
+				},
+			},
+		];
+	},
+	executeAbility: async ( name, args ) => {
+		// Handle execution if not handled by individual ability callbacks
+		if ( name === 'get_latest_posts' ) {
+			return JSON.stringify( posts );
+		}
+	},
+};
+
+// Pass it to the component
+// <UnifiedAIAgent toolProvider={ myToolProvider } ... />
+```
+
+### Providing Context
+
+Use `contextProvider` to give the agent awareness of the current application state.
+
+```tsx
+import { ContextProvider } from '@automattic/agents-manager';
+
+const myContextProvider: ContextProvider = {
+	getClientContext: () => {
+		return {
+			url: window.location.href,
+			pathname: window.location.pathname,
+			search: window.location.search,
+			environment: 'my-app',
+			contextEntries: [
+				{
+					type: 'application_state',
+					data: {
+						currentView: 'editor',
+						selectedBlockId: 'block-123',
+					},
+				},
+			],
+		};
+	},
+};
+
+// Pass it to the component
+// <UnifiedAIAgent contextProvider={ myContextProvider } ... />
+```
+
+### Customizing the Empty View
+
+You can provide custom suggestions that appear when the chat is empty.
+
+```tsx
+const suggestions = [
+	{ label: 'Draft a post', prompt: 'Help me write a blog post about...' },
+	{ label: 'Analyze stats', prompt: 'How is my site performing today?' },
+];
+
+// <UnifiedAIAgent emptyViewSuggestions={ suggestions } ... />
 ```
 
 ## API Reference
@@ -60,62 +134,6 @@ function MyApp() {
 | `emptyViewSuggestions` | `Suggestion[]`       | Custom suggestions for the empty view.                    |
 | `markdownComponents`   | `MarkdownComponents` | Custom markdown renderers.                                |
 | `markdownExtensions`   | `MarkdownExtensions` | Custom markdown extensions.                               |
-
-## Architecture
-
-The package is built around several key components:
-
-- **UnifiedAIAgent**: The top-level wrapper that configures the agent.
-- **AgentDock**: Manages the chat UI, docking state, and session logic.
-- **ConversationHistoryView**: Displays past conversations and allows switching between them.
-- **useChatLayoutManager**: Manages the layout state (docked vs floating) and responsive behavior.
-- **useAgentSession**: Manages session persistence and lifecycle.
-- **useConversationList**: Manages fetching and caching the list of past conversations.
-- **useLoadConversation**: Handles loading conversation history from the server.
-
-## Extension API
-
-You can extend the agent's capabilities using providers.
-
-### ToolProvider
-
-Allows registering custom tools (abilities) that the agent can use.
-
-```typescript
-const myToolProvider: ToolProvider = {
-	getTools: async () => {
-		return [
-			{
-				name: 'my_custom_tool',
-				description: 'Does something cool',
-				execute: async ( params ) => {
-					// ...
-				},
-			},
-		];
-	},
-};
-```
-
-### ContextProvider
-
-Allows providing additional context to the agent.
-
-```typescript
-const myContextProvider: ContextProvider = {
-	getContext: async () => {
-		return [
-			{
-				type: 'application_state',
-				data: {
-					currentView: 'editor',
-					// ...
-				},
-			},
-		];
-	},
-};
-```
 
 ## Development
 
