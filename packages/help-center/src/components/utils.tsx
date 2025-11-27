@@ -39,11 +39,6 @@ export const getLastMessage = ( {
 	return filteredMessages.length > 0 ? filteredMessages[ filteredMessages.length - 1 ] : null;
 };
 
-export const getClientId = ( conversations: ZendeskConversation[] ): string =>
-	conversations
-		.flatMap( ( conversation ) => conversation.messages )
-		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';
-
 export const matchSupportInteractionId = (
 	getConversations: () => ZendeskConversation[],
 	isChatLoaded: boolean,

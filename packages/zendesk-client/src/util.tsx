@@ -147,3 +147,8 @@ export const getZendeskConversations = () => {
 		return [];
 	}
 };
+
+export const getClientId = ( conversations: ZendeskConversation[] ): string =>
+	conversations
+		.flatMap( ( conversation ) => conversation.messages )
+		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';

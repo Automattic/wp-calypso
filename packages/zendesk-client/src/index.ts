@@ -22,4 +22,4 @@ export {
 } from './constants';
 export { zendeskMessageConverter } from './zendesk-message-converter';
 export type * from './types';
-export type * from './util';
+export * from './util';

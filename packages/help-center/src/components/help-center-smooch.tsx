@@ -10,6 +10,7 @@ import {
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
 	useCanConnectToZendeskMessaging,
+	getClientId,
 } from '@automattic/zendesk-client';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -17,7 +18,6 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
-import { getClientId } from './utils';
 import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 const destroy = () => {
