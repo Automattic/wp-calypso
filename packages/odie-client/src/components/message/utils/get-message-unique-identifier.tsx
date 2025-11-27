@@ -1,6 +1,10 @@
-import { Message } from '../../../types';
+type MessageIDProps = {
+	metadata?: Record< string, any >;
+	message_id?: number;
+	internal_message_id?: string;
+};
 
-export const getMessageUniqueIdentifier = ( message: Message, fallback?: string ) => {
+export const getMessageUniqueIdentifier = ( message: MessageIDProps, fallback?: string ) => {
 	return (
 		message.metadata?.temporary_id ??
 		message.message_id ??

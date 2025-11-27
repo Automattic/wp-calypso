@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { ZendeskMessage } from '@automattic/zendesk-client';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
@@ -17,7 +18,7 @@ import {
 } from '../utils';
 import type { Chat, Message, OdieAllBotSlugs } from '../types';
 
-function isEqual( message1: Message, message2: Message ) {
+function isEqual( message1: Message | ZendeskMessage, message2: Message | ZendeskMessage ) {
 	const message1Id = getMessageUniqueIdentifier( message1 );
 	const message2Id = getMessageUniqueIdentifier( message2 );
 	return message1Id && message1Id === message2Id;
@@ -28,11 +29,11 @@ function isEqual( message1: Message, message2: Message ) {
  * @param messages - The messages to deduplicate.
  * @returns The deduplicated messages.
  */
-export function deduplicateZDMessages( messages: Message[] ) {
+export function deduplicateZDMessages( messages: ( Message | ZendeskMessage )[] ) {
 	const distinctMessages: Message[] = [];
 	for ( const message of messages ) {
 		if ( ! distinctMessages.some( ( otherMessage ) => isEqual( message, otherMessage ) ) ) {
-			distinctMessages.push( message );
+			distinctMessages.push( message as Message );
 		}
 	}
 	return distinctMessages;
@@ -154,7 +155,7 @@ export const useGetCombinedChat = (
 										...( isSameConversation
 											? prevChat.messages.filter( ( message ) => message.role === 'user' )
 											: [] ),
-										...( conversation.messages as Message[] ),
+										...conversation.messages,
 									] ) as Message[] ),
 								],
 								provider: 'zendesk',

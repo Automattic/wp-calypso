@@ -87,7 +87,7 @@ export type ZendeskMessage = {
 	};
 	type: ZendeskContentType;
 	mediaUrl?: string;
-	metadata?: Record< string, any >;
+	metadata?: Record< string, number | string | boolean >;
 	htmlText?: string;
 };
 

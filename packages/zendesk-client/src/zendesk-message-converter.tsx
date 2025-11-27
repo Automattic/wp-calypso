@@ -109,5 +109,5 @@ export const zendeskMessageConverter = ( message: ZendeskMessage ) => {
 		quotedMessageId: message.id,
 		metadata: message.metadata,
 		feedbackOptions: message.actions,
-	};
+	} as ZendeskMessage;
 };
