@@ -9,17 +9,12 @@ export { useZendeskMessagingAvailability } from './use-zendesk-messaging-availab
 export { useRateChat } from './use-rate-chat';
 export { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 export { useAttachFileToConversation } from './use-attach-file';
-export { useZendeskChat } from './use-zendesk-chat';
 export { useGetUnreadConversations } from './use-get-unread-conversations';
 export { useGetZendeskConversation } from './use-get-zendesk-conversation';
 export { calculateUnread } from './use-get-unread-conversations';
 
-export {
-	isTestModeEnvironment,
-	getBadRatingReasons,
-	convertZendeskMessageToAgentticFormat,
-} from './util';
-export type { AgentticMessage, MessageAction } from './util';
+export { isTestModeEnvironment, getBadRatingReasons } from './util';
+
 export {
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
 	ZENDESK_STAGING_SUPPORT_CHAT_KEY,
