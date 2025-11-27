@@ -1,48 +1,45 @@
 import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
-import { AI_SITE_BUILDER_FLOW, SITE_MIGRATION_FLOW, Step } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { code } from '@wordpress/icons';
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteData } from '../../../../hooks/use-site-data';
-import { STEPS } from '../../steps';
 import FlowCard from '../components/flow-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
-const PostCheckoutSetupYourSiteStep: StepType = () => {
+const PostCheckoutSetupYourSiteStep: StepType = ( { navigation } ) => {
 	const { siteSlug, siteId } = useSiteData();
 	const translate = useTranslate();
 
 	const handleBuildWithAI = () => {
 		recordTracksEvent( 'calypso_onboarding_post_checkout_build_with_ai_click' );
 
-		window.location.assign(
-			addQueryArgs( `/setup/${ AI_SITE_BUILDER_FLOW }/processing`, {
-				siteSlug,
-				siteId,
-				fromPostCheckoutSetupSite: '1',
-			} )
-		);
+		navigation.submit( {
+			setupChoice: 'build-with-ai',
+			siteSlug,
+			siteId,
+		} );
 	};
 
 	const handleBlankSite = () => {
 		recordTracksEvent( 'calypso_onboarding_post_checkout_blank_site_click' );
-		window.location.replace( `/sites/${ siteSlug }` );
+
+		navigation.submit( {
+			setupChoice: 'blank-site',
+			siteSlug,
+		} );
 	};
 
 	const handleMigrate = () => {
 		recordTracksEvent( 'calypso_onboarding_post_checkout_migrate_click' );
-		window.location.assign(
-			addQueryArgs(
-				`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
-				{
-					siteSlug,
-					siteId,
-				}
-			)
-		);
+
+		navigation.submit( {
+			setupChoice: 'migrate',
+			siteSlug,
+			siteId,
+		} );
 	};
 
 	const stepContent = (
@@ -77,9 +74,9 @@ const PostCheckoutSetupYourSiteStep: StepType = () => {
 			topBar={ <Step.TopBar /> }
 			heading={
 				<Step.Heading
-					text={ translate( 'Set up your site.' ) }
+					text={ translate( 'Set up your site' ) }
 					subText={ translate(
-						"No matter what you want to do, there's an easy way to get started."
+						"No matter what you want to do, there's an easy way to get started"
 					) }
 				/>
 			}
