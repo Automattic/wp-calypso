@@ -20,6 +20,5 @@ export {
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
 } from './constants';
-export { zendeskMessageConverter } from './zendesk-message-converter';
 export type * from './types';
 export * from './util';

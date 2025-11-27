@@ -10,7 +10,7 @@ import {
 } from './use-authenticate-zendesk-messaging';
 import { useLoadZendeskMessaging } from './use-load-zendesk-messaging';
 import { isTestModeEnvironment, convertZendeskMessageToAgentticFormat } from './util';
-import type { ZendeskMessage } from '@automattic/odie-client';
+import type { ZendeskMessage } from './types';
 
 const destroy = () => {
 	try {

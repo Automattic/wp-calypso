@@ -1,12 +1,12 @@
 import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
-import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
+import type { ZendeskConversation } from '@automattic/zendesk-client';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
 	canConnectToZendesk: boolean;
 	isLoadingCanConnectToZendesk: boolean;
-	addMessage: ( message: Message | ZendeskMessage ) => void;
+	addMessage: ( message: Message ) => void;
 	botName?: string;
 	newInteractionsBotSlug: string;
 	newInteractionsBotVersion?: string;

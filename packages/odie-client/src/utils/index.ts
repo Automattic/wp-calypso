@@ -1,5 +1,4 @@
 export { getTimestamp } from './get-timestamp';
-export { zendeskMessageConverter } from '@automattic/zendesk-client';
 export { isOdieAllowedBot } from './is-odie-allowed-bot';
 export { generateUUID } from './generate-uuid';
 export {

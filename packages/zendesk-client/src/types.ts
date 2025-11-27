@@ -74,7 +74,7 @@ export type ZendeskContentType =
 
 export type ZendeskMessage = {
 	received: number;
-	role: 'user' | 'business';
+	role: string;
 	text: string;
 	altText?: string;
 	avatarUrl?: string;
@@ -87,7 +87,7 @@ export type ZendeskMessage = {
 	};
 	type: ZendeskContentType;
 	mediaUrl?: string;
-	metadata?: Record< string, number | string | boolean >;
+	metadata?: Record< string, any >;
 	htmlText?: string;
 };
 
@@ -124,13 +124,12 @@ export type MessageType =
 	| 'form'
 	| 'formResponse';
 
-// Re-export MessageAction type for use in this module
 export interface MessageAction {
 	id: string;
 	payload: boolean;
 	text: string;
 	type: string;
-	metadata: Record< string, unknown >;
+	metadata: ChatFeedbackActions;
 }
 
 /**

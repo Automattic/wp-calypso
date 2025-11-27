@@ -1,10 +1,10 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { zendeskMessageConverter } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
+import { zendeskMessageConverter } from '../utils/zendesk-message-converter';
 import { deduplicateZDMessages } from './use-get-combined-chat';
 import type { ZendeskMessage } from '@automattic/zendesk-client';
 
