@@ -5,7 +5,6 @@ import {
 	createGooglePayMethod,
 	createBancontactMethod,
 	createP24Method,
-	createP24PaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 	createIdealMethod,
@@ -167,16 +166,14 @@ function useCreateP24( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createP24PaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createP24Method( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
 	);
 }
 
