@@ -108,6 +108,7 @@ export function mapApiPluginsToDataViewPlugins(
 			icons: null,
 			slug,
 			sitesCount: count,
+			sitesWithPluginActiveCount: activeCount,
 			hasUpdate: mapCountToQuantifier( updateCount, count ),
 			isActive: mapCountToQuantifier( activeCount, count ),
 			areAutoUpdatesAllowed: mapCountToQuantifier( autoupdateAllowedCount, count ),

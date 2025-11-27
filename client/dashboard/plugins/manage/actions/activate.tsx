@@ -1,6 +1,6 @@
 import { sitePluginActivateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { _n, sprintf } from '@wordpress/i18n';
 import ActionRenderModal, { getModalHeader } from '../components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../utils';
 import type { PluginListRow } from '../types';
@@ -8,7 +8,21 @@ import type { Action } from '@wordpress/dataviews';
 
 export const activateAction: Action< PluginListRow > = {
 	id: 'activate',
-	label: __( 'Activate' ),
+	label: ( items ) => {
+		const [ plugin ] = items;
+		const inactiveCount = plugin.sitesCount - plugin.sitesWithPluginActiveCount;
+
+		return sprintf(
+			// translators: %(count)d is the number of sites the plugin will be activated on.
+			_n(
+				'Activate on %(count)d site',
+				'Activate on %(count)d sites',
+				inactiveCount,
+				'next-admin'
+			),
+			{ count: inactiveCount }
+		);
+	},
 	modalHeader: getModalHeader( 'activate' ),
 	RenderModal: ( { items, closeModal, onActionPerformed } ) => {
 		const { mutateAsync } = useMutation( sitePluginActivateMutation() );
