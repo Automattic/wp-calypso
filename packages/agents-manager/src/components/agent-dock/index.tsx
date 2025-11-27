@@ -143,13 +143,13 @@ export default function AgentDock( {
 				try {
 					if ( ! serverSessionId ) {
 						// eslint-disable-next-line no-console
-						console.warn( 'Attempted to apply empty session ID' );
+						console.warn( '[AgentDock] Attempted to apply empty session ID' );
 						return;
 					}
 					applySessionId( serverSessionId );
 				} catch ( error ) {
 					// eslint-disable-next-line no-console
-					console.error( 'Failed to apply session ID:', error );
+					console.error( '[AgentDock] Failed to apply session ID:', error );
 					return;
 				}
 			}

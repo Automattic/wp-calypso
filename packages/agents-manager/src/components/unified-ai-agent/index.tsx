@@ -4,9 +4,11 @@
  * Main wrapper component for loading the AI agent.
  */
 
-import { useMemo } from '@wordpress/element';
+import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
+import { useMemo, useEffect, useState } from '@wordpress/element';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import useAgentSession from '../../hooks/use-agent-session';
+import { lastConversationCache } from '../../utils/conversation-cache';
 import AgentDock from '../agent-dock';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
@@ -101,11 +103,12 @@ export default function UnifiedAIAgent( {
 	markdownComponents,
 	markdownExtensions,
 }: UnifiedAIAgentProps ) {
+	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	// TODO: Migrate to the routing solution...
 	const { sessionId } = useAgentSession();
 
 	// Create agent configuration
-	const agentConfig = useMemo< UseAgentChatConfig >(
+	const config = useMemo< UseAgentChatConfig >(
 		() => {
 			const config: UseAgentChatConfig = {
 				agentId: 'wp-orchestrator',
@@ -176,6 +179,33 @@ export default function UnifiedAIAgent( {
 		[]
 	);
 
+	// Load config AND pre-load cached messages for progressive loading
+	useEffect( () => {
+		const initializeWithCache = async () => {
+			// Check if we have cached messages to pre-load
+			if ( sessionId ) {
+				const agentManager = getAgentManager();
+				const agentKey = config.agentId;
+				const botId = createOdieBotId( agentKey );
+
+				// Only pre-load if agent doesn't exist yet
+				if ( ! agentManager.hasAgent( agentKey ) ) {
+					const cachedData = lastConversationCache.get( botId );
+
+					if ( cachedData?.sessionId === sessionId && cachedData?.messages.length ) {
+						// Create agent and load cached messages BEFORE setting config
+						await agentManager.createAgent( agentKey, config );
+						await agentManager.replaceMessages( agentKey, cachedData.messages );
+					}
+				}
+			}
+
+			setAgentConfig( config );
+		};
+
+		initializeWithCache();
+	}, [ config, sessionId ] );
+
 	// Default suggestions - can be overridden via customSuggestions prop
 	const defaultSuggestions = useMemo(
 		() => [
@@ -197,6 +227,11 @@ export default function UnifiedAIAgent( {
 		],
 		[]
 	);
+
+	// Don't render until agent configuration is initialized
+	if ( ! agentConfig ) {
+		return null;
+	}
 
 	return (
 		<AgentDock
