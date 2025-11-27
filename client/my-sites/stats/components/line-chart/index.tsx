@@ -173,16 +173,24 @@ function StatsLineChart( {
 				</div>
 			);
 		},
-		[ moment ]
+		[ moment, seriesIcons ]
 	);
 
 	const onPointerUp = useCallback(
 		( { datum }: EventHandlerParams< DataPointDate > ) => {
+			// datum.date is always in the timezone of the browser, we need to use literal date here.
 			if ( datum && datum.date ) {
-				onClick && onClick( { data: { period: moment( datum.date ).format( DATE_FORMAT ) } } );
+				onClick &&
+					onClick( {
+						data: {
+							period: `${ datum.date.getFullYear() }-${
+								datum.date.getMonth() + 1
+							}-${ datum.date.getDate() }`,
+						},
+					} );
 			}
 		},
-		[ moment, onClick ]
+		[ onClick ]
 	);
 
 	return (
