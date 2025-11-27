@@ -31,6 +31,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { HELP_CENTER_STORE } from '../stores';
+import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 import './help-center-search-results.scss';
 
@@ -179,6 +180,7 @@ interface HelpSearchResultsProps {
 		result: SearchResult
 	) => void;
 	searchQuery: string;
+	placeholderLines?: number;
 	openAdminInNewTab: boolean;
 	location: string;
 	isSearching: boolean;
@@ -190,6 +192,7 @@ function HelpSearchResults( {
 	externalLinks = false,
 	onSelect,
 	searchQuery = '',
+	placeholderLines = 4,
 	openAdminInNewTab = false,
 	location = 'inline-help-popover',
 	isSearching,
@@ -358,6 +361,7 @@ function HelpSearchResults( {
 
 	return (
 		<div className="help-center-search-results" aria-label={ resultsLabel }>
+			{ isSearching && ! hasAPIResults && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 				<div className="help-center-search-results__empty-results">
 					<p>

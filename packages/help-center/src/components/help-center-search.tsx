@@ -13,7 +13,6 @@ import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterRecentConversations from './help-center-recent-conversations';
 import HelpCenterSearchResults from './help-center-search-results';
 import { BlockedZendeskNotice } from './notices';
-import PlaceholderLines from './placeholder-lines';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
 import './help-center-search.scss';
@@ -51,7 +50,6 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 			<HelpCenterRecentConversations />
 			<BlockedZendeskNotice />
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
-			{ isSearching && <PlaceholderLines lines={ 4 } /> }
 			{ ! isSearching && (
 				<InlineHelpSearchCard
 					searchQuery={ searchQuery }
