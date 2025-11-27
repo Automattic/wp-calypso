@@ -223,6 +223,7 @@ export default function RecoveryEmail() {
 				} }
 				onCancel={ () => setIsRemoveDialogOpen( false ) }
 				onConfirm={ handleRemove }
+				size="small"
 			>
 				{ __( 'Are you sure you want to remove this email?' ) }
 			</ConfirmModal>

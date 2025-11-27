@@ -276,6 +276,7 @@ export default function RecoverySMS() {
 				} }
 				onCancel={ () => setIsRemoveDialogOpen( false ) }
 				onConfirm={ handleRemove }
+				size="small"
 			>
 				{ __( 'Are you sure you want to remove this SMS number?' ) }
 			</ConfirmModal>
