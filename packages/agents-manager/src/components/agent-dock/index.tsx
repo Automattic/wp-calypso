@@ -343,7 +343,7 @@ export default function AgentDock( {
 				emptyView={
 					isLoadingRef.current ||
 					isLoadingConversation ||
-					( sessionId && loadedSessionIdRef.current !== sessionId && ! messages.length ) ? (
+					( sessionId && loadedSessionIdRef.current !== sessionId ) ? (
 						<ChatMessageSkeleton count={ 3 } />
 					) : (
 						<EmptyView
