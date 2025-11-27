@@ -8,10 +8,15 @@ import {
 	useAgentChat,
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
-import { AgentUI, createMessageRenderer, EmptyView } from '@automattic/agenttic-ui';
+import {
+	AgentUI,
+	createMessageRenderer,
+	EmptyView,
+	type MarkdownComponents,
+	type MarkdownExtensions,
+	type Suggestion,
+} from '@automattic/agenttic-ui';
 import { AgentsManagerSelect } from '@automattic/data-stores';
-import { useManagedOdieChat } from '@automattic/odie-client';
-import { useZendeskChat } from '@automattic/zendesk-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
@@ -22,10 +27,6 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import { AI } from '../icons';
-import type { ContextAdapter } from '../../adapters/context/context-adapter';
-import './style.scss';
-
-const MODE: 'zendesk' | 'bigsky' | 'odie' = 'odie';
 
 export interface AgentDockProps {
 	/**
@@ -33,21 +34,17 @@ export interface AgentDockProps {
 	 */
 	agentConfig: UseAgentChatConfig;
 	/**
-	 * Context adapter for providing environment context
-	 */
-	contextAdapter?: ContextAdapter;
-	/**
 	 * Custom empty view suggestions
 	 */
-	emptyViewSuggestions?: Array< { id?: string; label: string; prompt: string } >;
+	emptyViewSuggestions?: Suggestion[];
 	/**
 	 * Custom message renderer components
 	 */
-	markdownComponents?: Record< string, any >;
+	markdownComponents?: MarkdownComponents;
 	/**
 	 * Custom markdown extensions
 	 */
-	markdownExtensions?: any;
+	markdownExtensions?: MarkdownExtensions;
 	/**
 	 * Callback when chat is cleared
 	 */
@@ -107,62 +104,7 @@ export default function AgentDock( {
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager( 'body' );
 
-	const {
-		messages: bigskyMessages,
-		isProcessing: bigskyIsProcessing,
-		error,
-		onSubmit: onBigskySendMessage,
-	} = useAgentChat( agentConfig );
-	const { agentticMessages: zendeskMessages, sendMessage: sendZendeskMessage } = useZendeskChat(
-		MODE === 'zendesk',
-		'6925ee173e0beaf87e86e76a'
-	);
-	const {
-		messages: odieMessages,
-		isProcessing: odieIsProcessing,
-		sendMessage: sendOdieMessage,
-	} = useManagedOdieChat( null, 'wpcom-support-chat' );
-
-	function onSendMessage( message: string ) {
-		if ( MODE === 'zendesk' ) {
-			sendZendeskMessage( {
-				text: message,
-				role: 'user',
-				received: Date.now(),
-				id: crypto.randomUUID(),
-				type: 'text',
-			} );
-		} else if ( MODE === 'odie' ) {
-			sendOdieMessage( {
-				content: message,
-				role: 'user',
-				type: 'message',
-			} );
-		} else {
-			onBigskySendMessage( message );
-		}
-	}
-
-	const messages = useMemo( () => {
-		if ( MODE === 'zendesk' ) {
-			return zendeskMessages;
-		} else if ( MODE === 'bigsky' ) {
-			return bigskyMessages;
-		} else if ( MODE === 'odie' ) {
-			return odieMessages;
-		}
-		return [];
-	}, [ zendeskMessages, bigskyMessages, odieMessages ] );
-
-	const isProcessing = useMemo( () => {
-		if ( MODE === 'zendesk' ) {
-			return false;
-		} else if ( MODE === 'bigsky' ) {
-			return bigskyIsProcessing;
-		} else if ( MODE === 'odie' ) {
-			return odieIsProcessing;
-		}
-	}, [ bigskyIsProcessing, odieIsProcessing ] );
+	const { messages, isProcessing, error, onSubmit } = useAgentChat( agentConfig );
 
 	// TODO: Use this when adding custom chat header with clear chat menu item
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -180,11 +122,6 @@ export default function AgentDock( {
 
 	// Custom message renderer
 	const messageRenderer = useMemo( () => {
-		if ( MODE === 'zendesk' ) {
-			return function renderMessage( message: any ) {
-				return <div>{ message.children }</div>;
-			};
-		}
 		const options: any = { components: markdownComponents };
 		if ( markdownExtensions ) {
 			options.extensions = markdownExtensions;
@@ -242,7 +179,7 @@ export default function AgentDock( {
 				messages={ messages }
 				isProcessing={ isProcessing }
 				error={ error }
-				onSubmit={ onSendMessage }
+				onSubmit={ onSubmit }
 				variant={ isDocked ? 'embedded' : 'floating' }
 				floatingChatState={ chatState }
 				onClose={ isDocked ? closeSidebar : setChatIsClosed }

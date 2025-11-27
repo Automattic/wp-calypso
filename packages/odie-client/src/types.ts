@@ -175,9 +175,9 @@ export type ReturnedChat = {
 };
 
 export type OdieChat = {
-	chat_id?: number | null;
 	messages: Message[];
-	wpcom_user_id?: number | null | undefined;
+	odieId?: number | null;
+	wpcomUserId?: number | null;
 };
 
 export type Chat = OdieChat & {
