@@ -1,8 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isInSupportSession } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
-import Smooch from 'smooch';
-import type { AgentticMessage, ZendeskConversation, ZendeskMessage } from './types';
+import type { AgentticMessage, ZendeskMessage } from './types';
 
 const IS_TEST_MODE_ENVIRONMENT = true;
 const IS_PRODUCTION_ENVIRONMENT = false;
@@ -49,21 +48,6 @@ export const getBadRatingReasons = () => {
 		{ label: __( 'The issue was not resolved.', __i18n_text_domain__ ), value: '1002' },
 		{ label: __( 'The Happiness Engineer was unhelpful.', __i18n_text_domain__ ), value: '1003' },
 	];
-};
-
-export const getClientId = ( conversations: ZendeskConversation[] ): string =>
-	conversations
-		.flatMap( ( conversation ) => conversation.messages )
-		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';
-
-export const getZendeskConversations = () => {
-	try {
-		const conversations = Smooch?.getConversations?.() ?? [];
-		return conversations as unknown as ZendeskConversation[];
-	} catch {
-		// Smooch is not completely initialized yet
-		return [];
-	}
 };
 
 /**

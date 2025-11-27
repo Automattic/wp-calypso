@@ -9,7 +9,7 @@ export { useZendeskMessagingAvailability } from './use-zendesk-messaging-availab
 export { useRateChat } from './use-rate-chat';
 export { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 export { useAttachFileToConversation } from './use-attach-file';
-export { useZendeskChat } from './use-zendesk-chat';
+export { useManagedZendeskChat as useZendeskChat } from './use-managed-zendesk-chat';
 export { useGetUnreadConversations } from './use-get-unread-conversations';
 export { useGetZendeskConversation } from './use-get-zendesk-conversation';
 export { calculateUnread } from './use-get-unread-conversations';
@@ -18,7 +18,6 @@ export {
 	getBadRatingReasons,
 	convertZendeskMessageToAgentticFormat,
 } from './util';
-export type { AgentticMessage, MessageAction } from './util';
 export {
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
 	ZENDESK_STAGING_SUPPORT_CHAT_KEY,
@@ -26,5 +25,5 @@ export {
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
 } from './constants';
-export type * from './types';
 export { zendeskMessageConverter } from './zendesk-message-converter';
+export type * from './types';

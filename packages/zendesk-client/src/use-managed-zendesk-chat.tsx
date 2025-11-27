@@ -96,7 +96,20 @@ smoochContainer.style.height = '100%';
 smoochContainer.style.zIndex = '1000';
 document.body.appendChild( smoochContainer );
 
-export const useZendeskChat = ( enabled: boolean, conversationId?: string ) => {
+/**
+ * Returns a complete API for managing a Zendesk chat.
+ * @param enabled - Whether the chat is enabled.
+ * @param conversationId - The ID of the conversation to manage.
+ * @returns An object with the following properties:
+ * - isChatLoaded: Whether the chat is loaded.
+ * - typingStatus: The status of the typing.
+ * - clientId: The ID of the client.
+ * - conversation: The conversation.
+ * - connectionStatus: The status of the connection.
+ * - agentticMessages: The messages in the conversation in Agenttic-compatible format.
+ * - sendMessage: A function to send a message to the conversation.
+ */
+export const useManagedZendeskChat = ( enabled: boolean, conversationId?: string ) => {
 	const queryClient = useQueryClient();
 	const [ isChatLoaded, setIsChatLoaded ] = useState( false );
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
@@ -288,4 +301,4 @@ export const useZendeskChat = ( enabled: boolean, conversationId?: string ) => {
 	};
 };
 
-export default useZendeskChat;
+export default useManagedZendeskChat;
