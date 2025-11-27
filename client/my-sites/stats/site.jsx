@@ -262,10 +262,13 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		// Limit navigation within the currently selected range.
 		const currentChartStart = context.query?.chartStart;
 		const currentChartEnd = context.query?.chartEnd;
-		if ( currentChartStart && momentInSite( chartStart ).isBefore( currentChartStart ) ) {
+		if (
+			currentChartStart &&
+			momentInSite( chartStart ).isBefore( momentInSite( currentChartStart ) )
+		) {
 			chartStart = currentChartStart;
 		}
-		if ( currentChartEnd && momentInSite( chartEnd ).isAfter( currentChartEnd ) ) {
+		if ( currentChartEnd && momentInSite( chartEnd ).isAfter( momentInSite( currentChartEnd ) ) ) {
 			chartEnd = currentChartEnd;
 		}
 

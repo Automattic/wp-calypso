@@ -8,7 +8,7 @@ import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 /**
- * Dashboard page class for the new v2 dashboard.
+ * Dashboard page class for the new Multi-site Dashboard.
  *
  * This Page Object represents the new dashboard implementation
  * accessible under the /v2 path.

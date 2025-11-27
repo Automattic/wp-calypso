@@ -19,6 +19,7 @@ interface APILicense {
 	parent_license_id: number | null;
 	meta: APILicenseMeta | null;
 	referral: ReferralAPIResponse;
+	subscription?: APILicenseSubscription | null;
 }
 
 export interface APILicenseMeta {
@@ -28,6 +29,18 @@ export interface APILicenseMeta {
 	a4a_dev_site_period_start?: string;
 	a4a_transferred_subscription_id?: string;
 	a4a_transferred_subscription_expiration?: string;
+}
+
+interface APILicenseSubscription {
+	id: string;
+	product_name: string;
+	purchase_price: number;
+	purchase_currency: string;
+	billing_interval_unit: string;
+	status: string;
+	expiry: string | null;
+	is_auto_renew_enabled: boolean;
+	is_refundable: boolean;
 }
 
 export default function formatLicenses( items: APILicense[] ): License[] {
@@ -49,6 +62,7 @@ export default function formatLicenses( items: APILicense[] ): License[] {
 		parentLicenseId: item.parent_license_id,
 		meta: formatLicenseMeta( item.meta ),
 		referral: item.referral,
+		subscription: formatLicenseSubscription( item.subscription ),
 	} ) );
 }
 
@@ -72,5 +86,25 @@ export function formatLicenseMeta( meta: APILicenseMeta | null ): LicenseMeta {
 		devSitePeriodStart, // unix timestamp
 		transferredSubscriptionId,
 		transferredSubscriptionExpiration, // e.g.: "2025-09-15"
+	};
+}
+
+function formatLicenseSubscription(
+	subscription: APILicenseSubscription | null | undefined
+): License[ 'subscription' ] {
+	if ( ! subscription ) {
+		return undefined;
+	}
+
+	return {
+		id: subscription.id,
+		productName: subscription.product_name,
+		purchasePrice: subscription.purchase_price,
+		purchaseCurrency: subscription.purchase_currency,
+		billingIntervalUnit: subscription.billing_interval_unit,
+		status: subscription.status,
+		expiry: subscription.expiry,
+		isAutoRenewEnabled: subscription.is_auto_renew_enabled,
+		isRefundable: subscription.is_refundable,
 	};
 }
