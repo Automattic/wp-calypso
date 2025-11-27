@@ -75,14 +75,16 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const [ shouldCreateConversation, setShouldCreateConversation ] = useState< {
 		createdFrom?: string;
 		isFromError?: boolean;
+		escalationOnSecondAttempt?: boolean;
 		trigger: boolean;
 	} >( { isFromError: false, trigger: false } );
 
 	useEffect( () => {
-		const { createdFrom, isFromError, trigger } = shouldCreateConversation;
+		const { createdFrom, isFromError, escalationOnSecondAttempt, trigger } =
+			shouldCreateConversation;
 
 		if ( trigger ) {
-			createZendeskConversation( { createdFrom, isFromError } );
+			createZendeskConversation( { createdFrom, isFromError, escalationOnSecondAttempt } );
 			setShouldCreateConversation( { createdFrom: undefined, isFromError: false, trigger: false } );
 		}
 	}, [ createZendeskConversation, shouldCreateConversation ] );
@@ -169,6 +171,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						trigger: true,
 						createdFrom: 'automatic_escalation',
 						isFromError,
+						escalationOnSecondAttempt: hasTriedToEscalateToSupport,
 					} );
 					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;

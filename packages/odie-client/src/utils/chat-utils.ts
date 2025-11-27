@@ -1,6 +1,8 @@
 import { getTimestamp } from './get-timestamp';
 import type { Chat } from '../types';
 
+const MAX_ESCALATION_ATTEMPT_TIME = 3 * 24 * 60 * 60 * 1000; // three days
+
 export const hasRecentEscalationAttempt = ( chat: Chat ) => {
 	return (
 		chat?.messages?.some( ( message ) => {
@@ -9,7 +11,7 @@ export const hasRecentEscalationAttempt = ( chat: Chat ) => {
 			}
 
 			const messageTimestamp = getTimestamp( message.created_at ) * 1000;
-			const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
+			const threeDaysAgo = Date.now() - MAX_ESCALATION_ATTEMPT_TIME;
 
 			return messageTimestamp >= threeDaysAgo;
 		} ) ?? false
