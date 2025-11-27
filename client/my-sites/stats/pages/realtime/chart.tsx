@@ -4,7 +4,6 @@ import moment from 'moment';
 import { useEffect, useState, useMemo } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { parseChartData } from 'calypso/state/stats/lists/utils';
-import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 
 type Unit = 'hour' | 'day' | 'week' | 'month' | 'year';
 
@@ -27,16 +26,15 @@ const UPDATE_INTERVAL_IN_SECONDS = 5;
 const MINUTE_DATA_LENGTH = 30;
 
 const RealtimeChart = ( { siteId }: { siteId: number } ) => {
-	const momentInSite = useMomentInSite( siteId );
 	const [ viewsData, setViewsData ] = useState( {} as chartMinuteDataTypes );
 	const [ initialViewsCount, setInitialViewsCount ] = useState< number | undefined >( undefined );
 
 	useEffect( () => {
 		const intervalId = setInterval( () => {
 			// Query the chart data by site timezone YYYY-MM-DD HH:mm:00.
-			const adjustedDatetimeForQuery = momentInSite().format( 'YYYY-MM-DD HH:mm:00' );
+			const adjustedDatetimeForQuery = moment().format( 'YYYY-MM-DD HH:mm:00' );
 			// Index the chart data by local YYYY-MM-DD HH:mm:00 to compare with local time in X-axis tickFormat.
-			const localDatetimeKey = momentInSite().format( 'YYYY-MM-DD HH:mm:00' );
+			const localDatetimeKey = moment().format( 'YYYY-MM-DD HH:mm:00' );
 
 			queryStatsVisits( siteId, {
 				unit: 'hour',
@@ -67,7 +65,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 		const allDatetimeKeys = [];
 		// Display all the minutes in the last 30 minutes.
 		for ( let i = 0; i <= MINUTE_DATA_LENGTH; i++ ) {
-			const datetime = momentInSite().subtract( i, 'minute' ).format( 'YYYY-MM-DD HH:mm:00' );
+			const datetime = moment().subtract( i, 'minute' ).format( 'YYYY-MM-DD HH:mm:00' );
 			allDatetimeKeys.unshift( datetime );
 		}
 
@@ -110,7 +108,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 			chartData: data,
 			maxViews,
 		};
-	}, [ viewsData, momentInSite, initialViewsCount ] );
+	}, [ viewsData, initialViewsCount ] );
 
 	// Format the time in minute difference from now.
 	const formatTimeTick = ( value: number ) => {

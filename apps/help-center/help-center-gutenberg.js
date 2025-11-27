@@ -208,7 +208,7 @@ if ( helpCenterData.isNextAdmin ) {
 		if ( select( 'next-admin' ).getMetaMenuItems?.( 'wp-logo' ).length > 1 ) {
 			unsubscribe();
 			// wait for the next tick to ensure the menu items are registered
-			queueMicrotask( () => {
+			queueMicrotask( async () => {
 				select( 'next-admin' )
 					.getMetaMenuItems( 'wp-logo' )
 					.forEach( ( item ) => {
@@ -229,6 +229,16 @@ if ( helpCenterData.isNextAdmin ) {
 					? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
 					: {};
 
+				// Load external providers (e.g., from Big Sky plugin)
+				const { loadExternalProviders } = await import( './src/utils/load-external-providers' );
+				const {
+					toolProvider,
+					contextProvider,
+					suggestions,
+					markdownComponents,
+					markdownExtensions,
+				} = await loadExternalProviders();
+
 				createRoot( container ).render(
 					<QueryClientProvider client={ queryClient }>
 						<HelpCenter
@@ -240,6 +250,11 @@ if ( helpCenterData.isNextAdmin ) {
 							onboardingUrl="https://wordpress.com/start"
 							handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
 							isCommerceGarden={ helpCenterData.isCommerceGarden }
+							toolProvider={ toolProvider }
+							contextProvider={ contextProvider }
+							suggestions={ suggestions }
+							markdownComponents={ markdownComponents }
+							markdownExtensions={ markdownExtensions }
 							{ ...botProps }
 						/>
 					</QueryClientProvider>,
