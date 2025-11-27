@@ -1,16 +1,7 @@
-import {
-	RESURRECTED_FREE_USERS_EXPERIMENT,
-	RESURRECTION_DAY_LIMIT_EXPERIMENT,
-	WELCOME_BACK_VARIATION_FLAG_MAP,
-	type WelcomeBackVariation,
-} from './constants';
-import { hasExceededDormancyThreshold } from './utils';
 import config from '@automattic/calypso-config';
-import type { ExperimentAssignment } from '@automattic/explat-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import { useExperiment } from 'calypso/lib/explat';
 import { isRenewing, isSubscription } from 'calypso/lib/purchases';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { fetchUserPurchases } from 'calypso/state/purchases/actions';
@@ -21,6 +12,15 @@ import {
 } from 'calypso/state/purchases/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import {
+	RESURRECTED_FREE_USERS_EXPERIMENT,
+	RESURRECTION_DAY_LIMIT_EXPERIMENT,
+	WELCOME_BACK_VARIATION_FLAG_MAP,
+	type WelcomeBackVariation,
+} from './constants';
+import { hasExceededDormancyThreshold } from './utils';
+import type { ExperimentAssignment } from '@automattic/explat-client';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 interface EligibilityResult {
 	isLoading: boolean;
