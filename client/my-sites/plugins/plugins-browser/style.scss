@@ -122,7 +122,16 @@ body.is-section-plugins #primary .main.is-logged-out {
 		padding-top: 0;
 	}
 }
-
+.full-width-section {
+	.plugins-results-header .plugins-results-header__titles .plugins-results-header__title {
+		font-family: $brand-serif;
+		font-size: $font-headline-medium;
+		line-height: 1.32;
+	}
+	.plugins-results-header .plugins-results-header__titles .plugins-results-header__subtitle {
+		font-size: $font-body-large;
+	}
+}
 .full-width-section.plugins-browser__search-header {
 	padding-top: 100px;
 	padding-bottom: 32px;
