@@ -54,7 +54,7 @@ export default function CreditCardPayButton( {
 	);
 
 	const cardholderName = fields.cardholderName;
-	const { formStatus } = useFormStatus();
+	const { formStatus, setFormSubmitting, setFormReady } = useFormStatus();
 	const paymentPartner = shouldUseEbanx ? 'ebanx' : 'stripe';
 	const elements = useElements();
 	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
@@ -141,6 +141,8 @@ export default function CreditCardPayButton( {
 
 						if ( shouldUseVgs ) {
 							// VGS flow: get tokens from VGS form
+							// Set form to submitting state immediately to show loading indicator
+							setFormSubmitting();
 							try {
 								const vgsTokens = await submitVgsForm();
 								onClick( {
@@ -150,6 +152,8 @@ export default function CreditCardPayButton( {
 								} );
 							} catch ( error ) {
 								debug( 'VGS form submission failed', error );
+								// Reset form status to allow user to retry
+								setFormReady();
 								setDisplayFieldsError(
 									__(
 										'Failed to process card information. Please check your details and try again.'
