@@ -80,8 +80,8 @@ export default function PreferencesLogin() {
 		{
 			id: 'primarySiteId',
 			label: __( 'Primary site' ),
-			description: __( 'Choose the default site dashboard you’ll see at login.' ),
-			isVisible: () => user.visible_site_count > 0,
+			isVisible: ( formDataItem ) =>
+				user.visible_site_count > 0 && formDataItem.defaultLandingPage === 'primary-site-dashboard',
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
 				const value = getValue( { item: data } )?.toString( 10 ) ?? '';
@@ -108,12 +108,15 @@ export default function PreferencesLogin() {
 		},
 		{
 			id: 'defaultLandingPage',
-			label: __( 'Default landing page' ),
+			label: __( 'Default view' ),
 			Edit: 'radio',
 			elements: [
-				{ label: __( 'Primary site dashboard' ), value: 'primary-site-dashboard' },
-				{ label: __( 'Sites' ), value: 'sites' },
-				{ label: __( 'Reader' ), value: 'reader' },
+				{ label: __( 'See a list of all your sites.' ), value: 'sites' },
+				{ label: __( 'View posts from sites you follow.' ), value: 'reader' },
+				{
+					label: __( 'Open your primary site’s dashboard.' ),
+					value: 'primary-site-dashboard',
+				},
 			] satisfies { label: string; value: LandingPage }[],
 		},
 	];
@@ -121,7 +124,7 @@ export default function PreferencesLogin() {
 	// Define form layout
 	const form = {
 		layout: { type: 'regular' as const },
-		fields: [ 'primarySiteId', 'defaultLandingPage' ],
+		fields: [ 'defaultLandingPage', 'primarySiteId' ],
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -166,8 +169,14 @@ export default function PreferencesLogin() {
 		<Card className="preferences-login-card">
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
-					<VStack spacing={ 3 }>
-						<SectionHeader level={ 3 } title={ __( 'Login preferences' ) } />
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Login preferences' ) }
+							description={ __(
+								'Choose what you see by default when you log in to WordPress.com.'
+							) }
+						/>
 
 						<DataForm< LoginPreferencesFormData >
 							data={ formData }
@@ -177,11 +186,6 @@ export default function PreferencesLogin() {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-
-						<Text variant="muted" as="p">
-							{ __( 'Select what you’ll see by default when visiting WordPress.com.' ) }
-						</Text>
-
 						<ButtonStack>
 							<Button
 								__next40pxDefaultSize
