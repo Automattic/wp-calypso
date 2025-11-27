@@ -16,13 +16,15 @@ export function getRouterOptions( config: AppConfig ) {
 		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
-				message: 'Unknown error (backport)',
+				message: error.message,
 				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
 				tags: [ 'dashboard' ],
 				properties: {
+					dashboard_backport: true,
 					env: calypsoConfig( 'env_id' ),
 					message: error.message,
 					stack: errorInfo.componentStack,
+					path: window.location.href,
 				},
 			} );
 		},

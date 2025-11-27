@@ -2,6 +2,7 @@ import { fetchTwoStep } from '@automattic/api-core';
 import {
 	userSettingsQuery,
 	userPurchasesQuery,
+	allSitesQuery,
 	userReceiptsQuery,
 	purchaseQuery,
 	receiptQuery,
@@ -179,10 +180,10 @@ export const purchasesRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => billingRoute,
-	loader: async ( { context } ) => {
+	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userPurchasesQuery() ),
-			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+			queryClient.ensureQueryData( allSitesQuery() ),
 		] );
 	},
 	validateSearch: ( search ): { page?: number; search?: string; site?: number } => {
