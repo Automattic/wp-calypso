@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
-	AI_SITE_BUILDER_FLOW,
 	ONBOARDING_FLOW,
 	SITE_MIGRATION_FLOW,
+	SITE_SETUP_FLOW,
 	clearStepPersistedState,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -236,8 +236,9 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					switch ( setupChoice ) {
 						case 'build-with-ai':
+							// Use launch-big-sky step which has eligibility checks and protections for post-checkout scenarios
 							window.location.assign(
-								addQueryArgs( `/setup/${ AI_SITE_BUILDER_FLOW }/processing`, {
+								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
 									siteSlug,
 									siteId,
 									fromPostCheckoutSetupSite: '1',
