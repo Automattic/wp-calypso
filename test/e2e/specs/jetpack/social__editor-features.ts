@@ -105,7 +105,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			} );
 
 			test( 'Should verify that auto-sharing is available for new posts', async function () {
-				await socialConnectionsManager.interceptRequests();
+				await socialConnectionsManager.mockSocialConnections();
 
 				await Promise.all( [
 					// Open the Jetpack sidebar.
@@ -134,7 +134,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				features.resharing ? 'IS' : 'is NOT'
 			} available`, async function () {
 				let connectionTestPromise = Promise.resolve();
-				await socialConnectionsManager.interceptRequests();
+				await socialConnectionsManager.mockSocialConnections();
 
 				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 
@@ -271,7 +271,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			test( `Should verify that Social Image Generator ${
 				features.socialImageGenerator ? 'IS' : 'is NOT'
 			} available`, async function () {
-				await socialConnectionsManager.interceptRequests();
+				await socialConnectionsManager.mockSocialConnections();
 
 				const connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 
