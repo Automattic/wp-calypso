@@ -21,10 +21,16 @@ export const siteBySlugQuery = ( siteSlug: string ) =>
 				return await fetchSite( siteSlug );
 			} catch ( e ) {
 				if ( isWpError( e ) && e.error === 'unknown_blog' ) {
-					throw notFound();
+					throw notFound( { data: e.error } );
 				}
 				throw e;
 			}
+		},
+		retry: ( failureCount, e: { data?: string } ) => {
+			if ( e.data === 'unknown_blog' ) {
+				return false;
+			}
+			return failureCount < 3; // default retry count
 		},
 	} );
 
@@ -36,10 +42,16 @@ export const siteByIdQuery = ( siteId: number ) =>
 				return await fetchSite( siteId );
 			} catch ( e ) {
 				if ( isWpError( e ) && e.error === 'unknown_blog' ) {
-					throw notFound();
+					throw notFound( { data: e.error } );
 				}
 				throw e;
 			}
+		},
+		retry: ( failureCount, e: { data?: string } ) => {
+			if ( e.data === 'unknown_blog' ) {
+				return false;
+			}
+			return failureCount < 3; // default retry count
 		},
 	} );
 
