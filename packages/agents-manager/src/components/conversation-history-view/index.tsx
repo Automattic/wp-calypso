@@ -4,7 +4,7 @@
  */
 
 import { Button } from '@wordpress/components';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import useConversationList from '../../hooks/use-conversation-list';
 import ConversationListItem from '../conversation-list-item';
@@ -26,18 +26,19 @@ export default function ConversationHistoryView( {
 	onSelectConversation,
 	onNewChat,
 }: ConversationHistoryViewProps ) {
+	// To use the latest onSelectConversation in the callback
+	const onSelectConversationRef = useRef( onSelectConversation );
+	onSelectConversationRef.current = onSelectConversation;
+
 	const { conversations, isLoading, error } = useConversationList( {
 		botId,
 		apiBaseUrl,
 		authProvider,
 	} );
 
-	const handleConversationClick = useCallback(
-		( sessionId: string ) => {
-			onSelectConversation( sessionId );
-		},
-		[ onSelectConversation ]
-	);
+	const handleConversationClick = useCallback( ( sessionId: string ) => {
+		onSelectConversationRef.current( sessionId );
+	}, [] );
 
 	return (
 		<div className="agents-manager-conversation-history-view">
