@@ -38,4 +38,12 @@ describe( 'SelectCardCheckboxV2', () => {
 		expect( onChange ).toHaveBeenCalledTimes( 1 );
 		expect( onChange ).toHaveBeenCalledWith( true );
 	} );
+	it( 'disables the checkbox when isBusy is true', () => {
+		render(
+			<SelectCardCheckboxV2 onChange={ jest.fn() } isBusy>
+				Hello
+			</SelectCardCheckboxV2>
+		);
+		expect( screen.getByRole( 'checkbox', { name: 'Hello' } ) ).toBeDisabled();
+	} );
 } );

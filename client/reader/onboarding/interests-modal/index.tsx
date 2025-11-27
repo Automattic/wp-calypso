@@ -218,6 +218,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 									<SelectCardCheckboxV2
 										key={ topic.name }
 										onChange={ ( checked ) => handleTopicChange( checked, topic.tag ) }
+										isBusy={ processingTags.has( topic.tag ) }
 										checked={
 											Array.isArray( topic.tag )
 												? topic.tag.every( ( t ) => followedTags.includes( t ) )
