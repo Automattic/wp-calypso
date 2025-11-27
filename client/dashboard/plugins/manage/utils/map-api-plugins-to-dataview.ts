@@ -26,7 +26,7 @@ function mapCountToQuantifier( count: number, total: number ): 'all' | 'some' | 
 }
 
 export function mapApiPluginsToDataViewPlugins(
-	sitesById?: Map< number, Site >,
+	sitesById: Map< number, Site >,
 	response?: PluginsResponse
 ): PluginListRow[] {
 	if ( ! response?.sites ) {
