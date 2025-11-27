@@ -36,10 +36,8 @@ function AdminHelpCenterContent( {
 
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
 	const supportLinks = document.querySelectorAll( '[data-target="wpcom-help-center"]' );
-	const isMenuPanelExperimentEnabled = useMenuPanelExperiment(
-		'calypso_help_center_menu_popover_v2',
-		'menu_popover'
-	);
+	const { isInTreatment: isMenuPanelExperimentEnabled, isLoading: isLoadingExperimentAssignment } =
+		useMenuPanelExperiment( 'calypso_help_center_menu_popover_v2', 'menu_popover' );
 
 	const closeHelpCenterWhenNotificationsPanelIsOpened = useCallback( () => {
 		const helpCenterContainerIsVisible = document.querySelector( '.help-center__container' );
@@ -89,15 +87,13 @@ function AdminHelpCenterContent( {
 	);
 
 	const trackIconInteraction = useCallback( () => {
-		if ( isMenuPanelExperimentEnabled === undefined ) {
-			return;
-		}
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
+			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
-	}, [ isShown, isMenuPanelExperimentEnabled ] );
+	}, [ isShown, isMenuPanelExperimentEnabled, isLoadingExperimentAssignment ] );
 
 	const handleMenuPanelClick = () => {
 		trackIconInteraction();

@@ -63,6 +63,7 @@ function Help() {
 			is_help_center_visible: isShown,
 			section: 'dashboard',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
+			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
 	};
 
