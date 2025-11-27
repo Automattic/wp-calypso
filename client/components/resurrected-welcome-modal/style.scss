@@ -1,0 +1,14 @@
+.resurrected-welcome-modal {
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 16px;
+	}
+
+	&__cta-secondary {
+		background: var( --color-surface );
+		border: 1px solid var( --color-border );
+	}
+}
+
