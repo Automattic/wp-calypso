@@ -109,6 +109,7 @@ const SecurityKeysList = ( {
 				} }
 				onCancel={ () => setSelectedKeyToRemove( null ) }
 				onConfirm={ handleRemove }
+				size="small"
 			>
 				{ __( 'Are you sure you want to remove this security key?' ) }
 			</ConfirmModal>
