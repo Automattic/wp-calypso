@@ -129,8 +129,6 @@ export default function AgentDock( {
 		}
 	}, [ agentId, messages.length, sessionId ] );
 
-	// TODO: Maybe implement `useNavigationContinuation()`...
-
 	// Memoized callback for when conversation loads from server
 	const onLoaded = useCallback(
 		async ( loadedMessages: Message[], serverSessionId: string ) => {
