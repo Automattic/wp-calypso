@@ -26,7 +26,7 @@ export const activateAction: Action< PluginListRow > = {
 	modalHeader: getModalHeader( 'activate' ),
 	RenderModal: ( { items, closeModal, onActionPerformed } ) => {
 		const { mutateAsync } = useMutation( sitePluginActivateMutation() );
-		const action = buildBulkSitesPluginAction( mutateAsync );
+		const action = buildBulkSitesPluginAction( mutateAsync, items[ 0 ].sitesWithPluginActive );
 
 		return (
 			<ActionRenderModal
