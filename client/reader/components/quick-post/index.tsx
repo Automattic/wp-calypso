@@ -16,7 +16,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
@@ -105,6 +105,12 @@ export default function QuickPost() {
 					recordReaderTracksEvent( 'calypso_reader_quick_post_error', {
 						error: error.message,
 					} );
+
+					dispatch(
+						errorNotice( translate( 'Sorry, something went wrong. Please try again.' ), {
+							duration: 5000,
+						} )
+					);
 				},
 			}
 		);
