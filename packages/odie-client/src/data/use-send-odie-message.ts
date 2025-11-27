@@ -15,6 +15,7 @@ import {
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
+import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
@@ -115,9 +116,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			message.internal_message_id === getExistingConversationMessage().internal_message_id
 	);
 
-	const hasTriedToEscalateToSupport = chat?.messages?.some(
-		( message ) => message.context?.flags?.forward_to_human_support
-	);
+	const hasTriedToEscalateToSupport = hasRecentEscalationAttempt( chat );
 
 	/*
 		Adds a message to the chat.
