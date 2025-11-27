@@ -6,7 +6,7 @@ import { getNormalizedPath } from '../../app/analytics/super-props';
 export function PageViewTracker() {
 	const router = useRouter();
 	const { recordPageView } = useAnalytics();
-	const lastPath = useRef();
+	const lastPath = useRef< string | null >( null );
 
 	useEffect( () => {
 		if ( router.state.status !== 'pending' ) {
