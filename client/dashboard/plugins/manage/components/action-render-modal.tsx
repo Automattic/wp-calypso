@@ -21,6 +21,7 @@ export type ActionOnExecuteResponse = {
 
 export type ActionRenderModalProps = RenderModalProps< PluginListRow > & {
 	actionId: string;
+	listItems?: boolean;
 	// Function that executes the underlying action (e.g., existing callback)
 	onExecute: ( items: PluginListRow[] ) => Promise< ActionOnExecuteResponse >;
 };
@@ -224,6 +225,7 @@ function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< 
 
 export default function ActionRenderModal( {
 	items,
+	listItems = true,
 	closeModal,
 	onActionPerformed,
 	actionId,
@@ -502,7 +504,7 @@ export default function ActionRenderModal( {
 	return (
 		<VStack spacing={ 4 }>
 			<Text>{ getConfirmText( actionId, items ) }</Text>
-			{ getSiteList( actionId, items, sitesById ) }
+			{ listItems && getSiteList( actionId, items, sitesById ) }
 			<HStack justify="right">
 				<Button
 					__next40pxDefaultSize

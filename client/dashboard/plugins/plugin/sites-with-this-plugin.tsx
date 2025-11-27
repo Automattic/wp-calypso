@@ -275,6 +275,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 								<ActionRenderModal
 									actionId="activate"
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
+									listItems={ false }
 									closeModal={ closeModal }
 									onExecute={ action }
 									onActionPerformed={ invalidatePlugins }
@@ -297,6 +298,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 								<ActionRenderModal
 									actionId="deactivate"
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
+									listItems={ false }
 									closeModal={ closeModal }
 									onExecute={ action }
 									onActionPerformed={ invalidatePlugins }
