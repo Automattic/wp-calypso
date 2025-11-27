@@ -342,6 +342,10 @@ export function ImageUploader( {
 	const hasImages = images.length > 0;
 	const isUploading = uploadingImages.length > 0;
 
+	// Determine what to show based on state
+	const showDropMessage = ( ! hasImages && ! isUploading ) || isDraggingFile;
+	const showPreview = ! isDraggingFile && ( hasImages || isUploading );
+
 	// Prepare i18n strings with interpolation
 	const fileSizeMessage = maxFileSize
 		? sprintf(
@@ -398,7 +402,7 @@ export function ImageUploader( {
 									'a8c-agenttic'
 								) }
 							>
-								{ ! hasImages && ! isUploading && (
+								{ showDropMessage && (
 									<div className={ styles.draggingMessage }>
 										<p>
 											<strong>
@@ -412,7 +416,7 @@ export function ImageUploader( {
 										</p>
 									</div>
 								) }
-								{ ! isDraggingFile && (
+								{ showPreview && (
 									<div className={ styles.preview }>
 										{ hasImages &&
 											images.map( ( image ) => (
