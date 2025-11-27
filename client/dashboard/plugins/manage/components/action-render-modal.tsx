@@ -1,3 +1,4 @@
+import { Site } from '@automattic/api-core';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -231,7 +232,7 @@ export default function ActionRenderModal( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isBusy, setIsBusy ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
-	const sitesById = useSitesById();
+	const { sitesById } = useSitesById();
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_dashboard_plugins_action_click', { action_id: actionId } );

@@ -9,7 +9,7 @@ export const useSitesById = () => {
 	const map = new Map< number, Site >();
 
 	if ( isLoadingSites || ! sites ) {
-		return map;
+		return { isLoadingSites, sitesById: map };
 	}
 
 	const sitesById = sites
@@ -19,5 +19,5 @@ export const useSitesById = () => {
 			return acc;
 		}, map );
 
-	return sitesById;
+	return { isLoadingSites, sitesById };
 };

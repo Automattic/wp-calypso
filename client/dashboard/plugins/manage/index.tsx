@@ -8,7 +8,6 @@ import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useAppContext } from '../../app/context';
 import { DataViews, usePersistentView } from '../../app/dataviews';
 import { pluginsManageRoute } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews-card';
@@ -17,6 +16,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getActions } from './actions';
 import { fields } from './fields';
+import { useSitesById } from './hooks/use-sites-by-id';
 import { mapApiPluginsToDataViewPlugins } from './utils';
 import { defaultView } from './views';
 import type { PluginListRow } from './types';
@@ -24,9 +24,8 @@ import type { PluginListRow } from './types';
 import './style.scss';
 
 export default function PluginsList() {
-	const { queries } = useAppContext();
 	const { data: sitesPlugins, isLoading: isLoadingPlugins } = useQuery( pluginsQuery() );
-	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
+	const { isLoadingSites, sitesById } = useSitesById();
 	const searchParams = pluginsManageRoute.useSearch();
 	const actions = getActions();
 	const { view, updateView, resetView } = usePersistentView( {
@@ -35,8 +34,8 @@ export default function PluginsList() {
 		queryParams: searchParams,
 	} );
 	const data = useMemo(
-		() => mapApiPluginsToDataViewPlugins( sites, sitesPlugins ),
-		[ sites, sitesPlugins ]
+		() => mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
+		[ sitesById, sitesPlugins ]
 	);
 
 	const { data: filteredPlugins, paginationInfo } = useMemo( () => {

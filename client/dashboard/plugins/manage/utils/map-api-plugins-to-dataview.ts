@@ -26,19 +26,12 @@ function mapCountToQuantifier( count: number, total: number ): 'all' | 'some' | 
 }
 
 export function mapApiPluginsToDataViewPlugins(
-	userSites?: Site[],
+	sitesById?: Map< number, Site >,
 	response?: PluginsResponse
 ): PluginListRow[] {
-	if ( ! userSites || ! response?.sites ) {
+	if ( ! response?.sites ) {
 		return [];
 	}
-
-	const sitesById = userSites
-		.filter( ( site ) => site.capabilities.update_plugins )
-		.reduce( ( acc, site ) => {
-			acc.set( site.ID, site );
-			return acc;
-		}, new Map< number, Site >() );
 
 	const pluginsBySite = response.sites;
 	const map = new Map< string, Aggregated >();
