@@ -9,12 +9,7 @@ import {
 	fetchMessagingAuth,
 } from './use-authenticate-zendesk-messaging';
 import { useLoadZendeskMessaging } from './use-load-zendesk-messaging';
-import {
-	isTestModeEnvironment,
-	convertZendeskMessageToAgentticFormat,
-	getClientId,
-	getZendeskConversations,
-} from './util';
+import { isTestModeEnvironment, convertZendeskMessageToAgentticFormat } from './util';
 import type { ZendeskMessage } from '@automattic/odie-client';
 
 const destroy = () => {
@@ -114,7 +109,6 @@ export const useManagedZendeskChat = ( enabled: boolean, conversationId?: string
 	const [ isChatLoaded, setIsChatLoaded ] = useState( false );
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
-	const [ clientId, setClientId ] = useState< string | undefined >( undefined );
 	const [ connectionStatus, setConnectionStatus ] = useState<
 		'connected' | 'disconnected' | 'reconnecting' | undefined
 	>( undefined );
@@ -167,18 +161,6 @@ export const useManagedZendeskChat = ( enabled: boolean, conversationId?: string
 			recordTracksEvent( 'calypso_smooch_messenger_connected' );
 		}
 	}, [ setConnectionStatus, connectionStatus ] );
-
-	const clientIdListener = useCallback(
-		( message: ZendeskMessage ) => {
-			if ( message?.source?.type === 'web' && message.source?.id ) {
-				setClientId( message.source?.id );
-				// Unregister the listener after setting the client ID
-				// @ts-expect-error -- 'off' is not part of the def.
-				Smooch?.off?.( 'message:sent', clientIdListener );
-			}
-		},
-		[ setClientId ]
-	);
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
@@ -238,12 +220,8 @@ export const useManagedZendeskChat = ( enabled: boolean, conversationId?: string
 	}, [ conversation?.messages ] );
 
 	useEffect( () => {
-		if ( isChatLoaded && getZendeskConversations ) {
-			const allConversations = getZendeskConversations();
-			// getUnreadNotifications( allConversations );
-			setClientId( getClientId( allConversations ) );
+		if ( isChatLoaded ) {
 			Smooch.on( 'message:received', getUnreadListener );
-			Smooch.on( 'message:sent', clientIdListener );
 			Smooch.on( 'disconnected', disconnectedListener );
 			Smooch.on( 'reconnecting', reconnectingListener );
 			Smooch.on( 'connected', connectedListener );
@@ -270,7 +248,6 @@ export const useManagedZendeskChat = ( enabled: boolean, conversationId?: string
 	}, [
 		getUnreadListener,
 		setConnectionStatus,
-		clientIdListener,
 		isChatLoaded,
 		typingStartListener,
 		typingStopListener,
@@ -283,7 +260,6 @@ export const useManagedZendeskChat = ( enabled: boolean, conversationId?: string
 	return {
 		isChatLoaded,
 		typingStatus,
-		clientId,
 		conversation,
 		connectionStatus,
 		agentticMessages,

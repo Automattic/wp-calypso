@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import {
+	getZendeskConversations,
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
@@ -16,7 +17,7 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
-import { getClientId, getZendeskConversations } from './utils';
+import { getClientId } from './utils';
 import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 const destroy = () => {

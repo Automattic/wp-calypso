@@ -1,6 +1,5 @@
 import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
 import { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
-import Smooch from 'smooch';
 import type { OdieConversation, OdieMessage, SupportInteraction } from '@automattic/odie-client';
 
 const isMatchingInteraction = (
@@ -38,16 +37,6 @@ export const getLastMessage = ( {
 		'type' in message ? message.type !== 'form' : true
 	);
 	return filteredMessages.length > 0 ? filteredMessages[ filteredMessages.length - 1 ] : null;
-};
-
-export const getZendeskConversations = () => {
-	try {
-		const conversations = Smooch?.getConversations?.() ?? [];
-		return conversations as unknown as ZendeskConversation[];
-	} catch {
-		// Smooch is not completely initialized yet
-		return [];
-	}
 };
 
 export const getClientId = ( conversations: ZendeskConversation[] ): string =>

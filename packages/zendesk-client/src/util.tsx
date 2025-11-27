@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import { isInSupportSession } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
-import type { AgentticMessage, ZendeskMessage } from './types';
+import Smooch from 'smooch';
+import type { AgentticMessage, ZendeskConversation, ZendeskMessage } from './types';
 
 const IS_TEST_MODE_ENVIRONMENT = true;
 const IS_PRODUCTION_ENVIRONMENT = false;
@@ -135,4 +136,14 @@ export const convertZendeskMessageToAgentticFormat = (
 		actions: message.actions,
 		disabled: false,
 	};
+};
+
+export const getZendeskConversations = () => {
+	try {
+		const conversations = Smooch?.getConversations?.() ?? [];
+		return conversations as unknown as ZendeskConversation[];
+	} catch {
+		// Smooch is not completely initialized yet
+		return [];
+	}
 };

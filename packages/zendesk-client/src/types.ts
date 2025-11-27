@@ -60,14 +60,6 @@ export type ChatFeedbackActions = {
 	ticket_id: number;
 };
 
-export type MessageAction = {
-	id: string;
-	payload: boolean;
-	text: string;
-	type: string;
-	metadata: ChatFeedbackActions;
-};
-
 export type ZendeskContentType =
 	| 'text'
 	| 'carousel'

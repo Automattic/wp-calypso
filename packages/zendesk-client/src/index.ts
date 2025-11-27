@@ -14,11 +14,6 @@ export { useGetUnreadConversations } from './use-get-unread-conversations';
 export { useGetZendeskConversation } from './use-get-zendesk-conversation';
 export { calculateUnread } from './use-get-unread-conversations';
 export {
-	isTestModeEnvironment,
-	getBadRatingReasons,
-	convertZendeskMessageToAgentticFormat,
-} from './util';
-export {
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
 	ZENDESK_STAGING_SUPPORT_CHAT_KEY,
 	ZENDESK_SUPPORT_CHAT_KEY,
@@ -27,3 +22,4 @@ export {
 } from './constants';
 export { zendeskMessageConverter } from './zendesk-message-converter';
 export type * from './types';
+export type * from './util';
