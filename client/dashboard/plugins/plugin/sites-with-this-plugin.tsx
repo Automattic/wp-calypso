@@ -251,7 +251,6 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 									closeModal={ closeModal }
 									onExecute={ action }
-									onActionPerformed={ invalidatePlugins }
 								/>
 							);
 						},
@@ -278,7 +277,6 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 									listItems={ false }
 									closeModal={ closeModal }
 									onExecute={ action }
-									onActionPerformed={ invalidatePlugins }
 								/>
 							);
 						},
