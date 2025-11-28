@@ -543,6 +543,10 @@ function setUpCSP( req, res, next ) {
 			// Advertising and analytics tracking scripts
 			'https://static.ads-twitter.com', // Twitter/X advertising tag
 			'https://connect.facebook.net', // Facebook Pixel
+			'www.redditstatic.com', // Reddit tracking pixel
+			'www.googletagmanager.com',
+			'https://accounts.google.com',
+			'https://bat.bing.com', // Bing Ads JS
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [
@@ -562,15 +566,19 @@ function setUpCSP( req, res, next ) {
 			"'self'",
 			'data:', // data: URI scheme (e.g., data:image/svg+xml;base64,...)
 			'*.wp.com',
+			'*.wp.org',
 			'https://wordpress.com', // WordPress.com assets (mu-plugins, etc.)
+			'*.wordpress.com',
 			'*.files.wordpress.com',
 			'*.gravatar.com',
+			'https://t.co', // Twitter image links
 			'https://www.google-analytics.com',
 			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
 			'https://analytics.twitter.com', // Twitter/X analytics tracking pixels
 			'https://www.facebook.com', // Facebook Pixel tracking endpoint
 			'https://alb.reddit.com', // Reddit tracking pixel
 			'https://*.google.com', // Google Ads remarketing pixels (www.google.com and subdomains)
+			'https://*.google.com.my',
 			'https://*.google.co.uk', // Google Ads remarketing pixels (United Kingdom)
 			'https://*.google.de', // Google Ads remarketing pixels (Germany)
 			'https://*.google.fr', // Google Ads remarketing pixels (France)
@@ -580,6 +588,7 @@ function setUpCSP( req, res, next ) {
 			'https://*.google.com.au', // Google Ads remarketing pixels (Australia)
 			'https://*.google.co.jp', // Google Ads remarketing pixels (Japan)
 			'https://*.google.com.br', // Google Ads remarketing pixels (Brazil)
+			'https://*.google.com.pk', // Google Ads remarketing pixels (Pakistan)
 			'https://*.google.co.in', // Google Ads remarketing pixels (India)
 			'https://*.google.com.mx', // Google Ads remarketing pixels (Mexico)
 			'https://*.google.nl', // Google Ads remarketing pixels (Netherlands)
@@ -588,6 +597,7 @@ function setUpCSP( req, res, next ) {
 			'https://amplifypixel.outbrain.com',
 			'https://hexagon-analytics.com', // Hexagon analytics tracking pixels
 			'https://img.youtube.com',
+			'*.ads.linkedin.com',
 			'https://ps.w.org', // WordPress.org plugin directory (plugin icons)
 			'https://ts.w.org', // WordPress.org theme directory (theme screenshots)
 			'https://s.w.org', // WordPress.org static assets (SVG icons, etc.)
@@ -600,6 +610,7 @@ function setUpCSP( req, res, next ) {
 			'https://public-api.wordpress.com',
 			'https://accounts.google.com/',
 			'https://jetpack.com',
+			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
 			'*.wordpress.com', // User WordPress.com sites (site previews, embeds)
 			// Payment provider iframes (secure card input elements)
 			'js.stripe.com', // Stripe Elements iframes
@@ -625,7 +636,13 @@ function setUpCSP( req, res, next ) {
 			'wss://*.wordpress.com', // WebSocket connections (realtime API, notifications)
 			'https://*.wp.com',
 			'https://wordpress.com',
+			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
 			'https://api.wordpress.org', // WordPress.org API (plugin/theme info)
+			'https://*.google.com',
+			'www.google-analytics.com',
+			'https://www.facebook.com', // Facebook Pixel tracking endpoint
+			'*.sentry.io',
+			'*.reddit.com',
 			// Payment provider APIs (for tokenization and payment processing)
 			'*.stripe.com', // Stripe API calls
 			'api.stripe.com', // Stripe API endpoint
