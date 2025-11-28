@@ -1,8 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
 import { useOpenArticleInHelpCenter } from '@automattic/help-center/src/hooks';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
+import { Icon, shield, plugins, currencyDollar } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -78,9 +79,18 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	--color-accent-60: var( --studio-blue-60 );
 	margin-bottom: -32px;
 
+	.full-width-section & {
+		--color-accent: var( --studio-gray-100 );
+		--color-accent-60: var( --studio-gray-90 );
+
+		.marketplace-cta {
+			font-weight: 500;
+		}
+	}
+
 	.marketplace-cta {
 		min-width: 122px;
-		margin-bottom: 26px;
+		margin-top: 16px;
 
 		@media ( max-width: 660px ) {
 			margin-left: 16px;
@@ -108,12 +118,46 @@ const CardText = styled.span< { color: string } >`
 	line-height: 20px;
 `;
 
+const FeatureIcon = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background-color: var( --studio-blue-50 );
+	margin-bottom: 16px;
+
+	svg {
+		fill: var( --color-text-inverted );
+	}
+`;
+
+interface FeatureHeaderProps {
+	icon: React.ReactNode;
+	title: string;
+}
+
+const FeatureHeader = ( { icon, title }: FeatureHeaderProps ) => {
+	if ( ! isEnabled( 'marketplace-redesign' ) ) {
+		return title;
+	}
+
+	return (
+		<>
+			<FeatureIcon>{ icon }</FeatureIcon>
+			{ title }
+		</>
+	);
+};
+
 export const MarketplaceFooter = () => {
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 	const sectionName = useSelector( getSectionName );
+	const showCta = ! isLoggedIn || currentUserSiteCount === 0;
 
 	const startUrl = addQueryArgs(
 		{
@@ -122,34 +166,58 @@ export const MarketplaceFooter = () => {
 		sectionName === 'plugins' ? '/start/business' : '/start'
 	);
 
+	const headerTitle = isEnabled( 'marketplace-redesign' )
+		? translate( "You pick the plugin,{{br}}{{/br}}we'll take care of the rest", {
+				components: { br: <br /> },
+		  } )
+		: __( "You pick the plugin. We'll take care of the rest." );
+
+	const ctaButton = showCta ? (
+		<Button
+			variant={ isEnabled( 'marketplace-redesign' ) ? 'secondary' : 'primary' }
+			className="marketplace-cta"
+			href={ startUrl }
+		>
+			{ __( 'Get started' ) }
+		</Button>
+	) : undefined;
+
 	return (
 		<MarketplaceContainer isloggedIn={ isLoggedIn }>
-			<Section
-				header={
-					isEnabled( 'marketplace-redesign' )
-						? ( translate( "You pick the plugin,{{br}}{{/br}}we'll take care of the rest", {
-								components: { br: <br /> },
-						  } ) as React.ReactElement )
-						: __( "You pick the plugin. We'll take care of the rest." )
-				}
-			>
-				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
-					<Button className="is-primary marketplace-cta" href={ startUrl }>
-						{ __( 'Get Started' ) }
-					</Button>
-				) }
+			<Section header={ headerTitle as React.ReactElement } subheader={ ctaButton }>
 				<ThreeColumnContainer>
-					<FeatureItem header={ __( 'Fully managed' ) }>
+					<FeatureItem
+						header={
+							<FeatureHeader
+								icon={ <Icon icon={ shield } size={ 24 } /> }
+								title={ __( 'Fully managed' ) }
+							/>
+						}
+					>
 						{ __(
 							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
 						) }
 					</FeatureItem>
-					<FeatureItem header={ __( 'Thousands of plugins' ) }>
+					<FeatureItem
+						header={
+							<FeatureHeader
+								icon={ <Icon icon={ plugins } size={ 24 } /> }
+								title={ __( 'Thousands of plugins' ) }
+							/>
+						}
+					>
 						{ __(
 							'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
 						) }
 					</FeatureItem>
-					<FeatureItem header={ __( 'Flexible pricing' ) }>
+					<FeatureItem
+						header={
+							<FeatureHeader
+								icon={ <Icon icon={ currencyDollar } size={ 24 } /> }
+								title={ __( 'Flexible pricing' ) }
+							/>
+						}
+					>
 						{ __(
 							'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
 						) }

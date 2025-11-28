@@ -132,7 +132,17 @@ body.is-section-plugins #primary .main.is-logged-out {
 	--scss-font-body: 1.375rem;
 
 	.section-header-container {
-		max-width: 575px;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		max-width: none;;
+
+		.section-header-container__header {
+			max-width: 575px;
+		}
+		.section-header-container__subheader {
+			flex-shrink: 0;
+		}
 	}
 	.feature-item-container__header {
 		font-weight: 400;
