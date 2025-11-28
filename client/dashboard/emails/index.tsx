@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { emailsRoute } from '../app/router/emails';
 import { DataViews } from '../components/dataviews';
-import { DataViewsCard } from '../components/dataviews-card';
+import { DataViewsCard } from '../components/dataviews/dataviews-card';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';

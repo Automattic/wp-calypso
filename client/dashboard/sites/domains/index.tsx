@@ -9,7 +9,7 @@ import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
 import { DataViews } from '../../components/dataviews';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews/dataviews-card';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

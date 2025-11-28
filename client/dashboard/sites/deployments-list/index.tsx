@@ -17,7 +17,7 @@ import {
 	siteDeploymentsListRoute,
 } from '../../app/router/sites';
 import { DataViews } from '../../components/dataviews';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

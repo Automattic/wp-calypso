@@ -13,7 +13,7 @@ import { useAuth } from '../app/auth';
 import { useHelpCenter } from '../app/help-center';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
-import { DataViewsEmptyState } from '../components/dataviews-empty-state';
+import { DataViewsEmptyState } from '../components/dataviews/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { filterSortAndPaginate__ES, useSiteListQuery } from '../sites';

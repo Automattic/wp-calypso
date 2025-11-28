@@ -12,7 +12,7 @@ import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { pluginsManageRoute } from '../../app/router/plugins';
 import { DataViews } from '../../components/dataviews';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews/dataviews-card';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
