@@ -29,6 +29,11 @@
 				font-family: $brand-serif;
 				font-size: rem(50px);
 				line-height: 1.32;
+
+				@media (max-width: 660px) {
+					font-size: rem(40px);
+					line-height: 1.1;
+				}
 			}
 			.plugins-results-header__subtitle {
 				font-size: $font-body-large;

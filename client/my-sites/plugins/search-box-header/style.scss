@@ -248,6 +248,15 @@ main.is-logged-out .search-box-header {
 	}
 }
 main.is-logged-out .full-width-section .search-box-header {
+	.search-box-header__header {
+		font-size: rem(70px);
+		line-height: 1;
+
+		@media (max-width: 660px) {
+			font-size: rem(60px);
+		}
+	}
+
 	&.fixed-top .search-box-header__search {
 		background: var(--studio-gray-0);
 	}
