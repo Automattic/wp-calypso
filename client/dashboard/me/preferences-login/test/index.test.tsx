@@ -274,6 +274,92 @@ test( 'hides primary site selector when user has no sites', async () => {
 	expect( screen.getByText( 'Default view' ) ).toBeInTheDocument();
 } );
 
+test( 'hides primary site selector when primary-site-dashboard is not selected', async () => {
+	nock.cleanAll();
+	nock( API_BASE ).get( '/rest/v1.1/me/settings' ).reply( 200, {
+		primary_site_ID: mockPrimarySiteId,
+	} );
+
+	nock( API_BASE )
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, {
+			calypso_preferences: {
+				'sites-landing-page': {
+					useSitesAsLandingPage: true,
+					updatedAt: Date.now(),
+				},
+				'reader-landing-page': {
+					useReaderAsLandingPage: false,
+					updatedAt: Date.now(),
+				},
+			},
+		} );
+
+	nock( API_BASE ).get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites: mockSites } );
+
+	( useAuth as jest.Mock ).mockReturnValue( { user: { visible_site_count: 2 } } );
+
+	render( <PreferencesLogin /> );
+
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
+
+	// Primary site should be hidden when "sites" is selected (not primary-site-dashboard)
+	expect( screen.queryByText( 'Primary site' ) ).not.toBeInTheDocument();
+
+	// Verify "sites" option is selected
+	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
+	expect( sitesRadio ).toBeChecked();
+} );
+
+test( 'shows primary site selector when primary-site-dashboard is selected', async () => {
+	nock.cleanAll();
+	nock( API_BASE ).get( '/rest/v1.1/me/settings' ).reply( 200, {
+		primary_site_ID: mockPrimarySiteId,
+	} );
+
+	nock( API_BASE )
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, {
+			calypso_preferences: {
+				'sites-landing-page': {
+					useSitesAsLandingPage: false,
+					updatedAt: Date.now(),
+				},
+				'reader-landing-page': {
+					useReaderAsLandingPage: false,
+					updatedAt: Date.now(),
+				},
+			},
+		} );
+
+	nock( API_BASE ).get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites: mockSites } );
+
+	( useAuth as jest.Mock ).mockReturnValue( { user: { visible_site_count: 2 } } );
+
+	render( <PreferencesLogin /> );
+
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
+
+	// Primary site should be visible when "primary-site-dashboard" is selected
+	expect( screen.getByText( 'Primary site' ) ).toBeInTheDocument();
+
+	// Verify "primary-site-dashboard" option is selected
+	const primarySiteRadio = screen.getByLabelText( /Open your primary site.*dashboard/i );
+	expect( primarySiteRadio ).toBeChecked();
+} );
+
 test( 'disables save button while saving', async () => {
 	const mockCreateSuccessNotice = jest.fn();
 	( useDispatch as jest.Mock ).mockReturnValue( {
