@@ -3,7 +3,6 @@
  * Loading skeleton that mimics chat message bubbles
  */
 
-import { memo } from '@wordpress/element';
 import clsx from 'clsx';
 import './style.scss';
 
@@ -33,7 +32,7 @@ const SkeletonMessage = ( { isUser }: { isUser: boolean } ) => (
 	</div>
 );
 
-export const ChatMessageSkeleton = memo( ( { count = 3 }: ChatMessageSkeletonProps ) => {
+const ChatMessageSkeleton = ( { count = 3 }: ChatMessageSkeletonProps ) => {
 	return (
 		<div className="agents-manager-chat-message-skeleton" aria-busy="true" aria-hidden="true">
 			{ Array.from( { length: count } ).map( ( _, index ) => (
@@ -41,6 +40,8 @@ export const ChatMessageSkeleton = memo( ( { count = 3 }: ChatMessageSkeletonPro
 			) ) }
 		</div>
 	);
-} );
+};
 
 ChatMessageSkeleton.displayName = 'ChatMessageSkeleton';
+
+export default ChatMessageSkeleton;

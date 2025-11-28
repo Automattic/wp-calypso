@@ -32,7 +32,7 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { lastConversationCache } from '../../utils/conversation-cache';
 import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
-import { ChatMessageSkeleton } from '../chat-message-skeleton';
+import ChatMessageSkeleton from '../chat-message-skeleton';
 import ConversationHistoryView from '../conversation-history-view';
 import { AI } from '../icons';
 import type { DockViewState } from './types';
