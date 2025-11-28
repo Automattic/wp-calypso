@@ -96,7 +96,7 @@ export const usePlugin = ( pluginSlug: string ) => {
 						if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
 							const plugin = pluginBySiteId.get( site.ID );
 
-							const hasPluginUpdate = plugin?.update ?? false;
+							const hasPluginUpdate = !! plugin?.update;
 							const isPluginActive = plugin?.active ?? false;
 							const isPluginAutoupdated = plugin?.autoupdate ?? false;
 							const isPluginManaged = plugin?.is_managed ?? false;
