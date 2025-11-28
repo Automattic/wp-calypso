@@ -6,19 +6,15 @@
 
 import * as oauthToken from '@automattic/oauth-token';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import type { AuthProvider } from '@automattic/agenttic-client';
 
-export interface CalypsoAuthError {
+interface CalypsoAuthError {
 	code?: string;
 	status?: number;
 	message?: string;
 }
-
-/**
- * Error handler function type for Calypso authentication errors
- */
-export type CalypsoErrorHandler = ( error: CalypsoAuthError ) => string;
 
 const JWT_TOKEN_ID = 'jetpack-ai-jwt-token';
 const JWT_TOKEN_EXPIRATION_TIME = 30 * 60 * 1000; // 30 minutes
@@ -273,15 +269,15 @@ export const createCalypsoAuthProvider = ( siteId?: string | number ): AuthProvi
  */
 export const defaultCalypsoErrorHandler = ( error: CalypsoAuthError ): string => {
 	if ( error?.code === 'rest_invalid_nonce' ) {
-		return 'Your session expired. Please refresh the page and try again.';
+		return __( 'Your session expired. Please refresh the page and try again.', 'agents-manager' );
 	}
 
 	if ( error?.code === 'rest_forbidden' || error?.status === 403 ) {
-		return "You don't have permission to access AI features.";
+		return __( "You don't have permission to access AI features.", 'agents-manager' );
 	}
 
 	if ( error?.code === 'rest_no_route' || error?.status === 404 ) {
-		return 'AI service is not available. Please try again later.';
+		return __( 'AI service is not available. Please try again later.', 'agents-manager' );
 	}
 
 	if (
@@ -289,12 +285,15 @@ export const defaultCalypsoErrorHandler = ( error: CalypsoAuthError ): string =>
 		error?.message?.includes( 'Network' ) ||
 		error?.message?.includes( 'fetch' )
 	) {
-		return 'Network connection issue. Please check your internet connection and try again.';
+		return __(
+			'Network connection issue. Please check your internet connection and try again.',
+			'agents-manager'
+		);
 	}
 
 	if ( error?.status === 401 ) {
-		return 'Your session expired. Please refresh the page and try again.';
+		return __( 'Your session expired. Please refresh the page and try again.', 'agents-manager' );
 	}
 
-	return 'Unable to connect to AI service. Please try again.';
+	return __( 'Unable to connect to AI service. Please try again.', 'agents-manager' );
 };

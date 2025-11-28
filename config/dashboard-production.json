@@ -3,14 +3,14 @@
 	"env_id": "dashboard-production",
 	"favicon_url": "//s1.wp.com/i/favicon.ico",
 	"client_slug": "browser",
-	"protocol": "http",
-	"hostname": "my.localhost",
+	"hostname": "my.wordpress.com",
 	"i18n_default_locale_slug": "en",
-	"port": 3000,
+	"wpcom_login_url": "https://wordpress.com/log-in",
 	"site_name": "Hosting Dashboard",
 	"features": {
 		"dashboard": false,
-		"dashboard/v2": false
+		"dashboard/v2": false,
+		"cookie-banner": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],

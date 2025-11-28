@@ -216,6 +216,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isWcMobileApp: isWcMobileApp( request.useragent.source ),
+		isDevelopmentEnv: devEnvironments.includes( calypsoEnv ),
 		isDebug,
 	};
 
@@ -490,26 +491,22 @@ function setUpLoggedInRoute( req, res, next ) {
 }
 
 /**
- * Sets up a Content Security Policy header
+ * Sets up a Content Security Policy header for all Calypso routes
+ *
+ * This CSP is currently in REPORT-ONLY mode, which means violations are logged but not blocked.
+ * This allows us to identify issues before enforcing the policy.
+ *
+ * Required for compliance on pages handling credit card information.
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
  * @param {Object} req Express request object
  * @param {Object} res Express response object
  * @param {Function} next a callback to call when done
  */
 function setUpCSP( req, res, next ) {
-	const originalUrlPathname = req.originalUrl.split( '?' )[ 0 ];
-
-	// We only setup CSP for /log-in* for now
-	if ( ! /^\/log-in/.test( originalUrlPathname ) ) {
-		next();
-		return;
-	}
-
-	// This is calculated by taking the contents of the script text from between the tags,
-	// and calculating SHA256 hash on it, encoded in base64, example:
-	// `sha256-${ base64( sha256( 'window.AppBoot();' ) ) }` === sha256-3yiQswl88knA3EhjrG5tj5gmV6EUdLYFvn2dygc0xUQ
-	// you can also just run it in Chrome, chrome will give you the hash of the violating scripts
-	const inlineScripts = [ 'sha256-ZKTuGaoyrLu2lwYpcyzib+xE4/2mCN8PKv31uXS3Eg4=' ];
+	// CSP is now applied to all routes for security compliance (previously only /log-in*).
+	// This is necessary because Calypso is an SPA - the initial page load's CSP applies
+	// to the entire session, so we need CSP protection on all entry points, especially
+	// pages that handle credit card information (checkout, payment methods, billing).
 
 	req.context.inlineScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
 
@@ -518,16 +515,38 @@ function setUpCSP( req, res, next ) {
 		'script-src': [
 			"'self'",
 			"'report-sample'",
-			"'unsafe-eval'",
+			// Allow eval only in development for webpack's eval-based source maps (devtool: 'eval')
+			// which enable fast rebuilds and hot module reloading. Production uses 'hidden-source-map'
+			// which doesn't require eval, maintaining strict CSP in production environments.
+			...( req.context.app.isDevelopmentEnv ? [ "'unsafe-eval'" ] : [] ),
+			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'stats.wp.com',
 			'https://widgets.wp.com',
 			'*.wordpress.com',
 			'https://apis.google.com',
 			'https://appleid.cdn-apple.com',
-			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
 			'use.typekit.net',
-			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
+			// Payment provider scripts (required for credit card processing)
+			'js.stripe.com', // Stripe payment processing
+			'js.verygoodvault.com', // VGS for EBANX credit card tokenization
+			'www.paypal.com', // PayPal SDK
+			'www.paypalobjects.com', // PayPal assets
+			'cdn.siftscience.com', // Sift Science fraud detection for checkout
+			// User feedback and support tools
+			'survey.survicate.com', // Survicate survey tool
+			'surveys-static-prd.survicate-cdn.com', // Survicate CDN
+			'https://cdn.smooch.io', // Smooch/Sunshine Conversations (Zendesk messaging)
+			'https://static.zdassets.com', // Zendesk static assets
+			// Google static content
+			'https://www.gstatic.com', // Google Charts and other static content
+			// Advertising and analytics tracking scripts
+			'https://static.ads-twitter.com', // Twitter/X advertising tag
+			'https://connect.facebook.net', // Facebook Pixel
+			'www.redditstatic.com', // Reddit tracking pixel
+			'www.googletagmanager.com',
+			'https://accounts.google.com',
+			'https://bat.bing.com', // Bing Ads JS
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [
@@ -535,6 +554,9 @@ function setUpCSP( req, res, next ) {
 			'*.wp.com',
 			'https://fonts.googleapis.com',
 			'use.typekit.net',
+			'surveys-static-prd.survicate-cdn.com', // Survicate survey styles
+			'https://cdn.smooch.io', // Smooch/Sunshine Conversations styles
+			'https://www.gstatic.com', // Google Charts styles
 			// per https://helpx.adobe.com/ca/fonts/using/content-security-policy.html
 			"'unsafe-inline'",
 		],
@@ -542,13 +564,44 @@ function setUpCSP( req, res, next ) {
 		'object-src': [ "'none'" ],
 		'img-src': [
 			"'self'",
-			'data',
+			'data:', // data: URI scheme (e.g., data:image/svg+xml;base64,...)
 			'*.wp.com',
+			'*.wp.org',
+			'https://wordpress.com', // WordPress.com assets (mu-plugins, etc.)
+			'*.wordpress.com',
 			'*.files.wordpress.com',
 			'*.gravatar.com',
+			'https://t.co', // Twitter image links
 			'https://www.google-analytics.com',
+			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
+			'https://analytics.twitter.com', // Twitter/X analytics tracking pixels
+			'https://www.facebook.com', // Facebook Pixel tracking endpoint
+			'https://alb.reddit.com', // Reddit tracking pixel
+			'https://*.google.com', // Google Ads remarketing pixels (www.google.com and subdomains)
+			'https://*.google.com.my',
+			'https://*.google.co.uk', // Google Ads remarketing pixels (United Kingdom)
+			'https://*.google.de', // Google Ads remarketing pixels (Germany)
+			'https://*.google.fr', // Google Ads remarketing pixels (France)
+			'https://*.google.es', // Google Ads remarketing pixels (Spain)
+			'https://*.google.it', // Google Ads remarketing pixels (Italy)
+			'https://*.google.ca', // Google Ads remarketing pixels (Canada)
+			'https://*.google.com.au', // Google Ads remarketing pixels (Australia)
+			'https://*.google.co.jp', // Google Ads remarketing pixels (Japan)
+			'https://*.google.com.br', // Google Ads remarketing pixels (Brazil)
+			'https://*.google.com.pk', // Google Ads remarketing pixels (Pakistan)
+			'https://*.google.co.in', // Google Ads remarketing pixels (India)
+			'https://*.google.com.mx', // Google Ads remarketing pixels (Mexico)
+			'https://*.google.nl', // Google Ads remarketing pixels (Netherlands)
+			'https://*.google.co.id', // Google Ads remarketing pixels (Indonesia)
+			'https://bat.bing.com', // Bing Ads tracking pixel
 			'https://amplifypixel.outbrain.com',
+			'https://hexagon-analytics.com', // Hexagon analytics tracking pixels
 			'https://img.youtube.com',
+			'*.ads.linkedin.com',
+			'https://ps.w.org', // WordPress.org plugin directory (plugin icons)
+			'https://ts.w.org', // WordPress.org theme directory (theme screenshots)
+			'https://s.w.org', // WordPress.org static assets (SVG icons, etc.)
+			'https://woocommerce.com', // WooCommerce marketplace
 			'localhost:8888',
 			'p.typekit.net',
 		],
@@ -557,6 +610,14 @@ function setUpCSP( req, res, next ) {
 			'https://public-api.wordpress.com',
 			'https://accounts.google.com/',
 			'https://jetpack.com',
+			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
+			'*.wordpress.com', // User WordPress.com sites (site previews, embeds)
+			// Payment provider iframes (secure card input elements)
+			'js.stripe.com', // Stripe Elements iframes
+			'*.stripe.com', // Stripe 3D Secure and other payment flows
+			'*.verygoodsecurity.com', // VGS Collect secure iframes
+			'www.paypal.com', // PayPal checkout flow
+			'*.paypal.com', // PayPal additional flows
 		],
 		'font-src': [
 			"'self'",
@@ -564,14 +625,34 @@ function setUpCSP( req, res, next ) {
 			'https://fonts.gstatic.com',
 			'use.typekit.net',
 			'https://woocommerce.com',
+			'surveys-static-prd.survicate-cdn.com', // Survicate fonts
+			'https://cdn.smooch.io', // Smooch/Sunshine Conversations fonts
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
 		'connect-src': [
 			"'self'",
 			'https://*.wordpress.com/',
+			'wss://*.wordpress.com', // WebSocket connections (realtime API, notifications)
 			'https://*.wp.com',
 			'https://wordpress.com',
+			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
+			'https://api.wordpress.org', // WordPress.org API (plugin/theme info)
+			'https://*.google.com',
+			'www.google-analytics.com',
+			'https://www.facebook.com', // Facebook Pixel tracking endpoint
+			'*.sentry.io',
+			'*.reddit.com',
+			// Payment provider APIs (for tokenization and payment processing)
+			'*.stripe.com', // Stripe API calls
+			'api.stripe.com', // Stripe API endpoint
+			'*.verygoodsecurity.com', // VGS API calls
+			'*.paypal.com', // PayPal API calls
+			// Support and feedback tools
+			'*.zendesk.com', // Zendesk support chat
+			'wss://*.zendesk.com', // Zendesk WebSocket connections
+			'https://ekr.zdassets.com', // Zendesk composer
+			'https://*.config.smooch.io', // Smooch/Sunshine Conversations config
 		],
 		'report-uri': [ '/cspreport' ],
 	};
@@ -1061,8 +1142,22 @@ export default function pages() {
 			}, {} );
 
 			if ( calypsoEnv !== 'development' ) {
+				// Send to Tracks for analytics
 				analytics.tracks.recordEvent( 'calypso_csp_report', cspReportSnakeCase, req );
 			}
+
+			// Send to Logstash for better logging/debugging
+			analytics.logstash.log( {
+				feature: 'calypso_client',
+				message: 'CSP Violation Report',
+				severity: 'info',
+				properties: {
+					env: calypsoEnv,
+					...cspReportSnakeCase,
+					user_agent: req.get( 'user-agent' ),
+					referer: req.get( 'Referer' ),
+				},
+			} );
 
 			res.status( 200 ).send( 'Got it!' );
 		},
