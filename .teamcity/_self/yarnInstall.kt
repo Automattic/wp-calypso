@@ -9,7 +9,10 @@ val yarn_install_cmd = """
 
 	# Install modules. We save to the file while also outputting it for visibility.
 	yarn_out="/tmp/yarn-json-output.json"
-	yarn --json | tee -a "${'$'}yarn_out"
+	
+	# --immutable: ensures lockfile doesn't change (CI best practice)
+	# --inline-builds: builds dependencies immediately, faster than separate postinstall
+	yarn --json --immutable --inline-builds | tee -a "${'$'}yarn_out"
 
 	# Yarn --json saves as newline-delimited JSON. To make the JSON file valid,
 	# we add brackets at the beginning and end and commas on each entry in between.

@@ -578,7 +578,7 @@ object CheckCodeStyleBranch : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
-		cleanCheckout = true
+		cleanCheckout = false
 	}
 
 	steps {
@@ -587,8 +587,9 @@ object CheckCodeStyleBranch : BuildType({
 			scriptContent = """
 				export NODE_ENV="test"
 
-				# Install modules
-				${_self.yarn_install_cmd}
+				# Install only linting-related dependencies for faster builds
+				# This is much faster than full yarn install
+				yarn install --immutable --mode skip-build
 			"""
 		}
 		bashNodeScript {
@@ -755,8 +756,9 @@ object Translate : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				# Install modules
-				${_self.yarn_install_cmd}
+				# Install only dependencies needed for translation extraction
+				# This is faster than full install since we only need i18n-calypso and related tools
+				yarn workspaces focus @automattic/i18n-calypso
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}

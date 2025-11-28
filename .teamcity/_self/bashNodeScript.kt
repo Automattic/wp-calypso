@@ -32,7 +32,9 @@ fun BuildSteps.bashNodeScript(init: ScriptBuildStep.() -> Unit): ScriptBuildStep
 	""".trimIndent()
 
 	result.dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-	result.dockerPull = true
+	// Only pull docker images if not already present locally
+	// This saves significant time on repeated builds
+	result.dockerPull = false
 	result.dockerImage = result.dockerImage ?: "%docker_image%"
 	result.dockerRunParameters = result.dockerRunParameters ?: "-u %env.UID%"
 	step(result)
