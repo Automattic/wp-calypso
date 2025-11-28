@@ -1,4 +1,4 @@
-import { __experimentalText as Text } from '@wordpress/components';
+import { Button, __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
 import './plugins-header-actions.scss';
@@ -6,25 +6,43 @@ import './plugins-header-actions.scss';
 type PluginsHeaderActionsProps = {
 	updateCount: number;
 	onFilterUpdates: () => void;
+	/**
+	 * Whether the header is rendered in the "sites with this plugin" dataview.
+	 * When true, we use a singular "Plugin up to date" message instead of
+	 * the default plural wording.
+	 */
+	isSitesWithThisPluginView?: boolean;
 };
 
 export const PluginsHeaderActions = ( {
 	updateCount,
 	onFilterUpdates,
+	isSitesWithThisPluginView = false,
 }: PluginsHeaderActionsProps ) => {
 	const hasUpdates = updateCount > 0;
 
 	if ( hasUpdates ) {
 		return (
-			<Text onClick={ onFilterUpdates } className="plugins-header-actions__updates-link">
-				{ sprintf(
-					// translators: %d is the number of plugins with an update available.
-					__( 'Updates available (%d)' ),
-					updateCount
-				) }
-			</Text>
+			<Button
+				variant="tertiary"
+				size="compact"
+				className="plugins-header-actions__updates-link"
+				onClick={ onFilterUpdates }
+			>
+				<Text>
+					{ sprintf(
+						// translators: %d is the number of plugins with an update available.
+						__( 'Updates available (%d)' ),
+						updateCount
+					) }
+				</Text>
+			</Button>
 		);
 	}
 
-	return <Text>{ __( 'Plugins up to date' ) }</Text>;
+	return (
+		<Text>
+			{ isSitesWithThisPluginView ? __( 'Plugin up to date' ) : __( 'Plugins up to date' ) }
+		</Text>
+	);
 };

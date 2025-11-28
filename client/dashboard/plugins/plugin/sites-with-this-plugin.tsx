@@ -281,6 +281,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 					<PluginsHeaderActions
 						updateCount={ updateCount }
 						onFilterUpdates={ handleFilterUpdates }
+						isSitesWithThisPluginView
 					/>
 				}
 				defaultLayouts={ { table: {} } }
