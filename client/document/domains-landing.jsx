@@ -57,15 +57,13 @@ function DomainsLanding( {
 						} }
 					/>
 				) }
-				{ i18nLocaleScript && <script nonce={ inlineScriptNonce } src={ i18nLocaleScript } /> }
+				{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 				{ /*
 				 * inline manifest in production, but reference by url for development.
 				 * this lets us have the performance benefit in prod, without breaking HMR in dev
 				 * since the manifest needs to be updated on each save
 				 */ }
-				{ env === 'development' && (
-					<script nonce={ inlineScriptNonce } src="/calypso/evergreen/runtime.js" />
-				) }
+				{ env === 'development' && <script src="/calypso/evergreen/runtime.js" /> }
 				{ env !== 'development' &&
 					manifests.map( ( manifest ) => (
 						<script
@@ -76,7 +74,7 @@ function DomainsLanding( {
 						/>
 					) ) }
 				{ entrypoint.js.map( ( asset ) => (
-					<script key={ asset } nonce={ inlineScriptNonce } src={ asset } />
+					<script key={ asset } src={ asset } />
 				) ) }
 				<script
 					nonce={ inlineScriptNonce }
