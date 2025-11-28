@@ -192,25 +192,28 @@ afterAll( () => {
 } );
 
 describe( 'SiteLogs page', () => {
-	test( 'navigates on tab select for PHP errors/Web server/Activity', async () => {
-		render( <SiteLogs logType={ LogType.PHP } /> );
+	test.each( Object.entries( LogType ) )(
+		'on selecting tab %s, navigates to /%s',
+		async ( logType, logTypeName ) => {
+			// Different initial log type that the one under test
+			const initialLogType = logTypeName !== LogType.PHP ? LogType.PHP : LogType.SERVER;
+			render( <SiteLogs logType={ initialLogType } /> );
 
-		// Wait for data and TabPanel to render
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+			// Wait for data and TabPanel to render
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 
-		// Click web server and activity tabs
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Web server' } ) );
-		const { __mocks: routerMocks } = jest.requireMock( '@tanstack/react-router' ) as {
-			__mocks: { navigate: jest.Mock };
-		};
-		expect( routerMocks.navigate ).toHaveBeenCalledWith( { to: '/sites/test-site/logs/server' } );
-
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Activity' } ) );
-		expect( routerMocks.navigate ).toHaveBeenCalledWith( { to: '/sites/test-site/logs/activity' } );
-
-		await userEvent.click( await screen.findByRole( 'button', { name: 'PHP errors' } ) );
-		expect( routerMocks.navigate ).toHaveBeenCalledWith( { to: '/sites/test-site/logs/php' } );
-	} );
+			// Click another tab
+			await userEvent.click(
+				await screen.findByRole( 'button', { name: new RegExp( logTypeName, 'i' ) } )
+			);
+			const { __mocks: routerMocks } = jest.requireMock( '@tanstack/react-router' ) as {
+				__mocks: { navigate: jest.Mock };
+			};
+			expect( routerMocks.navigate ).toHaveBeenCalledWith( {
+				to: `/sites/test-site/logs/${ logTypeName }`,
+			} );
+		}
+	);
 
 	test( 'URL from/to params are normalized from ms to seconds', async () => {
 		const replaceSpy = jest.spyOn( window.history, 'replaceState' );

@@ -1,4 +1,5 @@
-import { Chat, Message, ZendeskMessage } from '../types';
+import type { Chat, Message } from '../types';
+import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 export const isCSATMessage = ( message: Message ) =>
 	message?.feedbackOptions?.length && message?.metadata?.type === 'csat';

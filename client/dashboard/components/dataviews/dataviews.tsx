@@ -23,19 +23,21 @@ export function DataViews< Item >( {
 		<WPDataViews< Item >
 			view={ sanitizedView }
 			header={
-				<>
-					{ header }
-					{ onResetView && (
-						<Button
-							variant="tertiary"
-							size="compact"
-							style={ { order: -1 } }
-							onClick={ onResetView }
-						>
-							{ __( 'Reset view' ) }
-						</Button>
-					) }
-				</>
+				( header || onResetView ) && (
+					<>
+						{ header }
+						{ onResetView && (
+							<Button
+								variant="tertiary"
+								size="compact"
+								style={ { order: -1 } }
+								onClick={ onResetView }
+							>
+								{ __( 'Reset view' ) }
+							</Button>
+						) }
+					</>
+				)
 			}
 			{ ...( props as any ) }
 		/>

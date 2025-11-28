@@ -1,0 +1,19 @@
+{
+	"env": "production",
+	"env_id": "dashboard-production",
+	"favicon_url": "//s1.wp.com/i/favicon.ico",
+	"client_slug": "browser",
+	"protocol": "http",
+	"hostname": "my.localhost",
+	"i18n_default_locale_slug": "en",
+	"port": 3000,
+	"site_name": "Hosting Dashboard",
+	"features": {
+		"dashboard": false,
+		"dashboard/v2": false
+	},
+	"enable_all_sections": false,
+	"site_filter": [],
+	"theme": "dashboard",
+	"restricted_me_access": false
+}

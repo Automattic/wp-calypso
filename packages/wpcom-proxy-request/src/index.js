@@ -527,6 +527,7 @@ const wpcomAllowedOrigins = [
 	'https://cloud.jetpack.com',
 	'https://jetpack.com',
 	'https://agencies.automattic.com',
+	'https://my.wordpress.com',
 	'http://wpcalypso.wordpress.com', // for running docker on dev instances
 	'http://widgets.wp.com',
 	'https://widgets.wp.com',
@@ -539,6 +540,8 @@ const wpcomAllowedOrigins = [
 	'https://jetpack.cloud.localhost:3000',
 	'http://agencies.localhost:3000',
 	'https://agencies.localhost:3000',
+	'http://my.localhost:3000',
+	'https://my.localhost:3000',
 	'http://calypso.localhost:3001',
 	'https://calypso.localhost:3001',
 	'https://calypso.live',

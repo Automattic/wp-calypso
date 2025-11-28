@@ -2,7 +2,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import Smooch from 'smooch';
-import { ZendeskConversation } from '../types';
+import type { ZendeskConversation } from './types';
 
 export const calculateUnread = (
 	conversations: Conversation[] | ZendeskConversation[] | undefined | null

@@ -49,6 +49,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 			is_help_center_visible: helpCenterVisible,
 			section: sectionName,
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
+			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
 	};
 
