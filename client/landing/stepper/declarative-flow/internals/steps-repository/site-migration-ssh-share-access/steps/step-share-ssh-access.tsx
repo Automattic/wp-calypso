@@ -89,9 +89,9 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 		setTimeout( () => setCopied( false ), 2000 );
 	};
 
-	const isCredentialFailure = error?.message === 'credential_failure';
-
 	const getErrorMessage = () => {
+		const isCredentialFailure = error?.message === 'credential_failure';
+
 		if ( ! isCredentialFailure ) {
 			return translate(
 				'We ran into a problem starting the migration. Please check your details and try again.'
@@ -110,8 +110,6 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 		);
 	};
 
-	const errorMessage = getErrorMessage();
-
 	return (
 		<div className="site-migration-ssh__step-share-ssh">
 			<p className="site-migration-ssh__step-share-ssh-description">
@@ -122,7 +120,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 
 			{ helpLink }
 
-			{ error && <AccordionNotice variant="error">{ errorMessage }</AccordionNotice> }
+			{ error && <AccordionNotice variant="error">{ getErrorMessage() }</AccordionNotice> }
 
 			<div className="site-migration-ssh__step-share-ssh-auth-method">
 				<label className="site-migration-ssh__step-share-ssh-label">
