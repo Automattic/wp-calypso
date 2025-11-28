@@ -77,13 +77,11 @@ export default function AgentDock( {
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager();
 
-	// TODO: Migrate to the routing solution...
 	const { sessionId, applySessionId, resetSession } = useAgentSession();
 
 	const { messages, suggestions, isProcessing, error, loadMessages, onSubmit } =
 		useAgentChat( agentConfig );
 
-	// TODO: Migrate to the routing solution...
 	// Update agent's sessionId when sessionId changes
 	useEffect( () => {
 		if ( ! sessionId ) {

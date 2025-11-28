@@ -105,7 +105,6 @@ export default function UnifiedAIAgent( {
 	markdownExtensions = {},
 }: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
-	// TODO: Migrate to the routing solution...
 	const { sessionId } = useAgentSession();
 
 	// Create agent configuration
