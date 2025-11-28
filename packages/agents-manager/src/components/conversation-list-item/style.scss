@@ -9,17 +9,17 @@
 	margin-bottom: -1px;
 	width: 100%;
 	background: transparent;
-	cursor: pointer;
 	text-align: left;
 	transition: background-color 0.2s ease;
+	cursor: pointer;
 
 	&:hover {
-		background-color: rgba( 255, 255, 255, 0.05 );
+		background-color: rgba( 0, 0, 0, 0.05 );
 	}
 
 	&:focus {
 		outline: none;
-		background-color: rgba( 255, 255, 255, 0.08 );
+		background-color: rgba( 0, 0, 0, 0.08 );
 	}
 
 	&__text {
@@ -28,7 +28,6 @@
 		gap: 2px;
 		flex: 1;
 		min-width: 0;
-		color: var( --color-foreground-inverted, #eff0f1 );
 	}
 
 	&__title {
@@ -41,7 +40,6 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		width: 100%;
-		color: var( --color-foreground-inverted, #eff0f1 );
 	}
 
 	&__subtitle {

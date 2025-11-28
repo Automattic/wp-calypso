@@ -264,24 +264,66 @@ body:not( .wp-admin ).agents-manager-sidebar-container {
 		height: $chat-header-height;
 		margin: 0;
 		padding: 0;
-	}
 
-	.agents-manager-chat-header__title {
-		color: $gray-100;
-	}
-
-	.agents-manager-chat-header__more-options,
-	.agents-manager-chat-header__close-btn {
-		svg {
-			fill: $gray-100;
+		&__title {
+			color: $gray-100;
 		}
 
-		& .components-dropdown-menu__toggle.has-icon,
-		&.has-icon {
-			min-width: unset;
-			width: 32px;
-			height: 32px;
+		&__more-options,
+		&__history-btn,
+		&__close-btn {
+			svg {
+				fill: $gray-100;
+			}
+
+			& .components-dropdown-menu__toggle.has-icon,
+			&.has-icon {
+				min-width: unset;
+				width: 32px;
+				height: 32px;
+				padding: 0;
+			}
+		}
+	}
+
+	.agents-manager-conversation-history-view {
+		padding-top: 48px;
+
+		&__content {
 			padding: 0;
+		}
+
+		&__loading,
+		&__error,
+		&__empty {
+			color: $white;
+		}
+	}
+
+	.agents-manager-conversation-list-item {
+		&:hover {
+			background-color: rgba( 255, 255, 255, 0.05 );
+		}
+
+		&:focus {
+			background-color: rgba( 255, 255, 255, 0.08 );
+		}
+
+		&__text,
+		&__title {
+			color: var( --color-foreground-inverted, #eff0f1 );
+		}
+	}
+
+	.agents-manager-conversation-list-skeleton {
+		&__item {
+			border-color: #464646;
+		}
+
+		&__avatar,
+		&__title,
+		&__subtitle {
+			background-color: rgba( 255, 255, 255, 0.1 );
 		}
 	}
 

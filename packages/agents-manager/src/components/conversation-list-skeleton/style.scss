@@ -16,18 +16,23 @@
 		gap: 8px;
 		align-items: center;
 		padding: 12px 0;
-		border-top: 1px solid #464646 !important;
-		border-bottom: 1px solid #464646 !important;
+		border-top: 1px solid #dcdcdc;
+		border-bottom: 1px solid #dcdcdc;
 		margin-bottom: -1px;
 		width: 100%;
 		pointer-events: none;
+	}
+
+	&__avatar,
+	&__title,
+	&__subtitle {
+		background-color: rgba( 0, 0, 0, 0.1 );
 	}
 
 	&__avatar {
 		width: 38px;
 		height: 38px;
 		border-radius: 50%;
-		background-color: rgba( 255, 255, 255, 0.1 );
 		flex-shrink: 0;
 		animation: skeleton-pulse 1.5s ease-in-out infinite;
 	}
@@ -42,7 +47,6 @@
 
 	&__title {
 		height: 14px;
-		background-color: rgba( 255, 255, 255, 0.1 );
 		border-radius: 4px;
 		width: 70%;
 		animation: skeleton-pulse 1.5s ease-in-out infinite;
@@ -51,7 +55,6 @@
 
 	&__subtitle {
 		height: 11px;
-		background-color: rgba( 255, 255, 255, 0.1 );
 		border-radius: 4px;
 		width: 40%;
 		animation: skeleton-pulse 1.5s ease-in-out infinite;

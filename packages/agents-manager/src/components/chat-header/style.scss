@@ -25,46 +25,11 @@
 		align-items: center;
 	}
 
-	&__more-options {
-		line-height: initial;
-
-		button {
-			padding: 4px;
-			border-radius: 8px;
-			color: var( --color-foreground-inverted, #eff0f1 );
-
-			svg {
-				fill: var( --color-foreground-inverted, #eff0f1 );
-			}
-		}
-	}
-
+	&__more-options,
+	&__history-btn,
 	&__close-btn {
-		line-height: initial;
-
-		button {
-			padding: 4px;
-			border-radius: 8px;
-			color: var( --color-foreground-inverted, #eff0f1 ) !important;
-
-			svg {
-				fill: var( --color-foreground-inverted, #eff0f1 ) !important;
-			}
-		}
-	}
-
-	&__history-btn {
-		line-height: initial;
-		color: $white;
-
-		button {
-			padding: 4px;
-			border-radius: 8px;
-			color: var( --color-foreground-inverted, #eff0f1 ) !important;
-
-			svg {
-				fill: var( --color-foreground-inverted, #eff0f1 ) !important;
-			}
+		svg {
+			fill: var( --color-foreground, #1f1f1f );
 		}
 	}
 }

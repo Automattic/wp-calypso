@@ -4,13 +4,14 @@
 	flex: 1;
 	width: 100%;
 	min-height: 0;
-	padding-top: 48px;
+	padding: 8px 0;
 
 	&__content {
 		flex: 1;
 		overflow-y: auto;
 		overflow-x: hidden;
 		min-height: 0;
+		padding: 0 8px 24px;
 	}
 
 	&__loading,
@@ -22,7 +23,6 @@
 		justify-content: center;
 		padding: 32px 16px;
 		text-align: center;
-		color: var( --color-foreground, #fff );
 
 		p {
 			margin: 0;
@@ -30,14 +30,14 @@
 		}
 	}
 
+	&__loading {
+		padding: 0;
+	}
+
 	&__empty-hint {
 		opacity: 0.5;
 		font-size: 12px;
 		margin-top: 8px;
-	}
-
-	&__error {
-		color: #f44336;
 	}
 
 	&__list {
