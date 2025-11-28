@@ -95,17 +95,19 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 					activeCount
 				);
 			}
-			case 'update':
+			case 'update': {
+				const updateCount = items[ 0 ].sitesWithPluginUpdate.length;
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
 					_n(
 						'You are about to update the %1$s plugin installed on %2$d site.',
 						'You are about to update the %1$s plugin installed on %2$d sites.',
-						count
+						updateCount
 					),
 					pluginName,
-					count
+					updateCount
 				);
+			}
 			case 'enable-autoupdate': {
 				const disabledCount = items[ 0 ].sitesWithPluginNotAutoupdated.length;
 				return sprintf(
@@ -221,41 +223,50 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 }
 
 function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< number, Site > ) {
-	if (
-		items.length === 1 &&
-		[ 'activate', 'deactivate', 'enable-autoupdate', 'disable-autoupdate' ].includes( actionId )
-	) {
-		const [ plugin ] = items;
-
-		let sites: number[] = [];
-		if ( actionId === 'activate' ) {
-			sites = plugin.sitesWithPluginInactive;
-		} else if ( actionId === 'deactivate' ) {
-			sites = plugin.sitesWithPluginActive;
-		} else if ( actionId === 'enable-autoupdate' ) {
-			sites = plugin.sitesWithPluginNotAutoupdated;
-		} else if ( actionId === 'disable-autoupdate' ) {
-			sites = plugin.sitesWithPluginAutoupdated;
-		}
-
-		if ( ! sites?.length ) {
-			return null;
-		}
-
-		return (
-			<ul>
-				{ sites.map( ( siteId ) => {
-					const site = sitesById.get( siteId );
-
-					if ( ! site ) {
-						return null;
-					}
-
-					return <li key={ siteId }>{ `${ site.name } (${ site.slug })` }</li>;
-				} ) }
-			</ul>
-		);
+	if ( items.length !== 1 ) {
+		return null;
 	}
+
+	const [ plugin ] = items;
+
+	let sites: number[] = [];
+	switch ( actionId ) {
+		case 'activate':
+			sites = plugin.sitesWithPluginInactive;
+			break;
+		case 'deactivate':
+			sites = plugin.sitesWithPluginActive;
+			break;
+		case 'update':
+			sites = plugin.sitesWithPluginUpdate;
+			break;
+		case 'enable-autoupdate':
+			sites = plugin.sitesWithPluginNotAutoupdated;
+			break;
+		case 'disable-autoupdate':
+			sites = plugin.sitesWithPluginAutoupdated;
+			break;
+		default:
+			return null;
+	}
+
+	if ( ! sites?.length ) {
+		return null;
+	}
+
+	return (
+		<ul>
+			{ sites.map( ( siteId ) => {
+				const site = sitesById.get( siteId );
+
+				if ( ! site ) {
+					return null;
+				}
+
+				return <li key={ siteId }>{ `${ site.name } (${ site.slug })` }</li>;
+			} ) }
+		</ul>
+	);
 }
 
 export default function ActionRenderModal( {

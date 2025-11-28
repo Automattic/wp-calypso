@@ -12,6 +12,7 @@ import { useLocale } from '../../app/locale';
 
 export interface SiteWithPluginData extends Site {
 	actionLinks?: SitePlugin[ 'action_links' ];
+	hasPluginUpdate?: boolean;
 	isPluginActive: boolean;
 	isPluginAutoupdated?: boolean;
 	isPluginManaged: boolean;
@@ -95,6 +96,7 @@ export const usePlugin = ( pluginSlug: string ) => {
 						if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
 							const plugin = pluginBySiteId.get( site.ID );
 
+							const hasPluginUpdate = plugin?.update ?? false;
 							const isPluginActive = plugin?.active ?? false;
 							const isPluginAutoupdated = plugin?.autoupdate ?? false;
 							const isPluginManaged = plugin?.is_managed ?? false;
@@ -104,6 +106,7 @@ export const usePlugin = ( pluginSlug: string ) => {
 
 							acc[ 0 ].push( {
 								...site,
+								hasPluginUpdate,
 								isPluginActive,
 								isPluginAutoupdated,
 								actionLinks,
