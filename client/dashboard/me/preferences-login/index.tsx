@@ -80,8 +80,8 @@ export default function PreferencesLogin() {
 		{
 			id: 'primarySiteId',
 			label: __( 'Primary site' ),
-			isVisible: ( formDataItem ) =>
-				user.visible_site_count > 0 && formDataItem.defaultLandingPage === 'primary-site-dashboard',
+			isVisible: ( item: LoginPreferencesFormData ) =>
+				user.visible_site_count > 0 && item.defaultLandingPage === 'primary-site-dashboard',
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
 				const value = getValue( { item: data } )?.toString( 10 ) ?? '';
