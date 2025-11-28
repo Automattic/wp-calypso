@@ -757,8 +757,8 @@ object Translate : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				# Install only dependencies needed for translation extraction
-				# This is faster than full install since we only need i18n-calypso and related tools
-				yarn workspaces focus @automattic/i18n-calypso
+				# This is faster than full install since we only need wp-babel-makepot and related tools
+				yarn workspaces focus @automattic/wp-babel-makepot
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
