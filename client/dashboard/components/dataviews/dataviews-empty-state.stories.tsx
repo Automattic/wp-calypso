@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@wordpress/components';
-import { DataViewsEmptyState } from './dataview-empty-state';
+import { DataViewsEmptyState } from './dataviews-empty-state';
 
 const meta: Meta< typeof DataViewsEmptyState > = {
 	title: 'client/dashboard/DataViewsEmptyState',
