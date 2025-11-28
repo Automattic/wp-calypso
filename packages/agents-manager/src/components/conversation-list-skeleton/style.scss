@@ -16,8 +16,8 @@
 		gap: 8px;
 		align-items: center;
 		padding: 12px 0;
-		border-top: 1px solid #dcdcdc;
-		border-bottom: 1px solid #dcdcdc;
+		border-top: 1px solid #ebebeb;
+		border-bottom: 1px solid #ebebeb;
 		margin-bottom: -1px;
 		width: 100%;
 		pointer-events: none;
@@ -26,7 +26,7 @@
 	&__avatar,
 	&__title,
 	&__subtitle {
-		background-color: rgba( 0, 0, 0, 0.1 );
+		background-color: rgba( 0, 0, 0, 0.08 );
 	}
 
 	&__avatar {

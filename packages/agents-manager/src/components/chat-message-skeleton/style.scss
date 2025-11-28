@@ -42,12 +42,12 @@
 		gap: 8px;
 		padding: var( --spacing-3, 12px ) var( --spacing-4, 16px );
 		border-radius: 24px 24px 8px 24px;
-		background-color: #484848;
+		background-color: #e8e8e8;
 		width: 85%;
 	}
 
 	&__bubble &__line {
-		background-color: rgba( 255, 255, 255, 0.3 );
+		background-color: rgba( 0, 0, 0, 0.15 );
 	}
 
 	// Assistant loose text (no bubble)
@@ -60,7 +60,7 @@
 
 	&__line {
 		height: 14px;
-		background-color: rgba( 255, 255, 255, 0.15 );
+		background-color: rgba( 0, 0, 0, 0.08 );
 		border-radius: 4px;
 		animation: skeleton-pulse 1.5s ease-in-out infinite;
 
