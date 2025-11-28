@@ -6,7 +6,8 @@ type Aggregated = {
 	name: string;
 	slug: string;
 	count: number;
-	activeCount: number;
+	activeSites: number[];
+	inactiveSites: number[];
 	updateCount: number;
 	autoupdateAllowedCount: number;
 	autoupdateCount: number;
@@ -25,19 +26,12 @@ function mapCountToQuantifier( count: number, total: number ): 'all' | 'some' | 
 }
 
 export function mapApiPluginsToDataViewPlugins(
-	userSites?: Site[],
+	sitesById: Map< number, Site >,
 	response?: PluginsResponse
 ): PluginListRow[] {
-	if ( ! userSites || ! response?.sites ) {
+	if ( ! response?.sites ) {
 		return [];
 	}
-
-	const sitesById = userSites
-		.filter( ( site ) => site.capabilities.update_plugins )
-		.reduce( ( acc, site ) => {
-			acc.set( site.ID, site );
-			return acc;
-		}, new Map< number, Site >() );
 
 	const pluginsBySite = response.sites;
 	const map = new Map< string, Aggregated >();
@@ -53,7 +47,8 @@ export function mapApiPluginsToDataViewPlugins(
 				name: p.name,
 				slug: p.slug,
 				count: 0,
-				activeCount: 0,
+				activeSites: [],
+				inactiveSites: [],
 				updateCount: 0,
 				autoupdateAllowedCount: 0,
 				autoupdateCount: 0,
@@ -64,7 +59,9 @@ export function mapApiPluginsToDataViewPlugins(
 			entry.count += 1;
 			entry.siteIds.push( siteId );
 			if ( p.active ) {
-				entry.activeCount += 1;
+				entry.activeSites.push( siteId );
+			} else {
+				entry.inactiveSites.push( siteId );
 			}
 			if ( p.update ) {
 				entry.updateCount += 1;
@@ -84,6 +81,7 @@ export function mapApiPluginsToDataViewPlugins(
 				);
 				entry.autoupdateAllowedCount += autoupdate ? 1 : 0;
 			}
+
 			map.set( p.id, entry );
 		} );
 	} );
@@ -95,7 +93,8 @@ export function mapApiPluginsToDataViewPlugins(
 				name,
 				slug,
 				count,
-				activeCount,
+				activeSites,
+				inactiveSites,
 				updateCount,
 				autoupdateAllowedCount,
 				autoupdateCount,
@@ -108,8 +107,10 @@ export function mapApiPluginsToDataViewPlugins(
 			icons: null,
 			slug,
 			sitesCount: count,
+			sitesWithPluginActive: activeSites,
+			sitesWithPluginInactive: inactiveSites,
 			hasUpdate: mapCountToQuantifier( updateCount, count ),
-			isActive: mapCountToQuantifier( activeCount, count ),
+			isActive: mapCountToQuantifier( activeSites.length, count ),
 			areAutoUpdatesAllowed: mapCountToQuantifier( autoupdateAllowedCount, count ),
 			areAutoUpdatesEnabled: mapCountToQuantifier( autoupdateCount, count ),
 			siteIds,
