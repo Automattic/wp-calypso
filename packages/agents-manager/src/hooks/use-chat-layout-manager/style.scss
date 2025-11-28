@@ -334,11 +334,11 @@ body:not( .wp-admin ).agents-manager-sidebar-container {
 		}
 
 		&__bubble &__line {
-			background-color: rgba( 255, 255, 255, 0.3 );
+			background-color: rgba( 255, 255, 255, 0.3 ) !important;
 		}
 
 		&__line {
-			background-color: rgba( 255, 255, 255, 0.15 );
+			background-color: rgba( 255, 255, 255, 0.15 ) !important;
 		}
 	}
 
