@@ -271,7 +271,7 @@ export default function AgentDock( {
 	markdownExtensions,
 }: AgentDockProps ) {
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
-	const { isOpen, hasLoaded, sessionId } = useSelect( ( select ) => {
+	const { isOpen, hasLoaded } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
@@ -405,14 +405,11 @@ export default function AgentDock( {
 	}
 
 	return createChatPortal(
-		<>
-			<span style={ { color: 'white' } }>Session Id: { sessionId }</span>
-			<Routes>
-				<Route path="/" element={ <BigSkyAgent /> } />
-				<Route path="/chat/:chatId" element={ <BigSkyAgent /> } />
-				<Route path="/history" element={ <HistoryView /> } />
-				<Route path="*" element={ <Navigate to="/" replace /> } />
-			</Routes>
-		</>
+		<Routes>
+			<Route path="/" element={ <BigSkyAgent /> } />
+			<Route path="/chat/:chatId" element={ <BigSkyAgent /> } />
+			<Route path="/history" element={ <HistoryView /> } />
+			<Route path="*" element={ <Navigate to="/" replace /> } />
+		</Routes>
 	);
 }
