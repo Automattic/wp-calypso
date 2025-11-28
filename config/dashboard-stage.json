@@ -1,0 +1,21 @@
+{
+	"env": "production",
+	"env_id": "dashboard-stage",
+	"favicon_url": "/calypso/images/favicons/favicon-staging.ico",
+	"client_slug": "browser",
+	"protocol": "http",
+	"hostname": "my.wordpress.com",
+	"i18n_default_locale_slug": "en",
+	"port": 3003,
+	"site_name": "Hosting Dashboard",
+	"features": {
+		"dashboard": true,
+		"dashboard/v2": false,
+		"cookie-banner": false,
+		"dev/preferences-helper": true
+	},
+	"enable_all_sections": false,
+	"site_filter": [],
+	"theme": "dashboard",
+	"restricted_me_access": false
+}

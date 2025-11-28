@@ -17,7 +17,7 @@ import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
-import type { ZendeskMessage } from '@automattic/odie-client';
+import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 const destroy = () => {
 	try {

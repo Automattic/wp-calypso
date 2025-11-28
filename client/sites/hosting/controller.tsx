@@ -1,7 +1,8 @@
-import { FEATURE_SFTP } from '@automattic/calypso-products';
+import { type Site, DotcomFeatures } from '@automattic/api-core';
 import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
 import { CalloutOverlay } from 'calypso/dashboard/components/callout-overlay';
 import PageLayout from 'calypso/dashboard/components/page-layout';
+import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
@@ -16,17 +17,18 @@ import './style.scss';
 
 export function hostingFeatures( context: PageJSContext, next: () => void ) {
 	const state = context.store.getState();
-	const site = getSelectedSite( state );
+	const site = getSelectedSite( state ) as unknown as Site;
 
 	let content;
 	if ( site ) {
-		const hasSftpFeature =
-			! site.plan?.expired && site.plan?.features.active.includes( FEATURE_SFTP );
-		const shouldShowActivationCallout = ! site.is_wpcom_atomic && hasSftpFeature;
+		const hasAtomicFeature = ! site.plan?.expired && hasPlanFeature( site, DotcomFeatures.ATOMIC );
+		const shouldShowActivationCallout = ! site.is_wpcom_atomic && hasAtomicFeature;
 
 		let redirectUrl = context.query.redirect_to;
 		if ( ! redirectUrl ) {
-			redirectUrl = hasSftpFeature ? `/sites/${ site.slug }/settings` : `/overview/${ site.slug }`;
+			redirectUrl = hasAtomicFeature
+				? `/sites/${ site.slug }/settings`
+				: `/overview/${ site.slug }`;
 		}
 
 		content = (
@@ -36,7 +38,7 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 					<CalloutOverlay
 						callout={
 							shouldShowActivationCallout ? (
-								<HostingActivationCallout siteId={ site.ID } redirectUrl={ redirectUrl } />
+								<HostingActivationCallout site={ site } redirectUrl={ redirectUrl } />
 							) : (
 								<HostingUpsellCallout siteSlug={ site.slug } />
 							)
@@ -81,7 +83,7 @@ export function hostingFeaturesCallout(
 				! site.is_wpcom_atomic &&
 				! site.plan?.expired &&
 				site.plan?.features.active.includes( feature ) ? (
-					<HostingActivationCallout siteId={ site.ID } />
+					<HostingActivationCallout site={ site as unknown as Site } />
 				) : (
 					<HostingFeatureCallout path={ path }>
 						<CalloutComponent siteSlug={ site.slug } titleAs="h3" />
