@@ -23,7 +23,6 @@ import {
 	DASHBOARD_SECTION_DEFINITION,
 	DASHBOARD_CIAB_SECTION_DEFINITION,
 } from 'calypso/dashboard/section';
-import isDashboard from 'calypso/dashboard/utils/is-dashboard';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -161,7 +160,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		'development',
 		'jetpack-cloud-development',
 		'a8c-for-agencies-development',
-		'dashboard-development',
 	];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 
@@ -267,18 +265,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	if ( calypsoEnv === 'a8c-for-agencies-development' ) {
 		context.badge = 'a8c-for-agencies-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.branchName = getCurrentBranchName();
-		context.commitChecksum = getCurrentCommitShortChecksum();
-	}
-
-	if ( calypsoEnv === 'dashboard-stage' ) {
-		context.badge = 'dashboard-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-	}
-
-	if ( calypsoEnv === 'dashboard-development' ) {
-		context.badge = 'dashboard-dev';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
@@ -945,7 +931,7 @@ export default function pages() {
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );
 
-	if ( ! ( isJetpackCloud() || isA8CForAgencies() || isDashboard() ) ) {
+	if ( ! ( isJetpackCloud() || isA8CForAgencies() ) ) {
 		wpcomPages( app );
 	}
 
@@ -1006,18 +992,11 @@ export default function pages() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
-	// Multi-site Dashboard routing fo my.wordpress.com.
-	if ( config.isEnabled( 'dashboard' ) ) {
-		[ '/', '/sites', '/domains', '/emails', '/plugins', '/me' ].forEach( ( route ) => {
-			handleSectionPath( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom' );
-		} );
-	}
+	// Set up Multi-site Dashboard routing.
+	handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom' );
 
-	// Multi-site Dashboard routing for wordpress.com.
-	if ( config.isEnabled( 'dashboard/v2' ) ) {
-		handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom' );
-		handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
-	}
+	// Set up CIAB dashboard routing.
+	handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );

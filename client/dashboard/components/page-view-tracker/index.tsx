@@ -1,23 +1,24 @@
-import { useRouter } from '@tanstack/react-router';
+import { useRouterState } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { getNormalizedPath } from '../../app/analytics/super-props';
 
 export function PageViewTracker() {
-	const router = useRouter();
+	const routerState = useRouterState();
 	const { recordPageView } = useAnalytics();
-	const lastPath = useRef< string | null >( null );
+	const lastPath = useRef();
 
 	useEffect( () => {
-		if ( router.state.status !== 'pending' ) {
-			const path = getNormalizedPath( router );
+		if ( routerState.status !== 'pending' ) {
+			const leafMatch = routerState.matches.at( -1 );
+			const basePath = leafMatch?.context?.config?.basePath;
+			const path = ( basePath !== '/' ? basePath : '' ) + leafMatch?.routeId;
 
 			if ( path && ( ! lastPath.current || lastPath.current !== path ) ) {
 				recordPageView( path, document.title );
 				lastPath.current = path;
 			}
 		}
-	}, [ router, router.state.status, router.state.location.href, recordPageView ] );
+	}, [ routerState.status, routerState.location.href, recordPageView ] );
 
 	return null;
 }
