@@ -14,19 +14,17 @@ export const PluginsHeaderActions = ( {
 }: PluginsHeaderActionsProps ) => {
 	const hasUpdates = updateCount > 0;
 
-	return (
-		<>
-			{ hasUpdates ? (
-				<Text onClick={ onFilterUpdates } className="plugins-header-actions__updates-link">
-					{ sprintf(
-						// translators: %d is the number of plugins with an update available.
-						__( 'Updates available (%d)' ),
-						updateCount
-					) }
-				</Text>
-			) : (
-				<Text>{ __( 'Plugins up to date' ) }</Text>
-			) }
-		</>
-	);
+	if ( hasUpdates ) {
+		return (
+			<Text onClick={ onFilterUpdates } className="plugins-header-actions__updates-link">
+				{ sprintf(
+					// translators: %d is the number of plugins with an update available.
+					__( 'Updates available (%d)' ),
+					updateCount
+				) }
+			</Text>
+		);
+	}
+
+	return <Text>{ __( 'Plugins up to date' ) }</Text>;
 };
