@@ -15,6 +15,7 @@ import {
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
+import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
@@ -74,14 +75,16 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const [ shouldCreateConversation, setShouldCreateConversation ] = useState< {
 		createdFrom?: string;
 		isFromError?: boolean;
+		escalationOnSecondAttempt?: boolean;
 		trigger: boolean;
 	} >( { isFromError: false, trigger: false } );
 
 	useEffect( () => {
-		const { createdFrom, isFromError, trigger } = shouldCreateConversation;
+		const { createdFrom, isFromError, escalationOnSecondAttempt, trigger } =
+			shouldCreateConversation;
 
 		if ( trigger ) {
-			createZendeskConversation( { createdFrom, isFromError } );
+			createZendeskConversation( { createdFrom, isFromError, escalationOnSecondAttempt } );
 			setShouldCreateConversation( { createdFrom: undefined, isFromError: false, trigger: false } );
 		}
 	}, [ createZendeskConversation, shouldCreateConversation ] );
@@ -115,6 +118,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			message.internal_message_id === getExistingConversationMessage().internal_message_id
 	);
 
+	const hasTriedToEscalateToSupport = hasRecentEscalationAttempt( chat );
+
 	/*
 		Adds a message to the chat.
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
@@ -142,7 +147,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					} ) );
 					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
-				} else if ( warnAboutExistingConversation && ! hasBeenWarnedAboutExistingConversation ) {
+				} else if (
+					warnAboutExistingConversation &&
+					! hasBeenWarnedAboutExistingConversation &&
+					! hasTriedToEscalateToSupport
+				) {
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,
@@ -162,6 +171,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						trigger: true,
 						createdFrom: 'automatic_escalation',
 						isFromError,
+						escalationOnSecondAttempt: hasTriedToEscalateToSupport,
 					} );
 					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
