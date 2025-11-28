@@ -10,7 +10,7 @@ import {
 	generateConversationTitle,
 	getBotType,
 } from '../../utils/formatters';
-import { ConversationAvatar } from '../conversation-avatar';
+import ConversationAvatar from '../conversation-avatar';
 import './style.scss';
 
 interface ConversationListItemProps {

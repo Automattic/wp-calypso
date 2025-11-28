@@ -12,7 +12,7 @@ interface ConversationAvatarProps {
 	className?: string;
 }
 
-export const ConversationAvatar = memo( ( { type, className = '' }: ConversationAvatarProps ) => {
+const ConversationAvatar = memo( ( { type, className = '' }: ConversationAvatarProps ) => {
 	const fullClassName = clsx(
 		'agents-manager-conversation-avatar',
 		`agents-manager-conversation-avatar--${ type }`,
@@ -71,3 +71,5 @@ export const ConversationAvatar = memo( ( { type, className = '' }: Conversation
 } );
 
 ConversationAvatar.displayName = 'ConversationAvatar';
+
+export default ConversationAvatar;
