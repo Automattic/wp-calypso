@@ -1,7 +1,7 @@
 /**
  * Unified AI Agent Component
  *
- * Main wrapper component for loading the AI agent.
+ * Configures the AI agent, manages sessions, and integrates custom tools and context.
  */
 
 import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
