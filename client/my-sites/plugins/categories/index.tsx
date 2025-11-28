@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
+import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -68,6 +70,10 @@ const Categories = ( { selected, noSelection }: { selected?: string; noSelection
 		>
 			{ categories.map( ( category ) => (
 				<span key={ `category-${ category.slug }` } title={ category.menu }>
+					{ category.slug === 'discover' && isEnabled( 'marketplace-redesign' ) && (
+						<Icon icon={ starEmpty } size={ 22 } />
+					) }
+
 					{ category.menu }
 				</span>
 			) ) }
