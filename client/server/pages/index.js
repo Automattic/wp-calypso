@@ -536,6 +536,10 @@ function setUpCSP( req, res, next ) {
 			// User feedback and support tools
 			'survey.survicate.com', // Survicate survey tool
 			'surveys-static-prd.survicate-cdn.com', // Survicate CDN
+			'https://cdn.smooch.io', // Smooch/Sunshine Conversations (Zendesk messaging)
+			'https://static.zdassets.com', // Zendesk static assets
+			// Google static content
+			'https://www.gstatic.com', // Google Charts and other static content
 			// Advertising and analytics tracking scripts
 			'https://static.ads-twitter.com', // Twitter/X advertising tag
 			'https://connect.facebook.net', // Facebook Pixel
@@ -547,6 +551,8 @@ function setUpCSP( req, res, next ) {
 			'https://fonts.googleapis.com',
 			'use.typekit.net',
 			'surveys-static-prd.survicate-cdn.com', // Survicate survey styles
+			'https://cdn.smooch.io', // Smooch/Sunshine Conversations styles
+			'https://www.gstatic.com', // Google Charts styles
 			// per https://helpx.adobe.com/ca/fonts/using/content-security-policy.html
 			"'unsafe-inline'",
 		],
@@ -583,6 +589,8 @@ function setUpCSP( req, res, next ) {
 			'https://hexagon-analytics.com', // Hexagon analytics tracking pixels
 			'https://img.youtube.com',
 			'https://ps.w.org', // WordPress.org plugin directory (plugin icons)
+			'https://ts.w.org', // WordPress.org theme directory (theme screenshots)
+			'https://s.w.org', // WordPress.org static assets (SVG icons, etc.)
 			'https://woocommerce.com', // WooCommerce marketplace
 			'localhost:8888',
 			'p.typekit.net',
@@ -607,6 +615,7 @@ function setUpCSP( req, res, next ) {
 			'use.typekit.net',
 			'https://woocommerce.com',
 			'surveys-static-prd.survicate-cdn.com', // Survicate fonts
+			'https://cdn.smooch.io', // Smooch/Sunshine Conversations fonts
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
@@ -616,6 +625,7 @@ function setUpCSP( req, res, next ) {
 			'wss://*.wordpress.com', // WebSocket connections (realtime API, notifications)
 			'https://*.wp.com',
 			'https://wordpress.com',
+			'https://api.wordpress.org', // WordPress.org API (plugin/theme info)
 			// Payment provider APIs (for tokenization and payment processing)
 			'*.stripe.com', // Stripe API calls
 			'api.stripe.com', // Stripe API endpoint
@@ -623,6 +633,9 @@ function setUpCSP( req, res, next ) {
 			'*.paypal.com', // PayPal API calls
 			// Support and feedback tools
 			'*.zendesk.com', // Zendesk support chat
+			'wss://*.zendesk.com', // Zendesk WebSocket connections
+			'https://ekr.zdassets.com', // Zendesk composer
+			'https://*.config.smooch.io', // Smooch/Sunshine Conversations config
 		],
 		'report-uri': [ '/cspreport' ],
 	};
