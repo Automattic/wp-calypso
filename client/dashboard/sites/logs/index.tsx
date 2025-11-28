@@ -116,6 +116,10 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	};
 
 	const handleTabChange = ( tab: LogType ) => {
+		if ( logType === tab ) {
+			return;
+		}
+
 		if ( tab === LogType.PHP ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/php` } );
 		} else if ( tab === LogType.ACTIVITY ) {

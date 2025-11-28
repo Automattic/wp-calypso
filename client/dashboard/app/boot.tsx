@@ -17,7 +17,7 @@ import type { AppConfig } from './context';
 import './style.scss';
 
 function boot( config: AppConfig ) {
-	if ( ! isEnabled( 'dashboard/v2' ) && ! isSupportSession() ) {
+	if ( ! isEnabled( 'dashboard' ) && ! isEnabled( 'dashboard/v2' ) && ! isSupportSession() ) {
 		throw new Error( 'Multi-site Dashboard is not enabled' );
 	}
 

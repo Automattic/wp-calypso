@@ -131,3 +131,25 @@ export type MessageType =
 	| 'introduction'
 	| 'form'
 	| 'formResponse';
+
+/**
+ * Agenttic-UI Message interface
+ * Used for components that require the standardized Message interface
+ */
+export interface AgentticMessage {
+	id: string;
+	role: 'user' | 'agent';
+	content: Array< {
+		type: 'text' | 'image_url' | 'component' | 'context';
+		text?: string;
+		image_url?: string;
+		component?: React.ComponentType;
+		componentProps?: unknown;
+	} >;
+	timestamp: number;
+	archived: boolean;
+	showIcon: boolean;
+	icon?: string;
+	actions?: MessageAction[];
+	disabled?: boolean;
+}
