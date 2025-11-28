@@ -141,22 +141,37 @@ body.is-section-plugins #primary .main.is-logged-out {
 .full-width-section.plugins-browser__search-header {
 	padding-top: 100px;
 	padding-bottom: 32px;
-	background-image: url( /calypso/images/plugins/plugins_hero_2.svg );
-	background-size: auto 380px;
-	background-position: right top;
-	background-repeat: no-repeat;
+	position: relative;
+	overflow: hidden;
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 50%;
+		width: 50%;
+		min-width: 660px;
+		height: 100%;
+		background-image: url(/calypso/images/plugins/plugins_hero_2.svg);
+		background-size: auto 380px;
+		background-position: right bottom;
+		background-repeat: no-repeat;
+		pointer-events: none;
+
+		@media screen and ( max-width: 600px ) {
+			background-image: url( /calypso/images/plugins/plugins_hero_2_m.svg );
+			left: 0;
+			min-width: 0;
+			width: 100%;
+		}
+	}
+
+	.full-width-section__content {
+		position: relative;
+	}
 
 	body.is-section-plugins #primary & .search-box-header::before {
 		display: none;
-	}
-
-	.search-box-header .search-box-header__header {
-		font-size: 70px;
-		line-height: 1;
-	}
-
-	@media screen and ( max-width: 600px ) {
-		background-image: url( /calypso/images/plugins/plugins_hero_2_m.svg );
 	}
 }
 
@@ -182,7 +197,7 @@ body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
 		max-width: 1040px;
 		padding-inline: 24px;
 		box-sizing: border-box;
-		@media screen and ( max-width: 600px ) {
+		@media (max-width: 660px) {
 			padding-inline: 16px;
 		}
 	}
