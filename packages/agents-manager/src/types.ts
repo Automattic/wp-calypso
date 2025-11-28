@@ -3,6 +3,7 @@
  */
 
 export type {
+	Ability,
 	ToolProvider,
 	ContextProvider,
 	ClientContextType,

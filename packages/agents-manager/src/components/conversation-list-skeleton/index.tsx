@@ -3,33 +3,36 @@
  * Loading skeleton that mimics the ConversationListItem structure
  */
 
-import { memo } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import './style.scss';
 
 interface ConversationListSkeletonProps {
 	count?: number;
 }
 
-const SkeletonItem = () => (
-	<div className="agents-manager-conversation-list-skeleton__item">
-		<div className="agents-manager-conversation-list-skeleton__avatar" />
-		<div className="agents-manager-conversation-list-skeleton__text">
-			<div className="agents-manager-conversation-list-skeleton__title" />
-			<div className="agents-manager-conversation-list-skeleton__subtitle" />
-		</div>
-	</div>
-);
-
-const ConversationListSkeleton = memo( ( { count = 3 }: ConversationListSkeletonProps ) => {
+function SkeletonItem() {
 	return (
-		<div className="agents-manager-conversation-list-skeleton" aria-busy="true" aria-hidden="true">
+		<div className="agents-manager-conversation-list-skeleton__item" aria-hidden="true">
+			<div className="agents-manager-conversation-list-skeleton__avatar" />
+			<div className="agents-manager-conversation-list-skeleton__text">
+				<div className="agents-manager-conversation-list-skeleton__title" />
+				<div className="agents-manager-conversation-list-skeleton__subtitle" />
+			</div>
+		</div>
+	);
+}
+
+export default function ConversationListSkeleton( { count = 3 }: ConversationListSkeletonProps ) {
+	return (
+		<div
+			className="agents-manager-conversation-list-skeleton"
+			role="status"
+			aria-label={ __( 'Loading conversations', 'agents-manager' ) }
+			aria-busy="true"
+		>
 			{ Array.from( { length: count } ).map( ( _, index ) => (
 				<SkeletonItem key={ index } />
 			) ) }
 		</div>
 	);
-} );
-
-ConversationListSkeleton.displayName = 'ConversationListSkeleton';
-
-export default ConversationListSkeleton;
+}

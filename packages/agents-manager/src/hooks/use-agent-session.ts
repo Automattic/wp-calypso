@@ -37,7 +37,7 @@ const getExistingSessionId = (): string => {
 		}
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
-		console.error( '[Agents Manager] Error loading session ID:', error );
+		console.error( '[useAgentSession] Error loading session ID:', error );
 	}
 
 	// No existing session - return empty string
@@ -58,7 +58,7 @@ const saveSessionId = ( sessionId: string ): void => {
 		localStorage.setItem( SESSION_STORAGE_KEY, JSON.stringify( session ) );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
-		console.error( '[Agents Manager] Error storing session ID:', error );
+		console.error( '[useAgentSession] Error storing session ID:', error );
 	}
 };
 
