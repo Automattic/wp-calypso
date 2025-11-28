@@ -271,9 +271,7 @@ export default function Sites() {
 								navigate( {
 									search: {
 										...currentSearchParams,
-										view: Object.fromEntries(
-											Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
-										),
+										search: undefined,
 									},
 								} );
 							} }
