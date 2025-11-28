@@ -247,7 +247,6 @@ function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< 
 
 export default function ActionRenderModal( {
 	items,
-	listItems = true,
 	closeModal,
 	onActionPerformed,
 	actionId,
@@ -526,7 +525,7 @@ export default function ActionRenderModal( {
 	return (
 		<VStack spacing={ 4 }>
 			<Text>{ getConfirmText( actionId, items ) }</Text>
-			{ listItems && getSiteList( actionId, items, sitesById ) }
+			{ getSiteList( actionId, items, sitesById ) }
 			<HStack justify="right">
 				<Button
 					__next40pxDefaultSize
