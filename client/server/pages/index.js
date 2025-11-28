@@ -1112,8 +1112,22 @@ export default function pages() {
 			}, {} );
 
 			if ( calypsoEnv !== 'development' ) {
+				// Send to Tracks for analytics
 				analytics.tracks.recordEvent( 'calypso_csp_report', cspReportSnakeCase, req );
 			}
+
+			// Send to Logstash for better logging/debugging
+			analytics.logstash.log( {
+				feature: 'calypso_client',
+				message: 'CSP Violation Report',
+				severity: 'info',
+				properties: {
+					env: calypsoEnv,
+					...cspReportSnakeCase,
+					user_agent: req.get( 'user-agent' ),
+					referer: req.get( 'Referer' ),
+				},
+			} );
 
 			res.status( 200 ).send( 'Got it!' );
 		},
