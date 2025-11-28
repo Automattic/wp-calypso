@@ -40,6 +40,18 @@ export const getSuperProps = ( user: User, router: AnyRouter, queryClient: Query
 };
 
 /**
+ * Normalize the path by removing leading double slashes.
+ */
+export function getNormalizedPath( router: AnyRouter ) {
+	const leafMatch = router.state.matches.at( -1 );
+	const basePath = router.basepath ?? '';
+	const routeId = leafMatch?.routeId ?? '';
+
+	const normalizedBasePath = basePath.endsWith( '/' ) ? basePath.slice( 0, -1 ) : basePath;
+	return normalizedBasePath + routeId;
+}
+
+/**
  * Attempts to retrieve the site information from the tanstack cache.
  *
  * It looks for the site slug in both the "site" and "sites" caches. Perhaps it's
