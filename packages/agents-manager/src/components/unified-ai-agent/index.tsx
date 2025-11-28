@@ -105,7 +105,8 @@ export default function UnifiedAIAgent( {
 	markdownExtensions = {},
 }: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
-	const { sessionId } = useAgentSession();
+	// TODO: Integrate the route session ID...
+	const { sessionId, applySessionId, resetSession } = useAgentSession();
 
 	// Create agent configuration
 	const config = useMemo< UseAgentChatConfig >(
@@ -176,8 +177,8 @@ export default function UnifiedAIAgent( {
 
 			return config;
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- Ensure agent config is stable
-		[]
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- sessionId is the only dynamic dependency
+		[ sessionId ]
 	);
 
 	// Load config AND pre-load cached messages for progressive loading
@@ -236,6 +237,9 @@ export default function UnifiedAIAgent( {
 
 	return (
 		<AgentDock
+			sessionId={ sessionId }
+			applySessionId={ applySessionId }
+			resetSession={ resetSession }
 			agentConfig={ agentConfig }
 			emptyViewSuggestions={ customSuggestions || defaultSuggestions }
 			markdownComponents={ markdownComponents }

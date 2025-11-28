@@ -25,7 +25,6 @@ import { useCallback, useEffect, useMemo, useState, useRef } from '@wordpress/el
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { API_BASE_URL } from '../../constants';
-import useAgentSession from '../../hooks/use-agent-session';
 import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
 import useLoadConversation from '../../hooks/use-load-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -38,6 +37,18 @@ import { AI } from '../icons';
 import type { DockViewState } from './types';
 
 interface AgentDockProps {
+	/**
+	 * Current session ID
+	 */
+	sessionId: string;
+	/**
+	 * Callback to apply a session ID
+	 */
+	applySessionId: ( sessionId: string ) => void;
+	/**
+	 * Callback to reset session
+	 */
+	resetSession: () => void;
 	/**
 	 * Agent configuration for @automattic/agenttic-client
 	 */
@@ -57,6 +68,9 @@ interface AgentDockProps {
 }
 
 export default function AgentDock( {
+	sessionId,
+	applySessionId,
+	resetSession,
 	agentConfig,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
@@ -77,11 +91,10 @@ export default function AgentDock( {
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
 		useChatLayoutManager();
 
-	const { sessionId, applySessionId, resetSession } = useAgentSession();
-
 	const { messages, suggestions, isProcessing, error, loadMessages, onSubmit } =
 		useAgentChat( agentConfig );
 
+	// TODO: We may not need this, will double-check later...
 	// Update agent's sessionId when sessionId changes
 	useEffect( () => {
 		if ( ! sessionId ) {
