@@ -18,12 +18,7 @@ export const activateAction: Action< PluginListRow > = {
 
 		return sprintf(
 			// translators: %(count)d is the number of sites the plugin will be activated on.
-			_n(
-				'Activate on %(count)d site',
-				'Activate on %(count)d sites',
-				inactiveCount,
-				'next-admin'
-			),
+			_n( 'Activate on %(count)d site', 'Activate on %(count)d sites', inactiveCount ),
 			{ count: inactiveCount }
 		);
 	},

@@ -74,36 +74,54 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 			case 'activate':
 				return sprintf(
 					// translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to activate the %1$s plugin on %2$d sites.' ),
+					_n(
+						'You are about to activate the %1$s plugin on %2$d site.',
+						'You are about to activate the %1$s plugin on %2$d sites.',
+						inactiveCount
+					),
 					pluginName,
 					inactiveCount
 				);
 			case 'deactivate':
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to deactivate the %1$s plugin installed on %2$d sites.' ),
+					_n(
+						'You are about to deactivate the %1$s plugin installed on %2$d site.',
+						'You are about to deactivate the %1$s plugin installed on %2$d sites.',
+						activeCount
+					),
 					pluginName,
 					activeCount
 				);
 			case 'update':
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to update the %1$s plugin installed on %2$d sites.' ),
+					_n(
+						'You are about to update the %1$s plugin installed on %2$d site.',
+						'You are about to update the %1$s plugin installed on %2$d sites.',
+						count
+					),
 					pluginName,
 					count
 				);
 			case 'enable-autoupdate':
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to enable auto‑updates for the %1$s plugin installed on %2$d sites.' ),
+					_n(
+						'You are about to enable auto‑updates for the %1$s plugin installed on %2$d site.',
+						'You are about to enable auto‑updates for the %1$s plugin installed on %2$d sites.',
+						count
+					),
 					pluginName,
 					count
 				);
 			case 'disable-autoupdate':
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					__(
-						'You are about to disable auto‑updates for the %1$s plugin installed on %2$d sites.'
+					_n(
+						'You are about to disable auto‑updates for the %1$s plugin installed on %2$d site.',
+						'You are about to disable auto‑updates for the %1$s plugin installed on %2$d sites.',
+						count
 					),
 					pluginName,
 					count
@@ -111,7 +129,11 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 			case 'delete':
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to deactivate and remove the %1$s plugin installed on %2$d sites.' ),
+					_n(
+						'You are about to deactivate and remove the %1$s plugin installed on %2$d site.',
+						'You are about to deactivate and remove the %1$s plugin installed on %2$d sites.',
+						count
+					),
 					pluginName,
 					count
 				);

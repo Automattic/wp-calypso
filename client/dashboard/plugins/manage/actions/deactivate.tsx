@@ -18,12 +18,7 @@ export const deactivateAction: Action< PluginListRow > = {
 
 		return sprintf(
 			// translators: %(count)d is the number of sites the plugin will be deactivated on.
-			_n(
-				'Deactivate on %(count)d site',
-				'Deactivate on %(count)d sites',
-				activeCount,
-				'next-admin'
-			),
+			_n( 'Deactivate on %(count)d site', 'Deactivate on %(count)d sites', activeCount ),
 			{ count: activeCount }
 		);
 	},
