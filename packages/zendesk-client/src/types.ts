@@ -23,6 +23,13 @@ export type UserFields = {
 	messaging_site_id: string | number | null;
 };
 
+export interface ConversationParticipant {
+	id: string;
+	userId: string;
+	unreadCount: number;
+	lastRead: number;
+}
+
 export type MessagingAuth = {
 	user: {
 		external_id?: string;
@@ -46,3 +53,81 @@ export type MessagingMetadata = {
 };
 
 export type ZendeskAuthType = 'zendesk' | 'messenger';
+
+export type ChatFeedbackActions = {
+	score: string;
+	account_id: number;
+	ticket_id: number;
+};
+
+export type MessageAction = {
+	id: string;
+	payload: boolean;
+	text: string;
+	type: string;
+	metadata: ChatFeedbackActions;
+};
+
+export type ZendeskContentType =
+	| 'text'
+	| 'carousel'
+	| 'file'
+	| 'form'
+	| 'formResponse'
+	| 'image'
+	| 'image-placeholder'
+	| 'list'
+	| 'location'
+	| 'template';
+
+export type ZendeskMessage = {
+	received: number;
+	role: 'user' | 'business';
+	text: string;
+	altText?: string;
+	avatarUrl?: string;
+	id: string;
+	actions?: MessageAction[];
+	source?: {
+		type: 'web' | 'slack' | 'zd:surveys' | 'zd:answerBot';
+		id: string;
+		integrationId: string;
+	};
+	type: ZendeskContentType;
+	mediaUrl?: string;
+	metadata?: Record< string, any >;
+	htmlText?: string;
+};
+
+export type ZendeskConversation = {
+	id: string;
+	lastUpdatedAt: number;
+	businessLastRead: number;
+	description: string;
+	displayName: string;
+	iconUrl: string;
+	type: 'sdkGroup' | string;
+	participants: ConversationParticipant[];
+	messages: ZendeskMessage[];
+	metadata: {
+		[ key: string ]: string | number | boolean;
+	};
+};
+
+export type ZendeskMessageRole = 'user' | 'business';
+
+export type MessageType =
+	| 'message'
+	| 'action'
+	| 'meta'
+	| 'error'
+	| 'placeholder'
+	| 'dislike-feedback'
+	| 'conversation-feedback'
+	| 'help-link'
+	| 'file'
+	| 'image'
+	| 'image-placeholder'
+	| 'introduction'
+	| 'form'
+	| 'formResponse';
