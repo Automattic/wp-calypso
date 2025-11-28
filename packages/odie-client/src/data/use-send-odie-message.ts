@@ -193,6 +193,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			const url = window.location.href;
 			const pathname = window.location.pathname;
 
+			const currentScreen = { url };
+
 			return canAccessWpcomApis()
 				? wpcomRequest< ReturnedChat >( {
 						method: 'POST',
@@ -202,7 +204,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						body: {
 							message: message.content,
 							...( version && { version } ),
-							context: { selectedSiteId, url, pathname },
+							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } )
 				: apiFetch< ReturnedChat >( {
@@ -212,7 +214,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						data: {
 							message: message.content,
 							...( version && { version } ),
-							context: { selectedSiteId, url, pathname },
+							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } );
 		},

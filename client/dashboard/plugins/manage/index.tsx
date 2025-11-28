@@ -7,7 +7,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { pluginsManageRoute } from '../../app/router/plugins';
@@ -15,7 +15,9 @@ import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getViewFilteredByUpdates } from '../utils/update-filters';
 import { getActions } from './actions';
+import { PluginsHeaderActions } from './components/plugins-header-actions';
 import { fields } from './fields';
 import { mapApiPluginsToDataViewPlugins } from './utils';
 import { defaultView } from './views';
@@ -86,6 +88,20 @@ export default function PluginsList() {
 		} );
 	}, [ filteredPlugins, iconBySlug ] );
 
+	const updateCount = useMemo( () => {
+		return data.filter( ( plugin ) => {
+			return ! plugin.isManaged && [ 'some', 'all' ].includes( plugin.hasUpdate );
+		} ).length;
+	}, [ data ] );
+
+	const handleFilterUpdates = useCallback( () => {
+		if ( updateCount <= 0 ) {
+			return;
+		}
+
+		updateView( getViewFilteredByUpdates( view, 'updateAvailable', 2 ) );
+	}, [ updateCount, updateView, view ] );
+
 	return (
 		<PageLayout
 			size="large"
@@ -110,6 +126,12 @@ export default function PluginsList() {
 					view={ view }
 					onChangeView={ updateView }
 					onResetView={ resetView }
+					header={
+						<PluginsHeaderActions
+							updateCount={ updateCount }
+							onFilterUpdates={ handleFilterUpdates }
+						/>
+					}
 					defaultLayouts={ { table: {} } }
 					actions={ actions }
 					getItemId={ ( item: PluginListRow ) => item.id }

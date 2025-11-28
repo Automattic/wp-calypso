@@ -12,10 +12,12 @@ import { __experimentalText as Text, Button, Icon } from '@wordpress/components'
 import { DataViews, filterSortAndPaginate, View, type Field } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
+import { PluginsHeaderActions } from '../manage/components/plugins-header-actions';
 import { buildBulkSitesPluginAction } from '../manage/utils';
+import { getViewFilteredByUpdates } from '../utils/update-filters';
 import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
 import FieldActionToggle from './components/field-action-toggle';
 import { SiteWithPluginData, usePlugin } from './use-plugin';
@@ -174,15 +176,34 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'update',
 				label: __( 'Update' ),
+				getValue: ( { item }: { item: SiteWithPluginData } ) => {
+					const pluginItem = pluginBySiteId.get( item.ID );
+					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+
+					return autoupdate && !! pluginItem?.update;
+				},
 				render: ( { item }: { item: SiteWithPluginData } ) => {
 					const update = pluginBySiteId.get( item.ID )?.update;
+					const version = pluginBySiteId.get( item.ID )?.version;
 
 					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 					if ( ! autoupdate ) {
-						return <Text>{ __( 'Auto-managed on this site' ) }</Text>;
+						return <Text>{ __( 'Updates auto-managed' ) }</Text>;
 					}
 
-					if ( ! update ) {
+					if ( ! update && version ) {
+						return (
+							<Text>
+								{ sprintf(
+									// translators: %s is the version number of the plugin.
+									__( '%s (current)' ),
+									version
+								) }
+							</Text>
+						);
+					}
+
+					if ( ! update?.new_version ) {
 						return null;
 					}
 
@@ -227,6 +248,27 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 
 	const { data, paginationInfo } = filterSortAndPaginate( sitesWithThisPlugin, view, fields );
 
+	const updateCount = useMemo( () => {
+		if ( ! sitesWithThisPlugin ) {
+			return 0;
+		}
+
+		return sitesWithThisPlugin.filter( ( item ) => {
+			const pluginItem = pluginBySiteId.get( item.ID );
+			const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+
+			return autoupdate && !! pluginItem?.update;
+		} ).length;
+	}, [ sitesWithThisPlugin, pluginBySiteId, pluginSlug ] );
+
+	const handleFilterUpdates = useCallback( () => {
+		if ( updateCount <= 0 ) {
+			return;
+		}
+
+		setView( getViewFilteredByUpdates( view, 'update', true ) );
+	}, [ updateCount, view, setView ] );
+
 	return (
 		<>
 			<DataViews
@@ -235,6 +277,13 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
+				header={
+					<PluginsHeaderActions
+						updateCount={ updateCount }
+						onFilterUpdates={ handleFilterUpdates }
+						isSitesWithThisPluginView
+					/>
+				}
 				defaultLayouts={ { table: {} } }
 				actions={ [
 					{
@@ -355,14 +404,15 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 						supportsBulk: true,
 					},
 					{
-						id: 'settings',
-						label: __( 'Settings' ),
+						id: 'wp-admin',
+						label: __( 'WP Admin ↗' ),
 						callback: ( items ) => {
 							const [ site ] = items;
 							window.open( site.actionLinks?.Settings, '_blank' );
 						},
 						isEligible: ( item ) => !! item.actionLinks?.Settings,
 						supportsBulk: false,
+						isPrimary: true,
 					},
 					{
 						id: 'delete',
