@@ -19,7 +19,7 @@ import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
-import { DataViewsEmptyState } from '../components/dataviews/dataviews-empty-state';
+import { DataViewsEmptyState } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import AddNewSite from './add-new-site';
