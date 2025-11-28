@@ -68,10 +68,9 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 	if ( items.length === 1 ) {
 		const pluginName = items[ 0 ].name;
 		const count = items[ 0 ].sitesCount;
-		const activeCount = items[ 0 ].sitesWithPluginActive.length;
-		const inactiveCount = items[ 0 ].sitesWithPluginInactive.length;
 		switch ( actionId ) {
-			case 'activate':
+			case 'activate': {
+				const inactiveCount = items[ 0 ].sitesWithPluginInactive.length;
 				return sprintf(
 					// translators: %1$s is the plugin name. %2$d is the number of sites.
 					_n(
@@ -82,7 +81,9 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 					pluginName,
 					inactiveCount
 				);
-			case 'deactivate':
+			}
+			case 'deactivate': {
+				const activeCount = items[ 0 ].sitesWithPluginActive.length;
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
 					_n(
@@ -93,6 +94,7 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 					pluginName,
 					activeCount
 				);
+			}
 			case 'update':
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
@@ -104,28 +106,32 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 					pluginName,
 					count
 				);
-			case 'enable-autoupdate':
+			case 'enable-autoupdate': {
+				const disabledCount = items[ 0 ].sitesWithPluginNotAutoupdated.length;
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
 					_n(
 						'You are about to enable auto‑updates for the %1$s plugin installed on %2$d site.',
 						'You are about to enable auto‑updates for the %1$s plugin installed on %2$d sites.',
-						count
+						disabledCount
 					),
 					pluginName,
-					count
+					disabledCount
 				);
-			case 'disable-autoupdate':
+			}
+			case 'disable-autoupdate': {
+				const enabledCount = items[ 0 ].sitesWithPluginAutoupdated.length;
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
 					_n(
 						'You are about to disable auto‑updates for the %1$s plugin installed on %2$d site.',
 						'You are about to disable auto‑updates for the %1$s plugin installed on %2$d sites.',
-						count
+						enabledCount
 					),
 					pluginName,
-					count
+					enabledCount
 				);
+			}
 			case 'delete':
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
@@ -215,7 +221,10 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 }
 
 function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< number, Site > ) {
-	if ( items.length === 1 && [ 'activate', 'deactivate' ].includes( actionId ) ) {
+	if (
+		items.length === 1 &&
+		[ 'activate', 'deactivate', 'enable-autoupdate', 'disable-autoupdate' ].includes( actionId )
+	) {
 		const [ plugin ] = items;
 
 		let sites: number[] = [];
@@ -223,6 +232,10 @@ function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< 
 			sites = plugin.sitesWithPluginInactive;
 		} else if ( actionId === 'deactivate' ) {
 			sites = plugin.sitesWithPluginActive;
+		} else if ( actionId === 'enable-autoupdate' ) {
+			sites = plugin.sitesWithPluginNotAutoupdated;
+		} else if ( actionId === 'disable-autoupdate' ) {
+			sites = plugin.sitesWithPluginAutoupdated;
 		}
 
 		if ( ! sites?.length ) {

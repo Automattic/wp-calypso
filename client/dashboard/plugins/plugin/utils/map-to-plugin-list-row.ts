@@ -15,6 +15,12 @@ export const mapToPluginListRow = (
 		sitesWithPluginInactive: items
 			.filter( ( item ) => ! item.isPluginActive )
 			.map( ( item ) => item.ID ),
+		sitesWithPluginAutoupdated: items
+			.filter( ( item ) => item.isPluginAutoupdated )
+			.map( ( item ) => item.ID ),
+		sitesWithPluginNotAutoupdated: items
+			.filter( ( item ) => ! item.isPluginAutoupdated )
+			.map( ( item ) => item.ID ),
 		siteIds: items.map( ( item ) => item.ID ),
 		sitesCount: items.length,
 	};

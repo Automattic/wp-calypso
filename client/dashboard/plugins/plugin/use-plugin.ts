@@ -13,6 +13,7 @@ import { useLocale } from '../../app/locale';
 export interface SiteWithPluginData extends Site {
 	actionLinks?: SitePlugin[ 'action_links' ];
 	isPluginActive: boolean;
+	isPluginAutoupdated?: boolean;
 	isPluginManaged: boolean;
 }
 
@@ -92,13 +93,22 @@ export const usePlugin = ( pluginSlug: string ) => {
 				.reduce(
 					( acc, site ) => {
 						if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
-							const isPluginActive = pluginBySiteId.get( site.ID )?.active ?? false;
-							const isPluginManaged = pluginBySiteId.get( site.ID )?.is_managed ?? false;
+							const plugin = pluginBySiteId.get( site.ID );
+
+							const isPluginActive = plugin?.active ?? false;
+							const isPluginAutoupdated = plugin?.autoupdate ?? false;
+							const isPluginManaged = plugin?.is_managed ?? false;
 							const actionLinks = actionLinksBySiteId.get( Number( site.ID ) ) || {
 								Settings: `${ site.URL }/wp-admin/plugins.php`,
 							};
 
-							acc[ 0 ].push( { ...site, isPluginActive, actionLinks, isPluginManaged } );
+							acc[ 0 ].push( {
+								...site,
+								isPluginActive,
+								isPluginAutoupdated,
+								actionLinks,
+								isPluginManaged,
+							} );
 						} else {
 							acc[ 1 ].push( site );
 						}
