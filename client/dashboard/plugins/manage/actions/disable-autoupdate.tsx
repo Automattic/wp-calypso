@@ -1,6 +1,10 @@
-import { sitePluginAutoupdateDisableMutation } from '@automattic/api-queries';
+import {
+	invalidatePlugins,
+	invalidateSitePlugins,
+	sitePluginAutoupdateDisableMutation,
+} from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { _n, sprintf } from '@wordpress/i18n';
 import ActionRenderModal, { getModalHeader } from '../components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../utils';
 import type { PluginListRow } from '../types';
@@ -8,18 +12,47 @@ import type { Action } from '@wordpress/dataviews';
 
 export const disableAutoupdateAction: Action< PluginListRow > = {
 	id: 'disable-autoupdate',
-	label: __( 'Disable auto‑updates' ),
+	label: ( items ) => {
+		const [ plugin ] = items;
+		const enabledCount = plugin.sitesWithPluginAutoupdated.length;
+
+		return sprintf(
+			// translators: %(count)d is the number of sites the plugin will have auto-updates disabled on.
+			_n(
+				'Disable auto‑updates on %(count)d site',
+				'Disable auto‑updates on %(count)d sites',
+				enabledCount
+			),
+			{ count: enabledCount }
+		);
+	},
 	modalHeader: getModalHeader( 'disable-autoupdate' ),
-	RenderModal: ( { items, closeModal, onActionPerformed } ) => {
-		const { mutateAsync } = useMutation( sitePluginAutoupdateDisableMutation() );
+	RenderModal: ( { items, closeModal } ) => {
+		const { mutateAsync } = useMutation( {
+			...sitePluginAutoupdateDisableMutation(),
+			onSuccess: () => {},
+		} );
 		const action = buildBulkSitesPluginAction( mutateAsync );
 
 		return (
 			<ActionRenderModal
 				actionId="disable-autoupdate"
-				items={ items }
+				items={ items.map( ( item ) => ( {
+					...item,
+					siteIds: item.siteIds.filter( ( siteId ) =>
+						item.sitesWithPluginAutoupdated.includes( siteId )
+					),
+				} ) ) }
 				closeModal={ closeModal }
-				onActionPerformed={ onActionPerformed }
+				onActionPerformed={ ( items: PluginListRow[] ) => {
+					items
+						.flatMap( ( item ) => item.siteIds )
+						.forEach( ( siteId ) => {
+							invalidateSitePlugins( siteId );
+						} );
+
+					invalidatePlugins();
+				} }
 				onExecute={ action }
 			/>
 		);
