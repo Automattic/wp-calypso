@@ -10,10 +10,10 @@ import deepmerge from 'deepmerge';
 import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
-import { usePersistentView } from '../app/dataviews';
 import { useHelpCenter } from '../app/help-center';
+import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
-import { DataViewsEmptyState } from '../components/dataviews-empty-state';
+import { DataViewsEmptyState } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { filterSortAndPaginate__ES, useSiteListQuery } from '../sites';
@@ -132,9 +132,7 @@ export default function CIABSites() {
 								navigate( {
 									search: {
 										...currentSearchParams,
-										view: Object.fromEntries(
-											Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
-										),
+										search: undefined,
 									},
 								} );
 							} }

@@ -1,3 +1,4 @@
+import { Site } from '@automattic/api-core';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -9,6 +10,7 @@ import { useEffect, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
+import { useSitesById } from '../hooks/use-sites-by-id';
 import type { PluginListRow } from '../types';
 import type { RenderModalProps } from '@wordpress/dataviews';
 
@@ -19,6 +21,7 @@ export type ActionOnExecuteResponse = {
 
 export type ActionRenderModalProps = RenderModalProps< PluginListRow > & {
 	actionId: string;
+	listItems?: boolean;
 	// Function that executes the underlying action (e.g., existing callback)
 	onExecute: ( items: PluginListRow[] ) => Promise< ActionOnExecuteResponse >;
 };
@@ -66,47 +69,79 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 		const pluginName = items[ 0 ].name;
 		const count = items[ 0 ].sitesCount;
 		switch ( actionId ) {
-			case 'activate':
+			case 'activate': {
+				const inactiveCount = items[ 0 ].sitesWithPluginInactive.length;
 				return sprintf(
 					// translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to activate the %1$s plugin installed on %2$d sites.' ),
-					pluginName,
-					count
-				);
-			case 'deactivate':
-				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to deactivate the %1$s plugin installed on %2$d sites.' ),
-					pluginName,
-					count
-				);
-			case 'update':
-				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to update the %1$s plugin installed on %2$d sites.' ),
-					pluginName,
-					count
-				);
-			case 'enable-autoupdate':
-				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to enable auto‑updates for the %1$s plugin installed on %2$d sites.' ),
-					pluginName,
-					count
-				);
-			case 'disable-autoupdate':
-				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					__(
-						'You are about to disable auto‑updates for the %1$s plugin installed on %2$d sites.'
+					_n(
+						'You are about to activate the %1$s plugin on %2$d site.',
+						'You are about to activate the %1$s plugin on %2$d sites.',
+						inactiveCount
 					),
 					pluginName,
-					count
+					inactiveCount
 				);
+			}
+			case 'deactivate': {
+				const activeCount = items[ 0 ].sitesWithPluginActive.length;
+				return sprintf(
+					// Translators: %1$s is the plugin name. %2$d is the number of sites.
+					_n(
+						'You are about to deactivate the %1$s plugin installed on %2$d site.',
+						'You are about to deactivate the %1$s plugin installed on %2$d sites.',
+						activeCount
+					),
+					pluginName,
+					activeCount
+				);
+			}
+			case 'update': {
+				const updateCount = items[ 0 ].sitesWithPluginUpdate.length;
+				return sprintf(
+					// Translators: %1$s is the plugin name. %2$d is the number of sites.
+					_n(
+						'You are about to update the %1$s plugin installed on %2$d site.',
+						'You are about to update the %1$s plugin installed on %2$d sites.',
+						updateCount
+					),
+					pluginName,
+					updateCount
+				);
+			}
+			case 'enable-autoupdate': {
+				const disabledCount = items[ 0 ].sitesWithPluginNotAutoupdated.length;
+				return sprintf(
+					// Translators: %1$s is the plugin name. %2$d is the number of sites.
+					_n(
+						'You are about to enable auto‑updates for the %1$s plugin installed on %2$d site.',
+						'You are about to enable auto‑updates for the %1$s plugin installed on %2$d sites.',
+						disabledCount
+					),
+					pluginName,
+					disabledCount
+				);
+			}
+			case 'disable-autoupdate': {
+				const enabledCount = items[ 0 ].sitesWithPluginAutoupdated.length;
+				return sprintf(
+					// Translators: %1$s is the plugin name. %2$d is the number of sites.
+					_n(
+						'You are about to disable auto‑updates for the %1$s plugin installed on %2$d site.',
+						'You are about to disable auto‑updates for the %1$s plugin installed on %2$d sites.',
+						enabledCount
+					),
+					pluginName,
+					enabledCount
+				);
+			}
 			case 'delete':
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to deactivate and remove the %1$s plugin installed on %2$d sites.' ),
+					_n(
+						'You are about to deactivate and remove the %1$s plugin installed on %2$d site.',
+						'You are about to deactivate and remove the %1$s plugin installed on %2$d sites.',
+						count
+					),
 					pluginName,
 					count
 				);
@@ -187,6 +222,53 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 	}
 }
 
+function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< number, Site > ) {
+	if ( items.length !== 1 ) {
+		return null;
+	}
+
+	const [ plugin ] = items;
+
+	let sites: number[] = [];
+	switch ( actionId ) {
+		case 'activate':
+			sites = plugin.sitesWithPluginInactive;
+			break;
+		case 'deactivate':
+			sites = plugin.sitesWithPluginActive;
+			break;
+		case 'update':
+			sites = plugin.sitesWithPluginUpdate;
+			break;
+		case 'enable-autoupdate':
+			sites = plugin.sitesWithPluginNotAutoupdated;
+			break;
+		case 'disable-autoupdate':
+			sites = plugin.sitesWithPluginAutoupdated;
+			break;
+		default:
+			return null;
+	}
+
+	if ( ! sites?.length ) {
+		return null;
+	}
+
+	return (
+		<ul>
+			{ sites.map( ( siteId ) => {
+				const site = sitesById.get( siteId );
+
+				if ( ! site ) {
+					return null;
+				}
+
+				return <li key={ siteId }>{ `${ site.name } (${ site.slug })` }</li>;
+			} ) }
+		</ul>
+	);
+}
+
 export default function ActionRenderModal( {
 	items,
 	closeModal,
@@ -197,6 +279,7 @@ export default function ActionRenderModal( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isBusy, setIsBusy ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
+	const { sitesById } = useSitesById();
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_dashboard_plugins_action_click', { action_id: actionId } );
@@ -466,6 +549,7 @@ export default function ActionRenderModal( {
 	return (
 		<VStack spacing={ 4 }>
 			<Text>{ getConfirmText( actionId, items ) }</Text>
+			{ getSiteList( actionId, items, sitesById ) }
 			<HStack justify="right">
 				<Button
 					__next40pxDefaultSize

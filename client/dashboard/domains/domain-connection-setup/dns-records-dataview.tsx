@@ -8,7 +8,7 @@ import { DataViews, type Field, type ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, arrowRight } from '@wordpress/icons';
 import { useMemo } from 'react';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews';
 import { matchCurrentToTargetValues } from './utils/match-records';
 
 const viewSuggested: ViewTable = {

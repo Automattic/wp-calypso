@@ -170,7 +170,7 @@ export class HelpCenterComponent {
 			this.page.waitForResponse(
 				( response ) => {
 					return (
-						response.request().url().includes( '/help/search/wpcom' ) &&
+						response.request().url().includes( '/help/search' ) &&
 						response
 							.request()
 							.url()

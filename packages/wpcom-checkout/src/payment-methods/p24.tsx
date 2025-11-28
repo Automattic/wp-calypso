@@ -1,142 +1,81 @@
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode } from 'react';
+import { useEffect, useState, Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
-import type {
-	PaymentMethodStore,
-	StoreSelectors,
-	StoreSelectorsWithState,
-	StoreActions,
-	StoreState,
-} from '../payment-method-store';
-import type { AnyAction } from '../types';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
-
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 const debug = debugFactory( 'wpcom-checkout:p24-payment-method' );
 
-type NounsInStore = 'customerName' | 'customerEmail';
-
-type P24Store = PaymentMethodStore< NounsInStore >;
-
-const actions: StoreActions< NounsInStore > = {
-	changeCustomerName( payload ) {
-		return { type: 'CUSTOMER_NAME_SET', payload };
-	},
-	changeCustomerEmail( payload ) {
-		return { type: 'CUSTOMER_EMAIL_SET', payload };
-	},
-};
-
-const selectors: StoreSelectorsWithState< NounsInStore > = {
-	getCustomerName( state ) {
-		return state.customerName;
-	},
-	getCustomerEmail( state ) {
-		return state.customerEmail;
-	},
-};
-
-export function createP24PaymentMethodStore(): P24Store {
-	debug( 'creating a new p24 payment method store' );
-	const store = registerStore( 'p24', {
-		reducer(
-			state: StoreState< NounsInStore > = {
-				customerName: { value: '', isTouched: false },
-				customerEmail: { value: '', isTouched: false },
-			},
-			action: AnyAction
-		): StoreState< NounsInStore > {
-			switch ( action.type ) {
-				case 'CUSTOMER_NAME_SET':
-					return { ...state, customerName: { value: action.payload, isTouched: true } };
-				case 'CUSTOMER_EMAIL_SET':
-					return { ...state, customerEmail: { value: action.payload, isTouched: true } };
-			}
-			return state;
-		},
-		actions,
-		selectors,
-	} );
-
-	return store;
+interface P24PaymentMethodStateShape {
+	customerName: string;
+	customerEmail: string;
 }
 
-function useCustomerData() {
-	const { customerName, customerEmail } = useSelect( ( select ) => {
-		const store = select( 'p24' ) as StoreSelectors< NounsInStore >;
-		return {
-			customerName: store.getCustomerName(),
-			customerEmail: store.getCustomerEmail(),
-		};
-	}, [] );
+type P24PaymentMethodKey = keyof P24PaymentMethodStateShape;
 
-	return {
-		customerName,
-		customerEmail,
+type StateSubscriber = () => void;
+
+class P24PaymentMethodState {
+	data: P24PaymentMethodStateShape = {
+		customerName: '',
+		customerEmail: '',
+	};
+
+	subscribers: StateSubscriber[] = [];
+
+	isTouched: Record< P24PaymentMethodKey, boolean > = {
+		customerName: false,
+		customerEmail: false,
+	};
+
+	change = ( field: P24PaymentMethodKey, value: string ): void => {
+		this.data[ field ] = value;
+		this.isTouched[ field ] = true;
+		this.notifySubscribers();
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
 	};
 }
 
 export function createP24Method( {
-	store,
 	submitButtonContent,
 }: {
-	store: P24Store;
 	submitButtonContent: ReactNode;
 } ): PaymentMethod {
+	const state = new P24PaymentMethodState();
+
 	return {
 		id: 'p24',
 		hasRequiredFields: true,
 		paymentProcessorId: 'p24',
 		label: <P24Label />,
-		activeContent: <P24Fields />,
-		inactiveContent: <P24Summary />,
-		submitButton: <P24PayButton store={ store } submitButtonContent={ submitButtonContent } />,
+		activeContent: <P24Fields state={ state } />,
+		inactiveContent: <P24Summary state={ state } />,
+		submitButton: <P24PayButton state={ state } submitButtonContent={ submitButtonContent } />,
 		getAriaLabel: () => 'Przelewy24',
 	};
 }
 
-function P24Fields() {
-	const { __ } = useI18n();
-
-	const { customerName, customerEmail } = useCustomerData();
-	const { changeCustomerName, changeCustomerEmail } = useDispatch( 'p24' );
-	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== FormStatus.READY;
-
-	return (
-		<P24FormWrapper>
-			<P24Field
-				id="p24-cardholder-name"
-				type="Text"
-				autoComplete="cc-name"
-				label={ __( 'Your name' ) }
-				value={ customerName.value }
-				onChange={ changeCustomerName }
-				isError={ customerName.isTouched && customerName.value.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
-			/>
-			<P24Field
-				id="p24-cardholder-email"
-				type="Text"
-				autoComplete="cc-email"
-				label={ __( 'Email address' ) }
-				value={ customerEmail.value ?? '' }
-				onChange={ changeCustomerEmail }
-				isError={ customerEmail.isTouched && customerEmail.value.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
-			/>
-		</P24FormWrapper>
-	);
+function useSubscribeToEventEmitter( state: P24PaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
 }
 
 const P24FormWrapper = styled.div`
@@ -168,19 +107,52 @@ const P24Field = styled( Field )`
 	}
 `;
 
+function P24Fields( { state }: { state: P24PaymentMethodState } ) {
+	const { __ } = useI18n();
+	useSubscribeToEventEmitter( state );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+
+	return (
+		<P24FormWrapper>
+			<P24Field
+				id="p24-cardholder-name"
+				type="Text"
+				autoComplete="cc-name"
+				label={ __( 'Your name' ) }
+				value={ state.data.customerName }
+				onChange={ ( value: string ) => state.change( 'customerName', value ) }
+				isError={ state.isTouched.customerName && state.data.customerName.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+			<P24Field
+				id="p24-cardholder-email"
+				type="Text"
+				autoComplete="cc-email"
+				label={ __( 'Email address' ) }
+				value={ state.data.customerEmail }
+				onChange={ ( value: string ) => state.change( 'customerEmail', value ) }
+				isError={ state.isTouched.customerEmail && state.data.customerEmail.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+		</P24FormWrapper>
+	);
+}
+
 function P24PayButton( {
 	disabled,
 	onClick,
-	store,
+	state,
 	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
-	store: P24Store;
+	state: P24PaymentMethodState;
 	submitButtonContent: ReactNode;
 } ) {
 	const { formStatus } = useFormStatus();
-	const { customerName, customerEmail } = useCustomerData();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -195,11 +167,11 @@ function P24PayButton( {
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isFormValid( store ) ) {
+				if ( isFormValid( state ) ) {
 					debug( 'submitting p24 payment' );
 					onClick( {
-						name: customerName.value,
-						email: customerEmail.value,
+						name: state.data.customerName,
+						email: state.data.customerEmail,
 					} );
 				}
 			} }
@@ -212,21 +184,20 @@ function P24PayButton( {
 	);
 }
 
-function isFormValid( store: P24Store ): boolean {
-	const customerName = selectors.getCustomerName( store.getState() );
-	const customerEmail = selectors.getCustomerEmail( store.getState() );
+function isFormValid( state: P24PaymentMethodState ): boolean {
+	let isValid = true;
 
-	if ( ! customerName.value.length ) {
+	if ( ! state.data.customerName.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( actions.changeCustomerName( '' ) );
+		state.change( 'customerName', '' );
+		isValid = false;
 	}
-	if ( ! customerEmail.value.length ) {
-		store.dispatch( actions.changeCustomerEmail( '' ) );
+	if ( ! state.data.customerEmail.length ) {
+		state.change( 'customerEmail', '' );
+		isValid = false;
 	}
-	if ( ! customerName.value.length || ! customerEmail.value.length ) {
-		return false;
-	}
-	return true;
+
+	return isValid;
 }
 
 function P24Label() {
@@ -339,13 +310,13 @@ function P24Logo() {
 	);
 }
 
-function P24Summary() {
-	const { customerName, customerEmail } = useCustomerData();
+function P24Summary( { state }: { state: P24PaymentMethodState } ) {
+	useSubscribeToEventEmitter( state );
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName.value }</SummaryLine>
-			<SummaryLine>{ customerEmail.value }</SummaryLine>
+			<SummaryLine>{ state.data.customerName }</SummaryLine>
+			<SummaryLine>{ state.data.customerEmail }</SummaryLine>
 		</SummaryDetails>
 	);
 }

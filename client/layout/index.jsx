@@ -264,6 +264,7 @@ class Layout extends Component {
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
+					source={ isA8CForAgencies() ? 'a4a' : 'wpcom' }
 				/>
 				{ ! shouldDisableSidebarScrollSynchronizer && (
 					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
