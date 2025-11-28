@@ -195,8 +195,12 @@
 		&:hover {
 			border-color: var(--studio-blue-50);
 		}
-
-
+	}
+	.full-width-section .extended & {
+		padding: 30px;
+	}
+	.full-width-section .compact & {
+		background: var(--studio-white);
 	}
 	.full-width-section--gray & {
 		background: var(--studio-white);

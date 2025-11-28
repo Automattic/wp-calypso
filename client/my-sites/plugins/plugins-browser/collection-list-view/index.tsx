@@ -35,7 +35,7 @@ export default function CollectionListView( {
 
 	let carouselPageSize = 6;
 	if ( ! isLargeOrAbove ) {
-		carouselPageSize = 1;
+		carouselPageSize = 2;
 	} else if ( ! isWideOrAbove ) {
 		carouselPageSize = 4;
 	}

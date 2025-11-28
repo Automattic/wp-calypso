@@ -32,11 +32,12 @@
 
 				@media (max-width: 660px) {
 					font-size: rem(40px);
-					line-height: 1.1;
+					line-height: 1;
 				}
 			}
 			.plugins-results-header__subtitle {
 				font-size: $font-body-large;
+				line-height: 1.4;
 			}
 		}
 	}
