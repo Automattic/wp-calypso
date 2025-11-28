@@ -1,32 +1,20 @@
 .post-checkout-setup-your-site-step {
-	.flow-question {
-		width: 100%;
-		max-width: unset;
-
-		.components-card__body {
-			padding: 24px;
+	.summary-button.has-density-low  {
+        border-radius: 8px;
+		
+		// adjust gap between title and strapline
+		[data-wp-component="VStack"]:has(.summary-button-title) {
+			gap: $grid-unit-05;
 		}
 
-		.flow-question__description {
-			color: var(--color-text-subtle);
+		.summary-button-title{
+			font-weight: 500;
 		}
-
-		svg {
-			fill: var(--color-text-subtle);
-		}
-	}
-
-	.post-checkout-custom-step__migrate-link {
-		display: flex;
-		justify-content: center;
-		margin-block-start: var(--spacing-2, 8px);
 	}
 
 	.post-checkout-custom-step__migrate-button {
 		color: var(--color-primary, #0675c4);
 		text-decoration: none;
-		text-align: center;
-	}
-	
+	}	
 }
 
