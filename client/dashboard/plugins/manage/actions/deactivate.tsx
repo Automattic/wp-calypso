@@ -23,7 +23,7 @@ export const deactivateAction: Action< PluginListRow > = {
 		);
 	},
 	modalHeader: getModalHeader( 'deactivate' ),
-	RenderModal: ( { items, closeModal, onActionPerformed } ) => {
+	RenderModal: ( { items, closeModal } ) => {
 		const { mutateAsync } = useMutation( {
 			...sitePluginDeactivateMutation(),
 			onSuccess: () => {},
@@ -32,14 +32,6 @@ export const deactivateAction: Action< PluginListRow > = {
 			const bulkDeactivate = buildBulkSitesPluginAction( mutateAsync );
 
 			const { successCount, errorCount } = await bulkDeactivate( items );
-
-			items
-				.flatMap( ( item ) => item.siteIds )
-				.forEach( ( siteId ) => {
-					invalidateSitePlugins( siteId );
-				} );
-
-			invalidatePlugins();
 
 			return { successCount, errorCount };
 		};
@@ -54,7 +46,15 @@ export const deactivateAction: Action< PluginListRow > = {
 					),
 				} ) ) }
 				closeModal={ closeModal }
-				onActionPerformed={ onActionPerformed }
+				onActionPerformed={ ( items: PluginListRow[] ) => {
+					items
+						.flatMap( ( item ) => item.siteIds )
+						.forEach( ( siteId ) => {
+							invalidateSitePlugins( siteId );
+						} );
+
+					invalidatePlugins();
+				} }
 				onExecute={ action }
 			/>
 		);
