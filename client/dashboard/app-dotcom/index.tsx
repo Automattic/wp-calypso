@@ -4,6 +4,7 @@ import {
 	dashboardSiteListQuery,
 	dashboardSiteFiltersQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import Logo from './logo';
@@ -16,7 +17,7 @@ import './style.scss';
 
 boot( {
 	name: 'WordPress.com',
-	basePath: '/v2',
+	basePath: isEnabled( 'dashboard/v2' ) ? '/v2' : '/',
 	mainRoute: '/sites',
 	Logo,
 	supports: {

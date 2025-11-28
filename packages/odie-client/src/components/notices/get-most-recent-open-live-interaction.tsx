@@ -1,5 +1,5 @@
 import Smooch from 'smooch';
-import { ZendeskConversation } from '../../types';
+import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 
 const AGE_THRESHOLD = 1000 * 60 * 60 * 24 * 3; // 3 days
 
@@ -16,7 +16,7 @@ export default function getMostRecentOpenLiveInteraction() {
 		const latestOpenConversation = conversations.find( ( conversation ) =>
 			// having a csat message means the conversation is closed
 			conversation.messages.every(
-				( message ) =>
+				( message: ZendeskMessage ) =>
 					message.type !== 'form' &&
 					message.metadata?.type !== 'csat' &&
 					message.metadata?.type !== 'form' &&
@@ -25,7 +25,7 @@ export default function getMostRecentOpenLiveInteraction() {
 			)
 		);
 
-		return latestOpenConversation?.metadata.supportInteractionId;
+		return latestOpenConversation?.metadata.supportInteractionId as string;
 	} catch {
 		return null;
 	}

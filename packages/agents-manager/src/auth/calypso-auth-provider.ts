@@ -44,30 +44,36 @@ declare global {
 }
 
 /**
- * Check if this is a WordPress.com simple site
+ * Get cached JWT token data from sessionStorage
+ * @param key - Storage key
+ * @returns TokenData or null
  */
-function isSimpleSite(): boolean {
-	return (
-		typeof window !== 'undefined' &&
-		typeof window._currentSiteType === 'string' &&
-		window._currentSiteType === 'simple'
-	);
+function getCachedJwtToken( key: string ): TokenData | null {
+	try {
+		const cached = sessionStorage.getItem( key );
+		if ( cached ) {
+			const tokenData = JSON.parse( cached ) as TokenData;
+			if ( tokenData?.token && tokenData?.expire && tokenData.expire > Date.now() ) {
+				return tokenData;
+			}
+		}
+	} catch {
+		// Invalid cached token
+	}
+	return null;
 }
 
 /**
- * Check if we're in Calypso proper (not wp-admin widget)
+ * Set cached JWT token data in sessionStorage
+ * @param key - Storage key
+ * @param tokenData - Token data to cache
  */
-function isCalypsoEnvironment(): boolean {
-	if ( typeof window === 'undefined' ) {
-		return false;
+function setCachedJwtToken( key: string, tokenData: TokenData ): void {
+	try {
+		sessionStorage.setItem( key, JSON.stringify( tokenData ) );
+	} catch {
+		// Continue without caching
 	}
-
-	const urlOrigin = window.location.origin;
-	return (
-		/^http(s)?:\/\/calypso\.localhost(:\d+)?$/.test( urlOrigin ) ||
-		/^http(s)?:\/\/[a-z0-9-]+\.calypso\.live$/.test( urlOrigin ) ||
-		/^https:\/\/wordpress\.com$/.test( urlOrigin )
-	);
 }
 
 /**
@@ -81,15 +87,10 @@ async function requestJWTToken(
 	useCachedToken = true
 ): Promise< TokenData | null > {
 	// Check for cached token
-	const cachedToken = localStorage.getItem( JWT_TOKEN_ID );
-	if ( cachedToken && useCachedToken ) {
-		try {
-			const tokenData = JSON.parse( cachedToken ) as TokenData;
-			if ( tokenData?.token && tokenData?.expire && tokenData.expire > Date.now() ) {
-				return tokenData;
-			}
-		} catch {
-			// Invalid cached token, continue to fetch new one
+	if ( useCachedToken ) {
+		const cached = getCachedJwtToken( JWT_TOKEN_ID );
+		if ( cached ) {
+			return cached;
 		}
 	}
 
@@ -103,7 +104,16 @@ async function requestJWTToken(
 	};
 
 	try {
-		if ( ! isSimpleSite() ) {
+		if ( canAccessWpcomApis() ) {
+			// WordPress.com simple site
+			if ( ! effectiveSiteId ) {
+				throw new Error( 'Site ID is required for simple sites' );
+			}
+			data = await apiFetch< { token: string; blog_id: string } >( {
+				path: '/wpcom/v2/sites/' + effectiveSiteId + '/jetpack-openai-query/jwt',
+				method: 'POST',
+			} );
+		} else {
 			// Jetpack-connected site
 			data = await apiFetch< { token: string; blog_id: string } >( {
 				path: '/jetpack/v4/jetpack-ai-jwt?_cacheBuster=' + Date.now(),
@@ -111,15 +121,6 @@ async function requestJWTToken(
 				headers: {
 					'X-WP-Nonce': apiNonce || '',
 				},
-				method: 'POST',
-			} );
-		} else {
-			// WordPress.com simple site
-			if ( ! effectiveSiteId ) {
-				throw new Error( 'Site ID is required for simple sites' );
-			}
-			data = await apiFetch< { token: string; blog_id: string } >( {
-				path: '/wpcom/v2/sites/' + effectiveSiteId + '/jetpack-openai-query/jwt',
 				method: 'POST',
 			} );
 		}
@@ -138,11 +139,7 @@ async function requestJWTToken(
 	};
 
 	// Cache the token
-	try {
-		localStorage.setItem( JWT_TOKEN_ID, JSON.stringify( newTokenData ) );
-	} catch {
-		// Continue without caching
-	}
+	setCachedJwtToken( JWT_TOKEN_ID, newTokenData );
 
 	return newTokenData;
 }
@@ -150,8 +147,22 @@ async function requestJWTToken(
 /**
  * Request a JWT token using wpcomRequest (for Calypso contexts)
  * @param siteId - Site ID for fetching JWT tokens
+ * @param useCachedToken - Whether to use cached token (default: true)
  */
-async function requestJWTTokenViaWpcom( siteId: string | number ): Promise< string | null > {
+async function requestJWTTokenViaWpcom(
+	siteId: string | number,
+	useCachedToken = true
+): Promise< string | null > {
+	const cacheKey = `${ JWT_TOKEN_ID }-wpcom-${ siteId }`;
+
+	// Check for cached token
+	if ( useCachedToken ) {
+		const cached = getCachedJwtToken( cacheKey );
+		if ( cached ) {
+			return cached.token;
+		}
+	}
+
 	try {
 		const data = ( await wpcomRequest( {
 			path: `/sites/${ siteId }/jetpack-openai-query/jwt`,
@@ -160,6 +171,18 @@ async function requestJWTTokenViaWpcom( siteId: string | number ): Promise< stri
 		} ) ) as { token?: string; jwt?: string };
 
 		const token = data?.token || data?.jwt;
+
+		if ( token ) {
+			// Cache the token
+			const tokenData: TokenData = {
+				token,
+				blogId: String( siteId ),
+				expire: Date.now() + JWT_TOKEN_EXPIRATION_TIME,
+			};
+
+			setCachedJwtToken( cacheKey, tokenData );
+		}
+
 		return token || null;
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
@@ -209,11 +232,7 @@ export const createCalypsoAuthProvider = ( siteId?: string | number ): AuthProvi
 			'Content-Type': 'application/json',
 		};
 
-		// Check if we're in Calypso proper
-		const inCalypso = isCalypsoEnvironment();
-
-		if ( inCalypso && canAccessWpcomApis() ) {
-			// In Calypso: Try OAuth token first, then JWT via wpcomRequest
+		if ( canAccessWpcomApis() ) {
 			const token = getOAuthToken();
 			if ( token ) {
 				headers.Authorization = `Bearer ${ token }`;

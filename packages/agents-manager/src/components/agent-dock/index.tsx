@@ -8,7 +8,14 @@ import {
 	useAgentChat,
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
-import { AgentUI, createMessageRenderer, EmptyView } from '@automattic/agenttic-ui';
+import {
+	AgentUI,
+	createMessageRenderer,
+	EmptyView,
+	type MarkdownComponents,
+	type MarkdownExtensions,
+	type Suggestion,
+} from '@automattic/agenttic-ui';
 import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -20,7 +27,6 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import { AI } from '../icons';
-import type { ContextAdapter } from '../../adapters/context/context-adapter';
 
 export interface AgentDockProps {
 	/**
@@ -28,21 +34,17 @@ export interface AgentDockProps {
 	 */
 	agentConfig: UseAgentChatConfig;
 	/**
-	 * Context adapter for providing environment context
-	 */
-	contextAdapter?: ContextAdapter;
-	/**
 	 * Custom empty view suggestions
 	 */
-	emptyViewSuggestions?: Array< { id?: string; label: string; prompt: string } >;
+	emptyViewSuggestions?: Suggestion[];
 	/**
 	 * Custom message renderer components
 	 */
-	markdownComponents?: Record< string, any >;
+	markdownComponents?: MarkdownComponents;
 	/**
 	 * Custom markdown extensions
 	 */
-	markdownExtensions?: any;
+	markdownExtensions?: MarkdownExtensions;
 	/**
 	 * Callback when chat is cleared
 	 */
