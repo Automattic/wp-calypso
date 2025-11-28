@@ -68,7 +68,7 @@ export default function ConversationHistoryView( {
 				) }
 
 				{ /* Conversation list - show whenever we have data, even while refreshing */ }
-				{ conversations.length && (
+				{ conversations.length > 0 && (
 					<div className="agents-manager-conversation-history-view__list">
 						{ conversations.map( ( conversation ) => (
 							<ConversationListItem
