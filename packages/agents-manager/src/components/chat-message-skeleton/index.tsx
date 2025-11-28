@@ -35,7 +35,7 @@ const SkeletonMessage = ( { isUser }: { isUser: boolean } ) => (
 
 export const ChatMessageSkeleton = memo( ( { count = 3 }: ChatMessageSkeletonProps ) => {
 	return (
-		<div className="agents-manager-chat-message-skeleton">
+		<div className="agents-manager-chat-message-skeleton" aria-busy="true" aria-hidden="true">
 			{ Array.from( { length: count } ).map( ( _, index ) => (
 				<SkeletonMessage key={ index } isUser={ index % 2 === 0 } />
 			) ) }

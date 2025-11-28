@@ -38,7 +38,7 @@ interface BigSkyIconProps {
 	/**
 	 * Click handler
 	 */
-	onClick?: ( e: React.MouseEvent ) => void;
+	onClick?: ( e: React.MouseEvent | React.KeyboardEvent ) => void;
 }
 
 /**
@@ -109,7 +109,7 @@ export default function BigSkyIcon( {
 	const handleKeyDown = ( e: React.KeyboardEvent ) => {
 		if ( onClick && ( e.key === 'Enter' || e.key === ' ' ) ) {
 			e.preventDefault();
-			onClick( e as unknown as React.MouseEvent );
+			onClick( e );
 		}
 	};
 

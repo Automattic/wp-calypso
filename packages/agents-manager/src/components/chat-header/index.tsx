@@ -1,7 +1,6 @@
 import { Button, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { close, moreVertical } from '@wordpress/icons';
-import { History as HistoryIcon } from '../icons';
+import { close, moreVertical, backup } from '@wordpress/icons';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -42,7 +41,7 @@ export default function ChatHeader( {
 				{ supportsHistory && onHistoryToggle && (
 					<Button
 						className="agents-manager-chat-header__history-btn"
-						icon={ HistoryIcon }
+						icon={ backup }
 						onClick={ onHistoryToggle }
 						label={
 							viewState === 'history'

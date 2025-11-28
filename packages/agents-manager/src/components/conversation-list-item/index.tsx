@@ -5,6 +5,7 @@
 
 import { type ServerConversationListItem } from '@automattic/agenttic-client';
 import { memo, useCallback } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	formatConversationDate,
 	generateConversationTitle,
@@ -29,12 +30,18 @@ const ConversationListItem = memo( ( { conversation, onClick }: ConversationList
 	const botType = getBotType( conversation.bot_id );
 	const title = conversation.last_message
 		? generateConversationTitle( conversation.last_message.content )
-		: 'New conversation';
+		: __( 'New conversation', 'agents-manager' );
 	const date = formatConversationDate( conversation.created_at );
 
 	// Check if this is a Happiness Engineer chat
 	const isHE = botType === 'he';
-	const subtitle = isHE ? `Happiness chat · ${ date }` : date;
+	const subtitle = isHE
+		? sprintf(
+				/* translators: %s: date of the conversation */
+				__( 'Happiness chat · %s', 'agents-manager' ),
+				date
+		  )
+		: date;
 	const disabled = ! conversation.session_id;
 
 	return (
@@ -43,6 +50,12 @@ const ConversationListItem = memo( ( { conversation, onClick }: ConversationList
 			onClick={ handleClick }
 			type="button"
 			disabled={ disabled }
+			aria-label={ sprintf(
+				/* translators: %1$s: conversation title, %2$s: conversation subtitle */
+				__( 'Load conversation: %1$s, %2$s', 'agents-manager' ),
+				title,
+				subtitle
+			) }
 		>
 			<ConversationAvatar type={ botType } />
 			<div className="agents-manager-conversation-list-item__text">

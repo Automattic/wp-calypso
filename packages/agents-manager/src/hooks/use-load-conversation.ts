@@ -50,11 +50,10 @@ export default function useLoadConversation(
 				// Don't update cache here - let onLoaded handle it to avoid duplicate updates
 
 				// Call onLoaded callback with messages and session ID from server
-				if ( onLoaded && result.sessionId ) {
-					await onLoaded( result.messages, result.sessionId );
-				} else if ( onLoaded && ! result.sessionId ) {
+				if ( onLoaded ) {
 					// Fallback to the sessionId we passed in if server doesn't return one
-					await onLoaded( result.messages, sessionId );
+					const finalSessionId = result.sessionId || sessionId;
+					await onLoaded( result.messages, finalSessionId );
 				}
 			} catch ( err ) {
 				// eslint-disable-next-line no-console

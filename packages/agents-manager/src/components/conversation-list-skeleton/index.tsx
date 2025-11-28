@@ -22,7 +22,7 @@ const SkeletonItem = () => (
 
 const ConversationListSkeleton = memo( ( { count = 3 }: ConversationListSkeletonProps ) => {
 	return (
-		<div className="agents-manager-conversation-list-skeleton">
+		<div className="agents-manager-conversation-list-skeleton" aria-busy="true" aria-hidden="true">
 			{ Array.from( { length: count } ).map( ( _, index ) => (
 				<SkeletonItem key={ index } />
 			) ) }

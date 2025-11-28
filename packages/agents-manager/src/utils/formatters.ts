@@ -26,8 +26,7 @@ export function parseMySQLDateTime( mysqlDateTime: string ): Date {
 export function formatConversationDate( timestamp: string ): string {
 	// MySQL datetime format: "YYYY-MM-DD HH:MM:SS"
 	// Replace space with 'T' to make it ISO-like, then parse
-	const isoLike = timestamp.replace( ' ', 'T' ) + 'Z';
-	const date = new Date( isoLike );
+	const date = parseMySQLDateTime( timestamp );
 	const today = new Date();
 	const yesterday = new Date( today );
 	yesterday.setDate( yesterday.getDate() - 1 );

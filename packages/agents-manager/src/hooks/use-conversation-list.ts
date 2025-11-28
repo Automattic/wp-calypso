@@ -57,13 +57,11 @@ export default function useConversationList(
 
 			// Sort by created_at descending (most recent first)
 			// Note: Dates are in MySQL format "2025-11-06 14:29:49"
-			const sorted = result
-				.map( ( item ) => ( {
-					...item,
-					_sortKey: parseMySQLDateTime( item.created_at ).getTime(),
-				} ) )
-				.sort( ( a, b ) => b._sortKey - a._sortKey )
-				.map( ( { _sortKey, ...item } ) => item );
+			const sorted = result.sort( ( a, b ) => {
+				const timeA = parseMySQLDateTime( a.created_at ).getTime();
+				const timeB = parseMySQLDateTime( b.created_at ).getTime();
+				return timeB - timeA;
+			} );
 
 			// Update cache with fresh data
 			conversationListCache.set( botId, sorted );
