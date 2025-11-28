@@ -46,7 +46,11 @@ const mockSite: DeepPartial< Site > = {
 };
 
 function mockPhpLogsOnce() {
-	return nock( API_BASE )
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.reply( 200, { calypso_preferences: {} } );
+
+	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/error-logs` )
 		.query( true )
 		.reply( 200, {
@@ -71,7 +75,11 @@ function mockPhpLogsOnce() {
 }
 
 function mockServerLogsOnce() {
-	return nock( API_BASE )
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.reply( 200, { calypso_preferences: {} } );
+
+	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/logs` )
 		.query( true )
 		.reply( 200, {
