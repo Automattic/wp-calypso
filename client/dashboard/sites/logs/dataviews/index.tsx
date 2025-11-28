@@ -11,7 +11,8 @@ import { arrowUp } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { DataViews, usePersistentView } from '../../../app/dataviews';
+import { usePersistentView } from '../../../app/hooks/use-persistent-view';
+import { DataViews } from '../../../components/dataviews';
 import { LogsDownloader } from '../downloader';
 import {
 	buildTimeRangeInSeconds,

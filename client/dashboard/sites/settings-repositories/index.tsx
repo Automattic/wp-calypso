@@ -19,7 +19,7 @@ import {
 	siteSettingsRepositoriesManageRoute,
 	siteSettingsRepositoriesRoute,
 } from '../../app/router/sites';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
