@@ -246,6 +246,9 @@ function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< 
 		case 'disable-autoupdate':
 			sites = plugin.sitesWithPluginAutoupdated;
 			break;
+		case 'delete':
+			sites = plugin.siteIds;
+			break;
 		default:
 			return null;
 	}
