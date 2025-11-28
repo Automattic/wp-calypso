@@ -1,140 +1,115 @@
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, registerStore } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode, useEffect } from 'react';
+import { Fragment, ReactNode, useEffect, useState } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
-import type {
-	PaymentMethodStore,
-	StoreSelectors,
-	StoreSelectorsWithState,
-	StoreActions,
-	StoreState,
-} from '../payment-method-store';
-import type { AnyAction, ManagedContactDetails } from '../types';
+import type { ManagedContactDetails } from '../types';
 import type { RazorpayConfiguration } from '@automattic/calypso-razorpay';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'wpcom-checkout:razorpay-payment-method' );
 
-type NounsInStore =
-	| 'customerName'
-	| 'address1'
-	| 'address2'
-	| 'city'
-	| 'state'
-	| 'postalCode'
-	| 'country';
-
-type RazorpayStore = PaymentMethodStore< NounsInStore >;
-
-const actions: StoreActions< NounsInStore > = {
-	changeCustomerName( payload ) {
-		return { type: 'CUSTOMER_NAME_SET', payload };
-	},
-	changeAddress1( payload ) {
-		return { type: 'ADDRESS_1_SET', payload };
-	},
-	changeAddress2( payload ) {
-		return { type: 'ADDRESS_2_SET', payload };
-	},
-	changeCity( payload ) {
-		return { type: 'CITY_SET', payload };
-	},
-	changeState( payload ) {
-		return { type: 'STATE_SET', payload };
-	},
-	changePostalCode( payload ) {
-		return { type: 'POSTAL_CODE_SET', payload };
-	},
-	changeCountry( payload ) {
-		return { type: 'COUNTRY_SET', payload };
-	},
-};
-
-const selectors: StoreSelectorsWithState< NounsInStore > = {
-	getCustomerName( state ) {
-		return state.customerName;
-	},
-	getAddress1( state ) {
-		return state.address1;
-	},
-	getAddress2( state ) {
-		return state.address2;
-	},
-	getCity( state ) {
-		return state.city;
-	},
-	getState( state ) {
-		return state.state;
-	},
-	getPostalCode( state ) {
-		return state.postalCode;
-	},
-	getCountry( state ) {
-		return state.country;
-	},
-};
-
-export function createRazorpayPaymentMethodStore(): RazorpayStore {
-	debug( 'creating a new razorpay payment method store' );
-	const store = registerStore( 'razorpay', {
-		reducer(
-			state: StoreState< NounsInStore > = {
-				customerName: { value: '', isTouched: false },
-				address1: { value: '', isTouched: false },
-				address2: { value: '', isTouched: false },
-				city: { value: '', isTouched: false },
-				state: { value: '', isTouched: false },
-				postalCode: { value: '', isTouched: false },
-				country: { value: '', isTouched: false },
-			},
-			action: AnyAction
-		): StoreState< NounsInStore > {
-			switch ( action.type ) {
-				case 'CUSTOMER_NAME_SET':
-					return { ...state, customerName: { value: action.payload, isTouched: true } };
-				case 'ADDRESS_1_SET':
-					return { ...state, address1: { value: action.payload, isTouched: true } };
-				case 'ADDRESS_2_SET':
-					return { ...state, address2: { value: action.payload, isTouched: true } };
-				case 'CITY_SET':
-					return { ...state, city: { value: action.payload, isTouched: true } };
-				case 'STATE_SET':
-					return { ...state, state: { value: action.payload, isTouched: true } };
-				case 'POSTAL_CODE_SET':
-					return { ...state, postalCode: { value: action.payload, isTouched: true } };
-				case 'COUNTRY_SET':
-					return { ...state, country: { value: action.payload, isTouched: true } };
-			}
-			return state;
-		},
-		actions,
-		selectors,
-	} );
-
-	return store;
+interface RazorpayPaymentMethodStateShape {
+	customerName: string;
+	address1: string;
+	address2: string;
+	city: string;
+	state: string;
+	postalCode: string;
+	country: string;
 }
 
-function useRazorpayData() {
-	const data = useSelect( ( select ) => {
-		const store = select( 'razorpay' ) as StoreSelectors< NounsInStore >;
-		return {
-			customerName: store.getCustomerName(),
-			address1: store.getAddress1(),
-			address2: store.getAddress2(),
-			city: store.getCity(),
-			state: store.getState(),
-			postalCode: store.getPostalCode(),
-			country: store.getCountry(),
-		};
-	}, [] );
+type RazorpayPaymentMethodKey = keyof RazorpayPaymentMethodStateShape;
 
-	return data;
+interface RazorpayFieldState {
+	value: string;
+	isTouched: boolean;
+}
+
+type StateSubscriber = () => void;
+
+class RazorpayPaymentMethodState {
+	data: RazorpayPaymentMethodStateShape = {
+		customerName: '',
+		address1: '',
+		address2: '',
+		city: '',
+		state: '',
+		postalCode: '',
+		country: '',
+	};
+
+	touched: Record< RazorpayPaymentMethodKey, boolean > = {
+		customerName: false,
+		address1: false,
+		address2: false,
+		city: false,
+		state: false,
+		postalCode: false,
+		country: false,
+	};
+
+	subscribers: StateSubscriber[] = [];
+
+	change = ( field: RazorpayPaymentMethodKey, newValue: string ): void => {
+		this.data[ field ] = newValue;
+		this.touched[ field ] = true;
+		this.notifySubscribers();
+	};
+
+	getFieldState = ( field: RazorpayPaymentMethodKey ): RazorpayFieldState => {
+		return {
+			value: this.data[ field ],
+			isTouched: this.touched[ field ],
+		};
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
+	};
+
+	isValid = (): boolean => {
+		// Touch all fields that are empty so they display validation errors
+		const fields: RazorpayPaymentMethodKey[] = [
+			'customerName',
+			'address1',
+			'address2',
+			'city',
+			'state',
+			'postalCode',
+			'country',
+		];
+
+		fields.forEach( ( field ) => {
+			if ( ! this.data[ field ].length ) {
+				this.change( field, '' );
+			}
+		} );
+
+		// Check if all required fields have values
+		return fields.every( ( field ) => this.data[ field ].length > 0 );
+	};
+}
+
+function useSubscribeToEventEmitter( state: RazorpayPaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
 }
 
 const RazorpayFormWrapper = styled.div`
@@ -166,19 +141,9 @@ const RazorpayField = styled( Field )`
 	}
 `;
 
-function RazorpayFields() {
+function RazorpayFields( { state }: { state: RazorpayPaymentMethodState } ) {
 	const { __ } = useI18n();
-
-	const { customerName, address1, address2, city, state, postalCode, country } = useRazorpayData();
-	const {
-		changeCustomerName,
-		changeAddress1,
-		changeAddress2,
-		changeCity,
-		changeState,
-		changePostalCode,
-		changeCountry,
-	} = useDispatch( 'razorpay' );
+	useSubscribeToEventEmitter( state );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
@@ -195,16 +160,24 @@ function RazorpayFields() {
 	useEffect( () => {
 		if ( checkoutContactDetails ) {
 			if ( checkoutContactDetails.state?.value ) {
-				changeState( checkoutContactDetails.state.value );
+				state.change( 'state', checkoutContactDetails.state.value );
 			}
 			if ( checkoutContactDetails.postalCode?.value ) {
-				changePostalCode( checkoutContactDetails.postalCode.value );
+				state.change( 'postalCode', checkoutContactDetails.postalCode.value );
 			}
 			if ( checkoutContactDetails.countryCode?.value ) {
-				changeCountry( checkoutContactDetails.countryCode.value );
+				state.change( 'country', checkoutContactDetails.countryCode.value );
 			}
 		}
-	}, [ checkoutContactDetails, changeState, changePostalCode, changeCountry ] );
+	}, [ checkoutContactDetails, state ] );
+
+	const customerName = state.getFieldState( 'customerName' );
+	const address1 = state.getFieldState( 'address1' );
+	const address2 = state.getFieldState( 'address2' );
+	const city = state.getFieldState( 'city' );
+	const stateField = state.getFieldState( 'state' );
+	const postalCode = state.getFieldState( 'postalCode' );
+	const country = state.getFieldState( 'country' );
 
 	return (
 		<RazorpayFormWrapper>
@@ -214,7 +187,7 @@ function RazorpayFields() {
 				autoComplete="name"
 				label={ __( 'Your name' ) }
 				value={ customerName.value }
-				onChange={ changeCustomerName }
+				onChange={ ( value: string ) => state.change( 'customerName', value ) }
 				isError={ customerName.isTouched && customerName.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
@@ -225,7 +198,7 @@ function RazorpayFields() {
 				autoComplete="address-line1"
 				label={ __( 'Address line 1' ) }
 				value={ address1.value }
-				onChange={ changeAddress1 }
+				onChange={ ( value: string ) => state.change( 'address1', value ) }
 				isError={ address1.isTouched && address1.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
@@ -236,7 +209,7 @@ function RazorpayFields() {
 				autoComplete="address-line2"
 				label={ __( 'Address line 2' ) }
 				value={ address2.value }
-				onChange={ changeAddress2 }
+				onChange={ ( value: string ) => state.change( 'address2', value ) }
 				isError={ address2.isTouched && address2.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
@@ -247,7 +220,7 @@ function RazorpayFields() {
 				autoComplete="address-level2"
 				label={ __( 'City' ) }
 				value={ city.value }
-				onChange={ changeCity }
+				onChange={ ( value: string ) => state.change( 'city', value ) }
 				isError={ city.isTouched && city.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
@@ -257,9 +230,9 @@ function RazorpayFields() {
 				type="Text"
 				autoComplete="address-level1"
 				label={ __( 'State' ) }
-				value={ state.value }
-				onChange={ changeState }
-				isError={ state.isTouched && state.value.length === 0 }
+				value={ stateField.value }
+				onChange={ ( value: string ) => state.change( 'state', value ) }
+				isError={ stateField.isTouched && stateField.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled
 			/>
@@ -269,7 +242,7 @@ function RazorpayFields() {
 				autoComplete="postal-code"
 				label={ __( 'Postcode' ) }
 				value={ postalCode.value }
-				onChange={ changePostalCode }
+				onChange={ ( value: string ) => state.change( 'postalCode', value ) }
 				isError={ postalCode.isTouched && postalCode.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled
@@ -280,7 +253,7 @@ function RazorpayFields() {
 				autoComplete="country"
 				label={ __( 'Country' ) }
 				value={ country.value }
-				onChange={ changeCountry }
+				onChange={ ( value: string ) => state.change( 'country', value ) }
 				isError={ country.isTouched && country.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled
@@ -293,28 +266,28 @@ export function createRazorpayMethod( {
 	razorpayConfiguration,
 	cartKey,
 	submitButtonContent,
-	store,
 }: {
 	razorpayConfiguration: RazorpayConfiguration;
 	cartKey: CartKey;
 	submitButtonContent: ReactNode;
-	store: RazorpayStore;
 } ): PaymentMethod {
+	const state = new RazorpayPaymentMethodState();
+
 	return {
 		id: 'razorpay',
 		hasRequiredFields: true,
 		paymentProcessorId: 'razorpay',
 		label: <RazorpayLabel />,
-		activeContent: <RazorpayFields />,
+		activeContent: <RazorpayFields state={ state } />,
 		submitButton: (
 			<RazorpaySubmitButton
 				razorpayConfiguration={ razorpayConfiguration }
 				cartKey={ cartKey }
 				submitButtonContent={ submitButtonContent }
-				store={ store }
+				state={ state }
 			/>
 		),
-		inactiveContent: <RazorpaySummary />,
+		inactiveContent: <RazorpaySummary state={ state } />,
 		// translators: UPI stands for Unified Payments Interface and may not need to be transalted.
 		getAriaLabel: ( __ ) => __( 'UPI' ),
 	};
@@ -333,8 +306,16 @@ export function RazorpayLabel() {
 	);
 }
 
-export function RazorpaySummary() {
-	const { customerName, address1, address2, city, state, postalCode, country } = useRazorpayData();
+export function RazorpaySummary( { state }: { state: RazorpayPaymentMethodState } ) {
+	useSubscribeToEventEmitter( state );
+
+	const customerName = state.getFieldState( 'customerName' );
+	const address1 = state.getFieldState( 'address1' );
+	const address2 = state.getFieldState( 'address2' );
+	const city = state.getFieldState( 'city' );
+	const stateField = state.getFieldState( 'state' );
+	const postalCode = state.getFieldState( 'postalCode' );
+	const country = state.getFieldState( 'country' );
 
 	return (
 		<SummaryDetails>
@@ -343,8 +324,8 @@ export function RazorpaySummary() {
 			{ address2.value && <SummaryLine>{ address2.value }</SummaryLine> }
 			<SummaryLine>
 				{ city.value }
-				{ city.value && state.value ? ', ' : '' }
-				{ state.value } { postalCode.value }
+				{ city.value && stateField.value ? ', ' : '' }
+				{ stateField.value } { postalCode.value }
 			</SummaryLine>
 			<SummaryLine>{ country.value }</SummaryLine>
 		</SummaryDetails>
@@ -357,17 +338,17 @@ export function RazorpaySubmitButton( {
 	razorpayConfiguration,
 	cartKey,
 	submitButtonContent,
-	store,
+	state,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	razorpayConfiguration: RazorpayConfiguration;
 	cartKey: CartKey;
 	submitButtonContent: ReactNode;
-	store: RazorpayStore;
+	state: RazorpayPaymentMethodState;
 } ) {
 	const { formStatus } = useFormStatus();
-	const { customerName, address1, address2, city, state, postalCode, country } = useRazorpayData();
+	useSubscribeToEventEmitter( state );
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -383,18 +364,18 @@ export function RazorpaySubmitButton( {
 			disabled={ disabled }
 			onClick={ ( ev ) => {
 				ev.preventDefault();
-				if ( isFormValid( store ) ) {
+				if ( state.isValid() ) {
 					debug( 'Initiate razorpay payment' );
 					onClick( {
 						razorpayConfiguration,
 						cartKey,
-						name: customerName.value,
-						address1: address1.value,
-						address2: address2.value,
-						city: city.value,
-						state: state.value,
-						postalCode: postalCode.value,
-						country: country.value,
+						name: state.data.customerName,
+						address1: state.data.address1,
+						address2: state.data.address2,
+						city: state.data.city,
+						state: state.data.state,
+						postalCode: state.data.postalCode,
+						country: state.data.country,
 					} );
 				}
 			} }
@@ -405,55 +386,6 @@ export function RazorpaySubmitButton( {
 			{ submitButtonContent }
 		</Button>
 	);
-}
-
-function isFormValid( store: RazorpayStore ): boolean {
-	const storeState = store.getState();
-	const customerName = selectors.getCustomerName( storeState );
-	const address1 = selectors.getAddress1( storeState );
-	const address2 = selectors.getAddress2( storeState );
-	const city = selectors.getCity( storeState );
-	const state = selectors.getState( storeState );
-	const postalCode = selectors.getPostalCode( storeState );
-	const country = selectors.getCountry( storeState );
-
-	// Touch all fields that are empty so they display validation errors
-	if ( ! customerName.value.length ) {
-		store.dispatch( actions.changeCustomerName( '' ) );
-	}
-	if ( ! address1.value.length ) {
-		store.dispatch( actions.changeAddress1( '' ) );
-	}
-	if ( ! address2.value.length ) {
-		store.dispatch( actions.changeAddress2( '' ) );
-	}
-	if ( ! city.value.length ) {
-		store.dispatch( actions.changeCity( '' ) );
-	}
-	if ( ! state.value.length ) {
-		store.dispatch( actions.changeState( '' ) );
-	}
-	if ( ! postalCode.value.length ) {
-		store.dispatch( actions.changePostalCode( '' ) );
-	}
-	if ( ! country.value.length ) {
-		store.dispatch( actions.changeCountry( '' ) );
-	}
-
-	// Check if all required fields have values
-	if (
-		! customerName.value.length ||
-		! address1.value.length ||
-		! address2.value.length ||
-		! city.value.length ||
-		! state.value.length ||
-		! postalCode.value.length ||
-		! country.value.length
-	) {
-		return false;
-	}
-
-	return true;
 }
 
 // Adapted from https://en.wikipedia.org/wiki/File:Razorpay_logo.svg
