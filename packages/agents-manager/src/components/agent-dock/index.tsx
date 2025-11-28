@@ -221,7 +221,7 @@ export default function AgentDock( {
 		}
 	}, [ agentId ] );
 
-	const handleNewChat = useCallback( async () => {
+	const resetChat = useCallback( async () => {
 		const agentManager = getAgentManager();
 		const agentKey = agentId;
 
@@ -241,21 +241,7 @@ export default function AgentDock( {
 
 		// Reset session to empty (new chat) - this generates a new session ID
 		resetSession();
-
-		// Navigate to root route (chat view)
-		navigate( '/' );
-	}, [ abortCurrentRequest, agentConfig, agentId, loadMessages, resetSession, navigate ] );
-
-	const handleSelectConversation = useCallback(
-		( newSessionId: string ) => {
-			// Navigate to the chat route with the session ID
-			navigate( `/chat/${ newSessionId }` );
-
-			// Update session with the UUID session_id
-			applySessionId( newSessionId );
-		},
-		[ applySessionId, navigate ]
-	);
+	}, [ abortCurrentRequest, agentConfig, agentId, loadMessages, resetSession ] );
 
 	// Custom message renderer that uses our markdown components
 	const messageRenderer = useMemo(
@@ -276,7 +262,7 @@ export default function AgentDock( {
 			icon: comment,
 			title: __( 'New chat', 'agents-manager' ),
 			isDisabled: isRootView && ! messages.length,
-			onClick: handleNewChat,
+			onClick: () => navigate( '/' ),
 		};
 
 		const historyMenuItem = {
@@ -345,8 +331,8 @@ export default function AgentDock( {
 						botId={ createOdieBotId( agentId ) }
 						apiBaseUrl={ API_BASE_URL }
 						authProvider={ agentConfig.authProvider }
-						onSelectConversation={ handleSelectConversation }
-						onNewChat={ handleNewChat }
+						onSelectConversation={ ( newSessionId ) => navigate( `/chat/${ newSessionId }` ) }
+						onNewChat={ () => navigate( '/' ) }
 					/>
 				</AgentUI.ConversationView>
 			</AgentUI.Container>
@@ -357,12 +343,16 @@ export default function AgentDock( {
 	const ChatView = () => {
 		const { chatId } = useParams< { chatId?: string } >();
 
-		// When route changes to a new chatId, apply that session ID
 		useEffect( () => {
+			// Navigated to a new chat - reset session
+			if ( ! chatId && sessionId ) {
+				resetChat();
+				return;
+			}
+
 			if ( chatId && chatId !== sessionId ) {
 				applySessionId( chatId );
 			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [ chatId ] );
 
 		const chatHeaderOptions = createMenuItems();
