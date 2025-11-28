@@ -31,7 +31,7 @@ interface SSHMigrationStatusResponse {
 		| 'migration-starting'
 		| 'migration-running'
 		| 'completed';
-	error_code?: 'credential_failure' | string;
+	error_code?: 'credential_failure';
 }
 
 /**
