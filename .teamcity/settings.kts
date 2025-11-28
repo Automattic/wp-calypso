@@ -279,8 +279,11 @@ object CheckCodeStyle : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				# Install modules
-				${_self.yarn_install_cmd}
+				export NODE_ENV="test"
+
+				# Install dependencies needed for linting, but skip building workspaces
+				# This is faster than a full install with inline builds and is sufficient for eslint/stylelint
+				yarn install --immutable --mode skip-build
 			"""
 		}
 		bashNodeScript {
