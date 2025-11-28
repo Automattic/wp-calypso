@@ -10,13 +10,13 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
-import { DataViews } from '../../app/dataviews';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import {
 	siteRoute,
 	siteSettingsRepositoriesRoute,
 	siteDeploymentsListRoute,
 } from '../../app/router/sites';
+import { DataViews } from '../../components/dataviews';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
