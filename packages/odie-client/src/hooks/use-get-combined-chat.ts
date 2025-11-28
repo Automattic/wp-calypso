@@ -4,7 +4,6 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
-import Smooch from 'smooch';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
 import { getOdieTransferMessage } from '../constants';
 import { emptyChat } from '../context';
@@ -126,15 +125,10 @@ export const useGetCombinedChat = (
 			return;
 		}
 
-		if ( isChatLoaded || refreshingAfterReconnect ) {
-			try {
-				getZendeskConversation( {
-					chatId: odieChat?.odieId,
-					conversationId: conversationId?.toString(),
-				} )?.then( ( conversation ) => {
+		if ( conversationId && ( isChatLoaded || refreshingAfterReconnect ) ) {
+			getZendeskConversation( conversationId )
+				?.then( ( conversation ) => {
 					if ( conversation ) {
-						// We need to load the conversation to get typing events. Load simply means "focus on".
-						Smooch.loadConversation( conversation.id );
 						setMainChatState( ( prevChat ) => {
 							const isSameConversation =
 								prevChat.odieId?.toString() === odieId?.toString() &&
@@ -162,21 +156,22 @@ export const useGetCombinedChat = (
 							};
 						} );
 					}
-				} );
-			} catch ( error ) {
-				recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
-					conversation_id: conversationId,
-					odie_id: odieId,
-					error: error instanceof Error ? error.message : String( error ),
-				} );
+				} )
+				.catch( ( error ) => {
+					recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
+						conversation_id: conversationId,
+						odie_id: odieId,
+						error: error instanceof Error ? error.message : String( error ),
+					} );
 
-				startNewInteraction( {
-					event_source: 'odie',
-					event_external_id: crypto.randomUUID(),
+					startNewInteraction( {
+						event_source: 'odie',
+						event_external_id: crypto.randomUUID(),
+					} );
+				} )
+				.finally( () => {
+					setRefreshingAfterReconnect( false );
 				} );
-			} finally {
-				setRefreshingAfterReconnect( false );
-			}
 		}
 	}, [
 		isOdieChatLoading,
