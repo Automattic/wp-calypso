@@ -536,6 +536,9 @@ function setUpCSP( req, res, next ) {
 			// User feedback and support tools
 			'survey.survicate.com', // Survicate survey tool
 			'surveys-static-prd.survicate-cdn.com', // Survicate CDN
+			// Advertising and analytics tracking scripts
+			'https://static.ads-twitter.com', // Twitter/X advertising tag
+			'https://connect.facebook.net', // Facebook Pixel
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [
@@ -557,6 +560,25 @@ function setUpCSP( req, res, next ) {
 			'*.files.wordpress.com',
 			'*.gravatar.com',
 			'https://www.google-analytics.com',
+			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
+			'https://analytics.twitter.com', // Twitter/X analytics tracking pixels
+			'https://www.facebook.com', // Facebook Pixel tracking endpoint
+			'https://alb.reddit.com', // Reddit tracking pixel
+			'https://*.google.com', // Google Ads remarketing pixels (www.google.com and subdomains)
+			'https://*.google.co.uk', // Google Ads remarketing pixels (United Kingdom)
+			'https://*.google.de', // Google Ads remarketing pixels (Germany)
+			'https://*.google.fr', // Google Ads remarketing pixels (France)
+			'https://*.google.es', // Google Ads remarketing pixels (Spain)
+			'https://*.google.it', // Google Ads remarketing pixels (Italy)
+			'https://*.google.ca', // Google Ads remarketing pixels (Canada)
+			'https://*.google.com.au', // Google Ads remarketing pixels (Australia)
+			'https://*.google.co.jp', // Google Ads remarketing pixels (Japan)
+			'https://*.google.com.br', // Google Ads remarketing pixels (Brazil)
+			'https://*.google.co.in', // Google Ads remarketing pixels (India)
+			'https://*.google.com.mx', // Google Ads remarketing pixels (Mexico)
+			'https://*.google.nl', // Google Ads remarketing pixels (Netherlands)
+			'https://*.google.co.id', // Google Ads remarketing pixels (Indonesia)
+			'https://bat.bing.com', // Bing Ads tracking pixel
 			'https://amplifypixel.outbrain.com',
 			'https://hexagon-analytics.com', // Hexagon analytics tracking pixels
 			'https://img.youtube.com',
