@@ -11,6 +11,5 @@ export type {
 	ClientContextType,
 	BaseContextEntry,
 	ContextEntry,
-	Ability,
 	Suggestion,
 } from './types';
