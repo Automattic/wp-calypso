@@ -7,7 +7,7 @@ import {
 import { Notice } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { camelCase, deburr } from 'lodash';
+import { camelCase } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
@@ -224,7 +224,7 @@ export class ManagedContactDetailsFormFields extends Component<
 		// Strip leading and trailing whitespace
 		const updatedValue =
 			this.props.contactDetails[ camelCase( name ) as keyof DomainContactDetailsData ];
-		const sanitizedValue = deburr( typeof updatedValue === 'string' ? updatedValue.trim() : '' );
+		const sanitizedValue = typeof updatedValue === 'string' ? updatedValue.trim() : '';
 		this.handleFieldChange( name, sanitizedValue );
 	};
 

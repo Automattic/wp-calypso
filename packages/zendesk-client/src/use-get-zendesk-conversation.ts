@@ -29,41 +29,19 @@ export const useGetZendeskConversation = () => {
 	const getUnreadNotifications = useGetUnreadConversations();
 
 	return useCallback(
-		( {
-			chatId,
-			conversationId,
-		}: {
-			chatId?: number | string | null | undefined;
-			conversationId?: string | null | undefined;
-		} ) => {
-			if ( ! chatId && ! conversationId ) {
+		( conversationId: string ) => {
+			if ( ! conversationId ) {
 				return null;
 			}
 
-			const conversations = Smooch.getConversations();
-
-			const conversation = conversations.find( ( conversation ) => {
-				if ( conversationId ) {
-					return conversation.id === conversationId;
-				} else if ( chatId ) {
-					return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
-				}
-
-				throw new Error();
-			} );
-
-			if ( ! conversation ) {
-				throw new Error();
-			}
-
 			// We need to ensure that more than one message is loaded
-			return Smooch.getConversationById( conversation.id || conversationId! )
-				.then( ( conversation ) => {
-					Smooch.markAllAsRead( conversation.id );
-					getUnreadNotifications();
-					return parseResponse( conversation );
-				} )
-				.catch( () => parseResponse( conversation ) );
+			return Smooch.getConversationById( conversationId ).then( ( conversation ) => {
+				// We need to load the conversation to get typing events. Load simply means "focus on".
+				Smooch.loadConversation( conversation.id );
+				Smooch.markAllAsRead( conversation.id );
+				getUnreadNotifications();
+				return parseResponse( conversation );
+			} );
 		},
 		[ getUnreadNotifications ]
 	);
