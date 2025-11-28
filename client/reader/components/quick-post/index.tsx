@@ -16,7 +16,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
@@ -79,10 +79,17 @@ export default function QuickPost() {
 	}, [ postContent ] );
 
 	const handleSubmit = () => {
-		if ( ! postContent.trim() || ! siteId || isSaving ) {
+		if ( ! siteId ) {
+			dispatch( warningNotice( translate( 'Please select a site.' ) ) );
 			return;
 		}
 
+		if ( postContent.trim().length === 0 ) {
+			dispatch( warningNotice( translate( 'Please fill in the post content.' ) ) );
+			return;
+		}
+
+		clearEditor();
 		save(
 			{ siteId, postContent, status: 'publish' },
 			{
@@ -121,11 +128,11 @@ export default function QuickPost() {
 	};
 
 	const getButtonText = () => {
-		if ( postVariables?.status === 'draft' ) {
+		if ( postVariables?.status === 'draft' && isSaving ) {
 			return translate( 'Saving…' );
 		}
 
-		if ( postVariables?.status === 'publish' ) {
+		if ( postVariables?.status === 'publish' && isSaving ) {
 			return translate( 'Posting…' );
 		}
 
@@ -219,12 +226,7 @@ export default function QuickPost() {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<Button
-					variant="primary"
-					onClick={ handleSubmit }
-					disabled={ ! postContent.trim() }
-					isBusy={ isSaving }
-				>
+				<Button variant="primary" onClick={ handleSubmit } isBusy={ isSaving }>
 					{ getButtonText() }
 				</Button>
 			</div>
