@@ -5,9 +5,12 @@
  */
 
 import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
+import { AgentsManagerSelect } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
 import { useMemo, useEffect, useState } from '@wordpress/element';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
-import useAgentSession, { SESSION_STORAGE_KEY } from '../../hooks/use-agent-session';
+import { SESSION_STORAGE_KEY } from '../../hooks/use-agent-session';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import { lastConversationCache } from '../../utils/conversation-cache';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
@@ -106,8 +109,10 @@ export default function UnifiedAIAgent( {
 	markdownExtensions = {},
 }: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
-	// TODO: Integrate the route session ID...
-	const { sessionId, applySessionId, resetSession } = useAgentSession();
+	const sessionId = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getSessionId();
+	}, [] );
 
 	// Create agent configuration
 	const config = useMemo< UseAgentChatConfig >(
@@ -239,9 +244,6 @@ export default function UnifiedAIAgent( {
 	return (
 		<PersistentRouter>
 			<AgentDock
-				sessionId={ sessionId }
-				applySessionId={ applySessionId }
-				resetSession={ resetSession }
 				agentConfig={ agentConfig }
 				emptyViewSuggestions={ customSuggestions || defaultSuggestions }
 				markdownComponents={ markdownComponents }
