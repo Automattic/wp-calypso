@@ -103,7 +103,28 @@ body.is-section-plugins #primary .main.is-logged-out {
 			&:not([class*="is-pressed"]):hover::before {
 				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
+
+
 		}
+	}
+	.full-width-section .responsive-toolbar-group__button-item {
+		height: 44px;
+		border-radius: 4px;
+		padding: 16px;
+
+		&:not([class*="is-pressed"]) {
+			color: var(--studio-gray-100);
+		}
+
+		&::before {
+			height: 44px;
+			background-color: var( --studio-gray-0 );
+		}
+
+		&:not([class*="is-pressed"]):hover::before {
+			background-color: var( --studio-gray-5 );
+		}
+
 	}
 
 	.responsive-toolbar-group__button-item.is-pressed::before {
@@ -112,6 +133,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		right: 0;
 	}
 }
+
 // Jetpack injects a banner on the /plugins page for jetpack sites
 .is-section-plugins .layout__content > .banner {
 	// This moves it down out from under our sticky header
@@ -160,10 +182,9 @@ body.is-section-plugins #primary .main.is-logged-out {
 		top: 0;
 		left: 50%;
 		width: 50%;
-		min-width: 660px;
+		min-width: 848px;
 		height: 100%;
 		background-image: url(/calypso/images/plugins/plugins_hero_2.svg);
-		background-size: auto 380px;
 		background-position: right bottom;
 		background-repeat: no-repeat;
 		pointer-events: none;

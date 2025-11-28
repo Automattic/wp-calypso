@@ -30,13 +30,13 @@ export default function CollectionListView( {
 	const categories = useCategories( [ category ] );
 
 	const isUseCarousel = isEnabled( 'marketplace-redesign' );
-	const isLessThanLargeViewport = useViewportMatch( 'large', '<' );
-	const isLessThanWideViewport = useViewportMatch( 'wide', '<' );
+	const isLargeOrAbove = useViewportMatch( 'large' );
+	const isWideOrAbove = useViewportMatch( 'wide' );
 
 	let carouselPageSize = 6;
-	if ( isLessThanLargeViewport ) {
+	if ( ! isLargeOrAbove ) {
 		carouselPageSize = 1;
-	} else if ( isLessThanWideViewport ) {
+	} else if ( ! isWideOrAbove ) {
 		carouselPageSize = 4;
 	}
 
