@@ -35,6 +35,7 @@ import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import ConversationHistoryView from '../conversation-history-view';
 import { AI } from '../icons';
+import type { ComponentType } from 'react';
 
 interface AgentDockProps {
 	/**
@@ -65,18 +66,18 @@ const Agent = ( {
 }: {
 	agentConfig: UseAgentChatConfig;
 	emptyViewSuggestions: Suggestion[];
-	getChatHeaderOptions: any;
+	getChatHeaderOptions: () => ChatHeaderOptions;
 	isDocked: boolean;
-	messageRenderer: any;
-	onClose: any;
+	messageRenderer: ComponentType< { children: string } >;
+	onClose: () => void;
 } ) => {
 	const { chatId = '' } = useParams< { chatId?: string } >();
-
 	const { setIsOpen, setSessionId } = useDispatch( AGENTS_MANAGER_STORE );
-	const { isOpen, sessionId } = useSelect( ( select ) => {
+	const { isOpen } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+	const navigate = useNavigate();
 
 	const isLoadingRef = useRef( false );
 	const loadedSessionIdRef = useRef< string | null >( null );
@@ -107,14 +108,15 @@ const Agent = ( {
 			agentManager.updateSessionId( agentKey, serverSessionId );
 
 			// Only update session if it changed (prevents unnecessary re-renders)
-			if ( sessionId !== serverSessionId ) {
+			if ( chatId !== serverSessionId ) {
 				try {
 					if ( ! serverSessionId ) {
 						// eslint-disable-next-line no-console
 						console.warn( '[AgentDock] Attempted to apply empty session ID' );
 						return;
 					}
-					setSessionId( serverSessionId );
+
+					navigate( `/chat/${ serverSessionId }`, { replace: true } );
 				} catch ( error ) {
 					// eslint-disable-next-line no-console
 					console.error( '[AgentDock] Failed to apply session ID:', error );
@@ -125,7 +127,7 @@ const Agent = ( {
 			// Track that we've loaded this session (after successful validation)
 			loadedSessionIdRef.current = serverSessionId;
 		},
-		[ agentConfig, agentId, setSessionId, loadMessages, sessionId ]
+		[ agentId, loadMessages, chatId, agentConfig, navigate ]
 	);
 
 	// Conversation loading hook
@@ -144,29 +146,20 @@ const Agent = ( {
 		}
 	}, [ agentId ] );
 
-	const resetChat = useCallback( async () => {
-		const agentManager = getAgentManager();
-		const agentKey = agentId;
-
-		if ( agentManager.hasAgent( agentKey ) ) {
-			// Abort any ongoing requests
-			await abortCurrentRequest();
-			// Clear chat messages
-			await loadMessages( [] );
-			// Remove the agent entirely so it gets recreated fresh
-			agentManager.removeAgent( agentKey );
+	useEffect( () => {
+		// Navigated to a new chat - reset session
+		if ( ! chatId ) {
+			abortCurrentRequest();
+			lastConversationCache.clear();
 		}
 
-		// Clear cached messages to prevent old messages from being reloaded
-		lastConversationCache.clear();
-
-		// Reset session to empty (new chat) - this triggers config re-creation
-		setSessionId( '' );
-	}, [ abortCurrentRequest, agentId, loadMessages, setSessionId ] );
+		//Sync store session id
+		setSessionId( chatId );
+	}, [ abortCurrentRequest, chatId, setSessionId ] );
 
 	// Update cache whenever messages change
 	useEffect( () => {
-		if ( ! messages.length || ! sessionId ) {
+		if ( ! messages.length || ! chatId ) {
 			return;
 		}
 
@@ -181,14 +174,14 @@ const Agent = ( {
 		const clientMessages = agentManager.getConversationHistory( agentKey );
 		if ( clientMessages.length ) {
 			const botId = createOdieBotId( agentId );
-			lastConversationCache.set( botId, sessionId, clientMessages );
+			lastConversationCache.set( botId, chatId, clientMessages );
 		}
-	}, [ agentId, messages.length, sessionId ] );
+	}, [ agentId, messages.length, chatId ] );
 
 	// Load conversation when switching to a session
 	// This handles clicking a conversation from the history list
 	useEffect( () => {
-		if ( ! sessionId || isLoadingRef.current ) {
+		if ( ! chatId || isLoadingRef.current ) {
 			return;
 		}
 
@@ -197,26 +190,15 @@ const Agent = ( {
 		// Check if we need to load messages from server
 		if ( agentManager.hasAgent( agentId ) ) {
 			// Load if this is a different session than what's currently loaded
-			if ( loadedSessionIdRef.current !== sessionId ) {
+			if ( loadedSessionIdRef.current !== chatId ) {
 				isLoadingRef.current = true;
 				const botId = createOdieBotId( agentId );
-				loadConversation( sessionId, botId ).finally( () => {
+				loadConversation( chatId, botId ).finally( () => {
 					isLoadingRef.current = false;
 				} );
 			}
 		}
-	}, [ agentId, loadConversation, sessionId ] );
-
-	useEffect( () => {
-		// Navigated to a new chat - reset session
-		if ( ! chatId && sessionId ) {
-			resetChat();
-		}
-
-		if ( chatId && chatId !== sessionId ) {
-			setSessionId( chatId );
-		}
-	}, [ chatId, resetChat, sessionId, setSessionId ] );
+	}, [ agentId, loadConversation, chatId ] );
 
 	return (
 		<AgentUI.Container
@@ -235,7 +217,7 @@ const Agent = ( {
 			emptyView={
 				isLoadingRef.current ||
 				isLoadingConversation ||
-				( sessionId && loadedSessionIdRef.current !== sessionId && messages.length === 0 ) ? (
+				( chatId && loadedSessionIdRef.current !== chatId && messages.length === 0 ) ? (
 					<ChatMessageSkeleton count={ 3 } />
 				) : (
 					<EmptyView
@@ -304,12 +286,10 @@ export default function AgentDock( {
 	// Shared menu items creation
 	const createMenuItems = () => {
 		const isHistoryView = location.pathname === '/history';
-		const isRootView = location.pathname === '/';
 
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', 'agents-manager' ),
-			isDisabled: isRootView,
 			onClick: () => navigate( '/' ),
 		};
 
@@ -386,7 +366,7 @@ export default function AgentDock( {
 		);
 	};
 
-	const BigSkyAgent = () => {
+	const OrchestratorAgent = () => {
 		return (
 			<Agent
 				agentConfig={ agentConfig }
@@ -406,8 +386,8 @@ export default function AgentDock( {
 
 	return createChatPortal(
 		<Routes>
-			<Route path="/" element={ <BigSkyAgent /> } />
-			<Route path="/chat/:chatId" element={ <BigSkyAgent /> } />
+			<Route path="/" element={ <OrchestratorAgent /> } />
+			<Route path="/chat/:chatId" element={ <OrchestratorAgent /> } />
 			<Route path="/history" element={ <HistoryView /> } />
 			<Route path="*" element={ <Navigate to="/" replace /> } />
 		</Routes>
