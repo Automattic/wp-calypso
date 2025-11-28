@@ -29,10 +29,7 @@ export const activateAction: Action< PluginListRow > = {
 			onSuccess: () => {},
 		} );
 		const action = async ( items: PluginListRow[] ) => {
-			const bulkActivate = buildBulkSitesPluginAction(
-				mutateAsync,
-				items[ 0 ].sitesWithPluginActive
-			);
+			const bulkActivate = buildBulkSitesPluginAction( mutateAsync );
 
 			const { successCount, errorCount } = await bulkActivate( items );
 
@@ -50,7 +47,12 @@ export const activateAction: Action< PluginListRow > = {
 		return (
 			<ActionRenderModal
 				actionId="activate"
-				items={ items }
+				items={ items.map( ( item ) => ( {
+					...item,
+					siteIds: item.siteIds.filter( ( siteId ) =>
+						item.sitesWithPluginInactive.includes( siteId )
+					),
+				} ) ) }
 				closeModal={ closeModal }
 				onActionPerformed={ onActionPerformed }
 				onExecute={ action }
