@@ -28,13 +28,7 @@ export const deactivateAction: Action< PluginListRow > = {
 			...sitePluginDeactivateMutation(),
 			onSuccess: () => {},
 		} );
-		const action = async ( items: PluginListRow[] ) => {
-			const bulkDeactivate = buildBulkSitesPluginAction( mutateAsync );
-
-			const { successCount, errorCount } = await bulkDeactivate( items );
-
-			return { successCount, errorCount };
-		};
+		const action = buildBulkSitesPluginAction( mutateAsync );
 
 		return (
 			<ActionRenderModal

@@ -28,13 +28,7 @@ export const activateAction: Action< PluginListRow > = {
 			...sitePluginActivateMutation(),
 			onSuccess: () => {},
 		} );
-		const action = async ( items: PluginListRow[] ) => {
-			const bulkActivate = buildBulkSitesPluginAction( mutateAsync );
-
-			const { successCount, errorCount } = await bulkActivate( items );
-
-			return { successCount, errorCount };
-		};
+		const action = buildBulkSitesPluginAction( mutateAsync );
 
 		return (
 			<ActionRenderModal
