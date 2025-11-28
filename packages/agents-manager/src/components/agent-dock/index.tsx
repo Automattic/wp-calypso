@@ -60,7 +60,7 @@ export default function AgentDock( {
 	agentConfig,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
-	markdownExtensions,
+	markdownExtensions = {},
 }: AgentDockProps ) {
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const persistedState = useSelect( ( select ) => {

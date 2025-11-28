@@ -13,6 +13,7 @@ import AgentDock from '../agent-dock';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
+import type { HelpCenterSite, CurrentUser } from '@automattic/data-stores';
 
 export interface UnifiedAIAgentProps {
 	/**
@@ -26,11 +27,11 @@ export interface UnifiedAIAgentProps {
 	/**
 	 * The selected site object.
 	 */
-	site?: Record< string, any >;
+	site?: HelpCenterSite | null;
 	/**
 	 * The current user object.
 	 */
-	currentUser?: Record< string, any >;
+	currentUser?: CurrentUser;
 	/**
 	 * Callback to handle closing the agent.
 	 */
@@ -96,12 +97,12 @@ function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
 
 export default function UnifiedAIAgent( {
 	currentRoute,
-	site,
+	site = null,
 	toolProvider,
 	contextProvider,
 	emptyViewSuggestions: customSuggestions,
-	markdownComponents,
-	markdownExtensions,
+	markdownComponents = {},
+	markdownExtensions = {},
 }: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	// TODO: Migrate to the routing solution...
