@@ -309,6 +309,7 @@ export default function AgentDock( {
 					floatingChatState={ chatState }
 					onClose={ isDocked ? closeSidebar : setChatIsClosed }
 					onExpand={ setChatIsOpen }
+					onStop={ abortCurrentRequest }
 				>
 					<AgentUI.ConversationView>
 						<ChatHeader
