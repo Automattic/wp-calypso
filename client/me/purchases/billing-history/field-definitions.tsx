@@ -100,7 +100,7 @@ function getUniqueTransactionTypes(
 		} );
 
 	return Array.from( typeMap.entries() )
-		.sort( ( [ a ], [ b ] ) => a.localeCompare( b ) )
+		.sort( ( [ a ], [ b ] ) => String( a ).localeCompare( String( b ) ) )
 		.map( ( [ value, label ] ) => ( {
 			value,
 			label,
@@ -157,7 +157,7 @@ export function getFieldDefinitions(
 			getValue: ( { item }: { item: BillingTransaction } ) => {
 				const [ transactionItem ] = groupDomainProducts( item.items, translate );
 				if ( transactionItem.product === transactionItem.variation ) {
-					return transactionItem.product;
+					return String( transactionItem.product );
 				}
 				return capitalPDangit( transactionItem.variation );
 			},
@@ -179,7 +179,7 @@ export function getFieldDefinitions(
 			},
 			getValue: ( { item }: { item: BillingTransaction } ) => {
 				const [ transactionItem ] = groupDomainProducts( item.items, translate );
-				return transactionItem.type;
+				return String( transactionItem.type || '' );
 			},
 		},
 		{
@@ -191,7 +191,7 @@ export function getFieldDefinitions(
 			enableHiding: false,
 			filterBy: false,
 			getValue: ( { item }: { item: BillingTransaction } ) => {
-				return item.amount_integer;
+				return String( item.amount_integer );
 			},
 			render: ( { item }: { item: BillingTransaction } ) => {
 				return <TransactionAmount transaction={ item } />;
