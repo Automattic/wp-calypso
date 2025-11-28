@@ -89,6 +89,29 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 		setTimeout( () => setCopied( false ), 2000 );
 	};
 
+	const isCredentialFailure = error?.message === 'credential_failure';
+
+	const getErrorMessage = () => {
+		if ( ! isCredentialFailure ) {
+			return translate(
+				'We ran into a problem starting the migration. Please check your details and try again.'
+			);
+		}
+
+		// Provide specific guidance based on authentication method
+		if ( authMethod === 'password' ) {
+			return translate(
+				'SSH authentication failed. Please verify your SSH username and password are correct and try again.'
+			);
+		}
+
+		return translate(
+			'SSH authentication failed. Please ensure your SSH key is properly configured on the source site and try again.'
+		);
+	};
+
+	const errorMessage = getErrorMessage();
+
 	return (
 		<div className="site-migration-ssh__step-share-ssh">
 			<p className="site-migration-ssh__step-share-ssh-description">
@@ -99,13 +122,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 
 			{ helpLink }
 
-			{ error && (
-				<AccordionNotice variant="error">
-					{ translate(
-						'We ran into a problem starting the migration. Please check your details and try again.'
-					) }
-				</AccordionNotice>
-			) }
+			{ error && <AccordionNotice variant="error">{ errorMessage }</AccordionNotice> }
 
 			<div className="site-migration-ssh__step-share-ssh-auth-method">
 				<label className="site-migration-ssh__step-share-ssh-label">
