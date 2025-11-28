@@ -166,6 +166,11 @@ function FileBrowserNode( {
 	] );
 
 	useEffect( () => {
+		// If rewindId changes, reset the addedAnyChildren flag
+		setAddedAnyChildren( false );
+	}, [ rewindId ] );
+
+	useEffect( () => {
 		// When it is no longer the current node clicked, close the node
 		if ( ! isCurrentNodeClicked && ! isRoot ) {
 			setIsOpen( false );
