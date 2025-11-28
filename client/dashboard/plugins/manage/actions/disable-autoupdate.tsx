@@ -28,7 +28,10 @@ export const disableAutoupdateAction: Action< PluginListRow > = {
 	},
 	modalHeader: getModalHeader( 'disable-autoupdate' ),
 	RenderModal: ( { items, closeModal } ) => {
-		const { mutateAsync } = useMutation( sitePluginAutoupdateDisableMutation() );
+		const { mutateAsync } = useMutation( {
+			...sitePluginAutoupdateDisableMutation(),
+			onSuccess: () => {},
+		} );
 		const action = buildBulkSitesPluginAction( mutateAsync );
 
 		return (

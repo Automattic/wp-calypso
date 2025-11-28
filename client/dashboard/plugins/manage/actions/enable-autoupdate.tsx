@@ -28,7 +28,10 @@ export const enableAutoupdateAction: Action< PluginListRow > = {
 	},
 	modalHeader: getModalHeader( 'enable-autoupdate' ),
 	RenderModal: ( { items, closeModal } ) => {
-		const { mutateAsync } = useMutation( sitePluginAutoupdateEnableMutation() );
+		const { mutateAsync } = useMutation( {
+			...sitePluginAutoupdateEnableMutation(),
+			onSuccess: () => {},
+		} );
 		const action = buildBulkSitesPluginAction( mutateAsync );
 
 		return (
