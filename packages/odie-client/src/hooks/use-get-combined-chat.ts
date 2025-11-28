@@ -45,7 +45,8 @@ export const useGetCombinedChat = (
 	canConnectToZendesk: boolean,
 	isLoadingCanConnectToZendesk: boolean
 ) => {
-	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const { data: currentSupportInteraction, isLoading: isLoadingCurrentSupportInteraction } =
+		useCurrentSupportInteraction();
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
 	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
@@ -82,6 +83,7 @@ export const useGetCombinedChat = (
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
 		if (
 			isOdieChatLoading ||
+			isLoadingCurrentSupportInteraction ||
 			isUploadingUnsentMessages ||
 			isLoadingCanConnectToZendesk ||
 			( chatStatus !== 'loading' && ! interactionHasChanged )
