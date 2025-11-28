@@ -756,9 +756,9 @@ object Translate : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				# Install only dependencies needed for translation extraction
-				# This is faster than full install since we only need wp-babel-makepot and related tools
-				yarn workspaces focus @automattic/wp-babel-makepot
+				# Install all dependencies but skip building them (translation extraction doesn't need built packages)
+				# This is faster than full install since we skip the build step
+				yarn install --immutable --mode skip-build
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
