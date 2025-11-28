@@ -206,7 +206,6 @@ body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
 	.full-width-section__content {
 		max-width: 1040px;
 		padding-inline: 24px;
-		box-sizing: border-box;
 		@media (max-width: 660px) {
 			padding-inline: 16px;
 		}
