@@ -4,7 +4,6 @@
  */
 
 import { type ServerConversationListItem } from '@automattic/agenttic-client';
-import { memo, useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	formatConversationDate,
@@ -19,13 +18,16 @@ interface ConversationListItemProps {
 	onClick: ( sessionId: string ) => void;
 }
 
-const ConversationListItem = memo( ( { conversation, onClick }: ConversationListItemProps ) => {
-	const handleClick = useCallback( () => {
+export default function ConversationListItem( {
+	conversation,
+	onClick,
+}: ConversationListItemProps ) {
+	const handleClick = () => {
 		const sessionId = conversation.session_id ?? '';
 		if ( sessionId ) {
 			onClick( sessionId );
 		}
-	}, [ onClick, conversation.session_id ] );
+	};
 
 	const botType = getBotType( conversation.bot_id );
 	const title = conversation.last_message
@@ -64,8 +66,4 @@ const ConversationListItem = memo( ( { conversation, onClick }: ConversationList
 			</div>
 		</button>
 	);
-} );
-
-ConversationListItem.displayName = 'ConversationListItem';
-
-export default ConversationListItem;
+}

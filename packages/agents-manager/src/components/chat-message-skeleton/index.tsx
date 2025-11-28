@@ -10,29 +10,31 @@ interface ChatMessageSkeletonProps {
 	count?: number;
 }
 
-const SkeletonMessage = ( { isUser }: { isUser: boolean } ) => (
-	<div
-		className={ clsx( 'agents-manager-chat-message-skeleton__message', {
-			'agents-manager-chat-message-skeleton__message--user': isUser,
-			'agents-manager-chat-message-skeleton__message--assistant': ! isUser,
-		} ) }
-	>
-		{ isUser ? (
-			<div className="agents-manager-chat-message-skeleton__bubble">
-				<div className="agents-manager-chat-message-skeleton__line agents-manager-chat-message-skeleton__line--long" />
-				<div className="agents-manager-chat-message-skeleton__line agents-manager-chat-message-skeleton__line--medium" />
-			</div>
-		) : (
-			<div className="agents-manager-chat-message-skeleton__text">
-				<div className="agents-manager-chat-message-skeleton__line agents-manager-chat-message-skeleton__line--long" />
-				<div className="agents-manager-chat-message-skeleton__line agents-manager-chat-message-skeleton__line--medium" />
-				<div className="agents-manager-chat-message-skeleton__line agents-manager-chat-message-skeleton__line--short" />
-			</div>
-		) }
-	</div>
-);
+function SkeletonMessage( { isUser }: { isUser: boolean } ) {
+	return (
+		<div
+			className={ clsx( 'agents-manager-chat-message-skeleton__message', {
+				'agents-manager-chat-message-skeleton__message--user': isUser,
+				'agents-manager-chat-message-skeleton__message--assistant': ! isUser,
+			} ) }
+		>
+			{ isUser ? (
+				<div className="agents-manager-chat-message-skeleton__bubble">
+					<div className="agents-manager-chat-message-skeleton__line agents-manager-chat-message-skeleton__line--long" />
+					<div className="agents-manager-chat-message-skeleton__line agents-manager-chat-message-skeleton__line--medium" />
+				</div>
+			) : (
+				<div className="agents-manager-chat-message-skeleton__text">
+					<div className="agents-manager-chat-message-skeleton__line agents-manager-chat-message-skeleton__line--long" />
+					<div className="agents-manager-chat-message-skeleton__line agents-manager-chat-message-skeleton__line--medium" />
+					<div className="agents-manager-chat-message-skeleton__line agents-manager-chat-message-skeleton__line--short" />
+				</div>
+			) }
+		</div>
+	);
+}
 
-const ChatMessageSkeleton = ( { count = 3 }: ChatMessageSkeletonProps ) => {
+export default function ChatMessageSkeleton( { count = 3 }: ChatMessageSkeletonProps ) {
 	return (
 		<div className="agents-manager-chat-message-skeleton" aria-busy="true" aria-hidden="true">
 			{ Array.from( { length: count } ).map( ( _, index ) => (
@@ -40,8 +42,4 @@ const ChatMessageSkeleton = ( { count = 3 }: ChatMessageSkeletonProps ) => {
 			) ) }
 		</div>
 	);
-};
-
-ChatMessageSkeleton.displayName = 'ChatMessageSkeleton';
-
-export default ChatMessageSkeleton;
+}

@@ -3,7 +3,6 @@
  * Displays avatar for different bot types (Big Sky, HE, Odie)
  */
 
-import { memo } from '@wordpress/element';
 import clsx from 'clsx';
 import './style.scss';
 
@@ -12,7 +11,7 @@ interface ConversationAvatarProps {
 	className?: string;
 }
 
-const ConversationAvatar = memo( ( { type, className = '' }: ConversationAvatarProps ) => {
+export default function ConversationAvatar( { type, className = '' }: ConversationAvatarProps ) {
 	const fullClassName = clsx(
 		'agents-manager-conversation-avatar',
 		`agents-manager-conversation-avatar--${ type }`,
@@ -68,8 +67,4 @@ const ConversationAvatar = memo( ( { type, className = '' }: ConversationAvatarP
 			</svg>
 		</div>
 	);
-} );
-
-ConversationAvatar.displayName = 'ConversationAvatar';
-
-export default ConversationAvatar;
+}
