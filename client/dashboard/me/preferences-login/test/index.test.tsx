@@ -45,7 +45,7 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 jest.mock( '../../../app/auth', () => ( {
-	useAuth: jest.fn( () => ( { user: { site_count: 2 } } ) ),
+	useAuth: jest.fn( () => ( { user: { visible_site_count: 2 } } ) ),
 } ) );
 
 const mockSites: DeepPartial< Site >[] = [
@@ -146,7 +146,7 @@ test( 'save button becomes enabled when form is modified', async () => {
 		{ timeout: 5000 }
 	);
 
-	const sitesRadio = screen.getByLabelText( 'Sites' );
+	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
@@ -179,7 +179,7 @@ test( 'saves preferences successfully', async () => {
 		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
 		.reply( 200, {} );
 
-	const sitesRadio = screen.getByLabelText( 'Sites' );
+	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
@@ -218,7 +218,7 @@ test( 'handles save error gracefully', async () => {
 		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
 		.reply( 500, { error: 'Server error' } );
 
-	const sitesRadio = screen.getByLabelText( 'Sites' );
+	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
@@ -258,7 +258,7 @@ test( 'hides primary site selector when user has no sites', async () => {
 
 	nock( API_BASE ).get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites: [] } );
 
-	( useAuth as jest.Mock ).mockReturnValue( { user: { site_count: 0 } } );
+	( useAuth as jest.Mock ).mockReturnValue( { user: { visible_site_count: 0 } } );
 
 	render( <PreferencesLogin /> );
 
@@ -271,7 +271,7 @@ test( 'hides primary site selector when user has no sites', async () => {
 
 	expect( screen.queryByText( 'Primary site' ) ).not.toBeInTheDocument();
 
-	expect( screen.getByText( 'Default landing page' ) ).toBeInTheDocument();
+	expect( screen.getByText( 'Default view' ) ).toBeInTheDocument();
 } );
 
 test( 'disables save button while saving', async () => {
@@ -296,7 +296,7 @@ test( 'disables save button while saving', async () => {
 		.delay( 100 )
 		.reply( 200, {} );
 
-	const sitesRadio = screen.getByLabelText( 'Sites' );
+	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
