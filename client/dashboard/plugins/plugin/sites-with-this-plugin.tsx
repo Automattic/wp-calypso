@@ -178,10 +178,19 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				label: __( 'Update' ),
 				getValue: ( { item }: { item: SiteWithPluginData } ) => {
 					const pluginItem = pluginBySiteId.get( item.ID );
-					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+					const { autoupdate, isManagedPlugin } = getAllowedPluginActions( item, pluginSlug );
 
-					return autoupdate && !! pluginItem?.update;
+					if ( isManagedPlugin ) {
+						return 0;
+					}
+
+					return autoupdate && !! pluginItem?.update ? 2 : 1;
 				},
+				elements: [
+					{ value: 2, label: __( 'Update available' ) },
+					{ value: 1, label: __( 'Up to date' ) },
+					{ value: 0, label: __( 'Updates auto-managed' ) },
+				],
 				render: ( { item }: { item: SiteWithPluginData } ) => {
 					const update = pluginBySiteId.get( item.ID )?.update;
 					const version = pluginBySiteId.get( item.ID )?.version;
@@ -266,7 +275,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			return;
 		}
 
-		setView( getViewFilteredByUpdates( view, 'update', true ) );
+		setView( getViewFilteredByUpdates( view, 'update', 2 ) );
 	}, [ updateCount, view, setView ] );
 
 	return (
