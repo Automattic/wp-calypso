@@ -6,7 +6,7 @@
 	"hostname": "my.localhost",
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
-	"logout_url": "https://wordpress.com",
+	"logout_url": "https://|subdomain|wordpress.com",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"site_name": "Hosting Dashboard",
 	"features": {
