@@ -10,7 +10,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
-import { DataViews, usePersistentView } from '../../app/dataviews';
+import { DataViews } from '../../app/dataviews';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import {
 	siteRoute,
 	siteSettingsRepositoriesRoute,

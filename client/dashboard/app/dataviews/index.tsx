@@ -1,2 +1,2 @@
 export * from './dataviews';
-export * from './use-persistent-view';
+export * from '../hooks/use-persistent-view';
