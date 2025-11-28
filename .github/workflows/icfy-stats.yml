@@ -6,6 +6,9 @@ jobs:
   build:
     name: Build ICFY stats
     runs-on: ubuntu-latest
+    concurrency:
+      group: icfy-stats-${{ github.ref }}
+      cancel-in-progress: true
     env:
       NODE_OPTIONS: --max-old-space-size=6144
     steps:
@@ -14,6 +17,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: 'yarn.lock'
       - name: Fetch git history
         run: git fetch --prune --unshallow
       - name: Install dependencies

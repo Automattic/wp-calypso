@@ -8,9 +8,6 @@ jobs:
   add_label:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
       - name: Get all comments on issue
         uses: octokit/request-action@v2.x
         id: get_all_comments
