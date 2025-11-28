@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';

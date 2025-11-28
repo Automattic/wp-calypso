@@ -44,6 +44,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
+import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -107,7 +108,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import ThemeDownloadCard from './theme-download-card';
@@ -396,8 +397,8 @@ class ThemeSheet extends Component {
 
 	shouldRenderForStaging() {
 		// isExternallyManagedTheme determines if a theme is paid or not
-		const { isExternallyManagedTheme, isWpcomStaging } = this.props;
-		return isExternallyManagedTheme && isWpcomStaging;
+		const { isExternallyManagedTheme, isMarketplaceThemeSubscribed, isWpcomStaging } = this.props;
+		return isExternallyManagedTheme && isWpcomStaging && ! isMarketplaceThemeSubscribed;
 	}
 
 	shouldRenderPreviewButton() {
@@ -1369,6 +1370,8 @@ const ThemeSheetWithOptions = ( props ) => {
 export default connect(
 	( state, { id } ) => {
 		const themeId = id;
+		const site = getSelectedSite( state );
+		const productionSiteId = site ? getProductionSiteId( site ) : null;
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, themeId );
@@ -1407,7 +1410,8 @@ export default connect(
 			( isExternallyManagedTheme && Object.values( getProductsList( state ) ).length === 0 );
 
 		const isMarketplaceThemeSubscribed =
-			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
+			isExternallyManagedTheme &&
+			getIsMarketplaceThemeSubscribed( state, theme?.id, productionSiteId || siteId );
 
 		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
 		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );

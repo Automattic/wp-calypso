@@ -45,6 +45,7 @@ interface CancelPurchaseFormProps {
 	closeDialog?: () => void;
 	disableButtons?: boolean;
 	downgradeClick?: ( upsell: string ) => void;
+	downgradePlan?: PlanProduct;
 	downgradePlanToMonthlyPrice?: number;
 	downgradePlanToPersonalPrice?: number;
 	flowType?: string;
@@ -108,6 +109,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 			clickNext,
 			closeDialog,
 			downgradeClick,
+			downgradePlan,
 			flowType,
 			freeMonthOfferClick,
 			getAllSurveySteps,
@@ -169,11 +171,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 					cancellationReason={ questionOneText }
 					closeDialog={ closeDialog }
 					currencyCode={ purchase.currency_code }
-					downgradePlanPrice={
-						'downgrade-personal' === upsell
-							? props.downgradePlanToPersonalPrice
-							: props.downgradePlanToMonthlyPrice
-					}
+					downgradePlan={ downgradePlan }
 					includedDomainPurchase={ props.includedDomainPurchase }
 					onClickDowngrade={ downgradeClick }
 					onClickFreeMonthOffer={ freeMonthOfferClick }

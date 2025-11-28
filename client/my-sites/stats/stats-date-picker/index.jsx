@@ -135,7 +135,7 @@ class StatsDatePicker extends Component {
 			return selectedShortcut.label;
 		}
 
-		const { date, moment, period, translate, isShort, dateRange, momentSiteZone } = this.props;
+		const { date, period, translate, isShort, dateRange, momentSiteZone } = this.props;
 		const weekPeriodFormat = isShort ? 'll' : 'LL';
 
 		// Respect the dateRange if provided.
@@ -144,8 +144,7 @@ class StatsDatePicker extends Component {
 		}
 
 		// Ensure we have a moment instance here to work with.
-		const momentDate = moment.isMoment( date ) ? date : momentSiteZone( date );
-		const localizedDate = momentSiteZone( momentDate.format( 'YYYY-MM-DD' ) );
+		const localizedDate = momentSiteZone( date );
 		let formattedDate;
 
 		switch ( period ) {

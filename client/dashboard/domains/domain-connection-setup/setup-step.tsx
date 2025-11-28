@@ -12,7 +12,7 @@ interface SetupStepProps {
 	expanded: boolean;
 	completed: boolean;
 	title: string;
-	label: string;
+	label?: string;
 	children: React.ReactNode;
 	onCheckboxChange: ( checked: boolean ) => void;
 	onToggle: ( expanded: boolean ) => void;
@@ -54,12 +54,14 @@ export default function SetupStep( {
 		>
 			<VStack spacing={ 4 } style={ { paddingLeft: '32px' } }>
 				{ children }
-				<CheckboxControl
-					checked={ completed }
-					onChange={ onCheckboxChange }
-					label={ label }
-					__nextHasNoMarginBottom
-				/>
+				{ label && (
+					<CheckboxControl
+						checked={ completed }
+						onChange={ onCheckboxChange }
+						label={ label }
+						__nextHasNoMarginBottom
+					/>
+				) }
 			</VStack>
 		</CollapsibleCard>
 	);

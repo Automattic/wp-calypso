@@ -4,7 +4,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { setHelpCenterRouterHistory, setIsMinimized } from './actions';
 import { STORE_KEY } from './constants';
-import type { APIFetchOptions } from './types';
+import type { APIFetchOptions } from '../shared-types';
 import type { Location } from 'history';
 
 type Preferences = {

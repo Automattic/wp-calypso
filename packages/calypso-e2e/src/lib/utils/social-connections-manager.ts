@@ -100,9 +100,9 @@ export class SocialConnectionsManager {
 	}
 
 	/**
-	 * Intercept the requests and to modify the response
+	 * Intercept the requests and to modify the response to add test connections.
 	 */
-	async interceptRequests() {
+	async mockSocialConnections() {
 		await this.page.route( this.isTargetUrl, async ( route ) => {
 			// Fetch original response.
 			const response = await route.fetch();

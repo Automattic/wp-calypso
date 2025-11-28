@@ -197,7 +197,7 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 	currentRoute,
 }: HelpSearchResultsProps ) {
-	const { hasPurchases, sectionName, site } = useHelpCenterContext();
+	const { hasPurchases, sectionName, site, source } = useHelpCenterContext();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const contextTerm = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getContextTerm(),
@@ -223,7 +223,8 @@ function HelpSearchResults( {
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
 		searchQuery || contextTerm || contextSearch, // If there's a query, we don't context search
 		locale,
-		currentRoute
+		currentRoute,
+		source
 	);
 
 	const searchResults = searchData ?? [];

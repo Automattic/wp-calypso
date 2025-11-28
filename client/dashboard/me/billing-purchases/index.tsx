@@ -1,6 +1,7 @@
 import {
 	userPaymentMethodsQuery,
 	userPurchasesQuery,
+	allSitesQuery,
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
@@ -9,10 +10,9 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useAppContext } from '../../app/context';
-import { DataViews, usePersistentView } from '../../app/dataviews';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { purchasesRoute } from '../../app/router/me';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
@@ -27,13 +27,12 @@ import {
 } from './dataviews';
 
 export default function PurchasesList() {
-	const { queries } = useAppContext();
 	const currentSearchParams = purchasesRoute.useSearch();
 	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
-	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( allSitesQuery() );
 
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
 	const { view, updateView, resetView } = usePersistentView( {
