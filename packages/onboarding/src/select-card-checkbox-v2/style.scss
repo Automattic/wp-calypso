@@ -1,0 +1,25 @@
+@import "@wordpress/base-styles/mixins";
+
+.select-card-checkbox-v2 {
+	border: 1px solid var(--color-surface-backdrop);
+	background: var(--color-surface-backdrop);
+	border-radius: 4px;
+	padding: 16px;
+	font-size: 0.875rem;
+	cursor: pointer;
+
+	&.is-busy {
+		cursor: progress;
+	}
+
+	&:has(:checked) {
+		background: var(--color-accent-5);
+		border-color: var(--color-accent);
+	}
+
+	&:has(:focus-visible) {
+		@include button-style__focus();
+	}
+}
+
+

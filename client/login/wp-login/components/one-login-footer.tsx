@@ -6,19 +6,23 @@ import './one-login-footer.scss';
 
 interface OneLoginFooterProps {
 	/**
-	 * when `isLoginView` is true, this is the "lost password" link
+	 * When `isLoginView` is true, this is the "lost password" link.
 	 */
 	lostPasswordLink?: JSX.Element;
 	/**
-	 * when `isLoginView` is false, this is the "back to login" link
+	 * When `isLoginView` is false, this is the "back to login" link.
 	 */
 	loginLink?: JSX.Element;
 	/**
-	 * when `isLoginView` is false, this is the "support" link
+	 * The content of the footer. If provided, it will be rendered instead of the default links.
+	 */
+	children?: React.ReactNode;
+	/**
+	 * When `isLoginView` is false, this is the "support" link.
 	 */
 	supportLink?: JSX.Element;
 	/**
-	 * when true, this is the footer for the main login screen
+	 * When true, this is the footer for the main login screen.
 	 */
 	isLoginView?: boolean;
 }
@@ -32,6 +36,7 @@ const OneLoginFooter = ( {
 	loginLink,
 	isLoginView,
 	supportLink,
+	children,
 }: OneLoginFooterProps ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 
@@ -58,10 +63,14 @@ const OneLoginFooter = ( {
 
 	return (
 		<div className="one-login__footer">
-			<div className="one-login__footer-links-wrapper">
-				{ loginLink }
-				{ supportLink }
-			</div>
+			{ children ? (
+				children
+			) : (
+				<div className="one-login__footer-links-wrapper">
+					{ loginLink }
+					{ supportLink }
+				</div>
+			) }
 		</div>
 	);
 };

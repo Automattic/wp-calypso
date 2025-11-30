@@ -122,3 +122,86 @@ body.is-section-plugins #primary .main.is-logged-out {
 		padding-top: 0;
 	}
 }
+
+.full-width-section.plugins-browser__search-header {
+	padding-top: 100px;
+	padding-bottom: 32px;
+}
+.plugins-browser__search-header,
+.plugins-discovery-page__favorites,
+.plugins-discovery-page__do-more,
+.plugins-discovery-page__power-store {
+	background-color: var(--studio-gray-0);
+}
+
+.plugins-browser__categories {
+	padding-bottom: 0;
+}
+
+.plugins-browser__categories,
+.plugins-browser__marketplace-footer {
+	background-color: var(--studio-white);
+}
+
+body .is-section-plugins .layout__content:has(.plugins-browser.is-full-width-layout) {
+	padding: 0;
+
+	.plugins-browser__content-wrapper {
+		background-color: var(--studio-white);
+	}
+
+	.full-width-section__content {
+		max-width: 1040px;
+		padding-inline: 24px;
+		box-sizing: border-box;
+		@media screen and ( max-width: 600px ) {
+			padding-inline: 16px;
+		}
+	}
+}
+
+body.is-section-plugins .is-logged-in {
+	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column).plugins-browser.is-full-width-layout";
+
+	#{$full-width-main} {
+		.plugins-browser__content-wrapper {
+			padding: 0;
+			max-width: 100%;
+		}
+	}
+	@media screen and ( max-width: 601px ) {
+		&:not( .has-no-sidebar ) #{$full-width-main} {
+			.plugins-navigation-header.navigation-header {
+				padding-inline: 0;
+			}
+		}
+	}
+
+	@media screen and ( min-width: 601px ) {
+		&:not( .has-no-sidebar ) #{$full-width-main} {
+			.navigation-header__container {
+				padding: 47px 0 0;
+			}
+			.full-width-section {
+				padding-inline: 2rem;
+			}
+		}
+	}
+	@media screen and ( min-width: 782px ) {
+		&:not( .has-no-sidebar ) #{$full-width-main} {
+			.full-width-section {
+				padding-inline-start: calc( var( --sidebar-width-max ) + 1px );
+				padding-inline-end: 0;
+			}
+			.plugins-navigation-header.navigation-header {
+				padding-inline: 0;
+			}
+			.plugins-browser__navigation-header {
+				border-block-end: 1px solid var( --color-neutral-5 );
+				.plugins-navigation-header.navigation-header {
+					border-block-end: none;
+				}
+			}
+		}
+	}
+}

@@ -1,73 +1,54 @@
-/**
- * Chat Header Component
- * Header for AI agent with close button and dropdown menu
- */
-
 import { Button, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { close, moreVertical } from '@wordpress/icons';
+import { close, moreVertical, backup } from '@wordpress/icons';
+import type { ComponentProps } from 'react';
 import './style.scss';
 
-export interface ChatHeaderMenuItem {
-	/**
-	 * Unique identifier for the menu item
-	 */
-	id?: string;
-	/**
-	 * Icon to display
-	 */
-	icon: JSX.Element;
-	/**
-	 * Menu item title/label
-	 */
-	title: string;
-	/**
-	 * Click handler
-	 */
-	onClick: () => void;
-	/**
-	 * Whether the menu item is disabled
-	 */
-	isDisabled?: boolean;
-}
+export type Options = ComponentProps< typeof DropdownMenu >[ 'controls' ];
 
-export interface ChatHeaderProps {
-	/**
-	 * Whether chat is docked (affects button sizes)
-	 */
-	isChatDocked?: boolean;
-	/**
-	 * Close handler
-	 */
+interface Props {
+	isChatDocked: boolean;
 	onClose: () => void;
-	/**
-	 * Menu items for dropdown
-	 */
-	options?: ChatHeaderMenuItem[];
+	options: Options;
+	onHistoryToggle?: () => void;
+	viewState?: 'chat' | 'history';
+	title?: string;
+	supportsHistory?: boolean;
 }
 
-/**
- * ChatHeader Component
- *
- * Displays a header with menu dropdown and close button
- */
 export default function ChatHeader( {
-	isChatDocked = true,
+	isChatDocked,
 	onClose,
-	options = [],
-}: ChatHeaderProps ) {
+	options,
+	onHistoryToggle,
+	viewState,
+	title,
+	supportsHistory = true,
+}: Props ) {
 	return (
 		<div className="agents-manager-chat-header">
+			{ title && <div className="agents-manager-chat-header__title">{ title }</div> }
 			<div className="agents-manager-chat-header__actions">
-				{ options.length > 0 && (
-					<DropdownMenu
-						className="agents-manager-chat-header__more-options"
-						controls={ options }
-						icon={ moreVertical }
-						label={ __( 'More Options', 'agents-manager' ) }
-						toggleProps={ {
-							size: ! isChatDocked ? 'small' : undefined,
-						} }
+				<DropdownMenu
+					className="agents-manager-chat-header__more-options"
+					controls={ options }
+					icon={ moreVertical }
+					label={ __( 'More Options', 'agents-manager' ) }
+					toggleProps={ {
+						size: ! isChatDocked ? 'small' : undefined,
+					} }
+				/>
+				{ supportsHistory && onHistoryToggle && (
+					<Button
+						className="agents-manager-chat-header__history-btn"
+						icon={ backup }
+						onClick={ onHistoryToggle }
+						label={
+							viewState === 'history'
+								? __( 'Back to chat', 'agents-manager' )
+								: __( 'View history', 'agents-manager' )
+						}
+						size={ ! isChatDocked ? 'small' : undefined }
 					/>
 				) }
 				<Button

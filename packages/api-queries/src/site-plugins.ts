@@ -44,8 +44,12 @@ export const invalidatePlugins = () => {
 	queryClient.invalidateQueries( pluginsQuery() );
 };
 
-const invalidateSitePlugins = ( siteId: number ) => {
+export const invalidateSitePlugins = ( siteId: number ) => {
 	queryClient.invalidateQueries( sitePluginsQuery( siteId ) );
+};
+
+const invalidatePluginsForSite = ( siteId: number ) => {
+	invalidateSitePlugins( siteId );
 	invalidatePlugins();
 };
 
@@ -53,47 +57,47 @@ export const sitePluginActivateMutation = () =>
 	mutationOptions( {
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			activateSitePlugin( vars.siteId, vars.pluginId ),
-		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSitePlugins( vars.siteId ),
+		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
 	} );
 
 export const sitePluginDeactivateMutation = () =>
 	mutationOptions( {
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			deactivateSitePlugin( vars.siteId, vars.pluginId ),
-		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSitePlugins( vars.siteId ),
+		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
 	} );
 
 export const sitePluginUpdateMutation = () =>
 	mutationOptions( {
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			updateSitePlugin( vars.siteId, vars.pluginId ),
-		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSitePlugins( vars.siteId ),
+		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
 	} );
 
 export const sitePluginAutoupdateEnableMutation = () =>
 	mutationOptions( {
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			enableSitePluginAutoupdate( vars.siteId, vars.pluginId ),
-		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSitePlugins( vars.siteId ),
+		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
 	} );
 
 export const sitePluginAutoupdateDisableMutation = () =>
 	mutationOptions( {
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			disableSitePluginAutoupdate( vars.siteId, vars.pluginId ),
-		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSitePlugins( vars.siteId ),
+		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
 	} );
 
 export const sitePluginInstallMutation = () =>
 	mutationOptions( {
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			installSitePlugin( vars.siteId, vars.pluginId ),
-		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSitePlugins( vars.siteId ),
+		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
 	} );
 
 export const sitePluginRemoveMutation = () =>
 	mutationOptions( {
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			removeSitePlugin( vars.siteId, vars.pluginId ),
-		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSitePlugins( vars.siteId ),
+		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
 	} );

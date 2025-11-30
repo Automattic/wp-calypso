@@ -13,7 +13,7 @@ import { dashboardBackportSiteSettings } from './settings/controller';
 
 export default function () {
 	/**
-	 * Backport dashboard v2
+	 * Backport Multi-site Dashboard
 	 */
 	page(
 		'/sites/:site/settings/:feature?',
