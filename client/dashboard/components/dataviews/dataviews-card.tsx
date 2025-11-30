@@ -1,3 +1,5 @@
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf, __ } from '@wordpress/i18n';
 import { forwardRef } from 'react';
 import { Card, CardBody } from '../card';
 
@@ -8,6 +10,19 @@ function UnforwardedDataViewsCard(
 	return (
 		<Card ref={ ref } className={ className }>
 			<CardBody>{ children }</CardBody>
+
+			{ createInterpolateElement(
+				sprintf(
+					/* translators: %(newOwnerEmail)s - the new owner's email */
+					__( 'Invitation sent to <strong>%(testEmail)s</strong>' ),
+					{
+						testEmail: 'test@example.com',
+					}
+				),
+				{
+					strong: <strong />,
+				}
+			) }
 		</Card>
 	);
 }

@@ -2,31 +2,19 @@
 applyTo: "client/dashboard/**"
 ---
 
-## Styling & Components (Dashboard)
+# Dashboard Code Review Instructions
 
-### Use Base WordPress components instead of custom CSS
+## Documentation to consult
 
-When working in `client/dashboard`, **avoid adding new custom CSS files or ad‑hoc CSS** unless absolutely necessary.
+For any pull request that touches `client/dashboard`:
 
-Our styling should come from **Base WordPress components and their props** (e.g. `className`, variant/size props, layout props, etc.), not from new CSS rules.
-
-**Preferred approaches:**
-- Use existing Base components (buttons, cards, layout, typography, etc.) and configure them via their documented props.
-- Reuse existing design tokens, utility classes, and patterns already provided by the component library.
-- If a new visual pattern is needed, first:
-  - Check whether an existing Base component can be adapted.
-  - If not, propose an addition/change to the shared component library rather than adding local CSS.
-
-**If you believe custom styling is unavoidable:**
-1. Explain in the PR description why Base components/props are insufficient.
-2. Keep the customization as small and localized as possible.
-3. Prefer extending existing shared styles/components over introducing a new CSS file.
-4. Flag the PR for review by someone familiar with our WordPress Base components/design system.
-
-**Reviewers:**  
-For changes under `client/dashboard`:
-- Push back on new `*.css` files or large blocks of custom styles.
-- Ask whether the same result can be achieved by:
-  - Choosing a more appropriate Base component, or
-  - Using existing props/variants/tokens.  
-- Only accept custom CSS if the limitation is clear and documented.
+- **Use the docs in `client/dashboard/docs` as the primary reference for best practices.**
+- Before making style, component, or architectural suggestions, consult:
+  - [`client/dashboard/docs/ui-components.md`](../client/dashboard/docs/ui-components.md) - Component usage and styling guidelines
+  - [`client/dashboard/docs/data-library.md`](../client/dashboard/docs/data-library.md) - Data fetching patterns and state management
+  - [`client/dashboard/docs/router.md`](../client/dashboard/docs/router.md) - Routing architecture and patterns
+  - [`client/dashboard/docs/entry-points.md`](../client/dashboard/docs/entry-points.md) - Entry point architecture
+  - [`client/dashboard/docs/typography-and-copy.md`](../client/dashboard/docs/typography-and-copy.md) - Typography and content guidelines
+  - [`client/dashboard/docs/i18n.md`](../client/dashboard/docs/i18n.md) - Internationalization practices
+  - [`client/dashboard/docs/testing.md`](../client/dashboard/docs/testing.md) - Testing guidelines
+- When possible, base your feedback on the patterns and examples described in those docs.
