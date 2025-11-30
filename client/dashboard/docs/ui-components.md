@@ -11,6 +11,11 @@ The dashboard prototype follows a component-based architecture with a strong foc
 3. **TypeScript**: All components are written in TypeScript with proper typing
 4. **Translation-ready**: All user-facing strings use the `@wordpress/i18n` package
 
+## Styling Guidelines
+
+- Prefer **Base WordPress components** and their props over custom CSS.
+- **Custom CSS is mostly not needed** - Before adding new custom CSS files under `client/dashboard`, consider whether the styling can be achieved through WordPress component props or composition. If custom CSS is necessary, ensure it's clearly documented and aligned with the guidelines in this document.
+
 ## Placeholders
 
 Use placeholder components such as `TextBlur`, `TextSkeleton`, or `CalloutSkeleton` instead of spinners.

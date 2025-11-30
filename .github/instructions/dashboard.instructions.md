@@ -18,3 +18,5 @@ For any pull request that touches `client/dashboard`:
   - [`client/dashboard/docs/i18n.md`](../../client/dashboard/docs/i18n.md) - Internationalization practices
   - [`client/dashboard/docs/testing.md`](../../client/dashboard/docs/testing.md) - Testing guidelines
 - When possible, base your feedback on the patterns and examples described in those docs.
+
+If a change appears to violate the documented best practices, call that out and, when helpful, **quote or link the relevant section** from the docs in `client/dashboard/docs`.
