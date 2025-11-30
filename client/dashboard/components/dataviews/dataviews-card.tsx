@@ -13,7 +13,7 @@ function UnforwardedDataViewsCard(
 
 			{ createInterpolateElement(
 				sprintf(
-					/* translators: %(newOwnerEmail)s - the new owner's email */
+					/* translators: %(newOwnerEmail)s - the test email */
 					__( 'Invitation sent to <strong>%(testEmail)s</strong>' ),
 					{
 						testEmail: 'test@example.com',
