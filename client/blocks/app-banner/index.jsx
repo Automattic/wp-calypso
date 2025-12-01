@@ -147,8 +147,14 @@ export class AppBanner extends Component {
 					return `intent://details?id=${ packageName }&url=${ scheme }://home&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case NOTES:
 					return `intent://details?id=${ packageName }&url=${ scheme }://notifications&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
-				case READER:
-					return `intent://details?id=${ packageName }&url=${ scheme }://read&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+				case READER: {
+					// Extract post details from route if available (e.g., /read/feeds/:feedId/posts/:postId)
+					const readerPath =
+						currentRoute && currentRoute.startsWith( '/reader' )
+							? currentRoute.replace( /^\/reader/, '' )
+							: '';
+					return `intent://details?id=${ packageName }&url=${ scheme }://read${ readerPath }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+				}
 				case STATS:
 					return `intent://details?id=${ packageName }&url=${ scheme }://stats&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 			}
