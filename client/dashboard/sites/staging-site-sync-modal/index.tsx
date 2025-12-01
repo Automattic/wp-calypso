@@ -494,6 +494,7 @@ function StagingSiteSyncModalInner( {
 								<VStack spacing={ 4 }>
 									<HStack>
 										<FileBrowser
+											key={ rewindId }
 											rewindId={ rewindId }
 											siteId={ querySiteId }
 											siteSlug={ querySiteSlug as string }

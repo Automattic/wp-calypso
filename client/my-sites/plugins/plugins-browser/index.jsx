@@ -179,14 +179,12 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				}
 			/>
 
-			<FullWidthSection className="plugins-browser__navigation-header full-width-section--no-padding">
-				<PluginsNavigationHeader
-					navigationHeaderRef={ navigationHeaderRef }
-					categoryName={ categoryName }
-					category={ category }
-					search={ search }
-				/>
-			</FullWidthSection>
+			<PluginsNavigationHeader
+				navigationHeaderRef={ navigationHeaderRef }
+				categoryName={ categoryName }
+				category={ category }
+				search={ search }
+			/>
 			<div className="plugins-browser__content-wrapper">
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
@@ -205,7 +203,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					</FullWidthSection>
 				) : (
 					<>
-						<FullWidthSection className="plugins-browser__search-header">
+						<FullWidthSection className="plugins-browser__search-header full-width-section--gray">
 							<SearchBoxHeader
 								searchRef={ searchRef }
 								categoriesRef={ categoriesRef }
@@ -213,10 +211,20 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 								isSticky={ isAboveElement }
 								searchTerm={ search }
 								isSearching={ isFetchingPluginsBySearchTerm }
-								title={ __( 'Flex your site’s features with plugins' ) }
-								subtitle={ __(
-									'Add new functionality and integrations to your site with thousands of plugins.'
-								) }
+								title={
+									isMarketplaceRedesignEnabled
+										? __( 'Plug into possibility' )
+										: __( 'Flex your site’s features with plugins' )
+								}
+								subtitle={
+									isMarketplaceRedesignEnabled
+										? __(
+												'Add new features or connect your favorite tools with thousands of plugins — available on all paid WordPress.com plans.'
+										  )
+										: __(
+												'Add new functionality and integrations to your site with thousands of plugins.'
+										  )
+								}
 								searchTerms={ searchTerms }
 								renderTitleInH1={ ! category }
 							/>

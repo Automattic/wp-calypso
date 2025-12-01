@@ -1,0 +1,79 @@
+@keyframes skeleton-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
+}
+
+.agents-manager-chat-message-skeleton {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	padding: 16px var( --spacing-3, 12px );
+	width: 100%;
+	height: 100%;
+	justify-content: flex-end; // Align to bottom like real chat
+	min-height: 0;
+	overflow: hidden;
+
+	&__message {
+		display: flex;
+		width: 100%;
+
+		&--user {
+			justify-content: flex-end;
+			padding-right: var( --spacing-1, 4px );
+		}
+
+		&--assistant {
+			justify-content: flex-start;
+		}
+	}
+
+	// User message bubble
+	&__bubble {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: var( --spacing-3, 12px ) var( --spacing-4, 16px );
+		border-radius: 24px 24px 8px 24px;
+		background-color: #e8e8e8;
+		width: 85%;
+	}
+
+	&__bubble &__line {
+		background-color: rgba( 0, 0, 0, 0.15 );
+	}
+
+	// Assistant loose text (no bubble)
+	&__text {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		width: 70%;
+	}
+
+	&__line {
+		height: 14px;
+		background-color: rgba( 0, 0, 0, 0.08 );
+		border-radius: 4px;
+		animation: skeleton-pulse 1.5s ease-in-out infinite;
+
+		&--long {
+			width: 100%;
+		}
+
+		&--medium {
+			width: 75%;
+			animation-delay: 0.1s;
+		}
+
+		&--short {
+			width: 50%;
+			animation-delay: 0.2s;
+		}
+	}
+}

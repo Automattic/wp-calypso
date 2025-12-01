@@ -2,13 +2,17 @@ import { __experimentalText as Text, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
+import HostingFeatureList from '../hosting-feature-list';
 import illustrationUrl from './upsell-illustration.svg';
+import type { Site } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 export default function ActivationCallout( {
+	site,
 	main,
 	onClick,
 }: {
+	site: Site;
 	main?: ReactNode;
 	onClick: () => void;
 } ) {
@@ -24,23 +28,7 @@ export default function ActivationCallout( {
 						) }
 					</Text>
 
-					<ul style={ { paddingInlineStart: '15px', margin: 0 } }>
-						<Text as="li" variant="muted">
-							{ __( 'Git-based deployments' ) }
-						</Text>
-						<Text as="li" variant="muted">
-							{ __( 'Server monitoring' ) }
-						</Text>
-						<Text as="li" variant="muted">
-							{ __( 'Access and error logs' ) }
-						</Text>
-						<Text as="li" variant="muted">
-							{ __( 'Secure access via SFTP/SSH' ) }
-						</Text>
-						<Text as="li" variant="muted">
-							{ __( 'Advanced server settings' ) }
-						</Text>
-					</ul>
+					<HostingFeatureList site={ site } />
 				</>
 			}
 			actions={

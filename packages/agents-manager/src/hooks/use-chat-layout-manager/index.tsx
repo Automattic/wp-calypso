@@ -9,6 +9,7 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import './style.scss';
 
 interface Options {
+	sidebarContainer?: string | HTMLElement;
 	desktopMediaQuery?: string;
 	onOpenSidebar?: () => void;
 	onCloseSidebar?: () => void;
@@ -26,16 +27,14 @@ interface ReturnValue {
 	createChatPortal: ( children: React.ReactNode ) => React.ReactNode | React.ReactPortal;
 }
 
-export default function useChatLayoutManager(
-	sidebarContainer: string | HTMLElement,
-	{
-		desktopMediaQuery = '(min-width: 1200px)',
-		onOpenSidebar = () => {},
-		onCloseSidebar = () => {},
-		onDock = () => {},
-		onUndock = () => {},
-	}: Options = {}
-): ReturnValue {
+export default function useChatLayoutManager( {
+	sidebarContainer = 'body',
+	desktopMediaQuery = '(min-width: 1200px)',
+	onOpenSidebar = () => {},
+	onCloseSidebar = () => {},
+	onDock = () => {},
+	onUndock = () => {},
+}: Options = {} ): ReturnValue {
 	const { setIsDocked, setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const { isDocked, isOpen } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );

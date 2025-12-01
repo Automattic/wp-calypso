@@ -19,7 +19,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';

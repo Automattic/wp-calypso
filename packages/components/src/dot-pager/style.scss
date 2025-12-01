@@ -40,7 +40,7 @@
 	}
 }
 
-.dot-pager__control-button {
+button.dot-pager__control-button {
 	background-color: var(--studio-white, #fff);
 	border: 1px solid var(--studio-gray-5);
 	border-radius: 50%;
@@ -53,10 +53,6 @@
 
 	&:hover {
 		background-color: var(--studio-white, #fff);
-	}
-
-	&[disabled] {
-		border-color: var(--studio-gray-0);
 	}
 }
 

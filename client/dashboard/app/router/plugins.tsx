@@ -53,8 +53,8 @@ export const pluginsManageRoute = createRoute( {
 	getParentRoute: () => pluginsRoute,
 	path: 'manage',
 	loader: async () => {
-		queryClient.ensureQueryData( marketplacePluginsQuery() );
-		queryClient.ensureQueryData( pluginsQuery() );
+		queryClient.prefetchQuery( marketplacePluginsQuery() );
+		queryClient.prefetchQuery( pluginsQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 } );
@@ -81,8 +81,8 @@ export const pluginRoute = createRoute( {
 	getParentRoute: () => pluginsManageRoute,
 	path: '$pluginId',
 	loader: async () => {
-		queryClient.ensureQueryData( marketplacePluginsQuery() );
-		queryClient.ensureQueryData( pluginsQuery() );
+		queryClient.prefetchQuery( marketplacePluginsQuery() );
+		queryClient.prefetchQuery( pluginsQuery() );
 	},
 } ).lazy( () =>
 	import( '../../plugins/plugin' ).then( ( d ) =>
@@ -126,7 +126,7 @@ export const pluginsScheduledUpdatesNewRoute = createRoute( {
 	getParentRoute: () => pluginsScheduledUpdatesRoute,
 	path: '/new',
 	loader: async ( { context } ) => {
-		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
 	},
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates/new' ).then( ( d ) =>
@@ -147,7 +147,7 @@ export const pluginsScheduledUpdatesEditRoute = createRoute( {
 	getParentRoute: () => pluginsScheduledUpdatesRoute,
 	path: '/edit/$scheduleId',
 	loader: async ( { context } ) => {
-		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
 	},
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates/edit' ).then( ( d ) =>

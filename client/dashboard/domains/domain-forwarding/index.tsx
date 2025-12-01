@@ -11,7 +11,7 @@ import {
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 } from '../../app/router/domains';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

@@ -1,34 +1,39 @@
 /**
- * Calypso AI Agent Component
- * Main wrapper component for loading AI agent in Calypso
+ * Unified AI Agent Component
+ *
+ * Configures the AI agent, manages sessions, and integrates custom tools and context.
  */
 
-import { useCallback, useMemo } from 'react';
+import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
+import { useMemo, useEffect, useState } from '@wordpress/element';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
+import useAgentSession, { SESSION_STORAGE_KEY } from '../../hooks/use-agent-session';
+import { lastConversationCache } from '../../utils/conversation-cache';
 import AgentDock from '../agent-dock';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
+import type { HelpCenterSite, CurrentUser } from '@automattic/data-stores';
 
 export interface UnifiedAIAgentProps {
 	/**
-	 * Current route/path
+	 * The current route path.
 	 */
 	currentRoute?: string;
 	/**
-	 * Section name (e.g., 'reader', 'posts', 'pages')
+	 * The name of the current section (e.g., 'posts', 'pages').
 	 */
 	sectionName?: string;
 	/**
-	 * Selected site object
+	 * The selected site object.
 	 */
-	site?: any;
+	site?: HelpCenterSite | null;
 	/**
-	 * Current user object
+	 * The current user object.
 	 */
-	currentUser?: any;
+	currentUser?: CurrentUser;
 	/**
-	 * Handle close callback
+	 * Callback to handle closing the agent.
 	 */
 	handleClose?: () => void;
 	/**
@@ -41,14 +46,6 @@ export interface UnifiedAIAgentProps {
 	 * Allows plugins to provide rich context about current state
 	 */
 	contextProvider?: ContextProvider;
-	/**
-	 * Save preference callback (optional, uses wpcomRequest if not provided)
-	 */
-	savePreference?: ( key: string, value: any ) => Promise< void >;
-	/**
-	 * Load preference callback (optional, uses wpcomRequest if not provided)
-	 */
-	loadPreference?: ( key: string ) => Promise< any >;
 	/**
 	 * Custom suggestions for the empty view (optional)
 	 * Allows plugins to provide context-specific suggestions
@@ -98,91 +95,118 @@ function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
 	} );
 }
 
-/**
- * CalypsoAIAgent Component
- *
- * Main entry point for AI agent in Calypso.
- * Configures the agent with Calypso-specific context and settings.
- */
-export default function CalypsoAIAgent( {
+export default function UnifiedAIAgent( {
 	currentRoute,
-	site,
-	currentUser,
+	site = null,
 	toolProvider,
 	contextProvider,
-	savePreference: externalSavePreference,
-	loadPreference: externalLoadPreference,
 	emptyViewSuggestions: customSuggestions,
-	markdownComponents,
-	markdownExtensions,
+	markdownComponents = {},
+	markdownExtensions = {},
 }: UnifiedAIAgentProps ) {
+	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
+	// TODO: Integrate the route session ID...
+	const { sessionId, applySessionId, resetSession } = useAgentSession();
+
 	// Create agent configuration
-	const agentConfig = useMemo< UseAgentChatConfig >( () => {
-		const config: UseAgentChatConfig = {
-			agentId: 'wp-orchestrator',
-			agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
-			sessionId: `calypso-${ currentUser?.ID || 'anonymous' }-${ Date.now() }`,
-			authProvider: createCalypsoAuthProvider( site?.ID ),
-			enableStreaming: true,
+	const config = useMemo< UseAgentChatConfig >(
+		() => {
+			const config: UseAgentChatConfig = {
+				agentId: 'wp-orchestrator',
+				agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
+				sessionId,
+				sessionIdStorageKey: SESSION_STORAGE_KEY,
+				authProvider: createCalypsoAuthProvider( site?.ID ),
+				enableStreaming: true,
+			};
+
+			// Add tool provider if provided by plugin
+			if ( toolProvider ) {
+				// Wrap toolProvider to filter out null annotation values
+				// WordPress Abilities API uses null, but agenttic-client expects undefined
+				config.toolProvider = {
+					...toolProvider,
+					getAbilities: async (): Promise< AgenticAbility[] > => {
+						const abilities = await toolProvider.getAbilities();
+						return abilities.map( ( ability ) => ( {
+							...ability,
+							meta: ability.meta?.annotations
+								? {
+										...ability.meta,
+										annotations: Object.fromEntries(
+											Object.entries( ability.meta.annotations ).filter(
+												( [ , value ] ) => value !== null
+											)
+										),
+								  }
+								: ability.meta,
+						} ) ) as AgenticAbility[];
+					},
+				};
+			}
+
+			// Add context provider - use plugin's or create default Calypso context
+			if ( contextProvider ) {
+				// Wrap plugin's context provider to resolve contextEntries
+				config.contextProvider = {
+					getClientContext: () => {
+						const pluginContext = contextProvider.getClientContext();
+
+						// Resolve contextEntries if present
+						if ( pluginContext.contextEntries && pluginContext.contextEntries.length ) {
+							return {
+								...pluginContext,
+								contextEntries: resolveContextEntries( pluginContext.contextEntries ),
+							};
+						}
+
+						return pluginContext;
+					},
+				};
+			} else {
+				// Create default Calypso context
+				config.contextProvider = {
+					getClientContext: () => ( {
+						url: window.location.href,
+						pathname: currentRoute || window.location.pathname,
+						search: window.location.search,
+						environment: 'calypso',
+					} ),
+				};
+			}
+
+			return config;
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- sessionId is the only dynamic dependency
+		[ sessionId ]
+	);
+
+	// Load config AND pre-load cached messages for progressive loading
+	useEffect( () => {
+		const initializeWithCache = async () => {
+			// Check if we have cached messages to pre-load
+			if ( sessionId ) {
+				const agentManager = getAgentManager();
+				const agentKey = config.agentId;
+				const botId = createOdieBotId( agentKey );
+
+				// Only pre-load if agent doesn't exist yet
+				if ( ! agentManager.hasAgent( agentKey ) ) {
+					const cachedData = lastConversationCache.get( botId );
+
+					if ( cachedData?.sessionId === sessionId && cachedData?.messages.length ) {
+						// Create agent and load cached messages BEFORE setting config
+						await agentManager.createAgent( agentKey, config );
+						await agentManager.replaceMessages( agentKey, cachedData.messages );
+					}
+				}
+			}
+
+			setAgentConfig( config );
 		};
 
-		// Add tool provider if provided by plugin
-		if ( toolProvider ) {
-			// Wrap toolProvider to filter out null annotation values
-			// WordPress Abilities API uses null, but agenttic-client expects undefined
-			config.toolProvider = {
-				...toolProvider,
-				getAbilities: async (): Promise< AgenticAbility[] > => {
-					const abilities = await toolProvider.getAbilities();
-					return abilities.map( ( ability ) => ( {
-						...ability,
-						meta: ability.meta?.annotations
-							? {
-									...ability.meta,
-									annotations: Object.fromEntries(
-										Object.entries( ability.meta.annotations ).filter(
-											( [ , value ] ) => value !== null
-										)
-									),
-							  }
-							: ability.meta,
-					} ) ) as AgenticAbility[];
-				},
-			};
-		}
-
-		// Add context provider - use plugin's or create default Calypso context
-		if ( contextProvider ) {
-			// Wrap plugin's context provider to resolve contextEntries
-			config.contextProvider = {
-				getClientContext: () => {
-					const pluginContext = contextProvider.getClientContext();
-
-					// Resolve contextEntries if present
-					if ( pluginContext.contextEntries && pluginContext.contextEntries.length > 0 ) {
-						return {
-							...pluginContext,
-							contextEntries: resolveContextEntries( pluginContext.contextEntries ),
-						};
-					}
-
-					return pluginContext;
-				},
-			};
-		} else {
-			// Create default Calypso context
-			config.contextProvider = {
-				getClientContext: () => ( {
-					url: window.location.href,
-					pathname: currentRoute || window.location.pathname,
-					search: window.location.search,
-					environment: 'calypso',
-				} ),
-			};
-		}
-
-		return config;
-	}, [ currentUser, site, currentRoute, toolProvider, contextProvider ] );
+		initializeWithCache();
+	}, [ config, sessionId ] );
 
 	// Default suggestions - can be overridden via customSuggestions prop
 	const defaultSuggestions = useMemo(
@@ -205,66 +229,21 @@ export default function CalypsoAIAgent( {
 		],
 		[]
 	);
-	const suggestions = customSuggestions || defaultSuggestions;
 
-	const handleClearChat = useCallback( () => {
-		// Clear chat handler
-	}, [] );
-
-	// Save/load preferences - use provided callbacks or fall back to wpcomRequest
-	const defaultSavePreference = useCallback( async ( key: string, value: any ) => {
-		if ( typeof window !== 'undefined' && ( window as any ).wpcomRequest ) {
-			const wpcomRequest = ( window as any ).wpcomRequest;
-			try {
-				await wpcomRequest( {
-					path: '/me/preferences',
-					apiNamespace: 'wpcom/v2',
-					method: 'PUT',
-					body: {
-						calypso_preferences: {
-							[ key ]: value,
-						},
-					},
-				} );
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[UnifiedAIAgent] Failed to save preferences:', error );
-			}
-		}
-	}, [] );
-
-	const defaultLoadPreference = useCallback( async ( key: string ) => {
-		if ( typeof window !== 'undefined' && ( window as any ).wpcomRequest ) {
-			const wpcomRequest = ( window as any ).wpcomRequest;
-			try {
-				const response = await wpcomRequest( {
-					path: '/me/preferences',
-					apiNamespace: 'wpcom/v2',
-					method: 'GET',
-				} );
-				return response?.calypso_preferences?.[ key ] || null;
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[UnifiedAIAgent] Failed to load preferences:', error );
-			}
-		}
+	// Don't render until agent configuration is initialized
+	if ( ! agentConfig ) {
 		return null;
-	}, [] );
-
-	const savePreference = externalSavePreference || defaultSavePreference;
-	const loadPreference = externalLoadPreference || defaultLoadPreference;
+	}
 
 	return (
 		<AgentDock
+			sessionId={ sessionId }
+			applySessionId={ applySessionId }
+			resetSession={ resetSession }
 			agentConfig={ agentConfig }
-			emptyViewSuggestions={ suggestions }
+			emptyViewSuggestions={ customSuggestions || defaultSuggestions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			onClearChat={ handleClearChat }
-			sessionStorageKey="agents-manager-session"
-			preferenceKey="agents_manager_state"
-			savePreference={ savePreference }
-			loadPreference={ loadPreference }
 		/>
 	);
 }

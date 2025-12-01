@@ -1,19 +1,35 @@
+@import '@wordpress/base-styles/colors';
+
 .agents-manager-chat-header {
-	width: calc( 100% + 16px );
+	width: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: end;
 	height: 56px;
-	padding: 16px;
-	margin-top: -8px;
-	margin-left: -8px;
-}
+	padding: 4px 16px;
 
-.agents-manager-chat-header__actions {
-	display: flex;
-	gap: 8px;
-}
+	&:has( .agents-manager-chat-header__title ) {
+		justify-content: space-between;
+	}
 
-.agents-manager-chat-header__more-options {
-	line-height: initial;
+	&__title {
+		font-size: 14px;
+		font-weight: 600;
+		color: var( --color-foreground, #1f1f1f );
+		flex-grow: 1;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 4px;
+		align-items: center;
+	}
+
+	&__more-options,
+	&__history-btn,
+	&__close-btn {
+		svg {
+			fill: var( --color-foreground, #1f1f1f );
+		}
+	}
 }

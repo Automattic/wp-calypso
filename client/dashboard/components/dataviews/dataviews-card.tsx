@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { Card, CardBody } from '../../components/card';
+import { Card, CardBody } from '../card';
 
 function UnforwardedDataViewsCard(
 	{ className, children }: { className?: string; children: React.ReactNode },
