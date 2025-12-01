@@ -115,44 +115,21 @@ export default function AgentDock( {
 	// Called after we fetch the conversation from the server
 	const onLoaded = useCallback(
 		async ( loadedMessages: Message[], serverSessionId: string ) => {
-			const agentManager = getAgentManager();
-			const agentKey = agentId;
-
-			// Make sure the agent exists before we try to use it
-			if ( ! agentManager.hasAgent( agentKey ) ) {
-				await agentManager.createAgent( agentKey, {
-					...agentConfig,
-					sessionId: serverSessionId,
-				} );
-			}
-
 			// Update the UI with the loaded messages
 			await loadMessages( loadedMessages );
 
 			// Make sure future messages go to the right session
-			agentManager.updateSessionId( agentKey, serverSessionId );
+			getAgentManager().updateSessionId( agentId, serverSessionId );
 
-			// Save the session ID to localStorage if it's new or different
-			if ( sessionId !== serverSessionId ) {
-				try {
-					if ( ! serverSessionId ) {
-						// eslint-disable-next-line no-console
-						console.warn( '[AgentDock] Received empty session ID from server, skipping update' );
-						return;
-					}
-
-					setSessionId( serverSessionId );
-				} catch ( sessionError ) {
-					// eslint-disable-next-line no-console
-					console.error( '[AgentDock] Failed to update session ID:', sessionError );
-					return;
-				}
+			// Persist to localStorage only if we got a valid new session ID
+			if ( serverSessionId && sessionId !== serverSessionId ) {
+				setSessionId( serverSessionId );
 			}
 
 			// Remember that we loaded this session so we don't load it again
 			loadedSessionIdRef.current = serverSessionId;
 		},
-		[ agentConfig, agentId, loadMessages, sessionId ]
+		[ agentId, loadMessages, sessionId ]
 	);
 
 	// Hook that handles fetching conversation history from the server
