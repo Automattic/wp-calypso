@@ -6,7 +6,7 @@ import {
 	sitePluginRemoveMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { _n, sprintf } from '@wordpress/i18n';
 import ActionRenderModal, { getModalHeader } from '../components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../utils';
 import type { PluginListRow } from '../types';
@@ -14,10 +14,19 @@ import type { Action } from '@wordpress/dataviews';
 
 export const deleteAction: Action< PluginListRow > = {
 	id: 'delete',
-	label: __( 'Delete' ),
+	label: ( items ) => {
+		const [ plugin ] = items;
+		const count = plugin.siteIds.length;
+
+		return sprintf(
+			// translators: %(count)d is the number of sites the plugin will be deleted on.
+			_n( 'Delete on %(count)d site', 'Delete on %(count)d sites', count ),
+			{ count: count }
+		);
+	},
 	isPrimary: false,
 	modalHeader: getModalHeader( 'delete' ),
-	RenderModal: ( { items, closeModal, onActionPerformed } ) => {
+	RenderModal: ( { items, closeModal } ) => {
 		const { mutateAsync: deactivate } = useMutation( {
 			...sitePluginDeactivateMutation(),
 			onSuccess: () => {},
@@ -43,13 +52,6 @@ export const deleteAction: Action< PluginListRow > = {
 			// Finally remove the plugins
 			const { successCount, errorCount } = await bulkRemove( items );
 
-			items
-				.flatMap( ( item ) => item.siteIds )
-				.forEach( ( siteId ) => {
-					invalidateSitePlugins( siteId );
-				} );
-			invalidatePlugins();
-
 			return { successCount, errorCount };
 		};
 
@@ -58,7 +60,15 @@ export const deleteAction: Action< PluginListRow > = {
 				actionId="delete"
 				items={ items }
 				closeModal={ closeModal }
-				onActionPerformed={ onActionPerformed }
+				onActionPerformed={ ( items: PluginListRow[] ) => {
+					items
+						.flatMap( ( item ) => item.siteIds )
+						.forEach( ( siteId ) => {
+							invalidateSitePlugins( siteId );
+						} );
+
+					invalidatePlugins();
+				} }
 				onExecute={ action }
 			/>
 		);
