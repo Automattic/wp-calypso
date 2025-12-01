@@ -5,6 +5,7 @@ import config from '@automattic/calypso-config';
 import { waitFor } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
 import { fetchUserPurchases } from 'calypso/state/purchases/actions';
+import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { WELCOME_BACK_VARIATIONS } from '../constants';
 import { useResurrectedFreeUserEligibility } from '../use-resurrected-free-user-eligibility';
@@ -15,12 +16,14 @@ const selectorsState = {
 	isFetching: false,
 };
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	__esModule: true,
-	default: {
-		isEnabled: jest.fn().mockReturnValue( true ),
-	},
-} ) );
+jest.mock( '@automattic/calypso-config', () => {
+	const mockConfig = jest.fn();
+	mockConfig.isEnabled = jest.fn().mockReturnValue( true );
+	return {
+		__esModule: true,
+		default: mockConfig,
+	};
+} );
 
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getUserPurchases: () => selectorsState.purchases,
@@ -48,6 +51,10 @@ const mockFetchUserPurchases = fetchUserPurchases as jest.MockedFunction<
 const mockIsFeatureEnabled = config.isEnabled as jest.MockedFunction< typeof config.isEnabled >;
 
 const DAY_IN_SECONDS = 24 * 60 * 60;
+
+const reducers = {
+	userSettings: userSettingsReducer,
+};
 
 const createState = ( {
 	lastSeenOffsetDays = 400,
@@ -89,6 +96,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 
 		renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
 			initialState,
+			reducers,
 		} );
 
 		await waitFor( () =>
@@ -104,6 +112,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 
 		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
 			initialState,
+			reducers,
 		} );
 
 		expect( result.current.hasActivePaidSubscription ).toBe( true );
@@ -123,14 +132,11 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 			{ variationName: WELCOME_BACK_VARIATIONS.AI_ONLY } as any,
 		] );
 
-		mockIsFeatureEnabled.mockImplementation(
-			( flagName ) => flagName === 'welcome-back-modal-ai-only'
-		);
-
 		const initialState = createState( { lastSeenOffsetDays: 400 } );
 
 		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
 			initialState,
+			reducers,
 		} );
 
 		expect( result.current.isResurrectedSixMonths ).toBe( true );
@@ -140,22 +146,19 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		expect( result.current.isLoading ).toBe( false );
 	} );
 
-	it( 'suppresses eligibility when the variant flag is disabled', () => {
+	it( 'remains ineligible when the experiment does not return a variation', () => {
 		selectorsState.purchases = [];
 		selectorsState.hasLoaded = true;
-		mockIsFeatureEnabled.mockReturnValue( false );
-		mockUseExperiment.mockReturnValue( [
-			false,
-			{ variationName: WELCOME_BACK_VARIATIONS.AI_ONLY } as any,
-		] );
+		mockUseExperiment.mockReturnValue( [ false, null ] );
 
 		const initialState = createState( { lastSeenOffsetDays: 400 } );
 
 		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
 			initialState,
+			reducers,
 		} );
 
-		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATIONS.AI_ONLY );
+		expect( result.current.variationName ).toBeNull();
 		expect( result.current.isEligible ).toBe( false );
 	} );
 
@@ -170,6 +173,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 
 		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
 			initialState,
+			reducers,
 		} );
 
 		expect( result.current.isEligible ).toBe( true );

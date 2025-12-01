@@ -78,7 +78,8 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 			isEligible: baseEligibility,
 		}
 	);
-	const variationName = experimentAssignment?.variationName as WelcomeBackVariation | null;
+	const variationName = ( experimentAssignment?.variationName ??
+		null ) as WelcomeBackVariation | null;
 
 	const forcedVariation =
 		( Object.keys( WELCOME_BACK_VARIATION_FLAG_MAP ) as WelcomeBackVariation[] ).find(
