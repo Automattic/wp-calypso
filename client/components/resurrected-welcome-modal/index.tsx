@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, Modal } from '@wordpress/components';
+import { Button, Icon, Modal } from '@wordpress/components';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import { close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useResurrectedFreeUserEligibility } from 'calypso/lib/resurrected-users';
@@ -34,11 +35,9 @@ const CTA_TARGETS = {
 
 const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig > > = {
 	[ WELCOME_BACK_VARIATIONS.AI_ONLY ]: {
-		getTitle: ( translate ) => translate( 'Rebuild with AI' ),
+		getTitle: ( translate ) => translate( 'Try our new AI website builder' ),
 		getDescription: ( translate ) =>
-			translate(
-				"Our AI builder can create a modern site in minutes. It's the quickest way to start fresh."
-			),
+			translate( 'Create a fully designed, content-ready WordPress website in no time.' ),
 		ctas: [
 			{
 				id: 'ai-only',
@@ -48,10 +47,10 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 		],
 	},
 	[ WELCOME_BACK_VARIATIONS.MANUAL ]: {
-		getTitle: ( translate ) => translate( 'Start over or pick up where you left off' ),
+		getTitle: ( translate ) => translate( 'Welcome back!' ),
 		getDescription: ( translate ) =>
 			translate(
-				'Create a brand-new site with guided onboarding or head back to your existing dashboard.'
+				'Ready to explore our latest upgrades? All paid plans now include access to new themes and plugins. Pick up where you left off or start fresh with our latest tools.'
 			),
 		ctas: [
 			{
@@ -67,10 +66,10 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 		],
 	},
 	[ WELCOME_BACK_VARIATIONS.AI_ONBOARDING ]: {
-		getTitle: ( translate ) => translate( 'Two quick ways to get going' ),
+		getTitle: ( translate ) => translate( 'Welcome back!' ),
 		getDescription: ( translate ) =>
 			translate(
-				'Use AI for a head start or continue editing your existing site—whatever suits you best.'
+				'Ready to explore our latest upgrades? Check our AI website builder, new themes and plugins. Pick up where you left off or start fresh with our latest tools.'
 			),
 		ctas: [
 			{
@@ -86,10 +85,10 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 		],
 	},
 	[ WELCOME_BACK_VARIATIONS.ALL_OPTIONS ]: {
-		getTitle: ( translate ) => translate( 'Pick the path that fits' ),
+		getTitle: ( translate ) => translate( 'Welcome back!' ),
 		getDescription: ( translate ) =>
 			translate(
-				'Start from scratch manually, let AI handle the heavy lifting, or keep working on your current site.'
+				'Ready to explore our latest upgrades? Check our AI website builder, new themes and plugins. Pick up where you left off or start fresh with our latest tools.'
 			),
 		ctas: [
 			{
@@ -134,6 +133,9 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 		() => ( variationName ? VARIATION_CONTENT[ variationName ] : undefined ),
 		[ variationName ]
 	);
+	const variationClassName = variationName
+		? `resurrected-welcome-modal--${ variationName.replace( /_/g, '-' ) }`
+		: null;
 
 	const shouldDisplay =
 		! eligibility.isLoading &&
@@ -200,25 +202,42 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 
 	return (
 		<Modal
-			className="resurrected-welcome-modal"
+			className={ clsx( 'resurrected-welcome-modal', variationClassName ) }
 			title={ title }
 			onRequestClose={ () => persistDismissal( 'close' ) }
 		>
-			<p>{ description }</p>
-			<div className="resurrected-welcome-modal__actions">
-				{ variationConfig.ctas.map( ( cta ) => (
-					<Button
-						key={ cta.id }
-						variant={ cta.isDismissOnly ? undefined : 'primary' }
-						onClick={ () => handleCta( cta ) }
-						href={ cta.isDismissOnly ? undefined : cta.href }
-						className={ clsx( {
-							'resurrected-welcome-modal__cta-secondary': cta.isDismissOnly,
-						} ) }
+			<div className="resurrected-welcome-modal__frame">
+				<div className="resurrected-welcome-modal__hero">
+					<button
+						type="button"
+						className="resurrected-welcome-modal__close"
+						onClick={ persistDismissal }
+						aria-label={ translate( 'Close welcome back modal' ) }
 					>
-						{ cta.getLabel( translate ) }
-					</Button>
-				) ) }
+						<Icon icon={ close } size={ 20 } />
+					</button>
+				</div>
+
+				<div className="resurrected-welcome-modal__content">
+					<h1 className="resurrected-welcome-modal__title">{ title }</h1>
+					<p className="resurrected-welcome-modal__description">{ description }</p>
+
+					<div className="resurrected-welcome-modal__actions">
+						{ variationConfig.ctas.map( ( cta ) => (
+							<Button
+								key={ cta.id }
+								variant={ cta.isDismissOnly ? undefined : 'primary' }
+								onClick={ () => handleCta( cta ) }
+								href={ cta.isDismissOnly ? undefined : cta.href }
+								className={ clsx( 'resurrected-welcome-modal__cta', {
+									'resurrected-welcome-modal__cta-secondary': cta.isDismissOnly,
+								} ) }
+							>
+								{ cta.getLabel( translate ) }
+							</Button>
+						) ) }
+					</div>
+				</div>
 			</div>
 		</Modal>
 	);
