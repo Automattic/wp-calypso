@@ -73,4 +73,5 @@ export const deleteAction: Action< PluginListRow > = {
 			/>
 		);
 	},
+	supportsBulk: true,
 };
