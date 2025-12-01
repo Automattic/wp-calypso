@@ -333,7 +333,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
-				page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
+				const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+					this.props.siteSlug,
+					this.props.purchaseId
+				);
+				const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
+				page.redirect( managePurchaseUrl ?? backupRedirect );
 			} else {
 				this.props.errorNotice( result.error );
 			}
