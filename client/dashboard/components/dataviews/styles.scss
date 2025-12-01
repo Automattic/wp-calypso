@@ -54,6 +54,8 @@ a.dataviews-url-field {
 .dataviews-view-table tr th:first-child,
 .dataviews-view-list div[role="row"] .dataviews-view-list__item-wrapper,
 .dataviews-view-list div[role="article"] .dataviews-view-list__item-wrapper {
+
+	// Matches medium breakpoint from Core.
 	@media ( max-width: 782px ) {
 		padding-inline: #{$grid-unit-20} !important;
 	}
