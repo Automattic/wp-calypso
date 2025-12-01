@@ -31,6 +31,18 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 }
 
 .promote-post-i2__table {
+	display: block;
+
+	@media (max-width: 1054px) {
+		&.campaigns-list__table {
+			tbody,
+			.post-item__row {
+				width: 100%;
+				display: block;
+			}
+		}
+	}
+
 	th {
 		@include promote-post-i2-font;
 		padding-bottom: 8px;

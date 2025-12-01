@@ -43,10 +43,8 @@ import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
-import BlazePluginBanner from './components/blaze-plugin-banner';
 import CampaignsTotalStats from './components/campaigns-total-stats';
 import MainWrapper from './components/main-wrapper';
-import PostsListBanner from './components/posts-list-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 
@@ -154,7 +152,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		has_more_pages: campaignsHasMorePages,
 		items: pagedCampaigns,
 		campaigns_stats: campaignsStats,
-		tsp_eligible: campaignsTspEligible,
 	} = getPagedBlazeSearchData( 'campaigns', campaignsData );
 
 	const { total_items: totalCampaignsUnfiltered } = getPagedBlazeSearchData(
@@ -186,7 +183,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		has_more_pages: postsHasMorePages,
 		items: posts,
 		warnings: postsWarnings,
-		tsp_eligible: postsTspEligible,
 	} = getPagedBlazeSearchData( 'posts', postsData );
 
 	const tabs: TabOption[] = [
@@ -214,12 +210,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		} );
 	}
 
-	const showTspBanner = // TSP Banner has a higher priority than the regular banner
-		( ! campaignsIsLoading && campaignsTspEligible ) || ( ! postsIsLoading && postsTspEligible );
-
-	const showRegularBanner =
-		! showTspBanner && ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
-
 	if ( selectedSite?.is_coming_soon || selectedSite?.is_private ) {
 		return (
 			<EmptyContent
@@ -242,8 +232,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 			/>
 		);
 	}
-
-	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 
 	const renderWarningNotices = ( warnings?: PromotePostWarning[] ) => {
 		const content = [];
@@ -302,9 +290,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 					</div>
 				</div>
 			</div>
-
-			{ /* Banners */ }
-			{ showRegularBanner && ( isBlazePlugin ? <BlazePluginBanner /> : <PostsListBanner /> ) }
 
 			{
 				// TODO: Uncomment when DebtNotifier is implemented

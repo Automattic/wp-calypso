@@ -188,28 +188,20 @@ $break-medium-expanded-menu: $break-medium + 272px;
 // Specific Woo Blaze styles
 .woo-blaze-dashboard {
 	.promote-post-i2 {
+
+		a:focus {
+			box-shadow: none;
+		}
+
 		// Header
 		.promote-post-i2__top-bar {
 			height: 40px;
 			display: flex;
 			align-items: center;
-			margin-bottom: 16px;
 
 			.promote-post-i2__top-bar-buttons {
-				height: 36px;
-
-				.inline-support-link {
-					padding: 6px 12px;
-					line-height: 1;
-					color: var(--color-neutral-70);
-				}
-
 				button {
-					line-height: 1;
-
-					&.posts-list-banner__border-button {
-						color: var(--color-neutral-70);
-					}
+					line-height: rem(22px);
 				}
 			}
 		}
