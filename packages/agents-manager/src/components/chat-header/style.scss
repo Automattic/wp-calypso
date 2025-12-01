@@ -1,5 +1,3 @@
-@import '@wordpress/base-styles/colors';
-
 .agents-manager-chat-header {
 	width: 100%;
 	display: flex;
@@ -15,7 +13,7 @@
 	&__title {
 		font-size: 14px;
 		font-weight: 600;
-		color: var( --color-foreground, #1f1f1f );
+		color: #1f1f1f;
 		flex-grow: 1;
 	}
 
@@ -29,7 +27,7 @@
 	&__history-btn,
 	&__close-btn {
 		svg {
-			fill: var( --color-foreground, #1f1f1f );
+			fill: #1f1f1f;
 		}
 	}
 }
