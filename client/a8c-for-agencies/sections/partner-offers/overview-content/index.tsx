@@ -47,7 +47,14 @@ function PartnerOfferCard( { item }: { item: PartnerOffer } ) {
 					</VStack>
 				</VStack>
 				{ item.cta && (
-					<ButtonStack style={ { marginTop: '24px', alignSelf: 'flex-start' } }>
+					<ButtonStack
+						style={ {
+							marginTop: '24px',
+							alignSelf: 'flex-start',
+							justifyContent: 'flex-start',
+							gap: '16px',
+						} }
+					>
 						<Button variant="secondary" href={ item.cta.url }>
 							{ item.cta.label }
 						</Button>

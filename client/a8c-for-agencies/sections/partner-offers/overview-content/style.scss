@@ -2,8 +2,12 @@
 
 .partner-offers-cards {
 	display: grid;
-	grid-template-columns: repeat( auto-fill, minmax( 260px, 1fr ) );
+	grid-template-columns: repeat( auto-fill, minmax( 250px, 1fr ) );
 	gap: 32px;
+
+	@include break-large {
+		grid-template-columns: repeat( auto-fill, minmax( 270px, 1fr ) );
+	}
 }
 
 .partner-offers-filters {
