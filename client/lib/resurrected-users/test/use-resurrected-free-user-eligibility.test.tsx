@@ -120,6 +120,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 
 		expect( result.current.hasActivePaidSubscription ).toBe( true );
 		expect( result.current.isEligible ).toBe( false );
+		expect( result.current.isForcedVariation ).toBe( false );
 		expect( mockUseExperiment ).toHaveBeenCalledWith(
 			'calypso_resurrected_users_welcome_back_modal_202511',
 			expect.objectContaining( { isEligible: false } )
@@ -147,6 +148,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		expect( result.current.isEligible ).toBe( true );
 		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATIONS.AI_ONLY );
 		expect( result.current.isLoading ).toBe( false );
+		expect( result.current.isForcedVariation ).toBe( false );
 	} );
 
 	it( 'remains ineligible when the experiment does not return a variation', () => {
@@ -163,6 +165,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 
 		expect( result.current.variationName ).toBeNull();
 		expect( result.current.isEligible ).toBe( false );
+		expect( result.current.isForcedVariation ).toBe( false );
 	} );
 
 	it( 'forces eligibility when a variation flag is enabled', () => {
@@ -182,5 +185,6 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		expect( result.current.isEligible ).toBe( true );
 		expect( result.current.isLoading ).toBe( false );
 		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATIONS.AI_ONLY );
+		expect( result.current.isForcedVariation ).toBe( true );
 	} );
 } );

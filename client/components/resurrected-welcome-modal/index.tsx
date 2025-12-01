@@ -142,7 +142,9 @@ type Props = {
 export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) => {
 	const translate = useTranslate();
 	const eligibility = useResurrectedFreeUserEligibility();
-	const [ hasDismissedForSession, setHasDismissedForSession ] = useState( getInitialDismissState );
+	const [ hasDismissedForSession, setHasDismissedForSession ] = useState( () =>
+		eligibility.isForcedVariation ? false : getInitialDismissState()
+	);
 	const [ hasTrackedImpression, setHasTrackedImpression ] = useState( false );
 
 	const variationName = eligibility.variationName as WelcomeBackVariation | null;
@@ -163,6 +165,12 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 		variationName !== WELCOME_BACK_VARIATIONS.CONTROL;
 
 	useEffect( () => {
+		if ( eligibility.isForcedVariation ) {
+			setHasDismissedForSession( false );
+		}
+	}, [ eligibility.isForcedVariation ] );
+
+	useEffect( () => {
 		if ( ! shouldDisplay || hasTrackedImpression || ! variationName ) {
 			return;
 		}
@@ -176,7 +184,7 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 	const persistDismissal = useCallback(
 		( source: 'cta' | 'close' = 'cta' ) => {
 			setHasDismissedForSession( true );
-			if ( typeof window !== 'undefined' ) {
+			if ( typeof window !== 'undefined' && ! eligibility.isForcedVariation ) {
 				window.sessionStorage.setItem( SESSION_STORAGE_KEY, 'true' );
 			}
 			recordTracksEvent( 'calypso_resurrected_welcome_modal_dismiss', {
@@ -184,7 +192,7 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 				source,
 			} );
 		},
-		[ variationName ]
+		[ variationName, eligibility.isForcedVariation ]
 	);
 
 	const handleCta = useCallback(
