@@ -250,15 +250,15 @@ body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
 	}
 }
 
-// Remove layout padding for logged-out full-width layout
-body .is-section-plugins:not(.is-logged-in):has(.plugins-browser.is-full-width-layout) {
+// Remove layout padding for logged-out full-width layout (covers both actually logged out and logged-in showing logged-out UI)
+body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out) {
 	.layout__content {
 		padding: 0;
 	}
 }
 
 body.is-section-plugins .is-logged-in {
-	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column).plugins-browser.is-full-width-layout";
+	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column):not(.is-logged-out).plugins-browser.is-full-width-layout";
 
 	#{$full-width-main} {
 		.plugins-browser__content-wrapper {
