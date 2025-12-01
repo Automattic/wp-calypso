@@ -12,6 +12,8 @@ import {
 	GROUP_P2,
 	GROUP_WPCOM,
 	PLAN_100_YEARS,
+	PLAN_A4A_BUSINESS,
+	PLAN_A4A_BUSINESS_MONTHLY,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_BUSINESS,
@@ -857,6 +859,7 @@ describe( 'findSimilarPlansKeys', () => {
 		] );
 		expect( findSimilarPlansKeys( PLAN_BUSINESS_2_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_BUSINESS,
+			PLAN_A4A_BUSINESS,
 		] );
 
 		expect( findSimilarPlansKeys( PLAN_PREMIUM_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
@@ -876,6 +879,7 @@ describe( 'findSimilarPlansKeys', () => {
 		] );
 		expect( findSimilarPlansKeys( PLAN_BUSINESS_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_BUSINESS,
+			PLAN_A4A_BUSINESS,
 		] );
 
 		expect( findSimilarPlansKeys( PLAN_JETPACK_PERSONAL, { term: TERM_MONTHLY } ) ).toEqual( [
@@ -912,21 +916,21 @@ describe( 'findSimilarPlansKeys', () => {
 	test( 'should return a proper similar plan - by type and group - wp.com', () => {
 		expect(
 			findSimilarPlansKeys( PLAN_BLOGGER, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
-		).toEqual( [ PLAN_BUSINESS ] );
+		).toEqual( [ PLAN_BUSINESS, PLAN_A4A_BUSINESS ] );
 		expect(
 			findSimilarPlansKeys( PLAN_BLOGGER, { type: TYPE_PREMIUM, group: GROUP_WPCOM } )
 		).toEqual( [ PLAN_PREMIUM ] );
 
 		expect(
 			findSimilarPlansKeys( PLAN_PERSONAL, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
-		).toEqual( [ PLAN_BUSINESS ] );
+		).toEqual( [ PLAN_BUSINESS, PLAN_A4A_BUSINESS ] );
 		expect(
 			findSimilarPlansKeys( PLAN_PERSONAL, { type: TYPE_PREMIUM, group: GROUP_WPCOM } )
 		).toEqual( [ PLAN_PREMIUM ] );
 
 		expect(
 			findSimilarPlansKeys( PLAN_PREMIUM, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
-		).toEqual( [ PLAN_BUSINESS ] );
+		).toEqual( [ PLAN_BUSINESS, PLAN_A4A_BUSINESS ] );
 		expect(
 			findSimilarPlansKeys( PLAN_PREMIUM, { type: TYPE_PERSONAL, group: GROUP_WPCOM } )
 		).toEqual( [ PLAN_PERSONAL ] );
@@ -1028,14 +1032,14 @@ describe( 'findSimilarPlansKeys', () => {
 	test( 'should return a proper similar plan - by type and group - wp.com / jetpack', () => {
 		expect(
 			findSimilarPlansKeys( PLAN_JETPACK_PERSONAL, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
-		).toEqual( [ PLAN_BUSINESS ] );
+		).toEqual( [ PLAN_BUSINESS, PLAN_A4A_BUSINESS ] );
 		expect(
 			findSimilarPlansKeys( PLAN_JETPACK_PERSONAL, { type: TYPE_PREMIUM, group: GROUP_WPCOM } )
 		).toEqual( [ PLAN_PREMIUM ] );
 
 		expect(
 			findSimilarPlansKeys( PLAN_JETPACK_PREMIUM, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
-		).toEqual( [ PLAN_BUSINESS ] );
+		).toEqual( [ PLAN_BUSINESS, PLAN_A4A_BUSINESS ] );
 		expect(
 			findSimilarPlansKeys( PLAN_JETPACK_PREMIUM, { type: TYPE_PERSONAL, group: GROUP_WPCOM } )
 		).toEqual( [ PLAN_PERSONAL ] );
@@ -1054,6 +1058,7 @@ describe( 'findSimilarPlansKeys', () => {
 			} )
 		).toEqual( [
 			PLAN_BUSINESS_MONTHLY,
+			PLAN_A4A_BUSINESS_MONTHLY,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 			PLAN_HOSTING_TRIAL_MONTHLY,
 		] );
@@ -1090,6 +1095,7 @@ describe( 'findPlansKeys', () => {
 		] );
 		expect( findPlansKeys( { term: TERM_ANNUALLY } ).sort() ).toEqual(
 			[
+				PLAN_A4A_BUSINESS,
 				PLAN_BLOGGER,
 				PLAN_BUSINESS,
 				PLAN_ECOMMERCE,
@@ -1123,6 +1129,7 @@ describe( 'findPlansKeys', () => {
 		);
 
 		const termMonthlyPaid = [
+			PLAN_A4A_BUSINESS_MONTHLY,
 			PLAN_BUSINESS_MONTHLY,
 			PLAN_ECOMMERCE_MONTHLY,
 			PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -1189,6 +1196,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_BUSINESS_3_YEARS,
+			PLAN_A4A_BUSINESS,
+			PLAN_A4A_BUSINESS_MONTHLY,
 			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
@@ -1202,6 +1211,8 @@ describe( 'findPlansKeys', () => {
 		expect( findPlansKeys( { group: GROUP_WPCOM } ).sort() ).toEqual(
 			[
 				PLAN_100_YEARS,
+				PLAN_A4A_BUSINESS,
+				PLAN_A4A_BUSINESS_MONTHLY,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_BUSINESS,
@@ -1294,6 +1305,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_BUSINESS_3_YEARS,
+			PLAN_A4A_BUSINESS,
+			PLAN_A4A_BUSINESS_MONTHLY,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 			PLAN_HOSTING_TRIAL_MONTHLY,
 		] );
