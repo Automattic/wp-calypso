@@ -8,7 +8,7 @@
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"site_name": "Hosting Dashboard",
 	"features": {
-		"dashboard": false,
+		"dashboard": true,
 		"dashboard/v2": false,
 		"cookie-banner": false
 	},

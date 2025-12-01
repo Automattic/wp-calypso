@@ -1,24 +1,18 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-.action-list {
-	.action-list__heading {
+.icon-list {
+	.icon-list__heading {
 		padding-top: $grid-unit-10;
 		padding-bottom: $grid-unit-15;
 	}
 
-	.action-list__heading ~ .action-list__actions {
+	.icon-list__heading ~ .icon-list__items {
 		margin: -$grid-unit-10 0;
 	}
 
-	.action-list__actions {
+	.icon-list__items {
 		margin: -$grid-unit-20 0;
 	}
-	.action-item {
-		border-bottom: 1px solid $gray-100;
-		&:last-child {
-			border-bottom: none;
-		}
-	}
-
 }
+

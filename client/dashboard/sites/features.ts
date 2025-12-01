@@ -6,7 +6,7 @@ import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
 import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
-	if ( site.is_deleted || ! site.capabilities.manage_options ) {
+	if ( site.is_deleted || ! site.capabilities?.manage_options ) {
 		return false;
 	}
 
