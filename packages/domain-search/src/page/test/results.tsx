@@ -552,6 +552,94 @@ describe( 'ResultsPage', () => {
 		} );
 	} );
 
+	describe( 'suggestion badges', () => {
+		it( 'shows premium badge in featured card if FQDN is premium', async () => {
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-premium.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-premium.com',
+					status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+					is_supported_premium_domain: true,
+				} ),
+			} );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-premium.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'test.net' } ) ],
+			} );
+
+			render(
+				<TestDomainSearch query="test-premium.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			const featuredCard = await screen.findByTitle( 'test-premium.com' );
+
+			expect( featuredCard ).toBeInTheDocument();
+			expect( featuredCard ).toHaveTextContent( "It's available!" );
+			expect( featuredCard ).toHaveTextContent( 'Premium' );
+		} );
+
+		it( 'shows sale badge in featured card if FQDN is on sale', async () => {
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-sale.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-sale.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+					sale_cost: 10,
+				} ),
+			} );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-sale.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'test.net' } ) ],
+			} );
+
+			render(
+				<TestDomainSearch query="test-sale.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			const featuredCard = await screen.findByTitle( 'test-sale.com' );
+
+			expect( featuredCard ).toBeInTheDocument();
+			expect( featuredCard ).toHaveTextContent( "It's available!" );
+			expect( featuredCard ).toHaveTextContent( 'Sale' );
+		} );
+
+		it( 'shows both premium and sale badges in featured card if FQDN is premium and on sale', async () => {
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-premium-sale.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-premium-sale.com',
+					status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+					is_supported_premium_domain: true,
+					sale_cost: 10,
+				} ),
+			} );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-premium-sale.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'test.net' } ) ],
+			} );
+
+			render(
+				<TestDomainSearch query="test-premium-sale.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			const featuredCard = await screen.findByTitle( 'test-premium-sale.com' );
+
+			expect( featuredCard ).toBeInTheDocument();
+			expect( featuredCard ).toHaveTextContent( "It's available!" );
+			expect( featuredCard ).toHaveTextContent( 'Premium' );
+			expect( featuredCard ).toHaveTextContent( 'Sale' );
+		} );
+	} );
+
 	it( 'renders the BeforeResults slot if passed', () => {
 		render(
 			<TestDomainSearch slots={ { BeforeResults: () => <div>Before Results</div> } }>
