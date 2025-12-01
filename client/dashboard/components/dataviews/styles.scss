@@ -44,19 +44,17 @@ a.dataviews-url-field {
 }
 
 // Temporary overrides for the dataviews wrapper to match the new design system.
-.dataviews-filters__container,
-.dataviews-footer,
-.dataviews-view-grid,
-.dataviews-loading,
-.dataviews-no-results,
-.dataviews__view-actions,
-.dataviews-view-table tr td:first-child,
-.dataviews-view-table tr th:first-child,
-.dataviews-view-list div[role="row"] .dataviews-view-list__item-wrapper,
-.dataviews-view-list div[role="article"] .dataviews-view-list__item-wrapper {
-
-	// Matches medium breakpoint from Core.
-	@media ( max-width: 782px ) {
+@media ( max-width: 782px ) { // Matches medium breakpoint from Core.
+	.dataviews-filters__container,
+	.dataviews-footer,
+	.dataviews-view-grid,
+	.dataviews-loading,
+	.dataviews-no-results,
+	.dataviews__view-actions,
+	.dataviews-view-table tr td:first-child,
+	.dataviews-view-table tr th:first-child,
+	.dataviews-view-list div[role="row"] .dataviews-view-list__item-wrapper,
+	.dataviews-view-list div[role="article"] .dataviews-view-list__item-wrapper {
 		padding-inline: #{$grid-unit-20} !important;
 	}
 }
