@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { BigSkyLogo } from '@automattic/components';
 import { Button, Icon, Modal } from '@wordpress/components';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { close } from '@wordpress/icons';
@@ -15,11 +16,16 @@ const SESSION_STORAGE_KEY = 'wpcom_resurrected_welcome_modal_dismissed';
 
 type TranslateFn = ReturnType< typeof useTranslate >;
 
+type CtaVariant = 'primary' | 'secondary' | 'tertiary';
+type CtaIcon = 'big-sky';
+
 type CtaConfig = {
 	id: string;
 	getLabel: ( translate: TranslateFn ) => string;
 	href?: string;
 	isDismissOnly?: boolean;
+	variant?: CtaVariant;
+	icon?: CtaIcon;
 };
 
 type VariationConfig = {
@@ -43,6 +49,8 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 				id: 'ai-only',
 				getLabel: ( translate ) => translate( 'Create a new site with AI' ),
 				href: CTA_TARGETS.AI,
+				variant: 'primary',
+				icon: 'big-sky',
 			},
 		],
 	},
@@ -57,11 +65,13 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 				id: 'manual-new',
 				getLabel: ( translate ) => translate( 'Create a new site' ),
 				href: CTA_TARGETS.MANUAL,
+				variant: 'primary',
 			},
 			{
 				id: 'manual-continue',
-				getLabel: ( translate ) => translate( 'Continue where I left' ),
+				getLabel: ( translate ) => translate( 'Continue where I left off' ),
 				isDismissOnly: true,
+				variant: 'tertiary',
 			},
 		],
 	},
@@ -76,11 +86,14 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 				id: 'ai-builder',
 				getLabel: ( translate ) => translate( 'Create a new site with AI' ),
 				href: CTA_TARGETS.AI,
+				variant: 'primary',
+				icon: 'big-sky',
 			},
 			{
 				id: 'ai-continue',
-				getLabel: ( translate ) => translate( 'Continue where I left' ),
+				getLabel: ( translate ) => translate( 'Continue where I left off' ),
 				isDismissOnly: true,
+				variant: 'tertiary',
 			},
 		],
 	},
@@ -92,19 +105,23 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 			),
 		ctas: [
 			{
-				id: 'all-manual',
-				getLabel: ( translate ) => translate( 'Create a new site' ),
-				href: CTA_TARGETS.MANUAL,
-			},
-			{
 				id: 'all-ai',
 				getLabel: ( translate ) => translate( 'Create a new site with AI' ),
 				href: CTA_TARGETS.AI,
+				icon: 'big-sky',
+				variant: 'primary',
+			},
+			{
+				id: 'all-manual',
+				getLabel: ( translate ) => translate( 'Start with a blank site' ),
+				href: CTA_TARGETS.MANUAL,
+				variant: 'secondary',
 			},
 			{
 				id: 'all-continue',
-				getLabel: ( translate ) => translate( 'Continue where I left' ),
+				getLabel: ( translate ) => translate( 'Continue where I left off' ),
 				isDismissOnly: true,
+				variant: 'tertiary',
 			},
 		],
 	},
@@ -223,19 +240,37 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 					<p className="resurrected-welcome-modal__description">{ description }</p>
 
 					<div className="resurrected-welcome-modal__actions">
-						{ variationConfig.ctas.map( ( cta ) => (
-							<Button
-								key={ cta.id }
-								variant={ cta.isDismissOnly ? undefined : 'primary' }
-								onClick={ () => handleCta( cta ) }
-								href={ cta.isDismissOnly ? undefined : cta.href }
-								className={ clsx( 'resurrected-welcome-modal__cta', {
-									'resurrected-welcome-modal__cta-secondary': cta.isDismissOnly,
-								} ) }
-							>
-								{ cta.getLabel( translate ) }
-							</Button>
-						) ) }
+						{ variationConfig.ctas.map( ( cta ) => {
+							const variant = cta.variant ?? 'primary';
+							const icon =
+								cta.icon === 'big-sky' ? (
+									<span
+										key="icon"
+										className="resurrected-welcome-modal__cta-icon"
+										aria-hidden="true"
+									>
+										<BigSkyLogo.CentralLogo size={ 18 } fill="currentColor" />
+									</span>
+								) : null;
+
+							return (
+								<Button
+									key={ cta.id }
+									variant={ variant }
+									onClick={ () => handleCta( cta ) }
+									href={ cta.isDismissOnly ? undefined : cta.href }
+									className={ clsx(
+										'resurrected-welcome-modal__cta',
+										`resurrected-welcome-modal__cta--${ variant }`
+									) }
+								>
+									<span className="resurrected-welcome-modal__cta-label">
+										{ icon }
+										{ cta.getLabel( translate ) }
+									</span>
+								</Button>
+							);
+						} ) }
 					</div>
 				</div>
 			</div>

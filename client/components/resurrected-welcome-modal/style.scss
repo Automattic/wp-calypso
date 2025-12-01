@@ -89,10 +89,14 @@
 	justify-content: center;
 }
 
-.resurrected-welcome-modal__cta-secondary {
-	background: transparent;
-	border: 1px solid var( --color-border );
-	color: inherit;
+.resurrected-welcome-modal__cta-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.resurrected-welcome-modal__cta-icon {
+	display: inline-flex;
 }
 
 .resurrected-welcome-modal--treatment-ai-only .resurrected-welcome-modal__hero {
