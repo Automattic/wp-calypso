@@ -18,7 +18,7 @@ const StyledSearchControl = styled( SearchControl )`
 	.full-width-section & {
 		input[type='search'],
 		input[type='search']::placeholder {
-			font-size: 16px !important;
+			font-size: 16px;
 			color: var( --studio-gray-90 );
 		}
 	}
