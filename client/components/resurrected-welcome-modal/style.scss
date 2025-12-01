@@ -2,7 +2,28 @@
 
 .resurrected-welcome-modal.components-modal__frame {
 	width: 400px;
-	max-width: 100%;
+	max-width: min( 400px, calc( 100vw - 32px ) );
+	margin-inline: auto;
+	align-self: center;
+	height: auto;
+	max-height: calc( 100vh - 32px );
+}
+
+.resurrected-welcome-modal__overlay.components-modal__screen-overlay {
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+
+@media (max-width: 480px) {
+	.resurrected-welcome-modal.components-modal__frame {
+		width: 100%;
+		max-width: calc( 100vw - 16px );
+	}
+
+	.resurrected-welcome-modal__overlay.components-modal__screen-overlay {
+		padding: 12px;
+	}
 }
 
 .resurrected-welcome-modal .components-modal__content {

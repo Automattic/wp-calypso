@@ -220,6 +220,7 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 	return (
 		<Modal
 			className={ clsx( 'resurrected-welcome-modal', variationClassName ) }
+			overlayClassName="resurrected-welcome-modal__overlay"
 			title={ title }
 			onRequestClose={ () => persistDismissal( 'close' ) }
 		>
