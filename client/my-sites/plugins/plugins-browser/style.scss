@@ -103,15 +103,37 @@ body.is-section-plugins #primary .main.is-logged-out {
 			&:not([class*="is-pressed"]):hover::before {
 				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
+
+
 		}
 	}
+	.full-width-section .components-button {
+		height: 44px;
+		border-radius: 4px;
+		padding: 16px;
 
-	.responsive-toolbar-group__button-item.is-pressed::before {
+		&:not([class*="is-pressed"]) {
+			color: var(--studio-gray-100);
+		}
+
+		&::before {
+			height: 44px;
+			background-color: var( --studio-gray-0 );
+		}
+
+		&:not([class*="is-pressed"]):hover::before {
+			background-color: var( --studio-gray-5 );
+		}
+
+	}
+
+	.components-button.is-pressed::before {
 		background: var(--studio-blue-50);
 		left: 0;
 		right: 0;
 	}
 }
+
 // Jetpack injects a banner on the /plugins page for jetpack sites
 .is-section-plugins .layout__content > .banner {
 	// This moves it down out from under our sticky header
@@ -122,16 +144,83 @@ body.is-section-plugins #primary .main.is-logged-out {
 		padding-top: 0;
 	}
 }
+.full-width-section {
+	.plugins-results-header__action {
+		font-size: $font-body-small;
+	}
+}
+.plugins-browser__marketplace-footer {
+	--scss-font-title-large: 2.5rem;
+	--scss-font-body: 1.375rem;
 
+	.section-header-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		max-width: none;
+
+		.section-header-container__header {
+			max-width: 575px;
+		}
+		.section-header-container__subheader {
+			flex-shrink: 0;
+		}
+
+		@media screen and ( max-width: 600px ) {
+			flex-direction: column;
+			align-items: flex-start;
+
+			.marketplace-cta {
+				margin-inline: 0;
+			}
+		}
+	}
+	.feature-item-container__header {
+		font-weight: 400;
+	}
+}
 .full-width-section.plugins-browser__search-header {
 	padding-top: 100px;
 	padding-bottom: 32px;
-}
-.plugins-browser__search-header,
-.plugins-discovery-page__favorites,
-.plugins-discovery-page__do-more,
-.plugins-discovery-page__power-store {
-	background-color: var(--studio-gray-0);
+	position: relative;
+	overflow: hidden;
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 50%;
+		width: 50%;
+		min-width: 848px;
+		height: 100%;
+		background-image: url(/calypso/images/plugins/plugins_hero_2.svg);
+		background-position: right bottom;
+		background-repeat: no-repeat;
+		pointer-events: none;
+
+		@media screen and ( max-width: 600px ) {
+			background-image: url( /calypso/images/plugins/plugins_hero_2_m.svg );
+			left: 0;
+			min-width: 0;
+			width: 100%;
+		}
+	}
+
+	.full-width-section__content {
+		position: relative;
+	}
+
+	body.is-section-plugins #primary & .search-box-header::before {
+		display: none;
+	}
+	@media screen and ( max-width: 600px ) {
+		padding-top: 30px;
+		padding-bottom: 0;
+
+		.search-box-header__sticky-ref {
+			padding-bottom: 30px;
+		}
+	}
 }
 
 .plugins-browser__categories {
@@ -143,9 +232,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 	background-color: var(--studio-white);
 }
 
-body .is-section-plugins .layout__content:has(.plugins-browser.is-full-width-layout) {
-	padding: 0;
-
+body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
 	.plugins-browser__content-wrapper {
 		background-color: var(--studio-white);
 	}
@@ -153,55 +240,38 @@ body .is-section-plugins .layout__content:has(.plugins-browser.is-full-width-lay
 	.full-width-section__content {
 		max-width: 1040px;
 		padding-inline: 24px;
-		box-sizing: border-box;
 		@media screen and ( max-width: 600px ) {
 			padding-inline: 16px;
 		}
 	}
+	.lpc-header-nav-wrapper .masterbar {
+		background: var(--studio-gray-0);
+		border-bottom: 1px solid var(--studio-gray-0);
+	}
+}
+
+// Remove layout padding for logged-out full-width layout (covers both actually logged out and logged-in showing logged-out UI)
+body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out) {
+	.layout__content {
+		padding: 0;
+	}
 }
 
 body.is-section-plugins .is-logged-in {
-	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column).plugins-browser.is-full-width-layout";
+	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column):not(.is-logged-out).plugins-browser.is-full-width-layout";
 
 	#{$full-width-main} {
 		.plugins-browser__content-wrapper {
 			padding: 0;
 			max-width: 100%;
 		}
-	}
-	@media screen and ( max-width: 601px ) {
-		&:not( .has-no-sidebar ) #{$full-width-main} {
-			.plugins-navigation-header.navigation-header {
-				padding-inline: 0;
-			}
-		}
-	}
 
-	@media screen and ( min-width: 601px ) {
-		&:not( .has-no-sidebar ) #{$full-width-main} {
-			.navigation-header__container {
-				padding: 47px 0 0;
-			}
-			.full-width-section {
-				padding-inline: 2rem;
-			}
+		.full-width-section__content {
+			max-width: 100%;
 		}
-	}
-	@media screen and ( min-width: 782px ) {
-		&:not( .has-no-sidebar ) #{$full-width-main} {
-			.full-width-section {
-				padding-inline-start: calc( var( --sidebar-width-max ) + 1px );
-				padding-inline-end: 0;
-			}
-			.plugins-navigation-header.navigation-header {
-				padding-inline: 0;
-			}
-			.plugins-browser__navigation-header {
-				border-block-end: 1px solid var( --color-neutral-5 );
-				.plugins-navigation-header.navigation-header {
-					border-block-end: none;
-				}
-			}
+
+		.navigation-header__container {
+			max-width: 100%;
 		}
 	}
 }

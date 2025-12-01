@@ -1,13 +1,13 @@
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { Children, forwardRef } from 'react';
 import { Card, CardBody } from '../card';
-import ActionItem from './action-item';
-import type { ActionListProps } from './types';
+import IconListItem from './icon-list-item';
+import type { IconListProps } from './types';
 
 import './style.scss';
 
-function UnforwardedActionList(
-	{ title, description, children }: ActionListProps,
+function UnforwardedIconList(
+	{ title, description, children }: IconListProps,
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	// Hide component if there are no children
@@ -16,10 +16,10 @@ function UnforwardedActionList(
 	}
 
 	return (
-		<Card className="action-list" ref={ ref }>
+		<Card className="icon-list" ref={ ref }>
 			<CardBody>
 				{ ( title || description ) && (
-					<VStack className="action-list__heading" spacing={ 2 }>
+					<VStack className="icon-list__heading" spacing={ 2 }>
 						{ title && (
 							<Text size="15px" weight={ 500 } lineHeight="20px">
 								{ title }
@@ -32,7 +32,7 @@ function UnforwardedActionList(
 						) }
 					</VStack>
 				) }
-				<VStack className="action-list__actions" spacing={ 0 }>
+				<VStack className="icon-list__items" spacing={ 0 }>
 					{ children }
 				</VStack>
 			</CardBody>
@@ -40,13 +40,13 @@ function UnforwardedActionList(
 	);
 }
 
-export const ActionList = Object.assign( forwardRef( UnforwardedActionList ), {
+export const IconList = Object.assign( forwardRef( UnforwardedIconList ), {
 	/**
-	 * Renders a action item inside the `ActionList` component.
+	 * Renders an item inside the `IconList` component.
 	 */
-	ActionItem: Object.assign( ActionItem, {
-		displayName: 'ActionList.ActionItem',
+	Item: Object.assign( IconListItem, {
+		displayName: 'IconList.Item',
 	} ),
 } );
 
-export default ActionList;
+export default IconList;
