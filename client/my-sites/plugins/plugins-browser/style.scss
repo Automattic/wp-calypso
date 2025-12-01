@@ -166,7 +166,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 			flex-shrink: 0;
 		}
 
-		@media screen and ( max-width: 601px ) {
+		@media screen and ( max-width: 600px ) {
 			flex-direction: column;
 			align-items: flex-start;
 
@@ -213,7 +213,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 	body.is-section-plugins #primary & .search-box-header::before {
 		display: none;
 	}
-	@media screen and ( max-width: 601px ) {
+	@media screen and ( max-width: 600px ) {
 		padding-top: 30px;
 		padding-bottom: 0;
 
@@ -240,7 +240,7 @@ body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
 	.full-width-section__content {
 		max-width: 1040px;
 		padding-inline: 24px;
-		@media screen and ( max-width: 601px ) {
+		@media screen and ( max-width: 600px ) {
 			padding-inline: 16px;
 		}
 	}
