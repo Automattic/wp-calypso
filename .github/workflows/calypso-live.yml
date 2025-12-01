@@ -49,7 +49,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: |
+              body: `
                 <!--calypso-live-watermark:apr@v1-->
                 <details>
                   <summary>
@@ -86,29 +86,30 @@ jobs:
                     Automattic for Agencies live <a href="${{steps.build_link.outputs.LINK}}&env=a8c-for-agencies">(direct link)</a>
                   </summary>
                   <table>
-                  <tr>
-                    <td>
-                      <img src="${{steps.build_link.outputs.QR_A4A}}"/>
-                    </td>
-                    <td>
-                      <a href="${{steps.build_link.outputs.LINK}}&env=a8c-for-agencies">${{steps.build_link.outputs.LINK}}&env=a8c-for-agencies</a>
-                    </td>
-                  </tr>
-                </table>
-              </details>
-              <details>
-                <summary>
-                  Dashboard live <a href="${{steps.build_link.outputs.LINK}}&env=dashboard">(direct link)</a>
-                </summary>
-                <table>
-                  <tr>
-                    <td>
-                      <img src="${{steps.build_link.outputs.QR_DASHBOARD}}"/>
-                    </td>
-                    <td>
-                      <a href="${{steps.build_link.outputs.LINK}}&env=dashboard">${{steps.build_link.outputs.LINK}}&env=dashboard</a>
-                    </td>
-                  </tr>
-                </table>
-              </details>
+                    <tr>
+                      <td>
+                        <img src="${{steps.build_link.outputs.QR_A4A}}"/>
+                      </td>
+                      <td>
+                        <a href="${{steps.build_link.outputs.LINK}}&env=a8c-for-agencies">${{steps.build_link.outputs.LINK}}&env=a8c-for-agencies</a>
+                      </td>
+                    </tr>
+                  </table>
+                </details>
+                <details>
+                  <summary>
+                    Dashboard live <a href="${{steps.build_link.outputs.LINK}}&env=dashboard">(direct link)</a>
+                  </summary>
+                  <table>
+                    <tr>
+                      <td>
+                        <img src="${{steps.build_link.outputs.QR_DASHBOARD}}"/>
+                      </td>
+                      <td>
+                        <a href="${{steps.build_link.outputs.LINK}}&env=dashboard">${{steps.build_link.outputs.LINK}}&env=dashboard</a>
+                      </td>
+                    </tr>
+                  </table>
+                </details>
+              `
             })
