@@ -257,6 +257,7 @@ export interface License {
 	parentLicenseId: number | null;
 	meta: LicenseMeta;
 	referral: ReferralAPIResponse | null;
+	subscription?: LicenseSubscription | null;
 }
 
 export interface LicenseMeta {
@@ -266,6 +267,18 @@ export interface LicenseMeta {
 	devSitePeriodEnd?: string;
 	transferredSubscriptionId?: string;
 	transferredSubscriptionExpiration?: string;
+}
+
+export interface LicenseSubscription {
+	id: string;
+	productName: string;
+	purchasePrice: number;
+	purchaseCurrency: string;
+	billingIntervalUnit: string;
+	status: string;
+	expiry: string | null;
+	isAutoRenewEnabled: boolean;
+	isRefundable: boolean;
 }
 
 export interface LicenseCounts {

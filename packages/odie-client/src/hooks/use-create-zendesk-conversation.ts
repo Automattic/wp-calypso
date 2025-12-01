@@ -29,10 +29,12 @@ export const useCreateZendeskConversation = () => {
 		createdFrom = '',
 		isFromError = false,
 		errorReason = '',
+		escalationOnSecondAttempt = false,
 	}: {
 		createdFrom?: string;
 		isFromError?: boolean;
 		errorReason?: string;
+		escalationOnSecondAttempt?: boolean;
 	} ) => {
 		let activeInteractionId = currentSupportInteraction?.uuid;
 
@@ -44,6 +46,7 @@ export const useCreateZendeskConversation = () => {
 			interaction_id: activeInteractionId,
 			created_from: createdFrom,
 			is_from_error: isFromError,
+			escalation_on_second_attempt: escalationOnSecondAttempt,
 			error_reason: isFromError ? errorReason ?? 'Unknown error' : '',
 		} );
 

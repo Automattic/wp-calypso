@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import FullWidthSection from 'calypso/components/full-width-section';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
@@ -32,21 +33,23 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 
 	return (
 		<>
-			<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
-			<PluginsBrowserList
-				title={ categoryName }
-				subtitle={ categoryDescription }
-				resultCount={ resultCount }
-				plugins={ plugins }
-				listName={ category }
-				listType="browse"
-				site={ siteSlug }
-				showPlaceholders={ isFetching }
-				currentSites={ sites }
-				variant={ PluginsBrowserListVariant.InfiniteScroll }
-				extended
-			/>
-			<InfiniteScroll nextPageMethod={ fetchNextPage } />
+			<FullWidthSection className="plugins-browser__category-results">
+				<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
+				<PluginsBrowserList
+					title={ categoryName }
+					subtitle={ categoryDescription }
+					resultCount={ resultCount }
+					plugins={ plugins }
+					listName={ category }
+					listType="browse"
+					site={ siteSlug }
+					showPlaceholders={ isFetching }
+					currentSites={ sites }
+					variant={ PluginsBrowserListVariant.InfiniteScroll }
+					extended
+				/>
+				<InfiniteScroll nextPageMethod={ fetchNextPage } />
+			</FullWidthSection>
 		</>
 	);
 };

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Spinner } from '@automattic/components';
 import { isLocaleRtl, useLocale } from '@automattic/i18n-utils';
 import {
@@ -6,27 +5,25 @@ import {
 	loadBlocksWithCustomizations,
 	loadTextFormatting,
 } from '@automattic/verbum-block-editor';
+import { useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { moreVertical } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
-import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesDropdown from 'calypso/components/sites-dropdown';
-import { stripHTML } from 'calypso/lib/formatting';
-import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import { receivePosts } from 'calypso/state/reader/posts/actions';
-import { receiveNewPost } from 'calypso/state/reader/streams/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
-
+import { savePostMutation } from './hooks/use-post-mutation';
 import './style.scss';
 
 // Initialize the editor blocks and text formatting.
@@ -37,31 +34,16 @@ loadTextFormatting();
 // not match the type in the stream data, but we can insert
 // the post data there for now until we create a corresponding
 // structure for the newly created post in the stream.
-interface PostItem {
-	ID: number;
-	site_ID: number;
-	title: string;
-	content: string;
-	URL: string;
-}
 
-function QuickPost( {
-	receivePosts,
-	successNotice,
-}: {
-	receivePosts: ( posts: PostItem[] ) => Promise< void >;
-	successNotice: ( message: string, options: object ) => void;
-} ) {
+export default function QuickPost() {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const STORAGE_KEY = 'reader_quick_post_content';
 	const [ postContent, setPostContent ] = useState( () => {
-		// Use localStorage to save content between sessions.
 		return localStorage.getItem( STORAGE_KEY ) || '';
 	} );
 	const [ editorKey, setEditorKey ] = useState( 0 );
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const editorRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
@@ -72,12 +54,17 @@ function QuickPost( {
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 	const [ isMenuVisible, setIsMenuVisible ] = useState( false );
 	const popoverButtonRef = useRef< HTMLButtonElement >( null );
+	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId || undefined;
+	const siteAdminUrl = useSelector(
+		( state ) => ( siteId ? getSiteAdminUrl( state, siteId ) : null ),
+		( siteId ) => !! siteId
+	);
 
-	useEffect( () => {
-		if ( postContent ) {
-			localStorage.setItem( STORAGE_KEY, postContent );
-		}
-	}, [ postContent ] );
+	const {
+		mutate: save,
+		isPending: isSaving,
+		variables: postVariables,
+	} = useMutation( savePostMutation( { siteId } ) );
 
 	const clearEditor = () => {
 		localStorage.removeItem( STORAGE_KEY );
@@ -85,65 +72,55 @@ function QuickPost( {
 		setEditorKey( ( key ) => key + 1 );
 	};
 
-	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId || undefined;
+	useEffect( () => {
+		if ( postContent ) {
+			localStorage.setItem( STORAGE_KEY, postContent );
+		}
+	}, [ postContent ] );
 
 	const handleSubmit = () => {
-		if ( ! postContent.trim() || ! siteId || isSubmitting ) {
+		if ( ! siteId ) {
+			dispatch( warningNotice( translate( 'Please select a site.' ) ) );
 			return;
 		}
 
-		setIsSubmitting( true );
+		if ( postContent.trim().length === 0 ) {
+			dispatch( warningNotice( translate( 'Please fill in the post content.' ) ) );
+			return;
+		}
 
-		wpcom
-			.site( siteId )
-			.post()
-			.add( {
-				title:
-					(
-						stripHTML( postContent )
-							.split( '\n' )
-							.find( ( line ) => line.trim() ) || ''
-					)
-						.substring( 0, 57 )
-						.trim() + '...',
-				content: postContent,
-				status: 'publish',
-			} )
-			.then( ( postData: PostItem ) => {
-				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted', {
-					post_id: postData.ID,
-					post_url: postData.URL,
-				} );
-				clearEditor();
-
-				successNotice( translate( 'Post successful! Your post will appear in the feed soon.' ), {
-					button: translate( 'View Post.' ),
-					noticeActionProps: {
-						external: true,
-					},
-					href: postData.URL,
-				} );
-				// TODO: Update the stream with the new post (if they're subscribed?) to signal success.
-
-				if ( config.isEnabled( 'reader/quick-post-v2' ) ) {
-					receivePosts( [ postData ] ).then( () => {
-						// Actual API response will update the stream with the real post data
-						dispatch(
-							receiveNewPost( {
-								streamKey: 'following',
-								postData,
-							} )
-						);
+		clearEditor();
+		save(
+			{ siteId, postContent, status: 'publish' },
+			{
+				onSuccess: ( data ) => {
+					clearEditor();
+					dispatch(
+						successNotice(
+							translate( 'Post successful! Your post will appear in the feed soon.' ),
+							{
+								button: translate( 'View Post.' ),
+								href: data.URL,
+								onClick: () => {
+									window.open( data.URL, '_blank' );
+								},
+							}
+						)
+					);
+				},
+				onError: ( error ) => {
+					recordReaderTracksEvent( 'calypso_reader_quick_post_error', {
+						error: error.message,
 					} );
-				}
-			} )
-			.catch( () => {
-				recordReaderTracksEvent( 'calypso_reader_quick_post_error' );
-				// TODO: Add error handling
-			} )
-			.finally( () => {
-				setIsSubmitting( false );
-			} );
+
+					dispatch(
+						errorNotice( translate( 'Sorry, something went wrong. Please try again.' ), {
+							duration: 5000,
+						} )
+					);
+				},
+			}
+		);
 	};
 
 	const handleSiteSelect = ( siteId: number ) => {
@@ -151,14 +128,41 @@ function QuickPost( {
 	};
 
 	const getButtonText = () => {
-		if ( isSubmitting ) {
-			return translate( 'Posting' );
+		if ( postVariables?.status === 'draft' && isSaving ) {
+			return translate( 'Saving…' );
 		}
+
+		if ( postVariables?.status === 'publish' && isSaving ) {
+			return translate( 'Posting…' );
+		}
+
 		return translate( 'Post' );
 	};
 
 	const handleFullEditorClick = () => {
+		const isEmpty = postContent.trim().length === 0;
 		recordReaderTracksEvent( 'calypso_reader_quick_post_full_editor_opened' );
+
+		if ( ! isEmpty && siteId ) {
+			save(
+				{ siteId, postContent, status: 'draft' },
+				{
+					onSuccess: ( data ) => {
+						clearEditor();
+						window.location.assign(
+							addQueryArgs( `${ siteAdminUrl }/post.php`, { post: data.ID, action: 'edit' } )
+						);
+					},
+					onError: ( error ) => {
+						recordReaderTracksEvent( 'calypso_reader_quick_post_error', {
+							error: error.message,
+						} );
+					},
+				}
+			);
+		} else {
+			window.location.assign( addQueryArgs( `${ siteAdminUrl }/post.php`, { type: 'post' } ) );
+		}
 	};
 
 	const toggleMenu = () => setIsMenuVisible( ! isMenuVisible );
@@ -175,8 +179,6 @@ function QuickPost( {
 	if ( ! hasSites ) {
 		return null; // Don't show QuickPost if user has no sites.
 	}
-
-	const isDisabled = isSubmitting;
 
 	return (
 		<div className="quick-post-input">
@@ -202,12 +204,7 @@ function QuickPost( {
 							position="bottom"
 							className="quick-post-input__popover"
 						>
-							<PopoverMenuItem
-								href={ siteId ? `/post/${ siteId }?type=post` : '/post' }
-								target="_blank"
-								rel="noreferrer"
-								onClick={ handleFullEditorClick }
-							>
+							<PopoverMenuItem target="_blank" rel="noreferrer" onClick={ handleFullEditorClick }>
 								{ translate( 'Open Full Editor' ) }
 							</PopoverMenuItem>
 						</PopoverMenu>
@@ -229,19 +226,10 @@ function QuickPost( {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<Button
-					variant="primary"
-					onClick={ handleSubmit }
-					disabled={ ! postContent.trim() || isDisabled }
-				>
+				<Button variant="primary" onClick={ handleSubmit } isBusy={ isSaving }>
 					{ getButtonText() }
 				</Button>
 			</div>
 		</div>
 	);
 }
-
-export default connect( null, {
-	successNotice: ( message: string, options: object ) => successNotice( message, options ),
-	receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
-} )( QuickPost );

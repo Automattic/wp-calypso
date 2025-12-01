@@ -151,7 +151,8 @@ export const createSiteWithCart = async (
 	siteIntent?: string,
 	siteGoals?: SiteGoal[],
 	gardenName?: string | null,
-	gardenPartnerName?: string | null
+	gardenPartnerName?: string | null,
+	specId?: string | null
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -200,6 +201,9 @@ export const createSiteWithCart = async (
 					garden_name: gardenName,
 					garden_partner_name: gardenPartnerName,
 				} ),
+			...( specId && {
+				spec_id: specId,
+			} ),
 			options: {
 				...newSiteParams.options,
 				has_segmentation_survey: hasSegmentationSurvey,

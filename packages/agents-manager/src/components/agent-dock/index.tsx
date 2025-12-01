@@ -1,314 +1,358 @@
 /**
  * Agent Dock Component
- * Provides floating + docked mode AI chat using @automattic/agenttic-ui
+ *
+ * Renders a chat interface (floating or docked) with session and history management.
  */
 
 import {
+	createOdieBotId,
 	getAgentManager,
 	useAgentChat,
+	type Message,
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
-import { AgentUI, createMessageRenderer, EmptyView } from '@automattic/agenttic-ui';
+import {
+	AgentUI,
+	createMessageRenderer,
+	EmptyView,
+	type MarkdownComponents,
+	type MarkdownExtensions,
+	type Suggestion,
+} from '@automattic/agenttic-ui';
+import { AgentsManagerSelect } from '@automattic/data-stores';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useCallback, useEffect, useMemo, useState, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { drawerRight, login, rotateRight } from '@wordpress/icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAgentSession } from '../../hooks/use-agent-session';
-import { useChatState } from '../../hooks/use-chat-state';
-import { usePersistedAgentState } from '../../hooks/use-persisted-agent-state';
-import ChatHeader from '../chat-header';
-import ChatLayoutManager from '../chat-layout-manager';
-import type { ContextAdapter } from '../../adapters/context/context-adapter';
-import type { ChatHeaderMenuItem } from '../chat-header';
+import { comment, drawerRight, login } from '@wordpress/icons';
+import { API_BASE_URL } from '../../constants';
+import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
+import useLoadConversation from '../../hooks/use-load-conversation';
+import { AGENTS_MANAGER_STORE } from '../../stores';
+import { getSessionId, setSessionId, clearSessionId } from '../../utils/agent-session';
+import { lastConversationCache } from '../../utils/conversation-cache';
+import BigSkyIcon from '../big-sky-icon';
+import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
+import ChatMessageSkeleton from '../chat-message-skeleton';
+import ConversationHistoryView from '../conversation-history-view';
+import { AI } from '../icons';
+import type { DockViewState } from './types';
 
-export interface AgentDockProps {
+interface AgentDockProps {
 	/**
 	 * Agent configuration for @automattic/agenttic-client
 	 */
 	agentConfig: UseAgentChatConfig;
 	/**
-	 * Context adapter for providing environment context
-	 */
-	contextAdapter?: ContextAdapter;
-	/**
-	 * Container selector for the sidebar
-	 */
-	containerSelector: string;
-	/**
 	 * Custom empty view suggestions
 	 */
-	emptyViewSuggestions?: Array< { id?: string; label: string; prompt: string } >;
-	/**
-	 * Custom empty view heading
-	 */
-	emptyViewHeading?: string;
-	/**
-	 * Custom empty view help text
-	 */
-	emptyViewHelp?: string;
+	emptyViewSuggestions?: Suggestion[];
 	/**
 	 * Custom message renderer components
 	 */
-	markdownComponents?: Record< string, any >;
+	markdownComponents?: MarkdownComponents;
 	/**
 	 * Custom markdown extensions
 	 */
-	markdownExtensions?: any;
-	/**
-	 * Custom icon for FAB button
-	 */
-	fabIcon?: JSX.Element;
-	/**
-	 * Callback when chat is cleared
-	 */
-	onClearChat?: () => void;
-	/**
-	 * Storage key for session persistence
-	 */
-	sessionStorageKey?: string;
-	/**
-	 * Storage key for chat state persistence
-	 */
-	chatStateStorageKey?: string;
-	/**
-	 * Storage key for dock state persistence
-	 */
-	dockStateStorageKey?: string;
-	/**
-	 * Storage key for /me/preferences persistence
-	 */
-	preferenceKey?: string;
-	/**
-	 * Function to save preferences to server
-	 */
-	savePreference?: ( key: string, value: any ) => Promise< void >;
-	/**
-	 * Function to load preferences from server
-	 */
-	loadPreference?: ( key: string ) => Promise< any >;
-	/**
-	 * Start with dock open (overrides saved state)
-	 */
-	defaultOpen?: boolean;
-	/**
-	 * Media query for desktop breakpoint (default: '(min-width: 960px)')
-	 */
-	desktopMediaQuery?: string;
+	markdownExtensions?: MarkdownExtensions;
 }
 
-/**
- * AgentDock Component
- *
- * Full-featured AI agent chat with docking/floating modes and context awareness.
- * @param {AgentDockProps} props - Component props
- */
 export default function AgentDock( {
 	agentConfig,
-	containerSelector,
 	emptyViewSuggestions = [],
-	emptyViewHeading = __( 'How can I help you today?', 'agents-manager' ),
-	emptyViewHelp = __( 'Ask me anything.', 'agents-manager' ),
 	markdownComponents = {},
-	markdownExtensions,
-	fabIcon,
-	onClearChat,
-	sessionStorageKey = 'agents-manager-session',
-	chatStateStorageKey = 'agents-manager-chat-state',
-	dockStateStorageKey = 'agents-manager-docked',
-	preferenceKey = 'agents-manager-state',
-	savePreference,
-	loadPreference,
-	defaultOpen = false,
-	desktopMediaQuery = '(min-width: 960px)',
+	markdownExtensions = {},
 }: AgentDockProps ) {
-	// Persisted state for /me/preferences
+	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
+	// Get saved preferences like whether the chat was open/closed
+	const persistedState = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
+	// 'chat' shows the conversation, 'history' shows past conversations
+	const [ viewState, setViewState ] = useState< DockViewState >( 'chat' );
+	// Tracks which session we've already loaded to avoid redundant fetches
+	const loadedSessionIdRef = useRef< string | null >( null );
+
+	// Note: Ideally `sessionId` should be managed via React State to ensure reactivity.
+	// However, reading directly from storage works sufficiently for the current use case.
+	const sessionId = getSessionId();
+	const agentId = agentConfig.agentId;
+	const chatState = persistedState.isOpen ? 'expanded' : 'collapsed';
+
+	// Manage how the chat is displayed: floating window or docked in sidebar
+	const { isDocked, isDesktop, dock, undock, closeSidebar, createChatPortal } =
+		useChatLayoutManager();
+
+	// Main chat hook: handles messages, sending, and AI processing state
 	const {
-		state: persistedState,
-		setSessionId: setPersistedSessionId,
-		setIsOpen: setPersistedIsOpen,
-		setIsDocked: setPersistedIsDocked,
-		isLoading: isLoadingPersistedState,
-	} = usePersistedAgentState( {
-		preferenceKey,
-		savePreference,
-		loadPreference,
-	} );
+		messages,
+		suggestions,
+		isProcessing,
+		error,
+		loadMessages,
+		onSubmit,
+		abortCurrentRequest,
+	} = useAgentChat( agentConfig );
 
-	const { sessionId, resetSession } = useAgentSession( {
-		storageKey: sessionStorageKey,
-	} );
-
-	const { chatState, toggleExpand, collapse, expand } = useChatState( {
-		storageKey: chatStateStorageKey,
-	} );
-
-	// Dock state from localStorage (fallback) and persisted state
-	const [ isDocked, setIsDocked ] = useState( () => {
-		// Use persisted state if available
-		if ( persistedState.isDocked !== undefined ) {
-			return persistedState.isDocked;
-		}
-		// Fallback to localStorage
-		try {
-			const stored = localStorage.getItem( dockStateStorageKey );
-			return stored === 'true'; // Default to undocked (floating)
-		} catch {
-			return false;
-		}
-	} );
-
-	// Sync sessionId with persisted state
+	// Keep the local cache up to date so we can quickly restore the chat later
 	useEffect( () => {
-		if ( ! isLoadingPersistedState && sessionId ) {
-			setPersistedSessionId( sessionId );
+		if ( ! messages.length || ! sessionId ) {
+			return;
 		}
-	}, [ sessionId, setPersistedSessionId, isLoadingPersistedState ] );
 
-	// Sync chatState with persisted isOpen
-	useEffect( () => {
-		if ( ! isLoadingPersistedState ) {
-			const isOpen = chatState === 'expanded';
-			setPersistedIsOpen( isOpen );
-		}
-	}, [ chatState, setPersistedIsOpen, isLoadingPersistedState ] );
-
-	// Sync isDocked with persisted state
-	useEffect( () => {
-		if ( ! isLoadingPersistedState ) {
-			setPersistedIsDocked( isDocked );
-		}
-	}, [ isDocked, setPersistedIsDocked, isLoadingPersistedState ] );
-
-	const { messages, isProcessing, error, onSubmit } = useAgentChat( agentConfig );
-
-	// TODO: Use this when adding custom chat header with clear chat menu item
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleClearChat = useCallback( async () => {
 		const agentManager = getAgentManager();
-		const agentKey = `${ agentConfig.agentId }-${ sessionId }`;
+		const agentKey = agentId;
 
-		if ( agentManager.hasAgent( agentKey ) ) {
-			await agentManager.resetConversation( agentKey );
+		if ( ! agentManager.hasAgent( agentKey ) ) {
+			return;
 		}
 
-		resetSession();
-		onClearChat?.();
-	}, [ sessionId, resetSession, agentConfig.agentId, onClearChat ] );
-
-	const handleCollapse = useCallback( () => {
-		collapse();
-	}, [ collapse ] );
-
-	const handleExpand = useCallback( () => {
-		expand();
-	}, [ expand ] );
-
-	const handleDock = useCallback( () => {
-		setIsDocked( true );
-		try {
-			localStorage.setItem( dockStateStorageKey, 'true' );
-		} catch {
-			// Ignore storage errors
+		const clientMessages = agentManager.getConversationHistory( agentKey );
+		if ( clientMessages.length ) {
+			const botId = createOdieBotId( agentId );
+			lastConversationCache.set( botId, sessionId, clientMessages );
 		}
-	}, [ dockStateStorageKey ] );
+	}, [ agentId, messages.length, sessionId ] );
 
-	const handleUndock = useCallback( () => {
-		setIsDocked( false );
-		try {
-			localStorage.setItem( dockStateStorageKey, 'false' );
-		} catch {
-			// Ignore storage errors
-		}
-		expand(); // Expand when undocking to floating mode
-	}, [ dockStateStorageKey, expand ] );
+	// Called after we fetch the conversation from the server
+	const onLoaded = useCallback(
+		async ( loadedMessages: Message[], serverSessionId: string ) => {
+			// Update the UI with the loaded messages
+			await loadMessages( loadedMessages );
 
-	// Custom message renderer
-	const messageRenderer = useMemo( () => {
-		const options: any = { components: markdownComponents };
-		if ( markdownExtensions ) {
-			options.extensions = markdownExtensions;
-		}
-		return createMessageRenderer( options );
-	}, [ markdownComponents, markdownExtensions ] );
+			// Make sure future messages go to the right session
+			getAgentManager().updateSessionId( agentId, serverSessionId );
 
-	// Add IDs to suggestions if not provided
-	const suggestions = useMemo(
-		() =>
-			emptyViewSuggestions.map( ( suggestion, index ) => ( {
-				id: suggestion.id || `suggestion-${ index }`,
-				label: suggestion.label,
-				prompt: suggestion.prompt,
-			} ) ),
-		[ emptyViewSuggestions ]
+			// Persist to localStorage only if we got a valid new session ID
+			if ( serverSessionId && sessionId !== serverSessionId ) {
+				setSessionId( serverSessionId );
+			}
+
+			// Remember that we loaded this session so we don't load it again
+			loadedSessionIdRef.current = serverSessionId;
+		},
+		[ agentId, loadMessages, sessionId ]
 	);
 
-	const renderAgentUI = ( {
-		isDocked: isDockedFromManager,
-		closeSidebar,
-		dock,
-		undock,
-	}: {
-		isDocked: boolean;
-		isDesktop: boolean;
-		closeSidebar: () => void;
-		dock: () => void;
-		undock: () => void;
-	} ) => {
-		// Create menu items for chat header
-		const menuItems: ChatHeaderMenuItem[] = [];
+	// Hook that handles fetching conversation history from the server
+	const { loadConversation, isLoading: isLoadingConversation } = useLoadConversation( {
+		apiBaseUrl: API_BASE_URL,
+		authProvider: agentConfig.authProvider,
+		onLoaded,
+	} );
 
-		// Add dock/undock menu item
-		if ( isDockedFromManager ) {
-			menuItems.push( {
-				id: 'undock',
-				icon: login,
-				title: __( 'Pop out sidebar', 'agents-manager' ),
-				onClick: undock,
-			} );
-		} else {
-			menuItems.push( {
-				id: 'dock',
-				icon: drawerRight,
-				title: __( 'Move to sidebar', 'agents-manager' ),
-				onClick: dock,
-			} );
+	// Fetch the conversation from the server (skips if already loaded)
+	const maybeLoadConversation = useCallback(
+		( sessionId: string ) => {
+			if ( loadedSessionIdRef.current === sessionId ) {
+				return;
+			}
+
+			const agentManager = getAgentManager();
+			const agentKey = agentId;
+
+			if ( ! agentManager.hasAgent( agentKey ) ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[AgentDock] Agent not found, skipping conversation load' );
+				return;
+			}
+
+			const botId = createOdieBotId( agentId );
+			loadConversation( sessionId, botId );
+		},
+		[ agentId, loadConversation ]
+	);
+
+	// When the component loads, restore the previous chat if there was one
+	useEffect(
+		() => {
+			if ( sessionId ) {
+				maybeLoadConversation( sessionId );
+			}
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Only run on mount
+		[]
+	);
+
+	// Handlers for opening/closing the floating chat
+	const setChatIsOpen = () => {
+		setIsOpen( true );
+	};
+
+	const setChatIsClosed = () => {
+		setIsOpen( false );
+	};
+
+	// Start a brand new chat, wiping out everything from the current one
+	const handleNewChat = useCallback( async () => {
+		const agentManager = getAgentManager();
+		const agentKey = agentId;
+
+		if ( agentManager.hasAgent( agentKey ) ) {
+			abortCurrentRequest();
+			await loadMessages( [] );
+
+			// Start fresh: remove the old agent and create a new one without a session.
+			// The server will give us a new session ID once the user sends a message.
+			agentManager.removeAgent( agentKey );
+			await agentManager.createAgent( agentKey, { ...agentConfig, sessionId: '' } );
 		}
 
-		// Add reset chat menu item (disabled if no messages or processing)
-		menuItems.push( {
-			id: 'reset',
-			icon: rotateRight,
-			title: __( 'Reset chat', 'agents-manager' ),
-			onClick: handleClearChat,
-			isDisabled: ! messages.length || isProcessing,
-		} );
+		// Wipe all saved data
+		lastConversationCache.clear();
+		clearSessionId();
+		loadedSessionIdRef.current = null;
 
+		// Go back to the chat view if we were looking at history
+		if ( viewState === 'history' ) {
+			setViewState( 'chat' );
+		}
+	}, [ abortCurrentRequest, agentConfig, agentId, loadMessages, viewState ] );
+
+	// User picked a past conversation from history, so load it up
+	const handleSelectConversation = useCallback(
+		( newSessionId: string ) => {
+			setViewState( 'chat' );
+
+			const agentManager = getAgentManager();
+			const agentKey = agentId;
+
+			if ( agentManager.hasAgent( agentKey ) ) {
+				abortCurrentRequest();
+				agentManager.updateSessionId( agentKey, newSessionId );
+				maybeLoadConversation( newSessionId );
+			}
+		},
+		[ abortCurrentRequest, agentId, maybeLoadConversation ]
+	);
+
+	// Toggle between chat view and conversation history view
+	const handleToggleHistory = () => {
+		setViewState( ( prev ) => ( prev === 'chat' ? 'history' : 'chat' ) );
+	};
+
+	// Set up how messages get rendered (with any custom markdown handling)
+	const messageRenderer = useMemo(
+		() =>
+			createMessageRenderer( {
+				components: markdownComponents,
+				extensions: markdownExtensions,
+			} ),
+		[ markdownComponents, markdownExtensions ]
+	);
+
+	// Build the chat UI based on current view state (chat or history)
+	const renderAgentUI = () => {
+		// Menu items for the chat header dropdown
+		const newChatMenuItem = {
+			icon: comment,
+			title: __( 'New chat', '__i18n_text_domain__' ),
+			isDisabled: viewState === 'chat' && ! messages.length,
+			onClick: handleNewChat,
+		};
+		const undockMenuItem = {
+			icon: login,
+			title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
+			onClick: () => {
+				// TODO: Persist the float position...
+				try {
+					window.localStorage?.setItem( 'agenttic-chat-position', 'right' );
+				} catch ( err ) {
+					// Ignore errors
+				}
+
+				undock();
+			},
+		};
+		const dockMenuItem = {
+			icon: drawerRight,
+			title: __( 'Move to sidebar', '__i18n_text_domain__' ),
+			onClick: dock,
+		};
+
+		// Build the header menu: always show "New chat", then add dock/undock based on layout
+		const chatHeaderOptions: ChatHeaderOptions = [ newChatMenuItem ];
+
+		if ( isDocked ) {
+			chatHeaderOptions.push( undockMenuItem );
+		} else if ( isDesktop ) {
+			chatHeaderOptions.push( dockMenuItem );
+		}
+
+		// User is browsing past conversations
+		if ( viewState === 'history' ) {
+			return (
+				<AgentUI.Container
+					className="agenttic"
+					messages={ messages }
+					isProcessing={ false }
+					error={ null }
+					onSubmit={ onSubmit }
+					variant={ isDocked ? 'embedded' : 'floating' }
+					floatingChatState={ chatState }
+					onClose={ isDocked ? closeSidebar : setChatIsClosed }
+					onExpand={ setChatIsOpen }
+					onStop={ abortCurrentRequest }
+				>
+					<AgentUI.ConversationView>
+						<ChatHeader
+							isChatDocked={ isDocked }
+							onClose={ isDocked ? closeSidebar : setChatIsClosed }
+							options={ chatHeaderOptions }
+							onHistoryToggle={ handleToggleHistory }
+							viewState={ viewState }
+							title={ __( 'Past chats', '__i18n_text_domain__' ) }
+						/>
+						<ConversationHistoryView
+							botId={ createOdieBotId( agentId ) }
+							apiBaseUrl={ API_BASE_URL }
+							authProvider={ agentConfig.authProvider }
+							onSelectConversation={ handleSelectConversation }
+							onNewChat={ handleNewChat }
+						/>
+					</AgentUI.ConversationView>
+				</AgentUI.Container>
+			);
+		}
+
+		// Main chat view with messages and input
 		return (
 			<AgentUI.Container
+				className="agenttic"
 				messages={ messages }
 				isProcessing={ isProcessing }
 				error={ error }
 				onSubmit={ onSubmit }
-				variant={ isDockedFromManager ? 'embedded' : 'floating' }
+				variant={ isDocked ? 'embedded' : 'floating' }
+				suggestions={ suggestions }
 				floatingChatState={ chatState }
-				onClose={ isDockedFromManager ? closeSidebar : toggleExpand }
-				onExpand={ toggleExpand }
-				className="agenttic agents-manager-dock"
+				onClose={ isDocked ? closeSidebar : setChatIsClosed }
+				onExpand={ setChatIsOpen }
+				onStop={ abortCurrentRequest }
 				messageRenderer={ messageRenderer }
 				emptyView={
-					<EmptyView
-						heading={ emptyViewHeading }
-						help={ emptyViewHelp }
-						suggestions={ suggestions }
-					/>
+					isLoadingConversation ? (
+						<ChatMessageSkeleton count={ 3 } />
+					) : (
+						<EmptyView
+							heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
+							help={ __( 'Got a different request? Ask away.', '__i18n_text_domain__' ) }
+							suggestions={ emptyViewSuggestions }
+							icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
+						/>
+					)
 				}
 			>
 				<AgentUI.ConversationView>
 					<ChatHeader
-						isChatDocked={ isDockedFromManager }
-						onClose={ isDockedFromManager ? closeSidebar : toggleExpand }
-						options={ menuItems }
+						isChatDocked={ isDocked }
+						onClose={ isDocked ? closeSidebar : setChatIsClosed }
+						options={ chatHeaderOptions }
+						onHistoryToggle={ handleToggleHistory }
+						viewState={ viewState }
+						supportsHistory
 					/>
-					<AgentUI.Messages />
+					{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 					<AgentUI.Footer>
 						<AgentUI.Suggestions />
 						<AgentUI.Notice />
@@ -319,23 +363,10 @@ export default function AgentDock( {
 		);
 	};
 
-	// Determine if sidebar should be open by default
-	// Priority: defaultOpen prop > chatState from storage
-	const shouldBeOpen = defaultOpen || chatState === 'expanded';
+	// Don't render anything until we know the user's preferences
+	if ( ! persistedState.hasLoaded ) {
+		return null;
+	}
 
-	return (
-		<ChatLayoutManager
-			sidebarContainer={ containerSelector }
-			onOpenSidebar={ handleExpand }
-			onCloseSidebar={ handleCollapse }
-			onDock={ handleDock }
-			onUndock={ handleUndock }
-			defaultOpen={ shouldBeOpen }
-			defaultUndocked={ ! isDocked }
-			desktopMediaQuery={ desktopMediaQuery }
-			fabIcon={ fabIcon }
-		>
-			{ renderAgentUI }
-		</ChatLayoutManager>
-	);
+	return createChatPortal( renderAgentUI() );
 }

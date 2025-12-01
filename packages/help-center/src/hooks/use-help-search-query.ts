@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { buildQueryString } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { SearchResult } from '../types';
+import type { HelpCenterRequiredInformation } from '../contexts/HelpCenterContext';
+import type { SearchResult } from '../types';
 
 interface APIFetchOptions {
 	global: boolean;
@@ -13,14 +14,15 @@ interface APIFetchOptions {
 const fetchArticlesAPI = async (
 	search: string,
 	locale: string,
-	sectionName: string
+	sectionName: string,
+	source: HelpCenterRequiredInformation[ 'source' ]
 ): Promise< SearchResult[] > => {
 	let searchResultResponse: SearchResult[] = [];
 
-	const queryString = buildQueryString( { query: search, locale, section: sectionName } );
+	const queryString = buildQueryString( { query: search, locale, section: sectionName, source } );
 	if ( canAccessWpcomApis() ) {
 		searchResultResponse = ( await wpcomRequest( {
-			path: `/help/search/wpcom?${ queryString }`,
+			path: `/help/search?${ queryString }`,
 			apiNamespace: 'wpcom/v2',
 		} ) ) as SearchResult[];
 	} else {
@@ -49,11 +51,12 @@ export const useHelpSearchQuery = (
 	search: string,
 	locale = 'en',
 	sectionName = '',
+	source: HelpCenterRequiredInformation[ 'source' ] = '',
 	queryOptions: Record< string, unknown > = {}
 ) => {
 	return useQuery< any >( {
-		queryKey: [ 'help-center-search', search, locale, sectionName ],
-		queryFn: () => fetchArticlesAPI( search, locale, sectionName ),
+		queryKey: [ 'help-center-search', search, locale, sectionName, source ],
+		queryFn: () => fetchArticlesAPI( search, locale, sectionName, source ),
 		refetchOnWindowFocus: false,
 		...queryOptions,
 	} );

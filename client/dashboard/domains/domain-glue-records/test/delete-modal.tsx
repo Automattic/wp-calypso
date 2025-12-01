@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { DomainGlueRecord } from '@automattic/api-core';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -75,10 +75,7 @@ test( 'calls delete mutation and onClose when Delete button is clicked and the r
 
 	await user.click( screen.getByRole( 'button', { name: 'Delete' } ) );
 
-	// Wait for the mutation to complete
-	await screen.findByText( 'Are you sure you want to delete this glue record?' );
-
-	expect( mockOnClose ).toHaveBeenCalled();
+	await waitFor( () => expect( mockOnClose ).toHaveBeenCalled() );
 } );
 
 test( 'calls delete mutation and onClose when Delete button is clicked and the request fails', async () => {
@@ -91,8 +88,5 @@ test( 'calls delete mutation and onClose when Delete button is clicked and the r
 
 	await user.click( screen.getByRole( 'button', { name: 'Delete' } ) );
 
-	// Wait for the mutation to complete
-	await screen.findByText( 'Are you sure you want to delete this glue record?' );
-
-	expect( mockOnClose ).toHaveBeenCalled();
+	await waitFor( () => expect( mockOnClose ).toHaveBeenCalled() );
 } );

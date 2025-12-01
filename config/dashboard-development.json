@@ -1,0 +1,25 @@
+{
+	"env": "development",
+	"env_id": "dashboard-development",
+	"favicon_url": "/calypso/images/favicons/favicon-development.ico",
+	"client_slug": "browser",
+	"protocol": "http",
+	"hostname": "my.localhost",
+	"i18n_default_locale_slug": "en",
+	"port": 3000,
+	"site_name": "Hosting Dashboard",
+	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
+	"features": {
+		"dashboard": true,
+		"dashboard/v2": false,
+		"always_use_logout_url": true,
+		"cookie-banner": false,
+		"dev/auth-helper": true,
+		"dev/preferences-helper": true
+	},
+	"enable_all_sections": false,
+	"site_filter": [],
+	"theme": "dashboard",
+	"theme_color": "#3858E9",
+	"restricted_me_access": false
+}

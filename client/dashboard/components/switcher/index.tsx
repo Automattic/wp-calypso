@@ -4,6 +4,7 @@ import {
 	Button,
 	ScrollLock,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { chevronDownSmall } from '@wordpress/icons';
 import SwitcherContent from './switcher-content';
 import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
@@ -38,6 +39,7 @@ export default function Switcher< T >( {
 	onToggle,
 	defaultOpen,
 }: SwitcherProps< T > ) {
+	const isDesktop = useViewportMatch( 'medium' );
 	return (
 		<Dropdown
 			open={ open }
@@ -57,8 +59,12 @@ export default function Switcher< T >( {
 					} }
 					aria-haspopup="true"
 					aria-expanded={ isOpen }
+					style={ { width: '100%', justifyContent: 'flex-start' } }
 				>
-					<HStack alignment="center">
+					<HStack
+						alignment="center"
+						style={ { overflow: 'hidden', maxWidth: isDesktop ? 'calc(30vw)' : '100%' } }
+					>
 						{ renderItemMedia( { item: value, context: 'dropdown', size: 16 } ) }
 						{ renderItemTitle( { item: value, context: 'dropdown' } ) }
 					</HStack>

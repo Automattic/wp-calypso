@@ -8,7 +8,7 @@ import { Badge } from '@automattic/ui';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { DataViewsCard } from '../../../components/dataviews-card';
+import { DataViewsCard } from '../../../components/dataviews';
 import type { Field, ViewTable } from '@wordpress/dataviews';
 
 import './dns-records-table-style.scss';

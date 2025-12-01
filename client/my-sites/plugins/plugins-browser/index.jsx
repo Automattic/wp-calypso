@@ -8,6 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import FullWidthSection from 'calypso/components/full-width-section';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -114,6 +115,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	const shouldUseLoggedInView =
 		isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn ? siteId : isLoggedIn;
 
+	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
+
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
 		if ( search ) {
@@ -155,7 +158,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 			className={ clsx( 'plugins-browser', {
 				'plugins-browser--site-view': !! selectedSite,
 			} ) }
-			wideLayout
+			wideLayout={ ! isMarketplaceRedesignEnabled }
+			fullWidthLayout={ isMarketplaceRedesignEnabled }
 			isLoggedOut={ ! shouldUseLoggedInView }
 		>
 			<QueryProductsList persist />
@@ -186,7 +190,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
 				{ shouldUseLoggedInView ? (
-					<>
+					<FullWidthSection className="plugins-browser__search-categories full-width-section--no-padding">
 						<div ref={ loggedInSearchBoxRef } />
 						<SearchCategories
 							category={ category }
@@ -196,34 +200,47 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 							searchTerm={ search }
 							searchTerms={ searchTerms }
 						/>
-					</>
+					</FullWidthSection>
 				) : (
 					<>
-						<SearchBoxHeader
-							searchRef={ searchRef }
-							categoriesRef={ categoriesRef }
-							stickySearchBoxRef={ searchHeaderRef }
-							isSticky={ isAboveElement }
-							searchTerm={ search }
-							isSearching={ isFetchingPluginsBySearchTerm }
-							title={ __( 'Flex your site’s features with plugins' ) }
-							subtitle={ __(
-								'Add new functionality and integrations to your site with thousands of plugins.'
-							) }
-							searchTerms={ searchTerms }
-							renderTitleInH1={ ! category }
-						/>
-
-						<div ref={ categoriesRef }>
-							<Categories selected={ category } noSelection={ search ? true : false } />
-						</div>
+						<FullWidthSection className="plugins-browser__search-header full-width-section--gray">
+							<SearchBoxHeader
+								searchRef={ searchRef }
+								categoriesRef={ categoriesRef }
+								stickySearchBoxRef={ searchHeaderRef }
+								isSticky={ isAboveElement }
+								searchTerm={ search }
+								isSearching={ isFetchingPluginsBySearchTerm }
+								title={
+									isMarketplaceRedesignEnabled
+										? __( 'Plug into possibility' )
+										: __( 'Flex your site’s features with plugins' )
+								}
+								subtitle={
+									isMarketplaceRedesignEnabled
+										? __(
+												'Add new features or connect your favorite tools with thousands of plugins — available on all paid WordPress.com plans.'
+										  )
+										: __(
+												'Add new functionality and integrations to your site with thousands of plugins.'
+										  )
+								}
+								searchTerms={ searchTerms }
+								renderTitleInH1={ ! category }
+							/>
+						</FullWidthSection>
+						<FullWidthSection className="plugins-browser__categories">
+							<div ref={ categoriesRef }>
+								<Categories selected={ category } noSelection={ search ? true : false } />
+							</div>
+						</FullWidthSection>
 					</>
 				) }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
-					<div className="plugins-browser__marketplace-footer">
+					<FullWidthSection className="plugins-browser__marketplace-footer">
 						<MarketplaceFooter />
-					</div>
+					</FullWidthSection>
 				) }
 			</div>
 		</MainComponent>
