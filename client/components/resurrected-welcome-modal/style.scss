@@ -7,6 +7,8 @@
 	align-self: center;
 	height: auto;
 	max-height: calc( 100vh - 32px );
+	border-radius: 8px;
+	overflow: hidden;
 }
 
 .resurrected-welcome-modal__overlay.components-modal__screen-overlay {
