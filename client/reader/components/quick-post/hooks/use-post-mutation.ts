@@ -13,10 +13,13 @@ interface PostItem {
 interface PostMutationVariables {
 	postContent: string;
 	status: 'draft' | 'publish';
-	siteId: number;
+	siteId: number | undefined;
 }
 
 const request = async ( { postContent, status, siteId }: PostMutationVariables ) => {
+	if ( ! siteId ) {
+		return Promise.reject( new Error( 'Site ID is required' ) );
+	}
 	return (
 		wpcom
 			.site( siteId )
