@@ -157,7 +157,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-end;
-		max-width: none;;
+		max-width: none;
 
 		.section-header-container__header {
 			max-width: 575px;
@@ -233,10 +233,6 @@ body.is-section-plugins #primary .main.is-logged-out {
 }
 
 body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
-	.layout__content {
-		padding: 0;
-	}
-
 	.plugins-browser__content-wrapper {
 		background-color: var(--studio-white);
 	}
@@ -254,6 +250,13 @@ body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
 	}
 }
 
+// Remove layout padding for logged-out full-width layout
+body .is-section-plugins:not(.is-logged-in):has(.plugins-browser.is-full-width-layout) {
+	.layout__content {
+		padding: 0;
+	}
+}
+
 body.is-section-plugins .is-logged-in {
 	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column).plugins-browser.is-full-width-layout";
 
@@ -262,40 +265,13 @@ body.is-section-plugins .is-logged-in {
 			padding: 0;
 			max-width: 100%;
 		}
-	}
-	@media screen and ( max-width: 601px ) {
-		&:not( .has-no-sidebar ) #{$full-width-main} {
-			.plugins-navigation-header.navigation-header {
-				padding-inline: 0;
-			}
-		}
-	}
 
-	@media screen and ( min-width: 601px ) {
-		&:not( .has-no-sidebar ) #{$full-width-main} {
-			.navigation-header__container {
-				padding: 47px 0 0;
-			}
-			.full-width-section {
-				padding-inline: 2rem;
-			}
+		.full-width-section__content {
+			max-width: 100%;
 		}
-	}
-	@media screen and ( min-width: 782px ) {
-		&:not( .has-no-sidebar ) #{$full-width-main} {
-			.full-width-section {
-				padding-inline-start: calc( var( --sidebar-width-max ) + 1px );
-				padding-inline-end: 0;
-			}
-			.plugins-navigation-header.navigation-header {
-				padding-inline: 0;
-			}
-			.plugins-browser__navigation-header {
-				border-block-end: 1px solid var( --color-neutral-5 );
-				.plugins-navigation-header.navigation-header {
-					border-block-end: none;
-				}
-			}
+
+		.navigation-header__container {
+			max-width: 100%;
 		}
 	}
 }

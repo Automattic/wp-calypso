@@ -179,14 +179,12 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				}
 			/>
 
-			<FullWidthSection className="plugins-browser__navigation-header full-width-section--no-padding">
-				<PluginsNavigationHeader
-					navigationHeaderRef={ navigationHeaderRef }
-					categoryName={ categoryName }
-					category={ category }
-					search={ search }
-				/>
-			</FullWidthSection>
+			<PluginsNavigationHeader
+				navigationHeaderRef={ navigationHeaderRef }
+				categoryName={ categoryName }
+				category={ category }
+				search={ search }
+			/>
 			<div className="plugins-browser__content-wrapper">
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
