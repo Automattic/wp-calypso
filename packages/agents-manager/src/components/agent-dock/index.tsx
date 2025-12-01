@@ -73,8 +73,10 @@ export default function AgentDock( {
 	// Tracks which session we've already loaded to avoid redundant fetches
 	const loadedSessionIdRef = useRef< string | null >( null );
 
-	const agentId = agentConfig.agentId;
+	// Note: Ideally `sessionId` should be managed via React State to ensure reactivity.
+	// However, reading directly from storage works sufficiently for the current use case.
 	const sessionId = getSessionId();
+	const agentId = agentConfig.agentId;
 	const chatState = persistedState.isOpen ? 'expanded' : 'collapsed';
 
 	// Manage how the chat is displayed: floating window or docked in sidebar
