@@ -9,11 +9,11 @@ import {
 	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
 	useNoticeVisibilityQuery,
 } from '../hooks/use-notice-visibility-query';
+import useSiteTypes from '../hooks/use-site-types';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
 import useHighlightsQuery from './use-highlights-query';
 import useOnScreen from './use-on-screen';
-import useSiteTypes from './use-site-types';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'animate.css';
