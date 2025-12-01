@@ -49,24 +49,23 @@ export default function ConversationHistoryView( {
 						<ConversationListSkeleton count={ 5 } />
 					</div>
 				) }
-
 				{ /* Error state - only show if we have no data to display */ }
 				{ error && ! isLoading && ! conversations.length && (
 					<div className="agents-manager-conversation-history-view__error">
-						<p>{ __( 'Failed to load conversations. Please try again.', 'agents-manager' ) }</p>
-					</div>
-				) }
-
-				{ /* Empty state */ }
-				{ ! isLoading && ! error && ! conversations.length && (
-					<div className="agents-manager-conversation-history-view__empty">
-						<p>{ __( 'No past conversations', 'agents-manager' ) }</p>
-						<p className="agents-manager-conversation-history-view__empty-hint">
-							{ __( 'Start a new chat to begin', 'agents-manager' ) }
+						<p>
+							{ __( 'Failed to load conversations. Please try again.', '__i18n_text_domain__' ) }
 						</p>
 					</div>
 				) }
-
+				{ /* Empty state */ }
+				{ ! isLoading && ! error && ! conversations.length && (
+					<div className="agents-manager-conversation-history-view__empty">
+						<p>{ __( 'No past conversations', '__i18n_text_domain__' ) }</p>
+						<p className="agents-manager-conversation-history-view__empty-hint">
+							{ __( 'Start a new chat to begin', '__i18n_text_domain__' ) }
+						</p>
+					</div>
+				) }{ ' ' }
 				{ /* Conversation list - show whenever we have data, even while refreshing */ }
 				{ conversations.length > 0 && (
 					<div className="agents-manager-conversation-history-view__list">
@@ -88,7 +87,7 @@ export default function ConversationHistoryView( {
 					onClick={ onNewChat }
 					className="agents-manager-conversation-history-view__new-chat-btn"
 				>
-					{ __( 'Start a new chat', 'agents-manager' ) }
+					{ __( 'Start a new chat', '__i18n_text_domain__' ) }
 				</Button>
 			</div>
 		</div>

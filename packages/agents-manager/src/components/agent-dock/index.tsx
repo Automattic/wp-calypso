@@ -246,13 +246,13 @@ export default function AgentDock( {
 		// Menu items for the chat header dropdown
 		const newChatMenuItem = {
 			icon: comment,
-			title: __( 'New chat', 'agents-manager' ),
+			title: __( 'New chat', '__i18n_text_domain__' ),
 			isDisabled: viewState === 'chat' && ! messages.length,
 			onClick: handleNewChat,
 		};
 		const undockMenuItem = {
 			icon: login,
-			title: __( 'Pop out sidebar', 'agents-manager' ),
+			title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
 			onClick: () => {
 				// TODO: Persist the float position...
 				try {
@@ -266,7 +266,7 @@ export default function AgentDock( {
 		};
 		const dockMenuItem = {
 			icon: drawerRight,
-			title: __( 'Move to sidebar', 'agents-manager' ),
+			title: __( 'Move to sidebar', '__i18n_text_domain__' ),
 			onClick: dock,
 		};
 
@@ -301,7 +301,7 @@ export default function AgentDock( {
 							options={ chatHeaderOptions }
 							onHistoryToggle={ handleToggleHistory }
 							viewState={ viewState }
-							title={ __( 'Past chats', 'agents-manager' ) }
+							title={ __( 'Past chats', '__i18n_text_domain__' ) }
 						/>
 						<ConversationHistoryView
 							botId={ createOdieBotId( agentId ) }
@@ -335,8 +335,8 @@ export default function AgentDock( {
 						<ChatMessageSkeleton count={ 3 } />
 					) : (
 						<EmptyView
-							heading={ __( 'Howdy! How can I help you today?', 'agents-manager' ) }
-							help={ __( 'Got a different request? Ask away.', 'agents-manager' ) }
+							heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
+							help={ __( 'Got a different request? Ask away.', '__i18n_text_domain__' ) }
 							suggestions={ emptyViewSuggestions }
 							icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
 						/>
