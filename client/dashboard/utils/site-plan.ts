@@ -131,8 +131,8 @@ export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
 
 	if ( site.plan?.is_free ) {
 		return isCommerceGarden( site )
-			? `${ protocol }//${ host }/setup/woo-hosted-plans?siteSlug=${ site.slug }`
-			: `${ protocol }//${ host }/setup/plan-upgrade?siteSlug=${ site.slug }`;
+			? `https://wordpress.com/setup/woo-hosted-plans?siteSlug=${ site.slug }`
+			: `https://wordpress.com/setup/plan-upgrade?siteSlug=${ site.slug }`;
 	}
 
 	if ( isDashboardBackport() ) {

@@ -49,7 +49,7 @@ export default function AlternativesModal( {
 			: [] ),
 		{
 			text: __( 'Start a new site' ),
-			to: '/start?ref=me-account-close',
+			to: 'https://wordpress.com/start?ref=me-account-close',
 			supportLink: localizeUrl( 'https://wordpress.com/support/create-a-blog/' ),
 			useRouterButton: false,
 		},

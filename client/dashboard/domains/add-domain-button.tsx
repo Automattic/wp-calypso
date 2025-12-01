@@ -27,10 +27,14 @@ export function AddDomainButton( {
 		return false;
 	};
 
-	const onSearchClick = () => navigateTo( '/setup/domain', '/start/domain' );
+	const onSearchClick = () =>
+		navigateTo( 'https://wordpress.com/setup/domain', 'https://wordpress.com/start/domain' );
 
 	const onTransferOrConnectClick = () =>
-		navigateTo( '/setup/domain/use-my-domain', '/setup/domain-transfer' );
+		navigateTo(
+			'https://wordpress.com/setup/domain/use-my-domain',
+			'https://wordpress.com/setup/domain-transfer'
+		);
 
 	return (
 		<Dropdown

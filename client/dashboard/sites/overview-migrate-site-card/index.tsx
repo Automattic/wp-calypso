@@ -11,7 +11,9 @@ export default function MigrateSiteCard( { site }: { site: Site } ) {
 			title={ __( 'Migrate' ) }
 			heading={ __( 'Migrate site' ) }
 			description={ __( 'Bring your site to WordPress.com.' ) }
-			externalLink={ addQueryArgs( '/setup/site-migration', { siteSlug: site.slug } ) }
+			externalLink={ addQueryArgs( 'https://wordpress.com/setup/site-migration', {
+				siteSlug: site.slug,
+			} ) }
 			intent="upsell"
 			tracksId="site-overview-migrate-site"
 			upsellFeatureId="site-migration"

@@ -41,10 +41,16 @@ const getContinueMigrationUrl = ( site: Site ): string | null => {
 			return addQueryArgs( `${ url }wp-admin/admin.php`, { page: 'wpcom-migration' } );
 		}
 
-		return addQueryArgs( '/setup/site-migration/site-migration-instructions', queryArgs );
+		return addQueryArgs(
+			'https://wordpress.com/setup/site-migration/site-migration-instructions',
+			queryArgs
+		);
 	}
 
-	return addQueryArgs( '/setup/site-migration/site-migration-credentials', queryArgs );
+	return addQueryArgs(
+		'https://wordpress.com/setup/site-migration/site-migration-credentials',
+		queryArgs
+	);
 };
 
 function CancellationModal( { site, onClose }: { site: Site; onClose: () => void } ) {

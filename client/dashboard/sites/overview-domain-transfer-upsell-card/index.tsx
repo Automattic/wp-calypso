@@ -20,7 +20,7 @@ export default function DomainTransferUpsellCard() {
 			imageVariant="full-bleed"
 			actions={
 				<UpsellCTAButton
-					href="/setup/domain-transfer"
+					href="https://wordpress.com/setup/domain-transfer"
 					text={ __( 'Transfer domain' ) }
 					size="compact"
 					upsellId="site-overview-transfer-domain"

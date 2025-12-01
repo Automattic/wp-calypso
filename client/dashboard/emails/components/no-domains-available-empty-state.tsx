@@ -12,7 +12,7 @@ const NoDomainsAvailableEmptyState = () => {
 			) }
 			illustration={ <DomainEmptyIllustration /> }
 			actions={
-				<Button variant="primary" href="/setup/domain">
+				<Button variant="primary" href="https://wordpress.com/setup/domain">
 					{ __( 'Choose a domain' ) }
 				</Button>
 			}

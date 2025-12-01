@@ -54,7 +54,7 @@ const DuplicateSite = ( { site }: { site: Site } ) => {
 				<Button
 					variant="secondary"
 					size="compact"
-					href={ addQueryArgs( '/setup/copy-site', {
+					href={ addQueryArgs( 'https://wordpress.com/setup/copy-site', {
 						sourceSlug: site.slug,
 					} ) }
 				>

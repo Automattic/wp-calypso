@@ -125,7 +125,7 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 	}
 
 	if ( purchase.is_woo_hosted_product ) {
-		return `/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug }`;
+		return `https://wordpress.com/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug }`;
 	}
 
 	return getWpcomPlanGridUrl( purchase.site_slug );
@@ -149,7 +149,7 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 
 function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 	const backUrl = window.location.href.replace( window.location.origin, '' );
-	return addQueryArgs( '/setup/plan-upgrade', {
+	return addQueryArgs( 'https://wordpress.com/setup/plan-upgrade', {
 		...( siteSlug && { siteSlug } ),
 		cancel_to: backUrl,
 	} );
@@ -811,7 +811,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 							{
 								SubmitContent: (
 									<a
-										href={ `/start/site-content-collection/website-content?siteSlug=${ purchase.site_slug }` }
+										href={ `https://wordpress.com/start/site-content-collection/website-content?siteSlug=${ purchase.site_slug }` }
 									>
 										{ __( 'Submit content' ) }
 									</a>

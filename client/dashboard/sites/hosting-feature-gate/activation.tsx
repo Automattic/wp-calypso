@@ -44,7 +44,7 @@ export default function HostingFeatureActivation( {
 			feature_id: tracksFeatureId,
 		} );
 
-		window.location.href = addQueryArgs( '/setup/transferring-hosted-site', {
+		window.location.href = addQueryArgs( 'https://wordpress.com/setup/transferring-hosted-site', {
 			siteId: String( site.ID ),
 			feature,
 			initiate_transfer_context: 'hosting',

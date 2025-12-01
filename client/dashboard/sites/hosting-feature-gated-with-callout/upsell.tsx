@@ -38,7 +38,7 @@ export default function UpsellCallout( {
 	const handleUpsellClick = () => {
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
-		window.location.href = addQueryArgs( '/setup/plan-upgrade/', {
+		window.location.href = addQueryArgs( 'https://wordpress.com/setup/plan-upgrade/', {
 			siteSlug: site.slug,
 			cancel_to: backUrl,
 			redirect_to: backUrl,

@@ -32,7 +32,7 @@ const SiteActionMenu = ( { site }: { site: Site } ) => {
 	const handleImportSite = () => {
 		const url = isSelfHostedJetpackConnected( site )
 			? 'https://wordpress.com/move'
-			: addQueryArgs( '/setup/site-migration', { siteSlug: site.slug } );
+			: addQueryArgs( 'https://wordpress.com/setup/site-migration', { siteSlug: site.slug } );
 
 		trackActionClick( 'import-site' );
 		window.open( url, '_blank', 'noreferrer,noopener' );

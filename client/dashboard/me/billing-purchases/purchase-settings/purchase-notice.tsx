@@ -246,7 +246,9 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				to_checkout: false,
 			} );
 
-			window.location.href = `/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug ?? '' }`;
+			window.location.href = `https://wordpress.com/setup/woo-hosted-plans?siteSlug=${
+				purchase.site_slug ?? ''
+			}`;
 			return;
 		}
 

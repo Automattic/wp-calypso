@@ -104,7 +104,7 @@ export default function CIABSites() {
 		}
 	}, [ sites, queryClient ] );
 
-	const addNewStoreUrl = addQueryArgs( '/setup/ai-site-builder-spec', {
+	const addNewStoreUrl = addQueryArgs( 'https://wordpress.com/setup/ai-site-builder-spec', {
 		source: 'ciab-sites-dashboard',
 		ref: 'new-site-popover',
 	} );

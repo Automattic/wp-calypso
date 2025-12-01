@@ -115,7 +115,7 @@ function WebsiteContentSubmissionPending( { site }: { site: Site } ) {
 			<ButtonStack justify="start">
 				<Button
 					variant="primary"
-					href={ `/start/site-content-collection/website-content?siteSlug=${ site.slug }` }
+					href={ `https://wordpress.com/start/site-content-collection/website-content?siteSlug=${ site.slug }` }
 				>
 					{ __( 'Provide website content' ) }
 				</Button>

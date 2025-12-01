@@ -37,7 +37,7 @@ export default function DIFMUpsellCard( { site }: { site: Site } ) {
 			imageVariant="full-bleed"
 			actions={
 				<UpsellCTAButton
-					href="/start/do-it-for-me/new-or-existing-site?ref=site-overview"
+					href="https://wordpress.com/start/do-it-for-me/new-or-existing-site?ref=site-overview"
 					target="_blank"
 					text={ __( 'Build it for me' ) }
 					variant="secondary"

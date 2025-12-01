@@ -53,7 +53,7 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 
 	const getLaunchUrl = () => {
 		if ( isSitePlanBigSkyTrial( site ) ) {
-			return addQueryArgs( '/setup/ai-site-builder/domains', {
+			return addQueryArgs( 'https://wordpress.com/setup/ai-site-builder/domains', {
 				siteId: site.ID,
 				source: 'general-settings',
 				redirect: 'site-launch',
@@ -62,7 +62,7 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 			} );
 		}
 
-		return addQueryArgs( '/start/launch-site', {
+		return addQueryArgs( 'https://wordpress.com/start/launch-site', {
 			siteSlug: site.slug,
 			new: site.name,
 			hide_initial_query: 'yes',
