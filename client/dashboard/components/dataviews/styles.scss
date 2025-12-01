@@ -42,3 +42,19 @@ a.dataviews-url-field {
 .dashboard-dataviews-empty-state .dashboard-dataviews-empty-state__sub-heading {
 	text-wrap: balance;
 }
+
+// Temporary overrides for the dataviews wrapper to match the new design system.
+.dataviews-filters__container,
+.dataviews-footer,
+.dataviews-view-grid,
+.dataviews-loading,
+.dataviews-no-results,
+.dataviews__view-actions,
+.dataviews-view-table tr td:first-child,
+.dataviews-view-table tr th:first-child,
+.dataviews-view-list div[role="row"] .dataviews-view-list__item-wrapper,
+.dataviews-view-list div[role="article"] .dataviews-view-list__item-wrapper {
+	@media ( max-width: 782px ) {
+		padding-inline: #{$grid-unit-20} !important;
+	}
+}
