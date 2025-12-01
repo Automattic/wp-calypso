@@ -108,7 +108,7 @@ export default function UnifiedAIAgent( {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const sessionId = getSessionId();
 
-	// Create agent configuration
+	// Create the initial agent configuration
 	const config = useMemo< UseAgentChatConfig >(
 		() => {
 			const config: UseAgentChatConfig = {
@@ -177,7 +177,7 @@ export default function UnifiedAIAgent( {
 
 			return config;
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- Ensure agent config is stable
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Only create once
 		[]
 	);
 
