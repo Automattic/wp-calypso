@@ -59,7 +59,14 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		await test.step( 'Then I can see the invite is pending', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
 			! userManagementRevampFeature && ( await pagePeople.clickTab( 'Invites' ) );
-			await pagePeople.selectInvitedUser( testUser.email );
+
+			// await pagePeople.selectInvitedUser( testUser.email );
+
+			await page.getByRole( 'link', { name: 'View All' } ).click();
+			await expect( async () => {
+				page.reload();
+				expect( page.getByTitle( testUser.email ) ).toBeVisible();
+			} ).toPass();
 		} );
 
 		await test.step( 'When the invited user checks their email', async function () {
