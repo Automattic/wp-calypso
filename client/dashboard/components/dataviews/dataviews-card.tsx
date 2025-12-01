@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { forwardRef } from 'react';
 import { Card, CardBody } from '../card';
 
@@ -7,7 +6,7 @@ function UnforwardedDataViewsCard(
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	return (
-		<Card ref={ ref } className={ clsx( className, 'dataviews-card' ) }>
+		<Card ref={ ref } className={ className }>
 			<CardBody>{ children }</CardBody>
 		</Card>
 	);
