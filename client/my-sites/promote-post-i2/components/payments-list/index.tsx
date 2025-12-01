@@ -136,22 +136,24 @@ export default function PaymentsList( props: Props ) {
 									</p>
 								</div>
 							) }
-							<table className="promote-post-i2__table payments-list__table">
-								<thead>
-									<tr>
-										{ getHeaderColumns().map( ( item, key ) => (
-											<th className={ `payment-item__${ item.key }` } key={ key }>
-												{ item.title }
-											</th>
+							<div className="promote-post-i2__table payments-list__table">
+								<table>
+									<thead>
+										<tr>
+											{ getHeaderColumns().map( ( item, key ) => (
+												<th className={ `payment-item__${ item.key }` } key={ key }>
+													{ item.title }
+												</th>
+											) ) }
+										</tr>
+									</thead>
+									<tbody>
+										{ payments?.map( ( payment ) => (
+											<PaymentItem payment={ payment } key={ payment.id } />
 										) ) }
-									</tr>
-								</thead>
-								<tbody>
-									{ payments?.map( ( payment ) => (
-										<PaymentItem payment={ payment } key={ payment.id } />
-									) ) }
-								</tbody>
-							</table>
+									</tbody>
+								</table>
+							</div>
 						</>
 					) }
 				</>
