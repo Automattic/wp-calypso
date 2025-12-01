@@ -76,9 +76,6 @@ object BuildDockerImage : BuildType({
                   <table>
                     <tr>
                       <td>
-                        <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3D$imageBase%3Abuild-%build.number%%26${env.qrEnv}&choe=UTF-8" />
-                      </td>
-                      <td>
                         <a href="https://calypso.live?image=$imageBase:build-%build.number%${env.envQuery}">https://calypso.live?image=$imageBase:build-%build.number%${env.envQuery}</a>
                       </td>
                     </tr>
