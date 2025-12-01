@@ -3,15 +3,15 @@
 This module contains the reusable primitives that power the `calypso_resurrected_users_welcome_back_modal_202511`
 experiment:
 
-- `useResurrectedFreeUserEligibility` – Computes experiment eligibility (180 day inactivity threshold,
+- `useResurrectedFreeUserEligibility` - Computes experiment eligibility (180-day inactivity threshold,
   account-level purchase checks, feature-flag gates, and ExPlat assignment).
-- Analytics helpers – shared constants for Tracks event names and variation keys.
-- `ResurrectedWelcomeModalGate` – A lightweight modal placeholder that renders the correct variant slot and
+- Analytics helpers - shared constants for Tracks event names and variation keys.
+- `ResurrectedWelcomeModalGate` - A lightweight modal placeholder that renders the correct variant slot and
   emits impression/CTA events when the user is eligible.
 
 ## Flow Overview
 
-1. `TrackResurrections` now logs both the legacy 373 day event and a new `calypso_user_resurrected_6m` event so we can
+1. `TrackResurrections` now logs both the legacy 373-day event and a new `calypso_user_resurrected_6m` event so we can
    keep historical data while powering the shorter threshold experiment.
 2. `useResurrectedFreeUserEligibility`:
    - waits for user settings + purchases to finish loading,
@@ -26,7 +26,7 @@ experiment:
 
 | Variation Key           | Description            | Config Flag                      | Placeholder CTAs                                       |
 | ----------------------- | ---------------------- | -------------------------------- | ------------------------------------------------------ |
-| `control`               | No modal               | `welcome-back-modal-control`     | —                                                      |
+| `control`               | No modal               | `welcome-back-modal-control`     | -                                                      |
 | `treatment_ai_only`     | AI-only CTA            | `welcome-back-modal-ai-only`     | “Create a new site with AI” → `/setup/ai-site-builder` |
 | `treatment_manual_dual` | Manual + continue      | `welcome-back-modal-manual`      | Manual onboarding + “Continue where I left”            |
 | `treatment_ai_dual`     | AI + continue          | `welcome-back-modal-ai-combo`    | AI builder + “Continue where I left”                   |
@@ -34,13 +34,15 @@ experiment:
 
 All variants are feature-flagged so that we can selectively enable treatments during incremental rollouts. Control
 remains opt-in so we can disable _all_ UI safely if necessary. Enabling any of the variant flags automatically forces
-that experience to render—even if the user would otherwise be ineligible or the experiment assignment has not loaded—
+that experience to render - even if the user would otherwise be ineligible or the experiment assignment has not loaded -
 which makes it easy to test each treatment locally.
 
 ## Analytics
 
-- `calypso_resurrected_welcome_modal_impression` – Fired once per session when a variant modal opens.
-- `calypso_resurrected_welcome_modal_cta_click` – Fired whenever a CTA is pressed with `{ variation, cta_id }`.
+- `calypso_resurrected_welcome_modal_impression` - Fired once per session when a variant modal opens.
+- `calypso_resurrected_welcome_modal_cta_click` - Fired whenever a CTA is pressed with `{ variation, cta_id }`.
+- `calypso_resurrected_welcome_modal_dismiss` - Fired whenever the modal closes, with `{ variation, source }`
+  capturing whether the dismissal came from a CTA or the close button.
 
 ## Next Steps
 

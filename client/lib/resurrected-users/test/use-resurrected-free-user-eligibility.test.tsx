@@ -9,6 +9,7 @@ import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { WELCOME_BACK_VARIATIONS } from '../constants';
 import { useResurrectedFreeUserEligibility } from '../use-resurrected-free-user-eligibility';
+import type { ExperimentAssignment } from '@automattic/explat-client';
 
 const selectorsState = {
 	purchases: null as Array< { type: string; status: string } > | null,
@@ -129,7 +130,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 
 		mockUseExperiment.mockReturnValue( [
 			false,
-			{ variationName: WELCOME_BACK_VARIATIONS.AI_ONLY } as any,
+			{ variationName: WELCOME_BACK_VARIATIONS.AI_ONLY } as ExperimentAssignment,
 		] );
 
 		const initialState = createState( { lastSeenOffsetDays: 400 } );
