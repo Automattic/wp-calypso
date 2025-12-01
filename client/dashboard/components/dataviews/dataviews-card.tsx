@@ -7,22 +7,24 @@ function UnforwardedDataViewsCard(
 	{ className, children }: { className?: string; children: React.ReactNode },
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
+	const greetings = [ __( 'Friend!' ), __( 'Partner!' ), __( 'Client!' ) ];
+
+	const randomGreeting = greetings[ Math.floor( Math.random() * greetings.length ) ];
 	return (
 		<Card ref={ ref } className={ className }>
-			<CardBody>{ children }</CardBody>
-
 			{ createInterpolateElement(
 				sprintf(
-					/* translators: %(newOwnerEmail)s - the test email */
-					__( 'Invitation sent to <strong>%(testEmail)s</strong>' ),
+					/* translators: %(greeting)s - a string of text */
+					__( 'Welcome to your DataViews Card, <strong>%(greeting)s</strong>!' ),
 					{
-						testEmail: 'test@example.com',
+						greeting: randomGreeting,
 					}
 				),
 				{
 					strong: <strong />,
 				}
 			) }
+			<CardBody>{ children }</CardBody>
 		</Card>
 	);
 }
