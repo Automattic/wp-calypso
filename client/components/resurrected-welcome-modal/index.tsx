@@ -154,12 +154,19 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 		setHasTrackedImpression( true );
 	}, [ shouldDisplay, variationName, hasTrackedImpression ] );
 
-	const persistDismissal = useCallback( () => {
-		setHasDismissedForSession( true );
-		if ( typeof window !== 'undefined' ) {
-			window.sessionStorage.setItem( SESSION_STORAGE_KEY, 'true' );
-		}
-	}, [] );
+	const persistDismissal = useCallback(
+		( source: 'cta' | 'close' = 'cta' ) => {
+			setHasDismissedForSession( true );
+			if ( typeof window !== 'undefined' ) {
+				window.sessionStorage.setItem( SESSION_STORAGE_KEY, 'true' );
+			}
+			recordTracksEvent( 'calypso_resurrected_welcome_modal_dismiss', {
+				variation: variationName ?? 'unknown',
+				source,
+			} );
+		},
+		[ variationName ]
+	);
 
 	const handleCta = useCallback(
 		( cta: CtaConfig ) => {
@@ -173,7 +180,7 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 			} );
 
 			if ( cta.isDismissOnly ) {
-				persistDismissal();
+				persistDismissal( 'cta' );
 				return;
 			}
 
@@ -181,7 +188,7 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 				window.location.assign( cta.href );
 			}
 		},
-		[ persistDismissal, variationName ]
+		[ variationName, persistDismissal ]
 	);
 
 	if ( ! shouldDisplay || ! variationConfig ) {
@@ -195,7 +202,7 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 		<Modal
 			className="resurrected-welcome-modal"
 			title={ title }
-			onRequestClose={ persistDismissal }
+			onRequestClose={ () => persistDismissal( 'close' ) }
 		>
 			<p>{ description }</p>
 			<div className="resurrected-welcome-modal__actions">
