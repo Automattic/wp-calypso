@@ -538,11 +538,13 @@ function setUpCSP( req, res, next ) {
 			'surveys-static-prd.survicate-cdn.com', // Survicate CDN
 			'https://cdn.smooch.io', // Smooch/Sunshine Conversations (Zendesk messaging)
 			'https://static.zdassets.com', // Zendesk static assets
+			'*.zendesk.com', // Zendesk support scripts (Faye/Bayeux endpoints)
 			// Google static content
 			'https://www.gstatic.com', // Google Charts and other static content
 			// Advertising and analytics tracking scripts
 			'https://static.ads-twitter.com', // Twitter/X advertising tag
 			'https://connect.facebook.net', // Facebook Pixel
+			'https://snap.licdn.com', // LinkedIn analytics
 			'www.redditstatic.com', // Reddit tracking pixel
 			'www.googletagmanager.com',
 			'https://accounts.google.com',
@@ -593,6 +595,15 @@ function setUpCSP( req, res, next ) {
 			'https://*.google.com.mx', // Google Ads remarketing pixels (Mexico)
 			'https://*.google.nl', // Google Ads remarketing pixels (Netherlands)
 			'https://*.google.co.id', // Google Ads remarketing pixels (Indonesia)
+			'https://*.google.cd', // Google Ads remarketing pixels (Congo)
+			'https://*.google.lu', // Google Ads remarketing pixels (Luxembourg)
+			'https://*.google.com.tr', // Google Ads remarketing pixels (Turkey)
+			'https://*.google.sm', // Google Ads remarketing pixels (San Marino)
+			'https://*.google.com.ng', // Google Ads remarketing pixels (Nigeria)
+			'https://*.google.co.ma', // Google Ads remarketing pixels (Morocco)
+			'https://gravatar.com', // Gravatar assets (root domain)
+			'https://linkmaker.itunes.apple.com', // Apple App Store badges
+			'https://cdn.smooch.io', // Smooch/Sunshine Conversations images
 			'https://bat.bing.com', // Bing Ads tracking pixel
 			'https://amplifypixel.outbrain.com',
 			'https://hexagon-analytics.com', // Hexagon analytics tracking pixels
@@ -609,6 +620,7 @@ function setUpCSP( req, res, next ) {
 			"'self'",
 			'https://public-api.wordpress.com',
 			'https://accounts.google.com/',
+			'https://www.googletagmanager.com', // Google Tag Manager iframes
 			'https://jetpack.com',
 			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
 			'*.wordpress.com', // User WordPress.com sites (site previews, embeds)
@@ -638,9 +650,15 @@ function setUpCSP( req, res, next ) {
 			'https://wordpress.com',
 			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
 			'https://api.wordpress.org', // WordPress.org API (plugin/theme info)
+			'https://pixel.wp.com', // WordPress.com stats pixel
 			'https://*.google.com',
 			'www.google-analytics.com',
+			'https://region1.google-analytics.com', // Google Analytics 4
+			'https://www.googletagmanager.com', // Google Tag Manager
 			'https://www.facebook.com', // Facebook Pixel tracking endpoint
+			'https://bat.bing.com', // Bing Ads API
+			'https://px.ads.linkedin.com', // LinkedIn ads pixel
+			'https://survey.survicate.com', // Survicate API
 			'*.sentry.io',
 			'*.reddit.com',
 			// Payment provider APIs (for tokenization and payment processing)
