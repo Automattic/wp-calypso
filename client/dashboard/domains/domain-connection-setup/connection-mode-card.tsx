@@ -155,17 +155,17 @@ export default function ConnectionModeCard( {
 								</div>
 							) ) }
 						</div>
+						<ButtonStack justify="flex-start">
+							<Button
+								variant="primary"
+								onClick={ onVerifyConnection }
+								isBusy={ isUpdatingConnectionMode }
+								disabled={ verificationDisabled }
+							>
+								{ __( 'Verify Connection' ) }
+							</Button>
+						</ButtonStack>
 					</VStack>
-					<ButtonStack justify="flex-start">
-						<Button
-							variant="primary"
-							onClick={ onVerifyConnection }
-							isBusy={ isUpdatingConnectionMode }
-							disabled={ verificationDisabled }
-						>
-							{ __( 'Verify Connection' ) }
-						</Button>
-					</ButtonStack>
 				</CardBody>
 			) }
 		</Card>
