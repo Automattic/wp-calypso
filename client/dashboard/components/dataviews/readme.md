@@ -21,3 +21,7 @@ The `index.tsx` file exports the following components:
 These files are necessary extensions to WordPress's DataViews component. **Before making any changes to these components, please consider whether the changes can be contributed upstream to the WordPress core package** (`@wordpress/dataviews`) instead of being maintained as local modifications. This helps reduce maintenance burden and benefits the broader WordPress community.
 
 If a change is truly Multi-site dashboard specific and cannot be upstreamed, document the reason in the code or commit message.
+
+## CSS Styles
+
+**We do not want custom styles for this component.** The DataViews component should rely on the default styles provided by the `@wordpress/dataviews` package. If you find that custom styles are necessary, they should be considered temporary and documented as such. The goal is to work with the upstream package's styling system rather than maintaining custom overrides.
