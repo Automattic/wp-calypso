@@ -1,4 +1,18 @@
+import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
+import {
+	Icon,
+	commentAuthorAvatar,
+	postList,
+	create,
+	tag,
+	comment,
+	bell,
+	chartBar,
+	media,
+	addSubmenu,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -72,9 +86,25 @@ function Authorize() {
 		window.location.href = meta.links.logout;
 	};
 
+	// Map permission names to icons
+	const getPermissionIcon = ( permissionName: string ) => {
+		const iconMap: Record< string, typeof commentAuthorAvatar > = {
+			users: commentAuthorAvatar,
+			posts: postList,
+			follow: create,
+			taxonomy: tag,
+			comments: comment,
+			notifications: bell,
+			stats: chartBar,
+			media: media,
+			menus: addSubmenu,
+		};
+		return iconMap[ permissionName ];
+	};
+
 	let content = null;
 	if ( isLoading || ! meta ) {
-		content = <div className="oauth2-connect__loading">Loading...</div>;
+		content = <div className="oauth2-connect__loading">{ translate( 'Loading…' ) }</div>;
 	}
 
 	if ( error ) {
@@ -85,23 +115,55 @@ function Authorize() {
 		content = (
 			<div className="oauth2-connect">
 				{ meta.user && (
-					<div className="oauth2-connect__user">
-						<div>{ meta.user.display_name }</div>
-						<div>{ meta.user.email }</div>
-						<button onClick={ onSwitch }>Use a different account</button>
+					<div className="oauth2-connect__user-card">
+						<div className="oauth2-connect__user-info">
+							<div className="oauth2-connect__user-name">{ meta.user.display_name }</div>
+							<div className="oauth2-connect__user-details">{ meta.user.email }</div>
+						</div>
+						<Button variant="link" onClick={ onSwitch } className="oauth2-connect__switch-account">
+							{ translate( 'Log in with a different account' ) }
+						</Button>
 					</div>
 				) }
+
 				<div className="oauth2-connect__permissions">
-					<p>This will allow { meta.client.title } to:</p>
-					<ul>
-						{ meta.permissions.slice( 0, 3 ).map( ( p ) => (
-							<li key={ p.name }>{ p.description }</li>
-						) ) }
-					</ul>
+					<p className="oauth2-connect__permissions-heading">
+						{ translate( '%(client)s is requesting access to:', {
+							args: { client: meta.client.title },
+						} ) }
+					</p>
+					<div className="oauth2-connect__permissions-grid">
+						{ meta.permissions.map( ( permission ) => {
+							const icon = getPermissionIcon( permission.name );
+							return (
+								<div key={ permission.name } className="oauth2-connect__permission-item">
+									{ icon && <Icon icon={ icon } size={ 20 } /> }
+									<span>{ permission.description }</span>
+								</div>
+							);
+						} ) }
+					</div>
 				</div>
+
+				<div className="oauth2-connect__learn-more">
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/third-party-applications/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ translate( 'Learn more about how %(client)s uses your data', {
+							args: { client: meta.client.title },
+						} ) }
+					</a>
+				</div>
+
 				<div className="oauth2-connect__actions">
-					<button onClick={ onDeny }>Deny</button>
-					<button onClick={ onApprove }>Approve</button>
+					<Button variant="secondary" onClick={ onDeny }>
+						{ translate( 'Deny' ) }
+					</Button>
+					<Button variant="primary" onClick={ onApprove }>
+						{ translate( 'Approve' ) }
+					</Button>
 				</div>
 			</div>
 		);

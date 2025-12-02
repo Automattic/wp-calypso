@@ -6,3 +6,116 @@
 		padding: 0;
 	}
 }
+
+.oauth2-connect {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	max-width: 500px;
+	margin: 0 auto;
+	padding: 24px 16px;
+}
+
+.oauth2-connect__user-card {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.oauth2-connect__user-info {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.oauth2-connect__user-name {
+	font-weight: 500;
+	font-size: 14px;
+	color: #1e1e1e;
+}
+
+.oauth2-connect__user-details {
+	font-size: 13px;
+	color: #646970;
+}
+
+.oauth2-connect__switch-account {
+	text-align: start;
+	padding: 0;
+	height: auto;
+	font-size: 13px;
+}
+
+.oauth2-connect__permissions {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.oauth2-connect__permissions-heading {
+	font-size: 14px;
+	font-weight: 500;
+	color: #1e1e1e;
+	margin: 0;
+}
+
+.oauth2-connect__permissions-grid {
+	display: grid;
+	grid-template-columns: repeat( 2, 1fr );
+	gap: 16px 24px;
+}
+
+.oauth2-connect__permission-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	color: #1e1e1e;
+
+	svg {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+}
+
+.oauth2-connect__learn-more {
+	a {
+		font-size: 13px;
+		color: #3858e9;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+.oauth2-connect__actions {
+	display: flex;
+	gap: 16px;
+	justify-content: center;
+	margin-block-start: 8px;
+
+	button {
+		flex: 1;
+		height: 40px;
+		padding: 10px;
+		border-radius: 4px;
+		opacity: 1;
+	}
+}
+
+.oauth2-connect__loading,
+.oauth2-connect__error {
+	padding: 24px;
+	text-align: center;
+	font-size: 14px;
+}
+
+.oauth2-connect__error {
+	color: #d63638;
+}
