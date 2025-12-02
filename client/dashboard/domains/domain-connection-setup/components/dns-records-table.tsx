@@ -5,6 +5,7 @@ import {
 	DomainMappingStatus,
 } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
+import { __experimentalText as Text } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -79,7 +80,7 @@ const fields: Field< DnsRecordVerification >[] = [
 		enableHiding: false,
 		enableSorting: false,
 		filterBy: false,
-		render: ( { field, item } ) => field.getValue( { item } ) || '-',
+		render: ( { field, item } ) => <Text>{ field.getValue( { item } ) || '-' }</Text>,
 	},
 	{
 		id: 'status',
