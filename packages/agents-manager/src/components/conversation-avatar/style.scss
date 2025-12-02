@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/colors';
+
 .agents-manager-conversation-avatar {
 	display: flex;
 	align-items: center;
@@ -8,20 +10,20 @@
 	flex-shrink: 0;
 
 	svg {
-		color: #fff;
+		color: $white;
 	}
 
 	&--big-sky,
 	&--odie {
-		background-color: var( --color-popover-muted, #2f2f2f );
+		background-color: $gray-800;
 		border: 1px solid #464646 !important;
 
 		svg {
-			color: #fff;
+			color: $white;
 		}
 	}
 
 	&--he {
-		background-color: var( --color-primary, #2d5af2 );
+		background-color: #2d5af2;
 	}
 }

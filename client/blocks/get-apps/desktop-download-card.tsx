@@ -50,8 +50,9 @@ const getCurrentPlatform = async (): Promise< {
 		const { platform } = detection;
 
 		if ( platform === 'macos' ) {
-			// Cannot detect Mac architecture reliably - show both options
-			return { platform: PlatformType.MacIntel, detectionFailed: true };
+			// Cannot detect Mac architecture reliably - show both options,
+			// but default to Apple Silicon (more common now)
+			return { platform: PlatformType.MacSilicon, detectionFailed: true };
 		}
 
 		if ( platform === 'windows' ) {

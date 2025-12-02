@@ -32,7 +32,7 @@ export default function ConversationListItem( {
 	const botType = getBotType( conversation.bot_id );
 	const title = conversation.last_message
 		? generateConversationTitle( conversation.last_message.content )
-		: __( 'New conversation', 'agents-manager' );
+		: __( 'New conversation', '__i18n_text_domain__' );
 	const date = formatConversationDate( conversation.created_at );
 
 	// Check if this is a Happiness Engineer chat
@@ -40,7 +40,7 @@ export default function ConversationListItem( {
 	const subtitle = isHE
 		? sprintf(
 				/* translators: %s: date of the conversation */
-				__( 'Happiness chat · %s', 'agents-manager' ),
+				__( 'Happiness chat · %s', '__i18n_text_domain__' ),
 				date
 		  )
 		: date;
@@ -54,7 +54,7 @@ export default function ConversationListItem( {
 			disabled={ disabled }
 			aria-label={ sprintf(
 				/* translators: %1$s: conversation title, %2$s: conversation subtitle */
-				__( 'Load conversation: %1$s, %2$s', 'agents-manager' ),
+				__( 'Load conversation: %1$s, %2$s', '__i18n_text_domain__' ),
 				title,
 				subtitle
 			) }

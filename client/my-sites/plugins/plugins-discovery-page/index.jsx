@@ -116,7 +116,7 @@ const PluginsDiscoveryPage = ( props ) => {
 				<PaidPluginsSection { ...props } />
 			</FullWidthSection>
 
-			<FullWidthSection className="plugins-discovery-page__do-more">
+			<FullWidthSection className="plugins-discovery-page__do-more full-width-section--gray">
 				<CollectionListView category="monetization" { ...props } />
 			</FullWidthSection>
 
@@ -130,7 +130,7 @@ const PluginsDiscoveryPage = ( props ) => {
 				</FullWidthSection>
 			) }
 
-			<FullWidthSection className="plugins-discovery-page__favorites full-width-section--double-padding">
+			<FullWidthSection className="plugins-discovery-page__favorites full-width-section--double-padding full-width-section--gray">
 				<FeaturedPluginsSection
 					{ ...props }
 					pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
@@ -149,7 +149,7 @@ const PluginsDiscoveryPage = ( props ) => {
 				/>
 			</FullWidthSection>
 
-			<FullWidthSection className="plugins-discovery-page__power-store">
+			<FullWidthSection className="plugins-discovery-page__power-store full-width-section--gray">
 				<CollectionListView category="ecommerce" { ...props } />
 			</FullWidthSection>
 		</>

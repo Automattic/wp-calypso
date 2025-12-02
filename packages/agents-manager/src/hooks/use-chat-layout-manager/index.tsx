@@ -175,7 +175,7 @@ export default function useChatLayoutManager( {
 							className="agents-manager-sidebar-fab"
 							icon={ AI }
 							onClick={ handleOpenSidebar }
-							label={ __( 'Open Chat', 'agents-manager' ) }
+							label={ __( 'Open Chat', '__i18n_text_domain__' ) }
 						/>
 					</>
 				) : (

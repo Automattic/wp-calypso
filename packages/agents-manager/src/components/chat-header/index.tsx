@@ -33,7 +33,7 @@ export default function ChatHeader( {
 					className="agents-manager-chat-header__more-options"
 					controls={ options }
 					icon={ moreVertical }
-					label={ __( 'More Options', 'agents-manager' ) }
+					label={ __( 'More Options', '__i18n_text_domain__' ) }
 					toggleProps={ {
 						size: ! isChatDocked ? 'small' : undefined,
 					} }
@@ -45,8 +45,8 @@ export default function ChatHeader( {
 						onClick={ onHistoryToggle }
 						label={
 							viewState === 'history'
-								? __( 'Back to chat', 'agents-manager' )
-								: __( 'View history', 'agents-manager' )
+								? __( 'Back to chat', '__i18n_text_domain__' )
+								: __( 'View history', '__i18n_text_domain__' )
 						}
 						size={ ! isChatDocked ? 'small' : undefined }
 					/>
@@ -55,7 +55,7 @@ export default function ChatHeader( {
 					className="agents-manager-chat-header__close-btn"
 					icon={ close }
 					onClick={ onClose }
-					label={ __( 'Close', 'agents-manager' ) }
+					label={ __( 'Close', '__i18n_text_domain__' ) }
 					size={ ! isChatDocked ? 'small' : undefined }
 				/>
 			</div>

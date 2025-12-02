@@ -1,14 +1,14 @@
 {
 	"env": "production",
 	"env_id": "dashboard-horizon",
-	"favicon_url": "/calypso/images/favicons/favicon-horizon.ico",
+	"favicon_url": "/calypso/images/favicons/favicon-wpcalypso.ico",
 	"client_slug": "browser",
 	"hostname": "my.wordpress.com",
 	"i18n_default_locale_slug": "en",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"site_name": "Hosting Dashboard",
 	"features": {
-		"dashboard": false,
+		"dashboard": true,
 		"dashboard/v2": false,
 		"cookie-banner": false
 	},

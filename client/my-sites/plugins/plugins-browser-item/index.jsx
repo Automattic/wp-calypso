@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Badge, Gridicon } from '@automattic/components';
@@ -236,8 +237,13 @@ const PluginsBrowserListElement = ( props ) => {
 								</div>
 							</>
 						) }
+						{ isEnabled( 'marketplace-redesign' ) && (
+							<div className="plugins-browser-item__description">{ plugin.short_description }</div>
+						) }
 					</div>
-					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
+					{ ! isEnabled( 'marketplace-redesign' ) && (
+						<div className="plugins-browser-item__description">{ plugin.short_description }</div>
+					) }
 				</div>
 				{ isUntestedVersion && (
 					<div className="plugins-browser-item__untested-notice">
@@ -445,8 +451,13 @@ function Placeholder( { variant } ) {
 						<PluginIcon isPlaceholder />
 						<div className="plugins-browser-item__title">…</div>
 						<div className="plugins-browser-item__author">…</div>
+						{ isEnabled( 'marketplace-redesign' ) && (
+							<div className="plugins-browser-item__description">…</div>
+						) }
 					</div>
-					<div className="plugins-browser-item__description">…</div>
+					{ ! isEnabled( 'marketplace-redesign' ) && (
+						<div className="plugins-browser-item__description">…</div>
+					) }
 				</div>
 			</span>
 		</li>
