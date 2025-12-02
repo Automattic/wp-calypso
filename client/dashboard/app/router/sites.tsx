@@ -733,6 +733,9 @@ export const siteSettingsDatabaseRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'database',
+	loader: ( { params: { siteSlug } } ) => {
+		queryClient.prefetchQuery( siteBySlugQuery( siteSlug ) );
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-database' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-database' )( {
@@ -939,6 +942,9 @@ export const siteSettingsTransferSiteRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'transfer-site',
+	loader: ( { params: { siteSlug } } ) => {
+		queryClient.prefetchQuery( siteBySlugQuery( siteSlug ) );
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-transfer-site' )( {

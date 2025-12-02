@@ -77,8 +77,8 @@ const phpRoute = createRoute( {
 );
 
 const databaseRoute = createRoute( {
+	...appRouterSites.siteSettingsDatabaseRoute.options,
 	getParentRoute: () => settingsRoute,
-	path: 'database', // Bypass type issue by hard-coding the path instead of reusing the route.
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-database' ).then( ( d ) =>
 		createLazyRoute( 'database' )( {
@@ -165,8 +165,8 @@ const sftpSshRoute = createRoute( {
 );
 
 const transferSiteRoute = createRoute( {
+	...appRouterSites.siteSettingsTransferSiteRoute.options,
 	getParentRoute: () => settingsRoute,
-	path: 'transfer-site', // Bypass type issue by hard-coding the path instead of reusing the route.
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'transfer-site' )( {
