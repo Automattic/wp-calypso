@@ -54,6 +54,7 @@ function SiteDomains() {
 		fields
 	);
 
+<<<<<<< HEAD
 	const router = useRouter();
 
 	const domainConnectionSetupUrlRelativePath = router
@@ -67,6 +68,9 @@ function SiteDomains() {
 		domainConnectionSetupUrlRelativePath,
 		window.location.origin
 	).href;
+	const { basePath } = useAppContext();
+	const domainConnectionSetupUrl = `${ basePath }/domains/%s/domain-connection-setup`;
+	const redirectTo = `${ basePath }/sites/${ site.slug }/domains`;
 
 	return (
 		<PageLayout
@@ -77,6 +81,7 @@ function SiteDomains() {
 						<AddDomainButton
 							siteSlug={ site.slug }
 							domainConnectionSetupUrl={ domainConnectionSetupUrl }
+							redirectTo={ redirectTo }
 						/>
 					}
 				/>
