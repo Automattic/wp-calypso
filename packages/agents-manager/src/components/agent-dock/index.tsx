@@ -59,7 +59,7 @@ export default function AgentDock( {
 	const { pathname, state } = useLocation();
 	const navigate = useNavigate();
 
-	// Use route state `sessionId` if available, otherwise fall back to stored `sessionId`
+	// Use persisted route state `sessionId` if available, otherwise fall back to stored `sessionId`
 	const sessionId = state?.sessionId || getSessionId();
 	const agentId = agentConfig.agentId;
 

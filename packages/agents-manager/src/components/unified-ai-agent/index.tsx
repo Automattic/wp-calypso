@@ -94,7 +94,7 @@ function AgentSetup( {
 }: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const { state } = useLocation();
-	// Use route state `sessionId` if available, otherwise fall back to stored `sessionId`
+	// Use persisted route state `sessionId` if available, otherwise fall back to stored `sessionId`
 	const sessionId = state?.sessionId || getSessionId();
 
 	// Create the initial agent configuration
