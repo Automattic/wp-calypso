@@ -18,7 +18,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainTransferSetupRoute, domainsIndexRoute } from '../../app/router/domains';
+import { domainTransferSetupRoute, domainTransferIndexRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -152,7 +152,12 @@ export default function DomainTransferSetup() {
 					),
 					{ type: 'snackbar' }
 				);
-				navigate( { to: domainsIndexRoute.fullPath } );
+				navigate( {
+					to: domainTransferIndexRoute.fullPath,
+					params: {
+						domainName,
+					},
+				} );
 			},
 			onError: ( err ) => {
 				const errorMessage =
