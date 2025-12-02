@@ -3,7 +3,14 @@ import wpcomRequest from 'wpcom-proxy-request';
 
 export type AuthorizeMeta = {
 	client: { id: number; title: string; icon?: string };
-	user: null | { id: number; display_name: string; email: string };
+	user: null | {
+		id: number;
+		display_name: string;
+		email: string;
+		username: string;
+		avatar_URL: string;
+		site_count: number;
+	};
 	permissions: Array< { name: string; description: string } >;
 	links: {
 		authorize: string;

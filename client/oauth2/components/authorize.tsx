@@ -14,6 +14,7 @@ import {
 	addSubmenu,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import Gravatar from 'calypso/components/gravatar';
 import { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import { useSelector } from 'calypso/state';
@@ -115,15 +116,43 @@ function Authorize() {
 		content = (
 			<div className="oauth2-connect">
 				{ meta.user && (
-					<div className="oauth2-connect__user-card">
-						<div className="oauth2-connect__user-info">
-							<div className="oauth2-connect__user-name">{ meta.user.display_name }</div>
-							<div className="oauth2-connect__user-details">{ meta.user.email }</div>
+					<>
+						<div className="oauth2-connect__user-card">
+							<Gravatar
+								user={ meta.user }
+								size={ 72 }
+								imgSize={ 144 }
+								className="oauth2-connect__user-avatar"
+							/>
+							<div className="oauth2-connect__user-info">
+								<div className="oauth2-connect__user-name">{ meta.user.display_name }</div>
+								<div className="oauth2-connect__user-details">
+									{ meta.user.username && meta.user.site_count !== undefined
+										? translate(
+												'%(username)s - %(count)d site',
+												'%(username)s - %(count)d sites',
+												{
+													count: meta.user.site_count,
+													args: {
+														username: meta.user.username,
+														count: meta.user.site_count,
+													},
+												}
+										  )
+										: meta.user.email }
+								</div>
+							</div>
 						</div>
-						<Button variant="link" onClick={ onSwitch } className="oauth2-connect__switch-account">
-							{ translate( 'Log in with a different account' ) }
-						</Button>
-					</div>
+						<div className="oauth2-connect__switch-account-link">
+							<Button
+								variant="link"
+								onClick={ onSwitch }
+								className="oauth2-connect__switch-account"
+							>
+								{ translate( 'Log in with a different account' ) }
+							</Button>
+						</div>
+					</>
 				) }
 
 				<div className="oauth2-connect__permissions">

@@ -18,18 +18,26 @@
 
 .oauth2-connect__user-card {
 	display: flex;
-	flex-direction: column;
-	gap: 12px;
+	flex-direction: row;
+	align-items: center;
+	gap: 16px;
 	padding: 16px;
 	border: 1px solid #dcdcde;
 	border-radius: 4px;
 	background: #fff;
 }
 
+.oauth2-connect__user-avatar {
+	flex-shrink: 0;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
 .oauth2-connect__user-info {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
+	flex: 1;
 }
 
 .oauth2-connect__user-name {
@@ -43,11 +51,15 @@
 	color: #646970;
 }
 
-.oauth2-connect__switch-account {
-	text-align: start;
-	padding: 0;
-	height: auto;
-	font-size: 13px;
+.oauth2-connect__switch-account-link {
+	margin-block-start: -8px;
+
+	.oauth2-connect__switch-account {
+		text-align: start;
+		padding: 0;
+		height: auto;
+		font-size: 13px;
+	}
 }
 
 .oauth2-connect__permissions {
