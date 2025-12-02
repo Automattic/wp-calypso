@@ -50,7 +50,7 @@ export default function AgentDock( {
 	markdownExtensions = {},
 }: AgentDockProps ) {
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
-	const { hasLoaded, isOpen = false } = useSelect( ( select ) => {
+	const { hasLoaded: isStoreReady, isOpen = false } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
@@ -285,7 +285,7 @@ export default function AgentDock( {
 		/>
 	);
 
-	if ( ! hasLoaded ) {
+	if ( ! isStoreReady ) {
 		return null;
 	}
 
