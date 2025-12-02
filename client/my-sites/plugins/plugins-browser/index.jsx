@@ -41,6 +41,15 @@ import SearchCategories from '../search-categories';
 import './style.scss';
 
 const MASTERBAR_HEIGHT = 32;
+const CATEGORIES = [
+	'discover',
+	'design',
+	'marketing',
+	'ecommerce',
+	'photo',
+	'security',
+	'analytics',
+];
 
 // If adding new, longer search terms, ensure that the search input field is wide enough to accommodate it.
 const searchTerms = [ 'woocommerce', 'seo', 'file manager', 'jetpack', 'ecommerce', 'form' ];
@@ -231,7 +240,15 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 						</FullWidthSection>
 						<FullWidthSection className="plugins-browser__categories">
 							<div ref={ categoriesRef }>
-								<Categories selected={ category } noSelection={ search ? true : false } />
+								<Categories
+									selected={ category }
+									noSelection={ !! search }
+									{ ...( isMarketplaceRedesignEnabled && {
+										categories: CATEGORIES,
+										forceSwipe: true,
+										swipeEnabled: false,
+									} ) }
+								/>
 							</div>
 						</FullWidthSection>
 					</>
