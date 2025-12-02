@@ -186,7 +186,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							// Only apply design and delete page for non-garden sites
 							if ( ! gardenName ) {
 								pendingActions.push(
-									setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
+									setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: false } )
 								);
 								pendingActions.push( deletePage( siteId || '', 1 ) );
 							}
