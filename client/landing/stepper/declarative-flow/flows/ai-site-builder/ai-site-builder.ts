@@ -5,7 +5,6 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
 import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
@@ -18,19 +17,6 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { FlowV2, SubmitHandler } from '../../internals/types';
 
 const SiteIntent = Onboard.SiteIntent;
-const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
-	try {
-		await wpcomRequest( {
-			path: '/sites/' + siteId + '/pages/' + pageId,
-			method: 'DELETE',
-			apiNamespace: 'wp/v2',
-		} );
-		return true;
-	} catch ( error ) {
-		// fail silently here, just log an error and return false, Big Sky will still launch
-		return false;
-	}
-};
 
 function initialize() {
 	// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
@@ -164,31 +150,11 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
 							];
 
-							if ( ! gardenName ) {
-								// Add blog sticker - this runs independently and errors are handled by the mutation's onError callback (only for non-garden sites)
-								addBlogSticker( siteId, 'big-sky-free-trial' );
-
-								// Create a new home page if one is not set yet (only for non-garden sites)
-								pendingActions.push(
-									wpcomRequest( {
-										path: '/sites/' + siteId + '/pages',
-										method: 'POST',
-										apiNamespace: 'wp/v2',
-										body: {
-											title: 'Home',
-											status: 'publish',
-											content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-										},
-									} )
-								);
-							}
-
-							// Only apply design and delete page for non-garden sites
+							// Only apply design for non-garden sites
 							if ( ! gardenName ) {
 								pendingActions.push(
 									setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: false } )
 								);
-								pendingActions.push( deletePage( siteId || '', 1 ) );
 							}
 							pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
 
@@ -211,13 +177,11 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							}
 							const siteURL = siteData.URL;
 
-							// Handle page creation result (only exists for non-garden sites)
-							if ( ! gardenName && results.length > 1 ) {
-								const pageCreationResult = results[ 1 ];
-								if ( pageCreationResult && pageCreationResult.id ) {
-									const homePagePostId = pageCreationResult.id;
-									await setStaticHomepageOnSite( siteId, homePagePostId );
-								}
+							// Set the static homepage to the home page and add the blog sticker
+							if ( ! gardenName ) {
+								addBlogSticker( siteId, 'big-sky-free-trial' );
+
+								await setStaticHomepageOnSite( siteId, 1 );
 							}
 
 							if ( prompt ) {
