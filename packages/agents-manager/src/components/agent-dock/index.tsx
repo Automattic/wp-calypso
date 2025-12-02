@@ -107,10 +107,7 @@ export default function AgentDock( {
 			// Sync storage and URL if the server assigned a different session ID
 			if ( serverSessionId && sessionId !== serverSessionId ) {
 				setSessionId( serverSessionId );
-				navigate( `/chat/${ serverSessionId }`, {
-					state: { sessionId: serverSessionId },
-					replace: true,
-				} );
+				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
 
 			// Remember that we loaded this session so we don't load it again
@@ -201,7 +198,7 @@ export default function AgentDock( {
 			setSessionId( sessionId );
 			maybeLoadConversation( sessionId );
 
-			navigate( `/chat/${ sessionId }`, { state: { sessionId } } );
+			navigate( '/chat', { state: { sessionId } } );
 		},
 		[ abortCurrentRequest, agentId, maybeLoadConversation, navigate ]
 	);
@@ -299,7 +296,7 @@ export default function AgentDock( {
 	return createAgentPortal(
 		<Routes>
 			<Route path="/" element={ Chat } />
-			<Route path="/chat/:sessionId" element={ Chat } />
+			<Route path="/chat" element={ Chat } />
 			<Route path="/history" element={ History } />
 			<Route path="*" element={ <Navigate to="/" replace /> } />
 		</Routes>
