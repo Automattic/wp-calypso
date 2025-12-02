@@ -6,6 +6,7 @@ import { TestAccountName } from '..';
 import { getAccountSiteURL, getCalypsoURL } from '../data-helper';
 import { EmailClient } from '../email-client';
 import envVariables from '../env-variables';
+import { RestAPIClient } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
 import { SidebarComponent } from './components/sidebar-component';
@@ -18,6 +19,18 @@ import type { TestAccountCredentials } from '../secrets';
 export class TestAccount {
 	readonly accountName: TestAccountName;
 	readonly credentials: TestAccountCredentials;
+	private _restAPIClient: RestAPIClient | null = null;
+
+	/**
+	 * Returns a RestAPIClient instance for this test account.
+	 * The instance is cached after first creation.
+	 */
+	get restAPI(): RestAPIClient {
+		if ( ! this._restAPIClient ) {
+			this._restAPIClient = new RestAPIClient( this.credentials );
+		}
+		return this._restAPIClient;
+	}
 
 	/**
 	 * Constructs an instance of the TestAccount for the given account name.
@@ -37,7 +50,7 @@ export class TestAccount {
 	 */
 	async authenticate(
 		page: Page,
-		{ url, waitUntilStable }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
+		{ url, waitUntilStable = true }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
 	): Promise< void > {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
@@ -132,6 +145,7 @@ export class TestAccount {
 			inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
 			sentTo: this.credentials.smsNumber.number,
 			body: 'WordPress.com verification code',
+			receivedAfter: new Date( Date.now() - 10 * 1000 ), // Last 10 seconds
 		} );
 		return emailClient.get2FACodeFromMessage( message );
 	}

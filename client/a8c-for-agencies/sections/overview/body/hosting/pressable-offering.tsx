@@ -3,7 +3,6 @@ import { Button, FoldableCard, Gridicon } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -96,8 +95,7 @@ const PressableOffering = () => {
 						rel="norefferer nooppener"
 						href={ pressableUrl }
 					>
-						{ translate( 'View your dashboard' ) }
-						<Icon icon={ external } size={ 18 } />
+						{ translate( 'View your dashboard ↗' ) }
 					</Button>
 				)
 			) }

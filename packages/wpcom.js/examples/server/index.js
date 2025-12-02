@@ -1,6 +1,6 @@
 const path = require( 'path' );
 const express = require( 'express' );
-const WPCOM = require( '../../' );
+const WPCOM = require( '../..' );
 const wpapp = require( '../../test/config' );
 
 /**

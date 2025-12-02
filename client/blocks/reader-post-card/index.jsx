@@ -48,6 +48,7 @@ class ReaderPostCard extends Component {
 		hasOrganization: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		streamKey: PropTypes.string,
+		commentsApiDisabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -188,6 +189,7 @@ class ReaderPostCard extends Component {
 				onCommentClick={ onCommentClick }
 				className="ignore-click"
 				iconSize={ 20 }
+				commentsApiDisabled={ this.props.commentsApiDisabled }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

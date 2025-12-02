@@ -19,7 +19,7 @@ import ImporterActionButtonContainer from '../../importer-action-buttons/contain
 import ImportSubscribersError from './import-subscribers-error';
 
 type Props = {
-	nextStepUrl: string;
+	nextStepUrl?: string;
 	siteId: number;
 	skipNextStep: () => void;
 	cardData: any;
@@ -154,7 +154,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 					{ __( 'Continue' ) }
 				</ImporterActionButton>
 				<ImporterActionButton
-					href={ nextStepUrl }
+					{ ...( nextStepUrl && { href: nextStepUrl } ) }
 					onClick={ () => {
 						skipNextStep();
 						recordTracksEvent( 'calypso_paid_importer_connect_stripe_skipped' );

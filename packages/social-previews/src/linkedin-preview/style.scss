@@ -1,11 +1,9 @@
-
-
 .linkedin-preview {
 	&__wrapper {
 		padding: 20px;
 		background-color: #fff;
 		margin-inline: auto;
-		max-width: clamp(200px, 100%, 555px);
+		max-width: clamp( 200px, 100%, 555px );
 	}
 
 	// When the preview is in a section of all previews
@@ -14,13 +12,11 @@
 	}
 
 	&__section.social-preview__section {
-		width: clamp(200px, 100%, 555px);
+		width: clamp( 200px, 100%, 555px );
 	}
 
 	&__container {
-
-		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
-		/* stylelint-disable-next-line scales/radii */
+		box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.08 );
 		border-radius: 8px;
 		overflow: hidden;
 
@@ -121,7 +117,7 @@
 			gap: 0.25rem;
 			font-size: 0.875rem;
 			font-weight: 400;
-			color: rgba(0, 0, 0, 0.6);
+			color: rgba( 0, 0, 0, 0.6 );
 		}
 	}
 

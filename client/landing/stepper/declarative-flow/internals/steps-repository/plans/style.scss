@@ -1,12 +1,11 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@automattic/onboarding/styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@automattic/onboarding/styles/mixins';
 
 .plans {
 	.step-container {
 		padding: 0;
 
 		.step-wrapper__header {
-
 			.formatted-header {
 				margin: 20px 0 40px 0;
 				@include break-small {
@@ -14,7 +13,7 @@
 				}
 
 				h1.formatted-header__title {
-					font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+					font-family: Recoleta, 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
 					font-size: 2.25rem;
 					font-weight: 500;
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -89,14 +88,14 @@
 					line-height: 1.25rem;
 					padding: 0 8px;
 					right: 50%;
-					transform: translate(50%);
+					transform: translate( 50% );
 					border-radius: 4px;
-					background-color: var(--studio-green-5);
-					color: var(--studio-gray-80);
+					background-color: var( --studio-green-5 );
+					color: var( --studio-gray-80 );
 				}
 
 				.plan-features-comparison__item-annual-plan {
-					color: var(--studio-orange-40) !important;
+					color: var( --studio-orange-40 ) !important;
 				}
 
 				.plan-features-comparison__header {
@@ -115,7 +114,7 @@
 		}
 
 		button.is-borderless {
-			color: var(--studio-gray-90);
+			color: var( --studio-gray-90 );
 			font-weight: 500;
 			border: 0;
 			box-shadow: none;
@@ -135,15 +134,21 @@
 	}
 }
 
-.domain-upsell.plans {
+.domain-and-plan.plans {
 	.signup-header h1 {
 		display: none;
+	}
+
+	.step-wrapper__header,
+	#step-header {
+		margin-top: 0;
+		margin-bottom: 24px;
 	}
 
 	button.button.navigation-link.is-borderless {
 		background: none;
 		border: none;
-		color: var(--studio-gray-100);
+		color: var( --studio-gray-100 );
 		font-size: 0.875rem;
 		font-weight: 600;
 		padding: 0;
@@ -163,22 +168,23 @@
 }
 
 // Override styles for newsletter flow
-.newsletter.plans {
+.newsletter.plans,
+.domain-and-plan.plans {
 	.step-container {
 		.step-wrapper__header {
 			.formatted-header {
 				h1.formatted-header__title {
-					font-size: rem(32px); //typography-exception
-					line-height: rem(40px); //typography-exception
+					font-size: rem( 32px ); //typography-exception
+					line-height: rem( 40px ); //typography-exception
 
 					@include break-medium {
-						font-size: rem(44px); //typography-exception
-						line-height: rem(52px); //typography-exception
+						font-size: rem( 44px ); //typography-exception
+						line-height: rem( 52px ); //typography-exception
 					}
 				}
 				.formatted-header__subtitle {
-					font-size: rem(16px);
-					line-height: rem(24px);
+					font-size: rem( 16px );
+					line-height: rem( 24px );
 				}
 			}
 		}

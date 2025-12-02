@@ -1,13 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isFreePlanProduct } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { useMemo } from '@wordpress/element';
 import { globe, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { isP2Site } from 'calypso/sites-dashboard/utils';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -34,11 +33,6 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const { __ } = useI18n();
 
-	const getCtaClickHandler = useCallback( () => {
-		recordTracksEvent( trackEventClick );
-		page( `/domains/add/${ site?.domain }?domainAndPlanPackage=true` );
-	}, [ trackEventClick, site?.domain ] );
-
 	const getDismissClickHandler = () => {
 		recordTracksEvent( trackEventDismiss );
 		dispatch( savePreference( dismissPreference, 1 ) );
@@ -55,6 +49,14 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 	) {
 		return null;
 	}
+
+	const getCtaClickHandler = () => {
+		recordTracksEvent( trackEventClick );
+
+		const domainUpsellUrl = getDomainAndPlanUpsellUrl( { siteSlug: site.slug } );
+
+		return window.location.assign( domainUpsellUrl );
+	};
 
 	return (
 		<>

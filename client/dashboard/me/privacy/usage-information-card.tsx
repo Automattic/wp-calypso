@@ -1,23 +1,18 @@
+import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	Card,
-	CardBody,
-	ExternalLink,
-	ToggleControl,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, ExternalLink, ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { profileMutation, profileQuery } from '../../app/queries/me-profile';
+import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 
 export default function UsageInformationCard() {
-	const { data: userProfile } = useQuery( profileQuery() );
-	const mutation = useMutation( profileMutation() );
+	const { data: userSettings } = useQuery( userSettingsQuery() );
+	const mutation = useMutation( userSettingsMutation() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const handleChange = ( { tracks_opt_out }: { tracks_opt_out?: boolean } ) => {
@@ -66,11 +61,11 @@ export default function UsageInformationCard() {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'tracks_opt_out' ],
 	};
 
-	const data = { tracks_opt_out: userProfile?.tracks_opt_out ?? true };
+	const data = { tracks_opt_out: userSettings?.tracks_opt_out ?? true };
 
 	return (
 		<Card>

@@ -14,4 +14,11 @@
 	.action-list__actions {
 		margin: -$grid-unit-20 0;
 	}
+	.action-item {
+		border-bottom: 1px solid $gray-100;
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
 }

@@ -8,32 +8,35 @@ import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useChatStatus, useShouldUseWapuu, useLastSupportInteraction } from '../hooks';
+import { useSupportStatus } from '../data/use-support-status';
+import { useChatStatus, useShouldUseWapuu } from '../hooks';
 import './help-center-chat.scss';
 
 export function HelpCenterChat( {
 	isLoadingStatus,
 	isUserEligibleForPaidSupport,
-	userFieldFlowName,
 }: {
 	isLoadingStatus: boolean;
 	isUserEligibleForPaidSupport: boolean;
-	userFieldFlowName?: string;
 } ): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
-	const { sectionName } = useHelpCenterContext();
 	// Before issuing a redirect, make sure the status is loaded.
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
-	const { currentUser, site } = useHelpCenterContext();
+	const { currentUser, site, isCommerceGarden, newInteractionsBotSlug, newInteractionsBotVersion } =
+		useHelpCenterContext();
 	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging();
 	const { search } = useLocation();
+	const { data } = useSupportStatus( ! isCommerceGarden );
 	const params = new URLSearchParams( search );
 	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
-	const { forceEmailSupport } = useChatStatus();
-	useLastSupportInteraction( { isUserEligibleForPaidSupport, userFieldFlowName } );
+
+	const commerceGardenFlowName = isCommerceGarden ? 'messaging_flow_commerce_in_a_box' : null;
+	const userFieldFlowName = commerceGardenFlowName || data?.eligibility?.user_field_flow_name;
+
+	const { forceEmailSupport, isChatRestricted } = useChatStatus();
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -47,6 +50,8 @@ export function HelpCenterChat( {
 
 	return (
 		<OdieAssistantProvider
+			newInteractionsBotSlug={ newInteractionsBotSlug }
+			newInteractionsBotVersion={ newInteractionsBotVersion }
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }
 			isLoadingCanConnectToZendesk={ isLoading }
@@ -56,7 +61,7 @@ export function HelpCenterChat( {
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
-			sectionName={ sectionName }
+			isChatRestricted={ Boolean( isChatRestricted ) }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

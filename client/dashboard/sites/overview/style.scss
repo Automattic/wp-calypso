@@ -21,6 +21,14 @@
 			flex-basis: 0;
 		}
 	}
+
+	&:not( .is-large ) {
+		> * {
+			&:empty {
+				display: none;
+			}
+		}
+	}
 }
 
 .site-overview-card__badge {

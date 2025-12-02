@@ -1,23 +1,51 @@
 import { Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { useFormattedTime } from '../../../components/formatted-time';
+import { __, sprintf } from '@wordpress/i18n';
+import { FormattedTime } from '../../../components/formatted-time';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
-import type { ActivityLogEntry } from '../../../data/types';
-import type { Field } from '@wordpress/dataviews';
+import type { ActivityLogEntry, ActivityLogGroupCountResponse } from '@automattic/api-core';
+import type { Field, Operator } from '@wordpress/dataviews';
 
-const FormattedTime = ( { timestamp }: { timestamp: string } ) => {
-	const formattedTime = useFormattedTime( timestamp, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	} );
-	return <>{ formattedTime }</>;
+const getActivityLogTypeSlugFromName = ( name?: string ): string => {
+	if ( ! name ) {
+		return '';
+	}
+	const [ group ] = name.split( '__' );
+	return group ?? name;
 };
 
-export function getFields(): Field< ActivityLogEntry >[] {
+const getActivityLogTypeDescriptionFromName = (
+	name?: string,
+	activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ] | undefined
+): string => {
+	if ( ! name ) {
+		return '';
+	}
+	const slug = getActivityLogTypeSlugFromName( name );
+	return activityLogTypes?.[ slug ]?.name ?? slug;
+};
+
+export function getFields(
+	activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ],
+	timezoneString?: string,
+	gmtOffset?: number
+): Field< ActivityLogEntry >[] {
+	const activityLogTypeElements = activityLogTypes
+		? Object.entries( activityLogTypes )
+				.map( ( [ value, { name } ] ) => {
+					// Override "Backups and Restores" (rewind) to just "Backups" for backup list context
+					const displayName = value === 'rewind' ? __( 'Backups' ) : name;
+					return {
+						value,
+						label: `${ displayName }`,
+					};
+				} )
+				.sort( ( a, b ) => a.label.localeCompare( b.label ) )
+		: [];
 	return [
 		{
 			id: 'icon',
 			label: __( 'Icon' ),
+			enableSorting: false,
 			render: ( { item } ) => (
 				<Icon
 					icon={ gridiconToWordPressIcon( item.gridicon ) }
@@ -30,7 +58,8 @@ export function getFields(): Field< ActivityLogEntry >[] {
 			id: 'title',
 			label: __( 'Title' ),
 			getValue: ( { item } ) => {
-				const actor = item.actor?.name ? ` by ${ item.actor.name }` : '';
+				// translators: %s is the name of the person who performed the action
+				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
 				return item.summary + actor;
 			},
 			enableGlobalSearch: true,
@@ -38,14 +67,34 @@ export function getFields(): Field< ActivityLogEntry >[] {
 		{
 			id: 'date',
 			label: __( 'Date' ),
-			getValue: ( { item } ) => item.published,
-			render: ( { item } ) => <FormattedTime timestamp={ item.published } />,
+			getValue: ( { item } ) => {
+				return item.published || item.last_published;
+			},
+			render: ( { item } ) => (
+				<FormattedTime
+					timestamp={ item.published || item.last_published }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			),
 		},
 		{
 			id: 'content_text',
 			label: __( 'Content' ),
 			getValue: ( { item } ) => item.content.text,
 			enableGlobalSearch: true,
+		},
+		{
+			id: 'activity_type',
+			label: __( 'Type' ),
+			getValue: ( { item } ) => getActivityLogTypeSlugFromName( item.name ),
+			render: ( { item } ) => (
+				<span>{ getActivityLogTypeDescriptionFromName( item.name, activityLogTypes ) }</span>
+			),
+			elements: activityLogTypeElements,
+			enableHiding: false,
+			enableSorting: false,
+			filterBy: { operators: [ 'isAny' as Operator ] },
 		},
 	];
 }

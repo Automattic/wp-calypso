@@ -1,9 +1,9 @@
 import Markdown from 'react-markdown';
-import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 import { InsightDetailedContent } from './insight-detailed-content';
+import type { PerformanceMetricAudit } from '@automattic/api-core';
 
 interface InsightContentProps {
-	data: PerformanceMetricsItemQueryResponse;
+	data: PerformanceMetricAudit;
 }
 
 export const InsightContent: React.FC< InsightContentProps > = ( props ) => {

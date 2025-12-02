@@ -1,0 +1,33 @@
+.agents-manager-chat-header {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: end;
+	height: 56px;
+	padding: 4px 16px;
+
+	&:has( .agents-manager-chat-header__title ) {
+		justify-content: space-between;
+	}
+
+	&__title {
+		font-size: 14px;
+		font-weight: 600;
+		color: #1f1f1f;
+		flex-grow: 1;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 4px;
+		align-items: center;
+	}
+
+	&__more-options,
+	&__history-btn,
+	&__close-btn {
+		svg {
+			fill: #1f1f1f;
+		}
+	}
+}

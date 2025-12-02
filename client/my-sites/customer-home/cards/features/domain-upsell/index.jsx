@@ -1,3 +1,4 @@
+import { fetchDomainSuggestions } from '@automattic/api-core';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	getPlan,
@@ -8,9 +9,9 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
-import { useDomainSuggestions } from '@automattic/domain-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { isRTL } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -20,7 +21,7 @@ import domainUpsellIllustration from 'calypso/assets/images/customer-home/illust
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import { addQueryArgs } from 'calypso/lib/url';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
@@ -83,11 +84,6 @@ export default function DomainUpsell() {
 	);
 }
 
-const domainSuggestionOptions = {
-	vendor: 'domain-upsell',
-	include_wordpressdotcom: false,
-};
-
 export function RenderDomainUpsell( {
 	isFreePlan,
 	isMonthlyPlan,
@@ -101,10 +97,17 @@ export function RenderDomainUpsell( {
 	const dispatch = useDispatch();
 	const locale = useLocale();
 
-	// Note: domainSuggestionOptions must be equal by reference upon each render
-	// to avoid a render loop, since it's used to memoize a selector.
-	const { allDomainSuggestions } =
-		useDomainSuggestions( searchTerm, 3, undefined, locale, domainSuggestionOptions ) || {};
+	const options = {
+		include_wordpressdotcom: false,
+		quantity: 3,
+		locale,
+		vendor: 'domain-upsell',
+	};
+
+	const { data: allDomainSuggestions } = useQuery( {
+		queryKey: [ 'domains-suggestions', searchTerm, options ],
+		queryFn: () => fetchDomainSuggestions( searchTerm, options ),
+	} );
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
@@ -122,13 +125,10 @@ export function RenderDomainUpsell( {
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
 
-	const searchLink = addQueryArgs(
-		{
-			domainAndPlanPackage: true,
-			domain: true,
-		},
-		`/domains/add/${ siteSlug }`
-	);
+	const backUrl = window.location.href.replace( window.location.origin, '' );
+
+	const searchLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl } );
+
 	const getSearchClickHandler = () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
 			button_url: searchLink,
@@ -137,16 +137,13 @@ export function RenderDomainUpsell( {
 		} );
 	};
 
-	const purchaseLink =
-		! isFreePlan && ! isMonthlyPlan
-			? `/checkout/${ siteSlug }`
-			: addQueryArgs(
-					{
-						domain: true,
-						domainAndPlanPackage: true,
-					},
-					`/plans/yearly/${ siteSlug }`
-			  );
+	const plansPageLink = getDomainAndPlanUpsellUrl( {
+		siteSlug,
+		backUrl,
+		step: 'plans',
+	} );
+
+	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;
 
 	const getDismissClickHandler = () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_dismiss_click' );
@@ -181,7 +178,7 @@ export function RenderDomainUpsell( {
 	const getCardSubtitle = () => {
 		const translateProps = {
 			components: {
-				strong: <strong />,
+				strong: <strong data-testid="domain-upsell-domain-name" />,
 			},
 			args: {
 				domainSuggestion: domainSuggestionName,

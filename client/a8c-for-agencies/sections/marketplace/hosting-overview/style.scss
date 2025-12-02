@@ -1,5 +1,5 @@
-@import "../variables";
-@import "../shared";
+@import '../variables';
+@import '../shared';
 
 .hosting-overview.main.hosting-dashboard-layout {
 	.hosting-dashboard-layout__body {
@@ -21,7 +21,8 @@
 
 	.hosting-dashboard-layout__top-wrapper {
 		max-height: auto;
-		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-bg.svg ) no-repeat top right $header-background-color;
+		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-bg.svg )
+			no-repeat top right $header-background-color;
 		border-block-end: none;
 		padding-block-end: 0;
 		position: sticky;
@@ -30,17 +31,17 @@
 	}
 
 	.hosting-dashboard-layout__header-breadcrumb {
-		color: var(--color-neutral-40);
-		fill: var(--color-neutral-40);
+		color: var( --color-neutral-40 );
+		fill: var( --color-neutral-40 );
 
 		a {
-			color: var(--color-primary-5);
+			color: var( --color-primary-5 );
 		}
 	}
 
 	.hosting-dashboard-layout__header-actions {
-		background-color: var(--color-surface);
-		border-radius: 8px; /* stylelint-disable-line */
+		background-color: var( --color-surface );
+		border-radius: 8px;
 		padding: 8px 24px 8px 20px;
 
 		.shopping-cart {

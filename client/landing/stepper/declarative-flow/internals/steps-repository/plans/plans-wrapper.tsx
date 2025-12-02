@@ -6,7 +6,7 @@ import {
 	isNewsletterFlow,
 	NEWSLETTER_FLOW,
 	NEW_HOSTED_SITE_FLOW,
-	isDomainUpsellFlow,
+	isDomainAndPlanFlow,
 	isStartWritingFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -91,7 +91,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const stepName = 'plans';
 	const customerType = 'personal';
 	const headerText = __( 'Choose a plan' );
-	const isInSignup = isDomainUpsellFlow( flowName ) ? false : true;
+	const isInSignup = isDomainAndPlanFlow( flowName ) ? false : true;
 	/**
 	 * isWordCampPromo is temporary
 	 */
@@ -182,7 +182,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
-					hidePlanTypeSelector={ isWordCampPromo }
+					hidePlanTypeSelector={ isWordCampPromo || isDomainAndPlanFlow( flowName ) }
 					onPlanIntervalUpdate={ onPlanIntervalUpdate }
 					coupon={ couponCode }
 				/>
@@ -191,8 +191,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
-		if ( isDomainUpsellFlow( flowName ) ) {
-			return __( 'There’s a plan for you' );
+		if ( isDomainAndPlanFlow( flowName ) ) {
+			return __( 'Choose the perfect plan' );
 		}
 
 		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {
@@ -211,12 +211,33 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<Button onClick={ handleFreePlanButtonClick } className="is-borderless" />
 		);
 
-		if (
-			isStartWritingFlow( flowName ) ||
-			isNewsletterFlow( flowName ) ||
-			isDomainUpsellFlow( flowName )
-		) {
+		if ( isStartWritingFlow( flowName ) || isNewsletterFlow( flowName ) ) {
 			return;
+		}
+
+		if ( isDomainAndPlanFlow( flowName ) && domainCartItem?.meta ) {
+			return (
+				<>
+					<p>
+						{ translate(
+							'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
+							{
+								args: {
+									domainName: domainCartItem.meta,
+								},
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<p>
+						{ translate(
+							'You’ll also unlock advanced features that make it easy to build and grow your site.'
+						) }
+					</p>
+				</>
+			);
 		}
 
 		if ( ! hideFreePlan ) {

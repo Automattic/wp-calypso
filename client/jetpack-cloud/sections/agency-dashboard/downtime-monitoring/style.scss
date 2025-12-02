@@ -30,6 +30,12 @@
 		margin-block-start: 0;
 		line-height: 1.5;
 	}
+
+	.button {
+		line-height: inherit;
+		height: inherit;
+		font-size: inherit;
+	}
 }
 
 .configure-contact__phone-input-container {

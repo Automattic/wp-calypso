@@ -27,7 +27,7 @@ describe( 'LostPasswordForm', () => {
 	test( 'displays a lost password form without errors', () => {
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
 
-		const userLogin = screen.getByLabelText( /Username or email address/i );
+		const userLogin = screen.getByLabelText( /Email address or username/i );
 		expect( userLogin ).toBeInTheDocument();
 
 		const btn = screen.getByRole( 'button', { name: /Reset my password/i } );
@@ -41,7 +41,7 @@ describe( 'LostPasswordForm', () => {
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
 
 		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Username or email address' } ),
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
 			'invalid@email'
 		);
 		// The error message is displayed after the user blurs the input.
@@ -59,7 +59,7 @@ describe( 'LostPasswordForm', () => {
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
 
 		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Username or email address' } ),
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
 			'user@example.com'
 		);
 		// The error message is displayed after the user blurs the input.
@@ -73,15 +73,15 @@ describe( 'LostPasswordForm', () => {
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
 
 		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Username or email address' } ),
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
 			'invalid@email'
 		);
 		// The error message is displayed after the user blurs the input.
 		userEvent.tab();
 
-		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Username or email address' } ) );
+		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Email address or username' } ) );
 		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Username or email address' } ),
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
 			'user@example.com'
 		);
 		// The error message is displayed after the user blurs the input.
@@ -96,13 +96,13 @@ describe( 'LostPasswordForm', () => {
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
 
 		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Username or email address' } ),
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
 			'invalid@email'
 		);
 		// The error message is displayed after the user blurs the input.
 		userEvent.tab();
 
-		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Username or email address' } ) );
+		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Email address or username' } ) );
 		// The error message is displayed after the user blurs the input.
 		userEvent.tab();
 
@@ -115,7 +115,7 @@ describe( 'LostPasswordForm', () => {
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
 
 		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Username or email address' } ),
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
 			'validusername'
 		);
 		// The validation happens after the user blurs the input.
@@ -129,7 +129,7 @@ describe( 'LostPasswordForm', () => {
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
 
 		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Username or email address' } ),
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
 			'ab'
 		);
 		// The validation happens after the user blurs the input.
@@ -144,7 +144,7 @@ describe( 'LostPasswordForm', () => {
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
 
 		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Username or email address' } ),
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
 			'user123'
 		);
 		// The validation happens after the user blurs the input.
@@ -172,7 +172,7 @@ describe( 'LostPasswordForm', () => {
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
 
 		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Username or email address' } ),
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
 			'user@example.com'
 		);
 

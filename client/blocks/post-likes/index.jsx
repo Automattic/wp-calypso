@@ -10,6 +10,8 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+
 import './style.scss';
 
 class PostLikes extends PureComponent {
@@ -22,10 +24,16 @@ class PostLikes extends PureComponent {
 		this.props.recordGoogleEvent( 'Post Likes', 'Clicked on Gravatar' );
 	};
 
+	// In case of Odyssey Stats, ensure that we return the absolute URL for redirect.
+	getCalypsoUrl = ( href ) => {
+		const baseUrl = window?.location?.hostname === this.props.slug ? 'https://wordpress.com' : '';
+		return baseUrl + href;
+	};
+
 	renderLike = ( like ) => {
 		const { showDisplayNames } = this.props;
 
-		const likeUrl = like.login ? getUserProfileUrl( like.login ) : null;
+		const likeUrl = like.login ? this.getCalypsoUrl( getUserProfileUrl( like.login ) ) : null;
 		const LikeWrapper = likeUrl ? 'a' : 'span';
 
 		return (
@@ -99,7 +107,7 @@ class PostLikes extends PureComponent {
 		// => bypassed the loading state. We can check for likes instead, which is falsy until
 		// loaded as an array. However, for future proofing I am treating this as if it may be
 		// initialized as an empty array and checking its length vs the count.
-		const areLikesLoading = ! likes || ( likeCount && likes?.length === 0 );
+		const areLikesLoading = ! likes || ( !! likeCount && likes?.length === 0 );
 
 		// Prevent loading for postId `0`
 		const isLoading = !! postId && areLikesLoading;
@@ -131,10 +139,12 @@ export default connect(
 		const likeCount = countPostLikes( state, siteId, postId );
 		const likes = getPostLikes( state, siteId, postId );
 		const currentUserId = getCurrentUserId( state );
+		const slug = getSiteSlug( state, siteId );
 		return {
 			likeCount,
 			likes,
 			currentUserId,
+			slug,
 		};
 	},
 	{ recordGoogleEvent }

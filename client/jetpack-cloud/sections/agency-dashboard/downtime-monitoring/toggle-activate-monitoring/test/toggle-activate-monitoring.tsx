@@ -14,7 +14,8 @@ import ToggleActivateMonitoring from '../index';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
-	config.isEnabled = ( property: string ) => property === 'jetpack/pro-dashboard-monitor-paid-tier';
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	config.isEnabled = ( property: string ) => true;
 	return config;
 } );
 

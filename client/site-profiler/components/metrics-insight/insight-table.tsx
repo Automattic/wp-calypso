@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import Markdown from 'react-markdown';
-import { PerformanceMetricsDetailsQueryResponse } from 'calypso/data/site-profiler/types';
 import { getFormattedNumber, getFormattedSize } from 'calypso/site-profiler/utils/formatting-data';
+import type { PerformanceMetricAuditDetails } from '@automattic/api-core';
 
-export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryResponse } ) {
+export function InsightTable( { data }: { data: PerformanceMetricAuditDetails } ) {
 	const { headings = [], items = [] } = data ?? {};
 
 	return (
@@ -62,7 +62,7 @@ function Cell( {
 	data,
 	headingValueType,
 }: {
-	data: string | number | { [ key: string ]: any };
+	data: string | number | boolean | { [ key: string ]: any };
 	headingValueType: string;
 } ) {
 	const translate = useTranslate();

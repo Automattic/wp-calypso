@@ -14,6 +14,7 @@ import {
 	blogListing,
 	feedDiscovery,
 	feedListing,
+	feedLookup,
 	following,
 	readA8C,
 	readFollowingP2,
@@ -102,6 +103,8 @@ export default async function (): Promise< void > {
 			makeLayout,
 			clientRender
 		);
+
+		page( '/reader/feeds/lookup/*', redirectLoggedOutToSignup, feedLookup );
 
 		setupReaderRedirects();
 	}

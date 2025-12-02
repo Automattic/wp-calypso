@@ -12,7 +12,7 @@ export function getIntroductoryOfferIntervalDisplay( {
 	isPriceIncrease,
 	context,
 	remainingRenewalsUsingOffer = 0,
-	isStreamlinedPrice,
+	shouldShowComparison,
 }: {
 	translate: typeof i18n.translate;
 	intervalUnit: string;
@@ -21,7 +21,7 @@ export function getIntroductoryOfferIntervalDisplay( {
 	isPriceIncrease: boolean;
 	context: string;
 	remainingRenewalsUsingOffer: number;
-	isStreamlinedPrice?: boolean;
+	shouldShowComparison?: boolean;
 } ): string {
 	let text = isPriceIncrease
 		? translate( 'First billing period', { textOnly: true } )
@@ -85,7 +85,7 @@ export function getIntroductoryOfferIntervalDisplay( {
 					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
 					i18n.hasTranslation( 'Additional discount for first year' );
 				text =
-					! isPriceIncrease && isStreamlinedPrice && isAdditionalDiscountTranslated
+					! isPriceIncrease && shouldShowComparison && isAdditionalDiscountTranslated
 						? translate( 'Additional discount for first year' )
 						: text;
 			} else {
@@ -212,7 +212,7 @@ export function getPremiumDomainIntroductoryOfferDisplay(
 export function getItemIntroductoryOfferDisplay(
 	translate: typeof i18n.translate,
 	product: ResponseCartProduct,
-	isStreamlinedPrice?: boolean
+	shouldShowComparison?: boolean
 ) {
 	// Introductory offer manual renewals often have prorated prices that are
 	// difficult to display as a simple discount so we keep their display
@@ -245,7 +245,7 @@ export function getItemIntroductoryOfferDisplay(
 		isPriceIncrease: doesIntroductoryOfferHavePriceIncrease( product ),
 		context: 'checkout',
 		remainingRenewalsUsingOffer: product.introductory_offer_terms.transition_after_renewal_count,
-		isStreamlinedPrice,
+		shouldShowComparison,
 	} );
 
 	return { enabled: true, text };

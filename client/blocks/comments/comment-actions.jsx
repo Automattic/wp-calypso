@@ -71,6 +71,7 @@ const CommentActions = ( {
 				tagName={ Button }
 				siteId={ post.site_ID }
 				postId={ post.ID }
+				railcar={ post.railcar }
 				commentId={ commentId }
 				onLikeToggle={ onLikeToggle }
 			/>

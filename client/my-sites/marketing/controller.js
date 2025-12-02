@@ -1,23 +1,23 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { createElement } from 'react';
+import { navigate } from 'calypso/lib/navigate';
 import SharingConnections from 'calypso/sites/marketing/connections/connections';
 import SharingButtons from 'calypso/sites/marketing/sharing/buttons';
 import MarketingTools from 'calypso/sites/marketing/tools';
-import JetpackTraffic from 'calypso/sites/marketing/traffic/jetpack-traffic';
 import Traffic from 'calypso/sites/marketing/traffic/traffic';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Sharing from './main';
-import SettingsSharing from './settings-sharing';
-import ToolsMarketing from './tools-marketing';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';
@@ -111,8 +111,11 @@ export const sharingButtons = ( context, next ) => {
 	}
 
 	const isJetpack = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
+	if ( ! isJetpack ) {
+		return navigate( getSiteAdminUrl( state, siteId, 'options-general.php?page=sharing' ) );
+	}
 
-	context.contentComponent = createElement( isJetpack ? SharingButtons : SettingsSharing );
+	context.contentComponent = createElement( SharingButtons );
 
 	next();
 };
@@ -123,14 +126,41 @@ export const traffic = ( context, next ) => {
 	next();
 };
 
-export const jetpackTraffic = ( context, next ) => {
-	context.contentComponent = createElement( JetpackTraffic );
+export const activitypub = async ( { store } ) => {
+	const state = store.getState();
+	const siteId = getSelectedSiteId( state );
 
-	next();
-};
+	if ( ! siteId ) {
+		// Fallback to site selection if no site is selected.
+		page.redirect( '/marketing/activitypub' );
+	}
 
-export const toolsMarketing = ( context, next ) => {
-	context.primary = createElement( ToolsMarketing );
+	if ( ! canCurrentUser( state, siteId, 'manage_options' ) ) {
+		store.dispatch(
+			errorNotice(
+				translate( 'You are not authorized to manage ActivityPub settings for this site.' )
+			)
+		);
+	}
 
-	next();
+	// For Jetpack/Atomic sites, check if ActivityPub plugin is installed.
+	if ( isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } ) ) {
+		// Always fetch plugins first to ensure we have fresh data.
+		await store.dispatch( fetchSitePlugins( siteId ) );
+
+		const updatedState = store.getState();
+
+		if ( ! getPluginOnSite( updatedState, siteId, 'activitypub' ) ) {
+			// Plugin not installed, redirect to plugin installation with search term.
+			return navigate(
+				getSiteAdminUrl(
+					updatedState,
+					siteId,
+					'plugin-install.php?s=activitypub&tab=search&type=term'
+				)
+			);
+		}
+	}
+
+	return navigate( getSiteAdminUrl( state, siteId, 'options-general.php?page=activitypub' ) );
 };

@@ -11,6 +11,26 @@ import { FeaturedSkeleton } from './featured.skeleton';
 
 import './featured.scss';
 
+export const getForcedPriceAlignment = ( {
+	activeQuery,
+	isSingleFeaturedSuggestion,
+	matchReasons,
+}: {
+	activeQuery: 'small' | 'large';
+	isSingleFeaturedSuggestion?: boolean;
+	matchReasons?: string[];
+} ) => {
+	if ( activeQuery === 'large' && isSingleFeaturedSuggestion ) {
+		return 'right';
+	}
+
+	if ( ! matchReasons ) {
+		return 'left';
+	}
+
+	return undefined;
+};
+
 type DomainSuggestionFeaturedProps = {
 	domain: string;
 	tld: string;
@@ -32,26 +52,25 @@ const Featured = ( {
 	cta,
 	isSingleFeaturedSuggestion,
 }: DomainSuggestionFeaturedProps ) => {
-	const { containerRef, activeQuery } = useDomainSuggestionContainer();
+	const { containerRef, activeQuery, currentWidth } = useDomainSuggestionContainer();
 
 	const contextValue = useMemo(
 		() =>
 			( {
 				activeQuery,
-				priceAlignment:
-					// eslint-disable-next-line no-nested-ternary
-					activeQuery === 'large' && isSingleFeaturedSuggestion
-						? 'right'
-						: ! matchReasons
-						? 'left'
-						: undefined,
+				priceAlignment: getForcedPriceAlignment( {
+					activeQuery,
+					isSingleFeaturedSuggestion,
+					matchReasons,
+				} ),
 				priceSize: activeQuery === 'large' ? 20 : 18,
 				isFeatured: true,
+				currentWidth: currentWidth,
 			} ) as const,
-		[ activeQuery, matchReasons, isSingleFeaturedSuggestion ]
+		[ activeQuery, matchReasons, isSingleFeaturedSuggestion, currentWidth ]
 	);
 
-	const title = (
+	const domainName = (
 		<Text size={ activeQuery === 'large' ? 32 : 24 } style={ { wordBreak: 'break-all' } }>
 			{ domain }
 			<span style={ { whiteSpace: 'nowrap' } }>.{ tld }</span>
@@ -69,13 +88,16 @@ const Featured = ( {
 	return (
 		<DomainSuggestionContainerContext.Provider value={ contextValue }>
 			<FeaturedSkeleton
+				role="listitem"
+				title={ `${ domain }.${ tld }` }
 				ref={ containerRef }
 				activeQuery={ activeQuery }
 				className={ clsx( 'domain-suggestion-featured', {
 					'domain-suggestion-featured--highlighted': isHighlighted,
+					'domain-suggestion-featured--single': isSingleFeaturedSuggestion,
 				} ) }
 				badges={ badgesElement }
-				title={ title }
+				domainName={ domainName }
 				matchReasonsList={ matchReasonsList }
 				price={ price }
 				cta={ cta }

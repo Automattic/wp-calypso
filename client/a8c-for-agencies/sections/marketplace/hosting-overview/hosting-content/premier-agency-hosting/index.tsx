@@ -87,7 +87,13 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 			<PressablePlanSection
 				onSelect={ onAddToCart }
 				isReferralMode={ isReferralMode }
-				pressableOwnership={ isReferralMode || agencyPressablePlan ? 'agency' : pressableOwnership }
+				pressableOwnership={
+					isReferralMode ||
+					agencyPressablePlan ||
+					( pressableOwnership === 'regular' && ! agencyPressablePlan ) // Agency has an existing Pressable account, but no active subscription.
+						? 'agency'
+						: pressableOwnership
+				}
 				existingPlan={ agencyPressablePlan }
 				existingPlanInfo={ existingPlanInfo }
 				isFetching={ isExistingPlanFetched }

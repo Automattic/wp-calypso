@@ -8,6 +8,8 @@ import {
 	getPlan,
 	TERM_ANNUALLY,
 	findFirstSimilarPlanKey,
+	FEATURE_INSTALL_THEMES,
+	WPCOM_FEATURES_COMMUNITY_THEMES,
 } from '@automattic/calypso-products';
 import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { addQueryArgs } from '@wordpress/url';
@@ -247,7 +249,8 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||
-			isSiteWpcomAtomic( state, siteId ) ||
+			( siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ) &&
+				siteHasFeature( state, siteId, WPCOM_FEATURES_COMMUNITY_THEMES ) ) ||
 			! isUserLoggedIn( state ) ||
 			! siteId ||
 			isExternallyManagedTheme( state, themeId ) ||

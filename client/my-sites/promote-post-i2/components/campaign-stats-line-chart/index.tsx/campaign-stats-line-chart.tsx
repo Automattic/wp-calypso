@@ -152,7 +152,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 						}
 						// Increase the scale by 40%, this allows extra space for the tooltip
 						const padding = ( max - min ) * 0.4;
-						return [ min, max + padding ];
+						return [ 0, max + padding ];
 					},
 				},
 			},

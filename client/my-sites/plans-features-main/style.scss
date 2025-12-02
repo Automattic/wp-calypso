@@ -40,7 +40,7 @@ $plan-features-header-banner-height: 20px;
 	}
 
 	.plans-wrapper {
-		margin: 0 20px;
+		margin: 0;
 		padding: 0 0 10px;
 		overflow-x: visible;
 	}
@@ -73,6 +73,18 @@ $plan-features-header-banner-height: 20px;
 		margin: 0 0 24px;
 		width: 100%;
 	}
+}
+
+.plan-upgrade-credit-notice-compact {
+	position: absolute;
+	inset-block-start: 20px;
+	inset-inline-end: 20px;
+	background-color: #D6DDF966;
+	border-radius: 3px;
+	padding: 2px 10px;
+	font-size: 13px;
+	line-height: 20px;
+	color: var(--gray-gray-90, #1d2327);
 }
 
 /*TODO: Remove the section below when the 2023 pricing grid is live to all locales */

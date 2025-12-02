@@ -1,6 +1,11 @@
 import '@testing-library/jest-dom';
+import { TextEncoder, TextDecoder } from 'util';
 
 global.crypto.randomUUID = () => 'fake-uuid';
+
+// Polyfill for TextEncoder/TextDecoder required by superagent 10.x and its dependencies
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 
 global.ResizeObserver = require( 'resize-observer-polyfill' );
 

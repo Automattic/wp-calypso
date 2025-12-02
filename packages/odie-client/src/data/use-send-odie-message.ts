@@ -1,20 +1,38 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useSelect } from '@wordpress/data';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import getMostRecentOpenLiveInteraction from '../components/notices/get-most-recent-open-live-interaction';
 import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,
 	getOdieErrorMessageNonEligible,
+	getExistingConversationMessage,
+	ODIE_DEFAULT_BOT_SLUG_LEGACY,
+	getErrorMessageUnknownError,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
+import { hasRecentEscalationAttempt } from '../utils/chat-utils';
+import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
-import type { Chat, Message, ReturnedChat } from '../types';
+import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
+
+function getBotSlug(
+	supportInteraction: SupportInteraction | undefined,
+	newInteractionsBotSlug: string
+): string {
+	if ( supportInteraction ) {
+		// Legacy support interactions have their botSlug set to `''`. We need to use the legacy bot slug for them.
+		return supportInteraction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
+	}
+
+	// When the interaction is undefined, it means we're sending the first message to Odie, which is done before the interaction is created.
+	// In this case, we use the new interactions bot slug.
+	return newInteractionsBotSlug;
+}
 
 const getErrorMessageForSiteIdAndInternalMessageId = (
 	selectedSiteId: number | null | undefined,
@@ -29,7 +47,6 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
 			site_id: selectedSiteId ?? null,
 			flags: {
 				forward_to_human_support: true,
-				canned_response: false,
 				hide_disclaimer_content: false,
 				show_contact_support_msg: true,
 				show_ai_avatar: true,
@@ -44,39 +61,35 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
  * If the chat_id is not set, it will create a new chat and send a message to the chat.
  * @returns useMutation return object.
  */
-export const useSendOdieMessage = () => {
-	const { currentSupportInteraction, odieId } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		const currentSupportInteraction = store.getCurrentSupportInteraction();
-		const odieId = getOdieIdFromInteraction( currentSupportInteraction );
+export const useSendOdieMessage = ( signal: AbortSignal ) => {
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-			odieId,
-		};
-	}, [] );
+	const { addEventToInteraction, startNewInteraction } = useManageSupportInteraction();
+	const createZendeskConversation = useCreateZendeskConversation();
 
-	const { addEventToInteraction } = useManageSupportInteraction();
-	const newConversation = useCreateZendeskConversation();
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [ shouldCreateConversation, setShouldCreateConversation ] = useState< {
 		createdFrom?: string;
 		isFromError?: boolean;
+		escalationOnSecondAttempt?: boolean;
 		trigger: boolean;
 	} >( { isFromError: false, trigger: false } );
 
 	useEffect( () => {
-		const { createdFrom, isFromError, trigger } = shouldCreateConversation;
+		const { createdFrom, isFromError, escalationOnSecondAttempt, trigger } =
+			shouldCreateConversation;
 
 		if ( trigger ) {
-			newConversation( { createdFrom, isFromError } );
+			createZendeskConversation( { createdFrom, isFromError, escalationOnSecondAttempt } );
 			setShouldCreateConversation( { createdFrom: undefined, isFromError: false, trigger: false } );
 		}
-	}, [ newConversation, shouldCreateConversation ] );
+	}, [ createZendeskConversation, shouldCreateConversation ] );
 
 	const {
-		botNameSlug,
 		selectedSiteId,
 		version,
 		setChat,
@@ -87,7 +100,25 @@ export const useSendOdieMessage = () => {
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
 		forceEmailSupport,
+		trackEvent,
+		newInteractionsBotSlug,
 	} = useOdieAssistantContext();
+
+	const updateInteractionContext = useCallback(
+		( interaction: SupportInteraction ) => {
+			const params = new URLSearchParams( location.search );
+			params.set( 'id', interaction.uuid );
+			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+		},
+		[ location.pathname, location.search, navigate ]
+	);
+
+	const hasBeenWarnedAboutExistingConversation = chat?.messages?.some(
+		( message ) =>
+			message.internal_message_id === getExistingConversationMessage().internal_message_id
+	);
+
+	const hasTriedToEscalateToSupport = hasRecentEscalationAttempt( chat );
 
 	/*
 		Adds a message to the chat.
@@ -103,6 +134,8 @@ export const useSendOdieMessage = () => {
 		props?: Partial< Chat >;
 		isFromError: boolean;
 	} ) => {
+		const warnAboutExistingConversation = getMostRecentOpenLiveInteraction();
+
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
 				if ( forceEmailSupport ) {
@@ -110,6 +143,19 @@ export const useSendOdieMessage = () => {
 						...prevChat,
 						...props,
 						messages: [ ...prevChat.messages, getOdieEmailFallbackMessage() ],
+						status: 'loaded',
+					} ) );
+					broadcastOdieMessage( message, odieBroadcastClientId );
+					return;
+				} else if (
+					warnAboutExistingConversation &&
+					! hasBeenWarnedAboutExistingConversation &&
+					! hasTriedToEscalateToSupport
+				) {
+					setChat( ( prevChat ) => ( {
+						...prevChat,
+						...props,
+						messages: [ ...prevChat.messages, getExistingConversationMessage() ],
 						status: 'loaded',
 					} ) );
 					broadcastOdieMessage( message, odieBroadcastClientId );
@@ -125,10 +171,20 @@ export const useSendOdieMessage = () => {
 						trigger: true,
 						createdFrom: 'automatic_escalation',
 						isFromError,
+						escalationOnSecondAttempt: hasTriedToEscalateToSupport,
 					} );
 					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				}
+
+				trackEvent( 'failed_to_escallate_to_support', {
+					odie_id: chat?.odieId,
+					chat_conversation_id: chat?.conversationId,
+					can_connect_to_zendesk: canConnectToZendesk,
+					is_user_eligible_for_paid_support: isUserEligibleForPaidSupport,
+					warn_about_existing_conversation: warnAboutExistingConversation,
+					has_been_warned_about_existing_conversation: hasBeenWarnedAboutExistingConversation,
+				} );
 			}
 		}
 
@@ -142,32 +198,40 @@ export const useSendOdieMessage = () => {
 
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
+			const botSlug = getBotSlug( currentSupportInteraction, newInteractionsBotSlug );
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
+			const url = window.location.href;
+			const pathname = window.location.pathname;
+
+			const currentScreen = { url };
+
 			return canAccessWpcomApis()
-				? await wpcomRequest( {
+				? wpcomRequest< ReturnedChat >( {
 						method: 'POST',
-						path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
+						path: `/odie/chat/${ botSlug }${ chatIdSegment }`,
 						apiNamespace: 'wpcom/v2',
+						signal,
 						body: {
 							message: message.content,
 							...( version && { version } ),
-							context: { selectedSiteId },
+							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } )
-				: await apiFetch( {
-						path: `/help-center/odie/chat/${ botNameSlug }${ chatIdSegment }`,
+				: apiFetch< ReturnedChat >( {
+						path: `/help-center/odie/chat/${ botSlug }${ chatIdSegment }`,
 						method: 'POST',
+						signal,
 						data: {
 							message: message.content,
 							...( version && { version } ),
-							context: { selectedSiteId },
+							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } );
 		},
 		onMutate: () => {
 			setChatStatus( 'sending' );
 		},
-		onSuccess: ( returnedChat ) => {
+		onSuccess: async ( returnedChat ) => {
 			if (
 				! returnedChat.messages ||
 				returnedChat.messages.length === 0 ||
@@ -177,9 +241,12 @@ export const useSendOdieMessage = () => {
 				if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
 					// User is eligible for premium support - transfer to Zendesk
 					// Note: newConversation will add the ODIE_ON_ERROR_TRANSFER_MESSAGE automatically
-					newConversation( {
+					createZendeskConversation( {
 						createdFrom: 'empty_response_error',
 						isFromError: true,
+						errorReason: `messages: ${ returnedChat.messages
+							?.map( ( message ) => message.content )
+							.join( '|' ) }`,
 					} );
 				} else {
 					// User is not eligible for premium support - show error message with support buttons
@@ -193,13 +260,30 @@ export const useSendOdieMessage = () => {
 				return;
 			}
 
-			if ( ! odieId ) {
-				addEventToInteraction.mutate( {
-					interactionId: currentSupportInteraction!.uuid,
-					eventData: {
-						event_external_id: returnedChat.chat_id.toString(),
+			const chatId = returnedChat.chat_id;
+			let supportInteraction = currentSupportInteraction;
+
+			try {
+				if ( ! supportInteraction && chatId ) {
+					supportInteraction = await startNewInteraction( {
+						event_external_id: chatId.toString(),
 						event_source: 'odie',
-					},
+					} );
+				} else if ( supportInteraction && ! odieId && chatId ) {
+					supportInteraction = await addEventToInteraction.mutateAsync( {
+						interactionId: supportInteraction.uuid,
+						eventData: {
+							event_external_id: chatId.toString(),
+							event_source: 'odie',
+						},
+					} );
+				}
+			} catch ( error ) {
+				trackEvent( 'error_updating_support_interaction', {
+					error_message:
+						error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
+					existing_interaction_id: supportInteraction?.uuid ?? null,
+					chat_id: chatId ?? null,
 				} );
 			}
 
@@ -218,11 +302,21 @@ export const useSendOdieMessage = () => {
 				props: { odieId: returnedChat.chat_id },
 				isFromError: false,
 			} );
+
+			if ( supportInteraction ) {
+				updateInteractionContext( supportInteraction );
+			}
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botNameSlug, odieId ] } );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'odie-chat', currentSupportInteraction?.bot_slug, odieId ],
+			} );
 		},
 		onError: ( error ) => {
+			if ( error instanceof Event && error.type === 'abort' ) {
+				return;
+			}
+
 			const isRateLimitError = error.message.includes( '429' );
 
 			if ( isRateLimitError ) {
@@ -230,10 +324,11 @@ export const useSendOdieMessage = () => {
 				const message: Message = { ...getOdieRateLimitMessage(), internal_message_id };
 				addMessage( { message, props: {}, isFromError: true } );
 			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
-				// User is eligible for premium support - transfer to Zendesk
-				newConversation( {
-					createdFrom: 'api_error',
-					isFromError: true,
+				const errorMessage = getErrorMessageUnknownError();
+				addMessage( { message: errorMessage, props: {}, isFromError: true } );
+
+				trackEvent( 'error_sending_odie_message', {
+					error_message: error instanceof Error ? error.toString() : 'unknown_error',
 				} );
 			} else {
 				// User is not eligible for premium support - show error message with support buttons

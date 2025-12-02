@@ -24,6 +24,7 @@ export interface CheckoutStepProps {
 	nextStepButtonAriaLabel?: string;
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
+	onPageLoadError?: CheckoutPageErrorCallback;
 }
 
 export type IsCompleteCallback = () => boolean | Promise< boolean >;
@@ -93,10 +94,6 @@ export interface PaymentMethodProviderContextInterface {
 	paymentMethodId: string | null | undefined;
 	setPaymentMethodId: ( id: string ) => void;
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
-}
-
-export interface CheckoutContextInterface {
-	onPageLoadError?: CheckoutPageErrorCallback;
 }
 
 export type ReactStandardAction< T = string, P = unknown > = P extends void

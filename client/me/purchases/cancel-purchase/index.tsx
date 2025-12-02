@@ -207,7 +207,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 		this.setState( ( state ) => ( {
 			...state,
-			newState,
+			...newState,
 		} ) );
 	};
 
@@ -738,7 +738,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	renderPlanRevertContent = () => {
-		const { purchase, atomicTransfer } = this.props;
+		const { purchase, atomicTransfer, includedDomainPurchase } = this.props;
 
 		return (
 			<>
@@ -752,7 +752,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					isLoading={ this.state.isLoading }
 				/>
 
-				<p>{ this.renderFullText() }</p>
+				{ ! includedDomainPurchase && <p>{ this.renderFullText() }</p> }
 
 				<div className="cancel-purchase__confirm-buttons">
 					{ this.renderCancelButton() }
@@ -773,7 +773,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 			this.setState( ( state ) => ( {
 				...state,
-				newState,
+				...newState,
 			} ) );
 		};
 

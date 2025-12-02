@@ -239,6 +239,12 @@
 		top: 30px;
 		right: 45px;
 	}
+
+	.components-toggle-group-control {
+		> div {
+			flex: 1 1 auto;
+		}
+	}
 }
 
 div.is-section-reader:not(.is-logged-in) {

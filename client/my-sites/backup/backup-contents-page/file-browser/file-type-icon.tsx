@@ -11,7 +11,6 @@ import {
 	video,
 	wordpress,
 } from '@wordpress/icons';
-import { FunctionComponent } from 'react';
 import { FileType } from './types';
 
 interface FileTypeIconProps {
@@ -35,10 +34,10 @@ const fileTypeToIcon: Record< FileType, JSX.Element > = {
 	archive: file,
 };
 
-const FileTypeIcon: FunctionComponent< FileTypeIconProps > = ( { type } ) => {
+function FileTypeIcon( { type }: FileTypeIconProps ) {
 	const icon = fileTypeToIcon[ type ] || pages;
 
 	return <Icon icon={ icon } />;
-};
+}
 
 export default FileTypeIcon;

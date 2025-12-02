@@ -60,23 +60,38 @@ const ChecklistItem: FC< Props > = ( {
 		const taskTitle = typeof title === 'string' ? title : String( title );
 
 		if ( completed ) {
-			/* translators: %s: Task title */
-			return sprintf( __( 'Completed: %s', 'launchpad' ), taskTitle );
+			return sprintf(
+				/* translators: %s: Task title */
+				__( 'Completed: %s', 'launchpad' ),
+				taskTitle
+			);
 		}
 		if ( disabled ) {
-			/* translators: %s: Task title */
-			return sprintf( __( 'Not available yet: %s', 'launchpad' ), taskTitle );
+			return sprintf(
+				/* translators: %s: Task title */
+				__( 'Not available yet: %s', 'launchpad' ),
+				taskTitle
+			);
 		}
 		if ( isClickable ) {
 			if ( isPrimaryAction ) {
-				/* translators: %s: Task title */
-				return sprintf( __( 'Start task: %s', 'launchpad' ), taskTitle );
+				return sprintf(
+					/* translators: %s: Task title */
+					__( 'Start task: %s', 'launchpad' ),
+					taskTitle
+				);
 			}
-			/* translators: %s: Task title in lowercase */
-			return sprintf( __( 'Select to %s', 'launchpad' ), taskTitle.toLowerCase() );
+			return sprintf(
+				/* translators: %s: Task title in lowercase */
+				__( 'Select to %s', 'launchpad' ),
+				taskTitle.toLowerCase()
+			);
 		}
-		/* translators: %s: Task title */
-		return sprintf( __( 'To do: %s', 'launchpad' ), taskTitle );
+		return sprintf(
+			/* translators: %s: Task title */
+			__( 'To do: %s', 'launchpad' ),
+			taskTitle
+		);
 	};
 
 	return (

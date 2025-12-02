@@ -7,6 +7,7 @@ export const LATEST_TAB = 'latest';
 export const FIRST_POSTS_TAB = 'firstposts';
 export const ADD_NEW_TAB = 'add-new';
 export const REDDIT_TAB = 'reddit';
+export const TAGS_TAB = 'tags';
 
 /**
  * Filters tags data and returns the tags intended to be loaded by the discover pages recommended
@@ -25,23 +26,6 @@ export function getDiscoverStreamTags( tags: string[] | null, isLoggedIn: boolea
 		return DEFAULT_DISCOVER_TAGS;
 	}
 	return tags;
-}
-
-export function getSelectedTabTitle( selectedTab: string ) {
-	if ( selectedTab === RECOMMENDED_TAB ) {
-		return 'popular';
-	}
-
-	if ( selectedTab === LATEST_TAB ) {
-		return 'new';
-	}
-	if ( selectedTab === FIRST_POSTS_TAB ) {
-		return 'fresh';
-	}
-	if ( selectedTab === FRESHLY_PRESSED_TAB ) {
-		return 'Freshly Pressed';
-	}
-	return decodeURIComponent( selectedTab );
 }
 
 export function getDefaultTab() {

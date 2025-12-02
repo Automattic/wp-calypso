@@ -1,5 +1,4 @@
 import CommandPalette from '@automattic/command-palette';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import domReady from '@wordpress/dom-ready';
 import { createRoot } from 'react-dom/client';
 import setLocale from './set-locale';
@@ -32,16 +31,14 @@ function CommandPaletteApp() {
 	const userCapabilities = { [ siteId ]: capabilities };
 
 	return (
-		<QueryClientProvider client={ new QueryClient() }>
-			<CommandPalette
-				navigate={ navigate }
-				currentRoute={ currentRoute }
-				useCommands={ useCommandsWpAdmin }
-				currentSiteId={ siteId }
-				useSites={ useSites }
-				userCapabilities={ userCapabilities }
-			/>
-		</QueryClientProvider>
+		<CommandPalette
+			navigate={ navigate }
+			currentRoute={ currentRoute }
+			useCommands={ useCommandsWpAdmin }
+			currentSiteId={ siteId }
+			useSites={ useSites }
+			userCapabilities={ userCapabilities }
+		/>
 	);
 }
 

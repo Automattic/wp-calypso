@@ -1,11 +1,18 @@
 import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
+import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
+import type { AppConfig } from 'calypso/dashboard/app/context';
 
 const settingsRoute = createRoute( {
 	...appRouterSites.siteSettingsRoute.options,
 	getParentRoute: () => siteRoute,
+} );
+
+const settingsIndexRoute = createRoute( {
+	getParentRoute: () => settingsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'settings' )( {
@@ -16,7 +23,7 @@ const settingsRoute = createRoute( {
 
 const siteVisibilityRoute = createRoute( {
 	...appRouterSites.siteSettingsSiteVisibilityRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-visibility' )( {
@@ -27,7 +34,7 @@ const siteVisibilityRoute = createRoute( {
 
 const subscriptionGiftingRoute = createRoute( {
 	...appRouterSites.siteSettingsSubscriptionGiftingRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'subscription-gifting' )( {
@@ -36,9 +43,20 @@ const subscriptionGiftingRoute = createRoute( {
 	)
 );
 
+const holidaySnowRoute = createRoute( {
+	...appRouterSites.siteSettingsHolidaySnowRoute.options,
+	getParentRoute: () => settingsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-holiday-snow' ).then( ( d ) =>
+		createLazyRoute( 'holiday-snow' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const wordpressRoute = createRoute( {
 	...appRouterSites.siteSettingsWordPressRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-wordpress' ).then( ( d ) =>
 		createLazyRoute( 'wordpress' )( {
@@ -49,7 +67,7 @@ const wordpressRoute = createRoute( {
 
 const phpRoute = createRoute( {
 	...appRouterSites.siteSettingsPHPRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-php' ).then( ( d ) =>
 		createLazyRoute( 'php' )( {
@@ -59,8 +77,8 @@ const phpRoute = createRoute( {
 );
 
 const databaseRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'settings/database', // Bypass type issue by hard-coding the path instead of reusing the route.
+	getParentRoute: () => settingsRoute,
+	path: 'database', // Bypass type issue by hard-coding the path instead of reusing the route.
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-database' ).then( ( d ) =>
 		createLazyRoute( 'database' )( {
@@ -71,7 +89,7 @@ const databaseRoute = createRoute( {
 
 const agencyRoute = createRoute( {
 	...appRouterSites.siteSettingsAgencyRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-agency' ).then( ( d ) =>
 		createLazyRoute( 'agency' )( {
@@ -82,7 +100,7 @@ const agencyRoute = createRoute( {
 
 const hundredYearPlanRoute = createRoute( {
 	...appRouterSites.siteSettingsHundredYearPlanRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-hundred-year-plan' ).then( ( d ) =>
 		createLazyRoute( 'hundred-year-plan' )( {
@@ -93,7 +111,7 @@ const hundredYearPlanRoute = createRoute( {
 
 const primaryDataCenterRoute = createRoute( {
 	...appRouterSites.siteSettingsPrimaryDataCenterRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-primary-data-center' ).then( ( d ) =>
 		createLazyRoute( 'primary-data-center' )( {
@@ -104,7 +122,7 @@ const primaryDataCenterRoute = createRoute( {
 
 const staticFile404Route = createRoute( {
 	...appRouterSites.siteSettingsStaticFile404Route.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-static-file-404' ).then( ( d ) =>
 		createLazyRoute( 'static-file-404' )( {
@@ -115,7 +133,7 @@ const staticFile404Route = createRoute( {
 
 const cachingRoute = createRoute( {
 	...appRouterSites.siteSettingsCachingRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-caching' ).then( ( d ) =>
 		createLazyRoute( 'caching' )( {
@@ -126,7 +144,7 @@ const cachingRoute = createRoute( {
 
 const defensiveModeRoute = createRoute( {
 	...appRouterSites.siteSettingsDefensiveModeRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-defensive-mode' ).then( ( d ) =>
 		createLazyRoute( 'defensive-mode' )( {
@@ -137,7 +155,7 @@ const defensiveModeRoute = createRoute( {
 
 const sftpSshRoute = createRoute( {
 	...appRouterSites.siteSettingsSftpSshRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-sftp-ssh' ).then( ( d ) =>
 		createLazyRoute( 'sftp-ssh' )( {
@@ -147,8 +165,8 @@ const sftpSshRoute = createRoute( {
 );
 
 const transferSiteRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'settings/transfer-site', // Bypass type issue by hard-coding the path instead of reusing the route.
+	getParentRoute: () => settingsRoute,
+	path: 'transfer-site', // Bypass type issue by hard-coding the path instead of reusing the route.
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'transfer-site' )( {
@@ -159,7 +177,7 @@ const transferSiteRoute = createRoute( {
 
 const webApplicationFirewallRoute = createRoute( {
 	...appRouterSites.siteSettingsWebApplicationFirewallRoute.options,
-	getParentRoute: () => siteRoute,
+	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-web-application-firewall' ).then( ( d ) =>
 		createLazyRoute( 'web-application-firewall' )( {
@@ -168,24 +186,51 @@ const webApplicationFirewallRoute = createRoute( {
 	)
 );
 
+const wpcomLoginRoute = createRoute( {
+	...appRouterSites.siteSettingsWpcomLoginRoute.options,
+	getParentRoute: () => settingsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-wpcom-login' ).then( ( d ) =>
+		createLazyRoute( 'wpcom-login' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const experimentalRoute = createRoute( {
+	...appRouterSites.siteSettingsExperimentalRoute.options,
+	getParentRoute: () => settingsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-assistant' ).then( ( d ) =>
+		createLazyRoute( 'ai-assistant' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		siteRoute.addChildren( [
-			settingsRoute,
-			siteVisibilityRoute,
-			subscriptionGiftingRoute,
-			wordpressRoute,
-			phpRoute,
-			databaseRoute,
-			agencyRoute,
-			hundredYearPlanRoute,
-			primaryDataCenterRoute,
-			staticFile404Route,
-			cachingRoute,
-			defensiveModeRoute,
-			transferSiteRoute,
-			sftpSshRoute,
-			webApplicationFirewallRoute,
+			settingsRoute.addChildren( [
+				settingsIndexRoute,
+				siteVisibilityRoute,
+				subscriptionGiftingRoute,
+				holidaySnowRoute,
+				wordpressRoute,
+				phpRoute,
+				databaseRoute,
+				agencyRoute,
+				hundredYearPlanRoute,
+				primaryDataCenterRoute,
+				staticFile404Route,
+				cachingRoute,
+				defensiveModeRoute,
+				transferSiteRoute,
+				sftpSshRoute,
+				webApplicationFirewallRoute,
+				wpcomLoginRoute,
+				experimentalRoute,
+			] ),
 		] ),
 		dashboardSitesCompatibilityRoute,
 	] );
@@ -193,18 +238,18 @@ const createRouteTree = () =>
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
 	createBrowserHistoryAndMemoryRouterSync();
 
-export const getRouter = ( { basePath }: { basePath: string } ) => {
+export const getRouter = ( config: AppConfig ) => {
 	const routeTree = createRouteTree();
 	const router = new Router( {
-		...getRouterOptions(),
+		...getRouterOptions( config ),
 		routeTree,
-		basepath: basePath,
 	} );
 
 	return router;
 };
 
 export const routerConfig = {
+	...APP_CONTEXT_DEFAULT_CONFIG,
 	basePath: '/',
 };
 

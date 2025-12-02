@@ -12,6 +12,3 @@ export const DEFAULT_POST_QUERY = {
 	sticky: 'include',
 	search: '',
 };
-
-// All post statuses displayed in Calypso.
-export const POST_STATUSES = [ 'publish', 'draft', 'pending', 'private', 'future', 'trash' ];

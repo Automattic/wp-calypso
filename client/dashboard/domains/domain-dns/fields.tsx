@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import type { DnsRecord } from '../../data/domain-dns-records';
+import type { DnsRecord } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const trimDot = ( str?: string ) => {

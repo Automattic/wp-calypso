@@ -1,0 +1,90 @@
+.migration-site-ssh__accordion-notice {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	padding: 0.5rem;
+	gap: 0.25rem;
+	border-radius: 4px;
+	width: 100%;
+	box-sizing: border-box;
+	margin-bottom: 1rem;
+
+	&--error {
+		background: #F7E1E1;
+
+		.migration-site-ssh__accordion-notice-icon {
+			color: #53050C;
+
+			svg {
+				fill: #53050C;
+			}
+		}
+
+		.migration-site-ssh__accordion-notice-text {
+			color: #53050C;
+		}
+	}
+
+	&--info {
+		background: #E1F2F7;
+
+		.migration-site-ssh__accordion-notice-icon {
+			color: #0C3853;
+
+			svg {
+				fill: #0C3853;
+			}
+		}
+
+		.migration-site-ssh__accordion-notice-text {
+			color: #0C3853;
+		}
+	}
+}
+
+.migration-site-ssh__accordion-notice-icon {
+	width: 1.5rem;
+	height: 1.5rem;
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+.migration-site-ssh__accordion-notice-content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 0;
+	gap: 0.5rem;
+	flex: 1;
+	order: 1;
+	min-width: 0;
+}
+
+.migration-site-ssh__accordion-notice-texts {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 0.125rem 0;
+	gap: 0.125rem;
+	flex: none;
+	order: 0;
+	align-self: stretch;
+	flex-grow: 0;
+	width: 100%;
+}
+
+.migration-site-ssh__accordion-notice-text {
+	font-style: normal;
+	font-weight: 400;
+	font-size: 0.875rem;
+	line-height: 16px;
+	flex: none;
+	order: 1;
+	align-self: stretch;
+	flex-grow: 0;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	word-break: break-word;
+}

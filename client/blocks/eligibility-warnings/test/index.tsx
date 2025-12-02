@@ -15,10 +15,6 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/help-center/src/hooks/use-reset-support-interaction', () => ( {
-	useResetSupportInteraction: () => jest.fn().mockResolvedValue( undefined ),
-} ) );
-
 jest.mock( '@automattic/odie-client/src/data', () => ( {
 	useManageSupportInteraction: () => ( {
 		startNewInteraction: jest.fn().mockResolvedValue( undefined ),

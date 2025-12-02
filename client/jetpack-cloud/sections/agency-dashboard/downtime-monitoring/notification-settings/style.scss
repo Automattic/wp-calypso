@@ -24,6 +24,14 @@
 	@include break-mobile {
 		padding-block-end: 35px;
 	}
+
+	.badge {
+		height: auto;
+	}
+
+	.alert-banner {
+		margin-block-start: 16px;
+	}
 }
 
 .notification-settings__content-heading-with-beta {
@@ -140,6 +148,7 @@
 	display: inline-flex;
 	flex-direction: row-reverse;
 	width: 100%;
+
 }
 
 .notification-settings__toggle-container .components-base-control__field .components-flex {

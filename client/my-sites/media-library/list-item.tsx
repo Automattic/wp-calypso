@@ -3,10 +3,8 @@ import clsx from 'clsx';
 import { isEqual } from 'lodash';
 import * as React from 'react';
 import { getMimePrefix } from 'calypso/lib/media/utils';
-import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
 import ListItemImage from './list-item-image';
-import ListItemVideo from './list-item-video';
 
 import './list-item.scss';
 
@@ -92,12 +90,6 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		switch ( getMimePrefix( this.props.media ) as string ) {
 			case 'image':
 				component = ListItemImage;
-				break;
-			case 'video':
-				component = ListItemVideo;
-				break;
-			case 'audio':
-				component = ListItemAudio;
 				break;
 			default:
 				component = ListItemDocument;

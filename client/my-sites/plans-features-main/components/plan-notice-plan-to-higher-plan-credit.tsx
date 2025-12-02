@@ -7,12 +7,14 @@ import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { PlanSlug } from '@automattic/calypso-products';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 
 type Props = {
 	className?: string;
 	onDismissClick?: () => void;
 	siteId: number;
 	visiblePlans?: PlanSlug[];
+	intent?: PlansIntent;
 };
 
 const PlanNoticePlanToHigherPlanCredit = ( {
@@ -20,6 +22,7 @@ const PlanNoticePlanToHigherPlanCredit = ( {
 	onDismissClick,
 	siteId,
 	visiblePlans,
+	intent,
 }: Props ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -32,10 +35,25 @@ const PlanNoticePlanToHigherPlanCredit = ( {
 		planUpgradeCreditsApplicable !== null &&
 		planUpgradeCreditsApplicable > 0;
 
+	// Check if this is the plans-upgrade flow which requires compact styling
+	const isUpgradeFlow = intent === 'plans-upgrade';
+
 	return (
 		<>
 			<QuerySitePlans siteId={ siteId } />
-			{ showNotice && (
+			{ showNotice && isUpgradeFlow && (
+				<div className="plan-upgrade-credit-notice-compact">
+					{ translate( 'You have %(amountInCurrency)s in upgrade credits available', {
+						args: {
+							amountInCurrency: formatCurrency( planUpgradeCreditsApplicable, currencyCode ?? '', {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</div>
+			) }
+			{ showNotice && ! isUpgradeFlow && (
 				<Notice
 					className={ className }
 					showDismiss={ !! onDismissClick }

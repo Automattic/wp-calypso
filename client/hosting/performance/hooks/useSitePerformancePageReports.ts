@@ -80,8 +80,8 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 
 	const {
 		data,
-		isLoading: isInitialLoading,
-		refetch,
+		isLoading: isLoadingPages,
+		refetch: refetchPages,
 	} = useQuery( {
 		queryKey: [ 'useSitePerformancePageReports', siteId, query ],
 		queryFn: () => getPages( siteId!, query ),
@@ -163,5 +163,5 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 		[ siteId, dispatch ]
 	);
 
-	return { pages, isInitialLoading, savePerformanceReportUrl, refetch };
+	return { pages, isLoadingPages, savePerformanceReportUrl, refetchPages };
 };

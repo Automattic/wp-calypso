@@ -10,7 +10,7 @@ import getIsPanelOpen from '../state/selectors/get-is-panel-open';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
 import EmptyMessage from './empty-message';
 import FilterBar from './filter-bar';
-import Filters from './filters';
+import { getFilters } from './filters';
 import ListHeader from './list-header';
 import Note from './note';
 import Spinner from './spinner';
@@ -354,7 +354,7 @@ export class NoteList extends Component {
 
 		const emptyNoteList = 0 === notes.length;
 
-		const filter = Filters[ this.props.filterName ];
+		const filter = getFilters()[ this.props.filterName ];
 		const loadingIndicatorVisibility = { opacity: 0 };
 		if ( this.props.isLoading ) {
 			loadingIndicatorVisibility.opacity = 1;
@@ -364,9 +364,9 @@ export class NoteList extends Component {
 		} else if ( ! this.props.initialLoad && emptyNoteList && filter.emptyMessage ) {
 			notes = (
 				<EmptyMessage
-					emptyMessage={ filter.emptyMessage( translate ) }
+					emptyMessage={ filter.emptyMessage }
 					height={ this.props.height }
-					linkMessage={ filter.emptyLinkMessage( translate ) }
+					linkMessage={ filter.emptyLinkMessage }
 					link={ filter.emptyLink }
 					name={ filter.name }
 					showing={ this.props.isPanelOpen }

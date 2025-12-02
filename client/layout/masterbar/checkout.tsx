@@ -37,6 +37,13 @@ const CheckoutMasterbar = ( {
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
 
 	const getCheckoutType = () => {
+		// Woo Hosted sites are supposed to default to WPcom colors, but without
+		// a logo. We should update this once we have a better way to identify
+		// Garden sites outside of the Hosting Dashboard.
+		if ( isJetpackNotAtomic && siteSlug?.endsWith( '.commerce-garden.com' ) ) {
+			return 'woo-hosted';
+		}
+
 		if ( window.location.pathname.startsWith( '/checkout/jetpack' ) || isJetpackNotAtomic ) {
 			return 'jetpack';
 		}
@@ -54,7 +61,8 @@ const CheckoutMasterbar = ( {
 	const checkoutType = getCheckoutType();
 
 	const showCloseButton =
-		isLeavingAllowed && ( checkoutType === 'wpcom' || checkoutType === 'gravatar' );
+		isLeavingAllowed &&
+		( checkoutType === 'wpcom' || checkoutType === 'gravatar' || checkoutType === 'woo-hosted' );
 
 	return (
 		<Masterbar

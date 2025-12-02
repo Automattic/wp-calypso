@@ -1,5 +1,6 @@
 import { Spinner } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
+import { SearchControl } from '@wordpress/components';
 import { Icon, search, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import i18n from 'i18n-calypso';
@@ -65,6 +66,7 @@ class Search extends Component {
 		inputLabel: PropTypes.string,
 		searchMode: PropTypes.string,
 		applySearch: PropTypes.bool,
+		useSearchControl: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -219,6 +221,13 @@ class Search extends Component {
 	};
 
 	onChange = ( event ) => {
+		// SearchControl handle event.
+		if ( typeof event === 'string' ) {
+			this.setState( {
+				keyword: event,
+			} );
+			return;
+		}
 		this.setState( {
 			keyword: event.target.value,
 		} );
@@ -341,6 +350,36 @@ class Search extends Component {
 			autoCorrect: 'off',
 			spellCheck: 'false',
 		};
+
+		if ( this.props.useSearchControl ) {
+			return (
+				<SearchControl
+					__nextHasNoMarginBottom
+					className={ clsx( 'search__input', this.props.className ) }
+					id={ 'search-component-' + this.instanceId }
+					autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+					aria-describedby={ this.props.describedBy }
+					aria-label={ inputLabel ? inputLabel : i18n.translate( 'Search' ) }
+					aria-hidden={ ! isOpenUnpinnedOrQueried }
+					placeholder={ placeholder }
+					role="searchbox"
+					value={ searchValue }
+					inputRef={ this.setSearchInputRef }
+					onChange={ this.onChange }
+					onKeyUp={ this.keyUp }
+					onKeyDown={ this.keyDown }
+					onMouseUp={ this.props.onClick }
+					onFocus={ this.onFocus }
+					onBlur={ this.onBlur }
+					disabled={ this.props.disabled }
+					autoCapitalize="none"
+					dir={ this.props.dir }
+					maxLength={ this.props.maxLength }
+					minLength={ this.props.minLength }
+					{ ...autocorrect }
+				/>
+			);
+		}
 
 		const searchClass = clsx( this.props.additionalClasses, this.props.dir, {
 			'is-expanded-to-container': this.props.fitsContainer,

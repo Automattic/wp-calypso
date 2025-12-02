@@ -1,7 +1,7 @@
+import { queryClient, persistQueryClientPromise } from '@automattic/api-queries';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
-import { queryClient, persistPromise } from 'calypso/dashboard/app/query-client';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useAnalyticsClient } from '../hooks/use-analytics-client';
@@ -13,7 +13,7 @@ export default function DashboardBackportSitesList() {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const user = useSelector( ( state ) => getCurrentUser( state ) );
-	const analyticsClient = useAnalyticsClient();
+	const analyticsClient = useAnalyticsClient( router );
 
 	// Initialize the root instance.
 	useEffect( () => {
@@ -38,7 +38,7 @@ export default function DashboardBackportSitesList() {
 		}
 
 		Promise.all( [
-			persistPromise,
+			persistQueryClientPromise,
 			router.preloadRoute( {
 				to: '/sites',
 			} ),

@@ -2,8 +2,11 @@ import { Card } from '@automattic/components';
 import { SubscribersStepProps } from '../types';
 import PaidSubscribers from './paid-subscribers';
 
+interface StepPendingProps extends SubscribersStepProps {
+	onStartImport: () => void;
+}
+
 export default function StepPending( {
-	nextStepUrl,
 	selectedSite,
 	fromSite,
 	siteSlug,
@@ -12,17 +15,17 @@ export default function StepPending( {
 	engine,
 	setAutoFetchData,
 	status,
-}: SubscribersStepProps ) {
+}: StepPendingProps ) {
 	return (
 		<Card>
 			<PaidSubscribers
 				cardData={ cardData }
 				engine={ engine }
 				fromSite={ fromSite }
-				nextStepUrl={ nextStepUrl }
 				selectedSite={ selectedSite }
 				setAutoFetchData={ setAutoFetchData }
 				siteSlug={ siteSlug }
+				onStartImport={ () => {} }
 				skipNextStep={ skipNextStep }
 				status={ status }
 			/>

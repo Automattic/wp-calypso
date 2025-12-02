@@ -230,11 +230,7 @@ class AutoRenewToggle extends Component<
 		const { planName, siteDomain, purchase, withTextStatus, shouldDisable, showLink, children } =
 			this.props;
 
-		if ( ! this.shouldRender( purchase ) ) {
-			return null;
-		}
-
-		if ( ! planName ) {
+		if ( ! showLink && ! this.shouldRender( purchase ) ) {
 			return null;
 		}
 
@@ -247,7 +243,7 @@ class AutoRenewToggle extends Component<
 					variant="link"
 					className="is-link"
 					onClick={ this.onToggleAutoRenew }
-					disabled={ shouldDisable }
+					disabled={ shouldDisable || ! this.shouldRender( purchase ) }
 				>
 					{ children }
 				</Button>
@@ -268,7 +264,7 @@ class AutoRenewToggle extends Component<
 				{ toggle }
 				<AutoRenewDisablingDialog
 					isVisible={ this.state.showAutoRenewDisablingDialog }
-					planName={ planName }
+					planName={ planName ? planName : '' }
 					purchase={ purchase }
 					siteDomain={ siteDomain }
 					onClose={ this.onCloseAutoRenewDisablingDialog }

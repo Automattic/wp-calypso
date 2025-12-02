@@ -52,6 +52,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import canCurrentUserManageSiteOptions from 'calypso/state/sites/selectors/can-current-user-manage-site-options';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -76,6 +77,7 @@ class MasterbarLoggedIn extends Component {
 		loadHelpCenterIcon: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
+		hostingDashboardOptIn: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -225,11 +227,15 @@ class MasterbarLoggedIn extends Component {
 			currentRoute,
 			isGlobalSidebarVisible,
 			siteAdminUrl,
+			hostingDashboardOptIn,
 		} = this.props;
 
-		const mySitesUrl = domainOnlySite
+		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
+		if ( hostingDashboardOptIn ) {
+			mySitesUrl = domainOnlySite ? '/v2/domains' : '/v2/sites';
+		}
 		const icon = this.wordpressIcon();
 
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
@@ -243,11 +249,11 @@ class MasterbarLoggedIn extends Component {
 					[
 						{
 							label: translate( 'Sites' ),
-							url: '/sites',
+							url: hostingDashboardOptIn ? '/v2/sites' : '/sites',
 						},
 						{
 							label: translate( 'Domains' ),
-							url: '/domains/manage',
+							url: hostingDashboardOptIn ? '/v2/domains' : '/domains/manage',
 						},
 					],
 					...( this.props.isSimpleSite
@@ -343,8 +349,8 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderCommentsMenu() {
-		const { adminMenu } = this.props;
-		if ( ! adminMenu ) {
+		const { adminMenu, domainOnlySite } = this.props;
+		if ( ! adminMenu || domainOnlySite ) {
 			return null;
 		}
 
@@ -476,55 +482,42 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
-		const siteHomeOrAdminItem = isClassicView
-			? {
-					label: translate( 'Dashboard' ),
-					url: siteAdminUrl,
-			  }
-			: {
-					label: translate( 'My Home' ),
-					url: siteHomeUrl,
-			  };
+		const menuItems = [ { label: translate( 'Visit Site' ), url: siteUrl } ];
 
-		// Get site badges
-		const siteBadges = this.renderSiteBadges();
+		if ( isClassicView ) {
+			menuItems.push( { label: translate( 'Dashboard' ), url: siteAdminUrl } );
+		} else {
+			menuItems.push( { label: translate( 'My Home' ), url: siteHomeUrl } );
+		}
 
-		// Create a site status item for the dropdown if we have badges
-		const menuItems = [
-			[ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ],
-			[
-				...( ! site?.is_wpcom_staging_site
-					? [
-							{
-								label: (
-									<div className="masterbar__site-info">
-										<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
-										<div className="masterbar__info-badges">
-											<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
-										</div>
-									</div>
-								),
-								onClick: () => {
-									this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
-									page( `/plans/${ siteSlug }` );
-								},
-							},
-					  ]
-					: [] ),
-				{
-					label: (
-						<div className="masterbar__site-infos">
-							{ siteBadges && siteBadges.length > 0 && (
-								<div className="masterbar__site-info">
-									<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
-									<div className="masterbar__info-badges">{ siteBadges }</div>
-								</div>
-							) }
+		if ( ! site?.is_wpcom_staging_site ) {
+			menuItems.push( {
+				label: (
+					<div className="masterbar__site-info masterbar__site-plan">
+						<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
+						<div className="masterbar__info-badges">
+							<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
 						</div>
-					),
+					</div>
+				),
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
+					page( `/plans/${ siteSlug }` );
 				},
-			],
-		];
+			} );
+		}
+
+		const siteBadges = this.renderSiteBadges();
+		if ( siteBadges && siteBadges.length > 0 ) {
+			menuItems.push( {
+				label: (
+					<div className="masterbar__site-info masterbar__site-status">
+						<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
+						<div className="masterbar__info-badges">{ siteBadges }</div>
+					</div>
+				),
+			} );
+		}
 
 		return (
 			<Item
@@ -532,7 +525,7 @@ class MasterbarLoggedIn extends Component {
 				url={ siteUrl }
 				icon={ <span className="dashicons-before dashicons-admin-home" /> }
 				tipTarget="visit-site"
-				subItems={ menuItems }
+				subItems={ [ menuItems ] }
 			>
 				{ siteTitle.length > 40 ? `${ siteTitle.substring( 0, 40 ) }\u2026` : siteTitle }
 			</Item>
@@ -885,6 +878,7 @@ export default connect(
 				isAtomicSite( state, siteId ) &&
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
+			hostingDashboardOptIn: hasHostingDashboardOptIn( state ),
 		};
 	},
 	{

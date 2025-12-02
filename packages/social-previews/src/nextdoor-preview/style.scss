@@ -1,6 +1,6 @@
 .nextdoor-preview {
 	&__wrapper {
-		max-width: clamp(200px, 100%, 600px);
+		max-width: clamp( 200px, 100%, 600px );
 	}
 
 	// When the preview is in a section of all previews
@@ -9,13 +9,11 @@
 	}
 
 	&__section.social-preview__section {
-		width: clamp(200px, 100%, 600px);
+		width: clamp( 200px, 100%, 600px );
 	}
 
 	&__container {
-
-		box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
-		/* stylelint-disable-next-line scales/radii */
+		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 8px;
 		border-radius: 8px;
 		overflow: hidden;
 		background-color: #fff;
@@ -102,9 +100,10 @@
 	}
 
 	&__card {
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 16px;
-		box-shadow: rgba(0, 0, 0, 0.08) 0 1px 4px 0, rgba(0, 0, 0, 0.2) 0 0 2px 0;
+		box-shadow:
+			rgba( 0, 0, 0, 0.08 ) 0 1px 4px 0,
+			rgba( 0, 0, 0, 0.2 ) 0 0 2px 0;
 		display: flex;
 		flex-direction: column;
 		margin-top: 12px;
@@ -188,7 +187,7 @@
 		width: 40px;
 		height: 40px;
 		border-radius: 50%;
-		background-color: rgb(140 110 99);
+		background-color: rgb( 140 110 99 );
 		color: #fff;
 		display: flex;
 		justify-content: center;

@@ -113,7 +113,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				href={ link }
 				{ ...props }
 			>
-				{ children.map( ( item ) => {
+				{ children.map( ( item, index ) => {
 					if ( ! shouldShowAdvertisingOption && item?.url?.includes( '/advertising/' ) ) {
 						return;
 					}
@@ -121,7 +121,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 
 					return (
 						<MySitesSidebarUnifiedItem
-							key={ item.title }
+							key={ `${ item.title }-${ index }` }
 							{ ...item }
 							selected={ isSelected }
 							trackClickEvent={ trackClickEvent }

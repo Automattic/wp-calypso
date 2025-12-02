@@ -96,7 +96,7 @@ const UserStepComponent: StepType = function UserStep( {
 				socialServiceResponse={ socialServiceResponse }
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
-				userEmail=""
+				userEmail={ queryArgs.get( 'user_email' ) || '' }
 				notice={ notice }
 				isSocialFirst
 				onCreateAccountSuccess={ handleCreateAccountSuccess }

@@ -17,10 +17,15 @@ import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
-import type { ZendeskMessage } from '@automattic/odie-client';
+import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 const destroy = () => {
-	Smooch.destroy();
+	try {
+		Smooch.destroy();
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Error destroying Smooch', error );
+	}
 };
 
 const initSmooch = (
@@ -88,25 +93,34 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const queryClient = useQueryClient();
 	const smoochRef = useRef< HTMLDivElement >( null );
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
-	const { isHelpCenterShown, isChatLoaded, areSoundNotificationsEnabled, allowPremiumSupport } =
-		useSelect( ( select ) => {
-			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-			return {
-				isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
-				isChatLoaded: helpCenterSelect.getIsChatLoaded(),
-				areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
-				allowPremiumSupport: helpCenterSelect.getAllowPremiumSupport(),
-			};
-		}, [] );
+	const {
+		isHelpCenterShown,
+		isChatLoaded,
+		areSoundNotificationsEnabled,
+		hasPremiumSupport,
+		connectionStatus,
+	} = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
+			isChatLoaded: helpCenterSelect.getIsChatLoaded(),
+			areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
+			hasPremiumSupport: helpCenterSelect.getHasPremiumSupport(),
+			connectionStatus: helpCenterSelect.getZendeskConnectionStatus(),
+		};
+	}, [] );
 
-	const allowChat =
-		canConnectToZendesk && enableAuth && ( isEligibleForChat || allowPremiumSupport );
+	const allowChat = canConnectToZendesk && enableAuth && ( isEligibleForChat || hasPremiumSupport );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
-	const { setIsChatLoaded, setZendeskClientId, setZendeskConnectionStatus } =
-		useDispatch( HELP_CENTER_STORE );
+	const {
+		setIsChatLoaded,
+		setZendeskClientId,
+		setZendeskConnectionStatus,
+		setSupportTypingStatus,
+	} = useDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
@@ -134,10 +148,27 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		recordTracksEvent( 'calypso_smooch_messenger_reconnecting' );
 	}, [ setZendeskConnectionStatus ] );
 
+	const typingStartListener = useCallback(
+		( { conversation }: ConversationData ) => {
+			setSupportTypingStatus( conversation.id, true );
+		},
+		[ setSupportTypingStatus ]
+	);
+	const typingStopListener = useCallback(
+		( { conversation }: ConversationData ) => {
+			setSupportTypingStatus( conversation.id, false );
+		},
+		[ setSupportTypingStatus ]
+	);
+
 	const connectedListener = useCallback( () => {
-		setZendeskConnectionStatus( 'connected' );
-		recordTracksEvent( 'calypso_smooch_messenger_connected' );
-	}, [ setZendeskConnectionStatus ] );
+		// We only want to revert the connection status to connected if it was disconnected before.
+		// We don't want a "connected" status on page load, it's only useful as a sign of a recovered connection.
+		if ( connectionStatus ) {
+			setZendeskConnectionStatus( 'connected' );
+			recordTracksEvent( 'calypso_smooch_messenger_connected' );
+		}
+	}, [ setZendeskConnectionStatus, connectionStatus ] );
 
 	const clientIdListener = useCallback(
 		( message: ZendeskMessage ) => {
@@ -205,6 +236,8 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			Smooch.on( 'disconnected', disconnectedListener );
 			Smooch.on( 'reconnecting', reconnectingListener );
 			Smooch.on( 'connected', connectedListener );
+			Smooch.on( 'typing:start', typingStartListener );
+			Smooch.on( 'typing:stop', typingStopListener );
 		}
 
 		return () => {
@@ -219,15 +252,17 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'connected', connectedListener );
 			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'message:received', getUnreadListener );
+			Smooch?.off?.( 'typing:stop', typingStopListener );
 			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'message:sent', clientIdListener );
+			Smooch?.off?.( 'typing:start', typingStartListener );
 		};
 	}, [
 		getUnreadListener,
 		setZendeskConnectionStatus,
 		clientIdListener,
 		isChatLoaded,
+		typingStartListener,
+		typingStopListener,
 		getUnreadNotifications,
 		setZendeskClientId,
 		disconnectedListener,

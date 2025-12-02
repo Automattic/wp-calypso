@@ -134,7 +134,7 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 				<div className="onboarding-tour-modal__main">
 					<Button
 						className={ clsx( 'onboarding-tour-modal__close-button', {
-							'is-light': currentSection?.props?.isDarkBanner,
+							'is-dark-background': currentSection?.props?.isDarkBanner,
 						} ) }
 						onClick={ () => {
 							dispatch( recordTracksEvent( 'calypso_onboarding_tour_modal_close_button_click' ) );

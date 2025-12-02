@@ -1,6 +1,6 @@
 import { Gridicon, ProgressBar } from '@automattic/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -25,6 +25,7 @@ const PROGRESS_BAR_CLASS_NAMES = {
 	[ StorageUsageLevels.Warning ]: 'yellow-warning',
 	[ StorageUsageLevels.Normal ]: 'no-warning',
 	[ StorageUsageLevels.BackupsDiscarded ]: 'full-warning',
+	[ StorageUsageLevels.FullButForecastOk ]: 'full-warning',
 };
 
 type OwnProps = {
@@ -36,7 +37,6 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) ) || 0;
@@ -52,9 +52,9 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 	// current site size
 	const lastBackupSize = useSelector( ( state ) => getBackupCurrentSiteSize( state, siteId ) ) || 0;
 	const { upsellSlug } = useUpsellInfo( siteId );
-	const loadingText = translate( 'Calculating…', {
-		comment: 'Loading text displayed while storage usage is being calculated',
-	} );
+
+	// translators: Loading text displayed while storage usage is being calculated
+	const loadingText = __( 'Calculating…' );
 
 	let forecastInDays = 0;
 	if ( bytesAvailable > 0 && lastBackupSize > 0 ) {
@@ -75,6 +75,9 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 		);
 	}, [ dispatch, usageLevel, bytesUsed ] );
 
+	const isStorageFull =
+		StorageUsageLevels.Full === usageLevel || StorageUsageLevels.FullButForecastOk === usageLevel;
+
 	return (
 		<div
 			className={ clsx( 'backup-storage-space__progress-bar-container', {
@@ -82,10 +85,16 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 			} ) }
 		>
 			<div className="backup-storage-space__progress-heading">
-				<span hidden={ StorageUsageLevels.Full !== usageLevel }>
-					<Gridicon className="backup-storage-space__storage-full-icon" icon="notice" size={ 24 } />
-				</span>
-				<span>{ translate( 'Cloud storage space' ) } </span>
+				{ isStorageFull && (
+					<span>
+						<Gridicon
+							className="backup-storage-space__storage-full-icon"
+							icon="notice"
+							size={ 24 }
+						/>
+					</span>
+				) }
+				<span>{ __( 'Cloud storage space' ) } </span>
 			</div>
 			<div className="backup-storage-space__progress-bar">
 				<ProgressBar
@@ -97,7 +106,7 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 			<div className="backup-storage-space__progress-usage-container">
 				<div
 					className={ clsx( 'backup-storage-space__progress-storage-usage-text', {
-						'is-storage-full': StorageUsageLevels.Full === usageLevel,
+						'is-storage-full': isStorageFull,
 					} ) }
 				>
 					<span>{ loading ? loadingText : storageUsageText }</span>

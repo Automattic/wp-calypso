@@ -9,9 +9,8 @@
 	font-size: $font-body-small;
 	text-align: center;
 	height: calc(65vh - 47px); /* The values here are set so that the Not-you line gets pushed to the bottom of the screen on mobile */
-	margin: 48px auto 0;
+	margin: 24px auto 0;
 	position: relative;
-	max-width: 400px;
 	min-height: 260px;
 
 	@include break-medium {
@@ -51,5 +50,50 @@
 	}
 	.continue-as-user__not-you {
 		position: static;
+	}
+}
+
+/* For now, limit this to Woo and Blaze Pro. In the future, styles will be applied to all clients. */
+.layout.is-blaze-pro,
+.layout.is-woo-passwordless {
+	.continue-as-user {
+		max-width: 430px;
+		width: 100%;
+	}
+
+	.continue-as-user__user-info {
+		background: #fff;
+		width: 100%;
+		border: 1px solid var( --studio-gray-5 );
+		padding: 24px 0;
+	}
+
+	.continue-as-user__gravatar {
+		width: 80px;
+		height: 80px;
+	}
+
+	.continue-as-user__username {
+		font-size: rem( 15px );
+		font-weight: 500;
+		color: var( --studio-gray-90 );
+		margin-top: 16px;
+	}
+
+	.continue-as-user__email {
+		font-size: rem( 13px );
+	}
+
+	.continue-as-user__continue-button {
+		font-size: rem( 13px );
+		margin-block-start: 24px;
+		margin-block-end: 0;
+	}
+
+	.continue-as-user__change-user-link {
+		font-weight: 500;
+		font-size: rem( 13px );
+		color: var( --studio-gray-90 );
+		margin-top: 24px;
 	}
 }

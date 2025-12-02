@@ -6,8 +6,8 @@ import { Visibility, GlobalStyles } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData, ReadymadeTemplate } from './types';
 import type { DomainTransferData, State } from '.';
-import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
+import type { DomainSuggestion } from '@automattic/api-core';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -363,6 +363,16 @@ export const setPartnerBundle = ( partnerBundle: string | null ) => ( {
 	partnerBundle,
 } );
 
+export const setGardenName = ( gardenName: string | null ) => ( {
+	type: 'SET_GARDEN_NAME' as const,
+	gardenName,
+} );
+
+export const setGardenPartnerName = ( gardenPartnerName: string | null ) => ( {
+	type: 'SET_GARDEN_PARTNER_NAME' as const,
+	gardenPartnerName,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -422,4 +432,6 @@ export type OnboardAction = ReturnType<
 	| typeof setPaidSubscribers
 	| typeof setPartnerBundle
 	| typeof setSignupDomainOrigin
+	| typeof setGardenName
+	| typeof setGardenPartnerName
 >;

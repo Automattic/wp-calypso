@@ -3,47 +3,31 @@ import { Gridicon } from '@automattic/components';
 import { SelectItems } from '@automattic/onboarding';
 import { globe, addCard, layout } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getUserSiteCountForPlatform } from 'calypso/components/site-selector/utils';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug } from 'calypso/lib/domains';
 import { preventWidows } from 'calypso/lib/formatting';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 import './style.scss';
 
 class SiteOrDomain extends Component {
 	getDomainName() {
-		const { signupDependencies } = this.props;
-		let isValidDomain = false;
-		const domain = get( signupDependencies, 'domainItem.meta', false );
-
-		if ( domain ) {
-			if ( domain.split( '.' ).length > 1 ) {
-				const productSlug = getDomainProductSlug( domain );
-				isValidDomain = !! this.props.productsList[ productSlug ];
-			}
-			return isValidDomain && domain;
-		}
-
 		const domainCart = this.getDomainCart();
 		if ( domainCart.length ) {
-			const productSlug = domainCart[ 0 ].product_slug;
-			isValidDomain = !! this.props.productsList[ productSlug ];
-			return isValidDomain && domainCart[ 0 ].meta;
+			return domainCart[ 0 ].meta;
 		}
+
 		return false;
 	}
 
 	getDomainCart() {
 		const { signupDependencies } = this.props;
-		const domainCart = get( signupDependencies, 'domainCart', [] );
+		const domainCart = signupDependencies?.domainCart ?? [];
 
 		return domainCart;
 	}
@@ -160,12 +144,7 @@ class SiteOrDomain extends Component {
 	}
 
 	renderScreen() {
-		return (
-			<div>
-				{ ! this.props.productsLoaded && <QueryProductsList /> }
-				{ this.renderChoices() }
-			</div>
-		);
+		return <div>{ this.renderChoices() }</div>;
 	}
 
 	submitDomain( designType ) {
@@ -232,10 +211,10 @@ class SiteOrDomain extends Component {
 	};
 
 	render() {
-		const { translate, productsLoaded } = this.props;
+		const { translate } = this.props;
 		const domainName = this.getDomainName();
 
-		if ( productsLoaded && ! domainName ) {
+		if ( ! domainName ) {
 			const headerText = translate( 'Unsupported domain.' );
 			const subHeaderText = translate(
 				'Please visit {{a}}wordpress.com/domains{{/a}} to search for a domain.',
@@ -289,14 +268,10 @@ class SiteOrDomain extends Component {
 
 export default connect(
 	( state ) => {
-		const productsList = getAvailableProductsList( state );
-		const productsLoaded = ! isEmpty( productsList );
 		const user = getCurrentUser( state );
 
 		return {
 			isLoggedIn: isUserLoggedIn( state ),
-			productsList,
-			productsLoaded,
 			siteCount: getUserSiteCountForPlatform( user ),
 		};
 	},

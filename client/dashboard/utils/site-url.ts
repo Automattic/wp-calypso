@@ -1,5 +1,6 @@
 import { addQueryArgs } from '@wordpress/url';
-import type { Site } from '../data/types';
+import { isSelfHostedJetpackConnected } from './site-types';
+import type { Site } from '@automattic/api-core';
 
 /**
  * Returns a user-friendly version of the site's URL.
@@ -9,7 +10,20 @@ import type { Site } from '../data/types';
  * installations.
  */
 export function getSiteDisplayUrl( site: Site ) {
+	if ( site.options?.is_redirect ) {
+		return site.slug;
+	}
 	return site.URL.replace( 'https://', '' ).replace( 'http://', '' );
+}
+
+/**
+ * Returns the actual formatted URL for the site considering site redirects
+ */
+export function getSiteFormattedUrl( site: Site ) {
+	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
+		return site.options.unmapped_url;
+	}
+	return site.URL;
 }
 
 /**
@@ -33,4 +47,15 @@ export function getSiteEditUrl( site: Site, isSiteUsingBlockTheme?: boolean ) {
 	}
 
 	return addQueryArgs( `${ siteAdminUrl }customize.php`, queryArgs );
+}
+
+/**
+ * Returns the URL for the site visibility settings page.
+ */
+export function getSiteVisibilityURL( site: Site ) {
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return undefined;
+	}
+
+	return `/sites/${ site.slug }/settings/site-visibility`;
 }

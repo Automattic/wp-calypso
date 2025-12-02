@@ -1,0 +1,46 @@
+// Validation styles for username fields
+.components-input-control.has-error {
+	.components-input-control__backdrop {
+		border-color: var( --dashboard__background-color-error );
+	}
+
+	.components-input-control__input:focus + .components-input-control__backdrop {
+		border-color: var( --dashboard__background-color-error );
+		box-shadow: 0 0 0 1px var( --dashboard__background-color-error );
+	}
+
+	.components-base-control__help {
+		color: var( --dashboard__background-color-error );
+		display: flex;
+		align-items: center;
+		gap: 4px;
+
+		svg {
+			fill: var( --dashboard__background-color-error );
+			flex-shrink: 0;
+		}
+	}
+}
+
+.components-input-control.has-success {
+	.components-input-control__backdrop {
+		border-color: var( --dashboard__background-color-success );
+	}
+
+	.components-input-control__input:focus + .components-input-control__backdrop {
+		border-color: var( --dashboard__background-color-success );
+		box-shadow: 0 0 0 1px var( --dashboard__background-color-success );
+	}
+
+	.components-base-control__help {
+		color: var( --dashboard__background-color-success );
+		display: flex;
+		align-items: center;
+		gap: 4px;
+
+		svg {
+			fill: var( --dashboard__background-color-success );
+			flex-shrink: 0;
+		}
+	}
+}

@@ -81,3 +81,5 @@ export const getPluginsToVerify = ( state: State ) => state.pluginsToVerify;
 export const getProfilerData = ( state: State ) => state.profilerData;
 export const getPaidSubscribers = ( state: State ) => state.paidSubscribers;
 export const getPartnerBundle = ( state: State ) => state.partnerBundle;
+export const getGardenName = ( state: State ) => state.gardenName;
+export const getGardenPartnerName = ( state: State ) => state.gardenPartnerName;

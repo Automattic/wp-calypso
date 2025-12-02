@@ -62,3 +62,13 @@
 		display: none;
 	}
 }
+
+.hundred-year-plan-step-wrapper__step-container:has( .domain-search ) {
+	width: 100%;
+
+	.domains__content {
+		padding: 0 16px;
+		margin: 0 auto;
+		max-width: 780px;
+	}
+}

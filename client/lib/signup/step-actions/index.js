@@ -1078,7 +1078,16 @@ function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 }
 
 export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { siteDomains, submitSignupStep } = nextProps;
+	const { siteDomains, submitSignupStep, flowName } = nextProps;
+
+	// Prevent duplicate processing for launch-site flow's domains-launch step
+	if (
+		flowName === 'launch-site' &&
+		stepName === 'domains-launch' &&
+		includes( flows.excludedSteps, stepName )
+	) {
+		return;
+	}
 
 	if ( siteDomains && siteDomains.length > 1 ) {
 		const tracksEventValue = siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );

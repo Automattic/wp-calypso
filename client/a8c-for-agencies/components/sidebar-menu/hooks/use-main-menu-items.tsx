@@ -46,6 +46,7 @@ const useMainMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
 	const agency = useSelector( getActiveAgency );
+	const isTiersRevampEnabled = config.isEnabled( 'tiers-revamp' );
 
 	const menuItems = useMemo( () => {
 		let referralItems = [] as any[];
@@ -88,6 +89,19 @@ const useMainMenuItems = ( path: string ) => {
 					menu_item: 'Automattic for Agencies / Overview',
 				},
 			},
+			...( isTiersRevampEnabled
+				? [
+						{
+							icon: starEmpty,
+							path: '/',
+							link: A4A_AGENCY_TIER_LINK,
+							title: translate( 'Agency Tier' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Agency Tier',
+							},
+						},
+				  ]
+				: [] ),
 			{
 				icon: category,
 				path: '/',
@@ -158,21 +172,16 @@ const useMainMenuItems = ( path: string ) => {
 				},
 				withChevron: true,
 			},
-			...( config.isEnabled( 'a4a-partner-directory' ) ||
-			config.isEnabled( 'a8c-for-agencies-agency-tier' )
-				? [
-						{
-							icon: commentAuthorAvatar,
-							path: '/dashboard',
-							link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
-							title: translate( 'Partner Directories' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Partner Directory',
-							},
-							withChevron: true,
-						},
-				  ]
-				: [] ),
+			{
+				icon: commentAuthorAvatar,
+				path: '/dashboard',
+				link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+				title: translate( 'Partner Directories' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Partner Directory',
+				},
+				withChevron: true,
+			},
 			...( isSectionNameEnabled( 'a8c-for-agencies-settings' )
 				? [
 						{
@@ -199,7 +208,7 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-agency-tier' )
+			...( ! isTiersRevampEnabled
 				? [
 						{
 							icon: starEmpty,
@@ -215,7 +224,7 @@ const useMainMenuItems = ( path: string ) => {
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );
-	}, [ agency, path, translate ] );
+	}, [ agency, isTiersRevampEnabled, path, translate ] );
 	return menuItems;
 };
 

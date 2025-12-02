@@ -8,7 +8,7 @@ import AutomatticLogo from 'calypso/components/automattic-logo';
 import CardHeading from 'calypso/components/card-heading';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import {
@@ -80,7 +80,9 @@ export default function SignupForm() {
 	useEffect( () => {
 		// We need to include HubSpot tracking code on the signup form.
 		loadScript( '//js.hs-scripts.com/45522507.js' );
-	}, [] );
+		// Load Hotjar tracking script
+		dispatch( loadTrackingTool( 'HotJar' ) );
+	}, [ dispatch ] );
 
 	return (
 		<Card className="agency-signup-form">

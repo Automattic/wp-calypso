@@ -137,7 +137,11 @@ class Login extends Component {
 			window.scrollTo( 0, 0 );
 		}
 
-		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
+		if (
+			! prevProps.accountType &&
+			! this.props.requestError?.code &&
+			isPasswordlessAccount( this.props.accountType )
+		) {
 			this.props.sendEmailLogin();
 		}
 
@@ -488,20 +492,6 @@ class Login extends Component {
 							isBlazePro={ isBlazePro }
 							isWoo={ isWCCOM }
 						/>
-						<LoginForm
-							disableAutoFocus={ disableAutoFocus }
-							onSuccess={ this.handleValidLogin }
-							socialService={ socialService }
-							socialServiceResponse={ socialServiceResponse }
-							domain={ domain }
-							locale={ locale }
-							userEmail={ userEmail }
-							handleUsernameChange={ handleUsernameChange }
-							signupUrl={ signupUrl }
-							showSocialLoginFormOnly
-							sendMagicLoginLink={ this.sendMagicLoginLink }
-							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-						/>
 					</div>
 				);
 			}
@@ -666,7 +656,10 @@ export default connect(
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: false,
-				...( shouldUseMagicCode( { isJetpack: ownProps.isJetpack } ) && { tokenType: 'code' } ),
+				...( shouldUseMagicCode( {
+					isWooJPC: stateProps.isWooJPC,
+					isJetpack: ownProps.isJetpack,
+				} ) && { tokenType: 'code' } ),
 				source: stateProps.isWooJPC ? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' ) : '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||

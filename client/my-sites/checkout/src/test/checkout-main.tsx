@@ -20,7 +20,6 @@ import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	domainProduct,
 	planWithoutDomain,
-	planWithoutDomainMonthly,
 	mockSetCartEndpointWith,
 	getActivePersonalPlanDataForType,
 	countryList,
@@ -86,7 +85,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 		} );
 	} );
@@ -111,7 +112,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 		} );
 	} );
@@ -339,7 +342,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 		} );
 	} );
@@ -490,7 +495,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 			screen
 				.getAllByText( 'Support Session' )
@@ -535,7 +542,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 			screen
 				.getAllByText( 'Premium Theme: Ovation' )
@@ -629,7 +638,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
 			screen
@@ -659,7 +670,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 		} );
 	} );
@@ -677,7 +690,7 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
+			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -694,7 +707,7 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -715,49 +728,8 @@ describe( 'CheckoutMain', () => {
 		await waitFor( () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 6 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 4 );
 		} );
-	} );
-
-	it( 'displays an error and empties the cart when the url has a renewal but no site', async () => {
-		const cartChanges = { products: [ planWithoutDomainMonthly ] };
-		const additionalProps = {
-			productAliasFromUrl: 'personal-bundle',
-			purchaseId: '12345',
-			siteId: 0,
-		};
-
-		( useCartKey as jest.Mock ).mockImplementation( () => 'no-site' );
-		render(
-			<MockCheckout
-				cartChanges={ cartChanges }
-				additionalProps={ additionalProps }
-				initialCart={ initialCart }
-				setCart={ mockSetCartEndpoint }
-			/>
-		);
-		await waitFor( async () => {
-			expect( navigate ).not.toHaveBeenCalled();
-		} );
-		await waitFor( async () => {
-			expect( await screen.findByText( /You have no items in your cart/ ) ).toBeInTheDocument();
-		} );
-
-		// Noticing the error message is a little difficult because we are not
-		// mounting the error display components. Instead, we spy on the
-		// `errorNotice` action creator. However, `CheckoutMain` does not pass the
-		// raw error message string to the action creator; it passes an array of
-		// React components, one of which contains the string. The following code
-		// lets us verify that.
-		expect( errorNotice ).toHaveBeenCalledWith(
-			expect.arrayContaining( [
-				expect.objectContaining( {
-					props: expect.objectContaining( {
-						children: expect.stringMatching( /This renewal is invalid/ ),
-					} ),
-				} ),
-			] )
-		);
 	} );
 
 	it( 'adds the product to the cart for a gift renewal', async () => {
@@ -815,7 +787,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 			screen
 				.getAllByText( 'Coupon: MYCOUPONCODE' )

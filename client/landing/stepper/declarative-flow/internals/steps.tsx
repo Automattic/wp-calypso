@@ -56,17 +56,17 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/domain-transfer-domains' ),
 	},
 
-	DOMAINS: {
-		slug: 'domains',
-		asyncComponent: () => import( './steps-repository/domains' ),
-	},
-
 	DOMAIN_SEARCH: {
 		slug: 'domains',
 		asyncComponent: () => import( './steps-repository/domain-search' ),
 	},
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
+
+	FLEX_SITE_CREATION: {
+		slug: 'flex-site-creation',
+		asyncComponent: () => import( './steps-repository/flex-site-creation' ),
+	},
 
 	NEWSLETTER_SETUP: {
 		slug: 'newsletterSetup',
@@ -142,6 +142,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/importer-squarespace' ),
 	},
 
+	IMPORTER_SUBSTACK: {
+		slug: 'importerSubstack',
+		asyncComponent: () => import( './steps-repository/importer-substack' ),
+	},
+
 	IMPORTER_WIX: {
 		slug: 'importerWix',
 		asyncComponent: () => import( './steps-repository/importer-wix' ),
@@ -165,6 +170,11 @@ export const STEPS = {
 	LAUNCH_BIG_SKY: {
 		slug: 'launch-big-sky',
 		asyncComponent: () => import( './steps-repository/launch-big-sky' ),
+	},
+
+	SITE_SPEC: {
+		slug: 'site-spec',
+		asyncComponent: () => import( './steps-repository/site-spec' ),
 	},
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
@@ -303,6 +313,21 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-support-instructions' ),
 	},
 
+	SITE_MIGRATION_SSH_VERIFICATION: {
+		slug: 'site-migration-ssh-verification',
+		asyncComponent: () => import( './steps-repository/site-migration-ssh-verification' ),
+	},
+
+	SITE_MIGRATION_SSH_SHARE_ACCESS: {
+		slug: 'site-migration-ssh-share-access',
+		asyncComponent: () => import( './steps-repository/site-migration-ssh-share-access' ),
+	},
+
+	SITE_MIGRATION_SSH_IN_PROGRESS: {
+		slug: 'site-migration-ssh-in-progress',
+		asyncComponent: () => import( './steps-repository/site-migration-ssh-in-progress' ),
+	},
+
 	PICK_SITE: {
 		slug: 'sitePicker',
 		asyncComponent: () => import( './steps-repository/site-picker' ),
@@ -320,13 +345,6 @@ export const STEPS = {
 	PLATFORM_IDENTIFICATION: {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
-	},
-	UNIFIED_DOMAINS: {
-		slug: 'domains',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-unified-domains' */ './steps-repository/unified-domains'
-			),
 	},
 	UNIFIED_PLANS: {
 		slug: 'plans',

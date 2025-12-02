@@ -2,11 +2,11 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import Markdown from 'react-markdown';
-import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 import { highImpactAudits } from 'calypso/performance-profiler/utils/metrics';
+import type { PerformanceMetricAudit } from '@automattic/api-core';
 
 interface InsightHeaderProps {
-	data: PerformanceMetricsItemQueryResponse;
+	data: PerformanceMetricAudit;
 	index: number;
 }
 export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {

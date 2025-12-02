@@ -1,7 +1,12 @@
+import { TrialPlans } from '@automattic/api-core';
+import {
+	p2HubP2sQuery,
+	siteDeleteMutation,
+	siteHasCancelablePurchasesQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -15,11 +20,12 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { p2HubP2sQuery } from '../../app/queries/p2';
-import { siteDeleteMutation } from '../../app/queries/site';
-import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
+import { purchasesRoute } from '../../app/router/me';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
-import type { Site } from '../../data/types';
+import RouterLinkButton from '../../components/router-link-button';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 type SiteDeleteFormData = {
@@ -29,14 +35,8 @@ type SiteDeleteFormData = {
 const canDeleteSite = ( site: Site ) =>
 	( site.is_wpcom_atomic || ! site.jetpack ) && ! site.is_vip && ! site.options?.p2_hub_blog_id;
 
-const TRIAL_PRODUCT_SLUGS = [
-	'wp_bundle_migration_trial_monthly',
-	'wp_bundle_hosting_trial_monthly',
-	'ecommerce-trial-bundle-monthly',
-];
-
 const isTrialSite = ( site: Site ) =>
-	site.plan?.product_slug && TRIAL_PRODUCT_SLUGS.includes( site.plan?.product_slug );
+	site.plan?.product_slug && ( TrialPlans as string[] ).includes( site.plan?.product_slug );
 
 function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const { data: p2HubP2s } = useQuery( {
@@ -78,9 +78,14 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 	};
 
 	const renderPrimaryButton = () => {
+		const buttonProps = {
+			__next40pxDefaultSize: true,
+			variant: 'primary' as const,
+		};
+
 		if ( isAtomicRemovalInProgress ) {
 			return (
-				<Button variant="primary" onClick={ onClose }>
+				<Button { ...buttonProps } onClick={ onClose }>
 					{ __( 'OK' ) }
 				</Button>
 			);
@@ -88,36 +93,42 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 
 		if ( p2HubP2Count ) {
 			return (
-				<Button variant="primary" href={ site.URL }>
+				<Button { ...buttonProps } href={ site.URL }>
 					{ __( 'Manage P2s' ) }
 				</Button>
 			);
 		}
 
-		if ( isTrialSite( site ) ) {
-			<Button variant="primary" href={ `/purchases/subscriptions/${ site.slug }` }>
-				{ __( 'Cancel trial' ) }
-			</Button>;
+		if ( isDashboardBackport() ) {
+			return (
+				<Button { ...buttonProps } href={ `/purchases/subscriptions/${ site.slug }` }>
+					{ isTrialSite( site ) ? __( 'Cancel trial' ) : __( 'Manage purchases' ) }
+				</Button>
+			);
 		}
 
 		return (
-			<Button variant="primary" href={ `/purchases/subscriptions/${ site.slug }` }>
-				{ __( 'Manage purchases' ) }
-			</Button>
+			<RouterLinkButton
+				{ ...buttonProps }
+				to={ purchasesRoute.fullPath }
+				search={ { site: site.slug } }
+			>
+				{ isTrialSite( site ) ? __( 'Cancel trial' ) : __( 'Manage purchases' ) }
+			</RouterLinkButton>
 		);
 	};
 
 	return (
 		<>
 			<Text as="p">{ renderWarningContent() }</Text>
-			<HStack justify="flex-end">
+			<ButtonStack justify="flex-end">
 				{ ! isAtomicRemovalInProgress && (
-					<Button variant="tertiary" onClick={ onClose }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
 				) }
 				{ renderPrimaryButton() }
-			</HStack>
+			</ButtonStack>
 		</>
 	);
 }
@@ -142,7 +153,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'domain' ],
 	};
 
@@ -205,11 +216,17 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }
 					/>
-					<HStack justify="flex-end">
-						<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onClose }>
+					<ButtonStack justify="flex-end">
+						<Button
+							__next40pxDefaultSize
+							variant="tertiary"
+							disabled={ mutation.isPending }
+							onClick={ onClose }
+						>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							type="submit"
 							isDestructive
@@ -218,7 +235,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 						>
 							{ __( 'Delete site' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</form>
 		</>

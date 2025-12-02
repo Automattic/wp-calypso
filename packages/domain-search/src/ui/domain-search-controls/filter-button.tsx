@@ -9,10 +9,11 @@ type Props = {
 	count: number;
 	onClick: () => void;
 	children?: React.ReactNode;
+	disabled?: boolean;
 };
 
 export const DomainSearchControlsFilterButton = forwardRef(
-	( { count, onClick, children }: Props, ref: Ref< HTMLButtonElement > ) => {
+	( { count, onClick, disabled, children }: Props, ref: Ref< HTMLButtonElement > ) => {
 		const { __, _n } = useI18n();
 
 		let ariaLabel = '';
@@ -32,15 +33,17 @@ export const DomainSearchControlsFilterButton = forwardRef(
 
 		return (
 			<div className="domain-search-controls__filters">
-				<Button icon={ funnel } variant="secondary" showTooltip onClick={ onClick } ref={ ref } />
+				<Button
+					icon={ funnel }
+					label={ ariaLabel }
+					variant="secondary"
+					showTooltip
+					onClick={ onClick }
+					ref={ ref }
+					disabled={ disabled }
+				/>
 				{ !! count && (
-					<div
-						className="domain-search-controls__filters-count"
-						/* translators: %d: number of active filters */
-						aria-label={ ariaLabel }
-						aria-live="polite"
-						role="status"
-					>
+					<div className="domain-search-controls__filters-count" aria-hidden="true">
 						{ count }
 					</div>
 				) }

@@ -56,6 +56,7 @@ describe( 'clients reducer', () => {
 				name: 'vaultpress',
 				title: 'Vaultpress',
 				icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
+				url: 'https://vaultpress.com/',
 			},
 			973: {
 				id: 973,

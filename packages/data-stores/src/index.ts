@@ -1,5 +1,5 @@
 import * as AddOns from './add-ons';
-import * as DomainSuggestions from './domain-suggestions';
+import * as AgentsManager from './agents-manager';
 import * as HelpCenter from './help-center';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
@@ -19,7 +19,6 @@ export * from './starter-designs-queries';
 export * from './site/types';
 export * from './templates';
 export * from './onboard/types';
-export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './theme';
 export * from './user/types';
@@ -37,8 +36,8 @@ const { SubscriptionManager } = Reader;
 
 export {
 	AddOns,
+	AgentsManager,
 	User,
-	DomainSuggestions,
 	HelpCenter,
 	Site,
 	Plans,
@@ -66,9 +65,13 @@ export type {
 	HelpCenterSelect,
 	Dispatch as HelpCenterDispatch,
 } from './help-center/types';
+export type {
+	AgentsManagerSelect,
+	Dispatch as AgentsManagerDispatch,
+} from './agents-manager/types';
 export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
 export type { SiteActions } from './site';
 export type { UserActions } from './user';
 export type { Member, UseQuery, UsersQuery } from './users/types';
-export { isInSupportSession } from './help-center';
+export { isE2ETest, isInSupportSession } from './utils';

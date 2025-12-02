@@ -1,9 +1,9 @@
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
 
 .a4a-signup-intro {
 	text-align: center;
-	color: var(--color-text-white);
+	color: var( --color-text-white );
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -18,7 +18,7 @@
 	}
 
 	p {
-		color: var(--color-neutral-10);
+		color: var( --color-neutral-10 );
 		@include heading-x-large;
 		max-width: 700px;
 		margin: 0;
@@ -32,37 +32,41 @@
 		gap: 48px;
 		padding: 24px 48px;
 		border-radius: 48px; /* stylelint-disable-line scales/radii */
-		background:
-			linear-gradient(111deg, rgba(160, 221, 244, 0.1) -19.14%, rgba(0, 0, 0, 0) 54.32%, rgba(161, 218, 240, 0.1) 104.32%),
-			rgba(2, 156, 215, 0.04);
-		backdrop-filter: blur(10px);
-		box-shadow: 0 4px 44px 0 rgba(0, 0, 0, 0.12);
+		background: linear-gradient(
+				111deg,
+				rgba( 160, 221, 244, 0.1 ) -19.14%,
+				rgba( 0, 0, 0, 0 ) 54.32%,
+				rgba( 161, 218, 240, 0.1 ) 104.32%
+			),
+			rgba( 2, 156, 215, 0.04 );
+		backdrop-filter: blur( 10px );
+		box-shadow: 0 4px 44px 0 rgba( 0, 0, 0, 0.12 );
 		overflow: hidden;
 		margin-bottom: 24px;
 
 		&::before {
-			content: "";
+			content: '';
 			position: absolute;
 			display: block;
 			left: 0;
 			right: 0;
 			top: 0;
-			border-top: 1px solid var(--color-primary-70);
+			border-top: 1px solid var( --color-primary-70 );
 			border-radius: 99px; /* stylelint-disable-line scales/radii */
 		}
 	}
 
 	&__separator {
-		border: 2px solid var(--color-primary-70);
-		border-radius: 24px; /* stylelint-disable-line scales/radii */
+		border: 2px solid var( --color-primary-70 );
+		border-radius: 24px;
 		padding: 8px 16px;
 		@include heading-medium;
 		text-transform: uppercase;
-		background-color: var(--color-surface-backdrop);
+		background-color: var( --color-surface-backdrop );
 
 		&::after {
-			content: "";
-			border-bottom: 1px solid var(--color-primary-70);
+			content: '';
+			border-bottom: 1px solid var( --color-primary-70 );
 			display: block;
 			height: 1px;
 			width: 100%;
@@ -75,13 +79,13 @@
 	}
 
 	&__wp-admin-link {
-		color: var(--color-neutral-10);
+		color: var( --color-neutral-10 );
 		@include heading-medium;
 		text-decoration: underline;
 		cursor: pointer;
 
 		&:hover {
-			color: var(--color-text-white);
+			color: var( --color-text-white );
 		}
 	}
 }

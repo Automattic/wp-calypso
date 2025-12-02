@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import debug from 'debug';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeTrackByTracker } from './tracker-buckets';
 
@@ -12,9 +13,18 @@ export function mayWeLoadHotJarScript() {
 }
 
 export function getHotjarSiteSettings() {
-	return isJetpackCloud()
-		? { hjid: 3165344, hjsv: 6 } // Calypso green (cloud.jetpack.com)
-		: { hjid: 227769, hjsv: 5 }; // Calypso blue (wordpress.com)
+	// Automattic for Agencies (agencies.automattic.com)
+	if ( isA8CForAgencies() ) {
+		return { hjid: 6527274, hjsv: 6 };
+	}
+
+	// Jetpack Cloud (cloud.jetpack.com)
+	if ( isJetpackCloud() ) {
+		return { hjid: 3165344, hjsv: 6 };
+	}
+
+	// WordPress.com (wordpress.com)
+	return { hjid: 227769, hjsv: 5 };
 }
 
 export function addHotJarScript() {

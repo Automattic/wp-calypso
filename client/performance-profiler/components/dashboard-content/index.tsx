@@ -11,7 +11,6 @@ import { NewsletterBanner } from 'calypso/performance-profiler/components/newsle
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
 import { ScreenshotThumbnail } from 'calypso/performance-profiler/components/screenshot-thumbnail';
 import { ScreenshotTimeline } from 'calypso/performance-profiler/components/screenshot-timeline';
-import { useReportCompletedEffect } from 'calypso/performance-profiler/hooks/use-report-track-events-effect';
 import './style.scss';
 
 type PerformanceProfilerDashboardContentProps = {
@@ -54,8 +53,6 @@ export const PerformanceProfilerDashboardContent = ( {
 		fullPageScreenshot,
 	} = performanceReport;
 	const insightsRef = useRef< HTMLDivElement >( null );
-
-	useReportCompletedEffect( url, hash );
 
 	return (
 		<div className="performance-profiler-content">

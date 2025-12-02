@@ -1,18 +1,18 @@
 /**
  * Notifications
  */
-@import "@wordpress/base-styles/breakpoints";
+@import '@wordpress/base-styles/breakpoints';
 
 $notification-panel-width: 450px;
 
 #wpnc-panel {
 	position: fixed;
-	top: var(--masterbar-height);
+	top: var( --masterbar-height );
 	right: 0;
 	bottom: 0;
 	min-width: $notification-panel-width;
 
-	@media only screen and (max-width: 600px) {
+	@media only screen and ( max-width: 600px ) {
 		width: 100%;
 		min-width: 0;
 	}
@@ -49,18 +49,18 @@ $notification-panel-width: 450px;
 		text-transform: uppercase;
 	}
 
-	.has-drop-cap:not(:focus)::first-letter {
+	.has-drop-cap:not( :focus )::first-letter {
 		font-weight: bold;
 		line-height: 0.66;
 		text-transform: uppercase;
 		font-style: normal;
 		float: left;
-		font-size: calc(2 * 2.25rem);
+		font-size: calc( 2 * 2.25rem );
 		margin: 0.05em 0.1em 0 0;
 	}
 
-	.has-drop-cap:not(:focus)::after {
-		content: "";
+	.has-drop-cap:not( :focus )::after {
+		content: '';
 		display: table;
 		clear: both;
 		padding-top: 14px;
@@ -91,7 +91,7 @@ $notification-panel-width: 450px;
 
 	&.wpnt-open {
 		right: 0;
-		transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+		transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );
 		opacity: 1;
 		pointer-events: auto;
 		visibility: visible;
@@ -102,7 +102,7 @@ $notification-panel-width: 450px;
 		right: -$notification-panel-width;
 		opacity: 0;
 		pointer-events: none;
-		transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+		transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );
 	}
 
 	&.wpnc__main .wpnc__time-group-title.fixed {
@@ -113,13 +113,13 @@ $notification-panel-width: 450px;
 		left: inherit;
 		width: $notification-panel-width;
 
-		@include breakpoint-deprecated( "<800px" ) {
+		@include breakpoint-deprecated( '<800px' ) {
 			left: 0;
 			width: auto;
 		}
 	}
 
-	@include breakpoint-deprecated( "<800px" ) {
+	@include breakpoint-deprecated( '<800px' ) {
 		&.wpnc__main header {
 			top: 47px;
 		}
@@ -129,8 +129,8 @@ $notification-panel-width: 450px;
 		blockquote {
 			padding: 0 24px 0 32px;
 			margin: 16px 0 32px;
-			border-left: 3px solid var(--color-neutral-0);
-			color: var(--color-neutral-50);
+			border-left: 3px solid var( --color-neutral-0 );
+			color: var( --color-neutral-50 );
 			font-weight: 400;
 			background: transparent;
 		}
@@ -176,37 +176,47 @@ div.reader-notifications__panel {
 	$breakpoint-flyout: 1114px;
 
 	--3pc-notice-external-height: 50px;
-	@media only screen and (min-width: $breakpoint-flyout) {
+	@media only screen and ( min-width: $breakpoint-flyout ) {
 		--3pc-notice-external-height: 0px; /* stylelint-disable-line length-zero-no-unit */
 	}
 
 	#wpnc-panel.wpnc__main {
-		top: var(--3pc-notice-external-height);
-		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom) - var(--3pc-notice-external-height));
-		box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
-		border-top: 1px solid var(--color-neutral-0);
+		top: var( --3pc-notice-external-height );
+		height: calc(
+			100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
+					--content-padding-bottom
+				) - var( --3pc-notice-external-height )
+		);
+		box-shadow: -3px 1px 10px -2px color-mix( in srgb, var( --color-neutral-70 ) 7.5%, transparent );
+		border-top: 1px solid var( --color-neutral-0 );
 		box-sizing: border-box;
 
 		&.wpnt-open {
 			position: absolute;
-			@media only screen and (min-width: $break-small) {
-				border-radius: 8px; /* stylelint-disable-line scales/radii */
+			@media only screen and ( min-width: $break-small ) {
+				border-radius: 8px;
 				width: 100%;
 				.wpnc__single-view,
 				.wpnc__note-list {
 					width: 100%;
 				}
 			}
-			@media only screen and (min-width: $breakpoint-flyout) {
-				width: calc(100vw - var(--sidebar-width-max) - 16px); // 16px for content frame padding.
+			@media only screen and ( min-width: $breakpoint-flyout ) {
+				width: calc( 100vw - var( --sidebar-width-max ) - 16px ); // 16px for content frame padding.
 
 				.wpnc__single-view {
 					width: $notification-panel-width;
-					z-index: z-index( ".reader-notifications", ".wpnc__single-view" ); // This ensures the single view flies out above the 3PC notice.
+					z-index: z-index(
+						'.reader-notifications',
+						'.wpnc__single-view'
+					); // This ensures the single view flies out above the 3PC notice.
 				}
 				.wpnc__note-list {
 					width: $notification-panel-width;
-					z-index: z-index( ".reader-notifications", ".wpnc__note-list" ); // This ensures the single view does not rise above the note list while animating outwards.
+					z-index: z-index(
+						'.reader-notifications',
+						'.wpnc__note-list'
+					); // This ensures the single view does not rise above the note list while animating outwards.
 				}
 			}
 		}
@@ -227,18 +237,18 @@ div.reader-notifications__panel {
 			padding: 0 30px;
 			right: $notification-panel-width;
 
-			@media only screen and (min-width: $breakpoint-flyout) {
+			@media only screen and ( min-width: $breakpoint-flyout ) {
 				display: flex;
 			}
 		}
 		&-external {
 			display: flex;
 			right: 0;
-			height: var(--3pc-notice-external-height);
+			height: var( --3pc-notice-external-height );
 			p {
 				margin-bottom: 5px;
 			}
-			@media only screen and (min-width: $breakpoint-flyout) {
+			@media only screen and ( min-width: $breakpoint-flyout ) {
 				display: none;
 			}
 		}

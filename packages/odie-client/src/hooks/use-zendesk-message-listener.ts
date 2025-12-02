@@ -1,11 +1,12 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { zendeskMessageConverter } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
-import { zendeskMessageConverter } from '../utils';
-import type { ZendeskMessage } from '../types';
+import { deduplicateZDMessages } from './use-get-combined-chat';
+import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 /**
  * Listens for messages from Zendesk and converts them to Odie messages.
@@ -25,10 +26,18 @@ export const useZendeskMessageListener = () => {
 			const zendeskMessage = message as ZendeskMessage;
 
 			if ( data.conversation.id === chat.conversationId ) {
+				// Skip form messages with fields (like CSAT forms)
+				if ( zendeskMessage.type === 'form' && 'fields' in zendeskMessage ) {
+					// We don't want to mark the conversation as read if it's a form message with fields.
+					Smooch.markAllAsRead( data.conversation.id );
+					return;
+				}
+
 				const convertedMessage = zendeskMessageConverter( zendeskMessage );
 				setChat( ( prevChat ) => ( {
 					...prevChat,
-					messages: [ ...prevChat.messages, convertedMessage ],
+					// During connection recovery, some duplication due to auto-redownload and the message listener firing.
+					messages: deduplicateZDMessages( [ ...prevChat.messages, convertedMessage ] ),
 					status: 'loaded',
 				} ) );
 				Smooch.markAllAsRead( data.conversation.id );

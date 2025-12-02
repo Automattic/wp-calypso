@@ -1,4 +1,5 @@
-import { Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Card, CardBody } from '../card';
 import { TextSkeleton } from '../text-skeleton';
 
 export function CalloutSkeleton() {

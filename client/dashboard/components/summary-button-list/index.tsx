@@ -1,7 +1,8 @@
-import { Card, CardHeader, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import clsx from 'clsx';
 import { isValidElement, cloneElement, Children } from 'react';
+import { Card, CardHeader, CardBody } from '../card';
 import { SectionHeader } from '../section-header';
 import { SummaryButtonListProps } from './types';
 import './style.scss';

@@ -9,7 +9,7 @@ export type UpcomingEventProps = {
 	subtitle: string;
 	descriptions: TranslateResult[];
 	logoUrl: string;
-	imageUrl: string;
+	imageUrl?: string;
 	trackEventName: string;
 	dateClassName?: string;
 	imageClassName?: string;

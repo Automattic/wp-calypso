@@ -1,8 +1,4 @@
-<div style="width:45%; float:left" align="left"><a href="./test_environment.md"><-- Test Environment</a> </div>
-<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./tests_ci.md">Running tests on CI --></a> </div>
-
-<br><br>
+[<-- Test Environment](./test_environment.md) | [Top](./../README.md) | [Running tests on CI -->](./tests_ci.md)
 
 # Running tests on your machine
 
@@ -76,7 +72,7 @@ See the [list of groups](tests_ci.md#featuretest-groups).
 
 Specified accounts will be pre-authenticated prior to the main test suite executions and their cookies saved to be re-used until expiry (typically 3 days).
 
-Specify a list of user accounts found in [Secret Manager](packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
+Specify a list of user accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
 
 ```bash
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,atomicUser,defaultUser
@@ -103,13 +99,13 @@ b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn je
 
 ### Target a different environment
 
-To target a webapp running in a different environment:
+By default these tests target <http://calypso.localhost:3000>. To target a webapp running in a different environment:
 
 1. determine the base URL to use for the appropriate environment.
 
-   - for local webapp: `http://calypso.localhost:3000`
-   - for staging webapp: `https://wordpress.com`
+   - for staging/production webapp: `https://wordpress.com`
    - for wpcalypso webapp: `https://wpcalypso.wordpress.com`
+   - for horizon webapp: `https://horizon.wordpress.com`
 
 2. set the `CALYPSO_BASE_URL` environment variable:
 
@@ -126,8 +122,8 @@ Refer to the [Debugging](debugging.md) page for techniques on running a test in 
 
 #### Notes on TypeScript
 
-Because Jest, the test runner, is already to configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs` directory, and it will automatically take care of running both `.js` and `.ts` files.
+Because Jest, the test runner, is already configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs` directory, and it will automatically take care of running both `.js` and `.ts` files.
 
-Please note: [Babel does not do type-checking as it runs](https://jestjs.io/docs/getting-started#using-typescript), so if you want to do a specific type-check for your test scripts, you can use the local `tsconfig.json` by running `yarn tsc --project ./tsconfig.json`. We run this as part of the Playwright CI script, so all types will be checked before tests are run on TeamCity.
+Please note: [Babel does not do type-checking as it runs](https://jestjs.io/docs/getting-started#using-typescript), so if you want to do a specific type-check for your test scripts, you can use the local `tsconfig.json` by running `yarn tsc --project ./tsconfig.json`. This type-checking step is run as part of the Jest CI script, so all types will be checked before tests are run on TeamCity.
 
-The local `tsconfig.json` also adds global Jest typings, so you do **not** need to explicitly import `describe` or `it` into your TypeScript testing files.
+The local `tsconfig.json` also adds global Jest typings, so you do **not** need to explicitly import `describe` or `it` into your TypeScript testing files—this applies only if your `tsconfig.json` is correctly referenced and up-to-date; users with custom setups should ensure their configuration includes Jest typings.

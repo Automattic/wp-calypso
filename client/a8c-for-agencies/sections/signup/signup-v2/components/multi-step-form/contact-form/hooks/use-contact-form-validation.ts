@@ -26,6 +26,8 @@ const useContactFormValidation = ( { withEmail }: Props ) => {
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
 	const [ isValidating, setIsValidating ] = useState( false );
 
+	const skipURLValidation = new URLSearchParams( window.location.search ).has( '_nvc' );
+
 	const updateValidationError = ( newState: ValidationState ) => {
 		return setValidationError( ( prev ) => ( { ...prev, ...newState } ) );
 	};
@@ -59,7 +61,7 @@ const useContactFormValidation = ( { withEmail }: Props ) => {
 				newValidationError.agencyUrl = translate( 'Please enter a valid URL' );
 			} else if (
 				CAPTURE_SOCIAL_URL_RGX.test( payload.agencyUrl ) ||
-				! ( await isSiteActive( payload.agencyUrl ) )
+				! ( skipURLValidation || ( await isSiteActive( payload.agencyUrl ) ) )
 			) {
 				newValidationError.agencyUrl = preventWidows(
 					translate(
@@ -77,7 +79,7 @@ const useContactFormValidation = ( { withEmail }: Props ) => {
 
 			return null;
 		},
-		[ translate, withEmail ]
+		[ skipURLValidation, translate, withEmail ]
 	);
 
 	return { validate, validationError, updateValidationError, isValidating };

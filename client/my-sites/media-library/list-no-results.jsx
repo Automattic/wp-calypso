@@ -27,30 +27,6 @@ class MediaLibraryListNoResults extends Component {
 					context: 'Media no search results',
 				} );
 				break;
-			case 'videos':
-				label = this.props.translate( 'No videos match your search for {{searchTerm/}}.', {
-					components: {
-						searchTerm: <em>{ this.props.search }</em>,
-					},
-					context: 'Media no search results',
-				} );
-				break;
-			case 'audio':
-				label = this.props.translate( 'No audio files match your search for {{searchTerm/}}.', {
-					components: {
-						searchTerm: <em>{ this.props.search }</em>,
-					},
-					context: 'Media no search results',
-				} );
-				break;
-			case 'documents':
-				label = this.props.translate( 'No documents match your search for {{searchTerm/}}.', {
-					components: {
-						searchTerm: <em>{ this.props.search }</em>,
-					},
-					context: 'Media no search results',
-				} );
-				break;
 			default:
 				label = this.props.translate( 'No media files match your search for {{searchTerm/}}.', {
 					components: {

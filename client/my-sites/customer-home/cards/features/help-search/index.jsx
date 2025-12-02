@@ -1,7 +1,6 @@
 import { Card, Button } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
-import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -51,11 +50,9 @@ export default function HelpSearch() {
 	};
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { url } = useStillNeedHelpURL();
-	const resetSupportInteraction = useResetSupportInteraction();
 
-	const onClick = async () => {
+	const onClick = () => {
 		setNavigateToRoute( url );
-		await resetSupportInteraction();
 		setShowHelpCenter( true );
 		dispatch( recordTracksEvent( 'calypso_inlinehelp_get_help_click' ) );
 	};

@@ -2,10 +2,13 @@ import { Card } from '@automattic/components';
 import { ProgressBar } from '@wordpress/components';
 import { Icon, atSymbol } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import ImporterActionButton from '../../importer-action-buttons/action-button';
 import { SubscribersStepProps } from '../types';
 
-export default function StepImporting( { nextStepUrl }: SubscribersStepProps ) {
+interface StepImportingProps extends SubscribersStepProps {
+	actionButton?: React.ReactNode;
+}
+
+export default function StepImporting( { actionButton }: StepImportingProps ) {
 	const { __ } = useI18n();
 	return (
 		<Card>
@@ -22,7 +25,7 @@ export default function StepImporting( { nextStepUrl }: SubscribersStepProps ) {
 			<p>
 				<ProgressBar className="is-larger-progress-bar" />
 			</p>
-			<ImporterActionButton href={ nextStepUrl }>{ __( 'View summary' ) }</ImporterActionButton>
+			{ actionButton }
 		</Card>
 	);
 }

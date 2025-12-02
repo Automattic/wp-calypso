@@ -25,7 +25,6 @@ import PlanStorage from 'calypso/blocks/plan-storage/docs/example';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card/docs/example';
 import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
 import PostLikes from 'calypso/blocks/post-likes/docs/example';
-import PostShare from 'calypso/blocks/post-share/docs/example';
 import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices/docs/example';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link/docs/example';
 import ReaderAvatar from 'calypso/blocks/reader-avatar/docs/example';
@@ -39,7 +38,6 @@ import RelatedPostCard from 'calypso/blocks/reader-related-card/docs/example';
 import ReaderShare from 'calypso/blocks/reader-share/docs/example';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link/docs/example';
 import ReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/docs/example';
-import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane/docs/example';
 import Site from 'calypso/blocks/site/docs/example';
 import SitePlaceholder from 'calypso/blocks/site/docs/placeholder-example';
 import SiteIcon from 'calypso/blocks/site-icon/docs/example';
@@ -47,7 +45,6 @@ import SupportArticleDialog from 'calypso/blocks/support-article-dialog/docs/exa
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning/docs/example';
 import UpsellNudge from 'calypso/blocks/upsell-nudge/docs/example';
 import UserMentions from 'calypso/blocks/user-mentions/docs/example';
-import VideoEditor from 'calypso/blocks/video-editor/docs/example';
 import DocumentHead from 'calypso/components/data/document-head';
 import HappinessSupport from 'calypso/components/happiness-support/docs/example';
 import HeaderCake from 'calypso/components/header-cake';
@@ -116,7 +113,6 @@ export default class AppComponents extends Component {
 					<FollowButton readmeFilePath="follow-button" />
 					<HappinessSupport />
 					<ImageEditor readmeFilePath="image-editor" />
-					<VideoEditor readmeFilePath="video-editor" />
 					<LikeButtons readmeFilePath="like-button" />
 					<Login />
 					<PostEditButton />
@@ -137,7 +133,6 @@ export default class AppComponents extends Component {
 					<AuthorCompactProfile />
 					<ReaderPostCard />
 					<PlanPrice />
-					<PostShare readmeFilePath="post-share" />
 					<PlanThankYouCard readmeFilePath="plan-thank-you-card" />
 					<DismissibleCard readmeFilePath="dismissible-card" />
 					<ReaderAvatar readmeFilePath="reader-avatar" />
@@ -146,7 +141,6 @@ export default class AppComponents extends Component {
 					<ReaderFeaturedVideo readmeFilePath="reader-featured-video" />
 					<ReaderExportButton readmeFilePath="reader-export-button" />
 					<ReaderImportButton readmeFilePath="reader-import-button" />
-					<SharingPreviewPane />
 					<ReaderShare readmeFilePath="reader-share" />
 					<ConversationCommentList />
 					<PostComment />

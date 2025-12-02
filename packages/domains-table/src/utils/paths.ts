@@ -108,7 +108,7 @@ export function domainManagementRoot() {
 	return '/domains/manage';
 }
 
-export function isUnderDomainManagementAll( path: string ) {
+export function isUnderDomainManagementAll( path: string | undefined ) {
 	return path?.startsWith( domainManagementAllRoot() + '/' ) || path === domainManagementRoot();
 }
 
@@ -168,7 +168,11 @@ export function domainMappingSetup(
 	return path;
 }
 
-export function domainUseMyDomain( siteName: string, domain: string, initialMode: string ) {
+export function domainUseMyDomain(
+	siteName: string,
+	domain: string,
+	initialMode: string | undefined
+) {
 	const path = `/domains/add/use-my-domain/${ siteName }`;
 	const queryArgs = [];
 	if ( domain ) {
@@ -240,4 +244,16 @@ export function emailManagementEdit(
 		default:
 			return '/email/' + domainName + '/manage/' + siteSlug;
 	}
+}
+
+export function domainSiteContextRoot() {
+	return '/overview/site-domain';
+}
+
+export function domainManagementAllEmailRoot() {
+	return domainManagementAllRoot() + '/email';
+}
+
+export function isUnderDomainSiteContext( path: string | undefined ) {
+	return path?.startsWith( domainSiteContextRoot() + '/' );
 }

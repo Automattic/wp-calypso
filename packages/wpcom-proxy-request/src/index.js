@@ -76,6 +76,12 @@ let buffered;
 const requests = {};
 
 /**
+ * A flag which stores whether the iframe has sent a cookie-auth-missing event.
+ * @type boolean
+ */
+let _isCookieAuthMissing = false;
+
+/**
  * Performs a "proxied REST API request". This happens by calling
  * `iframe.postMessage()` on the proxy iframe instance, which from there
  * takes care of WordPress.com user authentication (via the currently
@@ -154,6 +160,13 @@ const makeRequest = ( originalParams, fn ) => {
 		// the XMLHttpRequest#response to ondownloadprogress there, then parse the chunks here).
 	}
 
+	if ( params.signal ) {
+		params.signal.addEventListener( 'abort', ( event ) => {
+			submitRequest( { abort: true, callback: params.callback } );
+			fn?.( event );
+		} );
+		delete params.signal;
+	}
 	if ( loaded ) {
 		submitRequest( params );
 	} else {
@@ -385,6 +398,13 @@ function onmessage( e ) {
 		return;
 	}
 
+	// Allows packages consumers to check whether the iframe had a cookie
+	// error. See the isCookieAuthMissing() function.
+	if ( data === 'cookie-auth-missing' ) {
+		_isCookieAuthMissing = true;
+		return;
+	}
+
 	if ( postStrings && 'string' === typeof data ) {
 		data = JSON.parse( data );
 	}
@@ -507,6 +527,7 @@ const wpcomAllowedOrigins = [
 	'https://cloud.jetpack.com',
 	'https://jetpack.com',
 	'https://agencies.automattic.com',
+	'https://my.wordpress.com',
 	'http://wpcalypso.wordpress.com', // for running docker on dev instances
 	'http://widgets.wp.com',
 	'https://widgets.wp.com',
@@ -519,6 +540,8 @@ const wpcomAllowedOrigins = [
 	'https://jetpack.cloud.localhost:3000',
 	'http://agencies.localhost:3000',
 	'https://agencies.localhost:3000',
+	'http://my.localhost:3000',
+	'https://my.localhost:3000',
 	'http://calypso.localhost:3001',
 	'https://calypso.localhost:3001',
 	'https://calypso.live',
@@ -547,7 +570,16 @@ function canAccessWpcomApis() {
 }
 
 /**
+ * Returns whether the iframe has ever sent the "cookie-auth-missing" event, signalling
+ * that something is wrong with the user's cookie.
+ * @returns {boolean}
+ */
+function isCookieAuthMissing() {
+	return _isCookieAuthMissing;
+}
+
+/**
  * Export `request` function.
  */
 export default request;
-export { reloadProxy, canAccessWpcomApis };
+export { reloadProxy, canAccessWpcomApis, isCookieAuthMissing };

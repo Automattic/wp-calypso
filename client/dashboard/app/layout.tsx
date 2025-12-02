@@ -1,3 +1,5 @@
+import { queryClient } from '@automattic/api-queries';
+// eslint-disable-next-line no-restricted-imports
 import {
 	initializeAnalytics,
 	recordTracksEvent,
@@ -8,17 +10,12 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
 import { useMemo, useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
-import { getSuperProps } from './analytics/super-props';
+import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
-import { AppProvider, type AppConfig } from './context';
+import { AppProvider } from './context';
 import { I18nProvider } from './i18n';
-import { queryClient } from './query-client';
 import { getRouter } from './router';
-
-function RouterProviderWithAuth( { config, router }: { config: AppConfig; router: AnyRouter } ) {
-	const auth = useAuth();
-	return <RouterProvider router={ router } context={ { auth, config } } />;
-}
+import type { AppConfig } from './context';
 
 function AnalyticsProviderWithClient( {
 	children,
@@ -38,7 +35,11 @@ function AnalyticsProviderWithClient( {
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
 			recordTracksEvent( eventName, properties ) {
-				recordTracksEvent( eventName, properties );
+				const path = getNormalizedPath( router );
+				recordTracksEvent( eventName, {
+					path,
+					...properties,
+				} );
 			},
 
 			// The title property is used by Google Analytics not Tracks. The hosting
@@ -50,7 +51,7 @@ function AnalyticsProviderWithClient( {
 				} );
 			},
 		} ),
-		[]
+		[ router ]
 	);
 
 	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;
@@ -65,7 +66,7 @@ function Layout( { config }: { config: AppConfig } ) {
 				<AuthProvider>
 					<I18nProvider>
 						<AnalyticsProviderWithClient router={ router }>
-							<RouterProviderWithAuth router={ router } config={ config } />
+							<RouterProvider router={ router } context={ { config } } />
 						</AnalyticsProviderWithClient>
 					</I18nProvider>
 				</AuthProvider>

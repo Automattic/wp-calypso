@@ -23,7 +23,8 @@ export default function DomainTransferUpsellCard() {
 					href="/setup/domain-transfer"
 					text={ __( 'Transfer domain' ) }
 					size="compact"
-					tracksId="transfer-domain"
+					upsellId="site-overview-transfer-domain"
+					upsellFeatureId="domain"
 					variant="secondary"
 				/>
 			}

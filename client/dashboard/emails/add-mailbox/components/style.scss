@@ -1,0 +1,11 @@
+.error-message {
+	display: flex;
+
+	svg {
+		fill: currentcolor;
+	}
+}
+
+.mailbox-input {
+	flex-grow: 1;
+}

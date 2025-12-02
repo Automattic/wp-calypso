@@ -56,6 +56,14 @@ export function receiveAgencies( agencies: Agency[] ): AgencyThunkAction {
 		if ( newAgency ) {
 			dispatch( setActiveAgency( newAgency ) );
 
+			// Enable the a4a-bd-checkout feature flag if the billing system is 'billingdragon'
+			if (
+				! config.isEnabled( 'a4a-bd-checkout' ) &&
+				newAgency.billing_system === 'billingdragon'
+			) {
+				config.enable( 'a4a-bd-checkout' );
+			}
+
 			// Enable the Partner Directory section
 			if ( ! config.isEnabled( 'a4a-partner-directory' ) && newAgency.partner_directory.allowed ) {
 				config.enable( 'a4a-partner-directory' );

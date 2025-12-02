@@ -1,0 +1,5 @@
+.security-password-card {
+	input[type="password"]::-ms-reveal {
+		display: none;
+	}
+}

@@ -88,3 +88,9 @@ export const getCurrentCycleActivityWindow = ( currentDate: Date ) => {
 		finish: new Date( currentYear, activityEnd.month - 1, activityEnd.day ),
 	};
 };
+
+export const areNextAndCurrentPayoutDatesEqual = ( currentDate: Date ): boolean => {
+	const nextPayoutDate = getNextPayoutDate( currentDate );
+	const currentCyclePayoutDate = getCurrentCyclePayoutDate( currentDate );
+	return nextPayoutDate.getTime() === currentCyclePayoutDate.getTime();
+};

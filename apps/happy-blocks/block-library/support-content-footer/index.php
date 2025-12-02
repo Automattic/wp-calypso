@@ -18,7 +18,7 @@ if ( 'contact' === $current_page_slug ) {
 	?>
 	<div class="happy-blocks-new-support-content-footer contact-page">
 		<div class="support-content-resources">
-			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/sites?help-center=wapuu' ) ); ?>" class="support-content-resource">
+			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/sites?help-center=wapuu' ) ); ?>" class="support-content-resource" data-track-destination="help_center">
 				<div class="support-content-resource__content">
 					<div class="support-footer__icon-wrapper">
 						<svg class="support-footer__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -29,7 +29,7 @@ if ( 'contact' === $current_page_slug ) {
 					<p class="support-footer__card-description"><?php esc_html_e( 'Get answers from our AI assistant, with access to 24/7 expert human support on paid plans.', 'happy-blocks' ); ?></p>
 				</div>
 			</a>
-			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/wp-login.php?action=recovery' ) ); ?>" class="support-content-resource">
+			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/wp-login.php?action=recovery' ) ); ?>" class="support-content-resource" data-track-destination="login_recovery">
 				<div class="support-content-resource__content">
 					<div class="support-footer__icon-wrapper">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -40,7 +40,7 @@ if ( 'contact' === $current_page_slug ) {
 					<p class="support-footer__card-description"><?php esc_html_e( 'Having trouble logging in to your account? Complete these easy steps to get back in.', 'happy-blocks' ); ?></p>
 				</div>
 			</a>
-			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums' ) ); ?>" class="support-content-resource">
+			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums' ) ); ?>" class="support-content-resource" data-track-destination="forums">
 				<div class="support-content-resource__content">
 					<div class="support-footer__icon-wrapper">
 						<svg class="support-footer__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -51,7 +51,7 @@ if ( 'contact' === $current_page_slug ) {
 					<p class="support-footer__card-description"><?php esc_html_e( 'Browse questions and get answers from other experienced users.', 'happy-blocks' ); ?></p>
 				</div>
 			</a>
-			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wpchrg.wordpress.com' ) ); ?>" class="support-content-resource">
+			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wpchrg.wordpress.com' ) ); ?>" class="support-content-resource" data-track-destination="charge_lookup">
 				<div class="support-content-resource__content">
 					<div class="support-footer__icon-wrapper">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -70,7 +70,7 @@ if ( 'contact' === $current_page_slug ) {
 		<div class="happy-blocks-new-support-content-footer">
 			<h2 class="support-footer__heading"><?php esc_html_e( 'Couldn\'t find what you needed?', 'happy-blocks' ); ?></h2>
 			<div class="support-content-resources">
-				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/contact/' ) ); ?>" class="support-content-resource">
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/contact/' ) ); ?>" class="support-content-resource" data-track-destination="contact_form">
 					<div class="support-content-resource__content">
 						<div class="support-footer__icon-wrapper">
 							<svg class="support-footer__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -81,7 +81,7 @@ if ( 'contact' === $current_page_slug ) {
 						<p class="support-footer__card-description"><?php esc_html_e( 'Get answers from our AI assistant, with access to 24/7 expert human support on paid plans.', 'happy-blocks' ); ?></p>
 					</div>
 				</a>
-				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums/' ) ); ?>" class="support-content-resource">
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums/' ) ); ?>" class="support-content-resource" data-track-destination="forums">
 					<div class="support-content-resource__content">
 						<div class="support-footer__icon-wrapper">
 							<svg class="support-footer__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

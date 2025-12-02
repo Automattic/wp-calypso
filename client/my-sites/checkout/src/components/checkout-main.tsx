@@ -10,6 +10,7 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from '@automattic/wpcom-checkout';
+import { VGSCollectProvider } from '@vgs/collect-js-react';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
@@ -31,9 +32,9 @@ import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import useCountryList from '../hooks/use-country-list';
-import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
+import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
@@ -85,11 +86,6 @@ export interface CheckoutMainProps {
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
-	isInModal?: boolean;
-	// IMPORTANT NOTE: This will not be called for redirect payment methods like
-	// PayPal. They will redirect directly to the post-checkout page decided by
-	// `getThankYouUrl`.
-	onAfterPaymentComplete?: () => void;
 	disabledThankYouPage?: boolean;
 	sitelessCheckoutType?: SitelessCheckoutType;
 	akismetSiteSlug?: string;
@@ -125,8 +121,6 @@ export default function CheckoutMain( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	isGiftPurchase,
-	isInModal,
-	onAfterPaymentComplete,
 	disabledThankYouPage,
 	sitelessCheckoutType,
 	akismetSiteSlug,
@@ -214,7 +208,6 @@ export default function CheckoutMain( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
-		isInModal,
 		usesJetpackProducts: isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
@@ -285,7 +278,6 @@ export default function CheckoutMain( {
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
 		sitelessCheckoutType,
-		isInModal,
 		domains,
 		connectAfterCheckout,
 		adminUrl,
@@ -557,9 +549,9 @@ export default function CheckoutMain( {
 		[ dataForProcessor, translate ]
 	);
 
+	// Gravatar Theme
 	let gravatarColors = {};
 	let gravatarFontWeights = {};
-
 	if ( isGravatarDomain ) {
 		gravatarColors = {
 			primary: '#1d4fc4',
@@ -574,18 +566,25 @@ export default function CheckoutMain( {
 		};
 	}
 
-	const jetpackColors = isJetpackNotAtomic
-		? {
-				primary: colors[ 'Jetpack Green' ],
-				primaryBorder: colors[ 'Jetpack Green 80' ],
-				primaryOver: colors[ 'Jetpack Green 60' ],
-				success: colors[ 'Jetpack Green' ],
-				discount: colors[ 'Jetpack Green' ],
-				highlight: colors[ 'WordPress Blue 50' ],
-				highlightBorder: colors[ 'WordPress Blue 80' ],
-				highlightOver: colors[ 'WordPress Blue 60' ],
-		  }
-		: {};
+	// Jetpack Theme
+	// Woo Hosted sites are technically Jetpack, but are supposed to default to
+	// WPcom colors. We should update this once we have a better way to identify
+	// Garden sites outside of the Hosting Dashboard.
+	const jetpackColors =
+		isJetpackNotAtomic && ! updatedSiteSlug?.endsWith( '.commerce-garden.com' )
+			? {
+					primary: colors[ 'Jetpack Green' ],
+					primaryBorder: colors[ 'Jetpack Green 80' ],
+					primaryOver: colors[ 'Jetpack Green 60' ],
+					success: colors[ 'Jetpack Green' ],
+					discount: colors[ 'Jetpack Green' ],
+					highlight: colors[ 'WordPress Blue 50' ],
+					highlightBorder: colors[ 'WordPress Blue 80' ],
+					highlightOver: colors[ 'WordPress Blue 60' ],
+			  }
+			: {};
+
+	// A4A Theme
 	const a4aColors =
 		sitelessCheckoutType === 'a4a'
 			? {
@@ -597,6 +596,7 @@ export default function CheckoutMain( {
 					highlightOver: colors[ 'Automattic Blue 60' ],
 			  }
 			: {};
+
 	const theme = {
 		...checkoutTheme,
 		colors: { ...checkoutTheme.colors, ...gravatarColors, ...jetpackColors, ...a4aColors },
@@ -687,14 +687,15 @@ export default function CheckoutMain( {
 
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
 	// PayPal. They will redirect directly to the post-checkout page decided by
-	// `getThankYouUrl`.
-	const onPaymentComplete = useCreatePaymentCompleteCallback( {
+	// `getThankYouUrl` after passing through the pending page.
+	//
+	// DO NOT PUT POST-CHECKOUT BEHAVIOR IN HERE! IT'S NOT WHAT YOU THINK!
+	const onPaymentSubmittedAndProcessing = useCreatePaymentSubmittedAndProcessingCallback( {
 		createUserAndSiteBeforeTransaction,
 		productAliasFromUrl,
 		redirectTo,
 		purchaseId,
 		feature,
-		isInModal,
 		isComingFromUpsell,
 		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
@@ -746,11 +747,12 @@ export default function CheckoutMain( {
 
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
 	// PayPal. They will redirect directly to the post-checkout page decided by
-	// `getThankYouUrl`.
-	const handlePaymentComplete = useCallback(
+	// `getThankYouUrl` after passing through the pending page.
+	//
+	// DO NOT PUT POST-CHECKOUT BEHAVIOR IN HERE! IT'S NOT WHAT YOU THINK!
+	const handlePaymentSubmitted = useCallback(
 		( args: PaymentEventCallbackArguments ) => {
-			onPaymentComplete?.( args );
-			onAfterPaymentComplete?.();
+			onPaymentSubmittedAndProcessing?.( args );
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_step_complete', {
 					step: 2,
@@ -758,7 +760,7 @@ export default function CheckoutMain( {
 				} )
 			);
 		},
-		[ onPaymentComplete, onAfterPaymentComplete, reduxDispatch ]
+		[ onPaymentSubmittedAndProcessing, reduxDispatch ]
 	);
 
 	const handlePaymentError = useCallback(
@@ -820,52 +822,56 @@ export default function CheckoutMain( {
 					useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
 				} }
 			/>
-			<CheckoutProvider
-				onPaymentComplete={ handlePaymentComplete }
-				onPaymentError={ handlePaymentError }
-				onPaymentRedirect={ handlePaymentRedirect }
-				onPageLoadError={ onPageLoadError }
-				onPaymentMethodChanged={ handlePaymentMethodChanged }
-				paymentMethods={ paymentMethods }
-				paymentProcessors={ paymentProcessors }
-				isLoading={ isCheckoutPageLoading }
-				isValidating={ isCartPendingUpdate }
-				theme={ theme }
-				selectFirstAvailablePaymentMethod
-				initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
-			>
-				<CheckoutMainContent
-					loadingHeader={
-						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
-					}
-					onStepChanged={ handleStepChanged }
-					customizedPreviousPath={ customizedPreviousPath }
-					isRemovingProductFromCart={ isRemovingProductFromCart }
-					areThereErrors={ areThereErrors }
-					isInitialCartLoading={ isInitialCartLoading }
-					addItemToCart={ addItemAndLog }
-					changeSelection={ changeSelection }
-					countriesList={ countriesList }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					infoMessage={ <PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } /> }
-					isLoggedOutCart={ !! isLoggedOutCart }
+			<VGSCollectProvider>
+				<CheckoutProvider
+					onPaymentComplete={ handlePaymentSubmitted }
+					onPaymentError={ handlePaymentError }
+					onPaymentRedirect={ handlePaymentRedirect }
 					onPageLoadError={ onPageLoadError }
+					onPaymentMethodChanged={ handlePaymentMethodChanged }
 					paymentMethods={ paymentMethods }
-					areStoredCardsFiltered={ areStoredCardsFiltered }
-					isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
-				/>
-				{
-					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
-					<JetpackProRedirectModal
-						redirectTo={ redirectTo }
-						productSourceFromUrl={ productSourceFromUrl }
+					paymentProcessors={ paymentProcessors }
+					isLoading={ isCheckoutPageLoading }
+					isValidating={ isCartPendingUpdate }
+					theme={ theme }
+					selectFirstAvailablePaymentMethod
+					initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
+				>
+					<CheckoutMainContent
+						loadingHeader={
+							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
+						}
+						onStepChanged={ handleStepChanged }
+						customizedPreviousPath={ customizedPreviousPath }
+						isRemovingProductFromCart={ isRemovingProductFromCart }
+						areThereErrors={ areThereErrors }
+						isInitialCartLoading={ isInitialCartLoading }
+						addItemToCart={ addItemAndLog }
+						changeSelection={ changeSelection }
+						countriesList={ countriesList }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						infoMessage={
+							<PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } />
+						}
+						isLoggedOutCart={ !! isLoggedOutCart }
+						onPageLoadError={ onPageLoadError }
+						paymentMethods={ paymentMethods }
+						areStoredCardsFiltered={ areStoredCardsFiltered }
+						isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+						removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+						showErrorMessageBriefly={ showErrorMessageBriefly }
+						siteId={ updatedSiteId }
+						siteUrl={ updatedSiteSlug }
 					/>
-				}
-			</CheckoutProvider>
+					{
+						// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
+						<JetpackProRedirectModal
+							redirectTo={ redirectTo }
+							productSourceFromUrl={ productSourceFromUrl }
+						/>
+					}
+				</CheckoutProvider>
+			</VGSCollectProvider>
 		</Fragment>
 	);
 }

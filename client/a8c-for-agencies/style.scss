@@ -16,6 +16,7 @@
 	--color-text-white: var(--studio-white);
 	--color-text-black: var(--studio-black);
 	--wp-components-color-accent: var(--studio-automattic-blue-50);
+	--wp-admin-theme-color: var(--studio-automattic-blue-50);
 
 	// FIXME: Need to move this colors to a color scheme file
 	--color-scary-0: var(--studio-red-0);
@@ -128,7 +129,9 @@
 	}
 
 	.components-button.is-primary:disabled {
-		background-color: var(--color-primary-50);
+		&:hover {
+			background-color: var(--color-accent-5);
+		}
 	}
 
 	.components-button.is-link {
@@ -165,8 +168,8 @@
 		color: var(--color-primary-50);
 	}
 
-	.components-button.is-destructive,
-	.button.is-scary {
+	.components-button.is-destructive:not(:disabled),
+	.button.is-scary:not(:disabled) {
 		color: var(--color-scary-50);
 		border-color: var(--color-scary-50);
 
@@ -176,16 +179,20 @@
 			border-color: var(--color-scary-60);
 			color: var(--color-scary-60);
 		}
+
 	}
 
 	.components-button.is-primary.is-destructive,
 	.button.is-primary.is-scary {
-		background-color: var(--color-scary-50);
-		color: var(--color-text-inverted);
+		&:not(:disabled) {
+			background-color: var(--color-scary-50);
+			color: var(--color-text-inverted);
 
-		&:hover,
-		&:focus-visible {
-			background-color: var(--color-scary-60);
+			&:hover,
+			&:focus-visible {
+				background-color: var(--color-scary-60);
+				color: var(--color-text-inverted);
+			}
 		}
 	}
 
@@ -215,6 +222,32 @@
 		&:focus-visible {
 			background-color: var(--color-accent-100);
 			color: var(--color-surface);
+		}
+	}
+
+	.components-button.is-light {
+		background-color: var(--color-text-white);
+		color: initial;
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+
+		&.is-secondary, &.is-link {
+			color: var(--color-text-white);
+			background-color: transparent;
+		}
+
+		svg {
+			fill: var(--color-text-white);
+		}
+
+		&.is-busy {
+			color: var(--color-text);
+
+			svg {
+				fill: var(--color-text);
+			}
 		}
 	}
 

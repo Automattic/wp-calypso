@@ -2,19 +2,17 @@ import { Button, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Markdown from 'react-markdown';
-import {
-	FullPageScreenshot,
-	PerformanceMetricsItemQueryResponse,
-} from 'calypso/data/site-profiler/types';
+import { FullPageScreenshot } from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { LLMMessage } from 'calypso/performance-profiler/components/llm-message';
 import { ThumbsUpIcon, ThumbsDownIcon } from 'calypso/performance-profiler/icons/thumbs';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { InsightDetailedContent } from './insight-detailed-content';
+import type { PerformanceMetricAudit } from '@automattic/api-core';
 
 interface InsightContentProps {
 	fullPageScreenshot: FullPageScreenshot;
-	data: PerformanceMetricsItemQueryResponse;
+	data: PerformanceMetricAudit;
 	secondaryArea?: React.ReactNode;
 	isLoading?: boolean;
 	isFetched?: boolean;

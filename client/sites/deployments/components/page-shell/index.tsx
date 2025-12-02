@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { transferInProgress } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isWpcomFlexSite from 'calypso/state/sites/selectors/is-wpcom-flex-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
@@ -25,6 +26,7 @@ interface GitHubDeploymentsProps {
 export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploymentsProps ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
+	const isFlexSite = useSelector( ( state ) => isWpcomFlexSite( state, siteId as number ) );
 	const dispatch = useDispatch();
 	const transferState = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const [ hasTransfer, setHasTransferring ] = useState(
@@ -33,7 +35,8 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 			transferInProgress.includes( transferState as ( typeof transferInProgress )[ number ] )
 		)
 	);
-	const showHostingActivationBanner = ! isSiteAtomic && ! hasTransfer;
+	const hasHostingFeatures = isSiteAtomic || isFlexSite;
+	const showHostingActivationBanner = ! hasHostingFeatures && ! hasTransfer;
 
 	const clickActivate = () => {
 		dispatch( initiateThemeTransfer( siteId ?? 0, null, '', '', 'hosting' ) );
@@ -60,11 +63,11 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 		}
 	};
 
-	if ( ! isSiteAtomic ) {
+	if ( ! hasHostingFeatures ) {
 		return null;
 	}
 
-	const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
+	const WrapperComponent = ! hasHostingFeatures ? FeatureExample : Fragment;
 	return (
 		<Panel wide className="github-deployments tools-deployments">
 			<DocumentHead title={ pageTitle } />
@@ -89,7 +92,7 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 				<HostingActivateStatus
 					context="hosting"
 					onTick={ onTick }
-					keepAlive={ ! isSiteAtomic && hasTransfer }
+					keepAlive={ ! hasHostingFeatures && hasTransfer }
 				/>
 			) }
 			<WrapperComponent>{ children }</WrapperComponent>

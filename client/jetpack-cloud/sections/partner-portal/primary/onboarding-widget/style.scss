@@ -1,10 +1,10 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .onboarding-widget__empty-list {
 	h2 {
 		font-size: 2rem;
-		color: var(--color-text);
+		color: var( --color-text );
 		text-align: center;
 	}
 
@@ -19,7 +19,6 @@
 		@include break-huge {
 			margin-inline: 3%;
 		}
-
 	}
 
 	.onboarding-widget__step {
@@ -56,14 +55,13 @@
 				margin-inline-start: 32px;
 			}
 		}
-
 	}
 
 	.onboarding-widget__step-description {
 		text-align: left;
 		margin-block-end: 32px;
 		font-size: 1rem;
-		color: var(--color-text);
+		color: var( --color-text );
 		line-height: 24px;
 	}
 
@@ -82,8 +80,8 @@
 			width: 32px;
 			height: 32px;
 			border-radius: 50%;
-			background: var(--studio-jetpack-green-40);
-			color: var(--studio-white);
+			background: var( --studio-jetpack-green-40 );
+			color: var( --studio-white );
 			font-size: 1.25rem;
 		}
 
@@ -113,15 +111,14 @@
 
 .onboarding-widget__step-completed {
 	display: none;
-	background: var(--studio-jetpack-green-5);
-	/* stylelint-disable-next-line scales/radii */
+	background: var( --studio-jetpack-green-5 );
 	border-radius: 16px;
 	height: 30px;
 	padding: 1px 16px;
 	font-weight: 600;
 	font-size: 0.75rem;
 	line-height: 28px;
-	color: var(--studio-jetpack-green-60);
+	color: var( --studio-jetpack-green-60 );
 	margin-inline-start: 8px;
 
 	@include break-large {

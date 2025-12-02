@@ -1,4 +1,5 @@
-import { SiteLogsCallout } from 'calypso/dashboard/sites/logs';
+import { DotcomFeatures } from '@automattic/api-core';
+import { LogsCallout } from 'calypso/dashboard/sites/logs/logs-callout';
 import { LogType } from 'calypso/data/hosting/use-site-logs-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
@@ -27,4 +28,4 @@ export function webServerLogs( context: PageJSContext, next: () => void ) {
 	next();
 }
 
-export const siteLogsCallout = hostingFeaturesCallout( SiteLogsCallout );
+export const siteLogsCallout = hostingFeaturesCallout( LogsCallout, DotcomFeatures.LOGS );

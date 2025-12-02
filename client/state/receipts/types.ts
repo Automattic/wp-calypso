@@ -1,4 +1,4 @@
-import type { Purchase } from '@automattic/wpcom-checkout';
+import type { TransactionResponsePurchase } from '@automattic/wpcom-checkout';
 
 export interface ReceiptPurchase {
 	delayedProvisioning: boolean;
@@ -36,7 +36,7 @@ export interface RawReceiptData {
 	price_float: number;
 	price_integer: number;
 	currency: string;
-	purchases: Purchase[] | undefined | false;
+	purchases: TransactionResponsePurchase[] | undefined | false;
 	is_gravatar_domain: boolean;
 }
 

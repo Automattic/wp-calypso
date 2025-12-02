@@ -1,5 +1,5 @@
-import { DomainSuggestion } from '@automattic/data-stores';
 import { MinimalRequestCartProduct, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { DomainSuggestion } from '@automattic/api-core';
 
 export interface DomainStepResult {
 	stepName?: 'domains';

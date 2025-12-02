@@ -1,14 +1,27 @@
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import { makeLayout, render as clientRender, redirectIfDuplicatedView } from 'calypso/controller';
-import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
-import { clearCommentNotices, comment, postComments, redirect, siteComments } from './controller';
+import { getSiteFragment } from 'calypso/lib/route';
+import { siteSelection, sites } from 'calypso/my-sites/controller';
+
+const redirect = ( { path } ) => {
+	const siteFragment = getSiteFragment( path );
+	if ( siteFragment ) {
+		return page.redirect( `/comments/all/${ siteFragment }` );
+	}
+	return page.redirect( '/comments/all' );
+};
 
 const redirectToCommentIfDuplicatedView = ( url ) => ( context, next ) => {
-	if ( context.params.status !== 'all' ) {
+	if ( context.params.commentStatus !== 'all' ) {
 		url = addQueryArgs( url, {
-			comment_status: context.params.status === 'pending' ? 'moderated' : context.params.status,
+			comment_status:
+				context.params.commentStatus === 'pending' ? 'moderated' : context.params.commentStatus,
 		} );
+	}
+
+	if ( context.params.post ) {
+		url = addQueryArgs( url, { p: context.params.post } );
 	}
 
 	if ( context.params.comment ) {
@@ -21,40 +34,28 @@ const redirectToCommentIfDuplicatedView = ( url ) => ( context, next ) => {
 export default function () {
 	// Site View
 	page(
-		'/comments/:status(all|pending|approved|spam|trash)/:site',
+		'/comments/:commentStatus(all|pending|approved|spam|trash)/:site',
 		siteSelection,
-		redirectToCommentIfDuplicatedView( 'edit-comments.php' ),
-		navigation,
-		siteComments,
-		makeLayout,
-		clientRender
+		redirectToCommentIfDuplicatedView( 'edit-comments.php' )
 	);
 
 	// Post View
 	page(
-		'/comments/:status(all|pending|approved|spam|trash)/:site/:post',
+		'/comments/:commentStatus(all|pending|approved|spam|trash)/:site/:post',
 		siteSelection,
-		redirectToCommentIfDuplicatedView( 'edit-comments.php' ),
-		navigation,
-		postComments,
-		makeLayout,
-		clientRender
+		redirectToCommentIfDuplicatedView( 'edit-comments.php' )
 	);
 
 	// Comment View
 	page(
 		'/comment/:site/:comment',
 		siteSelection,
-		redirectToCommentIfDuplicatedView( 'comment.php?action=editcomment' ),
-		navigation,
-		comment,
-		makeLayout,
-		clientRender
+		redirectToCommentIfDuplicatedView( 'comment.php?action=editcomment' )
 	);
 
 	// Redirect
 	page(
-		'/comments/:status(all|pending|approved|spam|trash)',
+		'/comments/:commentStatus(all|pending|approved|spam|trash)',
 		siteSelection,
 		sites,
 		makeLayout,
@@ -64,8 +65,4 @@ export default function () {
 	page( '/comments', siteSelection, redirect );
 	page( '/comment/*', siteSelection, redirect );
 	page( '/comment', siteSelection, redirect );
-
-	// Leaving Comment Management
-	page.exit( '/comments/*', clearCommentNotices );
-	page.exit( '/comment/*', clearCommentNotices );
 }

@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .dashboard-modal-form__footer {
-	width: calc(100% - 64px); // reducing the left and right padding
+	width: 100%;
 	display: flex;
 	justify-content: flex-start;
 	flex-direction: column;

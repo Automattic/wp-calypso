@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { BackButton } from '@automattic/onboarding';
@@ -19,6 +20,7 @@ import {
 	transferLockedDomainStepsDefinition,
 	transferUnlockedDomainStepsDefinition,
 } from 'calypso/components/domains/connect-domain-step/page-definitions';
+import OwnershipVerification from 'calypso/components/domains/ownership-verification';
 import {
 	getAvailabilityErrorMessage,
 	getDomainNameValidationErrorMessage,
@@ -54,6 +56,7 @@ function UseMyDomain( props ) {
 		stepLocation,
 		registerNowAction,
 		hideHeader,
+		render,
 	} = props;
 
 	const { __ } = useI18n();
@@ -329,6 +332,10 @@ function UseMyDomain( props ) {
 	};
 
 	const renderOwnershipVerificationFlow = () => {
+		if ( config.isEnabled( 'domain-connection-redesign' ) ) {
+			return <OwnershipVerification domainName={ domainName } onConnect={ onConnect } />;
+		}
+
 		return (
 			<ConnectDomainSteps
 				baseClassName="connect-domain-step"
@@ -471,6 +478,10 @@ function UseMyDomain( props ) {
 		}
 	}, [ stepLocation, updateMode, isStepper ] );
 
+	if ( render ) {
+		return render( { onGoBack, headerText, content: renderContent() } );
+	}
+
 	return (
 		<>
 			{ renderHeader() }
@@ -497,6 +508,7 @@ UseMyDomain.propTypes = {
 	stepLocation: PropTypes.object,
 	registerNowAction: PropTypes.func,
 	hideHeader: PropTypes.bool,
+	render: PropTypes.func,
 };
 
 export default connect( ( state ) => ( {

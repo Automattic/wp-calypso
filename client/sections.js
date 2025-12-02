@@ -190,12 +190,12 @@ const sections = [
 	},
 	{
 		name: 'settings-newsletter',
-		paths: [ '/settings/newsletter', '/settings/jetpack-newsletter' ],
+		paths: [ '/settings/newsletter' ],
 		module: 'calypso/my-sites/site-settings/settings-newsletter',
 	},
 	{
 		name: 'settings-podcast',
-		paths: [ '/settings/podcasting', '/settings/jetpack-podcasting' ],
+		paths: [ '/settings/podcasting' ],
 		module: 'calypso/my-sites/site-settings/settings-podcast',
 		group: 'sites',
 	},
@@ -410,6 +410,14 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [ '/reader/feeds/[^\\/]+', '/reader/blogs/[^\\/]+', '/reader/a8c', '/reader/p2' ],
+		module: 'calypso/reader',
+		group: 'reader',
+		enableLoggedOut: true,
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/reader/feeds/lookup/.*' ],
 		module: 'calypso/reader',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -883,6 +891,13 @@ const sections = [
 		],
 		module: 'calypso/a8c-for-agencies/sections/client',
 		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-express-checkout',
+		paths: [ '/client/express-checkout' ],
+		module: 'calypso/a8c-for-agencies/sections/express-checkout',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'a8c-for-agencies-agency-tier',

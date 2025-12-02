@@ -55,7 +55,7 @@ export const getShortcuts = createSelector(
 	) => {
 		const translate = translateFromProps ?? i18nCalypsoTranslate;
 		const siteId = getSelectedSiteId( state );
-		const siteToday = getMomentSiteZone( state, siteId );
+		const siteToday = getMomentSiteZone( state, siteId )();
 		const siteTodayStr = siteToday.format( DATE_FORMAT );
 
 		const supportedShortcutList = [
@@ -113,13 +113,6 @@ export const getShortcuts = createSelector(
 				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.YEAR,
 			},
-			{
-				id: 'custom_date_range',
-				label: translate( 'Custom Range' ),
-				startDate: '',
-				endDate: '',
-				period: DATERANGE_PERIOD.DAY,
-			},
 		];
 
 		return {
@@ -136,7 +129,7 @@ export const getShortcuts = createSelector(
 		}
 	) => {
 		const siteId = getSelectedSiteId( state );
-		const siteToday = getMomentSiteZone( state, siteId );
+		const siteToday = getMomentSiteZone( state, siteId )();
 
 		return [
 			siteId,

@@ -7,7 +7,7 @@ import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
-import { getSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import { getSite, isCurrentPlanPaid, isWpcomFlexSite } from 'calypso/state/sites/selectors';
 
 class TransferConfirmationDialog extends PureComponent {
 	static propTypes = {
@@ -131,6 +131,8 @@ class TransferConfirmationDialog extends PureComponent {
 
 export default connect( ( state, ownProps ) => ( {
 	targetSite: getSite( state, ownProps.targetSiteId ),
-	isTargetSiteOnPaidPlan: isCurrentPlanPaid( state, ownProps.targetSiteId ),
+	isTargetSiteOnPaidPlan:
+		isCurrentPlanPaid( state, ownProps.targetSiteId ) ||
+		isWpcomFlexSite( state, ownProps.targetSiteId ),
 	primaryWithPlansOnly: currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ),
 } ) )( localize( TransferConfirmationDialog ) );

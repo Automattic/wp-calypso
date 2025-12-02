@@ -1,0 +1,13 @@
+.dashboard-snackbar-back-button {
+	button.components-button.is-primary {
+		&, &:hover {
+			color: var(--dashboard__background-color);
+			background-color: var(--dashboard__text-color);
+			border-color: var(--dashboard__text-color);
+		}
+
+		&:not(:focus) {
+			--wp-admin-theme-color: var(--dashboard__text-color);
+		}
+	}
+}

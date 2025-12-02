@@ -23,7 +23,7 @@ export const getMShotOptions = ( {
 	// end up serving WEBPs instead of JPEGs, spend fewer bits on parts of images that are not displayed, and possibly display fewer images.
 	//
 	// See #88786 for more info.
-	let w = 500;
+	let w = 1200;
 	let screen_height = 1100;
 	if ( oldHighResImageLoading ) {
 		w = highRes ? 1199 : 600;

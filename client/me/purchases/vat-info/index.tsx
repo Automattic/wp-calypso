@@ -1,6 +1,5 @@
 import { CompactCard, Card } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -27,7 +26,6 @@ export default function VatInfoPage() {
 	const taxName = useTaxName(
 		vatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB'
 	);
-	const resetSupportInteraction = useResetSupportInteraction();
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
@@ -42,14 +40,13 @@ export default function VatInfoPage() {
 	const taxSupportPageLinkTitle = translate( 'VAT, GST, and other taxes' );
 
 	const handleOpenCenterChat = useCallback(
-		async ( e: React.MouseEvent< HTMLAnchorElement > ) => {
+		( e: React.MouseEvent< HTMLAnchorElement > ) => {
 			e.preventDefault();
 			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
-			await resetSupportInteraction();
 			reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
 		},
-		[ reduxDispatch, resetSupportInteraction, setNavigateToRoute, setShowHelpCenter ]
+		[ reduxDispatch, setNavigateToRoute, setShowHelpCenter ]
 	);
 
 	useRecordVatEvents( { fetchError } );

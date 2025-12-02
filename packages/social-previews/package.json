@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/social-previews",
-	"version": "2.1.0-beta.12",
+	"version": "2.1.0-beta.13",
 	"description": "A suite of components to generate previews for a post for both social and search engines.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -50,7 +50,7 @@
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
-		"@wordpress/components": "^29.9.0",
+		"@wordpress/components": "^30.8.0",
 		"@wordpress/element": "^6.23.0",
 		"@wordpress/i18n": "^5.23.0",
 		"clsx": "^2.1.1",
@@ -60,8 +60,8 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/dom": "^10.4.0",
-		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/dom": "^10.4.1",
+		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.0",
 		"postcss": "^8.5.3",
 		"react": "^18.3.1",

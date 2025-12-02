@@ -122,7 +122,7 @@ export async function updateCreditCard( {
 	const response = await wp.req.post(
 		{
 			path: '/upgrades/' + purchaseId + '/update-credit-card',
-			apiVersion: '1.1',
+			apiVersion: '1.2',
 		},
 		{
 			payment_partner,

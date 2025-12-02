@@ -1,28 +1,23 @@
+import { DotcomFeatures } from '@automattic/api-core';
+import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Button,
-	Card,
-	CardBody,
-	CheckboxControl,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { DotcomFeatures } from '../../data/constants';
 import { hasPlanFeature } from '../../utils/site-features';
-import SettingsPageHeader from '../settings-page-header';
-import type { SiteSettings } from '../../data/types';
-import type { Field, SimpleFormField } from '@wordpress/dataviews';
+import type { SiteSettings } from '@automattic/api-core';
+import type { Field, FormField } from '@wordpress/dataviews';
 
 const fields: Field< SiteSettings >[] = [
 	{
@@ -45,8 +40,8 @@ const fields: Field< SiteSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
-	fields: [ { id: 'wpcom_gifting_subscription' } as SimpleFormField ],
+	layout: { type: 'regular' as const },
+	fields: [ { id: 'wpcom_gifting_subscription' } as FormField ],
 };
 
 export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
@@ -99,14 +94,15 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Accept a gift subscription' ) }
 					description={ createInterpolateElement(
 						__(
-							'Allow a site visitor to cover the full cost of your site’s WordPress.com plan. <link>Learn more</link>'
+							'Allow a site visitor to cover the full cost of your site’s WordPress.com plan. <learnMoreLink />'
 						),
 						{
-							link: <InlineSupportLink supportContext="gift-a-subscription" />,
+							learnMoreLink: <InlineSupportLink supportContext="gift-a-subscription" />,
 						}
 					) }
 				/>
@@ -124,7 +120,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
@@ -133,7 +129,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>

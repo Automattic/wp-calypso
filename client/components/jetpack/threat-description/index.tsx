@@ -3,7 +3,7 @@ import { translate, TranslateResult } from 'i18n-calypso';
 import { PureComponent, ReactNode } from 'react';
 import DiffViewer from 'calypso/components/diff-viewer';
 import { ThreatStatus } from 'calypso/components/jetpack/threat-item/types';
-import MarkedLines from 'calypso/components/marked-lines';
+import MarkedLines from 'calypso/dashboard/components/marked-lines';
 
 import './style.scss';
 
@@ -14,7 +14,10 @@ export interface Props {
 	type?: string | ReactNode;
 	source?: string;
 	fix?: string | ReactNode;
-	context?: Record< string, unknown >;
+	context?: {
+		marks?: Record< string, [ number, number ][] >;
+		[ lineNumber: string ]: string | Record< string, [ number, number ][] > | undefined;
+	};
 	diff?: string;
 	rows?: Record< string, unknown >;
 	table?: string;

@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -7,7 +8,6 @@ import {
 	A4A_WOOPAYMENTS_SITE_SETUP_LINK,
 	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview/hooks/use-issue-and-assign-licenses';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AddWooPaymentsToSiteTable, { type WooPaymentsSiteItem } from './add-site-table';
@@ -18,24 +18,14 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 
 	const [ selectedSite, setSelectedSite ] = useState< WooPaymentsSiteItem | null >( null );
 
-	const { issueAndAssignLicenses, isLoading } = useIssueAndAssignLicenses(
-		selectedSite ? { ID: selectedSite.rawSite.blog_id, domain: selectedSite.site } : null,
-		{
-			redirectTo: addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, {
-				site_id: selectedSite?.rawSite.blog_id,
-			} ),
-		}
-	);
-
 	const handleAddSite = () => {
 		if ( selectedSite ) {
 			dispatch( recordTracksEvent( 'calypso_a4a_woopayments_add_site_button_click' ) );
-			issueAndAssignLicenses( [
-				{
-					slug: 'woocommerce-woopayments',
-					quantity: 1,
-				},
-			] );
+			page.redirect(
+				addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, {
+					site_id: selectedSite?.rawSite.blog_id,
+				} )
+			);
 		}
 	};
 
@@ -63,12 +53,7 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 			) }
 			onClose={ onClose }
 			extraActions={
-				<Button
-					variant="primary"
-					onClick={ handleAddSite }
-					disabled={ ! selectedSite || isLoading }
-					isBusy={ isLoading }
-				>
+				<Button variant="primary" onClick={ handleAddSite } disabled={ ! selectedSite }>
 					{ translate( 'Add WooPayments to selected site' ) }
 				</Button>
 			}

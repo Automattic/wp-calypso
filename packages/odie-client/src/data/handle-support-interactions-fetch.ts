@@ -1,13 +1,17 @@
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import type { SupportInteraction, SupportInteractionEvent } from '../types';
+import type {
+	SupportInteraction,
+	SupportInteractionDraft,
+	SupportInteractionEvent,
+} from '../types';
 
 export const handleSupportInteractionsFetch = async (
 	method: 'GET' | 'POST' | 'PUT',
 	path: string | null,
 	isTestMode: boolean,
-	data?: SupportInteractionEvent | { status: string }
+	data?: SupportInteractionDraft | SupportInteractionEvent | { status: string }
 ): Promise< SupportInteraction[] > => {
 	const fullPath = addQueryArgs( path ?? '', { is_test_mode: isTestMode } );
 	return canAccessWpcomApis()

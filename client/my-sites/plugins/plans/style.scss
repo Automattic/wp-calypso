@@ -1,4 +1,4 @@
-@import "@wordpress/base-styles/breakpoints";
+@import '@wordpress/base-styles/breakpoints';
 
 .plugin-plans-header {
 	.formatted-header__title {
@@ -20,7 +20,7 @@
 		display: block;
 		left: 0;
 
-		@media (max-width: 480px) {
+		@media ( max-width: 480px ) {
 			padding-left: 20px;
 		}
 
@@ -36,11 +36,10 @@
 			box-shadow: none;
 			padding-left: 0;
 			padding-right: 0;
-			width: calc(33% - 1em);
+			width: calc( 33% - 1em );
 			min-width: 250px;
 			display: inline-block;
 			vertical-align: top;
-
 
 			.action-panel__figure {
 				text-align: left;
@@ -49,8 +48,7 @@
 			.action-panel__title {
 				font-weight: normal;
 				font-size: $font-body;
-				color: var(--studio-gray-100);
-
+				color: var( --studio-gray-100 );
 			}
 
 			.gridicon {
@@ -58,7 +56,7 @@
 				width: 25px;
 				padding: 10px;
 				background: #f0f7fc;
-				border-radius: 8px; /* stylelint-disable-line scales/radii */
+				border-radius: 8px;
 			}
 
 			.action-panel__body {
@@ -79,14 +77,14 @@
 		padding: 0;
 		min-height: 100px;
 
-		@media (max-width: 660px) {
+		@media ( max-width: 660px ) {
 			padding: 0 25px;
 		}
 	}
 
 	&.action-card::before {
 		box-sizing: border-box;
-		content: "";
+		content: '';
 		background-color: #f0f7fc;
 		position: absolute;
 		width: 215vw;

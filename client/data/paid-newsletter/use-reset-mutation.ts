@@ -42,7 +42,6 @@ export const useResetMutation = (
 		...options,
 		onSuccess( ...args ) {
 			const [ data, { siteId, engine } ] = args;
-
 			queryClient.setQueryData( [ 'paid-newsletter-importer', siteId, engine ], data );
 			options.onSuccess?.( ...args );
 		},

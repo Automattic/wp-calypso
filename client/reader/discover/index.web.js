@@ -21,7 +21,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { getSelectedTabTitle, getDefaultTab } from './helper';
+import { getDefaultTab } from './helper';
 import { getPrivateRoutes, getDiscoverRoutes, getCurrentTab } from './routes';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
@@ -35,7 +35,6 @@ const discover = ( context, next ) => {
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
 	const selectedTab = getCurrentTab( context.path, getDefaultTab() );
-	const tabTitle = getSelectedTabTitle( selectedTab );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack(
@@ -50,7 +49,7 @@ const discover = ( context, next ) => {
 
 	context.primary = (
 		<>
-			<DiscoverDocumentHead tabTitle={ tabTitle } />
+			<DiscoverDocumentHead />
 			<AsyncLoad
 				require="calypso/reader/discover/discover-stream"
 				key="discover-page"

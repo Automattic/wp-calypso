@@ -3,7 +3,6 @@ import { PureComponent } from 'react';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
-import NavSegmented from 'calypso/components/section-nav/segmented';
 import NavTabs from 'calypso/components/section-nav/tabs';
 
 /**
@@ -110,8 +109,6 @@ class SectionNavigation extends PureComponent {
 					>
 						{ demoSections.siblingTabs }
 					</NavTabs>
-
-					<NavSegmented label="author">{ demoSections.siblingSegmented }</NavSegmented>
 
 					<Search
 						pinned

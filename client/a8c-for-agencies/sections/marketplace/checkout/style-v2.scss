@@ -1,0 +1,40 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+@mixin loading-effect {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var( --color-sidebar-menu-selected-background );
+}
+
+.checkout .hosting-dashboard-layout__body,
+.checkout .hosting-dashboard-layout__body-wrapper {
+	border-radius: 8px;
+}
+
+.checkout .hosting-dashboard-layout__container {
+	height: 100%;
+}
+
+.checkout .hosting-dashboard-layout__body {
+	padding: 0;
+	flex-grow: 1;
+
+	@include break-large {
+		background: linear-gradient(
+			to right,
+			var( --color-surface ) 0%,
+			var( --color-surface ) 70%,
+			var( --color-neutral-0 ) 70%,
+			var( --color-neutral-0 ) 100%
+		);
+	}
+}
+
+.checkout .hosting-dashboard-layout__body-wrapper {
+	height: 100%;
+
+	.checkout-main-content {
+		margin-top: 50px;
+	}
+}

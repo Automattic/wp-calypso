@@ -1,22 +1,25 @@
+import {
+	siteBySlugQuery,
+	stagingSiteSyncStateQuery,
+	isDeletingStagingSiteQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { stagingSiteSyncStateQuery } from '../../app/queries/site-staging-sites';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getProductionSiteId,
 	getStagingSiteId,
 	isStagingSiteSyncing,
 } from '../../utils/site-staging-site';
-import type { StagingSiteSyncDirection } from '../../data/types';
+import StagingSiteSyncModal from '../staging-site-sync-modal';
+import type { StagingSiteSyncDirection } from '@automattic/api-core';
 
-// TODO: We need to rewrite the modal, as it’s not compatible with v2.
-// Both the Modal and especially the FileBrowser rely heavily on Redux state
-// which makes integration problematic in the current setup.
-const StagingSiteSyncModal = lazy(
+// We are currently loading the StagingSiteSyncModalV1 back into the interim dashboard. Once these changes are live for users, we can remove this along with the old modal.
+const StagingSiteSyncModalV1 = lazy(
 	() =>
 		import(
 			/* webpackChunkName: "async-load-staging-site-sync-modal" */ 'calypso/sites/staging-site/components/staging-site-sync-modal'
@@ -41,6 +44,11 @@ export default function StagingSiteSyncDropdown( {
 
 	const productionSiteId = site ? getProductionSiteId( site ) : null;
 	const stagingSiteId = site ? getStagingSiteId( site ) : null;
+
+	const { data: isStagingSiteDeletionInProgress } = useQuery( {
+		...isDeletingStagingSiteQuery( stagingSiteId ?? 0 ),
+		enabled: !! stagingSiteId,
+	} );
 
 	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
 		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
@@ -74,57 +82,15 @@ export default function StagingSiteSyncDropdown( {
 
 	// The sync is not allowed if the staging site is in a transition or is deleting.
 	// We should consider this when we start to rewrite the StagingSiteSyncModal.
-	if ( ! productionSiteId || ! stagingSiteId ) {
+	if ( ! productionSiteId || ! stagingSiteId || isStagingSiteDeletionInProgress ) {
 		return null;
 	}
 
-	return (
-		<>
-			<Dropdown
-				className={ className }
-				popoverProps={ { placement: 'bottom-end' } }
-				renderToggle={ ( { isOpen, onToggle } ) => (
-					<Button
-						icon={ chevronDown }
-						iconPosition="right"
-						variant="secondary"
-						aria-expanded={ isOpen }
-						onClick={ () => onToggle() }
-						disabled={ isSyncing }
-					>
-						{ isSyncing ? __( 'Syncing…' ) : __( 'Sync' ) }
-					</Button>
-				) }
-				renderContent={ ( { onClose } ) => (
-					<div>
-						<MenuGroup className={ className }>
-							<MenuItem
-								onClick={ () => {
-									onClose();
-									handleOpenModal( 'pull' );
-								} }
-								icon={ cloudDownload }
-								iconPosition="left"
-							>
-								{ pullLabel }
-							</MenuItem>
-							<MenuItem
-								onClick={ () => {
-									onClose();
-									handleOpenModal( 'push' );
-								} }
-								icon={ cloudUpload }
-								iconPosition="left"
-							>
-								{ pushLabel }
-							</MenuItem>
-						</MenuGroup>
-					</div>
-				) }
-			/>
-			{ isModalOpen && (
+	const renderModal = () => {
+		if ( isDashboardBackport() ) {
+			return (
 				<Suspense fallback={ null }>
-					<StagingSiteSyncModal
+					<StagingSiteSyncModalV1
 						onClose={ handleCloseModal }
 						syncType={ syncDirection }
 						environment={ environment }
@@ -133,7 +99,65 @@ export default function StagingSiteSyncDropdown( {
 						onSyncStart={ handleSyncStart }
 					/>
 				</Suspense>
-			) }
+			);
+		}
+
+		return (
+			<StagingSiteSyncModal
+				onClose={ handleCloseModal }
+				syncType={ syncDirection }
+				environment={ environment }
+				productionSiteId={ productionSiteId }
+				stagingSiteId={ stagingSiteId }
+				onSyncStart={ handleSyncStart }
+			/>
+		);
+	};
+
+	return (
+		<>
+			<DropdownMenu
+				className={ className }
+				popoverProps={ { placement: 'bottom-end' } }
+				toggleProps={ {
+					__next40pxDefaultSize: true,
+					iconPosition: 'right',
+					variant: 'secondary',
+					disabled: isSyncing,
+					isBusy: isSyncing,
+				} }
+				icon={ chevronDown }
+				text={ isSyncing ? __( 'Syncing…' ) : __( 'Sync' ) }
+				/* DropdownMenu prop types are too strict here. We don't need a label because our button has visible text. */
+				/* We can't pass the button's text to `label` because it causes a tooltip to appear. */
+				label={ null as any } // eslint-disable-line @typescript-eslint/no-explicit-any
+			>
+				{ ( { onClose } ) => (
+					<MenuGroup className={ className }>
+						<MenuItem
+							onClick={ () => {
+								onClose();
+								handleOpenModal( 'pull' );
+							} }
+							icon={ cloudDownload }
+							iconPosition="left"
+						>
+							{ pullLabel }
+						</MenuItem>
+						<MenuItem
+							onClick={ () => {
+								onClose();
+								handleOpenModal( 'push' );
+							} }
+							icon={ cloudUpload }
+							iconPosition="left"
+						>
+							{ pushLabel }
+						</MenuItem>
+					</MenuGroup>
+				) }
+			</DropdownMenu>
+			{ isModalOpen && renderModal() }
 		</>
 	);
 }

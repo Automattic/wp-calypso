@@ -1,6 +1,6 @@
-import { formatNumber } from '@automattic/number-formatters';
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
-import { Popover, Icon } from '@wordpress/components';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { __experimentalHStack as HStack, Popover, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
@@ -9,115 +9,62 @@ import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
+import { purchaseSettingsRoute } from '../../app/router/me';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
-import SiteIcon from '../../sites/site-icon';
+import SiteIcon from '../../components/site-icon';
 import {
 	isRenewing,
 	isTransferredOwnership,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
+	getTitleForDisplay,
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
-import type { StoredPaymentMethod } from '../../data/me-payment-methods';
-import type { Purchase } from '../../data/purchase';
-import type { Site } from '../../data/site';
+import type { StoredPaymentMethod, Purchase, Site } from '@automattic/api-core';
 import type { SortDirection, View, Fields } from '@wordpress/dataviews';
-import type { ReactNode } from 'react';
+import type { ReactNode, ComponentProps } from 'react';
 
-const purchasesWideFields = [ 'status', 'payment-method' ];
-const purchasesDesktopFields = [ 'status' ];
-const purchasesMobileFields: string[] = [];
-const defaultPerPage = 10;
-const defaultSort = {
-	field: 'site',
-	direction: 'desc' as SortDirection,
-};
-export const purchasesDataView: View = {
+import './style.scss';
+
+export const WIDE_FIELDS = [ 'status', 'payment-method' ];
+export const DESKTOP_FIELDS = [ 'status' ];
+export const MOBILE_FIELDS: string[] = [];
+
+export const DEFAULT_VIEW: View = {
 	type: 'table',
-	page: 1,
-	search: '',
-	perPage: defaultPerPage,
+	perPage: 10,
 	titleField: 'product',
 	showTitle: true,
 	mediaField: 'site',
 	showMedia: true,
 	descriptionField: 'description',
 	showDescription: true,
-	fields: purchasesDesktopFields,
-	sort: defaultSort,
-	layout: {},
+	showLevels: false,
+	fields: DESKTOP_FIELDS,
+	sort: {
+		field: 'site',
+		direction: 'desc' as SortDirection,
+	},
+	layout: {
+		density: 'balanced',
+	},
 };
 
-function getDisplayName( purchase: Purchase ): string {
-	if (
-		purchase.is_jetpack_ai_product &&
-		purchase.renewal_price_tier_usage_quantity &&
-		purchase.price_tier_list?.length
-	) {
-		// translators: productName is the name of the product and quantity is a number
-		return sprintf( __( '%(productName)s (%(quantity)s requests per month)' ), {
-			productName: purchase.product_name,
-			quantity: formatNumber( purchase.renewal_price_tier_usage_quantity ),
-		} );
-	}
-
-	if (
-		purchase.is_jetpack_stats_product &&
-		! purchase.is_free_jetpack_stats_product &&
-		purchase.renewal_price_tier_usage_quantity &&
-		purchase.price_tier_list?.length
-	) {
-		// translators: productName is the name of the product and quantity is a number
-		return sprintf( __( '%(productName)s (%(quantity)s views per month)' ), {
-			productName: purchase.product_name,
-			quantity: formatNumber( purchase.renewal_price_tier_usage_quantity ),
-		} );
-	}
-
-	if (
-		'wordpress_com_1gb_space_addon_yearly' === purchase.product_slug &&
-		purchase.renewal_price_tier_usage_quantity
-	) {
-		// translators: productName is the name of the product and quantity is a number (GB stands for GigaBytes)
-		return sprintf( __( '%(productName)s %(quantity)s GB' ), {
-			productName: purchase.product_name,
-			quantity: purchase.renewal_price_tier_usage_quantity,
-		} );
-	}
-
-	if ( purchase.meta && ( purchase.is_domain_registration || purchase.is_domain ) ) {
-		return purchase.meta;
-	}
-	return purchase.product_name;
-}
-
-function getPurchaseUrl( purchase: Purchase ) {
-	const siteUrl = purchase.site_slug || purchase.domain;
-	const subscriptionId = purchase.ID;
-	if ( ! siteUrl ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Cannot display manage purchase page for subscription without site' );
-		throw new Error( 'Cannot display manage purchase page for subscription without site' );
-	}
-	if ( ! subscriptionId ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Cannot display manage purchase page for subscription without ID' );
-		throw new Error( 'Cannot display manage purchase page for subscription without ID' );
-	}
-	return `/me/purchases/${ siteUrl }/${ subscriptionId }`;
-}
-
-function getAddPaymentMethodUrlFor( purchase: Purchase ): string {
-	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
-}
-
-function InfoPopover( { children }: { children: ReactNode } ) {
+export function BillingPurchaseInfoPopover( { children }: { children: ReactNode } ) {
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
+	const handleClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
+		event.preventDefault();
+		event.stopPropagation();
+		setIsTooltipVisible( ( val ) => ! val );
+	};
+
 	return (
-		<span>
-			<Icon icon={ info } onClick={ () => setIsTooltipVisible( ( val ) => ! val ) } />
-			{ isTooltipVisible && <Popover>{ children }</Popover> }
+		<span style={ { display: 'inline-flex', pointerEvents: 'auto' } }>
+			<Button icon={ info } iconSize={ 24 } size="small" onClick={ handleClick } />
+			{ isTooltipVisible && (
+				<Popover className="billing-purchase-info-popover">{ children }</Popover>
+			) }
 		</span>
 	);
 }
@@ -132,13 +79,11 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		purchase.is_free_jetpack_stats_product
 	) {
 		return (
-			<div>
-				<img
-					src={ jetpackIcon }
-					alt="Jetpack icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ jetpackIcon }
+				alt="Jetpack icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
@@ -147,45 +92,35 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		purchase.product_slug.startsWith( 'passport' )
 	) {
 		return (
-			<div>
-				<img
-					src={ passportIcon }
-					alt="Passport icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ passportIcon }
+				alt="Passport icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
 	if ( isAkismetTemporarySitePurchase( purchase ) ) {
 		return (
-			<div>
-				<img
-					src={ akismetIcon }
-					alt="Akismet icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ akismetIcon }
+				alt="Akismet icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
 	if ( ! site ) {
 		return (
-			<div>
-				<img
-					src={ jetpackIcon }
-					alt="No site icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ jetpackIcon }
+				alt="No site icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
-	return (
-		<div>
-			<SiteIcon site={ site } size={ size } />
-		</div>
-	);
+	return <SiteIcon site={ site } size={ size } />;
 }
 
 function BackupPaymentMethodNotice() {
@@ -195,7 +130,7 @@ function BackupPaymentMethodNotice() {
 			link: <a href="/me/purchases/payment-methods" />,
 		}
 	);
-	return <InfoPopover>{ noticeText }</InfoPopover>;
+	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;
 }
 
 function OwnerInfo( {
@@ -215,7 +150,7 @@ function OwnerInfo( {
 			{ createInterpolateElement(
 				// translators: domain is a domain name
 				__(
-					"This license was activated on <domain /> by another user. If you haven't given the license to them on purpose, <link>contact our support team</link> for more assistance."
+					'This license was activated on <domain /> by another user. If you haven’t given the license to them on purpose, <link>contact our support team</link> for more assistance.'
 				),
 				{
 					domain: <strong>{ purchase.domain || purchase.site_slug || __( 'a site' ) }</strong>,
@@ -231,19 +166,42 @@ function OwnerInfo( {
 		</span>
 	);
 
-	return <InfoPopover>{ tooltipContent }</InfoPopover>;
+	return <BillingPurchaseInfoPopover>{ tooltipContent }</BillingPurchaseInfoPopover>;
+}
+
+function PurchaseSettingLink( {
+	purchase,
+	disabled,
+	...props
+}: ComponentProps< typeof Link > & { purchase: Purchase; disabled: boolean } ) {
+	return (
+		<Link
+			{ ...props }
+			to={ purchaseSettingsRoute.fullPath }
+			params={ Object.assign( {}, props.params, { purchaseId: purchase.ID } ) }
+			title={ __( 'Manage purchase' ) }
+			disabled={ disabled }
+			style={ {
+				width: 'auto',
+				minWidth: 'unset',
+				textDecoration: 'none',
+				pointerEvents: disabled ? 'none' : undefined,
+				...props.style,
+			} }
+		/>
+	);
 }
 
 export function getFields( {
 	sites,
 	paymentMethods,
 	transferredPurchases,
-	filterViewBySite,
+	siteFilter,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
-	filterViewBySite: ( site: Site ) => void;
+	siteFilter?: number;
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
@@ -264,7 +222,7 @@ export function getFields( {
 						elements: sites.map( ( site ) => {
 							return { value: String( site.ID ), label: `${ site.name } (${ site.slug })` };
 						} ),
-						filterBy: { operators: [ 'isAny' ] },
+						filterBy: { operators: [ 'isAny' ], ...( siteFilter && { isPrimary: true } ) },
 				  }
 				: { filterBy: false } ),
 			getValue: ( { item }: { item: Purchase } ) => {
@@ -273,11 +231,12 @@ export function getFields( {
 			},
 			// Render the site icon
 			render: ( { item }: { item: Purchase } ) => {
-				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
+				const site = sites.find( ( site ) => site.ID === item.blog_id );
+				const isTransferred = isTransferredOwnership( item.ID, transferredPurchases );
 				return (
-					<a href={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
+					<PurchaseSettingLink purchase={ item } disabled={ isTransferred } style={ { zIndex: 1 } }>
 						<PurchaseItemSiteIcon purchase={ item } site={ site } />
-					</a>
+					</PurchaseSettingLink>
 				);
 			},
 		},
@@ -290,10 +249,10 @@ export function getFields( {
 			enableHiding: false,
 			filterBy: false,
 			getValue: ( { item }: { item: Purchase } ) => {
-				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
+				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				// Render a bunch of things to make this easily searchable.
 				return (
-					getDisplayName( item ) +
+					getTitleForDisplay( item ) +
 					' ' +
 					item.blogname +
 					' ' +
@@ -305,16 +264,12 @@ export function getFields( {
 			render: ( { item }: { item: Purchase } ) => {
 				const isTransferred = isTransferredOwnership( item.ID, transferredPurchases );
 				return (
-					<div>
-						{ isTransferred ? (
-							getDisplayName( item ) + '&nbsp;'
-						) : (
-							<a href={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
-								{ getDisplayName( item ) }
-							</a>
-						) }
+					<HStack justify="flex-start" spacing={ 1 }>
+						<PurchaseSettingLink purchase={ item } disabled={ isTransferred }>
+							{ getTitleForDisplay( item ) }
+						</PurchaseSettingLink>
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
-					</div>
+					</HStack>
 				);
 			},
 		},
@@ -328,14 +283,12 @@ export function getFields( {
 			filterBy: false,
 			getValue: ( { item }: { item: Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
-				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
+				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return item.blogname + ' ' + ( item.site_slug || item.domain ) + ' ' + ( site?.URL ?? '' );
 			},
 			render: ( { item }: { item: Purchase } ) => {
-				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
-				return (
-					<PurchaseProduct purchase={ item } site={ site } filterViewBySite={ filterViewBySite } />
-				);
+				const site = sites.find( ( site ) => site.ID === item.blog_id );
+				return <PurchaseProduct purchase={ item } site={ site } />;
 			},
 		},
 		{
@@ -437,7 +390,7 @@ export function getFields( {
 				return item.expiry_date + ' ' + item.expiry_status;
 			},
 			render: ( { item }: { item: Purchase } ) => {
-				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
+				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
 					<div>
 						<PurchaseExpiryStatus purchase={ item } isDisconnectedSite={ ! site } />
@@ -471,16 +424,12 @@ export function getFields( {
 					);
 					isBackupMethodAvailable = backupPaymentMethodsWithoutCurrentPurchase.length >= 1;
 				}
-				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
+				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<div>
-						<PurchasePaymentMethod
-							purchase={ item }
-							isDisconnectedSite={ ! site }
-							getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
-						/>
+					<HStack justify="flex-start" spacing={ 1 }>
+						<PurchasePaymentMethod purchase={ item } isDisconnectedSite={ ! site } />
 						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
-					</div>
+					</HStack>
 				);
 			},
 		},
@@ -491,53 +440,12 @@ export const getItemId = ( purchase: Purchase ) => {
 	return purchase.ID.toString();
 };
 
-export function adjustViewFieldsForWidth(
-	width: number,
-	setView: ( setter: View | ( ( view: View ) => View ) ) => void
-): void {
-	if ( width >= 1280 ) {
-		setView( ( view ) => {
-			if ( view.fields?.length !== purchasesWideFields.length ) {
-				return {
-					...view,
-					fields: purchasesWideFields,
-				};
-			}
-			return view;
-		} );
-		return;
-	}
-	if ( width >= 960 ) {
-		setView( ( view ) => {
-			if ( view.fields?.length !== purchasesDesktopFields.length ) {
-				return {
-					...view,
-					fields: purchasesDesktopFields,
-				};
-			}
-			return view;
-		} );
-		return;
-	}
-	if ( width < 960 ) {
-		setView( ( view ) => {
-			if ( view.fields?.length !== purchasesMobileFields.length ) {
-				return {
-					...view,
-					fields: purchasesMobileFields,
-				};
-			}
-			return view;
-		} );
-		return;
-	}
-}
-
 export function usePurchasesListActions( {
 	transferredPurchases,
 }: {
 	transferredPurchases: Purchase[];
 } ) {
+	const navigate = useNavigate();
 	return useMemo(
 		() => [
 			{
@@ -553,10 +461,13 @@ export function usePurchasesListActions( {
 				},
 				callback: ( items: Purchase[] ) => {
 					const item = items[ 0 ];
-					window.location.href = getPurchaseUrl( item );
+					navigate( {
+						to: purchaseSettingsRoute.fullPath,
+						params: { purchaseId: item.ID },
+					} );
 				},
 			},
 		],
-		[ transferredPurchases ]
+		[ transferredPurchases, navigate ]
 	);
 }

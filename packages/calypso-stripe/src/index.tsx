@@ -11,6 +11,7 @@ import {
 	ComponentType,
 	PropsWithChildren,
 } from 'react';
+import type { StripeConfiguration } from '@automattic/api-core';
 import type {
 	Stripe,
 	StripeError,
@@ -21,6 +22,9 @@ import type {
 } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso-stripe' );
+
+// Re-export StripeConfiguration for backwards compatibility
+export type { StripeConfiguration } from '@automattic/api-core';
 
 type PaymentDetails = Record< string, unknown >;
 
@@ -38,12 +42,6 @@ export interface PaymentRequestOptions {
 	currency: string;
 	displayItems: PaymentRequestOptionsItem[];
 	total: PaymentRequestOptionsItem;
-}
-
-export interface StripeConfiguration {
-	js_url: string;
-	public_key: string;
-	processor_id: string;
 }
 
 export type ReloadSetupIntentId = () => void;
@@ -83,8 +81,8 @@ export type GetStripeSetupIntentId = () => Promise< {
 	setup_intent_id: StripeSetupIntentId | undefined;
 } >;
 export type GetStripeConfiguration = (
-	requestArgs: GetStripeConfigurationArgs & { needs_intent?: boolean }
-) => Promise< StripeConfiguration & { setup_intent_id: StripeSetupIntentId | undefined } >;
+	requestArgs: GetStripeConfigurationArgs
+) => Promise< StripeConfiguration >;
 
 export type StripePaymentRequestHandler = ( event: StripePaymentRequestHandlerEvent ) => void;
 
@@ -605,7 +603,7 @@ export function useStripeSetupIntentId(): StripeSetupIntentIdData {
  * details of the properties it provides.
  */
 export function withStripeProps< P >( WrappedComponent: ComponentType< P > ) {
-	return ( props: P ) => {
+	return function WithStripePropsWrapper( props: P ) {
 		const stripeData = useStripe();
 		const newProps = { ...props, ...stripeData };
 		return <WrappedComponent { ...newProps } />;

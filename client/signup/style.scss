@@ -272,7 +272,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 	--color-accent: var(--studio-wordpress-blue-50);
 	--color-accent-60: var(--studio-wordpress-blue-60);
 
-	.signup-header {
+	&:not(:has(.step-container-v2)) .signup-header {
 		.wordpress-logo {
 			position: absolute;
 			inset-inline-start: 20px;

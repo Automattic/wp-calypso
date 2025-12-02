@@ -28,7 +28,6 @@ const DiscoverStream = ( props ) => {
 	const headerAndNavigationProps = {
 		width: props.width,
 		selectedTab: selectedTab,
-		effectiveTabSelection: effectiveTabSelection,
 		selectedTag: selectedTag,
 	};
 

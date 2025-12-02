@@ -7,7 +7,7 @@ import {
 	useFeedRecommendationsQuery,
 } from 'calypso/data/reader/use-feed-recommendations-query';
 import UserRecommendedBlogs from '../recommended-blogs';
-import type { UserData } from 'calypso/lib/user/user';
+import type { UserProfileData } from 'calypso/lib/user/user';
 
 jest.mock( '@automattic/components', () => ( {
 	LoadingPlaceholder: () => <div data-testid="loading-placeholder">Loading...</div>,
@@ -42,7 +42,7 @@ describe( 'UserRecommendedBlogs', () => {
 		jest.clearAllMocks();
 	} );
 
-	const defaultUser: UserData = {
+	const defaultUser: UserProfileData = {
 		ID: 123,
 		user_login: 'testuser',
 		display_name: 'Test User',

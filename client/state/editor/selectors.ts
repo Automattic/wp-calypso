@@ -1,7 +1,5 @@
 import { get } from 'lodash';
-import { addQueryArgs } from 'calypso/lib/route';
 import { getEditedPost } from 'calypso/state/posts/selectors';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -14,28 +12,6 @@ import 'calypso/state/editor/init';
  */
 export function getEditorPostId( state: AppState ): number | undefined {
 	return state.editor.postId;
-}
-
-/**
- * Returns the editor URL for duplicating a given site ID, post ID pair.
- * @param  {Object} state       Global state tree
- * @param  {number} siteId      Site ID
- * @param  {number} postId      Post ID
- * @param  {string} type        Post type
- * @returns {string}             Editor URL path
- */
-export function getEditorDuplicatePostPath(
-	state: AppState,
-	siteId: number,
-	postId: number,
-	type = 'post'
-): string {
-	return addQueryArgs(
-		{
-			'jetpack-copy': postId,
-		},
-		getEditorUrl( state, siteId, null, type )
-	);
 }
 
 /**

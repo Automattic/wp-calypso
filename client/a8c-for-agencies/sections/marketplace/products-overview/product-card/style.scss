@@ -1,8 +1,8 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
-$woocommerce-purple-50: #720EEC;
+$woocommerce-purple-50: #720eec;
 
 .product-card {
 	display: flex;
@@ -20,7 +20,7 @@ $woocommerce-purple-50: #720EEC;
 
 	// Override discount text color with success color
 	.product-price-with-discount__price .product-price-with-discount__price-discount {
-		color: var(--color-success);
+		color: var( --color-success );
 	}
 }
 
@@ -28,7 +28,7 @@ $woocommerce-purple-50: #720EEC;
 	flex-grow: 1;
 	margin: 0;
 	padding: 1.5rem;
-	border: 1px solid var(--color-neutral-10);
+	border: 1px solid var( --color-neutral-10 );
 	border-radius: 4px;
 	user-select: none;
 	cursor: pointer;
@@ -44,14 +44,16 @@ $woocommerce-purple-50: #720EEC;
 .product-card:focus-within,
 .product-card.selected {
 	.product-card__inner {
-		border: 1px solid var(--color-border-light);
-		background: var(--color-border-light);
-		box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+		border: 1px solid var( --color-border-light );
+		background: var( --color-border-light );
+		box-shadow: 0 0 40px rgba( 0, 0, 0, 0.08 );
 	}
 }
 
 .product-card:focus-visible .components-button {
-	box-shadow: inset 0 0 0 1px var(--color-surface), 0 0 0 var(--wp-admin-border-width-focus) var(--color-accent);
+	box-shadow:
+		inset 0 0 0 1px var( --color-surface ),
+		0 0 0 var( --wp-admin-border-width-focus ) var( --color-accent );
 }
 
 @mixin product-card-block__details {
@@ -74,7 +76,7 @@ $woocommerce-purple-50: #720EEC;
 		@include product-card-line__details;
 	}
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		@include product-card-block__details;
 	}
 
@@ -91,7 +93,7 @@ $woocommerce-purple-50: #720EEC;
 	display: block;
 	width: 100%;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 		justify-content: space-between;
 		gap: 0.5rem;
@@ -106,7 +108,7 @@ $woocommerce-purple-50: #720EEC;
 	margin-block-start: auto;
 	padding-block-start: 1rem;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.button {
 			padding: 4px;
 		}
@@ -119,13 +121,12 @@ $woocommerce-purple-50: #720EEC;
 	text-align: center;
 	@include body-large;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 7px 12px;
 		@include heading-medium;
 		height: 2rem;
 	}
 }
-
 
 .product-card__heading {
 	display: flex;
@@ -134,7 +135,7 @@ $woocommerce-purple-50: #720EEC;
 }
 
 @mixin product-card-block__title {
-	flex: 0 1  calc(100% - 34px);
+	flex: 0 1 calc( 100% - 34px );
 }
 
 @mixin product-card-line__title {
@@ -143,7 +144,7 @@ $woocommerce-purple-50: #720EEC;
 
 .product-card__title {
 	@include heading-x-large;
-	color: var(--color-neutral-80);
+	color: var( --color-neutral-80 );
 
 	@include product-card-block__title;
 
@@ -151,7 +152,7 @@ $woocommerce-purple-50: #720EEC;
 		@include product-card-line__title;
 	}
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		@include product-card-block__title;
 	}
 
@@ -166,7 +167,7 @@ $woocommerce-purple-50: #720EEC;
 
 .product-card__description {
 	@include body-large;
-	color: var(--color-neutral-60);
+	color: var( --color-neutral-60 );
 	margin: 8px 0;
 }
 
@@ -182,14 +183,14 @@ $woocommerce-purple-50: #720EEC;
 	text-align: right;
 }
 
-.product-card__pricing:not(.is-compact) {
+.product-card__pricing:not( .is-compact ) {
 	@include product-card-block__pricing;
 
 	@include break-mobile {
 		@include product-card-line__pricing;
 	}
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		@include product-card-block__pricing;
 	}
 
@@ -230,7 +231,7 @@ $woocommerce-purple-50: #720EEC;
 	}
 
 	.form-radio:checked::before {
-		background: var(--color-link);
+		background: var( --color-link );
 	}
 }
 
@@ -240,7 +241,7 @@ $woocommerce-purple-50: #720EEC;
 	}
 
 	.product-card__inner {
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		border-radius: 8px;
 		border-color: #ddd;
 		padding: 16px;
 	}
@@ -264,7 +265,7 @@ $woocommerce-purple-50: #720EEC;
 	.product-card__description {
 		@include body-large;
 
-		color: var(--color-neutral-80);
+		color: var( --color-neutral-80 );
 		margin: 0;
 	}
 
@@ -274,7 +275,7 @@ $woocommerce-purple-50: #720EEC;
 		@include body-medium;
 
 		text-decoration: none;
-		color: var(--color-primary);
+		color: var( --color-primary );
 	}
 }
 
@@ -289,16 +290,16 @@ $woocommerce-purple-50: #720EEC;
 .product-card.is-woopayments:focus,
 .product-card.is-woopayments:active {
 	.product-card__inner {
-		background: $woocommerce-purple-50 url( calypso/assets/images/a8c-for-agencies/woo-product-card-bg.svg ) no-repeat bottom right;
+		background: $woocommerce-purple-50
+			url( calypso/assets/images/a8c-for-agencies/woo-product-card-bg.svg ) no-repeat bottom right;
 		border-color: $woocommerce-purple-50;
 	}
 
 	.product-card__title,
 	.product-card__description,
 	.license-lightbox-link {
-		color: var(--color-text-inverted);
+		color: var( --color-text-inverted );
 	}
-
 
 	.product-card__title {
 		@include heading-x-large;
@@ -312,12 +313,12 @@ $woocommerce-purple-50: #720EEC;
 		}
 	}
 
-	.product-card__select-button.is-primary:not(:disabled) {
+	.product-card__select-button.is-primary:not( :disabled ) {
 		&,
 		&:focus,
 		&:focus-visible {
 			color: $woocommerce-purple-50;
-			background-color: var(--color-surface);
+			background-color: var( --color-surface );
 			border: none;
 			outline: none;
 			box-shadow: none;
@@ -325,8 +326,8 @@ $woocommerce-purple-50: #720EEC;
 
 		&.is-selected {
 			background-color: $woocommerce-purple-50;
-			color: var(--color-text-inverted);
-			border: 1px solid var(--color-surface);
+			color: var( --color-text-inverted );
+			border: 1px solid var( --color-surface );
 		}
 	}
 

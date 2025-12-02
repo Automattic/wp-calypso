@@ -29,7 +29,7 @@ interface Props {
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
 
-const defaultLayouts = { table: {} };
+const defaultLayouts = { table: {}, list: {} };
 
 const openPluginSitesPane = ( plugin: Plugin ) => {
 	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {

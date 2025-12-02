@@ -30,7 +30,7 @@ const DnsActionsMenu = ( {
 							onRestoreDefaultARecords();
 						} }
 					>
-						{ __( 'Restore default A records ↗' ) }
+						{ __( 'Restore default A records' ) }
 					</MenuItem>
 					<MenuItem
 						disabled={ hasDefaultCnameRecord }
@@ -39,7 +39,7 @@ const DnsActionsMenu = ( {
 							onRestoreDefaultCnameRecord();
 						} }
 					>
-						{ __( 'Restore default CNAME record ↗' ) }
+						{ __( 'Restore default CNAME record' ) }
 					</MenuItem>
 					<MenuItem
 						disabled={ hasDefaultEmailRecords }
@@ -48,7 +48,7 @@ const DnsActionsMenu = ( {
 							onRestoreDefaultEmailRecords();
 						} }
 					>
-						{ __( 'Restore default email records ↗' ) }
+						{ __( 'Restore default email records' ) }
 					</MenuItem>
 				</MenuGroup>
 			) }

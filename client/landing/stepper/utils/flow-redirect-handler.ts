@@ -15,6 +15,7 @@ const REMOVED_TAILORED_FLOWS = [
 	{ flow: 'site-setup-wg', to: '/setup/site-setup' },
 	{ flow: 'migration-signup', to: '/setup/site-migration' },
 	{ flow: 'hosted-site-migration', to: '/setup/site-migration' },
+	{ flow: 'domain-upsell', to: '/setup/domain-and-plan' },
 ];
 
 export const isRemovedFlow = ( flowToCheck: string ) =>

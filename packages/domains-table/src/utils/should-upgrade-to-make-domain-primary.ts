@@ -6,6 +6,7 @@ interface Attributes {
 	canSetPrimaryDomainForSite: boolean;
 	userCanSetPrimaryDomains: boolean;
 	isSiteOnFreePlan: boolean;
+	isFlexSite: boolean;
 }
 
 export const shouldUpgradeToMakeDomainPrimary = (
@@ -15,11 +16,13 @@ export const shouldUpgradeToMakeDomainPrimary = (
 		isSiteOnFreePlan,
 		userCanSetPrimaryDomains,
 		canSetPrimaryDomainForSite,
+		isFlexSite,
 	}: Attributes
 ) => {
 	return (
 		! userCanSetPrimaryDomains &&
 		isSiteOnFreePlan &&
+		! isFlexSite &&
 		( domain.type === domainTypes.REGISTERED || domain.type === domainTypes.MAPPED ) &&
 		! isDomainOnly &&
 		! domain.isPrimary &&

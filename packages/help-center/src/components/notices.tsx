@@ -5,9 +5,11 @@ import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Icon, info } from '@wordpress/icons';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useSupportStatus } from '../data/use-support-status';
 import useChatStatus from '../hooks/use-chat-status';
 import './notices.scss';
 import { HELP_CENTER_STORE } from '../stores';
@@ -61,38 +63,36 @@ export const BlockedZendeskNotice: React.FC = () => {
 
 export const EmailFallbackNotice: React.FC = () => {
 	const navigate = useNavigate();
+	const { search } = useLocation();
+	const { data: supportStatus } = useSupportStatus();
+	const params = new URLSearchParams( search );
+	params.set( 'wapuuFlow', 'true' );
+	const url = '/contact-form?' + params.toString();
+
+	const title = supportStatus?.eligibility?.is_chat_restricted
+		? __( 'Live chat is currently unavailable.', __i18n_text_domain__ )
+		: __( 'Live chat is temporarily unavailable for scheduled maintenance.', __i18n_text_domain__ );
+
+	const message = __(
+		'Please reach out via <email>email</email> if you need assistance.',
+		__i18n_text_domain__
+	);
+
 	return (
-		<div className="help-center__notice">
+		<div className="help-center__notice email-fallback-notice">
+			<Icon icon={ info } className="help-center__notice-icon" />
 			<p>
-				<strong>
-					{ __(
-						'Live chat is temporarily unavailable for scheduled maintenance.',
-						__i18n_text_domain__
-					) }
-				</strong>
+				<strong>{ title }</strong>
 				&nbsp;
-				{ createInterpolateElement(
-					__(
-						'We’re sorry for the inconvenience and appreciate your patience. Please feel free to reach out via <email>email</email> or check our <guides>Support Guides</guides> in the meantime.',
-						__i18n_text_domain__
+				{ createInterpolateElement( message, {
+					email: (
+						<Button
+							variant="link"
+							className="help-center__notice-link"
+							onClick={ () => navigate( url ) }
+						/>
 					),
-					{
-						email: (
-							<Button
-								variant="link"
-								className="help-center__notice-link"
-								onClick={ () => navigate( '/contact-form?mode=EMAIL&wapuuFlow=true' ) }
-							/>
-						),
-						guides: (
-							<Button
-								variant="link"
-								className="help-center__notice-link"
-								onClick={ () => navigate( '/' ) }
-							/>
-						),
-					}
-				) }
+				} ) }
 			</p>
 		</div>
 	);

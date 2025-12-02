@@ -1,12 +1,12 @@
+import { DomainSubtype, FreeSiteAddressType } from '@automattic/api-core';
+import {
+	validateSiteAddressChangeMutation,
+	changeSiteAddressChangeMutation,
+	domainsQuery,
+} from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Button,
-	ExternalLink,
-	Icon,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, ExternalLink, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -14,16 +14,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import {
-	validateSiteAddressChangeMutation,
-	changeSiteAddressChangeMutation,
-} from '../../app/queries/site-address-change';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
+import { ButtonStack } from '../../components/button-stack';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
-import { FreeSiteAddressType } from '../../data/site-address-change';
-import type { Site, DomainSummary } from '../../data/types';
+import type { Site, DomainSummary } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
 type NewSiteAddressFormData = {
@@ -50,10 +45,9 @@ const SubdomainInputControlEdit = < Item, >( {
 		<SuffixInputControl
 			label={ field.label }
 			value={ getValue( { item: data } ) }
-			__next40pxDefaultSize
-			suffix={ <Text variant="muted">{ DOMAIN_SUFFIX }</Text> }
-			onChange={ ( newValue ) => {
-				onChange( { [ id ]: newValue } );
+			suffix={ DOMAIN_SUFFIX }
+			onChange={ ( newValue: string ) => {
+				onChange( { [ id ]: newValue } as Partial< Item > );
 			} }
 		/>
 	);
@@ -71,7 +65,12 @@ const NewSiteAddressForm = ( {
 	onCancel: () => void;
 } ) => {
 	const { createErrorNotice } = useDispatch( noticesStore );
-	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
+	const { data: siteDomains } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.blog_id === site.ID );
+		},
+	} );
 	const mutation = useMutation( validateSiteAddressChangeMutation() );
 	const [ formData, setFormData ] = useState( {
 		subdomain: '',
@@ -88,15 +87,19 @@ const NewSiteAddressForm = ( {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'subdomain' ],
 	};
 
 	const wpcomDomain = siteDomains?.find(
-		( domain ) => domain.wpcom_domain && ! domain.is_wpcom_staging_domain
+		( domain ) =>
+			domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS &&
+			! domain.tags.includes( 'wpcom_staging' )
 	);
 
-	const hasCustomDomain = !! siteDomains?.find( ( domain ) => ! domain.wpcom_domain );
+	const hasCustomDomain = !! siteDomains?.find(
+		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+	);
 
 	const isDisabled = ! formData.subdomain || formData.subdomain === currentSubdomain;
 
@@ -157,7 +160,7 @@ const NewSiteAddressForm = ( {
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }
 					/>
-					<HStack justify="flex-end">
+					<ButtonStack justify="flex-end">
 						<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onCancel }>
 							{ __( 'Cancel' ) }
 						</Button>
@@ -169,7 +172,7 @@ const NewSiteAddressForm = ( {
 						>
 							{ __( 'Next' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</form>
 		</VStack>
@@ -211,7 +214,7 @@ const ConfirmNewSiteAddressForm = ( {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'accept_undone' ],
 	};
 
@@ -282,7 +285,7 @@ const ConfirmNewSiteAddressForm = ( {
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }
 					/>
-					<HStack justify="flex-end">
+					<ButtonStack justify="flex-end">
 						<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onBack }>
 							{ __( 'Back' ) }
 						</Button>
@@ -294,7 +297,7 @@ const ConfirmNewSiteAddressForm = ( {
 						>
 							{ __( 'Confirm' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</form>
 		</VStack>

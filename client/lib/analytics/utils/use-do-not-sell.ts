@@ -2,11 +2,11 @@ import {
 	recordTracksEvent,
 	getTrackingPrefs,
 	setTrackingPrefs,
-	isRegionInCcpaZone,
 } from '@automattic/calypso-analytics';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { isRegionInCcpaZone } from 'calypso/dashboard/app/analytics/geo-privacy';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import { refreshCountryCodeCookieGdpr } from '.';
 

@@ -33,7 +33,7 @@ const MyApp = () => (
 `OdieAssistantProviderProps`
 
 - `botName?: string` - Display the bot's name in the chat.
-- `botNameSlug: OdieAllowedBots` - Configure bot settings in WordPress.com.
+- `botNameSlug: OdieAllowedBots` - Set the botSlug that will be used when creating interactions.
 - `enabled?: boolean` - Toggle chat component visibility.
 - `initialUserMessage?: string | null | undefined` - Set an initial message from the user.
 - `isMinimized?: boolean` - Tells if parent component app is minimized.
@@ -47,7 +47,7 @@ const MyApp = () => (
 const defaultContextInterfaceValues = {
 	addMessage: noop, // Function to add a new message to the chat.
 	botName: 'Wapuu', // Default name of the chat bot.
-	botNameSlug: 'wpcom-support-chat', // Identifier for the chat bot configuration.
+	botNameSlug: 'wpcom-support-chat', // Identifier for the chat bot configuration. It is only used when creating new interactions. Existing interactions used their `botSlug` attribute.
 	chat: { context: { section_name: '', site_id: null }, messages: [] }, // Current chat state, including context and messages.
 	clearChat: noop, // Function to clear the current chat.
 	isLoading: false, // Flag for general loading state.

@@ -2,18 +2,15 @@ import { Badge, Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import withProductLightbox, {
-	ProductLightboxActivatorProps,
-	WithProductLightboxProps,
-} from 'calypso/a8c-for-agencies/sections/marketplace/products-overview/hocs/with-product-lightbox';
+import { A4A_WOOPAYMENTS_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import WooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/woopayments.svg';
 
-type Props = WithProductLightboxProps &
-	ProductLightboxActivatorProps & {
-		onDismiss: () => void;
-	};
+type Props = {
+	onDismiss: () => void;
+	onClick: () => void;
+};
 
-const WooPaymentsFeaturedCard = ( { onDismiss, onShowLightbox }: Props ) => {
+const WooPaymentsFeaturedCard = ( { onDismiss, onClick }: Props ) => {
 	const translate = useTranslate();
 
 	return (
@@ -51,7 +48,8 @@ const WooPaymentsFeaturedCard = ( { onDismiss, onShowLightbox }: Props ) => {
 				className="overview__featured-woopayments-button"
 				variant="primary"
 				__next40pxDefaultSize
-				onClick={ onShowLightbox }
+				href={ A4A_WOOPAYMENTS_OVERVIEW_LINK }
+				onClick={ onClick }
 			>
 				{ translate( 'View details and start earning' ) }
 			</Button>
@@ -59,4 +57,4 @@ const WooPaymentsFeaturedCard = ( { onDismiss, onShowLightbox }: Props ) => {
 	);
 };
 
-export default withProductLightbox( WooPaymentsFeaturedCard );
+export default WooPaymentsFeaturedCard;

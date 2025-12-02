@@ -1,20 +1,30 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useI18n } from '@wordpress/react-i18n';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { getTimestamp } from '../utils';
-import type { OdieConversation } from '../types';
+import type { OdieConversation, SupportInteraction } from '../types';
 
 /**
  * Retrieves the list of conversations handled by AI.
  */
-export const useGetOdieConversations = ( enabled = true ) => {
-	const { __ } = useI18n();
-	const { botNameSlug, version } = useOdieAssistantContext();
+export const useGetOdieConversations = (
+	supportInteractions: SupportInteraction[] = [],
+	enabled = true
+) => {
+	const { version } = useOdieAssistantContext();
+	const botSlugs = Array.from(
+		new Set(
+			supportInteractions?.map( ( interaction ) => {
+				// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
+				return interaction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
+			} )
+		)
+	).join( ',' );
 
 	return useQuery< OdieConversation[], Error >( {
-		queryKey: [ 'odie-interactions', botNameSlug, version ],
+		queryKey: [ 'odie-interactions', botSlugs, version ],
 		queryFn: async (): Promise< OdieConversation[] > => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
@@ -25,11 +35,11 @@ export const useGetOdieConversations = ( enabled = true ) => {
 			const response: any[] = canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'GET',
-						path: `/odie/conversations/${ botNameSlug }?${ queryParams }`,
+						path: `/odie/conversations/${ botSlugs }?${ queryParams }`,
 						apiNamespace: 'wpcom/v2',
 				  } )
 				: await apiFetch( {
-						path: `/help-center/odie/conversations/${ botNameSlug }?${ queryParams }`,
+						path: `/help-center/odie/conversations/${ botSlugs }?${ queryParams }`,
 						method: 'GET',
 				  } );
 
@@ -41,7 +51,6 @@ export const useGetOdieConversations = ( enabled = true ) => {
 					messages: summary
 						? [
 								{
-									displayName: __( 'Me', __i18n_text_domain__ ),
 									received: getTimestamp( summary.created_at ),
 									role: summary.role ?? 'bot',
 									text: summary.content ?? '',
@@ -53,7 +62,7 @@ export const useGetOdieConversations = ( enabled = true ) => {
 		},
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,
-		enabled,
+		enabled: enabled && supportInteractions?.length > 0,
 		staleTime: 1000 * 30, // 30 seconds
 	} );
 };

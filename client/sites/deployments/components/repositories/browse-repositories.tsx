@@ -9,12 +9,12 @@ import { GitHubBrowseRepositoriesList } from './repository-list';
 
 import './style.scss';
 
-type GitHubBrowseRepositoriesProps = {
-	initialInstallationId?: number;
-} & Pick< ComponentProps< typeof GitHubBrowseRepositoriesList >, 'onSelectRepository' >;
+type GitHubBrowseRepositoriesProps = Pick<
+	ComponentProps< typeof GitHubBrowseRepositoriesList >,
+	'onSelectRepository'
+>;
 
 export const GitHubBrowseRepositories = ( {
-	initialInstallationId,
 	onSelectRepository,
 }: GitHubBrowseRepositoriesProps ) => {
 	const { __ } = useI18n();
@@ -24,9 +24,7 @@ export const GitHubBrowseRepositories = ( {
 		installations,
 		onNewInstallationRequest,
 		isLoadingInstallations,
-	} = useLiveInstallations( {
-		initialInstallationId: initialInstallationId,
-	} );
+	} = useLiveInstallations();
 
 	const [ query, setQuery ] = useState( '' );
 

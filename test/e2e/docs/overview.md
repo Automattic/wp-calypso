@@ -1,8 +1,4 @@
-<div style="width: 45%; float:left" align="left"><p></p> </div>
-<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./setup.md">Setup --></a> </div>
-
-<br><br>
+[⬅️ Top](./../README.md) | [Setup ➡️](./setup.md)
 
 # Overview
 
@@ -29,7 +25,7 @@ To accelerate development by being a force for continuous improvement, and help 
 
 ## What is tested?
 
-These end-to-end test focus on several key areas:
+These end-to-end tests focus on several key areas:
 
 - Calypso features.
 - interaction between Calypso and Gutenberg editor.

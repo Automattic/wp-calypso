@@ -1,0 +1,14 @@
+.security-two-step-auth-main-page {
+	// Hacks to make DataViews look non-interactive
+    .dataviews-view-list {
+        button.dataviews-view-list__item {
+            display: none;
+        }
+
+        div[role="row"]:hover {
+            .dataviews-view-list__fields {
+                color: $gray-700;
+            }
+        }
+    }
+}

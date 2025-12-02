@@ -4,22 +4,61 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_INSTALL_THEMES,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	WPCOM_FEATURES_COMMUNITY_THEMES,
+	WPCOM_FEATURES_SENSEI_THEMES,
 } from '@automattic/calypso-products';
-import {
-	FREE_THEME,
-	PREMIUM_THEME,
-	DOT_ORG_THEME,
-	BUNDLED_THEME,
-	MARKETPLACE_THEME,
-	PERSONAL_THEME,
-} from '@automattic/design-picker';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getThemeType, getThemeSoftwareSet } from 'calypso/state/themes/selectors';
+import { getThemeSoftwareSet, getThemeTierForTheme } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
 
 const extraFeatureChecks = {
 	'woo-on-plans': [ FEATURE_WOOP ],
+};
+
+const getThemeTierFeatureChecks = ( state, siteId, themeId ) => {
+	const themeTier = getThemeTierForTheme( state, themeId );
+
+	switch ( themeTier.slug ) {
+		case 'free': {
+			return [];
+		}
+
+		case 'personal': {
+			return [ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ];
+		}
+
+		case 'premium': {
+			return [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
+		}
+
+		case 'community': {
+			return [ FEATURE_INSTALL_THEMES, WPCOM_FEATURES_COMMUNITY_THEMES ];
+		}
+
+		case 'sensei': {
+			return [ WPCOM_FEATURES_SENSEI_THEMES, WPCOM_FEATURES_ATOMIC ];
+		}
+
+		case 'woocommerce': {
+			const themeSoftwareSet = getThemeSoftwareSet( state, themeId );
+			const themeSoftware = themeSoftwareSet[ 0 ];
+
+			return [
+				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+				WPCOM_FEATURES_ATOMIC,
+				...( extraFeatureChecks[ themeSoftware ] || [] ),
+			];
+		}
+
+		case 'partner': {
+			return [ WPCOM_FEATURES_ATOMIC ];
+		}
+
+		default: {
+			return null;
+		}
+	}
 };
 
 /**
@@ -30,40 +69,11 @@ const extraFeatureChecks = {
  * @returns {boolean}         Whether the theme is included in the site plan.
  */
 export function canUseTheme( state, siteId, themeId ) {
-	const type = getThemeType( state, themeId );
+	const featureChecks = getThemeTierFeatureChecks( state, siteId, themeId );
 
-	if ( type === FREE_THEME ) {
-		return true;
+	if ( featureChecks === null ) {
+		return false;
 	}
 
-	if ( type === PERSONAL_THEME ) {
-		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_LIMITED );
-	}
-
-	if ( type === PREMIUM_THEME ) {
-		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED );
-	}
-
-	if ( type === DOT_ORG_THEME ) {
-		return siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
-	}
-
-	if ( type === BUNDLED_THEME ) {
-		const themeSoftwareSet = getThemeSoftwareSet( state, themeId );
-		const themeSoftware = themeSoftwareSet[ 0 ];
-
-		const featureChecks = [
-			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-			WPCOM_FEATURES_ATOMIC,
-			...( extraFeatureChecks[ themeSoftware ] || [] ),
-		];
-
-		return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
-	}
-
-	if ( type === MARKETPLACE_THEME ) {
-		return siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
-	}
-
-	return false;
+	return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
 }

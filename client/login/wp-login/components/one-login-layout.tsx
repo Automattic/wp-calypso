@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
@@ -21,6 +22,12 @@ interface OneLoginLayoutProps {
 	signupUrl?: string;
 	isSectionSignup?: boolean;
 	loginUrl?: string;
+	isLostPasswordView?: boolean;
+	noThanksRedirectUrl?: string;
+	/**
+	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
+	 */
+	columnWidth?: 4 | 5 | 6 | 8 | 10;
 }
 
 const OneLoginLayout = ( {
@@ -29,13 +36,19 @@ const OneLoginLayout = ( {
 	signupUrl: signupUrlProp,
 	isSectionSignup,
 	loginUrl,
+	isLostPasswordView,
+	noThanksRedirectUrl,
+	columnWidth,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
-	const locale = useSelector( getCurrentUserLocale );
+	const urlLocale = useLocale();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const userLocale = useSelector( getCurrentUserLocale );
+	// For logged-in users, use their user locale setting. For logged-out users, use URL locale.
+	const locale = isLoggedIn && userLocale ? userLocale : urlLocale;
 	const currentRoute = useSelector( getCurrentRoute );
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
-	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 
@@ -53,6 +66,10 @@ const OneLoginLayout = ( {
 				dispatch( redirectToLogout( signupUrl ) );
 			}
 		};
+
+		if ( isLostPasswordView ) {
+			return null;
+		}
 
 		return (
 			<Step.LinkButton href={ signupUrl } key="sign-up-link" onClick={ handleClick } rel="external">
@@ -73,15 +90,43 @@ const OneLoginLayout = ( {
 		);
 	};
 
+	const NoThanksLink = () => {
+		if ( ! noThanksRedirectUrl ) {
+			return null;
+		}
+
+		const handleClick = () => {
+			recordTracksEvent( 'calypso_login_no_thanks_click', {
+				page: currentRoute,
+			} );
+		};
+
+		const href = noThanksRedirectUrl;
+
+		return (
+			<Step.LinkButton href={ href } key="no-thanks-link" rel="external" onClick={ handleClick }>
+				{ translate( 'No, thanks' ) }
+			</Step.LinkButton>
+		);
+	};
+
+	const topBar = (): JSX.Element => {
+		const rightElement = (
+			<nav className="wp-login__one-login-layout-top-right">
+				{ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
+				{ noThanksRedirectUrl && <NoThanksLink /> }
+			</nav>
+		);
+
+		return <Step.TopBar rightElement={ rightElement } compactLogo="always" />;
+	};
+
+	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;
+
 	return (
 		<Step.CenteredColumnLayout
-			columnWidth={ 6 }
-			topBar={
-				<Step.TopBar
-					rightElement={ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
-					compactLogo="always"
-				/>
-			}
+			columnWidth={ effectiveColumnWidth }
+			topBar={ topBar() }
 			verticalAlign="center"
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">

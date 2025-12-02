@@ -4,14 +4,16 @@ import {
 	getCountryTaxRequirements,
 	CountryListItem,
 } from '@automattic/wpcom-checkout';
+import { Notice } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { camelCase, deburr } from 'lodash';
+import { camelCase } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import CountrySelectMenu from 'calypso/my-sites/checkout/src/components/country-select-menu';
@@ -222,7 +224,7 @@ export class ManagedContactDetailsFormFields extends Component<
 		// Strip leading and trailing whitespace
 		const updatedValue =
 			this.props.contactDetails[ camelCase( name ) as keyof DomainContactDetailsData ];
-		const sanitizedValue = deburr( typeof updatedValue === 'string' ? updatedValue.trim() : '' );
+		const sanitizedValue = typeof updatedValue === 'string' ? updatedValue.trim() : '';
 		this.handleFieldChange( name, sanitizedValue );
 	};
 
@@ -358,6 +360,24 @@ export class ManagedContactDetailsFormFields extends Component<
 						name="organization"
 						text={ translate( '+ Add organization name' ) }
 						toggled={ this.props.contactDetails.organization || isOrganizationFieldRequired }
+						placeholder={ translate( 'Organization (optional)' ) }
+						description={
+							<Notice status="warning" isDismissible={ false }>
+								{ translate(
+									'By completing the organization field, you agree that the listed organization will be considered the legal domain owner and that this information will be publicly visible. You can choose to hide it using {{a}}privacy protection{{/a}}.',
+									{
+										components: {
+											a: (
+												<InlineSupportLink
+													supportContext="domain-registrations-and-privacy"
+													showIcon={ false }
+												/>
+											),
+										},
+									}
+								) }
+							</Notice>
+						}
 					/>
 				</div>
 

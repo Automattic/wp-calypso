@@ -142,3 +142,13 @@ Menu children to be rendered.
 </table>
 
 If `true`, then the menu icon will be displayed in light gray and will not be clickable.
+
+### `allowEventBubbling`
+
+<table>
+	<tr><td>Type</td><td><code>PropTypes.bool</code></td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+	<tr><td>Default</td><td><code>false</code></td></tr>
+</table>
+
+If `true`, then the event won't be prevented from bubbling up to parent elements, allowing natural link navigation when href is provided. This is useful for navigation buttons that need to work with client-side routing. If `false` (default), event propagation is stopped to prevent interference with parent elements like FoldableCard.

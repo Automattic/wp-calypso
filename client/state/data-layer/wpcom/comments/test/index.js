@@ -42,6 +42,7 @@ describe( 'wpcom-api', () => {
 							method: 'GET',
 							path: '/sites/2916284/posts/1010/replies',
 							query,
+							retryPolicy: { name: 'NO_RETRY' },
 						},
 						action
 					)
@@ -88,6 +89,7 @@ describe( 'wpcom-api', () => {
 								...query,
 								before: '2017-05-25T19:41:25.841Z',
 							},
+							retryPolicy: { name: 'NO_RETRY' },
 						},
 						action
 					)

@@ -84,6 +84,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 								site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false
 							}
 							isSiteOnFreePlan={ site?.plan?.is_free ?? true }
+							isFlexSite={ site?.is_wpcom_flex ?? false }
 							isSimpleSite={ ! site?.is_wpcom_atomic }
 						/>
 					) }

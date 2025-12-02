@@ -2,10 +2,6 @@ import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
 import {
-	isInternalA4AAgencyDomain,
-	isSitelessDomainForBillingAndReceipts,
-} from 'calypso/me/purchases/utils';
-import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	TransactionAmount,
@@ -26,15 +22,10 @@ function renderServiceNameDescription(
 	const plan = capitalPDangit( transaction.variation );
 	const termLabel = getTransactionTermLabel( transaction, translate );
 
-	// Hide domains for siteless transactions (Passport URL (siteless.marketplace.wp.com), A4A agency, and a4a purchases)
-	// These are internal/system domains that don't represent user sites
-	const isSitelessDomain = isSitelessDomainForBillingAndReceipts( transaction.domain );
-	const shouldShowDomain =
-		transaction.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( transaction.domain );
 	return (
 		<div>
 			<strong>{ plan }</strong>
-			{ shouldShowDomain && <small>{ transaction.domain }</small> }
+			{ transaction.domain && <small>{ transaction.domain }</small> }
 			{ termLabel && <small>{ termLabel }</small> }
 			{ transaction.licensed_quantity && (
 				<small>{ renderTransactionQuantitySummary( transaction, translate ) }</small>
@@ -109,7 +100,7 @@ function getUniqueTransactionTypes(
 		} );
 
 	return Array.from( typeMap.entries() )
-		.sort( ( [ a ], [ b ] ) => a.localeCompare( b ) )
+		.sort( ( [ a ], [ b ] ) => String( a ).localeCompare( String( b ) ) )
 		.map( ( [ value, label ] ) => ( {
 			value,
 			label,
@@ -166,7 +157,7 @@ export function getFieldDefinitions(
 			getValue: ( { item }: { item: BillingTransaction } ) => {
 				const [ transactionItem ] = groupDomainProducts( item.items, translate );
 				if ( transactionItem.product === transactionItem.variation ) {
-					return transactionItem.product;
+					return String( transactionItem.product );
 				}
 				return capitalPDangit( transactionItem.variation );
 			},
@@ -188,7 +179,7 @@ export function getFieldDefinitions(
 			},
 			getValue: ( { item }: { item: BillingTransaction } ) => {
 				const [ transactionItem ] = groupDomainProducts( item.items, translate );
-				return transactionItem.type;
+				return String( transactionItem.type || '' );
 			},
 		},
 		{
@@ -200,7 +191,7 @@ export function getFieldDefinitions(
 			enableHiding: false,
 			filterBy: false,
 			getValue: ( { item }: { item: BillingTransaction } ) => {
-				return item.amount_integer;
+				return String( item.amount_integer );
 			},
 			render: ( { item }: { item: BillingTransaction } ) => {
 				return <TransactionAmount transaction={ item } />;

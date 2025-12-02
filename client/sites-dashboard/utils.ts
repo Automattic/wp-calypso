@@ -39,12 +39,14 @@ export function getSiteAdminUrl( site: SiteExcerptNetworkData ) {
 }
 
 export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
-	return site.jetpack && ! site?.is_wpcom_atomic;
+	return site.jetpack && ! site?.is_wpcom_atomic && ! site?.is_wpcom_flex;
 };
 
 // Sites connected through A4A plugin are listed on wordpress.com/sites even when Jetpack is deactivated.
 export const isDisconnectedJetpackAndNotAtomic = ( site: SiteExcerptNetworkData ) => {
-	return ! site?.is_wpcom_atomic && site?.jetpack_connection && ! site?.jetpack;
+	return (
+		! site?.is_wpcom_atomic && site?.jetpack_connection && ! site?.jetpack && ! site?.is_wpcom_flex
+	);
 };
 
 export const isSimpleSite = ( site: SiteExcerptNetworkData ) => {

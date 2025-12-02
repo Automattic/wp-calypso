@@ -1,3 +1,8 @@
+import {
+	siteResetContentSummaryQuery,
+	siteResetMutation,
+	siteResetStatusQuery,
+} from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -14,14 +19,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState, useCallback } from 'react';
-import {
-	siteResetContentSummaryQuery,
-	siteResetMutation,
-	siteResetStatusQuery,
-} from '../../app/queries/site-reset';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import ContentInfo from './content-info';
-import type { Site, SiteResetContentSummary, SiteResetStatus } from '../../data/types';
+import type { Site, SiteResetContentSummary, SiteResetStatus } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -34,11 +35,11 @@ function ErrorContent( { message, onClose }: { message: string; onClose: () => v
 	return (
 		<VStack spacing={ 6 }>
 			<Text>{ message }</Text>
-			<HStack justify="flex-end">
-				<Button variant="primary" onClick={ onClose }>
+			<ButtonStack justify="flex-end">
+				<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
 					{ __( 'OK' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		</VStack>
 	);
 }
@@ -121,7 +122,7 @@ function SiteResetContent( {
 					<DataForm< SiteResetFormData >
 						data={ formData }
 						fields={ fields }
-						form={ { type: 'regular', fields } }
+						form={ { layout: { type: 'regular' as const }, fields } }
 						onChange={ ( edits: { domain?: string } ) => {
 							setFormData( ( data ) => ( {
 								...data,
@@ -131,10 +132,11 @@ function SiteResetContent( {
 						} }
 					/>
 					<HStack spacing={ 4 } justify="flex-end">
-						<Button variant="tertiary" onClick={ onClose }>
+						<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							type="submit"
 							isBusy={ isBusy }

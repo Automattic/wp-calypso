@@ -23,7 +23,8 @@
 	"scripts": {
 		"clean": "rm -rf dist",
 		"teamcity:build-app": "yarn run build",
-		"build": "NODE_ENV=production yarn dev",
+		"code-comment": "The find command below is a terrible hack to quickly fix DOTCOM-14617",
+		"build": "NODE_ENV=production yarn dev && find dist -maxdepth 1 -type f ! -name '*.min.js' -name '*.js' -delete",
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",
 		"prepack": "yarn run clean && yarn run build",
@@ -31,17 +32,24 @@
 		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './dist' --dir './dist/strings' --output './dist/help-center.pot' && build-app-languages --stringsFilePath='./dist/help-center.pot' --outputPath='./dist/languages' --outputFormat='JS'"
 	},
 	"dependencies": {
+		"@automattic/agents-manager": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/components": "^29.9.0",
+		"@wordpress/api-fetch": "^7.23.0",
+		"@wordpress/components": "^30.8.0",
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/data": "^10.23.0",
+		"@wordpress/dom-ready": "^4.29.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/icons": "^10.23.0",
 		"@wordpress/plugins": "^7.23.0",
 		"@wordpress/private-apis": "^1.23.0",
 		"@wordpress/router": "^1.23.0",
+		"@wordpress/url": "^4.35.0",
 		"postcss-prefix-selector": "^1.16.1"
 	},
 	"devDependencies": {

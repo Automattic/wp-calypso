@@ -1,18 +1,24 @@
+import { domainSuggestionsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { domainSuggestionsQuery } from '../../app/queries/domains';
-import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
+// eslint-disable-next-line no-restricted-imports
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { DomainUpsellIllustraction } from './upsell-illustration';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
+
+/**
+ * Returns true if the site requires a plan upgrade.
+ */
+const requiresPlanUpgrade = ( site: Site ) => {
+	return site.plan?.is_free || site.plan?.billing_period === 'Monthly';
+};
 
 const useDomainSuggestion = ( site: Site ) => {
 	const search = site.slug.split( '.' )[ 0 ];
@@ -34,26 +40,18 @@ const DomainUpsellCardContent = ( {
 	title,
 	description,
 	upsellCTAButtonText,
-	tracksId,
+	upsellId,
 }: {
 	site: Site;
 	title: string;
 	description: string;
 	upsellCTAButtonText: string;
-	tracksId: string;
+	upsellId: string;
 } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
-	const { recordTracksEvent } = useAnalytics();
 
 	const backUrl = window.location.href.replace( window.location.origin, '' );
-
-	const handleChooseYourOwn = () => {
-		recordTracksEvent( 'calypso_dashboard_upsell_click', {
-			feature: tracksId,
-			type: 'link',
-		} );
-	};
 
 	const handleUpsell = async () => {
 		if ( suggestedDomain ) {
@@ -70,11 +68,11 @@ const DomainUpsellCardContent = ( {
 			] );
 		}
 
-		if ( site.plan?.is_free || site.plan?.billing_period === 'Monthly' ) {
-			window.location.href = addQueryArgs( `/plans/yearly/${ site.slug }`, {
-				domain: true,
-				domainAndPlanPackage: true,
-				back_to: backUrl,
+		if ( requiresPlanUpgrade( site ) ) {
+			window.location.href = getDomainAndPlanUpsellUrl( {
+				siteSlug: site.slug,
+				backUrl,
+				step: 'plans',
 			} );
 		} else {
 			window.location.href = addQueryArgs( `/checkout/${ site.slug }`, {
@@ -83,6 +81,11 @@ const DomainUpsellCardContent = ( {
 			} );
 		}
 	};
+
+	const chooseYourOwnUrl = getDomainAndPlanUpsellUrl( {
+		siteSlug: site.slug,
+		backUrl,
+	} );
 
 	return (
 		<Callout
@@ -97,13 +100,11 @@ const DomainUpsellCardContent = ( {
 							<TextBlur>{ search }</TextBlur>
 						),
 						link: (
-							<Link
-								to={ addQueryArgs( `${ window.location.origin }/domains/add/${ site.slug }`, {
-									domainAndPlanPackage: true,
-									domain: true,
-									back_to: backUrl,
-								} ) }
-								onClick={ handleChooseYourOwn }
+							<UpsellCTAButton
+								variant="link"
+								href={ chooseYourOwnUrl }
+								upsellId="site-overview-choose-your-own-domain"
+								upsellFeatureId="domain"
 							/>
 						),
 					} ) }
@@ -123,7 +124,8 @@ const DomainUpsellCardContent = ( {
 					text={ upsellCTAButtonText }
 					variant="primary"
 					size="compact"
-					tracksId={ tracksId }
+					upsellId={ upsellId }
+					upsellFeatureId="domain"
 					isBusy={ isSubmitting }
 					onClick={ handleUpsell }
 				/>
@@ -146,12 +148,30 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				description={ __(
 					'<domain /> is included free for one year with your paid plan. Claim this domain or <link>choose your own</link>.'
 				) }
+				upsellId="site-overview-claim-this-domain"
 				upsellCTAButtonText={ __( 'Claim this domain' ) }
-				tracksId="claim-this-domain"
 			/>
 		);
 	}
 
+	if ( requiresPlanUpgrade( site ) ) {
+		return (
+			<DomainUpsellCardContent
+				site={ site }
+				title={ __( 'The perfect domain awaits' ) }
+				description={ __(
+					'Upgrade to an annual paid plan to get <domain /> free for one year. You can also <link>choose your own domain name</link>.'
+				) }
+				upsellId="site-overview-get-this-domain"
+				upsellCTAButtonText={ __( 'Choose a plan' ) }
+			/>
+		);
+	}
+
+	/**
+	 * A site may have used their domain credit but detached the domain from the site (for whatever reason).
+	 * In this case, we should show the domain upsell card.
+	 */
 	return (
 		<DomainUpsellCardContent
 			site={ site }
@@ -159,8 +179,8 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 			description={ __(
 				'<domain /> is a perfect domain for your site. Grab it now or <link>choose your own</link>.'
 			) }
+			upsellId="site-overview-get-this-domain"
 			upsellCTAButtonText={ __( 'Get this domain' ) }
-			tracksId="get-this-domain"
 		/>
 	);
 };

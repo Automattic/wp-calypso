@@ -102,7 +102,7 @@ function getFeatureStrings(
 				translate( 'Stats (10K site views, upgradeable)' ),
 				translate( 'Social' ),
 				translate( 'Display ads with WordAds' ),
-				translate( 'Pay with PayPal' ),
+				translate( 'PayPal Payment Buttons' ),
 				translate( 'Import unlimited subscribers' ),
 				translate( '40+ Jetpack blocks' ),
 				translate( 'Paid content gating' ),
@@ -171,7 +171,7 @@ function getFeatureStrings(
 		case 'creator':
 			return [
 				translate( 'Display ads with WordAds' ),
-				translate( 'Pay with PayPal' ),
+				translate( 'PayPal Payment Buttons' ),
 				translate( 'Import unlimited subscribers' ),
 				translate( '40+ Jetpack blocks' ),
 				translate( 'Paid content gating' ),

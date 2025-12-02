@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { isSubdomain } from '@automattic/domain-search';
 import { useEffect, useState } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
@@ -18,12 +19,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import {
-	getSelectedDomain,
-	isDomainInGracePeriod,
-	isDomainUpdateable,
-	isSubdomain,
-} from 'calypso/lib/domains';
+import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
 import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';

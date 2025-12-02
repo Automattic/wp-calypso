@@ -1,0 +1,63 @@
+@keyframes skeleton-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
+}
+
+.agents-manager-conversation-list-skeleton {
+	width: 100%;
+
+	&__item {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		padding: 12px 0;
+		border-top: 1px solid #ebebeb;
+		border-bottom: 1px solid #ebebeb;
+		margin-bottom: -1px;
+		width: 100%;
+		pointer-events: none;
+	}
+
+	&__avatar,
+	&__title,
+	&__subtitle {
+		background-color: rgba( 0, 0, 0, 0.08 );
+	}
+
+	&__avatar {
+		width: 38px;
+		height: 38px;
+		border-radius: 50%;
+		flex-shrink: 0;
+		animation: skeleton-pulse 1.5s ease-in-out infinite;
+	}
+
+	&__text {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		flex: 1;
+		min-width: 0;
+	}
+
+	&__title {
+		height: 14px;
+		border-radius: 4px;
+		width: 70%;
+		animation: skeleton-pulse 1.5s ease-in-out infinite;
+		animation-delay: 0.1s;
+	}
+
+	&__subtitle {
+		height: 11px;
+		border-radius: 4px;
+		width: 40%;
+		animation: skeleton-pulse 1.5s ease-in-out infinite;
+		animation-delay: 0.2s;
+	}
+}

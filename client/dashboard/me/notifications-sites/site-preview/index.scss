@@ -1,0 +1,49 @@
+@import '@wordpress/base-styles/colors';
+
+.site-preview {
+	&__name {
+		display: flex;
+		min-width: 0;
+
+		> a {
+			color: $gray-800;
+			font-weight: 500;
+			min-width: 0;
+			text-decoration: none;
+
+			&:hover {
+				color: var(--wp-admin-theme-color);
+			}
+		}
+	}
+
+	&__url {
+		color: $gray-700;
+		display: flex;
+		flex: 1 1 100%;
+		min-width: 0;
+		width: 100%;
+
+		.components-external-link__contents {
+			max-width: 170px;
+			text-decoration: none;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+
+			@include break-mobile {
+				overflow: unset;
+				max-width: unset;
+				max-width: 250px;
+			}
+
+			@include break-small {
+				max-width: unset;
+			}
+		}
+
+		&:hover {
+			color: var(--wp-admin-theme-color);
+		}
+	}
+}

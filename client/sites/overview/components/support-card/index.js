@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
-import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -32,10 +31,8 @@ export default function SupportCard() {
 	const dispatch = useDispatch();
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { url } = useStillNeedHelpURL();
-	const resetSupportInteraction = useResetSupportInteraction();
 
-	const onClick = async () => {
-		await resetSupportInteraction();
+	const onClick = () => {
 		setNavigateToRoute( url );
 		setShowHelpCenter( true );
 		dispatch( trackNavigateGetHelpClick() );

@@ -1,10 +1,10 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .featured-item-card {
-	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-	color: var(--gray-100);
+	background: linear-gradient( 159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53% );
+	border-radius: 8px;
+	color: var( --gray-100 );
 	display: flex;
 	flex-direction: column;
 	font-size: $font-body-small;
@@ -42,7 +42,7 @@
 		}
 
 		.form-radio:checked::before {
-			background: var(--studio-green-50);
+			background: var( --studio-green-50 );
 		}
 	}
 
@@ -56,7 +56,7 @@
 		flex-direction: column;
 		justify-content: stretch;
 
-		@media (min-width: $break-small) and (max-width: $break-xlarge) {
+		@media ( min-width: $break-small ) and ( max-width: $break-xlarge ) {
 			// vertical
 			flex-direction: row;
 			justify-content: flex-start;
@@ -73,7 +73,7 @@
 		width: 33.6%;
 	}
 
-	@media (max-width: $break-mobile) {
+	@media ( max-width: $break-mobile ) {
 		width: auto;
 	}
 
@@ -83,7 +83,7 @@
 		max-width: 100%;
 		width: 100%;
 
-		@media (min-width: $break-small) and (max-width: $break-xlarge) {
+		@media ( min-width: $break-small ) and ( max-width: $break-xlarge ) {
 			// vertical
 			height: 100%;
 			max-height: 100%;
@@ -106,7 +106,7 @@
 		width: 66.6%;
 	}
 
-	@media (max-width: $break-mobile) {
+	@media ( max-width: $break-mobile ) {
 		width: auto;
 	}
 
@@ -116,7 +116,7 @@
 		height: 100%;
 		box-sizing: border-box;
 
-		@media (min-width: $break-small) and (max-width: $break-xlarge) {
+		@media ( min-width: $break-small ) and ( max-width: $break-xlarge ) {
 			// vertical
 			max-width: 400px;
 		}
@@ -124,7 +124,7 @@
 }
 
 .featured-item-card--title {
-	color: var(--gray-100);
+	color: var( --gray-100 );
 	font-size: $font-title-medium;
 	font-weight: 700;
 	line-height: 1;
@@ -138,7 +138,7 @@
 	margin-top: 0.25rem;
 	margin-bottom: 0.5rem;
 
-	.item-price > .display-price:not(.is-placeholder) {
+	.item-price > .display-price:not( .is-placeholder ) {
 		flex-direction: column;
 		align-items: flex-start;
 		padding-top: 0.5rem;
@@ -146,7 +146,7 @@
 }
 
 .featured-item-card--desc {
-	color: var(--gray-80);
+	color: var( --gray-80 );
 	line-height: 1.5;
 
 	p {
@@ -174,7 +174,7 @@
 	margin-top: 1.5rem;
 
 	.gridicon.gridicons-checkmark {
-		transform: rotate(-8.37deg);
+		transform: rotate( -8.37deg );
 		margin-right: 11.46px;
 		color: #008710;
 	}

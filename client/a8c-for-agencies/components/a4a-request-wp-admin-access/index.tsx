@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import illustration from 'calypso/assets/images/a8c-for-agencies/request-wp-admin-access-illustration.svg';
 import { useDispatch } from 'calypso/state';
@@ -36,10 +35,7 @@ export function A4ARequestWPAdminAccess() {
 					onClick={ onLearnMoreClick }
 					target="_blank"
 				>
-					<>
-						{ translate( 'Learn more about team member permissions' ) }
-						<Icon icon={ external } size={ 18 } />
-					</>
+					{ translate( 'Learn more about team member permissions ↗' ) }
 				</Button>
 			</div>
 			<div className="a4a-request-wp-admin-access__illustration">

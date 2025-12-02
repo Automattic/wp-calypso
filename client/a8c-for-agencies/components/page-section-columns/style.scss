@@ -67,6 +67,12 @@
 			width: 400px;
 		}
 	}
+
+	&.is-full-width {
+		@include break-large {
+			grid-column: 1 / -1;
+		}
+	}
 }
 
 

@@ -3,6 +3,7 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import PressablePremiumPlanMigrationCard from 'calypso/a8c-for-agencies/components/pressable-premium-plan-migration/card';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import OverviewSidebarAgencyTier from './agency-tier';
 import OverviewSidebarContactSupport from './contact-support';
@@ -30,9 +31,10 @@ const OverviewSidebar = () => {
 					<OverviewSidebarGrowthAccelerator />
 				</>
 			) }
-			{ isEnabled( 'a8c-for-agencies-agency-tier' ) && <OverviewSidebarAgencyTier /> }
+			<OverviewSidebarAgencyTier />
 			{ ! isNewArrangement && <OverviewSidebarQuickLinks /> }
 			<OverviewSidebarFeaturedWooPayments />
+			<PressablePremiumPlanMigrationCard />
 			{ ! isNewArrangement && <OverviewSidebarGrowthAccelerator /> }
 			<OverviewSidebarContactSupport />
 			<Button

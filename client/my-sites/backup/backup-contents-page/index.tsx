@@ -1,5 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink, __experimentalSpacer as Spacer } from '@wordpress/components';
 import { arrowLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect } from 'react';
@@ -11,14 +12,18 @@ import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/us
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useDispatch, useSelector } from 'calypso/state';
+import { rewindRequestGranularBackup } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
-import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
+import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
+import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
-import { backupMainPath } from '../paths';
+import { backupDownloadPath, backupGranularRestorePath, backupMainPath } from '../paths';
 import FileBrowser from './file-browser';
+import { useFileBrowserContext } from './file-browser/file-browser-context';
 import './style.scss';
 
 interface OwnProps {
@@ -32,10 +37,15 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 	const getDisplayDate = useGetDisplayDate();
 	const moment = useLocalizedMoment();
 	const displayDate = getDisplayDate( moment.unix( rewindId ), false );
-	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
+	const { fileBrowserState } = useFileBrowserContext();
+	const browserCheckList = fileBrowserState.getCheckList( rewindId );
+	const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+	const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
 
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
+	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
+	const isRestoreEnabled = useSelector( ( state ) => canRestoreSite( state, siteId ) );
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_view' ) );
@@ -44,6 +54,34 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 	const onLearnAboutClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_learn_about_click' ) );
 	}, [ dispatch ] );
+
+	const handleTrackEvent = useCallback(
+		( eventName: string, properties?: Record< string, unknown > ) => {
+			dispatch( recordTracksEvent( eventName, properties ) );
+		},
+		[ dispatch ]
+	);
+
+	const handleRequestGranularDownload = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_download_multiple_files' ) );
+		dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
+		page.redirect( backupDownloadPath( siteSlug, rewindId.toString() ) );
+	}, [ dispatch, siteId, rewindId, siteSlug, includePaths, excludePaths ] );
+
+	const handleRequestGranularRestore = useCallback( ( siteSlug: string, rewindId: number ) => {
+		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
+	}, [] );
+
+	const onGranularRestoreClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_browser_restore_multiple_files', {
+				...( hasCredentials !== undefined && {
+					has_credentials: hasCredentials,
+				} ),
+			} )
+		);
+		handleRequestGranularRestore( siteSlug, rewindId );
+	}, [ dispatch, hasCredentials, handleRequestGranularRestore, siteSlug, rewindId ] );
 
 	return (
 		<>
@@ -75,12 +113,40 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							</div>
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
-						{ browserCheckList.totalItems === 0 && (
-							<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
-						) }
+						<Spacer marginBottom={ 2 }>
+							{ fileBrowserState.getCheckList( rewindId ).totalItems === 0 ? (
+								<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
+							) : (
+								<ButtonStack justify="flex-start">
+									<Button
+										__next40pxDefaultSize
+										onClick={ handleRequestGranularDownload }
+										variant="secondary"
+									>
+										{ translate( 'Download selected files' ) }
+									</Button>
+									<Button
+										__next40pxDefaultSize
+										onClick={ onGranularRestoreClick }
+										disabled={ ! isRestoreEnabled }
+										variant="primary"
+									>
+										{ translate( 'Restore selected files' ) }
+									</Button>
+								</ButtonStack>
+							) }
+						</Spacer>
 					</div>
 					<div className="backup-contents-page__body">
-						<FileBrowser rewindId={ rewindId } />
+						<FileBrowser
+							rewindId={ rewindId }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+							hasCredentials={ hasCredentials }
+							isRestoreEnabled={ isRestoreEnabled }
+							onTrackEvent={ handleTrackEvent }
+							onRequestGranularRestore={ handleRequestGranularRestore }
+						/>
 					</div>
 				</Card>
 			</Main>

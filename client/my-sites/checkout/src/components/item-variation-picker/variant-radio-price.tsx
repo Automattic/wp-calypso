@@ -71,7 +71,13 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	const translate = useTranslate();
 	const discountPercentage = getItemVariantDiscount( variant, compareTo );
 
-	const pricePerMonth = Math.round( variant.priceInteger / variant.termIntervalInMonths );
+	// Calculate months per bill period with introductory offers.
+	let priceTermIntervalInMonths = variant.termIntervalInMonths;
+	if ( variant.introductoryTerm === 'month' ) {
+		priceTermIntervalInMonths = variant.introductoryInterval ?? 1;
+	}
+
+	const pricePerMonth = Math.round( variant.priceInteger / priceTermIntervalInMonths );
 
 	const pricePerMonthFormatted = formatCurrency( pricePerMonth, variant.currency, {
 		stripZeros: true,

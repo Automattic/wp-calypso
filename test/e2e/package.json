@@ -22,7 +22,15 @@
 		"test": "yarn jest",
 		"test:mobile": "VIEWPORT_NAME=mobile yarn jest",
 		"debug": "PWDEBUG=1 DEBUG=pw:api yarn run test",
-		"debug:mobile": "PWDEBUG=1 DEBUG=pw:api yarn run test:mobile"
+		"debug:mobile": "PWDEBUG=1 DEBUG=pw:api yarn run test:mobile",
+		"test:pw:mobile": "yarn playwright test --project=pixel",
+		"test:pw:desktop": "yarn playwright test --project=chrome",
+		"test:pw": "yarn playwright test --project=pixel --project=chrome",
+		"test:pw:calypso-pr": "yarn playwright test --project=chrome --grep @calypso-pr",
+		"test:pw:calypso-release": "yarn playwright test --project=chrome --grep @calypso-release",
+		"test:pw:authentication": "yarn playwright test --project=authentication --grep @authentication",
+		"test:pw:a8c-for-agencies": "yarn playwright test --project=chrome --grep @a8c-for-agencies",
+		"test:pw:i18n": "yarn playwright test --project=chrome --grep @i18n"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
@@ -36,7 +44,8 @@
 		"@automattic/calypso-e2e": "workspace:^",
 		"@automattic/jest-circus-allure-reporter": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@playwright/browser-chromium": "1.48.2",
+		"@playwright/browser-chromium": "1.57.0",
+		"@playwright/test": "1.57.0",
 		"@types/archiver": "^5.3.1",
 		"archiver": "^5.3.0",
 		"asana-phrase": "^0.0.8",
@@ -45,7 +54,7 @@
 		"eslint": "^8.34.0",
 		"eslint-plugin-jest": "^25.3.0",
 		"esm": "^3.2.25",
-		"form-data": "^4.0.0",
+		"form-data": "^4.0.4",
 		"jest": "^29.6.1",
 		"jest-docblock": "^29.4.3",
 		"jest-environment-node": "^29.6.1",
@@ -54,7 +63,8 @@
 		"jest-teamcity": "^1.12.0",
 		"lodash": "^4.17.20",
 		"mailosaur": "^8.4.0",
-		"playwright": "1.48.2",
+		"playwright": "1.57.0",
+		"playwright-ctrf-json-reporter": "^0.0.26",
 		"postcss": "^8.3.11"
 	}
 }

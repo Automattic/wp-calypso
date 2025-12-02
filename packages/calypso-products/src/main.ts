@@ -44,11 +44,13 @@ import {
 	TYPE_STARTER,
 	TYPE_JETPACK_GROWTH,
 	WOO_EXPRESS_PLANS,
+	WOO_HOSTED_PLANS,
 } from './constants';
 import {
 	resolveFeatureGroupsForComparisonGrid,
 	resolveFeatureGroupsForFeaturesGrid,
 	resolveWooExpressFeatureGroupsForComparisonGrid,
+	resolveWordPressHostingFeatureGroupsForFeaturesGrid,
 } from './feature-group-plan-map';
 import { FEATURES_LIST } from './features-list';
 import { PLANS_LIST } from './plans-list';
@@ -105,6 +107,10 @@ export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroup
 export function getWooExpressFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
 	// Same as getPlanFeaturesGroupedForFeaturesGrid() for now
 	return getPlanFeaturesGroupedForFeaturesGrid();
+}
+
+export function getWordPressHostingFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveWordPressHostingFeatureGroupsForFeaturesGrid();
 }
 
 export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
@@ -176,6 +182,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isEcommercePlan( planKey ) ) {
 		return 'is-ecommerce-plan';
+	}
+
+	if ( isWooHostedPlan( planKey ) ) {
+		return 'is-woo-hosted-plan';
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planKey ) ) {
@@ -406,6 +416,10 @@ export function isWooExpressSmallPlan( planSlug: string ): boolean {
 
 export function isWooExpressPlan( planSlug: string ): boolean {
 	return ( WOO_EXPRESS_PLANS as ReadonlyArray< string > ).includes( planSlug );
+}
+
+export function isWooHostedPlan( planSlug: string ): boolean {
+	return ( WOO_HOSTED_PLANS as ReadonlyArray< string > ).includes( planSlug );
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {
@@ -721,6 +735,8 @@ export type FilteredPlan = Plan &
 		| 'getPlanTagline'
 		| 'getNewsletterTagLine'
 		| 'getBlogOnboardingTagLine'
+		| 'getVisualSplitBusinessFeatures'
+		| 'getVisualSplitCommerceFeatures'
 	>;
 
 export function applyTestFiltersToPlansList(

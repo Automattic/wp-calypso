@@ -1,31 +1,36 @@
-import type { ViewTable, ViewList } from '@wordpress/dataviews';
+import type { View } from '@wordpress/dataviews';
 
-export type DomainsView = ViewTable | ViewList;
-
-export const DEFAULT_VIEW: Partial< DomainsView > = {
-	filters: [],
+// Base properties that are common to all view types
+const BASE_VIEW_PROPS: View = {
+	type: 'table',
+	layout: {
+		density: 'balanced',
+	},
 	sort: {
 		field: 'domain',
 		direction: 'asc',
 	},
-	page: 1,
 	perPage: 10,
-	search: '',
+	showLevels: false,
 	showMedia: false,
 	titleField: 'domain',
-	// descriptionField: 'domain_type',
 	fields: [
-		'type',
 		// 'owner',
 		'blog_name',
-		// 'ssl_status',
+		'ssl_status',
 		'expiry',
 		'domain_status',
 	],
 };
 
+export const DEFAULT_VIEW = BASE_VIEW_PROPS;
+
+export const SITE_CONTEXT_VIEW = {
+	...BASE_VIEW_PROPS,
+	fields: [ 'ssl_status', 'expiry', 'domain_status' ],
+};
+
 // Default layouts
 export const DEFAULT_LAYOUTS = {
 	table: {},
-	list: {},
 };

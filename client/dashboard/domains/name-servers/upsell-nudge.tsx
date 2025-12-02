@@ -26,12 +26,12 @@ export default function UpsellNudge( { domainName, domainSiteSlug }: Props ) {
 				<Text as="p">
 					{ createInterpolateElement(
 						__(
-							'Upgrade to a paid plan to make <domain /> the primary address that your visitors see when they visit your site.<br /><learnMore />'
+							'Upgrade to a paid plan to make <domain /> the primary address that your visitors see when they visit your site.<br /><learnMoreLink />'
 						),
 						{
 							br: <br />,
 							domain: <strong>{ domainName }</strong>,
-							learnMore: <InlineSupportLink supportLink={ SETTING_PRIMARY_DOMAIN } />,
+							learnMoreLink: <InlineSupportLink supportLink={ SETTING_PRIMARY_DOMAIN } />,
 						}
 					) }
 				</Text>
@@ -39,7 +39,8 @@ export default function UpsellNudge( { domainName, domainSiteSlug }: Props ) {
 			actions={
 				<UpsellCTAButton
 					text={ __( 'Upgrade plan' ) }
-					tracksId="nameservers"
+					upsellId="domain-nameservers-primary-domain"
+					upsellFeatureId="domain"
 					variant="primary"
 					href={ `/checkout/${ domainSiteSlug }/business` }
 				/>

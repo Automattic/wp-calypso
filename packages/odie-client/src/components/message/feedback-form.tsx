@@ -7,7 +7,7 @@ import { Button, TextareaControl, SelectControl, Spinner } from '@wordpress/comp
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
-import { useSendChatMessage } from '../../hooks';
+import { useSendZendeskMessageOnce } from '../../hooks';
 import { Message, MessageAction } from '../../types';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
 
@@ -28,8 +28,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 		}
 		return chatFeedbackOptions[ 0 ]?.metadata?.ticket_id ?? null;
 	}, [ chatFeedbackOptions ] );
-	const sendMessage = useSendChatMessage();
-
+	const sendZendeskMessage = useSendZendeskMessageOnce();
 	const badRatingReasons = getBadRatingReasons();
 
 	const { isPending: isSubmitting, mutateAsync: rateChat } = useRateChat();
@@ -63,9 +62,9 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 			}
 
 			setScore( score );
-			await sendMessage( generateFeedbackMessage( score ) );
+			sendZendeskMessage( generateFeedbackMessage( score ) );
 		},
-		[ sendMessage, generateFeedbackMessage ]
+		[ sendZendeskMessage, generateFeedbackMessage ]
 	);
 
 	const postCSAT = useCallback( async () => {
@@ -92,10 +91,18 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 		<>
 			<div className={ clsx( 'odie-conversation__feedback', { has_message: score } ) }>
 				<div className="odie-conversation-feedback__thumbs">
-					<Button onClick={ () => postScore( 'good' ) }>
+					<Button
+						__next40pxDefaultSize
+						onClick={ () => postScore( 'good' ) }
+						className="odie-conversation-feedback__thumbs-button"
+					>
 						<ThumbsUpIcon />
 					</Button>
-					<Button onClick={ () => postScore( 'bad' ) }>
+					<Button
+						__next40pxDefaultSize
+						onClick={ () => postScore( 'bad' ) }
+						className="odie-conversation-feedback__thumbs-button"
+					>
 						<ThumbsDownIcon />
 					</Button>
 				</div>

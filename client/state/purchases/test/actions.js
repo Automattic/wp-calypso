@@ -39,7 +39,7 @@ describe( 'actions', () => {
 	describe( '#fetchSitePurchases', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( `/rest/v1.1/sites/${ siteId }/purchases` )
+				.get( `/rest/v1.2/sites/${ siteId }/purchases` )
 				.reply( 200, purchases );
 		} );
 
@@ -64,7 +64,7 @@ describe( 'actions', () => {
 	describe( '#fetchUserPurchases', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/me/purchases' )
+				.get( '/rest/v1.2/me/purchases' )
 				.reply( 200, purchases );
 		} );
 

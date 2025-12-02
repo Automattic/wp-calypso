@@ -7,10 +7,12 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent, recordTrackForPost, getLocation } from 'calypso/reader/stats';
 import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
 
 import './form.scss';
@@ -106,10 +108,24 @@ class PostCommentForm extends Component {
 
 		recordAction( 'posted_comment' );
 		recordGaEvent( 'Clicked Post Comment Button' );
-		recordTrackForPost( 'calypso_reader_article_commented_on', post, {
-			parent_post_id: this.props.parentCommentId ? this.props.parentCommentId : undefined,
-			is_inline_comment: this.props.isInlineComment,
-		} );
+
+		const locationId = getLocation( this.props.currentPath );
+		const isSinglePost = locationId === 'single_post';
+
+		const options = {
+			// Override the pathname to the previous path if the current path is a single post
+			pathnameOverride: isSinglePost ? this.props.previousPath : undefined,
+		};
+
+		recordTrackForPost(
+			'calypso_reader_article_commented_on',
+			post,
+			{
+				parent_post_id: this.props.parentCommentId ? this.props.parentCommentId : undefined,
+				is_inline_comment: this.props.isInlineComment,
+			},
+			options
+		);
 
 		this.resetCommentText();
 
@@ -210,6 +226,8 @@ export default connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		previousPath: getPreviousPath( state ),
+		currentPath: getCurrentRoute( state ),
 	} ),
 	{ writeComment, deleteComment, replyComment, registerLastActionRequiresLogin }
 )( localize( PostCommentForm ) );

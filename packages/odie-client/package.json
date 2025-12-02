@@ -41,6 +41,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/agenttic-ui": "^0.1.20",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
@@ -53,6 +54,7 @@
 		"autosize": "^6.0.1",
 		"clsx": "^2.1.1",
 		"dompurify": "^3.2.6",
+		"framer-motion": "^12.23.12",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-intersection-observer": "^9.4.3",
@@ -63,7 +65,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/jest-dom": "^6.9.1",
 		"@types/autosize": "^4.0.3",
 		"@types/jest": "^29.5.14",
 		"@types/react": "^18.3.23",

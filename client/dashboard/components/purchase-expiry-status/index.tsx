@@ -1,10 +1,10 @@
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
-import { SubscriptionBillPeriod } from '../../data/constants';
 import {
 	formatDate,
 	isWithinLast,
@@ -24,7 +24,7 @@ import {
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
 } from '../../utils/purchase';
-import type { Purchase } from '../../data/purchase';
+import type { Purchase } from '@automattic/api-core';
 
 // Renders a formatted purchase's expiry date in an inline-block span
 // so that the text won't wrap by default.

@@ -3,7 +3,6 @@ import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { useFlowCustomOptions, useFlowZendeskUserFields } from '../hooks';
-import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '../stores';
 import type { FC, ReactNode } from 'react';
 
@@ -25,7 +24,6 @@ const HelpCenterInlineButton: FC< HelpCenterInlineButtonProps > = ( {
 	children,
 	className,
 } ) => {
-	const resetSupportInteraction = useResetSupportInteraction();
 	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
 		useDispatch( HELP_CENTER_STORE );
 	const isShowingHelpCenter = useSelect(
@@ -36,18 +34,13 @@ const HelpCenterInlineButton: FC< HelpCenterInlineButtonProps > = ( {
 	const { userFieldMessage, userFieldFlowName } = useFlowZendeskUserFields( flowName || '' );
 
 	function toggleHelpCenter() {
-		setShowHelpCenter(
-			! isShowingHelpCenter,
-			flowCustomOptions?.hasPremiumSupport,
-			flowCustomOptions
-		);
+		setShowHelpCenter( ! isShowingHelpCenter, flowCustomOptions );
 		if ( flowCustomOptions?.hasPremiumSupport ) {
 			setNewMessagingChat( {
 				initialMessage: userFieldMessage || '',
 				userFieldFlowName: userFieldFlowName || '',
 			} );
 		} else {
-			resetSupportInteraction();
 			setNavigateToRoute( '/odie' );
 		}
 	}

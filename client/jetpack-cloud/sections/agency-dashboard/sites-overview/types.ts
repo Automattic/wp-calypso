@@ -433,12 +433,14 @@ export interface RequestVerificationCodeParams {
 	number?: string;
 	country_code?: string;
 	country_numeric_code?: string;
+	agency_id?: number;
 }
 
 export interface ValidateVerificationCodeParams {
 	type: AllowedMonitorContactTypes;
 	value: string;
 	verification_code: number;
+	agency_id?: number;
 }
 
 export interface MonitorContactsResponse {
@@ -459,4 +461,5 @@ export interface InitialMonitorSettings {
 export interface ResendVerificationCodeParams {
 	type: 'email' | 'sms';
 	value: string;
+	agency_id?: number;
 }

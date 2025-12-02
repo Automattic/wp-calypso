@@ -14,5 +14,5 @@ This store holds user settings from `/me/settings`.
    	( dispatch ) => ( {
    		saveLanguage: ( language ) => dispatch( saveUserSettings( { language } ) ),
    	} )
-   )( Account );
+   )( EmailAccount );
    ```

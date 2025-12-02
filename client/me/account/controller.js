@@ -15,6 +15,15 @@ export function account( context, next ) {
 		);
 		page.replace( context.pathname );
 	}
+	if ( context.query && context.query.updated === 'dashboard' ) {
+		context.store.dispatch(
+			successNotice( i18n.translate( 'New Hosting Dashboard disabled.' ), {
+				displayOnNextPage: true,
+				id: meSettingsNoticeId,
+			} )
+		);
+		page.replace( context.pathname );
+	}
 
 	const AccountTitle = () => {
 		const translate = useTranslate();

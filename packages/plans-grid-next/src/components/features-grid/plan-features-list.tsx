@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { JetpackLogo } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { usePlansGridContext } from '../../grid-context';
@@ -55,7 +56,7 @@ const PlanFeaturesList = ( {
 }: PlanFeaturesListProps ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const { featureGroupMap, hideFeatureGroupTitles } = usePlansGridContext();
+	const { featureGroupMap, hideFeatureGroupTitles, intent } = usePlansGridContext();
 	const featureGroup = featureGroupSlug && featureGroupMap[ featureGroupSlug ];
 
 	/**
@@ -88,9 +89,15 @@ const PlanFeaturesList = ( {
 						isTableCell={ options?.isTableCell }
 						className="plan-features-2023-grid__table-item"
 					>
-						{ ! hideFeatureGroupTitles && (
+						{ ! hideFeatureGroupTitles && 'plans-wordpress-hosting' !== intent && (
 							<PlanFeaturesItem>
-								<h2 className="plans-grid-next-features-grid__feature-group-title">
+								<h2
+									className={ clsx( 'plans-grid-next-features-grid__feature-group-title', {
+										// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+										// @ts-ignore
+										'is-wordpress-hosting': 'plans-wordpress-hosting' === intent,
+									} ) }
+								>
 									{ featureGroup?.getTitle() }
 								</h2>
 							</PlanFeaturesItem>
@@ -136,7 +143,11 @@ const PlanFeaturesList = ( {
 				>
 					{ ! hideFeatureGroupTitles && featureGroup?.getTitle() && (
 						<PlanFeaturesItem>
-							<h2 className="plans-grid-next-features-grid__feature-group-title">
+							<h2
+								className={ clsx( 'plans-grid-next-features-grid__feature-group-title', {
+									'is-wordpress-hosting': intent === 'plans-wordpress-hosting',
+								} ) }
+							>
 								{ featureGroup.getTitle() }
 							</h2>
 						</PlanFeaturesItem>

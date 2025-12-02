@@ -12,8 +12,6 @@ export {
 } from './utils/get-tracking-prefs';
 export type { TrackingPrefs } from './utils/get-tracking-prefs';
 export { default as setTrackingPrefs } from './utils/set-tracking-prefs';
-export { default as isCountryInGdprZone } from './utils/is-country-in-gdpr-zone';
-export { default as isRegionInCcpaZone } from './utils/is-region-in-ccpa-zone';
 export { default as isRegionInStsZone } from './utils/is-region-in-sts-zone';
 export {
 	recordTracksPageView,

@@ -8,6 +8,26 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 
+function canParse( url: string, baseUrl?: string ): URL | false {
+	try {
+		return new URL( url, baseUrl );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Temporary: the Odie backend returns links with no protocol.
+ * This function ensures that the link has a protocol.
+ * @param url - The URL to parse.
+ * @param baseUrl - The base URL to use for parsing.
+ * @returns The parsed URL or null if the URL is invalid.
+ * @todo Remove this function when the Odie backend is updated.
+ */
+function ensureProtocolAndParse( url: string, baseUrl?: string ) {
+	return canParse( url, baseUrl ) || canParse( 'https://' + url, baseUrl );
+}
+
 export const useContentFilter = ( node: HTMLDivElement | null ) => {
 	const navigate = useNavigate();
 	const [ searchParams ] = useSearchParams();
@@ -67,17 +87,27 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				pattern: '.toc-parent-list a, a[href^="#"]',
 				action: ( element: HTMLAnchorElement ) => {
 					const hash = element.hash;
+					const url = ensureProtocolAndParse( hash, link );
 
-					element.setAttribute( 'href', new URL( hash, link ).href );
+					if ( ! url ) {
+						// disable the faulty link.
+						element.removeAttribute( 'href' );
+						return;
+					}
+
+					element.setAttribute( 'href', url?.href );
 					element.onclick = ( event: Event ) => {
 						event.preventDefault();
 						// We need to use CSS.escape since we can have non latin chars in the hash
 						const target = node?.querySelector( `#${ CSS.escape( hash.slice( 1 ) ) }` );
 						if ( target instanceof HTMLElement ) {
 							target.setAttribute( 'tabindex', '-1' );
-							target.focus();
-
-							target.scrollIntoView();
+							target.focus( {
+								// Let scrollIntoView handle the scrolling.
+								// The scroll of focus is a bit buggy in Safari.
+								preventScroll: true,
+							} );
+							target.scrollIntoView( { behavior: 'smooth' } );
 						}
 					};
 				},
@@ -110,6 +140,9 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				action: ( element: HTMLAnchorElement ) => {
 					const href = element.getAttribute( 'href' ) as string;
 
+					if ( ! canParse( href ) ) {
+						return;
+					}
 					// Skip support articles
 					if ( href && isThisASupportArticleLink( href ) ) {
 						return;

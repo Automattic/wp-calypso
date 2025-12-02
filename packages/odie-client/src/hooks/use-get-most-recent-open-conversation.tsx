@@ -15,11 +15,7 @@ export const useGetMostRecentOpenConversation = () => {
 		[]
 	);
 
-	const { data: supportInteractions, isLoading } = useGetSupportInteractions(
-		'zendesk',
-		100,
-		'resolved'
-	);
+	const { data: supportInteractions, isLoading } = useGetSupportInteractions( 'zendesk' );
 
 	if ( supportInteractions?.length && isChatLoaded && ! isLoading ) {
 		const allConversations = Smooch?.getConversations?.() ?? [];

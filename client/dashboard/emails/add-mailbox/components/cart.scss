@@ -1,0 +1,31 @@
+.cart__cushion {
+	margin-top: 36px;
+	height: 80px;
+}
+
+.cart__container {
+	position: fixed !important;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 80px;
+}
+
+.cart {
+	justify-content: center;
+	align-items: center;
+	padding-inline: 24px;
+	display: flex;
+	box-sizing: border-box;
+	height: 100%;
+}
+
+.cart__content {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: var( --page-layout-max-width );
+}
+
+.cart-summary__total {
+	font-size: 1.125rem !important; /* stylelint-disable-line scales/font-sizes */
+}

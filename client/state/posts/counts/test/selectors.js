@@ -3,8 +3,6 @@ import {
 	getAllPostCounts,
 	getAllPostCount,
 	getMyPostCounts,
-	getNormalizedPostCounts,
-	getNormalizedMyPostCounts,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -217,106 +215,6 @@ describe( 'selectors', () => {
 
 			expect( postCounts ).toEqual( {
 				publish: 1,
-			} );
-		} );
-	} );
-
-	describe( 'getNormalizedPostCounts()', () => {
-		test( 'should return normalized post counts using selector', () => {
-			const postCounts = getNormalizedPostCounts(
-				{
-					posts: {
-						counts: {
-							counts: {
-								2916284: {
-									post: {
-										all: {},
-										mine: {
-											publish: 1,
-											private: 1,
-											draft: 2,
-											pending: 1,
-											future: 2,
-											badstatus: 10,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				'post',
-				getMyPostCounts
-			);
-
-			expect( postCounts ).toEqual( {
-				publish: 2,
-				draft: 3,
-				future: 2,
-				trash: 0,
-			} );
-		} );
-
-		test( 'should default to returning all counts', () => {
-			const postCounts = getNormalizedPostCounts(
-				{
-					posts: {
-						counts: {
-							counts: {
-								2916284: {
-									post: {
-										all: {
-											publish: 1,
-										},
-										mine: {},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				'post'
-			);
-
-			expect( postCounts ).toEqual( {
-				publish: 1,
-				draft: 0,
-				future: 0,
-				trash: 0,
-			} );
-		} );
-	} );
-
-	describe( 'getNormalizedMyPostCounts()', () => {
-		test( 'should return normalized post counts for mine counts', () => {
-			const postCounts = getNormalizedMyPostCounts(
-				{
-					posts: {
-						counts: {
-							counts: {
-								2916284: {
-									post: {
-										all: {},
-										mine: {
-											publish: 1,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				'post'
-			);
-
-			expect( postCounts ).toEqual( {
-				publish: 1,
-				draft: 0,
-				future: 0,
-				trash: 0,
 			} );
 		} );
 	} );

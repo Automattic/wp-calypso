@@ -1,7 +1,6 @@
+import { siteBySlugQuery, sitesQueryKey } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { siteBySlugQuery } from '../queries/site';
-import { sitesQuery } from '../queries/sites';
-import type { User, Site } from '../../data/types';
+import type { User, Site } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AnyRouter } from '@tanstack/react-router';
 
@@ -41,6 +40,18 @@ export const getSuperProps = ( user: User, router: AnyRouter, queryClient: Query
 };
 
 /**
+ * Normalize the path by removing leading double slashes.
+ */
+export function getNormalizedPath( router: AnyRouter ) {
+	const leafMatch = router.state.matches.at( -1 );
+	const basePath = router.basepath ?? '';
+	const routeId = leafMatch?.routeId ?? '';
+
+	const normalizedBasePath = basePath.endsWith( '/' ) ? basePath.slice( 0, -1 ) : basePath;
+	return normalizedBasePath + routeId;
+}
+
+/**
  * Attempts to retrieve the site information from the tanstack cache.
  *
  * It looks for the site slug in both the "site" and "sites" caches. Perhaps it's
@@ -54,6 +65,12 @@ function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | 
 		return site;
 	}
 
-	const sites = queryClient.getQueryData< Site[] >( sitesQuery().queryKey );
-	return sites?.find( ( s ) => s.slug === siteSlug );
+	const sitesQueries = queryClient.getQueriesData< Site[] >( { queryKey: sitesQueryKey } );
+	const sitesBySlug = new Map(
+		sitesQueries
+			.map( ( [ , sites ] ) => ( sites || [] ).map( ( site ) => [ site.slug, site ] ) )
+			.flat() as [ string, Site ][]
+	);
+
+	return sitesBySlug.get( siteSlug );
 }

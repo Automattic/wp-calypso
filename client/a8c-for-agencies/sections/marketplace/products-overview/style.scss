@@ -1,7 +1,7 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "../variables";
-@import "../shared";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '../variables';
+@import '../shared';
 
 $header-compact-height: 114px;
 $header-compact-height-mobile: 128px;
@@ -15,7 +15,8 @@ $header-compact-height-mobile: 128px;
 
 	.products-overview__top {
 		max-height: auto;
-		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-bg.svg ) no-repeat top right $header-background-color;
+		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-bg.svg )
+			no-repeat top right $header-background-color;
 		border-block-end: none;
 		position: sticky;
 		top: 0;
@@ -29,17 +30,17 @@ $header-compact-height-mobile: 128px;
 	}
 
 	.hosting-dashboard-layout__header-breadcrumb {
-		color: var(--color-neutral-40);
-		fill: var(--color-neutral-40);
+		color: var( --color-neutral-40 );
+		fill: var( --color-neutral-40 );
 
 		a {
-			color: var(--color-primary-5);
+			color: var( --color-primary-5 );
 		}
 	}
 
 	.hosting-dashboard-layout__header-actions {
-		background-color: var(--color-surface);
-		border-radius: 8px; /* stylelint-disable-line */
+		background-color: var( --color-surface );
+		border-radius: 8px;
 		padding: 8px 24px 8px 20px;
 
 		.shopping-cart {
@@ -47,12 +48,12 @@ $header-compact-height-mobile: 128px;
 		}
 	}
 
-	.components-button:is(.is-primary, .is-secondary) {
+	.components-button:is( .is-primary, .is-secondary ) {
 		min-height: 40px;
 	}
 
 	.product-category-menu {
-		transition: height .25s ease-out;
+		transition: height 0.25s ease-out;
 		opacity: 1;
 		height: 156px;
 	}
@@ -72,6 +73,6 @@ $header-compact-height-mobile: 128px;
 	}
 
 	.products-overview__action-panel-wrapper {
-		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .10);
+		box-shadow: 0 2px 4px 0 rgba( 0, 0, 0, 0.1 );
 	}
 }

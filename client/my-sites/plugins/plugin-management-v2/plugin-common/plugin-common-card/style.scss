@@ -36,7 +36,7 @@
 }
 
 .plugin-common-card__all-actions {
-	color: var(--studio-gray-40);
+	color: var( --studio-gray-40 );
 	margin: 0 0.1em;
 }
 
@@ -45,13 +45,17 @@
 	position: absolute;
 	height: 20px;
 	width: 20px;
-	background: linear-gradient(to right, rgb(255 255 255 / 80%) 30%, rgb(255 255 255 / 100%) 100%);
+	background: linear-gradient(
+		to right,
+		rgb( 255 255 255 / 80% ) 30%,
+		rgb( 255 255 255 / 100% ) 100%
+	);
 	inset-block-start: 2px;
 	inset-inline-end: 0;
 }
 
 .plugin-common-card__site-data {
-	color: var(--studio-gray-60);
+	color: var( --studio-gray-60 );
 	font-size: 0.75rem;
 	margin: 16px 0;
 }
@@ -71,13 +75,12 @@
 	padding: 16px;
 	&.is-compact:last-child {
 		box-shadow: none;
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px;
 	}
 }
 
 .plugin-common-card__left-checkbox {
-	input[type="checkbox"] {
+	input[type='checkbox'] {
 		margin-top: 8px;
 	}
 }

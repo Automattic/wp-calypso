@@ -14,6 +14,7 @@ import {
 	WooPaymentsStatusColumn,
 	TransactionsColumn,
 	CommissionsPaidColumn,
+	TimeframeCommissionsColumn,
 } from './site-columns';
 import type { SitesWithWooPaymentsState } from '../types';
 
@@ -60,8 +61,23 @@ export default function SitesWithWooPaymentsMobileView( {
 								) }
 							</div>
 						</ListItemCardContent>
+						<ListItemCardContent title={ translate( 'Timeframe Commissions' ) }>
+							<div className="sites-with-woopayments-list-mobile-view__column">
+								{ isLoadingWooPaymentsData ? (
+									<TextPlaceholder />
+								) : (
+									<TimeframeCommissionsColumn
+										estimatedPayout={ getSiteData( woopaymentsData, item.blogId ).estimatedPayout }
+									/>
+								) }
+							</div>
+						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Review status' ) }>
-							<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
+							<WooPaymentsStatusColumn
+								state={ item.state }
+								siteId={ item.blogId }
+								woopaymentsData={ woopaymentsData }
+							/>
 						</ListItemCardContent>
 					</ListItemCard>
 				) ) }

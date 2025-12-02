@@ -1,8 +1,4 @@
-<div style="width: 45%; float:left" align="left"><a href="./style_guide.md"><-- Style Guide</a> </div>
-<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./troubleshooting.md"> Troubleshooting --></a> </div>
-
-<br><br>
+[← Style Guide](./style_guide.md) | [Top](./../README.md) | [Troubleshooting →](./troubleshooting.md)
 
 # Debugging
 
@@ -29,8 +25,6 @@ The rest of this page will cover debugging scenarios unique to WordPress.com and
 
 ## Debug instance
 
-<img src="https://cldup.com/FURE4BK9FF.png">
-
 While developing tests and/or debugging flakey e2e tests, it is often helpful to have a browser window open with Playwright hooked in order to verify selector behavior.
 
 Launch Playwright with the following parameters to:
@@ -55,16 +49,10 @@ However the Playwright object does not have visibility into elements on iFramed 
 To be able to interact with elements of the iFramed editor:
 
 1. launch developer tools (F12)
-
 2. click on Console tab.
-
 3. immediately below the top bar, click on the dropdown with text `top`
-
 4. select option `post-new.php`
-
 5. try selecting an element on page.
-
-<img src="https://cldup.com/cSQEdamVDI.gif"/>
 
 ## VSCode Debugger and Jest
 
@@ -72,4 +60,4 @@ Jest documentation on setting up VSCode debugger can be found [here](https://jes
 
 If using VSCode, setting up the debugger using the attaching method is often easier (as opposed to directly launching Jest in the `launch.json`). The attach configuration gives you more control over which script you want to run.
 
-The E2E tests use the Jest binary that is installed at the root level of the repo. Put all together, if you were currently in the `e2e` directory, the command to run a single spec would look like `node --inspect-brk ../../node_modules/.bin/jest --runInBand specs/specs-playwright/wp-auth__canary-spec.ts`
+The e2e tests use the Jest binary that is installed at the root level of the repo. Put all together, if you were currently in the `e2e` directory, the command to run a single spec would look like:

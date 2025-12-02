@@ -1,0 +1,12 @@
+@import '@wordpress/base-styles/colors';
+@import "@wordpress/base-styles/variables";
+
+.performance-insight__markdown {
+	pre:has(code) {
+		max-width: 100%;
+		padding: $grid-unit-20;
+		border-radius: $radius-small;
+		background-color: $gray-100;
+		overflow: auto;
+	}
+}

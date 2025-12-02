@@ -457,7 +457,7 @@ describe( 'PurchaseNotice', () => {
 				/>
 			</ReduxProvider>
 		);
-		expect( screen.getByText( /Your VISA ending in 1111 expires/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Your VISA ending in 1111 expired/ ) ).toBeInTheDocument();
 		expect( screen.getByText( 'update your payment information' ) ).toBeInTheDocument();
 	} );
 

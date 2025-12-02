@@ -10,6 +10,12 @@ $profile-dropdown-menu-height: 250px;
 	display: flex;
 	justify-content: space-between;
 }
+.components-button .help-center__icon {
+	fill: var(--color-sidebar-text);
+}
+.components-button:hover .help-center__icon {
+	fill: var(--color-sidebar-menu-selected-background);
+}
 
 .a4a-sidebar__profile-dropdown {
 	position: relative;

@@ -39,7 +39,7 @@
 		],
 		"scales/radii": [
 			{
-				"scale": [ 2, 3, 4 ],
+				"scale": [ 2, 3, 4, 8, 16, 24 ],
 				"units": [ "px" ]
 			}
 		],

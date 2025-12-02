@@ -14,11 +14,13 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TabType } from 'calypso/performance-profiler/components/header';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
+import { trackReportCompletedEvent } from 'calypso/performance-profiler/utils/track-report-events';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { isWpcomFlexSite } from 'calypso/state/sites/selectors';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -53,6 +55,7 @@ const SitePerformanceContent = () => {
 	const blog_public = getSiteSetting( 'blog_public' );
 	const isSitePublic = site && blog_public === 1;
 	const isSiteAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isSiteFlex = useSelector( ( state ) => isWpcomFlexSite( state, siteId ) );
 
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
@@ -67,12 +70,8 @@ const SitePerformanceContent = () => {
 	}, [ dispatch, siteId ] );
 
 	const queryParams = useSelector( getCurrentQueryArguments );
-	const {
-		pages,
-		isInitialLoading,
-		savePerformanceReportUrl,
-		refetch: refetchPages,
-	} = useSitePerformancePageReports();
+	const { pages, isLoadingPages, savePerformanceReportUrl, refetchPages } =
+		useSitePerformancePageReports();
 
 	const orderedPages = useMemo( () => {
 		return [ ...pages ].sort( ( a, b ) => {
@@ -131,7 +130,8 @@ const SitePerformanceContent = () => {
 		savePerformanceReportUrl,
 		currentPageId,
 		isSitePublic ? currentPage?.wpcom_performance_report_url : undefined,
-		activeTab
+		activeTab,
+		trackReportCompletedEvent
 	);
 
 	useEffect( () => {
@@ -174,10 +174,7 @@ const SitePerformanceContent = () => {
 
 	const isMobile = useMobileBreakpoint();
 	const disableControls =
-		performanceReport.isLoading ||
-		isInitialLoading ||
-		! isSitePublic ||
-		isSavingPerformanceReportUrl;
+		performanceReport.isLoading || isLoadingPages || ! isSitePublic || isSavingPerformanceReportUrl;
 
 	const handleDeviceTabChange = ( tab: TabType ) => {
 		setActiveTab( tab );
@@ -242,7 +239,9 @@ const SitePerformanceContent = () => {
 	);
 
 	const subtitle =
-		! performanceReport.isLoading && performanceReport.performanceReport
+		! performanceReport.isLoading &&
+		! performanceReport.isRetesting &&
+		performanceReport.performanceReport
 			? translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
 					args: {
 						testedDate: moment( performanceReport.performanceReport.timestamp ).format(
@@ -282,7 +281,7 @@ const SitePerformanceContent = () => {
 					}
 			  );
 
-	if ( ! isSiteAtomic ) {
+	if ( ! isSiteAtomic && ! isSiteFlex ) {
 		return null;
 	}
 
@@ -310,8 +309,8 @@ const SitePerformanceContent = () => {
 					value={ activeTab }
 				/>
 			</div>
-			{ isInitialLoading && isSitePublic ? (
-				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
+			{ isLoadingPages && isSitePublic ? (
+				<PerformanceReportLoading isLoadingPages />
 			) : (
 				<>
 					{ ! isSitePublic ? (
@@ -325,21 +324,19 @@ const SitePerformanceContent = () => {
 							}
 						/>
 					) : (
-						currentPage && (
-							<>
-								<ExpiredReportNotice
-									reportTimestamp={ performanceReport.performanceReport?.timestamp }
-									onRetest={ retestPage }
-								/>
-								<PerformanceReport
-									{ ...performanceReport }
-									pageTitle={ currentPage.label }
-									onRetestClick={ retestPage }
-									onFilterChange={ handleRecommendationsFilterChange }
-									filter={ recommendationsFilter }
-								/>
-							</>
-						)
+						<>
+							<ExpiredReportNotice
+								reportTimestamp={ performanceReport.performanceReport?.timestamp }
+								onRetest={ retestPage }
+							/>
+							<PerformanceReport
+								{ ...performanceReport }
+								pageTitle={ currentPage?.label }
+								onRetestClick={ retestPage }
+								onFilterChange={ handleRecommendationsFilterChange }
+								filter={ recommendationsFilter }
+							/>
+						</>
 					) }
 				</>
 			) }

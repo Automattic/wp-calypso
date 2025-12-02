@@ -1,0 +1,9 @@
+{
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
+	"compilerOptions": {
+		"outDir": "dist/cjs",
+		"declarationDir": "dist/types",
+		"module": "commonjs"
+	},
+	"include": [ "src", "test", "src/secrets/decrypted-secrets.json" ]
+}

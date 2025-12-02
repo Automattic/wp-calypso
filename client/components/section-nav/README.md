@@ -12,10 +12,9 @@ React component used to display a particular section's navigation bar. Or more t
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
-import NavSegmented from 'calypso/components/section-nav/segmented';
 import NavTabs from 'calypso/components/section-nav/tabs';
 
-export default class extends React.Component {
+export default class ExampleComponent extends React.Component {
 	// ...
 
 	render() {
@@ -42,15 +41,6 @@ export default class extends React.Component {
 						Trashed
 					</NavItem>
 				</NavTabs>
-
-				<NavSegmented label="Author">
-					<NavItem path="/posts/my" selected={ false }>
-						Only Me
-					</NavItem>
-					<NavItem path="/posts" selected>
-						Everyone
-					</NavItem>
-				</NavSegmented>
 
 				<Search
 					pinned
@@ -110,28 +100,7 @@ Count displayed in the header when rendered as dropdown.
 Text displayed above tabs group when:
 
 - Mobile (`<480px`)
-- `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
-
-![label example](https://cldup.com/OeWSPtifYY.png)
-
----
-
-## Nav Segmented
-
-The segmented sub component utilizes [`SegmentedControl`](/packages/components/segmented-control) to display `NavItems` inline.
-
-![Nav Segmented Example](https://cldup.com/tPEfoQ78pR.png)
-
-> Note: `SectionNav` relies on flex box techniques for sizing and that `NavSegmented` will not be allowed to overflow available horizontal space.
-
-### Props
-
-`label` - _optional_ (string)
-
-Text displayed above tabs group when:
-
-- Mobile (`<480px`)
-- `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
+- `SectionNav` contains sibling level controls groups (more than one `NavTabs`).
 
 ![label example](https://cldup.com/OeWSPtifYY.png)
 
@@ -139,7 +108,7 @@ Text displayed above tabs group when:
 
 ## Nav Item
 
-These are the sub components that make up the children of both `NavTabs` & `NavSegmented`. They represent the options under each control group.
+These are the sub components that make up the children of `NavTabs`. They represent the options under each control group.
 
 ### Props
 

@@ -28,6 +28,7 @@ import { login } from 'calypso/lib/paths';
 import LoginContextProvider, { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import getHeadingSubText from 'calypso/login/wp-login/hooks/get-heading-subtext';
+import getNoThanksRedirectUrl from 'calypso/login/wp-login/hooks/get-no-thanks-redirect';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
 import {
@@ -133,6 +134,7 @@ function isOauth2RedirectValid( oauth2Redirect ) {
 		return false;
 	}
 }
+
 export class UserStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
@@ -648,6 +650,10 @@ export class UserStep extends Component {
 			return null;
 		}
 
+		// Check for "No, thanks" URL in WooCommerce flows
+		const query = this.props.initialContext?.query || {};
+		const noThanksRedirectUrl = getNoThanksRedirectUrl( { currentQuery: query } );
+
 		return (
 			<LoginContextProvider>
 				<LoginContextWrapper
@@ -659,7 +665,12 @@ export class UserStep extends Component {
 						isWooJPC: this.props.isWooJPC,
 					} ) }
 				>
-					<OneLoginLayout isJetpack={ false } isSectionSignup loginUrl={ this.getLoginUrl() }>
+					<OneLoginLayout
+						isJetpack={ false }
+						isSectionSignup
+						loginUrl={ this.getLoginUrl() }
+						noThanksRedirectUrl={ noThanksRedirectUrl }
+					>
 						{ this.renderSignupForm() }
 					</OneLoginLayout>
 				</LoginContextWrapper>

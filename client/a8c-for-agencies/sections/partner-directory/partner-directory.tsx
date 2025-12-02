@@ -1,15 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import {
-	A4A_OVERVIEW_LINK,
-	A4A_PARTNER_DIRECTORY_LINK,
-} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
@@ -101,13 +96,6 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 	// Wait until the agency is fetched
 	if ( ! hasAgency || isFetching ) {
 		return null;
-	}
-
-	// Check if the Partner Directory is allowed for the agency
-	if ( ! agency?.partner_directory.allowed && ! isEnabled( 'a8c-for-agencies-agency-tier' ) ) {
-		// Redirect user to the Overview page
-		page.redirect( A4A_OVERVIEW_LINK );
-		return;
 	}
 
 	// Set the selected section

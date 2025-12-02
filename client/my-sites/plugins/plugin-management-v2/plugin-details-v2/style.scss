@@ -137,7 +137,6 @@
 
 .plugin-details-v2__sites-list {
 	border: 1px solid var( --studio-gray-10 );
-	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px;
 	padding-block-end: 8px;
 
@@ -153,7 +152,6 @@
 
 		td:first-child .dataviews-view-table__cell-content-wrapper > span {
 			flex-grow: 1;
-
 		}
 
 		td:last-child .dataviews-view-table__cell-content-wrapper {

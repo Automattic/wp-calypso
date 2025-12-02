@@ -100,9 +100,8 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	openDialog = ( event ) => {
+	openDialog = () => {
 		event.preventDefault();
-
 		if ( this.props.onClickTracks ) {
 			this.props.onClickTracks( event );
 		}
@@ -143,6 +142,12 @@ class RemovePurchase extends Component {
 				isShowingWordAdsEligibilityWarningDialog: false,
 				isDialogVisible: true,
 			} );
+		}
+	};
+
+	componentDidMount = () => {
+		if ( this.props.showDialog ) {
+			this.actuallyOpenDialog();
 		}
 	};
 

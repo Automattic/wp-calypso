@@ -27,7 +27,8 @@ const ThreatDialog: React.FC< Props > = ( {
 	const isExtensionDeleteFixer =
 		threat.signature === 'Vulnerable.WP.Extension' &&
 		threat.fixable &&
-		threat.fixable.fixer === 'delete';
+		threat.fixable.fixer === 'delete' &&
+		action === 'fix';
 	const [ confirmationInput, setConfirmationInput ] = React.useState( '' );
 	// So we don't share the input value between different threats
 	React.useEffect( () => {

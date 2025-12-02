@@ -8,6 +8,8 @@ import {
 	TYPE_PREMIUM,
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
+	TYPE_WOO_HOSTED_BASIC,
+	TYPE_WOO_HOSTED_PRO,
 	getPlan,
 	isBloggerPlan,
 	applyTestFiltersToPlansList,
@@ -23,6 +25,8 @@ import {
 	isPremiumPlan,
 	isFreePlan,
 	isPersonalPlan,
+	planHasFeature,
+	getPlanClass,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { isSamePlan } from '../../lib/is-same-plan';
@@ -51,39 +55,57 @@ const isGridPlanVisible = ( {
 		hideEcommercePlan,
 	} = {},
 	isDisplayingPlansNeededForFeature,
-	planSlug,
+	gridPlanSlug,
 	planSlugsForIntent,
 	selectedPlan,
+	selectedFeature,
+	currentPlanSlug,
 }: {
 	hiddenPlans?: HiddenPlans;
 	isDisplayingPlansNeededForFeature?: boolean;
-	planSlug: PlanSlug;
+	gridPlanSlug: PlanSlug;
 	planSlugsForIntent: PlanSlug[];
 	selectedPlan?: PlanSlug;
+	selectedFeature?: string | null;
+	currentPlanSlug?: PlanSlug;
 } ): boolean => {
-	let isVisible = planSlugsForIntent.includes( planSlug );
+	let isVisible = planSlugsForIntent.includes( gridPlanSlug );
 
-	if ( isDisplayingPlansNeededForFeature && selectedPlan ) {
-		if ( isEcommercePlan( selectedPlan ) ) {
-			isVisible = isEcommercePlan( planSlug );
+	if ( isDisplayingPlansNeededForFeature ) {
+		// Feature-based filtering: Show the plan being evaluated if it includes the selected feature,
+		// or if it's the user's current plan (ignoring billing term length)
+		if ( selectedFeature && ! selectedPlan ) {
+			const hasFeature = planHasFeature( gridPlanSlug, selectedFeature );
+			const isCurrentPlan =
+				currentPlanSlug && getPlanClass( currentPlanSlug ) === getPlanClass( gridPlanSlug );
+			isVisible = isVisible && ( isCurrentPlan || hasFeature );
 		}
+		// Plan-tier-based filtering: When a specific plan is pre-selected,
+		// show that plan tier and all higher tiers (e.g., if Premium is selected, show Premium + Business + Commerce)
+		else if ( selectedPlan ) {
+			if ( isEcommercePlan( selectedPlan ) ) {
+				isVisible = isEcommercePlan( gridPlanSlug );
+			}
 
-		if ( isBusinessPlan( selectedPlan ) ) {
-			isVisible = isBusinessPlan( planSlug ) || isEcommercePlan( planSlug );
-		}
+			if ( isBusinessPlan( selectedPlan ) ) {
+				isVisible = isBusinessPlan( gridPlanSlug ) || isEcommercePlan( gridPlanSlug );
+			}
 
-		if ( isPremiumPlan( selectedPlan ) ) {
-			isVisible =
-				isPremiumPlan( planSlug ) || isBusinessPlan( planSlug ) || isEcommercePlan( planSlug );
+			if ( isPremiumPlan( selectedPlan ) ) {
+				isVisible =
+					isPremiumPlan( gridPlanSlug ) ||
+					isBusinessPlan( gridPlanSlug ) ||
+					isEcommercePlan( gridPlanSlug );
+			}
 		}
 	}
 
 	if (
-		( hideFreePlan && isFreePlan( planSlug ) ) ||
-		( hidePersonalPlan && isPersonalPlan( planSlug ) ) ||
-		( hidePremiumPlan && isPremiumPlan( planSlug ) ) ||
-		( hideBusinessPlan && isBusinessPlan( planSlug ) ) ||
-		( hideEcommercePlan && isEcommercePlan( planSlug ) )
+		( hideFreePlan && isFreePlan( gridPlanSlug ) ) ||
+		( hidePersonalPlan && isPersonalPlan( gridPlanSlug ) ) ||
+		( hidePremiumPlan && isPremiumPlan( gridPlanSlug ) ) ||
+		( hideBusinessPlan && isBusinessPlan( gridPlanSlug ) ) ||
+		( hideEcommercePlan && isEcommercePlan( gridPlanSlug ) )
 	) {
 		isVisible = false;
 	}
@@ -122,6 +144,8 @@ export const usePlanTypesWithIntent = ( {
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 		TYPE_WOOEXPRESS_SMALL,
 		TYPE_WOOEXPRESS_MEDIUM,
+		TYPE_WOO_HOSTED_BASIC,
+		TYPE_WOO_HOSTED_PRO,
 		TYPE_P2_PLUS,
 	];
 
@@ -168,6 +192,33 @@ export const usePlanTypesWithIntent = ( {
 				TYPE_ECOMMERCE,
 			];
 			break;
+		case 'plans-upgrade': {
+			// Show current plan plus all higher-tier plans (upgrade options only)
+			const upgradePlanTypes = [
+				TYPE_FREE,
+				TYPE_PERSONAL,
+				TYPE_PREMIUM,
+				TYPE_BUSINESS,
+				TYPE_ECOMMERCE,
+			];
+			if ( isEnterpriseAvailable ) {
+				upgradePlanTypes.push( TYPE_ENTERPRISE_GRID_WPCOM );
+			}
+
+			// Find the index of the current plan in the hierarchy
+			const currentPlanIndex = currentSitePlanType
+				? upgradePlanTypes.findIndex( ( planType ) => planType === currentSitePlanType )
+				: -1;
+
+			if ( currentPlanIndex >= 0 ) {
+				// Show current plan and all plans after it (higher tiers)
+				planTypes = upgradePlanTypes.slice( currentPlanIndex );
+			} else {
+				// If current plan not found or no current plan, show all plans
+				planTypes = upgradePlanTypes;
+			}
+			break;
+		}
 		case 'plans-jetpack-app':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
@@ -214,6 +265,15 @@ export const usePlanTypesWithIntent = ( {
 			// This plan intent is currently not utilized but will be soon
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
+		case 'plans-wordpress-hosting':
+			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ];
+			break;
+		case 'plans-website-builder':
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			break;
+		case 'plans-woo-hosted':
+			planTypes = [ TYPE_WOO_HOSTED_BASIC, TYPE_WOO_HOSTED_PRO ];
+			break;
 		default:
 			planTypes = availablePlanTypes;
 	}
@@ -235,6 +295,7 @@ const useGridPlans: UseGridPlansType = ( {
 	term = TERM_MONTHLY,
 	intent,
 	selectedPlan,
+	selectedFeature,
 	hiddenPlans,
 	isInSignup,
 	eligibleForFreeHostingTrial,
@@ -343,9 +404,11 @@ const useGridPlans: UseGridPlansType = ( {
 				  };
 
 		const isVisible = isGridPlanVisible( {
-			planSlug,
+			gridPlanSlug: planSlug,
 			planSlugsForIntent,
 			selectedPlan,
+			selectedFeature,
+			currentPlanSlug: sitePlanSlug,
 			hiddenPlans,
 			isDisplayingPlansNeededForFeature,
 		} );

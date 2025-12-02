@@ -1,8 +1,8 @@
+import { DotcomPlans, getPlanNames } from '@automattic/api-core';
+import { sitePlanBySlugQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
-	Card,
-	CardBody,
 	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -11,14 +11,14 @@ import {
 import { sprintf, __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, Suspense, lazy } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { sitePlanBySlugQuery } from '../../app/queries/site-plans';
+import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { wasEcommerceTrial } from '../../utils/site-trial';
 import SiteDeleteModal from '../site-delete-modal';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import './style.scss';
 
 const PlanPrice = lazy( () =>
@@ -32,7 +32,7 @@ const PlanPrice = lazy( () =>
 const getProduct = ( site: Site ) => {
 	if ( wasEcommerceTrial( site ) ) {
 		return {
-			name: __( 'Commerce' ),
+			name: getPlanNames()[ DotcomPlans.ECOMMERCE ],
 			tagline: __( 'Grow your online store with commerce-optimized extensions.' ),
 			slug: 'ecommerce-bundle',
 			pathSlug: 'ecommerce',
@@ -40,7 +40,7 @@ const getProduct = ( site: Site ) => {
 	}
 
 	return {
-		name: __( 'Business' ),
+		name: getPlanNames()[ DotcomPlans.BUSINESS ],
 		tagline: __( 'Unlock next-level WordPress with custom plugins and themes.' ),
 		slug: 'business-bundle',
 		pathSlug: 'business',
@@ -99,17 +99,18 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 									</Text>
 								</VStack>
 							</HStack>
-							<HStack>
+							<ButtonStack>
 								<UpsellCTAButton
 									text={ __( 'Purchase plan' ) }
-									tracksId="trial"
+									upsellId="site-trial-ended"
+									upsellFeatureId="site-trial"
 									variant="primary"
 									href={ addQueryArgs( `/checkout/${ site.slug }/${ product.pathSlug }`, {
 										cancel_to: backUrl,
 										redirect_to: backUrl,
 									} ) }
 								/>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</CardBody>
 				</Card>

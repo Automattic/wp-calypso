@@ -105,7 +105,7 @@ export default function getPlanFeatures(
 				? String( translate( 'Unlimited access to our library of Premium Themes' ) )
 				: null,
 			isEnabled( 'earn/pay-with-paypal' )
-				? String( translate( 'Subscriber-only content and Pay with PayPal buttons' ) )
+				? String( translate( 'Subscriber-only content and PayPal Payment Buttons' ) )
 				: String( translate( 'Subscriber-only content and payment buttons' ) ),
 			googleAnalytics,
 		].filter( isValueTruthy );

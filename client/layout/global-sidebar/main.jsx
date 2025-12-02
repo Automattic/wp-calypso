@@ -9,6 +9,7 @@ import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSection } from 'calypso/state/ui/selectors';
 import Sidebar from '../sidebar';
+import SidebarFooter from '../sidebar/footer';
 import { GLOBAL_SIDEBAR_EVENTS } from './events';
 import './style.scss';
 
@@ -17,6 +18,7 @@ const GlobalSidebar = ( {
 	onClick = undefined,
 	className = '',
 	path = '',
+	footer,
 	...props
 } ) => {
 	const wrapperRef = useRef( null );
@@ -96,6 +98,7 @@ const GlobalSidebar = ( {
 					{ children }
 				</Sidebar>
 			</div>
+			<SidebarFooter>{ footer }</SidebarFooter>
 		</div>
 	);
 };

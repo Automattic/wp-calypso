@@ -6,6 +6,7 @@ import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
 import withDimensions from 'calypso/lib/with-dimensions';
+import ReaderBackButton from 'calypso/reader/components/back-button';
 import FeedError from 'calypso/reader/feed-error';
 import { getFollowerCount, getSiteName } from 'calypso/reader/get-helpers';
 import SiteBlocked from 'calypso/reader/site-blocked';
@@ -85,6 +86,7 @@ const FeedStream = ( props ) => {
 					comment: '%s is the section name. For example: "My Likes"',
 				} ) }
 			/>
+			<ReaderBackButton />
 			<ReaderFeedHeader feed={ feed } site={ site } streamKey={ props.streamKey } />
 			{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }
 			{ ! feed && <QueryReaderFeed feedId={ feedId } /> }

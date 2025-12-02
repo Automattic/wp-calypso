@@ -1,9 +1,9 @@
 import { isMobile } from '@automattic/viewport';
 import Markdown from 'react-markdown';
-import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import type { PerformanceMetricAudit } from '@automattic/api-core';
 
 interface InsightHeaderProps {
-	data: PerformanceMetricsItemQueryResponse;
+	data: PerformanceMetricAudit;
 }
 
 export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {

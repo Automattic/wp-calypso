@@ -26,12 +26,14 @@ export interface TestAccountCredentials {
 	};
 }
 
+/**
+ * Secrets needed for end-to-end tests.
+ */
 export interface Secrets {
 	storeSandboxCookieValue: string;
 	testCouponCode: string;
 	wpccAuthPath: string;
 	wooSignupPath: string;
-	wooLoginPath: string;
 	calypsoOauthApplication: {
 		client_id: string;
 		client_secret: string;

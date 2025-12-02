@@ -21,6 +21,6 @@ export function useSupportStatus( enabled = true ) {
 		enabled,
 		refetchOnWindowFocus: false,
 		placeholderData: keepPreviousData,
-		staleTime: 100, // 100  ms, just to prevent refreshing the data on every render.
+		staleTime: 180000, // 3mins.
 	} );
 }

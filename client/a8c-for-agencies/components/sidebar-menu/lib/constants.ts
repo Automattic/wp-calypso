@@ -17,6 +17,7 @@ export const A4A_MARKETPLACE_LINK = '/marketplace';
 export const A4A_MARKETPLACE_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }/products`;
 export const A4A_MARKETPLACE_HOSTING_LINK = `${ A4A_MARKETPLACE_LINK }/hosting`;
 export const A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK = `${ A4A_MARKETPLACE_HOSTING_LINK }/refer-enterprise-hosting`;
+export const A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK = `${ A4A_MARKETPLACE_HOSTING_LINK }/refer-pressable-premium-plan`;
 export const A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK = `${ A4A_MARKETPLACE_HOSTING_LINK }/pressable`;
 export const A4A_MARKETPLACE_HOSTING_WPCOM_LINK = `${ A4A_MARKETPLACE_HOSTING_LINK }/wpcom`;
 export const A4A_MARKETPLACE_CHECKOUT_LINK = `${ A4A_MARKETPLACE_LINK }/checkout`;
@@ -62,6 +63,11 @@ export const A4A_CLIENT_PAYMENT_METHODS_LINK = '/client/payment-methods';
 export const A4A_CLIENT_INVOICES_LINK = '/client/invoices';
 export const A4A_CLIENT_PAYMENT_METHODS_ADD_LINK = `${ A4A_CLIENT_PAYMENT_METHODS_LINK }/add`;
 export const A4A_CLIENT_CHECKOUT = '/client/checkout';
+export const A4A_CLIENT_EXPRESS_CHECKOUT = '/client/express-checkout';
 export const EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE =
 	'https://agencieshelp.automattic.com/knowledge-base/client-billing/';
-export const EXTERNAL_WPCOM_ACCOUNT_URL = 'https://wordpress.com/me/';
+
+// WPCOM External Links
+export const EXTERNAL_WPCOM_ACCOUNT_URL = 'https://wordpress.com/me';
+export const EXTERNAL_WPCOM_PAYMENT_METHODS_URL = `${ EXTERNAL_WPCOM_ACCOUNT_URL }/purchases/payment-methods`;
+export const EXTERNAL_WPCOM_BILLING_HISTORY_URL = `${ EXTERNAL_WPCOM_ACCOUNT_URL }/purchases/billing`;

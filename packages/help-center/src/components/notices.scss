@@ -1,11 +1,31 @@
+@import "variables";
+
 .help-center__notice {
-	background-color: var( --studio-yellow-0 );
-	border-left: 4px solid var( --studio-yellow-20 );
+	background-color: $help-center-notice-background;
+	border-radius: 8px;
+	color: $help-center-notice-color;
 	padding: 8px 16px;
-    
-    &.cookie-warning{
-        margin-bottom: 30px;
-    }
+	display: flex;
+	column-gap: 8px;
+	align-items: flex-start;
+	
+	&.email-fallback-notice {
+		padding: 8px;
+	}
+
+	&.cookie-warning {
+		margin-bottom: 30px;
+	}
+
+	.help-center__notice-link {
+		color: inherit;
+	}
+
+	.help-center__notice-icon {
+		display: block;
+		fill: $help-center-notice-color;
+		flex: 0 0 auto;
+	}
 
 	p {
 		margin: 0;

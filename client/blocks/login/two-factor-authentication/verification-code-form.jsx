@@ -15,7 +15,7 @@ import {
 	loginUserWithTwoFactorVerificationCode,
 	sendSmsCode,
 } from 'calypso/state/login/actions';
-import { getTwoFactorAuthRequestError } from 'calypso/state/login/selectors';
+import { getTwoFactorAuthNonce, getTwoFactorAuthRequestError } from 'calypso/state/login/selectors';
 import TwoFactorActions from './two-factor-actions';
 
 import './verification-code-form.scss';
@@ -68,8 +68,9 @@ class VerificationCodeForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const { onSuccess, twoFactorAuthType } = this.props;
+		const { onSuccess, twoFactorAuthType: _twoFactorAuthType, twoFactorEmailNonce } = this.props;
 		const { twoStepCode } = this.state;
+		const twoFactorAuthType = twoFactorEmailNonce ? 'email' : _twoFactorAuthType;
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_submit' );
 
@@ -102,12 +103,18 @@ class VerificationCodeForm extends Component {
 			twoFactorAuthRequestError: requestError,
 			twoFactorAuthType,
 			switchTwoFactorAuthType,
+			twoFactorEmailNonce,
 		} = this.props;
 
 		let buttonText = translate( 'Continue' );
 		let helpText = translate( 'Enter the code from your authenticator app.' );
 		let labelText = translate( '6-Digit code' );
 		let smallPrint;
+
+		if ( twoFactorEmailNonce ) {
+			helpText = translate( 'Enter the code from the email we sent you.' );
+			labelText = translate( '9-Digit code' );
+		}
 
 		if ( twoFactorAuthType === 'sms' ) {
 			helpText = translate( 'Enter the code from the text message we sent you.' );
@@ -187,6 +194,7 @@ class VerificationCodeForm extends Component {
 export default connect(
 	( state ) => ( {
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
+		twoFactorEmailNonce: getTwoFactorAuthNonce( state, 'email' ),
 	} ),
 	{
 		formUpdate,

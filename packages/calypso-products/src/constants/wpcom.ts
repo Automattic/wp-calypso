@@ -76,6 +76,12 @@ export const PLAN_WOOEXPRESS_SMALL_MONTHLY = 'wooexpress-small-bundle-monthly';
 export const PLAN_WOOEXPRESS_MEDIUM = 'wooexpress-medium-bundle-yearly';
 export const PLAN_WOOEXPRESS_MEDIUM_MONTHLY = 'wooexpress-medium-bundle-monthly';
 export const PLAN_WOOEXPRESS_PLUS = 'wooexpress-plus'; // Not a real plan;
+export const PLAN_WOO_HOSTED_FREE = 'woo_hosted_free_plan';
+export const PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY = 'woo_hosted_free_trial_plan_monthly';
+export const PLAN_WOO_HOSTED_BASIC = 'woo_hosted_basic_plan_yearly';
+export const PLAN_WOO_HOSTED_BASIC_MONTHLY = 'woo_hosted_basic_plan_monthly';
+export const PLAN_WOO_HOSTED_PRO = 'woo_hosted_pro_plan_yearly';
+export const PLAN_WOO_HOSTED_PRO_MONTHLY = 'woo_hosted_pro_plan_monthly';
 export const PLAN_FREE = 'free_plan';
 export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
@@ -133,6 +139,12 @@ export const WPCOM_PLANS = < const >[
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_PLUS,
+	PLAN_WOO_HOSTED_FREE,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_BASIC,
+	PLAN_WOO_HOSTED_BASIC_MONTHLY,
+	PLAN_WOO_HOSTED_PRO,
+	PLAN_WOO_HOSTED_PRO_MONTHLY,
 ];
 
 export const WPCOM_MONTHLY_PLANS = < const >[
@@ -146,6 +158,9 @@ export const WPCOM_MONTHLY_PLANS = < const >[
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_PLUS,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_BASIC_MONTHLY,
+	PLAN_WOO_HOSTED_PRO_MONTHLY,
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
@@ -157,6 +172,15 @@ export const WOO_EXPRESS_PLANS = < const >[
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_PLUS,
+];
+
+export const WOO_HOSTED_PLANS = < const >[
+	PLAN_WOO_HOSTED_FREE,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_BASIC,
+	PLAN_WOO_HOSTED_BASIC_MONTHLY,
+	PLAN_WOO_HOSTED_PRO,
+	PLAN_WOO_HOSTED_PRO_MONTHLY,
 ];
 
 export const WPCOM_PREMIUM_PLANS = < const >[

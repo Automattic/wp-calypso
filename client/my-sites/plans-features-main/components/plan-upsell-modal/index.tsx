@@ -27,6 +27,7 @@ export type DomainPlanDialogProps = {
 	upsellPremiumPlan?: boolean;
 	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
+	isDomainTransfer?: boolean;
 };
 
 type ModalContainerProps = {

@@ -1,0 +1,19 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/variables";
+
+.plans-grid-next__intent-toggle {
+	width: calc(100% - 32px); // 100% minus 16px on each side
+	margin: 0 auto 16px; // Center with bottom margin
+
+	.components-toggle-group-control {
+		border-radius: 2px;
+		border: 1px solid #949494;
+		background: var( --studio-white);
+	}
+
+	// Desktop: fixed width and adjusted margins
+	@media ( min-width: $break-small ) {
+		width: 432px;
+		margin: 9px auto calc(#{$grid-unit-40} + 3px) auto;
+	}
+}

@@ -1,6 +1,18 @@
 # History
 
-## 7.0.0 / 2025-02-10
+## 7.1.1 / 2025-10-31
+
+- Added missing `@babel/runtime` dependency.
+
+## 7.1.0 / 2025-10-28
+
+- Added type declarations for APIs provided in the library.
+
+## 7.0.1 / 2025-10-09
+
+- Fixed package versions in `devDependencies`.
+
+## 7.0.0 / 2025-10-09
 
 - Removed `site.post.like`, `site.post.likesList`
 - Removed `site.post.subscriber`, `site.post.subscribersList`

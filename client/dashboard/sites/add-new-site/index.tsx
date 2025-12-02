@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
@@ -11,44 +10,48 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
-import { download, reusableBlock, Icon } from '@wordpress/icons';
+import { reusableBlock } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
+import { useContext } from 'react';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
+import { useAnalytics } from '../../app/analytics';
+import { AuthContext } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
+import { userHasFlag } from '../../utils/user';
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
 import './style.scss';
 
-const wordpressClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'wordpress',
-	} );
-};
-const jetpackClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'jetpack',
-	} );
-};
-const migrateClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'migrate',
-	} );
-};
-const importClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'import',
-	} );
-};
-const offerClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'offer',
-	} );
-};
+function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
+	const { recordTracksEvent } = useAnalytics();
+	const auth = useContext( AuthContext );
+	const user = auth?.user;
+	const isFlexEligible = user ? userHasFlag( user, 'wpcom-flex' ) : false;
 
-function AddNewSite( { context }: AddNewSiteProps ) {
+	const wordpressClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'wordpress',
+		} );
+	};
+	const jetpackClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'jetpack',
+		} );
+	};
+	const migrateClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'migrate',
+		} );
+	};
+	const offerClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'offer',
+		} );
+	};
+
 	const isDesktop = useViewportMatch( 'medium' );
 	const Wrapper = isDesktop ? HStack : VStack;
 	const offer = sprintf(
@@ -62,30 +65,58 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 	const { setShowHelpCenter } = useHelpCenter();
 
 	return (
-		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 6 }>
-			<Column title={ __( 'Add new site' ) }>
+		<Wrapper alignment="flex-start" spacing={ 6 }>
+			<Column title={ __( 'Start a new site' ) }>
+				{ isFlexEligible && (
+					<MenuItem
+						icon={ <WordPressLogo /> }
+						title={ __( 'Create a Flex site' ) }
+						description={ __( 'Provision a flexible WordPress.com environment.' ) }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+								action: 'flex-site',
+							} );
+						} }
+						href={ `/setup/flex-site?source=${ context }&ref=new-site-popover` }
+						aria-label={ __( 'Create a Flex site' ) }
+					/>
+				) }
 				<MenuItem
 					icon={ <WordPressLogo /> }
-					title="WordPress.com"
-					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
+					title="Create it yourself"
+					description={ __( 'Start with a clean WordPress site and make it yours.' ) }
 					onClick={ wordpressClick }
-					href={ `/start?source=${ context }&ref=new-site-popover` }
-					aria-label={ __( 'Add WordPress.com site' ) }
+					href={ addQueryArgs( '/start', {
+						source: context,
+						ref: 'new-site-popover',
+					} ) }
+					aria-label={ __( 'Create a blank site on WordPress.com' ) }
 				/>
 				<MenuItem
 					icon={ <BigSkyLogo.Mark /> }
-					title={ __( 'Build with AI' ) }
-					description={ __(
-						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
-					) }
+					title={ __( 'Create with AI' ) }
+					description={ __( 'Describe your idea and let AI help you refine your site.' ) }
 					onClick={ () => {
 						setShowHelpCenter( false );
 						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 							action: 'big-sky',
 						} );
 					} }
-					href={ `/setup/ai-site-builder?source=${ context }&ref=new-site-popover` }
+					href={ addQueryArgs( '/setup/ai-site-builder', {
+						source: context,
+						ref: 'new-site-popover',
+					} ) }
 					aria-label={ __( 'Build a new site with AI' ) }
+				/>
+			</Column>
+			<Column title={ __( 'Bring an existing site' ) }>
+				<MenuItem
+					icon={ reusableBlock }
+					title={ __( 'Migrate to WordPress.com' ) }
+					description={ __( 'Bring your site to the world’s best WordPress host.' ) }
+					onClick={ migrateClick }
+					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover` }
+					aria-label={ __( 'Migrate an existing WordPress site' ) }
 				/>
 				<MenuItem
 					icon={ <JetpackLogo /> }
@@ -96,24 +127,6 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					aria-label={ __( 'Add site via the Jetpack plugin' ) }
 				/>
 			</Column>
-			<Column title={ __( 'Migrate and import' ) }>
-				<MenuItem
-					icon={ reusableBlock }
-					title={ __( 'Migrate' ) }
-					description={ __( 'Bring your entire WordPress site to WordPress.com.' ) }
-					onClick={ migrateClick }
-					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover&action=migrate` }
-					aria-label={ __( 'Migrate an existing WordPress site' ) }
-				/>
-				<MenuItem
-					icon={ <Icon icon={ download } size={ 18 } /> }
-					title={ __( 'Import' ) }
-					description={ __( 'Use a backup to only import content from other platforms.' ) }
-					onClick={ importClick }
-					href={ `/setup/site-migration/create-site?source=${ context }&ref=new-site-popover&action=import` }
-					aria-label={ __( 'Import content from other platforms' ) }
-				/>
-			</Column>
 
 			<Button
 				href="https://wordpress.com/setup/onboarding"
@@ -122,7 +135,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					display: 'block',
 					height: 'auto',
 					textAlign: 'left',
-					width: '260px',
+					width: isDesktop ? '260px' : '100%',
 					padding: 0,
 				} }
 				aria-label={ __( 'Get special offer: Free domain and up to 55% off annual plans' ) }

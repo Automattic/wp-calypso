@@ -1,10 +1,15 @@
 import { Badge, Tooltip } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
+import { RestrictionType } from '../types';
 
 import './style.scss';
 
-export default function NotAvailableBadge() {
+type Props = {
+	restriction: RestrictionType;
+};
+
+export default function NotAvailableBadge( { restriction }: Props ) {
 	const translate = useTranslate();
 
 	const [ showPopover, setShowPopover ] = useState( false );
@@ -30,7 +35,9 @@ export default function NotAvailableBadge() {
 				showDelay={ 300 }
 				className="not-available-badge__tooltip"
 			>
-				{ translate( 'One of the selected sites does not have a Basic plan.' ) }
+				{ restriction === 'atomic_site_selected'
+					? translate( 'The selected site does not support this feature.' )
+					: translate( 'One of the selected sites does not have a Basic plan.' ) }
 			</Tooltip>
 		</span>
 	);

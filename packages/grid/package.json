@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/grid",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Grid component for Automattic projects.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",

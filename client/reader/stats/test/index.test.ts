@@ -295,6 +295,33 @@ describe( 'reader stats', () => {
 			);
 		} );
 
+		it( 'should track calypso_traintracks_interact when the post has a railcar', () => {
+			const post = {
+				ID: 123,
+				site_ID: 456,
+				railcar: {
+					railcar: 'test_railcar',
+					fetch_algo: 'test_algo',
+					fetch_lang: 'en',
+					fetch_position: 1,
+					rec_blog_id: '123',
+				},
+			} as unknown as TrackPostData;
+
+			recordTrackForPost( 'calypso_reader_article_opened', post );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_traintracks_interact',
+				expect.objectContaining( {
+					railcar: 'test_railcar',
+					action: 'article_opened',
+					fetch_algo: 'test_algo',
+					fetch_lang: 'en',
+					fetch_position: 1,
+					rec_blog_id: '123',
+				} )
+			);
+		} );
+
 		it( 'should record track for post without railcar', () => {
 			const post = { ID: 123, site_ID: 456 } as unknown as TrackPostData;
 
@@ -332,21 +359,24 @@ describe( 'reader stats', () => {
 			} );
 		} );
 
-		it( 'should return properties for external post', () => {
+		it( 'should return railcar properties for post with railcar', () => {
 			const post = {
 				ID: 123,
 				site_ID: 456,
-				is_external: true,
+				railcar: {
+					railcar: 'test_railcar',
+					fetch_algo: 'test_algo',
+					fetch_lang: 'en',
+					fetch_position: 1,
+					rec_blog_id: '123',
+				},
 			} as unknown as TrackPostData;
 
-			const result = getTracksPropertiesForPost( post );
-
-			expect( result ).toEqual( {
-				blog_id: undefined,
-				post_id: undefined,
-				feed_id: undefined,
-				feed_item_id: undefined,
-				is_jetpack: undefined,
+			expect( getTracksPropertiesForPost( post ) ).toMatchObject( {
+				railcar: 'test_railcar',
+				fetch_algo: 'test_algo',
+				fetch_lang: 'en',
+				fetch_position: 1,
 			} );
 		} );
 

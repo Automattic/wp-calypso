@@ -1,3 +1,8 @@
+import {
+	siteByIdQuery,
+	isDeletingStagingSiteQuery,
+	hasStagingSiteQuery,
+} from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -8,11 +13,6 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
-import {
-	isDeletingStagingSiteQuery,
-	hasStagingSiteQuery,
-} from 'calypso/dashboard/app/queries/site-staging-sites';
 import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';

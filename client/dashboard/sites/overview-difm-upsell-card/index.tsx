@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import illustrationUrl from './upsell-illustration.svg';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const FOUR_DAYS_IN_MILLISECONDS = 4 * 24 * 60 * 60 * 1000;
 
@@ -41,7 +41,8 @@ export default function DIFMUpsellCard( { site }: { site: Site } ) {
 					target="_blank"
 					text={ __( 'Build it for me' ) }
 					variant="secondary"
-					tracksId="difm"
+					upsellId="site-overview-difm"
+					upsellFeatureId="site-difm"
 				/>
 			}
 		/>

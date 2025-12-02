@@ -1,3 +1,12 @@
+import { DotcomFeatures, HostingFeatures, JetpackModules } from '@automattic/api-core';
+import {
+	siteLatestAtomicTransferQuery,
+	siteLastBackupQuery,
+	siteMediaStorageQuery,
+	sitePHPVersionQuery,
+	siteEngagementStatsQuery,
+	siteUptimeQuery,
+} from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -11,30 +20,24 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
-import { siteLatestAtomicTransferQuery } from '../../app/queries/site-atomic-transfers';
-import { siteLastBackupQuery } from '../../app/queries/site-backups';
-import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
-import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
-import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
-import { siteUptimeQuery } from '../../app/queries/site-uptime';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
-import { DotcomFeatures, HostingFeatures, JetpackModules } from '../../data/constants';
+import { addTransientViewPropertiesToQueryParams } from '../../utils/dashboard-v1-sync';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
-import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
-import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
+import { isP2 } from '../../utils/site-types';
+import { getSiteFormattedUrl } from '../../utils/site-url';
 import { canManageSite } from '../features';
 import { isSitePlanTrial } from '../plans';
-import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { AtomicTransferStatus, Site } from '../../data/types';
-
-import './style.scss';
+import type { AtomicTransferStatus, Site, DashboardSiteListSite } from '@automattic/api-core';
+import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
@@ -44,73 +47,141 @@ function LoadingIndicator( { label }: { label: string } ) {
 	return <TextBlur>{ label }</TextBlur>;
 }
 
-function getSiteManagementUrl( site: Site ) {
+export function getSiteManagementUrl( site: Site ) {
 	if ( canManageSite( site ) ) {
-		return `/sites/${ site.slug }`;
+		const path = `/sites/${ site.slug }`;
+
+		if ( isDashboardBackport() ) {
+			return addTransientViewPropertiesToQueryParams( path );
+		}
+
+		return path;
 	}
 	return site.options?.admin_url;
 }
 
-const titleFieldTextOverflowStyles = {
+export const titleFieldTextOverflowStyles = {
 	overflowX: 'hidden',
 	textOverflow: 'ellipsis',
 	whiteSpace: 'nowrap',
 } as const;
 
+export function SiteLink( { site, ...props }: ComponentProps< typeof Link > & { site: Site } ) {
+	return (
+		<Link
+			{ ...props }
+			to={ getSiteManagementUrl( site ) }
+			disabled={ site.is_deleted }
+			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
+		/>
+	);
+}
+
+export function SiteLink__ES( {
+	site,
+	...props
+}: ComponentProps< typeof Link > & { site: DashboardSiteListSite } ) {
+	// TODO: Get the correct site management url based on permissions and backport.
+	return (
+		<Link
+			{ ...props }
+			to={ `/sites/${ site.slug }` }
+			disabled={ site.deleted }
+			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
+		/>
+	);
+}
+
 export function Name( { site, value }: { site: Site; value: string } ) {
-	const renderBadge = () => {
+	const getBadgeType = () => {
 		if ( site.is_wpcom_staging_site ) {
-			return <Badge>{ __( 'Staging' ) }</Badge>;
+			return 'staging';
 		}
-
 		if ( isSitePlanTrial( site ) ) {
-			return <Badge>{ __( 'Trial' ) }</Badge>;
+			return 'trial';
 		}
-
 		if ( isP2( site ) ) {
-			return <Badge>{ __( 'P2' ) }</Badge>;
+			return 'p2';
 		}
-
 		return null;
 	};
 
+	return <NameRenderer badge={ getBadgeType() } muted={ site.is_deleted } value={ value } />;
+}
+
+export function NameRenderer( {
+	badge,
+	muted,
+	value,
+}: {
+	badge: null | 'staging' | 'trial' | 'p2';
+	muted: boolean;
+	value: string;
+} ) {
+	const renderBadge = () => {
+		switch ( badge ) {
+			case 'staging':
+				return <Badge>{ __( 'Staging' ) }</Badge>;
+			case 'trial':
+				return <Badge>{ __( 'Trial' ) }</Badge>;
+			case 'p2':
+				return <Badge>{ __( 'P2' ) }</Badge>;
+			default:
+				break;
+		}
+	};
+
+	const badgeElement = renderBadge();
+
 	return (
-		<Link to={ getSiteManagementUrl( site ) } disabled={ site.is_deleted }>
-			<HStack alignment="center" spacing={ 1 }>
-				{ site.is_deleted ? (
-					<Text variant="muted">{ value }</Text>
-				) : (
-					<span style={ titleFieldTextOverflowStyles }>{ value }</span>
-				) }
-				<span style={ { flexShrink: 0 } }>{ renderBadge() }</span>
-			</HStack>
-		</Link>
+		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
+			{ muted ? (
+				<Text variant="muted">{ value }</Text>
+			) : (
+				<span style={ titleFieldTextOverflowStyles }>{ value }</span>
+			) }
+			{ badgeElement && <span style={ { flexShrink: 0 } }>{ badgeElement }</span> }
+		</HStack>
 	);
 }
 
 export function URL( { site, value }: { site: Site; value: string } ) {
-	return site.is_deleted ? (
+	return (
+		<URLRenderer
+			disabled={ site.is_deleted }
+			href={ getSiteFormattedUrl( site ) }
+			value={ value }
+		/>
+	);
+}
+
+export function URLRenderer( {
+	disabled,
+	href,
+	value,
+}: {
+	disabled: boolean;
+	href: string;
+	value: string;
+} ) {
+	return disabled ? (
 		<Text variant="muted">{ value }</Text>
 	) : (
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ site.URL }
+			href={ href }
 		>
 			{ value }
 		</ExternalLink>
 	);
 }
 
-export function SiteIconLink( { site }: { site: Site } ) {
+export function SiteIconLink( props: ComponentProps< typeof SiteIcon > ) {
 	return (
-		<Link
-			to={ getSiteManagementUrl( site ) }
-			disabled={ site.is_deleted }
-			style={ { textDecoration: 'none' } }
-		>
-			<SiteIcon site={ site } />
-		</Link>
+		<SiteLink site={ props.site } style={ { flexShrink: 0 } }>
+			<SiteIcon { ...props } />
+		</SiteLink>
 	);
 }
 
@@ -124,7 +195,13 @@ export function Preview( { site }: { site: Site } ) {
 		<Link
 			to={ getSiteManagementUrl( site ) }
 			disabled={ site.is_deleted }
-			style={ { display: 'block', height: '100%', width: '100%' } }
+			style={ {
+				display: 'block',
+				height: '100%',
+				width: '100%',
+				borderRadius: 'inherit',
+				overflow: 'hidden',
+			} }
 		>
 			{ resizeListener }
 			{ iframeDisabled && (
@@ -147,7 +224,7 @@ export function Preview( { site }: { site: Site } ) {
 	);
 }
 
-export function EngagementStat( {
+export function AsyncEngagementStat( {
 	site,
 	type,
 }: {
@@ -176,6 +253,10 @@ export function EngagementStat( {
 	};
 
 	return <span ref={ ref }>{ renderContent() }</span>;
+}
+
+export function EngagementStat( { value }: { value: number | null } ) {
+	return typeof value !== 'number' ? <IneligibleIndicator /> : value;
 }
 
 export function LastBackup( { site }: { site: Site } ) {
@@ -407,35 +488,43 @@ export function Status( { site }: { site: Site } ) {
 	return renderBasicStatus();
 }
 
-export function Plan( { site }: { site: Site } ) {
-	const planName = getSitePlanDisplayName( site );
-
-	if ( isSelfHostedJetpackConnected( site ) ) {
-		if ( ! site.jetpack ) {
+export function Plan( {
+	nag,
+	isSelfHostedJetpackConnected,
+	isJetpack,
+	value,
+}: {
+	nag: { isExpired: false } | { isExpired: true; site: Site };
+	isSelfHostedJetpackConnected: boolean;
+	isJetpack: boolean;
+	value: string;
+} ) {
+	if ( isSelfHostedJetpackConnected ) {
+		if ( ! isJetpack ) {
 			return <IneligibleIndicator />;
 		}
 		return (
 			<HStack spacing={ 1 } expanded={ false } justify="flex-start">
 				<JetpackLogo size={ 16 } />
-				<span>{ planName }</span>
+				<span>{ value }</span>
 			</HStack>
 		);
 	}
 
-	if ( site.plan?.expired ) {
+	if ( nag.isExpired ) {
 		return (
 			<VStack spacing={ 1 }>
 				<Text intent="error">
 					{ sprintf(
 						/* translators: %s: plan name */
 						__( '%s-expired' ),
-						planName
+						value
 					) }
 				</Text>
-				<PlanRenewNag site={ site } source="plan" />
+				<PlanRenewNag site={ nag.site } source="plan" />
 			</VStack>
 		);
 	}
 
-	return planName;
+	return value;
 }

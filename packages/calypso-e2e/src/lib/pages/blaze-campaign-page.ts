@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { TestFile } from '../../types';
 
 /**
@@ -23,6 +23,14 @@ export class BlazeCampaignPage {
 	 */
 	async clickButton( name: string ) {
 		await this.page.getByRole( 'button', { name: name } ).click();
+	}
+
+	/**
+	 * Gets the heading for the Blaze Campaign page.
+	 * @returns The heading element for the Blaze Campaign page.
+	 */
+	get makeMostOfYourBlazeCampaignHeading(): Locator {
+		return this.page.getByRole( 'heading', { name: 'Make the most of your Blaze campaign' } );
 	}
 
 	/**

@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Icon, link, linkOff, trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import {
 	ACTIVATE_PLUGIN,
@@ -11,12 +13,14 @@ import { PluginActionTypes } from 'calypso/my-sites/plugins/plugin-management-v2
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { Plugin, PluginSite } from 'calypso/state/plugins/installed/types';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { PluginActions } from '../hooks/types';
 
 export function useActions(
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void
 ) {
 	const dispatch = useDispatch();
+	const hostingDashboardOptIn = useSelector( ( state ) => hasHostingDashboardOptIn( state ) );
 	const recordIntentionEvent = ( plugins: Array< Plugin >, action: string ) => {
 		/**
 		 * There's currently no better way to differentiate between bulk and single action clicks.
@@ -45,9 +49,20 @@ export function useActions(
 			href: 'some-url',
 			callback: ( plugins: Array< Plugin > ) => {
 				recordIntentionEvent( plugins, 'manage-plugin' );
-				plugins.length && navigate( '/plugins/' + plugins[ 0 ].slug );
+				const pluginSlug = plugins?.[ 0 ]?.slug;
+				if ( pluginSlug ) {
+					const url = `/plugins/${ pluginSlug }`;
+					if ( isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn ) {
+						window.open( url, '_blank' );
+					} else {
+						navigate( url );
+					}
+				}
 			},
-			label: translate( 'Manage plugin' ),
+			label:
+				isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn
+					? translate( 'Manage plugin ↗' )
+					: translate( 'Manage plugin' ),
 			isExternalLink: true,
 			isEnabled: true,
 			supportsBulk: false,

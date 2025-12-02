@@ -151,8 +151,6 @@ export const requestError = ( state = null, action ) => {
 			const { error } = action;
 			return error;
 		}
-		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS:
-			return null;
 		case LOGIN_AUTH_ACCOUNT_TYPE_RESET:
 			return null;
 		case LOGIN_REQUEST:
@@ -263,6 +261,7 @@ const twoFactorProperties = [
 	'two_step_nonce',
 	'two_step_supported_auth_types',
 	'two_step_notification_sent',
+	'two_step_nonce_email',
 	'two_step_nonce_backup',
 	'two_step_nonce_sms',
 	'two_step_nonce_authenticator',

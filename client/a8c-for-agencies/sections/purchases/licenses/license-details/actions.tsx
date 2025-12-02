@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
 import CancelLicenseFeedbackModal from 'calypso/a8c-for-agencies/components/a4a-feedback/churn-mechanism/cancel-license-feedback-modal';
@@ -23,6 +22,7 @@ import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useLicenseDownloadUrlMutation from '../revoke-license-dialog/hooks/use-license-download-url-mutation';
+import type { LicenseSubscription } from 'calypso/state/partner-portal/types';
 
 interface Props {
 	licenseKey: string;
@@ -35,6 +35,7 @@ interface Props {
 	isClientLicense?: boolean;
 	isDevSite?: boolean;
 	productId?: number;
+	subscription?: LicenseSubscription | null;
 }
 
 export default function LicenseDetailsActions( {
@@ -48,6 +49,7 @@ export default function LicenseDetailsActions( {
 	isClientLicense,
 	isDevSite,
 	productId,
+	subscription,
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -60,6 +62,8 @@ export default function LicenseDetailsActions( {
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
 	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
+	const isAutoRenewDisabled =
+		subscription?.status === 'active' && ! subscription.isAutoRenewEnabled;
 
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
@@ -135,14 +139,15 @@ export default function LicenseDetailsActions( {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ translate( 'Manage in Pressable' ) } <Icon icon={ external } size={ 18 } />
+					{ translate( 'Manage in Pressable ↗' ) }
 				</Button>
 			) }
 
 			{ ( isPressableLicense || isWPCOMHostingLicense ) &&
 				licenseState !== LicenseState.Revoked &&
 				! isDevSite &&
-				! isClientLicense && (
+				! isClientLicense &&
+				! isAutoRenewDisabled && (
 					<Button
 						compact
 						href={
@@ -156,10 +161,12 @@ export default function LicenseDetailsActions( {
 				) }
 
 			{ canRevoke &&
+				! isClientLicense &&
 				( isChildLicense
 					? licenseState === LicenseState.Attached
 					: licenseState !== LicenseState.Revoked ) &&
-				licenseType === LicenseType.Partner && (
+				licenseType === LicenseType.Partner &&
+				! isAutoRenewDisabled && (
 					<Button compact onClick={ openRevokeDialog } scary>
 						{ translate( 'Revoke' ) }
 					</Button>

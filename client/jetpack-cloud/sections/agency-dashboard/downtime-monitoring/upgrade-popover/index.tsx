@@ -2,6 +2,8 @@ import { Popover, Button } from '@automattic/components';
 import { close, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext } from 'react';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useDispatch, useSelector } from 'calypso/state';
 import {
 	JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_TOOLTIP_PREFERENCE as tooltipPreference,
@@ -12,6 +14,7 @@ import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitesOverviewContext from '../../sites-overview/context';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import { PreferenceType } from '../../sites-overview/types';
+
 import './style.scss';
 
 type Props = {
@@ -34,6 +37,8 @@ export default function UpgradePopover( {
 	const { showLicenseInfo } = useContext( SitesOverviewContext );
 
 	const preference = useSelector( ( state ) => getPreference( state, tooltipPreference ) );
+
+	const isA4AEnvironment = isA8CForAgencies();
 
 	const isDismissed = dismissibleWithPreference ? preference?.dismiss : false;
 
@@ -64,6 +69,11 @@ export default function UpgradePopover( {
 		handleDismissPopover();
 		recordEvent( 'downtime_monitoring_upgrade_popover_accept' );
 		showLicenseInfo( 'monitor' );
+	};
+
+	const handleClickUpgrade = () => {
+		handleDismissPopover();
+		recordEvent( 'downtime_monitoring_upgrade_popover_accept' );
 	};
 
 	const handleOnShow = () => {
@@ -101,9 +111,21 @@ export default function UpgradePopover( {
 				<li>{ translate( 'SMS Notifications' ) }</li>
 				<li>{ translate( 'Multiple email recipients' ) }</li>
 			</ul>
-			<Button className="upgrade-popover__button" primary onClick={ handleClickExplore }>
-				{ translate( 'Explore' ) }
-			</Button>
+
+			{ isA4AEnvironment ? (
+				<Button
+					className="upgrade-popover__button"
+					primary
+					onClick={ handleClickUpgrade }
+					href={ `${ A4A_MARKETPLACE_PRODUCTS_LINK }?show_license_modal=jetpack-monitor` }
+				>
+					{ translate( 'Upgrade' ) }
+				</Button>
+			) : (
+				<Button className="upgrade-popover__button" primary onClick={ handleClickExplore }>
+					{ translate( 'Explore' ) }
+				</Button>
+			) }
 		</Popover>
 	);
 }

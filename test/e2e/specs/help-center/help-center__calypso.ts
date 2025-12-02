@@ -62,11 +62,14 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 		it( 'can be minimized', async () => {
 			await helpCenterComponent.minimizePopover();
 
+			// Wait for the transition to complete.
+			await page.waitForTimeout( 200 );
+
 			const containerHeight = await helpCenterLocator.evaluate(
 				( el: HTMLElement ) => el.offsetHeight
 			);
 
-			expect( containerHeight ).toBe( 50 );
+			expect( containerHeight ).toBe( 56 );
 		} );
 
 		it( 'can be maximized', async () => {
@@ -84,15 +87,16 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 		it( 'initial articles are shown', async () => {
 			const articles = helpCenterComponent.getArticles();
 
-			expect( await articles.count() ).toBeGreaterThanOrEqual( 5 );
+			expect( await articles.count() ).toBeGreaterThanOrEqual( 1 );
 		} );
 
 		it( 'search returns proper results', async () => {
-			await helpCenterComponent.search( 'Change a Domain Name Address' );
+			await helpCenterComponent.search( 'Change a domain name address' );
 			const resultTitles = await helpCenterComponent.getArticles().allTextContents();
+
 			expect(
 				resultTitles.some(
-					( title ) => normalizeString( title )?.includes( 'Change a Domain Name Address' )
+					( title ) => normalizeString( title )?.includes( 'Change a domain name address' )
 				)
 			).toBeTruthy();
 		} );

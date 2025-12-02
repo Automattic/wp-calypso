@@ -152,6 +152,15 @@ export const userSettingsSaveSuccess =
 			return;
 		}
 
+		// Suppress notifications for site-specific MCP updates (they handle their own notifications)
+		if (
+			settingsOverride?.mcp_abilities &&
+			settingsOverride.mcp_abilities.sites &&
+			Object.keys( settingsOverride.mcp_abilities.sites ).length > 0
+		) {
+			return;
+		}
+
 		// Don't show success notice if we're in reader onboarding
 		try {
 			const currentUrl = typeof window !== 'undefined' ? window.location.href : '';

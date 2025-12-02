@@ -4,9 +4,9 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
+import InfoModal from 'calypso/a8c-for-agencies/components/a4a-info-modal';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import InfoModal from './info-modal';
 
 import './style.scss';
 

@@ -264,7 +264,7 @@ export function useActions( {
 		site: SiteExcerptData,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
-	viewType: 'list' | 'table' | 'grid';
+	viewType: 'list' | 'table' | 'grid' | 'pickerGrid' | 'pickerTable';
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const localizeUrl = useLocalizeUrl();
@@ -334,7 +334,7 @@ export function useActions( {
 				: [] ),
 			{
 				id: 'open-site',
-				isPrimary: true,
+				isPrimary: viewType !== 'list',
 				label: __( 'Open site' ),
 				icon: external,
 				callback: ( sites ) => {
@@ -349,7 +349,7 @@ export function useActions( {
 			},
 			{
 				id: 'admin',
-				isPrimary: true,
+				isPrimary: viewType !== 'list',
 				label: __( 'WP Admin' ),
 				icon: wordpress,
 				callback: ( sites ) => {

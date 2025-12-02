@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -7,6 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import FullWidthSection from 'calypso/components/full-width-section';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -24,6 +26,7 @@ import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-s
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -108,6 +111,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
 		: __( 'Plugins' );
 	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
+	const hostingDashboardOptIn = useSelector( ( state ) => hasHostingDashboardOptIn( state ) );
+	const shouldUseLoggedInView =
+		isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn ? siteId : isLoggedIn;
+
+	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
@@ -150,8 +158,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 			className={ clsx( 'plugins-browser', {
 				'plugins-browser--site-view': !! selectedSite,
 			} ) }
-			wideLayout
-			isLoggedOut={ ! isLoggedIn }
+			wideLayout={ ! isMarketplaceRedesignEnabled }
+			fullWidthLayout={ isMarketplaceRedesignEnabled }
+			isLoggedOut={ ! shouldUseLoggedInView }
 		>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
@@ -180,8 +189,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
-				{ isLoggedIn ? (
-					<>
+				{ shouldUseLoggedInView ? (
+					<FullWidthSection className="plugins-browser__search-categories full-width-section--no-padding">
 						<div ref={ loggedInSearchBoxRef } />
 						<SearchCategories
 							category={ category }
@@ -191,37 +200,47 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 							searchTerm={ search }
 							searchTerms={ searchTerms }
 						/>
-					</>
+					</FullWidthSection>
 				) : (
 					<>
-						<SearchBoxHeader
-							searchRef={ searchRef }
-							categoriesRef={ categoriesRef }
-							stickySearchBoxRef={ searchHeaderRef }
-							isSticky={ isAboveElement }
-							searchTerm={ search }
-							isSearching={ isFetchingPluginsBySearchTerm }
-							title={ __( 'Flex your site’s features with plugins' ) }
-							subtitle={
-								! isLoggedIn &&
-								__(
-									'Add new functionality and integrations to your site with thousands of plugins.'
-								)
-							}
-							searchTerms={ searchTerms }
-							renderTitleInH1={ ! category }
-						/>
-
-						<div ref={ categoriesRef }>
-							<Categories selected={ category } noSelection={ search ? true : false } />
-						</div>
+						<FullWidthSection className="plugins-browser__search-header full-width-section--gray">
+							<SearchBoxHeader
+								searchRef={ searchRef }
+								categoriesRef={ categoriesRef }
+								stickySearchBoxRef={ searchHeaderRef }
+								isSticky={ isAboveElement }
+								searchTerm={ search }
+								isSearching={ isFetchingPluginsBySearchTerm }
+								title={
+									isMarketplaceRedesignEnabled
+										? __( 'Plug into possibility' )
+										: __( 'Flex your site’s features with plugins' )
+								}
+								subtitle={
+									isMarketplaceRedesignEnabled
+										? __(
+												'Add new features or connect your favorite tools with thousands of plugins — available on all paid WordPress.com plans.'
+										  )
+										: __(
+												'Add new functionality and integrations to your site with thousands of plugins.'
+										  )
+								}
+								searchTerms={ searchTerms }
+								renderTitleInH1={ ! category }
+							/>
+						</FullWidthSection>
+						<FullWidthSection className="plugins-browser__categories">
+							<div ref={ categoriesRef }>
+								<Categories selected={ category } noSelection={ search ? true : false } />
+							</div>
+						</FullWidthSection>
 					</>
 				) }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
-					<div className="plugins-browser__marketplace-footer">
+					<FullWidthSection className="plugins-browser__marketplace-footer">
 						<MarketplaceFooter />
-					</div>
+					</FullWidthSection>
 				) }
 			</div>
 		</MainComponent>

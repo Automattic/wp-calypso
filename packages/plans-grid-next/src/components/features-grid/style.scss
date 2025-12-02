@@ -15,7 +15,7 @@
 	padding-left: 20px;
 
 	@include plans-grid-medium-large {
-		margin-top: 36px;
+		margin-top: 32px;
 	}
 
 	.plan-features-2023-grid__table-top & {
@@ -319,6 +319,11 @@
 .plans-grid-next-features-grid__feature-group-title {
 	font-weight: 600;
 	color: var(--studio-gray-80);
+
+	&.is-wordpress-hosting {
+		padding-top: 12px;
+		font-size: 12px;
+	}
 }
 
 .plans-grid-next-features-grid__feature-group-row {
@@ -612,6 +617,15 @@
 		.plan-features-2023-grid__item-annual-plan-container
 		.plan-features-2023-grid__item-annual-plan {
 			color: var(--studio-orange-40);
+		}
+	}
+}
+
+// Conditional styles for visual split layout (website-builder and wordpress-hosting intents)
+.plans-features-main__group.is-visual-split-layout {
+	.plans-grid-next-features-grid__feature-group-row {
+		&:last-child > .plan-features-2023-grid__table-item {
+			padding-bottom: 18px;
 		}
 	}
 }

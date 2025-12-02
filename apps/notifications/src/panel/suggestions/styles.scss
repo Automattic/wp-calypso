@@ -1,14 +1,14 @@
-$base-background-color: var(--color-surface);
-$list-background: var(--color-surface);
-$border-color: var(--color-neutral-10);
-$light-border-color: var(--color-neutral-0);
-$text-color: var(--color-neutral-70);
-$name-color: var(--color-neutral-light);
-$selected-color: var(--color-primary);
+$base-background-color: var(--color-surface, #fff);
+$list-background: var(--color-surface, #fff);
+$border-color: var(--color-neutral-10, #c3c4c7);
+$light-border-color: var(--color-neutral-0, #f6f7f7);
+$text-color: var(--color-neutral-70, #3c434a);
+$name-color: var(--color-neutral-light, #8c8f94);
+$selected-color: var(--color-primary, #3858e9);
 $img-size: 24px;
 $img-border-radius: 50%;
 $border-radius: 3px;
-$box-shadow: 0 5px 6px color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
+$box-shadow: 0 5px 6px color-mix(in srgb, var(--color-neutral-10, #c3c4c7) 50%, transparent);
 
 .wpnc__suggestions {
 	position: relative;
@@ -76,12 +76,12 @@ $box-shadow: 0 5px 6px color-mix(in srgb, var(--color-neutral-10) 50%, transpare
 	// Currently-selected item (arrows or via search)
 	.cur {
 		background: $selected-color;
-		color: var(--color-text-inverted);
+		color: var(--color-text-inverted, #fff);
 
 		strong,
 		.username strong {
-			color: var(--color-text-inverted);
-			background: color-mix(in srgb, var(--color-primary-light) 45%, transparent);
+			color: var(--color-text-inverted, #fff);
+			background: color-mix(in srgb, var(--color-primary-light, #5882eb) 45%, transparent);
 		}
 
 		small {

@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { JetpackLogo } from '@automattic/components';
+import { JetpackLogo, WordPressLogo } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -12,6 +12,9 @@ import { SitesAddNewSitePopover } from 'calypso/components/sites-add-new-site';
 import SplitButton from 'calypso/components/split-button';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
+import { useSelector } from 'calypso/state';
+import { WPCOM_FLEX } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { LinkWithRedirect } from './link-with-redirect';
 import './sites-dashboard-header.scss';
@@ -113,7 +116,7 @@ const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPrevie
 	const importSiteUrl = useSitesDashboardImportSiteUrl( {
 		ref: 'topbar',
 	} );
-
+	const isFlexEligible = useSelector( ( state ) => currentUserHasFlag( state, WPCOM_FLEX ) );
 	return (
 		<PageHeader className="sites-dashboard-header">
 			<HeaderControls>
@@ -133,6 +136,17 @@ const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPrevie
 						toggleIcon={ isMobile ? 'plus' : undefined }
 						isMobile={ isMobile }
 					>
+						{ isFlexEligible && (
+							<PopoverMenuItem
+								onClick={ () => {
+									recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_flex' );
+								} }
+								href="/setup/flex-site"
+							>
+								<WordPressLogo className="gridicon" size={ 18 } />
+								<span>{ translate( 'Create a Flex site' ) }</span>
+							</PopoverMenuItem>
+						) }
 						<PopoverMenuItem
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );

@@ -1,4 +1,3 @@
-import { persistGooglePhotosPickerSessionCookie } from 'calypso/jetpack-connect/persistence-utils';
 import wp from 'calypso/lib/wp';
 import {
 	MEDIA_DELETE,
@@ -19,7 +18,6 @@ import {
 	MEDIA_ITEM_EDIT,
 	MEDIA_SET_QUERY,
 	MEDIA_CLEAR_SITE,
-	MEDIA_PHOTOS_PICKER_SESSION_SET,
 	MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET,
 } from 'calypso/state/action-types';
 
@@ -298,19 +296,6 @@ export function clearSite( siteId ) {
 	return {
 		type: MEDIA_CLEAR_SITE,
 		siteId,
-	};
-}
-
-/**
- * Set a Google photos picker session.
- * @param session
- */
-export function setPhotoPickerSession( session ) {
-	persistGooglePhotosPickerSessionCookie( session.id );
-
-	return {
-		type: MEDIA_PHOTOS_PICKER_SESSION_SET,
-		session,
 	};
 }
 

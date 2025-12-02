@@ -121,6 +121,32 @@ export function feedDiscovery( context, next ) {
 	}
 }
 
+/**
+ * Feed lookup and redirect to feed stream.
+ * @param {*} context
+ */
+export function feedLookup( context ) {
+	if ( ! context.params[ 0 ] ) {
+		page.redirect( `/reader` );
+		return;
+	}
+
+	const url = context.params[ 0 ];
+	context.queryClient
+		.fetchQuery( {
+			queryKey: [ 'feed-lookup', url ],
+			queryFn: () =>
+				wpcom.req.get( '/read/feed', { url } ).then( ( res ) => res.feeds[ 0 ].feed_ID ),
+			meta: { persist: false },
+		} )
+		.then( ( feedId ) => {
+			page.redirect( `/reader/feeds/${ feedId }` );
+		} )
+		.catch( () => {
+			page.redirect( `/reader` );
+		} );
+}
+
 export function feedListing( context, next ) {
 	const feedId = context.params.feed_id;
 	if ( ! parseInt( feedId, 10 ) ) {

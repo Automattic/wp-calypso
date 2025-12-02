@@ -1,28 +1,26 @@
-import { __ } from '@wordpress/i18n';
-import { useOdieAssistantContext } from '../../context';
+import { sprintf, __ } from '@wordpress/i18n';
+import { error, Icon } from '@wordpress/icons';
 
-const MESSAGE_SIZE_ERROR_NOTICE_ID = 'message-size-error-notice';
+const MAX_MESSAGE_LENGTH = 4096;
 
-export default function useMessageSizeErrorNotice() {
-	const { setNotice } = useOdieAssistantContext();
+export default function useMessageSizeErrorNotice( messageLength: number ) {
+	const isMessageTooLong = messageLength > MAX_MESSAGE_LENGTH;
 
-	const isMessageLengthValid = ( message?: string ) => {
-		if ( message?.length && message.length > 4096 ) {
-			return false;
-		}
-		return true;
-	};
-
-	const setMessageLengthErrorNotice = () => {
-		setNotice(
-			MESSAGE_SIZE_ERROR_NOTICE_ID,
-			__( 'Message exceeds 4096 characters limit.', __i18n_text_domain__ )
-		);
-	};
-
-	const clearMessageLengthErrorNotice = () => {
-		setNotice( MESSAGE_SIZE_ERROR_NOTICE_ID, null );
-	};
-
-	return { isMessageLengthValid, setMessageLengthErrorNotice, clearMessageLengthErrorNotice };
+	return isMessageTooLong
+		? {
+				icon: <Icon size={ 24 } icon={ error } />,
+				message: sprintf(
+					/* translators: %(messageLength)d is the current message length and %(maxMessageLength)d is the maximum message length. */
+					__(
+						'Maximum length reached (%(messageLength)d/%(maxMessageLength)d).',
+						__i18n_text_domain__
+					),
+					{
+						messageLength,
+						maxMessageLength: MAX_MESSAGE_LENGTH,
+					}
+				),
+				dismissible: true,
+		  }
+		: undefined;
 }

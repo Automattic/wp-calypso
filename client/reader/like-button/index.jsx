@@ -16,6 +16,7 @@ import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-co
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 
 import './style.scss';
 
@@ -57,7 +58,10 @@ class ReaderLikeButton extends Component {
 		recordTrackForPost(
 			liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked',
 			post,
-			{ context: this.props.fullPost ? 'full-post' : 'card' }
+			{ context: this.props.fullPost ? 'full-post' : 'card' },
+			{
+				...( this.props.fullPost ? { pathnameOverride: this.props.previousPath } : {} ),
+			}
 		);
 		if ( liked && ! this.props.fullPost && ! post._seen ) {
 			this.props.markPostSeen( post, this.props.site );
@@ -129,6 +133,7 @@ export default connect(
 			likeCount: getPostLikeCount( state, siteId, postId ),
 			iLike: isLikedPost( state, siteId, postId ),
 			isLoggedIn: isUserLoggedIn( state ),
+			previousPath: getPreviousPath( state ),
 		};
 	},
 	{ markPostSeen }

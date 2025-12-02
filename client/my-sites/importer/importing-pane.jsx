@@ -1,6 +1,5 @@
-import { ProgressBar, Spinner } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import clsx from 'clsx';
+import { ProgressBar } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -232,9 +231,6 @@ export class ImportingPane extends PureComponent {
 			site,
 		} = this.props;
 		const { customData } = importerStatus;
-		const progressClasses = clsx( 'importer__import-progress', {
-			'is-complete': this.isFinished(),
-		} );
 
 		let { percentComplete, statusMessage } = this.props.importerStatus;
 		const { progress } = this.props.importerStatus;
@@ -254,9 +250,7 @@ export class ImportingPane extends PureComponent {
 		}
 
 		if ( this.isImporting() && hasProgressInfo( progress ) ) {
-			const remainingResources = resourcesRemaining( progress );
 			percentComplete = calculateProgress( progress );
-			blockingMessage = this.getImportMessage( remainingResources );
 		}
 
 		return (
@@ -278,11 +272,15 @@ export class ImportingPane extends PureComponent {
 				) }
 				{ ( this.isImporting() || this.isProcessing() ) &&
 					( percentComplete >= 0 ? (
-						<ProgressBar className={ progressClasses } value={ percentComplete } />
+						<div className="importer__importing-pane-progress-container">
+							<ProgressBar
+								className="importer__importing-pane-progress"
+								value={ percentComplete }
+							/>
+						</div>
 					) : (
-						<div>
-							<Spinner className="importer__import-spinner" />
-							<br />
+						<div className="importer__importing-pane-progress-container">
+							<ProgressBar className="importer__importing-pane-progress" isPulsing />
 						</div>
 					) ) }
 				{ blockingMessage && (

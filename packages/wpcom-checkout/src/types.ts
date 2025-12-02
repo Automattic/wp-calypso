@@ -5,7 +5,7 @@ type PurchaseSiteId = number;
 
 export type WPCOMTransactionEndpointResponseSuccess = {
 	success: true;
-	purchases: Record< PurchaseSiteId, Purchase[] >;
+	purchases: Record< PurchaseSiteId, TransactionResponsePurchase[] >;
 	failed_purchases: Record< PurchaseSiteId, FailedPurchase[] >;
 	receipt_id: number;
 	order_id: number | '';
@@ -22,7 +22,7 @@ export type WPCOMTransactionEndpointResponseSuccess = {
 
 export type WPCOMTransactionEndpointResponseFailed = {
 	success: false;
-	purchases: Record< PurchaseSiteId, Purchase[] >;
+	purchases: Record< PurchaseSiteId, TransactionResponsePurchase[] >;
 	failed_purchases: Record< PurchaseSiteId, FailedPurchase[] >;
 	receipt_id: number;
 	order_id: number | '';
@@ -95,7 +95,7 @@ export interface TaxVendorInfo {
 	tax_name: string;
 }
 
-export interface Purchase {
+export interface TransactionResponsePurchase {
 	delayed_provisioning?: boolean;
 	expiry?: string;
 	is_domain_registration: boolean;

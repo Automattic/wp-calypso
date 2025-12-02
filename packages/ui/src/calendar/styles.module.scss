@@ -1,4 +1,5 @@
-@use "@wordpress/base-styles/colors";
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/variables';
 @use '../utils/theme-variables' as theme;
 
 /* Root of the component. */
@@ -7,9 +8,9 @@
 
 	// Internal variables
 	--a8c-calendar-outline-focus: 1.5px solid #{theme.$components-color-accent};
-	--a8c-calendar-button-height: 2rem;
-	--a8c-calendar-button-width: 2rem;
-	--a8c-calendar-nav-height: 2rem;
+	--a8c-calendar-button-height: #{variables.$grid-unit-40};
+	--a8c-calendar-button-width: #{variables.$grid-unit-40};
+	--a8c-calendar-nav-height: #{variables.$grid-unit-40};
 
 	// TODO: themify / align to DS tokens
 	--a8c-calendar-range-middle-background-color: color-mix(in srgb, #{theme.$components-color-accent} 4%, transparent);
@@ -18,10 +19,10 @@
 	position: relative; /* Required to position the navigation toolbar. */
 	box-sizing: border-box;
 	display: inline flow-root;
-	color: colors.$gray-900;
-	background-color: colors.$white;
-	font-size: 13px;
-	font-weight: 400;
+	color: theme.$components-color-foreground;
+	background-color: theme.$components-color-background;
+	font-size: variables.$font-size-medium;
+	font-weight: variables.$font-weight-regular;
 	z-index: 0; // Create a stacking context and render on top of the background.
 
 	*, *::before, *::after {
@@ -38,7 +39,7 @@
 	// date follows the same color as the button's text, since the button
 	// inherits its text color.
 	&:has(.calendar__day-button:disabled) {
-		color: colors.$gray-600;
+		color: theme.$components-color-disabled;
 	}
 	&:has(.calendar__day-button:hover:not(:disabled)),
 	&:has(.calendar__day-button:focus-visible) {
@@ -60,7 +61,7 @@
 	height: var(--a8c-calendar-button-height);
 
 	border: none;
-	border-radius: 2px;
+	border-radius: variables.$radius-small;
 
 	font: inherit;
 	font-variant-numeric: tabular-nums;
@@ -76,7 +77,7 @@
 		z-index: -1;
 		inset: 0;
 		border: none; // No default border to avoid polluting high-contrast mode.
-		border-radius: 2px;
+		border-radius: variables.$radius-small;
 	}
 
 	// Use the button's ::after to show the selection preview.
@@ -120,7 +121,7 @@
 .calendar__button-next,
 .calendar__button-previous {
 	border: none;
-	border-radius: 2px;
+	border-radius: variables.$radius-small;
 	background: none;
 	padding: 0;
 	margin: 0;
@@ -142,7 +143,7 @@
 	&[aria-disabled="true"] {
 		cursor: revert;
 
-		color: colors.$gray-600;
+		color: theme.$components-color-disabled;
 	}
 
 	&:focus-visible {
@@ -153,8 +154,8 @@
 .calendar__chevron {
 	display: inline-block;
 	fill: currentColor;
-	width: 16px;
-	height: 16px;
+	width: variables.$grid-unit-20;
+	height: variables.$grid-unit-20;
 }
 
 .calendar[dir="rtl"] .calendar__nav .calendar__chevron {
@@ -168,7 +169,7 @@
 	align-content: center;
 
 	height: var(--a8c-calendar-nav-height);
-	margin-bottom: 12px;
+	margin-bottom: variables.$grid-unit-15;
 }
 
 .calendar__months {
@@ -176,13 +177,13 @@
 	display: flex;
 	justify-content: center;
 	flex-wrap: wrap;
-	gap: 1rem;
+	gap: variables.$grid-unit-20;
 	max-width: fit-content;
 }
 
 .calendar__month-grid {
 	border-collapse: separate;
-	border-spacing: 0 4px;
+	border-spacing: 0 variables.$grid-unit-05;
 }
 
 .calendar__nav {
@@ -203,7 +204,7 @@
 	height: var(--a8c-calendar-button-height);
 	padding: 0;
 
-	color: colors.$gray-700;
+	color: theme.$components-color-gray-700;
 	text-align: center;
 	text-transform: uppercase;
 }
@@ -225,12 +226,12 @@
 // Selected date button (individual date, range start, and range end)
 .calendar__day--selected:not(.calendar__range-middle) {
 	&:has(.calendar__day-button, .calendar__day-button:hover:not(:disabled)) {
-		color: colors.$white;
+		color: theme.$components-color-foreground-inverted;
 	}
 
 	.calendar__day-button {
 		&::before {
-			background-color: colors.$gray-900;
+			background-color: theme.$components-color-foreground;
 			// Render a transparent border to highlight the selected day in
 			// forced-colors (high-contrast) mode, since the background is not
 			// visible.
@@ -238,11 +239,11 @@
 		}
 
 		&:disabled::before {
-			background-color: colors.$gray-600;
+			background-color: theme.$components-color-disabled;
 		}
 
 		&:hover:not(:disabled)::before {
-			background-color: colors.$gray-800;
+			background-color: theme.$components-color-gray-800;
 		}
 	}
 }

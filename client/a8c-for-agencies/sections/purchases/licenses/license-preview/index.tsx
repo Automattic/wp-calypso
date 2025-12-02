@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
-import { Icon, external } from '@wordpress/icons';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -82,8 +81,7 @@ export const ManageInPressable = ( { attachedAt }: { attachedAt: string | null }
 				}
 			} }
 		>
-			{ translate( 'Manage in Pressable' ) }
-			<Icon className="gridicon" icon={ external } size={ 18 } />
+			{ translate( 'Manage in Pressable ↗' ) }
 		</a>
 	) : (
 		translate( 'Managed by agency owner' )

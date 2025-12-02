@@ -59,7 +59,7 @@ const wpcomAssignPaymentMethod = (
 	wp.req.post( {
 		path: '/upgrades/' + subscriptionId + '/assign-payment-method',
 		body: { stored_details_id },
-		apiVersion: '1',
+		apiVersion: '1.2',
 	} );
 
 const wpcomCreatePayPalAgreement = (

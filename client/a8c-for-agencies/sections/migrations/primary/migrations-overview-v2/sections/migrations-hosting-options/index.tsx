@@ -1,5 +1,4 @@
 import { Button, Card } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
@@ -146,7 +145,7 @@ export default function MigrationsHostingOptions() {
 							rel="noopener noreferrer"
 							onClick={ onSchedulePressableDemoClick }
 						>
-							{ translate( 'Schedule a demo' ) } <Icon icon={ external } size={ 16 } />
+							{ translate( 'Schedule a demo ↗' ) }
 						</Button>,
 					] }
 				/>

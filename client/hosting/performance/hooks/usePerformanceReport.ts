@@ -3,6 +3,7 @@ import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basi
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { TabType } from 'calypso/performance-profiler/components/header';
 import { isValidURL } from '../utils';
+import type { PageSpeedReport } from 'calypso/data/site-profiler/types';
 
 export const usePerformanceReport = (
 	setIsSavingPerformanceReportUrl: ( isSaving: boolean ) => void,
@@ -13,7 +14,8 @@ export const usePerformanceReport = (
 	) => Promise< void >,
 	currentPageId: string,
 	wpcom_performance_report_url: { url: string; hash: string } | undefined,
-	activeTab: TabType
+	activeTab: TabType,
+	reportCompletedCallback: ( report: PageSpeedReport, url: string, hash: string ) => void
 ) => {
 	const { url = '', hash = '' } = wpcom_performance_report_url || {};
 
@@ -28,6 +30,9 @@ export const usePerformanceReport = (
 	} = useUrlBasicMetricsQuery( url, hash, true );
 
 	const { final_url: finalUrl, token } = basicMetrics || {};
+
+	const targetUrl = finalUrl ?? url;
+	const targetHash = token ?? hash;
 
 	useEffect( () => {
 		if ( token && finalUrl && isValidURL( finalUrl ) ) {
@@ -49,9 +54,15 @@ export const usePerformanceReport = (
 		status: insightsStatus,
 		isError: isInsightsError,
 		isLoading: isLoadingInsights,
-	} = useUrlPerformanceInsightsQuery( url, token ?? hash );
+	} = useUrlPerformanceInsightsQuery( url, targetHash );
 
 	const performanceInsights = data?.pagespeed;
+
+	useEffect( () => {
+		if ( performanceInsights && performanceInsights.status === 'completed' ) {
+			reportCompletedCallback( performanceInsights, targetUrl, targetHash );
+		}
+	}, [ performanceInsights, reportCompletedCallback, targetHash, targetUrl ] );
 
 	const isReportFailed = ( report: unknown ) => report === 'failed';
 
@@ -103,7 +114,7 @@ export const usePerformanceReport = (
 
 	return {
 		performanceReport,
-		url: finalUrl ?? url,
+		url: targetUrl,
 		hash: getHashOrToken( hash, token, activeTab === 'mobile' ? mobileLoaded : desktopLoaded ),
 		isLoading:
 			isLoadingBasicMetrics ||

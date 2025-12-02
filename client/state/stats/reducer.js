@@ -7,7 +7,6 @@ import moduleToggles from './module-toggles/reducer';
 import paidStatsUpsell from './paid-stats-upsell/reducer';
 import planUsage from './plan-usage/reducer';
 import posts from './posts/reducer';
-import recentPostViews from './recent-post-views/reducer';
 import utmMetrics from './utm-metrics/reducer';
 
 const combinedReducer = combineReducers( {
@@ -16,7 +15,6 @@ const combinedReducer = combineReducers( {
 	lists,
 	posts,
 	emails,
-	recentPostViews,
 	paidStatsUpsell,
 	utmMetrics,
 	planUsage,

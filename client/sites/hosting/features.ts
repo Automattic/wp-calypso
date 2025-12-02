@@ -7,10 +7,15 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 
 export function areHostingFeaturesSupported( site?: SiteExcerptData | null ) {
-	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+	const isWoAOrStagingOrFlexSite =
+		!! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site || !! site?.is_wpcom_flex;
 	const isPlanExpired = site?.plan?.expired;
 
-	return isAtomicSite && ! isPlanExpired;
+	return isWoAOrStagingOrFlexSite && ! isPlanExpired;
+}
+
+export function isHostingFeatureSupported( site: SiteExcerptData, feature: string ) {
+	return areHostingFeaturesSupported( site ) && site.plan?.features.active.includes( feature );
 }
 
 export function useAreHostingFeaturesSupported() {

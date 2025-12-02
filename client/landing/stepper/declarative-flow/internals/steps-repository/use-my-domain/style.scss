@@ -2,11 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .step-route.use-my-domain {
-	.start-writing .register-domain-step {
-		box-shadow: none;
-		background: none;
-	}
-
 	.domain-transfer-or-connect__content {
 		box-shadow: none;
 	}
@@ -14,10 +9,6 @@
 
 .step-route.use-my-domain:not(:has(.step-container-v2)) {
 	padding: 36px 0;
-
-	.start-writing .register-domain-step__next-page-button {
-		padding-bottom: 8px !important;
-	}
 }
 
 .use-my-domain:has(.step-container-v2) {

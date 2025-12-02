@@ -6,6 +6,7 @@ import {
 	redirectWithoutLocaleParamIfLoggedIn,
 	render as clientRender,
 } from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import {
 	addNavigationIfLoggedIn,
 	navigation,
@@ -73,6 +74,7 @@ export default function ( router ) {
 		redirectWithoutLocaleParamIfLoggedIn,
 		fetchAndValidateVerticalsAndFilters,
 		noSite,
+		setupPreferences,
 		renderThemes,
 		addNavigationIfLoggedIn,
 		makeLayout,
@@ -91,5 +93,5 @@ export default function ( router ) {
 			redirectToThemeDetails( page.redirect, site_id, theme, section, next )
 	);
 
-	router( '/themes/*', fetchThemeData, renderThemes, makeLayout );
+	router( '/themes/*', setupPreferences, fetchThemeData, renderThemes, makeLayout );
 }

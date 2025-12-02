@@ -45,11 +45,11 @@ describe( 'DataHelper Tests', function () {
 		type Params = Parameters< typeof getCalypsoURL >;
 		test.each< { route: Params[ 0 ]; queryStrings: Params[ 1 ]; expected: string } >`
 			route           | queryStrings                               | expected
-			${ '/' }        | ${ undefined }                             | ${ 'https://wordpress.com/' }
-			${ 'log-in' }   | ${ undefined }                             | ${ 'https://wordpress.com/log-in' }
-			${ 'post/new' } | ${ { param: 'test' } }                     | ${ 'https://wordpress.com/post/new?param=test' }
-			${ 'post/new' } | ${ { param: 'test', query: 'jest-test' } } | ${ 'https://wordpress.com/post/new?param=test&query=jest-test' }
-			${ 'post/new' } | ${ { param: 'ASCIIではありません' } }      | ${ 'https://wordpress.com/post/new?param=ASCII%E3%81%A7%E3%81%AF%E3%81%82%E3%82%8A%E3%81%BE%E3%81%9B%E3%82%93' }
+			${ '/' }        | ${ undefined }                             | ${ 'http://calypso.localhost:3000/' }
+			${ 'log-in' }   | ${ undefined }                             | ${ 'http://calypso.localhost:3000/log-in' }
+			${ 'post/new' } | ${ { param: 'test' } }                     | ${ 'http://calypso.localhost:3000/post/new?param=test' }
+			${ 'post/new' } | ${ { param: 'test', query: 'jest-test' } } | ${ 'http://calypso.localhost:3000/post/new?param=test&query=jest-test' }
+			${ 'post/new' } | ${ { param: 'ASCIIではありません' } }      | ${ 'http://calypso.localhost:3000/post/new?param=ASCII%E3%81%A7%E3%81%AF%E3%81%82%E3%82%8A%E3%81%BE%E3%81%9B%E3%82%93' }
 		`(
 			'Returns $expected if getCalypsoURL is called with $route and $queryStrings',
 			function ( { route, queryStrings, expected } ) {

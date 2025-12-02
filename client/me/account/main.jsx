@@ -57,6 +57,7 @@ import {
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
+import HostingDashboardOptInForm from './hosting-dashboard-opt-in-form';
 import ToggleLandingPageSettings from './toggle-landing-page';
 import ToggleUseCommunityTranslator from './toggle-use-community-translator';
 
@@ -101,6 +102,7 @@ class Account extends Component {
 		usernameAction: 'new',
 		validationResult: false,
 		accountSubmitDisable: false,
+		isSubmittingHostingDashboard: false,
 	};
 
 	componentDidUpdate() {
@@ -1023,6 +1025,8 @@ class Account extends Component {
 						</FormFieldset>
 					</form>
 				</Card>
+
+				{ config.isEnabled( 'dashboard/v2' ) && <HostingDashboardOptInForm /> }
 
 				{ config.isEnabled( 'me/account-close' ) && <AccountSettingsCloseLink /> }
 			</Main>

@@ -1,83 +1,48 @@
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, notFound } from '@tanstack/react-router';
-import {
-	__experimentalHStack as HStack,
-	MenuGroup,
-	MenuItem,
-	Icon,
-	Modal,
-} from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
-import { plus } from '@wordpress/icons';
-import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { sitesQuery } from '../../app/queries/sites';
+import { __experimentalHStack as HStack } from '@wordpress/components';
+import { Suspense, useMemo, lazy } from 'react';
+import { useAppContext } from '../../app/context';
 import { siteRoute } from '../../app/router/sites';
+import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
-import Switcher from '../../components/switcher';
-import { getSiteDisplayName } from '../../utils/site-name';
-import AddNewSite from '../add-new-site';
+import { hasStagingSite } from '../../utils/site-staging-site';
+import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { canManageSite, canSwitchEnvironment } from '../features';
-import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
 
 function Site() {
-	const isDesktop = useViewportMatch( 'medium' );
-	const sites = useQuery( sitesQuery() ).data;
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { components } = useAppContext();
+	const SiteSwitcher = useMemo( () => lazy( components.siteSwitcher ), [ components ] );
 
 	if ( ! canManageSite( site ) ) {
 		throw notFound();
 	}
 
 	return (
-		<>
+		<Suspense fallback={ null }>
+			{ hasStagingSite( site ) && <StagingSiteSyncMonitor site={ site } /> }
 			<HeaderBar>
-				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 3 }>
+				<HStack spacing={ 3 }>
 					<HeaderBar.Title>
-						<Switcher
-							items={ sites }
-							value={ site }
-							getItemName={ getSiteDisplayName }
-							getItemUrl={ ( site ) => `/sites/${ site.slug }` }
-							renderItemIcon={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
-						>
-							<MenuGroup>
-								<MenuItem onClick={ () => setIsModalOpen( true ) }>
-									<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
-										<Icon icon={ plus } />
-										{ __( 'Add New Site' ) }
-									</div>
-								</MenuItem>
-							</MenuGroup>
-							{ isModalOpen && (
-								<Modal
-									title={ __( 'Add New Site' ) }
-									onRequestClose={ () => setIsModalOpen( false ) }
-									className="dashboard-site-switcher__modal"
-								>
-									<AddNewSite context="sites-dashboard" />
-								</Modal>
-							) }
-						</Switcher>
+						<SiteSwitcher />
+						{ canSwitchEnvironment( site ) && (
+							<>
+								<MenuDivider />
+								<EnvironmentSwitcher site={ site } />
+							</>
+						) }
 					</HeaderBar.Title>
-					{ canSwitchEnvironment( site ) && (
-						<>
-							<MenuDivider />
-							<EnvironmentSwitcher site={ site } />
-						</>
-					) }
-					{ isDesktop && <MenuDivider /> }
-					<SiteMenu site={ site } />
+					{ ! isSiteMigrationInProgress( site ) && <SiteMenu site={ site } /> }
 				</HStack>
 			</HeaderBar>
 			<Outlet />
-		</>
+		</Suspense>
 	);
 }
 

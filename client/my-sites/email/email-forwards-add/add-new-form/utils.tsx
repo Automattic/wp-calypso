@@ -4,7 +4,7 @@ import type { ValidationError } from './types';
 import type { EmailAccountEmail } from 'calypso/data/emails/types';
 
 export function isValidMailbox( mailbox: string ) {
-	const allowedSpecialChars = "!#$%&'*+/=?^_`{|}~.";
+	const allowedSpecialChars = "!#$%&'*+/=?^_`{|}~.-";
 
 	if ( mailbox.length === 0 || mailbox.length > 64 ) {
 		return false;

@@ -41,7 +41,6 @@ export { default as LanguagePicker } from 'calypso/components/language-picker/do
 export { default as LayoutExample } from 'calypso/components/layout/docs/example';
 export { default as LineChart } from 'calypso/components/line-chart/docs/example';
 export { default as ListEnd } from 'calypso/components/list-end/docs/example';
-export { default as MarkedLinesExample } from 'calypso/components/marked-lines/docs/example';
 export { default as MultipleChoiceQuestionExample } from 'calypso/components/multiple-choice-question/docs/example';
 export { default as Notices } from 'calypso/components/notice/docs/example';
 export { default as PaginationExample } from 'calypso/components/pagination/docs/example';

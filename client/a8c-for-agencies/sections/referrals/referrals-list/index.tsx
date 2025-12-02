@@ -191,7 +191,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 					actions,
 					setDataViewsState,
 					dataViewsState,
-					defaultLayouts: { table: {} },
+					defaultLayouts: { table: {}, list: {} },
 				} }
 			/>
 		</div>

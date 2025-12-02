@@ -55,13 +55,8 @@ export class FormPatternsFlow implements BlockFlow {
 			.getAttribute( 'id' );
 		const newParentBlockLocator = editorCanvas.locator( `#${ newParentBlockId }` );
 
-		// Name and Email are common fields shared amongst all Form patterns.
-		// So let's make them unique here!
-		await labelFormFieldBlock( newParentBlockLocator, {
-			blockName: 'Name field',
-			accessibleLabelName: 'Add label…',
-			labelText: this.addLabelPrefix( 'Name field' ),
-		} );
+		// Email is a common field shared amongst all Form patterns.
+		// So let's make it unique here!
 		await labelFormFieldBlock( newParentBlockLocator, {
 			blockName: 'Email field',
 			accessibleLabelName: 'Add label…',
@@ -111,7 +106,6 @@ export class FormPatternsFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		await validatePublishedFormFields( context.page, [
-			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Name field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email field' ) },
 			...this.validationData.otherExpectedFields,
 		] );

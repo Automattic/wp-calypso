@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
-import { PerformanceMetricsDetailsQueryResponse } from 'calypso/data/site-profiler/types';
 import { getFormattedNumber, getFormattedSize } from 'calypso/site-profiler/utils/formatting-data';
+import type { PerformanceMetricAuditDetails } from '@automattic/api-core';
 
 interface InsightTreeProps {
-	data: PerformanceMetricsDetailsQueryResponse;
+	data: PerformanceMetricAuditDetails;
 }
 
 export const InsightTree: React.FC< InsightTreeProps > = ( { data } ) => {

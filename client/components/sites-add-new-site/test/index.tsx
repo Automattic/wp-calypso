@@ -3,6 +3,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { SitesAddNewSitePopover } from '../index';
@@ -22,25 +23,63 @@ jest.mock( '../async', () => ( {
 	AsyncContent: () => <div data-testid="async-content">Async Content</div>,
 } ) );
 
+// Mock fetchUser to provide auth data
+jest.mock( '@automattic/api-core', () => ( {
+	fetchUser: jest.fn( () =>
+		Promise.resolve( {
+			ID: 123,
+			username: 'testuser',
+			email: 'test@example.com',
+			language: 'en',
+			logout_URL: 'https://wordpress.com/logout',
+		} )
+	),
+} ) );
+
 describe( 'SitesAddNewSitePopover', () => {
 	const sitesDashboardContext = 'sites-dashboard';
+	let queryClient: QueryClient;
+
+	const renderWithQueryClient = ( component: React.ReactElement ) => {
+		return render(
+			<QueryClientProvider client={ queryClient }>{ component }</QueryClientProvider>
+		);
+	};
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: { retry: false },
+			},
+		} );
 	} );
 
-	it( 'renders with full label when not in compact mode', () => {
-		render( <SitesAddNewSitePopover showCompact={ false } context={ sitesDashboardContext } /> );
-		expect( screen.getByText( 'Add new site' ) ).toBeInTheDocument();
+	it( 'renders with full label when not in compact mode', async () => {
+		renderWithQueryClient(
+			<SitesAddNewSitePopover showCompact={ false } context={ sitesDashboardContext } />
+		);
+		await waitFor( () => {
+			expect( screen.getByText( 'Add new site' ) ).toBeInTheDocument();
+		} );
 	} );
 
-	it( 'renders without label in compact mode', () => {
-		render( <SitesAddNewSitePopover showCompact context={ sitesDashboardContext } /> );
-		expect( screen.queryByText( 'Add new site' ) ).not.toBeInTheDocument();
+	it( 'renders without label in compact mode', async () => {
+		renderWithQueryClient(
+			<SitesAddNewSitePopover showCompact context={ sitesDashboardContext } />
+		);
+		await waitFor( () => {
+			expect( screen.queryByText( 'Add new site' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
-	it( 'tracks event when dropdown is opened', () => {
-		render( <SitesAddNewSitePopover showCompact={ false } context={ sitesDashboardContext } /> );
+	it( 'tracks event when dropdown is opened', async () => {
+		renderWithQueryClient(
+			<SitesAddNewSitePopover showCompact={ false } context={ sitesDashboardContext } />
+		);
+		await waitFor( () => {
+			expect( screen.getByRole( 'button' ) ).toBeInTheDocument();
+		} );
 		const button = screen.getByRole( 'button' );
 		fireEvent.click( button );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -49,7 +88,12 @@ describe( 'SitesAddNewSitePopover', () => {
 	} );
 
 	it( 'closes popover when clicking the button again', async () => {
-		render( <SitesAddNewSitePopover showCompact={ false } context={ sitesDashboardContext } /> );
+		renderWithQueryClient(
+			<SitesAddNewSitePopover showCompact={ false } context={ sitesDashboardContext } />
+		);
+		await waitFor( () => {
+			expect( screen.getByRole( 'button' ) ).toBeInTheDocument();
+		} );
 		const button = screen.getByRole( 'button' );
 		fireEvent.click( button );
 		expect( screen.getByTestId( 'async-content' ) ).toBeInTheDocument();

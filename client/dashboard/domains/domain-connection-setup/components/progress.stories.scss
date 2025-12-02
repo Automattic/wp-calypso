@@ -1,0 +1,13 @@
+/* Storybook container styling */
+#storybook-root,
+.sb-show-main,
+.docs-story {
+	--wp-admin-theme-color: #3858e9;
+	--dashboard__background-color-success: #21873b;
+}
+
+/* Also set on root for fallback */
+:root {
+	--wp-admin-theme-color: #3858e9;
+	--dashboard__background-color-success: #21873b;
+}

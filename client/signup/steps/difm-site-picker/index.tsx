@@ -4,7 +4,6 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import SiteSelector from 'calypso/components/site-selector';
-import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch, useStore } from 'calypso/state';
@@ -58,19 +57,12 @@ export default function DIFMSitePickerStep( props: Props ) {
 		goToNextStep();
 	};
 
-	const { data: geoData } = useGeoLocationQuery();
-
-	const isPremiumHelpCenterLinkEnabled = geoData?.country_short === 'US';
-
 	const subHeaderText = translate(
 		'Please {{SupportLink}}contact support{{/SupportLink}} if your existing WordPress.com site isn’t listed, or create a {{NewSiteLink}}new site{{/NewSiteLink}} instead.',
 		{
 			components: {
 				SupportLink: (
-					<HelpCenterInlineButton
-						className="subtitle-link"
-						flowName={ isPremiumHelpCenterLinkEnabled ? props.flowName : undefined }
-					/>
+					<HelpCenterInlineButton className="subtitle-link" flowName={ props.flowName } />
 				),
 				NewSiteLink: (
 					<Button variant="link" className="subtitle-link" onClick={ onNewSiteClicked } />

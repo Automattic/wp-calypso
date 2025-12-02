@@ -1,24 +1,8 @@
-import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import {
-	getTotalLineItemFromCart,
-	getTaxBreakdownLineItemsFromCart,
-	getCreditsLineItemFromCart,
-	NonProductLineItem,
-	LineItemType,
-	getSubtotalWithoutDiscounts,
-	getTotalDiscountsWithoutCredits,
-	isBillingInfoEmpty,
-} from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import {
-	useStreamlinedPriceExperiment,
-	isStreamlinedPriceCheckoutTreatment,
-} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import CheckoutTerms from '../components/checkout-terms';
-import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div`
 	& > * {
@@ -63,17 +47,6 @@ const CheckoutTermsWrapper = styled.div`
 	}
 `;
 
-const NonTotalPrices = styled.div`
-	font-size: 12px;
-	border-top: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
-	border-bottom: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
-	padding: 16px 0;
-`;
-const TotalPrice = styled.div`
-	font-size: 14px;
-	padding: 16px 0 6px;
-`;
-
 const TaxNotCalculatedLineItemWrapper = styled.div`
 	font-size: 14px;
 	text-wrap: pretty;
@@ -96,62 +69,10 @@ export function TaxNotCalculatedLineItem() {
 export default function BeforeSubmitCheckoutHeader() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
-	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
-	const translate = useTranslate();
-
-	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
-
-	const totalAdjustments = getTotalDiscountsWithoutCredits( responseCart );
-	const adjustmentLineItem: LineItemType = {
-		id: 'total-adjustments',
-		type: 'subtotal',
-		label: totalAdjustments < 0 ? translate( 'Discounts' ) : translate( 'Additional charges' ),
-		formattedAmount: formatCurrency( totalAdjustments, responseCart.currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} ),
-	};
-
-	const subtotalBeforeAdjustments = getSubtotalWithoutDiscounts( responseCart );
-	const subTotalLineItemWithoutCoupon: LineItemType = {
-		id: 'subtotal-without-coupon',
-		type: 'subtotal',
-		label:
-			totalAdjustments < 0 ? translate( 'Subtotal before discounts' ) : translate( 'Subtotal' ),
-		formattedAmount: formatCurrency( subtotalBeforeAdjustments, responseCart.currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} ),
-	};
 
 	return (
-		<>
-			<CheckoutTermsWrapper>
-				<CheckoutTerms cart={ responseCart } />
-			</CheckoutTermsWrapper>
-			{ ! isStreamlinedPriceExperimentLoading &&
-				! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
-					<WPOrderReviewSection>
-						<NonTotalPrices>
-							<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-							{ totalAdjustments !== 0 && (
-								<NonProductLineItem subtotal lineItem={ adjustmentLineItem } />
-							) }
-							{ taxLineItems.map( ( taxLineItem ) => (
-								<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-							) ) }
-							{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-								<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-							) }
-						</NonTotalPrices>
-						<TotalPrice>
-							<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
-						</TotalPrice>
-						{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
-					</WPOrderReviewSection>
-				) }
-		</>
+		<CheckoutTermsWrapper>
+			<CheckoutTerms cart={ responseCart } />
+		</CheckoutTermsWrapper>
 	);
 }

@@ -10,8 +10,13 @@ import {
 	isJetpackSite as isJetpackSiteSelector,
 } from 'calypso/state/sites/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import { SubscriptionOptions } from '../settings-reading/main';
 import type { AppState } from 'calypso/types';
+
+export type SubscriptionOptions = {
+	invitation: string;
+	comment_follow: string;
+	welcome: string;
+};
 
 type EmailsTextSettingProps = {
 	value?: SubscriptionOptions;

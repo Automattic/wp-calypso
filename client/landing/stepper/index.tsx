@@ -1,7 +1,6 @@
 import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -18,6 +17,7 @@ import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { AsyncHelpCenterApp } from 'calypso/components/help-center';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
+import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
@@ -30,7 +30,6 @@ import { setStore } from 'calypso/state/redux-store';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FlowRenderer } from './declarative-flow/internals';
-import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
 import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
 import availableFlows from './declarative-flow/registered-flows';
@@ -43,6 +42,7 @@ import { DEFAULT_FLOW, getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
+import type { CurrentUser } from '@automattic/data-stores';
 import type { AnyAction } from 'redux';
 
 declare const window: AppWindow;
@@ -99,7 +99,7 @@ async function main() {
 	accessibleFocus();
 
 	const user = await initializeCurrentUser();
-	const userId = ( user as CurrentUser ).ID;
+	const userId = user ? user.ID : 0;
 	let queryClient;
 
 	let { default: flow } = await flowPromise;
@@ -113,13 +113,15 @@ async function main() {
 	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
 	if ( user ) {
-		initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+		initializeCalypsoUserStore( reduxStore, user );
 		receiveCurrentUser( user as UserStore.CurrentUser );
 	}
 
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
+
+	loadDevHelpers( reduxStore );
 
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );

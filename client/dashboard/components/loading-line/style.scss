@@ -1,4 +1,4 @@
-@keyframes loading {
+@keyframes spinning {
 	from {
 		transform: translateX(-50vw);
 	}
@@ -7,20 +7,49 @@
 	}
 }
 
+@keyframes progress {
+	0% {
+		width: 0;
+	}
+	30% {
+		width: 70vw;
+	}
+	100% {
+		width: 95vw;
+	}
+}
+
 .loading-line-wrapper {
 	position: fixed;
 	top: 0;
 	inset-inline-start: 0;
 	width: 100%;
-	height: 2px;
 	background-color: transparent;
 	z-index: 1000;
+
+	&.is-spinner {
+		height: 2px;
+	}
+
+	&.is-progress {
+		height: 4px;
+	}
 }
 
 .loading-line-bar {
-	width: 50vw;
 	height: 100%;
 	position: absolute;
-	background: linear-gradient( to right, transparent 0%, var(--wp-admin-theme-color) 50%, transparent 100% );
-	animation: loading 2s infinite linear;
+
+	.is-spinner & {
+		width: 50vw;
+		background: linear-gradient( to right, transparent 0%, var(--wp-admin-theme-color) 50%, transparent 100% );
+		animation: spinning 2s infinite linear;
+	}
+
+	.is-progress & {
+		background: var(--wp-admin-theme-color);
+		animation-name: progress;
+		animation-timing-function: ease;
+		// animation-duration is set dynamically
+	}
 }

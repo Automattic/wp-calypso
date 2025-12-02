@@ -1,4 +1,9 @@
+import { dateI18n } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { parse, isValid, format } from 'date-fns';
+
+const HOUR_MS = 3_600_000;
+const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 export function formatDate(
 	date: Date,
@@ -46,7 +51,7 @@ export function isWithinNext( date: Date, count: number, unit: 'hours' | 'days' 
 }
 
 /**
- * Return a string like "2 days from now" or "1 month ago" for a given date.
+ * Return a string like "in 2 days" or "1 month ago" for a given date.
  *
  * Note that given the imprecision of date math and time zones, this may not be
  * totally accurate. Use it only in places where precision is not required.
@@ -141,32 +146,44 @@ export function getRelativeTimeString( date: Date ): string {
 	switch ( unit ) {
 		case 'year':
 			// translators: value is a number
-			return sprintf( _n( '%(value)s year from now', '%(value)s years from now', value ), {
+			return sprintf( _n( 'in %(value)s year', 'in %(value)s years', value ), {
 				value,
 			} );
 		case 'month':
 			// translators: value is a number
-			return sprintf( _n( '%(value)s month from now', '%(value)s months from now', value ), {
+			return sprintf( _n( 'in %(value)s month', 'in %(value)s months', value ), {
 				value,
 			} );
 		case 'day':
 			// translators: value is a number
-			return sprintf( _n( '%(value)s day from now', '%(value)s days from now', value ), {
+			return sprintf( _n( 'in %(value)s day', 'in %(value)s days', value ), {
 				value,
 			} );
 		case 'hour':
 			// translators: value is a number
-			return sprintf( _n( '%(value)s hour from now', '%(value)s hours from now', value ), {
+			return sprintf( _n( 'in %(value)s hour', 'in %(value)s hours', value ), {
 				value,
 			} );
 		case 'minute':
 			// translators: value is a number
-			return sprintf( _n( '%(value)s minute from now', '%(value)s minutes from now', value ), {
+			return sprintf( _n( 'in %(value)s minute', 'in %(value)s minutes', value ), {
 				value,
 			} );
 		default:
 			return __( 'just now' );
 	}
+}
+
+/**
+ * Format a Date into a credit card expiry format (MM/YY).
+ *
+ * The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813
+ */
+export function formatCreditCardExpiry( cardExpiryDate: Date ): string {
+	return `${
+		// Note that months are 0 based here so we have to add 1.
+		cardExpiryDate.getMonth() + 1
+	}/${ cardExpiryDate.getFullYear().toString().slice( -2 ) }`;
 }
 
 /**
@@ -198,7 +215,7 @@ export function getDateFromCreditCardExpiry( cardExpiryDate: string ): Date {
 }
 
 /**
- * Format a date with a given offset in hours.
+ * Format a date with a given offset in hours -- used as a fallback if the timezone is not available.
  */
 export function formatDateWithOffset(
 	input: Date | string | number,
@@ -221,7 +238,7 @@ export function formatDateWithOffset(
 		return '';
 	}
 
-	const adjusted = new Date( sourceTimestampMs + offsetHours * 3_600_000 );
+	const adjusted = new Date( sourceTimestampMs + offsetHours * HOUR_MS );
 	return formatDate( adjusted, locale, { ...options, timeZone: 'UTC' } );
 }
 
@@ -232,9 +249,57 @@ export function getUtcOffsetDisplay( offsetHours: number ): string {
 	if ( ! offsetHours ) {
 		return 'UTC';
 	}
-	const sign = offsetHours > 0 ? '+' : '';
+	let sign = '';
+	if ( offsetHours > 0 ) {
+		sign = '+';
+	} else if ( offsetHours < 0 ) {
+		sign = '-';
+	}
 	const abs = Math.abs( offsetHours );
 	const hoursPart = String( Math.floor( abs ) ).padStart( 2, '0' );
 	const minutesPart = String( Math.round( ( abs - Math.floor( abs ) ) * 60 ) ).padStart( 2, '0' );
 	return `UTC${ sign }${ hoursPart }:${ minutesPart }`;
+}
+
+/**
+ * Parse a date string in the format "YYYY-MM-DD" (local time).
+ */
+export function parseYmdLocal( value: string ): Date | null {
+	if ( ! YMD_REGEX.test( value ) ) {
+		return null;
+	}
+	const parsed = parse( value, 'yyyy-MM-dd', new Date() );
+	if ( ! isValid( parsed ) ) {
+		return null;
+	}
+	// Ensure strict match (reject overflows like 2023-02-31 -> 2023-03-03)
+	return format( parsed, 'yyyy-MM-dd' ) === value ? parsed : null;
+}
+
+/**
+ * Format a date as a site calendar day (YYYY-MM-DD).
+ */
+export function formatYmd( date: Date, timezoneString?: string, gmtOffset?: number ) {
+	if ( timezoneString ) {
+		return dateI18n( 'Y-m-d', date, timezoneString );
+	}
+	if ( typeof gmtOffset === 'number' ) {
+		const shifted = new Date( date.getTime() + gmtOffset * HOUR_MS );
+		const year = shifted.getUTCFullYear();
+		const month = String( shifted.getUTCMonth() + 1 ).padStart( 2, '0' );
+		const day = String( shifted.getUTCDate() ).padStart( 2, '0' );
+		return `${ year }-${ month }-${ day }`;
+	}
+	return dateI18n( 'Y-m-d', date );
+}
+
+/**
+ * Format a Date that already represents a site calendar day.
+ * This avoids reapplying timezone math to dates coming from the picker or URL.
+ */
+export function formatSiteYmd( date: Date ) {
+	const year = date.getFullYear();
+	const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
+	const day = String( date.getDate() ).padStart( 2, '0' );
+	return `${ year }-${ month }-${ day }`;
 }

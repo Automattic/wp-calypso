@@ -4,6 +4,7 @@ import {
 	getCurrentCycleActivityWindow,
 	getNextPayoutDate,
 	getNextPayoutDateActivityWindow,
+	areNextAndCurrentPayoutDatesEqual,
 } from '../lib/get-next-payout-date';
 
 const formatDateWithYear = ( date: Date ) =>
@@ -37,8 +38,7 @@ export default function useGetPayoutData() {
 				currentCycleWindow.start,
 				currentCycleWindow.finish
 			),
-			areNextAndCurrentPayoutDatesEqual:
-				nextPayoutDateRaw.getTime() === currentCyclePayoutDateRaw.getTime(),
+			areNextAndCurrentPayoutDatesEqual: areNextAndCurrentPayoutDatesEqual( now ),
 			isFullQuarter:
 				new Date().toLocaleDateString() === currentCycleWindow.finish.toLocaleDateString(),
 		};

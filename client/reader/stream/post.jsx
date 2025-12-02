@@ -4,6 +4,7 @@ import ReaderPostCard from 'calypso/blocks/reader-post-card';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
@@ -54,6 +55,7 @@ class ReaderPostCardAdapter extends Component {
 				showFollowButton={ this.props.showFollowButton }
 				fixedHeaderHeight={ this.props.fixedHeaderHeight }
 				streamKey={ this.props.streamKey }
+				commentsApiDisabled={ this.props.commentsApiDisabled }
 			>
 				<div ref={ this.props.postRef }>
 					{ feedId && <QueryReaderFeed feedId={ feedId } /> }
@@ -80,5 +82,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		site: isExternal ? null : getSite( state, siteId ),
 		feed: feed,
+		commentsApiDisabled: isExternal ? false : isCommentsApiDisabled( state, siteId ),
 	};
 } )( ReaderPostCardAdapter );

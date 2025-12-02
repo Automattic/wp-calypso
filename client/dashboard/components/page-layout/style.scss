@@ -1,12 +1,22 @@
+@import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
 
 .dashboard-page-layout {
+	--page-layout-block-padding: #{$grid-unit-20};
+	--page-layout-inline-padding: #{$grid-unit-20};
+
+	@include break-medium {
+		--page-layout-block-padding: #{$grid-unit-40};
+		--page-layout-inline-padding: #{$grid-unit-30};
+	}
+
 	margin: auto;
-	padding: $grid-unit-40 $grid-unit-30;
+	padding: var( --page-layout-block-padding ) var( --page-layout-inline-padding );
+	max-width: var( --page-layout-max-width );
 
 	// Creates a positioning context for CalloutOverlay components. It needs to
 	// be on the PageLayout so that the blurred overlay can cover the entire
 	// PageLayout, including the padding.
 	position: relative;
 }
-

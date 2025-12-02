@@ -31,7 +31,7 @@ export const BackButton = () => {
 			onTouchStart={ handleClick }
 			className="back-button__help-center"
 		>
-			<Icon icon={ chevronLeft } size={ 18 } />
+			<Icon icon={ chevronLeft } />
 		</Button>
 	);
 };

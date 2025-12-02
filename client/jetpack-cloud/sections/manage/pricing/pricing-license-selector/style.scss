@@ -1,18 +1,18 @@
 .pricing-license-selector-wrapper {
 	display: flex;
 	width: 100%;
-	background: rgba(255, 255, 255, 0.84);
+	background: rgba( 255, 255, 255, 0.84 );
 	position: sticky;
 	top: 0;
 	z-index: 1;
-	backdrop-filter: blur(4px);
+	backdrop-filter: blur( 4px );
 
 	.pricing-license-selector {
 		display: flex;
 		align-items: center;
 		justify-content: space-evenly;
 		background: #f4f4f4;
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		border-radius: 8px;
 		width: 682px;
 		margin: 20px auto;
 		padding: 2px 2px;
@@ -30,17 +30,20 @@
 
 		.pricing-license-option {
 			padding: 5px 0;
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 			background: transparent;
 			text-align: center;
 			width: 100%;
-			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
+				Cantarell, 'Helvetica Neue', sans-serif;
 			font-size: $font-body-small;
 			cursor: pointer; /* Changes the cursor to a pointer */
 			user-select: none; /* Prevents text selection */
 
 			&.is-selected {
-				box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+				box-shadow:
+					0 3px 8px rgba( 0, 0, 0, 0.12 ),
+					0 3px 1px rgba( 0, 0, 0, 0.04 );
 				border-radius: 7px; /* stylelint-disable-line scales/radii */
 				font-weight: 500;
 				color: #000;
@@ -50,6 +53,8 @@
 	}
 }
 
-.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing div.jpcom-masterbar div.header__submenu-content {
+.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing
+	div.jpcom-masterbar
+	div.header__submenu-content {
 	z-index: 2;
 }

@@ -3,14 +3,19 @@ import { BadgeType } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
+import { shuffle, upload } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import {
+	recordMigrationStartEvent,
+	recordMigrationStartFacebookEvent,
+} from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import FlowCard from '../components/flow-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -29,13 +34,17 @@ const SiteMigrationImportOrMigrate: StepType< {
 	const isUpgradeRequired = ! siteCanInstallPlugins;
 
 	const options = useMemo( () => {
-		const upgradeRequiredLabel = translate( '%(discountPercentage)s off %(planName)s', {
-			args: {
-				planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-				discountPercentage: formatNumber( 0.5, { numberFormatOptions: { style: 'percent' } } ),
-			},
-			comment: 'discountPercentage is a number between 0 and 100 followed or preceded by a % sign',
-		} );
+		const upgradeRequiredLabel = translate(
+			'Available on %(planName)s plan with %(discountPercentage)s off',
+			{
+				args: {
+					planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+					discountPercentage: formatNumber( 0.5, { numberFormatOptions: { style: 'percent' } } ),
+				},
+				comment:
+					'discountPercentage is a number between 0 and 100 followed or preceded by a % sign',
+			}
+		);
 
 		const migrateOptionDescription = translate(
 			"For WordPress sites. Move all your site's content, themes, plugins, and users to WordPress.com."
@@ -43,6 +52,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 
 		return [
 			{
+				icon: shuffle,
 				label: translate( 'Migrate site' ),
 				description: migrateOptionDescription,
 				value: 'migrate' as const,
@@ -53,6 +63,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 				selected: true,
 			},
 			{
+				icon: upload,
 				label: translate( 'Import content only' ),
 				description: translate( 'Import just posts, pages, comments and media.' ),
 				value: 'import' as const,
@@ -64,6 +75,12 @@ const SiteMigrationImportOrMigrate: StepType< {
 	const hostingProviderName = hostingProviderDetails.name;
 	const shouldDisplayHostIdentificationMessage =
 		! hostingProviderDetails.is_unknown && ! hostingProviderDetails.is_a8c;
+
+	// Fire Google Ads tracking event when component loads
+	useEffect( () => {
+		recordMigrationStartEvent( 'SiteMigrationImportOrMigrate' );
+		recordMigrationStartFacebookEvent( 'SiteMigrationImportOrMigrate' );
+	}, [] );
 
 	const handleClick = ( destination: 'migrate' | 'import' | 'upgrade' ) => {
 		if ( destination === 'migrate' && ! siteCanInstallPlugins ) {
@@ -85,6 +102,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 			<div className="import-or-migrate__list">
 				{ options.map( ( option, i ) => (
 					<FlowCard
+						icon={ option.icon }
 						key={ i }
 						title={ option.label }
 						badge={ option.badge }

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -10,9 +11,14 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
+import {
+	recordMigrationCredentialsEvent,
+	recordMigrationRequestSubmittedFacebookEvent,
+} from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
+import { isHostingSupportedForSSHMigration } from '../site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { CredentialsForm } from './components/credentials-form';
 import { NeedHelpLink } from './components/need-help-link';
 import { ApplicationPasswordsInfo } from './types';
@@ -52,22 +58,24 @@ const SiteMigrationCredentials: StepType< {
 			| 'credentials-required'
 			| 'already-wpcom'
 			| 'site-is-not-using-wordpress'
+			| 'redirect-to-ssh'
 			| 'skip';
 		from?: string;
 		platform?: ImporterPlatform;
 		authorizationUrl?: string;
 		hasError?: 'ticket-creation';
+		host?: string;
 	};
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
 	const dispatch = useDispatch();
+	const fromUrl = useQuery().get( 'from' ) || '';
 
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	const locale = useLocale();
 	const siteSlugParam = useSiteSlugParam();
-	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
 	const { sendTicketAsync } = useSubmitMigrationTicket( {
 		onSuccess: () => {
@@ -92,9 +100,28 @@ const SiteMigrationCredentials: StepType< {
 
 	const handleSubmit = (
 		siteInfo?: UrlData | undefined,
-		applicationPasswordsInfo?: ApplicationPasswordsInfo
+		applicationPasswordsInfo?: ApplicationPasswordsInfo,
+		hostingProviderSlug?: string
 	) => {
+		const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
+		const isHostingSupported = isHostingSupportedForSSHMigration( hostingProviderSlug );
+
+		// If SSH migration is available and hosting is supported and locale is English, redirect to SSH flow
+		if ( isSSHMigrationAvailable && isHostingSupported && locale === 'en' ) {
+			siteId && dispatch( resetSite( siteId ) );
+			return navigation.submit?.( {
+				action: 'redirect-to-ssh',
+				from: siteInfo?.url || fromUrl,
+				host: hostingProviderSlug,
+			} );
+		}
+
 		const action = getAction( siteInfo, applicationPasswordsInfo );
+
+		// Fire Google Ads tracking event when credentials are submitted
+		recordMigrationCredentialsEvent( 'SiteMigrationCredentials' );
+		recordMigrationRequestSubmittedFacebookEvent( 'SiteMigrationCredentials' );
+
 		siteId && dispatch( resetSite( siteId ) );
 		return navigation.submit?.( {
 			action,
@@ -109,6 +136,9 @@ const SiteMigrationCredentials: StepType< {
 			path: window.location.pathname,
 			automated_migration: true,
 		} );
+
+		// Fire Google Ads tracking event when credentials are skipped
+		recordMigrationCredentialsEvent( 'SiteMigrationCredentials' );
 
 		try {
 			await sendTicketAsync( {
@@ -136,9 +166,7 @@ const SiteMigrationCredentials: StepType< {
 	}, [ siteId, updateMigrationStatus ] );
 
 	const title = translate( 'Tell us about your WordPress site' );
-	const subHeaderText = translate(
-		'Help us get started by providing some basic details about your current website.'
-	);
+	const subHeaderText = translate( 'Provide the following details to get your migration started.' );
 	const mainForm = <CredentialsForm onSubmit={ handleSubmit } />;
 	const skipButton = <NeedHelpLink onHelpLinkClicked={ handleSkip } />;
 
@@ -146,7 +174,7 @@ const SiteMigrationCredentials: StepType< {
 		<>
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
-				columnWidth={ 5 }
+				columnWidth={ 4 }
 				topBar={
 					<Step.TopBar
 						leftElement={

@@ -1,1 +1,1 @@
-export type ChoiceType = 'new-site' | 'existing-site';
+export type ChoiceType = 'new-site' | 'existing-site' | 'domain';

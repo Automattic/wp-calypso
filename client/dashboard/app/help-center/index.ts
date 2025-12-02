@@ -42,17 +42,11 @@ export function useHelpCenter() {
 	}
 
 	const setShowHelpCenter = useCallback(
-		async (
-			show: boolean,
-			allowPremiumSupport?: boolean,
-			options?: HelpCenterShowOptions,
-			forceClose?: boolean
-		) => {
+		async ( show: boolean, options?: HelpCenterShowOptions, forceClose?: boolean ) => {
 			await ensureHelpCenterLoaded();
 
 			return ( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setShowHelpCenter(
 				show,
-				allowPremiumSupport,
 				options,
 				forceClose
 			);

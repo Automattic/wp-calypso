@@ -1,29 +1,42 @@
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button, FormFileUpload } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
-import { domainQuery } from '../../app/queries/domain';
 import {
+	domainQuery,
 	domainDnsMutation,
 	domainDnsQuery,
 	domainDnsEmailMutation,
-} from '../../app/queries/domain-dns-records';
+} from '@automattic/api-queries';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
+import {
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	Button,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews';
+import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
+import DnsDescription from './dns-description';
+import DnsImportDialog from './dns-import-dialog';
+import EmailSetup from './email-setup';
 import { useDnsFields } from './fields';
+import ImportBindFileButton from './import-bind-file-button';
+import { DomainDnsNameserversNotice } from './notice';
 import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
 import { hasDefaultARecords, hasDefaultCnameRecord, hasDefaultEmailRecords } from './utils';
-import type { DnsRecord } from '../../data/domain-dns-records';
+import type { DnsRecord } from '@automattic/api-core';
 import type { ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 function getDnsRecordId( record: DnsRecord ) {
@@ -55,7 +68,15 @@ export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
 	const router = useRouter();
 	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
-	const restoreDefaultEmailRecordsMutation = useMutation( domainDnsEmailMutation( domainName ) );
+	const restoreDefaultEmailRecordsMutation = useMutation( {
+		...domainDnsEmailMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'Default email DNS records restored.' ),
+				error: __( 'Failed to restore default email DNS records.' ),
+			},
+		},
+	} );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
@@ -65,6 +86,8 @@ export default function DomainDns() {
 		useState( false );
 	const [ isRestoreDefaultEmailRecordsDialogOpen, setIsRestoreDefaultEmailRecordsDialogOpen ] =
 		useState( false );
+	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
+	const [ importedRecords, setImportedRecords ] = useState< DnsRecord[] >( [] );
 
 	const actions = useDnsActions();
 	const fields = useDnsFields( domainName );
@@ -79,6 +102,11 @@ export default function DomainDns() {
 		view,
 		fields
 	);
+
+	const closeImportDialog = () => {
+		setIsImportDialogOpen( false );
+		setImportedRecords( [] );
+	};
 
 	const handleRestoreDefaultARecords = () => {
 		const recordsToRemove = dnsData?.records?.filter(
@@ -160,20 +188,80 @@ export default function DomainDns() {
 
 	const handleRestoreDefaultEmailRecords = () => {
 		restoreDefaultEmailRecordsMutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'The default email DNS records were successfully fixed!' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: () => {
-				createErrorNotice( __( 'There was a problem when restoring default email DNS records' ), {
-					type: 'snackbar',
-				} );
-			},
 			onSettled: () => {
 				setIsRestoreDefaultEmailRecordsDialogOpen( false );
 			},
 		} );
+	};
+
+	const renderDefaultARecordsNotice = () => {
+		if ( ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
+			return null;
+		}
+
+		if ( domain.is_gravatar_domain ) {
+			return (
+				<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
+					{ createInterpolateElement(
+						__(
+							'This means it may not be pointing to your Gravatar profile correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <learnMoreLink />'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="dns_default_records" />,
+						}
+					) }
+				</Notice>
+			);
+		}
+		return (
+			<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
+				{ createInterpolateElement(
+					__(
+						'This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <learnMoreLink />'
+					),
+					{
+						learnMoreLink: <InlineSupportLink supportContext="dns_default_records" />,
+					}
+				) }
+			</Notice>
+		);
+	};
+
+	const renderDefaultCnameRecordNotice = () => {
+		if ( ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				variant="warning"
+				title={ __( 'Your domain is not using the default WWW CNAME record' ) }
+			>
+				{ createInterpolateElement(
+					__(
+						'This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select “Restore default CNAME record”. <learnMoreLink />'
+					),
+					{
+						learnMoreLink: <InlineSupportLink supportContext="dns_default_records" />,
+					}
+				) }
+			</Notice>
+		);
+	};
+
+	const renderDnsRecordsExplanationNotice = () => {
+		return (
+			<Notice title={ __( 'What are DNS records used for?' ) }>
+				{ createInterpolateElement(
+					__(
+						'Custom DNS records allow you to connect your domain to third-party services that are not hosted on WordPress.com, such as an email provider. <learnMoreLink />'
+					),
+					{
+						learnMoreLink: <InlineSupportLink supportContext="manage-your-dns-records" />,
+					}
+				) }
+			</Notice>
+		);
 	};
 
 	return (
@@ -182,22 +270,16 @@ export default function DomainDns() {
 			header={
 				<VStack>
 					<PageHeader
-						title={ __( 'DNS Records' ) }
+						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
-							<>
-								{ /* TODO Implement bind file logic */ }
-								<FormFileUpload
-									__next40pxDefaultSize
-									onChange={ ( event ) => {
-										const file = event.currentTarget.files?.[ 0 ];
-										if ( ! file ) {
-											return;
-										}
-										// const formData = [ [ 'files[]', file, file.name ] ];
+							<HStack>
+								<ImportBindFileButton
+									domainName={ domainName }
+									onRecordsImported={ ( data ) => {
+										setImportedRecords( data );
+										setIsImportDialogOpen( true );
 									} }
-								>
-									{ /* <Button variant="secondary">{ __( 'Import BIND file' ) }</Button> */ }
-								</FormFileUpload>
+								/>
 								<Button
 									variant="primary"
 									onClick={ () => {
@@ -206,27 +288,35 @@ export default function DomainDns() {
 											params: { domainName },
 										} );
 									} }
+									__next40pxDefaultSize
 								>
-									{ __( 'Add DNS Record' ) }
+									{ __( 'Add record' ) }
 								</Button>
-								<DnsActionsMenu
-									hasDefaultARecords={ hasDefaultARecordsValue }
-									hasDefaultCnameRecord={ hasDefaultCnameRecordValue }
-									hasDefaultEmailRecords={ hasDefaultEmailRecordsValue }
-									onRestoreDefaultARecords={ () => setIsRestoreDefaultARecordsDialogOpen( true ) }
-									onRestoreDefaultCnameRecord={ () =>
-										setIsRestoreDefaultCnameRecordDialogOpen( true )
-									}
-									onRestoreDefaultEmailRecords={ () =>
-										setIsRestoreDefaultEmailRecordsDialogOpen( true )
-									}
-								/>
-							</>
+								<PageHeader.ActionMenu>
+									<DnsActionsMenu
+										hasDefaultARecords={ hasDefaultARecordsValue }
+										hasDefaultCnameRecord={ hasDefaultCnameRecordValue }
+										hasDefaultEmailRecords={ hasDefaultEmailRecordsValue }
+										onRestoreDefaultARecords={ () => setIsRestoreDefaultARecordsDialogOpen( true ) }
+										onRestoreDefaultCnameRecord={ () =>
+											setIsRestoreDefaultCnameRecordDialogOpen( true )
+										}
+										onRestoreDefaultEmailRecords={ () =>
+											setIsRestoreDefaultEmailRecordsDialogOpen( true )
+										}
+									/>
+								</PageHeader.ActionMenu>
+							</HStack>
 						}
+						description={ <DnsDescription /> }
 					/>
 				</VStack>
 			}
 		>
+			{ renderDnsRecordsExplanationNotice() }
+			<DomainDnsNameserversNotice domainName={ domainName } domain={ domain } />
+			{ renderDefaultARecordsNotice() }
+			{ renderDefaultCnameRecordNotice() }
 			<DataViewsCard>
 				{ dnsData?.records?.length === 0 && ! isLoading ? (
 					<div style={ { padding: '20px', textAlign: 'center' } }>
@@ -247,15 +337,17 @@ export default function DomainDns() {
 					>
 						<>
 							<DataViews.Layout />
+							<DataViews.Pagination />
 						</>
 					</DataViews>
 				) }
 			</DataViewsCard>
+			<EmailSetup />
 			<RestoreDefaultARecords
 				onConfirm={ handleRestoreDefaultARecords }
 				onCancel={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }
 				isBusy={ updateDnsMutation.isPending }
-				isGravatarDomain={ domain?.is_gravatar_domain ?? false }
+				isGravatarDomain={ domain.is_gravatar_domain ?? false }
 				isOpen={ isRestoreDefaultARecordsDialogOpen }
 			/>
 			<RestoreDefaultCnameRecord
@@ -270,6 +362,15 @@ export default function DomainDns() {
 				isBusy={ updateDnsMutation.isPending }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
 			/>
+			{ isImportDialogOpen && (
+				<DnsImportDialog
+					isOpen={ isImportDialogOpen }
+					domainName={ domainName }
+					records={ importedRecords }
+					onConfirm={ closeImportDialog }
+					onCancel={ closeImportDialog }
+				/>
+			) }
 		</PageLayout>
 	);
 }

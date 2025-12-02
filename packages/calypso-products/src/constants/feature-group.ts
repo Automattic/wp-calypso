@@ -33,6 +33,7 @@ export const FEATURE_GROUP_ADS = 'feature-group-ads';
 export const FEATURE_GROUP_ANALYTICS = 'feature-group-analytics';
 export const FEATURE_GROUP_CUSTOM_PLUGINS = 'feature-group-custom-plugins';
 export const FEATURE_GROUP_CUSTOMIZE_STYLE = 'feature-group-customize-style';
+export const FEATURE_GROUP_WORDADS = 'feature-group-wordads';
 export const FEATURE_GROUP_DEV_TOOLS = 'feature-group-dev-tools';
 export const FEATURE_GROUP_DOMAIN = 'feature-group-domain';
 export const FEATURE_GROUP_ENTITIES = 'feature-group-entities';
@@ -43,3 +44,11 @@ export const FEATURE_GROUP_WOO = 'feature-group-woo';
 export const FEATURE_GROUP_BIG_SKY = 'feature-group-big-sky';
 export const FEATURE_GROUP_UPLOAD_VIDEOS = 'feature-group-upload-videos';
 export const FEATURE_GROUP_STATS = 'stats-group';
+
+/* START: WordPress Hosting Intent Feature Groups */
+export const FEATURE_GROUP_WP_HOSTING_ESSENTIALS = 'feature-group-wp-hosting-essentials';
+export const FEATURE_GROUP_WP_HOSTING_MANAGED = 'feature-group-wp-hosting-managed';
+export const FEATURE_GROUP_WP_HOSTING_DEVELOPER = 'feature-group-wp-hosting-developer';
+export const FEATURE_GROUP_WP_HOSTING_SUPPORT = 'feature-group-wp-hosting-support';
+export const FEATURE_GROUP_WP_HOSTING_COMMERCE = 'feature-group-wp-hosting-commerce';
+/* END: WordPress Hosting Intent Feature Groups */

@@ -754,10 +754,10 @@ export function LineItemSublabelAndPrice( {
 		isTitanMail( product )
 	) {
 		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
-			const billingInterval = GetBillingIntervalLabel( { product } );
 			return (
 				<>
-					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+					<DefaultLineItemSublabel product={ product } />:{ ' ' }
+					<GetBillingIntervalLabel product={ product } />
 					<LineItemExpiryDates product={ product } />
 				</>
 			);
@@ -833,7 +833,9 @@ export function LineItemSublabelAndPrice( {
 			<>
 				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
 				{ ! product.is_included_for_100yearplan && (
-					<>: { GetBillingIntervalLabel( { product } ) }</>
+					<>
+						: <GetBillingIntervalLabel product={ product } />
+					</>
 				) }
 				<LineItemExpiryDates product={ product } />
 			</>
@@ -1192,16 +1194,16 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 
 function IntroductoryOfferCallout( {
 	product,
-	isStreamlinedPrice,
+	shouldShowComparison,
 }: {
 	product: ResponseCartProduct;
-	isStreamlinedPrice?: boolean;
+	shouldShowComparison?: boolean;
 } ) {
 	const translate = useTranslate();
 	const introductoryOffer = getItemIntroductoryOfferDisplay(
 		translate,
 		product,
-		isStreamlinedPrice
+		shouldShowComparison
 	);
 
 	if ( ! introductoryOffer ) {
@@ -1405,12 +1407,16 @@ function CheckoutLineItem( {
 		stripZeros: true,
 	} );
 
+	// Calculate months per bill period with introductory offers.
+	let months_per_bill_period = product.months_per_bill_period ?? 1;
+	if ( product.introductory_offer_terms?.interval_unit === 'month' ) {
+		months_per_bill_period = product.introductory_offer_terms?.interval_count ?? 1;
+	}
+
 	let pricePerMonth = 0;
 	let originalPricePerMonth = 0;
 	if ( shouldShowComparison ) {
-		pricePerMonth = Math.round(
-			product.item_subtotal_integer / ( product.months_per_bill_period ?? 1 )
-		);
+		pricePerMonth = Math.round( product.item_subtotal_integer / months_per_bill_period );
 		originalPricePerMonth = product.item_original_monthly_cost_integer;
 	}
 
@@ -1533,7 +1539,7 @@ function CheckoutLineItem( {
 							<DomainDiscountCallout product={ product } />
 							<IntroductoryOfferCallout
 								product={ product }
-								isStreamlinedPrice={ shouldShowComparison }
+								shouldShowComparison={ shouldShowComparison }
 							/>
 							<JetpackAkismetSaleCouponCallout product={ product } />
 						</LineItemMeta>

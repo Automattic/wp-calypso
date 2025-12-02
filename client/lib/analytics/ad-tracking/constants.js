@@ -59,6 +59,9 @@ export const TRACKING_IDS = {
 	wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
 	wpcomGoogleAdsGtagDomainTransferPurchase: 'AW-946162814/8T2PCL3d7rsYEP6YlcMD',
+	wpcomGoogleAdsGtagMigrationSignupStart: 'AW-946162814/0qOACLyvvccZEP6YlcMD',
+	wpcomGoogleAdsGtagMigrationFlowStart: 'AW-946162814/59yUCNG15tYZEP6YlcMD',
+	wpcomGoogleAdsGtagMigrationCredentials: 'AW-946162814/Uev_COubnpkbEP6YlcMD',
 	wpcomGoogleGA4Gtag: 'G-1H4VG5F5JF',
 	jetpackGoogleTagManagerId: 'GTM-MWWK6WM',
 	jetpackGoogleGA4Gtag: 'G-K8CRH0LL00',

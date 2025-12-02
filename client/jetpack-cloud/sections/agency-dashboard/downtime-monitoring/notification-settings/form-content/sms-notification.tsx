@@ -1,5 +1,6 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import ContactList from '../../contact-list';
 import FeatureRestrictionBadge from '../../feature-restriction-badge';
 import { RestrictionType } from '../../types';
@@ -61,9 +62,7 @@ export default function SMSNotification( {
 						{ translate( 'Set up text messages to send to one or more people.' ) }
 					</div>
 					{ restriction === 'upgrade_required' && (
-						<div>
-							<UpgradeLink />
-						</div>
+						<div>{ ! isA8CForAgencies() && <UpgradeLink /> }</div>
 					) }
 				</div>
 			</div>

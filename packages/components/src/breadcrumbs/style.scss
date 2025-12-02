@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
@@ -30,7 +31,6 @@
 
 	.a8c-components-breadcrumbs__item {
 		color: $gray-700;
-		text-decoration: none;
 		height: auto;
 		padding: 0;
 		@include body-medium;

@@ -1,8 +1,11 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import {
+	siteHasCancelablePurchasesQuery,
+	siteCurrentUserQuery,
+	siteUserDeleteMutation,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -13,11 +16,13 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
-import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
-import { siteCurrentUserQuery, siteUserDeleteMutation } from '../../app/queries/site-users';
+import { purchasesRoute } from '../../app/router/me';
+import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
-import type { Site, User } from '../../data/types';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import type { Site, User } from '@automattic/api-core';
 
 interface ContentInfoProps {
 	site: Site;
@@ -33,6 +38,17 @@ function isSiteOwner( user: User, site: Site ) {
 }
 
 function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	const managePurchasesButtonProps = {
+		__next40pxDefaultSize: true,
+		text: __( 'Manage purchases' ),
+		variant: 'primary' as const,
+		onClick: () => {
+			recordTracksEvent( 'calypso_dashboard_site_leave_modal_manage_purchases_click' );
+		},
+	};
+
 	return (
 		<>
 			<VStack spacing={ 0 }>
@@ -42,25 +58,30 @@ function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
 					) }
 				</Text>
 			</VStack>
-			<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
-				<Button variant="tertiary" onClick={ onClose }>
+			<ButtonStack justify="flex-end" expanded={ false }>
+				<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 					{ __( 'Cancel' ) }
 				</Button>
-				<Button
-					variant="primary"
-					href={ `/purchases/subscriptions/${ site.slug }` }
-					onClick={ () =>
-						recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_manage_purchases_click' )
-					}
-				>
-					{ __( 'Manage purchases' ) }
-				</Button>
-			</HStack>
+				{ isDashboardBackport() ? (
+					<Button
+						{ ...managePurchasesButtonProps }
+						href={ `/purchases/subscriptions/${ site.slug }` }
+					/>
+				) : (
+					<RouterLinkButton
+						{ ...managePurchasesButtonProps }
+						to={ purchasesRoute.fullPath }
+						search={ { site: site.slug } }
+					/>
+				) }
+			</ButtonStack>
 		</>
 	);
 }
 
 function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	return (
 		<>
 			<VStack spacing={ 0 }>
@@ -70,11 +91,12 @@ function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
 					) }
 				</Text>
 			</VStack>
-			<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
-				<Button variant="tertiary" onClick={ onClose }>
+			<ButtonStack justify="flex-end" expanded={ false }>
+				<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 					{ __( 'Cancel' ) }
 				</Button>
 				<RouterLinkButton
+					__next40pxDefaultSize
 					variant="primary"
 					to={ `/sites/${ site.slug }/settings/transfer-site` }
 					onClick={ () =>
@@ -83,13 +105,14 @@ function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
 				>
 					{ __( 'Transfer ownership' ) }
 				</RouterLinkButton>
-			</HStack>
+			</ButtonStack>
 		</>
 	);
 }
 
 function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	// It gets external user ID (ID of user entity from site connected via Jetpack) from provided WPCOM user ID.
@@ -165,16 +188,17 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 							Edit: 'checkbox',
 						},
 					] }
-					form={ { type: 'regular' as const, fields: [ 'confirmed' ] } }
+					form={ { layout: { type: 'regular' as const }, fields: [ 'confirmed' ] } }
 					onChange={ ( edits: Partial< SiteLeaveFormData > ) => {
 						setFormData( ( data ) => ( { ...data, ...edits } ) );
 					} }
 				/>
-				<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
-					<Button variant="tertiary" onClick={ onClose }>
+				<ButtonStack justify="flex-end" expanded={ false }>
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
 						type="submit"
 						disabled={ ! isConfirmed }
@@ -182,7 +206,7 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 					>
 						{ __( 'Leave site' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</form>
 	);

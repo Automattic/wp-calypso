@@ -1,5 +1,5 @@
 export const marketingConnections = ( siteSlug?: string | null ): string => {
-	return `/marketing/connections/${ siteSlug || '' }`;
+	return siteSlug ? `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-social` : '';
 };
 
 export const marketingTraffic = ( siteSlug?: string | null ): string => {

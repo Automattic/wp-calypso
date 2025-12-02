@@ -1,11 +1,3 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { ExternalLink } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
-import { createInterpolateElement, useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
-import { ReactNode } from 'react';
 import {
 	getOdieForwardToForumsMessage,
 	getOdieForwardToZendeskMessage,
@@ -15,38 +7,34 @@ import {
 	getOdieErrorMessageNonEligible,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
+import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
 import {
 	interactionHasZendeskEvent,
-	userProvidedEnoughInformation,
 	getIsRequestingHumanSupport,
+	getIsLastBotMessage,
 } from '../../utils';
+import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
+import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
-import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
 import { MarkdownOrChildren } from './mardown-or-children';
 import Sources from './sources';
-import WasThisHelpfulButtons from './was-this-helpful-buttons';
 import type { Message } from '../../types';
 
 const getDisplayMessage = (
+	userHasRecentOpenConversation: boolean,
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
-	isRequestingHumanSupport: boolean,
-	messageContent: ReactNode,
-	hasCannedResponse?: boolean,
 	forceEmailSupport?: boolean,
+	isChatRestricted?: boolean,
 	isErrorMessage?: boolean
 ) => {
-	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport ) {
+	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
 		return getOdieThirdPartyMessageContent();
 	}
 
-	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
-		return messageContent;
-	}
-
-	if ( isUserEligibleForPaidSupport && forceEmailSupport && isRequestingHumanSupport ) {
-		return getOdieEmailFallbackMessageContent();
+	if ( isUserEligibleForPaidSupport && forceEmailSupport ) {
+		return getOdieEmailFallbackMessageContent( isChatRestricted );
 	}
 
 	if ( isErrorMessage && ! isUserEligibleForPaidSupport ) {
@@ -54,7 +42,7 @@ const getDisplayMessage = (
 	}
 
 	const forwardMessage = isUserEligibleForPaidSupport
-		? getOdieForwardToZendeskMessage()
+		? getOdieForwardToZendeskMessage( userHasRecentOpenConversation )
 		: getOdieForwardToForumsMessage();
 
 	return isErrorMessage ? getOdieErrorMessage() : forwardMessage;
@@ -62,84 +50,38 @@ const getDisplayMessage = (
 
 export const UserMessage = ( {
 	message,
-	isDisliked = false,
 	isMessageWithEscalationOption = false,
 }: {
-	isDisliked?: boolean;
 	message: Message;
 	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk, forceEmailSupport } =
-		useOdieAssistantContext();
-
-	const currentSupportInteraction = useSelect(
-		( select ) =>
-			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentSupportInteraction(),
-		[]
-	);
-
-	const hasCannedResponse = message.context?.flags?.canned_response;
-	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
-
-	const showDirectEscalationLink = useMemo( () => {
-		return (
-			canConnectToZendesk &&
-			! chat.conversationId &&
-			userProvidedEnoughInformation( chat?.messages ) &&
-			! interactionHasZendeskEvent( currentSupportInteraction )
-		);
-	}, [ chat.conversationId, currentSupportInteraction, chat?.messages, canConnectToZendesk ] );
-
-	const displayMessage = getDisplayMessage(
+	const {
 		isUserEligibleForPaidSupport,
+		trackEvent,
 		canConnectToZendesk,
-		isRequestingHumanSupport,
-		message.content,
-		hasCannedResponse,
 		forceEmailSupport,
-		message?.context?.flags?.is_error_message
-	);
-	const displayingThirdPartyMessage =
-		isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport;
+		isChatRestricted,
+		chat,
+	} = useOdieAssistantContext();
+
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
+	const isLastBotMessage = getIsLastBotMessage( chat, message );
+	const hasRecentOpenConversation = getMostRecentOpenLiveInteraction();
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
-	const handleGuidelinesClick = () => {
-		trackEvent?.( 'ai_guidelines_link_clicked' );
-	};
-
-	const renderDisclaimers = () => (
-		<>
-			<div className="disclaimer">
-				{ createInterpolateElement(
-					__(
-						'Powered by Support AI. Some responses may be inaccurate. <a>Learn more</a>.',
-						__i18n_text_domain__
-					),
-					{
-						a: (
-							// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
-							<ExternalLink
-								href="https://automattic.com/ai-guidelines"
-								onClick={ handleGuidelinesClick }
-							/>
-						),
-					}
-				) }
-			</div>
-			{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
-				<>
-					{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
-					{ ! message.rating_value && (
-						<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
-					) }
-				</>
-			) }
-		</>
-	);
-
-	const messageContent = isRequestingHumanSupport ? displayMessage : message.content;
+	const messageContent = isRequestingHumanSupport
+		? getDisplayMessage(
+				!! hasRecentOpenConversation,
+				isUserEligibleForPaidSupport,
+				canConnectToZendesk,
+				forceEmailSupport,
+				isChatRestricted,
+				message?.context?.flags?.is_error_message
+		  )
+		: message.content;
 
 	return (
 		<>
@@ -154,14 +96,8 @@ export const UserMessage = ( {
 				/>
 			</div>
 			{ isMessageWithEscalationOption && (
-				<div
-					className={ clsx( 'chat-feedback-wrapper', {
-						'chat-feedback-wrapper-no-extra-contact': ! isRequestingHumanSupport,
-						'chat-feedback-wrapper-third-party-cookies': displayingThirdPartyMessage,
-					} ) }
-				>
-					<Sources message={ message } />
-					{ isRequestingHumanSupport && (
+				<>
+					{ isRequestingHumanSupport && isLastBotMessage && (
 						<GetSupport
 							onClickAdditionalEvent={ ( destination ) => {
 								trackEvent( 'chat_get_support', {
@@ -170,9 +106,21 @@ export const UserMessage = ( {
 								} );
 							} }
 						/>
+					) }{ ' ' }
+					{ ! isRequestingHumanSupport && (
+						<>
+							{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
+								<BotMessageActions message={ message } />
+							) }
+							<div className="chat-feedback-wrapper">
+								<Sources
+									message={ message }
+									isMessageShowingDisclaimer={ isMessageShowingDisclaimer }
+								/>
+							</div>
+						</>
 					) }
-					{ isMessageShowingDisclaimer && renderDisclaimers() }
-				</div>
+				</>
 			) }
 		</>
 	);

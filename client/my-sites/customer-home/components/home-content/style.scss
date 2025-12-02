@@ -377,3 +377,13 @@ body.is-section-home.theme-default.color-scheme {
 	background: var(--color-neutral-80);
 	color: var(--color-neutral-0);
 }
+
+.customer-home__studio-sync-notice {
+	.calypso-notice__action {
+		color: var( --color-text-inverted );
+
+		&:hover {
+			color: var( --color-neutral-20 );
+		}
+	}
+}

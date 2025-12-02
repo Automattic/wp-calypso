@@ -3,19 +3,15 @@ $animation-timing: 300ms;
 .help-center__container {
 	.back-to-top-button__help-center {
 		position: sticky;
-		bottom: 0;
+		bottom: -35px;
 		left: 0;
-		width: 100%;
+		z-index: 2;
+		margin: 0 auto;
+
 
 		display: flex;
 		align-items: center;
 		justify-content: center;
-
-		background-color: var(--studio-white);
-		color: var(--studio-black);
-
-		border-radius: 0;
-		border-top: 1px solid rgba(0, 0, 0, 0.1);
 
 		visibility: hidden;
 		opacity: 0;
@@ -25,18 +21,6 @@ $animation-timing: 300ms;
 			visibility: visible;
 			opacity: 1;
 			transition: visibility 0s linear 0s, opacity $animation-timing;
-		}
-
-		&:hover {
-			background-color: var(--studio-white);
-			color: var(--studio-black);
-			border-color: rgba(0, 0, 0, 0.1);
-		}
-	}
-
-	&:not(.is-mobile) {
-		.back-to-top-button__help-center {
-			padding: 6px 0;
 		}
 	}
 }

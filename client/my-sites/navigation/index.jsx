@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
+import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
@@ -47,12 +48,14 @@ class MySitesNavigation extends Component {
 	}
 
 	renderGlobalSidebar() {
-		const asyncProps = {
-			placeholder: null,
-			path: this.props.path,
-		};
 		return (
-			<GlobalSidebar { ...asyncProps }>
+			<GlobalSidebar
+				path={ this.props.path }
+				footer={
+					config.isEnabled( 'dashboard/v2' ) &&
+					! this.props.isGlobalSidebarCollapsed && <HostingDashboardOptInBanner />
+				}
+			>
 				<MySitesSidebarUnifiedBody
 					isGlobalSidebarCollapsed={ this.props.isGlobalSidebarCollapsed }
 					path={ this.props.path }

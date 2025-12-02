@@ -61,7 +61,6 @@ export const STATS_FEATURE_DATE_CONTROL_MONTH_TO_DATE = 'StatsDateControl/month_
 export const STATS_FEATURE_DATE_CONTROL_LAST_12_MONTHS = 'StatsDateControl/last_12_months';
 export const STATS_FEATURE_DATE_CONTROL_YEAR_TO_DATE = 'StatsDateControl/year_to_date';
 export const STATS_FEATURE_DATE_CONTROL_LAST_3_YEARS = 'StatsDateControl/last_3_years';
-export const STATS_FEATURE_DATE_CONTROL_CUSTOM_DATE_RANGE = 'StatsDateControl/custom_date_range';
 export const STATS_FEATURE_INTERVAL_DROPDOWN = 'StatsIntervalDropdown';
 export const STATS_FEATURE_INTERVAL_DROPDOWN_HOUR = `StatsIntervalDropdown/${ STATS_PERIOD.HOUR }`;
 export const STATS_FEATURE_INTERVAL_DROPDOWN_DAY = `StatsIntervalDropdown/${ STATS_PERIOD.DAY }`;

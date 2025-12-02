@@ -1,8 +1,8 @@
-import { Card } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import SiteIcon from '../site-icon';
+import { Card } from '../../components/card';
+import SiteIcon from '../../components/site-icon';
 import SitePreview from '../site-preview';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const SitePreviewCard = ( { site }: { site: Site } ) => {
 	const [ resizeListener, { width, height } ] = useResizeObserver();

@@ -49,6 +49,28 @@ The main component exported by this package.
 - `spacing` (optional): Grid gap multiplier size, defaults to 2 (e.g. A spacing of 2 results in a gap of 8px, it's multiplied by 4)
 - `rowHeight` (optional): Height of each row in pixels or auto (e.g., 50, "auto")
 - `minColumnWidth` (optional): Minimum width in pixels for each column; when provided, enables responsive mode that automatically adjusts columns based on container width
+- `editMode` (optional): Enables drag-and-drop reordering and resize functionality
+- `onChangeLayout` (optional): Callback fired when the layout changes (required when `editMode` is true)
+
+#### Child Components Props
+
+Child components can accept special props that affect their behavior within the grid:
+
+- `actionableArea` (optional): React content rendered above the draggable area that remains interactive during edit mode. Useful for controls like action buttons, inputs, or links that need to stay actionable when `editMode` is enabled. Note that positioning and styling of this content is the consumer's responsibility - you'll need to use absolute positioning or similar techniques to place elements where needed within the grid tile.
+
+```jsx
+// Example with actionable area in edit mode
+<Grid layout={ layout } editMode onChangeLayout={ setLayout }>
+	<Card
+		key="a"
+		actionableArea={
+			<button onClick={ handleClose }>×</button>
+		}
+	>
+		Card content
+	</Card>
+</Grid>
+```
 
 ## Standard vs. Responsive Mode
 

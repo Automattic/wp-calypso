@@ -1,15 +1,16 @@
-import { recordViewChanges, type SitesView } from '../views';
+import { recordViewChanges } from '../dataviews/views';
+import type { View } from '@wordpress/dataviews';
 
 describe( 'recordViewChanges', () => {
 	test( 'nothing relevant changed', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			page: 1,
 			fields: [ 'name', 'status' ],
 			filters: [ { field: 'name', value: 'hello', operator: 'is' } ],
 		};
-		const newView: SitesView = {
+		const newView: View = {
 			type: 'grid',
 			page: 2,
 			fields: [ 'status', 'name' ],
@@ -23,8 +24,8 @@ describe( 'recordViewChanges', () => {
 
 	test( 'add new field', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = { type: 'grid' };
-		const newView: SitesView = {
+		const oldView: View = { type: 'grid' };
+		const newView: View = {
 			type: 'grid',
 			fields: [ 'name' ],
 		};
@@ -43,8 +44,8 @@ describe( 'recordViewChanges', () => {
 
 	test( 'add multiple new fields', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = { type: 'grid', fields: [ 'name' ] };
-		const newView: SitesView = {
+		const oldView: View = { type: 'grid', fields: [ 'name' ] };
+		const newView: View = {
 			type: 'grid',
 			fields: [ 'name', 'url', 'status' ],
 		};
@@ -70,11 +71,11 @@ describe( 'recordViewChanges', () => {
 
 	test( 'remove field', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			fields: [ 'name' ],
 		};
-		const newView: SitesView = { type: 'grid' };
+		const newView: View = { type: 'grid' };
 
 		recordViewChanges( oldView, newView, tracks );
 
@@ -90,11 +91,11 @@ describe( 'recordViewChanges', () => {
 
 	test( 'remove multiple fields', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			fields: [ 'name', 'url', 'status' ],
 		};
-		const newView: SitesView = { type: 'grid', fields: [ 'name' ] };
+		const newView: View = { type: 'grid', fields: [ 'name' ] };
 
 		recordViewChanges( oldView, newView, tracks );
 
@@ -117,11 +118,11 @@ describe( 'recordViewChanges', () => {
 
 	test( 'add/remove fields', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			fields: [ 'name', 'url' ],
 		};
-		const newView: SitesView = {
+		const newView: View = {
 			type: 'grid',
 			fields: [ 'media', 'name' ],
 		};
@@ -147,8 +148,8 @@ describe( 'recordViewChanges', () => {
 
 	test( 'add new filters', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = { type: 'grid' };
-		const newView: SitesView = {
+		const oldView: View = { type: 'grid' };
+		const newView: View = {
 			type: 'grid',
 			filters: [ { field: 'status', value: 'active', operator: 'is' } ],
 		};
@@ -164,11 +165,11 @@ describe( 'recordViewChanges', () => {
 
 	test( 'add multiple new filters', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			filters: [ { field: 'status', value: 'active', operator: 'is' } ],
 		};
-		const newView: SitesView = {
+		const newView: View = {
 			type: 'grid',
 			filters: [
 				{ field: 'status', value: 'active', operator: 'is' },
@@ -192,11 +193,11 @@ describe( 'recordViewChanges', () => {
 
 	test( 'remove filter', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			filters: [ { field: 'status', value: 'active', operator: 'is' } ],
 		};
-		const newView: SitesView = { type: 'grid' };
+		const newView: View = { type: 'grid' };
 
 		recordViewChanges( oldView, newView, tracks );
 
@@ -209,7 +210,7 @@ describe( 'recordViewChanges', () => {
 
 	test( 'remove multiple filters', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			filters: [
 				{ field: 'status', value: 'active', operator: 'is' },
@@ -217,7 +218,7 @@ describe( 'recordViewChanges', () => {
 				{ field: 'name', value: 'active', operator: 'is' },
 			],
 		};
-		const newView: SitesView = {
+		const newView: View = {
 			type: 'grid',
 			filters: [ { field: 'status', value: 'active', operator: 'is' } ],
 		};
@@ -237,14 +238,14 @@ describe( 'recordViewChanges', () => {
 
 	test( 'add/remove filters', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			filters: [
 				{ field: 'status', value: 'active', operator: 'is' },
 				{ field: 'name', value: 'active', operator: 'is' },
 			],
 		};
-		const newView: SitesView = {
+		const newView: View = {
 			type: 'grid',
 			filters: [
 				{ field: 'media', value: 'active', operator: 'is' },
@@ -267,11 +268,11 @@ describe( 'recordViewChanges', () => {
 
 	test( 'view type change', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			fields: [ 'name', 'status' ],
 		};
-		const newView: SitesView = {
+		const newView: View = {
 			type: 'table',
 			fields: [ 'name', 'visitors' ],
 		};
@@ -289,11 +290,11 @@ describe( 'recordViewChanges', () => {
 
 	test( 'sort direction change', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			sort: { field: 'name', direction: 'asc' },
 		};
-		const newView: SitesView = {
+		const newView: View = {
 			type: 'grid',
 			sort: { field: 'name', direction: 'desc' },
 		};
@@ -308,11 +309,11 @@ describe( 'recordViewChanges', () => {
 
 	test( 'sort field change', () => {
 		const tracks = jest.fn();
-		const oldView: SitesView = {
+		const oldView: View = {
 			type: 'grid',
 			sort: { field: 'status', direction: 'asc' },
 		};
-		const newView: SitesView = {
+		const newView: View = {
 			type: 'grid',
 			sort: { field: 'name', direction: 'desc' },
 		};

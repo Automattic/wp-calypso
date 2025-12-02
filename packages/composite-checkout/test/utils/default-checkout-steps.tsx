@@ -58,7 +58,7 @@ function CheckoutReviewOrder( { items }: { items: LineItem[] } ) {
 }
 
 export function DefaultCheckoutSteps( { items }: { items: LineItem[] } ) {
-	const paymentMethodStep = getDefaultPaymentMethodStep();
+	const paymentMethodStep = getDefaultPaymentMethodStep( {} );
 	return (
 		<CheckoutStepGroup>
 			<CheckoutStepBody

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ContactList from '../../contact-list';
@@ -21,14 +20,11 @@ export default function EmailNotification( {
 	verifiedItem,
 	enableEmailNotification,
 	setEnableEmailNotification,
-	defaultUserEmailAddresses,
 	toggleAddEmailModal,
 	allEmailItems,
 	restriction,
 }: Props ) {
 	const translate = useTranslate();
-
-	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
 	return (
 		<>
@@ -52,23 +48,13 @@ export default function EmailNotification( {
 					<div className="notification-settings__content-heading-with-beta">
 						<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
 					</div>
-					{ isPaidTierEnabled ? (
-						<>
-							<div className="notification-settings__content-sub-heading">
-								{ translate( 'Receive email notifications with one or more recipients.' ) }
-							</div>
-						</>
-					) : (
-						<div className="notification-settings__content-sub-heading">
-							{ translate( 'Receive email notifications with your account email address %s.', {
-								args: defaultUserEmailAddresses,
-							} ) }
-						</div>
-					) }
+					<div className="notification-settings__content-sub-heading">
+						{ translate( 'Receive email notifications with one or more recipients.' ) }
+					</div>
 				</div>
 			</div>
 
-			{ enableEmailNotification && isPaidTierEnabled && (
+			{ enableEmailNotification && (
 				<ContactList
 					type="email"
 					onAction={ toggleAddEmailModal }

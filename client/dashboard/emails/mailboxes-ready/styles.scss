@@ -1,0 +1,20 @@
+.mailboxes-ready__item-group {
+	background-color: #fff;
+	border-radius: 8px;
+
+	.components-item {
+		height: 56px;
+		display: flex;
+		padding: 0 24px;
+		font-size: 14px;
+	}
+
+	.components-button {
+		font-size: 14px;
+		text-decoration: none;
+	}
+}
+
+.mailboxes-ready__back-button {
+	align-self: flex-start;
+}

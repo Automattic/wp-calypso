@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { Icon, chevronDown, external } from '@wordpress/icons';
+import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -57,8 +57,7 @@ const MigrationOfferV2 = () => {
 							className="a4a-migration-offer-v2__button"
 							href={ CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT }
 						>
-							{ translate( 'Contact us to learn more' ) }
-							<Icon icon={ external } size={ 18 } />
+							{ translate( 'Contact us to learn more ↗' ) }
 						</Button>
 					</div>
 				) }

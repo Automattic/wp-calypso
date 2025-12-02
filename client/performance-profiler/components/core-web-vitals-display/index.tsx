@@ -1,18 +1,15 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useState } from 'react';
-import {
-	Metrics,
-	PerformanceMetricsHistory,
-	PerformanceMetricsItemQueryResponse,
-} from 'calypso/data/site-profiler/types';
+import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
 import { CoreWebVitalsAccordion } from '../core-web-vitals-accordion';
 import MetricTabBar from '../metric-tab-bar';
 import { CoreWebVitalsDetails } from './core-web-vitals-details';
+import type { PerformanceMetricAudit } from '@automattic/api-core';
 import './style.scss';
 
 type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
-	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	audits: Record< string, PerformanceMetricAudit >;
 	recommendationsRef: React.RefObject< HTMLDivElement > | null;
 	overallScoreIsTab?: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;

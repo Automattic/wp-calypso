@@ -7,6 +7,7 @@ import {
 	render as clientRender,
 	redirectIfCurrentUserCannot,
 } from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import { noSite, navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	renderPluginsDashboard,
@@ -62,6 +63,7 @@ export default function ( router ) {
 		siteSelection,
 		navigationIfLoggedIn,
 		redirectTrialSites,
+		setupPreferences,
 		renderPluginsSidebar,
 		browsePlugins,
 		makeLayout,
@@ -98,6 +100,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigationIfLoggedIn,
+		setupPreferences,
 		renderPluginsSidebar,
 		browsePlugins,
 		makeLayout,
@@ -170,6 +173,7 @@ export default function ( router ) {
 		navigation,
 		redirectTrialSites,
 		jetpackCanUpdate,
+		setupPreferences,
 		renderPluginsSidebar,
 		plugins,
 		makeLayout,
@@ -216,6 +220,7 @@ export default function ( router ) {
 		siteSelection,
 		navigationIfLoggedIn,
 		redirectTrialSites,
+		setupPreferences,
 		renderPluginsSidebar,
 		relatedPlugins,
 		makeLayout,
@@ -243,6 +248,7 @@ export default function ( router ) {
 		siteSelection,
 		navigationIfLoggedIn,
 		redirectTrialSites,
+		setupPreferences,
 		renderPluginsSidebar,
 		browsePluginsOrPlugin,
 		makeLayout,

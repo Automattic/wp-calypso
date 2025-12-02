@@ -1,19 +1,29 @@
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { backup, payment, receipt, institution } from '@wordpress/icons';
+import { backup, payment, receipt, institution, currencyDollar } from '@wordpress/icons';
 import {
 	purchasesRoute,
 	billingHistoryRoute,
 	paymentMethodsRoute,
+	monetizeSubscriptionsRoute,
 	taxDetailsRoute,
 } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { getMonetizeSubscriptionsPageTitle } from '../billing-monetize-subscriptions/title';
 
 function Billing() {
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Billing' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Billing' ) }
+					description={ __( 'View your billing information and payment methods.' ) }
+				/>
+			}
+		>
 			<VStack spacing={ 4 }>
 				<RouterLinkSummaryButton
 					title={ __( 'Active upgrades' ) }
@@ -28,6 +38,12 @@ function Billing() {
 					description={ __( 'View email receipts for past purchases.' ) }
 					decoration={ <Icon icon={ backup } /> }
 					to={ billingHistoryRoute.to }
+				/>
+				<RouterLinkSummaryButton
+					title={ getMonetizeSubscriptionsPageTitle() }
+					description={ __( 'Manage Monetize subscriptions.' ) }
+					decoration={ <Icon icon={ currencyDollar } /> }
+					to={ monetizeSubscriptionsRoute.to }
 				/>
 				<RouterLinkSummaryButton
 					title={ __( 'Payment methods' ) }

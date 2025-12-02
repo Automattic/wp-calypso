@@ -1,7 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { siteByIdQuery, stagingSiteSyncStateQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
+import { useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -25,12 +27,12 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Pagination from 'calypso/components/pagination';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { withSyncStatus } from 'calypso/sites/staging-site/hooks/use-site-sync-status';
 import {
 	getRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -453,7 +455,7 @@ class ActivityLog extends Component {
 			const today = this.applySiteOffset( moment() );
 			let last = null;
 
-			return ( { rewindId } ) => {
+			const TimePeriod = ( { rewindId } ) => {
 				const ts = this.applySiteOffset( moment( rewindId * 1000 ) );
 
 				if ( null === last || ! ts.isSame( last, 'day' ) ) {
@@ -469,6 +471,8 @@ class ActivityLog extends Component {
 
 				return null;
 			};
+
+			return TimePeriod;
 		} )();
 
 		const showVisibleDaysLimitUpsell = ! allLogsVisible && actualPage >= pageCount;
@@ -640,22 +644,42 @@ function filterLogEntries( allLogEntries, visibleDays, gmtOffset, timezone ) {
 }
 
 function withActivityLog( Inner ) {
-	return ( props ) => {
-		const { siteId, filter, gmtOffset, timezone } = props;
+	const WithActivityLog = ( props ) => {
+		const { siteId, filter, gmtOffset, timezone, rewindState } = props;
 		const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
 		const { data, isSuccess } = useActivityLogQuery( siteId, filter );
 		const allLogEntries = data ?? emptyList;
 		const visibleLogEntries = filterLogEntries( allLogEntries, visibleDays, gmtOffset, timezone );
 		const allLogsVisible = visibleLogEntries.length === allLogEntries.length;
+
+		const { data: site } = useQuery( {
+			...siteByIdQuery( siteId ),
+			enabled: !! siteId,
+		} );
+
+		const productionSiteId = site ? getProductionSiteId( site ) : null;
+
+		const { data: stagingSiteSyncState, isLoading: isSyncLoading } = useQuery( {
+			...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
+			enabled: !! productionSiteId,
+		} );
+
+		const hideRewindProgress =
+			rewindState?.rewind?.restoreId === stagingSiteSyncState?.last_restore_id;
+
 		return (
 			<Inner
 				{ ...props }
 				logs={ visibleLogEntries }
 				logsLoaded={ isSuccess }
 				allLogsVisible={ allLogsVisible }
+				syncLoaded={ ! isSyncLoading }
+				hideRewindProgress={ hideRewindProgress }
 			/>
 		);
 	};
+
+	return WithActivityLog;
 }
 
 export default connect(
@@ -728,4 +752,4 @@ export default connect(
 		selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),
 		updateBreadcrumbs,
 	}
-)( withSyncStatus( withActivityLog( localize( withLocalizedMoment( ActivityLog ) ) ) ) );
+)( withActivityLog( localize( withLocalizedMoment( ActivityLog ) ) ) );

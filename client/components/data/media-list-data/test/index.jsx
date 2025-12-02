@@ -40,27 +40,6 @@ describe( 'EditorMediaModal', () => {
 		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, { mime_type: 'image/' } );
 	} );
 
-	test( 'should pass and process filter parameter for google photos', () => {
-		const setQuery = jest.fn();
-
-		render(
-			<MediaListData
-				siteId={ DUMMY_SITE_ID }
-				setQuery={ setQuery }
-				filter="images"
-				source="google_photos"
-			>
-				<EMPTY_COMPONENT />
-			</MediaListData>
-		);
-
-		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, {
-			source: 'google_photos',
-			path: 'recent',
-			filter: [ 'mediaType=photo' ],
-		} );
-	} );
-
 	test( 'should not pass and process filter parameter for pexels', () => {
 		const setQuery = jest.fn();
 
@@ -85,26 +64,6 @@ describe( 'EditorMediaModal', () => {
 		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, {
 			path: 'recent',
 			source: 'anything',
-		} );
-	} );
-
-	test( 'should pass categoryFilter parameter to media query for Google Photos', () => {
-		const setQuery = jest.fn();
-		render(
-			<MediaListData
-				siteId={ DUMMY_SITE_ID }
-				setQuery={ setQuery }
-				categoryFilter="cats"
-				source="google_photos"
-			>
-				<EMPTY_COMPONENT />
-			</MediaListData>
-		);
-
-		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, {
-			filter: [ 'categoryInclude=cats' ],
-			path: 'recent',
-			source: 'google_photos',
 		} );
 	} );
 

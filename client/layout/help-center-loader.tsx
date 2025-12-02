@@ -19,13 +19,19 @@ type Props = {
 	sectionName: string;
 	loadHelpCenter: boolean;
 	currentRoute: string;
+	source: string;
 };
 
-export default function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute }: Props ) {
+export default function HelpCenterLoader( {
+	sectionName,
+	loadHelpCenter,
+	currentRoute,
+	source,
+}: Props ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
 	const handleClose = useCallback( () => {
-		setShowHelpCenter( false, undefined, undefined, true );
+		setShowHelpCenter( false, undefined, true );
 	}, [ setShowHelpCenter ] );
 
 	const locale = useLocale();
@@ -54,6 +60,7 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
+			source={ source }
 		/>
 	);
 }

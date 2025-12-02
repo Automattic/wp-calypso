@@ -1,5 +1,0 @@
-.page.is-virtual {
-	& + .card:not(.page.is-virtual) {
-		margin-top: 16px;
-	}
-}

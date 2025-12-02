@@ -1,6 +1,6 @@
 import { Button, CompactCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Icon, external, trash } from '@wordpress/icons';
+import { Icon, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import useRemoveSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-remove-site';
@@ -111,8 +111,7 @@ export default function SiteErrorPreview( {
 							rel="noopener noreferrer"
 							onClick={ () => trackEvent( 'calypso_a4a_site_indicator_disconnect_confirm' ) }
 						>
-							{ translate( 'Confirm now' ) }
-							<Icon icon={ external } />
+							{ translate( 'Confirm now ↗' ) }
 						</Button>
 					</FormattedHeader>
 				</CompactCard>
@@ -141,8 +140,7 @@ export default function SiteErrorPreview( {
 							rel="noopener noreferrer"
 							onClick={ () => trackEvent( 'calypso_a4a_site_indicator_disconnect_troubleshoot' ) }
 						>
-							{ translate( 'View guide' ) }
-							<Icon icon={ external } />
+							{ translate( 'View guide ↗' ) }
 						</Button>
 					</FormattedHeader>
 				</CompactCard>
@@ -171,8 +169,7 @@ export default function SiteErrorPreview( {
 							rel="noopener noreferrer"
 							onClick={ () => trackEvent( 'calypso_a4a_site_indicator_disconnect_disconnect' ) }
 						>
-							{ translate( 'Disconnect' ) }
-							<Icon icon={ external } />
+							{ translate( 'Disconnect ↗' ) }
 						</Button>
 					</FormattedHeader>
 				</CompactCard>

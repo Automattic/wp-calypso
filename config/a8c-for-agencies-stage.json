@@ -27,6 +27,7 @@
 	],
 	"oauth_client_id": 95931,
 	"features": {
+		"a4a-help-center": true,
 		"ad-tracking": false,
 		"a8c-for-agencies": true,
 		"a8c-for-agencies/import-site-from-wpcom": true,
@@ -35,16 +36,16 @@
 		"a4a/site-migration": false,
 		"a4a-partner-directory": false,
 		"a4a-dev-sites": true,
-		"a8c-for-agencies-agency-tier": true,
 		"a4a-pressable-referrals": true,
 		"a4a-updated-add-new-site": true,
 		"a4a-signup-v2": true,
 		"a4a-signup-v2-via-email": false,
 		"a4a-unified-onboarding-tour": true,
-		"a4a-client-checkout-v2": true,
+		"a4a-bd-checkout": false,
 		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
-		"upgrades/redirect-payments": true
+		"upgrades/redirect-payments": true,
+		"tiers-revamp": true
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -66,7 +67,8 @@
 		"a8c-for-agencies-client": true,
 		"a8c-for-agencies-team": true,
 		"a8c-for-agencies-agency-tier": true,
-		"a8c-for-agencies-woopayments": true
+		"a8c-for-agencies-woopayments": true,
+		"a8c-for-agencies-express-checkout": false
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

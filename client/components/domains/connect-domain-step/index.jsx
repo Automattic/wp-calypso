@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Badge, Gridicon } from '@automattic/components';
+import { isSubdomain } from '@automattic/domain-search';
 import { BackButton } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -11,7 +12,6 @@ import DomainTransferRecommendation from 'calypso/components/domains/domain-tran
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import FormattedHeader from 'calypso/components/formatted-header';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { isSubdomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import {

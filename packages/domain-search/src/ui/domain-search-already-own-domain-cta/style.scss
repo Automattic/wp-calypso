@@ -1,4 +1,9 @@
 .domain-search-already-own-domain-cta {
+	&.summary-button.components-button {
+		width: auto;
+		margin: 0 auto;
+	}
+
 	.summary-button-description {
 		text-align: left;
 	}

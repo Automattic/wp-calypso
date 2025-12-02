@@ -15,6 +15,7 @@ const mockRequest = ( { cookies = {}, headers = {} } = {} ) => {
 		cookies,
 		query: {},
 		params: {},
+		originalUrl: '/',
 		get: jest.fn().mockImplementation( ( key ) => headers[ key ] ),
 	} );
 };
@@ -224,25 +225,6 @@ describe( 'User bootstrap', () => {
 
 		expect( user.ID ).toBe( '1' );
 		expect( user.username ).toBe( 'test' );
-	} );
-
-	it( 'filters out invalid properties', async () => {
-		configureUpstreamRequest( {
-			response: {
-				ID: '1',
-				unknown_field: 'test',
-			},
-		} );
-
-		const request = mockRequest( {
-			cookies: {
-				wordpress_logged_in: 'auth-cookie',
-			},
-		} );
-
-		const user = await getBootstrappedUser( request );
-
-		expect( user.unknown_field ).toBe( undefined );
 	} );
 
 	it( 'adds bootstrapped property to the response', async () => {

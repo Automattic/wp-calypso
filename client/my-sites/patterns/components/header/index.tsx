@@ -381,7 +381,7 @@ export const PatternsHeader = () => {
 
 	let heading: Substitution = CONTENT.default.patternsHeading;
 	let description: Substitution = CONTENT.default.patternsDescription;
-	let metaDescription: Substitution = CONTENT.default.patternsDescription;
+	let metaDescription: Substitution = CONTENT.default.metaDescription;
 
 	if ( categoryConfig ) {
 		if ( patternTypeFilter === PatternTypeFilter.REGULAR ) {

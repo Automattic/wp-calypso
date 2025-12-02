@@ -105,7 +105,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			} );
 
 			test( 'Should verify that auto-sharing is available for new posts', async function () {
-				await socialConnectionsManager.interceptRequests();
+				await socialConnectionsManager.mockSocialConnections();
 
 				await Promise.all( [
 					// Open the Jetpack sidebar.
@@ -115,10 +115,10 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				] );
 
 				// Expand the Publicize panel.
-				const section = await editorPage.expandSection( 'Share this post' );
+				const section = await editorPage.expandSection( 'Share to social media' );
 
 				// Verify that the toggle is enabled.
-				const toggle = section.getByLabel( 'Share when publishing' );
+				const toggle = section.getByLabel( 'Auto-share post' );
 				expect( await toggle.isChecked() ).toBe( true );
 
 				// Verify that the message box is editable.
@@ -134,7 +134,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				features.resharing ? 'IS' : 'is NOT'
 			} available`, async function () {
 				let connectionTestPromise = Promise.resolve();
-				await socialConnectionsManager.interceptRequests();
+				await socialConnectionsManager.mockSocialConnections();
 
 				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 
@@ -144,7 +144,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await connectionTestPromise;
 
 				// Expand the Publicize panel.
-				let section = await editorPage.expandSection( 'Share this post' );
+				let section = await editorPage.expandSection( 'Share to social media' );
 
 				// Verify that resharing button is not visible on new posts in the share modal
 				let sharePostModalButton = section.getByRole( 'button', {
@@ -178,10 +178,10 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await connectionTestPromise;
 
 				// Expand the Publicize panel.
-				section = await editorPage.expandSection( 'Share this post' );
+				section = await editorPage.expandSection( 'Share to social media' );
 
 				// Verify whether the auto-share toggle is no longer visible.
-				const toggle = section.getByLabel( 'Share when publishing' );
+				const toggle = section.getByLabel( 'Auto-share post' );
 				expect( await toggle.isVisible() ).toBe( false );
 
 				// Check if the Preview & Share button is visible based on resharing feature
@@ -234,7 +234,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await editorPage.openSettings( 'Jetpack' );
 
 				// Expand the Publicize panel.
-				let section = await editorPage.expandSection( 'Share this post' );
+				let section = await editorPage.expandSection( 'Share to social media' );
 
 				// Verify that manual sharing is NOT available before publishing.
 				let manualSharing = section.getByRole( 'paragraph', { name: 'Manual sharing' } );
@@ -261,7 +261,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await editorPage.openSettings( 'Jetpack' );
 
 				// Expand the Publicize panel.
-				section = await editorPage.expandSection( 'Share this post' );
+				section = await editorPage.expandSection( 'Share to social media' );
 
 				// Verify whether manual sharing is available in the Jetpack sidebar.
 				manualSharing = section.getByText( 'Manual sharing' );
@@ -271,13 +271,22 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			test( `Should verify that Social Image Generator ${
 				features.socialImageGenerator ? 'IS' : 'is NOT'
 			} available`, async function () {
+				await socialConnectionsManager.mockSocialConnections();
+
+				const connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
+
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
 
-				const section = await editorPage.getSettingsSection( 'Social Image Generator' );
+				await connectionTestPromise;
 
-				// Verify whether the Social Image Generator panel exists.
-				expect( await section.isVisible() ).toBe( features.socialImageGenerator );
+				// Expand the Publicize panel.
+				const section = await editorPage.expandSection( 'Share to social media' );
+
+				const toggle = section.getByLabel( 'Enable Social Image' );
+
+				// Verify whether the Social Image Generator exists.
+				expect( await toggle.isVisible() ).toBe( features.socialImageGenerator );
 			} );
 		} );
 	}

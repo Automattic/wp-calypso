@@ -1,3 +1,3 @@
 export interface AddNewSiteProps {
-	context: 'sites-dashboard' | string;
+	context?: 'sites-dashboard' | 'ciab-sites-dashboard' | 'unknown';
 }

@@ -1,25 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Card,
-	CardBody,
-	Button,
-	CheckboxControl,
-} from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
+import { DomainSubtype } from '@automattic/api-core';
+import { domainsQuery, siteSettingsMutation } from '@automattic/api-queries';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
+import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { ShareSiteForm } from './share-site-form';
-import type { Site, SiteSettings } from '../../data/types';
-import type { UseMutationResult } from '@tanstack/react-query';
+import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
 // The raw SiteSettings don't map nicely to the controls in the form. Mapping from SiteSettings to
@@ -51,7 +44,7 @@ const visibilityFields: Field< PrivacyFormData >[] = [
 				label: __( 'Private' ),
 				value: 'private',
 				description: __(
-					'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+					'Your site is only visible to you and to logged-in members you approve. Everyone else will see a login screen.'
 				),
 			},
 		],
@@ -59,8 +52,10 @@ const visibilityFields: Field< PrivacyFormData >[] = [
 ];
 
 const visibilityForm = {
-	type: 'regular',
-	fields: [ { id: 'visibility', labelPosition: 'none' } ],
+	layout: {
+		type: 'regular' as const,
+	},
+	fields: [ { id: 'visibility', layout: { type: 'regular', labelPosition: 'none' } } ],
 } satisfies Form;
 
 // This form also has access to `isPrimaryDomainStaging` which isn't a persisted setting, but is data
@@ -99,10 +94,12 @@ const robotFields: Field< PrivacyFormData & { isPrimaryDomainStaging: boolean } 
 				} }
 				help={ createInterpolateElement(
 					__(
-						'This will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. <a>Learn more</a>'
+						'This will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. <learnMoreLink />'
 					),
 					{
-						a: <InlineSupportLink supportContext="privacy-prevent-third-party-sharing" />,
+						learnMoreLink: (
+							<InlineSupportLink supportContext="privacy-prevent-third-party-sharing" />
+						),
 					}
 				) }
 			/>
@@ -113,26 +110,36 @@ const robotFields: Field< PrivacyFormData & { isPrimaryDomainStaging: boolean } 
 ];
 
 const robotForm = {
-	type: 'regular',
+	layout: { type: 'regular' as const },
 	fields: [ 'discourageSearchEngines', 'preventThirdPartySharing' ],
 } satisfies Form;
 
-export function PrivacyForm( {
-	site,
-	settings,
-	mutation,
-}: {
-	site: Site;
-	settings: SiteSettings;
-	mutation: UseMutationResult< Partial< SiteSettings >, Error, Partial< SiteSettings >, unknown >;
-} ) {
-	const { data: domains = [] } = useQuery( siteDomainsQuery( site.ID ) );
+export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
+	const { data: domains = [] } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.blog_id === site.ID );
+		},
+	} );
+
+	const mutation = useMutation( {
+		...siteSettingsMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Site visibility settings saved.' ),
+				error: __( 'Failed to save site visibility settings.' ),
+			},
+		},
+	} );
 
 	const primaryDomain = domains.find( ( domain ) => domain.primary_domain );
-	const isPrimaryDomainStaging = Boolean( primaryDomain?.is_wpcom_staging_domain );
-	const hasNonWpcomDomain = domains.some( ( domain ) => ! domain.wpcom_domain );
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const isPrimaryDomainStaging = Boolean(
+		primaryDomain?.subtype.id === DomainSubtype.DEFAULT_ADDRESS &&
+			primaryDomain?.tags.includes( 'wpcom_staging' )
+	);
+	const hasNonWpcomDomain = domains.some(
+		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+	);
 
 	const initialData = fromSiteSettings( settings );
 	const [ formData, setFormData ] = useState( () => ( {
@@ -148,16 +155,7 @@ export function PrivacyForm( {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( toSiteSettings( formData ), {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Site visibility settings saved.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save site visibility settings.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate( toSiteSettings( formData ) );
 	};
 
 	const handleChange = ( edits: Partial< PrivacyFormData > ) => {
@@ -242,7 +240,7 @@ export function PrivacyForm( {
 								form={ robotForm }
 								onChange={ ( { isPrimaryDomainStaging, ...edits } ) => handleChange( edits ) }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									__next40pxDefaultSize
@@ -252,7 +250,7 @@ export function PrivacyForm( {
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>

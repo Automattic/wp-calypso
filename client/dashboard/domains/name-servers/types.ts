@@ -7,15 +7,21 @@ export const WPCOM_DEFAULT_NAME_SERVERS = [
 	'ns3.wordpress.com',
 ];
 
-export interface NameServerField {
-	value: string;
-	error: string;
-	touched: boolean;
-}
-
 // Create a union type of numbers from 1 to MAX_NAME_SERVERS_LENGTH
 export type Range< N extends number, T extends number[] = [] > = T[ 'length' ] extends N
 	? T[ number ]
 	: Range< N, [ ...T, T[ 'length' ] ] >;
 
 export type NameServerKey = `nameServer${ Range< typeof MAX_NAME_SERVERS_LENGTH > }`;
+
+export type FormData = {
+	useWpcomNameServers: boolean;
+} & {
+	[ K in NameServerKey ]: string;
+};
+
+export interface NameServerField {
+	value: string;
+	error: string;
+	touched: boolean;
+}

@@ -1,10 +1,15 @@
+import { queryClient } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
-import { AuthProvider, useAuth } from 'calypso/dashboard/app/auth';
-import { queryClient } from 'calypso/dashboard/app/query-client';
+import { AuthProvider } from 'calypso/dashboard/app/auth';
+import {
+	AppProvider,
+	APP_CONTEXT_DEFAULT_CONFIG,
+	type AppConfig,
+} from 'calypso/dashboard/app/context';
 import router, {
 	routerConfig,
 	syncBrowserHistoryToRouter,
@@ -12,9 +17,13 @@ import router, {
 } from './router';
 import type { Store } from 'redux';
 
-function RouterProviderWithAuth( { siteSlug, feature }: { siteSlug?: string; feature?: string } ) {
-	const auth = useAuth();
-
+function RouterProviderWithConfig( {
+	siteSlug,
+	feature,
+}: {
+	siteSlug?: string;
+	feature?: string;
+} ) {
 	useEffect( () => {
 		syncBrowserHistoryToRouter( router );
 	}, [ siteSlug, feature ] );
@@ -33,7 +42,7 @@ function RouterProviderWithAuth( { siteSlug, feature }: { siteSlug?: string; fea
 		};
 	}, [] );
 
-	return <RouterProvider router={ router } context={ { auth, config: routerConfig } } />;
+	return <RouterProvider router={ router } context={ { config: routerConfig } } />;
 }
 
 function Layout( {
@@ -47,16 +56,34 @@ function Layout( {
 	siteSlug?: string;
 	feature?: string;
 } ) {
+	const APP_CONFIG = {
+		...APP_CONTEXT_DEFAULT_CONFIG,
+		supports: {
+			sites: {
+				settings: {
+					general: {
+						redirect: true,
+					},
+					server: true,
+					security: true,
+					experimental: true,
+				},
+			},
+		},
+	};
+
 	return (
-		<QueryClientProvider client={ queryClient }>
-			<AuthProvider>
-				<AnalyticsProvider client={ analyticsClient }>
-					<ReduxProvider store={ store }>
-						<RouterProviderWithAuth siteSlug={ siteSlug } feature={ feature } />
-					</ReduxProvider>
-				</AnalyticsProvider>
-			</AuthProvider>
-		</QueryClientProvider>
+		<AppProvider config={ APP_CONFIG as AppConfig }>
+			<QueryClientProvider client={ queryClient }>
+				<AuthProvider>
+					<AnalyticsProvider client={ analyticsClient }>
+						<ReduxProvider store={ store }>
+							<RouterProviderWithConfig siteSlug={ siteSlug } feature={ feature } />
+						</ReduxProvider>
+					</AnalyticsProvider>
+				</AuthProvider>
+			</QueryClientProvider>
+		</AppProvider>
 	);
 }
 

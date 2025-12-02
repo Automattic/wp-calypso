@@ -9,18 +9,36 @@
 #
 # See https://help.github.com/en/articles/about-code-owners for details on the format of this file
 
+# V2 Dashboard
+# Adding to the top as a fallback for all dashboard PRs
+/client/dashboard @Automattic/lego
+
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
 
 # Email services
-/client/components/gsuite @Automattic/yolo
-/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/yolo
-/client/lib/domains/email-forwarding @Automattic/yolo
-/client/lib/gsuite @Automattic/yolo
-/client/lib/titan @Automattic/yolo
-/client/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice.jsx  @Automattic/yolo
-/client/my-sites/domains/email-providers-upsell/index.tsx @Automattic/yolo
-/client/my-sites/email @Automattic/yolo
+/client/components/gsuite @Automattic/jetpack-avalon
+/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/jetpack-avalon
+/client/lib/domains/email-forwarding @Automattic/jetpack-avalon
+/client/lib/gsuite @Automattic/jetpack-avalon
+/client/lib/titan @Automattic/jetpack-avalon
+/client/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice.jsx @Automattic/jetpack-avalon
+/client/my-sites/domains/email-providers-upsell/index.tsx @Automattic/jetpack-avalon
+/client/my-sites/email @Automattic/jetpack-avalon
+
+# Staging sites - new dashboard
+/packages/api-queries/src/site-staging-sync.ts @Automattic/yolo
+/packages/api-queries/src/site-staging-sites.ts @Automattic/yolo
+/packages/api-core/src/site-staging-site @Automattic/yolo
+/client/dashboard/utils/site-staging-site.ts @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/staging-site-sync-dropdown @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/staging-site-sync-modal @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/staging-site-delete-modal @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/site/environment-switcher.tsx @Automattic/yolo @Automattic/lego
+/client/dashboard/app/staging-site-sync-monitor @Automattic/yolo @Automattic/lego
+
+# Staging sites - interim dashboard
+/client/sites/staging-site @Automattic/yolo
 
 # Payments
 /client/lib/checkout/ @Automattic/shilling
@@ -36,6 +54,18 @@
 /packages/composite-checkout/ @Automattic/shilling
 /packages/shopping-cart/ @Automattic/shilling
 /packages/wpcom-checkout/ @Automattic/shilling
+/client/dashboard/me/billing/ @Automattic/shilling @Automattic/lego
+/client/dashboard/me/billing-history/ @Automattic/shilling @Automattic/lego
+/client/dashboard/me/billing-monetize-subscriptions/ @Automattic/shilling @Automattic/lego
+/client/dashboard/me/billing-payment-methods/ @Automattic/shilling @Automattic/lego
+/client/dashboard/me/billing-purchases/ @Automattic/shilling @Automattic/lego
+/client/dashboard/me/billing-tax-details/ @Automattic/shilling @Automattic/lego
+/client/dashboard/shopping-cart/ @Automattic/shilling @Automattic/lego
+/client/dashboard/sites/overview-plan-card/ @Automattic/shilling @Automattic/lego
+/client/dashboard/sites/plans.ts @Automattic/shilling @Automattic/lego
+/client/dashboard/utils/payment-method.ts @Automattic/shilling @Automattic/lego
+/client/dashboard/utils/purchase.ts @Automattic/shilling @Automattic/lego
+/client/dashboard/utils/site-plan.ts @Automattic/shilling @Automattic/lego
 
 # Reader
 /client/reader @Automattic/loop
@@ -86,10 +116,10 @@
 
 # Domains entrypoints and UI components
 /client/components/domains @Automattic/quake
-/client/components/domain-search-v2 @Automattic/quake
 /client/signup/steps/domains @Automattic/quake
-/client/landing/stepper/declarative-flow/internals/steps-repository/unified-domains @Automattic/quake
-/client/landing/stepper/declarative-flow/internals/steps-repository/domains @Automattic/quake
+/client/landing/stepper/declarative-flow/internals/steps-repository/domain-search @Automattic/quake
+/client/my-sites/domains/domain-search @Automattic/quake
+/packages/domain-search @Automattic/quake
 
 # Plans
 /client/my-sites/plans-grid @Automattic/martech
@@ -117,6 +147,3 @@
 
 # Grid package
 /packages/grid @youknowriad
-
-# V2 Dashboard
-/client/dashboard @Automattic/lego

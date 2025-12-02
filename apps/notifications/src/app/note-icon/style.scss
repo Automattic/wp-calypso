@@ -1,0 +1,32 @@
+@import '@wordpress/base-styles/colors';
+
+.wpnc__note-icon {
+	position: relative;
+	height: 100%;
+	display: inline-flex;
+
+	img {
+		border-radius: 50%;
+	}
+
+	.wpnc__note-icon-placeholder {
+		background: $gray-100;
+		border-radius: 50%;
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		border: solid 1px rgba(0, 0, 0, 0.1);
+		border-radius: 50%;
+		transition: border-color 0.15s ease-in-out;
+
+		a:hover & {
+			border: solid 1px var(--wp-admin-theme-color);
+		}
+	}
+}

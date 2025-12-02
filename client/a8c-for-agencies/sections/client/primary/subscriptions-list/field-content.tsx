@@ -1,6 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
@@ -34,8 +33,7 @@ export function SubscriptionPurchase( {
 					href="https://my.pressable.com/agency/auth"
 					variant="link"
 				>
-					{ translate( 'Manage in Pressable' ) }
-					<Icon icon={ external } size={ 18 } />
+					{ translate( 'Manage in Pressable ↗' ) }
 				</Button>
 			) }
 		</div>

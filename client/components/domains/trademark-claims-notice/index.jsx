@@ -1,4 +1,5 @@
 import { Button, CompactCard } from '@automattic/components';
+import { TRADE_MARK_CLAIMS_MODAL_COPY } from '@automattic/domain-search';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -115,11 +116,7 @@ class TrademarkClaimsNotice extends Component {
 		return (
 			<CompactCard>
 				<h2>{ translate( '%(domain)s matches a trademark.', { args: { domain } } ) }</h2>
-				<p>
-					{ translate(
-						"To continue, you must agree not to infringe on the trademark holders' rights. Please review and acknowledge the following notice."
-					) }
-				</p>
+				<p>{ TRADE_MARK_CLAIMS_MODAL_COPY.PREAMBLE }</p>
 			</CompactCard>
 		);
 	};
@@ -250,7 +247,10 @@ class TrademarkClaimsNotice extends Component {
 	}
 }
 
-export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = ( domainName ) =>
+export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = (
+	domainName,
+	section = 'domains'
+) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -260,11 +260,14 @@ export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = ( domainNam
 		),
 		recordTracksEvent( 'calypso_show_trademark_notice_click', {
 			domain_name: domainName,
-			section: 'domains',
+			section,
 		} )
 	);
 
-export const recordChooseAnotherDomainButtonClickInTrademarkNotice = ( domainName ) =>
+export const recordChooseAnotherDomainButtonClickInTrademarkNotice = (
+	domainName,
+	section = 'domains'
+) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -274,11 +277,14 @@ export const recordChooseAnotherDomainButtonClickInTrademarkNotice = ( domainNam
 		),
 		recordTracksEvent( 'calypso_choose_another_domain_trademark_notice_click', {
 			domain_name: domainName,
-			section: 'domains',
+			section,
 		} )
 	);
 
-export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = ( domainName ) =>
+export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = (
+	domainName,
+	section = 'domains'
+) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -288,7 +294,7 @@ export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = ( domainNa
 		),
 		recordTracksEvent( 'calypso_acknowledge_trademark_notice_click', {
 			domain_name: domainName,
-			section: 'domains',
+			section,
 		} )
 	);
 

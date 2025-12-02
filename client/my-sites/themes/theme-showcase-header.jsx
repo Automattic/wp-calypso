@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -5,6 +6,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InstallThemeButton from './install-theme-button';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
@@ -33,12 +35,16 @@ export default function ThemeShowcaseHeader( {
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const skipTitleFormatting = shouldSkipTitleFormatting( { filter, tier } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
+	const hostingDashboardOptIn = useSelector( ( state ) => hasHostingDashboardOptIn( state ) );
+	const shouldUseLoggedInHeader =
+		isEnabled( 'themes/universal-header' ) && hostingDashboardOptIn ? selectedSiteId : isLoggedIn;
+
 	const {
 		title: documentHeadTitle,
 		metaDescription: metaDescription,
 		header: themesHeaderTitle,
 		description: themesHeaderDescription,
-	} = isLoggedIn
+	} = shouldUseLoggedInHeader
 		? {
 				title: title,
 				metaDescription: description,
@@ -93,7 +99,7 @@ export default function ThemeShowcaseHeader( {
 				meta={ metas }
 				skipTitleFormatting={ skipTitleFormatting }
 			/>
-			{ isLoggedIn ? (
+			{ shouldUseLoggedInHeader ? (
 				<div className="themes__header-navigation-container">
 					<NavigationHeader
 						compactBreadcrumb={ false }

@@ -17,6 +17,7 @@ type Props = {
 	placeholder?: string;
 	onSearch?: ( query: string ) => void;
 	sectionName: string;
+	useSearchControl: boolean;
 };
 
 const AUTO_FOCUS_LOCATION = [ 'help-center', 'inline-help-popover' ];
@@ -28,6 +29,7 @@ const InlineHelpSearchCard = ( {
 	placeholder,
 	onSearch,
 	sectionName,
+	useSearchControl,
 }: Props ) => {
 	const cardRef = useRef< { searchInput: HTMLInputElement } >();
 	const translate = useTranslate();
@@ -75,6 +77,7 @@ const InlineHelpSearchCard = ( {
 			onSearch={ searchHelperHandler }
 			placeholder={ placeholder || translate( 'Search for help…' ) }
 			delaySearch
+			useSearchControl={ useSearchControl }
 		/>
 	);
 };

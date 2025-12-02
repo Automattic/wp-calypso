@@ -35,31 +35,6 @@ export default {
 	},
 
 	/**
-	 * Return's a media query suitable for Google Photos.
-	 * @param {Object} query The existing query object
-	 * @param {Object} props Media library request props
-	 * @returns {Object} Modified query for Google Photos
-	 */
-	getGoogleQuery: function ( query, props ) {
-		const { categoryFilter, filter } = props;
-		const googleFilter = [];
-
-		if ( filter && this.convertMimeFilter( filter ) ) {
-			googleFilter.push( 'mediaType=' + this.convertMimeFilter( filter ) );
-		}
-
-		if ( categoryFilter ) {
-			googleFilter.push( 'categoryInclude=' + categoryFilter );
-		}
-
-		if ( googleFilter.length ) {
-			return { ...query, filter: googleFilter };
-		}
-
-		return query;
-	},
-
-	/**
 	 * Return a file type filter suitable for Google Photos
 	 * @param {string} wpMimeFilter Calypso MIME filter
 	 * @returns {string} Converted MIME filter, or null if unsupported type

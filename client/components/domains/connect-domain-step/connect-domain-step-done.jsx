@@ -1,4 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
+import { isSubdomain } from '@automattic/domain-search';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -7,7 +8,6 @@ import { connect } from 'react-redux';
 import domainConnectedIllustration from 'calypso/assets/images/domains/connect.svg';
 import CardHeading from 'calypso/components/card-heading';
 import { useCurrentRoute } from 'calypso/components/route';
-import { isSubdomain } from 'calypso/lib/domains';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { stepType } from './constants';

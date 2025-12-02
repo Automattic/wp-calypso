@@ -18,7 +18,8 @@ export const getUsageLevel = (
 	minDaysOfBackupsAllowed: number,
 	daysOfBackupsAllowed: number,
 	retentionDays: number,
-	daysOfBackupsSaved: number
+	daysOfBackupsSaved: number,
+	lastBackupSize?: number
 ): StorageUsageLevelName | null => {
 	if ( available === undefined || used === undefined ) {
 		return null;
@@ -37,6 +38,13 @@ export const getUsageLevel = (
 			available > 0 &&
 			used >= available
 		) {
+			// Check if forecast looks good based on current site size
+			if ( lastBackupSize && lastBackupSize > 0 ) {
+				const forecastInDays = Math.floor( available / lastBackupSize );
+				if ( forecastInDays >= minDaysOfBackupsAllowed ) {
+					return StorageUsageLevels.FullButForecastOk;
+				}
+			}
 			return StorageUsageLevels.Full;
 		}
 

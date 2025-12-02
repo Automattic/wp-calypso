@@ -47,10 +47,12 @@ import {
 	getSitePlan,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
 import { FullScreenLaunchpad } from '../full-screen-launchpad';
+import openSyncUrlInStudio from './studio-deeplink';
 
 import './style.scss';
 
@@ -70,6 +72,7 @@ const HomeContent = ( {
 	fetchingJetpackModules,
 	handleVerifyIcannEmail,
 	isAdmin,
+	hostingDashboardOptIn,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
@@ -135,9 +138,8 @@ const HomeContent = ( {
 		if ( ! studioSiteId ) {
 			return;
 		}
-		const studioSiteUrl = `wpcom-local-dev://sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
 		trackStudioSyncConnectSite( false );
-		window.location.href = studioSiteUrl;
+		openSyncUrlInStudio( studioSiteId, siteId );
 	}, [ siteId, trackStudioSyncConnectSite ] );
 
 	const isFirstSecondaryCardInPrimaryLocation =
@@ -183,8 +185,13 @@ const HomeContent = ( {
 				{ translate( 'View site' ) }
 			</Button>
 			{ isAdmin && ! isP2 && (
-				<Button primary href={ `/overview/${ site.slug }` }>
-					{ translate( 'Hosting Overview' ) }
+				<Button
+					primary
+					href={ hostingDashboardOptIn ? `/v2/sites/${ site.slug }` : `/overview/${ site.slug }` }
+				>
+					{ hostingDashboardOptIn
+						? translate( 'Hosting Dashboard' )
+						: translate( 'Hosting Overview' ) }
 				</Button>
 			) }
 		</>
@@ -285,11 +292,11 @@ const HomeContent = ( {
 		if ( ! studioSiteId ) {
 			return null;
 		}
-		const studioSiteUrl = `wpcom-local-dev://sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
 
 		return (
 			<Notice
-				text={ translate( 'Connect to your Studio site to start syncing.' ) }
+				className="customer-home__studio-sync-notice"
+				text={ translate( 'Open your Studio site to start syncing.' ) }
 				icon="sync"
 				showDismiss={ false }
 				status="is-info"
@@ -297,10 +304,11 @@ const HomeContent = ( {
 				<NoticeAction
 					onClick={ () => {
 						trackStudioSyncConnectSite( true );
-						window.location.href = studioSiteUrl;
+						openSyncUrlInStudio( studioSiteId, siteId );
 					} }
+					external
 				>
-					{ translate( 'Connect Studio' ) }
+					{ translate( 'Open Studio' ) }
 				</NoticeAction>
 			</Notice>
 		);
@@ -375,6 +383,7 @@ const mapStateToProps = ( state ) => {
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
+		hostingDashboardOptIn: hasHostingDashboardOptIn( state ),
 	};
 };
 

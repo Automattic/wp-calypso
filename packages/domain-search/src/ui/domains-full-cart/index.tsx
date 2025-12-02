@@ -19,7 +19,7 @@ import { DomainsFullCartSummary } from '../domains-full-cart-summary';
 
 import './style.scss';
 
-const AnimatedCard = motion( Card );
+const AnimatedCard = motion.create( Card );
 
 const createSlideAnimation = ( axis: 'x' | 'y' ) => ( {
 	initial: {
@@ -93,7 +93,7 @@ export const DomainsFullCart = ( {
 					/>
 				</CardHeader>
 				<CardBody className="domains-full-cart__body" isScrollable>
-					{ children }
+					<VStack spacing={ 6 }>{ children }</VStack>
 				</CardBody>
 				<CardFooter className="domains-full-cart__footer">
 					<VStack className="domains-full-cart__footer-content" spacing={ 4 }>

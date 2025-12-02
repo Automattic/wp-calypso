@@ -24,10 +24,6 @@ import TextareaAutosize from 'calypso/components/textarea-autosize';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
-import {
-	isInternalA4AAgencyDomain,
-	isSitelessDomainForBillingAndReceipts,
-} from 'calypso/me/purchases/utils';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
@@ -44,7 +40,7 @@ import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionQuantitySummary,
-	renderDomainTransactionVolumeSummary,
+	DomainTransactionVolumeSummary,
 	transactionIncludesTax,
 	isTransactionJetpackSearch10kTier,
 	renderJetpackSearch10kTierBreakdown,
@@ -569,10 +565,6 @@ function ReceiptLineItem( {
 		stripZeros: true,
 	} );
 
-	const isSitelessDomain = isSitelessDomainForBillingAndReceipts( item.domain );
-	const shouldShowDomain =
-		item.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( item.domain );
-
 	return (
 		<>
 			<tr>
@@ -580,14 +572,14 @@ function ReceiptLineItem( {
 					<span>{ item.variation }</span>
 					<small>({ item.type_localized })</small>
 					{ termLabel && <em>{ termLabel }</em> }
-					{ shouldShowDomain && <em>{ item.domain }</em> }
+					{ item.domain && <em>{ item.domain }</em> }
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 					) }
 					{ isTransactionJetpackSearch10kTier( item ) && (
 						<em>{ renderJetpackSearch10kTierBreakdown( item, subtotal_integer, translate ) }</em>
 					) }
-					{ item.volume && <em>{ renderDomainTransactionVolumeSummary( item, translate ) }</em> }
+					<DomainTransactionVolumeSummary item={ item } />
 				</td>
 				<td className="billing-history__receipt-amount">
 					{ doesIntroductoryOfferHaveDifferentTermLengthThanProduct(

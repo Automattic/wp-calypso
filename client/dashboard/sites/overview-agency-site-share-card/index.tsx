@@ -1,9 +1,9 @@
+import { sitePreviewLinksQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { link } from '@wordpress/icons';
-import { sitePreviewLinksQuery } from '../../app/queries/site-preview-links';
-import OverviewCard from '../overview-card';
-import type { Site } from '../../data/types';
+import OverviewCard from '../../components/overview-card';
+import type { Site } from '@automattic/api-core';
 
 export default function AgencySiteShareCard( { site }: { site: Site } ) {
 	const { data: links = [] } = useQuery( sitePreviewLinksQuery( site.ID ) );
@@ -16,7 +16,7 @@ export default function AgencySiteShareCard( { site }: { site: Site } ) {
 			description={ __( 'Collaborators with the link can view your site.' ) }
 			link={ `/sites/${ site.slug }/settings/site-visibility` }
 			title={ __( 'Share' ) }
-			tracksId="agency-site-share"
+			tracksId="site-overview-agency-site-share"
 		/>
 	);
 }

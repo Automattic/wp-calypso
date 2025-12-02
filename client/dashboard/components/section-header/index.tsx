@@ -4,8 +4,8 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import clsx from 'clsx';
+import { ButtonStack } from '../button-stack';
 import type { SectionHeaderProps } from './types';
-
 import './style.scss';
 
 /**
@@ -36,27 +36,31 @@ export const SectionHeader = ( {
 				{ decoration && (
 					<span className="dashboard-section-header__decoration">{ decoration }</span>
 				) }
-				<HStack justify="space-between" alignment="center" spacing={ 3 }>
-					<HeadingTag className="dashboard-section-header__heading" id={ headingId }>
-						{ title }
-					</HeadingTag>
-					{ /* The wrapper is always needed for view transitions. */ }
-					<HStack
-						justify="flex-end"
-						expanded={ false }
-						alignment="center"
-						className="dashboard-section-header__actions"
-						spacing={ 3 }
-					>
-						{ actions }
-					</HStack>
+				<HStack justify="space-between" alignment="center" spacing={ 6 } wrap>
+					<VStack style={ { flex: '1000 1 auto' } }>
+						<HeadingTag className="dashboard-section-header__heading" id={ headingId }>
+							{ title }
+						</HeadingTag>
+						{ description && (
+							<Text variant="muted" className="dashboard-section-header__description">
+								{ description }
+							</Text>
+						) }
+					</VStack>
+
+					{ !! actions && (
+						<ButtonStack
+							justify="flex-start"
+							expanded={ false }
+							alignment="flex-start"
+							className="dashboard-section-header__actions"
+							style={ { flex: '1 1 auto' } }
+						>
+							{ actions }
+						</ButtonStack>
+					) }
 				</HStack>
 			</HStack>
-			{ description && (
-				<Text variant="muted" className="dashboard-section-header__description">
-					{ description }
-				</Text>
-			) }
 		</VStack>
 	);
 };

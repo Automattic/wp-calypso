@@ -1,3 +1,4 @@
+import { getDataCenterOptions } from '@automattic/api-core';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { SelectControl } from '@wordpress/components';
@@ -14,37 +15,19 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
-const DataCenterOptions = [
+const AllDataCenterOptions = [
 	{
 		value: '',
 		get label(): string {
 			return translate( 'Optimal data center' );
 		},
 	},
-	{
-		value: 'bur',
+	...Object.entries( getDataCenterOptions() ).map( ( [ key, value ] ) => ( {
+		value: key,
 		get label(): string {
-			return translate( 'US West' );
+			return value as string;
 		},
-	},
-	{
-		value: 'dfw',
-		get label(): string {
-			return translate( 'US Central' );
-		},
-	},
-	{
-		value: 'dca',
-		get label(): string {
-			return translate( 'US East' );
-		},
-	},
-	{
-		value: 'ams',
-		get label(): string {
-			return translate( 'EU West' );
-		},
-	},
+	} ) ),
 ];
 
 const Form = styled.div( {
@@ -138,7 +121,7 @@ const DataCenterPicker = ( {
 										}
 								  )
 						}
-						options={ DataCenterOptions.map( ( option ) => ( {
+						options={ AllDataCenterOptions.map( ( option ) => ( {
 							label: option.label,
 							value: option.value,
 						} ) ) }

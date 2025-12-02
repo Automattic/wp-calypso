@@ -26,7 +26,10 @@ import { navigate } from 'calypso/lib/navigate';
 import { AutoRenewDiolog } from './components/auto-renew-dialog';
 import { useDomainsDataViewsContext } from './use-context';
 
-export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () => void ) {
+export function useActions(
+	viewType: 'table' | 'list' | 'grid' | 'pickerGrid' | 'pickerTable',
+	onClose?: () => void
+) {
 	const translate = useTranslate();
 	const {
 		getFullDomain,
@@ -157,6 +160,7 @@ export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () =>
 				const canSetPrimaryDomainForSite =
 					site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false;
 				const isSiteOnFreePlan = site?.plan?.is_free ?? true;
+				const isFlexSite = site?.is_wpcom_flex ?? false;
 
 				return (
 					! isAllSitesView &&
@@ -167,6 +171,7 @@ export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () =>
 							canSetPrimaryDomainForSite,
 							userCanSetPrimaryDomains,
 							isSiteOnFreePlan,
+							isFlexSite,
 						} )
 					) &&
 					! isRecentlyRegistered( domain.registrationDate )

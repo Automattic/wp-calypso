@@ -597,6 +597,13 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( redirectTo );
 	} );
 
+	it( 'redirects to external redirectTo url if the hostame is difmrequest.com', () => {
+		const adminUrl = 'https://my.site/wp-admin/';
+		const redirectTo = 'https://difmrequest.com/request-a-build-black-friday/';
+		const url = getThankYouPageUrl( { ...defaultArgs, adminUrl, redirectTo } );
+		expect( url ).toBe( redirectTo );
+	} );
+
 	it( 'redirects to manage purchase page if there is a renewal', () => {
 		const cart = {
 			...getMockCart(),
@@ -1687,6 +1694,28 @@ describe( 'getThankYouPageUrl', () => {
 					{
 						...getEmptyResponseCartProduct(),
 						product_slug: PLAN_100_YEARS,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'yourgroovydomain.com',
+				receiptId: 999999,
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/100-year/thank-you/yourgroovydomain.com/999999' );
+		} );
+
+		it( 'Redirects to the 100 year thank-you page when a 100-year domain was purchased (volume 100)', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'domain_reg',
+						is_domain_registration: true,
+						meta: 'example-100-year.com',
+						volume: 100,
 					},
 				],
 			};

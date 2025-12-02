@@ -4,6 +4,8 @@
 
 Add `getNumericFirstDayOfWeek` method as a wrapper for native (but not yet fully supported) `new Intl.Locale( locale ).getWeekInfo()`
 
+Get rid of implicit lodash dependency
+
 ## 1.2.3
 
 Get rid of i18n-calypso dependency

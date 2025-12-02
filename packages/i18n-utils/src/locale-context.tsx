@@ -1,7 +1,6 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import * as i18n from '@wordpress/i18n';
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import * as React from 'react';
 import { englishLocales } from './locales';
 import type { Locale } from './locales';
 
@@ -107,7 +106,7 @@ export function useLocale(): string {
  */
 export const withLocale = createHigherOrderComponent(
 	< OuterProps, >( InnerComponent: React.ComponentType< OuterProps & { locale: string } > ) => {
-		return ( props: OuterProps ) => {
+		return function OuterComponent( props: OuterProps ) {
 			const locale = useLocale();
 			const innerProps = { ...props, locale };
 			return <InnerComponent { ...innerProps } />;

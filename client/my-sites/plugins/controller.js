@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { includes, some } from 'lodash';
 import { createElement } from 'react';
@@ -15,6 +16,7 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import { UNLISTED_PLUGINS } from './constants';
@@ -382,13 +384,22 @@ export function maybeRedirectLoggedOut( context, next ) {
 export function renderPluginsSidebar( context, next ) {
 	const state = context.store.getState();
 	const siteUrl = getSiteFragment( context.path );
+	const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
 
 	if ( ! isUserLoggedIn( state ) ) {
 		next();
 	}
 
 	if ( ! siteUrl ) {
-		context.secondary = <PluginsSidebar path={ context.path } />;
+		context.secondary =
+			isEnabled( 'plugins/universal-header' ) &&
+			hostingDashboardOptIn &&
+			! (
+				context.path.startsWith( '/plugins/manage' ) ||
+				context.path.startsWith( '/plugins/scheduled-updates' )
+			) ? null : (
+				<PluginsSidebar path={ context.path } />
+			);
 	}
 
 	next();

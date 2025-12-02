@@ -12,6 +12,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsGrid from './components/add-ons-grid';
 import type { ReactElement } from 'react';
@@ -19,10 +20,7 @@ import type { ReactElement } from 'react';
 const globalOverrides = css`
 	.is-section-add-ons {
 		height: 100%;
-		#content.layout__content {
-			background: #fdfdfd;
-			height: 100%;
-		}
+		--color-surface-backdrop: #fdfdfd;
 	}
 	.layout__primary {
 		height: 100%;
@@ -36,7 +34,7 @@ const globalOverrides = css`
 const mobileBreakpoint = 660;
 
 const ContainerMain = styled.div`
-	height: 100%;
+	min-height: 100%;
 	.add-ons__main {
 		.add-ons__formatted-header {
 			text-align: center;
@@ -94,8 +92,11 @@ const NoAccess = () => {
 const AddOnsMain = () => {
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
 	const addOns = AddOns.useAddOns( { selectedSiteId: selectedSite?.ID } );
+	const queryArguments = useSelector( getCurrentQueryArguments );
 
 	const checkoutLink = AddOns.useAddOnCheckoutLink();
+
+	const storageOnly = queryArguments?.product === 'storage';
 
 	const canManageSite = useSelector( ( state ) => {
 		if ( ! selectedSite ) {
@@ -116,11 +117,11 @@ const AddOnsMain = () => {
 			quantity,
 		} );
 
-		page.redirect( `${ checkoutLink( selectedSite?.ID ?? null, addOnSlug, quantity ) }` );
+		page.show( `${ checkoutLink( selectedSite?.ID ?? null, addOnSlug, quantity ) }` );
 	};
 
 	const handleActionSelected = () => {
-		page.redirect( `/purchases/subscriptions/${ selectedSite?.slug }` );
+		page.show( `/purchases/subscriptions/${ selectedSite?.slug }` );
 	};
 
 	return (
@@ -135,6 +136,7 @@ const AddOnsMain = () => {
 					addOns={ addOns }
 					siteId={ selectedSite?.ID }
 					highlightFeatured
+					storageOnly={ storageOnly }
 				/>
 			</ContentWithHeader>
 		</>

@@ -1,3 +1,4 @@
+import { isSubdomain } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	CHANGE_NAME_SERVERS,
@@ -19,7 +20,6 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { isSubdomain } from 'calypso/lib/domains';
 import {
 	type as domainTypes,
 	transferStatus,

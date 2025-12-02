@@ -1,4 +1,5 @@
 import { ExternalLink } from '@automattic/components';
+import { isSubdomain } from '@automattic/domain-search';
 import {
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
 	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
@@ -9,7 +10,6 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { Notice } from 'calypso/components/notice';
-import { isSubdomain } from 'calypso/lib/domains';
 import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 
 import './style.scss';

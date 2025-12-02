@@ -1,18 +1,20 @@
-import {
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-	Card,
-	CardBody,
-} from '@wordpress/components';
-import { forwardRef } from 'react';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
+import { Children, forwardRef } from 'react';
+import { Card, CardBody } from '../card';
 import ActionItem from './action-item';
 import type { ActionListProps } from './types';
+
 import './style.scss';
 
 function UnforwardedActionList(
 	{ title, description, children }: ActionListProps,
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
+	// Hide component if there are no children
+	if ( ! children || Children.count( children ) === 0 ) {
+		return null;
+	}
+
 	return (
 		<Card className="action-list" ref={ ref }>
 			<CardBody>

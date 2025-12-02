@@ -1,4 +1,4 @@
-const WPCOM = require( '../../' );
+const WPCOM = require( '../..' );
 
 // anonymous auth since `freshlyPressed()` doesn't require auth
 const wpcom = WPCOM();

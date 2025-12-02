@@ -6,7 +6,8 @@ import './style.scss';
 const severityClassNames = ( severity: number ) => {
 	return {
 		'is-critical': severity >= 5,
-		'is-high': severity >= 3 && severity < 5,
+		'is-high': severity >= 4 && severity < 5,
+		'is-medium': severity >= 3 && severity < 4,
 		'is-low': severity < 3,
 	};
 };
@@ -15,9 +16,11 @@ const severityText = ( severity: number ) => {
 	if ( severity >= 5 ) {
 		return translate( 'Critical' );
 	}
-
-	if ( severity >= 3 ) {
+	if ( severity >= 4 ) {
 		return translate( 'High' );
+	}
+	if ( severity >= 3 ) {
+		return translate( 'Medium' );
 	}
 
 	return translate( 'Low' );

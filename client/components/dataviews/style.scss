@@ -12,7 +12,6 @@
 	}
 
 	tr.dataviews-view-table__row {
-		background: var( --studio-white );
 
 		.components-checkbox-control__input {
 			opacity: 0;
@@ -131,22 +130,5 @@
 	// Color overrides for focus states of Action button
 	.components-button:focus:not( :disabled ) {
 		--wp-components-color-accent: var( --color-primary-light );
-	}
-}
-
-// TODO: remove when this is implemented upstream.
-//
-// https://github.com/WordPress/gutenberg/pull/65086
-.is-section-a8c-for-agencies-referrals .dataviews-view-table tr,
-.is-section-a8c-for-agencies-sites .dataviews-view-table tr {
-	th:last-child,
-	td:last-child {
-		width: 20px;
-		white-space: nowrap;
-		position: sticky;
-		right: 0;
-		z-index: 1;
-		background: linear-gradient( 90deg, rgba( 255, 255, 255, 0 ) 0, rgb( 255, 255, 255 ) 25% );
-		padding-left: 48px;
 	}
 }

@@ -1,4 +1,3 @@
-import type { useOpeningCoordinates } from './hooks/use-opening-coordinates';
 import type { HelpCenterSite, SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
@@ -8,7 +7,6 @@ export interface Container {
 	isLoading?: boolean;
 	hidden?: boolean;
 	currentRoute?: string;
-	openingCoordinates?: ReturnType< typeof useOpeningCoordinates >;
 }
 
 export interface PostObject {
@@ -36,6 +34,7 @@ export interface SitePicker {
 	ownershipResult: AnalysisReport;
 	isSelfDeclaredSite: boolean;
 	onSelfDeclaredSite: ( selfDeclared: boolean ) => void;
+	disabled?: boolean;
 }
 
 export interface Article {
@@ -96,6 +95,7 @@ interface Availability {
 
 interface Eligibility {
 	is_user_eligible: boolean;
+	is_chat_restricted: boolean;
 	wapuu_assistant_enabled: boolean;
 	support_level:
 		| 'free'
@@ -109,6 +109,7 @@ interface Eligibility {
 		| 'jetpack-paid'
 		| 'p2-plus';
 	user_field_flow_name: string;
+	unified_agent_enabled?: boolean;
 }
 
 export interface SupportStatus {

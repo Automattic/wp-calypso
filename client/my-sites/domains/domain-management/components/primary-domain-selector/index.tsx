@@ -53,7 +53,12 @@ const PrimaryDomainSelector = ( {
 	}
 
 	const isOnFreePlan = site?.plan?.is_free ?? false;
-	const canUserSetPrimaryDomainOnThisSite = ! ( primaryWithPlanOnly && isOnFreePlan );
+	const isFlexSite = site?.is_wpcom_flex ?? false;
+	const canUserSetPrimaryDomainOnThisSite = ! (
+		primaryWithPlanOnly &&
+		isOnFreePlan &&
+		! isFlexSite
+	);
 
 	const shouldUpgradeToMakeDomainPrimary = ( domain: DomainData ): boolean => {
 		return (

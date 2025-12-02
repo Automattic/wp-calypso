@@ -1,29 +1,33 @@
+import { HostingFeatures } from '@automattic/api-core';
+import { siteScanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
-import { siteScanQuery } from '../../app/queries/site-scan';
+import OverviewCard from '../../components/overview-card';
 import { useTimeSince } from '../../components/time-since';
-import { HostingFeatures } from '../../data/constants';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
-import OverviewCard from '../overview-card';
-import type { SiteScan } from '../../data/site-scan';
-import type { Site } from '../../data/types';
+import type { SiteScan, Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	icon: shield,
 	title: __( 'Last scan' ),
-	tracksId: 'scan',
+	tracksId: 'site-overview-scan',
 };
 
 function getScanURL( site: Site ) {
-	return isSelfHostedJetpackConnected( site )
-		? `https://cloud.jetpack.com/scan/${ site.slug }`
-		: `https://wordpress.com/scan/${ site.slug }`;
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return `https://cloud.jetpack.com/scan/${ site.slug }`;
+	}
+
+	return isDashboardBackport()
+		? `https://wordpress.com/scan/${ site.slug }`
+		: `/sites/${ site.slug }/scan/active`;
 }
 
 function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
-	const threatCount = scan.threats.length;
+	const threatCount = scan.threats?.length ?? 0;
 	const description = sprintf(
 		/* translators: %d: number of risks */
 		_n( '%d risk found', '%d risks found', threatCount ),
@@ -35,7 +39,7 @@ function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 			{ ...CARD_PROPS }
 			heading={ description }
 			description={ __( 'Auto fixes are available.' ) }
-			externalLink={ getScanURL( site ) }
+			link={ getScanURL( site ) }
 			intent="error"
 		/>
 	);
@@ -58,7 +62,7 @@ function ScanCardNoThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 			{ ...CARD_PROPS }
 			heading={ __( 'No risks found' ) }
 			description={ description }
-			externalLink={ getScanURL( site ) }
+			link={ getScanURL( site ) }
 			intent="success"
 		/>
 	);
@@ -71,7 +75,7 @@ function ScanCardContent( { site }: { site: Site } ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
-	if ( ! scan ) {
+	if ( ! scan || ! scan.threats ) {
 		return null;
 	}
 
@@ -88,7 +92,8 @@ export default function ScanCard( { site }: { site: Site } ) {
 			site={ site }
 			feature={ HostingFeatures.SCAN }
 			featureIcon={ CARD_PROPS.icon }
-			tracksFeatureId={ CARD_PROPS.tracksId }
+			upsellId={ CARD_PROPS.tracksId }
+			upsellFeatureId="site-scan"
 			upsellHeading={ __( 'Scan for security threats' ) }
 			upsellDescription={ __( 'We guard your site. You run your business.' ) }
 			upsellLink={ getScanURL( site ) }

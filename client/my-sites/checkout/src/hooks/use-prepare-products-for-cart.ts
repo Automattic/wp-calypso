@@ -41,7 +41,6 @@ const initialPreparedProductsState: PreparedProductsForCart = {
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
-	isInModal,
 	usesJetpackProducts,
 	isPrivate,
 	siteSlug,
@@ -56,7 +55,6 @@ export default function usePrepareProductsForCart( {
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
-	isInModal?: boolean;
 	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
@@ -138,7 +136,7 @@ export default function usePrepareProductsForCart( {
 	useNothingToAdd( { addHandler, dispatch } );
 
 	// Do not strip products from url until the URL has been parsed
-	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInModal;
+	const areProductsRetrievedFromUrl = ! state.isLoading;
 	const doNotStripProducts = Boolean(
 		! areProductsRetrievedFromUrl ||
 			sitelessCheckoutType === 'jetpack' ||
@@ -386,25 +384,6 @@ function useAddRenewalItems( {
 		const productSlugs = productAlias?.split( ',' ) ?? [];
 		const purchaseIds = originalPurchaseId ? String( originalPurchaseId ).split( ',' ) : [];
 
-		// Renewals cannot be purchased without a site.
-		const isThereASite = cartKey && typeof cartKey === 'number';
-		if ( ! isThereASite && ! isGiftPurchase && ! sitelessCheckoutType ) {
-			debug(
-				'creating renewal products failed because there is no site. products:',
-				productAlias,
-				'cartKey:',
-				cartKey
-			);
-			dispatch( {
-				type: 'RENEWALS_ADD_ERROR',
-				message: translate(
-					'This renewal is invalid. Please verify that you are logged into the correct account for the product you want to renew.',
-					{ textOnly: true }
-				),
-			} );
-			return;
-		}
-
 		const productsForCart = purchaseIds
 			.map( ( subscriptionId, currentIndex ) => {
 				const productSlug = productSlugs[ currentIndex ];
@@ -428,7 +407,7 @@ function useAddRenewalItems( {
 					translate(
 						"I tried and failed to create products matching the identifier '%(productAlias)s'",
 						{
-							args: { productAlias: productAlias ?? '' },
+							args: { productAlias: `${ productAlias ?? '' } (${ originalPurchaseId })` },
 						}
 					)
 				),

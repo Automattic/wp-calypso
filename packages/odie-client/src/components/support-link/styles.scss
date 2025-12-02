@@ -1,50 +1,67 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/variables";
+
+$help-center-blue: #3858e9;
+$gray-700: #646970;
+
 .odie-support-doc-link__container {
-	display: flex;
-	flex-direction: column;
-	margin-bottom: 8px;
+	border-bottom: 1px solid var(--studio-gray-5);
+
+	&:first-child {
+		a:focus, button:focus {
+			border-radius: 8px 8px 0 0;
+		}
+	}
+
+	&:last-child {
+		border-bottom: 0;
+
+		a:focus, button:focus {
+			border-radius: 0 0 8px 8px;
+		}
+	}
 
 	.odie-support-doc-link__link {
-		display: flex;
-		align-items: center;
-		background-color: var(--color-body-background);
-		text-decoration: none;
-		color: var(--color-text);
-		border-radius: 4px;
+		display: block;
+		width: 100%;
 
-		&:hover {
-			background-color: var(--studio-gray-0);
-		}
+		a,
+		button {
+			&:hover {
+				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
+				cursor: pointer;
 
-		a {
+				svg {
+					fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
+				}
+			}
+			&:focus {
+				color: var(--studio-gray-100);
+				outline: $help-center-blue solid 2px;
+				outline-offset: -2px;
+			}
+	
 			display: flex;
+			text-decoration: none;
+			color: var(--studio-gray-900);
+			font-size: $font-body-small;
 			align-items: center;
 			width: 100%;
-			text-decoration: none;
-			color: var(--studio-gray-100);
+			min-width: 0;
+			box-sizing: border-box;
 
-			svg:last-child {
-				fill: var(--studio-gray-20);
-			}
-
-			.icon-background {
-				background-color: var(--studio-gray-0);
-				padding: 8px;
-				border-radius: 4px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin-right: 8px;
-				svg {
-					fill: var(--studio-blue-50);
-				}
+			svg {
+				fill: $gray-700;
+				flex-shrink: 0;
 			}
 
 			span {
-				flex-grow: 2;
-				font-size: $font-body-small;
-				-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-				color: var(--studio-gray-100);
+				flex: 1 1 auto;
+				min-width: 0;
+				text-align: left;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
 			}
 		}
 	}

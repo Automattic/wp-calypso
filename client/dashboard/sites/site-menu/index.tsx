@@ -1,9 +1,12 @@
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
+import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
+import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { AppConfig, SiteFeatureSupports } from '../../app/context';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof SiteFeatureSupports ) => {
 	return supports.sites && supports.sites[ feature ];
@@ -13,9 +16,35 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 	const { supports } = useAppContext();
 	const siteSlug = site.slug;
 
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
+					{ __( 'Overview' ) }
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
+		);
+	}
+
+	if ( isCommerceGarden( site ) ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
+					{ __( 'Overview' ) }
+				</ResponsiveMenu.Item>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
+					{ __( 'Domains' ) }
+				</ResponsiveMenu.Item>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
+					{ __( 'Settings' ) }
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
+		);
+	}
+
 	if ( hasSiteTrialEnded( site ) ) {
 		return (
-			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/trial-ended` }>
 					{ __( 'Trial ended' ) }
 				</ResponsiveMenu.Item>
@@ -23,9 +52,9 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( site.options?.is_difm_lite_in_progress ) {
+	if ( site.options?.is_difm_lite_in_progress && ! isSupportSession() ) {
 		return (
-			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-building-in-progress` }>
 					{ __( 'Site building' ) }
 				</ResponsiveMenu.Item>
@@ -44,7 +73,7 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 	}
 
 	return (
-		<ResponsiveMenu label={ __( 'Site Menu' ) }>
+		<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
 				{ __( 'Overview' ) }
 			</ResponsiveMenu.Item>
@@ -68,6 +97,11 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 					{ __( 'Logs' ) }
 				</ResponsiveMenu.Item>
 			) }
+			{ hasAppSupport( supports, 'scan' ) && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/scan` }>
+					{ __( 'Scan' ) }
+				</ResponsiveMenu.Item>
+			) }
 			{ hasAppSupport( supports, 'backups' ) && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
 					{ __( 'Backups' ) }
@@ -76,11 +110,6 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 			{ hasAppSupport( supports, 'domains' ) && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 					{ __( 'Domains' ) }
-				</ResponsiveMenu.Item>
-			) }
-			{ hasAppSupport( supports, 'emails' ) && (
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/emails` }>
-					{ __( 'Emails' ) }
 				</ResponsiveMenu.Item>
 			) }
 			{ site.capabilities.manage_options && (

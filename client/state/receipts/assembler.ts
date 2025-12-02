@@ -1,7 +1,7 @@
 import type { RawReceiptData, ReceiptData } from './types';
 import type {
 	WPCOMTransactionEndpointResponseSuccess,
-	Purchase,
+	TransactionResponsePurchase,
 	FailedPurchase,
 } from '@automattic/wpcom-checkout';
 
@@ -13,7 +13,7 @@ export function createReceiptObject(
 ): ReceiptData {
 	// purchases is a key-value store if the data is coming from the transactions
 	// endpoint, but an array if it comes from the receipt endpoint.
-	const purchases = ( (): Purchase[] => {
+	const purchases = ( (): TransactionResponsePurchase[] => {
 		if ( ! data.purchases ) {
 			return [];
 		}
@@ -85,7 +85,7 @@ export function createReceiptObject(
  */
 function flattenPurchases(
 	purchases: WPCOMTransactionEndpointResponseSuccess[ 'purchases' ]
-): Array< Purchase > {
+): Array< TransactionResponsePurchase > {
 	if ( Array.isArray( purchases ) ) {
 		// If the data is an array, it is because PHP converted an empty
 		// associative array into an empty array instead of an empty object.

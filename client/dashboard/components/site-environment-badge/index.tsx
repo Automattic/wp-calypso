@@ -1,7 +1,6 @@
 import { Badge } from '@automattic/ui';
 import { __ } from '@wordpress/i18n';
-
-export type EnvironmentType = 'production' | 'staging';
+import { EnvironmentType } from '../environment';
 
 interface SiteEnvironmentBadgeProps {
 	environmentType: EnvironmentType;

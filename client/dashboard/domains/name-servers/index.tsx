@@ -1,18 +1,20 @@
+import {
+	domainQuery,
+	domainNameServersQuery,
+	domainNameServersMutation,
+	siteByIdQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
-import { domainQuery } from '../../app/queries/domain';
-import {
-	domainNameServersQuery,
-	domainNameServersMutation,
-} from '../../app/queries/domain-name-servers';
-import { siteByIdQuery } from '../../app/queries/site';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
-import Notice from '../../components/notice';
+import { Card, CardBody } from '../../components/card';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getDomainSiteSlug } from '../../utils/domain';
@@ -23,7 +25,11 @@ export default function NameServers() {
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: nameServers, error: queryError } = useQuery( domainNameServersQuery( domainName ) );
+
+	const {
+		data: { nameServers, isUsingDefaultNameServers },
+	} = useSuspenseQuery( domainNameServersQuery( domainName ) );
+
 	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation(
 		domainNameServersMutation( domainName )
 	);
@@ -34,19 +40,6 @@ export default function NameServers() {
 		() => shouldShowUpsellNudge( user, domain, site ),
 		[ domain, site, user ]
 	);
-
-	const errorMsg = useMemo( () => {
-		if ( ! domain?.can_manage_name_servers ) {
-			return (
-				domain?.cannot_manage_name_servers_reason ||
-				__( 'You do not have permission to manage name servers.' )
-			);
-		}
-
-		if ( queryError ) {
-			return queryError.message;
-		}
-	}, [ domain, queryError ] );
 
 	const onSubmit = useCallback(
 		( ns: string[] ) => {
@@ -63,21 +56,31 @@ export default function NameServers() {
 	);
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Name Servers' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					description={ createInterpolateElement(
+						__( 'Change the name servers for your domain. <learnMoreLink />' ),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="nameservers" />,
+						}
+					) }
+					prefix={ <Breadcrumbs length={ 2 } /> }
+				/>
+			}
+		>
 			<Card>
 				<CardBody>
-					{ errorMsg ? (
-						<Notice variant="error">{ errorMsg }</Notice>
-					) : (
-						<NameServersForm
-							domainName={ domainName }
-							domainSiteSlug={ getDomainSiteSlug( domain ) }
-							isBusy={ isUpdatingNameServers }
-							nameServers={ nameServers ?? [] }
-							onSubmit={ onSubmit }
-							showUpsellNudge={ showUpsellNudge }
-						/>
-					) }
+					<NameServersForm
+						domainName={ domainName }
+						domainSiteSlug={ getDomainSiteSlug( domain ) }
+						nameServers={ nameServers }
+						isUsingDefaultNameServers={ isUsingDefaultNameServers }
+						isBusy={ isUpdatingNameServers }
+						showUpsellNudge={ showUpsellNudge }
+						onSubmit={ onSubmit }
+					/>
 				</CardBody>
 			</Card>
 		</PageLayout>

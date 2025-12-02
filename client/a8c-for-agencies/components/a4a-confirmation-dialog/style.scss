@@ -7,6 +7,15 @@
 		@include heading-large;
 	}
 
+	& .dialog__content {
+		h1.a4a-confirmation-dialog__heading {
+			@include heading-x-large;
+		}
+		p, div {
+			@include body-large;
+		}
+	}
+
 	& .dialog__action-buttons {
 		display: flex;
 		flex-direction: row;

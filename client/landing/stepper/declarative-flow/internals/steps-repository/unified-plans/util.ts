@@ -6,11 +6,12 @@ import {
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
+import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { UnifiedPlansStepProps } from './unified-plans-step';
 
-type SupportedIntervalTypes = Extract<
+export type SupportedIntervalTypes = Extract<
 	UrlFriendlyTermType,
 	'monthly' | 'yearly' | '2yearly' | '3yearly'
 >;
@@ -111,3 +112,13 @@ export const buildUpgradeFunction = (
 	submitSignupStep( step, signupVals );
 	goToNextStep();
 };
+
+export function getVisualSplitPlansIntent( intent?: string | null ): PlansIntent | null {
+	if ( intent === 'default_websitebuilder' ) {
+		return 'plans-website-builder';
+	}
+	if ( intent === 'default_hosting' ) {
+		return 'plans-wordpress-hosting';
+	}
+	return null;
+}

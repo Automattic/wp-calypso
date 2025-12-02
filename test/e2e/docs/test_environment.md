@@ -1,8 +1,4 @@
-<div style="width: 45%; float:left" align="left"><a href="./setup.md"><-- Setup</a> </div>
-<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./tests_local.md">Running tests on your machine --></a> </div>
-
-<br><br>
+[← Setup](./setup.md) | [Top](./../README.md) | [Running tests on your machine →](./tests_local.md)
 
 # Test Environment
 
@@ -28,7 +24,7 @@ For example:
 VIEWPORT_NAME=mobile yarn jest specs/<etc>
 ```
 
-The list of supported environment variables are found in [`env-variables.ts`](../../../packages/calypso-e2e//src/env-variables.ts). This file also adds static type checking and is the most up-to-date resource. The [Environment Variables](./environment_variables.md) page may be out of date but will contain explanations of what the individual variables mean.
+The list of supported environment variables are found in [`env-variables.ts`](../../../packages/calypso-e2e/src/env-variables.ts). This file also adds static type checking and is the most up-to-date resource. The [Environment Variables](./environment_variables.md) page may be out of date but will contain explanations of what the individual variables mean.
 
 To use:
 
@@ -68,7 +64,7 @@ yarn decrypt-secrets
 yarn workspace wp-e2e-tests decrypt-secrets
 ```
 
-The decrypted file must **NEVER be committed.** There are `.gitignore` rules to protect against this, but be vigilant nonetheless!
+The decrypted file (e.g., `src/secrets/secrets.decrypted.json`) must **NEVER be committed.** There are `.gitignore` rules (such as `src/secrets/secrets.decrypted.json`) to protect against this, but be vigilant nonetheless!
 
 ### Using the Secrets
 
@@ -81,6 +77,11 @@ import { SecretsManager } from '@automattic/calypso-e2e';
 
 // Later in the spec
 
-const credentials = SecretsManager.secrets.testAccounts.<test_account_name>;
+const credentials = SecretsManager.secrets.testAccounts.<test_account_name>; // Replace <test_account_name> with a valid account name from your decrypted secrets file
+
+// Example:
+const credentials = SecretsManager.secrets.testAccounts.adminUser;
+
+// You can find valid account names in the decrypted secrets file at @automattic/calypso-e2e/src/secrets/secrets.json
 
 ```

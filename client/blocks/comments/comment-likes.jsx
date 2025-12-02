@@ -46,6 +46,9 @@ class CommentLikeButtonContainer extends Component {
 			{
 				blog_id: this.props.siteId,
 				comment_id: this.props.commentId,
+			},
+			{
+				railcar: this.props.railcar,
 			}
 		);
 	};
@@ -82,6 +85,7 @@ CommentLikeButtonContainer.propTypes = {
 	commentId: PropTypes.number.isRequired,
 	showZeroCount: PropTypes.bool,
 	tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
+	railcar: PropTypes.object,
 
 	// connected props:
 	commentLike: PropTypes.object,

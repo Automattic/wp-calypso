@@ -235,7 +235,11 @@ export default function PaymentMethodSelector( {
 				{ currentPaymentMethodNotAvailable && purchase && (
 					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
 				) }
-				<CheckoutPaymentMethods className="payment-method-selector__list" isComplete={ false } />
+				<CheckoutPaymentMethods
+					className="payment-method-selector__list"
+					isComplete={ false }
+					onPageLoadError={ logError }
+				/>
 				<TOSItemWrapper>
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
