@@ -27,7 +27,7 @@ function Authorize() {
 				components: { span: <span className="wp-login__one-login-header-client-name" /> },
 			} ),
 			subHeading: translate(
-				'Give {{span}}%(client)s{{/span}} access to your WordPress.comaccount',
+				'Give {{span}}%(client)s{{/span}} access to your WordPress.com account',
 				{
 					args: { client: oauth2Client.name },
 					components: { span: <span className="wp-login__one-login-header-client-name" /> },
@@ -35,7 +35,7 @@ function Authorize() {
 			),
 			subHeadingSecondary: null,
 		} );
-	}, [ oauth2Client?.name ] );
+	}, [ oauth2Client, setHeaders, translate ] );
 
 	useEffect( () => {
 		if ( ! meta ) {
