@@ -1,5 +1,6 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { domainQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -13,6 +14,7 @@ export default function DomainTransfer() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const isInboundTransfer = domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER;
+	const isDomainTransferRedesignEnabled = config.isEnabled( 'domain-transfer-redesign' );
 
 	return (
 		<PageLayout
@@ -25,7 +27,7 @@ export default function DomainTransfer() {
 				/>
 			}
 		>
-			{ isInboundTransfer ? (
+			{ isDomainTransferRedesignEnabled && isInboundTransfer ? (
 				<InboundTransfer domain={ domain } />
 			) : (
 				<OutboundTransfer domain={ domain } />

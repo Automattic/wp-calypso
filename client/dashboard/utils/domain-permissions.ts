@@ -1,4 +1,5 @@
 import { DomainSubtype } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Domain } from '@automattic/api-core';
@@ -201,7 +202,9 @@ function checkDomainPermissions(
 }
 
 export function checkDomainTransferPermissions( domain: Domain ): void {
-	if ( domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) {
+	const isDomainTransferRedesignEnabled = config.isEnabled( 'domain-transfer-redesign' );
+
+	if ( isDomainTransferRedesignEnabled && domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) {
 		checkDomainPermissions( domain, PermissionCheck.INBOUND_TRANSFER );
 	} else {
 		checkDomainPermissions( domain, PermissionCheck.OUTBOUND_TRANSFER );
