@@ -12,6 +12,8 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { filterOptions, partnerOffers } from './constants';
 import type { PartnerOffer } from './types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -24,17 +26,36 @@ const initialView: View = {
 	search: '',
 	filters: [],
 	page: 1,
-	perPage: 10,
+	perPage: 100,
 };
 
 function PartnerOfferCard( { item }: { item: PartnerOffer } ) {
+	const dispatch = useDispatch();
+
 	const offerType = filterOptions.offerTypes.find( ( option ) => option.value === item.offerType );
+
+	const handleCTAClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_partner_offers_cta_click', {
+				offer_id: item.id,
+			} )
+		);
+	};
+
+	const handleViewTermsClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_partner_offers_view_terms_click', {
+				offer_id: item.id,
+			} )
+		);
+	};
+
 	return (
 		<Card>
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
 					<HStack>
-						<img src={ item.logo } alt={ item.product } style={ { width: '120px' } } />
+						{ item.logo }
 						{ offerType?.label && <Badge>{ offerType.label }</Badge> }
 					</HStack>
 					<VStack spacing={ 1 }>
@@ -55,13 +76,14 @@ function PartnerOfferCard( { item }: { item: PartnerOffer } ) {
 							gap: '16px',
 						} }
 					>
-						<Button variant="secondary" href={ item.cta.url }>
+						<Button variant="secondary" href={ item.cta.url } onClick={ handleCTAClick }>
 							{ item.cta.label }
 						</Button>
 						<Button
 							variant="link"
 							href="https://automattic.com/for-agencies/program-incentives"
 							target="_blank"
+							onClick={ handleViewTermsClick }
 						>
 							{ __( 'View terms' ) }
 						</Button>
@@ -123,29 +145,14 @@ export default function PartnerOffersOverviewContent() {
 				enableSorting: false,
 				enableHiding: true,
 			},
-			{
-				id: 'category',
-				label: __( 'Category' ),
-				type: 'text',
-				getValue: ( { item } ) => item.category,
-				elements: filterOptions.categories,
-				filterBy: {
-					operators: [ 'is' ],
-				},
-				enableSorting: false,
-				enableHiding: true,
-			},
 		],
 		[]
 	);
 
-	const { data: filteredData } = useMemo(
+	const { data: filteredData, paginationInfo } = useMemo(
 		() => filterSortAndPaginate( partnerOffers, view, fields ),
 		[ view, fields ]
 	);
-
-	const perPage = view.perPage ?? 10;
-	const totalPages = Math.max( 1, Math.ceil( filteredData.length / perPage ) );
 
 	return (
 		<>
@@ -162,10 +169,7 @@ export default function PartnerOffersOverviewContent() {
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
-				paginationInfo={ {
-					totalItems: filteredData.length,
-					totalPages,
-				} }
+				paginationInfo={ paginationInfo }
 				defaultLayouts={ { list: {} } }
 				search
 			>

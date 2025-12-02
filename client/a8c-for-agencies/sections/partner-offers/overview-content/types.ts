@@ -3,9 +3,8 @@ export type PartnerOffer = {
 	type?: string;
 	offerType: string;
 	product: string;
-	productType: string;
-	category: string;
-	logo: string;
+	productType?: string;
+	logo: JSX.Element;
 	title: string;
 	description: string;
 	cta: {

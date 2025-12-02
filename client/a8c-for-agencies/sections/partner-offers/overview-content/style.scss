@@ -5,8 +5,12 @@
 	grid-template-columns: repeat( auto-fill, minmax( 250px, 1fr ) );
 	gap: 32px;
 
-	@include break-large {
+	@include break-mobile {
 		grid-template-columns: repeat( auto-fill, minmax( 270px, 1fr ) );
+	}
+
+	@include break-huge {
+		grid-template-columns: repeat( auto-fill, minmax( 300px, 1fr ) );
 	}
 }
 
