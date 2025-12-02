@@ -27,7 +27,7 @@ interface ReturnValue {
 	createAgentPortal: ( children: React.ReactNode ) => React.ReactNode | React.ReactPortal;
 }
 
-export default function useChatLayoutManager( {
+export default function useAgentLayoutManager( {
 	sidebarContainer = 'body',
 	desktopMediaQuery = '(min-width: 1200px)',
 	onOpenSidebar = () => {},

@@ -23,7 +23,7 @@ import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login, backup } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../constants';
-import useChatLayoutManager from '../../hooks/use-chat-layout-manager';
+import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useLoadConversation from '../../hooks/use-load-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getSessionId, setSessionId, clearSessionId } from '../../utils/agent-session';
@@ -64,7 +64,7 @@ export default function AgentDock( {
 	const agentId = agentConfig.agentId;
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createAgentPortal } =
-		useChatLayoutManager();
+		useAgentLayoutManager();
 
 	const {
 		messages,
