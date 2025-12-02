@@ -12,7 +12,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody, CardHeader, CardDivider } from '../../components/card';
+import { Card, CardBody, CardDivider } from '../../components/card';
 import Notice from '../../components/notice';
 import SetupStep from './setup-step';
 
@@ -89,85 +89,88 @@ export default function ConnectionModeCard( {
 
 	return (
 		<Card>
-			<CardHeader>
-				<HStack spacing={ 2 } justify="flex-start">
-					<RadioControl
-						selected={ selectedMode }
-						options={ [ { label: '', value: mode } ] }
-						onChange={ ( value: string ) =>
-							onModeChange( value as DomainConnectionSetupModeValue )
-						}
-					/>
-					<VStack spacing={ 2 }>
-						<Text size="medium" weight={ 500 }>
-							{ title }
-						</Text>
-						<Text variant="muted">{ description }</Text>
-					</VStack>
-				</HStack>
-			</CardHeader>
-			{ isSelected && (
-				<CardBody>
-					<VStack spacing={ 4 }>
-						<VStack spacing={ 6 }>
-							{ mode === DomainConnectionSetupMode.SUGGESTED && ! hasEmailOrOtherServices && (
-								<Notice variant="info" title="No email or other services detected">
-									<Text>
-										{ __( 'You can safely connect your domain without affecting anything else.' ) }
-									</Text>
-								</Notice>
-							) }
-							{ mode === DomainConnectionSetupMode.SUGGESTED && hasEmailOrOtherServices && (
-								<Notice variant="warning" title="Email or other services detected">
-									<Text>
-										{ __(
-											'Warning: the services attached to your domain might be interrupted if you use this connection method'
-										) }
-									</Text>
-								</Notice>
-							) }
-							{ mode === DomainConnectionSetupMode.ADVANCED && hasEmailOrOtherServices && (
-								<Notice variant="info" title="Email or other services detected">
-									<Text>
-										{ __(
-											'To avoid disruption, this is the safest way to connect your domain name.'
-										) }
-									</Text>
-								</Notice>
-							) }
-							<Text>{ infoText }</Text>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<HStack spacing={ 2 } justify="flex-start">
+						<RadioControl
+							selected={ selectedMode }
+							options={ [ { label: '', value: mode } ] }
+							onChange={ ( value: string ) =>
+								onModeChange( value as DomainConnectionSetupModeValue )
+							}
+						/>
+						<VStack spacing={ 2 }>
+							<Text size="medium" weight={ 500 }>
+								{ title }
+							</Text>
+							<Text variant="muted">{ description }</Text>
 						</VStack>
-						<div>
-							{ steps.map( ( step, index ) => (
-								<div key={ step.title }>
-									<SetupStep
-										className="domain-connection-setup__step"
-										expanded={ stepsExpanded[ index ] }
-										completed={ stepsCompleted[ index ] }
-										onCheckboxChange={ ( checked ) => handleStepChange( index, checked ) }
-										onToggle={ ( expanded ) => handleStepToggle( index, expanded ) }
-										title={ step.title }
-										label={ step.label }
-									>
-										{ step.content }
-									</SetupStep>
-									{ index < steps.length - 1 && <CardDivider /> }
-								</div>
-							) ) }
-						</div>
-						<ButtonStack justify="flex-start">
-							<Button
-								variant="primary"
-								onClick={ onVerifyConnection }
-								isBusy={ isUpdatingConnectionMode }
-								disabled={ verificationDisabled }
-							>
-								{ __( 'Verify Connection' ) }
-							</Button>
-						</ButtonStack>
-					</VStack>
-				</CardBody>
-			) }
+					</HStack>
+					{ isSelected && (
+						<>
+							<CardDivider />
+							<VStack spacing={ 6 }>
+								{ mode === DomainConnectionSetupMode.SUGGESTED && ! hasEmailOrOtherServices && (
+									<Notice variant="info" title="No email or other services detected">
+										<Text>
+											{ __(
+												'You can safely connect your domain without affecting anything else.'
+											) }
+										</Text>
+									</Notice>
+								) }
+								{ mode === DomainConnectionSetupMode.SUGGESTED && hasEmailOrOtherServices && (
+									<Notice variant="warning" title="Email or other services detected">
+										<Text>
+											{ __(
+												'Warning: the services attached to your domain might be interrupted if you use this connection method'
+											) }
+										</Text>
+									</Notice>
+								) }
+								{ mode === DomainConnectionSetupMode.ADVANCED && hasEmailOrOtherServices && (
+									<Notice variant="info" title="Email or other services detected">
+										<Text>
+											{ __(
+												'To avoid disruption, this is the safest way to connect your domain name.'
+											) }
+										</Text>
+									</Notice>
+								) }
+								<Text>{ infoText }</Text>
+							</VStack>
+							<div>
+								{ steps.map( ( step, index ) => (
+									<div key={ step.title }>
+										<SetupStep
+											className="domain-connection-setup__step"
+											expanded={ stepsExpanded[ index ] }
+											completed={ stepsCompleted[ index ] }
+											onCheckboxChange={ ( checked ) => handleStepChange( index, checked ) }
+											onToggle={ ( expanded ) => handleStepToggle( index, expanded ) }
+											title={ step.title }
+											label={ step.label }
+										>
+											{ step.content }
+										</SetupStep>
+										{ index < steps.length - 1 && <CardDivider /> }
+									</div>
+								) ) }
+							</div>
+							<ButtonStack justify="flex-start">
+								<Button
+									variant="primary"
+									onClick={ onVerifyConnection }
+									isBusy={ isUpdatingConnectionMode }
+									disabled={ verificationDisabled }
+								>
+									{ __( 'Verify Connection' ) }
+								</Button>
+							</ButtonStack>
+						</>
+					) }
+				</VStack>
+			</CardBody>
 		</Card>
 	);
 }
