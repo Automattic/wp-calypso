@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -14,6 +15,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import FullWidthSection from 'calypso/components/full-width-section';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -293,6 +295,7 @@ function PluginDetails( props ) {
 		setBreadcrumbs( breadcrumbs );
 	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, localizePath ] );
 
+	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
 	const isMaintained = usePluginIsMaintained( fullPlugin?.tested );
 
 	const getPageTitle = () => {
@@ -359,8 +362,20 @@ function PluginDetails( props ) {
 		sameAs: 'https://wordpress.org/plugins/' + ( fullPlugin?.slug || '' ),
 	} );
 
+	const relatedPlugins = ! showPlaceholder && (
+		<RelatedPlugins
+			slug={ props.pluginSlug }
+			seeAllLink={ `/plugins/${ props.pluginSlug }/related/${ selectedSite?.slug ?? '' }` }
+		/>
+	);
+
 	return (
-		<MainComponent className="is-plugin-details" wideLayout isLoggedOut={ ! isLoggedIn }>
+		<MainComponent
+			className="is-plugin-details"
+			wideLayout={ ! isMarketplaceRedesignEnabled }
+			fullWidthLayout={ isMarketplaceRedesignEnabled }
+			isLoggedOut={ ! isLoggedIn }
+		>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker
 				path={ analyticsPath }
@@ -377,40 +392,41 @@ function PluginDetails( props ) {
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
 			<QueryUserPurchases />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
-			<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
-			<PluginNotices
-				pluginId={ fullPlugin.id }
-				sites={ selectedOrAllSites }
-				plugins={ [ fullPlugin ] }
-			/>
-			{ isSiteConnected === false && (
-				<Notice
-					icon="notice"
-					showDismiss={ false }
-					status="is-warning"
-					text={ translate( '%(siteName)s cannot be accessed.', {
-						textOnly: true,
-						args: { siteName: selectedSite.title },
-					} ) }
-				>
-					<NoticeAction
-						onClick={ trackSiteDisconnect }
-						href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+			<FullWidthSection className="plugin-details__navigation-header-section">
+				<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
+				<PluginNotices
+					pluginId={ fullPlugin.id }
+					sites={ selectedOrAllSites }
+					plugins={ [ fullPlugin ] }
+				/>
+				{ isSiteConnected === false && (
+					<Notice
+						icon="notice"
+						showDismiss={ false }
+						status="is-warning"
+						text={ translate( '%(siteName)s cannot be accessed.', {
+							textOnly: true,
+							args: { siteName: selectedSite.title },
+						} ) }
 					>
-						{ translate( 'I’d like to fix this now' ) }
-					</NoticeAction>
-				</Notice>
-			) }
-			<ReviewsModal
-				isVisible={ isReviewsModalVisible }
-				onClose={ () => setIsReviewsModalVisible( false ) }
-				productName={ fullPlugin.name }
-				slug={ fullPlugin.slug }
-				variations={ fullPlugin.variations }
-				productType="plugin"
-			/>
-			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
-
+						<NoticeAction
+							onClick={ trackSiteDisconnect }
+							href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+						>
+							{ translate( 'I’d like to fix this now' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				<ReviewsModal
+					isVisible={ isReviewsModalVisible }
+					onClose={ () => setIsReviewsModalVisible( false ) }
+					productName={ fullPlugin.name }
+					slug={ fullPlugin.slug }
+					variations={ fullPlugin.variations }
+					productType="plugin"
+				/>
+				<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
+			</FullWidthSection>
 			{ userReviews.length === 0 &&
 				canPublishReview &&
 				isMarketplaceProduct &&
@@ -426,118 +442,126 @@ function PluginDetails( props ) {
 						event="calypso_marketplace_reviews_plugin_banner"
 					/>
 				) }
-			<div className="plugin-details__page">
-				<div className={ clsx( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
-					<div className="plugin-details__header">
-						<PluginDetailsHeader
-							plugin={ fullPlugin }
-							isPlaceholder={ showPlaceholder }
-							onReviewsClick={ () => setIsReviewsModalVisible( true ) }
-							isMarketplaceProduct={ isMarketplaceProduct }
-						/>
-					</div>
-					<div className="plugin-details__content">
-						{ ! showPlaceholder && (
-							<div className="plugin-details__body">
-								{ ! isJetpackSelfHosted && isIncompatiblePlugin && ! isIncompatibleBackupPlugin && (
-									<Notice
-										text={ translate(
-											'Incompatible plugin: This plugin is not supported on WordPress.com.'
+			<FullWidthSection className="plugin-details__main-section">
+				<div className="plugin-details__page">
+					<div className={ clsx( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
+						<div className="plugin-details__header">
+							<PluginDetailsHeader
+								plugin={ fullPlugin }
+								isPlaceholder={ showPlaceholder }
+								onReviewsClick={ () => setIsReviewsModalVisible( true ) }
+								isMarketplaceProduct={ isMarketplaceProduct }
+							/>
+						</div>
+						<div className="plugin-details__content">
+							{ ! showPlaceholder && (
+								<div className="plugin-details__body">
+									{ ! isJetpackSelfHosted &&
+										isIncompatiblePlugin &&
+										! isIncompatibleBackupPlugin && (
+											<Notice
+												text={ translate(
+													'Incompatible plugin: This plugin is not supported on WordPress.com.'
+												) }
+												status="is-warning"
+												showDismiss={ false }
+											>
+												<NoticeAction
+													href={ localizeUrl(
+														'https://wordpress.com/support/incompatible-plugins/'
+													) }
+												>
+													{ translate( 'More info' ) }
+												</NoticeAction>
+											</Notice>
 										) }
-										status="is-warning"
-										showDismiss={ false }
-									>
-										<NoticeAction
-											href={ localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' ) }
+
+									{ isIncompatibleBackupPlugin && (
+										<Notice
+											text={ translate(
+												'Incompatible plugin: You site plan already includes Jetpack VaultPress Backup.'
+											) }
+											status="is-warning"
+											showDismiss={ false }
 										>
-											{ translate( 'More info' ) }
-										</NoticeAction>
-									</Notice>
-								) }
+											<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
+												{ translate( 'View backups' ) }
+											</NoticeAction>
+										</Notice>
+									) }
 
-								{ isIncompatibleBackupPlugin && (
-									<Notice
-										text={ translate(
-											'Incompatible plugin: You site plan already includes Jetpack VaultPress Backup.'
-										) }
-										status="is-warning"
-										showDismiss={ false }
-									>
-										<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
-											{ translate( 'View backups' ) }
-										</NoticeAction>
-									</Notice>
-								) }
+									{ ! isMaintained && (
+										<Notice showDismiss={ false } status="is-warning">
+											{ translate(
+												'This plugin {{strong}}hasn’t been tested with the latest 3 major releases of WordPress{{/strong}}. It may no longer be maintained or supported and may have compatibility issues when used with more recent versions of WordPress. Try {{a}}searching{{/a}} for a similar plugin.',
+												{
+													components: {
+														a: <a href={ `/plugins/${ selectedSite?.slug ?? '' }` } />,
+														strong: <strong />,
+													},
+												}
+											) }
+										</Notice>
+									) }
 
-								{ ! isMaintained && (
-									<Notice showDismiss={ false } status="is-warning">
-										{ translate(
-											'This plugin {{strong}}hasn’t been tested with the latest 3 major releases of WordPress{{/strong}}. It may no longer be maintained or supported and may have compatibility issues when used with more recent versions of WordPress. Try {{a}}searching{{/a}} for a similar plugin.',
-											{
-												components: {
-													a: <a href={ `/plugins/${ selectedSite?.slug ?? '' }` } />,
-													strong: <strong />,
-												},
-											}
-										) }
-									</Notice>
-								) }
-
-								{ fullPlugin.wporg || isMarketplaceProduct ? (
-									<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } addBanner />
-								) : (
-									<PluginSectionsCustom plugin={ fullPlugin } />
-								) }
-								<RelatedPlugins
-									slug={ props.pluginSlug }
-									seeAllLink={ `/plugins/${ props.pluginSlug }/related/${
-										selectedSite?.slug ?? ''
-									}` }
-								/>
-							</div>
-						) }
-					</div>
-
-					<div className="plugin-details__actions">
-						<div className="plugin-details__sidebar">
-							<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
-
-							{ ! showPlaceholder && ! requestingPluginsForSites && (
-								<PluginDetailsSidebar plugin={ fullPlugin } />
+									{ fullPlugin.wporg || isMarketplaceProduct ? (
+										<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } addBanner />
+									) : (
+										<PluginSectionsCustom plugin={ fullPlugin } />
+									) }
+									{ ! isMarketplaceRedesignEnabled && relatedPlugins }
+								</div>
 							) }
 						</div>
 
-						{ ! showPlaceholder && ! requestingPluginsForSites && isWporgPluginFetched && (
-							<div className="plugin-details__plugin-download">
-								<div className="plugin-details__plugin-download-text">
-									<span>{ downloadText }</span>
-								</div>
-								<div className="plugin-details__plugin-download-cta">
-									<Button
-										href={ `https://downloads.wordpress.org/plugin/${
-											fullPlugin?.slug || ''
-										}.latest-stable.zip` }
-										rel="nofollow"
-									>
-										{ translate( 'Download' ) }
-									</Button>
-								</div>
-								<script type="application/ld+json">{ structuredData }</script>
+						<div className="plugin-details__actions">
+							<div className="plugin-details__sidebar">
+								<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+
+								{ ! showPlaceholder && ! requestingPluginsForSites && (
+									<PluginDetailsSidebar plugin={ fullPlugin } />
+								) }
 							</div>
-						) }
+
+							{ ! showPlaceholder && ! requestingPluginsForSites && isWporgPluginFetched && (
+								<div className="plugin-details__plugin-download">
+									<div className="plugin-details__plugin-download-text">
+										<span>{ downloadText }</span>
+									</div>
+									<div className="plugin-details__plugin-download-cta">
+										<Button
+											href={ `https://downloads.wordpress.org/plugin/${
+												fullPlugin?.slug || ''
+											}.latest-stable.zip` }
+											rel="nofollow"
+										>
+											{ translate( 'Download' ) }
+										</Button>
+									</div>
+									<script type="application/ld+json">{ structuredData }</script>
+								</div>
+							) }
+						</div>
 					</div>
 				</div>
-			</div>
-			{ ! showPlaceholder && (
-				<div className="plugin-details__reviews">
-					<MarketplaceReviewsCards
-						slug={ fullPlugin.slug }
-						productType="plugin"
-						showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
-					/>
-				</div>
+			</FullWidthSection>
+			{ isMarketplaceRedesignEnabled && (
+				<FullWidthSection className="plugin-details__related-plugins-section full-width-section--gray">
+					{ relatedPlugins }
+				</FullWidthSection>
 			) }
-			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
+			<FullWidthSection className="plugin-details__reviews-section">
+				{ ! showPlaceholder && (
+					<div className="plugin-details__reviews">
+						<MarketplaceReviewsCards
+							slug={ fullPlugin.slug }
+							productType="plugin"
+							showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
+						/>
+					</div>
+				) }
+				{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
+			</FullWidthSection>
 		</MainComponent>
 	);
 }

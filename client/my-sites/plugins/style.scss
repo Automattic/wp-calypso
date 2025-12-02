@@ -698,3 +698,67 @@ body.is-section-plugins #primary {
 		padding-top: calc( $layout-padding-top - 40px );
 	}
 }
+body .is-section-plugins:has(.is-full-width-layout) {
+	.plugins-browser__content-wrapper {
+		background-color: var(--studio-white);
+	}
+
+	.full-width-section__content {
+		max-width: 1220px;
+		padding-inline: 24px;
+		@media screen and ( max-width: 600px ) {
+			padding-inline: 16px;
+		}
+	}
+	.lpc-header-nav-container {
+
+		.masterbar {
+			background: var(--studio-gray-0);
+			border-bottom: 1px solid var(--studio-gray-0);
+		}
+
+		.x-nav-item, .x-dropdown-link, .x-menu-link {
+			color: var(--studio-gray-100);
+		}
+		.x-dropdown-link{
+			&:hover, &:active, &:focus {
+				color: var(--studio-gray-100);
+				background-color: var(--studio-gray-0);
+			}
+		}
+		.x-nav-link__logo {
+			--studio-blue-50: var(--studio-gray-100);
+		}
+	}
+}
+
+// Remove layout padding for logged-out full-width layout (covers both actually logged out and logged-in showing logged-out UI)
+body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out),
+body .is-section-plugins:has(.is-plugin-details.is-full-width-layout) {
+	.layout__content {
+		padding: 0;
+	}
+	.lpc-footer-nav-wrapper,
+	.lpc-footer-automattic-nav-wrapper {
+		max-width: 1220px;
+	}
+}
+
+body.is-section-plugins .is-logged-in {
+	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column):not(.is-logged-out).plugins-browser.is-full-width-layout";
+
+	#{$full-width-main} {
+		.plugins-browser__content-wrapper {
+			padding: 0;
+			max-width: 100%;
+		}
+
+		.full-width-section__content {
+			max-width: 100%;
+		}
+
+		.navigation-header__container {
+			max-width: 100%;
+		}
+	}
+}
