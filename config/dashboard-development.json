@@ -5,7 +5,7 @@
 	"client_slug": "browser",
 	"hostname": "my.localhost",
 	"i18n_default_locale_slug": "en",
-	"port": 3000,
+	"port": 3003,
 	"logout_url": "https://|subdomain|wordpress.com",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"site_name": "Hosting Dashboard",
