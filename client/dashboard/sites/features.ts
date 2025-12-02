@@ -6,7 +6,7 @@ import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
 import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
-	if ( site.is_deleted || ! site.capabilities.manage_options ) {
+	if ( site.is_deleted || ! site.capabilities?.manage_options ) {
 		return false;
 	}
 
@@ -20,8 +20,9 @@ export function canManageSite( site: Site ) {
 		return false;
 	}
 
-	// Self-hosted Jetpack-connected sites are not supported, yet.
-	// Disable this check for v2 for development purposes, as it's not yet user-facing.
+	// Self-hosted Jetpack-connected sites are not supported, yet. But disable this
+	// check on the Multi-site Dashboard for development purposes, since it is not
+	// yet user-facing.
 	if ( isSelfHostedJetpackConnected( site ) && isDashboardBackport() ) {
 		return false;
 	}
@@ -57,15 +58,24 @@ export function canViewSiteActions( site: Site ) {
 
 export function canTransferSite( site: Site, user: User ) {
 	const isSiteOwner = site.site_owner === user.ID;
-	return ! site.is_wpcom_staging_site && isSiteOwner;
+	return ! site.is_wpcom_staging_site && isSiteOwner && ! isSelfHostedJetpackConnected( site );
 }
 
 export function canLeaveSite( site: Site ) {
-	return ! site.is_wpcom_staging_site;
+	return (
+		! site.is_wpcom_staging_site &&
+		! site.is_deleted &&
+		! isP2( site ) &&
+		! isSelfHostedJetpackConnected( site )
+	);
 }
 
 export function canResetSite( site: Site ) {
 	return ! site.is_wpcom_staging_site;
+}
+
+export function canRestoreSite( site: Site ) {
+	return site.is_deleted && ! isP2( site ) && ! isSelfHostedJetpackConnected( site );
 }
 
 export function canSwitchEnvironment( site: Site ) {

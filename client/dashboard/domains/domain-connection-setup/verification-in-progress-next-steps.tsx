@@ -1,8 +1,8 @@
 import { Icon, type IconType } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { rotateRight, globe, published } from '@wordpress/icons';
-import { ActionList } from '../../components/action-list';
 import { CollapsibleCard } from '../../components/collapsible-card';
+import { IconList } from '../../components/icon-list';
 import { SectionHeader } from '../../components/section-header';
 
 import './style.scss';
@@ -43,15 +43,12 @@ export default function VerificationInProgressNextSteps() {
 			header={ <SectionHeader level={ 3 } title={ __( 'What happens next' ) } /> }
 			className="verification-in-progress-next-steps"
 		>
-			{ /* TODO: We should replace with ItemList component once it's available.
-			See https://github.com/Automattic/wp-calypso/pull/106628#discussion_r2475530089 */ }
 			{ data.map( ( item ) => (
-				<ActionList.ActionItem
+				<IconList.Item
 					key={ item.id }
 					title={ item.title }
 					description={ item.description }
 					decoration={ <Icon icon={ item.icon } /> }
-					actions={ null }
 				/>
 			) ) }
 		</CollapsibleCard>

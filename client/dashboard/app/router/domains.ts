@@ -52,8 +52,8 @@ export const domainsIndexRoute = createRoute( {
 	getParentRoute: () => domainsRoute,
 	path: '/',
 	loader: async ( { context } ) => {
-		queryClient.ensureQueryData( domainsQuery() );
-		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+		queryClient.prefetchQuery( domainsQuery() );
+		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 } ).lazy( () =>
@@ -163,8 +163,8 @@ export const domainOverviewRoute = createRoute( {
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
-		queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
-		queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) );
+		queryClient.prefetchQuery( siteByIdQuery( domain.blog_id ) );
+		queryClient.prefetchQuery( mailboxesQuery( domain.blog_id ) );
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>
@@ -640,11 +640,17 @@ export const domainTransferSetupRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-connection-setup/transfer-setup' ).then( ( d ) =>
-		createLazyRoute( 'domain-transfer-setup' )( {
-			component: d.default,
-		} )
-	)
+	config.isEnabled( 'domain-transfer-redesign' )
+		? import( '../../domains/domain-connection-setup/new-transfer-setup' ).then( ( d ) =>
+				createLazyRoute( 'domain-transfer-setup' )( {
+					component: d.default,
+				} )
+		  )
+		: import( '../../domains/domain-connection-setup/legacy-transfer-setup' ).then( ( d ) =>
+				createLazyRoute( 'domain-transfer-setup' )( {
+					component: d.default,
+				} )
+		  )
 );
 
 export const createDomainsRoutes = () => {

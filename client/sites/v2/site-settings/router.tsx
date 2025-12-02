@@ -43,6 +43,17 @@ const subscriptionGiftingRoute = createRoute( {
 	)
 );
 
+const holidaySnowRoute = createRoute( {
+	...appRouterSites.siteSettingsHolidaySnowRoute.options,
+	getParentRoute: () => settingsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-holiday-snow' ).then( ( d ) =>
+		createLazyRoute( 'holiday-snow' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const wordpressRoute = createRoute( {
 	...appRouterSites.siteSettingsWordPressRoute.options,
 	getParentRoute: () => settingsRoute,
@@ -204,6 +215,7 @@ const createRouteTree = () =>
 				settingsIndexRoute,
 				siteVisibilityRoute,
 				subscriptionGiftingRoute,
+				holidaySnowRoute,
 				wordpressRoute,
 				phpRoute,
 				databaseRoute,

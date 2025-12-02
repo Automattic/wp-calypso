@@ -1,6 +1,5 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
-@import '../page-layout/style.scss';
 
 /**
 * Size of padding added to .components-button.has-icon.
@@ -27,4 +26,10 @@ $component-icon-padding: 6px;
 
 .dashboard-header-bar-title > span {
 	padding-inline: $grid-unit-15;
+}
+
+.dashboard-header-bar-title {
+	@include break-medium {
+		flex-shrink: 0;
+	}
 }

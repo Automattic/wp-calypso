@@ -162,7 +162,6 @@
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
 		"reader/quick-post": true,
-		"reader/quick-post-v2": false,
 		"reader/discover/freshly-pressed": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": false,

@@ -1,4 +1,4 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Badge, Card, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PressableUsageDetails from 'calypso/a8c-for-agencies/components/pressable-usage-details';
@@ -43,10 +43,59 @@ export default function LicenseDetails( {
 	const attachedAt = license.attachedAt;
 	const revokedAt = license.revokedAt;
 	const productId = license.productId;
+	const subscription = license.subscription;
 
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const shouldShowSubscription = subscription && licenseState !== LicenseState.Revoked;
+	const subscriptionDateLabel = ( () => {
+		if ( ! shouldShowSubscription ) {
+			return '';
+		}
+
+		if ( subscription?.status === 'active' ) {
+			return subscription.isAutoRenewEnabled
+				? translate( 'Renews on:' )
+				: translate( 'Auto-renew: OFF | Expires on:' );
+		}
+
+		return translate( 'Expired on:' );
+	} )();
+	const subscriptionBadgeLabel = ( () => {
+		if (
+			shouldShowSubscription &&
+			subscription?.isRefundable &&
+			subscription.status === 'active'
+		) {
+			return translate( 'Refundable' );
+		}
+
+		return '';
+	} )();
+	const subscriptionIntervalLabel = ( () => {
+		if ( ! shouldShowSubscription || ! subscription.isAutoRenewEnabled ) {
+			return '';
+		}
+
+		const intervalUnit = subscription?.billingIntervalUnit;
+
+		if ( intervalUnit === 'month' ) {
+			return translate( '(monthly)' );
+		}
+
+		if ( intervalUnit === 'year' ) {
+			return translate( '(yearly)' );
+		}
+
+		if ( intervalUnit ) {
+			return translate( '(%(interval)s)', {
+				args: { interval: intervalUnit },
+			} );
+		}
+
+		return '';
+	} )();
 
 	const pressablePlan = useGetPressablePlanByProductId( { product_id: productId } );
 
@@ -75,6 +124,39 @@ export default function LicenseDetails( {
 								<Gridicon icon="clipboard" />
 							</ClipboardButton>
 						</div>
+
+						{ shouldShowSubscription && (
+							<>
+								<div className="license-details__subscription-row">
+									{ subscriptionBadgeLabel && (
+										<Badge
+											type={ subscription?.status === 'inactive' ? 'info-green' : 'info' }
+											className="license-details__subscription-badge"
+										>
+											{ subscriptionBadgeLabel }
+										</Badge>
+									) }
+									<span className="license-details__subscription-label">
+										{ subscriptionDateLabel }
+									</span>
+									<span className="license-details__subscription-date">
+										{ subscription?.expiry ? (
+											<FormattedDate
+												date={ subscription.expiry }
+												format={ DETAILS_DATE_FORMAT_SHORT }
+											/>
+										) : (
+											'-'
+										) }
+										{ subscriptionIntervalLabel && (
+											<span className="license-details__subscription-interval">
+												{ ` ${ subscriptionIntervalLabel }` }
+											</span>
+										) }
+									</span>
+								</div>
+							</>
+						) }
 					</li>
 				) }
 				{ isPressableLicense && licenseState !== LicenseState.Revoked && (
@@ -133,6 +215,7 @@ export default function LicenseDetails( {
 				isClientLicense={ !! referral }
 				isDevSite={ isDevSite }
 				productId={ productId }
+				subscription={ subscription }
 			/>
 		</Card>
 	);

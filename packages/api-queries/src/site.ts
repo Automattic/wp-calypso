@@ -13,6 +13,8 @@ import { queryClient } from './query-client';
 import type { Site } from '@automattic/api-core';
 import type { Query } from '@tanstack/react-query';
 
+const KNOWN_ERRORS = [ 'unknown_blog', 'unauthorized' ];
+
 export const siteBySlugQuery = ( siteSlug: string ) =>
 	queryOptions( {
 		queryKey: [ 'site-by-slug', siteSlug, SITE_FIELDS, SITE_OPTIONS ],
@@ -20,11 +22,17 @@ export const siteBySlugQuery = ( siteSlug: string ) =>
 			try {
 				return await fetchSite( siteSlug );
 			} catch ( e ) {
-				if ( isWpError( e ) && e.error === 'unknown_blog' ) {
-					throw notFound();
+				if ( isWpError( e ) && e.error && KNOWN_ERRORS.includes( e.error ) ) {
+					throw notFound( { data: e.error } );
 				}
 				throw e;
 			}
+		},
+		retry: ( failureCount, e: { data?: string } ) => {
+			if ( e.data && KNOWN_ERRORS.includes( e.data ) ) {
+				return false;
+			}
+			return failureCount < 3; // default retry count
 		},
 	} );
 
@@ -35,11 +43,17 @@ export const siteByIdQuery = ( siteId: number ) =>
 			try {
 				return await fetchSite( siteId );
 			} catch ( e ) {
-				if ( isWpError( e ) && e.error === 'unknown_blog' ) {
-					throw notFound();
+				if ( isWpError( e ) && e.error && KNOWN_ERRORS.includes( e.error ) ) {
+					throw notFound( { data: e.error } );
 				}
 				throw e;
 			}
+		},
+		retry: ( failureCount, e: { data?: string } ) => {
+			if ( e.data && KNOWN_ERRORS.includes( e.data ) ) {
+				return false;
+			}
+			return failureCount < 3; // default retry count
 		},
 	} );
 
