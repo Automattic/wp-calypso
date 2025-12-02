@@ -859,7 +859,6 @@ describe( 'findSimilarPlansKeys', () => {
 		] );
 		expect( findSimilarPlansKeys( PLAN_BUSINESS_2_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_BUSINESS,
-			PLAN_A4A_BUSINESS,
 		] );
 
 		expect( findSimilarPlansKeys( PLAN_PREMIUM_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
@@ -879,7 +878,6 @@ describe( 'findSimilarPlansKeys', () => {
 		] );
 		expect( findSimilarPlansKeys( PLAN_BUSINESS_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_BUSINESS,
-			PLAN_A4A_BUSINESS,
 		] );
 
 		expect( findSimilarPlansKeys( PLAN_JETPACK_PERSONAL, { term: TERM_MONTHLY } ) ).toEqual( [
@@ -916,21 +914,21 @@ describe( 'findSimilarPlansKeys', () => {
 	test( 'should return a proper similar plan - by type and group - wp.com', () => {
 		expect(
 			findSimilarPlansKeys( PLAN_BLOGGER, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
-		).toEqual( [ PLAN_BUSINESS, PLAN_A4A_BUSINESS ] );
+		).toEqual( [ PLAN_BUSINESS ] );
 		expect(
 			findSimilarPlansKeys( PLAN_BLOGGER, { type: TYPE_PREMIUM, group: GROUP_WPCOM } )
 		).toEqual( [ PLAN_PREMIUM ] );
 
 		expect(
 			findSimilarPlansKeys( PLAN_PERSONAL, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
-		).toEqual( [ PLAN_BUSINESS, PLAN_A4A_BUSINESS ] );
+		).toEqual( [ PLAN_BUSINESS ] );
 		expect(
 			findSimilarPlansKeys( PLAN_PERSONAL, { type: TYPE_PREMIUM, group: GROUP_WPCOM } )
 		).toEqual( [ PLAN_PREMIUM ] );
 
 		expect(
 			findSimilarPlansKeys( PLAN_PREMIUM, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
-		).toEqual( [ PLAN_BUSINESS, PLAN_A4A_BUSINESS ] );
+		).toEqual( [ PLAN_BUSINESS ] );
 		expect(
 			findSimilarPlansKeys( PLAN_PREMIUM, { type: TYPE_PERSONAL, group: GROUP_WPCOM } )
 		).toEqual( [ PLAN_PERSONAL ] );
@@ -1032,14 +1030,14 @@ describe( 'findSimilarPlansKeys', () => {
 	test( 'should return a proper similar plan - by type and group - wp.com / jetpack', () => {
 		expect(
 			findSimilarPlansKeys( PLAN_JETPACK_PERSONAL, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
-		).toEqual( [ PLAN_BUSINESS, PLAN_A4A_BUSINESS ] );
+		).toEqual( [ PLAN_BUSINESS ] );
 		expect(
 			findSimilarPlansKeys( PLAN_JETPACK_PERSONAL, { type: TYPE_PREMIUM, group: GROUP_WPCOM } )
 		).toEqual( [ PLAN_PREMIUM ] );
 
 		expect(
 			findSimilarPlansKeys( PLAN_JETPACK_PREMIUM, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
-		).toEqual( [ PLAN_BUSINESS, PLAN_A4A_BUSINESS ] );
+		).toEqual( [ PLAN_BUSINESS ] );
 		expect(
 			findSimilarPlansKeys( PLAN_JETPACK_PREMIUM, { type: TYPE_PERSONAL, group: GROUP_WPCOM } )
 		).toEqual( [ PLAN_PERSONAL ] );
@@ -1058,7 +1056,6 @@ describe( 'findSimilarPlansKeys', () => {
 			} )
 		).toEqual( [
 			PLAN_BUSINESS_MONTHLY,
-			PLAN_A4A_BUSINESS_MONTHLY,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 			PLAN_HOSTING_TRIAL_MONTHLY,
 		] );

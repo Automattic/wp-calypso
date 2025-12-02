@@ -5,6 +5,8 @@ import {
 	GROUP_P2,
 	GROUP_WPCOM,
 	JETPACK_RESET_PLANS,
+	PLAN_A4A_BUSINESS,
+	PLAN_A4A_BUSINESS_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
@@ -551,6 +553,8 @@ export function findFirstSimilarPlanKey(
  * [PLAN_BUSINESS_2_YEARS]
  * > findSimilarPlansKeys( TYPE_JETPACK_BUSINESS_MONTHLY, { type: TYPE_ANNUALLY } );
  * [TYPE_JETPACK_BUSINESS]
+ *
+ * Note: A4A plans are excluded from similar plan lookups.
  */
 export function findSimilarPlansKeys(
 	planKey: string | Plan,
@@ -561,12 +565,18 @@ export function findSimilarPlansKeys(
 	if ( ! plan ) {
 		return [];
 	}
-	return findPlansKeys( {
+
+	const similarPlans = findPlansKeys( {
 		type: plan.type,
 		group: plan.group,
 		term: plan.term,
 		...diff,
 	} );
+
+	// Filter out A4A plans
+	return similarPlans.filter(
+		( slug ) => slug !== PLAN_A4A_BUSINESS && slug !== PLAN_A4A_BUSINESS_MONTHLY
+	);
 }
 
 /**
