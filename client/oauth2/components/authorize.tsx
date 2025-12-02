@@ -209,7 +209,8 @@ function Authorize() {
 				</div>
 
 				<div className="oauth2-connect__learn-more">
-					<a
+					<Button
+						variant="link"
 						href={ localizeUrl( 'https://wordpress.com/support/third-party-applications/' ) }
 						target="_blank"
 						rel="noopener noreferrer"
@@ -217,7 +218,7 @@ function Authorize() {
 						{ translate( 'Learn more about how %(client)s uses your data', {
 							args: { client: meta.client.title },
 						} ) }
-					</a>
+					</Button>
 				</div>
 
 				{ showSuccessMessage ? (

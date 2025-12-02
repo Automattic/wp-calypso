@@ -21,7 +21,6 @@
 	flex-direction: row;
 	align-items: center;
 	gap: 16px;
-	padding: 16px;
 	border: 1px solid #dcdcde;
 	border-radius: 4px;
 	background: #fff;
@@ -29,7 +28,7 @@
 
 .oauth2-connect__user-avatar {
 	flex-shrink: 0;
-	border-radius: 4px;
+	border-radius: 0;
 	overflow: hidden;
 }
 
