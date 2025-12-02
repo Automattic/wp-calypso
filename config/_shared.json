@@ -16,6 +16,7 @@
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
 	"logout_url": false,
+	"wpcom_url": false,
 	"wpcom_signup_url": false,
 	"wpcom_login_url": false,
 	"wpcom_authorize_endpoint": false,

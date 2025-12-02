@@ -7,6 +7,7 @@
 	"i18n_default_locale_slug": "en",
 	"port": 3003,
 	"logout_url": "https://|subdomain|wordpress.com",
+	"wpcom_url": "http://calypso.localhost:3000",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"site_name": "Hosting Dashboard",
 	"features": {

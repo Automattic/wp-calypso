@@ -20,6 +20,7 @@ import {
 import { purchaseSettingsRoute, purchasesRoute } from '../app/router/me';
 import { hasPlanFeature } from '../utils/site-features';
 import { isDashboardBackport } from './is-dashboard-backport';
+import { wpcomLink } from './link';
 import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
 
 export const JETPACK_PRODUCTS = [
@@ -131,8 +132,8 @@ export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
 
 	if ( site.plan?.is_free ) {
 		return isCommerceGarden( site )
-			? `https://wordpress.com/setup/woo-hosted-plans?siteSlug=${ site.slug }`
-			: `https://wordpress.com/setup/plan-upgrade?siteSlug=${ site.slug }`;
+			? wpcomLink( `/setup/woo-hosted-plans?siteSlug=${ site.slug }` )
+			: wpcomLink( `/setup/plan-upgrade?siteSlug=${ site.slug }` );
 	}
 
 	if ( isDashboardBackport() ) {

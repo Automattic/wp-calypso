@@ -20,6 +20,7 @@ import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
+import { wpcomLink } from '../../utils/link';
 import { getSiteMigrationState } from '../../utils/site-status';
 import { HostingCards } from './hosting-cards';
 import type { MigrationStatus } from '../../utils/site-status';
@@ -42,15 +43,12 @@ const getContinueMigrationUrl = ( site: Site ): string | null => {
 		}
 
 		return addQueryArgs(
-			'https://wordpress.com/setup/site-migration/site-migration-instructions',
+			wpcomLink( '/setup/site-migration/site-migration-instructions' ),
 			queryArgs
 		);
 	}
 
-	return addQueryArgs(
-		'https://wordpress.com/setup/site-migration/site-migration-credentials',
-		queryArgs
-	);
+	return addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-credentials' ), queryArgs );
 };
 
 function CancellationModal( { site, onClose }: { site: Site; onClose: () => void } ) {
