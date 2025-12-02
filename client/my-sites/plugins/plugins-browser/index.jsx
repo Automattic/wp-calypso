@@ -41,6 +41,15 @@ import SearchCategories from '../search-categories';
 import './style.scss';
 
 const MASTERBAR_HEIGHT = 32;
+const CATEGORIES = [
+	'discover',
+	'design',
+	'marketing',
+	'ecommerce',
+	'photo',
+	'security',
+	'analytics',
+];
 
 // If adding new, longer search terms, ensure that the search input field is wide enough to accommodate it.
 const searchTerms = [ 'woocommerce', 'seo', 'file manager', 'jetpack', 'ecommerce', 'form' ];
