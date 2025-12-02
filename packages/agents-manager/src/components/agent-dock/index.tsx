@@ -165,6 +165,7 @@ export default function AgentDock( {
 
 		if ( agentManager.hasAgent( agentId ) ) {
 			abortCurrentRequest();
+			// Clear out the current messages
 			await loadMessages( [] );
 
 			// Start fresh: remove the old agent and create a new one without a session.
@@ -189,12 +190,15 @@ export default function AgentDock( {
 		( sessionId: string ) => {
 			const agentManager = getAgentManager();
 
-			if ( agentManager.hasAgent( agentId ) ) {
-				abortCurrentRequest();
-				agentManager.updateSessionId( agentId, sessionId );
-				maybeLoadConversation( sessionId );
+			if ( ! agentManager.hasAgent( agentId ) ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[AgentDock] Agent not found, skipping conversation selection' );
+				return;
 			}
 
+			abortCurrentRequest();
+			agentManager.updateSessionId( agentId, sessionId );
+			maybeLoadConversation( sessionId );
 			navigate( `/chat/${ sessionId }`, { state: { sessionId } } );
 		},
 		[ abortCurrentRequest, agentId, maybeLoadConversation, navigate ]
