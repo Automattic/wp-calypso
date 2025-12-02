@@ -123,10 +123,10 @@ export default function AgentDock( {
 		onLoaded,
 	} );
 
-	// Fetch the conversation from the server (skips if already loaded)
+	// Function to load a conversation if not already loaded
 	const maybeLoadConversation = useCallback(
 		( sessionId: string ) => {
-			if ( loadedSessionIdRef.current === sessionId ) {
+			if ( ! sessionId || loadedSessionIdRef.current === sessionId ) {
 				return;
 			}
 
@@ -147,11 +147,7 @@ export default function AgentDock( {
 
 	// When the component loads, restore the previous chat if there was one
 	useEffect(
-		() => {
-			if ( sessionId ) {
-				maybeLoadConversation( sessionId );
-			}
-		},
+		() => maybeLoadConversation( sessionId ),
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- Only run on mount
 		[]
 	);
