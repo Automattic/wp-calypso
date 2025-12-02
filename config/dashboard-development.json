@@ -13,6 +13,7 @@
 	"logout_url": "https://|subdomain|wordpress.com",
 	"site_name": "Hosting Dashboard",
 	"features": {
+		"ciab/allow-domain-features": true,
 		"always_use_logout_url": true,
 		"cookie-banner": false,
 		"dashboard": true,

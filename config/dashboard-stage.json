@@ -12,6 +12,7 @@
 	"site_name": "Hosting Dashboard",
 	"features": {
 		"cookie-banner": false,
+		"ciab/allow-domain-features": true,
 		"dashboard": true,
 		"dashboard/v2": false
 	},
