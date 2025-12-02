@@ -199,10 +199,6 @@ export default function AgentDock( {
 		[ abortCurrentRequest, agentId, maybeLoadConversation, navigate ]
 	);
 
-	const setChatIsOpen = () => setIsOpen( true );
-
-	const setChatIsClosed = () => setIsOpen( false );
-
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		const isHistoryView = pathname === '/history';
 
@@ -260,8 +256,8 @@ export default function AgentDock( {
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
-			onClose={ isDocked ? closeSidebar : setChatIsClosed }
-			onExpand={ setChatIsOpen }
+			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
+			onExpand={ () => setIsOpen( true ) }
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
@@ -278,8 +274,8 @@ export default function AgentDock( {
 			isOpen={ isOpen }
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }
-			onClose={ isDocked ? closeSidebar : setChatIsClosed }
-			onExpand={ setChatIsOpen }
+			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
+			onExpand={ () => setIsOpen( true ) }
 			onSelectConversation={ handleSelectConversation }
 			onNewChat={ handleNewChat }
 		/>
