@@ -1115,6 +1115,9 @@ export default function pages() {
 	// Multi-site Dashboard routing for wordpress.com.
 	if ( config.isEnabled( 'dashboard/v2' ) ) {
 		handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom' );
+	}
+
+	if ( config.isEnabled( 'dashboard' ) || config.isEnabled( 'dashboard/v2' ) ) {
 		handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
 	}
 
