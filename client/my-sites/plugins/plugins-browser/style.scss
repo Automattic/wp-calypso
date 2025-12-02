@@ -153,6 +153,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 .full-width-section {
 	.plugins-results-header__action {
 		font-size: $font-body-small;
+		text-decoration: none;
 	}
 }
 .plugins-browser__marketplace-footer {
@@ -238,7 +239,13 @@ body.is-section-plugins #primary .main.is-logged-out {
 .plugins-browser__marketplace-footer {
 	background-color: var(--studio-white);
 }
+.plugins-discovery-page__education-footer {
+	padding-bottom: 72px;
 
+	@media screen and ( max-width: 600px ) {
+		padding-bottom: 48px;
+	}
+}
 body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
 	.plugins-browser__content-wrapper {
 		background-color: var(--studio-white);

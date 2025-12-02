@@ -40,6 +40,9 @@
 				line-height: 1.4;
 			}
 		}
+		.plugins-browser__category-results & {
+			margin-bottom: 32px;
+		}
 	}
 
 	.plugins-results-header__actions {
@@ -60,11 +63,9 @@
 				margin-left: 2px;
 			}
 			.full-width-section & {
-				font-size: $font-body-small;
+				font-size: $font-body;
+				text-decoration: none;
 			}
 		}
 	}
-}
-.plugins-results-header__action {
-	text-decoration: none;
 }
