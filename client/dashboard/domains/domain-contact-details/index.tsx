@@ -5,7 +5,6 @@ import {
 	domainWhoisQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { debounce } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -18,7 +17,7 @@ import ContactFormPrivacy from '../../components/domain-contact-details-form/con
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { findRegistrantWhois } from '../../utils/domain';
-import type { DomainContactValidationResponse, DomainContactDetails } from '@automattic/api-core';
+import type { DomainContactDetails } from '@automattic/api-core';
 
 export default function DomainContactInfo() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -87,41 +86,6 @@ export default function DomainContactInfo() {
 		} );
 	};
 
-	// Create debounced async validator for field-level validation (triggered on change)
-	const validateAsync = validateMutation.mutateAsync;
-
-	const asyncValidator = useMemo( () => {
-		type ValidationCallbacks = {
-			resolve: ( value: DomainContactValidationResponse ) => void;
-			reject: ( reason: unknown ) => void;
-		};
-
-		let pendingCallbacks: ValidationCallbacks[] = [];
-
-		const performValidation = ( item: DomainContactDetails ) => {
-			const callbacks = [ ...pendingCallbacks ];
-			pendingCallbacks = [];
-
-			validateAsync( item )
-				.then( ( result ) => {
-					callbacks.forEach( ( callback ) => callback.resolve( result ) );
-				} )
-				.catch( ( error ) => {
-					callbacks.forEach( ( callback ) => callback.reject( error ) );
-				} );
-		};
-
-		const debounced = debounce( performValidation as ( ...args: unknown[] ) => unknown, 800 ) as (
-			item: DomainContactDetails
-		) => void;
-
-		return ( item: DomainContactDetails ) =>
-			new Promise< DomainContactValidationResponse >( ( resolve, reject ) => {
-				pendingCallbacks.push( { resolve, reject } );
-				debounced( item );
-			} );
-	}, [ validateAsync ] );
-
 	return (
 		<PageLayout
 			size="small"
@@ -146,7 +110,7 @@ export default function DomainContactInfo() {
 				}
 				key={ key }
 				initialData={ initialData }
-				asyncValidator={ asyncValidator }
+				validate={ validateMutation.mutateAsync }
 			/>
 		</PageLayout>
 	);

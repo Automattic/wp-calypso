@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import Main, { MainProps } from 'calypso/components/main';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import StatsUpsellModal from 'calypso/my-sites/stats/stats-upsell-modal';
@@ -23,6 +24,7 @@ export default function StatsMain( { children, className, ...props }: MainProps 
 	return (
 		<Main { ...props } className={ clsx( 'stats-main', 'color-scheme', customTheme, className ) }>
 			{ ! isWPAdminAndNotSimpleSite && <QuerySiteFeatures siteIds={ [ siteId ] } /> }
+			<QuerySiteSettings siteId={ siteId } />
 			{ children }
 			{ upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 		</Main>

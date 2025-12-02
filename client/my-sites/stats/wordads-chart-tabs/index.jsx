@@ -11,7 +11,6 @@ import Chart from 'calypso/components/chart';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import compareProps from 'calypso/lib/compare-props';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
@@ -164,8 +163,7 @@ const connectComponent = connect(
 		}
 
 		const quantity = 'year' === period ? 10 : 30;
-		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
+		const date = getQueryDate( queryDate, state, siteId, period, quantity );
 
 		const query = { unit: period, date, quantity };
 		const data = getSiteStatsNormalizedData( state, siteId, 'statsAds', query );

@@ -29,15 +29,14 @@ import { addTransientViewPropertiesToQueryParams } from '../../utils/dashboard-v
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
-import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
-import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
+import { isP2 } from '../../utils/site-types';
 import { getSiteFormattedUrl } from '../../utils/site-url';
 import { canManageSite } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { AtomicTransferStatus, Site } from '@automattic/api-core';
+import type { AtomicTransferStatus, Site, DashboardSiteListSite } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -78,45 +77,100 @@ export function SiteLink( { site, ...props }: ComponentProps< typeof Link > & { 
 	);
 }
 
+export function SiteLink__ES( {
+	site,
+	...props
+}: ComponentProps< typeof Link > & { site: DashboardSiteListSite } ) {
+	// TODO: Get the correct site management url based on permissions and backport.
+	return (
+		<Link
+			{ ...props }
+			to={ `/sites/${ site.slug }` }
+			disabled={ site.deleted }
+			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
+		/>
+	);
+}
+
 export function Name( { site, value }: { site: Site; value: string } ) {
-	const renderBadge = () => {
+	const getBadgeType = () => {
 		if ( site.is_wpcom_staging_site ) {
-			return <Badge>{ __( 'Staging' ) }</Badge>;
+			return 'staging';
 		}
-
 		if ( isSitePlanTrial( site ) ) {
-			return <Badge>{ __( 'Trial' ) }</Badge>;
+			return 'trial';
 		}
-
 		if ( isP2( site ) ) {
-			return <Badge>{ __( 'P2' ) }</Badge>;
+			return 'p2';
 		}
-
 		return null;
 	};
 
-	const badge = renderBadge();
+	return <NameRenderer badge={ getBadgeType() } muted={ site.is_deleted } value={ value } />;
+}
+
+export function NameRenderer( {
+	badge,
+	muted,
+	value,
+}: {
+	badge: null | 'staging' | 'trial' | 'p2';
+	muted: boolean;
+	value: string;
+} ) {
+	const renderBadge = () => {
+		switch ( badge ) {
+			case 'staging':
+				return <Badge>{ __( 'Staging' ) }</Badge>;
+			case 'trial':
+				return <Badge>{ __( 'Trial' ) }</Badge>;
+			case 'p2':
+				return <Badge>{ __( 'P2' ) }</Badge>;
+			default:
+				break;
+		}
+	};
+
+	const badgeElement = renderBadge();
 
 	return (
 		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
-			{ site.is_deleted ? (
+			{ muted ? (
 				<Text variant="muted">{ value }</Text>
 			) : (
 				<span style={ titleFieldTextOverflowStyles }>{ value }</span>
 			) }
-			{ badge && <span style={ { flexShrink: 0 } }>{ badge }</span> }
+			{ badgeElement && <span style={ { flexShrink: 0 } }>{ badgeElement }</span> }
 		</HStack>
 	);
 }
 
 export function URL( { site, value }: { site: Site; value: string } ) {
-	return site.is_deleted ? (
+	return (
+		<URLRenderer
+			disabled={ site.is_deleted }
+			href={ getSiteFormattedUrl( site ) }
+			value={ value }
+		/>
+	);
+}
+
+export function URLRenderer( {
+	disabled,
+	href,
+	value,
+}: {
+	disabled: boolean;
+	href: string;
+	value: string;
+} ) {
+	return disabled ? (
 		<Text variant="muted">{ value }</Text>
 	) : (
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ getSiteFormattedUrl( site ) }
+			href={ href }
 		>
 			{ value }
 		</ExternalLink>
@@ -170,7 +224,7 @@ export function Preview( { site }: { site: Site } ) {
 	);
 }
 
-export function EngagementStat( {
+export function AsyncEngagementStat( {
 	site,
 	type,
 }: {
@@ -199,6 +253,10 @@ export function EngagementStat( {
 	};
 
 	return <span ref={ ref }>{ renderContent() }</span>;
+}
+
+export function EngagementStat( { value }: { value: number | null } ) {
+	return typeof value !== 'number' ? <IneligibleIndicator /> : value;
 }
 
 export function LastBackup( { site }: { site: Site } ) {
@@ -430,35 +488,43 @@ export function Status( { site }: { site: Site } ) {
 	return renderBasicStatus();
 }
 
-export function Plan( { site }: { site: Site } ) {
-	const planName = getSitePlanDisplayName( site );
-
-	if ( isSelfHostedJetpackConnected( site ) ) {
-		if ( ! site.jetpack ) {
+export function Plan( {
+	nag,
+	isSelfHostedJetpackConnected,
+	isJetpack,
+	value,
+}: {
+	nag: { isExpired: false } | { isExpired: true; site: Site };
+	isSelfHostedJetpackConnected: boolean;
+	isJetpack: boolean;
+	value: string;
+} ) {
+	if ( isSelfHostedJetpackConnected ) {
+		if ( ! isJetpack ) {
 			return <IneligibleIndicator />;
 		}
 		return (
 			<HStack spacing={ 1 } expanded={ false } justify="flex-start">
 				<JetpackLogo size={ 16 } />
-				<span>{ planName }</span>
+				<span>{ value }</span>
 			</HStack>
 		);
 	}
 
-	if ( site.plan?.expired ) {
+	if ( nag.isExpired ) {
 		return (
 			<VStack spacing={ 1 }>
 				<Text intent="error">
 					{ sprintf(
 						/* translators: %s: plan name */
 						__( '%s-expired' ),
-						planName
+						value
 					) }
 				</Text>
-				<PlanRenewNag site={ site } source="plan" />
+				<PlanRenewNag site={ nag.site } source="plan" />
 			</VStack>
 		);
 	}
 
-	return planName;
+	return value;
 }

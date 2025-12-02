@@ -1,4 +1,4 @@
-import { type DomainContactDetails } from '@automattic/api-core';
+import { type DomainContactDetails, DomainContactValidationResponse } from '@automattic/api-core';
 import { countryListQuery, statesListQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -7,6 +7,7 @@ import {
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import { DataForm, Field, useFormValidity, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -17,14 +18,13 @@ import InlineSupportLink from '../inline-support-link';
 import Notice from '../notice';
 import { getContactFormFields } from './contact-form-fields';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
-import type { AsyncValidator } from './contact-validation-utils';
-
+import type { UseMutateAsyncFunction } from '@tanstack/react-query';
 interface ContactFormProps {
 	initialData?: DomainContactDetails;
 	beforeForm?: React.ReactNode;
 	isSubmitting: boolean;
 	onSubmit: ( normalizedFormData: DomainContactDetails ) => void;
-	asyncValidator?: AsyncValidator;
+	validate: UseMutateAsyncFunction< DomainContactValidationResponse, Error, DomainContactDetails >;
 }
 
 export default function ContactForm( {
@@ -32,7 +32,7 @@ export default function ContactForm( {
 	isSubmitting,
 	beforeForm,
 	onSubmit,
-	asyncValidator,
+	validate,
 }: ContactFormProps ) {
 	const { data: countryList } = useQuery( countryListQuery() );
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
@@ -61,6 +61,38 @@ export default function ContactForm( {
 		e.preventDefault();
 		onSubmit( normalizedFormData );
 	};
+
+	const asyncValidator = useMemo( () => {
+		type ValidationCallbacks = {
+			resolve: ( value: DomainContactValidationResponse ) => void;
+			reject: ( reason: unknown ) => void;
+		};
+
+		let pendingCallbacks: ValidationCallbacks[] = [];
+
+		const performValidation = ( item: DomainContactDetails ) => {
+			const callbacks = [ ...pendingCallbacks ];
+			pendingCallbacks = [];
+
+			validate( item )
+				.then( ( result ) => {
+					callbacks.forEach( ( callback ) => callback.resolve( result ) );
+				} )
+				.catch( ( error ) => {
+					callbacks.forEach( ( callback ) => callback.reject( error ) );
+				} );
+		};
+
+		const debounced = debounce( performValidation as ( ...args: unknown[] ) => unknown, 800 ) as (
+			item: DomainContactDetails
+		) => void;
+
+		return ( item: DomainContactDetails ) =>
+			new Promise< DomainContactValidationResponse >( ( resolve, reject ) => {
+				pendingCallbacks.push( { resolve, reject } );
+				debounced( item );
+			} );
+	}, [ validate ] );
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
 		() =>

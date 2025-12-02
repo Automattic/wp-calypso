@@ -27,6 +27,7 @@ export const SITE_FIELDS = [
 	'options',
 	'jetpack',
 	'jetpack_connection',
+	'jetpack_holiday_snow_enabled',
 	'jetpack_modules',
 	'was_ecommerce_trial',
 	'was_migration_trial',

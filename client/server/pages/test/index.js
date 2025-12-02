@@ -94,6 +94,9 @@ jest.mock( 'calypso/server/lib/analytics', () => ( {
 	tracks: {
 		recordEvent: jest.fn(),
 	},
+	logstash: {
+		log: jest.fn(),
+	},
 } ) );
 
 jest.mock( 'calypso/lib/i18n-utils', () => ( {

@@ -382,17 +382,13 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, loginButtonText, isJetpack } = this.props;
+		const { translate, loginButtonText } = this.props;
 
 		if ( loginButtonText ) {
 			return loginButtonText;
 		}
 
 		if ( this.isUsernameOrEmailView() ) {
-			if ( isJetpack && ! isWoo ) {
-				return translate( 'Continue with email' );
-			}
-
 			return translate( 'Continue' );
 		}
 

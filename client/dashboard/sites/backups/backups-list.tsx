@@ -4,7 +4,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { siteRoute } from '../../app/router/sites';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews';
 import { buildTimeRangeForActivityLog } from '../../utils/site-activity-log';
 import { getFields } from './dataviews/fields';
 import type { ActivityLogEntry } from '@automattic/api-core';
@@ -87,6 +87,13 @@ export function BackupsList( {
 				searchLabel={ __( 'Search backups' ) }
 				onChangeSelection={ onChangeSelection }
 				selection={ selectedBackup ? [ selectedBackup.activity_id ] : [] }
+				empty={
+					<p>
+						{ view.search
+							? __( 'No results for this search term' )
+							: __( 'No results for this period' ) }
+					</p>
+				}
 			/>
 		</DataViewsCard>
 	);

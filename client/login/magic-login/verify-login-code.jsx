@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { navigate } from 'calypso/lib/navigate';
+import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
@@ -199,76 +200,80 @@ const VerifyLoginCode = ( {
 	const submitEnabled = getVerificationCode().length === CODE_LENGTH && ! isDisabled && ! showError;
 
 	return (
-		<div className="magic-login__successfully-jetpack">
-			<LoggedOutForm
-				className={ clsx( 'magic-login__verify-code-form', {
-					'magic-login__verify-code-form--error': showError,
-				} ) }
-				onSubmit={ onSubmit }
-			>
-				<div className="magic-login__verify-code-field-container">
-					{ Array.from( { length: CODE_LENGTH } ).map( ( _, index ) => (
-						<FormTextInput
-							key={ index }
-							ref={ inputRefs.current[ index ] }
-							autoCapitalize="off"
-							className="magic-login__verify-code-character-field"
-							disabled={ isDisabled }
-							maxLength={ 1 }
-							value={ codeCharacters[ index ] }
-							onChange={ ( event ) => onCodeCharacterChange( index, event.target.value ) }
-							onKeyDown={ ( event ) => onKeyDown( index, event ) }
-							onPaste={ ( event ) => onPaste( index, event ) }
-							aria-label={ translate( 'Verification code character %(position)s of %(total)s', {
-								args: {
-									position: index + 1,
-									total: CODE_LENGTH,
-								},
-							} ) }
-						/>
-					) ) }
-				</div>
-
-				{ showError && (
-					<div className="magic-login__verify-code-error-message">
-						{ translate( "Oops, that's the wrong code. Please verify or resend the email." ) }
-					</div>
-				) }
-
-				<div className="magic-login__form-action">
-					<Button
-						variant="primary"
-						disabled={ ! submitEnabled && ! isDisabled }
-						isBusy={ isDisabled }
-						type="submit"
-						__next40pxDefaultSize
+		<>
+			<div className="magic-login__successfully-jetpack">
+				<div className="magic-login__form">
+					<LoggedOutForm
+						className={ clsx( 'magic-login__verify-code-form', {
+							'magic-login__verify-code-form--error': showError,
+						} ) }
+						onSubmit={ onSubmit }
 					>
-						{ isDisabled ? translate( 'Verifying code…' ) : translate( 'Verify code' ) }
-					</Button>
-				</div>
-			</LoggedOutForm>
+						<div className="magic-login__verify-code-field-container">
+							{ Array.from( { length: CODE_LENGTH } ).map( ( _, index ) => (
+								<FormTextInput
+									key={ index }
+									ref={ inputRefs.current[ index ] }
+									autoCapitalize="off"
+									className="magic-login__verify-code-character-field"
+									disabled={ isDisabled }
+									maxLength={ 1 }
+									value={ codeCharacters[ index ] }
+									onChange={ ( event ) => onCodeCharacterChange( index, event.target.value ) }
+									onKeyDown={ ( event ) => onKeyDown( index, event ) }
+									onPaste={ ( event ) => onPaste( index, event ) }
+									aria-label={ translate( 'Verification code character %(position)s of %(total)s', {
+										args: {
+											position: index + 1,
+											total: CODE_LENGTH,
+										},
+									} ) }
+								/>
+							) ) }
+						</div>
 
-			<div className="magic-login__successfully-jetpack-actions">
-				<p>
+						{ showError && (
+							<div className="magic-login__verify-code-error-message">
+								{ translate( "Oops, that's the wrong code. Please verify or resend the email." ) }
+							</div>
+						) }
+
+						<div className="magic-login__form-action">
+							<Button
+								variant="primary"
+								disabled={ ! submitEnabled && ! isDisabled }
+								isBusy={ isDisabled }
+								type="submit"
+								__next40pxDefaultSize
+							>
+								{ isDisabled ? translate( 'Verifying code…' ) : translate( 'Verify code' ) }
+							</Button>
+						</div>
+					</LoggedOutForm>
+				</div>
+			</div>
+
+			<OneLoginFooter>
+				<p className="one-login__footer-text">
 					{ translate(
 						"Didn't get the code? Check your spam folder, or {{button}}resend the email{{/button}}. Wrong email or account? {{link}}Use a different account{{/link}}.",
 						{
 							components: {
 								button: (
 									<Button
-										className="magic-login__resend-button"
+										className="one-login__footer-link"
 										variant="link"
 										onClick={ handleResendEmail }
 										disabled={ isRedirecting }
 									/>
 								),
-								link: <a className="magic-login__log-in-link" href="/log-in/jetpack" />,
+								link: <a className="one-login__footer-link" href="/log-in/jetpack" />,
 							},
 						}
 					) }
 				</p>
-			</div>
-		</div>
+			</OneLoginFooter>
+		</>
 	);
 };
 

@@ -1,0 +1,54 @@
+.agents-manager-conversation-list-item {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	padding: 12px 0;
+	border: none;
+	border-top: 1px solid #464646;
+	border-bottom: 1px solid #464646;
+	margin-bottom: -1px;
+	width: 100%;
+	background: transparent;
+	text-align: left;
+	transition: background-color 0.2s ease;
+	cursor: pointer;
+
+	&:hover {
+		background-color: rgba( 0, 0, 0, 0.05 );
+	}
+
+	&:focus {
+		outline: none;
+		background-color: rgba( 0, 0, 0, 0.08 );
+	}
+
+	&__text {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		flex: 1;
+		min-width: 0;
+	}
+
+	&__title {
+		font-family: 'SF Pro Text', sans-serif;
+		font-size: 14px;
+		line-height: 1.6;
+		letter-spacing: -0.154px;
+		margin: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		width: 100%;
+	}
+
+	&__subtitle {
+		font-family: 'SF Pro', sans-serif;
+		font-size: 11px;
+		font-weight: 400;
+		line-height: 16px;
+		margin: 0;
+		opacity: 0.5;
+		white-space: nowrap;
+	}
+}

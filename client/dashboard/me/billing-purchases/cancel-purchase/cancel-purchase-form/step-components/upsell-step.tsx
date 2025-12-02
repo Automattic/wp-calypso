@@ -80,7 +80,7 @@ type StepProps = {
 	cancellationInProgress?: boolean;
 	closeDialog?: () => void;
 	currencyCode: string;
-	downgradePlanPrice?: number | null;
+	downgradePlan?: PlanProduct | null;
 	includedDomainPurchase?: object;
 	onClickDowngrade?: ( upsell: string ) => void;
 	onClickFreeMonthOffer?: () => void;
@@ -204,7 +204,11 @@ export default function UpsellStep( {
 					acceptButtonText={ sprintf( __( 'I want the %(businessPlanName)s plan' ), {
 						businessPlanName,
 					} ) }
-					acceptButtonUrl={ `/checkout/${ purchase.site_slug }/business?coupon=${ couponCode }` }
+					acceptButtonUrl={ `/checkout/${
+						purchase.site_slug
+					}/business?coupon=${ couponCode }&cancel_to=${ window.location.href
+						.replace( window.location.origin, '' )
+						.replace( '/cancel', '' ) }` }
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }
@@ -248,9 +252,13 @@ export default function UpsellStep( {
 								'By switching to monthly payments, you will keep most of the features for %(planCost)s per month.'
 							),
 							{
-								planCost: formatCurrency( props.downgradePlanPrice ?? 0, currencyCode, {
-									isSmallestUnit: true,
-								} ),
+								planCost: formatCurrency(
+									props.downgradePlan?.raw_price_integer ?? 0,
+									currencyCode,
+									{
+										isSmallestUnit: true,
+									}
+								),
 							}
 						) }{ ' ' }
 						{ props.cancelBundledDomain &&

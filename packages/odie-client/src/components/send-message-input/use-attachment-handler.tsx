@@ -3,6 +3,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import {
 	useAttachFileToConversation,
 	useAuthenticateZendeskMessaging,
+	zendeskMessageConverter,
 } from '@automattic/zendesk-client';
 import { DropZone } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -10,7 +11,6 @@ import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { error, image, Icon } from '@wordpress/icons';
 import { useOdieAssistantContext } from '../../context';
-import { zendeskMessageConverter } from '../../utils';
 import { AttachmentPreviews } from '../attachment-preview';
 
 const NOTICE_BAD_FORMAT = {
@@ -146,6 +146,11 @@ export const useAttachmentHandler = () => {
 	// Handle paste events for images
 	const handleImagePaste = useCallback(
 		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
+			// Disable image pasting for AI
+			if ( ! showAttachmentButton ) {
+				return;
+			}
+
 			if ( e.key === 'v' && ( e.ctrlKey || e.metaKey ) ) {
 				setTimeout( () => {
 					navigator.clipboard
@@ -169,7 +174,7 @@ export const useAttachmentHandler = () => {
 				}, 0 );
 			}
 		},
-		[ handleFileUpload ]
+		[ handleFileUpload, showAttachmentButton ]
 	);
 
 	const AttachmentDropZone = () => {

@@ -78,7 +78,7 @@ class StatsPeriodNavigation extends PureComponent {
 	calculatePeriod = ( period ) => ( this.isHoursPeriod( period ) ? 'day' : period );
 
 	queryParamsForNextDate = ( nextDay ) => {
-		const { dateRange, moment } = this.props;
+		const { dateRange, momentSiteZone } = this.props;
 		// Takes a 'YYYY-MM-DD' string.
 		const newParams = { startDate: nextDay };
 		// Maintain previous behaviour if we don't have a date range to work with.
@@ -86,10 +86,12 @@ class StatsPeriodNavigation extends PureComponent {
 			return newParams;
 		}
 		// Test if we need to update the chart start/end dates.
-		const isAfter = moment( nextDay ).isAfter( moment( dateRange.chartEnd ) );
+		const isAfter = momentSiteZone( nextDay ).isAfter( momentSiteZone( dateRange.chartEnd ) );
 		if ( isAfter ) {
-			newParams.chartStart = moment( dateRange.chartEnd ).add( 1, 'days' ).format( 'YYYY-MM-DD' );
-			newParams.chartEnd = moment( dateRange.chartEnd )
+			newParams.chartStart = momentSiteZone( dateRange.chartEnd )
+				.add( 1, 'days' )
+				.format( 'YYYY-MM-DD' );
+			newParams.chartEnd = momentSiteZone( dateRange.chartEnd )
 				.add( dateRange.daysInRange, 'days' )
 				.format( 'YYYY-MM-DD' );
 		}
@@ -97,10 +99,12 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	handleArrowPrevious = () => {
-		const { date, moment, period, url, queryParams, isEmailStats, maxBars } = this.props;
+		const { date, momentSiteZone, period, url, queryParams, isEmailStats, maxBars } = this.props;
 		const numberOfDAys = this.getNumberOfDays( isEmailStats, period, maxBars );
 		const usedPeriod = this.calculatePeriod( period );
-		const previousDay = moment( date ).subtract( numberOfDAys, usedPeriod ).format( 'YYYY-MM-DD' );
+		const previousDay = momentSiteZone( date )
+			.subtract( numberOfDAys, usedPeriod )
+			.format( 'YYYY-MM-DD' );
 		const newQueryParams = this.queryParamsForPreviousDate( previousDay );
 		const previousDayQuery = qs.stringify( Object.assign( {}, queryParams, newQueryParams ), {
 			addQueryPrefix: true,
@@ -115,10 +119,10 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	handleArrowNext = () => {
-		const { date, moment, period, url, queryParams, isEmailStats, maxBars } = this.props;
+		const { date, momentSiteZone, period, url, queryParams, isEmailStats, maxBars } = this.props;
 		const numberOfDAys = this.getNumberOfDays( isEmailStats, period, maxBars );
 		const usedPeriod = this.calculatePeriod( period );
-		const nextDay = moment( date ).add( numberOfDAys, usedPeriod ).format( 'YYYY-MM-DD' );
+		const nextDay = momentSiteZone( date ).add( numberOfDAys, usedPeriod ).format( 'YYYY-MM-DD' );
 		const newQueryParams = this.queryParamsForNextDate( nextDay );
 		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, newQueryParams ), {
 			addQueryPrefix: true,
@@ -142,14 +146,14 @@ class StatsPeriodNavigation extends PureComponent {
 
 	// TODO: refactor to extract logic with `dateForCustomRange` from `client/my-sites/stats/stats-date-picker/index.jsx`.
 	getFullPeriod = () => {
-		const { moment, dateRange, momentSiteZone } = this.props;
-		const localizedStartDate = moment( dateRange.chartStart );
-		const localizedEndDate = moment( dateRange.chartEnd );
+		const { dateRange, momentSiteZone } = this.props;
+		const localizedStartDate = momentSiteZone( dateRange.chartStart );
+		const localizedEndDate = momentSiteZone( dateRange.chartEnd );
 
 		// If it's a partial month but ends today.
 		if (
 			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'month' ), 'day' ) &&
-			localizedEndDate.isSame( momentSiteZone, 'day' ) &&
+			localizedEndDate.isSame( momentSiteZone(), 'day' ) &&
 			localizedStartDate.isSame( localizedEndDate, 'month' ) &&
 			( ! dateRange.shortcutId || dateRange.shortcutId === 'month_to_date' )
 		) {
@@ -159,7 +163,7 @@ class StatsPeriodNavigation extends PureComponent {
 		// If it's a partial year but ends today.
 		if (
 			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'year' ), 'day' ) &&
-			localizedEndDate.isSame( momentSiteZone, 'day' ) &&
+			localizedEndDate.isSame( momentSiteZone(), 'day' ) &&
 			localizedStartDate.isSame( localizedEndDate, 'year' ) &&
 			( ! dateRange.shortcutId || dateRange.shortcutId === 'year_to_date' )
 		) {
@@ -193,7 +197,7 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	handleArrowNavigation = ( previousOrNext = false ) => {
-		const { moment, momentSiteZone, period, slug, dateRange } = this.props;
+		const { momentSiteZone, period, slug, dateRange } = this.props;
 
 		const isWPAdmin = config.isEnabled( 'is_odyssey' );
 		const event_from = isWPAdmin ? 'jetpack_odyssey' : 'calypso';
@@ -202,8 +206,8 @@ class StatsPeriodNavigation extends PureComponent {
 			direction: previousOrNext ? 'previous' : 'next',
 		} );
 
-		const navigationStart = moment( dateRange.chartStart );
-		let navigationEnd = moment( dateRange.chartEnd );
+		const navigationStart = momentSiteZone( dateRange.chartStart );
+		let navigationEnd = momentSiteZone( dateRange.chartEnd );
 
 		// If it's a full month then we need to navigate to the previous/next month.
 		// If it's a full year then we need to navigate to the previous/next year.
@@ -233,8 +237,8 @@ class StatsPeriodNavigation extends PureComponent {
 			}
 			navigationStart.startOf( fullPeriod );
 			navigationEnd.endOf( fullPeriod );
-			if ( navigationEnd.isAfter( momentSiteZone, 'day' ) ) {
-				navigationEnd = momentSiteZone;
+			if ( navigationEnd.isAfter( momentSiteZone(), 'day' ) ) {
+				navigationEnd = momentSiteZone();
 			}
 		}
 
@@ -254,7 +258,7 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	queryParamsForPreviousDate = ( previousDay ) => {
-		const { dateRange, moment } = this.props;
+		const { dateRange, momentSiteZone } = this.props;
 		// Takes a 'YYYY-MM-DD' string.
 		const newParams = { startDate: previousDay };
 		// Maintain previous behaviour if we don't have a date range to work with.
@@ -262,12 +266,14 @@ class StatsPeriodNavigation extends PureComponent {
 			return newParams;
 		}
 		// Test if we need to update the chart start/end dates.
-		const isBefore = moment( previousDay ).isBefore( moment( dateRange.chartStart ) );
+		const isBefore = momentSiteZone( previousDay ).isBefore(
+			momentSiteZone( dateRange.chartStart )
+		);
 		if ( isBefore ) {
-			newParams.chartEnd = moment( dateRange.chartStart )
+			newParams.chartEnd = momentSiteZone( dateRange.chartStart )
 				.subtract( 1, 'days' )
 				.format( 'YYYY-MM-DD' );
-			newParams.chartStart = moment( dateRange.chartStart )
+			newParams.chartStart = momentSiteZone( dateRange.chartStart )
 				.subtract( dateRange.daysInRange, 'days' )
 				.format( 'YYYY-MM-DD' );
 		}
@@ -307,7 +313,6 @@ class StatsPeriodNavigation extends PureComponent {
 		const {
 			children,
 			date,
-			moment,
 			period,
 			showArrows,
 			disablePreviousArrow,
@@ -322,10 +327,10 @@ class StatsPeriodNavigation extends PureComponent {
 			momentSiteZone,
 		} = this.props;
 
-		const isToday = moment( date ).isSame( momentSiteZone, period );
+		const isToday = momentSiteZone( date ).isSame( momentSiteZone(), period );
 
-		const isChartRangeEndSameOrAfterToday = moment( dateRange?.chartEnd ).isSameOrAfter(
-			momentSiteZone,
+		const isChartRangeEndSameOrAfterToday = momentSiteZone( dateRange?.chartEnd ).isSameOrAfter(
+			momentSiteZone(),
 			'day'
 		);
 		// Make sure we only show arrows for date ranges that are less than 3 years for performance reasons.
