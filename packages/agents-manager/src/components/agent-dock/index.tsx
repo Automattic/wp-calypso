@@ -198,7 +198,9 @@ export default function AgentDock( {
 
 			abortCurrentRequest();
 			agentManager.updateSessionId( agentId, sessionId );
+			setSessionId( sessionId );
 			maybeLoadConversation( sessionId );
+
 			navigate( `/chat/${ sessionId }`, { state: { sessionId } } );
 		},
 		[ abortCurrentRequest, agentId, maybeLoadConversation, navigate ]
