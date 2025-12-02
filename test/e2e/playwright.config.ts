@@ -13,6 +13,10 @@ const reporter: ReporterDescription[] = [
 		{
 			outputDir: outputPath,
 			outputFile: `ctrf-report-${ Date.now() }.json`,
+			branchName: process.env.BUILD_VCS_BRANCH || '',
+			commit: process.env.BUILD_VCS_NUMBER || '',
+			appName: 'calypso',
+			repositoryName: 'Automattic/wp-calypso',
 		},
 	],
 ];
