@@ -398,7 +398,7 @@ function UnifiedPlansStep( {
 		}
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate( 'How with the best' );
+			return translate( 'Host with the best' );
 		}
 
 		if ( intent === 'plans-wordpress-hosting' ) {
