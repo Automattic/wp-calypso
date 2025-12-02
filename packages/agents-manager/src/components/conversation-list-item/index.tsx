@@ -14,9 +14,7 @@ import ConversationAvatar from '../conversation-avatar';
 import './style.scss';
 
 interface ConversationListItemProps {
-	/** Conversation data to display. */
 	conversation: ServerConversationListItem;
-	/** Called when the conversation is clicked. */
 	onClick: ( sessionId: string ) => void;
 }
 

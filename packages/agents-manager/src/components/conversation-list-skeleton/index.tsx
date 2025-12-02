@@ -7,7 +7,6 @@ import { __ } from '@wordpress/i18n';
 import './style.scss';
 
 interface ConversationListSkeletonProps {
-	/** Number of skeleton items to display. */
 	count?: number;
 }
 
