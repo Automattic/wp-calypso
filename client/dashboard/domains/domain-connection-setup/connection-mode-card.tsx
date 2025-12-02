@@ -90,24 +90,24 @@ export default function ConnectionModeCard( {
 	return (
 		<Card>
 			<CardBody>
-				<HStack spacing={ 2 } justify="flex-start">
-					<RadioControl
-						selected={ selectedMode }
-						options={ [ { label: '', value: mode } ] }
-						onChange={ ( value: string ) =>
-							onModeChange( value as DomainConnectionSetupModeValue )
-						}
-					/>
-					<VStack spacing={ 2 }>
-						<Text size="medium" weight={ 500 }>
-							{ title }
-						</Text>
-						<Text variant="muted">{ description }</Text>
-					</VStack>
-				</HStack>
-				{ isSelected && (
-					<>
-						<VStack spacing={ 4 } style={ { marginTop: '16px' } }>
+				<VStack spacing={ 4 }>
+					<HStack spacing={ 2 } justify="flex-start">
+						<RadioControl
+							selected={ selectedMode }
+							options={ [ { label: '', value: mode } ] }
+							onChange={ ( value: string ) =>
+								onModeChange( value as DomainConnectionSetupModeValue )
+							}
+						/>
+						<VStack spacing={ 2 }>
+							<Text size="medium" weight={ 500 }>
+								{ title }
+							</Text>
+							<Text variant="muted">{ description }</Text>
+						</VStack>
+					</HStack>
+					{ isSelected && (
+						<>
 							<CardDivider />
 							<VStack spacing={ 6 }>
 								{ mode === DomainConnectionSetupMode.SUGGESTED && ! hasEmailOrOtherServices && (
@@ -167,9 +167,9 @@ export default function ConnectionModeCard( {
 									{ __( 'Verify Connection' ) }
 								</Button>
 							</ButtonStack>
-						</VStack>
-					</>
-				) }
+						</>
+					) }
+				</VStack>
 			</CardBody>
 		</Card>
 	);
