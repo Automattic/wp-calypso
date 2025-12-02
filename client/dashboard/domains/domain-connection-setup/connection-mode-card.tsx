@@ -153,7 +153,11 @@ export default function ConnectionModeCard( {
 										>
 											{ step.content }
 										</SetupStep>
-										{ index < steps.length - 1 && <CardDivider /> }
+										{ index < steps.length - 1 && (
+											<CardDivider
+												style={ { borderColor: 'var(--dashboard-overview__divider-color)' } }
+											/>
+										) }
 									</div>
 								) ) }
 							</div>
