@@ -250,7 +250,7 @@ describe( 'FeaturedSearchResultsItem', () => {
 			expect( anotherOnePopoverContent ).toBeInTheDocument();
 		} );
 
-		it( 'renders the premium badge if the suggestion is premium and is_supported_premium_domain is true', async () => {
+		it( 'renders the premium badge if the FQDN is premium and is_supported_premium_domain is true', async () => {
 			mockGetAvailabilityQuery( {
 				params: { domainName: 'test-premium.com' },
 				availability: buildAvailability( {
@@ -281,7 +281,7 @@ describe( 'FeaturedSearchResultsItem', () => {
 			expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
 		} );
 
-		it( 'renders the sale badge if there is a sale cost in the availability and the price rule is PRICE', async () => {
+		it( 'renders the sale badge if the FQDN has a sale cost in the availability and the price rule is PRICE', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-sale-availability.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test2.com' } ) ],
@@ -312,7 +312,7 @@ describe( 'FeaturedSearchResultsItem', () => {
 			expect( screen.getByText( 'Sale' ) ).toBeInTheDocument();
 		} );
 
-		it( 'renders the premium and sale badges if the suggestion is premium and on sale', async () => {
+		it( 'renders the premium and sale badges if the FQDN is premium and on sale', async () => {
 			mockGetAvailabilityQuery( {
 				params: { domainName: 'test-premium-sale.com' },
 				availability: buildAvailability( {
