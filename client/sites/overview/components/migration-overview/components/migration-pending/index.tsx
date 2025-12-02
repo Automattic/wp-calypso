@@ -41,6 +41,10 @@ const getContinueMigrationUrl = (
 		return addQueryArgs( baseQueryArgs, '/setup/site-migration/site-migration-instructions' );
 	}
 
+	if ( migrationState?.type === 'ssh' ) {
+		return addQueryArgs( baseQueryArgs, '/setup/site-migration/site-migration-ssh-verification' );
+	}
+
 	return addQueryArgs( baseQueryArgs, '/setup/site-migration/site-migration-credentials' );
 };
 
