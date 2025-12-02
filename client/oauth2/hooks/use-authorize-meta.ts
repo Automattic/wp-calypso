@@ -7,9 +7,9 @@ export type AuthorizeMeta = {
 		id: number;
 		display_name: string;
 		email: string;
-		username: string;
-		avatar_URL: string;
-		site_count: number;
+		username?: string;
+		avatar_URL?: string;
+		site_count?: number;
 	};
 	permissions: Array< { name: string; description: string } >;
 	links: {

@@ -131,3 +131,33 @@
 .oauth2-connect__error {
 	color: #d63638;
 }
+
+.oauth2-connect__success {
+	border-left: 3px solid #008a20;
+	background-color: #fff;
+	padding: 12px 18px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.oauth2-connect__success-icon {
+	width: 46px;
+	flex-shrink: 0;
+}
+
+.oauth2-connect__success-content {
+	flex: 1;
+}
+
+.oauth2-connect__success-title {
+	font-size: 14px;
+	font-weight: 600;
+	margin-block-end: 4px;
+}
+
+.oauth2-connect__success-description {
+	font-size: 12px;
+	font-weight: 400;
+	color: #646970;
+}

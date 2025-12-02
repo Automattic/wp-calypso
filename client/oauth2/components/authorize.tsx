@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import {
 	Icon,
 	commentAuthorAvatar,
@@ -30,6 +30,7 @@ function Authorize() {
 	const { setHeaders } = useLoginContext();
 	const translate = useTranslate();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
 
 	useEffect( () => {
 		if ( ! oauth2Client ) {
@@ -65,19 +66,52 @@ function Authorize() {
 		if ( ! meta ) {
 			return;
 		}
-		const target = meta.links.authorize;
-		const qp = new URLSearchParams( window.location.search );
-		if ( meta.nonce?._wpnonce ) {
-			qp.set( '_wpnonce', meta.nonce._wpnonce );
+
+		// Check if this is a custom protocol (like wpcom-local-dev:// for Studio)
+		const params = new URLSearchParams( window.location.search );
+		const redirectUri = params.get( 'redirect_uri' ) || '';
+		const isCustomProtocol = redirectUri && ! redirectUri.startsWith( 'http' );
+
+		// Build the authorize URL with nonce
+		const authorizeUrl = new URL( meta.links.authorize, window.location.origin );
+		const redirectToUrl = new URL( meta.links.redirect_to, window.location.origin );
+
+		// Copy all parameters from redirect_to to authorize URL
+		redirectToUrl.searchParams.forEach( ( value, key ) => {
+			authorizeUrl.searchParams.set( key, value );
+		} );
+
+		// Ensure blog_id is set (required by backend, use 0 for WordPress.com Connect)
+		if ( ! authorizeUrl.searchParams.has( 'blog_id' ) ) {
+			authorizeUrl.searchParams.set( 'blog_id', '0' );
 		}
-		window.location.href = `${ target }?${ qp.toString() }`;
+
+		// Add the nonce
+		if ( meta.nonce?._wpnonce ) {
+			authorizeUrl.searchParams.set( '_wpnonce', meta.nonce._wpnonce );
+		}
+
+		// Redirect via GET (standard OAuth2 flow for logged-in users)
+		window.location.href = authorizeUrl.toString();
+
+		// For custom protocol, show success message after redirect starts
+		if ( isCustomProtocol ) {
+			setTimeout( () => {
+				setShowSuccessMessage( true );
+			}, 500 );
+		}
 	};
 
 	const onDeny = () => {
 		if ( ! meta ) {
 			return;
 		}
-		window.location.href = meta.links.deny;
+		// Decode HTML entities in the deny URL (backend may return &amp; instead of &)
+		const textarea = document.createElement( 'textarea' );
+		textarea.innerHTML = meta.links.deny;
+		const decodedUrl = textarea.value;
+
+		window.location.href = decodedUrl;
 	};
 
 	const onSwitch = () => {
@@ -186,14 +220,47 @@ function Authorize() {
 					</a>
 				</div>
 
-				<div className="oauth2-connect__actions">
-					<Button variant="secondary" onClick={ onDeny }>
-						{ translate( 'Deny' ) }
-					</Button>
-					<Button variant="primary" onClick={ onApprove }>
-						{ translate( 'Approve' ) }
-					</Button>
-				</div>
+				{ showSuccessMessage ? (
+					<div className="oauth2-connect__success">
+						<svg
+							className="oauth2-connect__success-icon"
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 50 50"
+							aria-label="Success"
+						>
+							<circle style={ { fill: '#008A20' } } cx="25" cy="25" r="25" />
+							<polyline
+								style={ {
+									fill: 'none',
+									stroke: '#FFFFFF',
+									strokeWidth: 5,
+									strokeLinecap: 'round',
+									strokeLinejoin: 'round',
+								} }
+								points="38,15 22,33 12,25"
+							/>
+						</svg>
+						<div className="oauth2-connect__success-content">
+							<div className="oauth2-connect__success-title">
+								{ translate( 'Success! You can return to %(client)s', {
+									args: { client: meta.client.title },
+								} ) }
+							</div>
+							<div className="oauth2-connect__success-description">
+								{ translate( 'You have successfully connected your WordPress.com account.' ) }
+							</div>
+						</div>
+					</div>
+				) : (
+					<div className="oauth2-connect__actions">
+						<Button variant="secondary" onClick={ onDeny }>
+							{ translate( 'Deny' ) }
+						</Button>
+						<Button variant="primary" onClick={ onApprove }>
+							{ translate( 'Approve' ) }
+						</Button>
+					</div>
+				) }
 			</div>
 		);
 	}
