@@ -1,4 +1,5 @@
 import { type Domain, DomainTransferStatus } from '@automattic/api-core';
+import { InboundTransferComplete } from './complete';
 import { InboundTransferInProgress } from './in-progress';
 
 export default function InboundTransfer( { domain }: { domain: Domain } ) {
@@ -9,7 +10,7 @@ export default function InboundTransfer( { domain }: { domain: Domain } ) {
 			);
 		}
 
-		return null;
+		return <InboundTransferComplete domainName={ domain.domain } siteSlug={ domain.site_slug } />;
 	};
 
 	return getInboundTransferStep();
