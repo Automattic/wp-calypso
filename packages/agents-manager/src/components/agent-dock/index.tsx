@@ -104,7 +104,7 @@ export default function AgentDock( {
 			// Make sure future messages go to the right session
 			getAgentManager().updateSessionId( agentId, serverSessionId );
 
-			// Sync session ID in URL and storage if it has changed
+			// Sync storage and URL if the server assigned a different session ID
 			if ( serverSessionId && sessionId !== serverSessionId ) {
 				setSessionId( serverSessionId );
 				navigate( `/chat/${ serverSessionId }`, {
