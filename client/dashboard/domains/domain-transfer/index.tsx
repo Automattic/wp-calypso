@@ -16,6 +16,8 @@ export default function DomainTransfer() {
 	const isInboundTransfer = domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER;
 	const isDomainTransferRedesignEnabled = config.isEnabled( 'domain-transfer-redesign' );
 
+	const isNewInboundTransferExperience = isDomainTransferRedesignEnabled && isInboundTransfer;
+
 	return (
 		<PageLayout
 			size="small"
@@ -23,11 +25,15 @@ export default function DomainTransfer() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Transfer' ) }
-					description={ __( 'Transfer this domain to another site or WordPress.com user.' ) }
+					description={
+						! isNewInboundTransferExperience
+							? __( 'Transfer this domain to another site or WordPress.com user.' )
+							: undefined
+					}
 				/>
 			}
 		>
-			{ isDomainTransferRedesignEnabled && isInboundTransfer ? (
+			{ isNewInboundTransferExperience ? (
 				<InboundTransfer domain={ domain } />
 			) : (
 				<OutboundTransfer domain={ domain } />
