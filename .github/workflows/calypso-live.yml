@@ -30,6 +30,10 @@ jobs:
             const hasComment = existingComment ? "true" : "false";
             console.log( `Has existing comment: ${ hasComment }` );
             return hasComment;
+      - name: Build calypso.live link
+        run: |
+          echo "LINK=https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+        id: build_link
       - name: Post comment on PR
         uses: actions/github-script@v6
         if: steps.has_comment.outputs.result == 'false'
@@ -37,59 +41,68 @@ jobs:
           # Skip adding a comment if we already have one.
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            function trimIndent(str) {
+              const lines = str.replace(/^\n+|\n+$/g, '').split('\n');
+              const min = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^ */)[0].length));
+              return lines.map(l => l.slice(min)).join('\n');
+            }
+
+            const link = "${{steps.build_link.outputs.LINK}}";
+            const body = trimIndent(`
+              <!--calypso-live-watermark:apr@v1-->
+              <details>
+                <summary>
+                  Calypso Live <a href="${link}">(direct link)</a>
+                </summary>
+                <table>
+                  <tr>
+                    <td>
+                      <a href="${link}">${link}</a>
+                    </td>
+                  </tr>
+                </table>
+              </details>
+              <details>
+                <summary>
+                  Jetpack Cloud live <a href="${link}&env=jetpack">(direct link)</a>
+                </summary>
+                <table>
+                  <tr>
+                    <td>
+                      <a href="${link}&env=jetpack">${link}&env=jetpack</a>
+                    </td>
+                  </tr>
+                </table>
+              </details>
+              <details>
+                <summary>
+                  Automattic for Agencies live <a href="${link}&env=a8c-for-agencies">(direct link)</a>
+                </summary>
+                <table>
+                  <tr>
+                    <td>
+                      <a href="${link}&env=a8c-for-agencies">${link}&env=a8c-for-agencies</a>
+                    </td>
+                  </tr>
+                </table>
+              </details>
+              <details>
+                <summary>
+                  Dashboard live <a href="${link}&env=dashboard">(direct link)</a>
+                </summary>
+                <table>
+                  <tr>
+                    <td>
+                      <a href="${link}&env=dashboard">${link}&env=dashboard</a>
+                    </td>
+                  </tr>
+                </table>
+              </details>`
+            );
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `
-                <!--calypso-live-watermark:apr@v1-->
-                <details>
-                  <summary>
-                    Calypso Live <a href="${{steps.build_link.outputs.LINK}}">(direct link)</a>
-                  </summary>
-                  <table>
-                    <tr>
-                      <td>
-                        <a href="${{steps.build_link.outputs.LINK}}">${{steps.build_link.outputs.LINK}}</a>
-                      </td>
-                    </tr>
-                  </table>
-                </details>
-                <details>
-                  <summary>
-                    Jetpack Cloud live <a href="${{steps.build_link.outputs.LINK}}&env=jetpack">(direct link)</a>
-                  </summary>
-                  <table>
-                    <tr>
-                      <td>
-                        <a href="${{steps.build_link.outputs.LINK}}&env=jetpack">${{steps.build_link.outputs.LINK}}&env=jetpack</a>
-                      </td>
-                    </tr>
-                  </table>
-                </details>
-                <details>
-                  <summary>
-                    Automattic for Agencies live <a href="${{steps.build_link.outputs.LINK}}&env=a8c-for-agencies">(direct link)</a>
-                  </summary>
-                  <table>
-                    <tr>
-                      <td>
-                        <a href="${{steps.build_link.outputs.LINK}}&env=a8c-for-agencies">${{steps.build_link.outputs.LINK}}&env=a8c-for-agencies</a>
-                      </td>
-                    </tr>
-                  </table>
-                </details>
-                <details>
-                  <summary>
-                    Dashboard live <a href="${{steps.build_link.outputs.LINK}}&env=dashboard">(direct link)</a>
-                  </summary>
-                  <table>
-                    <tr>
-                      <td>
-                        <a href="${{steps.build_link.outputs.LINK}}&env=dashboard">${{steps.build_link.outputs.LINK}}&env=dashboard</a>
-                      </td>
-                    </tr>
-                  </table>
-                </details>
-              `
+              body,
             })
