@@ -1,4 +1,5 @@
 /* The Type and Name columns should be narrow */
-.dns-records-table .dataviews-view-table__cell-content-wrapper {
+.dns-records-table .dataviews-view-table tbody .dataviews-view-table__cell-content-wrapper {
 	min-width: initial;
+	white-space: normal;
 }

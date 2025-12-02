@@ -11,40 +11,18 @@ import { useMemo } from 'react';
 import { DataViewsCard } from '../../components/dataviews';
 import { matchCurrentToTargetValues } from './utils/match-records';
 
+import './components/dns-records-table-style.scss';
+
 const viewSuggested: ViewTable = {
 	type: 'table',
 	page: 1,
 	perPage: 10,
 	fields: [ 'currentValue', 'arrow', 'updateTo' ],
-	layout: {
-		styles: {
-			arrow: {
-				width: '30px',
-				maxWidth: '30px',
-			},
-		},
-	},
 };
 
 const viewAdvanced: ViewTable = {
 	...viewSuggested,
 	fields: [ 'type', 'name', 'currentValue', 'arrow', 'updateTo' ],
-	layout: {
-		styles: {
-			type: {
-				width: '50px',
-				maxWidth: '50px',
-			},
-			name: {
-				width: '50px',
-				maxWidth: '50px',
-			},
-			arrow: {
-				width: '30px',
-				maxWidth: '30px',
-			},
-		},
-	},
 };
 
 interface DNSRecord {
@@ -171,7 +149,7 @@ export default function DNSRecordsDataView( {
 	);
 
 	return (
-		<DataViewsCard>
+		<DataViewsCard className="dns-records-table">
 			<DataViews< DNSRecord >
 				data={ records }
 				fields={ fields }
