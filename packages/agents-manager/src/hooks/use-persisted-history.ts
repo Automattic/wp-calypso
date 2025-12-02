@@ -1,8 +1,8 @@
 import { AgentsManagerSelect } from '@automattic/data-stores';
 import apiFetch from '@wordpress/api-fetch';
 import { useSelect } from '@wordpress/data';
+import { useState, useEffect, useLayoutEffect } from '@wordpress/element';
 import { Action, Location } from 'history';
-import { useState, useEffect, useLayoutEffect } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { AGENTS_MANAGER_STORE } from '../stores';
 

@@ -17,11 +17,10 @@
 }
 
 .verification-in-progress-next-steps {
-	.action-item {
+	.icon-list-item {
 		padding: $grid-unit-10;
-		border-bottom: none;
 	}
-	.action-item__decoration + span > span > span:last-child{
+	.icon-list-item__decoration + span > span > span:last-child{
 		font-size: $font-size-small;
 	}
 }

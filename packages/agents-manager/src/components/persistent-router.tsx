@@ -1,10 +1,9 @@
-import * as React from 'react';
 import { Router } from 'react-router-dom';
 import { usePersistedHistory } from '../hooks/use-persisted-history';
 
-type Props = {
+interface Props {
 	children: React.ReactNode;
-};
+}
 
 /**
  * A router like MemoryRouter, but it persists the history to the server using user preferences.

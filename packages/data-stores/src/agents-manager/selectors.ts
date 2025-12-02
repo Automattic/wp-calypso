@@ -6,11 +6,9 @@ export const getAgentsManagerState = ( state: State ) => ( {
 	agentsManagerRouterHistory: state.agentsManagerRouterHistory,
 	isLoading: state.isLoading,
 	hasLoaded: state.hasLoaded,
-	sessionId: state.sessionId,
 } );
 export const getIsOpen = ( state: State ) => state.isOpen;
 export const getIsDocked = ( state: State ) => state.isDocked;
 export const getAgentsManagerRouterHistory = ( state: State ) => state.agentsManagerRouterHistory;
 export const getIsLoading = ( state: State ) => state.isLoading;
 export const getHasLoaded = ( state: State ) => state.hasLoaded;
-export const getSessionId = ( state: State ) => state.sessionId;

@@ -46,19 +46,10 @@ const hasLoaded: Reducer< boolean, AgentsManagerAction > = ( state = false, acti
 	return state;
 };
 
-const sessionId: Reducer< string, AgentsManagerAction > = ( state = '', action ) => {
-	switch ( action.type ) {
-		case 'AGENTS_MANAGER_SET_SESSION_ID':
-			return action.sessionId;
-	}
-	return state;
-};
-
 const reducer = combineReducers( {
 	isOpen,
 	isDocked,
 	agentsManagerRouterHistory,
-	sessionId,
 	isLoading,
 	hasLoaded,
 } );

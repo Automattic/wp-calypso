@@ -2,6 +2,11 @@
 	padding-top: 24px;
 	padding-bottom: 24px;
 
+	@media screen and ( max-width: 601px ) {
+		padding-top: 12px;
+		padding-bottom: 12px;
+	}
+
 	.full-width-section__content {
 		margin-inline: auto;
 	}
@@ -13,5 +18,9 @@
 	&.full-width-section--no-padding {
 		padding-top: 0;
 		padding-bottom: 0;
+	}
+
+	&.full-width-section--gray {
+		background-color: var(--studio-gray-0);
 	}
 }

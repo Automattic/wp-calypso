@@ -41,11 +41,11 @@ export function formatConversationDate( timestamp: string ): string {
 	);
 
 	if ( dateOnly.getTime() === todayOnly.getTime() ) {
-		return __( 'Today', 'agents-manager' );
+		return __( 'Today', '__i18n_text_domain__' );
 	}
 
 	if ( dateOnly.getTime() === yesterdayOnly.getTime() ) {
-		return __( 'Yesterday', 'agents-manager' );
+		return __( 'Yesterday', '__i18n_text_domain__' );
 	}
 
 	// Format as "Oct 7, 2025"
@@ -63,7 +63,7 @@ export function formatConversationDate( timestamp: string ): string {
  */
 export function generateConversationTitle( messageContent: string ): string {
 	if ( ! messageContent ) {
-		return __( 'Untitled conversation', 'agents-manager' );
+		return __( 'Untitled conversation', '__i18n_text_domain__' );
 	}
 
 	return messageContent.trim();

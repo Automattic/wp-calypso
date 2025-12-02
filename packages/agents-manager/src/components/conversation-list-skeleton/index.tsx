@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import './style.scss';
 
 interface ConversationListSkeletonProps {
+	/** Number of skeleton items to display. */
 	count?: number;
 }
 
@@ -27,7 +28,7 @@ export default function ConversationListSkeleton( { count = 3 }: ConversationLis
 		<div
 			className="agents-manager-conversation-list-skeleton"
 			role="status"
-			aria-label={ __( 'Loading conversations', 'agents-manager' ) }
+			aria-label={ __( 'Loading conversations', '__i18n_text_domain__' ) }
 			aria-busy="true"
 		>
 			{ Array.from( { length: count } ).map( ( _, index ) => (
