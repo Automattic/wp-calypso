@@ -146,6 +146,11 @@ export const useAttachmentHandler = () => {
 	// Handle paste events for images
 	const handleImagePaste = useCallback(
 		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
+			// Disable image pasting for AI
+			if ( ! showAttachmentButton ) {
+				return;
+			}
+
 			if ( e.key === 'v' && ( e.ctrlKey || e.metaKey ) ) {
 				setTimeout( () => {
 					navigator.clipboard
@@ -169,7 +174,7 @@ export const useAttachmentHandler = () => {
 				}, 0 );
 			}
 		},
-		[ handleFileUpload ]
+		[ handleFileUpload, showAttachmentButton ]
 	);
 
 	const AttachmentDropZone = () => {

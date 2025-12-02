@@ -30,4 +30,8 @@
 		padding-inline-start: 0;
 		padding-inline-end: 0;
 	}
+	&__step .collapsible-card__content {
+		padding-inline-start: 40px;
+		padding-top: 16px;
+	}
 }
