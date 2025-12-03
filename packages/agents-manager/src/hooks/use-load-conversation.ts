@@ -4,7 +4,7 @@
 
 import { loadAllMessagesFromServer } from '@automattic/agenttic-client';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useRef } from '@wordpress/element';
+import { useRef } from '@wordpress/element';
 import type { Message } from '@automattic/agenttic-client';
 
 interface UseLoadConversationConfig {
@@ -20,7 +20,7 @@ interface LoadConversationParams {
 
 interface UseLoadConversationResult {
 	/** Triggers loading a conversation from the server. */
-	loadConversation: ( sessionId: string, botId: string ) => void;
+	loadConversation: ( params: LoadConversationParams ) => void;
 	/** Whether a conversation is currently being loaded. */
 	isLoading: boolean;
 	/** The error from the last load attempt, or null if successful. */
@@ -67,13 +67,8 @@ export default function useLoadConversation(
 		},
 	} );
 
-	const loadConversation = useCallback(
-		( sessionId: string, botId: string ) => mutation.mutate( { sessionId, botId } ),
-		[ mutation ]
-	);
-
 	return {
-		loadConversation,
+		loadConversation: mutation.mutate,
 		isLoading: mutation.isPending,
 		error: mutation.error,
 	};

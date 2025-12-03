@@ -140,7 +140,7 @@ export default function AgentDock( {
 			}
 
 			const botId = createOdieBotId( agentId );
-			loadConversation( sessionId, botId );
+			loadConversation( { sessionId, botId } );
 		},
 		[ agentId, loadConversation ]
 	);
