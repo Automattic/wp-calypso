@@ -100,6 +100,7 @@ $admin-background-color: #f1f1f1;
 		border-left: 1px solid $border-color;
 		border-bottom: 1px solid $border-color;
 		border-radius: 0 0 0 $main-border-radius;
+		overflow: scroll;
 	}
 
 	#wpcontent {
@@ -127,7 +128,7 @@ $admin-background-color: #f1f1f1;
 
 	#wpfooter {
 		margin-right: calc( $sidebar-width + 1px ) !important;
-		bottom: 15px;
+		bottom: 17px;
 		left: 18px;
 		background-color: $admin-background-color;
 		border-radius: 0 0 $main-border-radius 0;
