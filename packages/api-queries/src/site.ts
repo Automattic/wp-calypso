@@ -20,7 +20,9 @@ export const siteBySlugQuery = ( siteSlug: string ) =>
 		queryKey: [ 'site-by-slug', siteSlug, SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: async () => {
 			try {
-				return await fetchSite( siteSlug );
+				const site = await fetchSite( siteSlug );
+				queryClient.setQueryData( [ 'site-by-id', site.ID, SITE_FIELDS, SITE_OPTIONS ], site );
+				return site;
 			} catch ( e ) {
 				if ( isWpError( e ) && e.error && KNOWN_ERRORS.includes( e.error ) ) {
 					throw notFound( { data: e.error } );
@@ -41,7 +43,9 @@ export const siteByIdQuery = ( siteId: number ) =>
 		queryKey: [ 'site-by-id', siteId, SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: async () => {
 			try {
-				return await fetchSite( siteId );
+				const site = await fetchSite( siteId );
+				queryClient.setQueryData( [ 'site-by-slug', site.slug, SITE_FIELDS, SITE_OPTIONS ], site );
+				return site;
 			} catch ( e ) {
 				if ( isWpError( e ) && e.error && KNOWN_ERRORS.includes( e.error ) ) {
 					throw notFound( { data: e.error } );
