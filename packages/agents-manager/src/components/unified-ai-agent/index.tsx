@@ -5,6 +5,7 @@
  */
 
 import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMemo, useEffect, useState } from '@wordpress/element';
 import { useLocation } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
@@ -74,11 +75,15 @@ function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
 	} );
 }
 
+const queryClient = new QueryClient();
+
 export default function UnifiedAIAgent( props: UnifiedAIAgentProps ) {
 	return (
-		<PersistentRouter>
-			<AgentSetup { ...props } />
-		</PersistentRouter>
+		<QueryClientProvider client={ queryClient }>
+			<PersistentRouter>
+				<AgentSetup { ...props } />
+			</PersistentRouter>
+		</QueryClientProvider>
 	);
 }
 
