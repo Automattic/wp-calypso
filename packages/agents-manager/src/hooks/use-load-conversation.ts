@@ -3,7 +3,8 @@
  */
 
 import { loadAllMessagesFromServer } from '@automattic/agenttic-client';
-import { useCallback, useState } from '@wordpress/element';
+import { useMutation } from '@tanstack/react-query';
+import { useCallback, useRef } from '@wordpress/element';
 import type { Message } from '@automattic/agenttic-client';
 
 interface UseLoadConversationConfig {
@@ -12,9 +13,17 @@ interface UseLoadConversationConfig {
 	onLoaded?: ( messages: Message[], sessionId: string ) => void;
 }
 
+interface LoadConversationParams {
+	sessionId: string;
+	botId: string;
+}
+
 interface UseLoadConversationResult {
-	loadConversation: ( sessionId: string, botId: string ) => Promise< void >;
+	/** Triggers loading a conversation from the server. */
+	loadConversation: ( sessionId: string, botId: string ) => void;
+	/** Whether a conversation is currently being loaded. */
 	isLoading: boolean;
+	/** The error from the last load attempt, or null if successful. */
 	error: Error | null;
 }
 
@@ -26,49 +35,46 @@ export default function useLoadConversation(
 	config: UseLoadConversationConfig
 ): UseLoadConversationResult {
 	const { apiBaseUrl, authProvider, onLoaded } = config;
-	const [ isLoading, setIsLoading ] = useState( false );
-	const [ error, setError ] = useState< Error | null >( null );
+
+	// Use ref to always have access to the latest onLoaded callback
+	const onLoadedRef = useRef( onLoaded );
+	onLoadedRef.current = onLoaded;
+
+	const mutation = useMutation( {
+		mutationFn: async ( { sessionId, botId }: LoadConversationParams ) => {
+			// Load all messages from the conversation by session_id
+			// Note: tool_call and tool_result messages are filtered out in serverChatToLoadResult
+			const result = await loadAllMessagesFromServer(
+				sessionId,
+				{
+					botId,
+					apiBaseUrl,
+					authProvider,
+				},
+				10 // max 10 pages
+			);
+
+			return { result, sessionId };
+		},
+		onSuccess: ( { result, sessionId } ) => {
+			// Call onLoaded callback with messages and session ID from server
+			// Fallback to the sessionId we passed in if server doesn't return one
+			onLoadedRef.current?.( result.messages, result.sessionId || sessionId );
+		},
+		onError: ( error ) => {
+			// eslint-disable-next-line no-console
+			console.error( '[useLoadConversation] Error loading conversation:', error );
+		},
+	} );
 
 	const loadConversation = useCallback(
-		async ( sessionId: string, botId: string ) => {
-			setIsLoading( true );
-			setError( null );
-
-			try {
-				// Load all messages from the conversation by session_id
-				// Note: tool_call and tool_result messages are filtered out in serverChatToLoadResult
-				const result = await loadAllMessagesFromServer(
-					sessionId,
-					{
-						botId,
-						apiBaseUrl,
-						authProvider,
-					},
-					10 // max 10 pages
-				);
-
-				// Don't update cache here - let onLoaded handle it to avoid duplicate updates
-
-				// Call onLoaded callback with messages and session ID from server
-				if ( onLoaded ) {
-					// Fallback to the sessionId we passed in if server doesn't return one
-					const finalSessionId = result.sessionId || sessionId;
-					await onLoaded( result.messages, finalSessionId );
-				}
-			} catch ( err ) {
-				// eslint-disable-next-line no-console
-				console.error( '[useLoadConversation] Error loading conversation:', err );
-				setError( err as Error );
-			} finally {
-				setIsLoading( false );
-			}
-		},
-		[ apiBaseUrl, authProvider, onLoaded ]
+		( sessionId: string, botId: string ) => mutation.mutate( { sessionId, botId } ),
+		[ mutation ]
 	);
 
 	return {
 		loadConversation,
-		isLoading,
-		error,
+		isLoading: mutation.isPending,
+		error: mutation.error,
 	};
 }
