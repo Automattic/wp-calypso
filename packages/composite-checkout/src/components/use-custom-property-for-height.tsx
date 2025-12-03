@@ -13,6 +13,13 @@ function setCustomPropertyForElement< T extends HTMLElement >(
 	root.style.setProperty( customProperty, `${ height }px` );
 }
 
+function removeCustomProperty( customProperty: `--${ string }` ) {
+	const root = document.documentElement;
+	if ( root.style ) {
+		root.style.removeProperty( customProperty );
+	}
+}
+
 export function useCustomPropertyForHeight< T extends HTMLElement >(
 	customProperty: `--${ string }`
 ): RefObject< T > {
@@ -20,6 +27,9 @@ export function useCustomPropertyForHeight< T extends HTMLElement >(
 
 	useEffect( () => {
 		setCustomPropertyForElement( customProperty, elementRef.current );
+		return () => {
+			removeCustomProperty( customProperty );
+		};
 	}, [ customProperty ] );
 
 	useEffect( () => {

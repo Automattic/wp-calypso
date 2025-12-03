@@ -78,7 +78,7 @@ export const chooseDomainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails/choose-domain',
 	loader: async () => {
-		queryClient.ensureQueryData( domainsQuery() );
+		queryClient.prefetchQuery( domainsQuery() );
 	},
 } ).lazy( () =>
 	import( '../../emails/choose-domain' ).then( ( d ) =>

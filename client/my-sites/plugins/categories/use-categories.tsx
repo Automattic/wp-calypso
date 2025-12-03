@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __, _x } from '@wordpress/i18n';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -87,15 +88,21 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	paid: {
 		menu: __( 'Premium plugins' ),
-		title: __( 'Must-have premium plugins' ),
-		description: __( 'Take your site further with these premium plugins.' ),
+		title: isEnabled( 'marketplace-redesign' )
+			? __( 'Must-have plugins' )
+			: __( 'Must-have premium plugins' ),
+		description: isEnabled( 'marketplace-redesign' )
+			? __( 'Add the most popular plugins on WordPress.com.' )
+			: __( 'Take your site further with these premium plugins.' ),
 		slug: 'paid',
 		tags: [],
 		preview: [],
 	},
 	popular: {
 		menu: __( 'Popular plugins' ),
-		title: __( 'Popular plugins' ),
+		title: isEnabled( 'marketplace-redesign' )
+			? __( 'The free essentials' )
+			: __( 'Popular plugins' ),
 		description: __( 'Add and install the most popular free plugins.' ),
 		slug: 'popular',
 		tags: [],
@@ -103,8 +110,12 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	featured: {
 		menu: __( 'Developer favorites' ),
-		title: __( 'Our developers’ favorites' ),
-		description: __( 'Start fast with these WordPress.com team picks.' ),
+		title: isEnabled( 'marketplace-redesign' )
+			? __( 'Our favorites' )
+			: __( 'Our developers’ favorites' ),
+		description: isEnabled( 'marketplace-redesign' )
+			? __( "Start faster with the WordPress.com team's picks." )
+			: __( 'Start fast with these WordPress.com team picks.' ),
 		slug: 'featured',
 		tags: [],
 		preview: [],
@@ -426,11 +437,13 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	monetization: {
 		menu: __( 'Monetization' ),
-		title: __( 'Supercharging and monetizing your blog' ),
+		title: isEnabled( 'marketplace-redesign' )
+			? __( 'Do more, sell more, earn more' )
+			: __( 'Supercharging and monetizing your blog' ),
 		slug: 'monetization',
-		description: __(
-			'Building a money-making blog doesn’t have to be as hard as you might think.'
-		),
+		description: isEnabled( 'marketplace-redesign' )
+			? __( 'Making money with your site is easier than you`d think.' )
+			: __( 'Building a money-making blog doesn’t have to be as hard as you might think.' ),
 		tags: [ 'affiliate-marketing', 'advertising', 'adwords' ],
 		preview: [
 			{
@@ -565,9 +578,13 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	business: {
 		menu: _x( 'Business', 'category name' ),
-		title: __( 'Setting up your local business' ),
+		title: isEnabled( 'marketplace-redesign' )
+			? __( 'Set up your business' )
+			: __( 'Setting up your local business' ),
 		slug: 'business',
-		description: __( 'These plugins are here to keep your business on track.' ),
+		description: isEnabled( 'marketplace-redesign' )
+			? __( 'Find the perfect plugin to build and grow.' )
+			: __( 'These plugins are here to keep your business on track.' ),
 		tags: [ 'google', 'testimonials', 'crm', 'business-directory' ],
 		preview: [
 			{

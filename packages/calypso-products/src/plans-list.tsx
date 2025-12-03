@@ -152,6 +152,8 @@ import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
+	PLAN_A4A_BUSINESS,
+	PLAN_A4A_BUSINESS_MONTHLY,
 	PLAN_100_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE,
@@ -2966,6 +2968,25 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1048,
 		getStoreSlug: () => PLAN_BUSINESS_3_YEARS,
 		getPathSlug: () => 'business-3-years',
+	},
+
+	[ PLAN_A4A_BUSINESS ]: {
+		...getPlanBusinessDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: () => false, // A4A plans not available through standard flows
+		getProductId: () => 3300,
+		getStoreSlug: () => PLAN_A4A_BUSINESS,
+		getPathSlug: () => 'a4a-business',
+	},
+
+	[ PLAN_A4A_BUSINESS_MONTHLY ]: {
+		...getPlanBusinessDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: () => false, // A4A plans not available through standard flows
+		getProductId: () => 3301,
+		getStoreSlug: () => PLAN_A4A_BUSINESS_MONTHLY,
+		getPathSlug: () => 'a4a-business-monthly',
 	},
 
 	[ PLAN_100_YEARS ]: {

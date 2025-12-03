@@ -269,15 +269,18 @@ export const createCalypsoAuthProvider = ( siteId?: string | number ): AuthProvi
  */
 export const defaultCalypsoErrorHandler = ( error: CalypsoAuthError ): string => {
 	if ( error?.code === 'rest_invalid_nonce' ) {
-		return __( 'Your session expired. Please refresh the page and try again.', 'agents-manager' );
+		return __(
+			'Your session expired. Please refresh the page and try again.',
+			'__i18n_text_domain__'
+		);
 	}
 
 	if ( error?.code === 'rest_forbidden' || error?.status === 403 ) {
-		return __( "You don't have permission to access AI features.", 'agents-manager' );
+		return __( "You don't have permission to access AI features.", '__i18n_text_domain__' );
 	}
 
 	if ( error?.code === 'rest_no_route' || error?.status === 404 ) {
-		return __( 'AI service is not available. Please try again later.', 'agents-manager' );
+		return __( 'AI service is not available. Please try again later.', '__i18n_text_domain__' );
 	}
 
 	if (
@@ -287,13 +290,16 @@ export const defaultCalypsoErrorHandler = ( error: CalypsoAuthError ): string =>
 	) {
 		return __(
 			'Network connection issue. Please check your internet connection and try again.',
-			'agents-manager'
+			'__i18n_text_domain__'
 		);
 	}
 
 	if ( error?.status === 401 ) {
-		return __( 'Your session expired. Please refresh the page and try again.', 'agents-manager' );
+		return __(
+			'Your session expired. Please refresh the page and try again.',
+			'__i18n_text_domain__'
+		);
 	}
 
-	return __( 'Unable to connect to AI service. Please try again.', 'agents-manager' );
+	return __( 'Unable to connect to AI service. Please try again.', '__i18n_text_domain__' );
 };

@@ -93,7 +93,21 @@ const domain: FlowV2< typeof initialize > = {
 		const defaultRedirect = `/v2/sites/${ siteSlug }/domains`;
 
 		const goToCheckout = ( siteSlug: string ) => {
-			const destination = `/v2/sites/${ siteSlug }/domains`;
+			// Check if cart contains only one domain product and it's a domain connection
+			// Domain connections require a paid plan. When purchased with a plan, after checkout
+			// completes, we redirect to the domain connection setup page instead of the generic
+			// domains page to guide users through the connection process.
+			const hasOnlyDomainConnection =
+				domainCartItems && domainCartItems.length === 1 && isDomainMapping( domainCartItems[ 0 ] );
+
+			let destination = `/v2/sites/${ siteSlug }/domains`;
+
+			if ( hasOnlyDomainConnection ) {
+				const domain = domainCartItems[ 0 ].meta;
+				if ( domain ) {
+					destination = `/v2/domains/${ domain }/domain-connection-setup`;
+				}
+			}
 
 			// replace the location to delete processing step from history.
 			return window.location.replace(

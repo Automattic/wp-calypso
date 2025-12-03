@@ -151,7 +151,6 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 	const backUrl = window.location.href.replace( window.location.origin, '' );
 	return addQueryArgs( '/setup/plan-upgrade', {
 		...( siteSlug && { siteSlug } ),
-		redirect_to: backUrl,
 		cancel_to: backUrl,
 	} );
 }

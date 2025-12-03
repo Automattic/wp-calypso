@@ -20,7 +20,10 @@ import ReferHosting from './refer-hosting';
 
 export const marketplaceContext: Callback = ( context ) => {
 	const { purchase_type } = context.query;
-	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+	let purchaseType = undefined;
+	if ( purchase_type ) {
+		purchaseType = purchase_type === 'referral' ? 'referral' : 'regular';
+	}
 	const purchaseTypeURLQuery = purchaseType ? `?purchase_type=${ purchaseType }` : '';
 	page.redirect( A4A_MARKETPLACE_HOSTING_LINK + purchaseTypeURLQuery );
 };
