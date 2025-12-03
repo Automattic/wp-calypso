@@ -36,6 +36,8 @@ export default function ChatHeader( {
 		navigate( '/' );
 	}
 
+	const buttonSize = ! isChatDocked ? 'small' : undefined;
+
 	return (
 		<div className="agents-manager-chat-header">
 			{ title && <div className="agents-manager-chat-header__title">{ title }</div> }
@@ -45,9 +47,7 @@ export default function ChatHeader( {
 					controls={ options }
 					icon={ moreVertical }
 					label={ __( 'More Options', '__i18n_text_domain__' ) }
-					toggleProps={ {
-						size: ! isChatDocked ? 'small' : undefined,
-					} }
+					toggleProps={ { size: buttonSize } }
 				/>
 				<Button
 					className="agents-manager-chat-header__history-toggle-btn"
@@ -58,14 +58,14 @@ export default function ChatHeader( {
 							? __( 'Back to chat', '__i18n_text_domain__' )
 							: __( 'View history', '__i18n_text_domain__' )
 					}
-					size={ ! isChatDocked ? 'small' : undefined }
+					size={ buttonSize }
 				/>
 				<Button
 					className="agents-manager-chat-header__close-btn"
 					icon={ close }
 					onClick={ onClose }
 					label={ __( 'Close', '__i18n_text_domain__' ) }
-					size={ ! isChatDocked ? 'small' : undefined }
+					size={ buttonSize }
 				/>
 			</div>
 		</div>
