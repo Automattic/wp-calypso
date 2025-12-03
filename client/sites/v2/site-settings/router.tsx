@@ -77,7 +77,8 @@ const phpRoute = createRoute( {
 );
 
 const databaseRoute = createRoute( {
-	...appRouterSites.siteSettingsDatabaseRoute.options,
+	// Bypass type issue by omitting the loader.
+	...Object.assign( appRouterSites.siteSettingsDatabaseRoute.options, { loader: undefined } ),
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-database' ).then( ( d ) =>
@@ -165,7 +166,8 @@ const sftpSshRoute = createRoute( {
 );
 
 const transferSiteRoute = createRoute( {
-	...appRouterSites.siteSettingsTransferSiteRoute.options,
+	// Bypass type issue by omitting the loader.
+	...Object.assign( appRouterSites.siteSettingsTransferSiteRoute.options, { loader: undefined } ),
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-transfer-site' ).then( ( d ) =>
