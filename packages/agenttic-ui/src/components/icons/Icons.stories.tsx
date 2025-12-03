@@ -5,6 +5,7 @@ import { BigSkyIcon } from './BigSkyIcon';
 import { BlurIcon } from './BlurIcon';
 import { CheckIcon } from './CheckIcon';
 import { ChevronDownIcon } from './ChevronDownIcon';
+import { ChevronRightIcon } from './ChevronRightIcon';
 import { ChevronUpIcon } from './ChevronUpIcon';
 import { CopyIcon } from './CopyIcon';
 import { ImageIcon } from './ImageIcon';
@@ -95,6 +96,15 @@ export const Check: Story = {
 export const ChevronDown: Story = {
 	render: ( args ) => (
 		<ChevronDownIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const ChevronRight: Story = {
+	render: ( args ) => (
+		<ChevronRightIcon size={ args.size } className={ args.className } />
 	),
 	args: {
 		size: 24,

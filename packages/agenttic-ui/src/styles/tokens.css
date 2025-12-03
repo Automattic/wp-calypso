@@ -10,6 +10,8 @@
   --color-destructive: oklch(0.492 0.2095 28.09);
   --color-muted: color-mix(in srgb, var(--color-foreground) 10%, var(--color-background));
   --color-muted-foreground: color-mix(in srgb, var(--color-background) 40%, var(--color-foreground));
+  --color-popover-muted: #FCFCFC;
+  --color-popover-border: #e9e9e9;
   --color-success-background: #F1F7F1;
   --color-success: var(--color-foreground);
   --color-warning-background: #F8F3E7;
