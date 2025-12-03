@@ -42,7 +42,13 @@ const getContinueMigrationUrl = (
 	}
 
 	if ( migrationState?.type === 'ssh' ) {
-		return addQueryArgs( baseQueryArgs, '/setup/site-migration/site-migration-ssh-verification' );
+		return addQueryArgs(
+			{
+				...baseQueryArgs,
+				from: migrationSourceSiteDomain || undefined,
+			},
+			'/setup/site-migration/site-migration-ssh-verification'
+		);
 	}
 
 	return addQueryArgs( baseQueryArgs, '/setup/site-migration/site-migration-credentials' );
