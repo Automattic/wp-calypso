@@ -11,13 +11,13 @@
 	}
 
 	&__site-settings {
-		margin-left: -$grid-unit-20;
-		margin-right: -$grid-unit-20;
+		margin-inline-start: -$grid-unit-20;
+		margin-inline-end: -$grid-unit-20;
 	}
 
 	.components-tab-panel__tabs, .components-tab-panel__tab-content {
-		padding-left: $grid-unit-20;
-		padding-right: $grid-unit-20;
+		padding-inline-start: $grid-unit-20;
+		padding-inline-end: $grid-unit-20;
 	}
 
 	.components-tab-panel__tab-content {
@@ -26,13 +26,13 @@
 
 	@include break-medium {
 		&__site-settings {
-			margin-left: -$grid-unit-30;
-			margin-right: -$grid-unit-30;
+			margin-inline-start: -$grid-unit-30;
+			margin-inline-end: -$grid-unit-30;
 		}
 
 		.components-tab-panel__tabs, .components-tab-panel__tab-content {
-			padding-left: $grid-unit-30;
-			padding-right: $grid-unit-30;
+			padding-inline-start: $grid-unit-30;
+			padding-inline-end: $grid-unit-30;
 		}
 
 		.components-tab-panel__tab-content {
