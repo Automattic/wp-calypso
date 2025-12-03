@@ -386,7 +386,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 						isEligible: ( item ) => {
 							const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 
-							return !! autoupdate && ! ( pluginBySiteId.get( item.ID )?.autoupdate ?? false );
+							return !! autoupdate && ( pluginBySiteId.get( item.ID )?.autoupdate ?? false );
 						},
 						supportsBulk: true,
 					},
