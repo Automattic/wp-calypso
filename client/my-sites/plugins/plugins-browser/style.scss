@@ -276,7 +276,7 @@ body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
 		.x-nav-item, .x-dropdown-link, .x-menu-link {
 			color: var(--studio-gray-100);
 		}
-		.x-dropdown-link{
+		.x-dropdown-link {
 			&:hover, &:active, &:focus {
 				color: var(--studio-gray-100);
 				background-color: var(--studio-gray-0);
