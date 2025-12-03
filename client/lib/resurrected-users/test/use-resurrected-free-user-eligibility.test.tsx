@@ -18,7 +18,9 @@ const selectorsState = {
 };
 
 jest.mock( '@automattic/calypso-config', () => {
-	const mockConfig = jest.fn();
+	const mockConfig = jest.fn() as jest.Mock & {
+		isEnabled: jest.Mock;
+	};
 	mockConfig.isEnabled = jest.fn().mockReturnValue( true );
 	return {
 		__esModule: true,
