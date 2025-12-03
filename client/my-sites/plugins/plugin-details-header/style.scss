@@ -45,6 +45,10 @@ $block-spacing: 24px;
 	@include break-mobile {
 		margin-top: 0;
 	}
+
+	.full-width-section & {
+		padding-top: 5px;
+	}
 }
 
 .plugin-details-header__banner {
@@ -88,6 +92,10 @@ $block-spacing: 24px;
 	font-size: $font-title-small;
 	color: var(--studio-gray-80);
 	padding: 24px 0;
+
+	.full-width-section & {
+		font-size: $font-title-medium;
+	}
 }
 
 .plugin-details-header__additional-info {
@@ -98,6 +106,7 @@ $block-spacing: 24px;
 		width: 25%;
 		box-sizing: border-box;
 		padding: 0;
+
 
 		.plugin-details-header__number-reviews-link {
 			font-size: $font-body-small;
@@ -116,6 +125,7 @@ $block-spacing: 24px;
 
 		.full-width-section & {
 			text-transform: uppercase;
+			margin-bottom: 5px;
 		}
 	}
 
@@ -123,7 +133,43 @@ $block-spacing: 24px;
 		font-size: $font-body-small;
 		color: var(--studio-gray-90);
 	}
+
+	.full-width-section & {
+		column-gap: 48px;
+		row-gap: 12px;
+
+		.plugin-details-header__info {
+			width: auto;
+
+			&.is-updated {
+				order: 1;
+			}
+
+			&.is-version {
+				order: 2;
+			}
+
+			&.is-installs {
+				order: 3;
+			}
+		}
+	}
 }
+
+.plugin-details-header__rating {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	.rating .gridicon {
+		fill: #ffb514;
+	}
+
+	.full-width-section & {
+		font-size: $font-body;
+	}
+}
+
 
 .plugin-details-header__tag-badge-container {
 	margin-bottom: $block-spacing;

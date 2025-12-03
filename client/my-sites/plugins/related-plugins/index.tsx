@@ -156,39 +156,41 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 			<div className="related-plugins-item__info">
 				<h3 className="related-plugins-item__title">{ plugin.name }</h3>
 				<div className="related-plugins-item__excerpt">{ plugin.short_description }</div>
-				<div className="related-plugins-item__details">
-					<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
-						{ ( {
-							isFetching,
-							price,
-							period,
-						}: {
-							isFetching: boolean;
-							price: string;
-							period: string;
-						} ) => {
-							if ( isFetching ) {
-								return '...';
-							}
+				{ ! isEnabled( 'marketplace-redesign' ) && (
+					<div className="related-plugins-item__details">
+						<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
+							{ ( {
+								isFetching,
+								price,
+								period,
+							}: {
+								isFetching: boolean;
+								price: string;
+								period: string;
+							} ) => {
+								if ( isFetching ) {
+									return '...';
+								}
 
-							if ( price ) {
-								return (
-									<PreinstalledPremiumPluginPriceDisplay
-										className="related-plugins-item__price-interval"
-										period={ period }
-										pluginSlug={ plugin.slug }
-										price={ price }
-									/>
-								);
-							}
+								if ( price ) {
+									return (
+										<PreinstalledPremiumPluginPriceDisplay
+											className="related-plugins-item__price-interval"
+											period={ period }
+											pluginSlug={ plugin.slug }
+											price={ price }
+										/>
+									);
+								}
 
-							return <>{ translate( 'Free' ) }</>;
-						} }
-					</PluginPrice>
-					{ mainCategory && (
-						<span className="related-plugins-item__category">{ mainCategory }</span>
-					) }
-				</div>
+								return <>{ translate( 'Free' ) }</>;
+							} }
+						</PluginPrice>
+						{ mainCategory && (
+							<span className="related-plugins-item__category">{ mainCategory }</span>
+						) }
+					</div>
+				) }
 			</div>
 		</a>
 	);

@@ -373,6 +373,7 @@ $calypso-header-height: 31px;
 	.full-width-section & {
 		.badge--info {
 			background-color: var(--studio-gray-0);
+			text-transform: none;
 		}
 	}
 }
@@ -387,6 +388,7 @@ $calypso-header-height: 31px;
 	.plugin-sections {
 		.section-nav {
 			box-shadow: none;
+			background: none;
 		}
 
 		.card {
@@ -398,6 +400,11 @@ $calypso-header-height: 31px;
 
 	.section-nav-tabs__list {
 		box-shadow: inset 0 -1px 0 var( --studio-gray-5 );
+
+		.full-width-section & {
+			display: inline-flex;
+			width: auto;
+		}
 	}
 
 	.section-nav-tab {
@@ -422,8 +429,12 @@ $calypso-header-height: 31px;
 				color: var( --studio-gray-100 );
 			}
 
-			.full-width-section & .section-nav-tab__text{
-				padding: 14px 16px;
+			.full-width-section & {
+				padding-inline: 0;
+
+				.section-nav-tab__text {
+					padding: 14px 16px;
+				}
 			}
 		}
 

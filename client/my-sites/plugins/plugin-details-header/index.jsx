@@ -4,6 +4,7 @@ import { formatNumberCompact } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import Rating from 'calypso/components/rating';
 import {
 	useMarketplaceReviewsQuery,
 	useMarketplaceReviewsStatsQuery,
@@ -137,14 +138,30 @@ const PluginDetailsHeader = ( {
 				{ /* We want to accept rating 0, which means no rating for Marketplace products */ }
 				{ rating !== null && (
 					<div className="plugin-details-header__info">
-						<div className="plugin-details-header__info-title">{ translate( 'Rating' ) }</div>
+						<div className="plugin-details-header__info-title">
+							{ isEnabled( 'marketplace-redesign' )
+								? translate( 'Ratings' )
+								: translate( 'Rating' ) }
+						</div>
 						<div className="plugin-details-header__info-value">
-							{ rating !== 0 && <div>{ `${ formatPluginRating( rating, true ) }/5` }</div> }
-							{ isMarketplaceProduct ? getMarketPlacePluginReviewsLink() : getPluginReviewsLink() }
+							{ rating !== 0 &&
+								( isEnabled( 'marketplace-redesign' ) ? (
+									<div className="plugin-details-header__rating">
+										<Rating rating={ rating } size={ 20 } />
+										<span>{ formatPluginRating( rating, true ) }</span>
+									</div>
+								) : (
+									<>
+										<div>{ `${ formatPluginRating( rating, true ) }/5` }</div>
+										{ isMarketplaceProduct
+											? getMarketPlacePluginReviewsLink()
+											: getPluginReviewsLink() }
+									</>
+								) ) }
 						</div>
 					</div>
 				) }
-				<div className="plugin-details-header__info">
+				<div className="plugin-details-header__info is-version">
 					<div className="plugin-details-header__info-title">{ translate( 'Version' ) }</div>
 					<div className="plugin-details-header__info-value">
 						{ /* Show the default version if plugin is not installed */ }
@@ -153,7 +170,7 @@ const PluginDetailsHeader = ( {
 					</div>
 				</div>
 				{ Boolean( plugin.active_installs ) && (
-					<div className="plugin-details-header__info">
+					<div className="plugin-details-header__info is-installs">
 						<div className="plugin-details-header__info-title">
 							{ translate( 'Active installations' ) }
 						</div>
@@ -162,7 +179,7 @@ const PluginDetailsHeader = ( {
 						</div>
 					</div>
 				) }
-				<div className="plugin-details-header__info">
+				<div className="plugin-details-header__info is-updated">
 					<div className="plugin-details-header__info-title">{ translate( 'Last updated' ) }</div>
 					<div className="plugin-details-header__info-value">
 						{ moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'MMM D, YYYY' ) }

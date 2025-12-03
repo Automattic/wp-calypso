@@ -21,7 +21,11 @@
 		overflow-wrap: anywhere;
 		color: $gray-100;
 	}
-
+	.full-width-section & {
+		h2 {
+			font-size: rem(40px);
+		}
+	}
 }
 
 .related-plugins__list {
@@ -82,6 +86,22 @@
 			color: $gray-20;
 			content: "•";
 			margin: 0 8px;
+		}
+	}
+
+	.full-width-section .full-width-section__content & {
+		row-gap: 0;
+
+		.related-plugins-item {
+			background: var(--studio-white);
+			border-radius: 8px;
+			padding: 16px;
+			margin-top: 24px;
+			border: 1px solid transparent;
+
+			&:active, &:hover {
+				border-color: var(--studio-blue-50);
+			}
 		}
 	}
 }
