@@ -106,6 +106,9 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 		.marketplace-cta {
 			font-weight: 500;
 		}
+		${ SectionContainer }::before {
+			display: none;
+		}
 	}
 
 	.marketplace-cta {

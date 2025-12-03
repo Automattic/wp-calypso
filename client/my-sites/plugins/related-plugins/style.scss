@@ -1,4 +1,6 @@
 @import "@wordpress/base-styles/colors.native";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .related-plugins {
 	margin-top: 48px;
@@ -80,6 +82,35 @@
 			color: $gray-20;
 			content: "•";
 			margin: 0 8px;
+		}
+	}
+}
+
+// Carousel-specific styles (marketplace-redesign flag)
+.related-plugins__carousel {
+	.dot-pager__controls {
+		margin-top: 16px;
+		margin-bottom: 0;
+	}
+
+	// Match the responsive column layout from .plugins-browser-item.compact
+	.related-plugins__list {
+		// Mobile: 1 column
+		grid-template-columns: 1fr;
+
+		.related-plugins-item {
+			margin-top: 16px;
+			min-width: 30%;
+		}
+
+		@include break-medium {
+			// Medium and Large: 2 columns
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@include break-wide {
+			// Wide: 3 columns
+			grid-template-columns: repeat(3, 1fr);
 		}
 	}
 }

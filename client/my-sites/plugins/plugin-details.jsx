@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { Icon, download } from '@wordpress/icons';
 import clsx from 'clsx';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
@@ -369,6 +370,28 @@ function PluginDetails( props ) {
 		/>
 	);
 
+	const pluginDownload = ! showPlaceholder &&
+		! requestingPluginsForSites &&
+		isWporgPluginFetched && (
+			<div className="plugin-details__plugin-download">
+				<div className="plugin-details__plugin-download-text">
+					<span>{ downloadText }</span>
+				</div>
+				<div className="plugin-details__plugin-download-cta">
+					<Button
+						href={ `https://downloads.wordpress.org/plugin/${
+							fullPlugin?.slug || ''
+						}.latest-stable.zip` }
+						rel="nofollow"
+					>
+						{ isMarketplaceRedesignEnabled && <Icon icon={ download } size={ 18 } /> }
+						{ translate( 'Download' ) }
+					</Button>
+				</div>
+				<script type="application/ld+json">{ structuredData }</script>
+			</div>
+		);
+
 	return (
 		<MainComponent
 			className="is-plugin-details"
@@ -521,47 +544,29 @@ function PluginDetails( props ) {
 								{ ! showPlaceholder && ! requestingPluginsForSites && (
 									<PluginDetailsSidebar plugin={ fullPlugin } />
 								) }
+
+								{ isMarketplaceRedesignEnabled && pluginDownload }
 							</div>
 
-							{ ! showPlaceholder && ! requestingPluginsForSites && isWporgPluginFetched && (
-								<div className="plugin-details__plugin-download">
-									<div className="plugin-details__plugin-download-text">
-										<span>{ downloadText }</span>
-									</div>
-									<div className="plugin-details__plugin-download-cta">
-										<Button
-											href={ `https://downloads.wordpress.org/plugin/${
-												fullPlugin?.slug || ''
-											}.latest-stable.zip` }
-											rel="nofollow"
-										>
-											{ translate( 'Download' ) }
-										</Button>
-									</div>
-									<script type="application/ld+json">{ structuredData }</script>
-								</div>
-							) }
+							{ ! isMarketplaceRedesignEnabled && pluginDownload }
 						</div>
 					</div>
 				</div>
 			</FullWidthSection>
-			{ isMarketplaceRedesignEnabled && (
-				<FullWidthSection className="plugin-details__related-plugins-section full-width-section--gray">
-					{ relatedPlugins }
+			{ isMarketplaceRedesignEnabled && relatedPlugins }
+
+			{ ! showPlaceholder && (
+				<MarketplaceReviewsCards
+					slug={ fullPlugin.slug }
+					productType="plugin"
+					showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
+				/>
+			) }
+			{ isMarketplaceProduct && ! showPlaceholder && (
+				<FullWidthSection className="plugins__marketplace-footer">
+					<MarketplaceFooter />
 				</FullWidthSection>
 			) }
-			<FullWidthSection className="plugin-details__reviews-section">
-				{ ! showPlaceholder && (
-					<div className="plugin-details__reviews">
-						<MarketplaceReviewsCards
-							slug={ fullPlugin.slug }
-							productType="plugin"
-							showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
-						/>
-					</div>
-				) }
-				{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
-			</FullWidthSection>
 		</MainComponent>
 	);
 }
