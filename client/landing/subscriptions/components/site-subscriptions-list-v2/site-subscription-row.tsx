@@ -69,6 +69,8 @@ const SelectedNewPostDeliveryMethods = ( {
 
 type SiteRowProps = Reader.SiteSubscriptionsResponseItem & {
 	layout?: 'full' | 'compact';
+	style?: React.CSSProperties;
+	forwardedRef?: React.Ref< HTMLDivElement >;
 };
 
 const scrollToFirstRow = () => {
@@ -97,6 +99,8 @@ const SiteSubscriptionRow = ( {
 	is_rss,
 	resubscribed,
 	layout = 'full',
+	style,
+	forwardedRef,
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -282,7 +286,14 @@ const SiteSubscriptionRow = ( {
 	};
 
 	return ! isDeleted ? (
-		<HStack as="li" alignment="center" className="row site-subscription-row" role="row">
+		<HStack
+			style={ style }
+			ref={ forwardedRef }
+			alignment="center"
+			className="row site-subscription-row"
+			role="row"
+			as="li"
+		>
 			<span className="title-cell" role="cell">
 				<Link
 					className="title-icon"

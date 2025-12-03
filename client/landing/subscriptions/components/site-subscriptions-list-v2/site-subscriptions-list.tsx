@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestRecommendedBlogsListItems } from 'calypso/state/reader/lists/actions';
 import { Notice, NoticeType } from '../notice';
+import { VirtualizedList } from '../virtualized-list';
 import SiteSubscriptionRow from './site-subscription-row';
 import './styles/site-subscriptions-list.scss';
 
@@ -16,7 +17,7 @@ type SiteSubscriptionsListProps = {
 	layout?: 'full' | 'compact';
 };
 
-const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
+const SiteSubscriptionsListV2: React.FC< SiteSubscriptionsListProps > = ( {
 	emptyComponent: EmptyComponent,
 	notFoundComponent: NotFoundComponent,
 	layout = 'full',
@@ -83,7 +84,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 
 	return (
 		<ul
-			className={ `site-subscriptions-list${
+			className={ `debug site-subscriptions-list${
 				isCompactLayout ? ' site-subscriptions-list--compact' : ''
 			}` }
 			role="table"
@@ -132,15 +133,19 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				</span>
 				<span className="actions-cell" role="columnheader" />
 			</HStack>
-			{ subscriptions.map( ( siteSubscription ) => (
-				<SiteSubscriptionRow
-					key={ `sites.siteRow.${ siteSubscription.ID }` }
-					layout={ layout }
-					{ ...siteSubscription }
-				/>
-			) ) }
+
+			<VirtualizedList items={ subscriptions }>
+				{ ( { item, key, style, registerChild } ) => (
+					<SiteSubscriptionRow
+						key={ `${ item.ID }-${ key }` }
+						style={ style }
+						forwardedRef={ registerChild }
+						{ ...item }
+					/>
+				) }
+			</VirtualizedList>
 		</ul>
 	);
 };
 
-export default SiteSubscriptionsList;
+export default SiteSubscriptionsListV2;
