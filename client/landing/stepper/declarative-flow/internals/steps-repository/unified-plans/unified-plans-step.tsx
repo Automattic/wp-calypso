@@ -450,7 +450,7 @@ function UnifiedPlansStep( {
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
 			return translate(
-				'Create a site with WordPress.com, and get all the power of lightning-fast, secure and managed WordPress hosting.'
+				'Create a site with WordPress.com, and get all the power of lightning-fast, secure, and managed WordPress hosting.'
 			);
 		}
 
