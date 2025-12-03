@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
-import QuickPost from 'calypso/reader/components/quick-post';
 import { focusEditor } from 'calypso/reader/components/quick-post/utils';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
@@ -90,7 +89,7 @@ function FollowingStream( { ...props } ) {
 								recordReaderTracksEvent( 'calypso_reader_editor_card_closed' );
 							} }
 						>
-							<QuickPost />
+							<AsyncLoad require="calypso/reader/components/quick-post" />
 						</FoldableCard>
 					) }
 					<ReaderOnboarding />
