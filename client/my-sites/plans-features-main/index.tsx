@@ -1,13 +1,13 @@
 import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
+	getIntervalTypeForTerm,
 	getPlan,
 	isFreePlan,
 	isPersonalPlan,
 	PLAN_PERSONAL,
 	PLAN_FREE,
 	type PlanSlug,
-	type UrlFriendlyTermType,
 	isValidFeatureKey,
 	getFeaturesList,
 	isWooExpressPlan,
@@ -66,6 +66,7 @@ import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hook
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
+import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
@@ -122,13 +123,11 @@ export interface PlansFeaturesMainProps {
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
 	isDomainTransfer?: boolean;
-	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
+	intervalType?: SupportedUrlFriendlyTermType;
 	/**
 	 * An array of intervals to be displayed in the plan type selector. Defaults to [ 'yearly', '2yearly', '3yearly', 'monthly' ]
 	 */
-	displayedIntervals?: Array<
-		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
-	>;
+	displayedIntervals?: SupportedUrlFriendlyTermType[];
 	planTypeSelector?: 'interval';
 	discountEndDate?: Date;
 	hidePlansFeatureComparison?: boolean;
@@ -241,6 +240,9 @@ const PlansFeaturesMain = ( {
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+	const currentPlanTerm = useSelector( ( state: IAppState ) =>
+		siteId ? getCurrentPlanTerm( state, siteId ) : null
+	);
 	const sitePlanSlug = currentPlan?.productSlug;
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
@@ -292,8 +294,24 @@ const PlansFeaturesMain = ( {
 		paidDomainName,
 	} );
 
+	const hasIntervalTypeInQuery =
+		typeof window !== 'undefined' && hasQueryArg( window.location.href, 'intervalType' );
+
+	let resolvedIntervalType: SupportedUrlFriendlyTermType = intervalType;
+
+	// If no explicit intervalType is provided via query string, prefer the current plan's term.
+	if ( ! hasIntervalTypeInQuery && currentPlanTerm ) {
+		const fromCurrentPlan = getIntervalTypeForTerm(
+			currentPlanTerm
+		) as SupportedUrlFriendlyTermType | null;
+
+		if ( fromCurrentPlan ) {
+			resolvedIntervalType = fromCurrentPlan;
+		}
+	}
+
 	const term = usePlanBillingPeriod( {
-		intervalType,
+		intervalType: resolvedIntervalType,
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
@@ -505,7 +523,7 @@ const PlansFeaturesMain = ( {
 			isStepperUpgradeFlow,
 			isInSignup,
 			eligibleForWpcomMonthlyPlans,
-			intervalType,
+			intervalType: resolvedIntervalType,
 			customerType: _customerType,
 			siteSlug,
 			selectedPlan,
@@ -554,7 +572,7 @@ const PlansFeaturesMain = ( {
 		isStepperUpgradeFlow,
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
-		intervalType,
+		resolvedIntervalType,
 		_customerType,
 		siteSlug,
 		selectedPlan,
@@ -927,7 +945,7 @@ const PlansFeaturesMain = ( {
 													gridPlans={ gridPlansForComparisonGrid }
 													hideUnavailableFeatures={ hideUnavailableFeatures }
 													intent={ intent }
-													intervalType={ intervalType }
+													intervalType={ resolvedIntervalType }
 													isInAdmin={ ! isInSignup }
 													isInSiteDashboard={ isInSiteDashboard }
 													isInSignup={ isInSignup }
