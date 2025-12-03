@@ -433,13 +433,17 @@ export default withCurrentRoute(
 			config.isEnabled( 'themes/universal-header' ) &&
 			[ 'themes', 'theme' ].includes( sectionName );
 
+		const isLoggedIn = isUserLoggedIn( state );
+
 		const isEnabledPluginsUniversalHeader =
 			config.isEnabled( 'plugins/universal-header' ) &&
 			[ 'plugins' ].includes( sectionName ) &&
 			! (
 				currentRoute.startsWith( '/plugins/manage' ) ||
 				currentRoute.startsWith( '/plugins/scheduled-updates' )
-			);
+			) &&
+			// When marketplace-redesign is enabled, only show universal header for logged out users.
+			( ! config.isEnabled( 'marketplace-redesign' ) || ! isLoggedIn );
 
 		const hasUniversalHeader =
 			hostingDashboardOptIn &&
@@ -458,7 +462,7 @@ export default withCurrentRoute(
 			isBlazePro,
 			oauth2Client,
 			wccomFrom,
-			isLoggedIn: isUserLoggedIn( state ),
+			isLoggedIn,
 			isSupportSession: isSupportSession( state ),
 			sectionGroup,
 			sectionName,

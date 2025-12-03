@@ -516,14 +516,14 @@ const UniversalNavbarHeader = ( {
 												titleValue=""
 												content={ __( 'WordPress for Agencies', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/for-agencies/' ) }
-												type="dropdown"
+												type="menu"
 												target="_self"
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Become an Affiliate', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/affiliates/' ) }
-												type="dropdown"
+												type="menu"
 												target="_self"
 											/>
 											<ClickableItem
@@ -594,7 +594,7 @@ const UniversalNavbarHeader = ( {
 												titleValue=""
 												content={ __( 'WordPress Studio', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//developer.wordpress.com/studio/' ) }
-												type="dropdown"
+												type="menu"
 												target="_self"
 											/>
 											<ClickableItem

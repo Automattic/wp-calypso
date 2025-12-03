@@ -231,7 +231,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 						</FullWidthSection>
 						<FullWidthSection className="plugins-browser__categories">
 							<div ref={ categoriesRef }>
-								<Categories selected={ category } noSelection={ search ? true : false } />
+								<Categories selected={ category } noSelection={ !! search } />
 							</div>
 						</FullWidthSection>
 					</>
