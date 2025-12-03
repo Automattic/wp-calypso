@@ -5,6 +5,7 @@
 import { loadAllMessagesFromServer } from '@automattic/agenttic-client';
 import { useMutation } from '@tanstack/react-query';
 import { useRef } from '@wordpress/element';
+import { API_BASE_URL } from '../constants';
 import type { Message } from '@automattic/agenttic-client';
 
 interface UseLoadConversationConfig {
@@ -34,7 +35,7 @@ interface UseLoadConversationResult {
 export default function useLoadConversation(
 	config: UseLoadConversationConfig
 ): UseLoadConversationResult {
-	const { apiBaseUrl, authProvider, onLoaded } = config;
+	const { authProvider, onLoaded } = config;
 
 	// Use ref to always have access to the latest onLoaded callback
 	const onLoadedRef = useRef( onLoaded );
@@ -48,7 +49,7 @@ export default function useLoadConversation(
 				sessionId,
 				{
 					botId,
-					apiBaseUrl,
+					apiBaseUrl: API_BASE_URL,
 					authProvider,
 				},
 				10 // max 10 pages

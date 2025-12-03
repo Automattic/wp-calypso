@@ -22,7 +22,6 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../../constants';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useLoadConversation from '../../hooks/use-load-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -118,7 +117,6 @@ export default function AgentDock( {
 
 	// Hook that handles fetching conversation history from the server
 	const { loadConversation, isLoading: isLoadingConversation } = useLoadConversation( {
-		apiBaseUrl: API_BASE_URL,
 		authProvider: agentConfig.authProvider,
 		onLoaded,
 	} );
