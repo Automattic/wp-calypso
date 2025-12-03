@@ -3,14 +3,13 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { __experimentalHStack as HStack, Button, FormToggle } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import {
 	useRecordSiteUnsubscribed,
-	useRecordSiteResubscribed,
 	useRecordSiteIconClicked,
 	useRecordSiteTitleClicked,
 	useRecordSiteUrlClicked,
@@ -20,10 +19,9 @@ import {
 	useRecordPostEmailsSetFrequency,
 	useRecordRecommendToggle,
 	SOURCE_SUBSCRIPTIONS_SITE_LIST,
-	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from 'calypso/landing/subscriptions/tracks';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { useSubscriptionManagerContext } from '../subscription-manager-context';
@@ -73,14 +71,6 @@ type SiteRowProps = Reader.SiteSubscriptionsResponseItem & {
 	forwardedRef?: React.Ref< HTMLDivElement >;
 };
 
-const scrollToFirstRow = () => {
-	const firstRow = document.querySelector( '.site-subscriptions-list li.site-subscription-row' );
-
-	if ( firstRow ) {
-		firstRow.scrollIntoView( { block: 'center' } );
-	}
-};
-
 const siteUnsubscribedNoticeId = 'site-unsubscribed';
 
 const SiteSubscriptionRow = ( {
@@ -97,7 +87,6 @@ const SiteSubscriptionRow = ( {
 	is_gift,
 	isDeleted,
 	is_rss,
-	resubscribed,
 	layout = 'full',
 	style,
 	forwardedRef,
@@ -108,11 +97,7 @@ const SiteSubscriptionRow = ( {
 
 	// Use custom hook for recommended site functionality
 	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( Number( feed_id ) );
-
 	const isCompactLayout = layout === 'compact';
-
-	const unsubscribeInProgress = useRef( false );
-	const resubscribePending = useRef( false );
 
 	const hostname = useMemo( () => {
 		try {
@@ -137,7 +122,6 @@ const SiteSubscriptionRow = ( {
 		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 	const { mutate: unsubscribe, isPending: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
-	const { mutate: resubscribe } = SubscriptionManager.useSiteSubscribeMutation();
 
 	// Tracks events recording
 	const recordSiteIconClicked = useRecordSiteIconClicked();
@@ -148,65 +132,32 @@ const SiteSubscriptionRow = ( {
 	const recordCommentEmailsToggle = useRecordCommentEmailsToggle();
 	const recordPostEmailsSetFrequency = useRecordPostEmailsSetFrequency();
 	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
-	const recordSiteResubscribed = useRecordSiteResubscribed();
 	const recordRecommendToggle = useRecordRecommendToggle();
 
-	const unsubscribeCallback = () => {
-		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
-		dispatch(
-			successNotice(
-				translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
-				{
-					id: siteUnsubscribedNoticeId,
-					button: translate( 'Resubscribe' ),
-					duration: 5000,
-					onClick: () => {
-						if ( unsubscribeInProgress.current ) {
-							resubscribePending.current = true;
-						} else {
-							resubscribe( { blog_id, url, resubscribed: true } );
-							dispatch( removeNotice( siteUnsubscribedNoticeId ) );
-							scrollToFirstRow();
-
-							recordSiteResubscribed( {
-								blog_id,
-								url,
-								source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
-							} );
-						}
-					},
-				}
-			)
-		);
-	};
-
 	const onUnsubscribe = () => {
-		unsubscribeInProgress.current = true;
-		unsubscribeCallback();
-		unsubscribe( {
-			blog_id,
-			subscriptionId: Number( subscriptionId ),
-			url,
-			doNotInvalidateSiteSubscriptions: true,
-			onSuccess: () => {
-				unsubscribeInProgress.current = false;
-
-				if ( resubscribePending.current ) {
-					resubscribePending.current = false;
-					resubscribe( {
-						blog_id,
-						url,
-						doNotInvalidateSiteSubscriptions: true,
-						resubscribed: true,
-					} );
-					recordSiteResubscribed( {
-						blog_id,
-						url,
-						source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
-					} );
-				}
+		unsubscribe(
+			{
+				blog_id,
+				subscriptionId: Number( subscriptionId ),
+				url,
+				doNotInvalidateSiteSubscriptions: true,
 			},
-		} );
+			{
+				onSuccess: () => {
+					recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
+					dispatch(
+						successNotice(
+							translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
+							{
+								id: siteUnsubscribedNoticeId,
+								button: translate( 'Resubscribe' ),
+								duration: 5000,
+							}
+						)
+					);
+				},
+			}
+		);
 	};
 
 	const { isReaderPortal, isSubscriptionsPortal } = useSubscriptionManagerContext();
@@ -220,11 +171,6 @@ const SiteSubscriptionRow = ( {
 				return feedUrl;
 			}
 
-			if ( resubscribed ) {
-				// If the site was resubscribed, the id of the optmistic update is not the same as the id of the new subscription
-				return `/reader/site/subscription/${ blog_id }`;
-			}
-
 			return `/reader/subscriptions/${ subscriptionId }`;
 		}
 
@@ -235,7 +181,7 @@ const SiteSubscriptionRow = ( {
 			}
 			return `/subscriptions/site/${ blog_id }`;
 		}
-	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal, resubscribed, subscriptionId ] );
+	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal, subscriptionId ] );
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings
