@@ -114,6 +114,19 @@ class MasterbarLoggedOut extends Component {
 		);
 	}
 
+	renderHelpCenter() {
+		const { siteId, translate } = this.props;
+
+		return (
+			<AsyncLoad
+				require="./masterbar-help-center"
+				siteId={ siteId }
+				tooltip={ translate( 'Help' ) }
+				placeholder={ null }
+			/>
+		);
+	}
+
 	renderSignupItem() {
 		const { currentQuery, currentRoute, locale, sectionName, translate } = this.props;
 
@@ -243,6 +256,7 @@ class MasterbarLoggedOut extends Component {
 				) }
 				{ sectionName !== 'reader' && (
 					<div className="masterbar__login-links">
+						{ this.renderHelpCenter() }
 						{ this.renderLoginItem() }
 						{ this.renderSignupItem() }
 					</div>
