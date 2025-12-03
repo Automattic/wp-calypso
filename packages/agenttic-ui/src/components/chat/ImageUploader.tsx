@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
+import { useAgentUIContext } from '../../context/AgentUIContext';
 import styles from './ImageUploader.module.css';
 
 export interface UploadedImage {
@@ -25,6 +26,7 @@ export interface ImageUploaderProps {
 	onFilesSelected: ( files: File[] ) => void | Promise< void >;
 	onBrowse?: ( files: File[] ) => void | Promise< void >; // Separate callback for browse/click
 	onDrop?: ( files: File[] ) => void | Promise< void >; // Separate callback for drag/drop
+	onPaste?: ( files: File[] ) => void | Promise< void >; // Separate callback for clipboard paste
 	onRemoveImage: ( image: UploadedImage ) => void;
 
 	// Drag callbacks
@@ -128,6 +130,7 @@ export function ImageUploader( {
 	onFilesSelected,
 	onBrowse,
 	onDrop,
+	onPaste,
 	onRemoveImage,
 	onImageDragStart,
 	onImageDragEnd,
@@ -141,6 +144,7 @@ export function ImageUploader( {
 	onError,
 	visible = true,
 }: ImageUploaderProps ) {
+	const { textareaRef } = useAgentUIContext();
 	const [ isDraggingOver, setIsDraggingOver ] = useState( false );
 	const [ isDraggingFile, setIsDraggingFile ] = useState( false );
 	const [ showInvalidFileMessage, setShowInvalidFileMessage ] =
@@ -268,6 +272,64 @@ export function ImageUploader( {
 		},
 		[ onFilesSelected, acceptedFileTypes, maxFiles, onError ]
 	);
+
+	// Store handleFiles in a ref so the paste handler always has the latest version
+	const handleFilesRef = useRef( handleFiles );
+	useEffect( () => {
+		handleFilesRef.current = handleFiles;
+	}, [ handleFiles ] );
+
+	// Handle clipboard paste events
+	useEffect( () => {
+		const handlePaste = ( e: ClipboardEvent ) => {
+			// Check if the input is focused before processing paste
+			// Check both activeElement and event target to handle edge cases
+			const isTextareaFocused =
+				textareaRef.current &&
+				document.activeElement === textareaRef.current;
+			const isPasteTargetTextarea =
+				textareaRef.current &&
+				e.target &&
+				( e.target === textareaRef.current ||
+					textareaRef.current.contains( e.target as Node ) );
+
+			if ( ! isTextareaFocused && ! isPasteTargetTextarea ) {
+				return; // Don't handle paste if input is not focused and paste target is not textarea
+			}
+
+			// Check if there are files in the clipboard
+			const items = e.clipboardData?.items;
+			if ( ! items ) {
+				return;
+			}
+
+			const imageFiles: File[] = [];
+
+			// Extract image files from clipboard items
+			for ( let i = 0; i < items.length; i++ ) {
+				const item = items[ i ];
+				if ( item.type.startsWith( 'image/' ) ) {
+					const file = item.getAsFile();
+					if ( file ) {
+						imageFiles.push( file );
+					}
+				}
+			}
+
+			if ( imageFiles.length > 0 ) {
+				e.preventDefault();
+				handleFilesRef.current( imageFiles );
+				// Call the specific onPaste callback if provided
+				onPaste?.( imageFiles );
+			}
+		};
+
+		window.addEventListener( 'paste', handlePaste );
+
+		return () => {
+			window.removeEventListener( 'paste', handlePaste );
+		};
+	}, [ onPaste ] );
 
 	const handleDragOver = ( e: React.DragEvent ) => {
 		e.preventDefault();
