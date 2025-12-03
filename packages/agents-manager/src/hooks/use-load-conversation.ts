@@ -40,7 +40,7 @@ export default function useLoadConversation(
 	const onLoadedRef = useRef( onLoaded );
 	onLoadedRef.current = onLoaded;
 
-	const mutation = useMutation( {
+	const { mutate, isPending, error } = useMutation( {
 		mutationFn: async ( { sessionId, botId }: LoadConversationParams ) => {
 			// Load all messages from the conversation by session_id
 			// Note: tool_call and tool_result messages are filtered out in serverChatToLoadResult
@@ -68,8 +68,8 @@ export default function useLoadConversation(
 	} );
 
 	return {
-		loadConversation: mutation.mutate,
-		isLoading: mutation.isPending,
-		error: mutation.error,
+		loadConversation: mutate,
+		isLoading: isPending,
+		error: error,
 	};
 }
