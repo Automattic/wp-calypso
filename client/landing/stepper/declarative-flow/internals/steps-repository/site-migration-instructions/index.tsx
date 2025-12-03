@@ -16,6 +16,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
+import { CharsetWarning } from './charset-warning';
 import { HostingBadge } from './hosting-badge';
 import { MigrationInstructions } from './migration-instructions';
 import { ProvisionStatus } from './provision-status';
@@ -24,6 +25,7 @@ import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
 import { SupportNudge } from './support-nudge';
 import type { Step as StepType } from '../../types';
+
 import './style.scss';
 
 interface PreparationEventsHookOptions {
@@ -183,8 +185,12 @@ const SiteMigrationInstructions: StepType< {
 		/>
 	);
 
+	// Get the destination site's database charset
+	const dbCharset = site?.options?.db_charset;
+
 	const migrationInstructions = (
 		<MigrationInstructions withPreview={ withPreview } isContainerV2 progress={ progressCircle }>
+			<CharsetWarning dbCharset={ dbCharset } />
 			<div className="site-migration-instructions__steps">
 				<Steps steps={ steps } />
 			</div>

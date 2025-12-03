@@ -2,12 +2,14 @@ import {
 	deleteSiteMigrationPendingStatusQuery,
 	siteMigrationKeyQuery,
 } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
+	ExternalLink,
 	Modal,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -18,12 +20,17 @@ import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
+import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
 import { getSiteMigrationState } from '../../utils/site-status';
 import { HostingCards } from './hosting-cards';
 import type { MigrationStatus } from '../../utils/site-status';
 import type { Site } from '@automattic/api-core';
+
+const LATIN1_CHARSET = 'latin1';
+const SUPPORT_URL = 'https://wordpress.com/support/help-support-options/#how-to-contact-us';
+const CODEX_URL = 'https://codex.wordpress.org/Converting_Database_Character_Sets';
 
 const getContinueMigrationUrl = ( site: Site ): string | null => {
 	const migrationState = getSiteMigrationState( site );
@@ -115,6 +122,10 @@ export function PendingContentInfo( {
 	const [ isCancellationModalOpen, setIsCancellationModalOpen ] = useState( false );
 	const continueMigrationUrl = getContinueMigrationUrl( site );
 
+	// Check if the destination site has Latin1 charset
+	const dbCharset = site.options?.db_charset;
+	const isLatin1 = dbCharset?.toLowerCase() === LATIN1_CHARSET;
+
 	if ( isLoading ) {
 		return null;
 	}
@@ -137,6 +148,19 @@ export function PendingContentInfo( {
 							: __( 'Start your migration today and get ready for unmatched WordPress hosting.' )
 					}
 				/>
+				{ isLatin1 && (
+					<Notice variant="warning" title={ __( 'Database encoding mismatch' ) }>
+						{ createInterpolateElement(
+							__(
+								"Your WordPress.com site's database is encoded in Latin1. If your source site uses a different encoding (most sites use UTF-8), your migration may run into errors with special characters. To resolve this, you can <supportLink>contact support</supportLink> to have us convert your destination site to UTF-8, or <codexLink>convert your source site to Latin1</codexLink> before migrating."
+							),
+							{
+								supportLink: <ExternalLink href={ localizeUrl( SUPPORT_URL ) } />,
+								codexLink: <ExternalLink href={ localizeUrl( CODEX_URL ) } />,
+							}
+						) }
+					</Notice>
+				) }
 				{ continueMigrationUrl && (
 					<HStack justify="flex-start">
 						<ButtonStack justify="flex-start" expanded={ false }>

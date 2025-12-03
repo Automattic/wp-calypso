@@ -233,6 +233,7 @@ export interface SiteDetailsOptions {
 	background_color?: boolean;
 	blog_public?: number;
 	created_at?: string;
+	db_charset?: string;
 	default_category?: number;
 	default_comment_status?: boolean;
 	default_likes_enabled?: boolean;

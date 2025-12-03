@@ -248,4 +248,32 @@ describe( 'SiteMigrationInstructions', () => {
 			);
 		} );
 	} );
+
+	describe( 'CharsetWarning', () => {
+		it( 'should render charset warning when site has latin1 charset', async () => {
+			( useSite as jest.Mock ).mockReturnValue( {
+				ID: 123,
+				options: {
+					db_charset: 'latin1',
+				},
+			} );
+
+			const { queryByText } = render();
+
+			expect( queryByText( /Heads up!/i ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not render charset warning when site has utf8 charset', async () => {
+			( useSite as jest.Mock ).mockReturnValue( {
+				ID: 123,
+				options: {
+					db_charset: 'utf8',
+				},
+			} );
+
+			const { queryByText } = render();
+
+			expect( queryByText( /Heads up!/i ) ).not.toBeInTheDocument();
+		} );
+	} );
 } );
