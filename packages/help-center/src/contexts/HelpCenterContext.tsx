@@ -2,8 +2,20 @@ import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/cons
 import { useContext, createContext } from '@wordpress/element';
 import { useNewInteractionsBotConfig } from '../hooks/use-new-interaction-bot-config';
 import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
+import type { SubmitOptions } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
+
+/**
+ * Navigation continuation hook type - provided by plugins that support
+ * navigation with conversation continuation (e.g., Big Sky's wp-admin/navigate)
+ */
+export type NavigationContinuationHook = ( props: {
+	isProcessing: boolean;
+	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
+	sessionId: string;
+	agentId: string;
+} ) => void;
 
 export type HelpCenterRequiredInformation = {
 	newInteractionsBotSlug: string;
@@ -42,6 +54,11 @@ export type HelpCenterRequiredInformation = {
 	 * Custom markdown extensions (optional)
 	 */
 	markdownExtensions?: MarkdownExtensions;
+	/**
+	 * Navigation continuation hook (optional)
+	 * Provided by plugins that support navigation with conversation continuation
+	 */
+	useNavigationContinuation?: NavigationContinuationHook;
 	source: '' | 'wpcom' | 'a4a';
 };
 

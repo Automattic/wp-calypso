@@ -45,6 +45,7 @@ const HelpCenter: React.FC< Container > = ( {
 		suggestions,
 		markdownComponents,
 		markdownExtensions,
+		useNavigationContinuation,
 	} = useHelpCenterContext();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
@@ -93,6 +94,7 @@ const HelpCenter: React.FC< Container > = ( {
 				emptyViewSuggestions={ suggestions }
 				markdownComponents={ markdownComponents }
 				markdownExtensions={ markdownExtensions }
+				useNavigationContinuation={ useNavigationContinuation }
 			/>
 		);
 	}

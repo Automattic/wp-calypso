@@ -238,6 +238,7 @@ if ( helpCenterData.isNextAdmin ) {
 					suggestions,
 					markdownComponents,
 					markdownExtensions,
+					useNavigationContinuation,
 				} = await loadExternalProviders();
 
 				createRoot( container ).render(
@@ -256,6 +257,7 @@ if ( helpCenterData.isNextAdmin ) {
 							suggestions={ suggestions }
 							markdownComponents={ markdownComponents }
 							markdownExtensions={ markdownExtensions }
+							useNavigationContinuation={ useNavigationContinuation }
 							{ ...botProps }
 						/>
 					</QueryClientProvider>,

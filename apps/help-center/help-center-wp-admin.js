@@ -17,6 +17,7 @@ function AdminHelpCenterContent( {
 	suggestions,
 	markdownComponents,
 	markdownExtensions,
+	useNavigationContinuation,
 } ) {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDataStoreDispatch( 'automattic/help-center' );
@@ -231,6 +232,7 @@ function AdminHelpCenterContent( {
 			suggestions={ suggestions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
+			useNavigationContinuation={ useNavigationContinuation }
 			{ ...botProps }
 		/>
 	);
@@ -240,7 +242,14 @@ const target = document.getElementById( 'help-center-masterbar' );
 if ( target ) {
 	// Load external providers (e.g., from Big Sky plugin) and render
 	loadExternalProviders().then(
-		( { toolProvider, contextProvider, suggestions, markdownComponents, markdownExtensions } ) => {
+		( {
+			toolProvider,
+			contextProvider,
+			suggestions,
+			markdownComponents,
+			markdownExtensions,
+			useNavigationContinuation,
+		} ) => {
 			createRoot( target ).render(
 				<QueryClientProvider client={ queryClient }>
 					<AdminHelpCenterContent
@@ -249,6 +258,7 @@ if ( target ) {
 						suggestions={ suggestions }
 						markdownComponents={ markdownComponents }
 						markdownExtensions={ markdownExtensions }
+						useNavigationContinuation={ useNavigationContinuation }
 					/>
 				</QueryClientProvider>
 			);

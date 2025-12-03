@@ -14,9 +14,24 @@ import { lastConversationCache } from '../../utils/conversation-cache';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
-import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
+import type {
+	UseAgentChatConfig,
+	Ability as AgenticAbility,
+	SubmitOptions,
+} from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
 import type { HelpCenterSite, CurrentUser } from '@automattic/data-stores';
+
+/**
+ * Navigation continuation hook type - provided by environments that need
+ * navigation with conversation continuation (e.g wp-admin/navigate)
+ */
+type NavigationContinuationHook = ( props: {
+	isProcessing: boolean;
+	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
+	sessionId: string;
+	agentId: string;
+} ) => void;
 
 export interface UnifiedAIAgentProps {
 	/** The current route path. */
@@ -39,6 +54,8 @@ export interface UnifiedAIAgentProps {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
+	/** Navigation continuation hook for post-navigation conversation resumption. */
+	useNavigationContinuation?: NavigationContinuationHook;
 }
 
 /**
@@ -91,6 +108,7 @@ function AgentSetup( {
 	emptyViewSuggestions: customSuggestions,
 	markdownComponents = {},
 	markdownExtensions = {},
+	useNavigationContinuation,
 }: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const { state } = useLocation();
@@ -229,6 +247,7 @@ function AgentSetup( {
 			emptyViewSuggestions={ customSuggestions || defaultSuggestions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
+			useNavigationContinuation={ useNavigationContinuation }
 		/>
 	);
 }

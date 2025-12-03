@@ -6,10 +6,23 @@
  */
 
 import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
+import type { SubmitOptions } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
 // agentsManagerData is set as a global const via wp_add_inline_script
 declare const agentsManagerData: { agentProviders?: string[] } | undefined;
+
+/**
+ * Navigation continuation hook type - provided by environments that support
+ * navigation with conversation continuation (e.g., wp-admin/navigate)
+ * This is needed to send a follow-up after full page reloads in wp-admin
+ */
+export type NavigationContinuationHook = ( props: {
+	isProcessing: boolean;
+	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
+	sessionId: string;
+	agentId: string;
+} ) => void;
 
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
@@ -17,6 +30,7 @@ export interface LoadedProviders {
 	suggestions?: Suggestion[];
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
+	useNavigationContinuation?: NavigationContinuationHook;
 }
 
 /**
@@ -38,6 +52,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedSuggestions: Suggestion[] | undefined;
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
+	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -60,6 +75,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.markdownExtensions ) {
 				mergedMarkdownExtensions = module.markdownExtensions;
 			}
+			if ( module.useNavigationContinuation ) {
+				mergedNavigationContinuation = module.useNavigationContinuation;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[HelpCenter] Loaded provider "${ moduleId }"` );
@@ -75,5 +93,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		suggestions: mergedSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
+		useNavigationContinuation: mergedNavigationContinuation,
 	};
 }
