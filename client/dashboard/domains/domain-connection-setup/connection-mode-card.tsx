@@ -10,7 +10,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import Notice from '../../components/notice';
@@ -87,11 +87,35 @@ export default function ConnectionModeCard( {
 		} );
 	};
 
+	const handleModeClick = useCallback( () => {
+		onModeChange( mode );
+	}, [ mode, onModeChange ] );
+
+	const handleKeyDown = useCallback(
+		( event: React.KeyboardEvent< HTMLDivElement > ) => {
+			if ( event.key === 'Enter' || event.key === ' ' ) {
+				event.preventDefault();
+				handleModeClick();
+			}
+		},
+		[ handleModeClick ]
+	);
+
 	return (
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<HStack spacing={ 2 } justify="flex-start">
+					<HStack
+						spacing={ 2 }
+						justify="flex-start"
+						role="radio"
+						tabIndex={ 0 }
+						onClick={ handleModeClick }
+						onKeyDown={ handleKeyDown }
+						aria-checked={ isSelected }
+						aria-label={ `${ title }. ${ description }` }
+						style={ { cursor: 'pointer' } }
+					>
 						<RadioControl
 							selected={ selectedMode }
 							options={ [ { label: '', value: mode } ] }
