@@ -26,6 +26,9 @@
 	&.align-right {
 		text-align: right;
 	}
+	.full-width-section & {
+		font-size: rem(40px);
+	}
 }
 
 .plugin-details-cta__price-placeholder {

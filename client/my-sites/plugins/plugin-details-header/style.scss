@@ -61,11 +61,21 @@ $block-spacing: 24px;
 	overflow-wrap: anywhere;
 	line-height: 40px;
 	color: var(--studio-gray-100);
+
+	.full-width-section & {
+		font-size: rem(40px);
+	}
 }
 
 .plugin-details-header__author {
 	font-size: $font-body;
 	color: var(--studio-gray-60);
+
+	.full-width-section & {
+		a {
+			text-decoration: none;
+		}
+	}
 }
 
 .plugin-details-header__subtitle-separator {
@@ -103,6 +113,10 @@ $block-spacing: 24px;
 		font-size: $font-body-extra-small;
 		font-weight: 400;
 		color: var(--studio-gray-60);
+
+		.full-width-section & {
+			text-transform: uppercase;
+		}
 	}
 
 	.plugin-details-header__info-value {

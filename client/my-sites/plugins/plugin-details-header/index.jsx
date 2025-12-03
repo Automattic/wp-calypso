@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Badge, Button } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
@@ -96,7 +97,11 @@ const PluginDetailsHeader = ( {
 	return (
 		<div className="plugin-details-header__container">
 			<div className="plugin-details-header__main-info">
-				<PluginIcon className="plugin-details-header__icon" image={ plugin.icon } />
+				<PluginIcon
+					className="plugin-details-header__icon"
+					image={ plugin.icon }
+					size={ isEnabled( 'marketplace-redesign' ) ? 80 : undefined }
+				/>
 				<div className="plugin-details-header__title-container">
 					<h1 className="plugin-details-header__name">{ plugin.name }</h1>
 					<div className="plugin-details-header__subtitle">
