@@ -1,10 +1,10 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
 import React, { useState } from 'react';
+import NotFound from '../../app/404';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { Card, CardBody } from '../../components/card';
@@ -74,7 +74,7 @@ export default function SettingsTransferSite( {
 	};
 
 	if ( ! canTransferSite( site, user ) ) {
-		throw notFound();
+		return <NotFound />;
 	}
 
 	if ( confirmationHash ) {

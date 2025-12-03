@@ -1,7 +1,7 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import NotFound from '../../app/404';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -18,7 +18,7 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 	}
 
 	if ( ! canViewHundredYearPlanSettings( site ) ) {
-		throw notFound();
+		return <NotFound />;
 	}
 
 	return (
