@@ -257,7 +257,7 @@ export const ResurrectedWelcomeModalGate = ( {
 						className={ clsx( 'resurrected-welcome-modal__close', {
 							'resurrected-welcome-modal__close--light': hasDarkHero,
 						} ) }
-						onClick={ persistDismissal }
+						onClick={ () => persistDismissal( 'close' ) }
 						aria-label={ translate( 'Close welcome back modal' ) }
 					>
 						<Icon icon={ close } size={ 20 } />
