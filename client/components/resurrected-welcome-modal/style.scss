@@ -57,7 +57,7 @@
 .resurrected-welcome-modal__hero {
 	position: relative;
 	width: 100%;
-	aspect-ratio: 588 / 370;
+	aspect-ratio: 1175 / 740;
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
 	background-position: top center;
@@ -79,6 +79,15 @@
 	justify-content: center;
 	color: var( --color-text, #101517 );
 	cursor: pointer;
+}
+
+.resurrected-welcome-modal__close--light {
+	color: #fff;
+}
+
+.resurrected-welcome-modal__close--light svg {
+	fill: currentColor;
+	stroke: currentColor;
 }
 
 .resurrected-welcome-modal__content {

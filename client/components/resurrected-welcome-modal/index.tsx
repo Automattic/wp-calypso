@@ -155,6 +155,10 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 	const variationClassName = variationName
 		? `resurrected-welcome-modal--${ variationName.replace( /_/g, '-' ) }`
 		: null;
+	const hasDarkHero =
+		variationName === WELCOME_BACK_VARIATIONS.MANUAL ||
+		variationName === WELCOME_BACK_VARIATIONS.AI_ONBOARDING ||
+		variationName === WELCOME_BACK_VARIATIONS.ALL_OPTIONS;
 
 	const shouldDisplay =
 		! eligibility.isLoading &&
@@ -238,7 +242,9 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 				<div className="resurrected-welcome-modal__hero">
 					<button
 						type="button"
-						className="resurrected-welcome-modal__close"
+						className={ clsx( 'resurrected-welcome-modal__close', {
+							'resurrected-welcome-modal__close--light': hasDarkHero,
+						} ) }
 						onClick={ persistDismissal }
 						aria-label={ translate( 'Close welcome back modal' ) }
 					>
