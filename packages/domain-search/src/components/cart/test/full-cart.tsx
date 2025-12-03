@@ -64,7 +64,7 @@ describe( 'FullCart', () => {
 				</TestDomainSearchWithCart>
 			);
 
-			expect( await screen.findByLabelText( 'Sale price: $10/year' ) ).toBeInTheDocument();
+			expect( await screen.findByLabelText( 'Sale price: $10' ) ).toBeInTheDocument();
 			expect( screen.queryByLabelText( /Price/ ) ).not.toBeInTheDocument();
 		} );
 
@@ -80,7 +80,7 @@ describe( 'FullCart', () => {
 				</TestDomainSearchWithCart>
 			);
 
-			expect( await screen.findByLabelText( 'Price: $20/year' ) ).toBeInTheDocument();
+			expect( await screen.findByLabelText( 'Price: $20' ) ).toBeInTheDocument();
 			expect( screen.queryByLabelText( /Original price/ ) ).not.toBeInTheDocument();
 			expect( screen.queryByLabelText( /Sale price/ ) ).not.toBeInTheDocument();
 		} );
