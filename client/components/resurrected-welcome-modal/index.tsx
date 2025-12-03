@@ -58,7 +58,7 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 		getTitle: ( translate ) => translate( 'Welcome back!' ),
 		getDescription: ( translate ) =>
 			translate(
-				'Ready to explore our latest upgrades? All paid plans now include access to new themes and plugins. Pick up where you left off or start fresh with our latest tools.'
+				'Ready to explore our latest upgrades? All paid plans now include access to new themes and plugins.'
 			),
 		ctas: [
 			{
@@ -79,7 +79,7 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 		getTitle: ( translate ) => translate( 'Welcome back!' ),
 		getDescription: ( translate ) =>
 			translate(
-				'Ready to explore our latest upgrades? Check our AI website builder, new themes and plugins. Pick up where you left off or start fresh with our latest tools.'
+				'Ready to explore our latest upgrades? Check out our AI website builder, new themes and plugins.'
 			),
 		ctas: [
 			{
@@ -101,7 +101,7 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 		getTitle: ( translate ) => translate( 'Welcome back!' ),
 		getDescription: ( translate ) =>
 			translate(
-				'Ready to explore our latest upgrades? Check our AI website builder, new themes and plugins. Pick up where you left off or start fresh with our latest tools.'
+				'Ready to explore our latest upgrades? Check out our AI website builder, new themes and plugins.'
 			),
 		ctas: [
 			{
