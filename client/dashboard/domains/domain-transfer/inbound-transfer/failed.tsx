@@ -1,3 +1,5 @@
+import { domainInboundTransferStatusQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { cancelCircleFilled } from '@wordpress/icons';
@@ -9,6 +11,9 @@ import { InboundTransferStep } from './transfer-step';
 
 export const InboundTransferFailed = ( { domainName }: { domainName: string } ) => {
 	const { name: appName } = useAppContext();
+	const { data: domainInboundTransferStatus } = useQuery(
+		domainInboundTransferStatusQuery( domainName )
+	);
 
 	return (
 		<InboundTransferStep
@@ -48,8 +53,15 @@ export const InboundTransferFailed = ( { domainName }: { domainName: string } ) 
 						</li>
 					</ul>
 					<Text>
-						{ __(
-							'Restart the transfer, or contact GoDaddy to reactivate your domain and try again.'
+						{ sprintf(
+							// translators: %(registrar)s is the domain name provider
+							__(
+								'Restart the transfer, or contact %(registrar)s to reactivate your domain and try again.'
+							),
+							{
+								registrar:
+									domainInboundTransferStatus?.registrar ?? __( 'your domain name provider' ),
+							}
 						) }
 					</Text>
 				</VStack>
