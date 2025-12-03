@@ -22,7 +22,7 @@ export const useUpcomingEvents = () => {
 				subtitle: translate( 'Automattic for Agencies' ),
 				descriptions: [
 					translate(
-						"We invite you to share your input in our short Automattic for Agencies Partner Survey. Your feedback will help us better understand your experience with Automattic for Agencies and the products you use across our ecosystem. The survey is anonymous, and your insights will guide how we shape next year's incentives, tools, and product improvements to create more value for your agency and clients."
+						'We invite you to share your input in our short Automattic for Agencies Partner Survey. Your feedback will help us better understand your experience with Automattic for Agencies and the products you use across our ecosystem. The survey is anonymous, and your insights will guide how we shape next year’s incentives, tools, and product improvements to create more value for your agency and clients.'
 					),
 				],
 				cta: {
