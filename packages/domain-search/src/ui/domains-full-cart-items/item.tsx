@@ -59,7 +59,7 @@ export const DomainsFullCartItem = ( {
 										size="small"
 										aria-label={ sprintf(
 											// translators: %(price)s is the sale price of the domain.
-											__( 'Sale price: %(price)s/year' ),
+											__( 'Sale price: %(price)s' ),
 											{ price: domain.salePrice }
 										) }
 									>
@@ -70,15 +70,11 @@ export const DomainsFullCartItem = ( {
 										size="small"
 										aria-label={ sprintf(
 											// translators: %(price)s is the price of the domain.
-											__( 'Price: %(price)s/year' ),
+											__( 'Price: %(price)s' ),
 											{ price: domain.price }
 										) }
 									>
-										{ sprintf(
-											// translators: %(price)s is the price of the domain.
-											__( '%(price)s/year' ),
-											{ price: domain.price }
-										) }
+										{ domain.price }
 									</Text>
 								) }
 							</HStack>
