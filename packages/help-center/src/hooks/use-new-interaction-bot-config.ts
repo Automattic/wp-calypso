@@ -13,7 +13,7 @@ const botSlugMap = {
 		version: undefined, // Get active version
 	},
 	workflow_iteration: {
-		slug: 'wpcom-workflow-support_chat,',
+		slug: 'wpcom-workflow-support_chat',
 		version: '1.1.1', // Workflow iteration version
 	},
 };
