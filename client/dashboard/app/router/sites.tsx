@@ -45,15 +45,11 @@ import {
 	canViewSiteVisibilitySettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
-import {
-	hasHostingFeature,
-	hasPlanFeature,
-	isPlanFeatureAvailable,
-} from '../../utils/site-features';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site } from '@automattic/api-core';
@@ -72,7 +68,7 @@ export const sitesRoute = createRoute( {
 	loader: async ( { context } ) => {
 		// Preload the default sites list response without blocking.
 		if ( ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
-			queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+			queryClient.prefetchQuery( context.config.queries.sitesQuery() );
 		}
 
 		await Promise.all( [
@@ -93,7 +89,13 @@ export const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
 	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		let site;
+		try {
+			site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		} catch ( e ) {
+			// Do nothing and propagate the error through the loader function.
+			return;
+		}
 
 		const overviewUrl = `/sites/${ siteSlug }`;
 		if ( isSelfHostedJetpackConnected( site ) && ! location.pathname.endsWith( overviewUrl ) ) {
@@ -150,19 +152,21 @@ export const siteOverviewRoute = createRoute( {
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
-			Promise.all( [
-				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),
-				queryClient.ensureQueryData( siteLastFiveActivityLogEntriesQuery( site.ID ) ),
-				hasHostingFeature( site, HostingFeatures.SCAN ) &&
-					queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
-				hasHostingFeature( site, HostingFeatures.BACKUPS ) &&
-					queryClient.ensureQueryData( siteLastBackupQuery( site.ID ) ),
-				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
-			] ).then( ( [ currentPlan ] ) => {
-				if ( currentPlan.id ) {
-					queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
-				}
-			} );
+			queryClient.prefetchQuery( siteLastFiveActivityLogEntriesQuery( site.ID ) );
+			if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+				queryClient.prefetchQuery( siteScanQuery( site.ID ) );
+			}
+			if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
+				queryClient.prefetchQuery( siteLastBackupQuery( site.ID ) );
+			}
+			if ( site.is_a4a_dev_site ) {
+				queryClient.prefetchQuery( sitePreviewLinksQuery( site.ID ) );
+			}
+
+			const currentPlan = await queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) );
+			if ( currentPlan.id ) {
+				queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
+			}
 		}
 		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
 		await Promise.all( [
@@ -190,7 +194,7 @@ export const siteDeploymentsRoute = createRoute( {
 	path: 'deployments',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.DEPLOYMENT ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
@@ -207,7 +211,7 @@ export const siteDeploymentsListRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( codeDeploymentsQuery( site.ID ) );
+		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/deployments-list' ).then( ( d ) =>
@@ -229,7 +233,7 @@ export const siteMonitoringRoute = createRoute( {
 	path: 'monitoring',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.MONITOR ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
@@ -253,7 +257,7 @@ export const siteLogsRoute = createRoute( {
 	path: 'logs',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.LOGS ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
@@ -345,7 +349,7 @@ export const siteScanRoute = createRoute( {
 	path: 'scan',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.SCAN ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
@@ -419,7 +423,7 @@ export const siteBackupsRoute = createRoute( {
 	path: 'backups',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.BACKUPS ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
@@ -427,8 +431,8 @@ export const siteBackupsRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries and group counts.
 		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
-			queryClient.ensureQueryData( siteBackupActivityLogGroupCountsQuery( site.ID ) );
+			queryClient.prefetchQuery( siteBackupActivityLogEntriesQuery( site.ID ) );
+			queryClient.prefetchQuery( siteBackupActivityLogGroupCountsQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -545,7 +549,7 @@ export const sitePerformanceRoute = createRoute( {
 	path: 'performance',
 	beforeLoad: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! isPlanFeatureAvailable( site, HostingFeatures.PERFORMANCE ) ) {
+		if ( isCommerceGarden( site ) ) {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
@@ -569,7 +573,7 @@ export const siteSettingsRoute = createRoute( {
 	path: 'settings',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+		queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
 
 		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
 			// This impacts layout so we must wait for this to load
@@ -661,7 +665,7 @@ export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	path: 'subscription-gifting',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+		queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-subscription-gifting' ).then( ( d ) =>
@@ -910,12 +914,12 @@ export const siteSettingsSftpSshRoute = createRoute( {
 	path: 'sftp-ssh',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		return Promise.all( [
-			hasHostingFeature( site, HostingFeatures.SFTP ) &&
-				queryClient.ensureQueryData( siteSftpUsersQuery( site.ID ) ),
-			hasHostingFeature( site, HostingFeatures.SSH ) &&
-				queryClient.ensureQueryData( siteSshAccessStatusQuery( site.ID ) ),
-		] );
+		if ( hasHostingFeature( site, HostingFeatures.SFTP ) ) {
+			queryClient.prefetchQuery( siteSftpUsersQuery( site.ID ) );
+		}
+		if ( hasHostingFeature( site, HostingFeatures.SSH ) ) {
+			queryClient.prefetchQuery( siteSshAccessStatusQuery( site.ID ) );
+		}
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-sftp-ssh' ).then( ( d ) =>
@@ -999,6 +1003,26 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	)
 );
 
+export const siteSettingsExperimentalRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'AI Site Assistant' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'ai-assistant',
+	loader: async ( { params: { siteSlug } } ) => {
+		await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-assistant' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-assistant' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
 export const siteSettingsRepositoriesRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1020,9 +1044,9 @@ export const siteSettingsRepositoriesIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
+		queryClient.prefetchQuery( githubInstallationsQuery() );
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( codeDeploymentsQuery( site.ID ) );
-		queryClient.ensureQueryData( githubInstallationsQuery() );
+		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories' ).then( ( d ) =>
@@ -1043,7 +1067,7 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: 'connect',
 	loader: () => {
-		queryClient.ensureQueryData( githubInstallationsQuery() );
+		queryClient.prefetchQuery( githubInstallationsQuery() );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
@@ -1095,7 +1119,7 @@ export const siteSettingsHolidaySnowRoute = createRoute( {
 	path: 'holiday-snow',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+		queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-holiday-snow' ).then( ( d ) =>
@@ -1367,6 +1391,10 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 					siteSettingsDefensiveModeRoute,
 				]
 			);
+		}
+
+		if ( config.supports.sites.settings.experimental && isEnabled( 'wordpress-ai-assistant' ) ) {
+			settingsRoutes.push( siteSettingsExperimentalRoute );
 		}
 
 		siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );

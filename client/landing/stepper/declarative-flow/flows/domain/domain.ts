@@ -93,7 +93,21 @@ const domain: FlowV2< typeof initialize > = {
 		const defaultRedirect = `/v2/sites/${ siteSlug }/domains`;
 
 		const goToCheckout = ( siteSlug: string ) => {
-			const destination = `/v2/sites/${ siteSlug }/domains`;
+			// Check if cart contains only one domain product and it's a domain connection
+			// Domain connections require a paid plan. When purchased with a plan, after checkout
+			// completes, we redirect to the domain connection setup page instead of the generic
+			// domains page to guide users through the connection process.
+			const hasOnlyDomainConnection =
+				domainCartItems && domainCartItems.length === 1 && isDomainMapping( domainCartItems[ 0 ] );
+
+			let destination = `/v2/sites/${ siteSlug }/domains`;
+
+			if ( hasOnlyDomainConnection ) {
+				const domain = domainCartItems[ 0 ].meta;
+				if ( domain ) {
+					destination = `/v2/domains/${ domain }/domain-connection-setup`;
+				}
+			}
 
 			// replace the location to delete processing step from history.
 			return window.location.replace(
@@ -153,6 +167,22 @@ const domain: FlowV2< typeof initialize > = {
 						} )
 					);
 				case STEPS.USE_MY_DOMAIN.slug:
+					// Handle ownership verification completed
+					if (
+						providedDependencies &&
+						'ownershipVerificationCompleted' in providedDependencies &&
+						providedDependencies.ownershipVerificationCompleted &&
+						'domain' in providedDependencies
+					) {
+						const queryArgs = getQueryArgs( window.location.href );
+						const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
+							| string
+							| undefined;
+						window.location.href = domainConnectionSetupUrl
+							? domainConnectionSetupUrl.replace( '%s', providedDependencies.domain )
+							: defaultRedirect;
+					}
+
 					if (
 						providedDependencies &&
 						'mode' in providedDependencies &&
@@ -189,20 +219,22 @@ const domain: FlowV2< typeof initialize > = {
 						const mappingIsFree = hasPlanFeature( site, DotcomFeatures.DOMAIN_MAPPING );
 						const hasPaidPlan = siteHasPaidPlan( site );
 
-						if ( ( isDomainMapping && mappingIsFree ) || hasPaidPlan ) {
+						if ( isDomainMapping && ( mappingIsFree || hasPaidPlan ) ) {
 							const queryArgs = getQueryArgs( window.location.href );
-							const redirectTo = queryArgs.redirect_to as string | undefined;
+							const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
+								| string
+								| undefined;
+							const domain = providedDependencies.domainCartItem.meta;
 
 							// Use pending action for domain mapping
 							// Note: Verification (if required) is handled in the step before submission
 							setPendingAction( async () => {
-								const domain = providedDependencies.domainCartItem.meta;
-
 								await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
-
-								/// Redirect to appropriate domains page based on redirect_to parameter
-								const redirectUrl = redirectTo || `/domains/manage/${ siteSlug }`;
-
+								/// Redirect to appropriate domains page
+								const redirectUrl =
+									domainConnectionSetupUrl && domain
+										? domainConnectionSetupUrl.replace( '%s', domain )
+										: defaultRedirect;
 								return {
 									redirectTo: redirectUrl,
 								};

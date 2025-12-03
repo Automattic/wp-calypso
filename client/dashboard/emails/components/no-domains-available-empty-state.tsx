@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
+import { DataViewsEmptyState } from '../../components/dataviews';
 import DomainEmptyIllustration from '../resources/domain-empty-illustration';
 
 const NoDomainsAvailableEmptyState = () => {

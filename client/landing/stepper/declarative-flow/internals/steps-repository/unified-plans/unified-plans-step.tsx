@@ -398,14 +398,21 @@ function UnifiedPlansStep( {
 		}
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate( 'The right plan for the right project' );
+			return translate( 'Host with the best' );
 		}
 
 		if ( intent === 'plans-wordpress-hosting' ) {
 			return translate( 'Managed hosting without limits' );
-		} else if ( intent === 'plans-website-builder' ) {
+		}
+
+		if ( intent === 'plans-website-builder' ) {
 			return translate( 'Create a beautiful WordPress website' );
 		}
+
+		if ( intent === 'plans-woo-hosted' ) {
+			return translate( 'Select a plan to launch your store' );
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -443,7 +450,7 @@ function UnifiedPlansStep( {
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
 			return translate(
-				'Get the advanced features you need without ever thinking about overages.'
+				'Create a site with WordPress.com, and get all the power of lightning-fast, secure, and managed WordPress hosting.'
 			);
 		}
 
@@ -453,6 +460,10 @@ function UnifiedPlansStep( {
 
 		if ( intent === 'plans-website-builder' ) {
 			return null; // Use PlansFeaturesMain subheader for website-builder
+		}
+
+		if ( intent === 'plans-woo-hosted' ) {
+			return translate( 'Your free trial ends soon - select a plan to keep your online store.' );
 		}
 
 		if ( useEmailOnboardingSubheader ) {

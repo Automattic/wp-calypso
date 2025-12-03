@@ -56,7 +56,7 @@ export default function OptionContentV2( {
 				}
 				decoration={ illustration }
 				onClick={ onSelect }
-				disabled={ disabled || isPlaceholder }
+				disabled={ disabled || isPlaceholder || ! onSelect }
 				badges={ recommended ? [ { text: __( 'Recommended' ), intent: 'success' } ] : undefined }
 			/>
 			{ benefits && (

@@ -1,4 +1,6 @@
+import calypsoConfig from '@automattic/calypso-config';
 import { Router, createRoute, redirect } from '@tanstack/react-router';
+import { logToLogstash } from 'calypso/lib/logstash';
 import NotFound from '../404';
 import UnknownError from '../500';
 import { createDomainsRoutes } from './domains';
@@ -8,6 +10,7 @@ import { createPluginsRoutes } from './plugins';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
 import type { AppConfig } from '../context';
+import type { ErrorInfo } from 'react';
 
 interface RouteContext {
 	config?: AppConfig;
@@ -61,6 +64,21 @@ export const getRouter = ( config: AppConfig ) => {
 		},
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,
+		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: error.message,
+				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
+				tags: [ 'dashboard' ],
+				properties: {
+					dashboard_backport: false,
+					env: calypsoConfig( 'env_id' ),
+					message: error.message,
+					stack: errorInfo.componentStack,
+					path: window.location.href,
+				},
+			} );
+		},
 		defaultPreload: 'intent',
 		defaultPreloadStaleTime: 0,
 		// Calling document.startViewTransition() ourselves is really tricky,

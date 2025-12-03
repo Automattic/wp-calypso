@@ -13,6 +13,7 @@ import { translate } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import moment from 'moment';
 import memoizeLast from 'calypso/lib/memoize-last';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { rangeOfPeriod } from 'calypso/state/stats/lists/utils';
 import { parseLocalDate } from '../utils';
 
@@ -50,9 +51,9 @@ export function formatDate( date, period, chartStart = null, chartEnd = null ) {
 	}
 }
 
-export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
-	const momentSiteZone = moment().utcOffset( timezoneOffset );
-	const endOfPeriodDate = rangeOfPeriod( period, momentSiteZone.locale( 'en' ) ).endOf;
+export function getQueryDate( queryDate, state, siteId, period, quantity ) {
+	const momentSiteZone = getMomentSiteZone( state, siteId );
+	const endOfPeriodDate = rangeOfPeriod( period, momentSiteZone().locale( 'en' ) ).endOf;
 	const periodDifference = moment( endOfPeriodDate ).diff( moment( queryDate ), period );
 	if ( periodDifference >= quantity ) {
 		return moment( endOfPeriodDate )

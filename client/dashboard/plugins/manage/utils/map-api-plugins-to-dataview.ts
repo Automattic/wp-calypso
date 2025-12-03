@@ -6,11 +6,14 @@ type Aggregated = {
 	name: string;
 	slug: string;
 	count: number;
-	activeCount: number;
-	updateCount: number;
+	activeSites: number[];
+	inactiveSites: number[];
+	updatableSites: number[];
 	autoupdateAllowedCount: number;
-	autoupdateCount: number;
+	autoupdatedSites: number[];
+	notAutoupdatedSites: number[];
 	siteIds: number[];
+	isManaged: boolean;
 };
 
 function mapCountToQuantifier( count: number, total: number ): 'all' | 'some' | 'none' {
@@ -24,19 +27,12 @@ function mapCountToQuantifier( count: number, total: number ): 'all' | 'some' | 
 }
 
 export function mapApiPluginsToDataViewPlugins(
-	userSites?: Site[],
+	sitesById: Map< number, Site >,
 	response?: PluginsResponse
 ): PluginListRow[] {
-	if ( ! userSites || ! response?.sites ) {
+	if ( ! response?.sites ) {
 		return [];
 	}
-
-	const sitesById = userSites
-		.filter( ( site ) => site.capabilities.update_plugins )
-		.reduce( ( acc, site ) => {
-			acc.set( site.ID, site );
-			return acc;
-		}, new Map< number, Site >() );
 
 	const pluginsBySite = response.sites;
 	const map = new Map< string, Aggregated >();
@@ -52,30 +48,48 @@ export function mapApiPluginsToDataViewPlugins(
 				name: p.name,
 				slug: p.slug,
 				count: 0,
-				activeCount: 0,
-				updateCount: 0,
+				activeSites: [],
+				inactiveSites: [],
+				updatableSites: [],
+				autoupdatedSites: [],
+				notAutoupdatedSites: [],
 				autoupdateAllowedCount: 0,
-				autoupdateCount: 0,
+				isManaged: false,
 				siteIds: [],
 			};
 
 			entry.count += 1;
 			entry.siteIds.push( siteId );
 			if ( p.active ) {
-				entry.activeCount += 1;
+				entry.activeSites.push( siteId );
+			} else {
+				entry.inactiveSites.push( siteId );
 			}
 			if ( p.update ) {
-				entry.updateCount += 1;
+				entry.updatableSites.push( siteId );
 			}
-			if ( p.autoupdate ) {
-				entry.autoupdateCount += 1;
+			if ( p.is_managed ) {
+				entry.isManaged = true;
 			}
 
 			const site = sitesById.get( siteId );
 			if ( site ) {
-				const { autoupdate } = getAllowedPluginActions( site, p.slug );
+				const { autoupdate } = getAllowedPluginActions(
+					{ isPluginActive: p.active, ...site, isPluginManaged: entry.isManaged },
+					p.slug
+				);
+
 				entry.autoupdateAllowedCount += autoupdate ? 1 : 0;
+
+				if ( autoupdate ) {
+					if ( p.autoupdate ) {
+						entry.autoupdatedSites.push( siteId );
+					} else {
+						entry.notAutoupdatedSites.push( siteId );
+					}
+				}
 			}
+
 			map.set( p.id, entry );
 		} );
 	} );
@@ -87,11 +101,14 @@ export function mapApiPluginsToDataViewPlugins(
 				name,
 				slug,
 				count,
-				activeCount,
-				updateCount,
+				activeSites,
+				inactiveSites,
+				updatableSites,
+				autoupdatedSites,
+				notAutoupdatedSites,
 				autoupdateAllowedCount,
-				autoupdateCount,
 				siteIds,
+				isManaged,
 			},
 		] ) => ( {
 			id,
@@ -99,11 +116,17 @@ export function mapApiPluginsToDataViewPlugins(
 			icons: null,
 			slug,
 			sitesCount: count,
-			hasUpdate: mapCountToQuantifier( updateCount, count ),
-			isActive: mapCountToQuantifier( activeCount, count ),
+			sitesWithPluginActive: activeSites,
+			sitesWithPluginInactive: inactiveSites,
+			sitesWithPluginUpdate: updatableSites,
+			sitesWithPluginAutoupdated: autoupdatedSites,
+			sitesWithPluginNotAutoupdated: notAutoupdatedSites,
+			hasUpdate: mapCountToQuantifier( updatableSites.length, count ),
+			isActive: mapCountToQuantifier( activeSites.length, count ),
 			areAutoUpdatesAllowed: mapCountToQuantifier( autoupdateAllowedCount, count ),
-			areAutoUpdatesEnabled: mapCountToQuantifier( autoupdateCount, count ),
+			areAutoUpdatesEnabled: mapCountToQuantifier( autoupdatedSites.length, count ),
 			siteIds,
+			isManaged,
 		} )
 	);
 }

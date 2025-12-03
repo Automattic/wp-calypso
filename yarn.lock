@@ -291,9 +291,62 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.20, @automattic/agenttic-ui@npm:^0.1.9":
-  version: 0.1.22
-  resolution: "@automattic/agenttic-ui@npm:0.1.22"
+"@automattic/agents-manager@workspace:^, @automattic/agents-manager@workspace:packages/agents-manager":
+  version: 0.0.0-use.local
+  resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
+  dependencies:
+    "@automattic/agenttic-client": "npm:^0.1.26"
+    "@automattic/agenttic-ui": "npm:^0.1.26"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/data-stores": "workspace:^"
+    "@automattic/oauth-token": "workspace:^"
+    "@rive-app/react-canvas": "npm:^4.15.6"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.1"
+    "@wordpress/api-fetch": "npm:^7.23.0"
+    "@wordpress/base-styles": "npm:^5.23.0"
+    "@wordpress/components": "npm:30.6.0"
+    "@wordpress/compose": "npm:^7.2.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/primitives": "npm:^4.23.0"
+    clsx: "npm:^2.1.1"
+    react-router-dom: "npm:^6.23.1"
+    typescript: "npm:^5.8.3"
+    wpcom-proxy-request: "workspace:^"
+  peerDependencies:
+    "@automattic/calypso-router": "workspace:^"
+    "@wordpress/data": ^10.23.0
+    "@wordpress/element": ^6.23.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+    redux: ^5.0.1
+  languageName: unknown
+  linkType: soft
+
+"@automattic/agenttic-client@npm:^0.1.26":
+  version: 0.1.26
+  resolution: "@automattic/agenttic-client@npm:0.1.26"
+  dependencies:
+    "@types/react": "npm:^18.0.0"
+    marked: "npm:^16.2.1"
+    react: "npm:^18.0.0"
+  peerDependencies:
+    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
+    react: ^18.0.0
+  dependenciesMeta:
+    marked:
+      optional: true
+  peerDependenciesMeta:
+    "@wordpress/api-fetch":
+      optional: true
+  checksum: 731031b01e86be6c9fc41ce612e8d4e0804e550df127cf81d5ee46e85003eaaf58195dbafa552aca30dab93b2f990144cda9e47ff642191946bc95e43d13ca2b
+  languageName: node
+  linkType: hard
+
+"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.20, @automattic/agenttic-ui@npm:^0.1.26, @automattic/agenttic-ui@npm:^0.1.9":
+  version: 0.1.26
+  resolution: "@automattic/agenttic-ui@npm:0.1.26"
   dependencies:
     "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
@@ -311,13 +364,14 @@ __metadata:
     react-textarea-autosize: "npm:^8.5.9"
     remark-gfm: "npm:^4.0.1"
     unified: "npm:^11.0.5"
+    use-debounce: "npm:^10.0.6"
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 9f19a653c99a9f09ecfd8448b6aae8ab9d2aa1404ac6f5a7443bfa5d6acbfead27699f70137109137b31640c136fd88ecc6354d564ccfe5853b4776a789a2391
+  checksum: 1124d7cb33823a86254cda6f0216822c3d4b07315d85c76373ff452577be9c8078c0a57089ca312a7b059bfbf139ed21d58fbb4c9caad1ac0d71c5dd259f7be6
   languageName: node
   linkType: hard
 
@@ -621,8 +675,8 @@ __metadata:
     "@automattic/zendesk-client": "workspace:^"
     "@jest/globals": "npm:^29.7.0"
     "@jest/types": "npm:^29.6.3"
-    "@playwright/browser-chromium": "npm:1.56.1"
-    "@playwright/browser-firefox": "npm:1.56.1"
+    "@playwright/browser-chromium": "npm:1.57.0"
+    "@playwright/browser-firefox": "npm:1.57.0"
     "@types/node": "npm:^22.7.5"
     "@types/totp-generator": "npm:^0.0.8"
     "@wordpress/i18n": "npm:^5.23.0"
@@ -631,7 +685,7 @@ __metadata:
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
     nock: "npm:^14.0.10"
-    playwright: "npm:1.56.1"
+    playwright: "npm:1.57.0"
     totp-generator: "npm:^0.0.14"
     typescript: "npm:^5.8.3"
   languageName: unknown
@@ -1397,6 +1451,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/help-center-app@workspace:apps/help-center"
   dependencies:
+    "@automattic/agents-manager": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
@@ -1439,6 +1494,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/help-center@workspace:packages/help-center"
   dependencies:
+    "@automattic/agents-manager": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -2448,6 +2504,7 @@ __metadata:
     "@wordpress/rich-text": "npm:^7.23.0"
     "@wordpress/router": "npm:^1.23.0"
     "@wordpress/url": "npm:^4.23.0"
+    clsx: "npm:^2.1.1"
     debug: "npm:^4.4.1"
     lodash: "npm:^4.17.21"
     npm-run-all: "npm:^4.1.5"
@@ -7375,32 +7432,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/browser-chromium@npm:1.56.1":
-  version: 1.56.1
-  resolution: "@playwright/browser-chromium@npm:1.56.1"
+"@playwright/browser-chromium@npm:1.57.0":
+  version: 1.57.0
+  resolution: "@playwright/browser-chromium@npm:1.57.0"
   dependencies:
-    playwright-core: "npm:1.56.1"
-  checksum: 6025a9afbc8312f9b94bdf2b6431384236d7d253328ec2392aa3991803fc62d3ddfcd5882a06d202fc8f4a49c3b1fc110a2d9620994b28893378d594b1f0ad86
+    playwright-core: "npm:1.57.0"
+  checksum: a997fb094279b26ff954cb1099ad28c32853e0259b129dc040af75f1eebf1b9aa25957b27e5c7b1f52a70c791944024bcb95139729ac3b9e4a9a033f6420e1ab
   languageName: node
   linkType: hard
 
-"@playwright/browser-firefox@npm:1.56.1":
-  version: 1.56.1
-  resolution: "@playwright/browser-firefox@npm:1.56.1"
+"@playwright/browser-firefox@npm:1.57.0":
+  version: 1.57.0
+  resolution: "@playwright/browser-firefox@npm:1.57.0"
   dependencies:
-    playwright-core: "npm:1.56.1"
-  checksum: e1117ac1b21f9d1cde63ad87a5fb4730dea6f08bc0c58516e1ad736e734795160cecd28f68bd5100f769300e1f93ad5283371ee34dc52a2b9919690ab73b90f5
+    playwright-core: "npm:1.57.0"
+  checksum: 11fd8978e2a5e4d939f00ea7d989a78c452828cdac16dc3703bb7b9e07c7fdc4657857de73f3bf00c0f13c51e2582ccb7eb21b03e3da262e6006cc8e7ed783bf
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:1.56.1":
-  version: 1.56.1
-  resolution: "@playwright/test@npm:1.56.1"
+"@playwright/test@npm:1.57.0":
+  version: 1.57.0
+  resolution: "@playwright/test@npm:1.57.0"
   dependencies:
-    playwright: "npm:1.56.1"
+    playwright: "npm:1.57.0"
   bin:
     playwright: cli.js
-  checksum: 2b5b0e1f2e6a18f6e5ce6897c7440ca78f64e0b004834e9808e93ad2b78b96366b562ae4366602669cf8ad793a43d85481b58541e74be71e905e732d833dd691
+  checksum: 35ba4b28be72bf0a53e33dbb11c6cff848fb9a37f49e893ce63a90675b5291ec29a1ba82c8a3b043abaead129400f0589623e9ace2e6a1c8eaa409721ecc3774
   languageName: node
   linkType: hard
 
@@ -8228,6 +8285,24 @@ __metadata:
   version: 1.16.1
   resolution: "@remix-run/router@npm:1.16.1"
   checksum: 5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
+  languageName: node
+  linkType: hard
+
+"@rive-app/canvas@npm:2.32.0":
+  version: 2.32.0
+  resolution: "@rive-app/canvas@npm:2.32.0"
+  checksum: 2476c1479e9da1145a12682697c3c78683902b551fa958a4824aa2130c4c1540c377a084cefcf905d7b580fc8ccaff2b06294b50f6ff4c27cd3c25684bd5f918
+  languageName: node
+  linkType: hard
+
+"@rive-app/react-canvas@npm:^4.15.6":
+  version: 4.24.0
+  resolution: "@rive-app/react-canvas@npm:4.24.0"
+  dependencies:
+    "@rive-app/canvas": "npm:2.32.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
+  checksum: e8ae639fe0caff1ffc46d66368846208fff8ffd25e00245e73f302d9e10fdc153733abb0e8f519df10d9d24876ab72b95e06740ece431d7b58ea1dcf2213da75
   languageName: node
   linkType: hard
 
@@ -25895,16 +25970,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:^16.2.1":
-  version: 16.4.1
-  resolution: "marked@npm:16.4.1"
-  bin:
-    marked: bin/marked.js
-  checksum: 2b5bc04db3453e493ea78758f1fe5006d725ec90aab9bf991242b0820a069d9748e2ac26fb0e2603848a409649c77900e599f3f66d251d0f7e5f606576090a54
-  languageName: node
-  linkType: hard
-
-"marked@npm:^4.0.0":
+"marked@npm:4.0.10":
   version: 4.0.10
   resolution: "marked@npm:4.0.10"
   bin:
@@ -29209,12 +29275,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.56.1":
-  version: 1.56.1
-  resolution: "playwright-core@npm:1.56.1"
+"playwright-core@npm:1.57.0":
+  version: 1.57.0
+  resolution: "playwright-core@npm:1.57.0"
   bin:
     playwright-core: cli.js
-  checksum: ffd40142b99c68678b387445d5b42f1fee4ab0b65d983058c37f342e5629f9cdbdac0506ea80a0dfd41a8f9f13345bad54e9a8c35826ef66dc765f4eb3db8da7
+  checksum: 798e35d83bf48419a8c73de20bb94d68be5dde68de23f95d80a0ebe401e3b83e29e3e84aea7894d67fa6c79d2d3d40cc5bcde3e166f657ce50987aaa2421b6a9
   languageName: node
   linkType: hard
 
@@ -29240,18 +29306,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.56.1":
-  version: 1.56.1
-  resolution: "playwright@npm:1.56.1"
+"playwright@npm:1.57.0":
+  version: 1.57.0
+  resolution: "playwright@npm:1.57.0"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.56.1"
+    playwright-core: "npm:1.57.0"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 8e9965aede86df0f4722063385748498977b219630a40a10d1b82b8bd8d4d4e9b6b65ecbfa024331a30800163161aca292fb6dd7446c531a1ad25f4155625ab4
+  checksum: ab03c99a67b835bdea9059f516ad3b6e42c21025f9adaa161a4ef6bc7ca716dcba476d287140bb240d06126eb23f889a8933b8f5f1f1a56b80659d92d1358899
   languageName: node
   linkType: hard
 
@@ -37421,6 +37487,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"use-debounce@npm:^10.0.6":
+  version: 10.0.6
+  resolution: "use-debounce@npm:10.0.6"
+  peerDependencies:
+    react: "*"
+  checksum: f0745de48fc344e6f90ea24384f3c79bf0733d06649827241135847abd67ee8db32f523d490c3276bce9f5a6867194ab1c0187bf6b84cabe1dd679037f4a527e
+  languageName: node
+  linkType: hard
+
 "use-debounce@npm:^3.1.0":
   version: 3.1.0
   resolution: "use-debounce@npm:3.1.0"
@@ -38580,8 +38655,8 @@ __metadata:
     "@automattic/jest-circus-allure-reporter": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@babel/core": "npm:^7.16.0"
-    "@playwright/browser-chromium": "npm:1.56.1"
-    "@playwright/test": "npm:1.56.1"
+    "@playwright/browser-chromium": "npm:1.57.0"
+    "@playwright/test": "npm:1.57.0"
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
     asana-phrase: "npm:^0.0.8"
@@ -38599,7 +38674,7 @@ __metadata:
     jest-teamcity: "npm:^1.12.0"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
-    playwright: "npm:1.56.1"
+    playwright: "npm:1.57.0"
     playwright-ctrf-json-reporter: "npm:^0.0.26"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"

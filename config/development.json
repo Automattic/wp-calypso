@@ -162,7 +162,6 @@
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
 		"reader/quick-post": true,
-		"reader/quick-post-v2": false,
 		"reader/discover/freshly-pressed": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": false,
@@ -202,6 +201,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"user-management-revamp": true,
+		"wordpress-ai-assistant": true,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true
 	}

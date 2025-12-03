@@ -887,6 +887,13 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		name: 'a8c-for-agencies-express-checkout',
+		paths: [ '/client/express-checkout' ],
+		module: 'calypso/a8c-for-agencies/sections/express-checkout',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'a8c-for-agencies-agency-tier',
 		paths: [ '/agency-tier' ],
 		module: 'calypso/a8c-for-agencies/sections/agency-tier',
@@ -902,6 +909,12 @@ const sections = [
 			'/woopayments/site-setup',
 		],
 		module: 'calypso/a8c-for-agencies/sections/woopayments',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-partner-offers',
+		paths: [ '/exclusive-offers' ],
+		module: 'calypso/a8c-for-agencies/sections/partner-offers',
 		group: 'a8c-for-agencies',
 	},
 ];

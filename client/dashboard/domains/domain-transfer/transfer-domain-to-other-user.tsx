@@ -270,6 +270,7 @@ export default function TransferDomainToOtherUser() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Transfer to another user' ) }
+					description={ __( 'Transfer this domain to any administrator on this site.' ) }
 				/>
 			}
 		>

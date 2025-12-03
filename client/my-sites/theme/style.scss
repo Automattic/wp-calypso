@@ -167,6 +167,12 @@ $button-border: 4px;
 			fill: currentColor;
 		}
 	}
+
+	.theme__sheet-demo-toggle {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
 }
 
 .theme__sheet-columns.is-removed {

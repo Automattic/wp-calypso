@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { lazy, useEffect, useState, ReactNode, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import HostingFeatureActivationModal from '../hosting-feature-activation-modal';
 import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 
@@ -52,13 +53,13 @@ export default function HostingFeatureActivation( {
 		} );
 	};
 
-	const shouldLoadV2 = window.location.pathname.startsWith( '/v2/' );
+	const isBackport = isDashboardBackport();
 
 	return (
 		<>
 			{ renderActivationComponent( { onClick: handleClick } ) }
 
-			{ shouldLoadV2 && isModalOpen && (
+			{ ! isBackport && isModalOpen && (
 				<Suspense fallback={ null }>
 					<Modal
 						title={ __( 'Before you continue' ) }
@@ -70,7 +71,7 @@ export default function HostingFeatureActivation( {
 				</Suspense>
 			) }
 
-			{ ! shouldLoadV2 && isModalOpen && (
+			{ isBackport && isModalOpen && (
 				<Suspense fallback={ null }>
 					<Modal
 						title={ __( 'Before you continue' ) }

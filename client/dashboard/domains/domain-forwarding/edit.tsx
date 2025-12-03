@@ -68,7 +68,15 @@ export default function EditDomainForwarding() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					description={ __( 'Update where your domain redirects visitors.' ) }
+				/>
+			}
+		>
 			<DomainForwardingNotice domainName={ domainName } domainData={ domainData } />
 			<DomainForwardingForm
 				domainName={ domainName }

@@ -43,6 +43,17 @@ const subscriptionGiftingRoute = createRoute( {
 	)
 );
 
+const holidaySnowRoute = createRoute( {
+	...appRouterSites.siteSettingsHolidaySnowRoute.options,
+	getParentRoute: () => settingsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-holiday-snow' ).then( ( d ) =>
+		createLazyRoute( 'holiday-snow' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const wordpressRoute = createRoute( {
 	...appRouterSites.siteSettingsWordPressRoute.options,
 	getParentRoute: () => settingsRoute,
@@ -66,8 +77,9 @@ const phpRoute = createRoute( {
 );
 
 const databaseRoute = createRoute( {
+	// Bypass type issue by omitting the loader.
+	...Object.assign( appRouterSites.siteSettingsDatabaseRoute.options, { loader: undefined } ),
 	getParentRoute: () => settingsRoute,
-	path: 'database', // Bypass type issue by hard-coding the path instead of reusing the route.
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-database' ).then( ( d ) =>
 		createLazyRoute( 'database' )( {
@@ -154,8 +166,9 @@ const sftpSshRoute = createRoute( {
 );
 
 const transferSiteRoute = createRoute( {
+	// Bypass type issue by omitting the loader.
+	...Object.assign( appRouterSites.siteSettingsTransferSiteRoute.options, { loader: undefined } ),
 	getParentRoute: () => settingsRoute,
-	path: 'transfer-site', // Bypass type issue by hard-coding the path instead of reusing the route.
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'transfer-site' )( {
@@ -186,6 +199,17 @@ const wpcomLoginRoute = createRoute( {
 	)
 );
 
+const experimentalRoute = createRoute( {
+	...appRouterSites.siteSettingsExperimentalRoute.options,
+	getParentRoute: () => settingsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-assistant' ).then( ( d ) =>
+		createLazyRoute( 'ai-assistant' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		siteRoute.addChildren( [
@@ -193,6 +217,7 @@ const createRouteTree = () =>
 				settingsIndexRoute,
 				siteVisibilityRoute,
 				subscriptionGiftingRoute,
+				holidaySnowRoute,
 				wordpressRoute,
 				phpRoute,
 				databaseRoute,
@@ -206,6 +231,7 @@ const createRouteTree = () =>
 				sftpSshRoute,
 				webApplicationFirewallRoute,
 				wpcomLoginRoute,
+				experimentalRoute,
 			] ),
 		] ),
 		dashboardSitesCompatibilityRoute,

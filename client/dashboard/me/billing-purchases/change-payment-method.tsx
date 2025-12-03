@@ -71,6 +71,7 @@ function ChangePaymentMethod() {
 							? __( 'Add payment method' )
 							: __( 'Update payment method' )
 					}
+					description={ __( 'Select or update the payment method for this purchase.' ) }
 				/>
 			}
 		>

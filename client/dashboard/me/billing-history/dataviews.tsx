@@ -137,8 +137,8 @@ export function getFields( receipts: Receipt[] ): Fields< Receipt > {
 				const { label: firstLabel } = summarizeReceiptItems( firstReceipt.items );
 				const { label: secondLabel } = summarizeReceiptItems( secondReceipt.items );
 				return direction === 'asc'
-					? firstLabel.localeCompare( secondLabel )
-					: secondLabel.localeCompare( firstLabel );
+					? String( firstLabel ).localeCompare( String( secondLabel ) )
+					: String( secondLabel ).localeCompare( String( firstLabel ) );
 			},
 			filterBy: {
 				operators: [ 'is' as Operator ],
@@ -302,7 +302,7 @@ function getServicesForFiltering( receipts: Receipt[] ): Array< { value: string;
 }
 
 function getServiceForFiltering( receipt: Receipt ): string {
-	return receipt.service;
+	return String( receipt.service || '' );
 }
 
 function renderServiceNameDescription( receipt: Receipt ) {
@@ -359,7 +359,7 @@ function getReceiptItemTypesForFiltering(
  */
 function getReceiptItemTypeForDisplay( receipt: Receipt ): string {
 	const [ receiptItem ] = groupDomainProducts( receipt.items );
-	return receiptItem.type_localized || receiptItem.type;
+	return String( receiptItem.type_localized || receiptItem.type || '' );
 }
 
 function renderReceiptAmount( receipt: Receipt ) {

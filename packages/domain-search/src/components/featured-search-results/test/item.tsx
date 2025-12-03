@@ -250,27 +250,99 @@ describe( 'FeaturedSearchResultsItem', () => {
 			expect( anotherOnePopoverContent ).toBeInTheDocument();
 		} );
 
-		it( 'does not render other badges if the reason is exact match', async () => {
+		it( 'renders the premium badge if the FQDN is premium and is_supported_premium_domain is true', async () => {
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-premium.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-premium.com',
+					status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+					is_supported_premium_domain: true,
+				} ),
+			} );
+
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-exact-match-1.com' },
-				suggestions: [
-					buildSuggestion( { domain_name: 'test-exact-match-1.com', sale_cost: 10 } ),
-				],
+				params: { query: 'test-premium.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'test.net' } ) ],
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestions query="test-exact-match-1.com">
+				<TestDomainSearchWithSuggestions query="test-premium.com">
 					<FeaturedSearchResultsItem
 						reason="exact-match"
-						domainName="test-exact-match-1.com"
+						domainName="test-premium.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
 				</TestDomainSearchWithSuggestions>
 			);
 
-			await waitFor( () => screen.getByTitle( 'test-exact-match-1.com' ) );
+			await waitFor( () => screen.getByTitle( 'test-premium.com' ) );
 
-			expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( "It's available!" ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
+		} );
+
+		it( 'renders the sale badge if the FQDN has a sale cost in the availability and the price rule is PRICE', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-sale-availability.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'test2.com' } ) ],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-sale-availability.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-sale-availability.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+					sale_cost: 10,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearchWithSuggestions query="test-sale-availability.com">
+					<FeaturedSearchResultsItem
+						reason="exact-match"
+						domainName="test-sale-availability.com"
+						isSingleFeaturedSuggestion={ false }
+					/>
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await waitFor( () => screen.getByTitle( 'test-sale-availability.com' ) );
+
+			expect( screen.getByText( "It's available!" ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Sale' ) ).toBeInTheDocument();
+		} );
+
+		it( 'renders the premium and sale badges if the FQDN is premium and on sale', async () => {
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-premium-sale.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-premium-sale.com',
+					status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+					is_supported_premium_domain: true,
+					sale_cost: 10,
+				} ),
+			} );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-premium-sale.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'test.net' } ) ],
+			} );
+
+			render(
+				<TestDomainSearchWithSuggestions query="test-premium-sale.com">
+					<FeaturedSearchResultsItem
+						reason="exact-match"
+						domainName="test-premium-sale.com"
+						isSingleFeaturedSuggestion={ false }
+					/>
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await waitFor( () => screen.getByTitle( 'test-premium-sale.com' ) );
+
+			expect( screen.getByText( "It's available!" ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Sale' ) ).toBeInTheDocument();
 		} );
 	} );
 

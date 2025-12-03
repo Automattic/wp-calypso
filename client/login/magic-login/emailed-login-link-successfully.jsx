@@ -8,6 +8,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { login } from 'calypso/lib/paths';
+import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
@@ -60,7 +61,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 		const { translate, emailAddress } = this.props;
 
 		return (
-			<div className="magic-login__form">
+			<>
 				<RedirectWhenLoggedIn
 					redirectTo="/help"
 					replaceCurrentLocation
@@ -72,19 +73,26 @@ class EmailedLoginLinkSuccessfully extends Component {
 						<MagicLoginEmailWrapper emailAddress={ emailAddress } />
 					</div>
 				</Card>
-				<div className="magic-login__footer">
-					<p>
+				<OneLoginFooter>
+					<p className="one-login__footer-text">
 						{ translate(
 							"Didn't get the email? You might want to double check if the email address is associated with your account,{{a}}or reset your password.{{/a}}",
 							{
 								components: {
-									a: <a href="/" onClick={ this.onLostPasswordClick } rel="noopener noreferrer" />,
+									a: (
+										<a
+											className="one-login__footer-link"
+											href="/"
+											onClick={ this.onLostPasswordClick }
+											rel="noopener noreferrer"
+										/>
+									),
 								},
 							}
 						) }
 					</p>
-				</div>
-			</div>
+				</OneLoginFooter>
+			</>
 		);
 	}
 }

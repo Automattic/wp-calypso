@@ -1,13 +1,14 @@
 import { domainsQuery, siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Link, useRouterState } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
-import { usePersistentView, DataViews } from '../../app/dataviews';
+import { useAppContext } from '../../app/context';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -53,15 +54,20 @@ function SiteDomains() {
 		fields
 	);
 
-	const routerState = useRouterState();
-	const redirectTo = routerState.location.pathname;
+	const { basePath } = useAppContext();
+	const domainConnectionSetupUrl = `${ basePath }/domains/%s/domain-connection-setup`;
 
 	return (
 		<PageLayout
 			header={
 				<PageHeader
 					title={ __( 'Domains' ) }
-					actions={ <AddDomainButton siteSlug={ site.slug } redirectTo={ redirectTo } /> }
+					actions={
+						<AddDomainButton
+							siteSlug={ site.slug }
+							domainConnectionSetupUrl={ domainConnectionSetupUrl }
+						/>
+					}
 				/>
 			}
 		>

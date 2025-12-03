@@ -26,8 +26,9 @@ export const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
 	loader: async () => {
+		queryClient.prefetchQuery( userMailboxesQuery() );
+		queryClient.prefetchQuery( domainsQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-		queryClient.ensureQueryData( userMailboxesQuery() );
 	},
 	validateSearch: ( search ): { domainName: string | undefined } => {
 		return {
@@ -77,7 +78,7 @@ export const chooseDomainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails/choose-domain',
 	loader: async () => {
-		queryClient.ensureQueryData( domainsQuery() );
+		queryClient.prefetchQuery( domainsQuery() );
 	},
 } ).lazy( () =>
 	import( '../../emails/choose-domain' ).then( ( d ) =>

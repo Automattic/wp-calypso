@@ -87,7 +87,15 @@ export default function DomainContactInfo() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					description={ __( 'Update your domain’s contact information for registration.' ) }
+				/>
+			}
+		>
 			<ContactForm
 				isSubmitting={ isSubmitting }
 				onSubmit={ handleSubmit }
@@ -102,6 +110,7 @@ export default function DomainContactInfo() {
 				}
 				key={ key }
 				initialData={ initialData }
+				validate={ validateMutation.mutateAsync }
 			/>
 		</PageLayout>
 	);

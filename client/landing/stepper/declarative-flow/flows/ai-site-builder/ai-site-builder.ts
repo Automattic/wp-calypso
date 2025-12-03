@@ -186,7 +186,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							// Only apply design and delete page for non-garden sites
 							if ( ! gardenName ) {
 								pendingActions.push(
-									setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
+									setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: false } )
 								);
 								pendingActions.push( deletePage( siteId || '', 1 ) );
 							}
@@ -237,7 +237,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							}
 
 							window.location.replace(
-								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
+								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
 							);
 						} else if ( providedDependencies.isLaunched ) {
 							const site = await resolveSelect( SITE_STORE ).getSite(

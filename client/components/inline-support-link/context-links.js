@@ -225,6 +225,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/connect-existing-domain/#step-2-change-your-domains-name-servers',
 		post_id: 2789,
 	},
+	'map-domain-update-name-servers': {
+		link: 'https://wordpress.com/support/domains/connect-existing-domain/#option-2-manual-setup',
+		post_id: 2789,
+	},
 	'map-domain-update-a-records': {
 		link: 'https://wordpress.com/support/domains/connect-a-domain-alternative-method/',
 		post_id: 219751,

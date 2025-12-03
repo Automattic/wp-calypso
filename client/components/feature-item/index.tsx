@@ -46,9 +46,13 @@ const FeatureItem = ( props: FeatureItemProps ) => {
 	const { header, children, dark } = props;
 
 	return (
-		<FeatureItemContainer>
-			<FeatureItemHeader dark={ dark }>{ header }</FeatureItemHeader>
-			<FeatureItemContent dark={ dark }>{ children }</FeatureItemContent>
+		<FeatureItemContainer className="feature-item-container">
+			<FeatureItemHeader className="feature-item-container__header" dark={ dark }>
+				{ header }
+			</FeatureItemHeader>
+			<FeatureItemContent className="feature-item-container__content" dark={ dark }>
+				{ children }
+			</FeatureItemContent>
 		</FeatureItemContainer>
 	);
 };

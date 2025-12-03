@@ -159,7 +159,14 @@ export default function ChooseEmailSolution() {
 
 	return (
 		<PageLayout
-			header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> }
+			header={
+				<PageHeader
+					prefix={ <BackToEmailsPrefix /> }
+					description={ __(
+						'Choose between Professional Email and Google Workspace for your domain.'
+					) }
+				/>
+			}
 			size="small"
 			notices={
 				<>

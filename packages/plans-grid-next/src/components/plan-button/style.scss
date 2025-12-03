@@ -14,7 +14,8 @@
 		color: var(--color-text-inverted);
 	}
 
-	&.is-free-plan {
+	&.is-free-plan,
+	&.is-woo-hosted-plan {
 		background-color: var(--studio-wordpress-blue-50);
 
 		&:focus {

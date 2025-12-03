@@ -23,7 +23,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { addPaymentMethodRoute } from '../../app/router/me';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
@@ -174,6 +174,7 @@ export default function PaymentMethods() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Payment methods' ) }
+					description={ __( 'Manage your saved payment methods and billing information.' ) }
 					actions={
 						<Button
 							__next40pxDefaultSize

@@ -1,12 +1,23 @@
-import { sitesQuery, dashboardSiteListQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
+/* eslint-disable no-restricted-imports */
+import {
+	sitesQuery,
+	dashboardSiteListQuery,
+	dashboardSiteFiltersQuery,
+} from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
+/* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import Logo from './logo';
-import type { FetchSitesOptions } from '@automattic/api-core';
+import type {
+	FetchSitesOptions,
+	FetchDashboardSiteListParams,
+	FetchDashboardSiteFiltersParams,
+} from '@automattic/api-core';
 import './style.scss';
 
 boot( {
 	name: 'WordPress.com',
-	basePath: '/v2',
+	basePath: isEnabled( 'dashboard/v2' ) ? '/v2' : '/',
 	mainRoute: '/sites',
 	Logo,
 	supports: {
@@ -25,6 +36,7 @@ boot( {
 				},
 				server: true,
 				security: true,
+				experimental: true,
 			},
 		},
 		domains: true,
@@ -47,6 +59,9 @@ boot( {
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteListQuery,
+		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
+			dashboardSiteListQuery( 'all', fetchDashboardSiteListParams ),
+		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
+			dashboardSiteFiltersQuery( 'all', fields ),
 	},
 } );
