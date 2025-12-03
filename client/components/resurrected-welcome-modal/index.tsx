@@ -187,10 +187,12 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 			if ( typeof window !== 'undefined' && ! eligibility.isForcedVariation ) {
 				window.sessionStorage.setItem( SESSION_STORAGE_KEY, 'true' );
 			}
-			recordTracksEvent( 'calypso_resurrected_welcome_modal_dismiss', {
-				variation: variationName ?? 'unknown',
-				source,
-			} );
+			if ( source === 'close' ) {
+				recordTracksEvent( 'calypso_resurrected_welcome_modal_dismiss', {
+					variation: variationName ?? 'unknown',
+					source,
+				} );
+			}
 		},
 		[ variationName, eligibility.isForcedVariation ]
 	);
