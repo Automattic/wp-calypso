@@ -20,13 +20,14 @@
 	}
 }
 
-.site-subscriptions-list {
+.site-subscriptions-list-v2 {
 	margin: 0 0 32px 0;
 
 	.row {
 		border-block-end: 1px solid $studio-gray-5;
-		padding-top: 20px;
-		padding-bottom: 20px;
+		display: flex;
+		align-items: center;
+		height: 81px !important; // Override the height from the virtualized list
 		@extend %site-subscriptions-list-default-text;
 
 		* {
@@ -40,10 +41,6 @@
 			@media (max-width: $break-small) {
 				display: none;
 			}
-		}
-
-		&.deleted {
-			opacity: 0.5;
 		}
 
 		.title-cell {

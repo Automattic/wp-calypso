@@ -89,8 +89,8 @@ const SiteSubscriptionsListV2: React.FC< SiteSubscriptionsListProps > = ( {
 	}
 
 	return (
-		<ul
-			className={ `debug site-subscriptions-list${
+		<div
+			className={ `debug site-subscriptions-list-v2${
 				isCompactLayout ? ' site-subscriptions-list--compact' : ''
 			}` }
 			role="table"
@@ -143,14 +143,15 @@ const SiteSubscriptionsListV2: React.FC< SiteSubscriptionsListProps > = ( {
 			<VirtualizedList< SiteSubscriptionsResponseItem > items={ filteredSubscriptions }>
 				{ ( { item, key, style, registerChild } ) => (
 					<SiteSubscriptionRow
+						{ ...item }
 						key={ `${ item.ID }-${ key }` }
 						style={ style }
 						forwardedRef={ registerChild }
-						{ ...item }
+						layout={ layout }
 					/>
 				) }
 			</VirtualizedList>
-		</ul>
+		</div>
 	);
 };
 
