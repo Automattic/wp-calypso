@@ -1,8 +1,9 @@
 import { SubscriptionManager } from '@automattic/data-stores';
+import { SiteSubscriptionsResponseItem } from '@automattic/data-stores/src/reader';
 import { Spinner, __experimentalHStack as HStack, Icon, Tooltip } from '@wordpress/components';
 import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestRecommendedBlogsListItems } from 'calypso/state/reader/lists/actions';
@@ -31,6 +32,11 @@ const SiteSubscriptionsListV2: React.FC< SiteSubscriptionsListProps > = ( {
 	const { subscriptions, totalCount } = data;
 
 	const isCompactLayout = layout === 'compact';
+
+	const filteredSubscriptions = useMemo(
+		() => subscriptions.filter( ( subscription ) => ! subscription.isDeleted ),
+		[ subscriptions ]
+	);
 
 	// Fetch recommended blogs data once for all subscription rows
 	useEffect( () => {
@@ -134,7 +140,7 @@ const SiteSubscriptionsListV2: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="actions-cell" role="columnheader" />
 			</HStack>
 
-			<VirtualizedList items={ subscriptions }>
+			<VirtualizedList< SiteSubscriptionsResponseItem > items={ filteredSubscriptions }>
 				{ ( { item, key, style, registerChild } ) => (
 					<SiteSubscriptionRow
 						key={ `${ item.ID }-${ key }` }

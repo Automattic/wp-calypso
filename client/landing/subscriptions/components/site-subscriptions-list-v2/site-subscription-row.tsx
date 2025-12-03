@@ -95,7 +95,6 @@ const SiteSubscriptionRow = ( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	is_gift,
-	isDeleted,
 	is_rss,
 	resubscribed,
 	layout = 'full',
@@ -285,7 +284,7 @@ const SiteSubscriptionRow = ( {
 		recordRecommendToggle( newRecommendedState, { blog_id } );
 	};
 
-	return ! isDeleted ? (
+	return (
 		<HStack
 			style={ style }
 			ref={ forwardedRef }
@@ -426,7 +425,7 @@ const SiteSubscriptionRow = ( {
 				/>
 			</span>
 		</HStack>
-	) : null;
+	);
 };
 
 export default SiteSubscriptionRow;
