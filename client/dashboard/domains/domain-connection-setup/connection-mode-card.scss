@@ -1,0 +1,10 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.connection-mode-card__body {
+	padding-top: 16px;
+	padding-bottom: 16px;
+	@include break-medium {
+		padding-top: 24px;
+		padding-bottom: 24px;
+	}
+}
