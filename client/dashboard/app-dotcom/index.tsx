@@ -17,7 +17,14 @@ import './style.scss';
 
 boot( {
 	name: 'WordPress.com',
-	basePath: isEnabled( 'dashboard/v2' ) ? '/v2' : '/',
+	basePath: ( () => {
+		if ( isEnabled( 'dashboard/v2' ) ) {
+			// Serve dashboard routes directly under my.localhost's root;
+			// otherwise serve them under /v2.
+			return window.location.hostname.startsWith( 'my.localhost' ) ? '/' : '/v2';
+		}
+		return '/';
+	} )(),
 	mainRoute: '/sites',
 	Logo,
 	supports: {
