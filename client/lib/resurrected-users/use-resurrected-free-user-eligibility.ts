@@ -59,7 +59,16 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 		dispatch( fetchUserPurchases( currentUserId ) );
 	}, [ purchasesLoaded, isUserPurchasesFetching, currentUserId, dispatch ] );
 
-	const lastSeen = userSettings?.last_admin_activity_timestamp;
+	const rawLastSeen = userSettings?.last_admin_activity_timestamp;
+	let lastSeen: number | null = null;
+	if ( typeof rawLastSeen === 'number' ) {
+		lastSeen = rawLastSeen;
+	} else if ( rawLastSeen !== undefined && rawLastSeen !== null ) {
+		const numericLastSeen = Number( rawLastSeen );
+		if ( Number.isFinite( numericLastSeen ) ) {
+			lastSeen = numericLastSeen;
+		}
+	}
 	const isResurrectedSixMonths = useMemo(
 		() => hasExceededDormancyThreshold( lastSeen, RESURRECTION_DAY_LIMIT_EXPERIMENT ),
 		[ lastSeen ]
