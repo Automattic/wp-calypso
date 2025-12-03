@@ -6,60 +6,38 @@
 
 import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
 import { useMemo, useEffect, useState } from '@wordpress/element';
+import { useLocation } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { SESSION_STORAGE_KEY, getSessionId } from '../../utils/agent-session';
 import { lastConversationCache } from '../../utils/conversation-cache';
 import AgentDock from '../agent-dock';
+import { PersistentRouter } from '../persistent-router';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
 import type { HelpCenterSite, CurrentUser } from '@automattic/data-stores';
 
 export interface UnifiedAIAgentProps {
-	/**
-	 * The current route path.
-	 */
+	/** The current route path. */
 	currentRoute?: string;
-	/**
-	 * The name of the current section (e.g., 'posts', 'pages').
-	 */
+	/** The name of the current section (e.g., 'posts', 'pages'). */
 	sectionName?: string;
-	/**
-	 * The selected site object.
-	 */
+	/** The selected site object. */
 	site?: HelpCenterSite | null;
-	/**
-	 * The current user object.
-	 */
+	/** The current user object. */
 	currentUser?: CurrentUser;
-	/**
-	 * Callback to handle closing the agent.
-	 */
+	/** Called when the agent is closed. */
 	handleClose?: () => void;
-	/**
-	 * Tool provider for abilities (optional)
-	 * Allows plugins to provide custom abilities to the agent
-	 */
+	/** Tool provider for custom abilities. */
 	toolProvider?: ToolProvider;
-	/**
-	 * Context provider for environment-specific context (optional)
-	 * Allows plugins to provide rich context about current state
-	 */
+	/** Context provider for environment-specific context. */
 	contextProvider?: ContextProvider;
-	/**
-	 * Custom suggestions for the empty view (optional)
-	 * Allows plugins to provide context-specific suggestions
-	 */
+	/** Suggestions displayed when the chat is empty. */
 	emptyViewSuggestions?: Suggestion[];
-	/**
-	 * Custom markdown components for message rendering (optional)
-	 * Allows plugins to provide custom renderers for markdown elements
-	 */
+	/** Custom components for rendering markdown. */
 	markdownComponents?: MarkdownComponents;
-	/**
-	 * Custom markdown extensions (optional)
-	 */
+	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
 }
 
@@ -96,7 +74,16 @@ function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
 	} );
 }
 
-export default function UnifiedAIAgent( {
+export default function UnifiedAIAgent( props: UnifiedAIAgentProps ) {
+	return (
+		<PersistentRouter>
+			<AgentSetup { ...props } />
+		</PersistentRouter>
+	);
+}
+
+// Separate component that uses hooks within `PersistentRouter` context
+function AgentSetup( {
 	currentRoute,
 	site = null,
 	toolProvider,
@@ -106,7 +93,9 @@ export default function UnifiedAIAgent( {
 	markdownExtensions = {},
 }: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
-	const sessionId = getSessionId();
+	const { state } = useLocation();
+	// Use persisted route state `sessionId` if available, otherwise fall back to stored `sessionId`
+	const sessionId = state?.sessionId || getSessionId();
 
 	// Create the initial agent configuration
 	const config = useMemo< UseAgentChatConfig >(
@@ -187,16 +176,16 @@ export default function UnifiedAIAgent( {
 			// Check if we have cached messages to pre-load
 			if ( sessionId ) {
 				const agentManager = getAgentManager();
-				const agentKey = config.agentId;
-				const botId = createOdieBotId( agentKey );
+				const agentId = config.agentId;
+				const botId = createOdieBotId( agentId );
 
 				// Only pre-load if agent doesn't exist yet
-				if ( ! agentManager.hasAgent( agentKey ) ) {
+				if ( ! agentManager.hasAgent( agentId ) ) {
 					const cachedData = lastConversationCache.get( botId );
 					if ( cachedData?.sessionId === sessionId && cachedData?.messages.length ) {
 						// Create agent and load cached messages BEFORE setting config
-						await agentManager.createAgent( agentKey, config );
-						await agentManager.replaceMessages( agentKey, cachedData.messages );
+						await agentManager.createAgent( agentId, config );
+						await agentManager.replaceMessages( agentId, cachedData.messages );
 					}
 				}
 			}

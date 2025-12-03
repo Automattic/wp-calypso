@@ -1106,18 +1106,19 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	// Multi-site Dashboard routing fo my.wordpress.com.
+	// Return earlier since we don't need to set up any other routes.
 	if ( config.isEnabled( 'dashboard' ) ) {
 		[ '/', '/sites', '/domains', '/emails', '/plugins', '/me' ].forEach( ( route ) => {
 			handleSectionPath( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom' );
 		} );
+
+		handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
+		return app;
 	}
 
 	// Multi-site Dashboard routing for wordpress.com.
 	if ( config.isEnabled( 'dashboard/v2' ) ) {
 		handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom' );
-	}
-
-	if ( config.isEnabled( 'dashboard' ) || config.isEnabled( 'dashboard/v2' ) ) {
 		handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
 	}
 

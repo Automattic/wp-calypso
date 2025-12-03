@@ -44,6 +44,7 @@ export const FeaturedSearchResultsItem = ( {
 				<DomainSuggestionBadge key="available" variation="success">
 					{ __( "It's available!" ) }
 				</DomainSuggestionBadge>,
+				...suggestionBadges, // we still want to show the premium and sale badges even when it's an exact match
 				...policyBadges,
 			];
 		}

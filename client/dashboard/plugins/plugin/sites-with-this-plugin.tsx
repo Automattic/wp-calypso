@@ -8,11 +8,19 @@ import {
 	sitePluginUpdateMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __experimentalText as Text, Button, Icon } from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	Button,
+	Icon,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View, type Field } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
 import { useCallback, useMemo, useState } from 'react';
+import { Name, URL, SiteIconLink, SiteLink } from '../../sites/site-fields';
+import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { PluginsHeaderActions } from '../manage/components/plugins-header-actions';
@@ -65,8 +73,18 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				id: 'domain',
 				label: __( 'Site' ),
 				type: 'text',
-				getValue: ( { item }: { item: SiteWithPluginData } ) => getSiteDisplayUrl( item ),
-				render: ( { field, item } ) => field.getValue( { item } ),
+				getValue: ( { item }: { item: SiteWithPluginData } ) => getSiteDisplayName( item ),
+				render: ( { field, item } ) => (
+					<HStack spacing={ 3 } alignment="center" justify="flex-start">
+						<SiteIconLink site={ item } />
+						<VStack spacing={ 0 } alignment="flex-start">
+							<SiteLink site={ item }>
+								<Name site={ item } value={ field.getValue( { item } ) } />
+							</SiteLink>
+							<URL site={ item } value={ getSiteDisplayUrl( item ) } />
+						</VStack>
+					</HStack>
+				),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
