@@ -5,6 +5,7 @@ import {
 	siteSettingsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { notFound } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	Button,
@@ -15,7 +16,6 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import NotFound from '../../app/404';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -79,7 +79,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 	} );
 
 	if ( ! agencyBlog && ! isLoadingAgencyBlog ) {
-		return <NotFound />;
+		throw notFound();
 	}
 
 	const isAgencyDevelopmentSite = site.is_a4a_dev_site;

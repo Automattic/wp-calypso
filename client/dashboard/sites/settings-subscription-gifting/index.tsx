@@ -1,6 +1,7 @@
 import { DotcomFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { notFound } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -8,7 +9,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import NotFound from '../../app/404';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -59,7 +59,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 	}
 
 	if ( ! hasPlanFeature( site, DotcomFeatures.SUBSCRIPTION_GIFTING ) ) {
-		return <NotFound />;
+		throw notFound();
 	}
 
 	const isDirty = Object.entries( formData ).some(

@@ -1,9 +1,8 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Outlet } from '@tanstack/react-router';
+import { Outlet, notFound } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Suspense, useMemo, lazy } from 'react';
-import NotFound from '../../app/404';
 import { useAppContext } from '../../app/context';
 import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
@@ -22,7 +21,7 @@ function Site() {
 	const SiteSwitcher = useMemo( () => lazy( components.siteSwitcher ), [ components ] );
 
 	if ( ! canManageSite( site ) ) {
-		return <NotFound />;
+		throw notFound();
 	}
 
 	return (

@@ -4,10 +4,9 @@ import {
 	domainForwardingSaveMutation,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { notFound, useRouter } from '@tanstack/react-router';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import NotFound from '../../app/404';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
@@ -37,9 +36,15 @@ export default function EditDomainForwarding() {
 	// Find existing forwarding
 	const existingForwarding = useMemo( () => {
 		if ( ! forwardingData || ! forwardingId ) {
-			return null;
+			throw notFound();
 		}
-		return forwardingData.find( ( f ) => f.domain_redirect_id === parseInt( forwardingId, 10 ) );
+		const existingForwarding = forwardingData.find(
+			( f ) => f.domain_redirect_id === parseInt( forwardingId, 10 )
+		);
+		if ( ! existingForwarding ) {
+			throw notFound();
+		}
+		return existingForwarding;
 	}, [ forwardingData, forwardingId ] );
 
 	const handleSubmit = ( formData: FormData ) => {
@@ -61,10 +66,6 @@ export default function EditDomainForwarding() {
 			},
 		} );
 	};
-
-	if ( ! existingForwarding ) {
-		return <NotFound />;
-	}
 
 	return (
 		<PageLayout
