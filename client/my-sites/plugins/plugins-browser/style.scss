@@ -156,37 +156,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		text-decoration: none;
 	}
 }
-.plugins-browser__marketplace-footer {
-	--scss-font-title-large: 2.5rem;
-	--scss-font-body: 1.375rem;
 
-	.section-header-container {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-end;
-		max-width: none;
-		padding-inline: 0;
-
-		.section-header-container__header {
-			max-width: 575px;
-		}
-		.section-header-container__subheader {
-			flex-shrink: 0;
-		}
-
-		@media screen and ( max-width: 600px ) {
-			flex-direction: column;
-			align-items: flex-start;
-
-			.marketplace-cta {
-				margin-inline: 0;
-			}
-		}
-	}
-	.feature-item-container__header {
-		font-weight: 400;
-	}
-}
 .full-width-section.plugins-browser__search-header {
 	padding-top: 100px;
 	padding-bottom: 32px;
@@ -241,11 +211,6 @@ body.is-section-plugins #primary .main.is-logged-out {
 
 .plugins-browser__categories {
 	padding-bottom: 0;
-}
-
-.plugins-browser__categories,
-.plugins-browser__marketplace-footer {
-	background-color: var(--studio-white);
 }
 .plugins-discovery-page__education-footer {
 	padding-bottom: 72px;
