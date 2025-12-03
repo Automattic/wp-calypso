@@ -171,14 +171,19 @@ const SiteMigrationSshShareAccess: StepType< {
 			dispatch( resetSite( siteId ) );
 			navigation.submit?.( { destination: 'migration-started' } );
 		} else if ( migrationStatus.status === 'failed' ) {
-			setMigrationError( new Error( 'Migration failed. Please try again.' ) );
+			// Check if the failure is due to credential issues
+			const errorMessage =
+				migrationStatus.error_code === 'credential_failure'
+					? 'credential_failure'
+					: 'Migration failed. Please try again.';
+			setMigrationError( new Error( errorMessage ) );
 			setMigrationStarted( false );
 		} else if ( migrationStatus.status === 'completed' ) {
 			navigation.submit?.( { destination: 'migration-completed' } );
 		}
 	}, [ migrationStarted, migrationStatus, dispatch, siteId, navigation, setMigrationError ] );
 
-	const triggerSSHMigration = () => {
+	const triggerSSHMigration = useCallback( () => {
 		// Reset the migration status query to clear any stale data from previous attempts
 		queryClient.resetQueries( { queryKey: [ 'ssh-migration-status', siteId ] } );
 
@@ -202,7 +207,19 @@ const SiteMigrationSshShareAccess: StepType< {
 				},
 			}
 		);
-	};
+	}, [
+		queryClient,
+		siteId,
+		startMigration,
+		formState.serverAddress,
+		formState.port,
+		formState.username,
+		formState.authMethod,
+		formState.password,
+		fromUrl,
+		onMigrationStarted,
+		setMigrationError,
+	] );
 
 	const handleContinue = () => {
 		recordTracksEvent( 'calypso_site_migration_ssh_action', {
@@ -226,7 +243,7 @@ const SiteMigrationSshShareAccess: StepType< {
 			setShouldStartMigration( false );
 			triggerSSHMigration();
 		}
-	}, [ transferStatus, shouldStartMigration ] );
+	}, [ transferStatus, shouldStartMigration, triggerSSHMigration ] );
 
 	const handleSkip = useCallback( async () => {
 		recordTracksEvent( 'calypso_site_migration_ssh_action', {

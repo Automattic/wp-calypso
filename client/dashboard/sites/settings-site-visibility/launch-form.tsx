@@ -57,7 +57,7 @@ function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryE
 export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 	const { data, isError } = useQuery( siteAgencyBlogQuery( site.ID ) );
 
-	const billingMessage = getAgencyBillingMessage( data, isError );
+	const billingMessage = getAgencyBillingMessage( data ?? undefined, isError );
 	const isReferralStatusActive = data?.referral_status === 'active';
 	const shouldShowBillingMessage = ! isReferralStatusActive && !! billingMessage;
 	const shouldShowReferClientButton = ! isReferralStatusActive;

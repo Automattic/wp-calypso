@@ -1,9 +1,9 @@
-import { calculateUnread } from '@automattic/odie-client/src/data/use-get-unread-conversations';
-import { ZendeskConversation } from '@automattic/odie-client/src/types';
+import { calculateUnread } from '@automattic/zendesk-client';
 import React from 'react';
 import { useGetHistoryChats } from '../hooks';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 import { getLastMessage } from './utils';
+import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-recent-conversations.scss';
 

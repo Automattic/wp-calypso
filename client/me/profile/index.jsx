@@ -164,7 +164,7 @@ class Profile extends Component {
 						</FormFieldset>
 
 						<p className="profile__public-url">
-							{ this.props.translate( 'View your public profile at {{a}}{{url/}}{{/a}}.', {
+							{ this.props.translate( 'View your Reader profile at {{a}}{{url/}}{{/a}}.', {
 								components: {
 									a: <ExternalLink href={ relativeProfileUrl } />,
 									url: <>{ absoluteProfileUrl }</>,

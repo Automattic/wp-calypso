@@ -13,6 +13,7 @@ import {
 	starEmpty,
 	plugins,
 	chartBar,
+	box,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -39,6 +40,7 @@ import {
 	A4A_AGENCY_TIER_LINK,
 	A4A_MIGRATIONS_OVERVIEW_LINK,
 	A4A_WOOPAYMENTS_LINK,
+	A4A_PARTNER_OFFERS_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -99,6 +101,16 @@ const useMainMenuItems = ( path: string ) => {
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Agency Tier',
 							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-partner-offers' )
+				? [
+						{
+							icon: box,
+							path: '/',
+							link: A4A_PARTNER_OFFERS_LINK,
+							title: translate( 'Exclusive offers' ),
 						},
 				  ]
 				: [] ),

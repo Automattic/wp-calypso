@@ -7,7 +7,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { focusEditor } from 'calypso/reader/components/quick-post/utils';
-import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -48,7 +47,7 @@ function FollowingStream( { ...props } ) {
 						}
 					) }
 				</p>
-				<ReaderOnboarding forceShow />
+				<AsyncLoad require="calypso/reader/onboarding" forceShow />
 			</div>
 		);
 	}
@@ -92,7 +91,7 @@ function FollowingStream( { ...props } ) {
 							<AsyncLoad require="calypso/reader/components/quick-post" />
 						</FoldableCard>
 					) }
-					<ReaderOnboarding />
+					<AsyncLoad require="calypso/reader/onboarding" />
 				</ReaderStream>
 			) }
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
