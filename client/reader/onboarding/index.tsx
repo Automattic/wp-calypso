@@ -23,17 +23,12 @@ import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import './style.scss';
 
-type OnboardingRenderStatus = {
-	shouldShow: boolean;
-	isRendered: boolean;
-};
-
 const ReaderOnboarding = ( {
 	onRender,
 	forceShow = false,
 	isSuppressed = false,
 }: {
-	onRender?: ( status: OnboardingRenderStatus ) => void;
+	onRender?: ( shown: boolean ) => void;
 	forceShow?: boolean;
 	isSuppressed?: boolean;
 } ) => {
@@ -152,7 +147,7 @@ const ReaderOnboarding = ( {
 	}, [ dispatch ] );
 
 	// Notify the parent component if onboarding will render.
-	onRender?.( { shouldShow: shouldShowOnboarding, isRendered: shouldRenderOnboarding } );
+	onRender?.( shouldShowOnboarding );
 
 	if ( ! shouldRenderOnboarding ) {
 		return null;

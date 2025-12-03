@@ -33,12 +33,12 @@ function FollowingStream( { ...props } ) {
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 
 	const handleReaderOnboardingRender = useCallback(
-		( status: { shouldShow: boolean; isRendered: boolean } ) => {
-			setReaderOnboardingShouldShow( status.shouldShow );
-			if ( status.shouldShow && isResurrectedModalVisible ) {
+		( willRender: boolean ) => {
+			setReaderOnboardingShouldShow( willRender );
+			if ( willRender && isResurrectedModalVisible ) {
 				setShouldDelayReaderOnboarding( true );
 			}
-			if ( ! status.isRendered ) {
+			if ( ! willRender ) {
 				setShouldDelayReaderOnboarding( false );
 			}
 		},
