@@ -1630,6 +1630,17 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 } );
 
+const getPlanA4ABusinessDetails = (): IncompleteWPcomPlan => ( {
+	...getDotcomPlanDetails(),
+	group: GROUP_WPCOM,
+	type: TYPE_BUSINESS,
+	getTitle: getPlanBusinessTitle,
+	getDescription: () =>
+		i18n.translate(
+			'Power your business website with custom plugins and themes, storage, and the ability to remove WordPress.com branding.'
+		),
+} );
+
 const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -2971,7 +2982,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	},
 
 	[ PLAN_A4A_BUSINESS ]: {
-		...getPlanBusinessDetails(),
+		...getPlanA4ABusinessDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: () => false, // A4A plans not available through standard flows
@@ -2981,7 +2992,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	},
 
 	[ PLAN_A4A_BUSINESS_MONTHLY ]: {
-		...getPlanBusinessDetails(),
+		...getPlanA4ABusinessDetails(),
 		...getMonthlyTimeframe(),
 		availableFor: () => false, // A4A plans not available through standard flows
 		getProductId: () => 3301,
