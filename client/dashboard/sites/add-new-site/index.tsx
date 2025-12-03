@@ -126,7 +126,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					title={ __( 'Via the Jetpack plugin' ) }
 					description={ __( 'Install the Jetpack plugin on an existing site.' ) }
 					onClick={ jetpackClick }
-					href={ wpcomLink( `/start/jetpack/connect?cta_from=${ context }&cta_id=add-site` ) }
+					href={ wpcomLink( `/jetpack/connect?cta_from=${ context }&cta_id=add-site` ) }
 					aria-label={ __( 'Add site via the Jetpack plugin' ) }
 				/>
 			</Column>
