@@ -31,6 +31,8 @@ import { lastConversationCache } from '../../utils/conversation-cache';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import SupportGuide from '../support-guide';
+import SupportGuides from '../support-guides';
 
 interface AgentDockProps {
 	/** Agent configuration for the chat client. */
@@ -289,6 +291,8 @@ export default function AgentDock( {
 		<Routes>
 			<Route path="/" element={ Chat } />
 			<Route path="/chat" element={ Chat } />
+			<Route path="/post" element={ <SupportGuide /> } />
+			<Route path="/support-guides" element={ <SupportGuides /> } />
 			<Route path="/history" element={ History } />
 			<Route path="*" element={ <Navigate to="/" replace /> } />
 		</Routes>

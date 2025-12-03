@@ -1,0 +1,40 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.components-item-group {
+	border-color: #545454;
+	border-radius: 16px;
+
+	div[role='listitem'] {
+		box-sizing: border-box;
+		font-size: $font-size-small;
+		.components-item {
+			transition: var( --transition-colors );
+			padding: 0;
+			&:hover {
+				background: #2f2f2f;
+			}
+
+			a {
+				color: var( --color-text );
+				text-decoration: none;
+				padding: 14px;
+				display: block;
+			}
+		}
+
+		&:first-child .components-item {
+			border-top-left-radius: 15px;
+			border-top-right-radius: 15px;
+		}
+
+		&:last-child .components-item {
+			border-bottom-left-radius: 15px;
+			border-bottom-right-radius: 15px;
+		}
+	}
+
+	div[role='listitem'] + div[role='listitem'] {
+		border-top: 1px solid #545454;
+	}
+}
