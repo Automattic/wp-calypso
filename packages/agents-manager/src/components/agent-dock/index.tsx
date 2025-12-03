@@ -20,7 +20,7 @@ import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, drawerRight, login, backup } from '@wordpress/icons';
+import { comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../constants';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
@@ -200,19 +200,11 @@ export default function AgentDock( {
 	);
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
-		const isHistoryView = pathname === '/history';
-
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', '__i18n_text_domain__' ),
-			isDisabled: ! isHistoryView && ! messages.length,
+			isDisabled: pathname !== '/history' && ! messages.length,
 			onClick: handleNewChat,
-		};
-		const historyMenuItem = {
-			icon: backup,
-			title: __( 'View history', 'agents-manager' ),
-			isDisabled: isHistoryView,
-			onClick: () => navigate( '/history' ),
 		};
 		const undockMenuItem = {
 			icon: login,
@@ -234,7 +226,7 @@ export default function AgentDock( {
 			onClick: dock,
 		};
 
-		const options: ChatHeaderOptions = [ newChatMenuItem, historyMenuItem ];
+		const options: ChatHeaderOptions = [ newChatMenuItem ];
 
 		if ( isDocked ) {
 			options.push( undockMenuItem );
