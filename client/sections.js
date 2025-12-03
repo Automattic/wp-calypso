@@ -912,9 +912,9 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
-		name: 'a8c-for-agencies-partner-offers',
+		name: 'a8c-for-agencies-exclusive-offers',
 		paths: [ '/exclusive-offers' ],
-		module: 'calypso/a8c-for-agencies/sections/partner-offers',
+		module: 'calypso/a8c-for-agencies/sections/exclusive-offers',
 		group: 'a8c-for-agencies',
 	},
 ];

@@ -53,7 +53,7 @@ import {
 	A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK,
 	A4A_WOOPAYMENTS_SITE_SETUP_LINK,
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
-	A4A_PARTNER_OFFERS_LINK,
+	A4A_EXCLUSIVE_OFFERS_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -110,8 +110,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_SITE_SETUP_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_OVERVIEW_LINK ]: [ 'a4a_read_referrals' ],
-	// FIXME: Add the correct capability for Partner Offers
-	[ A4A_PARTNER_OFFERS_LINK ]: [ 'a4a_read_marketplace' ],
+	[ A4A_EXCLUSIVE_OFFERS_LINK ]: [ 'a4a_read_exclusive_offers' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
