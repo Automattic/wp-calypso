@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 
 const botSlugMap = {
 	control: {
@@ -20,6 +21,8 @@ const botSlugMap = {
 
 export function useNewInteractionsBotConfig() {
 	const experimentName = 'wpcom_help_center_ai_workflow_and_prompt_changes';
+	const { currentUser } = useHelpCenterContext();
+
 	const query = useQuery( {
 		queryKey: [ 'new-interactions-bot-slug', experimentName ],
 		staleTime: 10 * 60 * 1000, // 10 minutes
@@ -42,6 +45,12 @@ export function useNewInteractionsBotConfig() {
 						} ),
 				  } ),
 	} );
+
+	if ( ! currentUser?.ID ) {
+		return {
+			newInteractionsBotSlug: 'wpcom-chat-loggedout',
+		};
+	}
 
 	if ( query.data?.variations && experimentName in query.data.variations ) {
 		// null -> control
