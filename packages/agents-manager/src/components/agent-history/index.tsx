@@ -68,7 +68,6 @@ export default function AgentHistory( {
 					onClose={ onClose }
 					options={ chatHeaderOptions }
 					title={ __( 'Past chats', '__i18n_text_domain__' ) }
-					isHistoryView
 				/>
 				<ConversationHistoryView
 					botId={ createOdieBotId( agentId ) }
