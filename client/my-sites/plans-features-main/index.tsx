@@ -61,6 +61,7 @@ import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-not
 import {
 	shouldForceDefaultPlansBasedOnIntent,
 	hideEscapeHatchForIntent,
+	ensureCompatibleIntervalType,
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
@@ -292,8 +293,16 @@ const PlansFeaturesMain = ( {
 		paidDomainName,
 	} );
 
+	// Ensure intervalType is compatible with the current plan's term
+	// Users can only select interval types that are equal to or longer than their current plan's interval
+	const currentPlanTerm = sitePlanSlug ? getPlan( sitePlanSlug )?.term : null;
+	const compatibleIntervalType = useMemo(
+		() => ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
+		[ currentPlanTerm, intervalType ]
+	);
+
 	const term = usePlanBillingPeriod( {
-		intervalType,
+		intervalType: compatibleIntervalType,
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
@@ -505,7 +514,7 @@ const PlansFeaturesMain = ( {
 			isStepperUpgradeFlow,
 			isInSignup,
 			eligibleForWpcomMonthlyPlans,
-			intervalType,
+			intervalType: compatibleIntervalType,
 			customerType: _customerType,
 			siteSlug,
 			selectedPlan,
@@ -554,7 +563,7 @@ const PlansFeaturesMain = ( {
 		isStepperUpgradeFlow,
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
-		intervalType,
+		compatibleIntervalType,
 		_customerType,
 		siteSlug,
 		selectedPlan,
@@ -927,7 +936,7 @@ const PlansFeaturesMain = ( {
 													gridPlans={ gridPlansForComparisonGrid }
 													hideUnavailableFeatures={ hideUnavailableFeatures }
 													intent={ intent }
-													intervalType={ intervalType }
+													intervalType={ compatibleIntervalType }
 													isInAdmin={ ! isInSignup }
 													isInSiteDashboard={ isInSiteDashboard }
 													isInSignup={ isInSignup }
