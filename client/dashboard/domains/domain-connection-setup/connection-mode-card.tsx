@@ -87,18 +87,17 @@ export default function ConnectionModeCard( {
 		} );
 	};
 
-	const handleModeClick = useCallback( () => {
-		onModeChange( mode );
-	}, [ mode, onModeChange ] );
-
-	const handleKeyDown = useCallback(
-		( event: React.KeyboardEvent< HTMLDivElement > ) => {
-			if ( event.key === 'Enter' || event.key === ' ' ) {
-				event.preventDefault();
-				handleModeClick();
+	const handleModeClick = useCallback(
+		( event: React.MouseEvent< HTMLDivElement > ) => {
+			const target = event.target as HTMLElement;
+			// Skip if clicking directly on the RadioControl (fieldset or input)
+			if ( target.closest( 'fieldset' ) || target.tagName === 'INPUT' ) {
+				return;
 			}
+
+			onModeChange( mode );
 		},
-		[ handleModeClick ]
+		[ mode, onModeChange ]
 	);
 
 	return (
@@ -108,12 +107,7 @@ export default function ConnectionModeCard( {
 					<HStack
 						spacing={ 2 }
 						justify="flex-start"
-						role="radio"
-						tabIndex={ 0 }
 						onClick={ handleModeClick }
-						onKeyDown={ handleKeyDown }
-						aria-checked={ isSelected }
-						aria-label={ `${ title }. ${ description }` }
 						style={ { cursor: 'pointer' } }
 					>
 						<RadioControl
