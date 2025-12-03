@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -25,9 +25,34 @@ function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
+	const [ isResurrectedModalVisible, setIsResurrectedModalVisible ] = useState( false );
+	const [ shouldDelayReaderOnboarding, setShouldDelayReaderOnboarding ] = useState( false );
+	const [ readerOnboardingShouldShow, setReaderOnboardingShouldShow ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
+
+	const handleReaderOnboardingRender = useCallback(
+		( willRender: boolean ) => {
+			setReaderOnboardingShouldShow( willRender );
+			if ( willRender && isResurrectedModalVisible ) {
+				setShouldDelayReaderOnboarding( true );
+			}
+			if ( ! willRender ) {
+				setShouldDelayReaderOnboarding( false );
+			}
+		},
+		[ isResurrectedModalVisible ]
+	);
+
+	useEffect( () => {
+		if ( shouldDelayReaderOnboarding && ! isResurrectedModalVisible ) {
+			setShouldDelayReaderOnboarding( false );
+		}
+	}, [ shouldDelayReaderOnboarding, isResurrectedModalVisible ] );
+
+	const suppressReaderOnboarding =
+		readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding );
 
 	// Set the selected feed based on route param.
 	useEffect( () => {
@@ -49,7 +74,12 @@ function FollowingStream( { ...props } ) {
 						}
 					) }
 				</p>
-				<AsyncLoad require="calypso/reader/onboarding" forceShow />
+				<AsyncLoad
+					require="calypso/reader/onboarding"
+					forceShow
+					onRender={ handleReaderOnboardingRender }
+					isSuppressed={ suppressReaderOnboarding }
+				/>
 			</div>
 		);
 	}
@@ -93,10 +123,14 @@ function FollowingStream( { ...props } ) {
 							<QuickPost />
 						</FoldableCard>
 					) }
-					<AsyncLoad require="calypso/reader/onboarding" />
+					<AsyncLoad
+						require="calypso/reader/onboarding"
+						onRender={ handleReaderOnboardingRender }
+						isSuppressed={ suppressReaderOnboarding }
+					/>
 				</ReaderStream>
 			) }
-			<ResurrectedWelcomeModalGate />
+			<ResurrectedWelcomeModalGate onVisibilityChange={ setIsResurrectedModalVisible } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</>
 	);

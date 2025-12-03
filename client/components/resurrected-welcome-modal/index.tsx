@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { BigSkyLogo } from '@automattic/components';
 import { Button, Icon, Modal } from '@wordpress/components';
-import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -137,15 +137,20 @@ const getInitialDismissState = () => {
 
 type Props = {
 	isSuppressed?: boolean;
+	onVisibilityChange?: ( isVisible: boolean ) => void;
 };
 
-export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) => {
+export const ResurrectedWelcomeModalGate = ( {
+	isSuppressed = false,
+	onVisibilityChange,
+}: Props ) => {
 	const translate = useTranslate();
 	const eligibility = useResurrectedFreeUserEligibility();
 	const [ hasDismissedForSession, setHasDismissedForSession ] = useState( () =>
 		eligibility.isForcedVariation ? false : getInitialDismissState()
 	);
 	const [ hasTrackedImpression, setHasTrackedImpression ] = useState( false );
+	const previousVisibilityRef = useRef( false );
 
 	const variationName = eligibility.variationName as WelcomeBackVariation | null;
 	const variationConfig = useMemo(
@@ -173,6 +178,13 @@ export const ResurrectedWelcomeModalGate = ( { isSuppressed = false }: Props ) =
 			setHasDismissedForSession( false );
 		}
 	}, [ eligibility.isForcedVariation ] );
+
+	useEffect( () => {
+		if ( previousVisibilityRef.current !== shouldDisplay ) {
+			previousVisibilityRef.current = shouldDisplay;
+			onVisibilityChange?.( shouldDisplay );
+		}
+	}, [ shouldDisplay, onVisibilityChange ] );
 
 	useEffect( () => {
 		if ( ! shouldDisplay || hasTrackedImpression || ! variationName ) {
