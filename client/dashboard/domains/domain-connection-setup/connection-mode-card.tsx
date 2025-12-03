@@ -88,8 +88,8 @@ export default function ConnectionModeCard( {
 	};
 
 	return (
-		<Card>
-			<CardBody>
+		<Card className="connection-mode-card">
+			<CardBody className="connection-mode-card__body">
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 2 } justify="flex-start">
 						<RadioControl
@@ -99,11 +99,13 @@ export default function ConnectionModeCard( {
 								onModeChange( value as DomainConnectionSetupModeValue )
 							}
 						/>
-						<VStack spacing={ 2 }>
+						<VStack spacing={ 1 }>
 							<Text size="medium" weight={ 500 }>
 								{ title }
 							</Text>
-							<Text variant="muted">{ description }</Text>
+							<Text variant="muted" size={ 12 }>
+								{ description }
+							</Text>
 						</VStack>
 					</HStack>
 					{ isSelected && (
