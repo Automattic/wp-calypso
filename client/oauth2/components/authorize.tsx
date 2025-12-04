@@ -19,6 +19,7 @@ import { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { handleApprove, handleDeny, handleSwitch } from '../hooks/use-authorize-actions';
 import useAuthorizeMeta from '../hooks/use-authorize-meta';
 
 function Authorize() {
@@ -53,81 +54,25 @@ function Authorize() {
 		} );
 	}, [ oauth2Client, setHeaders, translate ] );
 
-	useEffect( () => {
-		if ( ! meta ) {
-			return;
-		}
-		if ( ! meta.flags.user_logged_in && meta.links?.calypso_login_url ) {
-			//window.location.replace( meta.links.calypso_login_url );
-		}
-	}, [ meta ] );
-
 	const onApprove = () => {
 		if ( ! meta ) {
 			return;
 		}
-
-		// Check if this is a custom protocol (like wpcom-local-dev:// for Studio)
-		const params = new URLSearchParams( window.location.search );
-		const redirectUri = params.get( 'redirect_uri' ) || '';
-		const isCustomProtocol = redirectUri && ! redirectUri.startsWith( 'http' );
-
-		// Build the authorize URL with nonce
-		const authorizeUrl = new URL( meta.links.authorize, window.location.origin );
-		const redirectToUrl = new URL( meta.links.redirect_to, window.location.origin );
-
-		// Copy all parameters from redirect_to to authorize URL
-		redirectToUrl.searchParams.forEach( ( value, key ) => {
-			authorizeUrl.searchParams.set( key, value );
-		} );
-
-		// Ensure blog_id is set (required by backend, use 0 for WordPress.com Connect)
-		if ( ! authorizeUrl.searchParams.has( 'blog_id' ) ) {
-			authorizeUrl.searchParams.set( 'blog_id', '0' );
-		}
-
-		// Add the nonce
-		if ( meta.nonce?._wpnonce ) {
-			authorizeUrl.searchParams.set( '_wpnonce', meta.nonce._wpnonce );
-		}
-
-		// Redirect via GET (standard OAuth2 flow for logged-in users)
-		window.location.href = authorizeUrl.toString();
-
-		// For custom protocol, show success message after redirect starts
-		if ( isCustomProtocol ) {
-			setTimeout( () => {
-				setShowSuccessMessage( true );
-			}, 500 );
-		}
-	};
-
-	/**
-	 * Safely decodes HTML entities in a string using DOMParser.
-	 * This prevents XSS vulnerabilities that could occur with innerHTML.
-	 * @param html - The string containing HTML entities to decode
-	 * @returns The decoded string
-	 */
-	const decodeHtmlEntities = ( html: string ): string => {
-		const doc = new DOMParser().parseFromString( html, 'text/html' );
-		return doc.documentElement.textContent || html;
+		handleApprove( meta, () => setShowSuccessMessage( true ) );
 	};
 
 	const onDeny = () => {
 		if ( ! meta ) {
 			return;
 		}
-		// Decode HTML entities in the deny URL (backend may return &amp; instead of &)
-		const decodedUrl = decodeHtmlEntities( meta.links.deny );
-
-		window.location.href = decodedUrl;
+		handleDeny( meta );
 	};
 
 	const onSwitch = () => {
 		if ( ! meta ) {
 			return;
 		}
-		window.location.href = meta.links.logout;
+		handleSwitch( meta );
 	};
 
 	// Map permission names to icons
