@@ -1,7 +1,51 @@
-.help-center-article {
+@import '@wordpress/base-styles/colors';
+
+.agent-manager-support-guide-wrapper {
+	color: #fff;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	.agent-manager-support-guide-content {
+		flex: 1;
+		overflow-y: auto;
+		scrollbar-color: #3f3f3f transparent;
+	}
+}
+
+.agents-manager-chat--docked .help-center-article {
 	.help-center-article-content {
-		.help-center-article-content__main p {
-			color: var( --color-text );
+		.help-center-article-content__header-title {
+			color: #fff;
+		}
+		.help-center-feedback__form {
+			button {
+				color: #fff;
+				fill: #fff;
+			}
+		}
+
+		.help-center-article-content__header-link {
+			color: $gray-400;
+		}
+
+		.help-center-article-content__main {
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6,
+			p,
+			ol,
+			ul,
+			button,
+			a {
+				color: #fff;
+			}
+
+			.wp-block-a8c-support-table-of-contents {
+				background-color: #2f2f2f;
+			}
 		}
 	}
 }
