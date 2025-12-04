@@ -838,14 +838,18 @@ body .is-section-plugins:has(.is-full-width-layout) {
 // Remove layout padding for logged-out full-width layout (covers both actually logged out and logged-in showing logged-out UI)
 body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out),
 body .is-section-plugins:has(.is-plugin-details.is-full-width-layout) {
-	.layout__content {
-		padding: 0;
-	}
 	.lpc-footer-nav-wrapper,
 	.lpc-footer-automattic-nav-wrapper {
 		max-width: 1220px;
 	}
 }
+body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out) .layout__content{
+	padding: 0;
+}
+body .is-section-plugins:has(.is-plugin-details.is-full-width-layout) .layout__content{
+	padding-block: 0;
+}
+
 
 body.is-section-plugins .is-logged-in {
 	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column):not(.is-logged-out).plugins-browser.is-full-width-layout";
