@@ -50,7 +50,7 @@ const getContinueMigrationUrl = ( site: Site, sshSourceSiteDomain?: string ): st
 	}
 
 	if ( migrationState?.type === 'ssh' ) {
-		return addQueryArgs( '/setup/site-migration/site-migration-ssh-verification', {
+		return addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-ssh-verification' ), {
 			...queryArgs,
 			from: sourceSiteDomain || undefined,
 		} );
