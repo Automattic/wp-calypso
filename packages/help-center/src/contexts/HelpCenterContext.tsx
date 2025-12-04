@@ -1,9 +1,65 @@
 import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/constants';
 import { useContext, createContext } from '@wordpress/element';
 import { useNewInteractionsBotConfig } from '../hooks/use-new-interaction-bot-config';
-import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
+
+/**
+ * Local copies of the Agents Manager extension types.
+ * Keep in sync with `@automattic/agents-manager/src/extension-types.ts`.
+ */
+export interface ToolProvider {
+	getAbilities: () => Promise< Ability[] >;
+	executeAbility: ( name: string, args: any ) => Promise< any >;
+}
+
+export interface Ability {
+	name: string;
+	label: string;
+	description: string;
+	category: string;
+	input_schema?: Record< string, any >;
+	output_schema?: Record< string, any >;
+	callback?: ( input: any ) => any | Promise< any >;
+	permissionCallback?: ( input?: any ) => boolean | Promise< boolean >;
+	meta?: {
+		annotations?: {
+			readonly?: boolean | null;
+			destructive?: boolean | null;
+			idempotent?: boolean | null;
+		};
+		[ key: string ]: any;
+	};
+}
+
+export interface ContextProvider {
+	getClientContext: () => ClientContextType;
+}
+
+export interface ClientContextType {
+	url: string;
+	pathname: string;
+	search: string;
+	environment: 'wp-admin' | 'ciab-admin' | 'calypso' | string;
+	contextEntries?: ContextEntry[];
+	[ key: string ]: any;
+}
+
+export interface BaseContextEntry {
+	id: string;
+	type: string;
+	getData?: () => any;
+	data?: any;
+}
+
+export type ContextEntry = BaseContextEntry;
+
+export type Suggestion = {
+	id: string;
+	title: string;
+	description?: string;
+	prompt: string;
+};
 
 export type HelpCenterRequiredInformation = {
 	newInteractionsBotSlug: string;

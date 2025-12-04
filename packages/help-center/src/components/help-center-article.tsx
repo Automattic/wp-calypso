@@ -11,6 +11,8 @@ import ArticleContent from './help-center-article-content';
 
 import './help-center-article.scss';
 
+declare const __i18n_text_domain__: string;
+
 export const HelpCenterArticle = () => {
 	const [ searchParams ] = useSearchParams();
 	const { sectionName } = useHelpCenterContext();

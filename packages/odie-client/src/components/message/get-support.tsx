@@ -11,6 +11,8 @@ import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-li
 
 import './get-support.scss';
 
+declare const __i18n_text_domain__: string;
+
 interface GetSupportProps {
 	onClickAdditionalEvent?: ( destination: string ) => void;
 	isUserEligibleForPaidSupport?: boolean;

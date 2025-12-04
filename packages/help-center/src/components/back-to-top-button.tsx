@@ -7,6 +7,8 @@ import clsx from 'clsx';
 import type { FC } from 'react';
 import './back-to-top-button.scss';
 
+declare const __i18n_text_domain__: string;
+
 export const BackToTopButton: FC = () => {
 	const elementRef = useRef< HTMLElement | null >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );

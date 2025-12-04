@@ -37,6 +37,8 @@ import type { SearchResult } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-search-results.scss';
 
+declare const __i18n_text_domain__: string;
+
 const MAX_VISIBLE_RESULTS = 8;
 
 type HelpLinkProps = {

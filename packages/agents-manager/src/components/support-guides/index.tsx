@@ -1,5 +1,5 @@
 import { AgentUI } from '@automattic/agenttic-ui';
-import { useHelpSearchQuery } from '@automattic/help-center';
+import { useHelpSearchQuery } from '@automattic/help-center/src/hooks/use-help-search-query';
 import {
 	SearchControl,
 	__experimentalVStack as VStack,
