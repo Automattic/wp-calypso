@@ -269,7 +269,7 @@ export const PerformanceInsight = ( {
 	if ( isError ) {
 		return (
 			<Notice variant="error" title={ __( 'Error' ) }>
-				{ __( 'An error occurred while generating the insight. Please try again later.' ) }
+				{ __( 'An error occurred while generating this insight. Please try again later.' ) }
 			</Notice>
 		);
 	}
