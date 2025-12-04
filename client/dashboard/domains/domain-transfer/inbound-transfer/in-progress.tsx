@@ -1,4 +1,6 @@
+import { domainInboundTransferStatusQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
+import { useQuery } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { drafts, layout } from '@wordpress/icons';
@@ -15,6 +17,10 @@ export const InboundTransferInProgress = ( {
 	domainName: string;
 	siteSlug: string;
 } ) => {
+	const { data: domainInboundTransferStatus } = useQuery(
+		domainInboundTransferStatusQuery( domainName )
+	);
+
 	return (
 		<InboundTransferStep
 			icon={ <Icon size={ 24 } icon={ drafts } /> }
@@ -37,9 +43,13 @@ export const InboundTransferInProgress = ( {
 						{ sprintf(
 							// translators: %s is the domain name
 							__(
-								"%s is on its way. There's nothing you need to do—we'll email you when it's complete."
+								"%(domainName)s is on its way. You may be able to speed up the transfer by approving the email %(registrar)s sent you. Besides that, there's nothing you need to do—we'll email you when it's complete."
 							),
-							domainName
+							{
+								domainName,
+								registrar:
+									domainInboundTransferStatus?.registrar ?? __( 'your domain name provider' ),
+							}
 						) }
 					</Text>
 				</VStack>
