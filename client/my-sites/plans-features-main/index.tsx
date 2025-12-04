@@ -295,7 +295,9 @@ const PlansFeaturesMain = ( {
 
 	// Ensure intervalType is compatible with the current plan's term
 	// Users can only select interval types that are equal to or longer than their current plan's interval
-	const currentPlanTerm = sitePlanSlug ? getPlan( sitePlanSlug )?.term : null;
+	// Only apply this fix in the plan-upgrade flow to avoid breaking other flows
+	const currentPlanTerm =
+		isStepperUpgradeFlow && sitePlanSlug ? getPlan( sitePlanSlug )?.term : null;
 	const compatibleIntervalType = useMemo(
 		() => ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
 		[ currentPlanTerm, intervalType ]
