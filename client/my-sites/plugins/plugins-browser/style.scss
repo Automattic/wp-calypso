@@ -158,10 +158,11 @@ body.is-section-plugins #primary .main.is-logged-out {
 }
 
 .full-width-section.plugins-browser__search-header {
-	padding-top: 100px;
+	padding-top: 157px;
 	padding-bottom: 32px;
 	position: relative;
 	overflow: hidden;
+
 
 	.is-section-plugins:not(:has(.lpc-header-nav-wrapper)) & {
 		padding-top: 165px;
@@ -200,7 +201,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		display: none;
 	}
 	@media screen and ( max-width: 600px ) {
-		padding-top: 30px;
+		padding-top: 95px;
 		padding-bottom: 0;
 
 		.search-box-header__sticky-ref {

@@ -37,6 +37,17 @@ $block-spacing: 24px;
 		height: $mobile-icon-height;
 		flex-shrink: 0;
 	}
+
+	.full-width-section & {
+		flex-wrap: nowrap;
+
+		@media screen and ( max-width: 600px ) {
+			.plugin-details-header__icon {
+				width: 56px;
+				height: 56px;
+			}
+		}
+	}
 }
 
 .plugin-details-header__title-container {
@@ -48,6 +59,8 @@ $block-spacing: 24px;
 
 	.full-width-section & {
 		padding-top: 5px;
+		margin-top: 0;
+		text-align: left;
 	}
 }
 
@@ -68,6 +81,9 @@ $block-spacing: 24px;
 
 	.full-width-section & {
 		font-size: rem(40px);
+		@media screen and ( max-width: 600px ) {
+			font-size: rem(32px);
+		}
 	}
 }
 

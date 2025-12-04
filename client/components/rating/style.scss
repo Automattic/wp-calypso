@@ -16,4 +16,13 @@
 			fill: var(--color-neutral-10);
 		}
 	}
+	.full-width-section & {
+		.rating__overlay,
+		.rating__star-outline {
+			.is-empty,
+			.gridicon {
+				fill: #FFB514;
+			}
+		}
+	}
 }
