@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import Banner from 'calypso/components/banner';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import QuickPost from 'calypso/reader/components/quick-post';
@@ -71,6 +72,20 @@ function FollowingStream( { ...props } ) {
 					>
 						<ViewToggle />
 					</NavigationHeader>
+					<Banner
+						callToAction={ translate( 'Take the survey' ) }
+						description={ translate(
+							'Got a minute? Share feedback to help shape WordPress.com for creators and content consumption in 2026.'
+						) }
+						dismissPreferenceName="reader-creator-survey-2026-banner"
+						dismissTemporary
+						horizontal
+						href="https://docs.google.com/forms/d/e/1FAIpQLSfvXsita2C3T5e4cpVmsvecSvY-bi7VCTbewDVgS3ieOdZMtg/viewform?usp=dialog"
+						title={ translate( 'Help shape WordPress.com for creators' ) }
+						tracksImpressionName="calypso_reader_creator_survey_banner_view"
+						tracksClickName="calypso_reader_creator_survey_banner_click"
+						tracksDismissName="calypso_reader_creator_survey_banner_dismiss"
+					/>
 					{ config.isEnabled( 'reader/quick-post' ) && hasSites && (
 						<FoldableCard
 							header={ translate( 'Write a quick post' ) }
