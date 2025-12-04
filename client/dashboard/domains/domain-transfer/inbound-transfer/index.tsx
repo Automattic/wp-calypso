@@ -9,5 +9,10 @@ export default function InboundTransfer( { domain }: { domain: Domain } ) {
 		return <InboundTransferInProgress domainName={ domain.domain } siteSlug={ domain.site_slug } />;
 	}
 
-	return <InboundTransferFailed domainName={ domain.domain } />;
+	return (
+		<InboundTransferFailed
+			domainName={ domain.domain }
+			lastTransferError={ domain.last_transfer_error }
+		/>
+	);
 }

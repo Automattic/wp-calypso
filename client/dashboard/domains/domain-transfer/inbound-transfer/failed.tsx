@@ -5,11 +5,18 @@ import { __, sprintf } from '@wordpress/i18n';
 import { cancelCircleFilled } from '@wordpress/icons';
 import { useAppContext } from '../../../app/context';
 import { domainTransferSetupRoute } from '../../../app/router/domains';
+import Notice from '../../../components/notice';
 import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
 import { InboundTransferStep } from './transfer-step';
 
-export const InboundTransferFailed = ( { domainName }: { domainName: string } ) => {
+export const InboundTransferFailed = ( {
+	domainName,
+	lastTransferError,
+}: {
+	domainName: string;
+	lastTransferError?: string | null;
+} ) => {
 	const { name: appName } = useAppContext();
 	const { data: domainInboundTransferStatus } = useQuery(
 		domainInboundTransferStatusQuery( domainName )
@@ -52,6 +59,12 @@ export const InboundTransferFailed = ( { domainName }: { domainName: string } ) 
 							<Text>{ __( 'Your current provider blocked the transfer.' ) }</Text>
 						</li>
 					</ul>
+					{ lastTransferError && (
+						<>
+							<Text>{ __( 'The last transfer error message we got was:' ) }</Text>
+							<Notice variant="error">{ lastTransferError }</Notice>
+						</>
+					) }
 					<Text>
 						{ sprintf(
 							// translators: %(registrar)s is the domain name provider

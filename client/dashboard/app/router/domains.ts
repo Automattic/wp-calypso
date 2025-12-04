@@ -548,7 +548,11 @@ export const domainTransferIndexRoute = createRoute( {
 		}
 
 		if ( domain.transfer_status === DomainTransferStatus.PENDING_START ) {
-			throw redirect( { to: domainTransferSetupRoute.fullPath, params: { domainName } } );
+			if ( domain.last_transfer_error === null ) {
+				throw redirect( { to: domainTransferSetupRoute.fullPath, params: { domainName } } );
+			}
+			// If there was a transfer error, the user should see the transfer failed page
+			return domain;
 		}
 
 		if (
