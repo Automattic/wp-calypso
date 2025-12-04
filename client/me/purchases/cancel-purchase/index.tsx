@@ -65,6 +65,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import SupportLink from '../cancel-purchase-support-link/support-link';
+import { isCancelRefundSeparationEnabled } from '../hooks/use-cancel-refund-separation';
 import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions, { willShowDomainOptionsRadioButtons } from './domain-options';
@@ -136,6 +137,8 @@ export type CancelPurchaseAllProps = CancelPurchaseProps &
 	CancelPurchaseActions;
 
 class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseState > {
+	private readonly refundSeparationEnabled = isCancelRefundSeparationEnabled();
+
 	state = {
 		cancelBundledDomain: false,
 		confirmCancelBundledDomain: false,
@@ -191,6 +194,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	isRemoveFlow = () => this.state.flowMode === 'remove';
 
+	isSeparationEnabled = () => this.refundSeparationEnabled;
+
+	isImmediateRemovalFlow = () => ! this.isSeparationEnabled() || this.isRemoveFlow();
+
 	redirect = () => {
 		const { purchase, siteSlug } = this.props;
 		let redirectPath = this.props.purchaseListUrl ?? purchasesRoot;
@@ -220,6 +227,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { includedDomainPurchase, purchase, isJetpack, isAkismet, isDomainRegistrationPurchase } =
 			this.props;
 
+		const shouldDisplayDomainOptions = this.isSeparationEnabled() ? this.isRemoveFlow() : true;
+
 		// For Jetpack/Akismet products and domain registrations, call onCancellationComplete to show the dialog
 		if ( isJetpack || isAkismet || isDomainRegistrationPurchase ) {
 			this.onCancellationComplete();
@@ -228,7 +237,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 		// Only show domain options as a separate step if radio buttons will be displayed
 		if (
-			this.isRemoveFlow() &&
+			shouldDisplayDomainOptions &&
 			includedDomainPurchase &&
 			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
 		) {
@@ -482,7 +491,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const hasRefund = hasAmountAvailableToRefund( purchase );
 
 		if ( isDomainRegistration( purchase ) ) {
-			if ( this.isRemoveFlow() && hasRefund ) {
+			if ( this.isImmediateRemovalFlow() && hasRefund ) {
 				return translate(
 					'After you confirm this removal, the domain will be removed immediately.'
 				);
@@ -495,7 +504,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			);
 		}
 
-		if ( this.isRemoveFlow() && hasRefund ) {
+		if ( this.isImmediateRemovalFlow() && hasRefund ) {
 			return translate(
 				'After you confirm this removal, the subscription will be removed immediately.'
 			);
@@ -520,7 +529,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainPurchase
 		);
 
-		if ( this.isRemoveFlow() && refundAmountString ) {
+		const immediateRemovalMessaging = this.isImmediateRemovalFlow();
+
+		if ( immediateRemovalMessaging && refundAmountString ) {
 			return translate(
 				'If you confirm this removal, you will receive a {{span}}refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
 				{
@@ -557,7 +568,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.props.includedDomainPurchase
 		);
 
-		if ( this.isRemoveFlow() && refundAmountString ) {
+		if ( this.isImmediateRemovalFlow() && refundAmountString ) {
 			return translate( '%(refundText)s to be refunded', {
 				args: {
 					refundText: refundAmountString,
@@ -657,8 +668,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];
 
 		// Check if we should show domain options inline (when they don't need radio buttons)
+		const shouldUseDomainOptions = this.isSeparationEnabled() ? this.isRemoveFlow() : true;
 		const shouldShowDomainOptionsInline =
-			this.isRemoveFlow() &&
+			shouldUseDomainOptions &&
 			includedDomainPurchase &&
 			! willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
 
@@ -685,7 +697,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				<CancelPurchaseRefundInformation
 					purchase={ purchase }
 					isJetpackPurchase={ isJetpackPurchase }
-					flowMode={ this.state.flowMode }
+					flowMode={ this.isSeparationEnabled() ? this.state.flowMode : 'remove' }
 				/>
 
 				<CancelPurchaseFeatureList
@@ -738,7 +750,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					) }
 					<div className="cancel-purchase__footer-text-wrapper">
 						<div className="cancel-purchase__footer-text">
-							{ this.isRemoveFlow() && hasAmountAvailableToRefund( purchase ) ? (
+							{ this.isImmediateRemovalFlow() && hasAmountAvailableToRefund( purchase ) ? (
 								<p className="cancel-purchase__refund-amount">{ this.renderFooterText() }</p>
 							) : (
 								<p className="cancel-purchase__expiration-text">{ this.renderExpirationText() }</p>
@@ -781,6 +793,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { cancelBundledDomain, confirmCancelBundledDomain } = this.state;
 
 		if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
+			return null;
+		}
+
+		if ( this.isSeparationEnabled() && ! this.isRemoveFlow() ) {
 			return null;
 		}
 
@@ -839,7 +855,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	renderRefundNotice = () => {
 		const { purchase, translate } = this.props;
 
-		if ( this.isRemoveFlow() || ! hasAmountAvailableToRefund( purchase ) ) {
+		if (
+			! this.isSeparationEnabled() ||
+			this.isRemoveFlow() ||
+			! hasAmountAvailableToRefund( purchase )
+		) {
 			return null;
 		}
 
