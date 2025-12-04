@@ -103,7 +103,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 							action: 'big-sky',
 						} );
 					} }
-					href={ addQueryArgs( wpcomLink( '/start/setup/ai-site-builder' ), {
+					href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }
@@ -116,9 +116,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					title={ __( 'Migrate to WordPress.com' ) }
 					description={ __( 'Bring your site to the world’s best WordPress host.' ) }
 					onClick={ migrateClick }
-					href={ wpcomLink(
-						`/start/setup/site-migration?source=${ context }&ref=new-site-popover`
-					) }
+					href={ wpcomLink( `/setup/site-migration?source=${ context }&ref=new-site-popover` ) }
 					aria-label={ __( 'Migrate an existing WordPress site' ) }
 				/>
 				<MenuItem
