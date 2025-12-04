@@ -40,11 +40,14 @@ $block-spacing: 24px;
 
 	.full-width-section & {
 		flex-wrap: nowrap;
-
+		.plugin-details-header__icon {
+			width: 80px;
+			height: 80px;
+		}
 		@media screen and ( max-width: 600px ) {
 			.plugin-details-header__icon {
-				width: 56px;
-				height: 56px;
+				width: 72px;
+				height: 72px;
 			}
 		}
 	}

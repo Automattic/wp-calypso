@@ -313,6 +313,10 @@ $calypso-header-height: 31px;
 
 			@include breakpoint-deprecated( '<960px' ) {
 				padding: 40px;
+
+				.full-width-section & {
+					padding-block: 30px;
+				}
 			}
 		}
 
@@ -376,6 +380,7 @@ $calypso-header-height: 31px;
 
 	.full-width-section & {
 		padding-top: 0;
+		column-gap: 125px;
 
 		.badge--info {
 			background-color: var(--studio-gray-0);
@@ -862,7 +867,7 @@ body.is-section-plugins .is-logged-in {
 }
 
 .full-width-section.plugin-details__navigation-header-section {
-	padding-top: 130px;
+	padding-top: 116px;
 	padding-bottom: 0;
 
 	.plugin-details__layout:not( .is-logged-in ) & {

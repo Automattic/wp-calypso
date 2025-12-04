@@ -152,7 +152,11 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 
 	return (
 		<a className="related-plugins-item" href={ pluginLink }>
-			<PluginIcon image={ plugin.icon } className="related-plugins-item__icon" />
+			<PluginIcon
+				image={ plugin.icon }
+				className="related-plugins-item__icon"
+				size={ isEnabled( 'marketplace-redesign' ) ? 40 : undefined }
+			/>
 			<div className="related-plugins-item__info">
 				<h3 className="related-plugins-item__title">{ plugin.name }</h3>
 				<div className="related-plugins-item__excerpt">{ plugin.short_description }</div>
