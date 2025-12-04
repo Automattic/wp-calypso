@@ -7,17 +7,12 @@ import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data'
 import { useEffect, useCallback, useState } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
-import { loadExternalProviders } from './src/utils/load-external-providers';
-const queryClient = new QueryClient();
+
 import './help-center.scss';
 
-function AdminHelpCenterContent( {
-	toolProvider,
-	contextProvider,
-	suggestions,
-	markdownComponents,
-	markdownExtensions,
-} ) {
+const queryClient = new QueryClient();
+
+function AdminHelpCenterContent() {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDataStoreDispatch( 'automattic/help-center' );
 	const { isShown, unreadCount } = useSelect(
@@ -226,11 +221,6 @@ function AdminHelpCenterContent( {
 			onboardingUrl="https://wordpress.com/start"
 			handleClose={ closeCallback }
 			isCommerceGarden={ helpCenterData.isCommerceGarden }
-			toolProvider={ toolProvider }
-			contextProvider={ contextProvider }
-			suggestions={ suggestions }
-			markdownComponents={ markdownComponents }
-			markdownExtensions={ markdownExtensions }
 			{ ...botProps }
 		/>
 	);
@@ -238,20 +228,9 @@ function AdminHelpCenterContent( {
 
 const target = document.getElementById( 'help-center-masterbar' );
 if ( target ) {
-	// Load external providers (e.g., from Big Sky plugin) and render
-	loadExternalProviders().then(
-		( { toolProvider, contextProvider, suggestions, markdownComponents, markdownExtensions } ) => {
-			createRoot( target ).render(
-				<QueryClientProvider client={ queryClient }>
-					<AdminHelpCenterContent
-						toolProvider={ toolProvider }
-						contextProvider={ contextProvider }
-						suggestions={ suggestions }
-						markdownComponents={ markdownComponents }
-						markdownExtensions={ markdownExtensions }
-					/>
-				</QueryClientProvider>
-			);
-		}
+	createRoot( target ).render(
+		<QueryClientProvider client={ queryClient }>
+			<AdminHelpCenterContent />
+		</QueryClientProvider>
 	);
 }
