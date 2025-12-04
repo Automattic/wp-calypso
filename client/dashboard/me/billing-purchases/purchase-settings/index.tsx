@@ -60,6 +60,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
+import { wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -125,7 +126,7 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 	}
 
 	if ( purchase.is_woo_hosted_product ) {
-		return `/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug }`;
+		return wpcomLink( `/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug }` );
 	}
 
 	return getWpcomPlanGridUrl( purchase.site_slug );
@@ -149,7 +150,7 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 
 function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 	const backUrl = window.location.href.replace( window.location.origin, '' );
-	return addQueryArgs( '/setup/plan-upgrade', {
+	return addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		...( siteSlug && { siteSlug } ),
 		cancel_to: backUrl,
 	} );
@@ -811,7 +812,9 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 							{
 								SubmitContent: (
 									<a
-										href={ `/start/site-content-collection/website-content?siteSlug=${ purchase.site_slug }` }
+										href={ wpcomLink(
+											`/start/site-content-collection/website-content?siteSlug=${ purchase.site_slug }`
+										) }
 									>
 										{ __( 'Submit content' ) }
 									</a>

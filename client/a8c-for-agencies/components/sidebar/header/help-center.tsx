@@ -10,7 +10,11 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SidebarHelpCenter = ( { onClick }: { onClick: () => void } ) => {
+type Props = {
+	onClick?: () => void;
+};
+
+const SidebarHelpCenter = ( { onClick }: Props ) => {
 	const { show, isMinimized } = useDateStoreSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -27,7 +31,7 @@ const SidebarHelpCenter = ( { onClick }: { onClick: () => void } ) => {
 		} else {
 			setShowHelpCenter( ! show );
 		}
-		onClick();
+		onClick?.();
 	};
 
 	return (

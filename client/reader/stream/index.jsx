@@ -712,32 +712,34 @@ class ReaderStream extends Component {
 								<CustomerCouncilBanner translate={ translate } />
 							</div>
 						) }
-						<div className="stream__header">
-							<SectionNav selectedText={ this.state.selectedTab }>
-								<NavTabs label={ translate( 'Status' ) }>
-									<NavItem
-										key="posts"
-										selected={ this.state.selectedTab === 'posts' }
-										onClick={ this.handlePostsSelected }
-									>
-										{ translate( 'Posts' ) }
-									</NavItem>
-									<NavItem
-										key="sites"
-										selected={ this.state.selectedTab === 'sites' }
-										onClick={ this.handleSitesSelected }
-									>
-										{ this.props.sidebarTabTitle || translate( 'Subscriptions' ) }
-									</NavItem>
-								</NavTabs>
-							</SectionNav>
+						<div className="stream__container">
+							<div className="stream__header">
+								<SectionNav selectedText={ this.state.selectedTab }>
+									<NavTabs label={ translate( 'Status' ) }>
+										<NavItem
+											key="posts"
+											selected={ this.state.selectedTab === 'posts' }
+											onClick={ this.handlePostsSelected }
+										>
+											{ translate( 'Posts' ) }
+										</NavItem>
+										<NavItem
+											key="sites"
+											selected={ this.state.selectedTab === 'sites' }
+											onClick={ this.handleSitesSelected }
+										>
+											{ this.props.sidebarTabTitle || translate( 'Subscriptions' ) }
+										</NavItem>
+									</NavTabs>
+								</SectionNav>
+							</div>
+							{ this.state.selectedTab === 'posts' && (
+								<div className="reader__content">{ bodyContent }</div>
+							) }
+							{ this.state.selectedTab === 'sites' && (
+								<div className="stream__right-column">{ sidebarContentFn?.() }</div>
+							) }
 						</div>
-						{ this.state.selectedTab === 'posts' && (
-							<div className="reader__content">{ bodyContent }</div>
-						) }
-						{ this.state.selectedTab === 'sites' && (
-							<div className="stream__right-column">{ sidebarContentFn?.() }</div>
-						) }
 					</>
 				);
 			}
