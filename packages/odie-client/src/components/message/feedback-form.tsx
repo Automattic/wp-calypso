@@ -47,7 +47,11 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 						? __( 'Good 👍', __i18n_text_domain__ )
 						: __( 'Bad 👎', __i18n_text_domain__ ),
 				payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
-				metadata: { rated: true },
+				metadata: {
+					rated: true,
+					temporary_id: crypto.randomUUID(),
+					local_timestamp: Date.now() / 1000,
+				},
 				role: 'user',
 				type: 'message',
 			};
