@@ -113,21 +113,14 @@ export default function DomainConnectCard( {
 						{ __( 'Need help?' ) }
 					</Text>
 					<VStack spacing={ 2 }>
-						<InlineSupportLink
-							supportContext="map-domain-setup-instructions"
-							className="domain-connect-card__support-link"
-						>
+						<InlineSupportLink supportContext="map-domain-setup-instructions">
 							{ __( 'Domain connection guide' ) }
 						</InlineSupportLink>
-						<InlineSupportLink
-							supportContext="general-support-options"
-							className="domain-connect-card__support-link"
-						>
+						<InlineSupportLink supportContext="general-support-options">
 							{ __( 'Contact support' ) }
 						</InlineSupportLink>
 						<Button
 							variant="link"
-							className="domain-connect-card__support-link"
 							onClick={ onChangeSetupMode }
 							disabled={ isUpdatingConnectionMode }
 							style={ { lineHeight: '20px' } }

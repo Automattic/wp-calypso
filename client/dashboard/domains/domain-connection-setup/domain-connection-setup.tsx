@@ -85,13 +85,7 @@ export default function DomainConnectionSetup( {
 						{
 							registrar:
 								! isReseller && registrar_url ? (
-									<ExternalLink
-										href={ registrar_url }
-										className="domain-connection-setup__registrar-link"
-									>
-										{ ' ' }
-										{ registrar }{ ' ' }
-									</ExternalLink>
+									<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
 								) : (
 									<>{ registrar || __( 'your domain name provider' ) }</>
 								),

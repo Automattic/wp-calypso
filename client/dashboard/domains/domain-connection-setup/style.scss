@@ -14,13 +14,18 @@
 	.summary-button.components-button .summary-button-title {
 		font-weight: 500;
 	}
-}
-
-.domain-connection-verification__support-link {
-	color: $gray-900;
-}
-.domain-connection-verification__restart-connection-link.components-button.is-link {
-	color: $gray-900;
+	a {
+		color: $gray-900;
+		&:hover {
+			color: $gray-900;
+		}
+	}
+	.is-link {
+		color: $gray-900;
+		&:hover {
+			color: $gray-900;
+		}
+	}
 }
 
 .verification-in-progress-next-steps {
@@ -33,8 +38,17 @@
 }
 
 .domain-connection-setup {
-	&__use-domain-connect-link.components-button.is-link {
+	a {
 		color: $gray-900;
+		&:hover {
+			color: $gray-900;
+		}
+	}
+	button.is-link {
+		color: $gray-900;
+		&:hover {
+			color: $gray-900;
+		}
 	}
 	&__step .components-card-body{
 		padding-inline-start: 0;
@@ -44,22 +58,8 @@
 		padding-inline-start: 40px;
 		padding-top: 16px;
 	}
-	&__registrar-link {
-		color: $gray-900;
-	}
 }
 
 .domain-registrar-banner__registrar-link {
 	color: $gray-900;
-}
-
-.domain-connect-card__registrar-link {
-	color: $gray-900;
-}
-
-.domain-connect-card__support-link {
-	color: $gray-900;
-	&.components-button.is-link {
-		color: $gray-900;
-	}
 }
