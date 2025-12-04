@@ -18,7 +18,6 @@ interface Result {
 	conversations: ServerConversationListItem[];
 	isLoading: boolean;
 	isError: boolean;
-	error: Error | null;
 	refetch: () => Promise< unknown >;
 }
 
@@ -74,7 +73,6 @@ export default function useConversationList( {
 		conversations: data ?? [],
 		isLoading,
 		isError,
-		error,
 		refetch,
 	};
 }

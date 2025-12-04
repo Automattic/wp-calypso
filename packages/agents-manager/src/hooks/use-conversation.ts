@@ -20,7 +20,6 @@ interface Result {
 	data: { messages: Message[]; sessionId?: string } | undefined;
 	isLoading: boolean;
 	isError: boolean;
-	error: Error | null;
 	refetch: () => Promise< unknown >;
 }
 
@@ -73,5 +72,5 @@ export default function useConversation( {
 		}
 	}, [ error ] );
 
-	return { data, isLoading, isError, error, refetch };
+	return { data, isLoading, isError, refetch };
 }
