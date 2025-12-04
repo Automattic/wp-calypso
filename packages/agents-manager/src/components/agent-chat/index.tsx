@@ -81,46 +81,44 @@ export default function AgentChat( {
 	);
 
 	return (
-		<>
-			<AgentUI.Container
-				className="agenttic"
-				messages={ messages }
-				isProcessing={ isProcessing }
-				error={ error }
-				onSubmit={ onSubmit }
-				variant={ isDocked ? 'embedded' : 'floating' }
-				suggestions={ suggestions }
-				floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
-				onClose={ onClose }
-				onExpand={ onExpand }
-				onStop={ onAbort }
-				messageRenderer={ messageRenderer }
-				emptyView={
-					<>
-						<Link to="/support-guides">Support articles</Link>
-						{ isLoadingConversation ? (
-							<ChatMessageSkeleton count={ 3 } />
-						) : (
-							<EmptyView
-								heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
-								help={ __( 'Got a different request? Ask away.', '__i18n_text_domain__' ) }
-								suggestions={ emptyViewSuggestions }
-								icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
-							/>
-						) }
-					</>
-				}
-			>
-				<AgentUI.ConversationView>
-					<ChatHeader isChatDocked={ isDocked } onClose={ onClose } options={ chatHeaderOptions } />
-					{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
-					<AgentUI.Footer>
-						<AgentUI.Suggestions />
-						<AgentUI.Notice />
-						<AgentUI.Input />
-					</AgentUI.Footer>
-				</AgentUI.ConversationView>
-			</AgentUI.Container>
-		</>
+		<AgentUI.Container
+			className="agenttic"
+			messages={ messages }
+			isProcessing={ isProcessing }
+			error={ error }
+			onSubmit={ onSubmit }
+			variant={ isDocked ? 'embedded' : 'floating' }
+			suggestions={ suggestions }
+			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
+			onClose={ onClose }
+			onExpand={ onExpand }
+			onStop={ onAbort }
+			messageRenderer={ messageRenderer }
+			emptyView={
+				<>
+					<Link to="/support-guides">Support articles</Link>
+					{ isLoadingConversation ? (
+						<ChatMessageSkeleton count={ 3 } />
+					) : (
+						<EmptyView
+							heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
+							help={ __( 'Got a different request? Ask away.', '__i18n_text_domain__' ) }
+							suggestions={ emptyViewSuggestions }
+							icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
+						/>
+					) }
+				</>
+			}
+		>
+			<AgentUI.ConversationView>
+				<ChatHeader isChatDocked={ isDocked } onClose={ onClose } options={ chatHeaderOptions } />
+				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
+				<AgentUI.Footer>
+					<AgentUI.Suggestions />
+					<AgentUI.Notice />
+					<AgentUI.Input />
+				</AgentUI.Footer>
+			</AgentUI.ConversationView>
+		</AgentUI.Container>
 	);
 }
