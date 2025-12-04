@@ -11,6 +11,7 @@ import {
 	GROUP_JETPACK,
 	GROUP_P2,
 	GROUP_WPCOM,
+	GROUP_A4A,
 	PLAN_100_YEARS,
 	PLAN_A4A_BUSINESS,
 	PLAN_A4A_BUSINESS_MONTHLY,
@@ -1315,6 +1316,10 @@ describe( 'findPlansKeys', () => {
 		expect( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_BUSINESS } ) ).toEqual( [
 			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
+		] );
+		expect( findPlansKeys( { group: GROUP_A4A, type: TYPE_BUSINESS } ) ).toEqual( [
+			PLAN_A4A_BUSINESS,
+			PLAN_A4A_BUSINESS_MONTHLY,
 		] );
 	} );
 } );
