@@ -15,8 +15,8 @@ import {
 	isTriennially,
 	isJetpackAISlug,
 	isJetpackStatsPaidTieredProductSlug,
-	isAkismetPro5h,
-	getAkismetPro5hProductDisplayName,
+	isAkismetPro500,
+	getAkismetPro500ProductDisplayName,
 } from '@automattic/calypso-products';
 import { formatNumber } from '@automattic/number-formatters';
 import { translate } from 'i18n-calypso';
@@ -122,8 +122,8 @@ export function getLabel( product: ResponseCartProduct ): string {
 		} );
 	}
 
-	if ( isAkismetPro5h( product ) ) {
-		return getAkismetPro5hProductDisplayName( product.product_name, quantity );
+	if ( isAkismetPro500( product ) ) {
+		return getAkismetPro500ProductDisplayName( product.product_name, quantity );
 	}
 
 	return product.product_name || '';
