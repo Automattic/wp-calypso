@@ -79,7 +79,6 @@ function FollowingStream( { ...props } ) {
 							'Got a minute? Share feedback to help shape WordPress.com for creators and content consumption in 2026.'
 						) }
 						dismissPreferenceName="reader-creator-survey-2026-banner"
-						dismissTemporary
 						horizontal
 						href="https://automattic.survey.fm/creating-consuming-on-wordpress-com"
 						title={ translate( 'Help shape WordPress.com for creators' ) }
