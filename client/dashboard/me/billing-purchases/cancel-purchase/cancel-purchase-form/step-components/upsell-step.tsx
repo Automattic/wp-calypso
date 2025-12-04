@@ -16,6 +16,7 @@ import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payme
 import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.png';
 import { useAnalytics } from '../../../../../app/analytics';
 import { useHelpCenter } from '../../../../../app/help-center';
+import { wpcomLink } from '../../../../../utils/link';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 type UpsellProps = {
@@ -62,13 +63,13 @@ function Upsell( { image, ...props }: UpsellProps ) {
 function getLiveChatUrl( type: string, purchase: Purchase ) {
 	switch ( type ) {
 		case 'live-chat:plans':
-			return `/purchases/subscriptions/${ purchase.site_slug }/${ purchase.ID }`;
+			return wpcomLink( `/purchases/subscriptions/${ purchase.site_slug }/${ purchase.ID }` );
 		case 'live-chat:plugins':
-			return `/plugins/${ purchase.site_slug }`;
+			return wpcomLink( `/plugins/${ purchase.site_slug }` );
 		case 'live-chat:themes':
-			return `/themes/${ purchase.site_slug }`;
+			return wpcomLink( `/themes/${ purchase.site_slug }` );
 		case 'live-chat:domains':
-			return `/domains/manage/${ purchase.site_slug }`;
+			return wpcomLink( `/domains/manage/${ purchase.site_slug }` );
 	}
 
 	return '';
@@ -204,11 +205,13 @@ export default function UpsellStep( {
 					acceptButtonText={ sprintf( __( 'I want the %(businessPlanName)s plan' ), {
 						businessPlanName,
 					} ) }
-					acceptButtonUrl={ `/checkout/${
-						purchase.site_slug
-					}/business?coupon=${ couponCode }&cancel_to=${ window.location.href
-						.replace( window.location.origin, '' )
-						.replace( '/cancel', '' ) }` }
+					acceptButtonUrl={ wpcomLink(
+						`/checkout/${
+							purchase.site_slug
+						}/business?coupon=${ couponCode }&cancel_to=${ window.location.href
+							.replace( window.location.origin, '' )
+							.replace( '/cancel', '' ) }`
+					) }
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }

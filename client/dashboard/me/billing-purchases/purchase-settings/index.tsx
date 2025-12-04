@@ -114,15 +114,15 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 
 	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
 	if ( upgradeProductSlug ) {
-		return `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }`;
+		return wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` );
 	}
 
 	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return `/plans/storage/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_jetpack_plan_or_product ) {
-		return `/plans/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_woo_hosted_product ) {
@@ -134,18 +134,18 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 
 function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return `/plans/storage/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_jetpack_plan_or_product ) {
-		return `/plans/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_plan ) {
 		return getWpcomPlanGridUrl( purchase.site_slug );
 	}
 
-	return `/plans/${ purchase.site_slug }`;
+	return wpcomLink( `/plans/${ purchase.site_slug }` );
 }
 
 function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
@@ -207,7 +207,7 @@ function upgradePurchase( upgradeUrl: string ): void {
 
 function ProductLink( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.is_plan && purchase.site_slug ) {
-		const url = '/plans/my-plan/' + purchase.site_slug;
+		const url = wpcomLink( '/plans/my-plan/' + purchase.site_slug );
 		const text = __( 'Plan features' );
 		return (
 			<MetadataItem>
@@ -440,7 +440,7 @@ function JetpackCRMDownloadsButton( { purchase }: { purchase: Purchase } ) {
 	}
 
 	// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-	const path = `/purchases/crm-downloads/${ purchase.ID }`;
+	const path = wpcomLink( `/purchases/crm-downloads/${ purchase.ID }` );
 
 	return (
 		<ActionList.ActionItem

@@ -3,6 +3,7 @@
  */
 import { AuthContext } from '../../../app/auth';
 import { render as testUtilsRender } from '../../../test-utils';
+import { wpcomLink } from '../../../utils/link';
 import { Plan } from '../index';
 import type { User, Site } from '@automattic/api-core';
 
@@ -102,7 +103,7 @@ describe( '<Plan>', () => {
 		expect( getByText( 'Business-expired' ) ).toBeInTheDocument();
 		expect( getByRole( 'link', { name: /Renew plan/ } ) ).toHaveAttribute(
 			'href',
-			'/checkout/test.wordpress.com/business-bundle'
+			wpcomLink( '/checkout/test.wordpress.com/business-bundle' )
 		);
 	} );
 
@@ -127,7 +128,7 @@ describe( '<Plan>', () => {
 		expect( getByText( 'Trial-expired' ) ).toBeInTheDocument();
 		expect( getByRole( 'link', { name: /Upgrade/ } ) ).toHaveAttribute(
 			'href',
-			'/plans/test.wordpress.com'
+			wpcomLink( '/plans/test.wordpress.com' )
 		);
 	} );
 } );

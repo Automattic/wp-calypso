@@ -16,6 +16,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
+import { wpcomLink } from '../../utils/link';
 import { wasEcommerceTrial } from '../../utils/site-trial';
 import SiteDeleteModal from '../site-delete-modal';
 import type { Site } from '@automattic/api-core';
@@ -105,10 +106,13 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 									upsellId="site-trial-ended"
 									upsellFeatureId="site-trial"
 									variant="primary"
-									href={ addQueryArgs( `/checkout/${ site.slug }/${ product.pathSlug }`, {
-										cancel_to: backUrl,
-										redirect_to: backUrl,
-									} ) }
+									href={ addQueryArgs(
+										wpcomLink( `/checkout/${ site.slug }/${ product.pathSlug }` ),
+										{
+											cancel_to: backUrl,
+											redirect_to: backUrl,
+										}
+									) }
 								/>
 							</ButtonStack>
 						</VStack>

@@ -27,6 +27,7 @@ import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
 import { addTransientViewPropertiesToQueryParams } from '../../utils/dashboard-v1-sync';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { wpcomLink } from '../../utils/link';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
@@ -365,7 +366,7 @@ function SiteLaunchNag( { site }: { site: Site } ) {
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_sites_site_launch_nag_impression" />
 			<ExternalLink
-				href={ `/home/${ site.slug }` }
+				href={ wpcomLink( `/home/${ site.slug }` ) }
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click' );
 				} }
@@ -395,8 +396,8 @@ function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
 			<ExternalLink
 				href={
 					isTrial
-						? `/plans/${ site.slug }`
-						: `/checkout/${ site.slug }/${ site.plan?.product_slug }`
+						? wpcomLink( `/plans/${ site.slug }` )
+						: wpcomLink( `/checkout/${ site.slug }/${ site.plan?.product_slug }` )
 				}
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_sites_plan_renew_nag_click', {
