@@ -42,7 +42,7 @@ export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../emails/list' ).then( ( d ) =>
+	import( '../../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails-index' )( {
 			component: d.default,
 		} )

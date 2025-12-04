@@ -3,18 +3,18 @@ import { domainsQuery, userMailboxesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
-import { usePersistentView } from '../../app/hooks/use-persistent-view';
-import { emailsRoute } from '../../app/router/emails';
-import { DataViews, DataViewsCard } from '../../components/dataviews';
-import NoDomainsAvailableEmptyState from '../components/no-domains-available-empty-state';
-import NoEmailsAvailableEmptyState from '../components/no-emails-available-empty-state';
-import UnusedMailboxNotice from '../components/unused-mailbox-notice';
-import { DEFAULT_VIEW, getFields, useActions } from '../dataviews';
-import { Layout } from '../layout';
-import { mapMailboxToEmail } from '../mappers/mailbox-to-email-mapper';
-import type { Email } from '../types';
+import { usePersistentView } from '../app/hooks/use-persistent-view';
+import { emailsRoute } from '../app/router/emails';
+import { DataViews, DataViewsCard } from '../components/dataviews';
+import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
+import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
+import UnusedMailboxNotice from './components/unused-mailbox-notice';
+import { DEFAULT_VIEW, getFields, useActions } from './dataviews';
+import { Layout } from './layout';
+import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
+import type { Email } from './types';
 
-import '../style.scss';
+import './style.scss';
 
 function EmailsList() {
 	const { data: allEmailAccounts, isLoading: isLoadingEmailAccounts } = useQuery(
@@ -128,3 +128,4 @@ function EmailsList() {
 }
 
 export default EmailsList;
+
