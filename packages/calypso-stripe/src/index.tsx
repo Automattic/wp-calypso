@@ -267,12 +267,21 @@ export async function confirmStripeSetupIntentAndAttachCard(
 
 // Confirm any PaymentIntent from Stripe response and carry out 3DS or
 // other next_actions if they are required.
+//
+// If returnUrl is provided, Stripe will redirect to that URL after 3DS
+// authentication is complete (for redirect-based 3DS flows). If not provided,
+// Stripe will use the default modal/iframe approach.
 export async function confirmStripePaymentIntent(
 	stripe: Stripe,
-	paymentIntentClientSecret: string
+	paymentIntentClientSecret: string,
+	returnUrl?: string
 ): Promise< StripeAuthenticationResponse > {
 	debug( 'Confirming paymentIntent...', paymentIntentClientSecret );
-	const { paymentIntent, error } = await stripe.confirmCardPayment( paymentIntentClientSecret );
+	const options = returnUrl ? { return_url: returnUrl } : {};
+	const { paymentIntent, error } = await stripe.confirmCardPayment(
+		paymentIntentClientSecret,
+		options
+	);
 	if ( error || ! paymentIntent ) {
 		debug( 'Confirming paymentIntent failed', error );
 		// Note that this is a promise rejection

@@ -8,7 +8,8 @@ export async function handle3DSChallenge(
 	reduxDispatch: CalypsoDispatch,
 	stripe: Stripe,
 	paymentIntentClientSecret: string,
-	paymentIntentId: string
+	paymentIntentId: string,
+	returnUrl?: string
 ): Promise< void > {
 	// 3DS authentication required
 	reduxDispatch(
@@ -25,7 +26,7 @@ export async function handle3DSChallenge(
 		'info'
 	);
 	// If this fails, it will reject (throw).
-	await confirmStripePaymentIntent( stripe, paymentIntentClientSecret );
+	await confirmStripePaymentIntent( stripe, paymentIntentClientSecret, returnUrl );
 }
 
 export function doesTransactionResponseRequire3DS(
