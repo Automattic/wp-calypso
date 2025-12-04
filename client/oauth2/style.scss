@@ -77,7 +77,7 @@
 .oauth2-connect__permissions-grid {
 	display: grid;
 	grid-template-columns: repeat( 2, 1fr );
-	gap: 16px 24px;
+	gap: 24px 24px;
 }
 
 .oauth2-connect__permission-item {
@@ -85,6 +85,7 @@
 	align-items: flex-start;
 	gap: 8px;
 	font-size: 12px;
+	line-height: 1.5;
 	color: #1e1e1e;
 	text-wrap: pretty;
 
