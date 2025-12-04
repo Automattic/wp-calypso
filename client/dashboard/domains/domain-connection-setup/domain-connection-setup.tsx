@@ -211,7 +211,6 @@ export default function DomainConnectionSetup( {
 									<Text>{ __( 'This domain name can be automatically connected.' ) }</Text>
 									<Button
 										variant="link"
-										className="domain-connection-setup__use-domain-connect-link"
 										onClick={ () => setConnectionMode( DomainConnectionSetupMode.DC ) }
 									>
 										{ __( 'Use Domain Connect' ) }

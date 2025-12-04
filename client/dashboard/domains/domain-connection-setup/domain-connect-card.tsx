@@ -76,13 +76,7 @@ export default function DomainConnectCard( {
 						{
 							b: <b />,
 							registrar: registrar_url ? (
-								<ExternalLink
-									href={ registrar_url }
-									className="domain-connect-card__registrar-link"
-								>
-									{ ' ' }
-									{ registrar }{ ' ' }
-								</ExternalLink>
+								<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
 							) : (
 								<>{ registrar || __( 'Your domain name provider' ) }</>
 							),
