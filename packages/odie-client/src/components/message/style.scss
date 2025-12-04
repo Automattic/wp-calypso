@@ -323,7 +323,7 @@ $blueberry-color: #3858e9;
 		}
 
 		.odie-chatbox-message__content {
-			flex-basis: calc( 100% - 78px );
+			flex-basis: 100%;
 		}
 
 		.odie-conversation__feedback {
@@ -342,7 +342,11 @@ $blueberry-color: #3858e9;
 
 			.odie-conversation-feedback__thumbs {
 				display: flex;
-				gap: 8px;
+				gap: var(--spacing-1, .25rem);
+
+				.odie-conversation-feedback__thumbs-button:hover svg {
+					color: var(--color-foreground, oklch(.241 0 0));
+				}
 
 				&-button {
 					padding: 0;
