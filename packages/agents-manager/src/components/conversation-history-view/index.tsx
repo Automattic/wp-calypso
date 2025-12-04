@@ -13,7 +13,6 @@ import './style.scss';
 
 interface ConversationHistoryViewProps {
 	botId: string;
-	apiBaseUrl?: string;
 	authProvider?: () => Promise< Record< string, string > >;
 	onSelectConversation: ( sessionId: string ) => void;
 	onNewChat: () => void;
@@ -21,7 +20,6 @@ interface ConversationHistoryViewProps {
 
 export default function ConversationHistoryView( {
 	botId,
-	apiBaseUrl,
 	authProvider,
 	onSelectConversation,
 	onNewChat,
@@ -32,7 +30,6 @@ export default function ConversationHistoryView( {
 
 	const { conversations, isLoading, error } = useConversationList( {
 		botId,
-		apiBaseUrl,
 		authProvider,
 	} );
 

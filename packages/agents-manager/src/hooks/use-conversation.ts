@@ -1,0 +1,71 @@
+import {
+	loadAllMessagesFromServer,
+	createOdieBotId,
+	type Message,
+} from '@automattic/agenttic-client';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useRef } from '@wordpress/element';
+import { API_BASE_URL } from '../constants';
+
+interface Config {
+	agentId: string;
+	sessionId: string;
+	authProvider?: () => Promise< Record< string, string > >;
+	maxPages?: number;
+	onSuccess?: ( messages: Message[], sessionId: string ) => void;
+	onError?: ( error: Error ) => void;
+}
+
+interface Result {
+	data: { messages: Message[]; sessionId?: string } | undefined;
+	isLoading: boolean;
+	isError: boolean;
+	error: Error | null;
+	refetch: () => Promise< unknown >;
+}
+
+export default function useConversation( {
+	agentId,
+	sessionId,
+	authProvider,
+	maxPages = 10,
+	onSuccess = () => {},
+	onError = () => {},
+}: Config ): Result {
+	// Keep refs to the latest callbacks
+	const onSuccessRef = useRef( onSuccess );
+	onSuccessRef.current = onSuccess;
+	const onErrorRef = useRef( onError );
+	onErrorRef.current = onError;
+
+	const { data, isLoading, isError, error, refetch } = useQuery( {
+		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
+		queryKey: [ 'agents-manager-conversation', sessionId ],
+		queryFn: async () => {
+			return await loadAllMessagesFromServer(
+				sessionId,
+				{
+					botId: createOdieBotId( agentId ),
+					apiBaseUrl: API_BASE_URL,
+					authProvider,
+				},
+				maxPages
+			);
+		},
+		enabled: !! sessionId,
+	} );
+
+	useEffect( () => {
+		if ( data ) {
+			onSuccessRef.current( data.messages, data.sessionId || sessionId );
+		}
+	}, [ data, sessionId ] );
+
+	useEffect( () => {
+		if ( error ) {
+			onErrorRef.current( error );
+		}
+	}, [ error ] );
+
+	return { data, isLoading, isError, error, refetch };
+}

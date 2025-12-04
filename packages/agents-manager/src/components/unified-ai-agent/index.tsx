@@ -1,17 +1,9 @@
-/**
- * Unified AI Agent Component
- *
- * Configures the AI agent, manages sessions, and integrates custom tools and context.
- */
-
-import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useMemo, useEffect, useState } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import { useLocation } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { SESSION_STORAGE_KEY, getSessionId } from '../../utils/agent-session';
-import { lastConversationCache } from '../../utils/conversation-cache';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
 import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
@@ -97,13 +89,12 @@ function AgentSetup( {
 	markdownComponents = {},
 	markdownExtensions = {},
 }: UnifiedAIAgentProps ) {
-	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const { state } = useLocation();
-	// Use persisted route state `sessionId` if available, otherwise fall back to stored `sessionId`
+	// Prefer route state `sessionId`, fall back to stored `sessionId` (server-generated via Agenttic UI)
 	const sessionId = state?.sessionId || getSessionId();
 
 	// Create the initial agent configuration
-	const config = useMemo< UseAgentChatConfig >(
+	const agentConfig = useMemo< UseAgentChatConfig >(
 		() => {
 			const config: UseAgentChatConfig = {
 				agentId: ORCHESTRATOR_AGENT_ID,
@@ -171,35 +162,9 @@ function AgentSetup( {
 
 			return config;
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- Only create once
-		[]
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Only recreate when session ID changes
+		[ sessionId ]
 	);
-
-	// Load config AND pre-load cached messages for progressive loading
-	useEffect( () => {
-		const initializeWithCache = async () => {
-			// Check if we have cached messages to pre-load
-			if ( sessionId ) {
-				const agentManager = getAgentManager();
-				const agentId = config.agentId;
-				const botId = createOdieBotId( agentId );
-
-				// Only pre-load if agent doesn't exist yet
-				if ( ! agentManager.hasAgent( agentId ) ) {
-					const cachedData = lastConversationCache.get( botId );
-					if ( cachedData?.sessionId === sessionId && cachedData?.messages.length ) {
-						// Create agent and load cached messages BEFORE setting config
-						await agentManager.createAgent( agentId, config );
-						await agentManager.replaceMessages( agentId, cachedData.messages );
-					}
-				}
-			}
-
-			setAgentConfig( config );
-		};
-
-		initializeWithCache();
-	}, [ config, sessionId ] );
 
 	// Default suggestions - can be overridden via the `customSuggestions` prop
 	const defaultSuggestions = useMemo(
@@ -222,11 +187,6 @@ function AgentSetup( {
 		],
 		[]
 	);
-
-	// Don't render until agent configuration is initialized
-	if ( ! agentConfig ) {
-		return null;
-	}
 
 	return (
 		<AgentDock
