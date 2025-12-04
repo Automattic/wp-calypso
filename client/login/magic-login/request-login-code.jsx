@@ -16,6 +16,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
+import { useLoginContext } from '../login-context';
 import VerifyLoginCode from './verify-login-code';
 
 const RequestLoginCode = ( {
@@ -38,11 +39,22 @@ const RequestLoginCode = ( {
 } ) => {
 	const [ usernameOrEmail, setUsernameOrEmail ] = useState( userEmail || '' );
 	const usernameOrEmailRef = useRef( null );
+	const { setHeaders } = useLoginContext();
+
 	useEffect( () => {
 		if ( onReady ) {
 			onReady();
 		}
-	}, [ onReady ] );
+	}, [ onReady, setHeaders, translate ] );
+
+	useEffect( () => {
+		setHeaders( {
+			heading: translate( 'Email me a login code' ),
+			subHeading: translate(
+				"We'll send you an email with a code that will log you in right away."
+			),
+		} );
+	}, [] );
 
 	const onUsernameOrEmailFieldChange = ( event ) => {
 		setUsernameOrEmail( event.target.value );
