@@ -8,6 +8,7 @@ import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useCallback } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
@@ -15,7 +16,6 @@ import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { useDashboardAnalytics } from '../../utils/analytics';
 import { getDomainSiteSlug } from '../../utils/domain';
 import NameServersForm from './form';
 import { shouldShowUpsellNudge } from './utils';
@@ -23,7 +23,7 @@ import { shouldShowUpsellNudge } from './utils';
 export default function NameServers() {
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
-	const { recordTracksEvent } = useDashboardAnalytics();
+	const { recordTracksEvent } = useAnalytics();
 
 	const {
 		data: { nameServers, isUsingDefaultNameServers },

@@ -7,6 +7,7 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, Suspense, lazy } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import {
 	domainOverviewRoute,
 	domainDnsRoute,
@@ -17,7 +18,6 @@ import {
 	domainTransferToOtherSiteRoute,
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
-import { useDashboardAnalytics } from '../../utils/analytics';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { AutoRenewModal } from './auto-renew-modal';
@@ -35,7 +35,7 @@ const noop = () => {};
 
 export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
 	const router = useRouter();
-	const { recordTracksEvent } = useDashboardAnalytics();
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );

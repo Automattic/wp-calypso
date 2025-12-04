@@ -15,6 +15,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews';
@@ -22,7 +23,6 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { useDashboardAnalytics } from '../../utils/analytics';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
 import DnsDescription from './dns-description';
@@ -65,7 +65,7 @@ const DEFAULT_LAYOUTS = {
 export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
 	const router = useRouter();
-	const { recordTracksEvent } = useDashboardAnalytics();
+	const { recordTracksEvent } = useAnalytics();
 	const updateDnsMutation = useMutation( {
 		...domainDnsMutation( domainName ),
 		meta: {

@@ -11,9 +11,9 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
-import { useDashboardAnalytics } from '../../utils/analytics';
 import { wpcomLink } from '../../utils/link';
 import { userHasFlag } from '../../utils/user';
 import type { Field } from '@wordpress/dataviews';
@@ -49,7 +49,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 			},
 		},
 	} );
-	const { recordTracksEvent } = useDashboardAnalytics();
+	const { recordTracksEvent } = useAnalytics();
 	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
 	const domainsList = useMemo( () => {
 		if ( ! domains || ! site ) {

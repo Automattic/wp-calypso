@@ -5,7 +5,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useDashboardAnalytics } from '../../utils/analytics';
+import { useAnalytics } from '../../app/analytics';
 import type { DnsRecord } from '@automattic/api-core';
 
 interface DnsActionsMenuProps {
@@ -31,7 +31,7 @@ const DnsActionsMenu = ( {
 }: DnsActionsMenuProps ) => {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const importDnsBindMutation = useMutation( domainDnsImportBindMutation( domainName ) );
-	const { recordTracksEvent } = useDashboardAnalytics();
+	const { recordTracksEvent } = useAnalytics();
 
 	const handleFileChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const file = event.currentTarget.files?.[ 0 ];

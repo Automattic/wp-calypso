@@ -12,12 +12,12 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ReactElement } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { domainSecurityRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import { useDashboardAnalytics } from '../../utils/analytics';
 import type { Domain, SslDetails } from '@automattic/api-core';
 
 interface SslCertificateProps {
@@ -27,7 +27,7 @@ interface SslCertificateProps {
 }
 
 export default function SslCertificate( { domainName, domain, sslDetails }: SslCertificateProps ) {
-	const { recordTracksEvent } = useDashboardAnalytics();
+	const { recordTracksEvent } = useAnalytics();
 	const mutation = useMutation( {
 		...provisionSslCertificateMutation( domainName ),
 		meta: {

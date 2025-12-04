@@ -9,8 +9,8 @@ import { Field, DataForm, NormalizedField, useFormValidity } from '@wordpress/da
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
-import { useDashboardAnalytics } from '../../utils/analytics';
 import {
 	MIN_NAME_SERVERS_LENGTH,
 	MAX_NAME_SERVERS_LENGTH,
@@ -111,7 +111,7 @@ export default function NameServersForm( {
 	isBusy,
 	onSubmit,
 }: Props ) {
-	const { recordTracksEvent } = useDashboardAnalytics();
+	const { recordTracksEvent } = useAnalytics();
 	const [ formData, setFormData ] = useState< FormData >( () => {
 		// Start with a partial object
 		const initialData = {

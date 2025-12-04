@@ -8,10 +8,10 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import { useDashboardAnalytics } from '../../utils/analytics';
 import { DnsSecRecordTextarea } from './dnssec-record-textarea';
 import type { Domain } from '@automattic/api-core';
 
@@ -21,7 +21,7 @@ interface DnsSecProps {
 }
 
 export default function DnsSec( { domainName, domain }: DnsSecProps ) {
-	const { recordTracksEvent } = useDashboardAnalytics();
+	const { recordTracksEvent } = useAnalytics();
 	const mutation = useMutation( {
 		...domainDnssecMutation( domainName ),
 		meta: {
