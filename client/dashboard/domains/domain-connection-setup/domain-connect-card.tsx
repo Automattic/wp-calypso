@@ -76,7 +76,13 @@ export default function DomainConnectCard( {
 						{
 							b: <b />,
 							registrar: registrar_url ? (
-								<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
+								<ExternalLink
+									href={ registrar_url }
+									className="domain-connect-card__registrar-link"
+								>
+									{ ' ' }
+									{ registrar }{ ' ' }
+								</ExternalLink>
 							) : (
 								<>{ registrar || __( 'Your domain name provider' ) }</>
 							),
@@ -107,14 +113,21 @@ export default function DomainConnectCard( {
 						{ __( 'Need help?' ) }
 					</Text>
 					<VStack spacing={ 2 }>
-						<InlineSupportLink supportContext="map-domain-setup-instructions">
+						<InlineSupportLink
+							supportContext="map-domain-setup-instructions"
+							className="domain-connect-card__support-link"
+						>
 							{ __( 'Domain connection guide' ) }
 						</InlineSupportLink>
-						<InlineSupportLink supportContext="general-support-options">
+						<InlineSupportLink
+							supportContext="general-support-options"
+							className="domain-connect-card__support-link"
+						>
 							{ __( 'Contact support' ) }
 						</InlineSupportLink>
 						<Button
 							variant="link"
+							className="domain-connect-card__support-link"
 							onClick={ onChangeSetupMode }
 							disabled={ isUpdatingConnectionMode }
 							style={ { lineHeight: '20px' } }

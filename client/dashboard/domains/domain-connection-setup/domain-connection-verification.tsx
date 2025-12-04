@@ -136,6 +136,7 @@ export default function DomainConnectionVerification( {
 							<HStack>
 								<Button
 									variant="link"
+									className="domain-connection-verification__restart-connection-link"
 									onClick={ onRestartConnection }
 									isBusy={ isRestartingConnection }
 									disabled={ isRestartingConnection }
@@ -144,13 +145,22 @@ export default function DomainConnectionVerification( {
 									{ __( 'Restart connection' ) }
 								</Button>
 							</HStack>
-							<InlineSupportLink supportContext="map-domain-setup-instructions">
+							<InlineSupportLink
+								supportContext="map-domain-setup-instructions"
+								className="domain-connection-verification__support-link"
+							>
 								{ __( 'Domain connection guide' ) }
 							</InlineSupportLink>
-							<InlineSupportLink supportContext="general-support-options">
+							<InlineSupportLink
+								supportContext="general-support-options"
+								className="domain-connection-verification__support-link"
+							>
 								{ __( 'Contact support' ) }
 							</InlineSupportLink>
-							<InlineSupportLink supportContext="transfer-domain-registrar-login">
+							<InlineSupportLink
+								supportContext="transfer-domain-registrar-login"
+								className="domain-connection-verification__support-link"
+							>
 								{ __( 'Registrar instructions' ) }
 							</InlineSupportLink>
 						</VStack>

@@ -32,7 +32,12 @@ export default function DomainRegistrarBanner( {
 								{ __( 'Registered by' ) }
 							</Text>
 							{ ! isReseller && registrar_url ? (
-								<ExternalLink href={ registrar_url }>{ registrar }</ExternalLink>
+								<ExternalLink
+									href={ registrar_url }
+									className="domain-registrar-banner__registrar-link"
+								>
+									{ registrar }
+								</ExternalLink>
 							) : (
 								<Text size="small">{ registrar }</Text>
 							) }

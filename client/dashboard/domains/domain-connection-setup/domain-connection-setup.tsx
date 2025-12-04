@@ -85,7 +85,13 @@ export default function DomainConnectionSetup( {
 						{
 							registrar:
 								! isReseller && registrar_url ? (
-									<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
+									<ExternalLink
+										href={ registrar_url }
+										className="domain-connection-setup__registrar-link"
+									>
+										{ ' ' }
+										{ registrar }{ ' ' }
+									</ExternalLink>
 								) : (
 									<>{ registrar || __( 'your domain name provider' ) }</>
 								),
@@ -211,9 +217,10 @@ export default function DomainConnectionSetup( {
 									<Text>{ __( 'This domain name can be automatically connected.' ) }</Text>
 									<Button
 										variant="link"
+										className="domain-connection-setup__use-domain-connect-link"
 										onClick={ () => setConnectionMode( DomainConnectionSetupMode.DC ) }
 									>
-										{ __( 'Use domain connect' ) }
+										{ __( 'Use Domain Connect' ) }
 									</Button>
 								</HStack>
 							</CardBody>
