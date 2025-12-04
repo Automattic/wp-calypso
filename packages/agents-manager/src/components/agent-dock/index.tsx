@@ -212,7 +212,10 @@ export default function AgentDock( {
 	return createAgentPortal(
 		<Routes>
 			<Route path="/" element={ Chat } />
-			{ /* Session ID is passed via route state to preserve conversation context */ }
+			{
+				// NOTE: Use route state for session ID so it can be accessed throughout the app.
+				// Example: `navigate('/chat', { state: { sessionId } })`
+			 }
 			<Route path="/chat" element={ Chat } />
 			<Route path="/history" element={ History } />
 			<Route path="*" element={ <Navigate to="/" replace /> } />
