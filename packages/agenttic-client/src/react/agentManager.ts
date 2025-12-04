@@ -1,6 +1,7 @@
 import type {
 	Client,
 	ClientConfig,
+	FilePart,
 	Message,
 	SendMessageParams,
 	Task,
@@ -289,7 +290,11 @@ function createAgentManager(): AgentManager {
 
 			const messageObj: Message =
 				options.message ||
-				createTextMessageWithHistory( message, conversationHistory );
+				createTextMessageWithHistory(
+					message,
+					conversationHistory,
+					options.imageUrls
+				);
 
 			const task = await client.sendMessage( {
 				message: messageObj,
@@ -455,7 +460,8 @@ function createAgentManager(): AgentManager {
 				options.message ||
 				createTextMessageWithHistory(
 					message,
-					resolvedConversationHistory
+					resolvedConversationHistory,
+					options.imageUrls
 				);
 
 			// Add metadata to the message object that will be sent to the agent
@@ -486,6 +492,40 @@ function createAgentManager(): AgentManager {
 			// Add user message to local conversation history before streaming (always)
 			// createTextMessage automatically splits contentType into TextPart metadata
 			const userMessage = createTextMessage( message, options.metadata );
+
+			// Add image parts if present
+			if ( options.imageUrls && options.imageUrls.length > 0 ) {
+				const imageParts: FilePart[] = options.imageUrls.map(
+					( imageData ) => {
+						// Handle both string URLs and ImageData objects
+						const url =
+							typeof imageData === 'string'
+								? imageData
+								: imageData.url;
+						const metadata =
+							typeof imageData === 'string'
+								? undefined
+								: imageData.metadata;
+
+						// Get mimeType from metadata if available, otherwise default to image/jpeg
+						const mimeType =
+							( metadata?.fileType as string ) || 'image/jpeg';
+						const fileName =
+							( metadata?.fileName as string ) || 'image';
+
+						return {
+							type: 'file',
+							file: {
+								name: fileName,
+								mimeType,
+								uri: url,
+							},
+							metadata,
+						};
+					}
+				);
+				userMessage.parts.push( ...imageParts );
+			}
 			currentConversationHistory = [
 				...currentConversationHistory,
 				userMessage,

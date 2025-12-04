@@ -1,6 +1,5 @@
-import type React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAgentManager } from './agentManager';
 import type {
 	AuthProvider,
@@ -18,6 +17,28 @@ const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
 	return [ ...messages ].sort( ( a, b ) => a.timestamp - b.timestamp );
 };
 
+/**
+ * Create an image component for display in messages
+ * @param url      - The image URL
+ * @param maxWidth - Maximum width (defaults to 40% so 2 images fit in a row)
+ */
+const createImageComponent = ( url: string, maxWidth = '40%' ) => ( {
+	type: 'component' as const,
+	component: () =>
+		React.createElement( 'img', {
+			src: url,
+			alt: 'Uploaded image',
+			style: {
+				maxWidth,
+				height: 'auto',
+				borderRadius: '8px',
+				marginTop: '8px',
+				marginRight: '8px',
+				display: 'inline-block',
+			},
+		} ),
+} );
+
 // Re-export types that will be used by consumers
 export interface Suggestion {
 	id: string;
@@ -26,10 +47,17 @@ export interface Suggestion {
 	action?: () => boolean | Promise< boolean >;
 }
 
+// Image data with optional metadata (e.g., WordPress attachment ID)
+export interface ImageData {
+	url: string;
+	metadata?: Record< string, unknown >;
+}
+
 // Extra options for submitting a message
 export interface SubmitOptions {
 	type?: ContentType; // Content type: 'text' for normal visible text (default), 'context' for hidden context content
 	archived?: boolean;
+	imageUrls?: ( string | ImageData )[]; // Array of image URLs or image objects with metadata
 	sessionId?: string; // Optional sessionId to use for this message (overrides agent's sessionId)
 }
 
@@ -38,9 +66,8 @@ export interface UIMessage {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component' | 'context';
+		type: 'text' | 'component' | 'context';
 		text?: string;
-		image_url?: string;
 		component?: React.ComponentType;
 		componentProps?: any;
 	} >;
@@ -125,12 +152,16 @@ const transformClientMessageToUI = (
 			};
 		}
 		if ( part.type === 'file' ) {
-			return {
-				type: 'image_url' as const,
-				image_url:
-					part.file.uri ||
-					`data:${ part.file.mimeType };base64,${ part.file.bytes }`,
-			};
+			// Convert file parts to component for rendering
+			// Prefer uri; fall back to base64 data URL if mimeType and bytes are available
+			const imageUrl =
+				part.file.uri ||
+				( part.file.mimeType && part.file.bytes
+					? `data:${ part.file.mimeType };base64,${ part.file.bytes }`
+					: undefined );
+			if ( imageUrl ) {
+				return createImageComponent( imageUrl );
+			}
 		}
 		if ( part.type === 'data' ) {
 			// Handle data parts that might contain component information
@@ -424,7 +455,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const userMessage: UIMessage = {
 				id: `user-${ messageTimestamp }`,
 				role: 'user',
-				content: [ { type: contentType, text: message } ],
+				content: [
+					{ type: contentType, text: message },
+					// Map image URLs to component content parts
+					...( options?.imageUrls?.map( ( imageData ) => {
+						const url =
+							typeof imageData === 'string'
+								? imageData
+								: imageData.url;
+						return createImageComponent( url );
+					} ) ?? [] ),
+				],
 				timestamp: messageTimestamp,
 				archived: options?.archived ?? false,
 				showIcon: false,
@@ -454,6 +495,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Pass sessionId if provided (overrides agent's default sessionId)
 				if ( options?.sessionId ) {
 					messageOptions.sessionId = options.sessionId;
+				}
+
+				if ( options?.imageUrls ) {
+					messageOptions.imageUrls = options.imageUrls;
 				}
 
 				for await ( const update of agentManager.sendMessageStream(
