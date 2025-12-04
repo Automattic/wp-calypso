@@ -37,16 +37,18 @@ export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) =
 	const addEmptyCard = reviews.length === 0;
 
 	return (
-		<FullWidthSection className="plugin-details__reviews-section">
+		<FullWidthSection className="plugin-details__reviews-section full-width-section--gray full-width-section--double-padding">
 			<div className="plugin-details__reviews">
 				<div className="marketplace-reviews-cards__container">
 					<div className="marketplace-reviews-cards__reviews">
-						<h2 className="marketplace-reviews-cards__reviews-title">
-							{ translate( 'Customer reviews' ) }
-						</h2>
-						<h3 className="marketplace-reviews-cards__reviews-subtitle">
-							{ translate( 'What other users are saying' ) }
-						</h3>
+						<div className="marketplace-reviews-cards__reviews-header">
+							<h2 className="marketplace-reviews-cards__reviews-title">
+								{ translate( 'Customer reviews' ) }
+							</h2>
+							<h3 className="marketplace-reviews-cards__reviews-subtitle">
+								{ translate( 'What other users are saying' ) }
+							</h3>
+						</div>
 
 						<div className="marketplace-reviews-cards__read-all">
 							<Button

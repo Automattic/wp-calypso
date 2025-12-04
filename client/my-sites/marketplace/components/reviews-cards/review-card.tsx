@@ -40,7 +40,7 @@ export const MarketplaceReviewCard = ( props: MarketplaceReviewCardProps ) => {
 					{ translate( 'How would you rate your overall experience?' ) }
 				</div>
 				<div className="marketplace-reviews-card__leave-a-review-rating">
-					<Rating rating={ 0 } size={ 32 } />
+					<Rating rating={ 0 } size={ 24 } />
 				</div>
 			</div>
 		);

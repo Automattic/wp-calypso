@@ -153,11 +153,9 @@ const PluginDetailsHeader = ( {
 								) : (
 									<>
 										<div>{ `${ formatPluginRating( rating, true ) }/5` }</div>
-										{ isMarketplaceProduct
-											? getMarketPlacePluginReviewsLink()
-											: getPluginReviewsLink() }
 									</>
 								) ) }
+							{ isMarketplaceProduct ? getMarketPlacePluginReviewsLink() : getPluginReviewsLink() }
 						</div>
 					</div>
 				) }
