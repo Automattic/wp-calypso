@@ -104,8 +104,8 @@ class ReaderLikeButton extends Component {
 					onLikeToggle={ this.onLikeToggle }
 					likeSource="reader"
 					icon={ likeIcon }
-					onMouseEnter={ hasEnoughLikes ? this.showLikesPopover : undefined }
-					onMouseLeave={ hasEnoughLikes ? this.hideLikesPopover : undefined }
+					onMouseEnter={ this.showLikesPopover }
+					onMouseLeave={ this.hideLikesPopover }
 				/>
 				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
 					<PostLikesPopover
