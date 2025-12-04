@@ -145,6 +145,7 @@ import {
 	FEATURE_WOOCOMMERCE,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
+	GROUP_A4A,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_SECURITY_PLANS,
 	PLAN_BLOGGER,
@@ -1632,7 +1633,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 const getPlanA4ABusinessDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
+	group: GROUP_A4A,
 	type: TYPE_BUSINESS,
 	getTitle: getPlanBusinessTitle,
 	getDescription: () =>
