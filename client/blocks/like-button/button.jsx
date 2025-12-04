@@ -22,8 +22,6 @@ class LikeButton extends PureComponent {
 		icon: PropTypes.object,
 		defaultLabel: PropTypes.string,
 		showTooltip: PropTypes.bool,
-		onLabelMouseEnter: PropTypes.func,
-		onLabelMouseLeave: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -67,8 +65,6 @@ class LikeButton extends PureComponent {
 			icon,
 			defaultLabel,
 			showTooltip,
-			onLabelMouseEnter,
-			onLabelMouseLeave,
 		} = this.props;
 		const showLikeCount = likeCount > 0 || showZeroCount;
 		const isLink = containerTag === 'a';
@@ -87,11 +83,7 @@ class LikeButton extends PureComponent {
 		}
 
 		const labelElement = (
-			<span
-				className="like-button__label"
-				onMouseEnter={ onLabelMouseEnter }
-				onMouseLeave={ onLabelMouseLeave }
-			>
+			<span className="like-button__label">
 				<span className="like-button__label-count">
 					{ showLikeCount ? likeCount : defaultLabel }
 				</span>
