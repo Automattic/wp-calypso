@@ -67,11 +67,6 @@ const fields: Field< FormData >[] = [
 		Edit: 'select',
 		elements: [
 			{
-				label: __( 'Select a product', __i18n_text_domain__ ),
-				value: '',
-				disabled: true,
-			},
-			{
 				label: __( 'Automattic for Agencies', __i18n_text_domain__ ),
 				value: 'a4a',
 			},
