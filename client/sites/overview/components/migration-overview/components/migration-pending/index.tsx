@@ -42,6 +42,10 @@ const getContinueMigrationUrl = (
 	}
 
 	if ( migrationState?.type === 'ssh' ) {
+		if ( ! migrationSourceSiteDomain ) {
+			return null;
+		}
+
 		return addQueryArgs(
 			{
 				...baseQueryArgs,
