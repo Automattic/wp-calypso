@@ -84,21 +84,28 @@ export const GuidedTourContextProvider = ( {
 	const previousStep = useCallback( () => {
 		setCurrentStep( ( step ) => {
 			const nextStep = Math.max( step - 1, 0 );
-			recordTracksEvent( 'calypso_dashboard_previous_step_tour', { to: nextStep } );
+			recordTracksEvent( 'calypso_dashboard_tour_previous_step', {
+				tour_id: tourId,
+				to: nextStep,
+			} );
+
 			return nextStep;
 		} );
-	}, [ recordTracksEvent ] );
+	}, [ tourId, recordTracksEvent ] );
 
 	const nextStep = useCallback( () => {
 		setCurrentStep( ( step ) => {
 			const nextStep = step + 1;
 			if ( nextStep < guidedTours.length ) {
-				recordTracksEvent( 'calypso_dashboard_next_step_tour', { to: nextStep } );
+				recordTracksEvent( 'calypso_dashboard_tour_next_step', {
+					tour_id: tourId,
+					to: nextStep,
+				} );
 			}
 
 			return nextStep;
 		} );
-	}, [ recordTracksEvent, guidedTours.length ] );
+	}, [ tourId, guidedTours.length, recordTracksEvent ] );
 
 	const value = useMemo(
 		() => ( {
