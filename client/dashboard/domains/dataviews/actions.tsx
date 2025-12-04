@@ -1,7 +1,6 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
@@ -255,7 +254,9 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				callback: () => {},
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
-					return !! site && ! site?.is_wpcom_atomic && isFreeUrlDomainName( item.domain );
+					return (
+						!! site && ! site?.is_wpcom_atomic && item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
+					);
 				},
 				RenderModal: ( { items, closeModal = noop } ) => {
 					const site = sitesByBlogId[ items[ 0 ].blog_id ];
