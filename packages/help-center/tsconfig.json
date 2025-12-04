@@ -7,16 +7,7 @@
 		"outDir": "dist/esm",
 		"rootDir": "src"
 	},
-	"include": [
-		"src",
-		"src/*.json",
-		"types",
-		"../components/src/inline-support-article/hooks/use-help-center-article-scroll.tsx",
-		"../components/src/inline-support-article/hooks/use-help-center-article-tab-component.tsx",
-		"../components/src/inline-support-article/components/back-to-top-button/back-to-top-button.tsx",
-		"../components/src/inline-support-article/hooks/use-content-filter.ts",
-		"../components/src/inline-support-article/hooks/use-post-by-url.ts"
-	],
+	"include": [ "src", "src/*.json", "types" ],
 	"exclude": [ "**/test/*" ],
 	"references": [
 		{ "path": "../state-utils" },
