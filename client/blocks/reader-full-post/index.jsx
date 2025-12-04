@@ -7,7 +7,6 @@ import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
@@ -674,10 +673,6 @@ export class FullPostView extends Component {
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
 		const contentWidth = readerContentWidth();
-		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
-
-		// Extract common props to avoid duplication
-		const siteIcon = get( site, 'icon.img' );
 		const feedUrl = get( post, 'feed_URL' );
 		const shouldShowMarkAsSeen =
 			isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && canBeMarkedAsSeen( { post } );
@@ -715,23 +710,9 @@ export class FullPostView extends Component {
 								post={ post }
 								referralPost={ referralPost }
 								layout={ this.props.layout }
-								authorProfile={
-									<AuthorCompactProfile
-										author={ post.author }
-										siteIcon={ siteIcon }
-										feedIcon={ feedIcon }
-										siteName={ siteName }
-										siteUrl={ post.site_URL }
-										feedUrl={ feedUrl }
-										followCount={ site && site.subscribers_count }
-										onFollowToggle={ this.openSuggestedFollowsModal }
-										feedId={ +post.feed_ID }
-										siteId={ +post.site_ID }
-										post={ post }
-									/>
-								}
 								author={ post.author }
 								siteName={ siteName }
+								followCount={ site && site.subscribers_count }
 								feedId={ +post.feed_ID }
 								siteId={ +post.site_ID }
 								tags={ isDefaultLayout ? <TagsList post={ post } tagsToShow={ 5 } /> : null }

@@ -12,10 +12,10 @@ import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
 const ReaderFullPostHeader = ( {
 	post,
-	authorProfile,
 	layout = 'default',
 	author,
 	siteName,
+	followCount,
 	feedId,
 	siteId,
 	tags,
@@ -40,12 +40,9 @@ const ReaderFullPostHeader = ( {
 		return <ReaderFullPostHeaderPlaceholder />;
 	}
 
-	// Rather than pass in additional props for the `recent` layout, we extract the props we need from authorProfile.
-	const { props: { siteName: recentSiteName, followCount } = {} } = authorProfile || {};
-
 	const isDefaultLayout = layout === 'default';
 	const iconSrc = getPostIcon( post );
-	const displaySiteName = layout === 'recent' ? recentSiteName : siteName;
+	const displaySiteName = siteName;
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
@@ -148,9 +145,9 @@ ReaderFullPostHeader.propTypes = {
 	post: PropTypes.object.isRequired,
 	children: PropTypes.node,
 	layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
-	authorProfile: PropTypes.node,
 	author: PropTypes.object,
 	siteName: PropTypes.string,
+	followCount: PropTypes.number,
 	feedId: PropTypes.number,
 	siteId: PropTypes.number,
 	tags: PropTypes.node,
