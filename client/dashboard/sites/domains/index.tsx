@@ -56,12 +56,17 @@ function SiteDomains() {
 
 	const router = useRouter();
 
-	const domainConnectionSetupUrl = router
+	const domainConnectionSetupUrlRelativePath = router
 		.buildLocation( {
 			to: domainConnectionSetupRoute.fullPath,
 			params: { domainName: '%s' },
 		} )
 		.href.replace( '%25s', '%s' );
+
+	const domainConnectionSetupUrl = new URL(
+		domainConnectionSetupUrlRelativePath,
+		window.location.origin
+	).href;
 
 	return (
 		<PageLayout
