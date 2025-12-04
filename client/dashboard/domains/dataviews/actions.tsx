@@ -153,26 +153,20 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 					}
 
 					// Track the set primary domain action
-					recordTracksEvent(
-						'calypso_dashboard_domain_management_settings_change_primary_domain_link_click',
-						{
-							domain: domain.domain,
-							origin: 'dataviews_actions',
-						}
-					);
+					recordTracksEvent( 'calypso_dashboard_domain_list_change_primary_link', {
+						domain: domain.domain,
+						origin: 'dataviews_actions',
+					} );
 
 					setPrimaryDomainMutation.mutate(
 						{ siteId: site.ID, domain: domain.domain },
 						{
 							onSuccess: () => {
 								// Track success
-								recordTracksEvent(
-									'calypso_dashboard_domain_management_settings_change_primary_domain_link_click_success',
-									{
-										domain: domain.domain,
-										origin: 'dataviews_actions',
-									}
-								);
+								recordTracksEvent( 'calypso_dashboard_domain_list_change_primary_link_success', {
+									domain: domain.domain,
+									origin: 'dataviews_actions',
+								} );
 
 								createSuccessNotice(
 									sprintf(
@@ -187,14 +181,11 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 							},
 							onError: ( error: Error ) => {
 								// Track failure
-								recordTracksEvent(
-									'calypso_dashboard_domain_management_settings_change_primary_domain_link_click_failure',
-									{
-										domain: domain.domain,
-										origin: 'dataviews_actions',
-										error_message: error.message,
-									}
-								);
+								recordTracksEvent( 'calypso_dashboard_domain_list_change_primary_link_failure', {
+									domain: domain.domain,
+									origin: 'dataviews_actions',
+									error_message: error.message,
+								} );
 
 								createErrorNotice(
 									__( 'Something went wrong and we couldn’t change your primary domain.' ),
