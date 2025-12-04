@@ -17,6 +17,7 @@ import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banne
 import { useAnalytics } from '../../app/analytics';
 import { AuthContext } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
+import { wpcomLink } from '../../utils/link';
 import { userHasFlag } from '../../utils/user';
 import Column from './column';
 import MenuItem from './menu-item';
@@ -77,7 +78,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 								action: 'flex-site',
 							} );
 						} }
-						href={ `/setup/flex-site?source=${ context }&ref=new-site-popover` }
+						href={ wpcomLink( `/setup/flex-site?source=${ context }&ref=new-site-popover` ) }
 						aria-label={ __( 'Create a Flex site' ) }
 					/>
 				) }
@@ -86,7 +87,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					title="Create it yourself"
 					description={ __( 'Start with a clean WordPress site and make it yours.' ) }
 					onClick={ wordpressClick }
-					href={ addQueryArgs( '/start', {
+					href={ addQueryArgs( wpcomLink( '/start' ), {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }
@@ -102,7 +103,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 							action: 'big-sky',
 						} );
 					} }
-					href={ addQueryArgs( '/setup/ai-site-builder', {
+					href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }
@@ -115,7 +116,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					title={ __( 'Migrate to WordPress.com' ) }
 					description={ __( 'Bring your site to the world’s best WordPress host.' ) }
 					onClick={ migrateClick }
-					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover` }
+					href={ wpcomLink( `/setup/site-migration?source=${ context }&ref=new-site-popover` ) }
 					aria-label={ __( 'Migrate an existing WordPress site' ) }
 				/>
 				<MenuItem
@@ -123,13 +124,13 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					title={ __( 'Via the Jetpack plugin' ) }
 					description={ __( 'Install the Jetpack plugin on an existing site.' ) }
 					onClick={ jetpackClick }
-					href={ `/jetpack/connect?cta_from=${ context }&cta_id=add-site` }
+					href={ wpcomLink( `/jetpack/connect?cta_from=${ context }&cta_id=add-site` ) }
 					aria-label={ __( 'Add site via the Jetpack plugin' ) }
 				/>
 			</Column>
 
 			<Button
-				href="https://wordpress.com/setup/onboarding"
+				href={ wpcomLink( '/setup/onboarding' ) }
 				onClick={ offerClick }
 				style={ {
 					display: 'block',

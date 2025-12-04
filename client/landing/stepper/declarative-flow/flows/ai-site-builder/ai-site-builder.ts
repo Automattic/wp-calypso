@@ -1,5 +1,4 @@
 import { Onboard } from '@automattic/data-stores';
-import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
@@ -87,8 +86,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( _, navigate ) {
 		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
-		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
-			useWpDataDispatch( SITE_STORE );
+		const { setStaticHomepageOnSite, setIntentOnSite } = useWpDataDispatch( SITE_STORE );
 		const { gardenName } = useSelect(
 			( select ) => ( {
 				gardenName: ( select( ONBOARD_STORE ) as any ).getGardenName(),
@@ -185,9 +183,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 							// Only apply design and delete page for non-garden sites
 							if ( ! gardenName ) {
-								pendingActions.push(
-									setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: false } )
-								);
 								pendingActions.push( deletePage( siteId || '', 1 ) );
 							}
 							pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );

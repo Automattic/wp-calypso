@@ -8,18 +8,18 @@ const botSlugMap = {
 		slug: 'wpcom-support-chat',
 		version: undefined, // Get active version
 	},
-	new_workflow: {
+	workflow: {
 		slug: 'wpcom-workflow-support_chat',
 		version: undefined, // Get active version
 	},
-	updated_legacy: {
-		slug: 'wpcom-support-chat',
-		version: '20.8.4', // Legacy chain assistant with updated prompt
+	workflow_iteration: {
+		slug: 'wpcom-workflow-support_chat',
+		version: '1.1.1', // Workflow iteration version
 	},
 };
 
 export function useNewInteractionsBotConfig() {
-	const experimentName = 'wpcom_help_center_ai_workflow_and_prompt_changes';
+	const experimentName = 'wpcom_help_center_ai_workflow_variations';
 	const query = useQuery( {
 		queryKey: [ 'new-interactions-bot-slug', experimentName ],
 		staleTime: 10 * 60 * 1000, // 10 minutes

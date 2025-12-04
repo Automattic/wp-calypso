@@ -17,6 +17,7 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { formatDate } from '../../utils/datetime';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
+import { wpcomLink } from '../../utils/link';
 import type { Site } from '@automattic/api-core';
 
 function WebsiteContentSubmitted( { site }: { site: Site } ) {
@@ -115,7 +116,9 @@ function WebsiteContentSubmissionPending( { site }: { site: Site } ) {
 			<ButtonStack justify="start">
 				<Button
 					variant="primary"
-					href={ `/start/site-content-collection/website-content?siteSlug=${ site.slug }` }
+					href={ wpcomLink(
+						`/start/site-content-collection/website-content?siteSlug=${ site.slug }`
+					) }
 				>
 					{ __( 'Provide website content' ) }
 				</Button>

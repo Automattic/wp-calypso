@@ -8,8 +8,8 @@
 import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
-// helpCenterData is set as a global const via wp_add_inline_script
-declare const helpCenterData: { agentProviders?: string[] } | undefined;
+// agentsManagerData is set as a global const via wp_add_inline_script
+declare const agentsManagerData: { agentProviders?: string[] } | undefined;
 
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
@@ -27,7 +27,7 @@ export interface LoadedProviders {
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
-	const agentProviders = helpCenterData?.agentProviders || [];
+	const agentProviders = agentsManagerData?.agentProviders || [];
 
 	if ( agentProviders.length === 0 ) {
 		return {};

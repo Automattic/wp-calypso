@@ -36,7 +36,7 @@ function PartnerOfferCard( { item }: { item: PartnerOffer } ) {
 
 	const handleCTAClick = () => {
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_partner_offers_cta_click', {
+			recordTracksEvent( 'calypso_a4a_exclusive_offers_cta_click', {
 				offer_id: item.id,
 			} )
 		);
@@ -44,7 +44,7 @@ function PartnerOfferCard( { item }: { item: PartnerOffer } ) {
 
 	const handleViewTermsClick = () => {
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_partner_offers_view_terms_click', {
+			recordTracksEvent( 'calypso_a4a_exclusive_offers_view_terms_click', {
 				offer_id: item.id,
 			} )
 		);
@@ -177,9 +177,9 @@ export default function PartnerOffersOverviewContent() {
 					<DataViews.Search />
 					<DataViews.FiltersToggle />
 				</HStack>
-				<DataViews.FiltersToggled className="partner-offers-filters" />
+				<DataViews.FiltersToggled className="exclusive-offers-filters" />
 			</DataViews>
-			<div className="partner-offers-cards">
+			<div className="exclusive-offers-cards">
 				{ filteredData.map( ( item ) => (
 					<PartnerOfferCard key={ item.id } item={ item } />
 				) ) }
