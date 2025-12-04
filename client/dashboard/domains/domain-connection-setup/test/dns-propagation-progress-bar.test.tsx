@@ -28,7 +28,7 @@ const createMockDomainConnectionSetupInfo = (
 	connection_mode: null,
 	domain_connect_apply_wpcom_hosting: null,
 	domain_connect_provider_id: null,
-	default_ip_addresses: [],
+	default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
 	wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
 	is_subdomain: false,
 	root_domain: 'example.com',
@@ -78,13 +78,13 @@ describe( 'DnsPropagationProgressBar', () => {
 		expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '100' );
 	} );
 
-	test( 'renders 100% when all name servers match in advanced mode', () => {
+	test( 'renders 100% when all IP addresses match in advanced mode', () => {
 		const domainMappingStatus = createMockDomainMappingStatus( {
 			mode: DomainConnectionSetupMode.ADVANCED,
-			name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+			host_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
 		} );
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
-			wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+			default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
 		} );
 
 		const { getByRole, getByText } = render(
@@ -118,13 +118,13 @@ describe( 'DnsPropagationProgressBar', () => {
 		expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '67' );
 	} );
 
-	test( 'renders 33% when 1 out of 3 name servers match in advanced mode', () => {
+	test( 'renders 50% when 1 out of 2 IP addresses match in advanced mode', () => {
 		const domainMappingStatus = createMockDomainMappingStatus( {
 			mode: DomainConnectionSetupMode.ADVANCED,
-			name_servers: [ 'ns1.wordpress.com', 'ns1.other.com', 'ns2.other.com' ],
+			host_ip_addresses: [ '192.0.78.24', '185.230.63.186' ],
 		} );
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
-			wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+			default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
 		} );
 
 		const { getByRole, getByText } = render(
@@ -134,8 +134,48 @@ describe( 'DnsPropagationProgressBar', () => {
 			/>
 		);
 
-		expect( getByText( '33%' ) ).toBeVisible();
-		expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '33' );
+		expect( getByText( '50%' ) ).toBeVisible();
+		expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '50' );
+	} );
+
+	test( 'renders 0% when no IP addresses match in advanced mode', () => {
+		const domainMappingStatus = createMockDomainMappingStatus( {
+			mode: DomainConnectionSetupMode.ADVANCED,
+			host_ip_addresses: [ '185.230.63.186', '185.230.63.187' ],
+		} );
+		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+			default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
+		} );
+
+		const { getByRole, getByText } = render(
+			<DnsPropagationProgressBar
+				domainMappingStatus={ domainMappingStatus }
+				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+			/>
+		);
+
+		expect( getByText( '0%' ) ).toBeVisible();
+		expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '0' );
+	} );
+
+	test( 'renders 0% when IP addresses array is empty in advanced mode', () => {
+		const domainMappingStatus = createMockDomainMappingStatus( {
+			mode: DomainConnectionSetupMode.ADVANCED,
+			host_ip_addresses: [],
+		} );
+		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+			default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
+		} );
+
+		const { getByRole, getByText } = render(
+			<DnsPropagationProgressBar
+				domainMappingStatus={ domainMappingStatus }
+				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+			/>
+		);
+
+		expect( getByText( '0%' ) ).toBeVisible();
+		expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '0' );
 	} );
 
 	test( 'renders 0% when no name servers match in suggested mode', () => {
@@ -231,6 +271,26 @@ describe( 'DnsPropagationProgressBar', () => {
 		} );
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
 			wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+		} );
+
+		const { getByRole, getByText } = render(
+			<DnsPropagationProgressBar
+				domainMappingStatus={ domainMappingStatus }
+				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+			/>
+		);
+
+		expect( getByText( '100%' ) ).toBeVisible();
+		expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '100' );
+	} );
+
+	test( 'handles extra IP addresses in current list for advanced mode (only counts matches)', () => {
+		const domainMappingStatus = createMockDomainMappingStatus( {
+			mode: DomainConnectionSetupMode.ADVANCED,
+			host_ip_addresses: [ '192.0.78.24', '192.0.78.25', '185.230.63.186', '185.230.63.187' ],
+		} );
+		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+			default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
 		} );
 
 		const { getByRole, getByText } = render(
