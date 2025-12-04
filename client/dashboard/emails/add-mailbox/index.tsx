@@ -160,7 +160,23 @@ const AddProfessionalEmail = () => {
 		<PageLayout
 			header={
 				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
+					prefix={
+						<Breadcrumbs
+							length={ 2 }
+							onItemClick={ () => {
+								recordTracksEvent(
+									isAddMailboxRoute
+										? 'calypso_dashboard_emails_add_mailbox_back_to_emails_click'
+										: 'calypso_dashboard_emails_setup_mailbox_back_to_emails_click',
+									{
+										domainName,
+										mailboxCount: mailboxEntities.length,
+										provider,
+									}
+								);
+							} }
+						/>
+					}
 					description={ __( 'Add a new email mailbox to your domain.' ) }
 				/>
 			}
