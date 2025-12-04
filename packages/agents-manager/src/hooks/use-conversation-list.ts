@@ -33,7 +33,13 @@ export default function useConversationList( {
 	const onErrorRef = useRef( onError );
 	onErrorRef.current = onError;
 
-	const { data, isLoading, isError, error, refetch } = useQuery( {
+	const {
+		data: conversations,
+		isLoading,
+		isError,
+		error,
+		refetch,
+	} = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when botId changes
 		queryKey: [ 'agents-manager-conversation-list', botId ],
 		queryFn: async () => {
@@ -56,10 +62,10 @@ export default function useConversationList( {
 	} );
 
 	useEffect( () => {
-		if ( data ) {
-			onSuccessRef.current( data );
+		if ( conversations ) {
+			onSuccessRef.current( conversations || [] );
 		}
-	}, [ data ] );
+	}, [ conversations ] );
 
 	useEffect( () => {
 		if ( error ) {
@@ -70,7 +76,7 @@ export default function useConversationList( {
 	}, [ error ] );
 
 	return {
-		conversations: data ?? [],
+		conversations: conversations || [],
 		isLoading,
 		isError,
 		refetch,
