@@ -10,6 +10,7 @@ import {
 	useAgentChat,
 	type Message,
 	type UseAgentChatConfig,
+	type SubmitOptions,
 } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
@@ -34,6 +35,16 @@ import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
 
+/**
+ * Navigation continuation hook type
+ */
+type NavigationContinuationHook = ( props: {
+	isProcessing: boolean;
+	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
+	sessionId: string;
+	agentId: string;
+} ) => void;
+
 interface AgentDockProps {
 	/** Agent configuration for the chat client. */
 	agentConfig: UseAgentChatConfig;
@@ -43,6 +54,8 @@ interface AgentDockProps {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
+	/** Navigation continuation hook for post-navigation conversation resumption. */
+	useNavigationContinuation?: NavigationContinuationHook;
 }
 
 export default function AgentDock( {
@@ -50,6 +63,7 @@ export default function AgentDock( {
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
+	useNavigationContinuation,
 }: AgentDockProps ) {
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const { hasLoaded: isStoreReady, isOpen = false } = useSelect( ( select ) => {
@@ -77,6 +91,15 @@ export default function AgentDock( {
 		onSubmit,
 		abortCurrentRequest,
 	} = useAgentChat( agentConfig );
+
+	// Handle navigation continuation if hook is provided
+	// This allows to resume conversations after full page navigation
+	useNavigationContinuation?.( {
+		isProcessing,
+		onSubmit,
+		sessionId,
+		agentId,
+	} );
 
 	// Update the last conversation cache whenever messages change
 	useEffect( () => {

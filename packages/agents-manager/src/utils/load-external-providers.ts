@@ -5,11 +5,24 @@
  * PHP filter. Each provider module should export toolProvider and/or contextProvider.
  */
 
-import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
+import type { ToolProvider, ContextProvider, Suggestion } from '../types';
+import type { SubmitOptions } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
 // agentsManagerData is set as a global const via wp_add_inline_script
 declare const agentsManagerData: { agentProviders?: string[] } | undefined;
+
+/**
+ * Navigation continuation hook type - provided by environments that support
+ * navigation with conversation continuation (e.g., wp-admin/navigate)
+ * This is needed to send a follow-up after full page reloads in wp-admin
+ */
+export type NavigationContinuationHook = ( props: {
+	isProcessing: boolean;
+	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
+	sessionId: string;
+	agentId: string;
+} ) => void;
 
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
@@ -17,17 +30,19 @@ export interface LoadedProviders {
 	suggestions?: Suggestion[];
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
+	useNavigationContinuation?: NavigationContinuationHook;
 }
 
 /**
- * Load external agent providers from helpCenterData.agentProviders.
+ * Load external agent providers from agentsManagerData.agentProviders.
  *
  * Each provider module ID is dynamically imported using WordPress's script module
  * system. Modules should export { toolProvider, contextProvider }.
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
-	const agentProviders = agentsManagerData?.agentProviders || [];
+	const agentProviders =
+		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
 
 	if ( agentProviders.length === 0 ) {
 		return {};
@@ -38,6 +53,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedSuggestions: Suggestion[] | undefined;
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
+	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -60,12 +76,15 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.markdownExtensions ) {
 				mergedMarkdownExtensions = module.markdownExtensions;
 			}
+			if ( module.useNavigationContinuation ) {
+				mergedNavigationContinuation = module.useNavigationContinuation;
+			}
 
 			// eslint-disable-next-line no-console
-			console.log( `[HelpCenter] Loaded provider "${ moduleId }"` );
+			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
-			console.warn( `[HelpCenter] Failed to load provider "${ moduleId }":`, error );
+			console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );
 		}
 	}
 
@@ -75,5 +94,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		suggestions: mergedSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
+		useNavigationContinuation: mergedNavigationContinuation,
 	};
 }
