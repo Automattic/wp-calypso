@@ -17,7 +17,9 @@ export const MarketplaceReviewCard = ( props: MarketplaceReviewCardProps ) => {
 	if ( empty ) {
 		return (
 			<div className="marketplace-reviews-card__empty-container">
-				<h2 className="marketplace-reviews-card__empty-title">{ translate( 'No reviews yet' ) }</h2>
+				<h2 className="marketplace-reviews-card__header marketplace-reviews-card__empty-title">
+					{ translate( 'No reviews yet' ) }
+				</h2>
 				<h3 className="marketplace-reviews-card__empty-subtitle">
 					{ translate(
 						'There are no reviews for this plugin at the moment. Your feedback could be the first to guide others.'
@@ -36,7 +38,7 @@ export const MarketplaceReviewCard = ( props: MarketplaceReviewCardProps ) => {
 				tabIndex={ 0 }
 				onClick={ () => showMarketplaceReviews && showMarketplaceReviews() }
 			>
-				<div className="marketplace-reviews-card__leave-a-review-message">
+				<div className="marketplace-reviews-card__header marketplace-reviews-card__leave-a-review-message">
 					{ translate( 'How would you rate your overall experience?' ) }
 				</div>
 				<div className="marketplace-reviews-card__leave-a-review-rating">
@@ -48,7 +50,7 @@ export const MarketplaceReviewCard = ( props: MarketplaceReviewCardProps ) => {
 
 	return (
 		<div className="marketplace-reviews-card__container">
-			<div className="marketplace-reviews-card__rating">
+			<div className="marketplace-reviews-card__header marketplace-reviews-card__rating">
 				<Rating rating={ review.meta.wpcom_marketplace_rating * 20 } />
 			</div>
 

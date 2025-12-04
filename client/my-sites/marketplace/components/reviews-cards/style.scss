@@ -86,13 +86,11 @@ $cards-gap: 20px;
 		justify-content: flex-start;
 		gap: 0;
 
-		.marketplace-reviews-card__leave-a-review-message,
-		.marketplace-reviews-card__empty-title,
-		.marketplace-reviews-card__rating {
+		.marketplace-reviews-card__header {
 			font-family: inherit;
 			font-size: $font-body-small;
 			font-weight: 500;
-			margin-bottom: 16px;
+			margin-bottom: 8px;
 		}
 		.marketplace-reviews-card__empty-subtitle {
 			text-align: left;
