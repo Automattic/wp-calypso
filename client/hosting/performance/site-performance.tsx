@@ -46,7 +46,7 @@ const statsQuery = {
 	max: 0,
 };
 
-const SitePerformanceContent = ( { path }: { path: string } ) => {
+const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	const dispatch = useDispatch();
 	const { activeTab, setActiveTab } = useDeviceTab();
 	const site = useSelector( getSelectedSite );
@@ -352,7 +352,7 @@ const SitePerformanceContent = ( { path }: { path: string } ) => {
 	);
 };
 
-export const SitePerformance = ( { path }: { path: string } ) => {
+export const SitePerformance = ( { path }: { path?: string } ) => {
 	const queryParams = useSelector( getCurrentQueryArguments );
 	return (
 		<DeviceTabProvider initialTab={ queryParams?.initialTab as TabType }>
