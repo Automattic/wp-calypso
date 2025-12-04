@@ -73,6 +73,7 @@ function FollowingStream( { ...props } ) {
 						<ViewToggle />
 					</NavigationHeader>
 					<Banner
+						target="_blank"
 						callToAction={ translate( 'Take the survey' ) }
 						description={ translate(
 							'Got a minute? Share feedback to help shape WordPress.com for creators and content consumption in 2026.'
