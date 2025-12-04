@@ -18,7 +18,6 @@ interface Result {
 	conversations: ServerConversationListItem[];
 	isLoading: boolean;
 	isError: boolean;
-	refetch: () => Promise< unknown >;
 }
 
 export default function useConversationList( {
@@ -38,7 +37,6 @@ export default function useConversationList( {
 		isLoading,
 		isError,
 		error,
-		refetch,
 	} = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when botId changes
 		queryKey: [ 'agents-manager-conversation-list', botId ],
@@ -79,6 +77,5 @@ export default function useConversationList( {
 		conversations: conversations || [],
 		isLoading,
 		isError,
-		refetch,
 	};
 }

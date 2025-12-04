@@ -20,7 +20,6 @@ interface Result {
 	data: { messages: Message[]; sessionId?: string } | undefined;
 	isLoading: boolean;
 	isError: boolean;
-	refetch: () => Promise< unknown >;
 }
 
 export default function useConversation( {
@@ -37,7 +36,7 @@ export default function useConversation( {
 	const onErrorRef = useRef( onError );
 	onErrorRef.current = onError;
 
-	const { data, isLoading, isError, error, refetch } = useQuery( {
+	const { data, isLoading, isError, error } = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
 		queryKey: [ 'agents-manager-conversation', sessionId ],
 		queryFn: async () => {
@@ -72,5 +71,5 @@ export default function useConversation( {
 		}
 	}, [ error ] );
 
-	return { data, isLoading, isError, refetch };
+	return { data, isLoading, isError };
 }
