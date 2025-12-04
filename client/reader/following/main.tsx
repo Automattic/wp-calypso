@@ -82,8 +82,6 @@ function FollowingStream( { ...props } ) {
 						horizontal
 						href="https://automattic.survey.fm/creating-consuming-on-wordpress-com"
 						title={ translate( 'Help shape WordPress.com for creators' ) }
-						tracksImpressionName="calypso_reader_creator_survey_banner_view"
-						tracksClickName="calypso_reader_creator_survey_banner_click"
 						event="reader_creator_survey_2026"
 						tracksImpressionName="calypso_reader_creator_survey_banner_view"
 						tracksClickName="calypso_reader_creator_survey_banner_click"
