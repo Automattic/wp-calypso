@@ -12,7 +12,10 @@ import { ShareSiteForm } from './share-site-form';
 
 export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data: settings } = useQuery( {
+		...siteSettingsQuery( site.ID ),
+		staleTime: 0, // Forces refetch on mount to get the latest settings.
+	} );
 
 	if ( ! settings ) {
 		return null;

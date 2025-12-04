@@ -33,7 +33,10 @@ import type { SiteSettings } from '@automattic/api-core';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data: settings } = useQuery( {
+		...siteSettingsQuery( site.ID ),
+		staleTime: 0, // Forces refetch on mount to get the latest settings.
+	} );
 	const { supports } = useAppContext();
 	const supportsSettings = supports.sites && supports.sites.settings;
 
@@ -55,7 +58,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'General' ) } level={ 3 } />
 					<SummaryButtonList>
-						<SiteVisibilitySettingsSummary site={ site } />
+						<SiteVisibilitySettingsSummary site={ site } settings={ settings } />
 						{ supportsSettings.general.redirect ? (
 							<SiteRedirectSettingsSummary site={ site } />
 						) : null }
