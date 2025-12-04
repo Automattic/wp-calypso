@@ -1,21 +1,42 @@
+@import "@wordpress/base-styles/breakpoints";
+@import '@wordpress/base-styles/variables';
+
 .site-list-settings {
 	.components-tab-panel__tabs {
 		border-bottom: solid 1px #ddd;
 	}
-	&__site-settings {
-		margin-left: -24px;
-		margin-right: -24px;
-	}
-	.components-tab-panel__tabs, .components-tab-panel__tab-content {
-		padding-left: 24px;
-		padding-right: 24px;
-	}
-	.components-tab-panel__tab-content {
-		padding-top: 16px;
-	}
+
 	&__card-placeholder {
 		height: 112px;
 	}
+
+	&__site-settings {
+		margin-inline-start: -$grid-unit-20;
+		margin-inline-end: -$grid-unit-20;
+	}
+
+	.components-tab-panel__tabs, .components-tab-panel__tab-content {
+		padding-inline-start: $grid-unit-20;
+		padding-inline-end: $grid-unit-20;
+	}
+
+	.components-tab-panel__tab-content {
+		padding-top: $grid-unit-10;
+	}
+
+	@include break-medium {
+		&__site-settings {
+			margin-inline-start: -$grid-unit-30;
+			margin-inline-end: -$grid-unit-30;
+		}
+
+		.components-tab-panel__tabs, .components-tab-panel__tab-content {
+			padding-inline-start: $grid-unit-30;
+			padding-inline-end: $grid-unit-30;
+		}
+
+		.components-tab-panel__tab-content {
+			padding-top: $grid-unit-20;
+		}
+	}
 }
-
-

@@ -4,6 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { lazy, useEffect, useState, ReactNode, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { wpcomLink } from '../../utils/link';
 import HostingFeatureActivationModal from '../hosting-feature-activation-modal';
 import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 
@@ -44,7 +45,7 @@ export default function HostingFeatureActivation( {
 			feature_id: tracksFeatureId,
 		} );
 
-		window.location.href = addQueryArgs( '/setup/transferring-hosted-site', {
+		window.location.href = addQueryArgs( wpcomLink( '/setup/transferring-hosted-site' ), {
 			siteId: String( site.ID ),
 			feature,
 			initiate_transfer_context: 'hosting',

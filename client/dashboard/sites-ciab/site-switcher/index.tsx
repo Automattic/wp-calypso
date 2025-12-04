@@ -4,6 +4,7 @@ import { plus } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import { SiteSwitcherBase } from '../../sites/site-switcher/base';
+import { wpcomLink } from '../../utils/link';
 
 const CIABSiteSwitcher = () => {
 	const { recordTracksEvent } = useAnalytics();
@@ -13,7 +14,7 @@ const CIABSiteSwitcher = () => {
 			context: 'ciab-sites-dashboard',
 		} );
 
-		const addNewStoreUrl = addQueryArgs( '/setup/ai-site-builder-spec', {
+		const addNewStoreUrl = addQueryArgs( wpcomLink( '/setup/ai-site-builder-spec' ), {
 			source: 'ciab-sites-dashboard',
 			ref: 'new-site-popover',
 		} );

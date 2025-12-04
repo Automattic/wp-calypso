@@ -54,6 +54,11 @@
 	}
 }
 
+.stream__container {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
 .reader__content .reader-excerpt,
 .reader__content .reader-post-card__title {
 	-webkit-font-smoothing: antialiased;

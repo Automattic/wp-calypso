@@ -43,6 +43,11 @@ export type HelpCenterRequiredInformation = {
 	 */
 	markdownExtensions?: MarkdownExtensions;
 	source: '' | 'wpcom' | 'a4a';
+	// This is specific to A4A
+	agency: {
+		id: number;
+		pressableId?: number;
+	} | null;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -92,6 +97,7 @@ const defaultContext: HelpCenterRequiredInformation = {
 	onboardingUrl: '',
 	isCommerceGarden: false,
 	source: 'wpcom',
+	agency: null,
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );

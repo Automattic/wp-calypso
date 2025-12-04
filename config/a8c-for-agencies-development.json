@@ -74,7 +74,7 @@
 		"a8c-for-agencies-agency-tier": true,
 		"a8c-for-agencies-woopayments": true,
 		"a8c-for-agencies-express-checkout": true,
-		"a8c-for-agencies-partner-offers": true
+		"a8c-for-agencies-exclusive-offers": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

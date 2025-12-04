@@ -1,3 +1,5 @@
+export const DASHBOARD_SECTION_PATHS = [ '/', '/sites', '/domains', '/emails', '/plugins', '/me' ];
+
 export const DASHBOARD_SECTION_DEFINITION = {
 	name: 'dashboard-dotcom',
 	paths: [ '/v2' ],

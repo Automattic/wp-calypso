@@ -30,7 +30,6 @@ import DnsDescription from './dns-description';
 import DnsImportDialog from './dns-import-dialog';
 import EmailSetup from './email-setup';
 import { useDnsFields } from './fields';
-import ImportBindFileButton from './import-bind-file-button';
 import { DomainDnsNameserversNotice } from './notice';
 import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
@@ -273,13 +272,6 @@ export default function DomainDns() {
 						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
 							<HStack>
-								<ImportBindFileButton
-									domainName={ domainName }
-									onRecordsImported={ ( data ) => {
-										setImportedRecords( data );
-										setIsImportDialogOpen( true );
-									} }
-								/>
 								<Button
 									variant="primary"
 									onClick={ () => {
@@ -294,9 +286,14 @@ export default function DomainDns() {
 								</Button>
 								<PageHeader.ActionMenu>
 									<DnsActionsMenu
+										domainName={ domainName }
 										hasDefaultARecords={ hasDefaultARecordsValue }
 										hasDefaultCnameRecord={ hasDefaultCnameRecordValue }
 										hasDefaultEmailRecords={ hasDefaultEmailRecordsValue }
+										onRecordsImported={ ( data ) => {
+											setImportedRecords( data );
+											setIsImportDialogOpen( true );
+										} }
 										onRestoreDefaultARecords={ () => setIsRestoreDefaultARecordsDialogOpen( true ) }
 										onRestoreDefaultCnameRecord={ () =>
 											setIsRestoreDefaultCnameRecordDialogOpen( true )
