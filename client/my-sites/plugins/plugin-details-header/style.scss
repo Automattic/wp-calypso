@@ -5,6 +5,7 @@
 $plugin-details-header-padding: 100px;
 $mobile-icon-height: 175px;
 $block-spacing: 24px;
+$rating-star-color: #ffb514;
 
 .plugin-details-header__container {
 	display: block;
@@ -181,7 +182,7 @@ $block-spacing: 24px;
 	gap: 8px;
 
 	.rating .gridicon {
-		fill: variables.$rating-star-color;
+		fill: $rating-star-color;
 	}
 
 	.full-width-section & {

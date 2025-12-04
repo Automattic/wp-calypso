@@ -32,7 +32,7 @@ type RelatedPluginProps = {
 };
 
 function chunkItems< T >( items: T[], chunkSize: number ): T[][] {
-	if ( ! chunkSize || chunkSize <= 0 ) {
+	if ( ! items || ! items.length || ! chunkSize || chunkSize <= 0 ) {
 		return [];
 	}
 

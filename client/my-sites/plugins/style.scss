@@ -447,7 +447,6 @@ $calypso-header-height: 31px;
 						padding: 14px 16px;
 					}
 				}
-
 			}
 		}
 
@@ -556,10 +555,6 @@ body.is-section-plugins header .select-dropdown__item {
 
 body.is-section-plugins .is-logged-in .navigation-header {
 	padding-block: 16px;
-
-	&.full-width-section & {
-		padding: 0;
-	}
 }
 
 body.is-section-plugins #primary {
@@ -810,7 +805,6 @@ body.is-section-plugins:has(.is-full-width-layout) {
 		}
 	}
 	.lpc-header-nav-container {
-
 		.masterbar {
 			background: transparent;
 			border-bottom: none;
@@ -820,7 +814,7 @@ body.is-section-plugins:has(.is-full-width-layout) {
 		.x-nav-item, .x-dropdown-link, .x-menu-link {
 			color: var(--studio-gray-100);
 		}
-		.x-dropdown-link{
+		.x-dropdown-link {
 			&:hover, &:active, &:focus {
 				color: var(--studio-gray-100);
 				background-color: var(--studio-gray-0);
@@ -849,7 +843,6 @@ body.is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out)
 body.is-section-plugins:has(.is-plugin-details.is-full-width-layout) .layout__content {
 	padding-block: 0;
 }
-
 
 body.is-section-plugins .is-logged-in {
 	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column):not(.is-logged-out).plugins-browser.is-full-width-layout";
