@@ -5,7 +5,7 @@
  * PHP filter. Each provider module should export toolProvider and/or contextProvider.
  */
 
-import type { ToolProvider, ContextProvider, Suggestion } from '@automattic/agents-manager';
+import type { ToolProvider, ContextProvider, Suggestion } from '../types';
 import type { SubmitOptions } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
@@ -34,14 +34,15 @@ export interface LoadedProviders {
 }
 
 /**
- * Load external agent providers from helpCenterData.agentProviders.
+ * Load external agent providers from agentsManagerData.agentProviders.
  *
  * Each provider module ID is dynamically imported using WordPress's script module
  * system. Modules should export { toolProvider, contextProvider }.
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
-	const agentProviders = agentsManagerData?.agentProviders || [];
+	const agentProviders =
+		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
 
 	if ( agentProviders.length === 0 ) {
 		return {};
@@ -80,10 +81,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			}
 
 			// eslint-disable-next-line no-console
-			console.log( `[HelpCenter] Loaded provider "${ moduleId }"` );
+			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
-			console.warn( `[HelpCenter] Failed to load provider "${ moduleId }":`, error );
+			console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );
 		}
 	}
 
