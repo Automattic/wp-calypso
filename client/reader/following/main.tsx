@@ -84,6 +84,9 @@ function FollowingStream( { ...props } ) {
 						title={ translate( 'Help shape WordPress.com for creators' ) }
 						tracksImpressionName="calypso_reader_creator_survey_banner_view"
 						tracksClickName="calypso_reader_creator_survey_banner_click"
+						event="reader_creator_survey_2026"
+						tracksImpressionName="calypso_reader_creator_survey_banner_view"
+						tracksClickName="calypso_reader_creator_survey_banner_click"
 						tracksDismissName="calypso_reader_creator_survey_banner_dismiss"
 					/>
 					{ config.isEnabled( 'reader/quick-post' ) && hasSites && (
