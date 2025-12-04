@@ -60,10 +60,6 @@ export default function NameServers() {
 						domain: domainName,
 						ns,
 					} );
-
-					createSuccessNotice( __( 'Name servers updated successfully.' ), {
-						type: 'snackbar',
-					} );
 				},
 				onError: ( e: Error ) => {
 					recordTracksEvent( 'calypso_dashboard_domain_name_servers_save_failure', {
