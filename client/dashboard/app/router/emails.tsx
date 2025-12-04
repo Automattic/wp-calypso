@@ -9,7 +9,7 @@ import {
 	siteByIdQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
-import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
+import { createLazyRoute, createRoute, redirect, Outlet } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
 import { IntervalLength, MailboxProvider } from '../../emails/types';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
@@ -25,6 +25,7 @@ export const emailsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails',
+	component: () => <Outlet />,
 	loader: async () => {
 		queryClient.prefetchQuery( userMailboxesQuery() );
 		queryClient.prefetchQuery( domainsQuery() );
@@ -35,13 +36,7 @@ export const emailsRoute = createRoute( {
 			domainName: typeof search.domainName === 'string' ? search.domainName : undefined,
 		};
 	},
-} ).lazy( () =>
-	import( '../../emails' ).then( ( d ) =>
-		createLazyRoute( 'emails' )( {
-			component: d.default,
-		} )
-	)
-);
+} );
 
 export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
