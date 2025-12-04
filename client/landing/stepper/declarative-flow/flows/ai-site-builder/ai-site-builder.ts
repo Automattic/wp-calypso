@@ -51,14 +51,11 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 	 */
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
-	useSideEffect( currentStepSlug ) {
+	useSideEffect() {
 		const dispatch = useDispatch();
-		const { setGardenName, setGardenPartnerName, setPendingAction } =
-			useWpDataDispatch( ONBOARD_STORE );
+		const { setGardenName, setGardenPartnerName } = useWpDataDispatch( ONBOARD_STORE );
 		const queryParams = useQuery();
 		const siteId = queryParams.get( 'siteId' );
-		const siteSlug = queryParams.get( 'siteSlug' );
-		const fromPostCheckoutSetupSite = queryParams.get( 'fromPostCheckoutSetupSite' );
 		const prompt = queryParams.get( 'prompt' );
 		const createGardenSite = queryParams.get( 'create_garden_site' );
 
@@ -85,25 +82,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 				setGardenPartnerName( null );
 			}
 		}, [ createGardenSite, setGardenName, setGardenPartnerName ] );
-
-		// Set up pendingAction when coming from post-checkout step with existing site
-		useEffect( () => {
-			if (
-				currentStepSlug === 'processing' &&
-				fromPostCheckoutSetupSite === '1' &&
-				siteId &&
-				siteSlug
-			) {
-				setPendingAction( async () => {
-					return {
-						siteId: parseInt( siteId ),
-						siteSlug,
-						siteCreated: true,
-					};
-				} );
-			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [ currentStepSlug, fromPostCheckoutSetupSite, siteId, siteSlug ] );
 	},
 	initialize,
 	useStepNavigation( _, navigate ) {
