@@ -321,7 +321,13 @@ export default function Sites() {
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
 						empty={ emptyState }
 						paginationInfo={ paginationInfo__ES }
-						renderItemLink={ ( { item, ...props } ) => <SiteLink__ES { ...props } site={ item } /> }
+						renderItemLink={ ( { item, ...props } ) => (
+							<SiteLink__ES
+								{ ...props }
+								site={ item }
+								onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
+							/>
+						) }
 						onChangeView={ handleViewChange }
 						onResetView={ resetView }
 					/>
@@ -337,7 +343,13 @@ export default function Sites() {
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }
 						onResetView={ resetView }
-						renderItemLink={ ( { item, ...props } ) => <SiteLink { ...props } site={ item } /> }
+						renderItemLink={ ( { item, ...props } ) => (
+							<SiteLink
+								{ ...props }
+								site={ item }
+								onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
+							/>
+						) }
 					/>
 				) }
 			</PageLayout>

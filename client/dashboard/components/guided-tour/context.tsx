@@ -75,16 +75,30 @@ export const GuidedTourContextProvider = ( {
 	const endTour = useCallback( () => {
 		// Save the dismissed timestamp so we can show the new steps that are added after it in the future.
 		updateCompletedTimestamp( new Date().toISOString() );
-		recordTracksEvent( 'calypso_dashboard_end_tour', { tour_id: tourId } );
-	}, [ tourId, updateCompletedTimestamp, recordTracksEvent ] );
+		recordTracksEvent( 'calypso_dashboard_end_tour', {
+			tour_id: tourId,
+			is_completed: currentStep === guidedTours.length,
+		} );
+	}, [ tourId, updateCompletedTimestamp, recordTracksEvent, currentStep, guidedTours.length ] );
 
 	const previousStep = useCallback( () => {
-		setCurrentStep( ( step ) => Math.max( step - 1, 0 ) );
-	}, [] );
+		setCurrentStep( ( step ) => {
+			const nextStep = Math.max( step - 1, 0 );
+			recordTracksEvent( 'calypso_dashboard_previous_step_tour', { to: nextStep } );
+			return nextStep;
+		} );
+	}, [ recordTracksEvent ] );
 
 	const nextStep = useCallback( () => {
-		setCurrentStep( ( step ) => step + 1 );
-	}, [] );
+		setCurrentStep( ( step ) => {
+			const nextStep = step + 1;
+			if ( nextStep < guidedTours.length ) {
+				recordTracksEvent( 'calypso_dashboard_next_step_tour', { to: nextStep } );
+			}
+
+			return nextStep;
+		} );
+	}, [ recordTracksEvent, guidedTours.length ] );
 
 	const value = useMemo(
 		() => ( {
