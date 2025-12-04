@@ -12,6 +12,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -28,26 +29,52 @@ const TRANSFER_LOCK_GRACE_PERIOD_MS = 60 * 24 * 60 * 60 * 1000; // 60 days
 
 export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 	const domainName = domain.domain;
+	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
-	const { mutate: updateDomainLock, isPending: isUpdatingDomainLock } = useMutation(
-		domainLockMutation( domainName )
-	);
-	const { mutate: requestTransferCode, isPending: isRequestingTransferCode } = useMutation(
-		domainTransferCodeMutation( domainName )
-	);
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { mutate: updateDomainLock, isPending: isUpdatingDomainLock } = useMutation( {
+		...domainLockMutation( domainName ),
+		meta: {
+			snackbar: {
+				error: { source: 'server' },
+			},
+		},
+	} );
+	const { mutate: requestTransferCode, isPending: isRequestingTransferCode } = useMutation( {
+		...domainTransferCodeMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __(
+					'We have sent the transfer authorization code to the domain registrant’s email address. If you don’t receive the email shortly, please check your spam folder.'
+				),
+				error: { source: 'server' },
+			},
+		},
+	} );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const handleToggleChange = ( enabled: boolean ) => {
+		recordTracksEvent( 'calypso_dashboard_domain_transfer_toggle_change', {
+			domain: domainName,
+			enabled: enabled,
+		} );
+
 		updateDomainLock( enabled, {
 			onSuccess: () => {
+				recordTracksEvent( 'calypso_dashboard_domain_transfer_toggle_change_success', {
+					domain: domainName,
+					enabled: enabled,
+				} );
+
 				createSuccessNotice(
 					enabled ? __( 'Transfer lock enabled.' ) : __( 'Transfer lock disabled.' ),
 					{ type: 'snackbar' }
 				);
 			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save transfer lock settings.' ), {
-					type: 'snackbar',
+			onError: ( error ) => {
+				recordTracksEvent( 'calypso_dashboard_domain_transfer_toggle_change_failure', {
+					domain: domainName,
+					enabled: enabled,
+					error_message: error.message,
 				} );
 			},
 		} );
@@ -126,19 +153,20 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 	};
 
 	const onRequestTransferCode = () => {
+		recordTracksEvent( 'calypso_dashboard_domain_transfer_request_transfer_code', {
+			domain: domainName,
+		} );
+
 		requestTransferCode( undefined, {
 			onSuccess: () => {
-				createSuccessNotice(
-					__(
-						'We have sent the transfer authorization code to the domain registrant’s email address. If you don’t receive the email shortly, please check your spam folder.'
-					),
-					{ type: 'snackbar' }
-				);
+				recordTracksEvent( 'calypso_dashboard_domain_transfer_request_transfer_code_success', {
+					domain: domainName,
+				} );
 			},
-			onError: () => {
-				// Todo: improve error message
-				createErrorNotice( __( 'Failed to send transfer code.' ), {
-					type: 'snackbar',
+			onError: ( error ) => {
+				recordTracksEvent( 'calypso_dashboard_domain_transfer_request_transfer_code_failure', {
+					domain: domainName,
+					error_message: error.message,
 				} );
 			},
 		} );
