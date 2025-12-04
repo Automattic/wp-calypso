@@ -14,6 +14,7 @@ import { logStashEvent, recordTransactionBeginAnalytics } from '../lib/analytics
 import existingCardProcessor from './existing-card-processor';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
+import { addUrlToPendingPageRedirect } from './pending-page';
 import {
 	doesTransactionResponseRequire3DS,
 	handle3DSChallenge,
@@ -145,11 +146,25 @@ async function stripeCardProcessor(
 			if ( doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				debug( 'transaction requires authentication' );
 				paymentIntentId = stripeResponse.message.payment_intent_id;
+
+				// Generate the return URL for redirect-based 3DS flows.
+				// This wraps the thank you URL in a pending page redirect so that
+				// after 3DS authentication, the user lands on the pending page which
+				// polls for order completion before redirecting to the final thank you page.
+				const thankYouUrl = transactionOptions.getThankYouUrl();
+				const returnUrl = addUrlToPendingPageRedirect( thankYouUrl, {
+					siteSlug: transactionOptions.siteSlug,
+					orderId: stripeResponse.order_id,
+					urlType: 'absolute',
+					fromSiteSlug: transactionOptions.fromSiteSlug,
+				} );
+
 				await handle3DSChallenge(
 					reduxDispatch,
 					submitData.stripe,
 					stripeResponse.message.payment_intent_client_secret,
-					paymentIntentId
+					paymentIntentId,
+					returnUrl
 				);
 				// We must return the original authentication response in order
 				// to have access to the order_id so that we can display a
