@@ -29,6 +29,7 @@ export default function SwitcherContent< T >( {
 	renderItemDescription,
 	children,
 	onClose,
+	onItemClick,
 }: PropsWithChildren< {
 	items?: T[];
 	searchableFields: Field< T >[];
@@ -37,6 +38,7 @@ export default function SwitcherContent< T >( {
 	renderItemTitle: RenderItemTitle< T >;
 	renderItemDescription?: RenderItemDescription< T >;
 	onClose: () => void;
+	onItemClick?: () => void;
 } > ) {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
@@ -72,7 +74,10 @@ export default function SwitcherContent< T >( {
 							key={ itemUrl }
 							to={ itemUrl }
 							style={ { height: 'fit-content', minHeight: '40px' } }
-							onClick={ onClose }
+							onClick={ () => {
+								onClose();
+								onItemClick?.();
+							} }
 						>
 							<HStack justify="flex-start" alignment="center" expanded>
 								{ renderItemMedia( { item, context: 'list', size: 32 } ) }

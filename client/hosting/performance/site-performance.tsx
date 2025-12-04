@@ -46,7 +46,7 @@ const statsQuery = {
 	max: 0,
 };
 
-const SitePerformanceContent = () => {
+const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	const dispatch = useDispatch();
 	const { activeTab, setActiveTab } = useDeviceTab();
 	const site = useSelector( getSelectedSite );
@@ -168,8 +168,16 @@ const SitePerformanceContent = () => {
 			page( `/sites/settings/site/${ site.slug }` );
 			return;
 		}
+
 		dispatch( launchSite( siteId! ) );
 		recordTracksEvent( 'calypso_performance_profiler_launch_site_cta_click' );
+
+		// Additional event to align analysis across dashboards.
+		// See: https://wp.me/pgz0xU-qp
+		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', {
+			context: 'site_performance',
+			path,
+		} );
 	};
 
 	const isMobile = useMobileBreakpoint();
@@ -344,11 +352,11 @@ const SitePerformanceContent = () => {
 	);
 };
 
-export const SitePerformance = () => {
+export const SitePerformance = ( { path }: { path?: string } ) => {
 	const queryParams = useSelector( getCurrentQueryArguments );
 	return (
 		<DeviceTabProvider initialTab={ queryParams?.initialTab as TabType }>
-			<SitePerformanceContent />
+			<SitePerformanceContent path={ path } />
 		</DeviceTabProvider>
 	);
 };
