@@ -1208,8 +1208,6 @@ describe( 'findPlansKeys', () => {
 		expect( findPlansKeys( { group: GROUP_WPCOM } ).sort() ).toEqual(
 			[
 				PLAN_100_YEARS,
-				PLAN_A4A_BUSINESS,
-				PLAN_A4A_BUSINESS_MONTHLY,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_BUSINESS,
@@ -1302,8 +1300,6 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_BUSINESS_3_YEARS,
-			PLAN_A4A_BUSINESS,
-			PLAN_A4A_BUSINESS_MONTHLY,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 			PLAN_HOSTING_TRIAL_MONTHLY,
 		] );
