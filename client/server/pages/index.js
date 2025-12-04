@@ -274,6 +274,15 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
+	if ( calypsoEnv === 'dashboard-horizon' ) {
+		context.badge = 'dashboard-horizon';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+
+		if ( request.query.branch ) {
+			context.branchName = request.query.branch;
+		}
+	}
+
 	if ( calypsoEnv === 'dashboard-stage' ) {
 		context.badge = 'dashboard-staging';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
