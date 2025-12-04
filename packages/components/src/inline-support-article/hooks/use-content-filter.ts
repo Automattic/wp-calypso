@@ -1,12 +1,11 @@
 import { isSameOrigin } from '@automattic/calypso-url';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { isThisASupportArticleLink } from '@automattic/urls';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { HELP_CENTER_STORE } from '../stores';
 
 function canParse( url: string, baseUrl?: string ): URL | false {
 	try {
@@ -28,11 +27,10 @@ function ensureProtocolAndParse( url: string, baseUrl?: string ) {
 	return canParse( url, baseUrl ) || canParse( 'https://' + url, baseUrl );
 }
 
-export const useContentFilter = ( node: HTMLDivElement | null ) => {
+export const useContentFilter = ( node: HTMLDivElement | null, currentSiteDomain: string ) => {
 	const navigate = useNavigate();
 	const [ searchParams ] = useSearchParams();
 	const link = searchParams.get( 'link' ) || '';
-	const { site } = useHelpCenterContext();
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useViewportMatch( 'medium' );
 
@@ -72,7 +70,6 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				pattern: 'a[href*="wordpress.com/plans/"], a[href^="/"]',
 				action: ( element: HTMLAnchorElement ) => {
 					const href = element.getAttribute( 'href' ) as string;
-					const currentSiteDomain = site?.domain;
 
 					if ( currentSiteDomain ) {
 						element.setAttribute( 'href', new URL( `${ href + currentSiteDomain }` ).href );
@@ -187,7 +184,7 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				},
 			},
 		],
-		[ navigate, link, node, site?.domain, setIsMinimized, isDesktop ]
+		[ navigate, link, node, currentSiteDomain, setIsMinimized, isDesktop ]
 	);
 
 	useEffect( () => {

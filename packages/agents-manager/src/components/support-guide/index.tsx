@@ -1,5 +1,5 @@
 import { AgentUI } from '@automattic/agenttic-ui';
-import { HelpCenterArticle } from '@automattic/help-center/src/components/help-center-article';
+import { HelpCenterArticle } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import ChatHeader, { Options } from '../chat-header';
 import './style.scss';
@@ -43,7 +43,12 @@ export default function SupportGuide( {
 				/>
 				<div className="agenttic agent-manager-support-guide-wrapper">
 					<div className="agent-manager-support-guide-content help-center__container-content">
-						<HelpCenterArticle />
+						<HelpCenterArticle
+							sectionName="support-guides"
+							currentSiteDomain="currentSiteDomain"
+							isEligibleForChat
+							forceEmailSupport={ false }
+						/>
 					</div>
 					{ /*
 					<div className="agent-manager-support-guide-footer">

@@ -1,7 +1,7 @@
-import { ExternalLink } from '@automattic/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
-import type { PostObject } from '../types';
+import ExternalLink from '../../../external-link';
+import type { PostObject } from '../../types';
 
 export const SupportArticleHeader = ( {
 	post,
