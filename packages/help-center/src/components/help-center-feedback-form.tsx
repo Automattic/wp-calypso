@@ -8,8 +8,6 @@ import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 
 import './help-center-feedback-form.scss';
 
-declare const __i18n_text_domain__: string;
-
 const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 	const { __ } = useI18n();
 	const [ startedFeedback, setStartedFeedback ] = useState< boolean | null >( null );

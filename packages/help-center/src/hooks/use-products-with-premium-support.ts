@@ -11,8 +11,6 @@ import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { FLOWS_ZENDESK_INITIAL_MESSAGES, FLOWS_ZENDESK_FLOWNAME } from '../constants';
 import { useSupportStatus } from '../data/use-support-status';
 
-declare const __i18n_text_domain__: string;
-
 const getUserFieldMessage = ( flowName: string, url?: string ) => {
 	return `${
 		FLOWS_ZENDESK_INITIAL_MESSAGES[ flowName as keyof typeof FLOWS_ZENDESK_INITIAL_MESSAGES ]

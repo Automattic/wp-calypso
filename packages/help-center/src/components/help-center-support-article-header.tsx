@@ -3,8 +3,6 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import type { PostObject } from '../types';
 
-declare const __i18n_text_domain__: string;
-
 export const SupportArticleHeader = ( {
 	post,
 	isLoading,
