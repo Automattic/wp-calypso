@@ -82,10 +82,11 @@
 
 .oauth2-connect__permission-item {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 8px;
-	font-size: 14px;
+	font-size: 12px;
 	color: #1e1e1e;
+	text-wrap: pretty;
 
 	svg {
 		flex-shrink: 0;
