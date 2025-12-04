@@ -107,19 +107,15 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-exclusive-offers' )
-				? [
-						{
-							icon: box,
-							path: '/',
-							link: A4A_EXCLUSIVE_OFFERS_LINK,
-							title: translate( 'Exclusive offers' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Exclusive offers',
-							},
-						},
-				  ]
-				: [] ),
+			{
+				icon: box,
+				path: '/',
+				link: A4A_EXCLUSIVE_OFFERS_LINK,
+				title: translate( 'Exclusive offers' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Exclusive offers',
+				},
+			},
 			{
 				icon: category,
 				path: '/',
