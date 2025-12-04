@@ -25,6 +25,7 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import Notice from 'calypso/components/notice';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getName,
@@ -68,7 +69,7 @@ import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions, { willShowDomainOptionsRadioButtons } from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
-import CancelPurchaseRefundInformation from './refund-information';
+import CancelPurchaseRefundInformation, { type CancelPurchaseFlowMode } from './refund-information';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 import type { ReactNode } from 'react';
@@ -88,6 +89,7 @@ export interface CancelPurchaseState {
 	domainConfirmationConfirmed: boolean;
 	showDomainOptionsStep: boolean;
 	showDialog: boolean;
+	flowMode: CancelPurchaseFlowMode;
 }
 
 export interface CancelPurchaseActions {
@@ -144,6 +146,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		showDomainOptionsStep: false,
 		// Cancellation state moved from button component
 		showDialog: false,
+		flowMode: 'cancel' as CancelPurchaseFlowMode,
 	};
 
 	componentDidMount() {
@@ -186,6 +189,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		return isValidForCancellation;
 	};
 
+	isRemoveFlow = () => this.state.flowMode === 'remove';
+
 	redirect = () => {
 		const { purchase, siteSlug } = this.props;
 		let redirectPath = this.props.purchaseListUrl ?? purchasesRoot;
@@ -223,6 +228,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 		// Only show domain options as a separate step if radio buttons will be displayed
 		if (
+			this.isRemoveFlow() &&
 			includedDomainPurchase &&
 			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
 		) {
@@ -473,12 +479,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { expiryDate } = purchase;
 
 		const expirationDate = this.props.moment( expiryDate ).format( 'LL' );
+		const hasRefund = hasAmountAvailableToRefund( purchase );
 
 		if ( isDomainRegistration( purchase ) ) {
-			// Domain in AGP bought with domain credits
-			if ( isRefundable( purchase ) ) {
+			if ( this.isRemoveFlow() && hasRefund ) {
 				return translate(
-					'After you confirm this change, the domain will be removed immediately.'
+					'After you confirm this removal, the domain will be removed immediately.'
 				);
 			}
 			return translate(
@@ -486,6 +492,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				{
 					args: { expirationDate },
 				}
+			);
+		}
+
+		if ( this.isRemoveFlow() && hasRefund ) {
+			return translate(
+				'After you confirm this removal, the subscription will be removed immediately.'
 			);
 		}
 
@@ -508,9 +520,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainPurchase
 		);
 
-		if ( refundAmountString ) {
+		if ( this.isRemoveFlow() && refundAmountString ) {
 			return translate(
-				'If you confirm this cancellation, you will receive a {{span}}refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
+				'If you confirm this removal, you will receive a {{span}}refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
 				{
 					args: {
 						refundText: refundAmountString,
@@ -545,7 +557,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.props.includedDomainPurchase
 		);
 
-		if ( refundAmountString ) {
+		if ( this.isRemoveFlow() && refundAmountString ) {
 			return translate( '%(refundText)s to be refunded', {
 				args: {
 					refundText: refundAmountString,
@@ -646,6 +658,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 		// Check if we should show domain options inline (when they don't need radio buttons)
 		const shouldShowDomainOptionsInline =
+			this.isRemoveFlow() &&
 			includedDomainPurchase &&
 			! willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
 
@@ -672,6 +685,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				<CancelPurchaseRefundInformation
 					purchase={ purchase }
 					isJetpackPurchase={ isJetpackPurchase }
+					flowMode={ this.state.flowMode }
 				/>
 
 				<CancelPurchaseFeatureList
@@ -724,7 +738,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					) }
 					<div className="cancel-purchase__footer-text-wrapper">
 						<div className="cancel-purchase__footer-text">
-							{ hasAmountAvailableToRefund( purchase ) ? (
+							{ this.isRemoveFlow() && hasAmountAvailableToRefund( purchase ) ? (
 								<p className="cancel-purchase__refund-amount">{ this.renderFooterText() }</p>
 							) : (
 								<p className="cancel-purchase__expiration-text">{ this.renderExpirationText() }</p>
@@ -822,6 +836,37 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		);
 	};
 
+	renderRefundNotice = () => {
+		const { purchase, translate } = this.props;
+
+		if ( this.isRemoveFlow() || ! hasAmountAvailableToRefund( purchase ) ) {
+			return null;
+		}
+
+		const refundAmountString = this.renderRefundAmountString(
+			purchase,
+			this.state.cancelBundledDomain,
+			this.props.includedDomainPurchase
+		);
+
+		if ( ! refundAmountString ) {
+			return null;
+		}
+
+		return (
+			<Notice className="cancel-purchase__refund-notice" showDismiss={ false } status="is-info">
+				{ translate(
+					"You're eligible for a %(refundAmount)s refund if you remove the plan now. Your features will be unavailable right away.",
+					{
+						args: {
+							refundAmount: refundAmountString,
+						},
+					}
+				) }
+			</Notice>
+		);
+	};
+
 	render() {
 		if ( ! this.isDataValid() ) {
 			return null;
@@ -892,6 +937,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 							) }
 						/>
 					</div>
+
+					{ this.renderRefundNotice() }
 
 					<FormattedHeader
 						className="cancel-purchase__formatted-header"
