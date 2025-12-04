@@ -181,7 +181,7 @@ $block-spacing: 24px;
 	gap: 8px;
 
 	.rating .gridicon {
-		fill: #ffb514;
+		fill: variables.$rating-star-color;
 	}
 
 	.full-width-section & {

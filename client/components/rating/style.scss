@@ -1,3 +1,5 @@
+$rating-star-color: #ffb514;
+
 .rating {
 	position: relative;
 
@@ -21,7 +23,7 @@
 		.rating__star-outline {
 			.is-empty,
 			.gridicon {
-				fill: #FFB514;
+				fill: $rating-star-color;
 			}
 		}
 	}
