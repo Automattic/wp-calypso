@@ -36,17 +36,7 @@ const HelpCenter: React.FC< Container > = ( {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
-	const {
-		currentUser,
-		site,
-		sectionName,
-		toolProvider,
-		contextProvider,
-		suggestions,
-		markdownComponents,
-		markdownExtensions,
-		useNavigationContinuation,
-	} = useHelpCenterContext();
+	const { currentUser, site, sectionName } = useHelpCenterContext();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
@@ -89,12 +79,6 @@ const HelpCenter: React.FC< Container > = ( {
 				site={ site }
 				sectionName={ sectionName }
 				handleClose={ handleClose }
-				toolProvider={ toolProvider }
-				contextProvider={ contextProvider }
-				emptyViewSuggestions={ suggestions }
-				markdownComponents={ markdownComponents }
-				markdownExtensions={ markdownExtensions }
-				useNavigationContinuation={ useNavigationContinuation }
 			/>
 		);
 	}
