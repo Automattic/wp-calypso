@@ -55,11 +55,15 @@ export default function useConversation( {
 		enabled: !! sessionId,
 	} );
 
-	useEffect( () => {
-		if ( data ) {
-			onSuccessRef.current( data.messages, data.sessionId || sessionId );
-		}
-	}, [ data, sessionId ] );
+	useEffect(
+		() => {
+			if ( data ) {
+				onSuccessRef.current( data.messages, data.sessionId || sessionId );
+			}
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to call onSuccess when data changes
+		[ data ]
+	);
 
 	useEffect( () => {
 		if ( error ) {
