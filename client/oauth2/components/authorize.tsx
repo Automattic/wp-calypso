@@ -102,14 +102,23 @@ function Authorize() {
 		}
 	};
 
+	/**
+	 * Safely decodes HTML entities in a string using DOMParser.
+	 * This prevents XSS vulnerabilities that could occur with innerHTML.
+	 * @param html - The string containing HTML entities to decode
+	 * @returns The decoded string
+	 */
+	const decodeHtmlEntities = ( html: string ): string => {
+		const doc = new DOMParser().parseFromString( html, 'text/html' );
+		return doc.documentElement.textContent || html;
+	};
+
 	const onDeny = () => {
 		if ( ! meta ) {
 			return;
 		}
 		// Decode HTML entities in the deny URL (backend may return &amp; instead of &)
-		const textarea = document.createElement( 'textarea' );
-		textarea.innerHTML = meta.links.deny;
-		const decodedUrl = textarea.value;
+		const decodedUrl = decodeHtmlEntities( meta.links.deny );
 
 		window.location.href = decodedUrl;
 	};
