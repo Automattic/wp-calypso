@@ -13,6 +13,7 @@ import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
@@ -28,6 +29,11 @@ function FollowingStream( { ...props } ) {
 	const currentUser = useSelector( getCurrentUser );
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
+
+	const handleSurveyClick = () => {
+		// Dismiss the banner permanently when the survey button is clicked
+		dispatch( savePreference( 'dismissible-card-reader-creator-survey-2026-banner', true ) );
+	};
 
 	// Set the selected feed based on route param.
 	useEffect( () => {
@@ -82,8 +88,7 @@ function FollowingStream( { ...props } ) {
 						horizontal
 						href="https://automattic.survey.fm/creating-consuming-on-wordpress-com"
 						title={ translate( 'Help shape WordPress.com for creators' ) }
-						tracksImpressionName="calypso_reader_creator_survey_banner_view"
-						tracksClickName="calypso_reader_creator_survey_banner_click"
+						onClick={ handleSurveyClick }
 						event="reader_creator_survey_2026"
 						tracksImpressionName="calypso_reader_creator_survey_banner_view"
 						tracksClickName="calypso_reader_creator_survey_banner_click"
