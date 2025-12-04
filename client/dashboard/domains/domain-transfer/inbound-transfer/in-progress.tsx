@@ -41,7 +41,7 @@ export const InboundTransferInProgress = ( {
 					</Text>
 					<Text>
 						{ sprintf(
-							// translators: %s is the domain name
+							// translators: %(domainName)s is the domain name, %(registrar)s is the domain name provider
 							__(
 								'%(domainName)s is on its way. You may be able to speed up the transfer by approving the email %(registrar)s sent you. Besides that, there’s nothing you need to do—we’ll email you when it’s complete.'
 							),
