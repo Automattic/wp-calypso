@@ -277,10 +277,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	if ( calypsoEnv === 'dashboard-horizon' ) {
 		context.badge = 'dashboard-horizon';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-
-		if ( request.query.branch ) {
-			context.branchName = request.query.branch;
-		}
 	}
 
 	if ( calypsoEnv === 'dashboard-stage' ) {
