@@ -43,6 +43,17 @@ export const emailsRoute = createRoute( {
 	)
 );
 
+export const emailsIndexRoute = createRoute( {
+	getParentRoute: () => emailsRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../emails/list' ).then( ( d ) =>
+		createLazyRoute( 'emails-index' )( {
+			component: d.default,
+		} )
+	)
+);
+
 const redirectIfInvalidDomain = async ( domainName: string ) => {
 	try {
 		await queryClient.ensureQueryData( domainQuery( domainName ) );
@@ -75,8 +86,8 @@ export const chooseDomainRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/choose-domain',
+	getParentRoute: () => emailsRoute,
+	path: 'choose-domain',
 	loader: async () => {
 		queryClient.prefetchQuery( domainsQuery() );
 	},
@@ -96,8 +107,8 @@ export const chooseEmailSolutionRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/choose-email-solution/$domain',
+	getParentRoute: () => emailsRoute,
+	path: 'choose-email-solution/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
 		await redirectIfInvalidDomain( domainName );
 	},
@@ -128,8 +139,8 @@ export const addMailboxRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/add-mailbox/$domain/$provider/$interval',
+	getParentRoute: () => emailsRoute,
+	path: 'add-mailbox/$domain/$provider/$interval',
 	beforeLoad: async ( { params: { domain: domainName, provider, interval } } ) => {
 		await redirectIfInvalidDomain( domainName );
 
@@ -172,8 +183,8 @@ export const setUpMailboxRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/set-up-mailbox/$domain',
+	getParentRoute: () => emailsRoute,
+	path: 'set-up-mailbox/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
@@ -224,8 +235,8 @@ export const addEmailForwarderRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/add-forwarder',
+	getParentRoute: () => emailsRoute,
+	path: 'add-forwarder',
 } ).lazy( () =>
 	import( '../../emails/add-forwarder' ).then( ( d ) =>
 		createLazyRoute( 'add-email-forwarder' )( {
@@ -252,8 +263,8 @@ export const mailboxesReadyRoute = createRoute( {
 		}
 		return { meta: [ { title } ] };
 	},
-	getParentRoute: () => rootRoute,
-	path: 'emails/mailboxes-ready/$domain',
+	getParentRoute: () => emailsRoute,
+	path: 'mailboxes-ready/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
 		await redirectIfInvalidDomain( domainName );
 	},
@@ -304,12 +315,14 @@ export const mailboxesReadyRoute = createRoute( {
 
 export const createEmailsRoutes = () => {
 	return [
-		emailsRoute,
-		chooseDomainRoute,
-		chooseEmailSolutionRoute,
-		addMailboxRoute,
-		setUpMailboxRoute,
-		addEmailForwarderRoute,
-		mailboxesReadyRoute,
+		emailsRoute.addChildren( [
+			emailsIndexRoute,
+			chooseDomainRoute,
+			chooseEmailSolutionRoute,
+			addMailboxRoute,
+			setUpMailboxRoute,
+			addEmailForwarderRoute,
+			mailboxesReadyRoute,
+		] ),
 	];
 };
