@@ -10,6 +10,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordTransactionBeginAnalytics, logStashEvent } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
+import { addUrlToPendingPageRedirect } from './pending-page';
 import {
 	doesTransactionResponseRequire3DS,
 	handle3DSChallenge,
@@ -105,11 +106,24 @@ export default async function existingCardProcessor(
 					  } )
 					: undefined;
 
+				// Generate the return URL for redirect-based 3DS flows.
+				// This wraps the thank you URL in a pending page redirect so that
+				// after 3DS authentication, the user lands on the pending page which
+				// polls for order completion before redirecting to the final thank you page.
+				const thankYouUrl = dataForProcessor.getThankYouUrl();
+				const returnUrl = addUrlToPendingPageRedirect( thankYouUrl, {
+					siteSlug: dataForProcessor.siteSlug,
+					orderId: stripeResponse.order_id,
+					urlType: 'absolute',
+					fromSiteSlug: dataForProcessor.fromSiteSlug,
+				} );
+
 				await handle3DSChallenge(
 					reduxDispatch,
 					cardSpecificStripe ?? stripe,
 					stripeResponse.message.payment_intent_client_secret,
-					paymentIntentId
+					paymentIntentId,
+					returnUrl
 				);
 				// We must return the original authentication response in order
 				// to have access to the order_id so that we can display a
