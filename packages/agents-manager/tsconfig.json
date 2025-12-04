@@ -7,6 +7,7 @@
 		"outDir": "dist/esm",
 		"rootDir": "src"
 	},
-	"include": [ "src", "src/*.json", "types", "../help-center" ],
-	"exclude": [ "**/test/*" ]
+	"include": [ "src", "src/*.json", "types" ],
+	"exclude": [ "**/test/*" ],
+	"references": [ { "path": "../help-center" } ]
 }
