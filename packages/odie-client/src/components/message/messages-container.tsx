@@ -1,7 +1,4 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { Spinner } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
@@ -19,8 +16,8 @@ import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-li
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
-import { TypingPlaceholder } from './typing-placeholder';
 import { getMessageUniqueIdentifier } from './utils/get-message-unique-identifier';
+import { ZendeskTypingIndicator } from './zendesk-typing-indicator';
 import ChatMessage from '.';
 import type { CurrentUser } from '../../types';
 interface ChatMessagesProps {
@@ -40,13 +37,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 	const navType: NavigationType = useNavigationType();
-	const typingStatus = useSelect(
-		( select ) =>
-			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getSupportTypingStatus(
-				chat.conversationId ?? ''
-			),
-		[ chat.conversationId ]
-	);
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
@@ -183,13 +173,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						<ThinkingPlaceholder />
 					</div>
 				) }
-				{ chat.provider.startsWith( 'zendesk' ) && typingStatus && (
-					<div
-						className="odie-chatbox__action-message"
-						ref={ ( div ) => div?.scrollIntoView( { behavior: 'smooth', block: 'end' } ) }
-					>
-						<TypingPlaceholder />
-					</div>
+				{ chat.provider.startsWith( 'zendesk' ) && (
+					<ZendeskTypingIndicator conversationId={ chat.conversationId } />
 				) }
 			</>
 		</div>
