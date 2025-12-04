@@ -28,7 +28,7 @@ export default function ConversationHistoryView( {
 	const onSelectConversationRef = useRef( onSelectConversation );
 	onSelectConversationRef.current = onSelectConversation;
 
-	const { conversations, isLoading, error } = useConversationList( {
+	const { conversations, isLoading, isError } = useConversationList( {
 		botId,
 		authProvider,
 	} );
@@ -47,7 +47,7 @@ export default function ConversationHistoryView( {
 					</div>
 				) }
 				{ /* Error state - only show if we have no data to display */ }
-				{ error && ! isLoading && ! conversations.length && (
+				{ isError && ! conversations.length && (
 					<div className="agents-manager-conversation-history-view__error">
 						<p>
 							{ __( 'Failed to load conversations. Please try again.', '__i18n_text_domain__' ) }
@@ -55,7 +55,7 @@ export default function ConversationHistoryView( {
 					</div>
 				) }
 				{ /* Empty state */ }
-				{ ! isLoading && ! error && ! conversations.length && (
+				{ ! isLoading && ! isError && ! conversations.length && (
 					<div className="agents-manager-conversation-history-view__empty">
 						<p>{ __( 'No past conversations', '__i18n_text_domain__' ) }</p>
 						<p className="agents-manager-conversation-history-view__empty-hint">
