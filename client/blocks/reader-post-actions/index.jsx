@@ -86,7 +86,6 @@ const ReaderPostActions = ( {
 						showZeroCount={ false }
 						likeSource="reader"
 						defaultLabel={ translate( 'Like' ) }
-						showTooltip
 					/>
 				</li>
 			) }

@@ -249,7 +249,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 
 	.comment-button.tooltip,
-	.like-button.tooltip,
 	.follow-button.tooltip {
 		@include tooltip-base;
 		@include tooltip-top;
@@ -600,8 +599,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 
 	// Tooltip styles
-	.comment-button.tooltip,
-	.like-button.tooltip {
+	.comment-button.tooltip {
 		@include tooltip-base;
 		@include tooltip-top;
 	}
