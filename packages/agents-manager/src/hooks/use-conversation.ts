@@ -63,6 +63,8 @@ export default function useConversation( {
 
 	useEffect( () => {
 		if ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( '[useConversation] Error loading conversation:', error );
 			onErrorRef.current( error );
 		}
 	}, [ error ] );

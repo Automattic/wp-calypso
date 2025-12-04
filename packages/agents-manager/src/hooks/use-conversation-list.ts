@@ -64,6 +64,8 @@ export default function useConversationList( {
 
 	useEffect( () => {
 		if ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( '[useConversationList] Error loading conversation list:', error );
 			onErrorRef.current( error );
 		}
 	}, [ error ] );
