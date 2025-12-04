@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
+import { useDashboardAnalytics } from '../../utils/analytics';
 import { DnsSecRecordTextarea } from './dnssec-record-textarea';
 import type { Domain } from '@automattic/api-core';
 
@@ -20,6 +21,7 @@ interface DnsSecProps {
 }
 
 export default function DnsSec( { domainName, domain }: DnsSecProps ) {
+	const { recordTracksEvent } = useDashboardAnalytics();
 	const mutation = useMutation( {
 		...domainDnssecMutation( domainName ),
 		meta: {
@@ -33,7 +35,30 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 	const { isPending } = mutation;
 
 	const handleToggleChange = ( enabled: boolean ) => {
-		mutation.mutate( enabled );
+		// Track the toggle action
+
+		recordTracksEvent( 'calypso_dashboard_domain_dnssec_toggle', {
+			domain: domainName,
+			dnssec_enabled: enabled,
+		} );
+
+		mutation.mutate( enabled, {
+			onSuccess: () => {
+				// Track success
+				recordTracksEvent( 'calypso_dashboard_domain_dnssec_toggle_success', {
+					domain: domainName,
+					dnssec_enabled: enabled,
+				} );
+			},
+			onError: ( error: Error ) => {
+				// Track failure
+				recordTracksEvent( 'calypso_dashboard_domain_dnssec_toggle_failure', {
+					domain: domainName,
+					dnssec_enabled: enabled,
+					error_message: error.message,
+				} );
+			},
+		} );
 	};
 
 	return (

@@ -16,7 +16,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews';
@@ -24,6 +24,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { useDashboardAnalytics } from '../../utils/analytics';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
 import DnsDescription from './dns-description';
@@ -66,6 +67,7 @@ const DEFAULT_LAYOUTS = {
 export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
 	const router = useRouter();
+	const { recordTracksEvent } = useDashboardAnalytics();
 	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
 	const restoreDefaultEmailRecordsMutation = useMutation( {
 		...domainDnsEmailMutation( domainName ),
@@ -95,6 +97,39 @@ export default function DomainDns() {
 	const hasDefaultARecordsValue = hasDefaultARecords( dnsData?.records ?? [] );
 	const hasDefaultCnameRecordValue = hasDefaultCnameRecord( dnsData?.records ?? [], domainName );
 	const hasDefaultEmailRecordsValue = hasDefaultEmailRecords( dnsData?.records ?? [], domainName );
+
+	// Track when default A records notice is shown
+	useEffect( () => {
+		if ( domain.has_wpcom_nameservers && ! hasDefaultARecordsValue && ! isLoading ) {
+			recordTracksEvent( 'calypso_dashboard_domain_management_dns_default_a_records_notice_show', {
+				domain: domainName,
+			} );
+		}
+	}, [
+		domain.has_wpcom_nameservers,
+		hasDefaultARecordsValue,
+		isLoading,
+		domainName,
+		recordTracksEvent,
+	] );
+
+	// Track when default CNAME record notice is shown
+	useEffect( () => {
+		if ( domain.has_wpcom_nameservers && ! hasDefaultCnameRecordValue && ! isLoading ) {
+			recordTracksEvent(
+				'calypso_dashboard_domain_management_dns_default_cname_record_notice_show',
+				{
+					domain: domainName,
+				}
+			);
+		}
+	}, [
+		domain.has_wpcom_nameservers,
+		hasDefaultCnameRecordValue,
+		isLoading,
+		domainName,
+		recordTracksEvent,
+	] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		dnsData?.records ?? [],

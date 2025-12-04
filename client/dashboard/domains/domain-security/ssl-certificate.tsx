@@ -17,6 +17,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
+import { useDashboardAnalytics } from '../../utils/analytics';
 import type { Domain, SslDetails } from '@automattic/api-core';
 
 interface SslCertificateProps {
@@ -26,6 +27,7 @@ interface SslCertificateProps {
 }
 
 export default function SslCertificate( { domainName, domain, sslDetails }: SslCertificateProps ) {
+	const { recordTracksEvent } = useDashboardAnalytics();
 	const mutation = useMutation( {
 		...provisionSslCertificateMutation( domainName ),
 		meta: {
@@ -47,7 +49,16 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 					'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. <learnMoreLink />'
 				),
 				{
-					learnMoreLink: <InlineSupportLink supportContext="https-ssl" />,
+					learnMoreLink: (
+						<InlineSupportLink
+							supportContext="https-ssl"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_domain_security_learn_more_click', {
+									domain: domainName,
+								} );
+							} }
+						/>
+					),
 				}
 			);
 		}
@@ -72,7 +83,16 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		return createInterpolateElement(
 			__( 'There is an issue with your certificate. Contact us to <learnMoreLink />.' ),
 			{
-				learnMoreLink: <InlineSupportLink supportLink={ CONTACT } />,
+				learnMoreLink: (
+					<InlineSupportLink
+						supportLink={ CONTACT }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_dashboard_domain_security_learn_more_click', {
+								domain: domainName,
+							} );
+						} }
+					/>
+				),
 			}
 		);
 	};
@@ -87,7 +107,26 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 
 	const handleOnClick = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( undefined );
+
+		recordTracksEvent( 'calypso_dashboard_ssl_provision', {
+			domain: domainName,
+		} );
+
+		mutation.mutate( undefined, {
+			onSuccess: () => {
+				// Track success
+				recordTracksEvent( 'calypso_dashboard_ssl_provision_success', {
+					domain: domainName,
+				} );
+			},
+			onError: ( error: Error ) => {
+				// Track failure
+				recordTracksEvent( 'calypso_dashboard_ssl_provision_failure', {
+					domain: domainName,
+					error_message: error.message,
+				} );
+			},
+		} );
 	};
 
 	const renderFailureReasons = (

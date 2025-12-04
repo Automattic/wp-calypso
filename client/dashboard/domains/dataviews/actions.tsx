@@ -18,6 +18,7 @@ import {
 	domainTransferToOtherSiteRoute,
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
+import { useDashboardAnalytics } from '../../utils/analytics';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { AutoRenewModal } from './auto-renew-modal';
@@ -35,6 +36,7 @@ const noop = () => {};
 
 export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
 	const router = useRouter();
+	const { recordTracksEvent } = useDashboardAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
@@ -150,10 +152,29 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 					if ( ! site ) {
 						return;
 					}
+
+					// Track the set primary domain action
+					recordTracksEvent(
+						'calypso_dashboard_domain_management_settings_change_primary_domain_link_click',
+						{
+							domain: domain.domain,
+							origin: 'dataviews_actions',
+						}
+					);
+
 					setPrimaryDomainMutation.mutate(
 						{ siteId: site.ID, domain: domain.domain },
 						{
 							onSuccess: () => {
+								// Track success
+								recordTracksEvent(
+									'calypso_dashboard_domain_management_settings_change_primary_domain_link_click_success',
+									{
+										domain: domain.domain,
+										origin: 'dataviews_actions',
+									}
+								);
+
 								createSuccessNotice(
 									sprintf(
 										/* translators: %s is domain */
@@ -165,7 +186,17 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 									}
 								);
 							},
-							onError: () => {
+							onError: ( error: Error ) => {
+								// Track failure
+								recordTracksEvent(
+									'calypso_dashboard_domain_management_settings_change_primary_domain_link_click_failure',
+									{
+										domain: domain.domain,
+										origin: 'dataviews_actions',
+										error_message: error.message,
+									}
+								);
+
 								createErrorNotice(
 									__( 'Something went wrong and we couldn’t change your primary domain.' ),
 									{
@@ -296,6 +327,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			createSuccessNotice,
 			createErrorNotice,
 			sitesByBlogId,
+			recordTracksEvent,
 		]
 	);
 
