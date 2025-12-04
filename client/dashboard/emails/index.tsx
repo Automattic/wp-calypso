@@ -16,7 +16,7 @@ import type { Email } from './types';
 
 import './style.scss';
 
-function EmailsList() {
+function Emails() {
 	const { data: allEmailAccounts, isLoading: isLoadingEmailAccounts } = useQuery(
 		userMailboxesQuery()
 	);
@@ -127,5 +127,4 @@ function EmailsList() {
 	);
 }
 
-export default EmailsList;
-
+export default Emails;
