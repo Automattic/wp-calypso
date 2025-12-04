@@ -45,9 +45,11 @@ export default function SupportGuide( {
 					<div className="agent-manager-support-guide-content help-center__container-content">
 						<HelpCenterArticle />
 					</div>
+					{ /*
 					<div className="agent-manager-support-guide-footer">
 						<AgentUI.Footer />
 					</div>
+					 */ }
 				</div>
 			</AgentUI.ConversationView>
 		</AgentUI.Container>
