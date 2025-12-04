@@ -32,7 +32,7 @@ export const InboundTransferInProgress = ( {
 			<VStack spacing={ 8 }>
 				<Notice>
 					{ __(
-						"Domain name transfers typically take 5–7 days. We'll email you when it's ready."
+						'Domain name transfers typically take 5–7 days. We’ll email you when it’s ready.'
 					) }
 				</Notice>
 				<VStack spacing={ 4 }>
@@ -43,7 +43,7 @@ export const InboundTransferInProgress = ( {
 						{ sprintf(
 							// translators: %s is the domain name
 							__(
-								"%(domainName)s is on its way. You may be able to speed up the transfer by approving the email %(registrar)s sent you. Besides that, there's nothing you need to do—we'll email you when it's complete."
+								'%(domainName)s is on its way. You may be able to speed up the transfer by approving the email %(registrar)s sent you. Besides that, there’s nothing you need to do—we’ll email you when it’s complete.'
 							),
 							{
 								domainName,

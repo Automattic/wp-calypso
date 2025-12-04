@@ -42,7 +42,7 @@ export const InboundTransferFailed = ( {
 					<Text>
 						{ sprintf(
 							// translators: %(appName)s is the app name
-							__( "Your domain transfer to %(appName)s didn't go through. This can happen if:" ),
+							__( 'Your domain transfer to %(appName)s didn’t go through. This can happen if:' ),
 							{
 								appName,
 							}
@@ -53,7 +53,7 @@ export const InboundTransferFailed = ( {
 							<Text>{ __( 'The domain has expired' ) }</Text>
 						</li>
 						<li>
-							<Text>{ __( "Approval steps weren't completed" ) }</Text>
+							<Text>{ __( 'Approval steps weren’t completed' ) }</Text>
 						</li>
 						<li>
 							<Text>{ __( 'Your current provider blocked the transfer.' ) }</Text>
