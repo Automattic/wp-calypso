@@ -80,7 +80,7 @@ function FollowingStream( { ...props } ) {
 						dismissPreferenceName="reader-creator-survey-2026-banner"
 						dismissTemporary
 						horizontal
-						href="https://docs.google.com/forms/d/e/1FAIpQLSfvXsita2C3T5e4cpVmsvecSvY-bi7VCTbewDVgS3ieOdZMtg/viewform?usp=dialog"
+						href="https://automattic.survey.fm/creating-consuming-on-wordpress-com"
 						title={ translate( 'Help shape WordPress.com for creators' ) }
 						tracksImpressionName="calypso_reader_creator_survey_banner_view"
 						tracksClickName="calypso_reader_creator_survey_banner_click"
