@@ -3,6 +3,7 @@ import {
 	domainConnectionSetupInfoQuery,
 	startDomainInboundTransferMutation,
 	purchaseQuery,
+	siteByIdQuery,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -18,7 +19,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainTransferSetupRoute, domainTransferIndexRoute } from '../../app/router/domains';
+import { domainTransferSetupRoute } from '../../app/router/domains';
+import { siteDomainsRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -43,6 +45,7 @@ export default function DomainTransferSetup() {
 	const { data: purchase } = useQuery(
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
+	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
 	const registrar = domainConnectionSetupInfo?.registrar || null;
 	const registrar_url = domainConnectionSetupInfo?.registrar_url || null;
@@ -154,12 +157,14 @@ export default function DomainTransferSetup() {
 					),
 					{ type: 'snackbar' }
 				);
-				navigate( {
-					to: domainTransferIndexRoute.fullPath,
-					params: {
-						domainName,
-					},
-				} );
+				if ( site?.slug ) {
+					navigate( {
+						to: siteDomainsRoute.fullPath,
+						params: {
+							siteSlug: site.slug,
+						},
+					} );
+				}
 			},
 			onError: ( err ) => {
 				const errorMessage =
