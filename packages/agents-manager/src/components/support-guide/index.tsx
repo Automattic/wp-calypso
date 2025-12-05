@@ -1,7 +1,8 @@
 import { AgentUI } from '@automattic/agenttic-ui';
 import { HelpCenterArticle } from '@automattic/support-articles';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ChatHeader, { Options } from '../chat-header';
 import './style.scss';
 
@@ -19,6 +20,9 @@ export default function SupportGuide( {
 	onClose: () => void;
 } ) {
 	const navigate = useNavigate();
+	const location = useLocation().search;
+	const query = new URLSearchParams( location );
+	const isFromChat = query.has( 'from-chat' );
 
 	function handleSubmit( value: string ) {
 		// eslint-disable-next-line no-console
@@ -54,11 +58,13 @@ export default function SupportGuide( {
 							forceEmailSupport={ false }
 						/>
 					</div>
-					{ /*
-					<div className="agent-manager-support-guide-footer">
-						<AgentUI.Footer />
-					</div>
-					 */ }
+					{ ! isFromChat && (
+						<div className="agent-manager-support-guide-footer">
+							<Button variant="primary" onClick={ () => navigate( '/chat' ) }>
+								{ __( 'Start a new chat', '__i18n_text_domain__' ) }
+							</Button>
+						</div>
+					) }
 				</div>
 			</AgentUI.ConversationView>
 		</AgentUI.Container>

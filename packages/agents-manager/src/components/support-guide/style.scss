@@ -12,7 +12,13 @@
 		scroll-behavior: smooth;
 	}
 	.agent-manager-support-guide-footer {
-		margin-top: 16px;
+		padding: 16px;
+		display: flex;
+		justify-content: stretch;
+		
+		button {
+			flex: 1
+		}
 	}
 }
 
