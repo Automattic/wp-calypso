@@ -15,8 +15,15 @@ import type { Query } from '@tanstack/react-query';
 
 const KNOWN_ERRORS = [ 'unknown_blog', 'unauthorized' ];
 
-export const siteBySlugQuery = ( siteSlug: string ) =>
-	queryOptions( {
+export const siteBySlugQuery = ( siteSlug: string ) => {
+	// Used to find an existing Site object which is already in the `site-by-id` cache.
+	const getFromCache = () =>
+		queryClient
+			.getQueriesData< Site >( { queryKey: [ 'site-by-id' ] } )
+			.map( ( [ , data ] ) => data )
+			.find( ( site ) => site?.slug === siteSlug );
+
+	return queryOptions( {
 		queryKey: [ 'site-by-slug', siteSlug, SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: async () => {
 			try {
@@ -36,10 +43,26 @@ export const siteBySlugQuery = ( siteSlug: string ) =>
 			}
 			return failureCount < 3; // default retry count
 		},
+		initialData: () => getFromCache(),
+		initialDataUpdatedAt: () => {
+			const site = getFromCache();
+			if ( site?.ID ) {
+				return queryClient.getQueryState( [ 'site-by-id', site.ID, SITE_FIELDS, SITE_OPTIONS ] )
+					?.dataUpdatedAt;
+			}
+		},
 	} );
+};
 
-export const siteByIdQuery = ( siteId: number ) =>
-	queryOptions( {
+export const siteByIdQuery = ( siteId: number ) => {
+	// Used to find an existing Site object which is already in the `site-by-slug` cache.
+	const getFromCache = () =>
+		queryClient
+			.getQueriesData< Site >( { queryKey: [ 'site-by-slug' ] } )
+			.map( ( [ , data ] ) => data )
+			.find( ( site ) => site?.ID === siteId );
+
+	return queryOptions( {
 		queryKey: [ 'site-by-id', siteId, SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: async () => {
 			try {
@@ -59,7 +82,16 @@ export const siteByIdQuery = ( siteId: number ) =>
 			}
 			return failureCount < 3; // default retry count
 		},
+		initialData: () => getFromCache(),
+		initialDataUpdatedAt: () => {
+			const site = getFromCache();
+			if ( site?.ID ) {
+				return queryClient.getQueryState( [ 'site-by-slug', site.slug, SITE_FIELDS, SITE_OPTIONS ] )
+					?.dataUpdatedAt;
+			}
+		},
 	} );
+};
 
 export const siteQueryFilter = ( siteId: number ) => ( {
 	predicate: ( { queryKey, state }: Query ) => {
