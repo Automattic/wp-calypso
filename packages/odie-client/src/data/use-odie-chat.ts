@@ -14,12 +14,12 @@ import type { OdieChat, ReturnedChat } from '../types';
 export const useOdieChat = ( chatId: number | null ) => {
 	const { version } = useOdieAssistantContext();
 	const { data: supportInteraction } = useCurrentSupportInteraction();
-
 	// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
 	const botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
+	const queryKey = [ 'odie-chat', botSlug, chatId, version ];
 
-	return useQuery< OdieChat, Error >( {
-		queryKey: [ 'odie-chat', botSlug, chatId, version ],
+	const query = useQuery< OdieChat, Error >( {
+		queryKey,
 		queryFn: async (): Promise< OdieChat > => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
@@ -55,4 +55,9 @@ export const useOdieChat = ( chatId: number | null ) => {
 		enabled: !! chatId && !! supportInteraction,
 		staleTime: 3600, // 1 hour
 	} );
+
+	return {
+		...query,
+		queryKey,
+	};
 };

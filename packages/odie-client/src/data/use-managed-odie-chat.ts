@@ -1,9 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
-import type { ReturnedChat, Message, AgentticMessage } from '../types';
+import { useOdieChat } from './use-odie-chat';
+import type { ReturnedChat, Message, AgentticMessage, OdieChat } from '../types';
 
 function convertMessageToAgentticFormat( message: Message ): AgentticMessage {
 	return {
@@ -14,6 +16,14 @@ function convertMessageToAgentticFormat( message: Message ): AgentticMessage {
 		actions: [],
 		archived: false,
 		showIcon: true,
+	};
+}
+
+function convertMessageFromAgentticFormat( message: string ): Message {
+	return {
+		content: message,
+		role: 'user',
+		type: 'message',
 	};
 }
 
@@ -31,6 +41,7 @@ export const useSendOdieMessage = (
 	onSuccess: ( chat: ReturnedChat ) => void
 ) => {
 	const { selectedSiteId, version } = useOdieAssistantContext();
+	const queryClient = useQueryClient();
 
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
@@ -59,37 +70,66 @@ export const useSendOdieMessage = (
 						},
 				  } );
 		},
-		onSuccess,
+		onMutate( message: Message ) {
+			queryClient.setQueryData(
+				[ 'odie-chat', botSlug, odieChatId, version ],
+				( currentChatCache: OdieChat ) => {
+					return {
+						...currentChatCache,
+						messages: [ ...( currentChatCache?.messages ?? [] ), message ],
+					};
+				}
+			);
+		},
+		onSuccess( data: ReturnedChat ) {
+			const chatId = data.chat_id;
+			queryClient.setQueryData(
+				[ 'odie-chat', botSlug, chatId, version ],
+				( currentChatCache: OdieChat ) => {
+					return {
+						...currentChatCache,
+						messages: [ ...( currentChatCache?.messages ?? [] ), ...data.messages ],
+					};
+				}
+			);
+			onSuccess( data );
+		},
 	} );
 };
 
 /**
  * Get a full API of an Odie chat.
- * @param providedChatId - The chat ID to manage.
+ * @param botSlug - The bot slug to send the message to.
  */
-export const useManagedOdieChat = ( providedChatId: number | null, botSlug: string ) => {
-	const [ chatId, setChatId ] = useState< number | null >( providedChatId );
-	const [ chatMessages, setChatMessages ] = useState< Message[] >( [] );
+export const useManagedOdieChat = ( botSlug: string ) => {
+	const chatId = new URLSearchParams( useLocation().search ).get( 'odieChatId' );
+	const { data: chat, isFetching: isLoadingChat } = useOdieChat( chatId ? Number( chatId ) : null );
+	const navigate = useNavigate();
 
 	const onSuccess = useCallback(
 		( returnedChat: ReturnedChat ) => {
-			const messages = [ ...chatMessages, ...returnedChat.messages ];
-			setChatId( returnedChat.chat_id );
-			setChatMessages( messages );
+			const newChatId = returnedChat.chat_id;
+			if ( newChatId !== Number( chatId ) ) {
+				navigate( `/odie?odieChatId=${ newChatId }`, { replace: true } );
+			}
 		},
-		[ chatMessages ]
+		[ chatId, navigate ]
 	);
 
-	const sendOdieMessage = useSendOdieMessage( chatId ?? null, botSlug, onSuccess );
+	const sendOdieMessage = useSendOdieMessage(
+		chatId ? Number( chatId ) : null,
+		botSlug,
+		onSuccess
+	);
 
-	function sendMessage( message: Message ) {
-		setChatMessages( [ ...chatMessages, message ] );
-		sendOdieMessage.mutateAsync( message );
+	function sendMessage( message: string ) {
+		const odieMessage = convertMessageFromAgentticFormat( message );
+		sendOdieMessage.mutateAsync( odieMessage );
 	}
 
 	return {
-		messages: chatMessages.map( convertMessageToAgentticFormat ) || [],
+		messages: chat?.messages.map( convertMessageToAgentticFormat ) || [],
 		sendMessage,
-		isProcessing: sendOdieMessage.isPending,
+		isProcessing: sendOdieMessage.isPending || isLoadingChat,
 	};
 };
