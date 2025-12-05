@@ -141,7 +141,7 @@ function getFetchSiteListParams(
 
 	const filters = view.filters?.reduce( ( acc, current ) => {
 		let value = current.value;
-		if ( current.field === 'plan' ) {
+		if ( current.field === 'plan' && current.value ) {
 			value = current.value.map( ( v: string ) => planSlugsByName?.[ v ] ).flat();
 		}
 
