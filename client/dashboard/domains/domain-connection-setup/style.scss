@@ -14,6 +14,18 @@
 	.summary-button.components-button .summary-button-title {
 		font-weight: 500;
 	}
+	a {
+		color: $gray-900;
+		&:hover {
+			color: $gray-900;
+		}
+	}
+	.is-link {
+		color: $gray-900;
+		&:hover {
+			color: $gray-900;
+		}
+	}
 }
 
 .verification-in-progress-next-steps {
@@ -26,6 +38,18 @@
 }
 
 .domain-connection-setup {
+	a {
+		color: $gray-900;
+		&:hover {
+			color: $gray-900;
+		}
+	}
+	button.is-link {
+		color: $gray-900;
+		&:hover {
+			color: $gray-900;
+		}
+	}
 	&__step .components-card-body{
 		padding-inline-start: 0;
 		padding-inline-end: 0;

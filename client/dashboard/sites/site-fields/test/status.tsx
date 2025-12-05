@@ -3,6 +3,7 @@
  */
 import { render as testingLibraryRender } from '@testing-library/react';
 import { AuthContext } from '../../../app/auth';
+import { wpcomLink } from '../../../utils/link';
 import { Status } from '../index';
 import type { User, Site } from '@automattic/api-core';
 
@@ -62,7 +63,7 @@ describe( '<Status>', () => {
 		expect( container.textContent ).toBe( 'Finish setup↗' );
 		expect( getByRole( 'link', { name: /Finish setup/ } ) ).toHaveAttribute(
 			'href',
-			'/home/test.wordpress.com'
+			wpcomLink( '/home/test.wordpress.com' )
 		);
 	} );
 
@@ -120,7 +121,7 @@ describe( '<Status>', () => {
 		expect( getByText( 'Plan expired' ) ).toBeInTheDocument();
 		expect( getByRole( 'link', { name: /Renew plan/ } ) ).toHaveAttribute(
 			'href',
-			'/checkout/test.wordpress.com/business-bundle'
+			wpcomLink( '/checkout/test.wordpress.com/business-bundle' )
 		);
 	} );
 } );
