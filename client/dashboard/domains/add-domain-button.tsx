@@ -2,6 +2,7 @@ import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import { wpcomLink } from '../utils/link';
 
 export function AddDomainButton( {
 	siteSlug,
@@ -27,10 +28,11 @@ export function AddDomainButton( {
 		return false;
 	};
 
-	const onSearchClick = () => navigateTo( '/setup/domain', '/start/domain' );
+	const onSearchClick = () =>
+		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/start/domain' ) );
 
 	const onTransferOrConnectClick = () =>
-		navigateTo( '/setup/domain/use-my-domain', '/setup/domain-transfer' );
+		navigateTo( wpcomLink( '/setup/domain/use-my-domain' ), wpcomLink( '/setup/domain-transfer' ) );
 
 	return (
 		<Dropdown

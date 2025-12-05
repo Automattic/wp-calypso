@@ -24,6 +24,7 @@ export type SwitcherProps< T > = {
 	renderItemMedia: RenderItemMedia< T >;
 	renderItemTitle: RenderItemTitle< T >;
 	renderItemDescription?: RenderItemDescription< T >;
+	onItemClick?: () => void;
 } & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' >; // For controlled usage of the switcher
 
 export default function Switcher< T >( {
@@ -35,6 +36,7 @@ export default function Switcher< T >( {
 	renderItemMedia,
 	renderItemTitle,
 	renderItemDescription,
+	onItemClick,
 	open,
 	onToggle,
 	defaultOpen,
@@ -81,6 +83,7 @@ export default function Switcher< T >( {
 						renderItemTitle={ renderItemTitle }
 						renderItemDescription={ renderItemDescription }
 						onClose={ onClose }
+						onItemClick={ onItemClick }
 					>
 						{ children?.( { onClose } ) }
 					</SwitcherContent>

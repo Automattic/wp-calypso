@@ -107,24 +107,30 @@ body.is-section-plugins #primary .main.is-logged-out {
 
 		}
 	}
-	.full-width-section .components-button {
-		height: 44px;
-		border-radius: 4px;
-		padding: 16px;
-
-		&:not([class*="is-pressed"]) {
-			color: var(--studio-gray-100);
+	.full-width-section {
+		.responsive-toolbar-group__swipe-list > div:not(:first-child) {
+			flex-grow: 1;
 		}
-
-		&::before {
+		.components-button {
 			height: 44px;
-			background-color: var( --studio-gray-0 );
-		}
+			border-radius: 4px;
+			padding: 16px;
+			width: 100%;
 
-		&:not([class*="is-pressed"]):hover::before {
-			background-color: var( --studio-gray-5 );
-		}
+			&:not([class*="is-pressed"]) {
+				color: var(--studio-gray-100);
+			}
 
+			&::before {
+				height: 44px;
+				background-color: var( --studio-gray-0 );
+			}
+
+			&:not([class*="is-pressed"]):hover::before {
+				background-color: var( --studio-gray-5 );
+			}
+
+		}
 	}
 
 	.components-button.is-pressed::before {
@@ -147,43 +153,24 @@ body.is-section-plugins #primary .main.is-logged-out {
 .full-width-section {
 	.plugins-results-header__action {
 		font-size: $font-body-small;
+		text-decoration: none;
 	}
 }
-.plugins-browser__marketplace-footer {
-	--scss-font-title-large: 2.5rem;
-	--scss-font-body: 1.375rem;
 
-	.section-header-container {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-end;
-		max-width: none;
-
-		.section-header-container__header {
-			max-width: 575px;
-		}
-		.section-header-container__subheader {
-			flex-shrink: 0;
-		}
-
-		@media screen and ( max-width: 600px ) {
-			flex-direction: column;
-			align-items: flex-start;
-
-			.marketplace-cta {
-				margin-inline: 0;
-			}
-		}
-	}
-	.feature-item-container__header {
-		font-weight: 400;
-	}
-}
 .full-width-section.plugins-browser__search-header {
-	padding-top: 100px;
+	padding-top: 157px;
 	padding-bottom: 32px;
 	position: relative;
 	overflow: hidden;
+
+
+	.is-section-plugins:not(:has(.lpc-header-nav-wrapper)) & {
+		padding-top: 165px;
+
+		@media screen and ( max-width: 600px ) {
+			padding-top: 93px;
+		}
+	}
 
 	&::before {
 		content: "";
@@ -214,7 +201,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		display: none;
 	}
 	@media screen and ( max-width: 600px ) {
-		padding-top: 30px;
+		padding-top: 95px;
 		padding-bottom: 0;
 
 		.search-box-header__sticky-ref {
@@ -226,52 +213,10 @@ body.is-section-plugins #primary .main.is-logged-out {
 .plugins-browser__categories {
 	padding-bottom: 0;
 }
+.plugins-discovery-page__education-footer {
+	padding-bottom: 72px;
 
-.plugins-browser__categories,
-.plugins-browser__marketplace-footer {
-	background-color: var(--studio-white);
-}
-
-body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
-	.plugins-browser__content-wrapper {
-		background-color: var(--studio-white);
-	}
-
-	.full-width-section__content {
-		max-width: 1040px;
-		padding-inline: 24px;
-		@media screen and ( max-width: 600px ) {
-			padding-inline: 16px;
-		}
-	}
-	.lpc-header-nav-wrapper .masterbar {
-		background: var(--studio-gray-0);
-		border-bottom: 1px solid var(--studio-gray-0);
-	}
-}
-
-// Remove layout padding for logged-out full-width layout (covers both actually logged out and logged-in showing logged-out UI)
-body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out) {
-	.layout__content {
-		padding: 0;
-	}
-}
-
-body.is-section-plugins .is-logged-in {
-	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column):not(.is-logged-out).plugins-browser.is-full-width-layout";
-
-	#{$full-width-main} {
-		.plugins-browser__content-wrapper {
-			padding: 0;
-			max-width: 100%;
-		}
-
-		.full-width-section__content {
-			max-width: 100%;
-		}
-
-		.navigation-header__container {
-			max-width: 100%;
-		}
+	@media screen and ( max-width: 600px ) {
+		padding-bottom: 48px;
 	}
 }

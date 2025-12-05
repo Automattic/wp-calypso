@@ -2,9 +2,7 @@
 	.components-popover {
 		z-index: z-index("root", ".categories__menu .components-popover");
 	}
-	.full-width-section & .components-toolbar {
-		column-gap: 10px;
-	}
+
 	&.is-logged-in {
 		.components-toolbar .components-button::before {
 			height: 38px;
@@ -14,5 +12,6 @@
 	span {
 		display: flex;
 		column-gap: 4px;
+		line-height: 22px;
 	}
 }

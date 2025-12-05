@@ -20,6 +20,7 @@ import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import {
+	DASHBOARD_SECTION_PATHS,
 	DASHBOARD_SECTION_DEFINITION,
 	DASHBOARD_CIAB_SECTION_DEFINITION,
 } from 'calypso/dashboard/section';
@@ -271,6 +272,11 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
+	}
+
+	if ( calypsoEnv === 'dashboard-horizon' ) {
+		context.badge = 'dashboard-horizon';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'dashboard-stage' ) {
@@ -1085,6 +1091,32 @@ export default function pages() {
 		);
 	}
 
+	// Multi-site Dashboard routing for development {calypso.localhost, wpcalypso.wordpress.com}.
+	if ( config.isEnabled( 'dashboard/v2' ) ) {
+		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
+			app.get(
+				pathToRegExp( sectionPath ),
+				( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
+				setupDefaultContext( entrypoint, section.name ),
+				setUpSectionContext( section, entrypoint ),
+				setUpRoute,
+				serverRender
+			);
+		};
+
+		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+			handleRoute( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom', ( req ) => {
+				// Allow dashboard routes under my.localhost.
+				return req.get( 'host' ).startsWith( 'my.localhost' );
+			} );
+		} );
+		handleRoute( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom', ( req ) => {
+			// Deprecated: allow dashboard routes under {calypso.localhost, wpcalypso.wordpress.com}/v2.
+			return ! req.get( 'host' ).startsWith( 'my.localhost' );
+		} );
+		handleRoute( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
+	}
+
 	sections
 		.filter( ( section ) => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.filter( isSectionEnabled )
@@ -1105,20 +1137,15 @@ export default function pages() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
-	// Multi-site Dashboard routing fo my.wordpress.com.
+	// Multi-site Dashboard routing for my.wordpress.com.
+	// Return earlier since we don't need to set up any other routes.
 	if ( config.isEnabled( 'dashboard' ) ) {
-		[ '/', '/sites', '/domains', '/emails', '/plugins', '/me' ].forEach( ( route ) => {
+		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom' );
 		} );
-	}
 
-	// Multi-site Dashboard routing for wordpress.com.
-	if ( config.isEnabled( 'dashboard/v2' ) ) {
-		handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom' );
-	}
-
-	if ( config.isEnabled( 'dashboard' ) || config.isEnabled( 'dashboard/v2' ) ) {
 		handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
+		return app;
 	}
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );

@@ -92,7 +92,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			? __( 'Must-have plugins' )
 			: __( 'Must-have premium plugins' ),
 		description: isEnabled( 'marketplace-redesign' )
-			? __( 'Add the best-loved plugins on WordPress.com.' )
+			? __( 'Add the most popular plugins on WordPress.com.' )
 			: __( 'Take your site further with these premium plugins.' ),
 		slug: 'paid',
 		tags: [],
@@ -110,9 +110,11 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	featured: {
 		menu: __( 'Developer favorites' ),
-		title: __( 'Our developers’ favorites' ),
+		title: isEnabled( 'marketplace-redesign' )
+			? __( 'Our favorites' )
+			: __( 'Our developers’ favorites' ),
 		description: isEnabled( 'marketplace-redesign' )
-			? __( 'WordPress.com developer favorites. Start faster with our team`s picks.' )
+			? __( "Start faster with the WordPress.com team's picks." )
 			: __( 'Start fast with these WordPress.com team picks.' ),
 		slug: 'featured',
 		tags: [],
@@ -576,10 +578,12 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	business: {
 		menu: _x( 'Business', 'category name' ),
-		title: __( 'Setting up your local business' ),
+		title: isEnabled( 'marketplace-redesign' )
+			? __( 'Set up your business' )
+			: __( 'Setting up your local business' ),
 		slug: 'business',
 		description: isEnabled( 'marketplace-redesign' )
-			? __( 'Find the perfect plugin to build and grow your local business.' )
+			? __( 'Find the perfect plugin to build and grow.' )
 			: __( 'These plugins are here to keep your business on track.' ),
 		tags: [ 'google', 'testimonials', 'crm', 'business-directory' ],
 		preview: [

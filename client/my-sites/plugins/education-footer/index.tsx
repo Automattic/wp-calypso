@@ -25,6 +25,26 @@ const ThreeColumnContainer = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
+
+	.full-width-section & {
+		flex-wrap: nowrap;
+		overflow: auto;
+		scrollbar-width: none;
+		gap: 16px;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		.feature-item-container {
+			min-width: 310px;
+		}
+
+		@media ( max-width: 660px ) {
+			scroll-padding: 0 32px;
+			margin: 0 -16px;
+		}
+	}
 `;
 
 const EducationFooterContainer = styled.div`
@@ -85,6 +105,9 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 
 		.marketplace-cta {
 			font-weight: 500;
+		}
+		${ SectionContainer }::before {
+			display: none;
 		}
 	}
 
@@ -194,9 +217,13 @@ export const MarketplaceFooter = () => {
 							/>
 						}
 					>
-						{ __(
-							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-						) }
+						{ isEnabled( 'marketplace-redesign' )
+							? __(
+									'Plugins authored by WordPress.com are fully managed by our team. No security patches. No update nags. It just works.'
+							  )
+							: __(
+									'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+							  ) }
 					</FeatureItem>
 					<FeatureItem
 						header={
@@ -218,9 +245,13 @@ export const MarketplaceFooter = () => {
 							/>
 						}
 					>
-						{ __(
-							'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
-						) }
+						{ isEnabled( 'marketplace-redesign' )
+							? __(
+									'Pay yearly and save. Or keep it flexible with monthly plugin pricing. It’s entirely up to you.'
+							  )
+							: __(
+									'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
+							  ) }
 					</FeatureItem>
 				</ThreeColumnContainer>
 			</Section>

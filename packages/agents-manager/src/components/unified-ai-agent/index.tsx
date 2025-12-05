@@ -5,62 +5,30 @@
  */
 
 import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
-import { useMemo, useEffect, useState } from '@wordpress/element';
+import { useMemo, useEffect, useState, useRef } from '@wordpress/element';
+import { useLocation } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { SESSION_STORAGE_KEY, getSessionId } from '../../utils/agent-session';
 import { lastConversationCache } from '../../utils/conversation-cache';
+import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
-import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
+import { PersistentRouter } from '../persistent-router';
+import type { ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
 import type { HelpCenterSite, CurrentUser } from '@automattic/data-stores';
 
 export interface UnifiedAIAgentProps {
-	/**
-	 * The current route path.
-	 */
+	/** The current route path. */
 	currentRoute?: string;
-	/**
-	 * The name of the current section (e.g., 'posts', 'pages').
-	 */
+	/** The name of the current section (e.g., 'posts', 'pages'). */
 	sectionName?: string;
-	/**
-	 * The selected site object.
-	 */
+	/** The selected site object. */
 	site?: HelpCenterSite | null;
-	/**
-	 * The current user object.
-	 */
+	/** The current user object. */
 	currentUser?: CurrentUser;
-	/**
-	 * Callback to handle closing the agent.
-	 */
+	/** Called when the agent is closed. */
 	handleClose?: () => void;
-	/**
-	 * Tool provider for abilities (optional)
-	 * Allows plugins to provide custom abilities to the agent
-	 */
-	toolProvider?: ToolProvider;
-	/**
-	 * Context provider for environment-specific context (optional)
-	 * Allows plugins to provide rich context about current state
-	 */
-	contextProvider?: ContextProvider;
-	/**
-	 * Custom suggestions for the empty view (optional)
-	 * Allows plugins to provide context-specific suggestions
-	 */
-	emptyViewSuggestions?: Suggestion[];
-	/**
-	 * Custom markdown components for message rendering (optional)
-	 * Allows plugins to provide custom renderers for markdown elements
-	 */
-	markdownComponents?: MarkdownComponents;
-	/**
-	 * Custom markdown extensions (optional)
-	 */
-	markdownExtensions?: MarkdownExtensions;
 }
 
 /**
@@ -96,21 +64,37 @@ function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
 	} );
 }
 
-export default function UnifiedAIAgent( {
-	currentRoute,
-	site = null,
-	toolProvider,
-	contextProvider,
-	emptyViewSuggestions: customSuggestions,
-	markdownComponents = {},
-	markdownExtensions = {},
-}: UnifiedAIAgentProps ) {
-	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
-	const sessionId = getSessionId();
+export default function UnifiedAIAgent( props: UnifiedAIAgentProps ) {
+	return (
+		<PersistentRouter>
+			<AgentSetup { ...props } />
+		</PersistentRouter>
+	);
+}
 
-	// Create the initial agent configuration
-	const config = useMemo< UseAgentChatConfig >(
-		() => {
+// Separate component that uses hooks within `PersistentRouter` context
+function AgentSetup( { currentRoute, site = null }: UnifiedAIAgentProps ) {
+	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
+	const [ loadedProviders, setLoadedProviders ] = useState< LoadedProviders >( {} );
+	const providersLoadedRef = useRef( false );
+	const { state } = useLocation();
+	// Use persisted route state `sessionId` if available, otherwise fall back to stored `sessionId`
+	const sessionId = state?.sessionId || getSessionId();
+
+	// Load external providers and initialize agent config
+	useEffect( () => {
+		const initializeAgent = async () => {
+			// Load external providers (only once)
+			let providers = loadedProviders;
+			if ( ! providersLoadedRef.current ) {
+				providers = await loadExternalProviders();
+				providersLoadedRef.current = true;
+				setLoadedProviders( providers );
+			}
+
+			const { toolProvider, contextProvider } = providers;
+
+			// Create the agent configuration
 			const config: UseAgentChatConfig = {
 				agentId: ORCHESTRATOR_AGENT_ID,
 				agentUrl: ORCHESTRATOR_AGENT_URL,
@@ -175,28 +159,19 @@ export default function UnifiedAIAgent( {
 				};
 			}
 
-			return config;
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- Only create once
-		[]
-	);
-
-	// Load config AND pre-load cached messages for progressive loading
-	useEffect( () => {
-		const initializeWithCache = async () => {
 			// Check if we have cached messages to pre-load
 			if ( sessionId ) {
 				const agentManager = getAgentManager();
-				const agentKey = config.agentId;
-				const botId = createOdieBotId( agentKey );
+				const agentId = config.agentId;
+				const botId = createOdieBotId( agentId );
 
 				// Only pre-load if agent doesn't exist yet
-				if ( ! agentManager.hasAgent( agentKey ) ) {
+				if ( ! agentManager.hasAgent( agentId ) ) {
 					const cachedData = lastConversationCache.get( botId );
 					if ( cachedData?.sessionId === sessionId && cachedData?.messages.length ) {
 						// Create agent and load cached messages BEFORE setting config
-						await agentManager.createAgent( agentKey, config );
-						await agentManager.replaceMessages( agentKey, cachedData.messages );
+						await agentManager.createAgent( agentId, config );
+						await agentManager.replaceMessages( agentId, cachedData.messages );
 					}
 				}
 			}
@@ -204,10 +179,10 @@ export default function UnifiedAIAgent( {
 			setAgentConfig( config );
 		};
 
-		initializeWithCache();
-	}, [ config, sessionId ] );
+		initializeAgent();
+	}, [ currentRoute, loadedProviders, sessionId, site?.ID ] );
 
-	// Default suggestions - can be overridden via the `customSuggestions` prop
+	// Default suggestions - can be overridden by loaded providers
 	const defaultSuggestions = useMemo(
 		() => [
 			{
@@ -237,9 +212,10 @@ export default function UnifiedAIAgent( {
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
-			emptyViewSuggestions={ customSuggestions || defaultSuggestions }
-			markdownComponents={ markdownComponents }
-			markdownExtensions={ markdownExtensions }
+			emptyViewSuggestions={ loadedProviders.suggestions || defaultSuggestions }
+			markdownComponents={ loadedProviders.markdownComponents || {} }
+			markdownExtensions={ loadedProviders.markdownExtensions || {} }
+			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
 		/>
 	);
 }

@@ -24,10 +24,10 @@ interface ReturnValue {
 	undock: () => void;
 	openSidebar: () => void;
 	closeSidebar: () => void;
-	createChatPortal: ( children: React.ReactNode ) => React.ReactNode | React.ReactPortal;
+	createAgentPortal: ( children: React.ReactNode ) => React.ReactNode | React.ReactPortal;
 }
 
-export default function useChatLayoutManager( {
+export default function useAgentLayoutManager( {
 	sidebarContainer = 'body',
 	desktopMediaQuery = '(min-width: 1200px)',
 	onOpenSidebar = () => {},
@@ -161,7 +161,7 @@ export default function useChatLayoutManager( {
 		setIsDocked( false );
 	}, [ setIsDocked ] );
 
-	const createChatPortal = useCallback(
+	const createAgentPortal = useCallback(
 		( children: React.ReactNode ) => {
 			if ( ! portalRef.current ) {
 				return null;
@@ -194,6 +194,6 @@ export default function useChatLayoutManager( {
 		undock,
 		openSidebar: handleOpenSidebar,
 		closeSidebar: handleCloseSidebar,
-		createChatPortal,
+		createAgentPortal,
 	};
 }

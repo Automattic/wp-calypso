@@ -205,16 +205,17 @@ function HelpCenterContentWithProvider() {
 if ( helpCenterData.isNextAdmin ) {
 	const unsubscribe = subscribe( () => {
 		// Make sure the wp-logo menu item is registered before unregistering its default items.
-		if ( select( 'next-admin' ).getMetaMenuItems?.( 'wp-logo' ).length > 1 ) {
+		// Use optional chaining since 'next-admin' store only exists in next-admin context
+		if ( select( 'next-admin' )?.getMetaMenuItems?.( 'wp-logo' )?.length > 1 ) {
 			unsubscribe();
 			// wait for the next tick to ensure the menu items are registered
-			queueMicrotask( async () => {
+			queueMicrotask( () => {
 				select( 'next-admin' )
-					.getMetaMenuItems( 'wp-logo' )
-					.forEach( ( item ) => {
-						dispatch( 'next-admin' ).unregisterSiteHubHelpMenuItem( item.id );
+					?.getMetaMenuItems?.( 'wp-logo' )
+					?.forEach( ( item ) => {
+						dispatch( 'next-admin' )?.unregisterSiteHubHelpMenuItem?.( item.id );
 					} );
-				dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'help-center', {
+				dispatch( 'next-admin' )?.registerSiteHubHelpMenuItem?.( 'help-center', {
 					label: __( 'Help Center', __i18n_text_domain__ ),
 					parent: 'wp-logo',
 					callback: () => {
@@ -229,16 +230,6 @@ if ( helpCenterData.isNextAdmin ) {
 					? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
 					: {};
 
-				// Load external providers (e.g., from Big Sky plugin)
-				const { loadExternalProviders } = await import( './src/utils/load-external-providers' );
-				const {
-					toolProvider,
-					contextProvider,
-					suggestions,
-					markdownComponents,
-					markdownExtensions,
-				} = await loadExternalProviders();
-
 				createRoot( container ).render(
 					<QueryClientProvider client={ queryClient }>
 						<HelpCenter
@@ -250,21 +241,15 @@ if ( helpCenterData.isNextAdmin ) {
 							onboardingUrl="https://wordpress.com/start"
 							handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
 							isCommerceGarden={ helpCenterData.isCommerceGarden }
-							toolProvider={ toolProvider }
-							contextProvider={ contextProvider }
-							suggestions={ suggestions }
-							markdownComponents={ markdownComponents }
-							markdownExtensions={ markdownExtensions }
 							{ ...botProps }
 						/>
-					</QueryClientProvider>,
-					document.getElementById( 'jetpack-help-center' )
+					</QueryClientProvider>
 				);
 			} );
 		}
 	} );
 } else {
 	registerPlugin( 'jetpack-help-center', {
-		render: HelpCenterContentWithProvider,
+		render: () => <HelpCenterContentWithProvider />,
 	} );
 }

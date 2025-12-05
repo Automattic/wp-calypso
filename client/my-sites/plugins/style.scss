@@ -293,11 +293,19 @@ $calypso-header-height: 31px;
 
 		@include breakpoint-deprecated( '<960px' ) {
 			margin-top: 40px;
+
+			.full-width-section & {
+				margin-top: 20px;
+			}
 		}
 
 		.plugin-details__sidebar {
 			background-color: var( --studio-gray-0 );
 			padding: 40px;
+
+			.full-width-section & {
+				border-radius: 16px;
+			}
 
 			@include breakpoint-deprecated( '<1280px' ) {
 				padding: 30px;
@@ -305,6 +313,10 @@ $calypso-header-height: 31px;
 
 			@include breakpoint-deprecated( '<960px' ) {
 				padding: 40px;
+
+				.full-width-section & {
+					padding-block: 30px;
+				}
 			}
 		}
 
@@ -344,6 +356,36 @@ $calypso-header-height: 31px;
 				padding: 6px 14px;
 			}
 		}
+
+		.full-width-section & {
+			font-size: $font-body-small;
+			flex-direction: column;
+
+			border-top: 1px solid var(--studio-gray-5);
+			padding-top: 24px;
+
+			.plugin-details__plugin-download-cta .button {
+				border-color: var(--studio-blue-50);
+				color: var(--studio-blue-50);
+				display: inline-flex;
+				align-items: center;
+				gap: 4px;
+
+				svg {
+					fill: currentColor;
+				}
+			}
+		}
+	}
+
+	.full-width-section & {
+		padding-top: 0;
+		column-gap: 125px;
+
+		.badge--info {
+			background-color: var(--studio-gray-0);
+			text-transform: none;
+		}
 	}
 }
 
@@ -351,12 +393,17 @@ $calypso-header-height: 31px;
 	@media screen and ( max-width: 1040px ) {
 		padding: 16px;
 	}
+
+	.full-width-section & {
+		padding-inline: 0;
+	}
 }
 
 .plugin-details__body {
 	.plugin-sections {
 		.section-nav {
 			box-shadow: none;
+			background: none;
 		}
 
 		.card {
@@ -391,11 +438,22 @@ $calypso-header-height: 31px;
 				background-color: transparent;
 				color: var( --studio-gray-100 );
 			}
+
+			.full-width-section & {
+				padding-inline: 0;
+
+				@media screen and ( min-width: 481px ) {
+					.section-nav-tab__text {
+						padding: 14px 16px;
+					}
+				}
+			}
 		}
 
 		&.is-selected .section-nav-tab__link {
 			border-bottom: none;
 			color: var( --studio-gray-100 );
+			background: none;
 
 			&:hover {
 				color: var( --studio-gray-100 );
@@ -448,6 +506,10 @@ $calypso-header-height: 31px;
 	@media screen and ( min-width: 481px ) {
 		.section-nav-tab:first-child .section-nav-tab__link {
 			padding-left: 0;
+		}
+		.full-width-section & .section-nav-tabs__list {
+			display: inline-flex;
+			width: auto;
 		}
 	}
 }
@@ -662,6 +724,38 @@ body.is-section-plugins #primary {
 	}
 }
 
+.plugins__marketplace-footer {
+	--scss-font-title-large: 2.5rem;
+	--scss-font-body: 1.375rem;
+
+	.section-header-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		max-width: none;
+		padding-inline: 0;
+
+		.section-header-container__header {
+			max-width: 575px;
+		}
+		.section-header-container__subheader {
+			flex-shrink: 0;
+		}
+
+		@media screen and ( max-width: 600px ) {
+			flex-direction: column;
+			align-items: flex-start;
+
+			.marketplace-cta {
+				margin-inline: 0;
+			}
+		}
+	}
+	.feature-item-container__header {
+		font-weight: 400;
+	}
+}
+
 .plugin__header {
 	border-bottom: none !important;
 	background-color: var( --color-surface-backdrop ) !important;
@@ -696,5 +790,99 @@ body.is-section-plugins #primary {
 
 	~ .plugin-details__page .plugin-details__layout {
 		padding-top: calc( $layout-padding-top - 40px );
+	}
+}
+body.is-section-plugins:has(.is-full-width-layout) {
+	.plugins-browser__content-wrapper {
+		background-color: var(--studio-white);
+	}
+
+	.full-width-section__content {
+		max-width: 1220px;
+		padding-inline: 24px;
+		@media screen and ( max-width: 600px ) {
+			padding-inline: 16px;
+		}
+	}
+	.lpc-header-nav-container {
+		.masterbar {
+			background: transparent;
+			border-bottom: none;
+			height: 0;
+		}
+
+		.x-nav-item, .x-dropdown-link, .x-menu-link {
+			color: var(--studio-gray-100);
+		}
+		.x-dropdown-link {
+			&:hover, &:active, &:focus {
+				color: var(--studio-gray-100);
+				background-color: var(--studio-gray-0);
+			}
+		}
+		.x-nav-link__logo {
+			--studio-blue-50: var(--studio-gray-100);
+		}
+	}
+	.section-nav__mobile-header {
+		padding-inline: 0;
+	}
+}
+
+// Remove layout padding for logged-out full-width layout (covers both actually logged out and logged-in showing logged-out UI)
+body.is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out),
+body.is-section-plugins:has(.is-plugin-details.is-full-width-layout) {
+	.lpc-footer-nav-wrapper,
+	.lpc-footer-automattic-nav-wrapper {
+		max-width: 1220px;
+	}
+}
+body.is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out) .layout__content {
+	padding: 0;
+}
+body.is-section-plugins:has(.is-plugin-details.is-full-width-layout) .layout__content {
+	padding-block: 0;
+}
+
+body.is-section-plugins .is-logged-in {
+	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column):not(.is-logged-out).plugins-browser.is-full-width-layout";
+
+	#{$full-width-main} {
+		.plugins-browser__content-wrapper {
+			padding: 0;
+			max-width: 100%;
+		}
+
+		.full-width-section__content {
+			max-width: 100%;
+		}
+
+		.navigation-header__container {
+			max-width: 100%;
+		}
+	}
+}
+
+.full-width-section.plugin-details__navigation-header-section {
+	padding-top: 116px;
+	padding-bottom: 0;
+
+	.plugin-details__layout:not( .is-logged-in ) & {
+		padding-top: calc( 130px + $calypso-header-height );
+	}
+
+	@media screen and ( max-width: 600px ) {
+		padding-top: 60px;
+	}
+
+	.is-section-plugins.has-no-sidebar .is-plugin-details & .navigation-header {
+		margin-top: 0;
+		padding-inline: 0;
+	}
+}
+
+.plugin-details__main-section {
+	@media screen and ( max-width: 600px ) {
+		padding-top: 0;
 	}
 }

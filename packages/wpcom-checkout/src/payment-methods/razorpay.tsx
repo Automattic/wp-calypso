@@ -1,13 +1,266 @@
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
+import styled from '@emotion/styled';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode } from 'react';
+import { Fragment, ReactNode, useEffect, useState } from 'react';
+import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
+import { SummaryLine, SummaryDetails } from '../summary-details';
+import type { ManagedContactDetails } from '../types';
 import type { RazorpayConfiguration } from '@automattic/calypso-razorpay';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'wpcom-checkout:razorpay-payment-method' );
+
+interface RazorpayPaymentMethodStateShape {
+	customerName: string;
+	address1: string;
+	address2: string;
+	city: string;
+	state: string;
+	postalCode: string;
+	country: string;
+}
+
+type RazorpayPaymentMethodKey = keyof RazorpayPaymentMethodStateShape;
+
+interface RazorpayFieldState {
+	value: string;
+	isTouched: boolean;
+}
+
+type StateSubscriber = () => void;
+
+class RazorpayPaymentMethodState {
+	data: RazorpayPaymentMethodStateShape = {
+		customerName: '',
+		address1: '',
+		address2: '',
+		city: '',
+		state: '',
+		postalCode: '',
+		country: '',
+	};
+
+	touched: Record< RazorpayPaymentMethodKey, boolean > = {
+		customerName: false,
+		address1: false,
+		address2: false,
+		city: false,
+		state: false,
+		postalCode: false,
+		country: false,
+	};
+
+	subscribers: StateSubscriber[] = [];
+
+	change = ( field: RazorpayPaymentMethodKey, newValue: string ): void => {
+		this.data[ field ] = newValue;
+		this.touched[ field ] = true;
+		this.notifySubscribers();
+	};
+
+	getFieldState = ( field: RazorpayPaymentMethodKey ): RazorpayFieldState => {
+		return {
+			value: this.data[ field ],
+			isTouched: this.touched[ field ],
+		};
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
+	};
+
+	isValid = (): boolean => {
+		// Touch all fields that are empty so they display validation errors
+		const fields: RazorpayPaymentMethodKey[] = [
+			'customerName',
+			'address1',
+			'address2',
+			'city',
+			'state',
+			'postalCode',
+			'country',
+		];
+
+		fields.forEach( ( field ) => {
+			if ( ! this.data[ field ].length ) {
+				this.change( field, '' );
+			}
+		} );
+
+		// Check if all required fields have values
+		return fields.every( ( field ) => this.data[ field ].length > 0 );
+	};
+}
+
+function useSubscribeToEventEmitter( state: RazorpayPaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
+}
+
+const RazorpayFormWrapper = styled.div`
+	padding: 16px;
+	position: relative;
+
+	::after {
+		display: block;
+		width: calc( 100% - 6px );
+		height: 1px;
+		content: '';
+		background: ${ ( props ) => props.theme.colors.borderColorLight };
+		position: absolute;
+		top: 0;
+		left: 3px;
+
+		.rtl & {
+			right: 3px;
+			left: auto;
+		}
+	}
+`;
+
+const RazorpayField = styled( Field )`
+	margin-top: 16px;
+
+	:first-of-type {
+		margin-top: 0;
+	}
+`;
+
+function RazorpayFields( { state }: { state: RazorpayPaymentMethodState } ) {
+	const { __ } = useI18n();
+	useSubscribeToEventEmitter( state );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+
+	// Get live contact details from checkout store
+	const checkoutContactDetails = useSelect( ( select ) => {
+		const store = select( 'wpcom-checkout' );
+		return store && typeof store === 'object' && 'getContactInfo' in store
+			? ( store as { getContactInfo: () => ManagedContactDetails } ).getContactInfo()
+			: null;
+	}, [] ) as ManagedContactDetails | null;
+
+	// Keep state, postalCode, and country synced with live checkout contact details
+	// These fields are disabled/readonly, so they should always reflect billing info
+	useEffect( () => {
+		if ( checkoutContactDetails ) {
+			if ( checkoutContactDetails.state?.value ) {
+				state.change( 'state', checkoutContactDetails.state.value );
+			}
+			if ( checkoutContactDetails.postalCode?.value ) {
+				state.change( 'postalCode', checkoutContactDetails.postalCode.value );
+			}
+			if ( checkoutContactDetails.countryCode?.value ) {
+				state.change( 'country', checkoutContactDetails.countryCode.value );
+			}
+		}
+	}, [ checkoutContactDetails, state ] );
+
+	const customerName = state.getFieldState( 'customerName' );
+	const address1 = state.getFieldState( 'address1' );
+	const address2 = state.getFieldState( 'address2' );
+	const city = state.getFieldState( 'city' );
+	const stateField = state.getFieldState( 'state' );
+	const postalCode = state.getFieldState( 'postalCode' );
+	const country = state.getFieldState( 'country' );
+
+	return (
+		<RazorpayFormWrapper>
+			<RazorpayField
+				id="razorpay-cardholder-name"
+				type="Text"
+				autoComplete="name"
+				label={ __( 'Your name' ) }
+				value={ customerName.value }
+				onChange={ ( value: string ) => state.change( 'customerName', value ) }
+				isError={ customerName.isTouched && customerName.value.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+			<RazorpayField
+				id="razorpay-address-1"
+				type="Text"
+				autoComplete="address-line1"
+				label={ __( 'Address line 1' ) }
+				value={ address1.value }
+				onChange={ ( value: string ) => state.change( 'address1', value ) }
+				isError={ address1.isTouched && address1.value.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+			<RazorpayField
+				id="razorpay-address-2"
+				type="Text"
+				autoComplete="address-line2"
+				label={ __( 'Address line 2' ) }
+				value={ address2.value }
+				onChange={ ( value: string ) => state.change( 'address2', value ) }
+				isError={ address2.isTouched && address2.value.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+			<RazorpayField
+				id="razorpay-city"
+				type="Text"
+				autoComplete="address-level2"
+				label={ __( 'City' ) }
+				value={ city.value }
+				onChange={ ( value: string ) => state.change( 'city', value ) }
+				isError={ city.isTouched && city.value.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+			<RazorpayField
+				id="razorpay-state"
+				type="Text"
+				autoComplete="address-level1"
+				label={ __( 'State' ) }
+				value={ stateField.value }
+				onChange={ ( value: string ) => state.change( 'state', value ) }
+				isError={ stateField.isTouched && stateField.value.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled
+			/>
+			<RazorpayField
+				id="razorpay-postal-code"
+				type="Text"
+				autoComplete="postal-code"
+				label={ __( 'Postcode' ) }
+				value={ postalCode.value }
+				onChange={ ( value: string ) => state.change( 'postalCode', value ) }
+				isError={ postalCode.isTouched && postalCode.value.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled
+			/>
+			<RazorpayField
+				id="razorpay-country"
+				type="Text"
+				autoComplete="country"
+				label={ __( 'Country' ) }
+				value={ country.value }
+				onChange={ ( value: string ) => state.change( 'country', value ) }
+				isError={ country.isTouched && country.value.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled
+			/>
+		</RazorpayFormWrapper>
+	);
+}
 
 export function createRazorpayMethod( {
 	razorpayConfiguration,
@@ -18,18 +271,23 @@ export function createRazorpayMethod( {
 	cartKey: CartKey;
 	submitButtonContent: ReactNode;
 } ): PaymentMethod {
+	const state = new RazorpayPaymentMethodState();
+
 	return {
 		id: 'razorpay',
+		hasRequiredFields: true,
 		paymentProcessorId: 'razorpay',
 		label: <RazorpayLabel />,
+		activeContent: <RazorpayFields state={ state } />,
 		submitButton: (
 			<RazorpaySubmitButton
 				razorpayConfiguration={ razorpayConfiguration }
 				cartKey={ cartKey }
 				submitButtonContent={ submitButtonContent }
+				state={ state }
 			/>
 		),
-		inactiveContent: <RazorpaySummary />,
+		inactiveContent: <RazorpaySummary state={ state } />,
 		// translators: UPI stands for Unified Payments Interface and may not need to be transalted.
 		getAriaLabel: ( __ ) => __( 'UPI' ),
 	};
@@ -48,9 +306,30 @@ export function RazorpayLabel() {
 	);
 }
 
-export function RazorpaySummary() {
-	const { __ } = useI18n();
-	return <Fragment>{ __( 'UPI' ) }</Fragment>;
+export function RazorpaySummary( { state }: { state: RazorpayPaymentMethodState } ) {
+	useSubscribeToEventEmitter( state );
+
+	const customerName = state.getFieldState( 'customerName' );
+	const address1 = state.getFieldState( 'address1' );
+	const address2 = state.getFieldState( 'address2' );
+	const city = state.getFieldState( 'city' );
+	const stateField = state.getFieldState( 'state' );
+	const postalCode = state.getFieldState( 'postalCode' );
+	const country = state.getFieldState( 'country' );
+
+	return (
+		<SummaryDetails>
+			<SummaryLine>{ customerName.value }</SummaryLine>
+			<SummaryLine>{ address1.value }</SummaryLine>
+			{ address2.value && <SummaryLine>{ address2.value }</SummaryLine> }
+			<SummaryLine>
+				{ city.value }
+				{ city.value && stateField.value ? ', ' : '' }
+				{ stateField.value } { postalCode.value }
+			</SummaryLine>
+			<SummaryLine>{ country.value }</SummaryLine>
+		</SummaryDetails>
+	);
 }
 
 export function RazorpaySubmitButton( {
@@ -59,14 +338,17 @@ export function RazorpaySubmitButton( {
 	razorpayConfiguration,
 	cartKey,
 	submitButtonContent,
+	state,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	razorpayConfiguration: RazorpayConfiguration;
 	cartKey: CartKey;
 	submitButtonContent: ReactNode;
+	state: RazorpayPaymentMethodState;
 } ) {
 	const { formStatus } = useFormStatus();
+	useSubscribeToEventEmitter( state );
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -82,8 +364,20 @@ export function RazorpaySubmitButton( {
 			disabled={ disabled }
 			onClick={ ( ev ) => {
 				ev.preventDefault();
-				debug( 'Initiate razorpay payment' );
-				onClick( { razorpayConfiguration, cartKey } );
+				if ( state.isValid() ) {
+					debug( 'Initiate razorpay payment' );
+					onClick( {
+						razorpayConfiguration,
+						cartKey,
+						name: state.data.customerName,
+						address1: state.data.address1,
+						address2: state.data.address2,
+						city: state.data.city,
+						state: state.data.state,
+						postalCode: state.data.postalCode,
+						country: state.data.country,
+					} );
+				}
 			} }
 			buttonType="primary"
 			isBusy={ FormStatus.SUBMITTING === formStatus }

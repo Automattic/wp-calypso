@@ -102,14 +102,19 @@ export default function DomainConnectionVerification( {
 						) }
 
 						{ status === 'connected' && (
-							<RouterLinkSummaryButton
-								to={ siteDomainsRoute.fullPath }
-								params={ { siteSlug } }
-								/* Translators: %s is the domain name. */
-								title={ sprintf( __( 'Set %s as your primary site address' ), domainName ) }
-								description={ __( 'It’s the URL visitors see in their browser’s address bar.' ) }
-								decoration={ <Icon icon={ atSymbol } /> }
-							/>
+							<>
+								<Text size="medium" weight={ 500 }>
+									{ __( 'Recommended' ) }
+								</Text>
+								<RouterLinkSummaryButton
+									to={ siteDomainsRoute.fullPath }
+									params={ { siteSlug } }
+									/* Translators: %s is the domain name. */
+									title={ sprintf( __( 'Set %s as your primary site address' ), domainName ) }
+									description={ __( 'It’s the URL visitors see in their browser’s address bar.' ) }
+									decoration={ <Icon icon={ atSymbol } /> }
+								/>
+							</>
 						) }
 						<RouterLinkSummaryButton
 							to={ siteOverviewRoute.fullPath }

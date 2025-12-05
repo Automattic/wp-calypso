@@ -4,7 +4,8 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { getRedirectUri, getSocialServiceResponse } from './utils';
+import { wpcomLink } from '../../utils/link';
+import { getSocialServiceResponse } from './utils';
 import type { SocialLoginButtonProps, AppleClient } from './types';
 
 const APPLE_CLIENT_URL =
@@ -45,7 +46,7 @@ export default function AppleLogin( {
 		windowObj.AppleID.auth.init( {
 			clientId: config( 'apple_oauth_client_id' ),
 			scope: 'name email',
-			redirectURI: getRedirectUri(),
+			redirectURI: wpcomLink( '/start/user' ),
 			state: JSON.stringify( {
 				oauth2State,
 				originalUrlPath: window?.location?.pathname,

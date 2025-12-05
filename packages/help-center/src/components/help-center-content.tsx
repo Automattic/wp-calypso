@@ -14,6 +14,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { HELP_CENTER_STORE } from '../stores';
+import { HelpCenterA4AContactForm } from './help-center-a4a-contact-form';
 import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterChat } from './help-center-chat';
 import { HelpCenterChatHistory } from './help-center-chat-history';
@@ -122,6 +123,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route path="/" element={ <HelpCenterSearch currentRoute={ currentRoute } /> } />
 					<Route path="/post" element={ <HelpCenterArticle /> } />
 					<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
+					<Route path="/a4a-contact-form" element={ <HelpCenterA4AContactForm /> } />
 					<Route path="/success" element={ <SuccessScreen /> } />
 					<Route
 						path="/support-guides"
