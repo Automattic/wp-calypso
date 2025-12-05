@@ -10,13 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback, useMemo } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
-import {
-	MIN_NAME_SERVERS_LENGTH,
-	MAX_NAME_SERVERS_LENGTH,
-	WPCOM_DEFAULT_NAME_SERVERS,
-	FormData,
-	NameServerKey,
-} from './types';
+import { MIN_NAME_SERVERS_LENGTH, MAX_NAME_SERVERS_LENGTH, FormData, NameServerKey } from './types';
 import UpsellNudge from './upsell-nudge';
 import { validateHostname } from './utils';
 
@@ -96,6 +90,7 @@ interface Props {
 	domainSiteSlug: string;
 	showUpsellNudge?: boolean;
 	nameServers?: string[];
+	defaultNameServers: string[];
 	isUsingDefaultNameServers?: boolean;
 	isBusy?: boolean;
 	onSubmit: ( nameServers: string[] ) => void;
@@ -106,6 +101,7 @@ export default function NameServersForm( {
 	domainSiteSlug,
 	showUpsellNudge,
 	nameServers = [],
+	defaultNameServers = [],
 	isUsingDefaultNameServers = false,
 	isBusy,
 	onSubmit,
@@ -159,7 +155,7 @@ export default function NameServersForm( {
 									const ns = Object.fromEntries(
 										Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) => [
 											`nameServer${ i + 1 }` as NameServerKey,
-											value ? WPCOM_DEFAULT_NAME_SERVERS[ i ] : '',
+											value ? defaultNameServers[ i ] : '',
 										] )
 									);
 

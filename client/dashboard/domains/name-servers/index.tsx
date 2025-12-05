@@ -27,7 +27,7 @@ export default function NameServers() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const {
-		data: { nameServers, isUsingDefaultNameServers },
+		data: { nameServers, isUsingDefaultNameServers, defaultNameServers },
 	} = useSuspenseQuery( domainNameServersQuery( domainName ) );
 
 	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation(
@@ -76,6 +76,7 @@ export default function NameServers() {
 						domainName={ domainName }
 						domainSiteSlug={ getDomainSiteSlug( domain ) }
 						nameServers={ nameServers }
+						defaultNameServers={ defaultNameServers }
 						isUsingDefaultNameServers={ isUsingDefaultNameServers }
 						isBusy={ isUpdatingNameServers }
 						showUpsellNudge={ showUpsellNudge }
