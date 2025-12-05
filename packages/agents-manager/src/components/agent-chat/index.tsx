@@ -14,6 +14,7 @@ import {
 } from '@automattic/agenttic-ui';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from 'react-router-dom';
 import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
@@ -94,16 +95,19 @@ export default function AgentChat( {
 			onStop={ onAbort }
 			messageRenderer={ messageRenderer }
 			emptyView={
-				isLoadingConversation ? (
-					<ChatMessageSkeleton count={ 3 } />
-				) : (
-					<EmptyView
-						heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
-						help={ __( 'Got a different request? Ask away.', '__i18n_text_domain__' ) }
-						suggestions={ emptyViewSuggestions }
-						icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
-					/>
-				)
+				<>
+					<Link to="/support-guides">Support articles</Link>
+					{ isLoadingConversation ? (
+						<ChatMessageSkeleton count={ 3 } />
+					) : (
+						<EmptyView
+							heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
+							help={ __( 'Got a different request? Ask away.', '__i18n_text_domain__' ) }
+							suggestions={ emptyViewSuggestions }
+							icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
+						/>
+					) }
+				</>
 			}
 		>
 			<AgentUI.ConversationView>
