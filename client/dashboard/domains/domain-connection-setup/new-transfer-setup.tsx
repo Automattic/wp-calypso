@@ -113,6 +113,8 @@ export default function DomainTransferSetup() {
 								setAuthorizationCode( value || '' );
 								setError( null );
 							} }
+							type="password"
+							autoComplete="off"
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
 						/>
