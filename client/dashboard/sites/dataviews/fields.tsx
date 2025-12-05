@@ -87,7 +87,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 				);
 			},
 			getElements: async () => {
-				const { plan = [] } = await queryClient.fetchQuery( {
+				const { plan = [] } = await queryClient.ensureQueryData( {
 					...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
 					staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
 				} );
@@ -265,7 +265,7 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				);
 			},
 			getElements: async () => {
-				const { plan = [] } = await queryClient.fetchQuery( {
+				const { plan = [] } = await queryClient.ensureQueryData( {
 					...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
 					staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
 				} );
@@ -282,8 +282,8 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				operators: [ 'isAny' ],
 			},
 			sort: ( a, b, direction ) => {
-				const planA = a.plan?.product_name_short ?? '';
-				const planB = b.plan?.product_name_short ?? '';
+				const planA = getSitePlanDisplayName__ES( a ) ?? '';
+				const planB = getSitePlanDisplayName__ES( b ) ?? '';
 
 				return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
 			},

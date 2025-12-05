@@ -39,6 +39,7 @@ import type {
 	Site,
 	FetchDashboardSiteListParams,
 	DashboardSiteListSite,
+	DashboardFilters,
 } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -63,8 +64,9 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 };
 
 function getFetchSiteListParams(
-	view: View
-	// isRestoringAccount: boolean TODO: Add site visibility filtering
+	view: View,
+	// isRestoringAccount: boolean TODO: Add site visibility filtering,
+	siteFilters: DashboardFilters = {}
 ): FetchDashboardSiteListParams {
 	// The mapping from Dataview fields to Site Profiles fields.
 	const MAPPED_FIELDS: Record< string, keyof DashboardSiteListSite > = {
@@ -129,9 +131,30 @@ function getFetchSiteListParams(
 		}
 	} );
 
+	const planSlugsByName = siteFilters.plan?.reduce(
+		( acc, current ) => ( {
+			...acc,
+			[ current.name ]: [ ...( acc[ current.name ] || [] ), current.value ],
+		} ),
+		{} as Record< string, string[] >
+	);
+
+	const filters = view.filters?.reduce( ( acc, current ) => {
+		let value = current.value;
+		if ( current.field === 'plan' ) {
+			value = current.value.map( ( v: string ) => planSlugsByName?.[ v ] ).flat();
+		}
+
+		return {
+			...acc,
+			[ current.field ]: value,
+		};
+	}, {} );
+
 	return {
 		fields: Array.from( new Set( fields ) ).filter( Boolean ),
 		s: view.search || undefined,
+		filters,
 		sort_by: MAPPED_FIELDS[ view.sort?.field ?? '' ],
 		sort_direction: view.sort?.direction,
 		page: view.page,
@@ -145,8 +168,16 @@ function getFetchSiteListParams(
 export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 	const { queries } = useAppContext();
 
+	const { data: siteFilters } = useQuery( {
+		...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
+		staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
+		enabled:
+			isEnabled( 'dashboard/v2/es-site-list' ) &&
+			!! view.filters?.find( ( filter ) => filter.field === 'plan' ),
+	} );
+
 	const siteProfilesQueryResult = useQuery( {
-		...queries.dashboardSiteListQuery( getFetchSiteListParams( view ) ),
+		...queries.dashboardSiteListQuery( getFetchSiteListParams( view, siteFilters ) ),
 		placeholderData: keepPreviousData,
 		enabled: isEnabled( 'dashboard/v2/es-site-list' ),
 		meta: {

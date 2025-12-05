@@ -49,6 +49,10 @@ export interface DashboardSiteListResponse {
 export interface FetchDashboardSiteListParams {
 	fields?: ( keyof DashboardSiteListSite )[];
 	s?: string;
+	filters?: {
+		plan?: string[];
+		is_a8c?: boolean;
+	};
 	sort_by?: keyof DashboardSiteListSite;
 	sort_direction?: 'asc' | 'desc';
 	page?: number;
