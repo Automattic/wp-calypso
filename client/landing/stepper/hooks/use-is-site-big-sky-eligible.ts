@@ -49,7 +49,6 @@ export function useIsBigSkyEligible( flowName?: string ) {
 				featurePostCheckoutAiStepEnabled &&
 				!! isOwner &&
 				siteHasAiAssistantFeature &&
-				// TODO: Add eligibility check for plans
 				isEligibleGoals &&
 				onSupportedDevice,
 		};
