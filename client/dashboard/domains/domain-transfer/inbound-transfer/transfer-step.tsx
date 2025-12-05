@@ -1,3 +1,4 @@
+import { Domain, Purchase } from '@automattic/api-core';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -7,6 +8,7 @@ import { Card, CardBody } from '../../../components/card';
 import InlineSupportLink from '../../../components/inline-support-link';
 import SegmentedBar, { type SegmentedBarSegment } from '../../../components/segmented-bar';
 import { Text } from '../../../components/text';
+import { shouldShowRemoveAction } from '../../domain-overview/actions.utils';
 import type { ReactNode } from 'react';
 
 interface InboundTransferStepProps {
@@ -15,7 +17,9 @@ interface InboundTransferStepProps {
 	badge?: ReactNode;
 	subtitle?: ReactNode;
 	progress: { currentStep: number; color: string };
-	children: React.ReactNode;
+	children: ReactNode;
+	domain: Domain;
+	purchase?: Purchase;
 }
 
 const segment = ( step: number, currentStep: number, color: string ): SegmentedBarSegment => {
@@ -33,6 +37,8 @@ export const InboundTransferStep = ( {
 	subtitle,
 	progress,
 	children,
+	domain,
+	purchase,
 }: InboundTransferStepProps ) => {
 	return (
 		<Card>
@@ -74,6 +80,11 @@ export const InboundTransferStep = ( {
 							<InlineSupportLink supportContext="general-support-options">
 								{ __( 'Contact support' ) }
 							</InlineSupportLink>
+							{ purchase && shouldShowRemoveAction( domain, purchase ) && (
+								<a href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }` }>
+									{ __( 'Cancel transfer' ) }
+								</a>
+							) }
 						</VStack>
 					</VStack>
 				</VStack>

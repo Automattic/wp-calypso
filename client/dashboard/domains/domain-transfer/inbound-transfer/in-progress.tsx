@@ -1,3 +1,4 @@
+import { Domain, type Purchase } from '@automattic/api-core';
 import { domainInboundTransferStatusQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
@@ -11,15 +12,16 @@ import { Text } from '../../../components/text';
 import { InboundTransferStep } from './transfer-step';
 
 export const InboundTransferInProgress = ( {
-	domainName,
-	siteSlug,
+	domain,
+	purchase,
 }: {
-	domainName: string;
-	siteSlug: string;
+	domain: Domain;
+	purchase?: Purchase;
 } ) => {
 	const { data: domainInboundTransferStatus } = useQuery(
-		domainInboundTransferStatusQuery( domainName )
+		domainInboundTransferStatusQuery( domain.domain )
 	);
+	const { domain: domainName, site_slug: siteSlug } = domain;
 
 	return (
 		<InboundTransferStep
@@ -28,6 +30,8 @@ export const InboundTransferInProgress = ( {
 			badge={ <Badge intent="warning">{ __( 'In progress' ) }</Badge> }
 			subtitle={ __( 'Estimated: 5–7 days' ) }
 			progress={ { currentStep: 2, color: 'var(--wp-admin-theme-color)' } }
+			domain={ domain }
+			purchase={ purchase }
 		>
 			<VStack spacing={ 8 }>
 				<Notice>
