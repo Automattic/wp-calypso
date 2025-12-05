@@ -45,6 +45,7 @@
 		"@automattic/agenttic-ui": "^0.1.26",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
+		"@automattic/support-articles": "workspace:^",
 		"@rive-app/react-canvas": "^4.15.6",
 		"@wordpress/api-fetch": "^7.23.0",
 		"@wordpress/base-styles": "^5.23.0",

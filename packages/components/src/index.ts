@@ -12,7 +12,6 @@ export { default as Dialog } from './dialog';
 export type { BaseButton } from './dialog/button-bar';
 export * from './forms';
 export { default as Gridicon } from './gridicon';
-export { HelpCenterArticle } from './inline-support-article';
 export { default as Popover } from './popover';
 export { default as ProductIcon } from './product-icon';
 export type { SupportedSlugs } from './product-icon/config';

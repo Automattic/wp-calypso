@@ -1,9 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
+import { GetSupport } from '@automattic/odie-client';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../../icons/thumbs';
+
+declare const __i18n_text_domain__: string;
 
 import './help-center-feedback-form.scss';
 

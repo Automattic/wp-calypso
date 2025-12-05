@@ -1,11 +1,13 @@
+import { useScrollToTop } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { Icon, arrowUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useScrollToTop } from '../../../scroll-to-top/use-scroll-to-top';
 import type { FC } from 'react';
 import './back-to-top-button.scss';
+
+declare const __i18n_text_domain__: string;
 
 export const BackToTopButton: FC = () => {
 	const elementRef = useRef< HTMLElement | null >( null );

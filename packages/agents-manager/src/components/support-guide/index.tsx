@@ -1,5 +1,5 @@
 import { AgentUI } from '@automattic/agenttic-ui';
-import { HelpCenterArticle } from '@automattic/components';
+import { HelpCenterArticle } from '@automattic/support-articles';
 import { __ } from '@wordpress/i18n';
 import ChatHeader, { Options } from '../chat-header';
 import './style.scss';

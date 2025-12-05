@@ -1,6 +1,5 @@
-/* eslint-disable no-restricted-imports */
+import { EmbedContainer } from '@automattic/components';
 import { useState, useCallback } from '@wordpress/element';
-import EmbedContainer from '../../../embed-container';
 import { useContentFilter } from '../../hooks/use-content-filter';
 import HelpCenterFeedbackForm from '../help-center-feedback-form';
 import Placeholders from '../placeholder-lines';

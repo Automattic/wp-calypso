@@ -8,5 +8,4 @@ export { default as HelpCenterInlineButton } from './components/help-center-inli
 export { default as Mail } from './icons/mail';
 export { useHelpSearchQuery } from './hooks/use-help-search-query';
 export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';
-export { HelpCenterArticle } from '@automattic/components';
 export { HelpCenterSupportGuides } from './components/help-center-support-guides';
