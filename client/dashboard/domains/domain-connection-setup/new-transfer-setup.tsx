@@ -266,7 +266,7 @@ export default function DomainTransferSetup() {
 								<InlineSupportLink supportContext="general-support-options">
 									{ __( 'Contact support' ) }
 								</InlineSupportLink>
-								{ shouldShowRemoveAction( domain, purchase ) && (
+								{ purchase && shouldShowRemoveAction( domain, purchase ) && (
 									<a href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }` }>
 										{ __( 'Cancel transfer' ) }
 									</a>
