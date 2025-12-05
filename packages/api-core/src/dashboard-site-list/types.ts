@@ -33,6 +33,7 @@ export interface DashboardSiteListSite {
 	visitors?: null | number;
 	total_wpcom_subscribers?: number;
 	url?: { value: string; with_scheme: string };
+	wordpress_version?: string;
 	wpcom_status?: {
 		is_staging: boolean;
 		is_coming_soon: boolean;

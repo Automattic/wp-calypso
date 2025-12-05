@@ -15,7 +15,13 @@ export function getFormattedWordPressVersion(
 	site: Site,
 	versionTag: string | undefined = undefined
 ) {
-	let wpVersion = site.options?.software_version;
+	return getFormattedWPVersion( site.options?.software_version ?? '', versionTag );
+}
+
+export function getFormattedWPVersion(
+	wpVersion: string,
+	versionTag: string | undefined = undefined
+) {
 	if ( ! wpVersion ) {
 		return '';
 	}

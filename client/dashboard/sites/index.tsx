@@ -76,7 +76,7 @@ function getFetchSiteListParams(
 		backup: 'has_backup',
 		// views: 'stats_views',
 		plan: 'plan',
-		// wp_version
+		wp_version: 'wordpress_version',
 		is_a8c: 'is_a8c',
 		// preview
 		// last_published
