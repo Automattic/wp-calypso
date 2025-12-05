@@ -6,7 +6,7 @@ export interface SitePlan {
 	expired: boolean;
 	is_free: boolean;
 	license_key: string;
-	billing_period: 'Yearly' | 'Monthly';
+	billing_period?: 'Yearly' | 'Monthly';
 	features: {
 		active: string[];
 	};

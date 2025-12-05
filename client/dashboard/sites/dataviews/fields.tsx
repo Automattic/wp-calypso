@@ -1,16 +1,19 @@
-import { queryClient, siteBySlugQuery } from '@automattic/api-queries';
+import { queryClient } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import SiteIcon, { SiteIconRenderer } from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { getSitePlanDisplayName } from '../../utils/site-plan';
+import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { getSiteStatus, getStatusLabels } from '../../utils/site-status';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import {
+	isSelfHostedJetpackConnected,
+	isSelfHostedJetpackConnected__ES,
+} from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import {
@@ -71,14 +74,18 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			id: 'plan',
 			label: __( 'Plan' ),
 			getValue: ( { item } ) => getSitePlanDisplayName( item ) ?? '',
-			render: ( { field, item } ) => (
-				<Plan
-					nag={ item.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
-					isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
-					isJetpack={ item.jetpack }
-					value={ field.getValue( { item } ) }
-				/>
-			),
+			render: function PlanField( { field, item } ) {
+				const { user } = useAuth();
+				return (
+					<Plan
+						nag={ item.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
+						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
+						isJetpack={ item.jetpack }
+						isOwner={ item.site_owner === user.ID }
+						value={ field.getValue( { item } ) }
+					/>
+				);
+			},
 			getElements: async () => {
 				const { plan = [] } = await queryClient.fetchQuery( {
 					...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
@@ -244,16 +251,15 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 		{
 			id: 'plan',
 			label: __( 'Plan' ),
-			getValue: ( { item } ) => item.plan?.product_name_short ?? '',
-			render: function Plan__ES( { item, field } ) {
-				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+			getValue: ( { item } ) => getSitePlanDisplayName__ES( item ),
+			render: function PlanField__ES( { item, field } ) {
+				const { user } = useAuth();
 				return (
 					<Plan
-						nag={ site?.plan?.expired ? { isExpired: true, site } : { isExpired: false } }
-						isSelfHostedJetpackConnected={
-							( site && isSelfHostedJetpackConnected( site ) ) ?? false
-						}
-						isJetpack={ site?.jetpack ?? false }
+						nag={ item?.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
+						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected__ES( item ) }
+						isJetpack={ !! item?.is_jetpack }
+						isOwner={ item.owner_id === user.ID }
 						value={ field.getValue( { item } ) }
 					/>
 				);

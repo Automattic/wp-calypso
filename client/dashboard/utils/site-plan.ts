@@ -1,10 +1,4 @@
-import {
-	DotcomPlans,
-	JetpackFeatures,
-	type JetpackFeatureSlug,
-	type Purchase,
-	type Site,
-} from '@automattic/api-core';
+import { DotcomPlans, JetpackFeatures } from '@automattic/api-core';
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
@@ -22,6 +16,12 @@ import { hasPlanFeature } from '../utils/site-features';
 import { isDashboardBackport } from './is-dashboard-backport';
 import { wpcomLink } from './link';
 import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
+import type {
+	JetpackFeatureSlug,
+	Purchase,
+	Site,
+	DashboardSiteListSite,
+} from '@automattic/api-core';
 
 export const JETPACK_PRODUCTS = [
 	{
@@ -78,7 +78,7 @@ export const JETPACK_PRODUCTS = [
 	},
 ];
 
-export function getJetpackProductsForSite( site: Site ) {
+export function getJetpackProductsForSite( site: Pick< Site, 'plan' > ) {
 	return JETPACK_PRODUCTS.filter( ( product ) =>
 		hasPlanFeature( site, product.id as JetpackFeatureSlug )
 	);
@@ -89,6 +89,31 @@ export function getSitePlanDisplayName( site: Site ) {
 		return __( 'Staging Site' );
 	}
 
+	const plan = site.plan;
+	if ( ! plan ) {
+		return '';
+	}
+
+	if ( plan.product_slug === DotcomPlans.JETPACK_FREE ) {
+		const products = getJetpackProductsForSite( site );
+		if ( products.length === 1 ) {
+			return products[ 0 ].label;
+		}
+		if ( products.length > 1 ) {
+			return __( 'Jetpack' );
+		}
+	}
+
+	// Display the short name for WP.com plans.
+	// Determine if the plan is a WP.com plan by checking if the license key is empty.
+	if ( ! plan.license_key ) {
+		return plan.product_name_short;
+	}
+
+	return plan.product_name || plan.product_name_short;
+}
+
+export function getSitePlanDisplayName__ES( site: DashboardSiteListSite ) {
 	const plan = site.plan;
 	if ( ! plan ) {
 		return '';

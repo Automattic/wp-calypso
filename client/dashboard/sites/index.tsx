@@ -66,7 +66,8 @@ function getFetchSiteListParams(
 	view: View
 	// isRestoringAccount: boolean TODO: Add site visibility filtering
 ): FetchDashboardSiteListParams {
-	const dataviewFieldToSiteProfileField: Record< string, keyof DashboardSiteListSite > = {
+	// The mapping from Dataview fields to Site Profiles fields.
+	const MAPPED_FIELDS: Record< string, keyof DashboardSiteListSite > = {
 		name: 'name',
 		URL: 'url',
 		'icon.ico': 'icon',
@@ -86,34 +87,52 @@ function getFetchSiteListParams(
 		// host
 	};
 
-	const fields = new Set< keyof DashboardSiteListSite >( [ 'blog_id', 'slug', 'deleted' ] ); // Always include ID and slug (for navigation), and deleted (for styling)
+	const ADDITIONAL_MAPPED_FIELDS: Record< string, ( keyof DashboardSiteListSite )[] > = {
+		name: [ 'badge' ],
+		status: [ 'wpcom_status', 'private', 'deleted' ],
+		plan: [ 'owner_id' ],
+	};
+
+	// Always include ID and slug (for navigation), deleted (for styling), is_a8c (for included a8c owned) and other (for vip & self hosted jetpack)
+	const fields: ( keyof DashboardSiteListSite )[] = [
+		'blog_id',
+		'slug',
+		'deleted',
+		'is_a8c',
+		'is_atomic',
+		'is_garden',
+		'is_jetpack',
+		'is_vip',
+	];
+
 	if ( view.showTitle && view.titleField ) {
-		fields.add( dataviewFieldToSiteProfileField[ view.titleField ] );
-		fields.add( 'badge' );
+		fields.push( MAPPED_FIELDS[ view.titleField ] );
 	}
+
 	if ( view.showMedia && view.mediaField ) {
-		fields.add( dataviewFieldToSiteProfileField[ view.mediaField ] );
+		fields.push( MAPPED_FIELDS[ view.mediaField ] );
 	}
+
 	if ( view.showDescription && view.descriptionField ) {
-		fields.add( dataviewFieldToSiteProfileField[ view.descriptionField ] );
+		fields.push( MAPPED_FIELDS[ view.descriptionField ] );
 	}
-	// Status is a composite field that comes from a number of different SiteProfile fields.
-	if ( view.fields?.includes( 'status' ) ) {
-		fields.add( 'wpcom_status' );
-		fields.add( 'private' );
-		fields.add( 'deleted' );
-	}
+
 	view.fields?.forEach( ( field ) => {
-		const mappedField = dataviewFieldToSiteProfileField[ field ];
+		const mappedField = MAPPED_FIELDS[ field ];
 		if ( mappedField ) {
-			fields.add( mappedField );
+			fields.push( mappedField );
+		}
+
+		const additionalMappedFields = ADDITIONAL_MAPPED_FIELDS[ field ];
+		if ( additionalMappedFields ) {
+			fields.push( ...additionalMappedFields );
 		}
 	} );
 
 	return {
-		fields: Array.from( fields ).filter( Boolean ),
+		fields: Array.from( new Set( fields ) ).filter( Boolean ),
 		s: view.search || undefined,
-		sort_by: dataviewFieldToSiteProfileField[ view.sort?.field ?? '' ],
+		sort_by: MAPPED_FIELDS[ view.sort?.field ?? '' ],
 		sort_direction: view.sort?.direction,
 		page: view.page,
 		per_page: view.perPage,

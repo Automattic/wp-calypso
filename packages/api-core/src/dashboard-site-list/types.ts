@@ -1,18 +1,35 @@
 export interface DashboardSiteListSite {
 	badge?: null | 'staging' | 'trial' | 'p2';
 	blog_id: number; // Site ID is always fetched
+	capabilities?: {
+		manage_options: boolean;
+	};
 	deleted?: boolean;
 	has_backup?: boolean;
 	name?: string;
 	plan?: {
 		product_id: number;
+		product_slug: string;
+		product_name: string;
 		product_name_short: string;
+		expired: boolean;
+		is_free: boolean;
+		license_key: string;
+		features: {
+			active: string[];
+		};
 	};
 	private?: boolean;
 	icon?: null | {
 		ico: string;
 		img: string;
 	};
+	is_a8c?: boolean;
+	is_atomic?: boolean;
+	is_garden?: boolean;
+	is_jetpack?: boolean;
+	is_vip?: boolean;
+	owner_id?: number;
 	slug: string; // Slug is always fetched
 	visitors?: null | number;
 	total_wpcom_subscribers?: number;
