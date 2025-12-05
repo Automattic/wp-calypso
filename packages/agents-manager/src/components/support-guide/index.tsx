@@ -1,6 +1,7 @@
 import { AgentUI } from '@automattic/agenttic-ui';
 import { HelpCenterArticle } from '@automattic/support-articles';
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from 'react-router-dom';
 import ChatHeader, { Options } from '../chat-header';
 import './style.scss';
 
@@ -17,6 +18,8 @@ export default function SupportGuide( {
 	onAbort: () => void;
 	onClose: () => void;
 } ) {
+	const navigate = useNavigate();
+
 	function handleSubmit( value: string ) {
 		// eslint-disable-next-line no-console
 		console.log( 'Submitted message:', value );
@@ -38,6 +41,7 @@ export default function SupportGuide( {
 				<ChatHeader
 					isChatDocked={ isChatDocked }
 					onClose={ onClose }
+					onBack={ () => navigate( -1 ) }
 					options={ chatHeaderOptions }
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
 				/>

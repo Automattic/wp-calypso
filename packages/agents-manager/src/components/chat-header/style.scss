@@ -6,6 +6,16 @@
 	height: 56px;
 	padding: 4px 16px;
 
+	.agents-manager-chat-header__back-btn {
+		padding: 0;
+		padding-right: 4px;
+
+		svg {
+			// Cancel out negative space in the icon
+			margin-left: -4px;
+		}
+	}
+
 	&:has( .agents-manager-chat-header__title ) {
 		justify-content: space-between;
 	}
