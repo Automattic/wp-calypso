@@ -10,6 +10,7 @@ import { useCreateZendeskConversation } from '../../hooks';
 import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
 
 import './get-support.scss';
+
 interface GetSupportProps {
 	onClickAdditionalEvent?: ( destination: string ) => void;
 	isUserEligibleForPaidSupport?: boolean;

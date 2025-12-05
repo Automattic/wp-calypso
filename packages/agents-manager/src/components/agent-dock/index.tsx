@@ -10,7 +10,6 @@ import {
 	useAgentChat,
 	type Message,
 	type UseAgentChatConfig,
-	type SubmitOptions,
 } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
@@ -32,18 +31,6 @@ import { lastConversationCache } from '../../utils/conversation-cache';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
-import SupportGuide from '../support-guide';
-import SupportGuides from '../support-guides';
-
-/**
- * Navigation continuation hook type
- */
-type NavigationContinuationHook = ( props: {
-	isProcessing: boolean;
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
-	sessionId: string;
-	agentId: string;
-} ) => void;
 
 interface AgentDockProps {
 	/** Agent configuration for the chat client. */
@@ -54,8 +41,6 @@ interface AgentDockProps {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
-	/** Navigation continuation hook for post-navigation conversation resumption. */
-	useNavigationContinuation?: NavigationContinuationHook;
 }
 
 export default function AgentDock( {
@@ -63,7 +48,6 @@ export default function AgentDock( {
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
-	useNavigationContinuation,
 }: AgentDockProps ) {
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const { hasLoaded: isStoreReady, isOpen = false } = useSelect( ( select ) => {
@@ -91,15 +75,6 @@ export default function AgentDock( {
 		onSubmit,
 		abortCurrentRequest,
 	} = useAgentChat( agentConfig );
-
-	// Handle navigation continuation if hook is provided
-	// This allows to resume conversations after full page navigation
-	useNavigationContinuation?.( {
-		isProcessing,
-		onSubmit,
-		sessionId,
-		agentId,
-	} );
 
 	// Update the last conversation cache whenever messages change
 	useEffect( () => {
@@ -306,26 +281,6 @@ export default function AgentDock( {
 		/>
 	);
 
-	const SupportGuideRoute = (
-		<SupportGuide
-			onAbort={ abortCurrentRequest }
-			onClose={ closeSidebar }
-			isOpen={ isOpen }
-			chatHeaderOptions={ getChatHeaderOptions() }
-			isChatDocked={ isDocked }
-		/>
-	);
-
-	const SupportGuidesRoute = (
-		<SupportGuides
-			onAbort={ abortCurrentRequest }
-			onClose={ closeSidebar }
-			isOpen={ isOpen }
-			chatHeaderOptions={ getChatHeaderOptions() }
-			isChatDocked={ isDocked }
-		/>
-	);
-
 	if ( ! isStoreReady ) {
 		return null;
 	}
@@ -334,8 +289,6 @@ export default function AgentDock( {
 		<Routes>
 			<Route path="/" element={ Chat } />
 			<Route path="/chat" element={ Chat } />
-			<Route path="/post" element={ SupportGuideRoute } />
-			<Route path="/support-guides" element={ SupportGuidesRoute } />
 			<Route path="/history" element={ History } />
 			<Route path="*" element={ <Navigate to="/" replace /> } />
 		</Routes>
