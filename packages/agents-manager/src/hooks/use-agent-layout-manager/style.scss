@@ -328,7 +328,8 @@ body:not( .wp-admin ).agents-manager-sidebar-container {
 	.agents-manager-conversation-history-view {
 		padding-top: 48px;
 
-		&__content {
+		&__content,
+		&__footer {
 			padding: 0;
 		}
 
