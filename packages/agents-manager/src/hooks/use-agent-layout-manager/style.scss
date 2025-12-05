@@ -66,6 +66,7 @@ $transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
 	}
 }
 
+// Reposition the WP notice panel
 @mixin wp-notice-panel-open( $notice-panel-selector ) {
 	#{$notice-panel-selector} {
 		right: $sidebar-width;
