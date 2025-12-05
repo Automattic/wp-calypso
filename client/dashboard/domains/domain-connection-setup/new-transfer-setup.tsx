@@ -5,7 +5,7 @@ import {
 	purchaseQuery,
 	siteByIdQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -37,6 +37,7 @@ export default function DomainTransferSetup() {
 	const { domainName } = domainTransferSetupRoute.useParams();
 	const navigate = useNavigate();
 	const { createSuccessNotice } = useDispatch( noticesStore );
+	const queryClient = useQueryClient();
 
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
@@ -149,6 +150,7 @@ export default function DomainTransferSetup() {
 		setError( null );
 		startTransfer( authorizationCode, {
 			onSuccess: () => {
+				queryClient.invalidateQueries( domainQuery( domainName ) );
 				createSuccessNotice(
 					sprintf(
 						// translators: %s is a domain name
