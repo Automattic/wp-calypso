@@ -93,6 +93,7 @@ function getFetchSiteListParams(
 		name: [ 'badge' ],
 		status: [ 'wpcom_status', 'private', 'deleted' ],
 		plan: [ 'owner_id' ],
+		preview: [ 'name', 'icon', 'url', 'private', 'deleted' ],
 	};
 
 	// Always include ID and slug (for navigation), deleted (for styling), is_a8c (for included a8c owned) and other (for vip & self hosted jetpack)

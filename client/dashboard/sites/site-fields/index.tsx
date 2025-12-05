@@ -20,7 +20,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import SiteIcon from '../../components/site-icon';
+import SiteIcon, { SiteIconRenderer } from '../../components/site-icon';
 import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
@@ -233,6 +233,50 @@ export function Preview( { site }: { site: Site } ) {
 				<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
 			) }
 		</div>
+	);
+}
+
+export function Preview__ES( { site }: { site: DashboardSiteListSite } ) {
+	const [ resizeListener, { width } ] = useResizeObserver();
+
+	// If the site is a private A8C site, X-Frame-Options is set to same
+	// origin.
+	const iframeDisabled = site.deleted || ( site.is_a8c && site.private );
+	return (
+		<Link
+			to={ getSiteManagementUrl__ES( site ) }
+			disabled={ site.deleted }
+			style={ {
+				display: 'block',
+				height: '100%',
+				width: '100%',
+				borderRadius: 'inherit',
+				overflow: 'hidden',
+			} }
+		>
+			{ resizeListener }
+			{ iframeDisabled && (
+				<div
+					style={ {
+						fontSize: '24px',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						height: '100%',
+					} }
+				>
+					<SiteIconRenderer
+						alt={ site.name ?? '' }
+						fallbackInitial={ site.name?.charAt( 0 ) ?? '' }
+						icon={ site.icon ?? undefined }
+						isMigration={ false }
+					/>
+				</div>
+			) }
+			{ width && ! iframeDisabled && (
+				<SitePreview url={ site.url?.with_scheme ?? '' } scale={ width / 1200 } height={ 1200 } />
+			) }
+		</Link>
 	);
 }
 

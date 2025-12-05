@@ -26,6 +26,7 @@ import {
 	PHPVersion,
 	Plan,
 	Preview,
+	Preview__ES,
 	Status,
 	URL,
 	Uptime,
@@ -303,6 +304,13 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				operators: [ 'is' as Operator ],
 			},
 			render: ( { item } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
+		},
+		{
+			id: 'preview',
+			label: __( 'Preview' ),
+			render: ( { item } ) => <Preview__ES site={ item } />,
+			enableHiding: false,
+			enableSorting: false,
 		},
 		{
 			id: 'visitors',
