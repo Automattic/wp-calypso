@@ -21,8 +21,17 @@ export function wpcomLink( path: string ) {
  * - For Dashboard, the reauth page isn't hosted on the same origin so we use window.location.href.
  */
 export function reauthRequiredLink() {
-	const wpcomUrl = config( 'wpcom_url' );
-	const isSameOrigin = window.location.origin === wpcomUrl;
+	const wpcomUrl = config( 'wpcom_url' ) || '';
+
+	let wpcomOrigin = '';
+	try {
+		wpcomOrigin = new URL( wpcomUrl as string ).origin;
+	} catch {
+		// Fallback to the current origin, so that currentPath is a relative path.
+		wpcomOrigin = window.location.origin;
+	}
+
+	const isSameOrigin = window.location.origin === wpcomOrigin;
 	const currentPath = isSameOrigin ? window.location.pathname : window.location.href;
 
 	return `${ wpcomUrl }/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
