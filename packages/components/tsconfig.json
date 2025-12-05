@@ -12,9 +12,6 @@
 	"references": [
 		{ "path": "../calypso-analytics" },
 		{ "path": "../calypso-url" },
-		{ "path": "../zendesk-client" },
-		{ "path": "../data-stores" },
-		{ "path": "../odie-client" },
 		{ "path": "../i18n-utils" },
 		{ "path": "../ui" }
 	]
