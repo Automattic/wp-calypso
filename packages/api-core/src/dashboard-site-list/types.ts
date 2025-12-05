@@ -10,11 +10,9 @@ export interface DashboardSiteListSite {
 	plan?: {
 		product_id: number;
 		product_slug: string;
-		product_name: string;
 		product_name_short: string;
 		expired: boolean;
 		is_free: boolean;
-		license_key: string;
 		features: {
 			active: string[];
 		};

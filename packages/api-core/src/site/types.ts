@@ -1,11 +1,11 @@
 export interface SitePlan {
 	product_id: number;
 	product_slug: string;
-	product_name: string;
+	product_name?: string; // Only returns by /sites/:site
 	product_name_short: string;
 	expired: boolean;
 	is_free: boolean;
-	license_key: string;
+	license_key?: string; // Only returns by /sites/:site
 	billing_period?: 'Yearly' | 'Monthly';
 	features: {
 		active: string[];
