@@ -330,6 +330,14 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			render: ( { item }: { item: DashboardSiteListSite } ) => <PHPVersion__ES site={ item } />,
 			enableSorting: false,
 		},
+		{
+			id: 'host',
+			label: __( 'Host' ),
+			getValue: ( { item } ) => {
+				return getSiteProviderName( item ) ?? DEFAULT_PROVIDER_NAME;
+			},
+			render: ( { field, item } ) => field.getValue( { item } ),
+		},
 	];
 }
 

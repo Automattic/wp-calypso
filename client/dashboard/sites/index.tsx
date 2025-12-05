@@ -86,7 +86,7 @@ function getFetchSiteListParams(
 		// links
 		php_version: 'php_version',
 		// storage
-		// host
+		host: 'hosting_provider_guess',
 	};
 
 	const additionalMappedFields: Record< string, ( keyof DashboardSiteListSite )[] > = {

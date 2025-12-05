@@ -6,6 +6,7 @@ export interface DashboardSiteListSite {
 	};
 	deleted?: boolean;
 	has_backup?: boolean;
+	hosting_provider_guess?: string;
 	name?: string;
 	plan?: {
 		product_id: number;
