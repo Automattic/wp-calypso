@@ -116,6 +116,8 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 						  ]
 						: undefined
 				}
+				allowTemporaryDismissal
+				preferenceName="provisioning-site-notification-temporary-dismissed"
 			>
 				{ isReady
 					? readySiteMessage

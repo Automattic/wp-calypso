@@ -85,6 +85,8 @@ const A4AAgencyApprovalNotice = ( { isFullWidth }: { isFullWidth?: boolean } ) =
 			level={ bannerDetails.level as 'warning' | 'success' | 'error' }
 			onClose={ dismissNotice }
 			hideCloseButton={ bannerDetails.hideCloseButton }
+			allowTemporaryDismissal
+			preferenceName="a4a-agency-approval-notice-temporary-dismissed"
 		>
 			<div className="a4a-agency-approval-notice__text">{ bannerDetails.text }</div>
 		</LayoutBanner>

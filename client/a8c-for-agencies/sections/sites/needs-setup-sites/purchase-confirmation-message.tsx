@@ -39,6 +39,8 @@ export default function PurchaseConfirmationMessage() {
 			level="success"
 			title={ translate( 'Congratulations on your WordPress.com purchase!' ) }
 			onClose={ () => setSuccessNotification( false ) }
+			allowTemporaryDismissal
+			preferenceName="purchase-confirmation-message-temporary-dismissed"
 		>
 			{ translate(
 				'Set up your sites as you need them, in the “Needs setup” tab within the sites dashboard. Once set up, you can access each site under the “All” tab.'
