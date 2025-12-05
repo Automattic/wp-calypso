@@ -8,13 +8,14 @@ import {
 	__experimentalHeading as Heading,
 	Icon,
 } from '@wordpress/components';
-import { isRTL, __ } from '@wordpress/i18n';
+import { isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
 import { isRelativeUrl } from '../../utils/url';
 import ComponentViewTracker from '../component-view-tracker';
+import ExternalText from '../external-text';
 import { Text } from '../text';
 import { TextSkeleton } from '../text-skeleton';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
@@ -132,15 +133,10 @@ export default function OverviewCard( {
 						/>
 					) }
 					{ externalLink && ! progress && (
-						<span
+						<ExternalText
 							className="dashboard-overview-card__link-icon components-external-link__icon"
-							aria-label={
-								/* translators: accessibility text */
-								__( '(opens in a new tab)' )
-							}
-						>
-							&#8599;
-						</span>
+							iconSize={ 24 }
+						/>
 					) }
 				</HStack>
 				<HStack justify="flex-start" alignment="baseline">

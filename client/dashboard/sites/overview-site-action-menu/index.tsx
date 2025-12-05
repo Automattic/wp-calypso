@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
+import ExternalText from '../../components/external-text';
 import { wpcomLink } from '../../utils/link';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteEditUrl } from '../../utils/site-url';
@@ -44,9 +45,11 @@ const SiteActionMenu = ( { site }: { site: Site } ) => {
 			{ () => (
 				<MenuGroup>
 					<MenuItem disabled={ isSiteUsingBlockThemeLoading } onClick={ handleEditSite }>
-						{ __( 'Edit site ↗' ) }
+						<ExternalText justify="space-between">{ __( 'Edit site' ) }</ExternalText>
 					</MenuItem>
-					<MenuItem onClick={ handleWritePost }>{ __( 'Write a post ↗' ) }</MenuItem>
+					<MenuItem onClick={ handleWritePost }>
+						<ExternalText justify="space-between">{ __( 'Write a post' ) }</ExternalText>
+					</MenuItem>
 					<MenuItem onClick={ handleImportSite }>{ __( 'Import site' ) }</MenuItem>
 				</MenuGroup>
 			) }

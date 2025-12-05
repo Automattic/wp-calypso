@@ -16,6 +16,7 @@ import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import ExternalText from '../../components/external-text';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -130,7 +131,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 									isBusy={ isFetchingToken }
 									onClick={ handleOpenPhpMyAdmin }
 								>
-									{ __( 'Open phpMyAdmin ↗' ) }
+									<ExternalText>{ __( 'Open phpMyAdmin' ) }</ExternalText>
 								</Button>
 							</ButtonStack>
 							<Text variant="muted" lineHeight="20px">
