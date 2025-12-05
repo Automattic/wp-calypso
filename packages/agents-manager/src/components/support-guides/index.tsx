@@ -87,7 +87,12 @@ export default function SupportGuides( {
 					alignment="stretch"
 					justify="stretch"
 				>
-					<SearchControl onChange={ setSearchInput } value={ searchInput } />
+					<SearchControl
+						onChange={ setSearchInput }
+						// The click event is highjacked by the drag-handlers of the floating chat container.
+						onClick={ ( e ) => e.currentTarget.focus() }
+						value={ searchInput }
+					/>
 					<SearchResults searchInput={ searchInput } />
 				</VStack>
 			</AgentUI.ConversationView>
