@@ -292,6 +292,19 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			},
 		},
 		{
+			id: 'is_a8c',
+			type: 'boolean',
+			label: __( 'A8C owned' ),
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			render: ( { item } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
+		},
+		{
 			id: 'visitors',
 			label: __( '7-day visitors' ),
 			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,

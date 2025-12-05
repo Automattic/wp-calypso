@@ -77,7 +77,7 @@ function getFetchSiteListParams(
 		// views: 'stats_views',
 		plan: 'plan',
 		// wp_version
-		// is_a8c
+		is_a8c: 'is_a8c',
 		// preview
 		// last_published
 		// uptime
