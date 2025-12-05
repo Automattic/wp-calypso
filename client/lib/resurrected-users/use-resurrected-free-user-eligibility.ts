@@ -29,6 +29,7 @@ interface EligibilityResult {
 	isEligible: boolean;
 	experimentAssignment: ExperimentAssignment | null;
 	variationName: string | null;
+	isForcedVariation: boolean;
 }
 
 function hasActivePaidSubscription( purchases: Purchase[] | null ): boolean | null {
@@ -103,6 +104,7 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 			isEligible: true,
 			experimentAssignment,
 			variationName: forcedVariation,
+			isForcedVariation: true,
 		};
 	}
 
@@ -121,5 +123,6 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 		isEligible: baseEligibility && experimentReady,
 		experimentAssignment,
 		variationName,
+		isForcedVariation: false,
 	};
 }
