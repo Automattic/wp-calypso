@@ -1,11 +1,13 @@
 import { isSameOrigin } from '@automattic/calypso-url';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { HelpCenter } from '@automattic/data-stores';
 import { isThisASupportArticleLink } from '@automattic/urls';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 function canParse( url: string, baseUrl?: string ): URL | false {
 	try {
