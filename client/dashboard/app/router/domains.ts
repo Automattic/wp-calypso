@@ -1,3 +1,4 @@
+import { DomainSubtype, DomainTransferStatus } from '@automattic/api-core';
 import {
 	domainQuery,
 	domainDnsQuery,
@@ -492,6 +493,36 @@ export const domainSecurityRoute = createRoute( {
 	)
 );
 
+export const domainTransferSetupRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domain transfer setup' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'domain-transfer-setup',
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainAvailabilityQuery( domainName ) ),
+			queryClient.ensureQueryData( domainInboundTransferStatusQuery( domainName ) ),
+		] );
+	},
+} ).lazy( () =>
+	config.isEnabled( 'domain-transfer-redesign' )
+		? import( '../../domains/domain-connection-setup/new-transfer-setup' ).then( ( d ) =>
+				createLazyRoute( 'domain-transfer-setup' )( {
+					component: d.default,
+				} )
+		  )
+		: import( '../../domains/domain-connection-setup/legacy-transfer-setup' ).then( ( d ) =>
+				createLazyRoute( 'domain-transfer-setup' )( {
+					component: d.default,
+				} )
+		  )
+);
+
 export const domainTransferRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -507,6 +538,32 @@ export const domainTransferRoute = createRoute( {
 export const domainTransferIndexRoute = createRoute( {
 	getParentRoute: () => domainTransferRoute,
 	path: '/',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+
+		const isInboundTransfer = domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER;
+
+		if ( ! isInboundTransfer ) {
+			return;
+		}
+
+		if ( domain.transfer_status === DomainTransferStatus.PENDING_START ) {
+			if ( domain.last_transfer_error === null ) {
+				throw redirect( { to: domainTransferSetupRoute.fullPath, params: { domainName } } );
+			}
+			// If there was a transfer error, the user should see the transfer failed page
+			return domain;
+		}
+
+		if (
+			DomainTransferStatus.PENDING_REGISTRY !== domain.transfer_status &&
+			DomainTransferStatus.CANCELLED !== domain.transfer_status
+		) {
+			throw redirect( { to: domainOverviewRoute.fullPath, params: { domainName } } );
+		}
+
+		return domain;
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-transfer' ).then( ( d ) =>
 		createLazyRoute( 'domain-transfer' )( {
@@ -618,36 +675,6 @@ export const domainConnectionSetupRoute = createRoute( {
 		  )
 		: import( '../../domains/domain-connection-setup/legacy-connection-flow' ).then( ( d ) =>
 				createLazyRoute( 'domain-connection-setup' )( {
-					component: d.default,
-				} )
-		  )
-);
-
-export const domainTransferSetupRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Domain transfer setup' ),
-			},
-		],
-	} ),
-	getParentRoute: () => domainRoute,
-	path: 'domain-transfer-setup',
-	loader: async ( { params: { domainName } } ) => {
-		await Promise.all( [
-			queryClient.ensureQueryData( domainAvailabilityQuery( domainName ) ),
-			queryClient.ensureQueryData( domainInboundTransferStatusQuery( domainName ) ),
-		] );
-	},
-} ).lazy( () =>
-	config.isEnabled( 'domain-transfer-redesign' )
-		? import( '../../domains/domain-connection-setup/new-transfer-setup' ).then( ( d ) =>
-				createLazyRoute( 'domain-transfer-setup' )( {
-					component: d.default,
-				} )
-		  )
-		: import( '../../domains/domain-connection-setup/legacy-transfer-setup' ).then( ( d ) =>
-				createLazyRoute( 'domain-transfer-setup' )( {
 					component: d.default,
 				} )
 		  )

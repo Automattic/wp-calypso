@@ -255,7 +255,7 @@ export const PerformanceInsight = ( {
 } ) => {
 	const locale = useLocale();
 	const isDesktop = useViewportMatch( 'medium' );
-	const { data: llmAnswer } = useQuery( {
+	const { data: llmAnswer, isError } = useQuery( {
 		...odieAssistantPerformanceProfilerQuery( {
 			hash,
 			insight,
@@ -265,6 +265,14 @@ export const PerformanceInsight = ( {
 		} ),
 		enabled: !! insight,
 	} );
+
+	if ( isError ) {
+		return (
+			<Notice variant="error" title={ __( 'Error' ) }>
+				{ __( 'An error occurred while generating this insight. Please try again later.' ) }
+			</Notice>
+		);
+	}
 
 	return (
 		<VStack spacing={ 4 } style={ { padding: '0 16px' } }>

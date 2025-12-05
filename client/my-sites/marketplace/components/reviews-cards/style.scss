@@ -7,6 +7,11 @@ $cards-gap: 20px;
 	flex-direction: column;
 	gap: 24px;
 
+	.marketplace-reviews-cards__reviews {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
 	.marketplace-reviews-cards__reviews-title {
 		font-family: Recoleta, $sans;
 		color: var(--studio-gray-80);
@@ -22,9 +27,6 @@ $cards-gap: 20px;
 	.marketplace-reviews-cards__read-all {
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-small;
-		position: absolute;
-		right: 0;
-		top: 25px;
 	}
 
 	.marketplace-reviews-cards__content {
@@ -40,6 +42,21 @@ $cards-gap: 20px;
 	.rating .rating__overlay .gridicon,
 	.rating .rating__star-outline .gridicon {
 		fill: var(--studio-yellow-20);
+	}
+
+	.full-width-section & {
+		.marketplace-reviews-cards__reviews-title {
+			font-size: rem(40px);
+		}
+		.marketplace-reviews-cards__reviews-subtitle {
+			font-size: $font-body-large;
+		}
+		.marketplace-reviews-cards__reviews {
+			align-items: flex-end;
+		}
+		.marketplace-reviews-cards__reviews-header {
+			margin-bottom: 36px;
+		}
 	}
 }
 
@@ -59,6 +76,32 @@ $cards-gap: 20px;
 	border-radius: 4px;
 	width: calc((100% - $cards-gap)/2); // Half of the available space
 	box-sizing: border-box;
+
+	.full-width-section & {
+		background: var(--studio-white);
+		border-color: transparent;
+		border-radius: 8px;
+		padding: 18px 16px 26px;
+		align-items: flex-start;
+		justify-content: flex-start;
+		gap: 0;
+
+		.marketplace-reviews-card__header {
+			font-family: inherit;
+			font-size: $font-body-small;
+			font-weight: 500;
+			margin-bottom: 8px;
+		}
+		.marketplace-reviews-card__empty-subtitle {
+			text-align: left;
+		}
+
+		&.marketplace-reviews-card__leave-a-review {
+			&:active, &:hover {
+				border-color: var(--studio-blue-50);
+			}
+		}
+	}
 }
 
 .marketplace-reviews-card__review-data {

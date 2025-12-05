@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import FullWidthSection from 'calypso/components/full-width-section';
 import {
 	useMarketplaceReviewsQuery,
 	ProductProps,
@@ -36,39 +37,45 @@ export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) =
 	const addEmptyCard = reviews.length === 0;
 
 	return (
-		<div className="marketplace-reviews-cards__container">
-			<div className="marketplace-reviews-cards__reviews">
-				<h2 className="marketplace-reviews-cards__reviews-title">
-					{ translate( 'Customer reviews' ) }
-				</h2>
-				<h3 className="marketplace-reviews-cards__reviews-subtitle">
-					{ translate( 'What other users are saying' ) }
-				</h3>
+		<FullWidthSection className="plugin-details__reviews-section full-width-section--gray full-width-section--double-padding">
+			<div className="plugin-details__reviews">
+				<div className="marketplace-reviews-cards__container">
+					<div className="marketplace-reviews-cards__reviews">
+						<div className="marketplace-reviews-cards__reviews-header">
+							<h2 className="marketplace-reviews-cards__reviews-title">
+								{ translate( 'Customer reviews' ) }
+							</h2>
+							<h3 className="marketplace-reviews-cards__reviews-subtitle">
+								{ translate( 'What other users are saying' ) }
+							</h3>
+						</div>
 
-				<div className="marketplace-reviews-cards__read-all">
-					<Button
-						className="is-link"
-						onClick={ () => props.showMarketplaceReviews && props.showMarketplaceReviews() }
-						href=""
-					>
-						{ translate( 'Read all reviews' ) }
-					</Button>
+						<div className="marketplace-reviews-cards__read-all">
+							<Button
+								className="is-link"
+								onClick={ () => props.showMarketplaceReviews && props.showMarketplaceReviews() }
+								href=""
+							>
+								{ translate( 'Read all reviews' ) }
+							</Button>
+						</div>
+					</div>
+
+					<div className="marketplace-reviews-cards__content">
+						{ reviews.map( ( review ) => (
+							<MarketplaceReviewCard review={ review } key={ review.id } />
+						) ) }
+						{ addEmptyCard && <MarketplaceReviewCard empty key="empty-card" /> }
+						{ addLeaveAReviewCard && (
+							<MarketplaceReviewCard
+								leaveAReview
+								key="leave-a-review-card"
+								showMarketplaceReviews={ props.showMarketplaceReviews }
+							/>
+						) }
+					</div>
 				</div>
 			</div>
-
-			<div className="marketplace-reviews-cards__content">
-				{ reviews.map( ( review ) => (
-					<MarketplaceReviewCard review={ review } key={ review.id } />
-				) ) }
-				{ addEmptyCard && <MarketplaceReviewCard empty key="empty-card" /> }
-				{ addLeaveAReviewCard && (
-					<MarketplaceReviewCard
-						leaveAReview
-						key="leave-a-review-card"
-						showMarketplaceReviews={ props.showMarketplaceReviews }
-					/>
-				) }
-			</div>
-		</div>
+		</FullWidthSection>
 	);
 };

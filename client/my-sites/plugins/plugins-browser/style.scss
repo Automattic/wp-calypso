@@ -156,42 +156,13 @@ body.is-section-plugins #primary .main.is-logged-out {
 		text-decoration: none;
 	}
 }
-.plugins-browser__marketplace-footer {
-	--scss-font-title-large: 2.5rem;
-	--scss-font-body: 1.375rem;
 
-	.section-header-container {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-end;
-		max-width: none;
-		padding-inline: 0;
-
-		.section-header-container__header {
-			max-width: 575px;
-		}
-		.section-header-container__subheader {
-			flex-shrink: 0;
-		}
-
-		@media screen and ( max-width: 600px ) {
-			flex-direction: column;
-			align-items: flex-start;
-
-			.marketplace-cta {
-				margin-inline: 0;
-			}
-		}
-	}
-	.feature-item-container__header {
-		font-weight: 400;
-	}
-}
 .full-width-section.plugins-browser__search-header {
-	padding-top: 100px;
+	padding-top: 157px;
 	padding-bottom: 32px;
 	position: relative;
 	overflow: hidden;
+
 
 	.is-section-plugins:not(:has(.lpc-header-nav-wrapper)) & {
 		padding-top: 165px;
@@ -230,7 +201,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		display: none;
 	}
 	@media screen and ( max-width: 600px ) {
-		padding-top: 30px;
+		padding-top: 95px;
 		padding-bottom: 0;
 
 		.search-box-header__sticky-ref {
@@ -242,78 +213,10 @@ body.is-section-plugins #primary .main.is-logged-out {
 .plugins-browser__categories {
 	padding-bottom: 0;
 }
-
-.plugins-browser__categories,
-.plugins-browser__marketplace-footer {
-	background-color: var(--studio-white);
-}
 .plugins-discovery-page__education-footer {
 	padding-bottom: 72px;
 
 	@media screen and ( max-width: 600px ) {
 		padding-bottom: 48px;
-	}
-}
-body .is-section-plugins:has(.plugins-browser.is-full-width-layout) {
-	.plugins-browser__content-wrapper {
-		background-color: var(--studio-white);
-	}
-
-	.full-width-section__content {
-		max-width: 1220px;
-		padding-inline: 24px;
-		@media screen and ( max-width: 600px ) {
-			padding-inline: 16px;
-		}
-	}
-	.lpc-header-nav-container {
-
-		.masterbar {
-			background: var(--studio-gray-0);
-			border-bottom: 1px solid var(--studio-gray-0);
-		}
-
-		.x-nav-item, .x-dropdown-link, .x-menu-link {
-			color: var(--studio-gray-100);
-		}
-		.x-dropdown-link {
-			&:hover, &:active, &:focus {
-				color: var(--studio-gray-100);
-				background-color: var(--studio-gray-0);
-			}
-		}
-		.x-nav-link__logo {
-			--studio-blue-50: var(--studio-gray-100);
-		}
-	}
-}
-
-// Remove layout padding for logged-out full-width layout (covers both actually logged out and logged-in showing logged-out UI)
-body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out) {
-	.layout__content {
-		padding: 0;
-	}
-	.lpc-footer-nav-wrapper,
-	.lpc-footer-automattic-nav-wrapper {
-		max-width: 1220px;
-	}
-}
-
-body.is-section-plugins .is-logged-in {
-	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column):not(.is-logged-out).plugins-browser.is-full-width-layout";
-
-	#{$full-width-main} {
-		.plugins-browser__content-wrapper {
-			padding: 0;
-			max-width: 100%;
-		}
-
-		.full-width-section__content {
-			max-width: 100%;
-		}
-
-		.navigation-header__container {
-			max-width: 100%;
-		}
 	}
 }

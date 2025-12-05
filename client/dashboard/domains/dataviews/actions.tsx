@@ -13,7 +13,7 @@ import {
 	domainDnsRoute,
 	domainContactInfoRoute,
 	domainConnectionSetupRoute,
-	domainTransferSetupRoute,
+	domainTransferRoute,
 	domainTransferToAnyUserRoute,
 	domainTransferToOtherSiteRoute,
 	domainsContactInfoRoute,
@@ -103,10 +103,8 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 
 					const targetRoute =
 						domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER &&
-						// TODO: When DOMAINS-1802 is completed, we should check if the domain has the `pending_registry` status
-						// and send the user to the `/v2/domains/<domain_name>/transfer` URL instead of the `domain-transfer-setup` URL
 						config.isEnabled( 'domain-transfer-redesign' )
-							? domainTransferSetupRoute
+							? domainTransferRoute
 							: domainOverviewRoute;
 
 					router.navigate( {

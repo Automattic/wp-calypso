@@ -238,7 +238,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				) }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
-					<FullWidthSection className="plugins-browser__marketplace-footer">
+					<FullWidthSection className="plugins__marketplace-footer">
 						<MarketplaceFooter />
 					</FullWidthSection>
 				) }

@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { Link } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { domainOverviewRoute, domainTransferSetupRoute } from '../../app/router/domains';
+import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
 import { Text } from '../../components/text';
 import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -23,10 +23,8 @@ export const DomainNameField = ( {
 
 	const href =
 		domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER &&
-		// TODO: When DOMAINS-1802 is completed, we should check if the domain has the `pending_registry` status
-		// and send the user to the `/v2/domains/<domain_name>/transfer` URL instead of the `domain-transfer-setup` URL
 		config.isEnabled( 'domain-transfer-redesign' )
-			? domainTransferSetupRoute.fullPath
+			? domainTransferRoute.fullPath
 			: domainOverviewRoute.fullPath;
 
 	return (
