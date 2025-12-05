@@ -494,7 +494,7 @@ export function Plan( {
 	nag: { isExpired: false } | { isExpired: true; site: Pick< Site, 'slug' | 'plan' > };
 	isSelfHostedJetpackConnected: boolean;
 	isJetpack: boolean;
-	isOwner: boolean;
+	isOwner?: boolean;
 	value: string;
 } ) {
 	if ( isSelfHostedJetpackConnected ) {
