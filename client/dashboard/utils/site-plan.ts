@@ -129,13 +129,7 @@ export function getSitePlanDisplayName__ES( site: DashboardSiteListSite ) {
 		}
 	}
 
-	// Display the short name for WP.com plans.
-	// Determine if the plan is a WP.com plan by checking if the license key is empty.
-	if ( ! plan.license_key ) {
-		return plan.product_name_short;
-	}
-
-	return plan.product_name || plan.product_name_short;
+	return plan.product_name_short;
 }
 
 export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
