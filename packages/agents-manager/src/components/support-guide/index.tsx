@@ -12,12 +12,18 @@ export default function SupportGuide( {
 	isChatDocked,
 	onAbort,
 	onClose,
+	currentSiteDomain,
+	sectionName,
+	isEligibleForChat,
 }: {
 	chatHeaderOptions: Options;
 	isChatDocked: boolean;
 	isOpen: boolean;
 	onAbort: () => void;
 	onClose: () => void;
+	currentSiteDomain?: string;
+	sectionName: string;
+	isEligibleForChat: boolean;
 } ) {
 	const navigate = useNavigate();
 	const location = useLocation().search;
@@ -52,9 +58,9 @@ export default function SupportGuide( {
 				<div className="agenttic agent-manager-support-guide-wrapper">
 					<div className="agent-manager-support-guide-content help-center__container-content">
 						<HelpCenterArticle
-							sectionName="support-guides"
-							currentSiteDomain="currentSiteDomain"
-							isEligibleForChat
+							sectionName={ sectionName }
+							currentSiteDomain={ currentSiteDomain }
+							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ false }
 						/>
 					</div>

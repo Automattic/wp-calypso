@@ -21,8 +21,10 @@ import type { HelpCenterSite, CurrentUser } from '@automattic/data-stores';
 export interface UnifiedAIAgentProps {
 	/** The current route path. */
 	currentRoute?: string;
+	/** Indicates if the user is eligible for chat. */
+	isEligibleForChat: boolean;
 	/** The name of the current section (e.g., 'posts', 'pages'). */
-	sectionName?: string;
+	sectionName: string;
 	/** The selected site object. */
 	site?: HelpCenterSite | null;
 	/** The current user object. */
@@ -73,7 +75,12 @@ export default function UnifiedAIAgent( props: UnifiedAIAgentProps ) {
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup( { currentRoute, site = null }: UnifiedAIAgentProps ) {
+function AgentSetup( {
+	currentRoute,
+	site = null,
+	sectionName,
+	isEligibleForChat,
+}: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const [ loadedProviders, setLoadedProviders ] = useState< LoadedProviders >( {} );
 	const providersLoadedRef = useRef( false );
@@ -212,6 +219,9 @@ function AgentSetup( { currentRoute, site = null }: UnifiedAIAgentProps ) {
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
+			isEligibleForChat={ isEligibleForChat }
+			site={ site }
+			sectionName={ sectionName }
 			emptyViewSuggestions={ loadedProviders.suggestions || defaultSuggestions }
 			markdownComponents={ loadedProviders.markdownComponents || {} }
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }

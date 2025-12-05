@@ -17,7 +17,7 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
-import { AgentsManagerSelect } from '@automattic/data-stores';
+import { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -46,6 +46,12 @@ type NavigationContinuationHook = ( props: {
 } ) => void;
 
 interface AgentDockProps {
+	/** The selected site object. */
+	site?: HelpCenterSite | null;
+	/** The name of the current section (e.g., 'posts', 'pages'). */
+	sectionName: string;
+	/** Indicates if the user is eligible for chat. */
+	isEligibleForChat: boolean;
 	/** Agent configuration for the chat client. */
 	agentConfig: UseAgentChatConfig;
 	/** Suggestions displayed when the chat is empty. */
@@ -60,6 +66,9 @@ interface AgentDockProps {
 
 export default function AgentDock( {
 	agentConfig,
+	site,
+	sectionName,
+	isEligibleForChat,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -308,9 +317,12 @@ export default function AgentDock( {
 
 	const SupportGuideRoute = (
 		<SupportGuide
+			isEligibleForChat={ isEligibleForChat }
 			onAbort={ abortCurrentRequest }
 			onClose={ closeSidebar }
 			isOpen={ isOpen }
+			sectionName={ sectionName }
+			currentSiteDomain={ site?.domain }
 			chatHeaderOptions={ getChatHeaderOptions() }
 			isChatDocked={ isDocked }
 		/>
