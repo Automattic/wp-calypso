@@ -84,7 +84,7 @@ function getFetchSiteListParams(
 		visitors: 'visitors',
 		subscribers_count: 'total_wpcom_subscribers',
 		// links
-		// php_version
+		php_version: 'php_version',
 		// storage
 		// host
 	};

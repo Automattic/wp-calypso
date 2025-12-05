@@ -29,6 +29,7 @@ export interface DashboardSiteListSite {
 	is_p2?: boolean;
 	is_vip?: boolean;
 	owner_id?: number;
+	php_version?: string;
 	slug: string; // Slug is always fetched
 	visitors?: null | number;
 	total_wpcom_subscribers?: number;

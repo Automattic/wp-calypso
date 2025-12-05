@@ -390,6 +390,10 @@ export function PHPVersion( { site }: { site: Site } ) {
 	return <span ref={ ref }>{ ! isLoading ? data : <LoadingIndicator label="X.Y" /> }</span>;
 }
 
+export function PHPVersion__ES( { site }: { site: DashboardSiteListSite } ) {
+	return site.php_version ? <span>{ site.php_version }</span> : <IneligibleIndicator />;
+}
+
 export function MediaStorage( { site }: { site: Site } ) {
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
