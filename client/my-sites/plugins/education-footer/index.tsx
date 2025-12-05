@@ -30,7 +30,15 @@ const ThreeColumnContainer = styled.div`
 		flex-wrap: nowrap;
 		overflow: auto;
 		scrollbar-width: none;
-		gap: 16px;
+		gap: 28px;
+
+		&.plugin-how-to-guides {
+			margin-top: 52px;
+		}
+
+		.card-block:focus {
+			outline: none;
+		}
 
 		&::-webkit-scrollbar {
 			display: none;
@@ -43,6 +51,11 @@ const ThreeColumnContainer = styled.div`
 		@media ( max-width: 660px ) {
 			scroll-padding: 0 32px;
 			margin: 0 -16px;
+
+			&.plugin-how-to-guides {
+				flex-direction: column;
+				margin-top: 12px;
+			}
 		}
 	}
 `;
@@ -53,10 +66,6 @@ const EducationFooterContainer = styled.div`
 	> div:first-child {
 		padding: 0;
 		margin-bottom: 18px;
-
-		@media ( max-width: 660px ) {
-			padding: 0 16px;
-		}
 
 		.wp-brand-font {
 			font-size: var( --scss-font-title-medium );
@@ -90,6 +99,10 @@ const EducationFooterContainer = styled.div`
 		div {
 			width: 100%;
 			text-wrap: pretty;
+
+			.full-width-section & {
+				padding: 0;
+			}
 		}
 	}
 `;
@@ -141,6 +154,9 @@ const CardText = styled.span< { color: string } >`
 	line-height: 20px;
 `;
 
+const CardTitle = styled( CardText )`
+	font-size: ${ isEnabled( 'marketplace-redesign' ) ? '18px' : '14px' };
+`;
 const FeatureIcon = styled.div`
 	display: flex;
 	align-items: center;
@@ -279,6 +295,8 @@ const EducationFooter = () => {
 		[ dispatch, openArticleInHelpCenter, isLoggedIn ]
 	);
 
+	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
+
 	const links = {
 		websiteBuilding: localizeUrl( 'https://wordpress.com/support/plugins/' ),
 		customization: localizeUrl( 'https://wordpress.com/support/plugins/install-a-plugin/' ),
@@ -289,46 +307,65 @@ const EducationFooter = () => {
 		<EducationFooterContainer>
 			<PluginsResultsHeader
 				title={ __( 'Get started with plugins' ) }
-				subtitle={ __( 'Our favorite how-to guides to get you started with plugins.' ) }
+				subtitle={
+					isMarketplaceRedesignEnabled
+						? __( 'Become a plugin pro with our step-by-step guides.' )
+						: __( 'Our favorite how-to guides to get you started with plugins.' )
+				}
 			/>
 			<ThreeColumnContainer className="plugin-how-to-guides">
 				<LinkCard
+					image={
+						isMarketplaceRedesignEnabled
+							? '/calypso/images/plugins/what-are-plugins.png'
+							: undefined
+					}
 					title={
-						<CardText color="var(--studio-gray-100)">
+						<CardTitle color="var(--studio-gray-100)">
 							{ __( 'What Are WordPress Plugins? Everything You Need to Know as a Beginner' ) }
-						</CardText>
+						</CardTitle>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
 					url={ links.websiteBuilding }
-					border="var(--studio-gray-5)"
+					border={ ! isMarketplaceRedesignEnabled ? 'var(--studio-gray-5)' : undefined }
 					onClick={ onClickLinkCard( 'website_building', links.websiteBuilding ) }
 				/>
 				<LinkCard
-					title={
-						<CardText color="var(--studio-gray-100)">
-							{ __(
-								"How to Install Plugins on Your WordPress.com site: The Complete Beginner's Guide"
-							) }
-						</CardText>
+					image={
+						isMarketplaceRedesignEnabled
+							? '/calypso/images/plugins/how-to-find-plugins.png'
+							: undefined
 					}
-					titleMarginBottom="16px"
-					cta={ <ReadMoreLink /> }
-					url={ links.customization }
-					border="var(--studio-gray-5)"
-					onClick={ onClickLinkCard( 'customization', links.customization ) }
-				/>
-				<LinkCard
 					title={
-						<CardText color="var(--studio-gray-100)">
+						<CardTitle color="var(--studio-gray-100)">
 							{ __( 'How to Find and Choose the Best WordPress Plugins (Useful for All Sites)' ) }
-						</CardText>
+						</CardTitle>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
 					url={ links.seo }
-					border="var(--studio-gray-5)"
+					border={ ! isMarketplaceRedesignEnabled ? 'var(--studio-gray-5)' : undefined }
 					onClick={ onClickLinkCard( 'seo', links.seo ) }
+				/>
+				<LinkCard
+					image={
+						isMarketplaceRedesignEnabled
+							? '/calypso/images/plugins/how-to-install-plugins.png'
+							: undefined
+					}
+					title={
+						<CardTitle color="var(--studio-gray-100)">
+							{ __(
+								"How to Install Plugins on Your WordPress.com site: The Complete Beginner's Guide"
+							) }
+						</CardTitle>
+					}
+					titleMarginBottom="16px"
+					cta={ <ReadMoreLink /> }
+					url={ links.customization }
+					border={ ! isMarketplaceRedesignEnabled ? 'var(--studio-gray-5)' : undefined }
+					onClick={ onClickLinkCard( 'customization', links.customization ) }
 				/>
 			</ThreeColumnContainer>
 		</EducationFooterContainer>
