@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
+import { wpcomLink } from '../../utils/link';
 import { getSiteVisibilityURL } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 
@@ -51,7 +52,7 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 				: {
 						heading: __( 'Coming soon' ),
 						description: __( 'Finish setting up your site.' ),
-						externalLink: `/home/${ site.slug }`,
+						externalLink: wpcomLink( `/home/${ site.slug }` ),
 				  } ) }
 			progress={ {
 				value: completedTasks,

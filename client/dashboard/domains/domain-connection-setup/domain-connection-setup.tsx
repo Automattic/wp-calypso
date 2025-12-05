@@ -213,7 +213,7 @@ export default function DomainConnectionSetup( {
 										variant="link"
 										onClick={ () => setConnectionMode( DomainConnectionSetupMode.DC ) }
 									>
-										{ __( 'Use domain connect' ) }
+										{ __( 'Use Domain Connect' ) }
 									</Button>
 								</HStack>
 							</CardBody>
