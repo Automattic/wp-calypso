@@ -1,4 +1,4 @@
-import { Button, Icon } from '@wordpress/components';
+import { Button, Icon, Spinner } from '@wordpress/components';
 import { check, edit, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode, useState } from 'react';
@@ -24,10 +24,12 @@ interface StepShareSSHAccessProps {
 	onPasswordChange: ( password: string ) => void;
 	onGenerateSSHKey: () => void;
 	onEditUsername: () => void;
+	onAskForHelp: () => void;
 	helpLink: ReactNode;
 	isTransferring: boolean;
 	shouldGenerateKey: boolean;
 	isInputDisabled: boolean;
+	isProcessingAssistedMigration: boolean;
 }
 
 export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
@@ -45,10 +47,12 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 	onPasswordChange,
 	onGenerateSSHKey,
 	onEditUsername,
+	onAskForHelp,
 	helpLink,
 	isTransferring,
 	shouldGenerateKey,
 	isInputDisabled,
+	isProcessingAssistedMigration,
 } ) => {
 	const translate = useTranslate();
 	const [ copied, setCopied ] = useState( false );
@@ -98,15 +102,43 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 			);
 		}
 
-		// Provide specific guidance based on authentication method
+		const AskForHelpButton = (
+			<Button
+				variant="link"
+				onClick={ () => {
+					recordTracksEvent( 'calypso_site_migration_ssh_action', {
+						step: 'share-ssh-access',
+						action: 'click_assisted_migration_from_error',
+						auth_method: authMethod,
+					} );
+					onAskForHelp();
+				} }
+				type="button"
+				disabled={ isProcessingAssistedMigration }
+			/>
+		);
+
+		// Provide specific guidance based on authentication method with link to assisted migration
 		if ( authMethod === 'password' ) {
 			return translate(
-				'SSH authentication failed. Please verify your SSH username and password are correct and try again.'
+				'SSH authentication failed. Please verify your SSH username and password are correct and try again. {{button}}Need help? Let us migrate your site{{spinner/}}{{/button}}',
+				{
+					components: {
+						button: AskForHelpButton,
+						spinner: isProcessingAssistedMigration ? <Spinner /> : null,
+					},
+				}
 			);
 		}
 
 		return translate(
-			'SSH authentication failed. Please ensure your SSH key is properly configured on the source site and try again.'
+			'SSH authentication failed. Please ensure your SSH key is properly configured on the source site and try again. {{button}}Need help? Let us migrate your site{{spinner/}}{{/button}}',
+			{
+				components: {
+					button: AskForHelpButton,
+					spinner: isProcessingAssistedMigration ? <Spinner /> : null,
+				},
+			}
 		);
 	};
 

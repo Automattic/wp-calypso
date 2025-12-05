@@ -156,6 +156,38 @@ const SiteMigrationSshShareAccess: StepType< {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
+	const handleSkip = useCallback( async () => {
+		recordTracksEvent( 'calypso_site_migration_ssh_action', {
+			step: 'share_access',
+			action: 'click_assisted_migration',
+		} );
+		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
+			path: window.location.pathname,
+			automated_migration: true,
+		} );
+
+		try {
+			await sendTicketAsync( {
+				locale,
+				from_url: fromUrl,
+				blog_url: siteSlug,
+			} );
+
+			// Reset the site in the state to ensure the correct overview screen is shown.
+			siteId && dispatch( resetSite( siteId ) );
+
+			return navigation.submit?.( {
+				destination: 'do-it-for-me',
+			} );
+		} catch ( error ) {
+			// TODO: Handle error
+		}
+	}, [ locale, fromUrl, siteSlug, siteId, dispatch, navigation, sendTicketAsync ] );
+
+	const navigateToDoItForMe = useCallback( () => {
+		handleSkip();
+	}, [ handleSkip ] );
+
 	// Poll for migration status after starting migration
 	const { data: migrationStatus } = useSSHMigrationStatus( {
 		siteId,
@@ -180,11 +212,13 @@ const SiteMigrationSshShareAccess: StepType< {
 		siteName: site?.name ?? '',
 		host,
 		onNoSSHAccess: handleNoSSHAccess,
+		onAskForHelp: navigateToDoItForMe,
 		migrationStatus: migrationStatus?.status,
 		isTransferring,
 		isInputDisabled:
 			isStartingMigration || migrationStarted || shouldStartMigration || isProcessingNoSSH,
 		isProcessingNoSSH,
+		isProcessingAssistedMigration: isSubmittingTicket,
 	} );
 
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
@@ -275,38 +309,6 @@ const SiteMigrationSshShareAccess: StepType< {
 			triggerSSHMigration();
 		}
 	}, [ transferStatus, shouldStartMigration, triggerSSHMigration ] );
-
-	const handleSkip = useCallback( async () => {
-		recordTracksEvent( 'calypso_site_migration_ssh_action', {
-			step: 'share_access',
-			action: 'click_assisted_migration',
-		} );
-		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
-			path: window.location.pathname,
-			automated_migration: true,
-		} );
-
-		try {
-			await sendTicketAsync( {
-				locale,
-				from_url: fromUrl,
-				blog_url: siteSlug,
-			} );
-
-			// Reset the site in the state to ensure the correct overview screen is shown.
-			siteId && dispatch( resetSite( siteId ) );
-
-			return navigation.submit?.( {
-				destination: 'do-it-for-me',
-			} );
-		} catch ( error ) {
-			// TODO: Handle error
-		}
-	}, [ locale, fromUrl, siteSlug, siteId, dispatch, navigation, sendTicketAsync ] );
-
-	const navigateToDoItForMe = useCallback( () => {
-		handleSkip();
-	}, [ handleSkip ] );
 
 	const displaySiteName = urlToDomain( fromUrl );
 	const hostDisplayName = getSSHHostDisplayName( host );
