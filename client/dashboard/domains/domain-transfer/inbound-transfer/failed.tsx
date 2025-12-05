@@ -1,5 +1,5 @@
-import { Domain, type Purchase } from '@automattic/api-core';
-import { domainInboundTransferStatusQuery } from '@automattic/api-queries';
+import { Domain } from '@automattic/api-core';
+import { domainInboundTransferStatusQuery, purchaseQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -11,16 +11,13 @@ import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
 import { InboundTransferStep } from './transfer-step';
 
-export const InboundTransferFailed = ( {
-	domain,
-	purchase,
-}: {
-	domain: Domain;
-	purchase?: Purchase;
-} ) => {
+export const InboundTransferFailed = ( { domain }: { domain: Domain } ) => {
 	const { name: appName } = useAppContext();
 	const { data: domainInboundTransferStatus } = useQuery(
 		domainInboundTransferStatusQuery( domain.domain )
+	);
+	const { data: purchase } = useQuery(
+		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
 
 	return (
