@@ -80,7 +80,6 @@ export default function PreferencesLogin() {
 		{
 			id: 'primarySiteId',
 			label: __( 'Primary site' ),
-			description: __( 'Choose the default site dashboard you’ll see at login.' ),
 			isVisible: () => user.visible_site_count > 0,
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
@@ -109,11 +108,12 @@ export default function PreferencesLogin() {
 		{
 			id: 'defaultLandingPage',
 			label: __( 'Default landing page' ),
+			description: __( 'Select what you’ll see by default when visiting WordPress.com.' ),
 			Edit: 'radio',
 			elements: [
-				{ label: __( 'Primary site dashboard' ), value: 'primary-site-dashboard' },
-				{ label: __( 'Sites' ), value: 'sites' },
-				{ label: __( 'Reader' ), value: 'reader' },
+				{ label: __( 'Open your primary site’s dashboard.' ), value: 'primary-site-dashboard' },
+				{ label: __( 'See a list of all your sites.' ), value: 'sites' },
+				{ label: __( 'View posts from sites you follow.' ), value: 'reader' },
 			] satisfies { label: string; value: LandingPage }[],
 		},
 	];
@@ -163,11 +163,11 @@ export default function PreferencesLogin() {
 	};
 
 	return (
-		<Card className="preferences-login-card">
+		<Card>
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
 					<VStack spacing={ 3 }>
-						<SectionHeader level={ 3 } title={ __( 'Login preferences' ) } />
+						<SectionHeader level={ 3 } title={ __( 'Account preferences' ) } />
 
 						<DataForm< LoginPreferencesFormData >
 							data={ formData }
@@ -177,10 +177,6 @@ export default function PreferencesLogin() {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-
-						<Text variant="muted" as="p">
-							{ __( 'Select what you’ll see by default when visiting WordPress.com.' ) }
-						</Text>
 
 						<ButtonStack>
 							<Button
