@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
@@ -18,6 +18,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import SitesHeaderActions from '../sites-header-actions';
 import ClientSite from './client-site';
 import { AvailablePlans } from './plan-field';
@@ -170,9 +171,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 			title={ title }
 		>
 			<LayoutColumn className="sites-overview" wide>
-				<LayoutTop isFullWidth>
-					<PurchaseConfirmationMessage />
-
+				<LayoutTop>
 					<LayoutHeader>
 						<Title>{ translate( 'Sites' ) }</Title>
 						<Actions>
@@ -181,6 +180,10 @@ export default function NeedSetup( { licenseKey }: Props ) {
 						</Actions>
 					</LayoutHeader>
 				</LayoutTop>
+				<div className="sites-dashboard__notices">
+					<PendingPaymentNotification isFullWidth />
+					<PurchaseConfirmationMessage />
+				</div>
 				{ currentSiteConfigurationId && (
 					<SiteConfigurationsModal
 						closeModal={ closeModal }

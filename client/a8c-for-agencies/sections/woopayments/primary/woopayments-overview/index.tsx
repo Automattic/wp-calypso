@@ -6,7 +6,6 @@ import { useMemo, useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import CopyToClipboardButton from 'calypso/a8c-for-agencies/components/copy-to-clipboard-button';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_WOOPAYMENTS_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -25,6 +24,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';

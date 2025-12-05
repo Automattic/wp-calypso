@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
@@ -19,6 +18,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 import { WooPaymentsProvider } from '../../context';
 import WooPaymentsDashboardContent from '../../dashboard-content';
@@ -148,8 +148,7 @@ const WooPaymentsDashboard = () => {
 					sitesWithPluginsStates: sortedSitesWithWooPayments,
 				} }
 			>
-				<LayoutTop isFullWidth={ isFullWidth }>
-					{ !! allSitesWithWooPayments.length && <MissingPaymentSettingsNotice /> }
+				<LayoutTop>
 					<LayoutHeader>
 						<Title>{ title }</Title>
 						<Actions>
@@ -161,7 +160,12 @@ const WooPaymentsDashboard = () => {
 					</LayoutHeader>
 				</LayoutTop>
 
-				<LayoutBody>{ content }</LayoutBody>
+				<LayoutBody
+					notices={ !! allSitesWithWooPayments.length && <MissingPaymentSettingsNotice /> }
+					isFullWidth={ isFullWidth }
+				>
+					{ content }
+				</LayoutBody>
 			</WooPaymentsProvider>
 		</Layout>
 	);

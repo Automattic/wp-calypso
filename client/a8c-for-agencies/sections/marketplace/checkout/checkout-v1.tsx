@@ -7,7 +7,6 @@ import { useCallback, useMemo, useContext, useEffect, useRef, useState } from 'r
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_LINK,
@@ -17,6 +16,7 @@ import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -237,7 +237,6 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 		>
 			{ isClient ? null : (
 				<LayoutTop>
-					<A4AAgencyApprovalNotice />
 					<LayoutHeader>
 						<Breadcrumb
 							items={ [
@@ -253,7 +252,7 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 					</LayoutHeader>
 				</LayoutTop>
 			) }
-			<LayoutBody>
+			<LayoutBody notices={ <A4AAgencyApprovalNotice /> }>
 				<div className="checkout__container">
 					<div className="checkout__main">
 						<h1 className="checkout__main-title">{ title }</h1>

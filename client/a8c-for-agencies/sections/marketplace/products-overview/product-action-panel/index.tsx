@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { SearchControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import LayoutSection from 'calypso/layout/hosting-dashboard/body';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { SelectedFilters } from '../../lib/product-filter';
@@ -106,7 +106,7 @@ export default function ProductActionPanel( {
 
 	return (
 		<>
-			<LayoutSection className="product-action-panel">
+			<LayoutBody hidePendingPaymentNotification className="product-action-panel">
 				<div className="product-action-panel__filter">
 					<SearchControl
 						label={ translate( 'Search' ) }
@@ -130,7 +130,7 @@ export default function ProductActionPanel( {
 							onChange={ handleSelectedBundleSizeChange }
 						/>
 					) ) }
-			</LayoutSection>
+			</LayoutBody>
 
 			{ showDiscountsModal && <DiscountsComingSoonModal onClose={ handleCloseModal } /> }
 		</>

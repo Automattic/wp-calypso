@@ -4,7 +4,6 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
@@ -17,6 +16,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/layout/hosting-dashboard/header';
 import LayoutNavigation, { LayoutNavigationTabs } from 'calypso/layout/hosting-dashboard/nav';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { TAB_ACTIVE_MEMBERS, TAB_INVITED_MEMBERS } from '../../constants';
@@ -96,7 +96,7 @@ export default function TeamList( { currentTab }: Props ) {
 
 	return (
 		<Layout className="team-list full-width-layout-with-table" title={ title } wide>
-			<LayoutTop isFullWidth withNavigation>
+			<LayoutTop withNavigation>
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
@@ -118,7 +118,7 @@ export default function TeamList( { currentTab }: Props ) {
 					/>
 				</LayoutNavigation>
 			</LayoutTop>
-			<LayoutBody>{ tabs.selected.content }</LayoutBody>
+			<LayoutBody isFullWidth>{ tabs.selected.content }</LayoutBody>
 		</Layout>
 	);
 }

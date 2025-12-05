@@ -9,7 +9,6 @@ import {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
@@ -28,6 +27,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { useDispatch, useSelector } from 'calypso/state';
 import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -117,7 +117,7 @@ export default function ReferralsOverview() {
 			withBorder
 		>
 			<LayoutColumn wide className="referrals-layout__column">
-				<LayoutTop isFullWidth={ hasReferrals }>
+				<LayoutTop>
 					{ !! newReferralOrderEmail && (
 						<NewReferralOrderNotification
 							referralOrderEmail={ newReferralOrderEmail }
@@ -132,11 +132,8 @@ export default function ReferralsOverview() {
 						/>
 					) }
 
-					<MissingPaymentSettingsNotice isFullWidth />
-
 					<LayoutHeader>
 						<Title>{ title } </Title>
-
 						<Actions>
 							<MobileSidebarNavigation />
 							{ isAgencyApproved && (
@@ -153,7 +150,10 @@ export default function ReferralsOverview() {
 					</LayoutHeader>
 				</LayoutTop>
 
-				<LayoutBody>
+				<LayoutBody
+					isFullWidth={ hasReferrals }
+					notices={ <MissingPaymentSettingsNotice isFullWidth /> }
+				>
 					<LayoutBodyContent
 						tipaltiData={ tipaltiData }
 						referrals={ referrals }

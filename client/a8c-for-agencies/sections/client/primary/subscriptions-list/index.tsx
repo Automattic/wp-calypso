@@ -8,11 +8,11 @@ import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, { LayoutHeaderTitle as Title } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { useSelector } from 'calypso/state';
 import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';

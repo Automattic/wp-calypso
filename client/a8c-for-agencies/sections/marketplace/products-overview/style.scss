@@ -76,3 +76,11 @@ $header-compact-height-mobile: 128px;
 		box-shadow: 0 2px 4px 0 rgba( 0, 0, 0, 0.1 );
 	}
 }
+
+.products-overview__notices {
+	padding: 16px;
+
+	@include break-medium {
+		padding: 16px 64px;
+	}
+}

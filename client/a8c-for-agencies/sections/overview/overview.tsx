@@ -2,7 +2,6 @@ import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -10,6 +9,7 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { MissingPaymentSettingsNotice } from '../referrals/common/missing-payment-settings-notice';
 import OverviewBody from './body';
 import OverviewHeaderActions from './header-actions';
@@ -25,10 +25,6 @@ export default function Overview() {
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
-				<MissingPaymentSettingsNotice />
-				<A4AAgencyApprovalNotice />
-				<PressableUsageLimitNotice />
-
 				<LayoutHeader className="a4a-overview-header">
 					<Title>{ title }</Title>
 					<Actions className="a4a-overview__header-actions">
@@ -37,7 +33,16 @@ export default function Overview() {
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
-			<LayoutBody className="a4a-overview-content">
+			<LayoutBody
+				className="a4a-overview-content"
+				notices={
+					<>
+						<MissingPaymentSettingsNotice />
+						<A4AAgencyApprovalNotice />
+						<PressableUsageLimitNotice />
+					</>
+				}
+			>
 				<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
 			</LayoutBody>
 

@@ -9,7 +9,6 @@ import {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -18,6 +17,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { A4A_REPORTS_BUILD_LINK } from '../../constants';
@@ -106,7 +106,7 @@ export default function ReportsDashboard() {
 			wide
 		>
 			<LayoutColumn wide className="reports-dashboard__column" scrollable>
-				<LayoutTop isFullWidth={ isFullWidth }>
+				<LayoutTop>
 					<LayoutHeader>
 						<Title>{ title }</Title>
 						<Actions>
@@ -125,7 +125,7 @@ export default function ReportsDashboard() {
 						</Actions>
 					</LayoutHeader>
 				</LayoutTop>
-				<LayoutBody>{ content }</LayoutBody>
+				<LayoutBody isFullWidth={ isFullWidth }>{ content }</LayoutBody>
 			</LayoutColumn>
 			{ selectedItem && (
 				<LayoutColumn wide>

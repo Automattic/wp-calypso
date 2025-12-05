@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useLayoutEffect, useState } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
@@ -20,6 +19,7 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -109,8 +109,6 @@ function HostingOverview( { section }: SectionProps ) {
 			<GuidedTour defaultTourId="marketplaceWalkthrough" />
 
 			<LayoutTop>
-				<PressableUsageLimitNotice />
-				<A4AAgencyApprovalNotice />
 				<LayoutHeader>
 					<Breadcrumb
 						items={ [
@@ -163,9 +161,16 @@ function HostingOverview( { section }: SectionProps ) {
 				/>
 			</LayoutTop>
 
-			<LayoutBody className="hosting-overview__body">
+			<LayoutBody
+				className="hosting-overview__body"
+				notices={
+					<div className="hosting-overview__notices">
+						<PressableUsageLimitNotice />
+						<A4AAgencyApprovalNotice />
+					</div>
+				}
+			>
 				<QueryProductsList currency="USD" />
-
 				{ section && <HostingContent section={ section } onAddToCart={ onAddToCart } /> }
 			</LayoutBody>
 		</Layout>

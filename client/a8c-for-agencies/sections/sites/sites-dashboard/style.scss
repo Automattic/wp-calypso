@@ -1084,3 +1084,11 @@
 .sites-dashboard.preview-hidden .notice-banner {
 	display: flex;
 }
+
+.sites-dashboard__notices {
+	padding: 16px;
+
+	@media ( min-width: $break-small ) {
+		padding: 16px 64px;
+	}
+}

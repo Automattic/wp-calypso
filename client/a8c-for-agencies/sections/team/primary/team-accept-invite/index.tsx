@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import { A4A_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useActivateMemberMutation, {
@@ -11,6 +10,7 @@ import useActivateMemberMutation, {
 import AgencyLogo from 'calypso/assets/images/a8c-for-agencies/agency-logo.svg';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, { LayoutHeaderTitle as Title } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';

@@ -13,6 +13,14 @@
 		}
 	}
 
+	.hosting-dashboard-layout__body-notices {
+		padding: 16px;
+
+		@include break-medium {
+			padding: 16px 40px;
+		}
+	}
+
 	.page-section__header-description {
 		@include heading-medium;
 		color: var(--color-neutral-70);

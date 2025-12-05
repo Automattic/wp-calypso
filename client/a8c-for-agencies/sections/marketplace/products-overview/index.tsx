@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
@@ -18,6 +18,7 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -137,7 +138,6 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 
 			<div className="products-overview__top" ref={ topRef }>
 				<LayoutTop>
-					<A4AAgencyApprovalNotice />
 					<LayoutHeader>
 						<Breadcrumb
 							items={ [
@@ -186,6 +186,11 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 
 					<ProductCategoryMenu onSelect={ onCategorySelected } />
 				</LayoutTop>
+			</div>
+
+			<div className="products-overview__notices">
+				<PendingPaymentNotification />
+				<A4AAgencyApprovalNotice />
 			</div>
 
 			<div

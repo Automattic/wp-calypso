@@ -35,7 +35,7 @@ export function A4AFeedback( { type }: { type: FeedbackType } ) {
 
 	return (
 		<Layout className="a4a-feedback" title={ title } wide>
-			<LayoutBody>
+			<LayoutBody hidePendingPaymentNotification>
 				<div className="a4a-feedback__wrapper">
 					<div className="a4a-feedback__content">
 						<h1 className="a4a-feedback__title">{ title }</h1>

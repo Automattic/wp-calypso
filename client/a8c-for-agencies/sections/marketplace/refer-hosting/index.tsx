@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_HOSTING_LINK,
@@ -12,6 +11,7 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import ReferHostingForm from './form';
 import { getReferralConfig } from './lib/get-referral-config';
 import type { ReferHostingType } from './types';
@@ -27,7 +27,6 @@ function ReferHosting( { type }: { type: ReferHostingType } ) {
 		<Layout className="refer-hosting" title={ config.pageTitle } wide>
 			<div className="refer-hosting__top">
 				<LayoutTop>
-					<A4AAgencyApprovalNotice />
 					<LayoutHeader>
 						<Breadcrumb
 							items={ [
@@ -53,7 +52,7 @@ function ReferHosting( { type }: { type: ReferHostingType } ) {
 				</LayoutTop>
 			</div>
 
-			<LayoutBody>
+			<LayoutBody notices={ <A4AAgencyApprovalNotice /> }>
 				<ReferHostingForm config={ config } />
 			</LayoutBody>
 		</Layout>

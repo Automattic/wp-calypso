@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import LayoutStepper from 'calypso/a8c-for-agencies/components/layout/stepper';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
@@ -18,6 +17,7 @@ import LayoutHeader, {
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { isClientView } from '../lib/is-client-view';
 import PaymentMethodForm from './payment-method-form';
 
@@ -54,7 +54,6 @@ export default function PaymentMethodAdd( { withAssignLicense, isClientCheckout 
 			{ !! stepper && <LayoutStepper steps={ stepper.steps } current={ stepper.current } /> }
 
 			<LayoutTop>
-				<A4AAgencyApprovalNotice />
 				<LayoutHeader>
 					{ ! stepper && ! isClientCheckout && (
 						<Breadcrumb
@@ -74,7 +73,7 @@ export default function PaymentMethodAdd( { withAssignLicense, isClientCheckout 
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>
+			<LayoutBody notices={ <A4AAgencyApprovalNotice /> }>
 				<div className="payment-method-add__content">
 					<Card className="payment-method-add__card payment-form">
 						<PaymentMethodForm />

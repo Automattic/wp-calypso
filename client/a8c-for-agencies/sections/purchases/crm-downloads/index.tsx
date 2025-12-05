@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import { CrmDownloadsContent } from 'calypso/components/crm-downloads/crm-downloads';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, { LayoutHeaderTitle as Title } from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import './style.scss';
 
 export function CrmDownloads( { licenseKey }: { licenseKey: string } ) {
