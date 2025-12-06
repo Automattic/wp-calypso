@@ -19,7 +19,6 @@ import {
 	type StoredPaymentMethod,
 	type ContactDetailsType,
 } from '@automattic/wpcom-checkout';
-import debugFactory from 'debug';
 import { useMemo } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { CheckoutSubmitButtonContent } from '../../components/checkout-submit-button-content';
@@ -43,8 +42,6 @@ import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 import type { Stripe } from '@stripe/stripe-js';
 import type { ReactNode } from 'react';
-
-const debug = debugFactory( 'calypso:use-create-payment-methods' );
 
 export { useCreateExistingCards };
 
@@ -358,15 +355,7 @@ function useCreateRazorpay( {
 	razorpayConfiguration: RazorpayConfiguration | null;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
-	if ( ! isEnabled( 'checkout/razorpay' ) ) {
-		debug( 'Razorpay disabled by configuration' );
-	}
-
-	const isRazorpayReady =
-		! isRazorpayLoading &&
-		! razorpayLoadingError &&
-		razorpayConfiguration &&
-		isEnabled( 'checkout/razorpay' );
+	const isRazorpayReady = ! isRazorpayLoading && ! razorpayLoadingError && razorpayConfiguration;
 
 	return useMemo( () => {
 		return isRazorpayReady && razorpayConfiguration && cartKey
