@@ -98,13 +98,14 @@ export function fetchPluginsList( options ) {
  * @param {string}     themeId  The theme identifier.
  * @returns {Promise.<Object>}  A promise that returns a `theme` object
  */
-export function fetchThemeInformation( themeId ) {
+export function fetchThemeInformation( themeId, locale ) {
 	const query = {
 		action: 'theme_information',
 		// Return an `author` object containing `user_nicename` and `display_name` attrs.
 		// This is for consistency with WP.com, which always returns the display name as `author`.
 		'request[fields][extended_author]': true,
 		'request[slug]': themeId,
+		'request[locale]': getWporgLocaleCode( locale ),
 	};
 
 	return getRequest( WPORG_THEMES_ENDPOINT, query );
