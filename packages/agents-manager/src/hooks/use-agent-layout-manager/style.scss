@@ -1,6 +1,6 @@
 @import '@wordpress/base-styles/colors';
 
-$admin-bar-height: 32px;
+$admin-bar-height: 33px;
 $layout-spacing: 16px;
 $sidebar-width: 350px;
 $chat-header-height: 38px;
@@ -50,6 +50,17 @@ $transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
 	}
 }
 
+// Reposition the notice panel
+@mixin notice-panel-open( $notice-panel-selector ) {
+	#{$notice-panel-selector} {
+		right: $sidebar-width !important;
+		top: $layout-spacing + $admin-bar-height !important;
+		bottom: $layout-spacing !important;
+		border-bottom-right-radius: $main-border-radius !important;
+		overflow: hidden;
+	}
+}
+
 // Reposition the editor's template save confirmation panel
 @mixin editor-save-panel-open( $save-panel-selector ) {
 	#{$save-panel-selector} {
@@ -66,27 +77,20 @@ $transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
 	}
 }
 
-// Reposition the WP notice panel
-@mixin wp-notice-panel-open( $notice-panel-selector ) {
-	#{$notice-panel-selector} {
-		right: $sidebar-width;
-		top: $layout-spacing + $admin-bar-height;
-		bottom: $layout-spacing;
-	}
-}
-
 /* WP Admin */
 $admin-menu-width-unified: 272px;
 $admin-menu-width-classic: 160px;
 $admin-menu-width-folded: 37px;
 $admin-content-top: calc( $admin-bar-height + $layout-spacing );
-$admin-content-height: calc( 100vh - $admin-bar-height - ( $layout-spacing * 2 ) );
 $admin-background-color: #f1f1f1;
 $border-color: #545454;
 
 // Mixin for wp-admin sidebar open styles
-// Used by both body-level and #wpwrap-level containers
 @mixin wp-admin-sidebar-open-general() {
+	background-color: $gray-900;
+
+	@include notice-panel-open( '#wpnt-notes-panel2' );
+
 	#wpadminbar {
 		position: fixed !important;
 		top: $layout-spacing;
@@ -96,6 +100,7 @@ $border-color: #545454;
 		border-radius: $main-border-radius $main-border-radius 0 0;
 		border: 1px solid $border-color;
 		border-bottom: none;
+		overflow: hidden;
 	}
 
 	#adminmenuback,
@@ -103,11 +108,10 @@ $border-color: #545454;
 		position: fixed !important;
 		top: $admin-content-top;
 		left: $layout-spacing;
-		bottom: $layout-spacing;
-		height: $admin-content-height !important;
+		height: calc( 100vh - $admin-bar-height - ( $layout-spacing * 2 ) ) !important;
 		border-left: 1px solid $border-color;
 		border-bottom: 1px solid $border-color;
-		border-radius: 0 0 0 $main-border-radius;
+		border-bottom-left-radius: $main-border-radius;
 		overflow: scroll;
 	}
 
@@ -119,27 +123,23 @@ $border-color: #545454;
 		position: fixed !important;
 		top: $admin-content-top;
 		right: $sidebar-width;
-		bottom: $layout-spacing;
-		height: $admin-content-height !important;
-		max-height: $admin-content-height !important;
-		min-height: 0;
-		box-sizing: border-box;
 		padding-left: $layout-spacing;
-		border-radius: 0 0 $main-border-radius 0;
-		border: 1px solid $border-color;
-		border-top: none;
+		bottom: $layout-spacing - 1px;
+		border-bottom-right-radius: $main-border-radius;
+		border-right: 1px solid $border-color;
+		border-bottom: 1px solid $border-color;
 		overflow-y: auto;
 		overflow-x: hidden;
 		background-color: $admin-background-color;
-		margin: 0 !important;
+		box-sizing: border-box;
 	}
 
 	#wpfooter {
 		margin-right: calc( $sidebar-width + 1px ) !important;
-		bottom: 17px;
-		left: 18px;
+		left: $layout-spacing - 2px;
+		bottom: $layout-spacing;
+		border-bottom-right-radius: $main-border-radius;
 		background-color: $admin-background-color;
-		border-radius: 0 0 $main-border-radius 0;
 	}
 
 	.agents-manager-chat--docked {
@@ -165,43 +165,17 @@ $border-color: #545454;
 	}
 }
 
-// When container is body (legacy behavior)
-body.wp-admin:has( #wpwrap.agents-manager-sidebar-container--sidebar-open ),
-body.is-nav-unification.wp-admin.agents-manager-sidebar-container--sidebar-open,
-body.folded.wp-admin.agents-manager-sidebar-container--sidebar-open,
 body.wp-admin.agents-manager-sidebar-container--sidebar-open {
-	background-color: $gray-900;
-	@include wp-admin-sidebar-open-general();
-}
-
-body.is-nav-unification.wp-admin.agents-manager-sidebar-container--sidebar-open {
-	@include wp-admin-sidebar-open-specific( $admin-menu-width-unified );
-}
-
-body.folded.wp-admin.agents-manager-sidebar-container--sidebar-open {
-	@include wp-admin-sidebar-open-specific( $admin-menu-width-folded );
-}
-
-body.wp-admin.agents-manager-sidebar-container--sidebar-open {
-	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
-}
-
-body.is-nav-unification #wpwrap.agents-manager-sidebar-container--sidebar-open {
-	@include wp-admin-sidebar-open-specific( $admin-menu-width-unified );
-}
-
-body #wpwrap.agents-manager-sidebar-container--sidebar-open {
 	@include wp-admin-sidebar-open-general();
 	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
-}
 
-body.folded #wpwrap.agents-manager-sidebar-container--sidebar-open {
-	@include wp-admin-sidebar-open-general();
-	@include wp-admin-sidebar-open-specific( $admin-menu-width-folded );
-}
+	&.is-nav-unification {
+		@include wp-admin-sidebar-open-specific( $admin-menu-width-unified );
+	}
 
-#wp-admin-bar-top-secondary {
-	border-radius: $main-border-radius $main-border-radius 0 0 !important;
+	&.folded {
+		@include wp-admin-sidebar-open-specific( $admin-menu-width-folded );
+	}
 }
 
 /* Calypso */
@@ -214,7 +188,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '#wpcom #content' );
-		@include wp-notice-panel-open( '#wpnc-panel' );
+		@include notice-panel-open( '#wpnc-panel' );
 
 		#header {
 			top: $layout-spacing;
