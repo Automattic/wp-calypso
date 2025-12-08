@@ -51,7 +51,6 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 			},
 		},
 	} );
-	const { recordTracksEvent } = useAnalytics();
 	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
 	const domainsList = useMemo( () => {
 		if ( ! domains || ! site ) {
