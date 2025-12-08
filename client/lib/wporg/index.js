@@ -105,8 +105,11 @@ export function fetchThemeInformation( themeId, locale ) {
 		// This is for consistency with WP.com, which always returns the display name as `author`.
 		'request[fields][extended_author]': true,
 		'request[slug]': themeId,
-		'request[locale]': getWporgLocaleCode( locale ),
 	};
+
+	if ( locale ) {
+		query[ 'request[locale]' ] = getWporgLocaleCode( locale );
+	}
 
 	return getRequest( WPORG_THEMES_ENDPOINT, query );
 }
