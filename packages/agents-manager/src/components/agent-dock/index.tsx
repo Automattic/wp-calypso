@@ -337,7 +337,7 @@ export default function AgentDock( {
 
 	return createAgentPortal(
 		<Routes>
-			<Route path="/" element={ OdieChat } />
+			<Route path="/" element={ Chat } />
 			<Route path="/odie" element={ OdieChat } />
 			<Route path="/chat" element={ Chat } />
 			<Route path="/history" element={ History } />
