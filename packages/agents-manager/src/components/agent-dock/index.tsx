@@ -9,7 +9,7 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
-import { AgentsManagerSelect } from '@automattic/data-stores';
+import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -22,6 +22,9 @@ import { setSessionId, clearSessionId } from '../../utils/agent-session';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import SupportGuide from '../support-guide';
+import SupportGuides from '../support-guides';
+import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 
 /**
  * Navigation continuation hook type
@@ -34,6 +37,12 @@ type NavigationContinuationHook = ( props: {
 } ) => void;
 
 interface AgentDockProps {
+	/** The selected site object. */
+	site?: HelpCenterSite | null;
+	/** The name of the current section (e.g., 'posts', 'pages'). */
+	sectionName: string;
+	/** Indicates if the user is eligible for chat. */
+	isEligibleForChat: boolean;
 	/** Agent configuration for the chat client. */
 	agentConfig: UseAgentChatConfig;
 	/** Suggestions displayed when the chat is empty. */
@@ -48,6 +57,9 @@ interface AgentDockProps {
 
 export default function AgentDock( {
 	agentConfig,
+	site,
+	sectionName,
+	isEligibleForChat,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -76,6 +88,12 @@ export default function AgentDock( {
 		onSubmit,
 		abortCurrentRequest,
 	} = useAgentChat( agentConfig );
+
+	const {
+		messages: odieMessages,
+		isProcessing: isOdieProcessing,
+		sendMessage: sendOdieMessage,
+	} = useManagedOdieChat();
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		agentId,
@@ -189,6 +207,26 @@ export default function AgentDock( {
 		/>
 	);
 
+	const OdieChat = (
+		<AgentChat
+			messages={ odieMessages }
+			suggestions={ [] }
+			isProcessing={ isOdieProcessing }
+			error={ null }
+			onSubmit={ sendOdieMessage }
+			onAbort={ () => {} }
+			isLoadingConversation={ isLoadingConversation }
+			isDocked={ isDocked }
+			isOpen={ isOpen }
+			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
+			onExpand={ () => setIsOpen( true ) }
+			chatHeaderOptions={ getChatHeaderOptions() }
+			markdownComponents={ markdownComponents }
+			markdownExtensions={ markdownExtensions }
+			emptyViewSuggestions={ emptyViewSuggestions }
+		/>
+	);
+
 	const History = (
 		<AgentHistory
 			agentId={ agentId }
@@ -205,6 +243,29 @@ export default function AgentDock( {
 		/>
 	);
 
+	const SupportGuideRoute = (
+		<SupportGuide
+			isEligibleForChat={ isEligibleForChat }
+			onAbort={ abortCurrentRequest }
+			onClose={ closeSidebar }
+			isOpen={ isOpen }
+			sectionName={ sectionName }
+			currentSiteDomain={ site?.domain }
+			chatHeaderOptions={ getChatHeaderOptions() }
+			isChatDocked={ isDocked }
+		/>
+	);
+
+	const SupportGuidesRoute = (
+		<SupportGuides
+			onAbort={ abortCurrentRequest }
+			onClose={ closeSidebar }
+			isOpen={ isOpen }
+			chatHeaderOptions={ getChatHeaderOptions() }
+			isChatDocked={ isDocked }
+		/>
+	);
+
 	if ( ! isStoreReady ) {
 		return null;
 	}
@@ -212,8 +273,11 @@ export default function AgentDock( {
 	return createAgentPortal(
 		<Routes>
 			<Route path="/" element={ Chat } />
+			<Route path="/odie" element={ OdieChat } />
 			{ /* NOTE: Use route state for session ID so it can be accessed throughout the app. */ }
 			<Route path="/chat" element={ Chat } />
+			<Route path="/post" element={ SupportGuideRoute } />
+			<Route path="/support-guides" element={ SupportGuidesRoute } />
 			<Route path="/history" element={ History } />
 			<Route path="*" element={ <Navigate to="/" replace /> } />
 		</Routes>

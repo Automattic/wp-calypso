@@ -323,6 +323,11 @@ body:not( .wp-admin ).agents-manager-sidebar-container {
 				padding: 0;
 			}
 		}
+
+		&__back-btn svg {
+			fill: #fff;
+			margin-left: 0;
+		}
 	}
 
 	.agents-manager-conversation-history-view {
