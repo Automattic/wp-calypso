@@ -11,7 +11,7 @@ import { useAppContext } from '../../app/context';
 import { ButtonStack } from '../../components/button-stack/';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
-import PreferencesLoginSiteDropdown from '../preferences-login/site-dropdown';
+import PreferencesLoginSiteDropdown from './site-dropdown';
 
 interface PrimarySiteFormData {
 	primarySiteId?: number;
