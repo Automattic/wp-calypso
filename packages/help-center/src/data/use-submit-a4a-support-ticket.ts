@@ -21,11 +21,18 @@ export function useSubmitA4ATicketMutation() {
 				path = '/agency/help/pressable/support';
 			}
 
+			// Get OAuth token from localStorage
+			const token = localStorage.getItem( 'wpcom_token' );
+
+			// Remove quotes from token
+			const tokenWithoutQuotes = token?.substring( 1, token.length - 1 );
+
 			return wpcomRequest( {
 				path,
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 				body: ticket,
+				token: tokenWithoutQuotes ?? undefined,
 			} );
 		},
 	} );
