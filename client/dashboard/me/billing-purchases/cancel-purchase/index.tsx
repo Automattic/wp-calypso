@@ -426,7 +426,7 @@ export default function CancelPurchase() {
 			customerConfirmedUnderstanding: false,
 			domainConfirmationConfirmed: false,
 			initialized: true,
-			isLoading: REMOVE_PLAN_STEP !== firstStep,
+			isLoading: REMOVE_PLAN_STEP !== firstStep && CANCEL_FLOW_TYPE.REMOVE !== flowType,
 			isNextAdventureValid: false,
 			isSubmitting: false,
 			questionOneOrder,
@@ -440,7 +440,7 @@ export default function CancelPurchase() {
 			showDomainOptionsStep: false,
 			siteId: undefined,
 			solution: '',
-			surveyShown: REMOVE_PLAN_STEP === firstStep,
+			surveyShown: REMOVE_PLAN_STEP === firstStep || CANCEL_FLOW_TYPE.REMOVE === flowType,
 			surveyStep: firstStep,
 			upsell: '',
 		};
