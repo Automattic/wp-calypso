@@ -425,7 +425,7 @@ function WithHostingFeaturesQuery( {
 	return <span ref={ ref }>{ children( data?.status ) }</span>;
 }
 
-export function Status( { site, isOwner }: { site: Site; isOwner: boolean } ) {
+export function Status( { site, isOwner }: { site: Site; isOwner?: boolean } ) {
 	const status = getSiteStatus( site );
 	const label = getSiteStatusLabel( site );
 
