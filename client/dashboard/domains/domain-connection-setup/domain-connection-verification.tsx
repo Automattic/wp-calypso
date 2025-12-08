@@ -68,7 +68,10 @@ export default function DomainConnectionVerification( {
 						</Badge>
 					</HStack>
 
-					<DnsPropagationProgressBar domainName={ domainName } />
+					<DnsPropagationProgressBar
+						domainMappingStatus={ domainMappingStatus }
+						domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					/>
 
 					{ status === 'verifying' && (
 						<Notice variant="info">
@@ -92,7 +95,7 @@ export default function DomainConnectionVerification( {
 						/>
 					</VStack>
 
-					<DomainPropagationStatus domainName={ domainName } />
+					{ status === 'connected' && <DomainPropagationStatus domainName={ domainName } /> }
 
 					<VStack spacing={ 4 }>
 						{ status === 'verifying' && (

@@ -1501,6 +1501,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/odie-client": "workspace:^"
+    "@automattic/support-articles": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
@@ -2256,6 +2257,14 @@ __metadata:
     react: ^18.3.1
     react-dom: ^18.3.1
     redux: ^5.0.1
+  languageName: unknown
+  linkType: soft
+
+"@automattic/support-articles@workspace:^, @automattic/support-articles@workspace:packages/support-articles":
+  version: 0.0.0-use.local
+  resolution: "@automattic/support-articles@workspace:packages/support-articles"
+  dependencies:
+    wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -15345,6 +15354,7 @@ __metadata:
     "@automattic/social-previews": "workspace:^"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
+    "@automattic/support-articles": "workspace:^"
     "@automattic/tree-select": "workspace:^"
     "@automattic/ui": "workspace:^"
     "@automattic/urls": "workspace:^"

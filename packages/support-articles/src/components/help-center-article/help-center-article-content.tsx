@@ -1,17 +1,22 @@
-/* eslint-disable no-restricted-imports */
 import { EmbedContainer } from '@automattic/components';
 import { useState, useCallback } from '@wordpress/element';
-import { useContentFilter } from '../hooks';
-import { ArticleContentProps } from '../types';
-import HelpCenterFeedbackForm from './help-center-feedback-form';
+import { useContentFilter } from '../../hooks/use-content-filter';
+import HelpCenterFeedbackForm from '../help-center-feedback-form';
+import Placeholders from '../placeholder-lines';
 import { SupportArticleHeader } from './help-center-support-article-header';
-import Placeholders from './placeholder-lines';
+import type { ArticleContentProps } from '../../types';
 
-const ArticleContent = ( { isLoading = false, post }: ArticleContentProps ) => {
+const ArticleContent = ( {
+	post,
+	isLoading,
+	currentSiteDomain,
+	isEligibleForChat,
+	forceEmailSupport,
+}: ArticleContentProps ) => {
 	const [ theRef, setTheRef ] = useState< HTMLDivElement | null >( null );
 	const articleContentRef = useCallback( ( node: HTMLDivElement | null ) => setTheRef( node ), [] );
 
-	useContentFilter( theRef );
+	useContentFilter( theRef, currentSiteDomain || '' );
 
 	return (
 		<article className="help-center-article-content">
@@ -27,7 +32,11 @@ const ArticleContent = ( { isLoading = false, post }: ArticleContentProps ) => {
 							dangerouslySetInnerHTML={ { __html: post.content } }
 							ref={ articleContentRef }
 						/>
-						<HelpCenterFeedbackForm postId={ post.ID } />
+						<HelpCenterFeedbackForm
+							postId={ post.ID }
+							isEligibleForChat={ isEligibleForChat }
+							forceEmailSupport={ forceEmailSupport }
+						/>
 					</EmbedContainer>
 				</>
 			) }
