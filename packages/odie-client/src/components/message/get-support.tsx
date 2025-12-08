@@ -1,6 +1,5 @@
 import { localizeUrl, translationExists } from '@automattic/i18n-utils';
 import { Icon } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import React from 'react';
@@ -59,22 +58,6 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	const isPaidUser = isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport;
 	const isEmailForced = forceEmailSupport || contextForceEmailSupport;
 	const hasZendeskAccess = canConnectToZendesk || contextCanConnectToZendesk;
-	const showExistingChatOptions =
-		isPaidUser &&
-		! isEmailForced &&
-		! forceAIConversation &&
-		supportInteraction &&
-		hasZendeskAccess;
-
-	const [ hasTrackedExistingChatOptions, setHasTrackedExistingChatOptions ] = useState( false );
-
-	// Track when "existing chat" options are shown to the user
-	useEffect( () => {
-		if ( showExistingChatOptions && ! hasTrackedExistingChatOptions ) {
-			setHasTrackedExistingChatOptions( true );
-			trackEvent( 'chat_existing_conversation_options_shown' );
-		}
-	}, [ showExistingChatOptions, hasTrackedExistingChatOptions, trackEvent ] );
 
 	// Early return if user is already talking to a human or transferring to Zendesk
 	if ( chat.provider !== 'odie' || chat.status === 'transfer' ) {
