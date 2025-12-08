@@ -25,6 +25,7 @@ describe( 'NameServersForm', () => {
 		isUsingDefaultNameServers: false,
 		isBusy: false,
 		onSubmit: jest.fn(),
+		defaultNameServers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
 	};
 
 	beforeEach( () => {
