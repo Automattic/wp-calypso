@@ -11,6 +11,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import { wpcomLink } from '../../utils/link';
@@ -48,6 +49,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 			},
 		},
 	} );
+	const { recordTracksEvent } = useAnalytics();
 	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
 	const domainsList = useMemo( () => {
 		if ( ! domains || ! site ) {
@@ -131,6 +133,12 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 		if ( ! formData.primaryDomain ) {
 			return;
 		}
+
+		recordTracksEvent( 'calypso_dashboard_site_domains_primary_domain_selector_submit', {
+			site: site.slug,
+			domain: formData.primaryDomain,
+		} );
+
 		setPrimaryDomainMutation.mutate(
 			{ siteId: site.ID, domain: formData.primaryDomain },
 			{
