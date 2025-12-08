@@ -243,9 +243,7 @@ export function Preview__ES( { site }: { site: DashboardSiteListSite } ) {
 	// origin.
 	const iframeDisabled = site.deleted || ( site.is_a8c && site.private );
 	return (
-		<Link
-			to={ getSiteManagementUrl__ES( site ) }
-			disabled={ site.deleted }
+		<div
 			style={ {
 				display: 'block',
 				height: '100%',
@@ -276,7 +274,7 @@ export function Preview__ES( { site }: { site: DashboardSiteListSite } ) {
 			{ width && ! iframeDisabled && (
 				<SitePreview url={ site.url?.with_scheme ?? '' } scale={ width / 1200 } height={ 1200 } />
 			) }
-		</Link>
+		</div>
 	);
 }
 
