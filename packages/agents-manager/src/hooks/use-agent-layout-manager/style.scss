@@ -86,10 +86,22 @@ $admin-background-color: #f1f1f1;
 $border-color: #545454;
 
 // Mixin for wp-admin sidebar open styles
-@mixin wp-admin-sidebar-open-general() {
-	background-color: $gray-900;
+@mixin wp-admin-sidebar-open-specific( $admin-menu-width ) {
+	#wpcontent {
+		margin-left: calc( $admin-menu-width + $layout-spacing ) !important;
+	}
 
+	#wpbody {
+		left: calc( $admin-menu-width + $layout-spacing );
+		width: calc( 100% - $admin-menu-width - $layout-spacing - $sidebar-width ) !important;
+	}
+}
+
+body.wp-admin.agents-manager-sidebar-container--sidebar-open {
+	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 	@include notice-panel-open( '#wpnt-notes-panel2' );
+
+	background-color: $gray-900;
 
 	#wpadminbar {
 		position: fixed !important;
@@ -152,22 +164,6 @@ $border-color: #545454;
 	.agents-manager-sidebar-fab {
 		display: none;
 	}
-}
-
-@mixin wp-admin-sidebar-open-specific( $admin-menu-width ) {
-	#wpcontent {
-		margin-left: calc( $admin-menu-width + $layout-spacing ) !important;
-	}
-
-	#wpbody {
-		left: calc( $admin-menu-width + $layout-spacing );
-		width: calc( 100% - $admin-menu-width - $layout-spacing - $sidebar-width ) !important;
-	}
-}
-
-body.wp-admin.agents-manager-sidebar-container--sidebar-open {
-	@include wp-admin-sidebar-open-general();
-	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 
 	&.is-nav-unification {
 		@include wp-admin-sidebar-open-specific( $admin-menu-width-unified );
