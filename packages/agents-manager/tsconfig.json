@@ -8,5 +8,6 @@
 		"rootDir": "src"
 	},
 	"include": [ "src", "src/*.json", "types" ],
-	"exclude": [ "**/test/*" ]
+	"exclude": [ "**/test/*" ],
+	"references": [ { "path": "../odie-client" } ]
 }
