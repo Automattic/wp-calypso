@@ -1,11 +1,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
+import { getOdieIdFromInteraction } from '../utils';
+import { useCurrentSupportInteraction } from './use-current-support-interaction';
+import { useManageSupportInteraction } from './use-manage-support-interaction';
 import { useOdieChat } from './use-odie-chat';
-import type { ReturnedChat, Message, AgentticMessage, OdieChat } from '../types';
+import type {
+	ReturnedChat,
+	Message,
+	AgentticMessage,
+	OdieChat,
+	SupportInteraction,
+} from '../types';
 
 function convertMessageToAgentticFormat( message: Message ): AgentticMessage {
 	return {
@@ -29,27 +37,34 @@ function convertMessageFromAgentticFormat( message: string ): Message {
 
 /**
  * Sends a new message to ODIE.
- * If the chat_id is not set, it will create a new chat and send a message to the chat.
- * @param odieChatId - The Odie chat ID to send the message to.
- * @param botSlug - The bot slug to send the message to.
- * @param onSuccess - A callback function to call when the message is sent successfully.
  * @returns useMutation return object.
  */
-export const useSendOdieMessage = (
-	odieChatId: number | null,
-	botSlug: string,
-	onSuccess: ( chat: ReturnedChat ) => void
-) => {
-	const { selectedSiteId, version } = useOdieAssistantContext();
+export const useSendOdieMessage = () => {
+	const { selectedSiteId, version, newInteractionsBotSlug } = useOdieAssistantContext();
+	const {
+		data: currentSupportInteraction,
+		promise: currentSupportInteractionPromise,
+		isFetching: isFetchingCurrentSupportInteraction,
+	} = useCurrentSupportInteraction();
+	const botSlug = currentSupportInteraction?.bot_slug || newInteractionsBotSlug;
+	const chatId = getOdieIdFromInteraction( currentSupportInteraction );
+	const { startNewInteraction } = useManageSupportInteraction();
+
 	const queryClient = useQueryClient();
 
-	return useMutation< ReturnedChat, Error, Message >( {
-		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
-			const chatIdSegment = odieChatId ? `/${ odieChatId }` : '';
+	return useMutation< { chat: ReturnedChat; interaction: SupportInteraction }, Error, Message >( {
+		mutationFn: async ( message: Message ) => {
+			const chatIdSegment = chatId ? `/${ chatId }` : '';
 			const url = window.location.href;
 			const pathname = window.location.pathname;
+			let interaction = currentSupportInteraction;
 
-			return canAccessWpcomApis()
+			// This prevents a race condition where the current support interaction is not fetched yet.
+			if ( isFetchingCurrentSupportInteraction ) {
+				interaction = await currentSupportInteractionPromise;
+			}
+
+			const chat = await ( canAccessWpcomApis()
 				? wpcomRequest< ReturnedChat >( {
 						method: 'POST',
 						path: `/odie/chat/${ botSlug }${ chatIdSegment }`,
@@ -68,11 +83,20 @@ export const useSendOdieMessage = (
 							...( version && { version } ),
 							context: { selectedSiteId, url, pathname },
 						},
-				  } );
+				  } ) );
+
+			if ( ! interaction ) {
+				interaction = await startNewInteraction( {
+					event_source: 'odie',
+					event_external_id: chat.chat_id.toString(),
+				} );
+			}
+
+			return { chat, interaction };
 		},
 		onMutate( message: Message ) {
 			queryClient.setQueryData(
-				[ 'odie-chat', botSlug, odieChatId, version ],
+				[ 'odie-chat', botSlug, chatId ? Number( chatId ) : undefined, version ],
 				( currentChatCache: OdieChat ) => {
 					return {
 						...currentChatCache,
@@ -81,50 +105,41 @@ export const useSendOdieMessage = (
 				}
 			);
 		},
-		onSuccess( data: ReturnedChat ) {
-			const chatId = data.chat_id;
+		onSuccess( data ) {
 			queryClient.setQueryData(
-				[ 'odie-chat', botSlug, chatId, version ],
+				[ 'odie-chat', botSlug, data.chat.chat_id, version ],
 				( currentChatCache: OdieChat ) => {
 					return {
 						...currentChatCache,
-						messages: [ ...( currentChatCache?.messages ?? [] ), ...data.messages ],
+						messages: [ ...( currentChatCache?.messages ?? [] ), ...data.chat.messages ],
 					};
 				}
 			);
-			onSuccess( data );
+		},
+		onError() {
+			// handle errors gracefully.
 		},
 	} );
 };
 
 /**
  * Get a full API of an Odie chat.
- * @param botSlug - The bot slug to send the message to.
  */
-export const useManagedOdieChat = ( botSlug: string ) => {
-	const chatId = new URLSearchParams( useLocation().search ).get( 'odieChatId' );
+export const useManagedOdieChat = () => {
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const chatId = getOdieIdFromInteraction( currentSupportInteraction );
 	const { data: chat, isFetching: isLoadingChat } = useOdieChat( chatId ? Number( chatId ) : null );
 	const navigate = useNavigate();
 
-	const onSuccess = useCallback(
-		( returnedChat: ReturnedChat ) => {
-			const newChatId = returnedChat.chat_id;
-			if ( newChatId !== Number( chatId ) ) {
-				navigate( `/odie?odieChatId=${ newChatId }`, { replace: true } );
-			}
-		},
-		[ chatId, navigate ]
-	);
+	const sendOdieMessage = useSendOdieMessage();
 
-	const sendOdieMessage = useSendOdieMessage(
-		chatId ? Number( chatId ) : null,
-		botSlug,
-		onSuccess
-	);
-
-	function sendMessage( message: string ) {
+	async function sendMessage( message: string ) {
 		const odieMessage = convertMessageFromAgentticFormat( message );
-		sendOdieMessage.mutateAsync( odieMessage );
+		const { interaction } = await sendOdieMessage.mutateAsync( odieMessage );
+
+		if ( interaction.uuid !== currentSupportInteraction?.uuid ) {
+			navigate( `/odie?odieInteractionId=${ interaction.uuid }`, { replace: true } );
+		}
 	}
 
 	return {
