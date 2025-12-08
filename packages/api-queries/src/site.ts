@@ -9,20 +9,12 @@ import {
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
+import equal from 'fast-deep-equal/es6';
 import { queryClient } from './query-client';
 import type { Site } from '@automattic/api-core';
 import type { Query } from '@tanstack/react-query';
 
 const KNOWN_ERRORS = [ 'unknown_blog', 'unauthorized' ];
-
-function equalStringSets( a: string[], b: string[] ): boolean {
-	const setA = new Set< string >( a );
-	const setB = new Set< string >( b );
-	if ( setA.size !== setB.size ) {
-		return false;
-	}
-	return a.every( ( item ) => setB.has( item ) ) && b.every( ( item ) => setA.has( item ) );
-}
 
 export function siteBySlugQuery( siteSlug: string ) {
 	// Used to find an existing Site object which is already in the `site-by-id` cache.
@@ -34,8 +26,8 @@ export function siteBySlugQuery( siteSlug: string ) {
 					query.queryKey[ 0 ] === 'site-by-id' &&
 					query.state.status === 'success' &&
 					( query.state.data as Site )?.slug === siteSlug &&
-					equalStringSets( query.queryKey[ 2 ] as string[], SITE_FIELDS ) &&
-					equalStringSets( query.queryKey[ 3 ] as string[], SITE_OPTIONS ),
+					equal( new Set( query.queryKey[ 2 ] as string[] ), new Set( SITE_FIELDS ) ) &&
+					equal( new Set( query.queryKey[ 3 ] as string[] ), new Set( SITE_OPTIONS ) ),
 			} )
 			.map( ( [ , data ] ) => data )[ 0 ];
 
@@ -77,8 +69,8 @@ export function siteByIdQuery( siteId: number ) {
 					query.queryKey[ 0 ] === 'site-by-slug' &&
 					query.state.status === 'success' &&
 					( query.state.data as Site )?.ID === siteId &&
-					equalStringSets( query.queryKey[ 2 ] as string[], SITE_FIELDS ) &&
-					equalStringSets( query.queryKey[ 3 ] as string[], SITE_OPTIONS ),
+					equal( new Set( query.queryKey[ 2 ] as string[] ), new Set( SITE_FIELDS ) ) &&
+					equal( new Set( query.queryKey[ 3 ] as string[] ), new Set( SITE_OPTIONS ) ),
 			} )
 			.map( ( [ , data ] ) => data )[ 0 ];
 
