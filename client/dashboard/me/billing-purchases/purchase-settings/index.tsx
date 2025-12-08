@@ -293,7 +293,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
-	if ( purchase.is_cancelable ) {
+	if ( purchase.is_cancelable && purchase.is_auto_renew_enabled ) {
 		return (
 			<ActionList.ActionItem
 				title={ __( 'Downgrade or cancel your subscription' ) }
