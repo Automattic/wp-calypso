@@ -44,8 +44,6 @@ export default function PreferencesLogin() {
 	// Check if form has been modified
 	const isDirty = defaultLandingPage !== formData.defaultLandingPage;
 
-	const isBusy = isSavingUserPreferences;
-
 	// Define form fields
 	const fields: Field< LoginPreferencesFormData >[] = [
 		{
@@ -116,8 +114,8 @@ export default function PreferencesLogin() {
 								__next40pxDefaultSize
 								variant="primary"
 								type="submit"
-								isBusy={ isBusy }
-								disabled={ isBusy || ! isDirty }
+								isBusy={ isSavingUserPreferences }
+								disabled={ isSavingUserPreferences || ! isDirty }
 							>
 								{ __( 'Save' ) }
 							</Button>
