@@ -18,7 +18,12 @@ import { store as noticesStore } from '@wordpress/notices';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
-import { languagesAsOptions, shouldDisplayCommunityTranslator, CalypsoLanguage } from './languages';
+import {
+	languagesAsOptions,
+	shouldDisplayCommunityTranslator,
+	getLocaleVariantOrLanguage,
+	CalypsoLanguage,
+} from './languages';
 import ThanksToCommunityTranslator from './thanks-to-community-translator';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
@@ -112,6 +117,11 @@ export default function PreferencesLanguageForm() {
 			label: __( 'Interface language' ),
 			type: 'text',
 			Edit: ( { field, data, onChange } ) => {
+				const shouldShowHelp =
+					data?.language &&
+					shouldDisplayCommunityTranslator( data.language ) &&
+					getLocaleVariantOrLanguage( data.language );
+
 				return (
 					<ComboboxControl
 						__next40pxDefaultSize
@@ -127,12 +137,7 @@ export default function PreferencesLanguageForm() {
 						options={ field.elements || [] }
 						allowReset={ false } // a language is required so we're not allowing to reset it and have an empty state.
 						help={
-							<>
-								{ __(
-									'This is the language of the interface you see across WordPress.com as a whole.'
-								) }
-								<ThanksToCommunityTranslator locale={ data?.language } />
-							</>
+							shouldShowHelp ? <ThanksToCommunityTranslator locale={ data.language } /> : undefined
 						}
 					/>
 				);
@@ -212,8 +217,12 @@ export default function PreferencesLanguageForm() {
 			<FlashMessage id="language" message={ __( 'Language setting saved.' ) } />
 			<Card>
 				<CardBody>
-					<VStack spacing={ 3 } className="dasboard-preferences__vstack">
-						<SectionHeader level={ 3 } title={ __( 'Language' ) } />
+					<VStack spacing={ 4 } className="dasboard-preferences__vstack">
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Language' ) }
+							description={ __( 'Use this to set the display language for WordPress.com.' ) }
+						/>
 						<DataForm< UserSettings >
 							data={ data }
 							fields={ languageFields }

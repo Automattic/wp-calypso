@@ -5,6 +5,7 @@ import PageLayout from '../../components/page-layout';
 import PreferencesLanguageForm from '../preferences-language';
 import PreferencesLogin from '../preferences-login';
 import PreferencesNewHostingDashboard from '../preferences-new-hosting-dashboard';
+import PreferencesPrimarySite from '../preferences-primary-site';
 
 export default function Preferences() {
 	const { optIn } = useAppContext();
@@ -21,6 +22,7 @@ export default function Preferences() {
 		>
 			{ optIn && <PreferencesNewHostingDashboard /> }
 			<PreferencesLanguageForm />
+			<PreferencesPrimarySite />
 			<PreferencesLogin />
 		</PageLayout>
 	);
