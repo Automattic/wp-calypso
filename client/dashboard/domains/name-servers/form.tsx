@@ -9,6 +9,7 @@ import { Field, DataForm, NormalizedField, useFormValidity } from '@wordpress/da
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
 import {
 	MIN_NAME_SERVERS_LENGTH,
@@ -110,6 +111,7 @@ export default function NameServersForm( {
 	isBusy,
 	onSubmit,
 }: Props ) {
+	const { recordTracksEvent } = useAnalytics();
 	const [ formData, setFormData ] = useState< FormData >( () => {
 		// Start with a partial object
 		const initialData = {
@@ -155,6 +157,15 @@ export default function NameServersForm( {
 								checked={ data.useWpcomNameServers }
 								disabled={ isBusy }
 								onChange={ ( value ) => {
+									// Track toggle button click
+									recordTracksEvent(
+										'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_toggle_button_click',
+										{
+											domain: domainName,
+											enabled: value,
+										}
+									);
+
 									// Create nameServer fields dynamically
 									const ns = Object.fromEntries(
 										Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) => [
@@ -179,7 +190,17 @@ export default function NameServersForm( {
 										__( '<link>Look up</link> the name servers for popular hosts.' ),
 										{
 											link: (
-												<InlineSupportLink supportContext="change-name-servers-finding-out-new-ns" />
+												<InlineSupportLink
+													supportContext="change-name-servers-finding-out-new-ns"
+													onClick={ () => {
+														recordTracksEvent(
+															'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_look_up_click',
+															{
+																domain: domainName,
+															}
+														);
+													} }
+												/>
 											),
 										}
 									) }
@@ -193,7 +214,7 @@ export default function NameServersForm( {
 				createNameServerField( i + 1, formData, isBusy )
 			),
 		],
-		[ formData, isBusy, showUpsellNudge, domainName, domainSiteSlug ]
+		[ formData, isBusy, showUpsellNudge, domainName, domainSiteSlug, recordTracksEvent ]
 	);
 
 	const handleSubmit = useCallback(

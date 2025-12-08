@@ -30,6 +30,7 @@ export async function fetchDashboardSiteList(
 			...params,
 			fields: [ ...fields ].join( ',' ),
 			filters: {
+				...params.filters,
 				site_types: site_types !== 'all' ? site_types : undefined,
 			},
 		}

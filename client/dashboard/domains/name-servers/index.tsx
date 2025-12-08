@@ -5,11 +5,10 @@ import {
 	siteByIdQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useCallback } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
@@ -24,15 +23,22 @@ import { shouldShowUpsellNudge } from './utils';
 export default function NameServers() {
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const {
 		data: { nameServers, isUsingDefaultNameServers },
 	} = useSuspenseQuery( domainNameServersQuery( domainName ) );
 
-	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation(
-		domainNameServersMutation( domainName )
-	);
+	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation( {
+		...domainNameServersMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'Name servers updated successfully.' ),
+				error: { source: 'server' },
+			},
+		},
+	} );
+
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
@@ -43,16 +49,28 @@ export default function NameServers() {
 
 	const onSubmit = useCallback(
 		( ns: string[] ) => {
+			recordTracksEvent( 'calypso_dashboard_domain_name_servers_save', {
+				domain: domainName,
+				ns,
+			} );
+
 			updateNameServers( ns, {
 				onSuccess: () => {
-					createSuccessNotice( __( 'Name servers updated successfully.' ), {
-						type: 'snackbar',
+					recordTracksEvent( 'calypso_dashboard_domain_name_servers_save_success', {
+						domain: domainName,
+						ns,
 					} );
 				},
-				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+				onError: ( e: Error ) => {
+					recordTracksEvent( 'calypso_dashboard_domain_name_servers_save_failure', {
+						domain: domainName,
+						ns,
+						error_message: e.message,
+					} );
+				},
 			} );
 		},
-		[ updateNameServers, createSuccessNotice, createErrorNotice ]
+		[ updateNameServers, domainName, recordTracksEvent ]
 	);
 
 	return (

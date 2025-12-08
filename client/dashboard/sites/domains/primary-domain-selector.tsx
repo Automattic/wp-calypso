@@ -51,6 +51,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 			},
 		},
 	} );
+	const { recordTracksEvent } = useAnalytics();
 	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
 	const domainsList = useMemo( () => {
 		if ( ! domains || ! site ) {
@@ -149,6 +150,12 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 		if ( ! formData.primaryDomain ) {
 			return;
 		}
+
+		recordTracksEvent( 'calypso_dashboard_site_domains_primary_domain_selector_submit', {
+			site: site.slug,
+			domain: formData.primaryDomain,
+		} );
+
 		setPrimaryDomainMutation.mutate(
 			{ siteId: site.ID, domain: formData.primaryDomain },
 			{
