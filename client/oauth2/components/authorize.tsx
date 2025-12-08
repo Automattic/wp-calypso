@@ -17,9 +17,14 @@ interface AuthorizeProps {
 	 * Defaults to true. Set to false for clients that don't want to show a logo.
 	 */
 	showLogo?: boolean;
+	/**
+	 * Optional flag to control whether the permissions list should be displayed.
+	 * Defaults to true. Set to false for clients that don't need to show permissions.
+	 */
+	showPermissions?: boolean;
 }
 
-function Authorize( { showLogo = true }: AuthorizeProps = {} ) {
+function Authorize( { showLogo = true, showPermissions = true }: AuthorizeProps = {} ) {
 	const params = Object.fromEntries( new URLSearchParams( window.location.search ) ) as Record<
 		string,
 		string
@@ -95,7 +100,9 @@ function Authorize( { showLogo = true }: AuthorizeProps = {} ) {
 			<div className="oauth2-connect">
 				{ meta.user && <UserCard user={ meta.user } onSwitch={ onSwitch } /> }
 
-				<PermissionsList permissions={ meta.permissions } clientTitle={ meta.client.title } />
+				{ showPermissions && (
+					<PermissionsList permissions={ meta.permissions } clientTitle={ meta.client.title } />
+				) }
 
 				{ showSuccessMessage ? (
 					<SuccessMessage clientTitle={ meta.client.title } />
