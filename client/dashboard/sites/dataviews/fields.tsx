@@ -235,7 +235,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'storage',
 			label: __( 'Storage' ),
-			render: ( { item } ) => <MediaStorage site={ item } />,
+			render: ( { item } ) => <MediaStorage siteId={ item.ID } />,
 			enableSorting: false,
 		},
 		{
@@ -424,12 +424,12 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			render: ( { item }: { item: DashboardSiteListSite } ) => <PHPVersion__ES site={ item } />,
 			enableSorting: false,
 		},
-		// {
-		// 	id: 'storage',
-		// 	label: __( 'Storage' ),
-		// 	render: ( { item } ) => <MediaStorage site={ item } />,
-		// 	enableSorting: false,
-		// },
+		{
+			id: 'storage',
+			label: __( 'Storage' ),
+			render: ( { item } ) => <MediaStorage siteId={ item.blog_id } />,
+			enableSorting: false,
+		},
 		{
 			id: 'host',
 			label: __( 'Host' ),

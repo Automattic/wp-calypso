@@ -390,14 +390,14 @@ export function PHPVersion__ES( { site }: { site: DashboardSiteListSite } ) {
 	return site.php_version ? <span>{ site.php_version }</span> : <IneligibleIndicator />;
 }
 
-export function MediaStorage( { site }: { site: Site } ) {
+export function MediaStorage( { siteId }: { siteId: number } ) {
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
 		fallbackInView: true,
 	} );
 
 	const { data: mediaStorage, isLoading } = useQuery( {
-		...siteMediaStorageQuery( site.ID ),
+		...siteMediaStorageQuery( siteId ),
 		enabled: inView,
 	} );
 
