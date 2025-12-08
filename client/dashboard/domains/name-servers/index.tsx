@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useMemo, useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
@@ -33,7 +33,8 @@ export default function NameServers() {
 		...domainNameServersMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Name servers updated successfully.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Name servers for %s updated successfully.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},

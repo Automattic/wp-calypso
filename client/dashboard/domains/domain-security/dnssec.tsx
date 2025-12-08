@@ -7,7 +7,7 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -26,8 +26,9 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 		...domainDnssecMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'DNSSEC setting saved.' ),
-				error: __( 'Failed to save DNSSEC settings.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'DNSSEC setting for %s saved.' ), domainName ),
+				error: { source: 'server' },
 			},
 		},
 	} );
