@@ -17,7 +17,7 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
-import { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
+import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -34,6 +34,7 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
+import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 
 /**
  * Navigation continuation hook type
@@ -100,6 +101,12 @@ export default function AgentDock( {
 		onSubmit,
 		abortCurrentRequest,
 	} = useAgentChat( agentConfig );
+
+	const {
+		messages: odieMessages,
+		isProcessing: isOdieProcessing,
+		sendMessage: sendOdieMessage,
+	} = useManagedOdieChat();
 
 	// Handle navigation continuation if hook is provided
 	// This allows to resume conversations after full page navigation
@@ -299,6 +306,26 @@ export default function AgentDock( {
 		/>
 	);
 
+	const OdieChat = (
+		<AgentChat
+			messages={ odieMessages }
+			suggestions={ [] }
+			isProcessing={ isOdieProcessing }
+			error={ null }
+			onSubmit={ sendOdieMessage }
+			onAbort={ () => {} }
+			isLoadingConversation={ isLoadingConversation }
+			isDocked={ isDocked }
+			isOpen={ isOpen }
+			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
+			onExpand={ () => setIsOpen( true ) }
+			chatHeaderOptions={ getChatHeaderOptions() }
+			markdownComponents={ markdownComponents }
+			markdownExtensions={ markdownExtensions }
+			emptyViewSuggestions={ emptyViewSuggestions }
+		/>
+	);
+
 	const History = (
 		<AgentHistory
 			agentId={ agentId }
@@ -345,6 +372,7 @@ export default function AgentDock( {
 	return createAgentPortal(
 		<Routes>
 			<Route path="/" element={ Chat } />
+			<Route path="/odie" element={ OdieChat } />
 			<Route path="/chat" element={ Chat } />
 			<Route path="/post" element={ SupportGuideRoute } />
 			<Route path="/support-guides" element={ SupportGuidesRoute } />

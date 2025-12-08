@@ -754,6 +754,10 @@ body.is-section-plugins #primary {
 	.feature-item-container__header {
 		font-weight: 400;
 	}
+
+	.feature-item-container__content {
+		font-size: $font-body;
+	}
 }
 
 .plugin__header {
@@ -886,3 +890,4 @@ body.is-section-plugins .is-logged-in {
 		padding-top: 0;
 	}
 }
+

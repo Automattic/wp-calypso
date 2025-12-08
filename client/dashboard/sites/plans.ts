@@ -46,7 +46,7 @@ export const isSitePlanLaunchable = ( site: Site ) => {
 	] );
 };
 
-export function isSitePlanTrial( site: Site ) {
+export function isSitePlanTrial( site: Pick< Site, 'plan' > ) {
 	const trialPlans = [
 		DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
 		DotcomPlans.HOSTING_TRIAL_MONTHLY,

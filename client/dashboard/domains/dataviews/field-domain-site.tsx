@@ -11,7 +11,10 @@ import { Truncate } from '../../components/truncate';
 import type { DomainSummary } from '@automattic/api-core';
 
 export const DomainSiteField = ( { domain, value }: { domain: DomainSummary; value: string } ) => {
-	const { data: site } = useQuery( siteBySlugQuery( domain.site_slug ) );
+	const { data: site } = useQuery( {
+		...siteBySlugQuery( domain.site_slug ),
+		staleTime: 60_000,
+	} );
 
 	if ( domain.is_domain_only_site ) {
 		return (

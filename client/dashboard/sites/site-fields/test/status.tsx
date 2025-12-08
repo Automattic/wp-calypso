@@ -117,7 +117,7 @@ describe( '<Status>', () => {
 				expired: true,
 			},
 		} as Site;
-		const { getByText, getByRole } = render( <Status site={ site } /> );
+		const { getByText, getByRole } = render( <Status site={ site } isOwner /> );
 		expect( getByText( 'Plan expired' ) ).toBeInTheDocument();
 		expect( getByRole( 'link', { name: /Renew plan/ } ) ).toHaveAttribute(
 			'href',
