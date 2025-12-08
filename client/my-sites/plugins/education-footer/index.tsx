@@ -155,7 +155,11 @@ const CardText = styled.span< { color: string } >`
 `;
 
 const CardTitle = styled( CardText )`
-	font-size: ${ isEnabled( 'marketplace-redesign' ) ? '18px' : '14px' };
+	font-size: 14px;
+
+	.full-width-section & {
+		font-size: 18px;
+	}
 `;
 const FeatureIcon = styled.div`
 	display: flex;
@@ -303,6 +307,8 @@ const EducationFooter = () => {
 		seo: localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' ),
 	};
 
+	const border = ! isMarketplaceRedesignEnabled ? 'var(--studio-gray-5)' : undefined;
+
 	return (
 		<EducationFooterContainer>
 			<PluginsResultsHeader
@@ -328,7 +334,7 @@ const EducationFooter = () => {
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
 					url={ links.websiteBuilding }
-					border={ ! isMarketplaceRedesignEnabled ? 'var(--studio-gray-5)' : undefined }
+					border={ border }
 					onClick={ onClickLinkCard( 'website_building', links.websiteBuilding ) }
 				/>
 				<LinkCard
@@ -345,7 +351,7 @@ const EducationFooter = () => {
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
 					url={ links.seo }
-					border={ ! isMarketplaceRedesignEnabled ? 'var(--studio-gray-5)' : undefined }
+					border={ border }
 					onClick={ onClickLinkCard( 'seo', links.seo ) }
 				/>
 				<LinkCard
@@ -364,7 +370,7 @@ const EducationFooter = () => {
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
 					url={ links.customization }
-					border={ ! isMarketplaceRedesignEnabled ? 'var(--studio-gray-5)' : undefined }
+					border={ border }
 					onClick={ onClickLinkCard( 'customization', links.customization ) }
 				/>
 			</ThreeColumnContainer>
