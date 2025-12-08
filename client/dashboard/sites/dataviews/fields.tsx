@@ -118,7 +118,10 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			filterBy: {
 				operators: [ 'isAny' as Operator ],
 			},
-			render: ( { item } ) => <Status site={ item } />,
+			render: function StatusField( { item } ) {
+				const { user } = useAuth();
+				return <Status site={ item } isOwner={ item.site_owner === user.ID } />;
+			},
 			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{

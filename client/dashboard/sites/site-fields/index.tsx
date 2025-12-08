@@ -19,7 +19,6 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
-import { useAuth } from '../../app/auth';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
@@ -426,8 +425,7 @@ function WithHostingFeaturesQuery( {
 	return <span ref={ ref }>{ children( data?.status ) }</span>;
 }
 
-export function Status( { site }: { site: Site } ) {
-	const { user } = useAuth();
+export function Status( { site, isOwner }: { site: Site; isOwner: boolean } ) {
 	const status = getSiteStatus( site );
 	const label = getSiteStatusLabel( site );
 
@@ -451,7 +449,7 @@ export function Status( { site }: { site: Site } ) {
 		return (
 			<VStack spacing={ 1 }>
 				<Text intent="error">{ __( 'Plan expired' ) }</Text>
-				{ site.site_owner === user.ID && <PlanRenewNag site={ site } source="status" /> }
+				{ isOwner && <PlanRenewNag site={ site } source="status" /> }
 			</VStack>
 		);
 	}
