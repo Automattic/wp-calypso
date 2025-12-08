@@ -15,13 +15,29 @@ import type { Query } from '@tanstack/react-query';
 
 const KNOWN_ERRORS = [ 'unknown_blog', 'unauthorized' ];
 
-export const siteBySlugQuery = ( siteSlug: string ) => {
+function equalStringSets( a: string[], b: string[] ): boolean {
+	const setA = new Set< string >( a );
+	const setB = new Set< string >( b );
+	if ( setA.size !== setB.size ) {
+		return false;
+	}
+	return a.every( ( item ) => setB.has( item ) ) && b.every( ( item ) => setA.has( item ) );
+}
+
+export function siteBySlugQuery( siteSlug: string ) {
 	// Used to find an existing Site object which is already in the `site-by-id` cache.
 	const getFromCache = () =>
 		queryClient
-			.getQueriesData< Site >( { queryKey: [ 'site-by-id' ] } )
-			.map( ( [ , data ] ) => data )
-			.find( ( site ) => site?.slug === siteSlug );
+			.getQueriesData< Site >( {
+				predicate: ( query ) =>
+					query.queryKey.length >= 4 &&
+					query.queryKey[ 0 ] === 'site-by-id' &&
+					query.state.status === 'success' &&
+					( query.state.data as Site )?.slug === siteSlug &&
+					equalStringSets( query.queryKey[ 2 ] as string[], SITE_FIELDS ) &&
+					equalStringSets( query.queryKey[ 3 ] as string[], SITE_OPTIONS ),
+			} )
+			.map( ( [ , data ] ) => data )[ 0 ];
 
 	return queryOptions( {
 		queryKey: [ 'site-by-slug', siteSlug, SITE_FIELDS, SITE_OPTIONS ],
@@ -42,23 +58,29 @@ export const siteBySlugQuery = ( siteSlug: string ) => {
 			return failureCount < 3; // default retry count
 		},
 		initialData: () => getFromCache(),
-		initialDataUpdatedAt: () => {
+		initialDataUpdatedAt: (): number | undefined => {
 			const site = getFromCache();
 			if ( site?.ID ) {
-				return queryClient.getQueryState( [ 'site-by-id', site.ID, SITE_FIELDS, SITE_OPTIONS ] )
-					?.dataUpdatedAt;
+				return queryClient.getQueryState( siteByIdQuery( site.ID ).queryKey )?.dataUpdatedAt;
 			}
 		},
 	} );
-};
+}
 
-export const siteByIdQuery = ( siteId: number ) => {
+export function siteByIdQuery( siteId: number ) {
 	// Used to find an existing Site object which is already in the `site-by-slug` cache.
 	const getFromCache = () =>
 		queryClient
-			.getQueriesData< Site >( { queryKey: [ 'site-by-slug' ] } )
-			.map( ( [ , data ] ) => data )
-			.find( ( site ) => site?.ID === siteId );
+			.getQueriesData< Site >( {
+				predicate: ( query ) =>
+					query.queryKey.length >= 4 &&
+					query.queryKey[ 0 ] === 'site-by-slug' &&
+					query.state.status === 'success' &&
+					( query.state.data as Site )?.ID === siteId &&
+					equalStringSets( query.queryKey[ 2 ] as string[], SITE_FIELDS ) &&
+					equalStringSets( query.queryKey[ 3 ] as string[], SITE_OPTIONS ),
+			} )
+			.map( ( [ , data ] ) => data )[ 0 ];
 
 	return queryOptions( {
 		queryKey: [ 'site-by-id', siteId, SITE_FIELDS, SITE_OPTIONS ],
@@ -79,15 +101,14 @@ export const siteByIdQuery = ( siteId: number ) => {
 			return failureCount < 3; // default retry count
 		},
 		initialData: () => getFromCache(),
-		initialDataUpdatedAt: () => {
+		initialDataUpdatedAt: (): number | undefined => {
 			const site = getFromCache();
-			if ( site?.ID ) {
-				return queryClient.getQueryState( [ 'site-by-slug', site.slug, SITE_FIELDS, SITE_OPTIONS ] )
-					?.dataUpdatedAt;
+			if ( site?.slug ) {
+				return queryClient.getQueryState( siteBySlugQuery( site.slug ).queryKey )?.dataUpdatedAt;
 			}
 		},
 	} );
-};
+}
 
 export const siteQueryFilter = ( siteId: number ) => ( {
 	predicate: ( { queryKey, state }: Query ) => {
