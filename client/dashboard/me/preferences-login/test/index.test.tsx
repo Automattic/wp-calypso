@@ -7,14 +7,10 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
-import { useAuth } from '../../../app/auth';
 import { render } from '../../../test-utils';
 import PreferencesLogin from '../index';
-import type { Site } from '@automattic/api-core';
-import type { DeepPartial } from 'utility-types';
 
 const API_BASE = 'https://public-api.wordpress.com';
-const mockPrimarySiteId = 123;
 
 if ( typeof CSS === 'undefined' ) {
 	global.CSS = {} as unknown as typeof CSS;
@@ -44,35 +40,6 @@ jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn(),
 } ) );
 
-jest.mock( '../../../app/auth', () => ( {
-	useAuth: jest.fn( () => ( { user: { site_count: 2 } } ) ),
-} ) );
-
-const mockSites: DeepPartial< Site >[] = [
-	{
-		ID: mockPrimarySiteId,
-		name: 'Test Site 1',
-		URL: 'https://testsite1.com',
-		site_migration: {
-			migration_status: '',
-		},
-	},
-	{
-		ID: 456,
-		name: 'Test Site 2',
-		URL: 'https://testsite2.com',
-		site_migration: {
-			migration_status: '',
-		},
-	},
-];
-
-function mockUpdateUserSettingsSuccess() {
-	return nock( API_BASE )
-		.post( '/rest/v1.1/me/settings', { primary_site_ID: mockPrimarySiteId } )
-		.reply( 200, {} );
-}
-
 function matchesLoginPreferencesPayload( body: {
 	calypso_preferences?: Record< string, unknown >;
 } ) {
@@ -83,10 +50,6 @@ function matchesLoginPreferencesPayload( body: {
 }
 
 function renderPreferencesLogin() {
-	nock( API_BASE ).get( '/rest/v1.1/me/settings' ).reply( 200, {
-		primary_site_ID: mockPrimarySiteId,
-	} );
-
 	nock( API_BASE )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
@@ -102,8 +65,6 @@ function renderPreferencesLogin() {
 				},
 			},
 		} );
-
-	nock( API_BASE ).get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites: mockSites } );
 
 	return render( <PreferencesLogin /> );
 }
@@ -146,7 +107,7 @@ test( 'save button becomes enabled when form is modified', async () => {
 		{ timeout: 5000 }
 	);
 
-	const sitesRadio = screen.getByLabelText( 'Sites' );
+	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
@@ -173,13 +134,12 @@ test( 'saves preferences successfully', async () => {
 		{ timeout: 5000 }
 	);
 
-	// Mock the save API requests that will be made
-	mockUpdateUserSettingsSuccess();
+	// Mock the save API request that will be made
 	nock( API_BASE )
 		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
 		.reply( 200, {} );
 
-	const sitesRadio = screen.getByLabelText( 'Sites' );
+	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
@@ -210,15 +170,12 @@ test( 'handles save error gracefully', async () => {
 		{ timeout: 5000 }
 	);
 
-	// Mock the save API requests, forcing the preferences update to error
-	nock( API_BASE )
-		.post( '/rest/v1.1/me/settings', { primary_site_ID: mockPrimarySiteId } )
-		.reply( 500, { error: 'Server error' } );
+	// Mock the save API request, forcing the preferences update to error
 	nock( API_BASE )
 		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
 		.reply( 500, { error: 'Server error' } );
 
-	const sitesRadio = screen.getByLabelText( 'Sites' );
+	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
@@ -226,52 +183,15 @@ test( 'handles save error gracefully', async () => {
 
 	await waitFor(
 		() => {
-			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Failed to save login preferences.', {
-				type: 'snackbar',
-			} );
+			expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+				'Failed to save default landing page.',
+				{
+					type: 'snackbar',
+				}
+			);
 		},
 		{ timeout: 5000 }
 	);
-} );
-
-test( 'hides primary site selector when user has no sites', async () => {
-	nock.cleanAll();
-	nock( API_BASE ).get( '/rest/v1.1/me/settings' ).reply( 200, {
-		primary_site_ID: null,
-	} );
-
-	nock( API_BASE )
-		.get( '/rest/v1.1/me/preferences' )
-		.query( true )
-		.reply( 200, {
-			calypso_preferences: {
-				'sites-landing-page': {
-					useSitesAsLandingPage: true,
-					updatedAt: Date.now(),
-				},
-				'reader-landing-page': {
-					useReaderAsLandingPage: false,
-					updatedAt: Date.now(),
-				},
-			},
-		} );
-
-	nock( API_BASE ).get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites: [] } );
-
-	( useAuth as jest.Mock ).mockReturnValue( { user: { site_count: 0 } } );
-
-	render( <PreferencesLogin /> );
-
-	await waitFor(
-		() => {
-			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-		},
-		{ timeout: 5000 }
-	);
-
-	expect( screen.queryByText( 'Primary site' ) ).not.toBeInTheDocument();
-
-	expect( screen.getByText( 'Default landing page' ) ).toBeInTheDocument();
 } );
 
 test( 'disables save button while saving', async () => {
@@ -289,14 +209,13 @@ test( 'disables save button while saving', async () => {
 		{ timeout: 5000 }
 	);
 
-	// Mock the save requests with a delayed preferences response
-	mockUpdateUserSettingsSuccess();
+	// Mock the save request with a delayed preferences response
 	nock( API_BASE )
 		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
 		.delay( 100 )
 		.reply( 200, {} );
 
-	const sitesRadio = screen.getByLabelText( 'Sites' );
+	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
