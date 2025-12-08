@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from 'calypso/lib/route';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -15,6 +16,8 @@ const TelexBanner = () => {
 	const trackClick = useCallback( () => {
 		recordTracksEvent( 'calypso_plugin_telex_banner_click', { section: sectionName } );
 	}, [ sectionName ] );
+
+	const telexUrl = addQueryArgs( { ref: sectionName + '-lp' }, 'https://telex.automattic.ai/' );
 
 	return (
 		<div className="telex-banner">
@@ -28,7 +31,7 @@ const TelexBanner = () => {
 			</p>
 			<Button
 				className="telex-banner__cta is-primary"
-				href="https://telex.automattic.ai/"
+				href={ telexUrl }
 				target="_blank"
 				onClick={ trackClick }
 			>
