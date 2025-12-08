@@ -50,7 +50,10 @@ export default function DomainEditDNS() {
 		const recordsToAdd: DnsRecord[] = [ recordToAdd ];
 		const recordsToRemove: DnsRecord[] = [ recordToEdit ];
 
-		mutation.mutate( { recordsToAdd, recordsToRemove } );
+		mutation.mutate(
+			{ recordsToAdd, recordsToRemove },
+			{ onSuccess: () => navigateToDNSOverviewPage() }
+		);
 	};
 
 	return (

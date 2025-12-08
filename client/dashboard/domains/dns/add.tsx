@@ -41,7 +41,7 @@ export default function DomainAddDNS() {
 
 		const recordsToAdd: DnsRecord[] = [ formattedData ];
 
-		mutation.mutate( { recordsToAdd } );
+		mutation.mutate( { recordsToAdd }, { onSuccess: () => navigateToDNSOverviewPage() } );
 	};
 
 	return (
