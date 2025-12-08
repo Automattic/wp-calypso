@@ -95,7 +95,7 @@ export default function AgentDock( {
 		messages: odieMessages,
 		isProcessing: isOdieProcessing,
 		sendMessage: sendOdieMessage,
-	} = useManagedOdieChat( 'wpcom-support-chat' );
+	} = useManagedOdieChat();
 
 	// Handle navigation continuation if hook is provided
 	// This allows to resume conversations after full page navigation
