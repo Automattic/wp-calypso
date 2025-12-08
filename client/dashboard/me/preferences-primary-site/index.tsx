@@ -40,6 +40,9 @@ export default function PreferencesPrimarySite() {
 		primarySiteId,
 	} );
 
+	// Check if form has been modified
+	const isDirty = Boolean( primarySiteId !== formData.primarySiteId );
+
 	// Define form fields
 	const fields: Field< PrimarySiteFormData >[] = [
 		{
@@ -118,7 +121,7 @@ export default function PreferencesPrimarySite() {
 								variant="primary"
 								type="submit"
 								isBusy={ isSavingUserSettings }
-								disabled={ isSavingUserSettings || ! primarySiteId !== formData.primarySiteId }
+								disabled={ isSavingUserSettings || ! isDirty }
 							>
 								{ __( 'Save' ) }
 							</Button>

@@ -55,6 +55,9 @@ export default function PreferencesLogin() {
 		},
 	];
 
+	// Check if form has been modified
+	const isDirty = Boolean( defaultLandingPage !== formData.defaultLandingPage );
+
 	// Define form layout
 	const form = {
 		layout: { type: 'regular' as const },
@@ -112,9 +115,7 @@ export default function PreferencesLogin() {
 								variant="primary"
 								type="submit"
 								isBusy={ isSavingUserPreferences }
-								disabled={
-									isSavingUserPreferences || ! defaultLandingPage !== formData.defaultLandingPage
-								}
+								disabled={ isSavingUserPreferences || ! isDirty }
 							>
 								{ __( 'Save' ) }
 							</Button>
