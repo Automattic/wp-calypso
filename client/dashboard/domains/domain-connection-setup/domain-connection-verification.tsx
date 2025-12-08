@@ -49,6 +49,9 @@ export default function DomainConnectionVerification( {
 		? 'connected'
 		: 'verifying';
 
+	const connectedAndCanBeSetAsPrimary =
+		status === 'connected' && ! domainData.primary_domain && domainData.can_set_as_primary;
+
 	return (
 		<Card
 			className={ `dashboard-domain-connection-verification dashboard-domain-connection-verification--${ status }` }
@@ -104,7 +107,7 @@ export default function DomainConnectionVerification( {
 							</Text>
 						) }
 
-						{ status === 'connected' && (
+						{ connectedAndCanBeSetAsPrimary && (
 							<>
 								<Text size="medium" weight={ 500 }>
 									{ __( 'Recommended' ) }
