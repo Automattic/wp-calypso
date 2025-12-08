@@ -29,6 +29,7 @@ export const OdieAssistant: React.FC = () => {
 		</div>
 	);
 };
+export { GetSupport } from './components/message/get-support';
 
 export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';

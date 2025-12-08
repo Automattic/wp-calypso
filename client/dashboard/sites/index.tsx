@@ -111,7 +111,7 @@ function getFetchSiteListParams(
 	} );
 
 	return {
-		fields: Array.from( fields ),
+		fields: Array.from( fields ).filter( Boolean ),
 		s: view.search || undefined,
 		sort_by: dataviewFieldToSiteProfileField[ view.sort?.field ?? '' ],
 		sort_direction: view.sort?.direction,

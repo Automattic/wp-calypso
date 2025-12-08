@@ -44,7 +44,7 @@
 	}
 }
 
-body.is-section-plugins {
+body .is-section-plugins {
 	.is-section-plugins.is-global-sidebar-visible {
 		.layout__content {
 			min-height: 100vh;
@@ -717,16 +717,20 @@ body.is-section-plugins #primary {
 }
 
 .plugin-details__reviews {
-	margin-bottom: 40px;
+	margin-bottom: 80px;
 
 	@media screen and ( max-width: 1040px ) {
 		padding: 16px;
 	}
 }
 
-.plugins__marketplace-footer {
+.full-width-section.plugins__marketplace-footer {
 	--scss-font-title-large: 2.5rem;
 	--scss-font-body: 1.375rem;
+
+	@media screen and ( min-width: 601px ) {
+		padding-bottom: 40px;
+	}
 
 	.section-header-container {
 		display: flex;
@@ -753,6 +757,10 @@ body.is-section-plugins #primary {
 	}
 	.feature-item-container__header {
 		font-weight: 400;
+	}
+
+	.feature-item-container__content {
+		font-size: $font-body;
 	}
 }
 
@@ -830,21 +838,19 @@ body.is-section-plugins:has(.is-full-width-layout) {
 }
 
 // Remove layout padding for logged-out full-width layout (covers both actually logged out and logged-in showing logged-out UI)
-body.is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out),
-body.is-section-plugins:has(.is-plugin-details.is-full-width-layout) {
+body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out),
+body .is-section-plugins:has(.is-plugin-details.is-full-width-layout) {
 	.lpc-footer-nav-wrapper,
 	.lpc-footer-automattic-nav-wrapper {
 		max-width: 1220px;
 	}
 }
-body.is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out) .layout__content {
+body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out) .layout__content,
+body .is-section-plugins.has-no-sidebar:has(.is-plugin-details.is-full-width-layout) .layout__content {
 	padding: 0;
 }
-body.is-section-plugins:has(.is-plugin-details.is-full-width-layout) .layout__content {
-	padding-block: 0;
-}
 
-body.is-section-plugins .is-logged-in {
+body .is-section-plugins .is-logged-in {
 	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column):not(.is-logged-out).plugins-browser.is-full-width-layout";
 
 	#{$full-width-main} {
@@ -886,3 +892,4 @@ body.is-section-plugins .is-logged-in {
 		padding-top: 0;
 	}
 }
+

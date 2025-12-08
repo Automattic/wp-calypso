@@ -610,6 +610,7 @@ function getRememberedCoupon() {
 		'TXAM',
 		'WC',
 		'grad25',
+		'hirocode35ai',
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

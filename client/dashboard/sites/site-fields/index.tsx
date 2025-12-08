@@ -88,6 +88,7 @@ export function SiteLink__ES( {
 			{ ...props }
 			to={ `/sites/${ site.slug }` }
 			disabled={ site.deleted }
+			preload="viewport"
 			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
 		/>
 	);

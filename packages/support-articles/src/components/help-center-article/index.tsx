@@ -2,18 +2,28 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect, createInterpolateElement, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useSearchParams } from 'react-router-dom';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { usePostByUrl } from '../hooks';
-import { useHelpCenterArticleScroll } from '../hooks/use-help-center-article-scroll';
-import { useHelpCenterArticleTabComponent } from '../hooks/use-help-center-article-tab-component';
-import { BackToTopButton } from './back-to-top-button';
+import { useHelpCenterArticleScroll } from '../../hooks/use-help-center-article-scroll';
+import { useHelpCenterArticleTabComponent } from '../../hooks/use-help-center-article-tab-component';
+import { usePostByUrl } from '../../hooks/use-post-by-url';
+import { BackToTopButton } from '../back-to-top-button';
 import ArticleContent from './help-center-article-content';
 
 import './help-center-article.scss';
 
-export const HelpCenterArticle = () => {
+declare const __i18n_text_domain__: string;
+
+export const HelpCenterArticle = ( {
+	sectionName,
+	currentSiteDomain,
+	isEligibleForChat,
+	forceEmailSupport,
+}: {
+	sectionName: string;
+	currentSiteDomain?: string;
+	isEligibleForChat: boolean;
+	forceEmailSupport: boolean;
+} ) => {
 	const [ searchParams ] = useSearchParams();
-	const { sectionName } = useHelpCenterContext();
 	const postUrl = searchParams.get( 'link' ) || '';
 	const query = searchParams.get( 'query' );
 
@@ -26,7 +36,7 @@ export const HelpCenterArticle = () => {
 		}
 	}, [ elementRef ] );
 
-	const { data: post, isLoading, error } = usePostByUrl( postUrl );
+	const { data: post, isLoading, error } = usePostByUrl( postUrl, sectionName );
 	useHelpCenterArticleTabComponent( post?.content );
 	useHelpCenterArticleScroll( post?.ID, scrollParentRef );
 	useEffect( () => {
@@ -94,7 +104,15 @@ export const HelpCenterArticle = () => {
 
 	return (
 		<div className="help-center-article" ref={ elementRef }>
-			{ ! error && <ArticleContent post={ post } isLoading={ isLoading } /> }
+			{ ! error && (
+				<ArticleContent
+					post={ post }
+					isLoading={ isLoading }
+					currentSiteDomain={ currentSiteDomain }
+					isEligibleForChat={ isEligibleForChat }
+					forceEmailSupport={ forceEmailSupport }
+				/>
+			) }
 			{ ! isLoading && error && (
 				<p className="help-center-article__error">
 					{ createInterpolateElement(

@@ -18,6 +18,7 @@ import { useCategories } from 'calypso/my-sites/plugins/categories/use-categorie
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visible';
+import { PluginsFAQ } from 'calypso/my-sites/plugins/plugins-faq';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
@@ -240,6 +241,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				{ ! category && ! search && (
 					<FullWidthSection className="plugins__marketplace-footer">
 						<MarketplaceFooter />
+					</FullWidthSection>
+				) }
+				{ ! category && ! search && isMarketplaceRedesignEnabled && (
+					<FullWidthSection className="plugins-browser__faq full-width-section--double-padding">
+						<PluginsFAQ />
 					</FullWidthSection>
 				) }
 			</div>
