@@ -1,12 +1,12 @@
-export interface SitePlan {
+interface SitePlan {
 	product_id: number;
 	product_slug: string;
-	product_name: string;
+	product_name?: string;
 	product_name_short: string;
 	expired: boolean;
 	is_free: boolean;
-	license_key: string;
-	billing_period: 'Yearly' | 'Monthly';
+	license_key?: string;
+	billing_period?: 'Yearly' | 'Monthly';
 	features: {
 		active: string[];
 	};
@@ -48,8 +48,7 @@ export interface Site {
 		img: string;
 		ico: string;
 	};
-	plan?: Omit< SitePlan, 'product_name' | 'license_key' | 'billing_period' > &
-		Partial< Pick< SitePlan, 'product_name' | 'license_key' | 'billing_period' > >;
+	plan?: SitePlan;
 	capabilities: SiteCapabilities;
 	subscribers_count?: number; // Can be undefined if query cache is prefilled from old Calypso Redux store.
 	options?: SiteOptions; // Can be undefined for deleted sites.
