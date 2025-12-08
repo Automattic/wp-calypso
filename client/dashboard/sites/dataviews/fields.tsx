@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { queryClient } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
@@ -6,6 +7,7 @@ import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import SiteIcon, { SiteIconRenderer } from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
+import { hasHostingFeature, hasHostingFeature__ES } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
@@ -69,7 +71,12 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'backup',
 			label: __( 'Backup' ),
-			render: ( { item } ) => <LastBackup site={ item } />,
+			render: ( { item } ) => (
+				<LastBackup
+					siteId={ item.ID }
+					isEligible={ hasHostingFeature( item, HostingFeatures.BACKUPS ) }
+				/>
+			),
 			enableSorting: false,
 		},
 		{
@@ -253,12 +260,17 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			getValue: ( { item } ) => item.total_wpcom_subscribers,
 			label: __( 'Subscribers' ),
 		},
-		// {
-		// 	id: 'backup',
-		// 	label: __( 'Backup' ),
-		// 	render: ( { item } ) => <LastBackup site={ item } />,
-		// 	enableSorting: false,
-		// },
+		{
+			id: 'backup',
+			label: __( 'Backup' ),
+			render: ( { item } ) => (
+				<LastBackup
+					siteId={ item.blog_id }
+					isEligible={ hasHostingFeature__ES( item, HostingFeatures.BACKUPS ) }
+				/>
+			),
+			enableSorting: false,
+		},
 		{
 			id: 'plan',
 			label: __( 'Plan' ),

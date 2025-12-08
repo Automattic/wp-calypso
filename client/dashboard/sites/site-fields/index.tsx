@@ -313,16 +313,15 @@ export function EngagementStat( { value }: { value: number | null } ) {
 	return typeof value !== 'number' ? <IneligibleIndicator /> : value;
 }
 
-export function LastBackup( { site }: { site: Site } ) {
+export function LastBackup( { siteId, isEligible }: { siteId: number; isEligible: boolean } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = hasHostingFeature( site, HostingFeatures.BACKUPS );
 
 	const {
 		data: lastBackup,
 		isLoading,
 		isError,
 	} = useQuery( {
-		...siteLastBackupQuery( site.ID ),
+		...siteLastBackupQuery( siteId ),
 		enabled: isEligible && inView,
 	} );
 

@@ -5,6 +5,7 @@ import type {
 	JetpackFeatureSlug,
 	JetpackModuleSlug,
 	Site,
+	DashboardSiteListSite,
 } from '@automattic/api-core';
 
 // Returns whether the plan supports a specific feature.
@@ -25,6 +26,16 @@ export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
 	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) ) {
 		const isWoAOrFlexSite = site.is_wpcom_atomic || site.is_wpcom_flex;
 		if ( site.plan?.expired || ! isWoAOrFlexSite ) {
+			return false;
+		}
+	}
+	return hasPlanFeature( site, feature );
+}
+
+export function hasHostingFeature__ES( site: DashboardSiteListSite, feature: HostingFeatureSlug ) {
+	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) ) {
+		// TODO: Check flex site when it's supported.
+		if ( site.plan?.expired || ! site.is_atomic ) {
 			return false;
 		}
 	}
