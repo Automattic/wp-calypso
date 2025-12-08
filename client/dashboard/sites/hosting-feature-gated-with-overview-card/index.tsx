@@ -13,6 +13,8 @@ interface HostingFeatureGatedWithOverviewCardProps
 	upsellHeading: OverviewCardProps[ 'heading' ];
 	upsellDescription: OverviewCardProps[ 'description' ];
 	upsellLink: OverviewCardProps[ 'link' ];
+	upsellId: string;
+	upsellFeatureId?: string;
 }
 
 export default function HostingFeatureGatedWithOverviewCard( {
