@@ -173,7 +173,12 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'uptime',
 			label: __( '7-day uptime' ),
-			render: ( { item } ) => <Uptime site={ item } />,
+			render: ( { item } ) => (
+				<Uptime
+					siteId={ item.ID }
+					isEligible={ hasJetpackModule( item, JetpackModules.MONITOR ) }
+				/>
+			),
 			enableSorting: false,
 		},
 		{
@@ -375,12 +380,17 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 		// 	render: ( { item } ) =>
 		// 		item.options?.updated_at ? <TimeSince timestamp={ item.options.updated_at } /> : '',
 		// },
-		// {
-		// 	id: 'uptime',
-		// 	label: __( '7-day uptime' ),
-		// 	render: ( { item } ) => <Uptime site={ item } />,
-		// 	enableSorting: false,
-		// },
+		{
+			id: 'uptime',
+			label: __( '7-day uptime' ),
+			render: ( { item } ) => (
+				<Uptime
+					siteId={ item.blog_id }
+					isEligible={ hasJetpackModule__ES( item, JetpackModules.MONITOR ) }
+				/>
+			),
+			enableSorting: false,
+		},
 		{
 			id: 'visitors',
 			label: __( '7-day visitors' ),

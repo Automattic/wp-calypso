@@ -1,4 +1,4 @@
-import { DotcomFeatures, HostingFeatures, JetpackModules } from '@automattic/api-core';
+import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import {
 	siteLatestAtomicTransferQuery,
 	siteLastBackupQuery,
@@ -28,7 +28,7 @@ import { addTransientViewPropertiesToQueryParams } from '../../utils/dashboard-v
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
-import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isP2 } from '../../utils/site-types';
 import { getSiteFormattedUrl } from '../../utils/site-url';
@@ -344,12 +344,11 @@ export function LastBackup( { siteId, isEligible }: { siteId: number; isEligible
 	return <span ref={ ref }>{ renderContent() }</span>;
 }
 
-export function Uptime( { site }: { site: Site } ) {
+export function Uptime( { siteId, isEligible }: { siteId: number; isEligible?: boolean } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = hasJetpackModule( site, JetpackModules.MONITOR );
 
 	const { data: uptime, isLoading } = useQuery( {
-		...siteUptimeQuery( site.ID, 'week' ),
+		...siteUptimeQuery( siteId, 'week' ),
 		enabled: isEligible && inView,
 	} );
 
