@@ -24,7 +24,6 @@ import {
 	getLocaleVariantOrLanguage,
 	CalypsoLanguage,
 } from './languages';
-import ThanksToCommunityTranslator from './thanks-to-community-translator';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
@@ -117,10 +116,31 @@ export default function PreferencesLanguageForm() {
 			label: __( 'Interface language' ),
 			type: 'text',
 			Edit: ( { field, data, onChange } ) => {
-				const shouldShowHelp =
-					data?.language &&
-					shouldDisplayCommunityTranslator( data.language ) &&
-					getLocaleVariantOrLanguage( data.language );
+				const locale = data?.language;
+				const language =
+					locale && shouldDisplayCommunityTranslator( locale )
+						? getLocaleVariantOrLanguage( locale )
+						: undefined;
+
+				const helpText = language
+					? createInterpolateElement(
+							sprintf(
+								/* translators: %s: selected interface language */
+								__(
+									'Thanks to all our <externalLink>community members who helped translate to %s</externalLink>'
+								),
+								language.name
+							),
+							{
+								externalLink: (
+									<ExternalLink
+										href={ `https://translate.wordpress.com/translators/?contributor_locale=${ language.langSlug }` }
+										children={ null }
+									/>
+								),
+							}
+					  )
+					: undefined;
 
 				return (
 					<ComboboxControl
@@ -136,9 +156,7 @@ export default function PreferencesLanguageForm() {
 						placeholder={ __( 'Select a language' ) }
 						options={ field.elements || [] }
 						allowReset={ false } // a language is required so we're not allowing to reset it and have an empty state.
-						help={
-							shouldShowHelp ? <ThanksToCommunityTranslator locale={ data.language } /> : undefined
-						}
+						help={ helpText }
 					/>
 				);
 			},
