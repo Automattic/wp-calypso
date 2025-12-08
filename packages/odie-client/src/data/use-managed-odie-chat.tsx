@@ -26,6 +26,10 @@ function convertMessageToAgentticFormat(
 		return {
 			content: [
 				{
+					type: 'text',
+					text: message.content as string,
+				},
+				{
 					type: 'component',
 					component: () => (
 						<SummaryButton
