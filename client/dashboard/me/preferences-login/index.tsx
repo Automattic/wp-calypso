@@ -78,7 +78,7 @@ export default function PreferencesLogin() {
 			},
 		} )
 			.then( () => {
-				createSuccessNotice( __( 'Login preferences saved.' ), {
+				createSuccessNotice( __( 'Default landing page saved.' ), {
 					type: 'snackbar',
 				} );
 			} )

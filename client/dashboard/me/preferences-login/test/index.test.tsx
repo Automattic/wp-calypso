@@ -147,7 +147,7 @@ test( 'saves preferences successfully', async () => {
 	await user.click( saveButton );
 	await waitFor(
 		() => {
-			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Login preferences saved.', {
+			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Default landing page saved.', {
 				type: 'snackbar',
 			} );
 		},
