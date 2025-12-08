@@ -3,11 +3,9 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import type { PostObject } from '../types';
 
-export function usePostByUrl( url: string ) {
-	const { sectionName } = useHelpCenterContext();
+export function usePostByUrl( url: string, sectionName: string ) {
 	const postUrl = encodeURIComponent( localizeUrl( url ) );
 
 	return useQuery< PostObject >( {

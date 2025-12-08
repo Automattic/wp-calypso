@@ -1,6 +1,6 @@
 import { EmbedContainer } from '@automattic/components';
-import { SupportArticleHeader } from '@automattic/help-center/src/components/help-center-support-article-header';
 import { useLocale } from '@automattic/i18n-utils';
+import { SupportArticleHeader } from '@automattic/support-articles';
 import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';

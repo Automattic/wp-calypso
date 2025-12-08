@@ -66,6 +66,8 @@ export type MessageAction = {
 	text: string;
 	type: string;
 	metadata: ChatFeedbackActions;
+	label: string;
+	onClick: () => void;
 };
 
 export type ZendeskContentType =

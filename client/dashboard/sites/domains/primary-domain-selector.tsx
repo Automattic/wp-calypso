@@ -11,8 +11,10 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
+import { wpcomLink } from '../../utils/link';
 import { userHasFlag } from '../../utils/user';
 import type { Field } from '@wordpress/dataviews';
 
@@ -47,6 +49,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 			},
 		},
 	} );
+	const { recordTracksEvent } = useAnalytics();
 	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
 	const domainsList = useMemo( () => {
 		if ( ! domains || ! site ) {
@@ -102,7 +105,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 			return createInterpolateElement(
 				'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink />',
 				{
-					upgradeLink: <a href={ `/plans/${ site.slug }` } />,
+					upgradeLink: <a href={ wpcomLink( `/plans/${ site.slug }` ) } />,
 					br: <br />,
 					learnMoreLink: <InlineSupportLink supportContext="primary-site-address" />,
 				}
@@ -130,6 +133,12 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 		if ( ! formData.primaryDomain ) {
 			return;
 		}
+
+		recordTracksEvent( 'calypso_dashboard_site_domains_primary_domain_selector_submit', {
+			site: site.slug,
+			domain: formData.primaryDomain,
+		} );
+
 		setPrimaryDomainMutation.mutate(
 			{ siteId: site.ID, domain: formData.primaryDomain },
 			{

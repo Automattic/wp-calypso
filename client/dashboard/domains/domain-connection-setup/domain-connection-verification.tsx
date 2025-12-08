@@ -49,6 +49,9 @@ export default function DomainConnectionVerification( {
 		? 'connected'
 		: 'verifying';
 
+	const connectedAndCanBeSetAsPrimary =
+		status === 'connected' && ! domainData.primary_domain && domainData.can_set_as_primary;
+
 	return (
 		<Card
 			className={ `dashboard-domain-connection-verification dashboard-domain-connection-verification--${ status }` }
@@ -68,7 +71,10 @@ export default function DomainConnectionVerification( {
 						</Badge>
 					</HStack>
 
-					<DnsPropagationProgressBar domainName={ domainName } />
+					<DnsPropagationProgressBar
+						domainMappingStatus={ domainMappingStatus }
+						domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					/>
 
 					{ status === 'verifying' && (
 						<Notice variant="info">
@@ -92,7 +98,7 @@ export default function DomainConnectionVerification( {
 						/>
 					</VStack>
 
-					<DomainPropagationStatus domainName={ domainName } />
+					{ status === 'connected' && <DomainPropagationStatus domainName={ domainName } /> }
 
 					<VStack spacing={ 4 }>
 						{ status === 'verifying' && (
@@ -101,7 +107,7 @@ export default function DomainConnectionVerification( {
 							</Text>
 						) }
 
-						{ status === 'connected' && (
+						{ connectedAndCanBeSetAsPrimary && (
 							<>
 								<Text size="medium" weight={ 500 }>
 									{ __( 'Recommended' ) }

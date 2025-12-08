@@ -1,57 +1,35 @@
-/**
- * Hook for fetching and managing conversation list
- */
-
 import {
 	listConversationsFromServer,
 	type ServerConversationListItem,
 } from '@automattic/agenttic-client';
-import { useCallback, useEffect, useState } from '@wordpress/element';
-import { conversationListCache } from '../utils/conversation-cache';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect } from '@wordpress/element';
+import { API_BASE_URL } from '../constants';
 import { parseMySQLDateTime } from '../utils/formatters';
 
-interface UseConversationListResult {
+interface Config {
+	botId: string;
+	authProvider?: () => Promise< Record< string, string > >;
+}
+
+interface Result {
 	conversations: ServerConversationListItem[];
 	isLoading: boolean;
-	error: Error | null;
-	refetch: () => Promise< void >;
+	isError: boolean;
 }
 
-interface UseConversationListConfig {
-	botId: string;
-	apiBaseUrl?: string;
-	authProvider?: () => Promise< Record< string, string > >;
-	enabled?: boolean;
-}
-
-/**
- * Hook to fetch and manage conversation list from server
- * @param config
- */
-export default function useConversationList(
-	config: UseConversationListConfig
-): UseConversationListResult {
-	const { botId, apiBaseUrl, authProvider, enabled = true } = config;
-
-	// Try to load from cache immediately
-	const cachedConversations = conversationListCache.get( botId );
-	const [ conversations, setConversations ] = useState< ServerConversationListItem[] >(
-		cachedConversations || []
-	);
-	const [ isLoading, setIsLoading ] = useState( ! cachedConversations );
-	const [ error, setError ] = useState< Error | null >( null );
-
-	const fetchConversations = useCallback( async () => {
-		if ( ! enabled ) {
-			return;
-		}
-
-		setIsLoading( true );
-		setError( null );
-
-		try {
+export default function useConversationList( { botId, authProvider }: Config ): Result {
+	const {
+		data: conversations,
+		isLoading,
+		isError,
+		error,
+	} = useQuery( {
+		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when botId changes
+		queryKey: [ 'agents-manager-conversation-list', botId ],
+		queryFn: async () => {
 			const result = await listConversationsFromServer( botId, {
-				apiBaseUrl,
+				apiBaseUrl: API_BASE_URL,
 				authProvider,
 			} );
 
@@ -63,29 +41,21 @@ export default function useConversationList(
 				return timeB - timeA;
 			} );
 
-			// Update cache with fresh data
-			conversationListCache.set( botId, sorted );
-			setConversations( sorted );
-		} catch ( err ) {
-			setError( err as Error );
-			setConversations( [] );
-		} finally {
-			setIsLoading( false );
-		}
-	}, [ botId, apiBaseUrl, authProvider, enabled ] );
+			return sorted;
+		},
+		enabled: !! botId,
+	} );
 
-	// Auto-fetch on mount and when config changes
 	useEffect( () => {
-		fetchConversations().catch( ( err ) => {
+		if ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( 'Failed to fetch conversations:', err );
-		} );
-	}, [ fetchConversations ] );
+			console.error( '[useConversationList] Error loading conversation list:', error );
+		}
+	}, [ error ] );
 
 	return {
-		conversations,
+		conversations: conversations || [],
 		isLoading,
-		error,
-		refetch: fetchConversations,
+		isError,
 	};
 }

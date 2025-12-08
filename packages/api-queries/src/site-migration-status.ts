@@ -3,6 +3,7 @@ import {
 	deleteSiteMigrationPendingStatus,
 	fetchSiteMigrationKey,
 	fetchSiteMigrationZendeskTicket,
+	fetchSSHMigration,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -18,6 +19,12 @@ export const siteMigrationZendeskTicketQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'migration', 'zendesk', 'ticket' ],
 		queryFn: () => fetchSiteMigrationZendeskTicket( siteId ),
+	} );
+
+export const sshMigrationQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'ssh-migration' ],
+		queryFn: () => fetchSSHMigration( siteId ),
 	} );
 
 export const cancelSiteMigrationQuery = ( siteId: number ) =>
