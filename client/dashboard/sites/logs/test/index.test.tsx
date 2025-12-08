@@ -199,9 +199,6 @@ describe( 'SiteLogs page', () => {
 			const initialLogType = logTypeName !== LogType.PHP ? LogType.PHP : LogType.SERVER;
 			render( <SiteLogs logType={ initialLogType } /> );
 
-			// Wait for data and TabPanel to render
-			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-
 			// Click another tab
 			await userEvent.click(
 				await screen.findByRole( 'button', { name: new RegExp( logTypeName, 'i' ) } )
@@ -255,7 +252,6 @@ describe( 'SiteLogs page', () => {
 		jest.spyOn( dateRangeUtils, 'isLast7Days' ).mockReturnValue( false );
 
 		render( <SiteLogs logType={ LogType.PHP } /> );
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Toggle auto' } ) );
 
@@ -280,7 +276,6 @@ describe( 'SiteLogs page', () => {
 		jest.spyOn( dateRangeUtils, 'isLast7Days' ).mockReturnValue( true );
 
 		render( <SiteLogs logType={ LogType.PHP } /> );
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Toggle auto' } ) );
 
