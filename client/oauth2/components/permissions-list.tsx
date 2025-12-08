@@ -1,6 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
+import { useState } from '@wordpress/element';
+import { Icon, chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { getPermissionIcon } from '../utils/permission-icons';
 import type { AuthorizeMeta } from '../hooks/use-authorize-meta';
@@ -10,8 +11,15 @@ interface PermissionsListProps {
 	clientTitle: string;
 }
 
+const INITIAL_VISIBLE_COUNT = 4;
+
 const PermissionsList = ( { permissions, clientTitle }: PermissionsListProps ) => {
 	const translate = useTranslate();
+	const [ showAll, setShowAll ] = useState( false );
+
+	const visiblePermissions = showAll ? permissions : permissions.slice( 0, INITIAL_VISIBLE_COUNT );
+	const hiddenCount = permissions.length - INITIAL_VISIBLE_COUNT;
+	const hasMorePermissions = permissions.length > INITIAL_VISIBLE_COUNT;
 
 	return (
 		<>
@@ -21,8 +29,8 @@ const PermissionsList = ( { permissions, clientTitle }: PermissionsListProps ) =
 						args: { client: clientTitle },
 					} ) }
 				</p>
-				<div className="oauth2-connect__permissions-grid">
-					{ permissions.map( ( permission ) => {
+				<div className="oauth2-connect__permissions-list">
+					{ visiblePermissions.map( ( permission ) => {
 						const icon = getPermissionIcon( permission.name );
 						return (
 							<div key={ permission.name } className="oauth2-connect__permission-item">
@@ -32,6 +40,21 @@ const PermissionsList = ( { permissions, clientTitle }: PermissionsListProps ) =
 						);
 					} ) }
 				</div>
+
+				{ hasMorePermissions && (
+					<button
+						onClick={ () => setShowAll( ! showAll ) }
+						className="oauth2-connect__show-more"
+						type="button"
+					>
+						{ showAll
+							? translate( 'Show less' )
+							: translate( '%(count)d more', {
+									args: { count: hiddenCount },
+							  } ) }
+						<Icon icon={ chevronDown } size={ 20 } className={ showAll ? 'is-rotated' : '' } />
+					</button>
+				) }
 			</div>
 
 			<div className="oauth2-connect__learn-more">

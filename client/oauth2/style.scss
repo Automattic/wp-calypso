@@ -51,10 +51,12 @@
 }
 
 .oauth2-connect__switch-account-link {
-	margin-block-start: -8px;
+	display: flex;
+	justify-content: center;
+	margin-block-start: 16px;
 
 	.oauth2-connect__switch-account {
-		text-align: start;
+		text-align: center;
 		padding: 0;
 		height: auto;
 		font-size: 13px;
@@ -74,24 +76,51 @@
 	margin: 0;
 }
 
-.oauth2-connect__permissions-grid {
-	display: grid;
-	grid-template-columns: repeat( 2, 1fr );
-	gap: 24px 24px;
+.oauth2-connect__permissions-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 }
 
 .oauth2-connect__permission-item {
 	display: flex;
 	align-items: flex-start;
-	gap: 8px;
-	font-size: 12px;
+	gap: 12px;
+	font-size: 14px;
 	line-height: 1.5;
 	color: #1e1e1e;
-	text-wrap: pretty;
 
 	svg {
 		flex-shrink: 0;
 		fill: currentColor;
+		margin-block-start: 2px;
+	}
+}
+
+.oauth2-connect__show-more {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 0;
+	margin: 0;
+	margin-block-start: 4px;
+	background: none;
+	border: none;
+	font-size: 14px;
+	color: #1e1e1e;
+	cursor: pointer;
+	font-family: inherit;
+
+	&:hover {
+		opacity: 0.7;
+	}
+
+	svg {
+		transition: transform 0.2s ease;
+
+		&.is-rotated {
+			transform: rotate( 180deg );
+		}
 	}
 }
 

@@ -98,7 +98,7 @@ function Authorize( { showLogo = true, showPermissions = true }: AuthorizeProps 
 	if ( meta ) {
 		content = (
 			<div className="oauth2-connect">
-				{ meta.user && <UserCard user={ meta.user } onSwitch={ onSwitch } /> }
+				{ meta.user && <UserCard user={ meta.user } /> }
 
 				{ showPermissions && (
 					<PermissionsList permissions={ meta.permissions } clientTitle={ meta.client.title } />
@@ -113,6 +113,14 @@ function Authorize( { showLogo = true, showPermissions = true }: AuthorizeProps 
 						</Button>
 						<Button variant="primary" onClick={ onApprove }>
 							{ translate( 'Approve' ) }
+						</Button>
+					</div>
+				) }
+
+				{ meta.user && (
+					<div className="oauth2-connect__switch-account-link">
+						<Button variant="link" onClick={ onSwitch } className="oauth2-connect__switch-account">
+							{ translate( 'Log in with a different account' ) }
 						</Button>
 					</div>
 				) }
