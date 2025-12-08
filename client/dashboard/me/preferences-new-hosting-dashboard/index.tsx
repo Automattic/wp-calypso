@@ -66,7 +66,7 @@ export default function PreferencesOptInForm() {
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		recordTracksEvent( 'calypso_dashboard_me_preferences_new_hosting_dashboard_toggle', {
+		recordTracksEvent( 'calypso_dashboard_me_preferences_new_hosting_dashboard_submit', {
 			enabled: formData.enabled,
 		} );
 
@@ -114,6 +114,14 @@ export default function PreferencesOptInForm() {
 						fields={ fields }
 						form={ form }
 						onChange={ ( edits ) => {
+							if ( edits.hasOwnProperty( 'enabled' ) ) {
+								recordTracksEvent(
+									'calypso_dashboard_me_preferences_new_hosting_dashboard_toggle_click',
+									{
+										enabled: edits.enabled,
+									}
+								);
+							}
 							setFormData( ( current ) => ( { ...current, ...edits } ) );
 						} }
 					/>

@@ -53,7 +53,7 @@ export default function HostingDashboardOptInForm() {
 		event.preventDefault();
 
 		dispatch(
-			recordTracksEvent( 'calypso_account_new_hosting_dashboard_toggle', {
+			recordTracksEvent( 'calypso_account_new_hosting_dashboard_submit', {
 				enabled,
 			} )
 		);
@@ -101,7 +101,14 @@ export default function HostingDashboardOptInForm() {
 							<FormCheckbox
 								checked={ enabled }
 								disabled={ isFetching || isSaving }
-								onChange={ ( event ) => setEnabled( event.target.checked ) }
+								onChange={ ( event ) => {
+									setEnabled( event.target.checked );
+									dispatch(
+										recordTracksEvent( 'calypso_account_new_hosting_dashboard_toggle_click', {
+											enabled: event.target.checked,
+										} )
+									);
+								} }
 							/>
 							<span>{ translate( 'I want to try the beta version.' ) }</span>
 						</FormLabel>
