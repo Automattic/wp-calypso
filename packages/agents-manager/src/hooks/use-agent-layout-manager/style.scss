@@ -308,6 +308,7 @@ body:not( .wp-admin ).agents-manager-sidebar-container {
 			color: $gray-100;
 		}
 
+		&__back-btn,
 		&__more-options,
 		&__history-btn,
 		&__close-btn {
@@ -325,7 +326,6 @@ body:not( .wp-admin ).agents-manager-sidebar-container {
 		}
 
 		&__back-btn svg {
-			fill: #fff;
 			margin-left: 0;
 		}
 	}
