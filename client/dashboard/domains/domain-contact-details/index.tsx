@@ -1,4 +1,8 @@
 import {
+	domainPrivacyDisableMutation,
+	domainPrivacyDiscloseMutation,
+	domainPrivacyEnableMutation,
+	domainPrivacyRedactMutation,
 	domainQuery,
 	domainWhoisValidateMutation,
 	domainWhoisMutation,
@@ -47,10 +51,38 @@ export default function DomainContactInfo() {
 		return { initialData, key: JSON.stringify( initialData ) };
 	}, [ registrantWhoisData ] );
 
-	const validateMutation = useMutation( domainWhoisValidateMutation( [ domainName ] ) );
-	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
+	const validateMutation = useMutation( {
+		...domainWhoisValidateMutation( [ domainName ] ),
+		meta: { snackbar: { error: { source: 'server' } } },
+	} );
+	const updateMutation = useMutation( {
+		...domainWhoisMutation( domainName ),
+		meta: { snackbar: { error: { source: 'server' } } },
+	} );
+	const enablePrivacyMutation = useMutation( {
+		...domainPrivacyEnableMutation( domainName ),
+		meta: { snackbar: { error: { source: 'server' } } },
+	} );
+	const disablePrivacyMutation = useMutation( {
+		...domainPrivacyDisableMutation( domainName ),
+		meta: { snackbar: { error: { source: 'server' } } },
+	} );
+	const disclosePrivacyMutation = useMutation( {
+		...domainPrivacyDiscloseMutation( domainName ),
+		meta: { snackbar: { error: { source: 'server' } } },
+	} );
+	const redactPrivacyMutation = useMutation( {
+		...domainPrivacyRedactMutation( domainName ),
+		meta: { snackbar: { error: { source: 'server' } } },
+	} );
 
-	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
+	const isSubmitting =
+		validateMutation.isPending ||
+		updateMutation.isPending ||
+		enablePrivacyMutation.isPending ||
+		disablePrivacyMutation.isPending ||
+		disclosePrivacyMutation.isPending ||
+		redactPrivacyMutation.isPending;
 
 	const handleSubmit = ( normalizedFormData: DomainContactDetails ) => {
 		validateMutation.mutate( normalizedFormData, {
@@ -65,11 +97,6 @@ export default function DomainContactInfo() {
 							onSuccess: () => {
 								createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
 							},
-							onError: ( error: Error ) => {
-								createErrorNotice( error.message, {
-									type: 'snackbar',
-								} );
-							},
 						}
 					);
 				} else {
@@ -78,12 +105,47 @@ export default function DomainContactInfo() {
 					} );
 				}
 			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message, {
-					type: 'snackbar',
-				} );
-			},
 		} );
+	};
+
+	const handleTogglePrivacyProtection = () => {
+		if ( domain.private_domain ) {
+			disablePrivacyMutation.mutate( undefined, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'Privacy has been successfully disabled!' ), {
+						type: 'snackbar',
+					} );
+				},
+			} );
+		} else {
+			enablePrivacyMutation.mutate( undefined, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'Privacy has been successfully enabled!' ), {
+						type: 'snackbar',
+					} );
+				},
+			} );
+		}
+	};
+
+	const handleTogglePrivacyDisclosure = () => {
+		if ( domain.contact_info_disclosed ) {
+			redactPrivacyMutation.mutate( undefined, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'Your contact information is now redacted!' ), {
+						type: 'snackbar',
+					} );
+				},
+			} );
+		} else {
+			disclosePrivacyMutation.mutate( undefined, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'Your contact information is now publicly visible!' ), {
+						type: 'snackbar',
+					} );
+				},
+			} );
+		}
 	};
 
 	return (
@@ -92,7 +154,7 @@ export default function DomainContactInfo() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-					description={ __( 'Update your domain’s contact information for registration.' ) }
+					description={ __( "Update your domain's contact information for registration." ) }
 				/>
 			}
 		>
@@ -103,7 +165,12 @@ export default function DomainContactInfo() {
 					! domain.is_hundred_year_domain && (
 						<Card>
 							<CardBody>
-								<ContactFormPrivacy domainName={ domainName } />
+								<ContactFormPrivacy
+									domainName={ domainName }
+									isSubmitting={ isSubmitting }
+									onTogglePrivacyProtection={ handleTogglePrivacyProtection }
+									onTogglePrivacyDisclosure={ handleTogglePrivacyDisclosure }
+								/>
 							</CardBody>
 						</Card>
 					)
