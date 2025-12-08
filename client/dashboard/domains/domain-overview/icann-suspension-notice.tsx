@@ -15,7 +15,7 @@ export default function IcannSuspensionNotice( { domainName }: { domainName: str
 		meta: {
 			snackbar: {
 				success: __(
-					'Verification email sent! It will arrive in a few minutes. Check your inbox and follow the instructions to verify your domain name.'
+					'Verification email sent! It should arrive within a few minutes. Please check your inbox and follow the instructions to verify your domain name.'
 				),
 				error: { source: 'server' },
 			},
