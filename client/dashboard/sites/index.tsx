@@ -69,7 +69,7 @@ function getFetchSiteListParams(
 	siteFilters: DashboardFilters = {}
 ): FetchDashboardSiteListParams {
 	// The mapping from Dataview fields to Site Profiles fields.
-	const MAPPED_FIELDS: Record< string, keyof DashboardSiteListSite > = {
+	const mappedFields: Record< string, keyof DashboardSiteListSite > = {
 		name: 'name',
 		URL: 'url',
 		'icon.ico': 'icon',
@@ -89,7 +89,7 @@ function getFetchSiteListParams(
 		// host
 	};
 
-	const ADDITIONAL_MAPPED_FIELDS: Record< string, ( keyof DashboardSiteListSite )[] > = {
+	const additionalMappedFields: Record< string, ( keyof DashboardSiteListSite )[] > = {
 		name: [ 'badge' ],
 		status: [ 'wpcom_status', 'private', 'deleted' ],
 		plan: [ 'owner_id' ],
@@ -108,26 +108,25 @@ function getFetchSiteListParams(
 	];
 
 	if ( view.showTitle && view.titleField ) {
-		fields.push( MAPPED_FIELDS[ view.titleField ] );
+		fields.push( mappedFields[ view.titleField ] );
 	}
 
 	if ( view.showMedia && view.mediaField ) {
-		fields.push( MAPPED_FIELDS[ view.mediaField ] );
+		fields.push( mappedFields[ view.mediaField ] );
 	}
 
 	if ( view.showDescription && view.descriptionField ) {
-		fields.push( MAPPED_FIELDS[ view.descriptionField ] );
+		fields.push( mappedFields[ view.descriptionField ] );
 	}
 
 	view.fields?.forEach( ( field ) => {
-		const mappedField = MAPPED_FIELDS[ field ];
+		const mappedField = mappedFields[ field ];
 		if ( mappedField ) {
 			fields.push( mappedField );
 		}
 
-		const additionalMappedFields = ADDITIONAL_MAPPED_FIELDS[ field ];
-		if ( additionalMappedFields ) {
-			fields.push( ...additionalMappedFields );
+		if ( additionalMappedFields[ field ] ) {
+			fields.push( ...additionalMappedFields[ field ] );
 		}
 	} );
 
@@ -155,7 +154,7 @@ function getFetchSiteListParams(
 		fields: Array.from( new Set( fields ) ).filter( Boolean ),
 		s: view.search || undefined,
 		filters,
-		sort_by: MAPPED_FIELDS[ view.sort?.field ?? '' ],
+		sort_by: mappedFields[ view.sort?.field ?? '' ],
 		sort_direction: view.sort?.direction,
 		page: view.page,
 		per_page: view.perPage,
