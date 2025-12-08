@@ -230,9 +230,8 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 	}
 }
 
-// TODO: AI-679 will fix it...
 /* Site editor */
-#site-editor .agents-manager-sidebar-container {
+body.site-editor-php.agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-site-layout__canvas' );
 
 	// Delay to prevent flickering when closing the left navigation sidebar
@@ -248,9 +247,8 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 	}
 }
 
-// TODO: AI-679 will fix it...
 /* Page editor */
-.block-editor .agents-manager-sidebar-container {
+body.post-php.agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-post-layout' );
 
 	.edit-post-layout {
