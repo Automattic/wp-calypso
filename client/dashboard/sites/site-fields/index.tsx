@@ -279,18 +279,18 @@ export function Preview__ES( { site }: { site: DashboardSiteListSite } ) {
 }
 
 export function AsyncEngagementStat( {
-	site,
+	siteId,
 	type,
+	isEligible,
 }: {
-	site: Site;
+	siteId: number;
 	type: 'visitors' | 'views' | 'likes';
+	isEligible?: boolean;
 } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible =
-		! site.is_deleted && ( ! site.jetpack || hasJetpackModule( site, JetpackModules.STATS ) );
 
 	const { data: stats, isLoading } = useQuery( {
-		...siteEngagementStatsQuery( site.ID ),
+		...siteEngagementStatsQuery( siteId ),
 		enabled: isEligible && inView,
 	} );
 
@@ -313,7 +313,7 @@ export function EngagementStat( { value }: { value: number | null } ) {
 	return typeof value !== 'number' ? <IneligibleIndicator /> : value;
 }
 
-export function LastBackup( { siteId, isEligible }: { siteId: number; isEligible: boolean } ) {
+export function LastBackup( { siteId, isEligible }: { siteId: number; isEligible?: boolean } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
 
 	const {

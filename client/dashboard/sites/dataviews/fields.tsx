@@ -1,4 +1,4 @@
-import { HostingFeatures } from '@automattic/api-core';
+import { HostingFeatures, JetpackModules } from '@automattic/api-core';
 import { queryClient } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
@@ -7,7 +7,12 @@ import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import SiteIcon, { SiteIconRenderer } from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
-import { hasHostingFeature, hasHostingFeature__ES } from '../../utils/site-features';
+import {
+	hasHostingFeature,
+	hasHostingFeature__ES,
+	hasJetpackModule,
+	hasJetpackModule__ES,
+} from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
@@ -174,19 +179,46 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'visitors',
 			label: __( '7-day visitors' ),
-			render: ( { item } ) => <AsyncEngagementStat site={ item } type="visitors" />,
+			render: ( { item } ) => (
+				<AsyncEngagementStat
+					siteId={ item.ID }
+					type="visitors"
+					isEligible={
+						! item.is_deleted &&
+						( ! item.jetpack || hasJetpackModule( item, JetpackModules.STATS ) )
+					}
+				/>
+			),
 			enableSorting: false,
 		},
 		{
 			id: 'views',
 			label: __( '7-day views' ),
-			render: ( { item } ) => <AsyncEngagementStat site={ item } type="views" />,
+			render: ( { item } ) => (
+				<AsyncEngagementStat
+					siteId={ item.ID }
+					type="views"
+					isEligible={
+						! item.is_deleted &&
+						( ! item.jetpack || hasJetpackModule( item, JetpackModules.STATS ) )
+					}
+				/>
+			),
 			enableSorting: false,
 		},
 		{
 			id: 'likes',
 			label: __( '7-day likes' ),
-			render: ( { item } ) => <AsyncEngagementStat site={ item } type="likes" />,
+			render: ( { item } ) => (
+				<AsyncEngagementStat
+					siteId={ item.ID }
+					type="likes"
+					isEligible={
+						! item.is_deleted &&
+						( ! item.jetpack || hasJetpackModule( item, JetpackModules.STATS ) )
+					}
+				/>
+			),
 			enableSorting: false,
 		},
 		{
@@ -361,12 +393,21 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
 			enableSorting: false,
 		},
-		// {
-		// 	id: 'likes',
-		// 	label: __( '7-day likes' ),
-		// 	render: ( { item } ) => <AsyncEngagementStat site={ item } type="likes" />,
-		// 	enableSorting: false,
-		// },
+		{
+			id: 'likes',
+			label: __( '7-day likes' ),
+			render: ( { item } ) => (
+				<AsyncEngagementStat
+					siteId={ item.blog_id }
+					type="likes"
+					isEligible={
+						! item.deleted &&
+						( ! item.is_jetpack || hasJetpackModule__ES( item, JetpackModules.STATS ) )
+					}
+				/>
+			),
+			enableSorting: false,
+		},
 		{
 			id: 'php_version',
 			label: __( 'PHP version' ),

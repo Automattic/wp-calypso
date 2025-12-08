@@ -91,6 +91,7 @@ function getFetchSiteListParams(
 	};
 
 	const additionalMappedFields: Record< string, ( keyof DashboardSiteListSite )[] > = {
+		likes: [ 'enabled_modules' ],
 		name: [ 'badge' ],
 		status: [ 'wpcom_status', 'private', 'deleted' ],
 		plan: [ 'owner_id' ],

@@ -45,3 +45,10 @@ export function hasHostingFeature__ES( site: DashboardSiteListSite, feature: Hos
 export function hasJetpackModule( site: Site, module: `${ JetpackModuleSlug }` ) {
 	return site.jetpack && site.jetpack_modules?.includes( module );
 }
+
+export function hasJetpackModule__ES(
+	site: DashboardSiteListSite,
+	module: `${ JetpackModuleSlug }`
+) {
+	return site.is_jetpack && site.enabled_modules?.includes( module );
+}

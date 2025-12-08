@@ -5,6 +5,7 @@ export interface DashboardSiteListSite {
 		manage_options: boolean;
 	};
 	deleted?: boolean;
+	enabled_modules?: null | string[];
 	has_backup?: boolean;
 	hosting_provider_guess?: string;
 	name?: string;
