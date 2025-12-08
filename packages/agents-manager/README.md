@@ -29,7 +29,14 @@ import UnifiedAIAgent from '@automattic/agents-manager';
 function MyApp() {
 	const site = { ID: 456, URL: 'https://example.com' };
 
-	return <UnifiedAIAgent currentRoute="/dashboard" sectionName="dashboard" site={ site } />;
+	return (
+		<UnifiedAIAgent
+			currentRoute="/dashboard"
+			sectionName="dashboard"
+			site={ site }
+			isEligibleForChat
+		/>
+	);
 }
 ```
 
@@ -66,13 +73,14 @@ function MyComponent() {
 
 ### UnifiedAIAgent Props
 
-| Prop           | Type             | Description                                                |
-| -------------- | ---------------- | ---------------------------------------------------------- |
-| `currentRoute` | `string`         | The current route path.                                    |
-| `sectionName`  | `string`         | The name of the current section (e.g., 'posts', 'pages').  |
-| `site`         | `HelpCenterSite` | The selected site object (from `@automattic/data-stores`). |
-| `currentUser`  | `CurrentUser`    | The current user object (from `@automattic/data-stores`).  |
-| `handleClose`  | `() => void`     | Callback to handle closing the agent.                      |
+| Prop                | Type                        | Description                                                |
+| ------------------- | --------------------------- | ---------------------------------------------------------- |
+| `currentRoute`      | `string` (optional)         | The current route path.                                    |
+| `isEligibleForChat` | `boolean`                   | Indicates if the user is eligible for chat.                |
+| `sectionName`       | `string`                    | The name of the current section (e.g., 'posts', 'pages').  |
+| `site`              | `HelpCenterSite` (optional) | The selected site object (from `@automattic/data-stores`). |
+| `currentUser`       | `CurrentUser` (optional)    | The current user object (from `@automattic/data-stores`).  |
+| `handleClose`       | `() => void` (optional)     | Called when the agent is closed.                           |
 
 ### Exported Types
 
