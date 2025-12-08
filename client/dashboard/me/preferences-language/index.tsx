@@ -235,7 +235,7 @@ export default function PreferencesLanguageForm() {
 			<FlashMessage id="language" message={ __( 'Language setting saved.' ) } />
 			<Card>
 				<CardBody>
-					<VStack spacing={ 4 } className="dasboard-preferences__vstack">
+					<VStack spacing={ 4 }>
 						<SectionHeader
 							level={ 3 }
 							title={ __( 'Language' ) }
