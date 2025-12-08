@@ -42,6 +42,7 @@ export default function HostingFeatureGatedWithCallout( {
 	return (
 		<HostingFeatureGate
 			{ ...props }
+			shouldRenderActivationModal
 			renderUpsellComponent={ () => {
 				let callout = (
 					<UpsellCallout

@@ -8,6 +8,7 @@ export interface HostingFeatureGateProps {
 	feature: HostingFeatureSlug;
 	upsellId: string;
 	upsellFeatureId?: string;
+	shouldRenderActivationModal?: boolean;
 	children: ReactNode;
 	renderUpsellComponent: () => ReactNode;
 	renderActivationComponent: ( { onClick }: { onClick: () => void } ) => ReactNode;
@@ -18,6 +19,7 @@ export default function HostingFeatureGate( {
 	feature,
 	upsellId,
 	upsellFeatureId,
+	shouldRenderActivationModal,
 	children,
 	renderUpsellComponent,
 	renderActivationComponent,
@@ -33,6 +35,7 @@ export default function HostingFeatureGate( {
 				feature={ feature }
 				tracksFeatureId={ upsellFeatureId ?? upsellId }
 				renderActivationComponent={ renderActivationComponent }
+				shouldRenderActivationModal={ shouldRenderActivationModal }
 			/>
 		);
 	}

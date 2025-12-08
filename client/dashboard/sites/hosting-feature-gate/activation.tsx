@@ -12,6 +12,7 @@ interface HostingFeatureActivationProps {
 	site: Site;
 	feature: HostingFeatureSlug;
 	tracksFeatureId: string;
+	shouldRenderActivationModal: boolean;
 	renderActivationComponent: ( { onClick }: { onClick: () => void } ) => ReactNode;
 }
 
@@ -21,16 +22,21 @@ export default function HostingFeatureActivation( {
 	site,
 	feature,
 	tracksFeatureId,
+	shouldRenderActivationModal,
 	renderActivationComponent,
 }: HostingFeatureActivationProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
 
 	useEffect( () => {
+		if ( ! shouldRenderActivationModal ) {
+			return;
+		}
+
 		recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_impression', {
 			feature_id: tracksFeatureId,
 		} );
-	}, [ recordTracksEvent, tracksFeatureId ] );
+	}, [ recordTracksEvent, tracksFeatureId, shouldRenderActivationModal ] );
 
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_click', {
@@ -54,25 +60,14 @@ export default function HostingFeatureActivation( {
 		} );
 	};
 
-	const isBackport = isDashboardBackport();
+	const renderActivationModal = () => {
+		const isBackport = isDashboardBackport();
+		if ( ! shouldRenderActivationModal || ! isModalOpen ) {
+			return null;
+		}
 
-	return (
-		<>
-			{ renderActivationComponent( { onClick: handleClick } ) }
-
-			{ ! isBackport && isModalOpen && (
-				<Suspense fallback={ null }>
-					<Modal
-						title={ __( 'Before you continue' ) }
-						onRequestClose={ () => setIsModalOpen( false ) }
-						size="medium"
-					>
-						<HostingFeatureActivationModal siteId={ site.ID } onProceed={ handleConfirm } />
-					</Modal>
-				</Suspense>
-			) }
-
-			{ isBackport && isModalOpen && (
+		if ( isBackport ) {
+			return (
 				<Suspense fallback={ null }>
 					<Modal
 						title={ __( 'Before you continue' ) }
@@ -88,7 +83,26 @@ export default function HostingFeatureActivation( {
 						/>
 					</Modal>
 				</Suspense>
-			) }
+			);
+		}
+
+		return (
+			<Suspense fallback={ null }>
+				<Modal
+					title={ __( 'Before you continue' ) }
+					onRequestClose={ () => setIsModalOpen( false ) }
+					size="medium"
+				>
+					<HostingFeatureActivationModal siteId={ site.ID } onProceed={ handleConfirm } />
+				</Modal>
+			</Suspense>
+		);
+	};
+
+	return (
+		<>
+			{ renderActivationComponent( { onClick: handleClick } ) }
+			{ renderActivationModal() }
 		</>
 	);
 }
