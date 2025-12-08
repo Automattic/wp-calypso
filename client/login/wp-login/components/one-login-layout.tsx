@@ -28,6 +28,10 @@ interface OneLoginLayoutProps {
 	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
 	 */
 	columnWidth?: 4 | 5 | 6 | 8 | 10;
+	/**
+	 * Optional flag to control whether the heading logo should be displayed. Defaults to true.
+	 */
+	showLogo?: boolean;
 }
 
 const OneLoginLayout = ( {
@@ -39,6 +43,7 @@ const OneLoginLayout = ( {
 	isLostPasswordView,
 	noThanksRedirectUrl,
 	columnWidth,
+	showLogo = true,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const urlLocale = useLocale();
@@ -131,7 +136,7 @@ const OneLoginLayout = ( {
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
 				<div className="wp-login__one-login-layout-heading">
-					<HeadingLogo isJetpack={ isJetpack } />
+					{ showLogo && <HeadingLogo isJetpack={ isJetpack } /> }
 					<Step.Heading
 						text={ <div className="wp-login__one-login-layout-heading-text">{ headingText }</div> }
 					/>
