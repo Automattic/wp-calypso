@@ -1,14 +1,15 @@
 import '@automattic/agenttic-ui/index.css';
+import { useInput } from '@automattic/agenttic-ui';
 import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
-import { Message } from '../../types';
 import { AgentUIFooter } from '../chat-footer';
 import { useConnectionStatusNotice, useMessageSizeErrorNotice } from '../notices';
 import { useAttachmentHandler } from './use-attachment-handler';
+import { useSendMessageHandler } from './use-send-message-handler';
 
 const getTextAreaPlaceholder = (
 	shouldDisableInputField: boolean,
@@ -24,7 +25,6 @@ const getTextAreaPlaceholder = (
 
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const textareaRef = useRef< HTMLTextAreaElement >( null );
 	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport } = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
@@ -38,10 +38,13 @@ export const OdieSendMessageButton = () => {
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
 	const connectionNotice = useConnectionStatusNotice( isLiveChat );
 
-	// Focus the textarea when the component mounts
-	useEffect( () => {
-		textareaRef.current?.focus();
-	}, [ textareaRef ] );
+	// I'm only using adjustHeight from agenttic-ui
+	const { textareaRef } = useInput( {
+		value: inputValue,
+		setValue: () => {},
+		onSubmit: () => {},
+		isProcessing: false,
+	} );
 
 	useEffect( () => {
 		if ( isLiveChat ) {
@@ -66,6 +69,23 @@ export const OdieSendMessageButton = () => {
 
 	const hasAttachments = !! attachmentPreviews;
 
+	const sendMessageHandler = useSendMessageHandler( {
+		inputValue,
+		setInputValue,
+		hasAttachments,
+		isChatBusy,
+		chat,
+		sendAttachments,
+		textareaRef,
+		trackEvent,
+		sendMessage,
+	} );
+
+	// Focus the textarea when the component mounts
+	useEffect( () => {
+		textareaRef.current?.focus();
+	}, [ textareaRef ] );
+
 	// Prioritize connection status notice over message size notice
 	const notice = connectionNotice || messageSizeNotice || badFormatNotice;
 
@@ -88,80 +108,6 @@ export const OdieSendMessageButton = () => {
 	const textAreaPlaceholder = getTextAreaPlaceholder( isChatBusy, cantTransferToZendesk );
 
 	const customActions = showAttachmentButton ? [ attachmentAction ] : undefined;
-
-	const sendMessageHandler = useCallback( async () => {
-		const message = inputValue.trim().substring( 0, 4096 );
-
-		// Allow submission if there's either a message or attachments
-		if ( ( message === '' && ! hasAttachments ) || isChatBusy ) {
-			return;
-		}
-
-		// Immediately clear the input field
-		if ( chat?.provider === 'odie' ) {
-			setInputValue( '' );
-		} else if ( chat.conversationId ) {
-			Smooch?.stopTyping?.();
-			sendAttachments();
-		}
-
-		if ( ! message ) {
-			textareaRef.current?.focus();
-			return;
-		}
-
-		try {
-			trackEvent( 'chat_message_action_send', {
-				message_length: inputValue.length,
-				provider: chat?.provider,
-			} );
-
-			const messageObj = {
-				content: inputValue,
-				role: 'user',
-				type: 'message',
-			} as Message;
-
-			if ( chat?.provider === 'zendesk' ) {
-				messageObj.metadata = {
-					temporary_id: crypto.randomUUID(),
-					local_timestamp: Date.now() / 1000,
-				};
-			}
-
-			sendMessage( messageObj ).catch( ( error ) => {
-				if ( error?.type === 'abort' ) {
-					setInputValue( inputValue );
-				}
-			} );
-
-			// Clear input after zendesk messages are sent
-			if ( chat?.provider === 'zendesk' ) {
-				setInputValue( '' );
-			}
-
-			trackEvent( 'chat_message_action_receive', {
-				message_length: inputValue.length,
-				provider: chat?.provider,
-			} );
-		} catch ( e ) {
-			const error = e as Error;
-			trackEvent( 'chat_message_error', {
-				error: error?.message,
-			} );
-		} finally {
-			textareaRef.current?.focus();
-		}
-	}, [
-		inputValue,
-		isChatBusy,
-		chat?.provider,
-		sendMessage,
-		trackEvent,
-		chat.conversationId,
-		sendAttachments,
-		hasAttachments,
-	] );
 
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 
