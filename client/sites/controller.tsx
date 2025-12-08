@@ -4,6 +4,7 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
+import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
@@ -113,6 +114,7 @@ export function sitesDashboard( context: Context, next: () => void ) {
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
+			<ResurrectedWelcomeModalGate />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 			<SitesDashboard queryParams={ getQueryParams( context ) } />
 		</>

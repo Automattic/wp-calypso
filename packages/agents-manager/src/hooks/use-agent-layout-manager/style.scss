@@ -282,7 +282,9 @@ body.post-php.agents-manager-sidebar-container {
 			color: $gray-100;
 		}
 
+		&__back-btn,
 		&__more-options,
+		&__history-btn,
 		&__close-btn {
 			svg {
 				fill: $gray-100;
@@ -296,12 +298,17 @@ body.post-php.agents-manager-sidebar-container {
 				padding: 0;
 			}
 		}
+
+		&__back-btn svg {
+			margin-left: 0;
+		}
 	}
 
 	.agents-manager-conversation-history-view {
 		padding-top: 48px;
 
-		&__content {
+		&__content,
+		&__footer {
 			padding: 0;
 		}
 
