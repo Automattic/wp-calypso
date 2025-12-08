@@ -47,8 +47,13 @@ export default function HostingFeatureGatedWithOverviewCard( {
 					upsellFeatureId={ upsellFeatureId ?? upsellId }
 				/>
 			) }
-			renderActivationComponent={ () => (
-				<OverviewCard { ...cardProps } icon={ featureIcon } title={ __( 'Activate to unlock' ) } />
+			renderActivationComponent={ ( { onClick } ) => (
+				<OverviewCard
+					{ ...cardProps }
+					icon={ featureIcon }
+					title={ __( 'Activate to unlock' ) }
+					onClick={ onClick }
+				/>
 			) }
 		/>
 	);
