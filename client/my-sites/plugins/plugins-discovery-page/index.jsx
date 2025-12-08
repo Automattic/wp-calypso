@@ -7,6 +7,7 @@ import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WPBEGINNER_PLUGINS } from '../constants';
 import EducationFooter from '../education-footer';
+import BusinessPlanBanner from '../plugins-banners/business-plan-banner';
 import TelexBanner from '../plugins-banners/telex-banner';
 import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
@@ -145,6 +146,12 @@ const PluginsDiscoveryPage = ( props ) => {
 			<FullWidthSection className="plugins-discovery-page__business">
 				<CollectionListView category="business" { ...props } />
 			</FullWidthSection>
+
+			{ isEnabled( 'marketplace-redesign' ) && (
+				<FullWidthSection className="plugins-discovery-page__business-plan-banner full-width-section--double-padding">
+					<BusinessPlanBanner />
+				</FullWidthSection>
+			) }
 
 			<FullWidthSection className="plugins-discovery-page__free-essentials full-width-section--double-padding">
 				<PopularPluginsSection

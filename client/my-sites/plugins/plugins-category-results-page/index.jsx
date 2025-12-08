@@ -1,7 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import FullWidthSection from 'calypso/components/full-width-section';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
+import BusinessPlanBanner from 'calypso/my-sites/plugins/plugins-banners/business-plan-banner';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
@@ -31,26 +33,28 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 		} );
 	}
 
+	const isMarketplaceRedesign = isEnabled( 'marketplace-redesign' );
+
 	return (
-		<>
-			<FullWidthSection className="plugins-browser__category-results">
-				<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
-				<PluginsBrowserList
-					title={ categoryName }
-					subtitle={ categoryDescription }
-					resultCount={ resultCount }
-					plugins={ plugins }
-					listName={ category }
-					listType="browse"
-					site={ siteSlug }
-					showPlaceholders={ isFetching }
-					currentSites={ sites }
-					variant={ PluginsBrowserListVariant.InfiniteScroll }
-					extended
-				/>
-				<InfiniteScroll nextPageMethod={ fetchNextPage } />
-			</FullWidthSection>
-		</>
+		<FullWidthSection className="plugins-browser__category-results">
+			<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
+			<PluginsBrowserList
+				title={ categoryName }
+				subtitle={ categoryDescription }
+				resultCount={ resultCount }
+				plugins={ plugins }
+				listName={ category }
+				listType="browse"
+				site={ siteSlug }
+				showPlaceholders={ isFetching }
+				currentSites={ sites }
+				variant={ PluginsBrowserListVariant.InfiniteScroll }
+				extended
+				injectAfterIndex={ isMarketplaceRedesign ? 12 : undefined }
+				injectElement={ isMarketplaceRedesign ? <BusinessPlanBanner /> : undefined }
+			/>
+			<InfiniteScroll nextPageMethod={ fetchNextPage } />
+		</FullWidthSection>
 	);
 };
 
