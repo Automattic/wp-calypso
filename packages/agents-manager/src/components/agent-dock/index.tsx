@@ -35,6 +35,7 @@ import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
+import './styles.scss';
 
 /**
  * Navigation continuation hook type
@@ -371,7 +372,7 @@ export default function AgentDock( {
 
 	return createAgentPortal(
 		<Routes>
-			<Route path="/" element={ Chat } />
+			<Route path="/" element={ OdieChat } />
 			<Route path="/odie" element={ OdieChat } />
 			<Route path="/chat" element={ Chat } />
 			<Route path="/post" element={ SupportGuideRoute } />

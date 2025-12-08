@@ -1,0 +1,14 @@
+.agenttic {
+	--wp-components-color-foreground: #2f2f2f;
+}
+
+.agents-manager-chat--docked {
+	.agenttic {
+		--wp-components-color-foreground: #f2f2f2;
+
+		.summary-button.components-button.has-density-low {
+			background-color: #2f2f2f;
+			border-color: #454545;
+		}
+	}
+}

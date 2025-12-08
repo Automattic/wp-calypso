@@ -116,6 +116,7 @@ export type Context = {
 		show_contact_support_msg?: boolean;
 		show_ai_avatar?: boolean;
 		is_error_message?: boolean;
+		agent_handover?: '1' | undefined;
 	};
 };
 

@@ -1,5 +1,7 @@
+import { SummaryButton } from '@automattic/components';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
@@ -15,7 +17,34 @@ import type {
 	SupportInteraction,
 } from '../types';
 
-function convertMessageToAgentticFormat( message: Message ): AgentticMessage {
+function convertMessageToAgentticFormat(
+	message: Message,
+	chatId: number | null,
+	navigate: ( path: string ) => void
+): AgentticMessage {
+	if ( message.context?.flags?.agent_handover === '1' ) {
+		return {
+			content: [
+				{
+					type: 'component',
+					component: () => (
+						<SummaryButton
+							title={ __( 'Switch to Build assistant', __i18n_text_domain__ ) }
+							description={ __( 'A new chat will start', __i18n_text_domain__ ) }
+							onClick={ () => navigate( `/chat?startedFrom=odie&chatId=${ chatId }` ) }
+							className="agent-handover-summary-button"
+						/>
+					),
+				},
+			],
+			role: message.role as 'agent',
+			timestamp: message.received as number,
+			id: message.message_id?.toString() ?? '',
+			actions: [],
+			archived: false,
+			showIcon: true,
+		};
+	}
 	return {
 		content: [ { type: 'text', text: message.content as string } ],
 		role: message.role as 'agent',
@@ -40,7 +69,12 @@ function convertMessageFromAgentticFormat( message: string ): Message {
  * @returns useMutation return object.
  */
 export const useSendOdieMessage = () => {
-	const { selectedSiteId, version, newInteractionsBotSlug } = useOdieAssistantContext();
+	const versionParam = new URLSearchParams( window.location.search ).get( 'version' );
+	const {
+		selectedSiteId,
+		version = versionParam,
+		newInteractionsBotSlug,
+	} = useOdieAssistantContext();
 	const {
 		data: currentSupportInteraction,
 		promise: currentSupportInteractionPromise,
@@ -143,7 +177,10 @@ export const useManagedOdieChat = () => {
 	}
 
 	return {
-		messages: chat?.messages.map( convertMessageToAgentticFormat ) || [],
+		messages:
+			chat?.messages.map( ( message ) =>
+				convertMessageToAgentticFormat( message, chatId ? Number( chatId ) : null, navigate )
+			) || [],
 		sendMessage,
 		isProcessing: sendOdieMessage.isPending || isLoadingChat,
 	};

@@ -100,14 +100,22 @@ $blueberry-blue: #3858e9;
 
 	.Notice-module_containerWithIcon {
 		background-color: #cc18180a;
-		border: 1px solid #0000001A;
+		border: 1px solid #0000001a;
 
 		svg {
-			fill: #8C0B0B;
+			fill: #8c0b0b;
 		}
 	}
 
 	.Textarea-module_textarea:focus {
 		box-shadow: none;
+	}
+}
+
+.summary-button.components-button.agent-handover-summary-button {
+	padding: 12px 16px;
+
+	> .components-h-stack {
+		align-items: center;
 	}
 }
