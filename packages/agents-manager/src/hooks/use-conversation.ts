@@ -13,7 +13,6 @@ interface Config {
 	authProvider?: () => Promise< Record< string, string > >;
 	maxPages?: number;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
-	onError?: ( error: Error ) => void;
 }
 
 interface Result {
@@ -28,13 +27,10 @@ export default function useConversation( {
 	authProvider,
 	maxPages = 10,
 	onSuccess = () => {},
-	onError = () => {},
 }: Config ): Result {
 	// Keep refs to the latest callbacks
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
-	const onErrorRef = useRef( onError );
-	onErrorRef.current = onError;
 
 	const { data, isLoading, isError, error } = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
@@ -67,7 +63,6 @@ export default function useConversation( {
 		if ( error ) {
 			// eslint-disable-next-line no-console
 			console.error( '[useConversation] Error loading conversation:', error );
-			onErrorRef.current( error );
 		}
 	}, [ error ] );
 

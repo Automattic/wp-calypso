@@ -3,15 +3,13 @@ import {
 	type ServerConversationListItem,
 } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { parseMySQLDateTime } from '../utils/formatters';
 
 interface Config {
 	botId: string;
 	authProvider?: () => Promise< Record< string, string > >;
-	onSuccess?: ( conversations: ServerConversationListItem[] ) => void;
-	onError?: ( error: Error ) => void;
 }
 
 interface Result {
@@ -20,18 +18,7 @@ interface Result {
 	isError: boolean;
 }
 
-export default function useConversationList( {
-	botId,
-	authProvider,
-	onSuccess = () => {},
-	onError = () => {},
-}: Config ): Result {
-	// Keep refs to the latest callbacks
-	const onSuccessRef = useRef( onSuccess );
-	onSuccessRef.current = onSuccess;
-	const onErrorRef = useRef( onError );
-	onErrorRef.current = onError;
-
+export default function useConversationList( { botId, authProvider }: Config ): Result {
 	const {
 		data: conversations,
 		isLoading,
@@ -60,16 +47,9 @@ export default function useConversationList( {
 	} );
 
 	useEffect( () => {
-		if ( conversations ) {
-			onSuccessRef.current( conversations || [] );
-		}
-	}, [ conversations ] );
-
-	useEffect( () => {
 		if ( error ) {
 			// eslint-disable-next-line no-console
 			console.error( '[useConversationList] Error loading conversation list:', error );
-			onErrorRef.current( error );
 		}
 	}, [ error ] );
 
