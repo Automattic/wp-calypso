@@ -432,6 +432,7 @@ export default function CheckoutMain( {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
 					new_product_slug: newProductSlug,
+					volume: newProductVolume,
 				} )
 			);
 
