@@ -96,6 +96,7 @@ describe( '<Plan>', () => {
 			<Plan
 				isJetpack={ false }
 				isSelfHostedJetpackConnected={ false }
+				isOwner
 				value="Business"
 				nag={ { isExpired: true, site } }
 			/>
@@ -121,6 +122,7 @@ describe( '<Plan>', () => {
 			<Plan
 				isJetpack={ false }
 				isSelfHostedJetpackConnected={ false }
+				isOwner
 				value="Trial"
 				nag={ { isExpired: true, site } }
 			/>

@@ -19,7 +19,6 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
-import { useAuth } from '../../app/auth';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
@@ -378,14 +377,8 @@ function SiteLaunchNag( { site }: { site: Site } ) {
 	);
 }
 
-function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
-	const { user } = useAuth();
+function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; source: string } ) {
 	const { recordTracksEvent } = useAnalytics();
-
-	if ( site.site_owner !== user.ID ) {
-		return null;
-	}
-
 	const isTrial = isSitePlanTrial( site );
 
 	return (
@@ -433,7 +426,7 @@ function WithHostingFeaturesQuery( {
 	return <span ref={ ref }>{ children( data?.status ) }</span>;
 }
 
-export function Status( { site }: { site: Site } ) {
+export function Status( { site, isOwner }: { site: Site; isOwner?: boolean } ) {
 	const status = getSiteStatus( site );
 	const label = getSiteStatusLabel( site );
 
@@ -457,7 +450,7 @@ export function Status( { site }: { site: Site } ) {
 		return (
 			<VStack spacing={ 1 }>
 				<Text intent="error">{ __( 'Plan expired' ) }</Text>
-				<PlanRenewNag site={ site } source="status" />
+				{ isOwner && <PlanRenewNag site={ site } source="status" /> }
 			</VStack>
 		);
 	}
@@ -494,11 +487,13 @@ export function Plan( {
 	nag,
 	isSelfHostedJetpackConnected,
 	isJetpack,
+	isOwner,
 	value,
 }: {
-	nag: { isExpired: false } | { isExpired: true; site: Site };
+	nag: { isExpired: false } | { isExpired: true; site: Pick< Site, 'slug' | 'plan' > };
 	isSelfHostedJetpackConnected: boolean;
 	isJetpack: boolean;
+	isOwner?: boolean;
 	value: string;
 } ) {
 	if ( isSelfHostedJetpackConnected ) {
@@ -523,7 +518,7 @@ export function Plan( {
 						value
 					) }
 				</Text>
-				<PlanRenewNag site={ nag.site } source="plan" />
+				{ isOwner && <PlanRenewNag site={ nag.site } source="plan" /> }
 			</VStack>
 		);
 	}
