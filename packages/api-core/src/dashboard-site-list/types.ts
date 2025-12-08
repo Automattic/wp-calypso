@@ -32,6 +32,7 @@ export interface DashboardSiteListSite {
 	owner_id?: number;
 	php_version?: string;
 	slug: string; // Slug is always fetched
+	views?: null | number;
 	visitors?: null | number;
 	total_wpcom_subscribers?: number;
 	url?: { value: string; with_scheme: string };

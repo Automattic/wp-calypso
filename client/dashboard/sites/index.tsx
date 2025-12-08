@@ -81,6 +81,7 @@ function getFetchSiteListParams(
 		// preview
 		// last_published
 		// uptime
+		views: 'views',
 		visitors: 'visitors',
 		subscribers_count: 'total_wpcom_subscribers',
 		// links

@@ -343,12 +343,12 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
 			enableSorting: false,
 		},
-		// {
-		// 	id: 'views',
-		// 	label: __( '7-day views' ),
-		// 	render: ( { item } ) => <AsyncEngagementStat site={ item } type="views" />,
-		// 	enableSorting: false,
-		// },
+		{
+			id: 'views',
+			label: __( '7-day views' ),
+			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
+			enableSorting: false,
+		},
 		// {
 		// 	id: 'likes',
 		// 	label: __( '7-day likes' ),
