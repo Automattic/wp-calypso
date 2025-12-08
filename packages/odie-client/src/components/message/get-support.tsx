@@ -1,5 +1,6 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, translationExists } from '@automattic/i18n-utils';
 import { Icon } from '@wordpress/components';
+import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import React from 'react';
@@ -55,6 +56,26 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		mostRecentSupportInteractionId || null
 	);
 
+	const isPaidUser = isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport;
+	const isEmailForced = forceEmailSupport || contextForceEmailSupport;
+	const hasZendeskAccess = canConnectToZendesk || contextCanConnectToZendesk;
+	const showExistingChatOptions =
+		isPaidUser &&
+		! isEmailForced &&
+		! forceAIConversation &&
+		supportInteraction &&
+		hasZendeskAccess;
+
+	const [ hasTrackedExistingChatOptions, setHasTrackedExistingChatOptions ] = useState( false );
+
+	// Track when "existing chat" options are shown to the user
+	useEffect( () => {
+		if ( showExistingChatOptions && ! hasTrackedExistingChatOptions ) {
+			setHasTrackedExistingChatOptions( true );
+			trackEvent( 'chat_existing_conversation_options_shown' );
+		}
+	}, [ showExistingChatOptions, hasTrackedExistingChatOptions, trackEvent ] );
+
 	// Early return if user is already talking to a human or transferring to Zendesk
 	if ( chat.provider !== 'odie' || chat.status === 'transfer' ) {
 		return null;
@@ -63,8 +84,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	const getButtonConfig = (): ButtonConfig[] => {
 		const buttons: ButtonConfig[] = [];
 
-		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
-			if ( forceEmailSupport || contextForceEmailSupport ) {
+		if ( isPaidUser ) {
+			if ( isEmailForced ) {
 				buttons.push( {
 					text: __( 'Send an email', __i18n_text_domain__ ),
 					action: async () => {
@@ -75,10 +96,16 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 				} );
 			} else {
 				if ( supportInteraction ) {
+					const existingConversationCtaText = translationExists(
+						'Yes, go back to that conversation'
+					)
+						? __( 'Yes, go back to that conversation', __i18n_text_domain__ )
+						: __( 'Yes, please take me to that chat', __i18n_text_domain__ );
+
 					buttons.push( {
 						text: (
 							<>
-								{ __( 'Yes, please take me to that chat', __i18n_text_domain__ ) }
+								{ existingConversationCtaText }
 								<Icon icon={ chevronRight } />
 							</>
 						),
@@ -100,10 +127,14 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							navigate( '/odie?' + params.toString() );
 						},
 					} );
-				} else if ( canConnectToZendesk || contextCanConnectToZendesk ) {
+				} else if ( hasZendeskAccess ) {
+					const startNewConversationText = translationExists( 'No, connect me with someone new' )
+						? __( 'No, connect me with someone new', __i18n_text_domain__ )
+						: __( 'No thanks, let’s keep it here', __i18n_text_domain__ );
+
 					buttons.push( {
 						text: supportInteraction
-							? __( 'No thanks, let’s keep it here', __i18n_text_domain__ )
+							? startNewConversationText
 							: __( 'Get support', __i18n_text_domain__ ),
 						action: async () => {
 							onClickAdditionalEvent?.( 'chat' );
