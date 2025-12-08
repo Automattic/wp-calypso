@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
 import FullWidthSection from 'calypso/components/full-width-section';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -6,6 +7,7 @@ import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WPBEGINNER_PLUGINS } from '../constants';
 import EducationFooter from '../education-footer';
+import TelexBanner from '../plugins-banners/telex-banner';
 import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
@@ -124,9 +126,11 @@ const PluginsDiscoveryPage = ( props ) => {
 				<EducationFooter />
 			</FullWidthSection>
 
-			{ ! isLoggedIn && (
-				<FullWidthSection className="plugins-discovery-page__cta full-width-section--double-padding">
-					<InPageCTASection />
+			{ ! isLoggedIn && ! isEnabled( 'marketplace-redesign' ) && <InPageCTASection /> }
+
+			{ isEnabled( 'marketplace-redesign' ) && (
+				<FullWidthSection className="plugins-discovery-page__telex-banner full-width-section--double-padding">
+					<TelexBanner />
 				</FullWidthSection>
 			) }
 
