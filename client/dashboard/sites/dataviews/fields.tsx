@@ -253,6 +253,12 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			getValue: ( { item } ) => item.total_wpcom_subscribers,
 			label: __( 'Subscribers' ),
 		},
+		// {
+		// 	id: 'backup',
+		// 	label: __( 'Backup' ),
+		// 	render: ( { item } ) => <LastBackup site={ item } />,
+		// 	enableSorting: false,
+		// },
 		{
 			id: 'plan',
 			label: __( 'Plan' ),
@@ -318,18 +324,49 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			enableHiding: false,
 			enableSorting: false,
 		},
+		// {
+		// 	id: 'last_published',
+		// 	label: __( 'Last published' ),
+		// 	getValue: ( { item } ) => item.options?.updated_at ?? '',
+		// 	render: ( { item } ) =>
+		// 		item.options?.updated_at ? <TimeSince timestamp={ item.options.updated_at } /> : '',
+		// },
+		// {
+		// 	id: 'uptime',
+		// 	label: __( '7-day uptime' ),
+		// 	render: ( { item } ) => <Uptime site={ item } />,
+		// 	enableSorting: false,
+		// },
 		{
 			id: 'visitors',
 			label: __( '7-day visitors' ),
 			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
 			enableSorting: false,
 		},
+		// {
+		// 	id: 'views',
+		// 	label: __( '7-day views' ),
+		// 	render: ( { item } ) => <AsyncEngagementStat site={ item } type="views" />,
+		// 	enableSorting: false,
+		// },
+		// {
+		// 	id: 'likes',
+		// 	label: __( '7-day likes' ),
+		// 	render: ( { item } ) => <AsyncEngagementStat site={ item } type="likes" />,
+		// 	enableSorting: false,
+		// },
 		{
 			id: 'php_version',
 			label: __( 'PHP version' ),
 			render: ( { item }: { item: DashboardSiteListSite } ) => <PHPVersion__ES site={ item } />,
 			enableSorting: false,
 		},
+		// {
+		// 	id: 'storage',
+		// 	label: __( 'Storage' ),
+		// 	render: ( { item } ) => <MediaStorage site={ item } />,
+		// 	enableSorting: false,
+		// },
 		{
 			id: 'host',
 			label: __( 'Host' ),
