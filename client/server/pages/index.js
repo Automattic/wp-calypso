@@ -1135,7 +1135,7 @@ export default function pages() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
-	// Register CSP report route for dashboard
+	// Register CSP report route
 	registerCspReportRoute( app );
 
 	// Multi-site Dashboard routing for my.wordpress.com.
