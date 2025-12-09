@@ -31,6 +31,7 @@ export type {
 export { ThinkingMessage } from './components/chat/ThinkingMessage';
 export { Messages } from './components/chat/Messages';
 export { MessageActions } from './components/chat/MessageActions';
+export { MessageDivider } from './components/chat/MessageDivider';
 export { Notice } from './components/chat/Notice';
 export { Message } from './components/chat/Message';
 export { Suggestions } from './components/chat/Suggestions';
