@@ -1,5 +1,7 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, privateApis } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { pluginRoute } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews';
@@ -14,9 +16,102 @@ import { usePlugin } from './use-plugin';
 
 import './style.scss';
 
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+
+const { Tabs } = unlock( privateApis );
+
+type PluginTabsProps = {
+	pluginSlug: string;
+	isLoading: boolean;
+	sitesWithThisPlugin: Array< unknown >;
+	sitesWithoutThisPlugin: Array< unknown >;
+	plugin: unknown;
+	pluginName?: string;
+	pluginBySiteId: Map< number, unknown >;
+};
+
+function PluginTabs( {
+	pluginSlug,
+	isLoading,
+	sitesWithThisPlugin,
+	sitesWithoutThisPlugin,
+	plugin,
+	pluginName,
+	pluginBySiteId,
+}: PluginTabsProps ) {
+	const [ activeTab, setActiveTab ] = useState< 'installed' | 'available' >( 'installed' );
+
+	return (
+		<VStack spacing={ 6 }>
+			<Tabs
+				selectedTabId={ activeTab }
+				onSelect={ ( tabId: 'installed' | 'available' ) => setActiveTab( tabId ) }
+			>
+				<Tabs.TabList>
+					<Tabs.Tab tabId="installed">
+						<SectionHeader
+							title={ sprintf(
+								// translators: %(count) is the number of sites the plugin is installed on.
+								_n(
+									'Installed on %(count)d site',
+									'Installed on %(count)d sites',
+									sitesWithThisPlugin.length
+								),
+								{ count: sitesWithThisPlugin.length }
+							) }
+						/>
+					</Tabs.Tab>
+					<Tabs.Tab tabId="available">
+						<SectionHeader title={ __( 'Available on' ) } />
+					</Tabs.Tab>
+				</Tabs.TabList>
+
+				<Tabs.TabPanel tabId="installed">
+					<VStack spacing={ 6 }>
+						<DataViewsCard>
+							<SitesWithThisPlugin
+								pluginSlug={ pluginSlug }
+								isLoading={ isLoading }
+								plugin={ plugin as never }
+								pluginBySiteId={ pluginBySiteId as never }
+								sitesWithThisPlugin={ sitesWithThisPlugin as never }
+							/>
+						</DataViewsCard>
+					</VStack>
+				</Tabs.TabPanel>
+
+				<Tabs.TabPanel tabId="available">
+					<VStack spacing={ 6 }>
+						<DataViewsCard>
+							<SitesWithoutThisPlugin
+								pluginSlug={ pluginSlug }
+								pluginName={ pluginName }
+								isLoading={ isLoading }
+								sitesWithoutThisPlugin={ sitesWithoutThisPlugin as never }
+							/>
+						</DataViewsCard>
+					</VStack>
+				</Tabs.TabPanel>
+			</Tabs>
+		</VStack>
+	);
+}
+
 export default function Plugin() {
 	const { pluginId: pluginSlug } = pluginRoute.useParams();
-	const { icon, isLoading, sitesWithThisPlugin, plugin } = usePlugin( pluginSlug );
+	const { icon, isLoading, plugin, pluginBySiteId, sitesWithThisPlugin, sitesWithoutThisPlugin } =
+		usePlugin( pluginSlug );
+
+	const decoration = useMemo( () => {
+		if ( icon ) {
+			return <img src={ icon } alt={ plugin?.name } />;
+		} else if ( isLoading ) {
+			return <div className="plugin-icon-placeholder" aria-hidden="true" />;
+		}
+	}, [ icon, isLoading, plugin?.name ] );
 
 	if ( ! isLoading && ! plugin ) {
 		return (
@@ -27,14 +122,6 @@ export default function Plugin() {
 				}
 			/>
 		);
-	}
-
-	let decoration = null;
-
-	if ( icon ) {
-		decoration = <img src={ icon } alt={ plugin?.name } />;
-	} else if ( isLoading ) {
-		decoration = <div className="plugin-icon-placeholder" aria-hidden="true" />;
 	}
 
 	return (
@@ -58,33 +145,15 @@ export default function Plugin() {
 				</VStack>
 			}
 		>
-			<VStack spacing={ 20 }>
-				<VStack spacing={ 6 }>
-					<SectionHeader
-						title={ sprintf(
-							// translators: %(count) is the number of sites the plugin is installed on.
-							_n(
-								'Installed on %(count)d site',
-								'Installed on %(count)d sites',
-								sitesWithThisPlugin.length
-							),
-							{ count: sitesWithThisPlugin.length }
-						) }
-					/>
-
-					<DataViewsCard>
-						<SitesWithThisPlugin pluginSlug={ pluginSlug } />
-					</DataViewsCard>
-				</VStack>
-
-				<VStack spacing={ 6 }>
-					<SectionHeader title={ __( 'Available on' ) } />
-
-					<DataViewsCard>
-						<SitesWithoutThisPlugin pluginSlug={ pluginSlug } />
-					</DataViewsCard>
-				</VStack>
-			</VStack>
+			<PluginTabs
+				pluginSlug={ pluginSlug }
+				isLoading={ isLoading }
+				plugin={ plugin }
+				pluginName={ ( plugin as { name?: string } | null | undefined )?.name }
+				pluginBySiteId={ pluginBySiteId as never }
+				sitesWithThisPlugin={ sitesWithThisPlugin as never }
+				sitesWithoutThisPlugin={ sitesWithoutThisPlugin as never }
+			/>
 		</PageLayout>
 	);
 }
