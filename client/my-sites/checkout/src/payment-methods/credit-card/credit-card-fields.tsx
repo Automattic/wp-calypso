@@ -61,6 +61,11 @@ export default function CreditCardFields( {
 			( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForAllSubscriptions(),
 		[]
 	);
+	const formSubmitAttempted: boolean = useSelect(
+		( select ) =>
+			( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).formSubmitAttempted(),
+		[]
+	);
 
 	const getField = ( key: string ) => fields[ key ] || {};
 	const getFieldValue = ( key: string ) => getField( key ).value ?? '';
@@ -169,6 +174,7 @@ export default function CreditCardFields( {
 								cvc: __( 'CVC', 'calypso' ),
 							} }
 							onVgsFormError={ setVgsFormError }
+							formSubmitAttempted={ formSubmitAttempted }
 						/>
 
 						{ shouldShowContactFields && (

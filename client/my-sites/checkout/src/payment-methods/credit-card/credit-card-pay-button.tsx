@@ -10,6 +10,7 @@ import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useVgsFormSubmit } from '../../hooks/use-vgs-form-submit';
+import { useVgsFormValidation } from '../../hooks/use-vgs-form-validation';
 import { logStashEvent } from '../../lib/analytics';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
@@ -37,6 +38,7 @@ export default function CreditCardPayButton( {
 	const { __ } = useI18n();
 	const { stripeConfiguration, stripe } = useStripe();
 	const submitVgsForm = useVgsFormSubmit();
+	const { validateVgsForm } = useVgsFormValidation();
 	const fields: CardFieldState = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
 		[]
@@ -140,7 +142,21 @@ export default function CreditCardPayButton( {
 						};
 
 						if ( shouldUseVgs ) {
-							// VGS flow: get tokens from VGS form
+							// VGS flow: validate form before attempting submission
+							// This will trigger VGS to show validation errors for invalid fields
+							const vgsValidation = validateVgsForm();
+							if ( ! vgsValidation.isValid ) {
+								debug( 'VGS form validation failed', vgsValidation.errorMessage );
+								// Mark form submission as attempted to show field errors
+								store.dispatch( actions.setFormSubmitAttempted( true ) );
+								setDisplayFieldsError(
+									vgsValidation.errorMessage ||
+										__( 'Please check your card details and try again.' )
+								);
+								return;
+							}
+
+							// VGS form is valid, proceed with submission
 							// Set form to submitting state immediately to show loading indicator
 							setFormSubmitting();
 							try {
@@ -241,8 +257,9 @@ function isCreditCardFormValid(
 			const isUsingVgs = ! rawState?.number?.value;
 
 			if ( isUsingVgs ) {
-				// VGS flow: VGS fields are validated by the VGS library itself
-				// We only need to validate the cardholder name and contact/billing fields
+				// For VGS mode, we validate billing fields only here
+				// VGS card fields validation is handled separately via useVgsFormValidation hook
+				// which checks the VGS form state directly
 				const requiredFields = [
 					'cardholderName',
 					'state',

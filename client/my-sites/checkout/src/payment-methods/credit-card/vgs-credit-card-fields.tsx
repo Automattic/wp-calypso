@@ -5,7 +5,11 @@
  */
 
 import { loadVGSCollect, VGS } from '@vgs/collect-js';
-import { VGSCollectForm, type VGSCollectVaultEnvironment } from '@vgs/collect-js-react';
+import {
+	VGSCollectForm,
+	useVGSCollectFormInstance,
+	type VGSCollectVaultEnvironment,
+} from '@vgs/collect-js-react';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useVaultId } from '../../hooks/use-vault-id';
@@ -13,6 +17,7 @@ import { useVaultId } from '../../hooks/use-vault-id';
 const { CardNumberField, CardExpirationDateField, CardSecurityCodeField } = VGSCollectForm;
 
 // Match existing credit card field styling exactly with proper height and spacing
+// Include error states for validation feedback
 const VGSCollectFieldStyles: VGS.Css = {
 	width: '100%',
 	height: '40px',
@@ -38,6 +43,16 @@ const VGSCollectFieldStyles: VGS.Css = {
 	'&:focus::placeholder': {
 		color: '#c3c4c7',
 	},
+	// Show error state when field is invalid and touched
+	'&.invalid.touched:not(:focus)': {
+		borderColor: '#d63638',
+		boxShadow: '0 0 0 1px #d63638',
+	},
+	// Show error state when field is invalid (even if not touched) after form submission attempt
+	'&.invalid:not(:focus)': {
+		borderColor: '#d63638',
+		boxShadow: '0 0 0 1px #d63638',
+	},
 };
 
 interface VgsCreditCardFieldsStyles {
@@ -52,6 +67,7 @@ interface VgsCreditCardFieldsProps {
 	styles?: VgsCreditCardFieldsStyles;
 	showFutureChargeNotice?: boolean;
 	onVgsFormError?: ( error: string | null ) => void;
+	formSubmitAttempted?: boolean;
 	labels?: {
 		cardNumber?: string;
 		expiryDate?: string;
@@ -71,10 +87,63 @@ interface VgsCreditCardFieldsProps {
 	fieldSpacing?: string;
 }
 
+/**
+ * Get localized error message for a VGS field
+ */
+function getVgsFieldErrorMessage( field: VGS.FieldState | undefined ): string | null {
+	if ( ! field || ! field.errors || field.errors.length === 0 ) {
+		return null;
+	}
+
+	const error = field.errors[ 0 ];
+	const errorCode = error.code || 0;
+
+	if ( field.name === 'card_number' || field.name === 'card-number' ) {
+		switch ( errorCode ) {
+			case 1001:
+				return __( 'Card number is required.', 'calypso' );
+			case 1011:
+				return __( 'Card number is invalid.', 'calypso' );
+		}
+	} else if ( field.name === 'card_exp' || field.name === 'card-expiration-date' ) {
+		switch ( errorCode ) {
+			case 1001:
+				return __( 'Expiration date is required.', 'calypso' );
+			case 1015:
+				return __( 'Expiration date is invalid.', 'calypso' );
+		}
+	} else if ( field.name === 'card_cvc' || field.name === 'card-security-code' ) {
+		switch ( errorCode ) {
+			case 1001:
+				return __( 'Security code is required.', 'calypso' );
+			case 1017:
+				return __( 'Security code is invalid.', 'calypso' );
+		}
+	}
+
+	return error.message || __( 'Please check this field.', 'calypso' );
+}
+
+/**
+ * Check if a field should display an error message
+ */
+function shouldDisplayFieldError(
+	field: VGS.FieldState | undefined,
+	formSubmitAttempted: boolean
+): boolean {
+	if ( ! field ) {
+		return false;
+	}
+
+	// Show error if field is invalid and (touched or form submission was attempted)
+	return ! field.isValid && ( field.isTouched || formSubmitAttempted );
+}
+
 export const VgsCreditCardFields = ( {
 	styles = {},
 	showFutureChargeNotice = false,
 	onVgsFormError,
+	formSubmitAttempted: formSubmitAttemptedProp = false,
 	labels = {},
 	placeholders = {},
 	descriptions = {},
@@ -83,7 +152,16 @@ export const VgsCreditCardFields = ( {
 	const hasRun = useRef( false );
 	const [ isVGSCollectScriptLoaded, setCollectScriptLoaded ] = useState( false );
 	const [ initializationError, setInitializationError ] = useState< string | null >( null );
+	const [ formSubmitAttempted, setFormSubmitAttempted ] = useState( false );
 	const { data: vaultConfig, isSuccess, error: vaultError } = useVaultId();
+	const [ form ] = useVGSCollectFormInstance();
+
+	// Update formSubmitAttempted when prop changes
+	useEffect( () => {
+		if ( formSubmitAttemptedProp ) {
+			setFormSubmitAttempted( true );
+		}
+	}, [ formSubmitAttemptedProp ] );
 
 	// Enhanced VGS Collect script loading with better error handling
 	useEffect( () => {
@@ -161,6 +239,12 @@ export const VgsCreditCardFields = ( {
 
 	const expirySecurityFieldStyle: React.CSSProperties = { flex: '1' };
 
+	// Get form state to check field validation
+	const formData = form?.state || {};
+	const cardNumberField = formData[ 'card_number' ] || formData[ 'card-number' ];
+	const cardExpField = formData[ 'card_exp' ] || formData[ 'card-expiration-date' ];
+	const cardCvcField = formData[ 'card_cvc' ] || formData[ 'card-security-code' ];
+
 	// Show error state - this will trigger fallback to existing form
 	if ( initializationError ) {
 		// Log error but don't show to user - fallback will handle it
@@ -196,6 +280,19 @@ export const VgsCreditCardFields = ( {
 						css={ fieldStyles }
 						placeholder={ placeholders.cardNumber || '' }
 					/>
+					{ shouldDisplayFieldError( cardNumberField, formSubmitAttempted ) && (
+						<div
+							className="vgs-field-error"
+							role="alert"
+							style={ {
+								color: '#d63638',
+								fontSize: '14px',
+								marginTop: '0.25rem',
+							} }
+						>
+							{ getVgsFieldErrorMessage( cardNumberField ) }
+						</div>
+					) }
 					{ descriptions.cardNumber && (
 						<span style={ defaultDescriptionStyle }>{ descriptions.cardNumber }</span>
 					) }
@@ -217,6 +314,19 @@ export const VgsCreditCardFields = ( {
 								{ name: 'replace', options: { old: '(\\d{2}) \\/ (\\d{2})', new: '$1/20$2' } },
 							] }
 						/>
+						{ shouldDisplayFieldError( cardExpField, formSubmitAttempted ) && (
+							<div
+								className="vgs-field-error"
+								role="alert"
+								style={ {
+									color: '#d63638',
+									fontSize: '14px',
+									marginTop: '0.25rem',
+								} }
+							>
+								{ getVgsFieldErrorMessage( cardExpField ) }
+							</div>
+						) }
 						{ descriptions.expiryDate && (
 							<span style={ defaultDescriptionStyle }>{ descriptions.expiryDate }</span>
 						) }
@@ -232,6 +342,19 @@ export const VgsCreditCardFields = ( {
 							css={ fieldStyles }
 							placeholder={ placeholders.cvc || '' }
 						/>
+						{ shouldDisplayFieldError( cardCvcField, formSubmitAttempted ) && (
+							<div
+								className="vgs-field-error"
+								role="alert"
+								style={ {
+									color: '#d63638',
+									fontSize: '14px',
+									marginTop: '0.25rem',
+								} }
+							>
+								{ getVgsFieldErrorMessage( cardCvcField ) }
+							</div>
+						) }
 						{ descriptions.cvc && (
 							<span style={ defaultDescriptionStyle }>{ descriptions.cvc }</span>
 						) }
