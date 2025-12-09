@@ -40,7 +40,7 @@ export const getSuperProps = ( user: User, router: AnyRouter, queryClient: Query
 };
 
 /**
- * Normalize the path by removing leading double slashes.
+ * Normalize the path by removing leading double slashes and trailing slashes.
  */
 export function getNormalizedPath( router: AnyRouter ) {
 	const leafMatch = router.state.matches.at( -1 );
@@ -48,7 +48,7 @@ export function getNormalizedPath( router: AnyRouter ) {
 	const routeId = leafMatch?.routeId ?? '';
 
 	const normalizedBasePath = basePath.endsWith( '/' ) ? basePath.slice( 0, -1 ) : basePath;
-	return normalizedBasePath + routeId;
+	return normalizedBasePath + routeId.replace( /\/$/, '' );
 }
 
 /**
