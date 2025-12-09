@@ -1,5 +1,4 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -18,6 +17,7 @@ import FlashMessage from '../../components/flash-message';
 import { Notice } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
+import { wpcomLink } from '../../utils/link';
 import type { Field } from '@wordpress/dataviews';
 
 interface OptInFormData {
@@ -82,7 +82,7 @@ export default function PreferencesOptInForm() {
 						createSuccessNotice( __( 'New Hosting Dashboard enabled.' ), { type: 'snackbar' } );
 					} else {
 						setIsRedirecting( true );
-						window.location.href = config( 'wpcom_url' ) + '/me/account?flash=dashboard';
+						window.location.href = wpcomLink( '/me/account?flash=dashboard' );
 					}
 				},
 				onError( _, data ) {

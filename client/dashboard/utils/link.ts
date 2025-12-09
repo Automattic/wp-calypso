@@ -16,10 +16,10 @@ export function wpcomLink( path: string ) {
 /**
  * This function returns the link to the dashboard.
  */
-export function dashboardLink() {
+export function dashboardLink( path: string = '' ) {
 	return config( 'env' ) === 'development'
-		? 'http://my.localhost:3000'
-		: 'https://my.wordpress.com';
+		? `http://my.localhost:3000${ path }`
+		: `https://my.wordpress.com${ path }`;
 }
 
 /**
