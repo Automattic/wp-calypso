@@ -59,7 +59,7 @@ const EllipsisMenu = () => {
 	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
-	const { source } = useHelpCenterContext();
+	const { disableChatSupport } = useHelpCenterContext();
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -99,7 +99,7 @@ const EllipsisMenu = () => {
 					<Menu.ItemLabel>{ __( 'Minimize', __i18n_text_domain__ ) }</Menu.ItemLabel>
 				</Menu.Item>
 				<Menu.Separator />
-				{ source !== 'a4a' && (
+				{ ! disableChatSupport && (
 					<>
 						<Menu.Item
 							onClick={ clearChat }
