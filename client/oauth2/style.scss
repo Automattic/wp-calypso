@@ -18,18 +18,34 @@
 
 .oauth2-connect__user-card {
 	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 16px;
 	border: 1px solid #dcdcde;
 	border-radius: 4px;
 	background: #fff;
 }
 
+.oauth2-connect__user-card-horizontal {
+	flex-direction: row;
+	align-items: center;
+	gap: 16px;
+	padding: 16px;
+}
+
+.oauth2-connect__user-card-centered {
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	padding: 32px 24px;
+	text-align: center;
+}
+
 .oauth2-connect__user-avatar {
 	flex-shrink: 0;
-	border-radius: 0;
 	overflow: hidden;
+	border-radius: 50%;
+}
+
+.oauth2-connect__user-avatar-centered {
+	border-radius: 50%;
 }
 
 .oauth2-connect__user-info {
@@ -37,6 +53,10 @@
 	flex-direction: column;
 	gap: 4px;
 	flex: 1;
+}
+
+.oauth2-connect__user-card-centered .oauth2-connect__user-info {
+	flex: initial;
 }
 
 .oauth2-connect__user-name {
