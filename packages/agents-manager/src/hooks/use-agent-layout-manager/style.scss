@@ -669,7 +669,7 @@ body:not( .wp-admin ).agents-manager-sidebar-container {
 }
 
 /* Agenttic UI: Styles for the undocked chat */
-.agents-manager-chat--undocked .agenttic {
+.agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
 }
