@@ -39,22 +39,22 @@ const PermissionsList = ( { permissions, clientTitle }: PermissionsListProps ) =
 							</div>
 						);
 					} ) }
-				</div>
 
-				{ hasMorePermissions && (
-					<button
-						onClick={ () => setShowAll( ! showAll ) }
-						className="oauth2-connect__show-more"
-						type="button"
-					>
-						{ showAll
-							? translate( 'Show less' )
-							: translate( '%(count)d more', {
-									args: { count: hiddenCount },
-							  } ) }
-						<Icon icon={ chevronDown } size={ 20 } className={ showAll ? 'is-rotated' : '' } />
-					</button>
-				) }
+					{ hasMorePermissions && (
+						<button
+							onClick={ () => setShowAll( ! showAll ) }
+							className="oauth2-connect__show-more"
+							type="button"
+						>
+							{ showAll
+								? translate( 'Show less' )
+								: translate( '%(count)d more', {
+										args: { count: hiddenCount },
+								  } ) }
+							<Icon icon={ chevronDown } size={ 20 } className={ showAll ? 'is-rotated' : '' } />
+						</button>
+					) }
+				</div>
 			</div>
 
 			<div className="oauth2-connect__learn-more">

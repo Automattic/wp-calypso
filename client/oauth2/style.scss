@@ -100,6 +100,10 @@
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+	padding: 16px;
 }
 
 .oauth2-connect__permission-item {
@@ -123,7 +127,7 @@
 	gap: 4px;
 	padding: 0;
 	margin: 0;
-	margin-block-start: 4px;
+	margin-block-start: 16px;
 	background: none;
 	border: none;
 	font-size: 14px;
