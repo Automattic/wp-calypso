@@ -47,13 +47,11 @@ export default function SupportGuides( {
 	isOpen,
 	chatHeaderOptions,
 	isChatDocked,
-	onAbort,
 	onClose,
 }: {
 	chatHeaderOptions: Options;
 	isChatDocked: boolean;
 	isOpen: boolean;
-	onAbort: () => void;
 	onClose: () => void;
 } ) {
 	const [ searchInput, setSearchInput ] = useState( '' );
@@ -73,7 +71,6 @@ export default function SupportGuides( {
 			variant={ isChatDocked ? 'embedded' : 'floating' }
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
-			onStop={ onAbort }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader

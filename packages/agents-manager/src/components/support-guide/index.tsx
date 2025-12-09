@@ -10,7 +10,6 @@ export default function SupportGuide( {
 	isOpen,
 	chatHeaderOptions,
 	isChatDocked,
-	onAbort,
 	onClose,
 	currentSiteDomain,
 	sectionName,
@@ -19,7 +18,6 @@ export default function SupportGuide( {
 	chatHeaderOptions: Options;
 	isChatDocked: boolean;
 	isOpen: boolean;
-	onAbort: () => void;
 	onClose: () => void;
 	currentSiteDomain?: string;
 	sectionName: string;
@@ -45,7 +43,6 @@ export default function SupportGuide( {
 			variant={ isChatDocked ? 'embedded' : 'floating' }
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
-			onStop={ onAbort }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader

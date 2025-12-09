@@ -1,93 +1,78 @@
-import {
-	getAgentManager,
-	useAgentChat,
-	type UseAgentChatConfig,
-	type SubmitOptions,
-} from '@automattic/agenttic-client';
-import {
-	type MarkdownComponents,
-	type MarkdownExtensions,
-	type Suggestion,
-} from '@automattic/agenttic-ui';
+import { type AuthProvider } from '@automattic/agenttic-client';
 import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { useEffect, useState, useRef, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
-import useConversation from '../../hooks/use-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
-import { setSessionId, clearSessionId } from '../../utils/agent-session';
+import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import OrchestratorAgentChat from '../orchestrator-agent-chat';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 
-/**
- * Navigation continuation hook type
- */
-type NavigationContinuationHook = ( props: {
-	isProcessing: boolean;
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
-	sessionId: string;
-	agentId: string;
-} ) => void;
-
 interface AgentDockProps {
 	/** The selected site object. */
 	site?: HelpCenterSite | null;
+	/** The current route path. */
+	currentRoute?: string;
 	/** The name of the current section (e.g., 'posts', 'pages'). */
 	sectionName: string;
 	/** Indicates if the user is eligible for chat. */
 	isEligibleForChat: boolean;
-	/** Agent configuration for the chat client. */
-	agentConfig: UseAgentChatConfig;
-	/** Suggestions displayed when the chat is empty. */
-	emptyViewSuggestions?: Suggestion[];
-	/** Custom components for rendering markdown. */
-	markdownComponents?: MarkdownComponents;
-	/** Custom markdown extensions. */
-	markdownExtensions?: MarkdownExtensions;
-	/** Navigation continuation hook for post-navigation conversation resumption. */
-	useNavigationContinuation?: NavigationContinuationHook;
 }
 
 export default function AgentDock( {
-	agentConfig,
 	site,
+	currentRoute,
 	sectionName,
 	isEligibleForChat,
-	emptyViewSuggestions = [],
-	markdownComponents = {},
-	markdownExtensions = {},
-	useNavigationContinuation,
 }: AgentDockProps ) {
+	const navigate = useNavigate();
+	const providersLoadedRef = useRef( false );
+	const [ loadedProviders, setLoadedProviders ] = useState< LoadedProviders >( {} );
+
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const { hasLoaded: isStoreReady, isOpen = false } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-	const { pathname } = useLocation();
-	const navigate = useNavigate();
-
-	const sessionId = agentConfig.sessionId;
-	const agentId = agentConfig.agentId;
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager();
 
-	const {
-		messages,
-		suggestions,
-		isProcessing,
-		error,
-		loadMessages,
-		onSubmit,
-		abortCurrentRequest,
-	} = useAgentChat( agentConfig );
+	const authProvider: AuthProvider = useMemo(
+		() => createCalypsoAuthProvider( site?.ID ),
+		[ site?.ID ]
+	);
+
+	// Default suggestions - can be overridden by loaded providers
+	const defaultSuggestions = useMemo(
+		() => [
+			{
+				id: 'getting-started',
+				label: 'Getting started with WordPress',
+				prompt: 'How do I get started with WordPress?',
+			},
+			{
+				id: 'create-post',
+				label: 'Create a blog post',
+				prompt: 'How do I create a blog post?',
+			},
+			{
+				id: 'customize-site',
+				label: 'Customize my site',
+				prompt: 'How can I customize my site?',
+			},
+		],
+		[]
+	);
 
 	const {
 		messages: odieMessages,
@@ -95,66 +80,11 @@ export default function AgentDock( {
 		sendMessage: sendOdieMessage,
 	} = useManagedOdieChat();
 
-	const { isLoading: isLoadingConversation } = useConversation( {
-		agentId,
-		sessionId,
-		authProvider: agentConfig.authProvider,
-		onSuccess: ( messages, serverSessionId ) => {
-			// Update the UI with the loaded messages
-			loadMessages( messages );
-			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentId, serverSessionId );
-
-			// Sync local session ID with the server's
-			if ( sessionId !== serverSessionId ) {
-				setSessionId( serverSessionId );
-				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
-			}
-		},
-	} );
-
-	// Handle navigation continuation if hook is provided
-	// This allows to resume conversations after full page navigation
-	useNavigationContinuation?.( {
-		isProcessing,
-		onSubmit,
-		sessionId,
-		agentId,
-	} );
-
-	const handleNewChat = useCallback( async () => {
-		const agentManager = getAgentManager();
-
-		if ( agentManager.hasAgent( agentId ) ) {
-			abortCurrentRequest();
-			await loadMessages( [] );
-
-			// Start a new session by removing and recreating the agent with an empty session ID
-			// The server will assign a new session ID once the user sends a message
-			agentManager.removeAgent( agentId );
-			await agentManager.createAgent( agentId, { ...agentConfig, sessionId: '' } );
-		}
-
-		clearSessionId();
-
-		// Navigate to the chat view if not already there
-		if ( pathname !== '/' ) {
-			navigate( '/' );
-		}
-	}, [ abortCurrentRequest, agentConfig, agentId, loadMessages, navigate, pathname ] );
-
-	const handleSelectConversation = ( sessionId: string ) => {
-		abortCurrentRequest();
-		setSessionId( sessionId );
-		navigate( '/chat', { state: { sessionId } } );
-	};
-
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', '__i18n_text_domain__' ),
-			isDisabled: pathname !== '/history' && ! messages.length,
-			onClick: handleNewChat,
+			onClick: () => navigate( '/' ),
 		};
 		const undockMenuItem = {
 			icon: login,
@@ -187,23 +117,27 @@ export default function AgentDock( {
 		return options;
 	};
 
-	const Chat = (
-		<AgentChat
-			messages={ messages }
-			suggestions={ suggestions }
-			isProcessing={ isProcessing }
-			error={ error }
-			onSubmit={ onSubmit }
-			onAbort={ abortCurrentRequest }
-			isLoadingConversation={ isLoadingConversation }
+	useEffect( () => {
+		const loadProviders = async () => {
+			if ( ! providersLoadedRef.current ) {
+				const providers = await loadExternalProviders();
+				providersLoadedRef.current = true;
+				setLoadedProviders( providers );
+			}
+		};
+
+		loadProviders();
+	}, [] );
+
+	const OrchestratorChat = (
+		<OrchestratorAgentChat
+			authProvider={ authProvider }
+			currentRoute={ currentRoute }
 			isDocked={ isDocked }
-			isOpen={ isOpen }
-			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
+			closeSidebar={ closeSidebar }
 			chatHeaderOptions={ getChatHeaderOptions() }
-			markdownComponents={ markdownComponents }
-			markdownExtensions={ markdownExtensions }
-			emptyViewSuggestions={ emptyViewSuggestions }
+			defaultSuggestions={ defaultSuggestions }
+			loadedProviders={ loadedProviders }
 		/>
 	);
 
@@ -215,38 +149,32 @@ export default function AgentDock( {
 			error={ null }
 			onSubmit={ sendOdieMessage }
 			onAbort={ () => {} }
-			isLoadingConversation={ isLoadingConversation }
+			isLoadingConversation={ false }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
 			onExpand={ () => setIsOpen( true ) }
 			chatHeaderOptions={ getChatHeaderOptions() }
-			markdownComponents={ markdownComponents }
-			markdownExtensions={ markdownExtensions }
-			emptyViewSuggestions={ emptyViewSuggestions }
+			markdownComponents={ loadedProviders.markdownComponents }
+			markdownExtensions={ loadedProviders.markdownExtensions }
+			emptyViewSuggestions={ loadedProviders.suggestions || defaultSuggestions }
 		/>
 	);
 
 	const History = (
 		<AgentHistory
-			agentId={ agentId }
-			authProvider={ agentConfig.authProvider }
+			authProvider={ authProvider }
 			chatHeaderOptions={ getChatHeaderOptions() }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
-			onSubmit={ onSubmit }
-			onAbort={ abortCurrentRequest }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
 			onExpand={ () => setIsOpen( true ) }
-			onSelectConversation={ handleSelectConversation }
-			onNewChat={ handleNewChat }
 		/>
 	);
 
 	const SupportGuideRoute = (
 		<SupportGuide
 			isEligibleForChat={ isEligibleForChat }
-			onAbort={ abortCurrentRequest }
 			onClose={ closeSidebar }
 			isOpen={ isOpen }
 			sectionName={ sectionName }
@@ -258,7 +186,6 @@ export default function AgentDock( {
 
 	const SupportGuidesRoute = (
 		<SupportGuides
-			onAbort={ abortCurrentRequest }
 			onClose={ closeSidebar }
 			isOpen={ isOpen }
 			chatHeaderOptions={ getChatHeaderOptions() }
@@ -272,14 +199,12 @@ export default function AgentDock( {
 
 	return createAgentPortal(
 		<Routes>
-			<Route path="/" element={ Chat } />
-			<Route path="/odie" element={ OdieChat } />
-			{ /* NOTE: Use route state for session ID so it can be accessed throughout the app. */ }
-			<Route path="/chat" element={ Chat } />
+			<Route path="/chat/:sessionId?" element={ OrchestratorChat } />
+			<Route path="/odie/:sessionId?" element={ OdieChat } />
 			<Route path="/post" element={ SupportGuideRoute } />
 			<Route path="/support-guides" element={ SupportGuidesRoute } />
 			<Route path="/history" element={ History } />
-			<Route path="*" element={ <Navigate to="/" replace /> } />
+			<Route path="*" element={ <Navigate to="/chat" replace /> } />
 		</Routes>
 	);
 }
