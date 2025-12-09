@@ -5,7 +5,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { loadVGSCollect } from '@vgs/collect-js';
-import { VGSCollectForm } from '@vgs/collect-js-react';
+import { VGSCollectForm, useVGSCollectFormInstance } from '@vgs/collect-js-react';
 import { useVaultId } from '../hooks/use-vault-id';
 import { VgsCreditCardFields } from '../payment-methods/credit-card/vgs-credit-card-fields';
 
@@ -17,12 +17,45 @@ jest.mock( '@vgs/collect-js', () => ( {
 		Css: {},
 	},
 } ) );
+
+// Create a mock form instance
+const createMockForm = () => ( {
+	state: {
+		card_number: {
+			name: 'card_number',
+			isValid: true,
+			isTouched: false,
+			isEmpty: true,
+			isFocused: false,
+			errors: [],
+		},
+		card_exp: {
+			name: 'card_exp',
+			isValid: true,
+			isTouched: false,
+			isEmpty: true,
+			isFocused: false,
+			errors: [],
+		},
+		card_cvc: {
+			name: 'card_cvc',
+			isValid: true,
+			isTouched: false,
+			isEmpty: true,
+			isFocused: false,
+			errors: [],
+		},
+	},
+	submit: jest.fn(),
+} );
+
 jest.mock( '@vgs/collect-js-react', () => ( {
 	VGSCollectForm: Object.assign( jest.fn(), {
 		CardNumberField: jest.fn(),
 		CardExpirationDateField: jest.fn(),
 		CardSecurityCodeField: jest.fn(),
 	} ),
+	useVGSCollectFormInstance: jest.fn(),
 } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
@@ -30,6 +63,9 @@ jest.mock( '@wordpress/i18n', () => ( {
 
 const mockUseVaultId = useVaultId as jest.MockedFunction< typeof useVaultId >;
 const mockLoadVGSCollect = loadVGSCollect as jest.MockedFunction< typeof loadVGSCollect >;
+const mockUseVGSCollectFormInstance = useVGSCollectFormInstance as jest.MockedFunction<
+	typeof useVGSCollectFormInstance
+>;
 
 // Mock VGS Collect Form components
 const MockCardNumberField = ( props: any ) => {
@@ -146,6 +182,8 @@ describe( 'VgsCreditCardFields', () => {
 		// Use mockImplementation with Promise.resolve to ensure async state updates
 		// are properly handled within act() boundaries
 		mockLoadVGSCollect.mockImplementation( () => Promise.resolve( {} as any ) );
+		// Mock useVGSCollectFormInstance to return a fresh mock form instance for each test
+		mockUseVGSCollectFormInstance.mockReturnValue( [ createMockForm() ] );
 	} );
 
 	// Default props for tests
