@@ -47,7 +47,7 @@ export default function PreferencesPrimarySite() {
 	const fields: Field< PrimarySiteFormData >[] = [
 		{
 			id: 'primarySiteId',
-			label: __( 'Primary site' ),
+			label: __( 'Site' ),
 			isVisible: () => user.visible_site_count > 0,
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
@@ -100,9 +100,9 @@ export default function PreferencesPrimarySite() {
 					<VStack spacing={ 4 }>
 						<SectionHeader
 							level={ 3 }
-							title={ __( 'Site settings' ) }
+							title={ __( 'Primary site' ) }
 							description={ __(
-								'Select your default site for login preferences. Your primary site is also associated with your account in the Reader.'
+								'Choose your default site. This determines where you land after logging in and which account appears in the Reader.'
 							) }
 						/>
 

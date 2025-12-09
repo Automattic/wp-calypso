@@ -45,7 +45,7 @@ export default function PreferencesLogin() {
 	const fields: Field< LoginPreferencesFormData >[] = [
 		{
 			id: 'defaultLandingPage',
-			label: __( 'Default landing page' ),
+			label: __( 'Default' ),
 			Edit: 'radio',
 			elements: [
 				{ label: __( 'Open your primary site’s dashboard.' ), value: 'primary-site-dashboard' },
@@ -97,7 +97,7 @@ export default function PreferencesLogin() {
 						<SectionHeader
 							level={ 3 }
 							title={ __( 'Login preferences' ) }
-							description={ __( 'Select what you’ll see by default when visiting WordPress.com.' ) }
+							description={ __( 'Choose what you see after logging into WordPress.com' ) }
 						/>
 
 						<DataForm< LoginPreferencesFormData >
