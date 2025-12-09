@@ -30,6 +30,7 @@ export interface DashboardSiteListSite {
 	is_jetpack?: boolean;
 	is_p2?: boolean;
 	is_vip?: boolean;
+	last_publish?: string;
 	owner_id?: number;
 	php_version?: string;
 	slug: string; // Slug is always fetched

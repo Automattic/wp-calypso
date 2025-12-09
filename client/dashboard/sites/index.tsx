@@ -79,7 +79,7 @@ function getFetchSiteListParams(
 		wp_version: 'wordpress_version',
 		is_a8c: 'is_a8c',
 		// preview
-		// last_published
+		last_published: 'last_publish',
 		// uptime
 		views: 'views',
 		visitors: 'visitors',

@@ -373,13 +373,13 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			enableHiding: false,
 			enableSorting: false,
 		},
-		// {
-		// 	id: 'last_published',
-		// 	label: __( 'Last published' ),
-		// 	getValue: ( { item } ) => item.options?.updated_at ?? '',
-		// 	render: ( { item } ) =>
-		// 		item.options?.updated_at ? <TimeSince timestamp={ item.options.updated_at } /> : '',
-		// },
+		{
+			id: 'last_published',
+			label: __( 'Last published' ),
+			getValue: ( { item } ) => item.last_publish ?? '',
+			render: ( { item } ) =>
+				item.last_publish ? <TimeSince timestamp={ item.last_publish } /> : '',
+		},
 		{
 			id: 'uptime',
 			label: __( '7-day uptime' ),
