@@ -113,12 +113,12 @@ export interface ImageData {
 }
 
 /**
- * Create A2A message with conversation history from Message array
+ * Create message with conversation history from Message array
  *
  * @param text                 - The user text message to send
  * @param conversationMessages - Array of previous conversation messages
  * @param imageUrls            - Array of image URLs or image objects with metadata
- * @return A2A Message with history and current text
+ * @return Message with history and current text
  */
 export function createTextMessageWithHistory(
 	text: string,

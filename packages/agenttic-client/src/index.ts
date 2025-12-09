@@ -26,7 +26,7 @@ export {
 
 // All type exports (safe to expose)
 export type {
-	// Core A2A types
+	// Core types
 	JsonRpcId,
 	JsonRpcRequest,
 	JsonRpcResponse,
@@ -81,7 +81,7 @@ export type {
 } from './react/useAgentChat';
 
 // Constants
-export { A2AErrorCodes } from './client/types/index';
+export { ErrorCodes } from './client/types/index';
 
 // Client creation function
 export { createClient } from './client/index';

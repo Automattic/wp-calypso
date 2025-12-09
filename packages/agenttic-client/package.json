@@ -2,7 +2,7 @@
 	"name": "@automattic/agenttic-client",
 	"version": "0.1.27",
 	"type": "module",
-	"description": "A TypeScript client library for A2A (Agent2Agent) protocol communication",
+	"description": "A TypeScript client library for connection to the Automattic agent framework.",
 	"main": "dist/index.js",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -31,7 +31,6 @@
 		"prepublishOnly": "pnpm run build"
 	},
 	"keywords": [
-		"a2a",
 		"agent2agent",
 		"agenttic",
 		"client",

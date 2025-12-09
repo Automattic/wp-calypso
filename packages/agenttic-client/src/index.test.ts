@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-	A2AErrorCodes,
+	ErrorCodes,
 	createClient,
 	createRequestId,
 	createTaskId,
@@ -100,13 +100,13 @@ describe( '@automattic/agenttic-client', () => {
 	} );
 
 	describe( 'Error codes', () => {
-		it( 'should export A2A error codes', () => {
-			expect( A2AErrorCodes.PARSE_ERROR ).toBe( -32700 );
-			expect( A2AErrorCodes.INVALID_REQUEST ).toBe( -32600 );
-			expect( A2AErrorCodes.METHOD_NOT_FOUND ).toBe( -32601 );
-			expect( A2AErrorCodes.INVALID_PARAMS ).toBe( -32602 );
-			expect( A2AErrorCodes.INTERNAL_ERROR ).toBe( -32603 );
-			expect( A2AErrorCodes.SERVER_ERROR ).toBe( -32000 );
+		it( 'should export error codes', () => {
+			expect( ErrorCodes.PARSE_ERROR ).toBe( -32700 );
+			expect( ErrorCodes.INVALID_REQUEST ).toBe( -32600 );
+			expect( ErrorCodes.METHOD_NOT_FOUND ).toBe( -32601 );
+			expect( ErrorCodes.INVALID_PARAMS ).toBe( -32602 );
+			expect( ErrorCodes.INTERNAL_ERROR ).toBe( -32603 );
+			expect( ErrorCodes.SERVER_ERROR ).toBe( -32000 );
 		} );
 	} );
 } );

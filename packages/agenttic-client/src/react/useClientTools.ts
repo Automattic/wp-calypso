@@ -119,7 +119,7 @@ function useToolProviderFromConfig( {
  * This hook takes separate callback functions for getting tools and executing tools.
  * It wraps them in the ToolProvider interface expected by the agenttic client.
  * The callbacks are called fresh each time, ensuring dynamic tool availability and execution.
- * Tool results are automatically handled by the A2A client.
+ * Tool results are automatically handled by the client.
  *
  * @param getClientTools - Function that returns available tools as an array of Tool objects
  * @param executeTool    - Function that executes a tool with the arguments returned by the agent

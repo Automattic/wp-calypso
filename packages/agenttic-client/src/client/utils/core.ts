@@ -35,14 +35,14 @@ export function generateMessageId(): string {
 }
 
 /**
- * Creates a unique request ID for A2A requests
+ * Creates a unique request ID for requests
  */
 export function createRequestId(): JsonRpcId {
 	return `req-${ generateRandomId() }`;
 }
 
 /**
- * Creates a unique task ID for A2A tasks
+ * Creates a unique task ID for tasks
  */
 export function createTaskId(): string {
 	return `task-${ generateRandomId() }`;

@@ -317,7 +317,7 @@ async function executeToolCallBatch(
 /**
  * Extract conversation history from a message's data parts
  *
- * @param message - The A2A message to extract conversation history from
+ * @param message - The message to extract conversation history from
  * @return Array of conversation messages reconstructed from data parts
  */
 export function extractConversationHistory( message: Message ): Message[] {

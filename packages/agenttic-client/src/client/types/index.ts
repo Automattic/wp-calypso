@@ -1,5 +1,5 @@
-// A2A Protocol Type Definitions
-// Based on https://google.github.io/A2A/specification/
+// Protocol Type Definitions
+// Originally based on https://google.github.io/A2A/specification/ but no longer tied to that protocol.
 
 export type JsonRpcId = string | number;
 
@@ -181,7 +181,7 @@ export interface Ability {
 }
 
 /**
- * AbilityDataPart - A2A protocol data part for WordPress Abilities.
+ * AbilityDataPart - protocol data part for WordPress Abilities.
  * This transmits the full ability structure (minus client-side callbacks) over the wire.
  */
 export interface AbilityDataPart extends DataPart {
@@ -254,7 +254,7 @@ export interface TaskArtifactUpdateEvent {
 	artifact: Artifact;
 }
 
-export enum A2AErrorCodes {
+export enum ErrorCodes {
 	PARSE_ERROR = -32700,
 	INVALID_REQUEST = -32600,
 	METHOD_NOT_FOUND = -32601,
