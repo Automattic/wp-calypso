@@ -192,7 +192,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
 				{ shouldUseLoggedInView ? (
-					<FullWidthSection className="plugins-browser__search-categories full-width-section--no-padding">
+					<FullWidthSection
+						className="plugins-browser__search-categories full-width-section--no-padding"
+						enabled={ isMarketplaceRedesignEnabled }
+					>
 						<div ref={ loggedInSearchBoxRef } />
 						<SearchCategories
 							category={ category }
@@ -205,7 +208,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					</FullWidthSection>
 				) : (
 					<>
-						<FullWidthSection className="plugins-browser__search-header full-width-section--gray">
+						<FullWidthSection
+							className="plugins-browser__search-header full-width-section--gray"
+							enabled={ isMarketplaceRedesignEnabled }
+						>
 							<SearchBoxHeader
 								searchRef={ searchRef }
 								categoriesRef={ categoriesRef }
@@ -231,7 +237,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 								renderTitleInH1={ ! category }
 							/>
 						</FullWidthSection>
-						<FullWidthSection className="plugins-browser__categories">
+						<FullWidthSection
+							className="plugins-browser__categories"
+							enabled={ isMarketplaceRedesignEnabled }
+						>
 							<div ref={ categoriesRef }>
 								<Categories selected={ category } noSelection={ !! search } />
 							</div>
@@ -240,12 +249,18 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				) }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
-					<FullWidthSection className="plugins__marketplace-footer">
+					<FullWidthSection
+						className="plugins__marketplace-footer"
+						enabled={ isMarketplaceRedesignEnabled }
+					>
 						<MarketplaceFooter />
 					</FullWidthSection>
 				) }
 				{ ! category && ! search && isMarketplaceRedesignEnabled && (
-					<FullWidthSection className="plugins-browser__faq full-width-section--double-padding">
+					<FullWidthSection
+						className="plugins-browser__faq full-width-section--double-padding"
+						enabled={ isMarketplaceRedesignEnabled }
+					>
 						<PluginsFAQ />
 					</FullWidthSection>
 				) }

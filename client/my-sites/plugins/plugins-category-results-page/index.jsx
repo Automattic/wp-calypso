@@ -36,7 +36,10 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	const isMarketplaceRedesign = useIsMarketplaceRedesignEnabled();
 
 	return (
-		<FullWidthSection className="plugins-browser__category-results">
+		<FullWidthSection
+			className="plugins-browser__category-results"
+			enabled={ isMarketplaceRedesign }
+		>
 			<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
 			<PluginsBrowserList
 				title={ categoryName }

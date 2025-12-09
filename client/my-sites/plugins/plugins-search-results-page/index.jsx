@@ -112,7 +112,10 @@ const PluginsSearchResultPage = ( {
 		}
 
 		return (
-			<FullWidthSection className="plugins-browser__search-results">
+			<FullWidthSection
+				className="plugins-browser__search-results"
+				enabled={ isMarketplaceRedesign }
+			>
 				<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
 				<PluginsBrowserList
 					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
@@ -142,7 +145,7 @@ const PluginsSearchResultPage = ( {
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		<FullWidthSection>
+		<FullWidthSection enabled={ isMarketplaceRedesign }>
 			<div className="plugins-browser__no-results">
 				<NoResults
 					text={ translate( 'No matches found' ) }

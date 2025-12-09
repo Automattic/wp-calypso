@@ -415,7 +415,10 @@ function PluginDetails( props ) {
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
 			<QueryUserPurchases />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
-			<FullWidthSection className="plugin-details__navigation-header-section">
+			<FullWidthSection
+				className="plugin-details__navigation-header-section"
+				enabled={ isMarketplaceRedesignEnabled }
+			>
 				<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 				<PluginNotices
 					pluginId={ fullPlugin.id }
@@ -465,7 +468,10 @@ function PluginDetails( props ) {
 						event="calypso_marketplace_reviews_plugin_banner"
 					/>
 				) }
-			<FullWidthSection className="plugin-details__main-section">
+			<FullWidthSection
+				className="plugin-details__main-section"
+				enabled={ isMarketplaceRedesignEnabled }
+			>
 				<div className="plugin-details__page">
 					<div className={ clsx( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 						<div className="plugin-details__header">
@@ -563,7 +569,10 @@ function PluginDetails( props ) {
 				/>
 			) }
 			{ isMarketplaceProduct && ! showPlaceholder && (
-				<FullWidthSection className="plugins__marketplace-footer">
+				<FullWidthSection
+					className="plugins__marketplace-footer"
+					enabled={ isMarketplaceRedesignEnabled }
+				>
 					<MarketplaceFooter />
 				</FullWidthSection>
 			) }

@@ -119,7 +119,7 @@ export function RelatedPlugins( { slug, size, seeAllLink, options }: RelatedPlug
 	};
 
 	return (
-		<FullWidthSection className="full-width-section--gray">
+		<FullWidthSection className="full-width-section--gray" enabled={ isUseCarousel }>
 			<div className="related-plugins">
 				<div className="related-plugins__header">
 					<h2>{ translate( 'Related plugins' ) }</h2>
