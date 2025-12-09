@@ -7,9 +7,15 @@ import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { handleApprove, handleDeny, handleSwitch } from '../hooks/use-authorize-actions';
 import useAuthorizeMeta from '../hooks/use-authorize-meta';
+import AuthorizeActions from './authorize-actions';
 import PermissionsList from './permissions-list';
 import SuccessMessage from './success-message';
 import UserCard from './user-card';
+
+interface AuthorizeActionsRenderProps {
+	onApprove: () => void;
+	onDeny: () => void;
+}
 
 interface AuthorizeProps {
 	/**
@@ -50,6 +56,12 @@ interface AuthorizeProps {
 	 * Custom CSS class for the deny button.
 	 */
 	denyButtonClassName?: string;
+	/**
+	 * Custom render function for the action buttons.
+	 * If provided, this will override the default button layout and all button-related props.
+	 * The function receives onApprove and onDeny callbacks.
+	 */
+	renderActions?: ( props: AuthorizeActionsRenderProps ) => JSX.Element;
 }
 
 function Authorize( {
@@ -61,6 +73,7 @@ function Authorize( {
 	denyButtonVariant = 'secondary',
 	approveButtonClassName,
 	denyButtonClassName,
+	renderActions,
 }: AuthorizeProps = {} ) {
 	const params = Object.fromEntries( new URLSearchParams( window.location.search ) ) as Record<
 		string,
@@ -141,26 +154,23 @@ function Authorize( {
 					<PermissionsList permissions={ meta.permissions } clientTitle={ meta.client.title } />
 				) }
 
-				{ showSuccessMessage ? (
-					<SuccessMessage clientTitle={ meta.client.title } />
-				) : (
-					<div className="oauth2-connect__actions">
-						<Button
-							variant={ denyButtonVariant }
-							onClick={ onDeny }
-							className={ denyButtonClassName }
-						>
-							{ denyButtonText || translate( 'Deny' ) }
-						</Button>
-						<Button
-							variant={ approveButtonVariant }
-							onClick={ onApprove }
-							className={ approveButtonClassName }
-						>
-							{ approveButtonText || translate( 'Approve' ) }
-						</Button>
-					</div>
-				) }
+				{ showSuccessMessage && <SuccessMessage clientTitle={ meta.client.title } /> }
+
+				{ ! showSuccessMessage &&
+					( renderActions ? (
+						renderActions( { onApprove, onDeny } )
+					) : (
+						<AuthorizeActions
+							onApprove={ onApprove }
+							onDeny={ onDeny }
+							approveButtonText={ approveButtonText }
+							denyButtonText={ denyButtonText }
+							approveButtonVariant={ approveButtonVariant }
+							denyButtonVariant={ denyButtonVariant }
+							approveButtonClassName={ approveButtonClassName }
+							denyButtonClassName={ denyButtonClassName }
+						/>
+					) ) }
 
 				{ meta.user && (
 					<div className="oauth2-connect__switch-account-link">
