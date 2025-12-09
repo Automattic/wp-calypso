@@ -16,7 +16,8 @@ export default function useHelpCenter() {
 		};
 	}, [] );
 
-	const { setShowHelpCenter, setIsMinimized } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setIsMinimized, setNavigateToRoute } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const handleToggleHelpCenter = () => {
 		if ( isMinimized ) {
@@ -24,11 +25,11 @@ export default function useHelpCenter() {
 		} else {
 			setShowHelpCenter( ! show );
 		}
-		onClick?.();
 	};
 
 	return {
 		toggleHelpCenter: handleToggleHelpCenter,
+		setNavigateToRoute,
 		show,
 		isMinimized,
 	};
