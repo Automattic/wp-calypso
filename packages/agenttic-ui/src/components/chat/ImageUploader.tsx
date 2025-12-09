@@ -404,8 +404,8 @@ export function ImageUploader( {
 	const hasImages = images.length > 0;
 	const isUploading = uploadingImages.length > 0;
 
-	// Determine what to show based on state
-	const showDropMessage = ( ! hasImages && ! isUploading ) || isDraggingFile;
+	// Only show drop message when actively dragging a file over the window
+	const showDropMessage = isDraggingFile;
 	const showPreview = ! isDraggingFile && ( hasImages || isUploading );
 
 	// Prepare i18n strings with interpolation
