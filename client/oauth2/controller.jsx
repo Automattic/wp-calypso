@@ -1,6 +1,7 @@
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import LoginContextProvider from 'calypso/login/login-context';
 import { AuthorizeDefault, AuthorizeStudio } from './components/authorize-variants';
+import { OAUTH2_CLIENT_IDS } from './constants';
 import './style.scss';
 
 /**
@@ -9,8 +10,7 @@ import './style.scss';
  * Add new client variants here as they are configured.
  */
 const CLIENT_VARIANT_MAP = {
-	// Studio by WordPress.com
-	95109: AuthorizeStudio,
+	[ OAUTH2_CLIENT_IDS.STUDIO ]: AuthorizeStudio,
 
 	// Add more client variants here as needed
 };
@@ -26,7 +26,9 @@ function getAuthorizeVariant( clientId ) {
 		return AuthorizeDefault;
 	}
 
-	return CLIENT_VARIANT_MAP[ clientId ] || AuthorizeDefault;
+	// Convert string to number for lookup
+	const numericClientId = parseInt( clientId, 10 );
+	return CLIENT_VARIANT_MAP[ numericClientId ] || AuthorizeDefault;
 }
 
 export function bootstrap( context, next ) {
