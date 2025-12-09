@@ -54,7 +54,7 @@ export default function AgentHistory( {
 					botId={ createOdieBotId( ORCHESTRATOR_AGENT_ID ) }
 					authProvider={ authProvider }
 					onSelectConversation={ ( sessionId ) => navigate( `/chat/${ sessionId }` ) }
-					onNewChat={ () => navigate( '/' ) }
+					onNewChat={ () => navigate( '/chat' ) }
 				/>
 			</AgentUI.ConversationView>
 		</AgentUI.Container>

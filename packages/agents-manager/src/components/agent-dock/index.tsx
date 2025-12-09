@@ -84,7 +84,7 @@ export default function AgentDock( {
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', '__i18n_text_domain__' ),
-			onClick: () => navigate( '/' ),
+			onClick: () => navigate( '/chat' ),
 		};
 		const undockMenuItem = {
 			icon: login,
