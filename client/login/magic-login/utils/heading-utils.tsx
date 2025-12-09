@@ -86,3 +86,9 @@ export const getEmailCodeHeaders = ( translate: TranslateFn ) => ( {
 	heading: translate( 'Email me a login code' ),
 	subHeading: translate( "We'll send you an email with a code that will log you in right away." ),
 } );
+
+export default {
+	getEmailLinkHeaders,
+	getCheckYourEmailHeaders,
+	getEmailCodeHeaders,
+};
