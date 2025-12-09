@@ -1,0 +1,11 @@
+{
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
+	"compilerOptions": {
+		"outDir": "dist/esm",
+		"declarationDir": "dist/types",
+		"rootDir": "src",
+		"types": []
+	},
+	"include": [ "src" ],
+	"references": [ { "path": "../zendesk-client" }, { "path": "../odie-client" } ]
+}

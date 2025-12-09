@@ -304,6 +304,7 @@ export const ODIE_ALLOWED_BOTS = [
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
 	'wpcom-plan-support',
 	'wpcom-workflow-support_chat',
+	'automattic-chat-support_a4a',
 ];
 
 export const ODIE_ALL_BOT_SLUGS = [ ...ODIE_ALLOWED_BOTS, 'ciab-workflow-support_chat' ];

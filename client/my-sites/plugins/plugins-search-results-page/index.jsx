@@ -1,9 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import FullWidthSection from 'calypso/components/full-width-section';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import NoResults from 'calypso/my-sites/no-results';
+import BusinessPlanBanner from 'calypso/my-sites/plugins/plugins-banners/business-plan-banner';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
@@ -70,6 +72,8 @@ const PluginsSearchResultPage = ( {
 		}
 	}, [ searchTerm, pluginsPagination.page, pluginsPagination.results, dispatch, siteId ] );
 
+	const isMarketplaceRedesign = isEnabled( 'marketplace-redesign' );
+
 	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
 		let title = translate( 'Search results for "%(searchTerm)s"', {
 			textOnly: true,
@@ -108,31 +112,31 @@ const PluginsSearchResultPage = ( {
 		}
 
 		return (
-			<>
-				<FullWidthSection className="plugins-browser__search-results">
-					<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
-					<PluginsBrowserList
-						plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
-						listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
-						listType="search"
-						title={ translate( 'Search Results' ) }
-						subtitle={
-							<>
-								{ title }
-								<ClearSearchButton />
-							</>
-						}
-						showReset
-						site={ siteSlug }
-						showPlaceholders={ isFetchingPluginsBySearchTerm }
-						currentSites={ sites }
-						variant={ PluginsBrowserListVariant.Paginated }
-						extended
-						search={ searchTerm }
-					/>
-					<InfiniteScroll nextPageMethod={ fetchNextPage } />
-				</FullWidthSection>
-			</>
+			<FullWidthSection className="plugins-browser__search-results">
+				<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
+				<PluginsBrowserList
+					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
+					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
+					listType="search"
+					title={ translate( 'Search Results' ) }
+					subtitle={
+						<>
+							{ title }
+							<ClearSearchButton />
+						</>
+					}
+					showReset
+					site={ siteSlug }
+					showPlaceholders={ isFetchingPluginsBySearchTerm }
+					currentSites={ sites }
+					variant={ PluginsBrowserListVariant.Paginated }
+					extended
+					search={ searchTerm }
+					injectAfterIndex={ isMarketplaceRedesign ? 12 : undefined }
+					injectElement={ isMarketplaceRedesign ? <BusinessPlanBanner /> : undefined }
+				/>
+				<InfiniteScroll nextPageMethod={ fetchNextPage } />
+			</FullWidthSection>
 		);
 	}
 

@@ -25,6 +25,39 @@ const ThreeColumnContainer = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
+
+	.full-width-section & {
+		flex-wrap: nowrap;
+		overflow: auto;
+		scrollbar-width: none;
+		gap: 28px;
+
+		&.plugin-how-to-guides {
+			margin-top: 52px;
+		}
+
+		.card-block:focus {
+			outline: none;
+		}
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		.feature-item-container {
+			min-width: 310px;
+		}
+
+		@media ( max-width: 660px ) {
+			scroll-padding: 0 32px;
+			margin: 0 -16px;
+
+			&.plugin-how-to-guides {
+				flex-direction: column;
+				margin-top: 12px;
+			}
+		}
+	}
 `;
 
 const EducationFooterContainer = styled.div`
@@ -33,10 +66,6 @@ const EducationFooterContainer = styled.div`
 	> div:first-child {
 		padding: 0;
 		margin-bottom: 18px;
-
-		@media ( max-width: 660px ) {
-			padding: 0 16px;
-		}
 
 		.wp-brand-font {
 			font-size: var( --scss-font-title-medium );
@@ -70,6 +99,10 @@ const EducationFooterContainer = styled.div`
 		div {
 			width: 100%;
 			text-wrap: pretty;
+
+			.full-width-section & {
+				padding: 0;
+			}
 		}
 	}
 `;
@@ -85,6 +118,9 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 
 		.marketplace-cta {
 			font-weight: 500;
+		}
+		${ SectionContainer }::before {
+			display: none;
 		}
 	}
 
@@ -118,6 +154,13 @@ const CardText = styled.span< { color: string } >`
 	line-height: 20px;
 `;
 
+const CardTitle = styled( CardText )`
+	font-size: 14px;
+
+	.full-width-section & {
+		font-size: 18px;
+	}
+`;
 const FeatureIcon = styled.div`
 	display: flex;
 	align-items: center;
@@ -194,9 +237,13 @@ export const MarketplaceFooter = () => {
 							/>
 						}
 					>
-						{ __(
-							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-						) }
+						{ isEnabled( 'marketplace-redesign' )
+							? __(
+									'Plugins authored by WordPress.com are fully managed by our team. No security patches. No update nags. It just works.'
+							  )
+							: __(
+									'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+							  ) }
 					</FeatureItem>
 					<FeatureItem
 						header={
@@ -218,9 +265,13 @@ export const MarketplaceFooter = () => {
 							/>
 						}
 					>
-						{ __(
-							'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
-						) }
+						{ isEnabled( 'marketplace-redesign' )
+							? __(
+									'Pay yearly and save. Or keep it flexible with monthly plugin pricing. It’s entirely up to you.'
+							  )
+							: __(
+									'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
+							  ) }
 					</FeatureItem>
 				</ThreeColumnContainer>
 			</Section>
@@ -248,56 +299,79 @@ const EducationFooter = () => {
 		[ dispatch, openArticleInHelpCenter, isLoggedIn ]
 	);
 
+	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
+
 	const links = {
 		websiteBuilding: localizeUrl( 'https://wordpress.com/support/plugins/' ),
 		customization: localizeUrl( 'https://wordpress.com/support/plugins/install-a-plugin/' ),
 		seo: localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' ),
 	};
 
+	const border = ! isMarketplaceRedesignEnabled ? 'var(--studio-gray-5)' : undefined;
+
 	return (
 		<EducationFooterContainer>
 			<PluginsResultsHeader
 				title={ __( 'Get started with plugins' ) }
-				subtitle={ __( 'Our favorite how-to guides to get you started with plugins.' ) }
+				subtitle={
+					isMarketplaceRedesignEnabled
+						? __( 'Become a plugin pro with our step-by-step guides.' )
+						: __( 'Our favorite how-to guides to get you started with plugins.' )
+				}
 			/>
 			<ThreeColumnContainer className="plugin-how-to-guides">
 				<LinkCard
+					image={
+						isMarketplaceRedesignEnabled
+							? '/calypso/images/plugins/what-are-plugins.png'
+							: undefined
+					}
 					title={
-						<CardText color="var(--studio-gray-100)">
+						<CardTitle color="var(--studio-gray-100)">
 							{ __( 'What Are WordPress Plugins? Everything You Need to Know as a Beginner' ) }
-						</CardText>
+						</CardTitle>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
 					url={ links.websiteBuilding }
-					border="var(--studio-gray-5)"
+					border={ border }
 					onClick={ onClickLinkCard( 'website_building', links.websiteBuilding ) }
 				/>
 				<LinkCard
-					title={
-						<CardText color="var(--studio-gray-100)">
-							{ __(
-								"How to Install Plugins on Your WordPress.com site: The Complete Beginner's Guide"
-							) }
-						</CardText>
+					image={
+						isMarketplaceRedesignEnabled
+							? '/calypso/images/plugins/how-to-find-plugins.png'
+							: undefined
 					}
-					titleMarginBottom="16px"
-					cta={ <ReadMoreLink /> }
-					url={ links.customization }
-					border="var(--studio-gray-5)"
-					onClick={ onClickLinkCard( 'customization', links.customization ) }
-				/>
-				<LinkCard
 					title={
-						<CardText color="var(--studio-gray-100)">
+						<CardTitle color="var(--studio-gray-100)">
 							{ __( 'How to Find and Choose the Best WordPress Plugins (Useful for All Sites)' ) }
-						</CardText>
+						</CardTitle>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
 					url={ links.seo }
-					border="var(--studio-gray-5)"
+					border={ border }
 					onClick={ onClickLinkCard( 'seo', links.seo ) }
+				/>
+				<LinkCard
+					image={
+						isMarketplaceRedesignEnabled
+							? '/calypso/images/plugins/how-to-install-plugins.png'
+							: undefined
+					}
+					title={
+						<CardTitle color="var(--studio-gray-100)">
+							{ __(
+								"How to Install Plugins on Your WordPress.com site: The Complete Beginner's Guide"
+							) }
+						</CardTitle>
+					}
+					titleMarginBottom="16px"
+					cta={ <ReadMoreLink /> }
+					url={ links.customization }
+					border={ border }
+					onClick={ onClickLinkCard( 'customization', links.customization ) }
 				/>
 			</ThreeColumnContainer>
 		</EducationFooterContainer>

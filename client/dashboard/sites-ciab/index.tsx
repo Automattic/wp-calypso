@@ -28,6 +28,7 @@ import {
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
 import { SitesNotices } from '../sites/notices';
 import { SiteLink, SiteLink__ES } from '../sites/site-fields';
+import { wpcomLink } from '../utils/link';
 import type { DashboardSiteListSite, Site } from '@automattic/api-core';
 
 export default function CIABSites() {
@@ -104,7 +105,7 @@ export default function CIABSites() {
 		}
 	}, [ sites, queryClient ] );
 
-	const addNewStoreUrl = addQueryArgs( '/setup/ai-site-builder-spec', {
+	const addNewStoreUrl = addQueryArgs( wpcomLink( '/setup/ai-site-builder-spec' ), {
 		source: 'ciab-sites-dashboard',
 		ref: 'new-site-popover',
 	} );

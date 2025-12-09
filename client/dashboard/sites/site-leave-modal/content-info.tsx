@@ -71,7 +71,7 @@ function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
 					<RouterLinkButton
 						{ ...managePurchasesButtonProps }
 						to={ purchasesRoute.fullPath }
-						search={ { site: site.slug } }
+						search={ { site: site.ID } }
 					/>
 				) }
 			</ButtonStack>

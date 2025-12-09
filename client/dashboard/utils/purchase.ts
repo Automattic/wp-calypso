@@ -12,6 +12,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
+import { wpcomLink } from './link';
 import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase, Site } from '@automattic/api-core';
 
@@ -451,7 +452,9 @@ export function getRenewUrlForPurchases(
 	const checkoutSiteSlug = checkoutSiteSlugForUrl || firstPurchase.site_slug || '';
 	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	return `/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`;
+	return wpcomLink(
+		`/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`
+	);
 }
 
 /**

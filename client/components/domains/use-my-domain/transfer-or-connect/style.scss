@@ -83,6 +83,20 @@
 						flex-shrink: 0;
 					}
 				}
+
+				&--clickable {
+					cursor: pointer;
+					transition: background-color 0.2s ease;
+
+					&:hover {
+						background-color: #f3f6fc;
+					}
+				}
+			}
+			&:hover {
+				.option-content-v2__benefits--clickable {
+					background-color: #f3f6fc;
+				}
 			}
 		}
 

@@ -5,10 +5,11 @@ Unified AI Agent manager for WordPress and Calypso.
 ## Features
 
 - **Unified AI Agent**: A complete AI chat interface with docking and floating modes.
-- **Conversation History**: View and resume past conversations with automatic caching.
+- **Conversation History**: View and resume past conversations with React Query caching.
 - **Session Management**: Automatic session handling with 24-hour persistence in localStorage.
-- **Extensible**: Support for custom tools, context providers, and markdown components.
+- **Extensible**: Support for custom tools, context providers, and markdown components via external plugins.
 - **Multi-Context Support**: Works in WordPress (wp-admin, block-editor, site-editor), Calypso, and generic contexts.
+- **React Query Integration**: Efficient data fetching with `@tanstack/react-query` for conversation management.
 
 ## Installation
 
@@ -28,95 +29,27 @@ import UnifiedAIAgent from '@automattic/agents-manager';
 function MyApp() {
 	const site = { ID: 456, URL: 'https://example.com' };
 
-	return <UnifiedAIAgent currentRoute="/dashboard" sectionName="dashboard" site={ site } />;
+	return (
+		<UnifiedAIAgent
+			currentRoute="/dashboard"
+			sectionName="dashboard"
+			site={ site }
+			isEligibleForChat
+		/>
+	);
 }
 ```
 
-### Adding Custom Tools
+### External Provider Extensions
 
-You can extend the agent's capabilities by providing a `toolProvider`. This allows the agent to perform actions specific to your application.
+Custom tools, context providers, suggestions, and markdown extensions are loaded automatically from external plugins via the `loadExternalProviders()` utility. Plugins can register their providers by implementing the extension API.
 
-```tsx
-import { ToolProvider } from '@automattic/agents-manager';
+See the `extension-types.ts` file for the full API documentation on creating custom:
 
-const myToolProvider: ToolProvider = {
-	getAbilities: async () => {
-		return [
-			{
-				name: 'get_latest_posts',
-				label: 'Get Latest Posts',
-				description: 'Fetches the latest posts from the site',
-				category: 'content',
-				input_schema: {
-					type: 'object',
-					properties: {
-						limit: { type: 'number', description: 'Number of posts to fetch' },
-					},
-				},
-				callback: async ( params ) => {
-					// Implementation to fetch posts
-					return JSON.stringify( posts );
-				},
-			},
-		];
-	},
-	executeAbility: async ( name, args ) => {
-		// Handle execution if not handled by individual ability callbacks
-		if ( name === 'get_latest_posts' ) {
-			return JSON.stringify( posts );
-		}
-	},
-};
-
-// Pass it to the component
-// <UnifiedAIAgent toolProvider={ myToolProvider } ... />
-```
-
-### Providing Context
-
-Use `contextProvider` to give the agent awareness of the current application state. Context entries support lazy evaluation via `getData` closures.
-
-```tsx
-import { ContextProvider } from '@automattic/agents-manager';
-
-const myContextProvider: ContextProvider = {
-	getClientContext: () => {
-		return {
-			url: window.location.href,
-			pathname: window.location.pathname,
-			search: window.location.search,
-			environment: 'my-app',
-			contextEntries: [
-				{
-					id: 'application_state',
-					type: 'application_state',
-					// Lazy evaluation - getData is called when context is needed
-					getData: () => ( {
-						currentView: 'editor',
-						selectedBlockId: 'block-123',
-					} ),
-				},
-			],
-		};
-	},
-};
-
-// Pass it to the component
-// <UnifiedAIAgent contextProvider={ myContextProvider } ... />
-```
-
-### Customizing the Empty View
-
-You can provide custom suggestions that appear when the chat is empty.
-
-```tsx
-const suggestions = [
-	{ id: 'draft-post', label: 'Draft a post', prompt: 'Help me write a blog post about...' },
-	{ id: 'analyze-stats', label: 'Analyze stats', prompt: 'How is my site performing today?' },
-];
-
-// <UnifiedAIAgent emptyViewSuggestions={ suggestions } ... />
-```
+- **Tool Providers**: Register custom abilities the agent can execute
+- **Context Providers**: Provide environment-specific context to the agent
+- **Suggestions**: Custom suggestions shown in the empty chat view
+- **Markdown Components/Extensions**: Custom rendering for agent responses
 
 ### Using the Store
 
@@ -128,7 +61,9 @@ import { useDispatch, useSelect } from '@wordpress/data';
 
 function MyComponent() {
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
-	const { isOpen } = useSelect( ( select ) => select( AGENTS_MANAGER_STORE ).getAgentsManagerState() );
+	const { isOpen } = useSelect( ( select ) =>
+		select( AGENTS_MANAGER_STORE ).getAgentsManagerState()
+	);
 
 	return <button onClick={ () => setIsOpen( ! isOpen ) }>Toggle Agent</button>;
 }
@@ -138,18 +73,14 @@ function MyComponent() {
 
 ### UnifiedAIAgent Props
 
-| Prop                   | Type                 | Description                                                             |
-| ---------------------- | -------------------- | ----------------------------------------------------------------------- |
-| `currentRoute`         | `string`             | The current route path.                                                 |
-| `sectionName`          | `string`             | The name of the current section (e.g., 'posts', 'pages').               |
-| `site`                 | `HelpCenterSite`     | The selected site object (from `@automattic/data-stores`).              |
-| `currentUser`          | `CurrentUser`        | The current user object (from `@automattic/data-stores`).               |
-| `handleClose`          | `() => void`         | Callback to handle closing the agent.                                   |
-| `toolProvider`         | `ToolProvider`       | Provider for custom tools/abilities.                                    |
-| `contextProvider`      | `ContextProvider`    | Provider for environment-specific context.                              |
-| `emptyViewSuggestions` | `Suggestion[]`       | Custom suggestions for the empty view.                                  |
-| `markdownComponents`   | `MarkdownComponents` | Custom markdown renderers (from `@automattic/agenttic-ui`).             |
-| `markdownExtensions`   | `MarkdownExtensions` | Custom markdown extensions (from `@automattic/agenttic-ui`).            |
+| Prop                | Type                        | Description                                                |
+| ------------------- | --------------------------- | ---------------------------------------------------------- |
+| `currentRoute`      | `string` (optional)         | The current route path.                                    |
+| `isEligibleForChat` | `boolean`                   | Indicates if the user is eligible for chat.                |
+| `sectionName`       | `string`                    | The name of the current section (e.g., 'posts', 'pages').  |
+| `site`              | `HelpCenterSite` (optional) | The selected site object (from `@automattic/data-stores`). |
+| `currentUser`       | `CurrentUser` (optional)    | The current user object (from `@automattic/data-stores`).  |
+| `handleClose`       | `() => void` (optional)     | Called when the agent is closed.                           |
 
 ### Exported Types
 

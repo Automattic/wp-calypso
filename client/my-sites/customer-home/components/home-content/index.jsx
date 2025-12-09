@@ -13,6 +13,7 @@ import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connec
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
@@ -359,6 +360,7 @@ const HomeContent = ( {
 					allDomains={ allDomains }
 				/>
 			) }
+			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</div>
 	);

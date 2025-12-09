@@ -111,7 +111,7 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 			<RouterLinkButton
 				{ ...buttonProps }
 				to={ purchasesRoute.fullPath }
-				search={ { site: site.slug } }
+				search={ { site: site.ID } }
 			>
 				{ isTrialSite( site ) ? __( 'Cancel trial' ) : __( 'Manage purchases' ) }
 			</RouterLinkButton>
