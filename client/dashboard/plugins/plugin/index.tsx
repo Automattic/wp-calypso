@@ -1,3 +1,4 @@
+import { type PluginItem, Site } from '@automattic/api-core';
 import { __experimentalVStack as VStack, privateApis } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
@@ -12,7 +13,7 @@ import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import { SitesWithThisPlugin } from './sites-with-this-plugin';
 import { SitesWithoutThisPlugin } from './sites-without-this-plugin';
-import { usePlugin } from './use-plugin';
+import { SiteWithPluginData, usePlugin } from './use-plugin';
 
 import './style.scss';
 
@@ -26,11 +27,11 @@ const { Tabs } = unlock( privateApis );
 type PluginTabsProps = {
 	pluginSlug: string;
 	isLoading: boolean;
-	sitesWithThisPlugin: Array< unknown >;
-	sitesWithoutThisPlugin: Array< unknown >;
-	plugin: unknown;
+	sitesWithThisPlugin: SiteWithPluginData[];
+	sitesWithoutThisPlugin: Site[];
+	plugin: PluginItem | undefined;
 	pluginName?: string;
-	pluginBySiteId: Map< number, unknown >;
+	pluginBySiteId: Map< number, PluginItem >;
 };
 
 function PluginTabs( {
@@ -53,6 +54,7 @@ function PluginTabs( {
 				<Tabs.TabList>
 					<Tabs.Tab tabId="installed">
 						<SectionHeader
+							level={ 3 }
 							title={ sprintf(
 								// translators: %(count) is the number of sites the plugin is installed on.
 								_n(
@@ -65,7 +67,7 @@ function PluginTabs( {
 						/>
 					</Tabs.Tab>
 					<Tabs.Tab tabId="available">
-						<SectionHeader title={ __( 'Available on' ) } />
+						<SectionHeader level={ 3 } title={ __( 'Available on' ) } />
 					</Tabs.Tab>
 				</Tabs.TabList>
 
@@ -75,9 +77,9 @@ function PluginTabs( {
 							<SitesWithThisPlugin
 								pluginSlug={ pluginSlug }
 								isLoading={ isLoading }
-								plugin={ plugin as never }
-								pluginBySiteId={ pluginBySiteId as never }
-								sitesWithThisPlugin={ sitesWithThisPlugin as never }
+								plugin={ plugin }
+								pluginBySiteId={ pluginBySiteId }
+								sitesWithThisPlugin={ sitesWithThisPlugin }
 							/>
 						</DataViewsCard>
 					</VStack>
@@ -90,7 +92,7 @@ function PluginTabs( {
 								pluginSlug={ pluginSlug }
 								pluginName={ pluginName }
 								isLoading={ isLoading }
-								sitesWithoutThisPlugin={ sitesWithoutThisPlugin as never }
+								sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
 							/>
 						</DataViewsCard>
 					</VStack>
@@ -149,10 +151,10 @@ export default function Plugin() {
 				pluginSlug={ pluginSlug }
 				isLoading={ isLoading }
 				plugin={ plugin }
-				pluginName={ ( plugin as { name?: string } | null | undefined )?.name }
-				pluginBySiteId={ pluginBySiteId as never }
-				sitesWithThisPlugin={ sitesWithThisPlugin as never }
-				sitesWithoutThisPlugin={ sitesWithoutThisPlugin as never }
+				pluginName={ plugin?.name }
+				pluginBySiteId={ pluginBySiteId }
+				sitesWithThisPlugin={ sitesWithThisPlugin }
+				sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
 			/>
 		</PageLayout>
 	);
