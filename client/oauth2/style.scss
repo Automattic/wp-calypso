@@ -80,6 +80,11 @@
 		padding: 0;
 		height: auto;
 		font-size: 13px;
+		color: #1e1e1e;
+
+		&:hover {
+			color: #1e1e1e;
+		}
 	}
 }
 
@@ -148,15 +153,23 @@
 	}
 }
 
-.oauth2-connect__learn-more {
-	a {
-		font-size: 13px;
-		color: #3858e9;
-		text-decoration: none;
+.oauth2-connect__learn-more-link.components-button.is-link {
+	font-size: 13px;
+	color: #1e1e1e;
+	padding: 0;
+	height: auto;
 
-		&:hover {
-			text-decoration: underline;
-		}
+	&:hover {
+		color: #1e1e1e;
+	}
+
+	&:focus {
+		color: #1e1e1e;
+		box-shadow: none;
+	}
+
+	&:active {
+		color: #1e1e1e;
 	}
 }
 
@@ -175,25 +188,6 @@
 	}
 }
 
-.oauth2-connect__button-custom-color {
-	&.components-button {
-		background-color: var( --button-bg-color );
-		color: var( --button-text-color );
-		border-color: var( --button-border-color, var( --button-bg-color ) );
-
-		&:hover:not( :disabled ) {
-			background-color: var( --button-bg-color-hover, var( --button-bg-color ) );
-			color: var( --button-text-color-hover, var( --button-text-color ) );
-			border-color: var( --button-border-color-hover, var( --button-border-color, var( --button-bg-color ) ) );
-		}
-
-		&:focus:not( :disabled ) {
-			background-color: var( --button-bg-color );
-			color: var( --button-text-color );
-			border-color: var( --button-border-color, var( --button-bg-color ) );
-		}
-	}
-}
 
 .oauth2-connect__loading,
 .oauth2-connect__error {

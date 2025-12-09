@@ -63,6 +63,7 @@ const PermissionsList = ( { permissions, clientTitle }: PermissionsListProps ) =
 					href={ localizeUrl( 'https://wordpress.com/support/third-party-applications/' ) }
 					target="_blank"
 					rel="noopener noreferrer"
+					className="oauth2-connect__learn-more-link"
 				>
 					{ translate( 'Learn more about how %(client)s uses your data', {
 						args: { client: clientTitle },
