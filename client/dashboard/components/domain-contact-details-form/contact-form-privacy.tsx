@@ -41,10 +41,10 @@ export default function ContactFormPrivacy( {
 						{ createInterpolateElement(
 							domain.private_domain
 								? __(
-										"Privacy protection must be enabled due to the registry's policies. <learnMoreLink />"
+										'Privacy protection must be enabled due to the registry’s policies. <learnMoreLink />'
 								  )
 								: __(
-										"Privacy protection is not available due to the registry's policies. <learnMoreLink />"
+										'Privacy protection is not available due to the registry’s policies. <learnMoreLink />'
 								  ),
 							{
 								learnMoreLink: (

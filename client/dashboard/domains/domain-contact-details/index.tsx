@@ -156,7 +156,7 @@ export default function DomainContactInfo() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-					description={ __( "Update your domain's contact information for registration." ) }
+					description={ __( 'Update your domain’s contact information for registration.' ) }
 				/>
 			}
 		>
