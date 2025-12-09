@@ -13,7 +13,7 @@ import {
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -70,7 +70,8 @@ export default function DomainDns() {
 		...domainDnsMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Default A records restored.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Default A records restored for %s.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},
@@ -79,8 +80,9 @@ export default function DomainDns() {
 		...domainDnsEmailMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Default email DNS records restored.' ),
-				error: __( 'Failed to restore default email DNS records.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Default email DNS records restored for %s.' ), domainName ),
+				error: { source: 'server' },
 			},
 		},
 	} );

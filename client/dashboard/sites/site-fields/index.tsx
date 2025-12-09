@@ -193,9 +193,7 @@ export function Preview( { site }: { site: Site } ) {
 	// origin.
 	const iframeDisabled = is_deleted || ( site.is_a8c && is_private );
 	return (
-		<Link
-			to={ getSiteManagementUrl( site ) }
-			disabled={ site.is_deleted }
+		<div
 			style={ {
 				display: 'block',
 				height: '100%',
@@ -221,7 +219,7 @@ export function Preview( { site }: { site: Site } ) {
 			{ width && ! iframeDisabled && (
 				<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
 			) }
-		</Link>
+		</div>
 	);
 }
 
