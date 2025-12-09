@@ -11,7 +11,7 @@ import './help-center-more-resources.scss';
 
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
-	const { sectionName } = useHelpCenterContext();
+	const { sectionName, source } = useHelpCenterContext();
 	const navigate = useNavigate();
 
 	const trackMoreResourcesButtonClick = ( resource: string ) => {
@@ -54,36 +54,40 @@ export const HelpCenterMoreResources = () => {
 						</button>
 					</div>
 				</li>
-				<li className="help-center-more-resources__resource-item help-center-link__item">
-					<div className="help-center-more-resources__resource-cell help-center-link__cell">
-						<a
-							href={ localizeUrl( 'https://wordpress.com/support/courses' ) }
-							rel="noreferrer"
-							target="_blank"
-							onClick={ () => trackLearnButtonClick( 'courses' ) }
-							className="help-center-more-resources__institution"
-						>
-							<Icon icon={ video } size={ 24 } />
-							<span>{ __( 'Courses', __i18n_text_domain__ ) }</span>
-							<Icon icon={ external } size={ 20 } />
-						</a>
-					</div>
-				</li>
-				<li className="help-center-more-resources__resource-item help-center-link__item">
-					<div className="help-center-more-resources__resource-cell help-center-link__cell">
-						<a
-							href={ localizeUrl( 'https://wordpress.com/blog/category/product-features/' ) }
-							rel="noreferrer"
-							target="_blank"
-							className="help-center-more-resources__product-updates"
-							onClick={ () => trackMoreResourcesButtonClick( 'product-updates' ) }
-						>
-							<Icon icon={ rss } size={ 24 } />
-							<span>{ __( 'Product updates', __i18n_text_domain__ ) }</span>
-							<Icon icon={ external } size={ 20 } />
-						</a>
-					</div>
-				</li>
+				{ source === 'wpcom' && (
+					<>
+						<li className="help-center-more-resources__resource-item help-center-link__item">
+							<div className="help-center-more-resources__resource-cell help-center-link__cell">
+								<a
+									href={ localizeUrl( 'https://wordpress.com/support/courses' ) }
+									rel="noreferrer"
+									target="_blank"
+									onClick={ () => trackLearnButtonClick( 'courses' ) }
+									className="help-center-more-resources__institution"
+								>
+									<Icon icon={ video } size={ 24 } />
+									<span>{ __( 'Courses', __i18n_text_domain__ ) }</span>
+									<Icon icon={ external } size={ 20 } />
+								</a>
+							</div>
+						</li>
+						<li className="help-center-more-resources__resource-item help-center-link__item">
+							<div className="help-center-more-resources__resource-cell help-center-link__cell">
+								<a
+									href={ localizeUrl( 'https://wordpress.com/blog/category/product-features/' ) }
+									rel="noreferrer"
+									target="_blank"
+									className="help-center-more-resources__product-updates"
+									onClick={ () => trackMoreResourcesButtonClick( 'product-updates' ) }
+								>
+									<Icon icon={ rss } size={ 24 } />
+									<span>{ __( 'Product updates', __i18n_text_domain__ ) }</span>
+									<Icon icon={ external } size={ 20 } />
+								</a>
+							</div>
+						</li>
+					</>
+				) }
 			</ul>
 		</div>
 	);
