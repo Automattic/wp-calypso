@@ -49,6 +49,8 @@ export default function DomainConnectionVerification( {
 		? 'connected'
 		: 'verifying';
 
+	const hasCloudflareIpAddresses = domainMappingStatus.has_cloudflare_ip_addresses;
+
 	const connectedAndCanBeSetAsPrimary =
 		status === 'connected' && ! domainData.primary_domain && domainData.can_set_as_primary;
 
@@ -91,11 +93,27 @@ export default function DomainConnectionVerification( {
 								: __( 'DNS record verification' ) }
 						</Text>
 
-						<DnsRecordsTable
-							domainName={ domainName }
-							domainConnectionStatus={ domainMappingStatus }
-							domainConnectionSetupInfo={ domainConnectionSetupInfo }
-						/>
+						{ ! hasCloudflareIpAddresses && (
+							<DnsRecordsTable
+								domainName={ domainName }
+								domainConnectionStatus={ domainMappingStatus }
+								domainConnectionSetupInfo={ domainConnectionSetupInfo }
+							/>
+						) }
+						{ hasCloudflareIpAddresses && ! domainMappingStatus.resolves_to_wpcom && (
+							<Notice variant="error">
+								{ __(
+									'Your domain appears to be set up with Cloudflare, but does not resolve to WordPress.com'
+								) }
+							</Notice>
+						) }
+						{ hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom && (
+							<Notice variant="info">
+								{ __(
+									'Your domain appears to be set up with Cloudflare, and it resolves to WordPress.com'
+								) }
+							</Notice>
+						) }
 					</VStack>
 
 					{ status === 'connected' && <DomainPropagationStatus domainName={ domainName } /> }
