@@ -2,6 +2,7 @@ import { SummaryButton } from '@automattic/components';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../../context';
@@ -9,56 +10,7 @@ import { getOdieIdFromInteraction } from '../../utils';
 import { useCurrentSupportInteraction } from '../use-current-support-interaction';
 import { useManageSupportInteraction } from '../use-manage-support-interaction';
 import { useOdieChat } from '../use-odie-chat';
-import type {
-	ReturnedChat,
-	Message,
-	AgentticMessage,
-	OdieChat,
-	SupportInteraction,
-} from '../../types';
-
-function convertMessageToAgentticFormat(
-	message: Message,
-	chatId: number | null,
-	navigate: ( path: string ) => void
-): AgentticMessage {
-	if ( message.context?.flags?.agent_handover === '1' ) {
-		return {
-			content: [
-				{
-					type: 'text',
-					text: message.content as string,
-				},
-				{
-					type: 'component',
-					component: () => (
-						<SummaryButton
-							title={ __( 'Switch to Build assistant', __i18n_text_domain__ ) }
-							description={ __( 'A new chat will start', __i18n_text_domain__ ) }
-							onClick={ () => navigate( `/chat?startedFrom=odie&chatId=${ chatId }` ) }
-							className="agent-handover-summary-button"
-						/>
-					),
-				},
-			],
-			role: message.role as 'agent',
-			timestamp: message.received as number,
-			id: message.message_id?.toString() ?? '',
-			actions: [],
-			archived: false,
-			showIcon: true,
-		};
-	}
-	return {
-		content: [ { type: 'text', text: message.content as string } ],
-		role: message.role as 'agent',
-		timestamp: message.received as number,
-		id: message.message_id?.toString() ?? '',
-		actions: [],
-		archived: false,
-		showIcon: true,
-	};
-}
+import type { ReturnedChat, Message, OdieChat, SupportInteraction } from '../../types';
 
 function convertMessageFromAgentticFormat( message: string ): Message {
 	return {
@@ -109,6 +61,7 @@ export const useSendOdieMessage = () => {
 						apiNamespace: 'wpcom/v2',
 						body: {
 							message: message.content,
+							role: message.role,
 							...( version && { version } ),
 							context: { selectedSiteId, url, pathname },
 						},
@@ -160,14 +113,134 @@ export const useSendOdieMessage = () => {
 	} );
 };
 
+function useTransformMessageToAgenttic(
+	onTransferToOrchestrator: () => void,
+	maybeLoadConversation: ( sessionId: string ) => void
+) {
+	const navigate = useNavigate();
+	const { mutateAsync: sendOdieMessage } = useSendOdieMessage();
+	const [ isPending, setIsPending ] = useState( false );
+
+	const handleAgentHandover = useCallback(
+		async ( chatId: number, triggeringMessage: string ) => {
+			setIsPending( true );
+			const newChat = await onTransferToOrchestrator();
+			const task = await newChat.sendMessage(
+				{
+					message: {
+						role: 'user',
+						parts: [
+							{
+								type: 'text',
+								text: triggeringMessage,
+							},
+						],
+						kind: 'message',
+						messageId: 'j1051quy',
+					},
+				},
+				triggeringMessage
+			);
+			await sendOdieMessage( {
+				content: 'Agent handover',
+				role: 'navigation',
+				type: 'message',
+				metadata: {
+					session_id: task.sessionId,
+				},
+			} );
+			setIsPending( false );
+			navigate( `/chat?startedFrom=odie&chatId=${ chatId }`, {
+				state: { sessionId: task.sessionId },
+			} );
+			maybeLoadConversation( task.sessionId );
+		},
+		[ navigate, maybeLoadConversation, sendOdieMessage, onTransferToOrchestrator ]
+	);
+
+	return useCallback(
+		( messages: Message[], chatId: number | null ) => {
+			if ( ! chatId ) {
+				return [];
+			}
+			return messages.map( ( message, index ) => {
+				if ( message.role === 'navigation' ) {
+					return {
+						timestamp: message.received as number,
+						actions: [],
+						archived: false,
+						showIcon: true,
+						id: message.message_id?.toString() ?? '',
+					};
+				}
+				if ( chatId && message.context?.flags?.agent_handover === '1' ) {
+					const previousMessage = messages[ index - 1 ];
+
+					return {
+						content: [
+							{
+								type: 'text',
+								text: message.content as string,
+							},
+							{
+								type: 'component',
+								component: () => (
+									<SummaryButton
+										title={ __( 'Switch to Build assistant', __i18n_text_domain__ ) }
+										description={
+											isPending
+												? __( 'Forwarding your messages…', __i18n_text_domain__ )
+												: __( 'A new chat will start', __i18n_text_domain__ )
+										}
+										onClick={ () =>
+											handleAgentHandover( chatId, previousMessage.content as string )
+										}
+										className="agent-handover-summary-button"
+									/>
+								),
+							},
+						],
+						role: message.role as 'agent',
+						timestamp: message.received as number,
+						id: message.message_id?.toString() ?? '',
+						actions: [],
+						archived: false,
+						showIcon: true,
+					};
+				}
+				return {
+					content: [ { type: 'text', text: message.content as string } ],
+					role: message.role as 'agent',
+					timestamp: message.received as number,
+					id: message.message_id?.toString() ?? '',
+					actions: [],
+					archived: false,
+					showIcon: true,
+				};
+			} );
+		},
+		[ handleAgentHandover, isPending ]
+	);
+}
+
 /**
  * Get a full API of an Odie chat.
  */
-export const useManagedOdieChat = () => {
+export const useManagedOdieChat = ( {
+	onTransferToOrchestrator,
+	maybeLoadConversation,
+}: {
+	onTransferToOrchestrator: () => void;
+	maybeLoadConversation: ( sessionId: string ) => void;
+} ) => {
 	const versionParam = new URLSearchParams( window.location.search ).get( 'version' );
 	const { version = versionParam } = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const chatId = getOdieIdFromInteraction( currentSupportInteraction );
+	const transformMessageToAgenttic = useTransformMessageToAgenttic(
+		onTransferToOrchestrator,
+		maybeLoadConversation
+	);
 	const { data: chat, isFetching: isLoadingChat } = useOdieChat(
 		chatId ? Number( chatId ) : null,
 		version
@@ -186,10 +259,7 @@ export const useManagedOdieChat = () => {
 	}
 
 	return {
-		messages:
-			chat?.messages.map( ( message ) =>
-				convertMessageToAgentticFormat( message, chatId ? Number( chatId ) : null, navigate )
-			) || [],
+		messages: transformMessageToAgenttic( chat?.messages ?? [], chatId ? Number( chatId ) : null ),
 		sendMessage,
 		isProcessing: sendOdieMessage.isPending || isLoadingChat,
 	};

@@ -120,7 +120,7 @@ export type Context = {
 	};
 };
 
-export type MessageRole = 'user' | 'bot' | 'business';
+export type MessageRole = 'user' | 'bot' | 'business' | 'navigation';
 
 export type MessageType =
 	| 'message'
@@ -257,7 +257,7 @@ export type SupportInteraction = {
 };
 export interface AgentticMessage {
 	id: string;
-	role: 'user' | 'agent';
+	role: 'user' | 'agent' | 'navigation';
 	content: Array< {
 		type: 'text' | 'image_url' | 'component' | 'context';
 		text?: string;

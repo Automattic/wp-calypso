@@ -103,12 +103,6 @@ export default function AgentDock( {
 		abortCurrentRequest,
 	} = useAgentChat( agentConfig );
 
-	const {
-		messages: odieMessages,
-		isProcessing: isOdieProcessing,
-		sendMessage: sendOdieMessage,
-	} = useManagedOdieChat();
-
 	// Handle navigation continuation if hook is provided
 	// This allows to resume conversations after full page navigation
 	useNavigationContinuation?.( {
@@ -206,7 +200,7 @@ export default function AgentDock( {
 			// Start fresh: remove the old agent and create a new one without a session.
 			// The server will give us a new session ID once the user sends a message.
 			agentManager.removeAgent( agentId );
-			await agentManager.createAgent( agentId, { ...agentConfig, sessionId: '' } );
+			return await agentManager.createAgent( agentId, { ...agentConfig, sessionId: '' } );
 		}
 
 		// Wipe all saved data
@@ -240,6 +234,12 @@ export default function AgentDock( {
 		},
 		[ abortCurrentRequest, agentId, maybeLoadConversation, navigate ]
 	);
+
+	const {
+		messages: odieMessages,
+		isProcessing: isOdieProcessing,
+		sendMessage: sendOdieMessage,
+	} = useManagedOdieChat( { onTransferToOrchestrator: handleNewChat, maybeLoadConversation } );
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		const isHistoryView = pathname === '/history';

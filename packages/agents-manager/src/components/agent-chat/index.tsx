@@ -7,17 +7,14 @@
 import {
 	AgentUI,
 	createMessageRenderer,
-	EmptyView,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
-import { AI } from '../icons';
+import CustomEmptyView from '../empty-view';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 interface AgentChatProps {
@@ -97,12 +94,7 @@ export default function AgentChat( {
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
 				) : (
-					<EmptyView
-						heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
-						help={ __( 'Got a different request? Ask away.', '__i18n_text_domain__' ) }
-						suggestions={ emptyViewSuggestions }
-						icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
-					/>
+					<CustomEmptyView isDocked={ isDocked } emptyViewSuggestions={ emptyViewSuggestions } />
 				)
 			}
 		>
