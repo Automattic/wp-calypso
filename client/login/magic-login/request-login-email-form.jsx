@@ -31,7 +31,6 @@ import getMagicLoginRequestedEmailSuccessfully from 'calypso/state/selectors/get
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import EmailedLoginLinkSuccessfullyJetpackConnect from './emailed-login-link-successfully-jetpack-connect';
-import { getCheckYourEmailHeaders, getEmailLinkHeaders } from './utils/heading-utils';
 
 class RequestLoginEmailForm extends Component {
 	static propTypes = {
@@ -81,18 +80,9 @@ class RequestLoginEmailForm extends Component {
 	usernameOrEmailRef = createRef();
 
 	setRequestLoginHeaders() {
-		const { translate, headerText, subHeaderText } = this.props;
-		const siteName = this.state.site?.name ?? null;
-
-		const { heading, subHeading } = getEmailLinkHeaders( translate, {
-			headingOverride: headerText,
-			subHeadingOverride: subHeaderText,
-			siteName,
-		} );
-
 		this.context?.setHeaders( {
-			heading,
-			subHeading,
+			heading: this.props.headerText || this.props.translate( 'Email me a login link' ),
+			subHeading: this.getSubHeaderText(),
 		} );
 	}
 
@@ -103,13 +93,19 @@ class RequestLoginEmailForm extends Component {
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
 		const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
 
-		const { heading, subHeading } = getCheckYourEmailHeaders( this.props.translate, {
-			emailAddress,
-		} );
-
 		this.context?.setHeaders( {
-			heading,
-			subHeading: preventWidows( subHeading ),
+			heading: this.props.translate( 'Check your email' ),
+			subHeading: preventWidows(
+				emailAddress
+					? this.props.translate(
+							"We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}",
+							{
+								args: { emailAddress },
+								components: { strong: <strong /> },
+							}
+					  )
+					: this.props.translate( 'We just emailed you a link.' )
+			),
 		} );
 	}
 
@@ -188,6 +184,28 @@ class RequestLoginEmailForm extends Component {
 
 	getUsernameOrEmailFromState() {
 		return this.state.usernameOrEmail;
+	}
+
+	getSubHeaderText() {
+		const { translate, subHeaderText } = this.props;
+		const siteName = this.state.site?.name;
+
+		if ( subHeaderText ) {
+			return subHeaderText;
+		}
+
+		if ( siteName ) {
+			return translate(
+				'We’ll send you an email with a link that will log you in right away to %(siteName)s.',
+				{
+					args: {
+						siteName,
+					},
+				}
+			);
+		}
+
+		return translate( 'We’ll send you an email with a link that will log you in right away.' );
 	}
 
 	getGravatarHeader() {

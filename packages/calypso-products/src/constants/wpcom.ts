@@ -1,5 +1,6 @@
 export const GROUP_WPCOM = 'GROUP_WPCOM';
 export const GROUP_P2 = 'GROUP_P2';
+export const GROUP_A4A = 'GROUP_A4A';
 
 /**
  * WPCOM Search Products

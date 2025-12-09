@@ -140,6 +140,14 @@
 			.plugins-browser-item__header {
 				min-height: 0;
 			}
+
+			.plugins-browser-item__title {
+				font-size: $font-body-small;
+				line-height: 1.5;
+			}
+			.plugins-browser-item__description {
+				font-size: $font-body-extra-small;
+			}
 		}
 	}
 

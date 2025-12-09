@@ -45,9 +45,7 @@ By default, the whole dashboard is protected and the user must be logged in to a
 beforeLoad: async () => {
   const twoStep = await fetchTwoStep();
   if ( twoStep.two_step_reauthorization_required ) {
-    const currentPath = window.location.pathname;
-    const loginUrl = `/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
-    window.location.href = loginUrl;
+    window.location.href = reauthRequiredLink();
   }
 },
 ```

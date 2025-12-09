@@ -2,6 +2,7 @@ import {
 	type GROUP_JETPACK,
 	type GROUP_WPCOM,
 	type GROUP_P2,
+	type GROUP_A4A,
 	type WPCOM_PRODUCTS,
 	type WPCOM_PLANS,
 	type PLAN_JETPACK_FREE,
@@ -312,7 +313,7 @@ export type FeatureGroup = {
 export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 
 export type Plan = BillingTerm & {
-	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK | typeof GROUP_P2;
+	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK | typeof GROUP_P2 | typeof GROUP_A4A;
 	type: PlanType;
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];

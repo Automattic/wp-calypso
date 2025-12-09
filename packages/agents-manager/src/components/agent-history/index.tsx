@@ -1,13 +1,6 @@
-/**
- * Agent History Component
- *
- * Renders the conversation history view.
- */
-
 import { createOdieBotId, type UseAgentChatConfig } from '@automattic/agenttic-client';
 import { AgentUI } from '@automattic/agenttic-ui';
 import { __ } from '@wordpress/i18n';
-import { API_BASE_URL } from '../../constants';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ConversationHistoryView from '../conversation-history-view';
 
@@ -71,7 +64,6 @@ export default function AgentHistory( {
 				/>
 				<ConversationHistoryView
 					botId={ createOdieBotId( agentId ) }
-					apiBaseUrl={ API_BASE_URL }
 					authProvider={ authProvider }
 					onSelectConversation={ onSelectConversation }
 					onNewChat={ onNewChat }

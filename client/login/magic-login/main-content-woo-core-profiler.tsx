@@ -1,10 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { useLoginContext } from '../login-context';
 import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
-import { getCheckYourEmailHeaders } from './utils/heading-utils';
 
 interface Props {
 	emailAddress: string;
@@ -20,16 +19,16 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } )
 	const [ resendEmailCountdown, setResendEmailCountdown ] = useState( RESEND_EMAIL_COUNTDOWN_TIME );
 	const { setHeaders } = useLoginContext();
 
-	const resetResendEmailCountdown = useCallback( () => {
+	const resetResendEmailCountdown = () => {
 		if ( ! resendEmailCountdownId ) {
 			return;
 		}
 		clearInterval( resendEmailCountdownId );
 		resendEmailCountdownId = null;
 		setResendEmailCountdown( RESEND_EMAIL_COUNTDOWN_TIME );
-	}, [] );
+	};
 
-	const startResendEmailCountdown = useCallback( () => {
+	const startResendEmailCountdown = () => {
 		resetResendEmailCountdown();
 
 		resendEmailCountdownId = setInterval( () => {
@@ -41,7 +40,7 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } )
 				return prevState - 1;
 			} );
 		}, 1000 );
-	}, [ resetResendEmailCountdown ] );
+	};
 
 	const sendEmail = () => {
 		dispatch(
@@ -63,13 +62,21 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } )
 		return () => {
 			resetResendEmailCountdown();
 		};
-	}, [ resetResendEmailCountdown, startResendEmailCountdown ] );
+	}, [] );
 
 	useEffect( () => {
-		const { heading, subHeading } = getCheckYourEmailHeaders( translate, { emailAddress } );
 		setHeaders( {
-			heading,
-			subHeading,
+			heading: translate( 'Check your email' ),
+			subHeading: emailAddress
+				? translate( "We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}.", {
+						args: {
+							emailAddress,
+						},
+						components: {
+							strong: <strong />,
+						},
+				  } )
+				: translate( 'We just emailed you a link.' ),
 		} );
 	}, [ emailAddress, setHeaders, translate ] );
 

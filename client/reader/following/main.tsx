@@ -2,16 +2,18 @@ import config from '@automattic/calypso-config';
 import { FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import Banner from 'calypso/components/banner';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
-import QuickPost from 'calypso/reader/components/quick-post';
+import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { focusEditor } from 'calypso/reader/components/quick-post/utils';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
@@ -24,9 +26,39 @@ function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
+	const [ isResurrectedModalVisible, setIsResurrectedModalVisible ] = useState( false );
+	const [ shouldDelayReaderOnboarding, setShouldDelayReaderOnboarding ] = useState( false );
+	const [ readerOnboardingShouldShow, setReaderOnboardingShouldShow ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
+
+	const handleSurveyClick = () => {
+		// Dismiss the banner permanently when the survey button is clicked
+		dispatch( savePreference( 'dismissible-card-reader-creator-survey-2026-banner', true ) );
+	};
+
+	const handleReaderOnboardingRender = useCallback(
+		( willRender: boolean ) => {
+			setReaderOnboardingShouldShow( willRender );
+			if ( willRender && isResurrectedModalVisible ) {
+				setShouldDelayReaderOnboarding( true );
+			}
+			if ( ! willRender ) {
+				setShouldDelayReaderOnboarding( false );
+			}
+		},
+		[ isResurrectedModalVisible ]
+	);
+
+	useEffect( () => {
+		if ( shouldDelayReaderOnboarding && ! isResurrectedModalVisible ) {
+			setShouldDelayReaderOnboarding( false );
+		}
+	}, [ shouldDelayReaderOnboarding, isResurrectedModalVisible ] );
+
+	const suppressReaderOnboarding =
+		readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding );
 
 	// Set the selected feed based on route param.
 	useEffect( () => {
@@ -48,7 +80,12 @@ function FollowingStream( { ...props } ) {
 						}
 					) }
 				</p>
-				<AsyncLoad require="calypso/reader/onboarding" forceShow />
+				<AsyncLoad
+					require="calypso/reader/onboarding"
+					forceShow
+					onRender={ handleReaderOnboardingRender }
+					isSuppressed={ suppressReaderOnboarding }
+				/>
 			</div>
 		);
 	}
@@ -71,6 +108,22 @@ function FollowingStream( { ...props } ) {
 					>
 						<ViewToggle />
 					</NavigationHeader>
+					<Banner
+						target="_blank"
+						callToAction={ translate( 'Take the survey' ) }
+						description={ translate(
+							'Got a minute? Share feedback to help shape WordPress.com for creators and content consumption in 2026.'
+						) }
+						dismissPreferenceName="reader-creator-survey-2026-banner"
+						horizontal
+						href="https://automattic.survey.fm/creating-consuming-on-wordpress-com"
+						title={ translate( 'Help shape WordPress.com for creators' ) }
+						onClick={ handleSurveyClick }
+						event="reader_creator_survey_2026"
+						tracksImpressionName="calypso_reader_creator_survey_banner_view"
+						tracksClickName="calypso_reader_creator_survey_banner_click"
+						tracksDismissName="calypso_reader_creator_survey_banner_dismiss"
+					/>
 					{ config.isEnabled( 'reader/quick-post' ) && hasSites && (
 						<FoldableCard
 							header={ translate( 'Write a quick post' ) }
@@ -89,12 +142,17 @@ function FollowingStream( { ...props } ) {
 								recordReaderTracksEvent( 'calypso_reader_editor_card_closed' );
 							} }
 						>
-							<QuickPost />
+							<AsyncLoad require="calypso/reader/components/quick-post" />
 						</FoldableCard>
 					) }
-					<AsyncLoad require="calypso/reader/onboarding" />
+					<AsyncLoad
+						require="calypso/reader/onboarding"
+						onRender={ handleReaderOnboardingRender }
+						isSuppressed={ suppressReaderOnboarding }
+					/>
 				</ReaderStream>
 			) }
+			<ResurrectedWelcomeModalGate onVisibilityChange={ setIsResurrectedModalVisible } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</>
 	);

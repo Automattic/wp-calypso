@@ -18,6 +18,7 @@ import './style.scss';
 export function hostingFeatures( context: PageJSContext, next: () => void ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state ) as unknown as Site;
+	const path = getRouteFromContext( context );
 
 	let content;
 	if ( site ) {
@@ -33,12 +34,12 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 
 		content = (
 			<>
-				<PageViewTracker title="Sites > Hosting Features" path={ getRouteFromContext( context ) } />
+				<PageViewTracker title="Sites > Hosting Features" path={ path } />
 				<PageLayout>
 					<CalloutOverlay
 						callout={
 							shouldShowActivationCallout ? (
-								<HostingActivationCallout site={ site } redirectUrl={ redirectUrl } />
+								<HostingActivationCallout path={ path } site={ site } redirectUrl={ redirectUrl } />
 							) : (
 								<HostingUpsellCallout siteSlug={ site.slug } />
 							)
@@ -48,12 +49,12 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 			</>
 		);
 	} else {
-		content = <HostingFeatures />;
+		content = <HostingFeatures path={ path } />;
 	}
 
 	context.primary = (
 		<>
-			<PageViewTracker title="Sites > Hosting Features" path={ getRouteFromContext( context ) } />
+			<PageViewTracker title="Sites > Hosting Features" path={ path } />
 			{ content }
 		</>
 	);
@@ -83,7 +84,7 @@ export function hostingFeaturesCallout(
 				! site.is_wpcom_atomic &&
 				! site.plan?.expired &&
 				site.plan?.features.active.includes( feature ) ? (
-					<HostingActivationCallout site={ site as unknown as Site } />
+					<HostingActivationCallout path={ path } site={ site as unknown as Site } />
 				) : (
 					<HostingFeatureCallout path={ path }>
 						<CalloutComponent siteSlug={ site.slug } titleAs="h3" />

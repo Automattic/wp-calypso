@@ -9,9 +9,11 @@
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"site_name": "Hosting Dashboard",
 	"features": {
+		"cookie-banner": false,
 		"dashboard": true,
 		"dashboard/v2": false,
-		"cookie-banner": false
+		"dev/auth-helper": true,
+		"dev/preferences-helper": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],
