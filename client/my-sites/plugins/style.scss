@@ -847,6 +847,9 @@ body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out
 body.is-section-plugins .layout__primary main.main.is-plugin-details.is-full-width-layout {
 	padding: 0;
 }
+.is-section-plugins.is-logged-in.has-no-sidebar:has(.is-full-width-layout) .layout__content {
+	padding-inline: 0;
+}
 
 body.is-section-plugins .is-logged-in {
 	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column):not(.is-logged-out).plugins-browser.is-full-width-layout";
@@ -868,7 +871,7 @@ body.is-section-plugins .is-logged-in {
 }
 
 .full-width-section.plugin-details__navigation-header-section {
-	padding-top: 116px;
+	padding-top: 47px;
 	padding-bottom: 0;
 
 	.plugin-details__layout:not( .is-logged-in ) & {
