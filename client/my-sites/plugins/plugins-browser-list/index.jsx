@@ -50,8 +50,8 @@ const PluginsBrowserList = ( {
 	noHeader = false,
 	useCarousel = false,
 	carouselPageSize = DEFAULT_CAROUSEL_PAGE_SIZE,
-	injectAfterIndex,
-	injectElement,
+	injectAfterIndex = null,
+	injectElement = null,
 } ) => {
 	const extendedVariant = extended
 		? PluginsBrowserElementVariant.Extended
