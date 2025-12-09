@@ -171,6 +171,26 @@
 	}
 }
 
+.oauth2-connect__button-custom-color {
+	&.components-button {
+		background-color: var( --button-bg-color );
+		color: var( --button-text-color );
+		border-color: var( --button-border-color, var( --button-bg-color ) );
+
+		&:hover:not( :disabled ) {
+			background-color: var( --button-bg-color-hover, var( --button-bg-color ) );
+			color: var( --button-text-color-hover, var( --button-text-color ) );
+			border-color: var( --button-border-color-hover, var( --button-border-color, var( --button-bg-color ) ) );
+		}
+
+		&:focus:not( :disabled ) {
+			background-color: var( --button-bg-color );
+			color: var( --button-text-color );
+			border-color: var( --button-border-color, var( --button-bg-color ) );
+		}
+	}
+}
+
 .oauth2-connect__loading,
 .oauth2-connect__error {
 	padding: 24px;

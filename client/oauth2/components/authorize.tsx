@@ -22,9 +22,46 @@ interface AuthorizeProps {
 	 * Defaults to true. Set to false for clients that don't need to show permissions.
 	 */
 	showPermissions?: boolean;
+	/**
+	 * Custom text for the approve button.
+	 * Defaults to "Approve".
+	 */
+	approveButtonText?: string;
+	/**
+	 * Custom text for the deny button.
+	 * Defaults to "Deny".
+	 */
+	denyButtonText?: string;
+	/**
+	 * Variant for the approve button.
+	 * Defaults to "primary".
+	 */
+	approveButtonVariant?: 'primary' | 'secondary' | 'tertiary' | 'link';
+	/**
+	 * Variant for the deny button.
+	 * Defaults to "secondary".
+	 */
+	denyButtonVariant?: 'primary' | 'secondary' | 'tertiary' | 'link';
+	/**
+	 * Custom CSS class for the approve button.
+	 */
+	approveButtonClassName?: string;
+	/**
+	 * Custom CSS class for the deny button.
+	 */
+	denyButtonClassName?: string;
 }
 
-function Authorize( { showLogo = true, showPermissions = true }: AuthorizeProps = {} ) {
+function Authorize( {
+	showLogo = true,
+	showPermissions = true,
+	approveButtonText,
+	denyButtonText,
+	approveButtonVariant = 'primary',
+	denyButtonVariant = 'secondary',
+	approveButtonClassName,
+	denyButtonClassName,
+}: AuthorizeProps = {} ) {
 	const params = Object.fromEntries( new URLSearchParams( window.location.search ) ) as Record<
 		string,
 		string
@@ -108,11 +145,19 @@ function Authorize( { showLogo = true, showPermissions = true }: AuthorizeProps 
 					<SuccessMessage clientTitle={ meta.client.title } />
 				) : (
 					<div className="oauth2-connect__actions">
-						<Button variant="secondary" onClick={ onDeny }>
-							{ translate( 'Deny' ) }
+						<Button
+							variant={ denyButtonVariant }
+							onClick={ onDeny }
+							className={ denyButtonClassName }
+						>
+							{ denyButtonText || translate( 'Deny' ) }
 						</Button>
-						<Button variant="primary" onClick={ onApprove }>
-							{ translate( 'Approve' ) }
+						<Button
+							variant={ approveButtonVariant }
+							onClick={ onApprove }
+							className={ approveButtonClassName }
+						>
+							{ approveButtonText || translate( 'Approve' ) }
 						</Button>
 					</div>
 				) }
