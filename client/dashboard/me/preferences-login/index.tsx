@@ -45,7 +45,7 @@ export default function PreferencesLogin() {
 	const fields: Field< LoginPreferencesFormData >[] = [
 		{
 			id: 'defaultLandingPage',
-			label: __( 'Default' ),
+			label: __( 'Page' ),
 			Edit: 'radio',
 			elements: [
 				{ label: __( 'Open your primary site’s dashboard.' ), value: 'primary-site-dashboard' },
@@ -90,13 +90,13 @@ export default function PreferencesLogin() {
 	};
 
 	return (
-		<Card className="preferences-login-card">
+		<Card>
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
 					<VStack spacing={ 4 }>
 						<SectionHeader
 							level={ 3 }
-							title={ __( 'Login preferences' ) }
+							title={ __( 'Default landing page' ) }
 							description={ __( 'Choose what you see after logging into WordPress.com' ) }
 						/>
 
