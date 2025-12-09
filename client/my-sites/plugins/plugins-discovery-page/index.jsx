@@ -1,11 +1,14 @@
 import { useSelector } from 'react-redux';
 import FullWidthSection from 'calypso/components/full-width-section';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WPBEGINNER_PLUGINS } from '../constants';
 import EducationFooter from '../education-footer';
+import BusinessPlanBanner from '../plugins-banners/business-plan-banner';
+import TelexBanner from '../plugins-banners/telex-banner';
 import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
@@ -105,10 +108,14 @@ const PluginsDiscoveryPage = ( props ) => {
 		getSiteOption( state, siteId, 'site_partner_bundle' )
 	);
 	const isWPBeginnerSpecial = sitePartnerBundle === 'wpbeginner-special';
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	return (
 		<>
-			<FullWidthSection className="plugins-discovery-page__hero">
+			<FullWidthSection
+				className="plugins-discovery-page__hero"
+				enabled={ isMarketplaceRedesignEnabled }
+			>
 				<UpgradeNudge { ...props } paidPlugins />
 				{ isWPBeginnerSpecial && (
 					<FeaturePartnerBundlePlugins { ...props } category="wpbeginner" />
@@ -116,21 +123,35 @@ const PluginsDiscoveryPage = ( props ) => {
 				<PaidPluginsSection { ...props } />
 			</FullWidthSection>
 
-			<FullWidthSection className="plugins-discovery-page__do-more full-width-section--gray">
+			<FullWidthSection
+				className="plugins-discovery-page__do-more full-width-section--gray"
+				enabled={ isMarketplaceRedesignEnabled }
+			>
 				<CollectionListView category="monetization" { ...props } />
 			</FullWidthSection>
 
-			<FullWidthSection className="plugins-discovery-page__education-footer">
+			<FullWidthSection
+				className="plugins-discovery-page__education-footer"
+				enabled={ isMarketplaceRedesignEnabled }
+			>
 				<EducationFooter />
 			</FullWidthSection>
 
-			{ ! isLoggedIn && (
-				<FullWidthSection className="plugins-discovery-page__cta full-width-section--double-padding">
-					<InPageCTASection />
+			{ ! isLoggedIn && ! isMarketplaceRedesignEnabled && <InPageCTASection /> }
+
+			{ isMarketplaceRedesignEnabled && (
+				<FullWidthSection
+					className="plugins-discovery-page__telex-banner full-width-section--double-padding"
+					enabled={ isMarketplaceRedesignEnabled }
+				>
+					<TelexBanner />
 				</FullWidthSection>
 			) }
 
-			<FullWidthSection className="plugins-discovery-page__favorites full-width-section--double-padding full-width-section--gray">
+			<FullWidthSection
+				className="plugins-discovery-page__favorites full-width-section--double-padding full-width-section--gray"
+				enabled={ isMarketplaceRedesignEnabled }
+			>
 				<FeaturedPluginsSection
 					{ ...props }
 					pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
@@ -138,18 +159,36 @@ const PluginsDiscoveryPage = ( props ) => {
 				/>
 			</FullWidthSection>
 
-			<FullWidthSection className="plugins-discovery-page__business">
+			<FullWidthSection
+				className="plugins-discovery-page__business"
+				enabled={ isMarketplaceRedesignEnabled }
+			>
 				<CollectionListView category="business" { ...props } />
 			</FullWidthSection>
 
-			<FullWidthSection className="plugins-discovery-page__free-essentials full-width-section--double-padding">
+			{ isMarketplaceRedesignEnabled && (
+				<FullWidthSection
+					className="plugins-discovery-page__business-plan-banner"
+					enabled={ isMarketplaceRedesignEnabled }
+				>
+					<BusinessPlanBanner />
+				</FullWidthSection>
+			) }
+
+			<FullWidthSection
+				className="plugins-discovery-page__free-essentials full-width-section--double-padding"
+				enabled={ isMarketplaceRedesignEnabled }
+			>
 				<PopularPluginsSection
 					{ ...props }
 					pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				/>
 			</FullWidthSection>
 
-			<FullWidthSection className="plugins-discovery-page__power-store full-width-section--gray">
+			<FullWidthSection
+				className="plugins-discovery-page__power-store full-width-section--gray"
+				enabled={ isMarketplaceRedesignEnabled }
+			>
 				<CollectionListView category="ecommerce" { ...props } />
 			</FullWidthSection>
 		</>

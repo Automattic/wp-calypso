@@ -1,0 +1,11 @@
+.resource-center {
+	&__content {
+		padding: 24px;
+		max-width: 1200px;
+
+		p {
+			margin-block-start: 0;
+			margin-block-end: 16px;
+		}
+	}
+}

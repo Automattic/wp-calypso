@@ -33,12 +33,16 @@ export type SegmentedBarProps = {
 	height?: number;
 	/** Border radius in pixels, defaults to 0 (square ends) */
 	radius?: number;
+	/** Whether to round the segments with `radius`. Defaults to false (square ends). */
+	roundedSegments?: boolean;
 	/** Optional gap between segments in pixels. Defaults to 6 (some spacing). */
 	gap?: number;
 	/** Render labels row above the bar. Defaults to true. */
 	showLabels?: boolean;
 	/** Custom renderer for label values (e.g., currency). Defaults to raw value. */
 	formatValue?: ( value: number, segment: SegmentedBarSegment ) => React.ReactNode;
+	/** Optional custom style for the container. */
+	style?: CSSProperties;
 };
 
 /**
@@ -77,6 +81,8 @@ export default function SegmentedBar( {
 	gap = 6,
 	showLabels = true,
 	formatValue,
+	roundedSegments = false,
+	style,
 }: SegmentedBarProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const values = segments.map( ( s ) => s.value );
@@ -91,7 +97,7 @@ export default function SegmentedBar( {
 	};
 
 	return (
-		<div className="dashboard-segmented-bar-wrapper">
+		<div className="dashboard-segmented-bar-wrapper" style={ style }>
 			{ showLabels && (
 				<div
 					className={ `dashboard-segmented-bar__labels${
@@ -133,6 +139,7 @@ export default function SegmentedBar( {
 						flexGrow: weight,
 						flexBasis: 0,
 						backgroundColor: segment.color,
+						borderRadius: roundedSegments ? radius : 0,
 					};
 					const aria = segment.label
 						? `${ segment.label }: ${ Math.round( weight ) }%`

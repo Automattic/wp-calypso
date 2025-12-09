@@ -3,7 +3,7 @@
 
 .dashboard-domain-connection-verification {
 	&--connected {
-		&__icon {
+		.dashboard-domain-connection-verification__icon {
 			color: var(--dashboard__background-color-success);
 			fill: var(--dashboard__background-color-success);
 		}

@@ -50,23 +50,65 @@ export const CollapsibleCard = ( {
 		// Always call onToggle if provided (for both modes)
 		onToggle?.( newExpandedState );
 	};
+
+	const handleHeaderClick = ( event: React.MouseEvent< HTMLDivElement > ) => {
+		// Check if click originated from an interactive element
+		const target = event.target as HTMLElement;
+		const headerElement = event.currentTarget;
+
+		// Check if the target or any parent is an interactive element
+		const interactiveElement = target.closest(
+			'button, a, input, select, textarea, [role="button"], [role="link"], [role="menuitem"], [role="tab"]'
+		);
+
+		// Only toggle if click is not on an interactive element within the header
+		// Exclude the header element itself (which has role="button" for accessibility)
+		const isClickOnInteractiveElement =
+			interactiveElement &&
+			interactiveElement !== headerElement &&
+			headerElement.contains( interactiveElement );
+
+		if ( ! isClickOnInteractiveElement ) {
+			handleCollapsedChange();
+		}
+	};
+
 	return (
 		<Card
 			className={ clsx( 'collapsible-card', { collapsed: ! isExpanded }, className ) }
 			isBorderless={ isBorderless }
 		>
 			<CardBody>
-				<HStack justify="space-between" className="collapsible-card__header">
-					{ header }
-					<Button
-						icon={ chevronUp }
-						className={ clsx( 'collapsible-card__toggle', { collapsed: ! isExpanded } ) }
-						onClick={ handleCollapsedChange }
-						aria-expanded={ isExpanded }
-						aria-controls={ id }
-						aria-label={ label }
-					/>
-				</HStack>
+				<div
+					className="collapsible-card__header"
+					onClick={ handleHeaderClick }
+					role="button"
+					tabIndex={ 0 }
+					onKeyDown={ ( event: React.KeyboardEvent< HTMLDivElement > ) => {
+						// Allow keyboard activation with Enter or Space
+						if ( event.key === 'Enter' || event.key === ' ' ) {
+							event.preventDefault();
+							handleCollapsedChange();
+						}
+					} }
+					aria-expanded={ isExpanded }
+					aria-label={ label }
+				>
+					<HStack justify="space-between">
+						{ header }
+						<Button
+							icon={ chevronUp }
+							className={ clsx( 'collapsible-card__toggle', { collapsed: ! isExpanded } ) }
+							onClick={ ( event: React.MouseEvent< HTMLButtonElement > ) => {
+								event.stopPropagation();
+								handleCollapsedChange();
+							} }
+							aria-expanded={ isExpanded }
+							aria-controls={ id }
+							aria-label={ label }
+						/>
+					</HStack>
+				</div>
 				{ isExpanded && (
 					<div className="collapsible-card__content" id={ id }>
 						{ children }

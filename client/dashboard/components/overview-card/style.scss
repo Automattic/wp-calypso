@@ -48,6 +48,7 @@
 }
 
 .dashboard-overview-card__title {
+	.dashboard-overview-card--activate &,
 	.dashboard-overview-card--upsell & {
 		color: var( --wp-admin-theme-color );
 	}

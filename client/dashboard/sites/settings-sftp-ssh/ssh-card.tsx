@@ -32,6 +32,7 @@ import { Card, CardBody } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
+import { reauthRequiredLink } from '../../utils/link';
 import type { SftpUser, SiteSshKey, UserSshKey } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
@@ -280,9 +281,7 @@ export default function SshCard( {
 	};
 
 	if ( isWpError( userSshKeysError ) && userSshKeysError.code === 'reauthorization_required' ) {
-		const currentPath = window.location.pathname;
-		const loginUrl = `/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
-		window.location.href = loginUrl;
+		window.location.href = reauthRequiredLink();
 		return null;
 	}
 
