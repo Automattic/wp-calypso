@@ -1,13 +1,44 @@
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import LoginContextProvider from 'calypso/login/login-context';
-import Authorize from './components/authorize';
+import { AuthorizeDefault, AuthorizeStudio } from './components/authorize-variants';
 import './style.scss';
+
+/**
+ * Maps OAuth2 client IDs to their respective authorization component variants.
+ * This allows different clients to have customized authorization flows.
+ * Add new client variants here as they are configured.
+ */
+const CLIENT_VARIANT_MAP = {
+	// Studio by WordPress.com
+	95109: AuthorizeStudio,
+
+	// Add more client variants here as needed
+};
+
+/**
+ * Gets the appropriate authorization variant component for a given client ID.
+ * Falls back to the default variant if no specific variant is configured.
+ * @param {string} clientId - The OAuth2 client ID from query params
+ * @returns {Function} The React component for the authorization variant
+ */
+function getAuthorizeVariant( clientId ) {
+	if ( ! clientId ) {
+		return AuthorizeDefault;
+	}
+
+	return CLIENT_VARIANT_MAP[ clientId ] || AuthorizeDefault;
+}
 
 export function bootstrap( context, next ) {
 	recordPageView( '/oauth2/authorize', 'OAuth2 client authorization' );
+
+	// Get client ID from context query params to determine which variant to use
+	const clientId = context.query?.client_id;
+	const AuthorizeVariant = getAuthorizeVariant( clientId );
+
 	context.primary = (
 		<LoginContextProvider>
-			<Authorize />
+			<AuthorizeVariant />
 		</LoginContextProvider>
 	);
 	next();

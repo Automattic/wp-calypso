@@ -12,12 +12,12 @@ import PermissionsList from './permissions-list';
 import SuccessMessage from './success-message';
 import UserCard from './user-card';
 
-interface AuthorizeActionsRenderProps {
+export interface AuthorizeActionsRenderProps {
 	onApprove: () => void;
 	onDeny: () => void;
 }
 
-interface AuthorizeProps {
+export interface AuthorizeProps {
 	/**
 	 * Optional flag to control whether the heading logo should be displayed.
 	 * Defaults to true. Set to false for clients that don't want to show a logo.
@@ -28,6 +28,11 @@ interface AuthorizeProps {
 	 * Defaults to true. Set to false for clients that don't need to show permissions.
 	 */
 	showPermissions?: boolean;
+	/**
+	 * Variant for the user card display.
+	 * Defaults to "horizontal".
+	 */
+	userCardVariant?: 'horizontal' | 'centered';
 	/**
 	 * Custom text for the approve button.
 	 * Defaults to "Approve".
@@ -67,6 +72,7 @@ interface AuthorizeProps {
 function Authorize( {
 	showLogo = true,
 	showPermissions = true,
+	userCardVariant,
 	approveButtonText,
 	denyButtonText,
 	approveButtonVariant = 'primary',
@@ -148,7 +154,7 @@ function Authorize( {
 	if ( meta ) {
 		content = (
 			<div className="oauth2-connect">
-				{ meta.user && <UserCard user={ meta.user } /> }
+				{ meta.user && <UserCard user={ meta.user } variant={ userCardVariant || 'horizontal' } /> }
 
 				{ showPermissions && (
 					<PermissionsList permissions={ meta.permissions } clientTitle={ meta.client.title } />
