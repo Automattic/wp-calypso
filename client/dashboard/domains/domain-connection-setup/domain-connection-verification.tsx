@@ -103,14 +103,14 @@ export default function DomainConnectionVerification( {
 						{ hasCloudflareIpAddresses && ! domainMappingStatus.resolves_to_wpcom && (
 							<Notice variant="error">
 								{ __(
-									'Your domain appears to be set up with Cloudflare, but does not resolve to WordPress.com'
+									'Your domain appears to be set up with Cloudflare, but does not resolve to WordPress.com. Please make sure your domain is properly configured to point to WordPress.com in your Cloudflare dashboard.'
 								) }
 							</Notice>
 						) }
 						{ hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom && (
 							<Notice variant="info">
 								{ __(
-									'Your domain appears to be set up with Cloudflare, and it resolves to WordPress.com'
+									'Your domain appears to be set up with Cloudflare and it resolves to WordPress.com.'
 								) }
 							</Notice>
 						) }
