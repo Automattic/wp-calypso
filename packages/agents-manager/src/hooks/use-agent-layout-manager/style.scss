@@ -239,6 +239,12 @@ body.site-editor-php.agents-manager-sidebar-container {
 		@include editor-save-panel-open(
 			'.interface-navigable-region.interface-interface-skeleton__actions'
 		);
+
+		// Override canvas styles when the site editor navigation menu is open
+		.edit-site-layout:not( .is-full-canvas ) .edit-site-layout__canvas {
+			width: calc( 100% - $sidebar-width ) !important;
+			margin: 0 !important;
+		}
 	}
 }
 
