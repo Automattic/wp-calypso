@@ -46,7 +46,15 @@ export default function DnsPropagationProgressBar( {
 	const hasCloudflareIpAddresses = domainMappingStatus.has_cloudflare_ip_addresses;
 	let progressPercentage = 0;
 
+<<<<<<< HEAD
 	if ( mode === DomainConnectionSetupMode.SUGGESTED ) {
+=======
+	if ( hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom ) {
+		progressPercentage = 100;
+	} else if ( mode === DomainConnectionSetupMode.DC ) {
+		progressPercentage = 100;
+	} else if ( mode === DomainConnectionSetupMode.SUGGESTED ) {
+>>>>>>> 29429bcb806 (Minor fixes)
 		const currentNameServers = domainMappingStatus.name_servers || [];
 		const expectedNameServers = domainConnectionSetupInfo.wpcom_name_servers || [];
 		progressPercentage = calculateProgress( currentNameServers, expectedNameServers );
@@ -57,8 +65,6 @@ export default function DnsPropagationProgressBar( {
 		const currentIpAddresses = domainMappingStatus.host_ip_addresses || [];
 		const expectedIpAddresses = domainConnectionSetupInfo.default_ip_addresses || [];
 		progressPercentage = calculateProgress( currentIpAddresses, expectedIpAddresses );
-	} else if ( hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom ) {
-		progressPercentage = 100;
 	} else {
 		// All other cases: 0%
 		progressPercentage = 0;

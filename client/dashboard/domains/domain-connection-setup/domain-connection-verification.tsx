@@ -1,14 +1,17 @@
 import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import {
+	ExternalLink,
 	Icon,
 	Button,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { layout, swatch, atSymbol, published } from '@wordpress/icons';
+import { useAppContext } from '../../app/context';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -42,6 +45,7 @@ export default function DomainConnectionVerification( {
 	onRestartConnection,
 	isRestartingConnection,
 }: DomainConnectionVerificationProps ) {
+	const { name: appName } = useAppContext();
 	const status: DomainConnectionStatus = isMappingVerificationSuccess(
 		domainMappingStatus.mode,
 		domainMappingStatus
@@ -80,9 +84,20 @@ export default function DomainConnectionVerification( {
 
 					{ status === 'verifying' && (
 						<Notice variant="info">
-							{ __(
-								'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
-							) }
+							{ hasCloudflareIpAddresses
+								? createInterpolateElement(
+										__(
+											'<domainName/> is using Cloudflare, which hides dns records, so we can’t verify them the usual way. We’ll still confirm that your domain name points to <appName/>.com. Please check that your <link>Cloudflare</link> dns settings include the required records./>'
+										),
+										{
+											domainName: <>{ domainName }</>,
+											appName: <>{ appName }</>,
+											link: <ExternalLink href="https://www.cloudflare.com/" children={ null } />,
+										}
+								  )
+								: __(
+										'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
+								  ) }
 						</Notice>
 					) }
 
@@ -99,13 +114,6 @@ export default function DomainConnectionVerification( {
 								domainConnectionStatus={ domainMappingStatus }
 								domainConnectionSetupInfo={ domainConnectionSetupInfo }
 							/>
-						) }
-						{ hasCloudflareIpAddresses && ! domainMappingStatus.resolves_to_wpcom && (
-							<Notice variant="error">
-								{ __(
-									'Your domain appears to be set up with Cloudflare, but does not resolve to WordPress.com. Please make sure your domain is properly configured to point to WordPress.com in your Cloudflare dashboard.'
-								) }
-							</Notice>
 						) }
 						{ hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom && (
 							<Notice variant="info">
