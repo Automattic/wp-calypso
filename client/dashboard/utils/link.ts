@@ -14,6 +14,15 @@ export function wpcomLink( path: string ) {
 }
 
 /**
+ * This function returns the link to the dashboard.
+ */
+export function dashboardLink() {
+	return config( 'env' ) === 'development'
+		? 'http://my.localhost:3000'
+		: 'https://my.wordpress.com';
+}
+
+/**
  * This function returns the link to the reauth page.
  *
  * Currently, the dashboard run in either Calypso or Dashboard environment. When it comes to the redirect URL:

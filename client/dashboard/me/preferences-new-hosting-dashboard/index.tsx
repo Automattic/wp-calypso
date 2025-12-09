@@ -1,4 +1,5 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -81,7 +82,7 @@ export default function PreferencesOptInForm() {
 						createSuccessNotice( __( 'New Hosting Dashboard enabled.' ), { type: 'snackbar' } );
 					} else {
 						setIsRedirecting( true );
-						window.location.href = '/me/account?flash=dashboard';
+						window.location.href = config( 'wpcom_url' ) + '/me/account?flash=dashboard';
 					}
 				},
 				onError( _, data ) {
