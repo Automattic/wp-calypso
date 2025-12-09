@@ -31,7 +31,7 @@ export const DomainNameField = ( {
 		<VStack spacing={ 1 }>
 			<span style={ textOverflowStyles }>{ value }</span>
 			{ showPrimaryDomainBadge && domain.primary_domain && (
-				<Tooltip text={ __( 'The site address your visitors will see while viewing your site.' ) }>
+				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
 					<span
 						style={ {
 							...textOverflowStyles,
