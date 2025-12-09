@@ -11,8 +11,8 @@ import type { OdieChat, ReturnedChat } from '../types';
  * Get the ODIE chat and manage the cache to save on API calls.
  * @param chatId - The chat ID to fetch
  */
-export const useOdieChat = ( chatId: number | null ) => {
-	const { version } = useOdieAssistantContext();
+export const useOdieChat = ( chatId: number | null, defaultVersion?: string | null ) => {
+	const { version = defaultVersion } = useOdieAssistantContext();
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 
 	// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.

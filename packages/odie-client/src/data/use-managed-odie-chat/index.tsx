@@ -4,18 +4,18 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { useOdieAssistantContext } from '../context';
-import { getOdieIdFromInteraction } from '../utils';
-import { useCurrentSupportInteraction } from './use-current-support-interaction';
-import { useManageSupportInteraction } from './use-manage-support-interaction';
-import { useOdieChat } from './use-odie-chat';
+import { useOdieAssistantContext } from '../../context';
+import { getOdieIdFromInteraction } from '../../utils';
+import { useCurrentSupportInteraction } from '../use-current-support-interaction';
+import { useManageSupportInteraction } from '../use-manage-support-interaction';
+import { useOdieChat } from '../use-odie-chat';
 import type {
 	ReturnedChat,
 	Message,
 	AgentticMessage,
 	OdieChat,
 	SupportInteraction,
-} from '../types';
+} from '../../types';
 
 function convertMessageToAgentticFormat(
 	message: Message,
@@ -164,9 +164,14 @@ export const useSendOdieMessage = () => {
  * Get a full API of an Odie chat.
  */
 export const useManagedOdieChat = () => {
+	const versionParam = new URLSearchParams( window.location.search ).get( 'version' );
+	const { version = versionParam } = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const chatId = getOdieIdFromInteraction( currentSupportInteraction );
-	const { data: chat, isFetching: isLoadingChat } = useOdieChat( chatId ? Number( chatId ) : null );
+	const { data: chat, isFetching: isLoadingChat } = useOdieChat(
+		chatId ? Number( chatId ) : null,
+		version
+	);
 	const navigate = useNavigate();
 
 	const sendOdieMessage = useSendOdieMessage();
