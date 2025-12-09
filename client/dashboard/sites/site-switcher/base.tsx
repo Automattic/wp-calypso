@@ -1,6 +1,7 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import { siteRoute } from '../../app/router/sites';
@@ -24,6 +25,7 @@ const searchableFields = [
 ];
 
 export const SiteSwitcherBase = ( props: Pick< SwitcherProps< Site >, 'children' > ) => {
+	const { recordTracksEvent } = useAnalytics();
 	const { queries } = useAppContext();
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
 	const { data: sites } = useQuery( { ...queries.sitesQuery(), enabled: isSwitcherOpen } );
@@ -57,7 +59,15 @@ export const SiteSwitcherBase = ( props: Pick< SwitcherProps< Site >, 'children'
 				</Text>
 			) }
 			open={ isSwitcherOpen }
-			onToggle={ setIsSwitcherOpen }
+			onToggle={ ( willOpen: boolean ) => {
+				setIsSwitcherOpen( willOpen );
+				recordTracksEvent( 'calypso_dashboard_site_switcher_toggle', {
+					is_open: willOpen,
+				} );
+			} }
+			onItemClick={ () => {
+				recordTracksEvent( 'calypso_dashboard_site_switcher_item_click' );
+			} }
 		/>
 	);
 };

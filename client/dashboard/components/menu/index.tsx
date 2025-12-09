@@ -17,10 +17,12 @@ function MenuItem( {
 	to,
 	children,
 	activeOptions,
+	onClick,
 }: {
 	to: string;
 	children: React.ReactNode;
 	activeOptions?: ActiveOptions;
+	onClick?: () => void;
 } ) {
 	return (
 		<RouterLinkButton
@@ -29,6 +31,7 @@ function MenuItem( {
 			to={ to }
 			activeOptions={ activeOptions }
 			__next40pxDefaultSize
+			onClick={ onClick }
 		>
 			{ children }
 		</RouterLinkButton>

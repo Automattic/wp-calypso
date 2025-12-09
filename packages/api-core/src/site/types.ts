@@ -1,12 +1,12 @@
-export interface SitePlan {
+interface SitePlan {
 	product_id: number;
 	product_slug: string;
-	product_name: string;
+	product_name?: string;
 	product_name_short: string;
 	expired: boolean;
 	is_free: boolean;
-	license_key: string;
-	billing_period: 'Yearly' | 'Monthly';
+	license_key?: string;
+	billing_period?: 'Yearly' | 'Monthly';
 	features: {
 		active: string[];
 	};

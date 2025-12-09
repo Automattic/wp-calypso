@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { wpcomLink } from '../../utils/link';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
@@ -53,7 +54,7 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 
 	const getLaunchUrl = () => {
 		if ( isSitePlanBigSkyTrial( site ) ) {
-			return addQueryArgs( '/setup/ai-site-builder/domains', {
+			return addQueryArgs( wpcomLink( '/setup/ai-site-builder/domains' ), {
 				siteId: site.ID,
 				source: 'general-settings',
 				redirect: 'site-launch',
@@ -62,7 +63,7 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 			} );
 		}
 
-		return addQueryArgs( '/start/launch-site', {
+		return addQueryArgs( wpcomLink( '/start/launch-site' ), {
 			siteSlug: site.slug,
 			new: site.name,
 			hide_initial_query: 'yes',

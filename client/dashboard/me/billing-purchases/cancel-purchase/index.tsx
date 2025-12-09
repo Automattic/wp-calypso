@@ -51,6 +51,7 @@ import {
 	isAkismetProduct,
 	isPartnerPurchase,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
+	isOneTimePurchase,
 } from '../../../utils/purchase';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
@@ -1040,10 +1041,32 @@ export default function CancelPurchase() {
 			! purchase.is_cancelable &&
 			! purchase.is_removable
 		) {
-			if ( ! createdErrorNoticeForRedirect.current ) {
+			if ( purchase.subscription_status !== 'active' && ! createdErrorNoticeForRedirect.current ) {
 				createErrorNotice(
 					__(
 						'This purchase has already been removed. Please contact support if you believe this to be in error.'
+					),
+					{ type: 'snackbar' }
+				);
+				createdErrorNoticeForRedirect.current = true;
+			}
+			if (
+				isOneTimePurchase( purchase ) &&
+				! purchase.is_refundable &&
+				! createdErrorNoticeForRedirect.current
+			) {
+				createErrorNotice(
+					__(
+						'This one time purchase cannot be cancelled. Please contact support if you need assistance.'
+					),
+					{ type: 'snackbar' }
+				);
+				createdErrorNoticeForRedirect.current = true;
+			}
+			if ( ! createdErrorNoticeForRedirect.current ) {
+				createErrorNotice(
+					__(
+						'This product cannot be cancelled or removed. Please contact support if you need assistance.'
 					),
 					{ type: 'snackbar' }
 				);

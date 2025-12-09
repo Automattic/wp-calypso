@@ -14,6 +14,7 @@ import {
 	plugins,
 	chartBar,
 	box,
+	pages,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -40,7 +41,9 @@ import {
 	A4A_AGENCY_TIER_LINK,
 	A4A_MIGRATIONS_OVERVIEW_LINK,
 	A4A_WOOPAYMENTS_LINK,
-	A4A_PARTNER_OFFERS_LINK,
+	A4A_LEARN_LINK,
+	A4A_LEARN_RESOURCE_CENTER_LINK,
+	A4A_EXCLUSIVE_OFFERS_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -104,12 +107,12 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-partner-offers' )
+			...( isSectionNameEnabled( 'a8c-for-agencies-exclusive-offers' )
 				? [
 						{
 							icon: box,
 							path: '/',
-							link: A4A_PARTNER_OFFERS_LINK,
+							link: A4A_EXCLUSIVE_OFFERS_LINK,
 							title: translate( 'Exclusive offers' ),
 						},
 				  ]
@@ -194,6 +197,20 @@ const useMainMenuItems = ( path: string ) => {
 				},
 				withChevron: true,
 			},
+			...( isSectionNameEnabled( 'a8c-for-agencies-learn' )
+				? [
+						{
+							icon: pages,
+							path: A4A_LEARN_LINK,
+							link: A4A_LEARN_RESOURCE_CENTER_LINK,
+							title: translate( 'Learn' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Learn',
+							},
+							withChevron: true,
+						},
+				  ]
+				: [] ),
 			...( isSectionNameEnabled( 'a8c-for-agencies-settings' )
 				? [
 						{

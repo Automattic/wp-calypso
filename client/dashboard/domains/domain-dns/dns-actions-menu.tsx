@@ -5,6 +5,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import type { DnsRecord } from '@automattic/api-core';
 
 interface DnsActionsMenuProps {
@@ -30,6 +31,7 @@ const DnsActionsMenu = ( {
 }: DnsActionsMenuProps ) => {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const importDnsBindMutation = useMutation( domainDnsImportBindMutation( domainName ) );
+	const { recordTracksEvent } = useAnalytics();
 
 	const handleFileChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const file = event.currentTarget.files?.[ 0 ];
@@ -37,11 +39,22 @@ const DnsActionsMenu = ( {
 			return;
 		}
 
+		recordTracksEvent( 'calypso_dashboard_domain_dns_import_bind_file', {
+			domain: domainName,
+		} );
+
 		importDnsBindMutation.mutate( file, {
 			onSuccess: ( data ) => {
+				recordTracksEvent( 'calypso_dashboard_domain_dns_import_bind_file_success', {
+					domain: domainName,
+				} );
 				onRecordsImported( data );
 			},
-			onError: () => {
+			onError: ( error ) => {
+				recordTracksEvent( 'calypso_dashboard_domain_dns_import_bind_file_failure', {
+					domain: domainName,
+					error_message: error.message,
+				} );
 				createErrorNotice( __( 'Failed to import DNS records.' ), {
 					type: 'snackbar',
 				} );

@@ -122,9 +122,9 @@ export default ( router ) => {
 		[
 			`/log-in/:twoFactorAuthType(authenticator|backup|email|sms|push|webauthn)/${ lang }`,
 			`/log-in/:flow(social-connect)/${ lang }`,
-			`/log-in/:socialService(google|apple|github)/callback/${ lang }`,
+			`/log-in/:socialService(google|apple|github|paypal)/callback/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/${ lang }`,
-			`/log-in/:isJetpack(jetpack)/:socialService(google|apple|github)/${ lang }`,
+			`/log-in/:isJetpack(jetpack)/:socialService(google|apple|github|paypal)/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|email|sms|push|webauthn)/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/:action(lostpassword)/${ lang }`,
 			`/log-in/:isGutenboarding(new)/${ lang }`,

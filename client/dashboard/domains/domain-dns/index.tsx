@@ -11,12 +11,11 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews';
@@ -66,17 +65,28 @@ const DEFAULT_LAYOUTS = {
 export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
 	const router = useRouter();
-	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
+	const { recordTracksEvent } = useAnalytics();
+	const updateDnsMutation = useMutation( {
+		...domainDnsMutation( domainName ),
+		meta: {
+			snackbar: {
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Default A records restored for %s.' ), domainName ),
+				error: { source: 'server' },
+			},
+		},
+	} );
 	const restoreDefaultEmailRecordsMutation = useMutation( {
 		...domainDnsEmailMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Default email DNS records restored.' ),
-				error: __( 'Failed to restore default email DNS records.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Default email DNS records restored for %s.' ), domainName ),
+				error: { source: 'server' },
 			},
 		},
 	} );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
 	const [ isRestoreDefaultARecordsDialogOpen, setIsRestoreDefaultARecordsDialogOpen ] =
@@ -114,6 +124,10 @@ export default function DomainDns() {
 				[ 'A', 'AAAA' ].includes( record.type )
 		);
 
+		recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_a_records', {
+			domain: domainName,
+		} );
+
 		updateDnsMutation.mutate(
 			{
 				recordsToRemove,
@@ -121,13 +135,14 @@ export default function DomainDns() {
 			},
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'Default A records restored.' ), {
-						type: 'snackbar',
+					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_a_records_success', {
+						domain: domainName,
 					} );
 				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to restore the default A records.' ), {
-						type: 'snackbar',
+				onError: ( error ) => {
+					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_a_records_failure', {
+						domain: domainName,
+						error_message: error.message,
 					} );
 				},
 				onSettled: () => {
@@ -151,6 +166,11 @@ export default function DomainDns() {
 				name: 'www',
 			},
 		];
+
+		recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_cname_record', {
+			domain: domainName,
+		} );
+
 		updateDnsMutation.mutate(
 			{
 				recordsToRemove,
@@ -158,25 +178,15 @@ export default function DomainDns() {
 			},
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'Default CNAME record restored.' ), {
-						type: 'snackbar',
+					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_cname_record_success', {
+						domain: domainName,
 					} );
 				},
 				onError: ( error ) => {
-					if ( error.message.match( /^CNAME www\..+ conflicts with .*$/ ) ) {
-						createErrorNotice(
-							__(
-								'Failed to restore the default CNAME record. Please remove any DNS records you added for the “www” subdomain before restoring the default CNAME record.'
-							),
-							{
-								type: 'snackbar',
-							}
-						);
-					} else {
-						createErrorNotice( __( 'Failed to restore the default CNAME record.' ), {
-							type: 'snackbar',
-						} );
-					}
+					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_cname_record_failure', {
+						domain: domainName,
+						error_message: error.message,
+					} );
 				},
 				onSettled: () => {
 					setIsRestoreDefaultCnameRecordDialogOpen( false );
@@ -186,7 +196,22 @@ export default function DomainDns() {
 	};
 
 	const handleRestoreDefaultEmailRecords = () => {
+		recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_email_records', {
+			domain: domainName,
+		} );
+
 		restoreDefaultEmailRecordsMutation.mutate( undefined, {
+			onSuccess: () => {
+				recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_email_records_success', {
+					domain: domainName,
+				} );
+			},
+			onError: ( error ) => {
+				recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_email_records_failure', {
+					domain: domainName,
+					error_message: error.message,
+				} );
+			},
 			onSettled: () => {
 				setIsRestoreDefaultEmailRecordsDialogOpen( false );
 			},

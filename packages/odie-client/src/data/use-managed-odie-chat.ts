@@ -1,9 +1,19 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
-import type { ReturnedChat, Message, AgentticMessage } from '../types';
+import { getOdieIdFromInteraction } from '../utils';
+import { useCurrentSupportInteraction } from './use-current-support-interaction';
+import { useManageSupportInteraction } from './use-manage-support-interaction';
+import { useOdieChat } from './use-odie-chat';
+import type {
+	ReturnedChat,
+	Message,
+	AgentticMessage,
+	OdieChat,
+	SupportInteraction,
+} from '../types';
 
 function convertMessageToAgentticFormat( message: Message ): AgentticMessage {
 	return {
@@ -17,28 +27,44 @@ function convertMessageToAgentticFormat( message: Message ): AgentticMessage {
 	};
 }
 
+function convertMessageFromAgentticFormat( message: string ): Message {
+	return {
+		content: message,
+		role: 'user',
+		type: 'message',
+	};
+}
+
 /**
  * Sends a new message to ODIE.
- * If the chat_id is not set, it will create a new chat and send a message to the chat.
- * @param odieChatId - The Odie chat ID to send the message to.
- * @param botSlug - The bot slug to send the message to.
- * @param onSuccess - A callback function to call when the message is sent successfully.
  * @returns useMutation return object.
  */
-export const useSendOdieMessage = (
-	odieChatId: number | null,
-	botSlug: string,
-	onSuccess: ( chat: ReturnedChat ) => void
-) => {
-	const { selectedSiteId, version } = useOdieAssistantContext();
+export const useSendOdieMessage = () => {
+	const { selectedSiteId, version, newInteractionsBotSlug } = useOdieAssistantContext();
+	const {
+		data: currentSupportInteraction,
+		promise: currentSupportInteractionPromise,
+		isFetching: isFetchingCurrentSupportInteraction,
+	} = useCurrentSupportInteraction();
+	const botSlug = currentSupportInteraction?.bot_slug || newInteractionsBotSlug;
+	const chatId = getOdieIdFromInteraction( currentSupportInteraction );
+	const { startNewInteraction } = useManageSupportInteraction();
 
-	return useMutation< ReturnedChat, Error, Message >( {
-		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
-			const chatIdSegment = odieChatId ? `/${ odieChatId }` : '';
+	const queryClient = useQueryClient();
+
+	return useMutation< { chat: ReturnedChat; interaction: SupportInteraction }, Error, Message >( {
+		mutationFn: async ( message: Message ) => {
+			const chatIdSegment = chatId ? `/${ chatId }` : '';
 			const url = window.location.href;
 			const pathname = window.location.pathname;
+			let interaction = currentSupportInteraction;
 
-			return canAccessWpcomApis()
+			// This prevents a race condition where the current support interaction is not fetched yet.
+			if ( isFetchingCurrentSupportInteraction ) {
+				interaction = await currentSupportInteractionPromise;
+			}
+
+			const chat = await ( canAccessWpcomApis()
 				? wpcomRequest< ReturnedChat >( {
 						method: 'POST',
 						path: `/odie/chat/${ botSlug }${ chatIdSegment }`,
@@ -57,39 +83,68 @@ export const useSendOdieMessage = (
 							...( version && { version } ),
 							context: { selectedSiteId, url, pathname },
 						},
-				  } );
+				  } ) );
+
+			if ( ! interaction ) {
+				interaction = await startNewInteraction( {
+					event_source: 'odie',
+					event_external_id: chat.chat_id.toString(),
+				} );
+			}
+
+			return { chat, interaction };
 		},
-		onSuccess,
+		onMutate( message: Message ) {
+			queryClient.setQueryData(
+				[ 'odie-chat', botSlug, chatId ? Number( chatId ) : undefined, version ],
+				( currentChatCache: OdieChat ) => {
+					return {
+						...currentChatCache,
+						messages: [ ...( currentChatCache?.messages ?? [] ), message ],
+					};
+				}
+			);
+		},
+		onSuccess( data ) {
+			queryClient.setQueryData(
+				[ 'odie-chat', botSlug, data.chat.chat_id, version ],
+				( currentChatCache: OdieChat ) => {
+					return {
+						...currentChatCache,
+						messages: [ ...( currentChatCache?.messages ?? [] ), ...data.chat.messages ],
+					};
+				}
+			);
+		},
+		onError() {
+			// handle errors gracefully.
+		},
 	} );
 };
 
 /**
  * Get a full API of an Odie chat.
- * @param providedChatId - The chat ID to manage.
  */
-export const useManagedOdieChat = ( providedChatId: number | null, botSlug: string ) => {
-	const [ chatId, setChatId ] = useState< number | null >( providedChatId );
-	const [ chatMessages, setChatMessages ] = useState< Message[] >( [] );
+export const useManagedOdieChat = () => {
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const chatId = getOdieIdFromInteraction( currentSupportInteraction );
+	const { data: chat, isFetching: isLoadingChat } = useOdieChat( chatId ? Number( chatId ) : null );
+	const navigate = useNavigate();
 
-	const onSuccess = useCallback(
-		( returnedChat: ReturnedChat ) => {
-			const messages = [ ...chatMessages, ...returnedChat.messages ];
-			setChatId( returnedChat.chat_id );
-			setChatMessages( messages );
-		},
-		[ chatMessages ]
-	);
+	const sendOdieMessage = useSendOdieMessage();
 
-	const sendOdieMessage = useSendOdieMessage( chatId ?? null, botSlug, onSuccess );
+	async function sendMessage( message: string ) {
+		const odieMessage = convertMessageFromAgentticFormat( message );
+		const { interaction } = await sendOdieMessage.mutateAsync( odieMessage );
 
-	function sendMessage( message: Message ) {
-		setChatMessages( [ ...chatMessages, message ] );
-		sendOdieMessage.mutateAsync( message );
+		if ( interaction.uuid !== currentSupportInteraction?.uuid ) {
+			navigate( `/odie?odieInteractionId=${ interaction.uuid }`, { replace: true } );
+		}
 	}
 
 	return {
-		messages: chatMessages.map( convertMessageToAgentticFormat ) || [],
+		messages: chat?.messages.map( convertMessageToAgentticFormat ) || [],
 		sendMessage,
-		isProcessing: sendOdieMessage.isPending,
+		isProcessing: sendOdieMessage.isPending || isLoadingChat,
 	};
 };

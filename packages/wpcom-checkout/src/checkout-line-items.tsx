@@ -26,6 +26,7 @@ import {
 	useFormStatus,
 	Theme,
 } from '@automattic/composite-checkout';
+import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -971,6 +972,7 @@ function getApproximateDifferenceInMonths( dateFrom: Date, dateTo: Date ): numbe
 }
 
 function LineItemExpiryDates( { product }: { product: ResponseCartProduct } ) {
+	const locale = useLocale();
 	const translate = useTranslate();
 
 	// We only currently show the expiry date for renewals when the current
@@ -990,10 +992,10 @@ function LineItemExpiryDates( { product }: { product: ResponseCartProduct } ) {
 	}
 
 	const expiryDate = product.subscription_current_expiry_date
-		? formatDate( product.subscription_current_expiry_date )
+		? formatDate( new Date( product.subscription_current_expiry_date ), locale )
 		: undefined;
 	const postRenewExpiry = product.subscription_post_purchase_expiry_date
-		? formatDate( product.subscription_post_purchase_expiry_date )
+		? formatDate( new Date( product.subscription_post_purchase_expiry_date ), locale )
 		: undefined;
 	return (
 		<>
@@ -1015,15 +1017,15 @@ function LineItemExpiryDates( { product }: { product: ResponseCartProduct } ) {
 	);
 }
 
-function formatDate( isoDate: string ): string {
-	// This somewhat mimics `moment.format('ll')` (used here formerly) without
-	// needing the deprecated `moment` package.
-	return new Date( Date.parse( isoDate ) ).toLocaleDateString( 'en-US', {
-		weekday: undefined,
-		month: 'short',
-		day: 'numeric',
-		year: 'numeric',
-	} );
+function formatDate(
+	date: Date,
+	locale: string,
+	formatOptions: Intl.DateTimeFormatOptions = { dateStyle: 'medium' }
+) {
+	if ( isNaN( date.getTime() ) ) {
+		return '';
+	}
+	return new Intl.DateTimeFormat( locale, formatOptions ).format( date );
 }
 
 function GetBillingIntervalLabel( { product }: { product: ResponseCartProduct } ) {

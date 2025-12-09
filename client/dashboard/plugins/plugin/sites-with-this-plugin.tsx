@@ -15,7 +15,13 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate, View, type Field } from '@wordpress/dataviews';
+import {
+	DataViews,
+	filterSortAndPaginate,
+	View,
+	type Field,
+	type DataViewRenderFieldProps,
+} from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
 import { useCallback, useMemo, useState } from 'react';
@@ -27,7 +33,8 @@ import { PluginsHeaderActions } from '../manage/components/plugins-header-action
 import { buildBulkSitesPluginAction } from '../manage/utils';
 import { getViewFilteredByUpdates } from '../utils/update-filters';
 import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
-import FieldActionToggle from './components/field-action-toggle';
+import { ActiveToggle } from './components/active-toggle';
+import { AutoupdateToggle } from './components/autoupdate-toggle';
 import { SiteWithPluginData, usePlugin } from './use-plugin';
 import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
 import { mapToPluginListRow } from './utils/map-to-plugin-list-row';
@@ -44,24 +51,26 @@ const defaultView: View = {
 export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
 	const { mutateAsync } = useMutation( sitePluginUpdateMutation() );
 	const updateAction = buildBulkSitesPluginAction( mutateAsync );
-	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin, isFetching } =
-		usePlugin( pluginSlug );
+	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin } = usePlugin( pluginSlug );
 	const [ view, setView ] = useState< View >( defaultView );
-	const { mutateAsync: activateMutate, isPending: isActivating } = useMutation(
-		sitePluginActivateMutation()
-	);
-	const { mutateAsync: deactivateMutate, isPending: isDeactivating } = useMutation(
-		sitePluginDeactivateMutation()
-	);
-	const { mutateAsync: enableAutoupdateMutate, isPending: isEnablingAutoupdate } = useMutation(
+	const { mutateAsync: activateMutate } = useMutation( sitePluginActivateMutation() );
+	const { mutateAsync: deactivateMutate } = useMutation( sitePluginDeactivateMutation() );
+	const { mutateAsync: enableAutoupdateMutate } = useMutation(
 		sitePluginAutoupdateEnableMutation()
 	);
-	const { mutateAsync: disableAutoupdateMutate, isPending: isDisablingAutoupdate } = useMutation(
+	const { mutateAsync: disableAutoupdateMutate } = useMutation(
 		sitePluginAutoupdateDisableMutation()
 	);
 	const [ selection, setSelection ] = useState< SiteWithPluginData[] >( [] );
 	const [ updateModalOpen, setUpdateModalOpen ] = useState( false );
 	const [ siteToUpdate, setSiteToUpdate ] = useState< SiteWithPluginData | null >( null );
+	const [ optimisticActive, setOptimisticActive ] = useState<
+		Record< number, boolean | undefined >
+	>( {} );
+	const [ optimisticAutoupdate, setOptimisticAutoupdate ] = useState<
+		Record< number, boolean | undefined >
+	>( {} );
+
 	const closeUpdateModal = () => {
 		setUpdateModalOpen( false );
 		setSiteToUpdate( null );
@@ -93,47 +102,25 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				id: 'active',
 				label: __( 'Active' ),
 				type: 'boolean',
-				getValue: ( { item }: { item: SiteWithPluginData } ) =>
-					pluginBySiteId.get( item.ID )?.active ?? false,
-				render: ( { item }: { item: SiteWithPluginData } ) => {
+				getValue: ( { item }: { item: SiteWithPluginData } ) => {
 					const pluginItem = pluginBySiteId.get( item.ID );
-					const checked = pluginItem?.active ?? false;
-					const isBusy = isActivating || isDeactivating || isFetching;
-					return (
-						<FieldActionToggle
-							label={ __( 'Active' ) }
-							checked={ checked }
-							disabled={ isBusy }
-							onToggle={ ( next ) => {
-								if ( next ) {
-									return activateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-								}
-								return deactivateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-							} }
-							successOn={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( '%s has been activated.' ),
-								plugin?.name ?? ''
-							) }
-							errorOn={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Failed to activate %s.' ),
-								plugin?.name ?? ''
-							) }
-							successOff={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( '%s has been deactivated.' ),
-								plugin?.name ?? ''
-							) }
-							errorOff={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Failed to deactivate %s.' ),
-								plugin?.name ?? ''
-							) }
-							actionId="activate"
-						/>
-					);
+					const serverChecked = pluginItem?.active ?? false;
+					const optimistic = optimisticActive[ item.ID ];
+
+					// Use optimistic value if we have one, otherwise use server value
+					return optimistic ?? serverChecked;
 				},
+				render: ( { field, item }: DataViewRenderFieldProps< SiteWithPluginData > ) => (
+					<ActiveToggle
+						item={ item }
+						plugin={ plugin }
+						active={ field.getValue?.( { item } ) as boolean }
+						activateMutate={ activateMutate }
+						deactivateMutate={ deactivateMutate }
+						optimisticActive={ optimisticActive }
+						setOptimisticActive={ setOptimisticActive }
+					/>
+				),
 				enableHiding: false,
 				enableSorting: true,
 			},
@@ -141,50 +128,28 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				id: 'autoupdate',
 				label: __( 'Autoupdate' ),
 				type: 'boolean',
-				getValue: ( { item }: { item: SiteWithPluginData } ) =>
-					pluginBySiteId.get( item.ID )?.autoupdate ?? false,
-				render: ( { item }: { item: SiteWithPluginData } ) => {
+				getValue: ( { item }: { item: SiteWithPluginData } ) => {
 					const pluginItem = pluginBySiteId.get( item.ID );
 					const checked = pluginItem?.autoupdate ?? false;
-					const isBusy = isEnablingAutoupdate || isDisablingAutoupdate || isFetching;
-
+					const optimistic = optimisticAutoupdate[ item.ID ];
+					return optimistic ?? checked;
+				},
+				render: ( { field, item }: DataViewRenderFieldProps< SiteWithPluginData > ) => {
 					// Determine if this plugin is managed on this site; if so, disable interaction
 					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 					// when not allowed, it's either managed or user lacks permission
 					const isManaged = ! autoupdate;
 
 					return (
-						<FieldActionToggle
-							label={ __( 'Autoupdate' ) }
-							checked={ checked }
-							disabled={ isBusy || isManaged }
-							onToggle={ ( next ) => {
-								if ( next ) {
-									return enableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-								}
-								return disableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-							} }
-							successOn={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Auto‑updates for %s have been enabled.' ),
-								plugin?.name ?? ''
-							) }
-							errorOn={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Failed to enable auto‑updates for %s.' ),
-								plugin?.name ?? ''
-							) }
-							successOff={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Auto‑updates for %s have been disabled.' ),
-								plugin?.name ?? ''
-							) }
-							errorOff={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Failed to disable auto‑updates for %s.' ),
-								plugin?.name ?? ''
-							) }
-							actionId="autoupdate"
+						<AutoupdateToggle
+							item={ item }
+							plugin={ plugin }
+							autoupdate={ field.getValue?.( { item } ) as boolean }
+							enableAutoupdateMutate={ enableAutoupdateMutate }
+							disableAutoupdateMutate={ disableAutoupdateMutate }
+							optimisticAutoupdate={ optimisticAutoupdate }
+							setOptimisticAutoupdate={ setOptimisticAutoupdate }
+							disabled={ isManaged }
 						/>
 					);
 				},
@@ -258,18 +223,15 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 		],
 		[
 			pluginBySiteId,
-			isActivating,
-			isDeactivating,
-			isFetching,
-			plugin?.name,
-			plugin?.id,
-			deactivateMutate,
+			optimisticActive,
+			optimisticAutoupdate,
+			plugin,
 			activateMutate,
-			isEnablingAutoupdate,
-			isDisablingAutoupdate,
+			deactivateMutate,
 			pluginSlug,
 			disableAutoupdateMutate,
 			enableAutoupdateMutate,
+			setOptimisticAutoupdate,
 		]
 	);
 
@@ -424,7 +386,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 						isEligible: ( item ) => {
 							const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 
-							return !! autoupdate && ! ( pluginBySiteId.get( item.ID )?.autoupdate ?? false );
+							return !! autoupdate && ( pluginBySiteId.get( item.ID )?.autoupdate ?? false );
 						},
 						supportsBulk: true,
 					},
