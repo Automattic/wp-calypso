@@ -25,6 +25,14 @@
 	.spotlight {
 		margin-top: 20px;
 	}
+
+	.business-plan-banner {
+		margin-block: 40px;
+
+		@media ( min-width: $break-small ) {
+			margin-block: 100px;
+		}
+	}
 }
 
 .card.plugins-browser-list__elements {
@@ -40,6 +48,9 @@
 
 	&::after {
 		display: none;
+	}
+	.full-width-section & {
+		margin-top: 10px;
 	}
 }
 

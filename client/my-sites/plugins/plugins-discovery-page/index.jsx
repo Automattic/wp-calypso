@@ -148,7 +148,7 @@ const PluginsDiscoveryPage = ( props ) => {
 			</FullWidthSection>
 
 			{ isEnabled( 'marketplace-redesign' ) && (
-				<FullWidthSection className="plugins-discovery-page__business-plan-banner full-width-section--double-padding">
+				<FullWidthSection className="plugins-discovery-page__business-plan-banner">
 					<BusinessPlanBanner />
 				</FullWidthSection>
 			) }

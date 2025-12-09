@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -35,7 +35,7 @@ const TelexBanner = () => {
 				target="_blank"
 				onClick={ trackClick }
 			>
-				{ __( 'Experiment with Tele |' ) }
+				{ __( 'Experiment with Tele' ) }
 			</Button>
 			<img
 				className="telex-banner__mobile-illustration"

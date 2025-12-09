@@ -1,4 +1,5 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 .telex-banner {
 	--color-accent: var( --studio-gray-100 );
@@ -6,18 +7,17 @@
 
 	display: flex;
 	flex-direction: column;
-	background-color: #f6f6f4;
+	background-color: var( --color-neutral-0);
 	margin-block: 24px;
 	padding: 32px 24px;
 	border-radius: 16px;
 	border: 1px solid var( --studio-blue-50 );
-	row-gap: 16px;
 	position: relative;
 	overflow: hidden;
 
-	@media ( min-width: 600px ) {
+	@media ( min-width: $break-small ) {
 		margin-inline: 0;
-		padding: 48px;
+		padding: 56px 40px;
 		padding-inline-end: 50%;
 		min-height: 320px;
 		justify-content: center;
@@ -37,25 +37,44 @@
 .telex-banner__title {
 	font-size: rem(40px);
 	font-weight: 400;
-	line-height: 1.2;
+	line-height: 1.1;
 	margin: 0;
 	font-family: $brand-serif;
 
-	@media ( min-width: 600px ) {
+	@media ( min-width: $break-small ) {
 		font-size: rem(50px);
 	}
 }
 
 .telex-banner__description {
-	font-size: $font-body;
+	font-size: $font-body-large;
 	line-height: 1.5;
-	margin: 0;
+	margin-bottom: 24px;
 	color: var( --studio-gray-80 );
 	max-width: 400px;
 }
 
-.telex-banner__cta {
+.components-button.telex-banner__cta {
 	width: fit-content;
+	font-size: $font-body;
+	border-radius: 4px;
+	font-weight: 500;
+	padding: 12px 24px;
+	height: auto;
+	margin-bottom: 40px;
+
+	&::after {
+		content: "|";
+		margin-left: 5px;
+		opacity: 0.6;
+		vertical-align: text-bottom;
+		font-size: 115%;
+		margin-top: -4px;
+	}
+
+	@media ( min-width: $break-small ) {
+		margin-bottom: 0;
+	}
 }
 
 .telex-banner__mobile-illustration {
@@ -63,7 +82,7 @@
 	height: auto;
 	align-self: center;
 
-	@media ( min-width: 600px ) {
+	@media ( min-width: $break-small ) {
 		display: none;
 	}
 }
@@ -71,7 +90,7 @@
 .telex-banner__prompt-overlay {
 	display: none;
 
-	@media ( min-width: 1000px ) {
+	@media ( min-width: $break-large ) {
 		display: block;
 		position: absolute;
 		top: 50%;
@@ -86,5 +105,6 @@
 		font-size: $font-body-large;
 		line-height: 1.22;
 		color: var( --studio-gray-30 );
+		max-width: calc( 50% - 24px );
 	}
 }
