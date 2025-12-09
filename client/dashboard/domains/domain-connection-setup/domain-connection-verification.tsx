@@ -92,7 +92,7 @@ export default function DomainConnectionVerification( {
 						</Text>
 
 						<DnsRecordsTable
-							domainData={ domainData }
+							domainName={ domainName }
 							domainConnectionStatus={ domainMappingStatus }
 							domainConnectionSetupInfo={ domainConnectionSetupInfo }
 						/>

@@ -40,11 +40,14 @@ const createMockDomainConnectionSetupInfo = (
 } );
 
 describe( 'DnsPropagationProgressBar', () => {
-	test( 'renders 100% for DC mode', () => {
+	test( 'renders 100% for DC mode when all IP addresses match', () => {
 		const domainMappingStatus = createMockDomainMappingStatus( {
 			mode: DomainConnectionSetupMode.DC,
+			host_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
 		} );
-		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
+		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+			default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
+		} );
 
 		const { getByRole, getByText } = render(
 			<DnsPropagationProgressBar
