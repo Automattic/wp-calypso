@@ -7,12 +7,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Hook to determine if the marketplace redesign feature should be applied.
  *
- * The marketplace redesign is shown when:
+ * The marketplace redesign is shown when ALL of the following are true:
  * 1. The 'marketplace-redesign' feature flag is enabled
  * 2. No site is selected
- * 3. AND one of the following is true:
- * - User is logged out
- * - User has opted into the dashboard/v2 (hosting dashboard opt-in)
+ * 3. Either the user is logged out OR the user has opted into the dashboard/v2 (hosting dashboard opt-in)
  *
  * This ensures the redesign is applied for:
  * - Logged-out users (chromeless experience)
