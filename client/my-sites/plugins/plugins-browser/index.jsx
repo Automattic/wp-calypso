@@ -16,6 +16,7 @@ import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visible';
 import { PluginsFAQ } from 'calypso/my-sites/plugins/plugins-faq';
@@ -116,7 +117,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	const shouldUseLoggedInView =
 		isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn ? siteId : isLoggedIn;
 
-	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {

@@ -1,11 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 
 import './style.scss';
 
 const FullWidthSection = ( { children, className } ) => {
-	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	// TODO: Remove this when the marketplace redesign is enabled by default
 	if ( ! isMarketplaceRedesignEnabled ) {

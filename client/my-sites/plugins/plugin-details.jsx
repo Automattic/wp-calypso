@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -82,6 +81,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MarketplaceFooter } from './education-footer';
+import { useIsMarketplaceRedesignEnabled } from './hooks/use-is-marketplace-redesign-enabled';
 import NoPermissionsError from './no-permissions-error';
 import { usePluginIsMaintained } from './use-plugin-is-maintained';
 
@@ -296,7 +296,7 @@ function PluginDetails( props ) {
 		setBreadcrumbs( breadcrumbs );
 	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, localizePath ] );
 
-	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 	const isMaintained = usePluginIsMaintained( fullPlugin?.tested );
 
 	const getPageTitle = () => {

@@ -1,6 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
 import FullWidthSection from 'calypso/components/full-width-section';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -108,6 +108,7 @@ const PluginsDiscoveryPage = ( props ) => {
 		getSiteOption( state, siteId, 'site_partner_bundle' )
 	);
 	const isWPBeginnerSpecial = sitePartnerBundle === 'wpbeginner-special';
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	return (
 		<>
@@ -127,9 +128,9 @@ const PluginsDiscoveryPage = ( props ) => {
 				<EducationFooter />
 			</FullWidthSection>
 
-			{ ! isLoggedIn && ! isEnabled( 'marketplace-redesign' ) && <InPageCTASection /> }
+			{ ! isLoggedIn && ! isMarketplaceRedesignEnabled && <InPageCTASection /> }
 
-			{ isEnabled( 'marketplace-redesign' ) && (
+			{ isMarketplaceRedesignEnabled && (
 				<FullWidthSection className="plugins-discovery-page__telex-banner full-width-section--double-padding">
 					<TelexBanner />
 				</FullWidthSection>
@@ -147,7 +148,7 @@ const PluginsDiscoveryPage = ( props ) => {
 				<CollectionListView category="business" { ...props } />
 			</FullWidthSection>
 
-			{ isEnabled( 'marketplace-redesign' ) && (
+			{ isMarketplaceRedesignEnabled && (
 				<FullWidthSection className="plugins-discovery-page__business-plan-banner">
 					<BusinessPlanBanner />
 				</FullWidthSection>

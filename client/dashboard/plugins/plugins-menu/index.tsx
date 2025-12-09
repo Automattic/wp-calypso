@@ -19,7 +19,7 @@ const PluginsMenu = () => {
 				<Button
 					className="dashboard-menu__item"
 					variant="tertiary"
-					href={ wpcomLink( '/plugins?flags=marketplace-redesign' ) }
+					href={ wpcomLink( '/plugins' ) }
 				>
 					{ browsePluginsLabel }
 				</Button>

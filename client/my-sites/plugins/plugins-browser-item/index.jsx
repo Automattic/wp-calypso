@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Badge, Gridicon } from '@automattic/components';
@@ -13,6 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
@@ -70,6 +70,7 @@ const PluginsBrowserListElement = ( props ) => {
 	);
 
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( plugin.slug );
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	const pluginLink = useMemo( () => {
 		if ( plugin.link ) {
@@ -237,11 +238,11 @@ const PluginsBrowserListElement = ( props ) => {
 								</div>
 							</>
 						) }
-						{ isEnabled( 'marketplace-redesign' ) && (
+						{ isMarketplaceRedesignEnabled && (
 							<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 						) }
 					</div>
-					{ ! isEnabled( 'marketplace-redesign' ) && (
+					{ ! isMarketplaceRedesignEnabled && (
 						<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 					) }
 				</div>
@@ -443,6 +444,8 @@ function InstalledInOrPricing( {
 }
 
 function Placeholder( { variant } ) {
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
+
 	return (
 		<li className={ clsx( 'plugins-browser-item is-placeholder', variant ) }>
 			<span className="plugins-browser-item__link">
@@ -451,11 +454,11 @@ function Placeholder( { variant } ) {
 						<PluginIcon isPlaceholder />
 						<div className="plugins-browser-item__title">…</div>
 						<div className="plugins-browser-item__author">…</div>
-						{ isEnabled( 'marketplace-redesign' ) && (
+						{ isMarketplaceRedesignEnabled && (
 							<div className="plugins-browser-item__description">…</div>
 						) }
 					</div>
-					{ ! isEnabled( 'marketplace-redesign' ) && (
+					{ ! isMarketplaceRedesignEnabled && (
 						<div className="plugins-browser-item__description">…</div>
 					) }
 				</div>
