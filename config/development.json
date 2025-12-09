@@ -175,6 +175,7 @@
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
+		"sign-in-with-paypal": true,
 		"signup/social": true,
 		"signup/social-first": true,
 		"site-indicator": true,
