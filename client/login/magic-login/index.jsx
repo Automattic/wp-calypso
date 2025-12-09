@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { fixMe } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { useSelector, connect } from 'react-redux';
@@ -37,7 +37,6 @@ import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-e
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginContextProvider from '../login-context';
-import useLocaleReadyTranslate from '../utils/use-locale-ready-translate';
 import GravPoweredMagicLogin from './gravatar';
 import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
 import RequestLoginCode from './request-login-code';
@@ -348,7 +347,7 @@ const getMagicLoginInitialHeaders = ( props, translate ) => {
 };
 
 const MagicLoginWithContext = ( props ) => {
-	const { translate } = useLocaleReadyTranslate( props.locale );
+	const translate = useTranslate();
 	const { heading, subHeading } = getMagicLoginInitialHeaders( props, translate );
 
 	return (

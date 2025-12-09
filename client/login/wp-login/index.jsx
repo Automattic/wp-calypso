@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -43,7 +44,6 @@ import isWooJPCFlow, {
 } from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginContextProvider, { LoginContext } from '../login-context';
-import useLocaleReadyTranslate from '../utils/use-locale-ready-translate';
 import OneLoginFooter from './components/one-login-footer';
 import OneLoginLayout from './components/one-login-layout';
 import GravPoweredLoginBlockFooter from './gravatar/grav-powered-login-block-footer';
@@ -425,7 +425,7 @@ function getInitialHeadingState( props, translate ) {
 }
 
 const LoginWithContext = ( props ) => {
-	const { translate } = useLocaleReadyTranslate( props.locale );
+	const translate = useTranslate();
 	const { headingText, subHeadingPrimary, subHeadingSecondary } = getInitialHeadingState(
 		props,
 		translate
