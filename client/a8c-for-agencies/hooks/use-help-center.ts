@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
 import {
 	useDispatch as useDataStoreDispatch,
@@ -44,7 +45,7 @@ export default function useHelpCenter() {
 		// When the hash changes, we need to check if it contains a support form hash fragment.
 		// If it does, we need to set the show help center to true and set the navigate to route to the contact form.
 		const handleHashChange = () => {
-			if ( hasSupportFormHash ) {
+			if ( hasSupportFormHash && isEnabled( 'a4a-help-center' ) ) {
 				setShowHelpCenter( true );
 				setNavigateToRoute( '/a4a-contact-form' );
 				history.pushState( null, '', window.location.pathname + window.location.search );
