@@ -280,6 +280,28 @@ export const getErrorMessageUnknownError = (): Message => {
 	};
 };
 
+export const getOdieZendeskConnectionErrorMessage = (): Message => {
+	return {
+		content: __(
+			"Sorry, I couldn't connect you to our support team right now. Please try again using the button below or try reaching out to us via email.",
+			__i18n_text_domain__
+		),
+		role: 'bot',
+		type: 'message',
+		context: {
+			site_id: null,
+			flags: {
+				show_ai_avatar: true,
+				is_error_message: true,
+				forward_to_human_support: true,
+			},
+			question_tags: {
+				inquiry_type: 'request-for-human-support',
+			},
+		},
+	};
+};
+
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 
