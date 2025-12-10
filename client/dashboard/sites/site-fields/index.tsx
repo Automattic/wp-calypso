@@ -390,7 +390,7 @@ export function PHPVersion( { site }: { site: Site } ) {
 
 export function PHPVersion__ES( { site }: { site: DashboardSiteListSite } ) {
 	return site.php_version ? (
-		<span>{ site.php_version.split( '.' ).slice( 0, 2 ).join( '.' ) }</span> // Drop patch version.
+		site.php_version.split( '.' ).slice( 0, 2 ).join( '.' ) // Drop patch version.
 	) : (
 		<IneligibleIndicator />
 	);
