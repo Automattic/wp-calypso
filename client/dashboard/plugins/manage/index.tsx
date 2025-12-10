@@ -213,7 +213,10 @@ export default function PluginsList() {
 								return (
 									<VStack spacing={ 1 }>
 										{ /* @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`. */ }
-										<Text dangerouslySetInnerHTML={ { __html: item.name } } />
+										<Text
+											className="plugin-switcher-item-name"
+											dangerouslySetInnerHTML={ { __html: item.name } }
+										/>
 										<Text variant="muted">
 											{ updatesText ? `${ sitesText }, ${ updatesText }` : sitesText }
 										</Text>

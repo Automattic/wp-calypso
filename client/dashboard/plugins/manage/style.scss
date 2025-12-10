@@ -3,6 +3,7 @@
 	position: relative;
 	width: 44px;
 	height: 44px;
+	flex-shrink: 0;
 
 	&.is-fallback {
 		background: #c3c4c7;
@@ -34,4 +35,10 @@
 	&:hover {
 		background-color: #f8f8f8;
 	}
+}
+
+.plugin-switcher-item-name {
+    overflow: hidden;
+	text-overflow: ellipsis;
+    text-wrap-mode: nowrap;
 }
