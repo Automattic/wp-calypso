@@ -1,3 +1,4 @@
+import { getUseUnifiedExperienceFromInlineData } from '@automattic/agents-manager';
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
@@ -6,8 +7,16 @@ interface MeResponse {
 }
 
 /**
- * Fetches the unified_ai_chat field from the /me endpoint.
- * This determines if the user should see the unified AI chat experience.
+ * Determines if the user should see the unified AI chat experience.
+ *
+ * This hook uses a hybrid approach to work across all environments:
+ *
+ * 1. **wp-admin environments** (Atomic, Garden, Simple sites):
+ *    The flag is available via `agentsManagerData.useUnifiedExperience`,
+ *    injected server-side by Jetpack's Agents Manager.
+ *
+ * 2. **Calypso app** (wordpress.com):
+ *    The flag is fetched from the `/me?fields=unified_ai_chat` endpoint.
  *
  * The rollout logic lives in Agents Manager (Jetpack) via the
  * `agents_manager_use_unified_experience` filter.
@@ -16,20 +25,25 @@ export function useUnifiedAiChat( enabled = true ) {
 	return useQuery< boolean, Error >( {
 		queryKey: [ 'unified-ai-chat' ],
 		queryFn: async () => {
-			if ( ! canAccessWpcomApis() ) {
-				// For non-wpcom environments (Atomic/Garden), the filter is checked
-				// server-side by Agents Manager. This API call won't work there.
-				// The Help Center should rely on other signals in those environments.
-				return false;
+			// 1. Check inline script first (available on wp-admin via Jetpack's Agents Manager)
+			const inlineValue = getUseUnifiedExperienceFromInlineData();
+			if ( inlineValue !== undefined ) {
+				return inlineValue;
 			}
 
-			const response: MeResponse = await wpcomRequest( {
-				path: '/me',
-				apiVersion: '1.1',
-				query: 'fields=unified_ai_chat',
-			} );
+			// 2. Fall back to /me endpoint for Calypso app (wordpress.com)
+			if ( canAccessWpcomApis() ) {
+				const response: MeResponse = await wpcomRequest( {
+					path: '/me',
+					apiVersion: '1.1',
+					query: 'fields=unified_ai_chat',
+				} );
 
-			return response.unified_ai_chat ?? false;
+				return response.unified_ai_chat ?? false;
+			}
+
+			// 3. No data available - default to false
+			return false;
 		},
 		enabled,
 		refetchOnWindowFocus: false,
