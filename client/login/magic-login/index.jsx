@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { fixMe, useTranslate } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { useSelector, connect } from 'react-redux';
@@ -347,7 +347,7 @@ const getMagicLoginInitialHeaders = ( props, translate ) => {
 };
 
 const MagicLoginWithContext = ( props ) => {
-	const translate = useTranslate();
+	const { translate } = props;
 	const { heading, subHeading } = getMagicLoginInitialHeaders( props, translate );
 
 	return (
@@ -384,4 +384,7 @@ const mapDispatch = {
 	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
 };
 
-export default connect( mapState, mapDispatch )( MagicLoginWithContext );
+const ConnectedMagicLogin = connect( mapState, mapDispatch )( MagicLoginWithContext );
+
+export default ConnectedMagicLogin;
+export const LocalizedMagicLogin = localize( ConnectedMagicLogin );

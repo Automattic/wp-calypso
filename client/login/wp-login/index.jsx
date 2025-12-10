@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -425,7 +425,7 @@ function getInitialHeadingState( props, translate ) {
 }
 
 const LoginWithContext = ( props ) => {
-	const translate = useTranslate();
+	const { translate } = props;
 	const { headingText, subHeadingPrimary, subHeadingSecondary } = getInitialHeadingState(
 		props,
 		translate
@@ -494,4 +494,4 @@ export default connect(
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 		recordTracksEvent,
 	}
-)( LoginWithContext );
+)( localize( LoginWithContext ) );
