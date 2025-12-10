@@ -215,7 +215,7 @@ function AgentSetup( {
 
 	const loadedProviders = loadedProvidersRef.current;
 
-	// Don't render until agent configuration is initialized
+	// Don't render until the setup is complete
 	if ( ! agentConfig || ! loadedProviders ) {
 		return null;
 	}
