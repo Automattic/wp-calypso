@@ -5,7 +5,6 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { pluginRouteWithId } from '../../app/router/plugins';
-import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -73,28 +72,24 @@ export function PluginTabs( {
 
 				<Tabs.TabPanel tabId="installed">
 					<VStack spacing={ 6 }>
-						<DataViewsCard>
-							<SitesWithThisPlugin
-								pluginSlug={ pluginSlug }
-								isLoading={ isLoading }
-								plugin={ plugin }
-								pluginBySiteId={ pluginBySiteId }
-								sitesWithThisPlugin={ sitesWithThisPlugin }
-							/>
-						</DataViewsCard>
+						<SitesWithThisPlugin
+							pluginSlug={ pluginSlug }
+							isLoading={ isLoading }
+							plugin={ plugin }
+							pluginBySiteId={ pluginBySiteId }
+							sitesWithThisPlugin={ sitesWithThisPlugin }
+						/>
 					</VStack>
 				</Tabs.TabPanel>
 
 				<Tabs.TabPanel tabId="available">
 					<VStack spacing={ 6 }>
-						<DataViewsCard>
-							<SitesWithoutThisPlugin
-								pluginSlug={ pluginSlug }
-								pluginName={ pluginName }
-								isLoading={ isLoading }
-								sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
-							/>
-						</DataViewsCard>
+						<SitesWithoutThisPlugin
+							pluginSlug={ pluginSlug }
+							pluginName={ pluginName }
+							isLoading={ isLoading }
+							sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
+						/>
 					</VStack>
 				</Tabs.TabPanel>
 			</Tabs>

@@ -17,8 +17,10 @@ import { DataViewsCard } from '../../components/dataviews';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
 import SwitcherContent from '../../components/switcher/switcher-content';
 import { Text } from '../../components/text';
+import { TextBlur } from '../../components/text-blur';
 import { PluginTabs } from '../plugin';
 import { usePlugin } from '../plugin/use-plugin';
 import { useSitesById } from './hooks/use-sites-by-id';
@@ -70,6 +72,7 @@ export default function PluginsList() {
 
 	// console.debug( 'plugins', plugins );
 	const {
+		icon,
 		isLoading: isLoadingPlugin,
 		plugin,
 		pluginBySiteId,
@@ -119,6 +122,28 @@ export default function PluginsList() {
 	}, [ plugins, iconBySlug ] );
 
 	// console.debug( 'pluginsWithIcon', pluginsWithIcon );
+
+	const decoration = useMemo( () => {
+		if ( icon ) {
+			return <img src={ icon } alt={ plugin?.name } />;
+		} else if ( isLoadingPlugin ) {
+			return <div className="plugin-icon-placeholder" aria-hidden="true" />;
+		}
+	}, [ icon, isLoadingPlugin, plugin?.name ] );
+
+	const title = useMemo( () => {
+		if ( ! isLoadingPlugin && ! plugin ) {
+			return __( 'Plugin not found' );
+		}
+
+		return plugin ? (
+			// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
+			<Text dangerouslySetInnerHTML={ { __html: plugin.name } } />
+		) : (
+			<TextBlur>{ pluginSlug }</TextBlur>
+		);
+	}, [ isLoadingPlugin, plugin, pluginSlug ] );
+
 	return (
 		<PageLayout
 			size="large"
@@ -162,6 +187,8 @@ export default function PluginsList() {
 				</DataViewsCard>
 
 				<DataViewsCard>
+					<SectionHeader decoration={ decoration } level={ 2 } title={ title } />
+
 					<PluginTabs
 						pluginSlug={ pluginSlug }
 						isLoading={ isLoadingPlugin }
