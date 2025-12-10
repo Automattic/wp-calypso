@@ -1,8 +1,6 @@
 import {
-	domainPrivacyDisableMutation,
-	domainPrivacyDiscloseMutation,
-	domainPrivacyEnableMutation,
-	domainPrivacyRedactMutation,
+	domainPrivacySaveMutation,
+	domainPrivacyDiscloseSaveMutation,
 	domainQuery,
 	domainWhoisValidateMutation,
 	domainWhoisMutation,
@@ -65,28 +63,19 @@ export default function DomainContactInfo() {
 			},
 		},
 	} );
-	const enablePrivacyMutation = useMutation( {
-		...domainPrivacyEnableMutation( domainName ),
+	const savePrivacyMutation = useMutation( {
+		...domainPrivacySaveMutation( domainName ),
 		meta: {
 			snackbar: {
 				/* translators: %s is the domain name */
-				success: sprintf( __( 'Privacy has been successfully enabled for %s!' ), domainName ),
+				success: sprintf( __( 'Privacy has been successfully updated for %s!' ), domainName ),
 				error: { source: 'server' },
 			},
 		},
 	} );
-	const disablePrivacyMutation = useMutation( {
-		...domainPrivacyDisableMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Privacy has been successfully disabled for %s!' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+
 	const disclosePrivacyMutation = useMutation( {
-		...domainPrivacyDiscloseMutation( domainName ),
+		...domainPrivacyDiscloseSaveMutation( domainName ),
 		meta: {
 			snackbar: {
 				success: sprintf(
@@ -99,7 +88,7 @@ export default function DomainContactInfo() {
 		},
 	} );
 	const redactPrivacyMutation = useMutation( {
-		...domainPrivacyRedactMutation( domainName ),
+		...domainPrivacyDiscloseSaveMutation( domainName ),
 		meta: {
 			snackbar: {
 				/* translators: %s is the domain name */
@@ -112,8 +101,7 @@ export default function DomainContactInfo() {
 	const isSubmitting =
 		validateMutation.isPending ||
 		updateMutation.isPending ||
-		enablePrivacyMutation.isPending ||
-		disablePrivacyMutation.isPending ||
+		savePrivacyMutation.isPending ||
 		disclosePrivacyMutation.isPending ||
 		redactPrivacyMutation.isPending;
 
@@ -135,18 +123,14 @@ export default function DomainContactInfo() {
 	};
 
 	const handleTogglePrivacyProtection = () => {
-		if ( domain.private_domain ) {
-			disablePrivacyMutation.mutate( undefined );
-		} else {
-			enablePrivacyMutation.mutate( undefined );
-		}
+		savePrivacyMutation.mutate( domain.private_domain ? false : true );
 	};
 
 	const handleTogglePrivacyDisclosure = () => {
 		if ( domain.contact_info_disclosed ) {
-			redactPrivacyMutation.mutate( undefined );
+			redactPrivacyMutation.mutate( false );
 		} else {
-			disclosePrivacyMutation.mutate( undefined );
+			disclosePrivacyMutation.mutate( true );
 		}
 	};
 
