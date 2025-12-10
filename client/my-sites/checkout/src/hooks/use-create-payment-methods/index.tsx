@@ -520,9 +520,9 @@ export default function useCreatePaymentMethods( {
 	// `filterAppropriatePaymentMethods()`.
 	let paymentMethods = [
 		...existingCardMethods,
-		stripeMethod,
 		applePayMethod,
 		googlePayMethod,
+		stripeMethod,
 		freePaymentMethod,
 		paypalExpressMethod,
 		paypalPPCPMethod,
