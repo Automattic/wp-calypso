@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -11,6 +10,7 @@ import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-brow
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { UNLISTED_PLUGINS } from '../constants';
+import { useIsMarketplaceRedesignEnabled } from '../hooks/use-is-marketplace-redesign-enabled';
 import ClearSearchButton from '../plugins-browser/clear-search-button';
 import { PaidPluginsSection } from '../plugins-discovery-page';
 import usePlugins from '../use-plugins';
@@ -72,7 +72,7 @@ const PluginsSearchResultPage = ( {
 		}
 	}, [ searchTerm, pluginsPagination.page, pluginsPagination.results, dispatch, siteId ] );
 
-	const isMarketplaceRedesign = isEnabled( 'marketplace-redesign' );
+	const isMarketplaceRedesign = useIsMarketplaceRedesignEnabled();
 
 	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
 		let title = translate( 'Search results for "%(searchTerm)s"', {
@@ -112,7 +112,10 @@ const PluginsSearchResultPage = ( {
 		}
 
 		return (
-			<FullWidthSection className="plugins-browser__search-results">
+			<FullWidthSection
+				className="plugins-browser__search-results"
+				enabled={ isMarketplaceRedesign }
+			>
 				<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
 				<PluginsBrowserList
 					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
@@ -142,7 +145,7 @@ const PluginsSearchResultPage = ( {
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		<FullWidthSection>
+		<FullWidthSection enabled={ isMarketplaceRedesign }>
 			<div className="plugins-browser__no-results">
 				<NoResults
 					text={ translate( 'No matches found' ) }

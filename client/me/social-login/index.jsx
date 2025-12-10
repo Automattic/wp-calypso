@@ -12,6 +12,7 @@ import Notice from 'calypso/components/notice';
 import AppleIcon from 'calypso/components/social-icons/apple';
 import GitHubIcon from 'calypso/components/social-icons/github';
 import GoogleIcon from 'calypso/components/social-icons/google';
+import PayPalIcon from 'calypso/components/social-icons/paypal';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -64,12 +65,25 @@ class SocialLogin extends Component {
 
 				<SocialLoginService
 					service="github"
+					label="GitHub"
 					icon={ <GitHubIcon /> }
 					redirectUri={ redirectUri }
 					socialServiceResponse={
 						this.props.socialService === 'github' ? this.props.socialServiceResponse : null
 					}
 				/>
+
+				{ config.isEnabled( 'sign-in-with-paypal' ) && (
+					<SocialLoginService
+						service="paypal"
+						label="PayPal"
+						icon={ <PayPalIcon /> }
+						redirectUri={ redirectUri }
+						socialServiceResponse={
+							this.props.socialService === 'paypal' ? this.props.socialServiceResponse : null
+						}
+					/>
+				) }
 			</div>
 		);
 	}

@@ -237,6 +237,7 @@ if ( helpCenterData.isNextAdmin ) {
 							sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
 							currentUser={ helpCenterData.currentUser }
 							site={ helpCenterData.site }
+							source={ helpCenterData.isCommerceGarden ? 'commerce-garden' : null }
 							hasPurchases={ false }
 							onboardingUrl="https://wordpress.com/start"
 							handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }

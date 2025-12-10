@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import FullWidthSection from 'calypso/components/full-width-section';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
@@ -8,6 +7,7 @@ import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
 import { WPBEGINNER_PLUGINS } from '../constants';
+import { useIsMarketplaceRedesignEnabled } from '../hooks/use-is-marketplace-redesign-enabled';
 import usePlugins from '../use-plugins';
 
 const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
@@ -33,10 +33,13 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 		} );
 	}
 
-	const isMarketplaceRedesign = isEnabled( 'marketplace-redesign' );
+	const isMarketplaceRedesign = useIsMarketplaceRedesignEnabled();
 
 	return (
-		<FullWidthSection className="plugins-browser__category-results">
+		<FullWidthSection
+			className="plugins-browser__category-results"
+			enabled={ isMarketplaceRedesign }
+		>
 			<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
 			<PluginsBrowserList
 				title={ categoryName }

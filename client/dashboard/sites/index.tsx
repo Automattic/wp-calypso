@@ -76,23 +76,26 @@ function getFetchSiteListParams(
 		backup: 'has_backup',
 		// views: 'stats_views',
 		plan: 'plan',
-		// wp_version
+		wp_version: 'wordpress_version',
 		is_a8c: 'is_a8c',
 		// preview
-		// last_published
+		last_published: 'last_publish',
 		// uptime
+		views: 'views',
 		visitors: 'visitors',
 		subscribers_count: 'total_wpcom_subscribers',
 		// links
-		// php_version
+		php_version: 'php_version',
 		// storage
-		// host
+		host: 'hosting_provider_guess',
 	};
 
 	const additionalMappedFields: Record< string, ( keyof DashboardSiteListSite )[] > = {
+		likes: [ 'enabled_modules' ],
 		name: [ 'badge' ],
 		status: [ 'wpcom_status', 'private', 'deleted' ],
 		plan: [ 'owner_id' ],
+		preview: [ 'name', 'icon', 'url', 'private', 'deleted' ],
 	};
 
 	// Always include ID and slug (for navigation), deleted (for styling), is_a8c (for included a8c owned) and other (for vip & self hosted jetpack)
@@ -100,10 +103,12 @@ function getFetchSiteListParams(
 		'blog_id',
 		'slug',
 		'deleted',
+		'capabilities',
 		'is_a8c',
 		'is_atomic',
 		'is_garden',
 		'is_jetpack',
+		'is_p2',
 		'is_vip',
 	];
 

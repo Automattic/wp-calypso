@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useOpenArticleInHelpCenter } from '@automattic/help-center/src/hooks';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
@@ -11,6 +10,7 @@ import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
 import Section, { SectionContainer } from 'calypso/components/section';
 import { addQueryArgs } from 'calypso/lib/route';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -181,8 +181,12 @@ interface FeatureHeaderProps {
 	title: string;
 }
 
-const FeatureHeader = ( { icon, title }: FeatureHeaderProps ) => {
-	if ( ! isEnabled( 'marketplace-redesign' ) ) {
+const FeatureHeader = ( {
+	icon,
+	title,
+	isMarketplaceRedesignEnabled,
+}: FeatureHeaderProps & { isMarketplaceRedesignEnabled: boolean } ) => {
+	if ( ! isMarketplaceRedesignEnabled ) {
 		return title;
 	}
 
@@ -201,6 +205,7 @@ export const MarketplaceFooter = () => {
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 	const sectionName = useSelector( getSectionName );
 	const showCta = ! isLoggedIn || currentUserSiteCount === 0;
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	const startUrl = addQueryArgs(
 		{
@@ -209,7 +214,7 @@ export const MarketplaceFooter = () => {
 		sectionName === 'plugins' ? '/start/business' : '/start'
 	);
 
-	const headerTitle = isEnabled( 'marketplace-redesign' )
+	const headerTitle = isMarketplaceRedesignEnabled
 		? translate( "You pick the plugin,{{br}}{{/br}}we'll take care of the rest", {
 				components: { br: <br /> },
 		  } )
@@ -217,7 +222,7 @@ export const MarketplaceFooter = () => {
 
 	const ctaButton = showCta ? (
 		<Button
-			variant={ isEnabled( 'marketplace-redesign' ) ? 'secondary' : 'primary' }
+			variant={ isMarketplaceRedesignEnabled ? 'secondary' : 'primary' }
 			className="marketplace-cta"
 			href={ startUrl }
 		>
@@ -234,10 +239,11 @@ export const MarketplaceFooter = () => {
 							<FeatureHeader
 								icon={ <Icon icon={ shield } size={ 24 } /> }
 								title={ __( 'Fully managed' ) }
+								isMarketplaceRedesignEnabled={ isMarketplaceRedesignEnabled }
 							/>
 						}
 					>
-						{ isEnabled( 'marketplace-redesign' )
+						{ isMarketplaceRedesignEnabled
 							? __(
 									'Plugins authored by WordPress.com are fully managed by our team. No security patches. No update nags. It just works.'
 							  )
@@ -250,6 +256,7 @@ export const MarketplaceFooter = () => {
 							<FeatureHeader
 								icon={ <Icon icon={ plugins } size={ 24 } /> }
 								title={ __( 'Thousands of plugins' ) }
+								isMarketplaceRedesignEnabled={ isMarketplaceRedesignEnabled }
 							/>
 						}
 					>
@@ -262,10 +269,11 @@ export const MarketplaceFooter = () => {
 							<FeatureHeader
 								icon={ <Icon icon={ currencyDollar } size={ 24 } /> }
 								title={ __( 'Flexible pricing' ) }
+								isMarketplaceRedesignEnabled={ isMarketplaceRedesignEnabled }
 							/>
 						}
 					>
-						{ isEnabled( 'marketplace-redesign' )
+						{ isMarketplaceRedesignEnabled
 							? __(
 									'Pay yearly and save. Or keep it flexible with monthly plugin pricing. It’s entirely up to you.'
 							  )
@@ -299,7 +307,7 @@ const EducationFooter = () => {
 		[ dispatch, openArticleInHelpCenter, isLoggedIn ]
 	);
 
-	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	const links = {
 		websiteBuilding: localizeUrl( 'https://wordpress.com/support/plugins/' ),

@@ -1,6 +1,9 @@
 import '@automattic/agenttic-ui/index.css';
 import { useInput } from '@automattic/agenttic-ui';
+import { HelpCenterSelect } from '@automattic/data-stores';
 import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Smooch from 'smooch';
@@ -34,7 +37,11 @@ export const OdieSendMessageButton = () => {
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const isInitialLoading = chat.status === 'loading';
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
-	const [ inputValue, setInputValue ] = useState( '' );
+	const searchQuery = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getMessage(),
+		[]
+	);
+	const [ inputValue, setInputValue ] = useState( searchQuery || '' );
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
 	const connectionNotice = useConnectionStatusNotice( isLiveChat );
 
