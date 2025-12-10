@@ -4,6 +4,8 @@ import qs from 'qs';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 
+const ALLOWED_ORIGINS = [ 'https://my.wordpress.com' ];
+
 function loginEndpointData() {
 	return {
 		client_id: config( 'wpcom_signup_id' ),
@@ -65,6 +67,12 @@ function redirectToCalypso( request, response, next ) {
 		client_id: config( 'apple_oauth_client_id' ),
 		state: state.oauth2State,
 	} );
+
+	const isRelativeUrl = originalUrlPath.startsWith( '/' ) && ! originalUrlPath.startsWith( '//' );
+	if ( ! isRelativeUrl && ! ALLOWED_ORIGINS.includes( originalUrlPath ) ) {
+		return next();
+	}
+
 	response.redirect( originalUrlPath + '?' + state.queryString + '#' + hashString );
 }
 
