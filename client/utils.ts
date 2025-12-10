@@ -111,3 +111,19 @@ export function isCIAB( partner: string ): boolean {
 
 	return /\/ciab/.test( redirectTo ) || ( isAuth && service === partner );
 }
+
+export function sortLoginButtons< T extends { service: string } >( buttons: T[] ): T[] {
+	if ( ! isCIAB( 'paypal' ) ) {
+		return buttons;
+	}
+
+	return buttons.toSorted( ( a, b ) => {
+		if ( a.service === 'paypal' ) {
+			return -1;
+		}
+		if ( b.service === 'paypal' ) {
+			return 1;
+		}
+		return 0;
+	} );
+}

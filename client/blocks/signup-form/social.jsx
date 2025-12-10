@@ -20,7 +20,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { isCIAB } from 'calypso/utils';
+import { isCIAB, sortLoginButtons } from 'calypso/utils';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -159,19 +159,7 @@ class SocialSignupForm extends Component {
 			},
 		];
 
-		if ( isCIAB( 'paypal' ) ) {
-			buttons = buttons.toSorted( ( a, b ) => {
-				if ( a.service === 'paypal' ) {
-					return -1;
-				}
-				if ( b.service === 'paypal' ) {
-					return 1;
-				}
-				return 0;
-			} );
-		}
-
-		buttons = buttons.filter( ( button ) => button.enabled );
+		buttons = sortLoginButtons( buttons.filter( ( button ) => button.enabled ) );
 
 		return (
 			<Card
