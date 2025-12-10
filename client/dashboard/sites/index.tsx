@@ -100,10 +100,12 @@ function getFetchSiteListParams(
 		'blog_id',
 		'slug',
 		'deleted',
+		'capabilities',
 		'is_a8c',
 		'is_atomic',
 		'is_garden',
 		'is_jetpack',
+		'is_p2',
 		'is_vip',
 	];
 

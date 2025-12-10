@@ -32,11 +32,11 @@ import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isP2 } from '../../utils/site-types';
 import { getSiteFormattedUrl } from '../../utils/site-url';
-import { canManageSite } from '../features';
+import { canManageSite, canManageSite__ES } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { AtomicTransferStatus, Site, DashboardSiteListSite } from '@automattic/api-core';
+import type { AtomicTransferStatus, DashboardSiteListSite, Site } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -47,7 +47,7 @@ function LoadingIndicator( { label }: { label: string } ) {
 	return <TextBlur>{ label }</TextBlur>;
 }
 
-export function getSiteManagementUrl( site: Site ) {
+function getSiteManagementUrl( site: Site ) {
 	if ( canManageSite( site ) ) {
 		const path = `/sites/${ site.slug }`;
 
@@ -58,6 +58,19 @@ export function getSiteManagementUrl( site: Site ) {
 		return path;
 	}
 	return site.options?.admin_url;
+}
+
+function getSiteManagementUrl__ES( site: DashboardSiteListSite ) {
+	if ( canManageSite__ES( site ) ) {
+		const path = `/sites/${ site.slug }`;
+
+		if ( isDashboardBackport() ) {
+			return addTransientViewPropertiesToQueryParams( path );
+		}
+
+		return path;
+	}
+	return `${ site.url?.with_scheme }/wp-admin`;
 }
 
 export const titleFieldTextOverflowStyles = {
@@ -85,7 +98,7 @@ export function SiteLink__ES( {
 	return (
 		<Link
 			{ ...props }
-			to={ `/sites/${ site.slug }` }
+			to={ getSiteManagementUrl__ES( site ) }
 			disabled={ site.deleted }
 			preload="viewport"
 			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }

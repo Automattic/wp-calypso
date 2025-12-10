@@ -26,6 +26,7 @@ export interface DashboardSiteListSite {
 	is_atomic?: boolean;
 	is_garden?: boolean;
 	is_jetpack?: boolean;
+	is_p2?: boolean;
 	is_vip?: boolean;
 	owner_id?: number;
 	slug: string; // Slug is always fetched
