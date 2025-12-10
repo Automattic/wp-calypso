@@ -44,16 +44,6 @@ export interface AuthorizeProps {
 	 */
 	denyButtonText?: string;
 	/**
-	 * Variant for the approve button.
-	 * Defaults to "primary".
-	 */
-	approveButtonVariant?: 'primary' | 'secondary' | 'tertiary' | 'link';
-	/**
-	 * Variant for the deny button.
-	 * Defaults to "secondary".
-	 */
-	denyButtonVariant?: 'primary' | 'secondary' | 'tertiary' | 'link';
-	/**
 	 * Custom CSS class for the approve button.
 	 */
 	approveButtonClassName?: string;
@@ -75,8 +65,6 @@ function Authorize( {
 	userCardVariant,
 	approveButtonText,
 	denyButtonText,
-	approveButtonVariant = 'primary',
-	denyButtonVariant = 'secondary',
 	approveButtonClassName,
 	denyButtonClassName,
 	renderActions,
@@ -167,8 +155,6 @@ function Authorize( {
 							onDeny={ onDeny }
 							approveButtonText={ approveButtonText }
 							denyButtonText={ denyButtonText }
-							approveButtonVariant={ approveButtonVariant }
-							denyButtonVariant={ denyButtonVariant }
 							approveButtonClassName={ approveButtonClassName }
 							denyButtonClassName={ denyButtonClassName }
 						/>
