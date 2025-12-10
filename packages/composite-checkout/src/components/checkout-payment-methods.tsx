@@ -22,8 +22,10 @@ import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
-const CheckoutPaymentMethodsWrapper = styled.div`
+const CheckoutPaymentMethodsWrapper = styled.div< { isLoading: boolean } >`
+	position: relative;
 	padding-top: 4px;
+	pointer-events: ${ ( props ) => ( props.isLoading ? 'none' : 'auto' ) };
 	> div > div:not( [disabled] ):has( + div:hover )::before,
 	> div > div[disabled]:has( + div.is-checked[disabled] )::before {
 		border-bottom: none;
@@ -40,7 +42,8 @@ const LoadingOverlay = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	z-index: 10;
+	z-index: 999;
+	cursor: not-allowed;
 `;
 
 const LoadingSpinner = styled.div`
@@ -65,7 +68,6 @@ const PaymentMethodsContainer = styled.div< { isLoading: boolean } >`
 	position: relative;
 	min-height: 100px;
 	opacity: ${ ( props ) => ( props.isLoading ? 0.3 : 1 ) };
-	pointer-events: ${ ( props ) => ( props.isLoading ? 'none' : 'auto' ) };
 `;
 
 export default function CheckoutPaymentMethods( {
@@ -103,6 +105,7 @@ export default function CheckoutPaymentMethods( {
 		return (
 			<CheckoutPaymentMethodsWrapper
 				className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }
+				isLoading={ false }
 			>
 				<CheckoutErrorBoundary
 					errorMessage={ __( 'There was a problem with this payment method.' ) }
@@ -136,13 +139,14 @@ export default function CheckoutPaymentMethods( {
 	return (
 		<CheckoutPaymentMethodsWrapper
 			className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }
+			isLoading={ arePaymentMethodsLoading }
 		>
+			{ arePaymentMethodsLoading && (
+				<LoadingOverlay>
+					<LoadingSpinner />
+				</LoadingOverlay>
+			) }
 			<PaymentMethodsContainer isLoading={ arePaymentMethodsLoading }>
-				{ arePaymentMethodsLoading && (
-					<LoadingOverlay>
-						<LoadingSpinner />
-					</LoadingOverlay>
-				) }
 				<div>
 					{ paymentMethods.map( ( method ) => (
 						<CheckoutErrorBoundary
