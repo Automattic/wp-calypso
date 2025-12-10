@@ -6,21 +6,7 @@
 @import "./placeholders";
 
 
-.debug {
-	outline: 1px solid #9acd32;
-	&::before {
-		content: 'virtualized';
-		color: #f00;
-		background-color: #9acd32;
-		border-radius: 8px;
-		padding: 8px;
-		position: relative;
-		font-size: 8px;
-		top: -18px;
-	}
-}
-
-.site-subscriptions-list-v2 {
+.site-subscriptions-list {
 	margin: 0 0 32px 0;
 
 	.row {

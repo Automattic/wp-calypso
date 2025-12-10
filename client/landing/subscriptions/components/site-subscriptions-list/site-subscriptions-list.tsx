@@ -90,7 +90,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 
 	return (
 		<div
-			className={ `debug site-subscriptions-list-v2${
+			className={ `site-subscriptions-list${
 				isCompactLayout ? ' site-subscriptions-list--compact' : ''
 			}` }
 			role="table"
