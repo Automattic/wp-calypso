@@ -138,7 +138,7 @@ function Authorize( {
 	} else {
 		content = (
 			<div className="oauth2-connect">
-				{ meta.user && <UserCard user={ meta.user } variant={ userCardVariant || 'horizontal' } /> }
+				{ meta.user && <UserCard user={ meta.user } variant={ userCardVariant } /> }
 
 				{ showPermissions && (
 					<PermissionsList permissions={ meta.permissions } clientTitle={ meta.client.title } />
