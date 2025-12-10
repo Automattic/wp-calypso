@@ -6,9 +6,13 @@ import {
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { __experimentalGrid as Grid, Icon } from '@wordpress/components';
+import {
+	__experimentalGrid as Grid,
+	__experimentalVStack as VStack,
+	Icon,
+} from '@wordpress/components';
 import { filterSortAndPaginate, View } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useMemo } from 'react';
@@ -30,8 +34,8 @@ import type { PluginListRow } from './types';
 
 import './style.scss';
 
-const ICON_SIZE = 32;
-const FALLBACK_ICON_SIZE = 24;
+const ICON_SIZE = 44;
+const FALLBACK_ICON_SIZE = 33;
 const view: View = {
 	type: 'list',
 	page: 1,
@@ -188,8 +192,33 @@ export default function PluginsList() {
 								);
 							} }
 							renderItemTitle={ ( { item } ) => {
-								// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-								return <Text dangerouslySetInnerHTML={ { __html: item.name } } />;
+								const sitesText = sprintf(
+									// translators: %(siteCount)d is the number of sites the plugin is installed on.
+									_n( '%(siteCount)d site', '%(siteCount)d sites', item.sitesCount ),
+									{ siteCount: item.sitesCount }
+								);
+
+								const updatesText = item.sitesWithPluginUpdate.length
+									? sprintf(
+											// translators: %(updateCount)d is the number of updates available.
+											_n(
+												'%(updateCount)d update available',
+												'%(updateCount)d updates available',
+												item.sitesWithPluginUpdate.length
+											),
+											{ updateCount: item.sitesWithPluginUpdate.length }
+									  )
+									: '';
+
+								return (
+									<VStack spacing={ 1 }>
+										{ /* @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`. */ }
+										<Text dangerouslySetInnerHTML={ { __html: item.name } } />
+										<Text variant="muted">
+											{ updatesText ? `${ sitesText }, ${ updatesText }` : sitesText }
+										</Text>
+									</VStack>
+								);
 							} }
 							searchableFields={ searchableFields }
 							onClose={ () => {} }
