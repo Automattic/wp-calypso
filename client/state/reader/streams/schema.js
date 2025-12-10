@@ -10,6 +10,7 @@ export default {
 				lastPage: { type: 'boolean' },
 				isRequesting: { type: 'boolean' },
 				pageHandle: { type: 'string' },
+				error: { type: 'object' },
 			},
 			additionalProperties: false,
 		},
