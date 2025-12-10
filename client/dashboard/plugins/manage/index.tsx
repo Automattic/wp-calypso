@@ -18,7 +18,6 @@ import clsx from 'clsx';
 import { useMemo } from 'react';
 import { pluginsManageRoute } from '../../app/router/plugins';
 import { Card, CardBody } from '../../components/card';
-import { DataViewsCard } from '../../components/dataviews';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -231,19 +230,21 @@ export default function PluginsList() {
 					</CardBody>
 				</Card>
 
-				<DataViewsCard>
-					<SectionHeader decoration={ decoration } level={ 2 } title={ title } />
+				<Card>
+					<CardBody className="plugin-sites-card-body">
+						<SectionHeader decoration={ decoration } level={ 2 } title={ title } />
 
-					<PluginTabs
-						pluginSlug={ pluginSlug }
-						isLoading={ isLoadingPlugin }
-						plugin={ plugin }
-						pluginName={ plugin?.name }
-						pluginBySiteId={ pluginBySiteId }
-						sitesWithThisPlugin={ sitesWithThisPlugin }
-						sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
-					/>
-				</DataViewsCard>
+						<PluginTabs
+							pluginSlug={ pluginSlug }
+							isLoading={ isLoadingPlugin }
+							plugin={ plugin }
+							pluginName={ plugin?.name }
+							pluginBySiteId={ pluginBySiteId }
+							sitesWithThisPlugin={ sitesWithThisPlugin }
+							sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
+						/>
+					</CardBody>
+				</Card>
 			</Grid>
 		</PageLayout>
 	);
