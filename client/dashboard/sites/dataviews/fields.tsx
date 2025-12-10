@@ -1,4 +1,3 @@
-import { JetpackModules } from '@automattic/api-core';
 import { queryClient, siteBySlugQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
@@ -8,7 +7,6 @@ import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import SiteIcon, { SiteIconRenderer } from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
-import { hasJetpackModule } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
@@ -170,16 +168,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'visitors',
 			label: __( '7-day visitors' ),
-			render: ( { item } ) => (
-				<AsyncEngagementStat
-					siteId={ item.ID }
-					type="visitors"
-					isEligible={
-						! item.is_deleted &&
-						( ! item.jetpack || hasJetpackModule( item, JetpackModules.STATS ) )
-					}
-				/>
-			),
+			render: ( { item } ) => <AsyncEngagementStat site={ item } type="visitors" />,
 			enableSorting: false,
 		},
 		{
