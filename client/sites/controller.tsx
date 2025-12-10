@@ -171,9 +171,8 @@ const waitForPrefs = () => async ( dispatch: CalypsoDispatch, getState: () => IA
 // The wp-admin admin bar does not know about user preferences and so may use the
 // origin_admin_bar query param to indicate that Calypso should take the user's
 // preference into account (without the query param, users can still navigate to
-// `/sites` manually allowing, meaning `/sites
-// navigate to `/sites`
-// user's preferenc
+// `/sites` manually, meaning the old dashboard is still accessible when the user
+// is specifically trying to go there).
 export const maybeRedirectToMultiSiteDashboard = ( context: PageJSContext, next: () => void ) => {
 	const originAdminBar = context.query[ 'origin_admin_bar' ];
 	if ( originAdminBar !== 'wpcom' ) {
