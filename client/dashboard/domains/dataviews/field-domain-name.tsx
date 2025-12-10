@@ -1,7 +1,7 @@
 import { DomainSubtype } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Link } from '@tanstack/react-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Tooltip, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
 import { Text } from '../../components/text';
@@ -27,15 +27,11 @@ export const DomainNameField = ( {
 			? domainTransferRoute.fullPath
 			: domainOverviewRoute.fullPath;
 
-	return (
-		<Link
-			to={ href }
-			params={ { siteSlug, domainName: domain.domain } }
-			disabled={ ! domain.subscription_id }
-		>
-			<VStack spacing={ 1 }>
-				<span style={ textOverflowStyles }>{ value }</span>
-				{ showPrimaryDomainBadge && domain.primary_domain && (
+	const content = (
+		<VStack spacing={ 1 }>
+			<span style={ textOverflowStyles }>{ value }</span>
+			{ showPrimaryDomainBadge && domain.primary_domain && (
+				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
 					<span
 						style={ {
 							...textOverflowStyles,
@@ -47,13 +43,23 @@ export const DomainNameField = ( {
 					>
 						{ __( 'Primary site address' ) }
 					</span>
-				) }
-				{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
-					<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
-						{ domain.subtype.label }
-					</Text>
-				) }
-			</VStack>
+				</Tooltip>
+			) }
+			{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
+				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
+					{ domain.subtype.label }
+				</Text>
+			) }
+		</VStack>
+	);
+
+	if ( ! domain.subscription_id ) {
+		return content;
+	}
+
+	return (
+		<Link to={ href } params={ { siteSlug, domainName: domain.domain } }>
+			{ content }
 		</Link>
 	);
 };

@@ -67,9 +67,14 @@ export default function HostingFeatureGatedWithCallout( {
 					</>
 				);
 			} }
-			renderActivationComponent={ ( { onClick } ) => (
+			renderActivationComponent={ () => (
 				<>
-					<ActivationCallout site={ site } main={ overlay } onClick={ onClick } />
+					<ActivationCallout
+						site={ site }
+						main={ overlay }
+						feature={ feature }
+						tracksFeatureId={ upsellFeatureId ?? upsellId }
+					/>
 					{ backButton }
 				</>
 			) }

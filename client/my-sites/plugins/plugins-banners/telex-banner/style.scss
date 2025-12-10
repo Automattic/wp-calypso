@@ -1,0 +1,110 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.telex-banner {
+	--color-accent: var( --studio-gray-100 );
+	--color-accent-60: var( --studio-gray-80 );
+
+	display: flex;
+	flex-direction: column;
+	background-color: var( --color-neutral-0);
+	margin-block: 24px;
+	padding: 32px 24px;
+	border-radius: 16px;
+	border: 1px solid var( --studio-blue-50 );
+	position: relative;
+	overflow: hidden;
+
+	@media ( min-width: $break-small ) {
+		margin-inline: 0;
+		padding: 56px 40px;
+		padding-inline-end: 50%;
+		min-height: 320px;
+		justify-content: center;
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			inset-inline-end: 0;
+			width: 50%;
+			background: url( /calypso/images/plugins/dithered-illustration.webp ) center / cover no-repeat;
+		}
+	}
+}
+
+.telex-banner__title {
+	font-size: rem(40px);
+	font-weight: 400;
+	line-height: 1.1;
+	margin: 0;
+	font-family: $brand-serif;
+
+	@media ( min-width: $break-small ) {
+		font-size: rem(50px);
+	}
+}
+
+.telex-banner__description {
+	font-size: $font-body-large;
+	line-height: 1.5;
+	margin-bottom: 24px;
+	color: var( --studio-gray-80 );
+	max-width: 400px;
+}
+
+.components-button.telex-banner__cta {
+	width: fit-content;
+	font-size: $font-body;
+	border-radius: 4px;
+	font-weight: 500;
+	padding: 12px 24px;
+	height: auto;
+	margin-bottom: 40px;
+
+	&::after {
+		content: "|";
+		margin-left: 5px;
+		opacity: 0.6;
+		vertical-align: text-bottom;
+		font-size: 115%;
+		margin-top: -4px;
+	}
+
+	@media ( min-width: $break-small ) {
+		margin-bottom: 0;
+	}
+}
+
+.telex-banner__mobile-illustration {
+	max-width: 300px;
+	height: auto;
+	align-self: center;
+
+	@media ( min-width: $break-small ) {
+		display: none;
+	}
+}
+
+.telex-banner__prompt-overlay {
+	display: none;
+
+	@media ( min-width: $break-large ) {
+		display: block;
+		position: absolute;
+		top: 50%;
+		inset-inline-end: 25%;
+		transform: translate( 50%, -50% );
+		width: 450px;
+		min-height: 182px;
+		background: url( /calypso/images/plugins/prompt-input-box.png ) 100% 100% / 100% 100% no-repeat;
+		padding: 16px 20px 48px;
+		box-sizing: border-box;
+		z-index: 1;
+		font-size: $font-body-large;
+		line-height: 1.22;
+		color: var( --studio-gray-30 );
+		max-width: calc( 50% - 24px );
+	}
+}

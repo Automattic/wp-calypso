@@ -45,13 +45,14 @@ export default function DnsPropagationProgressBar( {
 	const mode = domainMappingStatus.mode;
 	let progressPercentage = 0;
 
-	if ( mode === DomainConnectionSetupMode.DC ) {
-		progressPercentage = 100;
-	} else if ( mode === DomainConnectionSetupMode.SUGGESTED ) {
+	if ( mode === DomainConnectionSetupMode.SUGGESTED ) {
 		const currentNameServers = domainMappingStatus.name_servers || [];
 		const expectedNameServers = domainConnectionSetupInfo.wpcom_name_servers || [];
 		progressPercentage = calculateProgress( currentNameServers, expectedNameServers );
-	} else if ( mode === DomainConnectionSetupMode.ADVANCED ) {
+	} else if (
+		mode === DomainConnectionSetupMode.ADVANCED ||
+		mode === DomainConnectionSetupMode.DC
+	) {
 		const currentIpAddresses = domainMappingStatus.host_ip_addresses || [];
 		const expectedIpAddresses = domainConnectionSetupInfo.default_ip_addresses || [];
 		progressPercentage = calculateProgress( currentIpAddresses, expectedIpAddresses );

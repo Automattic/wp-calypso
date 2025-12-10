@@ -47,6 +47,7 @@
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/support-articles": "workspace:^",
 		"@rive-app/react-canvas": "^4.15.6",
+		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.23.0",
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/components": "^30.9.0",

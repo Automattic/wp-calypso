@@ -1,9 +1,3 @@
-/**
- * Agent Chat Component
- *
- * Renders the main chat interface with conversation view.
- */
-
 import {
 	AgentUI,
 	createMessageRenderer,

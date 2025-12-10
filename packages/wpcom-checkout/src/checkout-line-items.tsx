@@ -1399,10 +1399,7 @@ function CheckoutLineItem( {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
-	const itemSubtotalInteger =
-		isAkPro500Cart && product.quantity
-			? product.item_subtotal_integer / product.quantity
-			: product.item_subtotal_integer;
+	const itemSubtotalInteger = product.item_subtotal_integer;
 
 	const actualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
 		isSmallestUnit: true,

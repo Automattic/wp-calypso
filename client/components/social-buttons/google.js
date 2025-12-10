@@ -43,7 +43,10 @@ export class GoogleSocialButton extends Component {
 	}
 
 	componentDidMount() {
-		if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
+		if (
+			this.props.authCodeFromRedirect &&
+			[ 'github', 'paypal' ].indexOf( this.props.serviceFromRedirect ) === -1
+		) {
 			this.handleAuthorizationCode( {
 				auth_code: this.props.authCodeFromRedirect,
 				redirect_uri: this.props.redirectUri,
