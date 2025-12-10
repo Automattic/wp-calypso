@@ -69,7 +69,10 @@ function redirectToCalypso( request, response, next ) {
 	} );
 
 	const isRelativeUrl = originalUrlPath.startsWith( '/' ) && ! originalUrlPath.startsWith( '//' );
-	if ( ! isRelativeUrl && ! ALLOWED_ORIGINS.includes( originalUrlPath ) ) {
+	if (
+		! isRelativeUrl &&
+		! ALLOWED_ORIGINS.some( ( origin ) => originalUrlPath.startsWith( origin ) )
+	) {
 		return next();
 	}
 
