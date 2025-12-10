@@ -302,6 +302,7 @@ __metadata:
     "@automattic/oauth-token": "workspace:^"
     "@automattic/support-articles": "workspace:^"
     "@rive-app/react-canvas": "npm:^4.15.6"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
     "@wordpress/api-fetch": "npm:^7.23.0"

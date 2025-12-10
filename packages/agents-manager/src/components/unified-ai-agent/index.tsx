@@ -1,16 +1,9 @@
-/**
- * Unified AI Agent Component
- *
- * Configures the AI agent, manages sessions, and integrates custom tools and context.
- */
-
-import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMemo, useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { SESSION_STORAGE_KEY, getSessionId } from '../../utils/agent-session';
-import { lastConversationCache } from '../../utils/conversation-cache';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
@@ -66,11 +59,15 @@ function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
 	} );
 }
 
+const queryClient = new QueryClient();
+
 export default function UnifiedAIAgent( props: UnifiedAIAgentProps ) {
 	return (
-		<PersistentRouter>
-			<AgentSetup { ...props } />
-		</PersistentRouter>
+		<QueryClientProvider client={ queryClient }>
+			<PersistentRouter>
+				<AgentSetup { ...props } />
+			</PersistentRouter>
+		</QueryClientProvider>
 	);
 }
 
@@ -85,7 +82,7 @@ function AgentSetup( {
 	const [ loadedProviders, setLoadedProviders ] = useState< LoadedProviders >( {} );
 	const providersLoadedRef = useRef( false );
 	const { state } = useLocation();
-	// Use persisted route state `sessionId` if available, otherwise fall back to stored `sessionId`
+	// Prefer route state `sessionId`, fall back to stored `sessionId` (server-generated via Agenttic UI)
 	const sessionId = state?.sessionId || getSessionId();
 
 	// Load external providers and initialize agent config
@@ -164,23 +161,6 @@ function AgentSetup( {
 						environment: 'calypso',
 					} ),
 				};
-			}
-
-			// Check if we have cached messages to pre-load
-			if ( sessionId ) {
-				const agentManager = getAgentManager();
-				const agentId = config.agentId;
-				const botId = createOdieBotId( agentId );
-
-				// Only pre-load if agent doesn't exist yet
-				if ( ! agentManager.hasAgent( agentId ) ) {
-					const cachedData = lastConversationCache.get( botId );
-					if ( cachedData?.sessionId === sessionId && cachedData?.messages.length ) {
-						// Create agent and load cached messages BEFORE setting config
-						await agentManager.createAgent( agentId, config );
-						await agentManager.replaceMessages( agentId, cachedData.messages );
-					}
-				}
 			}
 
 			setAgentConfig( config );

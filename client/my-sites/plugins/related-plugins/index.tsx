@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon, Button, DotPager } from '@automattic/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
@@ -7,6 +6,7 @@ import FullWidthSection from 'calypso/components/full-width-section';
 import { RelatedPlugin } from 'calypso/data/marketplace/types';
 import { useGetRelatedPlugins } from 'calypso/data/marketplace/use-get-related-plugins';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PreinstalledPremiumPluginPriceDisplay from 'calypso/my-sites/plugins/plugin-price/preinstalled-premium-plugin-price-display';
@@ -47,7 +47,7 @@ function chunkItems< T >( items: T[], chunkSize: number ): T[][] {
 
 export function RelatedPlugins( { slug, size, seeAllLink, options }: RelatedPluginProps ) {
 	const translate = useTranslate();
-	const isUseCarousel = isEnabled( 'marketplace-redesign' );
+	const isUseCarousel = useIsMarketplaceRedesignEnabled();
 	const isLargeOrAbove = useViewportMatch( 'large' );
 	const isWideOrAbove = useViewportMatch( 'wide' );
 
@@ -119,7 +119,7 @@ export function RelatedPlugins( { slug, size, seeAllLink, options }: RelatedPlug
 	};
 
 	return (
-		<FullWidthSection className="full-width-section--gray">
+		<FullWidthSection className="full-width-section--gray" enabled={ isUseCarousel }>
 			<div className="related-plugins">
 				<div className="related-plugins__header">
 					<h2>{ translate( 'Related plugins' ) }</h2>
@@ -139,6 +139,7 @@ export function RelatedPlugins( { slug, size, seeAllLink, options }: RelatedPlug
 function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	const pluginLink = useMemo( () => {
 		let url = '/plugins/' + plugin.slug;
@@ -155,12 +156,12 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 			<PluginIcon
 				image={ plugin.icon }
 				className="related-plugins-item__icon"
-				size={ isEnabled( 'marketplace-redesign' ) ? 40 : undefined }
+				size={ isMarketplaceRedesignEnabled ? 40 : undefined }
 			/>
 			<div className="related-plugins-item__info">
 				<h3 className="related-plugins-item__title">{ plugin.name }</h3>
 				<div className="related-plugins-item__excerpt">{ plugin.short_description }</div>
-				{ ! isEnabled( 'marketplace-redesign' ) && (
+				{ ! isMarketplaceRedesignEnabled && (
 					<div className="related-plugins-item__details">
 						<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
 							{ ( {

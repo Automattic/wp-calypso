@@ -836,6 +836,12 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		name: 'a8c-for-agencies-learn',
+		paths: [ '/learn', '/learn/resource-center' ],
+		module: 'calypso/a8c-for-agencies/sections/learn',
+		group: 'a8c-for-agencies',
+	},
+	{
 		name: 'a8c-for-agencies-migrations',
 		paths: [
 			'/migrations',

@@ -1,5 +1,4 @@
 import {
-	Domain,
 	DomainConnectionSetupMode,
 	DomainMappingSetupInfo,
 	DomainMappingStatus,
@@ -121,13 +120,13 @@ const nameServerRecordData = ( currentValue: string | null, expectedValue: strin
 };
 
 interface DnsRecordVerificationProps {
-	domainData: Domain;
+	domainName: string;
 	domainConnectionStatus: DomainMappingStatus;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
 }
 
 export default function DnsRecordsTable( {
-	domainData,
+	domainName,
 	domainConnectionStatus,
 	domainConnectionSetupInfo,
 }: DnsRecordVerificationProps ) {
@@ -146,7 +145,7 @@ export default function DnsRecordsTable( {
 			}
 		} else {
 			const currentIpAddresses = ( domainConnectionStatus?.host_ip_addresses || [] ).sort();
-			const expectedIpAddresses = ( domainData?.a_records_required_for_mapping || [] ).sort();
+			const expectedIpAddresses = ( domainConnectionSetupInfo.default_ip_addresses || [] ).sort();
 			const longestLength = Math.max( currentIpAddresses.length, expectedIpAddresses.length );
 
 			for ( let i = 0; i < longestLength; i++ ) {
@@ -154,11 +153,11 @@ export default function DnsRecordsTable( {
 			}
 
 			const wwwCnameRecordTarget = domainConnectionStatus.www_cname_record_target;
-			data.push( wwwCnameRecordData( wwwCnameRecordTarget, domainData.domain ) );
+			data.push( wwwCnameRecordData( wwwCnameRecordTarget, domainName ) );
 		}
 
 		return data;
-	}, [ domainData, domainConnectionStatus, domainConnectionSetupInfo, isSuggestedMode ] );
+	}, [ domainName, domainConnectionStatus, domainConnectionSetupInfo, isSuggestedMode ] );
 
 	return (
 		<DataViewsCard className="dns-records-table">

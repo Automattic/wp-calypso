@@ -1,12 +1,3 @@
-.agents-manager-chat--docked {
-	.agents-manager-chat-header {
-		.agents-manager-chat-header__back-btn svg {
-			fill: #fff;
-			margin-left: 0;
-		}
-	}
-}
-
 .agents-manager-chat-header {
 	width: 100%;
 	display: flex;
@@ -38,6 +29,7 @@
 	}
 
 	&__more-options,
+	&__history-btn,
 	&__close-btn {
 		svg {
 			fill: #1f1f1f;
