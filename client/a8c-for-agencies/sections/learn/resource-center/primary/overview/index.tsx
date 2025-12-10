@@ -7,8 +7,9 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import ResourceCenterOverviewContent from '../../overview-content';
 
-export default function ResourceCenter() {
+export default function ResourceCenterOverview() {
 	const translate = useTranslate();
 	const title = translate( 'Resource center' );
 	return (
@@ -23,13 +24,7 @@ export default function ResourceCenter() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<div>
-					<p>
-						{ translate(
-							'Find resources and tutorials to grow your agency and boost your clients.'
-						) }
-					</p>
-				</div>
+				<ResourceCenterOverviewContent />
 			</LayoutBody>
 		</Layout>
 	);
