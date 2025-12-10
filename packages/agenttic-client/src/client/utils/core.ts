@@ -121,10 +121,11 @@ export function extractProgressFromMessage(
 		return undefined;
 	}
 
-	// Find progress parts - they are DataParts with type 'data' and data.summary property
+	// Find progress parts - they can have type 'progress' or 'data' with a summary property
 	const progressPart = message.parts.find(
 		( part ): part is ProgressDataPart =>
-			part.type === 'data' &&
+			( part.type === 'data' || part.type === 'progress' ) &&
+			'data' in part &&
 			'summary' in part.data &&
 			typeof part.data.summary === 'string'
 	);

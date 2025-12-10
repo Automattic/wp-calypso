@@ -103,10 +103,12 @@ export interface ConversationHistoryPart extends DataPart {
 	};
 }
 
-export interface ProgressDataPart extends DataPart {
+export interface ProgressDataPart {
+	type: 'progress' | 'data';
 	data: {
 		summary: string;
 	};
+	metadata?: Record< string, unknown >;
 }
 
 /**
