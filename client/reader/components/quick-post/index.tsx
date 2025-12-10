@@ -6,6 +6,8 @@ import {
 	loadTextFormatting,
 } from '@automattic/verbum-block-editor';
 import { useMutation } from '@tanstack/react-query';
+// @ts-expect-error - No declaration file for heading block.
+import * as heading from '@wordpress/block-library/build-module/heading';
 import { Button } from '@wordpress/components';
 import { moreVertical } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
@@ -27,8 +29,8 @@ import { savePostMutation } from './hooks/use-post-mutation';
 import './style.scss';
 
 // Initialize the editor blocks and text formatting.
-loadBlocksWithCustomizations();
-loadTextFormatting();
+loadBlocksWithCustomizations( [ heading ] );
+loadTextFormatting( [ heading.name ] );
 
 // Note: The post data we receive from the API response does
 // not match the type in the stream data, but we can insert

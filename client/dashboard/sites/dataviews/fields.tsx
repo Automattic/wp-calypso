@@ -3,16 +3,20 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import SiteIcon, { SiteIconRenderer } from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { getSitePlanDisplayName } from '../../utils/site-plan';
+import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { getSiteStatus, getStatusLabels } from '../../utils/site-status';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import {
+	isSelfHostedJetpackConnected,
+	isSelfHostedJetpackConnected__ES,
+} from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
-import { getFormattedWordPressVersion } from '../../utils/wp-version';
+import { getFormattedWordPressVersion, formatWordPressVersion } from '../../utils/wp-version';
 import {
 	AsyncEngagementStat,
 	EngagementStat,
@@ -21,8 +25,10 @@ import {
 	Name,
 	NameRenderer,
 	PHPVersion,
+	PHPVersion__ES,
 	Plan,
 	Preview,
+	Preview__ES,
 	Status,
 	URL,
 	Uptime,
@@ -71,16 +77,20 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			id: 'plan',
 			label: __( 'Plan' ),
 			getValue: ( { item } ) => getSitePlanDisplayName( item ) ?? '',
-			render: ( { field, item } ) => (
-				<Plan
-					nag={ item.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
-					isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
-					isJetpack={ item.jetpack }
-					value={ field.getValue( { item } ) }
-				/>
-			),
+			render: function PlanField( { field, item } ) {
+				const { user } = useAuth();
+				return (
+					<Plan
+						nag={ item.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
+						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
+						isJetpack={ item.jetpack }
+						isOwner={ item.site_owner === user.ID }
+						value={ field.getValue( { item } ) }
+					/>
+				);
+			},
 			getElements: async () => {
-				const { plan = [] } = await queryClient.fetchQuery( {
+				const { plan = [] } = await queryClient.ensureQueryData( {
 					...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
 					staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
 				} );
@@ -111,7 +121,10 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			filterBy: {
 				operators: [ 'isAny' as Operator ],
 			},
-			render: ( { item } ) => <Status site={ item } />,
+			render: function StatusField( { item } ) {
+				const { user } = useAuth();
+				return <Status site={ item } isOwner={ item.site_owner === user.ID } />;
+			},
 			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{
@@ -193,6 +206,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 	];
 }
 
+// Use the site returned by siteBySlugQuery to render async fields (e.g. Backup) so the structure remains consistent.
 function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< DashboardSiteListSite >[] {
 	return [
 		{
@@ -242,24 +256,32 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			label: __( 'Subscribers' ),
 		},
 		{
+			id: 'backup',
+			label: __( 'Backup' ),
+			render: function BackupField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <LastBackup site={ site } />;
+			},
+			enableSorting: false,
+		},
+		{
 			id: 'plan',
 			label: __( 'Plan' ),
-			getValue: ( { item } ) => item.plan?.product_name_short ?? '',
-			render: function Plan__ES( { item, field } ) {
-				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+			getValue: ( { item } ) => getSitePlanDisplayName__ES( item ),
+			render: function PlanField__ES( { item, field } ) {
+				const { user } = useAuth();
 				return (
 					<Plan
-						nag={ site?.plan?.expired ? { isExpired: true, site } : { isExpired: false } }
-						isSelfHostedJetpackConnected={
-							( site && isSelfHostedJetpackConnected( site ) ) ?? false
-						}
-						isJetpack={ site?.jetpack ?? false }
+						nag={ item?.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
+						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected__ES( item ) }
+						isJetpack={ !! item?.is_jetpack }
+						isOwner={ item.owner_id === user.ID }
 						value={ field.getValue( { item } ) }
 					/>
 				);
 			},
 			getElements: async () => {
-				const { plan = [] } = await queryClient.fetchQuery( {
+				const { plan = [] } = await queryClient.ensureQueryData( {
 					...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
 					staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
 				} );
@@ -276,17 +298,96 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				operators: [ 'isAny' ],
 			},
 			sort: ( a, b, direction ) => {
-				const planA = a.plan?.product_name_short ?? '';
-				const planB = b.plan?.product_name_short ?? '';
+				const planA = getSitePlanDisplayName__ES( a ) ?? '';
+				const planB = getSitePlanDisplayName__ES( b ) ?? '';
 
 				return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
 			},
+		},
+		{
+			id: 'wp_version',
+			label: __( 'WP version' ),
+			getValue: ( { item } ) => formatWordPressVersion( item.wordpress_version ?? '' ),
+		},
+		{
+			id: 'is_a8c',
+			type: 'boolean',
+			label: __( 'A8C owned' ),
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			render: ( { item } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
+		},
+		{
+			id: 'preview',
+			label: __( 'Preview' ),
+			render: ( { item } ) => <Preview__ES site={ item } />,
+			enableHiding: false,
+			enableSorting: false,
+		},
+		{
+			id: 'last_published',
+			label: __( 'Last published' ),
+			getValue: ( { item } ) => item.last_publish ?? '',
+			render: ( { item } ) =>
+				item.last_publish ? <TimeSince timestamp={ item.last_publish } /> : '',
+		},
+		{
+			id: 'uptime',
+			label: __( '7-day uptime' ),
+			render: function UptimeField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <Uptime site={ site } />;
+			},
+			enableSorting: false,
 		},
 		{
 			id: 'visitors',
 			label: __( '7-day visitors' ),
 			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
 			enableSorting: false,
+		},
+		{
+			id: 'views',
+			label: __( '7-day views' ),
+			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
+			enableSorting: false,
+		},
+		{
+			id: 'likes',
+			label: __( '7-day likes' ),
+			render: function LikesField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <AsyncEngagementStat site={ site } type="likes" />;
+			},
+			enableSorting: false,
+		},
+		{
+			id: 'php_version',
+			label: __( 'PHP version' ),
+			render: ( { item }: { item: DashboardSiteListSite } ) => <PHPVersion__ES site={ item } />,
+			enableSorting: false,
+		},
+		{
+			id: 'storage',
+			label: __( 'Storage' ),
+			render: function StorageField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <MediaStorage site={ site } />;
+			},
+			enableSorting: false,
+		},
+		{
+			id: 'host',
+			label: __( 'Host' ),
+			getValue: ( { item } ) => {
+				return getSiteProviderName( item ) ?? DEFAULT_PROVIDER_NAME;
+			},
+			render: ( { field, item } ) => field.getValue( { item } ),
 		},
 	];
 }

@@ -1,4 +1,6 @@
 @import "@wordpress/base-styles/colors.native";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .related-plugins {
 	margin-top: 48px;
@@ -19,7 +21,13 @@
 		overflow-wrap: anywhere;
 		color: $gray-100;
 	}
+	.full-width-section & {
+		margin-bottom: 0;
 
+		h2 {
+			font-size: rem(40px);
+		}
+	}
 }
 
 .related-plugins__list {
@@ -64,6 +72,15 @@
 	.related-plugins-item__excerpt {
 		color: $gray-60;
 	}
+	.full-width-section & {
+		.related-plugins-item__title {
+			font-size: $font-body-small;
+			line-height: 1.5;
+		}
+		.related-plugins-item__excerpt {
+			font-size: $font-body-extra-small;
+		}
+	}
 
 	.related-plugins-item__details {
 		margin-top: 8px;
@@ -80,6 +97,51 @@
 			color: $gray-20;
 			content: "•";
 			margin: 0 8px;
+		}
+	}
+
+	.full-width-section .full-width-section__content & {
+		row-gap: 0;
+
+		.related-plugins-item {
+			background: var(--studio-white);
+			border-radius: 8px;
+			padding: 16px;
+			margin-top: 24px;
+			border: 1px solid transparent;
+
+			&:active, &:hover {
+				border-color: var(--studio-blue-50);
+			}
+		}
+	}
+}
+
+// Carousel-specific styles (marketplace-redesign flag)
+.related-plugins__carousel {
+	.dot-pager__controls {
+		margin-top: 16px;
+		margin-bottom: 0;
+	}
+
+	// Match the responsive column layout from .plugins-browser-item.compact
+	.related-plugins__list {
+		// Mobile: 1 column
+		grid-template-columns: 1fr;
+
+		.related-plugins-item {
+			margin-top: 16px;
+			min-width: 30%;
+		}
+
+		@include break-medium {
+			// Medium and Large: 2 columns
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@include break-wide {
+			// Wide: 3 columns
+			grid-template-columns: repeat(3, 1fr);
 		}
 	}
 }

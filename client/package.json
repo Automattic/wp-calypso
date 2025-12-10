@@ -70,6 +70,7 @@
 		"@automattic/social-previews": "workspace:^",
 		"@automattic/state-utils": "workspace:^",
 		"@automattic/subscriber": "workspace:^",
+		"@automattic/support-articles": "workspace:^",
 		"@automattic/tree-select": "workspace:^",
 		"@automattic/ui": "workspace:^",
 		"@automattic/urls": "workspace:^",

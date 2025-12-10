@@ -27,33 +27,37 @@ export const DomainNameField = ( {
 			? domainTransferRoute.fullPath
 			: domainOverviewRoute.fullPath;
 
+	const content = (
+		<VStack spacing={ 1 }>
+			<span style={ textOverflowStyles }>{ value }</span>
+			{ showPrimaryDomainBadge && domain.primary_domain && (
+				<span
+					style={ {
+						...textOverflowStyles,
+						color: 'var(--dashboard__foreground-color-success)',
+						fontWeight: 'normal',
+						textDecoration: 'underline',
+						textDecorationStyle: 'dotted',
+					} }
+				>
+					{ __( 'Primary site address' ) }
+				</span>
+			) }
+			{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
+				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
+					{ domain.subtype.label }
+				</Text>
+			) }
+		</VStack>
+	);
+
+	if ( ! domain.subscription_id ) {
+		return content;
+	}
+
 	return (
-		<Link
-			to={ href }
-			params={ { siteSlug, domainName: domain.domain } }
-			disabled={ ! domain.subscription_id }
-		>
-			<VStack spacing={ 1 }>
-				<span style={ textOverflowStyles }>{ value }</span>
-				{ showPrimaryDomainBadge && domain.primary_domain && (
-					<span
-						style={ {
-							...textOverflowStyles,
-							color: 'var(--dashboard__foreground-color-success)',
-							fontWeight: 'normal',
-							textDecoration: 'underline',
-							textDecorationStyle: 'dotted',
-						} }
-					>
-						{ __( 'Primary site address' ) }
-					</span>
-				) }
-				{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
-					<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
-						{ domain.subtype.label }
-					</Text>
-				) }
-			</VStack>
+		<Link to={ href } params={ { siteSlug, domainName: domain.domain } }>
+			{ content }
 		</Link>
 	);
 };

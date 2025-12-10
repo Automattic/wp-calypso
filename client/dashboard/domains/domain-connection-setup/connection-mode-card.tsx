@@ -140,10 +140,10 @@ export default function ConnectionModeCard( {
 									</Notice>
 								) }
 								{ mode === DomainConnectionSetupMode.SUGGESTED && hasEmailOrOtherServices && (
-									<Notice variant="warning" title="Email or other services detected">
+									<Notice variant="info" title="Email or other services detected">
 										<Text>
 											{ __(
-												'Warning: the services attached to your domain might be interrupted if you use this connection method'
+												'We detected email services attached to your domain. If you want to continue with this setup, we recommend copying over your DNS records before proceeding to avoid any disruptions.'
 											) }
 										</Text>
 									</Notice>
