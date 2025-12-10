@@ -106,8 +106,7 @@ export const useSendOdieMessage = () => {
 };
 
 function useTransformMessageToAgenttic(
-	onTransferToOrchestrator: () => Promise< Agent | undefined >,
-	maybeLoadConversation: ( sessionId: string ) => void
+	onTransferToOrchestrator: () => Promise< Agent | undefined >
 ) {
 	const navigate = useNavigate();
 	const { mutateAsync: sendOdieMessage } = useSendOdieMessage();
@@ -145,9 +144,8 @@ function useTransformMessageToAgenttic(
 			navigate( `/chat?startedFrom=odie&chatId=${ chatId }`, {
 				state: { sessionId: task.sessionId },
 			} );
-			task.sessionId && maybeLoadConversation( task.sessionId );
 		},
-		[ navigate, maybeLoadConversation, sendOdieMessage, onTransferToOrchestrator ]
+		[ navigate, sendOdieMessage, onTransferToOrchestrator ]
 	);
 
 	return useCallback(
@@ -161,6 +159,7 @@ function useTransformMessageToAgenttic(
 						id: message.message_id?.toString() ?? '',
 						showIcon: true,
 						timestamp: message.received as number,
+						role: message.role,
 					};
 				}
 				if ( chatId && message.context?.flags?.agent_handover === '1' ) {
@@ -220,10 +219,8 @@ function useTransformMessageToAgenttic(
  */
 export const useManagedOdieChat = ( {
 	onTransferToOrchestrator,
-	maybeLoadConversation,
 }: {
 	onTransferToOrchestrator: () => Promise< Agent | undefined >;
-	maybeLoadConversation: ( sessionId: string ) => void;
 } ) => {
 	const versionParam = new URLSearchParams( window.location.search ).get( 'version' );
 	const [ messages, setMessages ] = useState< Message[] >( [] );
@@ -232,10 +229,7 @@ export const useManagedOdieChat = ( {
 	const { data: currentSupportInteraction, isFetching: isFetchingCurrentSupportInteraction } =
 		useCurrentSupportInteraction();
 
-	const transformMessageToAgenttic = useTransformMessageToAgenttic(
-		onTransferToOrchestrator,
-		maybeLoadConversation
-	);
+	const transformMessageToAgenttic = useTransformMessageToAgenttic( onTransferToOrchestrator );
 
 	const { data: chat, isFetching: isLoadingChat } = useOdieChat(
 		chatId ? Number( chatId ) : null,

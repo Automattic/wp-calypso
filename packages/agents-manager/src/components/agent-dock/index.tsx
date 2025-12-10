@@ -90,12 +90,6 @@ export default function AgentDock( {
 		abortCurrentRequest,
 	} = useAgentChat( agentConfig );
 
-	const {
-		messages: odieMessages,
-		isProcessing: isOdieProcessing,
-		sendMessage: sendOdieMessage,
-	} = useManagedOdieChat();
-
 	const { isLoading: isLoadingConversation } = useConversation( {
 		agentId,
 		sessionId,
