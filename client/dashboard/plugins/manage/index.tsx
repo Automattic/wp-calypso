@@ -44,18 +44,18 @@ export default function PluginsList() {
 	const { sitesById } = useSitesById();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Bind this to the switcher
 	const searchParams = pluginsManageRoute.useSearch();
-	const { pluginSlug = 'aino-blocks' } = useParams( { strict: false } );
+	const { pluginId: pluginSlug } = useParams( { strict: false } );
+	const plugins = useMemo(
+		() => mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
+		[ sitesById, sitesPlugins ]
+	);
 	const {
 		isLoading: isLoadingPlugin,
 		plugin,
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
-	} = usePlugin( pluginSlug );
-	const plugins = useMemo(
-		() => mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
-		[ sitesById, sitesPlugins ]
-	);
+	} = usePlugin( pluginSlug || plugins[ 0 ]?.slug );
 	// console.debug( 'plugins', plugins );
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 	const { data: marketplaceSearch } = useQuery(
@@ -115,7 +115,7 @@ export default function PluginsList() {
 				<DataViewsCard>
 					<SwitcherContent
 						items={ pluginsWithIcon }
-						getItemUrl={ () => '' }
+						getItemUrl={ ( item ) => `/plugins/manage/${ item.slug }` }
 						renderItemMedia={ ( { item } ) => {
 							const icon = item.icon ? (
 								<img src={ item.icon } alt={ item.name } width={ ICON_SIZE } height={ ICON_SIZE } />

@@ -59,9 +59,9 @@ export const pluginsManageRoute = createRoute( {
 	},
 } );
 
-export const pluginsManageIndexRoute = createRoute( {
+export const pluginRouteWithId = createRoute( {
 	getParentRoute: () => pluginsManageRoute,
-	path: '/',
+	path: '$pluginId',
 } ).lazy( () =>
 	import( '../../plugins/manage' ).then( ( d ) =>
 		createLazyRoute( 'plugins-manage' )( {
@@ -70,23 +70,12 @@ export const pluginsManageIndexRoute = createRoute( {
 	)
 );
 
-export const pluginRoute = createRoute( {
-	head: ( { params } ) => ( {
-		meta: [
-			{
-				title: params.pluginId,
-			},
-		],
-	} ),
+export const pluginRouteWithoutId = createRoute( {
 	getParentRoute: () => pluginsManageRoute,
-	path: '$pluginId',
-	loader: async () => {
-		queryClient.prefetchQuery( marketplacePluginsQuery() );
-		queryClient.prefetchQuery( pluginsQuery() );
-	},
+	path: '/',
 } ).lazy( () =>
-	import( '../../plugins/plugin' ).then( ( d ) =>
-		createLazyRoute( 'plugin' )( {
+	import( '../../plugins/manage' ).then( ( d ) =>
+		createLazyRoute( 'plugins-manage' )( {
 			component: d.default,
 		} )
 	)
@@ -160,7 +149,7 @@ export const pluginsScheduledUpdatesEditRoute = createRoute( {
 export const createPluginsRoutes = () => {
 	const childRoutes: AnyRoute[] = [
 		pluginsIndexRoute,
-		pluginsManageRoute.addChildren( [ pluginsManageIndexRoute, pluginRoute ] ),
+		pluginsManageRoute.addChildren( [ pluginRouteWithId, pluginRouteWithoutId ] ),
 		pluginsScheduledUpdatesRoute.addChildren( [
 			pluginsScheduledUpdatesIndexRoute,
 			pluginsScheduledUpdatesNewRoute,

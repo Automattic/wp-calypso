@@ -3,7 +3,7 @@ import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { plugins } from '@wordpress/icons';
 import clsx from 'clsx';
-import { pluginRoute } from '../../../app/router/plugins';
+import { pluginRouteWithId } from '../../../app/router/plugins';
 import type { PluginListRow } from '../types';
 import type { Field } from '@wordpress/dataviews';
 
@@ -29,7 +29,7 @@ export const nameField: Field< PluginListRow > = {
 					{ icon }
 				</div>
 				<Link
-					to={ pluginRoute.to }
+					to={ pluginRouteWithId.to }
 					params={ { pluginId: item.slug } }
 					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
 				/>

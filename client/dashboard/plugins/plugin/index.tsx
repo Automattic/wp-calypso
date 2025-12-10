@@ -4,7 +4,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { pluginRoute } from '../../app/router/plugins';
+import { pluginRouteWithId } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -103,7 +103,7 @@ export function PluginTabs( {
 }
 
 export default function Plugin() {
-	const { pluginId: pluginSlug } = pluginRoute.useParams();
+	const { pluginId: pluginSlug } = pluginRouteWithId.useParams();
 	const { icon, isLoading, plugin, pluginBySiteId, sitesWithThisPlugin, sitesWithoutThisPlugin } =
 		usePlugin( pluginSlug );
 
