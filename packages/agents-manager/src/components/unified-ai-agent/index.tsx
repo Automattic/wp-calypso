@@ -191,7 +191,7 @@ function AgentSetup( {
 
 			initializeAgent();
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- Ignore `loadedProviders` to avoid unnecessary reloads
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Ignore `loadedProviders` to avoid unnecessary config re-initialization
 		[ currentRoute, isNewChat, navigate, sessionId, site?.ID ]
 	);
 
