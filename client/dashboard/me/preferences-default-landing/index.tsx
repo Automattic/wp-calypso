@@ -12,11 +12,11 @@ import { SectionHeader } from '../../components/section-header';
 
 type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 
-interface LoginPreferencesFormData {
+interface DefaultLandingPreferencesFormData {
 	defaultLandingPage: LandingPage;
 }
 
-export default function PreferencesLogin() {
+export default function PreferencesDefaultLanding() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { data: defaultLandingPage } = useSuspenseQuery( {
@@ -37,12 +37,12 @@ export default function PreferencesLogin() {
 	);
 
 	// Initialize form data with default values
-	const [ formData, setFormData ] = useState< LoginPreferencesFormData >( {
+	const [ formData, setFormData ] = useState< DefaultLandingPreferencesFormData >( {
 		defaultLandingPage,
 	} );
 
 	// Define form fields
-	const fields: Field< LoginPreferencesFormData >[] = [
+	const fields: Field< DefaultLandingPreferencesFormData >[] = [
 		{
 			id: 'defaultLandingPage',
 			label: __( 'Page' ),
@@ -100,11 +100,11 @@ export default function PreferencesLogin() {
 							description={ __( 'Choose what you see after logging into WordPress.com' ) }
 						/>
 
-						<DataForm< LoginPreferencesFormData >
+						<DataForm< DefaultLandingPreferencesFormData >
 							data={ formData }
 							fields={ fields }
 							form={ form }
-							onChange={ ( edits: Partial< LoginPreferencesFormData > ) => {
+							onChange={ ( edits: Partial< DefaultLandingPreferencesFormData > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>

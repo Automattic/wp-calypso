@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import PreferencesLogin from '../index';
+import PreferencesDefaultLanding from '../index';
 
 const API_BASE = 'https://public-api.wordpress.com';
 
@@ -40,6 +40,20 @@ jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn(),
 } ) );
 
+jest.mock(
+	'@automattic/api-queries',
+	() => ( {
+		rawUserPreferencesQuery: jest.fn( () => ( {
+			queryKey: [ 'me', 'preferences' ],
+			queryFn: jest.fn(),
+		} ) ),
+		userPreferencesMutation: jest.fn( () => ( {
+			mutationFn: jest.fn(),
+		} ) ),
+	} ),
+	{ virtual: true }
+);
+
 function matchesLoginPreferencesPayload( body: {
 	calypso_preferences?: Record< string, unknown >;
 } ) {
@@ -49,7 +63,25 @@ function matchesLoginPreferencesPayload( body: {
 	);
 }
 
-function renderPreferencesLogin() {
+function renderPreferencesDefaultLanding() {
+	const { rawUserPreferencesQuery } = require( '@automattic/api-queries' );
+
+	// Mock rawUserPreferencesQuery to return the API response
+	rawUserPreferencesQuery.mockReturnValue( {
+		queryKey: [ 'me', 'preferences' ],
+		queryFn: () =>
+			Promise.resolve( {
+				'sites-landing-page': {
+					useSitesAsLandingPage: false,
+					updatedAt: Date.now(),
+				},
+				'reader-landing-page': {
+					useReaderAsLandingPage: false,
+					updatedAt: Date.now(),
+				},
+			} ),
+	} );
+
 	nock( API_BASE )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
@@ -66,12 +98,14 @@ function renderPreferencesLogin() {
 			},
 		} );
 
-	return render( <PreferencesLogin /> );
+	return render( <PreferencesDefaultLanding /> );
 }
 
 afterEach( () => {
 	nock.cleanAll();
 	jest.clearAllMocks();
+	const { rawUserPreferencesQuery } = require( '@automattic/api-queries' );
+	rawUserPreferencesQuery.mockClear();
 } );
 
 beforeAll( () => {
@@ -83,11 +117,11 @@ afterAll( () => {
 } );
 
 test( 'save button is disabled when form is not dirty', async () => {
-	renderPreferencesLogin();
+	renderPreferencesDefaultLanding();
 
 	await waitFor(
 		() => {
-			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Default landing page' ) ).toBeInTheDocument();
 		},
 		{ timeout: 5000 }
 	);
@@ -98,11 +132,11 @@ test( 'save button is disabled when form is not dirty', async () => {
 
 test( 'save button becomes enabled when form is modified', async () => {
 	const user = userEvent.setup();
-	renderPreferencesLogin();
+	renderPreferencesDefaultLanding();
 
 	await waitFor(
 		() => {
-			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Default landing page' ) ).toBeInTheDocument();
 		},
 		{ timeout: 5000 }
 	);
@@ -125,11 +159,11 @@ test( 'saves preferences successfully', async () => {
 		createSuccessNotice: mockCreateSuccessNotice,
 	} );
 	const user = userEvent.setup();
-	renderPreferencesLogin();
+	renderPreferencesDefaultLanding();
 
 	await waitFor(
 		() => {
-			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Default landing page' ) ).toBeInTheDocument();
 		},
 		{ timeout: 5000 }
 	);
@@ -161,11 +195,11 @@ test( 'handles save error gracefully', async () => {
 		createErrorNotice: mockCreateErrorNotice,
 	} );
 	const user = userEvent.setup();
-	renderPreferencesLogin();
+	renderPreferencesDefaultLanding();
 
 	await waitFor(
 		() => {
-			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Default landing page' ) ).toBeInTheDocument();
 		},
 		{ timeout: 5000 }
 	);
@@ -200,11 +234,11 @@ test( 'disables save button while saving', async () => {
 		createSuccessNotice: mockCreateSuccessNotice,
 	} );
 	const user = userEvent.setup();
-	renderPreferencesLogin();
+	renderPreferencesDefaultLanding();
 
 	await waitFor(
 		() => {
-			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Default landing page' ) ).toBeInTheDocument();
 		},
 		{ timeout: 5000 }
 	);
