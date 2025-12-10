@@ -13,6 +13,7 @@ import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useMemo } from 'react';
 import { pluginsManageRoute } from '../../app/router/plugins';
+import { Card, CardBody } from '../../components/card';
 import { DataViewsCard } from '../../components/dataviews';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
@@ -156,35 +157,45 @@ export default function PluginsList() {
 			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
 			<Grid columns={ 2 } templateColumns="25% 1fr">
-				<DataViewsCard>
-					<SwitcherContent
-						initialView={ view }
-						items={ pluginsWithIcon }
-						getItemUrl={ ( item ) => `/plugins/manage/${ item.slug }` }
-						renderItemMedia={ ( { item } ) => {
-							const icon = item.icon ? (
-								<img src={ item.icon } alt={ item.name } width={ ICON_SIZE } height={ ICON_SIZE } />
-							) : (
-								<Icon
-									icon={ pluginIcon }
-									size={ FALLBACK_ICON_SIZE }
-									className="plugin-icon-fallback"
-								/>
-							);
+				<Card>
+					<CardBody className="plugin-switcher-card-body">
+						<SwitcherContent
+							itemClassName="plugin-switcher-item"
+							searchClassName="plugin-switcher-search"
+							initialView={ view }
+							items={ pluginsWithIcon }
+							getItemUrl={ ( item ) => `/plugins/manage/${ item.slug }` }
+							renderItemMedia={ ( { item } ) => {
+								const icon = item.icon ? (
+									<img
+										src={ item.icon }
+										alt={ item.name }
+										width={ ICON_SIZE }
+										height={ ICON_SIZE }
+									/>
+								) : (
+									<Icon
+										icon={ pluginIcon }
+										size={ FALLBACK_ICON_SIZE }
+										className="plugin-icon-fallback"
+									/>
+								);
 
-							return (
-								<div className={ clsx( 'plugin-icon-wrapper', { 'is-fallback': ! item.icon } ) }>
-									{ icon }
-								</div>
-							);
-						} }
-						renderItemTitle={ ( { item } ) => {
-							return <Text>{ item.name }</Text>;
-						} }
-						searchableFields={ searchableFields }
-						onClose={ () => {} }
-					/>
-				</DataViewsCard>
+								return (
+									<div className={ clsx( 'plugin-icon-wrapper', { 'is-fallback': ! item.icon } ) }>
+										{ icon }
+									</div>
+								);
+							} }
+							renderItemTitle={ ( { item } ) => {
+								return <Text>{ item.name }</Text>;
+							} }
+							searchableFields={ searchableFields }
+							onClose={ () => {} }
+							width="auto"
+						/>
+					</CardBody>
+				</Card>
 
 				<DataViewsCard>
 					<SectionHeader decoration={ decoration } level={ 2 } title={ title } />

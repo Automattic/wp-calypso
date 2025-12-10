@@ -16,3 +16,18 @@
 	inset-inline-start: 50%;
 	transform: translate(-50%, -50%);
 }
+
+.plugin-switcher-card-body {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.plugin-switcher-search {
+	padding: 0 calc(4px * 6) calc(4px * 4);
+}
+
+.plugin-switcher-item {
+	border-top: 1px solid #f0f0f0;
+	padding-left: calc(4px * 6);
+	padding-right: calc(4px * 6);
+}
