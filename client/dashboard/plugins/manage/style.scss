@@ -30,4 +30,8 @@
 	border-top: 1px solid #f0f0f0;
 	padding-left: calc(4px * 6);
 	padding-right: calc(4px * 6);
+
+	&:hover {
+		background-color: #f8f8f8;
+	}
 }
