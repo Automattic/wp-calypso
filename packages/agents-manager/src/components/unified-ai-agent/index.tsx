@@ -1,9 +1,10 @@
+import { getAgentManager } from '@automattic/agenttic-client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMemo, useEffect, useState, useRef } from '@wordpress/element';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../../constants';
-import { SESSION_STORAGE_KEY, getSessionId } from '../../utils/agent-session';
+import { SESSION_STORAGE_KEY, getSessionId, clearSessionId } from '../../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
@@ -81,9 +82,17 @@ function AgentSetup( {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const [ loadedProviders, setLoadedProviders ] = useState< LoadedProviders >( {} );
 	const providersLoadedRef = useRef( false );
+	const navigate = useNavigate();
 	const { state } = useLocation();
-	// Prefer route state `sessionId`, fall back to stored `sessionId` (server-generated via Agenttic UI)
-	const sessionId = state?.sessionId || getSessionId();
+
+	const isNewChat = state?.isNewChat === true;
+	// Empty `sessionId` by default for new chat
+	let sessionId = '';
+
+	if ( ! isNewChat ) {
+		// Prefer route state `sessionId`, fall back to stored `sessionId` (server-generated via Agenttic UI)
+		sessionId = state?.sessionId || getSessionId();
+	}
 
 	// Load external providers and initialize agent config
 	useEffect( () => {
@@ -163,11 +172,28 @@ function AgentSetup( {
 				};
 			}
 
+			// If starting a new chat, clear existing session
+			if ( isNewChat ) {
+				const agentManager = getAgentManager();
+				const agentId = config.agentId;
+
+				if ( agentManager.hasAgent( agentId ) ) {
+					// Abort any ongoing requests
+					await agentManager.abortCurrentRequest( agentId );
+					// Remove existing agent to start fresh
+					agentManager.removeAgent( agentId );
+					// Clear stored session ID
+					clearSessionId();
+					// Clear route state to prevent repeated new chat initialization
+					navigate( '/chat', { replace: true } );
+				}
+			}
+
 			setAgentConfig( config );
 		};
 
 		initializeAgent();
-	}, [ currentRoute, loadedProviders, sessionId, site?.ID ] );
+	}, [ currentRoute, isNewChat, loadedProviders, navigate, sessionId, site?.ID ] );
 
 	// Default suggestions - can be overridden by loaded providers
 	const defaultSuggestions = useMemo(

@@ -18,7 +18,7 @@ import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
-import { setSessionId, clearSessionId } from '../../utils/agent-session';
+import { setSessionId } from '../../utils/agent-session';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -123,25 +123,8 @@ export default function AgentDock( {
 	} );
 
 	const handleNewChat = useCallback( async () => {
-		const agentManager = getAgentManager();
-
-		if ( agentManager.hasAgent( agentId ) ) {
-			abortCurrentRequest();
-			await loadMessages( [] );
-
-			// Start a new session by removing and recreating the agent with an empty session ID
-			// The server will assign a new session ID once the user sends a message
-			agentManager.removeAgent( agentId );
-			await agentManager.createAgent( agentId, { ...agentConfig, sessionId: '' } );
-		}
-
-		clearSessionId();
-
-		// Navigate to the chat view if not already there
-		if ( pathname !== '/' ) {
-			navigate( '/' );
-		}
-	}, [ abortCurrentRequest, agentConfig, agentId, loadMessages, navigate, pathname ] );
+		navigate( '/chat', { state: { isNewChat: true } } );
+	}, [ navigate ] );
 
 	const handleSelectConversation = ( sessionId: string ) => {
 		abortCurrentRequest();
