@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -7,7 +6,6 @@ import {
 	SiteSubscriptionsList,
 	SiteSubscriptionsListActionsBar,
 } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
-import { SiteSubscriptionsList as SiteSubscriptionsListV2 } from 'calypso/landing/subscriptions/components/site-subscriptions-list-v2';
 import {
 	useRecordSearchPerformed,
 	useRecordSearchByUrlPerformed,
@@ -72,11 +70,7 @@ const ReaderSiteSubscriptions = () => {
 		<>
 			<SiteSubscriptionsListActionsBar />
 
-			{ isEnabled( 'reader/site-subscriptions-list-v2' ) ? (
-				<SiteSubscriptionsListV2 notFoundComponent={ NotFoundSiteSubscriptions } />
-			) : (
-				<SiteSubscriptionsList notFoundComponent={ NotFoundSiteSubscriptions } />
-			) }
+			<SiteSubscriptionsList notFoundComponent={ NotFoundSiteSubscriptions } />
 			{ ! searchTerm && <RecommendedSites /> }
 
 			{ hasSomeSubscriptions && hasSomeUnsubscribedSearchResults && (
