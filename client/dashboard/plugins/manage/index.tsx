@@ -5,51 +5,63 @@ import {
 	pluginsQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { useParams } from '@tanstack/react-router';
+import { __experimentalGrid as Grid, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo } from 'react';
-import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { plugins as pluginIcon } from '@wordpress/icons';
+import clsx from 'clsx';
+import { useMemo } from 'react';
 import { pluginsManageRoute } from '../../app/router/plugins';
-import { DataViews, DataViewsCard } from '../../components/dataviews';
+import { DataViewsCard } from '../../components/dataviews';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { getViewFilteredByUpdates } from '../utils/update-filters';
-import { getActions } from './actions';
-import { PluginsHeaderActions } from './components/plugins-header-actions';
-import { fields } from './fields';
+import SwitcherContent from '../../components/switcher/switcher-content';
+import { Text } from '../../components/text';
+import { PluginTabs } from '../plugin';
+import { usePlugin } from '../plugin/use-plugin';
 import { useSitesById } from './hooks/use-sites-by-id';
 import { mapApiPluginsToDataViewPlugins } from './utils';
-import { defaultView } from './views';
 import type { PluginListRow } from './types';
 
 import './style.scss';
 
+const ICON_SIZE = 32;
+const FALLBACK_ICON_SIZE = 24;
+const searchableFields = [
+	{
+		id: 'name',
+		getValue: ( { item }: { item: PluginListRow } ) => item.name,
+	},
+	{
+		id: 'slug',
+		getValue: ( { item }: { item: PluginListRow } ) => item.slug,
+	},
+];
+
 export default function PluginsList() {
-	const { data: sitesPlugins, isLoading: isLoadingPlugins } = useQuery( pluginsQuery() );
-	const { isLoadingSites, sitesById } = useSitesById();
+	const { data: sitesPlugins } = useQuery( pluginsQuery() );
+	const { sitesById } = useSitesById();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Bind this to the switcher
 	const searchParams = pluginsManageRoute.useSearch();
-	const actions = getActions();
-	const { view, updateView, resetView } = usePersistentView( {
-		slug: 'plugins-manage',
-		defaultView,
-		queryParams: searchParams,
-	} );
-	const data = useMemo(
+	const { pluginSlug = 'aino-blocks' } = useParams( { strict: false } );
+	const {
+		isLoading: isLoadingPlugin,
+		plugin,
+		pluginBySiteId,
+		sitesWithThisPlugin,
+		sitesWithoutThisPlugin,
+	} = usePlugin( pluginSlug );
+	const plugins = useMemo(
 		() => mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
 		[ sitesById, sitesPlugins ]
 	);
-
-	const { data: filteredPlugins, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( data, view, fields );
-	}, [ data, view ] );
-	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
-		marketplacePluginsQuery()
-	);
-	const { data: marketplaceSearch, isLoading: isLoadingMarketplaceSearch } = useQuery(
+	// console.debug( 'plugins', plugins );
+	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
+	const { data: marketplaceSearch } = useQuery(
 		marketplaceSearchQuery( {
-			perPage: Number( view.perPage ),
-			slugs: filteredPlugins.map( ( plugin ) => plugin.slug ),
+			perPage: plugins.length,
+			slugs: plugins.map( ( plugin ) => plugin.slug ),
 		} )
 	);
 
@@ -64,7 +76,7 @@ export default function PluginsList() {
 			new Map< string, MarketplaceSearchResult[ 'fields' ] >()
 		);
 
-		return filteredPlugins.reduce( ( acc, { slug } ) => {
+		return plugins.reduce( ( acc, { slug } ) => {
 			let icon;
 			if ( marketplacePluginsBySlug.has( slug ) ) {
 				icon = marketplacePluginsBySlug.get( slug )?.icons;
@@ -76,31 +88,18 @@ export default function PluginsList() {
 
 			return acc;
 		}, new Map< string, PluginListRow[ 'icon' ] >() );
-	}, [ filteredPlugins, marketplacePlugins, marketplaceSearch ] );
+	}, [ plugins, marketplacePlugins, marketplaceSearch ] );
 
-	const filteredPluginsWithIcon = useMemo( () => {
-		return filteredPlugins.map( ( plugin ) => {
+	const pluginsWithIcon = useMemo( () => {
+		return plugins.map( ( plugin ) => {
 			return {
 				...plugin,
 				icon: iconBySlug?.get( plugin.slug ),
 			};
 		} );
-	}, [ filteredPlugins, iconBySlug ] );
+	}, [ plugins, iconBySlug ] );
 
-	const updateCount = useMemo( () => {
-		return data.filter( ( plugin ) => {
-			return ! plugin.isManaged && [ 'some', 'all' ].includes( plugin.hasUpdate );
-		} ).length;
-	}, [ data ] );
-
-	const handleFilterUpdates = useCallback( () => {
-		if ( updateCount <= 0 ) {
-			return;
-		}
-
-		updateView( getViewFilteredByUpdates( view, 'updateAvailable', 2 ) );
-	}, [ updateCount, updateView, view ] );
-
+	// console.debug( 'pluginsWithIcon', pluginsWithIcon );
 	return (
 		<PageLayout
 			size="large"
@@ -112,31 +111,48 @@ export default function PluginsList() {
 			}
 			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
-			<DataViewsCard>
-				<DataViews
-					isLoading={
-						isLoadingPlugins ||
-						isLoadingMarketplacePlugins ||
-						isLoadingMarketplaceSearch ||
-						isLoadingSites
-					}
-					data={ filteredPluginsWithIcon ?? [] }
-					fields={ fields }
-					view={ view }
-					onChangeView={ updateView }
-					onResetView={ resetView }
-					header={
-						<PluginsHeaderActions
-							updateCount={ updateCount }
-							onFilterUpdates={ handleFilterUpdates }
-						/>
-					}
-					defaultLayouts={ { table: {} } }
-					actions={ actions }
-					getItemId={ ( item: PluginListRow ) => item.id }
-					paginationInfo={ paginationInfo }
-				/>
-			</DataViewsCard>
+			<Grid columns={ 2 } templateColumns="40% 1fr">
+				<DataViewsCard>
+					<SwitcherContent
+						items={ pluginsWithIcon }
+						getItemUrl={ () => '' }
+						renderItemMedia={ ( { item } ) => {
+							const icon = item.icon ? (
+								<img src={ item.icon } alt={ item.name } width={ ICON_SIZE } height={ ICON_SIZE } />
+							) : (
+								<Icon
+									icon={ pluginIcon }
+									size={ FALLBACK_ICON_SIZE }
+									className="plugin-icon-fallback"
+								/>
+							);
+
+							return (
+								<div className={ clsx( 'plugin-icon-wrapper', { 'is-fallback': ! item.icon } ) }>
+									{ icon }
+								</div>
+							);
+						} }
+						renderItemTitle={ ( { item } ) => {
+							return <Text>{ item.name }</Text>;
+						} }
+						searchableFields={ searchableFields }
+						onClose={ () => {} }
+					/>
+				</DataViewsCard>
+
+				<DataViewsCard>
+					<PluginTabs
+						pluginSlug={ pluginSlug }
+						isLoading={ isLoadingPlugin }
+						plugin={ plugin }
+						pluginName={ plugin?.name }
+						pluginBySiteId={ pluginBySiteId }
+						sitesWithThisPlugin={ sitesWithThisPlugin }
+						sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
+					/>
+				</DataViewsCard>
+			</Grid>
 		</PageLayout>
 	);
 }

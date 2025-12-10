@@ -34,7 +34,7 @@ type PluginTabsProps = {
 	pluginBySiteId: Map< number, PluginItem >;
 };
 
-function PluginTabs( {
+export function PluginTabs( {
 	pluginSlug,
 	isLoading,
 	sitesWithThisPlugin,
