@@ -18,7 +18,7 @@ export const decodeHtmlEntities = ( html: string ): string => {
  * @returns True if the URI uses a custom protocol
  */
 export const isCustomProtocol = ( redirectUri: string ): boolean => {
-	return Boolean( redirectUri && ! redirectUri.startsWith( 'http' ) );
+	return Boolean( redirectUri && ! /^https?:\/\//.test( redirectUri ) );
 };
 
 /**
