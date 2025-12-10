@@ -128,6 +128,7 @@ function useTransformMessageToAgenttic(
 			if ( ! newChat ) {
 				return;
 			}
+			// Send the first message to the orchestrator. This will also give us the session ID of the new chat.
 			const task = await newChat.sendMessage( {
 				message: {
 					messageId: '',
@@ -141,6 +142,7 @@ function useTransformMessageToAgenttic(
 					kind: 'message',
 				},
 			} );
+			// Leave the breadcrumb about the agent handover.
 			await sendOdieMessage( {
 				content: 'orchestrator',
 				role: 'navigation',
