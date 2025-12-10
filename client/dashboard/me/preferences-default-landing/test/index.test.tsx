@@ -230,15 +230,16 @@ test( 'handles save error gracefully', async () => {
 
 test( 'disables save button while saving', async () => {
 	const mockCreateSuccessNotice = jest.fn();
+	const mockCreateErrorNotice = jest.fn();
 	( useDispatch as jest.Mock ).mockReturnValue( {
 		createSuccessNotice: mockCreateSuccessNotice,
+		createErrorNotice: mockCreateErrorNotice,
 	} );
 
 	// Override the mock to make mutationFn return a delayed promise
+	// This simulates an async operation that takes time, making isPending true
 	const { userPreferencesMutation } = require( '@automattic/api-queries' );
-	const originalMutation = userPreferencesMutation();
 	userPreferencesMutation.mockReturnValue( {
-		...originalMutation,
 		mutationFn: jest.fn( () => {
 			return new Promise( ( resolve ) => {
 				setTimeout( () => {
@@ -271,7 +272,18 @@ test( 'disables save button while saving', async () => {
 	nock( API_BASE )
 		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
 		.delay( 100 )
-		.reply( 200, {} );
+		.reply( 200, {
+			calypso_preferences: {
+				'sites-landing-page': {
+					useSitesAsLandingPage: true,
+					updatedAt: Date.now(),
+				},
+				'reader-landing-page': {
+					useReaderAsLandingPage: false,
+					updatedAt: Date.now(),
+				},
+			},
+		} );
 
 	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
