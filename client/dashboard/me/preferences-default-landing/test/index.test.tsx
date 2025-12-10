@@ -6,24 +6,8 @@ import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useDispatch } from '@wordpress/data';
-import nock from 'nock';
 import { render } from '../../../test-utils';
 import PreferencesDefaultLanding from '../index';
-
-const API_BASE = 'https://public-api.wordpress.com';
-
-if ( typeof CSS === 'undefined' ) {
-	global.CSS = {} as unknown as typeof CSS;
-}
-
-if ( typeof CSS.escape !== 'function' ) {
-	CSS.escape = function ( value ) {
-		return String( value ).replace( /[^a-zA-Z0-9_\u00A0-\uFFFF-]/g, '\\$&' );
-	};
-}
-
-// Mock scrollIntoView for JSDOM compatibility
-Element.prototype.scrollIntoView = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: jest.fn( () => ( {
@@ -54,19 +38,11 @@ jest.mock(
 	{ virtual: true }
 );
 
-function matchesLoginPreferencesPayload( body: {
-	calypso_preferences?: Record< string, unknown >;
-} ) {
-	const preferences = body?.calypso_preferences;
-	return Boolean(
-		preferences && 'sites-landing-page' in preferences && 'reader-landing-page' in preferences
-	);
-}
-
 function renderPreferencesDefaultLanding() {
 	const { rawUserPreferencesQuery } = require( '@automattic/api-queries' );
 
 	// Mock rawUserPreferencesQuery to return the API response
+	// This is required because the component uses useSuspenseQuery which needs data immediately
 	rawUserPreferencesQuery.mockReturnValue( {
 		queryKey: [ 'me', 'preferences' ],
 		queryFn: () =>
@@ -82,38 +58,13 @@ function renderPreferencesDefaultLanding() {
 			} ),
 	} );
 
-	nock( API_BASE )
-		.get( '/rest/v1.1/me/preferences' )
-		.query( true )
-		.reply( 200, {
-			calypso_preferences: {
-				'sites-landing-page': {
-					useSitesAsLandingPage: false,
-					updatedAt: Date.now(),
-				},
-				'reader-landing-page': {
-					useReaderAsLandingPage: false,
-					updatedAt: Date.now(),
-				},
-			},
-		} );
-
 	return render( <PreferencesDefaultLanding /> );
 }
 
 afterEach( () => {
-	nock.cleanAll();
 	jest.clearAllMocks();
 	const { rawUserPreferencesQuery } = require( '@automattic/api-queries' );
 	rawUserPreferencesQuery.mockClear();
-} );
-
-beforeAll( () => {
-	nock.disableNetConnect();
-} );
-
-afterAll( () => {
-	nock.enableNetConnect();
 } );
 
 test( 'save button is disabled when form is not dirty', async () => {
@@ -158,6 +109,24 @@ test( 'saves preferences successfully', async () => {
 	( useDispatch as jest.Mock ).mockReturnValue( {
 		createSuccessNotice: mockCreateSuccessNotice,
 	} );
+
+	// Override the mock to make mutationFn return a resolved promise
+	const { userPreferencesMutation } = require( '@automattic/api-queries' );
+	userPreferencesMutation.mockReturnValue( {
+		mutationFn: jest.fn( () =>
+			Promise.resolve( {
+				'sites-landing-page': {
+					useSitesAsLandingPage: true,
+					updatedAt: Date.now(),
+				},
+				'reader-landing-page': {
+					useReaderAsLandingPage: false,
+					updatedAt: Date.now(),
+				},
+			} )
+		),
+	} );
+
 	const user = userEvent.setup();
 	renderPreferencesDefaultLanding();
 
@@ -167,11 +136,6 @@ test( 'saves preferences successfully', async () => {
 		},
 		{ timeout: 5000 }
 	);
-
-	// Mock the save API request that will be made
-	nock( API_BASE )
-		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
-		.reply( 200, {} );
 
 	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
@@ -194,6 +158,14 @@ test( 'handles save error gracefully', async () => {
 	( useDispatch as jest.Mock ).mockReturnValue( {
 		createErrorNotice: mockCreateErrorNotice,
 	} );
+
+	// Override the mock to make mutationFn return a rejected promise
+	// This simulates an API error
+	const { userPreferencesMutation } = require( '@automattic/api-queries' );
+	userPreferencesMutation.mockReturnValue( {
+		mutationFn: jest.fn( () => Promise.reject( new Error( 'Server error' ) ) ),
+	} );
+
 	const user = userEvent.setup();
 	renderPreferencesDefaultLanding();
 
@@ -203,11 +175,6 @@ test( 'handles save error gracefully', async () => {
 		},
 		{ timeout: 5000 }
 	);
-
-	// Mock the save API request, forcing the preferences update to error
-	nock( API_BASE )
-		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
-		.reply( 500, { error: 'Server error' } );
 
 	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
@@ -267,23 +234,6 @@ test( 'disables save button while saving', async () => {
 		},
 		{ timeout: 5000 }
 	);
-
-	// Mock the save request with a delayed preferences response
-	nock( API_BASE )
-		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
-		.delay( 100 )
-		.reply( 200, {
-			calypso_preferences: {
-				'sites-landing-page': {
-					useSitesAsLandingPage: true,
-					updatedAt: Date.now(),
-				},
-				'reader-landing-page': {
-					useReaderAsLandingPage: false,
-					updatedAt: Date.now(),
-				},
-			},
-		} );
 
 	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
 	await user.click( sitesRadio );
