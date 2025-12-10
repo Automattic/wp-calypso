@@ -6,6 +6,8 @@ import emailValidator from 'email-validator';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
+import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -87,6 +89,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	const locale = useLocale();
 	const siteSlug = useSiteSlugParam() ?? '';
 	const { sendTicketAsync, isPending: isSubmittingTicket } = useSubmitMigrationTicket();
+	const { mutateAsync: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -173,6 +176,9 @@ const SiteMigrationSshShareAccess: StepType< {
 				blog_url: siteSlug,
 			} );
 
+			// Update migration status to pending DIY
+			await updateMigrationStatus( { status: MigrationStatus.STARTED_DIFM } );
+
 			// Reset the site in the state to ensure the correct overview screen is shown.
 			siteId && dispatch( resetSite( siteId ) );
 
@@ -182,7 +188,16 @@ const SiteMigrationSshShareAccess: StepType< {
 		} catch ( error ) {
 			// TODO: Handle error
 		}
-	}, [ locale, fromUrl, siteSlug, siteId, dispatch, navigation, sendTicketAsync ] );
+	}, [
+		locale,
+		fromUrl,
+		siteSlug,
+		siteId,
+		dispatch,
+		navigation,
+		sendTicketAsync,
+		updateMigrationStatus,
+	] );
 
 	const navigateToDoItForMe = useCallback( () => {
 		handleSkip();
