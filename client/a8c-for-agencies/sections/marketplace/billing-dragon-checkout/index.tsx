@@ -21,6 +21,7 @@ import type { ShoppingCartItem } from '../types';
 import './style.scss';
 
 const debug = debugFactory( 'a4a:bd-checkout' );
+const DEV_SITE_LAUNCH_SOURCE = 'a4a_dev_site_launch';
 
 /**
  * A4A-BD Checkout Component using the WordPress.com checkout
@@ -45,6 +46,7 @@ function BillingDragonCheckoutContent( {
 	const siteId = site?.ID;
 	const isSitelessCheckout = ! siteId;
 	const isPlanCheckout = useMemo( () => Boolean( planSlug ), [ planSlug ] );
+	const isDevSiteLaunchFlow = Boolean( site?.is_a4a_dev_site && isPlanCheckout );
 
 	const { replaceProductsInCart, responseCart } = useShoppingCart( 'no-site' );
 
@@ -59,6 +61,7 @@ function BillingDragonCheckoutContent( {
 		isPrivate: false,
 		siteSlug,
 		sitelessCheckoutType: 'a4a',
+		source: isDevSiteLaunchFlow ? DEV_SITE_LAUNCH_SOURCE : undefined,
 	} );
 
 	debug( '[A4A Checkout] Cart items: ', cartItems );
@@ -136,6 +139,7 @@ function BillingDragonCheckoutContent( {
 						isA4ASitelessCheckout: true,
 						agency_id: agency.id,
 						cart_item_index: cartItemIndex++,
+						...( isDevSiteLaunchFlow ? { source: DEV_SITE_LAUNCH_SOURCE } : {} ),
 					},
 				};
 				debug( '[A4A Checkout] Processing product to add: ', product_cart );
@@ -170,6 +174,7 @@ function BillingDragonCheckoutContent( {
 		cartItems,
 		siteId,
 		isPlanCheckout,
+		isDevSiteLaunchFlow,
 	] );
 
 	// Debugging: Set a timeout to force showing the checkout after 2 seconds
