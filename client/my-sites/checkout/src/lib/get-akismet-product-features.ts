@@ -3,7 +3,7 @@ import {
 	isAkismetBusiness5k,
 	isAkismetPersonal,
 	isAkismetPro,
-	isAkismetPro5h,
+	isAkismetPro500,
 	isAkismetFree,
 	isAkismetEnterprise,
 	isAkismetPlus10k,
@@ -106,7 +106,7 @@ export default function getAkismetProductFeatures(
 		if ( isAkismetPlus40k( product ) ) {
 			return getFeatureStrings( 'pro_40k', translate );
 		}
-		if ( isAkismetPro5h( product ) ) {
+		if ( isAkismetPro500( product ) ) {
 			return getFeatureStrings( 'pro_5h', translate );
 		}
 	}

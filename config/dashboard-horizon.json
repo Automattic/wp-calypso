@@ -5,6 +5,8 @@
 	"client_slug": "browser",
 	"hostname": "my.wordpress.com",
 	"i18n_default_locale_slug": "en",
+	"wpcom_signup_id": "39911",
+	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
 	"wpcom_url": "https://wpcalypso.wordpress.com",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"site_name": "Hosting Dashboard",
