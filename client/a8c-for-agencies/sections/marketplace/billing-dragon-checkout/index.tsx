@@ -4,14 +4,16 @@ import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
+import usePrepareProductsForCart from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getSite from 'calypso/state/sites/selectors/get-site';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import type { ShoppingCartItem } from '../types';
@@ -26,24 +28,75 @@ const debug = debugFactory( 'a4a:bd-checkout' );
 function BillingDragonCheckoutContent( {
 	cartItems,
 	withA8cLogo = true,
+	siteSlug,
+	planSlug,
 }: {
 	cartItems: ShoppingCartItem[];
 	withA8cLogo?: boolean;
+	siteSlug?: string;
+	planSlug?: string;
 } ) {
 	const translate = useTranslate();
 	const [ isReady, setIsReady ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
 
-	// Access the shopping cart API
+	const agency = useSelector( getActiveAgency );
+	const site = useSelector( ( state ) => ( siteSlug ? getSite( state, siteSlug ) : undefined ) );
+	const siteId = site?.ID;
+	const isSitelessCheckout = ! siteId;
+	const isPlanCheckout = useMemo( () => Boolean( planSlug ), [ planSlug ] );
+
 	const { replaceProductsInCart, responseCart } = useShoppingCart( 'no-site' );
 
-	const agency = useSelector( getActiveAgency );
+	const {
+		productsForCart,
+		isLoading: areProductsPreparing,
+		error: productsError,
+	} = usePrepareProductsForCart( {
+		productAliasFromUrl: planSlug,
+		purchaseId: null,
+		usesJetpackProducts: false,
+		isPrivate: false,
+		siteSlug,
+		sitelessCheckoutType: 'a4a',
+	} );
 
 	debug( '[A4A Checkout] Cart items: ', cartItems );
+
+	useEffect( () => {
+		if ( ! isPlanCheckout || areProductsPreparing ) {
+			return;
+		}
+
+		if ( ! productsForCart.length || productsError ) {
+			debug( '[A4A Checkout] No products created from plan slug' );
+			return;
+		}
+
+		debug( '[A4A Checkout] Replacing cart with products from plan slug', productsForCart );
+		replaceProductsInCart( productsForCart )
+			.then( () => {
+				debug( '[A4A Checkout] Products added to cart successfully (plan slug)' );
+				setIsReady( true );
+			} )
+			.catch( ( err ) => {
+				debug( '[A4A Checkout] Failed to add products to cart:', err );
+			} );
+	}, [
+		areProductsPreparing,
+		isPlanCheckout,
+		productsError,
+		productsForCart,
+		replaceProductsInCart,
+	] );
 
 	// Add products to cart when data is loaded
 	// Note: We are loading products from A4A cart to the Billing Dragon cart
 	useEffect( () => {
+		if ( isPlanCheckout ) {
+			return;
+		}
+
 		// Skip if we're already ready
 		if ( isReady ) {
 			debug( '[A4A Checkout] Already ready' );
@@ -108,7 +161,16 @@ function BillingDragonCheckoutContent( {
 			debug( '[A4A Checkout] No matching products found to add to cart' );
 			setError( 'Could not find the requested products' );
 		}
-	}, [ isReady, error, replaceProductsInCart, responseCart, agency, cartItems ] );
+	}, [
+		isReady,
+		error,
+		replaceProductsInCart,
+		responseCart,
+		agency,
+		cartItems,
+		siteId,
+		isPlanCheckout,
+	] );
 
 	// Debugging: Set a timeout to force showing the checkout after 2 seconds
 	// Todo: This was reduced from 10 seconds to 2 seconds to check if it works well. Better UX.
@@ -143,11 +205,11 @@ function BillingDragonCheckoutContent( {
 				</div>
 			) }
 			<CheckoutMain
-				sitelessCheckoutType="a4a"
+				{ ...( isSitelessCheckout ? { sitelessCheckoutType: 'a4a' as const } : {} ) }
 				redirectTo={ window.location.origin + '/purchases/licenses' }
 				customizedPreviousPath="/marketplace"
-				siteSlug=""
-				siteId={ 0 }
+				siteSlug={ siteSlug ?? '' }
+				siteId={ siteId ?? 0 }
 			/>
 		</div>
 	);
@@ -156,9 +218,13 @@ function BillingDragonCheckoutContent( {
 export default function BillingDragonCheckout( {
 	cartItems,
 	withA8cLogo = true,
+	siteSlug,
+	planSlug,
 }: {
 	cartItems: ShoppingCartItem[];
 	withA8cLogo?: boolean;
+	siteSlug?: string;
+	planSlug?: string;
 } ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -170,7 +236,12 @@ export default function BillingDragonCheckout( {
 			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-						<BillingDragonCheckoutContent cartItems={ cartItems } withA8cLogo={ withA8cLogo } />
+						<BillingDragonCheckoutContent
+							cartItems={ cartItems }
+							withA8cLogo={ withA8cLogo }
+							siteSlug={ siteSlug }
+							planSlug={ planSlug }
+						/>
 					</RazorpayHookProvider>
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>

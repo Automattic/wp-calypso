@@ -130,6 +130,21 @@ export const marketplaceReferPremiumPlanContext: Callback = ( context, next ) =>
 	next();
 };
 
+export const checkoutWithPlanContext: Callback = ( context, next ) => {
+	const { siteSlug, planSlug } = context.params;
+	const { referral_blog_id } = context.query;
+	const referralBlogId = referral_blog_id ? parseInt( referral_blog_id ) : undefined;
+
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Marketplace > Checkout" path={ context.path } />
+			<Checkout referralBlogId={ referralBlogId } siteSlug={ siteSlug } planSlug={ planSlug } />
+		</>
+	);
+	next();
+};
+
 export const checkoutContext: Callback = ( context, next ) => {
 	const { referral_blog_id } = context.query;
 	const referralBlogId = referral_blog_id ? parseInt( referral_blog_id ) : undefined;
