@@ -1,30 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.cancel-purchase__domain-options {
-	.card {
-		margin: 16px 0;
-	}
-
-	.cancel-purchase__refund-domain-info {
-		color: var(--color-text-subtle);
-		display: inline-block;
-		font-size: $font-body-extra-small;
-		line-height: 1.4;
-		margin-top: 4px;
-	}
-
-	.cancel-purchase__domain-warning {
-		display: inline-block;
-		font-size: $font-body-small;
-		line-height: 1.4;
-
-		.form-label {
-			margin: 1.5em 0;
-		}
-	}
-}
-
 .confirm-cancel-domain__formatted-header.formatted-header {
 	margin: 16px 0 8px;
 }
@@ -37,18 +13,6 @@
 .cancel-purchase__warning-string {
 	color: var(--color-error);
 	font-weight: 600;
-}
-
-.cancel-purchase__confirm-buttons {
-	display: flex;
-
-	.form-button {
-		margin-inline-start: 8px;
-	}
-
-	button.cancel-purchase__button {
-		background-color: #F00;
-	}
 }
 
 .cancel-purchase__refund-information {
