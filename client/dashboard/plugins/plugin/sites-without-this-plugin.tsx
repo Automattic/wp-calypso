@@ -106,25 +106,7 @@ export const SitesWithoutThisPlugin = ( {
 						value={ field.getValue( { item } ) }
 					/>
 				),
-				enableHiding: true,
 				enableSorting: true,
-				getElements: async () => {
-					const planNames = Array.from(
-						new Set(
-							sitesWithoutThisPlugin
-								.map( ( site ) => getSitePlanDisplayName( site ) ?? '' )
-								.filter( Boolean )
-						)
-					);
-
-					return planNames.map( ( name ) => ( {
-						label: name,
-						value: name,
-					} ) );
-				},
-				filterBy: {
-					operators: [ 'isAny' ],
-				},
 				sort: ( a, b, direction ) => {
 					const planA = getSitePlanDisplayName( a ) ?? '';
 					const planB = getSitePlanDisplayName( b ) ?? '';
@@ -133,7 +115,7 @@ export const SitesWithoutThisPlugin = ( {
 				},
 			},
 		],
-		[ sitesWithoutThisPlugin ]
+		[]
 	);
 
 	const actions: Action< Site >[] = useMemo(
