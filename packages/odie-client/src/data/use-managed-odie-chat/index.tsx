@@ -11,6 +11,9 @@ import { useCurrentSupportInteraction } from '../use-current-support-interaction
 import { useManageSupportInteraction } from '../use-manage-support-interaction';
 import { useOdieChat } from '../use-odie-chat';
 import type { ReturnedChat, Message, OdieChat, SupportInteraction } from '../../types';
+import type { AgentManager } from '@automattic/agenttic-client';
+
+type Agent = Awaited< ReturnType< AgentManager[ 'createAgent' ] > >;
 
 function convertMessageFromAgentticFormat( message: string ): Message {
 	return {
@@ -103,7 +106,7 @@ export const useSendOdieMessage = () => {
 };
 
 function useTransformMessageToAgenttic(
-	onTransferToOrchestrator: () => void,
+	onTransferToOrchestrator: () => Promise< Agent | undefined >,
 	maybeLoadConversation: ( sessionId: string ) => void
 ) {
 	const navigate = useNavigate();
@@ -114,21 +117,22 @@ function useTransformMessageToAgenttic(
 		async ( chatId: number, triggeringMessage: string ) => {
 			setIsPending( true );
 			const newChat = await onTransferToOrchestrator();
-			const task = await newChat.sendMessage(
-				{
-					message: {
-						role: 'user',
-						parts: [
-							{
-								type: 'text',
-								text: triggeringMessage,
-							},
-						],
-						kind: 'message',
-					},
+			if ( ! newChat ) {
+				return;
+			}
+			const task = await newChat.sendMessage( {
+				message: {
+					messageId: '',
+					role: 'user',
+					parts: [
+						{
+							type: 'text',
+							text: triggeringMessage,
+						},
+					],
+					kind: 'message',
 				},
-				triggeringMessage
-			);
+			} );
 			await sendOdieMessage( {
 				content: 'Agent handover',
 				role: 'navigation',
@@ -141,7 +145,7 @@ function useTransformMessageToAgenttic(
 			navigate( `/chat?startedFrom=odie&chatId=${ chatId }`, {
 				state: { sessionId: task.sessionId },
 			} );
-			maybeLoadConversation( task.sessionId );
+			task.sessionId && maybeLoadConversation( task.sessionId );
 		},
 		[ navigate, maybeLoadConversation, sendOdieMessage, onTransferToOrchestrator ]
 	);
@@ -218,7 +222,7 @@ export const useManagedOdieChat = ( {
 	onTransferToOrchestrator,
 	maybeLoadConversation,
 }: {
-	onTransferToOrchestrator: () => void;
+	onTransferToOrchestrator: () => Promise< Agent | undefined >;
 	maybeLoadConversation: ( sessionId: string ) => void;
 } ) => {
 	const versionParam = new URLSearchParams( window.location.search ).get( 'version' );
