@@ -10,8 +10,9 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { ReactElement } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { domainSecurityRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -26,12 +27,14 @@ interface SslCertificateProps {
 }
 
 export default function SslCertificate( { domainName, domain, sslDetails }: SslCertificateProps ) {
+	const { recordTracksEvent } = useAnalytics();
 	const mutation = useMutation( {
 		...provisionSslCertificateMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'New SSL certificate requested.' ),
-				error: __( 'Failed to provision SSL certificate.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'New SSL certificate requested for %s.' ), domainName ),
+				error: { source: 'server' },
 			},
 		},
 	} );
@@ -47,7 +50,16 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 					'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. <learnMoreLink />'
 				),
 				{
-					learnMoreLink: <InlineSupportLink supportContext="https-ssl" />,
+					learnMoreLink: (
+						<InlineSupportLink
+							supportContext="https-ssl"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_domain_security_learn_more_click', {
+									domain: domainName,
+								} );
+							} }
+						/>
+					),
 				}
 			);
 		}
@@ -72,7 +84,16 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		return createInterpolateElement(
 			__( 'There is an issue with your certificate. Contact us to <learnMoreLink />.' ),
 			{
-				learnMoreLink: <InlineSupportLink supportLink={ CONTACT } />,
+				learnMoreLink: (
+					<InlineSupportLink
+						supportLink={ CONTACT }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_dashboard_domain_security_learn_more_click', {
+								domain: domainName,
+							} );
+						} }
+					/>
+				),
 			}
 		);
 	};
@@ -87,7 +108,26 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 
 	const handleOnClick = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( undefined );
+
+		recordTracksEvent( 'calypso_dashboard_ssl_provision', {
+			domain: domainName,
+		} );
+
+		mutation.mutate( undefined, {
+			onSuccess: () => {
+				// Track success
+				recordTracksEvent( 'calypso_dashboard_ssl_provision_success', {
+					domain: domainName,
+				} );
+			},
+			onError: ( error: Error ) => {
+				// Track failure
+				recordTracksEvent( 'calypso_dashboard_ssl_provision_failure', {
+					domain: domainName,
+					error_message: error.message,
+				} );
+			},
+		} );
 	};
 
 	const renderFailureReasons = (

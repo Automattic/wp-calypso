@@ -260,6 +260,7 @@ main.is-logged-out .full-width-section .full-width-section__content .search-box-
 	.search-box-header__header {
 		font-size: rem(70px);
 		line-height: 1;
+		margin-bottom: 6px;
 
 		@media (max-width: 660px) {
 			font-size: rem(60px);

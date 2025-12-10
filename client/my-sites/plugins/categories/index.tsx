@@ -1,8 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
 import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -46,6 +46,7 @@ const Categories = ( {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	// We hide these special categories from the category selector
 	const displayCategories = allowedCategories.filter(
@@ -82,7 +83,7 @@ const Categories = ( {
 		>
 			{ categories.map( ( category ) => (
 				<span key={ `category-${ category.slug }` } title={ category.menu }>
-					{ category.slug === 'discover' && isEnabled( 'marketplace-redesign' ) && (
+					{ category.slug === 'discover' && isMarketplaceRedesignEnabled && (
 						<Icon icon={ starEmpty } size={ 22 } />
 					) }
 

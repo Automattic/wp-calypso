@@ -54,6 +54,7 @@ interface ExternalProps {
 	showDataCenterPicker?: boolean;
 	disableContinueButton?: boolean;
 	showFreeTrial?: boolean;
+	path?: string;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -84,6 +85,7 @@ export const EligibilityWarnings = ( {
 	translate,
 	disableContinueButton,
 	showFreeTrial,
+	path = '',
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
@@ -158,6 +160,14 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
+
+			{ /* Additional event to align analysis across dashboards.
+			     See: https://wp.me/pgz0xU-qp */ }
+			<TrackComponentView
+				eventName="calypso_dashboard_hosting_feature_activation_modal_impression"
+				eventProperties={ { context, path } }
+			/>
+
 			{ ! isPlaceholder && context === 'plugin-details' && hasBlockingHold( listHolds ) && (
 				<CompactCard>
 					<HardBlockingNotice

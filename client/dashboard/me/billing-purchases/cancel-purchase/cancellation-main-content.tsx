@@ -86,6 +86,7 @@ export default function CancellationMainContent( {
 		! isJetpack &&
 		! isAkismet &&
 		! isDomainRegistrationPurchase &&
+		purchase.is_plan &&
 		Boolean( atomicTransfer?.created_at )
 	) {
 		defaultChanges.push( ...atomicRevertChanges );

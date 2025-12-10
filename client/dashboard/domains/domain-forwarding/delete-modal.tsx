@@ -5,7 +5,7 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import type { DomainForwarding } from '@automattic/api-core';
@@ -25,7 +25,8 @@ const DomainForwardingDeleteModal = ( {
 		...domainForwardingDeleteMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Domain forwarding rule deleted.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Domain forwarding rule for %s deleted.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},

@@ -1,0 +1,165 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.business-plan-banner {
+	--banner-bg: #101517;
+
+	display: flex;
+	flex-direction: column;
+	background-color: var( --banner-bg );
+	margin-block: 24px;
+	padding: 32px 24px;
+	border-radius: 16px;
+	border: 1px solid var( --studio-blue-50 );
+	position: relative;
+	overflow: hidden;
+	color: var( --studio-white );
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: url( /calypso/images/plugins/plugins-dot-pattern.png ) repeat;
+		background-size: 13px;
+		box-shadow: inset 0 0 60px 40px var( --banner-bg );
+		opacity: 0.6;
+		pointer-events: none;
+	}
+
+	@media ( min-width: $break-small ) {
+		min-height: 320px;
+	}
+
+	@media ( min-width: $break-large ) {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 55px 48px;
+	}
+}
+
+.business-plan-banner__content {
+	position: relative;
+	z-index: 1;
+	max-width: 640px;
+}
+
+.business-plan-banner__title {
+	font-size: rem( 40px );
+	font-weight: 400;
+	line-height: 1.2;
+	margin: 0 0 16px;
+	font-family: $brand-serif;
+
+	@media ( min-width: $break-small ) {
+		font-size: rem( 50px );
+	}
+}
+
+.business-plan-banner__description {
+	font-size: $font-body;
+	line-height: 1.5;
+	margin: 0 0 6px;
+
+	@media ( min-width: $break-small ) {
+		font-size: $font-body-large;
+	}
+}
+
+.business-plan-banner__features {
+	font-size: $font-body;
+	margin: 0 0 24px;
+	padding-inline-start: 20px;
+
+	li {
+		margin-bottom: 8px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	@media ( min-width: $break-small ) {
+		font-size: $font-body-large;
+	}
+}
+
+.components-button.business-plan-banner__cta {
+	width: fit-content;
+	border: 1px solid var( --studio-white );
+	background: transparent;
+	padding: 12px 24px;
+	height: auto;
+	color: var( --studio-white );
+	font-size: $font-body;
+	border-radius: 4px;
+	font-weight: 500;
+	margin-bottom: 40px;
+
+	&:hover,
+	&:focus,
+	&:active {
+		background: rgba( 255, 255, 255, 0.1 );
+		border-color: var( --studio-white );
+		color: var( --studio-white );
+	}
+
+	@media ( min-width: $break-small ) {
+		margin-bottom: 0;
+	}
+}
+
+.business-plan-banner__illustration-container {
+	position: relative;
+	z-index: 1;
+	text-align: center;
+
+	// Vertical line
+	&::before {
+		content: "";
+		position: absolute;
+		width: 1px;
+		height: 600px;
+		left: 50%;
+		top: 50%;
+		transform: translateY( -50% );
+		background: linear-gradient( 180deg, transparent 0%, #3858E9 40%, #069E08 60%, transparent 100% );
+	}
+
+	// Circle on mobile, horizontal line on desktop
+	&::after {
+		content: "";
+		position: absolute;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var( --studio-white );
+		left: 50%;
+		bottom: -20px;
+		transform: translateX( -50% );
+		border: solid 1px var( --studio-blue-50 );
+
+		@media ( min-width: $break-large ) {
+			width: 1000px;
+			height: 1px;
+			border-radius: 0;
+			background: linear-gradient( 90deg, transparent 0%, #080909 20%, #375AE3 50%, #069E08 70%, transparent 100% );
+			left: 0;
+			bottom: auto;
+			top: 50%;
+			border: none;
+		}
+	}
+
+	@media ( min-width: $break-large ) {
+		margin-inline-start: 48px;
+	}
+}
+
+.business-plan-banner__illustration {
+	position: relative;
+	z-index: 1;
+	max-width: 356px;
+	height: auto;
+	width: 100%;
+}

@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { HelpCenterArticle } from '@automattic/support-articles';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
@@ -13,9 +14,9 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
+import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterA4AContactForm } from './help-center-a4a-contact-form';
-import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterChat } from './help-center-chat';
 import { HelpCenterChatHistory } from './help-center-chat-history';
 import { HelpCenterContactForm } from './help-center-contact-form';
@@ -49,8 +50,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName } = useHelpCenterContext();
+	const { sectionName, site } = useHelpCenterContext();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
+	const { forceEmailSupport } = useChatStatus();
+	const currentSiteDomain = site?.domain;
 
 	const { navigateToRoute, isMinimized, hasPremiumSupport } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -121,7 +124,17 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
 				<Routes>
 					<Route path="/" element={ <HelpCenterSearch currentRoute={ currentRoute } /> } />
-					<Route path="/post" element={ <HelpCenterArticle /> } />
+					<Route
+						path="/post"
+						element={
+							<HelpCenterArticle
+								sectionName={ sectionName }
+								currentSiteDomain={ currentSiteDomain }
+								isEligibleForChat={ isUserEligibleForPaidSupport }
+								forceEmailSupport={ !! forceEmailSupport }
+							/>
+						}
+					/>
 					<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
 					<Route path="/a4a-contact-form" element={ <HelpCenterA4AContactForm /> } />
 					<Route path="/success" element={ <SuccessScreen /> } />

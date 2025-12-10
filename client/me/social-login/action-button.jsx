@@ -6,6 +6,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GithubLoginButton from 'calypso/components/social-buttons/github';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
+import PayPalLoginButton from 'calypso/components/social-buttons/paypal';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/actions';
@@ -101,7 +102,7 @@ class SocialLoginActionButton extends Component {
 			};
 		}
 
-		if ( service === 'github' ) {
+		if ( [ 'github', 'paypal' ].indexOf( service ) !== -1 ) {
 			this.recordLoginSuccess( service );
 
 			socialInfo = {
@@ -180,6 +181,20 @@ class SocialLoginActionButton extends Component {
 				>
 					{ actionButton }
 				</GithubLoginButton>
+			);
+		}
+
+		if ( service === 'paypal' ) {
+			return (
+				<PayPalLoginButton
+					onClick={ this.handleButtonClick }
+					responseHandler={ this.handleSocialServiceResponse }
+					socialServiceResponse={ this.props.socialServiceResponse }
+					userHasDisconnected={ userHasDisconnected }
+					overrideRedirectUri={ redirectUri }
+				>
+					{ actionButton }
+				</PayPalLoginButton>
 			);
 		}
 

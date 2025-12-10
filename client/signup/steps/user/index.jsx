@@ -530,7 +530,7 @@ export class UserStep extends Component {
 			return translate( 'Create your account' );
 		}
 
-		return headerText ?? translate( 'Create your account' );
+		return headerText;
 	}
 
 	submitButtonText() {
@@ -654,21 +654,17 @@ export class UserStep extends Component {
 		const query = this.props.initialContext?.query || {};
 		const noThanksRedirectUrl = getNoThanksRedirectUrl( { currentQuery: query } );
 
-		const headerText = this.getHeaderText();
-		const subHeaderText = getHeadingSubText( {
-			isSocialFirst: true,
-			twoFactorAuthType: false,
-			translate: this.props.translate,
-			isWooJPC: this.props.isWooJPC,
-		} );
-
 		return (
-			<LoginContextProvider
-				initialHeading={ headerText }
-				initialSubHeading={ subHeaderText?.primary }
-				initialSubHeadingSecondary={ subHeaderText?.secondary }
-			>
-				<LoginContextWrapper headerText={ headerText } subHeaderText={ subHeaderText }>
+			<LoginContextProvider>
+				<LoginContextWrapper
+					headerText={ this.getHeaderText() }
+					subHeaderText={ getHeadingSubText( {
+						isSocialFirst: true,
+						twoFactorAuthType: false,
+						translate: this.props.translate,
+						isWooJPC: this.props.isWooJPC,
+					} ) }
+				>
 					<OneLoginLayout
 						isJetpack={ false }
 						isSectionSignup

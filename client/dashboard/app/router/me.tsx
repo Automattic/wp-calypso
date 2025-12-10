@@ -21,6 +21,7 @@ import {
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
+import { reauthRequiredLink } from '../../utils/link';
 import { isTemporarySitePurchase, getTitleForDisplay, isDotcomPlan } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -44,9 +45,7 @@ export const meRoute = createRoute( {
 		}
 		const twoStep = await fetchTwoStep();
 		if ( twoStep.two_step_reauthorization_required ) {
-			const currentPath = window.location.pathname;
-			const loginUrl = `/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
-			window.location.href = loginUrl;
+			window.location.href = reauthRequiredLink();
 		}
 	},
 } ).lazy( () =>

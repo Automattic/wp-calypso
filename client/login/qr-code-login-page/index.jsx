@@ -1,10 +1,11 @@
 import { Card } from '@automattic/components';
+import { useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import Main from 'calypso/components/main';
 import { login } from 'calypso/lib/paths';
-import LoginContextProvider from 'calypso/login/login-context';
+import { useLoginContext } from 'calypso/login/login-context';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 
@@ -16,6 +17,14 @@ function QrCodeLoginPlaceholder() {
 
 function QrCodeLoginPage( { locale, redirectTo, isJetpack = false } ) {
 	const translate = useTranslate();
+	const { setHeaders } = useLoginContext();
+
+	useEffect( () => {
+		setHeaders( {
+			heading: translate( 'Log in via Jetpack app' ),
+			subHeading: translate( 'Open the Jetpack app on your phone to scan this code.' ),
+		} );
+	}, [ setHeaders, translate ] );
 
 	const mainContent = (
 		<Main className={ clsx( 'qr-code-login-page', { 'is-jetpack': isJetpack } ) }>
@@ -46,16 +55,4 @@ function QrCodeLoginPage( { locale, redirectTo, isJetpack = false } ) {
 	);
 }
 
-const QrCodeLoginPageWithContext = ( props ) => {
-	const translate = useTranslate();
-	return (
-		<LoginContextProvider
-			initialHeading={ translate( 'Log in via Jetpack app' ) }
-			initialSubHeading={ translate( 'Open the Jetpack app on your phone to scan this code.' ) }
-		>
-			<QrCodeLoginPage { ...props } />
-		</LoginContextProvider>
-	);
-};
-
-export default QrCodeLoginPageWithContext;
+export default QrCodeLoginPage;

@@ -13,15 +13,18 @@ import {
 	isAtomicTransferredSite,
 } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import HostingActivationButton from '../hosting-activation-button';
 import illustrationUrl from './hosting-callout-illustration.svg';
 
 export function HostingActivationCallout( {
 	site,
+	path,
 	redirectUrl,
 }: {
 	site: Site;
+	path: string;
 	redirectUrl?: string;
 } ) {
 	const dispatch = useDispatch();
@@ -79,6 +82,16 @@ export function HostingActivationCallout( {
 		}
 	}, [ isActivated, site.ID, redirectUrl, dispatch ] );
 
+	// Additional event to align analysis across dashboards.
+	// See: https://wp.me/pgz0xU-qp
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_impression', {
+				path,
+			} )
+		);
+	}, [ dispatch, path ] );
+
 	return (
 		<Callout
 			title={ __( 'Activate hosting features' ) }
@@ -98,6 +111,7 @@ export function HostingActivationCallout( {
 				<HostingActivationButton
 					text={ isActivating ? __( 'Activating…' ) : __( 'Activate' ) }
 					size="compact"
+					path={ path }
 					redirectUrl={ redirectUrl ?? window.location.href.replace( window.location.origin, '' ) }
 				/>
 			}
