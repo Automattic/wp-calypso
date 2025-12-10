@@ -121,8 +121,8 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 		);
 		?>
 	<div class="<?php echo esc_attr( implode( ' ', $content_classes ) ); ?>">
-			<h2><?php echo esc_html( $is_404_page ? __( 'This page doesn\'t exist', 'happy-blocks' ) : __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
-			<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( 'Let\'s help you find what you\'re looking for.', 'happy-blocks' ) ) . '</p>' : ''; ?>
+			<h2><?php echo esc_html( $is_404_page ? __( "This page doesn't exist", 'happy-blocks' ) : __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
+			<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( "Let's help you find what you're looking for.", 'happy-blocks' ) ) . '</p>' : ''; ?>
 			<form id="support-search-form" class="" role="search" method="get" action="">
 				<div class="input-wrapper" dir="auto">
 					<input id="support-search-input" type="search" name="s" placeholder="<?php echo esc_html( __( 'Search questions, guides, courses', 'happy-blocks' ) ); ?>"/>
