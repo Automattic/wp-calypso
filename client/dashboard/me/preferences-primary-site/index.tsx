@@ -41,7 +41,7 @@ export default function PreferencesPrimarySite() {
 	} );
 
 	// Check if form has been modified
-	const isDirty = Boolean( primarySiteId !== formData.primarySiteId );
+	const isDirty = primarySiteId !== formData.primarySiteId;
 
 	// Define form fields
 	const fields: Field< PrimarySiteFormData >[] = [
