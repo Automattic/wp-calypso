@@ -90,106 +90,110 @@ function AgentSetup( {
 	const sessionId = isNewChat ? '' : state?.sessionId || getSessionId();
 
 	// Load external providers and initialize agent config
-	useEffect( () => {
-		const initializeAgent = async () => {
-			// Load external providers (only once)
-			let providers = loadedProviders;
-			if ( ! providersLoadedRef.current ) {
-				providers = await loadExternalProviders();
-				providersLoadedRef.current = true;
-				setLoadedProviders( providers );
-			}
-
-			const { toolProvider, contextProvider } = providers;
-
-			// Create the agent configuration
-			const config: UseAgentChatConfig = {
-				agentId: ORCHESTRATOR_AGENT_ID,
-				agentUrl: ORCHESTRATOR_AGENT_URL,
-				sessionId,
-				sessionIdStorageKey: SESSION_STORAGE_KEY,
-				authProvider: createCalypsoAuthProvider( site?.ID ),
-				enableStreaming: true,
-			};
-
-			// Add tool provider if provided by plugin
-			if ( toolProvider ) {
-				// Wrap `toolProvider` to filter out `null` annotation values
-				// WordPress Abilities API uses `null`, but `agenttic-client` expects `undefined`
-				config.toolProvider = {
-					...toolProvider,
-					getAbilities: async (): Promise< AgenticAbility[] > => {
-						const abilities = await toolProvider.getAbilities();
-						return abilities.map( ( ability ) => ( {
-							...ability,
-							meta: ability.meta?.annotations
-								? {
-										...ability.meta,
-										annotations: Object.fromEntries(
-											Object.entries( ability.meta.annotations ).filter(
-												( [ , value ] ) => value !== null
-											)
-										),
-								  }
-								: ability.meta,
-						} ) ) as AgenticAbility[];
-					},
-				};
-			}
-
-			// Add context provider - use plugin's or create default Calypso context
-			if ( contextProvider ) {
-				// Wrap plugin's context provider to resolve contextEntries
-				config.contextProvider = {
-					getClientContext: () => {
-						const pluginContext = contextProvider.getClientContext();
-
-						// Resolve `contextEntries` if present
-						if ( pluginContext.contextEntries && pluginContext.contextEntries.length ) {
-							return {
-								...pluginContext,
-								contextEntries: resolveContextEntries( pluginContext.contextEntries ),
-							};
-						}
-
-						return pluginContext;
-					},
-				};
-			} else {
-				// Create default Calypso context
-				config.contextProvider = {
-					getClientContext: () => ( {
-						url: window.location.href,
-						pathname: currentRoute || window.location.pathname,
-						search: window.location.search,
-						environment: 'calypso',
-					} ),
-				};
-			}
-
-			// If starting a new chat, clear existing session
-			if ( isNewChat ) {
-				const agentManager = getAgentManager();
-				const agentId = config.agentId;
-
-				if ( agentManager.hasAgent( agentId ) ) {
-					// Abort any ongoing requests
-					await agentManager.abortCurrentRequest( agentId );
-					// Remove existing agent to start fresh
-					agentManager.removeAgent( agentId );
+	useEffect(
+		() => {
+			const initializeAgent = async () => {
+				// Load external providers (only once)
+				let providers = loadedProviders;
+				if ( ! providersLoadedRef.current ) {
+					providers = await loadExternalProviders();
+					providersLoadedRef.current = true;
+					setLoadedProviders( providers );
 				}
 
-				// Clear stored session ID
-				clearSessionId();
-				// Clear route state to prevent repeated new chat initialization
-				navigate( '/chat', { replace: true } );
-			}
+				const { toolProvider, contextProvider } = providers;
 
-			setAgentConfig( config );
-		};
+				// Create the agent configuration
+				const config: UseAgentChatConfig = {
+					agentId: ORCHESTRATOR_AGENT_ID,
+					agentUrl: ORCHESTRATOR_AGENT_URL,
+					sessionId,
+					sessionIdStorageKey: SESSION_STORAGE_KEY,
+					authProvider: createCalypsoAuthProvider( site?.ID ),
+					enableStreaming: true,
+				};
 
-		initializeAgent();
-	}, [ currentRoute, isNewChat, loadedProviders, navigate, sessionId, site?.ID ] );
+				// Add tool provider if provided by plugin
+				if ( toolProvider ) {
+					// Wrap `toolProvider` to filter out `null` annotation values
+					// WordPress Abilities API uses `null`, but `agenttic-client` expects `undefined`
+					config.toolProvider = {
+						...toolProvider,
+						getAbilities: async (): Promise< AgenticAbility[] > => {
+							const abilities = await toolProvider.getAbilities();
+							return abilities.map( ( ability ) => ( {
+								...ability,
+								meta: ability.meta?.annotations
+									? {
+											...ability.meta,
+											annotations: Object.fromEntries(
+												Object.entries( ability.meta.annotations ).filter(
+													( [ , value ] ) => value !== null
+												)
+											),
+									  }
+									: ability.meta,
+							} ) ) as AgenticAbility[];
+						},
+					};
+				}
+
+				// Add context provider - use plugin's or create default Calypso context
+				if ( contextProvider ) {
+					// Wrap plugin's context provider to resolve contextEntries
+					config.contextProvider = {
+						getClientContext: () => {
+							const pluginContext = contextProvider.getClientContext();
+
+							// Resolve `contextEntries` if present
+							if ( pluginContext.contextEntries && pluginContext.contextEntries.length ) {
+								return {
+									...pluginContext,
+									contextEntries: resolveContextEntries( pluginContext.contextEntries ),
+								};
+							}
+
+							return pluginContext;
+						},
+					};
+				} else {
+					// Create default Calypso context
+					config.contextProvider = {
+						getClientContext: () => ( {
+							url: window.location.href,
+							pathname: currentRoute || window.location.pathname,
+							search: window.location.search,
+							environment: 'calypso',
+						} ),
+					};
+				}
+
+				// If starting a new chat, clear existing session
+				if ( isNewChat ) {
+					const agentManager = getAgentManager();
+					const agentId = config.agentId;
+
+					if ( agentManager.hasAgent( agentId ) ) {
+						// Abort any ongoing requests
+						await agentManager.abortCurrentRequest( agentId );
+						// Remove existing agent to start fresh
+						agentManager.removeAgent( agentId );
+					}
+
+					// Clear stored session ID
+					clearSessionId();
+					// Clear route state to prevent repeated new chat initialization
+					navigate( '/chat', { replace: true } );
+				}
+
+				setAgentConfig( config );
+			};
+
+			initializeAgent();
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Ignore `loadedProviders` to avoid unnecessary reloads
+		[ currentRoute, isNewChat, navigate, sessionId, site?.ID ]
+	);
 
 	// Default suggestions - can be overridden by loaded providers
 	const defaultSuggestions = useMemo(
