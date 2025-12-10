@@ -217,7 +217,7 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 						firstDomain={ firstDomainInCart }
 					/>
 				</p>
-				<Button onClick={ addPlanToCart }>{ translate( 'Add to Cart' ) }</Button>
+				<Button onClick={ addPlanToCart }>{ translate( 'Add to cart' ) }</Button>
 			</div>
 			<TrackComponentView eventName="calypso_non_dwpo_checkout_plan_upsell_impression" />
 		</div>
