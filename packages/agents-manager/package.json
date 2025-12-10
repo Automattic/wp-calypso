@@ -46,6 +46,7 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/support-articles": "workspace:^",
+		"@automattic/zendesk-client": "workspace:^",
 		"@rive-app/react-canvas": "^4.15.6",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.23.0",
