@@ -114,16 +114,6 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 		border: 1px solid $border-color;
 		border-bottom: none;
 		overflow: hidden;
-
-		// Fix the border radius of the first in the admin bar
-		#wp-admin-bar-wpcom-logo > .ab-item {
-			border-radius: $main-border-radius 0 0 0;
-		}
-	}
-
-	// Fix the border radius of the last item in the admin bar
-	#wp-admin-bar-my-account a {
-		border-radius: 0 $main-border-radius 0 0;
 	}
 
 	#adminmenuback,
