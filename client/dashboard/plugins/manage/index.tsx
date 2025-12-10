@@ -188,7 +188,8 @@ export default function PluginsList() {
 								);
 							} }
 							renderItemTitle={ ( { item } ) => {
-								return <Text>{ item.name }</Text>;
+								// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
+								return <Text dangerouslySetInnerHTML={ { __html: item.name } } />;
 							} }
 							searchableFields={ searchableFields }
 							onClose={ () => {} }
