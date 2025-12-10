@@ -115,28 +115,29 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 				} }
 				type="button"
 				disabled={ isProcessingAssistedMigration }
-			/>
+			>
+				{ translate( 'Need help? Let us migrate your site' ) }
+				{ isProcessingAssistedMigration && <Spinner /> }
+			</Button>
 		);
 
 		// Provide specific guidance based on authentication method with link to assisted migration
 		if ( authMethod === 'password' ) {
 			return translate(
-				'SSH authentication failed. Please verify your SSH username and password are correct and try again. {{button}}Need help? Let us migrate your site{{spinner/}}{{/button}}',
+				'SSH authentication failed. Please verify your SSH username and password are correct and try again. {{button/}}',
 				{
 					components: {
 						button: AskForHelpButton,
-						spinner: isProcessingAssistedMigration ? <Spinner /> : null,
 					},
 				}
 			);
 		}
 
 		return translate(
-			'SSH authentication failed. Please ensure your SSH key is properly configured on the source site and try again. {{button}}Need help? Let us migrate your site{{spinner/}}{{/button}}',
+			'SSH authentication failed. Please ensure your SSH key is properly configured on the source site and try again. {{button/}}',
 			{
 				components: {
 					button: AskForHelpButton,
-					spinner: isProcessingAssistedMigration ? <Spinner /> : null,
 				},
 			}
 		);
