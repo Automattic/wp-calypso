@@ -5,7 +5,9 @@ export interface DashboardSiteListSite {
 		manage_options: boolean;
 	};
 	deleted?: boolean;
+	enabled_modules?: null | string[];
 	has_backup?: boolean;
+	hosting_provider_guess?: string;
 	name?: string;
 	plan?: {
 		product_id: number;
@@ -26,12 +28,17 @@ export interface DashboardSiteListSite {
 	is_atomic?: boolean;
 	is_garden?: boolean;
 	is_jetpack?: boolean;
+	is_p2?: boolean;
 	is_vip?: boolean;
+	last_publish?: string;
 	owner_id?: number;
+	php_version?: string;
 	slug: string; // Slug is always fetched
+	views?: null | number;
 	visitors?: null | number;
 	total_wpcom_subscribers?: number;
 	url?: { value: string; with_scheme: string };
+	wordpress_version?: string;
 	wpcom_status?: {
 		is_staging: boolean;
 		is_coming_soon: boolean;

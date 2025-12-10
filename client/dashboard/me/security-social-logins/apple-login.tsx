@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { wpcomLink } from '../../utils/link';
+import { dashboardLink, wpcomLink } from '../../utils/link';
 import { getSocialServiceResponse } from './utils';
 import type { SocialLoginButtonProps, AppleClient } from './types';
 
@@ -49,7 +49,7 @@ export default function AppleLogin( {
 			redirectURI: wpcomLink( '/start/user' ),
 			state: JSON.stringify( {
 				oauth2State,
-				originalUrlPath: window?.location?.pathname,
+				originalUrlPath: dashboardLink( window?.location?.pathname ),
 			} ),
 		} );
 
