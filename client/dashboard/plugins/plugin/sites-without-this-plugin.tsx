@@ -228,7 +228,12 @@ export const SitesWithoutThisPlugin = ( {
 								) }
 							</Text>
 							<HStack spacing={ 2 } justify="right">
-								<Button variant="tertiary" onClick={ () => closeModal?.() }>
+								<Button
+									variant="tertiary"
+									onClick={ () => closeModal?.() }
+									isBusy={ isInstalling }
+									disabled={ isInstalling }
+								>
 									{ __( 'Cancel' ) }
 								</Button>
 								<Button
