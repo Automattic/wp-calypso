@@ -11,7 +11,6 @@ import {
 } from '@automattic/agenttic-ui';
 import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -122,9 +121,9 @@ export default function AgentDock( {
 		agentId,
 	} );
 
-	const handleNewChat = useCallback( async () => {
+	const handleNewChat = () => {
 		navigate( '/chat', { state: { isNewChat: true } } );
-	}, [ navigate ] );
+	};
 
 	const handleSelectConversation = ( sessionId: string ) => {
 		abortCurrentRequest();
