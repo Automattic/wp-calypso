@@ -543,11 +543,11 @@ export default function useCreatePaymentMethods( {
 	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
 		paymentMethods = [
 			...existingCardMethods,
+			applePayMethod,
+			googlePayMethod,
 			paypalExpressMethod,
 			paypalPPCPMethod,
 			stripeMethod,
-			applePayMethod,
-			googlePayMethod,
 			freePaymentMethod,
 			idealMethod,
 			sofortMethod,
