@@ -12,4 +12,4 @@ export const AuthorizeDefault = () => (
  * Studio by WordPress.com variant.
  * Uses horizontal layout with permissions display.
  */
-export const AuthorizeStudio = () => <Authorize showPermissions />;
+export const AuthorizeStudio = () => <Authorize showPermissions showLogo />;

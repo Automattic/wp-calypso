@@ -70,8 +70,8 @@ export interface AuthorizeProps {
 }
 
 function Authorize( {
-	showLogo = true,
-	showPermissions = true,
+	showLogo = false,
+	showPermissions = false,
 	userCardVariant,
 	approveButtonText,
 	denyButtonText,

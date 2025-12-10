@@ -45,6 +45,12 @@ const PermissionsList = ( { permissions, clientTitle }: PermissionsListProps ) =
 							onClick={ () => setShowAll( ! showAll ) }
 							className="oauth2-connect__show-more"
 							type="button"
+							aria-expanded={ showAll }
+							aria-label={
+								showAll
+									? translate( 'Show less permissions' )
+									: translate( 'Show more permissions' )
+							}
 						>
 							{ showAll
 								? translate( 'Show less' )
