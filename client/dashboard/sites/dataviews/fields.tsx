@@ -16,7 +16,7 @@ import {
 	isSelfHostedJetpackConnected__ES,
 } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
-import { getFormattedWordPressVersion, getFormattedWPVersion } from '../../utils/wp-version';
+import { getFormattedWordPressVersion, formatWordPressVersion } from '../../utils/wp-version';
 import {
 	AsyncEngagementStat,
 	EngagementStat,
@@ -307,7 +307,7 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 		{
 			id: 'wp_version',
 			label: __( 'WP version' ),
-			getValue: ( { item } ) => getFormattedWPVersion( item.wordpress_version ?? '' ),
+			getValue: ( { item } ) => formatWordPressVersion( item.wordpress_version ?? '' ),
 		},
 		{
 			id: 'is_a8c',
