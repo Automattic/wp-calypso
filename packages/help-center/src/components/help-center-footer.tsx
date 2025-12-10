@@ -22,8 +22,7 @@ export const HelpCenterContactButton = () => {
 			button_type: 'Still need help?',
 		} );
 
-		const to = redirectToWpcom ? { pathname: url } : url;
-		navigate( to );
+		navigate( redirectToWpcom ? { pathname: url } : url );
 	};
 
 	return (

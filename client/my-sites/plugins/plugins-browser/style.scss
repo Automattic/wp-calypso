@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .main.is-wide-layout.plugins-browser--site-view {
 	max-width: 100%;
 }
@@ -10,7 +12,7 @@
 	display: flex;
 	align-items: center;
 
-	@media screen and (max-width: 960px) {
+	@media screen and (max-width: $break-large) {
 		.plugins-browser__button {
 			border: none;
 		}
@@ -27,7 +29,7 @@
 		}
 
 		&:not(:last-child) {
-			@include breakpoint-deprecated( ">480px" ) {
+			@media ( min-width: $break-mobile ) {
 				margin-right: 10px;
 			}
 		}
@@ -42,7 +44,7 @@
 
 .plugins-browser__no-results {
 	padding-top: 32px;
-	@include breakpoint-deprecated( "<660px" ) {
+	@media ( max-width: $break-small ) {
 		margin: 0 16px;
 	}
 
@@ -111,7 +113,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		.responsive-toolbar-group__swipe-list > div:not(:first-child) {
 			flex-grow: 1;
 		}
-		.components-button {
+		.components-toolbar__control {
 			height: 44px;
 			border-radius: 4px;
 			padding: 16px;
@@ -133,7 +135,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		}
 	}
 
-	.components-button.is-pressed::before {
+	.components-toolbar__control.is-pressed::before {
 		background: var(--studio-blue-50);
 		left: 0;
 		right: 0;
@@ -167,7 +169,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 	.is-section-plugins:not(:has(.lpc-header-nav-wrapper)) & {
 		padding-top: 165px;
 
-		@media screen and ( max-width: 600px ) {
+		@media screen and ( max-width: $break-small ) {
 			padding-top: 93px;
 		}
 	}
@@ -185,7 +187,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		background-repeat: no-repeat;
 		pointer-events: none;
 
-		@media screen and ( max-width: 600px ) {
+		@media screen and ( max-width: $break-small ) {
 			background-image: url( /calypso/images/plugins/plugins_hero_2_m.svg );
 			left: 0;
 			min-width: 0;
@@ -200,7 +202,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 	body.is-section-plugins #primary & .search-box-header::before {
 		display: none;
 	}
-	@media screen and ( max-width: 600px ) {
+	@media screen and ( max-width: $break-small ) {
 		padding-top: 95px;
 		padding-bottom: 0;
 
@@ -214,13 +216,25 @@ body.is-section-plugins #primary .main.is-logged-out {
 	padding-bottom: 0;
 }
 .plugins-discovery-page__education-footer {
-	padding-bottom: 72px;
+	padding-bottom: 30px;
 
-	@media screen and ( max-width: 600px ) {
-		padding-bottom: 48px;
+	@media screen and ( max-width: $break-small ) {
+		padding-bottom: 20px;
 	}
 }
 .plugins-browser__faq {
 	background-color: var(--studio-gray-100);
 }
 
+.full-width-section.plugins-discovery-page__telex-banner {
+	padding-top: 5px;
+	padding-bottom: 15px;
+
+	@media ( min-width: $break-small ) {
+		padding-top: 24px;
+		padding-bottom: 80px;
+	}
+}
+.plugins-discovery-page__business-plan-banner {
+	padding-bottom: 2px;
+}

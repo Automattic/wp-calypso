@@ -1,14 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import './style.scss';
 
-const FullWidthSection = ( { children, className } ) => {
-	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
-
-	// TODO: Remove this when the marketplace redesign is enabled by default
-	if ( ! isMarketplaceRedesignEnabled ) {
+const FullWidthSection = ( { children, className, enabled = false } ) => {
+	if ( ! enabled ) {
 		return children;
 	}
 
@@ -22,6 +18,7 @@ const FullWidthSection = ( { children, className } ) => {
 FullWidthSection.propTypes = {
 	children: PropTypes.node,
 	className: PropTypes.string,
+	enabled: PropTypes.bool,
 };
 
 export default FullWidthSection;

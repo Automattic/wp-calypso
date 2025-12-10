@@ -29,7 +29,7 @@ export { isAkismetBusiness5k } from './is-akismet-business-5k';
 export { isAkismetFree } from './is-akismet-free';
 export { isAkismetPersonal } from './is-akismet-personal';
 export { isAkismetPro } from './is-akismet-pro';
-export { isAkismetPro5h } from './is-akismet-pro-5h';
+export { isAkismetPro500 } from './is-akismet-pro-500';
 export { isAkismetPlus10k } from './is-akismet-plus-10k';
 export { isAkismetPlus20k } from './is-akismet-plus-20k';
 export { isAkismetPlus30k } from './is-akismet-plus-30k';

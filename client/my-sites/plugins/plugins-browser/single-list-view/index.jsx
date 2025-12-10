@@ -1,8 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
@@ -13,7 +13,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Module variables
  */
-export const SHORT_LIST_LENGTH = isEnabled( 'marketplace-redesign' ) ? 9 : 6;
+export const SHORT_LIST_LENGTH = 9;
 
 const PLUGIN_SLUGS_BLOCKLIST = [];
 
@@ -43,9 +43,12 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 	const categoryName = categories[ category ]?.title || translate( 'Plugins' );
 	const categoryDescription = categories[ category ]?.description || null;
 
-	const isUseCarousel = isEnabled( 'marketplace-redesign' );
+	const isUseCarousel = useIsMarketplaceRedesignEnabled();
 	const isLargeOrAbove = useViewportMatch( 'large' );
 	const isWideOrAbove = useViewportMatch( 'wide' );
+
+	// Use shorter list length when redesign is not enabled
+	const listLength = isUseCarousel ? SHORT_LIST_LENGTH : 6;
 
 	const { localizePath } = useLocalizedPlugins();
 
@@ -75,14 +78,14 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 
 	return (
 		<PluginsBrowserList
-			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
+			plugins={ plugins.slice( 0, listLength ) }
 			listName={ category }
 			listType="discovery"
 			title={ categoryName }
 			subtitle={ categoryDescription }
 			site={ siteSlug }
-			browseAllLink={ plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false }
-			size={ SHORT_LIST_LENGTH }
+			browseAllLink={ plugins.length > listLength ? localizePath( listLink ) : false }
+			size={ listLength }
 			showPlaceholders={ isFetching }
 			currentSites={ sites }
 			variant={ PluginsBrowserListVariant.Fixed }
