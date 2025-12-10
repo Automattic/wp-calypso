@@ -80,8 +80,7 @@ function AgentSetup( {
 	isEligibleForChat,
 }: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
-	const loadedProvidersRef = useRef< LoadedProviders >( {} );
-	const providersLoadedRef = useRef( false );
+	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
 	const { state } = useLocation();
 
@@ -94,9 +93,8 @@ function AgentSetup( {
 		const initializeAgent = async () => {
 			// Load external providers (only once)
 			let providers = loadedProvidersRef.current;
-			if ( ! providersLoadedRef.current ) {
+			if ( ! providers ) {
 				providers = await loadExternalProviders();
-				providersLoadedRef.current = true;
 				loadedProvidersRef.current = providers;
 			}
 
@@ -213,12 +211,12 @@ function AgentSetup( {
 		[]
 	);
 
+	const loadedProviders = loadedProvidersRef.current;
+
 	// Don't render until agent configuration is initialized
-	if ( ! agentConfig ) {
+	if ( ! agentConfig || ! loadedProviders ) {
 		return null;
 	}
-
-	const loadedProviders = loadedProvidersRef.current;
 
 	return (
 		<AgentDock
