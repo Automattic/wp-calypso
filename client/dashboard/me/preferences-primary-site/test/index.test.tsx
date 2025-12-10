@@ -4,7 +4,6 @@
 
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
-import nock from 'nock';
 import { useAuth } from '../../../app/auth';
 import { render } from '../../../test-utils';
 import PreferencesPrimarySite from '../index';
@@ -13,19 +12,6 @@ import type { DeepPartial } from 'utility-types';
 
 const mockPrimarySiteId = 123;
 const mockNewSiteId = 456;
-
-if ( typeof CSS === 'undefined' ) {
-	global.CSS = {} as unknown as typeof CSS;
-}
-
-if ( typeof CSS.escape !== 'function' ) {
-	CSS.escape = function ( value ) {
-		return String( value ).replace( /[^a-zA-Z0-9_\u00A0-\uFFFF-]/g, '\\$&' );
-	};
-}
-
-// Mock scrollIntoView for JSDOM compatibility
-Element.prototype.scrollIntoView = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: jest.fn( () => ( {
@@ -111,17 +97,8 @@ function renderPreferencesPrimarySite() {
 }
 
 afterEach( () => {
-	nock.cleanAll();
 	jest.clearAllMocks();
 	mockSitesQuery.mockClear();
-} );
-
-beforeAll( () => {
-	nock.disableNetConnect();
-} );
-
-afterAll( () => {
-	nock.enableNetConnect();
 } );
 
 test( 'save button is disabled when form is not dirty', async () => {
