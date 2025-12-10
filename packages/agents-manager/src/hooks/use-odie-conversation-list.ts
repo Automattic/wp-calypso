@@ -24,7 +24,7 @@ interface Result {
 	isError: boolean;
 }
 
-export default function useOdieConversations(): Result {
+export default function useOdieConversationList(): Result {
 	const { data: supportInteractions = [], isLoading: isLoadingInteractions } =
 		useGetSupportInteractions( 'odie' );
 
@@ -43,7 +43,7 @@ export default function useOdieConversations(): Result {
 		isError,
 		error,
 	} = useQuery< Conversation[], Error >( {
-		queryKey: [ 'agents-manager-odie-conversations', botSlugs ],
+		queryKey: [ 'agents-manager-odie-conversation-list', botSlugs ],
 		queryFn: async (): Promise< Conversation[] > => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
@@ -90,7 +90,7 @@ export default function useOdieConversations(): Result {
 	useEffect( () => {
 		if ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( '[useOdieConversations] Error loading conversation list:', error );
+			console.error( '[useOdieConversationList] Error loading conversation list:', error );
 		}
 	}, [ error ] );
 

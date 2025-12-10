@@ -6,7 +6,7 @@
 import { Button } from '@wordpress/components';
 import { useCallback, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import useOrchestratorConversations from '../../hooks/use-orchestrator-conversations';
+import useOrchestratorConversationList from '../../hooks/use-orchestrator-conversation-list';
 import ConversationListItem from '../conversation-list-item';
 import ConversationListSkeleton from '../conversation-list-skeleton';
 import './style.scss';
@@ -28,7 +28,7 @@ export default function ConversationHistoryView( {
 	const onSelectConversationRef = useRef( onSelectConversation );
 	onSelectConversationRef.current = onSelectConversation;
 
-	const { conversations, isLoading, isError } = useOrchestratorConversations( {
+	const { conversations, isLoading, isError } = useOrchestratorConversationList( {
 		botId,
 		authProvider,
 	} );

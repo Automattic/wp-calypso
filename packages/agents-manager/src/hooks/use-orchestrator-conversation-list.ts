@@ -18,7 +18,7 @@ interface Result {
 	isError: boolean;
 }
 
-export default function useOrchestratorConversations( { botId, authProvider }: Config ): Result {
+export default function useOrchestratorConversationList( { botId, authProvider }: Config ): Result {
 	const {
 		data: conversations,
 		isLoading,
@@ -26,7 +26,7 @@ export default function useOrchestratorConversations( { botId, authProvider }: C
 		error,
 	} = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when botId changes
-		queryKey: [ 'agents-manager-orchestrator-conversations', botId ],
+		queryKey: [ 'agents-manager-orchestrator-conversation-list', botId ],
 		queryFn: async () => {
 			const result = await listConversationsFromServer( botId, {
 				apiBaseUrl: API_BASE_URL,
@@ -49,7 +49,7 @@ export default function useOrchestratorConversations( { botId, authProvider }: C
 	useEffect( () => {
 		if ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( '[useOrchestratorConversations] Error loading conversation list:', error );
+			console.error( '[useOrchestratorConversationList] Error loading conversation list:', error );
 		}
 	}, [ error ] );
 
