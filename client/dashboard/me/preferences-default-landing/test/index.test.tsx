@@ -233,6 +233,30 @@ test( 'disables save button while saving', async () => {
 	( useDispatch as jest.Mock ).mockReturnValue( {
 		createSuccessNotice: mockCreateSuccessNotice,
 	} );
+
+	// Override the mock to make mutationFn return a delayed promise
+	const { userPreferencesMutation } = require( '@automattic/api-queries' );
+	const originalMutation = userPreferencesMutation();
+	userPreferencesMutation.mockReturnValue( {
+		...originalMutation,
+		mutationFn: jest.fn( () => {
+			return new Promise( ( resolve ) => {
+				setTimeout( () => {
+					resolve( {
+						'sites-landing-page': {
+							useSitesAsLandingPage: true,
+							updatedAt: Date.now(),
+						},
+						'reader-landing-page': {
+							useReaderAsLandingPage: false,
+							updatedAt: Date.now(),
+						},
+					} );
+				}, 100 );
+			} );
+		} ),
+	} );
+
 	const user = userEvent.setup();
 	renderPreferencesDefaultLanding();
 
