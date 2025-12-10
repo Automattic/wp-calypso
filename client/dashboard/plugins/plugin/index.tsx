@@ -45,55 +45,49 @@ export function PluginTabs( {
 	const [ activeTab, setActiveTab ] = useState< 'installed' | 'available' >( 'installed' );
 
 	return (
-		<VStack spacing={ 6 }>
-			<Tabs
-				selectedTabId={ activeTab }
-				onSelect={ ( tabId: 'installed' | 'available' ) => setActiveTab( tabId ) }
-			>
-				<Tabs.TabList>
-					<Tabs.Tab tabId="installed">
-						<SectionHeader
-							level={ 3 }
-							title={ sprintf(
-								// translators: %(count) is the number of sites the plugin is installed on.
-								_n(
-									'Installed on %(count)d site',
-									'Installed on %(count)d sites',
-									sitesWithThisPlugin.length
-								),
-								{ count: sitesWithThisPlugin.length }
-							) }
-						/>
-					</Tabs.Tab>
-					<Tabs.Tab tabId="available">
-						<SectionHeader level={ 3 } title={ __( 'Available on' ) } />
-					</Tabs.Tab>
-				</Tabs.TabList>
+		<Tabs
+			selectedTabId={ activeTab }
+			onSelect={ ( tabId: 'installed' | 'available' ) => setActiveTab( tabId ) }
+		>
+			<Tabs.TabList>
+				<Tabs.Tab tabId="installed">
+					<SectionHeader
+						level={ 3 }
+						title={ sprintf(
+							// translators: %(count) is the number of sites the plugin is installed on.
+							_n(
+								'Installed on %(count)d site',
+								'Installed on %(count)d sites',
+								sitesWithThisPlugin.length
+							),
+							{ count: sitesWithThisPlugin.length }
+						) }
+					/>
+				</Tabs.Tab>
+				<Tabs.Tab tabId="available">
+					<SectionHeader level={ 3 } title={ __( 'Available on' ) } />
+				</Tabs.Tab>
+			</Tabs.TabList>
 
-				<Tabs.TabPanel tabId="installed">
-					<VStack spacing={ 6 }>
-						<SitesWithThisPlugin
-							pluginSlug={ pluginSlug }
-							isLoading={ isLoading }
-							plugin={ plugin }
-							pluginBySiteId={ pluginBySiteId }
-							sitesWithThisPlugin={ sitesWithThisPlugin }
-						/>
-					</VStack>
-				</Tabs.TabPanel>
+			<Tabs.TabPanel tabId="installed">
+				<SitesWithThisPlugin
+					pluginSlug={ pluginSlug }
+					isLoading={ isLoading }
+					plugin={ plugin }
+					pluginBySiteId={ pluginBySiteId }
+					sitesWithThisPlugin={ sitesWithThisPlugin }
+				/>
+			</Tabs.TabPanel>
 
-				<Tabs.TabPanel tabId="available">
-					<VStack spacing={ 6 }>
-						<SitesWithoutThisPlugin
-							pluginSlug={ pluginSlug }
-							pluginName={ pluginName }
-							isLoading={ isLoading }
-							sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
-						/>
-					</VStack>
-				</Tabs.TabPanel>
-			</Tabs>
-		</VStack>
+			<Tabs.TabPanel tabId="available">
+				<SitesWithoutThisPlugin
+					pluginSlug={ pluginSlug }
+					pluginName={ pluginName }
+					isLoading={ isLoading }
+					sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
+				/>
+			</Tabs.TabPanel>
+		</Tabs>
 	);
 }
 
