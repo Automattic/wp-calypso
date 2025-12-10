@@ -61,7 +61,8 @@ export const licensesContext: Callback = ( context, next ) => {
 
 export const billingContext: Callback = ( context, next ) => {
 	if ( isEnabled( 'a4a-bd-checkout' ) ) {
-		window.location.href = EXTERNAL_WPCOM_BILLING_HISTORY_URL;
+		window.location.replace( EXTERNAL_WPCOM_BILLING_HISTORY_URL );
+		return;
 	}
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
@@ -76,7 +77,8 @@ export const billingContext: Callback = ( context, next ) => {
 
 export const invoicesContext: Callback = ( context, next ) => {
 	if ( isEnabled( 'a4a-bd-checkout' ) ) {
-		window.location.href = EXTERNAL_WPCOM_BILLING_HISTORY_URL;
+		window.location.replace( EXTERNAL_WPCOM_BILLING_HISTORY_URL );
+		return;
 	}
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
@@ -91,7 +93,8 @@ export const invoicesContext: Callback = ( context, next ) => {
 
 export const paymentMethodsContext: Callback = ( context, next ) => {
 	if ( isEnabled( 'a4a-bd-checkout' ) ) {
-		window.location.href = EXTERNAL_WPCOM_PAYMENT_METHODS_URL;
+		window.location.replace( EXTERNAL_WPCOM_PAYMENT_METHODS_URL );
+		return;
 	}
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
@@ -106,7 +109,7 @@ export const paymentMethodsContext: Callback = ( context, next ) => {
 
 export const paymentMethodsAddContext: Callback = ( context, next ) => {
 	if ( isEnabled( 'a4a-bd-checkout' ) ) {
-		page.redirect( EXTERNAL_WPCOM_PAYMENT_METHODS_URL );
+		window.location.replace( EXTERNAL_WPCOM_PAYMENT_METHODS_URL );
 		return;
 	}
 	context.secondary = <PurchasesSidebar path={ context.path } />;
