@@ -216,6 +216,7 @@ export default function PluginsList() {
 										<Text
 											className="plugin-switcher-item-name"
 											dangerouslySetInnerHTML={ { __html: item.name } }
+											title={ item.name }
 										/>
 										<Text variant="muted">
 											{ updatesText ? `${ sitesText }, ${ updatesText }` : sitesText }
