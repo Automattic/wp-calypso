@@ -10,10 +10,10 @@ import { wpcom } from '../wpcom-fetcher';
  * underlying REST endpoint. The plugin `slug` is supplied by the caller
  * and sent in the request body.
  */
-export function installPlugin( site: number | string, slug: string ): Promise< unknown > {
+export function installPlugin( siteId: number, slug: string ): Promise< unknown > {
 	return wpcom.req.post(
 		{
-			path: `/sites/${ encodeURIComponent( String( site ) ) }/plugins/install`,
+			path: `/sites/${ encodeURIComponent( String( siteId ) ) }/plugins/install`,
 			apiVersion: '1.1',
 		},
 		{
