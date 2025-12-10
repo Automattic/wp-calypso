@@ -183,11 +183,12 @@ function AgentSetup( {
 					await agentManager.abortCurrentRequest( agentId );
 					// Remove existing agent to start fresh
 					agentManager.removeAgent( agentId );
-					// Clear stored session ID
-					clearSessionId();
-					// Clear route state to prevent repeated new chat initialization
-					navigate( '/chat', { replace: true } );
 				}
+
+				// Clear stored session ID
+				clearSessionId();
+				// Clear route state to prevent repeated new chat initialization
+				navigate( '/chat', { replace: true } );
 			}
 
 			setAgentConfig( config );
