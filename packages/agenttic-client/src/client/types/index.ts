@@ -103,13 +103,19 @@ export interface ConversationHistoryPart extends DataPart {
 	};
 }
 
-export interface ProgressDataPart {
-	type: 'progress' | 'data';
-	data: {
-		summary: string;
-	};
-	metadata?: Record< string, unknown >;
-}
+export type ProgressDataPart =
+	| ( DataPart & {
+			data: {
+				summary: string;
+			};
+	  } )
+	| {
+			type: 'progress';
+			data: {
+				summary: string;
+			};
+			metadata?: Record< string, unknown >;
+	  };
 
 /**
  * WordPress Ability interface
