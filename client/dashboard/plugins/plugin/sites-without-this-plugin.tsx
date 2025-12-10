@@ -163,7 +163,7 @@ export const SitesWithoutThisPlugin = ( {
 								// In some cases the API can return HTTP 200 with an error code
 								// in the response body (e.g., plugin_already_installed). Detect
 								// that case here and treat it like the error path below.
-								// The gets updated by invalidating the plugins cache once more
+								// That gets updated by invalidating the plugins cache once more
 								const responseErrorCode = getPluginInstallErrorCode( response );
 
 								if ( responseErrorCode === 'plugin_already_installed' ) {

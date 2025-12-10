@@ -27,15 +27,13 @@ export const wpOrgPluginQuery = ( slug: string, locale: string ) =>
 
 export const installPluginMutation = () =>
 	mutationOptions( {
-		mutationFn: ( vars: { siteId: number | string; slug: string } ) =>
+		mutationFn: ( vars: { siteId: number; slug: string } ) =>
 			installPlugin( vars.siteId, vars.slug ),
 		onSuccess: ( _data, vars ) => {
 			// Refresh the plugin data so usePlugin sees the newly installed plugin.
 			// We invalidate both the per-site plugins list and the aggregated plugins
 			// query that `usePlugin` relies on to compute sitesWith/WithoutThisPlugin.
-			if ( typeof vars.siteId === 'number' ) {
-				invalidateSitePlugins( vars.siteId );
-			}
+			invalidateSitePlugins( vars.siteId );
 			invalidatePlugins();
 		},
 	} );
