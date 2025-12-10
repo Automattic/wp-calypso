@@ -1,5 +1,6 @@
-import { __experimentalHeading as Heading } from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { SectionHeader } from '../../../components/section-header';
 import CancellationMainContent from './cancellation-main-content';
 import DomainOptionsContent from './domain-options-content';
 import type { CancelPurchaseState } from './types';
@@ -44,17 +45,19 @@ export default function CancellationPreSurveyContent( {
 	showMarketplaceDialog,
 }: CancellationPreSurveyContentProps ) {
 	return (
-		<>
-			<Heading level={ 4 }>
-				{
+		<VStack>
+			<SectionHeader
+				title={ sprintf(
 					/* translators: %(purchaseName)s is the name of the product which was purchased */
-					sprintf( __( 'Manage %(purchaseName)s' ), {
+					__( 'Manage %(purchaseName)s' ),
+					{
 						purchaseName: purchase.is_domain ? purchase.meta : purchase.product_name,
-					} )
-				}
-			</Heading>
+					}
+				) }
+				level={ 2 }
+			/>
 
-			<p className="cancel-purchase__left">
+			<Text>
 				{ state.showDomainOptionsStep ? (
 					<DomainOptionsContent
 						purchase={ purchase }
@@ -82,7 +85,7 @@ export default function CancellationPreSurveyContent( {
 						}
 					/>
 				) }
-			</p>
-		</>
+			</Text>
+		</VStack>
 	);
 }

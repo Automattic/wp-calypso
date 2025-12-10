@@ -1,3 +1,4 @@
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { ButtonStack } from '../../../components/button-stack';
 import CancelButton from './cancel-button';
 import CancellationFullText from './cancellation-full-text';
@@ -28,15 +29,15 @@ export default function PlanProductRevertContent( {
 	onCancelClick,
 }: PlanProductRevertContentProps ) {
 	return (
-		<>
+		<VStack spacing={ 4 }>
 			{ ! includedDomainPurchase && (
-				<p>
+				<Text>
 					<CancellationFullText
 						purchase={ purchase }
 						cancelBundledDomain={ state.cancelBundledDomain ?? false }
 						includedDomainPurchase={ includedDomainPurchase }
 					/>
-				</p>
+				</Text>
 			) }
 
 			{ ! state.surveyShown && (
@@ -62,6 +63,6 @@ export default function PlanProductRevertContent( {
 					onKeepSubscriptionClick={ onKeepSubscriptionClick }
 				/>
 			</ButtonStack>
-		</>
+		</VStack>
 	);
 }

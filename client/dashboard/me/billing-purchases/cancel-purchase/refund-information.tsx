@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { hasAmountAvailableToRefund, isOneTimePurchase } from '../../../utils/purchase';
 import type { Purchase, Domain } from '@automattic/api-core';
@@ -125,20 +126,17 @@ const CancelPurchaseRefundInformation = ( {
 	}
 
 	return (
-		<div className="cancel-purchase__info">
+		<VStack>
 			{ Array.isArray( text ) ? (
 				text.map( ( paragraph, index ) => (
-					<p
-						key={ purchase?.ID + '_refund_p_' + index }
-						className="cancel-purchase__refund-details"
-					>
+					<Text as="p" key={ purchase?.ID + '_refund_p_' + index }>
 						{ paragraph }
-					</p>
+					</Text>
 				) )
 			) : (
-				<p className="cancel-purchase__refund-details">{ text }</p>
+				<Text as="p">{ text }</Text>
 			) }
-		</div>
+		</VStack>
 	);
 };
 

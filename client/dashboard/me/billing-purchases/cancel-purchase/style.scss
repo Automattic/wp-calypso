@@ -1,11 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.cancel-purchase__wrapper-card {
-	padding: 32px;
-	margin-top: 12px;
-}
-
 .cancel-purchase__domain-options {
 	.card {
 		margin: 16px 0;
@@ -32,40 +27,6 @@
 
 .confirm-cancel-domain__formatted-header.formatted-header {
 	margin: 16px 0 8px;
-}
-
-.cancel-purchase__features {
-	line-height: 1.4;
-
-	p {
-		margin: 16px 0 8px 0;
-		font-size: $font-body-small;
-		line-height: 1.4;
-	}
-
-	ul.cancel-purchase__features-list {
-		list-style: none;
-		margin: 0 0 1.5em;
-		padding: 0;
-
-		li {
-			list-style: none;
-			display: flex;
-			font-size: $font-body-small;
-
-			span {
-				margin: auto 0;
-				flex: 1;
-			}
-
-			.gridicon {
-				flex-shrink: 0;
-				margin-inline-end: 8px;
-				margin-top: 2px;
-				color: var(--color-error-40);
-			}
-		}
-	}
 }
 
 .cancel-purchase__refund-string {
@@ -97,31 +58,5 @@
 .cancel-purchase__button {
 	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
-	}
-}
-
-.cancel-purchase__changes {
-	ul.cancel-purchase__changes-list {
-		list-style: none;
-		margin: 0 0 1.5em;
-		padding: 0;
-
-		li {
-			list-style: none;
-			display: flex;
-			font-size: $font-body-small;
-
-			span {
-				margin: auto 0;
-				flex: 1;
-			}
-
-			.gridicon {
-				flex-shrink: 0;
-				margin-inline-end: 8px;
-				margin-top: 2px;
-				color: var(--color-warning);
-			}
-		}
 	}
 }
