@@ -2,6 +2,7 @@ import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -11,6 +12,7 @@ import { getClientReferralQueryArgs } from 'calypso/a8c-for-agencies/sections/ma
 import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
+import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import ClientCheckoutV2Error from '../../checkout-v2-error';
@@ -45,6 +47,9 @@ function ClientCheckoutContent( { expressMode }: CheckoutProps ) {
 	const userEmail = useSelector( ( state ) => getCurrentUser( state )?.email );
 
 	const emailMismatchWithReferralClient = referral?.client?.email !== userEmail;
+
+	// Access checkout store to set email for express checkout
+	const checkoutStoreDispatch = useDispatch( CHECKOUT_STORE );
 
 	// Add products to cart when referral data is loaded
 	useEffect( () => {
@@ -103,6 +108,17 @@ function ClientCheckoutContent( { expressMode }: CheckoutProps ) {
 		queryArgs.referralId,
 		queryArgs.agencyId,
 	] );
+
+	// Set referral client email in checkout store for express checkout
+	useEffect( () => {
+		if ( expressMode && referral?.client?.email && checkoutStoreDispatch ) {
+			debug(
+				'[A4A Checkout] Setting referral client email in checkout store:',
+				referral.client.email
+			);
+			checkoutStoreDispatch.updateEmail( referral.client.email );
+		}
+	}, [ expressMode, referral?.client?.email, checkoutStoreDispatch ] );
 
 	// Debugging: Set a timeout to force showing the checkout after 10 seconds
 	useEffect( () => {
