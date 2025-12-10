@@ -141,17 +141,13 @@ function Authorize( {
 				<p>{ translate( 'Loading authorization details…' ) }</p>
 			</div>
 		);
-	}
-
-	if ( error ) {
+	} else if ( error ) {
 		content = (
 			<Notice status="error" isDismissible={ false }>
 				{ error.message || translate( 'An error occurred while loading authorization details.' ) }
 			</Notice>
 		);
-	}
-
-	if ( meta ) {
+	} else {
 		content = (
 			<div className="oauth2-connect">
 				{ meta.user && <UserCard user={ meta.user } variant={ userCardVariant || 'horizontal' } /> }
