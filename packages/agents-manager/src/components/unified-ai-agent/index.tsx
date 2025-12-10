@@ -89,6 +89,7 @@ function AgentSetup( {
 	// Empty `sessionId` by default for new chat
 	let sessionId = '';
 
+	// For existing chat, use stored session ID
 	if ( ! isNewChat ) {
 		// Prefer route state `sessionId`, fall back to stored `sessionId` (server-generated via Agenttic UI)
 		sessionId = state?.sessionId || getSessionId();
