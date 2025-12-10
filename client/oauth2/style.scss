@@ -15,7 +15,8 @@
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
-	width: 432px;
+	max-width: 432px;
+	width: 100%;
 	margin: 0 auto;
 	padding: 24px 16px;
 }
@@ -25,6 +26,8 @@
 	border: 1px solid #dcdcde;
 	border-radius: 4px;
 	background: #fff;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .oauth2-connect__user-card-horizontal {
