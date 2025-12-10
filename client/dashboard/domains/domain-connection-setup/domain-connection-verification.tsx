@@ -87,12 +87,14 @@ export default function DomainConnectionVerification( {
 							{ hasCloudflareIpAddresses
 								? createInterpolateElement(
 										__(
-											'<domainName/> is using Cloudflare, which hides dns records, so we can’t verify them the usual way. We’ll still confirm that your domain name points to <appName/>.com. Please check that your <link>Cloudflare</link> dns settings include the required records.'
+											'<domainName/> is using Cloudflare, which hides DNS records, so we can’t verify them the usual way. We’ll still confirm that your domain name points to <appName/>.com. Please check that your <cloudflare/> DNS settings include the required records.'
 										),
 										{
 											domainName: <>{ domainName }</>,
 											appName: <>{ appName }</>,
-											link: <ExternalLink href="https://www.cloudflare.com/" children={ null } />,
+											cloudflare: (
+												<ExternalLink href="https://www.cloudflare.com/">Cloudflare</ExternalLink>
+											),
 										}
 								  )
 								: __(
@@ -119,8 +121,14 @@ export default function DomainConnectionVerification( {
 						) }
 						{ hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom && (
 							<Notice variant="info">
-								{ __(
-									'Your domain appears to be set up with Cloudflare and it resolves to WordPress.com.'
+								{ createInterpolateElement(
+									__(
+										'<domainName/> appears to be set up with Cloudflare and it resolves to <appName/>.'
+									),
+									{
+										domainName: <>{ domainName }</>,
+										appName: <>{ appName }</>,
+									}
 								) }
 							</Notice>
 						) }
