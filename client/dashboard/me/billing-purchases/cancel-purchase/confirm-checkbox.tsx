@@ -29,7 +29,7 @@ export default function ConfirmCheckbox( {
 
 	return (
 		<VStack spacing={ 4 }>
-			<Text as="b">{ __( 'Have a question before cancelling?' ) }</Text>
+			<Text weight="bold">{ __( 'Have a question before cancelling?' ) }</Text>
 			<Text>
 				{ createInterpolateElement(
 					__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
