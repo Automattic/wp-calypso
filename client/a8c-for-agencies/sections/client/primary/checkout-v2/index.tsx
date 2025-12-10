@@ -158,6 +158,7 @@ function ClientCheckoutContent( { expressMode }: CheckoutProps ) {
 				redirectTo={ window.location.origin + '/client/subscriptions' }
 				customizedPreviousPath="/client/subscriptions"
 				siteSlug=""
+				isLoggedOutCart={ expressMode }
 				siteId={ 0 }
 			/>
 		</div>
