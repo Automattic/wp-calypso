@@ -2,8 +2,10 @@ import { getUseUnifiedExperienceFromInlineData } from '@automattic/agents-manage
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
-interface MeResponse {
-	unified_ai_chat?: boolean;
+interface CalypsoPreferencesResponse {
+	calypso_preferences?: {
+		unified_ai_chat?: boolean;
+	};
 }
 
 /**
@@ -16,7 +18,7 @@ interface MeResponse {
  *    injected server-side by Jetpack's Agents Manager.
  *
  * 2. **Calypso app** (wordpress.com):
- *    The flag is fetched from the `/me?fields=unified_ai_chat` endpoint.
+ *    The flag is fetched from the `/me/preferences` endpoint.
  *
  * The rollout logic lives in Agents Manager (Jetpack) via the
  * `agents_manager_use_unified_experience` filter.
@@ -31,15 +33,14 @@ export function useUnifiedAiChat( enabled = true ) {
 				return inlineValue;
 			}
 
-			// 2. Fall back to /me endpoint for Calypso app (wordpress.com)
+			// 2. Fall back to /me/preferences endpoint for Calypso app (wordpress.com)
 			if ( canAccessWpcomApis() ) {
-				const response: MeResponse = await wpcomRequest( {
-					path: '/me',
+				const response: CalypsoPreferencesResponse = await wpcomRequest( {
+					path: '/me/preferences',
 					apiVersion: '1.1',
-					query: 'fields=unified_ai_chat',
 				} );
 
-				return response.unified_ai_chat ?? false;
+				return response.calypso_preferences?.unified_ai_chat ?? false;
 			}
 
 			// 3. No data available - default to false
