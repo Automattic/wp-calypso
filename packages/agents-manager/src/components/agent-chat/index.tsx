@@ -11,7 +11,9 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
+import { Button } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
+import { useNavigate } from 'react-router-dom';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import CustomEmptyView from '../empty-view';
@@ -75,6 +77,7 @@ export default function AgentChat( {
 			} ),
 		[ markdownComponents, markdownExtensions ]
 	);
+	const navigate = useNavigate();
 
 	return (
 		<AgentUI.Container
@@ -100,8 +103,12 @@ export default function AgentChat( {
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader isChatDocked={ isDocked } onClose={ onClose } options={ chatHeaderOptions } />
+
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				<AgentUI.Footer>
+					<Button variant="link" onClick={ () => navigate( -1 ) }>
+						Back
+					</Button>
 					<AgentUI.Suggestions />
 					<AgentUI.Notice />
 					<AgentUI.Input />

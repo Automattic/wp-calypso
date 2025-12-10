@@ -1,6 +1,9 @@
+import { MessageDivider } from '@automattic/agenttic-ui';
 import { SummaryButton } from '@automattic/components';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +13,13 @@ import { getOdieIdFromInteraction } from '../../utils';
 import { useCurrentSupportInteraction } from '../use-current-support-interaction';
 import { useManageSupportInteraction } from '../use-manage-support-interaction';
 import { useOdieChat } from '../use-odie-chat';
-import type { ReturnedChat, Message, OdieChat, SupportInteraction } from '../../types';
+import type {
+	ReturnedChat,
+	Message,
+	OdieChat,
+	SupportInteraction,
+	AgentticMessage,
+} from '../../types';
 import type { AgentManager } from '@automattic/agenttic-client';
 
 type Agent = Awaited< ReturnType< AgentManager[ 'createAgent' ] > >;
@@ -66,7 +75,7 @@ export const useSendOdieMessage = () => {
 							message: message.content,
 							role: message.role,
 							...( version && { version } ),
-							context: { selectedSiteId, url, pathname },
+							context: { ...message.context, selectedSiteId, url, pathname },
 						},
 				  } )
 				: apiFetch< ReturnedChat >( {
@@ -113,7 +122,7 @@ function useTransformMessageToAgenttic(
 	const [ isPending, setIsPending ] = useState( false );
 
 	const handleAgentHandover = useCallback(
-		async ( chatId: number, triggeringMessage: string ) => {
+		async ( chatId: number, sourceMessageId: string, triggeringMessage: string ) => {
 			setIsPending( true );
 			const newChat = await onTransferToOrchestrator();
 			if ( ! newChat ) {
@@ -133,11 +142,14 @@ function useTransformMessageToAgenttic(
 				},
 			} );
 			await sendOdieMessage( {
-				content: 'Agent handover',
+				content: 'orchestrator',
 				role: 'navigation',
 				type: 'message',
-				metadata: {
-					session_id: task.sessionId,
+				context: {
+					source_message_id: sourceMessageId,
+					destination_chat_id: task.sessionId,
+					destination_chat_type: 'orchestrator',
+					site_id: null,
 				},
 			} );
 			setIsPending( false );
@@ -149,23 +161,58 @@ function useTransformMessageToAgenttic(
 	);
 
 	return useCallback(
-		( messages: Message[], chatId: number | null ) => {
+		( messages: Message[], chatId: number | null ): AgentticMessage[] => {
 			return messages.map( ( message, index ) => {
 				if ( message.role === 'navigation' ) {
 					return {
-						actions: [],
-						archived: false,
-						content: [],
 						id: message.message_id?.toString() ?? '',
-						showIcon: true,
+						role: 'agent' as const,
 						timestamp: message.received as number,
-						role: message.role,
+						archived: false,
+						showIcon: true,
+						content: [
+							{
+								type: 'component' as const,
+								component: () => (
+									<MessageDivider
+										message={
+											createInterpolateElement(
+												__( 'Switched to <a>a new chat</a>', __i18n_text_domain__ ),
+												{
+													a: (
+														<Button
+															variant="link"
+															onClick={ () =>
+																navigate( '/chat', {
+																	state: { sessionId: message.context?.destination_chat_id },
+																} )
+															}
+														/>
+													),
+												}
+											) as unknown as string
+										}
+									/>
+								),
+								timestamp: message.received as number,
+							},
+						],
 					};
 				}
 				if ( chatId && message.context?.flags?.agent_handover === '1' ) {
 					const previousMessage = messages[ index - 1 ];
+					const alreadyHandedOver = messages.find(
+						( m ) => m.context?.source_message_id === message.message_id?.toString()
+					);
+
+					const description = alreadyHandedOver
+						? __( 'Handled by the Build assistant', __i18n_text_domain__ )
+						: __( 'A new chat will start', __i18n_text_domain__ );
 
 					return {
+						timestamp: message.received as number,
+						archived: false,
+						showIcon: true,
 						content: [
 							{
 								type: 'text',
@@ -175,16 +222,29 @@ function useTransformMessageToAgenttic(
 								type: 'component',
 								component: () => (
 									<SummaryButton
-										title={ __( 'Switch to Build assistant', __i18n_text_domain__ ) }
+										title={
+											alreadyHandedOver
+												? __( 'Continue with the Build assistant', __i18n_text_domain__ )
+												: __( 'Switch to Build assistant', __i18n_text_domain__ )
+										}
 										description={
 											isPending
 												? __( 'Forwarding your messages…', __i18n_text_domain__ )
-												: __( 'A new chat will start', __i18n_text_domain__ )
+												: description
 										}
 										disabled={ isPending }
-										isBusy={ isPending }
 										onClick={ () =>
-											handleAgentHandover( chatId, previousMessage.content as string )
+											alreadyHandedOver
+												? navigate( `/chat?startedFrom=odie&chatId=${ chatId }`, {
+														state: {
+															sessionId: alreadyHandedOver?.context?.destination_chat_id,
+														},
+												  } )
+												: handleAgentHandover(
+														chatId,
+														message.message_id?.toString() ?? '',
+														previousMessage.content as string
+												  )
 										}
 										className="agent-handover-summary-button"
 									/>
@@ -192,11 +252,8 @@ function useTransformMessageToAgenttic(
 							},
 						],
 						role: message.role as 'agent',
-						timestamp: message.received as number,
 						id: message.message_id?.toString() ?? '',
 						actions: [],
-						archived: false,
-						showIcon: true,
 					};
 				}
 				return {
@@ -210,7 +267,7 @@ function useTransformMessageToAgenttic(
 				};
 			} );
 		},
-		[ handleAgentHandover, isPending ]
+		[ handleAgentHandover, isPending, navigate ]
 	);
 }
 

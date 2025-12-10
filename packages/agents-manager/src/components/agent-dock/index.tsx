@@ -148,7 +148,7 @@ export default function AgentDock( {
 		messages: odieMessages,
 		isProcessing: isOdieProcessing,
 		sendMessage: sendOdieMessage,
-	} = useManagedOdieChat( { onTransferToOrchestrator: handleNewChat, maybeLoadConversation } );
+	} = useManagedOdieChat( { onTransferToOrchestrator: handleNewChat } );
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		const newChatMenuItem = {
@@ -190,7 +190,7 @@ export default function AgentDock( {
 
 	const Chat = (
 		<AgentChat
-			messages={ messages }
+			messages={ messages as any }
 			suggestions={ suggestions }
 			isProcessing={ isProcessing }
 			error={ error }

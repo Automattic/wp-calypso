@@ -102,6 +102,9 @@ export type OdieUserTracking = {
 };
 
 export type Context = {
+	source_message_id?: string;
+	destination_chat_id?: string;
+	destination_chat_type?: string;
 	nudge_id?: string | undefined;
 	section_name?: string;
 	session_id?: string;
@@ -257,9 +260,9 @@ export type SupportInteraction = {
 };
 export interface AgentticMessage {
 	id: string;
-	role: 'user' | 'agent' | 'navigation';
+	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component' | 'context';
+		type: 'text' | 'component' | 'context';
 		text?: string;
 		image_url?: string;
 		component?: React.ComponentType;
