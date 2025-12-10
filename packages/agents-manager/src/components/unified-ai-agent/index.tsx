@@ -91,6 +91,26 @@ function AgentSetup( {
 	// Load external providers and initialize agent config
 	useEffect( () => {
 		const initializeAgent = async () => {
+			// Handle new chat: clear existing session and navigate to clean state
+			if ( isNewChat ) {
+				const agentManager = getAgentManager();
+
+				if ( agentManager.hasAgent( ORCHESTRATOR_AGENT_ID ) ) {
+					// Abort any ongoing requests
+					await agentManager.abortCurrentRequest( ORCHESTRATOR_AGENT_ID );
+					// Remove existing agent to start fresh
+					agentManager.removeAgent( ORCHESTRATOR_AGENT_ID );
+				}
+
+				// Clear stored session ID
+				clearSessionId();
+				// Clear route state to prevent repeated new chat initialization
+				navigate( '/chat', { replace: true } );
+
+				// Don't set config now - the navigation above will re-run this effect
+				return;
+			}
+
 			// Load external providers (only once)
 			let providers = loadedProvidersRef.current;
 			if ( ! providers ) {
@@ -163,24 +183,6 @@ function AgentSetup( {
 						environment: 'calypso',
 					} ),
 				};
-			}
-
-			// If starting a new chat, clear existing session
-			if ( isNewChat ) {
-				const agentManager = getAgentManager();
-				const agentId = config.agentId;
-
-				if ( agentManager.hasAgent( agentId ) ) {
-					// Abort any ongoing requests
-					await agentManager.abortCurrentRequest( agentId );
-					// Remove existing agent to start fresh
-					agentManager.removeAgent( agentId );
-				}
-
-				// Clear stored session ID
-				clearSessionId();
-				// Clear route state to prevent repeated new chat initialization
-				navigate( '/chat', { replace: true } );
 			}
 
 			setAgentConfig( config );
