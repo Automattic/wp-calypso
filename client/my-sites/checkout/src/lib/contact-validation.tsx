@@ -109,11 +109,53 @@ async function runContactValidationCheck(
 async function runLoggedOutEmailValidationCheck(
 	contactInfo: ManagedContactDetails,
 	reduxDispatch: CalypsoDispatch,
-	translate: ReturnType< typeof useTranslate >
+	translate: ReturnType< typeof useTranslate >,
+	shouldCheckForEmailTaken?: boolean
 ): Promise< unknown > {
 	const email = contactInfo.email?.value ?? '';
-	return getSignupEmailValidationResult( email, ( newEmail: string ) =>
-		getEmailTakenLoginRedirectMessage( newEmail, reduxDispatch, translate )
+	const originalResponse = await wpcomValidateSignupEmail( {
+		email,
+		is_from_registrationless_checkout: true,
+	} );
+
+	// Check if we're in A4A express checkout and email already exists
+	if ( shouldCheckForEmailTaken && isSignupValidationResponse( originalResponse ) ) {
+		const emailResponse: Record< string, string > = originalResponse.messages?.email ?? {};
+		const emailExists = emailResponse.hasOwnProperty( 'taken' );
+
+		if ( emailExists ) {
+			const { href, pathname } = window.location;
+			const currentURLQueryParameters = Object.fromEntries(
+				new URL( href ).searchParams.entries()
+			);
+			// Redirect back to express checkout after login with query params preserved
+			const redirectTo = addQueryArgs(
+				{ ...currentURLQueryParameters, flow: 'coming_from_login' },
+				pathname
+			);
+			const loginUrl = login( { redirectTo, emailAddress: email } );
+
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
+					email,
+				} )
+			);
+
+			// Immediately redirect to login page
+			window.location.href = loginUrl;
+			// Return a failed validation response to stop further processing
+			return {
+				success: false,
+				messages: {},
+			};
+		}
+	}
+
+	// Transform the response using the existing logic, passing the cached response
+	return getSignupEmailValidationResult(
+		email,
+		( newEmail: string ) => getEmailTakenLoginRedirectMessage( newEmail, reduxDispatch, translate ),
+		originalResponse
 	);
 }
 
@@ -152,11 +194,18 @@ export async function validateContactDetails(
 	};
 
 	if ( isLoggedOutCart ) {
+		// Check if this is an A4A siteless checkout by examining cart products
+		const isA4AExpressCheckout = responseCart.products.some(
+			( product ) => product.extra?.isA4ASitelessCheckout
+		);
+
 		const loggedOutValidationResult = await runLoggedOutEmailValidationCheck(
 			contactInfo,
 			reduxDispatch,
-			translate
+			translate,
+			isA4AExpressCheckout
 		);
+
 		if ( shouldDisplayErrors ) {
 			handleContactValidationResult( {
 				translate,
@@ -411,12 +460,15 @@ function handleContactValidationResult( {
 
 async function getSignupEmailValidationResult(
 	email: string,
-	emailTakenLoginRedirect: ( email: string ) => TranslateResult
+	emailTakenLoginRedirect: ( email: string ) => TranslateResult,
+	cachedResponse?: SignupValidationResponse
 ) {
-	const response = await wpcomValidateSignupEmail( {
-		email,
-		is_from_registrationless_checkout: true,
-	} );
+	const response =
+		cachedResponse ??
+		( await wpcomValidateSignupEmail( {
+			email,
+			is_from_registrationless_checkout: true,
+		} ) );
 	const signupValidationErrorResponse = getSignupValidationErrorResponse(
 		response,
 		email,
