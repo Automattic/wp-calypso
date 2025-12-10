@@ -100,6 +100,17 @@ function Authorize( {
 		} );
 	}, [ oauth2Client, setHeaders, translate ] );
 
+	useEffect( () => {
+		if ( ! meta ) {
+			return;
+		}
+
+		// Redirect to login if user is not logged in
+		if ( ! meta.flags.user_logged_in && meta.links?.calypso_login_url ) {
+			window.location.replace( meta.links.calypso_login_url );
+		}
+	}, [ meta ] );
+
 	const onApprove = () => {
 		if ( ! meta ) {
 			return;

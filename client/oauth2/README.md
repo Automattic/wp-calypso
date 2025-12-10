@@ -48,6 +48,7 @@ The main orchestrator component that manages the authorization flow.
 
 **Key Responsibilities:**
 - Fetching and displaying authorization metadata
+- Redirecting to login if user is not authenticated
 - Managing loading, error, and success states
 - Rendering user information, permissions, and action buttons
 - Coordinating with the login context for headers
@@ -133,14 +134,25 @@ Controller determines variant based on client_id
                          ↓
 useAuthorizeMeta fetches authorization metadata
                          ↓
-Authorize component renders user card, permissions, actions
+          ┌──────────────▼──────────────┐
+          │   User logged in?           │
+          └──────┬─────────────┬────────┘
+           NO    │             │  YES
+          ┌──────▼──────┐      │
+          │  Redirect   │      │
+          │  to Login   │      │
+          └─────────────┘      │
+                               ▼
+          Authorize component renders user card, permissions, actions
                          ↓
-User clicks Approve/Deny
+          User clicks Approve/Deny
                          ↓
-handleApprove/handleDeny processes action
+          handleApprove/handleDeny processes action
                          ↓
-Redirect to authorization/denial URL
+          Redirect to authorization/denial URL
 ```
+
+**Login Redirect:** If the user is not logged in (`meta.flags.user_logged_in === false`), they are automatically redirected to the login page (`meta.links.calypso_login_url`) before seeing the authorization screen. After login, they return to complete the authorization.
 
 ## Customization Guide
 
