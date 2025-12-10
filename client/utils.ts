@@ -112,6 +112,11 @@ export function isCIAB( partner: string ): boolean {
 	return /\/ciab/.test( redirectTo ) || ( isAuth && service === partner );
 }
 
+/**
+ * Sort social login buttons based on the current context.
+ *
+ * This is a quick and dirty solution to put PayPal first for CIAB when trying to log in/sign up.
+ */
 export function sortLoginButtons< T extends { service: string } >( buttons: T[] ): T[] {
 	if ( ! isCIAB( 'paypal' ) ) {
 		return buttons;

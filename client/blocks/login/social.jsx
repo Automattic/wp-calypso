@@ -107,7 +107,33 @@ class SocialLoginForm extends Component {
 			},
 		];
 
+		const usernameOrEmailButton = {
+			service: 'username-or-email',
+			enabled: true,
+			button: (
+				<UsernameOrEmailButton
+					key="social-login-button-username-or-email"
+					onClick={ this.props.resetLastUsedAuthenticationMethod }
+				/>
+			),
+		};
+
 		buttons = sortLoginButtons( buttons.filter( ( button ) => button.enabled ) );
+
+		// Some login options may be present only in certain flows (e.g. PayPal), so if the last used
+		// one is only shown conditionally, the username option will need to be appended as it
+		// cannot replace the last used one.
+		if ( lastUsedAuthenticationMethod ) {
+			const lastUsedButtonIndex = buttons.findIndex(
+				( button ) => button.service === lastUsedAuthenticationMethod
+			);
+
+			if ( lastUsedButtonIndex > -1 ) {
+				buttons[ lastUsedButtonIndex ] = usernameOrEmailButton;
+			} else {
+				buttons.push( usernameOrEmailButton );
+			}
+		}
 
 		return (
 			<Card
@@ -115,18 +141,7 @@ class SocialLoginForm extends Component {
 			>
 				<div className="auth-form__social-buttons">
 					<div className="auth-form__social-buttons-container">
-						{ buttons.map( ( item ) => {
-							if ( isSocialFirst && item.service === lastUsedAuthenticationMethod ) {
-								return (
-									<UsernameOrEmailButton
-										key="social-login-button-username-or-email"
-										onClick={ this.props.resetLastUsedAuthenticationMethod }
-									/>
-								);
-							}
-
-							return item.button;
-						} ) }
+						{ buttons.map( ( item ) => item.button ) }
 					</div>
 				</div>
 			</Card>

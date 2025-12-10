@@ -150,7 +150,7 @@ class SocialSignupForm extends Component {
 			{
 				service: 'username-or-email',
 				enabled: isSocialFirst,
-				button: () => (
+				button: (
 					<UsernameOrEmailButton
 						key="username-or-email"
 						onClick={ () => setCurrentStep( 'email' ) }
