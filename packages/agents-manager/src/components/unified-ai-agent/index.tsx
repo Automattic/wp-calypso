@@ -86,14 +86,8 @@ function AgentSetup( {
 	const { state } = useLocation();
 
 	const isNewChat = state?.isNewChat === true;
-	// Empty `sessionId` by default for new chat
-	let sessionId = '';
-
-	// For existing chat, use stored session ID
-	if ( ! isNewChat ) {
-		// Prefer route state `sessionId`, fall back to stored `sessionId` (server-generated via Agenttic UI)
-		sessionId = state?.sessionId || getSessionId();
-	}
+	// Use empty `sessionId` for new chat, otherwise use state or stored session ID
+	const sessionId = isNewChat ? '' : state?.sessionId || getSessionId();
 
 	// Load external providers and initialize agent config
 	useEffect( () => {
