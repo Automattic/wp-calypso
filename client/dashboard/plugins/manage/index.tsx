@@ -155,7 +155,7 @@ export default function PluginsList() {
 			}
 			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
-			<Grid columns={ 2 } templateColumns="40% 1fr">
+			<Grid columns={ 2 } templateColumns="25% 1fr">
 				<DataViewsCard>
 					<SwitcherContent
 						initialView={ view }
