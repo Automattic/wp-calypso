@@ -6,6 +6,7 @@ import type {
 	JsonRpcId,
 	Message,
 	MessageSendParams,
+	ProgressDataPart,
 	SendMessageRequest,
 	TextPart,
 	Tool,
@@ -106,6 +107,29 @@ export function extractTextFromMessage( message: Message ): string {
 		.filter( ( part ): part is TextPart => part.type === 'text' )
 		.map( ( part ) => part.text )
 		.join( ' ' );
+}
+
+/**
+ * Extract progress message from a message's parts
+ * Returns the summary from the first progress part found
+ * @param message
+ */
+export function extractProgressFromMessage(
+	message: Message
+): string | undefined {
+	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {
+		return undefined;
+	}
+
+	// Find progress parts - they are DataParts with type 'data' and data.summary property
+	const progressPart = message.parts.find(
+		( part ): part is ProgressDataPart =>
+			part.type === 'data' &&
+			'summary' in part.data &&
+			typeof part.data.summary === 'string'
+	);
+
+	return progressPart ? progressPart.data.summary : undefined;
 }
 
 /**

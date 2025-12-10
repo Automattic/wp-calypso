@@ -5,6 +5,7 @@ export {
 	createTextPart,
 	createSendMessageRequest,
 	extractTextFromMessage,
+	extractProgressFromMessage,
 	extractToolCallsFromMessage,
 	createToolDataPart,
 	createToolResultDataPart,
