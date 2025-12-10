@@ -1,4 +1,4 @@
-import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
+import { DotcomFeatures, HostingFeatures, JetpackModules } from '@automattic/api-core';
 import {
 	siteLatestAtomicTransferQuery,
 	siteLastBackupQuery,
@@ -28,7 +28,7 @@ import { addTransientViewPropertiesToQueryParams } from '../../utils/dashboard-v
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
-import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isP2 } from '../../utils/site-types';
 import { getSiteFormattedUrl } from '../../utils/site-url';
@@ -279,28 +279,28 @@ export function Preview__ES( { site }: { site: DashboardSiteListSite } ) {
 }
 
 export function AsyncEngagementStat( {
-	siteId,
+	site,
 	type,
-	isEligible,
 }: {
-	siteId: number;
+	site?: Site;
 	type: 'visitors' | 'views' | 'likes';
-	isEligible?: boolean;
 } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
+	const isEligible =
+		! site?.is_deleted && ( ! site?.jetpack || hasJetpackModule( site, JetpackModules.STATS ) );
 
 	const { data: stats, isLoading } = useQuery( {
-		...siteEngagementStatsQuery( siteId ),
-		enabled: isEligible && inView,
+		...siteEngagementStatsQuery( site?.ID ?? 0 ),
+		enabled: !! site?.ID && isEligible && inView,
 	} );
 
-	if ( ! isEligible ) {
-		return <IneligibleIndicator />;
-	}
-
 	const renderContent = () => {
-		if ( isLoading ) {
+		if ( ! site || isLoading ) {
 			return <LoadingIndicator label="100" />;
+		}
+
+		if ( ! isEligible ) {
+			return <IneligibleIndicator />;
 		}
 
 		return stats?.currentData[ type ];
@@ -313,25 +313,26 @@ export function EngagementStat( { value }: { value: number | null } ) {
 	return typeof value !== 'number' ? <IneligibleIndicator /> : value;
 }
 
-export function LastBackup( { siteId, isEligible }: { siteId: number; isEligible?: boolean } ) {
+export function LastBackup( { site }: { site?: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
+	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS );
 
 	const {
 		data: lastBackup,
 		isLoading,
 		isError,
 	} = useQuery( {
-		...siteLastBackupQuery( siteId ),
-		enabled: isEligible && inView,
+		...siteLastBackupQuery( site?.ID ?? 0 ),
+		enabled: !! site?.ID && isEligible && inView,
 	} );
 
-	if ( ! isEligible ) {
-		return <IneligibleIndicator />;
-	}
-
 	const renderContent = () => {
-		if ( isLoading ) {
+		if ( ! site || isLoading ) {
 			return <LoadingIndicator label="Unknown" />;
+		}
+
+		if ( ! isEligible ) {
+			return <IneligibleIndicator />;
 		}
 
 		if ( ! lastBackup || isError ) {
@@ -344,21 +345,22 @@ export function LastBackup( { siteId, isEligible }: { siteId: number; isEligible
 	return <span ref={ ref }>{ renderContent() }</span>;
 }
 
-export function Uptime( { siteId, isEligible }: { siteId: number; isEligible?: boolean } ) {
+export function Uptime( { site }: { site?: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
+	const isEligible = site && hasJetpackModule( site, JetpackModules.MONITOR );
 
 	const { data: uptime, isLoading } = useQuery( {
-		...siteUptimeQuery( siteId, 'week' ),
-		enabled: isEligible && inView,
+		...siteUptimeQuery( site?.ID ?? 0, 'week' ),
+		enabled: !! site?.ID && isEligible && inView,
 	} );
 
-	if ( ! isEligible ) {
-		return <IneligibleIndicator />;
-	}
-
 	const renderContent = () => {
-		if ( isLoading ) {
+		if ( ! site || isLoading ) {
 			return <LoadingIndicator label="100%" />;
+		}
+
+		if ( ! isEligible ) {
+			return <IneligibleIndicator />;
 		}
 
 		return uptime ? `${ uptime }%` : <IneligibleIndicator />;
@@ -394,26 +396,31 @@ export function PHPVersion__ES( { site }: { site: DashboardSiteListSite } ) {
 	);
 }
 
-export function MediaStorage( { siteId }: { siteId: number } ) {
+export function MediaStorage( { site }: { site?: Site } ) {
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
 		fallbackInView: true,
 	} );
 
 	const { data: mediaStorage, isLoading } = useQuery( {
-		...siteMediaStorageQuery( siteId ),
-		enabled: inView,
+		...siteMediaStorageQuery( site?.ID ?? 0 ),
+		enabled: !! site?.ID && inView,
 	} );
 
-	const value = mediaStorage ? (
-		`${
-			Math.round( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
-		}%`
-	) : (
-		<IneligibleIndicator />
-	);
+	const renderContent = () => {
+		if ( ! site || isLoading ) {
+			return <LoadingIndicator label="100%" />;
+		}
 
-	return <span ref={ ref }>{ ! isLoading ? value : <LoadingIndicator label="100%" /> }</span>;
+		if ( ! mediaStorage ) {
+			return <IneligibleIndicator />;
+		}
+
+		const { storage_used_bytes, max_storage_bytes } = mediaStorage;
+		return `${ Math.round( ( storage_used_bytes / max_storage_bytes ) * 1000 ) / 10 }%`;
+	};
+
+	return <span ref={ ref }>{ renderContent() }</span>;
 }
 
 function SiteLaunchNag( { site }: { site: Site } ) {

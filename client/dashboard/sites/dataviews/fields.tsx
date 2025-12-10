@@ -1,18 +1,14 @@
-import { HostingFeatures, JetpackModules } from '@automattic/api-core';
-import { queryClient } from '@automattic/api-queries';
+import { JetpackModules } from '@automattic/api-core';
+import { queryClient, siteBySlugQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import SiteIcon, { SiteIconRenderer } from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
-import {
-	hasHostingFeature,
-	hasHostingFeature__ES,
-	hasJetpackModule,
-	hasJetpackModule__ES,
-} from '../../utils/site-features';
+import { hasJetpackModule } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
@@ -76,12 +72,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'backup',
 			label: __( 'Backup' ),
-			render: ( { item } ) => (
-				<LastBackup
-					siteId={ item.ID }
-					isEligible={ hasHostingFeature( item, HostingFeatures.BACKUPS ) }
-				/>
-			),
+			render: ( { item } ) => <LastBackup site={ item } />,
 			enableSorting: false,
 		},
 		{
@@ -173,12 +164,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'uptime',
 			label: __( '7-day uptime' ),
-			render: ( { item } ) => (
-				<Uptime
-					siteId={ item.ID }
-					isEligible={ hasJetpackModule( item, JetpackModules.MONITOR ) }
-				/>
-			),
+			render: ( { item } ) => <Uptime site={ item } />,
 			enableSorting: false,
 		},
 		{
@@ -199,31 +185,13 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'views',
 			label: __( '7-day views' ),
-			render: ( { item } ) => (
-				<AsyncEngagementStat
-					siteId={ item.ID }
-					type="views"
-					isEligible={
-						! item.is_deleted &&
-						( ! item.jetpack || hasJetpackModule( item, JetpackModules.STATS ) )
-					}
-				/>
-			),
+			render: ( { item } ) => <AsyncEngagementStat site={ item } type="views" />,
 			enableSorting: false,
 		},
 		{
 			id: 'likes',
 			label: __( '7-day likes' ),
-			render: ( { item } ) => (
-				<AsyncEngagementStat
-					siteId={ item.ID }
-					type="likes"
-					isEligible={
-						! item.is_deleted &&
-						( ! item.jetpack || hasJetpackModule( item, JetpackModules.STATS ) )
-					}
-				/>
-			),
+			render: ( { item } ) => <AsyncEngagementStat site={ item } type="likes" />,
 			enableSorting: false,
 		},
 		{
@@ -235,7 +203,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'storage',
 			label: __( 'Storage' ),
-			render: ( { item } ) => <MediaStorage siteId={ item.ID } />,
+			render: ( { item } ) => <MediaStorage site={ item } />,
 			enableSorting: false,
 		},
 		{
@@ -249,6 +217,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 	];
 }
 
+// Use the site returned by siteBySlugQuery to render async fields (e.g. Backup) so the structure remains consistent.
 function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< DashboardSiteListSite >[] {
 	return [
 		{
@@ -300,12 +269,10 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 		{
 			id: 'backup',
 			label: __( 'Backup' ),
-			render: ( { item } ) => (
-				<LastBackup
-					siteId={ item.blog_id }
-					isEligible={ hasHostingFeature__ES( item, HostingFeatures.BACKUPS ) }
-				/>
-			),
+			render: function BackupField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <LastBackup site={ site } />;
+			},
 			enableSorting: false,
 		},
 		{
@@ -383,12 +350,10 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 		{
 			id: 'uptime',
 			label: __( '7-day uptime' ),
-			render: ( { item } ) => (
-				<Uptime
-					siteId={ item.blog_id }
-					isEligible={ hasJetpackModule__ES( item, JetpackModules.MONITOR ) }
-				/>
-			),
+			render: function UptimeField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <Uptime site={ site } />;
+			},
 			enableSorting: false,
 		},
 		{
@@ -406,16 +371,10 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 		{
 			id: 'likes',
 			label: __( '7-day likes' ),
-			render: ( { item } ) => (
-				<AsyncEngagementStat
-					siteId={ item.blog_id }
-					type="likes"
-					isEligible={
-						! item.deleted &&
-						( ! item.is_jetpack || hasJetpackModule__ES( item, JetpackModules.STATS ) )
-					}
-				/>
-			),
+			render: function LikesField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <AsyncEngagementStat site={ site } type="likes" />;
+			},
 			enableSorting: false,
 		},
 		{
@@ -427,7 +386,10 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 		{
 			id: 'storage',
 			label: __( 'Storage' ),
-			render: ( { item } ) => <MediaStorage siteId={ item.blog_id } />,
+			render: function StorageField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <MediaStorage site={ site } />;
+			},
 			enableSorting: false,
 		},
 		{
