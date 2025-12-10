@@ -30,7 +30,7 @@ const USE_CASE_OPTIONS: Array< { value: UseCaseOption; label: string } > = [
 	{ value: 'content', label: __( 'Make changes to my site content' ) },
 	{ value: 'redesign', label: __( 'Redesign my site' ) },
 	{ value: 'images', label: __( 'Create and edit images' ) },
-	{ value: 'block-notes', label: __( 'Collaborate with the assistant using Block Notes ) },
+	{ value: 'block-notes', label: __( 'Collaborate with the assistant using Block Notes' ) },
 	{ value: 'other', label: __( 'Other' ) },
 ];
 
