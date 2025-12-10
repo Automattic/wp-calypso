@@ -1,4 +1,5 @@
 import type { Badge } from '@automattic/ui';
+import type { ButtonHTMLAttributes } from 'react';
 
 export type Density = 'low' | 'medium';
 
@@ -19,7 +20,11 @@ export type SummaryButtonBadgeProps = {
 	intent?: React.ComponentProps< typeof Badge >[ 'intent' ];
 };
 
-export interface SummaryButtonProps {
+export interface SummaryButtonProps
+	extends Omit<
+		ButtonHTMLAttributes< HTMLButtonElement >,
+		'href' | 'onClick' | 'description' | 'title'
+	> {
 	/**
 	 * The main label that identifies the setting or feature the button links to.
 	 */
@@ -67,12 +72,6 @@ export interface SummaryButtonProps {
 	 * @default true
 	 */
 	showArrow?: boolean;
-	/**
-	 * Determines if the element is disabled. If `true`, this will force a `button`
-	 * element to be rendered, even when an `href` is given.
-	 * @default false
-	 */
-	disabled?: boolean;
 	/**
 	 * Optional class name to be applied to the component.
 	 */

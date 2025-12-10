@@ -9,7 +9,7 @@ import {
 import { isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import React, { ComponentProps, forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { SummaryButtonProps } from './types';
 import './style.scss';
 
@@ -45,7 +45,7 @@ function UnforwardedSummaryButton(
 		showArrow = true,
 		density = 'low',
 		...props
-	}: ComponentProps< typeof Button > & SummaryButtonProps,
+	}: SummaryButtonProps,
 	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
 ) {
 	const hasLowDensity = density === 'low';
