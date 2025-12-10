@@ -21,6 +21,7 @@ const DEFAULT_VIEW: View = {
 };
 
 export default function SwitcherContent< T >( {
+	initialView = DEFAULT_VIEW,
 	items,
 	searchableFields,
 	getItemUrl,
@@ -31,6 +32,7 @@ export default function SwitcherContent< T >( {
 	onClose,
 	onItemClick,
 }: PropsWithChildren< {
+	initialView?: View;
 	items?: T[];
 	searchableFields: Field< T >[];
 	getItemUrl: ( item: T ) => string;
@@ -40,7 +42,7 @@ export default function SwitcherContent< T >( {
 	onClose: () => void;
 	onItemClick?: () => void;
 } > ) {
-	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const [ view, setView ] = useState< View >( initialView );
 
 	const fields = useMemo( () => {
 		return searchableFields.map( ( searchableField ) => ( {

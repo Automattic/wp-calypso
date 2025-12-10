@@ -7,6 +7,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { __experimentalGrid as Grid, Icon } from '@wordpress/components';
+import { filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -28,6 +29,12 @@ import './style.scss';
 
 const ICON_SIZE = 32;
 const FALLBACK_ICON_SIZE = 24;
+const view: View = {
+	type: 'list',
+	page: 1,
+	perPage: 100,
+	sort: { field: 'name', direction: 'asc' },
+};
 const searchableFields = [
 	{
 		id: 'name',
@@ -45,10 +52,23 @@ export default function PluginsList() {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Bind this to the switcher
 	const searchParams = pluginsManageRoute.useSearch();
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
-	const plugins = useMemo(
-		() => mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
-		[ sitesById, sitesPlugins ]
+	const fields = useMemo( () => {
+		return searchableFields.map( ( searchableField ) => ( {
+			...searchableField,
+			enableGlobalSearch: true,
+		} ) );
+	}, [] );
+	const { data: plugins } = useMemo(
+		() =>
+			filterSortAndPaginate(
+				mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
+				view,
+				fields
+			),
+		[ sitesById, sitesPlugins, fields ]
 	);
+
+	// console.debug( 'plugins', plugins );
 	const {
 		isLoading: isLoadingPlugin,
 		plugin,
@@ -56,7 +76,6 @@ export default function PluginsList() {
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
 	} = usePlugin( pluginSlug || plugins[ 0 ]?.slug );
-	// console.debug( 'plugins', plugins );
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 	const { data: marketplaceSearch } = useQuery(
 		marketplaceSearchQuery( {
@@ -114,6 +133,7 @@ export default function PluginsList() {
 			<Grid columns={ 2 } templateColumns="40% 1fr">
 				<DataViewsCard>
 					<SwitcherContent
+						initialView={ view }
 						items={ pluginsWithIcon }
 						getItemUrl={ ( item ) => `/plugins/manage/${ item.slug }` }
 						renderItemMedia={ ( { item } ) => {
