@@ -346,38 +346,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.26":
-  version: 0.1.28
-  resolution: "@automattic/agenttic-ui@npm:0.1.28"
-  dependencies:
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
-    "@radix-ui/react-scroll-area": "npm:^1.2.9"
-    "@radix-ui/react-slot": "npm:^1.2.3"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/i18n": "npm:^6.1.0"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    framer-motion: "npm:^12.23.0"
-    lucide-react: "npm:^0.525.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
-    react-markdown: "npm:^10.1.0"
-    react-textarea-autosize: "npm:^8.5.9"
-    remark-gfm: "npm:^4.0.1"
-    unified: "npm:^11.0.5"
-    use-debounce: "npm:^10.0.6"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  checksum: ade6d1d730d0e3245fc781a9125e7483a543424cedb5e8323107d40715b9674de149c9b4824f2e52f874541fc2aaa1be59fb9a9a57df8290727a39c574a2d05a
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-ui@npm:^0.1.29":
+"@automattic/agenttic-ui@npm:^0.1.26, @automattic/agenttic-ui@npm:^0.1.29":
   version: 0.1.29
   resolution: "@automattic/agenttic-ui@npm:0.1.29"
   dependencies:
