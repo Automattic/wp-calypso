@@ -9,7 +9,8 @@ export {
 	getOdieIdFromInteraction,
 } from './support-interaction-utils';
 export { isCSATMessage, hasCSATMessage, hasSubmittedCSATRating } from './csat';
-import type { Chat, Message } from '../types';
+import { ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../constants';
+import type { Chat, Message, SupportInteraction } from '../types';
 
 export const getIsRequestingHumanSupport = ( message: Message ) => {
 	return message.context?.flags?.forward_to_human_support ?? false;
@@ -22,3 +23,17 @@ export const getIsLastBotMessage = ( chat: Chat, message: Message ) => {
 		chat?.messages[ chat?.messages?.length - 1 ].message_id === message.message_id
 	);
 };
+
+export function getBotSlug(
+	supportInteraction: SupportInteraction | undefined,
+	newInteractionsBotSlug: string
+): string {
+	if ( supportInteraction ) {
+		// Legacy support interactions have their botSlug set to `''`. We need to use the legacy bot slug for them.
+		return supportInteraction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
+	}
+
+	// When the interaction is undefined, it means we're sending the first message to Odie, which is done before the interaction is created.
+	// In this case, we use the new interactions bot slug.
+	return newInteractionsBotSlug;
+}

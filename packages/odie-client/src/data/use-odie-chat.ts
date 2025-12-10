@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../constants';
 import { useOdieAssistantContext } from '../context';
-import { generateUUID } from '../utils';
+import { generateUUID, getBotSlug } from '../utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import type { OdieChat, ReturnedChat } from '../types';
 
@@ -12,11 +11,10 @@ import type { OdieChat, ReturnedChat } from '../types';
  * @param chatId - The chat ID to fetch
  */
 export const useOdieChat = ( chatId: number | null, defaultVersion?: string | null ) => {
-	const { version = defaultVersion } = useOdieAssistantContext();
+	const { version = defaultVersion, newInteractionsBotSlug } = useOdieAssistantContext();
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 
-	// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
-	const botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
+	const botSlug = getBotSlug( supportInteraction, newInteractionsBotSlug );
 
 	return useQuery< OdieChat, Error >( {
 		queryKey: [ 'odie-chat', botSlug, chatId, version ],

@@ -9,7 +9,7 @@ import {
 import { isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import React, { forwardRef } from 'react';
+import React, { ComponentProps, forwardRef } from 'react';
 import { SummaryButtonProps } from './types';
 import './style.scss';
 
@@ -38,17 +38,14 @@ function BadgeList( { badges }: { badges: SummaryButtonProps[ 'badges' ] } ) {
 function UnforwardedSummaryButton(
 	{
 		title,
-		href,
 		decoration,
 		description,
 		strapline,
 		badges,
 		showArrow = true,
-		onClick,
-		disabled,
 		density = 'low',
 		...props
-	}: SummaryButtonProps,
+	}: ComponentProps< typeof Button > & SummaryButtonProps,
 	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
 ) {
 	const hasLowDensity = density === 'low';
@@ -57,10 +54,7 @@ function UnforwardedSummaryButton(
 			// Forward additional props to support standard attributes like mouse events.
 			{ ...props }
 			ref={ ref }
-			href={ href }
-			onClick={ onClick }
 			className={ clsx( 'summary-button', `has-density-${ density }`, props.className ) }
-			disabled={ disabled }
 			accessibleWhenDisabled
 		>
 			<HStack spacing={ 4 } justify="flex-start" alignment="flex-start" as="span">
