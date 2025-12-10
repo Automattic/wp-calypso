@@ -87,7 +87,7 @@ export default function DomainConnectionVerification( {
 							{ hasCloudflareIpAddresses
 								? createInterpolateElement(
 										__(
-											'<domainName/> is using Cloudflare, which hides dns records, so we can’t verify them the usual way. We’ll still confirm that your domain name points to <appName/>.com. Please check that your <link>Cloudflare</link> dns settings include the required records./>'
+											'<domainName/> is using Cloudflare, which hides dns records, so we can’t verify them the usual way. We’ll still confirm that your domain name points to <appName/>.com. Please check that your <link>Cloudflare</link> dns settings include the required records.'
 										),
 										{
 											domainName: <>{ domainName }</>,
@@ -102,11 +102,13 @@ export default function DomainConnectionVerification( {
 					) }
 
 					<VStack spacing={ 4 }>
-						<Text size="medium" weight={ 500 }>
-							{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
-								? __( 'Name server verification' )
-								: __( 'DNS record verification' ) }
-						</Text>
+						{ ! hasCloudflareIpAddresses && (
+							<Text size="medium" weight={ 500 }>
+								{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
+									? __( 'Name server verification' )
+									: __( 'DNS record verification' ) }
+							</Text>
+						) }
 
 						{ ! hasCloudflareIpAddresses && (
 							<DnsRecordsTable
