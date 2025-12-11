@@ -1,0 +1,46 @@
+import { useExperiment } from 'calypso/lib/explat';
+
+type PlanDifferentiatorsExperimentVariant =
+	| 'long_set'
+	| 'long_set_diff'
+	| 'long_set_stacked'
+	| 'short_set_stacked'
+	| 'short_set_stacked_diff';
+
+type PlanDifferentiatorsExperimentResult = {
+	isLoading: boolean;
+	variant?: PlanDifferentiatorsExperimentVariant;
+	/**
+	 * When true, show "Everything in X, plus:" with incremental features.
+	 * Applies to: long_set_stacked, short_set_stacked, short_set_stacked_diff
+	 */
+	isStacked: boolean;
+	/**
+	 * When true, use the long/full feature set instead of simplified.
+	 * Applies to: long_set, long_set_diff, long_set_stacked
+	 */
+	isLongSet: boolean;
+	/**
+	 * When true, show the differentiator header (3 bullet points).
+	 * Applies to: long_set_diff, short_set_stacked_diff
+	 */
+	showDifferentiatorHeader: boolean;
+};
+
+function usePlanDifferentiatorsExperiment(): PlanDifferentiatorsExperimentResult {
+	const [ isLoading, assignment ] = useExperiment( 'calypso_plans_differentiators_20251210' );
+	const variant = ( assignment?.variationName ?? undefined ) as
+		| PlanDifferentiatorsExperimentVariant
+		| undefined;
+
+	return {
+		isLoading,
+		variant,
+		isStacked: variant?.includes( 'stacked' ) ?? false,
+		isLongSet: variant?.includes( 'long_set' ) ?? false,
+		showDifferentiatorHeader: variant?.includes( 'diff' ) ?? false,
+	};
+}
+
+export default usePlanDifferentiatorsExperiment;
+export type { PlanDifferentiatorsExperimentVariant, PlanDifferentiatorsExperimentResult };
