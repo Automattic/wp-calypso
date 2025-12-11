@@ -367,11 +367,10 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 // preference into account (without the query param, users can still navigate to
 // `/domains/manage` manually, meaning the old dashboard is still accessible when
 // the user is specifically trying to go there).
-const maybeRedirectToMultiSiteDashboard = ( context, next ) => {
+const maybeRedirectToDashboard = ( context, next ) => {
 	const originAdminBar = context.query.origin_admin_bar;
 	if ( originAdminBar !== 'wpcom' ) {
-		next();
-		return;
+		return next();
 	}
 
 	const { dispatch, getState } = context.store;
@@ -402,5 +401,5 @@ export default {
 	transferDomainPrecheck,
 	useMyDomain,
 	redirectDomainToSite,
-	maybeRedirectToMultiSiteDashboard,
+	maybeRedirectToDashboard,
 };
