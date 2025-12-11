@@ -18,9 +18,3 @@
 .cancel-purchase__refund-information {
 	font-size: $font-body-small;
 }
-
-.cancel-purchase__button {
-	@include breakpoint-deprecated( "<660px" ) {
-		width: 100%;
-	}
-}
