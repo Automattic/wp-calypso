@@ -53,7 +53,6 @@
 		"cookie-banner": true,
 		"google-my-business": true,
 		"global-styles/on-personal-plan": false,
-		"help-center/workflow": false,
 		"help": true,
 		"help/gpt-response": true,
 		"home/layout-dev": true,

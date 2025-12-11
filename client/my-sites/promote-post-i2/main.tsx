@@ -153,6 +153,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		data: payments,
 		isLoading: isLoadingPayments,
 		isFetching: isFetchingPayments,
+		error: paymentsError,
 	} = usePaymentsQuery(
 		arePaymentsEnabled,
 		fetchPaymentsForCurrentSite ? selectedSiteId : undefined
@@ -496,7 +497,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 					) : (
 						<PaymentsList
 							isLoading={ isLoadingPayments }
-							isError={ campaignError as DSPMessage }
+							isError={ paymentsError as DSPMessage }
 							isFetching={ isFetchingPayments }
 							payments={ payments?.payments }
 							selectedPaymentsFilter={ fetchPaymentsForCurrentSite }
