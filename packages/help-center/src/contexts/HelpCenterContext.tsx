@@ -1,6 +1,5 @@
 import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/constants';
 import { useContext, createContext } from '@wordpress/element';
-import { useNewInteractionsBotConfig } from '../hooks/use-new-interaction-bot-config';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
@@ -81,7 +80,10 @@ export const HelpCenterRequiredContextProvider: React.FC< {
 	value: Partial< HelpCenterRequiredInformation > &
 		Pick< HelpCenterRequiredInformation, 'currentUser' | 'sectionName' >;
 } > = function ( { children, value } ) {
-	const botConfig = useNewInteractionsBotConfig();
+	const botConfig = {
+		newInteractionsBotSlug: ODIE_NEW_INTERACTIONS_BOT_SLUG,
+		newInteractionsBotVersion: undefined,
+	};
 
 	return (
 		<HelpCenterRequiredContext.Provider
