@@ -34,7 +34,7 @@ const CancelPurchaseFeatureList = ( {
 			<Text as="p">
 				{ sprintf(
 					/* translators: %(expire)s is the date the product will expire */
-					__( "Your plan will expire on %(expiry)s and you'll lose access to:" ),
+					__( 'Your plan will expire on %(expiry)s and you’ll lose access to:' ),
 					{
 						expiry: expirationDate,
 					}
