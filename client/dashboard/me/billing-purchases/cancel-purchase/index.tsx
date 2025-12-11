@@ -1198,10 +1198,9 @@ export default function CancelPurchase() {
 					) }
 				/>
 			}
+			notices={ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
 		>
 			<VStack>
-				{ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
-
 				<Card>
 					<CardBody>
 						<CancelPurchaseForm
