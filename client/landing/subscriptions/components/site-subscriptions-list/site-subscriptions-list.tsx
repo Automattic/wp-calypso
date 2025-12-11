@@ -1,12 +1,14 @@
 import { SubscriptionManager } from '@automattic/data-stores';
+import { SiteSubscriptionsResponseItem } from '@automattic/data-stores/src/reader';
 import { Spinner, __experimentalHStack as HStack, Icon, Tooltip } from '@wordpress/components';
 import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestRecommendedBlogsListItems } from 'calypso/state/reader/lists/actions';
 import { Notice, NoticeType } from '../notice';
+import { VirtualizedList } from '../virtualized-list';
 import SiteSubscriptionRow from './site-subscription-row';
 import './styles/site-subscriptions-list.scss';
 
@@ -30,6 +32,11 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 	const { subscriptions, totalCount } = data;
 
 	const isCompactLayout = layout === 'compact';
+
+	const filteredSubscriptions = useMemo(
+		() => subscriptions.filter( ( subscription ) => ! subscription.isDeleted ),
+		[ subscriptions ]
+	);
 
 	// Fetch recommended blogs data once for all subscription rows
 	useEffect( () => {
@@ -82,7 +89,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 	}
 
 	return (
-		<ul
+		<div
 			className={ `site-subscriptions-list${
 				isCompactLayout ? ' site-subscriptions-list--compact' : ''
 			}` }
@@ -132,14 +139,19 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				</span>
 				<span className="actions-cell" role="columnheader" />
 			</HStack>
-			{ subscriptions.map( ( siteSubscription ) => (
-				<SiteSubscriptionRow
-					key={ `sites.siteRow.${ siteSubscription.ID }` }
-					layout={ layout }
-					{ ...siteSubscription }
-				/>
-			) ) }
-		</ul>
+
+			<VirtualizedList< SiteSubscriptionsResponseItem > items={ filteredSubscriptions }>
+				{ ( { item, key, style, registerChild } ) => (
+					<SiteSubscriptionRow
+						{ ...item }
+						key={ `${ item.ID }-${ key }` }
+						style={ style }
+						forwardedRef={ registerChild }
+						layout={ layout }
+					/>
+				) }
+			</VirtualizedList>
+		</div>
 	);
 };
 

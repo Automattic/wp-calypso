@@ -1,4 +1,4 @@
-import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
+import { LineChart } from '@automattic/charts';
 import clsx from 'clsx';
 import moment from 'moment';
 import { useEffect, useState, useMemo } from 'react';
@@ -135,32 +135,30 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 
 	return (
 		<div className={ clsx( 'stats-line-chart', 'stats-realtime-chart' ) }>
-			<ThemeProvider theme={ jetpackTheme }>
-				<LineChart
-					data={ chartDataSeries }
-					withTooltips
-					withGradientFill
-					height={ 425 }
-					margin={ { left: 15, top: 20, bottom: 20 } }
-					options={ {
-						yScale: {
-							type: 'linear',
-							domain: [ 0, maxViews ],
-							zero: false,
+			<LineChart
+				data={ chartDataSeries }
+				withTooltips
+				withGradientFill
+				height={ 425 }
+				margin={ { left: 15, top: 20, bottom: 20 } }
+				options={ {
+					yScale: {
+						type: 'linear',
+						domain: [ 0, maxViews ],
+						zero: false,
+					},
+					axis: {
+						x: {
+							tickFormat: formatTimeTick,
 						},
-						axis: {
-							x: {
-								tickFormat: formatTimeTick,
-							},
-							y: {
-								orientation: 'right',
-								tickFormat: formatViews,
-								numTicks: maxViews > 4 ? 4 : 1,
-							},
+						y: {
+							orientation: 'right',
+							tickFormat: formatViews,
+							numTicks: maxViews > 4 ? 4 : 1,
 						},
-					} }
-				/>
-			</ThemeProvider>
+					},
+				} }
+			/>
 		</div>
 	);
 };

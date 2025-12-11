@@ -11,6 +11,7 @@ import {
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { MARKETPLACE_TYPE_SESSION_STORAGE_KEY } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -35,6 +36,9 @@ function PartnerOfferCard( { item }: { item: PartnerOffer } ) {
 	const offerType = filterOptions.offerTypes.find( ( option ) => option.value === item.offerType );
 
 	const handleCTAClick = () => {
+		if ( item.cta.purchase_type ) {
+			sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, item.cta.purchase_type );
+		}
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_exclusive_offers_cta_click', {
 				offer_id: item.id,

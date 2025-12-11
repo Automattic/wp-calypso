@@ -85,7 +85,7 @@ export const useFields = ( {
 					{ value: DomainSubtype.DOMAIN_REGISTRATION, label: __( 'Domain name registration' ) },
 					{ value: DomainSubtype.DOMAIN_TRANSFER, label: __( 'Domain name transfer' ) },
 					{ value: DomainSubtype.DOMAIN_CONNECTION, label: __( 'Domain name connection' ) },
-					{ value: DomainSubtype.DEFAULT_ADDRESS, label: __( 'Default site address' ) },
+					{ value: DomainSubtype.DEFAULT_ADDRESS, label: __( 'Included site address' ) },
 				],
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
