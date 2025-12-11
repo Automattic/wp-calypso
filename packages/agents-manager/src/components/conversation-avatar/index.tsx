@@ -1,6 +1,6 @@
 /**
  * ConversationAvatar Component
- * Displays avatar for different bot types (Big Sky, HE, Odie)
+ * Displays avatar for different conversation types (Orchestrator, Odie, Zendesk)
  */
 
 import { SVG, Path } from '@wordpress/primitives';
@@ -44,7 +44,7 @@ export default function ConversationAvatar( { type, className = '' }: Props ) {
 		);
 	}
 
-	// Big Sky / Odie - Gray circle with sparkle icon
+	// Orchestrator and Odie - Gray circle with sparkle icon
 	return (
 		<div className={ fullClassName }>
 			<SVG
