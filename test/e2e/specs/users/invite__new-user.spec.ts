@@ -96,19 +96,23 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'When I navigate back to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
-			await pagePeople.clickViewAllIfAvailable();
 		} );
 
 		await test.step( 'Then I can see the invited user in the team', async function () {
-			expect( page.getByTitle( testUser.email ) ).toBeVisible();
+			await expect( async () => {
+				page.reload();
+				expect(
+					( await pagePeople.getPeopleTeamMembersListContainer() ).getByTitle( testUser.email )
+				).toBeVisible();
+			} ).toPass();
 		} );
 
 		await test.step( 'When I select the invited user from the site', async function () {
-			await pagePeople.selectUser( testUser.username );
+			await pagePeople.selectTeamMemberUser( testUser.username );
 		} );
 
 		await test.step( 'When I remove the invited user from the site', async function () {
-			await pagePeople.clearUserInvitation();
+			await pagePeople.removeUserFromSite( testUser.username );
 		} );
 
 		await test.step( 'And the invited user closes their account', async function () {
