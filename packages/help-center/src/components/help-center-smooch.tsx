@@ -197,10 +197,6 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		let retryTimeout: ReturnType< typeof setTimeout > | undefined;
 
 		const initializeSmooch = async () => {
-			console.log( 'initializeSmooch with delay for testing' );
-			// Force delay of 50 seconds for testing
-			await new Promise( ( resolve ) => setTimeout( resolve, 50000 ) );
-
 			initSmooch( authData, queryClient )
 				.then( () => {
 					setIsChatLoaded( true );
