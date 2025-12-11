@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button, Dropdown, DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { close, moreVertical, backup, chevronLeft, Icon, comment } from '@wordpress/icons';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -18,7 +18,9 @@ interface Props {
 
 const A11nChatMenu = ( { onCloseDropdown }: { onCloseDropdown: () => void } ) => {
 	const navigate = useNavigate();
+	const { state } = useLocation();
 	const isProd = config( 'env_id' ) === 'production';
+	const isNewChat = ! state?.sessionId;
 
 	if ( isProd ) {
 		return null;
@@ -36,8 +38,8 @@ const A11nChatMenu = ( { onCloseDropdown }: { onCloseDropdown: () => void } ) =>
 				},
 			} }
 			renderToggle={ ( { onToggle } ) => (
-				<MenuItem icon={ comment } iconPosition="left" onClick={ onToggle }>
-					{ __( 'New chat', '__i18n_text_domain__' ) }
+				<MenuItem icon={ comment } iconPosition="left" onClick={ onToggle } disabled={ isNewChat }>
+					{ __( 'New chat (a8c)', '__i18n_text_domain__' ) }
 				</MenuItem>
 			) }
 			renderContent={ ( { onClose: onCloseSubmenu } ) => (
