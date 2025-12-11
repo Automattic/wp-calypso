@@ -1,12 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	CheckboxControl,
-	__experimentalText as Text,
 	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Text } from '../../../components/text';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 

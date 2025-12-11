@@ -1,6 +1,7 @@
-import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { SectionHeader } from '../../../components/section-header';
+import { Text } from '../../../components/text';
 import CancellationMainContent from './cancellation-main-content';
 import DomainOptionsContent from './domain-options-content';
 import type { CancelPurchaseState } from './types';

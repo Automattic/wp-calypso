@@ -1,12 +1,12 @@
 import {
 	Icon,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
+import { Text } from '../../../components/text';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 type FeatureObject = {

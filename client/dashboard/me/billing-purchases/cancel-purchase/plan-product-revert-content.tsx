@@ -1,5 +1,6 @@
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { ButtonStack } from '../../../components/button-stack';
+import { Text } from '../../../components/text';
 import CancelButton from './cancel-button';
 import CancellationFullText from './cancellation-full-text';
 import ConfirmCheckbox from './confirm-checkbox';

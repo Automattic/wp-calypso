@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
-import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Text } from '../../../components/text';
 import { hasAmountAvailableToRefund, isOneTimePurchase } from '../../../utils/purchase';
 import type { Purchase, Domain } from '@automattic/api-core';
 
