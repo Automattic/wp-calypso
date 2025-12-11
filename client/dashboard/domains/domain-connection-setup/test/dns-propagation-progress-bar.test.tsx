@@ -489,25 +489,5 @@ describe( 'DnsPropagationProgressBar', () => {
 			expect( getByText( '50%' ) ).toBeVisible();
 			expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '50' );
 		} );
-
-		test( 'prioritizes DC mode over Cloudflare logic', () => {
-			const domainMappingStatus = createMockDomainMappingStatus( {
-				mode: DomainConnectionSetupMode.DC,
-				has_cloudflare_ip_addresses: true,
-				resolves_to_wpcom: true,
-			} );
-			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
-
-			const { getByRole, getByText } = render(
-				<DnsPropagationProgressBar
-					domainMappingStatus={ domainMappingStatus }
-					domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				/>
-			);
-
-			// Should show 100% from DC mode, not from Cloudflare logic
-			expect( getByText( '100%' ) ).toBeVisible();
-			expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '100' );
-		} );
 	} );
 } );

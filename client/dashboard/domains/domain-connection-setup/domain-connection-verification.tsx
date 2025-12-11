@@ -134,7 +134,7 @@ export default function DomainConnectionVerification( {
 						) }
 					</VStack>
 
-					{ status === 'connected' && <DomainPropagationStatus domainName={ domainName } /> }
+					<DomainPropagationStatus domainName={ domainName } />
 
 					<VStack spacing={ 4 }>
 						{ status === 'verifying' && (
