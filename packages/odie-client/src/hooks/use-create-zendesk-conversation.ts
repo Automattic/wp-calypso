@@ -1,7 +1,11 @@
-import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
+import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
-import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
+import {
+	getOdieOnErrorTransferMessage,
+	getOdieTransferMessage,
+	getOdieZendeskConnectionErrorMessage,
+} from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -61,14 +65,19 @@ export const useCreateZendeskConversation = () => {
 			return chat.conversationId || '';
 		}
 
+		// Store previous state to restore on error
+		const previousMessages = [ ...chat.messages ];
+		const previousProvider = chat.provider;
+		const previousConversationId = chat.conversationId;
+
+		// Get transfer messages to identify and remove them on error
+		const transferMessages = isFromError
+			? getOdieOnErrorTransferMessage()
+			: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs );
+
 		setChat( ( prevChat ) => ( {
 			...prevChat,
-			messages: [
-				...prevChat.messages,
-				...( isFromError
-					? getOdieOnErrorTransferMessage()
-					: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs ) ),
-			],
+			messages: [ ...prevChat.messages, ...transferMessages ],
 			status: 'transfer',
 		} ) );
 
@@ -99,17 +108,18 @@ export const useCreateZendeskConversation = () => {
 			} );
 		}
 
-		const conversation = await Smooch.createConversation( {
-			metadata: {
-				createdAt: Date.now(),
-				...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
-				...( chatId ? { odieChatId: chatId } : {} ),
-			},
-		} );
-
+		let conversation: ZendeskConversation | null = null;
 		let interaction = null;
 
 		try {
+			conversation = await Smooch.createConversation( {
+				metadata: {
+					createdAt: Date.now(),
+					...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
+					...( chatId ? { odieChatId: chatId } : {} ),
+				},
+			} );
+
 			if ( activeInteractionId ) {
 				interaction = await addEventToInteraction.mutateAsync( {
 					interactionId: activeInteractionId,
@@ -131,42 +141,70 @@ export const useCreateZendeskConversation = () => {
 				} );
 				activeInteractionId = interaction.uuid;
 			}
+
+			if ( ! conversation?.id ) {
+				throw new Error( 'Failed to create conversation: conversation is null or missing id' );
+			}
+
+			const conversationId = conversation.id;
+
+			// We need to load the conversation to get typing events. Load simply means "focus on"..
+			Smooch.loadConversation( conversationId );
+
+			setChat( ( prevChat ) => ( {
+				...prevChat,
+				conversationId: conversationId,
+				provider: 'zendesk',
+				status: 'loaded',
+			} ) );
+
+			// Track success only if conversation was created
+			trackEvent( 'new_zendesk_conversation', {
+				support_interaction: activeInteractionId || null,
+				created_from: createdFrom,
+				messaging_site_id: selectedSiteId || null,
+				messaging_url: selectedSiteURL || null,
+			} );
+
+			// If the interaction id has changed, update the URL.
+			if ( activeInteractionId && currentSupportInteraction?.uuid !== activeInteractionId ) {
+				const params = new URLSearchParams( location.search );
+				if ( params.get( 'id' ) !== activeInteractionId ) {
+					params.set( 'id', activeInteractionId );
+					navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+				}
+			}
+
+			return conversationId;
 		} catch ( error ) {
-			trackEvent( 'error_updating_interaction_and_smooch', {
-				error_message:
-					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
+			const errorMessage =
+				error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
+
+			// Track error event
+			trackEvent( 'error_creating_zendesk_conversation', {
+				error_message: errorMessage,
+				error_type: conversation ? 'interaction_update_failed' : 'conversation_creation_failed',
+				created_from: createdFrom,
+				escalation_on_second_attempt: escalationOnSecondAttempt,
 				active_interaction_id: activeInteractionId || null,
-				conversation_id: conversation.id,
+				conversation_id: conversation?.id || null,
+				is_chat_loaded: isChatLoaded,
+			} );
+
+			// Add error message to inform user and show GetSupport button
+			const errorMessageObj = getOdieZendeskConnectionErrorMessage();
+
+			// Restore previous chat state and add error message
+			setChat( {
+				messages: [ ...previousMessages, errorMessageObj ],
+				status: 'loaded',
+				provider: previousProvider,
+				conversationId: previousConversationId,
+				odieId: chat.odieId,
+				wpcomUserId: chat.wpcomUserId,
+				clientId: chat.clientId,
 			} );
 		}
-
-		trackEvent( 'new_zendesk_conversation', {
-			support_interaction: activeInteractionId || null,
-			created_from: createdFrom,
-			messaging_site_id: selectedSiteId || null,
-			messaging_url: selectedSiteURL || null,
-		} );
-
-		// We need to load the conversation to get typing events. Load simply means "focus on"..
-		Smooch.loadConversation( conversation.id );
-
-		setChat( ( prevChat ) => ( {
-			...prevChat,
-			conversationId: conversation.id,
-			provider: 'zendesk',
-			status: 'loaded',
-		} ) );
-
-		// If the interaction id has changed, update the URL.
-		if ( activeInteractionId && currentSupportInteraction?.uuid !== activeInteractionId ) {
-			const params = new URLSearchParams( location.search );
-			if ( params.get( 'id' ) !== activeInteractionId ) {
-				params.set( 'id', activeInteractionId );
-				navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
-			}
-		}
-
-		return conversation.id;
 	};
 
 	return createConversation;
