@@ -1,4 +1,4 @@
-import type { SupportInteraction } from '../types';
+import type { SupportInteraction } from '@automattic/odie-client';
 
 /**
  * Finds the support interaction ID (UUID) for a given conversation ID and event type.

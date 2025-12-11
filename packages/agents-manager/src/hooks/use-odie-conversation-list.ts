@@ -1,11 +1,10 @@
+import { ODIE_DEFAULT_BOT_SLUG_LEGACY, useGetSupportInteractions } from '@automattic/odie-client';
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useEffect } from '@wordpress/element';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../constants';
 import getSupportInteractionId from '../utils/get-support-interaction-id';
 import getTimestamp from '../utils/get-timestamp';
-import useGetSupportInteractions from './use-get-support-interactions';
 import type { Conversation } from '../types';
 
 interface Result {
