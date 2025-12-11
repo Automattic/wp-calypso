@@ -15,6 +15,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import emailValidator from 'email-validator';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
 import { emailsRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
@@ -24,7 +25,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
-import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { useDomains } from '../hooks/use-domains';
 import { DEFAULT_MAX_DOMAIN_FORWARDS, useDomainMaxForwards } from './hooks/use-domain-max-forwards';
 import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
@@ -228,7 +228,7 @@ function AddEmailForwarder() {
 
 	if ( isLoadingDomains ) {
 		return (
-			<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
+			<PageLayout header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> } size="small">
 				<Spinner
 					style={ {
 						alignSelf: 'center',
@@ -246,7 +246,7 @@ function AddEmailForwarder() {
 		<PageLayout
 			header={
 				<PageHeader
-					prefix={ <BackToEmailsPrefix /> }
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					description={ __( 'Set where your emails should be forwarded.' ) }
 				/>
 			}

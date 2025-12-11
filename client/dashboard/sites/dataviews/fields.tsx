@@ -1,5 +1,4 @@
 import { queryClient, siteBySlugQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -48,7 +47,6 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayName( item ),
 			render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
-			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{
 			id: 'URL',
@@ -125,7 +123,6 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 				const { user } = useAuth();
 				return <Status site={ item } isOwner={ item.site_owner === user.ID } />;
 			},
-			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{
 			id: 'wp_version',
@@ -297,17 +294,13 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			filterBy: {
 				operators: [ 'isAny' ],
 			},
-			sort: ( a, b, direction ) => {
-				const planA = getSitePlanDisplayName__ES( a ) ?? '';
-				const planB = getSitePlanDisplayName__ES( b ) ?? '';
-
-				return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
-			},
+			enableSorting: false,
 		},
 		{
 			id: 'wp_version',
 			label: __( 'WP version' ),
 			getValue: ( { item } ) => formatWordPressVersion( item.wordpress_version ?? '' ),
+			enableSorting: false,
 		},
 		{
 			id: 'is_a8c',
@@ -321,6 +314,7 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				operators: [ 'is' as Operator ],
 			},
 			render: ( { item } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
+			enableSorting: false,
 		},
 		{
 			id: 'preview',
@@ -349,13 +343,11 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			id: 'visitors',
 			label: __( '7-day visitors' ),
 			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
-			enableSorting: false,
 		},
 		{
 			id: 'views',
 			label: __( '7-day views' ),
 			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
-			enableSorting: false,
 		},
 		{
 			id: 'likes',
@@ -370,7 +362,6 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			id: 'php_version',
 			label: __( 'PHP version' ),
 			render: ( { item }: { item: DashboardSiteListSite } ) => <PHPVersion__ES site={ item } />,
-			enableSorting: false,
 		},
 		{
 			id: 'storage',
@@ -388,6 +379,7 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				return getSiteProviderName( item ) ?? DEFAULT_PROVIDER_NAME;
 			},
 			render: ( { field, item } ) => field.getValue( { item } ),
+			enableSorting: false,
 		},
 	];
 }

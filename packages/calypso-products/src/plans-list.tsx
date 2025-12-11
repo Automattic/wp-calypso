@@ -389,6 +389,7 @@ import {
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOO_HOSTED_BASIC,
 	TYPE_WOO_HOSTED_PRO,
+	TYPE_WOO_HOSTED_FREE_TRIAL,
 	FEATURE_PREMIUM_STORE_THEMES,
 	FEATURE_STORE_DESIGN,
 	FEATURE_UNLIMITED_PRODUCTS,
@@ -3198,6 +3199,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOO_HOSTED_FREE ]: {
 		...getPlanFreeDetails(),
 		...getAnnualTimeframe(),
+		type: isEnabled( 'ciab/allow-domain-features' ) ? TYPE_WOO_HOSTED_FREE_TRIAL : TYPE_FREE,
 		getTitle: () => i18n.translate( 'Free subscription' ),
 		getTagline: () => 'Learn more about everything included with Woo Free Trial.',
 		getProductId: () => 4005,
@@ -3208,6 +3210,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ]: {
 		...getPlanFreeDetails(),
 		...getMonthlyTimeframe(),
+		type: isEnabled( 'ciab/allow-domain-features' ) ? TYPE_WOO_HOSTED_FREE_TRIAL : TYPE_FREE,
 		getTitle: () => 'Free Trial',
 		getPlanTagline: () => "Get a taste of the world's most popular eCommerce software.",
 		getDescription: () =>

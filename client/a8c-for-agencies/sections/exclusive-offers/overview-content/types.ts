@@ -10,5 +10,6 @@ export type PartnerOffer = {
 	cta: {
 		label: string;
 		url: string;
+		purchase_type?: string;
 	};
 };
