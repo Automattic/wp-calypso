@@ -18,9 +18,9 @@ interface Props {
 
 const A11nChatMenu = ( { onCloseDropdown }: { onCloseDropdown: () => void } ) => {
 	const navigate = useNavigate();
-	const isProxied = config( 'env_id' ) === 'development';
+	const isProd = config( 'env_id' ) === 'production';
 
-	if ( ! isProxied ) {
+	if ( isProd ) {
 		return null;
 	}
 

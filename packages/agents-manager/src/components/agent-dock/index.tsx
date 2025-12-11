@@ -133,7 +133,7 @@ export default function AgentDock( {
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
-		const isProxied = config( 'env_id' ) === 'development';
+		const isProd = config( 'env_id' ) === 'production';
 
 		const newChatMenuItem = {
 			icon: comment,
@@ -163,8 +163,8 @@ export default function AgentDock( {
 
 		const options = [];
 
-		// For proxied users, the new chat menu is handled inside the chat header component
-		if ( ! isProxied ) {
+		// For dev envs, the new chat menu is handled inside the chat header component
+		if ( isProd ) {
 			options.push( newChatMenuItem );
 		}
 
