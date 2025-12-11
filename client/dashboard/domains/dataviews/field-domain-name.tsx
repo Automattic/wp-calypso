@@ -1,9 +1,13 @@
 import { DomainSubtype } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
-import { Link } from '@tanstack/react-router';
+import { Link, useLocation, useMatches } from '@tanstack/react-router';
 import { Tooltip, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
+import {
+	domainsIndexRoute,
+	domainOverviewRoute,
+	domainTransferRoute,
+} from '../../app/router/domains';
 import { Text } from '../../components/text';
 import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -19,6 +23,9 @@ export const DomainNameField = ( {
 	value: string;
 	showPrimaryDomainBadge?: boolean;
 } ) => {
+	const location = useLocation();
+	const matches = useMatches();
+
 	const siteSlug = site?.slug ?? domain.site_slug;
 
 	const href =
@@ -57,8 +64,13 @@ export const DomainNameField = ( {
 		return content;
 	}
 
+	const currentRoute = matches[ matches.length - 1 ];
+
+	const searchParams =
+		currentRoute.fullPath !== domainsIndexRoute.fullPath ? { from: location.pathname } : undefined;
+
 	return (
-		<Link to={ href } params={ { siteSlug, domainName: domain.domain } }>
+		<Link to={ href } params={ { siteSlug, domainName: domain.domain } } search={ searchParams }>
 			{ content }
 		</Link>
 	);
