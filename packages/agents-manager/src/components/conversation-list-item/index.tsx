@@ -50,12 +50,12 @@ export default function ConversationListItem( { conversation, onClick = () => {}
 		>
 			<ConversationAvatar type={ type } />
 			<div className="agents-manager-conversation-list-item__text">
-				<span className="agents-manager-conversation-list-item__title">{ title }</span>
-				<span className="agents-manager-conversation-list-item__subtitle">{
+				<p className="agents-manager-conversation-list-item__title">{ title }</p>
+				<p className="agents-manager-conversation-list-item__subtitle">{
 					// TODO: Remove the `type` debug info before release.
 					// NOTE: Add a tempo `type` for us to debug which type of conversation it is.
 					`${ subtitle } · ${ type }`
-				}</span>
+				}</p>
 			</div>
 		</button>
 	);
