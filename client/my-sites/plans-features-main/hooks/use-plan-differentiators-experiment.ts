@@ -27,8 +27,26 @@ type PlanDifferentiatorsExperimentResult = {
 	showDifferentiatorHeader: boolean;
 };
 
-function usePlanDifferentiatorsExperiment(): PlanDifferentiatorsExperimentResult {
-	const [ isLoading, assignment ] = useExperiment( 'calypso_plans_differentiators_20251210' );
+interface UsePlanDifferentiatorsExperimentParams {
+	flowName?: string | null;
+	intent?: string;
+	isInSignup: boolean;
+}
+
+function usePlanDifferentiatorsExperiment( {
+	flowName,
+	intent,
+	isInSignup,
+}: UsePlanDifferentiatorsExperimentParams ): PlanDifferentiatorsExperimentResult {
+	// Eligible for onboarding signup flow or plans-default-wpcom admin intent
+	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
+	const isEligibleAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
+	const isEligible = isEligibleSignupFlow || isEligibleAdminIntent;
+
+	const [ isLoading, assignment ] = useExperiment( 'calypso_plans_differentiators_20251210', {
+		isEligible,
+	} );
+
 	const variant = ( assignment?.variationName ?? undefined ) as
 		| PlanDifferentiatorsExperimentVariant
 		| undefined;
