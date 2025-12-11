@@ -82,11 +82,13 @@ function AgentSetup( {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
-	const { state } = useLocation();
+	const { pathname, state } = useLocation();
 
-	const isNewChat = state?.isNewChat === true;
-	// Use empty `sessionId` for new chat, otherwise use state or stored session ID
-	const sessionId = isNewChat ? '' : state?.sessionId || getSessionId();
+	const isChatRoute = pathname.startsWith( '/chat' );
+	const isNewChat = isChatRoute && !! state?.isNewChat;
+	const routeSessionId = isChatRoute && state?.sessionId;
+	// Use empty `sessionId` for new chat, otherwise use route or stored session ID
+	const sessionId = isNewChat ? '' : routeSessionId || getSessionId();
 
 	// Load external providers and initialize agent config
 	useEffect( () => {
