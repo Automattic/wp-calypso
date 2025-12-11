@@ -7,7 +7,15 @@
 
 	button {
 		padding-inline: 20px;
+
+		.dashboard-section-header__heading {
+			font-weight: normal;
+		}
 	}
+}
+
+.plugin-tabs-panel {
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .sites-with-this-plugin {

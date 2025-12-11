@@ -63,7 +63,7 @@ export function PluginTabs( {
 				</Tabs.Tab>
 			</Tabs.TabList>
 
-			<Tabs.TabPanel tabId="installed">
+			<Tabs.TabPanel className="plugin-tabs-panel" tabId="installed">
 				<SitesWithThisPlugin
 					pluginSlug={ pluginSlug }
 					isLoading={ isLoading }
@@ -73,7 +73,7 @@ export function PluginTabs( {
 				/>
 			</Tabs.TabPanel>
 
-			<Tabs.TabPanel tabId="available">
+			<Tabs.TabPanel className="plugin-tabs-panel" tabId="available">
 				<SitesWithoutThisPlugin
 					pluginSlug={ pluginSlug }
 					pluginName={ pluginName }
