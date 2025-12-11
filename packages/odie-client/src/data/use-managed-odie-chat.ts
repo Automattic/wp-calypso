@@ -146,5 +146,6 @@ export const useManagedOdieChat = () => {
 		messages: chat?.messages.map( convertMessageToAgentticFormat ) || [],
 		sendMessage,
 		isProcessing: sendOdieMessage.isPending || isLoadingChat,
+		isLoading: isLoadingChat,
 	};
 };

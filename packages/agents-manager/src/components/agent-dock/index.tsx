@@ -93,6 +93,7 @@ export default function AgentDock( {
 		messages: odieMessages,
 		isProcessing: isOdieProcessing,
 		sendMessage: sendOdieMessage,
+		isLoading: isLoadingOdieConversation,
 	} = useManagedOdieChat();
 
 	const { isLoading: isLoadingConversation } = useConversation( {
@@ -208,7 +209,7 @@ export default function AgentDock( {
 			error={ null }
 			onSubmit={ sendOdieMessage }
 			onAbort={ () => {} }
-			isLoadingConversation={ isLoadingConversation }
+			isLoadingConversation={ isLoadingOdieConversation }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
