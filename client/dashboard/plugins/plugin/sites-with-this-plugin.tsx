@@ -263,7 +263,7 @@ export const SitesWithThisPlugin = ( {
 	}, [ updateCount, view, setView ] );
 
 	return (
-		<>
+		<div className="sites-with-this-plugin">
 			<DataViews
 				isLoading={ isLoading }
 				data={ data }
@@ -463,6 +463,6 @@ export const SitesWithThisPlugin = ( {
 				onRequestClose={ closeUpdateModal }
 				title={ __( 'Update Plugin' ) }
 			/>
-		</>
+		</div>
 	);
 };

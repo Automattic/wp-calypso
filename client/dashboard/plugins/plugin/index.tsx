@@ -49,7 +49,7 @@ export function PluginTabs( {
 			selectedTabId={ activeTab }
 			onSelect={ ( tabId: 'installed' | 'available' ) => setActiveTab( tabId ) }
 		>
-			<Tabs.TabList>
+			<Tabs.TabList className="plugin-tabs-list">
 				<Tabs.Tab tabId="installed">
 					<SectionHeader
 						level={ 3 }

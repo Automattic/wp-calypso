@@ -232,7 +232,12 @@ export default function PluginsList() {
 
 				<Card>
 					<CardBody className="plugin-sites-card-body">
-						<SectionHeader decoration={ decoration } level={ 2 } title={ title } />
+						<SectionHeader
+							className="plugin-sites-card-header"
+							decoration={ decoration }
+							level={ 2 }
+							title={ title }
+						/>
 
 						<PluginTabs
 							pluginSlug={ pluginSlug }

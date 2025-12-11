@@ -8,3 +8,28 @@
 	animation: pulse 1.4s ease-in-out infinite;
 	will-change: opacity, transform;
 }
+
+.plugin-tabs-list[aria-orientation='horizontal'] {
+	&::before {
+		transform: translateX(calc((var(--selected-start) * var(--direction-factor) * 1px) + 20px)) scaleX(calc(calc(var(--selected-width, 0) - 2 * 20) / var(--antialiasing-factor)));
+	}
+
+	button {
+		padding-inline: 20px;
+	}
+}
+
+.sites-with-this-plugin {
+	.dataviews__view-actions, .dataviews-filters__container {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	.dataviews-view-table tr td:first-child, .dataviews-view-table tr th:first-child {
+		padding-left: 20px;
+	}
+
+	.dataviews-view-table tr td:last-child, .dataviews-view-table tr th:last-child {
+		padding-right: 20px;
+	}
+}
