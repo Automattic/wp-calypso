@@ -6,6 +6,8 @@ import emailValidator from 'email-validator';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
+import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -87,6 +89,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	const locale = useLocale();
 	const siteSlug = useSiteSlugParam() ?? '';
 	const { sendTicketAsync, isPending: isSubmittingTicket } = useSubmitMigrationTicket();
+	const { mutateAsync: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -94,6 +97,21 @@ const SiteMigrationSshShareAccess: StepType< {
 			navigation.submit?.( { destination: 'back-to-verification' } );
 		}
 	}, [ transferId, navigation ] );
+
+	// Update migration status to pending SSH when the user reaches this step
+	useEffect( () => {
+		const currentStatus = site?.site_migration?.migration_status;
+
+		// Only update if status is not already set to a migration status
+		if ( siteId && currentStatus !== MigrationStatus.PENDING_SSH ) {
+			updateMigrationStatus( { status: MigrationStatus.PENDING_SSH } ).catch( ( error: Error ) => {
+				// Log error but don't block the user from continuing
+				recordTracksEvent( 'calypso_site_migration_ssh_status_update_error', {
+					error: error instanceof Error ? error.message : 'Unknown error',
+				} );
+			} );
+		}
+	}, [ siteId, site?.site_migration?.migration_status, updateMigrationStatus ] );
 
 	const handleNoSSHAccess = useCallback( async () => {
 		setIsProcessingNoSSH( true );

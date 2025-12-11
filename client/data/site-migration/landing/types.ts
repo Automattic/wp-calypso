@@ -5,4 +5,6 @@ export enum MigrationStatus {
 	// Do it yourself
 	PENDING_DIY = 'migration-pending-diy',
 	STARTED_DIY = 'migration-started-diy',
+	// SSH
+	PENDING_SSH = 'migration-pending-ssh',
 }
