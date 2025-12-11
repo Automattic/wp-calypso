@@ -178,6 +178,10 @@ class Layout extends Component {
 			return null;
 		}
 
+		if ( this.props.isReader ) {
+			return <AsyncLoad require="calypso/reader/layout/header" placeholder={ null } />;
+		}
+
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
@@ -366,6 +370,7 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
+		const isReader = currentRoute.startsWith( '/reader' );
 
 		const sidebarType = getSidebarType( {
 			state,
@@ -460,6 +465,7 @@ export default withCurrentRoute(
 			isFromAutomatticForAgenciesPlugin,
 			isEligibleForJITM,
 			isBlazePro,
+			isReader,
 			oauth2Client,
 			wccomFrom,
 			isLoggedIn,
