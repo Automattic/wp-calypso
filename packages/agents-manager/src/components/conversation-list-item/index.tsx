@@ -40,6 +40,7 @@ export default function ConversationListItem( { conversation, onClick = () => {}
 			className="agents-manager-conversation-list-item"
 			onClick={ () => onClick( type, id ) }
 			type="button"
+			disabled={ ! id }
 			aria-label={ sprintf(
 				/* translators: %1$s: conversation title, %2$s: conversation subtitle */
 				__( 'Load conversation: %1$s, %2$s', '__i18n_text_domain__' ),
@@ -50,7 +51,11 @@ export default function ConversationListItem( { conversation, onClick = () => {}
 			<ConversationAvatar type={ type } />
 			<div className="agents-manager-conversation-list-item__text">
 				<span className="agents-manager-conversation-list-item__title">{ title }</span>
-				<span className="agents-manager-conversation-list-item__subtitle">{ subtitle }</span>
+				<span className="agents-manager-conversation-list-item__subtitle">{
+					// TODO: Remove the `type` debug info before release.
+					// NOTE: Add a tempo `type` for us to debug which type of conversation it is.
+					`${ subtitle } · ${ type }`
+				}</span>
 			</div>
 		</button>
 	);
