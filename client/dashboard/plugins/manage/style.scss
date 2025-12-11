@@ -12,8 +12,8 @@
 }
 
 .plugin-icon-placeholder {
-	width: 40px;
-	height: 40px;
+	width: 32px;
+	height: 32px;
 	background-color: var(--color-neutral-10, #c3c4c7);
 	border-radius: 4px;
 	animation: pulse 1.4s ease-in-out infinite;
@@ -21,8 +21,8 @@
 }
 
 img.plugin-icon {
-	width: 40px;
-	height: 40px;
+	width: 32px;
+	height: 32px;
 }
 
 .plugin-icon-fallback {
@@ -62,6 +62,11 @@ img.plugin-icon {
 .plugin-sites-card-header {
 	margin-bottom: 8px;
 	padding-inline-start: 20px;
+
+	.dashboard-section-header__decoration {
+		width: 32px;
+		height: 32px;
+	}
 }
 
 .plugin-sites-card-body {
