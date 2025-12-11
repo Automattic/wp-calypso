@@ -131,7 +131,7 @@ export default function AgentDock( {
 		switch ( type ) {
 			case 'orchestrator':
 				abortCurrentRequest();
-				setSessionId( sessionId );
+				setSessionId( id );
 				navigate( '/chat', { state: { sessionId: id } } );
 				break;
 			case 'odie':

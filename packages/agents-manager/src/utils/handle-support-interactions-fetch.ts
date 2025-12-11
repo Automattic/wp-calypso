@@ -25,13 +25,13 @@ export default async function handleSupportInteractionsFetch(
 	return canAccessWpcomApis()
 		? await wpcomRequest( {
 				method,
-				path: `/support-interactions${ fullPath ?? '' }`,
+				path: `/support-interactions${ fullPath }`,
 				apiNamespace: 'wpcom/v2',
 				body: data,
 		  } )
 		: await apiFetch( {
 				method,
-				path: `/help-center/support-interactions${ fullPath ?? '' }`,
+				path: `/help-center/support-interactions${ fullPath }`,
 				data,
 		  } );
 }

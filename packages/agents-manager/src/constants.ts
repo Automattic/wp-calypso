@@ -9,4 +9,4 @@ export const ODIE_ALLOWED_BOTS = [
 	'wpcom-plan-support',
 	'wpcom-workflow-support_chat',
 	'automattic-chat-support_a4a',
-];
+] as const;

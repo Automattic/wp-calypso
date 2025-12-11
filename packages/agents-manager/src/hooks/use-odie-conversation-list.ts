@@ -64,7 +64,7 @@ export default function useOdieConversationList(): Result {
 					return id
 						? {
 								type: 'odie',
-								id: id ?? '',
+								id,
 								createdAt: getTimestamp( conversation.created_at ),
 								message: {
 									received: getTimestamp( summary?.created_at ),
