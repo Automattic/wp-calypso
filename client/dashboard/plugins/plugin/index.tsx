@@ -1,18 +1,12 @@
 import { type PluginItem, Site } from '@automattic/api-core';
-import { __experimentalVStack as VStack, privateApis } from '@wordpress/components';
+import { privateApis } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useMemo, useState } from 'react';
-import Breadcrumbs from '../../app/breadcrumbs';
-import { pluginRouteWithId } from '../../app/router/plugins';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
+import { useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
-import { Text } from '../../components/text';
-import { TextBlur } from '../../components/text-blur';
 import { SitesWithThisPlugin } from './sites-with-this-plugin';
 import { SitesWithoutThisPlugin } from './sites-without-this-plugin';
-import { SiteWithPluginData, usePlugin } from './use-plugin';
+import { SiteWithPluginData } from './use-plugin';
 
 import './style.scss';
 
@@ -88,63 +82,5 @@ export function PluginTabs( {
 				/>
 			</Tabs.TabPanel>
 		</Tabs>
-	);
-}
-
-export default function Plugin() {
-	const { pluginId: pluginSlug } = pluginRouteWithId.useParams();
-	const { icon, isLoading, plugin, pluginBySiteId, sitesWithThisPlugin, sitesWithoutThisPlugin } =
-		usePlugin( pluginSlug );
-
-	const decoration = useMemo( () => {
-		if ( icon ) {
-			return <img src={ icon } alt={ plugin?.name } />;
-		} else if ( isLoading ) {
-			return <div className="plugin-icon-placeholder" aria-hidden="true" />;
-		}
-	}, [ icon, isLoading, plugin?.name ] );
-
-	if ( ! isLoading && ! plugin ) {
-		return (
-			<PageLayout
-				size="large"
-				header={
-					<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Plugin not found' ) } />
-				}
-			/>
-		);
-	}
-
-	return (
-		<PageLayout
-			size="large"
-			header={
-				<VStack spacing={ 2 }>
-					<PageHeader
-						prefix={ <Breadcrumbs length={ 2 } /> }
-						decoration={ decoration }
-						title={
-							plugin ? (
-								// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-								<Text dangerouslySetInnerHTML={ { __html: plugin.name } } />
-							) : (
-								<TextBlur>{ pluginSlug }</TextBlur>
-							)
-						}
-						description={ __( 'View plugin details and manage installation across your sites.' ) }
-					/>
-				</VStack>
-			}
-		>
-			<PluginTabs
-				pluginSlug={ pluginSlug }
-				isLoading={ isLoading }
-				plugin={ plugin }
-				pluginName={ plugin?.name }
-				pluginBySiteId={ pluginBySiteId }
-				sitesWithThisPlugin={ sitesWithThisPlugin }
-				sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
-			/>
-		</PageLayout>
 	);
 }
