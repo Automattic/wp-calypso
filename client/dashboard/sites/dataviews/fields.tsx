@@ -362,7 +362,6 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			id: 'php_version',
 			label: __( 'PHP version' ),
 			render: ( { item }: { item: DashboardSiteListSite } ) => <PHPVersion__ES site={ item } />,
-			enableSorting: false,
 		},
 		{
 			id: 'storage',
