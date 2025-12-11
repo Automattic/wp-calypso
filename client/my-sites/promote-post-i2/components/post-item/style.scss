@@ -12,8 +12,13 @@ $post-item-background-color: var(--studio-white);
 		padding-bottom: 8px;
 	}
 
+	.promote-post-i2__table tbody,
 	.post-item__row {
 		width: 100%;
+
+		@media (max-width: 1054px) {
+			display: block;
+		}
 	}
 
 	.post-item__post {
