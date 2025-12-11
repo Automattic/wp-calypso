@@ -14,6 +14,7 @@ import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useResourceCtaLabel } from './hooks/use-resource-cta-label';
 import type { ResourceItem } from './types';
 import type { View, Field } from '@wordpress/dataviews';
 
@@ -31,37 +32,36 @@ interface BrowseAllResourcesProps {
 	isLoading: boolean;
 }
 
-function ResourceItemCard( { resource }: { resource: ResourceItem } ) {
+function ResourceItemCard( { item }: { item: ResourceItem } ) {
 	const dispatch = useDispatch();
+	const ctaLabel = useResourceCtaLabel( item.format );
 
 	const handleCTAClick = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_resource_center_browse_cta_click', {
-				resource_id: resource.id,
-				resource_name: resource.name,
+				resource_id: item.id,
+				resource_name: item.name,
 			} )
 		);
 	};
-
-	const ctaLabel = resource.format === 'video' ? __( 'Watch' ) : __( 'Learn more' );
 
 	return (
 		<Card>
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-					<HStack>{ resource.logo }</HStack>
+					<HStack>{ item.logo }</HStack>
 					<VStack spacing={ 1 }>
 						<Text size={ 13 } weight={ 500 }>
-							{ resource.name }
+							{ item.name }
 						</Text>
 						<Text variant="muted" size={ 12 }>
-							{ resource.description }
+							{ item.description }
 						</Text>
 					</VStack>
 				</VStack>
 				<Button
 					variant="secondary"
-					href={ resource.externalUrl }
+					href={ item.externalUrl }
 					target="_blank"
 					onClick={ handleCTAClick }
 					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
@@ -97,15 +97,15 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 		return {
 			products: Array.from( products ).map( ( value ) => ( {
 				value,
-				label: value.charAt( 0 ).toUpperCase() + value.slice( 1 ),
+				label: value,
 			} ) ),
 			resourceTypes: Array.from( resourceTypes ).map( ( value ) => ( {
 				value,
-				label: value.charAt( 0 ).toUpperCase() + value.slice( 1 ),
+				label: value,
 			} ) ),
 			formats: Array.from( formats ).map( ( value ) => ( {
 				value,
-				label: value.charAt( 0 ).toUpperCase() + value.slice( 1 ),
+				label: value,
 			} ) ),
 		};
 	}, [ resources ] );
@@ -114,19 +114,19 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 		() => [
 			{
 				id: 'name',
-				getValue: ( { resource } ) => resource.name,
+				getValue: ( { item } ) => item.name,
 				enableGlobalSearch: true,
 			},
 			{
 				id: 'description',
-				getValue: ( { resource } ) => resource.description,
+				getValue: ( { item } ) => item.description,
 				enableGlobalSearch: true,
 			},
 			{
 				id: 'relatedProduct',
 				label: __( 'Product' ),
 				type: 'text',
-				getValue: ( { resource } ) => resource.relatedProduct,
+				getValue: ( { item } ) => item.relatedProduct,
 				elements: filterOptions.products,
 				filterBy: {
 					operators: [ 'is' ],
@@ -138,7 +138,7 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 				id: 'resourceType',
 				label: __( 'Resource type' ),
 				type: 'text',
-				getValue: ( { resource } ) => resource.resourceType,
+				getValue: ( { item } ) => item.resourceType,
 				elements: filterOptions.resourceTypes,
 				filterBy: {
 					operators: [ 'is' ],
@@ -150,7 +150,7 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 				id: 'format',
 				label: __( 'Format' ),
 				type: 'text',
-				getValue: ( { resource } ) => resource.format,
+				getValue: ( { item } ) => item.format,
 				elements: filterOptions.formats,
 				filterBy: {
 					operators: [ 'is' ],
@@ -218,8 +218,8 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 				<DataViews.FiltersToggled className="resource-center-filters" />
 			</DataViews>
 			<div className="resource-center-cards">
-				{ filteredData.map( ( resource ) => (
-					<ResourceItemCard key={ resource.id } resource={ resource } />
+				{ filteredData.map( ( item ) => (
+					<ResourceItemCard key={ item.id } item={ item } />
 				) ) }
 			</div>
 		</>

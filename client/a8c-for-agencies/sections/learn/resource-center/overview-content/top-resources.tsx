@@ -13,6 +13,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useResourceCtaLabel } from './hooks/use-resource-cta-label';
 import type { ResourceItem } from './types';
 
 interface TopResourcesProps {
@@ -22,6 +23,7 @@ interface TopResourcesProps {
 
 function ResourceCard( { resource }: { resource: ResourceItem } ) {
 	const dispatch = useDispatch();
+	const ctaLabel = useResourceCtaLabel( resource.format );
 
 	const handleClick = () => {
 		dispatch(
@@ -31,8 +33,6 @@ function ResourceCard( { resource }: { resource: ResourceItem } ) {
 			} )
 		);
 	};
-
-	const ctaLabel = resource.format === 'video' ? __( 'Watch' ) : __( 'Learn more' );
 
 	return (
 		<Card isBorderless size="none" style={ { width: '33%' } }>
