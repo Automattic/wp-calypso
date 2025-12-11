@@ -316,15 +316,15 @@ export class UserSignupPage {
 	async signupThroughInvite( email: string ): Promise< NewUserResponse > {
 		await this.emailInput.fill( email );
 
-		const responsePromise = this.page.waitForResponse( /\/users\/new\?[^?]*$/ );
+		const responsePromise = this.page.waitForResponse( /\/users\/new\?[^?]*$/ ).then( ( r ) => {
+			if ( ! r.ok() ) {
+				throw new Error( `Failed to create new user through invite. Status: ${ r.status() }` );
+			}
+			return r.json();
+		} );
 		await this.continueButton.click();
-		const response = await responsePromise;
 
-		if ( ! response ) {
-			throw new Error( 'Failed to create new user through invite.' );
-		}
-
-		return await response.json();
+		return await responsePromise;
 	}
 
 	/**
