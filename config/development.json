@@ -135,6 +135,7 @@
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": true,
 		"oauth": false,
+		"oauth/unified-experience": true,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,

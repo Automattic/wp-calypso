@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -12,6 +13,7 @@ import './style.scss';
 // const PENDING_PAYMENT_NOTIFICATION_DISMISS_PREFERENCE = 'pending-payment-notification-dismissed';
 
 export default function PendingPaymentNotification( { isFullWidth }: { isFullWidth?: boolean } ) {
+	const isBdCheckoutEnabled = isEnabled( 'a4a-bd-checkout' );
 	const invoices = useFetchInvoices( { starting_after: '', ending_before: '' }, undefined, 'open' );
 
 	const translate = useTranslate();
@@ -26,6 +28,11 @@ export default function PendingPaymentNotification( { isFullWidth }: { isFullWid
 		return Math.floor( differenceInSeconds / ( 60 * 60 * 24 ) ); // Convert seconds to days
 	}, [ invoices ] );
 	const daysLeft = 28 - daysDue;
+
+	if ( isBdCheckoutEnabled ) {
+		// In Billing Dragon (BD) context, this payment notification should not be shown.
+		return null;
+	}
 
 	if ( ! invoices?.isSuccess || ! invoices?.data?.items?.length || daysDue < 7 ) {
 		return null;
