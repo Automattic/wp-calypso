@@ -7,14 +7,10 @@ import { __ } from '@wordpress/i18n';
 /**
  * Format a timestamp for display in conversation list
  * Shows "Today", "Yesterday", or date string
- * @param timestamp - MySQL datetime format (e.g., "2025-11-06 14:29:49") or Unix timestamp in milliseconds
+ * @param timestamp - Unix timestamp in seconds
  */
-export function formatConversationDate( timestamp: string | number ): string {
-	const date =
-		typeof timestamp === 'number'
-			? new Date( timestamp )
-			: new Date( timestamp.replace( ' ', 'T' ) + 'Z' );
-
+export function formatConversationDate( timestamp: number ): string {
+	const date = new Date( timestamp * 1000 );
 	const today = new Date();
 	const yesterday = new Date( today );
 	yesterday.setDate( yesterday.getDate() - 1 );
