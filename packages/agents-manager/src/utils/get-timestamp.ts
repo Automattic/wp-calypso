@@ -1,7 +1,7 @@
 /**
  * Converts the specified date string to a timestamp.
  * @param date A date formatted as 'YYYY-MM-DD HH:MM:SS' (e.g. '2025-04-29 14:21:38')
- * @returns The timestamp in seconds (e.g. 1745936539), or 0 if the date is invalid
+ * @returns The timestamp in seconds (e.g. 1745946098), or 0 if the date is invalid
  */
 export default function getTimestamp( date?: string ): number {
 	if ( ! date ) {
