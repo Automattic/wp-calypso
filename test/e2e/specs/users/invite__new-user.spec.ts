@@ -108,7 +108,7 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'When I remove the invited user from the site', async function () {
-			await pagePeople.deleteUser( testUser.username );
+			await pagePeople.clearUserInvitation();
 		} );
 
 		await test.step( 'And the invited user closes their account', async function () {

@@ -69,8 +69,15 @@ test.describe(
 				}
 			} );
 
+			await test.step( 'Then I can see the invite is pending', async function () {
+				await expect( async () => {
+					page.reload();
+					expect( page.getByTitle( testEmailAddress ) ).toBeVisible();
+				} ).toPass();
+			} );
+
 			await test.step( 'When I revoke the invite for the test user', async function () {
-				await pagePeople.selectInvitedUser( testEmailAddress );
+				await pagePeople.selectUser( testEmailAddress );
 				await pagePeople.revokeInvite();
 			} );
 
