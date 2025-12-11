@@ -36,7 +36,7 @@ export default function SwitcherContent< T >( {
 	onClose,
 	onItemClick,
 }: PropsWithChildren< {
-	itemClassName?: string;
+	itemClassName?: string | ( ( item: T ) => string );
 	initialView?: View;
 	items?: T[];
 	searchClassName?: string;
@@ -80,9 +80,11 @@ export default function SwitcherContent< T >( {
 			<MenuGroup hideSeparator>
 				{ filteredData.map( ( item ) => {
 					const itemUrl = getItemUrl( item );
+					const className =
+						typeof itemClassName === 'function' ? itemClassName( item ) : itemClassName;
 					return (
 						<RouterLinkMenuItem
-							className={ itemClassName }
+							className={ className }
 							key={ itemUrl }
 							to={ itemUrl }
 							style={ { height: 'fit-content', minHeight: '40px' } }

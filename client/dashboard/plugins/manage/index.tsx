@@ -70,7 +70,7 @@ export default function PluginsList() {
 			),
 		[ sitesById, sitesPlugins, fields ]
 	);
-
+	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
 	const {
 		icon,
 		isLoading: isLoadingPlugin,
@@ -78,7 +78,7 @@ export default function PluginsList() {
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
-	} = usePlugin( pluginSlug || plugins[ 0 ]?.slug );
+	} = usePlugin( selectedPluginSlug );
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 	const { data: marketplaceSearch } = useQuery(
 		marketplaceSearchQuery( {
@@ -157,7 +157,9 @@ export default function PluginsList() {
 				<Card>
 					<CardBody className="plugin-switcher-card-body">
 						<SwitcherContent
-							itemClassName="plugin-switcher-item"
+							itemClassName={ ( item ) =>
+								clsx( 'plugin-switcher-item', { 'is-selected': selectedPluginSlug === item.slug } )
+							}
 							searchClassName="plugin-switcher-search"
 							initialView={ view }
 							items={ pluginsWithIcon }

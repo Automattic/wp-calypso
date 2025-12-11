@@ -48,8 +48,14 @@ img.plugin-icon {
 	border-top: 1px solid #f0f0f0;
 	padding: calc(4px * 2.5) calc(4px * 6);
 
+	&.is-selected,
 	&:hover {
 		background-color: #f8f8f8;
+	}
+
+	&.is-selected:focus {
+		box-shadow: none;
+		outline: none;
 	}
 }
 
