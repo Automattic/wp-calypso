@@ -100,9 +100,11 @@ const domain: FlowV2< typeof initialize > = {
 			const hasOnlyDomainConnection =
 				domainCartItems && domainCartItems.length === 1 && isDomainMapping( domainCartItems[ 0 ] );
 
-			let destination = `/v2/sites/${ siteSlug }/domains`;
+			// Use the redirect_to query param if provided, otherwise fall back to v2 domains
+			let destination = redirectTo || `/v2/sites/${ siteSlug }/domains`;
 
-			if ( hasOnlyDomainConnection ) {
+			// But send domain-only connects to domain-connection-setup.
+			if ( ! redirectTo && hasOnlyDomainConnection ) {
 				const domain = domainCartItems[ 0 ].meta;
 				if ( domain ) {
 					destination = `/v2/domains/${ domain }/domain-connection-setup`;
@@ -114,8 +116,10 @@ const domain: FlowV2< typeof initialize > = {
 				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 					redirect_to: destination,
 					signup: 1,
-					cancel_to: new URL( addQueryArgs( '/setup/domain', { siteSlug } ), window.location.href )
-						.href,
+					cancel_to: new URL(
+						addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
+						window.location.href
+					).href,
 				} )
 			);
 		};

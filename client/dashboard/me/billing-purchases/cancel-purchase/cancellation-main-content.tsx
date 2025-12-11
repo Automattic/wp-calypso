@@ -1,3 +1,4 @@
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { isAkismetProduct, isGSuiteOrGoogleWorkspaceProductSlug } from '../../../utils/purchase';
 import BackupRetentionOptionOnCancelPurchase from './backup-retention-management/retention-option-on-cancel-purchase';
@@ -108,7 +109,7 @@ export default function CancellationMainContent( {
 		! willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
 
 	return (
-		<>
+		<VStack spacing={ 4 }>
 			{ shouldShowDomainOptionsInline && (
 				<CancelPurchaseDomainOptions
 					includedDomainPurchase={ includedDomainPurchase }
@@ -153,6 +154,6 @@ export default function CancellationMainContent( {
 				onKeepSubscriptionClick={ onKeepSubscriptionClick }
 				onCancelClick={ onCancelClick }
 			/>
-		</>
+		</VStack>
 	);
 }

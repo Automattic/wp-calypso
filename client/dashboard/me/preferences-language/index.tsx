@@ -18,8 +18,12 @@ import { store as noticesStore } from '@wordpress/notices';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
-import { languagesAsOptions, shouldDisplayCommunityTranslator, CalypsoLanguage } from './languages';
-import ThanksToCommunityTranslator from './thanks-to-community-translator';
+import {
+	languagesAsOptions,
+	shouldDisplayCommunityTranslator,
+	getLocaleVariantOrLanguage,
+	CalypsoLanguage,
+} from './languages';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
@@ -112,6 +116,32 @@ export default function PreferencesLanguageForm() {
 			label: __( 'Interface language' ),
 			type: 'text',
 			Edit: ( { field, data, onChange } ) => {
+				const locale = data?.language;
+				const language =
+					locale && shouldDisplayCommunityTranslator( locale )
+						? getLocaleVariantOrLanguage( locale )
+						: undefined;
+
+				const helpText = language
+					? createInterpolateElement(
+							sprintf(
+								/* translators: %s: selected interface language */
+								__(
+									'Thanks to all our <externalLink>community members who helped translate to %s</externalLink>'
+								),
+								language.name
+							),
+							{
+								externalLink: (
+									<ExternalLink
+										href={ `https://translate.wordpress.com/translators/?contributor_locale=${ language.langSlug }` }
+										children={ null }
+									/>
+								),
+							}
+					  )
+					: undefined;
+
 				return (
 					<ComboboxControl
 						__next40pxDefaultSize
@@ -126,14 +156,7 @@ export default function PreferencesLanguageForm() {
 						placeholder={ __( 'Select a language' ) }
 						options={ field.elements || [] }
 						allowReset={ false } // a language is required so we're not allowing to reset it and have an empty state.
-						help={
-							<>
-								{ __(
-									'This is the language of the interface you see across WordPress.com as a whole.'
-								) }
-								<ThanksToCommunityTranslator locale={ data?.language } />
-							</>
-						}
+						help={ helpText }
 					/>
 				);
 			},
@@ -212,8 +235,12 @@ export default function PreferencesLanguageForm() {
 			<FlashMessage id="language" message={ __( 'Language setting saved.' ) } />
 			<Card>
 				<CardBody>
-					<VStack spacing={ 3 } className="dasboard-preferences__vstack">
-						<SectionHeader level={ 3 } title={ __( 'Language' ) } />
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Language' ) }
+							description={ __( 'Use this to set the display language for WordPress.com.' ) }
+						/>
 						<DataForm< UserSettings >
 							data={ data }
 							fields={ languageFields }
