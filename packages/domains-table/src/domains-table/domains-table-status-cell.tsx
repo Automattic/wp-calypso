@@ -1,10 +1,10 @@
 import { Spinner } from '@automattic/components';
-import { DomainUpdateStatus } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { StatusPopover } from '../status-popover';
 import { ResolveDomainStatusReturn } from '../utils/resolve-domain-status';
+import type { DomainUpdateStatus } from '@automattic/api-core';
 
 interface DomainsTableStatusCellProps {
 	domainStatus: ResolveDomainStatusReturn | null;
