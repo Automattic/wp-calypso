@@ -45,6 +45,7 @@
 		"calypso/domains-dataviews": true,
 		"cancellation-offers": true,
 		"checkout/checkout-version": true,
+		"ciab/allow-domain-features": true,
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/razorpay": true,

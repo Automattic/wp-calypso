@@ -9,7 +9,7 @@ import {
 	siteByIdQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
-import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
+import { createLazyRoute, createRoute, redirect, Outlet } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
 import { IntervalLength, MailboxProvider } from '../../emails/types';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
@@ -25,19 +25,25 @@ export const emailsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails',
-	loader: async () => {
-		queryClient.prefetchQuery( userMailboxesQuery() );
-		queryClient.prefetchQuery( domainsQuery() );
-		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-	},
+	component: () => <Outlet />,
 	validateSearch: ( search ): { domainName: string | undefined } => {
 		return {
 			domainName: typeof search.domainName === 'string' ? search.domainName : undefined,
 		};
 	},
+} );
+
+export const emailsIndexRoute = createRoute( {
+	getParentRoute: () => emailsRoute,
+	path: '/',
+	loader: async () => {
+		queryClient.prefetchQuery( userMailboxesQuery() );
+		queryClient.prefetchQuery( domainsQuery() );
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+	},
 } ).lazy( () =>
 	import( '../../emails' ).then( ( d ) =>
-		createLazyRoute( 'emails' )( {
+		createLazyRoute( 'emails-index' )( {
 			component: d.default,
 		} )
 	)
@@ -75,8 +81,8 @@ export const chooseDomainRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/choose-domain',
+	getParentRoute: () => emailsRoute,
+	path: 'choose-domain',
 	loader: async () => {
 		queryClient.prefetchQuery( domainsQuery() );
 	},
@@ -96,8 +102,8 @@ export const chooseEmailSolutionRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/choose-email-solution/$domain',
+	getParentRoute: () => emailsRoute,
+	path: 'choose-email-solution/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
 		await redirectIfInvalidDomain( domainName );
 	},
@@ -128,8 +134,8 @@ export const addMailboxRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/add-mailbox/$domain/$provider/$interval',
+	getParentRoute: () => emailsRoute,
+	path: 'add-mailbox/$domain/$provider/$interval',
 	beforeLoad: async ( { params: { domain: domainName, provider, interval } } ) => {
 		await redirectIfInvalidDomain( domainName );
 
@@ -172,8 +178,8 @@ export const setUpMailboxRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/set-up-mailbox/$domain',
+	getParentRoute: () => emailsRoute,
+	path: 'set-up-mailbox/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
@@ -224,8 +230,8 @@ export const addEmailForwarderRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/add-forwarder',
+	getParentRoute: () => emailsRoute,
+	path: 'add-forwarder',
 } ).lazy( () =>
 	import( '../../emails/add-forwarder' ).then( ( d ) =>
 		createLazyRoute( 'add-email-forwarder' )( {
@@ -252,8 +258,8 @@ export const mailboxesReadyRoute = createRoute( {
 		}
 		return { meta: [ { title } ] };
 	},
-	getParentRoute: () => rootRoute,
-	path: 'emails/mailboxes-ready/$domain',
+	getParentRoute: () => emailsRoute,
+	path: 'mailboxes-ready/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
 		await redirectIfInvalidDomain( domainName );
 	},
@@ -304,12 +310,14 @@ export const mailboxesReadyRoute = createRoute( {
 
 export const createEmailsRoutes = () => {
 	return [
-		emailsRoute,
-		chooseDomainRoute,
-		chooseEmailSolutionRoute,
-		addMailboxRoute,
-		setUpMailboxRoute,
-		addEmailForwarderRoute,
-		mailboxesReadyRoute,
+		emailsRoute.addChildren( [
+			emailsIndexRoute,
+			chooseDomainRoute,
+			chooseEmailSolutionRoute,
+			addMailboxRoute,
+			setUpMailboxRoute,
+			addEmailForwarderRoute,
+			mailboxesReadyRoute,
+		] ),
 	];
 };

@@ -125,6 +125,7 @@ export const DotcomFeatures = {
 	ATOMIC: 'atomic',
 	BACKUPS: 'backups',
 	DOMAIN_MAPPING: 'domain-mapping',
+	INSTALL_PLUGINS: 'install-plugins',
 	SUBSCRIPTION_GIFTING: 'subscription-gifting',
 	COPY_SITE: 'copy-site',
 	FULL_ACTIVITY_LOG: 'full-activity-log',
