@@ -16,7 +16,6 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useMemo } from 'react';
-import { pluginsManageRoute } from '../../app/router/plugins';
 import { Card, CardBody } from '../../components/card';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
@@ -55,8 +54,6 @@ const searchableFields = [
 export default function PluginsList() {
 	const { data: sitesPlugins } = useQuery( pluginsQuery() );
 	const { sitesById } = useSitesById();
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Bind this to the switcher
-	const searchParams = pluginsManageRoute.useSearch();
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
 	const fields = useMemo( () => {
 		return searchableFields.map( ( searchableField ) => ( {
@@ -74,7 +71,6 @@ export default function PluginsList() {
 		[ sitesById, sitesPlugins, fields ]
 	);
 
-	// console.debug( 'plugins', plugins );
 	const {
 		icon,
 		isLoading: isLoadingPlugin,
@@ -124,8 +120,6 @@ export default function PluginsList() {
 			};
 		} );
 	}, [ plugins, iconBySlug ] );
-
-	// console.debug( 'pluginsWithIcon', pluginsWithIcon );
 
 	const decoration = useMemo( () => {
 		if ( icon ) {
