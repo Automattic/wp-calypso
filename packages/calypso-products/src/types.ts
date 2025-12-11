@@ -327,6 +327,24 @@ export type Plan = BillingTerm & {
 	get2023PricingGridSignupWpcomFeatures?: ( props?: { isSummerSpecial?: boolean } ) => Feature[];
 
 	/**
+	 * Comprehensive feature list for the long_set variant of the plans differentiators experiment.
+	 * Shows all features for each plan including base infrastructure features.
+	 */
+	getLongSetSignupWpcomFeatures?: () => Feature[];
+
+	/**
+	 * Incremental feature list for the long_set_stacked variant of the plans differentiators experiment.
+	 * Shows only features that are new compared to the previous plan tier, with "Everything in X, plus:" header.
+	 */
+	getLongSetStackedSignupWpcomFeatures?: () => Feature[];
+
+	/**
+	 * Incremental feature list for the short_set_stacked variant of the plans differentiators experiment.
+	 * Shows only features that are new compared to the previous plan tier, with "Everything in X, plus:" header.
+	 */
+	getShortSetStackedSignupWpcomFeatures?: () => Feature[];
+
+	/**
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.
 	 * Context - pdgrnI-26j
 	 */

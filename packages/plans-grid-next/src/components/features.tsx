@@ -108,9 +108,18 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					'is-bold': isHighlightedFeature,
 				} );
 
+				const featureSlug = currentFeature.getSlug();
+				const featuresWithMinHeight = [
+					'support-from-experts',
+					'priority-24-7-support',
+				];
+				const itemStyle = featuresWithMinHeight.includes( featureSlug )
+					? { minHeight: '32px' }
+					: undefined;
+
 				return (
 					<div key={ key } className={ divClasses }>
-						<PlanFeaturesItem>
+						<PlanFeaturesItem style={ itemStyle }>
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
 									{ isFreePlanAndCustomDomainFeature ? (

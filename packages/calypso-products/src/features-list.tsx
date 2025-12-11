@@ -334,6 +334,16 @@ import {
 	FEATURE_LIMITED_SITE_ACTIVITY_LOG,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
+	FEATURE_AI_WEBSITE_BUILDER,
+	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
+	FEATURE_AI_WRITER_DESIGNER,
+	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_EVERYTHING_IN_FREE_PLUS,
+	FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
+	FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
+	FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
+	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+	FEATURE_BLAZE_AD_CREDITS,
 	FEATURE_UPLOAD_VIDEO,
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
@@ -2729,6 +2739,64 @@ const FEATURES_LIST: FeatureList = {
 						'Enjoy unrestricted usage of our AI tool to design your perfect website.'
 				  )
 				: i18n.translate( 'Build your site with our AI Website Builder.' ),
+	},
+
+	// AI features for plan differentiators experiment
+	[ FEATURE_AI_WEBSITE_BUILDER ]: {
+		getSlug: () => FEATURE_AI_WEBSITE_BUILDER,
+		getTitle: () => i18n.translate( 'AI Website Builder' ),
+		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+	},
+	[ FEATURE_AI_WEBSITE_BUILDER_LIMITED ]: {
+		getSlug: () => FEATURE_AI_WEBSITE_BUILDER_LIMITED,
+		getTitle: () => i18n.translate( 'AI Website Builder (limited)' ),
+		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+	},
+	[ FEATURE_AI_WRITER_DESIGNER ]: {
+		getSlug: () => FEATURE_AI_WRITER_DESIGNER,
+		getTitle: () => i18n.translate( 'AI Writer & Designer' ),
+		getDescription: () =>
+			i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
+	},
+	[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: {
+		getSlug: () => FEATURE_AI_WRITER_DESIGNER_LIMITED,
+		getTitle: () => i18n.translate( 'AI Writer & Designer (limited)' ),
+		getDescription: () =>
+			i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
+	},
+
+	// "Everything in X, plus:" features for stacked variants
+	[ FEATURE_EVERYTHING_IN_FREE_PLUS ]: {
+		getSlug: () => FEATURE_EVERYTHING_IN_FREE_PLUS,
+		getTitle: () => i18n.translate( 'Everything in Free, plus:' ),
+	},
+	[ FEATURE_EVERYTHING_IN_PERSONAL_PLUS ]: {
+		getSlug: () => FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
+		getTitle: () => i18n.translate( 'Everything in Personal, plus:' ),
+	},
+	[ FEATURE_EVERYTHING_IN_PREMIUM_PLUS ]: {
+		getSlug: () => FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
+		getTitle: () => i18n.translate( 'Everything in Premium, plus:' ),
+	},
+	[ FEATURE_EVERYTHING_IN_BUSINESS_PLUS ]: {
+		getSlug: () => FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
+		getTitle: () => i18n.translate( 'Everything in Business, plus:' ),
+	},
+
+	// Additional features for plan differentiators experiment
+	[ FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR ]: {
+		getSlug: () => FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+		getTitle: () => i18n.translate( 'Professional email Inbox free for 1 year' ),
+		getDescription: () =>
+			i18n.translate( 'Get a professional email address with your domain, free for one year.' ),
+	},
+	[ FEATURE_BLAZE_AD_CREDITS ]: {
+		getSlug: () => FEATURE_BLAZE_AD_CREDITS,
+		getTitle: () => i18n.translate( 'Blaze - Free ad credits ($200)' ),
+		getDescription: () =>
+			i18n.translate(
+				'Promote your content across millions of sites with $200 in free Blaze ad credits.'
+			),
 	},
 
 	[ FEATURE_UNLIMITED_ENTITIES ]: {
