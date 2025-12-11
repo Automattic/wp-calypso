@@ -23,6 +23,7 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isSummerSpecial,
+	useLongSetFeatures,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -31,6 +32,7 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isSummerSpecial?: boolean;
+	useLongSetFeatures?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -42,6 +44,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		selectedFeature,
 		showLegacyStorageFeature,
 		isSummerSpecial,
+		useLongSetFeatures,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -64,8 +67,14 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				let wpcomFeatures;
 
-				// Check if there's a specific override for comparison
-				if (
+				// Plans Differentiators Experiment: use the long set features for comparison grid
+				if ( useLongSetFeatures && planConstantObj.getLongSetSignupWpcomFeatures?.().length ) {
+					wpcomFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.getLongSetSignupWpcomFeatures().slice()
+					);
+				} else if (
+					// Check if there's a specific override for comparison
 					planConstantObj.get2023PlanComparisonFeatureOverride?.( {
 						isSummerSpecial,
 					} ).length
@@ -192,6 +201,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			hasRedeemedDomainCredit,
 			isSummerSpecial,
+			useLongSetFeatures,
 		] );
 	};
 

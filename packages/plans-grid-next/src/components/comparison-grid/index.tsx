@@ -3,6 +3,10 @@ import {
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
+	FEATURE_AI_WEBSITE_BUILDER,
+	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
+	FEATURE_AI_WRITER_DESIGNER,
+	FEATURE_AI_WRITER_DESIGNER_LIMITED,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
@@ -48,6 +52,24 @@ import type {
 	FeatureGroupMap,
 } from '@automattic/calypso-products';
 import './style.scss';
+
+// Plans Differentiators Experiment: treat feature variants (e.g., _LIMITED) as the same row
+const FEATURE_ALIASES: Record< string, string[] > = {
+	[ FEATURE_AI_WEBSITE_BUILDER ]: [ FEATURE_AI_WEBSITE_BUILDER_LIMITED ],
+	[ FEATURE_AI_WRITER_DESIGNER ]: [ FEATURE_AI_WRITER_DESIGNER_LIMITED ],
+};
+
+// Finds a matching feature, checking both the base slug and any aliases
+const findFeatureWithAlias = (
+	featureSlug: string | undefined,
+	planFeatures: { getSlug: () => string }[]
+) => {
+	if ( ! featureSlug ) {
+		return undefined;
+	}
+	const slugsToCheck = [ featureSlug, ...( FEATURE_ALIASES[ featureSlug ] ?? [] ) ];
+	return planFeatures.find( ( f ) => slugsToCheck.includes( f.getSlug() ) );
+};
 
 const featureGroupRowTitleCellMaxWidth = 450;
 const rowCellMaxWidth = 290;
@@ -590,18 +612,18 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 
 	const featureSlug = feature?.getSlug();
 
-	const hasFeature =
-		isStorageFeature ||
-		( featureSlug
-			? [ ...gridPlan.features.wpcomFeatures, ...gridPlan.features.jetpackFeatures ]
-					.filter( ( feature ) =>
-						'monthly' === intervalType ? ! feature.availableOnlyForAnnualPlans : true
-					)
-					.some( ( feature ) => feature.getSlug() === featureSlug )
-			: false );
+	const planFeatures = [
+		...gridPlan.features.wpcomFeatures,
+		...gridPlan.features.jetpackFeatures,
+	].filter( ( feature ) =>
+		'monthly' === intervalType ? ! feature.availableOnlyForAnnualPlans : true
+	);
 
-	const featureLabel = featureSlug
-		? gridPlan?.features?.comparisonGridFeatureLabels?.[ featureSlug ]
+	const matchingFeature = findFeatureWithAlias( featureSlug, planFeatures );
+	const hasFeature = isStorageFeature || !! matchingFeature;
+	const featureLabelSlug = matchingFeature?.getSlug() ?? featureSlug;
+	const featureLabel = featureLabelSlug
+		? gridPlan?.features?.comparisonGridFeatureLabels?.[ featureLabelSlug ]
 		: undefined;
 
 	const cellClasses = clsx(
