@@ -5,18 +5,7 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../constants';
 import getTimestamp from '../utils/get-timestamp';
 import useGetSupportInteractions from './use-get-support-interactions';
-
-interface Message {
-	received: number;
-	role: string;
-	text: string;
-}
-
-interface Conversation {
-	id: string;
-	createdAt: number;
-	messages: Message[];
-}
+import type { Conversation } from '../types';
 
 interface Result {
 	conversations: Conversation[];
@@ -25,8 +14,11 @@ interface Result {
 }
 
 export default function useOdieConversationList(): Result {
-	const { data: supportInteractions = [], isLoading: isLoadingInteractions } =
-		useGetSupportInteractions( 'odie' );
+	const {
+		data: supportInteractions = [],
+		isLoading: isLoadingInteractions,
+		isError: isFetchingInteractionsError,
+	} = useGetSupportInteractions( 'odie' );
 
 	const botSlugs = Array.from(
 		new Set(
@@ -40,7 +32,7 @@ export default function useOdieConversationList(): Result {
 	const {
 		data: conversations,
 		isLoading: isLoadingConversations,
-		isError,
+		isError: isFetchingConversationsError,
 		error,
 	} = useQuery< Conversation[], Error >( {
 		queryKey: [ 'agents-manager-odie-conversation-list', botSlugs ],
@@ -51,7 +43,6 @@ export default function useOdieConversationList(): Result {
 				truncation_method: 'first_message',
 			} ).toString();
 
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const response: any[] = canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'GET',
@@ -67,23 +58,19 @@ export default function useOdieConversationList(): Result {
 				const summary = conversation.first_message ?? conversation.last_message;
 
 				return {
+					type: 'odie',
 					id: String( conversation.chat_id ?? '' ),
 					createdAt: getTimestamp( conversation.created_at ),
-					messages: summary
-						? [
-								{
-									received: getTimestamp( summary.created_at ),
-									role: summary.role ?? 'bot',
-									text: summary.content ?? '',
-								},
-						  ]
-						: [],
+					message: {
+						received: getTimestamp( summary?.created_at ),
+						role: summary?.role ?? 'bot',
+						text: summary?.content ?? '',
+					},
 				};
 			} );
 		},
-		refetchOnMount: true,
-		refetchOnWindowFocus: false,
 		enabled: supportInteractions.length > 0,
+		refetchOnWindowFocus: false,
 		staleTime: 1000 * 30, // 30 seconds
 	} );
 
@@ -97,6 +84,6 @@ export default function useOdieConversationList(): Result {
 	return {
 		conversations: conversations || [],
 		isLoading: isLoadingInteractions || isLoadingConversations,
-		isError,
+		isError: isFetchingInteractionsError || isFetchingConversationsError,
 	};
 }

@@ -3,40 +3,36 @@
  * Displays a single conversation in the history list
  */
 
-import { type ServerConversationListItem } from '@automattic/agenttic-client';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	formatConversationDate,
 	generateConversationTitle,
-	getBotType,
-} from '../../utils/formatters';
+} from '../../utils/conversation-history-formatters';
 import ConversationAvatar from '../conversation-avatar';
+import type { Conversation } from '../../types';
 import './style.scss';
 
-interface ConversationListItemProps {
-	conversation: ServerConversationListItem;
+interface Props {
+	conversation: Conversation;
 	onClick: ( sessionId: string ) => void;
 }
 
-export default function ConversationListItem( {
-	conversation,
-	onClick,
-}: ConversationListItemProps ) {
+export default function ConversationListItem( { conversation, onClick }: Props ) {
+	const { type, id, message, createdAt } = conversation;
+
 	const handleClick = () => {
-		const sessionId = conversation.session_id ?? '';
-		if ( sessionId ) {
-			onClick( sessionId );
+		if ( id ) {
+			onClick( id );
 		}
 	};
 
-	const botType = getBotType( conversation.bot_id );
-	const title = conversation.last_message
-		? generateConversationTitle( conversation.last_message.content )
+	const title = message
+		? generateConversationTitle( message.text )
 		: __( 'New conversation', '__i18n_text_domain__' );
-	const date = formatConversationDate( conversation.created_at );
+	const date = formatConversationDate( createdAt );
 
 	// Check if this is a Happiness Engineer chat
-	const isHE = botType === 'he';
+	const isHE = type === 'zendesk';
 	const subtitle = isHE
 		? sprintf(
 				/* translators: %s: date of the conversation */
@@ -44,14 +40,13 @@ export default function ConversationListItem( {
 				date
 		  )
 		: date;
-	const disabled = ! conversation.session_id;
 
 	return (
 		<button
 			className="agents-manager-conversation-list-item"
 			onClick={ handleClick }
 			type="button"
-			disabled={ disabled }
+			disabled={ ! id }
 			aria-label={ sprintf(
 				/* translators: %1$s: conversation title, %2$s: conversation subtitle */
 				__( 'Load conversation: %1$s, %2$s', '__i18n_text_domain__' ),
@@ -59,10 +54,10 @@ export default function ConversationListItem( {
 				subtitle
 			) }
 		>
-			<ConversationAvatar type={ botType } />
+			<ConversationAvatar type={ type } />
 			<div className="agents-manager-conversation-list-item__text">
-				<p className="agents-manager-conversation-list-item__title">{ title }</p>
-				<p className="agents-manager-conversation-list-item__subtitle">{ subtitle }</p>
+				<span className="agents-manager-conversation-list-item__title">{ title }</span>
+				<span className="agents-manager-conversation-list-item__subtitle">{ subtitle }</span>
 			</div>
 		</button>
 	);

@@ -4,24 +4,25 @@
  */
 
 import { Button } from '@wordpress/components';
-import { useCallback, useRef } from '@wordpress/element';
+import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import useOdieConversationList from '../../hooks/use-odie-conversation-list';
 import useOrchestratorConversationList from '../../hooks/use-orchestrator-conversation-list';
 import ConversationListItem from '../conversation-list-item';
 import ConversationListSkeleton from '../conversation-list-skeleton';
 import './style.scss';
 
 interface ConversationHistoryViewProps {
-	botId: string;
+	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;
 	onSelectConversation: ( sessionId: string ) => void;
 	onNewChat: () => void;
 }
 
 export default function ConversationHistoryView( {
-	botId,
+	agentId,
 	authProvider,
-	onSelectConversation,
+	onSelectConversation = () => {},
 	onNewChat,
 }: ConversationHistoryViewProps ) {
 	// To use the latest onSelectConversation in the callback
@@ -29,13 +30,15 @@ export default function ConversationHistoryView( {
 	onSelectConversationRef.current = onSelectConversation;
 
 	const { conversations, isLoading, isError } = useOrchestratorConversationList( {
-		botId,
+		agentId,
 		authProvider,
 	} );
+	// eslint-disable-next-line no-console
+	console.log( 'Orchestrator conversations:', conversations );
 
-	const handleConversationClick = useCallback( ( sessionId: string ) => {
-		onSelectConversationRef.current( sessionId );
-	}, [] );
+	const test = useOdieConversationList();
+	// eslint-disable-next-line no-console
+	console.log( 'Odie conversations:', test.conversations );
 
 	return (
 		<div className="agents-manager-conversation-history-view">
@@ -68,9 +71,9 @@ export default function ConversationHistoryView( {
 					<div className="agents-manager-conversation-history-view__list">
 						{ conversations.map( ( conversation ) => (
 							<ConversationListItem
-								key={ conversation.chat_id }
+								key={ conversation.id }
 								conversation={ conversation }
-								onClick={ handleConversationClick }
+								onClick={ ( sessionId: string ) => onSelectConversationRef.current( sessionId ) }
 							/>
 						) ) }
 					</div>

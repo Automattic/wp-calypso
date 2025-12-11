@@ -1,24 +1,27 @@
-import {
-	listConversationsFromServer,
-	type ServerConversationListItem,
-} from '@automattic/agenttic-client';
+import { listConversationsFromServer, createOdieBotId } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
-import { parseMySQLDateTime } from '../utils/formatters';
+import getTimestamp from '../utils/get-timestamp';
+import type { Conversation } from '../types';
 
 interface Config {
-	botId: string;
+	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;
 }
 
 interface Result {
-	conversations: ServerConversationListItem[];
+	conversations: Conversation[];
 	isLoading: boolean;
 	isError: boolean;
 }
 
-export default function useOrchestratorConversationList( { botId, authProvider }: Config ): Result {
+export default function useOrchestratorConversationList( {
+	agentId,
+	authProvider,
+}: Config ): Result {
+	const botId = createOdieBotId( agentId );
+
 	const {
 		data: conversations,
 		isLoading,
@@ -27,23 +30,30 @@ export default function useOrchestratorConversationList( { botId, authProvider }
 	} = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when botId changes
 		queryKey: [ 'agents-manager-orchestrator-conversation-list', botId ],
-		queryFn: async () => {
-			const result = await listConversationsFromServer( botId, {
+		queryFn: async (): Promise< Conversation[] > => {
+			const response = await listConversationsFromServer( botId, {
 				apiBaseUrl: API_BASE_URL,
 				authProvider,
 			} );
 
-			// Sort by created_at descending (most recent first)
-			// Note: Dates are in MySQL format "2025-11-06 14:29:49"
-			const sorted = result.sort( ( a, b ) => {
-				const timeA = parseMySQLDateTime( a.created_at ).getTime();
-				const timeB = parseMySQLDateTime( b.created_at ).getTime();
-				return timeB - timeA;
-			} );
+			return response.map( ( conversation ) => {
+				const summary = conversation.last_message;
 
-			return sorted;
+				return {
+					type: 'orchestrator',
+					id: String( conversation.session_id ?? '' ),
+					createdAt: getTimestamp( conversation.created_at ),
+					message: {
+						received: getTimestamp( summary?.created_at ),
+						role: summary?.role ?? 'bot',
+						text: summary?.content ?? '',
+					},
+				};
+			} );
 		},
 		enabled: !! botId,
+		refetchOnWindowFocus: false,
+		staleTime: 1000 * 30, // 30 seconds
 	} );
 
 	useEffect( () => {

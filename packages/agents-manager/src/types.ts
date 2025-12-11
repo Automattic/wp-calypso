@@ -41,3 +41,14 @@ export interface SupportInteraction {
 	events: SupportInteractionEvent[];
 	environment: 'staging' | 'production';
 }
+
+export interface Conversation {
+	type: 'orchestrator' | 'odie' | 'zendesk';
+	id: string;
+	createdAt: number;
+	message: {
+		received: number;
+		role: string;
+		text: string;
+	};
+}
