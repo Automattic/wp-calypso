@@ -1,13 +1,20 @@
 export type ResourceItem = {
 	id: string;
-	type?: string;
-	resourceType: string;
-	product: string;
-	productType?: string;
-	logo: JSX.Element;
-	title: string;
+	name: string;
 	description: string;
-	cta: {
+	externalUrl: string;
+	format: string;
+	relatedProduct: string;
+	relatedProductType: string;
+	resourceType: string;
+	previewImage: string;
+	section: string;
+	createdAt: string;
+	updatedAt: string;
+	// UI-specific fields (computed from API data)
+	logo?: JSX.Element;
+	title?: string;
+	cta?: {
 		label: string;
 		url: string;
 	};

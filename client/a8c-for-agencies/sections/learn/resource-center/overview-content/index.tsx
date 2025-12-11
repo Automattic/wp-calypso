@@ -1,5 +1,8 @@
 import { __experimentalSpacer as Spacer, __experimentalText as Text } from '@wordpress/components';
+import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { formatAgencyResources } from 'calypso/a8c-for-agencies/data/learn/lib/format-agency-resources';
+import useFetchAgencyResources from 'calypso/a8c-for-agencies/data/learn/use-fetch-agency-resources';
 import ArtOfTheDeal from './art-of-the-deal';
 import BrowseAllResources from './browse-all-resources';
 import TopResources from './top-resources';
@@ -7,6 +10,27 @@ import TopResources from './top-resources';
 import './style.scss';
 
 export default function ResourceCenterOverviewContent() {
+	const { data, isLoading } = useFetchAgencyResources();
+
+	const resources = useMemo( () => {
+		if ( ! data?.results ) {
+			return [];
+		}
+		return formatAgencyResources( data.results );
+	}, [ data ] );
+
+	const topResources = useMemo( () => {
+		return resources.filter( ( resource ) => resource.section === 'top_resources' );
+	}, [ resources ] );
+
+	const artOfTheDealResources = useMemo( () => {
+		return resources.filter( ( resource ) => resource.section === 'art_of_the_deal' );
+	}, [ resources ] );
+
+	const browseAllResources = useMemo( () => {
+		return resources.filter( ( resource ) => resource.section === 'browse_all' );
+	}, [ resources ] );
+
 	return (
 		<>
 			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
@@ -17,11 +41,11 @@ export default function ResourceCenterOverviewContent() {
 				</Text>
 			</Spacer>
 
-			<TopResources />
+			<TopResources resources={ topResources } isLoading={ isLoading } />
 
-			<ArtOfTheDeal />
+			<ArtOfTheDeal resources={ artOfTheDealResources } isLoading={ isLoading } />
 
-			<BrowseAllResources />
+			<BrowseAllResources resources={ browseAllResources } isLoading={ isLoading } />
 		</>
 	);
 }
