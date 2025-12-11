@@ -5,6 +5,7 @@ import {
 	getOdieEmailFallbackMessageContent,
 	getOdieErrorMessage,
 	getOdieErrorMessageNonEligible,
+	getOdieZendeskConnectionErrorMessage,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
@@ -27,7 +28,8 @@ const getDisplayMessage = (
 	canConnectToZendesk: boolean,
 	forceEmailSupport?: boolean,
 	isChatRestricted?: boolean,
-	isErrorMessage?: boolean
+	isErrorMessage?: boolean,
+	isChatLoaded?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
 		return getOdieThirdPartyMessageContent();
@@ -45,7 +47,15 @@ const getDisplayMessage = (
 		? getOdieForwardToZendeskMessage( userHasRecentOpenConversation )
 		: getOdieForwardToForumsMessage();
 
-	return isErrorMessage ? getOdieErrorMessage() : forwardMessage;
+	if ( isErrorMessage ) {
+		return getOdieErrorMessage();
+	}
+
+	if ( isUserEligibleForPaidSupport && ! isChatLoaded ) {
+		return getOdieZendeskConnectionErrorMessage().content;
+	}
+
+	return forwardMessage;
 };
 
 export const UserMessage = ( {
@@ -61,6 +71,7 @@ export const UserMessage = ( {
 		canConnectToZendesk,
 		forceEmailSupport,
 		isChatRestricted,
+		isChatLoaded,
 		chat,
 	} = useOdieAssistantContext();
 
@@ -79,7 +90,8 @@ export const UserMessage = ( {
 				canConnectToZendesk,
 				forceEmailSupport,
 				isChatRestricted,
-				message?.context?.flags?.is_error_message
+				message?.context?.flags?.is_error_message,
+				isChatLoaded
 		  )
 		: message.content;
 

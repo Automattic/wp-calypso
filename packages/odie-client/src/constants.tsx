@@ -282,7 +282,7 @@ export const getErrorMessageUnknownError = (): Message => {
 export const getOdieZendeskConnectionErrorMessage = (): Message => {
 	return {
 		content: __(
-			"Sorry, I couldn't connect you to our support team right now. Please try again later.",
+			"Sorry, I couldn't connect you to our support team right now. Please try again later or use the button below to reach out via email.",
 			__i18n_text_domain__
 		),
 		role: 'bot',
@@ -293,7 +293,7 @@ export const getOdieZendeskConnectionErrorMessage = (): Message => {
 				show_ai_avatar: true,
 				failed_zendesk_connection: true,
 				is_error_message: false,
-				forward_to_human_support: false,
+				forward_to_human_support: true,
 			},
 			question_tags: {
 				inquiry_type: 'request-for-human-support',
