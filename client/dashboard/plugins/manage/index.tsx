@@ -33,8 +33,8 @@ import type { PluginListRow } from './types';
 
 import './style.scss';
 
-const ICON_SIZE = 44;
-const FALLBACK_ICON_SIZE = 33;
+const ICON_SIZE = 40;
+const FALLBACK_ICON_SIZE = 30;
 const view: View = {
 	type: 'list',
 	page: 1,
@@ -129,7 +129,7 @@ export default function PluginsList() {
 
 	const decoration = useMemo( () => {
 		if ( icon ) {
-			return <img src={ icon } alt={ plugin?.name } />;
+			return <img className="plugin-icon" src={ icon } alt={ plugin?.name } />;
 		} else if ( isLoadingPlugin ) {
 			return <div className="plugin-icon-placeholder" aria-hidden="true" />;
 		}
@@ -159,7 +159,7 @@ export default function PluginsList() {
 			}
 			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
-			<Grid columns={ 2 } templateColumns="25% 1fr">
+			<Grid columns={ 2 } gap={ 6 } templateColumns="25% 1fr">
 				<Card>
 					<CardBody className="plugin-switcher-card-body">
 						<SwitcherContent
@@ -210,7 +210,7 @@ export default function PluginsList() {
 									: '';
 
 								return (
-									<VStack spacing={ 1 }>
+									<VStack spacing={ 0 }>
 										{ /* @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`. */ }
 										<Text
 											className="plugin-switcher-item-name"

@@ -1,14 +1,19 @@
 .plugin-icon-wrapper {
 	border-radius: 4px;
 	position: relative;
-	width: 44px;
-	height: 44px;
+	width: 40px;
+	height: 40px;
 	flex-shrink: 0;
 
 	&.is-fallback {
 		background: #c3c4c7;
 		fill: #fff;
 	}
+}
+
+img.plugin-icon {
+	width: 40px;
+	height: 40px;
 }
 
 .plugin-icon-fallback {
@@ -29,8 +34,7 @@
 
 .plugin-switcher-item {
 	border-top: 1px solid #f0f0f0;
-	padding-left: calc(4px * 6);
-	padding-right: calc(4px * 6);
+	padding: calc(4px * 2.5) calc(4px * 6);
 
 	&:hover {
 		background-color: #f8f8f8;
