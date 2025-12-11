@@ -125,7 +125,7 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 	const siteEditorUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit';
 	const siteSpecUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit&ai-step=spec';
 	const mediaLibraryUrl = site?.URL + '/wp-admin/upload.php';
-	const postEditorUrl = site?.URL + '/wp-admin/edit.php';
+	const postEditorUrl = site?.URL + '/wp-admin/edit.php?post_type=post';
 
 	const hasSelection = selectedUseCases.size > 0;
 	const { isPending, isSuccess } = mutation;
