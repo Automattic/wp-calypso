@@ -71,13 +71,26 @@ function BillingDragonCheckoutContent( {
 			return;
 		}
 
+		if ( ! agency ) {
+			debug( '[A4A Checkout] Agency not loaded yet, waiting (plan checkout)...' );
+			return;
+		}
+
 		if ( ! productsForCart.length || productsError ) {
 			debug( '[A4A Checkout] No products created from plan slug' );
 			return;
 		}
 
-		debug( '[A4A Checkout] Replacing cart with products from plan slug', productsForCart );
-		replaceProductsInCart( productsForCart )
+		const productsWithAgency = productsForCart.map( ( product ) => ( {
+			...product,
+			extra: {
+				...product.extra,
+				agency_id: agency.id,
+			},
+		} ) );
+
+		debug( '[A4A Checkout] Replacing cart with products from plan slug', productsWithAgency );
+		replaceProductsInCart( productsWithAgency )
 			.then( () => {
 				debug( '[A4A Checkout] Products added to cart successfully (plan slug)' );
 				setIsReady( true );
@@ -87,6 +100,7 @@ function BillingDragonCheckoutContent( {
 			} );
 	}, [
 		areProductsPreparing,
+		agency,
 		isPlanCheckout,
 		productsError,
 		productsForCart,
