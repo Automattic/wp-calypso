@@ -80,15 +80,10 @@ export const HelpCenterRequiredContextProvider: React.FC< {
 	value: Partial< HelpCenterRequiredInformation > &
 		Pick< HelpCenterRequiredInformation, 'currentUser' | 'sectionName' >;
 } > = function ( { children, value } ) {
-	const botConfig = {
-		newInteractionsBotSlug: ODIE_NEW_INTERACTIONS_BOT_SLUG,
-		newInteractionsBotVersion: undefined,
-	};
-
 	return (
 		<HelpCenterRequiredContext.Provider
 			value={ {
-				...Object.assign( {}, defaultContext, botConfig, value ),
+				...Object.assign( {}, defaultContext, value ),
 			} }
 		>
 			{ children }
