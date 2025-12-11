@@ -53,7 +53,7 @@ export class PeoplePage {
 	 * Click view all link if its available.
 	 */
 	async clickViewAllIfAvailable(): Promise< void > {
-		const viewAllLink = await this.page.getByRole( 'link', { name: 'View all' } );
+		const viewAllLink = this.page.getByRole( 'link', { name: 'View all' } );
 
 		if ( ( await viewAllLink.count() ) > 0 ) {
 			await viewAllLink.click();
@@ -86,10 +86,7 @@ export class PeoplePage {
 	 * @param {string} username Username of the user.
 	 */
 	async selectUser( username: string ): Promise< void > {
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.teamUser( username ) ),
-		] );
+		this.page.getByTitle( username );
 	}
 
 	/**

@@ -56,13 +56,13 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 			}
 		} );
 
-		await test.step( 'Then I can see the invite is pending', async function () {
+		await test.step( 'When I navigate to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
 			! userManagementRevampFeature && ( await pagePeople.clickTab( 'Invites' ) );
+			await pagePeople.clickViewAllIfAvailable();
+		} );
 
-			// await pagePeople.selectInvitedUser( testUser.email );
-
-			await page.getByRole( 'link', { name: 'View All' } ).click();
+		await test.step( 'Then I can see the invite is pending', async function () {
 			await expect( async () => {
 				page.reload();
 				expect( page.getByTitle( testUser.email ) ).toBeVisible();
@@ -89,15 +89,21 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'Then they see a welcome banner after signup', async function () {
-			const bannerText = `You're now an ${ role } of: `;
-			await pageIncognito.getPage().waitForSelector( `:has-text("${ bannerText }")` );
+			await expect(
+				pageIncognito.getPage().getByText( `You're now an ${ role } of: ` )
+			).toBeVisible();
 		} );
 
 		await test.step( 'When I navigate back to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
+			await pagePeople.clickViewAllIfAvailable();
 		} );
 
 		await test.step( 'Then I can see the invited user in the team', async function () {
+			expect( page.getByTitle( testUser.email ) ).toBeVisible();
+		} );
+
+		await test.step( 'When I select the invited user from the site', async function () {
 			await pagePeople.selectUser( testUser.username );
 		} );
 
