@@ -2,6 +2,7 @@ import { AgentUI } from '@automattic/agenttic-ui';
 import { __ } from '@wordpress/i18n';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ConversationHistoryView from '../conversation-history-view';
+import type { ConversationType } from '../../types';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 interface AgentHistoryProps {
@@ -24,7 +25,7 @@ interface AgentHistoryProps {
 	/** Called when the chat is expanded (floating mode). */
 	onExpand: () => void;
 	/** Called when a conversation is selected. */
-	onSelectConversation: ( sessionId: string ) => void;
+	onSelectConversation: ( type: ConversationType, id: string ) => void;
 	/** Called when the user starts a new chat. */
 	onNewChat: () => void;
 }

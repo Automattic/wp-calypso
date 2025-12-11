@@ -42,8 +42,10 @@ export interface SupportInteraction {
 	environment: 'staging' | 'production';
 }
 
+export type ConversationType = 'orchestrator' | 'odie' | 'zendesk';
+
 export interface Conversation {
-	type: 'orchestrator' | 'odie' | 'zendesk';
+	type: ConversationType;
 	id: string;
 	createdAt: number;
 	message: {

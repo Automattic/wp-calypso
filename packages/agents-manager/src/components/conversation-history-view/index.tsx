@@ -6,16 +6,16 @@
 import { Button } from '@wordpress/components';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import useOdieConversationList from '../../hooks/use-odie-conversation-list';
-import useOrchestratorConversationList from '../../hooks/use-orchestrator-conversation-list';
+import useConversationList from '../../hooks/use-conversation-list';
 import ConversationListItem from '../conversation-list-item';
 import ConversationListSkeleton from '../conversation-list-skeleton';
+import type { ConversationType } from '../../types';
 import './style.scss';
 
-interface ConversationHistoryViewProps {
+interface Props {
 	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;
-	onSelectConversation: ( sessionId: string ) => void;
+	onSelectConversation: ( type: ConversationType, id: string ) => void;
 	onNewChat: () => void;
 }
 
@@ -24,56 +24,49 @@ export default function ConversationHistoryView( {
 	authProvider,
 	onSelectConversation = () => {},
 	onNewChat,
-}: ConversationHistoryViewProps ) {
+}: Props ) {
 	// To use the latest onSelectConversation in the callback
 	const onSelectConversationRef = useRef( onSelectConversation );
 	onSelectConversationRef.current = onSelectConversation;
 
-	const { conversations, isLoading, isError } = useOrchestratorConversationList( {
+	const { conversations, status } = useConversationList( {
 		agentId,
 		authProvider,
 	} );
-	// eslint-disable-next-line no-console
-	console.log( 'Orchestrator conversations:', conversations );
-
-	const test = useOdieConversationList();
-	// eslint-disable-next-line no-console
-	console.log( 'Odie conversations:', test.conversations );
 
 	return (
 		<div className="agents-manager-conversation-history-view">
 			<div className="agents-manager-conversation-history-view__content">
-				{ /* Loading state */ }
-				{ isLoading && ! conversations.length && (
-					<div className="agents-manager-conversation-history-view__loading">
-						<ConversationListSkeleton count={ 5 } />
-					</div>
-				) }
-				{ /* Error state - only show if we have no data to display */ }
-				{ isError && ! conversations.length && (
+				{ /* Status states: error, loading, empty */ }
+				{ status === 'error' && (
 					<div className="agents-manager-conversation-history-view__error">
 						<p>
 							{ __( 'Failed to load conversations. Please try again.', '__i18n_text_domain__' ) }
 						</p>
 					</div>
 				) }
-				{ /* Empty state */ }
-				{ ! isLoading && ! isError && ! conversations.length && (
+				{ status === 'loading' && (
+					<div className="agents-manager-conversation-history-view__loading">
+						<ConversationListSkeleton count={ 5 } />
+					</div>
+				) }
+				{ status === 'empty' && (
 					<div className="agents-manager-conversation-history-view__empty">
 						<p>{ __( 'No past conversations', '__i18n_text_domain__' ) }</p>
 						<p className="agents-manager-conversation-history-view__empty-hint">
 							{ __( 'Start a new chat to begin', '__i18n_text_domain__' ) }
 						</p>
 					</div>
-				) }{ ' ' }
-				{ /* Conversation list - show whenever we have data, even while refreshing */ }
-				{ conversations.length > 0 && (
+				) }
+
+				{ /* Conversation list */ }
+				{ status === 'success' && (
 					<div className="agents-manager-conversation-history-view__list">
 						{ conversations.map( ( conversation ) => (
 							<ConversationListItem
 								key={ conversation.id }
 								conversation={ conversation }
-								onClick={ ( sessionId: string ) => onSelectConversationRef.current( sessionId ) }
+								onClick={ ( type, id ) => onSelectConversationRef.current( type, id ) }
 							/>
 						) ) }
 					</div>

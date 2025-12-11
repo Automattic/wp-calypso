@@ -45,6 +45,7 @@
 		"@automattic/agenttic-ui": "^0.1.26",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
+		"@automattic/odie-client": "workspace:^",
 		"@automattic/support-articles": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@rive-app/react-canvas": "^4.15.6",

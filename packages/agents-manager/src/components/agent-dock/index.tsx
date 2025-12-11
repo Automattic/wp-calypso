@@ -23,6 +23,7 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
+import type { ConversationType } from '../../types';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 
 /**
@@ -125,10 +126,20 @@ export default function AgentDock( {
 		navigate( '/chat', { state: { isNewChat: true } } );
 	};
 
-	const handleSelectConversation = ( sessionId: string ) => {
-		abortCurrentRequest();
-		setSessionId( sessionId );
-		navigate( '/chat', { state: { sessionId } } );
+	const handleSelectConversation = ( type: ConversationType, id: string ) => {
+		switch ( type ) {
+			case 'orchestrator':
+				abortCurrentRequest();
+				setSessionId( sessionId );
+				navigate( '/chat', { state: { sessionId: id } } );
+				break;
+			case 'odie':
+				// TODO: Handle Odie conversation selection...
+				break;
+			case 'zendesk':
+				// TODO: Handle Zendesk conversation selection...
+				break;
+		}
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {

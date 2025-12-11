@@ -5,11 +5,11 @@
 
 import { SVG, Path } from '@wordpress/primitives';
 import clsx from 'clsx';
-import { Conversation } from '../../types';
+import type { ConversationType } from '../../types';
 import './style.scss';
 
 interface Props {
-	type: Conversation[ 'type' ];
+	type: ConversationType;
 	className?: string;
 }
 

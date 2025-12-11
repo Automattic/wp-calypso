@@ -5,7 +5,7 @@ import { API_BASE_URL } from '../constants';
 import getTimestamp from '../utils/get-timestamp';
 import type { Conversation } from '../types';
 
-interface Config {
+interface Options {
 	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;
 }
@@ -19,7 +19,7 @@ interface Result {
 export default function useOrchestratorConversationList( {
 	agentId,
 	authProvider,
-}: Config ): Result {
+}: Options ): Result {
 	const botId = createOdieBotId( agentId );
 
 	const {
