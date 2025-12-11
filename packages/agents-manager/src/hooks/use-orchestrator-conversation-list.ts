@@ -36,6 +36,7 @@ export default function useOrchestratorConversationList( {
 				authProvider,
 			} );
 
+			// Unify the conversation format with other conversation lists.
 			return response.map( ( conversation ) => {
 				const summary = conversation.last_message;
 

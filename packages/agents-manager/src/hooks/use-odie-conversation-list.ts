@@ -54,6 +54,7 @@ export default function useOdieConversationList(): Result {
 						method: 'GET',
 				  } );
 
+			// Unify the conversation format with other conversation lists.
 			return response.map( ( conversation ) => {
 				const summary = conversation.first_message ?? conversation.last_message;
 
