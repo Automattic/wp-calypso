@@ -53,7 +53,8 @@ img.plugin-icon {
 		background-color: #f8f8f8;
 	}
 
-	&.is-selected:focus {
+	&:focus:not(:disabled),
+	&:focus-visible:not(:disabled) {
 		box-shadow: none;
 		outline: none;
 	}
