@@ -1,3 +1,4 @@
+import { useMemo } from '@wordpress/element';
 import useOdieConversationList from './use-odie-conversation-list';
 import useOrchestratorConversationList from './use-orchestrator-conversation-list';
 import type { Conversation } from '../types';
@@ -34,8 +35,12 @@ export default function useConversationList( { agentId, authProvider }: Options 
 	// TODO: Integrate Zendesk conversation list...
 
 	// Merge and sort conversations by `createdAt` (most recent first)
-	const conversations = [ ...odieQuery.conversations, ...orchestratorQuery.conversations ].sort(
-		( a, b ) => new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime()
+	const conversations = useMemo(
+		() =>
+			[ ...odieQuery.conversations, ...orchestratorQuery.conversations ].sort(
+				( a, b ) => b.createdAt - a.createdAt
+			),
+		[ odieQuery.conversations, orchestratorQuery.conversations ]
 	);
 
 	const isLoading = odieQuery.isLoading || orchestratorQuery.isLoading;
