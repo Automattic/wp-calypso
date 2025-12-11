@@ -16,8 +16,6 @@ const incompatiblePlugins = new Set( [
 	'backup',
 	'better-wp-security',
 	'database-browser',
-	'duplicator',
-	'duplicator-pro',
 	'extended-wp-reset',
 	'file-manager-advanced',
 	'file-manager',
