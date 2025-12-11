@@ -31,6 +31,7 @@ export default function SwitcherContent< T >( {
 	renderItemMedia,
 	renderItemTitle,
 	renderItemDescription,
+	resetScroll = true,
 	children,
 	onClose,
 	onItemClick,
@@ -45,6 +46,7 @@ export default function SwitcherContent< T >( {
 	renderItemMedia: RenderItemMedia< T >;
 	renderItemTitle: RenderItemTitle< T >;
 	renderItemDescription?: RenderItemDescription< T >;
+	resetScroll?: boolean;
 	onClose: () => void;
 	onItemClick?: () => void;
 } > ) {
@@ -88,6 +90,7 @@ export default function SwitcherContent< T >( {
 								onClose();
 								onItemClick?.();
 							} }
+							resetScroll={ resetScroll }
 						>
 							<HStack justify="flex-start" alignment="center" expanded>
 								{ renderItemMedia( { item, context: 'list', size: 32 } ) }

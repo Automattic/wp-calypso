@@ -161,6 +161,7 @@ export default function PluginsList() {
 							searchClassName="plugin-switcher-search"
 							initialView={ view }
 							items={ pluginsWithIcon }
+							resetScroll={ false }
 							getItemUrl={ ( item ) => `/plugins/manage/${ item.slug }` }
 							renderItemMedia={ ( { item } ) => {
 								const icon = item.icon ? (
