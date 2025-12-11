@@ -31,7 +31,6 @@ function getStatus( hasData: boolean, isError: boolean, isLoading: boolean ): St
 export default function useConversationList( { agentId, authProvider }: Options ): Result {
 	const odieQuery = useOdieConversationList();
 	const orchestratorQuery = useOrchestratorConversationList( { agentId, authProvider } );
-
 	// TODO: Integrate Zendesk conversation list...
 
 	// Merge and sort conversations by `createdAt` (most recent first)
