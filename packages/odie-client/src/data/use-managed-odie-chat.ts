@@ -128,7 +128,11 @@ export const useSendOdieMessage = () => {
 export const useManagedOdieChat = () => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const chatId = getOdieIdFromInteraction( currentSupportInteraction );
-	const { data: chat, isFetching: isLoadingChat } = useOdieChat( chatId ? Number( chatId ) : null );
+	const {
+		data: chat,
+		isFetching: isLoadingChat,
+		isPending: isPendingChat,
+	} = useOdieChat( chatId ? Number( chatId ) : null );
 	const navigate = useNavigate();
 
 	const sendOdieMessage = useSendOdieMessage();
@@ -146,6 +150,6 @@ export const useManagedOdieChat = () => {
 		messages: chat?.messages.map( convertMessageToAgentticFormat ) || [],
 		sendMessage,
 		isProcessing: sendOdieMessage.isPending || isLoadingChat,
-		isLoading: isLoadingChat,
+		isPending: isPendingChat,
 	};
 };
