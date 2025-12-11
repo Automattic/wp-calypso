@@ -134,7 +134,7 @@ export default function AgentDock( {
 				navigate( '/chat', { state: { sessionId: id } } );
 				break;
 			case 'odie':
-				// TODO: Handle Odie conversation selection...
+				navigate( `/odie?id=${ id }` );
 				break;
 			case 'zendesk':
 				// TODO: Handle Zendesk conversation selection...

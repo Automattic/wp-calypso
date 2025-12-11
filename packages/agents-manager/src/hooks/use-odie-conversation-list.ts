@@ -3,6 +3,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { useEffect } from '@wordpress/element';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../constants';
+import getSupportInteractionId from '../utils/get-support-interaction-id';
 import getTimestamp from '../utils/get-timestamp';
 import useGetSupportInteractions from './use-get-support-interactions';
 import type { Conversation } from '../types';
@@ -54,21 +55,28 @@ export default function useOdieConversationList(): Result {
 						method: 'GET',
 				  } );
 
-			// Unify the conversation format with other conversation lists.
-			return response.map( ( conversation ) => {
-				const summary = conversation.first_message ?? conversation.last_message;
+			// Unify the conversation format and map to support interaction IDs, filtering out unmatched entries.
+			const conversations = response
+				.map( ( conversation ) => {
+					const summary = conversation.first_message ?? conversation.last_message;
+					const id = getSupportInteractionId( 'odie', conversation.chat_id, supportInteractions );
 
-				return {
-					type: 'odie',
-					id: String( conversation.chat_id ?? '' ),
-					createdAt: getTimestamp( conversation.created_at ),
-					message: {
-						received: getTimestamp( summary?.created_at ),
-						role: summary?.role ?? 'bot',
-						text: summary?.content ?? '',
-					},
-				};
-			} );
+					return id
+						? {
+								type: 'odie',
+								id: id ?? '',
+								createdAt: getTimestamp( conversation.created_at ),
+								message: {
+									received: getTimestamp( summary?.created_at ),
+									role: summary?.role ?? 'bot',
+									text: summary?.content ?? '',
+								},
+						  }
+						: null;
+				} )
+				.filter( Boolean ) as Conversation[];
+
+			return conversations;
 		},
 		enabled: supportInteractions.length > 0,
 		refetchOnWindowFocus: false,
