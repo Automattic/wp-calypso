@@ -73,7 +73,9 @@ const getUseCaseDescription = (
 			);
 		case 'block-notes':
 			return createInterpolateElement(
-				__( 'Use Block Notes in the <postEditorLink>post editor</postEditorLink> by typing @ai.' ),
+				__(
+					'Address the assistant in the <postEditorLink>post editor</postEditorLink> using the @ai mention.'
+				),
 				{
 					postEditorLink: <ExternalLink href={ postEditorUrl } children={ null } />,
 				}
