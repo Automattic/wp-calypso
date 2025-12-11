@@ -292,6 +292,7 @@ export const getOdieZendeskConnectionErrorMessage = (): Message => {
 			site_id: null,
 			flags: {
 				show_ai_avatar: true,
+				failed_zendesk_connection: true,
 				is_error_message: false,
 				forward_to_human_support: false,
 			},
