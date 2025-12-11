@@ -11,11 +11,6 @@ export type ResourceItem = {
 	section: string;
 	createdAt: string;
 	updatedAt: string;
-	// UI-specific fields (computed from API data)
-	logo?: JSX.Element;
-	title?: string;
-	cta?: {
-		label: string;
-		url: string;
-	};
+	// Computed field
+	logo: JSX.Element | null;
 };

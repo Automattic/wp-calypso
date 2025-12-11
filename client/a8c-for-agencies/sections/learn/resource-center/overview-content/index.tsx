@@ -5,6 +5,7 @@ import { formatAgencyResources } from 'calypso/a8c-for-agencies/data/learn/lib/f
 import useFetchAgencyResources from 'calypso/a8c-for-agencies/data/learn/use-fetch-agency-resources';
 import ArtOfTheDeal from './art-of-the-deal';
 import BrowseAllResources from './browse-all-resources';
+import { useFilterResources } from './hooks/use-filter-resources';
 import TopResources from './top-resources';
 
 import './style.scss';
@@ -16,20 +17,15 @@ export default function ResourceCenterOverviewContent() {
 		if ( ! data?.results ) {
 			return [];
 		}
-		return formatAgencyResources( data.results );
+		const formattedResources = formatAgencyResources( data.results );
+		// Sort by created_at descending (newest first)
+		return formattedResources.sort( ( a, b ) => {
+			return new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime();
+		} );
 	}, [ data ] );
 
-	const topResources = useMemo( () => {
-		return resources.filter( ( resource ) => resource.section === 'top_resources' );
-	}, [ resources ] );
-
-	const artOfTheDealResources = useMemo( () => {
-		return resources.filter( ( resource ) => resource.section === 'art_of_the_deal' );
-	}, [ resources ] );
-
-	const browseAllResources = useMemo( () => {
-		return resources.filter( ( resource ) => resource.section === 'browse_all' );
-	}, [ resources ] );
+	const { topResources, artOfTheDealResources, browseAllResources } =
+		useFilterResources( resources );
 
 	return (
 		<>

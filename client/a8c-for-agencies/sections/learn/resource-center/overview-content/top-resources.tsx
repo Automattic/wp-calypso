@@ -1,7 +1,6 @@
 import {
 	Card,
 	CardBody,
-	CardHeader,
 	CardMedia,
 	Button,
 	Spinner,
@@ -33,52 +32,36 @@ function ResourceCard( { resource }: { resource: ResourceItem } ) {
 		);
 	};
 
+	const ctaLabel = resource.format === 'video' ? __( 'Watch' ) : __( 'Learn more' );
+
 	return (
 		<Card isBorderless size="none" style={ { width: '33%' } }>
-			<CardMedia style={ { borderRadius: '4px' } }>
-				{ resource.previewImage ? (
-					<img src={ resource.previewImage } alt={ resource.name } />
-				) : (
-					<div
-						style={ {
-							width: '100%',
-							height: '150px',
-							backgroundColor: 'var(--color-neutral-10)',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-						} }
-					>
-						<Text variant="muted">{ __( 'No preview available' ) }</Text>
-					</div>
-				) }
-			</CardMedia>
-			<CardHeader
-				size={ {
-					blockStart: 'small',
-					blockEnd: 'none',
-					inlineStart: 'none',
-					inlineEnd: 'none',
-				} }
-			>
-				<Heading level={ 3 } weight={ 500 } size={ 16 }>
-					{ resource.title || resource.name }
-				</Heading>
-			</CardHeader>
-			<CardBody>
-				<VStack spacing={ 2 }>
-					<Text>{ resource.description }</Text>
-					{ resource.cta && (
-						<Button
-							variant="secondary"
-							href={ resource.cta.url }
-							target="_blank"
-							onClick={ handleClick }
-						>
-							{ resource.cta.label }
-						</Button>
+			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
+				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+					{ resource.previewImage && (
+						<CardMedia style={ { borderRadius: '4px' } }>
+							<img src={ resource.previewImage } alt={ resource.name } />
+						</CardMedia>
 					) }
+					<HStack>{ resource.logo }</HStack>
+					<VStack spacing={ 1 }>
+						<Text size={ 13 } weight={ 500 }>
+							{ resource.name }
+						</Text>
+						<Text variant="muted" size={ 12 }>
+							{ resource.description }
+						</Text>
+					</VStack>
 				</VStack>
+				<Button
+					variant="secondary"
+					href={ resource.externalUrl }
+					target="_blank"
+					onClick={ handleClick }
+					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
+				>
+					{ ctaLabel }
+				</Button>
 			</CardBody>
 		</Card>
 	);

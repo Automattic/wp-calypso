@@ -31,43 +31,43 @@ interface BrowseAllResourcesProps {
 	isLoading: boolean;
 }
 
-function ResourceItemCard( { item }: { item: ResourceItem } ) {
+function ResourceItemCard( { resource }: { resource: ResourceItem } ) {
 	const dispatch = useDispatch();
 
 	const handleCTAClick = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_resource_center_browse_cta_click', {
-				resource_id: item.id,
-				resource_name: item.name,
+				resource_id: resource.id,
+				resource_name: resource.name,
 			} )
 		);
 	};
+
+	const ctaLabel = resource.format === 'video' ? __( 'Watch' ) : __( 'Learn more' );
 
 	return (
 		<Card>
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-					{ item.logo && <HStack>{ item.logo }</HStack> }
+					<HStack>{ resource.logo }</HStack>
 					<VStack spacing={ 1 }>
 						<Text size={ 13 } weight={ 500 }>
-							{ item.title || item.name }
+							{ resource.name }
 						</Text>
 						<Text variant="muted" size={ 12 }>
-							{ item.description }
+							{ resource.description }
 						</Text>
 					</VStack>
 				</VStack>
-				{ item.cta && (
-					<Button
-						variant="secondary"
-						href={ item.cta.url }
-						target="_blank"
-						onClick={ handleCTAClick }
-						style={ { marginTop: '24px', alignSelf: 'flex-start' } }
-					>
-						{ item.cta.label }
-					</Button>
-				) }
+				<Button
+					variant="secondary"
+					href={ resource.externalUrl }
+					target="_blank"
+					onClick={ handleCTAClick }
+					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
+				>
+					{ ctaLabel }
+				</Button>
 			</CardBody>
 		</Card>
 	);
@@ -114,19 +114,19 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 		() => [
 			{
 				id: 'name',
-				getValue: ( { item } ) => item.name,
+				getValue: ( { resource } ) => resource.name,
 				enableGlobalSearch: true,
 			},
 			{
 				id: 'description',
-				getValue: ( { item } ) => item.description,
+				getValue: ( { resource } ) => resource.description,
 				enableGlobalSearch: true,
 			},
 			{
 				id: 'relatedProduct',
 				label: __( 'Product' ),
 				type: 'text',
-				getValue: ( { item } ) => item.relatedProduct,
+				getValue: ( { resource } ) => resource.relatedProduct,
 				elements: filterOptions.products,
 				filterBy: {
 					operators: [ 'is' ],
@@ -138,7 +138,7 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 				id: 'resourceType',
 				label: __( 'Resource type' ),
 				type: 'text',
-				getValue: ( { item } ) => item.resourceType,
+				getValue: ( { resource } ) => resource.resourceType,
 				elements: filterOptions.resourceTypes,
 				filterBy: {
 					operators: [ 'is' ],
@@ -150,7 +150,7 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 				id: 'format',
 				label: __( 'Format' ),
 				type: 'text',
-				getValue: ( { item } ) => item.format,
+				getValue: ( { resource } ) => resource.format,
 				elements: filterOptions.formats,
 				filterBy: {
 					operators: [ 'is' ],
@@ -218,8 +218,8 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 				<DataViews.FiltersToggled className="resource-center-filters" />
 			</DataViews>
 			<div className="resource-center-cards">
-				{ filteredData.map( ( item ) => (
-					<ResourceItemCard key={ item.id } item={ item } />
+				{ filteredData.map( ( resource ) => (
+					<ResourceItemCard key={ resource.id } resource={ resource } />
 				) ) }
 			</div>
 		</>
