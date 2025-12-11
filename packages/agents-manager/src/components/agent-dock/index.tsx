@@ -9,6 +9,7 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
+import config from '@automattic/calypso-config';
 import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -132,6 +133,8 @@ export default function AgentDock( {
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
+		const isProxied = config( 'env_id' ) === 'development';
+
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', '__i18n_text_domain__' ),
@@ -158,7 +161,12 @@ export default function AgentDock( {
 			onClick: dock,
 		};
 
-		const options: ChatHeaderOptions = [ newChatMenuItem ];
+		const options = [];
+
+		// For proxied users, the new chat menu is handled inside the chat header component
+		if ( ! isProxied ) {
+			options.push( newChatMenuItem );
+		}
 
 		if ( isDocked ) {
 			options.push( undockMenuItem );
@@ -166,7 +174,7 @@ export default function AgentDock( {
 			options.push( dockMenuItem );
 		}
 
-		return options;
+		return options as ChatHeaderOptions;
 	};
 
 	const Chat = (
