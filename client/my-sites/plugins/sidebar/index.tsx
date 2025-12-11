@@ -12,6 +12,7 @@ import SidebarMenu from 'calypso/layout/sidebar/menu';
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
 import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
+import { isMultiSiteDashboardEnabled } from 'calypso/state/sites/selectors/is-multi-site-dashboard-enabled';
 import { AppState } from 'calypso/types';
 import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
 import { SidebarIconCalendar } from './icons';
@@ -21,10 +22,11 @@ interface Props {
 	path: string;
 	isCollapsed: boolean;
 	hasOptIn: boolean;
+	isMultiSiteDashboardEnabled: boolean;
 }
 const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
 
-const PluginsSidebar = ( { path, isCollapsed, hasOptIn }: Props ) => {
+const PluginsSidebar = ( { path, isCollapsed, hasOptIn, isMultiSiteDashboardEnabled }: Props ) => {
 	const translate = useTranslate();
 
 	const [ previousPath, setPreviousPath ] = useState( path );
@@ -46,7 +48,7 @@ const PluginsSidebar = ( { path, isCollapsed, hasOptIn }: Props ) => {
 					"Enhance your site's features with plugins, or schedule updates to fit your needs."
 				)
 			}
-			footer={ isEnabled( 'dashboard/v2' ) && ! isCollapsed && <HostingDashboardOptInBanner /> }
+			footer={ isMultiSiteDashboardEnabled && ! isCollapsed && <HostingDashboardOptInBanner /> }
 		>
 			<SidebarMenu>
 				{ ! ( isEnabled( 'plugins/universal-header' ) && hasOptIn ) && (
@@ -119,6 +121,7 @@ export default withCurrentRoute(
 		return {
 			isCollapsed: shouldShowCollapsedGlobalSidebar,
 			hasOptIn: hasHostingDashboardOptIn( state ),
+			isMultiSiteDashboardEnabled: isMultiSiteDashboardEnabled( state ),
 		};
 	} )( PluginsSidebar )
 );
