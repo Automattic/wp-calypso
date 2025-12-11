@@ -55,7 +55,7 @@ export default function CancellationPreSurveyContent( {
 						purchaseName: purchase.is_domain ? purchase.meta : purchase.product_name,
 					}
 				) }
-				level={ 2 }
+				level={ 3 }
 			/>
 
 			<Text>
