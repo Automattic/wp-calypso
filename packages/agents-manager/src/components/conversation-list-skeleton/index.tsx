@@ -6,7 +6,7 @@
 import { __ } from '@wordpress/i18n';
 import './style.scss';
 
-interface ConversationListSkeletonProps {
+interface Props {
 	count?: number;
 }
 
@@ -22,7 +22,7 @@ function SkeletonItem() {
 	);
 }
 
-export default function ConversationListSkeleton( { count = 3 }: ConversationListSkeletonProps ) {
+export default function ConversationListSkeleton( { count = 3 }: Props ) {
 	return (
 		<div
 			className="agents-manager-conversation-list-skeleton"
