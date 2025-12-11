@@ -211,6 +211,7 @@ describe( 'StagingSiteDeleteModal', () => {
 			Object.defineProperty( window, 'location', {
 				writable: true,
 				value: {
+					hostname: 'my.localhost',
 					pathname: '/sites/test-site',
 				},
 			} );
