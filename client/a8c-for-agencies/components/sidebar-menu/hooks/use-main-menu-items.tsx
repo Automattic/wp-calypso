@@ -100,7 +100,7 @@ const useMainMenuItems = ( path: string ) => {
 							icon: starEmpty,
 							path: '/',
 							link: A4A_AGENCY_TIER_LINK,
-							title: translate( 'Agency Tier' ),
+							title: translate( 'Agency tier' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Agency Tier',
 							},
@@ -114,6 +114,9 @@ const useMainMenuItems = ( path: string ) => {
 							path: '/',
 							link: A4A_EXCLUSIVE_OFFERS_LINK,
 							title: translate( 'Exclusive offers' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Exclusive offers',
+							},
 						},
 				  ]
 				: [] ),
@@ -191,7 +194,7 @@ const useMainMenuItems = ( path: string ) => {
 				icon: commentAuthorAvatar,
 				path: '/dashboard',
 				link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
-				title: translate( 'Partner Directories' ),
+				title: translate( 'Partner directories' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Partner Directory',
 				},

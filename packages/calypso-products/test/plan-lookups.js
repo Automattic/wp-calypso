@@ -145,7 +145,6 @@ describe( 'isFreePlan', () => {
 	test( 'should return true for free plans', () => {
 		expect( isFreePlan( PLAN_FREE ) ).toEqual( true );
 		expect( isFreePlan( PLAN_JETPACK_FREE ) ).toEqual( true );
-		expect( isFreePlan( PLAN_WOO_HOSTED_FREE ) ).toEqual( true );
 	} );
 	test( 'should return false for non-free plans', () => {
 		expect( isFreePlan( PLAN_PERSONAL ) ).toEqual( false );
@@ -155,6 +154,7 @@ describe( 'isFreePlan', () => {
 		expect( isFreePlan( PLAN_BUSINESS ) ).toEqual( false );
 		expect( isFreePlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
 		expect( isFreePlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isFreePlan( PLAN_WOO_HOSTED_FREE ) ).toEqual( false );
 		expect( isFreePlan( 'non-existing plan' ) ).toEqual( false );
 	} );
 } );
@@ -1161,13 +1161,7 @@ describe( 'findPlansKeys', () => {
 
 	test( 'all matching plans keys - by type', () => {
 		expect( findPlansKeys( { type: TYPE_FREE } ).sort() ).toEqual(
-			[
-				PLAN_FREE,
-				PLAN_JETPACK_FREE,
-				PLAN_P2_FREE,
-				PLAN_WOO_HOSTED_FREE,
-				PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
-			].sort()
+			[ PLAN_FREE, PLAN_JETPACK_FREE, PLAN_P2_FREE ].sort()
 		);
 		expect( findPlansKeys( { type: TYPE_BLOGGER } ) ).toEqual( [
 			PLAN_BLOGGER,

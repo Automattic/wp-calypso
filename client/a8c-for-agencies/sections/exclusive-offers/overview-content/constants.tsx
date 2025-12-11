@@ -13,6 +13,10 @@ import {
 	PRODUCT_BRAND_FILTER_JETPACK,
 	PRODUCT_BRAND_FILTER_WOOCOMMERCE,
 } from 'calypso/a8c-for-agencies/sections/marketplace/constants';
+import {
+	MARKETPLACE_TYPE_REFERRAL,
+	MARKETPLACE_TYPE_REGULAR,
+} from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
 import JetpackLogo from './images/jetpack.svg';
 import PressableLogo from './images/pressable.svg';
 import VIPLogo from './images/vip.svg';
@@ -57,9 +61,8 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Refer WordPress.com' ),
-			url: addQueryArgs( A4A_MARKETPLACE_HOSTING_WPCOM_LINK, {
-				purchase_type: 'referral',
-			} ),
+			url: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+			purchase_type: MARKETPLACE_TYPE_REFERRAL,
 		},
 	},
 	{
@@ -74,9 +77,8 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Refer Pressable' ),
-			url: addQueryArgs( A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK, {
-				purchase_type: 'referral',
-			} ),
+			url: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+			purchase_type: MARKETPLACE_TYPE_REFERRAL,
 		},
 	},
 	{
@@ -135,8 +137,8 @@ export const partnerOffers: PartnerOffer[] = [
 			label: __( 'Refer Woo' ),
 			url: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
 				category: PRODUCT_BRAND_FILTER_WOOCOMMERCE,
-				purchase_type: 'referral',
 			} ),
+			purchase_type: MARKETPLACE_TYPE_REFERRAL,
 		},
 	},
 	{
@@ -152,8 +154,8 @@ export const partnerOffers: PartnerOffer[] = [
 			label: __( 'Refer Jetpack' ),
 			url: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
 				category: PRODUCT_BRAND_FILTER_JETPACK,
-				purchase_type: 'referral',
 			} ),
+			purchase_type: MARKETPLACE_TYPE_REFERRAL,
 		},
 	},
 	{
@@ -174,9 +176,8 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Save on WordPress.com' ),
-			url: addQueryArgs( A4A_MARKETPLACE_HOSTING_WPCOM_LINK, {
-				purchase_type: 'regular',
-			} ),
+			url: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+			purchase_type: MARKETPLACE_TYPE_REGULAR,
 		},
 	},
 	{
@@ -191,9 +192,8 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Save on Pressable' ),
-			url: addQueryArgs( A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK, {
-				purchase_type: 'regular',
-			} ),
+			url: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+			purchase_type: MARKETPLACE_TYPE_REGULAR,
 		},
 	},
 	{
@@ -210,8 +210,8 @@ export const partnerOffers: PartnerOffer[] = [
 			label: __( 'Save on Woo' ),
 			url: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
 				category: PRODUCT_BRAND_FILTER_WOOCOMMERCE,
-				purchase_type: 'regular',
 			} ),
+			purchase_type: MARKETPLACE_TYPE_REGULAR,
 		},
 	},
 	{
@@ -227,8 +227,8 @@ export const partnerOffers: PartnerOffer[] = [
 			label: __( 'Save on Jetpack' ),
 			url: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
 				category: PRODUCT_BRAND_FILTER_JETPACK,
-				purchase_type: 'regular',
 			} ),
+			purchase_type: MARKETPLACE_TYPE_REGULAR,
 		},
 	},
 	{

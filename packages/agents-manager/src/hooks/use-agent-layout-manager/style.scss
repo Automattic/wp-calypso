@@ -7,6 +7,7 @@ $chat-header-height: 38px;
 $main-border-radius: 8px;
 $transition-duration: 0.2s;
 $transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
+$agents-manager-z-index-docked: 999999;
 
 @mixin sidebar-base( $main-container-selector ) {
 	background-color: $gray-900 !important;
@@ -174,6 +175,9 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 	}
 }
 
+// Import fixes for specific pages. This is done after the base styles are applied to ensure the fixes are applied after the base styles.
+@import './fixes-woocommerce.scss';
+
 /* Calypso */
 body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-container {
 	@include sidebar-base( '#wpcom #content' );
@@ -273,7 +277,7 @@ body.post-php.agents-manager-sidebar-container {
 	padding: $layout-spacing;
 	width: $sidebar-width;
 	box-sizing: border-box;
-	z-index: 999999;
+	z-index: $agents-manager-z-index-docked;
 
 	.agents-manager-chat-header {
 		position: absolute;
