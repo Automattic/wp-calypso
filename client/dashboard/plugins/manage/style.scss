@@ -24,6 +24,9 @@ img.plugin-icon {
 }
 
 .plugin-switcher-card-body {
+	// take into account masterbar height + padding, and page layout padding
+	height: calc(100vh - 64px - var(--page-layout-block-padding));
+    overflow-y: scroll;
 	padding-left: 0;
 	padding-right: 0;
 }
