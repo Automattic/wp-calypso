@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
