@@ -320,7 +320,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			component = renderInstantActivationToggle( component );
 		} else if ( isWordadsInstantEligibleButNotOwner ) {
 			component = renderOwnerRequiredMessage();
-		} else if ( canUpgradeToUseWordAds && site?.jetpack ) {
+		} else if ( canUpgradeToUseWordAds && site?.jetpack && ! site?.is_wpcom_atomic ) {
 			component = renderjetpackUpsell();
 		} else if ( canUpgradeToUseWordAds ) {
 			component = renderUpsell();

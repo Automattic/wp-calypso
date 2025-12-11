@@ -60,7 +60,13 @@ export default function OptionContentV2( {
 				badges={ recommended ? [ { text: __( 'Recommended' ), intent: 'success' } ] : undefined }
 			/>
 			{ benefits && (
-				<VStack spacing={ 1 } className="option-content-v2__benefits">
+				<VStack
+					spacing={ 1 }
+					className={ clsx( 'option-content-v2__benefits', {
+						'option-content-v2__benefits--clickable': ! disabled && ! isPlaceholder && onSelect,
+					} ) }
+					onClick={ disabled || isPlaceholder || ! onSelect ? undefined : onSelect }
+				>
 					{ benefits.map( ( benefit, index ) => {
 						return (
 							<HStack

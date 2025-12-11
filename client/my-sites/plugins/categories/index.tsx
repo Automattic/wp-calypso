@@ -1,6 +1,8 @@
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
+import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -28,13 +30,26 @@ export type Plugin = {
 	icon: string;
 };
 
-const Categories = ( { selected, noSelection }: { selected?: string; noSelection?: boolean } ) => {
+const Categories = ( {
+	selected,
+	noSelection,
+	categories: allowedCategories = ALLOWED_CATEGORIES,
+	forceSwipe,
+	swipeEnabled,
+}: {
+	selected?: string;
+	noSelection?: boolean;
+	categories?: string[];
+	forceSwipe?: boolean;
+	swipeEnabled?: boolean;
+} ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	// We hide these special categories from the category selector
-	const displayCategories = ALLOWED_CATEGORIES.filter(
+	const displayCategories = allowedCategories.filter(
 		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
 	);
 
@@ -63,11 +78,15 @@ const Categories = ( { selected, noSelection }: { selected?: string; noSelection
 			initialActiveIndex={ activeIndex }
 			onClick={ onClick }
 			hrefList={ categoryUrls }
-			forceSwipe={ isLoggedIn ? false : 'undefined' === typeof window }
-			swipeEnabled={ ! isLoggedIn }
+			forceSwipe={ 'undefined' === typeof window || ( forceSwipe ?? false ) }
+			swipeEnabled={ swipeEnabled ?? ! isLoggedIn }
 		>
 			{ categories.map( ( category ) => (
 				<span key={ `category-${ category.slug }` } title={ category.menu }>
+					{ category.slug === 'discover' && isMarketplaceRedesignEnabled && (
+						<Icon icon={ starEmpty } size={ 22 } />
+					) }
+
 					{ category.menu }
 				</span>
 			) ) }

@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .main.is-wide-layout.plugins-browser--site-view {
 	max-width: 100%;
 }
@@ -10,7 +12,7 @@
 	display: flex;
 	align-items: center;
 
-	@media screen and (max-width: 960px) {
+	@media screen and (max-width: $break-large) {
 		.plugins-browser__button {
 			border: none;
 		}
@@ -27,7 +29,7 @@
 		}
 
 		&:not(:last-child) {
-			@include breakpoint-deprecated( ">480px" ) {
+			@media ( min-width: $break-mobile ) {
 				margin-right: 10px;
 			}
 		}
@@ -42,7 +44,7 @@
 
 .plugins-browser__no-results {
 	padding-top: 32px;
-	@include breakpoint-deprecated( "<660px" ) {
+	@media ( max-width: $break-small ) {
 		margin: 0 16px;
 	}
 
@@ -103,15 +105,43 @@ body.is-section-plugins #primary .main.is-logged-out {
 			&:not([class*="is-pressed"]):hover::before {
 				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
+
+
+		}
+	}
+	.full-width-section {
+		.responsive-toolbar-group__swipe-list > div:not(:first-child) {
+			flex-grow: 1;
+		}
+		.components-toolbar__control {
+			height: 44px;
+			border-radius: 4px;
+			padding: 16px;
+			width: 100%;
+
+			&:not([class*="is-pressed"]) {
+				color: var(--studio-gray-100);
+			}
+
+			&::before {
+				height: 44px;
+				background-color: var( --studio-gray-0 );
+			}
+
+			&:not([class*="is-pressed"]):hover::before {
+				background-color: var( --studio-gray-5 );
+			}
+
 		}
 	}
 
-	.responsive-toolbar-group__button-item.is-pressed::before {
+	.components-toolbar__control.is-pressed::before {
 		background: var(--studio-blue-50);
 		left: 0;
 		right: 0;
 	}
 }
+
 // Jetpack injects a banner on the /plugins page for jetpack sites
 .is-section-plugins .layout__content > .banner {
 	// This moves it down out from under our sticky header
@@ -122,86 +152,89 @@ body.is-section-plugins #primary .main.is-logged-out {
 		padding-top: 0;
 	}
 }
+.full-width-section {
+	.plugins-results-header__action {
+		font-size: $font-body-small;
+		text-decoration: none;
+	}
+}
 
 .full-width-section.plugins-browser__search-header {
-	padding-top: 100px;
+	padding-top: 157px;
 	padding-bottom: 32px;
-}
-.plugins-browser__search-header,
-.plugins-discovery-page__favorites,
-.plugins-discovery-page__do-more,
-.plugins-discovery-page__power-store {
-	background-color: var(--studio-gray-0);
+	position: relative;
+	overflow: hidden;
+
+
+	.is-section-plugins:not(:has(.lpc-header-nav-wrapper)) & {
+		padding-top: 165px;
+
+		@media screen and ( max-width: $break-small ) {
+			padding-top: 93px;
+		}
+	}
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 50%;
+		width: 50%;
+		min-width: 848px;
+		height: 100%;
+		background-image: url(/calypso/images/plugins/plugins_hero_2.svg);
+		background-position: right bottom;
+		background-repeat: no-repeat;
+		pointer-events: none;
+
+		@media screen and ( max-width: $break-small ) {
+			background-image: url( /calypso/images/plugins/plugins_hero_2_m.svg );
+			left: 0;
+			min-width: 0;
+			width: 100%;
+		}
+	}
+
+	.full-width-section__content {
+		position: relative;
+	}
+
+	body.is-section-plugins #primary & .search-box-header::before {
+		display: none;
+	}
+	@media screen and ( max-width: $break-small ) {
+		padding-top: 95px;
+		padding-bottom: 0;
+
+		.search-box-header__sticky-ref {
+			padding-bottom: 30px;
+		}
+	}
 }
 
 .plugins-browser__categories {
 	padding-bottom: 0;
 }
+.plugins-discovery-page__education-footer {
+	padding-bottom: 30px;
 
-.plugins-browser__categories,
-.plugins-browser__marketplace-footer {
-	background-color: var(--studio-white);
-}
-
-body .is-section-plugins .layout__content:has(.plugins-browser.is-full-width-layout) {
-	padding: 0;
-
-	.plugins-browser__content-wrapper {
-		background-color: var(--studio-white);
-	}
-
-	.full-width-section__content {
-		max-width: 1040px;
-		padding-inline: 24px;
-		box-sizing: border-box;
-		@media screen and ( max-width: 600px ) {
-			padding-inline: 16px;
-		}
+	@media screen and ( max-width: $break-small ) {
+		padding-bottom: 20px;
 	}
 }
+.plugins-browser__faq {
+	background-color: var(--studio-gray-100);
+}
 
-body.is-section-plugins .is-logged-in {
-	$full-width-main: "main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column).plugins-browser.is-full-width-layout";
+.full-width-section.plugins-discovery-page__telex-banner {
+	padding-top: 5px;
+	padding-bottom: 15px;
 
-	#{$full-width-main} {
-		.plugins-browser__content-wrapper {
-			padding: 0;
-			max-width: 100%;
-		}
+	@media ( min-width: $break-small ) {
+		padding-top: 24px;
+		padding-bottom: 80px;
 	}
-	@media screen and ( max-width: 601px ) {
-		&:not( .has-no-sidebar ) #{$full-width-main} {
-			.plugins-navigation-header.navigation-header {
-				padding-inline: 0;
-			}
-		}
-	}
-
-	@media screen and ( min-width: 601px ) {
-		&:not( .has-no-sidebar ) #{$full-width-main} {
-			.navigation-header__container {
-				padding: 47px 0 0;
-			}
-			.full-width-section {
-				padding-inline: 2rem;
-			}
-		}
-	}
-	@media screen and ( min-width: 782px ) {
-		&:not( .has-no-sidebar ) #{$full-width-main} {
-			.full-width-section {
-				padding-inline-start: calc( var( --sidebar-width-max ) + 1px );
-				padding-inline-end: 0;
-			}
-			.plugins-navigation-header.navigation-header {
-				padding-inline: 0;
-			}
-			.plugins-browser__navigation-header {
-				border-block-end: 1px solid var( --color-neutral-5 );
-				.plugins-navigation-header.navigation-header {
-					border-block-end: none;
-				}
-			}
-		}
-	}
+}
+.plugins-discovery-page__business-plan-banner {
+	padding-bottom: 2px;
 }

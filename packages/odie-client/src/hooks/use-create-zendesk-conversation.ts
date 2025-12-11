@@ -16,6 +16,7 @@ export const useCreateZendeskConversation = () => {
 		setChat,
 		chat,
 		trackEvent,
+		isChatLoaded,
 	} = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
@@ -29,10 +30,12 @@ export const useCreateZendeskConversation = () => {
 		createdFrom = '',
 		isFromError = false,
 		errorReason = '',
+		escalationOnSecondAttempt = false,
 	}: {
 		createdFrom?: string;
 		isFromError?: boolean;
 		errorReason?: string;
+		escalationOnSecondAttempt?: boolean;
 	} ) => {
 		let activeInteractionId = currentSupportInteraction?.uuid;
 
@@ -44,6 +47,8 @@ export const useCreateZendeskConversation = () => {
 			interaction_id: activeInteractionId,
 			created_from: createdFrom,
 			is_from_error: isFromError,
+			is_chat_loaded: isChatLoaded,
+			escalation_on_second_attempt: escalationOnSecondAttempt,
 			error_reason: isFromError ? errorReason ?? 'Unknown error' : '',
 		} );
 

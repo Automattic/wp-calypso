@@ -8,7 +8,8 @@ import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -57,6 +58,7 @@ const DotcomPreviewPane = ( {
 	closeSitePreviewPane,
 	changeSitePreviewPane,
 }: Props ) => {
+	const dispatch = useDispatch();
 	const { __ } = useI18n();
 	const isInProgress = isMigrationInProgress( site );
 	const isA4ADevSite = !! site?.is_a4a_dev_site;
@@ -122,10 +124,8 @@ const DotcomPreviewPane = ( {
 		return siteFeatures.map( ( { label, enabled, visible, featureIds } ) => {
 			const selected = enabled && featureIds.includes( selectedSiteFeature );
 			const defaultFeatureId = featureIds[ 0 ] as string;
-			const defaultRoute = `/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace(
-				':site',
-				site.slug
-			) }`;
+			const featureRoute = `/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ] }`;
+			const defaultRoute = featureRoute.replace( ':site', site.slug );
 
 			return {
 				id: defaultFeatureId,
@@ -137,6 +137,14 @@ const DotcomPreviewPane = ( {
 					onTabClick: () => {
 						if ( enabled ) {
 							showSitesPage( defaultRoute );
+
+							// Additional event to align analysis across dashboards.
+							// See: https://wp.me/pgz0xU-qp
+							dispatch(
+								recordTracksEvent( 'calypso_dashboard_menu_item_click', {
+									to: featureRoute,
+								} )
+							);
 						}
 					},
 				},
@@ -145,6 +153,7 @@ const DotcomPreviewPane = ( {
 			};
 		} );
 	}, [
+		dispatch,
 		__,
 		site,
 		selectedSiteFeature,

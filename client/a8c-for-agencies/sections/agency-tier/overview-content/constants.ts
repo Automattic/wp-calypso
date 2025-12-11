@@ -19,6 +19,7 @@ const TARGET_INFLUENCED_REVENUE = {
 	'emerging-partner': 0,
 	'agency-partner': 1200,
 	'pro-agency-partner': 5000,
+	'vip-pro-agency-partner': 100000,
 	'premier-partner': 250000,
 };
 
@@ -32,7 +33,7 @@ export const ALL_TIERS: TierItem[] = [
 		subheading: __( 'Tools, earning opportunities, support & training and more' ),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],
 		progressCardDescription: __(
-			'You’re just getting started. Explore your benefits and learn how to grow your influenced revenue.'
+			"You're just getting started. Explore your benefits and learn how to grow your influenced revenue."
 		),
 		benefits: [
 			{
@@ -63,7 +64,7 @@ export const ALL_TIERS: TierItem[] = [
 				icon: currencyDollar,
 				title: __( 'Earning Opportunities' ),
 				description: __(
-					'All partners get access to referral and reseller earning opportunities across all of Automattic’s suite of products. Premier partners receive the highest earning opportunities.'
+					"All partners get access to referral and reseller earning opportunities across all of Automattic's suite of products. Premier partners receive the highest earning opportunities."
 				),
 				actions: [
 					{
@@ -104,7 +105,7 @@ export const ALL_TIERS: TierItem[] = [
 				icon: people,
 				title: __( 'Networking & Community' ),
 				description: __(
-					'Access Automattic’s community platforms and network with like-minded agencies.'
+					"Access Automattic's community platforms and network with like-minded agencies."
 				),
 				status: __( 'Coming Soon' ),
 			},
@@ -122,7 +123,7 @@ export const ALL_TIERS: TierItem[] = [
 		heading: __( '2 additional benefits unlocked' ),
 		subheading: __( 'Directory visibility, early access' ),
 		progressCardDescription: __(
-			'You’re making great progress! Keep growing your influenced revenue to unlock Pro Partner benefits.'
+			"You're making great progress! Keep growing your influenced revenue to unlock Pro Partner benefits."
 		),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ],
 		benefits: [
@@ -130,7 +131,7 @@ export const ALL_TIERS: TierItem[] = [
 				icon: commentAuthorAvatar,
 				title: __( 'Directory Visibility & Badging' ),
 				description: __(
-					'Eligible for inclusion in Automattic’s agency directories and increased exposure to potential clients.'
+					"Eligible for inclusion in Automattic's agency directories and increased exposure to potential clients."
 				),
 				actions: [
 					{
@@ -165,7 +166,7 @@ export const ALL_TIERS: TierItem[] = [
 		heading: __( '3 additional benefits unlocked' ),
 		subheading: __( 'Co-marketing, qualified leads, partner manager & more' ),
 		progressCardDescription: __(
-			'Congratulations! You’ve unlocked all Pro Partner benefits including co-marketing opportunities and your dedicated partner manager.'
+			"Congratulations! You've unlocked all Pro Partner benefits including co-marketing opportunities and your dedicated partner manager."
 		),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
 		benefits: [
@@ -200,6 +201,38 @@ export const ALL_TIERS: TierItem[] = [
 	},
 	{
 		level: 3,
+		id: 'vip-pro-agency-partner',
+		name: __( 'VIP Pro Agency Partner' ),
+		description: sprintf(
+			/* translators: %s is the influenced revenue */
+			__( '%s+ influenced revenue and invitation to the tier.' ),
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'vip-pro-agency-partner' ], 'USD' )
+		),
+		heading: __( '2 additional benefits unlocked' ),
+		subheading: __( 'Higher VIP referral commissions, annual credits' ),
+		progressCardDescription: __(
+			"Congratulations! You've unlocked higher VIP referral commissions, and annual credits for WooCommerce and Jetpack extensions."
+		),
+		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'vip-pro-agency-partner' ],
+		benefits: [
+			{
+				icon: currencyDollar,
+				title: __( 'Higher commissions for WordPress VIP referrals' ),
+				description: __(
+					'WordPress VIP Pro partners are eligible for a 15% one-time commission on successful WordPress VIP referrals.'
+				),
+			},
+			{
+				icon: payment,
+				title: __( 'Annual Credit for WooCommerce and Jetpack Extensions' ),
+				description: __(
+					'WordPress VIP Pro partners receive annual credits toward WooCommerce and Jetpack premium extensions for agency and client sites.'
+				),
+			},
+		],
+	},
+	{
+		level: 4,
 		id: 'premier-partner',
 		name: __( 'Premier Partner' ),
 		description: sprintf(
@@ -207,25 +240,18 @@ export const ALL_TIERS: TierItem[] = [
 			__( '%s+ influenced revenue and invitation to the tier.' ),
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD' )
 		),
-		heading: __( '3 premium benefits' ),
-		subheading: __( 'Annual credits, Parse.ly trial, marketing funds' ),
+		heading: __( '2 premium benefits' ),
+		subheading: __( 'Parse.ly trial, marketing funds' ),
 		progressCardDescription: __(
-			'You’ve reached the highest tier! Enjoy all Premier Partner benefits including annual credits, Parse.ly trial, and marketing development funds.'
+			"You've reached the highest tier! Enjoy all Premier Partner benefits including annual credits, Parse.ly trial, and marketing development funds."
 		),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
 		benefits: [
 			{
-				icon: payment,
-				title: __( 'Annual Credit for WooCommerce and Jetpack Extensions' ),
-				description: __(
-					'Premier partners receive annual credits toward WooCommerce and Jetpack premium extensions for agency and client sites.'
-				),
-			},
-			{
 				icon: trendingUp,
 				title: __( 'Free three-month Parse.ly trial' ),
 				description: __(
-					'Premier partners receive complimentary access to Parse.ly’s content analytics platform for three months to optimize content strategy.'
+					"Premier partners receive complimentary access to Parse.ly's content analytics platform for three months to optimize content strategy."
 				),
 			},
 			{

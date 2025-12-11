@@ -10,8 +10,10 @@ import {
 } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
+import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
+import { wpcomLink } from './link';
 import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase, Site } from '@automattic/api-core';
 
@@ -262,6 +264,19 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	if ( purchase.meta && ( purchase.is_domain_registration || purchase.is_domain ) ) {
 		return purchase.meta;
 	}
+
+	if (
+		isAkismetPro500Plan( purchase.product_slug ) &&
+		purchase.renewal_price_tier_usage_quantity &&
+		purchase.renewal_price_tier_usage_quantity > 1
+	) {
+		/* translators: %s is the product name "Akismet Pro", %d is a number of requests/month */
+		return sprintf( __( '%(productName)s (%(requests)d requests/month)' ), {
+			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
+			requests: 500 * purchase.renewal_price_tier_usage_quantity,
+		} );
+	}
+
 	return purchase.product_name;
 }
 
@@ -451,7 +466,9 @@ export function getRenewUrlForPurchases(
 	const checkoutSiteSlug = checkoutSiteSlugForUrl || firstPurchase.site_slug || '';
 	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	return `/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`;
+	return wpcomLink(
+		`/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`
+	);
 }
 
 /**

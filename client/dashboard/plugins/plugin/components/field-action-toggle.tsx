@@ -1,8 +1,9 @@
 import { ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { ComponentProps } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import type { ComponentProps } from 'react';
 
 export type FieldActionToggleProps = {
 	label: ComponentProps< typeof ToggleControl >[ 'label' ];
@@ -31,8 +32,50 @@ export default function FieldActionToggle( {
 	errorOff,
 	actionId,
 }: FieldActionToggleProps ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice, createInfoNotice, removeNotice } =
+		useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
+
+	const handleChange = ( next: boolean ) => {
+		if ( disabled ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_dashboard_plugins_toggle_click', {
+			action_id: actionId,
+			next_state: next ? 'enable' : 'disable',
+		} );
+
+		let processingMessage: string;
+		if ( actionId === 'activate' ) {
+			processingMessage = next ? __( 'Activating' ) : __( 'Deactivating' );
+		} else {
+			processingMessage = next ? __( 'Enabling auto-updates' ) : __( 'Disabling auto-updates' );
+		}
+
+		const processingNoticeId = `field-action-toggle-${ actionId }-${ next ? 'on' : 'off' }`;
+
+		createInfoNotice( processingMessage, {
+			id: processingNoticeId,
+			type: 'snackbar',
+			isDismissible: false,
+		} );
+
+		Promise.resolve( onToggle( next ) )
+			.then( () => {
+				createSuccessNotice( next ? successOn : successOff, {
+					type: 'snackbar',
+				} );
+			} )
+			.catch( () => {
+				createErrorNotice( next ? errorOn : errorOff, {
+					type: 'snackbar',
+				} );
+			} )
+			.finally( () => {
+				removeNotice( processingNoticeId );
+			} );
+	};
 
 	return (
 		<div
@@ -45,20 +88,8 @@ export default function FieldActionToggle( {
 				__nextHasNoMarginBottom
 				label={ label }
 				checked={ checked }
-				onChange={ ( next ) => {
-					recordTracksEvent( 'calypso_dashboard_plugins_toggle_click', {
-						action_id: actionId,
-						next_state: next ? 'enable' : 'disable',
-					} );
-					onToggle( next )
-						.then( () => {
-							createSuccessNotice( next ? successOn : successOff, { type: 'snackbar' } );
-						} )
-						.catch( () => {
-							createErrorNotice( next ? errorOn : errorOff, { type: 'snackbar' } );
-						} );
-				} }
 				disabled={ disabled }
+				onChange={ handleChange }
 			/>
 		</div>
 	);

@@ -28,6 +28,7 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { Suspense, lazy, useCallback, useState } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { useExperiment } from 'calypso/lib/explat';
+import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 import { useAppContext } from '../context';
@@ -63,6 +64,7 @@ function Help() {
 			is_help_center_visible: isShown,
 			section: 'dashboard',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
+			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
 	};
 
@@ -351,7 +353,7 @@ function SecondaryMenu() {
 					icon={ <ReaderIcon /> }
 					label={ __( 'Reader' ) }
 					text={ isDesktop ? __( 'Reader' ) : undefined }
-					href="/reader"
+					href={ wpcomLink( '/reader' ) }
 				/>
 			) }
 			{ supports.help && <Help /> }

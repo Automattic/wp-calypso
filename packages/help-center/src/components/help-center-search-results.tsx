@@ -197,7 +197,7 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 	currentRoute,
 }: HelpSearchResultsProps ) {
-	const { hasPurchases, sectionName, site } = useHelpCenterContext();
+	const { hasPurchases, sectionName, site, source } = useHelpCenterContext();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const contextTerm = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getContextTerm(),
@@ -223,7 +223,8 @@ function HelpSearchResults( {
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
 		searchQuery || contextTerm || contextSearch, // If there's a query, we don't context search
 		locale,
-		currentRoute
+		currentRoute,
+		source
 	);
 
 	const searchResults = searchData ?? [];
@@ -354,13 +355,13 @@ function HelpSearchResults( {
 			title: searchQuery
 				? __( 'Search Results', __i18n_text_domain__ )
 				: __( 'Recommended guides', __i18n_text_domain__ ),
-			results: searchResults,
+			results: searchResults as unknown as SearchResult[],
 			condition: ! isSearching && searchResults.length > 0,
 		},
 		{
 			type: SUPPORT_TYPE_CONTEXTUAL_HELP,
 			title: ! searchQuery.length ? __( 'Recommended guides', __i18n_text_domain__ ) : '',
-			results: contextualResults.slice( 0, 6 ),
+			results: contextualResults.slice( 0, 6 ) as unknown as SearchResult[],
 			condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 		},
 	].map( renderSearchResultsSection );
@@ -382,7 +383,9 @@ function HelpSearchResults( {
 					</p>
 					<Button
 						variant="secondary"
-						onClick={ () => setNavigateToRoute( '/odie' ) }
+						onClick={ () =>
+							setNavigateToRoute( `/odie?query=${ encodeURIComponent( searchQuery ) }` )
+						}
 						className="show-more-button"
 					>
 						{ __( 'Ask AI assistant', __i18n_text_domain__ ) }

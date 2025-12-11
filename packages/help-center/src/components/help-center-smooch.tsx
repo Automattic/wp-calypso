@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
+import { isZendeskIntroMessage } from '@automattic/odie-client/src/utils/csat';
 import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
@@ -17,7 +18,7 @@ import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
-import type { ZendeskMessage } from '@automattic/odie-client';
+import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 const destroy = () => {
 	try {
@@ -125,7 +126,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	const getUnreadListener = useCallback(
 		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
-			if ( areSoundNotificationsEnabled ) {
+			if ( ! isZendeskIntroMessage( message ) && areSoundNotificationsEnabled ) {
 				playNotificationSound();
 			}
 

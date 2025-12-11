@@ -16,7 +16,7 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useShouldUseUnifiedAgent } from '../hooks';
+import { useChatStatus, useShouldUseUnifiedAgent } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -37,6 +37,7 @@ const HelpCenter: React.FC< Container > = ( {
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
 	const { currentUser, site, sectionName } = useHelpCenterContext();
+	const { isEligibleForChat } = useChatStatus();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
@@ -75,6 +76,7 @@ const HelpCenter: React.FC< Container > = ( {
 	if ( shouldUseUnifiedAgent ) {
 		return (
 			<UnifiedAIAgent
+				isEligibleForChat={ isEligibleForChat }
 				currentUser={ currentUser }
 				site={ site }
 				sectionName={ sectionName }

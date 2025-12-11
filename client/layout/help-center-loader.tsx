@@ -5,8 +5,10 @@ import { useDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { onboardingUrl } from 'calypso/lib/paths';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
@@ -19,9 +21,15 @@ type Props = {
 	sectionName: string;
 	loadHelpCenter: boolean;
 	currentRoute: string;
+	source: string;
 };
 
-export default function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute }: Props ) {
+export default function HelpCenterLoader( {
+	sectionName,
+	loadHelpCenter,
+	currentRoute,
+	source,
+}: Props ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
 	const handleClose = useCallback( () => {
@@ -31,6 +39,7 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const locale = useLocale();
 	const hasPurchases = useSelector( hasCancelableUserPurchases );
 	const user = useSelector( getCurrentUser );
+	const agency = useSelector( getActiveAgency );
 	const selectedSite = useSelector( getSelectedSite );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
@@ -38,6 +47,18 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	if ( ! loadHelpCenter ) {
 		return null;
 	}
+
+	const additionalHelpCenterProps = isA8CForAgencies()
+		? {
+				newInteractionsBotSlug: 'automattic-chat-support_a4a',
+				agency: agency
+					? {
+							id: agency.id,
+							pressableId: agency?.third_party?.pressable?.pressable_id,
+					  }
+					: null,
+		  }
+		: {};
 
 	return (
 		<AsyncLoad
@@ -54,6 +75,8 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
+			source={ source }
+			{ ...additionalHelpCenterProps }
 		/>
 	);
 }

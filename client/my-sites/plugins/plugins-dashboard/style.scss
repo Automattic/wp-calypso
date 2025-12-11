@@ -68,8 +68,8 @@
 	}
 
 	.hosting-dashboard-layout__top-wrapper .hosting-dashboard-layout__viewport {
-		@media ( max-width: $break-mobile ) {
-			padding-inline: 24px;
+		@media ( max-width: $break-medium ) {
+			padding-inline: 16px;
 		}
 	}
 

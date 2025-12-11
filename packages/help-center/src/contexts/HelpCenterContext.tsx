@@ -1,6 +1,5 @@
 import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/constants';
 import { useContext, createContext } from '@wordpress/element';
-import { useNewInteractionsBotConfig } from '../hooks/use-new-interaction-bot-config';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
@@ -16,6 +15,12 @@ export type HelpCenterRequiredInformation = {
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
 	isCommerceGarden: boolean;
+	source: '' | 'wpcom' | 'a4a';
+	// This is specific to A4A
+	agency: {
+		id: number;
+		pressableId?: number;
+	} | null;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -64,6 +69,8 @@ const defaultContext: HelpCenterRequiredInformation = {
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
 	isCommerceGarden: false,
+	source: 'wpcom',
+	agency: null,
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
@@ -73,12 +80,10 @@ export const HelpCenterRequiredContextProvider: React.FC< {
 	value: Partial< HelpCenterRequiredInformation > &
 		Pick< HelpCenterRequiredInformation, 'currentUser' | 'sectionName' >;
 } > = function ( { children, value } ) {
-	const botConfig = useNewInteractionsBotConfig();
-
 	return (
 		<HelpCenterRequiredContext.Provider
 			value={ {
-				...Object.assign( {}, defaultContext, botConfig, value ),
+				...Object.assign( {}, defaultContext, value ),
 			} }
 		>
 			{ children }

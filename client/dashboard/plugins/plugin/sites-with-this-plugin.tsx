@@ -9,19 +9,31 @@ import {
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalText as Text, Button, Icon } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate, View, type Field } from '@wordpress/dataviews';
+import {
+	DataViews,
+	filterSortAndPaginate,
+	View,
+	type Field,
+	type DataViewRenderFieldProps,
+} from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
+import { PluginsHeaderActions } from '../manage/components/plugins-header-actions';
 import { buildBulkSitesPluginAction } from '../manage/utils';
+import { getViewFilteredByUpdates } from '../utils/update-filters';
 import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
-import FieldActionToggle from './components/field-action-toggle';
-import { SiteWithPluginData, usePlugin } from './use-plugin';
+import { ActiveToggle } from './components/active-toggle';
+import { AutoupdateToggle } from './components/autoupdate-toggle';
+import { PluginSiteFieldContent } from './components/plugin-site-field-content';
+import { SiteWithPluginData } from './use-plugin';
 import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
 import { mapToPluginListRow } from './utils/map-to-plugin-list-row';
 import type { PluginListRow } from '../manage/types';
+import type { PluginItem } from '@automattic/api-core';
 
 const defaultView: View = {
 	type: 'table',
@@ -31,27 +43,42 @@ const defaultView: View = {
 	perPage: 10,
 };
 
-export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
+type SitesWithThisPluginProps = {
+	pluginSlug: string;
+	isLoading: boolean;
+	plugin: PluginItem | undefined;
+	pluginBySiteId: Map< number, PluginItem >;
+	sitesWithThisPlugin: SiteWithPluginData[];
+};
+
+export const SitesWithThisPlugin = ( {
+	pluginSlug,
+	isLoading,
+	plugin,
+	pluginBySiteId,
+	sitesWithThisPlugin,
+}: SitesWithThisPluginProps ) => {
 	const { mutateAsync } = useMutation( sitePluginUpdateMutation() );
 	const updateAction = buildBulkSitesPluginAction( mutateAsync );
-	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin, isFetching } =
-		usePlugin( pluginSlug );
 	const [ view, setView ] = useState< View >( defaultView );
-	const { mutateAsync: activateMutate, isPending: isActivating } = useMutation(
-		sitePluginActivateMutation()
-	);
-	const { mutateAsync: deactivateMutate, isPending: isDeactivating } = useMutation(
-		sitePluginDeactivateMutation()
-	);
-	const { mutateAsync: enableAutoupdateMutate, isPending: isEnablingAutoupdate } = useMutation(
+	const { mutateAsync: activateMutate } = useMutation( sitePluginActivateMutation() );
+	const { mutateAsync: deactivateMutate } = useMutation( sitePluginDeactivateMutation() );
+	const { mutateAsync: enableAutoupdateMutate } = useMutation(
 		sitePluginAutoupdateEnableMutation()
 	);
-	const { mutateAsync: disableAutoupdateMutate, isPending: isDisablingAutoupdate } = useMutation(
+	const { mutateAsync: disableAutoupdateMutate } = useMutation(
 		sitePluginAutoupdateDisableMutation()
 	);
 	const [ selection, setSelection ] = useState< SiteWithPluginData[] >( [] );
 	const [ updateModalOpen, setUpdateModalOpen ] = useState( false );
 	const [ siteToUpdate, setSiteToUpdate ] = useState< SiteWithPluginData | null >( null );
+	const [ optimisticActive, setOptimisticActive ] = useState<
+		Record< number, boolean | undefined >
+	>( {} );
+	const [ optimisticAutoupdate, setOptimisticAutoupdate ] = useState<
+		Record< number, boolean | undefined >
+	>( {} );
+
 	const closeUpdateModal = () => {
 		setUpdateModalOpen( false );
 		setSiteToUpdate( null );
@@ -63,8 +90,14 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				id: 'domain',
 				label: __( 'Site' ),
 				type: 'text',
-				getValue: ( { item }: { item: SiteWithPluginData } ) => getSiteDisplayUrl( item ),
-				render: ( { field, item } ) => field.getValue( { item } ),
+				getValue: ( { item }: { item: SiteWithPluginData } ) => getSiteDisplayName( item ),
+				render: ( { field, item } ) => (
+					<PluginSiteFieldContent
+						site={ item }
+						name={ field.getValue( { item } ) as string }
+						url={ getSiteDisplayUrl( item ) }
+					/>
+				),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
@@ -73,47 +106,25 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				id: 'active',
 				label: __( 'Active' ),
 				type: 'boolean',
-				getValue: ( { item }: { item: SiteWithPluginData } ) =>
-					pluginBySiteId.get( item.ID )?.active ?? false,
-				render: ( { item }: { item: SiteWithPluginData } ) => {
+				getValue: ( { item }: { item: SiteWithPluginData } ) => {
 					const pluginItem = pluginBySiteId.get( item.ID );
-					const checked = pluginItem?.active ?? false;
-					const isBusy = isActivating || isDeactivating || isFetching;
-					return (
-						<FieldActionToggle
-							label={ __( 'Active' ) }
-							checked={ checked }
-							disabled={ isBusy }
-							onToggle={ ( next ) => {
-								if ( next ) {
-									return activateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-								}
-								return deactivateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-							} }
-							successOn={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( '%s has been activated.' ),
-								plugin?.name ?? ''
-							) }
-							errorOn={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Failed to activate %s.' ),
-								plugin?.name ?? ''
-							) }
-							successOff={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( '%s has been deactivated.' ),
-								plugin?.name ?? ''
-							) }
-							errorOff={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Failed to deactivate %s.' ),
-								plugin?.name ?? ''
-							) }
-							actionId="activate"
-						/>
-					);
+					const serverChecked = pluginItem?.active ?? false;
+					const optimistic = optimisticActive[ item.ID ];
+
+					// Use optimistic value if we have one, otherwise use server value
+					return optimistic ?? serverChecked;
 				},
+				render: ( { field, item }: DataViewRenderFieldProps< SiteWithPluginData > ) => (
+					<ActiveToggle
+						item={ item }
+						plugin={ plugin }
+						active={ field.getValue?.( { item } ) as boolean }
+						activateMutate={ activateMutate }
+						deactivateMutate={ deactivateMutate }
+						optimisticActive={ optimisticActive }
+						setOptimisticActive={ setOptimisticActive }
+					/>
+				),
 				enableHiding: false,
 				enableSorting: true,
 			},
@@ -121,50 +132,28 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				id: 'autoupdate',
 				label: __( 'Autoupdate' ),
 				type: 'boolean',
-				getValue: ( { item }: { item: SiteWithPluginData } ) =>
-					pluginBySiteId.get( item.ID )?.autoupdate ?? false,
-				render: ( { item }: { item: SiteWithPluginData } ) => {
+				getValue: ( { item }: { item: SiteWithPluginData } ) => {
 					const pluginItem = pluginBySiteId.get( item.ID );
 					const checked = pluginItem?.autoupdate ?? false;
-					const isBusy = isEnablingAutoupdate || isDisablingAutoupdate || isFetching;
-
+					const optimistic = optimisticAutoupdate[ item.ID ];
+					return optimistic ?? checked;
+				},
+				render: ( { field, item }: DataViewRenderFieldProps< SiteWithPluginData > ) => {
 					// Determine if this plugin is managed on this site; if so, disable interaction
 					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 					// when not allowed, it's either managed or user lacks permission
 					const isManaged = ! autoupdate;
 
 					return (
-						<FieldActionToggle
-							label={ __( 'Autoupdate' ) }
-							checked={ checked }
-							disabled={ isBusy || isManaged }
-							onToggle={ ( next ) => {
-								if ( next ) {
-									return enableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-								}
-								return disableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-							} }
-							successOn={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Auto‑updates for %s have been enabled.' ),
-								plugin?.name ?? ''
-							) }
-							errorOn={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Failed to enable auto‑updates for %s.' ),
-								plugin?.name ?? ''
-							) }
-							successOff={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Auto‑updates for %s have been disabled.' ),
-								plugin?.name ?? ''
-							) }
-							errorOff={ sprintf(
-								// translators: %s is the name of the plugin.
-								__( 'Failed to disable auto‑updates for %s.' ),
-								plugin?.name ?? ''
-							) }
-							actionId="autoupdate"
+						<AutoupdateToggle
+							item={ item }
+							plugin={ plugin }
+							autoupdate={ field.getValue?.( { item } ) as boolean }
+							enableAutoupdateMutate={ enableAutoupdateMutate }
+							disableAutoupdateMutate={ disableAutoupdateMutate }
+							optimisticAutoupdate={ optimisticAutoupdate }
+							setOptimisticAutoupdate={ setOptimisticAutoupdate }
+							disabled={ isManaged }
 						/>
 					);
 				},
@@ -174,15 +163,43 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'update',
 				label: __( 'Update' ),
+				getValue: ( { item }: { item: SiteWithPluginData } ) => {
+					const pluginItem = pluginBySiteId.get( item.ID );
+					const { autoupdate, isManagedPlugin } = getAllowedPluginActions( item, pluginSlug );
+
+					if ( isManagedPlugin ) {
+						return 0;
+					}
+
+					return autoupdate && !! pluginItem?.update ? 2 : 1;
+				},
+				elements: [
+					{ value: 2, label: __( 'Update available' ) },
+					{ value: 1, label: __( 'Up to date' ) },
+					{ value: 0, label: __( 'Updates auto-managed' ) },
+				],
 				render: ( { item }: { item: SiteWithPluginData } ) => {
 					const update = pluginBySiteId.get( item.ID )?.update;
+					const version = pluginBySiteId.get( item.ID )?.version;
 
 					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 					if ( ! autoupdate ) {
-						return <Text>{ __( 'Auto-managed on this site' ) }</Text>;
+						return <Text>{ __( 'Updates auto-managed' ) }</Text>;
 					}
 
-					if ( ! update ) {
+					if ( ! update && version ) {
+						return (
+							<Text>
+								{ sprintf(
+									// translators: %s is the version number of the plugin.
+									__( '%s (current)' ),
+									version
+								) }
+							</Text>
+						);
+					}
+
+					if ( ! update?.new_version ) {
 						return null;
 					}
 
@@ -210,22 +227,40 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 		],
 		[
 			pluginBySiteId,
-			isActivating,
-			isDeactivating,
-			isFetching,
-			plugin?.name,
-			plugin?.id,
-			deactivateMutate,
+			optimisticActive,
+			optimisticAutoupdate,
+			plugin,
 			activateMutate,
-			isEnablingAutoupdate,
-			isDisablingAutoupdate,
+			deactivateMutate,
 			pluginSlug,
 			disableAutoupdateMutate,
 			enableAutoupdateMutate,
+			setOptimisticAutoupdate,
 		]
 	);
 
 	const { data, paginationInfo } = filterSortAndPaginate( sitesWithThisPlugin, view, fields );
+
+	const updateCount = useMemo( () => {
+		if ( ! sitesWithThisPlugin ) {
+			return 0;
+		}
+
+		return sitesWithThisPlugin.filter( ( item ) => {
+			const pluginItem = pluginBySiteId.get( item.ID );
+			const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+
+			return autoupdate && !! pluginItem?.update;
+		} ).length;
+	}, [ sitesWithThisPlugin, pluginBySiteId, pluginSlug ] );
+
+	const handleFilterUpdates = useCallback( () => {
+		if ( updateCount <= 0 ) {
+			return;
+		}
+
+		setView( getViewFilteredByUpdates( view, 'update', 2 ) );
+	}, [ updateCount, view, setView ] );
 
 	return (
 		<>
@@ -235,6 +270,13 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
+				header={
+					<PluginsHeaderActions
+						updateCount={ updateCount }
+						onFilterUpdates={ handleFilterUpdates }
+						isSitesWithThisPluginView
+					/>
+				}
 				defaultLayouts={ { table: {} } }
 				actions={ [
 					{
@@ -251,7 +293,6 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 									closeModal={ closeModal }
 									onExecute={ action }
-									onActionPerformed={ invalidatePlugins }
 								/>
 							);
 						},
@@ -277,7 +318,6 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 									closeModal={ closeModal }
 									onExecute={ action }
-									onActionPerformed={ invalidatePlugins }
 								/>
 							);
 						},
@@ -350,19 +390,26 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 						isEligible: ( item ) => {
 							const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 
-							return !! autoupdate && ! ( pluginBySiteId.get( item.ID )?.autoupdate ?? false );
+							return !! autoupdate && ( pluginBySiteId.get( item.ID )?.autoupdate ?? false );
 						},
 						supportsBulk: true,
 					},
 					{
-						id: 'settings',
-						label: __( 'Settings' ),
+						id: 'wp-admin',
+						label: __( 'WP Admin ↗' ),
 						callback: ( items ) => {
 							const [ site ] = items;
-							window.open( site.actionLinks?.Settings, '_blank' );
+
+							if ( ! site?.URL ) {
+								return;
+							}
+
+							const baseUrl = site.URL.replace( /\/$/, '' );
+							window.open( `${ baseUrl }/wp-admin/plugins.php`, '_blank' );
 						},
-						isEligible: ( item ) => !! item.actionLinks?.Settings,
+						isEligible: ( item ) => !! item.URL,
 						supportsBulk: false,
+						isPrimary: true,
 					},
 					{
 						id: 'delete',

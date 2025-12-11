@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { DataViews } from '../../app/dataviews';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { DEFAULT_LAYOUTS, DEFAULT_CONFIG } from './views';
 import type { Action, Field, View } from '@wordpress/dataviews';

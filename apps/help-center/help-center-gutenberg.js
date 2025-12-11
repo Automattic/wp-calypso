@@ -25,24 +25,20 @@ function HelpCenterContent() {
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
-	const isMenuPanelExperimentEnabled = useMenuPanelExperiment(
-		'calypso_help_center_menu_popover_v2',
-		'menu_popover'
-	);
+	const { isInTreatment: isMenuPanelExperimentEnabled, isLoading: isLoadingExperimentAssignment } =
+		useMenuPanelExperiment( 'calypso_help_center_menu_popover_v2', 'menu_popover' );
 	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown(), [] );
 
 	const canvasMode = useCanvasMode();
 
 	const trackIconInteraction = useCallback( () => {
-		if ( isMenuPanelExperimentEnabled === undefined ) {
-			return;
-		}
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
+			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
-	}, [ isShown, isMenuPanelExperimentEnabled ] );
+	}, [ isShown, isMenuPanelExperimentEnabled, isLoadingExperimentAssignment ] );
 
 	const handleToggleHelpCenter = useCallback( () => {
 		trackIconInteraction();
@@ -209,16 +205,17 @@ function HelpCenterContentWithProvider() {
 if ( helpCenterData.isNextAdmin ) {
 	const unsubscribe = subscribe( () => {
 		// Make sure the wp-logo menu item is registered before unregistering its default items.
-		if ( select( 'next-admin' ).getMetaMenuItems?.( 'wp-logo' ).length > 1 ) {
+		// Use optional chaining since 'next-admin' store only exists in next-admin context
+		if ( select( 'next-admin' )?.getMetaMenuItems?.( 'wp-logo' )?.length > 1 ) {
 			unsubscribe();
 			// wait for the next tick to ensure the menu items are registered
 			queueMicrotask( () => {
 				select( 'next-admin' )
-					.getMetaMenuItems( 'wp-logo' )
-					.forEach( ( item ) => {
-						dispatch( 'next-admin' ).unregisterSiteHubHelpMenuItem( item.id );
+					?.getMetaMenuItems?.( 'wp-logo' )
+					?.forEach( ( item ) => {
+						dispatch( 'next-admin' )?.unregisterSiteHubHelpMenuItem?.( item.id );
 					} );
-				dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'help-center', {
+				dispatch( 'next-admin' )?.registerSiteHubHelpMenuItem?.( 'help-center', {
 					label: __( 'Help Center', __i18n_text_domain__ ),
 					parent: 'wp-logo',
 					callback: () => {
@@ -240,20 +237,20 @@ if ( helpCenterData.isNextAdmin ) {
 							sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
 							currentUser={ helpCenterData.currentUser }
 							site={ helpCenterData.site }
+							source={ helpCenterData.isCommerceGarden ? 'commerce-garden' : null }
 							hasPurchases={ false }
 							onboardingUrl="https://wordpress.com/start"
 							handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
 							isCommerceGarden={ helpCenterData.isCommerceGarden }
 							{ ...botProps }
 						/>
-					</QueryClientProvider>,
-					document.getElementById( 'jetpack-help-center' )
+					</QueryClientProvider>
 				);
 			} );
 		}
 	} );
 } else {
 	registerPlugin( 'jetpack-help-center', {
-		render: HelpCenterContentWithProvider,
+		render: () => <HelpCenterContentWithProvider />,
 	} );
 }

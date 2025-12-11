@@ -398,7 +398,7 @@ function UnifiedPlansStep( {
 		}
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate( 'The right plan for the right project' );
+			return translate( 'Host with the best' );
 		}
 
 		if ( intent === 'plans-wordpress-hosting' ) {
@@ -450,7 +450,7 @@ function UnifiedPlansStep( {
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
 			return translate(
-				'Get the advanced features you need without ever thinking about overages.'
+				'Create a site with WordPress.com, and get all the power of lightning-fast, secure, and managed WordPress hosting.'
 			);
 		}
 

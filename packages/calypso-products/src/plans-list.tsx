@@ -145,6 +145,7 @@ import {
 	FEATURE_WOOCOMMERCE,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
+	GROUP_A4A,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_SECURITY_PLANS,
 	PLAN_BLOGGER,
@@ -152,6 +153,8 @@ import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
+	PLAN_A4A_BUSINESS,
+	PLAN_A4A_BUSINESS_MONTHLY,
 	PLAN_100_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE,
@@ -386,6 +389,7 @@ import {
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOO_HOSTED_BASIC,
 	TYPE_WOO_HOSTED_PRO,
+	TYPE_WOO_HOSTED_FREE_TRIAL,
 	FEATURE_PREMIUM_STORE_THEMES,
 	FEATURE_STORE_DESIGN,
 	FEATURE_UNLIMITED_PRODUCTS,
@@ -1626,6 +1630,17 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_AD_FREE_EXPERIENCE,
 	],
+} );
+
+const getPlanA4ABusinessDetails = (): IncompleteWPcomPlan => ( {
+	...getDotcomPlanDetails(),
+	group: GROUP_A4A,
+	type: TYPE_BUSINESS,
+	getTitle: getPlanBusinessTitle,
+	getDescription: () =>
+		i18n.translate(
+			'Power your business website with custom plugins and themes, storage, and the ability to remove WordPress.com branding.'
+		),
 } );
 
 const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
@@ -2968,6 +2983,25 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'business-3-years',
 	},
 
+	[ PLAN_A4A_BUSINESS ]: {
+		...getPlanA4ABusinessDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: () => false, // A4A plans not available through standard flows
+		getProductId: () => 3300,
+		getStoreSlug: () => PLAN_A4A_BUSINESS,
+		getPathSlug: () => 'a4a-business',
+	},
+
+	[ PLAN_A4A_BUSINESS_MONTHLY ]: {
+		...getPlanA4ABusinessDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: () => false, // A4A plans not available through standard flows
+		getProductId: () => 3301,
+		getStoreSlug: () => PLAN_A4A_BUSINESS_MONTHLY,
+		getPathSlug: () => 'a4a-business-monthly',
+	},
+
 	[ PLAN_100_YEARS ]: {
 		...getPlanBusinessDetails(),
 		term: TERM_CENTENNIALLY,
@@ -3165,6 +3199,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOO_HOSTED_FREE ]: {
 		...getPlanFreeDetails(),
 		...getAnnualTimeframe(),
+		type: isEnabled( 'ciab/allow-domain-features' ) ? TYPE_WOO_HOSTED_FREE_TRIAL : TYPE_FREE,
 		getTitle: () => i18n.translate( 'Free subscription' ),
 		getTagline: () => 'Learn more about everything included with Woo Free Trial.',
 		getProductId: () => 4005,
@@ -3175,6 +3210,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ]: {
 		...getPlanFreeDetails(),
 		...getMonthlyTimeframe(),
+		type: isEnabled( 'ciab/allow-domain-features' ) ? TYPE_WOO_HOSTED_FREE_TRIAL : TYPE_FREE,
 		getTitle: () => 'Free Trial',
 		getPlanTagline: () => "Get a taste of the world's most popular eCommerce software.",
 		getDescription: () =>

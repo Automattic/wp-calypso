@@ -26,29 +26,17 @@ Release notes:
 As you complete the tasks in this list, please update the relevant lines with diff and other IDs
 -->
 
-**Install and activate**
+**Install and Activate**
 
 - [ ] Install and activate [v#.#.#]-rc.1 on edge (######-code)
 - [ ] Install and activate [v#.#.#] on edge (######-code)
+- [ ] [v#.#.#] WPCOM Core unit tests (######-code)
 - [ ] Activate [v#.#.#] on production (######-code)
-- [ ] Release the [v#.#.#] build to intermediary repo for AT to pull (https://github.com/Automattic/gutenberg-dotcom-woa-releases/releases/tag/[v#.#.#])
-
-**Testing**
-
-- [ ] [v#.#.#] Desktop viewport E2E
-- [ ] [v#.#.#] Mobile viewport E2E
-- [ ] [v#.#.#] WPCOM core (######-code)
-
-**Publish internal announcements**
-
-- [ ] Slack: #wpcom-happy-announce
-- [ ] P2: wpcomhappy
 
 **Wrap-up**
 
 - [ ] Clean up unused releases
 - [ ] Add log entry to the Gutenberg Upgrade Log (pcoGjb-g-p2)
-- [ ] [Open a new issue](https://github.com/Automattic/wp-calypso/issues/new?assignees=&labels=gutenberg-upgrade%2C+%5BType%5D+Task&template=gutenberg-plugin-upgrade.md&title=Gutenberg%3A+%5Bv%23.%23.%23%5D+plugin+upgrade) for the next upgrade, transfer remaining tasks, close this issue.
 
 ### Blockers 🤷‍♀️
 

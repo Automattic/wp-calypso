@@ -93,15 +93,33 @@ const domain: FlowV2< typeof initialize > = {
 		const defaultRedirect = `/v2/sites/${ siteSlug }/domains`;
 
 		const goToCheckout = ( siteSlug: string ) => {
-			const destination = `/v2/sites/${ siteSlug }/domains`;
+			// Check if cart contains only one domain product and it's a domain connection
+			// Domain connections require a paid plan. When purchased with a plan, after checkout
+			// completes, we redirect to the domain connection setup page instead of the generic
+			// domains page to guide users through the connection process.
+			const hasOnlyDomainConnection =
+				domainCartItems && domainCartItems.length === 1 && isDomainMapping( domainCartItems[ 0 ] );
+
+			// Use the redirect_to query param if provided, otherwise fall back to v2 domains
+			let destination = redirectTo || `/v2/sites/${ siteSlug }/domains`;
+
+			// But send domain-only connects to domain-connection-setup.
+			if ( ! redirectTo && hasOnlyDomainConnection ) {
+				const domain = domainCartItems[ 0 ].meta;
+				if ( domain ) {
+					destination = `/v2/domains/${ domain }/domain-connection-setup`;
+				}
+			}
 
 			// replace the location to delete processing step from history.
 			return window.location.replace(
 				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 					redirect_to: destination,
 					signup: 1,
-					cancel_to: new URL( addQueryArgs( '/setup/domain', { siteSlug } ), window.location.href )
-						.href,
+					cancel_to: new URL(
+						addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
+						window.location.href
+					).href,
 				} )
 			);
 		};

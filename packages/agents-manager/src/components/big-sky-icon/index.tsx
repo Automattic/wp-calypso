@@ -2,14 +2,14 @@
  * External dependencies
  */
 import { useRive, useStateMachineInput } from '@rive-app/react-canvas';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
 
-export interface BigSkyIconProps {
+interface BigSkyIconProps {
 	/**
 	 * Icon color variant
 	 * @default 'blue'
@@ -38,7 +38,7 @@ export interface BigSkyIconProps {
 	/**
 	 * Click handler
 	 */
-	onClick?: ( e: React.MouseEvent ) => void;
+	onClick?: ( e: React.MouseEvent | React.KeyboardEvent ) => void;
 }
 
 /**
@@ -109,7 +109,7 @@ export default function BigSkyIcon( {
 	const handleKeyDown = ( e: React.KeyboardEvent ) => {
 		if ( onClick && ( e.key === 'Enter' || e.key === ' ' ) ) {
 			e.preventDefault();
-			onClick( e as any );
+			onClick( e );
 		}
 	};
 

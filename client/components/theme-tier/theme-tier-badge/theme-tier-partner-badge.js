@@ -2,7 +2,9 @@ import { PremiumBadge } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import { useSelector } from 'calypso/state';
+import { getSite } from 'calypso/state/sites/selectors';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import {
 	isMarketplaceThemeSubscribed,
@@ -27,9 +29,16 @@ export default function ThemeTierPartnerBadge( {
 	const translate = useTranslate();
 	const { themeId, siteId } = useThemeTierBadgeContext();
 
-	const isPartnerThemePurchased = useSelector( ( state ) =>
-		siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false
-	);
+	const isPartnerThemePurchased = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return false;
+		}
+
+		const site = getSite( state, siteId );
+		const productionSiteId = getProductionSiteId( site );
+
+		return isMarketplaceThemeSubscribed( state, themeId, productionSiteId );
+	} );
 
 	const subscriptionPrices = useSelector(
 		( state ) => getMarketplaceThemeSubscriptionPrices( state, themeId ),

@@ -1,3 +1,4 @@
+import { Site } from '@automattic/api-core';
 import { siteLatestAtomicTransferQuery, siteByIdQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
@@ -6,26 +7,29 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { Callout } from 'calypso/dashboard/components/callout';
+import HostingFeatureList from 'calypso/dashboard/sites/hosting-feature-list';
 import {
 	isAtomicTransferInProgress,
 	isAtomicTransferredSite,
 } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import HostingActivationButton from '../hosting-activation-button';
 import illustrationUrl from './hosting-callout-illustration.svg';
 
 export function HostingActivationCallout( {
-	siteId,
+	site,
+	path,
 	redirectUrl,
 }: {
-	siteId: number;
+	site: Site;
+	path: string;
 	redirectUrl?: string;
 } ) {
 	const dispatch = useDispatch();
 	const { data: latestAtomicTransfer } = useQuery( {
-		...siteLatestAtomicTransferQuery( siteId ),
-		enabled: !! siteId,
+		...siteLatestAtomicTransferQuery( site.ID ),
 		refetchInterval: ( query ) => {
 			if ( ! query.state.data ) {
 				return 0;
@@ -36,8 +40,8 @@ export function HostingActivationCallout( {
 		refetchIntervalInBackground: true,
 	} );
 
-	const { data: site } = useQuery( {
-		...siteByIdQuery( siteId ),
+	const { data: atomicSite } = useQuery( {
+		...siteByIdQuery( site.ID ),
 		refetchInterval: ( query ) => {
 			if ( ! query.state.data ) {
 				return 0;
@@ -45,7 +49,7 @@ export function HostingActivationCallout( {
 
 			return ! isAtomicTransferredSite( query.state.data ) ? 2000 : false;
 		},
-		enabled: !! siteId && latestAtomicTransfer?.status === 'completed',
+		enabled: latestAtomicTransfer?.status === 'completed',
 	} );
 
 	const isActivating =
@@ -55,11 +59,13 @@ export function HostingActivationCallout( {
 			latestAtomicTransfer?.status === 'completed' );
 
 	const isActivated =
-		latestAtomicTransfer?.status === 'completed' && site && isAtomicTransferredSite( site );
+		latestAtomicTransfer?.status === 'completed' &&
+		atomicSite &&
+		isAtomicTransferredSite( atomicSite );
 
 	useEffect( () => {
 		const handleActivated = async () => {
-			await dispatch( requestSite( siteId ) );
+			await dispatch( requestSite( site.ID ) );
 			if ( redirectUrl ) {
 				page.replace( redirectUrl );
 			} else {
@@ -74,7 +80,17 @@ export function HostingActivationCallout( {
 		if ( isActivated ) {
 			handleActivated();
 		}
-	}, [ isActivated, siteId, redirectUrl, dispatch ] );
+	}, [ isActivated, site.ID, redirectUrl, dispatch ] );
+
+	// Additional event to align analysis across dashboards.
+	// See: https://wp.me/pgz0xU-qp
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_impression', {
+				path,
+			} )
+		);
+	}, [ dispatch, path ] );
 
 	return (
 		<Callout
@@ -88,29 +104,14 @@ export function HostingActivationCallout( {
 							'Your plan includes a range of powerful hosting features. Activate them to get started.'
 						) }
 					</Text>
-					<ul style={ { listStyle: 'none', margin: 0 } }>
-						<Text as="li" variant="muted">
-							{ __( 'Git-based deployments' ) }
-						</Text>
-						<Text as="li" variant="muted">
-							{ __( 'Server monitoring' ) }
-						</Text>
-						<Text as="li" variant="muted">
-							{ __( 'Access and error logs' ) }
-						</Text>
-						<Text as="li" variant="muted">
-							{ __( 'Secure access via SFTP/SSH' ) }
-						</Text>
-						<Text as="li" variant="muted">
-							{ __( 'Advanced server settings' ) }
-						</Text>
-					</ul>
+					<HostingFeatureList site={ site } />
 				</>
 			}
 			actions={
 				<HostingActivationButton
 					text={ isActivating ? __( 'Activating…' ) : __( 'Activate' ) }
 					size="compact"
+					path={ path }
 					redirectUrl={ redirectUrl ?? window.location.href.replace( window.location.origin, '' ) }
 				/>
 			}

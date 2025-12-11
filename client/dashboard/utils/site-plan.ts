@@ -1,10 +1,4 @@
-import {
-	DotcomPlans,
-	JetpackFeatures,
-	type JetpackFeatureSlug,
-	type Purchase,
-	type Site,
-} from '@automattic/api-core';
+import { DotcomPlans, JetpackFeatures } from '@automattic/api-core';
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
@@ -20,7 +14,14 @@ import {
 import { purchaseSettingsRoute, purchasesRoute } from '../app/router/me';
 import { hasPlanFeature } from '../utils/site-features';
 import { isDashboardBackport } from './is-dashboard-backport';
+import { wpcomLink } from './link';
 import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
+import type {
+	JetpackFeatureSlug,
+	Purchase,
+	Site,
+	DashboardSiteListSite,
+} from '@automattic/api-core';
 
 export const JETPACK_PRODUCTS = [
 	{
@@ -77,7 +78,7 @@ export const JETPACK_PRODUCTS = [
 	},
 ];
 
-export function getJetpackProductsForSite( site: Site ) {
+export function getJetpackProductsForSite( site: Pick< Site, 'plan' > ) {
 	return JETPACK_PRODUCTS.filter( ( product ) =>
 		hasPlanFeature( site, product.id as JetpackFeatureSlug )
 	);
@@ -112,6 +113,25 @@ export function getSitePlanDisplayName( site: Site ) {
 	return plan.product_name || plan.product_name_short;
 }
 
+export function getSitePlanDisplayName__ES( site: DashboardSiteListSite ) {
+	const plan = site.plan;
+	if ( ! plan ) {
+		return '';
+	}
+
+	if ( plan.product_slug === DotcomPlans.JETPACK_FREE ) {
+		const products = getJetpackProductsForSite( site );
+		if ( products.length === 1 ) {
+			return products[ 0 ].label;
+		}
+		if ( products.length > 1 ) {
+			return __( 'Jetpack' );
+		}
+	}
+
+	return plan.product_name_short;
+}
+
 export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
 	const router = useRouter();
 	const host = typeof window !== 'undefined' ? window.location.host : 'wordpress.com';
@@ -131,8 +151,8 @@ export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
 
 	if ( site.plan?.is_free ) {
 		return isCommerceGarden( site )
-			? `${ protocol }//${ host }/setup/woo-hosted-plans?siteSlug=${ site.slug }`
-			: `${ protocol }//${ host }/setup/plan-upgrade?siteSlug=${ site.slug }`;
+			? wpcomLink( `/setup/woo-hosted-plans?siteSlug=${ site.slug }` )
+			: wpcomLink( `/setup/plan-upgrade?siteSlug=${ site.slug }` );
 	}
 
 	if ( isDashboardBackport() ) {

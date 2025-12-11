@@ -1,0 +1,32 @@
+/**
+ * Utility functions shared across data stores
+ */
+
+declare const helpCenterData: { isProxied: boolean; isSU: boolean; isSSP: boolean } | undefined;
+declare const isSupportSession: boolean;
+declare const isSSP: boolean;
+
+// All end-to-end tests use a custom user agent containing this string.
+const E2E_USER_AGENT = 'wp-e2e-tests';
+
+export const isE2ETest = (): boolean =>
+	typeof window !== 'undefined' && window.navigator.userAgent.includes( E2E_USER_AGENT );
+
+export const isInSupportSession = () => {
+	if ( typeof window !== 'undefined' ) {
+		return (
+			// A bit hacky but much easier than passing down data from PHP in Jetpack
+			// Simple
+			!! document.querySelector( '#wp-admin-bar-support-session-details' ) ||
+			!! document.querySelector( '#a8c-support-session-overlay' ) ||
+			// Atomic
+			document.body.classList.contains( 'support-session' ) ||
+			document.querySelector( '#wpcom > .is-support-session' ) ||
+			( typeof isSupportSession !== 'undefined' && !! isSupportSession ) ||
+			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSU ) ||
+			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSSP ) ||
+			( typeof isSSP !== 'undefined' && !! isSSP )
+		);
+	}
+	return false;
+};
