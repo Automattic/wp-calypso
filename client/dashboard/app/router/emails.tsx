@@ -26,11 +26,6 @@ export const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
 	component: () => <Outlet />,
-	loader: async () => {
-		queryClient.prefetchQuery( userMailboxesQuery() );
-		queryClient.prefetchQuery( domainsQuery() );
-		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-	},
 	validateSearch: ( search ): { domainName: string | undefined } => {
 		return {
 			domainName: typeof search.domainName === 'string' ? search.domainName : undefined,
@@ -41,6 +36,11 @@ export const emailsRoute = createRoute( {
 export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
+	loader: async () => {
+		queryClient.prefetchQuery( userMailboxesQuery() );
+		queryClient.prefetchQuery( domainsQuery() );
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+	},
 } ).lazy( () =>
 	import( '../../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails-index' )( {
