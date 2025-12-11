@@ -10,7 +10,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { ReactElement } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { domainSecurityRoute } from '../../app/router/domains';
@@ -32,8 +32,9 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		...provisionSslCertificateMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'New SSL certificate requested.' ),
-				error: __( 'Failed to provision SSL certificate.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'New SSL certificate requested for %s.' ), domainName ),
+				error: { source: 'server' },
 			},
 		},
 	} );
@@ -74,8 +75,22 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		}
 
 		if ( hasFailureReasons ) {
-			return __(
-				'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued.'
+			return createInterpolateElement(
+				__(
+					'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued. <learnMoreLink />'
+				),
+				{
+					learnMoreLink: (
+						<InlineSupportLink
+							supportContext="https-ssl"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_domain_security_learn_more_click', {
+									domain: domainName,
+								} );
+							} }
+						/>
+					),
+				}
 			);
 		}
 

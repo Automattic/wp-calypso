@@ -1,14 +1,17 @@
 import { useEffect, useRef } from '@wordpress/element';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 /**
- * Persist the value in memory so when the element is unmounted it doesn't get lost.
+ * Persist scroll position for Help Center articles.
+ * Uses router location state which gets persisted to user preferences,
+ * allowing scroll position to survive page refreshes.
  */
-const cachedScrollPositions: Record< string, number > = {};
-
 export const useHelpCenterArticleScroll = (
 	postId: number | undefined,
 	scrollParentRef: React.RefObject< HTMLElement >
 ) => {
+	const location = useLocation();
+	const navigate = useNavigate();
 	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 
 	useEffect( () => {
@@ -22,25 +25,25 @@ export const useHelpCenterArticleScroll = (
 		// temporary disable smooth scrolling
 		scrollRef.style.scrollBehavior = 'auto';
 
-		if ( cachedScrollPositions[ postId ] ) {
-			scrollRef.scrollTop = cachedScrollPositions[ postId ];
-		} else {
-			scrollRef.scrollTop = 0;
-		}
+		// Restore scroll from location state (persisted across refreshes) or default to 0
+		const savedScrollTop = ( location.state as { scrollTop?: number } )?.scrollTop ?? 0;
+		scrollRef.scrollTop = savedScrollTop;
 
-		// restore smooth scrolling
+		// Restore smooth scrolling
 		scrollRef.style.scrollBehavior = scrollBehaviour;
 
-		const handleScroll = ( event: { target: EventTarget | null } ) => {
+		const handleScroll = () => {
 			if ( timeoutRef.current ) {
 				clearTimeout( timeoutRef.current );
 			}
 
 			timeoutRef.current = setTimeout( () => {
-				if ( event.target === scrollParentRef.current ) {
-					cachedScrollPositions[ postId ] = Number( scrollRef.scrollTop );
-				}
-			}, 250 );
+				// Save scroll position to location state (which gets persisted via MemoryHistory)
+				navigate( location.pathname + location.search + location.hash, {
+					replace: true,
+					state: { ...( location.state as object ), scrollTop: scrollRef.scrollTop },
+				} );
+			}, 2000 ); // Debounce to avoid excessive history updates
 		};
 
 		scrollRef.addEventListener( 'scroll', handleScroll );
@@ -50,5 +53,5 @@ export const useHelpCenterArticleScroll = (
 			}
 			scrollRef?.removeEventListener( 'scroll', handleScroll );
 		};
-	}, [ postId, scrollParentRef ] );
+	}, [ postId, scrollParentRef, location, navigate ] );
 };

@@ -593,11 +593,11 @@ describe( 'FeaturedSearchResultsItem', () => {
 
 			await waitFor( () => screen.getByTitle( 'test-add-to-cart.com' ) );
 
-			const cta = screen.getByRole( 'button', { name: 'Add to Cart' } );
+			const cta = screen.getByRole( 'button', { name: 'Add to cart' } );
 
 			expect( cta ).toBeInTheDocument();
 			expect( cta ).toHaveClass( 'is-primary' );
-			expect( cta ).toHaveTextContent( 'Add to Cart' );
+			expect( cta ).toHaveTextContent( 'Add to cart' );
 		} );
 
 		it( 'renders continue cta with text', async () => {

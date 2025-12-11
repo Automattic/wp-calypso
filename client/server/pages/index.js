@@ -11,11 +11,10 @@ import {
 	getLanguageSlugs,
 	localizeUrl,
 } from '@automattic/i18n-utils';
-import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import express from 'express';
-import { get, includes, snakeCase } from 'lodash';
+import { get, includes } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -37,7 +36,6 @@ import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
-import analytics from 'calypso/server/lib/analytics';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
 import {
@@ -63,6 +61,7 @@ import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
+import { registerCspReportRoute } from './csp-report';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
@@ -165,7 +164,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		'dashboard-development',
 	];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
-
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
@@ -1137,6 +1135,9 @@ export default function pages() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
+	// Register CSP report route
+	registerCspReportRoute( app );
+
 	// Multi-site Dashboard routing for my.wordpress.com.
 	// Return earlier since we don't need to set up any other routes.
 	if ( config.isEnabled( 'dashboard' ) ) {
@@ -1177,44 +1178,6 @@ export default function pages() {
 		const redirectUrl = localizeUrl( `https://wordpress.com/support`, req.context.locale );
 		return res.redirect( 301, redirectUrl );
 	} );
-
-	// This is used to log to tracks Content Security Policy violation reports sent by browsers
-	app.post(
-		'/cspreport',
-		bodyParser.json( { type: [ 'json', 'application/csp-report' ] } ),
-		function ( req, res ) {
-			const cspReport = req.body[ 'csp-report' ] || {};
-			const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
-				report[ snakeCase( key ) ] = cspReport[ key ];
-				return report;
-			}, {} );
-
-			if ( calypsoEnv !== 'development' ) {
-				// Send to Tracks for analytics
-				analytics.tracks.recordEvent( 'calypso_csp_report', cspReportSnakeCase, req );
-			}
-
-			// Send to Logstash for better logging/debugging
-			analytics.logstash.log( {
-				feature: 'calypso_client',
-				message: 'CSP Violation Report',
-				severity: 'info',
-				properties: {
-					env: calypsoEnv,
-					...cspReportSnakeCase,
-					user_agent: req.get( 'user-agent' ),
-					referer: req.get( 'Referer' ),
-				},
-			} );
-
-			res.status( 200 ).send( 'Got it!' );
-		},
-		// eslint-disable-next-line no-unused-vars
-		function ( err, req, res, next ) {
-			res.status( 500 ).send( 'Bad report!' );
-		}
-	);
-
 	// catchall to render 404 for all routes not explicitly allowed in client/sections
 	app.use( render404() );
 

@@ -45,7 +45,7 @@ export const Default = () => {
 								<DomainSuggestionBadge variation="warning">Sale</DomainSuggestionBadge>
 							</>
 						}
-						cta={ <DomainSuggestionPrimaryCTA>Add to Cart</DomainSuggestionPrimaryCTA> }
+						cta={ <DomainSuggestionPrimaryCTA>Add to cart</DomainSuggestionPrimaryCTA> }
 					/>
 				) ) }
 			</DomainSuggestionsList>

@@ -1,4 +1,6 @@
 import {
+	domainPrivacySaveMutation,
+	domainPrivacyDiscloseSaveMutation,
 	domainQuery,
 	domainWhoisValidateMutation,
 	domainWhoisMutation,
@@ -6,7 +8,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -20,7 +22,7 @@ import { findRegistrantWhois } from '../../utils/domain';
 import type { DomainContactDetails } from '@automattic/api-core';
 
 export default function DomainContactInfo() {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
@@ -47,43 +49,89 @@ export default function DomainContactInfo() {
 		return { initialData, key: JSON.stringify( initialData ) };
 	}, [ registrantWhoisData ] );
 
-	const validateMutation = useMutation( domainWhoisValidateMutation( [ domainName ] ) );
-	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
+	const validateMutation = useMutation( {
+		...domainWhoisValidateMutation( [ domainName ] ),
+		meta: { snackbar: { error: { source: 'server' } } },
+	} );
+	const updateMutation = useMutation( {
+		...domainWhoisMutation( domainName ),
+		meta: {
+			snackbar: {
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Contact details for %s saved.' ), domainName ),
+				error: { source: 'server' },
+			},
+		},
+	} );
+	const savePrivacyMutation = useMutation( {
+		...domainPrivacySaveMutation( domainName ),
+		meta: {
+			snackbar: {
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Privacy has been successfully updated for %s!' ), domainName ),
+				error: { source: 'server' },
+			},
+		},
+	} );
 
-	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
+	const disclosePrivacyMutation = useMutation( {
+		...domainPrivacyDiscloseSaveMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: sprintf(
+					/* translators: %s is the domain name */
+					__( 'Your contact information for %s is now publicly visible!' ),
+					domainName
+				),
+				error: { source: 'server' },
+			},
+		},
+	} );
+	const redactPrivacyMutation = useMutation( {
+		...domainPrivacyDiscloseSaveMutation( domainName ),
+		meta: {
+			snackbar: {
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Your contact information for %s is now redacted!' ), domainName ),
+				error: { source: 'server' },
+			},
+		},
+	} );
+
+	const isSubmitting =
+		validateMutation.isPending ||
+		updateMutation.isPending ||
+		savePrivacyMutation.isPending ||
+		disclosePrivacyMutation.isPending ||
+		redactPrivacyMutation.isPending;
 
 	const handleSubmit = ( normalizedFormData: DomainContactDetails ) => {
 		validateMutation.mutate( normalizedFormData, {
 			onSuccess: ( data ) => {
 				if ( data.success ) {
-					updateMutation.mutate(
-						{
-							domainContactDetails: normalizedFormData,
-							transferLock: normalizedFormData.optOutTransferLock === false,
-						},
-						{
-							onSuccess: () => {
-								createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
-							},
-							onError: ( error: Error ) => {
-								createErrorNotice( error.message, {
-									type: 'snackbar',
-								} );
-							},
-						}
-					);
+					updateMutation.mutate( {
+						domainContactDetails: normalizedFormData,
+						transferLock: normalizedFormData.optOutTransferLock === false,
+					} );
 				} else {
 					createErrorNotice( data.messages_simple.join( ' ' ), {
 						type: 'snackbar',
 					} );
 				}
 			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message, {
-					type: 'snackbar',
-				} );
-			},
 		} );
+	};
+
+	const handleTogglePrivacyProtection = () => {
+		savePrivacyMutation.mutate( domain.private_domain ? false : true );
+	};
+
+	const handleTogglePrivacyDisclosure = () => {
+		if ( domain.contact_info_disclosed ) {
+			redactPrivacyMutation.mutate( false );
+		} else {
+			disclosePrivacyMutation.mutate( true );
+		}
 	};
 
 	return (
@@ -103,7 +151,12 @@ export default function DomainContactInfo() {
 					! domain.is_hundred_year_domain && (
 						<Card>
 							<CardBody>
-								<ContactFormPrivacy domainName={ domainName } />
+								<ContactFormPrivacy
+									domainName={ domainName }
+									isSubmitting={ isSubmitting }
+									onTogglePrivacyProtection={ handleTogglePrivacyProtection }
+									onTogglePrivacyDisclosure={ handleTogglePrivacyDisclosure }
+								/>
 							</CardBody>
 						</Card>
 					)

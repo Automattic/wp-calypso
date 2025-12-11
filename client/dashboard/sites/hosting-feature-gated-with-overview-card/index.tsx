@@ -13,6 +13,8 @@ interface HostingFeatureGatedWithOverviewCardProps
 	upsellHeading: OverviewCardProps[ 'heading' ];
 	upsellDescription: OverviewCardProps[ 'description' ];
 	upsellLink: OverviewCardProps[ 'link' ];
+	upsellId: string;
+	upsellFeatureId?: string;
 }
 
 export default function HostingFeatureGatedWithOverviewCard( {
@@ -48,7 +50,13 @@ export default function HostingFeatureGatedWithOverviewCard( {
 				/>
 			) }
 			renderActivationComponent={ () => (
-				<OverviewCard { ...cardProps } icon={ featureIcon } title={ __( 'Activate to unlock' ) } />
+				<OverviewCard
+					{ ...cardProps }
+					intent="activate"
+					icon={ featureIcon }
+					title={ __( 'Activate to unlock' ) }
+					tracksId={ upsellId }
+				/>
 			) }
 		/>
 	);

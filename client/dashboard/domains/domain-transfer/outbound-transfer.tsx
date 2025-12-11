@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
@@ -66,7 +66,11 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 				} );
 
 				createSuccessNotice(
-					enabled ? __( 'Transfer lock enabled.' ) : __( 'Transfer lock disabled.' ),
+					enabled
+						? /* translators: %s is the domain name */
+						  sprintf( __( 'Transfer lock enabled for %s.' ), domainName )
+						: /* translators: %s is the domain name */
+						  sprintf( __( 'Transfer lock disabled for %s.' ), domainName ),
 					{ type: 'snackbar' }
 				);
 			},

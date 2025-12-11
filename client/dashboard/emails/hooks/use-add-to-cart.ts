@@ -5,13 +5,13 @@ import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import { emailsRoute, mailboxesReadyRoute } from '../../app/router/emails';
-import { CartActionError } from '../../shopping-cart/errors';
 import { wpcomLink } from '../../utils/link';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
 import { useDomainFromUrlParam } from './use-domain-from-url-param';
 import { useEmailProduct } from './use-email-product';
+import type { CartActionError } from '@automattic/shopping-cart';
 
 export const useAddToCart = () => {
 	const { recordTracksEvent } = useAnalytics();

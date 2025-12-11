@@ -16,6 +16,7 @@ import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visible';
 import { PluginsFAQ } from 'calypso/my-sites/plugins/plugins-faq';
@@ -116,7 +117,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	const shouldUseLoggedInView =
 		isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn ? siteId : isLoggedIn;
 
-	const isMarketplaceRedesignEnabled = isEnabled( 'marketplace-redesign' );
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
@@ -191,7 +192,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
 				{ shouldUseLoggedInView ? (
-					<FullWidthSection className="plugins-browser__search-categories full-width-section--no-padding">
+					<FullWidthSection
+						className="plugins-browser__search-categories full-width-section--no-padding"
+						enabled={ isMarketplaceRedesignEnabled }
+					>
 						<div ref={ loggedInSearchBoxRef } />
 						<SearchCategories
 							category={ category }
@@ -204,7 +208,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					</FullWidthSection>
 				) : (
 					<>
-						<FullWidthSection className="plugins-browser__search-header full-width-section--gray">
+						<FullWidthSection
+							className="plugins-browser__search-header full-width-section--gray"
+							enabled={ isMarketplaceRedesignEnabled }
+						>
 							<SearchBoxHeader
 								searchRef={ searchRef }
 								categoriesRef={ categoriesRef }
@@ -230,7 +237,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 								renderTitleInH1={ ! category }
 							/>
 						</FullWidthSection>
-						<FullWidthSection className="plugins-browser__categories">
+						<FullWidthSection
+							className="plugins-browser__categories"
+							enabled={ isMarketplaceRedesignEnabled }
+						>
 							<div ref={ categoriesRef }>
 								<Categories selected={ category } noSelection={ !! search } />
 							</div>
@@ -239,12 +249,18 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				) }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
-					<FullWidthSection className="plugins__marketplace-footer">
+					<FullWidthSection
+						className="plugins__marketplace-footer"
+						enabled={ isMarketplaceRedesignEnabled }
+					>
 						<MarketplaceFooter />
 					</FullWidthSection>
 				) }
 				{ ! category && ! search && isMarketplaceRedesignEnabled && (
-					<FullWidthSection className="plugins-browser__faq full-width-section--double-padding">
+					<FullWidthSection
+						className="plugins-browser__faq full-width-section--double-padding"
+						enabled={ isMarketplaceRedesignEnabled }
+					>
 						<PluginsFAQ />
 					</FullWidthSection>
 				) }
