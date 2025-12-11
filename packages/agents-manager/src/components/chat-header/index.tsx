@@ -28,6 +28,7 @@ const A11nChatMenu = ( { onCloseDropdown }: { onCloseDropdown: () => void } ) =>
 		<Dropdown
 			popoverProps={ {
 				placement: 'right-start',
+				offset: 0,
 				onFocusOutside: ( { relatedTarget }: { relatedTarget: HTMLElement | null } ) => {
 					if ( ! relatedTarget || relatedTarget.role !== 'menuitem' ) {
 						onCloseDropdown();
