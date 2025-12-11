@@ -36,8 +36,8 @@ img.plugin-icon {
 	// take into account masterbar height + padding, and page layout padding
 	height: calc(100vh - 64px - var(--page-layout-block-padding));
     overflow-y: scroll;
-	padding-left: 0;
-	padding-right: 0;
+	padding-inline-start: 0;
+	padding-inline-end: 0;
 }
 
 .plugin-switcher-search {
@@ -61,10 +61,10 @@ img.plugin-icon {
 
 .plugin-sites-card-header {
 	margin-bottom: 8px;
-	padding-left: 20px;
+	padding-inline-start: 20px;
 }
 
 .plugin-sites-card-body {
-	padding-left: 0;
-	padding-right: 0;
+	padding-inline-start: 0;
+	padding-inline-end: 0;
 }

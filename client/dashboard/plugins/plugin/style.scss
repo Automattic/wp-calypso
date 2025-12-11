@@ -12,15 +12,15 @@
 
 .sites-with-this-plugin {
 	.dataviews__view-actions, .dataviews-filters__container {
-		padding-left: 20px;
-		padding-right: 20px;
+		padding-inline-start: 20px;
+		padding-inline-end: 20px;
 	}
 
 	.dataviews-view-table tr td:first-child, .dataviews-view-table tr th:first-child {
-		padding-left: 20px;
+		padding-inline-start: 20px;
 	}
 
 	.dataviews-view-table tr td:last-child, .dataviews-view-table tr th:last-child {
-		padding-right: 20px;
+		padding-inline-end: 20px;
 	}
 }
