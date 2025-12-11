@@ -125,7 +125,8 @@ export function usePersistentView( {
 				( field ) =>
 					newView.filters?.some(
 						( filter ) =>
-							filter.field === field && fastDeepEqual( filter.value, [ queryParams[ field ] ] )
+							filter.field === field &&
+							fastDeepEqual( filter.value, [ String( queryParams[ field ] ) ] )
 					)
 			);
 
