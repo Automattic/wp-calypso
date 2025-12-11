@@ -383,7 +383,9 @@ function HelpSearchResults( {
 					</p>
 					<Button
 						variant="secondary"
-						onClick={ () => setNavigateToRoute( '/odie' ) }
+						onClick={ () =>
+							setNavigateToRoute( `/odie?query=${ encodeURIComponent( searchQuery ) }` )
+						}
 						className="show-more-button"
 					>
 						{ __( 'Ask AI assistant', __i18n_text_domain__ ) }

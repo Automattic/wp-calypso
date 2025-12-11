@@ -37,11 +37,11 @@ export const DomainSuggestionPrimaryCTA = ( {
 			icon={ icon ?? shoppingCartIcon }
 			onClick={ onClick }
 			href={ href }
-			label={ label ?? __( 'Add to Cart' ) }
+			label={ label ?? __( 'Add to cart' ) }
 			disabled={ disabled }
 			isBusy={ isBusy }
 		>
-			{ listContext.isFeatured ? children ?? __( 'Add to Cart' ) : undefined }
+			{ listContext.isFeatured ? children ?? __( 'Add to cart' ) : undefined }
 		</Button>
 	);
 };

@@ -1,7 +1,7 @@
 import { DomainSubtype } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Link } from '@tanstack/react-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Tooltip, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
 import { Text } from '../../components/text';
@@ -31,17 +31,19 @@ export const DomainNameField = ( {
 		<VStack spacing={ 1 }>
 			<span style={ textOverflowStyles }>{ value }</span>
 			{ showPrimaryDomainBadge && domain.primary_domain && (
-				<span
-					style={ {
-						...textOverflowStyles,
-						color: 'var(--dashboard__foreground-color-success)',
-						fontWeight: 'normal',
-						textDecoration: 'underline',
-						textDecorationStyle: 'dotted',
-					} }
-				>
-					{ __( 'Primary site address' ) }
-				</span>
+				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
+					<span
+						style={ {
+							...textOverflowStyles,
+							color: 'var(--dashboard__foreground-color-success)',
+							fontWeight: 'normal',
+							textDecoration: 'underline',
+							textDecorationStyle: 'dotted',
+						} }
+					>
+						{ __( 'Primary site address' ) }
+					</span>
+				</Tooltip>
 			) }
 			{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
 				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
