@@ -75,8 +75,22 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		}
 
 		if ( hasFailureReasons ) {
-			return __(
-				'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued.'
+			return createInterpolateElement(
+				__(
+					'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued. <learnMoreLink />'
+				),
+				{
+					learnMoreLink: (
+						<InlineSupportLink
+							supportContext="https-ssl"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_domain_security_learn_more_click', {
+									domain: domainName,
+								} );
+							} }
+						/>
+					),
+				}
 			);
 		}
 
