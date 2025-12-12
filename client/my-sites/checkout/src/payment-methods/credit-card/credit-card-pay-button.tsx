@@ -9,6 +9,8 @@ import { useDispatch } from 'react-redux';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { useVgsFormSubmit } from '../../hooks/use-vgs-form-submit';
+import { useVgsFormValidation } from '../../hooks/use-vgs-form-validation';
 import { logStashEvent } from '../../lib/analytics';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
@@ -23,16 +25,20 @@ export default function CreditCardPayButton( {
 	onClick,
 	store,
 	shouldUseEbanx,
+	shouldUseVgs,
 	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
+	shouldUseVgs?: boolean;
 	submitButtonContent: ReactNode;
 } ) {
 	const { __ } = useI18n();
 	const { stripeConfiguration, stripe } = useStripe();
+	const submitVgsForm = useVgsFormSubmit();
+	const { validateVgsForm } = useVgsFormValidation();
 	const fields: CardFieldState = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
 		[]
@@ -50,7 +56,7 @@ export default function CreditCardPayButton( {
 	);
 
 	const cardholderName = fields.cardholderName;
-	const { formStatus } = useFormStatus();
+	const { formStatus, setFormSubmitting, setFormReady } = useFormStatus();
 	const paymentPartner = shouldUseEbanx ? 'ebanx' : 'stripe';
 	const elements = useElements();
 	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
@@ -76,72 +82,118 @@ export default function CreditCardPayButton( {
 	return (
 		<Button
 			disabled={ disabled }
-			onClick={ () => {
-				if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayFieldsError ) ) {
-					if ( paymentPartner === 'stripe' ) {
-						debug( 'submitting stripe payment' );
-						if ( ! cardNumberElement ) {
-							// This should never happen because they won't get
-							// to this point if the credit card fields are not
-							// filled-in (see isCreditCardFormValid) but it
-							// seems to happen so let's tell the user
-							// something.
-							setDisplayFieldsError(
-								__(
-									'Something seems to be wrong with the credit card form. Please try again or contact support for help.'
-								)
-							);
-							reduxDispatch(
-								recordTracksEvent( 'calypso_checkout_card_missing_element', {
-									error: 'No card number element found on page when submtting form.',
-								} )
-							);
-							logStashEvent( 'calypso_checkout_card_missing_element', {
+			onClick={ async () => {
+				if ( ! isCreditCardFormValid( store, paymentPartner, __, setDisplayFieldsError ) ) {
+					return;
+				}
+
+				if ( paymentPartner === 'stripe' ) {
+					debug( 'submitting stripe payment' );
+					if ( ! cardNumberElement ) {
+						// This should never happen because they won't get
+						// to this point if the credit card fields are not
+						// filled-in (see isCreditCardFormValid) but it
+						// seems to happen so let's tell the user
+						// something.
+						setDisplayFieldsError(
+							__(
+								'Something seems to be wrong with the credit card form. Please try again or contact support for help.'
+							)
+						);
+						reduxDispatch(
+							recordTracksEvent( 'calypso_checkout_card_missing_element', {
 								error: 'No card number element found on page when submtting form.',
-							} );
+							} )
+						);
+						logStashEvent( 'calypso_checkout_card_missing_element', {
+							error: 'No card number element found on page when submtting form.',
+						} );
+						return;
+					}
+					onClick( {
+						stripe,
+						name: cardholderName?.value,
+						stripeConfiguration,
+						cardNumberElement,
+						paymentPartner,
+						countryCode: fields?.countryCode?.value ?? '',
+						postalCode: fields?.postalCode?.value ?? '',
+						state: fields?.state?.value,
+						city: fields?.city?.value,
+						organization: fields?.organization?.value,
+						address: fields?.address1?.value,
+						useForAllSubscriptions,
+						useForBusiness,
+						eventSource: 'checkout',
+					} );
+					return;
+				}
+
+				if ( paymentPartner === 'ebanx' ) {
+					debug( 'submitting ebanx payment', { useVgs: shouldUseVgs } );
+
+					// Common billing details for both VGS and traditional flow
+					const billingDetails = {
+						name: cardholderName?.value || '',
+						countryCode: fields?.countryCode?.value || '',
+						state: fields?.state?.value || '',
+						city: fields?.city?.value || '',
+						postalCode: fields[ 'postal-code' ]?.value || '',
+						address: fields[ 'address-1' ]?.value || '',
+						streetNumber: fields[ 'street-number' ]?.value || '',
+						phoneNumber: fields[ 'phone-number' ]?.value || '',
+						document: fields?.document?.value || '', // Taxpayer Identification Number
+					};
+
+					if ( shouldUseVgs ) {
+						// VGS flow: validate form before attempting submission
+						// This will trigger VGS to show validation errors for invalid fields
+						const vgsValidation = validateVgsForm();
+						if ( ! vgsValidation.isValid ) {
+							debug( 'VGS form validation failed', vgsValidation.errorMessage );
+							// Mark form submission as attempted to show field errors
+							store.dispatch( actions.setFormSubmitAttempted( true ) );
+							setDisplayFieldsError(
+								vgsValidation.errorMessage || __( 'Please check your card details and try again.' )
+							);
 							return;
 						}
-						onClick( {
-							stripe,
-							name: cardholderName?.value,
-							stripeConfiguration,
-							cardNumberElement,
-							paymentPartner,
-							countryCode: fields?.countryCode?.value ?? '',
-							postalCode: fields?.postalCode?.value ?? '',
-							state: fields?.state?.value,
-							city: fields?.city?.value,
-							organization: fields?.organization?.value,
-							address: fields?.address1?.value,
-							useForAllSubscriptions,
-							useForBusiness,
-							eventSource: 'checkout',
-						} );
+
+						// VGS form is valid, proceed with submission
+						// Set form to submitting state immediately to show loading indicator
+						setFormSubmitting();
+						try {
+							const vgsTokens = await submitVgsForm();
+							onClick( {
+								...billingDetails,
+								paymentPartner: 'ebanx',
+								vgsTokens,
+							} );
+						} catch ( error ) {
+							debug( 'VGS form submission failed', error );
+							// Reset form status to allow user to retry
+							setFormReady();
+							setDisplayFieldsError(
+								__( 'Failed to process card information. Please check your details and try again.' )
+							);
+						}
 						return;
 					}
-					if ( paymentPartner === 'ebanx' ) {
-						debug( 'submitting ebanx payment' );
-						onClick( {
-							name: cardholderName?.value || '',
-							countryCode: fields?.countryCode?.value || '',
-							number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
-							cvv: fields?.cvv?.value || '',
-							'expiration-date': fields[ 'expiration-date' ]?.value || '',
-							state: fields?.state?.value || '',
-							city: fields?.city?.value || '',
-							postalCode: fields[ 'postal-code' ]?.value || '',
-							address: fields[ 'address-1' ]?.value || '',
-							streetNumber: fields[ 'street-number' ]?.value || '',
-							phoneNumber: fields[ 'phone-number' ]?.value || '',
-							document: fields?.document?.value || '', // Taxpayer Identification Number
-							paymentPartner,
-						} );
-						return;
-					}
-					throw new Error(
-						'Unrecognized payment partner in submit handler: "' + paymentPartner + '"'
-					);
+
+					// Traditional flow: use card data from form fields
+					onClick( {
+						...billingDetails,
+						paymentPartner: 'ebanx',
+						number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
+						cvv: fields?.cvv?.value || '',
+						'expiration-date': fields[ 'expiration-date' ]?.value || '',
+					} );
+					return;
 				}
+
+				throw new Error(
+					'Unrecognized payment partner in submit handler: "' + paymentPartner + '"'
+				);
 			} }
 			buttonType="primary"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
@@ -198,9 +250,46 @@ function isCreditCardFormValid(
 		case 'ebanx': {
 			// Touch fields so that we show errors
 			store.dispatch( actions.touchAllFields() );
-			let isValid = true;
 
 			const rawState = selectors.getFields( store.getState() );
+
+			// Check if we're using VGS (determined by feature flag at runtime)
+			// Simple heuristic: if card number field is empty, we're likely using VGS
+			const isUsingVgs = ! rawState?.number?.value;
+
+			if ( isUsingVgs ) {
+				// For VGS mode, we validate billing fields only here
+				// VGS card fields validation is handled separately via useVgsFormValidation hook
+				// which checks the VGS form state directly
+				let isValid = true;
+				const requiredFields = [
+					'cardholderName',
+					'state',
+					'city',
+					'postal-code',
+					'address-1',
+					'street-number',
+					'phone-number',
+					'document',
+				];
+
+				requiredFields.forEach( ( fieldName ) => {
+					const fieldValue = rawState[ fieldName ]?.value;
+					if ( ! fieldValue || fieldValue.trim() === '' ) {
+						isValid = false;
+						store.dispatch( actions.setFieldError( fieldName, __( 'This field is required' ) ) );
+					}
+				} );
+
+				debug( 'ebanx validation (VGS mode) - cardholder name and contact details', {
+					isValid,
+				} );
+
+				return isValid;
+			}
+
+			// Traditional flow: validate all card and contact fields
+			let isValid = true;
 			const cardholderName = rawState.cardholderName;
 			const numberWithoutSpaces = {
 				value: rawState?.number?.value?.replace( /\s+/g, '' ),
@@ -227,7 +316,8 @@ function isCreditCardFormValid(
 					store.dispatch( actions.setFieldError( key, error ) );
 				} );
 			} );
-			debug( 'ebanx card details validation results: ', validationResults );
+			debug( 'ebanx validation (traditional mode) - card details', validationResults );
+
 			return isValid;
 		}
 

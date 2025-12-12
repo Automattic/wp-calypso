@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getCommentById } from 'calypso/state/comments/selectors';
 import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
-import { getStream } from 'calypso/state/reader/streams/selectors';
+import { getPendingItems } from 'calypso/state/reader/streams/selectors';
 import './style.scss';
 
 const noop = () => {};
@@ -62,10 +62,9 @@ const countNewComments = ( state, postKeys ) => {
 	return newComments.length;
 };
 
-const mapStateToProps = ( state, ownProps ) => {
-	const stream = getStream( state, ownProps.streamKey );
-	const pendingItems = stream.pendingItems.items;
-	const updateCount = stream.pendingItems.items.length;
+const mapStateToProps = ( state ) => {
+	const pendingItems = getPendingItems( state );
+	const updateCount = pendingItems.length;
 
 	// ugly hack for convos
 	const isConversations = !! get( pendingItems, [ 0, 'comments' ] );

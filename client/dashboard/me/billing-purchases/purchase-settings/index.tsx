@@ -60,7 +60,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
-import { wpcomLink } from '../../../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -149,7 +149,7 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 }
 
 function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
-	const backUrl = window.location.href.replace( window.location.origin, '' );
+	const backUrl = redirectToDashboardLink();
 	return addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		...( siteSlug && { siteSlug } ),
 		cancel_to: backUrl,
