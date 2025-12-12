@@ -43,7 +43,7 @@ export function redirectToDashboardLink( {
 }: {
 	backUrl?: string;
 	supportBackport?: boolean;
-} ) {
+} = {} ) {
 	const url = backUrl ? backUrl : window.location.href.replace( window.location.origin, '' );
 	return supportBackport ? dashboardLinkWithBackport( url ) : dashboardLink( url );
 }
