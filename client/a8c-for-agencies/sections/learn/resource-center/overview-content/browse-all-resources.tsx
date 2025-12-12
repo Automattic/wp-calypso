@@ -2,7 +2,6 @@ import {
 	Card,
 	CardBody,
 	Button,
-	Modal,
 	Spinner,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -31,6 +30,7 @@ const initialView: View = {
 interface BrowseAllResourcesProps {
 	resources: ResourceItem[];
 	isLoading: boolean;
+	onOpenVideoModal: ( resource: ResourceItem ) => void;
 }
 
 function ResourceItemCard( {
@@ -85,15 +85,12 @@ function ResourceItemCard( {
 	);
 }
 
-export default function BrowseAllResources( { resources, isLoading }: BrowseAllResourcesProps ) {
+export default function BrowseAllResources( {
+	resources,
+	isLoading,
+	onOpenVideoModal,
+}: BrowseAllResourcesProps ) {
 	const [ view, setView ] = useState< View >( initialView );
-	const [ showVideoModal, setShowVideoModal ] = useState( false );
-	const [ selectedResource, setSelectedResource ] = useState< ResourceItem | null >( null );
-
-	const handleOpenVideoModal = ( resource: ResourceItem ) => {
-		setSelectedResource( resource );
-		setShowVideoModal( true );
-	};
 
 	// Build filter options dynamically from available resources
 	const filterOptions = useMemo( () => {
@@ -238,28 +235,9 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 			</DataViews>
 			<div className="resource-center-cards resource-center-browse-all-resources">
 				{ filteredData.map( ( item ) => (
-					<ResourceItemCard
-						key={ item.id }
-						item={ item }
-						onOpenVideoModal={ handleOpenVideoModal }
-					/>
+					<ResourceItemCard key={ item.id } item={ item } onOpenVideoModal={ onOpenVideoModal } />
 				) ) }
 			</div>
-			{ showVideoModal && selectedResource && (
-				<Modal
-					isDismissible
-					size="medium"
-					onRequestClose={ () => setShowVideoModal( false ) }
-					title={ selectedResource.name }
-				>
-					<VStack spacing={ 4 }>
-						<Text>
-							This is a placeholder for the video modal content. The actual video player will be
-							implemented here.
-						</Text>
-					</VStack>
-				</Modal>
-			) }
 		</>
 	);
 }

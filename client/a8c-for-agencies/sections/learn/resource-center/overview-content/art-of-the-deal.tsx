@@ -3,14 +3,12 @@ import {
 	CardMedia,
 	CardBody,
 	Button,
-	Modal,
 	Spinner,
 	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -20,6 +18,7 @@ import type { ResourceItem } from './types';
 interface ArtOfTheDealProps {
 	resources: ResourceItem[];
 	isLoading: boolean;
+	onOpenVideoModal: ( resource: ResourceItem ) => void;
 }
 
 function DealCard( {
@@ -78,15 +77,11 @@ function DealCard( {
 	);
 }
 
-export default function ArtOfTheDeal( { resources, isLoading }: ArtOfTheDealProps ) {
-	const [ showVideoModal, setShowVideoModal ] = useState( false );
-	const [ selectedResource, setSelectedResource ] = useState< ResourceItem | null >( null );
-
-	const handleOpenVideoModal = ( resource: ResourceItem ) => {
-		setSelectedResource( resource );
-		setShowVideoModal( true );
-	};
-
+export default function ArtOfTheDeal( {
+	resources,
+	isLoading,
+	onOpenVideoModal,
+}: ArtOfTheDealProps ) {
 	if ( isLoading ) {
 		return (
 			<>
@@ -129,28 +124,12 @@ export default function ArtOfTheDeal( { resources, isLoading }: ArtOfTheDealProp
 					<DealCard
 						key={ resource.id }
 						resource={ resource }
-						onOpenVideoModal={ handleOpenVideoModal }
+						onOpenVideoModal={ onOpenVideoModal }
 					/>
 				) ) }
 			</div>
 
 			<Spacer marginBottom={ 12 } />
-
-			{ showVideoModal && selectedResource && (
-				<Modal
-					isDismissible
-					size="medium"
-					onRequestClose={ () => setShowVideoModal( false ) }
-					title={ selectedResource.name }
-				>
-					<VStack spacing={ 4 }>
-						<Text>
-							This is a placeholder for the video modal content. The actual video player will be
-							implemented here.
-						</Text>
-					</VStack>
-				</Modal>
-			) }
 		</>
 	);
 }
