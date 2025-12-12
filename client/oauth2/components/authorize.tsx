@@ -176,7 +176,6 @@ function Authorize( {
 	}
 
 	let content = null;
-	// Show loading state while fetching metadata
 	if ( isLoading || ! meta ) {
 		content = (
 			<div className="oauth2-connect__loading">
