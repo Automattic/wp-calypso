@@ -191,7 +191,7 @@ function AgentSetup( {
 		};
 
 		initializeAgent();
-	}, [ currentRoute, isNewChat, navigate, pathname, sessionId, site?.ID ] );
+	}, [ currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
 
 	// Default suggestions - can be overridden by loaded providers
 	const defaultSuggestions = useMemo(
