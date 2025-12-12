@@ -21,6 +21,11 @@ type PlanDifferentiatorsExperimentResult = {
 	 */
 	isLongSet: boolean;
 	/**
+	 * When true, use the short/simplified feature set instead of simplified.
+	 * Applies to: short_set_stacked, short_set_stacked_diff
+	 */
+	isShortSet: boolean;
+	/**
 	 * When true, show the differentiator header (3 bullet points).
 	 * Applies to: long_set_diff, short_set_stacked_diff
 	 */
@@ -56,6 +61,7 @@ function usePlanDifferentiatorsExperiment( {
 		variant,
 		isStacked: variant?.includes( 'stacked' ) ?? false,
 		isLongSet: variant?.includes( 'long_set' ) ?? false,
+		isShortSet: variant?.includes( 'short_set' ) ?? false,
 		showDifferentiatorHeader: variant?.includes( 'diff' ) ?? false,
 	};
 }

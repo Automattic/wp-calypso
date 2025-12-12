@@ -383,6 +383,7 @@ const PlansFeaturesMain = ( {
 		isLoading: isLoadingDifferentiatorsExperiment,
 		isStacked,
 		isLongSet,
+		isShortSet,
 		showDifferentiatorHeader,
 	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
 
@@ -459,7 +460,9 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useLongSetFeatures: isLongSet,
+		useLongSetFeatures: isLongSet && ! isStacked,
+		useLongSetStackedFeatures: isLongSet && isStacked,
+		useShortSetStackedFeatures: ! isLongSet && isStacked,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -737,8 +740,9 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( isLongSet ) {
-		// Experiment: long_set variants use full feature list with storage first
+	} else if ( isLongSet || isShortSet ) {
+		// Experiment: stacked variants should render a single, ordered list (no grouping),
+		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid( { isSummerSpecial } );
 		featureGroupMapForFeaturesGrid = Object.fromEntries(
 			Object.entries( featureGroups ).reverse()

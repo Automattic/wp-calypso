@@ -24,6 +24,8 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	selectedFeature,
 	isSummerSpecial,
 	useLongSetFeatures,
+	useLongSetStackedFeatures,
+	useShortSetStackedFeatures,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -33,6 +35,8 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	showLegacyStorageFeature?: boolean;
 	isSummerSpecial?: boolean;
 	useLongSetFeatures?: boolean;
+	useLongSetStackedFeatures?: boolean;
+	useShortSetStackedFeatures?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -45,6 +49,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		showLegacyStorageFeature,
 		isSummerSpecial,
 		useLongSetFeatures,
+		useLongSetStackedFeatures,
+		useShortSetStackedFeatures,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -67,8 +73,27 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				let wpcomFeatures;
 
-				// Plans Differentiators Experiment: use the long set features for comparison grid
-				if ( useLongSetFeatures && planConstantObj.getLongSetSignupWpcomFeatures?.().length ) {
+				// Plans Differentiators Experiment: keep comparison grid aligned to pricing grid variants.
+				if (
+					useShortSetStackedFeatures &&
+					planConstantObj.getShortSetStackedSignupWpcomFeatures?.().length
+				) {
+					wpcomFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.getShortSetStackedSignupWpcomFeatures().slice()
+					);
+				} else if (
+					useLongSetStackedFeatures &&
+					planConstantObj.getLongSetStackedSignupWpcomFeatures?.().length
+				) {
+					wpcomFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.getLongSetStackedSignupWpcomFeatures().slice()
+					);
+				} else if (
+					useLongSetFeatures &&
+					planConstantObj.getLongSetSignupWpcomFeatures?.().length
+				) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.getLongSetSignupWpcomFeatures().slice()
@@ -202,6 +227,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			hasRedeemedDomainCredit,
 			isSummerSpecial,
 			useLongSetFeatures,
+			useLongSetStackedFeatures,
+			useShortSetStackedFeatures,
 		] );
 	};
 
