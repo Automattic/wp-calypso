@@ -29,7 +29,7 @@ const ReaderHeader = () => {
 			/>
 			<HStack spacing={ 0 } justify="flex-end">
 				<Button
-					className="dashboard-secondary-menu__item"
+					className={ clsx( 'dashboard-secondary-menu__item', 'is-active' ) }
 					icon={ <ReaderIcon /> }
 					label={ __( 'Reader' ) }
 					text={ isDesktop ? __( 'Reader' ) : undefined }
