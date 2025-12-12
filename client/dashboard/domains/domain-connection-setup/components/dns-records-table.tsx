@@ -9,6 +9,7 @@ import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { DataViewsCard } from '../../../components/dataviews';
+import { useDnsRecordNames } from '../hooks/use-dns-record-names';
 import type { Field, ViewTable } from '@wordpress/dataviews';
 
 import './dns-records-table-style.scss';
@@ -151,29 +152,11 @@ export default function DnsRecordsTable( {
 	const isSuggestedMode = domainConnectionStatus.mode === DomainConnectionSetupMode.SUGGESTED;
 	const isSubdomain = domainConnectionSetupInfo.is_subdomain;
 
-	const recordName = useMemo( () => {
-		if ( isSubdomain && domainConnectionSetupInfo.root_domain ) {
-			const rootDomain = domainConnectionSetupInfo.root_domain;
-			const suffix = `.${ rootDomain }`;
-
-			if ( domainName.endsWith( suffix ) ) {
-				const subdomain = domainName.slice( 0, -suffix.length );
-				return subdomain || domainName;
-			}
-
-			return domainName;
-		}
-
-		return '@';
-	}, [ domainName, domainConnectionSetupInfo.root_domain, isSubdomain ] );
-
-	const cnameRecordName = useMemo( () => {
-		if ( recordName === '@' ) {
-			return 'www';
-		}
-
-		return `www.${ recordName }`;
-	}, [ recordName ] );
+	const { recordName, cnameRecordName } = useDnsRecordNames( {
+		domainName,
+		isSubdomain,
+		rootDomain: domainConnectionSetupInfo.root_domain,
+	} );
 
 	const dnsRecords = useMemo( () => {
 		const data: DnsRecordVerification[] = [];
