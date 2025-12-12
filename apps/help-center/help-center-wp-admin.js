@@ -1,5 +1,6 @@
 /* global helpCenterData */
 import './config';
+import { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
@@ -15,6 +16,8 @@ const queryClient = new QueryClient();
 function AdminHelpCenterContent() {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDataStoreDispatch( 'automattic/help-center' );
+	const { setIsOpen: setAgentsManagerOpen, setAgentsManagerRouterHistory } =
+		useDataStoreDispatch( AGENTS_MANAGER_STORE );
 	const { isShown, unreadCount } = useSelect(
 		( select ) => ( {
 			isShown: select( 'automattic/help-center' ).isHelpCenterShown(),
@@ -166,21 +169,63 @@ function AdminHelpCenterContent() {
 		},
 		[ isShown, setNavigateToRoute, setHelpCenterPage, setShowHelpCenter, helpCenterPage ]
 	);
+
+	const handleAgentsManagerClick = useCallback(
+		( destination, route = '/' ) => {
+			recordTracksEvent( `calypso_dashboard_help_center_menu_panel_click`, {
+				section: helpCenterData.sectionName || 'wp-admin',
+				destination,
+			} );
+
+			// Reset to root route for new chat
+			if ( route === '/' ) {
+				setAgentsManagerRouterHistory( {
+					entries: [ { pathname: '/', search: '', hash: '', key: 'default', state: null } ],
+					index: 0,
+				} );
+			} else {
+				// Set router history to navigate to a specific route
+				setAgentsManagerRouterHistory( {
+					entries: [
+						{ pathname: '/', search: '', hash: '', key: 'default', state: null },
+						{ pathname: route, search: '', hash: '', key: route.slice( 1 ), state: null },
+					],
+					index: 1,
+				} );
+			}
+
+			setAgentsManagerOpen( true );
+		},
+		[ setAgentsManagerOpen, setAgentsManagerRouterHistory ]
+	);
+
 	if ( chatSupportButton ) {
 		chatSupportButton.onclick = () => {
-			handleMenuClick( '/odie' );
+			if ( isMenuPanelExperimentEnabled ) {
+				handleAgentsManagerClick( 'agents-manager-chat' );
+			} else {
+				handleMenuClick( '/odie' );
+			}
 		};
 	}
 
 	if ( chatHistoryButton ) {
 		chatHistoryButton.onclick = () => {
-			handleMenuClick( '/chat-history' );
+			if ( isMenuPanelExperimentEnabled ) {
+				handleAgentsManagerClick( 'agents-manager-history', '/history' );
+			} else {
+				handleMenuClick( '/chat-history' );
+			}
 		};
 	}
 
 	if ( supportGuidesButton ) {
 		supportGuidesButton.onclick = () => {
-			handleMenuClick( '/support-guides' );
+			if ( isMenuPanelExperimentEnabled ) {
+				handleAgentsManagerClick( 'agents-manager-support-guides', '/support-guides' );
+			} else {
+				handleMenuClick( '/support-guides' );
+			}
 		};
 	}
 
