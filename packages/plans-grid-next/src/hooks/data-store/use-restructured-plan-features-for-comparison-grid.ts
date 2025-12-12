@@ -73,30 +73,27 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				let wpcomFeatures;
 
-				// Plans Differentiators Experiment: keep comparison grid aligned to pricing grid variants.
-				if (
-					useShortSetStackedFeatures &&
-					planConstantObj.getShortSetStackedSignupWpcomFeatures?.().length
-				) {
+				// Plans Differentiators Experiment: map variant flags to their feature methods
+				const experimentFeatureMethodMap = [
+					{
+						flag: useShortSetStackedFeatures,
+						method: 'getShortSetStackedSignupWpcomFeatures' as const,
+					},
+					{
+						flag: useLongSetStackedFeatures,
+						method: 'getLongSetStackedSignupWpcomFeatures' as const,
+					},
+					{ flag: useLongSetFeatures, method: 'getLongSetSignupWpcomFeatures' as const },
+				];
+
+				const experimentFeatureMethod =
+					experimentFeatureMethodMap.find( ( { flag } ) => flag )?.method ?? null;
+
+				// Use the experiment feature set if available, otherwise fall back to default
+				if ( experimentFeatureMethod && planConstantObj[ experimentFeatureMethod ]?.().length ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj.getShortSetStackedSignupWpcomFeatures().slice()
-					);
-				} else if (
-					useLongSetStackedFeatures &&
-					planConstantObj.getLongSetStackedSignupWpcomFeatures?.().length
-				) {
-					wpcomFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj.getLongSetStackedSignupWpcomFeatures().slice()
-					);
-				} else if (
-					useLongSetFeatures &&
-					planConstantObj.getLongSetSignupWpcomFeatures?.().length
-				) {
-					wpcomFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj.getLongSetSignupWpcomFeatures().slice()
+						planConstantObj[ experimentFeatureMethod ]().slice()
 					);
 				} else if (
 					// Check if there's a specific override for comparison
