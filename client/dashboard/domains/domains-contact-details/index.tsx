@@ -20,7 +20,6 @@ import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import { mostCommonValueInArray } from '../../utils/collection';
 import { omit } from '../../utils/object';
-import './style.scss';
 
 const aggregateWhoisDataWithMostCommonValues = (
 	whoisData: WhoisDataEntry[]
@@ -171,9 +170,11 @@ export default function DomainsContactInfo() {
 						variant="warning"
 						title={ sprintf( editingMessage, { domainCount: selectedDomains.length } ) }
 					>
-						<ul className="domains-contact-details__list">
+						<ul style={ { paddingLeft: 0 } }>
 							{ selectedDomains.map( ( domain ) => (
-								<li key={ domain }>{ domain }</li>
+								<li key={ domain } style={ { listStylePosition: 'inside' } }>
+									{ domain }
+								</li>
 							) ) }
 						</ul>
 						<Text>{ __( 'Updates may take a few minutes to appear.' ) }</Text>
@@ -182,9 +183,9 @@ export default function DomainsContactInfo() {
 								<Text weight="bold">
 									{ __( 'The following domain fields will not be updated:' ) }
 								</Text>
-								<ul className="domains-contact-details__list">
+								<ul style={ { paddingLeft: 0 } }>
 									{ domainsWithUnmodifiableContactInfo.map( ( domain ) => (
-										<li key={ domain.domain }>
+										<li key={ domain.domain } style={ { listStylePosition: 'inside' } }>
 											<strong>{ domain.domain }</strong>:
 											{ domain.whois_update_unmodifiable_fields
 												.map( ( field: string ) => getFieldMapping( field ) )
