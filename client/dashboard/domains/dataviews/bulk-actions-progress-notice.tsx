@@ -1,6 +1,6 @@
 import { bulkDomainUpdateStatusQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { useLayoutEffect, useState } from 'react';
 import { Notice } from '../../components/notice';
 import type { BulkDomainUpdateStatusQueryFnData } from '@automattic/api-core';
@@ -87,6 +87,13 @@ export const BulkActionsProgressNotice = () => {
 	const someUpdatesFailed = data.failed.length > 0;
 
 	if ( someUpdatesFailed ) {
+		// translators: %(domains)s is the list of failed domains
+		const title = _n(
+			'The following domain was not updated: %(domains)s',
+			'The following domains were not updated: %(domains)s',
+			data.failed.length
+		);
+
 		return (
 			<Notice
 				onClose={ closeNotice }
@@ -94,9 +101,7 @@ export const BulkActionsProgressNotice = () => {
 				title={ __( 'Some domain updates were not successful' ) }
 			>
 				<p>{ __( 'Please try again. If the problem persists, contact support.' ) }</p>
-				<p>
-					{ __( 'The following domains were not updated:' ) } { data.failed.join( ', ' ) }
-				</p>
+				<p>{ sprintf( title, { domains: data.failed.join( ', ' ) } ) }</p>
 			</Notice>
 		);
 	}
