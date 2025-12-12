@@ -93,7 +93,7 @@ export default function AgentDock( {
 		messages: odieMessages,
 		isProcessing: isOdieProcessing,
 		sendMessage: sendOdieMessage,
-		isPending: isLoadingOdieConversation,
+		isLoading: isLoadingOdieConversation,
 	} = useManagedOdieChat();
 
 	const { isLoading: isLoadingConversation } = useConversation( {

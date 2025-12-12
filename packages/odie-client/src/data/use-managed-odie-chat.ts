@@ -130,8 +130,8 @@ export const useManagedOdieChat = () => {
 	const chatId = getOdieIdFromInteraction( currentSupportInteraction );
 	const {
 		data: chat,
-		isFetching: isLoadingChat,
-		isPending: isPendingChat,
+		isFetching: isFetchingChat,
+		isPending: isLoadingChat, // Use `isPending` for faster UI response
 	} = useOdieChat( chatId ? Number( chatId ) : null );
 	const navigate = useNavigate();
 
@@ -149,7 +149,7 @@ export const useManagedOdieChat = () => {
 	return {
 		messages: chat?.messages.map( convertMessageToAgentticFormat ) || [],
 		sendMessage,
-		isProcessing: sendOdieMessage.isPending || isLoadingChat,
-		isPending: isPendingChat,
+		isProcessing: sendOdieMessage.isPending || isFetchingChat,
+		isLoading: isLoadingChat,
 	};
 };
