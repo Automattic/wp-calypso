@@ -6,7 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
 import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { wpcomLink } from '../../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import illustrationUrl from './upsell-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
 import type { HostingFeatureSlug, Site } from '@automattic/api-core';
@@ -37,7 +37,7 @@ export default function UpsellCallout( {
 	feature,
 }: UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
-		const backUrl = window.location.href.replace( window.location.origin, '' );
+		const backUrl = redirectToDashboardLink();
 
 		window.location.href = addQueryArgs( wpcomLink( '/setup/plan-upgrade/' ), {
 			siteSlug: site.slug,

@@ -36,10 +36,16 @@ import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-lo
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import LoginContextProvider from '../login-context';
 import GravPoweredMagicLogin from './gravatar';
 import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
 import RequestLoginCode from './request-login-code';
 import RequestLoginEmailForm from './request-login-email-form';
+import {
+	getCheckYourEmailHeaders,
+	getEmailCodeHeaders,
+	getEmailLinkHeaders,
+} from './utils/heading-utils';
 import './style.scss';
 
 export const MagicLoginLocaleSuggestions = ( { path, showCheckYourEmail } ) => {
@@ -316,6 +322,41 @@ class MagicLogin extends Component {
 	}
 }
 
+const getMagicLoginInitialHeaders = ( props, translate ) => {
+	if ( isGravPoweredOAuth2Client( props.oauth2Client ) ) {
+		return {};
+	}
+
+	if ( props.isWooJPC ) {
+		const emailAddress = props.userEmail?.includes( '@' ) ? props.userEmail : null;
+		return getCheckYourEmailHeaders( translate, { emailAddress } );
+	}
+
+	const isMagicCodeFlow = shouldUseMagicCode( { isJetpack: props.isJetpackLogin } );
+
+	if ( isMagicCodeFlow ) {
+		return getEmailCodeHeaders( translate );
+	}
+
+	if ( props.showCheckYourEmail ) {
+		const emailAddress = props.userEmail?.includes( '@' ) ? props.userEmail : null;
+		return getCheckYourEmailHeaders( translate, { emailAddress } );
+	}
+
+	return getEmailLinkHeaders( translate );
+};
+
+const MagicLoginWithContext = ( props ) => {
+	const { translate } = props;
+	const { heading, subHeading } = getMagicLoginInitialHeaders( props, translate );
+
+	return (
+		<LoginContextProvider initialHeading={ heading } initialSubHeading={ subHeading }>
+			<MagicLogin { ...props } translate={ translate } />
+		</LoginContextProvider>
+	);
+};
+
 const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	query: getCurrentQueryArguments( state ),
@@ -343,4 +384,7 @@ const mapDispatch = {
 	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
 };
 
-export default connect( mapState, mapDispatch )( localize( MagicLogin ) );
+const ConnectedMagicLogin = connect( mapState, mapDispatch )( MagicLoginWithContext );
+
+export default ConnectedMagicLogin;
+export const LocalizedMagicLogin = localize( ConnectedMagicLogin );

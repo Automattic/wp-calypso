@@ -39,6 +39,7 @@ export const MessageContent = ( {
 		message.role === 'bot' &&
 		! (
 			message.context?.flags?.hide_disclaimer_content ||
+			message.context?.flags?.failed_zendesk_connection ||
 			message.context?.question_tags?.inquiry_type === 'user-is-greeting'
 		);
 

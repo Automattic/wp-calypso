@@ -239,7 +239,7 @@ export const partnerOffers: PartnerOffer[] = [
 		logo: (
 			<img src={ WooPaymentsLogo } alt="WooPayments" style={ { width: 'auto', height: '16px' } } />
 		),
-		title: __( 'Earn up to a 5 bps on all TPV' ),
+		title: __( 'Earn up to 5 bps on all TPV' ),
 		description: __(
 			'Earn up to a 5 basis points (bps) revenue share on all Total Payments Volume (TPV) processed on client stores you onboard or migrate to WooPayments.'
 		),

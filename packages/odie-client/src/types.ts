@@ -111,6 +111,7 @@ export type Context = {
 	classification_results?: ClassificationResults;
 	question_tags?: ClassificationResults;
 	flags?: {
+		failed_zendesk_connection?: boolean;
 		forward_to_human_support?: boolean;
 		hide_disclaimer_content?: boolean;
 		show_contact_support_msg?: boolean;

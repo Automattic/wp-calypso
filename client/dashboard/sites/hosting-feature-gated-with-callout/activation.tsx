@@ -6,7 +6,7 @@ import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { wpcomLink } from '../../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import HostingFeatureActivationModal from '../hosting-feature-activation-modal';
 import HostingFeatureList from '../hosting-feature-list';
 import illustrationUrl from './upsell-illustration.svg';
@@ -54,7 +54,7 @@ export default function ActivationCallout( {
 			feature,
 			initiate_transfer_context: 'hosting',
 			initiate_transfer_geo_affinity: options.geo_affinity || '',
-			redirect_to: window.location.href.replace( window.location.origin, '' ),
+			redirect_to: redirectToDashboardLink(),
 		} );
 	};
 

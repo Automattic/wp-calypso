@@ -14,6 +14,7 @@ import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
@@ -307,7 +308,7 @@ const DomainSearchUI = (
 		const [ sitesBackLabelText, defaultBackUrl ] =
 			userSiteCount && userSiteCount === 1
 				? [ __( 'Back to My Home' ), '/home' ]
-				: [ __( 'Back to sites' ), hostingDashboardOptIn ? '/v2/sites' : '/sites' ];
+				: [ __( 'Back to sites' ), hostingDashboardOptIn ? dashboardLink( '/sites' ) : '/sites' ];
 
 		if ( isDomainForGravatarFlow( flowName ) ) {
 			backUrl = null;

@@ -16,7 +16,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { wpcomLink } from '../../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { wasEcommerceTrial } from '../../utils/site-trial';
 import SiteDeleteModal from '../site-delete-modal';
 import type { Site } from '@automattic/api-core';
@@ -53,7 +53,7 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const product = getProduct( site );
 	const { data: plan } = useQuery( sitePlanBySlugQuery( site.ID, product.slug ) );
-	const backUrl = window.location.href.replace( window.location.origin, '' );
+	const backUrl = redirectToDashboardLink();
 
 	if ( ! plan ) {
 		return null;
