@@ -23,7 +23,7 @@ export default function DomainTransfer() {
 			size="small"
 			header={
 				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
+					prefix={ <Breadcrumbs length={ 2 } renderAsLinks={ false } /> }
 					title={ __( 'Transfer' ) }
 					description={
 						! isNewInboundTransferExperience
