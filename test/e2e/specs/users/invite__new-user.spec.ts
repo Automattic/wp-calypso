@@ -64,10 +64,7 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'Then I can see the invite is pending', async function () {
-			await expect( async () => {
-				await page.reload();
-				await expect( pagePeople.getPage().getByTitle( testUser.email ) ).toBeVisible();
-			} ).toPass( { timeout: 60000 } );
+			await pagePeople.expectInvitation( testUser.email );
 		} );
 
 		await test.step( 'When the invited user checks their email', async function () {

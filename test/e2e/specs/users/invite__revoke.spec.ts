@@ -56,28 +56,20 @@ test.describe(
 				);
 			} );
 
-			await test.step( 'And I navigate to Users > All Users', async function () {
+			await test.step( 'When I navigate to Users > All Users', async function () {
 				await componentSidebar.navigate( 'Users', 'All Users' );
-			} );
-
-			await test.step( 'And I view pending invites', async function () {
-				if ( userManagementRevampFeature ) {
-					await pagePeople.clickTab( 'Users' );
-					await pagePeople.clickViewAllIfAvailable();
-				} else {
-					await pagePeople.clickTab( 'Invites' );
-				}
+				! userManagementRevampFeature && ( await pagePeople.clickTab( 'Invites' ) );
 			} );
 
 			await test.step( 'Then I can see the invite is pending', async function () {
-				await expect( async () => {
-					page.reload();
-					expect( page.getByTitle( testEmailAddress ) ).toBeVisible();
-				} ).toPass();
+				await pagePeople.expectInvitation( testEmailAddress );
 			} );
 
-			await test.step( 'When I revoke the invite for the test user', async function () {
-				await pagePeople.selectUser( testEmailAddress );
+			await test.step( 'When I select the invited user', async function () {
+				await pagePeople.selectInvitation( testEmailAddress );
+			} );
+
+			await test.step( 'And I revoke the invite', async function () {
 				await pagePeople.revokeInvite();
 			} );
 

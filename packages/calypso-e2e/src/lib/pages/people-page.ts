@@ -44,30 +44,10 @@ export class PeoplePage {
 	}
 
 	/**
-	 * Gets the team members list container.
-	 *
-	 * @returns {Promise<Locator>} The locator for the team members list container.
-	 */
-	async getPeopleTeamMembersListContainer(): Promise< Locator > {
-		return this.page.locator( '.people-team-members-list' );
-	}
-
-	/**
-	 * Gets the pending invites list container.
-	 * This can be displayed in a single invite view or multiple invites view.
-	 * The single invite view only displays the last invite and the "View all" link.
-	 *
-	 * @returns {Promise<Locator>} The locator for the pending invites list container.
-	 */
-	async getPendingInvitesListContainer(): Promise< Locator > {
-		return this.page.locator( '.people-team-invites-list' );
-	}
-
-	/**
 	 * Click view all link if its available.
 	 */
 	async clickViewAllIfAvailable(): Promise< void > {
-		const viewAllLink = ( await this.getPendingInvitesListContainer() ).getByRole( 'link', {
+		const viewAllLink = this.page.getByRole( 'link', {
 			name: 'View all',
 		} );
 
@@ -86,12 +66,24 @@ export class PeoplePage {
 		// For Invites tab, wait for the full request to be completed.
 		if ( name === 'Invites' ) {
 			await Promise.all( [
-				this.page.waitForNavigation( { url: '**/people/invites/**', waitUntil: 'networkidle' } ),
+				this.page.waitForURL( '**/people/invites/**', { waitUntil: 'networkidle' } ),
 				clickNavTab( this.page, name ),
 			] );
 			return;
 		}
 		await clickNavTab( this.page, name );
+	}
+
+	/**
+	 * Waits for an invitation to appear in the pending invites list. Reloads the page until the invitation is found or the timeout is reached.
+	 * @param emailaddress Email address of the invited user.
+	 */
+	async expectInvitation( emailaddress: string ): Promise< void > {
+		await this.clickViewAllIfAvailable();
+		await expect( async () => {
+			await this.page.reload();
+			await expect( this.page.getByTitle( emailaddress ) ).toBeVisible();
+		} ).toPass( { timeout: 60000 } );
 	}
 
 	/**
@@ -134,7 +126,7 @@ export class PeoplePage {
 	}
 
 	/**
-	 * Click on the `Invite` button to navigate to the invite user page.
+	 * Click on the `Add a user` button to navigate to the invite user page.
 	 */
 	async clickAddTeamMember(): Promise< void > {
 		await this.addPeopleButton.click();
