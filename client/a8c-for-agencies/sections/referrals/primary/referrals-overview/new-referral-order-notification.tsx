@@ -69,8 +69,6 @@ export default function NewReferralOrderNotification( {
 						  } )
 						: translate( 'Order link copied to your clipboard' ) ) as string
 				}
-				allowTemporaryDismissal
-				preferenceName="new-referral-order-notification-temporary-dismissed"
 			>
 				<div className="new-referral-order-notification">
 					{ translate(
