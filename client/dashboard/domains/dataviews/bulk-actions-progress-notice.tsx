@@ -25,7 +25,7 @@ export const BulkActionsProgressNotice = () => {
 		refetchInterval: ( query ) => {
 			const lastJob = getLastJob( query.state.data );
 
-			return lastJob?.complete ? -1 : 1_000;
+			return lastJob?.complete ? false : 1_000;
 		},
 		meta: { persist: false },
 		staleTime: 0,
