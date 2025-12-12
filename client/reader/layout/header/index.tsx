@@ -1,8 +1,10 @@
 import { isSupportUserSession } from '@automattic/calypso-support-session';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import Logo from './logo';
 import SecondaryMenu from './secondary-menu';
+
 import './style.scss';
 
 const ReaderHeader = () => {
@@ -18,7 +20,12 @@ const ReaderHeader = () => {
 			spacing={ 0 }
 			justify="flex-start"
 		>
-			<Logo />
+			<Button
+				style={ { flexShrink: 0 } }
+				icon={ <Logo /> }
+				label={ __( 'Reader Home' ) }
+				href="/reader"
+			/>
 
 			<HStack spacing={ 2 } justify="flex-end">
 				<SecondaryMenu />
