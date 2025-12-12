@@ -1,9 +1,8 @@
 import { isSupportUserSession } from '@automattic/calypso-support-session';
-import { __experimentalHStack as HStack, Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
-import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import Logo from './logo';
+import SecondaryMenu from './secondary-menu';
 import './style.scss';
 
 const ReaderHeader = () => {
@@ -22,13 +21,7 @@ const ReaderHeader = () => {
 			<Logo />
 
 			<HStack spacing={ 2 } justify="flex-end">
-				<Button
-					className="dashboard-secondary-menu__item"
-					icon={ <ReaderIcon /> }
-					label={ __( 'Reader' ) }
-					text={ __( 'Reader' ) }
-					href="/reader"
-				/>
+				<SecondaryMenu />
 			</HStack>
 		</HStack>
 	);
