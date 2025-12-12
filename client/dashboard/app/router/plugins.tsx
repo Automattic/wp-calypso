@@ -73,6 +73,10 @@ export const pluginsManageIndexRoute = createRoute( {
 export const pluginRoute = createRoute( {
 	getParentRoute: () => pluginsManageIndexRoute,
 	path: '$pluginId',
+	loader: async () => {
+		queryClient.prefetchQuery( marketplacePluginsQuery() );
+		queryClient.prefetchQuery( pluginsQuery() );
+	},
 } );
 
 export const pluginsScheduledUpdatesRoute = createRoute( {
