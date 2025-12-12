@@ -84,7 +84,7 @@ function AgentSetup( {
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
 
-	const isChatRoute = pathname.startsWith( '/chat' ) || pathname.startsWith( '/odie' );
+	const isChatRoute = pathname.startsWith( '/chat' );
 	const isNewChat = isChatRoute && !! state?.isNewChat;
 	const routeSessionId = isChatRoute && state?.sessionId;
 	// Use empty `sessionId` for new chat, otherwise use route or stored session ID
@@ -107,7 +107,7 @@ function AgentSetup( {
 				// Clear stored session ID
 				clearSessionId();
 				// Clear route state to prevent repeated new chat initialization
-				navigate( pathname, { replace: true } );
+				navigate( '/chat', { replace: true } );
 
 				// Don't set config now - the navigation above will re-run this effect
 				return;

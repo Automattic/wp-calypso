@@ -18,9 +18,10 @@ interface Props {
 
 const A11nChatMenu = ( { onCloseDropdown }: { onCloseDropdown: () => void } ) => {
 	const navigate = useNavigate();
-	const { state } = useLocation();
+	const { state, pathname, search } = useLocation();
 	const isProd = config( 'env_id' ) === 'production';
-	const isNewChat = ! state?.sessionId;
+	const isNewBuilderChat = pathname === '/chat' && ! state?.sessionId;
+	const isNewOdieChat = pathname === '/odie' && search === '';
 
 	if ( isProd ) {
 		return null;
@@ -38,13 +39,14 @@ const A11nChatMenu = ( { onCloseDropdown }: { onCloseDropdown: () => void } ) =>
 				},
 			} }
 			renderToggle={ ( { onToggle } ) => (
-				<MenuItem icon={ comment } iconPosition="left" onClick={ onToggle } disabled={ isNewChat }>
+				<MenuItem icon={ comment } iconPosition="left" onClick={ onToggle }>
 					{ __( 'New chat (a8c)', '__i18n_text_domain__' ) }
 				</MenuItem>
 			) }
 			renderContent={ ( { onClose: onCloseSubmenu } ) => (
 				<MenuGroup>
 					<MenuItem
+						disabled={ isNewBuilderChat }
 						onClick={ () => {
 							navigate( '/chat', { state: { isNewChat: true } } );
 							onCloseSubmenu();
@@ -54,8 +56,9 @@ const A11nChatMenu = ( { onCloseDropdown }: { onCloseDropdown: () => void } ) =>
 						{ __( 'Builder chat', '__i18n_text_domain__' ) }
 					</MenuItem>
 					<MenuItem
+						disabled={ isNewOdieChat }
 						onClick={ () => {
-							navigate( '/odie', { state: { isNewChat: true } } );
+							navigate( '/odie' );
 							onCloseSubmenu();
 							onCloseDropdown();
 						} }
