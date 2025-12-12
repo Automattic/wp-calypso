@@ -97,21 +97,10 @@ export class PeoplePage {
 	/**
 	 * Locate and click on an user in the pending invites list container.
 	 *
-	 * @param {string} username Username of the user.
+	 * @param {string} email Email of the user.
 	 */
-	async selectInvitation( username: string ): Promise< void > {
-		await ( await this.getPendingInvitesListContainer() ).getByTitle( username ).click();
-	}
-
-	/**
-	 * Locate and click on an user in the team members list container.
-	 *
-	 * @param {string} username Username of the user.
-	 */
-	async selectTeamMemberUser( username: string ): Promise< void > {
-		await ( await this.getPeopleTeamMembersListContainer() )
-			.getByRole( 'link', { name: username } )
-			.click();
+	async selectInvitation( email: string ): Promise< void > {
+		await this.page.getByTitle( email ).click();
 	}
 
 	/**
