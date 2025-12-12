@@ -25,6 +25,7 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
 import type { Header } from '../types';
@@ -58,6 +59,7 @@ const EllipsisMenu = () => {
 	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
+	const { disableChatSupport } = useHelpCenterContext();
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -97,19 +99,23 @@ const EllipsisMenu = () => {
 					<Menu.ItemLabel>{ __( 'Minimize', __i18n_text_domain__ ) }</Menu.ItemLabel>
 				</Menu.Item>
 				<Menu.Separator />
-				<Menu.Item
-					onClick={ clearChat }
-					prefix={ <Icon icon={ comment } width={ 24 } height={ 24 } /> }
-				>
-					<Menu.ItemLabel>{ __( 'New chat', __i18n_text_domain__ ) }</Menu.ItemLabel>
-				</Menu.Item>
-				<Menu.Item
-					onClick={ handleViewChats }
-					prefix={ <Icon icon={ backup } width={ 24 } height={ 24 } /> }
-				>
-					<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
-				</Menu.Item>
-				<Menu.Separator />
+				{ ! disableChatSupport && (
+					<>
+						<Menu.Item
+							onClick={ clearChat }
+							prefix={ <Icon icon={ comment } width={ 24 } height={ 24 } /> }
+						>
+							<Menu.ItemLabel>{ __( 'New chat', __i18n_text_domain__ ) }</Menu.ItemLabel>
+						</Menu.Item>
+						<Menu.Item
+							onClick={ handleViewChats }
+							prefix={ <Icon icon={ backup } width={ 24 } height={ 24 } /> }
+						>
+							<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
+						</Menu.Item>
+						<Menu.Separator />
+					</>
+				) }
 				<Menu.Item
 					onClick={ toggleSoundNotifications }
 					prefix={
