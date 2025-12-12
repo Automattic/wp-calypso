@@ -119,7 +119,7 @@ export function AtomicRevertStep( props: Props ) {
 				<Text as="span" highlightWords={ highlightWords }>
 					{ subHeaderText }
 				</Text>
-				{ createInfoPopover }
+				{ ! isDowngradePlan && createInfoPopover }
 			</Text>
 			<Text as="p">
 				{ createInterpolateElement(
