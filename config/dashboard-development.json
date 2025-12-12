@@ -19,7 +19,8 @@
 		"dashboard": true,
 		"dashboard/v2": false,
 		"dev/auth-helper": true,
-		"dev/preferences-helper": true
+		"dev/preferences-helper": true,
+		"wordpress-ai-assistant": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],

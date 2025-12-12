@@ -33,6 +33,9 @@ export function PaymentMethodProvider( {
 		.filter( ( method ) => ! disabledPaymentMethodIds.includes( method.id ) )
 		.map( ( method ) => method.id );
 
+	// Keep track of loading payment methods.
+	const [ loadingPaymentMethodIds, setLoadingPaymentMethodIds ] = useState< string[] >( [] );
+
 	// Automatically select first payment method unless explicitly set or disabled.
 	if (
 		selectFirstAvailablePaymentMethod &&
@@ -65,6 +68,8 @@ export function PaymentMethodProvider( {
 			paymentMethodId,
 			setPaymentMethodId,
 			onPaymentMethodChanged,
+			loadingPaymentMethodIds,
+			setLoadingPaymentMethodIds,
 		} ),
 		[
 			paymentMethodId,
@@ -72,6 +77,7 @@ export function PaymentMethodProvider( {
 			disabledPaymentMethodIds,
 			onPaymentMethodChanged,
 			paymentProcessors,
+			loadingPaymentMethodIds,
 		]
 	);
 

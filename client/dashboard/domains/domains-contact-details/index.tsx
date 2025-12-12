@@ -14,6 +14,7 @@ import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainsContactInfoRoute, domainsIndexRoute } from '../../app/router/domains';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
@@ -161,41 +162,41 @@ export default function DomainsContactInfo() {
 				/>
 			}
 		>
-			<div>
-				<Text variant="muted">
-					{ __( 'Note: Changes may take a few minutes to appear on the dashboard' ) }
-				</Text>
-			</div>
-			<div>
-				<span>{ sprintf( editingMessage, { domainCount: selectedDomains.length } ) }</span>
-				<ul>
-					{ selectedDomains.map( ( domain ) => (
-						<li key={ domain }>{ domain }</li>
-					) ) }
-				</ul>
-			</div>
-			{ domainsWithUnmodifiableContactInfo.length > 0 && (
-				<div>
-					<span>
-						<strong>{ __( 'The following domain fields will not be updated:' ) }</strong>
-					</span>
-					<ul>
-						{ domainsWithUnmodifiableContactInfo.map( ( domain ) => (
-							<li key={ domain.domain }>
-								<strong>{ domain.domain }</strong>
-								<ul style={ { listStylePosition: 'inside' } }>
-									{ domain.whois_update_unmodifiable_fields.map( ( field: string ) => (
-										<li key={ field }>{ getFieldMapping( field ) }</li>
-									) ) }
-								</ul>
-							</li>
-						) ) }
-					</ul>
-				</div>
-			) }
 			<ContactForm
 				key={ key }
 				initialData={ initialData }
+				beforeForm={
+					<Notice
+						variant="warning"
+						title={ sprintf( editingMessage, { domainCount: selectedDomains.length } ) }
+					>
+						<ul style={ { paddingLeft: 0 } }>
+							{ selectedDomains.map( ( domain ) => (
+								<li key={ domain } style={ { listStylePosition: 'inside' } }>
+									{ domain }
+								</li>
+							) ) }
+						</ul>
+						<Text>{ __( 'Updates may take a few minutes to appear.' ) }</Text>
+						{ domainsWithUnmodifiableContactInfo.length > 0 && (
+							<>
+								<Text weight="bold">
+									{ __( 'The following domain fields will not be updated:' ) }
+								</Text>
+								<ul style={ { paddingLeft: 0 } }>
+									{ domainsWithUnmodifiableContactInfo.map( ( domain ) => (
+										<li key={ domain.domain } style={ { listStylePosition: 'inside' } }>
+											<strong>{ domain.domain }</strong>:
+											{ domain.whois_update_unmodifiable_fields
+												.map( ( field: string ) => getFieldMapping( field ) )
+												.join( ', ' ) }
+										</li>
+									) ) }
+								</ul>
+							</>
+						) }
+					</Notice>
+				}
 				isSubmitting={ isValidatePending || isUpdatePending }
 				onSubmit={ handleSubmit }
 				validate={ validateBulkDomainsAsync }

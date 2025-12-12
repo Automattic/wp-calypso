@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { wpcomLink } from '../../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
@@ -67,7 +67,7 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 			siteSlug: site.slug,
 			new: site.name,
 			hide_initial_query: 'yes',
-			back_to: window.location.href.replace( window.location.origin, '' ),
+			back_to: redirectToDashboardLink( { supportBackport: true } ),
 		} );
 	};
 

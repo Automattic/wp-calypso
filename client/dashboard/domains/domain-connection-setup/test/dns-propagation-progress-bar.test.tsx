@@ -366,4 +366,128 @@ describe( 'DnsPropagationProgressBar', () => {
 		expect( getByText( '0%' ) ).toBeVisible();
 		expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '0' );
 	} );
+
+	describe( 'Cloudflare IP addresses', () => {
+		test( 'renders 100% when has Cloudflare IP addresses and resolves to WordPress.com', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				mode: DomainConnectionSetupMode.DONE,
+				has_cloudflare_ip_addresses: true,
+				resolves_to_wpcom: true,
+			} );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
+
+			const { getByRole, getByText } = render(
+				<DnsPropagationProgressBar
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			expect( getByText( '100%' ) ).toBeVisible();
+			expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '100' );
+		} );
+
+		test( 'renders 100% when has Cloudflare IP addresses and resolves to WordPress.com with null mode', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				mode: null,
+				has_cloudflare_ip_addresses: true,
+				resolves_to_wpcom: true,
+			} );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
+
+			const { getByRole, getByText } = render(
+				<DnsPropagationProgressBar
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			expect( getByText( '100%' ) ).toBeVisible();
+			expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '100' );
+		} );
+
+		test( 'renders 0% when has Cloudflare IP addresses but does not resolve to WordPress.com', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				mode: DomainConnectionSetupMode.DONE,
+				has_cloudflare_ip_addresses: true,
+				resolves_to_wpcom: false,
+			} );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
+
+			const { getByRole, getByText } = render(
+				<DnsPropagationProgressBar
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			expect( getByText( '0%' ) ).toBeVisible();
+			expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '0' );
+		} );
+
+		test( 'renders 0% when does not have Cloudflare IP addresses even if resolves to WordPress.com', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				mode: DomainConnectionSetupMode.DONE,
+				has_cloudflare_ip_addresses: false,
+				resolves_to_wpcom: true,
+			} );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
+
+			const { getByRole, getByText } = render(
+				<DnsPropagationProgressBar
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			expect( getByText( '0%' ) ).toBeVisible();
+			expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '0' );
+		} );
+
+		test( 'prioritizes mode-specific logic over Cloudflare logic for SUGGESTED mode', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				mode: DomainConnectionSetupMode.SUGGESTED,
+				has_cloudflare_ip_addresses: true,
+				resolves_to_wpcom: true,
+				name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com' ],
+			} );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+				wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+			} );
+
+			const { getByRole, getByText } = render(
+				<DnsPropagationProgressBar
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			// Should show 67% based on name server matching, not 100% from Cloudflare
+			expect( getByText( '67%' ) ).toBeVisible();
+			expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '67' );
+		} );
+
+		test( 'prioritizes mode-specific logic over Cloudflare logic for ADVANCED mode', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				mode: DomainConnectionSetupMode.ADVANCED,
+				has_cloudflare_ip_addresses: true,
+				resolves_to_wpcom: true,
+				host_ip_addresses: [ '192.0.78.24' ],
+			} );
+			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
+				default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
+			} );
+
+			const { getByRole, getByText } = render(
+				<DnsPropagationProgressBar
+					domainMappingStatus={ domainMappingStatus }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				/>
+			);
+
+			// Should show 50% based on IP address matching, not 100% from Cloudflare
+			expect( getByText( '50%' ) ).toBeVisible();
+			expect( getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '50' );
+		} );
+	} );
 } );

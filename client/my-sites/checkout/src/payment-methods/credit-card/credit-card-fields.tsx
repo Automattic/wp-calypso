@@ -61,6 +61,11 @@ export default function CreditCardFields( {
 			( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForAllSubscriptions(),
 		[]
 	);
+	const formSubmitAttempted: boolean = useSelect(
+		( select ) =>
+			( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).formSubmitAttempted(),
+		[]
+	);
 
 	const getField = ( key: string ) => fields[ key ] || {};
 	const getFieldValue = ( key: string ) => getField( key ).value ?? '';
@@ -144,26 +149,32 @@ export default function CreditCardFields( {
 			<CreditCardFormFields className="vgs-credit-card-form-fields">
 				<CreditCardFieldsWrapper isLoaded>
 					<div className="credit-card-fields-inner-wrapper">
+						<CreditCardField
+							id="cardholder-name"
+							type="Text"
+							autoComplete="cc-name"
+							label={ __( 'Cardholder name', 'calypso' ) }
+							description={ __( "Enter your name as it's written on the card", 'calypso' ) }
+							value={ cardholderName?.value ?? '' }
+							onChange={ ( value ) => setFieldValue( 'cardholderName', value ) }
+							isError={ !! cardholderNameErrorMessage }
+							errorMessage={ cardholderNameErrorMessage }
+							disabled={ isDisabled }
+						/>
+
 						<VgsCreditCardFields
-							styles={ {
-								input: stripeElementStyle.base,
-							} }
 							labels={ {
-								cardholderName: __( 'Cardholder name', 'calypso' ),
 								cardNumber: __( 'Card number', 'calypso' ),
 								expiryDate: __( 'Expiry date', 'calypso' ),
 								cvc: __( 'Security code', 'calypso' ),
 							} }
-							descriptions={ {
-								cardholderName: __( "Enter your name as it's written on the card", 'calypso' ),
-							} }
 							placeholders={ {
-								cardholderName: '',
 								cardNumber: __( '•••• •••• •••• ••••', 'calypso' ),
-								expiryDate: __( 'MM/YY', 'calypso' ),
+								expiryDate: __( 'MM / YY', 'calypso' ),
 								cvc: __( 'CVC', 'calypso' ),
 							} }
 							onVgsFormError={ setVgsFormError }
+							formSubmitAttempted={ formSubmitAttempted }
 						/>
 
 						{ shouldShowContactFields && (

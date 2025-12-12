@@ -1,4 +1,7 @@
-import { useTogglePaymentMethod } from '@automattic/composite-checkout';
+import {
+	useTogglePaymentMethod,
+	useRegisterPaymentMethodLoading,
+} from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { Fragment, useCallback, useEffect } from 'react';
 import { GooglePayMark } from '../google-pay-mark';
@@ -86,6 +89,9 @@ export function GooglePaySubmitButton( {
 		onSubmit,
 		stripe,
 	} );
+
+	// Register loading state with the payment methods context
+	useRegisterPaymentMethodLoading( 'google-pay', isLoading );
 
 	useEffect( () => {
 		if ( ! isLoading ) {

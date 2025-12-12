@@ -9,19 +9,28 @@ import { __ } from '@wordpress/i18n';
 import { Icon, arrowRight } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { DataViewsCard } from '../../components/dataviews';
+import { useDnsRecordNames } from './hooks/use-dns-record-names';
 import { matchCurrentToTargetValues } from './utils/match-records';
 
 import './components/dns-records-table-style.scss';
 
-const viewSuggested: ViewTable = {
+const baseSuggestedView: Pick< ViewTable, 'type' | 'page' | 'perPage' > = {
 	type: 'table',
 	page: 1,
 	perPage: 10,
-	fields: [ 'currentValue', 'arrow', 'updateTo' ],
+};
+
+const getSuggestedView = ( includeName: boolean ): ViewTable => {
+	return {
+		...baseSuggestedView,
+		fields: includeName
+			? [ 'name', 'currentValue', 'arrow', 'updateTo' ]
+			: [ 'currentValue', 'arrow', 'updateTo' ],
+	};
 };
 
 const viewAdvanced: ViewTable = {
-	...viewSuggested,
+	...baseSuggestedView,
 	fields: [ 'type', 'name', 'currentValue', 'arrow', 'updateTo' ],
 };
 
@@ -47,6 +56,13 @@ export default function DNSRecordsDataView( {
 	mode,
 }: DNSRecordsDataViewProps ) {
 	const isSuggestedMode = mode === DomainConnectionSetupMode.SUGGESTED;
+	const isSubdomain = domainConnectionSetupInfo.is_subdomain;
+
+	const { recordName, cnameRecordName } = useDnsRecordNames( {
+		domainName,
+		isSubdomain,
+		rootDomain: domainConnectionSetupInfo.root_domain,
+	} );
 
 	// Build the DNS records data
 	const records = useMemo( () => {
@@ -62,6 +78,7 @@ export default function DNSRecordsDataView( {
 			matchedRecords.forEach( ( record, index ) => {
 				dnsRecords.push( {
 					id: `ns-record-${ index }`,
+					name: recordName,
 					...record,
 				} );
 			} );
@@ -76,7 +93,7 @@ export default function DNSRecordsDataView( {
 				dnsRecords.push( {
 					id: `a-record-${ index }`,
 					type: 'A',
-					name: '@',
+					name: recordName,
 					...record,
 				} );
 			} );
@@ -87,14 +104,21 @@ export default function DNSRecordsDataView( {
 			dnsRecords.push( {
 				id: 'cname-record',
 				type: 'CNAME',
-				name: 'www',
+				name: cnameRecordName,
 				currentValue: currentCname || '-',
 				updateTo: domainName,
 			} );
 		}
 
 		return dnsRecords;
-	}, [ domainName, domainMappingStatus, domainConnectionSetupInfo, isSuggestedMode ] );
+	}, [
+		domainName,
+		domainMappingStatus,
+		domainConnectionSetupInfo,
+		isSuggestedMode,
+		recordName,
+		cnameRecordName,
+	] );
 
 	const fields = useMemo< Field< DNSRecord >[] >(
 		() => [
@@ -153,7 +177,7 @@ export default function DNSRecordsDataView( {
 			<DataViews< DNSRecord >
 				data={ records }
 				fields={ fields }
-				view={ isSuggestedMode ? viewSuggested : viewAdvanced }
+				view={ isSuggestedMode ? getSuggestedView( isSubdomain ) : viewAdvanced }
 				onChangeView={ () => {} }
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ { totalItems: records.length, totalPages: 1 } }

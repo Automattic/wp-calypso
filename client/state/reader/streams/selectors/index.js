@@ -4,3 +4,4 @@ export { default as getNextItem } from './get-reader-stream-next-item';
 export { default as getPreviousItem } from './get-reader-stream-prev-item';
 export { default as getTransformedStreamItems } from './get-reader-stream-transformed-items';
 export { default as shouldRequestRecs } from './get-reader-stream-should-request-recommendations';
+export { default as getPendingItems } from './get-reader-stream-pending-items';

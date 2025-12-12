@@ -147,7 +147,7 @@ export default function DomainContactInfo() {
 			<ContactForm
 				isSubmitting={ isSubmitting }
 				onSubmit={ handleSubmit }
-				beforeForm={
+				beforeFormCard={
 					! domain.is_hundred_year_domain && (
 						<Card>
 							<CardBody>

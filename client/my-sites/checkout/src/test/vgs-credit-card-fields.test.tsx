@@ -5,7 +5,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { loadVGSCollect } from '@vgs/collect-js';
-import { VGSCollectForm } from '@vgs/collect-js-react';
+import { VGSCollectForm, useVGSCollectFormInstance } from '@vgs/collect-js-react';
 import { useVaultId } from '../hooks/use-vault-id';
 import { VgsCreditCardFields } from '../payment-methods/credit-card/vgs-credit-card-fields';
 
@@ -17,13 +17,45 @@ jest.mock( '@vgs/collect-js', () => ( {
 		Css: {},
 	},
 } ) );
+
+// Create a mock form instance
+const createMockForm = () => ( {
+	state: {
+		card_number: {
+			name: 'card_number',
+			isValid: true,
+			isTouched: false,
+			isEmpty: true,
+			isFocused: false,
+			errors: [],
+		},
+		card_exp: {
+			name: 'card_exp',
+			isValid: true,
+			isTouched: false,
+			isEmpty: true,
+			isFocused: false,
+			errors: [],
+		},
+		card_cvc: {
+			name: 'card_cvc',
+			isValid: true,
+			isTouched: false,
+			isEmpty: true,
+			isFocused: false,
+			errors: [],
+		},
+	},
+	submit: jest.fn(),
+} );
+
 jest.mock( '@vgs/collect-js-react', () => ( {
 	VGSCollectForm: Object.assign( jest.fn(), {
-		CardholderField: jest.fn(),
 		CardNumberField: jest.fn(),
 		CardExpirationDateField: jest.fn(),
 		CardSecurityCodeField: jest.fn(),
 	} ),
+	useVGSCollectFormInstance: jest.fn(),
 } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
@@ -31,22 +63,11 @@ jest.mock( '@wordpress/i18n', () => ( {
 
 const mockUseVaultId = useVaultId as jest.MockedFunction< typeof useVaultId >;
 const mockLoadVGSCollect = loadVGSCollect as jest.MockedFunction< typeof loadVGSCollect >;
+const mockUseVGSCollectFormInstance = useVGSCollectFormInstance as jest.MockedFunction<
+	typeof useVGSCollectFormInstance
+>;
 
 // Mock VGS Collect Form components
-const MockCardholderField = ( props: any ) => {
-	const { showCardIcon, yearLength, validations, ...domProps } = props;
-	return (
-		<input
-			id={ props.name }
-			data-testid={ `cardholder-field-${ props.name }` }
-			placeholder={ props.placeholder }
-			className={ props.className }
-			aria-label={ props.validations?.includes( 'required' ) ? 'required' : undefined }
-			{ ...domProps }
-		/>
-	);
-};
-
 const MockCardNumberField = ( props: any ) => {
 	const { showCardIcon, yearLength, validations, ...domProps } = props;
 	return (
@@ -99,7 +120,6 @@ const MockVGSCollectForm = ( { children, vaultId, environment }: any ) => (
 ( VGSCollectForm as jest.MockedFunction< typeof VGSCollectForm > ).mockImplementation(
 	MockVGSCollectForm
 );
-( VGSCollectForm as any ).CardholderField.mockImplementation( MockCardholderField );
 ( VGSCollectForm as any ).CardNumberField.mockImplementation( MockCardNumberField );
 ( VGSCollectForm as any ).CardExpirationDateField.mockImplementation( MockCardExpirationDateField );
 ( VGSCollectForm as any ).CardSecurityCodeField.mockImplementation( MockCardSecurityCodeField );
@@ -162,18 +182,18 @@ describe( 'VgsCreditCardFields', () => {
 		// Use mockImplementation with Promise.resolve to ensure async state updates
 		// are properly handled within act() boundaries
 		mockLoadVGSCollect.mockImplementation( () => Promise.resolve( {} as any ) );
+		// Mock useVGSCollectFormInstance to return a fresh mock form instance for each test
+		mockUseVGSCollectFormInstance.mockReturnValue( [ createMockForm() ] );
 	} );
 
 	// Default props for tests
 	const defaultLabels = {
-		cardholderName: 'Cardholder name',
 		cardNumber: 'Card number',
 		expiryDate: 'Expiry date',
 		cvc: 'Security code',
 	};
 
 	const defaultPlaceholders = {
-		cardholderName: '',
 		cardNumber: '•••• •••• •••• ••••',
 		expiryDate: 'MM/YY',
 		cvc: 'CVC',
@@ -308,13 +328,11 @@ describe( 'VgsCreditCardFields', () => {
 			} );
 
 			// Check labels
-			expect( screen.getByText( 'Cardholder name' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Card number' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Expiry date' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Security code' ) ).toBeInTheDocument();
 
 			// Check form fields
-			expect( screen.getByTestId( 'cardholder-field-card_holder' ) ).toBeInTheDocument();
 			expect( screen.getByTestId( 'card-number-field-card_number' ) ).toBeInTheDocument();
 			expect( screen.getByTestId( 'card-expiration-field-card_exp' ) ).toBeInTheDocument();
 			expect( screen.getByTestId( 'card-security-field-card_cvc' ) ).toBeInTheDocument();
@@ -411,9 +429,9 @@ describe( 'VgsCreditCardFields', () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
 			} );
 
-			const cardholderField = screen.getByTestId( 'cardholder-field-card_holder' );
+			const cardNumberField = screen.getByTestId( 'card-number-field-card_number' );
 			// VGS library uses CSS-in-JS, so we check for className pattern instead of exact match
-			expect( cardholderField.className ).toMatch( /^css-\w+-VgsCreditCardFields$/ );
+			expect( cardNumberField.className ).toMatch( /^css-\w+-VgsCreditCardFields$/ );
 		} );
 
 		it( 'should merge custom styles with default styles', async () => {
@@ -439,9 +457,9 @@ describe( 'VgsCreditCardFields', () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
 			} );
 
-			const cardholderField = screen.getByTestId( 'cardholder-field-card_holder' );
+			const cardNumberField = screen.getByTestId( 'card-number-field-card_number' );
 			// VGS library uses CSS-in-JS, so we check for className pattern instead of exact match
-			expect( cardholderField.className ).toMatch( /^css-\w+-VgsCreditCardFields$/ );
+			expect( cardNumberField.className ).toMatch( /^css-\w+-VgsCreditCardFields$/ );
 		} );
 	} );
 
@@ -505,7 +523,6 @@ describe( 'VgsCreditCardFields', () => {
 
 		it( 'should render custom labels when provided', async () => {
 			const customLabels = {
-				cardholderName: 'Name on Card',
 				cardNumber: 'Card Number',
 				expiryDate: 'Expiration',
 				cvc: 'CVV',
@@ -520,7 +537,6 @@ describe( 'VgsCreditCardFields', () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
 			} );
 
-			expect( screen.getByText( 'Name on Card' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Card Number' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Expiration' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'CVV' ) ).toBeInTheDocument();
@@ -528,7 +544,6 @@ describe( 'VgsCreditCardFields', () => {
 
 		it( 'should render custom placeholders when provided', async () => {
 			const customPlaceholders = {
-				cardholderName: 'John Doe',
 				cardNumber: '1234 5678 9012 3456',
 				expiryDate: '12/25',
 				cvc: '123',
@@ -543,7 +558,6 @@ describe( 'VgsCreditCardFields', () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
 			} );
 
-			expect( screen.getByPlaceholderText( 'John Doe' ) ).toBeInTheDocument();
 			expect( screen.getByPlaceholderText( '1234 5678 9012 3456' ) ).toBeInTheDocument();
 			expect( screen.getByPlaceholderText( '12/25' ) ).toBeInTheDocument();
 			expect( screen.getByPlaceholderText( '123' ) ).toBeInTheDocument();
@@ -551,7 +565,6 @@ describe( 'VgsCreditCardFields', () => {
 
 		it( 'should render descriptions when provided', async () => {
 			const descriptions = {
-				cardholderName: 'Enter name as shown on card',
 				cardNumber: 'Enter card number without spaces',
 			};
 
@@ -568,7 +581,6 @@ describe( 'VgsCreditCardFields', () => {
 				expect( screen.getByTestId( 'vgs-collect-form' ) ).toBeInTheDocument();
 			} );
 
-			expect( screen.getByText( 'Enter name as shown on card' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Enter card number without spaces' ) ).toBeInTheDocument();
 		} );
 	} );
