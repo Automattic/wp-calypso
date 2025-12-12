@@ -32,9 +32,9 @@ const ReaderHeader = () => {
 					className={ clsx( 'dashboard-secondary-menu__item', 'is-active' ) }
 					icon={ <ReaderIcon /> }
 					label={ __( 'Reader' ) }
-					text={ isDesktop ? __( 'Reader' ) : undefined }
 					href="/reader"
-				/>
+				>
+					{ isDesktop ? __( 'Reader' ) : null }
 			</HStack>
 		</HStack>
 	);
