@@ -292,7 +292,9 @@ function onClickInstallPlugin( {
 			// Redirect to plans page to let user choose a plan, then redirect to checkout with plugin
 			const checkoutUrl = `/checkout/${ selectedSite.slug }/${ product_slug }#step2`;
 			return page(
-				`/plans/${ selectedSite.slug }?redirect_to=${ encodeURIComponent( checkoutUrl ) }`
+				`/plans/${ selectedSite.slug }?plan=personal_bundle&redirect_to=${ encodeURIComponent(
+					checkoutUrl
+				) }`
 			);
 		}
 
@@ -310,7 +312,9 @@ function onClickInstallPlugin( {
 	if ( upgradeAndInstall ) {
 		// Redirect to plans page to let user choose a plan, then redirect to plugin install
 		return page(
-			`/plans/${ selectedSite.slug }?redirect_to=${ encodeURIComponent( installPluginURL ) }`
+			`/plans/${ selectedSite.slug }?plan=personal_bundle&redirect_to=${ encodeURIComponent(
+				installPluginURL
+			) }`
 		);
 	}
 
