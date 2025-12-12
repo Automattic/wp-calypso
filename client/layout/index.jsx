@@ -56,7 +56,6 @@ import {
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
-import GlobalNotifications from './global-notifications';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
@@ -349,7 +348,10 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'layout/global-notifications' ) && <GlobalNotifications /> }
+
+				{ ! this.props.isMSDEnabledForReader && (
+					<AsyncLoad require="calypso/layout/global-notifications" placeholder={ null } />
+				) }
 				{ shouldEnableCommandPalette && (
 					<AsyncLoad require="calypso/layout/command-palette" placeholder={ null } />
 				) }
