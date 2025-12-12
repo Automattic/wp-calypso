@@ -56,7 +56,7 @@ export default function DomainRemovalConfirmationStep( {
 	return (
 		<VStack spacing={ 4 }>
 			<VStack spacing={ 4 }>
-				<SectionHeader title={ __( 'Confirm your decision' ) } level={ 2 } />
+				<SectionHeader title={ __( 'Confirm your decision' ) } level={ 3 } />
 
 				<Text>
 					{ createInterpolateElement(
