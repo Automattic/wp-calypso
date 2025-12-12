@@ -200,7 +200,6 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 		if ( surveyStep === ATOMIC_REVERT_STEP ) {
 			return (
 				<AtomicRevertStep
-					action="cancel-purchase"
 					atomicRevertCheckOne={ atomicRevertCheckOne ?? false }
 					atomicRevertCheckTwo={ atomicRevertCheckTwo ?? false }
 					atomicTransfer={ atomicTransfer }

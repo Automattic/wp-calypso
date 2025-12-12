@@ -25,7 +25,6 @@ type Props = {
 	isDowngradePlan?: boolean;
 	enableLosslessRevert?: boolean;
 	setEnableLosslessRevert?: ( isChecked: boolean ) => void;
-	action: 'cancel-purchase' | 'downgrade-plan';
 };
 
 export function AtomicRevertStep( props: Props ) {
@@ -42,7 +41,6 @@ export function AtomicRevertStep( props: Props ) {
 		onClickCheckTwo,
 		isRemovePlan,
 		isDowngradePlan,
-		action,
 	} = props;
 
 	if ( ! siteSlug || ! atomicTransfer || ! purchase || ! atomicTransfer.created_at ) {
@@ -190,9 +188,6 @@ export function AtomicRevertStep( props: Props ) {
 			) }
 			{ isDowngradePlan && (
 				<ToggleControl
-					className={
-						enableLosslessRevert ? `${ action }-form__atomic-revert-checkbox-enabled` : ''
-					}
 					label={ __( 'Restore my posts, pages, and media.' ) }
 					help={ __(
 						'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. This process may take up to 24 hours.'
