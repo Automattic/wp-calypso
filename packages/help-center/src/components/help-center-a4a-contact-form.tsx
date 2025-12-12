@@ -62,7 +62,7 @@ const fields: Field< FormData >[] = [
 	},
 	{
 		id: 'product',
-		label: __( 'What Automattic product would you like help with?', __i18n_text_domain__ ),
+		label: __( 'What product would you like help with?', __i18n_text_domain__ ),
 		type: 'text' as const,
 		Edit: 'select',
 		elements: [
@@ -208,13 +208,12 @@ export const HelpCenterA4AContactForm = () => {
 				/>
 
 				<Button
-					__next40pxDefaultSize
 					variant="primary"
 					type="submit"
 					disabled={ ! isValidForm || isPending }
 					isBusy={ isPending }
 				>
-					{ __( 'Submit form', __i18n_text_domain__ ) }
+					{ __( 'Send message', __i18n_text_domain__ ) }
 				</Button>
 
 				{ hasSubmitError && (

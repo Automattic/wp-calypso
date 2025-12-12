@@ -71,26 +71,13 @@ export const pluginsManageIndexRoute = createRoute( {
 );
 
 export const pluginRoute = createRoute( {
-	head: ( { params } ) => ( {
-		meta: [
-			{
-				title: params.pluginId,
-			},
-		],
-	} ),
-	getParentRoute: () => pluginsManageRoute,
+	getParentRoute: () => pluginsManageIndexRoute,
 	path: '$pluginId',
 	loader: async () => {
 		queryClient.prefetchQuery( marketplacePluginsQuery() );
 		queryClient.prefetchQuery( pluginsQuery() );
 	},
-} ).lazy( () =>
-	import( '../../plugins/plugin' ).then( ( d ) =>
-		createLazyRoute( 'plugin' )( {
-			component: d.default,
-		} )
-	)
-);
+} );
 
 export const pluginsScheduledUpdatesRoute = createRoute( {
 	head: () => ( {

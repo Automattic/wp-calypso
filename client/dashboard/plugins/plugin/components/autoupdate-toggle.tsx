@@ -35,7 +35,7 @@ export const AutoupdateToggle = ( {
 
 	return (
 		<FieldActionToggle
-			label={ __( 'Autoupdate' ) }
+			label={ checked ? __( 'On' ) : __( 'Off' ) }
 			checked={ checked }
 			disabled={ disabled }
 			onToggle={ ( next ) => {
