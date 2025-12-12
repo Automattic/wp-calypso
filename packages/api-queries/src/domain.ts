@@ -39,7 +39,7 @@ export const deleteEmailForwardMutation = () => {
 		mutationFn: ( vars: { domainName: string; mailbox: string; destination: string } ) =>
 			deleteEmailForward( vars.domainName, vars.mailbox, vars.destination ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'me', 'mailboxes' ] } );
 		},
 	} );
 };

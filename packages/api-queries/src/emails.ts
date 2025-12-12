@@ -39,7 +39,7 @@ export const createTitanMailboxMutation = () => {
 				passwordResetEmail: vars.passwordResetEmail,
 			} ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'me', 'mailboxes' ] } );
 		},
 	} );
 };
@@ -49,7 +49,7 @@ export const deleteTitanMailboxMutation = () => {
 		mutationFn: ( vars: { domainName: string; mailbox: string } ) =>
 			deleteTitanMailbox( vars.domainName, vars.mailbox ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'me', 'mailboxes' ] } );
 		},
 	} );
 };

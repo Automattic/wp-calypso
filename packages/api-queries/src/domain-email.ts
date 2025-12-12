@@ -43,7 +43,7 @@ export const addEmailForwarderMutation = () =>
 			redirectUrl?: string;
 		} ) => addEmailForwarder( domain, mailbox, destinations, redirectUrl ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'me', 'mailboxes' ] } );
 			queryClient.invalidateQueries( {
 				queryKey: [ 'domains' ],
 				predicate: ( query ) =>
