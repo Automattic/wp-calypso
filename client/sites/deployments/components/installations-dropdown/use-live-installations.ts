@@ -1,10 +1,12 @@
 import config from '@automattic/calypso-config';
 import { useI18n } from '@wordpress/react-i18n';
 import { useLayoutEffect, useState } from 'react';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useCodeDeploymentsQuery } from '../../deployments/use-code-deployments-query';
 import {
 	GitHubInstallationData,
 	useGithubInstallationsQuery,
@@ -20,12 +22,14 @@ const AUTHORIZATION_URL =
 const INSTALLATION_URL = 'https://public-api.wordpress.com/wpcom/v2/hosting/github/app-install';
 
 export const useLiveInstallations = () => {
+	const siteId = useSelector( getSelectedSiteId );
 	const {
 		data: installations,
 		error: installationsError,
 		refetch,
 		isLoading: isLoadingInstallations,
 	} = useGithubInstallationsQuery();
+	const { data: deployments = [] } = useCodeDeploymentsQuery( siteId );
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
 	const { saveGitHubCredentials } = useSaveGitHubCredentialsMutation();
@@ -36,8 +40,24 @@ export const useLiveInstallations = () => {
 			return;
 		}
 
+		// If there are existing deployments, try to pre-select the installation
+		// that matches the first deployment's installation_id
+		if ( deployments.length > 0 ) {
+			const firstDeploymentInstallationId = deployments[ 0 ]?.installation_id;
+			if ( firstDeploymentInstallationId ) {
+				const preselectedInstallation = installations.find(
+					( inst ) => inst.external_id === firstDeploymentInstallationId
+				);
+				if ( preselectedInstallation ) {
+					setInstallation( preselectedInstallation );
+					return;
+				}
+			}
+		}
+
+		// Fallback to first installation
 		setInstallation( installations[ 0 ] );
-	}, [ installations, installation ] );
+	}, [ installations, installation, deployments ] );
 
 	const authorizeApp = async ( { code }: { code: string } ) => {
 		const response = await postLoginRequest( 'exchange-social-auth-code', {
