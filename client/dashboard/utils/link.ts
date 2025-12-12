@@ -35,6 +35,20 @@ export function dashboardLinkWithBackport( path: string = '' ) {
 }
 
 /**
+ * This function returns the redirect link back to the dashboard.
+ */
+export function redirectToDashboardLink( {
+	backUrl,
+	supportBackport,
+}: {
+	backUrl?: string;
+	supportBackport?: boolean;
+} ) {
+	const url = backUrl ? backUrl : window.location.href.replace( window.location.origin, '' );
+	return supportBackport ? dashboardLinkWithBackport( url ) : dashboardLink( url );
+}
+
+/**
  * This function returns the link to the reauth page.
  *
  * Currently, the dashboard run in either Calypso or Dashboard environment. When it comes to the redirect URL:
