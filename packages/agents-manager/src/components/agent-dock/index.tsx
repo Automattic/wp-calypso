@@ -122,7 +122,7 @@ export default function AgentDock( {
 	} );
 
 	const handleNewChat = () => {
-		navigate( '/chat', { state: { isNewChat: true } } );
+		navigate( '/' );
 	};
 
 	const handleSelectConversation = ( sessionId: string ) => {
