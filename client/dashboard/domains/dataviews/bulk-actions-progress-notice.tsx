@@ -1,7 +1,7 @@
 import { bulkDomainUpdateStatusQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Notice } from '../../components/notice';
 import type { BulkDomainUpdateStatusQueryFnData } from '@automattic/api-core';
 
@@ -32,22 +32,23 @@ export const BulkActionsProgressNotice = () => {
 		select: ( data ) => getLastJob( data ),
 	} );
 
-	useLayoutEffect( () => {
+	useEffect( () => {
 		if ( ! data ) {
 			return;
 		}
 
-		if ( ! lastId ) {
-			setLastId( data.id );
-			return;
-		}
+		setLastId( ( prevId ) => {
+			if ( ! prevId ) {
+				return data.id;
+			}
 
-		if ( lastId !== data.id ) {
-			setShouldShowCompleteNotice( true );
-		}
+			if ( prevId !== data.id ) {
+				setShouldShowCompleteNotice( true );
+			}
 
-		setLastId( data.id );
-	}, [ data, lastId ] );
+			return data.id;
+		} );
+	}, [ data ] );
 
 	if ( ! data ) {
 		return null;
