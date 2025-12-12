@@ -2,6 +2,7 @@ import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
 import { resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { FlowV2, SubmitHandler } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -66,7 +67,8 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
 
 		// Validate back_to to prevent open redirect - must not be external
-		const safeBackTo = backTo && ! isExternal( backTo ) ? backTo : '/sites';
+		const isValidBackTo = dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+		const safeBackTo = backTo && ( ! isExternal( backTo ) || isValidBackTo ) ? backTo : '/sites';
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {

@@ -2,6 +2,13 @@ import config from '@automattic/calypso-config';
 import { isDashboardBackport } from './is-dashboard-backport';
 
 /**
+ * This function returns all the origins for the dashboard.
+ */
+export function dashboardOrigins(): string[] {
+	return [ 'http://my.localhost:3000', 'https://my.wordpress.com' ];
+}
+
+/**
  * This function essentially returns `https://wordpress.com${ path }`.
  *
  * However, the hostname is configurable in the `wpcom_url` key, so that
