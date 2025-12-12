@@ -23,6 +23,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -246,7 +247,7 @@ function UnifiedPlansStep( {
 			return null;
 		}
 
-		return hostingDashboardOptIn ? '/v2/sites' : '/sites/';
+		return hostingDashboardOptIn ? dashboardLink( '/sites' ) : '/sites/';
 	} );
 
 	useSiteGlobalStylesOnPersonal();

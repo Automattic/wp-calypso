@@ -15,7 +15,7 @@ import {
 } from '@wordpress/icons';
 import type { TierItem } from './types';
 
-const TARGET_INFLUENCED_REVENUE = {
+export const TARGET_INFLUENCED_REVENUE = {
 	'emerging-partner': 0,
 	'agency-partner': 1200,
 	'pro-agency-partner': 5000,

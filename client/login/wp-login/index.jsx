@@ -43,7 +43,7 @@ import isWooJPCFlow, {
 	isWooCommercePaymentsOnboardingFlow,
 } from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
-import { LoginContext } from '../login-context';
+import LoginContextProvider, { LoginContext } from '../login-context';
 import OneLoginFooter from './components/one-login-footer';
 import OneLoginLayout from './components/one-login-layout';
 import GravPoweredLoginBlockFooter from './gravatar/grav-powered-login-block-footer';
@@ -288,60 +288,16 @@ export class Login extends Component {
 	}
 
 	updateHeadingText() {
-		const {
-			twoFactorAuthType,
-			isManualRenewalImmediateLoginAttempt,
-			socialConnect,
-			linkingSocialService,
-			action,
-			oauth2Client,
-			isWooJPC,
-			isJetpack,
-			isWCCOM,
-			isBlazePro,
-			isFromAkismet,
-			isFromAutomatticForAgenciesPlugin,
-			isGravPoweredClient,
-			currentQuery,
-			translate,
-			isUserLoggedIn: isLoggedIn,
-		} = this.props;
-
-		// TODO: remove isGravPoweredClient when login pages are unified.
-		const isSocialFirst = ! isGravPoweredClient;
-
-		const headingText = getHeaderText( {
-			isSocialFirst,
-			twoFactorAuthType,
-			isManualRenewalImmediateLoginAttempt,
-			socialConnect,
-			linkingSocialService,
-			action,
-			oauth2Client,
-			isWooJPC,
-			isJetpack,
-			isWCCOM,
-			isBlazePro,
-			isFromAkismet,
-			isFromAutomatticForAgenciesPlugin,
-			isGravPoweredClient,
-			currentQuery,
-			translate,
-			isUserLoggedIn: isLoggedIn,
-		} );
-
-		const headingSubText = getHeadingSubText( {
-			isSocialFirst,
-			twoFactorAuthType,
-			action,
-			translate,
-			isWooJPC,
-		} );
+		const { translate } = this.props;
+		const { headingText, subHeadingPrimary, subHeadingSecondary } = getInitialHeadingState(
+			this.props,
+			translate
+		);
 
 		this.context.setHeaders( {
 			heading: headingText,
-			subHeading: headingSubText?.primary,
-			subHeadingSecondary: headingSubText?.secondary,
+			subHeading: subHeadingPrimary,
+			subHeadingSecondary,
 		} );
 	}
 
@@ -412,6 +368,80 @@ export class Login extends Component {
 	}
 }
 
+function getInitialHeadingState( props, translate ) {
+	const {
+		twoFactorAuthType,
+		isManualRenewalImmediateLoginAttempt,
+		socialConnect,
+		linkingSocialService,
+		action,
+		oauth2Client,
+		isWooJPC,
+		isJetpack,
+		isWCCOM,
+		isBlazePro,
+		isFromAkismet,
+		isFromAutomatticForAgenciesPlugin,
+		isGravPoweredClient,
+		currentQuery,
+		isUserLoggedIn: isLoggedIn,
+	} = props;
+
+	const isSocialFirst = ! isGravPoweredClient;
+
+	const headingText = getHeaderText( {
+		isSocialFirst,
+		twoFactorAuthType,
+		isManualRenewalImmediateLoginAttempt,
+		socialConnect,
+		linkingSocialService,
+		action,
+		oauth2Client,
+		isWooJPC,
+		isJetpack,
+		isWCCOM,
+		isBlazePro,
+		isFromAkismet,
+		isFromAutomatticForAgenciesPlugin,
+		isGravPoweredClient,
+		currentQuery,
+		translate,
+		isUserLoggedIn: isLoggedIn,
+	} );
+
+	const headingSubText = getHeadingSubText( {
+		isSocialFirst,
+		twoFactorAuthType,
+		action,
+		translate,
+		isWooJPC,
+	} );
+
+	return {
+		headingText,
+		subHeadingPrimary: headingSubText?.primary,
+		subHeadingSecondary: headingSubText?.secondary,
+	};
+}
+
+const LoginWithContext = ( props ) => {
+	const { translate } = props;
+	const { headingText, subHeadingPrimary, subHeadingSecondary } = getInitialHeadingState(
+		props,
+		translate
+	);
+
+	return (
+		<LoginContextProvider
+			initialHeading={ headingText }
+			initialSubHeading={ subHeadingPrimary }
+			initialSubHeadingSecondary={ subHeadingSecondary }
+		>
+			<Login { ...props } translate={ translate } />
+		</LoginContextProvider>
+	);
+};
+
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
@@ -464,4 +494,4 @@ export default connect(
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 		recordTracksEvent,
 	}
-)( localize( Login ) );
+)( localize( LoginWithContext ) );

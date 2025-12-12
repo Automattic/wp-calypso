@@ -1,6 +1,8 @@
 import { getQueryArg } from '@wordpress/url';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext } from '../context';
 import { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
 import { type ShoppingCartItem } from '../types';
@@ -9,6 +11,8 @@ const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
 const SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL = 'referrals-shopping-card-selected-items';
 
 export default function useShoppingCart() {
+	const dispatch = useDispatch();
+
 	const [ selectedCartItems, setSelectedCartItems ] = useState< ShoppingCartItem[] >( [] );
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 
@@ -21,6 +25,11 @@ export default function useShoppingCart() {
 	}, [ marketplaceType ] );
 
 	const toggleCart = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_toggle_cart', {
+				purchase_mode: marketplaceType,
+			} )
+		);
 		setShowCart( ( prevState ) => {
 			const nextState = ! prevState;
 

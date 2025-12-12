@@ -178,7 +178,11 @@ export function usePersistentView( {
 
 	const resetView = useCallback( () => {
 		persistView( undefined );
-	}, [ persistView ] );
+		navigate( {
+			search: mergeQueryParamsWithTransientProperties( queryParams, { page: 1, search: '' } ),
+			replace: true,
+		} );
+	}, [ persistView, navigate, queryParams ] );
 
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
 }

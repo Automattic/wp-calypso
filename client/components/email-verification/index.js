@@ -1,5 +1,6 @@
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { sendVerificationSignal } from 'calypso/lib/user/verification-checker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -45,8 +46,8 @@ export default function emailVerification( context, next ) {
 }
 
 // Helper function to build redirect URL
-function buildV2RedirectUrl( verified, newEmailResult ) {
-	let redirectUrl = '/v2/me/profile';
+function buildDashboardRedirectUrl( verified, newEmailResult ) {
+	let redirectUrl = dashboardLink( '/me/profile' );
 	if ( verified ) {
 		redirectUrl += `?verified=${ verified }`;
 	} else if ( newEmailResult ) {
@@ -89,7 +90,10 @@ function shouldRedirectToV2( context, next, params ) {
 				unsubscribe();
 
 				if ( hasHostingDashboardOptIn( state ) ) {
-					window.location.href = buildV2RedirectUrl( params.verified, params.newEmailResult );
+					window.location.href = buildDashboardRedirectUrl(
+						params.verified,
+						params.newEmailResult
+					);
 				}
 			}
 		} );
@@ -101,7 +105,7 @@ function shouldRedirectToV2( context, next, params ) {
 	}
 
 	if ( hasHostingDashboardOptIn( state ) ) {
-		window.location.href = buildV2RedirectUrl( params.verified, params.newEmailResult );
+		window.location.href = buildDashboardRedirectUrl( params.verified, params.newEmailResult );
 		return true;
 	}
 
