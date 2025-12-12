@@ -46,6 +46,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
+import { isMultiSiteDashboardEnabled } from 'calypso/state/sites/selectors/is-multi-site-dashboard-enabled';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -178,7 +179,7 @@ class Layout extends Component {
 			return null;
 		}
 
-		if ( this.props.isReader ) {
+		if ( this.props.isMSDEnabledForReader ) {
 			return <AsyncLoad require="calypso/reader/layout/header" placeholder={ null } />;
 		}
 
@@ -370,7 +371,8 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const isReader = currentRoute.startsWith( '/reader' );
+		const isMSDEnabled = isMultiSiteDashboardEnabled( state );
+		const isMSDEnabledForReader = currentSection?.name === 'reader' && isMSDEnabled;
 
 		const sidebarType = getSidebarType( {
 			state,
@@ -465,7 +467,7 @@ export default withCurrentRoute(
 			isFromAutomatticForAgenciesPlugin,
 			isEligibleForJITM,
 			isBlazePro,
-			isReader,
+			isMSDEnabledForReader,
 			oauth2Client,
 			wccomFrom,
 			isLoggedIn,

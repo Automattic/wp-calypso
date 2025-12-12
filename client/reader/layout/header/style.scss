@@ -19,6 +19,7 @@ $component-icon-padding: 6px;
 	background-color: var( --dashboard-header__background-color );
 	backdrop-filter: blur(4px);
 	color: var( --dashboard-header__color );
+	min-height: 65px;
 
 	@include break-medium {
 		padding-inline: calc(#{$grid-unit-30} - #{$component-icon-padding});
