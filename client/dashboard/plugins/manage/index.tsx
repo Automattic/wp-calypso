@@ -10,21 +10,14 @@ import { __experimentalGrid as Grid } from '@wordpress/components';
 import { filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { Card, CardBody } from '../../components/card';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { SectionHeader } from '../../components/section-header';
-import { Text } from '../../components/text';
-import { TextBlur } from '../../components/text-blur';
-import { PluginTabs } from '../plugin';
-import { usePlugin } from '../plugin/use-plugin';
+import { PluginSites } from './components/plugin-sites';
 import { PluginSwitcher } from './components/plugin-switcher';
 import { useSitesById } from './hooks/use-sites-by-id';
 import { mapApiPluginsToDataViewPlugins } from './utils';
 import type { PluginListRow } from './types';
-
-import './style.scss';
 
 const view: View = {
 	type: 'list',
@@ -63,14 +56,6 @@ export default function PluginsList() {
 		[ sitesById, sitesPlugins, fields ]
 	);
 	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
-	const {
-		icon,
-		isLoading: isLoadingPlugin,
-		plugin,
-		pluginBySiteId,
-		sitesWithThisPlugin,
-		sitesWithoutThisPlugin,
-	} = usePlugin( selectedPluginSlug );
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 	const { data: marketplaceSearch } = useQuery(
 		marketplaceSearchQuery( {
@@ -113,27 +98,6 @@ export default function PluginsList() {
 		} );
 	}, [ plugins, iconBySlug ] );
 
-	const decoration = useMemo( () => {
-		if ( icon ) {
-			return <img className="plugin-icon" src={ icon } alt={ plugin?.name } />;
-		} else if ( isLoadingPlugin ) {
-			return <div className="plugin-icon-placeholder" aria-hidden="true" />;
-		}
-	}, [ icon, isLoadingPlugin, plugin?.name ] );
-
-	const title = useMemo( () => {
-		if ( ! isLoadingPlugin && ! plugin ) {
-			return __( 'Plugin not found' );
-		}
-
-		return plugin ? (
-			// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-			<Text dangerouslySetInnerHTML={ { __html: plugin.name } } />
-		) : (
-			<TextBlur>{ pluginSlug }</TextBlur>
-		);
-	}, [ isLoadingPlugin, plugin, pluginSlug ] );
-
 	return (
 		<PageLayout
 			size="large"
@@ -153,26 +117,7 @@ export default function PluginsList() {
 					view={ view }
 				/>
 
-				<Card>
-					<CardBody className="plugin-sites-card-body">
-						<SectionHeader
-							className="plugin-sites-card-header"
-							decoration={ decoration }
-							level={ 2 }
-							title={ title }
-						/>
-
-						<PluginTabs
-							pluginSlug={ pluginSlug }
-							isLoading={ isLoadingPlugin }
-							plugin={ plugin }
-							pluginName={ plugin?.name }
-							pluginBySiteId={ pluginBySiteId }
-							sitesWithThisPlugin={ sitesWithThisPlugin }
-							sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
-						/>
-					</CardBody>
-				</Card>
+				<PluginSites selectedPluginSlug={ selectedPluginSlug } />
 			</Grid>
 		</PageLayout>
 	);
