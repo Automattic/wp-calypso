@@ -258,6 +258,23 @@
 			border: none;
 		}
 	}
+
+	.add-subscriber__import-limit-notice {
+		font-size: 0.875rem;
+		line-height: 1.25;
+		color: var(--studio-gray-50);
+		margin-top: 1.5rem;
+		margin-bottom: 1.5rem;
+
+		a {
+			color: var(--color-text);
+			text-decoration: underline;
+
+			&:hover {
+				color: var(--color-text-subtle);
+			}
+		}
+	}
 }
 
 .categories-info-popover {

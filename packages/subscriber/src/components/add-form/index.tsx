@@ -52,6 +52,8 @@ interface Props {
 	hidden?: boolean;
 	isWPCOMSite?: boolean;
 	disabled?: boolean;
+	isFreePlan?: boolean;
+	siteSlug?: string;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -84,6 +86,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		hidden = false,
 		isWPCOMSite = false,
 		disabled,
+		isFreePlan = false,
+		siteSlug = '',
 	} = props;
 
 	const { data: newsletterCategoriesData } = useNewsletterCategories( {
@@ -512,6 +516,27 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 								isWPCOMSite={ isWPCOMSite }
 							/>
 						) }
+
+					{ isFreePlan && (
+						<p className="add-subscriber__import-limit-notice">
+							{ createInterpolateElement(
+								__(
+									'Free plans have an import limit of 100 subscribers. <a>Upgrade your plan</a> to import unlimited subscribers.'
+								),
+								{
+									a: <a href={ `/plans/${ siteSlug }` } />,
+								}
+							) }
+						</p>
+					) }
+
+					{ ! isFreePlan && (
+						<p className="add-subscriber__import-limit-notice">
+							{ __(
+								'Imports of more than 10,000 subscribers will go through a manual review before being added to your site.'
+							) }
+						</p>
+					) }
 
 					<AddSubscribersDisclaimer buttonLabel={ submitBtnName } />
 

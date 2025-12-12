@@ -23,7 +23,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
-import SubscriberImportLimitNotice from '../subscriber-import-limit-notice';
 import { StaleImportJobsNotice } from './stale-job-notice';
 
 import './style.scss';
@@ -185,7 +184,6 @@ const AddSubscribersModal = ( {
 							</span>
 						</Notice>
 					) }
-					{ ! isUploading && site && <SubscriberImportLimitNotice selectedSite={ site } /> }
 					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
 						<StaleImportJobsNotice isJetpack={ isJetpack } siteId={ site?.ID || null } />
 					) }
@@ -204,6 +202,8 @@ const AddSubscribersModal = ( {
 						hidden={ isUploading }
 						isWPCOMSite={ ! isJetpack }
 						disabled={ isImportInProgress }
+						isFreePlan={ isFreeSite }
+						siteSlug={ site?.slug || '' }
 					/>
 				</>
 			) }
@@ -234,7 +234,6 @@ const AddSubscribersModal = ( {
 							</span>
 						</Notice>
 					) }
-					{ ! isUploading && site && <SubscriberImportLimitNotice selectedSite={ site } /> }
 					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
 						<StaleImportJobsNotice isJetpack={ isJetpack } siteId={ site?.ID || null } />
 					) }
@@ -248,6 +247,8 @@ const AddSubscribersModal = ( {
 						hidden={ isUploading }
 						disabled={ isImportInProgress }
 						isWPCOMSite={ ! isJetpack }
+						isFreePlan={ isFreeSite }
+						siteSlug={ site?.slug || '' }
 					/>
 				</>
 			) }
