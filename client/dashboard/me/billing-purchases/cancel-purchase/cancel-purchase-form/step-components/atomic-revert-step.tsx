@@ -1,13 +1,14 @@
 import {
-	__experimentalHeading as Heading,
 	Button,
 	CheckboxControl,
 	ToggleControl,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { intlFormat } from 'date-fns';
+import { SectionHeader } from '../../../../../components/section-header';
+import { Text } from '../../../../../components/text';
 import { BillingPurchaseInfoPopover } from '../../../dataviews';
 import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 
@@ -127,31 +128,19 @@ export function AtomicRevertStep( props: Props ) {
 		);
 	}
 
-	const enabledClassName = `${ action }-form__atomic-revert-checkbox-enabled`;
-
-	const checkBox1ClassName = clsx( 'required-checkboxes', {
-		[ enabledClassName ]: !! atomicRevertCheckOne,
-	} );
-
-	const checkBox2ClassName = clsx( 'required-checkboxes', {
-		[ enabledClassName ]: !! atomicRevertCheckTwo,
-	} );
-
 	return (
-		<div className={ `${ action }-form__atomic-revert` }>
-			<Heading level={ 4 }>{ __( 'Proceed With Caution' ) }</Heading>
-			<br />
-			<div>{ subHeaderText }</div>
-			<p>
+		<VStack spacing={ 4 }>
+			<SectionHeader level={ 3 } title={ __( 'Proceed with caution' ) } />
+			<Text as="p">{ subHeaderText }</Text>
+			<Text as="p">
 				{ createInterpolateElement(
 					__(
 						'Please <strong>confirm and check</strong> the following items before you continue with plan deactivation:'
 					),
 					{ strong: <strong /> }
 				) }
-			</p>
+			</Text>
 			<CheckboxControl
-				className={ checkBox1ClassName }
 				label={
 					isPlanPurchase && ! isRemovePlan && ! isDowngradePlan
 						? sprintf(
@@ -171,7 +160,6 @@ export function AtomicRevertStep( props: Props ) {
 				onChange={ onClickCheckOne }
 			/>
 			<CheckboxControl
-				className={ checkBox2ClassName }
 				label={
 					isPlanPurchase && ! isRemovePlan && ! isDowngradePlan
 						? sprintf(
@@ -191,35 +179,37 @@ export function AtomicRevertStep( props: Props ) {
 				onChange={ onClickCheckTwo }
 			/>
 			{ hasBackupsFeature && (
-				<div className={ `${ action }-form__backups` }>
-					<div>
-						<h4>{ __( 'Would you like to download the backup of your site?' ) }</h4>
-						<p>
-							{ __(
-								"To make sure you have everything after your plan is deactivated or if you'd like to migrate, you can download a backup."
-							) }
-						</p>
-					</div>
-					<Button variant="primary" href={ `/backup/${ siteSlug }` }>
-						{ __( 'Go to your backups' ) }
-					</Button>
-				</div>
+				<>
+					<Text weight="bold">{ __( 'Would you like to download the backup of your site?' ) }</Text>
+					<Text as="p">
+						{ createInterpolateElement(
+							__(
+								"To make sure you have everything after your plan is deactivated or if you'd like to migrate, you can <backupLink>download a backup</backupLink>."
+							),
+							{
+								backupLink: (
+									<Button variant="link" href={ `/backup/${ siteSlug }` }>
+										{ __( 'download a backup' ) }
+									</Button>
+								),
+							}
+						) }
+					</Text>
+				</>
 			) }
 			{ isDowngradePlan && (
-				<div className="downgrade-purchase-form__atomic-lossless-revert">
-					<ToggleControl
-						className={
-							enableLosslessRevert ? `${ action }-form__atomic-revert-checkbox-enabled` : ''
-						}
-						label={ __( 'Restore my posts, pages, and media.' ) }
-						help={ __(
-							'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. This process may take up to 24 hours.'
-						) }
-						checked={ enableLosslessRevert }
-						onChange={ setEnableLosslessRevert! }
-					/>
-				</div>
+				<ToggleControl
+					className={
+						enableLosslessRevert ? `${ action }-form__atomic-revert-checkbox-enabled` : ''
+					}
+					label={ __( 'Restore my posts, pages, and media.' ) }
+					help={ __(
+						'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. This process may take up to 24 hours.'
+					) }
+					checked={ enableLosslessRevert }
+					onChange={ setEnableLosslessRevert! }
+				/>
 			) }
-		</div>
+		</VStack>
 	);
 }
