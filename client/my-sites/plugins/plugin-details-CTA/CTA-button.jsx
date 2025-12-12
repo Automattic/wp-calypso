@@ -290,8 +290,10 @@ function onClickInstallPlugin( {
 
 		if ( upgradeAndInstall ) {
 			// Redirect to plans page to let user choose a plan, then redirect to checkout with plugin
-			const checkoutUrl = `/checkout/${ selectedSite.slug }/${ product_slug }`;
-			return page( `/plans/${ selectedSite.slug }?redirect_to=${ checkoutUrl }#step2` );
+			const checkoutUrl = `/checkout/${ selectedSite.slug }/${ product_slug }#step2`;
+			return page(
+				`/plans/${ selectedSite.slug }?redirect_to=${ encodeURIComponent( checkoutUrl ) }`
+			);
 		}
 
 		return page( `/checkout/${ selectedSite.slug }/${ product_slug }#step2` );
@@ -304,10 +306,12 @@ function onClickInstallPlugin( {
 	}
 
 	// After buying a plan we need to redirect to the plugin install page.
-	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
+	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }#step2`;
 	if ( upgradeAndInstall ) {
 		// Redirect to plans page to let user choose a plan, then redirect to plugin install
-		return page( `/plans/${ selectedSite.slug }?redirect_to=${ installPluginURL }#step2` );
+		return page(
+			`/plans/${ selectedSite.slug }?redirect_to=${ encodeURIComponent( installPluginURL ) }`
+		);
 	}
 
 	// No need to go through checkout, go to install page directly.
