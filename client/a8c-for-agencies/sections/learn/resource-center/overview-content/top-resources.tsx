@@ -3,6 +3,7 @@ import {
 	CardBody,
 	CardMedia,
 	Button,
+	Modal,
 	Spinner,
 	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
@@ -10,6 +11,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -21,11 +23,23 @@ interface TopResourcesProps {
 	isLoading: boolean;
 }
 
-function ResourceCard( { resource }: { resource: ResourceItem } ) {
+function ResourceCard( {
+	resource,
+	onOpenVideoModal,
+}: {
+	resource: ResourceItem;
+	onOpenVideoModal: ( resource: ResourceItem ) => void;
+} ) {
 	const dispatch = useDispatch();
 	const ctaLabel = useResourceCtaLabel( resource.format );
+	const isVideo = resource.format === 'Video';
 
-	const handleClick = () => {
+	const handleClick = ( e: React.MouseEvent ) => {
+		if ( isVideo ) {
+			e.preventDefault();
+			onOpenVideoModal( resource );
+		}
+
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_resource_center_top_resource_click', {
 				resource_id: resource.id,
@@ -55,8 +69,7 @@ function ResourceCard( { resource }: { resource: ResourceItem } ) {
 				</VStack>
 				<Button
 					variant="secondary"
-					href={ resource.externalUrl }
-					target="_blank"
+					{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
 					onClick={ handleClick }
 					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
 				>
@@ -68,6 +81,14 @@ function ResourceCard( { resource }: { resource: ResourceItem } ) {
 }
 
 export default function TopResources( { resources, isLoading }: TopResourcesProps ) {
+	const [ showVideoModal, setShowVideoModal ] = useState( false );
+	const [ selectedResource, setSelectedResource ] = useState< ResourceItem | null >( null );
+
+	const handleOpenVideoModal = ( resource: ResourceItem ) => {
+		setSelectedResource( resource );
+		setShowVideoModal( true );
+	};
+
 	if ( isLoading ) {
 		return (
 			<>
@@ -101,11 +122,31 @@ export default function TopResources( { resources, isLoading }: TopResourcesProp
 
 			<div className="resource-center-cards resource-center-top-resources">
 				{ displayResources.map( ( resource ) => (
-					<ResourceCard key={ resource.id } resource={ resource } />
+					<ResourceCard
+						key={ resource.id }
+						resource={ resource }
+						onOpenVideoModal={ handleOpenVideoModal }
+					/>
 				) ) }
 			</div>
 
 			<Spacer marginBottom={ 12 } />
+
+			{ showVideoModal && selectedResource && (
+				<Modal
+					isDismissible
+					size="medium"
+					onRequestClose={ () => setShowVideoModal( false ) }
+					title={ selectedResource.name }
+				>
+					<VStack spacing={ 4 }>
+						<Text>
+							This is a placeholder for the video modal content. The actual video player will be
+							implemented here.
+						</Text>
+					</VStack>
+				</Modal>
+			) }
 		</>
 	);
 }

@@ -2,6 +2,7 @@ import {
 	Card,
 	CardBody,
 	Button,
+	Modal,
 	Spinner,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -32,11 +33,23 @@ interface BrowseAllResourcesProps {
 	isLoading: boolean;
 }
 
-function ResourceItemCard( { item }: { item: ResourceItem } ) {
+function ResourceItemCard( {
+	item,
+	onOpenVideoModal,
+}: {
+	item: ResourceItem;
+	onOpenVideoModal: ( resource: ResourceItem ) => void;
+} ) {
 	const dispatch = useDispatch();
 	const ctaLabel = useResourceCtaLabel( item.format );
+	const isVideo = item.format === 'Video';
 
-	const handleCTAClick = () => {
+	const handleCTAClick = ( e: React.MouseEvent ) => {
+		if ( isVideo ) {
+			e.preventDefault();
+			onOpenVideoModal( item );
+		}
+
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_resource_center_browse_cta_click', {
 				resource_id: item.id,
@@ -61,8 +74,7 @@ function ResourceItemCard( { item }: { item: ResourceItem } ) {
 				</VStack>
 				<Button
 					variant="secondary"
-					href={ item.externalUrl }
-					target="_blank"
+					{ ...( ! isVideo && { href: item.externalUrl, target: '_blank' } ) }
 					onClick={ handleCTAClick }
 					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
 				>
@@ -75,6 +87,13 @@ function ResourceItemCard( { item }: { item: ResourceItem } ) {
 
 export default function BrowseAllResources( { resources, isLoading }: BrowseAllResourcesProps ) {
 	const [ view, setView ] = useState< View >( initialView );
+	const [ showVideoModal, setShowVideoModal ] = useState( false );
+	const [ selectedResource, setSelectedResource ] = useState< ResourceItem | null >( null );
+
+	const handleOpenVideoModal = ( resource: ResourceItem ) => {
+		setSelectedResource( resource );
+		setShowVideoModal( true );
+	};
 
 	// Build filter options dynamically from available resources
 	const filterOptions = useMemo( () => {
@@ -219,9 +238,28 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 			</DataViews>
 			<div className="resource-center-cards resource-center-browse-all-resources">
 				{ filteredData.map( ( item ) => (
-					<ResourceItemCard key={ item.id } item={ item } />
+					<ResourceItemCard
+						key={ item.id }
+						item={ item }
+						onOpenVideoModal={ handleOpenVideoModal }
+					/>
 				) ) }
 			</div>
+			{ showVideoModal && selectedResource && (
+				<Modal
+					isDismissible
+					size="medium"
+					onRequestClose={ () => setShowVideoModal( false ) }
+					title={ selectedResource.name }
+				>
+					<VStack spacing={ 4 }>
+						<Text>
+							This is a placeholder for the video modal content. The actual video player will be
+							implemented here.
+						</Text>
+					</VStack>
+				</Modal>
+			) }
 		</>
 	);
 }
