@@ -72,9 +72,7 @@ export default function AgentDock( {
 	}, [] );
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
-
-	const sessionId = agentConfig.sessionId;
-	const agentId = agentConfig.agentId;
+	const { agentId, sessionId } = agentConfig;
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager();
