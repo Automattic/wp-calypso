@@ -4,16 +4,17 @@ import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import usePrepareProductsForCart from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getSite from 'calypso/state/sites/selectors/get-site';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import type { ShoppingCartItem } from '../types';
@@ -41,14 +42,22 @@ function BillingDragonCheckoutContent( {
 	const [ isReady, setIsReady ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
 
+	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
 	const site = useSelector( ( state ) => ( siteSlug ? getSite( state, siteSlug ) : undefined ) );
 	const siteId = site?.ID;
-	const isSitelessCheckout = ! siteId;
-	const isPlanCheckout = useMemo( () => Boolean( planSlug ), [ planSlug ] );
+	const isPlanCheckout = !! planSlug;
 	const isDevSiteLaunchFlow = Boolean( site?.is_a4a_dev_site && isPlanCheckout );
 
-	const { replaceProductsInCart, responseCart } = useShoppingCart( 'no-site' );
+	useEffect( () => {
+		if ( siteId ) {
+			dispatch( setSelectedSiteId( siteId ) );
+		}
+	}, [ dispatch, siteId ] );
+
+	// Use site's cart key when site exists, otherwise use 'no-site' for siteless checkout
+	const cartKey = siteId || 'no-site';
+	const { replaceProductsInCart, responseCart } = useShoppingCart( cartKey );
 
 	const {
 		productsForCart,
@@ -224,7 +233,7 @@ function BillingDragonCheckoutContent( {
 				</div>
 			) }
 			<CheckoutMain
-				{ ...( isSitelessCheckout ? { sitelessCheckoutType: 'a4a' as const } : {} ) }
+				sitelessCheckoutType="a4a"
 				redirectTo={ window.location.origin + '/purchases/licenses' }
 				customizedPreviousPath="/marketplace"
 				siteSlug={ siteSlug ?? '' }
