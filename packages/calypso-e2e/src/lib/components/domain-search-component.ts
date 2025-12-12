@@ -86,51 +86,6 @@ export class DomainSearchComponent {
 	}
 
 	/**
-	 * Fills the "Use a domain I own" input and waits for the `is-available` response
-	 *
-	 * @param domainName Domain name to fill in the input
-	 */
-	async fillUseDomainIOwnInput( domainName: string ): Promise< void > {
-		const searchAndPressEnter = async () => {
-			const input = this.page.locator( '.use-my-domain__domain-input input' );
-			await input.fill( domainName );
-			await input.press( 'Enter' );
-		};
-
-		const [ response ] = await Promise.all( [
-			this.page.waitForResponse( /is-available\?/ ),
-			searchAndPressEnter(),
-		] );
-
-		if ( ! response ) {
-			const errorText = await this.page.getByRole( 'status', { name: 'Notice' } ).innerText();
-			throw new Error(
-				`Encountered error while trying to check availability of domain.\nOriginal error: ${ errorText }`
-			);
-		}
-	}
-
-	/**
-	 * Click on the "Transfer your domain" option in the "Transfer or Connect" page
-	 */
-	async selectTransferYourDomain(): Promise< void > {
-		const button = this.getContainer()
-			.locator( '.domain-transfer-or-connect__content button' )
-			.nth( 0 );
-		await button.waitFor();
-		await button.click();
-	}
-
-	/**
-	 * Click on the "Connect your domain" option in the "Transfer or Connect" page
-	 */
-	async selectConnectYourDomain(): Promise< void > {
-		const button = await this.getContainer().getByRole( 'button', { name: 'Select' } ).nth( 1 );
-		await button.waitFor();
-		await button.click();
-	}
-
-	/**
 	 * Click on the "Just buy a domain" option in the "Choose how to use your domain" page
 	 */
 	async selectJustBuyADomain(): Promise< void > {
