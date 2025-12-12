@@ -217,7 +217,7 @@ export default function BrowseAllResources( { resources, isLoading }: BrowseAllR
 				</HStack>
 				<DataViews.FiltersToggled className="resource-center-filters" />
 			</DataViews>
-			<div className="resource-center-cards">
+			<div className="resource-center-cards resource-center-browse-all-resources">
 				{ filteredData.map( ( item ) => (
 					<ResourceItemCard key={ item.id } item={ item } />
 				) ) }

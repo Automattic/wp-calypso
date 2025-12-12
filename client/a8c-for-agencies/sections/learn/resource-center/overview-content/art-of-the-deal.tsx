@@ -7,7 +7,6 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -35,7 +34,7 @@ function DealCard( { resource }: { resource: ResourceItem } ) {
 	};
 
 	return (
-		<Card isBorderless size="none" style={ { width: '50%' } }>
+		<Card isBorderless size="none">
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
 					{ resource.previewImage && (
@@ -104,11 +103,11 @@ export default function ArtOfTheDeal( { resources, isLoading }: ArtOfTheDealProp
 				</Text>
 			</Spacer>
 
-			<HStack spacing={ 6 } style={ { justifyContent: 'space-between' } } alignment="stretch">
+			<div className="resource-center-cards resource-center-art-of-deal">
 				{ displayResources.map( ( resource ) => (
 					<DealCard key={ resource.id } resource={ resource } />
 				) ) }
-			</HStack>
+			</div>
 
 			<Spacer marginBottom={ 12 } />
 		</>

@@ -35,7 +35,7 @@ function ResourceCard( { resource }: { resource: ResourceItem } ) {
 	};
 
 	return (
-		<Card isBorderless size="none" style={ { width: '33%' } }>
+		<Card isBorderless size="none">
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
 					{ resource.previewImage && (
@@ -99,11 +99,11 @@ export default function TopResources( { resources, isLoading }: TopResourcesProp
 				</Heading>
 			</Spacer>
 
-			<HStack spacing={ 6 } style={ { justifyContent: 'space-between' } } alignment="stretch">
+			<div className="resource-center-cards resource-center-top-resources">
 				{ displayResources.map( ( resource ) => (
 					<ResourceCard key={ resource.id } resource={ resource } />
 				) ) }
-			</HStack>
+			</div>
 
 			<Spacer marginBottom={ 12 } />
 		</>
