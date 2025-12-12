@@ -395,23 +395,6 @@ export const SitesWithThisPlugin = ( {
 						supportsBulk: true,
 					},
 					{
-						id: 'wp-admin',
-						label: __( 'WP Admin ↗' ),
-						callback: ( items ) => {
-							const [ site ] = items;
-
-							if ( ! site?.URL ) {
-								return;
-							}
-
-							const baseUrl = site.URL.replace( /\/$/, '' );
-							window.open( `${ baseUrl }/wp-admin/plugins.php`, '_blank' );
-						},
-						isEligible: ( item ) => !! item.URL,
-						supportsBulk: false,
-						isPrimary: true,
-					},
-					{
 						id: 'delete',
 						label: __( 'Delete' ),
 						modalHeader: getModalHeader( 'delete' ),
