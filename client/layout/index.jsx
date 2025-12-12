@@ -180,7 +180,7 @@ class Layout extends Component {
 		}
 
 		if ( this.props.isMSDEnabledForReader ) {
-			return <AsyncLoad require="calypso/reader/components/header" placeholder={ null } />;
+			return <AsyncLoad require="calypso/reader/layout/header" placeholder={ null } />;
 		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
@@ -371,7 +371,8 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled();
+		const isMSDEnabled = isMultiSiteDashboardEnabled( state );
+		const isMSDEnabledForReader = currentSection?.name === 'reader' && isMSDEnabled;
 
 		const sidebarType = getSidebarType( {
 			state,
