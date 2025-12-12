@@ -16,6 +16,8 @@ export type HelpCenterRequiredInformation = {
 	onboardingUrl: string;
 	isCommerceGarden: boolean;
 	source: '' | 'wpcom' | 'a4a';
+	disableChatSupport: boolean;
+	hideMoreResources: boolean;
 	// This is specific to A4A
 	agency: {
 		id: number;
@@ -70,6 +72,8 @@ const defaultContext: HelpCenterRequiredInformation = {
 	onboardingUrl: '',
 	isCommerceGarden: false,
 	source: 'wpcom',
+	disableChatSupport: false,
+	hideMoreResources: false,
 	agency: null,
 };
 
