@@ -16,7 +16,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useMemo } from 'react';
-import { pluginRouteWithId } from '../../app/router/plugins';
+import { pluginRoute } from '../../app/router/plugins';
 import { Card, CardBody } from '../../components/card';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
@@ -164,7 +164,7 @@ export default function PluginsList() {
 							initialView={ view }
 							items={ pluginsWithIcon }
 							resetScroll={ false }
-							getItemUrl={ ( item ) => pluginRouteWithId.to.replace( '$pluginId', item.slug ) }
+							getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
 							renderItemMedia={ ( { item } ) => {
 								const icon = item.icon ? (
 									<img
