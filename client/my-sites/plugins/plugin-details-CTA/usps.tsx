@@ -134,7 +134,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 	const lowestPlan = PLAN_PERSONAL;
 
 	const lowestPlanDisplayCost = useSelector( ( state ) => {
-		return getProductDisplayCost( state, lowestPlan || '', true );
+		return getProductDisplayCost( state, lowestPlan, true );
 	} );
 
 	const monthlyLabel = translate( 'month' );
