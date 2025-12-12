@@ -110,10 +110,5 @@ export const bulkDomainsActionMutation = () =>
 		mutationFn: ( action: BulkDomainsAction ) => bulkDomainsAction( action ),
 		onSuccess: () => {
 			queryClient.refetchQueries( bulkDomainUpdateStatusQuery() );
-
-			queryClient.invalidateQueries( {
-				queryKey: domainsQuery().queryKey,
-				exact: true,
-			} );
 		},
 	} );

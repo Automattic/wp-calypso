@@ -1,5 +1,5 @@
-import { bulkDomainUpdateStatusQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { bulkDomainUpdateStatusQuery, domainsQuery } from '@automattic/api-queries';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { Notice } from '../../components/notice';
@@ -18,6 +18,7 @@ const getLastJob = ( data: BulkDomainUpdateStatusQueryFnData | undefined ) => {
 
 export const BulkActionsProgressNotice = () => {
 	const [ lastId, setLastId ] = useState( '' );
+	const queryClient = useQueryClient();
 	const [ shouldShowCompleteNotice, setShouldShowCompleteNotice ] = useState( false );
 
 	const { data } = useQuery( {
@@ -49,6 +50,14 @@ export const BulkActionsProgressNotice = () => {
 			return data.id;
 		} );
 	}, [ data ] );
+
+	const shouldRefetchAllDomainsQuery = data?.complete && shouldShowCompleteNotice;
+
+	useEffect( () => {
+		if ( shouldRefetchAllDomainsQuery ) {
+			queryClient.refetchQueries( domainsQuery() );
+		}
+	}, [ shouldRefetchAllDomainsQuery, queryClient ] );
 
 	if ( ! data ) {
 		return null;
