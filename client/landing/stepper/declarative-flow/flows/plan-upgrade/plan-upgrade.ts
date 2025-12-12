@@ -66,7 +66,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const selectedFeature = query.get( 'feature' ) ?? undefined;
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
 
-		// Validate back_to to prevent open redirect - must not be external
+		// Validate back_to to prevent open redirect - must not be external (expect for allowed origins).
 		const isValidBackTo = dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
 		const safeBackTo = backTo && ( ! isExternal( backTo ) || isValidBackTo ) ? backTo : '/sites';
 
