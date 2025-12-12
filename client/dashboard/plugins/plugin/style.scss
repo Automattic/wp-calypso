@@ -18,6 +18,15 @@
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.plugin-tabs-list,
+.plugin-tabs-panel {
+	.is-level-3 {
+		.dashboard-section-header__heading {
+			font-size: 13px;
+		}
+	}
+}
+
 .sites-with-this-plugin {
 	.dataviews__view-actions, .dataviews-filters__container {
 		padding-inline-start: 20px;
