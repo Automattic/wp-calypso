@@ -7,6 +7,18 @@ import { __ } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
 
 /**
+ * Check if two dates represent the same calendar day in the user's local timezone
+ */
+function isSameLocalDay( date1: Date, date2: Date ): boolean {
+	const d1 = new Date( date1 );
+	const d2 = new Date( date2 );
+	d1.setHours( 0, 0, 0, 0 );
+	d2.setHours( 0, 0, 0, 0 );
+
+	return d1.getTime() === d2.getTime();
+}
+
+/**
  * Format a timestamp for display in conversation list
  * Shows "Today", "Yesterday", or localized date string
  * @param timestamp - Unix timestamp in seconds
@@ -16,14 +28,14 @@ export function formatConversationDate( timestamp: number ): string {
 	const date = new Date( timestampMs );
 	const today = new Date();
 
-	if ( date.toDateString() === today.toDateString() ) {
+	if ( isSameLocalDay( date, today ) ) {
 		return __( 'Today', '__i18n_text_domain__' );
 	}
 
 	const yesterday = new Date( today );
 	yesterday.setDate( yesterday.getDate() - 1 );
 
-	if ( date.toDateString() === yesterday.toDateString() ) {
+	if ( isSameLocalDay( date, yesterday ) ) {
 		return __( 'Yesterday', '__i18n_text_domain__' );
 	}
 
