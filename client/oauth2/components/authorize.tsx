@@ -134,19 +134,14 @@ function Authorize( {
 	}, [ oauth2Client, meta, setHeaders, translate, userCheckComplete, isLoggedIn ] );
 
 	useEffect( () => {
-		if ( ! meta ) {
-			return;
-		}
-
-		// Redirect to login if user is not logged in
-		// Check Redux state first to avoid redirect loops
-		if ( ! isLoggedIn && ! meta.flags.user_logged_in ) {
+		// Redirect to login if user check is complete and user is not logged in
+		if ( userCheckComplete && ! isLoggedIn ) {
 			// Build the redirect URL to return to this page after login
 			const currentUrl = window.location.pathname + window.location.search;
 			const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentUrl ) }`;
 			window.location.replace( loginUrl );
 		}
-	}, [ meta, isLoggedIn ] );
+	}, [ userCheckComplete, isLoggedIn ] );
 
 	const onApprove = () => {
 		if ( ! meta ) {
@@ -168,12 +163,6 @@ function Authorize( {
 		}
 		handleSwitch( meta );
 	};
-
-	// Check if user is authenticated, redirect to login if not
-	if ( userCheckComplete && ! isLoggedIn ) {
-		// Will be redirected in useEffect below
-		return null;
-	}
 
 	let content = null;
 	if ( isLoading || ! meta ) {
