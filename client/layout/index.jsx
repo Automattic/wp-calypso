@@ -180,7 +180,7 @@ class Layout extends Component {
 		}
 
 		if ( this.props.isMSDEnabledForReader ) {
-			return <AsyncLoad require="calypso/reader/layout/header" placeholder={ null } />;
+			return <AsyncLoad require="calypso/reader/components/header" placeholder={ null } />;
 		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
