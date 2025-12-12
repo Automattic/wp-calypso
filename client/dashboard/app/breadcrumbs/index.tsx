@@ -16,9 +16,18 @@ interface BreadcrumbsProps {
 	 * Receives the href and label of the clicked item.
 	 */
 	onItemClick?: ( href: string, label: string ) => void;
+	/**
+	 * Optional. Whether to render the breadcrumb items as links.
+	 * @default true
+	 */
+	renderAsLinks?: boolean;
 }
 
-export default function Breadcrumbs( { length, onItemClick }: BreadcrumbsProps ) {
+export default function Breadcrumbs( {
+	length,
+	onItemClick,
+	renderAsLinks = true,
+}: BreadcrumbsProps ) {
 	const matches = useMatches();
 
 	const items: BreadcrumbItemProps[] = matches
@@ -35,16 +44,20 @@ export default function Breadcrumbs( { length, onItemClick }: BreadcrumbsProps )
 	return (
 		<BreadcrumbsComponent
 			items={ items }
-			renderItemLink={ ( { href, label, ...rest } ) => (
-				<Link
-					to={ href }
-					search={ getTransientQueryParamsAtPathname( href ) }
-					onClick={ () => onItemClick?.( href, label ) }
-					{ ...rest }
-				>
-					{ label }
-				</Link>
-			) }
+			renderItemLink={ ( { href, label, ...rest } ) =>
+				renderAsLinks ? (
+					<Link
+						to={ href }
+						search={ getTransientQueryParamsAtPathname( href ) }
+						onClick={ () => onItemClick?.( href, label ) }
+						{ ...rest }
+					>
+						{ label }
+					</Link>
+				) : (
+					<span { ...rest }>{ label }</span>
+				)
+			}
 		/>
 	);
 }
