@@ -62,7 +62,7 @@ export const BulkActionsProgressNotice = () => {
 
 		return (
 			<Notice variant="warning" title={ title }>
-				<p>{ __( "This may take a few minutes. This page will refresh once it's complete." ) }</p>
+				{ __( "This may take a few minutes. This page will refresh once it's complete." ) }
 			</Notice>
 		);
 	}
@@ -80,7 +80,7 @@ export const BulkActionsProgressNotice = () => {
 	if ( allUpdatesFailed ) {
 		return (
 			<Notice onClose={ closeNotice } variant="error" title={ __( 'Domain updates failed' ) }>
-				<p>{ __( 'Please try again. If the problem persists, contact support.' ) }</p>
+				{ __( 'Please try again. If the problem persists, contact support.' ) }
 			</Notice>
 		);
 	}
@@ -102,7 +102,7 @@ export const BulkActionsProgressNotice = () => {
 				title={ __( 'Some domain updates were not successful' ) }
 			>
 				<p>{ __( 'Please try again. If the problem persists, contact support.' ) }</p>
-				<p>{ sprintf( title, { domains: data.failed.join( ', ' ) } ) }</p>
+				<span>{ sprintf( title, { domains: data.failed.join( ', ' ) } ) }</span>
 			</Notice>
 		);
 	}
@@ -114,7 +114,7 @@ export const BulkActionsProgressNotice = () => {
 
 	return (
 		<Notice onClose={ closeNotice } variant="success" title={ __( 'All updates complete' ) }>
-			<p>{ content }</p>
+			{ content }
 		</Notice>
 	);
 };
