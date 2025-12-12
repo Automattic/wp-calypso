@@ -1,4 +1,3 @@
-import { useNavigate } from '@tanstack/react-router';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -6,16 +5,12 @@ import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
-import { useAuth } from '../auth';
-import { useLocale } from '../locale';
+import type { User } from '@automattic/api-core';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
-export default function Notifications( { className }: { className: string } ) {
-	const navigate = useNavigate();
-	const { user } = useAuth();
-	const locale = useLocale();
+export default function Notifications( { user, className }: { user: User; className: string } ) {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
@@ -37,7 +32,7 @@ export default function Notifications( { className }: { className: string } ) {
 		VIEW_SETTINGS: [
 			() => {
 				handleClose();
-				navigate( { to: '/me/notifications' } );
+				window.location.assign( '/v2/me/notifications' );
 			},
 		],
 		EDIT_COMMENT: [
@@ -107,7 +102,7 @@ export default function Notifications( { className }: { className: string } ) {
 				>
 					<Suspense fallback={ null }>
 						<AsyncNotificationApp
-							locale={ locale }
+							locale={ user.language }
 							isDismissible={ isMobileViewport }
 							actionHandlers={ actionHandlers }
 							wpcom={ wpcom }
