@@ -70,6 +70,7 @@ class PlansComponent extends Component {
 		customerType: PropTypes.string,
 		selectedFeature: PropTypes.string,
 		redirectTo: PropTypes.string,
+		pluginSlug: PropTypes.string,
 		selectedSite: PropTypes.object,
 	};
 
@@ -168,6 +169,7 @@ class PlansComponent extends Component {
 				selectedFeature={ this.props.selectedFeature }
 				selectedPlan={ this.props.selectedPlan }
 				redirectTo={ this.props.redirectTo }
+				pluginSlug={ this.props.pluginSlug }
 				coupon={ this.props.coupon }
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }

@@ -114,6 +114,7 @@ export interface PlansFeaturesMainProps {
 	selectedFeature?: string;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
+	pluginSlug?: string;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -198,6 +199,7 @@ const PlansFeaturesMain = ( {
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectTo,
+	pluginSlug,
 	redirectToAddDomainFlow,
 	siteId,
 	selectedPlan,
@@ -411,6 +413,7 @@ const PlansFeaturesMain = ( {
 		showModalAndExit,
 		coupon,
 		redirectTo,
+		pluginSlug,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>

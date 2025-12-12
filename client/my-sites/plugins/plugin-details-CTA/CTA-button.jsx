@@ -280,6 +280,7 @@ function onClickInstallPlugin( {
 
 	dispatch( productToBeInstalled( plugin.slug, selectedSite.slug ) );
 
+	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }#step2`;
 	if ( isMarketplaceProduct ) {
 		// We need to add the product to the  cart.
 		// Plugin install is handled on the backend by activating the subscription.
@@ -289,11 +290,12 @@ function onClickInstallPlugin( {
 		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
 
 		if ( upgradeAndInstall ) {
-			// Redirect to plans page to let user choose a plan, then redirect to checkout with plugin
-			const checkoutUrl = `/checkout/${ selectedSite.slug }/${ product_slug }#step2`;
+			// Redirect to plans page to let user choose a plan, then checkout with both plan and plugin
 			return page(
-				`/plans/${ selectedSite.slug }?plan=personal_bundle&redirect_to=${ encodeURIComponent(
-					checkoutUrl
+				`/plans/${
+					selectedSite.slug
+				}?plan=personal_bundle&plugin_slug=${ product_slug }&redirect_to=${ encodeURIComponent(
+					installPluginURL
 				) }`
 			);
 		}
@@ -308,7 +310,6 @@ function onClickInstallPlugin( {
 	}
 
 	// After buying a plan we need to redirect to the plugin install page.
-	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }#step2`;
 	if ( upgradeAndInstall ) {
 		// Redirect to plans page to let user choose a plan, then redirect to plugin install
 		return page(

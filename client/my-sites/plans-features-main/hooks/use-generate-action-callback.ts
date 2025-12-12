@@ -31,11 +31,13 @@ function useUpgradeHandler( {
 	coupon,
 	cartHandler,
 	redirectTo,
+	pluginSlug,
 }: {
 	siteSlug?: string | null;
 	coupon?: string;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
+	pluginSlug?: string;
 } ) {
 	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
@@ -60,9 +62,19 @@ function useUpgradeHandler( {
 				? getPlanPath( cartItemForPlan.product_slug )
 				: '';
 
-			const checkoutUrl = cartItemForStorageAddOn
-				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
-				: `/checkout/${ siteSlug }/${ planPath }`;
+			let checkoutUrl = `/checkout/${ siteSlug }/${ planPath }`;
+
+			// Append storage add-on if present
+			if ( cartItemForStorageAddOn ) {
+				checkoutUrl = `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`;
+			}
+
+			// Append plugin if present
+			if ( pluginSlug ) {
+				checkoutUrl = cartItemForStorageAddOn
+					? `${ checkoutUrl },${ pluginSlug }`
+					: `/checkout/${ siteSlug }/${ planPath },${ pluginSlug }`;
+			}
 
 			const checkoutUrlWithArgs = addQueryArgs(
 				{ ...( coupon && { coupon } ), ...( redirectTo && { redirect_to: redirectTo } ) },
@@ -72,7 +84,7 @@ function useUpgradeHandler( {
 			page( checkoutUrlWithArgs );
 			return;
 		},
-		[ siteSlug, coupon, cartHandler, redirectTo ]
+		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug ]
 	);
 
 	return useCallback(
@@ -160,6 +172,7 @@ function useGenerateActionCallback( {
 	siteId,
 	coupon,
 	redirectTo,
+	pluginSlug,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
@@ -171,6 +184,7 @@ function useGenerateActionCallback( {
 	siteId?: number | null;
 	coupon?: string;
 	redirectTo?: string;
+	pluginSlug?: string;
 } ): UseActionCallback {
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const siteUrl = useSelector( ( state: IAppState ) => siteId && getSiteUrl( state, siteId ) );
@@ -184,7 +198,13 @@ function useGenerateActionCallback( {
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 			: null
 	);
-	const handleUpgradeClick = useUpgradeHandler( { siteSlug, coupon, cartHandler, redirectTo } );
+	const handleUpgradeClick = useUpgradeHandler( {
+		siteSlug,
+		coupon,
+		cartHandler,
+		redirectTo,
+		pluginSlug,
+	} );
 	const handleDowngradeClick = useDowngradeHandler( {
 		siteSlug,
 		siteUrl: siteUrl || '',
