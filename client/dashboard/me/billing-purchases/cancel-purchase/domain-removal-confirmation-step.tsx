@@ -55,30 +55,27 @@ export default function DomainRemovalConfirmationStep( {
 
 	return (
 		<VStack spacing={ 4 }>
-			<VStack spacing={ 4 }>
-				<SectionHeader title={ __( 'Confirm your decision' ) } level={ 3 } />
+			<SectionHeader title={ __( 'Confirm your decision' ) } level={ 3 } />
 
-				<Text>
-					{ createInterpolateElement(
-						/* translators: <domainName /> is the domain name */
-						__(
-							'<domainName /> will be deleted. Any services related to it will stop working. Are you sure you want to proceed?'
-						),
-						{
-							domainName: <strong>{ domainName }</strong>,
-						}
-					) }
-				</Text>
-				<DataForm< DomainRemovalFormData >
-					data={ formData }
-					fields={ fields }
-					form={ form }
-					onChange={ ( edits: Partial< DomainRemovalFormData > ) => {
-						setFormData( ( data ) => ( { ...data, ...edits } ) );
-					} }
-				/>
-			</VStack>
-
+			<Text>
+				{ createInterpolateElement(
+					/* translators: <domainName /> is the domain name */
+					__(
+						'<domainName /> will be deleted. Any services related to it will stop working. Are you sure you want to proceed?'
+					),
+					{
+						domainName: <strong>{ domainName }</strong>,
+					}
+				) }
+			</Text>
+			<DataForm< DomainRemovalFormData >
+				data={ formData }
+				fields={ fields }
+				form={ form }
+				onChange={ ( edits: Partial< DomainRemovalFormData > ) => {
+					setFormData( ( data ) => ( { ...data, ...edits } ) );
+				} }
+			/>
 			<ButtonStack justify="flex-end">
 				<Button
 					__next40pxDefaultSize
