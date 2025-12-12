@@ -153,7 +153,7 @@ export default function PluginsList() {
 			}
 			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
-			<Grid columns={ 2 } gap={ 6 } templateColumns="25% 1fr">
+			<Grid columns={ 2 } gap={ 6 } templateColumns="392px 1fr">
 				<Card>
 					<CardBody className="plugin-switcher-card-body">
 						<SwitcherContent
