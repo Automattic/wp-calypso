@@ -4,11 +4,16 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import Logo from './logo';
+import Notifications from './notifications';
 import './style.scss';
 
 const ReaderHeader = () => {
 	const isDesktop = useViewportMatch( 'medium' );
+	const user = useSelector( getCurrentUser );
+
 	return (
 		<HStack
 			className={ clsx( 'dashboard-header-bar', {
@@ -35,6 +40,8 @@ const ReaderHeader = () => {
 					href="/reader"
 				>
 					{ isDesktop ? __( 'Reader' ) : null }
+				</Button>
+				{ user && <Notifications user={ user } className="dashboard-secondary-menu__item" /> }
 			</HStack>
 		</HStack>
 	);

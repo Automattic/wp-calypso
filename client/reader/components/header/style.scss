@@ -28,14 +28,8 @@ $component-icon-padding: 6px;
 	&.is-support-user-session {
 		background-color: var( --dashboard-header__support-background-color );
 	}
-}
 
-.dashboard-header-bar-title > span {
-	padding-inline: $grid-unit-15;
-}
-
-.dashboard-header-bar-title {
-	@include break-medium {
-		flex-shrink: 0;
+	.dashboard-secondary-menu__item:not(.is-active) {
+		color: var(--dashboard-secondary-menu-item__color);
 	}
 }
