@@ -18,7 +18,7 @@ img.plugin-icon {
 	max-height: calc(100vh - 2 * ( 64px + 1px ) - 2 * 32px - 80px - 32px);
 	padding-inline-start: 0;
 	padding-inline-end: 0;
-	overflow-y: hidden;
+	overflow-y: auto;
 }
 
 .plugin-sites-card-header {
