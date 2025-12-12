@@ -899,7 +899,9 @@ const PlansFeaturesMain = ( {
 								{ gridPlansForFeaturesGrid && (
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
-										className="plans-features-main__features-grid"
+										className={ `plans-features-main__features-grid${
+											isLongSet || isShortSet ? ' is-plan-differentiators-experiment' : ''
+										}` }
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
