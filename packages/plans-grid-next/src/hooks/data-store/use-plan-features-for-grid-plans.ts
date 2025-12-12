@@ -78,12 +78,14 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
 								isSummerSpecial,
 							} ) ??
-							[]
+							[],
+						true // isExperimentVariant
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
+						true // isExperimentVariant
 					);
 				} else if ( useLongSetStackedFeatures ) {
 					// Use the stacked features (incremental) for long_set_stacked variant
@@ -94,12 +96,14 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
 								isSummerSpecial,
 							} ) ??
-							[]
+							[],
+						true // isExperimentVariant
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
+						true // isExperimentVariant
 					);
 				} else if ( useLongSetFeatures ) {
 					// Use the long set features for the differentiators experiment
@@ -109,12 +113,14 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
 								isSummerSpecial,
 							} ) ??
-							[]
+							[],
+						true // isExperimentVariant
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
+						true // isExperimentVariant
 					);
 				} else if ( 'plans-newsletter' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(

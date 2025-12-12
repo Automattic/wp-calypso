@@ -75,10 +75,13 @@ export type Feature = string;
 
 export type FeatureObject = {
 	getSlug: () => string;
-	getTitle: ( params?: { domainName?: string } ) => TranslateResult;
+	getTitle: ( params?: { domainName?: string; isExperimentVariant?: boolean } ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
 	getHeader?: () => TranslateResult;
-	getDescription?: ( params?: { domainName?: string } ) => TranslateResult;
+	getDescription?: ( params?: {
+		domainName?: string;
+		isExperimentVariant?: boolean;
+	} ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
 	getCompareSubtitle?: () => TranslateResult;

@@ -93,7 +93,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				if ( experimentFeatureMethod && planConstantObj[ experimentFeatureMethod ]?.().length ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj[ experimentFeatureMethod ]().slice()
+						planConstantObj[ experimentFeatureMethod ]().slice(),
+						true // isExperimentVariant - use alternative copy for experiment
 					);
 				} else if (
 					// Check if there's a specific override for comparison
