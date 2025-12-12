@@ -130,7 +130,7 @@ export const marketplaceReferPremiumPlanContext: Callback = ( context, next ) =>
 	next();
 };
 
-export const checkoutWithPlanContext: Callback = ( context, next ) => {
+export const checkoutContext: Callback = ( context, next ) => {
 	const { siteSlug, planSlug } = context.params;
 	const { referral_blog_id } = context.query;
 	const referralBlogId = referral_blog_id ? parseInt( referral_blog_id ) : undefined;
@@ -138,27 +138,12 @@ export const checkoutWithPlanContext: Callback = ( context, next ) => {
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
-			<PageViewTracker title="Marketplace > Checkout" path={ context.path } />
+			<MarketplacePageViewTracker title="Marketplace > Checkout" path={ context.path } />
 			<Checkout referralBlogId={ referralBlogId } siteSlug={ siteSlug } planSlug={ planSlug } />
 		</>
 	);
 	next();
 };
-
-export const checkoutContext: Callback = ( context, next ) => {
-	const { referral_blog_id } = context.query;
-	const referralBlogId = referral_blog_id ? parseInt( referral_blog_id ) : undefined;
-
-	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = (
-		<>
-			<MarketplacePageViewTracker title="Marketplace > Checkout" path={ context.path } />
-			<Checkout referralBlogId={ referralBlogId } />
-		</>
-	);
-	next();
-};
-
 export const assignLicenseContext: Callback = ( context, next ) => {
 	const { page, search } = context.query;
 	const initialPage = parseInt( page ) || 1;

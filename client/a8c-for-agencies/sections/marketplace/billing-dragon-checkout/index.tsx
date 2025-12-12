@@ -184,16 +184,7 @@ function BillingDragonCheckoutContent( {
 			debug( '[A4A Checkout] No matching products found to add to cart' );
 			setError( 'Could not find the requested products' );
 		}
-	}, [
-		isReady,
-		error,
-		replaceProductsInCart,
-		responseCart,
-		agency,
-		cartItems,
-		siteId,
-		isPlanCheckout,
-	] );
+	}, [ isReady, error, replaceProductsInCart, responseCart, agency, cartItems, isPlanCheckout ] );
 
 	// Debugging: Set a timeout to force showing the checkout after 2 seconds
 	// Todo: This was reduced from 10 seconds to 2 seconds to check if it works well. Better UX.

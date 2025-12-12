@@ -15,7 +15,6 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	assignLicenseContext,
 	checkoutContext,
-	checkoutWithPlanContext,
 	marketplaceContext,
 	marketplaceHostingContext,
 	marketplaceProductsContext,
@@ -64,7 +63,7 @@ export default function () {
 	page(
 		`${ A4A_MARKETPLACE_CHECKOUT_LINK }/:siteSlug/:planSlug`,
 		requireAccessContext,
-		checkoutWithPlanContext,
+		checkoutContext,
 		makeLayout,
 		clientRender
 	);
