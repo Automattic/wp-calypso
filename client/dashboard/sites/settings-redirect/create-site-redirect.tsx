@@ -8,7 +8,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { Card, CardBody } from '../../components/card';
 import { Notice } from '../../components/notice';
-import { wpcomLink } from '../../utils/link';
+import { dashboardLinkWithBackport, wpcomLink } from '../../utils/link';
 import SiteRedirectForm, { SiteRedirectFormData } from './site-redirect-form';
 
 export default function CreateSiteRedirect( {
@@ -38,7 +38,10 @@ export default function CreateSiteRedirect( {
 
 	const handleSubmit = async ( formData: SiteRedirectFormData ) => {
 		setIsSubmitting( true );
-		const backUrl = window.location.href.replace( window.location.origin, '' );
+		const backUrl = dashboardLinkWithBackport(
+			window.location.href.replace( window.location.origin, '' )
+		);
+
 		const { shoppingCartManagerClient } = await import(
 			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
 		);

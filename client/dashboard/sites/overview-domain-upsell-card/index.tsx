@@ -10,7 +10,7 @@ import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { wpcomLink } from '../../utils/link';
+import { dashboardLinkWithBackport, wpcomLink } from '../../utils/link';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
@@ -52,7 +52,9 @@ const DomainUpsellCardContent = ( {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
 
-	const backUrl = window.location.href.replace( window.location.origin, '' );
+	const backUrl = dashboardLinkWithBackport(
+		window.location.href.replace( window.location.origin, '' )
+	);
 
 	const handleUpsell = async () => {
 		if ( suggestedDomain ) {
