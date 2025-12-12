@@ -1,3 +1,4 @@
+import { Card, CardBody } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import Gravatar from 'calypso/components/gravatar';
@@ -32,25 +33,27 @@ const UserCard = ( { user, variant = 'horizontal' }: UserCardProps ) => {
 	};
 
 	return (
-		<div
+		<Card
 			className={ clsx( 'oauth2-connect__user-card', {
 				'oauth2-connect__user-card-centered': isCentered,
 				'oauth2-connect__user-card-horizontal': ! isCentered,
 			} ) }
 		>
-			<Gravatar
-				user={ user }
-				size={ isCentered ? 80 : 72 }
-				imgSize={ isCentered ? 160 : 144 }
-				className={ clsx( 'oauth2-connect__user-avatar', {
-					'oauth2-connect__user-avatar-centered': isCentered,
-				} ) }
-			/>
-			<div className="oauth2-connect__user-info">
-				<div className="oauth2-connect__user-name">{ user.display_name }</div>
-				<div className="oauth2-connect__user-details">{ getUserDetails() }</div>
-			</div>
-		</div>
+			<CardBody>
+				<Gravatar
+					user={ user }
+					size={ isCentered ? 80 : 72 }
+					imgSize={ isCentered ? 160 : 144 }
+					className={ clsx( 'oauth2-connect__user-avatar', {
+						'oauth2-connect__user-avatar-centered': isCentered,
+					} ) }
+				/>
+				<div className="oauth2-connect__user-info">
+					<div className="oauth2-connect__user-name">{ user.display_name }</div>
+					<div className="oauth2-connect__user-details">{ getUserDetails() }</div>
+				</div>
+			</CardBody>
+		</Card>
 	);
 };
 

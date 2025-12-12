@@ -22,27 +22,28 @@
 }
 
 .oauth2-connect__user-card {
-	display: flex;
-	border: 1px solid #dcdcde;
-	border-radius: 4px;
-	background: #fff;
 	width: 100%;
 	box-sizing: border-box;
+
+	.components-card__body {
+		display: flex;
+		gap: 16px;
+	}
 }
 
-.oauth2-connect__user-card-horizontal {
+.oauth2-connect__user-card-horizontal .components-card__body {
 	flex-direction: row;
 	align-items: center;
-	gap: 16px;
-	padding: 16px;
 }
 
 .oauth2-connect__user-card-centered {
-	flex-direction: column;
-	align-items: center;
-	gap: 16px;
-	padding: 32px 24px;
 	text-align: center;
+
+	.components-card__body {
+		flex-direction: column;
+		align-items: center;
+		padding: 32px 24px;
+	}
 }
 
 .oauth2-connect__user-avatar {
