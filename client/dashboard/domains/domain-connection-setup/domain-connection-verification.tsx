@@ -1,14 +1,17 @@
 import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import {
+	ExternalLink,
 	Icon,
 	Button,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { layout, swatch, atSymbol, published } from '@wordpress/icons';
+import { useAppContext } from '../../app/context';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -42,12 +45,15 @@ export default function DomainConnectionVerification( {
 	onRestartConnection,
 	isRestartingConnection,
 }: DomainConnectionVerificationProps ) {
+	const { name: appName } = useAppContext();
 	const status: DomainConnectionStatus = isMappingVerificationSuccess(
 		domainMappingStatus.mode,
 		domainMappingStatus
 	)
 		? 'connected'
 		: 'verifying';
+
+	const hasCloudflareIpAddresses = domainMappingStatus.has_cloudflare_ip_addresses;
 
 	const connectedAndCanBeSetAsPrimary =
 		status === 'connected' && ! domainData.primary_domain && domainData.can_set_as_primary;
@@ -78,27 +84,57 @@ export default function DomainConnectionVerification( {
 
 					{ status === 'verifying' && (
 						<Notice variant="info">
-							{ __(
-								'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
-							) }
+							{ hasCloudflareIpAddresses
+								? createInterpolateElement(
+										__(
+											'<domainName/> is using Cloudflare, which hides DNS records, so we can’t verify them the usual way. We’ll still confirm that your domain name points to <appName/>.com. Please check that your <cloudflare/> DNS settings include the required records.'
+										),
+										{
+											domainName: <>{ domainName }</>,
+											appName: <>{ appName }</>,
+											cloudflare: (
+												<ExternalLink href="https://www.cloudflare.com/">Cloudflare</ExternalLink>
+											),
+										}
+								  )
+								: __(
+										'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
+								  ) }
 						</Notice>
 					) }
 
 					<VStack spacing={ 4 }>
-						<Text size="medium" weight={ 500 }>
-							{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
-								? __( 'Name server verification' )
-								: __( 'DNS record verification' ) }
-						</Text>
+						{ ! hasCloudflareIpAddresses && (
+							<Text size="medium" weight={ 500 }>
+								{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
+									? __( 'Name server verification' )
+									: __( 'DNS record verification' ) }
+							</Text>
+						) }
 
-						<DnsRecordsTable
-							domainName={ domainName }
-							domainConnectionStatus={ domainMappingStatus }
-							domainConnectionSetupInfo={ domainConnectionSetupInfo }
-						/>
+						{ ! hasCloudflareIpAddresses && (
+							<DnsRecordsTable
+								domainName={ domainName }
+								domainConnectionStatus={ domainMappingStatus }
+								domainConnectionSetupInfo={ domainConnectionSetupInfo }
+							/>
+						) }
+						{ hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom && (
+							<Notice variant="info">
+								{ createInterpolateElement(
+									__(
+										'<domainName/> appears to be set up with Cloudflare and it resolves to <appName/>.'
+									),
+									{
+										domainName: <>{ domainName }</>,
+										appName: <>{ appName }</>,
+									}
+								) }
+							</Notice>
+						) }
 					</VStack>
 
-					{ status === 'connected' && <DomainPropagationStatus domainName={ domainName } /> }
+					<DomainPropagationStatus domainName={ domainName } />
 
 					<VStack spacing={ 4 }>
 						{ status === 'verifying' && (
