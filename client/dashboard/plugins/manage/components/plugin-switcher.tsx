@@ -18,12 +18,12 @@ const FALLBACK_ICON_SIZE = 30;
 export const PluginSwitcher = ( {
 	pluginsWithIcon,
 	searchableFields,
-	selectedPluginSlug,
+	selectedPluginSlug = '',
 	view,
 }: {
 	pluginsWithIcon: PluginListRow[];
 	searchableFields: Field< PluginListRow >[];
-	selectedPluginSlug: string;
+	selectedPluginSlug?: string;
 	view: View;
 } ) => {
 	const itemClassName = useCallback(

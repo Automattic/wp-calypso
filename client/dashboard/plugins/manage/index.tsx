@@ -7,9 +7,11 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { __experimentalGrid as Grid } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -37,6 +39,7 @@ const searchableFields = [
 ];
 
 export default function PluginsList() {
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const { data: sitesPlugins } = useQuery( pluginsQuery() );
 	const { sitesById } = useSitesById();
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
@@ -97,6 +100,34 @@ export default function PluginsList() {
 			};
 		} );
 	}, [ plugins, iconBySlug ] );
+
+	if ( isSmallViewport ) {
+		return (
+			<PageLayout
+				size="large"
+				header={
+					<PageHeader
+						title={ pluginSlug ? __( 'Plugin details' ) : __( 'Manage plugins' ) }
+						description={
+							pluginSlug ? null : __( 'Install, activate, and manage plugins across your sites.' )
+						}
+						prefix={ pluginSlug ? <Breadcrumbs length={ 2 } /> : null }
+					/>
+				}
+				notices={ <OptInWelcome tracksContext="plugins" /> }
+			>
+				{ pluginSlug ? (
+					<PluginSites selectedPluginSlug={ selectedPluginSlug } />
+				) : (
+					<PluginSwitcher
+						pluginsWithIcon={ pluginsWithIcon }
+						searchableFields={ searchableFields }
+						view={ view }
+					/>
+				) }
+			</PageLayout>
+		);
+	}
 
 	return (
 		<PageLayout
