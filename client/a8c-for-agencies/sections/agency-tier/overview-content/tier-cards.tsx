@@ -132,14 +132,14 @@ export default function TierCards( {
 					isDismissible
 					size="medium"
 					onRequestClose={ () => setShowEarlyAccessModal( false ) }
-					title={ __( "You've been granted early access" ) }
+					title={ __( 'You’ve been granted early access' ) }
 				>
 					<VStack spacing={ 8 }>
 						<Text>
 							{ sprintf(
 								/* translators: %s is the tier name */
 								__(
-									"You've been given early access to the %s tier in recognition of your partnership with Automattic. This is your head start to unlock powerful benefits, tools, and resources."
+									'You’ve been given early access to the %s tier in recognition of your partnership with Automattic. This is your head start to unlock powerful benefits, tools, and resources.'
 								),
 								currentTier.name
 							) }
