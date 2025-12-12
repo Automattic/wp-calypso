@@ -41,10 +41,9 @@ const PermissionsList = ( { permissions, clientTitle }: PermissionsListProps ) =
 					} ) }
 
 					{ hasMorePermissions && (
-						<button
+						<Button
 							onClick={ () => setShowAll( ! showAll ) }
 							className="oauth2-connect__show-more"
-							type="button"
 							aria-expanded={ showAll }
 							aria-label={
 								showAll
@@ -58,7 +57,7 @@ const PermissionsList = ( { permissions, clientTitle }: PermissionsListProps ) =
 										args: { count: hiddenCount },
 								  } ) }
 							<Icon icon={ chevronDown } size={ 20 } className={ showAll ? 'is-rotated' : '' } />
-						</button>
+						</Button>
 					) }
 				</div>
 			</div>
