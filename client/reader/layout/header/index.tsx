@@ -3,7 +3,6 @@ import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import Logo from './logo';
-import SecondaryMenu from './secondary-menu';
 
 import './style.scss';
 
@@ -23,13 +22,9 @@ const ReaderHeader = () => {
 			<Button
 				style={ { flexShrink: 0 } }
 				icon={ <Logo /> }
-				label={ __( 'Reader Home' ) }
+				label={ __( 'WordPress.com Home' ) }
 				href="/reader"
 			/>
-
-			<HStack spacing={ 2 } justify="flex-end">
-				<SecondaryMenu />
-			</HStack>
 		</HStack>
 	);
 };
