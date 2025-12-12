@@ -23,7 +23,7 @@ export default function useOdieConversationList(): Result {
 	const botSlugs = Array.from(
 		new Set(
 			supportInteractions.map( ( interaction ) => {
-				// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
+				// See `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
 				return interaction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
 			} )
 		)

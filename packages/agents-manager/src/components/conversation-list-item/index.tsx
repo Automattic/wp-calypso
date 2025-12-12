@@ -17,7 +17,7 @@ interface Props {
 	onClick: ( type: ConversationType, id: string ) => void;
 }
 
-export default function ConversationListItem( { conversation, onClick = () => {} }: Props ) {
+export default function ConversationListItem( { conversation, onClick }: Props ) {
 	const { type, id, message, createdAt } = conversation;
 
 	const title = message

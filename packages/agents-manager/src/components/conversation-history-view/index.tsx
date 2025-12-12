@@ -22,7 +22,7 @@ interface Props {
 export default function ConversationHistoryView( {
 	agentId,
 	authProvider,
-	onSelectConversation = () => {},
+	onSelectConversation,
 	onNewChat,
 }: Props ) {
 	// To use the latest onSelectConversation in the callback

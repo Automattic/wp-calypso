@@ -16,11 +16,11 @@ interface Result {
 }
 
 function getStatus( hasData: boolean, isError: boolean, isLoading: boolean ): Status {
-	if ( isError ) {
-		return 'error';
-	}
 	if ( isLoading ) {
 		return 'loading';
+	}
+	if ( isError ) {
+		return 'error';
 	}
 	if ( hasData ) {
 		return 'success';
