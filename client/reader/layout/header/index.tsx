@@ -23,7 +23,7 @@ const ReaderHeader = () => {
 				style={ { flexShrink: 0 } }
 				icon={ <Logo /> }
 				label={ __( 'WordPress.com Home' ) }
-				href="/reader"
+				href="/v2"
 			/>
 		</HStack>
 	);
