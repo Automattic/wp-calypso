@@ -78,27 +78,38 @@ function Authorize( {
 	const translate = useTranslate();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
+	const [ headersSet, setHeadersSet ] = useState( false );
 
+	// Set initial headers immediately to satisfy OneLoginLayout requirements
 	useEffect( () => {
-		if ( ! oauth2Client ) {
-			return;
-		}
+		const clientName = oauth2Client?.name || meta?.client?.title;
 
-		setHeaders( {
-			heading: translate( 'Connect {{span}}%(client)s{{/span}}', {
-				args: { client: oauth2Client.name },
-				components: { span: <span className="wp-login__one-login-header-client-name" /> },
-			} ),
-			subHeading: translate(
-				'Give {{span}}%(client)s{{/span}} access to your WordPress.com account',
-				{
-					args: { client: oauth2Client.name },
+		if ( clientName ) {
+			setHeaders( {
+				heading: translate( 'Connect {{span}}%(client)s{{/span}}', {
+					args: { client: clientName },
 					components: { span: <span className="wp-login__one-login-header-client-name" /> },
-				}
-			),
-			subHeadingSecondary: null,
-		} );
-	}, [ oauth2Client, setHeaders, translate ] );
+				} ),
+				subHeading: translate(
+					'Give {{span}}%(client)s{{/span}} access to your WordPress.com account',
+					{
+						args: { client: clientName },
+						components: { span: <span className="wp-login__one-login-header-client-name" /> },
+					}
+				),
+				subHeadingSecondary: null,
+			} );
+			setHeadersSet( true );
+		} else {
+			// Set default headers while loading
+			setHeaders( {
+				heading: translate( 'Connect' ),
+				subHeading: translate( 'Give access to your WordPress.com account' ),
+				subHeadingSecondary: null,
+			} );
+			setHeadersSet( true );
+		}
+	}, [ oauth2Client, meta, setHeaders, translate ] );
 
 	useEffect( () => {
 		if ( ! meta ) {
@@ -180,6 +191,11 @@ function Authorize( {
 				) }
 			</div>
 		);
+	}
+
+	// Don't render OneLoginLayout until headers are set
+	if ( ! headersSet ) {
+		return null;
 	}
 
 	return (
