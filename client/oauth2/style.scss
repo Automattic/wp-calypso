@@ -14,11 +14,11 @@
 .oauth2-connect {
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 32px;
 	max-width: 432px;
 	width: 100%;
 	margin: 0 auto;
-	padding: 24px 16px;
+	padding: 0 16px 24px;
 }
 
 .oauth2-connect__user-card {
@@ -99,7 +99,7 @@
 .oauth2-connect__permissions {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 18px;
 }
 
 .oauth2-connect__permissions-heading {
