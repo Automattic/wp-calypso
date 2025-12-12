@@ -47,8 +47,6 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 	const availableDevSites = devLicenses?.available;
 	const hasAvailableDevSites = devLicenses?.available > 0;
 
-	// Show dev sites section if dev sites are enabled and BD checkout is not enabled
-	// @todo: Remove this before merging as this is a temporary flag to test the new BD checkout
 	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 
 	const handleOnClick = useCallback(

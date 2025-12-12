@@ -19,8 +19,7 @@ function Checkout( { referralBlogId, isClient, siteSlug, planSlug }: CheckoutPro
 
 	// New Billing Dragon Checkout V2 page: check for BD feature flag and it's not in a referral context
 	if (
-		// @todo: Remove this before merging as this is a temporary flag to test the new BD checkout
-		// isEnabled( 'a4a-bd-checkout' ) &&
+		isEnabled( 'a4a-bd-checkout' ) &&
 		! isReferralMarketplace &&
 		! isClient &&
 		! referralBlogId
