@@ -36,6 +36,14 @@ export class PeoplePage {
 	}
 
 	/**
+	 * Get the underlying Playwright page instance.
+	 * @returns the Playwright page instance
+	 */
+	getPage(): Page {
+		return this.page;
+	}
+
+	/**
 	 * Gets the team members list container.
 	 *
 	 * @returns {Promise<Locator>} The locator for the team members list container.
@@ -92,7 +100,7 @@ export class PeoplePage {
 	 * @param {string} username Username of the user.
 	 */
 	async selectInvitation( username: string ): Promise< void > {
-		( await this.getPeopleTeamMembersListContainer() ).getByTitle( username ).click();
+		await ( await this.getPendingInvitesListContainer() ).getByTitle( username ).click();
 	}
 
 	/**
@@ -101,7 +109,9 @@ export class PeoplePage {
 	 * @param {string} username Username of the user.
 	 */
 	async selectTeamMemberUser( username: string ): Promise< void > {
-		( await this.getPeopleTeamMembersListContainer() ).getByTitle( username ).click();
+		await ( await this.getPeopleTeamMembersListContainer() )
+			.getByRole( 'link', { name: username } )
+			.click();
 	}
 
 	/**
@@ -122,7 +132,7 @@ export class PeoplePage {
 		await this.page.getByRole( 'button', { name: `Remove ${ username }` } ).click();
 		await this.page.getByRole( 'button', { name: 'Remove', exact: true } ).click();
 		await expect(
-			this.page.getByText( `Successfully removed ${ username }` ),
+			this.page.getByText( `Successfully removed @${ username }` ),
 			'User removed notice should be visible'
 		).toBeVisible();
 	}
@@ -150,5 +160,24 @@ export class PeoplePage {
 			this.page.getByText( 'Invite deleted' ),
 			'Invite deleted notice should be visible'
 		).toBeVisible();
+	}
+
+	/**
+	 * Navigates to the team member user details page with a direct URL. Verifies that the page is loaded by checking the presence of the Remove button.
+	 * @param baseURL Calypso URL.
+	 * @param siteURL User's primary site URL.
+	 * @param username Username of the team member.
+	 */
+	async visitTeamMemberUserDetails(
+		baseURL: string,
+		siteURL: string,
+		username: string
+	): Promise< void > {
+		expect( baseURL, 'Base URL should be defined' ).toBeDefined();
+		expect( siteURL, 'Site URL should be defined' ).toBeDefined();
+		expect( username, 'Username should be defined' ).toBeDefined();
+		await this.page.goto( `${ baseURL }/people/edit/${ siteURL }/${ username }` );
+
+		await expect( this.page.getByRole( 'button', { name: 'Remove' } ) ).toBeVisible();
 	}
 }

@@ -25,6 +25,7 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		pageAddPeople,
 		pageInvitePeople,
 		accountPreRelease,
+		helperData,
 	} ) => {
 		await test.step( 'Given I am logged in as a site owner', async function () {
 			await accountPreRelease.authenticate( page );
@@ -64,9 +65,9 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'Then I can see the invite is pending', async function () {
 			await expect( async () => {
-				page.reload();
-				expect( page.getByTitle( testUser.email ) ).toBeVisible();
-			} ).toPass();
+				await page.reload();
+				await expect( pagePeople.getPage().getByTitle( testUser.email ) ).toBeVisible();
+			} ).toPass( { timeout: 60000 } );
 		} );
 
 		await test.step( 'When the invited user checks their email', async function () {
@@ -81,11 +82,16 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 			expect( acceptInviteLink ).toBeDefined();
 		} );
 
+		let signedUpUsername: string;
+
 		await test.step( 'And they sign up from the invite link', async function () {
 			await pageIncognito.goto( acceptInviteLink );
 
 			const userSignupPage = new UserSignupPage( pageIncognito.getPage() );
-			await userSignupPage.signupThroughInvite( testUser.email );
+			const signUpResponse = await userSignupPage.signupThroughInvite( testUser.email );
+
+			signedUpUsername = signUpResponse?.body?.username;
+			expect( signedUpUsername ).toBeDefined();
 		} );
 
 		await test.step( 'Then they see a welcome banner after signup', async function () {
@@ -98,21 +104,17 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 			await componentSidebar.navigate( 'Users', 'All Users' );
 		} );
 
-		await test.step( 'Then I can see the invited user in the team', async function () {
-			await expect( async () => {
-				page.reload();
-				expect(
-					( await pagePeople.getPeopleTeamMembersListContainer() ).getByTitle( testUser.email )
-				).toBeVisible();
-			} ).toPass();
+		await test.step( 'Then I can see the invited user part of the team', async function () {
+			// Use direct navigation to avoid finding the user when there are over 100 team members piled up.
+			await pagePeople.visitTeamMemberUserDetails(
+				helperData.getCalypsoURL(),
+				accountPreRelease.credentials.testSites?.primary?.url as string,
+				signedUpUsername
+			);
 		} );
 
-		await test.step( 'When I select the invited user from the site', async function () {
-			await pagePeople.selectTeamMemberUser( testUser.username );
-		} );
-
-		await test.step( 'When I remove the invited user from the site', async function () {
-			await pagePeople.removeUserFromSite( testUser.username );
+		await test.step( 'Then I can remove the team member from the site', async function () {
+			await pagePeople.removeUserFromSite( signedUpUsername );
 		} );
 
 		await test.step( 'And the invited user closes their account', async function () {
