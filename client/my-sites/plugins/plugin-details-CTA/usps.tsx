@@ -5,7 +5,6 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	getPlan,
 } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { Icon, check } from '@wordpress/icons';
@@ -130,12 +129,15 @@ export const PlanUSPS: React.FC< Props > = ( {
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 	const supportText = usePluginsSupportText();
 	const requiredPlan = useRequiredPlan( shouldUpgrade );
-	const planDisplayCost = useSelector( ( state ) => {
-		return getProductDisplayCost( state, requiredPlan || '' );
+
+	// Always use Personal plan as it's the lowest tier paid plan
+	const lowestPlan = PLAN_PERSONAL;
+
+	const lowestPlanDisplayCost = useSelector( ( state ) => {
+		return getProductDisplayCost( state, lowestPlan || '', true );
 	} );
+
 	const monthlyLabel = translate( 'month' );
-	const annualLabel = translate( 'year' );
-	const periodicityLabel = isAnnualPeriod ? annualLabel : monthlyLabel;
 
 	if ( ! shouldUpgrade ) {
 		return null;
@@ -145,29 +147,14 @@ export const PlanUSPS: React.FC< Props > = ( {
 	switch ( requiredPlan ) {
 		case PLAN_PERSONAL:
 		case PLAN_PERSONAL_MONTHLY:
-			planText = translate(
-				'Included in the %(personalPlanName)s plan (%(cost)s/%(periodicity)s):',
-				{
-					args: {
-						personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() as string,
-						cost: planDisplayCost as string,
-						periodicity: periodicityLabel,
-					},
-				}
-			);
-			break;
 		case PLAN_BUSINESS:
 		case PLAN_BUSINESS_MONTHLY:
-			planText = translate(
-				'Included in the %(businessPlanName)s plan (%(cost)s/%(periodicity)s):',
-				{
-					args: {
-						businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() as string,
-						cost: planDisplayCost as string,
-						periodicity: periodicityLabel,
-					},
-				}
-			);
+			planText = translate( 'Included on all paid plans (starting at %(cost)s/%(periodicity)s)', {
+				args: {
+					cost: lowestPlanDisplayCost as string,
+					periodicity: monthlyLabel,
+				},
+			} );
 			break;
 		case PLAN_ECOMMERCE_TRIAL_MONTHLY:
 			planText = translate( 'Included in ecommerce plans:' );
