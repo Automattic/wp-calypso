@@ -1,12 +1,14 @@
 import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import Logo from './logo';
-
 import './style.scss';
 
 const ReaderHeader = () => {
+	const isDesktop = useViewportMatch( 'medium' );
 	return (
 		<HStack
 			className={ clsx( 'dashboard-header-bar', {
@@ -25,6 +27,15 @@ const ReaderHeader = () => {
 				label={ __( 'WordPress.com Home' ) }
 				href="/v2"
 			/>
+			<HStack spacing={ 0 } justify="flex-end">
+				<Button
+					className="dashboard-secondary-menu__item"
+					icon={ <ReaderIcon /> }
+					label={ __( 'Reader' ) }
+					text={ isDesktop ? __( 'Reader' ) : undefined }
+					href="/reader"
+				/>
+			</HStack>
 		</HStack>
 	);
 };
