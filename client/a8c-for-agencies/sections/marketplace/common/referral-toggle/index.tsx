@@ -28,7 +28,7 @@ const ReferralToggle = () => {
 		toggleMarketplaceType();
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_referral_toggle', {
-				purchase_mode: marketplaceType === 'referral' ? 'regular' : 'referral',
+				purchase_mode: marketplaceType,
 			} )
 		);
 	};
