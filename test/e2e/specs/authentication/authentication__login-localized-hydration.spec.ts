@@ -19,7 +19,7 @@ test.describe(
 			} );
 			await expect( usernameInput ).toBeEnabled( { timeout: 15_000 } );
 
-			const continueButton = page.getByRole( 'button', { name: /continue/i } );
+			const continueButton = page.getByRole( 'button', { name: /^continue$/i } );
 			await expect( continueButton ).toBeEnabled( { timeout: 15_000 } );
 		} );
 
@@ -37,7 +37,7 @@ test.describe(
 			} );
 			await expect( usernameInput ).toBeEnabled( { timeout: 15_000 } );
 
-			const continueButton = page.getByRole( 'button', { name: /doorgaan/i } );
+			const continueButton = page.getByRole( 'button', { name: /^doorgaan$/i } );
 			await expect( continueButton ).toBeEnabled( { timeout: 15_000 } );
 		} );
 	}
