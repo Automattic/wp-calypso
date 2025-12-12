@@ -39,6 +39,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -46,7 +47,6 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
-import { isMultiSiteDashboardEnabled } from 'calypso/state/sites/selectors/is-multi-site-dashboard-enabled';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -371,8 +371,7 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const isMSDEnabled = isMultiSiteDashboardEnabled( state );
-		const isMSDEnabledForReader = currentSection?.name === 'reader' && isMSDEnabled;
+		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled();
 
 		const sidebarType = getSidebarType( {
 			state,
