@@ -122,7 +122,7 @@ export default function AgentDock( {
 	} );
 
 	const handleNewChat = () => {
-		navigate( '/chat', { state: { isNewChat: true } } );
+		navigate( '/' );
 	};
 
 	const handleSelectConversation = ( type: ConversationType, id: string ) => {
@@ -265,13 +265,12 @@ export default function AgentDock( {
 	return createAgentPortal(
 		// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 		<Routes>
-			<Route path="/" element={ Chat } />
 			<Route path="/odie" element={ OdieChat } />
 			<Route path="/chat" element={ Chat } />
 			<Route path="/post" element={ SupportGuideRoute } />
 			<Route path="/support-guides" element={ SupportGuidesRoute } />
 			<Route path="/history" element={ History } />
-			<Route path="*" element={ <Navigate to="/" replace /> } />
+			<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
 		</Routes>
 	);
 }
