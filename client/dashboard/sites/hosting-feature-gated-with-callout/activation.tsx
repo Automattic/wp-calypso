@@ -54,7 +54,7 @@ export default function ActivationCallout( {
 			feature,
 			initiate_transfer_context: 'hosting',
 			initiate_transfer_geo_affinity: options.geo_affinity || '',
-			redirect_to: redirectToDashboardLink(),
+			redirect_to: redirectToDashboardLink( { supportBackport: true } ),
 		} );
 	};
 

@@ -37,7 +37,7 @@ export default function UpsellCallout( {
 	feature,
 }: UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
-		const backUrl = redirectToDashboardLink();
+		const backUrl = redirectToDashboardLink( { supportBackport: true } );
 
 		window.location.href = addQueryArgs( wpcomLink( '/setup/plan-upgrade/' ), {
 			siteSlug: site.slug,
