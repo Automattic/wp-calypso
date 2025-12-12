@@ -25,9 +25,12 @@ export type AuthorizeMeta = {
 	flags: { user_logged_in: boolean; require_email_verification: boolean };
 };
 
-type Props = { params: Record< string, string > };
+type Props = { params: Record< string, string >; enabled?: boolean };
 
-export default function useAuthorizeMeta( { params }: Props ): UseQueryResult< AuthorizeMeta > {
+export default function useAuthorizeMeta( {
+	params,
+	enabled = true,
+}: Props ): UseQueryResult< AuthorizeMeta > {
 	const query = new URLSearchParams( params ).toString();
 
 	return useQuery( {
@@ -39,5 +42,6 @@ export default function useAuthorizeMeta( { params }: Props ): UseQueryResult< A
 				query,
 			} ),
 		staleTime: 30_000,
+		enabled,
 	} );
 }

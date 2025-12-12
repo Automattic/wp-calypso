@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import { useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { handleApprove, handleDeny, handleSwitch } from '../hooks/use-authorize-actions';
 import useAuthorizeMeta from '../hooks/use-authorize-meta';
@@ -73,15 +74,36 @@ function Authorize( {
 		string,
 		string
 	>;
-	const { data: meta, isLoading, error } = useAuthorizeMeta( { params } );
 	const { setHeaders } = useLoginContext();
 	const translate = useTranslate();
+	const currentUser = useSelector( getCurrentUser );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
 	const [ headersSet, setHeadersSet ] = useState( false );
 
-	// Set initial headers immediately to satisfy OneLoginLayout requirements
+	// Only fetch authorization metadata after user check is complete
+	// Wait until currentUser is loaded: either null (not logged in) or has an ID (logged in)
+	// Don't fetch if currentUser is undefined (still loading)
+	const userCheckComplete =
+		currentUser !== undefined && ( currentUser === null || !! currentUser.ID );
+	const isLoggedIn = !! ( currentUser && currentUser.ID );
+	const {
+		data: meta,
+		isLoading,
+		error,
+	} = useAuthorizeMeta( {
+		params,
+		enabled: userCheckComplete,
+	} );
+
+	// Set initial headers only after confirming user is authenticated
+	// This prevents flashing the layout before redirect to login
 	useEffect( () => {
+		// Don't set headers until we know user is authenticated
+		if ( ! userCheckComplete || ! isLoggedIn ) {
+			return;
+		}
+
 		const clientName = oauth2Client?.name || meta?.client?.title;
 
 		if ( clientName ) {
@@ -109,7 +131,7 @@ function Authorize( {
 			} );
 			setHeadersSet( true );
 		}
-	}, [ oauth2Client, meta, setHeaders, translate ] );
+	}, [ oauth2Client, meta, setHeaders, translate, userCheckComplete, isLoggedIn ] );
 
 	useEffect( () => {
 		if ( ! meta ) {
@@ -117,10 +139,14 @@ function Authorize( {
 		}
 
 		// Redirect to login if user is not logged in
-		if ( ! meta.flags.user_logged_in && meta.links?.calypso_login_url ) {
-			window.location.replace( meta.links.calypso_login_url );
+		// Check Redux state first to avoid redirect loops
+		if ( ! isLoggedIn && ! meta.flags.user_logged_in ) {
+			// Build the redirect URL to return to this page after login
+			const currentUrl = window.location.pathname + window.location.search;
+			const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentUrl ) }`;
+			window.location.replace( loginUrl );
 		}
-	}, [ meta ] );
+	}, [ meta, isLoggedIn ] );
 
 	const onApprove = () => {
 		if ( ! meta ) {
@@ -143,7 +169,14 @@ function Authorize( {
 		handleSwitch( meta );
 	};
 
+	// Check if user is authenticated, redirect to login if not
+	if ( userCheckComplete && ! isLoggedIn ) {
+		// Will be redirected in useEffect below
+		return null;
+	}
+
 	let content = null;
+	// Show loading state while fetching metadata
 	if ( isLoading || ! meta ) {
 		content = (
 			<div className="oauth2-connect__loading">
