@@ -8,13 +8,7 @@ import {
 	sitePluginUpdateMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	__experimentalText as Text,
-	Button,
-	Icon,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalText as Text, Button, Icon } from '@wordpress/components';
 import {
 	DataViews,
 	filterSortAndPaginate,
@@ -25,7 +19,6 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
 import { useCallback, useMemo, useState } from 'react';
-import { Name, URL, SiteIconLink, SiteLink } from '../../sites/site-fields';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
@@ -35,10 +28,12 @@ import { getViewFilteredByUpdates } from '../utils/update-filters';
 import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
 import { ActiveToggle } from './components/active-toggle';
 import { AutoupdateToggle } from './components/autoupdate-toggle';
-import { SiteWithPluginData, usePlugin } from './use-plugin';
+import { PluginSiteFieldContent } from './components/plugin-site-field-content';
+import { SiteWithPluginData } from './use-plugin';
 import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
 import { mapToPluginListRow } from './utils/map-to-plugin-list-row';
 import type { PluginListRow } from '../manage/types';
+import type { PluginItem } from '@automattic/api-core';
 
 const defaultView: View = {
 	type: 'table',
@@ -48,10 +43,23 @@ const defaultView: View = {
 	perPage: 10,
 };
 
-export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
+type SitesWithThisPluginProps = {
+	pluginSlug: string;
+	isLoading: boolean;
+	plugin: PluginItem | undefined;
+	pluginBySiteId: Map< number, PluginItem >;
+	sitesWithThisPlugin: SiteWithPluginData[];
+};
+
+export const SitesWithThisPlugin = ( {
+	pluginSlug,
+	isLoading,
+	plugin,
+	pluginBySiteId,
+	sitesWithThisPlugin,
+}: SitesWithThisPluginProps ) => {
 	const { mutateAsync } = useMutation( sitePluginUpdateMutation() );
 	const updateAction = buildBulkSitesPluginAction( mutateAsync );
-	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin } = usePlugin( pluginSlug );
 	const [ view, setView ] = useState< View >( defaultView );
 	const { mutateAsync: activateMutate } = useMutation( sitePluginActivateMutation() );
 	const { mutateAsync: deactivateMutate } = useMutation( sitePluginDeactivateMutation() );
@@ -84,15 +92,11 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				type: 'text',
 				getValue: ( { item }: { item: SiteWithPluginData } ) => getSiteDisplayName( item ),
 				render: ( { field, item } ) => (
-					<HStack spacing={ 3 } alignment="center" justify="flex-start">
-						<SiteIconLink site={ item } />
-						<VStack spacing={ 0 } alignment="flex-start">
-							<SiteLink site={ item }>
-								<Name site={ item } value={ field.getValue( { item } ) } />
-							</SiteLink>
-							<URL site={ item } value={ getSiteDisplayUrl( item ) } />
-						</VStack>
-					</HStack>
+					<PluginSiteFieldContent
+						site={ item }
+						name={ field.getValue( { item } ) as string }
+						url={ getSiteDisplayUrl( item ) }
+					/>
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -395,9 +399,15 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 						label: __( 'WP Admin ↗' ),
 						callback: ( items ) => {
 							const [ site ] = items;
-							window.open( site.actionLinks?.Settings, '_blank' );
+
+							if ( ! site?.URL ) {
+								return;
+							}
+
+							const baseUrl = site.URL.replace( /\/$/, '' );
+							window.open( `${ baseUrl }/wp-admin/plugins.php`, '_blank' );
 						},
-						isEligible: ( item ) => !! item.actionLinks?.Settings,
+						isEligible: ( item ) => !! item.URL,
 						supportsBulk: false,
 						isPrimary: true,
 					},

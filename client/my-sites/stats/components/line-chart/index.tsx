@@ -1,10 +1,4 @@
-import {
-	LineChart,
-	ThemeProvider,
-	jetpackTheme,
-	type EventHandlerParams,
-	type DataPointDate,
-} from '@automattic/charts';
+import { LineChart, type EventHandlerParams, type DataPointDate } from '@automattic/charts';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
@@ -196,40 +190,38 @@ function StatsLineChart( {
 		<div className={ clsx( 'stats-line-chart', className ) }>
 			{ isEmpty && emptyState }
 			{ ! isEmpty && (
-				<ThemeProvider theme={ jetpackTheme }>
-					<LineChart
-						data={ chartData }
-						withTooltips
-						withGradientFill
-						height={ height }
-						curveType={ curveType }
-						onPointerUp={ onPointerUp }
-						margin={ {
-							left: 20,
-							top: 20,
-							bottom: 20,
-							right: Math.max( formatValue( maxValue ).length * 10, 40 ), //TODO: we should support this from the lib.
-						} }
-						options={ {
-							yScale: {
-								type: yScaleType,
-								...( fixedDomain && { domain: [ 0, maxValue ] } ),
-								zero: zeroBaseline,
+				<LineChart
+					data={ chartData }
+					withTooltips
+					withGradientFill
+					height={ height }
+					curveType={ curveType }
+					onPointerUp={ onPointerUp }
+					margin={ {
+						left: 20,
+						top: 20,
+						bottom: 20,
+						right: Math.max( formatValue( maxValue ).length * 10, 40 ), //TODO: we should support this from the lib.
+					} }
+					options={ {
+						yScale: {
+							type: yScaleType,
+							...( fixedDomain && { domain: [ 0, maxValue ] } ),
+							zero: zeroBaseline,
+						},
+						axis: {
+							x: {
+								tickFormat: formatTime,
 							},
-							axis: {
-								x: {
-									tickFormat: formatTime,
-								},
-								y: {
-									orientation: 'right',
-									tickFormat: formatValue,
-									numTicks: yNumTicks,
-								},
+							y: {
+								orientation: 'right',
+								tickFormat: formatValue,
+								numTicks: yNumTicks,
 							},
-						} }
-						renderTooltip={ renderTooltip }
-					/>
-				</ThemeProvider>
+						},
+					} }
+					renderTooltip={ renderTooltip }
+				/>
 			) }
 		</div>
 	);

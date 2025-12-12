@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Badge } from '@automattic/components';
 import {
 	category,
@@ -51,7 +50,6 @@ const useMainMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
 	const agency = useSelector( getActiveAgency );
-	const isTiersRevampEnabled = config.isEnabled( 'tiers-revamp' );
 
 	const menuItems = useMemo( () => {
 		let referralItems = [] as any[];
@@ -94,29 +92,24 @@ const useMainMenuItems = ( path: string ) => {
 					menu_item: 'Automattic for Agencies / Overview',
 				},
 			},
-			...( isTiersRevampEnabled
-				? [
-						{
-							icon: starEmpty,
-							path: '/',
-							link: A4A_AGENCY_TIER_LINK,
-							title: translate( 'Agency Tier' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Agency Tier',
-							},
-						},
-				  ]
-				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-exclusive-offers' )
-				? [
-						{
-							icon: box,
-							path: '/',
-							link: A4A_EXCLUSIVE_OFFERS_LINK,
-							title: translate( 'Exclusive offers' ),
-						},
-				  ]
-				: [] ),
+			{
+				icon: starEmpty,
+				path: '/',
+				link: A4A_AGENCY_TIER_LINK,
+				title: translate( 'Agency Tier' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Agency Tier',
+				},
+			},
+			{
+				icon: box,
+				path: '/',
+				link: A4A_EXCLUSIVE_OFFERS_LINK,
+				title: translate( 'Exclusive offers' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Exclusive offers',
+				},
+			},
 			{
 				icon: category,
 				path: '/',
@@ -191,7 +184,7 @@ const useMainMenuItems = ( path: string ) => {
 				icon: commentAuthorAvatar,
 				path: '/dashboard',
 				link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
-				title: translate( 'Partner Directories' ),
+				title: translate( 'Partner directories' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Partner Directory',
 				},
@@ -237,23 +230,10 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( ! isTiersRevampEnabled
-				? [
-						{
-							icon: starEmpty,
-							path: '/',
-							link: A4A_AGENCY_TIER_LINK,
-							title: translate( 'Agency Tiers' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Agency Tier',
-							},
-						},
-				  ]
-				: [] ),
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );
-	}, [ agency, isTiersRevampEnabled, path, translate ] );
+	}, [ agency, path, translate ] );
 	return menuItems;
 };
 

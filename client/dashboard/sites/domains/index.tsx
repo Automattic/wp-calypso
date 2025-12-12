@@ -5,6 +5,7 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
+import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { domainConnectionSetupRoute } from '../../app/router/domains';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
@@ -67,6 +68,8 @@ function SiteDomains() {
 		domainConnectionSetupUrlRelativePath,
 		window.location.origin
 	).href;
+	const { basePath } = useAppContext();
+	const redirectTo = `${ basePath }/sites/${ site.slug }/domains`;
 
 	return (
 		<PageLayout
@@ -77,6 +80,7 @@ function SiteDomains() {
 						<AddDomainButton
 							siteSlug={ site.slug }
 							domainConnectionSetupUrl={ domainConnectionSetupUrl }
+							redirectTo={ redirectTo }
 						/>
 					}
 				/>
