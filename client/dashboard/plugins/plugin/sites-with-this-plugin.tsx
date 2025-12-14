@@ -176,7 +176,7 @@ export const SitesWithThisPlugin = ( {
 				elements: [
 					{ value: 2, label: __( 'Update available' ) },
 					{ value: 1, label: __( 'Up to date' ) },
-					{ value: 0, label: __( 'Updates auto-managed' ) },
+					{ value: 0, label: __( 'Auto-managed' ) },
 				],
 				render: ( { item }: { item: SiteWithPluginData } ) => {
 					const update = pluginBySiteId.get( item.ID )?.update;
@@ -184,7 +184,7 @@ export const SitesWithThisPlugin = ( {
 
 					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 					if ( ! autoupdate ) {
-						return <Text>{ __( 'Updates auto-managed' ) }</Text>;
+						return <Text>{ __( 'Auto-managed' ) }</Text>;
 					}
 
 					if ( ! update && version ) {
@@ -263,7 +263,7 @@ export const SitesWithThisPlugin = ( {
 	}, [ updateCount, view, setView ] );
 
 	return (
-		<>
+		<div className="sites-with-this-plugin">
 			<DataViews
 				isLoading={ isLoading }
 				data={ data }
@@ -395,23 +395,6 @@ export const SitesWithThisPlugin = ( {
 						supportsBulk: true,
 					},
 					{
-						id: 'wp-admin',
-						label: __( 'WP Admin ↗' ),
-						callback: ( items ) => {
-							const [ site ] = items;
-
-							if ( ! site?.URL ) {
-								return;
-							}
-
-							const baseUrl = site.URL.replace( /\/$/, '' );
-							window.open( `${ baseUrl }/wp-admin/plugins.php`, '_blank' );
-						},
-						isEligible: ( item ) => !! item.URL,
-						supportsBulk: false,
-						isPrimary: true,
-					},
-					{
 						id: 'delete',
 						label: __( 'Delete' ),
 						modalHeader: getModalHeader( 'delete' ),
@@ -463,6 +446,6 @@ export const SitesWithThisPlugin = ( {
 				onRequestClose={ closeUpdateModal }
 				title={ __( 'Update Plugin' ) }
 			/>
-		</>
+		</div>
 	);
 };
