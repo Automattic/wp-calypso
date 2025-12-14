@@ -6,11 +6,6 @@ import {
 } from '@automattic/odie-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import type { Conversation } from '../types';
-interface Result {
-	conversations: Conversation[];
-	isLoading: boolean;
-	isError: boolean;
-}
 
 // Merges Odie conversations with their support interaction metadata.
 function getConversationsWithSupportInteractions(
@@ -50,8 +45,8 @@ function getConversationsWithSupportInteractions(
 			const { messages, ...restConversation } = conversation;
 
 			return {
-				type: 'odie',
 				...restConversation,
+				type: 'odie',
 				message,
 				supportInteraction: {
 					uuid: supportInteraction.uuid,
@@ -63,6 +58,12 @@ function getConversationsWithSupportInteractions(
 			};
 		} )
 		.filter( Boolean ) as Conversation[];
+}
+
+interface Result {
+	conversations: Conversation[];
+	isLoading: boolean;
+	isError: boolean;
 }
 
 export default function useOdieConversationList(): Result {
