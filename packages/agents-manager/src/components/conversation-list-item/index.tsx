@@ -18,7 +18,9 @@ interface Props {
 }
 
 export default function ConversationListItem( { conversation, onClick }: Props ) {
-	const { type, id, message, createdAt } = conversation;
+	const { type, id, message, createdAt, supportInteraction } = conversation;
+	// For Odie conversations, prefer the support interaction UUID if available
+	const finalId = supportInteraction?.uuid || id;
 
 	const title = message
 		? generateConversationTitle( message.text )
@@ -38,9 +40,9 @@ export default function ConversationListItem( { conversation, onClick }: Props )
 	return (
 		<button
 			className="agents-manager-conversation-list-item"
-			onClick={ () => onClick( type, id ) }
+			onClick={ () => onClick( type, finalId ) }
 			type="button"
-			disabled={ ! id }
+			disabled={ ! finalId }
 			aria-label={ sprintf(
 				/* translators: %1$s: conversation title, %2$s: conversation subtitle */
 				__( 'Load conversation: %1$s, %2$s', '__i18n_text_domain__' ),

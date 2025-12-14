@@ -1,31 +1,68 @@
-import { ODIE_DEFAULT_BOT_SLUG_LEGACY, useGetSupportInteractions } from '@automattic/odie-client';
-import { useQuery } from '@tanstack/react-query';
-import apiFetch from '@wordpress/api-fetch';
-import { useEffect } from '@wordpress/element';
-import { addQueryArgs } from '@wordpress/url';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import getSupportInteractionId from '../utils/get-support-interaction-id';
-import getTimestamp from '../utils/get-timestamp';
+import {
+	useGetSupportInteractions,
+	useGetOdieConversations,
+	type OdieConversation,
+	type SupportInteraction,
+} from '@automattic/odie-client';
+import { useEffect, useMemo } from '@wordpress/element';
 import type { Conversation } from '../types';
-
-interface OdieConversationMessage {
-	content: string;
-	role: string;
-	created_at: string;
-}
-
-interface OdieConversation {
-	chat_id: number;
-	session_id: string;
-	created_at: string;
-	first_message?: OdieConversationMessage;
-	last_message?: OdieConversationMessage;
-}
-
 interface Result {
 	conversations: Conversation[];
 	isLoading: boolean;
 	isError: boolean;
+}
+
+// Merges Odie conversations with their support interaction metadata.
+function getConversationsWithSupportInteractions(
+	odieConversations: OdieConversation[],
+	supportInteractions: SupportInteraction[]
+): Conversation[] {
+	return odieConversations
+		.map( ( conversation ) => {
+			if ( ! conversation?.messages?.length ) {
+				return null;
+			}
+
+			// Flattened conversation message
+			const message = conversation.messages[ 0 ];
+
+			// Validate message content
+			if (
+				typeof message.text !== 'string' ||
+				message.text.trim() === '' ||
+				// '--' is a token returned for Odie conversations that should be forwarded to human support
+				message.text.trim() === '--'
+			) {
+				return null;
+			}
+
+			const supportInteraction = supportInteractions.find( ( i ) =>
+				i.events.some(
+					( e ) => e.event_source === 'odie' && e.event_external_id === conversation.id
+				)
+			);
+
+			// Skip conversations without a valid support interaction
+			if ( ! supportInteraction || ! supportInteraction.uuid ) {
+				return null;
+			}
+
+			const { messages, ...restConversation } = conversation;
+
+			return {
+				type: 'odie',
+				...restConversation,
+				message,
+				supportInteraction: {
+					uuid: supportInteraction.uuid,
+					status: supportInteraction.status || 'open',
+					createdAt: supportInteraction.start_date
+						? Date.parse( supportInteraction.start_date )
+						: 0,
+				},
+			};
+		} )
+		.filter( Boolean ) as Conversation[];
 }
 
 export default function useOdieConversationList(): Result {
@@ -35,68 +72,12 @@ export default function useOdieConversationList(): Result {
 		isError: isFetchingInteractionsError,
 	} = useGetSupportInteractions( 'odie' );
 
-	const botSlugs = Array.from(
-		new Set(
-			supportInteractions.map( ( interaction ) => {
-				// See `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
-				return interaction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
-			} )
-		)
-	).join( ',' );
-
 	const {
-		data: conversations,
+		data: odieConversations = [],
 		isLoading: isLoadingConversations,
 		isError: isFetchingConversationsError,
 		error,
-	} = useQuery< Conversation[], Error >( {
-		queryKey: [ 'agents-manager-odie-conversation-list', botSlugs ],
-		queryFn: async (): Promise< Conversation[] > => {
-			const queryArgs = {
-				page_number: '1',
-				items_per_page: '30',
-				truncation_method: 'first_message',
-			};
-
-			const response: OdieConversation[] = canAccessWpcomApis()
-				? await wpcomRequest( {
-						method: 'GET',
-						path: addQueryArgs( `/odie/conversations/${ botSlugs }`, queryArgs ),
-						apiNamespace: 'wpcom/v2',
-				  } )
-				: await apiFetch( {
-						path: addQueryArgs( `/help-center/odie/conversations/${ botSlugs }`, queryArgs ),
-						method: 'GET',
-				  } );
-
-			// Unify the conversation format and map to support interaction IDs, filtering out unmatched entries.
-			const conversations = response
-				.map( ( conversation ) => {
-					const summary = conversation.first_message ?? conversation.last_message;
-					// Odie conversations use support interaction ID as the identifier
-					const id = getSupportInteractionId( conversation.chat_id, supportInteractions );
-
-					return id
-						? {
-								type: 'odie',
-								id,
-								createdAt: getTimestamp( conversation.created_at ),
-								message: {
-									received: getTimestamp( summary?.created_at ),
-									role: summary?.role ?? 'bot',
-									text: summary?.content ?? '',
-								},
-						  }
-						: null;
-				} )
-				.filter( Boolean ) as Conversation[];
-
-			return conversations;
-		},
-		enabled: supportInteractions.length > 0,
-		refetchOnWindowFocus: false,
-		staleTime: 1000 * 30, // 30 seconds
-	} );
+	} = useGetOdieConversations( supportInteractions );
 
 	useEffect( () => {
 		if ( error ) {
@@ -105,8 +86,13 @@ export default function useOdieConversationList(): Result {
 		}
 	}, [ error ] );
 
+	const conversations = useMemo(
+		() => getConversationsWithSupportInteractions( odieConversations, supportInteractions ),
+		[ odieConversations, supportInteractions ]
+	);
+
 	return {
-		conversations: conversations || [],
+		conversations,
 		isLoading: isLoadingInteractions || isLoadingConversations,
 		isError: isFetchingInteractionsError || isFetchingConversationsError,
 	};

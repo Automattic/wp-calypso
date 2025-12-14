@@ -23,7 +23,7 @@ export default function useOrchestratorConversationList( {
 	const botId = createOdieBotId( agentId );
 
 	const {
-		data: conversations,
+		data: conversations = [],
 		isLoading,
 		isError,
 		error,
@@ -64,9 +64,5 @@ export default function useOrchestratorConversationList( {
 		}
 	}, [ error ] );
 
-	return {
-		conversations: conversations || [],
-		isLoading,
-		isError,
-	};
+	return { conversations, isLoading, isError };
 }

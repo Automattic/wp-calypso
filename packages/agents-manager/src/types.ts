@@ -23,4 +23,9 @@ export interface Conversation {
 		role: string;
 		text: string;
 	};
+	supportInteraction?: {
+		uuid: string;
+		status: string;
+		createdAt: number;
+	};
 }
