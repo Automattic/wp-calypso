@@ -34,11 +34,11 @@ export default function useConversationList( { agentId, authProvider }: Options 
 	const orchestratorQuery = useOrchestratorConversationList( { agentId, authProvider } );
 	// TODO: Integrate Zendesk conversation list...
 
-	// Merge and sort conversations by `createdAt` (most recent first)
+	// Merge and sort conversations by `message.received` (most recent first)
 	const conversations = useMemo(
 		() =>
 			[ ...odieQuery.conversations, ...orchestratorQuery.conversations ].sort(
-				( a, b ) => b.createdAt - a.createdAt
+				( a, b ) => ( b.message?.received || 0 ) - ( a.message?.received || 0 )
 			),
 		[ odieQuery.conversations, orchestratorQuery.conversations ]
 	);
