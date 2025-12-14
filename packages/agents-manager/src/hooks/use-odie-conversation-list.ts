@@ -73,7 +73,7 @@ export default function useOdieConversationList(): Result {
 				.map( ( conversation ) => {
 					const summary = conversation.first_message ?? conversation.last_message;
 					// Odie conversations use support interaction ID as the identifier
-					const id = getSupportInteractionId( 'odie', conversation.chat_id, supportInteractions );
+					const id = getSupportInteractionId( conversation.chat_id, supportInteractions );
 
 					return id
 						? {
