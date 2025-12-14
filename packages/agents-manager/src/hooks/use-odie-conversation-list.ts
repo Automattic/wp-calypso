@@ -7,6 +7,20 @@ import getSupportInteractionId from '../utils/get-support-interaction-id';
 import getTimestamp from '../utils/get-timestamp';
 import type { Conversation } from '../types';
 
+interface OdieConversationMessage {
+	content: string;
+	role: string;
+	created_at: string;
+}
+
+interface OdieConversation {
+	chat_id: number;
+	session_id: string;
+	created_at: string;
+	first_message?: OdieConversationMessage;
+	last_message?: OdieConversationMessage;
+}
+
 interface Result {
 	conversations: Conversation[];
 	isLoading: boolean;
@@ -43,7 +57,7 @@ export default function useOdieConversationList(): Result {
 				truncation_method: 'first_message',
 			} ).toString();
 
-			const response: any[] = canAccessWpcomApis()
+			const response: OdieConversation[] = canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'GET',
 						path: `/odie/conversations/${ botSlugs }?${ queryParams }`,
