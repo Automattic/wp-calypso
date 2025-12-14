@@ -314,6 +314,7 @@ __metadata:
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
     "@wordpress/primitives": "npm:^4.23.0"
+    "@wordpress/url": "npm:^4.23.0"
     clsx: "npm:^2.1.1"
     i18n-calypso: "workspace:^"
     react-router-dom: "npm:^6.23.1"

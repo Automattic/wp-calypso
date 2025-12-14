@@ -2,6 +2,7 @@ import { ODIE_DEFAULT_BOT_SLUG_LEGACY, useGetSupportInteractions } from '@automa
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useEffect } from '@wordpress/element';
+import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import getSupportInteractionId from '../utils/get-support-interaction-id';
 import getTimestamp from '../utils/get-timestamp';
@@ -51,20 +52,20 @@ export default function useOdieConversationList(): Result {
 	} = useQuery< Conversation[], Error >( {
 		queryKey: [ 'agents-manager-odie-conversation-list', botSlugs ],
 		queryFn: async (): Promise< Conversation[] > => {
-			const queryParams = new URLSearchParams( {
+			const queryArgs = {
 				page_number: '1',
 				items_per_page: '30',
 				truncation_method: 'first_message',
-			} ).toString();
+			};
 
 			const response: OdieConversation[] = canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'GET',
-						path: `/odie/conversations/${ botSlugs }?${ queryParams }`,
+						path: addQueryArgs( `/odie/conversations/${ botSlugs }`, queryArgs ),
 						apiNamespace: 'wpcom/v2',
 				  } )
 				: await apiFetch( {
-						path: `/help-center/odie/conversations/${ botSlugs }?${ queryParams }`,
+						path: addQueryArgs( `/help-center/odie/conversations/${ botSlugs }`, queryArgs ),
 						method: 'GET',
 				  } );
 
