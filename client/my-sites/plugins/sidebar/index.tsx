@@ -10,9 +10,9 @@ import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
+import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { isMultiSiteDashboardEnabled } from 'calypso/state/dashboard/selectors/is-multi-site-dashboard-enabled';
 import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
-import { isMultiSiteDashboardEnabled } from 'calypso/state/sites/selectors/is-multi-site-dashboard-enabled';
 import { AppState } from 'calypso/types';
 import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
 import { SidebarIconCalendar } from './icons';
@@ -120,7 +120,7 @@ export default withCurrentRoute(
 
 		return {
 			isCollapsed: shouldShowCollapsedGlobalSidebar,
-			hasOptIn: hasHostingDashboardOptIn( state ),
+			hasOptIn: hasMultiSiteDashboardOptIn( state ),
 			isMultiSiteDashboardEnabled: isMultiSiteDashboardEnabled( state ),
 		};
 	} )( PluginsSidebar )

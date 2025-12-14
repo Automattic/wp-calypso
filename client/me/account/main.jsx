@@ -43,12 +43,12 @@ import {
 	getCurrentUserName,
 	getCurrentUserVisibleSiteCount,
 } from 'calypso/state/current-user/selectors';
+import { isMultiSiteDashboardEnabled } from 'calypso/state/dashboard/selectors/is-multi-site-dashboard-enabled';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
-import { isMultiSiteDashboardEnabled } from 'calypso/state/sites/selectors/is-multi-site-dashboard-enabled';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import {
 	clearUnsavedUserSettings,

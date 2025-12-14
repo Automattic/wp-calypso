@@ -7,9 +7,9 @@ import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-side
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isMultiSiteDashboardEnabled } from 'calypso/state/dashboard/selectors/is-multi-site-dashboard-enabled';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
-import { isMultiSiteDashboardEnabled } from 'calypso/state/sites/selectors/is-multi-site-dashboard-enabled';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MySitesNavigation extends Component {
