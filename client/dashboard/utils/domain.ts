@@ -7,6 +7,7 @@ import {
 } from '@automattic/api-core';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
+import { redirectToDashboardLink } from './link';
 import { getRenewalUrlFromPurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
@@ -27,7 +28,7 @@ export function getDomainSiteSlug( domain: DomainSummary ) {
 
 export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase ) {
 	const siteSlug = getDomainSiteSlug( domain );
-	const backUrl = window.location.href.replace( window.location.origin, '' );
+	const backUrl = redirectToDashboardLink();
 	return addQueryArgs( getRenewalUrlFromPurchase( purchase, siteSlug ), {
 		cancel_to: backUrl,
 		redirect_to: backUrl,
