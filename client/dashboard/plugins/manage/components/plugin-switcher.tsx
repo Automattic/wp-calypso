@@ -1,9 +1,10 @@
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
+import { throttle } from '@wordpress/compose';
 import { Field, View } from '@wordpress/dataviews';
 import { _n, sprintf } from '@wordpress/i18n';
 import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useCallback } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef } from 'react';
 import { pluginRoute } from '../../../app/router/plugins';
 import { Card, CardBody } from '../../../components/card';
 import SwitcherContent from '../../../components/switcher/switcher-content';
@@ -20,12 +21,59 @@ export const PluginSwitcher = ( {
 	searchableFields,
 	selectedPluginSlug = '',
 	view,
+	setView,
+	paginationInfo,
 }: {
 	pluginsWithIcon: PluginListRow[];
 	searchableFields: Field< PluginListRow >[];
 	selectedPluginSlug?: string;
 	view: View;
+	setView: Dispatch< SetStateAction< View > >;
+	paginationInfo: { totalItems: number; totalPages: number };
 } ) => {
+	const scrollRef = useRef< HTMLDivElement >( null );
+
+	// Load next page when scrolling near bottom
+	const handleLoadMore = useCallback( () => {
+		if ( ! paginationInfo ) {
+			return;
+		}
+
+		const currentPage = view.page || 1;
+		const currentPerPage = view.perPage || 10;
+
+		if ( currentPage < paginationInfo.totalPages ) {
+			// console.debug( 'paginate' );
+			setView( ( currentView ) => ( {
+				...currentView,
+				// page: currentPage + 1,
+				perPage: ( currentPage + 1 ) * currentPerPage, // Accumulate items
+			} ) );
+		}
+	}, [ paginationInfo, setView, view.page, view.perPage ] );
+
+	// Set up scroll listener
+	useEffect( () => {
+		const menuElement = scrollRef.current;
+
+		if ( ! menuElement || ! paginationInfo ) {
+			return;
+		}
+
+		const handleScroll = throttle( () => {
+			const scrollTop = menuElement.scrollTop;
+			const scrollHeight = menuElement.scrollHeight;
+			const clientHeight = menuElement.clientHeight;
+			// Load more when within 100px of bottom
+			if ( scrollTop + clientHeight >= scrollHeight - 100 ) {
+				handleLoadMore();
+			}
+		}, 100 );
+
+		menuElement.addEventListener( 'scroll', handleScroll );
+		return () => menuElement.removeEventListener( 'scroll', handleScroll );
+	}, [ handleLoadMore, paginationInfo ] );
+
 	const itemClassName = useCallback(
 		( item: PluginListRow ) =>
 			clsx( 'plugin-switcher-item', {
@@ -84,11 +132,11 @@ export const PluginSwitcher = ( {
 
 	return (
 		<Card>
-			<CardBody className="plugin-switcher-card-body">
+			<CardBody className="plugin-switcher-card-body" ref={ scrollRef }>
 				<SwitcherContent
 					itemClassName={ itemClassName }
 					searchClassName="plugin-switcher-search"
-					initialView={ view }
+					viewState={ [ view, setView ] }
 					items={ pluginsWithIcon }
 					resetScroll={ false }
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }

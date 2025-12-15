@@ -11,7 +11,7 @@ import { useState, useMemo } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
 import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
 import type { View, Field } from '@wordpress/dataviews';
-import type { PropsWithChildren } from 'react';
+import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -21,11 +21,11 @@ const DEFAULT_VIEW: View = {
 };
 
 export default function SwitcherContent< T >( {
-	initialView = DEFAULT_VIEW,
 	itemClassName,
 	items,
 	searchableFields,
 	searchClassName,
+	viewState,
 	width = '280px',
 	getItemUrl,
 	renderItemMedia,
@@ -37,10 +37,10 @@ export default function SwitcherContent< T >( {
 	onItemClick,
 }: PropsWithChildren< {
 	itemClassName?: string | ( ( item: T ) => string );
-	initialView?: View;
 	items?: T[];
 	searchClassName?: string;
 	searchableFields: Field< T >[];
+	viewState?: [ View, Dispatch< SetStateAction< View > > ];
 	width?: string;
 	getItemUrl: ( item: T ) => string;
 	renderItemMedia: RenderItemMedia< T >;
@@ -50,7 +50,9 @@ export default function SwitcherContent< T >( {
 	onClose: () => void;
 	onItemClick?: () => void;
 } > ) {
-	const [ view, setView ] = useState< View >( initialView );
+	const [ localView, setLocalView ] = useState< View >( DEFAULT_VIEW );
+	// viewState prop used to control view externally
+	const [ view, setView ] = viewState ?? [ localView, setLocalView ];
 
 	const fields = useMemo( () => {
 		return searchableFields.map( ( searchableField ) => ( {
