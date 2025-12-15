@@ -12,6 +12,8 @@ import { sendMessageToOpener } from './popup';
 
 const debug = debugFactory( 'calypso:leave-checkout' );
 
+const ALLOWED_ORIGINS = [ 'https://my.wordpress.com', 'http://my.localhost:3000' ];
+
 const getCloseURL = ( {
 	userHasClearedCart,
 	previousPath,
@@ -122,11 +124,13 @@ export const leaveCheckout = ( {
 
 		if ( searchParams.has( 'cancel_to' ) ) {
 			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
-			// Only allow redirecting to relative paths.
+
 			if ( isRelativeUrl( cancelPath ) ) {
 				navigate( cancelPath );
-				return;
+			} else if ( ALLOWED_ORIGINS.some( ( origin ) => cancelPath.startsWith( origin ) ) ) {
+				window.location.href = cancelPath;
 			}
+			return;
 		}
 	} catch ( error ) {
 		// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
