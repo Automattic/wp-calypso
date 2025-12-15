@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
@@ -11,7 +12,6 @@ import {
 import { __ } from '@wordpress/i18n';
 import { comment, backup, page, video, rss, help } from '@wordpress/icons';
 import { useState, useCallback, Suspense, lazy } from 'react';
-import { useAnalytics } from 'calypso/dashboard/app/analytics';
 import { useExperiment } from 'calypso/lib/explat';
 import { useHelpCenter } from './use-help-center';
 import type { User } from '@automattic/api-core';
@@ -24,7 +24,6 @@ interface Props {
 
 export function HelpCenter( { user }: Props ) {
 	const { isLoading, isShown, setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
-	const { recordTracksEvent } = useAnalytics();
 	const [ helpCenterPage, setHelpCenterPage ] = useState( '' );
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
