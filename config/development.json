@@ -76,7 +76,6 @@
 		"help": true,
 		"help/gpt-response": true,
 		"help-center/logged-out": true,
-		"help-center/workflow": false,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,
 		"hosting/datacenter-picker": true,
