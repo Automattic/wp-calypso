@@ -23,6 +23,7 @@ import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition'
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
 import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
+import { ImportLimitNotice } from '../import-limit-notice';
 import { CategoriesSection } from './categories-section';
 import { tip } from './icon';
 
@@ -517,26 +518,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							/>
 						) }
 
-					{ isFreePlan && (
-						<p className="add-subscriber__import-limit-notice">
-							{ createInterpolateElement(
-								__(
-									'Free plans have an import limit of 100 subscribers. <a>Upgrade your plan</a> to import unlimited subscribers.'
-								),
-								{
-									a: <a href={ `/plans/${ siteSlug }` } />,
-								}
-							) }
-						</p>
-					) }
-
-					{ ! isFreePlan && (
-						<p className="add-subscriber__import-limit-notice">
-							{ __(
-								'Imports of more than 10,000 subscribers will go through a manual review before being added to your site.'
-							) }
-						</p>
-					) }
+					<ImportLimitNotice isFreePlan={ isFreePlan } siteSlug={ siteSlug } />
 
 					<AddSubscribersDisclaimer buttonLabel={ submitBtnName } />
 
