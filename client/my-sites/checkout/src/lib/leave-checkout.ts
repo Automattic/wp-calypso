@@ -1,6 +1,7 @@
 import { isTailoredSignupFlow, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
+import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import {
@@ -11,8 +12,6 @@ import {
 import { sendMessageToOpener } from './popup';
 
 const debug = debugFactory( 'calypso:leave-checkout' );
-
-const ALLOWED_ORIGINS = [ 'https://my.wordpress.com', 'http://my.localhost:3000' ];
 
 const getCloseURL = ( {
 	userHasClearedCart,
@@ -127,7 +126,7 @@ export const leaveCheckout = ( {
 
 			if ( isRelativeUrl( cancelPath ) ) {
 				navigate( cancelPath );
-			} else if ( ALLOWED_ORIGINS.some( ( origin ) => cancelPath.startsWith( origin ) ) ) {
+			} else if ( dashboardOrigins().some( ( origin ) => cancelPath.startsWith( origin ) ) ) {
 				window.location.href = cancelPath;
 			}
 			return;
