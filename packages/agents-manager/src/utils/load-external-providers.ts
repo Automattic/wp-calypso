@@ -9,14 +9,6 @@ import type { ToolProvider, ContextProvider, Suggestion } from '../types';
 import type { SubmitOptions } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
-// agentsManagerData is set as a global const via wp_add_inline_script in Jetpack's Agents Manager
-declare const agentsManagerData:
-	| {
-			agentProviders?: string[];
-			useUnifiedExperience?: boolean;
-	  }
-	| undefined;
-
 /**
  * Check if the unified experience flag is set via agentsManagerData.
  *
