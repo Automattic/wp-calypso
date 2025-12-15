@@ -13,7 +13,11 @@ import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
 import type { AgentUIProps, Suggestion } from '../types';
 import { cn } from '../utils/classNames';
-import { getChatPosition, setChatPosition } from '../utils/chatStorage';
+import {
+	getChatPosition,
+	setChatPosition,
+	type ChatPosition,
+} from '../utils/chatStorage';
 import { morphSpring } from './animations';
 import {
 	type AgentUIContextValue,
@@ -78,6 +82,8 @@ export function AgentUIContainer( {
 	onInputLimitExceeded,
 	expandOnClick,
 	thinkingMessage,
+	initialChatPosition,
+	onChatPositionChange,
 	...props
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
@@ -164,8 +170,8 @@ export function AgentUIContainer( {
 	} );
 
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
-	const [ currentSide, setCurrentSide ] = useState< 'left' | 'right' >(
-		getChatPosition
+	const [ currentSide, setCurrentSide ] = useState< ChatPosition >(
+		getChatPosition( initialChatPosition )
 	);
 	const compactRef = useRef< HTMLDivElement >( null );
 	const constraintsRef = useRef< HTMLDivElement >( null );
@@ -389,8 +395,14 @@ export function AgentUIContainer( {
 			const viewportMidpointX = ( window.innerWidth - chatWidth ) / 2;
 			const isLeft = dropX < viewportMidpointX;
 			const newSide = isLeft ? 'left' : 'right';
-			setCurrentSide( newSide );
-			setChatPosition( newSide );
+
+			setCurrentSide( ( prevSide ) => {
+				if ( prevSide !== newSide ) {
+					setChatPosition( newSide );
+					onChatPositionChange?.( newSide );
+				}
+				return newSide;
+			} );
 
 			// Calculate snap position using the new side immediately
 			const position = calculateSnapPosition( newSide );
@@ -408,7 +420,7 @@ export function AgentUIContainer( {
 				velocity: info.velocity.y * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
 			} );
 		},
-		[ x, y, calculateSnapPosition ]
+		[ x, y, calculateSnapPosition, onChatPositionChange ]
 	);
 
 	// Track previous state for animation purposes

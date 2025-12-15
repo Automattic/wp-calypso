@@ -1,5 +1,6 @@
 // UI package should not import agent communication types
 import type { ComponentType } from 'react';
+import type { ChatPosition } from '../utils/chatStorage';
 
 // Define UI-specific types locally
 export interface Suggestion {
@@ -85,6 +86,10 @@ export interface AgentUIProps {
 
 	// Thinking message customization
 	thinkingMessage?: string; // Custom text to display when the agent is processing (defaults to "Thinking…")
+
+	// Chat position props
+	initialChatPosition?: ChatPosition;
+	onChatPositionChange?: ( position: ChatPosition ) => void;
 }
 
 export interface NoticeConfig {

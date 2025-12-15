@@ -8,9 +8,12 @@ export type ChatPosition = 'left' | 'right';
 
 /**
  * Get the saved chat position from localStorage
- * @return The saved position or 'left' as default
+ * @param defaultValue - The position to return if no saved value exists (defaults to 'left')
+ * @return The saved position or the default value
  */
-export function getChatPosition(): ChatPosition {
+export function getChatPosition(
+	defaultValue: ChatPosition = 'left'
+): ChatPosition {
 	try {
 		const saved = localStorage.getItem( STORAGE_KEY );
 		if ( saved === 'left' || saved === 'right' ) {
@@ -24,7 +27,7 @@ export function getChatPosition(): ChatPosition {
 			error
 		);
 	}
-	return 'left';
+	return defaultValue;
 }
 
 /**
