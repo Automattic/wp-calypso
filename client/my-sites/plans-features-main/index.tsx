@@ -241,6 +241,7 @@ const PlansFeaturesMain = ( {
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
+	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
 
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -412,8 +413,8 @@ const PlansFeaturesMain = ( {
 		isLaunchPage,
 		showModalAndExit,
 		coupon,
-		redirectTo,
-		pluginSlug,
+		// Only use redirectTo and pluginSlug when summer special is enabled
+		...( isSummerSpecial && { redirectTo, pluginSlug } ),
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
@@ -705,9 +706,6 @@ const PlansFeaturesMain = ( {
 			( { planSlug, isVisible } ) => isVisible && isWooExpressPlan( planSlug )
 		);
 	}, [ gridPlansForComparisonGrid ] );
-
-	// Get summer special status
-	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
 
 	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
 	const featureGroupMapForComparisonGrid = hasWooExpressFeatures

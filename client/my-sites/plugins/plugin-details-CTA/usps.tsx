@@ -5,12 +5,14 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	getPlan,
 } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
+import { useIsPluginAvailableOnAllPlans } from 'calypso/my-sites/plugins/use-is-plugin-available-on-all-plans';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text';
 import { useSelector } from 'calypso/state';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
@@ -125,19 +127,26 @@ export const PlanUSPS: React.FC< Props > = ( {
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isPreInstalledPlugin = ! isJetpack && PREINSTALLED_PLUGINS.includes( pluginSlug );
+	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans( {
+		siteId: selectedSite?.ID,
+	} );
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 	const supportText = usePluginsSupportText();
 	const requiredPlan = useRequiredPlan( shouldUpgrade );
 
-	// Always use Personal plan as it's the lowest tier paid plan
+	// Plan display cost setup
+	const planDisplayCost = useSelector( ( state ) => {
+		return getProductDisplayCost( state, requiredPlan || '' );
+	} );
 	const lowestPlan = PLAN_PERSONAL;
-
 	const lowestPlanDisplayCost = useSelector( ( state ) => {
 		return getProductDisplayCost( state, lowestPlan, true );
 	} );
 
 	const monthlyLabel = translate( 'month' );
+	const annualLabel = translate( 'year' );
+	const periodicityLabel = isAnnualPeriod ? annualLabel : monthlyLabel;
 
 	if ( ! shouldUpgrade ) {
 		return null;
@@ -147,14 +156,47 @@ export const PlanUSPS: React.FC< Props > = ( {
 	switch ( requiredPlan ) {
 		case PLAN_PERSONAL:
 		case PLAN_PERSONAL_MONTHLY:
+			if ( isPluginAvailableOnAllPlans ) {
+				planText = translate( 'Included on all paid plans (starting at %(cost)s/%(periodicity)s)', {
+					args: {
+						cost: lowestPlanDisplayCost as string,
+						periodicity: monthlyLabel,
+					},
+				} );
+			} else {
+				planText = translate(
+					'Included in the %(personalPlanName)s plan (%(cost)s/%(periodicity)s):',
+					{
+						args: {
+							personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() as string,
+							cost: planDisplayCost as string,
+							periodicity: periodicityLabel,
+						},
+					}
+				);
+			}
+			break;
 		case PLAN_BUSINESS:
 		case PLAN_BUSINESS_MONTHLY:
-			planText = translate( 'Included on all paid plans (starting at %(cost)s/%(periodicity)s)', {
-				args: {
-					cost: lowestPlanDisplayCost as string,
-					periodicity: monthlyLabel,
-				},
-			} );
+			if ( isPluginAvailableOnAllPlans ) {
+				planText = translate( 'Included on all paid plans (starting at %(cost)s/%(periodicity)s)', {
+					args: {
+						cost: lowestPlanDisplayCost as string,
+						periodicity: monthlyLabel,
+					},
+				} );
+			} else {
+				planText = translate(
+					'Included in the %(businessPlanName)s plan (%(cost)s/%(periodicity)s):',
+					{
+						args: {
+							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() as string,
+							cost: planDisplayCost as string,
+							periodicity: periodicityLabel,
+						},
+					}
+				);
+			}
 			break;
 		case PLAN_ECOMMERCE_TRIAL_MONTHLY:
 			planText = translate( 'Included in ecommerce plans:' );
