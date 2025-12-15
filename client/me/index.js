@@ -7,6 +7,7 @@ import './style.scss';
 export default function () {
 	page(
 		'/me',
+		controller.maybeRedirectToDashboard,
 		controller.sidebar,
 		setSelectedSiteIdByOrigin,
 		controller.profile,
