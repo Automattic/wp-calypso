@@ -32,4 +32,10 @@ $component-icon-padding: 6px;
 	.dashboard-secondary-menu__item:not(.is-active) {
 		color: var(--dashboard-secondary-menu-item__color);
 	}
+
+
+	.dashboard-secondary-menu__avatar {
+		height: 24px;
+		border-radius: 50%;
+	}
 }

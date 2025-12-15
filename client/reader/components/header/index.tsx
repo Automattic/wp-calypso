@@ -9,6 +9,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { HelpCenter } from './help-center';
 import Logo from './logo';
 import Notifications from './notifications';
+import UserProfile from './user-profile';
 import './style.scss';
 
 const ReaderHeader = () => {
@@ -44,6 +45,7 @@ const ReaderHeader = () => {
 				</Button>
 				{ user && <Notifications user={ user } className="dashboard-secondary-menu__item" /> }
 				{ user && <HelpCenter user={ user } /> }
+				{ user && <UserProfile user={ user } /> }
 			</HStack>
 		</HStack>
 	);
