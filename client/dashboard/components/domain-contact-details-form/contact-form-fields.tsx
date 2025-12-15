@@ -12,13 +12,13 @@ import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../inline-support-link';
 import PhoneNumberInput from '../phone-number-input';
 import { createFieldAsyncValidator, type AsyncValidator } from './contact-validation-utils';
-import { RegionAddressFieldsets } from './region-address-fieldsets';
 import {
 	sanitizePhoneCountryCode,
 	sanitizePhoneNumber,
 	splitPhoneNumber,
 	combinePhoneNumber,
-} from './utils';
+} from './contact-validation-utils';
+import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
 
