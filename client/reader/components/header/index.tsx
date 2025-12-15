@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { HelpCenter } from './help-center';
 import Logo from './logo';
 import Notifications from './notifications';
 import './style.scss';
@@ -42,6 +43,7 @@ const ReaderHeader = () => {
 					{ isDesktop ? __( 'Reader' ) : null }
 				</Button>
 				{ user && <Notifications user={ user } className="dashboard-secondary-menu__item" /> }
+				{ user && <HelpCenter user={ user } /> }
 			</HStack>
 		</HStack>
 	);
