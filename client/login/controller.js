@@ -7,8 +7,7 @@ import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
-import LoginContextProvider from './login-context';
-import MagicLogin from './magic-login';
+import { LocalizedMagicLogin } from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
 import QrCodeLoginPage from './qr-code-login-page';
@@ -57,21 +56,19 @@ const enhanceContextWithLogin = ( context ) => {
 	const isJetpackLogin = isJetpack === 'jetpack';
 
 	context.primary = (
-		<LoginContextProvider>
-			<WPLogin
-				action={ action }
-				isJetpack={ isJetpackLogin }
-				isGravPoweredClient={ isGravPoweredClient }
-				path={ path }
-				twoFactorAuthType={ twoFactorAuthType }
-				socialService={ socialService }
-				socialServiceResponse={ socialServiceResponse }
-				socialConnect={ flow === 'social-connect' }
-				domain={ ( query && query.domain ) || null }
-				fromSite={ ( query && query.site ) || null }
-				signupUrl={ ( query && query.signup_url ) || null }
-			/>
-		</LoginContextProvider>
+		<WPLogin
+			action={ action }
+			isJetpack={ isJetpackLogin }
+			isGravPoweredClient={ isGravPoweredClient }
+			path={ path }
+			twoFactorAuthType={ twoFactorAuthType }
+			socialService={ socialService }
+			socialServiceResponse={ socialServiceResponse }
+			socialConnect={ flow === 'social-connect' }
+			domain={ ( query && query.domain ) || null }
+			fromSite={ ( query && query.site ) || null }
+			signupUrl={ ( query && query.signup_url ) || null }
+		/>
 	);
 };
 
@@ -174,11 +171,7 @@ export async function magicLogin( context, next ) {
 		}
 	}
 
-	context.primary = (
-		<LoginContextProvider>
-			<MagicLogin path={ path } />
-		</LoginContextProvider>
-	);
+	context.primary = <LocalizedMagicLogin path={ path } />;
 
 	next();
 }
@@ -190,13 +183,11 @@ export function qrCodeLogin( context, next ) {
 	const isJetpack = context.path.includes( '/jetpack' );
 
 	context.primary = (
-		<LoginContextProvider>
-			<QrCodeLoginPage
-				locale={ context.params.lang }
-				redirectTo={ redirect_to }
-				isJetpack={ isJetpack }
-			/>
-		</LoginContextProvider>
+		<QrCodeLoginPage
+			locale={ context.params.lang }
+			redirectTo={ redirect_to }
+			isJetpack={ isJetpack }
+		/>
 	);
 
 	next();

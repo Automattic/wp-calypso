@@ -44,8 +44,7 @@
 		"a4a-bd-checkout": false,
 		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
-		"upgrades/redirect-payments": true,
-		"tiers-revamp": true
+		"upgrades/redirect-payments": true
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -69,7 +68,8 @@
 		"a8c-for-agencies-agency-tier": true,
 		"a8c-for-agencies-woopayments": true,
 		"a8c-for-agencies-express-checkout": false,
-		"a8c-for-agencies-partner-offers": true
+		"a8c-for-agencies-learn": false,
+		"a8c-for-agencies-exclusive-offers": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

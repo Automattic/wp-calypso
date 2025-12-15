@@ -1,9 +1,9 @@
 import { DomainSubtype } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Link } from '@tanstack/react-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Tooltip, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { domainOverviewRoute, domainTransferSetupRoute } from '../../app/router/domains';
+import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
 import { Text } from '../../components/text';
 import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -23,21 +23,15 @@ export const DomainNameField = ( {
 
 	const href =
 		domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER &&
-		// TODO: When DOMAINS-1802 is completed, we should check if the domain has the `pending_registry` status
-		// and send the user to the `/v2/domains/<domain_name>/transfer` URL instead of the `domain-transfer-setup` URL
 		config.isEnabled( 'domain-transfer-redesign' )
-			? domainTransferSetupRoute.fullPath
+			? domainTransferRoute.fullPath
 			: domainOverviewRoute.fullPath;
 
-	return (
-		<Link
-			to={ href }
-			params={ { siteSlug, domainName: domain.domain } }
-			disabled={ ! domain.subscription_id }
-		>
-			<VStack spacing={ 1 }>
-				<span style={ textOverflowStyles }>{ value }</span>
-				{ showPrimaryDomainBadge && domain.primary_domain && (
+	const content = (
+		<VStack spacing={ 1 }>
+			<span style={ textOverflowStyles }>{ value }</span>
+			{ showPrimaryDomainBadge && domain.primary_domain && (
+				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
 					<span
 						style={ {
 							...textOverflowStyles,
@@ -49,13 +43,23 @@ export const DomainNameField = ( {
 					>
 						{ __( 'Primary site address' ) }
 					</span>
-				) }
-				{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
-					<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
-						{ domain.subtype.label }
-					</Text>
-				) }
-			</VStack>
+				</Tooltip>
+			) }
+			{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
+				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
+					{ domain.subtype.label }
+				</Text>
+			) }
+		</VStack>
+	);
+
+	if ( ! domain.subscription_id ) {
+		return content;
+	}
+
+	return (
+		<Link to={ href } params={ { siteSlug, domainName: domain.domain } }>
+			{ content }
 		</Link>
 	);
 };

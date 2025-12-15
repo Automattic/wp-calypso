@@ -1,37 +1,22 @@
-import { Page } from 'playwright';
-import { clickNavTab, reloadAndRetry } from '../../element-helper';
-import { NoticeComponent } from '../components';
+import { Page, Locator, expect } from 'playwright/test';
+import { clickNavTab } from '../../element-helper';
 
 export type PeoplePageTabs = 'Users' | 'Followers' | 'Email Followers' | 'Invites';
 
-const selectors = {
-	// Navigation tabs
-	navTabs: '.section-nav-tabs',
-	navTabsDropdownOptions: '.select-dropdown__option',
-
-	// Team people
-	teamUser: ( username: string ) => `.people-profile:has(:text("${ username }"))`,
-	clearUserButton: 'button:has-text("Clear")',
-	removeUserButton: ( username: string ) => `button:has-text("Remove ${ username }")`,
-	deleteConfirmBanner: ':text("Invite deleted.")',
-	removeConfirmButton: '.dialog__action-buttons button:has-text("Remove")',
-	removeConfirmBanner: ':text("Successfully removed")',
-
-	// Header
-	addPeopleButton: 'a:text("Add a user")',
-	invitePeopleButton: '.people-list-section-header__add-button',
-
-	// Invites
-	invitedUser: ( email: string ) => `[title="${ email }"]`,
-	revokeInviteButton: 'button:text("Revoke")',
-	inviteRevokedMessage: 'span:text("Invite deleted.")',
-};
-
 /**
  * Represents the Users > All Users page.
+ * route: /people/team/{site}
  */
 export class PeoplePage {
 	private page: Page;
+
+	// User details
+	readonly clearUserButton: Locator;
+	readonly revokeInviteButton: Locator;
+
+	// Header
+	readonly addPeopleButton: Locator;
+	readonly invitePeopleButton: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -40,20 +25,31 @@ export class PeoplePage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+
+		// User details
+		this.clearUserButton = this.page.getByRole( 'button', { name: 'Clear' } );
+		this.revokeInviteButton = this.page.getByRole( 'button', { name: 'Revoke' } );
+
+		// Header
+		this.addPeopleButton = this.page.locator( 'a:text("Add a user")' );
+		this.invitePeopleButton = this.page.locator( '.people-list-section-header__add-button' );
 	}
 
 	/**
-	 * Wait until the page is loaded.
+	 * Get the underlying Playwright page instance.
+	 * @returns the Playwright page instance
 	 */
-	async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
+	getPage(): Page {
+		return this.page;
 	}
 
 	/**
 	 * Click view all link if its available.
 	 */
 	async clickViewAllIfAvailable(): Promise< void > {
-		const viewAllLink = await this.page.getByRole( 'link', { name: 'View all' } );
+		const viewAllLink = this.page.getByRole( 'link', {
+			name: 'View all',
+		} );
 
 		if ( ( await viewAllLink.count() ) > 0 ) {
 			await viewAllLink.click();
@@ -70,7 +66,7 @@ export class PeoplePage {
 		// For Invites tab, wait for the full request to be completed.
 		if ( name === 'Invites' ) {
 			await Promise.all( [
-				this.page.waitForNavigation( { url: '**/people/invites/**', waitUntil: 'networkidle' } ),
+				this.page.waitForURL( '**/people/invites/**', { waitUntil: 'networkidle' } ),
 				clickNavTab( this.page, name ),
 			] );
 			return;
@@ -78,107 +74,91 @@ export class PeoplePage {
 		await clickNavTab( this.page, name );
 	}
 
-	/* Team People */
+	/**
+	 * Waits for an invitation to appear in the pending invites list. Reloads the page until the invitation is found or the timeout is reached.
+	 * @param emailaddress Email address of the invited user.
+	 */
+	async expectInvitation( emailaddress: string ): Promise< void > {
+		await this.clickViewAllIfAvailable();
+		await expect( async () => {
+			await this.page.reload();
+			await expect( this.page.getByTitle( emailaddress ) ).toBeVisible();
+		} ).toPass( { timeout: 60000 } );
+	}
 
 	/**
-	 * Locate and click on an user.
+	 * Locate and click on an user in the pending invites list container.
 	 *
-	 * @param {string} username Username of the user.
+	 * @param {string} email Email of the user.
 	 */
-	async selectUser( username: string ): Promise< void > {
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.teamUser( username ) ),
-		] );
+	async selectInvitation( email: string ): Promise< void > {
+		await this.page.getByTitle( email ).click();
 	}
 
 	/**
-	 * Delete the user from site.
+	 * Clear the invitation of a user from site.
 	 */
-	async deleteUser( username: string ): Promise< void > {
-		// Try the Clear button first (for pending invites)
-		const clearButton = this.page.locator( selectors.clearUserButton );
-		try {
-			await clearButton.waitFor( { state: 'visible', timeout: 2000 } );
-			if ( await clearButton.isVisible() ) {
-				await clearButton.click();
-				await this.page.waitForSelector( selectors.deleteConfirmBanner );
-				return;
-			}
-		} catch ( e ) {}
-
-		// If Clear button not found, try Remove flow (for accepted invites)
-		const removeButton = this.page.locator( selectors.removeUserButton( username ) );
-		await removeButton.click();
-		await this.page.click( selectors.removeConfirmButton );
-		await this.page.waitForSelector( selectors.removeConfirmBanner );
+	async clearUserInvitation(): Promise< void > {
+		await this.clearUserButton.click();
+		await expect(
+			this.page.getByText( 'Invite deleted' ),
+			'Invite deleted notice should be visible'
+		).toBeVisible();
 	}
 
-	/* Invites */
+	/**
+	 * Removes a user from site.
+	 */
+	async removeUserFromSite( username: string ): Promise< void > {
+		await this.page.getByRole( 'button', { name: `Remove ${ username }` } ).click();
+		await this.page.getByRole( 'button', { name: 'Remove', exact: true } ).click();
+		await expect(
+			this.page.getByText( `Successfully removed @${ username }` ),
+			'User removed notice should be visible'
+		).toBeVisible();
+	}
 
 	/**
 	 * Click on the `Invite` button to navigate to the invite user page.
 	 */
 	async clickInviteUser(): Promise< void > {
-		await this.waitUntilLoaded();
-
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.invitePeopleButton ),
-		] );
+		await Promise.all( [ this.page.waitForNavigation(), this.invitePeopleButton.click() ] );
 	}
 
 	/**
-	 * Click on the `Invite` button to navigate to the invite user page.
+	 * Click on the `Add a user` button to navigate to the invite user page.
 	 */
 	async clickAddTeamMember(): Promise< void > {
-		await this.waitUntilLoaded();
-
-		await this.page.click( selectors.addPeopleButton );
-	}
-
-	/**
-	 * Locate and click on a pending invite.
-	 *
-	 * This method will make several attempts to locate the pending invite.
-	 * Each attempt will wait 5 seconds before the page is refreshed and another attempt made.
-	 *
-	 * The retry mechanism is necessary due to Calypso sometimes not immediately reflecting
-	 * the newly invited user. This can occur due to large number of pending invites and also
-	 * because of faster-than-human execution speed of automated test frameworks.
-	 *
-	 * @param {string} emailAddress Email address of the pending user.
-	 */
-	async selectInvitedUser( emailAddress: string ): Promise< void > {
-		/**
-		 * Closure to wait for the invited user to be processed in the backend and then
-		 * appear on the frontend.
-		 *
-		 * @param {Page} page Page on which the actions take place.
-		 */
-		async function waitForInviteToAppear( page: Page ): Promise< void > {
-			await page.waitForSelector( selectors.invitedUser( emailAddress ), {
-				timeout: 5 * 1000,
-			} );
-		}
-
-		await reloadAndRetry( this.page, waitForInviteToAppear );
-
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.invitedUser( emailAddress ) ),
-		] );
+		await this.addPeopleButton.click();
 	}
 
 	/**
 	 * Revokes the pending invite.
 	 */
 	async revokeInvite(): Promise< void > {
-		await this.waitUntilLoaded();
+		await this.revokeInviteButton.click();
+		await expect(
+			this.page.getByText( 'Invite deleted' ),
+			'Invite deleted notice should be visible'
+		).toBeVisible();
+	}
 
-		await this.page.click( selectors.revokeInviteButton );
+	/**
+	 * Navigates to the team member user details page with a direct URL. Verifies that the page is loaded by checking the presence of the Remove button.
+	 * @param baseURL Calypso URL.
+	 * @param siteURL User's primary site URL.
+	 * @param username Username of the team member.
+	 */
+	async visitTeamMemberUserDetails(
+		baseURL: string,
+		siteURL: string,
+		username: string
+	): Promise< void > {
+		expect( baseURL, 'Base URL should be defined' ).toBeDefined();
+		expect( siteURL, 'Site URL should be defined' ).toBeDefined();
+		expect( username, 'Username should be defined' ).toBeDefined();
+		await this.page.goto( `${ baseURL }/people/edit/${ siteURL }/${ username }` );
 
-		const noticeComponent = new NoticeComponent( this.page );
-		await noticeComponent.noticeShown( 'Invite deleted' );
+		await expect( this.page.getByRole( 'button', { name: 'Remove' } ) ).toBeVisible();
 	}
 }

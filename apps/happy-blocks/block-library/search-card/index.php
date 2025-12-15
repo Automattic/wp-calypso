@@ -11,10 +11,11 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
-$is_front_page = isset( $args['is_front_page'] ) && ( true === $args['is_front_page'] );
-$active_page = isset( $args['active_page'] ) ? $args['active_page'] : '';
-
-
+$is_front_page                 = isset( $args['is_front_page'] ) && ( true === $args['is_front_page'] );
+$is_404_page                   = isset( $args['is_404_page'] ) && ( true === $args['is_404_page'] );
+$active_page                   = isset( $args['active_page'] ) ? $args['active_page'] : '';
+$should_show_search_card       = ( $is_front_page || $is_404_page ) && 'forums' !== $active_page;
+$should_show_search_navigation = ! $is_front_page && ! $is_404_page;
 
 if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	function get_support_search_link_for_query( $query ) {
@@ -30,7 +31,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 }
 
 ?>
-<div class="happy-blocks-search-card<?php echo $is_front_page && 'forums' !== $active_page ? '' : ' navigation-only'; ?>">
+<div class="happy-blocks-search-card<?php echo $should_show_search_card ? '' : ' navigation-only'; ?>">
 	<nav class="navigation-header">
 		<!-- Desktop navigation -->
 		<div class="desktop-nav-container">
@@ -44,7 +45,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			</ul>
 			
 			<!-- Search button -->
-			<?php if ( ! $is_front_page ) : ?>
+			<?php if ( $should_show_search_navigation ) : ?>
 			<div class="happy-blocks_navigation_search">
 				<a class="jetpack-search-filter__link" href="#">
 					<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">
@@ -98,7 +99,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			</div>
 
 			<!-- Search button -->
-			<?php if ( ! $is_front_page ) : ?>
+			<?php if ( ! $should_show_search_navigation ) : ?>
 			<div class="happy-blocks_navigation_search">
 				<a class="jetpack-search-filter__link" href="#">
 					<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">
@@ -109,9 +110,19 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			<?php endif; ?>
 		</div>
 	</nav>
-	<?php if ( $is_front_page && 'forums' !== $active_page ) : ?>
-	<div class="support-search-content">
-			<h2><?php echo esc_html( __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
+	<?php if ( $should_show_search_card ) : ?>
+		<?php
+		$content_classes = array_filter(
+			array(
+				'support-search-content',
+				$is_front_page ? 'is-front-page' : '',
+				$is_404_page ? 'is-404-page' : '',
+			)
+		);
+		?>
+	<div class="<?php echo esc_attr( implode( ' ', $content_classes ) ); ?>">
+			<h2><?php echo esc_html( $is_404_page ? __( "This page doesn't exist", 'happy-blocks' ) : __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
+			<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( "Let's help you find what you're looking for.", 'happy-blocks' ) ) . '</p>' : ''; ?>
 			<form id="support-search-form" class="" role="search" method="get" action="">
 				<div class="input-wrapper" dir="auto">
 					<input id="support-search-input" type="search" name="s" placeholder="<?php echo esc_html( __( 'Search questions, guides, courses', 'happy-blocks' ) ); ?>"/>

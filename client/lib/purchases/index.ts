@@ -25,6 +25,8 @@ import {
 	is100Year,
 	isJetpackAISlug,
 	isJetpackStatsPaidProductSlug,
+	isAkismetPro500,
+	getAkismetPro500ProductDisplayName,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
@@ -303,6 +305,10 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 
 	if ( isTieredVolumeSpaceAddon( purchase ) ) {
 		return getStorageAddOnDisplayName( productName, purchaseRenewalQuantity );
+	}
+
+	if ( isAkismetPro500( purchase ) ) {
+		return getAkismetPro500ProductDisplayName( productName, purchaseRenewalQuantity );
 	}
 
 	return getName( purchase );

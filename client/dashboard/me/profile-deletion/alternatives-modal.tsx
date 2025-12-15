@@ -11,6 +11,7 @@ import { chevronLeft, chevronRight, help } from '@wordpress/icons';
 import ActionList from '../../components/action-list';
 import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
+import { wpcomLink } from '../../utils/link';
 
 interface AlternativeOption {
 	text: string;
@@ -49,7 +50,7 @@ export default function AlternativesModal( {
 			: [] ),
 		{
 			text: __( 'Start a new site' ),
-			to: '/start?ref=me-account-close',
+			to: wpcomLink( '/start?ref=me-account-close' ),
 			supportLink: localizeUrl( 'https://wordpress.com/support/create-a-blog/' ),
 			useRouterButton: false,
 		},

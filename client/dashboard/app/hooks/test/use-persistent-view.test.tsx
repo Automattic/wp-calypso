@@ -286,4 +286,78 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 	} );
+
+	describe( 'resetView', () => {
+		it( 'should clear the persisted view', async () => {
+			const persistedView = {
+				type: 'grid',
+				layout: { previewSize: 120 },
+				sort: { field: 'status', direction: 'asc' },
+			};
+
+			mockGetCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': persistedView,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const { result } = renderHook( () => usePersistentView( { slug, defaultView } ), {
+				wrapper: Wrapper,
+			} );
+
+			await waitFor( () => {
+				expect( result.current.resetView ).toBeTruthy();
+			} );
+
+			const expectedUpdatePreferences = mockUpdateCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': null,
+			} );
+
+			act( () => {
+				result.current.resetView?.();
+			} );
+
+			await waitFor( () => {
+				expect( expectedUpdatePreferences.isDone() ).toBe( true );
+			} );
+		} );
+
+		it( 'should clear transient properties from the current URL query params', async () => {
+			const persistedView = {
+				type: 'grid',
+				layout: { previewSize: 120 },
+				sort: { field: 'status', direction: 'asc' },
+			};
+
+			mockGetCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': persistedView,
+			} );
+			mockUpdateCalypsoPreferences();
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value', page: 2, search: 'test' };
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView, queryParams } ),
+				{
+					wrapper: Wrapper,
+				}
+			);
+
+			await waitFor( () => {
+				expect( result.current.resetView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.resetView?.();
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
+				} );
+			} );
+		} );
+	} );
 } );

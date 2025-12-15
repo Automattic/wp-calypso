@@ -1,44 +1,30 @@
-/**
- * Unified AI Agent Component
- *
- * Configures the AI agent, manages sessions, and integrates custom tools and context.
- */
-
-import { createOdieBotId, getAgentManager } from '@automattic/agenttic-client';
-import { useMemo, useEffect, useState } from '@wordpress/element';
-import { useLocation } from 'react-router-dom';
+import { getAgentManager } from '@automattic/agenttic-client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useMemo, useEffect, useState, useRef } from '@wordpress/element';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../../constants';
-import { SESSION_STORAGE_KEY, getSessionId } from '../../utils/agent-session';
-import { lastConversationCache } from '../../utils/conversation-cache';
+import { SESSION_STORAGE_KEY, getSessionId, clearSessionId } from '../../utils/agent-session';
+import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
-import type { ToolProvider, ContextProvider, ContextEntry } from '../../extension-types';
+import type { ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
 import type { HelpCenterSite, CurrentUser } from '@automattic/data-stores';
 
 export interface UnifiedAIAgentProps {
 	/** The current route path. */
 	currentRoute?: string;
+	/** Indicates if the user is eligible for chat. */
+	isEligibleForChat: boolean;
 	/** The name of the current section (e.g., 'posts', 'pages'). */
-	sectionName?: string;
+	sectionName: string;
 	/** The selected site object. */
 	site?: HelpCenterSite | null;
 	/** The current user object. */
 	currentUser?: CurrentUser;
 	/** Called when the agent is closed. */
 	handleClose?: () => void;
-	/** Tool provider for custom abilities. */
-	toolProvider?: ToolProvider;
-	/** Context provider for environment-specific context. */
-	contextProvider?: ContextProvider;
-	/** Suggestions displayed when the chat is empty. */
-	emptyViewSuggestions?: Suggestion[];
-	/** Custom components for rendering markdown. */
-	markdownComponents?: MarkdownComponents;
-	/** Custom markdown extensions. */
-	markdownExtensions?: MarkdownExtensions;
 }
 
 /**
@@ -74,11 +60,15 @@ function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
 	} );
 }
 
+const queryClient = new QueryClient();
+
 export default function UnifiedAIAgent( props: UnifiedAIAgentProps ) {
 	return (
-		<PersistentRouter>
-			<AgentSetup { ...props } />
-		</PersistentRouter>
+		<QueryClientProvider client={ queryClient }>
+			<PersistentRouter>
+				<AgentSetup { ...props } />
+			</PersistentRouter>
+		</QueryClientProvider>
 	);
 }
 
@@ -86,20 +76,53 @@ export default function UnifiedAIAgent( props: UnifiedAIAgentProps ) {
 function AgentSetup( {
 	currentRoute,
 	site = null,
-	toolProvider,
-	contextProvider,
-	emptyViewSuggestions: customSuggestions,
-	markdownComponents = {},
-	markdownExtensions = {},
+	sectionName,
+	isEligibleForChat,
 }: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
-	const { state } = useLocation();
-	// Use persisted route state `sessionId` if available, otherwise fall back to stored `sessionId`
-	const sessionId = state?.sessionId || getSessionId();
+	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
+	const navigate = useNavigate();
+	const { pathname, state } = useLocation();
 
-	// Create the initial agent configuration
-	const config = useMemo< UseAgentChatConfig >(
-		() => {
+	const isChatRoute = pathname.startsWith( '/chat' );
+	const isNewChat = isChatRoute && !! state?.isNewChat;
+	const routeSessionId = isChatRoute && state?.sessionId;
+	// Use empty `sessionId` for new chat, otherwise use route or stored session ID
+	const sessionId = isNewChat ? '' : routeSessionId || getSessionId();
+
+	// Load external providers and initialize agent config
+	useEffect( () => {
+		const initializeAgent = async () => {
+			// Handle new chat: clear existing session and navigate to clean state
+			if ( isNewChat ) {
+				const agentManager = getAgentManager();
+
+				if ( agentManager.hasAgent( ORCHESTRATOR_AGENT_ID ) ) {
+					// Abort any ongoing requests
+					await agentManager.abortCurrentRequest( ORCHESTRATOR_AGENT_ID );
+					// Remove existing agent to start fresh
+					agentManager.removeAgent( ORCHESTRATOR_AGENT_ID );
+				}
+
+				// Clear stored session ID
+				clearSessionId();
+				// Clear route state to prevent repeated new chat initialization
+				navigate( '/chat', { replace: true } );
+
+				// Don't set config now - the navigation above will re-run this effect
+				return;
+			}
+
+			// Load external providers (only once)
+			let providers = loadedProvidersRef.current;
+			if ( ! providers ) {
+				providers = await loadExternalProviders();
+				loadedProvidersRef.current = providers;
+			}
+
+			const { toolProvider, contextProvider } = providers;
+
+			// Create the agent configuration
 			const config: UseAgentChatConfig = {
 				agentId: ORCHESTRATOR_AGENT_ID,
 				agentUrl: ORCHESTRATOR_AGENT_URL,
@@ -164,39 +187,13 @@ function AgentSetup( {
 				};
 			}
 
-			return config;
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- Only create once
-		[]
-	);
-
-	// Load config AND pre-load cached messages for progressive loading
-	useEffect( () => {
-		const initializeWithCache = async () => {
-			// Check if we have cached messages to pre-load
-			if ( sessionId ) {
-				const agentManager = getAgentManager();
-				const agentId = config.agentId;
-				const botId = createOdieBotId( agentId );
-
-				// Only pre-load if agent doesn't exist yet
-				if ( ! agentManager.hasAgent( agentId ) ) {
-					const cachedData = lastConversationCache.get( botId );
-					if ( cachedData?.sessionId === sessionId && cachedData?.messages.length ) {
-						// Create agent and load cached messages BEFORE setting config
-						await agentManager.createAgent( agentId, config );
-						await agentManager.replaceMessages( agentId, cachedData.messages );
-					}
-				}
-			}
-
 			setAgentConfig( config );
 		};
 
-		initializeWithCache();
-	}, [ config, sessionId ] );
+		initializeAgent();
+	}, [ currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
 
-	// Default suggestions - can be overridden via the `customSuggestions` prop
+	// Default suggestions - can be overridden by loaded providers
 	const defaultSuggestions = useMemo(
 		() => [
 			{
@@ -218,17 +215,23 @@ function AgentSetup( {
 		[]
 	);
 
-	// Don't render until agent configuration is initialized
-	if ( ! agentConfig ) {
+	const loadedProviders = loadedProvidersRef.current;
+
+	// Don't render until the setup is complete
+	if ( ! agentConfig || ! loadedProviders ) {
 		return null;
 	}
 
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
-			emptyViewSuggestions={ customSuggestions || defaultSuggestions }
-			markdownComponents={ markdownComponents }
-			markdownExtensions={ markdownExtensions }
+			isEligibleForChat={ isEligibleForChat }
+			site={ site }
+			sectionName={ sectionName }
+			emptyViewSuggestions={ loadedProviders.suggestions || defaultSuggestions }
+			markdownComponents={ loadedProviders.markdownComponents || {} }
+			markdownExtensions={ loadedProviders.markdownExtensions || {} }
+			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
 		/>
 	);
 }

@@ -42,6 +42,36 @@ describe( 'getMigrationState', () => {
 		} );
 	} );
 
+	it( 'returns status pending and type ssh for migration-pending-ssh', () => {
+		const migrationInfo = {
+			migration_status: 'migration-pending-ssh',
+		};
+		expect( getMigrationState( migrationInfo ) ).toEqual( {
+			status: 'pending',
+			type: 'ssh',
+		} );
+	} );
+
+	it( 'returns status started and type ssh for migration-started-ssh', () => {
+		const migrationInfo = {
+			migration_status: 'migration-started-ssh',
+		};
+		expect( getMigrationState( migrationInfo ) ).toEqual( {
+			status: 'started',
+			type: 'ssh',
+		} );
+	} );
+
+	it( 'returns status completed and type ssh for migration-completed-ssh', () => {
+		const migrationInfo = {
+			migration_status: 'migration-completed-ssh',
+		};
+		expect( getMigrationState( migrationInfo ) ).toEqual( {
+			status: 'completed',
+			type: 'ssh',
+		} );
+	} );
+
 	it( 'returns type DIFM and status started when the migration was started by DAMS', () => {
 		const migrationInfo = {
 			migration_status: 'migration-in-progress',
@@ -84,6 +114,7 @@ describe( 'isMigrationInProgress', () => {
 		{ site: {} },
 		{ site: { site_migration: { migration_status: 'migration-completed-diy' } } },
 		{ site: { site_migration: { migration_status: 'migration-completed-difm' } } },
+		{ site: { site_migration: { migration_status: 'migration-completed-ssh' } } },
 		{ site: { site_migration: { migration_status: 'migration-cancelled-difm' } } },
 	] )( 'returns false when the migration is not in progress', ( scenario ) => {
 		return expect( isMigrationInProgress( scenario?.site as SiteExcerptData ) ).toBe( false );
@@ -92,6 +123,8 @@ describe( 'isMigrationInProgress', () => {
 	it.each( [
 		{ site: { site_migration: { migration_status: 'migration-started-diy' } } },
 		{ site: { site_migration: { migration_status: 'migration-pending-diy' } } },
+		{ site: { site_migration: { migration_status: 'migration-started-ssh' } } },
+		{ site: { site_migration: { migration_status: 'migration-pending-ssh' } } },
 		{ site: { site_migration: { migration_status: 'migration-in-progress' } } },
 	] )( 'returns true when the migration is in progress', ( scenario ) => {
 		return expect( isMigrationInProgress( scenario?.site as SiteExcerptData ) ).toBe( true );

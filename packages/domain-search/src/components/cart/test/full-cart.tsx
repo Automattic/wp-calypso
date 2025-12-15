@@ -52,7 +52,7 @@ describe( 'FullCart', () => {
 	} );
 
 	describe( 'prices', () => {
-		it( 'renders the price with the sale price when it is available', async () => {
+		it( 'renders the sale price when it is available', async () => {
 			render(
 				<TestDomainSearchWithCart
 					initialCartItems={ [
@@ -64,8 +64,7 @@ describe( 'FullCart', () => {
 				</TestDomainSearchWithCart>
 			);
 
-			expect( await screen.findByLabelText( 'Original price: $20/year' ) ).toBeInTheDocument();
-			expect( await screen.findByLabelText( 'Sale price: $10/year' ) ).toBeInTheDocument();
+			expect( await screen.findByLabelText( 'Sale price: $10' ) ).toBeInTheDocument();
 			expect( screen.queryByLabelText( /Price/ ) ).not.toBeInTheDocument();
 		} );
 
@@ -81,7 +80,7 @@ describe( 'FullCart', () => {
 				</TestDomainSearchWithCart>
 			);
 
-			expect( await screen.findByLabelText( 'Price: $20/year' ) ).toBeInTheDocument();
+			expect( await screen.findByLabelText( 'Price: $20' ) ).toBeInTheDocument();
 			expect( screen.queryByLabelText( /Original price/ ) ).not.toBeInTheDocument();
 			expect( screen.queryByLabelText( /Sale price/ ) ).not.toBeInTheDocument();
 		} );

@@ -11,6 +11,7 @@ import {
 	GROUP_JETPACK,
 	GROUP_P2,
 	GROUP_WPCOM,
+	GROUP_A4A,
 	PLAN_100_YEARS,
 	PLAN_A4A_BUSINESS,
 	PLAN_A4A_BUSINESS_MONTHLY,
@@ -144,7 +145,6 @@ describe( 'isFreePlan', () => {
 	test( 'should return true for free plans', () => {
 		expect( isFreePlan( PLAN_FREE ) ).toEqual( true );
 		expect( isFreePlan( PLAN_JETPACK_FREE ) ).toEqual( true );
-		expect( isFreePlan( PLAN_WOO_HOSTED_FREE ) ).toEqual( true );
 	} );
 	test( 'should return false for non-free plans', () => {
 		expect( isFreePlan( PLAN_PERSONAL ) ).toEqual( false );
@@ -154,6 +154,7 @@ describe( 'isFreePlan', () => {
 		expect( isFreePlan( PLAN_BUSINESS ) ).toEqual( false );
 		expect( isFreePlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
 		expect( isFreePlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isFreePlan( PLAN_WOO_HOSTED_FREE ) ).toEqual( false );
 		expect( isFreePlan( 'non-existing plan' ) ).toEqual( false );
 	} );
 } );
@@ -1160,13 +1161,7 @@ describe( 'findPlansKeys', () => {
 
 	test( 'all matching plans keys - by type', () => {
 		expect( findPlansKeys( { type: TYPE_FREE } ).sort() ).toEqual(
-			[
-				PLAN_FREE,
-				PLAN_JETPACK_FREE,
-				PLAN_P2_FREE,
-				PLAN_WOO_HOSTED_FREE,
-				PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
-			].sort()
+			[ PLAN_FREE, PLAN_JETPACK_FREE, PLAN_P2_FREE ].sort()
 		);
 		expect( findPlansKeys( { type: TYPE_BLOGGER } ) ).toEqual( [
 			PLAN_BLOGGER,
@@ -1208,8 +1203,6 @@ describe( 'findPlansKeys', () => {
 		expect( findPlansKeys( { group: GROUP_WPCOM } ).sort() ).toEqual(
 			[
 				PLAN_100_YEARS,
-				PLAN_A4A_BUSINESS,
-				PLAN_A4A_BUSINESS_MONTHLY,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_BUSINESS,
@@ -1302,8 +1295,6 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_BUSINESS_3_YEARS,
-			PLAN_A4A_BUSINESS,
-			PLAN_A4A_BUSINESS_MONTHLY,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 			PLAN_HOSTING_TRIAL_MONTHLY,
 		] );
@@ -1319,6 +1310,10 @@ describe( 'findPlansKeys', () => {
 		expect( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_BUSINESS } ) ).toEqual( [
 			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
+		] );
+		expect( findPlansKeys( { group: GROUP_A4A, type: TYPE_BUSINESS } ) ).toEqual( [
+			PLAN_A4A_BUSINESS,
+			PLAN_A4A_BUSINESS_MONTHLY,
 		] );
 	} );
 } );

@@ -1,14 +1,3 @@
-export const getRedirectUri = () => {
-	const host = typeof window !== 'undefined' && window.location.host;
-
-	let protocol = 'https';
-	if ( typeof window !== 'undefined' && window.location.hostname === 'calypso.localhost' ) {
-		protocol = 'http';
-	}
-
-	return `${ protocol }://${ host }/start/user`;
-};
-
 export const getSocialServiceResponse = () => {
 	const hash = window.location.hash.substring( 1 );
 	const params = new URLSearchParams( hash );

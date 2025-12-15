@@ -26,6 +26,9 @@
 	&.align-right {
 		text-align: right;
 	}
+	.full-width-section & {
+		font-size: rem(40px);
+	}
 }
 
 .plugin-details-cta__price-placeholder {
@@ -73,6 +76,10 @@
 	margin: 24px 0 0;
 	font-size: $font-body-extra-small;
 	color: var(--studio-gray-50);
+
+	.full-width-section & {
+		font-size: $font-body-small;
+	}
 }
 
 .plugin-details-cta__not-available {

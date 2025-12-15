@@ -54,7 +54,7 @@ export const useHelpSearchQuery = (
 	source: HelpCenterRequiredInformation[ 'source' ] = '',
 	queryOptions: Record< string, unknown > = {}
 ) => {
-	return useQuery< any >( {
+	return useQuery( {
 		queryKey: [ 'help-center-search', search, locale, sectionName, source ],
 		queryFn: () => fetchArticlesAPI( search, locale, sectionName, source ),
 		refetchOnWindowFocus: false,

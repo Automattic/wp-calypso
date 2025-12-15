@@ -331,13 +331,6 @@ const UniversalNavbarHeader = ( {
 														/>
 														<ClickableItem
 															titleValue=""
-															content={ __( 'Website Building Tips', __i18n_text_domain__ ) }
-															urlValue={ localizeUrl( '//wordpress.com/go/' ) }
-															type="dropdown"
-															target="_self"
-														/>
-														<ClickableItem
-															titleValue=""
 															content={ __( 'Business Name Generator', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl( '//wordpress.com/business-name-generator/' ) }
 															type="dropdown"
@@ -679,13 +672,6 @@ const UniversalNavbarHeader = ( {
 												titleValue=""
 												content={ __( 'News', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/blog/' ) }
-												type="menu"
-												tabIndex={ mobileMenuTabIndex }
-											/>
-											<ClickableItem
-												titleValue=""
-												content={ __( 'Website Building Tips', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/go/' ) }
 												type="menu"
 												tabIndex={ mobileMenuTabIndex }
 											/>
