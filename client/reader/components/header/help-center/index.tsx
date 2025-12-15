@@ -36,7 +36,7 @@ export function HelpCenter( { user }: Props ) {
 	const trackIconInteraction = () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown,
-			section: 'dashboard',
+			section: 'reader',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
 			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
@@ -182,7 +182,7 @@ export function HelpCenter( { user }: Props ) {
 							handleClose={ handleCloseHelpCenterApp }
 							locale={ user.language }
 							onboardingUrl={ config( 'wpcom_signup_url' ) }
-							sectionName="dashboard"
+							sectionName="reader"
 						/>
 					) }
 				</Suspense>
@@ -207,7 +207,7 @@ export function HelpCenter( { user }: Props ) {
 						handleClose={ handleCloseHelpCenterApp }
 						locale={ user.language }
 						onboardingUrl={ config( 'wpcom_signup_url' ) }
-						sectionName="dashboard"
+						sectionName="reader"
 					/>
 				</Suspense>
 			) }
