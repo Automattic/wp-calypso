@@ -3,8 +3,9 @@
  */
 
 import { getShortDateString } from '@automattic/i18n-utils';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
+import type { ConversationType } from '../types';
 
 /**
  * Check if two dates represent the same calendar day in the user's local timezone
@@ -23,7 +24,7 @@ function isSameLocalDay( date1: Date, date2: Date ): boolean {
  * Shows "Today", "Yesterday", or localized date string
  * @param timestamp - Unix timestamp in seconds
  */
-export function formatConversationDate( timestamp: number ): string {
+function formatConversationDate( timestamp: number ): string {
 	const timestampMs = timestamp * 1000;
 	const date = new Date( timestampMs );
 	const today = new Date();
@@ -53,4 +54,25 @@ export function generateConversationTitle( messageContent: string ): string {
 	}
 
 	return messageContent.trim();
+}
+
+/**
+ * Generate a conversation subtitle based on the conversation type and timestamp
+ * @param type - The conversation type
+ * @param timestamp - Unix timestamp in seconds
+ */
+export function generateConversationSubtitle( type: ConversationType, timestamp: number ): string {
+	const date = formatConversationDate( timestamp );
+
+	if ( type === 'zendesk' ) {
+		return sprintf(
+			/* translators: %s: date of the conversation */
+			__( 'Happiness chat · %s', '__i18n_text_domain__' ),
+			date
+		);
+	}
+
+	// TODO: Remove the `type` debug info before release.
+	// NOTE: Add a tempo `type` for us to debug which type of conversation it is.
+	return `${ date } · ${ type }`;
 }

@@ -5,8 +5,8 @@
 
 import { __, sprintf } from '@wordpress/i18n';
 import {
-	formatConversationDate,
 	generateConversationTitle,
+	generateConversationSubtitle,
 } from '../../utils/conversation-history-formatters';
 import ConversationAvatar from '../conversation-avatar';
 import type { Conversation, ConversationType } from '../../types';
@@ -20,17 +20,7 @@ interface Props {
 export default function ConversationListItem( { conversation, onClick }: Props ) {
 	const { type, id, message, supportInteraction } = conversation;
 	const title = generateConversationTitle( message.text );
-	const date = formatConversationDate( message.received );
-
-	// Check if this is a Happiness Engineer chat
-	const isHE = type === 'zendesk';
-	const subtitle = isHE
-		? sprintf(
-				/* translators: %s: date of the conversation */
-				__( 'Happiness chat · %s', '__i18n_text_domain__' ),
-				date
-		  )
-		: date;
+	const subtitle = generateConversationSubtitle( type, message.received );
 
 	return (
 		<button
@@ -48,11 +38,7 @@ export default function ConversationListItem( { conversation, onClick }: Props )
 			<ConversationAvatar type={ type } />
 			<div className="agents-manager-conversation-list-item__text">
 				<p className="agents-manager-conversation-list-item__title">{ title }</p>
-				<p className="agents-manager-conversation-list-item__subtitle">{
-					// TODO: Remove the `type` debug info before release.
-					// NOTE: Add a tempo `type` for us to debug which type of conversation it is.
-					`${ subtitle } · ${ type }`
-				}</p>
+				<p className="agents-manager-conversation-list-item__subtitle">{ subtitle }</p>
 			</div>
 		</button>
 	);
