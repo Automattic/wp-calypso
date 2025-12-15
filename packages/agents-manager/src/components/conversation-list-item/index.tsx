@@ -19,15 +19,17 @@ interface Props {
 
 export default function ConversationListItem( { conversation, onClick }: Props ) {
 	const { type, id, message, supportInteraction } = conversation;
+	// For Odie conversations, use supportInteraction ID
+	const finalId = supportInteraction?.id || id;
 	const title = generateConversationTitle( message.text );
 	const subtitle = generateConversationSubtitle( type, message.received );
 
 	return (
 		<button
 			className="agents-manager-conversation-list-item"
-			// For Odie conversations, use supportInteraction ID
-			onClick={ () => onClick( type, supportInteraction?.id || id ) }
 			type="button"
+			onClick={ () => onClick( type, finalId ) }
+			disabled={ ! finalId }
 			aria-label={ sprintf(
 				/* translators: %s: conversation title */
 				__( 'Load conversation: %s', '__i18n_text_domain__' ),
