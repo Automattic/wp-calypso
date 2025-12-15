@@ -2,7 +2,9 @@
  * Utility functions shared across data stores
  */
 
-declare const helpCenterData: { isProxied: boolean; isSU: boolean; isSSP: boolean } | undefined;
+declare const helpCenterData:
+	| { isProxied: boolean; isSU: boolean; isSSP: boolean; currentUser: { ID: number } }
+	| undefined;
 declare const isSupportSession: boolean;
 declare const isSSP: boolean;
 
@@ -29,4 +31,13 @@ export const isInSupportSession = () => {
 		);
 	}
 	return false;
+};
+
+export const isLoggedIn = () => {
+	return (
+		// Calypso
+		( typeof window !== 'undefined' && !! window.currentUser?.ID ) ||
+		// wp-admin and Gutenberg
+		( typeof helpCenterData !== 'undefined' && !! helpCenterData?.currentUser?.ID )
+	);
 };
