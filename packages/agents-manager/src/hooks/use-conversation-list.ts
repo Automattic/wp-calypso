@@ -38,7 +38,7 @@ export default function useConversationList( { agentId, authProvider }: Options 
 	const conversations = useMemo(
 		() =>
 			[ ...odieQuery.conversations, ...orchestratorQuery.conversations ].sort(
-				( a, b ) => ( b.message?.received || 0 ) - ( a.message?.received || 0 )
+				( a, b ) => ( b.message?.received ?? 0 ) - ( a.message?.received ?? 0 )
 			),
 		[ odieQuery.conversations, orchestratorQuery.conversations ]
 	);

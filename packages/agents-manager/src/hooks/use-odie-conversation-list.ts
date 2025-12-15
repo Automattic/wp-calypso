@@ -16,14 +16,14 @@ interface Result {
 export default function useOdieConversationList(): Result {
 	const {
 		data: supportInteractions = [],
-		isLoading: isLoadingInteractions,
-		isError: isFetchingInteractionsError,
+		isLoading: isLoadingSupportInteractions,
+		isError: isSupportInteractionsError,
 	} = useGetSupportInteractions( 'odie' );
 
 	const {
 		data: odieConversations = [],
-		isLoading: isLoadingConversations,
-		isError: isFetchingConversationsError,
+		isLoading: isLoadingOdieConversations,
+		isError: isOdieConversationsError,
 		error,
 	} = useGetOdieConversations( supportInteractions );
 
@@ -41,8 +41,8 @@ export default function useOdieConversationList(): Result {
 
 	return {
 		conversations,
-		isLoading: isLoadingInteractions || isLoadingConversations,
-		isError: isFetchingInteractionsError || isFetchingConversationsError,
+		isLoading: isLoadingSupportInteractions || isLoadingOdieConversations,
+		isError: isSupportInteractionsError || isOdieConversationsError,
 	};
 }
 
