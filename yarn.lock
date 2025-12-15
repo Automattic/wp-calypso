@@ -2225,27 +2225,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/social-previews@workspace:^, @automattic/social-previews@workspace:packages/social-previews":
-  version: 0.0.0-use.local
-  resolution: "@automattic/social-previews@workspace:packages/social-previews"
+"@automattic/social-previews@npm:^2.1.0-beta.13":
+  version: 2.1.0-beta.13
+  resolution: "@automattic/social-previews@npm:2.1.0-beta.13"
   dependencies:
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
     "@emotion/react": "npm:^11.11.1"
-    "@testing-library/dom": "npm:^10.4.1"
-    "@testing-library/jest-dom": "npm:^6.9.1"
-    "@testing-library/react": "npm:^16.3.0"
-    "@wordpress/components": "npm:^30.9.0"
+    "@wordpress/components": "npm:^30.8.0"
     "@wordpress/element": "npm:^6.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     clsx: "npm:^2.1.1"
-    postcss: "npm:^8.5.3"
     prop-types: "npm:^15.8.1"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^5.8.3"
-    webpack: "npm:^5.99.8"
   peerDependencies:
     "@babel/runtime": ^7.27.1
     react: ^18.3.1
@@ -2253,8 +2243,9 @@ __metadata:
   peerDependenciesMeta:
     "@babel/runtime":
       optional: true
-  languageName: unknown
-  linkType: soft
+  checksum: fac33dca75fb20305215654987e342d0b005bc960fa1974c311be9af6aa53a994989b017745eaee873a08b12269cde17c3a62f749010cb6ccc9efdf34bf2032f
+  languageName: node
+  linkType: hard
 
 "@automattic/state-utils@workspace:^, @automattic/state-utils@workspace:packages/state-utils":
   version: 0.0.0-use.local
@@ -15375,7 +15366,7 @@ __metadata:
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/sites": "workspace:^"
-    "@automattic/social-previews": "workspace:^"
+    "@automattic/social-previews": "npm:^2.1.0-beta.13"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
     "@automattic/support-articles": "workspace:^"

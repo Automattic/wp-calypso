@@ -67,7 +67,7 @@
 		"@automattic/search": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@automattic/sites": "workspace:^",
-		"@automattic/social-previews": "workspace:^",
+		"@automattic/social-previews": "^2.1.0-beta.13",
 		"@automattic/state-utils": "workspace:^",
 		"@automattic/subscriber": "workspace:^",
 		"@automattic/support-articles": "workspace:^",
