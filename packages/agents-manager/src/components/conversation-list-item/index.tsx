@@ -29,10 +29,9 @@ export default function ConversationListItem( { conversation, onClick }: Props )
 			onClick={ () => onClick( type, supportInteraction?.id || id ) }
 			type="button"
 			aria-label={ sprintf(
-				/* translators: %1$s: conversation title, %2$s: conversation subtitle */
-				__( 'Load conversation: %1$s, %2$s', '__i18n_text_domain__' ),
-				title,
-				subtitle
+				/* translators: %s: conversation title */
+				__( 'Load conversation: %s', '__i18n_text_domain__' ),
+				title
 			) }
 		>
 			<ConversationAvatar type={ type } />
