@@ -67,8 +67,16 @@ export const getContactFormFields = (
 				const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
 				const phoneValue = getValue( { item: data } );
 
+				const firstDotIndes = phoneValue.indexOf( '.' );
+
 				// Our backend stores phone number in the format: +country_code.phone_number
-				const [ countryNumericCode, phoneNumber ] = phoneValue?.split( '.' ) ?? [ '', '' ];
+				const [ countryNumericCode, phoneNumber ] =
+					firstDotIndes !== -1
+						? [
+								phoneValue.substring( 0, firstDotIndes ),
+								phoneValue.substring( firstDotIndes + 1 ),
+						  ]
+						: [ '', phoneValue ];
 
 				// Find country code from the numeric code using SMS country codes
 				const smsCountry = smsCountryCodes?.find(
