@@ -85,9 +85,21 @@ export const handleDeny = ( meta: AuthorizeMeta ): void => {
 
 /**
  * Handles switching to a different WordPress.com account.
- * Redirects to the logout URL which will return to the authorization screen.
+ * For Calypso flows (from-calypso=1), builds a login URL that redirects back to the current page.
+ * Otherwise uses the logout URL from the backend.
  * @param meta - The authorization metadata from the API
  */
 export const handleSwitch = ( meta: AuthorizeMeta ): void => {
-	window.location.href = meta.links.logout;
+	const params = new URLSearchParams( window.location.search );
+	const isFromCalypso = params.get( 'from-calypso' ) === '1';
+
+	if ( isFromCalypso ) {
+		// Build Calypso login URL that redirects back to current OAuth2 authorize page
+		const currentUrl = window.location.pathname + window.location.search;
+		const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentUrl ) }`;
+		window.location.href = loginUrl;
+	} else {
+		// For non-Calypso flows, use the backend logout URL
+		window.location.href = meta.links.logout;
+	}
 };
