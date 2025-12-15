@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import useSiteTypes from 'calypso/my-sites/stats/hooks/use-site-types';
 
 import './style.scss';
 
@@ -119,6 +120,7 @@ const StatsPlanUsage: React.FC< StatsPlanUsageProps > = ( { siteId, isOdysseySta
 	const upgradeLink = getStatsPurchaseURL( siteId, isOdysseyStats );
 
 	const { data } = usePlanUsageQuery( siteId );
+	const { isVip } = useSiteTypes( siteId );
 
 	// If there's no limit, don't show the component.
 	// Site with legacy plans or no plans at all will have a null limit.
@@ -132,7 +134,7 @@ const StatsPlanUsage: React.FC< StatsPlanUsageProps > = ( { siteId, isOdysseySta
 				limit={ data?.views_limit }
 				usage={ data?.current_usage?.views_count }
 				daysToReset={ data?.current_usage?.days_to_reset }
-				overLimitMonths={ data?.over_limit_months }
+				overLimitMonths={ isVip ? null : data?.over_limit_months }
 				upgradeLink={ upgradeLink }
 			/>
 		</div>

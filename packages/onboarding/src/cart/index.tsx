@@ -216,9 +216,6 @@ export const createSiteWithCart = async (
 		},
 	} );
 
-	// Sleep for 10 seconds to allow for site creation to settle
-	await new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
-
 	if ( ! siteCreationResponse.success ) {
 		// TODO ebuccelli: Manage siteCreationResponse.errors
 		return;

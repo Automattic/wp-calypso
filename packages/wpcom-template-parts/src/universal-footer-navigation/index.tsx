@@ -213,11 +213,6 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
-									<a href={ localizeUrl( 'https://wordpress.com/go/' ) } target="_self">
-										{ __( 'Website Building Tips', __i18n_text_domain__ ) }
-									</a>
-								</li>
-								<li>
 									<a
 										href={ localizeUrl( 'https://wordpress.com/business-name-generator/' ) }
 										target="_self"
@@ -231,17 +226,17 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
-									<a href={ localizeUrl( 'https://wordpress.com/discover/' ) } target="_self">
+									<a href={ localizeUrl( 'https://wordpress.com/discover' ) } target="_self">
 										{ __( 'Discover New Posts', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
-									<a href={ localizeUrl( 'https://wordpress.com/tags/' ) } target="_self">
+									<a href={ localizeUrl( 'https://wordpress.com/tags' ) } target="_self">
 										{ __( 'Popular Tags', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
-									<a href={ localizeUrl( 'https://wordpress.com/reader/search/' ) } target="_self">
+									<a href={ localizeUrl( 'https://wordpress.com/reader/search' ) } target="_self">
 										{ __( 'Blog Search', __i18n_text_domain__ ) }
 									</a>
 								</li>

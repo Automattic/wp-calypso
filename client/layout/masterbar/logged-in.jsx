@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -234,7 +235,7 @@ class MasterbarLoggedIn extends Component {
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
 		if ( hostingDashboardOptIn ) {
-			mySitesUrl = domainOnlySite ? '/v2/domains' : '/v2/sites';
+			mySitesUrl = domainOnlySite ? dashboardLink( '/domains' ) : dashboardLink( '/sites' );
 		}
 		const icon = this.wordpressIcon();
 
@@ -249,11 +250,11 @@ class MasterbarLoggedIn extends Component {
 					[
 						{
 							label: translate( 'Sites' ),
-							url: hostingDashboardOptIn ? '/v2/sites' : '/sites',
+							url: hostingDashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
 						},
 						{
 							label: translate( 'Domains' ),
-							url: hostingDashboardOptIn ? '/v2/domains' : '/domains/manage',
+							url: hostingDashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
 						},
 					],
 					...( this.props.isSimpleSite

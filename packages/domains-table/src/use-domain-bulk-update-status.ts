@@ -1,11 +1,10 @@
 import {
-	DomainUpdateStatus,
 	useBulkDomainUpdateStatusQuery,
 	getBulkDomainUpdateStatusQueryKey,
-	BulkDomainUpdateStatusQueryFnData,
 } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import type { BulkDomainUpdateStatusQueryFnData, DomainUpdateStatus } from '@automattic/api-core';
 
 const defaultResult = {
 	completedJobs: [],

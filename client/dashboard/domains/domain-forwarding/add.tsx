@@ -1,7 +1,7 @@
 import { domainQuery, domainForwardingSaveMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
@@ -19,7 +19,8 @@ export default function AddDomainForwarding() {
 		...domainForwardingSaveMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Domain forwarding rule saved.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Domain forwarding rule for %s saved.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},

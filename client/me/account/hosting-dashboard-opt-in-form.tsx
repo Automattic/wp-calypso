@@ -6,6 +6,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SectionHeader from 'calypso/components/section-header';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -53,7 +54,7 @@ export default function HostingDashboardOptInForm() {
 		event.preventDefault();
 
 		dispatch(
-			recordTracksEvent( 'calypso_account_new_hosting_dashboard_toggle', {
+			recordTracksEvent( 'calypso_account_new_hosting_dashboard_submit', {
 				enabled,
 			} )
 		);
@@ -73,7 +74,7 @@ export default function HostingDashboardOptInForm() {
 			);
 		} else if ( enabled ) {
 			setIsRedirecting( true );
-			window.location.href = '/v2/me/preferences?flash=dashboard';
+			window.location.href = dashboardLink( '/me/preferences?flash=dashboard' );
 		} else {
 			dispatch(
 				successNotice( translate( 'Successfully saved preference.' ), {
@@ -101,7 +102,14 @@ export default function HostingDashboardOptInForm() {
 							<FormCheckbox
 								checked={ enabled }
 								disabled={ isFetching || isSaving }
-								onChange={ ( event ) => setEnabled( event.target.checked ) }
+								onChange={ ( event ) => {
+									setEnabled( event.target.checked );
+									dispatch(
+										recordTracksEvent( 'calypso_account_new_hosting_dashboard_toggle_click', {
+											enabled: event.target.checked,
+										} )
+									);
+								} }
 							/>
 							<span>{ translate( 'I want to try the beta version.' ) }</span>
 						</FormLabel>

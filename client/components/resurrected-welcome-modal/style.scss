@@ -1,0 +1,136 @@
+@import '@wordpress/base-styles/variables';
+
+.resurrected-welcome-modal.components-modal__frame {
+	width: 400px;
+	max-width: min( 400px, calc( 100vw - 32px ) );
+	margin-inline: auto;
+	align-self: center;
+	height: auto;
+	max-height: calc( 100vh - 32px );
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.resurrected-welcome-modal__overlay.components-modal__screen-overlay {
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+
+@media (max-width: 480px) {
+	.resurrected-welcome-modal.components-modal__frame {
+		width: 100%;
+		max-width: calc( 100vw - 16px );
+	}
+
+	.resurrected-welcome-modal__overlay.components-modal__screen-overlay {
+		padding: 12px;
+	}
+}
+
+.resurrected-welcome-modal .components-modal__content {
+	padding: 0;
+	margin: 0;
+	background: var( --color-surface );
+	overflow: visible;
+}
+
+.resurrected-welcome-modal .components-modal__header {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect( 0, 0, 0, 0 );
+	border: 0;
+}
+
+.resurrected-welcome-modal__frame {
+	display: flex;
+	flex-direction: column;
+	border-radius: 8px;
+	background: var( --color-surface );
+	overflow: hidden;
+}
+
+.resurrected-welcome-modal__hero {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1175 / 740;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	background-position: top center;
+	background-color: #edf3ff;
+	background-image: url( ./media/bg-02.png );
+}
+
+.resurrected-welcome-modal__close {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	width: 24px;
+	height: 24px;
+	border: 0;
+	background: none;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var( --color-text, #101517 );
+	cursor: pointer;
+}
+
+.resurrected-welcome-modal__close--light {
+	color: #fff;
+}
+
+.resurrected-welcome-modal__close--light svg {
+	fill: currentColor;
+	stroke: currentColor;
+}
+
+.resurrected-welcome-modal__content {
+	margin-top: 0;
+	padding: 26px;
+	text-align: left;
+}
+
+.resurrected-welcome-modal__title {
+	margin: 0 0 8px;
+	font-size: $font-size-x-large;
+	line-height: 1.3;
+	font-weight: 500;
+}
+
+.resurrected-welcome-modal__description {
+	margin: 12px 0 0;
+	font-size: $font-size-medium;
+	line-height: 1.5;
+}
+
+.resurrected-welcome-modal__actions {
+	margin-top: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.resurrected-welcome-modal__cta {
+	width: 100%;
+	justify-content: center;
+}
+
+.resurrected-welcome-modal__cta-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.resurrected-welcome-modal__cta-icon {
+	display: inline-flex;
+}
+
+.resurrected-welcome-modal--treatment-ai-only .resurrected-welcome-modal__hero {
+	background-image: url( ./media/bg-01.png );
+}

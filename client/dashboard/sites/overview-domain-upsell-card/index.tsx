@@ -10,6 +10,7 @@ import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
@@ -51,8 +52,7 @@ const DomainUpsellCardContent = ( {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
 
-	const backUrl = window.location.href.replace( window.location.origin, '' );
-
+	const backUrl = redirectToDashboardLink( { supportBackport: true } );
 	const handleUpsell = async () => {
 		if ( suggestedDomain ) {
 			setIsSubmitting( true );
@@ -69,23 +69,27 @@ const DomainUpsellCardContent = ( {
 		}
 
 		if ( requiresPlanUpgrade( site ) ) {
-			window.location.href = getDomainAndPlanUpsellUrl( {
-				siteSlug: site.slug,
-				backUrl,
-				step: 'plans',
-			} );
+			window.location.href = wpcomLink(
+				getDomainAndPlanUpsellUrl( {
+					siteSlug: site.slug,
+					backUrl,
+					step: 'plans',
+				} )
+			);
 		} else {
-			window.location.href = addQueryArgs( `/checkout/${ site.slug }`, {
+			window.location.href = addQueryArgs( wpcomLink( `/checkout/${ site.slug }` ), {
 				cancel_to: backUrl,
 				redirect_to: backUrl,
 			} );
 		}
 	};
 
-	const chooseYourOwnUrl = getDomainAndPlanUpsellUrl( {
-		siteSlug: site.slug,
-		backUrl,
-	} );
+	const chooseYourOwnUrl = wpcomLink(
+		getDomainAndPlanUpsellUrl( {
+			siteSlug: site.slug,
+			backUrl,
+		} )
+	);
 
 	return (
 		<Callout
@@ -120,7 +124,6 @@ const DomainUpsellCardContent = ( {
 			imageVariant="full-bleed"
 			actions={
 				<UpsellCTAButton
-					target="_blank"
 					text={ upsellCTAButtonText }
 					variant="primary"
 					size="compact"

@@ -50,6 +50,8 @@ const PluginsBrowserList = ( {
 	noHeader = false,
 	useCarousel = false,
 	carouselPageSize = DEFAULT_CAROUSEL_PAGE_SIZE,
+	injectAfterIndex = null,
+	injectElement = null,
 } ) => {
 	const extendedVariant = extended
 		? PluginsBrowserElementVariant.Extended
@@ -148,6 +150,30 @@ const PluginsBrowserList = ( {
 						) ) }
 					</DotPager>
 				</div>
+			);
+		}
+
+		// If we have an element to inject after a specific index, split the items
+		if (
+			injectElement &&
+			typeof injectAfterIndex === 'number' &&
+			items.length > injectAfterIndex
+		) {
+			const firstBatch = items.slice( 0, injectAfterIndex );
+			const secondBatch = items.slice( injectAfterIndex );
+
+			return (
+				<>
+					<Card tagName="ul" className="plugins-browser-list__elements">
+						{ firstBatch }
+					</Card>
+					{ injectElement }
+					{ secondBatch.length > 0 && (
+						<Card tagName="ul" className="plugins-browser-list__elements">
+							{ secondBatch }
+						</Card>
+					) }
+				</>
 			);
 		}
 

@@ -111,6 +111,7 @@ export type Context = {
 	classification_results?: ClassificationResults;
 	question_tags?: ClassificationResults;
 	flags?: {
+		failed_zendesk_connection?: boolean;
 		forward_to_human_support?: boolean;
 		hide_disclaimer_content?: boolean;
 		show_contact_support_msg?: boolean;
@@ -198,6 +199,8 @@ export type MessageAction = {
 	text: string;
 	type: string;
 	metadata: ChatFeedbackActions;
+	label: string;
+	onClick: () => void;
 };
 
 export type OdieMessage = {
@@ -252,3 +255,20 @@ export type SupportInteraction = {
 	events: SupportInteractionEvent[];
 	environment: 'staging' | 'production';
 };
+export interface AgentticMessage {
+	id: string;
+	role: 'user' | 'agent';
+	content: Array< {
+		type: 'text' | 'image_url' | 'component' | 'context';
+		text?: string;
+		image_url?: string;
+		component?: React.ComponentType;
+		componentProps?: unknown;
+	} >;
+	timestamp: number;
+	archived: boolean;
+	showIcon: boolean;
+	icon?: string;
+	disabled?: boolean;
+	actions?: MessageAction[];
+}

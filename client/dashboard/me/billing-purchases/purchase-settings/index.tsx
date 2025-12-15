@@ -60,6 +60,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
+import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -113,19 +114,19 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 
 	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
 	if ( upgradeProductSlug ) {
-		return `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }`;
+		return wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` );
 	}
 
 	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return `/plans/storage/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_jetpack_plan_or_product ) {
-		return `/plans/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_woo_hosted_product ) {
-		return `/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug }`;
+		return wpcomLink( `/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug }` );
 	}
 
 	return getWpcomPlanGridUrl( purchase.site_slug );
@@ -133,25 +134,24 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 
 function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return `/plans/storage/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_jetpack_plan_or_product ) {
-		return `/plans/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_plan ) {
 		return getWpcomPlanGridUrl( purchase.site_slug );
 	}
 
-	return `/plans/${ purchase.site_slug }`;
+	return wpcomLink( `/plans/${ purchase.site_slug }` );
 }
 
 function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
-	const backUrl = window.location.href.replace( window.location.origin, '' );
-	return addQueryArgs( '/setup/plan-upgrade', {
+	const backUrl = redirectToDashboardLink();
+	return addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		...( siteSlug && { siteSlug } ),
-		redirect_to: backUrl,
 		cancel_to: backUrl,
 	} );
 }
@@ -207,7 +207,7 @@ function upgradePurchase( upgradeUrl: string ): void {
 
 function ProductLink( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.is_plan && purchase.site_slug ) {
-		const url = '/plans/my-plan/' + purchase.site_slug;
+		const url = wpcomLink( '/plans/my-plan/' + purchase.site_slug );
 		const text = __( 'Plan features' );
 		return (
 			<MetadataItem>
@@ -440,7 +440,7 @@ function JetpackCRMDownloadsButton( { purchase }: { purchase: Purchase } ) {
 	}
 
 	// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-	const path = `/purchases/crm-downloads/${ purchase.ID }`;
+	const path = wpcomLink( `/purchases/crm-downloads/${ purchase.ID }` );
 
 	return (
 		<ActionList.ActionItem
@@ -812,7 +812,9 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 							{
 								SubmitContent: (
 									<a
-										href={ `/start/site-content-collection/website-content?siteSlug=${ purchase.site_slug }` }
+										href={ wpcomLink(
+											`/start/site-content-collection/website-content?siteSlug=${ purchase.site_slug }`
+										) }
 									>
 										{ __( 'Submit content' ) }
 									</a>

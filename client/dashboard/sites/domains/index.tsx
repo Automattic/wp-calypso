@@ -1,19 +1,26 @@
 import { domainsQuery, siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
-import { usePersistentView, DataViews } from '../../app/dataviews';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { domainConnectionSetupRoute } from '../../app/router/domains';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { AddDomainButton } from '../../domains/add-domain-button';
-import { useActions, useFields, DEFAULT_LAYOUTS, SITE_CONTEXT_VIEW } from '../../domains/dataviews';
+import {
+	useActions,
+	useFields,
+	DEFAULT_LAYOUTS,
+	SITE_CONTEXT_VIEW,
+	BulkActionsProgressNotice,
+} from '../../domains/dataviews';
 import PrimaryDomainSelector from './primary-domain-selector';
 import type { DomainSummary } from '@automattic/api-core';
 
@@ -31,6 +38,7 @@ function SiteDomains() {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
 	} );
+
 	const { data: redirect, isLoading: isRedirectLoading } = useQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
 
@@ -54,8 +62,21 @@ function SiteDomains() {
 		fields
 	);
 
+	const router = useRouter();
+
+	const domainConnectionSetupUrlRelativePath = router
+		.buildLocation( {
+			to: domainConnectionSetupRoute.fullPath,
+			params: { domainName: '%s' },
+		} )
+		.href.replace( '%25s', '%s' );
+
+	const domainConnectionSetupUrl = new URL(
+		domainConnectionSetupUrlRelativePath,
+		window.location.origin
+	).href;
 	const { basePath } = useAppContext();
-	const domainConnectionSetupUrl = `${ basePath }/domains/%s/domain-connection-setup`;
+	const redirectTo = `${ basePath }/sites/${ site.slug }/domains`;
 
 	return (
 		<PageLayout
@@ -66,10 +87,12 @@ function SiteDomains() {
 						<AddDomainButton
 							siteSlug={ site.slug }
 							domainConnectionSetupUrl={ domainConnectionSetupUrl }
+							redirectTo={ redirectTo }
 						/>
 					}
 				/>
 			}
+			notices={ <BulkActionsProgressNotice /> }
 		>
 			{ ! isLoading && ! isRedirectLoading && siteDomains && ! hasRedirect && (
 				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />

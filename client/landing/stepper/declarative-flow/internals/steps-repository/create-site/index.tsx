@@ -55,6 +55,9 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 }
 
 async function pollForGardenProvisioning( siteId: number, maxAttempts = 10, delayMs = 3000 ) {
+	// Sleep for 10 seconds to allow for site creation to settle
+	await new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
+
 	for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 		try {
 			const siteResponse = ( await wpcomRequest( {

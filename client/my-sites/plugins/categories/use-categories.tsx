@@ -1,4 +1,5 @@
 import { __, _x } from '@wordpress/i18n';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -77,7 +78,9 @@ export const ALLOWED_CATEGORIES = [
 	'wpbeginner',
 ];
 
-export const getCategories: () => Record< string, Category > = () => ( {
+export const getCategories = (
+	isMarketplaceRedesignEnabled = false
+): Record< string, Category > => ( {
 	discover: {
 		menu: __( 'Discover' ),
 		title: __( 'Discover' ),
@@ -87,15 +90,19 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	paid: {
 		menu: __( 'Premium plugins' ),
-		title: __( 'Must-have premium plugins' ),
-		description: __( 'Take your site further with these premium plugins.' ),
+		title: isMarketplaceRedesignEnabled
+			? __( 'Must-have plugins' )
+			: __( 'Must-have premium plugins' ),
+		description: isMarketplaceRedesignEnabled
+			? __( 'Add the most popular plugins on WordPress.com.' )
+			: __( 'Take your site further with these premium plugins.' ),
 		slug: 'paid',
 		tags: [],
 		preview: [],
 	},
 	popular: {
 		menu: __( 'Popular plugins' ),
-		title: __( 'Popular plugins' ),
+		title: isMarketplaceRedesignEnabled ? __( 'The free essentials' ) : __( 'Popular plugins' ),
 		description: __( 'Add and install the most popular free plugins.' ),
 		slug: 'popular',
 		tags: [],
@@ -103,8 +110,10 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	featured: {
 		menu: __( 'Developer favorites' ),
-		title: __( 'Our developers’ favorites' ),
-		description: __( 'Start fast with these WordPress.com team picks.' ),
+		title: isMarketplaceRedesignEnabled ? __( 'Our favorites' ) : __( 'Our developers’ favorites' ),
+		description: isMarketplaceRedesignEnabled
+			? __( "Start faster with the WordPress.com team's picks." )
+			: __( 'Start fast with these WordPress.com team picks.' ),
 		slug: 'featured',
 		tags: [],
 		preview: [],
@@ -426,11 +435,13 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	monetization: {
 		menu: __( 'Monetization' ),
-		title: __( 'Supercharging and monetizing your blog' ),
+		title: isMarketplaceRedesignEnabled
+			? __( 'Do more, sell more, earn more' )
+			: __( 'Supercharging and monetizing your blog' ),
 		slug: 'monetization',
-		description: __(
-			'Building a money-making blog doesn’t have to be as hard as you might think.'
-		),
+		description: isMarketplaceRedesignEnabled
+			? __( 'Making money with your site is easier than you`d think.' )
+			: __( 'Building a money-making blog doesn’t have to be as hard as you might think.' ),
 		tags: [ 'affiliate-marketing', 'advertising', 'adwords' ],
 		preview: [
 			{
@@ -565,9 +576,13 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	business: {
 		menu: _x( 'Business', 'category name' ),
-		title: __( 'Setting up your local business' ),
+		title: isMarketplaceRedesignEnabled
+			? __( 'Set up your business' )
+			: __( 'Setting up your local business' ),
 		slug: 'business',
-		description: __( 'These plugins are here to keep your business on track.' ),
+		description: isMarketplaceRedesignEnabled
+			? __( 'Find the perfect plugin to build and grow.' )
+			: __( 'These plugins are here to keep your business on track.' ),
 		tags: [ 'google', 'testimonials', 'crm', 'business-directory' ],
 		preview: [
 			{
@@ -1068,6 +1083,7 @@ export function useCategories(
 	allowedCategories = ALLOWED_CATEGORIES
 ): Record< string, Category > {
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	const isJetpack = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
@@ -1082,6 +1098,8 @@ export function useCategories(
 	}
 
 	return Object.fromEntries(
-		Object.entries( getCategories() ).filter( ( [ key ] ) => allowed.includes( key ) )
+		Object.entries( getCategories( isMarketplaceRedesignEnabled ) ).filter( ( [ key ] ) =>
+			allowed.includes( key )
+		)
 	);
 }

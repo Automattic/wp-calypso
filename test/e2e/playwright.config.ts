@@ -13,6 +13,10 @@ const reporter: ReporterDescription[] = [
 		{
 			outputDir: outputPath,
 			outputFile: `ctrf-report-${ Date.now() }.json`,
+			branchName: process.env.BRANCH_NAME || '',
+			commit: process.env.BUILD_VCS_NUMBER || '',
+			appName: 'calypso',
+			repositoryName: 'Automattic/wp-calypso',
 		},
 	],
 ];
@@ -37,7 +41,7 @@ export default defineConfig( {
 	/* Fail the build on CI if you accidentally left test.only in the source code. */
 	forbidOnly: !! process.env.CI,
 	/* Retry on CI only */
-	retries: process.env.CI ? 1 : 0,
+	retries: process.env.CI ? 2 : 0,
 	/* Workers should use what is available locally, and half on CI*/
 	workers: process.env.CI ? '50%' : '100%',
 	/* Global timeout for each test */

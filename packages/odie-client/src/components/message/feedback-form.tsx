@@ -47,7 +47,11 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 						? __( 'Good 👍', __i18n_text_domain__ )
 						: __( 'Bad 👎', __i18n_text_domain__ ),
 				payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
-				metadata: { rated: true },
+				metadata: {
+					rated: true,
+					temporary_id: crypto.randomUUID(),
+					local_timestamp: Date.now() / 1000,
+				},
 				role: 'user',
 				type: 'message',
 			};
@@ -92,14 +96,12 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 			<div className={ clsx( 'odie-conversation__feedback', { has_message: score } ) }>
 				<div className="odie-conversation-feedback__thumbs">
 					<Button
-						__next40pxDefaultSize
 						onClick={ () => postScore( 'good' ) }
 						className="odie-conversation-feedback__thumbs-button"
 					>
 						<ThumbsUpIcon />
 					</Button>
 					<Button
-						__next40pxDefaultSize
 						onClick={ () => postScore( 'bad' ) }
 						className="odie-conversation-feedback__thumbs-button"
 					>

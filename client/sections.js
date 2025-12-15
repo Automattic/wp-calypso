@@ -836,6 +836,12 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		name: 'a8c-for-agencies-learn',
+		paths: [ '/learn', '/learn/resource-center' ],
+		module: 'calypso/a8c-for-agencies/sections/learn',
+		group: 'a8c-for-agencies',
+	},
+	{
 		name: 'a8c-for-agencies-migrations',
 		paths: [
 			'/migrations',
@@ -909,6 +915,12 @@ const sections = [
 			'/woopayments/site-setup',
 		],
 		module: 'calypso/a8c-for-agencies/sections/woopayments',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-exclusive-offers',
+		paths: [ '/exclusive-offers' ],
+		module: 'calypso/a8c-for-agencies/sections/exclusive-offers',
 		group: 'a8c-for-agencies',
 	},
 ];

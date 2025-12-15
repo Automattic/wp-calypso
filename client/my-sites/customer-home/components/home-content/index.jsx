@@ -13,6 +13,8 @@ import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connec
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
@@ -187,7 +189,11 @@ const HomeContent = ( {
 			{ isAdmin && ! isP2 && (
 				<Button
 					primary
-					href={ hostingDashboardOptIn ? `/v2/sites/${ site.slug }` : `/overview/${ site.slug }` }
+					href={
+						hostingDashboardOptIn
+							? dashboardLink( `/sites/${ site.slug }` )
+							: `/overview/${ site.slug }`
+					}
 				>
 					{ hostingDashboardOptIn
 						? translate( 'Hosting Dashboard' )
@@ -359,6 +365,7 @@ const HomeContent = ( {
 					allDomains={ allDomains }
 				/>
 			) }
+			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</div>
 	);

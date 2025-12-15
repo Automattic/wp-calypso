@@ -18,7 +18,7 @@ import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentAgencyTier from '../lib/get-current-agency-tier';
-import { ALL_TIERS } from './constants';
+import { ALL_TIERS, TARGET_INFLUENCED_REVENUE } from './constants';
 import type { AgencyTierType } from './types';
 
 const TEXT_COLOR = 'var(--color-gray-700)';
@@ -127,7 +127,7 @@ export default function TierCards( {
 					</Card>
 				);
 			} ) }
-			{ showEarlyAccessModal && (
+			{ showEarlyAccessModal && currentTier && (
 				<Modal
 					isDismissible
 					size="medium"
@@ -136,8 +136,12 @@ export default function TierCards( {
 				>
 					<VStack spacing={ 8 }>
 						<Text>
-							{ __(
-								'You’ve been given early access to the Pro Partner tier in recognition of your partnership with Automattic. This is your head start to unlock powerful benefits, tools, and resources.'
+							{ sprintf(
+								/* translators: %s is the tier name */
+								__(
+									'You’ve been given early access to the %s tier in recognition of your partnership with Automattic. This is your head start to unlock powerful benefits, tools, and resources.'
+								),
+								currentTier.name
 							) }
 						</Text>
 						<Text>
@@ -147,7 +151,7 @@ export default function TierCards( {
 									__(
 										'To make the most of your early access and stay on track toward your %s Influenced Automattic Revenue goal, <b>stay connected with your Partner Manager</b>. Your manager is here to help you reach that goal by providing strategic guidance, growth opportunities, and ensure you maximize every advantage during this phase.'
 									),
-									formatCurrency( 5000, 'USD' )
+									formatCurrency( TARGET_INFLUENCED_REVENUE[ currentTier.id ], 'USD' )
 								),
 								{
 									b: <strong />,

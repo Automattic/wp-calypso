@@ -33,7 +33,7 @@ import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
-import { Card } from '../../../components/card';
+import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { shuffleArray } from '../../../utils/collection';
@@ -51,6 +51,7 @@ import {
 	isAkismetProduct,
 	isPartnerPurchase,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
+	isOneTimePurchase,
 } from '../../../utils/purchase';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
@@ -69,6 +70,7 @@ import {
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
 import CancellationPreSurveyContent from './cancellation-pre-survey-content';
+import DomainRemovalFlow from './domain-removal-flow';
 import enrichedSurveyData from './enriched-survey-data';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
@@ -1039,10 +1041,32 @@ export default function CancelPurchase() {
 			! purchase.is_cancelable &&
 			! purchase.is_removable
 		) {
-			if ( ! createdErrorNoticeForRedirect.current ) {
+			if ( purchase.subscription_status !== 'active' && ! createdErrorNoticeForRedirect.current ) {
 				createErrorNotice(
 					__(
 						'This purchase has already been removed. Please contact support if you believe this to be in error.'
+					),
+					{ type: 'snackbar' }
+				);
+				createdErrorNoticeForRedirect.current = true;
+			}
+			if (
+				isOneTimePurchase( purchase ) &&
+				! purchase.is_refundable &&
+				! createdErrorNoticeForRedirect.current
+			) {
+				createErrorNotice(
+					__(
+						'This one time purchase cannot be cancelled. Please contact support if you need assistance.'
+					),
+					{ type: 'snackbar' }
+				);
+				createdErrorNoticeForRedirect.current = true;
+			}
+			if ( ! createdErrorNoticeForRedirect.current ) {
+				createErrorNotice(
+					__(
+						'This product cannot be cancelled or removed. Please contact support if you need assistance.'
 					),
 					{ type: 'snackbar' }
 				);
@@ -1139,24 +1163,46 @@ export default function CancelPurchase() {
 
 	const isAkismet = isAkismetProduct( purchase );
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
-	return (
-		<>
+	const isDomainRemoval = flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_domain_registration;
+
+	if ( isDomainRemoval ) {
+		return (
 			<PageLayout
 				size="small"
 				header={
 					<PageHeader
 						title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
 						prefix={ <Breadcrumbs length={ 4 } /> }
-						description={ __(
-							'Before you go, please answer a few quick questions to help us improve.'
-						) }
+						description={ __( 'Please confirm that you want to remove this domain.' ) }
 					/>
 				}
 			>
-				<VStack>
-					{ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
+				<Card>
+					<CardBody>
+						<DomainRemovalFlow purchase={ purchase } onCancel={ redirectBack } />
+					</CardBody>
+				</Card>
+			</PageLayout>
+		);
+	}
 
-					<Card className="cancel-purchase__wrapper-card">
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
+					prefix={ <Breadcrumbs length={ 4 } /> }
+					description={ __(
+						'Before you go, please answer a few quick questions to help us improve.'
+					) }
+				/>
+			}
+			notices={ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
+		>
+			<VStack>
+				<Card>
+					<CardBody>
 						<CancelPurchaseForm
 							atomicRevertCheckOne={ state.atomicRevertCheckOne }
 							atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
@@ -1246,9 +1292,9 @@ export default function CancelPurchase() {
 								sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
 							/>
 						) }
-					</Card>
-				</VStack>
-			</PageLayout>
-		</>
+					</CardBody>
+				</Card>
+			</VStack>
+		</PageLayout>
 	);
 }

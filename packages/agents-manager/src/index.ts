@@ -6,11 +6,11 @@ export { AGENTS_MANAGER_STORE } from './stores';
 
 // Extension API types for other plugins to hook into
 export type {
+	Ability,
 	ToolProvider,
 	ContextProvider,
 	ClientContextType,
 	BaseContextEntry,
 	ContextEntry,
-	Ability,
 	Suggestion,
 } from './types';

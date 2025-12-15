@@ -48,6 +48,7 @@ import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-c
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
+import { isMultiSiteDashboardEnabled } from 'calypso/state/sites/selectors/is-multi-site-dashboard-enabled';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import {
 	clearUnsavedUserSettings,
@@ -883,7 +884,7 @@ class Account extends Component {
 	};
 
 	render() {
-		const { isFetching, markChanged, translate } = this.props;
+		const { isFetching, markChanged, translate, isMSDEnabled } = this.props;
 		// Is a username change in progress?
 		const renderUsernameForm = this.hasUnsavedUserSetting( 'user_login' );
 		return (
@@ -1026,7 +1027,7 @@ class Account extends Component {
 					</form>
 				</Card>
 
-				{ config.isEnabled( 'dashboard/v2' ) && <HostingDashboardOptInForm /> }
+				{ isMSDEnabled && <HostingDashboardOptInForm /> }
 
 				{ config.isEnabled( 'me/account-close' ) && <AccountSettingsCloseLink /> }
 			</Main>
@@ -1053,6 +1054,7 @@ export default compose(
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isAutomattician: isA8cTeamMember( state ),
+			isMSDEnabled: isMultiSiteDashboardEnabled( state ),
 		} ),
 		{
 			clearUnsavedUserSettings,

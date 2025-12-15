@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Badge } from '@automattic/components';
 import {
 	category,
@@ -13,6 +12,8 @@ import {
 	starEmpty,
 	plugins,
 	chartBar,
+	box,
+	pages,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -39,6 +40,9 @@ import {
 	A4A_AGENCY_TIER_LINK,
 	A4A_MIGRATIONS_OVERVIEW_LINK,
 	A4A_WOOPAYMENTS_LINK,
+	A4A_LEARN_LINK,
+	A4A_LEARN_RESOURCE_CENTER_LINK,
+	A4A_EXCLUSIVE_OFFERS_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -46,7 +50,6 @@ const useMainMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
 	const agency = useSelector( getActiveAgency );
-	const isTiersRevampEnabled = config.isEnabled( 'tiers-revamp' );
 
 	const menuItems = useMemo( () => {
 		let referralItems = [] as any[];
@@ -89,19 +92,24 @@ const useMainMenuItems = ( path: string ) => {
 					menu_item: 'Automattic for Agencies / Overview',
 				},
 			},
-			...( isTiersRevampEnabled
-				? [
-						{
-							icon: starEmpty,
-							path: '/',
-							link: A4A_AGENCY_TIER_LINK,
-							title: translate( 'Agency Tier' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Agency Tier',
-							},
-						},
-				  ]
-				: [] ),
+			{
+				icon: starEmpty,
+				path: '/',
+				link: A4A_AGENCY_TIER_LINK,
+				title: translate( 'Agency Tier' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Agency Tier',
+				},
+			},
+			{
+				icon: box,
+				path: '/',
+				link: A4A_EXCLUSIVE_OFFERS_LINK,
+				title: translate( 'Exclusive offers' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Exclusive offers',
+				},
+			},
 			{
 				icon: category,
 				path: '/',
@@ -176,12 +184,26 @@ const useMainMenuItems = ( path: string ) => {
 				icon: commentAuthorAvatar,
 				path: '/dashboard',
 				link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
-				title: translate( 'Partner Directories' ),
+				title: translate( 'Partner directories' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Partner Directory',
 				},
 				withChevron: true,
 			},
+			...( isSectionNameEnabled( 'a8c-for-agencies-learn' )
+				? [
+						{
+							icon: pages,
+							path: A4A_LEARN_LINK,
+							link: A4A_LEARN_RESOURCE_CENTER_LINK,
+							title: translate( 'Learn' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Learn',
+							},
+							withChevron: true,
+						},
+				  ]
+				: [] ),
 			...( isSectionNameEnabled( 'a8c-for-agencies-settings' )
 				? [
 						{
@@ -208,23 +230,10 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( ! isTiersRevampEnabled
-				? [
-						{
-							icon: starEmpty,
-							path: '/',
-							link: A4A_AGENCY_TIER_LINK,
-							title: translate( 'Agency Tiers' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Agency Tier',
-							},
-						},
-				  ]
-				: [] ),
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );
-	}, [ agency, isTiersRevampEnabled, path, translate ] );
+	}, [ agency, path, translate ] );
 	return menuItems;
 };
 

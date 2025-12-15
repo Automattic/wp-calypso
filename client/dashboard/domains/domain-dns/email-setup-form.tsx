@@ -51,13 +51,15 @@ export default function EmailSetupForm( {
 		...domainDnsApplyTemplateMutation( domainName ),
 		meta: {
 			snackbar: {
-				// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365
-				success: sprintf( __( '%(provider)s email set up.' ), {
+				// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365; %(domainName)s will be replaced with the domain name
+				success: sprintf( __( '%(provider)s email set up for %(domainName)s.' ), {
 					provider: label,
+					domainName,
 				} ),
-				// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365
-				error: sprintf( __( 'Failed to complete %(provider)s email setup.' ), {
+				// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365; %(domainName)s will be replaced with the domain name
+				error: sprintf( __( 'Failed to complete %(provider)s email setup for %(domainName)s.' ), {
 					provider: label,
+					domainName,
 				} ),
 			},
 		},

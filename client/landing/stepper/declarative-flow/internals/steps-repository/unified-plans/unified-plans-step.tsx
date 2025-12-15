@@ -23,6 +23,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -246,7 +247,7 @@ function UnifiedPlansStep( {
 			return null;
 		}
 
-		return hostingDashboardOptIn ? '/v2/sites' : '/sites/';
+		return hostingDashboardOptIn ? dashboardLink( '/sites' ) : '/sites/';
 	} );
 
 	useSiteGlobalStylesOnPersonal();
@@ -398,7 +399,7 @@ function UnifiedPlansStep( {
 		}
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate( 'The right plan for the right project' );
+			return translate( 'Host with the best' );
 		}
 
 		if ( intent === 'plans-wordpress-hosting' ) {
@@ -450,7 +451,7 @@ function UnifiedPlansStep( {
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
 			return translate(
-				'Get the advanced features you need without ever thinking about overages.'
+				'Create a site with WordPress.com, and get all the power of lightning-fast, secure, and managed WordPress hosting.'
 			);
 		}
 

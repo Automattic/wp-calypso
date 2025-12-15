@@ -30,6 +30,13 @@
 				grid-column-start: span 2;
 			}
 		}
+
+		.badge {
+			font-size: $font-size-x-small;
+			padding: 0 10px;
+			font-weight: 400;
+			border-radius: 0;
+		}
 	}
 
 	.license-details__list-item-small {
@@ -107,6 +114,35 @@
 
 	.pressable-usage-details__card {
 		margin: 24px 0 8px;
+	}
+
+	.license-details__subscription-row {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.license-details__subscription-badge {
+		margin: 0;
+	}
+
+	.license-details__subscription-label {
+		@include body-medium;
+		font-weight: 600;
+		margin-inline-end: 2px;
+	}
+
+	.license-details__subscription-date {
+		@include body-medium;
+		font-style: italic;
+		display: inline-flex;
+		align-items: center;
+		gap: 2px;
+		white-space: nowrap;
+	}
+
+	.license-details__subscription-interval {
+		font-style: inherit;
 	}
 }
 
