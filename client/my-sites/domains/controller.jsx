@@ -347,7 +347,7 @@ const redirectDomainToSite = ( context, next ) => {
 	context.primary = <RedirectComponent domainName={ context.params.domain } />;
 	next();
 };
-//
+
 // Helper thunk that ensures that the user preferences has been fetched into Redux state before we
 // continue working with it.
 const waitForPrefs = () => async ( dispatch, getState ) => {
@@ -377,7 +377,7 @@ const maybeRedirectToDashboard = ( context, next ) => {
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasHostingDashboardOptIn( getState() ) ) {
-			window.location.href = dashboardLink( '/domains' );
+			window.location.replace( dashboardLink( '/domains' ) );
 			return;
 		}
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_admin_bar' ) );

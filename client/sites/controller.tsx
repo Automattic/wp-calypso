@@ -183,7 +183,7 @@ export const maybeRedirectToDashboard = ( context: PageJSContext, next: () => vo
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasHostingDashboardOptIn( getState() ) ) {
-			window.location.href = dashboardLink( '/sites' );
+			window.location.replace( dashboardLink( '/sites' ) );
 			return;
 		}
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_admin_bar' ) );
