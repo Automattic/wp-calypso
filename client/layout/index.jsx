@@ -36,7 +36,7 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -427,7 +427,7 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
-		const dashboardOptIn = hasMultiSiteDashboardOptIn( state );
+		const dashboardOptIn = hasDashboardOptIn( state );
 
 		const isEnabledThemeUniversalHeader =
 			config.isEnabled( 'themes/universal-header' ) &&

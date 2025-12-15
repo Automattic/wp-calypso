@@ -11,7 +11,7 @@ import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation, sites } from 'calypso/my-sites/controller';
 import PluginsSidebar from 'calypso/my-sites/plugins/sidebar';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
@@ -384,7 +384,7 @@ export function maybeRedirectLoggedOut( context, next ) {
 export function renderPluginsSidebar( context, next ) {
 	const state = context.store.getState();
 	const siteUrl = getSiteFragment( context.path );
-	const dashboardOptIn = hasMultiSiteDashboardOptIn( state );
+	const dashboardOptIn = hasDashboardOptIn( state );
 
 	if ( ! isUserLoggedIn( state ) ) {
 		next();

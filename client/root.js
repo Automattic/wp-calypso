@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import globalPageInstance from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getIsSubscriptionOnly from 'calypso/state/selectors/get-is-subscription-only';
@@ -91,7 +91,7 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 async function getLoggedInLandingPage( { dispatch, getState } ) {
 	await dispatch( waitForPrefs() );
 	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
-	const dashboardOptIn = hasMultiSiteDashboardOptIn( getState() );
+	const dashboardOptIn = hasDashboardOptIn( getState() );
 
 	if ( useSitesAsLandingPage ) {
 		if ( dashboardOptIn ) {

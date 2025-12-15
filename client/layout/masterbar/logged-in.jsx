@@ -22,7 +22,7 @@ import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { savePreference } from 'calypso/state/preferences/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -879,7 +879,7 @@ export default connect(
 				isAtomicSite( state, siteId ) &&
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
-			dashboardOptIn: hasMultiSiteDashboardOptIn( state ),
+			dashboardOptIn: hasDashboardOptIn( state ),
 		};
 	},
 	{

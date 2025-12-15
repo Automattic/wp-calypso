@@ -60,7 +60,7 @@ import {
 	isUserLoggedIn,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
@@ -939,7 +939,7 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-	const dashboardOptIn = hasMultiSiteDashboardOptIn( state );
+	const dashboardOptIn = hasDashboardOptIn( state );
 	const shouldShowNavigation =
 		config.isEnabled( 'themes/universal-header' ) && dashboardOptIn
 			? selectedSite

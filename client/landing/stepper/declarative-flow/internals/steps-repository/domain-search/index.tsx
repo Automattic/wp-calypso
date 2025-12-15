@@ -36,7 +36,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
@@ -75,7 +75,7 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
-	const dashboardOptIn = useSelector( hasMultiSiteDashboardOptIn );
+	const dashboardOptIn = useSelector( hasDashboardOptIn );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();

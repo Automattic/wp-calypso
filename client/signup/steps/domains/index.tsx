@@ -31,7 +31,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { USE_MY_DOMAIN_SECTION_NAME, UseMyDomain } from './use-my-domain';
 import type { StepProps } from './types';
@@ -295,7 +295,7 @@ const DomainSearchUI = (
 	}, [ flowName, __ ] );
 
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
-	const dashboardOptIn = useSelector( hasMultiSiteDashboardOptIn );
+	const dashboardOptIn = useSelector( hasDashboardOptIn );
 
 	const { hideBack, backUrl, backLabelText } = useMemo( () => {
 		let backUrl;

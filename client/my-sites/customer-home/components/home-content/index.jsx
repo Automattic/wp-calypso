@@ -30,7 +30,7 @@ import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import {
@@ -386,7 +386,7 @@ const mapStateToProps = ( state ) => {
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
-		dashboardOptIn: hasMultiSiteDashboardOptIn( state ),
+		dashboardOptIn: hasDashboardOptIn( state ),
 	};
 };
 

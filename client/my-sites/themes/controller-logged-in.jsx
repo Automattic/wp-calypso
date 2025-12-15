@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { setBackPath } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -47,7 +47,7 @@ export function upload( context, next ) {
 export function renderThemes( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSiteId( state );
-	const dashboardOptIn = hasMultiSiteDashboardOptIn( state );
+	const dashboardOptIn = hasDashboardOptIn( state );
 	const shouldUseLoggedIn =
 		isEnabled( 'themes/universal-header' ) && dashboardOptIn
 			? selectedSite

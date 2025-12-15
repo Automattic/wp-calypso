@@ -3,7 +3,7 @@ import i18n from 'i18n-calypso';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { sendVerificationSignal } from 'calypso/lib/user/verification-checker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { successNotice } from 'calypso/state/notices/actions';
 
 /**
@@ -89,7 +89,7 @@ function shouldRedirectToV2( context, next, params ) {
 			if ( arePreferencesLoaded( state ) ) {
 				unsubscribe();
 
-				if ( hasMultiSiteDashboardOptIn( state ) ) {
+				if ( hasDashboardOptIn( state ) ) {
 					window.location.href = buildDashboardRedirectUrl(
 						params.verified,
 						params.newEmailResult
@@ -104,7 +104,7 @@ function shouldRedirectToV2( context, next, params ) {
 		return;
 	}
 
-	if ( hasMultiSiteDashboardOptIn( state ) ) {
+	if ( hasDashboardOptIn( state ) ) {
 		window.location.href = buildDashboardRedirectUrl( params.verified, params.newEmailResult );
 		return true;
 	}

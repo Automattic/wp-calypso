@@ -22,7 +22,7 @@ import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visibl
 import { PluginsFAQ } from 'calypso/my-sites/plugins/plugins-faq';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasMultiSiteDashboardOptIn } from 'calypso/state/dashboard/selectors/has-multi-site-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
@@ -113,7 +113,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
 		: __( 'Plugins' );
 	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
-	const dashboardOptIn = useSelector( ( state ) => hasMultiSiteDashboardOptIn( state ) );
+	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
 	const shouldUseLoggedInView =
 		isEnabled( 'plugins/universal-header' ) && dashboardOptIn ? siteId : isLoggedIn;
 

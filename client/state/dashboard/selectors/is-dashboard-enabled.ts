@@ -5,7 +5,7 @@ import type { AppState } from 'calypso/types';
 // TODO: Set to a specific user when feature is rolled out to a limited audience.
 export const OLDEST_ELIGIBLE_USER = Infinity;
 
-export const isMultiSiteDashboardEnabled = ( state: AppState ): boolean => {
+export const isDashboardEnabled = ( state: AppState ): boolean => {
 	if ( ! isEnabled( 'dashboard/v2' ) ) {
 		return false;
 	}
