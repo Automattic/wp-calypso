@@ -67,14 +67,14 @@ export const getContactFormFields = (
 				const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
 				const phoneValue = getValue( { item: data } );
 
-				const firstDotIndes = phoneValue.indexOf( '.' );
+				const firstDotIndex = phoneValue.indexOf( '.' );
 
 				// Our backend stores phone number in the format: +country_code.phone_number
 				const [ countryNumericCode, phoneNumber ] =
-					firstDotIndes !== -1
+					firstDotIndex !== -1
 						? [
-								phoneValue.substring( 0, firstDotIndes ),
-								phoneValue.substring( firstDotIndes + 1 ),
+								phoneValue.substring( 0, firstDotIndex ),
+								phoneValue.substring( firstDotIndex + 1 ),
 						  ]
 						: [ '', phoneValue ];
 
