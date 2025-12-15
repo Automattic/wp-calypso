@@ -25,6 +25,10 @@ function isSameLocalDay( date1: Date, date2: Date ): boolean {
  * @param timestamp - Unix timestamp in seconds
  */
 function formatConversationDate( timestamp: number ): string {
+	if ( ! timestamp || timestamp < 0 ) {
+		return '';
+	}
+
 	const timestampMs = timestamp * 1000;
 	const date = new Date( timestampMs );
 	const today = new Date();
