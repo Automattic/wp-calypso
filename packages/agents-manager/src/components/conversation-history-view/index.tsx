@@ -1,6 +1,6 @@
 /**
  * ConversationHistoryView Component
- * Displays the list of past conversations with search and "new chat" action
+ * Displays the list of past conversations with a "new chat" action
  */
 
 import { Button } from '@wordpress/components';
