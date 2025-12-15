@@ -50,14 +50,17 @@ function formatConversationDate( timestamp: number ): string {
 /**
  * Generate a conversation title from the first user message
  * Returns the trimmed message content (CSS handles ellipsis via text-overflow)
- * @param messageContent
+ * @param messageContent - The message content to use as title
+ * @returns The trimmed message content, or "Untitled conversation" if empty/whitespace
  */
 export function generateConversationTitle( messageContent: string ): string {
-	if ( ! messageContent ) {
+	const title = messageContent?.trim();
+
+	if ( ! title ) {
 		return __( 'Untitled conversation', '__i18n_text_domain__' );
 	}
 
-	return messageContent.trim();
+	return title;
 }
 
 /**
