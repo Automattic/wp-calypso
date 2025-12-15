@@ -7,6 +7,45 @@ import {
 import { useEffect, useMemo } from '@wordpress/element';
 import type { Conversation } from '../types';
 
+interface Result {
+	conversations: Conversation[];
+	isLoading: boolean;
+	isError: boolean;
+}
+
+export default function useOdieConversationList(): Result {
+	const {
+		data: supportInteractions = [],
+		isLoading: isLoadingInteractions,
+		isError: isFetchingInteractionsError,
+	} = useGetSupportInteractions( 'odie' );
+
+	const {
+		data: odieConversations = [],
+		isLoading: isLoadingConversations,
+		isError: isFetchingConversationsError,
+		error,
+	} = useGetOdieConversations( supportInteractions );
+
+	useEffect( () => {
+		if ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( '[useOdieConversationList] Error loading conversation list:', error );
+		}
+	}, [ error ] );
+
+	const conversations = useMemo(
+		() => getConversationsWithSupportInteractions( odieConversations, supportInteractions ),
+		[ odieConversations, supportInteractions ]
+	);
+
+	return {
+		conversations,
+		isLoading: isLoadingInteractions || isLoadingConversations,
+		isError: isFetchingInteractionsError || isFetchingConversationsError,
+	};
+}
+
 // Merges Odie conversations with their support interaction metadata.
 function getConversationsWithSupportInteractions(
 	odieConversations: OdieConversation[],
@@ -58,43 +97,4 @@ function getConversationsWithSupportInteractions(
 			};
 		} )
 		.filter( Boolean ) as Conversation[];
-}
-
-interface Result {
-	conversations: Conversation[];
-	isLoading: boolean;
-	isError: boolean;
-}
-
-export default function useOdieConversationList(): Result {
-	const {
-		data: supportInteractions = [],
-		isLoading: isLoadingInteractions,
-		isError: isFetchingInteractionsError,
-	} = useGetSupportInteractions( 'odie' );
-
-	const {
-		data: odieConversations = [],
-		isLoading: isLoadingConversations,
-		isError: isFetchingConversationsError,
-		error,
-	} = useGetOdieConversations( supportInteractions );
-
-	useEffect( () => {
-		if ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( '[useOdieConversationList] Error loading conversation list:', error );
-		}
-	}, [ error ] );
-
-	const conversations = useMemo(
-		() => getConversationsWithSupportInteractions( odieConversations, supportInteractions ),
-		[ odieConversations, supportInteractions ]
-	);
-
-	return {
-		conversations,
-		isLoading: isLoadingInteractions || isLoadingConversations,
-		isError: isFetchingInteractionsError || isFetchingConversationsError,
-	};
 }
