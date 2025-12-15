@@ -18,7 +18,6 @@ import { ButtonStack } from '../../components/button-stack';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
-import { redirectToDashboardLink } from '../../utils/link';
 import type { Site, DomainSummary } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
@@ -237,7 +236,9 @@ const ConfirmNewSiteAddressForm = ( {
 			{
 				onSuccess: () => {
 					router.navigate( {
-						to: redirectToDashboardLink().replace( site.slug, newSiteAddress ),
+						to: window.location.href
+							.replace( window.location.origin, '' )
+							.replace( site.slug, newSiteAddress ),
 					} );
 
 					onSubmit();
