@@ -17,7 +17,7 @@ import type { Email } from './types';
 import './style.scss';
 
 function Emails() {
-	const { data: allEmailAccounts, isFetching: isLoadingEmailAccounts } = useQuery(
+	const { data: allEmailAccounts, isLoading: isLoadingEmailAccounts } = useQuery(
 		userMailboxesQuery()
 	);
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
