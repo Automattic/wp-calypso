@@ -27,8 +27,8 @@ export interface BackButtonConfig {
 
 // Config structure for the client
 export interface SiteSpecConfig {
-	agentUrl?: string | void;
-	agentId?: string | void;
+	agentUrl?: string;
+	agentId?: string;
 	buildSiteUrl?: string;
 	theme?: {
 		// Branding
@@ -121,11 +121,6 @@ export interface SiteSpecConfig {
 		label?: string;
 		callback?: () => void;
 	};
-	locale?: string;
-	source?: string;
-
-	// Remote theme ingestion (deferred and gated by VITE_SITESPEC_ENABLE_REMOTE_THEME)
-	themeUrl?: string; // When enabled, URL to fetch a JSON theme payload (tokens/slots)
 }
 
 // Config key for URL functions
@@ -219,6 +214,23 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 				border: '#000000',
 				muted: '#E3E8EF',
 			},
+			cssVariables: {
+				'--spec-preview-input-bg': 'rgba(0, 0, 0, 0.04)',
+				// For the create-site button
+				'--spec-preview-create-bg':
+					'var(--ss-suggestion-solid-bg, var(--ss-color-primary, #000000))',
+				'--spec-preview-create-fg':
+					'var(--ss-suggestion-solid-text, var(--ss-color-primary-foreground, #F5F7FA))',
+				'--spec-preview-create-border':
+					'1px solid var(--ss-suggestion-solid-border, var(--ss-color-primary, #000000))',
+
+				// For the footer submit button
+				'--spec-preview-chip-bg': 'var(--ss-suggestion-solid-bg, var(--ss-color-primary, #000000))',
+				'--spec-preview-chip-fg':
+					'var(--ss-suggestion-solid-text, var(--ss-color-primary-foreground, #F5F7FA))',
+				'--spec-preview-chip-border':
+					'1px solid var(--ss-suggestion-solid-border, var(--ss-color-primary, #000000))',
+			},
 			promptSuggestions: {
 				variant: 'solid' as const,
 				background: '#000000',
@@ -231,42 +243,42 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 				enabled: true,
 				items: [
 					{
-						label: __( 'Take a bookings for a hair salon', 'site-spec' ),
+						label: __( 'Take bookings for a hair salon' ),
 						prompt: __(
 							"Create a trendy, fashion-forward hair salon website with a sleek, modern, polished aesthetic. Use black, cool gray, white, and accents of electric blue, emerald, or magenta. Apply stylish, confident copy and elegant sans-serif fonts like Bonita. Highlight the salon's unique skills and ensure the design feels vibrant and engaging.",
 							'site-spec'
 						),
 					},
 					{
-						label: __( 'Offer personal training sessions', 'site-spec' ),
+						label: __( 'Offer personal training sessions' ),
 						prompt: __(
 							'Create a high-intensity fitness instructor website with an energetic, bold, dynamic aesthetic using black, deep red, electric orange, and charcoal gray. Use urgent, inspiring, direct copy and powerful sport-style sans-serif fonts like Jumpshot. Design the site to motivate users to book a training session.',
 							'site-spec'
 						),
 					},
 					{
-						label: __( 'Create an online plant shop', 'site-spec' ),
+						label: __( 'Create an online plant shop' ),
 						prompt: __(
 							'Create an eco-friendly plant store website with a natural, earthy, calming aesthetic using forest green, moss, terra cotta, warm beige, and natural white. Use nurturing, organic copy and fonts like Mollani Nature Script or Plantae. Showcase the full breadth of products with a fresh, inviting design.',
 							'site-spec'
 						),
 					},
 					{
-						label: __( 'Host cooking workshops', 'site-spec' ),
+						label: __( 'Host cooking workshops' ),
 						prompt: __(
 							'Create a fun, family-friendly cooking workshop website with a warm, inviting, colorful, playful aesthetic. Use bright yellow, orange, tomato red, warm brown, and cream tones. Apply warm, appetizing copy and friendly, whimsical fonts like Pacifico or Amatic SC. Design the site to encourage users to book a workshop.',
 							'site-spec'
 						),
 					},
 					{
-						label: __( 'Sell handmade jewelry online', 'site-spec' ),
+						label: __( 'Sell handmade jewelry' ),
 						prompt: __(
 							'Create a handmade, one-of-a-kind jewelry store website with a rustic, intricate, elegant aesthetic. Use deep browns, terracotta, moss green, metallic gold or silver, and soft neutrals. Apply personal, inviting copy and refined script or serif fonts like Parisienne or Cormorant Garamond. Design the site to encourage users to buy online.',
 							'site-spec'
 						),
 					},
 					{
-						label: __( 'Rent out photography equipment', 'site-spec' ),
+						label: __( 'Rent out photography equipment' ),
 						prompt: __(
 							'Create a high-tech, modern photography equipment rental website with a sleek, minimalist, futuristic aesthetic. Use charcoal gray, black, white, cool blue, and electric yellow/green accents. Apply informative, precise copy and clean, technical fonts like Kyrial Sans Pro or Zyphor. Design the site to encourage users to rent equipment.',
 							'site-spec'
@@ -287,7 +299,7 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 				headings: "'Inter', sans-serif",
 			},
 			poweredBy: {
-				label: 'Powered by',
+				label: __( 'Powered by' ),
 				logo: 'https://woocommerce.com/wp-content/uploads/2025/01/Logo-Black.png',
 				url: 'https://woocommerce.com',
 			},
