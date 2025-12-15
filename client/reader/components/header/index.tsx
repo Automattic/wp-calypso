@@ -34,7 +34,7 @@ const ReaderHeader = () => {
 				label={ __( 'WordPress.com Home' ) }
 				href="/v2"
 			/>
-			<HStack spacing={ 2 } justify="flex-end">
+			<HStack spacing={ isDesktop ? 2 : 0 } justify="flex-end">
 				<Button
 					className={ clsx( 'dashboard-secondary-menu__item', 'is-active' ) }
 					icon={ <ReaderIcon /> }
