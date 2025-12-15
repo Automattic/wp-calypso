@@ -50,7 +50,7 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
-		STEPS.POST_CHECKOUT_SETUP_YOUR_SITE_STEP,
+		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
 	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
@@ -225,11 +225,11 @@ const onboarding: FlowV2< typeof initialize > = {
 					 * redirect the user to the post-checkout setup your site step.
 					 */
 					if ( isEnabled( 'onboarding/post-checkout-ai-step' ) ) {
-						return navigate( 'post-checkout-setup-your-site' );
+						return navigate( 'setup-your-site-ai' );
 					}
 
 					return navigate( 'processing' );
-				case 'post-checkout-setup-your-site': {
+				case 'setup-your-site-ai': {
 					const setupChoice = providedDependencies?.setupChoice;
 					const siteSlug = providedDependencies?.siteSlug as string;
 					const siteId = providedDependencies?.siteId as number | string | undefined;

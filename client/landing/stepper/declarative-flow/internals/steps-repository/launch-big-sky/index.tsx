@@ -1,32 +1,29 @@
-import { ProgressBar } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect, FormEvent, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import '../processing-step/style.scss';
 import './styles.scss';
 
 const SiteIntent = Onboard.SiteIntent;
 
-const LaunchBigSky: Step = function ( props ) {
+const LaunchBigSky: StepType = function ( props ) {
 	const { flow } = props;
 	const { __ } = useI18n();
 	const [ isError, setError ] = useState( false );
 	const [ progress, setProgress ] = useState( 0 );
 	const { siteSlug, siteId, site } = useSiteData();
-	const translate = useTranslate();
 	const urlQuery = useQuery();
 	const { isEligible } = useIsBigSkyEligible( flow );
 	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
@@ -160,50 +157,10 @@ const LaunchBigSky: Step = function ( props ) {
 	}
 
 	return (
-		<div className="site-prompt__signup is-woocommerce-install">
-			<div className="site-prompt__is-store-address">
-				<div className="processing-step__container">
-					<div className="processing-step">
-						{ ! isError && <ProgressBar key="main-progress" value={ progress } compact /> }
-						{ isError && (
-							<p className="processing-step__error">
-								{ __( 'Something unexpected happened. Please go back and try again.' ) }
-							</p>
-						) }
-					</div>
-					<div className="big-sky-disclaimer">
-						<p>
-							{ translate(
-								"You can review our {{ai_guidelines}}AI Guidelines{{/ai_guidelines}}, and all sites must comply with WordPress.com's {{user_guidelines}}User Guidelines{{/user_guidelines}}.",
-								{
-									components: {
-										ai_guidelines: (
-											<a
-												href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
-												target="_blank"
-												rel="noreferrer noopener"
-												onClick={ ( event ) => {
-													recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
-													event.stopPropagation();
-												} }
-											/>
-										),
-										user_guidelines: (
-											<a
-												href={ localizeUrl( 'https://wordpress.com/support/user-guidelines/' ) }
-												target="_blank"
-												rel="noreferrer noopener"
-											/>
-										),
-										br: <br />,
-									},
-								}
-							) }
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
+		<>
+			<DocumentHead title={ __( 'Processing' ) } />
+			<Step.Loading title="" progress={ progress } delay={ 1000 } />
+		</>
 	);
 };
 
