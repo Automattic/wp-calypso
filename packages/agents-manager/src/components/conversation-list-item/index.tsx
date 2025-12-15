@@ -18,14 +18,9 @@ interface Props {
 }
 
 export default function ConversationListItem( { conversation, onClick }: Props ) {
-	const { type, id, message, createdAt, supportInteraction } = conversation;
-	// For Odie conversations, prefer the support interaction UUID if available
-	const finalId = supportInteraction?.uuid || id;
-
-	const title = message
-		? generateConversationTitle( message.text )
-		: __( 'New conversation', '__i18n_text_domain__' );
-	const date = formatConversationDate( createdAt );
+	const { type, id, message, supportInteraction } = conversation;
+	const title = generateConversationTitle( message.text );
+	const date = formatConversationDate( message.received );
 
 	// Check if this is a Happiness Engineer chat
 	const isHE = type === 'zendesk';
@@ -40,9 +35,9 @@ export default function ConversationListItem( { conversation, onClick }: Props )
 	return (
 		<button
 			className="agents-manager-conversation-list-item"
-			onClick={ () => onClick( type, finalId ) }
+			// For Odie conversations, use supportInteraction ID
+			onClick={ () => onClick( type, supportInteraction?.id || id ) }
 			type="button"
-			disabled={ ! finalId }
 			aria-label={ sprintf(
 				/* translators: %1$s: conversation title, %2$s: conversation subtitle */
 				__( 'Load conversation: %1$s, %2$s', '__i18n_text_domain__' ),

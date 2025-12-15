@@ -24,7 +24,7 @@ export interface Conversation {
 		text: string;
 	};
 	supportInteraction?: {
-		uuid: string;
+		id: string;
 		status: string;
 		createdAt: number;
 	};

@@ -37,20 +37,31 @@ export default function useOrchestratorConversationList( {
 			} );
 
 			// Unify the conversation format with other conversation lists.
-			return response.map( ( conversation ) => {
-				const summary = conversation.last_message;
+			return response
+				.map( ( conversation ) => {
+					const summary = conversation.last_message;
 
-				return {
-					type: 'orchestrator',
-					id: String( conversation.session_id ?? '' ),
-					createdAt: getTimestamp( conversation.created_at ),
-					message: {
-						received: getTimestamp( summary?.created_at ),
-						role: summary?.role ?? 'bot',
-						text: summary?.content ?? '',
-					},
-				};
-			} );
+					// Validate required fields
+					if (
+						! conversation.session_id ||
+						typeof summary?.content !== 'string' ||
+						summary.content.trim() === ''
+					) {
+						return null;
+					}
+
+					return {
+						type: 'orchestrator',
+						id: String( conversation.session_id ),
+						createdAt: getTimestamp( conversation.created_at ),
+						message: {
+							received: getTimestamp( summary.created_at ),
+							role: summary.role ?? 'bot',
+							text: summary.content,
+						},
+					};
+				} )
+				.filter( Boolean ) as Conversation[];
 		},
 		enabled: !! botId,
 		refetchOnWindowFocus: false,

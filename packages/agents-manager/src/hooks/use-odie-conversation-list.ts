@@ -23,7 +23,7 @@ function getConversationsWithSupportInteractions(
 
 			// Validate message content
 			if (
-				typeof message.text !== 'string' ||
+				typeof message?.text !== 'string' ||
 				message.text.trim() === '' ||
 				// '--' is a token returned for Odie conversations that should be forwarded to human support
 				message.text.trim() === '--'
@@ -49,7 +49,7 @@ function getConversationsWithSupportInteractions(
 				type: 'odie',
 				message,
 				supportInteraction: {
-					uuid: supportInteraction.uuid,
+					id: supportInteraction.uuid,
 					status: supportInteraction.status || 'open',
 					createdAt: supportInteraction.start_date
 						? Date.parse( supportInteraction.start_date )
