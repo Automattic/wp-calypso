@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { removeQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { get, includes, map } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -9,6 +10,7 @@ import { connectDomainAction } from 'calypso/components/domains/use-my-domain/ut
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { sectionify } from 'calypso/lib/route';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -23,9 +25,12 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
+import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite, isWpcomFlexSite } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -343,6 +348,43 @@ const redirectDomainToSite = ( context, next ) => {
 	next();
 };
 
+// Helper thunk that ensures that the user preferences has been fetched into Redux state before we
+// continue working with it.
+const waitForPrefs = () => async ( dispatch, getState ) => {
+	if ( hasReceivedRemotePreferences( getState() ) ) {
+		return;
+	}
+
+	try {
+		await dispatch( fetchPreferences() );
+	} catch {
+		// if the fetching of preferences fails, return gracefully and proceed to the next landing page candidate
+	}
+};
+
+// The wp-admin admin bar does not know about user preferences and so may use the
+// origin_admin_bar query param to indicate that Calypso should take the user's
+// preference into account (without the query param, users can still navigate to
+// `/domains/manage` manually, meaning the old dashboard is still accessible when
+// the user is specifically trying to go there).
+const maybeRedirectToDashboard = ( context, next ) => {
+	const originAdminBar = context.query.origin_admin_bar;
+	if ( originAdminBar !== 'wpcom' ) {
+		return next();
+	}
+
+	const { dispatch, getState } = context.store;
+
+	dispatch( waitForPrefs() ).finally( () => {
+		if ( hasHostingDashboardOptIn( getState() ) ) {
+			window.location.replace( dashboardLink( '/domains' ) );
+			return;
+		}
+		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_admin_bar' ) );
+		next();
+	} );
+};
+
 export default {
 	domainsAddHeader,
 	domainsAddRedirectHeader,
@@ -359,4 +401,5 @@ export default {
 	transferDomainPrecheck,
 	useMyDomain,
 	redirectDomainToSite,
+	maybeRedirectToDashboard,
 };

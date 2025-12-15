@@ -9,6 +9,7 @@ import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { isMultiSiteDashboardEnabled } from 'calypso/state/sites/selectors/is-multi-site-dashboard-enabled';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MySitesNavigation extends Component {
@@ -52,7 +53,7 @@ class MySitesNavigation extends Component {
 			<GlobalSidebar
 				path={ this.props.path }
 				footer={
-					config.isEnabled( 'dashboard/v2' ) &&
+					this.props.isMultiSiteDashboardEnabled &&
 					! this.props.isGlobalSidebarCollapsed && <HostingDashboardOptInBanner />
 				}
 			>
@@ -93,6 +94,7 @@ export default withCurrentRoute(
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,
 				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar,
 				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar,
+				isMultiSiteDashboardEnabled: isMultiSiteDashboardEnabled( state ),
 			};
 		},
 		{

@@ -3,8 +3,10 @@ import type { CheckoutPageErrorCallback, CheckoutStepProps } from '../types';
 
 export function getDefaultPaymentMethodStep( {
 	onPageLoadError,
+	waitForPaymentMethodIds = [],
 }: {
 	onPageLoadError?: CheckoutPageErrorCallback;
+	waitForPaymentMethodIds?: string[];
 } ): CheckoutStepProps {
 	return {
 		stepId: 'payment-method-step',
@@ -12,7 +14,11 @@ export function getDefaultPaymentMethodStep( {
 		className: 'checkout__payment-method-step',
 		titleContent: <CheckoutPaymentMethodsTitle />,
 		activeStepContent: (
-			<CheckoutPaymentMethods onPageLoadError={ onPageLoadError } isComplete={ false } />
+			<CheckoutPaymentMethods
+				onPageLoadError={ onPageLoadError }
+				isComplete={ false }
+				waitForPaymentMethodIds={ waitForPaymentMethodIds }
+			/>
 		),
 		completeStepContent: <CheckoutPaymentMethods summary isComplete />,
 	};

@@ -275,7 +275,6 @@ export const SitesWithoutThisPlugin = ( {
 
 	return (
 		<DataViews
-			search
 			isLoading={ isLoading }
 			data={ data }
 			fields={ fields }
@@ -285,9 +284,6 @@ export const SitesWithoutThisPlugin = ( {
 			defaultLayouts={ { table: {} } }
 			getItemId={ ( item ) => String( item.ID ) }
 			paginationInfo={ paginationInfo }
-		>
-			<DataViews.Layout />
-			<DataViews.Pagination />
-		</DataViews>
+		/>
 	);
 };
