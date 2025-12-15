@@ -59,7 +59,6 @@ const EllipsisMenu = () => {
 	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
-	const { disableChatSupport } = useHelpCenterContext();
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -99,23 +98,19 @@ const EllipsisMenu = () => {
 					<Menu.ItemLabel>{ __( 'Minimize', __i18n_text_domain__ ) }</Menu.ItemLabel>
 				</Menu.Item>
 				<Menu.Separator />
-				{ ! disableChatSupport && (
-					<>
-						<Menu.Item
-							onClick={ clearChat }
-							prefix={ <Icon icon={ comment } width={ 24 } height={ 24 } /> }
-						>
-							<Menu.ItemLabel>{ __( 'New chat', __i18n_text_domain__ ) }</Menu.ItemLabel>
-						</Menu.Item>
-						<Menu.Item
-							onClick={ handleViewChats }
-							prefix={ <Icon icon={ backup } width={ 24 } height={ 24 } /> }
-						>
-							<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
-						</Menu.Item>
-						<Menu.Separator />
-					</>
-				) }
+				<Menu.Item
+					onClick={ clearChat }
+					prefix={ <Icon icon={ comment } width={ 24 } height={ 24 } /> }
+				>
+					<Menu.ItemLabel>{ __( 'New chat', __i18n_text_domain__ ) }</Menu.ItemLabel>
+				</Menu.Item>
+				<Menu.Item
+					onClick={ handleViewChats }
+					prefix={ <Icon icon={ backup } width={ 24 } height={ 24 } /> }
+				>
+					<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
+				</Menu.Item>
+				<Menu.Separator />
 				<Menu.Item
 					onClick={ toggleSoundNotifications }
 					prefix={
@@ -213,6 +208,8 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 		};
 	}, [] );
 
+	const { disableChatSupport } = useHelpCenterContext();
+
 	const classNames = clsx(
 		'help-center__container-header',
 		location?.pathname?.replace( /^\//, '' ),
@@ -254,7 +251,18 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 			<Flex>
 				{ shouldShowBackButton ? <BackButton /> : null }
 				<HeaderText />
-				<EllipsisMenu />
+				{ disableChatSupport ? (
+					<Button
+						label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
+						tooltipPosition="top left"
+						icon={ lineSolid }
+						onClick={ () => setIsMinimized( true ) }
+					/>
+				) : (
+					// We only show the ellipsis menu if chat support is enabled
+					<EllipsisMenu />
+				) }
+
 				<Button
 					className="help-center-header__close"
 					label={ __( 'Close Help Center', __i18n_text_domain__ ) }
