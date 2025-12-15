@@ -24,10 +24,9 @@ import type { PluginListRow } from './types';
 const DEFAULT_VIEW: View = {
 	type: 'list',
 	page: 1,
-	perPage: 10,
+	perPage: 100,
 	sort: { field: 'name', direction: 'asc' },
 };
-// move to plugin switcher
 const searchableFields = [
 	{
 		id: 'name',
@@ -57,10 +56,8 @@ export default function PluginsList() {
 			view,
 			fields
 		);
-		// console.debug( 'filterSortAndPaginate - result', result );
 		return result;
 	}, [ fields, sitesById, sitesPlugins, view ] );
-	// console.debug( 'plugins', plugins );
 	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 	const { data: marketplaceSearch } = useQuery(

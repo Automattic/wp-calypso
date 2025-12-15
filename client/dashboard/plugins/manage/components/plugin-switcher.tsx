@@ -43,10 +43,8 @@ export const PluginSwitcher = ( {
 		const currentPerPage = view.perPage || 10;
 
 		if ( currentPage < paginationInfo.totalPages ) {
-			// console.debug( 'paginate' );
 			setView( ( currentView ) => ( {
 				...currentView,
-				// page: currentPage + 1,
 				perPage: ( currentPage + 1 ) * currentPerPage, // Accumulate items
 			} ) );
 		}
@@ -69,6 +67,9 @@ export const PluginSwitcher = ( {
 				handleLoadMore();
 			}
 		}, 100 );
+
+		// Initial check in case content is shorter than container
+		handleScroll();
 
 		menuElement.addEventListener( 'scroll', handleScroll );
 		return () => menuElement.removeEventListener( 'scroll', handleScroll );
