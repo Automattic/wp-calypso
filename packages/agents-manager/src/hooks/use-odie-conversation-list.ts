@@ -37,7 +37,7 @@ function getConversationsWithSupportInteractions(
 				)
 			);
 
-			// Skip conversations without a valid support interaction
+			// Skip if no valid support interaction
 			if ( ! supportInteraction || ! supportInteraction.uuid ) {
 				return null;
 			}
