@@ -50,7 +50,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName, site, source } = useHelpCenterContext();
+	const { sectionName, site, source, disableChatSupport } = useHelpCenterContext();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 	const { forceEmailSupport } = useChatStatus();
 	const currentSiteDomain = site?.domain;
@@ -131,7 +131,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								sectionName={ sectionName }
 								currentSiteDomain={ currentSiteDomain }
 								isEligibleForChat={ isUserEligibleForPaidSupport }
-								forceEmailSupport={ !! forceEmailSupport }
+								forceEmailSupport={ !! forceEmailSupport || disableChatSupport }
 							/>
 						}
 					/>
