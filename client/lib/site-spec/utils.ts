@@ -189,11 +189,17 @@ export function getDefaultSiteSpecConfig(): SiteSpecConfig {
  * @returns {SiteSpecConfig} Configuration object for CIAB (Commerce in a Box) flow
  */
 export function getCiabSiteSpecConfig(): SiteSpecConfig {
+	// Check for 'referrer' parameter
+	const ref = new URLSearchParams( window.location.search ).get( 'ref' );
+
 	return {
 		buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&spec_id=',
 		backButton: {
-			enabled: true,
+			enabled: ref === 'new-site-popover',
 			url: '/ciab/sites',
+		},
+		exitButton: {
+			enabled: false,
 		},
 		theme: {
 			brandId: 'ciab',
