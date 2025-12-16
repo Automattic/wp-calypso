@@ -11,6 +11,7 @@ interface CollapsibleCardProps {
 	header: React.ReactNode;
 	children: React.ReactNode;
 	isBorderless?: boolean;
+	size?: React.ComponentProps< typeof Card >[ 'size' ];
 	toggleLabel?: string;
 	initialExpanded?: boolean;
 	className?: string;
@@ -23,6 +24,7 @@ export const CollapsibleCard = ( {
 	header,
 	children,
 	toggleLabel,
+	size = 'medium',
 	isBorderless = false,
 	initialExpanded = false,
 	expanded: controlledExpanded,
@@ -77,6 +79,7 @@ export const CollapsibleCard = ( {
 		<Card
 			className={ clsx( 'collapsible-card', { collapsed: ! isExpanded }, className ) }
 			isBorderless={ isBorderless }
+			size={ size }
 		>
 			<CardBody>
 				<div
