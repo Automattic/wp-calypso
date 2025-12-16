@@ -30,6 +30,9 @@ function adaptFeed( feed ) {
 		name: feed.name && decodeEntities( feed.name ),
 		URL: safeLink( feed.URL ),
 		feed_URL: safeLink( feed.feed_URL ),
+		// Preserve the original feed URL for follow button functionality
+		// even if it doesn't pass safeLink validation (e.g., non-HTTP schemes)
+		unsanitized_URL: feed.URL || feed.feed_URL,
 		blog_owner: feed.blog_owner,
 		is_following: feed.is_following,
 		subscribers_count: feed.subscribers_count,

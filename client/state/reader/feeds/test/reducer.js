@@ -33,6 +33,7 @@ describe( 'reducer', () => {
 				blog_ID: 2,
 				feed_URL: 'http://example.com',
 				URL: undefined,
+				unsanitized_URL: 'http://example.com',
 				is_following: true,
 				name: undefined,
 				subscribers_count: undefined,
@@ -65,6 +66,7 @@ describe( 'reducer', () => {
 				description: 'peaches & cream',
 				URL: undefined,
 				feed_URL: undefined,
+				unsanitized_URL: undefined,
 				is_following: undefined,
 				subscribers_count: undefined,
 				last_update: undefined,
@@ -96,12 +98,46 @@ describe( 'reducer', () => {
 				description: 'peaches & cream',
 				URL: undefined,
 				feed_URL: undefined,
+				unsanitized_URL: 'javascript:foo',
 				is_following: undefined,
 				subscribers_count: undefined,
 				last_update: undefined,
 				image: undefined,
 				organization_id: undefined,
 				unseen_count: undefined,
+			} );
+		} );
+
+		test( 'should preserve unsanitized_URL even when URL is rejected by safeLink', () => {
+			expect(
+				items(
+					{},
+					{
+						type: READER_FEED_REQUEST_SUCCESS,
+						payload: {
+							feed_ID: 1,
+							blog_ID: 2,
+							URL: 'javascript:alert(1)',
+							feed_URL: 'data:text/html,<script>alert(1)</script>',
+						},
+					}
+				)[ 1 ]
+			).toEqual( {
+				feed_ID: 1,
+				blog_ID: 2,
+				name: undefined,
+				description: undefined,
+				URL: undefined, // Rejected by safeLink
+				feed_URL: undefined, // Rejected by safeLink
+				unsanitized_URL: 'javascript:alert(1)', // Preserved for follow functionality
+				is_following: undefined,
+				subscribers_count: undefined,
+				last_update: undefined,
+				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
+				blog_owner: undefined,
+				subscription_id: undefined,
 			} );
 		} );
 

@@ -45,13 +45,19 @@ export default function ReaderFeedHeaderFollow( props ) {
 	// Calculate an effective site URL, using follow data as fallback
 	// This ensures the follow button can render even when feed/site objects have missing URLs
 	// Fallback order:
-	// 1. siteUrl: from getSiteUrl() using feed/site objects
+	// 1. siteUrl: from getSiteUrl() using feed/site objects (safeLink-filtered URLs)
 	// 2. feed?.feed_URL: direct access to feed URL (may be undefined if filtered by safeLink)
-	// 3. followForFeed?.feed_URL: reliable URL from follow subscription data (only available if user is already following)
-	// 4. followForFeed?.URL: alternative URL property from follow subscription (only available if user is already following)
+	// 3. feed?.unsanitized_URL: original unfiltered URL from API (always present for valid feeds)
+	// 4. followForFeed?.feed_URL: reliable URL from follow subscription data (only available if user is already following)
+	// 5. followForFeed?.URL: alternative URL property from follow subscription (only available if user is already following)
 	const effectiveSiteUrl = useMemo(
-		() => siteUrl || feed?.feed_URL || followForFeed?.feed_URL || followForFeed?.URL,
-		[ siteUrl, feed?.feed_URL, followForFeed?.feed_URL, followForFeed?.URL ]
+		() =>
+			siteUrl ||
+			feed?.feed_URL ||
+			feed?.unsanitized_URL ||
+			followForFeed?.feed_URL ||
+			followForFeed?.URL,
+		[ siteUrl, feed?.feed_URL, feed?.unsanitized_URL, followForFeed?.feed_URL, followForFeed?.URL ]
 	);
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
