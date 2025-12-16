@@ -37,11 +37,18 @@ export default function ReaderFeedHeaderFollow( props ) {
 	const siteUrl = getSiteUrl( { feed, site } );
 	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( feed?.feed_ID );
 	// Get the follow data to use as a fallback for feed URLs
-	const followForFeed = useSelector( ( state ) =>
-		feed?.feed_ID ? getReaderFollowForFeed( state, feed.feed_ID ) : null
+	// This selector is scoped to feed_ID to avoid unnecessary re-renders
+	const followForFeed = useSelector(
+		( state ) => ( feed?.feed_ID ? getReaderFollowForFeed( state, feed.feed_ID ) : null ),
+		shallowEqual
 	);
 	// Calculate an effective site URL, using follow data as fallback
 	// This ensures the follow button can render even when feed/site objects have missing URLs
+	// Fallback order:
+	// 1. siteUrl: from getSiteUrl() using feed/site objects
+	// 2. feed?.feed_URL: direct access to feed URL (may be undefined if filtered by safeLink)
+	// 3. followForFeed?.feed_URL: reliable URL from follow subscription data (always present for followed feeds)
+	// 4. followForFeed?.URL: alternative URL property from follow subscription
 	const effectiveSiteUrl =
 		siteUrl || feed?.feed_URL || followForFeed?.feed_URL || followForFeed?.URL;
 	const owner = useSelector( getCurrentUserName );
