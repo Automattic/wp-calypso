@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
 import { getOdieIdFromInteraction } from '../utils';
@@ -127,33 +127,36 @@ export const useSendOdieMessage = () => {
  * Get a full API of an Odie chat.
  */
 export const useManagedOdieChat = () => {
-	const [ pendingMessage, setPendingMessage ] = useState< AgentticMessage | null >( null );
+	const [ initialMessage, setInitialMessage ] = useState< AgentticMessage | null >( null );
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { version, newInteractionsBotSlug } = useOdieAssistantContext();
 	const chatId = getOdieIdFromInteraction( currentSupportInteraction );
 	const botSlug = currentSupportInteraction?.bot_slug || newInteractionsBotSlug;
 	const queryClient = useQueryClient();
-	const { data: chat, isFetching: isLoadingChat } = useOdieChat( chatId ? Number( chatId ) : null );
+	const {
+		data: chat,
+		isFetching: isFetchingChat,
+		isPending: isPendingChat, // Fast loading: enables instant loading state
+	} = useOdieChat( chatId ? Number( chatId ) : null );
 	const navigate = useNavigate();
+	// Fast loading: instantly determine if this is a new chat for UI responsiveness
+	const [ searchParams ] = useSearchParams();
+	const isNewChat = ! searchParams.get( 'odieInteractionId' );
 
 	const sendOdieMessage = useSendOdieMessage();
 
 	async function sendMessage( message: string ) {
+		const odieMessage = convertMessageFromAgentticFormat( message );
+
+		// Show initial message immediately only for new chats
+		if ( isNewChat ) {
+			setInitialMessage( convertMessageToAgentticFormat( odieMessage ) );
+		}
+
 		try {
-			const odieMessage = convertMessageFromAgentticFormat( message );
-			const isNewChat = ! chatId;
-
-			// Show pending message immediately only for new chats
-			if ( isNewChat ) {
-				setPendingMessage( convertMessageToAgentticFormat( odieMessage ) );
-			}
-
 			const { interaction, chat: responseChat } = await sendOdieMessage.mutateAsync( odieMessage );
 
 			if ( interaction.uuid !== currentSupportInteraction?.uuid ) {
-				// Clear pending message since cache will have the user message
-				setPendingMessage( null );
-
 				// Set the new chat data with user's message prepended
 				queryClient.setQueryData( [ 'odie-chat', botSlug, responseChat.chat_id, version ], {
 					chat_id: responseChat.chat_id,
@@ -163,20 +166,28 @@ export const useManagedOdieChat = () => {
 				navigate( `/odie?odieInteractionId=${ interaction.uuid }`, { replace: true } );
 			}
 		} catch ( error ) {
-			// Clear pending message on error
-			setPendingMessage( null );
 			// eslint-disable-next-line no-console
 			console.error( '[useManagedOdieChat] Failed to send message:', error );
+		} finally {
+			// Clear initial message
+			setInitialMessage( null );
 		}
 	}
 
-	// Combine chat messages with pending message
-	const chatMessages = ( chat?.messages ?? [] ).map( convertMessageToAgentticFormat );
-	const messages = pendingMessage ? [ ...chatMessages, pendingMessage ] : chatMessages;
+	// Combine loaded messages with initial message
+	const messages = useMemo(
+		() => [
+			...( chat?.messages ?? [] ).map( convertMessageToAgentticFormat ),
+			...( initialMessage ? [ initialMessage ] : [] ),
+		],
+		[ chat?.messages, initialMessage ]
+	);
 
 	return {
 		messages,
 		sendMessage,
-		isProcessing: sendOdieMessage.isPending || isLoadingChat,
+		isProcessing: sendOdieMessage.isPending || isFetchingChat,
+		// Fast loading: only show spinner for existing chats, never for new chat creation
+		isLoadingChat: ! isNewChat && isPendingChat,
 	};
 };
