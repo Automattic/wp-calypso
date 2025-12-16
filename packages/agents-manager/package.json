@@ -43,6 +43,7 @@
 	"dependencies": {
 		"@automattic/agenttic-client": "^0.1.26",
 		"@automattic/agenttic-ui": "^0.1.26",
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/support-articles": "workspace:^",

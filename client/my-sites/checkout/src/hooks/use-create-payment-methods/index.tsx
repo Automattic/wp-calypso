@@ -524,9 +524,9 @@ export default function useCreatePaymentMethods( {
 	// `filterAppropriatePaymentMethods()`.
 	let paymentMethods = [
 		...existingCardMethods,
-		stripeMethod,
 		applePayMethod,
 		googlePayMethod,
+		stripeMethod,
 		freePaymentMethod,
 		paypalExpressMethod,
 		paypalPPCPMethod,
@@ -547,11 +547,11 @@ export default function useCreatePaymentMethods( {
 	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
 		paymentMethods = [
 			...existingCardMethods,
+			applePayMethod,
+			googlePayMethod,
 			paypalExpressMethod,
 			paypalPPCPMethod,
 			stripeMethod,
-			applePayMethod,
-			googlePayMethod,
 			freePaymentMethod,
 			idealMethod,
 			sofortMethod,

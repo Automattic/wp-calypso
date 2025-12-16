@@ -1,10 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { isDashboardEnabled } from './is-dashboard-enabled';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
-export const hasHostingDashboardOptIn = ( state: AppState ): boolean => {
-	if ( ! isEnabled( 'dashboard/v2' ) ) {
+export const hasDashboardOptIn = ( state: AppState ): boolean => {
+	if ( ! isDashboardEnabled( state ) ) {
 		return false;
 	}
 

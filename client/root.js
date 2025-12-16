@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import globalPageInstance from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getIsSubscriptionOnly from 'calypso/state/selectors/get-is-subscription-only';
@@ -14,7 +15,6 @@ import {
 	getSiteAdminUrl,
 	isAdminInterfaceWPAdmin,
 } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { hasReadersAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { getSelectedSiteId } from './state/ui/selectors';
@@ -91,10 +91,10 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 async function getLoggedInLandingPage( { dispatch, getState } ) {
 	await dispatch( waitForPrefs() );
 	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
-	const hostingDashboardOptIn = hasHostingDashboardOptIn( getState() );
+	const dashboardOptIn = hasDashboardOptIn( getState() );
 
 	if ( useSitesAsLandingPage ) {
-		if ( hostingDashboardOptIn ) {
+		if ( dashboardOptIn ) {
 			// Use absolute URL to force a hard reload.
 			return dashboardLink( '/sites' );
 		}

@@ -1,49 +1,30 @@
-import { HelpCenter } from '@automattic/data-stores';
 import { HelpIcon } from '@automattic/help-center';
-import { Button } from '@wordpress/components';
-import {
-	useDispatch as useDataStoreDispatch,
-	useSelect as useDateStoreSelect,
-} from '@wordpress/data';
+import { Button, Tooltip } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import type { HelpCenterSelect } from '@automattic/data-stores';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-const HELP_CENTER_STORE = HelpCenter.register();
+const SidebarHelpCenter = () => {
+	const { toggleHelpCenter, show } = useHelpCenter();
+	const dispatch = useDispatch();
 
-type Props = {
-	onClick?: () => void;
-};
-
-const SidebarHelpCenter = ( { onClick }: Props ) => {
-	const { show, isMinimized } = useDateStoreSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			show: store.isHelpCenterShown(),
-			isMinimized: store.getIsMinimized(),
-		};
-	}, [] );
-
-	const { setShowHelpCenter, setIsMinimized } = useDataStoreDispatch( HELP_CENTER_STORE );
-
-	const handleToggleHelpCenter = () => {
-		if ( isMinimized ) {
-			setIsMinimized( false );
-		} else {
-			setShowHelpCenter( ! show );
-		}
-		onClick?.();
+	const handleOnClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_help_center_click' ) );
+		toggleHelpCenter();
 	};
 
 	return (
-		<>
+		<Tooltip text={ __( 'Open Help Center' ) }>
 			<Button
-				onClick={ handleToggleHelpCenter }
+				onClick={ handleOnClick }
 				className={ clsx( 'sidebar__item-help', {
 					'is-active': show,
 				} ) }
 				icon={ <HelpIcon /> }
 			/>
-		</>
+		</Tooltip>
 	);
 };
 

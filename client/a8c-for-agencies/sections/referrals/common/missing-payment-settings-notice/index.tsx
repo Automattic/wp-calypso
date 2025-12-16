@@ -26,6 +26,8 @@ export const MissingPaymentSettingsNotice = ( { isFullWidth }: { isFullWidth?: b
 			level="warning"
 			title={ translate( 'Add your payment information to get paid' ) }
 			className="missing-payment-settings-notice"
+			allowTemporaryDismissal
+			preferenceName="missing-payment-settings-notice-dismissed"
 			hideCloseButton
 		>
 			<div>

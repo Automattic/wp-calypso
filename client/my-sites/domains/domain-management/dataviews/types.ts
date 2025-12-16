@@ -1,15 +1,14 @@
-import {
-	DomainUpdateStatus,
-	JobStatus,
-	BulkUpdateVariables,
-	BulkDomainUpdateStatusQueryFnData,
-	PartialDomainData,
-} from '@automattic/data-stores';
 import { SiteDomainsQueryFnData } from '@automattic/data-stores/src/queries/use-site-domains-query';
 import { DomainStatusPurchaseActions, ResponseDomain } from '@automattic/domains-table';
 import { DomainAction } from '@automattic/domains-table/src/domains-table/domains-table-row-actions';
 import { SiteExcerptData } from '@automattic/sites';
 import { QueryParams } from './query-params';
+import type {
+	DomainUpdateStatus,
+	JobStatus,
+	BulkDomainUpdateStatusQueryFnData,
+} from '@automattic/api-core';
+import type { BulkUpdateVariables, PartialDomainData } from '@automattic/data-stores';
 
 /**
  * Utility type for domain action descriptions.

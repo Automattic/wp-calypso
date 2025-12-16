@@ -34,6 +34,7 @@ import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import {
 	saveSignupStep as saveSignupStepAction,
@@ -41,7 +42,6 @@ import {
 } from 'calypso/state/signup/progress/actions';
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { ONBOARD_STORE } from '../../../../stores';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
@@ -241,13 +241,13 @@ function UnifiedPlansStep( {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
 	const translate = useTranslate();
-	const hostingDashboardOptIn = useSelector( hasHostingDashboardOptIn );
+	const dashboardOptIn = useSelector( hasDashboardOptIn );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
 		}
 
-		return hostingDashboardOptIn ? dashboardLink( '/sites' ) : '/sites/';
+		return dashboardOptIn ? dashboardLink( '/sites' ) : '/sites/';
 	} );
 
 	useSiteGlobalStylesOnPersonal();

@@ -49,7 +49,6 @@ const incompatiblePlugins = new Set( [
 	'backwpup',
 	'backwpup-pro',
 	'duplicator',
-	'duplicator-pro',
 	'jetpack-backup',
 	'siteground-migrator',
 	'wp-backitup',

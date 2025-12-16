@@ -43,6 +43,7 @@ export default function DnsPropagationProgressBar( {
 	domainConnectionSetupInfo,
 }: Props ) {
 	const mode = domainMappingStatus.mode;
+	const hasCloudflareIpAddresses = domainMappingStatus.has_cloudflare_ip_addresses;
 	let progressPercentage = 0;
 
 	if ( mode === DomainConnectionSetupMode.SUGGESTED ) {
@@ -56,6 +57,8 @@ export default function DnsPropagationProgressBar( {
 		const currentIpAddresses = domainMappingStatus.host_ip_addresses || [];
 		const expectedIpAddresses = domainConnectionSetupInfo.default_ip_addresses || [];
 		progressPercentage = calculateProgress( currentIpAddresses, expectedIpAddresses );
+	} else if ( hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom ) {
+		progressPercentage = 100;
 	} else {
 		// All other cases: 0%
 		progressPercentage = 0;
