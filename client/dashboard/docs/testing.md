@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The testing strategy for the dashboard prototype aims to ensure reliability, maintainability, and performance. Since it's a UI heavy project, E2E testing is a key to ensure trust while iterating on the dashboard.
+The testing strategy for the dashboard aims to ensure reliability, maintainability, and performance. Since it's a UI heavy project, E2E testing is a key to ensure trust while iterating on the dashboard.
 
 ## E2E Testing
 
