@@ -12,7 +12,11 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
+import {
+	getReaderFollowForFeed,
+	hasReaderFollowOrganization,
+	isFollowing,
+} from 'calypso/state/reader/follows/selectors';
 import { requestRecommendedBlogsListItems } from 'calypso/state/reader/lists/actions';
 import {
 	isRequestingUserRecommendedBlogs,
@@ -32,6 +36,14 @@ export default function ReaderFeedHeaderFollow( props ) {
 	const siteId = site?.ID;
 	const siteUrl = getSiteUrl( { feed, site } );
 	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( feed?.feed_ID );
+	// Get the follow data to use as a fallback for feed URLs
+	const followForFeed = useSelector( ( state ) =>
+		feed?.feed_ID ? getReaderFollowForFeed( state, feed.feed_ID ) : null
+	);
+	// Calculate an effective site URL, using follow data as fallback
+	// This ensures the follow button can render even when feed/site objects have missing URLs
+	const effectiveSiteUrl =
+		siteUrl || feed?.feed_URL || followForFeed?.feed_URL || followForFeed?.URL;
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
 		isRequestingUserRecommendedBlogs( state, owner )
@@ -102,11 +114,11 @@ export default function ReaderFeedHeaderFollow( props ) {
 	return (
 		<div className="reader-feed-header__follow">
 			<div className="reader-feed-header__follow-and-settings">
-				{ siteUrl && (
+				{ effectiveSiteUrl && (
 					<div className="reader-feed-header__follow-button">
 						<div className="reader-feed-header__follow-button-and-settings">
 							<ReaderFollowButton
-								siteUrl={ feed?.feed_URL || siteUrl }
+								siteUrl={ effectiveSiteUrl }
 								hasButtonStyle
 								iconSize={ 24 }
 								onFollowToggle={ openSuggestedFollowsModal }
