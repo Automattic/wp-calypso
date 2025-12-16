@@ -72,6 +72,11 @@ function BillingDragonCheckoutContent( {
 
 	debug( '[A4A Checkout] Cart items: ', cartItems );
 
+	// Plan Checkout Flow: This flow is used when a planSlug is provided in the URL (e.g., /checkout/:siteSlug/:planSlug).
+	// It handles direct plan purchases by:
+	// 1. Using usePrepareProductsForCart to convert the plan slug into products
+	// 2. Adding agency metadata to the products
+	// 3. Replacing the cart with the prepared products
 	useEffect( () => {
 		if ( ! isPlanCheckout || areProductsPreparing ) {
 			return;
@@ -92,6 +97,7 @@ function BillingDragonCheckoutContent( {
 			extra: {
 				...product.extra,
 				agency_id: agency.id,
+				isA4ADevSiteCheckout: true,
 			},
 		} ) );
 
@@ -113,8 +119,12 @@ function BillingDragonCheckoutContent( {
 		replaceProductsInCart,
 	] );
 
-	// Add products to cart when data is loaded
-	// Note: We are loading products from A4A cart to the Billing Dragon cart
+	// Cart Items Flow: This flow is used when cartItems are provided via props (the traditional A4A cart flow).
+	// It handles checkout for items already in the A4A shopping cart by:
+	// 1. Waiting for cartItems to be populated from the A4A cart
+	// 2. Converting A4A cart items into BD cart format
+	// 3. Replacing the cart with the converted products
+	// This is the original flow used when users add items to their cart first, then navigate to checkout.
 	useEffect( () => {
 		if ( isPlanCheckout ) {
 			return;
