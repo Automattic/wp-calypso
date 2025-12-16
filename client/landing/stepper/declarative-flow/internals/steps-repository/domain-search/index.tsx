@@ -82,7 +82,7 @@ const DomainSearchStep: StepType< {
 	const initialQuery = useQuery().get( 'new' ) ?? '';
 	const tldQuery = useQuery().get( 'tld' );
 	const source = useQuery().get( 'source' );
-	const backTo = useQuery().get( 'back_to' );
+	const backTo = useQuery().get( 'back_to' ) ?? '';
 	const sourceSlug = useQuery().get( 'sourceSlug' );
 	const { __ } = useI18n();
 
@@ -364,8 +364,11 @@ const DomainSearchStep: StepType< {
 				backDestination = defaultBackUrl;
 				backLabelText = sitesBackLabelText;
 
-				const isValidBackTo = dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
-				if ( backTo && ( isRelativeUrl( backTo ) || isValidBackTo ) ) {
+				const isSafeBackTo =
+					isRelativeUrl( backTo ) ||
+					dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+
+				if ( isSafeBackTo ) {
 					backDestination = backTo;
 					backLabelText = __( 'Back' );
 				}

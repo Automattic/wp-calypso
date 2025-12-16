@@ -8,7 +8,6 @@ import {
 import { useRouter } from '@tanstack/react-router';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { domainConnectionSetupRoute } from '../app/router/domains';
-import { dashboardLink } from './link';
 import { getRenewalUrlFromPurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
@@ -40,7 +39,7 @@ export function useDomainConnectionSetupTemplateUrl() {
 		} )
 		.href.replace( '%25s', '%s' );
 
-	return dashboardLink( domainConnectionSetupTemplateUrl );
+	return new URL( domainConnectionSetupTemplateUrl, window.location.origin ).href;
 }
 
 export function isRegisteredDomain( domain: DomainSummary ) {

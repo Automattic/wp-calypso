@@ -325,9 +325,12 @@ const DomainSearchUI = (
 			backUrl = defaultBackUrl;
 			backLabelText = sitesBackLabelText;
 
-			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString();
-			const isValidBackTo = dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
-			if ( backTo && ( isRelativeUrl( backTo ) || isValidBackTo ) ) {
+			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString() ?? '';
+			const isSafeBackTo =
+				isRelativeUrl( backTo ) ||
+				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+
+			if ( isSafeBackTo ) {
 				backUrl = backTo;
 				backLabelText = __( 'Back' );
 			}
