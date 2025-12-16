@@ -144,6 +144,8 @@ class Followers extends Component {
 								<AddSubscriberForm
 									siteId={ this.props.site.ID }
 									hasSubscriberLimit={ hasSubscriberLimit }
+									isFreePlan={ isFreeSite }
+									siteSlug={ site?.slug || '' }
 									flowName="people"
 									showSubtitle
 									showCsvUpload

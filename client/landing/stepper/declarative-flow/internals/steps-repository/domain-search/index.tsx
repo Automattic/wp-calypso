@@ -36,7 +36,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
@@ -75,7 +75,7 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
-	const hostingDashboardOptIn = useSelector( hasHostingDashboardOptIn );
+	const dashboardOptIn = useSelector( hasDashboardOptIn );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -319,7 +319,7 @@ const DomainSearchStep: StepType< {
 	const [ sitesBackLabelText, defaultBackUrl ] =
 		userSiteCount === 1
 			? [ __( 'Back to My Home' ), '/home' ]
-			: [ __( 'Back to sites' ), hostingDashboardOptIn ? dashboardLink( '/sites' ) : '/sites' ];
+			: [ __( 'Back to sites' ), dashboardOptIn ? dashboardLink( '/sites' ) : '/sites' ];
 
 	if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
 		return (

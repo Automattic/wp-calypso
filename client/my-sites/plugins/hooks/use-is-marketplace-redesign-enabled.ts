@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
@@ -24,7 +24,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export function useIsMarketplaceRedesignEnabled(): boolean {
 	const siteId = useSelector( getSelectedSiteId );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const hostingDashboardOptIn = useSelector( hasHostingDashboardOptIn );
+	const dashboardOptIn = useSelector( hasDashboardOptIn );
 
 	// Never show redesign when a site is selected
 	if ( siteId ) {
@@ -32,5 +32,5 @@ export function useIsMarketplaceRedesignEnabled(): boolean {
 	}
 
 	// Show redesign for logged-out users or logged-in users with dashboard opt-in
-	return isEnabled( 'marketplace-redesign' ) && ( ! isLoggedIn || hostingDashboardOptIn );
+	return isEnabled( 'marketplace-redesign' ) && ( ! isLoggedIn || dashboardOptIn );
 }
