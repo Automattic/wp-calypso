@@ -18,7 +18,7 @@ export function dashboardOrigins(): string[] {
  * so that the link points to the local Calypso dev server.
  */
 export function wpcomLink( path: string ) {
-	return `${ config( 'wpcom_url' ) }${ path }`;
+	return new URL( path, config( 'wpcom_url' ) ).href;
 }
 
 /**
