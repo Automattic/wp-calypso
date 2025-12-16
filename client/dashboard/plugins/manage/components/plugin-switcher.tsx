@@ -4,12 +4,11 @@ import { Field, View } from '@wordpress/dataviews';
 import { _n, sprintf } from '@wordpress/i18n';
 import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import { pluginRoute } from '../../../app/router/plugins';
 import { Card, CardBody } from '../../../components/card';
 import SwitcherContent from '../../../components/switcher/switcher-content';
 import { Text } from '../../../components/text';
-import { DEFAULT_VIEW } from '../index';
 import { PluginListRow } from '../types';
 
 import './plugin-switcher.scss';
@@ -33,6 +32,7 @@ export const PluginSwitcher = ( {
 	paginationInfo: { totalItems: number; totalPages: number };
 } ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
+	const [ itemsPerPage ] = useState( view.perPage );
 
 	// Load next page when scrolling near bottom
 	const handleLoadMore = useCallback( () => {
@@ -44,10 +44,10 @@ export const PluginSwitcher = ( {
 			setView( ( currentView ) => ( {
 				...currentView,
 				// @ts-expect-error: perPage can't be undefined
-				perPage: currentView.perPage + DEFAULT_VIEW.perPage, // Accumulate items
+				perPage: currentView.perPage + itemsPerPage, // Accumulate items
 			} ) );
 		}
-	}, [ paginationInfo, setView ] );
+	}, [ paginationInfo, setView, itemsPerPage ] );
 
 	// Set up scroll listener
 	useEffect( () => {
