@@ -72,7 +72,8 @@ export default function ReaderFeedHeaderFollow( props ) {
 			// This ensures the button stays visible even if feed becomes null during navigation
 			setPersistedUrl( effectiveSiteUrl );
 		}
-	}, [ effectiveSiteUrl, persistedUrl ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ effectiveSiteUrl ] ); // Intentionally exclude persistedUrl to avoid circular dependency
 	
 	// Use persisted URL as final fallback to ensure button doesn't disappear during navigation
 	const finalSiteUrl = effectiveSiteUrl || persistedUrl;
