@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -24,7 +25,9 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import ReferralToggle from '../common/referral-toggle';
+import TermPricingToggle from '../common/term-pricing-toggle';
 import withMarketplaceType from '../hoc/with-marketplace-type';
+import withTermPricing from '../hoc/with-term-pricing';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import HeroSection from './hero-section';
@@ -124,35 +127,42 @@ function HostingOverview( { section }: SectionProps ) {
 						] }
 						hideOnMobile
 					/>
-					<Actions className="a4a-marketplace__header-actions">
-						<MobileSidebarNavigation />
-						<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
-							<ReferralToggle />
+					<Actions>
+						{ isEnabled( 'a4a-bd-term-pricing' ) && (
+							<div className="a4a-marketplace__header-actions">
+								<TermPricingToggle />
+							</div>
+						) }
+						<div className="a4a-marketplace__header-actions">
+							<MobileSidebarNavigation />
+							<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
+								<ReferralToggle />
+							</div>
+							<ShoppingCart
+								showCart={ showCart }
+								setShowCart={ setShowCart }
+								toggleCart={ toggleCart }
+								items={ selectedCartItems }
+								onRemoveItem={ onRemoveCartItem }
+								onCheckout={ () => {
+									page.redirect( A4A_MARKETPLACE_CHECKOUT_LINK );
+								} }
+							/>
+
+							<GuidedTourStep
+								className="a4a-marketplace__guided-tour"
+								id="marketplace-walkthrough-navigation"
+								tourId="marketplaceWalkthrough"
+								context={ sidebarRef }
+							/>
+
+							<GuidedTourStep
+								className="a4a-marketplace__guided-tour"
+								id="marketplace-walkthrough-referral-toggle"
+								tourId="marketplaceWalkthrough"
+								context={ referralToggleRef }
+							/>
 						</div>
-						<ShoppingCart
-							showCart={ showCart }
-							setShowCart={ setShowCart }
-							toggleCart={ toggleCart }
-							items={ selectedCartItems }
-							onRemoveItem={ onRemoveCartItem }
-							onCheckout={ () => {
-								page.redirect( A4A_MARKETPLACE_CHECKOUT_LINK );
-							} }
-						/>
-
-						<GuidedTourStep
-							className="a4a-marketplace__guided-tour"
-							id="marketplace-walkthrough-navigation"
-							tourId="marketplaceWalkthrough"
-							context={ sidebarRef }
-						/>
-
-						<GuidedTourStep
-							className="a4a-marketplace__guided-tour"
-							id="marketplace-walkthrough-referral-toggle"
-							tourId="marketplaceWalkthrough"
-							context={ referralToggleRef }
-						/>
 					</Actions>
 				</LayoutHeader>
 				<HeroSection
@@ -172,4 +182,4 @@ function HostingOverview( { section }: SectionProps ) {
 	);
 }
 
-export default withMarketplaceType( HostingOverview );
+export default withMarketplaceType( withTermPricing( HostingOverview ) );
