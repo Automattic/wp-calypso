@@ -192,6 +192,8 @@ const AddSubscribersModal = ( {
 						siteId={ site?.ID || 0 }
 						siteUrl={ site?.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
+						isFreePlan={ isFreeSite }
+						siteSlug={ site?.slug || '' }
 						submitBtnAlwaysEnable
 						onImportStarted={ onImportStarted }
 						onImportFinished={ onImportFinished }
@@ -202,8 +204,6 @@ const AddSubscribersModal = ( {
 						hidden={ isUploading }
 						isWPCOMSite={ ! isJetpack }
 						disabled={ isImportInProgress }
-						isFreePlan={ isFreeSite }
-						siteSlug={ site?.slug || '' }
 					/>
 				</>
 			) }
