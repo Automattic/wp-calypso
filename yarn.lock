@@ -308,7 +308,6 @@ __metadata:
     "@types/react-dom": "npm:^18.3.1"
     "@wordpress/api-fetch": "npm:^7.23.0"
     "@wordpress/base-styles": "npm:^5.23.0"
-    "@wordpress/block-editor": "npm:^14.18.0"
     "@wordpress/components": "npm:^30.9.0"
     "@wordpress/compose": "npm:^7.2.0"
     "@wordpress/i18n": "npm:^5.23.0"
