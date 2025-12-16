@@ -41,7 +41,8 @@ function getProrationFlags( sitePlans: Record< string, SitePlan > | undefined ):
 		 */
 		hasNonCouponDiscount =
 			hasNonCouponDiscount ||
-			( ! plan?.pricing?.hasSaleCoupon && null !== plan?.pricing?.discountedPrice?.full );
+			( ! plan?.pricing?.hasSaleCoupon &&
+				'number' === typeof plan?.pricing?.discountedPrice?.full );
 	}
 
 	return { hasDomainProration, hasOtherUpgradeProration, hasNonCouponDiscount };
