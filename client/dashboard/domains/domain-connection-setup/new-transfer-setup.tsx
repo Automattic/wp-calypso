@@ -222,7 +222,6 @@ export default function DomainTransferSetup() {
 						<VStack spacing={ 6 }>
 							<div>
 								<SetupStep
-									className="domain-transfer-setup__step"
 									expanded={ stepsExpanded[ 0 ] }
 									completed={ firstStepCompleted }
 									onCheckboxChange={ ( checked ) => handleCheckboxChange( checked ) }
@@ -234,7 +233,6 @@ export default function DomainTransferSetup() {
 								</SetupStep>
 								<CardDivider />
 								<SetupStep
-									className="domain-transfer-setup__step"
 									expanded={ stepsExpanded[ 1 ] }
 									completed={ authorizationCode.length > 0 }
 									onCheckboxChange={ () => {} } // This step doesn't have a checkbox
