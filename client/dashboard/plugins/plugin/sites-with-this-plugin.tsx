@@ -399,8 +399,33 @@ export const SitesWithThisPlugin = ( {
 						label: __( 'Delete' ),
 						modalHeader: getModalHeader( 'delete' ),
 						RenderModal: ( { items, closeModal } ) => {
-							const { mutateAsync } = useMutation( sitePluginRemoveMutation() );
-							const action = buildBulkSitesPluginAction( mutateAsync );
+							const { mutateAsync: deactivate } = useMutation( {
+								...sitePluginDeactivateMutation(),
+								onSuccess: () => {},
+							} );
+							const { mutateAsync: disableAutoupdate } = useMutation( {
+								...sitePluginAutoupdateDisableMutation(),
+								onSuccess: () => {},
+							} );
+							const { mutateAsync: remove } = useMutation( {
+								...sitePluginRemoveMutation(),
+								onSuccess: () => {},
+							} );
+
+							const action = async ( items: PluginListRow[] ) => {
+								const bulkDeactivate = buildBulkSitesPluginAction( deactivate );
+								const bulkDisableAutoupdate = buildBulkSitesPluginAction( disableAutoupdate );
+								const bulkRemove = buildBulkSitesPluginAction( remove );
+
+								// First deactivate all plugins
+								await bulkDeactivate( items );
+								// Then disable auto-updates
+								await bulkDisableAutoupdate( items );
+								// Finally remove the plugins
+								const { successCount, errorCount } = await bulkRemove( items );
+
+								return { successCount, errorCount };
+							};
 
 							return (
 								<ActionRenderModal
