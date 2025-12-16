@@ -197,6 +197,7 @@ export default function AgentDock( {
 			error={ null }
 			onSubmit={ sendOdieMessage }
 			onAbort={ () => {} }
+			// TODO: Fix loading state for Odie chat...
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
