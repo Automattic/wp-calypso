@@ -39,14 +39,17 @@ This module implements a modern, flexible OAuth2 authorization flow for WordPres
 ## Core Components
 
 ### 1. **Route & Controller** (`controller.jsx`)
+
 - Entry point for OAuth2 authorization requests
 - Client-based variant selection using `CLIENT_VARIANT_MAP`
 - Maps client IDs to their respective authorization variants
 
 ### 2. **Authorize Component** (`components/authorize.tsx`)
+
 The main orchestrator component that manages the authorization flow.
 
 **Key Responsibilities:**
+
 - Fetching and displaying authorization metadata
 - Redirecting to login if user is not authenticated
 - Managing loading, error, and success states
@@ -54,6 +57,7 @@ The main orchestrator component that manages the authorization flow.
 - Coordinating with the login context for headers
 
 **Configurable Props:**
+
 - `showLogo` - Toggle heading logo display
 - `showPermissions` - Toggle permissions list display
 - `userCardVariant` - Choose between 'horizontal' or 'centered' layout
@@ -62,9 +66,11 @@ The main orchestrator component that manages the authorization flow.
 - `renderActions` - Complete override of action buttons
 
 ### 3. **Variant System** (`components/authorize-variants.tsx`)
+
 Pre-configured authorization experiences for different clients.
 
 **Available Variants:**
+
 - **AuthorizeDefault** - Minimal layout, horizontal user card, no permissions
 - **AuthorizeStudio** - Full layout with logo, permissions, and horizontal user card
 
@@ -73,12 +79,16 @@ Pre-configured authorization experiences for different clients.
 ### 4. **Sub-Components**
 
 #### **UserCard** (`components/user-card.tsx`)
+
 Displays user information with two layout variants:
+
 - **Horizontal** - Avatar and info side-by-side (compact)
 - **Centered** - Avatar and info stacked vertically (prominent)
 
 #### **PermissionsList** (`components/permissions-list.tsx`)
+
 Shows requested permissions with expand/collapse functionality:
+
 - Initially displays 4 permissions
 - "Show more/less" toggle for additional permissions
 - Icons mapped to permission types
@@ -86,14 +96,18 @@ Shows requested permissions with expand/collapse functionality:
 - Learn more link to support documentation
 
 #### **AuthorizeActions** (`components/authorize-actions.tsx`)
+
 Action buttons for the authorization flow:
+
 - Approve button (primary variant)
 - Deny button (secondary variant)
 - Customizable text and styling
 - Can be completely replaced via `renderActions` prop
 
 #### **SuccessMessage** (`components/success-message.tsx`)
+
 Confirmation displayed after successful authorization:
+
 - Shows success icon and message
 - Used primarily for custom protocol redirects
 - Accessible with `role="status"` and `aria-live="polite"`
@@ -101,9 +115,11 @@ Confirmation displayed after successful authorization:
 ## Custom Hooks
 
 ### **useAuthorizeMeta** (`hooks/use-authorize-meta.ts`)
+
 React Query-based hook for fetching authorization metadata.
 
 **Returns:**
+
 - Client information (ID, title, icon)
 - User data (if logged in)
 - Requested permissions
@@ -111,14 +127,17 @@ React Query-based hook for fetching authorization metadata.
 - Feature flags
 
 **Features:**
+
 - 30-second cache (staleTime)
 - Automatic refetching on mount
 - Loading and error states
 
 ### **use-authorize-actions** (`hooks/use-authorize-actions.ts`)
+
 Utility functions for handling user actions.
 
 **Exported Functions:**
+
 - `handleApprove()` - Builds authorization URL and redirects
 - `handleDeny()` - Decodes denial URL and redirects
 - `isCustomProtocol()` - Detects non-HTTP/HTTPS protocols (e.g., Studio)
@@ -161,12 +180,12 @@ useAuthorizeMeta fetches authorization metadata
 
 1. **Create the variant component** in `authorize-variants.tsx`:
 
-   ```tsx
+   ```typescript
    export const AuthorizeMyClient = () => (
-   	<Authorize 
+   	<Authorize
    		userCardVariant="centered"
-   		showPermissions 
-   		showLogo 
+   		showPermissions
+   		showLogo
    		approveButtonText="Connect"
    	/>
    );
@@ -195,8 +214,8 @@ useAuthorizeMeta fetches authorization metadata
 Use the `renderActions` prop for complete control:
 
 ```tsx
-<Authorize 
-	renderActions={ ({ onApprove, onDeny }) => (
+<Authorize
+	renderActions={ ( { onApprove, onDeny } ) => (
 		<div>
 			<Button onClick={ onDeny }>Cancel</Button>
 			<Button onClick={ onApprove } variant="primary">
@@ -287,4 +306,3 @@ client/oauth2/
 ---
 
 For questions or contributions, please refer to the main Calypso documentation.
-
