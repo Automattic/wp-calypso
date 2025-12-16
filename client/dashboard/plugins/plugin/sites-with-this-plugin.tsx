@@ -439,11 +439,7 @@ export const SitesWithThisPlugin = ( {
 						isEligible: ( item ) => {
 							const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 
-							return (
-								!! autoupdate &&
-								! ( pluginBySiteId.get( item.ID )?.autoupdate ?? false ) &&
-								! item.isPluginActive
-							);
+							return !! autoupdate;
 						},
 						supportsBulk: true,
 						icon: <Icon icon={ trash } />,
