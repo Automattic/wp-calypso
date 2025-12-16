@@ -33,7 +33,10 @@ class PostLikes extends PureComponent {
 	renderLike = ( like ) => {
 		const { showDisplayNames } = this.props;
 
-		const likeUrl = like.login ? this.getCalypsoUrl( getUserProfileUrl( like.login ) ) : null;
+		const likeUrl =
+			like.login && typeof like.login === 'string' && like.login.trim() !== ''
+				? this.getCalypsoUrl( getUserProfileUrl( like.login ) )
+				: null;
 		const LikeWrapper = likeUrl ? 'a' : 'span';
 
 		return (
