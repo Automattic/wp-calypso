@@ -104,11 +104,6 @@
 		right: 50px;
 		bottom: 50px;
 
-		&.section-customizer {
-			left: 50px;
-			right: auto;
-		}
-
 		&:not( .react-draggable-dragging ) {
 			transition: all 0.2s ease-in-out;
 		}

@@ -68,7 +68,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		const buttons: ButtonConfig[] = [];
 
 		if ( isPaidUser ) {
-			if ( isEmailForced ) {
+			if ( isEmailForced || ! isChatLoaded ) {
 				buttons.push( {
 					text: __( 'Send an email', __i18n_text_domain__ ),
 					action: async () => {
