@@ -143,7 +143,7 @@ export const useManagedOdieChat = () => {
 	async function sendMessage( message: string ) {
 		const odieMessage = convertMessageFromAgentticFormat( message );
 
-		// Show initial message immediately only for new chats
+		// Show initial message for new chats
 		if ( isNewChat ) {
 			setInitialMessage( convertMessageToAgentticFormat( odieMessage ) );
 		}
