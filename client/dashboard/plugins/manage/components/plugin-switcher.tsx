@@ -9,6 +9,7 @@ import { pluginRoute } from '../../../app/router/plugins';
 import { Card, CardBody } from '../../../components/card';
 import SwitcherContent from '../../../components/switcher/switcher-content';
 import { Text } from '../../../components/text';
+import { DEFAULT_VIEW } from '../index';
 import { PluginListRow } from '../types';
 
 import './plugin-switcher.scss';
@@ -40,11 +41,12 @@ export const PluginSwitcher = ( {
 		}
 
 		const currentPage = view.page || 1;
-		const currentPerPage = view.perPage || 10;
+		const currentPerPage = view.perPage || DEFAULT_VIEW.perPage;
 
 		if ( currentPage < paginationInfo.totalPages ) {
 			setView( ( currentView ) => ( {
 				...currentView,
+				// @ts-expect-error: currentPerPage can't be undefined, DEFAULT_VIEW.perPage is set.
 				perPage: ( currentPage + 1 ) * currentPerPage, // Accumulate items
 			} ) );
 		}

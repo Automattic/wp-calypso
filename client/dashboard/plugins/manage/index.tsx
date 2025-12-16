@@ -21,7 +21,7 @@ import { useSitesById } from './hooks/use-sites-by-id';
 import { mapApiPluginsToDataViewPlugins } from './utils';
 import type { PluginListRow } from './types';
 
-const DEFAULT_VIEW: View = {
+export const DEFAULT_VIEW: View = {
 	type: 'list',
 	page: 1,
 	perPage: 100,
