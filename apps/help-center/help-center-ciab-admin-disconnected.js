@@ -2,7 +2,6 @@
 import './config';
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import './help-center.scss';
 
 const unsubscribe = subscribe( () => {
 	// Make sure the wp-logo menu item is registered before unregistering its default items.
