@@ -37,7 +37,7 @@ function adaptFeed( feed ) {
 		feed_URL: safeLink( feed.feed_URL ),
 		// Store original URL even if it doesn't pass safeLink validation
 		// This ensures the subscribe button can always render
-		unsanitized_URL: originalUrl || undefined,
+		unsanitized_URL: originalUrl,
 		blog_owner: feed.blog_owner,
 		is_following: feed.is_following,
 		subscribers_count: feed.subscribers_count,
