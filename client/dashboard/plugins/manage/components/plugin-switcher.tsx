@@ -40,16 +40,14 @@ export const PluginSwitcher = ( {
 			return;
 		}
 
-		const currentPage = view.page || 1;
-
-		if ( currentPage < paginationInfo.totalPages ) {
+		if ( paginationInfo.totalPages > 1 ) {
 			setView( ( currentView ) => ( {
 				...currentView,
 				// @ts-expect-error: perPage can't be undefined
 				perPage: currentView.perPage + DEFAULT_VIEW.perPage, // Accumulate items
 			} ) );
 		}
-	}, [ paginationInfo, setView, view.page ] );
+	}, [ paginationInfo, setView ] );
 
 	// Set up scroll listener
 	useEffect( () => {
