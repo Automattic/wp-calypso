@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
@@ -126,24 +127,55 @@ export const useSendOdieMessage = () => {
  * Get a full API of an Odie chat.
  */
 export const useManagedOdieChat = () => {
+	const [ pendingMessage, setPendingMessage ] = useState< AgentticMessage | null >( null );
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const { version, newInteractionsBotSlug } = useOdieAssistantContext();
 	const chatId = getOdieIdFromInteraction( currentSupportInteraction );
+	const botSlug = currentSupportInteraction?.bot_slug || newInteractionsBotSlug;
+	const queryClient = useQueryClient();
 	const { data: chat, isFetching: isLoadingChat } = useOdieChat( chatId ? Number( chatId ) : null );
 	const navigate = useNavigate();
 
 	const sendOdieMessage = useSendOdieMessage();
 
 	async function sendMessage( message: string ) {
-		const odieMessage = convertMessageFromAgentticFormat( message );
-		const { interaction } = await sendOdieMessage.mutateAsync( odieMessage );
+		try {
+			const odieMessage = convertMessageFromAgentticFormat( message );
+			const isNewChat = ! chatId;
 
-		if ( interaction.uuid !== currentSupportInteraction?.uuid ) {
-			navigate( `/odie?odieInteractionId=${ interaction.uuid }`, { replace: true } );
+			// Show pending message immediately only for new chats
+			if ( isNewChat ) {
+				setPendingMessage( convertMessageToAgentticFormat( odieMessage ) );
+			}
+
+			const { interaction, chat: responseChat } = await sendOdieMessage.mutateAsync( odieMessage );
+
+			if ( interaction.uuid !== currentSupportInteraction?.uuid ) {
+				// Clear pending message since cache will have the user message
+				setPendingMessage( null );
+
+				// Set the new chat data with user's message prepended
+				queryClient.setQueryData( [ 'odie-chat', botSlug, responseChat.chat_id, version ], {
+					chat_id: responseChat.chat_id,
+					messages: [ odieMessage, ...responseChat.messages ],
+				} );
+
+				navigate( `/odie?odieInteractionId=${ interaction.uuid }`, { replace: true } );
+			}
+		} catch ( error ) {
+			// Clear pending message on error
+			setPendingMessage( null );
+			// eslint-disable-next-line no-console
+			console.error( '[useManagedOdieChat] Failed to send message:', error );
 		}
 	}
 
+	// Combine chat messages with pending message
+	const chatMessages = ( chat?.messages ?? [] ).map( convertMessageToAgentticFormat );
+	const messages = pendingMessage ? [ ...chatMessages, pendingMessage ] : chatMessages;
+
 	return {
-		messages: chat?.messages.map( convertMessageToAgentticFormat ) || [],
+		messages,
 		sendMessage,
 		isProcessing: sendOdieMessage.isPending || isLoadingChat,
 	};

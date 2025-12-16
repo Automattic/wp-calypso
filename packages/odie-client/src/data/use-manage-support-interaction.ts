@@ -35,7 +35,7 @@ export const useManageSupportInteraction = () => {
 			queryClient.setQueryData(
 				[ 'support-interactions', 'get-interactions', isTestMode ],
 				( oldData: SupportInteraction[] ) => {
-					const newData = [ ...oldData ];
+					const newData = [ ...( oldData || [] ) ];
 					const index = newData.findIndex( ( i ) => i.uuid === interaction.uuid );
 					if ( index !== -1 ) {
 						newData[ index ] = interaction;
@@ -84,7 +84,7 @@ export const useManageSupportInteraction = () => {
 			queryClient.setQueryData(
 				[ 'support-interactions', 'get-interactions', isTestMode ],
 				( oldData: SupportInteraction[] ) => {
-					const newData = [ ...oldData ];
+					const newData = [ ...( oldData || [] ) ];
 					const index = newData.findIndex( ( i ) => i.uuid === interaction.uuid );
 					if ( index !== -1 ) {
 						newData[ index ] = interaction;
