@@ -302,7 +302,6 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
     "@automattic/support-articles": "workspace:^"
-    "@rive-app/react-canvas": "npm:^4.15.6"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
@@ -8342,24 +8341,6 @@ __metadata:
   version: 1.16.1
   resolution: "@remix-run/router@npm:1.16.1"
   checksum: 5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
-  languageName: node
-  linkType: hard
-
-"@rive-app/canvas@npm:2.32.0":
-  version: 2.32.0
-  resolution: "@rive-app/canvas@npm:2.32.0"
-  checksum: 2476c1479e9da1145a12682697c3c78683902b551fa958a4824aa2130c4c1540c377a084cefcf905d7b580fc8ccaff2b06294b50f6ff4c27cd3c25684bd5f918
-  languageName: node
-  linkType: hard
-
-"@rive-app/react-canvas@npm:^4.15.6":
-  version: 4.24.0
-  resolution: "@rive-app/react-canvas@npm:4.24.0"
-  dependencies:
-    "@rive-app/canvas": "npm:2.32.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
-  checksum: e8ae639fe0caff1ffc46d66368846208fff8ffd25e00245e73f302d9e10fdc153733abb0e8f519df10d9d24876ab72b95e06740ece431d7b58ea1dcf2213da75
   languageName: node
   linkType: hard
 

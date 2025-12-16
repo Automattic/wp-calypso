@@ -8,7 +8,6 @@ import {
 } from '@automattic/agenttic-ui';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import BigSkyIcon from '../big-sky-icon';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import { AI } from '../icons';
@@ -95,7 +94,7 @@ export default function AgentChat( {
 						heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
 						help={ __( 'Got a different request? Ask away.', '__i18n_text_domain__' ) }
 						suggestions={ emptyViewSuggestions }
-						icon={ isDocked ? <AI /> : <BigSkyIcon width={ 64 } height={ 64 } /> }
+						icon={ isDocked ? <AI /> : <AI size={ 42 } color="#3858e8" /> }
 					/>
 				)
 			}
