@@ -160,32 +160,35 @@ useAuthorizeMeta fetches authorization metadata
 ### Adding a New Client Variant
 
 1. **Create the variant component** in `authorize-variants.tsx`:
-```tsx
-export const AuthorizeMyClient = () => (
-	<Authorize 
-		userCardVariant="centered"
-		showPermissions 
-		showLogo 
-		approveButtonText="Connect"
-	/>
-);
-```
+
+   ```tsx
+   export const AuthorizeMyClient = () => (
+   	<Authorize 
+   		userCardVariant="centered"
+   		showPermissions 
+   		showLogo 
+   		approveButtonText="Connect"
+   	/>
+   );
+   ```
 
 2. **Register in controller** (`controller.jsx`):
-```javascript
-const CLIENT_VARIANT_MAP = {
-	[ OAUTH2_CLIENT_IDS.STUDIO ]: AuthorizeStudio,
-	[ OAUTH2_CLIENT_IDS.MY_CLIENT ]: AuthorizeMyClient,
-};
-```
+
+   ```javascript
+   const CLIENT_VARIANT_MAP = {
+   	[ OAUTH2_CLIENT_IDS.STUDIO ]: AuthorizeStudio,
+   	[ OAUTH2_CLIENT_IDS.MY_CLIENT ]: AuthorizeMyClient,
+   };
+   ```
 
 3. **Add client ID** to `constants.ts`:
-```typescript
-export const OAUTH2_CLIENT_IDS = {
-	STUDIO: 95109,
-	MY_CLIENT: 12345,
-} as const;
-```
+
+   ```typescript
+   export const OAUTH2_CLIENT_IDS = {
+   	STUDIO: 95109,
+   	MY_CLIENT: 12345,
+   } as const;
+   ```
 
 ### Custom Action Buttons
 
