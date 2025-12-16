@@ -91,7 +91,9 @@ export default function ReaderFeedHeaderFollow( props ) {
 		}
 
 		return {
-			// Use feedId for following check as it's more reliable than feedUrl which may be filtered
+			// Use feedId for following check as it's more reliable than feedUrl
+			// feedUrl may be undefined when filtered by safeLink() security function (non-HTTP/HTTPS URLs)
+			// feedId is always present and lookup by ID is more direct
 			following: _feedId ? isFollowing( state, { feedId: _feedId } ) : false,
 			hasOrganization: hasReaderFollowOrganization( state, _feedId, _siteId ),
 			isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
