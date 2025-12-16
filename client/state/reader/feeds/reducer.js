@@ -119,8 +119,7 @@ export const items = withSchemaValidation(
 			// reconstruct from available URL/feed_URL fields. If those were filtered to undefined,
 			// we can't recover the original. This migration helps feeds with valid URLs.
 			const migrated = {};
-			Object.keys( persisted ).forEach( ( feedId ) => {
-				const feed = persisted[ feedId ];
+			Object.entries( persisted ).forEach( ( [ feedId, feed ] ) => {
 				if ( feed && feed.unsanitized_URL == null && ( feed.URL || feed.feed_URL ) ) {
 					// Reconstruct unsanitized_URL from available sanitized URLs
 					migrated[ feedId ] = {
