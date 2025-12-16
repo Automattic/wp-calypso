@@ -12,6 +12,12 @@ import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../inline-support-link';
 import PhoneNumberInput from '../phone-number-input';
 import { createFieldAsyncValidator, type AsyncValidator } from './contact-validation-utils';
+import {
+	sanitizePhoneCountryCode,
+	sanitizePhoneNumber,
+	splitPhoneNumber,
+	combinePhoneNumber,
+} from './contact-validation-utils';
 import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
@@ -65,10 +71,11 @@ export const getContactFormFields = (
 			Edit: ( { field, data, onChange } ) => {
 				const { getValue } = field;
 				const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
-				const phoneValue = getValue( { item: data } );
+				const phoneValueRaw = getValue( { item: data } );
 
-				// Our backend stores phone number in the format: +country_code.phone_number
-				const [ countryNumericCode, phoneNumber ] = phoneValue?.split( '.' ) ?? [ '', '' ];
+				const [ countryNumericCode, phoneNumber ] = splitPhoneNumber( phoneValueRaw );
+
+				const phoneValue = combinePhoneNumber( countryNumericCode, phoneNumber );
 
 				// Find country code from the numeric code using SMS country codes
 				const smsCountry = smsCountryCodes?.find(
@@ -102,10 +109,10 @@ export const getContactFormFields = (
 						} }
 						onChange={ ( edits ) => {
 							// Format the phone value back to the expected format: +country_code.phone_number
-							const formattedPhone = edits.countryNumericCode
-								? `${ edits.countryNumericCode }.${ edits.phoneNumber || '' }`
-								: '';
-
+							const formattedPhone = combinePhoneNumber(
+								sanitizePhoneCountryCode( edits.countryNumericCode ?? '' ),
+								sanitizePhoneNumber( edits.phoneNumber ?? '' )
+							);
 							onChange( {
 								phone: formattedPhone,
 							} );

@@ -23,7 +23,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
-import SubscriberImportLimitNotice from '../subscriber-import-limit-notice';
 import { StaleImportJobsNotice } from './stale-job-notice';
 
 import './style.scss';
@@ -185,9 +184,6 @@ const AddSubscribersModal = ( {
 							</span>
 						</Notice>
 					) }
-					{ ! isUploading && site && (
-						<SubscriberImportLimitNotice selectedSite={ site } closeModal={ onClose } />
-					) }
 					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
 						<StaleImportJobsNotice isJetpack={ isJetpack } siteId={ site?.ID || null } />
 					) }
@@ -196,6 +192,8 @@ const AddSubscribersModal = ( {
 						siteId={ site?.ID || 0 }
 						siteUrl={ site?.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
+						isFreePlan={ isFreeSite }
+						siteSlug={ site?.slug || '' }
 						submitBtnAlwaysEnable
 						onImportStarted={ onImportStarted }
 						onImportFinished={ onImportFinished }
@@ -236,9 +234,6 @@ const AddSubscribersModal = ( {
 							</span>
 						</Notice>
 					) }
-					{ ! isUploading && site && (
-						<SubscriberImportLimitNotice selectedSite={ site } closeModal={ onClose } />
-					) }
 					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
 						<StaleImportJobsNotice isJetpack={ isJetpack } siteId={ site?.ID || null } />
 					) }
@@ -252,6 +247,8 @@ const AddSubscribersModal = ( {
 						hidden={ isUploading }
 						disabled={ isImportInProgress }
 						isWPCOMSite={ ! isJetpack }
+						isFreePlan={ isFreeSite }
+						siteSlug={ site?.slug || '' }
 					/>
 				</>
 			) }

@@ -67,6 +67,10 @@ const fields: Field< FormData >[] = [
 		Edit: 'select',
 		elements: [
 			{
+				label: __( 'Choose a product', __i18n_text_domain__ ),
+				value: '',
+			},
+			{
 				label: __( 'Automattic for Agencies', __i18n_text_domain__ ),
 				value: 'a4a',
 			},
@@ -147,7 +151,7 @@ export const HelpCenterA4AContactForm = () => {
 		name: currentUser?.display_name ?? '',
 		email: currentUser?.email ?? '',
 		site: '',
-		product: 'a4a',
+		product: '',
 		message: '',
 		pressable_contact: 'sales',
 	} );

@@ -45,13 +45,11 @@ export function dashboardLinkWithBackport( path: string = '' ) {
  * This function returns the redirect link back to the dashboard.
  */
 export function redirectToDashboardLink( {
-	backUrl,
 	supportBackport,
 }: {
-	backUrl?: string;
 	supportBackport?: boolean;
 } = {} ) {
-	const url = backUrl ? backUrl : window.location.href.replace( window.location.origin, '' );
+	const url = window.location.href.replace( window.location.origin, '' );
 	return supportBackport ? dashboardLinkWithBackport( url ) : dashboardLink( url );
 }
 
