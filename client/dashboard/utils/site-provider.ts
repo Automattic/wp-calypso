@@ -1,7 +1,6 @@
 import type { Site } from '@automattic/api-core';
 
 export const DEFAULT_PROVIDER_NAME = 'WordPress.com';
-
 export function getSiteProviderName( site: Pick< Site, 'hosting_provider_guess' > ) {
 	const providerNameMap: Record< string, string > = {
 		automattic: 'WordPress.com',
@@ -11,5 +10,5 @@ export function getSiteProviderName( site: Pick< Site, 'hosting_provider_guess' 
 		pressable: 'Pressable',
 	};
 
-	return providerNameMap[ site.hosting_provider_guess ?? '' ];
+	return providerNameMap[ site.hosting_provider_guess ?? '' ] ?? site.hosting_provider_guess;
 }
