@@ -153,6 +153,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						isMarketplaceProduct,
 						billingPeriod,
 						productsList,
+						isPluginAvailableOnAllPlans,
 					} );
 				} }
 				isDialogVisible={ showAddCustomDomain }
@@ -181,6 +182,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 								isMarketplaceProduct,
 								billingPeriod,
 								productsList,
+								isPluginAvailableOnAllPlans,
 							} )
 						}
 					/>
@@ -297,7 +299,7 @@ function onClickInstallPlugin( {
 		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
 
 		if ( upgradeAndInstall ) {
-			// Marketplace products always use direct checkout flow with specific plan and plugin
+			// We also need to add a business plan to the cart.
 			return page(
 				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
