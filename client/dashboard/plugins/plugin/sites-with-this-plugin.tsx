@@ -78,6 +78,7 @@ export const SitesWithThisPlugin = ( {
 	const [ optimisticAutoupdate, setOptimisticAutoupdate ] = useState<
 		Record< number, boolean | undefined >
 	>( {} );
+	const [ optimisticDelete, setOptimisticDelete ] = useState< Record< number, boolean > >( {} );
 
 	const closeUpdateModal = () => {
 		setUpdateModalOpen( false );
@@ -239,20 +240,24 @@ export const SitesWithThisPlugin = ( {
 		]
 	);
 
-	const { data, paginationInfo } = filterSortAndPaginate( sitesWithThisPlugin, view, fields );
+	const sites = useMemo(
+		() => sitesWithThisPlugin.filter( ( item ) => ! optimisticDelete[ item.ID ] ),
+		[ sitesWithThisPlugin, optimisticDelete ]
+	);
+	const { data, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	const updateCount = useMemo( () => {
-		if ( ! sitesWithThisPlugin ) {
+		if ( ! sites ) {
 			return 0;
 		}
 
-		return sitesWithThisPlugin.filter( ( item ) => {
+		return sites.filter( ( item ) => {
 			const pluginItem = pluginBySiteId.get( item.ID );
 			const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 
 			return autoupdate && !! pluginItem?.update;
 		} ).length;
-	}, [ sitesWithThisPlugin, pluginBySiteId, pluginSlug ] );
+	}, [ sites, pluginBySiteId, pluginSlug ] );
 
 	const handleFilterUpdates = useCallback( () => {
 		if ( updateCount <= 0 ) {
@@ -424,6 +429,18 @@ export const SitesWithThisPlugin = ( {
 								// Finally remove the plugins
 								const { successCount, errorCount } = await bulkRemove( items );
 
+								if ( errorCount === 0 ) {
+									setOptimisticDelete( ( prev ) => {
+										const newState = { ...prev };
+										items.forEach( ( plugin ) => {
+											plugin.siteIds.forEach( ( id ) => {
+												newState[ id ] = true;
+											} );
+										} );
+										return newState;
+									} );
+								}
+
 								return { successCount, errorCount };
 							};
 
@@ -449,9 +466,7 @@ export const SitesWithThisPlugin = ( {
 				paginationInfo={ paginationInfo }
 				selection={ selection.map( ( site ) => String( site.ID ) ) }
 				onChangeSelection={ ( ids ) => {
-					setSelection(
-						sitesWithThisPlugin.filter( ( site ) => ids.includes( String( site.ID ) ) )
-					);
+					setSelection( sites.filter( ( site ) => ids.includes( String( site.ID ) ) ) );
 				} }
 			/>
 
