@@ -24,15 +24,19 @@ function handleRequestFailure( state, action ) {
 }
 
 function adaptFeed( feed ) {
+	// Preserve the original feed URL for follow button functionality
+	// Try multiple sources to ensure we have a URL even if safeLink filters them
+	const originalUrl = feed.URL || feed.feed_URL || feed.subscribe_URL;
+	
 	return {
 		feed_ID: +feed.feed_ID,
 		blog_ID: +feed.blog_ID,
 		name: feed.name && decodeEntities( feed.name ),
 		URL: safeLink( feed.URL ),
 		feed_URL: safeLink( feed.feed_URL ),
-		// Preserve the original feed URL for follow button functionality
-		// even if it doesn't pass safeLink validation (e.g., non-HTTP schemes)
-		unsanitized_URL: feed.URL || feed.feed_URL,
+		// Store original URL even if it doesn't pass safeLink validation
+		// This ensures the subscribe button can always render
+		unsanitized_URL: originalUrl || undefined,
 		blog_owner: feed.blog_owner,
 		is_following: feed.is_following,
 		subscribers_count: feed.subscribers_count,

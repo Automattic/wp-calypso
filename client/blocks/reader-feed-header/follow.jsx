@@ -50,15 +50,17 @@ export default function ReaderFeedHeaderFollow( props ) {
 	// 3. feed?.unsanitized_URL: original unfiltered URL from API (always present for valid feeds)
 	// 4. followForFeed?.feed_URL: reliable URL from follow subscription data (only available if user is already following)
 	// 5. followForFeed?.URL: alternative URL property from follow subscription (only available if user is already following)
-	const effectiveSiteUrl = useMemo(
-		() =>
-			siteUrl ||
-			feed?.feed_URL ||
-			feed?.unsanitized_URL ||
-			followForFeed?.feed_URL ||
+	const effectiveSiteUrl = useMemo( () => {
+		// Filter out empty strings and return first truthy value
+		const candidates = [
+			siteUrl,
+			feed?.feed_URL,
+			feed?.unsanitized_URL,
+			followForFeed?.feed_URL,
 			followForFeed?.URL,
-		[ siteUrl, feed?.feed_URL, feed?.unsanitized_URL, followForFeed?.feed_URL, followForFeed?.URL ]
-	);
+		];
+		return candidates.find( ( url ) => url && url.trim() !== '' );
+	}, [ siteUrl, feed?.feed_URL, feed?.unsanitized_URL, followForFeed?.feed_URL, followForFeed?.URL ] );
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
 		isRequestingUserRecommendedBlogs( state, owner )

@@ -141,6 +141,38 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should use subscribe_URL if URL and feed_URL are missing', () => {
+			expect(
+				items(
+					{},
+					{
+						type: READER_FEED_REQUEST_SUCCESS,
+						payload: {
+							feed_ID: 1,
+							blog_ID: 2,
+							subscribe_URL: 'https://example.com/feed',
+						},
+					}
+				)[ 1 ]
+			).toEqual( {
+				feed_ID: 1,
+				blog_ID: 2,
+				name: undefined,
+				description: undefined,
+				URL: undefined,
+				feed_URL: undefined,
+				unsanitized_URL: 'https://example.com/feed', // Falls back to subscribe_URL
+				is_following: undefined,
+				subscribers_count: undefined,
+				last_update: undefined,
+				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
+				blog_owner: undefined,
+				subscription_id: undefined,
+			} );
+		} );
+
 		test( 'should serialize feed entries', () => {
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
 			expect( serialize( items, unvalidatedObject ) ).toEqual( unvalidatedObject );
