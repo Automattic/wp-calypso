@@ -182,7 +182,7 @@ export const useManagedOdieChat = () => {
 		messages,
 		sendMessage,
 		isProcessing: sendOdieMessage.isPending || isFetchingChat,
-		// Fast loading: only show spinner for existing chats, never for new chat creation
+		// Fast loading: only show loading state for existing chats
 		isLoadingChat: ! isNewChat && isPendingChat,
 	};
 };
