@@ -5,6 +5,7 @@ import {
 	getOdieEmailFallbackMessageContent,
 	getOdieErrorMessage,
 	getOdieErrorMessageNonEligible,
+	getOdieZendeskConnectionErrorMessage,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
@@ -12,6 +13,7 @@ import {
 	interactionHasZendeskEvent,
 	getIsRequestingHumanSupport,
 	getIsLastBotMessage,
+	getIsErrorMessage,
 } from '../../utils';
 import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
 import BotMessageActions from './bot-message-actions';
@@ -27,7 +29,8 @@ const getDisplayMessage = (
 	canConnectToZendesk: boolean,
 	forceEmailSupport?: boolean,
 	isChatRestricted?: boolean,
-	isErrorMessage?: boolean
+	isErrorMessage?: boolean,
+	isChatLoaded?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
 		return getOdieThirdPartyMessageContent();
@@ -45,7 +48,15 @@ const getDisplayMessage = (
 		? getOdieForwardToZendeskMessage( userHasRecentOpenConversation )
 		: getOdieForwardToForumsMessage();
 
-	return isErrorMessage ? getOdieErrorMessage() : forwardMessage;
+	if ( isErrorMessage ) {
+		return getOdieErrorMessage();
+	}
+
+	if ( isUserEligibleForPaidSupport && ! isChatLoaded ) {
+		return getOdieZendeskConnectionErrorMessage().content;
+	}
+
+	return forwardMessage;
 };
 
 export const UserMessage = ( {
@@ -61,6 +72,7 @@ export const UserMessage = ( {
 		canConnectToZendesk,
 		forceEmailSupport,
 		isChatRestricted,
+		isChatLoaded,
 		chat,
 	} = useOdieAssistantContext();
 
@@ -68,9 +80,12 @@ export const UserMessage = ( {
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 	const isLastBotMessage = getIsLastBotMessage( chat, message );
 	const hasRecentOpenConversation = getMostRecentOpenLiveInteraction();
-
+	const isErrorMessage = getIsErrorMessage( message );
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
+
+	const showGetSupport = isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage );
+	const showActionButtons = ! isRequestingHumanSupport && ! isErrorMessage;
 
 	const shouldOverrideWithForwardMessage = isRequestingHumanSupport && chat.provider !== 'zendesk';
 
@@ -81,7 +96,8 @@ export const UserMessage = ( {
 				canConnectToZendesk,
 				forceEmailSupport,
 				isChatRestricted,
-				message?.context?.flags?.is_error_message
+				message?.context?.flags?.is_error_message,
+				isChatLoaded
 		  )
 		: message.content;
 
@@ -99,7 +115,7 @@ export const UserMessage = ( {
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
-					{ isRequestingHumanSupport && isLastBotMessage && (
+					{ showGetSupport && (
 						<GetSupport
 							onClickAdditionalEvent={ ( destination ) => {
 								trackEvent( 'chat_get_support', {
@@ -109,7 +125,7 @@ export const UserMessage = ( {
 							} }
 						/>
 					) }{ ' ' }
-					{ ! isRequestingHumanSupport && (
+					{ showActionButtons && (
 						<>
 							{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
 								<BotMessageActions message={ message } />
