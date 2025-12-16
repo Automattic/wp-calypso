@@ -77,7 +77,7 @@ export default function ReaderFeedHeaderFollow( props ) {
 	// Get final site URL with persistent fallback
 	// Priority: current effectiveSiteUrl > cached URL for this feedId
 	const finalSiteUrl = useMemo( () => {
-		return effectiveSiteUrl || ( feed?.feed_ID && urlCacheRef.current[ feed.feed_ID ] ) || undefined;
+		return effectiveSiteUrl || ( feed?.feed_ID && urlCacheRef.current[ feed.feed_ID ] );
 	}, [ effectiveSiteUrl, feed?.feed_ID ] );
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
