@@ -3,15 +3,15 @@ import { domainQuery, purchaseQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate, useSearch } from '@tanstack/react-router';
-import { Button, Snackbar, __experimentalHStack as HStack } from '@wordpress/components';
+import { useSearch } from '@tanstack/react-router';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { keyboardReturn, Icon } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import SnackbarBackButton from '../../components/snackbar-back-button';
 import { formatDate } from '../../utils/datetime';
 import { getDomainRenewalUrl } from '../../utils/domain';
 import Actions from './actions';
@@ -44,8 +44,16 @@ export default function DomainOverview() {
 		dateStyle: 'long',
 	} );
 
-	const navigate = useNavigate();
-	const { from: domainsBackLink } = useSearch( { from: domainRoute.fullPath } );
+	const { back_to: domainsBackTo } = useSearch( { from: domainRoute.fullPath } );
+	let backButton = null;
+	switch ( domainsBackTo ) {
+		case 'site-domains':
+			backButton = <SnackbarBackButton>{ __( 'Back to Site Domain Names' ) }</SnackbarBackButton>;
+			break;
+		case 'site-overview':
+			backButton = <SnackbarBackButton>{ __( 'Back to Site Overview' ) }</SnackbarBackButton>;
+			break;
+	}
 
 	return (
 		<>
@@ -115,23 +123,7 @@ export default function DomainOverview() {
 				) }
 				<Actions />
 			</PageLayout>
-			{ domainsBackLink !== undefined && (
-				<HStack className="dashboard-snackbars">
-					<Snackbar
-						icon={ <Icon icon={ keyboardReturn } style={ { fill: 'currentcolor' } } /> }
-						actions={ [
-							{
-								label: __( 'Navigate' ),
-								onClick: () => {
-									navigate( { to: domainsBackLink } );
-								},
-							},
-						] }
-					>
-						{ __( 'Back to Site Domains' ) }
-					</Snackbar>
-				</HStack>
-			) }
+			{ backButton }
 		</>
 	);
 }
