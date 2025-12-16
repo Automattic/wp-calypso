@@ -50,14 +50,15 @@ export default function PluginsList() {
 			enableGlobalSearch: true,
 		} ) );
 	}, [] );
-	const { data: plugins, paginationInfo } = useMemo( () => {
-		const result = filterSortAndPaginate(
-			mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
-			view,
-			fields
-		);
-		return result;
-	}, [ fields, sitesById, sitesPlugins, view ] );
+	const { data: plugins, paginationInfo } = useMemo(
+		() =>
+			filterSortAndPaginate(
+				mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
+				view,
+				fields
+			),
+		[ fields, sitesById, sitesPlugins, view ]
+	);
 	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 	const { data: marketplaceSearch } = useQuery(
