@@ -47,8 +47,8 @@ export default function ReaderFeedHeaderFollow( props ) {
 	// Fallback order:
 	// 1. siteUrl: from getSiteUrl() using feed/site objects
 	// 2. feed?.feed_URL: direct access to feed URL (may be undefined if filtered by safeLink)
-	// 3. followForFeed?.feed_URL: reliable URL from follow subscription data (always present for followed feeds)
-	// 4. followForFeed?.URL: alternative URL property from follow subscription
+	// 3. followForFeed?.feed_URL: reliable URL from follow subscription data (only available if user is already following)
+	// 4. followForFeed?.URL: alternative URL property from follow subscription (only available if user is already following)
 	const effectiveSiteUrl =
 		siteUrl || feed?.feed_URL || followForFeed?.feed_URL || followForFeed?.URL;
 	const owner = useSelector( getCurrentUserName );
