@@ -8,6 +8,7 @@ import type {
 	PerformanceMetricAuditDetails,
 	PerformanceMetricAuditDetailsItem,
 } from '@automattic/api-core';
+import type { SortDirection } from '@wordpress/dataviews';
 
 const renderNode = (
 	data: { [ key: string ]: any },
@@ -108,7 +109,9 @@ const PerformanceInsightTable = ( {
 	const view = {
 		fields: fields.map( ( field ) => field.id ),
 		type: 'table' as const,
-		groupByField: details.isEntityGrouped ? 'entity' : undefined,
+		groupBy: details.isEntityGrouped
+			? { field: 'entity', direction: 'asc' as SortDirection }
+			: undefined,
 		layout: {
 			enableMoving: false,
 		},

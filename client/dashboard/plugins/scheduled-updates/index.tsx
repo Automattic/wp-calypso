@@ -161,7 +161,7 @@ export const defaultView: View = {
 	titleField: 'site',
 	fields: [ 'lastUpdate', 'nextUpdate', 'schedule', 'plugins', 'active' ],
 	sort: { field: 'site', direction: 'asc' },
-	groupByField: 'scheduleId',
+	groupBy: { field: 'scheduleId', direction: 'asc' },
 	mediaField: 'icon.ico',
 	showMedia: true,
 };
