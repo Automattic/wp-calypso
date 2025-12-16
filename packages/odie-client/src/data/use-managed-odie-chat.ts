@@ -7,13 +7,8 @@ import { getOdieIdFromInteraction } from '../utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction } from './use-manage-support-interaction';
 import { useOdieChat } from './use-odie-chat';
-import type {
-	ReturnedChat,
-	Message,
-	AgentticMessage,
-	OdieChat,
-	SupportInteraction,
-} from '../types';
+import type { ReturnedChat, Message, OdieChat, SupportInteraction } from '../types';
+import type { Message as AgentticMessage } from '@automattic/agenttic-ui/dist/types';
 
 function convertMessageToAgentticFormat( message: Message ): AgentticMessage {
 	return {
