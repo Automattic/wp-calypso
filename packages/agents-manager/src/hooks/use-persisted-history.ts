@@ -150,8 +150,7 @@ export const usePersistedHistory = () => {
 		location: history.location,
 	} );
 	const persistedHistory = useSelect(
-		( select ) =>
-			( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerRouterHistory(),
+		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getRouterHistory(),
 		[]
 	);
 
