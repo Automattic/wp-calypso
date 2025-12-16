@@ -14,6 +14,7 @@ import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 import { useIsPluginAvailableOnAllPlans } from 'calypso/my-sites/plugins/use-is-plugin-available-on-all-plans';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text';
+import usePreinstalledPremiumPlugin from 'calypso/my-sites/plugins/use-preinstalled-premium-plugin';
 import { useSelector } from 'calypso/state';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
@@ -121,15 +122,26 @@ export const PlanUSPS: React.FC< Props > = ( {
 	pluginSlug,
 	shouldUpgrade,
 	isFreePlan,
+	isMarketplaceProduct,
 	billingPeriod,
 } ) => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isPreInstalledPlugin = ! isJetpack && PREINSTALLED_PLUGINS.includes( pluginSlug );
-	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans( {
+
+	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( pluginSlug );
+
+	const pluginAvailableOnAllPlansFromHook = useIsPluginAvailableOnAllPlans( {
 		siteId: selectedSite?.ID,
 	} );
+
+	// Only apply the new flow for free plugins that require upgrade
+	const isPluginAvailableOnAllPlans =
+		! isMarketplaceProduct &&
+		! isPreinstalledPremiumPlugin &&
+		shouldUpgrade &&
+		pluginAvailableOnAllPlansFromHook;
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 	const supportText = usePluginsSupportText();
