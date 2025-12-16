@@ -77,20 +77,7 @@ export default function ReaderFeedHeaderFollow( props ) {
 	// Get final site URL with persistent fallback
 	// Priority: current effectiveSiteUrl > cached URL for this feedId
 	const finalSiteUrl = useMemo( () => {
-		const feedId = feed?.feed_ID;
-		
-		// If we have a current URL, use it
-		if ( effectiveSiteUrl ) {
-			return effectiveSiteUrl;
-		}
-		
-		// If no current URL but we have a cached one for this feed, use it
-		if ( feedId && urlCacheRef.current[ feedId ] ) {
-			return urlCacheRef.current[ feedId ];
-		}
-		
-		// Last resort: return undefined
-		return undefined;
+		return effectiveSiteUrl || ( feed?.feed_ID && urlCacheRef.current[ feed.feed_ID ] ) || undefined;
 	}, [ effectiveSiteUrl, feed?.feed_ID ] );
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
