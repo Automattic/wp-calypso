@@ -1,11 +1,12 @@
 import { Button, Spinner, Notice } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { OAUTH2_SIGNUP_FLOW } from '../constants';
 import { handleApprove, handleDeny, handleSwitch } from '../hooks/use-authorize-actions';
 import useAuthorizeMeta from '../hooks/use-authorize-meta';
 import AuthorizeActions from './authorize-actions';
@@ -164,6 +165,33 @@ function Authorize( {
 		handleSwitch( meta );
 	};
 
+	// Build signup URL that stays in Calypso for from-calypso flows
+	const signupUrl = useMemo( () => {
+		const isFromCalypso = params[ 'from-calypso' ] === '1';
+		if ( ! isFromCalypso || ! meta ) {
+			return undefined;
+		}
+
+		// Build signup URL with OAuth2 parameters to preserve the flow
+		const clientId = params.client_id;
+		const redirectTo = params.redirect_to;
+
+		if ( clientId ) {
+			const signupParams = new URLSearchParams( {
+				oauth2_client_id: clientId,
+			} );
+
+			// Include redirect_to if present
+			if ( redirectTo ) {
+				signupParams.set( 'oauth2_redirect', redirectTo );
+			}
+
+			return `/start/${ OAUTH2_SIGNUP_FLOW }?${ signupParams.toString() }`;
+		}
+
+		return undefined;
+	}, [ params, meta ] );
+
 	let content = null;
 	if ( isLoading || ! meta ) {
 		content = (
@@ -220,7 +248,7 @@ function Authorize( {
 	}
 
 	return (
-		<OneLoginLayout isJetpack={ false } showLogo={ showLogo }>
+		<OneLoginLayout isJetpack={ false } showLogo={ showLogo } signupUrl={ signupUrl }>
 			{ content }
 		</OneLoginLayout>
 	);

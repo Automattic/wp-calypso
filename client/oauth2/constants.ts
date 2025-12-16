@@ -9,3 +9,9 @@ export const OAUTH2_CLIENT_IDS = {
 	// Gravatar
 	GRAVATAR: 1854,
 } as const;
+
+/**
+ * OAuth2 Signup Flow
+ * WordPress.com Connect signup flow name used for OAuth2 client registrations
+ */
+export const OAUTH2_SIGNUP_FLOW = 'wpcc';
