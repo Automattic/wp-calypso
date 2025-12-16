@@ -163,7 +163,6 @@ export default function ConnectionModeCard( {
 								{ steps.map( ( step, index ) => (
 									<div key={ step.title }>
 										<SetupStep
-											className="domain-connection-setup__step"
 											expanded={ stepsExpanded[ index ] }
 											completed={ stepsCompleted[ index ] }
 											onCheckboxChange={ ( checked ) => handleStepChange( index, checked ) }
