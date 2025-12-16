@@ -21,7 +21,7 @@ import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { useWPCOMDomainSearchEvents } from 'calypso/components/domains/wpcom-domain-search/use-wpcom-domain-search-events';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -364,7 +364,8 @@ const DomainSearchStep: StepType< {
 				backDestination = defaultBackUrl;
 				backLabelText = sitesBackLabelText;
 
-				if ( backTo && isRelativeUrl( backTo ) ) {
+				const isValidBackTo = dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+				if ( backTo && ( isRelativeUrl( backTo ) || isValidBackTo ) ) {
 					backDestination = backTo;
 					backLabelText = __( 'Back' );
 				}

@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
@@ -326,7 +326,8 @@ const DomainSearchUI = (
 			backLabelText = sitesBackLabelText;
 
 			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString();
-			if ( backTo && isRelativeUrl( backTo ) ) {
+			const isValidBackTo = dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+			if ( backTo && ( isRelativeUrl( backTo ) || isValidBackTo ) ) {
 				backUrl = backTo;
 				backLabelText = __( 'Back' );
 			}
