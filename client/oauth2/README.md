@@ -124,7 +124,7 @@ Utility functions for handling user actions.
 - `isCustomProtocol()` - Detects non-HTTP/HTTPS protocols (e.g., Studio)
 - `buildAuthorizeUrl()` - Constructs authorization URL with required parameters
 
-**Note:** For account switching, use `redirectToLogout()` from `calypso/state/current-user/actions` to properly log out the user before redirecting to login.
+**Note:** For account switching, use `redirectToLogout()` from `calypso/state/current-user/actions`. **Important:** Always pass an **absolute URL** (with `window.location.origin`) to `redirectToLogout()` so the backend redirects back to the current environment (local/staging/production) instead of always going to production.
 
 ## Data Flow
 

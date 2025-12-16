@@ -162,8 +162,10 @@ function Authorize( {
 
 	const onSwitch = () => {
 		// Build the login URL to redirect to after logout
+		// Use absolute URL so backend redirects back to current environment
 		const currentUrl = window.location.pathname + window.location.search;
-		const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentUrl ) }`;
+		const loginUrl =
+			window.location.origin + `/log-in?redirect_to=${ encodeURIComponent( currentUrl ) }`;
 
 		// Dispatch logout action which will clear session and redirect
 		dispatch( redirectToLogout( loginUrl ) );
