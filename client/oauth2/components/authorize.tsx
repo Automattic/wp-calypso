@@ -22,12 +22,12 @@ export interface AuthorizeActionsRenderProps {
 export interface AuthorizeProps {
 	/**
 	 * Optional flag to control whether the heading logo should be displayed.
-	 * Defaults to true. Set to false for clients that don't want to show a logo.
+	 * Defaults to false. Set to true for clients that want to show a logo.
 	 */
 	showLogo?: boolean;
 	/**
 	 * Optional flag to control whether the permissions list should be displayed.
-	 * Defaults to true. Set to false for clients that don't need to show permissions.
+	 * Defaults to false. Set to true for clients that need to show permissions.
 	 */
 	showPermissions?: boolean;
 	/**
