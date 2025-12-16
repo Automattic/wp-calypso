@@ -152,7 +152,7 @@ export const useManagedOdieChat = () => {
 			const { interaction, chat: responseChat } = await sendOdieMessage.mutateAsync( odieMessage );
 
 			if ( interaction.uuid !== currentSupportInteraction?.uuid ) {
-				// Set the new chat data with user's message prepended
+				// Set the new chat data with the initial message pre-pended
 				queryClient.setQueryData( [ 'odie-chat', botSlug, responseChat.chat_id, version ], {
 					chat_id: responseChat.chat_id,
 					messages: [ odieMessage, ...responseChat.messages ],
