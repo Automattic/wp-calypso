@@ -7,6 +7,7 @@ export function getSiteProviderName( site: Pick< Site, 'hosting_provider_guess' 
 		automattic: 'WordPress.com',
 		dreamhost: 'DreamHost',
 		jurassic_ninja: 'Jurassic Ninja',
+		digitalocean: 'DigitalOcean',
 		pressable: 'Pressable',
 	};
 
