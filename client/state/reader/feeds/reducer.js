@@ -109,6 +109,27 @@ export const items = withSchemaValidation(
 	withPersistence( itemsReducer, {
 		// remove errors from the serialized state
 		serialize: ( state ) => omitBy( state, 'is_error' ),
+		// Migrate old feed objects that don't have unsanitized_URL
+		deserialize: ( persisted ) => {
+			if ( ! persisted || typeof persisted !== 'object' ) {
+				return persisted;
+			}
+			// Add unsanitized_URL to feeds that don't have it (for backward compatibility)
+			const migrated = {};
+			Object.keys( persisted ).forEach( ( feedId ) => {
+				const feed = persisted[ feedId ];
+				if ( feed && ! feed.unsanitized_URL && ( feed.URL || feed.feed_URL ) ) {
+					// Reconstruct unsanitized_URL from available URLs
+					migrated[ feedId ] = {
+						...feed,
+						unsanitized_URL: feed.URL || feed.feed_URL,
+					};
+				} else {
+					migrated[ feedId ] = feed;
+				}
+			} );
+			return migrated;
+		},
 	} )
 );
 
