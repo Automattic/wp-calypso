@@ -7,7 +7,7 @@ import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
-import MagicLogin from './magic-login';
+import { LocalizedMagicLogin } from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
 import QrCodeLoginPage from './qr-code-login-page';
@@ -171,7 +171,7 @@ export async function magicLogin( context, next ) {
 		}
 	}
 
-	context.primary = <MagicLogin path={ path } />;
+	context.primary = <LocalizedMagicLogin path={ path } />;
 
 	next();
 }

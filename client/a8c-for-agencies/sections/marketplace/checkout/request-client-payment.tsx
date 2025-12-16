@@ -99,7 +99,11 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				return;
 			}
 			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_request_payment_click' )
+				recordTracksEvent(
+					flowType === 'send'
+						? 'calypso_a4a_marketplace_referral_checkout_request_payment_click'
+						: 'calypso_a4a_marketplace_referral_checkout_request_payment_copy_click'
+				)
 			);
 			requestPayment(
 				{

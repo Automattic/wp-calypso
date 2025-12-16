@@ -37,7 +37,7 @@ jest.mock( '../components/domain-propagation-status', () => ( {
 	default: () => null,
 } ) );
 
-const createMockDomain = (): Domain => ( {
+const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	// DomainSummary properties
 	blog_id: 123,
 	domain: 'example.com',
@@ -116,6 +116,7 @@ const createMockDomain = (): Domain => ( {
 	last_transfer_error: '',
 	current_user_can_add_email: true,
 	whois_update_unmodifiable_fields: [],
+	...overrides,
 } );
 
 const createMockDomainMappingStatus = (
@@ -322,6 +323,50 @@ describe( 'DomainConnectionVerification', () => {
 			);
 
 			expect( screen.getByText( 'Name server verification' ) ).toBeVisible();
+		} );
+
+		test( 'displays "Recommended" section when domain is not primary but can be set as primary', () => {
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainData={ createMockDomain( {
+						primary_domain: false,
+						can_set_as_primary: true,
+					} ) }
+				/>
+			);
+
+			expect( screen.getByText( 'Recommended' ) ).toBeVisible();
+
+			expect( screen.getByText( 'Set example.com as your primary site address' ) ).toBeVisible();
+		} );
+
+		test( 'does not display "Recommended" section when domain is not primary and cannot be set as primary', () => {
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainData={ createMockDomain( {
+						primary_domain: false,
+						can_set_as_primary: false,
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'does not display "Recommended" section when domain is primary', () => {
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainData={ createMockDomain( {
+						primary_domain: true,
+						can_set_as_primary: false,
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

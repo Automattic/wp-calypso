@@ -21,22 +21,13 @@ interface CheckEmailHeaderOptions {
 	subHeadingOverride?: TranslateResult | string | null;
 }
 
-const normalizeOverride = (
-	value?: TranslateResult | string | null
-): TranslateResult | string | undefined => {
-	if ( value === null || value === undefined ) {
-		return undefined;
-	}
-	return value;
-};
-
 export const getEmailLinkHeaders = (
 	translate: TranslateFn,
 	{ headingOverride, subHeadingOverride, siteName }: EmailLinkHeaderOptions = {}
 ) => {
-	const heading = normalizeOverride( headingOverride ) ?? translate( 'Email me a login link' );
+	const heading = headingOverride ?? translate( 'Email me a login link' );
 
-	let subHeading = normalizeOverride( subHeadingOverride );
+	let subHeading = subHeadingOverride ?? undefined;
 	if ( ! subHeading ) {
 		if ( siteName ) {
 			subHeading = translate(
@@ -61,9 +52,9 @@ export const getCheckYourEmailHeaders = (
 	translate: TranslateFn,
 	{ emailAddress, headingOverride, subHeadingOverride }: CheckEmailHeaderOptions = {}
 ) => {
-	const heading = normalizeOverride( headingOverride ) ?? translate( 'Check your email' );
+	const heading = headingOverride ?? translate( 'Check your email' );
 
-	let subHeading = normalizeOverride( subHeadingOverride );
+	let subHeading = subHeadingOverride ?? undefined;
 	if ( ! subHeading ) {
 		if ( emailAddress ) {
 			subHeading = translate( "We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}.", {
@@ -86,3 +77,9 @@ export const getEmailCodeHeaders = ( translate: TranslateFn ) => ( {
 	heading: translate( 'Email me a login code' ),
 	subHeading: translate( "We'll send you an email with a code that will log you in right away." ),
 } );
+
+export default {
+	getEmailLinkHeaders,
+	getCheckYourEmailHeaders,
+	getEmailCodeHeaders,
+};

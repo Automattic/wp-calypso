@@ -125,7 +125,8 @@ export function usePersistentView( {
 				( field ) =>
 					newView.filters?.some(
 						( filter ) =>
-							filter.field === field && fastDeepEqual( filter.value, [ queryParams[ field ] ] )
+							filter.field === field &&
+							fastDeepEqual( filter.value, [ String( queryParams[ field ] ) ] )
 					)
 			);
 
@@ -177,7 +178,11 @@ export function usePersistentView( {
 
 	const resetView = useCallback( () => {
 		persistView( undefined );
-	}, [ persistView ] );
+		navigate( {
+			search: mergeQueryParamsWithTransientProperties( queryParams, { page: 1, search: '' } ),
+			replace: true,
+		} );
+	}, [ persistView, navigate, queryParams ] );
 
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
 }

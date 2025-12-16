@@ -12,7 +12,13 @@ import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { AddDomainButton } from './add-domain-button';
-import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
+import {
+	BulkActionsProgressNotice,
+	useActions,
+	useFields,
+	DEFAULT_VIEW,
+	DEFAULT_LAYOUTS,
+} from './dataviews';
 import type { DomainSummary } from '@automattic/api-core';
 
 export function getDomainId( domain: DomainSummary ): string {
@@ -60,7 +66,12 @@ function Domains() {
 	return (
 		<PageLayout
 			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
-			notices={ <OptInWelcome tracksContext="domains" /> }
+			notices={
+				<>
+					<OptInWelcome tracksContext="domains" />
+					<BulkActionsProgressNotice />
+				</>
+			}
 		>
 			<DataViewsCard>
 				<DataViews< DomainSummary >

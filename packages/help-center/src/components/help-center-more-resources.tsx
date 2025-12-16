@@ -11,7 +11,7 @@ import './help-center-more-resources.scss';
 
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
-	const { sectionName } = useHelpCenterContext();
+	const { sectionName, disableChatSupport } = useHelpCenterContext();
 	const navigate = useNavigate();
 
 	const trackMoreResourcesButtonClick = ( resource: string ) => {
@@ -38,22 +38,24 @@ export const HelpCenterMoreResources = () => {
 				{ __( 'More resources', __i18n_text_domain__ ) }
 			</h3>
 			<ul aria-labelledby="help-center-more-resources__resources">
-				<li className="help-center-more-resources__resource-item help-center-link__item">
-					<div className="help-center-more-resources__resource-cell help-center-link__cell">
-						<button
-							type="button"
-							onClick={ () => {
-								trackMoreResourcesButtonClick( 'support-history' );
-								navigate( '/chat-history' );
-							} }
-							className="help-center-more-resources__support-history"
-						>
-							<Icon icon={ backup } size={ 24 } />
-							<span>{ __( 'Support history', __i18n_text_domain__ ) }</span>
-							<Icon icon={ chevronRight } size={ 20 } />
-						</button>
-					</div>
-				</li>
+				{ ! disableChatSupport && (
+					<li className="help-center-more-resources__resource-item help-center-link__item">
+						<div className="help-center-more-resources__resource-cell help-center-link__cell">
+							<button
+								type="button"
+								onClick={ () => {
+									trackMoreResourcesButtonClick( 'support-history' );
+									navigate( '/chat-history' );
+								} }
+								className="help-center-more-resources__support-history"
+							>
+								<Icon icon={ backup } size={ 24 } />
+								<span>{ __( 'Support history', __i18n_text_domain__ ) }</span>
+								<Icon icon={ chevronRight } size={ 20 } />
+							</button>
+						</div>
+					</li>
+				) }
 				<li className="help-center-more-resources__resource-item help-center-link__item">
 					<div className="help-center-more-resources__resource-cell help-center-link__cell">
 						<a

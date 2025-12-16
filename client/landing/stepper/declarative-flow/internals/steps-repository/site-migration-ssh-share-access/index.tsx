@@ -2,6 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
+import emailValidator from 'email-validator';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -30,6 +31,31 @@ import type { Step as StepType } from '../../types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 import './styles.scss';
+
+/**
+ * Check if a string is a valid IPv4 address
+ * @param value - The string to validate
+ * @returns True if the string is a valid IPv4 address
+ */
+const isValidIPv4 = ( value: string ): boolean => {
+	return (
+		/^(\d{1,3}\.){3}\d{1,3}$/.test( value ) &&
+		value.split( '.' ).every( ( octet ) => {
+			const num = parseInt( octet, 10 );
+			return num >= 0 && num <= 255;
+		} )
+	);
+};
+
+/**
+ * Check if a string is a valid IPv6 address
+ * @param value - The string to validate
+ * @returns True if the string is a valid IPv6 address
+ */
+const isValidIPv6 = ( value: string ): boolean => {
+	// Simplified IPv6 check - looks for hex groups separated by colons
+	return /^[a-f0-9:]+$/i.test( value );
+};
 
 const SiteMigrationSshShareAccess: StepType< {
 	submits: {
@@ -226,6 +252,11 @@ const SiteMigrationSshShareAccess: StepType< {
 			step: 'share_access',
 			action: 'click_button',
 			button: 'continue',
+			authentication_method: formState.authMethod,
+			is_username_email: emailValidator.validate( formState.username ),
+			is_server_address_ip:
+				isValidIPv4( formState.serverAddress ) || isValidIPv6( formState.serverAddress ),
+			host: host,
 		} );
 		setMigrationError( null );
 

@@ -7,6 +7,7 @@ import SocialLoginActionButton from './action-button';
 const SocialLoginService = ( {
 	service,
 	icon,
+	label,
 	isConnected,
 	redirectUri,
 	socialConnectionEmail,
@@ -16,7 +17,7 @@ const SocialLoginService = ( {
 		<div className="social-login__header">
 			<div className="social-login__header-info">
 				<div className="social-login__header-icon">{ icon }</div>
-				<h3>{ service === 'github' ? 'GitHub' : service }</h3>
+				<h3>{ label ? label : service }</h3>
 				{ socialConnectionEmail && <p>{ ' - ' + socialConnectionEmail }</p> }
 			</div>
 

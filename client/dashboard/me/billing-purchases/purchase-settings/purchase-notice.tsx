@@ -259,7 +259,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				to_checkout: false,
 			} );
 
-			window.location.href = `/plans/${ purchase.site_slug ?? '' }`;
+			window.location.href = wpcomLink( `/plans/${ purchase.site_slug ?? '' }` );
 			return;
 		}
 
@@ -270,7 +270,9 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 		} );
 
 		const siteSlug = purchase.site_slug ?? purchase.blog_id;
-		window.location.href = `/checkout/${ siteSlug }/business?redirectTo=/plans/my-plan/trial-upgraded/${ siteSlug }`;
+		window.location.href = wpcomLink(
+			`/checkout/${ siteSlug }/business?redirectTo=/plans/my-plan/trial-upgraded/${ siteSlug }`
+		);
 		return;
 	};
 
