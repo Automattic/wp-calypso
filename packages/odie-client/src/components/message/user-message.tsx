@@ -72,7 +72,9 @@ export const UserMessage = ( {
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
-	const messageContent = isRequestingHumanSupport
+	const shouldOverrideWithForwardMessage = isRequestingHumanSupport && chat.provider !== 'zendesk';
+
+	const messageContent = shouldOverrideWithForwardMessage
 		? getDisplayMessage(
 				!! hasRecentOpenConversation,
 				isUserEligibleForPaidSupport,

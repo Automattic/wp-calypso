@@ -1,10 +1,10 @@
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { isMultiSiteDashboardEnabled } from 'calypso/state/sites/selectors/is-multi-site-dashboard-enabled';
+import { isDashboardEnabled } from './is-dashboard-enabled';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
-export const hasHostingDashboardOptIn = ( state: AppState ): boolean => {
-	if ( ! isMultiSiteDashboardEnabled( state ) ) {
+export const hasDashboardOptIn = ( state: AppState ): boolean => {
+	if ( ! isDashboardEnabled( state ) ) {
 		return false;
 	}
 

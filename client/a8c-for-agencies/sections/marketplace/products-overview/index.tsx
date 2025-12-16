@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { SiteDetails } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -22,6 +23,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import ReferralToggle from '../common/referral-toggle';
+import TermPricingToggle from '../common/term-pricing-toggle';
 import { PRODUCT_FILTER_KEY_CATEGORIES } from '../constants';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
 import withMarketplaceType from '../hoc/with-marketplace-type';
@@ -126,6 +128,8 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 	const productListingStickyTopOffset =
 		actionPanelStickyTopOffset + ( actionPanelRef.current?.offsetHeight ?? 0 );
 
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' );
+
 	return (
 		<Layout
 			className={ clsx( 'products-overview', { 'is-compact': isCompact } ) }
@@ -152,35 +156,42 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 							hideOnMobile
 						/>
 
-						<Actions className="a4a-marketplace__header-actions">
-							<MobileSidebarNavigation />
-							<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
-								<ReferralToggle />
+						<Actions>
+							{ isTermPricingEnabled && (
+								<div className="a4a-marketplace__header-actions">
+									<TermPricingToggle />
+								</div>
+							) }
+							<div className="a4a-marketplace__header-actions">
+								<MobileSidebarNavigation />
+								<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
+									<ReferralToggle />
+								</div>
+								<ShoppingCart
+									showCart={ showCart }
+									setShowCart={ setShowCart }
+									toggleCart={ toggleCart }
+									items={ selectedCartItems }
+									onRemoveItem={ onRemoveCartItem }
+									onCheckout={ () => {
+										page( A4A_MARKETPLACE_CHECKOUT_LINK );
+									} }
+								/>
+
+								<GuidedTourStep
+									className="a4a-marketplace__guided-tour"
+									id="marketplace-walkthrough-navigation"
+									tourId="marketplaceWalkthrough"
+									context={ sidebarRef }
+								/>
+
+								<GuidedTourStep
+									className="a4a-marketplace__guided-tour"
+									id="marketplace-walkthrough-referral-toggle"
+									tourId="marketplaceWalkthrough"
+									context={ referralToggleRef }
+								/>
 							</div>
-							<ShoppingCart
-								showCart={ showCart }
-								setShowCart={ setShowCart }
-								toggleCart={ toggleCart }
-								items={ selectedCartItems }
-								onRemoveItem={ onRemoveCartItem }
-								onCheckout={ () => {
-									page( A4A_MARKETPLACE_CHECKOUT_LINK );
-								} }
-							/>
-
-							<GuidedTourStep
-								className="a4a-marketplace__guided-tour"
-								id="marketplace-walkthrough-navigation"
-								tourId="marketplaceWalkthrough"
-								context={ sidebarRef }
-							/>
-
-							<GuidedTourStep
-								className="a4a-marketplace__guided-tour"
-								id="marketplace-walkthrough-referral-toggle"
-								tourId="marketplaceWalkthrough"
-								context={ referralToggleRef }
-							/>
 						</Actions>
 					</LayoutHeader>
 

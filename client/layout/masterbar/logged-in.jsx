@@ -22,6 +22,7 @@ import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { savePreference } from 'calypso/state/preferences/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -53,7 +54,6 @@ import {
 } from 'calypso/state/sites/selectors';
 import canCurrentUserManageSiteOptions from 'calypso/state/sites/selectors/can-current-user-manage-site-options';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -78,7 +78,7 @@ class MasterbarLoggedIn extends Component {
 		loadHelpCenterIcon: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
-		hostingDashboardOptIn: PropTypes.bool,
+		dashboardOptIn: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -228,13 +228,13 @@ class MasterbarLoggedIn extends Component {
 			currentRoute,
 			isGlobalSidebarVisible,
 			siteAdminUrl,
-			hostingDashboardOptIn,
+			dashboardOptIn,
 		} = this.props;
 
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
-		if ( hostingDashboardOptIn ) {
+		if ( dashboardOptIn ) {
 			mySitesUrl = domainOnlySite ? dashboardLink( '/domains' ) : dashboardLink( '/sites' );
 		}
 		const icon = this.wordpressIcon();
@@ -250,11 +250,11 @@ class MasterbarLoggedIn extends Component {
 					[
 						{
 							label: translate( 'Sites' ),
-							url: hostingDashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
+							url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
 						},
 						{
 							label: translate( 'Domains' ),
-							url: hostingDashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
+							url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
 						},
 					],
 					...( this.props.isSimpleSite
@@ -879,7 +879,7 @@ export default connect(
 				isAtomicSite( state, siteId ) &&
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
-			hostingDashboardOptIn: hasHostingDashboardOptIn( state ),
+			dashboardOptIn: hasDashboardOptIn( state ),
 		};
 	},
 	{
