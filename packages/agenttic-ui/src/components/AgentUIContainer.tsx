@@ -396,13 +396,11 @@ export function AgentUIContainer( {
 			const isLeft = dropX < viewportMidpointX;
 			const newSide = isLeft ? 'left' : 'right';
 
-			setCurrentSide( ( prevSide ) => {
-				if ( prevSide !== newSide ) {
-					setChatPosition( newSide );
-					onChatPositionChange?.( newSide );
-				}
-				return newSide;
-			} );
+			if ( currentSide !== newSide ) {
+				setCurrentSide( newSide );
+				setChatPosition( newSide );
+				onChatPositionChange?.( newSide );
+			}
 
 			// Calculate snap position using the new side immediately
 			const position = calculateSnapPosition( newSide );
@@ -420,7 +418,7 @@ export function AgentUIContainer( {
 				velocity: info.velocity.y * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
 			} );
 		},
-		[ x, y, calculateSnapPosition, onChatPositionChange ]
+		[ x, y, calculateSnapPosition, onChatPositionChange, currentSide ]
 	);
 
 	// Track previous state for animation purposes
