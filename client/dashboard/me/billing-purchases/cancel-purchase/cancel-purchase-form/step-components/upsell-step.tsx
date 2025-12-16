@@ -16,7 +16,7 @@ import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payme
 import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.png';
 import { useAnalytics } from '../../../../../app/analytics';
 import { useHelpCenter } from '../../../../../app/help-center';
-import { wpcomLink } from '../../../../../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../../../../../utils/link';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 type UpsellProps = {
@@ -208,9 +208,10 @@ export default function UpsellStep( {
 					acceptButtonUrl={ wpcomLink(
 						`/checkout/${
 							purchase.site_slug
-						}/business?coupon=${ couponCode }&cancel_to=${ window.location.href
-							.replace( window.location.origin, '' )
-							.replace( '/cancel', '' ) }`
+						}/business?coupon=${ couponCode }&cancel_to=${ redirectToDashboardLink().replace(
+							'/cancel',
+							''
+						) }`
 					) }
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );

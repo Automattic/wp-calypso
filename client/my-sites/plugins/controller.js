@@ -11,12 +11,12 @@ import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation, sites } from 'calypso/my-sites/controller';
 import PluginsSidebar from 'calypso/my-sites/plugins/sidebar';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import { UNLISTED_PLUGINS } from './constants';
@@ -384,7 +384,7 @@ export function maybeRedirectLoggedOut( context, next ) {
 export function renderPluginsSidebar( context, next ) {
 	const state = context.store.getState();
 	const siteUrl = getSiteFragment( context.path );
-	const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
+	const dashboardOptIn = hasDashboardOptIn( state );
 
 	if ( ! isUserLoggedIn( state ) ) {
 		next();
@@ -393,7 +393,7 @@ export function renderPluginsSidebar( context, next ) {
 	if ( ! siteUrl ) {
 		context.secondary =
 			isEnabled( 'plugins/universal-header' ) &&
-			hostingDashboardOptIn &&
+			dashboardOptIn &&
 			! (
 				context.path.startsWith( '/plugins/manage' ) ||
 				context.path.startsWith( '/plugins/scheduled-updates' )

@@ -36,6 +36,7 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -45,7 +46,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -427,7 +427,7 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
-		const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
+		const dashboardOptIn = hasDashboardOptIn( state );
 
 		const isEnabledThemeUniversalHeader =
 			config.isEnabled( 'themes/universal-header' ) &&
@@ -446,7 +446,7 @@ export default withCurrentRoute(
 			( ! config.isEnabled( 'marketplace-redesign' ) || ! isLoggedIn );
 
 		const hasUniversalHeader =
-			hostingDashboardOptIn &&
+			dashboardOptIn &&
 			! siteId &&
 			( isEnabledThemeUniversalHeader || isEnabledPluginsUniversalHeader );
 
