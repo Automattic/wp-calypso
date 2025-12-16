@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, shallowEqual } from 'react-redux';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
@@ -62,21 +62,29 @@ export default function ReaderFeedHeaderFollow( props ) {
 		return candidates.find( ( url ) => url && url.trim() !== '' );
 	}, [ siteUrl, feed?.feed_URL, feed?.unsanitized_URL, followForFeed?.feed_URL, followForFeed?.URL ] );
 	
-	// Persist the URL once found to handle navigation scenarios where feed becomes null temporarily
-	// This prevents the button from disappearing during back button navigation
-	// Initial value matches effectiveSiteUrl (may be undefined on first render, which is fine)
-	const [ persistedUrl, setPersistedUrl ] = useState( effectiveSiteUrl );
-	useEffect( () => {
-		if ( effectiveSiteUrl && effectiveSiteUrl !== persistedUrl ) {
-			// Only update when we have a valid URL that's different - never clear it
-			// This ensures the button stays visible even if feed becomes null during navigation
-			setPersistedUrl( effectiveSiteUrl );
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ effectiveSiteUrl ] ); // Intentionally exclude persistedUrl to avoid circular dependency
+	// Use useRef to persist URL across navigation - survives component remounts
+	// Store as a map keyed by feedId to handle navigation between different feeds
+	const urlCacheRef = useRef( {} );
 	
-	// Use persisted URL as final fallback to ensure button doesn't disappear during navigation
-	const finalSiteUrl = effectiveSiteUrl || persistedUrl;
+	// Get final site URL with persistent fallback
+	// Priority: current effectiveSiteUrl > cached URL for this feedId
+	const finalSiteUrl = useMemo( () => {
+		const feedId = feed?.feed_ID;
+		
+		// If we have a current URL, cache it and use it
+		if ( effectiveSiteUrl && feedId ) {
+			urlCacheRef.current[ feedId ] = effectiveSiteUrl;
+			return effectiveSiteUrl;
+		}
+		
+		// If no current URL but we have a cached one for this feed, use it
+		if ( feedId && urlCacheRef.current[ feedId ] ) {
+			return urlCacheRef.current[ feedId ];
+		}
+		
+		// Last resort: use current value even if undefined
+		return effectiveSiteUrl;
+	}, [ effectiveSiteUrl, feed?.feed_ID ] );
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
 		isRequestingUserRecommendedBlogs( state, owner )
