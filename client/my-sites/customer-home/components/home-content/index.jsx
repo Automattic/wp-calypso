@@ -30,6 +30,7 @@ import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import {
@@ -49,7 +50,6 @@ import {
 	getSitePlan,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
@@ -74,7 +74,7 @@ const HomeContent = ( {
 	fetchingJetpackModules,
 	handleVerifyIcannEmail,
 	isAdmin,
-	hostingDashboardOptIn,
+	dashboardOptIn,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
@@ -190,14 +190,10 @@ const HomeContent = ( {
 				<Button
 					primary
 					href={
-						hostingDashboardOptIn
-							? dashboardLink( `/sites/${ site.slug }` )
-							: `/overview/${ site.slug }`
+						dashboardOptIn ? dashboardLink( `/sites/${ site.slug }` ) : `/overview/${ site.slug }`
 					}
 				>
-					{ hostingDashboardOptIn
-						? translate( 'Hosting Dashboard' )
-						: translate( 'Hosting Overview' ) }
+					{ dashboardOptIn ? translate( 'Hosting Dashboard' ) : translate( 'Hosting Overview' ) }
 				</Button>
 			) }
 		</>
@@ -390,7 +386,7 @@ const mapStateToProps = ( state ) => {
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
-		hostingDashboardOptIn: hasHostingDashboardOptIn( state ),
+		dashboardOptIn: hasDashboardOptIn( state ),
 	};
 };
 

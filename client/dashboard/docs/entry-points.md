@@ -7,7 +7,7 @@ The dashboard architecture is designed to support multiple entry points, where e
 - Different feature sets and navigation
 - Shared core functionality
 
-Currently, during the prototyping phase, the dashboard supports two main entry points:
+Currently, the dashboard supports two main entry points:
 
 - WordPress.com (dotcom) at `my.wordpress.com`
 - CIAB at `/ciab`

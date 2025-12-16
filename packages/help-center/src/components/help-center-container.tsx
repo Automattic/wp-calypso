@@ -62,7 +62,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	const isMobile = useMobileBreakpoint();
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
-		[ `section-${ sectionName }` ]: !! sectionName,
 	} );
 
 	useActionHooks();

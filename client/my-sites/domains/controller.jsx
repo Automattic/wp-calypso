@@ -25,12 +25,12 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite, isWpcomFlexSite } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -376,7 +376,7 @@ const maybeRedirectToDashboard = ( context, next ) => {
 	const { dispatch, getState } = context.store;
 
 	dispatch( waitForPrefs() ).finally( () => {
-		if ( hasHostingDashboardOptIn( getState() ) ) {
+		if ( hasDashboardOptIn( getState() ) ) {
 			window.location.replace( dashboardLink( '/domains' ) );
 			return;
 		}

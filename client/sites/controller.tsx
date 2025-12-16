@@ -7,10 +7,10 @@ import AsyncLoad from 'calypso/components/async-load';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SitesDashboard from './components/sites-dashboard';
@@ -182,7 +182,7 @@ export const maybeRedirectToDashboard = ( context: PageJSContext, next: () => vo
 	const { dispatch, getState } = context.store;
 
 	dispatch( waitForPrefs() ).finally( () => {
-		if ( hasHostingDashboardOptIn( getState() ) ) {
+		if ( hasDashboardOptIn( getState() ) ) {
 			window.location.replace( dashboardLink( '/sites' ) );
 			return;
 		}
