@@ -1,5 +1,4 @@
 import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
-import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
 import {
@@ -27,218 +26,186 @@ export const useCreateZendeskConversation = () => {
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction, startNewInteraction } = useManageSupportInteraction();
+	const chatId = chat.odieId;
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	const chatRef = useRef( chat );
-	const currentSupportInteractionRef = useRef( currentSupportInteraction );
+	const createConversation = async ( {
+		createdFrom = '',
+		isFromError = false,
+		errorReason = '',
+		escalationOnSecondAttempt = false,
+	}: {
+		createdFrom?: string;
+		isFromError?: boolean;
+		errorReason?: string;
+		escalationOnSecondAttempt?: boolean;
+	} ) => {
+		let activeInteractionId = currentSupportInteraction?.uuid;
 
-	useEffect( () => {
-		chatRef.current = chat;
-	}, [ chat ] );
+		trackEvent( 'create_zendesk_conversation', {
+			is_submitting_zendesk_user_fields: isSubmittingZendeskUserFields,
+			chat_conversation_id: chat.conversationId,
+			chat_status: chat.status,
+			chat_provider: chat.provider,
+			interaction_id: activeInteractionId,
+			created_from: createdFrom,
+			is_from_error: isFromError,
+			is_chat_loaded: isChatLoaded,
+			escalation_on_second_attempt: escalationOnSecondAttempt,
+			error_reason: isFromError ? errorReason ?? 'Unknown error' : '',
+		} );
 
-	useEffect( () => {
-		currentSupportInteractionRef.current = currentSupportInteraction;
-	}, [ currentSupportInteraction ] );
+		if (
+			isSubmittingZendeskUserFields ||
+			chat.conversationId ||
+			chat.status === 'transfer' ||
+			chat.provider === 'zendesk'
+		) {
+			return chat.conversationId || '';
+		}
 
-	const createConversation = useCallback(
-		async ( {
-			createdFrom = '',
-			isFromError = false,
-			errorReason = '',
-			escalationOnSecondAttempt = false,
-		}: {
-			createdFrom?: string;
-			isFromError?: boolean;
-			errorReason?: string;
-			escalationOnSecondAttempt?: boolean;
-		} ) => {
-			const currentChat = chatRef.current;
-			const currentInteraction = currentSupportInteractionRef.current;
-			const chatId = currentChat.odieId;
+		// Store previous state to restore on error
+		const previousMessages = [ ...chat.messages ];
+		const previousProvider = chat.provider;
+		const previousConversationId = chat.conversationId;
 
-			let activeInteractionId = currentInteraction?.uuid;
+		// Get transfer messages to identify and remove them on error
+		const transferMessages = isFromError
+			? getOdieOnErrorTransferMessage()
+			: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs );
 
-			trackEvent( 'create_zendesk_conversation', {
-				is_submitting_zendesk_user_fields: isSubmittingZendeskUserFields,
-				chat_conversation_id: currentChat.conversationId,
-				chat_status: currentChat.status,
-				chat_provider: currentChat.provider,
-				interaction_id: activeInteractionId,
-				created_from: createdFrom,
-				is_from_error: isFromError,
-				is_chat_loaded: isChatLoaded,
-				escalation_on_second_attempt: escalationOnSecondAttempt,
-				error_reason: isFromError ? errorReason ?? 'Unknown error' : '',
+		setChat( ( prevChat ) => ( {
+			...prevChat,
+			messages: [ ...prevChat.messages, ...transferMessages ],
+			status: 'transfer',
+		} ) );
+
+		try {
+			trackEvent( 'submitting_zendesk_user_fields', {
+				messaging_initial_message: userFieldMessage || undefined,
+				messaging_site_id: selectedSiteId || null,
+				messaging_ai_chat_id: chatId || undefined,
+				messaging_url: selectedSiteURL || window.location.href,
+				messaging_flow: userFieldFlowName || null,
+				messaging_source: window.location.href,
 			} );
 
-			if (
-				isSubmittingZendeskUserFields ||
-				currentChat.conversationId ||
-				currentChat.status === 'transfer' ||
-				currentChat.provider === 'zendesk'
-			) {
-				return currentChat.conversationId || '';
+			await submitUserFields( {
+				messaging_initial_message: userFieldMessage || undefined,
+				messaging_site_id: selectedSiteId || null,
+				messaging_ai_chat_id: chatId || undefined,
+				messaging_url: selectedSiteURL || window.location.href,
+				messaging_flow: userFieldFlowName || null,
+				messaging_source: window.location.href,
+			} );
+
+			trackEvent( 'submitted_zendesk_user_fields' );
+		} catch ( error ) {
+			trackEvent( 'error_submitting_zendesk_user_fields', {
+				error_message:
+					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
+			} );
+		}
+
+		let conversation: ZendeskConversation | null = null;
+		let interaction = null;
+
+		try {
+			conversation = await Smooch.createConversation( {
+				metadata: {
+					createdAt: Date.now(),
+					...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
+					...( chatId ? { odieChatId: chatId } : {} ),
+				},
+			} );
+
+			if ( activeInteractionId ) {
+				interaction = await addEventToInteraction.mutateAsync( {
+					interactionId: activeInteractionId,
+					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
+				} );
+			} else {
+				interaction = await startNewInteraction( {
+					event_source: 'zendesk',
+					event_external_id: conversation.id,
+				} );
 			}
 
-			// Store previous state to restore on error
-			const previousMessages = [ ...currentChat.messages ];
-			const previousProvider = currentChat.provider;
-			const previousConversationId = currentChat.conversationId;
+			if ( interaction.uuid !== activeInteractionId ) {
+				await Smooch.updateConversation( conversation.id, {
+					metadata: {
+						...conversation.metadata,
+						supportInteractionId: interaction.uuid,
+					},
+				} );
+				activeInteractionId = interaction.uuid;
+			}
 
-			// Get transfer messages to identify and remove them on error
-			const transferMessages = isFromError
-				? getOdieOnErrorTransferMessage()
-				: getOdieTransferMessage( currentInteraction?.bot_slug as OdieAllBotSlugs );
+			if ( ! conversation?.id ) {
+				throw new Error( 'Failed to create conversation: conversation is null or missing id' );
+			}
+
+			const conversationId = conversation.id;
+
+			// We need to load the conversation to get typing events. Load simply means "focus on"..
+			Smooch.loadConversation( conversationId );
 
 			setChat( ( prevChat ) => ( {
 				...prevChat,
-				messages: [ ...prevChat.messages, ...transferMessages ],
-				status: 'transfer',
+				conversationId: conversationId,
+				provider: 'zendesk',
+				status: 'loaded',
 			} ) );
 
-			try {
-				trackEvent( 'submitting_zendesk_user_fields', {
-					messaging_initial_message: userFieldMessage || undefined,
-					messaging_site_id: selectedSiteId || null,
-					messaging_ai_chat_id: chatId || undefined,
-					messaging_url: selectedSiteURL || window.location.href,
-					messaging_flow: userFieldFlowName || null,
-					messaging_source: window.location.href,
-				} );
+			// Track success only if conversation was created
+			trackEvent( 'new_zendesk_conversation', {
+				support_interaction: activeInteractionId || null,
+				created_from: createdFrom,
+				messaging_site_id: selectedSiteId || null,
+				messaging_url: selectedSiteURL || null,
+			} );
 
-				await submitUserFields( {
-					messaging_initial_message: userFieldMessage || undefined,
-					messaging_site_id: selectedSiteId || null,
-					messaging_ai_chat_id: chatId || undefined,
-					messaging_url: selectedSiteURL || window.location.href,
-					messaging_flow: userFieldFlowName || null,
-					messaging_source: window.location.href,
-				} );
-
-				trackEvent( 'submitted_zendesk_user_fields' );
-			} catch ( error ) {
-				trackEvent( 'error_submitting_zendesk_user_fields', {
-					error_message:
-						error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
-				} );
+			// If the interaction id has changed, update the URL.
+			if ( activeInteractionId && currentSupportInteraction?.uuid !== activeInteractionId ) {
+				const params = new URLSearchParams( location.search );
+				if ( params.get( 'id' ) !== activeInteractionId ) {
+					params.set( 'id', activeInteractionId );
+					navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+				}
 			}
 
-			let conversation: ZendeskConversation | null = null;
-			let interaction = null;
+			return conversationId;
+		} catch ( error ) {
+			const errorMessage =
+				error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
 
-			try {
-				conversation = await Smooch.createConversation( {
-					metadata: {
-						createdAt: Date.now(),
-						...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
-						...( chatId ? { odieChatId: chatId } : {} ),
-					},
-				} );
+			// Track error event
+			trackEvent( 'error_creating_zendesk_conversation', {
+				error_message: errorMessage,
+				error_type: conversation ? 'interaction_update_failed' : 'conversation_creation_failed',
+				created_from: createdFrom,
+				escalation_on_second_attempt: escalationOnSecondAttempt,
+				active_interaction_id: activeInteractionId || null,
+				conversation_id: conversation?.id || null,
+				is_chat_loaded: isChatLoaded,
+			} );
 
-				if ( activeInteractionId ) {
-					interaction = await addEventToInteraction.mutateAsync( {
-						interactionId: activeInteractionId,
-						eventData: { event_source: 'zendesk', event_external_id: conversation.id },
-					} );
-				} else {
-					interaction = await startNewInteraction( {
-						event_source: 'zendesk',
-						event_external_id: conversation.id,
-					} );
-				}
+			// Add error message to inform user and show GetSupport button
+			const errorMessageObj = getOdieZendeskConnectionErrorMessage();
 
-				if ( interaction.uuid !== activeInteractionId ) {
-					await Smooch.updateConversation( conversation.id, {
-						metadata: {
-							...conversation.metadata,
-							supportInteractionId: interaction.uuid,
-						},
-					} );
-					activeInteractionId = interaction.uuid;
-				}
-
-				if ( ! conversation?.id ) {
-					throw new Error( 'Failed to create conversation: conversation is null or missing id' );
-				}
-
-				const conversationId = conversation.id;
-
-				// We need to load the conversation to get typing events. Load simply means "focus on"..
-				Smooch.loadConversation( conversationId );
-
-				setChat( ( prevChat ) => ( {
-					...prevChat,
-					conversationId: conversationId,
-					provider: 'zendesk',
-					status: 'loaded',
-				} ) );
-
-				// Track success only if conversation was created
-				trackEvent( 'new_zendesk_conversation', {
-					support_interaction: activeInteractionId || null,
-					created_from: createdFrom,
-					messaging_site_id: selectedSiteId || null,
-					messaging_url: selectedSiteURL || null,
-				} );
-
-				// If the interaction id has changed, update the URL.
-				if ( activeInteractionId && currentInteraction?.uuid !== activeInteractionId ) {
-					const params = new URLSearchParams( location.search );
-					if ( params.get( 'id' ) !== activeInteractionId ) {
-						params.set( 'id', activeInteractionId );
-						navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
-					}
-				}
-
-				return conversationId;
-			} catch ( error ) {
-				const errorMessage =
-					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
-
-				// Track error event
-				trackEvent( 'error_creating_zendesk_conversation', {
-					error_message: errorMessage,
-					error_type: conversation ? 'interaction_update_failed' : 'conversation_creation_failed',
-					created_from: createdFrom,
-					escalation_on_second_attempt: escalationOnSecondAttempt,
-					active_interaction_id: activeInteractionId || null,
-					conversation_id: conversation?.id || null,
-					is_chat_loaded: isChatLoaded,
-				} );
-
-				// Add error message to inform user and show GetSupport button
-				const errorMessageObj = getOdieZendeskConnectionErrorMessage();
-
-				// Restore previous chat state and add error message
-				setChat( {
-					messages: [ ...previousMessages, errorMessageObj ],
-					status: 'loaded',
-					provider: previousProvider,
-					conversationId: previousConversationId,
-					odieId: currentChat.odieId,
-					wpcomUserId: currentChat.wpcomUserId,
-					clientId: currentChat.clientId,
-				} );
-			}
-		},
-		[
-			addEventToInteraction,
-			isChatLoaded,
-			isSubmittingZendeskUserFields,
-			location.pathname,
-			location.search,
-			navigate,
-			selectedSiteId,
-			selectedSiteURL,
-			setChat,
-			startNewInteraction,
-			submitUserFields,
-			trackEvent,
-			userFieldFlowName,
-			userFieldMessage,
-		]
-	);
+			// Restore previous chat state and add error message
+			setChat( {
+				messages: [ ...previousMessages, errorMessageObj ],
+				status: 'loaded',
+				provider: previousProvider,
+				conversationId: previousConversationId,
+				odieId: chat.odieId,
+				wpcomUserId: chat.wpcomUserId,
+				clientId: chat.clientId,
+			} );
+		}
+	};
 
 	return createConversation;
 };
