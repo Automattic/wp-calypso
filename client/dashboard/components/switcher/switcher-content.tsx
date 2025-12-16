@@ -7,13 +7,13 @@ import {
 } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
 import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
 import type { View, Field } from '@wordpress/dataviews';
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
 
-const DEFAULT_VIEW: View = {
+export const DEFAULT_VIEW: View = {
 	type: 'list',
 	page: 1,
 	perPage: 10,
@@ -25,7 +25,8 @@ export default function SwitcherContent< T >( {
 	items,
 	searchableFields,
 	searchClassName,
-	viewState,
+	view,
+	onChangeView,
 	width = '280px',
 	getItemUrl,
 	renderItemMedia,
@@ -40,7 +41,8 @@ export default function SwitcherContent< T >( {
 	items?: T[];
 	searchClassName?: string;
 	searchableFields: Field< T >[];
-	viewState?: [ View, Dispatch< SetStateAction< View > > ];
+	view: View;
+	onChangeView: Dispatch< SetStateAction< View > >;
 	width?: string;
 	getItemUrl: ( item: T ) => string;
 	renderItemMedia: RenderItemMedia< T >;
@@ -50,10 +52,6 @@ export default function SwitcherContent< T >( {
 	onClose: () => void;
 	onItemClick?: () => void;
 } > ) {
-	const [ localView, setLocalView ] = useState< View >( DEFAULT_VIEW );
-	// viewState prop used to control view externally
-	const [ view, setView ] = viewState ?? [ localView, setLocalView ];
-
 	const fields = useMemo( () => {
 		return searchableFields.map( ( searchableField ) => ( {
 			...searchableField,
@@ -74,7 +72,7 @@ export default function SwitcherContent< T >( {
 					className={ searchClassName }
 					label={ __( 'Search' ) }
 					value={ view.search }
-					onChange={ ( value ) => setView( { ...view, search: value } ) }
+					onChange={ ( value ) => onChangeView( { ...view, search: value } ) }
 					size="compact"
 					__nextHasNoMarginBottom
 				/>

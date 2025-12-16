@@ -6,10 +6,10 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { chevronDownSmall } from '@wordpress/icons';
-import SwitcherContent from './switcher-content';
+import { useState, type ComponentProps } from 'react';
+import SwitcherContent, { DEFAULT_VIEW } from './switcher-content';
 import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
-import type { Field } from '@wordpress/dataviews';
-import type { ComponentProps } from 'react';
+import type { Field, View } from '@wordpress/dataviews';
 
 interface RenderCallbackProps {
 	onClose: () => void;
@@ -41,6 +41,7 @@ export default function Switcher< T >( {
 	onToggle,
 	defaultOpen,
 }: SwitcherProps< T > ) {
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isDesktop = useViewportMatch( 'medium' );
 	return (
 		<Dropdown
@@ -82,6 +83,8 @@ export default function Switcher< T >( {
 						renderItemMedia={ renderItemMedia }
 						renderItemTitle={ renderItemTitle }
 						renderItemDescription={ renderItemDescription }
+						view={ view }
+						onChangeView={ setView }
 						onClose={ onClose }
 						onItemClick={ onItemClick }
 					>

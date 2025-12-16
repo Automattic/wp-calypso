@@ -137,7 +137,8 @@ export const PluginSwitcher = ( {
 				<SwitcherContent
 					itemClassName={ itemClassName }
 					searchClassName="plugin-switcher-search"
-					viewState={ [ view, setView ] }
+					view={ view }
+					onChangeView={ setView }
 					items={ pluginsWithIcon }
 					resetScroll={ false }
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
