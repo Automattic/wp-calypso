@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, shallowEqual } from 'react-redux';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
@@ -49,8 +49,10 @@ export default function ReaderFeedHeaderFollow( props ) {
 	// 2. feed?.feed_URL: direct access to feed URL (may be undefined if filtered by safeLink)
 	// 3. followForFeed?.feed_URL: reliable URL from follow subscription data (only available if user is already following)
 	// 4. followForFeed?.URL: alternative URL property from follow subscription (only available if user is already following)
-	const effectiveSiteUrl =
-		siteUrl || feed?.feed_URL || followForFeed?.feed_URL || followForFeed?.URL;
+	const effectiveSiteUrl = useMemo(
+		() => siteUrl || feed?.feed_URL || followForFeed?.feed_URL || followForFeed?.URL,
+		[ siteUrl, feed?.feed_URL, followForFeed?.feed_URL, followForFeed?.URL ]
+	);
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
 		isRequestingUserRecommendedBlogs( state, owner )
@@ -89,7 +91,8 @@ export default function ReaderFeedHeaderFollow( props ) {
 		}
 
 		return {
-			following: _feed && isFollowing( state, { feedUrl: _feed.feed_URL } ),
+			// Use feedId for following check as it's more reliable than feedUrl which may be filtered
+			following: _feedId ? isFollowing( state, { feedId: _feedId } ) : false,
 			hasOrganization: hasReaderFollowOrganization( state, _feedId, _siteId ),
 			isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 			isWPForTeamsItem: isSiteWPForTeams( state, _siteId ) || isFeedWPForTeams( state, _feedId ),
