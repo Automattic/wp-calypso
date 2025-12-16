@@ -17,9 +17,11 @@ export type UpgradeCreditsNoticeData = {
 function getProrationFlags( sitePlans: Record< string, SitePlan > | undefined ): {
 	hasDomainProration: boolean;
 	hasOtherUpgradeProration: boolean;
+	hasNonCouponDiscount: boolean;
 } {
 	let hasDomainProration = false;
 	let hasOtherUpgradeProration = false;
+	let hasNonCouponDiscount = false;
 
 	for ( const plan of Object.values( sitePlans || {} ) ) {
 		const overrideCodes =
@@ -31,9 +33,18 @@ function getProrationFlags( sitePlans: Record< string, SitePlan > | undefined ):
 		hasOtherUpgradeProration =
 			hasOtherUpgradeProration ||
 			overrideCodes.includes( Plans.COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION );
+
+		/**
+		 * Some upgrade-credit discounts (notably add-ons on Free) may show up as a discounted
+		 * price on the site plans endpoint without providing a cost override reason. In those
+		 * cases, we treat "non-coupon discounted site plan pricing" as upgrade-credit proration.
+		 */
+		hasNonCouponDiscount =
+			hasNonCouponDiscount ||
+			( ! plan?.pricing?.hasSaleCoupon && null !== plan?.pricing?.discountedPrice?.full );
 	}
 
-	return { hasDomainProration, hasOtherUpgradeProration };
+	return { hasDomainProration, hasOtherUpgradeProration, hasNonCouponDiscount };
 }
 
 /**
@@ -51,7 +62,8 @@ export function useUpgradeCreditsNoticeData(
 	const plans =
 		visiblePlans.length > 0 ? visiblePlans : ( Object.keys( sitePlans || {} ) as PlanSlug[] );
 	const maxCredits = useMaxPlanUpgradeCredits( { siteId, plans } );
-	const { hasDomainProration, hasOtherUpgradeProration } = getProrationFlags( sitePlans );
+	const { hasDomainProration, hasOtherUpgradeProration, hasNonCouponDiscount } =
+		getProrationFlags( sitePlans );
 
 	// 1) Preserve existing paid-plan upgrade behavior.
 	if (
@@ -63,8 +75,13 @@ export function useUpgradeCreditsNoticeData(
 	}
 
 	// 2) Proration-driven credits (covers free plan + add-ons, domain credits, or both).
-	const hasAnyProration = hasDomainProration || hasOtherUpgradeProration;
+	const hasInferredOtherUpgradeProration =
+		! hasDomainProration && ! hasOtherUpgradeProration && hasNonCouponDiscount;
+	const hasOtherUpgradesProration = hasOtherUpgradeProration || hasInferredOtherUpgradeProration;
+
+	const hasAnyProration = hasDomainProration || hasOtherUpgradesProration;
 	if ( hasAnyProration && maxCredits > 0 ) {
+		// Only claim "both" when we have an explicit signal for both sources.
 		if ( hasDomainProration && hasOtherUpgradeProration ) {
 			return { credits: maxCredits, source: 'domain-and-other-upgrades' };
 		}
