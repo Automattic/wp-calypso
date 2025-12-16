@@ -25,7 +25,8 @@ function handleRequestFailure( state, action ) {
 
 function adaptFeed( feed ) {
 	// Preserve the original feed URL for follow button functionality
-	// Try multiple sources to ensure we have a URL even if safeLink filters them
+	// Try multiple sources: URL, feed_URL, subscribe_URL
+	// This may still be undefined if the API doesn't provide any URL, but that's expected
 	const originalUrl = feed.URL || feed.feed_URL || feed.subscribe_URL;
 	
 	return {
