@@ -11,6 +11,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import { redirectToDashboardLink } from '../../utils/link';
 import { ShareSiteForm } from './share-site-form';
 import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
@@ -211,7 +212,7 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 												<Button
 													variant="secondary"
 													href={ addQueryArgs( `/domains/add/${ site.slug }`, {
-														redirect_to: window.location.pathname,
+														redirect_to: redirectToDashboardLink( { supportBackport: true } ),
 													} ) }
 												>
 													{ __( 'Add new domain' ) }
