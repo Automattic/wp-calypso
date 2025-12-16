@@ -12,14 +12,15 @@ async function shouldAutoLoadHelpCenter() {
 		? await wpcomRequest( {
 				path: '/me/preferences',
 				apiNamespace: 'wpcom/v2',
-				method: 'PUT',
-		  } ).catch( () => {} )
+		  } )
+				.then( ( prefs ) => prefs.calypso_preferences )
+				.catch( () => {} )
 		: await apiFetch( {
 				global: true,
 				path: '/help-center/open-state',
 		  } ).catch( () => {} );
 
-	return preferences?.calypso_preferences?.help_center_open;
+	return preferences?.help_center_open;
 }
 
 const unsubscribe = subscribe( () => {
