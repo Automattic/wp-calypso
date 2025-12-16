@@ -60,6 +60,7 @@ import {
 	isUserLoggedIn,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
@@ -83,7 +84,6 @@ import {
 	getSitePlanSlug,
 	getSiteSlug,
 } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -939,9 +939,9 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-	const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
+	const dashboardOptIn = hasDashboardOptIn( state );
 	const shouldShowNavigation =
-		config.isEnabled( 'themes/universal-header' ) && hostingDashboardOptIn
+		config.isEnabled( 'themes/universal-header' ) && dashboardOptIn
 			? selectedSite
 			: isUserLoggedIn( state );
 	if ( shouldShowNavigation ) {
