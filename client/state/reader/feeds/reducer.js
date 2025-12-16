@@ -118,7 +118,7 @@ export const items = withSchemaValidation(
 			const migrated = {};
 			Object.keys( persisted ).forEach( ( feedId ) => {
 				const feed = persisted[ feedId ];
-				if ( feed && ! feed.unsanitized_URL && ( feed.URL || feed.feed_URL ) ) {
+				if ( feed && feed.unsanitized_URL == null && ( feed.URL || feed.feed_URL ) ) {
 					// Reconstruct unsanitized_URL from available URLs
 					migrated[ feedId ] = {
 						...feed,
