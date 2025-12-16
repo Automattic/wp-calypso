@@ -16,8 +16,8 @@ interface Result {
 export default function useOdieConversationList(): Result {
 	const {
 		data: supportInteractions = [],
-		isLoading: isLoadingSupportInteractions,
-		isError: isSupportInteractionsError,
+		isLoading: isLoadingInteractions,
+		isError: isInteractionsError,
 	} = useGetSupportInteractions( 'odie' );
 
 	const {
@@ -41,8 +41,8 @@ export default function useOdieConversationList(): Result {
 
 	return {
 		conversations,
-		isLoading: isLoadingSupportInteractions || isLoadingOdieConversations,
-		isError: isSupportInteractionsError || isOdieConversationsError,
+		isLoading: isLoadingInteractions || isLoadingOdieConversations,
+		isError: isInteractionsError || isOdieConversationsError,
 	};
 }
 
