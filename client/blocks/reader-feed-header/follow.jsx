@@ -66,14 +66,21 @@ export default function ReaderFeedHeaderFollow( props ) {
 	// Store as a map keyed by feedId to handle navigation between different feeds
 	const urlCacheRef = useRef( {} );
 	
+	// Cache the URL when we have one (side effect in useEffect, not in useMemo)
+	useEffect( () => {
+		const feedId = feed?.feed_ID;
+		if ( effectiveSiteUrl && feedId ) {
+			urlCacheRef.current[ feedId ] = effectiveSiteUrl;
+		}
+	}, [ effectiveSiteUrl, feed?.feed_ID ] );
+	
 	// Get final site URL with persistent fallback
 	// Priority: current effectiveSiteUrl > cached URL for this feedId
 	const finalSiteUrl = useMemo( () => {
 		const feedId = feed?.feed_ID;
 		
-		// If we have a current URL, cache it and use it
-		if ( effectiveSiteUrl && feedId ) {
-			urlCacheRef.current[ feedId ] = effectiveSiteUrl;
+		// If we have a current URL, use it
+		if ( effectiveSiteUrl ) {
 			return effectiveSiteUrl;
 		}
 		
@@ -82,8 +89,8 @@ export default function ReaderFeedHeaderFollow( props ) {
 			return urlCacheRef.current[ feedId ];
 		}
 		
-		// Last resort: use current value even if undefined
-		return effectiveSiteUrl;
+		// Last resort: return undefined
+		return undefined;
 	}, [ effectiveSiteUrl, feed?.feed_ID ] );
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
