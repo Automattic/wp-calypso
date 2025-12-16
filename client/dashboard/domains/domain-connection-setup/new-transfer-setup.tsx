@@ -31,8 +31,6 @@ import { shouldShowRemoveAction } from '../domain-overview/actions.utils';
 import DomainRegistrarBanner from './domain-registrar-banner';
 import SetupStep from './setup-step';
 
-import './transfer-setup-style.scss';
-
 export default function DomainTransferSetup() {
 	const { domainName } = domainTransferSetupRoute.useParams();
 	const navigate = useNavigate();
