@@ -6,12 +6,16 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import { AI } from '../icons';
+import SelectedBlock from '../selected-block';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface AgentChatProps {
 	/** Chat messages to display. */
@@ -63,6 +67,11 @@ export default function AgentChat( {
 	markdownComponents = {},
 	markdownExtensions = {},
 }: AgentChatProps ) {
+	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition } = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
 	const messageRenderer = useMemo(
 		() =>
 			createMessageRenderer( {
@@ -74,6 +83,8 @@ export default function AgentChat( {
 
 	return (
 		<AgentUI.Container
+			initialChatPosition={ floatingPosition }
+			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
 			className="agenttic"
 			messages={ messages }
 			isProcessing={ isProcessing }
@@ -105,6 +116,7 @@ export default function AgentChat( {
 				<AgentUI.Footer>
 					<AgentUI.Suggestions />
 					<AgentUI.Notice />
+					<SelectedBlock />
 					<AgentUI.Input />
 				</AgentUI.Footer>
 			</AgentUI.ConversationView>

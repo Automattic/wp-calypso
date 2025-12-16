@@ -1,4 +1,5 @@
 import { AgentUI } from '@automattic/agenttic-ui';
+import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useHelpSearchQuery } from '@automattic/help-center/src/hooks/use-help-search-query';
 import {
 	SearchControl,
@@ -7,12 +8,14 @@ import {
 	__experimentalItem as Item,
 	Spinner,
 } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './style.scss';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { Options } from '../chat-header';
+import './style.scss';
 
 function SearchResults( { searchInput }: { searchInput: string } ) {
 	const { data: searchData, isFetching: isSearching } = useHelpSearchQuery(
@@ -57,6 +60,11 @@ export default function SupportGuides( {
 	onClose: () => void;
 } ) {
 	const [ searchInput, setSearchInput ] = useState( '' );
+	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition } = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
 
 	function handleSubmit( value: string ) {
 		// eslint-disable-next-line no-console
@@ -65,6 +73,8 @@ export default function SupportGuides( {
 
 	return (
 		<AgentUI.Container
+			initialChatPosition={ floatingPosition }
+			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
 			className="agenttic"
 			messages={ [] }
 			isProcessing={ false }

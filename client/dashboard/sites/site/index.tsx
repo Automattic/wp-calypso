@@ -41,7 +41,9 @@ function Site() {
 					{ ! isSiteMigrationInProgress( site ) && <SiteMenu site={ site } /> }
 				</HStack>
 			</HeaderBar>
-			<Outlet />
+			<Suspense fallback={ null }>
+				<Outlet />
+			</Suspense>
 		</Suspense>
 	);
 }

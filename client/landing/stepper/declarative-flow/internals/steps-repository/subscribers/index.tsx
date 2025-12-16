@@ -67,6 +67,8 @@ const Subscribers: Step = function ( { navigation } ) {
 							showSubtitle
 							showSkipLink
 							submitBtnAlwaysEnable={ false }
+							isFreePlan={ hasSubscriberLimit }
+							siteSlug={ site?.slug || '' }
 						/>
 					) }
 				</div>

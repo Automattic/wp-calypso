@@ -10,6 +10,7 @@ import type { APIFetchOptions } from '../shared-types';
 type AgentsManagerState = {
 	isOpen?: boolean;
 	isDocked?: boolean;
+	floatingPosition?: 'left' | 'right';
 	routerHistory?: null; // Only used to clear history
 };
 
@@ -28,12 +29,16 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 		// Help center resets when closing. But the agents manager might be different.
 		if ( ! state.isOpen ) {
 			saveState.agents_manager_router_history = null;
-			yield setAgentsManagerRouterHistory( undefined );
+			yield setRouterHistory( undefined );
 		}
 	}
 
 	if ( typeof state.isDocked === 'boolean' ) {
 		saveState.agents_manager_docked = state.isDocked;
+	}
+
+	if ( state.floatingPosition === 'left' || state.floatingPosition === 'right' ) {
+		saveState.agents_manager_floating_position = state.floatingPosition;
 	}
 
 	// Only make API call if there's something to save
@@ -60,9 +65,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 	}
 }
 
-export function setAgentsManagerRouterHistory(
-	history: { entries: Location[]; index: number } | undefined
-) {
+export function setRouterHistory( history: { entries: Location[]; index: number } | undefined ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_ROUTER_HISTORY',
 		history,
@@ -91,6 +94,20 @@ export function* setIsDocked( isDocked: boolean, shouldSave: boolean = true ) {
 	} as const;
 }
 
+export function* setFloatingPosition(
+	floatingPosition: 'left' | 'right',
+	shouldSave: boolean = true
+) {
+	if ( shouldSave ) {
+		yield saveAgentsManagerState( { floatingPosition } );
+	}
+
+	return {
+		type: 'AGENTS_MANAGER_SET_FLOATING_POSITION',
+		floatingPosition,
+	} as const;
+}
+
 export function setIsLoading( isLoading: boolean ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_LOADING',
@@ -106,8 +123,9 @@ export function setHasLoaded( hasLoaded: boolean ) {
 }
 
 export type AgentsManagerAction =
-	| ReturnType< typeof setAgentsManagerRouterHistory >
+	| ReturnType< typeof setRouterHistory >
 	| ReturnType< typeof setIsLoading >
 	| ReturnType< typeof setHasLoaded >
 	| GeneratorReturnType< typeof setIsOpen >
-	| GeneratorReturnType< typeof setIsDocked >;
+	| GeneratorReturnType< typeof setIsDocked >
+	| GeneratorReturnType< typeof setFloatingPosition >;
