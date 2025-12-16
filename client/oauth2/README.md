@@ -172,7 +172,7 @@ useAuthorizeMeta fetches authorization metadata
           Redirect to authorization/denial URL
 ```
 
-**Login Redirect:** If the user is not logged in (`meta.flags.user_logged_in === false`), they are automatically redirected to the login page (`meta.links.calypso_login_url`) before seeing the authorization screen. After login, they return to complete the authorization.
+**Login Redirect:** If the user is not logged in (checked via Redux `currentUser` state), they are automatically redirected to the login page before seeing the authorization screen. The redirect URL is constructed directly as `/log-in?redirect_to=...` (not using `meta.links.calypso_login_url`) and uses `window.location.replace()`. A ref is used to ensure the redirect only happens once. After login, the user returns to complete the authorization.
 
 ## Customization Guide
 
