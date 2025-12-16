@@ -61,6 +61,18 @@ export default function ReaderFeedHeaderFollow( props ) {
 		];
 		return candidates.find( ( url ) => url && url.trim() !== '' );
 	}, [ siteUrl, feed?.feed_URL, feed?.unsanitized_URL, followForFeed?.feed_URL, followForFeed?.URL ] );
+	
+	// Persist the URL once found to handle navigation scenarios where feed becomes null temporarily
+	// This prevents the button from disappearing during back button navigation
+	const [ persistedUrl, setPersistedUrl ] = useState( effectiveSiteUrl );
+	useEffect( () => {
+		if ( effectiveSiteUrl ) {
+			setPersistedUrl( effectiveSiteUrl );
+		}
+	}, [ effectiveSiteUrl ] );
+	
+	// Use persisted URL as final fallback to ensure button doesn't disappear during navigation
+	const finalSiteUrl = effectiveSiteUrl || persistedUrl;
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
 		isRequestingUserRecommendedBlogs( state, owner )
@@ -134,11 +146,11 @@ export default function ReaderFeedHeaderFollow( props ) {
 	return (
 		<div className="reader-feed-header__follow">
 			<div className="reader-feed-header__follow-and-settings">
-				{ effectiveSiteUrl && (
+				{ finalSiteUrl && (
 					<div className="reader-feed-header__follow-button">
 						<div className="reader-feed-header__follow-button-and-settings">
 							<ReaderFollowButton
-								siteUrl={ effectiveSiteUrl }
+								siteUrl={ finalSiteUrl }
 								hasButtonStyle
 								iconSize={ 24 }
 								onFollowToggle={ openSuggestedFollowsModal }
