@@ -667,17 +667,11 @@ export const domainConnectionSetupRoute = createRoute( {
 		};
 	},
 } ).lazy( () =>
-	config.isEnabled( 'domain-connection-redesign' )
-		? import( '../../domains/domain-connection-setup' ).then( ( d ) =>
-				createLazyRoute( 'domain-connection-setup' )( {
-					component: d.default,
-				} )
-		  )
-		: import( '../../domains/domain-connection-setup/legacy-connection-flow' ).then( ( d ) =>
-				createLazyRoute( 'domain-connection-setup' )( {
-					component: d.default,
-				} )
-		  )
+	import( '../../domains/domain-connection-setup' ).then( ( d ) =>
+		createLazyRoute( 'domain-connection-setup' )( {
+			component: d.default,
+		} )
+	)
 );
 
 export const createDomainsRoutes = () => {
