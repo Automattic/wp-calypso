@@ -24,9 +24,13 @@ When reviewing dashboard code, watch for these specific patterns and potential i
 
 ### External Link Handling
 
-- **WordPress.com Links**: All URLs linking to old WordPress.com/Calypso MUST use `wpcomLink()` function
-- **Import**: Use `import { wpcomLink } from '@automattic/dashboard/utils/link'`
-- **Purpose**: Ensures proper environment configuration (dev vs production hostnames)
+- All URLs linking to old WordPress.com/Calypso MUST use `wpcomLink()` function
+	- **Import**: Use `import { wpcomLink } from '@automattic/dashboard/utils/link'`
+	- **Purpose**: Ensures proper environment configuration (dev vs production hostnames)
+- Every link to `/checkout` must have `redirect_to` and `cancel_to` query param
+	- **Purpose**: Ensures correct behaviour when exiting the checkout screen
+- Every link to `/setup/plan-upgrade` must have a `cancel_to` query param
+	- **Purpose**: Ensures correct behaviour when exiting the upgrade screen
 
 ```typescript
 // ✅ Correct - wrapped with wpcomLink()
