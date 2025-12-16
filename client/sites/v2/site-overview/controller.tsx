@@ -1,13 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
-export function redirectToHostingDashboardBackportIfEnabled(
-	context: PageJSContext,
-	next: () => void
-) {
-	if ( isEnabled( 'dashboard/v2/backport/site-overview' ) ) {
-		return page.redirect( `/sites/${ context.params.site }` );
+export function redirectToDashboardIfOptedIn( context: PageJSContext, next: () => void ) {
+	if ( hasDashboardOptIn( context.store.getState() ) ) {
+		window.location.href = dashboardLink( `/sites/${ context.params.site }` );
+		return;
 	}
 
 	next();
