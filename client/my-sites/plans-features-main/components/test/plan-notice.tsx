@@ -15,8 +15,7 @@ import { useMarketingMessage } from 'calypso/components/marketing-message/use-ma
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
-import { useProrationUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-proration-upgrade-credits-applicable';
+import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import {
@@ -49,18 +48,9 @@ jest.mock( 'calypso/components/marketing-message/use-marketing-message', () => (
 jest.mock( 'calypso/lib/discounts', () => ( {
 	getDiscountByName: jest.fn(),
 } ) );
-jest.mock(
-	'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable',
-	() => ( {
-		usePlanUpgradeCreditsApplicable: jest.fn(),
-	} )
-);
-jest.mock(
-	'calypso/my-sites/plans-features-main/hooks/use-proration-upgrade-credits-applicable',
-	() => ( {
-		useProrationUpgradeCreditsApplicable: jest.fn(),
-	} )
-);
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice', () => ( {
+	useUpgradeCreditsNoticeData: jest.fn(),
+} ) );
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
 	useMaxPlanUpgradeCredits: jest.fn(),
 } ) );
@@ -93,12 +83,7 @@ describe( '<PlanNotice /> Tests', () => {
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
 		jest.mocked( isRequestingSitePlans ).mockReturnValue( true );
 		jest.mocked( getCurrentUserCurrencyCode ).mockReturnValue( 'USD' );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
-		jest.mocked( useProrationUpgradeCreditsApplicable ).mockReturnValue( {
-			credits: 100,
-			hasDomainProration: true,
-			hasOtherUpgradeProration: false,
-		} );
+		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( { credits: 100, source: 'plan' } );
 		jest.mocked( getByPurchaseId ).mockReturnValue( {
 			isInAppPurchase: false,
 		} as Purchase );
@@ -107,7 +92,6 @@ describe( '<PlanNotice /> Tests', () => {
 
 	test( 'A contact site owner <PlanNotice /> should be shown no matter what other conditions are met, when the current site owner is not logged in, and the site plan is paid', () => {
 		jest.mocked( getDiscountByName ).mockReturnValue( discount );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
 		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( false );
 
@@ -128,7 +112,6 @@ describe( '<PlanNotice /> Tests', () => {
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
 		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
 		jest.mocked( getDiscountByName ).mockReturnValue( discount );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
 
 		renderWithProvider(
 			<PlanNotice
@@ -145,8 +128,7 @@ describe( '<PlanNotice /> Tests', () => {
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
 		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
 		jest.mocked( getDiscountByName ).mockReturnValue( false );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( null );
-		jest.mocked( useProrationUpgradeCreditsApplicable ).mockReturnValue( null );
+		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( null );
 		jest
 			.mocked( useMarketingMessage )
 			.mockReturnValue( [
@@ -170,7 +152,7 @@ describe( '<PlanNotice /> Tests', () => {
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
 		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
 		jest.mocked( getDiscountByName ).mockReturnValue( false );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( null );
+		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( null );
 		jest
 			.mocked( useMarketingMessage )
 			.mockReturnValue( [
@@ -178,7 +160,6 @@ describe( '<PlanNotice /> Tests', () => {
 				[ { id: '12121', text: 'An important marketing message' } ],
 				() => ( {} ),
 			] );
-		jest.mocked( useProrationUpgradeCreditsApplicable ).mockReturnValue( null );
 		//
 		renderWithProvider(
 			<PlanNotice
