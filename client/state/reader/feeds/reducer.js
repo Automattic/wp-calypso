@@ -115,11 +115,14 @@ export const items = withSchemaValidation(
 				return persisted;
 			}
 			// Add unsanitized_URL to feeds that don't have it (for backward compatibility)
+			// Note: We're working with already-sanitized data from old cache, so we can only
+			// reconstruct from available URL/feed_URL fields. If those were filtered to undefined,
+			// we can't recover the original. This migration helps feeds with valid URLs.
 			const migrated = {};
 			Object.keys( persisted ).forEach( ( feedId ) => {
 				const feed = persisted[ feedId ];
 				if ( feed && feed.unsanitized_URL == null && ( feed.URL || feed.feed_URL ) ) {
-					// Reconstruct unsanitized_URL from available URLs
+					// Reconstruct unsanitized_URL from available sanitized URLs
 					migrated[ feedId ] = {
 						...feed,
 						unsanitized_URL: feed.URL || feed.feed_URL,
