@@ -1,6 +1,7 @@
 import { isTailoredSignupFlow, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
+import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import {
@@ -122,11 +123,13 @@ export const leaveCheckout = ( {
 
 		if ( searchParams.has( 'cancel_to' ) ) {
 			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
-			// Only allow redirecting to relative paths.
+
 			if ( isRelativeUrl( cancelPath ) ) {
 				navigate( cancelPath );
-				return;
+			} else if ( dashboardOrigins().some( ( origin ) => cancelPath.startsWith( origin ) ) ) {
+				window.location.href = cancelPath;
 			}
+			return;
 		}
 	} catch ( error ) {
 		// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).

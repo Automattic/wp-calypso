@@ -297,6 +297,7 @@ __metadata:
   dependencies:
     "@automattic/agenttic-client": "npm:^0.1.26"
     "@automattic/agenttic-ui": "npm:^0.1.26"
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
