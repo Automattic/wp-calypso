@@ -11,7 +11,7 @@ import { useMemo } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
 import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
 import type { View, Field } from '@wordpress/dataviews';
-import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
+import type { PropsWithChildren } from 'react';
 
 export const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -42,7 +42,7 @@ export default function SwitcherContent< T >( {
 	searchClassName?: string;
 	searchableFields: Field< T >[];
 	view: View;
-	onChangeView: Dispatch< SetStateAction< View > >;
+	onChangeView: ( newView: View ) => void;
 	width?: string;
 	getItemUrl: ( item: T ) => string;
 	renderItemMedia: RenderItemMedia< T >;
