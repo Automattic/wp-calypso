@@ -61,7 +61,7 @@ export const handleApprove = ( meta: AuthorizeMeta, onSuccessCallback?: () => vo
 	const redirectUri = params.get( 'redirect_uri' ) || '';
 	const authorizeUrl = buildAuthorizeUrl( meta );
 
-	// Redirect via GET (standard OAuth2 flow for logged-in users)
+	// Redirect to authorization endpoint
 	window.location.href = authorizeUrl.toString();
 
 	// For custom protocol, show success message after redirect starts
