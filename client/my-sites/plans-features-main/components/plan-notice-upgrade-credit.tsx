@@ -1,11 +1,19 @@
+import {
+	isDomainMapping,
+	isDomainRegistration,
+	isDomainTransfer,
+	isWpComPlan,
+} from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 
@@ -27,6 +35,7 @@ const PlanNoticeUpgradeCredit = ( {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const upgradeCreditsNoticeData = useUpgradeCreditsNoticeData( siteId, visiblePlans || [] );
+	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 
 	const credits = upgradeCreditsNoticeData?.credits ?? 0;
 	const showNotice = credits > 0;
@@ -47,8 +56,34 @@ const PlanNoticeUpgradeCredit = ( {
 		<InlineSupportLink supportContext="plans-upgrade-credit" showIcon={ false } />
 	);
 
+	const hasOtherUpgradesPurchase = sitePurchases.some( ( purchase ) => {
+		const productSlug = purchase?.productSlug;
+		if ( ! productSlug ) {
+			return false;
+		}
+
+		// "Other upgrades" means non-domain and non-plan purchases (e.g. themes add-on, storage, etc).
+		if ( isWpComPlan( productSlug ) ) {
+			return false;
+		}
+		if (
+			isDomainRegistration( purchase ) ||
+			isDomainTransfer( purchase ) ||
+			isDomainMapping( purchase )
+		) {
+			return false;
+		}
+
+		return true;
+	} );
+
+	const effectiveSource =
+		upgradeCreditsNoticeData?.source === 'domain' && hasOtherUpgradesPurchase
+			? 'domain-and-other-upgrades'
+			: upgradeCreditsNoticeData?.source;
+
 	const getFullNoticeText = () => {
-		switch ( upgradeCreditsNoticeData?.source ) {
+		switch ( effectiveSource ) {
 			case 'plan':
 				return translate(
 					'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!',
@@ -88,6 +123,7 @@ const PlanNoticeUpgradeCredit = ( {
 	return (
 		<>
 			<QuerySitePlans siteId={ siteId } />
+			<QuerySitePurchases siteId={ siteId } />
 			{ isUpgradeFlow ? (
 				<div className="plan-upgrade-credit-notice-compact">
 					{ translate( 'You have %(amountInCurrency)s in upgrade credits available', {
