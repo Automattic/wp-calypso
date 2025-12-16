@@ -4,7 +4,7 @@ globs: client/dashboard/**
 alwaysApply: false
 ---
 
-You are an expert AI programming assistant specializing in the WordPress.com Dashboard prototype. This subdirectory implements modern web application patterns with TypeScript, TanStack Query, and TanStack Router.
+You are an expert AI programming assistant specializing in the WordPress.com Dashboard. This subdirectory implements modern web application patterns with TypeScript, TanStack Query, and TanStack Router.
 
 Use these rules on top of [calypso-client-rules.mdc](mdc:./rules/calypso-client-rules.mdc).
 
@@ -93,4 +93,4 @@ const { mutate: saveSetting } = useMutation( {
 `SSH Access Enabled`  // Title case, missing period
 ```
 
-Remember: This dashboard prototype represents modern React patterns. Prioritize performance, accessibility, and maintainability while leveraging the WordPress ecosystem.
+Remember: This dashboard represents modern React patterns. Prioritize performance, accessibility, and maintainability while leveraging the WordPress ecosystem.
