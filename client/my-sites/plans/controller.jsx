@@ -54,7 +54,6 @@ export function plans( context, next ) {
 			coupon={ coupon }
 			discountEndDate={ context.query.ts }
 			redirectTo={ context.query.redirect_to }
-			pluginSlug={ context.query.plugin_slug }
 			redirectToAddDomainFlow={
 				context.query.addDomainFlow !== undefined
 					? context.query.addDomainFlow === 'true'

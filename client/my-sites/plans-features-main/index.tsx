@@ -114,7 +114,6 @@ export interface PlansFeaturesMainProps {
 	selectedFeature?: string;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
-	pluginSlug?: string;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -199,7 +198,6 @@ const PlansFeaturesMain = ( {
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectTo,
-	pluginSlug,
 	redirectToAddDomainFlow,
 	siteId,
 	selectedPlan,
@@ -413,8 +411,8 @@ const PlansFeaturesMain = ( {
 		isLaunchPage,
 		showModalAndExit,
 		coupon,
-		// Only use redirectTo and pluginSlug when summer special is enabled
-		...( isSummerSpecial && { redirectTo, pluginSlug } ),
+		// Only use redirectTo when plugins are available on all plans (for free plugin install flow)
+		...( isSummerSpecial && { redirectTo } ),
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>

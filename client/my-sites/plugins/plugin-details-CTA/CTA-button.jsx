@@ -297,18 +297,7 @@ function onClickInstallPlugin( {
 		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
 
 		if ( upgradeAndInstall ) {
-			if ( isPluginAvailableOnAllPlans ) {
-				// Plugin available on all plans: Redirect to plans page to let user choose a plan, then checkout with both plan and plugin
-				const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }#step2`;
-				return page(
-					`/plans/${
-						selectedSite.slug
-					}?plan=personal_bundle&plugin_slug=${ product_slug }&redirect_to=${ encodeURIComponent(
-						installPluginURL
-					) }`
-				);
-			}
-			// Original flow: Direct checkout with specific plan and plugin
+			// Marketplace products always use direct checkout flow with specific plan and plugin
 			return page(
 				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
