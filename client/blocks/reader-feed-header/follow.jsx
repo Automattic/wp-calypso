@@ -67,12 +67,12 @@ export default function ReaderFeedHeaderFollow( props ) {
 	// Initial value matches effectiveSiteUrl (may be undefined on first render, which is fine)
 	const [ persistedUrl, setPersistedUrl ] = useState( effectiveSiteUrl );
 	useEffect( () => {
-		if ( effectiveSiteUrl ) {
-			// Only update when we have a valid URL - never clear it
+		if ( effectiveSiteUrl && effectiveSiteUrl !== persistedUrl ) {
+			// Only update when we have a valid URL that's different - never clear it
 			// This ensures the button stays visible even if feed becomes null during navigation
 			setPersistedUrl( effectiveSiteUrl );
 		}
-	}, [ effectiveSiteUrl ] );
+	}, [ effectiveSiteUrl, persistedUrl ] );
 	
 	// Use persisted URL as final fallback to ensure button doesn't disappear during navigation
 	const finalSiteUrl = effectiveSiteUrl || persistedUrl;
