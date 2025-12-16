@@ -121,9 +121,10 @@ Utility functions for handling user actions.
 **Exported Functions:**
 - `handleApprove()` - Builds authorization URL and redirects
 - `handleDeny()` - Decodes denial URL and redirects
-- `handleSwitch()` - Redirects to logout for account switching
 - `isCustomProtocol()` - Detects non-HTTP/HTTPS protocols (e.g., Studio)
 - `buildAuthorizeUrl()` - Constructs authorization URL with required parameters
+
+**Note:** For account switching, use `redirectToLogout()` from `calypso/state/current-user/actions` to properly log out the user before redirecting to login.
 
 ## Data Flow
 

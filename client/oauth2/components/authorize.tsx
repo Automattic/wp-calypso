@@ -3,11 +3,12 @@ import { useEffect, useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { OAUTH2_SIGNUP_FLOW } from '../constants';
-import { handleApprove, handleDeny, handleSwitch } from '../hooks/use-authorize-actions';
+import { handleApprove, handleDeny } from '../hooks/use-authorize-actions';
 import useAuthorizeMeta from '../hooks/use-authorize-meta';
 import AuthorizeActions from './authorize-actions';
 import PermissionsList from './permissions-list';
@@ -77,6 +78,7 @@ function Authorize( {
 	>;
 	const { setHeaders } = useLoginContext();
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
@@ -159,10 +161,12 @@ function Authorize( {
 	};
 
 	const onSwitch = () => {
-		if ( ! meta ) {
-			return;
-		}
-		handleSwitch( meta );
+		// Build the login URL to redirect to after logout
+		const currentUrl = window.location.pathname + window.location.search;
+		const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentUrl ) }`;
+
+		// Dispatch logout action which will clear session and redirect
+		dispatch( redirectToLogout( loginUrl ) );
 	};
 
 	// Build signup URL that stays in Calypso for from-calypso flows
