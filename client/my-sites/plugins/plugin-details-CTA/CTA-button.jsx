@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { getProductSlugByPeriodVariation, marketplacePlanToAdd } from 'calypso/lib/plugins/utils';
+import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -34,7 +34,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getFirstCategoryFromTags } from '../categories/use-categories';
 import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
-import { useIsPluginAvailableOnAllPlans } from '../use-is-plugin-available-on-all-plans';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 
 export default function CTAButton( { plugin, hasEligibilityMessages, disabled } ) {
@@ -69,11 +68,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	const shouldUpgrade =
 		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
 		! isJetpackSelfHosted;
-
-	// Check if plugins are available on all plans for this site
-	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans( {
-		siteId: selectedSite?.ID,
-	} );
 
 	// Keep me updated
 	const userId = useSelector( getCurrentUserId );
@@ -153,7 +147,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						isMarketplaceProduct,
 						billingPeriod,
 						productsList,
-						isPluginAvailableOnAllPlans,
 					} );
 				} }
 				isDialogVisible={ showAddCustomDomain }
@@ -182,7 +175,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 								isMarketplaceProduct,
 								billingPeriod,
 								productsList,
-								isPluginAvailableOnAllPlans,
 							} )
 						}
 					/>
@@ -218,7 +210,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						isPreinstalledPremiumPlugin,
 						preinstalledPremiumPluginProduct,
 						productsList,
-						isPluginAvailableOnAllPlans,
 					} );
 				} }
 				disabled={
@@ -262,7 +253,6 @@ function onClickInstallPlugin( {
 	isPreinstalledPremiumPlugin,
 	preinstalledPremiumPluginProduct,
 	productsList,
-	isPluginAvailableOnAllPlans,
 } ) {
 	const tags = Object.keys( plugin.tags );
 
@@ -320,15 +310,7 @@ function onClickInstallPlugin( {
 	// After buying a plan we need to redirect to the plugin install page.
 	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 	if ( upgradeAndInstall ) {
-		if ( isPluginAvailableOnAllPlans ) {
-			// Plugin available on all plans: Redirect to plans page to let user choose a plan, then redirect to plugin install
-			return page(
-				`/plans/${ selectedSite.slug }?plan=personal_bundle&redirect_to=${ encodeURIComponent(
-					installPluginURL
-				) }#step2`
-			);
-		}
-		// Original flow: Direct checkout with specific plan and redirect
+		// We also need to add a business plan to the cart.
 		return page(
 			`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 				selectedSite?.plan,
