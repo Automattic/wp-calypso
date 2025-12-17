@@ -1,4 +1,5 @@
-import { ComponentType, useState } from 'react';
+import { ComponentType, useCallback, useMemo } from 'react';
+import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 import { TermPricingContext } from '../context';
 import { TermPricingType } from '../types';
 
@@ -6,7 +7,7 @@ type ContextProps = {
 	defaultTermPricing?: TermPricingType;
 };
 
-export const TERM_PRICING_SESSION_STORAGE_KEY = 'term-pricing';
+export const TERM_PRICING_PREFERENCE_KEY = 'a4a-marketplace-term-pricing';
 export const TERM_PRICING_MONTHLY = 'monthly';
 export const TERM_PRICING_YEARLY = 'yearly';
 
@@ -14,32 +15,34 @@ function withTermPricing< T >(
 	WrappedComponent: ComponentType< T & ContextProps >
 ): ComponentType< T & ContextProps > {
 	const WithTermPricing = ( props: T & ContextProps ) => {
-		const defaultType =
-			props.defaultTermPricing ??
-			( sessionStorage.getItem( TERM_PRICING_SESSION_STORAGE_KEY ) as TermPricingType ) ??
-			TERM_PRICING_YEARLY;
+		const defaultTermPricing = props.defaultTermPricing ?? TERM_PRICING_YEARLY;
 
-		const [ termPricing, setTermPricing ] = useState( defaultType );
+		const [ termPricingValue, updateTermPricing ] = useAsyncPreference< TermPricingType >( {
+			defaultValue: defaultTermPricing,
+			preferenceName: TERM_PRICING_PREFERENCE_KEY,
+		} );
 
-		const updateTermPricing = ( type: TermPricingType ) => {
-			sessionStorage.setItem( TERM_PRICING_SESSION_STORAGE_KEY, type );
-			setTermPricing( type );
-		};
+		// Handle async loading - use default until preference is loaded
+		const termPricing: TermPricingType =
+			termPricingValue === 'none' ? defaultTermPricing : termPricingValue;
 
-		const toggleTermPricing = () => {
+		const toggleTermPricing = useCallback( () => {
 			const nextType =
 				termPricing === TERM_PRICING_MONTHLY ? TERM_PRICING_YEARLY : TERM_PRICING_MONTHLY;
 			updateTermPricing( nextType );
-		};
+		}, [ termPricing, updateTermPricing ] );
+
+		const contextValue = useMemo(
+			() => ( {
+				termPricing,
+				setTermPricing: updateTermPricing,
+				toggleTermPricing,
+			} ),
+			[ termPricing, updateTermPricing, toggleTermPricing ]
+		);
 
 		return (
-			<TermPricingContext.Provider
-				value={ {
-					termPricing,
-					setTermPricing: updateTermPricing,
-					toggleTermPricing,
-				} }
-			>
+			<TermPricingContext.Provider value={ contextValue }>
 				<WrappedComponent { ...props } />
 			</TermPricingContext.Provider>
 		);

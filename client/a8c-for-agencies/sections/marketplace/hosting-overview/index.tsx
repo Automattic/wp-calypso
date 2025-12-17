@@ -26,8 +26,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import ReferralToggle from '../common/referral-toggle';
 import TermPricingToggle from '../common/term-pricing-toggle';
-import withMarketplaceType from '../hoc/with-marketplace-type';
-import withTermPricing from '../hoc/with-term-pricing';
+import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import HeroSection from './hero-section';
@@ -182,4 +181,4 @@ function HostingOverview( { section }: SectionProps ) {
 	);
 }
 
-export default withMarketplaceType( withTermPricing( HostingOverview ) );
+export default withMarketplaceProviders( HostingOverview );
