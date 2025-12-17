@@ -5,7 +5,7 @@ import { Page } from 'playwright';
 /**
  * Internal dependencies
  */
-import { getCalypsoURL } from '../../data-helper';
+import envVariables from '../../env-variables';
 
 /**
  * Dashboard page class for the new Multi-site Dashboard.
@@ -29,12 +29,44 @@ export class DashboardPage {
 	}
 
 	/**
+	 * Gets the dashboard base URL by converting calypso.localhost to my.localhost
+	 * or wpcalypso.wordpress.com to my.wordpress.com.
+	 *
+	 * @returns The dashboard base URL.
+	 */
+	private getDashboardBaseURL(): string {
+		const baseURL = envVariables.CALYPSO_BASE_URL;
+		// Convert calypso.localhost:3000 to my.localhost:3000
+		if ( baseURL.includes( 'calypso.localhost' ) ) {
+			return baseURL.replace( 'calypso.localhost', 'my.localhost' );
+		}
+		// Convert wpcalypso.wordpress.com to my.wordpress.com
+		if ( baseURL.includes( 'wpcalypso.wordpress.com' ) ) {
+			return baseURL.replace( 'wpcalypso.wordpress.com', 'my.wordpress.com' );
+		}
+		// If already my.localhost or my.wordpress.com, use as-is
+		return baseURL;
+	}
+
+	/**
+	 * Constructs a dashboard URL with the given path.
+	 *
+	 * @param path - The path to append to the dashboard base URL.
+	 * @returns The full dashboard URL.
+	 */
+	private getDashboardURL( path: string = '' ): string {
+		const baseURL = this.getDashboardBaseURL();
+		const cleanPath = path.startsWith( '/' ) ? path : `/${ path }`;
+		return new URL( cleanPath, baseURL ).toString();
+	}
+
+	/**
 	 * Visits the dashboard entry page.
 	 *
 	 * @returns Promise that resolves when navigation is complete.
 	 */
 	async visit(): Promise< void > {
-		await this.page.goto( getCalypsoURL( 'v2' ) );
+		await this.page.goto( this.getDashboardURL() );
 		// Wait for the main content to be visible
 		await this.page.getByRole( 'main' ).waitFor();
 	}
@@ -46,7 +78,9 @@ export class DashboardPage {
 	 */
 	async isLoaded(): Promise< boolean > {
 		const isMainContentVisible = await this.page.getByRole( 'main' ).isVisible();
-		const hasCorrectUrl = this.page.url().includes( '/v2' );
+		const hasCorrectUrl =
+			this.page.url().includes( 'my.localhost' ) || this.page.url().includes( 'my.wordpress.com' );
+
 		return isMainContentVisible && hasCorrectUrl;
 	}
 
@@ -80,8 +114,7 @@ export class DashboardPage {
 	 * @returns Promise that resolves when navigation is complete.
 	 */
 	async visitPath( subpath: string ): Promise< void > {
-		const path = subpath.startsWith( '/' ) ? subpath : `/${ subpath }`;
-		await this.page.goto( getCalypsoURL( `v2${ path }` ) );
+		await this.page.goto( this.getDashboardURL( subpath ) );
 	}
 
 	/**
@@ -93,6 +126,6 @@ export class DashboardPage {
 	 * await expect.poll( async () => await pageDashboard.is404Page() ).toBe( true );
 	 */
 	async is404Page(): Promise< boolean > {
-		return this.page.getByRole( 'heading', { name: '404 Not Found' } ).isVisible();
+		return this.page.getByRole( 'heading', { name: 'Page not found' } ).isVisible();
 	}
 }

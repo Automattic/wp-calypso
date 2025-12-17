@@ -4,7 +4,6 @@ import {
 	dashboardSiteListQuery,
 	dashboardSiteFiltersQuery,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import Logo from './logo';
@@ -17,14 +16,7 @@ import './style.scss';
 
 boot( {
 	name: 'WordPress.com',
-	basePath: ( () => {
-		if ( isEnabled( 'dashboard/v2' ) ) {
-			// Serve dashboard routes directly under my.localhost's root;
-			// otherwise serve them under /v2.
-			return window.location.hostname.startsWith( 'my.localhost' ) ? '/' : '/v2';
-		}
-		return '/';
-	} )(),
+	basePath: '/',
 	mainRoute: '/sites',
 	Logo,
 	supports: {
