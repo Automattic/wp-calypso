@@ -21,7 +21,6 @@ import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-pl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import StagingSiteNotice from 'calypso/my-sites/plugins/plugin-details-CTA/staging-site-notice';
-import { useIsPluginAvailableOnAllPlans } from 'calypso/my-sites/plugins/use-is-plugin-available-on-all-plans';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -548,24 +547,19 @@ function FreePrice( { shouldUpgrade } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSite = useSelector( getSelectedSite );
-	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans( {
-		siteId: selectedSite?.ID,
-	} );
 
 	return (
 		<>
 			{ translate( 'Free' ) }
 			{ ( ! isLoggedIn || ! selectedSite || shouldUpgrade ) && (
 				<span className="plugin-details-cta__notice">
-					{ isPluginAvailableOnAllPlans
-						? translate( 'on paid plans' )
-						: translate(
-								// Translators: %(planName)s is the name of a plan (e.g. Creator or Business)
-								'on %(planName)s plan',
-								{
-									args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-								}
-						  ) }
+					{ translate(
+						// Translators: %(planName)s is the name of a plan (e.g. Creator or Business)
+						'on %(planName)s plan',
+						{
+							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+						}
+					) }
 				</span>
 			) }
 		</>
