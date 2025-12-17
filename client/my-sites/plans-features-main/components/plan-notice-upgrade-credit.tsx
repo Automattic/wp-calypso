@@ -5,78 +5,16 @@ import {
 	isWpComPlan,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useTranslate } from 'i18n-calypso';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
+import UpgradeCreditsNoticeText from 'calypso/my-sites/plans-features-main/components/upgrade-credits-notice-text';
 import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
-import type { UpgradeCreditsNoticeSource } from '../hooks/use-upgrade-credits-notice';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
-
-type UpgradeCreditsNoticeTextProps = {
-	variant: 'compact' | 'full';
-	effectiveSource?: UpgradeCreditsNoticeSource | null;
-	amountInCurrency: string;
-};
-
-const UpgradeCreditsNoticeText = ( {
-	variant,
-	effectiveSource,
-	amountInCurrency,
-}: UpgradeCreditsNoticeTextProps ) => {
-	const translate = useTranslate();
-
-	if ( variant === 'compact' ) {
-		return translate( 'You have %(amountInCurrency)s in upgrade credits available', {
-			args: { amountInCurrency },
-		} );
-	}
-
-	const supportLink = (
-		<InlineSupportLink supportContext="plans-upgrade-credit" showIcon={ false } />
-	);
-
-	switch ( effectiveSource ) {
-		case 'plan':
-			return translate(
-				'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!',
-				{
-					args: { amountInCurrency },
-					components: { b: <strong />, a: supportLink },
-				}
-			);
-		case 'domain-and-other-upgrades':
-			return translate(
-				'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current domain and other upgrades. This credit will be applied to the pricing below at checkout if you purchase a plan today!',
-				{
-					args: { amountInCurrency },
-					components: { b: <strong />, a: supportLink },
-				}
-			);
-		case 'domain':
-			return translate(
-				'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current domain. This credit will be applied to the pricing below at checkout if you purchase a plan today!',
-				{
-					args: { amountInCurrency },
-					components: { b: <strong />, a: supportLink },
-				}
-			);
-		case 'other-upgrades':
-		default:
-			return translate(
-				'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from other upgrades. This credit will be applied to the pricing below at checkout if you purchase a plan today!',
-				{
-					args: { amountInCurrency },
-					components: { b: <strong />, a: supportLink },
-				}
-			);
-	}
-};
 
 type Props = {
 	className?: string;
@@ -144,7 +82,11 @@ const PlanNoticeUpgradeCredit = ( {
 			<QuerySitePurchases siteId={ siteId } />
 			{ isUpgradeFlow ? (
 				<div className="plan-upgrade-credit-notice-compact">
-					<UpgradeCreditsNoticeText variant="compact" amountInCurrency={ amountInCurrency } />
+					<UpgradeCreditsNoticeText
+						context="plans"
+						variant="compact"
+						amountInCurrency={ amountInCurrency }
+					/>
 				</div>
 			) : (
 				<Notice
@@ -156,8 +98,9 @@ const PlanNoticeUpgradeCredit = ( {
 					theme="light"
 				>
 					<UpgradeCreditsNoticeText
+						context="plans"
 						variant="full"
-						effectiveSource={ effectiveSource }
+						source={ effectiveSource }
 						amountInCurrency={ amountInCurrency }
 					/>
 				</Notice>

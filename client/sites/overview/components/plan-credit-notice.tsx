@@ -1,25 +1,60 @@
+import {
+	isDomainMapping,
+	isDomainRegistration,
+	isDomainTransfer,
+	isWpComPlan,
+} from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Notice } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
+import UpgradeCreditsNoticeText from 'calypso/my-sites/plans-features-main/components/upgrade-credits-notice-text';
+import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const PlanCreditNotice = () => {
 	const site = useSelector( getSelectedSite );
 	const { ID: siteId } = site || {};
-	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId );
-	const showNotice = domainToPlanCreditsApplicable !== null && domainToPlanCreditsApplicable > 0;
-	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const upgradeCreditsNoticeData = useUpgradeCreditsNoticeData( siteId );
 
 	if ( ! siteId ) {
 		return null;
 	}
+
+	const credits = upgradeCreditsNoticeData?.credits ?? 0;
+	const showNotice = credits > 0;
+
+	const hasOtherUpgradesPurchase =
+		sitePurchases?.some( ( purchase ) => {
+			const productSlug = purchase?.productSlug;
+			if ( ! productSlug ) {
+				return false;
+			}
+
+			// "Other upgrades" means non-domain and non-plan purchases (e.g. themes add-on, storage, etc).
+			if ( isWpComPlan( productSlug ) ) {
+				return false;
+			}
+			if (
+				isDomainRegistration( purchase ) ||
+				isDomainTransfer( purchase ) ||
+				isDomainMapping( purchase )
+			) {
+				return false;
+			}
+
+			return true;
+		} ) ?? false;
+
+	const effectiveSource =
+		upgradeCreditsNoticeData?.source === 'domain' && hasOtherUpgradesPurchase
+			? 'domain-and-other-upgrades'
+			: upgradeCreditsNoticeData?.source;
 
 	return (
 		<>
@@ -32,22 +67,14 @@ const PlanCreditNotice = () => {
 					status="info"
 					onRemove={ () => {} }
 				>
-					{ translate(
-						'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current domain. This credit will be applied at checkout if you purchase a plan today!',
-						{
-							args: {
-								amountInCurrency: formatCurrency(
-									domainToPlanCreditsApplicable,
-									currencyCode ?? '',
-									{ isSmallestUnit: true }
-								),
-							},
-							components: {
-								b: <strong />,
-								a: <InlineSupportLink supportContext="plans-upgrade-credit" showIcon={ false } />,
-							},
-						}
-					) }
+					<UpgradeCreditsNoticeText
+						context="overview"
+						variant="full"
+						source={ effectiveSource }
+						amountInCurrency={ formatCurrency( credits, currencyCode ?? '', {
+							isSmallestUnit: true,
+						} ) }
+					/>
 				</Notice>
 			) }
 		</>
