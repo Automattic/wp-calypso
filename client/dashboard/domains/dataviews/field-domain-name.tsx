@@ -1,9 +1,10 @@
 import { DomainSubtype } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
-import { Link } from '@tanstack/react-router';
+import { Link, useMatches } from '@tanstack/react-router';
 import { Tooltip, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
+import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
 import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -19,6 +20,8 @@ export const DomainNameField = ( {
 	value: string;
 	showPrimaryDomainBadge?: boolean;
 } ) => {
+	const matches = useMatches();
+
 	const siteSlug = site?.slug ?? domain.site_slug;
 
 	const href =
@@ -57,8 +60,20 @@ export const DomainNameField = ( {
 		return content;
 	}
 
+	const currentRoute = matches[ matches.length - 1 ];
+
+	const searchParams = () => {
+		if ( currentRoute.fullPath === siteDomainsRoute.fullPath ) {
+			return { back_to: 'site-domains' };
+		}
+		if ( currentRoute.fullPath === siteOverviewRoute.fullPath ) {
+			return { back_to: 'site-overview' };
+		}
+		return undefined;
+	};
+
 	return (
-		<Link to={ href } params={ { siteSlug, domainName: domain.domain } }>
+		<Link to={ href } params={ { siteSlug, domainName: domain.domain } } search={ searchParams() }>
 			{ content }
 		</Link>
 	);
