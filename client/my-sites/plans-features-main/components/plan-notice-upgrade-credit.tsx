@@ -14,8 +14,60 @@ import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-mai
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
+import type { UpgradeCreditsNoticeSource } from '../hooks/use-upgrade-credits-notice';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
+import type { ReactNode } from '@wordpress/element';
+
+type GetFullNoticeTextArgs = {
+	effectiveSource?: UpgradeCreditsNoticeSource | null;
+	translate: ReturnType< typeof useTranslate >;
+	amountInCurrency: string;
+	supportLink: ReactNode;
+};
+
+function getFullNoticeText( {
+	effectiveSource,
+	translate,
+	amountInCurrency,
+	supportLink,
+}: GetFullNoticeTextArgs ) {
+	switch ( effectiveSource ) {
+		case 'plan':
+			return translate(
+				'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!',
+				{
+					args: { amountInCurrency },
+					components: { b: <strong />, a: supportLink },
+				}
+			);
+		case 'domain-and-other-upgrades':
+			return translate(
+				'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current domain and other upgrades. This credit will be applied to the pricing below at checkout if you purchase a plan today!',
+				{
+					args: { amountInCurrency },
+					components: { b: <strong />, a: supportLink },
+				}
+			);
+		case 'domain':
+			return translate(
+				'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current domain. This credit will be applied to the pricing below at checkout if you purchase a plan today!',
+				{
+					args: { amountInCurrency },
+					components: { b: <strong />, a: supportLink },
+				}
+			);
+		case 'other-upgrades':
+		default:
+			return translate(
+				'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from other upgrades. This credit will be applied to the pricing below at checkout if you purchase a plan today!',
+				{
+					args: { amountInCurrency },
+					components: { b: <strong />, a: supportLink },
+				}
+			);
+	}
+}
 
 type Props = {
 	className?: string;
@@ -83,43 +135,12 @@ const PlanNoticeUpgradeCredit = ( {
 			? 'domain-and-other-upgrades'
 			: upgradeCreditsNoticeData?.source;
 
-	const fullNoticeText = ( () => {
-		switch ( effectiveSource ) {
-			case 'plan':
-				return translate(
-					'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!',
-					{
-						args: { amountInCurrency },
-						components: { b: <strong />, a: supportLink },
-					}
-				);
-			case 'domain-and-other-upgrades':
-				return translate(
-					'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current domain and other upgrades. This credit will be applied to the pricing below at checkout if you purchase a plan today!',
-					{
-						args: { amountInCurrency },
-						components: { b: <strong />, a: supportLink },
-					}
-				);
-			case 'domain':
-				return translate(
-					'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current domain. This credit will be applied to the pricing below at checkout if you purchase a plan today!',
-					{
-						args: { amountInCurrency },
-						components: { b: <strong />, a: supportLink },
-					}
-				);
-			case 'other-upgrades':
-			default:
-				return translate(
-					'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from other upgrades. This credit will be applied to the pricing below at checkout if you purchase a plan today!',
-					{
-						args: { amountInCurrency },
-						components: { b: <strong />, a: supportLink },
-					}
-				);
-		}
-	} )();
+	const fullNoticeText = getFullNoticeText( {
+		effectiveSource,
+		translate,
+		amountInCurrency,
+		supportLink,
+	} );
 
 	return (
 		<>
