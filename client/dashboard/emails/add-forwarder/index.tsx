@@ -10,6 +10,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import emailValidator from 'email-validator';
@@ -348,17 +349,20 @@ function AddEmailForwarder() {
 
 								{ duplicateForwardAddresses.length && (
 									<Notice variant="error">
-										{ sprintf(
-											// translators: %(mailbox)s is the email address the user is attempting to add a forwarder for, %(forwardingAddress)s is the duplicate forwarding email address.
-											_n(
-												'There is already a forwarding set from %(mailbox)s to %(forwardingAddress)s. Please remove the duplicate and try again.',
-												'There are already forwardings set from %(mailbox)s to %(forwardingAddress)s. Please remove the duplicates and try again.',
-												duplicateForwardAddresses.length
+										{ createInterpolateElement(
+											sprintf(
+												// translators: %(mailbox)s is the email address the user is attempting to add a forwarder for, %(forwardingAddress)s is the duplicate forwarding email address.
+												_n(
+													'There is already a forwarding set from <code>%(mailbox)s</code> to <code>%(forwardingAddress)s</code>. Please remove the duplicate and try again.',
+													'There are already forwardings set from <code>%(mailbox)s</code> to <code>%(forwardingAddress)s</code>. Please remove the duplicates and try again.',
+													duplicateForwardAddresses.length
+												),
+												{
+													mailbox,
+													forwardingAddress: duplicateForwardAddresses.join( ', ' ),
+												}
 											),
-											{
-												mailbox,
-												forwardingAddress: duplicateForwardAddresses.join( ', ' ),
-											}
+											{ code: <code /> }
 										) }
 									</Notice>
 								) }
