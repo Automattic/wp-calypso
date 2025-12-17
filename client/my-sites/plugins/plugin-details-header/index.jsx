@@ -159,9 +159,10 @@ const PluginDetailsHeader = ( {
 				<div className="plugin-details-header__info is-version">
 					<div className="plugin-details-header__info-title">{ translate( 'Version' ) }</div>
 					<div className="plugin-details-header__info-value">
-						{ /* Show the default version if plugin is not installed */ }
-						{ currentVersionsRange?.min || plugin.version }
-						{ currentVersionsRange?.max && ` - ${ currentVersionsRange.max }` }
+						{ isMarketplaceProduct ? plugin.version : currentVersionsRange?.min || plugin.version }
+						{ ! isMarketplaceProduct &&
+							currentVersionsRange?.max &&
+							` - ${ currentVersionsRange.max }` }
 					</div>
 				</div>
 				{ Boolean( plugin.active_installs ) && (
