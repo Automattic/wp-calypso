@@ -18,6 +18,7 @@ export const useForwardingAddresses = ( {
 
 	const isLoading = emailForwardersQueries.some( ( q ) => q.isLoading );
 	const forwards = emailForwardersQueries.flatMap( ( q ) => q.data?.forwards ?? [] );
+
 	const forwardsByMailbox = forwards.reduce( ( acc, f ) => {
 		const forwards: string[] = acc.has( f.email ) ? acc.get( f.email )! : [];
 		acc.set( f.email, forwards.concat( f.forward_address ) );
