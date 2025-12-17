@@ -13,10 +13,6 @@ import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-mai
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
-import type {
-	UpgradeCreditsNoticeData,
-	UpgradeCreditsNoticeSource,
-} from '../hooks/use-upgrade-credits-notice';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -44,22 +40,6 @@ function hasOtherUpgradesPurchase( sitePurchases: Purchase[] | undefined ): bool
 			return true;
 		} ) ?? false
 	);
-}
-
-/**
- * The upgrade credits hook can't always infer "domain + other upgrades" (some add-on related
- * credits only appear as a generic non-coupon discount). When we can see purchases, refine
- * the source so copy matches what contributed to the credit.
- */
-function getUpgradeCreditsEffectiveSource(
-	upgradeCreditsNoticeData: UpgradeCreditsNoticeData | null,
-	sitePurchases: Purchase[] | undefined
-): UpgradeCreditsNoticeSource | undefined {
-	const source = upgradeCreditsNoticeData?.source;
-	if ( source === 'domain' && hasOtherUpgradesPurchase( sitePurchases ) ) {
-		return 'domain-and-other-upgrades';
-	}
-	return source;
 }
 
 type Props = {
@@ -100,10 +80,11 @@ const PlanNoticeUpgradeCredit = ( {
 		isSmallestUnit: true,
 		stripZeros: isUpgradeFlow,
 	} );
-	const effectiveSource = getUpgradeCreditsEffectiveSource(
-		upgradeCreditsNoticeData,
-		sitePurchases
-	);
+
+	const effectiveSource =
+		upgradeCreditsNoticeData?.source === 'domain' && hasOtherUpgradesPurchase( sitePurchases )
+			? 'domain-and-other-upgrades'
+			: upgradeCreditsNoticeData?.source;
 	return (
 		<>
 			<QuerySitePlans siteId={ siteId } />
