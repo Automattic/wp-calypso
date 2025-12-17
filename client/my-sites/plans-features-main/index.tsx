@@ -30,6 +30,7 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 	usePlanBillingPeriod,
+	useSummerSpecialStatus,
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -64,7 +65,6 @@ import {
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import { useIsPluginAvailableOnAllPlans } from 'calypso/my-sites/plugins/use-is-plugin-available-on-all-plans';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -113,7 +113,6 @@ export interface PlansFeaturesMainProps {
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
-	redirectTo?: string;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -197,7 +196,6 @@ const PlansFeaturesMain = ( {
 	isDomainTransfer,
 	onUpgradeClick,
 	hidePlanTypeSelector,
-	redirectTo,
 	redirectToAddDomainFlow,
 	siteId,
 	selectedPlan,
@@ -239,7 +237,6 @@ const PlansFeaturesMain = ( {
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
-	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans( { isInSignup, siteId } );
 
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -411,8 +408,6 @@ const PlansFeaturesMain = ( {
 		isLaunchPage,
 		showModalAndExit,
 		coupon,
-		// Only use redirectTo when plugins are available on all plans (for free plugin install flow)
-		...( isPluginAvailableOnAllPlans && { redirectTo } ),
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
@@ -705,6 +700,9 @@ const PlansFeaturesMain = ( {
 		);
 	}, [ gridPlansForComparisonGrid ] );
 
+	// Get summer special status
+	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
+
 	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
 	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
 		? getWooExpressFeaturesGroupedForComparisonGrid()
@@ -717,11 +715,11 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
 	} else if ( showSimplifiedFeatures ) {
 		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial: isPluginAvailableOnAllPlans,
+			isSummerSpecial,
 		} );
 	} else {
 		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial: isPluginAvailableOnAllPlans,
+			isSummerSpecial,
 		} );
 	}
 
