@@ -17,7 +17,6 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
@@ -67,7 +66,12 @@ export const ProviderWrappedLayout = ( {
 	const userLoggedIn = isUserLoggedIn( state );
 
 	if ( userLoggedIn ) {
-		loadExperimentAssignment( RENEWAL_PRICING_EXPERIMENT );
+		// SSR-safe: Dynamic import ensures this only runs in client context
+		import( 'calypso/lib/explat' )
+			.then( ( { loadExperimentAssignment } ) => {
+				loadExperimentAssignment( RENEWAL_PRICING_EXPERIMENT );
+			} )
+			.catch( () => {} ); // Silently fail if SSR context
 	}
 
 	const layout = userLoggedIn ? (
