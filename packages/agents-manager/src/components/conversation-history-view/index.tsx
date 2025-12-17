@@ -36,20 +36,20 @@ export default function ConversationHistoryView( {
 	return (
 		<div className="agents-manager-conversation-history-view">
 			<div className="agents-manager-conversation-history-view__content">
-				{ /* Status states: error, loading, empty */ }
-				{ isError && (
+				{ /* States: loading → error → empty → list */ }
+				{ isLoading && (
+					<div className="agents-manager-conversation-history-view__loading">
+						<ConversationListSkeleton count={ 5 } />
+					</div>
+				) }
+				{ ! isLoading && isError && (
 					<div className="agents-manager-conversation-history-view__error">
 						<p>
 							{ __( 'Failed to load conversations. Please try again.', '__i18n_text_domain__' ) }
 						</p>
 					</div>
 				) }
-				{ isLoading && (
-					<div className="agents-manager-conversation-history-view__loading">
-						<ConversationListSkeleton count={ 5 } />
-					</div>
-				) }
-				{ ! isLoading && ! isError && ! conversations.length && (
+				{ ! isLoading && ! isError && conversations.length === 0 && (
 					<div className="agents-manager-conversation-history-view__empty">
 						<p>{ __( 'No past conversations', '__i18n_text_domain__' ) }</p>
 						<p className="agents-manager-conversation-history-view__empty-hint">
@@ -57,9 +57,7 @@ export default function ConversationHistoryView( {
 						</p>
 					</div>
 				) }
-
-				{ /* Conversation list */ }
-				{ ! isLoading && ! isError && conversations.length && (
+				{ ! isLoading && ! isError && conversations.length > 0 && (
 					<div className="agents-manager-conversation-history-view__list">
 						{ conversations.map( ( conversation ) => (
 							<ConversationListItem
