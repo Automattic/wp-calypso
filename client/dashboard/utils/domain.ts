@@ -5,8 +5,9 @@ import {
 	DomainStatus,
 	DomainTypes,
 } from '@automattic/api-core';
-import { addQueryArgs } from '@wordpress/url';
+import { useRouter } from '@tanstack/react-router';
 import { isAfter, subMinutes, subDays } from 'date-fns';
+import { domainConnectionSetupRoute } from '../app/router/domains';
 import { getRenewalUrlFromPurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
@@ -26,12 +27,19 @@ export function getDomainSiteSlug( domain: DomainSummary ) {
 }
 
 export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase ) {
-	const siteSlug = getDomainSiteSlug( domain );
-	const backUrl = window.location.href.replace( window.location.origin, '' );
-	return addQueryArgs( getRenewalUrlFromPurchase( purchase, siteSlug ), {
-		cancel_to: backUrl,
-		redirect_to: backUrl,
-	} );
+	return getRenewalUrlFromPurchase( purchase, getDomainSiteSlug( domain ) );
+}
+
+export function useDomainConnectionSetupTemplateUrl() {
+	const router = useRouter();
+	const domainConnectionSetupTemplateUrl = router
+		.buildLocation( {
+			to: domainConnectionSetupRoute.fullPath,
+			params: { domainName: '%s' },
+		} )
+		.href.replace( '%25s', '%s' );
+
+	return new URL( domainConnectionSetupTemplateUrl, window.location.origin ).href;
 }
 
 export function isRegisteredDomain( domain: DomainSummary ) {

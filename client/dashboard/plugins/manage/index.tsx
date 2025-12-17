@@ -10,7 +10,7 @@ import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
@@ -21,7 +21,7 @@ import { useSitesById } from './hooks/use-sites-by-id';
 import { mapApiPluginsToDataViewPlugins } from './utils';
 import type { PluginListRow } from './types';
 
-const view: View = {
+const DEFAULT_VIEW: View = {
 	type: 'list',
 	page: 1,
 	perPage: 100,
@@ -39,6 +39,7 @@ const searchableFields = [
 ];
 
 export default function PluginsList() {
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const { data: sitesPlugins } = useQuery( pluginsQuery() );
 	const { sitesById } = useSitesById();
@@ -49,14 +50,14 @@ export default function PluginsList() {
 			enableGlobalSearch: true,
 		} ) );
 	}, [] );
-	const { data: plugins } = useMemo(
+	const { data: plugins, paginationInfo } = useMemo(
 		() =>
 			filterSortAndPaginate(
 				mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
 				view,
 				fields
 			),
-		[ sitesById, sitesPlugins, fields ]
+		[ fields, sitesById, sitesPlugins, view ]
 	);
 	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
@@ -123,6 +124,8 @@ export default function PluginsList() {
 						pluginsWithIcon={ pluginsWithIcon }
 						searchableFields={ searchableFields }
 						view={ view }
+						onChangeView={ setView }
+						paginationInfo={ paginationInfo }
 					/>
 				) }
 			</PageLayout>
@@ -146,6 +149,8 @@ export default function PluginsList() {
 					searchableFields={ searchableFields }
 					selectedPluginSlug={ selectedPluginSlug }
 					view={ view }
+					onChangeView={ setView }
+					paginationInfo={ paginationInfo }
 				/>
 
 				<PluginSites selectedPluginSlug={ selectedPluginSlug } />

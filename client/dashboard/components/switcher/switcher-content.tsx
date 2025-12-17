@@ -7,25 +7,19 @@ import {
 } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
 import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
 import type { View, Field } from '@wordpress/dataviews';
 import type { PropsWithChildren } from 'react';
 
-const DEFAULT_VIEW: View = {
-	type: 'list',
-	page: 1,
-	perPage: 10,
-	sort: { field: 'name', direction: 'asc' },
-};
-
 export default function SwitcherContent< T >( {
-	initialView = DEFAULT_VIEW,
 	itemClassName,
 	items,
 	searchableFields,
 	searchClassName,
+	view,
+	onChangeView,
 	width = '280px',
 	getItemUrl,
 	renderItemMedia,
@@ -37,10 +31,11 @@ export default function SwitcherContent< T >( {
 	onItemClick,
 }: PropsWithChildren< {
 	itemClassName?: string | ( ( item: T ) => string );
-	initialView?: View;
 	items?: T[];
 	searchClassName?: string;
 	searchableFields: Field< T >[];
+	view: View;
+	onChangeView: ( newView: View ) => void;
 	width?: string;
 	getItemUrl: ( item: T ) => string;
 	renderItemMedia: RenderItemMedia< T >;
@@ -50,8 +45,6 @@ export default function SwitcherContent< T >( {
 	onClose: () => void;
 	onItemClick?: () => void;
 } > ) {
-	const [ view, setView ] = useState< View >( initialView );
-
 	const fields = useMemo( () => {
 		return searchableFields.map( ( searchableField ) => ( {
 			...searchableField,
@@ -72,7 +65,7 @@ export default function SwitcherContent< T >( {
 					className={ searchClassName }
 					label={ __( 'Search' ) }
 					value={ view.search }
-					onChange={ ( value ) => setView( { ...view, search: value } ) }
+					onChange={ ( value ) => onChangeView( { ...view, search: value } ) }
 					size="compact"
 					__nextHasNoMarginBottom
 				/>
