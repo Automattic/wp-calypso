@@ -178,16 +178,18 @@ useAuthorizeMeta fetches authorization metadata
 
 ### Adding a New Client Variant
 
+<!-- prettier-ignore-start -->
+
 1. **Create the variant component** in `authorize-variants.tsx`:
 
    ```typescript
    export const AuthorizeMyClient = () => (
-   	<Authorize
-   		userCardVariant="centered"
-   		showPermissions
-   		showLogo
-   		approveButtonText="Connect"
-   	/>
+      <Authorize
+         userCardVariant="centered"
+         showPermissions
+         showLogo
+         approveButtonText="Connect"
+      />
    );
    ```
 
@@ -195,8 +197,8 @@ useAuthorizeMeta fetches authorization metadata
 
    ```javascript
    const CLIENT_VARIANT_MAP = {
-   	[ OAUTH2_CLIENT_IDS.STUDIO ]: AuthorizeStudio,
-   	[ OAUTH2_CLIENT_IDS.MY_CLIENT ]: AuthorizeMyClient,
+      [ OAUTH2_CLIENT_IDS.STUDIO ]: AuthorizeStudio,
+      [ OAUTH2_CLIENT_IDS.MY_CLIENT ]: AuthorizeMyClient,
    };
    ```
 
@@ -204,27 +206,31 @@ useAuthorizeMeta fetches authorization metadata
 
    ```typescript
    export const OAUTH2_CLIENT_IDS = {
-   	STUDIO: 95109,
-   	MY_CLIENT: 12345,
+      STUDIO: 95109,
+      MY_CLIENT: 12345,
    } as const;
    ```
+
+<!-- prettier-ignore-end -->
 
 ### Custom Action Buttons
 
 Use the `renderActions` prop for complete control:
 
+<!-- prettier-ignore-start -->
 ```tsx
 <Authorize
-	renderActions={ ( { onApprove, onDeny } ) => (
-		<div>
-			<Button onClick={ onDeny }>Cancel</Button>
-			<Button onClick={ onApprove } variant="primary">
-				Grant Access
-			</Button>
-		</div>
-	) }
+   renderActions={ ( { onApprove, onDeny } ) => (
+      <div>
+         <Button onClick={ onDeny }>Cancel</Button>
+         <Button onClick={ onApprove } variant="primary">
+            Grant Access
+         </Button>
+      </div>
+   ) }
 />
 ```
+<!-- prettier-ignore-end -->
 
 ## Styling
 
