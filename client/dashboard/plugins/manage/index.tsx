@@ -124,7 +124,7 @@ export default function PluginsList() {
 						pluginsWithIcon={ pluginsWithIcon }
 						searchableFields={ searchableFields }
 						view={ view }
-						setView={ setView }
+						onChangeView={ setView }
 						paginationInfo={ paginationInfo }
 					/>
 				) }
@@ -149,7 +149,7 @@ export default function PluginsList() {
 					searchableFields={ searchableFields }
 					selectedPluginSlug={ selectedPluginSlug }
 					view={ view }
-					setView={ setView }
+					onChangeView={ setView }
 					paginationInfo={ paginationInfo }
 				/>
 

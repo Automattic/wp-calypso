@@ -21,14 +21,14 @@ export const PluginSwitcher = ( {
 	searchableFields,
 	selectedPluginSlug = '',
 	view,
-	setView,
+	onChangeView,
 	paginationInfo,
 }: {
 	pluginsWithIcon: PluginListRow[];
 	searchableFields: Field< PluginListRow >[];
 	selectedPluginSlug?: string;
 	view: View;
-	setView: Dispatch< SetStateAction< View > >;
+	onChangeView: Dispatch< SetStateAction< View > >;
 	paginationInfo: { totalItems: number; totalPages: number };
 } ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
@@ -41,13 +41,13 @@ export const PluginSwitcher = ( {
 		}
 
 		if ( paginationInfo.totalPages > 1 ) {
-			setView( ( currentView ) => ( {
+			onChangeView( ( currentView ) => ( {
 				...currentView,
 				// @ts-expect-error: perPage can't be undefined
 				perPage: currentView.perPage + itemsPerPage, // Accumulate items
 			} ) );
 		}
-	}, [ paginationInfo, setView, itemsPerPage ] );
+	}, [ paginationInfo, onChangeView, itemsPerPage ] );
 
 	// Set up scroll listener
 	useEffect( () => {
@@ -137,7 +137,7 @@ export const PluginSwitcher = ( {
 					itemClassName={ itemClassName }
 					searchClassName="plugin-switcher-search"
 					view={ view }
-					onChangeView={ setView }
+					onChangeView={ onChangeView }
 					items={ pluginsWithIcon }
 					resetScroll={ false }
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
