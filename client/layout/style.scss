@@ -163,6 +163,13 @@ body.is-mobile-app-view {
 		display: none;
 	}
 }
+
+.layout.has-msd-header {
+	.layout__secondary {
+		top: 61px;
+	}
+}
+
 // Setup the secondary element, which contains the sidebar and
 // the site-selector elements.
 .layout__secondary {

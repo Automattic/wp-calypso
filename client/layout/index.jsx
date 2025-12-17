@@ -1,4 +1,6 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
@@ -17,6 +19,10 @@ import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
+import { onLogout } from 'calypso/dashboard/app/auth/utils';
+import BaseHeader from 'calypso/dashboard/app/header/base-header';
+import DotcomLogo from 'calypso/dashboard/app-dotcom/logo.tsx';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
@@ -33,9 +39,10 @@ import {
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { isReaderMSDHeaderEnabled } from 'calypso/reader/utils';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
@@ -161,6 +168,22 @@ class Layout extends Component {
 		refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
 	}
 
+	handleMSDHeaderNavigation = ( path ) => {
+		if ( this.props.dashboardOptIn ) {
+			window.location.href = dashboardLink( path );
+			return;
+		}
+
+		// Translate MSD routes to Calypso if different.
+		switch ( path ) {
+			case '/me/preferences':
+				path = '/me/account';
+				break;
+		}
+
+		page( path );
+	};
+
 	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
@@ -176,6 +199,21 @@ class Layout extends Component {
 
 		if ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) {
 			return null;
+		}
+
+		if ( isReaderMSDHeaderEnabled() && this.props.dashboardOptIn ) {
+			return (
+				<BaseHeader
+					appName="WordPress.com"
+					hidePrimaryMenu
+					Logo={ DotcomLogo }
+					supports={ { reader: true, help: true, notifications: true } }
+					logout={ () => onLogout( this.props.currentUser ) }
+					navigateTo={ this.handleMSDHeaderNavigation }
+					recordTracksEvent={ recordTracksEvent }
+					user={ this.props.currentUser }
+				/>
+			);
 		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
@@ -213,6 +251,7 @@ class Layout extends Component {
 			'a8c-for-agencies': isA4AOAuth2Client( this.props.oauth2Client ),
 			crowdsignal: isCrowdsignalOAuth2Client( this.props.oauth2Client ),
 			'is-support-session': this.props.isSupportSession,
+			'has-msd-header': isReaderMSDHeaderEnabled() && this.props.dashboardOptIn,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden,
 			'has-universal-header': this.props.hasUniversalHeader,
@@ -460,6 +499,7 @@ export default withCurrentRoute(
 			isFromAutomatticForAgenciesPlugin,
 			isEligibleForJITM,
 			isBlazePro,
+			currentUser: getCurrentUser( state ),
 			oauth2Client,
 			wccomFrom,
 			isLoggedIn,
@@ -487,6 +527,7 @@ export default withCurrentRoute(
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			isGravatarDomain,
 			hasUniversalHeader,
+			dashboardOptIn,
 		};
 	} )( Layout )
 );
