@@ -57,6 +57,8 @@ export default function HelpCenterLoader( {
 							pressableId: agency?.third_party?.pressable?.pressable_id,
 					  }
 					: null,
+				disableChatSupport: true,
+				hideMoreResources: true,
 		  }
 		: {};
 
