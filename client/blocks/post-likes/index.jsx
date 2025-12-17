@@ -33,7 +33,9 @@ class PostLikes extends PureComponent {
 	renderLike = ( like ) => {
 		const { showDisplayNames } = this.props;
 
-		const likeUrl = like.login ? this.getCalypsoUrl( getUserProfileUrl( like.login ) ) : null;
+		// Only create a link if the user has a valid login (not empty or whitespace-only)
+		const hasValidLogin = like.login && like.login.trim().length > 0;
+		const likeUrl = hasValidLogin ? this.getCalypsoUrl( getUserProfileUrl( like.login ) ) : null;
 		const LikeWrapper = likeUrl ? 'a' : 'span';
 
 		return (
