@@ -115,6 +115,27 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 		expect( result.current ).toEqual( { credits: 300, source: 'other-upgrades' } );
 	} );
 
+	test( 'does not infer combined source when domain proration exists alongside a non-coupon discount (without explicit plan proration override)', () => {
+		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 700 );
+		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+			data: {
+				free_plan: {
+					pricing: {
+						costOverrides: [
+							{ overrideCode: Plans.COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION },
+						],
+						hasSaleCoupon: false,
+						discountedPrice: { full: 900, monthly: 75 },
+						originalPrice: { full: 1600, monthly: 133.33 },
+					},
+				},
+			},
+		} as unknown as SitePlansQueryResult );
+
+		const { result } = renderHookWithProvider( () => useUpgradeCreditsNoticeData( siteId, [] ) );
+		expect( result.current ).toEqual( { credits: 700, source: 'domain' } );
+	} );
+
 	test( 'returns combined source when both proration reasons exist', () => {
 		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 700 );
 		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
