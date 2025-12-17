@@ -150,8 +150,7 @@ export default function CheckoutMain( {
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
-		Boolean( isLoggedOutCart || isNoSiteCart ) &&
-		( ! isSiteless || sitelessCheckoutType === 'a4a' ); // Allow account creation for A4A siteless checkout when user is logged out (express mode)
+		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isSiteless;
 	const reduxDispatch = useDispatch();
 
 	const updatedSiteSlug = useMemo( () => {
