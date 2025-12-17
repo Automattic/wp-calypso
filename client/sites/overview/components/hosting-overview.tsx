@@ -51,7 +51,6 @@ const HostingOverview: FC = () => {
 			{ site?.ID && (
 				<PlanNoticeUpgradeCredit
 					className="hosting-overview__domain-to-plan-credit-notice"
-					context="overview"
 					siteId={ site.ID }
 				/>
 			) }

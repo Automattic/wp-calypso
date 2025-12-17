@@ -45,10 +45,6 @@ function hasOtherUpgradesPurchase( sitePurchases: Purchase[] | undefined ): bool
 type Props = {
 	className?: string;
 	onDismissClick?: () => void;
-	/**
-	 * Where this notice is rendered. Used to pick copy that matches the surrounding UI.
-	 */
-	context?: 'plans' | 'overview';
 	siteId: number;
 	visiblePlans?: PlanSlug[];
 	intent?: PlansIntent;
@@ -57,7 +53,6 @@ type Props = {
 const PlanNoticeUpgradeCredit = ( {
 	className,
 	onDismissClick,
-	context = 'plans',
 	siteId,
 	visiblePlans,
 	intent,
@@ -91,11 +86,7 @@ const PlanNoticeUpgradeCredit = ( {
 			<QuerySitePurchases siteId={ siteId } />
 			{ isUpgradeFlow ? (
 				<div className="plan-upgrade-credit-notice-compact">
-					<UpgradeCreditsNoticeText
-						context={ context }
-						variant="compact"
-						amountInCurrency={ amountInCurrency }
-					/>
+					<UpgradeCreditsNoticeText variant="compact" amountInCurrency={ amountInCurrency } />
 				</div>
 			) : (
 				<Notice
@@ -107,7 +98,6 @@ const PlanNoticeUpgradeCredit = ( {
 					theme="light"
 				>
 					<UpgradeCreditsNoticeText
-						context={ context }
 						variant="full"
 						source={ effectiveSource }
 						amountInCurrency={ amountInCurrency }
