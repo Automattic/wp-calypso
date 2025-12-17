@@ -115,7 +115,8 @@ body.is-mobile-app-view {
 		padding-inline-end: 1.5em;
 
 		&.masterbar--is-akismet,
-		&.masterbar--is-jetpack {
+		&.masterbar--is-jetpack,
+		&.masterbar--is-a4a {
 			padding-inline-start: 1.5em;
 		}
 
@@ -1085,7 +1086,8 @@ a.masterbar__quick-language-switcher {
 	align-items: center;
 
 	.masterbar--is-akismet &,
-	.masterbar--is-jetpack & {
+	.masterbar--is-jetpack &,
+	.masterbar--is-a4a & {
 		column-gap: 1em;
 	}
 
@@ -1140,7 +1142,8 @@ a.masterbar__quick-language-switcher {
 			margin-left: 16px;
 		}
 
-		.masterbar--is-jetpack & {
+		.masterbar--is-jetpack &
+		.masterbar--is-a4a & {
 			transform: translateY(0.5px);
 		}
 

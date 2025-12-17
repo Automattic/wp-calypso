@@ -3,6 +3,7 @@ import { checkoutTheme } from '@automattic/composite-checkout';
 import { ThemeProvider } from '@emotion/react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import AkismetLogo from 'calypso/components/akismet-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -52,6 +53,10 @@ const CheckoutMasterbar = ( {
 			return 'akismet';
 		}
 
+		if ( window.location.pathname.startsWith( '/checkout/a4a' ) ) {
+			return 'a4a';
+		}
+
 		if ( isGravatarDomain ) {
 			return 'gravatar';
 		}
@@ -70,6 +75,7 @@ const CheckoutMasterbar = ( {
 				'masterbar--is-wpcom': checkoutType === 'wpcom',
 				'masterbar--is-jetpack': checkoutType === 'jetpack',
 				'masterbar--is-akismet': checkoutType === 'akismet',
+				'masterbar--is-a4a': checkoutType === 'a4a',
 			} ) }
 		>
 			<div className="masterbar__secure-checkout">
@@ -94,6 +100,7 @@ const CheckoutMasterbar = ( {
 				) }
 				{ checkoutType === 'akismet' && <AkismetLogo className="masterbar__akismet-wordmark" /> }
 				{ checkoutType === 'gravatar' && <GravatarTextLogo /> }
+				{ checkoutType === 'a4a' && <A4ALogo full size={ 14 } /> }
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
