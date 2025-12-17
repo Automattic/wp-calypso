@@ -43,9 +43,13 @@ const ReaderHeader = () => {
 				>
 					{ isDesktop ? __( 'Reader' ) : null }
 				</Button>
-				{ user && <Notifications user={ user } className="dashboard-secondary-menu__item" /> }
-				{ user && <HelpCenter user={ user } /> }
-				{ user && <UserProfile user={ user } /> }
+				{ user && (
+					<>
+						<Notifications user={ user } className="dashboard-secondary-menu__item" />
+						<HelpCenter user={ user } />
+						<UserProfile user={ user } />
+					</>
+				) }
 			</HStack>
 		</HStack>
 	);
