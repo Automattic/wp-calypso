@@ -129,15 +129,17 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				>
 					<Spinner />
 				</div>
-				<ChatMessage
-					message={ getOdieInitialMessage(
-						supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,
-						currentUser?.display_name
-					) }
-					key={ 0 }
-					currentUser={ currentUser }
-					displayChatWithSupportLabel={ false }
-				/>
+				{ ( chat.odieId || chat.provider !== 'zendesk' ) && (
+					<ChatMessage
+						message={ getOdieInitialMessage(
+							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,
+							currentUser?.display_name
+						) }
+						key={ 0 }
+						currentUser={ currentUser }
+						displayChatWithSupportLabel={ false }
+					/>
+				) }
 				{ chat.messages?.length > 0 && <MessagesClusterizer messages={ chat.messages } /> }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
