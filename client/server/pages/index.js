@@ -1090,7 +1090,7 @@ export default function pages() {
 	}
 
 	// Multi-site Dashboard routing for development {calypso.localhost, wpcalypso.wordpress.com}.
-	if ( config.isEnabled( 'dashboard/v2' ) ) {
+	if ( calypsoEnv !== 'production' && config.isEnabled( 'dashboard/v2' ) ) {
 		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
 			app.get(
 				pathToRegExp( sectionPath ),
@@ -1108,11 +1108,34 @@ export default function pages() {
 				return req.get( 'host' ).startsWith( 'my.localhost' );
 			} );
 		} );
-		handleRoute( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom', ( req ) => {
-			// Deprecated: allow dashboard routes under {calypso.localhost, wpcalypso.wordpress.com}/v2.
-			return ! req.get( 'host' ).startsWith( 'my.localhost' );
+
+		handleRoute( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
+			// Allow CIAB routes under my.localhost.
+			return req.get( 'host' ).startsWith( 'my.localhost' );
 		} );
-		handleRoute( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
+
+		// Temporary support redirection for /ciab route for backwards compatibility with old testing links.
+		// TODO: Remove this once we no longer need to support the old testing link.
+		app.get( [ '/ciab', '/ciab/*' ], ( req, res, next ) => {
+			const host = req.get( 'host' );
+			const query = Object.keys( req.query ).length > 0 ? `?${ stringify( req.query ) }` : '';
+			const dashboardPath = req.path.startsWith( '/v2' ) ? req.path.replace( '/v2', '' ) : req.path;
+
+			if ( host.startsWith( 'calypso.localhost' ) ) {
+				const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
+				const port = host.includes( ':' ) ? host.substring( host.indexOf( ':' ) ) : ':3000';
+
+				const redirectUrl = `${ protocol }://my.localhost${ port }${ dashboardPath }${ query }`;
+				return res.redirect( 301, redirectUrl );
+			}
+
+			if ( host.startsWith( 'wpcalypso.wordpress.com' ) ) {
+				const redirectUrl = `https://my.wordpress.com${ dashboardPath }${ query }`;
+				return res.redirect( 301, redirectUrl );
+			}
+
+			next();
+		} );
 	}
 
 	sections
