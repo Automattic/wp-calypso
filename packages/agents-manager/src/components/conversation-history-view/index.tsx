@@ -9,13 +9,12 @@ import { __ } from '@wordpress/i18n';
 import useConversationList from '../../hooks/use-conversation-list';
 import ConversationListItem from '../conversation-list-item';
 import ConversationListSkeleton from '../conversation-list-skeleton';
-import type { ConversationType } from '../../types';
 import './style.scss';
 
 interface Props {
 	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;
-	onSelectConversation: ( type: ConversationType, id: string ) => void;
+	onSelectConversation: ( sessionId: string ) => void;
 	onNewChat: () => void;
 }
 
@@ -29,7 +28,7 @@ export default function ConversationHistoryView( {
 	const onSelectConversationRef = useRef( onSelectConversation );
 	onSelectConversationRef.current = onSelectConversation;
 
-	const { conversations, status } = useConversationList( {
+	const { conversations, isLoading, isError } = useConversationList( {
 		agentId,
 		authProvider,
 	} );
@@ -38,19 +37,19 @@ export default function ConversationHistoryView( {
 		<div className="agents-manager-conversation-history-view">
 			<div className="agents-manager-conversation-history-view__content">
 				{ /* Status states: error, loading, empty */ }
-				{ status === 'error' && (
+				{ isError && (
 					<div className="agents-manager-conversation-history-view__error">
 						<p>
 							{ __( 'Failed to load conversations. Please try again.', '__i18n_text_domain__' ) }
 						</p>
 					</div>
 				) }
-				{ status === 'loading' && (
+				{ isLoading && (
 					<div className="agents-manager-conversation-history-view__loading">
 						<ConversationListSkeleton count={ 5 } />
 					</div>
 				) }
-				{ status === 'empty' && (
+				{ ! isLoading && ! isError && ! conversations.length && (
 					<div className="agents-manager-conversation-history-view__empty">
 						<p>{ __( 'No past conversations', '__i18n_text_domain__' ) }</p>
 						<p className="agents-manager-conversation-history-view__empty-hint">
@@ -60,13 +59,13 @@ export default function ConversationHistoryView( {
 				) }
 
 				{ /* Conversation list */ }
-				{ status === 'success' && (
+				{ ! isLoading && ! isError && conversations.length && (
 					<div className="agents-manager-conversation-history-view__list">
 						{ conversations.map( ( conversation ) => (
 							<ConversationListItem
-								key={ conversation.id }
+								key={ conversation.session_id }
 								conversation={ conversation }
-								onClick={ ( type, id ) => onSelectConversationRef.current( type, id ) }
+								onClick={ ( sessionId ) => onSelectConversationRef.current( sessionId ) }
 							/>
 						) ) }
 					</div>

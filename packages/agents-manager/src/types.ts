@@ -11,21 +11,3 @@ export type {
 	ContextEntry,
 	Suggestion,
 } from './extension-types';
-
-export type ConversationType = 'orchestrator' | 'odie' | 'zendesk';
-
-export interface Conversation {
-	type: ConversationType;
-	id: string;
-	createdAt: number;
-	message: {
-		received: number;
-		role: string;
-		text: string;
-	};
-	supportInteraction?: {
-		id: string;
-		status: string;
-		createdAt: number;
-	};
-}

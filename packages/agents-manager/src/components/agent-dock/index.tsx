@@ -23,7 +23,6 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
-import type { ConversationType } from '../../types';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 
 /**
@@ -72,7 +71,9 @@ export default function AgentDock( {
 	}, [] );
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
-	const { agentId, sessionId } = agentConfig;
+
+	const sessionId = agentConfig.sessionId;
+	const agentId = agentConfig.agentId;
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager();
@@ -124,20 +125,10 @@ export default function AgentDock( {
 		navigate( '/' );
 	};
 
-	const handleSelectConversation = ( type: ConversationType, id: string ) => {
-		switch ( type ) {
-			case 'orchestrator':
-				abortCurrentRequest();
-				setSessionId( id );
-				navigate( '/chat', { state: { sessionId: id } } );
-				break;
-			case 'odie':
-				navigate( `/odie?odieInteractionId=${ id }` );
-				break;
-			case 'zendesk':
-				// TODO: Handle Zendesk conversation selection...
-				break;
-		}
+	const handleSelectConversation = ( sessionId: string ) => {
+		abortCurrentRequest();
+		setSessionId( sessionId );
+		navigate( '/chat', { state: { sessionId } } );
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {

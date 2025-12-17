@@ -5,32 +5,31 @@
 import { getShortDateString } from '@automattic/i18n-utils';
 import { __, sprintf } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
-import type { ConversationType } from '../types';
 
 /**
  * Check if two dates represent the same calendar day in the user's local timezone
+ * @param date1 - First date to compare
+ * @param date2 - Second date to compare
+ * @returns true if both dates are on the same calendar day
  */
 function isSameLocalDay( date1: Date, date2: Date ): boolean {
-	const d1 = new Date( date1 );
-	const d2 = new Date( date2 );
-	d1.setHours( 0, 0, 0, 0 );
-	d2.setHours( 0, 0, 0, 0 );
-
-	return d1.getTime() === d2.getTime();
+	return date1.toDateString() === date2.toDateString();
 }
 
 /**
- * Format a timestamp for display in conversation list
+ * Format a datetime string for display in conversation list
  * Shows "Today", "Yesterday", or localized date string
- * @param timestamp - Unix timestamp in seconds
+ * @param dateTime - MySQL datetime string (e.g., "2025-12-17 13:08:44")
+ * @returns Formatted date string ("Today", "Yesterday", or localized date)
  */
-function formatConversationDate( timestamp: number ): string {
-	if ( ! timestamp || timestamp < 0 ) {
+function formatConversationDate( dateTime: string ): string {
+	const date = new Date( dateTime );
+
+	// Return empty string for invalid dates
+	if ( isNaN( date.getTime() ) ) {
 		return '';
 	}
 
-	const timestampMs = timestamp * 1000;
-	const date = new Date( timestampMs );
 	const today = new Date();
 
 	if ( isSameLocalDay( date, today ) ) {
@@ -44,7 +43,7 @@ function formatConversationDate( timestamp: number ): string {
 		return __( 'Yesterday', '__i18n_text_domain__' );
 	}
 
-	return getShortDateString( timestampMs, getLocaleSlug() ?? 'en' );
+	return getShortDateString( date.getTime(), getLocaleSlug() ?? 'en' );
 }
 
 /**
@@ -64,14 +63,15 @@ export function generateConversationTitle( messageContent: string ): string {
 }
 
 /**
- * Generate a conversation subtitle based on the conversation type and timestamp
- * @param type - The conversation type
- * @param timestamp - Unix timestamp in seconds
+ * Generate a conversation subtitle based on the conversation type and datetime
+ * @param dateTime - MySQL datetime string (e.g., "2025-12-17 13:08:44")
+ * @param isHe - Whether this is a Happiness Engineer chat
+ * @returns Formatted subtitle string
  */
-export function generateConversationSubtitle( type: ConversationType, timestamp: number ): string {
-	const date = formatConversationDate( timestamp );
+export function generateConversationSubtitle( dateTime: string, isHe?: boolean ): string {
+	const date = formatConversationDate( dateTime );
 
-	if ( type === 'zendesk' ) {
+	if ( isHe ) {
 		return sprintf(
 			/* translators: %s: date of the conversation */
 			__( 'Happiness chat · %s', '__i18n_text_domain__' ),

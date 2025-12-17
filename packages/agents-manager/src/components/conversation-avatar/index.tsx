@@ -5,22 +5,21 @@
 
 import { SVG, Path } from '@wordpress/primitives';
 import clsx from 'clsx';
-import type { ConversationType } from '../../types';
 import './style.scss';
 
 interface Props {
-	type: ConversationType;
+	isHe?: boolean;
 	className?: string;
 }
 
-export default function ConversationAvatar( { type, className = '' }: Props ) {
+export default function ConversationAvatar( { isHe, className = '' }: Props ) {
 	const fullClassName = clsx(
 		'agents-manager-conversation-avatar',
-		`agents-manager-conversation-avatar--${ type }`,
+		{ 'agents-manager-conversation-avatar--he': isHe },
 		className
 	);
 
-	if ( type === 'zendesk' ) {
+	if ( isHe ) {
 		// Happiness Engineer - Blue circle with WordPress icon
 		return (
 			<div className={ fullClassName }>
@@ -44,7 +43,7 @@ export default function ConversationAvatar( { type, className = '' }: Props ) {
 		);
 	}
 
-	// Orchestrator and Odie - Gray circle with sparkle icon
+	//  Default avatar - Gray circle with sparkle icon
 	return (
 		<div className={ fullClassName }>
 			<SVG
