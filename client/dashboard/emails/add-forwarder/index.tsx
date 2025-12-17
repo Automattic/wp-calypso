@@ -82,7 +82,7 @@ function AddEmailForwarder() {
 	);
 	const {
 		isLoading: isLoadingNewForwardingAddresses,
-		mailboxForwardsSet,
+		forwardsByMailbox,
 		newForwardingAddresses,
 	} = useForwardingAddresses( {
 		domains: eligibleDomains,
@@ -143,12 +143,9 @@ function AddEmailForwarder() {
 		( forwards?.length ?? 0 ) + forwardingAddresses.length >
 		( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
 
-	const forwardingAddressesSet = new Set(
-		forwardingAddresses.map( ( addr ) => `${ mailbox }-${ addr }` )
+	const duplicateForwardAddresses = forwardingAddresses.filter(
+		( addr ) => forwardsByMailbox.get( mailbox )?.includes( addr )
 	);
-	const duplicateForwardAddresses = Array.from( forwardingAddressesSet )
-		.filter( ( addr ) => mailboxForwardsSet.has( addr ) )
-		.map( ( entry ) => entry.split( '-' )[ 1 ] );
 
 	const { isValid: isFormValid } = useFormValidity( formData, fields, form );
 	const isValid =
