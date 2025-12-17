@@ -97,8 +97,11 @@ export default function ContactDetailsContainer( {
 		responseCart.products.some( ( product ) => product.extra?.isA4ASitelessCheckout );
 
 	// Disable email field if we're in A4A express checkout and email is already set (from referral)
-	const isEmailDisabledForA4A =
-		isA4AExpressCheckout && contactDetails.email && contactDetails.email.trim() !== '';
+	const isEmailDisabledForA4A = !! (
+		isA4AExpressCheckout &&
+		contactDetails.email &&
+		contactDetails.email.trim() !== ''
+	);
 
 	switch ( contactDetailsType ) {
 		case 'domain':
