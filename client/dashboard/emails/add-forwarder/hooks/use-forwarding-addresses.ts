@@ -18,12 +18,10 @@ export const useForwardingAddresses = ( {
 
 	const isLoading = emailForwardersQueries.some( ( q ) => q.isLoading );
 	const forwards = emailForwardersQueries.flatMap( ( q ) => q.data?.forwards ?? [] );
-
-	const forwardsByMailbox = forwards.reduce( ( acc, f ) => {
-		acc.set( f.email, f.forward_address );
+	const mailboxForwardsSet = forwards.reduce( ( acc, f ) => {
+		acc.add( `${ f.email }-${ f.forward_address }` );
 		return acc;
-	}, new Map< string, string >() );
-
+	}, new Set< string >() );
 	const uniqueEmailForwarders = useMemo(
 		() => Array.from( new Set( forwards.map( ( f ) => f.forward_address ) ) ),
 		[ forwards ]
@@ -33,5 +31,5 @@ export const useForwardingAddresses = ( {
 		( addr ) => ! uniqueEmailForwarders.includes( addr )
 	);
 
-	return { isLoading, forwardsByMailbox, newForwardingAddresses };
+	return { isLoading, mailboxForwardsSet, newForwardingAddresses };
 };

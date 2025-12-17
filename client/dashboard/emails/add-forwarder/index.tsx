@@ -73,6 +73,7 @@ function AddEmailForwarder() {
 		domain: '',
 		forwardingAddresses: [],
 	} );
+	const mailbox = `${ formData.localPart }@${ formData.domain }`;
 	const [ untokenizedInput, setUntokenizedInput ] = useState< string >( '' );
 	const isUntokenizedInputValidEmail = emailValidator.validate( untokenizedInput );
 	const forwardingAddresses = formData.forwardingAddresses.concat(
@@ -80,7 +81,7 @@ function AddEmailForwarder() {
 	);
 	const {
 		isLoading: isLoadingNewForwardingAddresses,
-		forwardsByMailbox,
+		mailboxForwardsSet,
 		newForwardingAddresses,
 	} = useForwardingAddresses( {
 		domains: eligibleDomains,
@@ -141,9 +142,12 @@ function AddEmailForwarder() {
 		( forwards?.length ?? 0 ) + forwardingAddresses.length >
 		( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
 
-	const duplicateForwardAddress = forwardingAddresses.find(
-		( addr ) => forwardsByMailbox.get( `${ formData.localPart }@${ formData.domain }` ) === addr
+	const forwardingAddressesSet = new Set(
+		forwardingAddresses.map( ( addr ) => `${ mailbox }-${ addr }` )
 	);
+	const duplicateForwardAddresses = Array.from( forwardingAddressesSet )
+		.filter( ( addr ) => mailboxForwardsSet.has( addr ) )
+		.map( ( entry ) => entry.split( '-' )[ 1 ] );
 
 	const { isValid: isFormValid } = useFormValidity( formData, fields, form );
 	const isValid =
@@ -151,7 +155,7 @@ function AddEmailForwarder() {
 		( isUntokenizedInputValidEmail || untokenizedInput.trim() === '' ) &&
 		! isDomainMaxForwardsReached &&
 		! willDomainMaxForwardsBeReached &&
-		! duplicateForwardAddress;
+		! duplicateForwardAddresses.length;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -342,16 +346,18 @@ function AddEmailForwarder() {
 									</Notice>
 								) }
 
-								{ duplicateForwardAddress && (
+								{ duplicateForwardAddresses.length && (
 									<Notice variant="error">
 										{ sprintf(
 											// translators: %(mailbox)s is the email address the user is attempting to add a forwarder for, %(forwardingAddress)s is the duplicate forwarding email address.
-											__(
-												'There is already a forwarding set from %(mailbox)s to %(forwardingAddress)s. Please remove the duplicate and try again.'
+											_n(
+												'There is already a forwarding set from %(mailbox)s to %(forwardingAddress)s. Please remove the duplicate and try again.',
+												'There are already forwardings set from %(mailbox)s to %(forwardingAddress)s. Please remove the duplicates and try again.',
+												duplicateForwardAddresses.length
 											),
 											{
-												mailbox: `${ formData.localPart }@${ formData.domain }`,
-												forwardingAddress: duplicateForwardAddress,
+												mailbox,
+												forwardingAddress: duplicateForwardAddresses.join( ', ' ),
 											}
 										) }
 									</Notice>
