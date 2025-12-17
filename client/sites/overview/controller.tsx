@@ -1,14 +1,35 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { isDashboardEnabled } from 'calypso/state/dashboard/selectors/is-dashboard-enabled';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
+import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
 import DashboardBackportSiteOverview from '../v2/site-overview';
 import HostingOverview from './components/hosting-overview';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 import type { SiteExcerptData } from '@automattic/sites';
+import type { CalypsoDispatch, IAppState } from 'calypso/state/types';
 
-export function overview( context: PageJSContext, next: () => void ) {
+// Helper thunk that ensures that the user preferences has been fetched into Redux state before we
+// continue working with it.
+const waitForPrefs = () => async ( dispatch: CalypsoDispatch, getState: () => IAppState ) => {
+	if ( hasReceivedRemotePreferences( getState() ) ) {
+		return;
+	}
+
+	try {
+		await dispatch( fetchPreferences() );
+	} catch {
+		// if the fetching of preferences fails, return gracefully and proceed to the next landing page candidate
+	}
+};
+
+function overview( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<>
 			<PageViewTracker title="Sites > Overview" path={ getRouteFromContext( context ) } />
@@ -16,6 +37,23 @@ export function overview( context: PageJSContext, next: () => void ) {
 		</>
 	);
 	next();
+}
+
+export function redirectToSiteOverview( context: PageJSContext ) {
+	const { dispatch, getState } = context.store;
+	const path = `/sites/${ context.params.site }`;
+
+	if ( ! isDashboardEnabled( getState() ) ) {
+		return page.redirect( path );
+	}
+
+	dispatch( waitForPrefs() ).finally( () => {
+		if ( hasDashboardOptIn( getState() ) ) {
+			window.location.replace( dashboardLink( path ) );
+			return;
+		}
+		return page.redirect( path );
+	} );
 }
 
 /**
