@@ -8,9 +8,7 @@ export function useStillNeedHelpURL() {
 
 	let url = '/contact-form';
 
-	if ( isA8CForAgencies() ) {
-		url = '/a4a-contact-form';
-	} else if ( shouldUseWapuu ) {
+	if ( shouldUseWapuu && ! isA8CForAgencies() ) {
 		url = '/odie';
 	}
 

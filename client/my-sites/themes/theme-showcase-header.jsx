@@ -6,7 +6,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InstallThemeButton from './install-theme-button';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
@@ -35,9 +35,9 @@ export default function ThemeShowcaseHeader( {
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const skipTitleFormatting = shouldSkipTitleFormatting( { filter, tier } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
-	const hostingDashboardOptIn = useSelector( ( state ) => hasHostingDashboardOptIn( state ) );
+	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
 	const shouldUseLoggedInHeader =
-		isEnabled( 'themes/universal-header' ) && hostingDashboardOptIn ? selectedSiteId : isLoggedIn;
+		isEnabled( 'themes/universal-header' ) && dashboardOptIn ? selectedSiteId : isLoggedIn;
 
 	const {
 		title: documentHeadTitle,

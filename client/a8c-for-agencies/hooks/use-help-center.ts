@@ -47,7 +47,7 @@ export default function useHelpCenter() {
 		const handleHashChange = () => {
 			if ( hasSupportFormHash && isEnabled( 'a4a-help-center' ) ) {
 				setShowHelpCenter( true );
-				setNavigateToRoute( '/a4a-contact-form' );
+				setNavigateToRoute( '/contact-form' );
 				history.pushState( null, '', window.location.pathname + window.location.search );
 			}
 		};

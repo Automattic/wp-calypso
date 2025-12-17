@@ -19,7 +19,7 @@ import type { Field, FormField } from '@wordpress/dataviews';
 const fields: Field< SiteSettings >[] = [
 	{
 		id: 'jetpack_holiday_snow_enabled',
-		label: __( 'Show falling snow on my site until January 4th' ),
+		label: __( 'Show falling snow on my site until January 6th' ),
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 			const { id, getValue } = field;
 			return (

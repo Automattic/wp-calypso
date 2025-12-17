@@ -12,15 +12,15 @@ import {
 import { PluginActionTypes } from 'calypso/my-sites/plugins/plugin-management-v2/types';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { Plugin, PluginSite } from 'calypso/state/plugins/installed/types';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { PluginActions } from '../hooks/types';
 
 export function useActions(
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void
 ) {
 	const dispatch = useDispatch();
-	const hostingDashboardOptIn = useSelector( ( state ) => hasHostingDashboardOptIn( state ) );
+	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
 	const recordIntentionEvent = ( plugins: Array< Plugin >, action: string ) => {
 		/**
 		 * There's currently no better way to differentiate between bulk and single action clicks.
@@ -52,7 +52,7 @@ export function useActions(
 				const pluginSlug = plugins?.[ 0 ]?.slug;
 				if ( pluginSlug ) {
 					const url = `/plugins/${ pluginSlug }`;
-					if ( isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn ) {
+					if ( isEnabled( 'plugins/universal-header' ) && dashboardOptIn ) {
 						window.open( url, '_blank' );
 					} else {
 						navigate( url );
@@ -60,7 +60,7 @@ export function useActions(
 				}
 			},
 			label:
-				isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn
+				isEnabled( 'plugins/universal-header' ) && dashboardOptIn
 					? translate( 'Manage plugin ↗' )
 					: translate( 'Manage plugin' ),
 			isExternalLink: true,

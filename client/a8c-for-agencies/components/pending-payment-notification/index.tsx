@@ -90,6 +90,8 @@ export default function PendingPaymentNotification( { isFullWidth }: { isFullWid
 			level={ level }
 			title={ title }
 			hideCloseButton
+			allowTemporaryDismissal
+			preferenceName="pending-payment-notification-temporary-dismissed"
 		>
 			<div>{ description }</div>
 			<Button className="is-dark" href={ A4A_INVOICES_LINK }>

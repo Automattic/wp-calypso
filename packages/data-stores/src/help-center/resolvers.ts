@@ -20,7 +20,7 @@ type Preferences = {
 
 export function* isHelpCenterShown() {
 	try {
-		const { calypso_preferences: preferences }: Preferences = canAccessWpcomApis()
+		const allPreferences: Preferences | Preferences[ 'calypso_preferences' ] = canAccessWpcomApis()
 			? yield wpcomRequest( {
 					path: '/me/preferences',
 					apiNamespace: 'wpcom/v2',
@@ -29,6 +29,9 @@ export function* isHelpCenterShown() {
 					global: true,
 					path: '/help-center/open-state',
 			  } as APIFetchOptions );
+
+		const preferences =
+			'calypso_preferences' in allPreferences ? allPreferences.calypso_preferences : allPreferences;
 
 		const route: string | null | undefined = yield controls.select(
 			STORE_KEY,

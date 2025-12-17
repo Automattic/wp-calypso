@@ -25,6 +25,7 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		pageAddPeople,
 		pageInvitePeople,
 		accountPreRelease,
+		helperData,
 	} ) => {
 		await test.step( 'Given I am logged in as a site owner', async function () {
 			await accountPreRelease.authenticate( page );
@@ -56,10 +57,14 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 			}
 		} );
 
-		await test.step( 'Then I can see the invite is pending', async function () {
+		await test.step( 'When I navigate to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
 			! userManagementRevampFeature && ( await pagePeople.clickTab( 'Invites' ) );
-			await pagePeople.selectInvitedUser( testUser.email );
+			await pagePeople.clickViewAllIfAvailable();
+		} );
+
+		await test.step( 'Then I can see the invite is pending', async function () {
+			await pagePeople.expectInvitation( testUser.email );
 		} );
 
 		await test.step( 'When the invited user checks their email', async function () {
@@ -74,28 +79,39 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 			expect( acceptInviteLink ).toBeDefined();
 		} );
 
+		let signedUpUsername: string;
+
 		await test.step( 'And they sign up from the invite link', async function () {
 			await pageIncognito.goto( acceptInviteLink );
 
 			const userSignupPage = new UserSignupPage( pageIncognito.getPage() );
-			await userSignupPage.signupThroughInvite( testUser.email );
+			const signUpResponse = await userSignupPage.signupThroughInvite( testUser.email );
+
+			signedUpUsername = signUpResponse?.body?.username;
+			expect( signedUpUsername ).toBeDefined();
 		} );
 
 		await test.step( 'Then they see a welcome banner after signup', async function () {
-			const bannerText = `You're now an ${ role } of: `;
-			await pageIncognito.getPage().waitForSelector( `:has-text("${ bannerText }")` );
+			await expect(
+				pageIncognito.getPage().getByText( `You're now an ${ role } of: ` )
+			).toBeVisible();
 		} );
 
 		await test.step( 'When I navigate back to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
 		} );
 
-		await test.step( 'Then I can see the invited user in the team', async function () {
-			await pagePeople.selectUser( testUser.username );
+		await test.step( 'Then I can see the invited user part of the team', async function () {
+			// Use direct navigation to avoid finding the user when there are over 100 team members piled up.
+			await pagePeople.visitTeamMemberUserDetails(
+				helperData.getCalypsoURL(),
+				accountPreRelease.credentials.testSites?.primary?.url as string,
+				signedUpUsername
+			);
 		} );
 
-		await test.step( 'When I remove the invited user from the site', async function () {
-			await pagePeople.deleteUser( testUser.username );
+		await test.step( 'Then I can remove the team member from the site', async function () {
+			await pagePeople.removeUserFromSite( signedUpUsername );
 		} );
 
 		await test.step( 'And the invited user closes their account', async function () {
