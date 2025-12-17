@@ -83,7 +83,7 @@ const PlanNoticeUpgradeCredit = ( {
 			? 'domain-and-other-upgrades'
 			: upgradeCreditsNoticeData?.source;
 
-	const getFullNoticeText = () => {
+	const fullNoticeText = ( () => {
 		switch ( effectiveSource ) {
 			case 'plan':
 				return translate(
@@ -119,7 +119,7 @@ const PlanNoticeUpgradeCredit = ( {
 					}
 				);
 		}
-	};
+	} )();
 
 	return (
 		<>
@@ -140,7 +140,7 @@ const PlanNoticeUpgradeCredit = ( {
 					status="is-success"
 					theme="light"
 				>
-					{ getFullNoticeText() }
+					{ fullNoticeText }
 				</Notice>
 			) }
 		</>
