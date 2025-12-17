@@ -15,6 +15,10 @@ export const getIsRequestingHumanSupport = ( message: Message ) => {
 	return message.context?.flags?.forward_to_human_support ?? false;
 };
 
+export const getIsErrorMessage = ( message: Message ) => {
+	return message.context?.flags?.is_error_message ?? false;
+};
+
 export const getIsLastBotMessage = ( chat: Chat, message: Message ) => {
 	return (
 		chat?.messages?.length > 0 &&

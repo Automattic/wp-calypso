@@ -23,6 +23,8 @@ export const MissingPaymentSettingsNotice = () => {
 			title={ translate( 'Add your payout information to get paid.' ) }
 			className="missing-payment-settings-notice"
 			hideCloseButton
+			allowTemporaryDismissal
+			preferenceName="missing-payment-settings-notice-temporary-dismissed"
 		>
 			<div>
 				{ translate(

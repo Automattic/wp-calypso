@@ -11,6 +11,9 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import { useDomainConnectionSetupTemplateUrl } from '../../utils/domain';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { ShareSiteForm } from './share-site-form';
 import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
@@ -115,6 +118,7 @@ const robotForm = {
 } satisfies Form;
 
 export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
+	const domainConnectionSetupUrl = useDomainConnectionSetupTemplateUrl();
 	const { data: domains = [] } = useQuery( {
 		...domainsQuery(),
 		select: ( data ) => {
@@ -152,6 +156,20 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 		( [ key, value ] ) => formData[ key as keyof PrivacyFormData ] !== value
 	);
 	const { isPending } = mutation;
+
+	const getAddNewDomainUrl = () => {
+		const backUrl = redirectToDashboardLink( { supportBackport: true } );
+		if ( isDashboardBackport() ) {
+			return addQueryArgs( `/domains/add/${ site.slug }`, { redirect_to: backUrl } );
+		}
+
+		return addQueryArgs( wpcomLink( '/setup/domain' ), {
+			siteSlug: site.slug,
+			domainConnectionSetupUrl,
+			redirect_to: backUrl,
+			back_to: backUrl,
+		} );
+	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -208,12 +226,7 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 													{ __( 'Manage domains' ) }
 												</Button>
 											) : (
-												<Button
-													variant="secondary"
-													href={ addQueryArgs( `/domains/add/${ site.slug }`, {
-														redirect_to: window.location.pathname,
-													} ) }
-												>
+												<Button variant="secondary" href={ getAddNewDomainUrl() }>
 													{ __( 'Add new domain' ) }
 												</Button>
 											)

@@ -22,13 +22,13 @@ import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visibl
 import { PluginsFAQ } from 'calypso/my-sites/plugins/plugins-faq';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -113,9 +113,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
 		: __( 'Plugins' );
 	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
-	const hostingDashboardOptIn = useSelector( ( state ) => hasHostingDashboardOptIn( state ) );
+	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
 	const shouldUseLoggedInView =
-		isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn ? siteId : isLoggedIn;
+		isEnabled( 'plugins/universal-header' ) && dashboardOptIn ? siteId : isLoggedIn;
 
 	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 

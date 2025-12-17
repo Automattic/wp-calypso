@@ -9,21 +9,31 @@ import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { DataViewsCard } from '../../../components/dataviews';
+import { useDnsRecordNames } from '../hooks/use-dns-record-names';
 import type { Field, ViewTable } from '@wordpress/dataviews';
 
 import './dns-records-table-style.scss';
 
-const viewSuggested: ViewTable = {
+const baseSuggestedView: ViewTable = {
 	type: 'table',
 	page: 1,
-	fields: [ 'currentValue', 'expectedValue', 'status' ],
+	fields: [],
 	layout: {
 		enableMoving: false,
 	},
 };
 
+const getSuggestedView = ( includeName: boolean ): ViewTable => {
+	return {
+		...baseSuggestedView,
+		fields: includeName
+			? [ 'name', 'currentValue', 'expectedValue', 'status' ]
+			: [ 'currentValue', 'expectedValue', 'status' ],
+	};
+};
+
 const viewAdvanced: ViewTable = {
-	...viewSuggested,
+	...baseSuggestedView,
 	fields: [ 'type', 'name', 'currentValue', 'expectedValue', 'status' ],
 };
 
@@ -94,26 +104,35 @@ const fields: Field< DnsRecordVerification >[] = [
 	},
 ];
 
-const aRecordData = ( currentValue: string | null, expectedValue: string | null ) => {
+const aRecordData = ( currentValue: string | null, expectedValue: string | null, name: string ) => {
 	return {
 		type: 'A',
-		name: '@',
+		name,
 		currentValue: currentValue,
 		expectedValue: expectedValue,
 	};
 };
 
-const wwwCnameRecordData = ( currentValue: string | null, expectedValue: string | null ) => {
+const wwwCnameRecordData = (
+	currentValue: string | null,
+	expectedValue: string | null,
+	name: string
+) => {
 	return {
 		type: 'CNAME',
-		name: 'www',
+		name,
 		currentValue: currentValue,
 		expectedValue: expectedValue,
 	};
 };
 
-const nameServerRecordData = ( currentValue: string | null, expectedValue: string | null ) => {
+const nameServerRecordData = (
+	currentValue: string | null,
+	expectedValue: string | null,
+	name?: string
+) => {
 	return {
+		name,
 		currentValue: currentValue,
 		expectedValue: expectedValue,
 	};
@@ -131,6 +150,13 @@ export default function DnsRecordsTable( {
 	domainConnectionSetupInfo,
 }: DnsRecordVerificationProps ) {
 	const isSuggestedMode = domainConnectionStatus.mode === DomainConnectionSetupMode.SUGGESTED;
+	const isSubdomain = domainConnectionSetupInfo.is_subdomain;
+
+	const { recordName, cnameRecordName } = useDnsRecordNames( {
+		domainName,
+		isSubdomain,
+		rootDomain: domainConnectionSetupInfo.root_domain,
+	} );
 
 	const dnsRecords = useMemo( () => {
 		const data: DnsRecordVerification[] = [];
@@ -141,7 +167,13 @@ export default function DnsRecordsTable( {
 			const longestLength = Math.max( currentNameServers.length, expectedNameServers.length );
 
 			for ( let i = 0; i < longestLength; i++ ) {
-				data.push( nameServerRecordData( currentNameServers[ i ], expectedNameServers[ i ] ) );
+				data.push(
+					nameServerRecordData(
+						currentNameServers[ i ],
+						expectedNameServers[ i ],
+						isSubdomain ? recordName : undefined
+					)
+				);
 			}
 		} else {
 			const currentIpAddresses = ( domainConnectionStatus?.host_ip_addresses || [] ).sort();
@@ -149,22 +181,30 @@ export default function DnsRecordsTable( {
 			const longestLength = Math.max( currentIpAddresses.length, expectedIpAddresses.length );
 
 			for ( let i = 0; i < longestLength; i++ ) {
-				data.push( aRecordData( currentIpAddresses[ i ], expectedIpAddresses[ i ] ) );
+				data.push( aRecordData( currentIpAddresses[ i ], expectedIpAddresses[ i ], recordName ) );
 			}
 
 			const wwwCnameRecordTarget = domainConnectionStatus.www_cname_record_target;
-			data.push( wwwCnameRecordData( wwwCnameRecordTarget, domainName ) );
+			data.push( wwwCnameRecordData( wwwCnameRecordTarget, domainName, cnameRecordName ) );
 		}
 
 		return data;
-	}, [ domainName, domainConnectionStatus, domainConnectionSetupInfo, isSuggestedMode ] );
+	}, [
+		domainName,
+		domainConnectionStatus,
+		domainConnectionSetupInfo,
+		isSuggestedMode,
+		isSubdomain,
+		recordName,
+		cnameRecordName,
+	] );
 
 	return (
 		<DataViewsCard className="dns-records-table">
 			<DataViews< DnsRecordVerification >
 				data={ dnsRecords }
 				fields={ fields }
-				view={ isSuggestedMode ? viewSuggested : viewAdvanced }
+				view={ isSuggestedMode ? getSuggestedView( isSubdomain ) : viewAdvanced }
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ { totalItems: dnsRecords.length, totalPages: 1 } }
 				onChangeView={ () => {} }
