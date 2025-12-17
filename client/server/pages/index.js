@@ -1114,9 +1114,10 @@ export default function pages() {
 			return req.get( 'host' ).startsWith( 'my.localhost' );
 		} );
 
-		// Temporary support redirection for /ciab route for backwards compatibility with old testing links.
-		// TODO: Remove this once we no longer need to support the old testing link.
-		app.get( [ '/ciab', '/ciab/*' ], ( req, res, next ) => {
+		// Temporary support redirection for /v2 and /ciab routes for backwards compatibility.
+		// TODO: Remove /v2 once we have updated the E2E tests.
+		// TODO: Remove /ciab once we no longer need to support the old testing link.
+		app.get( [ '/v2', '/v2/*', '/ciab', '/ciab/*' ], ( req, res, next ) => {
 			const host = req.get( 'host' );
 			const query = Object.keys( req.query ).length > 0 ? `?${ stringify( req.query ) }` : '';
 			const dashboardPath = req.path.startsWith( '/v2' ) ? req.path.replace( '/v2', '' ) : req.path;
