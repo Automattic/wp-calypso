@@ -1,40 +1,36 @@
-import { useViewportMatch } from '@wordpress/compose';
-import { __, sprintf } from '@wordpress/i18n';
-import HeaderBar from '../../components/header-bar';
-import RouterLinkButton from '../../components/router-link-button';
+import { useNavigate } from '@tanstack/react-router';
 import { useAnalytics } from '../analytics';
+import { useAuth } from '../auth';
 import { useAppContext } from '../context';
-import PrimaryMenu from '../primary-menu';
-import SecondaryMenu from '../secondary-menu';
+import BaseHeader from './base-header';
 
+/**
+ * Header used in Multi Site Dashboard (v2).
+ */
 function Header() {
-	const { recordTracksEvent } = useAnalytics();
+	const { user, logout } = useAuth();
 	const { Logo, name } = useAppContext();
-	const isDesktop = useViewportMatch( 'medium' );
+	const navigate = useNavigate();
+	const { supports } = useAppContext();
+	const { recordTracksEvent } = useAnalytics();
+
+	/**
+	 * Takes care of the JS navigation inside the header.
+	 */
+	function handleNavigation( path: string ): void {
+		navigate( { to: path } );
+	}
 
 	return (
-		<HeaderBar as="header">
-			{ ! isDesktop && <PrimaryMenu /> }
-
-			{ Logo && (
-				<div style={ { display: 'flex', alignItems: 'center' } }>
-					<RouterLinkButton
-						/* translators: Screen reader text for link to root of the hosting dashboard. "name" is the product of whose hosting dashboard this is: e.g. WordPress.com */
-						aria-label={ sprintf( __( '%(name)s home' ), { name } ) }
-						icon={ <Logo /> }
-						to="/"
-						onClick={ () => {
-							recordTracksEvent( 'calypso_dashboard_logo_click' );
-						} }
-					/>
-				</div>
-			) }
-
-			<div style={ { flexGrow: 1 } }>{ isDesktop && <PrimaryMenu /> }</div>
-			<div style={ { flexShrink: 0 } }>
-				<SecondaryMenu />
-			</div>
-		</HeaderBar>
+		<BaseHeader
+			Logo={ Logo }
+			appName={ name }
+			supports={ supports }
+			user={ user }
+			navigateTo={ handleNavigation }
+			logout={ logout }
+			recordTracksEvent={ recordTracksEvent }
+		/>
 	);
 }
 
