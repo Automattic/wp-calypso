@@ -1140,7 +1140,7 @@ export default function pages() {
 
 	// Multi-site Dashboard routing for my.wordpress.com.
 	// Return earlier since we don't need to set up any other routes.
-	if ( config.isEnabled( 'dashboard' ) ) {
+	if ( isDashboard() ) {
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom' );
 		} );

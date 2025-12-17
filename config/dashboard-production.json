@@ -13,7 +13,6 @@
 	"features": {
 		"ciab/allow-domain-features": true,
 		"cookie-banner": true,
-		"dashboard": true,
 		"dashboard/v2": false
 	},
 	"enable_all_sections": false,
