@@ -6,13 +6,13 @@ import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
-import { useAuth } from '../auth';
-import { useLocale } from '../locale';
+import { useAuth } from '../../auth';
+import { useLocale } from '../../locale';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
-export default function Notifications( { className }: { className: string } ) {
+export default function NotificationsDropdown( { className }: { className: string } ) {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const locale = useLocale();
