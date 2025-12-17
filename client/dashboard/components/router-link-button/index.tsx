@@ -1,10 +1,43 @@
-import { createLink } from '@tanstack/react-router';
+import { createLink, LinkProps, useRouterState } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { ButtonProps } from '@wordpress/components/build-types/button/types';
 import { forwardRef } from 'react';
 
-function RouterLinkButton( props: ButtonProps, ref: React.Ref< HTMLAnchorElement > ) {
+function BaseButton( props: ButtonProps, ref: React.Ref< HTMLAnchorElement > ) {
 	return <Button ref={ ref } { ...props } />;
 }
 
-export default createLink( forwardRef( RouterLinkButton ) );
+const ButtonWithRouter = createLink( forwardRef( BaseButton ) );
+
+type RouterLinkButtonProps = LinkProps< 'a' > & ButtonProps & Omit< ButtonProps, 'href' >;
+
+/**
+ * RouterLinkButton - works with TanStack Router when available,
+ * falls back to regular anchor behavior for legacy Calypso routing.
+ */
+function RouterLinkButton( { to, children, ...props }: RouterLinkButtonProps ): JSX.Element {
+	let isTanstackRouterAvailable: boolean = false;
+	try {
+		useRouterState();
+		isTanstackRouterAvailable = true;
+	} catch {
+		isTanstackRouterAvailable = false;
+	}
+
+	if ( isTanstackRouterAvailable ) {
+		return (
+			<ButtonWithRouter to={ to } { ...props }>
+				{ children }
+			</ButtonWithRouter>
+		);
+	}
+
+	// Fallback to regular Button with href for legacy routing.
+	return (
+		<Button href={ typeof to === 'string' ? to : to?.pathname } { ...props }>
+			{ children }
+		</Button>
+	);
+}
+
+export default RouterLinkButton;
