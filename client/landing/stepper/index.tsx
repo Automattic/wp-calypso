@@ -17,7 +17,6 @@ import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { AsyncHelpCenterApp } from 'calypso/components/help-center';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
@@ -113,11 +112,9 @@ async function main() {
 	setupCountryCode();
 	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
-	const RENEWAL_PRICING_EXPERIMENT = 'international_pricing_2025'; //todo: use the actual experiment name
 	if ( user ) {
 		initializeCalypsoUserStore( reduxStore, user );
 		receiveCurrentUser( user as UserStore.CurrentUser );
-		loadExperimentAssignment( RENEWAL_PRICING_EXPERIMENT );
 	}
 
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
