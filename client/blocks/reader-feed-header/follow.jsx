@@ -102,7 +102,7 @@ export default function ReaderFeedHeaderFollow( props ) {
 	return (
 		<div className="reader-feed-header__follow">
 			<div className="reader-feed-header__follow-and-settings">
-				{ siteUrl && (
+				{ ( siteUrl || feed?.feed_URL ) && (
 					<div className="reader-feed-header__follow-button">
 						<div className="reader-feed-header__follow-button-and-settings">
 							<ReaderFollowButton
