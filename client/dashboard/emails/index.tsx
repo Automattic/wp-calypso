@@ -1,4 +1,4 @@
-import { DomainSubtype, EmailBox } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery, userMailboxesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
@@ -10,8 +10,8 @@ import NoDomainsAvailableEmptyState from './components/no-domains-available-empt
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
 import { DEFAULT_VIEW, getFields, useActions } from './dataviews';
+import { useUserEmailAddresses } from './hooks/use-user-email-addresses';
 import { Layout } from './layout';
-import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
 import type { Email } from './types';
 
 import './style.scss';
@@ -25,6 +25,7 @@ function Emails() {
 	const domains = ( allDomains ?? [] ).filter(
 		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
+	const emails = useUserEmailAddresses();
 
 	// Aggregate all domains into a single array
 	const { domainsWithEmails, domainsWithoutEmails } = useMemo( () => {
@@ -39,17 +40,6 @@ function Emails() {
 			domainsWithoutEmails: domains.filter( ( d ) => ! domainsWithEmails.includes( d.domain ) ),
 		};
 	}, [ allEmailAccounts, domains, isLoadingDomains, isLoadingEmailAccounts ] );
-
-	const emails: Email[] = useMemo( () => {
-		if ( ! allEmailAccounts?.length ) {
-			return [];
-		}
-		return allEmailAccounts
-			.flatMap( ( account ) =>
-				account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account ) )
-			)
-			.filter( ( email ) => email.canUserManage ) as Email[];
-	}, [ allEmailAccounts ] );
 
 	// Gather domains with unused mailbox warnings
 	const domainsWithUnusedMailbox: string[] = useMemo( () => {
