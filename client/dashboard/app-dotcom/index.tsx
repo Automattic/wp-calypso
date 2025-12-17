@@ -4,8 +4,8 @@ import {
 	dashboardSiteListQuery,
 	dashboardSiteFiltersQuery,
 } from '@automattic/api-queries';
-/* eslint-enable no-restricted-imports */
 import { isEnabled } from '@automattic/calypso-config';
+/* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import Logo from './logo';
 import type {
