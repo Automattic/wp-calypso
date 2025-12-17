@@ -14,7 +14,7 @@ import useClientCheckout from '../../hooks/use-client-checkout';
 function ClientExpressCheckoutContent() {
 	const translate = useTranslate();
 
-	const { isReady, error } = useClientCheckout();
+	const { isReady, error } = useClientCheckout( { expressMode: true } );
 
 	if ( ! isReady ) {
 		return <ClientCheckoutV2Placeholder />;
@@ -29,6 +29,7 @@ function ClientExpressCheckoutContent() {
 			sitelessCheckoutType="a4a"
 			redirectTo="https://agencies.automattic.com/client/subscriptions"
 			customizedPreviousPath="https://agencies.automattic.com/client/subscriptions"
+			isLoggedOutCart
 			siteSlug=""
 			siteId={ 0 }
 		/>

@@ -1,15 +1,21 @@
 import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useState } from 'react';
 import useProductsById from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-products-by-id';
 import { getClientReferralQueryArgs } from 'calypso/a8c-for-agencies/sections/marketplace/lib/get-client-referral-query-args';
+import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import useFetchClientReferral from './use-fetch-client-referral';
 
 const debug = debugFactory( 'client:checkout-v2' );
 
-export default function useClientCheckout() {
+type Props = {
+	expressMode?: boolean;
+};
+
+export default function useClientCheckout( { expressMode = false }: Props ) {
 	const [ isReady, setIsReady ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
 
@@ -18,9 +24,14 @@ export default function useClientCheckout() {
 	const { referredProducts } = useProductsById( referral?.products ?? [] );
 
 	// Access the shopping cart API
-	const { replaceProductsInCart, responseCart } = useShoppingCart( 'no-site' );
+	const { replaceProductsInCart, responseCart } = useShoppingCart(
+		expressMode ? 'no-user' : 'no-site'
+	);
 
 	const userEmail = useSelector( ( state ) => getCurrentUser( state )?.email );
+
+	// Access checkout store to set email for express checkout
+	const checkoutStoreDispatch = useDispatch( CHECKOUT_STORE );
 
 	const emailMismatchWithReferralClient = referral?.client?.email !== userEmail;
 
@@ -81,6 +92,17 @@ export default function useClientCheckout() {
 		queryArgs.referralId,
 		queryArgs.agencyId,
 	] );
+
+	// Set referral client email in checkout store for express checkout
+	useEffect( () => {
+		if ( expressMode && referral?.client?.email && checkoutStoreDispatch ) {
+			debug(
+				'[A4A Checkout] Setting referral client email in checkout store:',
+				referral.client.email
+			);
+			checkoutStoreDispatch.updateEmail( referral.client.email );
+		}
+	}, [ expressMode, referral?.client?.email, checkoutStoreDispatch ] );
 
 	// Debugging: Set a timeout to force showing the checkout after 10 seconds
 	useEffect( () => {

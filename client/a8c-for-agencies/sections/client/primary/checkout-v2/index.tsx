@@ -20,7 +20,9 @@ import './style.scss';
 function ClientCheckoutContent() {
 	const translate = useTranslate();
 
-	const { isReady, error, emailMismatchWithReferralClient, referral } = useClientCheckout();
+	const { isReady, error, emailMismatchWithReferralClient, referral } = useClientCheckout( {
+		expressMode: false,
+	} );
 
 	if ( ! isReady ) {
 		return <ClientCheckoutV2Placeholder />;
