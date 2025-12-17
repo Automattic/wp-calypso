@@ -13,9 +13,9 @@ export function getSnackbarBackButtonText(
 		case 'site-overview':
 			return __( 'Back to Site Overview' );
 		case 'site-deployments':
-			return __( 'Back to Deployments' );
+			return __( 'Back to Site Deployments' );
 		case 'site-domains':
-			return __( 'Back to Site Domain Names' );
+			return __( 'Back to Site Domains' );
 		default:
 			return null;
 	}
