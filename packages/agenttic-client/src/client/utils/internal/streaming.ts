@@ -1,6 +1,10 @@
 import type { Message, Task, TaskUpdate } from '../../types/index';
 import { logger } from '../logger';
-import { extractTextFromMessage, generateMessageId } from '../core';
+import {
+	extractTextFromMessage,
+	extractProgressFromMessage,
+	generateMessageId,
+} from '../core';
 
 /**
  * Parse a stream chunk from a server-sent events stream.
@@ -190,6 +194,10 @@ export async function* parseSSEStream(
 							accumulator.reset();
 						}
 
+						const statusMessage = event.result.status?.message || {
+							role: 'agent',
+							parts: [],
+						};
 						const update: TaskUpdate = {
 							id: event.result.id,
 							sessionId: event.result.sessionId,
@@ -198,12 +206,9 @@ export async function* parseSSEStream(
 								event.result.status.state === 'completed' ||
 								event.result.status.state === 'failed' ||
 								event.result.status.state === 'canceled',
-							text: extractTextFromMessage(
-								event.result.status?.message || {
-									role: 'agent',
-									parts: [],
-								}
-							),
+							text: extractTextFromMessage( statusMessage ),
+							progressMessage:
+								extractProgressFromMessage( statusMessage ),
 						};
 
 						yield update;
@@ -213,6 +218,11 @@ export async function* parseSSEStream(
 						// This is a regular response, not a delta
 						currentTaskId = event.result.id;
 						if ( event.result.status ) {
+							const statusMessage = event.result.status
+								?.message || {
+								role: 'agent',
+								parts: [],
+							};
 							const update: TaskUpdate = {
 								id: event.result.id,
 								sessionId: event.result.sessionId,
@@ -221,12 +231,9 @@ export async function* parseSSEStream(
 									event.result.status.state === 'completed' ||
 									event.result.status.state === 'failed' ||
 									event.result.status.state === 'canceled',
-								text: extractTextFromMessage(
-									event.result.status?.message || {
-										role: 'agent',
-										parts: [],
-									}
-								),
+								text: extractTextFromMessage( statusMessage ),
+								progressMessage:
+									extractProgressFromMessage( statusMessage ),
 							};
 							yield update;
 						}

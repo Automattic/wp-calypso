@@ -103,6 +103,20 @@ export interface ConversationHistoryPart extends DataPart {
 	};
 }
 
+export type ProgressDataPart =
+	| ( DataPart & {
+			data: {
+				summary: string;
+			};
+	  } )
+	| {
+			type: 'progress';
+			data: {
+				summary: string;
+			};
+			metadata?: Record< string, unknown >;
+	  };
+
 /**
  * WordPress Ability interface
  *
@@ -196,7 +210,8 @@ export type Part =
 	| ToolCallDataPart
 	| ToolResultDataPart
 	| ContextDataPart
-	| AbilityDataPart;
+	| AbilityDataPart
+	| ProgressDataPart;
 
 export interface Message {
 	role: 'user' | 'agent';
@@ -306,6 +321,7 @@ export interface TaskUpdate {
 	artifact?: Artifact;
 	text: string; // Extracted text from status.message
 	agentMessage?: Message; // Optional separate agent message for when returnToAgent is false
+	progressMessage?: string; // Optional progress message extracted from progress parts
 }
 
 export interface Client {

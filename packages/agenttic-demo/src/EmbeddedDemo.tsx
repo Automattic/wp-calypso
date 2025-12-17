@@ -28,6 +28,10 @@ const EmbeddedDemo: React.FC = () => {
 		getClientContext,
 	} ) );
 
+	const [ manualThinkingMessage, setManualThinkingMessage ] = useState<
+		string | undefined
+	>();
+
 	const addMessageRef = useRef< ( ( message: any ) => void ) | null >( null );
 
 	const toolProvider = useMemo(
@@ -348,6 +352,23 @@ const EmbeddedDemo: React.FC = () => {
 					>
 						Pattern
 					</button>
+					<button
+						onClick={ () => {
+							setManualThinkingMessage( 'Testing progress message...' );
+							setTimeout( () => setManualThinkingMessage( undefined ), 3000 );
+						} }
+						style={ {
+							padding: '4px 8px',
+							background: '#ff0000',
+							color: '#fff',
+							cursor: 'pointer',
+							fontSize: '12px',
+							fontFamily: 'monospace',
+							textTransform: 'uppercase',
+						} }
+					>
+						Test Progress
+					</button>
 				</div>
 				<AgentUI.Container
 					messages={ messages }
@@ -368,6 +389,7 @@ const EmbeddedDemo: React.FC = () => {
 						"Let's build something amazing",
 					] }
 					emptyView={ <EmptyView suggestions={ suggestions } /> }
+					thinkingMessage={ manualThinkingMessage }
 				>
 					<AgentUI.ConversationView showHeader={ false }>
 						<AgentUI.Messages />
