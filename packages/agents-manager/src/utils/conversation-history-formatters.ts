@@ -79,7 +79,5 @@ export function generateConversationSubtitle( type: ConversationType, timestamp:
 		);
 	}
 
-	// TODO: Remove the `type` debug info before release.
-	// NOTE: Add a tempo `type` for us to debug which type of conversation it is.
-	return `${ date } · ${ type }`;
+	return date;
 }
