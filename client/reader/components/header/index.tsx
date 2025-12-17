@@ -1,12 +1,21 @@
 import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { HelpCenter } from './help-center';
 import Logo from './logo';
-
+import Notifications from './notifications';
+import UserProfile from './user-profile';
 import './style.scss';
 
 const ReaderHeader = () => {
+	const isDesktop = useViewportMatch( 'medium' );
+	const user = useSelector( getCurrentUser );
+
 	return (
 		<HStack
 			className={ clsx( 'dashboard-header-bar', {
@@ -25,6 +34,23 @@ const ReaderHeader = () => {
 				label={ __( 'WordPress.com Home' ) }
 				href="/v2"
 			/>
+			<HStack spacing={ isDesktop ? 2 : 0 } justify="flex-end">
+				<Button
+					className={ clsx( 'dashboard-secondary-menu__item', 'is-active' ) }
+					icon={ <ReaderIcon /> }
+					label={ __( 'Reader' ) }
+					href="/reader"
+				>
+					{ isDesktop ? __( 'Reader' ) : null }
+				</Button>
+				{ user && (
+					<>
+						<Notifications user={ user } className="dashboard-secondary-menu__item" />
+						<HelpCenter user={ user } />
+						<UserProfile user={ user } />
+					</>
+				) }
+			</HStack>
 		</HStack>
 	);
 };
