@@ -13,13 +13,6 @@ import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types
 import type { View, Field } from '@wordpress/dataviews';
 import type { PropsWithChildren } from 'react';
 
-export const DEFAULT_VIEW: View = {
-	type: 'list',
-	page: 1,
-	perPage: 10,
-	sort: { field: 'name', direction: 'asc' },
-};
-
 export default function SwitcherContent< T >( {
 	itemClassName,
 	items,
