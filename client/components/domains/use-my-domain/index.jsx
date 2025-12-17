@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { BackButton } from '@automattic/onboarding';
@@ -332,21 +331,7 @@ function UseMyDomain( props ) {
 	};
 
 	const renderOwnershipVerificationFlow = () => {
-		if ( config.isEnabled( 'domain-connection-redesign' ) ) {
-			return <OwnershipVerification domainName={ domainName } onConnect={ onConnect } />;
-		}
-
-		return (
-			<ConnectDomainSteps
-				baseClassName="connect-domain-step"
-				domain={ domainName }
-				initialPageSlug={ ownershipVerificationFlowPageSlug }
-				isOwnershipVerificationFlow
-				onConnect={ onConnect }
-				onSetPage={ setOwnershipVerificationFlowPageSlug }
-				stepsDefinition={ connectADomainOwnershipVerificationStepsDefinition }
-			/>
-		);
+		return <OwnershipVerification domainName={ domainName } onConnect={ onConnect } />;
 	};
 
 	const renderTransferDomainFlow = () => {

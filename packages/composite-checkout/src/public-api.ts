@@ -24,6 +24,8 @@ import {
 	useAllPaymentMethods,
 	useAvailablePaymentMethodIds,
 	useTogglePaymentMethod,
+	useRegisterPaymentMethodLoading,
+	useArePaymentMethodsLoading,
 } from './lib/payment-methods';
 import {
 	usePaymentProcessor,
@@ -72,4 +74,6 @@ export {
 	useTogglePaymentMethod,
 	useTransactionStatus,
 	useMakeStepActive,
+	useRegisterPaymentMethodLoading,
+	useArePaymentMethodsLoading,
 };

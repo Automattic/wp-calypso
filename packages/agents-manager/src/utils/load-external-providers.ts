@@ -9,8 +9,20 @@ import type { ToolProvider, ContextProvider, Suggestion } from '../types';
 import type { SubmitOptions } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
-// agentsManagerData is set as a global const via wp_add_inline_script
-declare const agentsManagerData: { agentProviders?: string[] } | undefined;
+/**
+ * Check if the unified experience flag is set via agentsManagerData.
+ *
+ * This is used on wp-admin environments (Atomic, Garden, Simple sites) where
+ * the flag is injected server-side by Jetpack's Agents Manager.
+ *
+ * @returns The useUnifiedExperience value, or undefined if not available.
+ */
+export function getUseUnifiedExperienceFromInlineData(): boolean | undefined {
+	if ( typeof agentsManagerData !== 'undefined' ) {
+		return agentsManagerData?.useUnifiedExperience;
+	}
+	return undefined;
+}
 
 /**
  * Navigation continuation hook type - provided by environments that support

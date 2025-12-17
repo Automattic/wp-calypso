@@ -1,5 +1,5 @@
-import { queryClient } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
+import { queryClient, siteBySlugQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useAuth } from '../../app/auth';
@@ -15,7 +15,7 @@ import {
 	isSelfHostedJetpackConnected__ES,
 } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
-import { getFormattedWordPressVersion } from '../../utils/wp-version';
+import { getFormattedWordPressVersion, formatWordPressVersion } from '../../utils/wp-version';
 import {
 	AsyncEngagementStat,
 	EngagementStat,
@@ -24,8 +24,10 @@ import {
 	Name,
 	NameRenderer,
 	PHPVersion,
+	PHPVersion__ES,
 	Plan,
 	Preview,
+	Preview__ES,
 	Status,
 	URL,
 	Uptime,
@@ -45,7 +47,6 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayName( item ),
 			render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
-			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{
 			id: 'URL',
@@ -122,7 +123,6 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 				const { user } = useAuth();
 				return <Status site={ item } isOwner={ item.site_owner === user.ID } />;
 			},
-			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{
 			id: 'wp_version',
@@ -203,6 +203,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 	];
 }
 
+// Use the site returned by siteBySlugQuery to render async fields (e.g. Backup) so the structure remains consistent.
 function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< DashboardSiteListSite >[] {
 	return [
 		{
@@ -252,6 +253,15 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			label: __( 'Subscribers' ),
 		},
 		{
+			id: 'backup',
+			label: __( 'Backup' ),
+			render: function BackupField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <LastBackup site={ site } />;
+			},
+			enableSorting: false,
+		},
+		{
 			id: 'plan',
 			label: __( 'Plan' ),
 			getValue: ( { item } ) => getSitePlanDisplayName__ES( item ),
@@ -284,12 +294,13 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			filterBy: {
 				operators: [ 'isAny' ],
 			},
-			sort: ( a, b, direction ) => {
-				const planA = getSitePlanDisplayName__ES( a ) ?? '';
-				const planB = getSitePlanDisplayName__ES( b ) ?? '';
-
-				return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
-			},
+			enableSorting: false,
+		},
+		{
+			id: 'wp_version',
+			label: __( 'WP version' ),
+			getValue: ( { item } ) => formatWordPressVersion( item.wordpress_version ?? '' ),
+			enableSorting: false,
 		},
 		{
 			id: 'is_a8c',
@@ -303,11 +314,71 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				operators: [ 'is' as Operator ],
 			},
 			render: ( { item } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
+			enableSorting: false,
+		},
+		{
+			id: 'preview',
+			label: __( 'Preview' ),
+			render: ( { item } ) => <Preview__ES site={ item } />,
+			enableHiding: false,
+			enableSorting: false,
+		},
+		{
+			id: 'last_published',
+			label: __( 'Last published' ),
+			getValue: ( { item } ) => item.last_publish ?? '',
+			render: ( { item } ) =>
+				item.last_publish ? <TimeSince timestamp={ item.last_publish } /> : '',
+		},
+		{
+			id: 'uptime',
+			label: __( '7-day uptime' ),
+			render: function UptimeField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <Uptime site={ site } />;
+			},
+			enableSorting: false,
 		},
 		{
 			id: 'visitors',
 			label: __( '7-day visitors' ),
 			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
+		},
+		{
+			id: 'views',
+			label: __( '7-day views' ),
+			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
+		},
+		{
+			id: 'likes',
+			label: __( '7-day likes' ),
+			render: function LikesField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <AsyncEngagementStat site={ site } type="likes" />;
+			},
+			enableSorting: false,
+		},
+		{
+			id: 'php_version',
+			label: __( 'PHP version' ),
+			render: ( { item }: { item: DashboardSiteListSite } ) => <PHPVersion__ES site={ item } />,
+		},
+		{
+			id: 'storage',
+			label: __( 'Storage' ),
+			render: function StorageField( { item } ) {
+				const { data: site } = useQuery( siteBySlugQuery( item.slug ) );
+				return <MediaStorage site={ site } />;
+			},
+			enableSorting: false,
+		},
+		{
+			id: 'host',
+			label: __( 'Host' ),
+			getValue: ( { item } ) => {
+				return getSiteProviderName( item ) ?? DEFAULT_PROVIDER_NAME;
+			},
+			render: ( { field, item } ) => field.getValue( { item } ),
 			enableSorting: false,
 		},
 	];

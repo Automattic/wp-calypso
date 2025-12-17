@@ -19,7 +19,7 @@ const isDocked: Reducer< boolean | undefined, AgentsManagerAction > = ( state, a
 	return state;
 };
 
-const agentsManagerRouterHistory: Reducer<
+const routerHistory: Reducer<
 	{ entries: Location[]; index: number } | undefined,
 	AgentsManagerAction
 > = ( state, action ) => {
@@ -46,12 +46,24 @@ const hasLoaded: Reducer< boolean, AgentsManagerAction > = ( state = false, acti
 	return state;
 };
 
+const floatingPosition: Reducer< 'left' | 'right', AgentsManagerAction > = (
+	state = 'right',
+	action
+) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_FLOATING_POSITION':
+			return action.floatingPosition;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	isOpen,
 	isDocked,
-	agentsManagerRouterHistory,
+	routerHistory,
 	isLoading,
 	hasLoaded,
+	floatingPosition,
 } );
 
 export type State = ReturnType< typeof reducer >;

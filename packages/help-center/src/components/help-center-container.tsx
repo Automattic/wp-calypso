@@ -58,7 +58,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		};
 	}, [] );
 	const { sectionName } = useHelpCenterContext();
-
 	const nodeRef = useRef< HTMLDivElement >( null );
 	const isMobile = useMobileBreakpoint();
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {

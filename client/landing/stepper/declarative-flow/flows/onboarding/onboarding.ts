@@ -5,6 +5,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
@@ -110,7 +111,9 @@ const onboarding: FlowV2< typeof initialize > = {
 			 */
 			if ( isEnabled( 'dashboard/v2/onboarding' ) ) {
 				return [
-					addQueryArgs( `/v2/sites/${ providedDependencies.siteSlug }`, { ref: flowName } ),
+					addQueryArgs( dashboardLink( `/sites/${ providedDependencies.siteSlug }` ), {
+						ref: flowName,
+					} ),
 					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
 						siteSlug: providedDependencies.siteSlug,
 					} ),

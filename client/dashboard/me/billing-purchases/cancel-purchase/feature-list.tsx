@@ -1,7 +1,12 @@
-import { Icon } from '@wordpress/components';
+import {
+	Icon,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
+import { Text } from '../../../components/text';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 type FeatureObject = {
@@ -25,55 +30,49 @@ const CancelPurchaseFeatureList = ( {
 	const { expiry_date: expiryDate } = purchase;
 	const expirationDate = intlFormat( expiryDate, { dateStyle: 'medium' }, { locale: 'en-US' } );
 	return (
-		<>
-			<div className="cancel-purchase__features">
-				<p>
-					{ sprintf(
-						/* translators: %(expire)s is the date the product will expire */
-						__( "Your plan will expire on %(expiry)s and you'll lose access to:" ),
-						{
-							expiry: expirationDate,
-						}
-					) }
-				</p>
-				<ul className="cancel-purchase__features-list">
-					{ cancellationFeatures.map( ( feature ) => {
-						if ( ! feature ) {
-							return null;
-						}
-						return (
-							<li key={ feature.feature_id }>
-								<Icon
-									className="cancel-purchase__refund-information--item-cross-small"
-									size={ 24 }
-									icon={ close }
-								/>
+		<VStack spacing={ 4 }>
+			<Text as="p">
+				{ sprintf(
+					/* translators: %(expire)s is the date the product will expire */
+					__( 'Your plan will expire on %(expiry)s and you’ll lose access to:' ),
+					{
+						expiry: expirationDate,
+					}
+				) }
+			</Text>
+			<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
+				{ cancellationFeatures.map( ( feature ) => {
+					if ( ! feature ) {
+						return null;
+					}
+					return (
+						<li key={ feature.feature_id }>
+							<HStack alignment="topLeft">
+								<Icon size={ 20 } icon={ close } style={ { flexShrink: 0 } } />
 								<span>{ feature.title }</span>
-							</li>
-						);
-					} ) }
-				</ul>
-			</div>
+							</HStack>
+						</li>
+					);
+				} ) }
+			</VStack>
 			{ cancellationChanges.length > 0 && (
-				<div className="cancel-purchase__changes">
-					<p>{ __( 'We will also make these changes to your site:' ) }</p>
-					<ul className="cancel-purchase__changes-list">
+				<>
+					<Text as="p">{ __( 'We will also make these changes to your site:' ) }</Text>
+					<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
 						{ cancellationChanges.map( ( change ) => {
 							return (
 								<li key={ change.getSlug() }>
-									<Icon
-										className="cancel-purchase__refund-information--item-notice-outline"
-										size={ 24 }
-										icon={ info }
-									/>
-									<span>{ change.getTitle() }</span>
+									<HStack alignment="topLeft">
+										<Icon size={ 20 } icon={ info } style={ { flexShrink: 0 } } />
+										<span>{ change.getTitle() }</span>
+									</HStack>
 								</li>
 							);
 						} ) }
-					</ul>
-				</div>
+					</VStack>
+				</>
 			) }
-		</>
+		</VStack>
 	);
 };
 

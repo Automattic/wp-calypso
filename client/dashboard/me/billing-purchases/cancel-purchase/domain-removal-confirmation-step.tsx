@@ -1,15 +1,13 @@
-import {
-	Button,
-	__experimentalInputControl as InputControl,
-	__experimentalVStack as VStack,
-	__experimentalHeading as Heading,
-} from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { useState, useCallback } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
+import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import type { Purchase } from '@automattic/api-core';
+import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -20,6 +18,10 @@ interface DomainRemovalConfirmationStepProps {
 	isLoading?: boolean;
 }
 
+interface DomainRemovalFormData {
+	domain: string;
+}
+
 export default function DomainRemovalConfirmationStep( {
 	purchase,
 	onConfirm,
@@ -27,45 +29,53 @@ export default function DomainRemovalConfirmationStep( {
 	isLoading = false,
 }: DomainRemovalConfirmationStepProps ) {
 	const domainName = purchase.meta || purchase.product_name;
-	const [ inputValue, setInputValue ] = useState( '' );
-	const [ domainConfirmed, setDomainConfirmed ] = useState( false );
+	const [ formData, setFormData ] = useState< DomainRemovalFormData >( {
+		domain: '',
+	} );
 
-	const handleInputChange = useCallback(
-		( value: string | undefined ) => {
-			const newValue = value || '';
-			setInputValue( newValue );
-			setDomainConfirmed( newValue === domainName );
+	const fields: Field< DomainRemovalFormData >[] = [
+		{
+			id: 'domain',
+			label: __( 'Type your domain name to proceed' ),
+			type: 'text' as const,
+			description: sprintf(
+				/* translators: %s is the domain name */
+				__( 'The domain name is: %s' ),
+				domainName
+			),
 		},
-		[ domainName ]
-	);
+	];
+
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: [ 'domain' ],
+	};
+
+	const isDomainConfirmed = formData.domain === domainName;
 
 	return (
-		<VStack spacing={ 8 }>
-			<VStack spacing={ 3 }>
-				<Heading level={ 3 }>{ __( 'Confirm your decision' ) }</Heading>
+		<VStack spacing={ 4 }>
+			<SectionHeader title={ __( 'Confirm your decision' ) } level={ 3 } />
 
-				<Text>
-					{ createInterpolateElement(
-						/* translators: <domainName /> is the domain name */
-						__(
-							'<domainName /> will be deleted. Any services related to it will stop working. Are you sure you want to proceed?'
-						),
-						{
-							domainName: <strong>{ domainName }</strong>,
-						}
-					) }
-				</Text>
-
-				<InputControl
-					__next40pxDefaultSize
-					label={ __( 'Type your domain name to proceed' ) }
-					value={ inputValue }
-					onChange={ handleInputChange }
-					disabled={ isLoading }
-					placeholder={ domainName }
-				/>
-			</VStack>
-
+			<Text>
+				{ createInterpolateElement(
+					/* translators: <domainName /> is the domain name */
+					__(
+						'<domainName /> will be deleted. Any services related to it will stop working. Are you sure you want to proceed?'
+					),
+					{
+						domainName: <strong>{ domainName }</strong>,
+					}
+				) }
+			</Text>
+			<DataForm< DomainRemovalFormData >
+				data={ formData }
+				fields={ fields }
+				form={ form }
+				onChange={ ( edits: Partial< DomainRemovalFormData > ) => {
+					setFormData( ( data ) => ( { ...data, ...edits } ) );
+				} }
+			/>
 			<ButtonStack justify="flex-end">
 				<Button
 					__next40pxDefaultSize
@@ -80,7 +90,8 @@ export default function DomainRemovalConfirmationStep( {
 					variant="primary"
 					isDestructive
 					onClick={ onConfirm }
-					disabled={ ! domainConfirmed || isLoading }
+					disabled={ ! isDomainConfirmed || isLoading }
+					isBusy={ isLoading }
 				>
 					{ __( 'Delete this domain' ) }
 				</Button>

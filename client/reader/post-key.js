@@ -53,9 +53,9 @@ export function keyToString( postKey ) {
 	} else if ( postKey.isPromptBlock ) {
 		return `prompt-${ postKey.index }`;
 	} else if ( postKey.feedId ) {
-		return `${ postKey.postId }-${ postKey.feedId }`;
+		return `feed-${ postKey.postId }-${ postKey.feedId }`;
 	} else if ( postKey.blogId ) {
-		return `${ postKey.postId }-${ postKey.blogId }`;
+		return `blog-${ postKey.postId }-${ postKey.blogId }`;
 	}
 
 	return null; // should never happen!
