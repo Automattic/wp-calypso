@@ -115,8 +115,6 @@ const domain: FlowV2< typeof initialize > = {
 			}
 
 			// Send single domain transfers to domain-transfer-setup.
-			// TODO: The `redirecTo` parameter was introduced in https://github.com/Automattic/wp-calypso/pull/107439,
-			// check if this will break anything
 			if ( hasOnlyDomainTransfer ) {
 				const domain = domainCartItems[ 0 ].meta;
 				if ( domain ) {
