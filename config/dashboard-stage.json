@@ -15,6 +15,7 @@
 		"cookie-banner": false,
 		"dashboard/v2": false,
 		"dev/store-sandbox-helper": true,
+		"domain-transfer-redesign": true,
 		"wordpress-ai-assistant": true
 	},
 	"enable_all_sections": false,
