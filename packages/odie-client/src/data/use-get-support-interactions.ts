@@ -15,7 +15,7 @@ export const useGetSupportInteractions = (
 	const isTestMode = isTestModeEnvironment();
 	const { currentUser } = useOdieAssistantContext();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
-	let shouldFetch = enabled;
+	let shouldFetch = enabled && !! currentUser?.ID;
 	// Only fetch Zendesk interactions if the user can connect to Zendesk.
 	if ( ( provider === 'zendesk' || provider === 'zendesk-staging' ) && ! canConnectToZendesk ) {
 		shouldFetch = false;
