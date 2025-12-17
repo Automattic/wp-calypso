@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { User } from '@automattic/api-core';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -6,16 +6,20 @@ import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
-import { useAuth } from '../../auth';
-import { useLocale } from '../../locale';
+import { getLocaleFromUser } from '../../locale';
 import './style.scss';
+
+interface NotificationsDropdownProps {
+	className: string;
+	user: User;
+	navigateTo: ( path: string ) => void;
+}
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
-export default function NotificationsDropdown( { className }: { className: string } ) {
-	const navigate = useNavigate();
-	const { user } = useAuth();
-	const locale = useLocale();
+export default function NotificationsDropdown( props: NotificationsDropdownProps ) {
+	const { className, user, navigateTo } = props;
+	const locale = getLocaleFromUser( user );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
@@ -37,7 +41,7 @@ export default function NotificationsDropdown( { className }: { className: strin
 		VIEW_SETTINGS: [
 			() => {
 				handleClose();
-				navigate( { to: '/me/notifications' } );
+				navigateTo( '/me/notifications' );
 			},
 		],
 		EDIT_COMMENT: [
