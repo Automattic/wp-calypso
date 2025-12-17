@@ -334,7 +334,7 @@ function AddEmailForwarder() {
 												'You are adding too many new email forwarders for this domain (%(forwardingAddressesCount)d); the maximum number is %(maxForwards)d and there are already %(existingForwardersCount)d before this change. Please edit your changes or delete any of the existing forwarders.'
 											),
 											{
-												forwardingAddressesCount: formData.forwardingAddresses.length,
+												forwardingAddressesCount: forwardingAddresses.length,
 												maxForwards,
 												existingForwardersCount: forwards?.length ?? 0,
 											}
