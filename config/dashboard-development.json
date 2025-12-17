@@ -16,7 +16,6 @@
 		"always_use_logout_url": true,
 		"ciab/allow-domain-features": true,
 		"cookie-banner": false,
-		"dashboard": true,
 		"dashboard/v2": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
