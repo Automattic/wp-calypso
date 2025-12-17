@@ -16,6 +16,7 @@ import {
 	checkoutJetpackSiteless,
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
+	checkoutA4ASiteless,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -44,6 +45,15 @@ export default function () {
 		setLocaleMiddleware(),
 		noSite,
 		checkoutJetpackSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/a4a`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutA4ASiteless,
 		makeLayout,
 		clientRender
 	);

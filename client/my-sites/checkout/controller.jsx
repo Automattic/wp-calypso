@@ -125,6 +125,10 @@ function sitelessCheckout( context, next, extraProps ) {
 	next();
 }
 
+export function checkoutA4ASiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'a4a', siteSlug: '', siteId: 0 } );
+}
+
 export function checkout( context, next ) {
 	const { feature, plan, purchaseId } = context.params;
 	const state = context.store.getState();
