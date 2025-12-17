@@ -147,5 +147,6 @@
 	"boom_analytics_key": "horizon",
 	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
-	"survicate_enabled": true
+	"survicate_enabled": true,
+	"survicate_enabled_at_help_center": true
 }
