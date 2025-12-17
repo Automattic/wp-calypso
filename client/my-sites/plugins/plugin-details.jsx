@@ -189,7 +189,9 @@ function PluginDetails( props ) {
 			...wpComPluginData,
 			fetched: isWpComPluginFetched,
 		};
-		return {
+		// Preserve marketplace version - it should not be overwritten by installed plugin data
+		const marketplaceVersion = wpcomPlugin?.version;
+		const merged = {
 			...esPlugin,
 			...wpcomPlugin,
 			...wporgPlugin,
@@ -198,6 +200,10 @@ function PluginDetails( props ) {
 			isMarketplaceProduct,
 			isSaasProduct,
 		};
+		if ( isMarketplaceProduct && marketplaceVersion ) {
+			merged.version = marketplaceVersion;
+		}
+		return merged;
 	}, [
 		plugin,
 		esPlugin,
