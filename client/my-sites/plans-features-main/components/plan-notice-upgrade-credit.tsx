@@ -17,21 +17,30 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-pur
 import type { UpgradeCreditsNoticeSource } from '../hooks/use-upgrade-credits-notice';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
-import type { ReactNode } from '@wordpress/element';
 
-type GetFullNoticeTextArgs = {
+type UpgradeCreditsNoticeTextProps = {
+	variant: 'compact' | 'full';
 	effectiveSource?: UpgradeCreditsNoticeSource | null;
-	translate: ReturnType< typeof useTranslate >;
 	amountInCurrency: string;
-	supportLink: ReactNode;
 };
 
-function getFullNoticeText( {
+const UpgradeCreditsNoticeText = ( {
+	variant,
 	effectiveSource,
-	translate,
 	amountInCurrency,
-	supportLink,
-}: GetFullNoticeTextArgs ) {
+}: UpgradeCreditsNoticeTextProps ) => {
+	const translate = useTranslate();
+
+	if ( variant === 'compact' ) {
+		return translate( 'You have %(amountInCurrency)s in upgrade credits available', {
+			args: { amountInCurrency },
+		} );
+	}
+
+	const supportLink = (
+		<InlineSupportLink supportContext="plans-upgrade-credit" showIcon={ false } />
+	);
+
 	switch ( effectiveSource ) {
 		case 'plan':
 			return translate(
@@ -67,7 +76,7 @@ function getFullNoticeText( {
 				}
 			);
 	}
-}
+};
 
 type Props = {
 	className?: string;
@@ -84,7 +93,6 @@ const PlanNoticeUpgradeCredit = ( {
 	visiblePlans,
 	intent,
 }: Props ) => {
-	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const upgradeCreditsNoticeData = useUpgradeCreditsNoticeData( siteId, visiblePlans || [] );
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
@@ -103,10 +111,6 @@ const PlanNoticeUpgradeCredit = ( {
 		isSmallestUnit: true,
 		stripZeros: isUpgradeFlow,
 	} );
-
-	const supportLink = (
-		<InlineSupportLink supportContext="plans-upgrade-credit" showIcon={ false } />
-	);
 
 	const hasOtherUpgradesPurchase =
 		sitePurchases?.some( ( purchase ) => {
@@ -134,23 +138,13 @@ const PlanNoticeUpgradeCredit = ( {
 		upgradeCreditsNoticeData?.source === 'domain' && hasOtherUpgradesPurchase
 			? 'domain-and-other-upgrades'
 			: upgradeCreditsNoticeData?.source;
-
-	const fullNoticeText = getFullNoticeText( {
-		effectiveSource,
-		translate,
-		amountInCurrency,
-		supportLink,
-	} );
-
 	return (
 		<>
 			<QuerySitePlans siteId={ siteId } />
 			<QuerySitePurchases siteId={ siteId } />
 			{ isUpgradeFlow ? (
 				<div className="plan-upgrade-credit-notice-compact">
-					{ translate( 'You have %(amountInCurrency)s in upgrade credits available', {
-						args: { amountInCurrency },
-					} ) }
+					<UpgradeCreditsNoticeText variant="compact" amountInCurrency={ amountInCurrency } />
 				</div>
 			) : (
 				<Notice
@@ -161,7 +155,11 @@ const PlanNoticeUpgradeCredit = ( {
 					status="is-success"
 					theme="light"
 				>
-					{ fullNoticeText }
+					<UpgradeCreditsNoticeText
+						variant="full"
+						effectiveSource={ effectiveSource }
+						amountInCurrency={ amountInCurrency }
+					/>
 				</Notice>
 			) }
 		</>
