@@ -1,3 +1,4 @@
+import { User } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
@@ -11,18 +12,20 @@ import { __ } from '@wordpress/i18n';
 import { Icon, comment, backup, page, video, rss, help } from '@wordpress/icons';
 import { lazy, Suspense, useCallback, useState } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
-import { useAnalytics } from './../../analytics';
-import { useAuth } from './../../auth';
 import { useHelpCenter } from './../../help-center';
+
+interface HelpCenterCTAProps {
+	user: User;
+	recordTracksEvent: ( eventName: string, args?: Record< string, unknown > ) => void;
+}
 
 const AsyncHelpCenterApp = lazy(
 	() => import( 'calypso/dashboard/app/help-center/help-center-app' )
 );
 
-export default function HelpCenterCTA(): JSX.Element {
-	const { user } = useAuth();
+export default function HelpCenterCTA( props: HelpCenterCTAProps ): JSX.Element {
+	const { user, recordTracksEvent } = props;
 	const { isLoading, isShown, setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
-	const { recordTracksEvent } = useAnalytics();
 	const [ helpCenterPage, setHelpCenterPage ] = useState( '' );
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
