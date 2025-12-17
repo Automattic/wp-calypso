@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from '@wordpress/element';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
