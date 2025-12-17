@@ -1,0 +1,41 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+@import '../../../dashboard/app-dotcom/style.scss';
+
+/**
+* Size of padding added to .components-button.has-icon.
+*/
+$component-icon-padding: 6px;
+
+:root {
+	--masterbar-height: 65px !important;
+}
+
+.dashboard-header-bar {
+	box-sizing: border-box;
+	padding-block: $grid-unit-15;
+	padding-inline: calc(#{$grid-unit-20} - #{$component-icon-padding}); // Adjust for 6px padding on icons.
+	border-bottom: $border-width solid var( --dashboard-header__border-color );
+	background-color: var( --dashboard-header__background-color );
+	backdrop-filter: blur(4px);
+	color: var( --dashboard-header__color );
+	min-height: 65px;
+
+	@include break-medium {
+		padding-inline: calc(#{$grid-unit-30} - #{$component-icon-padding});
+	}
+
+	&.is-support-user-session {
+		background-color: var( --dashboard-header__support-background-color );
+	}
+}
+
+.dashboard-header-bar-title > span {
+	padding-inline: $grid-unit-15;
+}
+
+.dashboard-header-bar-title {
+	@include break-medium {
+		flex-shrink: 0;
+	}
+}
