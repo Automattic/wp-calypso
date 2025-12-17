@@ -105,7 +105,7 @@ export default function AgentChat( {
 						heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
 						help={ __( 'Got a different request? Ask away.', '__i18n_text_domain__' ) }
 						suggestions={ emptyViewSuggestions }
-						icon={ isDocked ? <AI /> : <AI size={ 42 } color="#3858e8" /> }
+						icon={ isDocked ? <AI /> : <AI size={ 41 } color="#3858e8" /> }
 					/>
 				)
 			}
