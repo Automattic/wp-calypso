@@ -159,5 +159,5 @@ export function setUrlQuery( key: string, value: string, pathname: string = '' )
 }
 
 export function isReaderMSDHeaderEnabled(): boolean {
-	return isEnabled( 'reader/msd-header' ) && isEnabled( 'dashboard/v2' ); // TODO: Replace v2 flag with isDashboardEnabled.
+	return isEnabled( 'reader/msd-header' );
 }
