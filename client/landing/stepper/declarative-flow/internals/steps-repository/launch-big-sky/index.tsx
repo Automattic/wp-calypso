@@ -21,7 +21,6 @@ const SiteIntent = Onboard.SiteIntent;
 const LaunchBigSky: StepType = function ( props ) {
 	const { flow } = props;
 	const { __ } = useI18n();
-	const [ isError, setError ] = useState( false );
 	const [ progress, setProgress ] = useState( 0 );
 	const { siteSlug, siteId, site } = useSiteData();
 	const urlQuery = useQuery();
@@ -121,9 +120,7 @@ const LaunchBigSky: StepType = function ( props ) {
 					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ flow }${ promptParam }&source=${ flow }${ specIdParam }`
 				);
 			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( 'An error occurred:', error );
-				setError( true );
+				window.location.replace( `/sites/${ selectedSiteSlug }` );
 			}
 		},
 		[ assemblerThemeActive, hasStaticHomepage, setDesignOnSite, setStaticHomepageOnSite ]
@@ -140,7 +137,7 @@ const LaunchBigSky: StepType = function ( props ) {
 	);
 
 	useEffect( () => {
-		if ( isError || ! isEligible ) {
+		if ( ! isEligible ) {
 			return;
 		}
 		const syntheticEvent = {
@@ -150,7 +147,7 @@ const LaunchBigSky: StepType = function ( props ) {
 			},
 		} as unknown as FormEvent;
 		onSubmit( syntheticEvent );
-	}, [ isError, isEligible, onSubmit ] );
+	}, [ isEligible, onSubmit ] );
 
 	if ( ! isEligible ) {
 		return null;

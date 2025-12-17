@@ -222,7 +222,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					/*
 					 * If the post-checkout ai step feature flag is enabled,
-					 * redirect the user to the post-checkout setup your site step.
+					 * redirect the user to the relevant step.
 					 */
 					if ( isEnabled( 'onboarding/post-checkout-ai-step' ) ) {
 						return navigate( 'setup-your-site-ai' );
@@ -236,7 +236,6 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					switch ( setupChoice ) {
 						case 'build-with-ai':
-							// Use launch-big-sky step which has eligibility checks and protections for post-checkout scenarios
 							window.location.assign(
 								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
 									siteSlug,
