@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { commentAuthorAvatar } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useState } from 'react';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import type { User } from '@automattic/api-core';
 
 interface Props {
@@ -18,10 +19,10 @@ interface Props {
 }
 
 const routesMe = {
-	billing: 'https://my.wordpress.com/me/billing',
-	profile: 'https://my.wordpress.com/me/profile',
-	preferences: 'https://my.wordpress.com/me/preferences',
-	security: 'https://my.wordpress.com/me/security',
+	billing: dashboardLink( '/me/billing' ),
+	profile: dashboardLink( '/me/profile' ),
+	preferences: dashboardLink( '/me/preferences' ),
+	security: dashboardLink( '/me/security' ),
 };
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(

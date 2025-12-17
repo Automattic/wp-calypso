@@ -4,6 +4,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { HelpCenter } from './help-center';
@@ -31,8 +32,8 @@ const ReaderHeader = () => {
 			<Button
 				style={ { flexShrink: 0 } }
 				icon={ <Logo /> }
+				href={ dashboardLink( '/' ) }
 				label={ __( 'WordPress.com Home' ) }
-				href="/v2"
 			/>
 			<HStack spacing={ isDesktop ? 2 : 0 } justify="flex-end">
 				<Button
