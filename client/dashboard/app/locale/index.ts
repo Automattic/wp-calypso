@@ -1,3 +1,4 @@
+import { User } from '@automattic/api-core';
 import { useAuth } from '../auth';
 
 type ComputedAttributes = {
@@ -8,5 +9,10 @@ type ComputedAttributes = {
 export function useLocale() {
 	const { user } = useAuth();
 	const u = user as typeof user & ComputedAttributes;
-	return u.localeVariant || u.localeSlug || user.locale_variant || user.language || 'en';
+
+	return getLocaleFromUser( u );
+}
+
+export function getLocaleFromUser( u: User ): string {
+	return u.localeVariant || u.localeSlug || u.locale_variant || u.language || 'en';
 }

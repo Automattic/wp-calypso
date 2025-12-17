@@ -46,18 +46,7 @@ export type AppConfig = {
 	mainRoute: string;
 	Logo: React.FC | null;
 	LoadingLogo?: React.FC;
-	supports: {
-		sites: SiteFeatureSupports | false;
-		plugins: boolean;
-		domains: boolean;
-		emails: boolean;
-		themes: boolean;
-		reader: boolean;
-		help: boolean;
-		notifications: boolean;
-		me: MeSupports | false;
-		commandPalette: boolean;
-	};
+	supports: AppConfigSupports;
 	optIn: boolean;
 	components: Record< string, () => Promise< { default: React.FC } > >;
 	queries: {
@@ -70,6 +59,19 @@ export type AppConfig = {
 		) => ReturnType< typeof dashboardSiteFiltersQuery >;
 	};
 };
+
+export interface AppConfigSupports {
+	sites: SiteFeatureSupports | false;
+	plugins: boolean;
+	domains: boolean;
+	emails: boolean;
+	themes: boolean;
+	reader: boolean;
+	help: boolean;
+	notifications: boolean;
+	me: MeSupports | false;
+	commandPalette: boolean;
+}
 
 export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	name: '',
