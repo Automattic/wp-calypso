@@ -40,6 +40,7 @@ import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboa
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -176,6 +177,10 @@ class Layout extends Component {
 
 		if ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) {
 			return null;
+		}
+
+		if ( this.props.isMSDEnabledForReader ) {
+			return <AsyncLoad require="calypso/reader/components/header" placeholder={ null } />;
 		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
@@ -366,6 +371,7 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
+		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled();
 
 		const sidebarType = getSidebarType( {
 			state,
@@ -460,6 +466,7 @@ export default withCurrentRoute(
 			isFromAutomatticForAgenciesPlugin,
 			isEligibleForJITM,
 			isBlazePro,
+			isMSDEnabledForReader,
 			oauth2Client,
 			wccomFrom,
 			isLoggedIn,
