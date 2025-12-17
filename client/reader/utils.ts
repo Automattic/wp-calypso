@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
@@ -155,4 +156,8 @@ export function setUrlQuery( key: string, value: string, pathname: string = '' )
 	if ( nextPath !== path ) {
 		page.replace( nextPath );
 	}
+}
+
+export function isReaderMSDHeaderEnabled(): boolean {
+	return isEnabled( 'reader/msd-header' ) && isEnabled( 'dashboard/v2' ); // TODO: Replace v2 flag with isDashboardEnabled.
 }
