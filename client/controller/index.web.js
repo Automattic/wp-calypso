@@ -17,6 +17,7 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
@@ -49,6 +50,7 @@ import { hydrate, render } from './web-util.js';
 export { setLocaleMiddleware, setSectionMiddleware } from './shared.js';
 export { hydrate, render } from './web-util.js';
 
+const RENEWAL_PRICING_EXPERIMENT = 'international_pricing_2025'; //todo: use the actual experiment name
 export const ProviderWrappedLayout = ( {
 	store,
 	queryClient,
@@ -63,6 +65,10 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
+
+	if ( userLoggedIn ) {
+		loadExperimentAssignment( RENEWAL_PRICING_EXPERIMENT );
+	}
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } beforePrimary={ beforePrimary } />
