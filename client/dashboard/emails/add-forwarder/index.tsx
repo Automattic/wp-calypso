@@ -75,15 +75,16 @@ function AddEmailForwarder() {
 	} );
 	const [ untokenizedInput, setUntokenizedInput ] = useState< string >( '' );
 	const isUntokenizedInputValidEmail = emailValidator.validate( untokenizedInput );
+	const forwardingAddresses = formData.forwardingAddresses.concat(
+		isUntokenizedInputValidEmail ? [ untokenizedInput ] : []
+	);
 	const {
 		isLoading: isLoadingNewForwardingAddresses,
 		forwardsByMailbox,
 		newForwardingAddresses,
 	} = useForwardingAddresses( {
 		domains: eligibleDomains,
-		forwardingAddresses: formData.forwardingAddresses.concat(
-			isUntokenizedInputValidEmail ? [ untokenizedInput ] : []
-		),
+		forwardingAddresses,
 	} );
 	const {
 		isLoading: isLoadingDomainMaxForwards,
@@ -143,7 +144,7 @@ function AddEmailForwarder() {
 		( forwards?.length ?? 0 ) + formData.forwardingAddresses.length >
 		( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
 
-	const duplicateForwardAddress = formData.forwardingAddresses.find(
+	const duplicateForwardAddress = forwardingAddresses.find(
 		( addr ) => forwardsByMailbox.get( `${ formData.localPart }@${ formData.domain }` ) === addr
 	);
 
