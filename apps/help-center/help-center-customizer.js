@@ -57,7 +57,7 @@ function CustomizerHelpCenterContent() {
 		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'help-center',
-			section: helpCenterData.sectionName || 'wp-admin',
+			section: helpCenterData.sectionName || 'wp-customizer',
 		} );
 
 		setShowHelpCenter( ! isShown );
@@ -95,7 +95,7 @@ function CustomizerHelpCenterContent() {
 	);
 }
 
-document.addEventListener( 'DOMContentLoaded', () => {
+function initCustomizerHelpCenter() {
 	const target = document.getElementById( 'help-center-customizer' );
 
 	if ( target ) {
@@ -105,4 +105,10 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			</QueryClientProvider>
 		);
 	}
-} );
+}
+
+if ( document.readyState === 'loading' ) {
+	document.addEventListener( 'DOMContentLoaded', initCustomizerHelpCenter );
+} else {
+	initCustomizerHelpCenter();
+}

@@ -10,9 +10,9 @@ import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { isDashboardEnabled } from 'calypso/state/dashboard/selectors/is-dashboard-enabled';
 import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
-import { isMultiSiteDashboardEnabled } from 'calypso/state/sites/selectors/is-multi-site-dashboard-enabled';
 import { AppState } from 'calypso/types';
 import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
 import { SidebarIconCalendar } from './icons';
@@ -22,11 +22,11 @@ interface Props {
 	path: string;
 	isCollapsed: boolean;
 	hasOptIn: boolean;
-	isMultiSiteDashboardEnabled: boolean;
+	isDashboardEnabled: boolean;
 }
 const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
 
-const PluginsSidebar = ( { path, isCollapsed, hasOptIn, isMultiSiteDashboardEnabled }: Props ) => {
+const PluginsSidebar = ( { path, isCollapsed, hasOptIn, isDashboardEnabled }: Props ) => {
 	const translate = useTranslate();
 
 	const [ previousPath, setPreviousPath ] = useState( path );
@@ -48,7 +48,7 @@ const PluginsSidebar = ( { path, isCollapsed, hasOptIn, isMultiSiteDashboardEnab
 					"Enhance your site's features with plugins, or schedule updates to fit your needs."
 				)
 			}
-			footer={ isMultiSiteDashboardEnabled && ! isCollapsed && <HostingDashboardOptInBanner /> }
+			footer={ isDashboardEnabled && ! isCollapsed && <HostingDashboardOptInBanner /> }
 		>
 			<SidebarMenu>
 				{ ! ( isEnabled( 'plugins/universal-header' ) && hasOptIn ) && (
@@ -120,8 +120,8 @@ export default withCurrentRoute(
 
 		return {
 			isCollapsed: shouldShowCollapsedGlobalSidebar,
-			hasOptIn: hasHostingDashboardOptIn( state ),
-			isMultiSiteDashboardEnabled: isMultiSiteDashboardEnabled( state ),
+			hasOptIn: hasDashboardOptIn( state ),
+			isDashboardEnabled: isDashboardEnabled( state ),
 		};
 	} )( PluginsSidebar )
 );

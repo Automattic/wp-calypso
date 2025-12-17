@@ -3,8 +3,8 @@ import i18n from 'i18n-calypso';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { sendVerificationSignal } from 'calypso/lib/user/verification-checker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { successNotice } from 'calypso/state/notices/actions';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 
 /**
  * Page middleware
@@ -34,7 +34,7 @@ export default function emailVerification( context, next ) {
 		return;
 	}
 
-	// Redirect users to v2 if they opted in to the Hosting Dashboard
+	// Redirect users to v2 if they opted in to the Multi-site Dashboard
 	if ( shouldRedirectToV2( context, next, params ) ) {
 		return;
 	}
@@ -89,7 +89,7 @@ function shouldRedirectToV2( context, next, params ) {
 			if ( arePreferencesLoaded( state ) ) {
 				unsubscribe();
 
-				if ( hasHostingDashboardOptIn( state ) ) {
+				if ( hasDashboardOptIn( state ) ) {
 					window.location.href = buildDashboardRedirectUrl(
 						params.verified,
 						params.newEmailResult
@@ -104,7 +104,7 @@ function shouldRedirectToV2( context, next, params ) {
 		return;
 	}
 
-	if ( hasHostingDashboardOptIn( state ) ) {
+	if ( hasDashboardOptIn( state ) ) {
 		window.location.href = buildDashboardRedirectUrl( params.verified, params.newEmailResult );
 		return true;
 	}

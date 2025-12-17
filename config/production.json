@@ -41,7 +41,6 @@
 		"current-site/notice": true,
 		"dashboard/v2/backport/site-overview": true,
 		"domain-search-rewrite": true,
-		"domain-connection-redesign": true,
 		"domain-transfer-redesign": true,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": true,
