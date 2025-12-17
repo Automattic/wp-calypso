@@ -74,7 +74,7 @@ export const SitesWithoutThisPlugin = ( {
 	isLoading,
 	sitesWithoutThisPlugin,
 }: SitesWithoutThisPluginProps ) => {
-	const isMediumViewport = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( 'medium' );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ view, setView ] = useState< View >( defaultView );
 
@@ -125,7 +125,7 @@ export const SitesWithoutThisPlugin = ( {
 			{
 				id: 'install-plugin',
 				label: __( 'Install plugin' ),
-				isPrimary: isMediumViewport,
+				isPrimary: isDesktop,
 				modalHeader: __( 'Install plugin' ),
 				RenderModal: ( { items, closeModal } ) => {
 					const { mutateAsync: installPluginMutate, isPending: isInstalling } = useMutation(
@@ -238,7 +238,7 @@ export const SitesWithoutThisPlugin = ( {
 			{
 				id: 'upgrade-to-install',
 				label: __( 'Upgrade to install' ),
-				isPrimary: isMediumViewport,
+				isPrimary: isDesktop,
 				callback: ( items: Site[] ) => {
 					const site = items[ 0 ];
 
@@ -267,10 +267,10 @@ export const SitesWithoutThisPlugin = ( {
 				},
 				isEligible: ( item: Site ) => !! item.URL,
 				supportsBulk: false,
-				isPrimary: isMediumViewport,
+				isPrimary: isDesktop,
 			},
 		],
-		[ createErrorNotice, createSuccessNotice, isMediumViewport, pluginName, pluginSlug ]
+		[ createErrorNotice, createSuccessNotice, isDesktop, pluginName, pluginSlug ]
 	);
 
 	const { data, paginationInfo } = filterSortAndPaginate( sitesWithoutThisPlugin, view, fields );
