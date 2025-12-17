@@ -1,5 +1,6 @@
 import { DomainSubtype, DomainTransferStatus } from '@automattic/api-core';
 import {
+	domainDiagnosticsQuery,
 	domainQuery,
 	domainDnsQuery,
 	domainForwardingQuery,
@@ -250,6 +251,27 @@ export const domainDnsEditRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains/dns/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-edit' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainDiagnosticsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Diagnostics' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'diagnostics',
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainDiagnosticsQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-diagnostics' ).then( ( d ) =>
+		createLazyRoute( 'domain-diagnostics' )( {
 			component: d.default,
 		} )
 	)
@@ -680,6 +702,7 @@ export const createDomainsRoutes = () => {
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
+			domainDiagnosticsRoute,
 			domainConnectionSetupRoute,
 			domainTransferSetupRoute,
 			domainForwardingRoute.addChildren( [

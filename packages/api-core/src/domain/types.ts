@@ -68,6 +68,7 @@ export interface Domain extends DomainSummary {
 	is_gravatar_domain: boolean;
 	is_gravatar_restricted_domain: boolean;
 	is_locked: boolean;
+	is_mapped_to_atomic_site: boolean;
 	is_pending_whois_update: boolean;
 	is_root_domain_registered_with_automattic: boolean;
 	is_redeemable: boolean;

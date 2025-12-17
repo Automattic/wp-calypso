@@ -1,8 +1,8 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { domainQuery, purchaseQuery } from '@automattic/api-queries';
+import { domainQuery, purchaseQuery, domainDiagnosticsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -27,6 +27,11 @@ export default function DomainOverview() {
 	const { data: purchase } = useSuspenseQuery(
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
+
+	const { data: diagnosticsData, isLoading: isLoadingDiagnostics } = useQuery( {
+		...domainDiagnosticsQuery( domain.domain ),
+		enabled: domain.is_mapped_to_atomic_site && domain.primary_domain,
+	} );
 
 	const wrappableDomainName = useMemo( () => {
 		const [ domainName, ...tlds ] = domain.domain.split( '.' );
@@ -118,7 +123,11 @@ export default function DomainOverview() {
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
 						<FeaturedCards />
-						<DomainOverviewSettings domain={ domain } />
+						<DomainOverviewSettings
+							domain={ domain }
+							domainDiagnostics={ diagnosticsData }
+							isLoadingDiagnostics={ isLoadingDiagnostics }
+						/>
 					</>
 				) }
 				<Actions />
