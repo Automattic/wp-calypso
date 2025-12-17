@@ -660,11 +660,66 @@ class ReaderStream extends Component {
 		// to be updated before we can remove it.
 		let baseClassnames = clsx( 'following', this.props.className );
 
+		const sidebarContentFn = this.props.streamSidebar;
+
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
-			body = this.props.emptyContent?.();
-			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
-				body = <EmptyContent />;
+			let emptyContent = this.props.emptyContent?.();
+			if ( ! emptyContent && this.props.showDefaultEmptyContentIfMissing ) {
+				emptyContent = <EmptyContent />;
+			}
+
+			// If a sidebar is available, show it alongside the empty content
+			// This ensures the subscribe button is visible even when there are no posts
+			if ( sidebarContentFn && streamType !== 'search' ) {
+				if ( wideDisplay ) {
+					body = (
+						<div className="stream__two-column">
+							<div className="reader__content">
+								{ streamHeader?.() }
+								{ emptyContent }
+							</div>
+							<div className="stream__right-column">{ sidebarContentFn() }</div>
+						</div>
+					);
+					baseClassnames = clsx( 'reader-two-column', baseClassnames );
+				} else {
+					body = (
+						<>
+							{ streamHeader?.() }
+							<div className="stream__container">
+								<div className="stream__header">
+									<SectionNav selectedText={ this.state.selectedTab }>
+										<NavTabs label={ translate( 'Status' ) }>
+											<NavItem
+												key="posts"
+												selected={ this.state.selectedTab === 'posts' }
+												onClick={ this.handlePostsSelected }
+											>
+												{ translate( 'Posts' ) }
+											</NavItem>
+											<NavItem
+												key="sites"
+												selected={ this.state.selectedTab === 'sites' }
+												onClick={ this.handleSitesSelected }
+											>
+												{ this.props.sidebarTabTitle || translate( 'Subscriptions' ) }
+											</NavItem>
+										</NavTabs>
+									</SectionNav>
+								</div>
+								{ this.state.selectedTab === 'posts' && (
+									<div className="reader__content">{ emptyContent }</div>
+								) }
+								{ this.state.selectedTab === 'sites' && (
+									<div className="stream__right-column">{ sidebarContentFn() }</div>
+								) }
+							</div>
+						</>
+					);
+				}
+			} else {
+				body = emptyContent;
 			}
 			showingStream = false;
 		} else {
@@ -685,8 +740,6 @@ class ReaderStream extends Component {
 					selectedItem={ selectedPostKey }
 				/>
 			);
-
-			const sidebarContentFn = this.props.streamSidebar;
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
 			if ( ! sidebarContentFn || streamType === 'search' ) {
