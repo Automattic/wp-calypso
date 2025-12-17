@@ -18,6 +18,7 @@ import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-not
 import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import {
 	isCurrentUserCurrentPlanOwner,
 	isRequestingSitePlans,
@@ -26,6 +27,7 @@ import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
 jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
 	isProPlan: jest.fn(),
 	isStarterPlan: jest.fn(),
 } ) );
@@ -58,6 +60,14 @@ jest.mock( 'calypso/state/currency-code/selectors', () => ( {
 	getCurrentUserCurrencyCode: jest.fn(),
 } ) );
 jest.mock( '@automattic/calypso-config' );
+jest.mock( 'calypso/state/purchases/selectors/get-site-purchases', () => ( {
+	getSitePurchases: jest.fn(),
+} ) );
+jest.mock( 'calypso/components/data/query-site-purchases', () => {
+	return function MockQuerySitePurchases() {
+		return null;
+	};
+} );
 
 const plansList: PlanSlug[] = [
 	PLAN_FREE,
@@ -87,6 +97,7 @@ describe( '<PlanNotice /> Tests', () => {
 		jest.mocked( getByPurchaseId ).mockReturnValue( {
 			isInAppPurchase: false,
 		} as Purchase );
+		jest.mocked( getSitePurchases ).mockReturnValue( [] );
 		jest.mocked( isProPlan ).mockReturnValue( false );
 	} );
 
@@ -201,6 +212,25 @@ describe( '<PlanNotice /> Tests', () => {
 		);
 		expect( screen.getByRole( 'status' ).textContent ).toBe(
 			'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress app.'
+		);
+	} );
+
+	test( 'Shows "domain and other upgrades" copy when source is domain and the site has other upgrades purchased', () => {
+		jest
+			.mocked( useUpgradeCreditsNoticeData )
+			.mockReturnValue( { credits: 4600, source: 'domain' } );
+		jest.mocked( getSitePurchases ).mockReturnValue( [
+			{
+				productSlug: 'premium_theme',
+			},
+		] as unknown as Purchase[] );
+
+		renderWithProvider(
+			<PlanNotice visiblePlans={ plansList } isInSignup={ false } siteId={ 32234 } />
+		);
+
+		expect( screen.getByRole( 'status' ).textContent ).toContain(
+			'available from your current domain and other upgrades'
 		);
 	} );
 } );

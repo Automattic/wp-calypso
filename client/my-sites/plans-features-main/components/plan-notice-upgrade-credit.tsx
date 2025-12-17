@@ -56,26 +56,27 @@ const PlanNoticeUpgradeCredit = ( {
 		<InlineSupportLink supportContext="plans-upgrade-credit" showIcon={ false } />
 	);
 
-	const hasOtherUpgradesPurchase = sitePurchases.some( ( purchase ) => {
-		const productSlug = purchase?.productSlug;
-		if ( ! productSlug ) {
-			return false;
-		}
+	const hasOtherUpgradesPurchase =
+		sitePurchases?.some( ( purchase ) => {
+			const productSlug = purchase?.productSlug;
+			if ( ! productSlug ) {
+				return false;
+			}
 
-		// "Other upgrades" means non-domain and non-plan purchases (e.g. themes add-on, storage, etc).
-		if ( isWpComPlan( productSlug ) ) {
-			return false;
-		}
-		if (
-			isDomainRegistration( purchase ) ||
-			isDomainTransfer( purchase ) ||
-			isDomainMapping( purchase )
-		) {
-			return false;
-		}
+			// "Other upgrades" means non-domain and non-plan purchases (e.g. themes add-on, storage, etc).
+			if ( isWpComPlan( productSlug ) ) {
+				return false;
+			}
+			if (
+				isDomainRegistration( purchase ) ||
+				isDomainTransfer( purchase ) ||
+				isDomainMapping( purchase )
+			) {
+				return false;
+			}
 
-		return true;
-	} );
+			return true;
+		} ) ?? false;
 
 	const effectiveSource =
 		upgradeCreditsNoticeData?.source === 'domain' && hasOtherUpgradesPurchase
