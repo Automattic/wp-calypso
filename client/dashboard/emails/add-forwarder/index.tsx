@@ -138,7 +138,7 @@ function AddEmailForwarder() {
 	const isDomainMaxForwardsReached =
 		( forwards?.length ?? 0 ) >= ( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
 	const willDomainMaxForwardsBeReached =
-		( forwards?.length ?? 0 ) + formData.forwardingAddresses.length >
+		( forwards?.length ?? 0 ) + forwardingAddresses.length >
 		( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
 
 	const duplicateForwardAddress = forwardingAddresses.find(
