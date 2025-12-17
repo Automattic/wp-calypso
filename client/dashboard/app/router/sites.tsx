@@ -430,6 +430,8 @@ export const siteBackupsRoute = createRoute( {
 			queryClient.prefetchQuery( siteBackupActivityLogEntriesQuery( site.ID ) );
 			queryClient.prefetchQuery( siteBackupActivityLogGroupCountsQuery( site.ID ) );
 		}
+
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
