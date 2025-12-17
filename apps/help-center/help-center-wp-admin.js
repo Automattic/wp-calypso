@@ -171,15 +171,21 @@ function AdminHelpCenterContent() {
 	);
 
 	if ( chatSupportButton ) {
-		chatSupportButton.onclick = () => handleMenuClick( '/odie' );
+		chatSupportButton.onclick = () => {
+			handleMenuClick( '/odie' );
+		};
 	}
 
 	if ( chatHistoryButton ) {
-		chatHistoryButton.onclick = () => handleMenuClick( '/chat-history' );
+		chatHistoryButton.onclick = () => {
+			handleMenuClick( '/chat-history' );
+		};
 	}
 
 	if ( supportGuidesButton ) {
-		supportGuidesButton.onclick = () => handleMenuClick( '/support-guides' );
+		supportGuidesButton.onclick = () => {
+			handleMenuClick( '/support-guides' );
+		};
 	}
 
 	const openSupportLinkInHelpCenter = useCallback(
