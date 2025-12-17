@@ -134,10 +134,7 @@ function AddEmailForwarder() {
 		isLoadingDomains ||
 		isLoadingDomainMaxForwards ||
 		isLoadingNewForwardingAddresses;
-	const allFieldsSet =
-		!! formData.localPart &&
-		!! formData.domain &&
-		( !! formData.forwardingAddresses.length || isUntokenizedInputValidEmail );
+	const allFieldsSet = !! formData.localPart && !! formData.domain && !! forwardingAddresses.length;
 	const isDomainMaxForwardsReached =
 		( forwards?.length ?? 0 ) >= ( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
 	const willDomainMaxForwardsBeReached =
