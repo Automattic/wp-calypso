@@ -131,7 +131,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/marketplace/:productSlug`,
+		`/checkout/:productSlug/:intentId`,
 		setLocaleMiddleware(),
 		noSite,
 		checkoutMarketplaceSiteless,
@@ -140,7 +140,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/marketplace/:productSlug/renew/:purchaseId`,
+		`/checkout/:productSlug/:intentId/renew/:purchaseId`,
 		setLocaleMiddleware(),
 		redirectLoggedOut,
 		noSite,
