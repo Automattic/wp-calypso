@@ -14,6 +14,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -119,6 +120,14 @@ export default function AgentDock( {
 		onSubmit,
 		sessionId,
 		agentId,
+	} );
+
+	// Handle WordPress admin bar integration
+	useAdminBarIntegration( {
+		isOpen,
+		sectionName,
+		setIsOpen,
+		navigate,
 	} );
 
 	const handleNewChat = () => {
