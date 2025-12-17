@@ -1,13 +1,8 @@
-import {
-	isDomainMapping,
-	isDomainRegistration,
-	isDomainTransfer,
-	isWpComPlan,
-} from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Notice from 'calypso/components/notice';
+import { getUpgradeCreditsEffectiveSource } from 'calypso/my-sites/plans-features-main/components/get-upgrade-credits-effective-source';
 import UpgradeCreditsNoticeText from 'calypso/my-sites/plans-features-main/components/upgrade-credits-notice-text';
 import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { useSelector } from 'calypso/state';
@@ -19,6 +14,10 @@ import type { PlansIntent } from '@automattic/plans-grid-next';
 type Props = {
 	className?: string;
 	onDismissClick?: () => void;
+	/**
+	 * Where this notice is rendered. Used to pick copy that matches the surrounding UI.
+	 */
+	context?: 'plans' | 'overview';
 	siteId: number;
 	visiblePlans?: PlanSlug[];
 	intent?: PlansIntent;
@@ -27,6 +26,7 @@ type Props = {
 const PlanNoticeUpgradeCredit = ( {
 	className,
 	onDismissClick,
+	context = 'plans',
 	siteId,
 	visiblePlans,
 	intent,
@@ -49,33 +49,10 @@ const PlanNoticeUpgradeCredit = ( {
 		isSmallestUnit: true,
 		stripZeros: isUpgradeFlow,
 	} );
-
-	const hasOtherUpgradesPurchase =
-		sitePurchases?.some( ( purchase ) => {
-			const productSlug = purchase?.productSlug;
-			if ( ! productSlug ) {
-				return false;
-			}
-
-			// "Other upgrades" means non-domain and non-plan purchases (e.g. themes add-on, storage, etc).
-			if ( isWpComPlan( productSlug ) ) {
-				return false;
-			}
-			if (
-				isDomainRegistration( purchase ) ||
-				isDomainTransfer( purchase ) ||
-				isDomainMapping( purchase )
-			) {
-				return false;
-			}
-
-			return true;
-		} ) ?? false;
-
-	const effectiveSource =
-		upgradeCreditsNoticeData?.source === 'domain' && hasOtherUpgradesPurchase
-			? 'domain-and-other-upgrades'
-			: upgradeCreditsNoticeData?.source;
+	const effectiveSource = getUpgradeCreditsEffectiveSource(
+		upgradeCreditsNoticeData,
+		sitePurchases
+	);
 	return (
 		<>
 			<QuerySitePlans siteId={ siteId } />
@@ -83,7 +60,7 @@ const PlanNoticeUpgradeCredit = ( {
 			{ isUpgradeFlow ? (
 				<div className="plan-upgrade-credit-notice-compact">
 					<UpgradeCreditsNoticeText
-						context="plans"
+						context={ context }
 						variant="compact"
 						amountInCurrency={ amountInCurrency }
 					/>
@@ -98,7 +75,7 @@ const PlanNoticeUpgradeCredit = ( {
 					theme="light"
 				>
 					<UpgradeCreditsNoticeText
-						context="plans"
+						context={ context }
 						variant="full"
 						source={ effectiveSource }
 						amountInCurrency={ amountInCurrency }
