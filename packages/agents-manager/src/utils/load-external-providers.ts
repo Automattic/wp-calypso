@@ -36,6 +36,13 @@ export type NavigationContinuationHook = ( props: {
 	agentId: string;
 } ) => void;
 
+/**
+ * Abilities setup hook type - provided by environments that need to register
+ * hook-dependent abilities (abilities that require React context to work).
+ * Called from AgentDock component to provide React context.
+ */
+export type AbilitiesSetupHook = () => void;
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -43,6 +50,8 @@ export interface LoadedProviders {
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
+	/** Setup hooks collected from all providers (called to register hook-dependent abilities) */
+	setupHooks?: AbilitiesSetupHook[];
 }
 
 /**
@@ -66,6 +75,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
+	// Setup hooks are collected from all providers (not last-wins)
+	const setupHooks: AbilitiesSetupHook[] = [];
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -91,9 +102,21 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useNavigationContinuation ) {
 				mergedNavigationContinuation = module.useNavigationContinuation;
 			}
+			// Collect setup hooks from all providers (multiple plugins can register abilities)
+			if ( module.useAbilitiesSetup ) {
+				setupHooks.push( module.useAbilitiesSetup );
+				// eslint-disable-next-line no-console
+				console.log( `[AgentsManager] Collected useAbilitiesSetup hook from "${ moduleId }"` );
+			}
 
 			// eslint-disable-next-line no-console
-			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
+			console.log( `[AgentsManager] Loaded provider "${ moduleId }"`, {
+				hasToolProvider: !! module.toolProvider,
+				hasContextProvider: !! module.contextProvider,
+				hasSuggestions: !! module.suggestions,
+				hasNavigationContinuation: !! module.useNavigationContinuation,
+				hasAbilitiesSetup: !! module.useAbilitiesSetup,
+			} );
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );
@@ -107,5 +130,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
+		setupHooks: setupHooks.length > 0 ? setupHooks : undefined,
 	};
 }

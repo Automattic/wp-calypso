@@ -36,6 +36,11 @@ type NavigationContinuationHook = ( props: {
 	agentId: string;
 } ) => void;
 
+/**
+ * Abilities setup hook type - registers hook-dependent abilities
+ */
+type AbilitiesSetupHook = () => void;
+
 interface AgentDockProps {
 	/** The selected site object. */
 	site?: HelpCenterSite | null;
@@ -53,6 +58,8 @@ interface AgentDockProps {
 	markdownExtensions?: MarkdownExtensions;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
+	/** Setup hooks to register hook-dependent abilities (collected from all providers). */
+	setupHooks?: AbilitiesSetupHook[];
 }
 
 export default function AgentDock( {
@@ -64,6 +71,7 @@ export default function AgentDock( {
 	markdownComponents = {},
 	markdownExtensions = {},
 	useNavigationContinuation,
+	setupHooks,
 }: AgentDockProps ) {
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const { hasLoaded: isStoreReady, isOpen = false } = useSelect( ( select ) => {
@@ -129,6 +137,18 @@ export default function AgentDock( {
 		setIsOpen,
 		navigate,
 	} );
+
+	// Call all setup hooks to register hook-dependent abilities
+	// These hooks are stable after loadedProviders is set (AgentDock only renders after providers load)
+	if ( setupHooks?.length ) {
+		// eslint-disable-next-line no-console
+		console.log( `[AgentDock] Calling ${ setupHooks.length } setup hook(s)` );
+		setupHooks.forEach( ( hook, index ) => {
+			// eslint-disable-next-line no-console
+			console.log( `[AgentDock] Calling setup hook ${ index + 1 }/${ setupHooks.length }` );
+			hook();
+		} );
+	}
 
 	const handleNewChat = () => {
 		navigate( '/' );
