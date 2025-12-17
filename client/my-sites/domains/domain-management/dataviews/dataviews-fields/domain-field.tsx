@@ -1,8 +1,9 @@
-import { JobStatus, PartialDomainData } from '@automattic/data-stores';
 import { PrimaryDomainLabel } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useDomainsDataViewsContext } from '../use-context';
+import type { JobStatus } from '@automattic/api-core';
+import type { PartialDomainData } from '@automattic/data-stores';
 
 interface Props {
 	domain: PartialDomainData;

@@ -23,6 +23,7 @@ import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition'
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
 import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
+import { ImportLimitNotice } from '../import-limit-notice';
 import { CategoriesSection } from './categories-section';
 import { tip } from './icon';
 
@@ -52,6 +53,8 @@ interface Props {
 	hidden?: boolean;
 	isWPCOMSite?: boolean;
 	disabled?: boolean;
+	isFreePlan?: boolean;
+	siteSlug?: string;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -84,6 +87,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		hidden = false,
 		isWPCOMSite = false,
 		disabled,
+		isFreePlan = false,
+		siteSlug = '',
 	} = props;
 
 	const { data: newsletterCategoriesData } = useNewsletterCategories( {
@@ -512,6 +517,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 								isWPCOMSite={ isWPCOMSite }
 							/>
 						) }
+
+					<ImportLimitNotice isFreePlan={ isFreePlan } siteSlug={ siteSlug } />
 
 					<AddSubscribersDisclaimer buttonLabel={ submitBtnName } />
 

@@ -50,7 +50,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName, site } = useHelpCenterContext();
+	const { sectionName, site, source, disableChatSupport } = useHelpCenterContext();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 	const { forceEmailSupport } = useChatStatus();
 	const currentSiteDomain = site?.domain;
@@ -131,12 +131,14 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								sectionName={ sectionName }
 								currentSiteDomain={ currentSiteDomain }
 								isEligibleForChat={ isUserEligibleForPaidSupport }
-								forceEmailSupport={ !! forceEmailSupport }
+								forceEmailSupport={ !! forceEmailSupport || disableChatSupport }
 							/>
 						}
 					/>
-					<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
-					<Route path="/a4a-contact-form" element={ <HelpCenterA4AContactForm /> } />
+					<Route
+						path="/contact-form"
+						element={ source === 'a4a' ? <HelpCenterA4AContactForm /> : <HelpCenterContactForm /> }
+					/>
 					<Route path="/success" element={ <SuccessScreen /> } />
 					<Route
 						path="/support-guides"

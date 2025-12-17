@@ -122,7 +122,7 @@ export default function AgentDock( {
 	} );
 
 	const handleNewChat = () => {
-		navigate( '/chat', { state: { isNewChat: true } } );
+		navigate( '/' );
 	};
 
 	const handleSelectConversation = ( sessionId: string ) => {
@@ -254,14 +254,13 @@ export default function AgentDock( {
 
 	return createAgentPortal(
 		<Routes>
-			<Route path="/" element={ Chat } />
 			<Route path="/odie" element={ OdieChat } />
 			{ /* NOTE: Use route state for session ID so it can be accessed throughout the app. */ }
 			<Route path="/chat" element={ Chat } />
 			<Route path="/post" element={ SupportGuideRoute } />
 			<Route path="/support-guides" element={ SupportGuidesRoute } />
 			<Route path="/history" element={ History } />
-			<Route path="*" element={ <Navigate to="/" replace /> } />
+			<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
 		</Routes>
 	);
 }

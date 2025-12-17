@@ -33,7 +33,7 @@ export const ActiveToggle = ( {
 
 	return (
 		<FieldActionToggle
-			label={ __( 'Active' ) }
+			label={ checked ? __( 'On' ) : __( 'Off' ) }
 			checked={ checked }
 			disabled={ disabled }
 			onToggle={ ( next ) => {

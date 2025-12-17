@@ -2,7 +2,7 @@
 
 ## Overview
 
-The dashboard prototype follows a component-based architecture with a strong focus on leveraging the WordPress component system. The UI components are designed to be reusable, accessible, and consistent with the WordPress design language.
+The dashboard follows a component-based architecture with a strong focus on leveraging the WordPress component system. The UI components are designed to be reusable, accessible, and consistent with the WordPress design language.
 
 ## Core Principles
 

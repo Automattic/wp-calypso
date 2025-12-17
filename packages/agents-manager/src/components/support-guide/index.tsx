@@ -1,8 +1,11 @@
 import { AgentUI } from '@automattic/agenttic-ui';
+import { AgentsManagerSelect } from '@automattic/data-stores';
 import { HelpCenterArticle } from '@automattic/support-articles';
 import { Button } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { Options } from '../chat-header';
 import './style.scss';
 
@@ -29,6 +32,11 @@ export default function SupportGuide( {
 	const location = useLocation().search;
 	const query = new URLSearchParams( location );
 	const isFromChat = query.has( 'from-chat' );
+	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition } = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
 
 	function handleSubmit( value: string ) {
 		// eslint-disable-next-line no-console
@@ -37,6 +45,8 @@ export default function SupportGuide( {
 
 	return (
 		<AgentUI.Container
+			initialChatPosition={ floatingPosition }
+			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
 			className="agenttic"
 			messages={ [] }
 			isProcessing={ false }

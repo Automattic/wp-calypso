@@ -148,7 +148,7 @@ const A4ASidebar = ( {
 				</ul>
 			</SidebarFooter>
 
-			<A4AContactSupportWidget />
+			{ ! isEnabled( 'a4a-help-center' ) && <A4AContactSupportWidget /> }
 			<ProvideFeedback />
 		</Sidebar>
 	);

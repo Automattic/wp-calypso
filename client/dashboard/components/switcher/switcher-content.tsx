@@ -21,26 +21,36 @@ const DEFAULT_VIEW: View = {
 };
 
 export default function SwitcherContent< T >( {
+	initialView = DEFAULT_VIEW,
+	itemClassName,
 	items,
 	searchableFields,
+	searchClassName,
+	width = '280px',
 	getItemUrl,
 	renderItemMedia,
 	renderItemTitle,
 	renderItemDescription,
+	resetScroll = true,
 	children,
 	onClose,
 	onItemClick,
 }: PropsWithChildren< {
+	itemClassName?: string | ( ( item: T ) => string );
+	initialView?: View;
 	items?: T[];
+	searchClassName?: string;
 	searchableFields: Field< T >[];
+	width?: string;
 	getItemUrl: ( item: T ) => string;
 	renderItemMedia: RenderItemMedia< T >;
 	renderItemTitle: RenderItemTitle< T >;
 	renderItemDescription?: RenderItemDescription< T >;
+	resetScroll?: boolean;
 	onClose: () => void;
 	onItemClick?: () => void;
 } > ) {
-	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const [ view, setView ] = useState< View >( initialView );
 
 	const fields = useMemo( () => {
 		return searchableFields.map( ( searchableField ) => ( {
@@ -56,9 +66,10 @@ export default function SwitcherContent< T >( {
 	const { data: filteredData } = filterSortAndPaginate( items, view, fields );
 
 	return (
-		<NavigableMenu style={ { width: '280px' } }>
+		<NavigableMenu style={ { width } }>
 			<MenuGroup>
 				<SearchControl
+					className={ searchClassName }
 					label={ __( 'Search' ) }
 					value={ view.search }
 					onChange={ ( value ) => setView( { ...view, search: value } ) }
@@ -66,11 +77,14 @@ export default function SwitcherContent< T >( {
 					__nextHasNoMarginBottom
 				/>
 			</MenuGroup>
-			<MenuGroup>
+			<MenuGroup hideSeparator>
 				{ filteredData.map( ( item ) => {
 					const itemUrl = getItemUrl( item );
+					const className =
+						typeof itemClassName === 'function' ? itemClassName( item ) : itemClassName;
 					return (
 						<RouterLinkMenuItem
+							className={ className }
 							key={ itemUrl }
 							to={ itemUrl }
 							style={ { height: 'fit-content', minHeight: '40px' } }
@@ -78,6 +92,7 @@ export default function SwitcherContent< T >( {
 								onClose();
 								onItemClick?.();
 							} }
+							resetScroll={ resetScroll }
 						>
 							<HStack justify="flex-start" alignment="center" expanded>
 								{ renderItemMedia( { item, context: 'list', size: 32 } ) }
