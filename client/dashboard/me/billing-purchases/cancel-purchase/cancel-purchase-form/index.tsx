@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
@@ -200,7 +200,6 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 		if ( surveyStep === ATOMIC_REVERT_STEP ) {
 			return (
 				<AtomicRevertStep
-					action="cancel-purchase"
 					atomicRevertCheckOne={ atomicRevertCheckOne ?? false }
 					atomicRevertCheckTwo={ atomicRevertCheckTwo ?? false }
 					atomicTransfer={ atomicTransfer }
@@ -440,11 +439,11 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 
 	return (
 		props.isVisible && (
-			<>
+			<VStack spacing={ 4 }>
 				{ surveyContent() }
 
 				{ renderStepButtons() }
-			</>
+			</VStack>
 		)
 	);
 }

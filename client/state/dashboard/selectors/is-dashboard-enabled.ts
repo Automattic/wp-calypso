@@ -2,8 +2,8 @@ import { isEnabled } from '@automattic/calypso-config';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type { AppState } from 'calypso/types';
 
-// TODO: Set to a specific user when feature is rolled out to a limited audience.
-export const OLDEST_ELIGIBLE_USER = Infinity;
+// TODO: Update user ID when feature is rolled out to a limited audience.
+export const OLDEST_ELIGIBLE_USER = 275022156;
 
 export const isDashboardEnabled = ( state: AppState ): boolean => {
 	if ( ! isEnabled( 'dashboard/v2' ) ) {

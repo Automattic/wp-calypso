@@ -13,6 +13,7 @@ import {
 	interactionHasZendeskEvent,
 	getIsRequestingHumanSupport,
 	getIsLastBotMessage,
+	getIsErrorMessage,
 } from '../../utils';
 import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
 import BotMessageActions from './bot-message-actions';
@@ -79,9 +80,12 @@ export const UserMessage = ( {
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 	const isLastBotMessage = getIsLastBotMessage( chat, message );
 	const hasRecentOpenConversation = getMostRecentOpenLiveInteraction();
-
+	const isErrorMessage = getIsErrorMessage( message );
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
+
+	const showGetSupport = isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage );
+	const showActionButtons = ! isRequestingHumanSupport && ! isErrorMessage;
 
 	const shouldOverrideWithForwardMessage = isRequestingHumanSupport && chat.provider !== 'zendesk';
 
@@ -111,7 +115,7 @@ export const UserMessage = ( {
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
-					{ isRequestingHumanSupport && isLastBotMessage && (
+					{ showGetSupport && (
 						<GetSupport
 							onClickAdditionalEvent={ ( destination ) => {
 								trackEvent( 'chat_get_support', {
@@ -121,7 +125,7 @@ export const UserMessage = ( {
 							} }
 						/>
 					) }{ ' ' }
-					{ ! isRequestingHumanSupport && (
+					{ showActionButtons && (
 						<>
 							{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
 								<BotMessageActions message={ message } />

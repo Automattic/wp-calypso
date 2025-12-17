@@ -274,6 +274,10 @@ export const getErrorMessageUnknownError = (): Message => {
 			flags: {
 				show_ai_avatar: true,
 				is_error_message: true,
+				forward_to_human_support: false,
+			},
+			question_tags: {
+				inquiry_type: 'request-for-human-support',
 			},
 		},
 	};
