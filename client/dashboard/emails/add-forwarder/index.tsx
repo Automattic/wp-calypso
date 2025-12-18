@@ -1,6 +1,7 @@
-import { addEmailForwarderMutation } from '@automattic/api-queries';
+import { EmailProvider } from '@automattic/api-core';
+import { addEmailForwarderMutation, userMailboxesQuery } from '@automattic/api-queries';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -25,7 +26,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
-import { useDomains } from '../hooks/use-domains';
 import { DEFAULT_MAX_DOMAIN_FORWARDS, useDomainMaxForwards } from './hooks/use-domain-max-forwards';
 import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
@@ -47,26 +47,26 @@ function AddEmailForwarder() {
 		addEmailForwarderMutation()
 	);
 	const navigate = useNavigate();
-	const { domains, isLoading: isLoadingDomains } = useDomains();
 
-	const eligibleDomains = useMemo(
-		() =>
-			domains?.filter(
-				( {
-					current_user_can_add_email,
-					current_user_is_owner,
-					google_apps_subscription,
-					titan_mail_subscription,
-					wpcom_domain,
-				} ) =>
-					current_user_can_add_email &&
-					current_user_is_owner &&
-					google_apps_subscription?.status === 'no_subscription' &&
-					titan_mail_subscription?.status === 'no_subscription' &&
-					! wpcom_domain
-			) || [],
-		[ domains ]
+	const { data: allEmailAccounts, isLoading: isLoadingEmailAccounts } = useQuery(
+		userMailboxesQuery()
 	);
+
+	const eligibleDomains = useMemo( () => {
+		const forwardingAccounts = ( allEmailAccounts ?? [] ).filter(
+			( account ) => account.account_type === EmailProvider.Forwarding && account.can_user_add_email
+		);
+
+		const uniqueDomains = Array.from(
+			new Set(
+				forwardingAccounts.flatMap( ( account ) => account.domains.map( ( d ) => d.domain ) )
+			)
+		)
+			.filter( Boolean )
+			.sort();
+
+		return uniqueDomains.map( ( domain ) => ( { domain } ) );
+	}, [ allEmailAccounts ] );
 
 	const [ formData, setFormData ] = useState< FormData >( {
 		localPart: '',
@@ -130,7 +130,7 @@ function AddEmailForwarder() {
 
 	const isBusy =
 		isAddingEmailForwarder ||
-		isLoadingDomains ||
+		isLoadingEmailAccounts ||
 		isLoadingDomainMaxForwards ||
 		isLoadingNewForwardingAddresses;
 	const allFieldsSet =
@@ -226,7 +226,7 @@ function AddEmailForwarder() {
 		);
 	};
 
-	if ( isLoadingDomains ) {
+	if ( isLoadingEmailAccounts ) {
 		return (
 			<PageLayout header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> } size="small">
 				<Spinner

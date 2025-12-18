@@ -1,13 +1,14 @@
-import { DomainSummary } from '@automattic/api-core';
 import { emailForwardersQuery } from '@automattic/api-queries';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
+type DomainLike = { domain: string };
 
 export const useForwardingAddresses = ( {
 	domains,
 	forwardingAddresses,
 }: {
-	domains: DomainSummary[];
+	domains: DomainLike[];
 	forwardingAddresses: string[];
 } ) => {
 	const emailForwardersQueries = useQueries( {
