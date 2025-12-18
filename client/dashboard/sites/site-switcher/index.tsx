@@ -8,10 +8,12 @@ import {
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import AddNewSite from '../add-new-site';
 import { SiteSwitcherBase } from './base';
 
 const SiteSwitcher = () => {
+	const { recordTracksEvent } = useAnalytics();
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
 
 	return (
@@ -21,6 +23,7 @@ const SiteSwitcher = () => {
 					<MenuGroup>
 						<MenuItem
 							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_site_switcher_add_new_site_click' );
 								onClose();
 								setIsAddSiteModalOpen( true );
 							} }

@@ -287,6 +287,10 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				} );
 			}
 
+			if ( supportInteraction ) {
+				updateInteractionContext( supportInteraction );
+			}
+
 			const botMessage: Message = {
 				message_id: returnedChat.messages[ 0 ].message_id,
 				internal_message_id,
@@ -302,10 +306,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				props: { odieId: returnedChat.chat_id },
 				isFromError: false,
 			} );
-
-			if ( supportInteraction ) {
-				updateInteractionContext( supportInteraction );
-			}
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries( {
