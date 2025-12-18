@@ -40,8 +40,9 @@ export type TransferFormData = {
 const getWpcomUserId = ( user: WpcomSiteUser ) => user.linked_user_ID ?? user.ID;
 
 const getUserDisplayName = ( user: WpcomSiteUser ) => {
-	const { first_name, last_name, nice_name } = user;
-	return first_name && last_name ? `${ first_name } ${ last_name } (${ nice_name })` : nice_name;
+	const { name, nice_name, email } = user;
+
+	return name || nice_name || email;
 };
 
 const createFields = ( users: WpcomSiteUser[] ): Field< TransferFormData >[] => [
