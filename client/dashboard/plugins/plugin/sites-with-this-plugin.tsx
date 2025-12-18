@@ -444,9 +444,25 @@ export const SitesWithThisPlugin = ( {
 								return { successCount, errorCount };
 							};
 
+							const willDeactivate = items.some( ( item ) => item.isPluginActive );
+							const willDisableAutoupdate = items.some( ( item ) => {
+								const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+
+								return !! autoupdate && ( pluginBySiteId.get( item.ID )?.autoupdate ?? false );
+							} );
+							const extraActions = Array.from(
+								new Map( [
+									[ 'deactivate', willDeactivate ],
+									[ 'disable-autoupdate', willDisableAutoupdate ],
+								] )
+							)
+								.filter( ( [ , isActive ] ) => isActive )
+								.map( ( [ action ] ) => action );
+
 							return (
 								<ActionRenderModal
 									actionId="delete"
+									extraActions={ extraActions }
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 									closeModal={ closeModal }
 									onExecute={ action }
