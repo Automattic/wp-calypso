@@ -23,7 +23,6 @@ export type HelpCenterRequiredInformation = {
 		id: number;
 		pressableId?: number;
 	} | null;
-	haveSurvicateEnabled: boolean;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -76,7 +75,6 @@ const defaultContext: HelpCenterRequiredInformation = {
 	disableChatSupport: false,
 	hideMoreResources: false,
 	agency: null,
-	haveSurvicateEnabled: false,
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
