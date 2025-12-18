@@ -1,5 +1,5 @@
 import './style.scss';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
@@ -19,7 +19,7 @@ export const MobileTitle = ( { noPadding = false }: Props ) => {
 	return (
 		<HStack className={ className } spacing={ 2 } justify="space-between" alignment="center">
 			<h1>{ __( 'Reader' ) }</h1>
-			<ReaderSearchIcon />
+			<Button icon={ <ReaderSearchIcon /> } label={ __( 'Search' ) } href="/reader/search" />
 		</HStack>
 	);
 };
