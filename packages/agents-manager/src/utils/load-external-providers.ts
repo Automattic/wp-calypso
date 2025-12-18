@@ -105,18 +105,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			// Collect setup hooks from all providers (multiple plugins can register abilities)
 			if ( module.useAbilitiesSetup ) {
 				setupHooks.push( module.useAbilitiesSetup );
-				// eslint-disable-next-line no-console
-				console.log( `[AgentsManager] Collected useAbilitiesSetup hook from "${ moduleId }"` );
 			}
 
 			// eslint-disable-next-line no-console
-			console.log( `[AgentsManager] Loaded provider "${ moduleId }"`, {
-				hasToolProvider: !! module.toolProvider,
-				hasContextProvider: !! module.contextProvider,
-				hasSuggestions: !! module.suggestions,
-				hasNavigationContinuation: !! module.useNavigationContinuation,
-				hasAbilitiesSetup: !! module.useAbilitiesSetup,
-			} );
+			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );

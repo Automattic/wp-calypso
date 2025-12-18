@@ -140,15 +140,7 @@ export default function AgentDock( {
 
 	// Call all setup hooks to register hook-dependent abilities
 	// These hooks are stable after loadedProviders is set (AgentDock only renders after providers load)
-	if ( setupHooks?.length ) {
-		// eslint-disable-next-line no-console
-		console.log( `[AgentDock] Calling ${ setupHooks.length } setup hook(s)` );
-		setupHooks.forEach( ( hook, index ) => {
-			// eslint-disable-next-line no-console
-			console.log( `[AgentDock] Calling setup hook ${ index + 1 }/${ setupHooks.length }` );
-			hook();
-		} );
-	}
+	setupHooks?.forEach( ( hook ) => hook() );
 
 	const handleNewChat = () => {
 		navigate( '/' );
