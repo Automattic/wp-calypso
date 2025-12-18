@@ -21,10 +21,12 @@ export default function AgencyTierProgressCard( {
 	currentAgencyTierId,
 	influencedRevenue,
 	isEarlyAccess,
+	isTierProtected,
 }: {
 	currentAgencyTierId?: AgencyTierType;
 	influencedRevenue: number;
 	isEarlyAccess: boolean;
+	isTierProtected: boolean;
 } ) {
 	const dispatch = useDispatch();
 
@@ -50,12 +52,19 @@ export default function AgencyTierProgressCard( {
 						<Heading level={ 4 } weight={ 500 }>
 							{ __( 'Your agency tier and benefits' ) }
 						</Heading>
-						<VStack spacing={ 3 }>
+						<VStack spacing={ 1 }>
 							{ isEarlyAccess && (
 								<Badge
-									style={ { width: 'fit-content' } }
+									style={ { width: 'fit-content', marginBottom: '4px' } }
 									intent="default"
 									children={ __( 'Early access' ) }
+								/>
+							) }
+							{ isTierProtected && (
+								<Badge
+									style={ { width: 'fit-content', marginBottom: '4px' } }
+									intent="default"
+									children={ __( 'Tier-level protected' ) }
 								/>
 							) }
 							<Heading level={ 3 } weight={ 500 }>
@@ -70,20 +79,20 @@ export default function AgencyTierProgressCard( {
 									  )
 									: currentTier.progressCardDescription }
 							</Text>
-							<InfluencedRevenue
-								currentAgencyTierId={ currentAgencyTierId }
-								totalInfluencedRevenue={ influencedRevenue }
-							/>
-							<ButtonStack justify="flex-start">
-								<Button
-									onClick={ handleExploreTiersAndBenefits }
-									href={ A4A_AGENCY_TIER_LINK }
-									variant="secondary"
-								>
-									{ __( 'Explore Tiers and benefits' ) }
-								</Button>
-							</ButtonStack>
 						</VStack>
+						<InfluencedRevenue
+							currentAgencyTierId={ currentAgencyTierId }
+							totalInfluencedRevenue={ influencedRevenue }
+						/>
+						<ButtonStack justify="flex-start">
+							<Button
+								onClick={ handleExploreTiersAndBenefits }
+								href={ A4A_AGENCY_TIER_LINK }
+								variant="secondary"
+							>
+								{ __( 'Explore Tiers and benefits' ) }
+							</Button>
+						</ButtonStack>
 					</VStack>
 				</CardBody>
 			</Card>

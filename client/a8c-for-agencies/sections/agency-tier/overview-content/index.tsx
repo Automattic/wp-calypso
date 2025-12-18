@@ -15,10 +15,12 @@ export default function AgencyTierOverviewContent( {
 	currentAgencyTierId,
 	totalInfluencedRevenue,
 	isEarlyAccess,
+	isTierProtected,
 }: {
 	currentAgencyTierId?: AgencyTierType;
 	totalInfluencedRevenue: number;
 	isEarlyAccess: boolean;
+	isTierProtected: boolean;
 } ) {
 	return (
 		<VStack spacing={ 6 }>
@@ -30,7 +32,11 @@ export default function AgencyTierOverviewContent( {
 					/>
 				</CardBody>
 			</Card>
-			<TierCards currentAgencyTierId={ currentAgencyTierId } isEarlyAccess={ isEarlyAccess } />
+			<TierCards
+				currentAgencyTierId={ currentAgencyTierId }
+				isEarlyAccess={ isEarlyAccess }
+				isTierProtected={ isTierProtected }
+			/>
 			<Divider orientation="horizontal" margin={ 4 } style={ { color: '#F0F0F0' } } />
 			<TierBenefits currentAgencyTierId={ currentAgencyTierId } />
 		</VStack>

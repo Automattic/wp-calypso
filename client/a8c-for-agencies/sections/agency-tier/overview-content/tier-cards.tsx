@@ -26,19 +26,22 @@ const TEXT_COLOR = 'var(--color-gray-700)';
 export default function TierCards( {
 	currentAgencyTierId,
 	isEarlyAccess,
+	isTierProtected,
 }: {
 	currentAgencyTierId?: AgencyTierType;
 	isEarlyAccess: boolean;
+	isTierProtected: boolean;
 } ) {
 	const dispatch = useDispatch();
 
 	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
 
-	const isSmallViewport = useViewportMatch( 'huge', '<' );
+	const isSmallViewport = useViewportMatch( 'wide', '<' );
 
 	const [ showEarlyAccessModal, setShowEarlyAccessModal ] = useState( false );
+	const [ showTierProtectedModal, setShowTierProtectedModal ] = useState( false );
 
-	const handleLearnMore = () => {
+	const handleViewEarlyAccessInfo = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_agency_tier_early_access_learn_more_click', {
 				agency_tier: currentAgencyTierId,
@@ -47,6 +50,14 @@ export default function TierCards( {
 		setShowEarlyAccessModal( true );
 	};
 
+	const handleViewTierProtectedInfo = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agency_tier_tier_protected_learn_more_click', {
+				agency_tier: currentAgencyTierId,
+			} )
+		);
+		setShowTierProtectedModal( true );
+	};
 	const handleViewBenefits = ( tierId: string ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_agency_tier_view_benefits_click', {
@@ -72,7 +83,10 @@ export default function TierCards( {
 					<Card
 						key={ tier.id }
 						style={ {
-							width: isSmallViewport ? '100%' : '33%',
+							width: '100%',
+							height: '100%',
+							display: 'flex',
+							flexDirection: 'column',
 							...( isCurrentTier && {
 								boxShadow: '0 0 0 1px var(--color-primary-50)',
 							} ),
@@ -96,7 +110,7 @@ export default function TierCards( {
 									<Badge
 										style={ { width: 'fit-content' } }
 										intent="default"
-										children={ __( 'Your Tier — Early Access' ) }
+										children={ __( 'Your tier — Early Access' ) }
 									/>
 								) }
 								<Text color={ TEXT_COLOR }>{ tier.description }</Text>
@@ -104,11 +118,25 @@ export default function TierCards( {
 									<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
 										{ createInterpolateElement( __( 'You’re in early. <a>Learn more</a>' ), {
 											a: (
-												<Button onClick={ handleLearnMore } variant="link">
+												<Button onClick={ handleViewEarlyAccessInfo } variant="link">
 													{ __( 'Learn more.' ) }
 												</Button>
 											),
 										} ) }
+									</Text>
+								) }
+								{ isCurrentTier && isTierProtected && (
+									<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
+										{ createInterpolateElement(
+											__( 'You’re tier level is protected. <a>Learn more</a>' ),
+											{
+												a: (
+													<Button onClick={ handleViewTierProtectedInfo } variant="link">
+														{ __( 'Learn more.' ) }
+													</Button>
+												),
+											}
+										) }
 									</Text>
 								) }
 								<Text color={ TEXT_COLOR } weight={ 700 }>
@@ -166,6 +194,36 @@ export default function TierCards( {
 					</VStack>
 				</Modal>
 			) }
+			{ showTierProtectedModal && currentTier && (
+				<Modal
+					isDismissible
+					size="medium"
+					onRequestClose={ () => setShowTierProtectedModal( false ) }
+					title={ __( 'Your tier level is protected' ) }
+				>
+					<VStack spacing={ 8 }>
+						<Text>
+							{ sprintf(
+								/* translators: %s is the tier name */
+								__(
+									'You earned the %s tier in the previous year, and your tier level is protected for the current year. This means you’re will not be downgraded during this year, regardless of your current influenced revenue.'
+								),
+								currentTier.name
+							) }
+						</Text>
+						<Text>
+							{ __(
+								'You can still move up to a higher tier if your influenced revenue qualifies. However, if you do not meet the minimum requirements for this tier, any downgrade will only occur when the next year’s cycle begins in January. This protection ensures you can continue to enjoy your current tier benefits throughout the year.'
+							) }
+						</Text>
+						<ButtonStack justify="flex-end">
+							<Button variant="primary" onClick={ () => setShowTierProtectedModal( false ) }>
+								{ __( 'Got it' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
+				</Modal>
+			) }
 		</>
 	);
 
@@ -178,8 +236,16 @@ export default function TierCards( {
 	}
 
 	return (
-		<HStack spacing={ 6 } style={ { justifyContent: 'space-between' } } alignment="stretch">
+		<div
+			style={ {
+				display: 'grid',
+				gridTemplateColumns: 'repeat(3, 1fr)',
+				gridAutoRows: '1fr',
+				gap: '24px',
+				alignItems: 'stretch',
+			} }
+		>
 			{ content }
-		</HStack>
+		</div>
 	);
 }

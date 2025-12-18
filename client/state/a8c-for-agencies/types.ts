@@ -110,7 +110,8 @@ export interface Agency {
 		id: AgencyTier;
 		label: string;
 		features: string[];
-		is_early_access: boolean;
+		is_early_access?: boolean;
+		is_tier_protected?: boolean;
 	};
 	influenced_revenue: number;
 	approval_status: ApprovalStatus | '';

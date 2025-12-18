@@ -96,7 +96,7 @@ const useMainMenuItems = ( path: string ) => {
 				icon: starEmpty,
 				path: '/',
 				link: A4A_AGENCY_TIER_LINK,
-				title: translate( 'Agency Tier' ),
+				title: translate( 'Agency tier' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Agency Tier',
 				},
