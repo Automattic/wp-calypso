@@ -18,6 +18,7 @@ import {
 	domainAvailabilityQuery,
 	domainInboundTransferStatusQuery,
 	purchaseQuery,
+	siteUsersWpcomQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
@@ -633,6 +634,7 @@ export const domainTransferToOtherUserRoute = createRoute( {
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
+		await queryClient.ensureQueryData( siteUsersWpcomQuery( domain.blog_id, 'administrator' ) );
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-transfer/transfer-domain-to-other-user' ).then( ( d ) =>
