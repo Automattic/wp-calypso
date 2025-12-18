@@ -66,199 +66,126 @@ export function getModalHeader( actionId: string ) {
 }
 
 function getConfirmText( actionId: string, extraActions: string[], items: PluginListRow[] ) {
-	if ( items.length === 1 ) {
-		const pluginName = items[ 0 ].name;
-		const count = items[ 0 ].sitesCount;
-		switch ( actionId ) {
-			case 'activate': {
-				const inactiveCount = items[ 0 ].sitesWithPluginInactive.length;
-				return sprintf(
-					// translators: %1$s is the plugin name. %2$d is the number of sites.
-					_n(
-						'You are about to activate the %1$s plugin on %2$d site.',
-						'You are about to activate the %1$s plugin on %2$d sites.',
-						inactiveCount
-					),
-					pluginName,
+	const pluginName = items[ 0 ].name;
+	const count = items[ 0 ].sitesCount;
+	switch ( actionId ) {
+		case 'activate': {
+			const inactiveCount = items[ 0 ].sitesWithPluginInactive.length;
+			return sprintf(
+				// translators: %1$s is the plugin name. %2$d is the number of sites.
+				_n(
+					'You are about to activate the %1$s plugin on %2$d site.',
+					'You are about to activate the %1$s plugin on %2$d sites.',
 					inactiveCount
-				);
-			}
-			case 'deactivate': {
-				const activeCount = items[ 0 ].sitesWithPluginActive.length;
-				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					_n(
-						'You are about to deactivate the %1$s plugin installed on %2$d site.',
-						'You are about to deactivate the %1$s plugin installed on %2$d sites.',
-						activeCount
-					),
-					pluginName,
+				),
+				pluginName,
+				inactiveCount
+			);
+		}
+		case 'deactivate': {
+			const activeCount = items[ 0 ].sitesWithPluginActive.length;
+			return sprintf(
+				// Translators: %1$s is the plugin name. %2$d is the number of sites.
+				_n(
+					'You are about to deactivate the %1$s plugin installed on %2$d site.',
+					'You are about to deactivate the %1$s plugin installed on %2$d sites.',
 					activeCount
-				);
-			}
-			case 'update': {
-				const updateCount = items[ 0 ].sitesWithPluginUpdate.length;
-				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					_n(
-						'You are about to update the %1$s plugin installed on %2$d site.',
-						'You are about to update the %1$s plugin installed on %2$d sites.',
-						updateCount
-					),
-					pluginName,
+				),
+				pluginName,
+				activeCount
+			);
+		}
+		case 'update': {
+			const updateCount = items[ 0 ].sitesWithPluginUpdate.length;
+			return sprintf(
+				// Translators: %1$s is the plugin name. %2$d is the number of sites.
+				_n(
+					'You are about to update the %1$s plugin installed on %2$d site.',
+					'You are about to update the %1$s plugin installed on %2$d sites.',
 					updateCount
-				);
-			}
-			case 'enable-autoupdate': {
-				const disabledCount = items[ 0 ].sitesWithPluginNotAutoupdated.length;
-				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					_n(
-						'You are about to enable auto‑updates for the %1$s plugin installed on %2$d site.',
-						'You are about to enable auto‑updates for the %1$s plugin installed on %2$d sites.',
-						disabledCount
-					),
-					pluginName,
+				),
+				pluginName,
+				updateCount
+			);
+		}
+		case 'enable-autoupdate': {
+			const disabledCount = items[ 0 ].sitesWithPluginNotAutoupdated.length;
+			return sprintf(
+				// Translators: %1$s is the plugin name. %2$d is the number of sites.
+				_n(
+					'You are about to enable auto‑updates for the %1$s plugin installed on %2$d site.',
+					'You are about to enable auto‑updates for the %1$s plugin installed on %2$d sites.',
 					disabledCount
-				);
-			}
-			case 'disable-autoupdate': {
-				const enabledCount = items[ 0 ].sitesWithPluginAutoupdated.length;
-				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
-					_n(
-						'You are about to disable auto‑updates for the %1$s plugin installed on %2$d site.',
-						'You are about to disable auto‑updates for the %1$s plugin installed on %2$d sites.',
-						enabledCount
-					),
-					pluginName,
+				),
+				pluginName,
+				disabledCount
+			);
+		}
+		case 'disable-autoupdate': {
+			const enabledCount = items[ 0 ].sitesWithPluginAutoupdated.length;
+			return sprintf(
+				// Translators: %1$s is the plugin name. %2$d is the number of sites.
+				_n(
+					'You are about to disable auto‑updates for the %1$s plugin installed on %2$d site.',
+					'You are about to disable auto‑updates for the %1$s plugin installed on %2$d sites.',
 					enabledCount
-				);
-			}
-			case 'delete':
-				if (
-					extraActions.includes( 'deactivate' ) &&
-					extraActions.includes( 'disable-autoupdate' )
-				) {
-					return sprintf(
-						// Translators: %1$s is the plugin name. %2$d is the number of sites.
-						_n(
-							'You are about to deactivate, disable auto‑updates, and remove the %1$s plugin installed on %2$d site.',
-							'You are about to deactivate, disable auto‑updates, and remove the %1$s plugin installed on %2$d sites.',
-							count
-						),
-						pluginName,
-						count
-					);
-				}
-
-				if ( extraActions.includes( 'deactivate' ) ) {
-					return sprintf(
-						// Translators: %1$s is the plugin name. %2$d is the number of sites.
-						_n(
-							'You are about to deactivate and remove the %1$s plugin installed on %2$d site.',
-							'You are about to deactivate and remove the %1$s plugin installed on %2$d sites.',
-							count
-						),
-						pluginName,
-						count
-					);
-				}
-
-				if ( extraActions.includes( 'disable-autoupdate' ) ) {
-					return sprintf(
-						// Translators: %1$s is the plugin name. %2$d is the number of sites.
-						_n(
-							'You are about to disable auto‑updates and remove the %1$s plugin installed on %2$d site.',
-							'You are about to disable auto‑updates and remove the %1$s plugin installed on %2$d sites.',
-							count
-						),
-						pluginName,
-						count
-					);
-				}
-
+				),
+				pluginName,
+				enabledCount
+			);
+		}
+		case 'delete':
+			if (
+				extraActions.includes( 'deactivate' ) &&
+				extraActions.includes( 'disable-autoupdate' )
+			) {
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
 					_n(
-						'You are about to remove the %1$s plugin installed on %2$d site.',
-						'You are about to remove the %1$s plugin installed on %2$d sites.',
+						'You are about to deactivate, disable auto‑updates, and remove the %1$s plugin installed on %2$d site.',
+						'You are about to deactivate, disable auto‑updates, and remove the %1$s plugin installed on %2$d sites.',
 						count
 					),
 					pluginName,
 					count
 				);
-			default:
-				return __( 'You are about to perform this action.' );
-		}
-	}
-	// Multi-select fallback
-	switch ( actionId ) {
-		case 'activate':
+			}
+
+			if ( extraActions.includes( 'deactivate' ) ) {
+				return sprintf(
+					// Translators: %1$s is the plugin name. %2$d is the number of sites.
+					_n(
+						'You are about to deactivate and remove the %1$s plugin installed on %2$d site.',
+						'You are about to deactivate and remove the %1$s plugin installed on %2$d sites.',
+						count
+					),
+					pluginName,
+					count
+				);
+			}
+
+			if ( extraActions.includes( 'disable-autoupdate' ) ) {
+				return sprintf(
+					// Translators: %1$s is the plugin name. %2$d is the number of sites.
+					_n(
+						'You are about to disable auto‑updates and remove the %1$s plugin installed on %2$d site.',
+						'You are about to disable auto‑updates and remove the %1$s plugin installed on %2$d sites.',
+						count
+					),
+					pluginName,
+					count
+				);
+			}
+
 			return sprintf(
-				// translators: %d is the number of selected plugins.
+				// Translators: %1$s is the plugin name. %2$d is the number of sites.
 				_n(
-					'You are about to activate %d selected plugin.',
-					'You are about to activate %d selected plugins.',
-					items.length,
-					'next-admin'
+					'You are about to remove the %1$s plugin installed on %2$d site.',
+					'You are about to remove the %1$s plugin installed on %2$d sites.',
+					count
 				),
-				items.length
-			);
-		case 'deactivate':
-			return sprintf(
-				// translators: %d is the number of selected plugins.
-				_n(
-					'You are about to deactivate %d selected plugin.',
-					'You are about to deactivate %d selected plugins.',
-					items.length,
-					'next-admin'
-				),
-				items.length
-			);
-		case 'update':
-			return sprintf(
-				// translators: %d is the number of selected plugins.
-				_n(
-					'You are about to update %d selected plugin.',
-					'You are about to update %d selected plugins.',
-					items.length,
-					'next-admin'
-				),
-				items.length
-			);
-		case 'enable-autoupdate':
-			return sprintf(
-				// translators: %d is the number of selected plugins.
-				_n(
-					'You are about to enable auto‑updates for %d selected plugin.',
-					'You are about to enable auto‑updates for %d selected plugins.',
-					items.length,
-					'next-admin'
-				),
-				items.length
-			);
-		case 'disable-autoupdate':
-			return sprintf(
-				// translators: %d is the number of selected plugins.
-				_n(
-					'You are about to disable auto‑updates for %d selected plugin.',
-					'You are about to disable auto‑updates for %d selected plugins.',
-					items.length,
-					'next-admin'
-				),
-				items.length
-			);
-		case 'delete':
-			return sprintf(
-				// translators: %d is the number of selected plugins.
-				_n(
-					'You are about to deactivate and remove %d selected plugin.',
-					'You are about to deactivate and remove %d selected plugins.',
-					items.length,
-					'next-admin'
-				),
-				items.length
+				pluginName,
+				count
 			);
 		default:
 			return __( 'You are about to perform this action.' );
