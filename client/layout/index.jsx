@@ -201,7 +201,11 @@ class Layout extends Component {
 			return null;
 		}
 
-		if ( isReaderMSDHeaderEnabled() && this.props.dashboardOptIn ) {
+		if (
+			this.props.sectionName === 'reader' &&
+			isReaderMSDHeaderEnabled() &&
+			this.props.dashboardOptIn
+		) {
 			return (
 				<BaseHeader
 					appName="WordPress.com"
