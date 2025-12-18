@@ -1,3 +1,4 @@
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -10,6 +11,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import BillingDragonCheckout from '../billing-dragon-checkout';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
+import useProductsBySlug from '../hooks/use-products-by-slug';
 import useShoppingCart from '../hooks/use-shopping-cart';
 
 import './style-v2.scss';
@@ -18,6 +20,11 @@ function CheckoutV2() {
 	const translate = useTranslate();
 
 	const { selectedCartItems } = useShoppingCart();
+
+	// Fetch selected products by slug for site checkout
+	const { selectedProductsBySlug } = useProductsBySlug();
+
+	const siteId = getQueryArg( window.location.href, 'site_id' )?.toString();
 
 	const title = translate( 'Checkout' );
 
@@ -46,7 +53,10 @@ function CheckoutV2() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<BillingDragonCheckout withA8cLogo={ false } cartItems={ selectedCartItems } />
+				<BillingDragonCheckout
+					withA8cLogo={ false }
+					cartItems={ siteId ? selectedProductsBySlug : selectedCartItems }
+				/>
 			</LayoutBody>
 		</Layout>
 	);
