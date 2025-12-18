@@ -1,5 +1,6 @@
 import {
 	invalidatePlugins,
+	resetPlugins,
 	sitePluginActivateMutation,
 	sitePluginAutoupdateDisableMutation,
 	sitePluginAutoupdateEnableMutation,
@@ -464,6 +465,8 @@ export const SitesWithThisPlugin = ( {
 									closeModal={ closeModal }
 									onExecute={ action }
 									onActionPerformed={ () => {
+										resetPlugins();
+
 										// Delay invalidation to allow backend to settle
 										setTimeout( invalidatePlugins, 500 );
 									} }
