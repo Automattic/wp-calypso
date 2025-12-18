@@ -57,15 +57,9 @@ function AddEmailForwarder() {
 			( account ) => account.account_type === EmailProvider.Forwarding && account.can_user_add_email
 		);
 
-		const uniqueDomains = Array.from(
-			new Set(
-				forwardingAccounts.flatMap( ( account ) => account.domains.map( ( d ) => d.domain ) )
-			)
-		)
-			.filter( Boolean )
-			.sort();
-
-		return uniqueDomains.map( ( domain ) => ( { domain } ) );
+		return forwardingAccounts.flatMap( ( account ) =>
+			account.domains.map( ( { domain } ) => domain )
+		);
 	}, [ allEmailAccounts ] );
 
 	const [ formData, setFormData ] = useState< FormData >( {
@@ -104,7 +98,7 @@ function AddEmailForwarder() {
 						label: __( 'Select a domain' ),
 						value: '',
 					},
-					...( eligibleDomains.map( ( d ) => ( { label: d.domain, value: d.domain } ) ) || [] ),
+					...( eligibleDomains.map( ( domain ) => ( { label: domain, value: domain } ) ) || [] ),
 				],
 				id: 'domain',
 				label: __( 'Domain' ),
