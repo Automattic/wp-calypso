@@ -36,7 +36,7 @@ test.describe( 'Dashboard: Basic & Routing', { tag: [ tags.CALYPSO_PR ] }, () =>
 		} );
 
 		await test.step( 'When I visit the dashboard page', async function () {
-			await pageDashboard.visitPath( 'non-existent-page' );
+			await pageDashboard.visitPath( 'me/non-existent-page' );
 		} );
 
 		await test.step( 'Then I see a 404 error page', async function () {
