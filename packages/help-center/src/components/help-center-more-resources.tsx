@@ -65,7 +65,7 @@ export const HelpCenterMoreResources = () => {
 									type="button"
 									onClick={ () => {
 										trackMoreResourcesButtonClick( 'feedback-survey' );
-										window._sva?.invokeEvent( 'showFeedbackSurveyFromHelpCenter' );
+										window._sva?.invokeEvent?.( 'showFeedbackSurveyFromHelpCenter' );
 									} }
 									className="help-center-more-resources__survicate"
 								>

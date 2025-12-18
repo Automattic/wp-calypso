@@ -8,6 +8,9 @@ interface Window {
 			| ( ( callback: ( data: string | number ) => void ) => void )
 			| { id: number; value: string }[]
 	) => void;
+	_sva?: {
+		invokeEvent?: ( eventName: string ) => void;
+	};
 }
 
 declare module '*.jpg';
