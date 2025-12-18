@@ -94,7 +94,7 @@ const getSitesLink = ( isDashboardOptIn ) => {
 	// but they get redirected to the Dashboard subdomain, and lose the Calypso Live domain in the process.
 	// As a temporary workaround, we send them to the v1 /sites instead.
 	// TODO: The workaround will need to change once we deprecate v1 /sites.
-	if ( isDashboardOptIn && config( 'env_id' ) === 'production' ) {
+	if ( isDashboardOptIn && ! [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
 		return dashboardLink( '/sites' );
 	}
 
