@@ -2,10 +2,8 @@
 	display: flex;
 	padding: 12px 16px;
 
-	@include break-medium {
-		display: none;
-	}
 	@include break-small {
 		padding: 12px 0;
 	}
+
 }
