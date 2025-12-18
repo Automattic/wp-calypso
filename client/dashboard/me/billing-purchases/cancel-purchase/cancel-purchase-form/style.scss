@@ -10,19 +10,6 @@
 	text-align: start;
 }
 
-.cancel-purchase-form__atomic-revert {
-	> p {
-		color: var(--studio-gray-60);
-		font-size: 0.875rem;
-
-		@include break-small {
-			text-align: center;
-		}
-	}
-}
-
-
-.cancel-purchase-form__atomic-revert,
 .cancel-purchase-form__remove-plan {
 	strong.is-highlighted {
 		font-size: 0.75rem;

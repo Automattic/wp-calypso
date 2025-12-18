@@ -9,6 +9,7 @@ import InviteAccept from 'calypso/my-sites/invites/invite-accept';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { setUserEmailVerified } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
 
 /**
@@ -38,7 +39,10 @@ export function acceptInvite( context, next ) {
 		context.store
 			.dispatch( acceptInviteAction( acceptedInvite, emailVerificationSecret ) )
 			.then( () => {
-				const redirect = getRedirectAfterAccept( acceptedInvite );
+				const redirect = getRedirectAfterAccept(
+					acceptedInvite,
+					hasDashboardOptIn( context.store.getState() )
+				);
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				navigate( redirect );
 			} )

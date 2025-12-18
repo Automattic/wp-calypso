@@ -207,7 +207,7 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 			initialIcon: 'https://woocommerce.com/wp-content/uploads/2025/01/Logo-Black.png',
 			brandIconHeight: 32,
 			brandColor: '#000000',
-			onboardingTitle: __( 'Your success story sarts here.', 'site-spec' ),
+			onboardingTitle: __( 'Your success story starts here.', 'site-spec' ),
 			onboardingSubtitle: __(
 				"Tell us about what you sell or offer, and we'll start building your online store.",
 				'site-spec'

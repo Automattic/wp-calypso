@@ -1,6 +1,10 @@
 import { getProtocol } from '@wordpress/url';
 
 export function isRelativeUrl( url: string ) {
+	if ( ! url ) {
+		return false;
+	}
+
 	return ! url.startsWith( '//' ) && ! getProtocol( url );
 }
 
