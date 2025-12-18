@@ -112,7 +112,9 @@ body.is-section-reader {
 			);
 			overflow: hidden;
 
-			border: 1px solid $gray-200;
+			@include break-small {
+				border: 1px solid $gray-200;
+			}
 		}
 		.layout__primary > div > div:not(.tags__header):not(.reader-notifications__3pc-notice):not(.freshly-pressed-suggestion) {
 			height: 100%;

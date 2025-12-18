@@ -1,11 +1,19 @@
 import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import './index.scss';
 
-const AppTitle = () => {
+interface props {
+	className?: string;
+}
+const AppTitle = ( { className }: props ) => {
 	const translate = useTranslate();
 	return (
-		<Button href="/reader" aria-label={ translate( 'Reader' ) } className="app-title">
+		<Button
+			href="/reader"
+			aria-label={ translate( 'Reader' ) }
+			className={ clsx( 'app-title', className ) }
+		>
 			<h3 className="app-title__heading">{ translate( 'Reader' ) }</h3>
 		</Button>
 	);

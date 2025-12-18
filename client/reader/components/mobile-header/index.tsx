@@ -12,7 +12,7 @@ export const MobileHeader = () => {
 
 	return (
 		<HStack className="mobile-header" spacing={ 0 } justify="space-between">
-			<AppTitle />
+			<AppTitle className="mobile-header__app-title" />
 		</HStack>
 	);
 };
