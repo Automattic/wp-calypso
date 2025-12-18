@@ -15,7 +15,7 @@ export async function fetchSiteUsers( siteId: number ): Promise< SiteUser[] > {
 	} );
 }
 
-export async function fetchSiteUsersWpcom(
+export async function fetchWpcomSiteUsers(
 	siteId: number,
 	role?: string
 ): Promise< WpcomSiteUsersResponse > {

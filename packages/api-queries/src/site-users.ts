@@ -2,7 +2,7 @@ import {
 	fetchCurrentSiteUser,
 	deleteSiteUser,
 	fetchSiteUsers,
-	fetchSiteUsersWpcom,
+	fetchWpcomSiteUsers,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -33,5 +33,5 @@ export const siteUsersQuery = ( siteId: number ) =>
 export const siteUsersWpcomQuery = ( siteId: number, role?: string ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'wpcom-users', 'wpcom', role ],
-		queryFn: () => fetchSiteUsersWpcom( siteId, role ),
+		queryFn: () => fetchWpcomSiteUsers( siteId, role ),
 	} );
