@@ -466,6 +466,7 @@ export const SitesWithThisPlugin = ( {
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 									closeModal={ closeModal }
 									onExecute={ action }
+									onActionPerformed={ invalidatePlugins }
 								/>
 							);
 						},
