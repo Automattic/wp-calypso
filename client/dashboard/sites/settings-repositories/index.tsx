@@ -22,12 +22,14 @@ import {
 import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import SnackbarBackButton, {
+	getSnackbarBackButtonText,
+} from '../../components/snackbar-back-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import GithubIcon from '../deployments/icons/github';
 import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { BackToDeploymentsButton } from './back-to-deployments-button';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
@@ -161,7 +163,7 @@ function SiteRepositories() {
 	const navigate = useNavigate( { from: siteSettingsRepositoriesRoute.fullPath } );
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 	const search = siteSettingsRepositoriesRoute.useSearch();
-	const showBackToDeployments = search?.back_to === 'deployments';
+	const snackbarBackButtonText = getSnackbarBackButtonText( search?.back_to );
 
 	const handleConnectRepository = () => {
 		navigate( { to: siteSettingsRepositoriesConnectRoute.fullPath } );
@@ -201,7 +203,9 @@ function SiteRepositories() {
 					<RepositoriesList />
 				</HostingFeatureGatedWithCallout>
 			</PageLayout>
-			{ showBackToDeployments && <BackToDeploymentsButton /> }
+			{ snackbarBackButtonText && (
+				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
+			) }
 		</>
 	);
 }

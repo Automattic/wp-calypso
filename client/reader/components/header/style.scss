@@ -21,6 +21,11 @@ $component-icon-padding: 6px;
 	color: var( --dashboard-header__color );
 	min-height: 65px;
 
+
+	//All the reader layout calculations are based considering the header uses a position:fixed and with high z-index
+	position: fixed;
+	z-index: 1000;
+
 	@include break-medium {
 		padding-inline: calc(#{$grid-unit-30} - #{$component-icon-padding});
 	}

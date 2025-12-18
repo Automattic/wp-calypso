@@ -88,17 +88,26 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 	}
 };
 
+const getSitesLink = ( isDashboardOptIn ) => {
+	// In development environments, don't redirect to the Dashboard subdomain as it might not be the intent.
+	// For instance, developers might use the Calypso Live link to test something not in the Dashboard,
+	// but they get redirected to the Dashboard subdomain, and lose the Calypso Live domain in the process.
+	// As a temporary workaround, we send them to the v1 /sites instead.
+	// TODO: The workaround will need to change once we deprecate v1 /sites.
+	if ( isDashboardOptIn && ! [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
+		return dashboardLink( '/sites' );
+	}
+
+	return '/sites';
+};
+
 async function getLoggedInLandingPage( { dispatch, getState } ) {
 	await dispatch( waitForPrefs() );
 	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
 	const dashboardOptIn = hasDashboardOptIn( getState() );
 
 	if ( useSitesAsLandingPage ) {
-		if ( dashboardOptIn ) {
-			// Use absolute URL to force a hard reload.
-			return dashboardLink( '/sites' );
-		}
-		return '/sites';
+		return getSitesLink( dashboardOptIn );
 	}
 
 	const useReaderAsLandingPage = hasReadersAsLandingPage( getState() );
@@ -117,8 +126,9 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 		if ( getIsSubscriptionOnly( getState() ) ) {
 			return '/reader';
 		}
+
 		// there is no primary site or the site info couldn't be fetched. Redirect to Sites Dashboard.
-		return '/sites';
+		return getSitesLink( dashboardOptIn );
 	}
 
 	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome(
