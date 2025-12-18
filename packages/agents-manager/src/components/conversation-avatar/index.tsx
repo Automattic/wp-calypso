@@ -1,6 +1,6 @@
 /**
  * ConversationAvatar Component
- * Displays avatar for different conversation types (Orchestrator, Odie, Zendesk)
+ * Displays avatar for different conversation types
  */
 
 import { SVG, Path } from '@wordpress/primitives';
