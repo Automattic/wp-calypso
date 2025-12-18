@@ -168,10 +168,6 @@ $blueberry-color: #3858e9;
 
 			a {
 				color: inherit;
-
-				&:hover {
-					text-decoration: none;
-				}
 			}
 		}
 	}
@@ -466,10 +462,6 @@ $blueberry-color: #3858e9;
 		font-style: normal;
 		padding: 4px 16px;
 		color: inherit;
-
-		&:hover {
-			text-decoration: none;
-		}
 	}
 
 	svg.gridicons-external {
