@@ -374,7 +374,7 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled();
+		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled( state );
 
 		const sidebarType = getSidebarType( {
 			state,
