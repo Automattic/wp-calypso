@@ -42,7 +42,8 @@ function getProrationFlags( sitePlans: Record< string, SitePlan > | undefined ):
 		hasNonCouponDiscount =
 			hasNonCouponDiscount ||
 			( ! plan?.pricing?.hasSaleCoupon &&
-				'number' === typeof plan?.pricing?.discountedPrice?.full );
+				typeof plan?.pricing?.discountedPrice?.full === 'number' &&
+				plan.pricing.discountedPrice.full < ( plan?.pricing?.originalPrice?.full ?? 0 ) );
 	}
 
 	return { hasDomainProration, hasOtherUpgradeProration, hasNonCouponDiscount };
@@ -53,6 +54,7 @@ function getProrationFlags( sitePlans: Record< string, SitePlan > | undefined ):
  * - Paid plan -> higher plan upgrades (source: "plan")
  * - Domain-to-plan proration credits (source: "domain")
  * - Other proration credits (e.g. add-ons) (source: "other-upgrades")
+ * - Domain + other upgrades proration (source: "domain-and-other-upgrades")
  */
 export function useUpgradeCreditsNoticeData(
 	siteId?: number | null,
