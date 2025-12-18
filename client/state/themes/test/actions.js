@@ -305,7 +305,7 @@ describe( 'actions', () => {
 						'Content-Type': 'application/json',
 					} )
 					.get(
-						'/themes/info/1.1/?action=query_themes&request%5Bfields%5D%5Bextended_author%5D=true'
+						'/themes/info/1.2/?action=query_themes&request%5Bfields%5D%5Bextended_author%5D=true'
 					)
 					.reply( 200, {
 						info: { page: 1, pages: 123, results: 2452 },
@@ -441,12 +441,12 @@ describe( 'actions', () => {
 						'Content-Type': 'application/json',
 					} )
 					.get(
-						'/themes/info/1.1/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
+						'/themes/info/1.2/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
 							'&request%5Bslug%5D=twentyseventeen'
 					)
 					.reply( 200, { slug: 'twentyseventeen', name: 'Twenty Seventeen' } )
 					.get(
-						'/themes/info/1.1/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
+						'/themes/info/1.2/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
 							'&request%5Bslug%5D=twentyumpteen'
 					)
 					.reply( 200, 'false' );
