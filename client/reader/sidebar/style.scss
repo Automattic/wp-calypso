@@ -13,6 +13,13 @@
 	}
 }
 :root:has(.is-reader-msd-enabled) {
+	.sidebar-menu-container {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		padding: 0 16px;
+	}
+
 	.sidebar-header {
 		display: flex;
 		justify-content: space-between;
@@ -32,7 +39,15 @@
 	}
 }
 
+//TODO: Remove this once the new reader MSD is enabled for all users (reader/enable-msd)
 :root:not(:has(.is-reader-msd-enabled)) {
+	.sidebar-menu-container {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		padding: 0 16px;
+	}
+
 	.sidebar-header {
 		display: flex;
 
@@ -114,12 +129,6 @@ body.is-section-reader {
 }
 
 :root .theme-default .is-section-reader .global-sidebar {
-	.sidebar-menu-container {
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-		padding: 0 16px;
-	}
 	.sidebar__menu {
 		.sidebar__expandable-content {
 			padding: 0;

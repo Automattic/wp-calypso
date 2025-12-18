@@ -1,11 +1,10 @@
-
 .app-title {
-	&:not(.no-padding) {
-		padding: 12px 16px;
-	}
-	box-sizing: border-box;
+	width: min-content;
+	text-decoration: none;
+	padding-inline: 0;
 
-	h1 {
+	&__heading {
+		color: var(--color-sidebar-submenu-text);
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		font-size: 32px;
 		font-weight: 400;
