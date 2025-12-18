@@ -15,12 +15,7 @@ export const useDomains = (): { domains: Domain[]; isLoading: boolean } => {
 			}
 			return ! isSelfHostedJetpackConnected( site );
 		} )
-		.filter( ( site ) => site.capabilities.manage_options )
-		.filter(
-			( site ) =>
-				! site.URL.endsWith( '.wordpress.com' ) && ! site.URL.endsWith( '.wpcomstaging.com' )
-		);
-
+		.filter( ( site ) => site.capabilities.manage_options );
 	const siteIds = sites.map( ( site ) => site.ID );
 
 	// Fetch site domains for each managed site ID
