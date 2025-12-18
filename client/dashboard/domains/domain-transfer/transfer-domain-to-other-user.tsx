@@ -26,6 +26,7 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import { wpcomLink } from '../../utils/link';
 import type { Field } from '@wordpress/dataviews';
 
 export type TransferFormData = {
@@ -155,7 +156,7 @@ export default function TransferDomainToOtherUser() {
 							'You can transfer this domain to any administrator on this site. If the user you want to transfer is not currently an administrator, please <link>add them to the site first</link>.'
 						),
 						{
-							link: <a href={ `/people/new/${ domain.site_slug }` } />,
+							link: <a href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
 						}
 					) }
 				</Text>
@@ -179,7 +180,7 @@ export default function TransferDomainToOtherUser() {
 							'You can transfer this domain connection to any administrator on this site. If the user you want to transfer is not currently an administrator, please <link>add them to the site first</link>.'
 						),
 						{
-							link: <a href={ `/people/new/${ domain.site_slug }` } />,
+							link: <a href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
 						}
 					) }
 				</Text>
