@@ -1,9 +1,5 @@
 import { TrialPlans } from '@automattic/api-core';
-import {
-	p2HubP2sQuery,
-	siteDeleteMutation,
-	siteHasCancelablePurchasesQuery,
-} from '@automattic/api-queries';
+import { p2HubP2sQuery, siteDeleteMutation } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -19,7 +15,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { useAuth } from '../../app/auth';
 import { purchasesRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
@@ -242,18 +237,17 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 	);
 }
 
-export default function SiteDeleteModal( { site, onClose }: { site: Site; onClose: () => void } ) {
-	const { user } = useAuth();
-	const { isLoading, data: hasPurchasesCancelable } = useQuery(
-		siteHasCancelablePurchasesQuery( site.ID, user.ID )
-	);
-
+export default function SiteDeleteModal( {
+	site,
+	hasPurchasesCancelable,
+	onClose,
+}: {
+	site: Site;
+	hasPurchasesCancelable: boolean;
+	onClose: () => void;
+} ) {
 	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesCancelable;
 	const title = canBeDeleted ? __( 'Delete site' ) : __( 'Unable to delete site' );
-
-	if ( isLoading ) {
-		return null;
-	}
 
 	return (
 		<Modal title={ title } size="medium" onRequestClose={ onClose }>

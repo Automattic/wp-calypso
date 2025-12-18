@@ -1,3 +1,5 @@
+import { siteHasCancelablePurchasesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -51,7 +53,12 @@ const SiteResetAction = ( { site }: { site: Site } ) => {
 };
 
 const SiteLeaveAction = ( { site }: { site: Site } ) => {
+	const { user } = useAuth();
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const { data: hasPurchasesCancelable, isLoading } = useQuery( {
+		...siteHasCancelablePurchasesQuery( site.ID, user.ID ),
+		enabled: isModalOpen,
+	} );
 
 	return (
 		<>
@@ -59,21 +66,45 @@ const SiteLeaveAction = ( { site }: { site: Site } ) => {
 				title={ __( 'Leave site' ) }
 				description={ __( 'Leave this site and remove your access.' ) }
 				actions={
-					<Button variant="secondary" size="compact" onClick={ () => setIsModalOpen( true ) }>
+					<Button
+						variant="secondary"
+						size="compact"
+						isBusy={ isModalOpen && isLoading }
+						disabled={ isModalOpen && isLoading }
+						onClick={ () => setIsModalOpen( true ) }
+					>
 						{ __( 'Leave' ) }
 					</Button>
 				}
 			/>
-			{ isModalOpen && <SiteLeaveModal site={ site } onClose={ () => setIsModalOpen( false ) } /> }
+			{ isModalOpen && hasPurchasesCancelable !== undefined && (
+				<SiteLeaveModal
+					site={ site }
+					hasPurchasesCancelable={ hasPurchasesCancelable }
+					onClose={ () => setIsModalOpen( false ) }
+				/>
+			) }
 		</>
 	);
 };
 
 const SiteDeleteAction = ( { site }: { site: Site } ) => {
-	const [ isOpen, setIsOpen ] = useState( false );
+	const { user } = useAuth();
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const { data: hasPurchasesCancelable, isLoading } = useQuery( {
+		...siteHasCancelablePurchasesQuery( site.ID, user.ID ),
+		enabled: isModalOpen,
+	} );
 
 	const deleteButton = (
-		<Button variant="secondary" size="compact" isDestructive onClick={ () => setIsOpen( true ) }>
+		<Button
+			variant="secondary"
+			size="compact"
+			isDestructive
+			isBusy={ isModalOpen && isLoading }
+			disabled={ isModalOpen && isLoading }
+			onClick={ () => setIsModalOpen( true ) }
+		>
 			{ __( 'Delete' ) }
 		</Button>
 	);
@@ -86,7 +117,9 @@ const SiteDeleteAction = ( { site }: { site: Site } ) => {
 					description={ __( 'Delete staging site and all of its posts, media, and data.' ) }
 					actions={ deleteButton }
 				/>
-				{ isOpen && <StagingSiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } /> }
+				{ isModalOpen && (
+					<StagingSiteDeleteModal site={ site } onClose={ () => setIsModalOpen( false ) } />
+				) }
 			</>
 		);
 	}
@@ -100,7 +133,13 @@ const SiteDeleteAction = ( { site }: { site: Site } ) => {
 				) }
 				actions={ deleteButton }
 			/>
-			{ isOpen && <SiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } /> }
+			{ isModalOpen && hasPurchasesCancelable !== undefined && (
+				<SiteDeleteModal
+					site={ site }
+					hasPurchasesCancelable={ hasPurchasesCancelable }
+					onClose={ () => setIsModalOpen( false ) }
+				/>
+			) }
 		</>
 	);
 };

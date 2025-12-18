@@ -1,8 +1,4 @@
-import {
-	siteHasCancelablePurchasesQuery,
-	siteCurrentUserQuery,
-	siteUserDeleteMutation,
-} from '@automattic/api-queries';
+import { siteCurrentUserQuery, siteUserDeleteMutation } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -212,15 +208,12 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 	);
 }
 
-export default function ContentInfo( { site, onClose }: ContentInfoProps ) {
+export default function ContentInfo( {
+	site,
+	hasPurchasesCancelable,
+	onClose,
+}: ContentInfoProps & { hasPurchasesCancelable: boolean } ) {
 	const { user } = useAuth();
-	const { data: hasPurchasesCancelable, isLoading: isLoadingHasPurchasesCancelable } = useQuery(
-		siteHasCancelablePurchasesQuery( site.ID, user.ID )
-	);
-
-	if ( isLoadingHasPurchasesCancelable ) {
-		return null;
-	}
 
 	const renderContent = () => {
 		if ( hasPurchasesCancelable ) {
