@@ -89,6 +89,7 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	is_pending_whois_update: false,
 	is_root_domain_registered_with_automattic: false,
 	is_redeemable: false,
+	is_mapped_to_atomic_site: false,
 	is_hundred_year_domain: false,
 	is_subdomain: false,
 	is_pending_icann_verification: false,

@@ -57,7 +57,13 @@ const getMockedDomainData = ( customProps: Partial< Domain > = {} ): Domain => {
 
 function renderDomainSettings( domainProps: Partial< Domain > = {} ) {
 	const mockDomain = getMockedDomainData( domainProps );
-	return render( <DomainOverviewSettings domain={ mockDomain } /> );
+	return render(
+		<DomainOverviewSettings
+			domain={ mockDomain }
+			domainDiagnostics={ undefined }
+			isLoadingDiagnostics={ false }
+		/>
+	);
 }
 
 describe( 'DomainOverviewSettings', () => {
