@@ -33,7 +33,7 @@ export default function HostingFeatureGatedWithOverviewCard( {
 		intent: 'upsell' as const,
 		link: isRelativeUrl( upsellLink )
 			? addQueryArgs( upsellLink, {
-					back_to: 'overview',
+					back_to: 'site-overview',
 			  } )
 			: upsellLink,
 	};

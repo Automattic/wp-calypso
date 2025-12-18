@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button, ExternalLink, Icon } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -18,6 +18,7 @@ import { ButtonStack } from '../../components/button-stack';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
+import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import type { Site, DomainSummary } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
@@ -134,10 +135,10 @@ const NewSiteAddressForm = ( {
 					<Text>
 						{ createInterpolateElement(
 							__(
-								'Before changing site address, consider <link>add a custom domain</link> instead?'
+								'Before changing site address, consider <link>adding a custom domain</link> instead?'
 							),
 							{
-								link: <ExternalLink href={ `/domains/add/${ site.slug }` } children={ null } />,
+								link: <a href={ getAddSiteDomainUrl( site.slug ) } />,
 							}
 						) }
 					</Text>

@@ -1,10 +1,25 @@
 import { useRouter, useCanGoBack } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { isRTL } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { ReactNode } from 'react';
 
 import './style.scss';
+
+export function getSnackbarBackButtonText(
+	to: 'site-overview' | 'site-domains' | 'site-deployments'
+) {
+	switch ( to ) {
+		case 'site-overview':
+			return __( 'Back to Site Overview' );
+		case 'site-deployments':
+			return __( 'Back to Site Deployments' );
+		case 'site-domains':
+			return __( 'Back to Site Domain Names' );
+		default:
+			return null;
+	}
+}
 
 export default function SnackbarBackButton( { children }: { children: ReactNode } ) {
 	const router = useRouter();
