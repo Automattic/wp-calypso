@@ -1,4 +1,6 @@
+import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 import i18n from 'i18n-calypso';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { logmeinUrl } from 'calypso/lib/logmein';
 
 type InviteType = {
@@ -143,18 +145,20 @@ export function acceptedNotice(
 	}
 }
 
-export function getRedirectAfterAccept( invite: InviteType ) {
+export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: boolean ) {
 	if ( invite.site.is_wpforteams_site ) {
 		return `https://${ invite.site.domain }`;
 	}
 
 	const readerPath = '/reader';
 	const postsListPath = '/posts/' + invite.site.ID;
-	const mySitesPath = '/sites';
+	const mySitesPath = hasDashboardOptIn ? dashboardLink( '/sites' ) : '/sites';
 	const getDestinationUrl = ( redirect: string ) => {
 		const remoteLoginHost = `https://${ invite.site.domain }`;
 		const remoteLoginBackUrl = ( destinationPath: string ) =>
-			`https://wordpress.com${ destinationPath }`;
+			determineUrlType( destinationPath ) === URL_TYPE.ABSOLUTE
+				? destinationPath
+				: `https://wordpress.com${ destinationPath }`;
 		const destination = logmeinUrl( remoteLoginHost, remoteLoginBackUrl( redirect ) );
 		const isMissingLogmein = destination === remoteLoginHost;
 		return isMissingLogmein ? redirect : destination;

@@ -5,12 +5,14 @@ import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpr
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import RouterLinkButton from '../../components/router-link-button';
+import { getAddSiteDomainUrl } from '../../utils/domain-url';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { ShareSiteForm } from './share-site-form';
 import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
@@ -204,16 +206,18 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 										density="medium"
 										actions={
 											hasNonWpcomDomain ? (
-												<Button variant="secondary" href={ `/domains/manage/${ site.slug }` }>
-													{ __( 'Manage domains' ) }
-												</Button>
-											) : (
-												<Button
+												<RouterLinkButton
 													variant="secondary"
-													href={ addQueryArgs( `/domains/add/${ site.slug }`, {
-														redirect_to: window.location.pathname,
-													} ) }
+													to={
+														isDashboardBackport()
+															? `/domains/manage/${ site.slug }`
+															: `/sites/${ site.slug }/domains`
+													}
 												>
+													{ __( 'Manage domains' ) }
+												</RouterLinkButton>
+											) : (
+												<Button variant="secondary" href={ getAddSiteDomainUrl( site.slug ) }>
 													{ __( 'Add new domain' ) }
 												</Button>
 											)
