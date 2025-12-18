@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 
 /**
  * Get reader last path selected
@@ -36,11 +37,9 @@ export function getPersistedLastActionPriorToLogin( state ) {
 }
 
 /**
- * Temporary selector to check if the reader multi-site version of the reader dashboard is enabled
+ * Selector to check if the reader multi-site version of the reader dashboard is enabled
  * @returns {boolean} Whether the user is enabled for the reader multi-site dashboard
  */
-export function isReaderMSDEnabled() {
-	// For now it is not using the state, but future implementations might need to use it to check if the user opted into the dashboard/v2
-	// Regardless of the feature flag state
-	return isEnabled( 'reader/msd-enabled' ) && isEnabled( 'dashboard/v2' );
+export function isReaderMSDEnabled( state ) {
+	return isEnabled( 'reader/msd-enabled' ) && hasDashboardOptIn( state );
 }

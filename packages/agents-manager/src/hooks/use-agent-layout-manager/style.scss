@@ -316,7 +316,12 @@ body.post-php.agents-manager-sidebar-container {
 	.agents-manager-conversation-history-view {
 		padding-top: 48px;
 
-		&__content,
+		&__content {
+			padding-top: 0;
+			padding-left: 0;
+			padding-right: 0;
+		}
+
 		&__footer {
 			padding: 0;
 		}

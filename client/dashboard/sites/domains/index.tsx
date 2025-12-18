@@ -20,7 +20,7 @@ import {
 	SITE_CONTEXT_VIEW,
 	BulkActionsProgressNotice,
 } from '../../domains/dataviews';
-import { useDomainConnectionSetupTemplateUrl } from '../../utils/domain';
+import { getDomainConnectionSetupTemplateUrl } from '../../utils/domain-url';
 import PrimaryDomainSelector from './primary-domain-selector';
 import type { DomainSummary } from '@automattic/api-core';
 
@@ -63,7 +63,7 @@ function SiteDomains() {
 	);
 
 	const { basePath } = useAppContext();
-	const domainConnectionSetupUrl = useDomainConnectionSetupTemplateUrl();
+	const domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
 	const redirectTo = `${ basePath }/sites/${ site.slug }/domains`;
 
 	return (
