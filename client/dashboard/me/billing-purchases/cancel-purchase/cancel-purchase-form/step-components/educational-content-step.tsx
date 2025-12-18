@@ -16,7 +16,6 @@ import {
 import { useState } from 'react';
 import * as React from 'react';
 import imgConnectDomain from 'calypso/assets/images/cancellation/connect-domain.png';
-import imgFreeDomain from 'calypso/assets/images/cancellation/free-domain.png';
 import imgLoadingTime from 'calypso/assets/images/cancellation/loading-time.png';
 import imgSEO from 'calypso/assets/images/cancellation/seo.png';
 import { useHelpCenter } from '../../../../../app/help-center';
@@ -150,56 +149,6 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 									}
 								) }
 							</div>
-						</li>
-					</ul>
-				</Content>
-			);
-		case 'education:free-domain':
-			return (
-				<Content
-					image={ imgFreeDomain }
-					title={ __( 'Step-by-step guide to get a free domain' ) }
-					onDecline={ props.onDecline }
-				>
-					<p>
-						{ __(
-							'You can register a free domain name for one year with the purchase of any WordPress.com annual or two-year plan!'
-						) }
-					</p>
-					<ul>
-						<li>
-							{ createInterpolateElement(
-								__(
-									'Go to Upgrades → Domains and click <link>Add a Domain</link> to register your plan’s free domain'
-								),
-								{
-									link: <Button href={ `/domains/add/${ siteSlug }` } variant="link" />,
-								}
-							) }
-						</li>
-						<li>
-							{ __(
-								'Choose from all popular extensions including .com, .org, .net, .shop, and .blog.'
-							) }
-						</li>
-						<li>
-							{ __( 'Make it your site’s primary domain (no “WordPress.com” in the address!)' ) }
-						</li>
-						<li>{ __( 'After the first year, your domain will renew at the regular price.' ) }</li>
-						<li>
-							{ __(
-								'If you have trouble claiming your free domain, contact us and we’ll assist you.'
-							) }
-						</li>
-						<li>
-							{ createInterpolateElement( __( 'Read more about domains <link>here</link>.' ), {
-								link: (
-									<Button
-										href={ localizeUrl( 'https://wordpress.com/support/domains/register-domain/' ) }
-										variant="link"
-									/>
-								),
-							} ) }
 						</li>
 					</ul>
 				</Content>
