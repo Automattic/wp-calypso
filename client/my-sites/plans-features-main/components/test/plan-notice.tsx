@@ -233,4 +233,32 @@ describe( '<PlanNotice /> Tests', () => {
 			'available from your current domain and other upgrades'
 		);
 	} );
+
+	test( 'Shows "other upgrades" copy when source is other-upgrades', () => {
+		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( {
+			credits: 4600,
+			source: 'other-upgrades',
+		} );
+
+		renderWithProvider(
+			<PlanNotice visiblePlans={ plansList } isInSignup={ false } siteId={ 32234 } />
+		);
+
+		expect( screen.getByRole( 'status' ).textContent ).toContain( 'available from other upgrades' );
+	} );
+
+	test( 'Shows "domain and other upgrades" copy when source is domain-and-other-upgrades', () => {
+		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( {
+			credits: 4600,
+			source: 'domain-and-other-upgrades',
+		} );
+
+		renderWithProvider(
+			<PlanNotice visiblePlans={ plansList } isInSignup={ false } siteId={ 32234 } />
+		);
+
+		expect( screen.getByRole( 'status' ).textContent ).toContain(
+			'available from your current domain and other upgrades'
+		);
+	} );
 } );

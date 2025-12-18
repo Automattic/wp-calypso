@@ -115,6 +115,53 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 		expect( result.current ).toEqual( { credits: 300, source: 'other-upgrades' } );
 	} );
 
+	test( 'returns null when proration exists but maxCredits is 0', () => {
+		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 0 );
+		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+			data: {
+				free_plan: {
+					pricing: {
+						costOverrides: [
+							{ overrideCode: Plans.COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION },
+						],
+					},
+				},
+			},
+		} as unknown as SitePlansQueryResult );
+
+		const { result } = renderHookWithProvider( () => useUpgradeCreditsNoticeData( siteId, [] ) );
+		expect( result.current ).toBeNull();
+	} );
+
+	test( 'does not infer other-upgrades proration when a sale coupon is present', () => {
+		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 300 );
+		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+			data: {
+				free_plan: {
+					pricing: {
+						hasSaleCoupon: true,
+						discountedPrice: { full: 900, monthly: 75 },
+						originalPrice: { full: 1200, monthly: 100 },
+					},
+				},
+			},
+		} as unknown as SitePlansQueryResult );
+
+		const { result } = renderHookWithProvider( () => useUpgradeCreditsNoticeData( siteId, [] ) );
+		expect( result.current ).toBeNull();
+	} );
+
+	test( 'does not return plan credits when visiblePlans is empty (even if plan credits are available)', () => {
+		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
+		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 0 );
+		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+			data: {},
+		} as unknown as SitePlansQueryResult );
+
+		const { result } = renderHookWithProvider( () => useUpgradeCreditsNoticeData( siteId, [] ) );
+		expect( result.current ).toBeNull();
+	} );
+
 	test( 'does not infer combined source when domain proration exists alongside a non-coupon discount (without explicit plan proration override)', () => {
 		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 700 );
 		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
