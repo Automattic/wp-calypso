@@ -1,6 +1,17 @@
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/mixins";
-@import '@wordpress/base-styles/colors';
+@import "@wordpress/base-styles/colors";
+
+// This is a temporary fix to ensure the sticky actions column has the correct background color.
+// TODO: Remove when https://github.com/WordPress/gutenberg/pull/73873 lands in Calypso.
+.dataviews-view-table {
+	td,
+	th {
+		&.dataviews-view-table__actions-column--sticky {
+			background-color: var(--wp-dataviews-color-background, $white);
+		}
+	}
+}
 
 // We manually compose the UI of the dataview without including the view actions, which results in extra padding and a border.
 .components-card__header + .components-card__body:has( > .dataviews-wrapper ):not( :has( .dataviews__view-actions ) ) {
