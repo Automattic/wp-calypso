@@ -1,5 +1,4 @@
 import { Page } from 'playwright';
-import { envVariables } from '../..';
 import { getCalypsoURL } from '../../data-helper';
 
 /**
@@ -18,37 +17,36 @@ export class SiteSettingsPage {
 	}
 
 	/**
-	 * Visits the `/sites/settings/$tab` endpoint.
+	 * Visits the `/sites/$siteSlug/settings` page and optionally drill into a sub-page.
 	 *
 	 * @param {string} siteSlug Site URL.
-	 * @param {string} tab      Settings tab.
 	 */
-	async visit( siteSlug: string, tab: string = 'site' ): Promise< void > {
+	async visit( siteSlug: string, subPathSlug?: string ): Promise< void > {
 		// Patch for redirectToHostingDashboardBackportIfEnabled bug that doesn't account for tabs.
-		await this.page.goto( getCalypsoURL( `sites/settings/v2/${ siteSlug }/${ tab }` ), {
+		const pageUrl = getCalypsoURL(
+			`sites/${ siteSlug }/settings${ subPathSlug ? `/${ subPathSlug }` : '' }`
+		);
+		await this.page.goto( pageUrl, {
 			timeout: 20 * 1000,
 		} );
 	}
 
 	/**
 	 * Start the site launch process.
+	 * Must be on the "Site visibility" sub-page.
 	 */
 	async launchSite(): Promise< void > {
-		const launchSite = this.page.getByRole( 'button', { name: 'Launch site' } ).first();
+		const launchSite = this.page.getByRole( 'button', { name: 'Launch your site' } ).first();
 		await launchSite.click();
 	}
 
 	/**
-	 * Navigates to a given item in the sidebar.
+	 * Navigates to a given settings sub-path by label.
 	 *
-	 * @param {string} item Item to navigate to.
+	 * @param {string} itemLabel Item to navigate to.
 	 */
-	async navigateToSubmenu( item: string ) {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.page.getByRole( 'button', { name: 'General' } ).click();
-		}
-
-		await this.page.getByRole( 'link', { name: item } ).click();
+	async navigateToSubmenu( itemLabel: string ) {
+		await this.page.getByRole( 'link', { name: itemLabel } ).click();
 	}
 
 	/**
