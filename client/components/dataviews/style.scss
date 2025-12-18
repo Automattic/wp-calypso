@@ -3,6 +3,17 @@
 @import '@wordpress/dataviews/build-style/style.css';
 
 .dataviews-wrapper {
+	// This is a temporary fix to ensure the sticky actions column has the correct background color.
+	// TODO: Remove when https://github.com/WordPress/gutenberg/pull/73873 lands in Calypso.
+	.dataviews-view-table {
+		td,
+		th {
+			&.dataviews-view-table__actions-column--sticky {
+				background-color: var(--wp-dataviews-color-background, $white);
+			}
+		}
+	}
+
 	// Maybe move upstream to the gutenberg repository
 	width: 100%;
 	padding-block-end: 40px;
