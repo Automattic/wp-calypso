@@ -150,7 +150,7 @@ export function getDashboardURL(
 	route = '',
 	queryStrings: { [ key: string ]: string } = {}
 ): string {
-	const base = envVariables.CALYPSO_BASE_URL;
+	const base = envVariables.DASHBOARD_BASE_URL;
 
 	const url = new URL( route, base );
 
