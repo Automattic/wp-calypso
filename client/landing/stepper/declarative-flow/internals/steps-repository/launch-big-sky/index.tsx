@@ -4,7 +4,7 @@ import { Step } from '@automattic/onboarding';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, FormEvent, useState } from 'react';
+import { useEffect, FormEvent } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -21,7 +21,6 @@ const SiteIntent = Onboard.SiteIntent;
 const LaunchBigSky: StepType = function ( props ) {
 	const { flow } = props;
 	const { __ } = useI18n();
-	const [ progress, setProgress ] = useState( 0 );
 	const { siteSlug, siteId, site } = useSiteData();
 	const urlQuery = useQuery();
 	const { isEligible } = useIsBigSkyEligible( flow );
@@ -70,7 +69,6 @@ const LaunchBigSky: StepType = function ( props ) {
 			if ( ! assemblerThemeActive ) {
 				setDesignOnSite( selectedSiteSlug, getAssemblerDesign(), { enableThemeSetup: true } );
 			}
-			setProgress( 25 );
 
 			// Create a new home page if one is not set yet.
 			if ( ! hasStaticHomepage ) {
@@ -87,7 +85,6 @@ const LaunchBigSky: StepType = function ( props ) {
 					} )
 				);
 			}
-			setProgress( 50 );
 
 			// Delete the existing boilerplate about page, always has a page ID of 1
 			pendingActions.push( deletePage( selectedSiteId, 1 ) );
@@ -100,7 +97,6 @@ const LaunchBigSky: StepType = function ( props ) {
 					const homePagePostId = results[ 1 ].id;
 					await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
 				}
-				setProgress( 75 );
 
 				const prompt = urlQuery.get( 'prompt' );
 				let promptParam = '';
@@ -156,7 +152,7 @@ const LaunchBigSky: StepType = function ( props ) {
 	return (
 		<>
 			<DocumentHead title={ __( 'Processing' ) } />
-			<Step.Loading title="" progress={ progress } delay={ 1000 } />
+			<Step.Loading />
 		</>
 	);
 };
