@@ -45,7 +45,9 @@
 		"@automattic/agenttic-ui": "^0.1.31",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
+		"@automattic/odie-client": "workspace:^",
 		"@automattic/support-articles": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.23.0",
@@ -56,6 +58,7 @@
 		"@wordpress/icons": "^10.23.0",
 		"@wordpress/primitives": "^4.23.0",
 		"clsx": "^2.1.1",
+		"i18n-calypso": "workspace:^",
 		"react-router-dom": "^6.23.1",
 		"wpcom-proxy-request": "workspace:^"
 	},

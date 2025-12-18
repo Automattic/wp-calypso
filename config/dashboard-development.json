@@ -19,6 +19,7 @@
 		"dashboard/v2": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
+		"dev/store-sandbox-helper": true,
 		"wordpress-ai-assistant": true
 	},
 	"enable_all_sections": false,

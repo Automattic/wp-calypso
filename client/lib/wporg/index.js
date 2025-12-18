@@ -11,7 +11,7 @@ const DEFAULT_PAGE_SIZE = 24;
 const DEFAULT_CATEGORY = 'all';
 const DEFAULT_FIRST_PAGE = 1;
 
-const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
+const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.2/';
 const WPORG_CORE_TRANSLATIONS_ENDPOINT = 'https://api.wordpress.org/translations/core/1.0/';
 const WPORG_CORE_VERSIONS_ENDPOINT = 'https://api.wordpress.org/core/version-check/1.7/';
 

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { useShouldUseUnifiedAgent } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -52,6 +53,7 @@ function Help() {
 	const { isLoading, isShown, setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const [ helpCenterPage, setHelpCenterPage ] = useState( '' );
+	const isUnifiedAgentEnabled = useShouldUseUnifiedAgent();
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_help_center_menu_popover_v2'
@@ -227,7 +229,7 @@ function Help() {
 				onClick={ handleToggleHelpCenter }
 			/>
 			<Suspense fallback={ null }>
-				{ isShown && (
+				{ ( isShown || isUnifiedAgentEnabled ) && (
 					<AsyncHelpCenterApp
 						currentUser={ user }
 						handleClose={ handleCloseHelpCenterApp }
