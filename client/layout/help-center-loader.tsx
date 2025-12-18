@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -44,7 +44,7 @@ export default function HelpCenterLoader( {
 	const selectedSite = useSelector( getSelectedSite );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
-	const haveSurvicateEnabled = config( 'survicate_enabled_at_help_center' );
+	const haveSurvicateEnabled = isEnabled( 'survicate_enabled_at_help_center' );
 
 	if ( ! loadHelpCenter ) {
 		return null;
