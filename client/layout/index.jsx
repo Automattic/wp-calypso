@@ -127,6 +127,7 @@ class Layout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
+		beforePrimary: PropTypes.element,
 		focus: PropTypes.object,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
@@ -324,6 +325,7 @@ class Layout extends Component {
 							<div id="secondary" className="layout__secondary" role="navigation">
 								{ this.props.secondary }
 							</div>
+							{ this.props.beforePrimary }
 							<div id="primary" className="layout__primary">
 								{ this.props.primary }
 							</div>

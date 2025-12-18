@@ -1,0 +1,13 @@
+
+.app-title {
+	&:not(.no-padding) {
+		padding: 12px 16px;
+	}
+	box-sizing: border-box;
+
+	h1 {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 32px;
+		font-weight: 400;
+	}
+}

@@ -12,6 +12,20 @@
 		}
 	}
 }
+:root:has(.is-reader-msd-enabled) {
+	.sidebar-header {
+		display: flex;
+		@media only screen and (max-width: 781px) {
+			display: none;
+		}
+	}
+}
+
+:root:not(:has(.is-reader-msd-enabled)) {
+	.sidebar-header {
+		display: flex;
+	}
+}
 
 body.is-section-reader {
 	&.rtl .layout__content {
@@ -123,7 +137,6 @@ body.is-section-reader {
 		margin-right: 12px;
 	}
 	.sidebar-header {
-		display: flex;
 		justify-content: space-between;
 		padding: 24px 8px;
 
@@ -138,6 +151,7 @@ body.is-section-reader {
 			font-size: $font-body-small;
 			margin: 0;
 		}
+
 
 		.reader-search-icon {
 			padding-inline: 0;

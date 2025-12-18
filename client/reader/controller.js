@@ -8,6 +8,7 @@ import wpcom from 'calypso/lib/wp';
 import FeedError from 'calypso/reader/feed-error';
 import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { MobileTitle } from 'calypso/reader/mobile-title/index';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLastPath } from 'calypso/state/reader-ui/selectors';
@@ -146,6 +147,11 @@ export function feedLookup( context ) {
 			page.redirect( `/reader` );
 		} );
 }
+
+export const setBeforePrimary = ( context, next ) => {
+	context.beforePrimary = createElement( MobileTitle );
+	next();
+};
 
 export function feedListing( context, next ) {
 	const feedId = context.params.feed_id;
