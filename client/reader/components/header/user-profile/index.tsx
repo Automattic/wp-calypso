@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { commentAuthorAvatar } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useState } from 'react';
+import { onLogout } from 'calypso/dashboard/app/auth/utils';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import type { User } from '@automattic/api-core';
 
@@ -101,7 +102,7 @@ export default function UserProfile( { user }: Props ) {
 						hideOnClick={ false }
 						onClick={ () => {
 							setIsLoggingOut( true );
-							// logout().catch( () => setIsLoggingOut( false ) );
+							onLogout( user ).catch( () => setIsLoggingOut( false ) );
 						} }
 					>
 						<Menu.ItemLabel>
