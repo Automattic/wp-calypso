@@ -18,7 +18,7 @@ import {
 } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
-import { useCallback, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
@@ -48,6 +48,7 @@ type SitesWithThisPluginProps = {
 	isLoading: boolean;
 	plugin: PluginItem | undefined;
 	pluginBySiteId: Map< number, PluginItem >;
+	setOptimisticDelete: Dispatch< SetStateAction< Record< number, boolean > > >;
 	sitesWithThisPlugin: SiteWithPluginData[];
 };
 
@@ -56,6 +57,7 @@ export const SitesWithThisPlugin = ( {
 	isLoading,
 	plugin,
 	pluginBySiteId,
+	setOptimisticDelete,
 	sitesWithThisPlugin,
 }: SitesWithThisPluginProps ) => {
 	const { mutateAsync } = useMutation( sitePluginUpdateMutation() );
@@ -78,7 +80,6 @@ export const SitesWithThisPlugin = ( {
 	const [ optimisticAutoupdate, setOptimisticAutoupdate ] = useState<
 		Record< number, boolean | undefined >
 	>( {} );
-	const [ optimisticDelete, setOptimisticDelete ] = useState< Record< number, boolean > >( {} );
 
 	const closeUpdateModal = () => {
 		setUpdateModalOpen( false );
@@ -240,24 +241,20 @@ export const SitesWithThisPlugin = ( {
 		]
 	);
 
-	const sites = useMemo(
-		() => sitesWithThisPlugin.filter( ( item ) => ! optimisticDelete[ item.ID ] ),
-		[ sitesWithThisPlugin, optimisticDelete ]
-	);
-	const { data, paginationInfo } = filterSortAndPaginate( sites, view, fields );
+	const { data, paginationInfo } = filterSortAndPaginate( sitesWithThisPlugin, view, fields );
 
 	const updateCount = useMemo( () => {
-		if ( ! sites ) {
+		if ( ! sitesWithThisPlugin ) {
 			return 0;
 		}
 
-		return sites.filter( ( item ) => {
+		return sitesWithThisPlugin.filter( ( item ) => {
 			const pluginItem = pluginBySiteId.get( item.ID );
 			const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 
 			return autoupdate && !! pluginItem?.update;
 		} ).length;
-	}, [ sites, pluginBySiteId, pluginSlug ] );
+	}, [ sitesWithThisPlugin, pluginBySiteId, pluginSlug ] );
 
 	const handleFilterUpdates = useCallback( () => {
 		if ( updateCount <= 0 ) {
@@ -466,7 +463,10 @@ export const SitesWithThisPlugin = ( {
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 									closeModal={ closeModal }
 									onExecute={ action }
-									onActionPerformed={ invalidatePlugins }
+									onActionPerformed={ () => {
+										// Delay invalidation to allow backend to settle
+										setTimeout( invalidatePlugins, 500 );
+									} }
 								/>
 							);
 						},
@@ -483,7 +483,9 @@ export const SitesWithThisPlugin = ( {
 				paginationInfo={ paginationInfo }
 				selection={ selection.map( ( site ) => String( site.ID ) ) }
 				onChangeSelection={ ( ids ) => {
-					setSelection( sites.filter( ( site ) => ids.includes( String( site.ID ) ) ) );
+					setSelection(
+						sitesWithThisPlugin.filter( ( site ) => ids.includes( String( site.ID ) ) )
+					);
 				} }
 			/>
 
