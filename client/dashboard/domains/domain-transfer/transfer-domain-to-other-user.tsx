@@ -104,7 +104,7 @@ export default function TransferDomainToOtherUser() {
 
 	const onConfirm = () => {
 		const selectedUser = availableUsers.find(
-			( user ) => String( getWpcomUserId( user ) ) === formData.user
+			( user ) => getWpcomUserId( user ) === parseInt( formData.user )
 		);
 		domainTransferToOtherUser( formData.user, {
 			onSuccess: () => {
@@ -209,7 +209,7 @@ export default function TransferDomainToOtherUser() {
 
 	const renderConfirmationDialog = () => {
 		const selectedUser = availableUsers.find(
-			( user ) => String( getWpcomUserId( user ) ) === formData.user
+			( user ) => getWpcomUserId( user ) === parseInt( formData.user )
 		);
 
 		return (
