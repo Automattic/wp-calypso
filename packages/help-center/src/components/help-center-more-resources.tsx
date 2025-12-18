@@ -66,6 +66,28 @@ export const HelpCenterMoreResources = () => {
 									onClick={ () => {
 										trackMoreResourcesButtonClick( 'feedback-survey' );
 										window._sva?.invokeEvent?.( 'showFeedbackSurveyFromHelpCenter' );
+
+										// Survicate overlay click doesn't close automatically, so we need to destroy the visitor to close the survey
+										const handleSurveyDisplayed = () => {
+											const overlay = document.querySelector( '.sv__overlay.sv__overlay--dark' );
+											if ( ! overlay ) {
+												return;
+											}
+
+											const handleOverlayClick = () => {
+												window._sva?.destroyVisitor?.();
+											};
+
+											overlay.addEventListener( 'click', handleOverlayClick, {
+												once: true,
+											} );
+											window._sva?.removeEventListener?.(
+												'survey_displayed',
+												handleSurveyDisplayed
+											);
+										};
+
+										window._sva?.addEventListener?.( 'survey_displayed', handleSurveyDisplayed );
 									} }
 									className="help-center-more-resources__survicate"
 								>
