@@ -5,6 +5,9 @@
 /**
  * Default mock implementations
  */
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: jest.fn(),
+} ) );
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 	combineReducers: jest.fn(),
@@ -29,6 +32,7 @@ jest.mock( '../../../wpcom-plans-ui', () => ( {
 	store: 'wpcom-plans-ui',
 } ) );
 
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
 import * as Plans from '../../';
@@ -38,6 +42,7 @@ import { STORAGE_ADD_ONS_MOCK } from '../../../add-ons/mocks';
 import * as Purchases from '../../../purchases';
 import * as WpcomPlansUI from '../../../wpcom-plans-ui';
 import { COST_OVERRIDE_REASONS } from '../../constants';
+import { PRICING_GRID_INTRO_OFFER_CHECKOUT_PARITY_FEATURE_FLAG } from '../use-is-pricing-grid-intro-offer-checkout-parity-enabled';
 import usePricingMetaForGridPlans from '../use-pricing-meta-for-grid-plans';
 
 const siteId = 100;
@@ -94,6 +99,7 @@ const useCheckPlanAvailabilityForPurchase = () => {
 describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest.mocked( isEnabled ).mockImplementation( () => false );
 		Purchases.useSitePurchaseById.mockImplementation( () => undefined );
 		Plans.useIntroOffers.mockImplementation( () => ( {
 			[ PLAN_BUSINESS ]: null,
@@ -336,6 +342,109 @@ describe( 'usePricingMetaForGridPlans', () => {
 		};
 
 		expect( pricingMeta ).toEqual( expectedPricingMeta );
+	} );
+
+	it( 'should not suppress prorated discounted price for intro offer plans when checkout-parity flag is enabled', () => {
+		jest.mocked( isEnabled ).mockImplementation( ( feature ) => {
+			return feature === PRICING_GRID_INTRO_OFFER_CHECKOUT_PARITY_FEATURE_FLAG;
+		} );
+
+		Plans.useIntroOffers.mockImplementation( () => ( {
+			[ PLAN_BUSINESS ]: introOffer,
+		} ) );
+		Plans.useSitePlans.mockImplementation( () => ( {
+			isLoading: false,
+			data: {
+				[ PLAN_BUSINESS ]: {
+					...SITE_PLANS[ PLAN_BUSINESS ],
+					pricing: {
+						...SITE_PLANS[ PLAN_BUSINESS ].pricing,
+						costOverrides: [ { overrideCode: COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION } ],
+						introOffer,
+					},
+				},
+			},
+		} ) );
+
+		const pricingMeta = usePricingMetaForGridPlans( {
+			planSlugs: [ PLAN_BUSINESS ],
+			siteId,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
+			withProratedDiscounts: false,
+		} );
+
+		expect( pricingMeta?.[ PLAN_BUSINESS ]?.discountedPrice ).toEqual( {
+			full: 250,
+			monthly: 250,
+		} );
+	} );
+
+	it( 'should not suppress domain proration discounted price for intro offer plans when checkout-parity flag is enabled', () => {
+		jest.mocked( isEnabled ).mockImplementation( ( feature ) => {
+			return feature === PRICING_GRID_INTRO_OFFER_CHECKOUT_PARITY_FEATURE_FLAG;
+		} );
+
+		Plans.useIntroOffers.mockImplementation( () => ( {
+			[ PLAN_BUSINESS ]: introOffer,
+		} ) );
+		Plans.useSitePlans.mockImplementation( () => ( {
+			isLoading: false,
+			data: {
+				[ PLAN_BUSINESS ]: {
+					...SITE_PLANS[ PLAN_BUSINESS ],
+					pricing: {
+						...SITE_PLANS[ PLAN_BUSINESS ].pricing,
+						costOverrides: [ { overrideCode: COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION } ],
+						introOffer,
+					},
+				},
+			},
+		} ) );
+
+		const pricingMeta = usePricingMetaForGridPlans( {
+			planSlugs: [ PLAN_BUSINESS ],
+			siteId,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
+			withProratedDiscounts: false,
+		} );
+
+		expect( pricingMeta?.[ PLAN_BUSINESS ]?.discountedPrice ).toEqual( {
+			full: 250,
+			monthly: 250,
+		} );
+	} );
+
+	it( 'should suppress plan proration discounted price even when override is not first (flag disabled)', () => {
+		Plans.useSitePlans.mockImplementation( () => ( {
+			isLoading: false,
+			data: {
+				[ PLAN_BUSINESS ]: {
+					...SITE_PLANS[ PLAN_BUSINESS ],
+					pricing: {
+						...SITE_PLANS[ PLAN_BUSINESS ].pricing,
+						costOverrides: [
+							{ overrideCode: 'coupon-discount' },
+							{ overrideCode: COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION },
+						],
+					},
+				},
+			},
+		} ) );
+
+		const pricingMeta = usePricingMetaForGridPlans( {
+			planSlugs: [ PLAN_BUSINESS ],
+			siteId,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
+			withProratedDiscounts: false,
+		} );
+
+		expect( pricingMeta?.[ PLAN_BUSINESS ]?.discountedPrice ).toEqual( {
+			full: null,
+			monthly: null,
+		} );
 	} );
 
 	it( 'should return intro offer pricing and standard pricing adjusted by storage selection', () => {

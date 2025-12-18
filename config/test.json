@@ -87,6 +87,7 @@
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
+		"plans/pricing-grid-checkout-parity-intro-offers": false,
 		"plans/self-service-downgrade": false,
 		"post-list/qr-code-link": false,
 		"press-this": true,

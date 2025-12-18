@@ -31,6 +31,7 @@ export { default as useCurrentPlan } from './hooks/use-current-plan';
 export { default as useCurrentPlanTerm } from './hooks/use-current-plan-term';
 export { default as useIntroOffers } from './hooks/use-intro-offers';
 export { default as useIntroOffersForWooExpress } from './hooks/use-intro-offers-for-woo-express';
+export { default as useIsPricingGridIntroOfferCheckoutParityEnabled } from './hooks/use-is-pricing-grid-intro-offer-checkout-parity-enabled';
 export { default as usePricingMetaForGridPlans } from './hooks/use-pricing-meta-for-grid-plans';
 export { default as useCurrentPlanExpiryDate } from './hooks/use-current-plan-expiry-date';
 

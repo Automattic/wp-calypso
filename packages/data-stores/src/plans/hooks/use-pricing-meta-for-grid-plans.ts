@@ -10,6 +10,7 @@ import * as AddOns from '../../add-ons';
 import * as Purchases from '../../purchases';
 import * as WpcomPlansUI from '../../wpcom-plans-ui';
 import { COST_OVERRIDE_REASONS } from '../constants';
+import useIsPricingGridIntroOfferCheckoutParityEnabled from './use-is-pricing-grid-intro-offer-checkout-parity-enabled';
 
 export type UseCheckPlanAvailabilityForPurchase = ( {
 	planSlugs,
@@ -89,6 +90,8 @@ const usePricingMetaForGridPlans = ( {
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const introOffers = Plans.useIntroOffers( { siteId, coupon } );
+	const isPricingGridIntroOfferCheckoutParityEnabled =
+		useIsPricingGridIntroOfferCheckoutParityEnabled();
 	const purchasedPlan = Purchases.useSitePurchaseById( {
 		siteId,
 		purchaseId: currentPlan?.purchaseId,
@@ -144,6 +147,12 @@ const usePricingMetaForGridPlans = ( {
 				const storageAddOnPriceYearly = selectedStorageAddOn?.prices?.yearlyPrice || 0;
 
 				const introOffer = introOffers?.[ planSlug ];
+				const shouldIncludeProrationDiscountsForIntroOffer =
+					isPricingGridIntroOfferCheckoutParityEnabled &&
+					!! introOffer &&
+					! introOffer.isOfferComplete;
+				const effectiveWithProratedDiscounts =
+					withProratedDiscounts || shouldIncludeProrationDiscountsForIntroOffer;
 
 				const introOfferPrice = introOffer
 					? ( {
@@ -234,16 +243,16 @@ const usePricingMetaForGridPlans = ( {
 					// If there is, however, a sale coupon, show the discounted price
 					// without proration. This isn't ideal, but is intentional. Because of
 					// this, the price will differ between the plans grid and checkout screen.
-					const costOverrideCode = sitePlan?.pricing?.costOverrides?.[ 0 ]?.overrideCode;
 					const hasProratedCostOverride =
-						costOverrideCode &&
-						[
-							COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION,
-							COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION,
-						].includes( costOverrideCode );
+						sitePlan?.pricing?.costOverrides?.some( ( override ) =>
+							[
+								COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION,
+								COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION,
+							].includes( override.overrideCode )
+						) ?? false;
 					if (
 						! sitePlan?.pricing?.hasSaleCoupon &&
-						! withProratedDiscounts &&
+						! effectiveWithProratedDiscounts &&
 						hasProratedCostOverride
 					) {
 						return [
