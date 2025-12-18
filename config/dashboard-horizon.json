@@ -15,7 +15,8 @@
 		"cookie-banner": false,
 		"dashboard/v2": false,
 		"dev/auth-helper": true,
-		"dev/preferences-helper": true
+		"dev/preferences-helper": true,
+		"dev/store-sandbox-helper": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],

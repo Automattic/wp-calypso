@@ -104,7 +104,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await socialConnectionsManager.clearIntercepts();
 			} );
 
-			test( 'Should verify that auto-sharing is available for new posts', async function () {
+			it( 'Should verify that auto-sharing is available for new posts', async function () {
 				await socialConnectionsManager.mockSocialConnections();
 
 				await Promise.all( [
@@ -130,7 +130,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				expect( await mediaButton.isVisible() ).toBe( features.mediaSharing );
 			} );
 
-			test( `Should verify that resharing ${
+			it( `Should verify that resharing ${
 				features.resharing ? 'IS' : 'is NOT'
 			} available`, async function () {
 				let connectionTestPromise = Promise.resolve();
@@ -214,10 +214,9 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 
 				// Verify whether the upgrade nudge/link is visible.
 				if ( ! features.resharing ) {
-					const upgradeLink = section.getByRole( 'link', { name: 'Upgrade now' } );
-					// The upgrade CTA is a button instead of a link until some API call finishes to get the checkout URL, which makes it a link.
-					// So, we need to wait for the link to appear.
-					await upgradeLink.waitFor();
+					const upgradeButton = section.getByRole( 'button', { name: 'Upgrade now' } );
+					// Wait for the upgrade button to appear.
+					await upgradeButton.waitFor();
 				}
 
 				const content = await section.textContent();
@@ -227,7 +226,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				expect( content?.includes( message ) ).toBe( ! features.resharing );
 			} );
 
-			test( `Should verify that manual sharing ${
+			it( `Should verify that manual sharing ${
 				features.manualSharing ? 'IS' : 'is NOT'
 			} available`, async function () {
 				// Open the Jetpack sidebar.
@@ -268,7 +267,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				expect( await manualSharing.isVisible() ).toBe( features.manualSharing );
 			} );
 
-			test( `Should verify that Social Image Generator ${
+			it( `Should verify that Social Image Generator ${
 				features.socialImageGenerator ? 'IS' : 'is NOT'
 			} available`, async function () {
 				await socialConnectionsManager.mockSocialConnections();

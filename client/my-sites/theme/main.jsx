@@ -1471,6 +1471,8 @@ export default connect(
 			isActivatingTheme: getIsActivatingTheme( state, siteId ),
 			isInstallingTheme: getIsInstallingTheme( state, themeId, siteId ),
 			hasActivatedTheme: getHasActivatedTheme( state, siteId ),
+			isThemeCommercial: !! theme?.is_commercial,
+			commercialThemeExternalSupportUrl: theme?.external_support_url || null,
 		};
 	},
 	{

@@ -6,11 +6,11 @@
 import clsx from 'clsx';
 import './style.scss';
 
-interface ChatMessageSkeletonProps {
-	count?: number;
+interface SkeletonMessageProps {
+	isUser: boolean;
 }
 
-function SkeletonMessage( { isUser }: { isUser: boolean } ) {
+function SkeletonMessage( { isUser }: SkeletonMessageProps ) {
 	return (
 		<div
 			className={ clsx( 'agents-manager-chat-message-skeleton__message', {
@@ -32,6 +32,10 @@ function SkeletonMessage( { isUser }: { isUser: boolean } ) {
 			) }
 		</div>
 	);
+}
+
+interface ChatMessageSkeletonProps {
+	count?: number;
 }
 
 export default function ChatMessageSkeleton( { count = 3 }: ChatMessageSkeletonProps ) {

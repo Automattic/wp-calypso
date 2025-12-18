@@ -235,6 +235,7 @@ class Layout extends Component {
 			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 			'is-domain-for-gravatar': this.props.isGravatarDomain,
+			'is-reader-msd-enabled': this.props.isMSDEnabledForReader,
 		} );
 
 		const optionalBodyProps = () => {
@@ -373,7 +374,7 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled();
+		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled( state );
 
 		const sidebarType = getSidebarType( {
 			state,
