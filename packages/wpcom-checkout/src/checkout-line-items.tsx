@@ -1554,7 +1554,11 @@ function CheckoutLineItem( {
 					<>
 						<LineItemPrice
 							actualAmount={ monthlyAmountDisplay }
-							crossedOutAmount={ isDiscounted ? originalMonthlyAmountDisplay : undefined }
+							crossedOutAmount={
+								isDiscounted && ! isRenewalPricingExperiment
+									? originalMonthlyAmountDisplay
+									: undefined
+							}
 						/>{ ' ' }
 						{ translate( '/month' ) }
 					</>
