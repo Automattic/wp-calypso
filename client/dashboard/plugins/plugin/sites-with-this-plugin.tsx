@@ -61,8 +61,8 @@ export const SitesWithThisPlugin = ( {
 	setOptimisticDelete,
 	sitesWithThisPlugin,
 }: SitesWithThisPluginProps ) => {
-	const { mutateAsync } = useMutation( sitePluginUpdateMutation() );
-	const updateAction = buildBulkSitesPluginAction( mutateAsync );
+	const { mutateAsync: updateMutate } = useMutation( sitePluginUpdateMutation() );
+	const updateAction = buildBulkSitesPluginAction( updateMutate );
 	const [ view, setView ] = useState< View >( defaultView );
 	const { mutateAsync: activateMutate } = useMutation( sitePluginActivateMutation() );
 	const { mutateAsync: deactivateMutate } = useMutation( sitePluginDeactivateMutation() );
