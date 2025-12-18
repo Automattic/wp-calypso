@@ -47,7 +47,7 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 				? {
 						heading: __( 'Launch site' ),
 						description: __( 'Ready to go public?' ),
-						link: getSiteVisibilityURL( site ),
+						link: getSiteVisibilityURL( site, { back_to: 'site-overview' } ),
 				  }
 				: {
 						heading: __( 'Coming soon' ),
@@ -75,7 +75,7 @@ function VisibilityCardComingSoon( { site }: { site: Site } ) {
 					? __( 'Visitors will see a coming soon page.' )
 					: __( 'Ready to go public?' )
 			}
-			link={ getSiteVisibilityURL( site ) }
+			link={ getSiteVisibilityURL( site, { back_to: 'site-overview' } ) }
 		/>
 	);
 }
@@ -87,7 +87,7 @@ function VisibilityCardPrivate( { site }: { site: Site } ) {
 			icon={ lockOutline }
 			heading={ __( 'Private' ) }
 			description={ __( 'Only invited users can view your site.' ) }
-			link={ getSiteVisibilityURL( site ) }
+			link={ getSiteVisibilityURL( site, { back_to: 'site-overview' } ) }
 		/>
 	);
 }
@@ -103,7 +103,7 @@ function VisibilityCardPublic( { site }: { site: Site } ) {
 			icon={ published }
 			heading={ __( 'Public' ) }
 			description={ description }
-			link={ getSiteVisibilityURL( site ) }
+			link={ getSiteVisibilityURL( site, { back_to: 'site-overview' } ) }
 			intent="success"
 		/>
 	);
