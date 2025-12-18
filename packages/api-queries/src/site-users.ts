@@ -32,6 +32,6 @@ export const siteUsersQuery = ( siteId: number ) =>
 
 export const siteUsersWpcomQuery = ( siteId: number, role?: string ) =>
 	queryOptions( {
-		queryKey: [ 'site', siteId, 'users', 'wpcom', role ],
+		queryKey: [ 'site', siteId, 'wpcom-users', 'wpcom', role ],
 		queryFn: () => fetchSiteUsersWpcom( siteId, role ),
 	} );
