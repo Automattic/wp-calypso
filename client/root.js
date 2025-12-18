@@ -89,15 +89,12 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 };
 
 const getSitesLink = ( isDashboardOptIn ) => {
-	if ( isDashboardOptIn ) {
-		// In development environments, don't redirect to the Dashboard subdomain as it might not be the intent.
-		// For instance, developers might use the Calypso Live link to test something not in the Dashboard,
-		// but they get redirected to the Dashboard subdomain, and lose the Calypso Live domain in the process.
-		// As a temporary workaround, we redirect to /home instead.
-		if ( config( 'env_id' ) !== 'production' ) {
-			return '/home';
-		}
-
+	// In development environments, don't redirect to the Dashboard subdomain as it might not be the intent.
+	// For instance, developers might use the Calypso Live link to test something not in the Dashboard,
+	// but they get redirected to the Dashboard subdomain, and lose the Calypso Live domain in the process.
+	// As a temporary workaround, we send them to the v1 /sites instead.
+	// TODO: The workaround will need to change once we deprecate v1 /sites.
+	if ( isDashboardOptIn && config( 'env_id' ) === 'production' ) {
 		return dashboardLink( '/sites' );
 	}
 
