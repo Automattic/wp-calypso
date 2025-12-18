@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useEffect, useState } from 'react';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import wpcom from 'calypso/lib/wp';
 import type { User } from '@automattic/api-core';
 import './style.scss';
@@ -32,7 +33,7 @@ export default function Notifications( { user, className }: { user: User; classN
 		VIEW_SETTINGS: [
 			() => {
 				handleClose();
-				window.location.assign( '/v2/me/notifications' );
+				window.location.assign( dashboardLink( '/me/notifications' ) );
 			},
 		],
 		EDIT_COMMENT: [

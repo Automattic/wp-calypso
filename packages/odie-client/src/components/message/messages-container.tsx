@@ -32,8 +32,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const navigate = useNavigate();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
-	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
-	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 	const navType: NavigationType = useNavigationType();
@@ -66,37 +64,20 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	useEffect( () => {
 		if ( isForwardingToZendesk && ! isUserEligibleForPaidSupport ) {
 			searchParams.delete( 'provider' );
-			setChatMessagesLoaded( true );
 		}
-	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, setChatMessagesLoaded, searchParams ] );
-
-	useEffect( () => {
-		if ( isForwardingToZendesk || hasForwardedToZendesk ) {
-			return;
-		}
-
-		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatMessagesLoaded( true );
-	}, [ chat?.status, isForwardingToZendesk, hasForwardedToZendesk ] );
+	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, searchParams ] );
 
 	/**
 	 * Handle the case where we are directly forwarding to Zendesk without AI first.
 	 */
 	useEffect( () => {
-		if (
-			isForwardingToZendesk &&
-			! hasForwardedToZendesk &&
-			! chat.conversationId &&
-			isChatLoaded &&
-			! forceEmailSupport
-		) {
+		if ( isForwardingToZendesk && ! chat.conversationId && isChatLoaded && ! forceEmailSupport ) {
 			searchParams.delete( 'provider' );
 			searchParams.set( 'direct-zd-chat', '1' );
 			setSearchParams( searchParams );
-			setHasForwardedToZendesk( true );
 
 			// when forwarding to zd avoid creating new chats
 			if ( alreadyHasActiveZendeskChatId ) {
-				setChatMessagesLoaded( true );
 				// Redirect to the existing Zendesk chat.
 				searchParams.set( 'id', alreadyHasActiveZendeskChatId );
 				return navigate( '/odie?' + searchParams.toString() );
@@ -106,14 +87,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			setSearchParams( searchParams );
 			createZendeskConversation( {
 				createdFrom: 'direct_url',
-			} ).then( () => {
-				setChatMessagesLoaded( true );
 			} );
 		}
 	}, [
 		navigate,
 		isForwardingToZendesk,
-		hasForwardedToZendesk,
 		isChatLoaded,
 		chat?.conversationId,
 		createZendeskConversation,
@@ -146,12 +124,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			<>
 				<div
 					className={ clx( 'chatbox-loading-chat__spinner', {
-						'is-visible': ! chatMessagesLoaded || isScrolling,
+						'is-visible': chat.status === 'loading' || isScrolling,
 					} ) }
 				>
 					<Spinner />
 				</div>
-				{ ( chat.odieId || chat.provider === 'odie' ) && (
+				{ ( chat.odieId || chat.provider !== 'zendesk' ) && (
 					<ChatMessage
 						message={ getOdieInitialMessage(
 							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,

@@ -2,15 +2,6 @@
 
 Unified AI Agent manager for WordPress and Calypso.
 
-## Features
-
-- **Unified AI Agent**: A complete AI chat interface with docking and floating modes.
-- **Conversation History**: View and resume past conversations with React Query caching.
-- **Session Management**: Automatic session handling with 24-hour persistence in localStorage.
-- **Extensible**: Support for custom tools, context providers, and markdown components via external plugins.
-- **Multi-Context Support**: Works in WordPress (wp-admin, block-editor, site-editor), Calypso, and generic contexts.
-- **React Query Integration**: Efficient data fetching with `@tanstack/react-query` for conversation management.
-
 ## Installation
 
 ```bash
