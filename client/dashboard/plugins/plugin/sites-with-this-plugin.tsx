@@ -402,18 +402,13 @@ export const SitesWithThisPlugin = ( {
 						label: __( 'Delete' ),
 						modalHeader: getModalHeader( 'delete' ),
 						RenderModal: ( { items, closeModal } ) => {
-							const { mutateAsync: deactivate } = useMutation( {
-								...sitePluginDeactivateMutation(),
-								onSuccess: () => {},
-							} );
-							const { mutateAsync: disableAutoupdate } = useMutation( {
-								...sitePluginAutoupdateDisableMutation(),
-								onSuccess: () => {},
-							} );
-							const { mutateAsync: remove } = useMutation( {
-								...sitePluginRemoveMutation(),
-								onSuccess: () => {},
-							} );
+							const { mutateAsync: deactivate } = useMutation(
+								sitePluginDeactivateMutation( false )
+							);
+							const { mutateAsync: disableAutoupdate } = useMutation(
+								sitePluginAutoupdateDisableMutation( false )
+							);
+							const { mutateAsync: remove } = useMutation( sitePluginRemoveMutation( false ) );
 
 							const action = async ( items: PluginListRow[] ) => {
 								const bulkDeactivate = buildBulkSitesPluginAction( deactivate );
