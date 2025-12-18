@@ -267,95 +267,43 @@ export default function ActionRenderModal( {
 	};
 
 	const buildSuccessPrefix = ( action: string, selected: PluginListRow[] ) => {
-		if ( selected.length === 1 ) {
-			const pluginName = selected[ 0 ].name;
-			switch ( action ) {
-				case 'activate':
-					return sprintf(
-						// translators: %s is the plugin name.
-						__( 'Activated %s' ),
-						pluginName
-					);
-				case 'deactivate':
-					return sprintf(
-						// translators: %s is the plugin name.
-						__( 'Deactivated %s' ),
-						pluginName
-					);
-				case 'update':
-					return sprintf(
-						// translators: %s is the plugin name.
-						__( 'Updated %s' ),
-						pluginName
-					);
-				case 'enable-autoupdate':
-					return sprintf(
-						// translators: %s is the plugin name.
-						__( 'Enabled auto‑updates for %s' ),
-						pluginName
-					);
-				case 'disable-autoupdate':
-					return sprintf(
-						// translators: %s is the plugin name.
-						__( 'Disabled auto‑updates for %s' ),
-						pluginName
-					);
-				case 'delete':
-					return sprintf(
-						// translators: %s is the plugin name.
-						__( 'Deleted %s' ),
-						pluginName
-					);
-				default:
-					return __( 'Action completed' );
-			}
-		}
+		const pluginName = selected[ 0 ].name;
 		switch ( action ) {
 			case 'activate':
 				return sprintf(
-					// translators: %d is the number of plugins activated.
-					_n( 'Activated %d plugin', 'Activated %d plugins', selected.length, 'next-admin' ),
-					selected.length
+					// translators: %s is the plugin name.
+					__( 'Activated %s' ),
+					pluginName
 				);
 			case 'deactivate':
 				return sprintf(
-					// translators: %d is the number of plugins deactivated.
-					_n( 'Deactivated %d plugin', 'Deactivated %d plugins', selected.length, 'next-admin' ),
-					selected.length
+					// translators: %s is the plugin name.
+					__( 'Deactivated %s' ),
+					pluginName
 				);
 			case 'update':
 				return sprintf(
-					// translators: %d is the number of plugins updated.
-					_n( 'Updated %d plugin', 'Updated %d plugins', selected.length, 'next-admin' ),
-					selected.length
+					// translators: %s is the plugin name.
+					__( 'Updated %s' ),
+					pluginName
 				);
 			case 'enable-autoupdate':
 				return sprintf(
-					// translators: %d is the number of plugins for which auto-updates were enabled.
-					_n(
-						'Enabled auto‑updates for %d plugin',
-						'Enabled auto‑updates for %d plugins',
-						selected.length,
-						'next-admin'
-					),
-					selected.length
+					// translators: %s is the plugin name.
+					__( 'Enabled auto‑updates for %s' ),
+					pluginName
 				);
 			case 'disable-autoupdate':
 				return sprintf(
-					// translators: %d is the number of plugins for which auto-updates were disabled.
-					_n(
-						'Disabled auto‑updates for %d plugin',
-						'Disabled auto‑updates for %d plugins',
-						selected.length,
-						'next-admin'
-					),
-					selected.length
+					// translators: %s is the plugin name.
+					__( 'Disabled auto‑updates for %s' ),
+					pluginName
 				);
 			case 'delete':
 				return sprintf(
-					// translators: %d is the number of plugins deleted.
-					_n( 'Deleted %d plugin', 'Deleted %d plugins', selected.length, 'next-admin' ),
-					selected.length
+					// translators: %s is the plugin name.
+					__( 'Deleted %s' ),
+					pluginName
 				);
 			default:
 				return __( 'Action completed' );
