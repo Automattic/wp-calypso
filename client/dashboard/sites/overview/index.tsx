@@ -15,6 +15,7 @@ import { useRef } from 'react';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import Survey from '../../components/survey';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
 import { canViewSiteVisibilitySettings } from '../features';
@@ -226,6 +227,10 @@ function SiteOverview( {
 				/>
 			}
 		>
+			<Survey
+				surveyUrl="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
+				eventName="theme-showcase-december-2025"
+			/>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<StorageWarningBanner site={ site } />
 				<Grid { ...gridLayout } gap={ spacing }>

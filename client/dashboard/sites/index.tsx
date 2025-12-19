@@ -22,6 +22,7 @@ import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import Survey from '../components/survey';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import AddNewSite from './add-new-site';
 import {
@@ -385,6 +386,10 @@ export default function Sites() {
 				}
 				notices={ <SitesNotices /> }
 			>
+				<Survey
+					surveyUrl="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
+					eventName="theme-showcase-december-2025"
+				/>
 				{ isEnabled( 'dashboard/v2/es-site-list' ) ? (
 					<SitesDataViews< DashboardSiteListSite >
 						getItemId={ ( item ) => '' + item.blog_id?.toString() + item.url?.value }
