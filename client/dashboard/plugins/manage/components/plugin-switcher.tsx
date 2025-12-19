@@ -162,7 +162,7 @@ export const PluginSwitcher = ( {
 					searchableFields={ searchableFields }
 					onClose={ () => {} }
 					width="auto"
-					Filter={
+					filter={
 						<PluginUpdatesFilter
 							siteCount={
 								pluginsWithIcon.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )

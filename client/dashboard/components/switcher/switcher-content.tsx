@@ -31,7 +31,7 @@ export default function SwitcherContent< T >( {
 	children,
 	onClose,
 	onItemClick,
-	Filter,
+	filter,
 	filterField,
 }: PropsWithChildren< {
 	itemAlignment?: string;
@@ -50,7 +50,7 @@ export default function SwitcherContent< T >( {
 	resetScroll?: boolean;
 	onClose: () => void;
 	onItemClick?: () => void;
-	Filter?: JSX.Element;
+	filter?: JSX.Element;
 	filterField?: Field< T >;
 } > ) {
 	const fields = useMemo( () => {
@@ -75,7 +75,7 @@ export default function SwitcherContent< T >( {
 
 	const { data: filteredData } = filterSortAndPaginate( items, view, fields );
 
-	const Search = (
+	const search = (
 		<SearchControl
 			className={ searchClassName }
 			label={ __( 'Search' ) }
@@ -89,13 +89,13 @@ export default function SwitcherContent< T >( {
 	return (
 		<NavigableMenu style={ { width } }>
 			<MenuGroup>
-				{ Filter ? (
+				{ filter ? (
 					<HStack justify="flex-start" alignment="center">
-						{ Search }
-						{ Filter }
+						{ search }
+						{ filter }
 					</HStack>
 				) : (
-					Search
+					search
 				) }
 			</MenuGroup>
 			<MenuGroup hideSeparator>
