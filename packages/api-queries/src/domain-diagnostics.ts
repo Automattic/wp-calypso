@@ -5,5 +5,4 @@ export const domainDiagnosticsQuery = ( domainName: string ) =>
 	queryOptions< DomainDiagnostics >( {
 		queryKey: [ 'domains', domainName, 'diagnostics' ],
 		queryFn: () => fetchDomainDiagnostics( domainName ),
-		refetchOnWindowFocus: false,
 	} );

@@ -5,15 +5,12 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import {
-	Button,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainOverviewRoute, domainRoute } from '../../app/router/domains';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -24,9 +21,7 @@ export default function DomainDiagnostics() {
 	const { domainName } = domainRoute.useParams();
 	const navigate = useNavigate();
 
-	const { data: domainDiagnostics, refetch: refetchDomainDiagnostics } = useSuspenseQuery(
-		domainDiagnosticsQuery( domainName )
-	);
+	const { data: domainDiagnostics } = useSuspenseQuery( domainDiagnosticsQuery( domainName ) );
 
 	const { mutate: fixDnsIssues, isPending: isFixing } = useMutation( {
 		...domainDnsEmailMutation( domainName ),
@@ -85,7 +80,7 @@ export default function DomainDiagnostics() {
 		}
 
 		return (
-			<li key={ recordType } className="domain-diagnostics-notice__record-item">
+			<li key={ recordType }>
 				<Text>{ message }</Text>
 				{ record.correct_record && (
 					<pre>
@@ -96,7 +91,7 @@ export default function DomainDiagnostics() {
 		);
 	};
 
-	const renderDiagnostics = () => {
+	const renderNotices = () => {
 		const emailDnsDiagnostics = domainDiagnostics?.email_dns_records;
 
 		if (
@@ -112,24 +107,30 @@ export default function DomainDiagnostics() {
 			);
 		}
 
+		return (
+			<Notice variant="error" title={ __( 'Missing or invalid DNS records' ) }>
+				<Text>
+					{ createInterpolateElement(
+						__(
+							'If you use this domain name to send email from your WordPress.com website, the following email records are required. <LearnMoreLink />'
+						),
+						{
+							LearnMoreLink: <InlineSupportLink supportContext="domain-email-authentication" />,
+						}
+					) }
+				</Text>
+			</Notice>
+		);
+	};
+
+	const renderDiagnostics = () => {
+		const emailDnsDiagnostics = domainDiagnostics?.email_dns_records;
+
 		const recordsToCheck = [ 'spf', 'dkim1', 'dkim2', 'dmarc' ];
 
 		return (
 			<VStack>
-				<Notice variant="error" title={ __( 'Missing or invalid DNS records' ) }>
-					<Text>
-						{ createInterpolateElement(
-							__(
-								'If you use this domain name to send email from your WordPress.com website, the following email records are required. <LearnMoreLink />'
-							),
-							{
-								LearnMoreLink: <InlineSupportLink supportContext="domain-email-authentication" />,
-							}
-						) }
-					</Text>
-				</Notice>
-
-				<VStack as="ul" spacing={ 2 } className="domain-diagnostics-notice__record-list">
+				<VStack as="ul" spacing={ 2 }>
 					{ recordsToCheck.map( renderDiagnosticForRecord ) }
 				</VStack>
 
@@ -143,20 +144,20 @@ export default function DomainDiagnostics() {
 					</Notice>
 				) }
 
-				<HStack justify="start" spacing={ 2 }>
+				<ButtonStack justify="start">
 					{ emailDnsDiagnostics.should_offer_automatic_fixes && (
 						<Button
 							variant="primary"
 							onClick={ () =>
 								fixDnsIssues( undefined, {
 									onSuccess: () => {
-										refetchDomainDiagnostics();
 										navigate( { to: domainOverviewRoute.fullPath, params: { domainName } } );
 									},
 								} )
 							}
 							isBusy={ isFixing }
 							disabled={ isFixing }
+							__next40pxDefaultSize
 						>
 							{ __( 'Fix DNS issues automatically' ) }
 						</Button>
@@ -173,11 +174,12 @@ export default function DomainDiagnostics() {
 							}
 							isBusy={ isDismissing }
 							disabled={ isDismissing }
+							__next40pxDefaultSize
 						>
 							{ __( 'Dismiss this notice' ) }
 						</Button>
 					) }
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		);
 	};
@@ -185,6 +187,7 @@ export default function DomainDiagnostics() {
 	return (
 		<PageLayout
 			size="small"
+			notices={ renderNotices() }
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
