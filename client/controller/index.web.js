@@ -49,7 +49,6 @@ import { hydrate, render } from './web-util.js';
 export { setLocaleMiddleware, setSectionMiddleware } from './shared.js';
 export { hydrate, render } from './web-util.js';
 
-const RENEWAL_PRICING_EXPERIMENT = 'international_pricing_2025'; //todo: use the actual experiment name
 export const ProviderWrappedLayout = ( {
 	store,
 	queryClient,
@@ -64,15 +63,6 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
-
-	if ( userLoggedIn ) {
-		// SSR-safe: Dynamic import ensures this only runs in client context
-		import( 'calypso/lib/explat' )
-			.then( ( { loadExperimentAssignment } ) => {
-				loadExperimentAssignment( RENEWAL_PRICING_EXPERIMENT );
-			} )
-			.catch( () => {} ); // Silently fail if SSR context
-	}
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } beforePrimary={ beforePrimary } />

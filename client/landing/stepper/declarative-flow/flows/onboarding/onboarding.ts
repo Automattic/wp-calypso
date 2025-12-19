@@ -351,9 +351,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			if ( isLoggedIn ) {
 				addSurvicate();
-				// Preload the renewal pricing experiment
-				const RENEWAL_PRICING_EXPERIMENT = 'international_pricing_2025'; //todo: use the actual experiment name
-				loadExperimentAssignment( RENEWAL_PRICING_EXPERIMENT );
 			}
 		}, [ isLoggedIn, currentStepSlug ] );
 
