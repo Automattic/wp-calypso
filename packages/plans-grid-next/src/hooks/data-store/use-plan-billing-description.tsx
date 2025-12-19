@@ -294,19 +294,17 @@ export default function usePlanBillingDescription( {
 		}
 	} else if ( renewalPricingVariation ) {
 		// For renewal pricing experiment, show variation-specific text
-		const monthlyPrice = discountedPrice?.monthly || originalPrice?.monthly;
-		const fullPrice = discountedPrice?.full || originalPrice?.full;
-
-		if ( ! monthlyPrice || ! fullPrice || ! currencyCode ) {
+		const monthlyPrice = originalPrice?.monthly;
+		const currentFullPrice =
+			introOffer?.rawPrice?.full || discountedPrice?.full || originalPrice?.full;
+		if ( ! monthlyPrice || ! currencyCode || ! currentFullPrice ) {
 			return null;
 		}
-
 		const formattedMonthlyPrice = formatCurrency( monthlyPrice, currencyCode, {
 			stripZeros: true,
 			isSmallestUnit: true,
 		} );
-
-		const formattedFullPrice = formatCurrency( fullPrice, currencyCode, {
+		const formattedFullPrice = formatCurrency( currentFullPrice, currencyCode, {
 			stripZeros: true,
 			isSmallestUnit: true,
 		} );
@@ -342,7 +340,7 @@ export default function usePlanBillingDescription( {
 						price: formattedMonthlyPrice,
 					},
 					comment:
-						'%(months)s is the billing period (12, 24, or 36), %(fullPrice)s is the total price like $120, %(price)s is the monthly price like $10',
+						'%(months)s is the billing period (12, 24, or 36), %(fullPrice)s is the current/intro total price like $100, %(price)s is the renewal monthly price like $12',
 				}
 			);
 		}
