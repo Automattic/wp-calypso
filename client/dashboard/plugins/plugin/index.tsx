@@ -2,7 +2,7 @@ import { type PluginItem, Site } from '@automattic/api-core';
 import { privateApis } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { SitesWithThisPlugin } from './sites-with-this-plugin';
 import { SitesWithoutThisPlugin } from './sites-without-this-plugin';
@@ -37,6 +37,28 @@ export function PluginTabs( {
 	pluginBySiteId,
 }: PluginTabsProps ) {
 	const [ activeTab, setActiveTab ] = useState< 'installed' | 'available' >( 'installed' );
+	const [ optimisticDelete, setOptimisticDelete ] = useState< Record< number, boolean > >( {} );
+	const prevSiteIds = useRef< Set< number > >(
+		new Set( sitesWithThisPlugin.map( ( site ) => site.ID ) )
+	);
+
+	useEffect( () => {
+		const currentSiteIds = new Set( sitesWithThisPlugin.map( ( site ) => site.ID ) );
+
+		const siteIdsChanged =
+			currentSiteIds.size !== prevSiteIds.current.size ||
+			Array.from( currentSiteIds ).some( ( id ) => ! prevSiteIds.current.has( id ) );
+
+		if ( siteIdsChanged ) {
+			setOptimisticDelete( {} );
+			prevSiteIds.current = currentSiteIds;
+		}
+	}, [ sitesWithThisPlugin ] );
+
+	const sitesWithThisPluginExcludingDeleted = useMemo(
+		() => sitesWithThisPlugin.filter( ( item ) => ! optimisticDelete[ item.ID ] ),
+		[ sitesWithThisPlugin, optimisticDelete ]
+	);
 
 	return (
 		<Tabs
@@ -52,9 +74,9 @@ export function PluginTabs( {
 							_n(
 								'Installed on %(count)d site',
 								'Installed on %(count)d sites',
-								sitesWithThisPlugin.length
+								sitesWithThisPluginExcludingDeleted.length
 							),
-							{ count: sitesWithThisPlugin.length }
+							{ count: sitesWithThisPluginExcludingDeleted.length }
 						) }
 					/>
 				</Tabs.Tab>
@@ -69,7 +91,8 @@ export function PluginTabs( {
 					isLoading={ isLoading }
 					plugin={ plugin }
 					pluginBySiteId={ pluginBySiteId }
-					sitesWithThisPlugin={ sitesWithThisPlugin }
+					setOptimisticDelete={ setOptimisticDelete }
+					sitesWithThisPlugin={ sitesWithThisPluginExcludingDeleted }
 				/>
 			</Tabs.TabPanel>
 

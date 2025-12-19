@@ -242,6 +242,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'oauth2-client',
+		paths: [ '/oauth2' ],
+		module: 'calypso/oauth2',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'jetpack-connect',
 		paths: [ '/jetpack' ],
 		module: 'calypso/jetpack-connect',

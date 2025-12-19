@@ -1,5 +1,6 @@
 import {
 	invalidatePlugins,
+	resetPlugins,
 	sitePluginActivateMutation,
 	sitePluginAutoupdateDisableMutation,
 	sitePluginAutoupdateEnableMutation,
@@ -18,7 +19,7 @@ import {
 } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
-import { useCallback, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
@@ -48,6 +49,7 @@ type SitesWithThisPluginProps = {
 	isLoading: boolean;
 	plugin: PluginItem | undefined;
 	pluginBySiteId: Map< number, PluginItem >;
+	setOptimisticDelete: Dispatch< SetStateAction< Record< number, boolean > > >;
 	sitesWithThisPlugin: SiteWithPluginData[];
 };
 
@@ -56,6 +58,7 @@ export const SitesWithThisPlugin = ( {
 	isLoading,
 	plugin,
 	pluginBySiteId,
+	setOptimisticDelete,
 	sitesWithThisPlugin,
 }: SitesWithThisPluginProps ) => {
 	const { mutateAsync } = useMutation( sitePluginUpdateMutation() );
@@ -399,26 +402,81 @@ export const SitesWithThisPlugin = ( {
 						label: __( 'Delete' ),
 						modalHeader: getModalHeader( 'delete' ),
 						RenderModal: ( { items, closeModal } ) => {
-							const { mutateAsync } = useMutation( sitePluginRemoveMutation() );
-							const action = buildBulkSitesPluginAction( mutateAsync );
+							const { mutateAsync: deactivate } = useMutation( {
+								...sitePluginDeactivateMutation(),
+								onSuccess: () => {},
+							} );
+							const { mutateAsync: disableAutoupdate } = useMutation( {
+								...sitePluginAutoupdateDisableMutation(),
+								onSuccess: () => {},
+							} );
+							const { mutateAsync: remove } = useMutation( {
+								...sitePluginRemoveMutation(),
+								onSuccess: () => {},
+							} );
+
+							const action = async ( items: PluginListRow[] ) => {
+								const bulkDeactivate = buildBulkSitesPluginAction( deactivate );
+								const bulkDisableAutoupdate = buildBulkSitesPluginAction( disableAutoupdate );
+								const bulkRemove = buildBulkSitesPluginAction( remove );
+
+								// First deactivate all plugins
+								await bulkDeactivate( items );
+								// Then disable auto-updates
+								await bulkDisableAutoupdate( items );
+								// Finally remove the plugins
+								const { successCount, errorCount } = await bulkRemove( items );
+
+								if ( errorCount === 0 ) {
+									setOptimisticDelete( ( prev ) => {
+										const newState = { ...prev };
+										items.forEach( ( plugin ) => {
+											plugin.siteIds.forEach( ( id ) => {
+												newState[ id ] = true;
+											} );
+										} );
+										return newState;
+									} );
+								}
+
+								return { successCount, errorCount };
+							};
+
+							const willDeactivate = items.some( ( item ) => item.isPluginActive );
+							const willDisableAutoupdate = items.some( ( item ) => {
+								const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+
+								return !! autoupdate && ( pluginBySiteId.get( item.ID )?.autoupdate ?? false );
+							} );
+							const extraActions = Array.from(
+								new Map( [
+									[ 'deactivate', willDeactivate ],
+									[ 'disable-autoupdate', willDisableAutoupdate ],
+								] )
+							)
+								.filter( ( [ , isActive ] ) => isActive )
+								.map( ( [ action ] ) => action );
 
 							return (
 								<ActionRenderModal
 									actionId="delete"
+									extraActions={ extraActions }
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 									closeModal={ closeModal }
 									onExecute={ action }
+									onActionPerformed={ () => {
+										resetPlugins();
+
+										// Delay invalidation to allow backend to settle
+										setTimeout( invalidatePlugins, 500 );
+									} }
 								/>
 							);
 						},
 						isEligible: ( item ) => {
 							const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 
-							return (
-								!! autoupdate &&
-								! ( pluginBySiteId.get( item.ID )?.autoupdate ?? false ) &&
-								! item.isPluginActive
-							);
+							return !! autoupdate;
 						},
 						supportsBulk: true,
 						icon: <Icon icon={ trash } />,

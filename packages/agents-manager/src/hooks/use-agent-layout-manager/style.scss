@@ -217,6 +217,30 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 	}
 }
 
+/* Calypso MSD */
+body.is-section-dashboard-dotcom.agents-manager-sidebar-container {
+	@include sidebar-base( '#wpcom .dashboard-root__layout' );
+
+	.dashboard-root__layout {
+		position: relative;
+		min-height: 100vh;
+		background-color: var(--dashboard__background-color, #fcfcfc) !important;
+		margin: 0 !important;
+	}
+
+	&.agents-manager-sidebar-container--sidebar-open {
+		@include sidebar-open-base('#wpcom .dashboard-root__layout');
+
+		.dashboard-root__layout {
+			height: calc( 100vh - ( $layout-spacing * 2 ) );
+			min-height: unset;
+			top: $layout-spacing;
+			left: $layout-spacing;
+			overflow: auto !important;
+		}
+	}
+}
+
 /* Next Admin editor */
 body.next-admin.agents-manager-sidebar-container {
 	@include sidebar-base( '.next-admin-layout__canvas.is-full-canvas' );

@@ -9,7 +9,7 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
 import BillingDragonCheckout from '../billing-dragon-checkout';
-import withMarketplaceType from '../hoc/with-marketplace-type';
+import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import useShoppingCart from '../hooks/use-shopping-cart';
 
 import './style-v2.scss';
@@ -52,4 +52,4 @@ function CheckoutV2() {
 	);
 }
 
-export default withMarketplaceType( CheckoutV2 );
+export default withMarketplaceProviders( CheckoutV2 );

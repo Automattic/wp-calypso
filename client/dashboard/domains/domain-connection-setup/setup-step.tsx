@@ -50,9 +50,10 @@ export default function SetupStep( {
 			}
 			expanded={ expanded }
 			onToggle={ onToggle }
+			size={ { blockStart: 'medium', blockEnd: 'medium', inlineStart: 'none', inlineEnd: 'none' } }
 			isBorderless
 		>
-			<VStack spacing={ 6 }>
+			<VStack spacing={ 6 } style={ { paddingInlineStart: '40px', paddingTop: '16px' } }>
 				{ children }
 				{ label && (
 					<CheckboxControl
