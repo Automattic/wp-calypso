@@ -53,7 +53,7 @@ const CheckoutMasterbar = ( {
 			return 'akismet';
 		}
 
-		if ( window.location.pathname.startsWith( '/checkout/a4a' ) ) {
+		if ( window.location.pathname.startsWith( '/checkout/agency/referral' ) ) {
 			return 'a4a';
 		}
 

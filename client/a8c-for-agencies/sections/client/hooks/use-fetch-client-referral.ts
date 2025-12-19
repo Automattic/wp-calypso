@@ -11,7 +11,7 @@ export default function useFetchClientReferral( {
 	referralId?: number;
 	secret?: string;
 } ) {
-	const isExpressCheckout = window.location.pathname.startsWith( '/checkout/a4a' );
+	const isExpressCheckout = window.location.pathname.startsWith( '/checkout/agency/referral' );
 	const isClient = isClientView();
 	const data = useQuery( {
 		queryKey: [ 'a4a-client-referral', agencyId, referralId, secret ],

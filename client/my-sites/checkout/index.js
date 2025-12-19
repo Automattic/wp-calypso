@@ -50,7 +50,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/a4a`,
+		`/checkout/agency/referral`,
 		setLocaleMiddleware(),
 		noSite,
 		checkoutA4ASiteless,
