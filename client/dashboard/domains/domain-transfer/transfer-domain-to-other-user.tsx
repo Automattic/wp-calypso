@@ -73,7 +73,7 @@ const form = {
 export default function TransferDomainToOtherUser() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: usersResponse } = useSuspenseQuery(
+	const { data: users } = useSuspenseQuery(
 		siteUsersWpcomQuery( domain.blog_id, 'administrator' )
 	);
 	const { user: currentUser } = useAuth();
@@ -87,10 +87,10 @@ export default function TransferDomainToOtherUser() {
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 
 	const availableUsers = useMemo( () => {
-		return usersResponse.users.filter( ( user: WpcomSiteUser ) => {
+		return users.filter( ( user: WpcomSiteUser ) => {
 			return getWpcomUserId( user ) !== currentUser.ID;
 		} );
-	}, [ usersResponse.users, currentUser.ID ] );
+	}, [ users, currentUser.ID ] );
 	const fields = useMemo( () => {
 		return createFields( availableUsers );
 	}, [ availableUsers ] );

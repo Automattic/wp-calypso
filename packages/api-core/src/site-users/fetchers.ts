@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { SiteUser, WpcomSiteUsersResponse } from './types';
+import type { SiteUser, WpcomSiteUser, WpcomSiteUsersResponse } from './types';
 
 export async function fetchCurrentSiteUser( siteId: number ): Promise< SiteUser > {
 	return wpcom.req.get( {
@@ -18,8 +18,8 @@ export async function fetchSiteUsers( siteId: number ): Promise< SiteUser[] > {
 export async function fetchWpcomSiteUsers(
 	siteId: number,
 	options?: { role?: string }
-): Promise< WpcomSiteUsersResponse > {
-	return wpcom.req.get( {
+): Promise< WpcomSiteUser[] > {
+	const response: WpcomSiteUsersResponse = await wpcom.req.get( {
 		path: `/sites/${ siteId }/users`,
 		apiVersion: '1.1',
 		query: {
@@ -27,4 +27,5 @@ export async function fetchWpcomSiteUsers(
 			...options,
 		},
 	} );
+	return response.users;
 }
