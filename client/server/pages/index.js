@@ -878,7 +878,7 @@ function wpcomPages( app ) {
 		res.redirect( 301, newRoute );
 	} );
 
-	app.get( [ '/domains', '/start/domain-first' ], function ( req, res ) {
+	app.get( [ '/start/domain-first' ], function ( req, res ) {
 		let redirectUrl = '/start/domain';
 		const domain = get( req, 'query.new', false );
 		if ( domain ) {
