@@ -90,7 +90,7 @@ export default function SwitcherContent< T >( {
 		<NavigableMenu style={ { width } }>
 			<MenuGroup>
 				{ filter ? (
-					<HStack justify="flex-start" alignment="center">
+					<HStack justify="flex-start">
 						{ search }
 						{ filter }
 					</HStack>
