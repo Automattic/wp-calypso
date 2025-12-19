@@ -8,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { funnel } from '@wordpress/icons';
 import { useMemo } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
 import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
@@ -116,8 +117,9 @@ export default function SwitcherContent< T >( {
 				/>
 				{ filterField && filterButtonLabel && (
 					<Button
-						variant={ hasActiveFilter ? 'primary' : 'secondary' }
+						variant={ hasActiveFilter ? 'primary' : 'tertiary' }
 						onClick={ toggleFilter }
+						icon={ funnel }
 						style={ { marginTop: '8px', width: '100%' } }
 						size="compact"
 					>
