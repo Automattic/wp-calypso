@@ -182,7 +182,6 @@ function Authorize( {
 		content = (
 			<div className="oauth2-connect__loading">
 				<Spinner />
-				<p>{ translate( 'Loading authorization details…' ) }</p>
 			</div>
 		);
 	} else if ( error ) {
