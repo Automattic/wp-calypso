@@ -41,7 +41,7 @@ export default function ConfirmCheckbox( {
 				</Text>
 			</VStack>
 
-			<Divider />
+			<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
 
 			<div>
 				{ isDomainRegistrationPurchase && ! state.surveyShown && (
