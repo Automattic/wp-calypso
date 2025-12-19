@@ -32,6 +32,7 @@ interface PlansGridContext {
 	enterpriseFeaturesList?: string[];
 	reflectStorageSelectionInPlanPrices?: boolean;
 	showSimplifiedBillingDescription?: boolean;
+	isRenewalPricingExperiment?: boolean;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -58,6 +59,7 @@ const PlansGridContextProvider = ( {
 	enterpriseFeaturesList,
 	reflectStorageSelectionInPlanPrices,
 	showSimplifiedBillingDescription,
+	isRenewalPricingExperiment,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -93,6 +95,7 @@ const PlansGridContextProvider = ( {
 				enterpriseFeaturesList,
 				reflectStorageSelectionInPlanPrices,
 				showSimplifiedBillingDescription,
+				isRenewalPricingExperiment,
 			} }
 		>
 			{ children }

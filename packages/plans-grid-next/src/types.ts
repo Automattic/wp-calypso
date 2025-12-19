@@ -252,6 +252,10 @@ export type GridContextProps = {
 	 * Enable simplified billing description
 	 */
 	showSimplifiedBillingDescription?: boolean;
+	/**
+	 * Enable renewal pricing treatment (simplified billing description with renewal text below CTA)
+	 */
+	isRenewalPricingExperiment?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

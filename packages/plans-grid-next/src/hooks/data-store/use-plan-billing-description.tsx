@@ -35,8 +35,11 @@ export default function usePlanBillingDescription( {
 }: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
 	const { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer } = pricing || {};
-	const { reflectStorageSelectionInPlanPrices, showSimplifiedBillingDescription } =
-		usePlansGridContext();
+	const {
+		reflectStorageSelectionInPlanPrices,
+		showSimplifiedBillingDescription,
+		isRenewalPricingExperiment,
+	} = usePlansGridContext();
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
 	const yearlyVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -108,7 +111,12 @@ export default function usePlanBillingDescription( {
 	 *   1. We only expose introOffers to monthly & yearly plans for now (so no need to introduce more translations just yet)
 	 *   2. We only expose month & year based intervals for now (so no need to introduce more translations just yet)
 	 */
-	if ( introOffer?.intervalCount && introOffer.intervalUnit && ! introOffer.isOfferComplete ) {
+	if (
+		introOffer?.intervalCount &&
+		introOffer.intervalUnit &&
+		! introOffer.isOfferComplete &&
+		! isRenewalPricingExperiment
+	) {
 		const discountedPriceFull =
 			typeof discountedPrice?.full === 'number' ? discountedPrice.full : introOffer?.rawPrice?.full;
 
@@ -284,6 +292,38 @@ export default function usePlanBillingDescription( {
 				}
 			);
 		}
+	} else if ( isRenewalPricingExperiment ) {
+		// For renewal pricing treatment, show the auto-renewal text instead of billing description
+		const monthlyPrice = discountedPrice?.monthly || originalPrice?.monthly;
+
+		if ( ! monthlyPrice || ! currencyCode ) {
+			return null;
+		}
+
+		const formattedPrice = formatCurrency( monthlyPrice, currencyCode, {
+			stripZeros: true,
+			isSmallestUnit: true,
+		} );
+
+		// Determine the billing period in months
+		let billingMonths = 12; // default to annual
+
+		if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
+			billingMonths = 24;
+		} else if ( PLAN_TRIENNIAL_PERIOD === billingPeriod ) {
+			billingMonths = 36;
+		} else if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
+			billingMonths = 12;
+		}
+
+		return translate( 'Auto-renews as %(price)s per month. Billed every %(months)s months.', {
+			args: {
+				price: formattedPrice,
+				months: billingMonths,
+			},
+			comment:
+				'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
+		} );
 	} else if ( showSimplifiedBillingDescription ) {
 		// Use simplified billing description
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
