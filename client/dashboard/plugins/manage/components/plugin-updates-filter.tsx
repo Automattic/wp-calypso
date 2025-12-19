@@ -46,6 +46,12 @@ export const PluginUpdatesFilter = ( {
 		}
 	};
 
+	const label = sprintf(
+		// translators: %(siteCount)d is the number of plugins with updates available.
+		__( 'Update available (%(siteCount)d)' ),
+		{ siteCount }
+	);
+
 	return currentFilter?.value === true ? (
 		<div className="plugin-switcher__updates-filter-wrapper dataviews-filters__summary-chip-container">
 			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */ }
@@ -58,13 +64,7 @@ export const PluginUpdatesFilter = ( {
 				tabIndex={ 0 }
 				onClick={ () => toggleFilterValue( false ) }
 			>
-				<Text className="plugin-switcher__updates-filter-active-label">
-					{ sprintf(
-						// translators: %(siteCount)d is the number of plugins with updates available.
-						__( 'Update available (%(siteCount)d)' ),
-						{ siteCount }
-					) }
-				</Text>
+				<Text className="plugin-switcher__updates-filter-active-label">{ label }</Text>
 
 				<button
 					className="plugin-switcher__updates-filter-remove"
@@ -79,16 +79,11 @@ export const PluginUpdatesFilter = ( {
 			<Button
 				className="plugin-switcher__updates-filter"
 				size="compact"
-				variant="primary"
 				onClick={ () => {
 					toggleFilterValue( true );
 				} }
 			>
-				{ sprintf(
-					// translators: %(siteCount)d is the number of plugins with updates available.
-					__( 'Update available (%(siteCount)d)' ),
-					{ siteCount }
-				) }
+				{ label }
 			</Button>
 		</div>
 	);
