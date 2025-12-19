@@ -131,10 +131,19 @@ const Survey = ( {
 		} );
 	};
 
-	const dismiss = () => {
-		trackSurvey( false );
+	const setDismissedNow = () => {
 		setIsDismissedState( true );
 		setDismissedAt( eventName, Date.now() );
+	};
+
+	const dismiss = () => {
+		trackSurvey( false );
+		setDismissedNow();
+	};
+
+	const takeSurvey = () => {
+		trackSurvey( true );
+		setDismissedNow();
 	};
 
 	return (
@@ -148,7 +157,7 @@ const Survey = ( {
 						href={ surveyUrl }
 						target="_blank"
 						rel="noopener noreferrer"
-						onClick={ () => trackSurvey( true ) }
+						onClick={ takeSurvey }
 					>
 						{ __( 'Take the survey' ) }
 					</Button>
