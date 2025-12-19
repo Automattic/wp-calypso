@@ -1615,6 +1615,21 @@ function CheckoutLineItem( {
 
 			{ children }
 
+			{ isRenewalPricingExperiment && isDomainRegistration( product ) && (
+				<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
+					<div>
+						{ translate( 'Auto-renews at %(price)s/year.', {
+							args: {
+								price: formatCurrency( product.item_original_cost_integer, product.currency, {
+									isSmallestUnit: true,
+									stripZeros: true,
+								} ),
+							},
+						} ) }
+					</div>
+				</LineItemMeta>
+			) }
+
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButtonWrapper>
