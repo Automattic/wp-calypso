@@ -1,0 +1,4 @@
+// take into account header and nav plus border (64+1), page layout padding (32),
+// page title/description (80), gap between title/description and the cards (32),
+// and select button border (1)
+$card-height: calc(100vh - 2 * ( 64px + 1px ) - 2 * 32px - 80px - 32px - 1px);
