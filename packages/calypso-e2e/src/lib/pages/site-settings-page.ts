@@ -35,7 +35,7 @@ export class SiteSettingsPage {
 	 * Must be on the "Site visibility" sub-page.
 	 */
 	async launchSite(): Promise< void > {
-		const launchSite = this.page.getByRole( 'button', { name: 'Launch your site' } ).first();
+		const launchSite = this.page.getByRole( 'link', { name: 'Launch your site' } ).first();
 		await launchSite.click();
 	}
 
