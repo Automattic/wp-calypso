@@ -27,7 +27,7 @@ export default function DomainDiagnostics() {
 		...domainDnsEmailMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'The default email DNS records were successfully restored.' ),
+				success: __( 'Default email DNS records restored.' ),
 				error: { source: 'server' },
 			},
 		},
@@ -37,7 +37,7 @@ export default function DomainDiagnostics() {
 		...domainNoticeMutation( domainName, 'email-dns-records-diagnostics' ),
 		meta: {
 			snackbar: {
-				success: __( 'The domain diagnostics notice has been dismissed.' ),
+				success: __( 'Domain diagnostics notice dismissed.' ),
 				error: { source: 'server' },
 			},
 		},
