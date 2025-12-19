@@ -122,8 +122,11 @@ const GiftBadge = styled.span`
 	font-size: small;
 `;
 
-const LineItemMeta = styled.div< { theme?: Theme } >`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
+const LineItemMeta = styled.div< { theme?: Theme; isRenewalPricingExperiment?: boolean } >`
+	color: ${ ( props ) =>
+		props.isRenewalPricingExperiment
+			? props.theme.colors.textColorDark
+			: props.theme.colors.textColorLight };
 	font-size: 14px;
 	overflow-wrap: anywhere;
 	width: 100%;
@@ -1578,7 +1581,7 @@ function CheckoutLineItem( {
 						<UpgradeCreditInformationLineItem>
 							<UpgradeCreditInformation product={ product } />
 						</UpgradeCreditInformationLineItem>
-						<LineItemMeta>
+						<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
 							<LineItemSublabelAndPrice
 								product={ product }
 								shouldShowComparison={ shouldShowComparison }
@@ -1598,7 +1601,7 @@ function CheckoutLineItem( {
 			) }
 
 			{ containsPartnerCoupon && (
-				<LineItemMeta>
+				<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
 					<LineItemSublabelAndPrice
 						product={ product }
 						isRenewalPricingExperiment={ isRenewalPricingExperiment }
