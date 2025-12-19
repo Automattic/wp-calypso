@@ -904,6 +904,7 @@ const PlansFeaturesMain = ( {
 										}
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
+										renewalPricingVariation={ renewalPricingVariation }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
