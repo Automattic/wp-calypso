@@ -198,11 +198,14 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			left: $layout-spacing;
 			right: $sidebar-width;
 			width: auto;
-			overflow: hidden;
 			border-radius: $main-border-radius $main-border-radius 0 0;
 			border: 1px solid $border-color;
 			border-bottom: none;
 			box-sizing: border-box;
+
+			.masterbar__section.masterbar__section--left {
+				overflow: hidden;
+			}
 		}
 
 		#content {
