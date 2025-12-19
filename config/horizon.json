@@ -86,6 +86,7 @@
 		"migration/ssh-migration": true,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
+		"onboarding/post-checkout-ai-step": false,
 		"p2/p2-plus": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
@@ -121,6 +122,7 @@
 		"stats/paid-wpcom-v2": true,
 		"stats/real-time-tab": false,
 		"subscriber-importer": true,
+		"survicate_enabled_at_help_center": true,
 		"themes/block-theme-previews-premium-and-woo": true,
 		"themes/discovery": true,
 		"themes/premium": true,
@@ -147,5 +149,6 @@
 	"boom_analytics_key": "horizon",
 	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
-	"survicate_enabled": true
+	"survicate_enabled": true,
+	"survicate_enabled_at_help_center": true
 }

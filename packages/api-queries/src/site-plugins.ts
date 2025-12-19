@@ -38,7 +38,10 @@ export const siteCorePluginsQuery = ( siteId: number ) =>
 		queryFn: () => fetchSiteCorePlugins( siteId ),
 	} );
 
-// Mutations for site-level plugin operations
+// Trigger `isLoading` state
+export const resetPlugins = () => {
+	queryClient.resetQueries( pluginsQuery() );
+};
 
 export const invalidatePlugins = () => {
 	queryClient.invalidateQueries( pluginsQuery() );
@@ -52,6 +55,8 @@ const invalidatePluginsForSite = ( siteId: number ) => {
 	invalidateSitePlugins( siteId );
 	invalidatePlugins();
 };
+
+// Mutations for site-level plugin operations
 
 export const sitePluginActivateMutation = () =>
 	mutationOptions( {
