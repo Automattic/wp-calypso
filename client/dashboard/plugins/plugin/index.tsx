@@ -1,4 +1,4 @@
-import { type PluginItem, Site } from '@automattic/api-core';
+import { MarketplacePlugin, type PluginItem, Site, WpOrgPlugin } from '@automattic/api-core';
 import { privateApis } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
@@ -22,7 +22,7 @@ type PluginTabsProps = {
 	isLoading: boolean;
 	sitesWithThisPlugin: SiteWithPluginData[];
 	sitesWithoutThisPlugin: Site[];
-	plugin: PluginItem | undefined;
+	plugin: PluginItem | MarketplacePlugin | WpOrgPlugin | undefined;
 	pluginName?: string;
 	pluginBySiteId: Map< number, PluginItem >;
 };
@@ -89,7 +89,8 @@ export function PluginTabs( {
 				<SitesWithThisPlugin
 					pluginSlug={ pluginSlug }
 					isLoading={ isLoading }
-					plugin={ plugin }
+					// plugin will only be MarketplacePlugin | WpOrgPlugin when there are no sites with it installed
+					plugin={ plugin as PluginItem | undefined }
 					pluginBySiteId={ pluginBySiteId }
 					setOptimisticDelete={ setOptimisticDelete }
 					sitesWithThisPlugin={ sitesWithThisPluginExcludingDeleted }

@@ -1,8 +1,9 @@
-import { SiteWithPluginData, usePlugin } from '../use-plugin';
+import { PluginItem } from '@automattic/api-core';
+import { SiteWithPluginData } from '../use-plugin';
 import type { PluginListRow } from '../../manage/types';
 
 export const mapToPluginListRow = (
-	plugin: ReturnType< typeof usePlugin >[ 'plugin' ],
+	plugin: PluginItem | undefined,
 	items: SiteWithPluginData[]
 ): Partial< PluginListRow > => {
 	return {
