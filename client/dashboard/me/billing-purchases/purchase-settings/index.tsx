@@ -206,16 +206,6 @@ function upgradePurchase( upgradeUrl: string ): void {
 }
 
 function ProductLink( { purchase }: { purchase: Purchase } ) {
-	if ( purchase.is_plan && purchase.site_slug ) {
-		const url = wpcomLink( '/plans/my-plan/' + purchase.site_slug );
-		const text = __( 'Plan features' );
-		return (
-			<MetadataItem>
-				<a href={ url }>{ text }</a>
-			</MetadataItem>
-		);
-	}
-
 	if (
 		( purchase.is_domain || purchase.product_slug === OFFSITE_REDIRECT ) &&
 		purchase.site_slug &&
