@@ -94,6 +94,14 @@ export default function TransferDomainToOtherUser() {
 	const fields = useMemo( () => {
 		return createFields( availableUsers );
 	}, [ availableUsers ] );
+	const selectedUser = useMemo( () => {
+		if ( ! formData.user ) {
+			return undefined;
+		}
+		return availableUsers.find(
+			( user ) => getWpcomUserId( user ) === parseInt( formData.user, 10 )
+		);
+	}, [ availableUsers, formData.user ] );
 
 	const isMapping = domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION;
 
@@ -103,9 +111,6 @@ export default function TransferDomainToOtherUser() {
 	};
 
 	const onConfirm = () => {
-		const selectedUser = availableUsers.find(
-			( user ) => getWpcomUserId( user ) === parseInt( formData.user )
-		);
 		domainTransferToOtherUser( formData.user, {
 			onSuccess: () => {
 				createSuccessNotice(
@@ -208,10 +213,6 @@ export default function TransferDomainToOtherUser() {
 	};
 
 	const renderConfirmationDialog = () => {
-		const selectedUser = availableUsers.find(
-			( user ) => getWpcomUserId( user ) === parseInt( formData.user )
-		);
-
 		return (
 			<Modal title={ __( 'Confirm transfer' ) } onRequestClose={ () => setIsDialogOpen( false ) }>
 				<VStack spacing={ 6 }>
