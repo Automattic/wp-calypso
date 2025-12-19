@@ -28,7 +28,6 @@ import {
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { FREE_PLAN_PRODUCT_ID } from '../../../../../../packages/data-stores/src/plans';
 import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
