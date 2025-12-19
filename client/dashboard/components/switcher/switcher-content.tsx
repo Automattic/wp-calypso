@@ -14,7 +14,9 @@ import type { View, Field } from '@wordpress/dataviews';
 import type { PropsWithChildren } from 'react';
 
 export default function SwitcherContent< T >( {
+	itemAlignment,
 	itemClassName,
+	itemSpacing,
 	items,
 	searchableFields,
 	searchClassName,
@@ -30,7 +32,9 @@ export default function SwitcherContent< T >( {
 	onClose,
 	onItemClick,
 }: PropsWithChildren< {
+	itemAlignment?: string;
 	itemClassName?: string | ( ( item: T ) => string );
+	itemSpacing?: number;
 	items?: T[];
 	searchClassName?: string;
 	searchableFields: Field< T >[];
@@ -87,7 +91,12 @@ export default function SwitcherContent< T >( {
 							} }
 							resetScroll={ resetScroll }
 						>
-							<HStack justify="flex-start" alignment="center" expanded>
+							<HStack
+								justify="flex-start"
+								alignment={ itemAlignment || 'center' }
+								expanded
+								{ ...( itemSpacing ? { spacing: itemSpacing } : {} ) }
+							>
 								{ renderItemMedia( { item, context: 'list', size: 32 } ) }
 								<VStack spacing={ 0 }>
 									{ renderItemTitle( { item, context: 'list' } ) }
