@@ -162,7 +162,7 @@ export const PluginSwitcher = ( {
 					searchableFields={ searchableFields }
 					onClose={ () => {} }
 					width="auto"
-					filter={
+					Filter={
 						<PluginUpdatesFilter
 							updatesField={ updatesField }
 							view={ view }
