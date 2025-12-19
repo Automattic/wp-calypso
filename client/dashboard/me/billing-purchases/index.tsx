@@ -28,11 +28,12 @@ import {
 
 export default function PurchasesList() {
 	const currentSearchParams = purchasesRoute.useSearch();
-	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
-	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
+	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
+	const { data: transferredPurchases = [], isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
-	const { data: sites, isLoading: isLoadingSites } = useQuery( allSitesQuery() );
+	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
+	const isLoading = isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites;
 
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
 	const { view, updateView, resetView } = usePersistentView( {
@@ -55,24 +56,24 @@ export default function PurchasesList() {
 		}
 	} );
 
-	const { data: paymentMethods } = useQuery( userPaymentMethodsQuery( {} ) );
+	const { data: paymentMethods = [] } = useQuery( userPaymentMethodsQuery( {} ) );
 	const purchasesDataFields = getFields( {
-		sites: sites ?? [],
-		paymentMethods: paymentMethods ?? [],
-		transferredPurchases: transferredPurchases ?? [],
+		sites,
+		paymentMethods,
+		transferredPurchases,
 		siteFilter: currentSearchParams.site,
 	} );
 
 	const allSubscriptions = useMemo( () => {
-		return [ ...( purchases ?? [] ), ...( transferredPurchases ?? [] ) ];
-	}, [ purchases, transferredPurchases ] );
+		return isLoading ? [] : [ ...purchases, ...transferredPurchases ];
+	}, [ isLoading, purchases, transferredPurchases ] );
 
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( allSubscriptions, view, purchasesDataFields );
 	}, [ allSubscriptions, view, purchasesDataFields ] );
 
 	const actions = usePurchasesListActions( {
-		transferredPurchases: transferredPurchases ?? [],
+		transferredPurchases,
 	} );
 
 	return (
@@ -89,8 +90,8 @@ export default function PurchasesList() {
 			<div ref={ ref }>
 				<DataViewsCard className="purchases-list__wrapper">
 					<DataViews
-						isLoading={ isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites }
-						data={ filteredSubscriptions ?? [] }
+						isLoading={ isLoading }
+						data={ filteredSubscriptions }
 						fields={ purchasesDataFields }
 						view={ view }
 						onChangeView={ updateView }
