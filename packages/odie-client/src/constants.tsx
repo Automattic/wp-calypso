@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
@@ -275,6 +274,33 @@ export const getErrorMessageUnknownError = (): Message => {
 			flags: {
 				show_ai_avatar: true,
 				is_error_message: true,
+				forward_to_human_support: false,
+			},
+			question_tags: {
+				inquiry_type: 'request-for-human-support',
+			},
+		},
+	};
+};
+
+export const getOdieZendeskConnectionErrorMessage = (): Message => {
+	return {
+		content: __(
+			"Sorry, I couldn't connect you to our support team right now. Please try again later or use the button below to reach out via email.",
+			__i18n_text_domain__
+		),
+		role: 'bot',
+		type: 'message',
+		context: {
+			site_id: null,
+			flags: {
+				show_ai_avatar: true,
+				failed_zendesk_connection: true,
+				is_error_message: false,
+				forward_to_human_support: true,
+			},
+			question_tags: {
+				inquiry_type: 'request-for-human-support',
 			},
 		},
 	};
@@ -296,14 +322,12 @@ export const ODIE_DEFAULT_BOT_SLUG_LEGACY = 'wpcom-support-chat';
 /**
  * New interactions will target this bot slug and store it in the interaction object. All future events of those interactions will use this bot slug.
  */
-export const ODIE_NEW_INTERACTIONS_BOT_SLUG = config.isEnabled( 'help-center/workflow' )
-	? 'wpcom-workflow-support_chat'
-	: 'wpcom-support-chat';
+export const ODIE_NEW_INTERACTIONS_BOT_SLUG = 'wpcom-workflow-support_chat';
 
 export const ODIE_ALLOWED_BOTS = [
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
+	ODIE_NEW_INTERACTIONS_BOT_SLUG,
 	'wpcom-plan-support',
-	'wpcom-workflow-support_chat',
 	'automattic-chat-support_a4a',
 ];
 

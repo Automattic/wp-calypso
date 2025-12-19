@@ -5,30 +5,47 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import Notice from '../../components/notice';
 
 export default function IcannSuspensionNotice( { domainName }: { domainName: string } ) {
-	const resendIcannVerificationEmail = useMutation(
-		resendIcannVerificationEmailMutation( domainName )
-	);
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const resendIcannVerificationEmail = useMutation( {
+		...resendIcannVerificationEmailMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __(
+					'Verification email sent! It should arrive within a few minutes. Please check your inbox and follow the instructions to verify your domain name.'
+				),
+				error: { source: 'server' },
+			},
+		},
+	} );
+	const { recordTracksEvent } = useAnalytics();
+
 	const onClick = () => {
+		recordTracksEvent( 'calypso_dashboard_domains_icann_suspension_notice_resend_email', {
+			domain_name: domainName,
+		} );
+
 		resendIcannVerificationEmail.mutate( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'ICANN verification email sent' ), {
-					type: 'snackbar',
-				} );
+				recordTracksEvent(
+					'calypso_dashboard_domains_icann_suspension_notice_resend_email_success',
+					{
+						domain_name: domainName,
+					}
+				);
 			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to send ICANN verification email' ), {
-					type: 'snackbar',
+			onError: ( error ) => {
+				recordTracksEvent( 'calypso_dashboard_domains_icann_suspension_notice_resend_email_error', {
+					domain_name: domainName,
+					error_message: error.message,
 				} );
 			},
 		} );
 	};
+
 	return (
 		<Notice variant="error" title={ __( 'Email verification required' ) }>
 			<VStack spacing={ 4 }>

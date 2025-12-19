@@ -1,8 +1,12 @@
 @import '@wordpress/base-styles/variables';
 
 .dns-propagation-progress-bar {
-	width: 100%;
-	height: 4px;
+	/*
+	 * !important is required because WordPress component CSS may be loaded after page-specific styles,
+	 * causing it to override our custom styles (for example, on my.wordpress.com).
+	 */
+	width: 100% !important;
+	height: 4px !important;
 
 	/* Change the progress bar color to the theme color */
 	& > div {

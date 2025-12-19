@@ -1,4 +1,7 @@
-import { useTogglePaymentMethod } from '@automattic/composite-checkout';
+import {
+	useTogglePaymentMethod,
+	useRegisterPaymentMethodLoading,
+} from '@automattic/composite-checkout';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { Fragment, useCallback, useEffect } from 'react';
@@ -89,6 +92,9 @@ export function ApplePaySubmitButton( {
 		stripe,
 	} );
 	debug( 'apple-pay button isLoading', isLoading );
+
+	// Register loading state with the payment methods context
+	useRegisterPaymentMethodLoading( 'apple-pay', isLoading );
 
 	useEffect( () => {
 		if ( ! isLoading ) {

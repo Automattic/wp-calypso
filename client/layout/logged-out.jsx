@@ -345,7 +345,7 @@ export default withCurrentRoute(
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&
 				! isBlazeProOAuth2Client( oauth2Client ) &&
-				[ 'signup', 'jetpack-connect' ].includes( sectionName );
+				[ 'signup', 'jetpack-connect', 'oauth2-client' ].includes( sectionName );
 			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
 				! ( currentSection || currentRoute ) ||

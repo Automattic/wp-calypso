@@ -1,4 +1,5 @@
-import { domainInboundTransferStatusQuery } from '@automattic/api-queries';
+import { Domain } from '@automattic/api-core';
+import { domainInboundTransferStatusQuery, purchaseQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -10,16 +11,13 @@ import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
 import { InboundTransferStep } from './transfer-step';
 
-export const InboundTransferFailed = ( {
-	domainName,
-	lastTransferError,
-}: {
-	domainName: string;
-	lastTransferError?: string | null;
-} ) => {
+export const InboundTransferFailed = ( { domain }: { domain: Domain } ) => {
 	const { name: appName } = useAppContext();
 	const { data: domainInboundTransferStatus } = useQuery(
-		domainInboundTransferStatusQuery( domainName )
+		domainInboundTransferStatusQuery( domain.domain )
+	);
+	const { data: purchase } = useQuery(
+		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
 
 	return (
@@ -31,8 +29,10 @@ export const InboundTransferFailed = ( {
 					fill="var(--dashboard__foreground-color-error)"
 				/>
 			}
-			title={ domainName }
+			title={ domain.domain }
 			progress={ { currentStep: 3, color: 'var(--dashboard__foreground-color-error)' } }
+			domain={ domain }
+			purchase={ purchase }
 		>
 			<VStack spacing={ 8 }>
 				<VStack spacing={ 4 }>
@@ -59,10 +59,10 @@ export const InboundTransferFailed = ( {
 							<Text>{ __( 'Your current provider blocked the transfer.' ) }</Text>
 						</li>
 					</ul>
-					{ lastTransferError && (
+					{ domain.last_transfer_error && (
 						<>
 							<Text>{ __( 'The last transfer error message we got was:' ) }</Text>
-							<Notice variant="error">{ lastTransferError }</Notice>
+							<Notice variant="error">{ domain.last_transfer_error }</Notice>
 						</>
 					) }
 					<Text>
@@ -83,7 +83,7 @@ export const InboundTransferFailed = ( {
 						variant="primary"
 						__next40pxDefaultSize
 						to={ domainTransferSetupRoute.fullPath }
-						params={ { domainName } }
+						params={ { domainName: domain.domain } }
 					>
 						{ __( 'Restart transfer' ) }
 					</RouterLinkButton>

@@ -25,7 +25,8 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import withMarketplaceType, {
+import withMarketplaceProviders from '../hoc/with-marketplace-providers';
+import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
 	MARKETPLACE_TYPE_REGULAR,
 } from '../hoc/with-marketplace-type';
@@ -99,7 +100,11 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				return;
 			}
 			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_request_payment_click' )
+				recordTracksEvent(
+					flowType === 'send'
+						? 'calypso_a4a_marketplace_referral_checkout_request_payment_click'
+						: 'calypso_a4a_marketplace_referral_checkout_request_payment_copy_click'
+				)
 			);
 			requestPayment(
 				{
@@ -264,4 +269,4 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	);
 }
 
-export default withMarketplaceType( RequestClientPayment );
+export default withMarketplaceProviders( RequestClientPayment );

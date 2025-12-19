@@ -3,8 +3,9 @@ import {
 	domainConnectionSetupInfoQuery,
 	startDomainInboundTransferMutation,
 	purchaseQuery,
+	siteByIdQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -18,7 +19,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainTransferSetupRoute, domainTransferIndexRoute } from '../../app/router/domains';
+import { domainTransferSetupRoute } from '../../app/router/domains';
+import { siteDomainsRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -29,12 +31,11 @@ import { shouldShowRemoveAction } from '../domain-overview/actions.utils';
 import DomainRegistrarBanner from './domain-registrar-banner';
 import SetupStep from './setup-step';
 
-import './transfer-setup-style.scss';
-
 export default function DomainTransferSetup() {
 	const { domainName } = domainTransferSetupRoute.useParams();
 	const navigate = useNavigate();
 	const { createSuccessNotice } = useDispatch( noticesStore );
+	const queryClient = useQueryClient();
 
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
@@ -43,6 +44,7 @@ export default function DomainTransferSetup() {
 	const { data: purchase } = useQuery(
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
+	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
 	const registrar = domainConnectionSetupInfo?.registrar || null;
 	const registrar_url = domainConnectionSetupInfo?.registrar_url || null;
@@ -113,6 +115,8 @@ export default function DomainTransferSetup() {
 								setAuthorizationCode( value || '' );
 								setError( null );
 							} }
+							type="password"
+							autoComplete="off"
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
 						/>
@@ -144,6 +148,7 @@ export default function DomainTransferSetup() {
 		setError( null );
 		startTransfer( authorizationCode, {
 			onSuccess: () => {
+				queryClient.invalidateQueries( domainQuery( domainName ) );
 				createSuccessNotice(
 					sprintf(
 						// translators: %s is a domain name
@@ -152,12 +157,14 @@ export default function DomainTransferSetup() {
 					),
 					{ type: 'snackbar' }
 				);
-				navigate( {
-					to: domainTransferIndexRoute.fullPath,
-					params: {
-						domainName,
-					},
-				} );
+				if ( site?.slug ) {
+					navigate( {
+						to: siteDomainsRoute.fullPath,
+						params: {
+							siteSlug: site.slug,
+						},
+					} );
+				}
 			},
 			onError: ( err ) => {
 				const errorMessage =
@@ -213,7 +220,6 @@ export default function DomainTransferSetup() {
 						<VStack spacing={ 6 }>
 							<div>
 								<SetupStep
-									className="domain-transfer-setup__step"
 									expanded={ stepsExpanded[ 0 ] }
 									completed={ firstStepCompleted }
 									onCheckboxChange={ ( checked ) => handleCheckboxChange( checked ) }
@@ -225,7 +231,6 @@ export default function DomainTransferSetup() {
 								</SetupStep>
 								<CardDivider />
 								<SetupStep
-									className="domain-transfer-setup__step"
 									expanded={ stepsExpanded[ 1 ] }
 									completed={ authorizationCode.length > 0 }
 									onCheckboxChange={ () => {} } // This step doesn't have a checkbox
@@ -257,7 +262,7 @@ export default function DomainTransferSetup() {
 								<InlineSupportLink supportContext="general-support-options">
 									{ __( 'Contact support' ) }
 								</InlineSupportLink>
-								{ shouldShowRemoveAction( domain, purchase ) && (
+								{ purchase && shouldShowRemoveAction( domain, purchase ) && (
 									<a href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }` }>
 										{ __( 'Cancel transfer' ) }
 									</a>

@@ -3,7 +3,6 @@ import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { getConversationIdFromInteraction } from '../utils';
-import { useCreateZendeskConversation } from './use-create-zendesk-conversation';
 import type { Message } from '../types';
 
 /**
@@ -38,24 +37,13 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const currentConversationId = getConversationIdFromInteraction( currentSupportInteraction );
 
-	const { chat, setChat } = useOdieAssistantContext();
-	const createZendeskConversation = useCreateZendeskConversation();
+	const { chat, setChat, trackEvent } = useOdieAssistantContext();
 
 	// < void, Error, { message: Message; signal: AbortSignal } >
-	let conversationId = currentConversationId || chat.conversationId;
+	const conversationId = currentConversationId || chat.conversationId;
 	return useMutation( {
 		mutationKey: [ 'send-zendesk-messages' ],
 		mutationFn: async ( message: Message ): Promise< Message > => {
-			if ( ! conversationId ) {
-				// Start a new conversation if it doesn't exist
-				// TODO: this can create excess tickets. We should track down the real issue.
-				conversationId = await createZendeskConversation( { createdFrom: 'send_zendesk_message' } );
-				setChat( {
-					...chat,
-					conversationId,
-				} );
-			}
-
 			const messageToSend = {
 				type: 'text',
 				text: message.content as string,
@@ -63,7 +51,15 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 				...( message.metadata && { metadata: message.metadata } ),
 			};
 
-			Smooch.sendMessage( messageToSend, conversationId );
+			if ( conversationId ) {
+				Smooch.sendMessage( messageToSend, conversationId );
+			} else {
+				trackEvent( 'send_zendesk_message_failed', {
+					conversation_id: conversationId,
+					interaction_id: currentSupportInteraction?.uuid,
+				} );
+			}
+
 			return new Promise< Message >( ( resolve, reject ) => {
 				// If the message is not sent within 5 seconds, reject the promise.
 				// This allows Tanstack Query to retry the request if the user comes back online.

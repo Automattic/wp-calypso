@@ -1,5 +1,6 @@
 import { DomainSubtype, DomainTransferStatus } from '@automattic/api-core';
 import {
+	domainDiagnosticsQuery,
 	domainQuery,
 	domainDnsQuery,
 	domainForwardingQuery,
@@ -250,6 +251,27 @@ export const domainDnsEditRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains/dns/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-edit' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainDiagnosticsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Diagnostics' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'diagnostics',
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainDiagnosticsQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-diagnostics' ).then( ( d ) =>
+		createLazyRoute( 'domain-diagnostics' )( {
 			component: d.default,
 		} )
 	)
@@ -548,7 +570,7 @@ export const domainTransferIndexRoute = createRoute( {
 		}
 
 		if ( domain.transfer_status === DomainTransferStatus.PENDING_START ) {
-			if ( domain.last_transfer_error === null ) {
+			if ( ! domain.last_transfer_error ) {
 				throw redirect( { to: domainTransferSetupRoute.fullPath, params: { domainName } } );
 			}
 			// If there was a transfer error, the user should see the transfer failed page
@@ -667,17 +689,11 @@ export const domainConnectionSetupRoute = createRoute( {
 		};
 	},
 } ).lazy( () =>
-	config.isEnabled( 'domain-connection-redesign' )
-		? import( '../../domains/domain-connection-setup' ).then( ( d ) =>
-				createLazyRoute( 'domain-connection-setup' )( {
-					component: d.default,
-				} )
-		  )
-		: import( '../../domains/domain-connection-setup/legacy-connection-flow' ).then( ( d ) =>
-				createLazyRoute( 'domain-connection-setup' )( {
-					component: d.default,
-				} )
-		  )
+	import( '../../domains/domain-connection-setup' ).then( ( d ) =>
+		createLazyRoute( 'domain-connection-setup' )( {
+			component: d.default,
+		} )
+	)
 );
 
 export const createDomainsRoutes = () => {
@@ -686,6 +702,7 @@ export const createDomainsRoutes = () => {
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
+			domainDiagnosticsRoute,
 			domainConnectionSetupRoute,
 			domainTransferSetupRoute,
 			domainForwardingRoute.addChildren( [

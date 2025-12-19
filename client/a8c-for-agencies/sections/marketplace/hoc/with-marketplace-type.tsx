@@ -13,7 +13,7 @@ export const MARKETPLACE_TYPE_REGULAR = 'regular';
 function withMarketplaceType< T >(
 	WrappedComponent: ComponentType< T & ContextProps >
 ): ComponentType< T & ContextProps > {
-	return ( props ) => {
+	const WithMarketplaceType = ( props: T & ContextProps ) => {
 		const defaultType =
 			props.defaultMarketplaceType ??
 			( sessionStorage.getItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY ) as MarketplaceType ) ??
@@ -46,6 +46,12 @@ function withMarketplaceType< T >(
 			</MarketplaceTypeContext.Provider>
 		);
 	};
+
+	WithMarketplaceType.displayName = `WithMarketplaceType(${
+		WrappedComponent.displayName || WrappedComponent.name || 'Component'
+	})`;
+
+	return WithMarketplaceType;
 }
 
 export default withMarketplaceType;

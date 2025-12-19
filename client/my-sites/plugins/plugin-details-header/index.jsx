@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Badge, Button } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
@@ -11,6 +10,7 @@ import {
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { useLocalizedPlugins, formatPluginRating } from 'calypso/my-sites/plugins/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -28,6 +28,7 @@ const PluginDetailsHeader = ( {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const { localizePath } = useLocalizedPlugins();
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -95,13 +96,20 @@ const PluginDetailsHeader = ( {
 		);
 	};
 
+	// Determine version display: marketplace products use plugin.version, others use installed versions
+	const versionDisplay = isMarketplaceProduct
+		? plugin.version
+		: `${ currentVersionsRange?.min || plugin.version }${
+				currentVersionsRange?.max ? ` - ${ currentVersionsRange.max }` : ''
+		  }`;
+
 	return (
 		<div className="plugin-details-header__container">
 			<div className="plugin-details-header__main-info">
 				<PluginIcon
 					className="plugin-details-header__icon"
 					image={ plugin.icon }
-					size={ isEnabled( 'marketplace-redesign' ) ? 80 : undefined }
+					size={ isMarketplaceRedesignEnabled ? 80 : undefined }
 				/>
 				<div className="plugin-details-header__title-container">
 					<h1 className="plugin-details-header__name">{ plugin.name }</h1>
@@ -139,13 +147,11 @@ const PluginDetailsHeader = ( {
 				{ rating !== null && (
 					<div className="plugin-details-header__info">
 						<div className="plugin-details-header__info-title">
-							{ isEnabled( 'marketplace-redesign' )
-								? translate( 'Ratings' )
-								: translate( 'Rating' ) }
+							{ isMarketplaceRedesignEnabled ? translate( 'Ratings' ) : translate( 'Rating' ) }
 						</div>
 						<div className="plugin-details-header__info-value">
 							{ rating !== 0 &&
-								( isEnabled( 'marketplace-redesign' ) ? (
+								( isMarketplaceRedesignEnabled ? (
 									<div className="plugin-details-header__rating">
 										<Rating rating={ rating } size={ 20 } />
 										<span>{ formatPluginRating( rating, true ) }</span>
@@ -159,11 +165,7 @@ const PluginDetailsHeader = ( {
 				) }
 				<div className="plugin-details-header__info is-version">
 					<div className="plugin-details-header__info-title">{ translate( 'Version' ) }</div>
-					<div className="plugin-details-header__info-value">
-						{ /* Show the default version if plugin is not installed */ }
-						{ currentVersionsRange?.min || plugin.version }
-						{ currentVersionsRange?.max && ` - ${ currentVersionsRange.max }` }
-					</div>
+					<div className="plugin-details-header__info-value">{ versionDisplay }</div>
 				</div>
 				{ Boolean( plugin.active_installs ) && (
 					<div className="plugin-details-header__info is-installs">

@@ -11,3 +11,4 @@ export * from './is-tiered-volume-space-addon';
 export * from './is-multi-year-domain-product';
 export * from './get-storage-addon-display-name';
 export * from './is-summer-special-enabled';
+export * from './get-akismet-pro-500-product-display-name';

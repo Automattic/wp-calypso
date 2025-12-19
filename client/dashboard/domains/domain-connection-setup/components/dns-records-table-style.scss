@@ -1,5 +1,16 @@
-/* The Type and Name columns should be narrow */
-.dns-records-table .dataviews-view-table tbody .dataviews-view-table__cell-content-wrapper {
-	min-width: initial;
-	white-space: normal;
+/* Prevent horizontal overflow and allow text wrapping */
+.dns-records-table {
+		.dataviews-view-table__cell-content-wrapper {
+			min-width: initial;
+			white-space: normal;
+			word-break: break-word;
+			overflow-wrap: break-word;
+			max-width: 100%;
+
+			// Ensure Text components wrap properly
+			> * {
+				word-break: break-word;
+				overflow-wrap: break-word;
+			}
+	}
 }

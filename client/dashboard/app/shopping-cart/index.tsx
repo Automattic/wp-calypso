@@ -1,5 +1,5 @@
 import { fetchShoppingCart, updateShoppingCart } from '@automattic/api-core';
-import { createShoppingCartManagerClient } from '@automattic/shopping-cart'; // eslint-disable-line no-restricted-imports
+import { createShoppingCartManagerClient } from '@automattic/shopping-cart';
 
 export const shoppingCartManagerClient = createShoppingCartManagerClient( {
 	getCart: fetchShoppingCart,

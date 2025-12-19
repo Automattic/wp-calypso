@@ -8,7 +8,10 @@ import { useGetSupportInteractionById } from './use-get-support-interaction-by-i
 export const useCurrentSupportInteraction = () => {
 	const { search } = useLocation();
 	const navigate = useNavigate();
-	const id = new URLSearchParams( search ).get( 'id' );
+	const oldId = new URLSearchParams( search ).get( 'id' );
+	// Adopt a new less generic ID with backwards compatibility.
+	const newId = new URLSearchParams( search ).get( 'odieInteractionId' );
+	const id = oldId || newId;
 	const query = useGetSupportInteractionById( id || null );
 
 	useEffect( () => {

@@ -1,15 +1,11 @@
-/**
- * Agent History Component
- *
- * Renders the conversation history view.
- */
-
-import { createOdieBotId, type UseAgentChatConfig } from '@automattic/agenttic-client';
 import { AgentUI } from '@automattic/agenttic-ui';
+import { AgentsManagerSelect } from '@automattic/data-stores';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { API_BASE_URL } from '../../constants';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ConversationHistoryView from '../conversation-history-view';
+import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 interface AgentHistoryProps {
 	/** Agent ID for fetching conversation history. */
@@ -49,8 +45,16 @@ export default function AgentHistory( {
 	onSelectConversation,
 	onNewChat,
 }: AgentHistoryProps ) {
+	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition } = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
+
 	return (
 		<AgentUI.Container
+			initialChatPosition={ floatingPosition }
+			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
 			className="agenttic"
 			messages={ [] }
 			isProcessing={ false }
@@ -70,8 +74,7 @@ export default function AgentHistory( {
 					title={ __( 'Past chats', '__i18n_text_domain__' ) }
 				/>
 				<ConversationHistoryView
-					botId={ createOdieBotId( agentId ) }
-					apiBaseUrl={ API_BASE_URL }
+					agentId={ agentId }
 					authProvider={ authProvider }
 					onSelectConversation={ onSelectConversation }
 					onNewChat={ onNewChat }

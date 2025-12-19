@@ -6,21 +6,12 @@
 	justify-content: center;
 	width: 38px;
 	height: 38px;
+	background-color: $gray-800;
+	border: 1px solid #464646;
 	border-radius: 50%;
-	flex-shrink: 0;
 
 	svg {
 		color: $white;
-	}
-
-	&--big-sky,
-	&--odie {
-		background-color: $gray-800;
-		border: 1px solid #464646 !important;
-
-		svg {
-			color: $white;
-		}
 	}
 
 	&--he {

@@ -6,6 +6,7 @@ import {
 	useMarketplaceReviewsQuery,
 	ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { MarketplaceReviewCard } from './review-card';
 import './style.scss';
@@ -15,6 +16,7 @@ type MarketplaceReviewsCardsProps = { showMarketplaceReviews?: () => void } & Pr
 export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) => {
 	const translate = useTranslate();
 	const currentUserId = useSelector( getCurrentUserId );
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
 		...props,
 		perPage: 1,
@@ -37,7 +39,10 @@ export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) =
 	const addEmptyCard = reviews.length === 0;
 
 	return (
-		<FullWidthSection className="plugin-details__reviews-section full-width-section--gray full-width-section--double-padding">
+		<FullWidthSection
+			className="plugin-details__reviews-section full-width-section--gray full-width-section--double-padding"
+			enabled={ isMarketplaceRedesignEnabled }
+		>
 			<div className="plugin-details__reviews">
 				<div className="marketplace-reviews-cards__container">
 					<div className="marketplace-reviews-cards__reviews">

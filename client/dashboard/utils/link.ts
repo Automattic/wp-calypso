@@ -1,4 +1,12 @@
 import config from '@automattic/calypso-config';
+import { isDashboardBackport } from './is-dashboard-backport';
+
+/**
+ * This function returns all the origins for the dashboard.
+ */
+export function dashboardOrigins(): string[] {
+	return [ 'http://my.localhost:3000', 'https://my.wordpress.com' ];
+}
 
 /**
  * This function essentially returns `https://wordpress.com${ path }`.
@@ -10,7 +18,41 @@ import config from '@automattic/calypso-config';
  * so that the link points to the local Calypso dev server.
  */
 export function wpcomLink( path: string ) {
-	return `${ config( 'wpcom_url' ) }${ path }`;
+	return new URL( path, config( 'wpcom_url' ) ).href;
+}
+
+/**
+ * This function returns the link to the dashboard.
+ */
+export function dashboardLink( path: string = '' ) {
+	if ( config( 'env' ) === 'development' ) {
+		return new URL( path, 'http://my.localhost:3000' ).href;
+	}
+
+	return new URL( path, 'https://my.wordpress.com' ).href;
+}
+
+/**
+ * This function returns the link to the dashboard, with backport support.
+ */
+export function dashboardLinkWithBackport( path: string = '' ) {
+	if ( isDashboardBackport() ) {
+		return path;
+	}
+
+	return dashboardLink( path );
+}
+
+/**
+ * This function returns the redirect link back to the dashboard.
+ */
+export function redirectToDashboardLink( {
+	supportBackport,
+}: {
+	supportBackport?: boolean;
+} = {} ) {
+	const url = window.location.href.replace( window.location.origin, '' );
+	return supportBackport ? dashboardLinkWithBackport( url ) : dashboardLink( url );
 }
 
 /**

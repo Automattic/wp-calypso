@@ -21,6 +21,7 @@ import { RegionAddressFieldsLayout } from './region-address-fieldsets';
 import type { UseMutateAsyncFunction } from '@tanstack/react-query';
 interface ContactFormProps {
 	initialData?: DomainContactDetails;
+	beforeFormCard?: React.ReactNode;
 	beforeForm?: React.ReactNode;
 	isSubmitting: boolean;
 	onSubmit: ( normalizedFormData: DomainContactDetails ) => void;
@@ -30,6 +31,7 @@ interface ContactFormProps {
 export default function ContactForm( {
 	initialData,
 	isSubmitting,
+	beforeFormCard,
 	beforeForm,
 	onSubmit,
 	validate,
@@ -170,11 +172,12 @@ export default function ContactForm( {
 				</VStack>
 			</Notice>
 
-			{ beforeForm }
+			{ beforeFormCard }
 
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
+						{ beforeForm }
 						<DataForm< DomainContactDetails >
 							data={ normalizedFormData }
 							fields={ fields }

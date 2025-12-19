@@ -104,8 +104,6 @@ export type TransferStepDefinition = {
 
 export type ProgressStepList = Partial< Record< StepNameValue, string > >;
 
-export type DomainConnectionStepsMap = Partial< Record< StepNameValue, StepDefinition > >;
-
 export type DomainTransferStepsMap = Partial< Record< StepNameValue, TransferStepDefinition > >;
 
 export type DNSRecord = {

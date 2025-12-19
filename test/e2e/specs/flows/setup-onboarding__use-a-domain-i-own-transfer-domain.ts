@@ -5,6 +5,7 @@
 import {
 	DataHelper,
 	DomainSearchComponent,
+	UseADomainIOwnPage,
 	SignupPickPlanPage,
 	CartCheckoutPage,
 	UserSignupPage,
@@ -53,13 +54,13 @@ describe(
 		} );
 
 		it( 'Fill the "Use a odmain I own" input', async function () {
-			const domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.fillUseDomainIOwnInput( domain );
+			const useADomainIOwnPage = new UseADomainIOwnPage( page );
+			await useADomainIOwnPage.fillUseDomainIOwnInput( domain );
 		} );
 
 		it( 'Select the "Transfer your domain" option', async function () {
-			const domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.selectTransferYourDomain();
+			const useADomainIOwnPage = new UseADomainIOwnPage( page );
+			await useADomainIOwnPage.selectTransferYourDomain();
 		} );
 
 		it( `Select ${ planName } plan`, async function () {

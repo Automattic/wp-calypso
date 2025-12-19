@@ -1,5 +1,6 @@
 import {
 	invalidatePlugins,
+	resetPlugins,
 	sitePluginActivateMutation,
 	sitePluginAutoupdateDisableMutation,
 	sitePluginAutoupdateEnableMutation,
@@ -8,13 +9,7 @@ import {
 	sitePluginUpdateMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	__experimentalText as Text,
-	Button,
-	Icon,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalText as Text, Button, Icon } from '@wordpress/components';
 import {
 	DataViews,
 	filterSortAndPaginate,
@@ -24,8 +19,7 @@ import {
 } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
-import { useCallback, useMemo, useState } from 'react';
-import { Name, URL, SiteIconLink, SiteLink } from '../../sites/site-fields';
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
@@ -35,10 +29,12 @@ import { getViewFilteredByUpdates } from '../utils/update-filters';
 import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
 import { ActiveToggle } from './components/active-toggle';
 import { AutoupdateToggle } from './components/autoupdate-toggle';
-import { SiteWithPluginData, usePlugin } from './use-plugin';
+import { PluginSiteFieldContent } from './components/plugin-site-field-content';
+import { SiteWithPluginData } from './use-plugin';
 import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
 import { mapToPluginListRow } from './utils/map-to-plugin-list-row';
 import type { PluginListRow } from '../manage/types';
+import type { PluginItem } from '@automattic/api-core';
 
 const defaultView: View = {
 	type: 'table',
@@ -48,10 +44,25 @@ const defaultView: View = {
 	perPage: 10,
 };
 
-export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
-	const { mutateAsync } = useMutation( sitePluginUpdateMutation() );
-	const updateAction = buildBulkSitesPluginAction( mutateAsync );
-	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin } = usePlugin( pluginSlug );
+type SitesWithThisPluginProps = {
+	pluginSlug: string;
+	isLoading: boolean;
+	plugin: PluginItem | undefined;
+	pluginBySiteId: Map< number, PluginItem >;
+	setOptimisticDelete: Dispatch< SetStateAction< Record< number, boolean > > >;
+	sitesWithThisPlugin: SiteWithPluginData[];
+};
+
+export const SitesWithThisPlugin = ( {
+	pluginSlug,
+	isLoading,
+	plugin,
+	pluginBySiteId,
+	setOptimisticDelete,
+	sitesWithThisPlugin,
+}: SitesWithThisPluginProps ) => {
+	const { mutateAsync: updateMutate } = useMutation( sitePluginUpdateMutation() );
+	const updateAction = buildBulkSitesPluginAction( updateMutate );
 	const [ view, setView ] = useState< View >( defaultView );
 	const { mutateAsync: activateMutate } = useMutation( sitePluginActivateMutation() );
 	const { mutateAsync: deactivateMutate } = useMutation( sitePluginDeactivateMutation() );
@@ -84,15 +95,11 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				type: 'text',
 				getValue: ( { item }: { item: SiteWithPluginData } ) => getSiteDisplayName( item ),
 				render: ( { field, item } ) => (
-					<HStack spacing={ 3 } alignment="center" justify="flex-start">
-						<SiteIconLink site={ item } />
-						<VStack spacing={ 0 } alignment="flex-start">
-							<SiteLink site={ item }>
-								<Name site={ item } value={ field.getValue( { item } ) } />
-							</SiteLink>
-							<URL site={ item } value={ getSiteDisplayUrl( item ) } />
-						</VStack>
-					</HStack>
+					<PluginSiteFieldContent
+						site={ item }
+						name={ field.getValue( { item } ) as string }
+						url={ getSiteDisplayUrl( item ) }
+					/>
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -172,7 +179,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				elements: [
 					{ value: 2, label: __( 'Update available' ) },
 					{ value: 1, label: __( 'Up to date' ) },
-					{ value: 0, label: __( 'Updates auto-managed' ) },
+					{ value: 0, label: __( 'Auto-managed' ) },
 				],
 				render: ( { item }: { item: SiteWithPluginData } ) => {
 					const update = pluginBySiteId.get( item.ID )?.update;
@@ -180,7 +187,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 
 					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 					if ( ! autoupdate ) {
-						return <Text>{ __( 'Updates auto-managed' ) }</Text>;
+						return <Text>{ __( 'Auto-managed' ) }</Text>;
 					}
 
 					if ( ! update && version ) {
@@ -259,7 +266,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 	}, [ updateCount, view, setView ] );
 
 	return (
-		<>
+		<div className="sites-with-this-plugin">
 			<DataViews
 				isLoading={ isLoading }
 				data={ data }
@@ -391,41 +398,80 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 						supportsBulk: true,
 					},
 					{
-						id: 'wp-admin',
-						label: __( 'WP Admin ↗' ),
-						callback: ( items ) => {
-							const [ site ] = items;
-							window.open( site.actionLinks?.Settings, '_blank' );
-						},
-						isEligible: ( item ) => !! item.actionLinks?.Settings,
-						supportsBulk: false,
-						isPrimary: true,
-					},
-					{
 						id: 'delete',
 						label: __( 'Delete' ),
 						modalHeader: getModalHeader( 'delete' ),
 						RenderModal: ( { items, closeModal } ) => {
-							const { mutateAsync } = useMutation( sitePluginRemoveMutation() );
-							const action = buildBulkSitesPluginAction( mutateAsync );
+							const { mutateAsync: deactivate } = useMutation(
+								sitePluginDeactivateMutation( false )
+							);
+							const { mutateAsync: disableAutoupdate } = useMutation(
+								sitePluginAutoupdateDisableMutation( false )
+							);
+							const { mutateAsync: remove } = useMutation( sitePluginRemoveMutation( false ) );
+
+							const action = async ( items: PluginListRow[] ) => {
+								const bulkDeactivate = buildBulkSitesPluginAction( deactivate );
+								const bulkDisableAutoupdate = buildBulkSitesPluginAction( disableAutoupdate );
+								const bulkRemove = buildBulkSitesPluginAction( remove );
+
+								// First deactivate all plugins
+								await bulkDeactivate( items );
+								// Then disable auto-updates
+								await bulkDisableAutoupdate( items );
+								// Finally remove the plugins
+								const { successCount, errorCount } = await bulkRemove( items );
+
+								if ( errorCount === 0 ) {
+									setOptimisticDelete( ( prev ) => {
+										const newState = { ...prev };
+										items.forEach( ( plugin ) => {
+											plugin.siteIds.forEach( ( id ) => {
+												newState[ id ] = true;
+											} );
+										} );
+										return newState;
+									} );
+								}
+
+								return { successCount, errorCount };
+							};
+
+							const willDeactivate = items.some( ( item ) => item.isPluginActive );
+							const willDisableAutoupdate = items.some( ( item ) => {
+								const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+
+								return !! autoupdate && ( pluginBySiteId.get( item.ID )?.autoupdate ?? false );
+							} );
+							const extraActions = Array.from(
+								new Map( [
+									[ 'deactivate', willDeactivate ],
+									[ 'disable-autoupdate', willDisableAutoupdate ],
+								] )
+							)
+								.filter( ( [ , isActive ] ) => isActive )
+								.map( ( [ action ] ) => action );
 
 							return (
 								<ActionRenderModal
 									actionId="delete"
+									extraActions={ extraActions }
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 									closeModal={ closeModal }
 									onExecute={ action }
+									onActionPerformed={ () => {
+										resetPlugins();
+
+										// Delay invalidation to allow backend to settle
+										setTimeout( invalidatePlugins, 500 );
+									} }
 								/>
 							);
 						},
 						isEligible: ( item ) => {
 							const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 
-							return (
-								!! autoupdate &&
-								! ( pluginBySiteId.get( item.ID )?.autoupdate ?? false ) &&
-								! item.isPluginActive
-							);
+							return !! autoupdate;
 						},
 						supportsBulk: true,
 						icon: <Icon icon={ trash } />,
@@ -453,6 +499,6 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				onRequestClose={ closeUpdateModal }
 				title={ __( 'Update Plugin' ) }
 			/>
-		</>
+		</div>
 	);
 };

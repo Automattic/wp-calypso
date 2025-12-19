@@ -107,6 +107,12 @@ $blueberry-blue: #3858e9;
 		}
 	}
 
+	.Notice-module_content {
+		p {
+			color: var( --studio-gray-80 );
+		}
+	}
+
 	.Textarea-module_textarea:focus {
 		box-shadow: none;
 	}

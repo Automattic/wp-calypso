@@ -16,6 +16,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: jest.fn(),
 } ) );
 jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
 	useQuery: jest.fn(),
 } ) );
 jest.mock( 'react-redux', () => ( {

@@ -1,13 +1,13 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, Suspense, lazy } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import {
 	domainOverviewRoute,
 	domainDnsRoute,
@@ -35,9 +35,19 @@ const noop = () => {};
 
 export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
-	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
+
+	const setPrimaryDomainMutation = useMutation( {
+		...siteSetPrimaryDomainMutation(),
+		meta: {
+			snackbar: {
+				error: { source: 'server' },
+			},
+		},
+	} );
+
 	const sitesByBlogId: Record< number, Site > = useMemo( () => {
 		if ( ! sites ) {
 			return {};
@@ -150,10 +160,23 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 					if ( ! site ) {
 						return;
 					}
+
+					// Track the set primary domain action
+					recordTracksEvent( 'calypso_dashboard_domain_list_change_primary_link', {
+						domain: domain.domain,
+						origin: 'dataviews_actions',
+					} );
+
 					setPrimaryDomainMutation.mutate(
 						{ siteId: site.ID, domain: domain.domain },
 						{
 							onSuccess: () => {
+								// Track success
+								recordTracksEvent( 'calypso_dashboard_domain_list_change_primary_link_success', {
+									domain: domain.domain,
+									origin: 'dataviews_actions',
+								} );
+
 								createSuccessNotice(
 									sprintf(
 										/* translators: %s is domain */
@@ -165,13 +188,13 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 									}
 								);
 							},
-							onError: () => {
-								createErrorNotice(
-									__( 'Something went wrong and we couldn’t change your primary domain.' ),
-									{
-										type: 'snackbar',
-									}
-								);
+							onError: ( error: Error ) => {
+								// Track failure
+								recordTracksEvent( 'calypso_dashboard_domain_list_change_primary_link_failure', {
+									domain: domain.domain,
+									origin: 'dataviews_actions',
+									error_message: error.message,
+								} );
 							},
 						}
 					);
@@ -224,7 +247,9 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				callback: () => {},
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
-					return !! site && ! site?.is_wpcom_atomic && isFreeUrlDomainName( item.domain );
+					return (
+						!! site && ! site?.is_wpcom_atomic && item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
+					);
 				},
 				RenderModal: ( { items, closeModal = noop } ) => {
 					const site = sitesByBlogId[ items[ 0 ].blog_id ];
@@ -296,6 +321,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			createSuccessNotice,
 			createErrorNotice,
 			sitesByBlogId,
+			recordTracksEvent,
 		]
 	);
 

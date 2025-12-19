@@ -18,7 +18,7 @@ export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	},
 	grid: {
 		layout: {
-			previewSize: 230,
+			previewSize: 290,
 		},
 		showLevels: false,
 		showMedia: true,

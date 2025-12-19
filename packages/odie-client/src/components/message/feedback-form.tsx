@@ -45,9 +45,13 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 				content:
 					score === 'good'
 						? __( 'Good 👍', __i18n_text_domain__ )
-						: __( 'Bad 👎', __i18n_text_domain__ ),
+						: __( 'Needs improvement 👎', __i18n_text_domain__ ),
 				payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
-				metadata: { rated: true },
+				metadata: {
+					rated: true,
+					temporary_id: crypto.randomUUID(),
+					local_timestamp: Date.now() / 1000,
+				},
 				role: 'user',
 				type: 'message',
 			};
@@ -111,7 +115,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 						<div>
 							{ score === 'good'
 								? __( 'Good 👍', __i18n_text_domain__ )
-								: __( 'Bad 👎', __i18n_text_domain__ ) }
+								: __( 'Needs improvement 👎', __i18n_text_domain__ ) }
 						</div>
 					</div>
 
@@ -123,10 +127,9 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 
 					{ ! isFormHidden && (
 						<div ref={ feedbackRef } className="odie-conversation-feedback__message">
-							<h3>{ __( 'Thank you for your input', __i18n_text_domain__ ) }</h3>
 							<p>
 								{ __(
-									'Please share any details that can help us understand your rating',
+									'Thank you for your input. Please share any details that can help us understand your rating.',
 									__i18n_text_domain__
 								) }
 							</p>

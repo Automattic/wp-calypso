@@ -25,6 +25,8 @@ jest.mock( '../../full-screen-launchpad', () => ( {
 	),
 } ) );
 
+jest.mock( 'calypso/components/resurrected-welcome-modal', () => () => null );
+
 const testSite = {
 	ID: 1,
 	slug: 'test-site',

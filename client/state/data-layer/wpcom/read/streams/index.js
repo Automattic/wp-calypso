@@ -14,9 +14,11 @@ import {
 } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
-import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
-
-const noop = () => {};
+import {
+	receivePage,
+	receiveUpdates,
+	receiveStreamError,
+} from 'calypso/state/reader/streams/actions';
 
 /**
  * Pull the suffix off of a stream key
@@ -520,19 +522,23 @@ export function handlePage( action, data ) {
 	return actions;
 }
 
+const handleError = ( action, error ) => {
+	return receiveStreamError( action, error );
+};
+
 registerHandlers( 'state/data-layer/wpcom/read/streams/index.js', {
 	[ READER_STREAMS_PAGE_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestPage,
 			onSuccess: handlePage,
-			onError: noop,
+			onError: handleError,
 		} ),
 	],
 	[ READER_STREAMS_PAGINATED_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestPage,
 			onSuccess: handlePage,
-			onError: noop,
+			onError: handleError,
 		} ),
 	],
 } );

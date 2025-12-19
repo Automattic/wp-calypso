@@ -31,6 +31,7 @@ import {
 	getDefaultView,
 	recordViewChanges,
 } from './dataviews';
+import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
 import { SiteLink, SiteLink__ES } from './site-fields';
@@ -39,6 +40,7 @@ import type {
 	Site,
 	FetchDashboardSiteListParams,
 	DashboardSiteListSite,
+	DashboardFilters,
 } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -63,57 +65,102 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 };
 
 function getFetchSiteListParams(
-	view: View
-	// isRestoringAccount: boolean TODO: Add site visibility filtering
+	view: View,
+	// isRestoringAccount: boolean TODO: Add site visibility filtering,
+	siteFilters: DashboardFilters = {}
 ): FetchDashboardSiteListParams {
-	const dataviewFieldToSiteProfileField: Record< string, keyof DashboardSiteListSite > = {
+	// The mapping from Dataview fields to Site Profiles fields.
+	const mappedFields: Record< string, keyof DashboardSiteListSite > = {
 		name: 'name',
 		URL: 'url',
 		'icon.ico': 'icon',
 		backup: 'has_backup',
 		// views: 'stats_views',
 		plan: 'plan',
-		// wp_version
-		// is_a8c
+		wp_version: 'wordpress_version',
+		is_a8c: 'is_a8c',
 		// preview
-		// last_published
+		last_published: 'last_publish',
 		// uptime
+		views: 'views',
 		visitors: 'visitors',
 		subscribers_count: 'total_wpcom_subscribers',
 		// links
-		// php_version
+		php_version: 'php_version',
 		// storage
-		// host
+		host: 'hosting_provider_guess',
 	};
 
-	const fields = new Set< keyof DashboardSiteListSite >( [ 'blog_id', 'slug', 'deleted' ] ); // Always include ID and slug (for navigation), and deleted (for styling)
+	const additionalMappedFields: Record< string, ( keyof DashboardSiteListSite )[] > = {
+		likes: [ 'enabled_modules' ],
+		name: [ 'badge' ],
+		status: [ 'wpcom_status', 'private', 'deleted' ],
+		plan: [ 'owner_id' ],
+		preview: [ 'name', 'icon', 'url', 'private', 'deleted' ],
+	};
+
+	// Always include ID and slug (for navigation), deleted (for styling), is_a8c (for included a8c owned) and other (for vip & self hosted jetpack)
+	const fields: ( keyof DashboardSiteListSite )[] = [
+		'blog_id',
+		'slug',
+		'deleted',
+		'capabilities',
+		'is_a8c',
+		'is_atomic',
+		'is_garden',
+		'is_jetpack',
+		'is_p2',
+		'is_vip',
+	];
+
 	if ( view.showTitle && view.titleField ) {
-		fields.add( dataviewFieldToSiteProfileField[ view.titleField ] );
-		fields.add( 'badge' );
+		fields.push( mappedFields[ view.titleField ] );
 	}
+
 	if ( view.showMedia && view.mediaField ) {
-		fields.add( dataviewFieldToSiteProfileField[ view.mediaField ] );
+		fields.push( mappedFields[ view.mediaField ] );
 	}
+
 	if ( view.showDescription && view.descriptionField ) {
-		fields.add( dataviewFieldToSiteProfileField[ view.descriptionField ] );
+		fields.push( mappedFields[ view.descriptionField ] );
 	}
-	// Status is a composite field that comes from a number of different SiteProfile fields.
-	if ( view.fields?.includes( 'status' ) ) {
-		fields.add( 'wpcom_status' );
-		fields.add( 'private' );
-		fields.add( 'deleted' );
-	}
+
 	view.fields?.forEach( ( field ) => {
-		const mappedField = dataviewFieldToSiteProfileField[ field ];
+		const mappedField = mappedFields[ field ];
 		if ( mappedField ) {
-			fields.add( mappedField );
+			fields.push( mappedField );
+		}
+
+		if ( additionalMappedFields[ field ] ) {
+			fields.push( ...additionalMappedFields[ field ] );
 		}
 	} );
 
+	const planSlugsByName = siteFilters.plan?.reduce(
+		( acc, current ) => ( {
+			...acc,
+			[ current.name ]: [ ...( acc[ current.name ] || [] ), current.value ],
+		} ),
+		{} as Record< string, string[] >
+	);
+
+	const filters = view.filters?.reduce( ( acc, current ) => {
+		let value = current.value;
+		if ( current.field === 'plan' && current.value ) {
+			value = current.value.map( ( v: string ) => planSlugsByName?.[ v ] ).flat();
+		}
+
+		return {
+			...acc,
+			[ current.field ]: value,
+		};
+	}, {} );
+
 	return {
-		fields: Array.from( fields ),
+		fields: Array.from( new Set( fields ) ).filter( Boolean ),
 		s: view.search || undefined,
-		sort_by: dataviewFieldToSiteProfileField[ view.sort?.field ?? '' ],
+		filters,
+		sort_by: mappedFields[ view.sort?.field ?? '' ],
 		sort_direction: view.sort?.direction,
 		page: view.page,
 		per_page: view.perPage,
@@ -126,8 +173,16 @@ function getFetchSiteListParams(
 export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 	const { queries } = useAppContext();
 
+	const { data: siteFilters } = useQuery( {
+		...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
+		staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
+		enabled:
+			isEnabled( 'dashboard/v2/es-site-list' ) &&
+			!! view.filters?.find( ( filter ) => filter.field === 'plan' ),
+	} );
+
 	const siteProfilesQueryResult = useQuery( {
-		...queries.dashboardSiteListQuery( getFetchSiteListParams( view ) ),
+		...queries.dashboardSiteListQuery( getFetchSiteListParams( view, siteFilters ) ),
 		placeholderData: keepPreviousData,
 		enabled: isEnabled( 'dashboard/v2/es-site-list' ),
 		meta: {
@@ -289,6 +344,7 @@ export default function Sites() {
 
 	return (
 		<>
+			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
 					<AddNewSite context="sites-dashboard" />

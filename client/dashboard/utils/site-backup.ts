@@ -1,4 +1,5 @@
 import { isDashboardBackport } from './is-dashboard-backport';
+import { wpcomLink } from './link';
 import { isSelfHostedJetpackConnected } from './site-types';
 import type { Site } from '@automattic/api-core';
 
@@ -8,6 +9,6 @@ export function getBackupUrl( site: Site ) {
 	}
 
 	return isDashboardBackport()
-		? `https://wordpress.com/backup/${ site.slug }`
+		? wpcomLink( `/backup/${ site.slug }` )
 		: `/sites/${ site.slug }/backups`;
 }

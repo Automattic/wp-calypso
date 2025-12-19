@@ -3,11 +3,11 @@ import type { Site } from '@automattic/api-core';
 
 export interface MigrationStatus {
 	status: 'pending' | 'started' | 'completed';
-	type: 'difm' | 'diy';
+	type: 'difm' | 'diy' | 'ssh';
 }
 
 const MIGRATION_STATUSES: MigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
-const MIGRATION_TYPES: MigrationStatus[ 'type' ][] = [ 'difm', 'diy' ];
+const MIGRATION_TYPES: MigrationStatus[ 'type' ][] = [ 'difm', 'diy', 'ssh' ];
 
 export function getStatusLabels() {
 	return {

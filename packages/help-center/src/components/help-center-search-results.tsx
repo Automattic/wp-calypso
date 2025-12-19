@@ -355,13 +355,13 @@ function HelpSearchResults( {
 			title: searchQuery
 				? __( 'Search Results', __i18n_text_domain__ )
 				: __( 'Recommended guides', __i18n_text_domain__ ),
-			results: searchResults,
+			results: searchResults as unknown as SearchResult[],
 			condition: ! isSearching && searchResults.length > 0,
 		},
 		{
 			type: SUPPORT_TYPE_CONTEXTUAL_HELP,
 			title: ! searchQuery.length ? __( 'Recommended guides', __i18n_text_domain__ ) : '',
-			results: contextualResults.slice( 0, 6 ),
+			results: contextualResults.slice( 0, 6 ) as unknown as SearchResult[],
 			condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 		},
 	].map( renderSearchResultsSection );
@@ -383,7 +383,9 @@ function HelpSearchResults( {
 					</p>
 					<Button
 						variant="secondary"
-						onClick={ () => setNavigateToRoute( '/odie' ) }
+						onClick={ () =>
+							setNavigateToRoute( `/odie?query=${ encodeURIComponent( searchQuery ) }` )
+						}
 						className="show-more-button"
 					>
 						{ __( 'Ask AI assistant', __i18n_text_domain__ ) }

@@ -242,6 +242,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'oauth2-client',
+		paths: [ '/oauth2', '/oauth2/authorize' ],
+		module: 'calypso/oauth2',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'jetpack-connect',
 		paths: [ '/jetpack' ],
 		module: 'calypso/jetpack-connect',
@@ -833,6 +839,12 @@ const sections = [
 		name: 'a8c-for-agencies-referrals',
 		paths: [ '/referrals/dashboard', '/referrals/payment-settings', '/referrals/faq' ],
 		module: 'calypso/a8c-for-agencies/sections/referrals',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-learn',
+		paths: [ '/learn', '/learn/resource-center' ],
+		module: 'calypso/a8c-for-agencies/sections/learn',
 		group: 'a8c-for-agencies',
 	},
 	{

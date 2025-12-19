@@ -1,6 +1,7 @@
 import {
 	deleteSiteMigrationPendingStatusQuery,
 	siteMigrationKeyQuery,
+	sshMigrationQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -26,9 +27,9 @@ import { HostingCards } from './hosting-cards';
 import type { MigrationStatus } from '../../utils/site-status';
 import type { Site } from '@automattic/api-core';
 
-const getContinueMigrationUrl = ( site: Site ): string | null => {
+const getContinueMigrationUrl = ( site: Site, sshSourceSiteDomain?: string ): string | null => {
 	const migrationState = getSiteMigrationState( site );
-	const sourceSiteDomain = site.options?.migration_source_site_domain;
+	const sourceSiteDomain = sshSourceSiteDomain ?? site.options?.migration_source_site_domain;
 
 	const queryArgs = {
 		siteId: site.ID,
@@ -46,6 +47,13 @@ const getContinueMigrationUrl = ( site: Site ): string | null => {
 			wpcomLink( '/setup/site-migration/site-migration-instructions' ),
 			queryArgs
 		);
+	}
+
+	if ( migrationState?.type === 'ssh' ) {
+		return addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-ssh-verification' ), {
+			...queryArgs,
+			from: sourceSiteDomain || undefined,
+		} );
 	}
 
 	return addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-credentials' ), queryArgs );
@@ -116,10 +124,14 @@ export function PendingContentInfo( {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { data: migrationKey, isLoading } = useQuery( siteMigrationKeyQuery( site.ID ) );
+	const {
+		data: { migration_source_site_domain: sshSourceSiteDomain } = {},
+		isLoading: isSshSourceSiteDomainLoading,
+	} = useQuery( { ...sshMigrationQuery( site.ID ), enabled: type === 'ssh' } );
 	const [ isCancellationModalOpen, setIsCancellationModalOpen ] = useState( false );
-	const continueMigrationUrl = getContinueMigrationUrl( site );
+	const continueMigrationUrl = getContinueMigrationUrl( site, sshSourceSiteDomain );
 
-	if ( isLoading ) {
+	if ( isLoading || ( type === 'ssh' && isSshSourceSiteDomainLoading ) ) {
 		return null;
 	}
 

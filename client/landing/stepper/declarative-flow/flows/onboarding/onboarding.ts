@@ -1,10 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
+import {
+	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
+	SITE_SETUP_FLOW,
+	clearStepPersistedState,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
@@ -44,6 +50,7 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
+		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
 	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
@@ -110,7 +117,9 @@ const onboarding: FlowV2< typeof initialize > = {
 			 */
 			if ( isEnabled( 'dashboard/v2/onboarding' ) ) {
 				return [
-					addQueryArgs( `/v2/sites/${ providedDependencies.siteSlug }`, { ref: flowName } ),
+					addQueryArgs( dashboardLink( `/sites/${ providedDependencies.siteSlug }` ), {
+						ref: flowName,
+					} ),
 					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
 						siteSlug: providedDependencies.siteSlug,
 					} ),
@@ -210,7 +219,49 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding':
 					setShouldShowNotification( providedDependencies?.siteId as number );
+
+					/*
+					 * If the post-checkout ai step feature flag is enabled,
+					 * redirect the user to the relevant step.
+					 */
+					if ( isEnabled( 'onboarding/post-checkout-ai-step' ) ) {
+						return navigate( 'setup-your-site-ai' );
+					}
+
 					return navigate( 'processing' );
+				case 'setup-your-site-ai': {
+					const setupChoice = providedDependencies?.setupChoice;
+					const siteSlug = providedDependencies?.siteSlug as string;
+					const siteId = providedDependencies?.siteId as number | string | undefined;
+
+					switch ( setupChoice ) {
+						case 'build-with-ai':
+							window.location.assign(
+								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
+									siteSlug,
+									siteId,
+									fromPostCheckoutSetupSite: '1',
+								} )
+							);
+							return;
+						case 'blank-site':
+							window.location.replace( `/sites/${ siteSlug }` );
+							return;
+						case 'migrate':
+							window.location.assign(
+								addQueryArgs(
+									`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
+									{
+										siteSlug,
+										siteId,
+									}
+								)
+							);
+							return;
+						default:
+							return;
+					}
+				}
 				case 'processing': {
 					const [ destination, backDestination ] =
 						await getPostCheckoutDestination( providedDependencies );
