@@ -8,6 +8,7 @@ import {
 import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useSelect } from '@wordpress/data';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useRenewalPricingPostButtonText from '../../../hooks/data-store/use-renewal-pricing-post-button-text';
@@ -46,6 +47,7 @@ const ActionButton = ( {
 		gridPlansIndex,
 		siteId,
 		helpers: { useAction },
+		renewalPricingVariation,
 	} = usePlansGridContext();
 	const {
 		current,
@@ -213,7 +215,13 @@ const ActionButton = ( {
 						{ text }
 					</PlanButton>
 					{ finalPostButtonText && (
-						<span className="plans-grid-next-action-button__label">{ finalPostButtonText }</span>
+						<span
+							className={ clsx( 'plans-grid-next-action-button__label', {
+								'is-left-aligned': renewalPricingVariation,
+							} ) }
+						>
+							{ finalPostButtonText }
+						</span>
 					) }
 				</>
 			);
