@@ -93,8 +93,8 @@ export default function TierCards( {
 						} }
 					>
 						<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-							<VStack spacing={ 2 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-								<HStack>
+							<VStack spacing={ 1 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+								<HStack style={ { marginBlockEnd: '4px' } }>
 									<Heading level={ 3 } weight={ 500 }>
 										{ tier.name }
 									</Heading>
@@ -128,7 +128,7 @@ export default function TierCards( {
 								{ isCurrentTier && isTierProtected && (
 									<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
 										{ createInterpolateElement(
-											__( 'You’re tier level is protected. <a>Learn more</a>' ),
+											__( 'Your tier level is protected. <a>Learn more</a>' ),
 											{
 												a: (
 													<Button onClick={ handleViewTierProtectedInfo } variant="link">
@@ -139,6 +139,11 @@ export default function TierCards( {
 										) }
 									</Text>
 								) }
+							</VStack>
+							<VStack
+								spacing={ 1 }
+								style={ { flex: 1, justifyContent: 'flex-start', marginBlockStart: '8px' } }
+							>
 								<Text color={ TEXT_COLOR } weight={ 700 }>
 									{ tier.heading }
 								</Text>
@@ -147,7 +152,7 @@ export default function TierCards( {
 							<Button
 								onClick={ () => handleViewBenefits( tier.id as string ) }
 								variant={ isSecondary ? 'secondary' : 'primary' }
-								style={ { marginTop: '24px', alignSelf: 'flex-start' } }
+								style={ { marginBlockStart: '24px', alignSelf: 'flex-start' } }
 							>
 								{ hasHigherTier ? __( 'See what you’ll unlock' ) : __( 'View your benefits' ) }
 							</Button>
