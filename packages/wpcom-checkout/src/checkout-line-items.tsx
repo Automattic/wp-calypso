@@ -1617,7 +1617,7 @@ function CheckoutLineItem( {
 
 			{ isRenewalPricingExperiment && isDomainRegistration( product ) && (
 				<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
-					<div>
+					<div style={ { marginBottom: '8px' } }>
 						{ translate( 'Auto-renews at %(price)s/year.', {
 							args: {
 								price: formatCurrency( product.item_original_cost_integer, product.currency, {
