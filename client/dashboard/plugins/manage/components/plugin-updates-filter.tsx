@@ -1,5 +1,7 @@
-import { Button } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button, Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { closeSmall } from '@wordpress/icons';
+import { Text } from '../../../components/text';
 import { PluginListRow } from '../types';
 import type { View, Field } from '@wordpress/dataviews';
 
@@ -44,20 +46,51 @@ export const PluginUpdatesFilter = ( {
 		}
 	};
 
-	return (
-		<Button
-			className="plugin-switcher__updates-filter"
-			size="compact"
-			onClick={ () => {
-				toggleFilterValue( true );
-			} }
-			aria-selected={ currentFilter?.value === true }
-		>
-			{ sprintf(
-				// translators: %(siteCount)d is the number of plugins with updates available.
-				__( 'Update available (%(siteCount)d)' ),
-				{ siteCount }
-			) }
-		</Button>
+	return currentFilter?.value === true ? (
+		<div className="plugin-switcher__updates-filter-wrapper dataviews-filters__summary-chip-container">
+			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */ }
+			<HStack
+				className="dataviews-filters__summary-chip has-reset"
+				spacing={ 1 }
+				role="button"
+				aria-pressed="false"
+				aria-expanded="false"
+				tabIndex={ 0 }
+				onClick={ () => toggleFilterValue( false ) }
+			>
+				<Text className="plugin-switcher__updates-filter-active-label">
+					{ sprintf(
+						// translators: %(siteCount)d is the number of plugins with updates available.
+						__( 'Update available (%(siteCount)d)' ),
+						{ siteCount }
+					) }
+				</Text>
+
+				<button
+					className="plugin-switcher__updates-filter-remove"
+					onClick={ () => toggleFilterValue( false ) }
+				>
+					<Icon icon={ closeSmall } />
+				</button>
+			</HStack>
+		</div>
+	) : (
+		<div className="plugin-switcher__updates-filter-wrapper">
+			<Button
+				className="plugin-switcher__updates-filter"
+				size="compact"
+				variant="primary"
+				onClick={ () => {
+					toggleFilterValue( true );
+				} }
+			>
+				{ sprintf(
+					// translators: %(siteCount)d is the number of plugins with updates available.
+					__( 'Update available (%(siteCount)d)' ),
+					{ siteCount }
+				) }
+			</Button>
+		</div>
 	);
 };
+// dataviews-filters__summary-chip-remove
