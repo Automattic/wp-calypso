@@ -162,7 +162,6 @@ export const PluginSwitcher = ( {
 					onClose={ () => {} }
 					width="auto"
 					filterField={ hasUpdatesField }
-					filterButtonLabel={ __( 'Show only plugins with updates' ) }
 				/>
 			</CardBody>
 		</Card>

@@ -34,7 +34,6 @@ export default function SwitcherContent< T >( {
 	onClose,
 	onItemClick,
 	filterField,
-	filterButtonLabel,
 }: PropsWithChildren< {
 	itemAlignment?: string;
 	itemClassName?: string | ( ( item: T ) => string );
@@ -53,7 +52,6 @@ export default function SwitcherContent< T >( {
 	onClose: () => void;
 	onItemClick?: () => void;
 	filterField?: Field< T >;
-	filterButtonLabel?: string;
 } > ) {
 	const fields = useMemo( () => {
 		const allFields = searchableFields.map( ( searchableField ) => ( {
@@ -120,15 +118,13 @@ export default function SwitcherContent< T >( {
 						size="compact"
 						__nextHasNoMarginBottom
 					/>
-					{ filterField && filterButtonLabel && (
+					{ filterField && (
 						<Button
-							variant={ hasActiveFilter ? 'primary' : 'tertiary' }
-							onClick={ toggleFilter }
-							icon={ funnel }
+							className="dataviews-filters__visibility-toggle"
 							size="compact"
-						>
-							{ filterButtonLabel }
-						</Button>
+							icon={ funnel }
+							onClick={ toggleFilter }
+						/>
 					) }
 				</HStack>
 			</MenuGroup>
