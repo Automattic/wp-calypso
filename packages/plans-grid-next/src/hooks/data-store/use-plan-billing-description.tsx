@@ -38,7 +38,7 @@ export default function usePlanBillingDescription( {
 	const {
 		reflectStorageSelectionInPlanPrices,
 		showSimplifiedBillingDescription,
-		isRenewalPricingExperiment,
+		renewalPricingVariation,
 	} = usePlansGridContext();
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
@@ -115,7 +115,7 @@ export default function usePlanBillingDescription( {
 		introOffer?.intervalCount &&
 		introOffer.intervalUnit &&
 		! introOffer.isOfferComplete &&
-		! isRenewalPricingExperiment
+		! renewalPricingVariation
 	) {
 		const discountedPriceFull =
 			typeof discountedPrice?.full === 'number' ? discountedPrice.full : introOffer?.rawPrice?.full;
@@ -292,15 +292,21 @@ export default function usePlanBillingDescription( {
 				}
 			);
 		}
-	} else if ( isRenewalPricingExperiment ) {
-		// For renewal pricing treatment, show the auto-renewal text instead of billing description
+	} else if ( renewalPricingVariation ) {
+		// For renewal pricing experiment, show variation-specific text
 		const monthlyPrice = discountedPrice?.monthly || originalPrice?.monthly;
+		const fullPrice = discountedPrice?.full || originalPrice?.full;
 
-		if ( ! monthlyPrice || ! currencyCode ) {
+		if ( ! monthlyPrice || ! fullPrice || ! currencyCode ) {
 			return null;
 		}
 
-		const formattedPrice = formatCurrency( monthlyPrice, currencyCode, {
+		const formattedMonthlyPrice = formatCurrency( monthlyPrice, currencyCode, {
+			stripZeros: true,
+			isSmallestUnit: true,
+		} );
+
+		const formattedFullPrice = formatCurrency( fullPrice, currencyCode, {
 			stripZeros: true,
 			isSmallestUnit: true,
 		} );
@@ -316,14 +322,32 @@ export default function usePlanBillingDescription( {
 			billingMonths = 12;
 		}
 
-		return translate( 'Auto-renews as %(price)s per month. Billed every %(months)s months.', {
-			args: {
-				price: formattedPrice,
-				months: billingMonths,
-			},
-			comment:
-				'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
-		} );
+		// Different text based on variation
+		if ( renewalPricingVariation === 'crossed_price' ) {
+			return translate( 'Auto-renews at %(price)s per month. Billed every %(months)s months.', {
+				args: {
+					price: formattedMonthlyPrice,
+					months: billingMonths,
+				},
+				comment:
+					'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
+			} );
+		} else if ( renewalPricingVariation === 'no_crossed_price' ) {
+			return translate(
+				'Get %(months)s months for %(fullPrice)s. Auto-renews at %(price)s per month.',
+				{
+					args: {
+						months: billingMonths,
+						fullPrice: formattedFullPrice,
+						price: formattedMonthlyPrice,
+					},
+					comment:
+						'%(months)s is the billing period (12, 24, or 36), %(fullPrice)s is the total price like $120, %(price)s is the monthly price like $10',
+				}
+			);
+		}
+
+		return null;
 	} else if ( showSimplifiedBillingDescription ) {
 		// Use simplified billing description
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {

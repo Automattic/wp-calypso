@@ -253,9 +253,9 @@ export type GridContextProps = {
 	 */
 	showSimplifiedBillingDescription?: boolean;
 	/**
-	 * Enable renewal pricing treatment (simplified billing description with renewal text below CTA)
+	 * Renewal pricing experiment variation name (e.g., 'crossed_price', 'no_crossed_price')
 	 */
-	isRenewalPricingExperiment?: boolean;
+	renewalPricingVariation?: string | null;
 };
 
 export type ComparisonGridExternalProps = Omit<

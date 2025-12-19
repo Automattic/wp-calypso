@@ -83,10 +83,7 @@ import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-interv
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
-import {
-	useRenewalPricingExperiment,
-	isRenewalPricingTreatment,
-} from './hooks/use-renewal-price-experiment';
+import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
@@ -243,7 +240,6 @@ const PlansFeaturesMain = ( {
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 
 	const [ , renewalPricingVariation ] = useRenewalPricingExperiment( flowName );
-	const isRenewalPricingExperiment = isRenewalPricingTreatment( renewalPricingVariation );
 
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -967,7 +963,7 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
-													isRenewalPricingExperiment={ isRenewalPricingExperiment }
+													renewalPricingVariation={ renewalPricingVariation }
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
