@@ -10,6 +10,7 @@ import { Card, CardBody } from '../../../components/card';
 import SwitcherContent from '../../../components/switcher/switcher-content';
 import { Text } from '../../../components/text';
 import { PluginListRow } from '../types';
+import { PluginUpdatesFilter } from './plugin-updates-filter';
 
 import './plugin-switcher.scss';
 
@@ -130,7 +131,7 @@ export const PluginSwitcher = ( {
 		);
 	}, [] );
 
-	const hasUpdatesField = useMemo(
+	const updatesField = useMemo(
 		() => ( {
 			id: 'hasUpdates',
 			type: 'boolean' as const,
@@ -161,7 +162,14 @@ export const PluginSwitcher = ( {
 					searchableFields={ searchableFields }
 					onClose={ () => {} }
 					width="auto"
-					filterField={ hasUpdatesField }
+					filter={
+						<PluginUpdatesFilter
+							updatesField={ updatesField }
+							view={ view }
+							onChangeView={ onChangeView }
+						/>
+					}
+					filterField={ updatesField }
 				/>
 			</CardBody>
 		</Card>
