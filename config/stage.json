@@ -126,7 +126,6 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/quick-post": true,
 		"reader/discover/freshly-pressed": true,
 		"reader/msd-enabled": true,
 		"readymade-templates/showcase": false,
