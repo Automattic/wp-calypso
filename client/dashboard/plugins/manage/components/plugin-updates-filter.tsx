@@ -22,10 +22,6 @@ export const PluginUpdatesFilter = ( {
 	const filterButtonRef = useRef< HTMLButtonElement >( null );
 
 	const toggleFilterValue = ( value: boolean | string | number ) => {
-		if ( ! updatesField ) {
-			return;
-		}
-
 		const currentFilter = view.filters?.find( ( f ) => f.field === updatesField.id );
 		const isCurrentlySelected = currentFilter?.value === value;
 
