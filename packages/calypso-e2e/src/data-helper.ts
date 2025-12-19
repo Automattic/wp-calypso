@@ -172,6 +172,16 @@ export function isCalypsoProduction(): boolean {
 }
 
 /**
+ * Returns whether the current Calypso environment is a local dev build
+ * (i.e. http://calypso.localhost:3000).
+ *
+ * @returns {boolean} True if the current Calypso environment is production; false otherwise.
+ */
+export function isCalypsoLocalDevelopment(): boolean {
+	return envVariables.CALYPSO_BASE_URL === 'http://calypso.localhost:3000';
+}
+
+/**
  * Constructs a locale-specific path segment based on the provided locale.
  * If the locale is 'en' (English), returns an empty string (no path segment).
  * Otherwise, returns the locale code followed by a slash (e.g., 'fr/', 'es/').
