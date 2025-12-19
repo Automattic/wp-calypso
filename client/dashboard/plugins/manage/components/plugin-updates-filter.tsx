@@ -1,6 +1,7 @@
 import { __experimentalHStack as HStack, Button, Icon, Tooltip } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
+import { clsx } from 'clsx';
 import { Text } from '../../../components/text';
 import { PluginListRow } from '../types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -53,11 +54,15 @@ export const PluginUpdatesFilter = ( {
 	);
 
 	return currentFilter?.value === true ? (
-		<div className="plugin-switcher__updates-filter-wrapper dataviews-filters__summary-chip-container">
+		<div
+			className={ clsx(
+				'plugin-switcher__updates-filter-wrapper',
+				'dataviews-filters__summary-chip-container'
+			) }
+		>
 			<Tooltip text={ __( 'Remove' ) } placement="top">
-				{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */ }
 				<HStack
-					className="dataviews-filters__summary-chip has-reset"
+					className="dataviews-filters__summary-chip"
 					spacing={ 1 }
 					role="button"
 					aria-pressed="false"
@@ -79,7 +84,7 @@ export const PluginUpdatesFilter = ( {
 	) : (
 		<div className="plugin-switcher__updates-filter-wrapper">
 			<Button
-				className="plugin-switcher__updates-filter"
+				className="plugin-switcher__updates-filter-btn"
 				size="compact"
 				onClick={ () => {
 					toggleFilterValue( true );

@@ -2,7 +2,7 @@
 	flex: 0 0 auto;
 	padding-inline-end: calc(4px * 6);
 
-	.dataviews-filters__summary-chip.has-reset {
+	.dataviews-filters__summary-chip {
 		padding-inline-end: calc(4px * 3);
 	}
 }
@@ -21,7 +21,7 @@
     cursor: pointer;
 }
 
-.plugin-switcher__updates-filter {
+.plugin-switcher__updates-filter-btn {
 	text-wrap-mode: nowrap;
 	padding-inline-start: calc(4px * 2);
 	padding-inline-end: calc(4px * 2);
