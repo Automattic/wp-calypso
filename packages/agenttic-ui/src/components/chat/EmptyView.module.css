@@ -1,12 +1,11 @@
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  align-items: start;
+  justify-content: end;
   height: 100%;
-  padding: var(--spacing-6);
+  padding: var(--spacing-6) var(--spacing-3) ;
   gap: var(--spacing-6);
-  padding-top: calc(50% - 150px);
 }
 
 .icon {
@@ -15,11 +14,10 @@
 }
 
 .heading, .help {
-  font-size: 1.125rem;
+  font-size: 0.875rem;
   font-weight: 400;
-  line-height: 1.5;
-  text-align: center;
-  color: var(--color-text);
+  line-height: 1.6;
+  color: var(--color-foreground);
   margin: 0;
   max-width: 400px;
 }
@@ -28,13 +26,4 @@
   width: 100%;
   max-width: 500px;
   position: relative;
-}
-
-/* Override Suggestions component styles to enable wrapping */
-.suggestionsWrapper > div {
-  position: static;
-  flex-wrap: wrap;
-  overflow-x: visible;
-  overflow-y: visible;
-  justify-content: center;
 }

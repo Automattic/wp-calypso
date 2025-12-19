@@ -136,7 +136,7 @@ export function CompactView( {
 				<Suggestions
 					suggestions={ suggestions }
 					onSubmit={ handleSuggestionSubmit }
-					layout="vertical"
+					layout="floating"
 					visible={ suggestionsVisible }
 					onMouseEnter={ () => {
 						clearAllTimeouts();
