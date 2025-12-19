@@ -31,6 +31,7 @@ import {
 	getDefaultView,
 	recordViewChanges,
 } from './dataviews';
+import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
 import { SiteLink, SiteLink__ES } from './site-fields';
@@ -343,6 +344,7 @@ export default function Sites() {
 
 	return (
 		<>
+			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
 					<AddNewSite context="sites-dashboard" />

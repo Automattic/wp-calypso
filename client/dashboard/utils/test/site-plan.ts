@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { getSitePlanDisplayName } from '../site-plan';
 import type { Site } from '@automattic/api-core';
 

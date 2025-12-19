@@ -1,7 +1,8 @@
 import { useRouterState } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
 import { CalloutOverlay } from '../../components/callout-overlay';
-import SnackbarBackButton from '../../components/snackbar-back-button';
+import SnackbarBackButton, {
+	getSnackbarBackButtonText,
+} from '../../components/snackbar-back-button';
 import HostingFeatureGate from '../hosting-feature-gate';
 import ActivationCallout from './activation';
 import UpsellCallout, { UpsellCalloutProps } from './upsell';
@@ -35,8 +36,9 @@ export default function HostingFeatureGatedWithCallout( {
 
 	const { site, upsellId, upsellFeatureId, feature } = props;
 
-	const backButton = search.back_to === 'overview' && (
-		<SnackbarBackButton>{ __( 'Back to Overview' ) }</SnackbarBackButton>
+	const snackbarBackButtonText = getSnackbarBackButtonText( search.back_to );
+	const backButton = snackbarBackButtonText && (
+		<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
 	);
 
 	return (

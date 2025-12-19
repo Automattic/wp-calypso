@@ -21,6 +21,7 @@ export type ActionOnExecuteResponse = {
 
 export type ActionRenderModalProps = RenderModalProps< PluginListRow > & {
 	actionId: string;
+	extraActions?: string[];
 	listItems?: boolean;
 	// Function that executes the underlying action (e.g., existing callback)
 	onExecute: ( items: PluginListRow[] ) => Promise< ActionOnExecuteResponse >;
@@ -58,13 +59,13 @@ export function getModalHeader( actionId: string ) {
 		case 'disable-autoupdate':
 			return __( 'Disable plugin auto‑updates' );
 		case 'delete':
-			return __( 'Deactivate and remove plugin' );
+			return __( 'Remove plugin' );
 		default:
 			return __( 'Confirm action' );
 	}
 }
 
-function getConfirmText( actionId: string, items: PluginListRow[] ) {
+function getConfirmText( actionId: string, extraActions: string[], items: PluginListRow[] ) {
 	if ( items.length === 1 ) {
 		const pluginName = items[ 0 ].name;
 		const count = items[ 0 ].sitesCount;
@@ -135,11 +136,53 @@ function getConfirmText( actionId: string, items: PluginListRow[] ) {
 				);
 			}
 			case 'delete':
+				if (
+					extraActions.includes( 'deactivate' ) &&
+					extraActions.includes( 'disable-autoupdate' )
+				) {
+					return sprintf(
+						// Translators: %1$s is the plugin name. %2$d is the number of sites.
+						_n(
+							'You are about to deactivate, disable auto‑updates, and remove the %1$s plugin installed on %2$d site.',
+							'You are about to deactivate, disable auto‑updates, and remove the %1$s plugin installed on %2$d sites.',
+							count
+						),
+						pluginName,
+						count
+					);
+				}
+
+				if ( extraActions.includes( 'deactivate' ) ) {
+					return sprintf(
+						// Translators: %1$s is the plugin name. %2$d is the number of sites.
+						_n(
+							'You are about to deactivate and remove the %1$s plugin installed on %2$d site.',
+							'You are about to deactivate and remove the %1$s plugin installed on %2$d sites.',
+							count
+						),
+						pluginName,
+						count
+					);
+				}
+
+				if ( extraActions.includes( 'disable-autoupdate' ) ) {
+					return sprintf(
+						// Translators: %1$s is the plugin name. %2$d is the number of sites.
+						_n(
+							'You are about to disable auto‑updates and remove the %1$s plugin installed on %2$d site.',
+							'You are about to disable auto‑updates and remove the %1$s plugin installed on %2$d sites.',
+							count
+						),
+						pluginName,
+						count
+					);
+				}
+
 				return sprintf(
 					// Translators: %1$s is the plugin name. %2$d is the number of sites.
 					_n(
-						'You are about to deactivate and remove the %1$s plugin installed on %2$d site.',
-						'You are about to deactivate and remove the %1$s plugin installed on %2$d sites.',
+						'You are about to remove the %1$s plugin installed on %2$d site.',
+						'You are about to remove the %1$s plugin installed on %2$d sites.',
 						count
 					),
 					pluginName,
@@ -277,6 +320,7 @@ export default function ActionRenderModal( {
 	closeModal,
 	onActionPerformed,
 	actionId,
+	extraActions = [],
 	onExecute,
 }: ActionRenderModalProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -551,7 +595,7 @@ export default function ActionRenderModal( {
 
 	return (
 		<VStack spacing={ 4 }>
-			<Text>{ getConfirmText( actionId, items ) }</Text>
+			<Text>{ getConfirmText( actionId, extraActions, items ) }</Text>
 			{ getSiteList( actionId, items, sitesById ) }
 			<HStack justify="right">
 				<Button

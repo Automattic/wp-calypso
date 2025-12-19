@@ -253,9 +253,9 @@ export default function AgentDock( {
 	}
 
 	return createAgentPortal(
+		// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 		<Routes>
 			<Route path="/odie" element={ OdieChat } />
-			{ /* NOTE: Use route state for session ID so it can be accessed throughout the app. */ }
 			<Route path="/chat" element={ Chat } />
 			<Route path="/post" element={ SupportGuideRoute } />
 			<Route path="/support-guides" element={ SupportGuidesRoute } />
