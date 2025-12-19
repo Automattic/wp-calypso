@@ -205,7 +205,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 	describe( 'Launch site without Focused Launchpad', function () {
 		it( 'Start site launch', async function () {
 			const siteSettingsPage = new SiteSettingsPage( page );
-			await siteSettingsPage.visit( newSiteDetails.blog_details.site_slug );
+			await siteSettingsPage.visit( newSiteDetails.blog_details.site_slug, 'site-visibility' );
 			await siteSettingsPage.launchSite();
 		} );
 
