@@ -22,7 +22,6 @@ export class SiteSettingsPage {
 	 * @param {string} siteSlug Site URL.
 	 */
 	async visit( siteSlug: string, subPathSlug?: string ): Promise< void > {
-		// Patch for redirectToHostingDashboardBackportIfEnabled bug that doesn't account for tabs.
 		const pageUrl = getCalypsoURL(
 			`sites/${ siteSlug }/settings${ subPathSlug ? `/${ subPathSlug }` : '' }`
 		);
