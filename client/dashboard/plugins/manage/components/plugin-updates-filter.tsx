@@ -1,4 +1,4 @@
-import { __experimentalHStack as HStack, Button, Icon } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button, Icon, Tooltip } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { Text } from '../../../components/text';
@@ -54,25 +54,27 @@ export const PluginUpdatesFilter = ( {
 
 	return currentFilter?.value === true ? (
 		<div className="plugin-switcher__updates-filter-wrapper dataviews-filters__summary-chip-container">
-			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */ }
-			<HStack
-				className="dataviews-filters__summary-chip has-reset"
-				spacing={ 1 }
-				role="button"
-				aria-pressed="false"
-				aria-expanded="false"
-				tabIndex={ 0 }
-				onClick={ () => toggleFilterValue( false ) }
-			>
-				<Text className="plugin-switcher__updates-filter-active-label">{ label }</Text>
-
-				<button
-					className="plugin-switcher__updates-filter-remove"
+			<Tooltip text={ __( 'Remove' ) } placement="top">
+				{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */ }
+				<HStack
+					className="dataviews-filters__summary-chip has-reset"
+					spacing={ 1 }
+					role="button"
+					aria-pressed="false"
+					aria-expanded="false"
+					tabIndex={ 0 }
 					onClick={ () => toggleFilterValue( false ) }
 				>
-					<Icon icon={ closeSmall } />
-				</button>
-			</HStack>
+					<Text className="plugin-switcher__updates-filter-active-label">{ label }</Text>
+
+					<button
+						className="plugin-switcher__updates-filter-remove"
+						onClick={ () => toggleFilterValue( false ) }
+					>
+						<Icon icon={ closeSmall } />
+					</button>
+				</HStack>
+			</Tooltip>
 		</div>
 	) : (
 		<div className="plugin-switcher__updates-filter-wrapper">
