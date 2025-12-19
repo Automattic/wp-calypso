@@ -226,11 +226,13 @@ function SiteOverview( {
 					actions={ renderActions() }
 				/>
 			}
+			notices={
+				<Survey
+					surveyUrl="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
+					eventName="theme-showcase-december-2025"
+				/>
+			}
 		>
-			<Survey
-				surveyUrl="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
-				eventName="theme-showcase-december-2025"
-			/>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<StorageWarningBanner site={ site } />
 				<Grid { ...gridLayout } gap={ spacing }>

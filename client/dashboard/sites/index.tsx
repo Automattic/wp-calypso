@@ -384,12 +384,16 @@ export default function Sites() {
 						}
 					/>
 				}
-				notices={ <SitesNotices /> }
+				notices={
+					<>
+						<SitesNotices />
+						<Survey
+							surveyUrl="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
+							eventName="theme-showcase-december-2025"
+						/>
+					</>
+				}
 			>
-				<Survey
-					surveyUrl="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
-					eventName="theme-showcase-december-2025"
-				/>
 				{ isEnabled( 'dashboard/v2/es-site-list' ) ? (
 					<SitesDataViews< DashboardSiteListSite >
 						getItemId={ ( item ) => '' + item.blog_id?.toString() + item.url?.value }
