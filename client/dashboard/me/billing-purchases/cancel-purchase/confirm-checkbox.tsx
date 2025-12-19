@@ -28,16 +28,18 @@ export default function ConfirmCheckbox( {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 
 	return (
-		<VStack spacing={ 4 }>
-			<Text weight="bold">{ __( 'Have a question before cancelling?' ) }</Text>
-			<Text>
-				{ createInterpolateElement(
-					__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
-					{
-						contactLink: <a href={ localizeUrl( 'https://wordpress.com/support' ) } />,
-					}
-				) }
-			</Text>
+		<VStack spacing={ 6 }>
+			<VStack spacing={ 1 }>
+				<Text weight="bold">{ __( 'Have a question before cancelling?' ) }</Text>
+				<Text>
+					{ createInterpolateElement(
+						__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
+						{
+							contactLink: <a href={ localizeUrl( 'https://wordpress.com/support' ) } />,
+						}
+					) }
+				</Text>
+			</VStack>
 
 			<Divider />
 

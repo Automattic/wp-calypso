@@ -109,7 +109,7 @@ export default function CancellationMainContent( {
 		! willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
 
 	return (
-		<VStack spacing={ 4 }>
+		<VStack spacing={ 6 }>
 			{ shouldShowDomainOptionsInline && (
 				<CancelPurchaseDomainOptions
 					includedDomainPurchase={ includedDomainPurchase }
