@@ -4,12 +4,14 @@ import {
 	Button,
 	MenuGroup,
 	NavigableMenu,
+	Popover,
 	SearchControl,
+	CheckboxControl,
 } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { funnel } from '@wordpress/icons';
-import { useMemo } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
 import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -53,6 +55,9 @@ export default function SwitcherContent< T >( {
 	onItemClick?: () => void;
 	filterField?: Field< T >;
 } > ) {
+	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+	const filterButtonRef = useRef< HTMLButtonElement >( null );
+
 	const fields = useMemo( () => {
 		const allFields = searchableFields.map( ( searchableField ) => ( {
 			...searchableField,
@@ -76,30 +81,31 @@ export default function SwitcherContent< T >( {
 
 	const { data: filteredData } = filterSortAndPaginate( items, view, fields );
 
-	const hasActiveFilter =
-		filterField && view.filters?.some( ( f ) => f.field === filterField.id && f.value === true );
-
-	const toggleFilter = () => {
+	const toggleFilterValue = ( value: boolean | string | number ) => {
 		if ( ! filterField ) {
 			return;
 		}
 
-		if ( hasActiveFilter ) {
+		const currentFilter = view.filters?.find( ( f ) => f.field === filterField.id );
+		const isCurrentlySelected = currentFilter?.value === value;
+
+		if ( isCurrentlySelected ) {
 			// Remove the filter
 			onChangeView( {
 				...view,
 				filters: view.filters?.filter( ( f ) => f.field !== filterField.id ) || [],
 			} );
 		} else {
-			// Add the filter
+			// Add or update the filter
+			const otherFilters = view.filters?.filter( ( f ) => f.field !== filterField.id ) || [];
 			onChangeView( {
 				...view,
 				filters: [
-					...( view.filters || [] ),
+					...otherFilters,
 					{
 						field: filterField.id,
 						operator: 'is' as const,
-						value: true,
+						value,
 					},
 				],
 			} );
@@ -119,12 +125,41 @@ export default function SwitcherContent< T >( {
 						__nextHasNoMarginBottom
 					/>
 					{ filterField && (
-						<Button
-							className="dataviews-filters__visibility-toggle"
-							size="compact"
-							icon={ funnel }
-							onClick={ toggleFilter }
-						/>
+						<>
+							<Button
+								ref={ filterButtonRef }
+								className="dataviews-filters__visibility-toggle"
+								size="compact"
+								icon={ funnel }
+								onClick={ () => setIsPopoverOpen( ! isPopoverOpen ) }
+								aria-expanded={ isPopoverOpen }
+							/>
+							{ isPopoverOpen && (
+								<Popover
+									anchor={ filterButtonRef.current }
+									onClose={ () => setIsPopoverOpen( false ) }
+									placement="bottom-end"
+								>
+									<VStack spacing={ 2 }>
+										{ filterField.elements?.map( ( element ) => {
+											const currentFilter = view.filters?.find(
+												( f ) => f.field === filterField.id
+											);
+											const isChecked = currentFilter?.value === element.value;
+
+											return (
+												<CheckboxControl
+													key={ String( element.value ) }
+													label={ element.label }
+													checked={ isChecked }
+													onChange={ () => toggleFilterValue( element.value ) }
+												/>
+											);
+										} ) }
+									</VStack>
+								</Popover>
+							) }
+						</>
 					) }
 				</HStack>
 			</MenuGroup>
