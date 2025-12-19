@@ -5,6 +5,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { backup, chevronRight, external, Icon, rss, thumbsUp, video } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useNavigate } from 'react-router-dom';
+import { showHelpCenterFeedbackSurvey } from 'calypso/lib/analytics/survicate';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 
 import './help-center-more-resources.scss';
@@ -65,29 +66,7 @@ export const HelpCenterMoreResources = () => {
 									type="button"
 									onClick={ () => {
 										trackMoreResourcesButtonClick( 'feedback-survey' );
-										window._sva?.invokeEvent?.( 'showFeedbackSurveyFromHelpCenter' );
-
-										// Survicate overlay click doesn't close automatically, so we need to destroy the visitor to close the survey
-										const handleSurveyDisplayed = () => {
-											const overlay = document.querySelector( '.sv__overlay.sv__overlay--dark' );
-											if ( ! overlay ) {
-												return;
-											}
-
-											const handleOverlayClick = () => {
-												window._sva?.destroyVisitor?.();
-											};
-
-											overlay.addEventListener( 'click', handleOverlayClick, {
-												once: true,
-											} );
-											window._sva?.removeEventListener?.(
-												'survey_displayed',
-												handleSurveyDisplayed
-											);
-										};
-
-										window._sva?.addEventListener?.( 'survey_displayed', handleSurveyDisplayed );
+										showHelpCenterFeedbackSurvey();
 									} }
 									className="help-center-more-resources__survicate"
 								>
