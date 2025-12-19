@@ -1,6 +1,7 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	Button,
 	MenuGroup,
 	NavigableMenu,
 	SearchControl,
@@ -29,6 +30,8 @@ export default function SwitcherContent< T >( {
 	children,
 	onClose,
 	onItemClick,
+	filterField,
+	filterButtonLabel,
 }: PropsWithChildren< {
 	itemClassName?: string | ( ( item: T ) => string );
 	items?: T[];
@@ -44,19 +47,61 @@ export default function SwitcherContent< T >( {
 	resetScroll?: boolean;
 	onClose: () => void;
 	onItemClick?: () => void;
+	filterField?: Field< T >;
+	filterButtonLabel?: string;
 } > ) {
 	const fields = useMemo( () => {
-		return searchableFields.map( ( searchableField ) => ( {
+		const allFields = searchableFields.map( ( searchableField ) => ( {
 			...searchableField,
 			enableGlobalSearch: true,
 		} ) );
-	}, [ searchableFields ] );
+
+		// Add filter field if provided
+		if ( filterField ) {
+			allFields.push( {
+				...filterField,
+				enableGlobalSearch: false,
+			} );
+		}
+
+		return allFields;
+	}, [ searchableFields, filterField ] );
 
 	if ( ! items ) {
 		return __( 'Loading…' );
 	}
 
 	const { data: filteredData } = filterSortAndPaginate( items, view, fields );
+
+	const hasActiveFilter =
+		filterField && view.filters?.some( ( f ) => f.field === filterField.id && f.value === true );
+
+	const toggleFilter = () => {
+		if ( ! filterField ) {
+			return;
+		}
+
+		if ( hasActiveFilter ) {
+			// Remove the filter
+			onChangeView( {
+				...view,
+				filters: view.filters?.filter( ( f ) => f.field !== filterField.id ) || [],
+			} );
+		} else {
+			// Add the filter
+			onChangeView( {
+				...view,
+				filters: [
+					...( view.filters || [] ),
+					{
+						field: filterField.id,
+						operator: 'is' as const,
+						value: true,
+					},
+				],
+			} );
+		}
+	};
 
 	return (
 		<NavigableMenu style={ { width } }>
@@ -69,6 +114,16 @@ export default function SwitcherContent< T >( {
 					size="compact"
 					__nextHasNoMarginBottom
 				/>
+				{ filterField && filterButtonLabel && (
+					<Button
+						variant={ hasActiveFilter ? 'primary' : 'secondary' }
+						onClick={ toggleFilter }
+						style={ { marginTop: '8px', width: '100%' } }
+						size="compact"
+					>
+						{ filterButtonLabel }
+					</Button>
+				) }
 			</MenuGroup>
 			<MenuGroup hideSeparator>
 				{ filteredData.map( ( item ) => {
