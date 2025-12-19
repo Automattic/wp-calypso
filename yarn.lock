@@ -2225,25 +2225,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/social-previews@npm:^2.1.0-beta.13":
-  version: 2.1.0-beta.13
-  resolution: "@automattic/social-previews@npm:2.1.0-beta.13"
+"@automattic/social-previews@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@automattic/social-previews@npm:3.0.0"
   dependencies:
-    "@emotion/react": "npm:^11.11.1"
-    "@wordpress/components": "npm:^30.8.0"
-    "@wordpress/element": "npm:^6.23.0"
-    "@wordpress/i18n": "npm:^5.23.0"
-    clsx: "npm:^2.1.1"
-    prop-types: "npm:^15.8.1"
-    tslib: "npm:^2.8.1"
+    "@wordpress/components": "npm:30.9.0"
+    "@wordpress/element": "npm:6.36.0"
+    "@wordpress/i18n": "npm:6.9.0"
+    clsx: "npm:2.1.1"
   peerDependencies:
-    "@babel/runtime": ^7.27.1
-    react: ^18.3.1
-    react-dom: ^18.3.1
-  peerDependenciesMeta:
-    "@babel/runtime":
-      optional: true
-  checksum: fac33dca75fb20305215654987e342d0b005bc960fa1974c311be9af6aa53a994989b017745eaee873a08b12269cde17c3a62f749010cb6ccc9efdf34bf2032f
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: f695d200c13669980ecd2c4ca4835dfce434bbad53b23b1c55a30d7a4abba3d5a8a985db439be5d16b8c50cdd3e58e7aef84c45617d2d89bc18f6ad40079d120
   languageName: node
   linkType: hard
 
@@ -15366,7 +15359,7 @@ __metadata:
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/sites": "workspace:^"
-    "@automattic/social-previews": "npm:^2.1.0-beta.13"
+    "@automattic/social-previews": "npm:^3.0.0"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
     "@automattic/support-articles": "workspace:^"
