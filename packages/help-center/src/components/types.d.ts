@@ -10,15 +10,6 @@ interface Window {
 	) => void;
 	_sva?: {
 		invokeEvent?: ( eventName: string ) => void;
-		addEventListener?: (
-			eventName: string,
-			callback: ( surveyId: string, surveyName: string ) => void
-		) => void;
-		removeEventListener?: (
-			eventName: string,
-			callback: ( surveyId: string, surveyName: string ) => void
-		) => void;
-		destroyVisitor?: () => void;
 	};
 }
 

@@ -129,7 +129,7 @@ export function showHelpCenterFeedbackSurvey() {
 	}
 
 	const handleSurveyDisplayed = () => {
-		const overlay = document.querySelector( '.sv__overlay.sv__overlay--dark' );
+		const overlay = document.querySelector( '#survicate-box .sv__overlay' );
 
 		if ( ! overlay ) {
 			return;
