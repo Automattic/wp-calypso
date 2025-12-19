@@ -1,6 +1,6 @@
 @import '@wordpress/base-styles/colors';
 
-$admin-bar-height: 33px;
+$admin-bar-height: 32px;
 $layout-spacing: 16px;
 $sidebar-width: 350px;
 $chat-header-height: 38px;
@@ -58,6 +58,9 @@ $agents-manager-z-index-docked: 999999;
 		top: $layout-spacing + $admin-bar-height !important;
 		bottom: $layout-spacing !important;
 		border-bottom-right-radius: $main-border-radius !important;
+		border: 1px solid $border-color;
+		border-top: none;
+		border-left: none;
 		overflow: hidden;
 	}
 }
@@ -114,6 +117,7 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 		border: 1px solid $border-color;
 		border-bottom: none;
 		overflow: hidden;
+		box-sizing: border-box;
 	}
 
 	#adminmenuback,
@@ -197,6 +201,9 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			width: auto;
 			overflow: hidden;
 			border-radius: $main-border-radius $main-border-radius 0 0;
+			border: 1px solid $border-color;
+			border-bottom: none;
+			box-sizing: border-box;
 		}
 
 		#content {
@@ -205,6 +212,8 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			height: calc( 100vh - ( $layout-spacing * 2 ) );
 			min-height: unset;
 			margin: 0 !important;
+			overflow: auto !important;
+			border: 1px solid $border-color;
 		}
 
 		#secondary {
@@ -212,7 +221,10 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			left: $layout-spacing;
 			bottom: $layout-spacing;
 			overflow: hidden;
-			border-radius: $main-border-radius 0 0 $main-border-radius;
+			border-radius: 0 0 0 $main-border-radius;
+			border: 1px solid $border-color;
+			border-top: none;
+			border-right: none;
 		}
 	}
 }

@@ -69,24 +69,31 @@
 	}
 }
 
+.following-stream__quick-post-card {
+	.following-stream__quick-post-card-container {
+		padding: 16px;
 
-.following-stream__quick-post-card.card {
-
-	.accessible-focus & .foldable-card__action:focus {
-		outline: none;
-		border-color: var(--color-primary);
-		box-shadow: 0 0 0 2px var(--color-primary-light);
-		border-radius: 2px;
+		@include break-small {
+			padding: 0;
+		}
 	}
 
-	.foldable-card__content {
-		position: relative;
-	}
-
-	&.is-expanded {
+	&.card {
+		.accessible-focus & .foldable-card__action:focus {
+			outline: none;
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+			border-radius: 2px;
+		}
 
 		.foldable-card__content {
-			overflow: visible;
+			position: relative;
+		}
+
+		&.is-expanded {
+			.foldable-card__content {
+				overflow: visible;
+			}
 		}
 	}
 }

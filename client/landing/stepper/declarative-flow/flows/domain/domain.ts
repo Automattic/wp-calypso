@@ -1,5 +1,5 @@
 import { DotcomFeatures } from '@automattic/api-core';
-import { isDomainMapping } from '@automattic/calypso-products';
+import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	DOMAIN_FLOW,
@@ -100,6 +100,8 @@ const domain: FlowV2< typeof initialize > = {
 			// domains page to guide users through the connection process.
 			const hasOnlyDomainConnection =
 				domainCartItems && domainCartItems.length === 1 && isDomainMapping( domainCartItems[ 0 ] );
+			const hasOnlyDomainTransfer =
+				domainCartItems && domainCartItems.length === 1 && isDomainTransfer( domainCartItems[ 0 ] );
 
 			// Use the redirect_to query param if provided, otherwise fall back to v2 domains
 			let destination = redirectTo || dashboardLink( `/sites/${ siteSlug }/domains` );
@@ -109,6 +111,14 @@ const domain: FlowV2< typeof initialize > = {
 				const domain = domainCartItems[ 0 ].meta;
 				if ( domain ) {
 					destination = dashboardLink( `/domains/${ domain }/domain-connection-setup` );
+				}
+			}
+
+			// Send single domain transfers to domain-transfer-setup.
+			if ( hasOnlyDomainTransfer ) {
+				const domain = domainCartItems[ 0 ].meta;
+				if ( domain ) {
+					destination = dashboardLink( `/domains/${ domain }/domain-transfer-setup` );
 				}
 			}
 

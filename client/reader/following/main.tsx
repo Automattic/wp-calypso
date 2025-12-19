@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
@@ -101,26 +100,28 @@ function FollowingStream( { ...props } ) {
 					>
 						<ViewToggle />
 					</NavigationHeader>
-					{ config.isEnabled( 'reader/quick-post' ) && hasSites && (
-						<FoldableCard
-							header={ translate( 'Write a quick post' ) }
-							clickableHeader
-							compact
-							expanded={ false }
-							className="following-stream__quick-post-card"
-							smooth
-							contentExpandedStyle={ { maxHeight: '800px' } }
-							useInert
-							onOpen={ () => {
-								focusEditor();
-								recordReaderTracksEvent( 'calypso_reader_editor_card_opened' );
-							} }
-							onClose={ () => {
-								recordReaderTracksEvent( 'calypso_reader_editor_card_closed' );
-							} }
-						>
-							<AsyncLoad require="calypso/reader/components/quick-post" />
-						</FoldableCard>
+					{ hasSites && (
+						<div className="following-stream__quick-post-card-container">
+							<FoldableCard
+								header={ translate( 'Write a quick post' ) }
+								clickableHeader
+								compact
+								expanded={ false }
+								className="following-stream__quick-post-card"
+								smooth
+								contentExpandedStyle={ { maxHeight: '800px' } }
+								useInert
+								onOpen={ () => {
+									focusEditor();
+									recordReaderTracksEvent( 'calypso_reader_editor_card_opened' );
+								} }
+								onClose={ () => {
+									recordReaderTracksEvent( 'calypso_reader_editor_card_closed' );
+								} }
+							>
+								<AsyncLoad require="calypso/reader/components/quick-post" />
+							</FoldableCard>
+						</div>
 					) }
 					<AsyncLoad
 						require="calypso/reader/onboarding"
