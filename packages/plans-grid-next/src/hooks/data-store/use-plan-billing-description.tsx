@@ -39,6 +39,7 @@ export default function usePlanBillingDescription( {
 		reflectStorageSelectionInPlanPrices,
 		showSimplifiedBillingDescription,
 		renewalPricingVariation,
+		enableCategorisedFeatures,
 	} = usePlansGridContext();
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
@@ -294,6 +295,12 @@ export default function usePlanBillingDescription( {
 		}
 	} else if ( renewalPricingVariation ) {
 		// For renewal pricing experiment, show variation-specific text
+		// In FeaturesGrid (enableCategorisedFeatures), show "per month" and move renewal text below CTA
+		// In ComparisonGrid, show full renewal text above CTA
+		if ( enableCategorisedFeatures ) {
+			return translate( 'per month' );
+		}
+
 		const monthlyPrice = originalPrice?.monthly;
 		const currentFullPrice =
 			introOffer?.rawPrice?.full || discountedPrice?.full || originalPrice?.full;

@@ -10,6 +10,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
+import useRenewalPricingPostButtonText from '../../../hooks/data-store/use-renewal-pricing-post-button-text';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
 import PlanButton from '../../plan-button';
@@ -111,6 +112,15 @@ const ActionButton = ( {
 		selectedStorageAddOn,
 	} );
 
+	// Get renewal pricing text for FeaturesGrid (below button)
+	const renewalPricingText = useRenewalPricingPostButtonText( {
+		planSlug,
+		pricing: gridPlansIndex[ planSlug ]?.pricing,
+	} );
+
+	// Use renewal pricing text if available, otherwise use the postButtonText from useAction
+	const finalPostButtonText = renewalPricingText || postButtonText;
+
 	const busy = status === 'blocked';
 
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
@@ -197,8 +207,8 @@ const ActionButton = ( {
 					>
 						{ text }
 					</PlanButton>
-					{ postButtonText && (
-						<span className="plans-grid-next-action-button__label">{ postButtonText }</span>
+					{ finalPostButtonText && (
+						<span className="plans-grid-next-action-button__label">{ finalPostButtonText }</span>
 					) }
 				</>
 			);
