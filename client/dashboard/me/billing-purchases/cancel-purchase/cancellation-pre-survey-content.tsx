@@ -1,6 +1,4 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
-import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import CancellationMainContent from './cancellation-main-content';
 import DomainOptionsContent from './domain-options-content';
@@ -47,17 +45,6 @@ export default function CancellationPreSurveyContent( {
 }: CancellationPreSurveyContentProps ) {
 	return (
 		<VStack>
-			<SectionHeader
-				title={ sprintf(
-					/* translators: %(purchaseName)s is the name of the product which was purchased */
-					__( 'Manage %(purchaseName)s' ),
-					{
-						purchaseName: purchase.is_domain ? purchase.meta : purchase.product_name,
-					}
-				) }
-				level={ 3 }
-			/>
-
 			<Text>
 				{ state.showDomainOptionsStep ? (
 					<DomainOptionsContent
