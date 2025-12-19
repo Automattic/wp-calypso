@@ -26,7 +26,7 @@ import ReferralToggle from '../common/referral-toggle';
 import TermPricingToggle from '../common/term-pricing-toggle';
 import { PRODUCT_FILTER_KEY_CATEGORIES } from '../constants';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
-import withMarketplaceType from '../hoc/with-marketplace-type';
+import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import useCompactOnScroll from './hooks/use-compact-on-scroll';
@@ -236,4 +236,4 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 	);
 }
 
-export default withMarketplaceType( ProductsOverview );
+export default withMarketplaceProviders( ProductsOverview );

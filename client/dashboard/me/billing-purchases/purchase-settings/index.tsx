@@ -296,7 +296,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.is_cancelable ) {
 		return (
 			<ActionList.ActionItem
-				title={ __( 'Downgrade or cancel your subscription' ) }
+				title={ __( 'Cancel subscription' ) }
 				description={ __( 'We’ll be sorry to see you go!' ) }
 				actions={
 					<Button
@@ -309,7 +309,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Downgrade or cancel' ) }
+						{ __( 'Cancel' ) }
 					</Button>
 				}
 			/>
@@ -331,7 +331,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Remove subscription' ) }
+						{ __( 'Remove' ) }
 					</Button>
 				}
 			/>
@@ -365,7 +365,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 						upgradePurchase( upgradeUrl );
 					} }
 				>
-					{ __( 'Upgrade subscription' ) }
+					{ __( 'Upgrade' ) }
 				</Button>
 			}
 		/>

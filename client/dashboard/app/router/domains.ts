@@ -1,5 +1,6 @@
 import { DomainSubtype, DomainTransferStatus } from '@automattic/api-core';
 import {
+	domainDiagnosticsQuery,
 	domainQuery,
 	domainDnsQuery,
 	domainForwardingQuery,
@@ -16,6 +17,7 @@ import {
 	rawUserPreferencesQuery,
 	domainAvailabilityQuery,
 	domainInboundTransferStatusQuery,
+	purchaseQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
@@ -166,6 +168,9 @@ export const domainOverviewRoute = createRoute( {
 
 		queryClient.prefetchQuery( siteByIdQuery( domain.blog_id ) );
 		queryClient.prefetchQuery( mailboxesQuery( domain.blog_id ) );
+		await queryClient.ensureQueryData(
+			purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
+		);
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>
@@ -250,6 +255,27 @@ export const domainDnsEditRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains/dns/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-edit' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainDiagnosticsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Diagnostics' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'diagnostics',
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainDiagnosticsQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-diagnostics' ).then( ( d ) =>
+		createLazyRoute( 'domain-diagnostics' )( {
 			component: d.default,
 		} )
 	)
@@ -680,6 +706,7 @@ export const createDomainsRoutes = () => {
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
+			domainDiagnosticsRoute,
 			domainConnectionSetupRoute,
 			domainTransferSetupRoute,
 			domainForwardingRoute.addChildren( [

@@ -77,7 +77,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				<Step.Heading
 					text={ translate( 'Set up your site' ) }
 					subText={ translate(
-						"No matter what you want to do, there's an easy way to get started"
+						"No matter what you want to do, there's an easy way to get started."
 					) }
 				/>
 			}

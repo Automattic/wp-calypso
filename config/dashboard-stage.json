@@ -9,7 +9,6 @@
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
 	"wpcom_url": "https://wordpress.com",
 	"wpcom_login_url": "https://wordpress.com/log-in",
-	"site_name": "Hosting Dashboard",
 	"features": {
 		"ciab/allow-domain-features": true,
 		"cookie-banner": false,

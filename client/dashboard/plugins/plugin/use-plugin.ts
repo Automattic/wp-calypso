@@ -84,9 +84,14 @@ export const usePlugin = ( pluginSlug: string ) => {
 
 	const siteIdsWithThisPlugin = Array.from( pluginBySiteId.keys() );
 
-	const pluginData = pluginBySiteId.size
-		? pluginBySiteId.get( siteIdsWithThisPlugin[ 0 ] )
-		: undefined;
+	let pluginData;
+	if ( pluginBySiteId.size ) {
+		pluginData = pluginBySiteId.get( siteIdsWithThisPlugin[ 0 ] );
+	} else if ( isMarketplacePlugin ) {
+		pluginData = marketplacePlugins?.results[ pluginSlug ];
+	} else if ( wpOrgPlugin ) {
+		pluginData = wpOrgPlugin;
+	}
 
 	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ]: [ SiteWithPluginData[], Site[] ] = sites
 		? sites

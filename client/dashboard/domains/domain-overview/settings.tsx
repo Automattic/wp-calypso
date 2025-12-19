@@ -1,17 +1,29 @@
-import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
+import {
+	DomainSubtype,
+	DomainTransferStatus,
+	type Domain,
+	DomainDiagnostics,
+} from '@automattic/api-core';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
 import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
+import DomainDiagnosticsSettingsSummary from '../domain-diagnostics/summary';
 import DnsSettingsSummary from '../domain-dns/summary';
 import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
 import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
 
-export default function DomainOverviewSettings( { domain }: { domain: Domain } ) {
+export default function DomainOverviewSettings( {
+	domain,
+	domainDiagnostics,
+}: {
+	domain: Domain;
+	domainDiagnostics: DomainDiagnostics | undefined;
+} ) {
 	const buttonListItems = [];
 
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
@@ -35,6 +47,29 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		domain.can_manage_dns_records
 	) {
 		buttonListItems.push( <DnsSettingsSummary key="dns" domain={ domain } /> );
+	}
+
+	if (
+		domain.is_mapped_to_atomic_site &&
+		domain.primary_domain &&
+		domainDiagnostics !== undefined
+	) {
+		buttonListItems.push(
+			<DomainDiagnosticsSettingsSummary
+				key="diagnostics"
+				domain={ domain }
+				domainDiagnostics={ domainDiagnostics }
+			/>
+		);
+	}
+
+	if (
+		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
+		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
+		domain.can_manage_dns_records
+	) {
 		buttonListItems.push( <DomainForwardingSettingsSummary key="forwarding" domain={ domain } /> );
 	}
 

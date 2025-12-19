@@ -13,8 +13,8 @@ import { PluginListRow } from '../types';
 
 import './plugin-switcher.scss';
 
-const ICON_SIZE = 40;
-const FALLBACK_ICON_SIZE = 30;
+const ICON_SIZE = 52;
+const FALLBACK_ICON_SIZE = 39;
 
 export const PluginSwitcher = ( {
 	pluginsWithIcon,
@@ -116,14 +116,14 @@ export const PluginSwitcher = ( {
 			: '';
 
 		return (
-			<VStack spacing={ 0 }>
+			<VStack spacing={ 1 }>
 				{ /* @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`. */ }
 				<Text
 					className="plugin-switcher-item-name"
 					dangerouslySetInnerHTML={ { __html: item.name } }
 					title={ item.name }
 				/>
-				<Text variant="muted">
+				<Text className="plugin-switcher-item-site-count" variant="muted">
 					{ updatesText ? `${ sitesText }, ${ updatesText }` : sitesText }
 				</Text>
 			</VStack>
@@ -134,7 +134,9 @@ export const PluginSwitcher = ( {
 		<Card>
 			<CardBody className="plugin-switcher-card-body" ref={ scrollRef }>
 				<SwitcherContent
+					itemAlignment="start"
 					itemClassName={ itemClassName }
+					itemSpacing={ 3 }
 					searchClassName="plugin-switcher-search"
 					view={ view }
 					onChangeView={ onChangeView }

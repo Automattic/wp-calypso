@@ -136,12 +136,15 @@ const HomeContent = ( {
 	}, [ emailDnsDiagnostics ] );
 
 	useEffect( () => {
-		const studioSiteId = getQueryArgs().studioSiteId;
+		const queryArgs = getQueryArgs();
+		const studioSiteId = queryArgs.studioSiteId;
+		const autoOpenPush = queryArgs.autoOpenPush === 'true';
+
 		if ( ! studioSiteId ) {
 			return;
 		}
 		trackStudioSyncConnectSite( false );
-		openSyncUrlInStudio( studioSiteId, siteId );
+		openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
 	}, [ siteId, trackStudioSyncConnectSite ] );
 
 	const isFirstSecondaryCardInPrimaryLocation =
@@ -291,6 +294,7 @@ const HomeContent = ( {
 
 	const renderStudioSyncNotice = () => {
 		const studioSiteId = getQueryArgs().studioSiteId;
+		const autoOpenPush = getQueryArgs().autoOpenPush === 'true';
 		if ( ! studioSiteId ) {
 			return null;
 		}
@@ -306,7 +310,7 @@ const HomeContent = ( {
 				<NoticeAction
 					onClick={ () => {
 						trackStudioSyncConnectSite( true );
-						openSyncUrlInStudio( studioSiteId, siteId );
+						openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
 					} }
 					external
 				>

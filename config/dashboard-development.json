@@ -11,7 +11,6 @@
 	"wpcom_url": "http://calypso.localhost:3000",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"logout_url": "https://|subdomain|wordpress.com",
-	"site_name": "Hosting Dashboard",
 	"features": {
 		"always_use_logout_url": true,
 		"ciab/allow-domain-features": true,

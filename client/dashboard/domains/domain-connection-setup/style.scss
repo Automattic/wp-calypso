@@ -8,7 +8,7 @@
 			fill: var(--dashboard__background-color-success);
 		}
 	}
-	&__title {
+	.dashboard-domain-connection-verification__title {
 		@include body-large;
 	}
 	.summary-button.components-button .summary-button-title {

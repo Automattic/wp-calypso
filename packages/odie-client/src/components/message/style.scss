@@ -170,7 +170,7 @@ $blueberry-color: #3858e9;
 				color: inherit;
 
 				&:hover {
-					text-decoration: none;
+					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 				}
 			}
 		}
@@ -453,7 +453,6 @@ $blueberry-color: #3858e9;
 	gap: 4px;
 	align-self: stretch;
 	border-radius: 4px;
-	background-color: var( --studio-gray-0 );
 	width: fit-content;
 	padding: 0;
 	margin: 4px 0;
@@ -463,10 +462,6 @@ $blueberry-color: #3858e9;
 		font-style: normal;
 		padding: 4px 16px;
 		color: inherit;
-
-		&:hover {
-			text-decoration: none;
-		}
 	}
 
 	svg.gridicons-external {

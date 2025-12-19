@@ -3,8 +3,8 @@ import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Dashboard: Basic & Routing', { tag: [ tags.CALYPSO_PR ] }, () => {
 	test.skip(
-		DataHelper.isCalypsoProduction(),
-		'Skipping for WordPress.com as Multi-site Dashboard is not enabled yet.'
+		! DataHelper.isCalypsoLocalDevelopment(),
+		'Skipping until we have separated Multi-site Dashboard tests from WordPress.com tests.'
 	);
 
 	test( 'As a WordPress.com user, I can see the new Multi-site Dashboard page as a list of my sites', async ( {
@@ -36,7 +36,7 @@ test.describe( 'Dashboard: Basic & Routing', { tag: [ tags.CALYPSO_PR ] }, () =>
 		} );
 
 		await test.step( 'When I visit the dashboard page', async function () {
-			await pageDashboard.visitPath( 'non-existent-page' );
+			await pageDashboard.visitPath( 'me/non-existent-page' );
 		} );
 
 		await test.step( 'Then I see a 404 error page', async function () {

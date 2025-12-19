@@ -630,6 +630,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/add-email/add-email-through-office-365/',
 		post_id: 78065,
 	},
+	'domain-email-authentication': {
+		link: 'https://wordpress.com/support/domains/set-up-email-authentication-for-your-domain/',
+		post_id: 323153,
+	},
 	'domain-designated-agent': {
 		link: 'https://wordpress.com/support/domains/update-contact-information/#designated-agent',
 		post_id: 3441,

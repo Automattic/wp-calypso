@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 .plugin-icon-placeholder {
 	width: 32px;
 	height: 32px;
@@ -13,9 +15,7 @@ img.plugin-icon {
 }
 
 .plugin-sites-card-body {
-	// take into account header and nav plus border (64+1), page layout padding (32),
-	// page title/description (80), and gap between title/description and the cards (32)
-	max-height: calc(100vh - 2 * ( 64px + 1px ) - 2 * 32px - 80px - 32px);
+	max-height: $card-height;
 	padding-inline-start: 0;
 	padding-inline-end: 0;
 	overflow-y: auto;

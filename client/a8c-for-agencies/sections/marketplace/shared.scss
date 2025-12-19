@@ -17,7 +17,7 @@
 	}
 }
 
-.a4a-marketplace__header-actions {
+.main.hosting-dashboard-layout .a4a-marketplace__header-actions {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -26,9 +26,16 @@
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
-		.current-section button {
+		header.current-section button {
 			border: none;
+			padding: 0;
 		}
 		justify-content: space-between;
+	}
+
+	.a4a-marketplace__term-pricing-toggle {
+		@include breakpoint-deprecated( "<660px" ) {
+			justify-content: center;
+		}
 	}
 }

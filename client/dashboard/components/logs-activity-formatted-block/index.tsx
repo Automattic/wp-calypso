@@ -16,6 +16,7 @@
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
+import { wpcomLink } from '../../utils/link';
 import type { ActivityBlockContent, ActivityBlockNode, ActivityBlockMeta } from './types';
 
 type BlockClickHandler = ( event: MouseEvent< HTMLAnchorElement > ) => void;
@@ -146,7 +147,7 @@ const Person: BlockRenderer = ( { content, children, onClick, meta } ) => {
 
 	return (
 		<a
-			href={ `/people/edit/${ siteId }/${ name }` }
+			href={ wpcomLink( `/people/edit/${ siteId }/${ name }` ) }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'users' }
