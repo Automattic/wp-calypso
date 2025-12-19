@@ -51,7 +51,7 @@ export default function PlanProductRevertContent( {
 				/>
 			) }
 
-			<ButtonStack>
+			<ButtonStack justify="flex-start">
 				<CancelButton
 					purchase={ purchase }
 					includedDomainPurchase={ includedDomainPurchase }

@@ -366,7 +366,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 
 		if ( surveyStep === REMOVE_PLAN_STEP ) {
 			return (
-				<ButtonStack>
+				<ButtonStack justify="flex-start">
 					<Button
 						className="cancel-purchase-form__remove-plan-button"
 						disabled={ ! canGoNext() }
@@ -390,7 +390,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 
 		if ( surveyStep === CANCELLATION_OFFER_STEP ) {
 			return (
-				<ButtonStack>
+				<ButtonStack justify="flex-start">
 					<Button
 						disabled={
 							! canGoNext() || disableButtons /* || disableContinuation || applyingOffer*/

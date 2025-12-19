@@ -89,7 +89,7 @@ export default function DomainRemovalWarningStep( {
 				<Text>{ __( 'Do you still want to continue with deleting your domain?' ) }</Text>
 			</VStack>
 
-			<ButtonStack justify="flex-end">
+			<ButtonStack justify="flex-start">
 				<Button
 					__next40pxDefaultSize
 					variant="tertiary"
