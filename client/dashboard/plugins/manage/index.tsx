@@ -143,7 +143,7 @@ export default function PluginsList() {
 			}
 			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
-			<Grid columns={ 2 } gap={ 6 } templateColumns="392px 1fr">
+			<Grid columns={ 2 } gap={ 3 } templateColumns="392px 1fr">
 				<PluginSwitcher
 					pluginsWithIcon={ pluginsWithIcon }
 					searchableFields={ searchableFields }
