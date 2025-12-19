@@ -111,25 +111,26 @@ export default function SwitcherContent< T >( {
 	return (
 		<NavigableMenu style={ { width } }>
 			<MenuGroup>
-				<SearchControl
-					className={ searchClassName }
-					label={ __( 'Search' ) }
-					value={ view.search }
-					onChange={ ( value ) => onChangeView( { ...view, search: value } ) }
-					size="compact"
-					__nextHasNoMarginBottom
-				/>
-				{ filterField && filterButtonLabel && (
-					<Button
-						variant={ hasActiveFilter ? 'primary' : 'tertiary' }
-						onClick={ toggleFilter }
-						icon={ funnel }
-						style={ { marginTop: '8px', width: '100%' } }
+				<HStack justify="space-between" alignment="center">
+					<SearchControl
+						className={ searchClassName }
+						label={ __( 'Search' ) }
+						value={ view.search }
+						onChange={ ( value ) => onChangeView( { ...view, search: value } ) }
 						size="compact"
-					>
-						{ filterButtonLabel }
-					</Button>
-				) }
+						__nextHasNoMarginBottom
+					/>
+					{ filterField && filterButtonLabel && (
+						<Button
+							variant={ hasActiveFilter ? 'primary' : 'tertiary' }
+							onClick={ toggleFilter }
+							icon={ funnel }
+							size="compact"
+						>
+							{ filterButtonLabel }
+						</Button>
+					) }
+				</HStack>
 			</MenuGroup>
 			<MenuGroup hideSeparator>
 				{ filteredData.map( ( item ) => {
