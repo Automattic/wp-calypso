@@ -16,6 +16,7 @@ import {
 	rawUserPreferencesQuery,
 	domainAvailabilityQuery,
 	domainInboundTransferStatusQuery,
+	purchaseQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
@@ -166,6 +167,9 @@ export const domainOverviewRoute = createRoute( {
 
 		queryClient.prefetchQuery( siteByIdQuery( domain.blog_id ) );
 		queryClient.prefetchQuery( mailboxesQuery( domain.blog_id ) );
+		await queryClient.ensureQueryData(
+			purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
+		);
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>
