@@ -243,7 +243,7 @@ const sections = [
 	},
 	{
 		name: 'oauth2-client',
-		paths: [ '/oauth2' ],
+		paths: [ '/oauth2', '/oauth2/authorize' ],
 		module: 'calypso/oauth2',
 		enableLoggedOut: true,
 	},
