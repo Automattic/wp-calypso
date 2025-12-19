@@ -116,6 +116,11 @@ const ActionButton = ( {
 	const renewalPricingText = useRenewalPricingPostButtonText( {
 		planSlug,
 		pricing: gridPlansIndex[ planSlug ]?.pricing,
+		isMonthlyPlan,
+		coupon: usePlansGridContext().coupon,
+		siteId,
+		useCheckPlanAvailabilityForPurchase:
+			usePlansGridContext().helpers.useCheckPlanAvailabilityForPurchase,
 	} );
 
 	// Use renewal pricing text if available, otherwise use the postButtonText from useAction

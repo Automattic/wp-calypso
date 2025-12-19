@@ -69,6 +69,12 @@ export default function usePlanBillingDescription( {
 		yearlyVariantPricing &&
 		( ! introOffer || introOffer.isOfferComplete )
 	) {
+		// For renewal pricing experiment in FeaturesGrid, show "per month" and move savings text to post-button area
+		// For ComparisonGrid, keep the original savings text above the button
+		if ( renewalPricingVariation && enableCategorisedFeatures ) {
+			return translate( 'per month' );
+		}
+
 		const yearlyVariantMaybeDiscountedPrice = Number.isFinite(
 			yearlyVariantPricing.discountedPrice?.monthly
 		)
