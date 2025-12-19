@@ -269,7 +269,15 @@ export default function usePlanBillingDescription( {
 		return null;
 	}
 
-	if ( discountedPriceFullTermText ) {
+	// For renewal pricing experiment with intro pricing
+	if ( renewalPricingVariation && discountedPriceFullTermText ) {
+		// In FeaturesGrid, show "per month" above button
+		if ( enableCategorisedFeatures ) {
+			return translate( 'per month' );
+		}
+		// In ComparisonGrid, continue to renewal pricing section below (don't return here)
+	} else if ( discountedPriceFullTermText ) {
+		// Show intro pricing for non-experiment users
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 			return translate(
 				'per month, %(fullTermDiscountedPriceText)s for the first year, excl. taxes',
@@ -299,7 +307,9 @@ export default function usePlanBillingDescription( {
 				}
 			);
 		}
-	} else if ( renewalPricingVariation ) {
+	}
+
+	if ( renewalPricingVariation ) {
 		// For renewal pricing experiment, show variation-specific text
 		// In FeaturesGrid (enableCategorisedFeatures), show "per month" and move renewal text below CTA
 		// In ComparisonGrid, show full renewal text above CTA
