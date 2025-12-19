@@ -59,7 +59,6 @@ export default function SwitcherContent< T >( {
 			enableGlobalSearch: true,
 		} ) );
 
-		// Add filter field if provided
 		if ( filterField ) {
 			allFields.push( {
 				...filterField,
