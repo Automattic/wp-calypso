@@ -1,4 +1,5 @@
 import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
+import { addQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { logmeinUrl } from 'calypso/lib/logmein';
@@ -152,7 +153,15 @@ export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: b
 
 	const readerPath = '/reader';
 	const postsListPath = '/posts/' + invite.site.ID;
-	const mySitesPath = hasDashboardOptIn ? dashboardLink( '/sites' ) : '/sites';
+	const mySitesPath = hasDashboardOptIn
+		? dashboardLink(
+				addQueryArgs( '/sites', {
+					flash: 'invite-accepted',
+					'invite-role': invite.role,
+					'invite-site-title': invite.site.title || invite.site.URL,
+				} )
+		  )
+		: '/sites';
 	const getDestinationUrl = ( redirect: string ) => {
 		const remoteLoginHost = `https://${ invite.site.domain }`;
 		const remoteLoginBackUrl = ( destinationPath: string ) =>

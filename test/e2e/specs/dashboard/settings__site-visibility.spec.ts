@@ -3,8 +3,8 @@ import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Dashboard: Site Visibility Settings', { tag: [ tags.CALYPSO_RELEASE ] }, () => {
 	test.skip(
-		DataHelper.isCalypsoProduction(),
-		'Skipping for WordPress.com as Multi-site Dashboard is not enabled yet.'
+		! DataHelper.isCalypsoLocalDevelopment(),
+		'Skipping until we have separated Multi-site Dashboard tests from WordPress.com tests.'
 	);
 
 	test( 'As a new simple site user, I can set my site visibility to Private, so that only I can see my site', async ( {

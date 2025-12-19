@@ -374,13 +374,9 @@ $blueberry-color: #3858e9;
 		}
 
 		.odie-conversation-feedback__message {
-			h3 {
-				font-weight: 500;
-				line-height: 24px;
-			}
-
 			p {
-				padding: 12px 0;
+				padding-top: 12px;
+				padding-bottom: 20px;
 				background-color: unset !important;
 				color: var( --studio-gray-80 );
 				line-height: 20px;
@@ -391,8 +387,8 @@ $blueberry-color: #3858e9;
 			}
 
 			button.is-primary {
-				margin-top: 10px;
-				margin-right: 8px;
+				margin-block: 16px;
+				margin-inline-end: 8px;
 				background: var( --studio-wordpress-blue, #3858e9 );
 			}
 

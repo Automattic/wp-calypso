@@ -23,6 +23,7 @@ export interface SupportedEnvVariables {
 	readonly CALYPSO_BASE_URL: string;
 	readonly COBLOCKS_EDGE: boolean;
 	readonly COOKIES_PATH: string;
+	readonly DASHBOARD_BASE_URL: string;
 	readonly GUTENBERG_EDGE: boolean;
 	readonly GUTENBERG_NIGHTLY: boolean;
 	readonly HEADLESS: boolean;
