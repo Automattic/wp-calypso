@@ -20,11 +20,9 @@ import NameServersSettingsSummary from '../name-servers/summary';
 export default function DomainOverviewSettings( {
 	domain,
 	domainDiagnostics,
-	isLoadingDiagnostics,
 }: {
 	domain: Domain;
 	domainDiagnostics: DomainDiagnostics | undefined;
-	isLoadingDiagnostics: boolean;
 } ) {
 	const buttonListItems = [];
 
@@ -54,8 +52,7 @@ export default function DomainOverviewSettings( {
 	if (
 		domain.is_mapped_to_atomic_site &&
 		domain.primary_domain &&
-		! isLoadingDiagnostics &&
-		domainDiagnostics
+		domainDiagnostics !== undefined
 	) {
 		buttonListItems.push(
 			<DomainDiagnosticsSettingsSummary

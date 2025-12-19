@@ -28,7 +28,7 @@ export default function DomainOverview() {
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
 
-	const { data: diagnosticsData, isLoading: isLoadingDiagnostics } = useQuery( {
+	const { data: diagnosticsData } = useQuery( {
 		...domainDiagnosticsQuery( domain.domain ),
 		enabled: domain.is_mapped_to_atomic_site && domain.primary_domain,
 	} );
@@ -123,11 +123,7 @@ export default function DomainOverview() {
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
 						<FeaturedCards />
-						<DomainOverviewSettings
-							domain={ domain }
-							domainDiagnostics={ diagnosticsData }
-							isLoadingDiagnostics={ isLoadingDiagnostics }
-						/>
+						<DomainOverviewSettings domain={ domain } domainDiagnostics={ diagnosticsData } />
 					</>
 				) }
 				<Actions />
