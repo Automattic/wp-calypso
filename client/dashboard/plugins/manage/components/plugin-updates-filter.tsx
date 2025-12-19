@@ -3,6 +3,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { PluginListRow } from '../types';
 import type { View, Field } from '@wordpress/dataviews';
 
+import './plugin-updates-filter.scss';
+
 export const PluginUpdatesFilter = ( {
 	siteCount,
 	updatesField,
@@ -42,20 +44,18 @@ export const PluginUpdatesFilter = ( {
 	};
 
 	return (
-		<div className="dataviews-filters__container-visibility-toggle">
-			<Button
-				className="dataviews-filters__visibility-toggle"
-				size="compact"
-				onClick={ () => {
-					toggleFilterValue( true );
-				} }
-			>
-				{ sprintf(
-					// translators: %(siteCount)d is the number of plugins with updates available.
-					__( 'Update available (%(siteCount)d)' ),
-					{ siteCount }
-				) }
-			</Button>
-		</div>
+		<Button
+			className="plugin-switcher__updates-filter"
+			size="compact"
+			onClick={ () => {
+				toggleFilterValue( true );
+			} }
+		>
+			{ sprintf(
+				// translators: %(siteCount)d is the number of plugins with updates available.
+				__( 'Update available (%(siteCount)d)' ),
+				{ siteCount }
+			) }
+		</Button>
 	);
 };

@@ -1,0 +1,10 @@
+.plugin-switcher__updates-filter {
+	text-wrap-mode: nowrap;
+	padding-inline-start: 0;
+	padding-inline-end: calc(4px * 6);
+
+	&:focus {
+		box-shadow: none !important;
+		outline: none !important;
+	}
+}
