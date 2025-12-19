@@ -35,6 +35,7 @@ import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
 import { SiteLink, SiteLink__ES } from './site-fields';
+import { OptInWelcomeModal } from './welcome-modal';
 import type {
 	FetchSitesOptions,
 	Site,
@@ -344,6 +345,7 @@ export default function Sites() {
 
 	return (
 		<>
+			<OptInWelcomeModal />
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
