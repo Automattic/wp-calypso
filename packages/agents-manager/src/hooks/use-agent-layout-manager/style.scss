@@ -226,6 +226,10 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			border-top: none;
 			border-right: none;
 		}
+
+		.domain-search--step-wrapper .domain-search--initial-state__already-own-domain-cta {
+			position: absolute;
+		}
 	}
 }
 
@@ -249,6 +253,37 @@ body.is-section-dashboard-dotcom.agents-manager-sidebar-container {
 			top: $layout-spacing;
 			left: $layout-spacing;
 			overflow: auto !important;
+		}
+	}
+}
+
+body.is-section-stepper.agents-manager-sidebar-container {
+	@include sidebar-base( '#wpcom .step-route' );
+
+	.step-route {
+		background-color: var(--color-main-background) !important;
+	}
+
+	&.agents-manager-sidebar-container--sidebar-open {
+		@include sidebar-open-base('#wpcom .step-route');
+
+		.step-route {
+			position: relative;
+			height: calc( 100vh - ( $layout-spacing * 2 ) );
+			min-height: unset;
+			top: $layout-spacing;
+			left: $layout-spacing;
+			overflow: auto !important;
+			margin: 0 !important;
+
+			.step-container-v2 {
+				height: 100%;
+				min-height: unset;
+			}
+		}
+
+		.domain-transfer {
+			max-width: unset;
 		}
 	}
 }
