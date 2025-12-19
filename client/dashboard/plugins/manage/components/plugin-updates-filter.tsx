@@ -70,7 +70,7 @@ export const PluginUpdatesFilter = ( {
 					tabIndex={ 0 }
 					onClick={ () => toggleFilterValue( false ) }
 				>
-					<Text className="plugin-switcher__updates-filter-active-label">{ label }</Text>
+					<Text>{ label }</Text>
 
 					<button
 						className="plugin-switcher__updates-filter-remove"
