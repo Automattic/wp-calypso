@@ -23,16 +23,16 @@ export const PluginUpdatesFilter = ( {
 
 	const toggleFilterValue = ( value: boolean ) => {
 		const isCurrentlySelected = currentFilter?.value === value;
+		const otherFilters = view.filters?.filter( ( f ) => f.field !== updatesField.id ) || [];
 
 		if ( isCurrentlySelected ) {
 			// Remove the filter
 			onChangeView( {
 				...view,
-				filters: view.filters?.filter( ( f ) => f.field !== updatesField.id ) || [],
+				filters: otherFilters,
 			} );
 		} else {
-			// Add or update the filter
-			const otherFilters = view.filters?.filter( ( f ) => f.field !== updatesField.id ) || [];
+			// Add the filter
 			onChangeView( {
 				...view,
 				filters: [
@@ -95,4 +95,3 @@ export const PluginUpdatesFilter = ( {
 		</div>
 	);
 };
-// dataviews-filters__summary-chip-remove
