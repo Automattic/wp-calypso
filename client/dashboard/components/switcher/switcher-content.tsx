@@ -115,7 +115,7 @@ export default function SwitcherContent< T >( {
 	return (
 		<NavigableMenu style={ { width } }>
 			<MenuGroup>
-				<HStack justify="space-between" alignment="center">
+				<HStack justify="flex-start" alignment="center">
 					<SearchControl
 						className={ searchClassName }
 						label={ __( 'Search' ) }
@@ -125,7 +125,7 @@ export default function SwitcherContent< T >( {
 						__nextHasNoMarginBottom
 					/>
 					{ filterField && (
-						<>
+						<div className="dataviews-filters__container-visibility-toggle">
 							<Button
 								ref={ filterButtonRef }
 								className="dataviews-filters__visibility-toggle"
@@ -133,14 +133,18 @@ export default function SwitcherContent< T >( {
 								icon={ funnel }
 								onClick={ () => setIsPopoverOpen( ! isPopoverOpen ) }
 								aria-expanded={ isPopoverOpen }
+								isPressed={ isPopoverOpen }
 							/>
+							{ view.filters && view.filters.length > 0 && (
+								<span className="dataviews-filters-toggle__count">{ view.filters.length }</span>
+							) }
 							{ isPopoverOpen && (
 								<Popover
 									anchor={ filterButtonRef.current }
 									onClose={ () => setIsPopoverOpen( false ) }
 									placement="bottom-end"
 								>
-									<VStack spacing={ 2 }>
+									<VStack spacing={ 2 } style={ { padding: '16px', minWidth: '200px' } }>
 										{ filterField.elements?.map( ( element ) => {
 											const currentFilter = view.filters?.find(
 												( f ) => f.field === filterField.id
@@ -152,14 +156,17 @@ export default function SwitcherContent< T >( {
 													key={ String( element.value ) }
 													label={ element.label }
 													checked={ isChecked }
-													onChange={ () => toggleFilterValue( element.value ) }
+													onChange={ () => {
+														toggleFilterValue( element.value );
+														setIsPopoverOpen( ! isPopoverOpen );
+													} }
 												/>
 											);
 										} ) }
 									</VStack>
 								</Popover>
 							) }
-						</>
+						</div>
 					) }
 				</HStack>
 			</MenuGroup>
