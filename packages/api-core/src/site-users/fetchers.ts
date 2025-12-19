@@ -17,14 +17,14 @@ export async function fetchSiteUsers( siteId: number ): Promise< SiteUser[] > {
 
 export async function fetchWpcomSiteUsers(
 	siteId: number,
-	role?: string
+	options?: { role?: string }
 ): Promise< WpcomSiteUsersResponse > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/users`,
 		apiVersion: '1.1',
 		query: {
 			force: 'wpcom',
-			...( role && { role } ),
+			...options,
 		},
 	} );
 }
