@@ -191,7 +191,7 @@ export default function DomainDiagnostics() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-					description={ __( 'Domain diagnostics tools.' ) }
+					description={ __( 'Detect domain configuration issues and fix them.' ) }
 				/>
 			}
 		>
