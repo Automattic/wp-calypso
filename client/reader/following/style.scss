@@ -70,7 +70,7 @@
 }
 
 .following-stream__quick-post-card {
-	&-container {
+	.following-stream__quick-post-card-container {
 		padding: 16px;
 
 		@include break-small {
@@ -91,14 +91,12 @@
 		}
 
 		&.is-expanded {
-
 			.foldable-card__content {
 				overflow: visible;
 			}
 		}
 	}
 }
-
 
 .following-stream__quick-post-card.card.is-compact {
 	margin-bottom: 20px !important;
