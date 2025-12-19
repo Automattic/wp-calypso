@@ -80,8 +80,7 @@ export class DashboardPage {
 	 * @returns Promise that resolves when navigation is complete.
 	 */
 	async visitPath( path: string ): Promise< void > {
-		const unslashed = path.startsWith( '/' ) ? path.substring( 1 ) : path;
-		await this.page.goto( getDashboardURL( unslashed ) );
+		await this.page.goto( getDashboardURL( path ) );
 	}
 
 	/**
