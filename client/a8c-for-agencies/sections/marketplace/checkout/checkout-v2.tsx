@@ -1,4 +1,3 @@
-import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -23,8 +22,6 @@ function CheckoutV2() {
 
 	// Fetch selected products by slug for site checkout
 	const { selectedProductsBySlug } = useProductsBySlug();
-
-	const siteId = getQueryArg( window.location.href, 'site_id' )?.toString();
 
 	const title = translate( 'Checkout' );
 
@@ -55,7 +52,9 @@ function CheckoutV2() {
 			<LayoutBody>
 				<BillingDragonCheckout
 					withA8cLogo={ false }
-					cartItems={ siteId ? selectedProductsBySlug : selectedCartItems }
+					cartItems={
+						selectedProductsBySlug.length > 0 ? selectedProductsBySlug : selectedCartItems
+					}
 				/>
 			</LayoutBody>
 		</Layout>
