@@ -17,7 +17,6 @@ class EnvVariables implements SupportedEnvVariables {
 		CALYPSO_BASE_URL: 'http://calypso.localhost:3000',
 		COBLOCKS_EDGE: false,
 		COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
-		DASHBOARD_BASE_URL: 'https://my.wordpress.com',
 		GUTENBERG_EDGE: false,
 		GUTENBERG_NIGHTLY: false,
 		HEADLESS: false,
@@ -238,14 +237,6 @@ class EnvVariables implements SupportedEnvVariables {
 	 */
 	get WPCOM_BASE_URL(): string {
 		return this.getValidatedUrlEnvVar( 'WPCOM_BASE_URL' );
-	}
-
-	/**
-	 * Returns the Dashboard base URL.
-	 * @example 'https://my.wordpress.com'
-	 */
-	get DASHBOARD_BASE_URL(): string {
-		return this.getValidatedUrlEnvVar( 'DASHBOARD_BASE_URL' );
 	}
 
 	get BROWSER_NAME(): string {
