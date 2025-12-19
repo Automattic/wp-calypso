@@ -16,13 +16,11 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-service' );
+const debug = debugFactory(
+	'calypso:composite-checkout:renewal-pricing-experiment-terms-of-service'
+);
 
-export default function AdditionalTermsOfServiceInCart( {
-	shouldShowRenewalPricingExperimentTerms,
-}: {
-	shouldShowRenewalPricingExperimentTerms: boolean;
-} ) {
+export default function RenewalPricingExperimentTermsOfService() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -31,37 +29,33 @@ export default function AdditionalTermsOfServiceInCart( {
 		return null;
 	}
 
-	let matchingTerms = responseCart.terms_of_service;
+	// Find all wpcom products with introductory offer terms
+	const productsWithIntroOffer = responseCart.products.filter( ( product ) =>
+		isWpcomRecurringProductWithIntroOffer( product )
+	);
 
-	if ( shouldShowRenewalPricingExperimentTerms ) {
-		// Find all products WITHOUT introductory offer terms
-		const productsWithoutIntroOffer = responseCart.products.filter(
-			( product ) => ! isWpcomRecurringProductWithIntroOffer( product )
-		);
+	// If no products with intro offers, show no terms
+	if ( productsWithIntroOffer.length === 0 ) {
+		return null;
+	}
 
-		// If no products without intro offers, show no terms
-		if ( productsWithoutIntroOffer.length === 0 ) {
-			return null;
-		}
+	// Build the expected terms of service keys for products with intro offers
+	// Key format: 'free_trial_terms,meta:{product.meta},product_id:{product.product_id}'
+	const expectedTermsKeys = new Set(
+		productsWithIntroOffer.map( ( product ) => {
+			const meta = product.meta || '';
+			return `free_trial_terms,meta:${ meta },product_id:${ product.product_id }`;
+		} )
+	);
 
-		// Build the expected terms of service keys for products without intro offers
-		// Key format: 'free_trial_terms,meta:{product.meta},product_id:{product.product_id}'
-		const expectedTermsKeys = new Set(
-			productsWithoutIntroOffer.map( ( product ) => {
-				const meta = product.meta || '';
-				return `free_trial_terms,meta:${ meta },product_id:${ product.product_id }`;
-			} )
-		);
+	// Filter terms of service to only those matching products with intro offers
+	const matchingTerms = responseCart.terms_of_service.filter( ( termsOfServiceRecord ) =>
+		expectedTermsKeys.has( termsOfServiceRecord.key )
+	);
 
-		// Filter terms of service to only those matching products without intro offers
-		matchingTerms = responseCart.terms_of_service.filter( ( termsOfServiceRecord ) =>
-			expectedTermsKeys.has( termsOfServiceRecord.key )
-		);
-
-		// If no matching terms, show nothing
-		if ( matchingTerms.length === 0 ) {
-			return null;
-		}
+	// If no matching terms, show nothing
+	if ( matchingTerms.length === 0 ) {
+		return null;
 	}
 
 	return (
@@ -108,6 +102,7 @@ function MessageForTermsOfServiceRecordUnknown( {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const args = termsOfServiceRecord.args;
+
 	if ( ! args ) {
 		return null;
 	}
