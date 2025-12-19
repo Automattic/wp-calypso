@@ -270,7 +270,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						event_source: 'odie',
 					} );
 				} else if ( supportInteraction && ! odieId && chatId ) {
-					supportInteraction = await addEventToInteraction.mutateAsync( {
+					supportInteraction = await addEventToInteraction( {
 						interactionId: supportInteraction.uuid,
 						eventData: {
 							event_external_id: chatId.toString(),
