@@ -1,7 +1,7 @@
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { throttle } from '@wordpress/compose';
 import { Field, View } from '@wordpress/dataviews';
-import { _n, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -135,7 +135,10 @@ export const PluginSwitcher = ( {
 		() => ( {
 			id: 'hasUpdates',
 			type: 'boolean' as const,
-			elements: [ { value: true }, { value: false } ],
+			elements: [
+				{ value: true, label: __( 'Has updates' ) },
+				{ value: false, label: __( 'No updates' ) },
+			],
 			getValue: ( { item }: { item: PluginListRow } ) => item.sitesWithPluginUpdate.length > 0,
 		} ),
 		[]
