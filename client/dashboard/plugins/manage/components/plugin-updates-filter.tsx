@@ -16,8 +16,9 @@ export const PluginUpdatesFilter = ( {
 	view: View;
 	onChangeView: ( newView: View ) => void;
 } ) => {
-	const toggleFilterValue = ( value: boolean | string | number ) => {
-		const currentFilter = view.filters?.find( ( f ) => f.field === updatesField.id );
+	const currentFilter = view.filters?.find( ( f ) => f.field === updatesField.id );
+
+	const toggleFilterValue = ( value: boolean ) => {
 		const isCurrentlySelected = currentFilter?.value === value;
 
 		if ( isCurrentlySelected ) {
@@ -50,6 +51,7 @@ export const PluginUpdatesFilter = ( {
 			onClick={ () => {
 				toggleFilterValue( true );
 			} }
+			aria-selected={ currentFilter?.value === true }
 		>
 			{ sprintf(
 				// translators: %(siteCount)d is the number of plugins with updates available.
