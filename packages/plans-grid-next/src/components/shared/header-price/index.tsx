@@ -51,6 +51,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		siteId,
 		coupon,
 		helpers,
+		renewalPricingVariation,
 	} = usePlansGridContext();
 	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
@@ -86,7 +87,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const termVariantPrice =
 		termVariantPricing?.discountedPrice.monthly ?? termVariantPricing?.originalPrice.monthly ?? 0;
 	const planPrice = discountedPrice.monthly ?? originalPrice.monthly ?? 0;
-	const savings =
+	let savings =
 		termVariantPrice > planPrice
 			? Math.floor( ( ( termVariantPrice - planPrice ) / termVariantPrice ) * 100 )
 			: 0;
@@ -110,13 +111,36 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;
 	}
+	const isRenewalPricingTreatment = renewalPricingVariation?.includes( 'crossed_price' );
 
 	if ( isGridPlanOnIntroOffer ) {
+		// Use the monthly plan price for renewal pricing, instead of the intro offer renewal price
+		const compareToMonthlyPrice =
+			( isRenewalPricingTreatment && termVariantPricing
+				? termVariantPricing.originalPrice.monthly
+				: originalPrice.monthly ) ?? 0;
+		const monthlyPrice =
+			typeof discountedPrice.monthly === 'number'
+				? discountedPrice.monthly
+				: introOffer.rawPrice.monthly;
+		if ( isRenewalPricingTreatment && compareToMonthlyPrice > monthlyPrice ) {
+			savings = Math.floor(
+				( ( compareToMonthlyPrice - monthlyPrice ) / compareToMonthlyPrice ) * 100
+			);
+		}
+		const hideCrossedPrice =
+			isRenewalPricingTreatment && renewalPricingVariation === 'no_crossed_price';
+
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
 					<div className="plans-grid-next-header-price__badge">
-						{ translate( 'Special Offer' ) }
+						{ isRenewalPricingTreatment
+							? translate( 'Save %(savings)d%%', {
+									args: { savings },
+									comment: 'Example: Save 35%',
+							  } )
+							: translate( 'Special Offer' ) }
 					</div>
 				) }
 				<div
@@ -124,22 +148,20 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						'is-large-currency': isLargeCurrency,
 					} ) }
 				>
+					{ ! hideCrossedPrice && (
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ compareToMonthlyPrice }
+							displayPerMonthNotation={ false }
+							isLargeCurrency
+							isSmallestUnit
+							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+							original
+						/>
+					) }
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ originalPrice.monthly }
-						displayPerMonthNotation={ false }
-						isLargeCurrency
-						isSmallestUnit
-						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={
-							typeof discountedPrice.monthly === 'number'
-								? discountedPrice.monthly
-								: introOffer.rawPrice.monthly
-						}
+						rawPrice={ monthlyPrice }
 						displayPerMonthNotation={ false }
 						isLargeCurrency
 						isSmallestUnit
