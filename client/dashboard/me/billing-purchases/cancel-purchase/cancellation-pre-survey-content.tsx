@@ -1,5 +1,3 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
-import { Text } from '../../../components/text';
 import CancellationMainContent from './cancellation-main-content';
 import DomainOptionsContent from './domain-options-content';
 import type { CancelPurchaseState } from './types';
@@ -43,37 +41,31 @@ export default function CancellationPreSurveyContent( {
 	shouldHandleMarketplaceSubscriptions,
 	showMarketplaceDialog,
 }: CancellationPreSurveyContentProps ) {
-	return (
-		<VStack>
-			<Text>
-				{ state.showDomainOptionsStep ? (
-					<DomainOptionsContent
-						purchase={ purchase }
-						includedDomainPurchase={ includedDomainPurchase }
-						atomicTransfer={ atomicTransfer }
-						state={ state }
-						onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
-						onKeepSubscriptionClick={ onKeepSubscriptionClick }
-						onCancellationComplete={ onCancellationComplete }
-					/>
-				) : (
-					<CancellationMainContent
-						purchase={ purchase }
-						includedDomainPurchase={ includedDomainPurchase }
-						atomicTransfer={ atomicTransfer }
-						selectedDomain={ selectedDomain }
-						state={ state }
-						purchaseCancelFeatures={ purchaseCancelFeatures }
-						onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
-						onDomainConfirmationChange={ onDomainConfirmationChange }
-						onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
-						onKeepSubscriptionClick={ onKeepSubscriptionClick }
-						onCancelClick={
-							shouldHandleMarketplaceSubscriptions() ? showMarketplaceDialog : onCancellationStart
-						}
-					/>
-				) }
-			</Text>
-		</VStack>
+	return state.showDomainOptionsStep ? (
+		<DomainOptionsContent
+			purchase={ purchase }
+			includedDomainPurchase={ includedDomainPurchase }
+			atomicTransfer={ atomicTransfer }
+			state={ state }
+			onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
+			onKeepSubscriptionClick={ onKeepSubscriptionClick }
+			onCancellationComplete={ onCancellationComplete }
+		/>
+	) : (
+		<CancellationMainContent
+			purchase={ purchase }
+			includedDomainPurchase={ includedDomainPurchase }
+			atomicTransfer={ atomicTransfer }
+			selectedDomain={ selectedDomain }
+			state={ state }
+			purchaseCancelFeatures={ purchaseCancelFeatures }
+			onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
+			onDomainConfirmationChange={ onDomainConfirmationChange }
+			onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
+			onKeepSubscriptionClick={ onKeepSubscriptionClick }
+			onCancelClick={
+				shouldHandleMarketplaceSubscriptions() ? showMarketplaceDialog : onCancellationStart
+			}
+		/>
 	);
 }
