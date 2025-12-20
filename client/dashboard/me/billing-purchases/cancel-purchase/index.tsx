@@ -1202,7 +1202,7 @@ export default function CancelPurchase() {
 		>
 			<Card>
 				<CardBody>
-					<VStack>
+					<VStack spacing={ 6 }>
 						<CancelPurchaseForm
 							atomicRevertCheckOne={ state.atomicRevertCheckOne }
 							atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
