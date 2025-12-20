@@ -27,8 +27,6 @@ import type {
 	Purchase,
 } from '@automattic/api-core';
 
-import './style.scss';
-
 interface CancelPurchaseFormProps {
 	atomicRevertCheckOne?: boolean;
 	atomicRevertCheckTwo?: boolean;
