@@ -439,9 +439,8 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 
 	return (
 		props.isVisible && (
-			<VStack spacing={ 4 }>
+			<VStack spacing={ 6 }>
 				{ surveyContent() }
-
 				{ renderStepButtons() }
 			</VStack>
 		)
