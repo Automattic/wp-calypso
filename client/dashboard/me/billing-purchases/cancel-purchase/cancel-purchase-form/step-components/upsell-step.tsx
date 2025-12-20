@@ -10,6 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import * as React from 'react';
 import { useAnalytics } from '../../../../../app/analytics';
 import { useHelpCenter } from '../../../../../app/help-center';
+import { ButtonStack } from '../../../../../components/button-stack';
 import { redirectToDashboardLink, wpcomLink } from '../../../../../utils/link';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
@@ -27,25 +28,25 @@ function Upsell( { ...props }: UpsellProps ) {
 	const declineButtonText = __( 'Cancel my current plan' );
 
 	return (
-		<VStack>
-			<div className="cancel-purchase-form__upsell-content">
+		<VStack spacing={ 6 }>
+			<VStack>
 				<div className="cancel-purchase-form__upsell-subheader">{ __( 'Here is an idea' ) }</div>
 				<Heading>{ props.title }</Heading>
 				<div className="cancel-purchase-form__upsell-text">{ props.children }</div>
-				<div className="cancel-purchase-form__upsell-buttons">
-					<Button
-						variant="primary"
-						href={ props.acceptButtonUrl }
-						onClick={ props.onAccept }
-						isBusy={ props.isBusy }
-					>
-						{ props.acceptButtonText }
-					</Button>
-					<Button variant="secondary" onClick={ props.onDecline } disabled={ props.isBusy }>
-						{ declineButtonText }
-					</Button>
-				</div>
-			</div>
+			</VStack>
+			<ButtonStack justify="flex-start">
+				<Button
+					variant="primary"
+					href={ props.acceptButtonUrl }
+					onClick={ props.onAccept }
+					isBusy={ props.isBusy }
+				>
+					{ props.acceptButtonText }
+				</Button>
+				<Button variant="secondary" onClick={ props.onDecline } disabled={ props.isBusy }>
+					{ declineButtonText }
+				</Button>
+			</ButtonStack>
 		</VStack>
 	);
 }
