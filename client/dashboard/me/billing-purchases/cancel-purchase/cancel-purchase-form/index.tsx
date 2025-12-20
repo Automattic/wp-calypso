@@ -354,10 +354,10 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 		if ( ! isLastStep ) {
 			return (
 				<ButtonStack justify="flex-start">
-					<Button variant="secondary" disabled={ ! canGoNext() } onClick={ clickNext }>
+					<Button variant="primary" disabled={ ! canGoNext() } onClick={ clickNext }>
 						{ __( 'Continue' ) }
 					</Button>
-					<Button variant="link" onClick={ onSubmit }>
+					<Button variant="tertiary" onClick={ onSubmit }>
 						{ __( 'Skip' ) }
 					</Button>
 				</ButtonStack>
@@ -429,7 +429,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 					{ __( 'Submit' ) }
 				</Button>
 				{ ! canGoNext() && ! isCancelling && (
-					<Button variant="link" onClick={ onSubmit }>
+					<Button variant="tertiary" onClick={ onSubmit }>
 						{ __( 'Skip' ) }
 					</Button>
 				) }
