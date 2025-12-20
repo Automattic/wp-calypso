@@ -1200,9 +1200,9 @@ export default function CancelPurchase() {
 			}
 			notices={ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
 		>
-			<VStack>
-				<Card>
-					<CardBody>
+			<Card>
+				<CardBody>
+					<VStack>
 						<CancelPurchaseForm
 							atomicRevertCheckOne={ state.atomicRevertCheckOne }
 							atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
@@ -1292,9 +1292,9 @@ export default function CancelPurchase() {
 								sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
 							/>
 						) }
-					</CardBody>
-				</Card>
-			</VStack>
+					</VStack>
+				</CardBody>
+			</Card>
 		</PageLayout>
 	);
 }

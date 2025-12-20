@@ -28,7 +28,7 @@ export default function ConfirmCheckbox( {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 
 	return (
-		<VStack spacing={ 6 }>
+		<VStack spacing={ 4 }>
 			<VStack spacing={ 1 }>
 				<Text weight="bold">{ __( 'Have a question before cancelling?' ) }</Text>
 				<Text>
@@ -43,7 +43,7 @@ export default function ConfirmCheckbox( {
 
 			<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
 
-			<div>
+			<VStack spacing={ 1 }>
 				{ isDomainRegistrationPurchase && ! state.surveyShown && (
 					<CheckboxControl
 						label={ __( 'I understand that canceling means that I may lose this domain forever.' ) }
@@ -64,7 +64,7 @@ export default function ConfirmCheckbox( {
 						onCustomerConfirmedUnderstandingChange( checked );
 					} }
 				/>
-			</div>
+			</VStack>
 		</VStack>
 	);
 }
