@@ -75,11 +75,19 @@ export default function usePlanBillingDescription( {
 			return translate( 'per month' );
 		}
 
-		const yearlyVariantMaybeDiscountedPrice = Number.isFinite(
+		let yearlyVariantMaybeDiscountedPrice = Number.isFinite(
 			yearlyVariantPricing.discountedPrice?.monthly
 		)
 			? yearlyVariantPricing.discountedPrice?.monthly
 			: yearlyVariantPricing.originalPrice?.monthly;
+
+		if ( renewalPricingVariation ) {
+			yearlyVariantMaybeDiscountedPrice = Number.isFinite(
+				yearlyVariantPricing.discountedPrice?.monthly
+			)
+				? yearlyVariantPricing.discountedPrice?.monthly
+				: yearlyVariantPricing.introOffer?.rawPrice?.monthly ?? null;
+		}
 
 		if (
 			yearlyVariantMaybeDiscountedPrice &&

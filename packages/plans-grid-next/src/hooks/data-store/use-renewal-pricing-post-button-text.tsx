@@ -56,6 +56,11 @@ export default function useRenewalPricingPostButtonText( {
 		return null;
 	}
 
+	// Don't show for free or enterprise plans
+	if ( isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
+		return null;
+	}
+
 	const { currencyCode, discountedPrice, originalPrice, billingPeriod, introOffer } = pricing;
 
 	// For monthly plans, show the savings message
@@ -69,7 +74,7 @@ export default function useRenewalPricingPostButtonText( {
 			yearlyVariantPricing.discountedPrice?.monthly
 		)
 			? yearlyVariantPricing.discountedPrice?.monthly
-			: yearlyVariantPricing.originalPrice?.monthly;
+			: yearlyVariantPricing.introOffer?.rawPrice?.monthly;
 
 		if (
 			yearlyVariantMaybeDiscountedPrice &&
@@ -85,11 +90,6 @@ export default function useRenewalPricingPostButtonText( {
 			} );
 		}
 
-		return null;
-	}
-
-	// Don't show for free or enterprise plans
-	if ( isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;
 	}
 
