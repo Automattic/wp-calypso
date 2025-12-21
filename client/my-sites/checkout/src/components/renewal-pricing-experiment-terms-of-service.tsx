@@ -10,6 +10,7 @@ import { hasTranslation } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import { isWpcomRecurringProductWithIntroOffer } from 'calypso/my-sites/checkout/src/lib/has-wpcom-recurring-product-with-intro-offer';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -24,6 +25,8 @@ export default function RenewalPricingExperimentTermsOfService() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
+	const manageSubscriptionLink = `/purchases/subscriptions/${ siteSlug }`;
 
 	if ( ! responseCart.terms_of_service || responseCart.terms_of_service.length === 0 ) {
 		return null;
@@ -57,6 +60,55 @@ export default function RenewalPricingExperimentTermsOfService() {
 	if ( matchingTerms.length === 0 ) {
 		return null;
 	}
+
+	const termsOfServiceRecord = matchingTerms[ 0 ];
+	const args = termsOfServiceRecord.args;
+	if ( ! args ) {
+		return null;
+	}
+	const productName = args.product_name + ( args.product_meta ? ` (${ args.product_meta })` : '' );
+	const promoEndDate = formatDate( args.subscription_end_of_promotion_date );
+	const renewalDate = formatDate( args.subscription_auto_renew_date );
+	const renewalPrice = formatCurrency( args.renewal_price_integer, responseCart.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const frequency = productsWithIntroOffer[ 0 ].months_per_bill_period;
+	const frequencyText = frequency + ' ' + ( frequency === 1 ? 'month' : 'months' );
+
+	const message = translate(
+		'You agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize us to charge you the above total today and to charge you automatically on a recurring basis after your promotional period ends on {{promoEndDate/}}. After that date, {{productName/}} will auto-renew on {{renewalDate/}} at {{renewalPrice/}} per {{frequencyText/}} plus applicable taxes until you cancel. You’ll receive an email notice 30 days before your next charge and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}}, {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}}, or {{faqCancellingSupportPage}}cancel{{/faqCancellingSupportPage}} at any time.',
+		{
+			components: {
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				promoEndDate: <strong>{ promoEndDate }</strong>,
+				productName: <strong>{ productName }</strong>,
+				renewalDate: <strong>{ renewalDate }</strong>,
+				renewalPrice: <strong>{ renewalPrice }</strong>,
+				frequencyText: <strong>{ frequencyText }</strong>,
+				updatePaymentMethodLink: (
+					<a
+						href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				manageSubscriptionLink: (
+					<a href={ manageSubscriptionLink } target="_blank" rel="noopener noreferrer" />
+				),
+				faqCancellingSupportPage: (
+					<InlineSupportLink supportContext="cancel_purchase" showIcon={ false } />
+				),
+			},
+		}
+	);
+	return <CheckoutTermsItem key={ matchingTerms[ 0 ].key }>{ message }</CheckoutTermsItem>;
 
 	return (
 		<>
