@@ -4,30 +4,22 @@ import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import TosText from 'calypso/me/purchases/manage-purchase/payment-method-selector/tos-text';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
-import RenewalPricingExperimentTermsOfService from './renewal-pricing-experiment-terms-of-service';
 
 export const TermsOfService = ( {
 	hasRenewableSubscription,
 	isGiftPurchase,
 	is100YearPlanPurchase,
 	is100YearDomainPurchase,
-	shouldShowRenewalPricingExperimentTerms,
 }: {
 	hasRenewableSubscription: boolean;
 	isGiftPurchase: boolean;
 	is100YearPlanPurchase: boolean;
 	is100YearDomainPurchase: boolean;
-	shouldShowRenewalPricingExperimentTerms: boolean;
 } ) => {
 	const translate = useTranslate();
 	const recordTermsAndConditionsClick = () => {
 		gaRecordEvent( 'Upgrades', 'Clicked Terms and Conditions Link' );
 	};
-
-	// If experiment conditions are met, show the experiment component
-	if ( shouldShowRenewalPricingExperimentTerms ) {
-		return <RenewalPricingExperimentTermsOfService />;
-	}
 
 	const renderTerms = () => {
 		let message = translate( 'You agree to our {{link}}Terms of Service{{/link}}.', {

@@ -12,15 +12,10 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import DomainPromotionalPricingRestrictions from 'calypso/my-sites/checkout/src/components/domain-promotional-pricing-restrictions';
-import {
-	useRenewalPricingExperiment,
-	isRenewalPricingTreatment,
-} from 'calypso/my-sites/plans-features-main/hooks/use-renewal-price-experiment';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { hasWpcomRecurringProductWithIntroOffer } from '../lib/has-wpcom-recurring-product-with-intro-offer';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
 import BundledDomainNotice, { showBundledDomainNotice } from './bundled-domain-notice';
@@ -88,13 +83,6 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	const shouldShowJetpackSocialAdvancedPricingDisclaimer =
 		showJetpackSocialAdvancedPricingDisclaimer( cart );
 
-	// Check if we should show the renewal pricing experiment terms
-	const [ , variationName ] = useRenewalPricingExperiment();
-	const shouldShowRenewalPricingExperimentTerms =
-		cart &&
-		isRenewalPricingTreatment( variationName ) &&
-		hasWpcomRecurringProductWithIntroOffer( cart );
-
 	return (
 		<Fragment>
 			<div className="checkout__terms" id="checkout-terms">
@@ -111,7 +99,6 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				isGiftPurchase={ Boolean( isGiftPurchase ) }
 				is100YearPlanPurchase={ has100YearPlan( cart ) }
 				is100YearDomainPurchase={ has100YearDomain( cart ) }
-				shouldShowRenewalPricingExperimentTerms={ shouldShowRenewalPricingExperimentTerms }
 			/>
 			<>
 				{ ! isGiftPurchase && <DomainTerms100Year cart={ cart } /> }
@@ -122,11 +109,7 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				{ ! isGiftPurchase && <DomainRegistrationFreeGravatarDomain cart={ cart } /> }
 				<EbanxTermsOfService />
 				{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
-				{ ! isGiftPurchase && (
-					<AdditionalTermsOfServiceInCart
-						shouldShowRenewalPricingExperimentTerms={ shouldShowRenewalPricingExperimentTerms }
-					/>
-				) }
+				{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
 				{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
 				{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 

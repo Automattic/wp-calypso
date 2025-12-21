@@ -11,18 +11,13 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
-import { isWpcomRecurringProductWithIntroOffer } from 'calypso/my-sites/checkout/src/lib/has-wpcom-recurring-product-with-intro-offer';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-service' );
 
-export default function AdditionalTermsOfServiceInCart( {
-	shouldShowRenewalPricingExperimentTerms,
-}: {
-	shouldShowRenewalPricingExperimentTerms: boolean;
-} ) {
+export default function AdditionalTermsOfServiceInCart() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -31,42 +26,9 @@ export default function AdditionalTermsOfServiceInCart( {
 		return null;
 	}
 
-	let matchingTerms = responseCart.terms_of_service;
-
-	if ( shouldShowRenewalPricingExperimentTerms ) {
-		// Find all products WITHOUT introductory offer terms
-		const productsWithoutIntroOffer = responseCart.products.filter(
-			( product ) => ! isWpcomRecurringProductWithIntroOffer( product )
-		);
-
-		// If no products without intro offers, show no terms
-		if ( productsWithoutIntroOffer.length === 0 ) {
-			return null;
-		}
-
-		// Build the expected terms of service keys for products without intro offers
-		// Key format: 'free_trial_terms,meta:{product.meta},product_id:{product.product_id}'
-		const expectedTermsKeys = new Set(
-			productsWithoutIntroOffer.map( ( product ) => {
-				const meta = product.meta || '';
-				return `free_trial_terms,meta:${ meta },product_id:${ product.product_id }`;
-			} )
-		);
-
-		// Filter terms of service to only those matching products without intro offers
-		matchingTerms = responseCart.terms_of_service.filter( ( termsOfServiceRecord ) =>
-			expectedTermsKeys.has( termsOfServiceRecord.key )
-		);
-
-		// If no matching terms, show nothing
-		if ( matchingTerms.length === 0 ) {
-			return null;
-		}
-	}
-
 	return (
 		<>
-			{ matchingTerms.map( ( termsOfServiceRecord ) => {
+			{ responseCart.terms_of_service.map( ( termsOfServiceRecord ) => {
 				const message = (
 					<MessageForTermsOfServiceRecord
 						termsOfServiceRecord={ termsOfServiceRecord }
