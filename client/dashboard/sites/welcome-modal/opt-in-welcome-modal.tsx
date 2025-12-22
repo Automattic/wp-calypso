@@ -53,7 +53,7 @@ export default function OptInWelcomeModal() {
 				<VStack alignment="flex-start" spacing={ 4 } style={ { flex: 1 } }>
 					<Icon icon={ wordpress } />
 					<Text className="dashboard-opt-in-welcome-modal__title" as="h1">
-						{ __( 'Meet the new WordPress.com hosting dashboard' ) }
+						{ __( 'Meet the new WordPress.com Hosting Dashboard' ) }
 					</Text>
 					<Text variant="muted">
 						{ __( 'A simpler way to manage your sites, domains, and hosting.' ) }
@@ -75,7 +75,7 @@ export default function OptInWelcomeModal() {
 					<VStack style={ { flex: 1 } }>
 						<img
 							src={ illustrationUrl }
-							alt={ __( 'Meet the new WordPress.com hosting dashboard' ) }
+							alt={ __( 'Meet the new WordPress.com Hosting Dashboard' ) }
 						/>
 					</VStack>
 				) }
