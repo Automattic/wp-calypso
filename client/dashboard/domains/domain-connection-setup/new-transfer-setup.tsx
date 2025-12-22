@@ -6,7 +6,7 @@ import {
 	siteByIdQuery,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -20,6 +20,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainTransferSetupRoute } from '../../app/router/domains';
+import { purchaseSettingsRoute } from '../../app/router/me';
 import { siteDomainsRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
@@ -263,9 +264,12 @@ export default function DomainTransferSetup() {
 									{ __( 'Contact support' ) }
 								</InlineSupportLink>
 								{ purchase && shouldShowRemoveAction( domain, purchase ) && (
-									<a href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }` }>
+									<Link
+										to={ purchaseSettingsRoute.fullPath }
+										params={ { purchaseId: purchase.ID } }
+									>
 										{ __( 'Cancel transfer' ) }
-									</a>
+									</Link>
 								) }
 							</VStack>
 						</VStack>
