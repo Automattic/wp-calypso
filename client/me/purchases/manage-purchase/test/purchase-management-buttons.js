@@ -166,7 +166,7 @@ describe( 'Purchase Management Buttons', () => {
 			</QueryClientProvider>
 		);
 		expect( await screen.findByText( /removed/ ) ).toBeInTheDocument();
-		expect( screen.queryByText( /Remove/ ) ).not.toBeInTheDocument();
+		expect( await screen.queryByText( /Remove/ ) ).not.toBeInTheDocument();
 		expect( screen.findByText( /Cancel/ ) ).toBeInTheDocument();
 	} );
 
@@ -196,7 +196,7 @@ describe( 'Purchase Management Buttons', () => {
 		);
 
 		expect( await screen.findByText( /removed/ ) ).toBeInTheDocument();
-		expect( screen.queryByText( /Remove/ ) ).not.toBeInTheDocument();
+		expect( await screen.queryByText( /Remove/ ) ).not.toBeInTheDocument();
 		expect( screen.findByText( /Cancel/ ) ).toBeInTheDocument();
 	} );
 
