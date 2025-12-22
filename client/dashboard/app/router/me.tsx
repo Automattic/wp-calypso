@@ -2,6 +2,8 @@ import { fetchTwoStep } from '@automattic/api-core';
 import {
 	userSettingsQuery,
 	userPurchasesQuery,
+	userTransferredPurchasesQuery,
+	userPaymentMethodsQuery,
 	allSitesQuery,
 	userReceiptsQuery,
 	purchaseQuery,
@@ -179,11 +181,17 @@ export const purchasesRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => billingRoute,
-	loader: async () => {
-		await Promise.all( [
-			queryClient.ensureQueryData( userPurchasesQuery() ),
-			queryClient.ensureQueryData( allSitesQuery() ),
-		] );
+	path: '/purchases',
+} );
+
+export const purchasesIndexRoute = createRoute( {
+	getParentRoute: () => purchasesRoute,
+	path: '/',
+	loader: () => {
+		queryClient.prefetchQuery( userPurchasesQuery() );
+		queryClient.prefetchQuery( userTransferredPurchasesQuery() );
+		queryClient.prefetchQuery( userPaymentMethodsQuery( {} ) );
+		queryClient.prefetchQuery( allSitesQuery() );
 	},
 	validateSearch: ( search ): { page?: number; search?: string; site?: number } => {
 		return {
@@ -192,12 +200,6 @@ export const purchasesRoute = createRoute( {
 			site: typeof search.site === 'number' ? search.site : undefined,
 		};
 	},
-	path: '/purchases',
-} );
-
-export const purchasesIndexRoute = createRoute( {
-	getParentRoute: () => purchasesRoute,
-	path: '/',
 } ).lazy( () =>
 	import( '../../me/billing-purchases' ).then( ( d ) =>
 		createLazyRoute( 'purchases' )( {

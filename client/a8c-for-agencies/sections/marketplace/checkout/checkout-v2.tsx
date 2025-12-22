@@ -10,6 +10,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import BillingDragonCheckout from '../billing-dragon-checkout';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
+import useProductsBySlug from '../hooks/use-products-by-slug';
 import useShoppingCart from '../hooks/use-shopping-cart';
 
 import './style-v2.scss';
@@ -18,6 +19,9 @@ function CheckoutV2() {
 	const translate = useTranslate();
 
 	const { selectedCartItems } = useShoppingCart();
+
+	// Fetch selected products by slug for site checkout
+	const { selectedProductsBySlug } = useProductsBySlug();
 
 	const title = translate( 'Checkout' );
 
@@ -46,7 +50,12 @@ function CheckoutV2() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<BillingDragonCheckout withA8cLogo={ false } cartItems={ selectedCartItems } />
+				<BillingDragonCheckout
+					withA8cLogo={ false }
+					cartItems={
+						selectedProductsBySlug.length > 0 ? selectedProductsBySlug : selectedCartItems
+					}
+				/>
 			</LayoutBody>
 		</Layout>
 	);

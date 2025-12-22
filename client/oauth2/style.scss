@@ -210,6 +210,18 @@
 	font-size: 14px;
 }
 
+.oauth2-connect--loading {
+	min-height: 400px;
+	
+	.oauth2-connect__loading {
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		height: 400px;
+		padding-top: 40px;
+	}
+}
+
 .oauth2-connect__error {
 	color: #d63638;
 }

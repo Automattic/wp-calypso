@@ -22,6 +22,7 @@ import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import AddNewSite from './add-new-site';
 import {
 	SitesDataViews,
@@ -35,6 +36,7 @@ import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
 import { SiteLink, SiteLink__ES } from './site-fields';
+import { OptInWelcomeModal } from './welcome-modal';
 import type {
 	FetchSitesOptions,
 	Site,
@@ -344,6 +346,7 @@ export default function Sites() {
 
 	return (
 		<>
+			{ ! isDashboardBackport() && <OptInWelcomeModal /> }
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>

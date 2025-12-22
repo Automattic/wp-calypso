@@ -180,9 +180,10 @@ function Authorize( {
 	let content = null;
 	if ( isLoading || ! meta ) {
 		content = (
-			<div className="oauth2-connect__loading">
-				<Spinner />
-				<p>{ translate( 'Loading authorization details…' ) }</p>
+			<div className="oauth2-connect oauth2-connect--loading">
+				<div className="oauth2-connect__loading">
+					<Spinner />
+				</div>
 			</div>
 		);
 	} else if ( error ) {

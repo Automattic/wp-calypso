@@ -878,7 +878,7 @@ function wpcomPages( app ) {
 		res.redirect( 301, newRoute );
 	} );
 
-	app.get( [ '/domains', '/start/domain-first' ], function ( req, res ) {
+	app.get( [ '/start/domain-first' ], function ( req, res ) {
 		let redirectUrl = '/start/domain';
 		const domain = get( req, 'query.new', false );
 		if ( domain ) {
@@ -1090,7 +1090,7 @@ export default function pages() {
 	}
 
 	// Multi-site Dashboard routing for development {calypso.localhost, wpcalypso.wordpress.com}.
-	if ( config.isEnabled( 'dashboard/v2' ) ) {
+	if ( calypsoEnv !== 'production' && config.isEnabled( 'dashboard/v2' ) ) {
 		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
 			app.get(
 				pathToRegExp( sectionPath ),
@@ -1108,11 +1108,56 @@ export default function pages() {
 				return req.get( 'host' ).startsWith( 'my.localhost' );
 			} );
 		} );
-		handleRoute( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom', ( req ) => {
-			// Deprecated: allow dashboard routes under {calypso.localhost, wpcalypso.wordpress.com}/v2.
-			return ! req.get( 'host' ).startsWith( 'my.localhost' );
+
+		handleRoute( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
+			// Allow CIAB routes under my.localhost.
+			return req.get( 'host' ).startsWith( 'my.localhost' );
 		} );
-		handleRoute( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
+
+		// Temporary support redirection for the /v2 route for backwards compatibility.
+		app.get( [ '/v2', '/v2/*' ], ( req, res, next ) => {
+			const host = req.get( 'host' );
+			const query = Object.keys( req.query ).length > 0 ? `?${ stringify( req.query ) }` : '';
+
+			if ( host.startsWith( 'calypso.localhost' ) ) {
+				const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
+				const port = host.includes( ':' ) ? host.substring( host.indexOf( ':' ) ) : ':3000';
+
+				const redirectUrl = `${ protocol }://my.localhost${ port }${ req.path.slice(
+					'/v2'.length
+				) }${ query }`;
+				return res.redirect( 301, redirectUrl );
+			}
+
+			if ( host.startsWith( 'wpcalypso.wordpress.com' ) ) {
+				const redirectUrl = `https://my.wordpress.com${ req.path.slice( '/v2'.length ) }${ query }`;
+				return res.redirect( 301, redirectUrl );
+			}
+
+			next();
+		} );
+
+		// Temporary support redirection for the /ciab route for backwards compatibility.
+		// TODO: Remove /ciab once we no longer need to support the old testing link.
+		app.get( [ '/ciab', '/ciab/*' ], ( req, res, next ) => {
+			const host = req.get( 'host' );
+			const query = Object.keys( req.query ).length > 0 ? `?${ stringify( req.query ) }` : '';
+
+			if ( host.startsWith( 'calypso.localhost' ) ) {
+				const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
+				const port = host.includes( ':' ) ? host.substring( host.indexOf( ':' ) ) : ':3000';
+
+				const redirectUrl = `${ protocol }://my.localhost${ port }${ req.path }${ query }`;
+				return res.redirect( 301, redirectUrl );
+			}
+
+			if ( host.startsWith( 'wpcalypso.wordpress.com' ) ) {
+				const redirectUrl = `https://my.wordpress.com${ req.path }${ query }`;
+				return res.redirect( 301, redirectUrl );
+			}
+
+			next();
+		} );
 	}
 
 	sections

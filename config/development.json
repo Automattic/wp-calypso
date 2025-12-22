@@ -164,7 +164,6 @@
 		"reader": true,
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
-		"reader/quick-post": true,
 		"reader/discover/freshly-pressed": true,
 		"reader/msd-enabled": true,
 		"readymade-templates/showcase": true,
