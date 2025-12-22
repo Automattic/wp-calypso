@@ -452,7 +452,7 @@ body.post-php.agents-manager-sidebar-container {
 		}
 
 		.Notice-module_container {
-			// Only override the default BG color 
+			// Only override the default BG color
 			&:not( [class*='Notice-module_is'] ) {
 				background-color: #e9e9e9;
 			}
