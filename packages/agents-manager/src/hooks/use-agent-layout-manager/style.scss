@@ -187,6 +187,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 	@include sidebar-base( '#wpcom #content' );
 
 	#content {
+		min-height: 100vh;
 		background-color: #fcfcfc !important;
 	}
 
@@ -257,11 +258,18 @@ body.is-section-dashboard-dotcom.agents-manager-sidebar-container {
 	}
 }
 
+/* Calypso Stepper flows */
 body.is-section-stepper.agents-manager-sidebar-container {
 	@include sidebar-base( '#wpcom .step-route' );
 
 	.step-route {
+		min-height: 100vh;
 		background-color: var(--color-main-background) !important;
+		overflow: hidden;
+	}
+
+	.domain-transfer {
+		max-width: unset;
 	}
 
 	&.agents-manager-sidebar-container--sidebar-open {
@@ -280,10 +288,6 @@ body.is-section-stepper.agents-manager-sidebar-container {
 				height: 100%;
 				min-height: unset;
 			}
-		}
-
-		.domain-transfer {
-			max-width: unset;
 		}
 	}
 }
