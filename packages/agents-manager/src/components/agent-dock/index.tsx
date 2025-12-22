@@ -58,8 +58,8 @@ interface AgentDockProps {
 	markdownExtensions?: MarkdownExtensions;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** Setup hooks to register hook-dependent abilities (collected from all providers). */
-	setupHooks?: AbilitiesSetupHook[];
+	/** Setup hook to register hook-dependent abilities. */
+	useAbilitiesSetup?: AbilitiesSetupHook;
 }
 
 export default function AgentDock( {
@@ -71,7 +71,7 @@ export default function AgentDock( {
 	markdownComponents = {},
 	markdownExtensions = {},
 	useNavigationContinuation,
-	setupHooks,
+	useAbilitiesSetup,
 }: AgentDockProps ) {
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const { hasLoaded: isStoreReady, isOpen = false } = useSelect( ( select ) => {
@@ -138,9 +138,9 @@ export default function AgentDock( {
 		navigate,
 	} );
 
-	// Call all setup hooks to register hook-dependent abilities
-	// These hooks are stable after loadedProviders is set (AgentDock only renders after providers load)
-	setupHooks?.forEach( ( hook ) => hook() );
+	// Call setup hook to register hook-dependent abilities
+	// The hook is stable after loadedProviders is set (AgentDock only renders after providers load)
+	useAbilitiesSetup?.();
 
 	const handleNewChat = () => {
 		navigate( '/' );

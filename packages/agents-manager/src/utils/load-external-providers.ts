@@ -50,8 +50,7 @@ export interface LoadedProviders {
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** Setup hooks collected from all providers (called to register hook-dependent abilities) */
-	setupHooks?: AbilitiesSetupHook[];
+	useAbilitiesSetup?: AbilitiesSetupHook;
 }
 
 /**
@@ -75,8 +74,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
-	// Setup hooks are collected from all providers (not last-wins)
-	const setupHooks: AbilitiesSetupHook[] = [];
+	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -102,9 +100,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useNavigationContinuation ) {
 				mergedNavigationContinuation = module.useNavigationContinuation;
 			}
-			// Collect setup hooks from all providers (multiple plugins can register abilities)
 			if ( module.useAbilitiesSetup ) {
-				setupHooks.push( module.useAbilitiesSetup );
+				mergedAbilitiesSetup = module.useAbilitiesSetup;
 			}
 
 			// eslint-disable-next-line no-console
@@ -122,6 +119,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
-		setupHooks: setupHooks.length > 0 ? setupHooks : undefined,
+		useAbilitiesSetup: mergedAbilitiesSetup,
 	};
 }
