@@ -2,7 +2,6 @@ import {
 	getAgentManager,
 	useAgentChat,
 	type UseAgentChatConfig,
-	type SubmitOptions,
 } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
@@ -24,22 +23,11 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
+import type {
+	NavigationContinuationHook,
+	AbilitiesSetupHook,
+} from '../../utils/load-external-providers';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
-
-/**
- * Navigation continuation hook type
- */
-type NavigationContinuationHook = ( props: {
-	isProcessing: boolean;
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
-	sessionId: string;
-	agentId: string;
-} ) => void;
-
-/**
- * Abilities setup hook type - registers hook-dependent abilities
- */
-type AbilitiesSetupHook = () => void;
 
 interface AgentDockProps {
 	/** The selected site object. */
