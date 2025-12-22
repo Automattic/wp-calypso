@@ -1402,14 +1402,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getDescription: () =>
 		i18n.translate(
-			'Grow your online presence and generate income with a professional-looking website — no developer required.',
+			'{{strong}}Best for professionals and creators:{{/strong}} Grow your online presence and generate income with a professional-looking website — no developer required.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
-			'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
-				' Google Analytics support,' +
-				' and the ability to monetize your site with ads.'
+			'Grow your online presence and generate income with a professional-looking website — no developer required.'
 		),
 	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
