@@ -18,9 +18,9 @@ export const useUpcomingEvents = () => {
 					from: moment( '2025-12-23' ),
 					to: moment( '2026-01-05' ),
 				},
-				displayDate: translate( 'As soon as possible' ),
+				displayDate: translate( 'Update as soon as possible' ),
 				title: translate( 'Action Needed: Critical WooCommerce Update Available' ),
-				subtitle: translate( 'Automattic for Agencies' ),
+				subtitle: translate( 'WooCommerce' ),
 				descriptions: [
 					translate(
 						'A vulnerability has been identified in WooCommerce versions 8.1 through 10.4.2, and a patch is now available. Client sites hosted with Automattic are already protected. For any client sites hosted elsewhere, please update WooCommerce to the latest version as soon as possible. At this time, we have no indication that this vulnerability has been exploited.'
