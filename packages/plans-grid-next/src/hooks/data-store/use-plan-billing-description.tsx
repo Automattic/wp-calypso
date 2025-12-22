@@ -13,6 +13,7 @@ import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
+import { getRenewalPricingText } from './get-renewal-pricing-text';
 import type { GridPlan } from '../../types';
 
 interface UsePlanBillingDescriptionProps {
@@ -325,58 +326,11 @@ export default function usePlanBillingDescription( {
 			return translate( 'per month' );
 		}
 
-		const monthlyPrice = originalPrice?.monthly;
-		const currentFullPrice =
-			introOffer?.rawPrice?.full || discountedPrice?.full || originalPrice?.full;
-		if ( ! monthlyPrice || ! currencyCode || ! currentFullPrice ) {
-			return null;
-		}
-		const formattedMonthlyPrice = formatCurrency( monthlyPrice, currencyCode, {
-			stripZeros: true,
-			isSmallestUnit: true,
+		return getRenewalPricingText( {
+			pricing,
+			renewalPricingVariation,
+			translate,
 		} );
-		const formattedFullPrice = formatCurrency( currentFullPrice, currencyCode, {
-			stripZeros: true,
-			isSmallestUnit: true,
-		} );
-
-		// Determine the billing period in months
-		let billingMonths = 12; // default to annual
-
-		if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-			billingMonths = 24;
-		} else if ( PLAN_TRIENNIAL_PERIOD === billingPeriod ) {
-			billingMonths = 36;
-		} else if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-			billingMonths = 12;
-		}
-
-		// Different text based on variation
-		if ( renewalPricingVariation === 'crossed_price' ) {
-			return translate( 'Auto-renews at %(price)s per month. Billed every %(months)s months.', {
-				args: {
-					price: formattedMonthlyPrice,
-					months: billingMonths,
-				},
-				comment:
-					'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
-			} );
-		} else if ( renewalPricingVariation === 'no_crossed_price' ) {
-			return translate(
-				'Get %(months)s months for %(fullPrice)s. Auto-renews at %(price)s per month.',
-				{
-					args: {
-						months: billingMonths,
-						fullPrice: formattedFullPrice,
-						price: formattedMonthlyPrice,
-					},
-					comment:
-						'%(months)s is the billing period (12, 24, or 36), %(fullPrice)s is the current/intro total price like $100, %(price)s is the renewal monthly price like $12',
-				}
-			);
-		}
-
-		return null;
 	} else if ( showSimplifiedBillingDescription ) {
 		// Use simplified billing description
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {

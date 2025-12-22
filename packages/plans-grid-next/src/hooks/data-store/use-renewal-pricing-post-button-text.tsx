@@ -1,7 +1,4 @@
 import {
-	PLAN_ANNUAL_PERIOD,
-	PLAN_BIENNIAL_PERIOD,
-	PLAN_TRIENNIAL_PERIOD,
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
@@ -9,9 +6,9 @@ import {
 	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
+import { getRenewalPricingText } from './get-renewal-pricing-text';
 import type { Plans as PlansType } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -60,7 +57,7 @@ export default function useRenewalPricingPostButtonText( {
 		return null;
 	}
 
-	const { currencyCode, discountedPrice, originalPrice, billingPeriod, introOffer } = pricing;
+	const { originalPrice, introOffer } = pricing;
 
 	// For monthly plans, show the savings message
 	if (
@@ -92,59 +89,9 @@ export default function useRenewalPricingPostButtonText( {
 		return null;
 	}
 
-	const monthlyPrice = originalPrice?.monthly;
-	const currentFullPrice =
-		introOffer?.rawPrice?.full || discountedPrice?.full || originalPrice?.full;
-
-	if ( ! monthlyPrice || ! currencyCode || ! currentFullPrice ) {
-		return null;
-	}
-
-	const formattedMonthlyPrice = formatCurrency( monthlyPrice, currencyCode, {
-		stripZeros: true,
-		isSmallestUnit: true,
+	return getRenewalPricingText( {
+		pricing,
+		renewalPricingVariation,
+		translate,
 	} );
-
-	const formattedFullPrice = formatCurrency( currentFullPrice, currencyCode, {
-		stripZeros: true,
-		isSmallestUnit: true,
-	} );
-
-	// Determine the billing period in months
-	let billingMonths = 12; // default to annual
-
-	if ( billingPeriod === PLAN_BIENNIAL_PERIOD ) {
-		billingMonths = 24;
-	} else if ( billingPeriod === PLAN_TRIENNIAL_PERIOD ) {
-		billingMonths = 36;
-	} else if ( billingPeriod === PLAN_ANNUAL_PERIOD ) {
-		billingMonths = 12;
-	}
-
-	// Different text based on variation
-	if ( renewalPricingVariation === 'crossed_price' ) {
-		return translate( 'Auto-renews at %(price)s per month. Billed every %(months)s months.', {
-			args: {
-				price: formattedMonthlyPrice,
-				months: billingMonths,
-			},
-			comment:
-				'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
-		} );
-	} else if ( renewalPricingVariation === 'no_crossed_price' ) {
-		return translate(
-			'Get %(months)s months for %(fullPrice)s. Auto-renews at %(price)s per month.',
-			{
-				args: {
-					months: billingMonths,
-					fullPrice: formattedFullPrice,
-					price: formattedMonthlyPrice,
-				},
-				comment:
-					'%(months)s is the billing period (12, 24, or 36), %(fullPrice)s is the current/intro total price like $100, %(price)s is the renewal monthly price like $12',
-			}
-		);
-	}
-
-	return null;
 }
