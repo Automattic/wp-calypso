@@ -2,7 +2,8 @@ import { isEnabled } from '@automattic/calypso-config';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type { AppState } from 'calypso/types';
 
-export const OLDEST_ELIGIBLE_USER = 275231967; // Cut-off on 22 December 2025
+// TODO: Update user ID when feature is rolled out to a limited audience.
+export const OLDEST_ELIGIBLE_USER = 275022156;
 
 export const isDashboardEnabled = ( state: AppState ): boolean => {
 	if ( ! isEnabled( 'dashboard/v2' ) ) {
