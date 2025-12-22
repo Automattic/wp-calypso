@@ -537,7 +537,7 @@ export const domainTransferSetupRoute = createRoute( {
 	},
 } ).lazy( () =>
 	config.isEnabled( 'domain-transfer-redesign' )
-		? import( '../../domains/domain-connection-setup/new-transfer-setup' ).then( ( d ) =>
+		? import( '../../domains/domain-connection-setup/transfer-setup' ).then( ( d ) =>
 				createLazyRoute( 'domain-transfer-setup' )( {
 					component: d.default,
 				} )
