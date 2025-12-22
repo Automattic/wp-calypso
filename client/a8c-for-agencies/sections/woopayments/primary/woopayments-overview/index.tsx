@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
@@ -243,17 +243,17 @@ const WooPaymentsOverview = () => {
 	);
 
 	const seeFullTermsLink = (
-		<ExternalLink
+		<Button
+			variant="link"
 			onClick={ () => {
 				dispatch( recordTracksEvent( 'calypso_a4a_woopayments_see_full_terms_click' ) );
 				showSupportGuide(
 					'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/'
 				);
 			} }
-			href="#"
 		>
 			{ translate( 'See full terms' ) }
-		</ExternalLink>
+		</Button>
 	);
 
 	return (

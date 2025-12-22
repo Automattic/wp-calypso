@@ -1,4 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import {
 	ConsolidatedStatsCard,
@@ -32,14 +33,13 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 					popoverTitle={ translate( 'Total payouts' ) }
 					popoverContent={ translate(
 						'The exact amount your agency has been paid out for referrals.' +
-							'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
+							'{{br/}}{{br/}}{{a}}Learn more{{/a}}',
 						{
 							components: {
 								a: (
-									// eslint-disable-next-line jsx-a11y/anchor-is-valid
-									<a
+									<Button
+										variant="link"
 										onClick={ () => showSupportGuide( AGENCY_EARNINGS_LEARN_MORE_LINK ) }
-										href="#"
 									/>
 								),
 								br: <br />,
@@ -59,12 +59,14 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 				popoverTitle={ translate( 'Pending orders' ) }
 				popoverContent={ translate(
 					'These are the number of pending referrals (unpaid carts). ' +
-						'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
+						'{{br/}}{{br/}}{{a}}Learn more{{/a}}',
 					{
 						components: {
 							a: (
-								// eslint-disable-next-line jsx-a11y/anchor-is-valid
-								<a onClick={ () => showSupportGuide( AGENCY_EARNINGS_LEARN_MORE_LINK ) } href="#" />
+								<Button
+									variant="link"
+									onClick={ () => showSupportGuide( AGENCY_EARNINGS_LEARN_MORE_LINK ) }
+								/>
 							),
 							br: <br />,
 						},

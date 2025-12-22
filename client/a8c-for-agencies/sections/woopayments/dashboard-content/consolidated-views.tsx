@@ -1,4 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import {
 	ConsolidatedStatsCard,
@@ -27,18 +28,17 @@ const WooPaymentsConsolidatedViews = () => {
 				popoverTitle={ translate( 'Total WooPayments commissions paid' ) }
 				popoverContent={ translate(
 					'The total amount of transactions processed through WooPayments across all your client sites. ' +
-						'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
+						'{{br/}}{{br/}}{{a}}Learn more{{/a}}',
 					{
 						components: {
 							a: (
-								// eslint-disable-next-line jsx-a11y/anchor-is-valid
-								<a
+								<Button
+									variant="link"
 									onClick={ () =>
 										showSupportGuide(
 											'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/'
 										)
 									}
-									href="#"
 								/>
 							),
 							br: <br />,

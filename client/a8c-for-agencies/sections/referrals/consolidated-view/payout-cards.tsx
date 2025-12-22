@@ -74,7 +74,7 @@ function PayoutAmount( {
 							onClick={ () => showSupportGuide( AGENCY_EARNINGS_LEARN_MORE_LINK ) }
 							variant="link"
 						>
-							{ translate( 'Learn more' ) } ↗
+							{ translate( 'Learn more' ) }
 						</Button>
 					</div>
 				</div>

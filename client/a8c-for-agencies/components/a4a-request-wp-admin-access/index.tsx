@@ -35,7 +35,7 @@ export function A4ARequestWPAdminAccess() {
 					className="a4a-request-wp-admin-access__learn-more-button"
 					onClick={ onLearnMoreClick }
 				>
-					{ translate( 'Learn more about team member permissions ↗' ) }
+					{ translate( 'Learn more about team member permissions' ) }
 				</Button>
 			</div>
 			<div className="a4a-request-wp-admin-access__illustration">

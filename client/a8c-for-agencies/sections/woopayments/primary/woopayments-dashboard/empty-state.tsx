@@ -1,4 +1,4 @@
-import { ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
@@ -37,7 +37,8 @@ const WooPaymentsDashboardEmptyState = () => {
 				</StepSectionItem>
 			</StepSection>
 			<StepSection heading={ translate( 'Learn more about the program' ) }>
-				<ExternalLink
+				<Button
+					variant="link"
 					onClick={ () => {
 						dispatch(
 							recordTracksEvent( 'calypso_a4a_woopayments_learn_more_about_program_click' )
@@ -46,10 +47,9 @@ const WooPaymentsDashboardEmptyState = () => {
 							'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/'
 						);
 					} }
-					href="#"
 				>
 					{ translate( 'Check out the full details in the Knowledge Base' ) }
-				</ExternalLink>
+				</Button>
 			</StepSection>
 		</div>
 	);

@@ -214,8 +214,8 @@ const PartnerDirectoryDashboard = () => {
 			className="partner-directory-dashboard__learn-more-section"
 			heading={ translate( 'Learn more about the program' ) }
 		>
-			<ExternalLink
-				href="#"
+			<Button
+				variant="link"
 				onClick={ () =>
 					showSupportGuide(
 						'https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings'
@@ -223,10 +223,10 @@ const PartnerDirectoryDashboard = () => {
 				}
 			>
 				{ translate( 'How does the approval process work?' ) }
-			</ExternalLink>
+			</Button>
 			<br />
-			<ExternalLink
-				href="#"
+			<Button
+				variant="link"
 				onClick={ () =>
 					showSupportGuide(
 						'https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings/#profile-content'
@@ -234,7 +234,7 @@ const PartnerDirectoryDashboard = () => {
 				}
 			>
 				{ translate( 'What can I put on my public profile?' ) }
-			</ExternalLink>
+			</Button>
 		</StepSection>
 	);
 
