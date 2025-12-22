@@ -213,7 +213,7 @@ export default function TierCards( {
 							{ sprintf(
 								/* translators: %s is the tier name */
 								__(
-									'You earned the %s tier in the previous year, and your tier level is protected for the current year. This means you’re will not be downgraded during this year, regardless of your current influenced revenue.'
+									'You earned the %s tier in the previous year, and your tier level is protected for the current year. This means you will not be downgraded during this year, regardless of your current influenced revenue.'
 								),
 								currentTier.name
 							) }
