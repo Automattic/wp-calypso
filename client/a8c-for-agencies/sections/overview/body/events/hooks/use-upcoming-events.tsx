@@ -23,12 +23,12 @@ export const useUpcomingEvents = () => {
 				subtitle: translate( 'WooCommerce' ),
 				descriptions: [
 					translate(
-						'A vulnerability has been identified in WooCommerce versions 8.1 through 10.4.2, and a patch is now available. Client sites hosted with Automattic are already protected. For any client sites hosted elsewhere, please update WooCommerce to the latest version as soon as possible. At this time, we have no indication that this vulnerability has been exploited.'
+						'A Store API vulnerability has been identified in WooCommerce versions 8.1 through 10.4.2, and a patch is now available. Client sites hosted with Automattic have been automatically patched. Please update WooCommerce on all client sites to the latest version (10.4.3) as soon as possible. We currently have no evidence of the vulnerability being used or exploited outside of our own security testing program.'
 					),
 				],
 				cta: {
 					label: translate( 'Read the announcement and FAQ ↗' ),
-					url: 'https://usabi.li/do/b8fc6strv3hm/tnzgph',
+					url: 'https://developer.woocommerce.com/2025/12/22/store-api-vulnerability-patched-in-woocommerce-8-1/',
 				},
 				logoUrl: WooLogo,
 				trackEventName: 'calypso_a4a_overview_events_a4a_woo_2025_12_23_click',
