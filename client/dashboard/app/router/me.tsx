@@ -805,6 +805,11 @@ export const mcpRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'mcp',
+} );
+
+export const mcpIndexRoute = createRoute( {
+	getParentRoute: () => mcpRoute,
+	path: '/',
 	loader: async () => {
 		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
@@ -911,7 +916,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 
 	if ( isEnabled( 'mcp-settings' ) ) {
-		meRoutes.push( mcpRoute.addChildren( [ mcpSetupRoute ] ) );
+		meRoutes.push( mcpRoute.addChildren( [ mcpIndexRoute, mcpSetupRoute ] ) );
 	}
 
 	return [ meRoute.addChildren( meRoutes ) ];
