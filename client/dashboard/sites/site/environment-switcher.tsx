@@ -35,7 +35,11 @@ import {
 	isAtomicTransferredSite,
 } from '../../utils/site-atomic-transfers';
 import { getProductionSiteId, getStagingSiteId } from '../../utils/site-staging-site';
-import { canManageSite, canCreateStagingSite } from '../features';
+import {
+	canManageSite,
+	canCreateStagingSite,
+	canManageOtherEnvironment as canManageOtherEnvironmentFeature,
+} from '../features';
 import type { Site } from '@automattic/api-core';
 
 const CurrentEnvironment = ( { site }: { site: Site } ) => {
@@ -287,15 +291,12 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	// Only show the environment switcher when the user has permission to access
 	// the other environment (manage_options on the paired site), similar to the
 	// behaviour in the sites preview pane.
-	const canManageProductionSite = productionSite && canManageSite( productionSite );
-	const canManageStagingSite = stagingSite && canManageSite( stagingSite );
-
-	const isStagingSite = site.is_wpcom_staging_site;
-
-	const hasLoadedOtherEnvironment = isStagingSite ? !! productionSite : !! stagingSite;
-	const canManageOtherEnvironment = isStagingSite
-		? !! canManageProductionSite
-		: !! canManageStagingSite;
+	const hasLoadedOtherEnvironment = site.is_wpcom_staging_site ? !! productionSite : !! stagingSite;
+	const canManageOtherEnvironment = canManageOtherEnvironmentFeature(
+		site,
+		productionSite,
+		stagingSite
+	);
 
 	if ( hasLoadedOtherEnvironment && ! canManageOtherEnvironment ) {
 		return null;

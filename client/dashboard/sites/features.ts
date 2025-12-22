@@ -27,6 +27,17 @@ export function canManageSite( site: Site ) {
 	return true;
 }
 
+export function canManageOtherEnvironment( site: Site, productionSite?: Site, stagingSite?: Site ) {
+	const isStagingSite = site.is_wpcom_staging_site;
+	const otherEnvironmentSite = isStagingSite ? productionSite : stagingSite;
+
+	if ( ! otherEnvironmentSite ) {
+		return false;
+	}
+
+	return canManageSite( otherEnvironmentSite );
+}
+
 export function canManageSite__ES( site: DashboardSiteListSite ) {
 	if ( site.deleted || ! site.capabilities?.manage_options ) {
 		return false;
