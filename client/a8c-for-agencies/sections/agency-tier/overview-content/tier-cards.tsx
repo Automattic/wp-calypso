@@ -20,17 +20,16 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentAgencyTier from '../lib/get-current-agency-tier';
 import { ALL_TIERS, TARGET_INFLUENCED_REVENUE } from './constants';
 import type { AgencyTierType } from './types';
+import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 
 const TEXT_COLOR = 'var(--color-gray-700)';
 
 export default function TierCards( {
 	currentAgencyTierId,
-	isEarlyAccess,
-	isTierProtected,
+	tierStatus,
 }: {
 	currentAgencyTierId?: AgencyTierType;
-	isEarlyAccess: boolean;
-	isTierProtected: boolean;
+	tierStatus?: AgencyTierStatus;
 } ) {
 	const dispatch = useDispatch();
 
@@ -70,6 +69,9 @@ export default function TierCards( {
 			element.scrollIntoView( { behavior: 'smooth' } );
 		}
 	};
+
+	const isEarlyAccess = tierStatus === 'early_access';
+	const isTierProtected = tierStatus === 'tier_protected';
 
 	const content = (
 		<>

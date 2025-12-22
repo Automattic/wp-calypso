@@ -16,17 +16,16 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentAgencyTier from '../lib/get-current-agency-tier';
 import InfluencedRevenue from '../overview-content/influenced-revenue';
 import type { AgencyTierType } from '../overview-content/types';
+import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 
 export default function AgencyTierProgressCard( {
 	currentAgencyTierId,
 	influencedRevenue,
-	isEarlyAccess,
-	isTierProtected,
+	tierStatus,
 }: {
 	currentAgencyTierId?: AgencyTierType;
 	influencedRevenue: number;
-	isEarlyAccess: boolean;
-	isTierProtected: boolean;
+	tierStatus?: AgencyTierStatus;
 } ) {
 	const dispatch = useDispatch();
 
@@ -53,14 +52,14 @@ export default function AgencyTierProgressCard( {
 							{ __( 'Your agency tier and benefits' ) }
 						</Heading>
 						<VStack spacing={ 1 }>
-							{ isEarlyAccess && (
+							{ tierStatus === 'early_access' && (
 								<Badge
 									style={ { width: 'fit-content', marginBottom: '4px' } }
 									intent="default"
 									children={ __( 'Early access' ) }
 								/>
 							) }
-							{ isTierProtected && (
+							{ tierStatus === 'tier_protected' && (
 								<Badge
 									style={ { width: 'fit-content', marginBottom: '4px' } }
 									intent="default"
@@ -71,7 +70,7 @@ export default function AgencyTierProgressCard( {
 								{ currentTier.name }
 							</Heading>
 							<Text color="#757575">
-								{ isEarlyAccess
+								{ tierStatus === 'early_access'
 									? sprintf(
 											/* translators: %s is the tier name */
 											'You’ve been given early access to %s tier benefits. Keep up the great work!',

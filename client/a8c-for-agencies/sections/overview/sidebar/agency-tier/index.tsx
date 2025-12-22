@@ -13,8 +13,7 @@ export default function OverviewSidebarAgencyTier() {
 
 	const currentAgencyTierId = agency?.tier?.id;
 	const influencedRevenue = agency?.influenced_revenue;
-	const isEarlyAccess = agency?.tier?.is_early_access;
-	const isTierProtected = agency?.tier?.is_tier_protected;
+	const tierStatus = agency?.tier?.status ?? undefined;
 	const currentAgencyTierInfo = getAgencyTierInfo( currentAgencyTierId, translate );
 
 	if ( ! currentAgencyTierInfo ) {
@@ -25,8 +24,7 @@ export default function OverviewSidebarAgencyTier() {
 		<AgencyTierProgressCard
 			currentAgencyTierId={ currentAgencyTierId }
 			influencedRevenue={ influencedRevenue ?? 0 }
-			isEarlyAccess={ !! isEarlyAccess }
-			isTierProtected={ !! isTierProtected }
+			tierStatus={ tierStatus }
 		/>
 	);
 }
