@@ -16,11 +16,18 @@ import {
 	isDefaultGlobalStylesVariationSlug,
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Badge } from '@automattic/ui';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import { MenuItem, Dropdown, Notice, NavigableMenu, ExternalLink } from '@wordpress/components';
+import {
+	MenuItem,
+	Dropdown,
+	Notice,
+	NavigableMenu,
+	ExternalLink,
+	privateApis,
+} from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { chevronDown, chevronUp, Icon, external } from '@wordpress/icons';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -119,6 +126,13 @@ import ThemeStyleVariations from './theme-style-variations';
 import ThemeSupportTab from './theme-support-tab';
 
 import './style.scss';
+
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+
+const { Badge } = unlock( privateApis );
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -671,11 +685,14 @@ class ThemeSheet extends Component {
 
 		return (
 			<Badge style={ { width: '100%' } }>
-				{ translate( 'This theme offers additional paid commercial upgrades or support.' ) }
-				&nbsp;
-				<ExternalLink href={ external_support_url } style={ { color: 'inherit' } }>
-					{ translate( 'View support' ) }
-				</ExternalLink>
+				{ /* Wrap the content in another <span> to prevent truncation. */ }
+				<span style={ { whiteSpace: 'pre-wrap' } }>
+					{ translate( 'This theme offers additional paid commercial upgrades or support.' ) }
+					&nbsp;
+					<ExternalLink href={ external_support_url } style={ { color: 'inherit' } }>
+						{ translate( 'View support' ) }
+					</ExternalLink>
+				</span>
 			</Badge>
 		);
 	};
