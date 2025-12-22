@@ -383,7 +383,7 @@ const ComparisonGridHeaderCell = ( {
 	showRefundPeriod,
 	isStuck,
 }: ComparisonGridHeaderCellProps ) => {
-	const { gridPlansIndex } = usePlansGridContext();
+	const { gridPlansIndex, showBillingDescriptionForIncreasedRenewalPrice } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		renderedGridPlans: visibleGridPlans,
@@ -476,7 +476,7 @@ const ComparisonGridHeaderCell = ( {
 				showMonthlyPrice={ false }
 				isStuck={ false }
 				visibleGridPlans={ visibleGridPlans }
-				showPostButtonText={ false }
+				showPostButtonText={ showBillingDescriptionForIncreasedRenewalPrice ? false : true }
 			/>
 		</Cell>
 	);
