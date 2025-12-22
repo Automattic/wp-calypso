@@ -74,7 +74,7 @@ export const InboundTransferStep = ( {
 							{ __( 'Need help?' ) }
 						</Text>
 						<VStack spacing={ 2 }>
-							<InlineSupportLink supportContext="transfer-domain-registration">
+							<InlineSupportLink supportContext="transfer-domain-name-to-wordpress-com">
 								{ __( 'Domain name transfer guide' ) }
 							</InlineSupportLink>
 							<InlineSupportLink supportContext="general-support-options">
