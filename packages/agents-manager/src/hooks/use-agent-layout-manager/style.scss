@@ -236,12 +236,12 @@ body.is-section-dashboard-dotcom.agents-manager-sidebar-container {
 	.dashboard-root__layout {
 		position: relative;
 		min-height: 100vh;
-		background-color: var(--dashboard__background-color, #fcfcfc) !important;
+		background-color: var( --dashboard__background-color, #fcfcfc ) !important;
 		margin: 0 !important;
 	}
 
 	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base('#wpcom .dashboard-root__layout');
+		@include sidebar-open-base( '#wpcom .dashboard-root__layout' );
 
 		.dashboard-root__layout {
 			height: calc( 100vh - ( $layout-spacing * 2 ) );
@@ -446,8 +446,21 @@ body.post-php.agents-manager-sidebar-container {
 		}
 	}
 
-	.ChatFooter-module_container:has( .Suggestions-module_container ) {
-		margin-top: 48px;
+	.ChatFooter-module_container {
+		&:has( .Suggestions-module_container ) {
+			margin-top: 48px;
+		}
+
+		.Notice-module_container {
+			// Only override the default BG color 
+			&:not( [class*='Notice-module_is'] ) {
+				background-color: #e9e9e9;
+			}
+
+			.Notice-module_content p {
+				margin: 0;
+			}
+		}
 	}
 }
 
@@ -648,18 +661,6 @@ body.post-php.agents-manager-sidebar-container {
 		.Suggestions-module_container .button-module_outline {
 			color: $gray-100;
 			background-color: #484848;
-		}
-
-		.Notice-module_container {
-			background-color: $gray-900;
-
-			.Notice-module_content {
-				color: $gray-100;
-
-				p {
-					margin: 0;
-				}
-			}
 		}
 	}
 
