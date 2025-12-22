@@ -62,7 +62,9 @@ const getFetchSitesOptions = (
 		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
 
 	if (
-		filters.find( ( item: Filter ) => item.field === 'status' && item.value.includes( 'deleted' ) )
+		filters.find(
+			( item: Filter ) => item.field === 'status' && item.value?.includes?.( 'deleted' )
+		)
 	) {
 		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
 	}
