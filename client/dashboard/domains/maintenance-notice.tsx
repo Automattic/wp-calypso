@@ -8,7 +8,40 @@ import { domainRoute } from '../app/router/domains';
 import Notice from '../components/notice';
 import { isTldInMaintenance } from '../utils/domain';
 
-export const TLDMaintenanceNotice = ( {
+export const TLDMaintenanceNotice = ( { showGoBackLink = true }: { showGoBackLink?: boolean } ) => {
+	const { domainName } = domainRoute.useParams();
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+
+	return (
+		<Notice
+			variant="error"
+			actions={
+				showGoBackLink ? (
+					<Link to={ domainRoute.fullPath } params={ { domainName } }>
+						{ __( 'Go back to domain overview' ) }
+					</Link>
+				) : undefined
+			}
+		>
+			{ sprintf(
+				/* translators: %(maintenanceEnd)s is the maintenance end time */
+				__(
+					'The domain registrar is undergoing maintenance. Please try again %(maintenanceEnd)s.'
+				),
+				{
+					maintenanceEnd: formatDistanceToNowStrict(
+						new Date( domain.tld_maintenance_end_time * 1000 ),
+						{
+							addSuffix: true,
+						}
+					),
+				}
+			) }
+		</Notice>
+	);
+};
+
+export const TLDMaintenanceNoticeLayout = ( {
 	error,
 	children,
 }: {
@@ -23,30 +56,6 @@ export const TLDMaintenanceNotice = ( {
 	}
 
 	return children( {
-		maintenanceNotice: (
-			<Notice
-				variant="error"
-				actions={
-					<Link to={ domainRoute.fullPath } params={ { domainName } }>
-						{ __( 'Go back to domain overview' ) }
-					</Link>
-				}
-			>
-				{ sprintf(
-					/* translators: %(maintenanceEnd)s is the maintenance end time */
-					__(
-						'The domain registrar is undergoing maintenance. Please try again %(maintenanceEnd)s.'
-					),
-					{
-						maintenanceEnd: formatDistanceToNowStrict(
-							new Date( domain.tld_maintenance_end_time * 1000 ),
-							{
-								addSuffix: true,
-							}
-						),
-					}
-				) }
-			</Notice>
-		),
+		maintenanceNotice: <TLDMaintenanceNotice />,
 	} );
 };

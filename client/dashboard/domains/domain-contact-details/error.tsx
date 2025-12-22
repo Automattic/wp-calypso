@@ -1,10 +1,10 @@
-import { TLDMaintenanceNotice } from '../maintenance-notice';
+import { TLDMaintenanceNoticeLayout } from '../maintenance-notice';
 import { DomainContactDetailsLayout } from './layout';
 
 export default function DomainContactDetailsError( { error }: { error: Error } ) {
 	return (
-		<TLDMaintenanceNotice error={ error }>
+		<TLDMaintenanceNoticeLayout error={ error }>
 			{ ( { maintenanceNotice } ) => <DomainContactDetailsLayout notices={ maintenanceNotice } /> }
-		</TLDMaintenanceNotice>
+		</TLDMaintenanceNoticeLayout>
 	);
 }
