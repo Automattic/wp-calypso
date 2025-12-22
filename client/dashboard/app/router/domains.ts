@@ -375,13 +375,11 @@ export const domainContactInfoRoute = createRoute( {
 			queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
 		] );
 	},
-} ).lazy( () =>
-	import( '../../domains/domain-contact-details' ).then( ( d ) =>
-		createLazyRoute( 'domain-contact-info' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: lazyRouteComponent( () => import( '../../domains/domain-contact-details' ) ),
+	errorComponent: lazyRouteComponent(
+		() => import( '../../domains/domain-contact-details/error' )
+	),
+} );
 
 export const domainContactVerificationRoute = createRoute( {
 	head: () => ( {
@@ -435,6 +433,8 @@ export const domainGlueRecordsRoute = createRoute( {
 	path: 'glue-records',
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
+	component: lazyRouteComponent( () => import( '../../domains/domain-glue-records' ) ),
+	errorComponent: lazyRouteComponent( () => import( '../../domains/domain-glue-records/error' ) ),
 } );
 
 export const domainGlueRecordsIndexRoute = createRoute( {
