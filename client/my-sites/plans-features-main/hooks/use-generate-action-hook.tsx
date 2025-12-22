@@ -18,6 +18,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
+import useRenewalPricingPostButtonText from '@automattic/plans-grid-next/src/hooks/data-store/use-renewal-pricing-post-button-text';
 import { useState } from '@wordpress/element';
 import { type LocalizeProps, type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
@@ -57,6 +58,8 @@ type UseActionHookProps = {
 	 * We can safely derive `planTitle` from one of the data-store or calypso-products hooks/selectors.
 	 */
 	planTitle?: TranslateResult;
+	pricing?: Plans.PricingMetaForGridPlan | null;
+	isMonthlyPlan?: boolean;
 };
 
 export default function useGenerateActionHook( {
@@ -68,6 +71,7 @@ export default function useGenerateActionHook( {
 	isLaunchPage,
 	showModalAndExit,
 	coupon,
+	useCheckPlanAvailabilityForPurchase,
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -77,6 +81,7 @@ export default function useGenerateActionHook( {
 	isLaunchPage: boolean | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	coupon?: string;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -121,7 +126,18 @@ export default function useGenerateActionHook( {
 		billingPeriod,
 		currentPlanBillingPeriod,
 		planTitle,
+		pricing,
+		isMonthlyPlan,
 	}: UseActionHookProps ): GridAction => {
+		// Get renewal pricing text - this will be used as postButtonText if available
+		const renewalPricingText = useRenewalPricingPostButtonText( {
+			planSlug,
+			pricing,
+			isMonthlyPlan,
+			coupon,
+			siteId,
+			useCheckPlanAvailabilityForPurchase,
+		} );
 		/**
 		 * 1. Enterprise Plan actions
 		 */
@@ -157,7 +173,7 @@ export default function useGenerateActionHook( {
 		 * 3. Onboarding actions
 		 */
 		if ( isInSignup ) {
-			return getSignupAction( {
+			const action = getSignupAction( {
 				getActionCallback,
 				planSlug,
 				cartItemForPlan,
@@ -171,12 +187,16 @@ export default function useGenerateActionHook( {
 				eligibleForFreeHostingTrial,
 				plansIntent,
 			} );
+			return {
+				...action,
+				postButtonText: action.postButtonText || renewalPricingText || undefined,
+			};
 		}
 
 		/**
 		 * 4. Logged-In (Admin) Plans actions
 		 */
-		return getLoggedInPlansAction( {
+		const action = getLoggedInPlansAction( {
 			getActionCallback,
 			planSlug,
 			cartItemForPlan,
@@ -197,6 +217,10 @@ export default function useGenerateActionHook( {
 			isLoading,
 			plansIntent,
 		} );
+		return {
+			...action,
+			postButtonText: renewalPricingText || action.postButtonText || undefined,
+		};
 	};
 
 	return useActionHook;

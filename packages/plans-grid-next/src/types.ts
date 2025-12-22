@@ -180,6 +180,8 @@ export type UseAction = ( {
 	planTitle,
 	priceString,
 	selectedStorageAddOn,
+	pricing,
+	isMonthlyPlan,
 }: {
 	availableForPurchase?: boolean;
 	billingPeriod?: PlanPricing[ 'billPeriod' ];
@@ -192,6 +194,8 @@ export type UseAction = ( {
 	planTitle?: TranslateResult;
 	priceString?: string;
 	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+	pricing?: Plans.PricingMetaForGridPlan | null;
+	isMonthlyPlan?: boolean;
 } ) => GridAction;
 
 export type GridContextProps = {

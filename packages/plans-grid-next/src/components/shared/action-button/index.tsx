@@ -11,7 +11,6 @@ import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
-import useRenewalPricingPostButtonText from '../../../hooks/data-store/use-renewal-pricing-post-button-text';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
 import PlanButton from '../../plan-button';
@@ -97,6 +96,8 @@ const ActionButton = ( {
 		cartItemForPlan,
 		currentPlanBillingPeriod,
 		selectedStorageAddOn,
+		pricing: gridPlansIndex[ planSlug ]?.pricing,
+		isMonthlyPlan,
 	} );
 	const {
 		primary: { callback: freeTrialCallback, text: freeTrialText },
@@ -112,21 +113,9 @@ const ActionButton = ( {
 		cartItemForPlan: { product_slug: freeTrialPlanSlug ?? PLAN_FREE },
 		currentPlanBillingPeriod,
 		selectedStorageAddOn,
-	} );
-
-	// Get renewal pricing text for FeaturesGrid (below button)
-	const renewalPricingText = useRenewalPricingPostButtonText( {
-		planSlug,
-		pricing: gridPlansIndex[ planSlug ]?.pricing,
+		pricing: gridPlansIndex[ freeTrialPlanSlug ?? PLAN_FREE ]?.pricing,
 		isMonthlyPlan,
-		coupon: usePlansGridContext().coupon,
-		siteId,
-		useCheckPlanAvailabilityForPurchase:
-			usePlansGridContext().helpers.useCheckPlanAvailabilityForPurchase,
 	} );
-
-	// Use renewal pricing text if available, otherwise use the postButtonText from useAction
-	const finalPostButtonText = renewalPricingText || postButtonText;
 
 	const busy = status === 'blocked';
 
@@ -214,13 +203,13 @@ const ActionButton = ( {
 					>
 						{ text }
 					</PlanButton>
-					{ finalPostButtonText && (
+					{ postButtonText && (
 						<span
 							className={ clsx( 'plans-grid-next-action-button__label', {
 								'is-left-aligned': showBillingDescriptionForIncreasedRenewalPrice,
 							} ) }
 						>
-							{ finalPostButtonText }
+							{ postButtonText }
 						</span>
 					) }
 				</>

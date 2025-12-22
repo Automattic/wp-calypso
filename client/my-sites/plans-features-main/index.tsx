@@ -412,6 +412,7 @@ const PlansFeaturesMain = ( {
 		isLaunchPage,
 		showModalAndExit,
 		coupon,
+		useCheckPlanAvailabilityForPurchase,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
