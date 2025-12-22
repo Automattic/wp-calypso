@@ -20,12 +20,14 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import PreferencesLoginSiteDropdown from '../preferences-primary-site/site-dropdown';
+import { CATEGORY_ORDER, getDisplayCategory } from './categories';
 import type { Site } from '@automattic/api-core';
 
 interface McpAbility {
 	title: string;
 	description: string;
 	enabled: boolean;
+	category?: string;
 }
 
 interface McpSite {
@@ -106,6 +108,23 @@ function McpComponent() {
 		mutation.mutate( payload as any );
 	};
 
+	// Group tools by display category
+	const groupToolsByCategory = (
+		tools: Array< [ string, McpAbility ] >
+	): Record< string, Array< [ string, McpAbility ] > > => {
+		const grouped: Record< string, Array< [ string, McpAbility ] > > = {};
+
+		tools.forEach( ( [ toolId, tool ] ) => {
+			const displayCategory = getDisplayCategory( toolId, tool.category || '' );
+			if ( ! grouped[ displayCategory ] ) {
+				grouped[ displayCategory ] = [];
+			}
+			grouped[ displayCategory ].push( [ toolId, tool ] );
+		} );
+
+		return grouped;
+	};
+
 	const handleSiteToggle = ( siteId: string, enabled: boolean ) => {
 		// Get current sites array from nested structure
 		const currentSites = ( userSettings?.mcp_abilities?.sites as McpSite[] | undefined ) || [];
@@ -171,35 +190,55 @@ function McpComponent() {
 		mutation.mutate( payload as any );
 	};
 
-	// Helper function to render tools section using ExtrasToggleCard pattern
+	// Helper function to render tools section with categories
 	const renderToolsSection = ( tools: Array< [ string, McpAbility ] > ) => {
 		if ( ! tools || tools.length === 0 ) {
 			return null;
 		}
 
+		const groupedTools = groupToolsByCategory( tools );
+
 		return (
-			<Card isRounded={ false }>
+			<Card>
 				<CardBody>
-					<VStack spacing={ 8 }>
+					<VStack spacing={ 4 }>
 						<SectionHeader
 							level={ 3 }
-							title={ __( 'Available MCP Tools' ) }
-							description={ __( 'Choose which AI tools you want to use.' ) }
+							title={ __( 'What the AI can access' ) }
+							description={ __(
+								'Control which parts of your account and sites the AI is allowed to use.'
+							) }
 						/>
 
-						{ /* Individual tool toggles */ }
-						<VStack>
-							{ tools.map( ( [ toolId, tool ]: [ string, McpAbility ] ) => (
-								<ToggleControl
-									key={ toolId }
-									__nextHasNoMarginBottom
-									checked={ tool.enabled }
-									disabled={ mutation.isPending }
-									label={ tool.title }
-									help={ tool.description }
-									onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-								/>
-							) ) }
+						{ /* Render tools grouped by category */ }
+						<VStack spacing={ 4 }>
+							{ CATEGORY_ORDER.map( ( categoryName ) => {
+								const categoryTools = groupedTools[ categoryName ];
+								if ( ! categoryTools || categoryTools.length === 0 ) {
+									return null;
+								}
+
+								return (
+									<VStack key={ categoryName } spacing={ 4 }>
+										<Text as="h4" size={ 14 } weight={ 600 }>
+											{ categoryName }
+										</Text>
+										<VStack spacing={ 4 }>
+											{ categoryTools.map( ( [ toolId, tool ]: [ string, McpAbility ] ) => (
+												<ToggleControl
+													key={ toolId }
+													__nextHasNoMarginBottom
+													checked={ tool.enabled }
+													disabled={ mutation.isPending }
+													label={ tool.title }
+													help={ tool.description }
+													onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+												/>
+											) ) }
+										</VStack>
+									</VStack>
+								);
+							} ) }
 						</VStack>
 					</VStack>
 				</CardBody>
@@ -214,17 +253,9 @@ function McpComponent() {
 		return (
 			<VStack spacing={ 8 }>
 				{ /* MCP Tool Access Master Toggle */ }
-				<Card isRounded={ false }>
+				<Card>
 					<CardBody>
-						<VStack spacing={ 8 }>
-							<SectionHeader
-								level={ 3 }
-								title={ __( 'MCP Tool Access' ) }
-								description={ __(
-									'Control which MCP tools can access your WordPress.com account and sites.'
-								) }
-							/>
-
+						<VStack spacing={ 4 }>
 							<div
 								style={ {
 									display: 'flex',
@@ -232,17 +263,12 @@ function McpComponent() {
 									alignItems: 'center',
 								} }
 							>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ anyToolsEnabled }
-									onChange={ handleMasterToggle }
-									label={
-										<Text weight="bold">
-											{ anyToolsEnabled
-												? __( 'Disable MCP Tool Access' )
-												: __( 'Enable MCP Tool Access' ) }
-										</Text>
-									}
+								<SectionHeader
+									level={ 3 }
+									title={ __( 'MCP Tool Access' ) }
+									description={ __(
+										'Control which MCP tools can access your WordPress.com account and sites.'
+									) }
 								/>
 								{ anyToolsEnabled && (
 									<Link to="/me/mcp/setup">
@@ -250,15 +276,28 @@ function McpComponent() {
 									</Link>
 								) }
 							</div>
+
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ anyToolsEnabled }
+								onChange={ handleMasterToggle }
+								label={
+									<Text weight="bold">
+										{ anyToolsEnabled
+											? __( 'Disable MCP Tool Access' )
+											: __( 'Enable MCP Tool Access' ) }
+									</Text>
+								}
+							/>
 						</VStack>
 					</CardBody>
 				</Card>
 
 				{ /* Site-Specific Settings */ }
 				{ hasTools && anyToolsEnabled && (
-					<Card isRounded={ false }>
+					<Card>
 						<CardBody>
-							<VStack spacing={ 8 }>
+							<VStack spacing={ 4 }>
 								<SectionHeader
 									level={ 3 }
 									title={ __( 'Site-specific MCP settings' ) }
@@ -311,7 +350,7 @@ function McpComponent() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'MCP Account Settings' ) }
+					title={ __( 'MCP' ) }
 					description={ createInterpolateElement(
 						__(
 							'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. <link>Learn more.</link>'
