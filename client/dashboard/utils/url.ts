@@ -1,4 +1,5 @@
 import { getProtocol } from '@wordpress/url';
+import { wpcomLink } from './link';
 
 export function isRelativeUrl( url: string ) {
 	if ( ! url ) {
@@ -9,8 +10,7 @@ export function isRelativeUrl( url: string ) {
 }
 
 export function isOnboardingUrl( url: string ) {
-	const path = new URL( url, window.location.origin ).pathname;
-	return path.startsWith( '/setup' ) || path.startsWith( '/start' );
+	return [ '/setup', '/start' ].some( ( path ) => url.startsWith( wpcomLink( path ) ) );
 }
 
 export function urlToSlug( url: string ) {
