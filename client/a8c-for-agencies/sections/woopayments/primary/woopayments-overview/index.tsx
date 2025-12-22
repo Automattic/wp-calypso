@@ -11,6 +11,7 @@ import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_WOOPAYMENTS_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { formatCurrencyCompact } from 'calypso/a8c-for-agencies/lib/currency';
 import { extractStrings } from 'calypso/a8c-for-agencies/lib/translation';
 import cartImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.png';
@@ -35,6 +36,7 @@ import './style.scss';
 const WooPaymentsOverview = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const title = translate( 'WooPayments commissions' );
 
@@ -244,8 +246,11 @@ const WooPaymentsOverview = () => {
 		<ExternalLink
 			onClick={ () => {
 				dispatch( recordTracksEvent( 'calypso_a4a_woopayments_see_full_terms_click' ) );
+				showSupportGuide(
+					'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/'
+				);
 			} }
-			href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
+			href="#"
 		>
 			{ translate( 'See full terms' ) }
 		</ExternalLink>

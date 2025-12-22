@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -46,6 +47,7 @@ interface StatusBadge {
 const PartnerDirectoryDashboard = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const agency = useSelector( getActiveAgency );
 
@@ -212,11 +214,25 @@ const PartnerDirectoryDashboard = () => {
 			className="partner-directory-dashboard__learn-more-section"
 			heading={ translate( 'Learn more about the program' ) }
 		>
-			<ExternalLink href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings">
+			<ExternalLink
+				href="#"
+				onClick={ () =>
+					showSupportGuide(
+						'https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings'
+					)
+				}
+			>
 				{ translate( 'How does the approval process work?' ) }
 			</ExternalLink>
 			<br />
-			<ExternalLink href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings/#profile-content">
+			<ExternalLink
+				href="#"
+				onClick={ () =>
+					showSupportGuide(
+						'https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings/#profile-content'
+					)
+				}
+			>
 				{ translate( 'What can I put on my public profile?' ) }
 			</ExternalLink>
 		</StepSection>

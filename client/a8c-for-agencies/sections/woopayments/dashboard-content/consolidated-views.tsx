@@ -4,11 +4,13 @@ import {
 	ConsolidatedStatsCard,
 	ConsolidatedStatsGroup,
 } from 'calypso/a8c-for-agencies/components/consolidated-stats-card';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import PayoutCards from '../../referrals/consolidated-view/payout-cards';
 import { useWooPaymentsContext } from '../context';
 
 const WooPaymentsConsolidatedViews = () => {
 	const translate = useTranslate();
+	const { showSupportGuide } = useHelpCenter();
 
 	const { woopaymentsData, isLoadingWooPaymentsData } = useWooPaymentsContext();
 	const totalCommission = woopaymentsData?.data?.total?.payout ?? 0;
@@ -16,9 +18,6 @@ const WooPaymentsConsolidatedViews = () => {
 		woopaymentsData?.data?.estimated?.previous_quarter?.payout ?? 0;
 	const currentQuarterExpectedCommission =
 		woopaymentsData?.data?.estimated?.current_quarter?.payout ?? 0;
-
-	const learnMoreLink =
-		'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/';
 
 	return (
 		<ConsolidatedStatsGroup className="consolidated-view">
@@ -31,7 +30,17 @@ const WooPaymentsConsolidatedViews = () => {
 						'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
 					{
 						components: {
-							a: <a href={ learnMoreLink } target="_blank" rel="noreferrer noopener" />,
+							a: (
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
+								<a
+									onClick={ () =>
+										showSupportGuide(
+											'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/'
+										)
+									}
+									href="#"
+								/>
+							),
 							br: <br />,
 						},
 					}

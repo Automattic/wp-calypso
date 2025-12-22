@@ -6,6 +6,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/consolidated-stats-card';
 import { AGENCY_EARNINGS_LEARN_MORE_LINK } from 'calypso/a8c-for-agencies/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import useGetConsolidatedPayoutData from '../hooks/use-get-consolidated-payout-data';
 import PayoutCards from './payout-cards';
 import type { Referral } from '../types';
@@ -20,6 +21,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 	const { data: productsData, isFetching } = useProductsQuery( false, false, true );
 	const { previousQuarterExpectedCommission, pendingOrders, currentQuarterExpectedCommission } =
 		useGetConsolidatedPayoutData( referrals, productsData );
+	const { showSupportGuide } = useHelpCenter();
 
 	return (
 		<ConsolidatedStatsGroup className="consolidated-view">
@@ -34,10 +36,10 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 						{
 							components: {
 								a: (
+									// eslint-disable-next-line jsx-a11y/anchor-is-valid
 									<a
-										href={ AGENCY_EARNINGS_LEARN_MORE_LINK }
-										target="_blank"
-										rel="noreferrer noopener"
+										onClick={ () => showSupportGuide( AGENCY_EARNINGS_LEARN_MORE_LINK ) }
+										href="#"
 									/>
 								),
 								br: <br />,
@@ -61,11 +63,8 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 					{
 						components: {
 							a: (
-								<a
-									href={ AGENCY_EARNINGS_LEARN_MORE_LINK }
-									target="_blank"
-									rel="noreferrer noopener"
-								/>
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
+								<a onClick={ () => showSupportGuide( AGENCY_EARNINGS_LEARN_MORE_LINK ) } href="#" />
 							),
 							br: <br />,
 						},
