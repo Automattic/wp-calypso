@@ -7,7 +7,6 @@ import { useAppContext } from '../../app/context';
 import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
 import HeaderBar from '../../components/header-bar';
-import MenuDivider from '../../components/menu-divider';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { canManageSite, canSwitchEnvironment } from '../features';
@@ -31,12 +30,7 @@ function Site() {
 				<HStack spacing={ 3 }>
 					<HeaderBar.Title>
 						<SiteSwitcher />
-						{ canSwitchEnvironment( site ) && (
-							<>
-								<MenuDivider />
-								<EnvironmentSwitcher site={ site } />
-							</>
-						) }
+						{ canSwitchEnvironment( site ) && <EnvironmentSwitcher site={ site } /> }
 					</HeaderBar.Title>
 					{ ! isSiteMigrationInProgress( site ) && <SiteMenu site={ site } /> }
 				</HStack>

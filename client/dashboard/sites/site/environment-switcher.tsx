@@ -28,6 +28,7 @@ import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import Environment from '../../components/environment';
+import MenuDivider from '../../components/menu-divider';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import {
 	isAtomicTransferInProgress,
@@ -283,6 +284,23 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		enabled: !! productionSite?.ID && ! stagingSite && ! isStagingSiteCreating,
 	} );
 
+	// Only show the environment switcher when the user has permission to access
+	// the other environment (manage_options on the paired site), similar to the
+	// behaviour in the sites preview pane.
+	const canManageProductionSite = productionSite && canManageSite( productionSite );
+	const canManageStagingSite = stagingSite && canManageSite( stagingSite );
+
+	const isStagingSite = site.is_wpcom_staging_site;
+
+	const hasLoadedOtherEnvironment = isStagingSite ? !! productionSite : !! stagingSite;
+	const canManageOtherEnvironment = isStagingSite
+		? !! canManageProductionSite
+		: !! canManageStagingSite;
+
+	if ( hasLoadedOtherEnvironment && ! canManageOtherEnvironment ) {
+		return null;
+	}
+
 	const handleAddStagingSite = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' );
 
@@ -367,48 +385,51 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	};
 
 	return (
-		<HStack style={ { width: 'auto', flexShrink: 0 } }>
-			<Dropdown
-				renderToggle={ ( { isOpen, onToggle } ) => {
-					// TODO: Let's make sure to revise these conditions and simplify them once we have the design and the full understanding of how the
-					// deletion in progress should look like and if it should have a loading state during deletion.
-					const canToggle =
-						( productionSite && canManageSite( productionSite ) ) ||
-						( stagingSite && canManageSite( stagingSite ) );
+		<>
+			<MenuDivider />
+			<HStack style={ { width: 'auto', flexShrink: 0 } }>
+				<Dropdown
+					renderToggle={ ( { isOpen, onToggle } ) => {
+						// TODO: Let's make sure to revise these conditions and simplify them once we have the design and the full understanding of how the
+						// deletion in progress should look like and if it should have a loading state during deletion.
+						const canToggle =
+							( productionSite && canManageSite( productionSite ) ) ||
+							( stagingSite && canManageSite( stagingSite ) );
 
-					return (
-						<Button
-							className="dashboard-menu__item active"
-							icon={ canToggle ? chevronDownSmall : null }
-							iconPosition="right"
-							disabled={ ! canToggle }
-							onClick={ onToggle }
-							onKeyDown={ ( event: React.KeyboardEvent ) => {
-								if ( ! isOpen && event.code === 'ArrowDown' ) {
-									event.preventDefault();
-									onToggle();
-								}
-							} }
-							aria-haspopup="true"
-							aria-expanded={ isOpen }
-						>
-							<CurrentEnvironment site={ site } />
-						</Button>
-					);
-				} }
-				renderContent={ ( { onClose } ) => (
-					<EnvironmentSwitcherDropdown
-						currentSite={ site }
-						productionSite={ productionSite }
-						stagingSite={ stagingSite }
-						onClose={ onClose }
-						onAddStagingSite={ handleAddStagingSite }
-						isStagingSiteDeleting={ !! isStagingSiteDeleting }
-						isStagingSiteCreating={ !! isStagingSiteCreating }
-					/>
-				) }
-			/>
-		</HStack>
+						return (
+							<Button
+								className="dashboard-menu__item active"
+								icon={ canToggle ? chevronDownSmall : null }
+								iconPosition="right"
+								disabled={ ! canToggle }
+								onClick={ onToggle }
+								onKeyDown={ ( event: React.KeyboardEvent ) => {
+									if ( ! isOpen && event.code === 'ArrowDown' ) {
+										event.preventDefault();
+										onToggle();
+									}
+								} }
+								aria-haspopup="true"
+								aria-expanded={ isOpen }
+							>
+								<CurrentEnvironment site={ site } />
+							</Button>
+						);
+					} }
+					renderContent={ ( { onClose } ) => (
+						<EnvironmentSwitcherDropdown
+							currentSite={ site }
+							productionSite={ productionSite }
+							stagingSite={ stagingSite }
+							onClose={ onClose }
+							onAddStagingSite={ handleAddStagingSite }
+							isStagingSiteDeleting={ !! isStagingSiteDeleting }
+							isStagingSiteCreating={ !! isStagingSiteCreating }
+						/>
+					) }
+				/>
+			</HStack>
+		</>
 	);
 };
 

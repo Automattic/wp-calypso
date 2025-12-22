@@ -293,4 +293,27 @@ describe( 'EnvironmentSwitcher', () => {
 			expect( mockMutate ).toHaveBeenCalled();
 		} );
 	} );
+
+	describe( 'Permissions', () => {
+		test( 'does not render switcher when user cannot manage the other environment', () => {
+			// For a production site with an existing staging site, simulate that the
+			// current user cannot manage the staging site (no manage_options there).
+			mockUseQuery( {
+				'site-by-id-1': mockProductionSiteWithStaging,
+				'site-by-id-2': mockStagingSite,
+				'site-latest-atomic-transfer': { status: 'completed' },
+				'is-creating-staging': false,
+				'is-deleting-staging': false,
+			} );
+
+			const { canManageSite } = require( '../../features' );
+			canManageSite.mockImplementation( ( site: Site ) => site.ID === 1 );
+
+			const { container } = render(
+				<EnvironmentSwitcher site={ mockProductionSiteWithStaging } />
+			);
+
+			expect( container.firstChild ).toBeNull();
+		} );
+	} );
 } );
