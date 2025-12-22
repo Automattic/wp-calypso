@@ -32,6 +32,7 @@ interface GetNewSiteParams {
 	partnerBundle: string | null;
 	sourceSlug?: string;
 	siteIntent?: string;
+	blueprint?: string | null;
 }
 
 type NewSiteParams = {
@@ -53,6 +54,7 @@ type NewSiteParams = {
 		wpcom_public_coming_soon: 0 | 1;
 		site_accent_color?: string;
 		site_intent?: string;
+		blueprint?: string;
 	};
 	validate: boolean;
 };
@@ -102,6 +104,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		blueprint,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -126,6 +129,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
 			...( siteIntent && { site_intent: siteIntent } ),
 			...( partnerBundle && { site_partner_bundle: partnerBundle } ),
+			...( blueprint && { blueprint: blueprint } ),
 		},
 		validate: false,
 	};
@@ -152,7 +156,8 @@ export const createSiteWithCart = async (
 	siteGoals?: SiteGoal[],
 	gardenName?: string | null,
 	gardenPartnerName?: string | null,
-	specId?: string | null
+	specId?: string | null,
+	blueprint?: string | null
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -170,6 +175,7 @@ export const createSiteWithCart = async (
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		blueprint,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
