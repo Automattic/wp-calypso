@@ -1,4 +1,10 @@
-import { __ } from '@wordpress/i18n';
-import { createDomainErrorComponent } from '../domain-error';
+import { TLDMaintenanceNotice } from '../maintenance-notice';
+import { NameServersLayout } from './layout';
 
-export default createDomainErrorComponent( __( 'Name Servers' ) );
+export default function NameServersError( { error }: { error: Error } ) {
+	return (
+		<TLDMaintenanceNotice error={ error }>
+			{ ( { maintenanceNotice } ) => <NameServersLayout notices={ maintenanceNotice } /> }
+		</TLDMaintenanceNotice>
+	);
+}

@@ -103,4 +103,5 @@ export interface Domain extends DomainSummary {
 	transfer_start_date?: string;
 	last_transfer_error: string;
 	current_user_can_add_email: boolean;
+	tld_maintenance_end_time: number;
 }
