@@ -193,7 +193,7 @@ function McpSetupComponent() {
 									) }
 								</Text>
 								<VStack spacing={ 2 }>
-									<ul style={ { color: '#757575' } }>
+									<ul style={ { color: '#757575', paddingLeft: '20px', margin: '0' } }>
 										<li>
 											<Text as="p" size="medium" variant="muted">
 												{ __(
@@ -260,7 +260,7 @@ function McpSetupComponent() {
 											<Text as="p" size="medium" variant="muted">
 												{ __( 'Installation steps:' ) }
 											</Text>
-											<ol style={ { color: '#757575' } }>
+											<ol style={ { color: '#757575', paddingLeft: '20px', margin: '0' } }>
 												<li>
 													<Text as="p" size="medium" variant="muted">
 														{ __( 'Click the download button' ) }
