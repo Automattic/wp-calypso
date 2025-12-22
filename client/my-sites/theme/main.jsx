@@ -16,8 +16,9 @@ import {
 	isDefaultGlobalStylesVariationSlug,
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Badge } from '@automattic/ui';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import { MenuItem, Dropdown, Notice, NavigableMenu } from '@wordpress/components';
+import { MenuItem, Dropdown, Notice, NavigableMenu, ExternalLink } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { chevronDown, chevronUp, Icon, external } from '@wordpress/icons';
 import { hasQueryArg } from '@wordpress/url';
@@ -655,9 +656,27 @@ class ThemeSheet extends Component {
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
 					</div>
+					{ this.renderDisclaimer() }
 				</div>
 				{ ! retired && this.renderStyleVariations() }
 			</div>
+		);
+	};
+
+	renderDisclaimer = () => {
+		const { is_commercial, external_support_url, translate } = this.props;
+		if ( ! is_commercial ) {
+			return null;
+		}
+
+		return (
+			<Badge style={ { width: '100%' } }>
+				{ translate( 'This theme offers additional paid commercial upgrades or support.' ) }
+				&nbsp;
+				<ExternalLink href={ external_support_url } style={ { color: 'inherit' } }>
+					{ translate( 'View support' ) }
+				</ExternalLink>
+			</Badge>
 		);
 	};
 
