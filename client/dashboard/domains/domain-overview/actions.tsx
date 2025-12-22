@@ -37,7 +37,7 @@ import {
 	getDeleteDescription,
 } from './actions.utils';
 
-export default function Actions() {
+export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 	const router = useRouter();
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
@@ -117,6 +117,7 @@ export default function Actions() {
 								size="compact"
 								variant="secondary"
 								href={ getDomainRenewalUrl( domain, purchase ) }
+								disabled={ isDisabled }
 							>
 								{ __( 'Renew' ) }
 							</Button>
@@ -137,6 +138,7 @@ export default function Actions() {
 								variant="secondary"
 								to={ domainTransferRoute.fullPath }
 								params={ { domainName } }
+								disabled={ isDisabled }
 							>
 								{ __( 'Transfer' ) }
 							</RouterLinkButton>
