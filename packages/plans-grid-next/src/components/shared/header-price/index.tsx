@@ -145,7 +145,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 				) }
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
-						'is-large-currency': isLargeCurrency,
+						'is-large-currency': isLargeCurrency && ! isRenewalPricingTreatment,
 					} ) }
 				>
 					{ ! hideCrossedPrice && (
@@ -153,7 +153,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 							currencyCode={ currencyCode }
 							rawPrice={ compareToMonthlyPrice }
 							displayPerMonthNotation={ false }
-							isLargeCurrency
+							isLargeCurrency={ isLargeCurrency && ! isRenewalPricingTreatment }
 							isSmallestUnit
 							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 							original
@@ -163,7 +163,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						currencyCode={ currencyCode }
 						rawPrice={ monthlyPrice }
 						displayPerMonthNotation={ false }
-						isLargeCurrency
+						isLargeCurrency={ isLargeCurrency && ! isRenewalPricingTreatment }
 						isSmallestUnit
 						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 						discounted
