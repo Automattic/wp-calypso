@@ -45,13 +45,21 @@ import type {
 } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
-const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {
+type SiteListQueryOptions = {
+	isRestoringAccount: boolean;
+	isAutomattician: boolean;
+};
+
+const getFetchSitesOptions = (
+	view: View,
+	{ isRestoringAccount, isAutomattician }: SiteListQueryOptions
+): FetchSitesOptions => {
 	const filters = view.filters ?? [];
 
 	// Include A8C sites unless explicitly excluded from the filter.
-	const shouldIncludeA8COwned = ! filters.some(
-		( item: Filter ) => item.field === 'is_a8c' && item.value === false
-	);
+	const shouldIncludeA8COwned =
+		isAutomattician &&
+		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
 
 	if ( filters.find( ( item: Filter ) => item.field === 'status' && item.value === 'deleted' ) ) {
 		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
@@ -171,7 +179,7 @@ function getFetchSiteListParams(
 /**
  * Enables the correct site query based on the dataviews/v2/es-site-list feature flag.
  */
-export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
+export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 	const { queries } = useAppContext();
 
 	const { data: siteFilters } = useQuery( {
@@ -192,7 +200,7 @@ export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 	} );
 
 	const sitesQueryResult = useQuery( {
-		...queries.sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
+		...queries.sitesQuery( getFetchSitesOptions( view, options ) ),
 		placeholderData: keepPreviousData,
 		enabled: ! isEnabled( 'dashboard/v2/es-site-list' ),
 	} );
@@ -259,7 +267,7 @@ export default function Sites() {
 	} );
 
 	const { sites, sites__ES, isLoadingSites, isPlaceholderData, hasNoData, totalItems } =
-		useSiteListQuery( view, isRestoringAccount );
+		useSiteListQuery( view, { isRestoringAccount, isAutomattician } );
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const fields__ES = useFields__ES( { isAutomattician, viewType: view.type } );
