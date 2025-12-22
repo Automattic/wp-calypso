@@ -101,21 +101,9 @@ export const useManageSupportInteraction = () => {
 		},
 	} );
 
-	/**
-	 * Resolve a support interaction.
-	 */
-	const resolveInteraction = useMutation( {
-		mutationKey: [ 'support-interaction', 'resolve', isTestMode ],
-		mutationFn: ( { interactionId }: { interactionId: string } ) =>
-			handleSupportInteractionsFetch( 'PUT', `/${ interactionId }/status`, isTestMode, {
-				status: 'resolved',
-			} ),
-	} ).mutate;
-
 	return {
 		startNewInteraction: startNewInteraction.mutateAsync,
 		isMutating: startNewInteraction.isPending,
-		addEventToInteraction,
-		resolveInteraction,
+		addEventToInteraction: addEventToInteraction.mutateAsync,
 	};
 };
