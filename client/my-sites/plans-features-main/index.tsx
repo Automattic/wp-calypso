@@ -239,7 +239,8 @@ const PlansFeaturesMain = ( {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 
-	const [ , renewalPricingVariation ] = useRenewalPricingExperiment( flowName );
+	const [ isRenewalPricingExperimentLoading, renewalPricingVariation ] =
+		useRenewalPricingExperiment( flowName );
 
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -681,7 +682,10 @@ const PlansFeaturesMain = ( {
 			! gridPlansForComparisonGrid
 	);
 
-	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
+	const isPlansGridReady =
+		! isLoadingGridPlans &&
+		! resolvedSubdomainName.isLoading &&
+		! isRenewalPricingExperimentLoading;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
