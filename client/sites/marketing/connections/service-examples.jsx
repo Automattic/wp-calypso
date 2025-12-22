@@ -272,7 +272,7 @@ class SharingServiceExamples extends Component {
 									showIcon={ false }
 									supportPostId={ 77589 }
 									supportLink={ localizeUrl(
-										'https://wordpress.com/support/instagram/#embed-a-feed-of-instagram-posts'
+										'https://wordpress.com/support/latest-instagram-posts/'
 									) }
 								/>
 							),
