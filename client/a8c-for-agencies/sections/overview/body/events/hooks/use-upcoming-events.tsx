@@ -3,6 +3,7 @@ import moment from 'moment';
 import { useMemo } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming-event/types';
+import WooLogo from 'calypso/assets/images/a8c-for-agencies/events/woo-logo.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 export const useUpcomingEvents = () => {
@@ -11,6 +12,28 @@ export const useUpcomingEvents = () => {
 
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
+			{
+				id: 'a4a-woo-2025-12-23',
+				date: {
+					from: moment( '2025-12-23' ),
+					to: moment( '2026-01-05' ),
+				},
+				displayDate: translate( 'As soon as possible' ),
+				title: translate( 'Action Needed: Critical WooCommerce Update Available' ),
+				subtitle: translate( 'Automattic for Agencies' ),
+				descriptions: [
+					translate(
+						'A vulnerability has been identified in WooCommerce versions 8.1 through 10.4.2, and a patch is now available. Client sites hosted with Automattic are already protected. For any client sites hosted elsewhere, please update WooCommerce to the latest version as soon as possible. At this time, we have no indication that this vulnerability has been exploited.'
+					),
+				],
+				cta: {
+					label: translate( 'Read the announcement and FAQ ↗' ),
+					url: 'https://usabi.li/do/b8fc6strv3hm/tnzgph',
+				},
+				logoUrl: WooLogo,
+				trackEventName: 'calypso_a4a_overview_events_a4a_woo_2025_12_23_click',
+				dateClassName: 'a4a-event__date--critical',
+			},
 			{
 				id: 'a4a-partner-survey-2025-12-03',
 				date: {
