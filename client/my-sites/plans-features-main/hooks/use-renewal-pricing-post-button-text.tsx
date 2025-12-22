@@ -99,4 +99,3 @@ export default function useRenewalPricingPostButtonText( {
 		translate,
 	} );
 }
-
