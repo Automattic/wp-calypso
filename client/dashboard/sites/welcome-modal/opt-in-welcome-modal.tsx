@@ -43,7 +43,6 @@ export default function OptInWelcomeModal() {
 		<Modal
 			className="dashboard-opt-in-welcome-modal"
 			shouldCloseOnEsc={ false }
-			shouldCloseOnClickOutside={ false }
 			isDismissible={ false }
 			__experimentalHideHeader
 			onRequestClose={ handleDismiss }
