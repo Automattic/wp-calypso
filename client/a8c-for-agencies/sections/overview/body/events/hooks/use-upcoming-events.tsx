@@ -13,9 +13,9 @@ export const useUpcomingEvents = () => {
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
 			{
-				id: 'a4a-woo-2025-12-23',
+				id: 'a4a-woo-2025-12-22',
 				date: {
-					from: moment( '2025-12-23' ),
+					from: moment( '2025-12-22' ),
 					to: moment( '2026-01-05' ),
 				},
 				displayDate: translate( 'Update as soon as possible' ),
@@ -31,7 +31,7 @@ export const useUpcomingEvents = () => {
 					url: 'https://developer.woocommerce.com/2025/12/22/store-api-vulnerability-patched-in-woocommerce-8-1/',
 				},
 				logoUrl: WooLogo,
-				trackEventName: 'calypso_a4a_overview_events_a4a_woo_2025_12_23_click',
+				trackEventName: 'calypso_a4a_overview_events_a4a_woo_2025_12_22_click',
 				dateClassName: 'a4a-event__date--critical',
 			},
 			{
