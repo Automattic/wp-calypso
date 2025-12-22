@@ -3,6 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import { ButtonStack } from '../../../../components/button-stack';
+import { SectionHeader } from '../../../../components/section-header';
 import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
@@ -438,6 +439,10 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 	return (
 		props.isVisible && (
 			<VStack spacing={ 6 }>
+				<SectionHeader
+					title={ __( 'Before you go, please answer a few quick questions to help us improve.' ) }
+					level={ 3 }
+				/>
 				{ surveyContent() }
 				{ renderStepButtons() }
 			</VStack>

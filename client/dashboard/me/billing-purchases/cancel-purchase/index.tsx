@@ -1193,9 +1193,6 @@ export default function CancelPurchase() {
 				<PageHeader
 					title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
 					prefix={ <Breadcrumbs length={ 4 } /> }
-					description={ __(
-						'Before you go, please answer a few quick questions to help us improve.'
-					) }
 				/>
 			}
 			notices={ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
