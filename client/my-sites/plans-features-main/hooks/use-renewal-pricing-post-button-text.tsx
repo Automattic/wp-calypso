@@ -6,9 +6,8 @@ import {
 	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { getRenewalPricingText } from '@automattic/plans-grid-next/src/hooks/data-store/get-renewal-pricing-text';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../../grid-context';
-import { getRenewalPricingText } from './get-renewal-pricing-text';
 import type { Plans as PlansType } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -19,6 +18,9 @@ interface UseRenewalPricingPostButtonTextProps {
 	coupon?: string;
 	siteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: PlansType.UseCheckPlanAvailabilityForPurchase;
+	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
+	enableCategorisedFeatures?: boolean;
+	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
 export default function useRenewalPricingPostButtonText( {
@@ -28,13 +30,11 @@ export default function useRenewalPricingPostButtonText( {
 	coupon,
 	siteId,
 	useCheckPlanAvailabilityForPurchase,
+	showBillingDescriptionForIncreasedRenewalPrice,
+	enableCategorisedFeatures,
+	reflectStorageSelectionInPlanPrices,
 }: UseRenewalPricingPostButtonTextProps ): TranslateResult | null {
 	const translate = useTranslate();
-	const {
-		showBillingDescriptionForIncreasedRenewalPrice,
-		enableCategorisedFeatures,
-		reflectStorageSelectionInPlanPrices,
-	} = usePlansGridContext();
 
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 	const yearlyVariantPricingData = Plans.usePricingMetaForGridPlans( {
@@ -99,3 +99,4 @@ export default function useRenewalPricingPostButtonText( {
 		translate,
 	} );
 }
+

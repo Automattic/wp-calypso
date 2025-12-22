@@ -476,6 +476,7 @@ const ComparisonGridHeaderCell = ( {
 				showMonthlyPrice={ false }
 				isStuck={ false }
 				visibleGridPlans={ visibleGridPlans }
+				showPostButtonText={ false }
 			/>
 		</Cell>
 	);

@@ -30,6 +30,7 @@ type ActionButtonProps = {
 	showMonthlyPrice: boolean;
 	isStuck: boolean;
 	visibleGridPlans: GridPlan[];
+	showPostButtonText?: boolean;
 };
 
 const ActionButton = ( {
@@ -40,6 +41,7 @@ const ActionButton = ( {
 	isStuck,
 	isInSignup,
 	isMonthlyPlan,
+	showPostButtonText = true,
 }: ActionButtonProps ) => {
 	const translate = useTranslate();
 	const {
@@ -203,7 +205,7 @@ const ActionButton = ( {
 					>
 						{ text }
 					</PlanButton>
-					{ postButtonText && (
+					{ showPostButtonText && postButtonText && (
 						<span
 							className={ clsx( 'plans-grid-next-action-button__label', {
 								'is-left-aligned': showBillingDescriptionForIncreasedRenewalPrice,

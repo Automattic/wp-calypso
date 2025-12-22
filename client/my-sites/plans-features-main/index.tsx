@@ -413,6 +413,9 @@ const PlansFeaturesMain = ( {
 		showModalAndExit,
 		coupon,
 		useCheckPlanAvailabilityForPurchase,
+		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
+		enableCategorisedFeatures: showSimplifiedFeatures,
+		reflectStorageSelectionInPlanPrices: true,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>

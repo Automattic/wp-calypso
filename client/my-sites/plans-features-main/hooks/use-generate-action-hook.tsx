@@ -18,7 +18,6 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
-import useRenewalPricingPostButtonText from '@automattic/plans-grid-next/src/hooks/data-store/use-renewal-pricing-post-button-text';
 import { useState } from '@wordpress/element';
 import { type LocalizeProps, type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
@@ -31,6 +30,7 @@ import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selecto
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
 import useGenerateActionCallback from './use-generate-action-callback';
+import useRenewalPricingPostButtonText from './use-renewal-pricing-post-button-text';
 import type {
 	GridAction,
 	PlansIntent,
@@ -72,6 +72,9 @@ export default function useGenerateActionHook( {
 	showModalAndExit,
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
+	showBillingDescriptionForIncreasedRenewalPrice,
+	enableCategorisedFeatures,
+	reflectStorageSelectionInPlanPrices,
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -82,6 +85,9 @@ export default function useGenerateActionHook( {
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	coupon?: string;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
+	enableCategorisedFeatures?: boolean;
+	reflectStorageSelectionInPlanPrices?: boolean;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -137,6 +143,9 @@ export default function useGenerateActionHook( {
 			coupon,
 			siteId,
 			useCheckPlanAvailabilityForPurchase,
+			showBillingDescriptionForIncreasedRenewalPrice,
+			enableCategorisedFeatures,
+			reflectStorageSelectionInPlanPrices,
 		} );
 		/**
 		 * 1. Enterprise Plan actions
