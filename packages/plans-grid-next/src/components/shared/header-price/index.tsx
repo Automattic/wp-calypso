@@ -51,7 +51,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		siteId,
 		coupon,
 		helpers,
-		renewalPricingVariation,
+		showBillingDescriptionForIncreasedRenewalPrice,
 	} = usePlansGridContext();
 	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
@@ -111,7 +111,8 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;
 	}
-	const isRenewalPricingTreatment = renewalPricingVariation?.includes( 'crossed_price' );
+	const isRenewalPricingTreatment =
+		showBillingDescriptionForIncreasedRenewalPrice?.includes( 'crossed_price' );
 
 	if ( isGridPlanOnIntroOffer ) {
 		// Use the monthly plan price for renewal pricing, instead of the intro offer renewal price
@@ -129,7 +130,8 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			);
 		}
 		const hideCrossedPrice =
-			isRenewalPricingTreatment && renewalPricingVariation === 'no_crossed_price';
+			isRenewalPricingTreatment &&
+			showBillingDescriptionForIncreasedRenewalPrice === 'no_crossed_price';
 
 		return (
 			<div className="plans-grid-next-header-price">

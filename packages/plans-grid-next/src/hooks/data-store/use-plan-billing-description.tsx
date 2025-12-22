@@ -39,7 +39,7 @@ export default function usePlanBillingDescription( {
 	const {
 		reflectStorageSelectionInPlanPrices,
 		showSimplifiedBillingDescription,
-		renewalPricingVariation,
+		showBillingDescriptionForIncreasedRenewalPrice,
 		enableCategorisedFeatures,
 	} = usePlansGridContext();
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
@@ -72,7 +72,7 @@ export default function usePlanBillingDescription( {
 	) {
 		// For renewal pricing experiment in FeaturesGrid, show "per month" and move savings text to post-button area
 		// For ComparisonGrid, keep the original savings text above the button
-		if ( renewalPricingVariation && enableCategorisedFeatures ) {
+		if ( showBillingDescriptionForIncreasedRenewalPrice && enableCategorisedFeatures ) {
 			return translate( 'per month' );
 		}
 
@@ -82,7 +82,7 @@ export default function usePlanBillingDescription( {
 			? yearlyVariantPricing.discountedPrice?.monthly
 			: yearlyVariantPricing.originalPrice?.monthly;
 
-		if ( renewalPricingVariation ) {
+		if ( showBillingDescriptionForIncreasedRenewalPrice ) {
 			yearlyVariantMaybeDiscountedPrice = Number.isFinite(
 				yearlyVariantPricing.discountedPrice?.monthly
 			)
@@ -131,7 +131,7 @@ export default function usePlanBillingDescription( {
 		introOffer?.intervalCount &&
 		introOffer.intervalUnit &&
 		! introOffer.isOfferComplete &&
-		! renewalPricingVariation
+		! showBillingDescriptionForIncreasedRenewalPrice
 	) {
 		const discountedPriceFull =
 			typeof discountedPrice?.full === 'number' ? discountedPrice.full : introOffer?.rawPrice?.full;
@@ -279,7 +279,7 @@ export default function usePlanBillingDescription( {
 	}
 
 	// For renewal pricing experiment with intro pricing
-	if ( renewalPricingVariation && discountedPriceFullTermText ) {
+	if ( showBillingDescriptionForIncreasedRenewalPrice && discountedPriceFullTermText ) {
 		// In FeaturesGrid, show "per month" above button
 		if ( enableCategorisedFeatures ) {
 			return translate( 'per month' );
@@ -318,7 +318,7 @@ export default function usePlanBillingDescription( {
 		}
 	}
 
-	if ( renewalPricingVariation ) {
+	if ( showBillingDescriptionForIncreasedRenewalPrice ) {
 		// For renewal pricing experiment, show variation-specific text
 		// In FeaturesGrid (enableCategorisedFeatures), show "per month" and move renewal text below CTA
 		// In ComparisonGrid, show full renewal text above CTA
@@ -328,7 +328,7 @@ export default function usePlanBillingDescription( {
 
 		return getRenewalPricingText( {
 			pricing,
-			renewalPricingVariation,
+			showBillingDescriptionForIncreasedRenewalPrice,
 			translate,
 		} );
 	} else if ( showSimplifiedBillingDescription ) {

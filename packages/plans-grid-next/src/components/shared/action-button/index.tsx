@@ -47,7 +47,7 @@ const ActionButton = ( {
 		gridPlansIndex,
 		siteId,
 		helpers: { useAction },
-		renewalPricingVariation,
+		showBillingDescriptionForIncreasedRenewalPrice,
 	} = usePlansGridContext();
 	const {
 		current,
@@ -217,7 +217,7 @@ const ActionButton = ( {
 					{ finalPostButtonText && (
 						<span
 							className={ clsx( 'plans-grid-next-action-button__label', {
-								'is-left-aligned': renewalPricingVariation,
+								'is-left-aligned': showBillingDescriptionForIncreasedRenewalPrice,
 							} ) }
 						>
 							{ finalPostButtonText }

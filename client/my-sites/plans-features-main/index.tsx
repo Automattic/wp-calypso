@@ -904,7 +904,7 @@ const PlansFeaturesMain = ( {
 										}
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
-										renewalPricingVariation={ renewalPricingVariation }
+										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -964,7 +964,7 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
-													renewalPricingVariation={ renewalPricingVariation }
+													showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }

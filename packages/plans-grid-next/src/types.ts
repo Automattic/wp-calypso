@@ -253,9 +253,9 @@ export type GridContextProps = {
 	 */
 	showSimplifiedBillingDescription?: boolean;
 	/**
-	 * Renewal pricing experiment variation name (e.g., 'crossed_price', 'no_crossed_price')
+	 * If, and how to present increased renewal pricing (null, 'crossed_price', 'no_crossed_price')
 	 */
-	renewalPricingVariation?: string | null;
+	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 };
 
 export type ComparisonGridExternalProps = Omit<

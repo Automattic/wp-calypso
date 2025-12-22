@@ -31,7 +31,7 @@ export default function useRenewalPricingPostButtonText( {
 }: UseRenewalPricingPostButtonTextProps ): TranslateResult | null {
 	const translate = useTranslate();
 	const {
-		renewalPricingVariation,
+		showBillingDescriptionForIncreasedRenewalPrice,
 		enableCategorisedFeatures,
 		reflectStorageSelectionInPlanPrices,
 	} = usePlansGridContext();
@@ -48,7 +48,11 @@ export default function useRenewalPricingPostButtonText( {
 		? yearlyVariantPricingData?.[ yearlyVariantPlanSlug ]
 		: null;
 
-	if ( ! renewalPricingVariation || ! enableCategorisedFeatures || ! pricing ) {
+	if (
+		! showBillingDescriptionForIncreasedRenewalPrice ||
+		! enableCategorisedFeatures ||
+		! pricing
+	) {
 		return null;
 	}
 
@@ -91,7 +95,7 @@ export default function useRenewalPricingPostButtonText( {
 
 	return getRenewalPricingText( {
 		pricing,
-		renewalPricingVariation,
+		showBillingDescriptionForIncreasedRenewalPrice,
 		translate,
 	} );
 }

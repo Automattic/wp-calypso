@@ -9,7 +9,7 @@ import type { TranslateResult } from 'i18n-calypso';
 
 interface GetRenewalPricingTextParams {
 	pricing: PlansType.PricingMetaForGridPlan;
-	renewalPricingVariation: string | null | undefined;
+	showBillingDescriptionForIncreasedRenewalPrice: string | null | undefined;
 	translate: ( text: string, options?: any ) => TranslateResult;
 }
 
@@ -19,7 +19,7 @@ interface GetRenewalPricingTextParams {
  */
 export function getRenewalPricingText( {
 	pricing,
-	renewalPricingVariation,
+	showBillingDescriptionForIncreasedRenewalPrice,
 	translate,
 }: GetRenewalPricingTextParams ): TranslateResult | null {
 	const { currencyCode, discountedPrice, originalPrice, billingPeriod, introOffer } = pricing;
@@ -54,7 +54,7 @@ export function getRenewalPricingText( {
 	}
 
 	// Different text based on variation
-	if ( renewalPricingVariation === 'crossed_price' ) {
+	if ( showBillingDescriptionForIncreasedRenewalPrice === 'crossed_price' ) {
 		return translate( 'Auto-renews at %(price)s per month. Billed every %(months)s months.', {
 			args: {
 				price: formattedMonthlyPrice,
@@ -63,7 +63,7 @@ export function getRenewalPricingText( {
 			comment:
 				'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
 		} );
-	} else if ( renewalPricingVariation === 'no_crossed_price' ) {
+	} else if ( showBillingDescriptionForIncreasedRenewalPrice === 'no_crossed_price' ) {
 		return translate(
 			'Get %(months)s months for %(fullPrice)s. Auto-renews at %(price)s per month.',
 			{
