@@ -69,11 +69,12 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const isGridPlanOnIntroOffer = introOffer && ! introOffer.isOfferComplete;
 
 	const { prices } = usePlanPricingInfoFromGridPlans( { gridPlans: visibleGridPlans } );
-	const isLargeCurrency = useIsLargeCurrency( {
-		prices,
-		currencyCode: currencyCode || 'USD',
-		ignoreWhitespace: true,
-	} );
+	const isLargeCurrency =
+		useIsLargeCurrency( {
+			prices,
+			currencyCode: currencyCode || 'USD',
+			ignoreWhitespace: true,
+		} ) && ! showBillingDescriptionForIncreasedRenewalPrice?.includes( 'crossed_price' ); // a temporary fix to handle an issue with isLargeCurrency logic for intro offers
 
 	const termVariantPlanSlug = useTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
 	const termVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -111,33 +112,29 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;
 	}
-	const isRenewalPricingTreatment =
-		showBillingDescriptionForIncreasedRenewalPrice?.includes( 'crossed_price' );
 
 	if ( isGridPlanOnIntroOffer ) {
 		// Use the monthly plan price for renewal pricing, instead of the intro offer renewal price
 		const compareToMonthlyPrice =
-			( isRenewalPricingTreatment && termVariantPricing
+			( showBillingDescriptionForIncreasedRenewalPrice && termVariantPricing
 				? termVariantPricing.originalPrice.monthly
 				: originalPrice.monthly ) ?? 0;
 		const monthlyPrice =
 			typeof discountedPrice.monthly === 'number'
 				? discountedPrice.monthly
 				: introOffer.rawPrice.monthly;
-		if ( isRenewalPricingTreatment && compareToMonthlyPrice > monthlyPrice ) {
+		if ( showBillingDescriptionForIncreasedRenewalPrice && compareToMonthlyPrice > monthlyPrice ) {
 			savings = Math.floor(
 				( ( compareToMonthlyPrice - monthlyPrice ) / compareToMonthlyPrice ) * 100
 			);
 		}
-		const hideCrossedPrice =
-			isRenewalPricingTreatment &&
-			showBillingDescriptionForIncreasedRenewalPrice === 'no_crossed_price';
+		const hideCrossedPrice = showBillingDescriptionForIncreasedRenewalPrice === 'no_crossed_price';
 
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
 					<div className="plans-grid-next-header-price__badge">
-						{ isRenewalPricingTreatment
+						{ showBillingDescriptionForIncreasedRenewalPrice
 							? translate( 'Save %(savings)d%%', {
 									args: { savings },
 									comment: 'Example: Save 35%',
@@ -147,7 +144,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 				) }
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
-						'is-large-currency': isLargeCurrency && ! isRenewalPricingTreatment,
+						'is-large-currency': isLargeCurrency,
 					} ) }
 				>
 					{ ! hideCrossedPrice && (
@@ -155,7 +152,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 							currencyCode={ currencyCode }
 							rawPrice={ compareToMonthlyPrice }
 							displayPerMonthNotation={ false }
-							isLargeCurrency={ isLargeCurrency && ! isRenewalPricingTreatment }
+							isLargeCurrency={ isLargeCurrency }
 							isSmallestUnit
 							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 							original
@@ -165,7 +162,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						currencyCode={ currencyCode }
 						rawPrice={ monthlyPrice }
 						displayPerMonthNotation={ false }
-						isLargeCurrency={ isLargeCurrency && ! isRenewalPricingTreatment }
+						isLargeCurrency={ isLargeCurrency }
 						isSmallestUnit
 						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 						discounted
