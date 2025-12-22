@@ -373,7 +373,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 						onClick={ onSubmit }
 						variant="primary"
 					>
-						{ __( 'Submit' ) }
+						{ __( 'Continue' ) }
 					</Button>
 					<Button
 						disabled={ ! canGoNext() }
