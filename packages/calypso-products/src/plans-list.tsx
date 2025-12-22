@@ -1655,11 +1655,15 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getPlanTagline: () => {
 		if (
 			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
-			i18n.hasTranslation( 'Unlock next-level WordPress with all custom plugins and themes.' )
+			i18n.hasTranslation(
+				'Unlock business tools, priority support, developer power with predictable costs.'
+			)
 		) {
-			return i18n.translate( 'Unlock next-level WordPress with all custom plugins and themes.' );
+			return i18n.translate(
+				'Unlock business tools, priority support, developer power with predictable costs.'
+			);
 		}
-		return i18n.translate( 'Unlock next-level WordPress with custom plugins and themes.' );
+		return i18n.translate( 'Unlock next-level WordPress with all custom plugins and themes.' );
 	},
 	getBlogOnboardingTagLine: () =>
 		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
