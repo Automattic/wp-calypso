@@ -774,7 +774,11 @@ class ManagePurchase extends Component<
 				<Icon icon={ trash } className="card__icon" />
 				{ text }
 				{ this.renderActionDetails(
-					String( translate( 'Will expire immediately and be removed' ) )
+					String(
+						purchase.expiryStatus === 'expired'
+							? translate( 'Expired purchase will be removed.' )
+							: translate( 'Will expire immediately and be removed' )
+					)
 				) }
 			</RemovePurchase>
 		);

@@ -7,7 +7,6 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { Button as GutenbergButton } from '@wordpress/components';
-import { hasTranslation } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
@@ -692,16 +691,10 @@ class CancelPurchaseForm extends Component {
 				return translate( 'Cancel domain and refund' );
 			}
 			if ( isPlan( purchase ) ) {
-				if ( hasTranslation( 'Cancel plan and refund' ) ) {
-					return translate( 'Cancel plan and refund' );
-				}
-				return translate( 'Cancel plan' );
+				return translate( 'Cancel plan and refund' );
 			}
 			if ( isSubscription( purchase ) ) {
-				if ( hasTranslation( 'Cancel subscription and refund' ) ) {
-					return translate( 'Cancel subscription and refund' );
-				}
-				return translate( 'Cancel subscription' );
+				return translate( 'Cancel subscription and refund' );
 			}
 			if ( isOneTimePurchase( purchase ) ) {
 				return translate( 'Cancel and refund' );
@@ -709,10 +702,7 @@ class CancelPurchaseForm extends Component {
 		}
 
 		if ( isDomainRegistration( purchase ) ) {
-			if ( hasTranslation( 'Cancel domain subscription' ) ) {
-				return translate( 'Cancel domain subscription' );
-			}
-			return translate( 'Cancel domain' );
+			return translate( 'Cancel domain subscription' );
 		}
 
 		if ( isSubscription( purchase ) ) {
