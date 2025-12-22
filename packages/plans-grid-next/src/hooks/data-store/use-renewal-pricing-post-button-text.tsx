@@ -51,7 +51,6 @@ export default function useRenewalPricingPostButtonText( {
 		? yearlyVariantPricingData?.[ yearlyVariantPlanSlug ]
 		: null;
 
-	// Only show in FeaturesGrid (when enableCategorisedFeatures is true) and when in experiment
 	if ( ! renewalPricingVariation || ! enableCategorisedFeatures || ! pricing ) {
 		return null;
 	}
