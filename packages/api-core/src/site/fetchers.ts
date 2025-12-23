@@ -69,7 +69,7 @@ export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site 
 			{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
 		);
 	} catch ( error ) {
-		if ( isWpError( error ) && error.error === 'parse_error' ) {
+		if ( isWpError( error ) && error.message.startsWith( 'The Jetpack site is inaccessible' ) ) {
 			throw new DashboardDataError( 'inaccessible_jetpack', error );
 		}
 		throw error;
