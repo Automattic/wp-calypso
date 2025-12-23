@@ -235,7 +235,9 @@ function McpSetupComponent() {
 										value={ selectedMcpClient }
 										options={ mcpClientOptions }
 										onChange={ setSelectedMcpClient }
-										help={ __( 'Choose your MCP client to get the correct configuration format.' ) }
+										help={ __(
+											'Choose your MCP client to get the correct configuration format. Then, follow the instructions below.'
+										) }
 									/>
 								</VStack>
 							</CardBody>
@@ -322,7 +324,7 @@ function McpSetupComponent() {
 										{ __( 'Manual Setup' ) }
 									</Text>
 
-									<VStack spacing={ 3 }>
+									<VStack spacing={ 2 }>
 										<div
 											style={ {
 												display: 'flex',
@@ -367,63 +369,63 @@ function McpSetupComponent() {
 											) }
 											style={ { minHeight: '240px' } }
 										/>
+										<ul style={ { listStyle: 'none', padding: '0', margin: '0' } }>
+											<li style={ { marginBottom: '4px' } }>
+												{ createInterpolateElement(
+													sprintf(
+														/* translators: %s is the server name identifier */
+														__(
+															'<code>%s</code> is a unique identifier for this WordPress.com account connection'
+														),
+														serverName
+													),
+													{
+														code: (
+															<code
+																key="server-name"
+																style={ {
+																	backgroundColor: '#f0f0f1',
+																	padding: '2px 6px',
+																	borderRadius: '3px',
+																	fontFamily: 'monospace',
+																	fontSize: '13px',
+																} }
+															>
+																{ serverName }
+															</code>
+														),
+													}
+												) }
+											</li>
+											<li>
+												{ createInterpolateElement(
+													sprintf(
+														/* translators: %s is the package name */
+														__(
+															'<code>%s</code> is the official WordPress.com MCP server package'
+														),
+														'@automattic/mcp-wpcom-remote'
+													),
+													{
+														code: (
+															<code
+																key="package-name"
+																style={ {
+																	backgroundColor: '#f0f0f1',
+																	padding: '2px 6px',
+																	borderRadius: '3px',
+																	fontFamily: 'monospace',
+																	fontSize: '13px',
+																} }
+															>
+																@automattic/mcp-wpcom-remote
+															</code>
+														),
+													}
+												) }
+											</li>
+										</ul>
 									</VStack>
-								</VStack>
-								<VStack spacing={ 3 }>
-									<ul style={ { listStyle: 'none', padding: '0', margin: '0' } }>
-										<li>
-											{ createInterpolateElement(
-												sprintf(
-													/* translators: %s is the server name identifier */
-													__(
-														'<code>%s</code> is a unique identifier for this WordPress.com account connection'
-													),
-													serverName
-												),
-												{
-													code: (
-														<code
-															key="server-name"
-															style={ {
-																backgroundColor: '#f0f0f1',
-																padding: '2px 6px',
-																borderRadius: '3px',
-																fontFamily: 'monospace',
-																fontSize: '13px',
-															} }
-														>
-															{ serverName }
-														</code>
-													),
-												}
-											) }
-										</li>
-										<li>
-											{ createInterpolateElement(
-												sprintf(
-													/* translators: %s is the package name */
-													__( '<code>%s</code> is the official WordPress.com MCP server package' ),
-													'@automattic/mcp-wpcom-remote'
-												),
-												{
-													code: (
-														<code
-															key="package-name"
-															style={ {
-																backgroundColor: '#f0f0f1',
-																padding: '2px 6px',
-																borderRadius: '3px',
-																fontFamily: 'monospace',
-																fontSize: '13px',
-															} }
-														>
-															@automattic/mcp-wpcom-remote
-														</code>
-													),
-												}
-											) }
-										</li>
-									</ul>
 								</VStack>
 							</CardBody>
 						</Card>
