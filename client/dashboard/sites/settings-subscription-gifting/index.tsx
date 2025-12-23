@@ -13,6 +13,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasPlanFeature } from '../../utils/site-features';
@@ -112,6 +113,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
 							<DataForm< SiteSettings >
 								data={ formData }
 								fields={ fields }

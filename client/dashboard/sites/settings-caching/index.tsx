@@ -25,6 +25,7 @@ import { ActionList } from '../../components/action-list';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -165,6 +166,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 				<CardBody>
 					<form onSubmit={ handleUpdateEdgeCacheStatus }>
 						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
 							<DataForm< CachingFormData >
 								data={ formData }
 								fields={ fields }

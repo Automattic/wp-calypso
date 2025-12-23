@@ -17,6 +17,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import { SectionHeader } from '../../components/section-header';
 import {
 	languagesAsOptions,
@@ -241,6 +242,7 @@ export default function PreferencesLanguageForm() {
 							title={ __( 'Language' ) }
 							description={ __( 'Use this to set the display language for WordPress.com.' ) }
 						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< UserSettings >
 							data={ data }
 							fields={ languageFields }

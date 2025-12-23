@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import { SectionHeader } from '../../components/section-header';
 import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, FormField } from '@wordpress/dataviews';
@@ -67,6 +68,7 @@ export default function ContactForm( { site, settings }: { site: Site; settings:
 							) }
 							level={ 3 }
 						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< SiteSettings >
 							data={ formData }
 							fields={ fields }

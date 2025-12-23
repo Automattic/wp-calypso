@@ -9,6 +9,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import { SectionHeader } from '../../components/section-header';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 
@@ -81,6 +82,7 @@ export default function ProtectForm( {
 							) }
 							level={ 3 }
 						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< { protect: boolean } >
 							data={ formData }
 							fields={ fields }

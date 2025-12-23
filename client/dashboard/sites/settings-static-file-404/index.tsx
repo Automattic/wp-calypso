@@ -12,6 +12,7 @@ import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
@@ -100,6 +101,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 					<CardBody>
 						<form onSubmit={ handleSubmit }>
 							<VStack spacing={ 4 }>
+								<NavigationBlocker shouldBlock={ isDirty } />
 								<DataForm< { setting: string } >
 									data={ formData }
 									fields={ fields }

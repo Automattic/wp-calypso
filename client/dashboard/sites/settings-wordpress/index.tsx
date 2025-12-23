@@ -17,6 +17,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -77,6 +78,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
 							<DataForm< { version: string } >
 								data={ formData }
 								fields={ fields }

@@ -13,6 +13,7 @@ import { getPHPVersions } from 'calypso/data/php-versions';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
@@ -98,6 +99,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 					<CardBody>
 						<form onSubmit={ handleSubmit }>
 							<VStack spacing={ 4 }>
+								<NavigationBlocker shouldBlock={ isDirty } />
 								<DataForm< { version: string } >
 									data={ formData }
 									fields={ fields }

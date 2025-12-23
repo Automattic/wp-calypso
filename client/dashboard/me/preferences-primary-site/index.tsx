@@ -10,6 +10,7 @@ import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import { ButtonStack } from '../../components/button-stack/';
 import { Card, CardBody } from '../../components/card';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import { SectionHeader } from '../../components/section-header';
 import PreferencesLoginSiteDropdown from './site-dropdown';
 
@@ -106,6 +107,7 @@ export default function PreferencesPrimarySite() {
 							) }
 						/>
 
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< PrimarySiteFormData >
 							data={ formData }
 							fields={ fields }

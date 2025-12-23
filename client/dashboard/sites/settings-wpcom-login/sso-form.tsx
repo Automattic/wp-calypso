@@ -13,6 +13,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 import type { Field } from '@wordpress/dataviews';
 
@@ -157,6 +158,7 @@ export default function SsoForm( {
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
 					<VStack spacing={ 4 }>
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< WpcomLoginFormData >
 							data={ formData }
 							fields={ fields }

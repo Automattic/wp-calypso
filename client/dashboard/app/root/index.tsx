@@ -3,6 +3,7 @@ import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
 import { Suspense, lazy, useEffect, useState, useMemo, useSyncExternalStore } from 'react';
 import { LoadingLine } from '../../components/loading-line';
+import { NavigationBlockerRegistry } from '../../components/navigation-blocker';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
 import { bumpStat } from '../analytics';
@@ -119,6 +120,7 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			<Snackbars />
 			<PageViewTracker />
+			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (
 				<Suspense fallback={ null }>
 					<WebpackBuildMonitor />

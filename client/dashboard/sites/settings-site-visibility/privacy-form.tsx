@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
@@ -186,6 +187,7 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 				<CardBody>
 					<form onSubmit={ handleSubmit } className="dashboard-site-settings-privacy-form">
 						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
 							<DataForm< PrivacyFormData >
 								data={ formData }
 								fields={ visibilityFields }

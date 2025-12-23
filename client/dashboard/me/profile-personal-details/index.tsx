@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useCallback } from 'react';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
+import { NavigationBlocker } from '../../components/navigation-blocker';
 import { SectionHeader } from '../../components/section-header';
 import EmailSection from './email-section';
 import EmailVerificationBanner from './update-email/email-verification-banner';
@@ -154,6 +155,8 @@ export default function PersonalDetailsSection( {
 
 						{ /* Email verification banner */ }
 						<EmailVerificationBanner userData={ userSettings } />
+
+						<NavigationBlocker shouldBlock={ isDirty } />
 
 						{ /* First & last name */ }
 						<DataForm< UserSettings >
