@@ -271,10 +271,6 @@ export default function AgentDock( {
 		/>
 	);
 
-	if ( ! isStoreReady ) {
-		return null;
-	}
-
 	return createAgentPortal(
 		// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 		<Routes>
