@@ -1,4 +1,4 @@
-# 🛠️ useAgentLayoutManager
+# 🎛️ useAgentLayoutManager
 
 `useAgentLayoutManager` is a flexible React hook for toggling between a sidebar chat and a floating chat experience. It uses [React Portal](https://react.dev/reference/react-dom/createPortal) under the hood and provides all the state, methods, and event callbacks needed to build a responsive AI chat layout that adapts to different user contexts.
 
