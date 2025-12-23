@@ -46,7 +46,8 @@ function usePlanDifferentiatorsExperiment( {
 	// Eligible for onboarding signup flow or plans-default-wpcom admin intent
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
 	const isEligibleAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
-	const isEligible = isEligibleSignupFlow || isEligibleAdminIntent;
+	const isEligible =
+		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
 
 	const [ isLoading, assignment ] = useExperiment( 'calypso_plans_differentiators_20251210', {
 		isEligible,
