@@ -40,11 +40,11 @@ interface McpSite {
 function McpComponent() {
 	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
-	const { data: sites = [], isLoading: isLoadingSites } = useQuery(
+	const sitesQueryResult = useQuery(
 		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
-	) as {
-		data: Site[];
-	};
+	);
+	const sites = ( sitesQueryResult.data as Site[] | undefined ) ?? [];
+	const isLoadingSites = sitesQueryResult.isLoading;
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	// Site selector state for disabling MCP access on specific sites
@@ -264,13 +264,13 @@ function McpComponent() {
 										'Control what AI assistants can access your WordPress.com account and sites.'
 									) }
 								/>
-								{ anyToolsEnabled && (
-									<VStack style={ { flexShrink: 0 } }>
-										<Link to="/me/mcp/setup">
-											<Button variant="secondary">{ __( 'Configure MCP Client' ) }</Button>
-										</Link>
-									</VStack>
-								) }
+								<VStack style={ { flexShrink: 0 } }>
+									<Link to="/me/mcp/setup">
+										<Button variant="secondary" disabled={ ! anyToolsEnabled }>
+											{ __( 'Configure MCP Client' ) }
+										</Button>
+									</Link>
+								</VStack>
 							</HStack>
 
 							<ToggleControl

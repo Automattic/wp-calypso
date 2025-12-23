@@ -27,11 +27,11 @@ const MeMenu = () => {
 			{ supports.reader && (
 				<ResponsiveMenu.Item to="/me/blocked-sites">{ __( 'Blocked sites' ) }</ResponsiveMenu.Item>
 			) }
-			{ hasAppSupport( supports, 'apps' ) && (
-				<ResponsiveMenu.Item to="/me/apps">{ __( 'Apps' ) }</ResponsiveMenu.Item>
-			) }
 			{ isEnabled( 'mcp-settings' ) && (
 				<ResponsiveMenu.Item to="/me/mcp">{ __( 'MCP' ) }</ResponsiveMenu.Item>
+			) }
+			{ hasAppSupport( supports, 'apps' ) && (
+				<ResponsiveMenu.Item to="/me/apps">{ __( 'Apps' ) }</ResponsiveMenu.Item>
 			) }
 		</ResponsiveMenu>
 	);
