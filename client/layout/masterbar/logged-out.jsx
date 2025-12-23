@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WordPressWordmark, WordPressLogo } from '@automattic/components';
 import {
 	isDefaultLocale,
@@ -115,6 +116,10 @@ class MasterbarLoggedOut extends Component {
 	}
 
 	renderHelpCenter() {
+		if ( ! isEnabled( 'help-center/logged-out' ) ) {
+			return null;
+		}
+
 		const { siteId, translate } = this.props;
 
 		return (
