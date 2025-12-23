@@ -265,7 +265,7 @@ function McpSetupComponent() {
 										</li>
 										<li>
 											<Text as="p" size="medium" variant="muted">
-												{ __( "Follow Claude Desktop's setup instructions" ) }
+												{ __( 'Follow Claude Desktop‘s setup instructions' ) }
 											</Text>
 										</li>
 									</ol>
