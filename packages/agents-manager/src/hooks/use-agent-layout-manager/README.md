@@ -12,6 +12,8 @@ Here's how to use the `useAgentLayoutManager` hook in your React app:
 
 ```jsx
 import useAgentLayoutManager from '@hooks/use-agent-layout-manager';
+import { AgentUI } from '@agents-manager/components';
+import { ChatHeader } from './components/chat-header';
 
 function App() {
 	const { isDocked, isDesktop, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
@@ -22,20 +24,19 @@ function App() {
 			onUndock: () => console.log( 'Undocked!' ),
 		} );
 
+	const handleClose = () => {
+		// Handle closing the floating chat (e.g., hide it)
+	};
+
 	return createAgentPortal(
-		<AgentUI.Container
-			variant={ isDocked ? 'embedded' : 'floating' }
-			// Other props...
-		>
+		<AgentUI.Container variant={ isDocked ? 'embedded' : 'floating' }>
 			<AgentUI.ConversationView>
 				<ChatHeader
 					isChatDocked={ isDocked }
-					onClose={ isDocked ? closeSidebar : () => {} /* Handle close */ }
-					options={ [
-						isDocked && undockMenuItem,
-						! isDocked && isDesktop && dockMenuItem,
-						// Other options...
-					] }
+					onClose={ isDocked ? closeSidebar : handleClose }
+					onDock={ dock }
+					onUndock={ undock }
+					showDockOption={ isDesktop }
 				/>
 				<AgentUI.Messages />
 				<AgentUI.Footer>
