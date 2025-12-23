@@ -11,8 +11,8 @@
 Here's how to use the `useAgentLayoutManager` hook in your React app:
 
 ```jsx
-import useAgentLayoutManager from '@hooks/use-agent-layout-manager';
 import { AgentUI } from '@agents-manager/components';
+import useAgentLayoutManager from '@hooks/use-agent-layout-manager';
 import { ChatHeader } from './components/chat-header';
 
 function App() {
