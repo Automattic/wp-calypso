@@ -257,7 +257,7 @@ describe( 'Person blocks', () => {
 		} );
 
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/people/edit/site_id/tony' );
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/people/edit/site_id/tony' );
 		expect( link.querySelector( 'strong' ) ).toHaveTextContent( 'Tony Stark' );
 	} );
 

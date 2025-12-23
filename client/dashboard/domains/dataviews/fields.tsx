@@ -1,4 +1,4 @@
-import { DomainSubtype } from '@automattic/api-core';
+import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { dateI18n } from '@wordpress/date';
@@ -192,14 +192,23 @@ export const useFields = ( {
 				enableHiding: false,
 				enableSorting: true,
 				elements: [
-					{ value: 'success', label: __( 'Active' ) },
-					{ value: 'neutral', label: __( 'Parked' ) },
-					{ value: 'error', label: __( 'Expiring soon' ) },
+					{ value: DomainStatus.ACTIVE, label: __( 'Active' ) },
+					{ value: DomainStatus.EXPIRED, label: __( 'Expired' ) },
+					{ value: DomainStatus.EXPIRING_SOON, label: __( 'Expiring soon' ) },
+					{ value: DomainStatus.EXPIRED_IN_AUCTION, label: __( 'Expired & in auction' ) },
+					{ value: DomainStatus.PENDING_RENEWAL, label: __( 'Pending renewal' ) },
+					{ value: DomainStatus.PENDING_REGISTRATION, label: __( 'Pending registration' ) },
+					{ value: DomainStatus.PENDING_TRANSFER, label: __( 'Outgoing transfer pending' ) },
+					{ value: DomainStatus.IN_PROGRESS, label: __( 'Incoming transfer in progress' ) },
+					{ value: DomainStatus.TRANSFER_COMPLETED, label: __( 'Incoming trnasfer completed' ) },
+					{ value: DomainStatus.TRANSFER_ERROR, label: __( 'Incoming transfer failed' ) },
+					{ value: DomainStatus.TRANSFER_PENDING, label: __( 'Incoming transfer pending' ) },
+					{ value: DomainStatus.CONNECTION_ERROR, label: __( 'Connection error' ) },
 				],
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
-				getValue: ( { item } ) => item.domain_status.label,
+				getValue: ( { item } ) => item.domain_status.id,
 				render: ( { item } ) => {
 					return <DomainStatusField domain={ item } value={ item.domain_status.label } />;
 				},

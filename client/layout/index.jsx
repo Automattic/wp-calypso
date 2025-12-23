@@ -127,6 +127,7 @@ class Layout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
+		beforePrimary: PropTypes.element,
 		focus: PropTypes.object,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
@@ -235,6 +236,7 @@ class Layout extends Component {
 			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 			'is-domain-for-gravatar': this.props.isGravatarDomain,
+			'is-reader-msd-enabled': this.props.isMSDEnabledForReader,
 		} );
 
 		const optionalBodyProps = () => {
@@ -323,6 +325,7 @@ class Layout extends Component {
 							<div id="secondary" className="layout__secondary" role="navigation">
 								{ this.props.secondary }
 							</div>
+							{ this.props.beforePrimary }
 							<div id="primary" className="layout__primary">
 								{ this.props.primary }
 							</div>
@@ -373,7 +376,7 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled();
+		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled( state );
 
 		const sidebarType = getSidebarType( {
 			state,

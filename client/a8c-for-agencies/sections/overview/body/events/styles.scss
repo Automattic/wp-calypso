@@ -33,6 +33,10 @@
 	color: var(--color-neutral-70);
 }
 
+.a4a-event__date--critical {
+	color: var(--color-scary-50);
+}
+
 .a4a-event__image--a4a,
 .a4a-event__image--klaviyo {
 	background-size: 90%;

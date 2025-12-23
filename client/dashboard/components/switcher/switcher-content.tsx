@@ -14,7 +14,9 @@ import type { View, Field } from '@wordpress/dataviews';
 import type { PropsWithChildren } from 'react';
 
 export default function SwitcherContent< T >( {
+	itemAlignment,
 	itemClassName,
+	itemSpacing,
 	items,
 	searchableFields,
 	searchClassName,
@@ -29,8 +31,12 @@ export default function SwitcherContent< T >( {
 	children,
 	onClose,
 	onItemClick,
+	filter,
+	filterField,
 }: PropsWithChildren< {
+	itemAlignment?: string;
 	itemClassName?: string | ( ( item: T ) => string );
+	itemSpacing?: number;
 	items?: T[];
 	searchClassName?: string;
 	searchableFields: Field< T >[];
@@ -44,13 +50,24 @@ export default function SwitcherContent< T >( {
 	resetScroll?: boolean;
 	onClose: () => void;
 	onItemClick?: () => void;
+	filter?: JSX.Element;
+	filterField?: Field< T >;
 } > ) {
 	const fields = useMemo( () => {
-		return searchableFields.map( ( searchableField ) => ( {
+		const allFields = searchableFields.map( ( searchableField ) => ( {
 			...searchableField,
 			enableGlobalSearch: true,
 		} ) );
-	}, [ searchableFields ] );
+
+		if ( filterField ) {
+			allFields.push( {
+				...filterField,
+				enableGlobalSearch: false,
+			} );
+		}
+
+		return allFields;
+	}, [ searchableFields, filterField ] );
 
 	if ( ! items ) {
 		return __( 'Loading…' );
@@ -58,17 +75,28 @@ export default function SwitcherContent< T >( {
 
 	const { data: filteredData } = filterSortAndPaginate( items, view, fields );
 
+	const search = (
+		<SearchControl
+			className={ searchClassName }
+			label={ __( 'Search' ) }
+			value={ view.search }
+			onChange={ ( value ) => onChangeView( { ...view, search: value } ) }
+			size="compact"
+			__nextHasNoMarginBottom
+		/>
+	);
+
 	return (
 		<NavigableMenu style={ { width } }>
 			<MenuGroup>
-				<SearchControl
-					className={ searchClassName }
-					label={ __( 'Search' ) }
-					value={ view.search }
-					onChange={ ( value ) => onChangeView( { ...view, search: value } ) }
-					size="compact"
-					__nextHasNoMarginBottom
-				/>
+				{ filter ? (
+					<HStack justify="flex-start">
+						{ search }
+						{ filter }
+					</HStack>
+				) : (
+					search
+				) }
 			</MenuGroup>
 			<MenuGroup hideSeparator>
 				{ filteredData.map( ( item ) => {
@@ -87,7 +115,12 @@ export default function SwitcherContent< T >( {
 							} }
 							resetScroll={ resetScroll }
 						>
-							<HStack justify="flex-start" alignment="center" expanded>
+							<HStack
+								justify="flex-start"
+								alignment={ itemAlignment || 'center' }
+								expanded
+								{ ...( itemSpacing ? { spacing: itemSpacing } : {} ) }
+							>
 								{ renderItemMedia( { item, context: 'list', size: 32 } ) }
 								<VStack spacing={ 0 }>
 									{ renderItemTitle( { item, context: 'list' } ) }

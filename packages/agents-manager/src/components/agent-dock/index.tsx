@@ -2,7 +2,6 @@ import {
 	getAgentManager,
 	useAgentChat,
 	type UseAgentChatConfig,
-	type SubmitOptions,
 } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
@@ -14,6 +13,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -23,17 +23,11 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
+import type {
+	NavigationContinuationHook,
+	AbilitiesSetupHook,
+} from '../../utils/load-external-providers';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
-
-/**
- * Navigation continuation hook type
- */
-type NavigationContinuationHook = ( props: {
-	isProcessing: boolean;
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
-	sessionId: string;
-	agentId: string;
-} ) => void;
 
 interface AgentDockProps {
 	/** The selected site object. */
@@ -52,6 +46,8 @@ interface AgentDockProps {
 	markdownExtensions?: MarkdownExtensions;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
+	/** Setup hook to register hook-dependent abilities. */
+	useAbilitiesSetup?: AbilitiesSetupHook;
 }
 
 export default function AgentDock( {
@@ -63,6 +59,7 @@ export default function AgentDock( {
 	markdownComponents = {},
 	markdownExtensions = {},
 	useNavigationContinuation,
+	useAbilitiesSetup,
 }: AgentDockProps ) {
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const { hasLoaded: isStoreReady, isOpen = false } = useSelect( ( select ) => {
@@ -120,6 +117,18 @@ export default function AgentDock( {
 		sessionId,
 		agentId,
 	} );
+
+	// Handle WordPress admin bar integration
+	useAdminBarIntegration( {
+		isOpen,
+		sectionName,
+		setIsOpen,
+		navigate,
+	} );
+
+	// Call setup hook to register hook-dependent abilities
+	// The hook is stable after loadedProviders is set (AgentDock only renders after providers load)
+	useAbilitiesSetup?.();
 
 	const handleNewChat = () => {
 		navigate( '/' );
@@ -253,9 +262,9 @@ export default function AgentDock( {
 	}
 
 	return createAgentPortal(
+		// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 		<Routes>
 			<Route path="/odie" element={ OdieChat } />
-			{ /* NOTE: Use route state for session ID so it can be accessed throughout the app. */ }
 			<Route path="/chat" element={ Chat } />
 			<Route path="/post" element={ SupportGuideRoute } />
 			<Route path="/support-guides" element={ SupportGuidesRoute } />

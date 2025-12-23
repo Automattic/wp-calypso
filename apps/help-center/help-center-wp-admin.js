@@ -24,7 +24,10 @@ function AdminHelpCenterContent() {
 	);
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 
-	const button = document.getElementById( 'wp-admin-bar-help-center' );
+	// Check for agents-manager-masterbar first, then fall back to help-center
+	const button =
+		document.getElementById( 'wp-admin-bar-agents-manager' ) ||
+		document.getElementById( 'wp-admin-bar-help-center' );
 	const chatSupportButton = document.getElementById( 'wp-admin-bar-help-center-chat-support' );
 	const chatHistoryButton = document.getElementById( 'wp-admin-bar-help-center-chat-history' );
 	const supportGuidesButton = document.getElementById( 'wp-admin-bar-help-center-support-guides' );
@@ -166,6 +169,7 @@ function AdminHelpCenterContent() {
 		},
 		[ isShown, setNavigateToRoute, setHelpCenterPage, setShowHelpCenter, helpCenterPage ]
 	);
+
 	if ( chatSupportButton ) {
 		chatSupportButton.onclick = () => {
 			handleMenuClick( '/odie' );
@@ -226,7 +230,10 @@ function AdminHelpCenterContent() {
 	);
 }
 
-const target = document.getElementById( 'help-center-masterbar' );
+// Check for agents-manager-masterbar first, then fall back to help-center-masterbar
+const target =
+	document.getElementById( 'agents-manager-masterbar' ) ||
+	document.getElementById( 'help-center-masterbar' );
 if ( target ) {
 	createRoot( target ).render(
 		<QueryClientProvider client={ queryClient }>

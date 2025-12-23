@@ -22,7 +22,7 @@ export default function AgencyTierOverview() {
 
 	const currentAgencyTierId = agency?.tier?.id;
 	const totalInfluencedRevenue = agency?.influenced_revenue ?? 0;
-	const isEarlyAccess = agency?.tier?.is_early_access ?? false;
+	const tierStatus = agency?.tier?.status ?? undefined;
 
 	return (
 		<Layout title={ title } wide>
@@ -39,7 +39,7 @@ export default function AgencyTierOverview() {
 				<AgencyTierOverviewContent
 					currentAgencyTierId={ currentAgencyTierId }
 					totalInfluencedRevenue={ totalInfluencedRevenue }
-					isEarlyAccess={ isEarlyAccess }
+					tierStatus={ tierStatus }
 				/>
 			</LayoutBody>
 		</Layout>

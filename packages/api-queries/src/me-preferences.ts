@@ -5,6 +5,7 @@ import type { UserPreferences } from '@automattic/api-core';
 
 const defaultValues: Required< UserPreferences > = {
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
+	'hosting-dashboard-opt-in-welcome-modal-dismissed': '',
 	'hosting-dashboard-welcome-notice-dismissed': '',
 	'reader-landing-page': {
 		useReaderAsLandingPage: false,

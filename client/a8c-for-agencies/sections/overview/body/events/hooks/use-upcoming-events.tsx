@@ -3,6 +3,7 @@ import moment from 'moment';
 import { useMemo } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming-event/types';
+import WooLogo from 'calypso/assets/images/a8c-for-agencies/events/woo-logo.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 export const useUpcomingEvents = () => {
@@ -11,6 +12,28 @@ export const useUpcomingEvents = () => {
 
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
+			{
+				id: 'a4a-woo-2025-12-22',
+				date: {
+					from: moment( '2025-12-22' ),
+					to: moment( '2026-01-05' ),
+				},
+				displayDate: translate( 'Update as soon as possible' ),
+				title: translate( 'Action Needed: Critical WooCommerce Update Available' ),
+				subtitle: translate( 'WooCommerce' ),
+				descriptions: [
+					translate(
+						'A Store API vulnerability has been identified in WooCommerce versions 8.1 through 10.4.2, and a patch is now available. Client sites hosted with Automattic have been automatically patched. Please update WooCommerce on all client sites to the latest version (10.4.3) as soon as possible. We currently have no evidence of the vulnerability being used or exploited outside of our own security testing program.'
+					),
+				],
+				cta: {
+					label: translate( 'Read the announcement and FAQ ↗' ),
+					url: 'https://developer.woocommerce.com/2025/12/22/store-api-vulnerability-patched-in-woocommerce-8-1/',
+				},
+				logoUrl: WooLogo,
+				trackEventName: 'calypso_a4a_overview_events_a4a_woo_2025_12_22_click',
+				dateClassName: 'a4a-event__date--critical',
+			},
 			{
 				id: 'a4a-partner-survey-2025-12-03',
 				date: {

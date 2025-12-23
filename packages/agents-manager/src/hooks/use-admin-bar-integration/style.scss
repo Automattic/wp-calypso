@@ -1,0 +1,149 @@
+/**
+ * WP-ADMIN Masterbar Styling
+ */
+ #wpadminbar #wp-toolbar {
+	#wp-admin-bar-agents-manager {
+		padding: 0;
+		width: 43px;
+
+		#agents-manager-icon-with-notification {
+			display: none;
+		}
+
+		&.has-unread {
+			#agents-manager-icon {
+				display: none;
+			}
+
+			#agents-manager-icon-with-notification {
+				display: block;
+			}
+		}
+
+		svg {
+			position: absolute;
+			height: 22px;
+			width: 22px;
+			top: 1px;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 4px 11px;
+		}
+
+		@media (max-width: 782px) {
+			svg {
+				height: 30px !important;
+				padding: 7px 8px !important;
+				width: 30px !important;
+			}
+		}
+
+		&.unseen-notification {
+			#agents-manager-icon-with-notification {
+				display: block;
+			}
+			#agents-manager-icon {
+				display: none;
+			}
+		}
+
+		.ab-item.ab-empty-item {
+			transition: 250ms ease;
+		}
+
+		.ab-item:hover {
+			color: #7b90ff;
+			cursor: pointer;
+		}
+
+		// Disable hover behavior for submenu - require click instead
+		&.menupop.hover > .ab-sub-wrapper,
+		&.menupop > .ab-sub-wrapper {
+			display: none !important;
+		}
+
+		// Only show submenu when the hover class is applied via click
+		&.menupop.open-click > .ab-sub-wrapper {
+			display: block !important;
+		}
+	}
+
+	.ab-icon:hover {
+		color: inherit;
+	}
+
+	.agents-manager {
+		button.components-button {
+			background: transparent;
+			border: none;
+			color: currentcolor;
+
+			&.inline-help__new-releases {
+				text-align: left;
+			}
+
+			svg {
+				fill: currentColor;
+			}
+		}
+	}
+
+	#wp-admin-bar-top-secondary {
+
+		@media (max-width: 782px) {
+
+			#wp-admin-bar-agents-manager {
+				display: block !important;
+				margin-right: 0 !important;
+				width: 52px !important;
+
+				.ab-item {
+					display: flex;
+					justify-content: center;
+
+					svg {
+						position: relative;
+					}
+				}
+			}
+		}
+
+		@media (max-width: 480px) {
+
+			#wp-admin-bar-agents-manager {
+				width: 46px !important;
+			}
+		}
+
+		#wp-admin-bar-agents-manager {
+
+			li {
+
+				.ab-item {
+					display: flex;
+					align-items: center;
+					justify-content: flex-start;
+					gap: 12px;
+
+					svg.help-center-menu-icon {
+						fill: currentColor;
+						padding: 0;
+						position: unset;
+
+						@media (max-width: 782px) {
+							padding: 0 !important;
+						}
+					}
+
+					&:hover {
+
+						svg {
+							fill: #7b90ff;
+						}
+					}
+				}
+			}
+		}
+	}
+}

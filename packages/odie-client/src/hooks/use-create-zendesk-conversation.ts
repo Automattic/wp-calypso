@@ -121,7 +121,7 @@ export const useCreateZendeskConversation = () => {
 			} );
 
 			if ( activeInteractionId ) {
-				interaction = await addEventToInteraction.mutateAsync( {
+				interaction = await addEventToInteraction( {
 					interactionId: activeInteractionId,
 					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 				} );

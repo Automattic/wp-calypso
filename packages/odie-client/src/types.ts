@@ -89,7 +89,7 @@ type InquiryType =
 	| 'unrelated-to-wordpress'
 	| 'request-for-human-support';
 
-type InteractionStatus = 'open' | 'closed' | 'resolved' | 'solved';
+type InteractionStatus = 'open' | 'closed' | 'solved';
 
 type ClassificationResults = {
 	inquiry_type?: InquiryType;

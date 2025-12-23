@@ -59,7 +59,7 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 					),
 					feedbackLink: (
 						<ExternalLink
-							href="https://automattic.survey.fm/new-hosting-dashboard-opt-in-survey"
+							href="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
 							onClick={ () =>
 								recordTracksEvent( 'calypso_dashboard_welcome_banner_survey_click', {
 									context: tracksContext,

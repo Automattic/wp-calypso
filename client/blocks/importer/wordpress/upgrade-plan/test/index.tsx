@@ -15,6 +15,11 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
 import { UpgradePlan, UnwrappedUpgradePlan } from '../index';
 
+jest.mock( 'calypso/my-sites/plans-features-main/components/plan-notice-upgrade-credit', () => ( {
+	__esModule: true,
+	default: () => null,
+} ) );
+
 // Stub out UpgradePlanDetails because it has much more complex dependencies, and only provides a wrapper around the content from this component.
 jest.mock( '../upgrade-plan-details', () => ( {
 	__esModule: true,

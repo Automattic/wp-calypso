@@ -8,14 +8,12 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { ActiveDiscount } from 'calypso/lib/discounts/active-discounts';
-import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
-import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
+import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlan, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import PlanNoticeDomainToPlanCredit from './plan-notice-domain-to-plan-credit';
-import PlanNoticePlanToHigherPlanCredit from './plan-notice-plan-to-higher-plan-credit';
+import PlanNoticeUpgradeCredit from './plan-notice-upgrade-credit';
 
 export type PlanNoticeProps = {
 	siteId: number;
@@ -32,23 +30,21 @@ export type PlanNoticeProps = {
 const NO_NOTICE = 'no-notice';
 const USER_CANNOT_PURCHASE_NOTICE = 'user-cannot-purchase-notice';
 const ACTIVE_DISCOUNT_NOTICE = 'active-discount-notice';
-const PLAN_UPGRADE_CREDIT_NOTICE = 'plan-upgrade-credit-notice';
+const UPGRADE_CREDIT_NOTICE = 'upgrade-credit-notice';
 const MARKETING_NOTICE = 'marketing-notice';
 const PLAN_RETIREMENT_NOTICE = 'plan-retirement-notice';
 const CURRENT_PLAN_IN_APP_PURCHASE_NOTICE = 'current-plan-in-app-purchase-notice';
 const PLAN_LEGACY_STORAGE_NOTICE = 'plan-legacy-storage-notice';
-const DOMAIN_TO_PLAN_CREDIT_NOTICE = 'domain-to-plan-credit-notice';
 
 export type PlanNoticeTypes =
 	| typeof NO_NOTICE
 	| typeof USER_CANNOT_PURCHASE_NOTICE
 	| typeof ACTIVE_DISCOUNT_NOTICE
-	| typeof PLAN_UPGRADE_CREDIT_NOTICE
+	| typeof UPGRADE_CREDIT_NOTICE
 	| typeof MARKETING_NOTICE
 	| typeof PLAN_RETIREMENT_NOTICE
 	| typeof CURRENT_PLAN_IN_APP_PURCHASE_NOTICE
-	| typeof PLAN_LEGACY_STORAGE_NOTICE
-	| typeof DOMAIN_TO_PLAN_CREDIT_NOTICE;
+	| typeof PLAN_LEGACY_STORAGE_NOTICE;
 
 function useResolveNoticeType(
 	{
@@ -67,8 +63,7 @@ function useResolveNoticeType(
 	const activeDiscount =
 		discountInformation &&
 		getDiscountByName( discountInformation.coupon, discountInformation.discountEndDate );
-	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
-	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId, visiblePlans );
+	const upgradeCreditsNoticeData = useUpgradeCreditsNoticeData( siteId, visiblePlans );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const sitePlanSlug = sitePlan?.product_slug ?? '';
 	const isCurrentPlanRetired = isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug );
@@ -89,10 +84,8 @@ function useResolveNoticeType(
 		return PLAN_LEGACY_STORAGE_NOTICE;
 	} else if ( activeDiscount ) {
 		return ACTIVE_DISCOUNT_NOTICE;
-	} else if ( planUpgradeCreditsApplicable ) {
-		return PLAN_UPGRADE_CREDIT_NOTICE;
-	} else if ( domainToPlanCreditsApplicable ) {
-		return DOMAIN_TO_PLAN_CREDIT_NOTICE;
+	} else if ( upgradeCreditsNoticeData ) {
+		return UPGRADE_CREDIT_NOTICE;
 	}
 	return MARKETING_NOTICE;
 }
@@ -173,9 +166,9 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					{ activeDiscount.plansPageNoticeText }
 				</Notice>
 			);
-		case PLAN_UPGRADE_CREDIT_NOTICE:
+		case UPGRADE_CREDIT_NOTICE:
 			return (
-				<PlanNoticePlanToHigherPlanCredit
+				<PlanNoticeUpgradeCredit
 					className="plan-features-main__notice"
 					onDismissClick={ handleDismissNotice }
 					siteId={ siteId }
@@ -211,15 +204,6 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 						'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress app.'
 					) }
 				></Notice>
-			);
-		case DOMAIN_TO_PLAN_CREDIT_NOTICE:
-			return (
-				<PlanNoticeDomainToPlanCredit
-					className="plan-features-main__notice"
-					onDismissClick={ handleDismissNotice }
-					siteId={ siteId }
-					visiblePlans={ visiblePlans }
-				/>
 			);
 		case MARKETING_NOTICE:
 		default:

@@ -1,8 +1,8 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { domainQuery, purchaseQuery } from '@automattic/api-queries';
+import { domainQuery, purchaseQuery, domainDiagnosticsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -11,9 +11,12 @@ import { useLocale } from '../../app/locale';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SnackbarBackButton from '../../components/snackbar-back-button';
+import SnackbarBackButton, {
+	getSnackbarBackButtonText,
+} from '../../components/snackbar-back-button';
 import { formatDate } from '../../utils/datetime';
-import { getDomainRenewalUrl } from '../../utils/domain';
+import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
+import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
 import IcannSuspensionNotice from './icann-suspension-notice';
@@ -27,6 +30,11 @@ export default function DomainOverview() {
 	const { data: purchase } = useSuspenseQuery(
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
+
+	const { data: diagnosticsData } = useQuery( {
+		...domainDiagnosticsQuery( domain.domain ),
+		enabled: domain.is_mapped_to_atomic_site && domain.primary_domain,
+	} );
 
 	const wrappableDomainName = useMemo( () => {
 		const [ domainName, ...tlds ] = domain.domain.split( '.' );
@@ -45,15 +53,7 @@ export default function DomainOverview() {
 	} );
 
 	const { back_to: domainsBackTo } = useSearch( { from: domainRoute.fullPath } );
-	let backButton = null;
-	switch ( domainsBackTo ) {
-		case 'site-domains':
-			backButton = <SnackbarBackButton>{ __( 'Back to Site Domain Names' ) }</SnackbarBackButton>;
-			break;
-		case 'site-overview':
-			backButton = <SnackbarBackButton>{ __( 'Back to Site Overview' ) }</SnackbarBackButton>;
-			break;
-	}
+	const snackbarBackButtonText = getSnackbarBackButtonText( domainsBackTo );
 
 	return (
 		<>
@@ -87,11 +87,12 @@ export default function DomainOverview() {
 							</HStack>
 						}
 						actions={
-							purchase?.can_explicit_renew &&
+							purchase.can_explicit_renew &&
 							domain.current_user_is_owner && (
 								<Button
 									variant="primary"
 									__next40pxDefaultSize
+									disabled={ isTldInMaintenance( domain ) }
 									href={ getDomainRenewalUrl( domain, purchase ) }
 								>
 									{
@@ -108,6 +109,9 @@ export default function DomainOverview() {
 						}
 					/>
 				}
+				notices={
+					isTldInMaintenance( domain ) && <TLDMaintenanceNotice showGoBackLink={ false } />
+				}
 			>
 				{ domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER && (
 					<TransferredDomainDetails domain={ domain } />
@@ -117,13 +121,19 @@ export default function DomainOverview() {
 				) }
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
-						<FeaturedCards />
-						<DomainOverviewSettings domain={ domain } />
+						<FeaturedCards isDisabled={ isTldInMaintenance( domain ) } />
+						<DomainOverviewSettings
+							isDisabled={ isTldInMaintenance( domain ) }
+							domain={ domain }
+							domainDiagnostics={ diagnosticsData }
+						/>
 					</>
 				) }
-				<Actions />
+				<Actions isDisabled={ isTldInMaintenance( domain ) } />
 			</PageLayout>
-			{ backButton }
+			{ snackbarBackButtonText && (
+				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
+			) }
 		</>
 	);
 }

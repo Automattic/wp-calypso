@@ -23,6 +23,7 @@ export interface TitanUsage {
 	orders: TitanOrder[];
 }
 
+export type AgencyTierStatus = 'early_access' | 'tier_protected';
 export interface Agency {
 	id: number;
 	name: string;
@@ -110,7 +111,7 @@ export interface Agency {
 		id: AgencyTier;
 		label: string;
 		features: string[];
-		is_early_access: boolean;
+		status: AgencyTierStatus;
 	};
 	influenced_revenue: number;
 	approval_status: ApprovalStatus | '';

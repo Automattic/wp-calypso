@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import closest from 'component-closest';
-import i18n, { localize } from 'i18n-calypso';
+import i18n, { localize, useTranslate } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -17,6 +17,7 @@ import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import AppTitle from 'calypso/reader/components/app-title';
 import ReaderA8cConversationsIcon from 'calypso/reader/components/icons/a8c-conversations-icon';
 import ReaderConversationsIcon from 'calypso/reader/components/icons/conversations-icon';
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
@@ -31,6 +32,7 @@ import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selecto
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
+import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import {
 	toggleReaderSidebarLists,
 	toggleReaderSidebarFollowing,
@@ -52,6 +54,28 @@ import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
+
+//TODO: Remove this component once the new reader MSD is enabled for all users
+const DeprecatedReaderSidebarHeader = ( { onSearchClicked } ) => {
+	const translate = useTranslate();
+	return (
+		<div className="sidebar-header">
+			<div>
+				<h3>{ translate( 'Reader' ) }</h3>
+				<p>{ translate( 'Keep up with your interests.' ) }</p>
+			</div>
+			<Button
+				className="reader-search-icon"
+				variant="tertiary"
+				href="/reader/search"
+				onClick={ onSearchClicked }
+				aria-label={ translate( 'Search' ) }
+			>
+				<ReaderSearchIcon viewBox="0 0 24 24" />
+			</Button>
+		</div>
+	);
+};
 
 export class ReaderSidebar extends Component {
 	state = {};
@@ -162,22 +186,12 @@ export class ReaderSidebar extends Component {
 
 		return (
 			<div className="sidebar-menu-container">
-				<div className="sidebar-header">
-					<div>
-						<h3>{ translate( 'Reader' ) }</h3>
-						<p>{ translate( 'Keep up with your interests.' ) }</p>
-					</div>
-
-					<Button
-						className="reader-search-icon"
-						variant="tertiary"
-						href="/reader/search"
-						onClick={ this.handleReaderSidebarSearchClicked }
-						aria-label={ translate( 'Search' ) }
-					>
-						<ReaderSearchIcon viewBox="0 0 24 24" />
-					</Button>
-				</div>
+				{ ! this.props.isMSDEnabled && (
+					<DeprecatedReaderSidebarHeader
+						onSearchClicked={ this.handleReaderSidebarSearchClicked }
+					/>
+				) }
+				{ this.props.isMSDEnabled && <AppTitle /> }
 				<SidebarMenu>
 					<QueryReaderLists />
 					<QueryReaderTeams />
@@ -191,6 +205,15 @@ export class ReaderSidebar extends Component {
 						/>
 					</li>
 
+					<SidebarItem
+						className={ clsx( 'sidebar-streams__search', {
+							selected: path.startsWith( '/reader/search' ),
+						} ) }
+						label={ translate( 'Search' ) }
+						onNavigate={ this.handleReaderSidebarSearchClicked }
+						customIcon={ <ReaderSearchIcon /> }
+						link="/reader/search"
+					/>
 					<SidebarItem
 						className={ clsx( 'sidebar-streams__discover', {
 							selected: path.startsWith( '/discover' ),
@@ -336,6 +359,7 @@ export default withCurrentRoute(
 				teams: getReaderTeams( state ),
 				organizations: getReaderOrganizations( state ),
 				shouldShowGlobalSidebar,
+				isMSDEnabled: isReaderMSDEnabled( state ),
 			};
 		},
 		{

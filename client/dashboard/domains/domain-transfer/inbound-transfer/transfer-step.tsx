@@ -1,9 +1,11 @@
 import { Domain, Purchase } from '@automattic/api-core';
+import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { purchaseSettingsRoute } from '../../../app/router/me';
 import { Card, CardBody } from '../../../components/card';
 import InlineSupportLink from '../../../components/inline-support-link';
 import SegmentedBar, { type SegmentedBarSegment } from '../../../components/segmented-bar';
@@ -74,16 +76,16 @@ export const InboundTransferStep = ( {
 							{ __( 'Need help?' ) }
 						</Text>
 						<VStack spacing={ 2 }>
-							<InlineSupportLink supportContext="transfer-domain-registration">
+							<InlineSupportLink supportContext="transfer-domain-name-to-wordpress-com">
 								{ __( 'Domain name transfer guide' ) }
 							</InlineSupportLink>
 							<InlineSupportLink supportContext="general-support-options">
 								{ __( 'Contact support' ) }
 							</InlineSupportLink>
 							{ purchase && shouldShowRemoveAction( domain, purchase ) && (
-								<a href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }` }>
+								<Link to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } }>
 									{ __( 'Cancel transfer' ) }
-								</a>
+								</Link>
 							) }
 						</VStack>
 					</VStack>
