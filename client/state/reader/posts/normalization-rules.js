@@ -94,7 +94,7 @@ export function classifyPost( post ) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
 	}
 
-	if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
+	if ( post.canonical_media?.mediaType === 'video' ) {
 		displayType ^= DISPLAY_TYPES.FEATURED_VIDEO;
 	}
 
