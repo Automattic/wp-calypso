@@ -1,5 +1,6 @@
 export const SITE_REQUEST_FIELDS = [
 	'ID',
+	'slug',
 	'URL',
 	'capabilities',
 	'icon',
