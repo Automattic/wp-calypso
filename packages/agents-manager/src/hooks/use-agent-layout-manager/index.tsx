@@ -46,6 +46,7 @@ export default function useAgentLayoutManager( {
 	onUndock = () => {},
 }: Options = {} ): ReturnValue {
 	const portalRef = useRef< HTMLDivElement >();
+	const [ isPortalReady, setIsPortalReady ] = useState( false );
 	const isDesktop = useMediaQuery( desktopMediaQuery );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
 	const shouldRenderSidebar = isDesktop && isDocked;
@@ -105,6 +106,8 @@ export default function useAgentLayoutManager( {
 				portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			}
 
+			setIsPortalReady( true );
+
 			return;
 		}
 
@@ -125,7 +128,7 @@ export default function useAgentLayoutManager( {
 
 			onUndockRef.current();
 		}
-	}, [ container, isDocked, shouldRenderSidebar, isReady ] );
+	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
 
 	// Cleanup on unmount
 	// Use `useLayoutEffect` to prevent flickering
@@ -133,6 +136,7 @@ export default function useAgentLayoutManager( {
 		() => () => {
 			clearTimeout( openSidebarTimeoutRef.current );
 			setIsDocked( null );
+			setIsPortalReady( false );
 
 			if ( container ) {
 				container.classList.remove(
@@ -195,7 +199,7 @@ export default function useAgentLayoutManager( {
 
 	const createAgentPortal = useCallback(
 		( children: React.ReactNode ) => {
-			if ( ! isReady || ! portalRef.current ) {
+			if ( ! isPortalReady || ! portalRef.current ) {
 				return null;
 			}
 
@@ -216,7 +220,7 @@ export default function useAgentLayoutManager( {
 				portalRef.current
 			);
 		},
-		[ handleOpenSidebar, isReady, shouldRenderSidebar ]
+		[ handleOpenSidebar, isPortalReady, shouldRenderSidebar ]
 	);
 
 	return {
