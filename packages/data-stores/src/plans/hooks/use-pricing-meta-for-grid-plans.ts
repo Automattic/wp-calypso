@@ -258,7 +258,7 @@ const usePricingMetaForGridPlans = ( {
 								...( sitePlan?.pricing.introOffer && {
 									introOffer: {
 										...sitePlan?.pricing.introOffer,
-										rawPrice: introOfferPrice,
+										...( introOfferPrice && { rawPrice: introOfferPrice } ),
 									},
 								} ),
 							},
@@ -282,7 +282,7 @@ const usePricingMetaForGridPlans = ( {
 							...( sitePlan?.pricing.introOffer && {
 								introOffer: {
 									...sitePlan?.pricing.introOffer,
-									rawPrice: introOfferPrice,
+									...( introOfferPrice && { rawPrice: introOfferPrice } ),
 								},
 							} ),
 						},
@@ -314,7 +314,7 @@ const usePricingMetaForGridPlans = ( {
 							...( plan?.pricing.introOffer && {
 								introOffer: {
 									...plan?.pricing.introOffer,
-									rawPrice: introOfferPrice,
+									...( introOfferPrice && { rawPrice: introOfferPrice } ),
 								},
 							} ),
 						},
@@ -342,7 +342,7 @@ const usePricingMetaForGridPlans = ( {
 						...( plan?.pricing.introOffer && {
 							introOffer: {
 								...plan?.pricing.introOffer,
-								rawPrice: introOfferPrice,
+								...( introOfferPrice && { rawPrice: introOfferPrice } ),
 							},
 						} ),
 					},
