@@ -1,5 +1,5 @@
 import { userSettingsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
@@ -18,23 +18,20 @@ import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { SectionHeader } from '../../../components/section-header';
 
 function McpSetupComponent() {
-	const {
-		data: userSettings,
-		isLoading: isLoadingUserSettings,
-		error: userSettingsError,
-	} = useQuery( userSettingsQuery() );
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	// MCP client selection for configuration format
-	const [ selectedMcpClient, setSelectedMcpClient ] = useState( 'claude' );
+	const [ selectedMcpClient, setSelectedMcpClient ] = useState< McpClient >( 'claude' );
 
 	// Copy button state
 	const [ copyStatus, setCopyStatus ] = useState( 'idle' );
 
+	type McpClient = 'claude' | 'cursor' | 'vscode' | 'continue' | 'default';
+
 	// MCP client options
-	const mcpClientOptions = [
+	const mcpClientOptions: Array< { label: string; value: McpClient } > = [
 		{ label: 'Claude Desktop', value: 'claude' },
 		{ label: 'Cursor', value: 'cursor' },
 		{ label: 'VS Code', value: 'vscode' },
@@ -43,7 +40,7 @@ function McpSetupComponent() {
 	];
 
 	// Documentation links for each client
-	const clientDocumentation = {
+	const clientDocumentation: Record< McpClient, string > = {
 		claude: 'https://docs.claude.com/en/docs/mcp',
 		vscode: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
 		cursor: 'https://docs.cursor.com/en/context/mcp',
@@ -54,7 +51,7 @@ function McpSetupComponent() {
 	const serverName = 'wpcom-mcp';
 
 	// Generate MCP configuration based on selected client
-	const generateMcpConfig = ( client ) => {
+	const generateMcpConfig = ( client: McpClient ) => {
 		const baseConfig = {
 			command: 'npx',
 			args: [ '-y', '@automattic/mcp-wpcom-remote@latest' ],
@@ -123,13 +120,8 @@ function McpSetupComponent() {
 		}
 	};
 
-	// Handle error states only - allow loading to continue so reauth can show
-	if ( userSettingsError ) {
-		return null;
-	}
-
 	// Check if any account-level tools are enabled using the new nested structure
-	const hasEnabledTools = hasEnabledAccountTools( userSettings );
+	const hasEnabledTools = hasEnabledAccountTools( userSettings || {} );
 
 	if ( ! hasEnabledTools ) {
 		return (
@@ -143,30 +135,30 @@ function McpSetupComponent() {
 				}
 			>
 				<ComponentViewTracker eventName="calypso_dashboard_mcp_setup_view" />
-				{ ! isLoadingUserSettings && (
-					<>
-						<SectionHeader label={ __( 'Setup Required' ) } />
-						<Card>
-							<CardBody>
-								<VStack spacing={ 4 }>
-									<Text as="p" size="medium">
-										{ __( 'No MCP tools are currently enabled for your account.' ) }
-									</Text>
-									<Text as="p" size="medium">
-										{ __(
-											'MCP tools define what actions and data your MCP client can access on your account. You need to enable at least one tool in the main MCP settings before configuring your client.'
-										) }
-									</Text>
-									<Link to="/me/mcp">
-										<Button variant="primary" style={ { alignSelf: 'flex-start' } }>
-											{ __( 'Go to MCP Settings' ) }
-										</Button>
-									</Link>
-								</VStack>
-							</CardBody>
-						</Card>
-					</>
-				) }
+				<>
+					<Text as="h2" size="large" weight={ 600 }>
+						{ __( 'Setup Required' ) }
+					</Text>
+					<Card>
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<Text as="p" size="medium">
+									{ __( 'No MCP tools are currently enabled for your account.' ) }
+								</Text>
+								<Text as="p" size="medium">
+									{ __(
+										'MCP tools define what actions and data your MCP client can access on your account. You need to enable at least one tool in the main MCP settings before configuring your client.'
+									) }
+								</Text>
+								<Link to="/me/mcp">
+									<Button variant="primary" style={ { alignSelf: 'flex-start' } }>
+										{ __( 'Go to MCP Settings' ) }
+									</Button>
+								</Link>
+							</VStack>
+						</CardBody>
+					</Card>
+				</>
 			</PageLayout>
 		);
 	}
@@ -174,264 +166,259 @@ function McpSetupComponent() {
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'MCP Client Setup' ) } /> }>
 			<ComponentViewTracker eventName="calypso_dashboard_mcp_setup_view" />
-			{ ! isLoadingUserSettings && (
-				<>
+			<>
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<Text as="h1" size="large" weight={ 500 }>
+								{ __( 'Connect AI Assistant to WordPress.com (MCP)' ) }
+							</Text>
+							<Text as="p" size="medium" variant="muted">
+								{ __(
+									'WordPress.com provides MCP (Model Context Protocol) support, which allows AI assistants to interact directly with your WordPress.com account.'
+								) }
+							</Text>
+							<Text as="p" size="medium" variant="muted">
+								{ __(
+									'The JSON configuration below sets up a secure connection between your AI assistant and your WordPress.com account. It works by:'
+								) }
+							</Text>
+							<VStack spacing={ 2 }>
+								<ul style={ { color: '#757575', paddingLeft: '20px', margin: '0' } }>
+									<li>
+										<Text as="p" size="medium" variant="muted">
+											{ __(
+												'Running a bridge server using the WordPress.com-specific MCP package'
+											) }
+										</Text>
+									</li>
+									<li>
+										<Text as="p" size="medium" variant="muted">
+											{ __(
+												'Handling OAuth 2.1 authentication to securely connect to your WordPress.com account'
+											) }
+										</Text>
+									</li>
+									<li>
+										<Text as="p" size="medium" variant="muted">
+											{ __(
+												"Providing real-time access to your account's content and management features"
+											) }
+										</Text>
+									</li>
+								</ul>
+							</VStack>
+						</VStack>
+					</CardBody>
+				</Card>
+
+				<div style={ { marginTop: '24px' } }>
 					<Card>
 						<CardBody>
 							<VStack spacing={ 4 }>
 								<Text as="h1" size="large" weight={ 500 }>
-									{ __( 'Connect AI Assistant to WordPress.com (MCP)' ) }
+									{ __( 'MCP Client Configuration' ) }
 								</Text>
-								<Text as="p" size="medium" variant="muted">
-									{ __(
-										'WordPress.com provides MCP (Model Context Protocol) support, which allows AI assistants to interact directly with your WordPress.com account.'
+								<SelectControl
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									label={ __( 'MCP Client' ) }
+									value={ selectedMcpClient }
+									options={ mcpClientOptions }
+									onChange={ setSelectedMcpClient }
+									help={ __(
+										'Choose your MCP client to get the correct configuration format. Then, follow the instructions below.'
 									) }
+								/>
+							</VStack>
+						</CardBody>
+					</Card>
+				</div>
+
+				{ ( selectedMcpClient === 'claude' || selectedMcpClient === 'cursor' ) && (
+					<div style={ { marginTop: '24px' } }>
+						<Card>
+							<CardBody>
+								{ /* Quick Setup for Claude Desktop */ }
+								{ selectedMcpClient === 'claude' && (
+									<VStack spacing={ 4 }>
+										<Text as="h1" size="large" weight={ 500 }>
+											{ __( 'Quick Setup' ) }
+										</Text>
+										<Text as="p" size="medium" variant="muted">
+											{ __(
+												'For Claude Desktop users, we provide a one-click setup option using our MCP Bundle (MCPB) file.'
+											) }
+										</Text>
+										<Text as="p" size="medium" variant="muted">
+											{ __( 'Installation steps:' ) }
+										</Text>
+										<ol style={ { color: '#757575', paddingLeft: '20px', margin: '0' } }>
+											<li>
+												<Text as="p" size="medium" variant="muted">
+													{ __( 'Click the download button' ) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" size="medium" variant="muted">
+													{ __( 'Double-click the downloaded file' ) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" size="medium" variant="muted">
+													{ __( "Follow Claude Desktop's setup instructions" ) }
+												</Text>
+											</li>
+										</ol>
+										<Button
+											variant="primary"
+											href="https://github.com/Automattic/wpcom-mcp-bundle/raw/refs/heads/trunk/wordpress-com-mcp.mcpb"
+											target="_blank"
+											style={ { alignSelf: 'flex-start' } }
+										>
+											{ __( 'Download MCPB File' ) }
+										</Button>
+									</VStack>
+								) }
+
+								{ /* Quick Setup for Cursor */ }
+								{ selectedMcpClient === 'cursor' && (
+									<VStack spacing={ 4 }>
+										<Text as="h1" size={ 16 } weight={ 600 }>
+											{ __( 'Quick Setup' ) }
+										</Text>
+										<Text as="p" size="medium" variant="muted">
+											{ __(
+												'For Cursor users, we provide a one-click setup option that will automatically configure the MCP server.'
+											) }
+										</Text>
+										<Button
+											variant="primary"
+											href="https://cursor.com/en/install-mcp?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBhdXRvbWF0dGljL21jcC13cGNvbS1yZW1vdGVAbGF0ZXN0Il19"
+											target="_blank"
+											style={ { alignSelf: 'flex-start' } }
+										>
+											{ __( 'Install in Cursor' ) }
+										</Button>
+									</VStack>
+								) }
+							</CardBody>
+						</Card>
+					</div>
+				) }
+
+				<div style={ { marginTop: '24px' } }>
+					<Card>
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<Text as="h1" size="large" weight={ 500 }>
+									{ __( 'Manual Setup' ) }
 								</Text>
-								<Text as="p" size="medium" variant="muted">
-									{ __(
-										'The JSON configuration below sets up a secure connection between your AI assistant and your WordPress.com account. It works by:'
-									) }
-								</Text>
+
 								<VStack spacing={ 2 }>
-									<ul style={ { color: '#757575', paddingLeft: '20px', margin: '0' } }>
-										<li>
-											<Text as="p" size="medium" variant="muted">
-												{ __(
-													'Running a bridge server using the WordPress.com-specific MCP package'
-												) }
-											</Text>
+									<div
+										style={ {
+											display: 'flex',
+											justifyContent: 'space-between',
+											alignItems: 'center',
+										} }
+									>
+										{ clientDocumentation[ selectedMcpClient ] && (
+											<ExternalLink
+												href={ clientDocumentation[ selectedMcpClient ] }
+												style={ { fontSize: 'inherit', textTransform: 'uppercase' } }
+											>
+												{ selectedMcpClient === 'default'
+													? __( 'View setup instructions for other MCP client' )
+													: sprintf(
+															/* translators: %s is the name of the MCP client */
+															__( 'View setup instructions for %s' ),
+															mcpClientOptions.find( ( opt ) => opt.value === selectedMcpClient )
+																?.label || ''
+													  ) }
+											</ExternalLink>
+										) }
+										<Button
+											icon={ getCopyIcon() }
+											variant="tertiary"
+											size="small"
+											style={ {
+												color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
+											} }
+											onClick={ copyToClipboard }
+											aria-label={ __( 'Copy configuration to clipboard' ) }
+										/>
+									</div>
+									<TextareaControl
+										__nextHasNoMarginBottom
+										value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
+										onChange={ () => {} } // Required prop for read-only textarea
+										readOnly
+										help={ __(
+											"Copy this configuration and paste it into your MCP client's settings."
+										) }
+										style={ { minHeight: '240px' } }
+									/>
+									<ul style={ { listStyle: 'none', padding: '0', margin: '0' } }>
+										<li style={ { marginBottom: '4px' } }>
+											{ createInterpolateElement(
+												sprintf(
+													/* translators: %s is the server name identifier */
+													__(
+														'<code>%s</code> is a unique identifier for this WordPress.com account connection'
+													),
+													serverName
+												),
+												{
+													code: (
+														<code
+															key="server-name"
+															style={ {
+																backgroundColor: '#f0f0f1',
+																padding: '2px 6px',
+																borderRadius: '3px',
+																fontFamily: 'monospace',
+																fontSize: '13px',
+															} }
+														>
+															{ serverName }
+														</code>
+													),
+												}
+											) }
 										</li>
 										<li>
-											<Text as="p" size="medium" variant="muted">
-												{ __(
-													'Handling OAuth 2.1 authentication to securely connect to your WordPress.com account'
-												) }
-											</Text>
-										</li>
-										<li>
-											<Text as="p" size="medium" variant="muted">
-												{ __(
-													"Providing real-time access to your account's content and management features"
-												) }
-											</Text>
+											{ createInterpolateElement(
+												sprintf(
+													/* translators: %s is the package name */
+													__( '<code>%s</code> is the official WordPress.com MCP server package' ),
+													'@automattic/mcp-wpcom-remote'
+												),
+												{
+													code: (
+														<code
+															key="package-name"
+															style={ {
+																backgroundColor: '#f0f0f1',
+																padding: '2px 6px',
+																borderRadius: '3px',
+																fontFamily: 'monospace',
+																fontSize: '13px',
+															} }
+														>
+															@automattic/mcp-wpcom-remote
+														</code>
+													),
+												}
+											) }
 										</li>
 									</ul>
 								</VStack>
 							</VStack>
 						</CardBody>
 					</Card>
-
-					<div style={ { marginTop: '24px' } }>
-						<Card>
-							<CardBody>
-								<VStack spacing={ 4 }>
-									<Text as="h1" size="large" weight={ 500 }>
-										{ __( 'MCP Client Configuration' ) }
-									</Text>
-									<SelectControl
-										__next40pxDefaultSize
-										__nextHasNoMarginBottom
-										label={ __( 'MCP Client' ) }
-										value={ selectedMcpClient }
-										options={ mcpClientOptions }
-										onChange={ setSelectedMcpClient }
-										help={ __(
-											'Choose your MCP client to get the correct configuration format. Then, follow the instructions below.'
-										) }
-									/>
-								</VStack>
-							</CardBody>
-						</Card>
-					</div>
-
-					{ ( selectedMcpClient === 'claude' || selectedMcpClient === 'cursor' ) && (
-						<div style={ { marginTop: '24px' } }>
-							<Card>
-								<CardBody>
-									{ /* Quick Setup for Claude Desktop */ }
-									{ selectedMcpClient === 'claude' && (
-										<VStack spacing={ 4 }>
-											<Text as="h1" size="large" weight={ 500 }>
-												{ __( 'Quick Setup' ) }
-											</Text>
-											<Text as="p" size="medium" variant="muted">
-												{ __(
-													'For Claude Desktop users, we provide a one-click setup option using our MCP Bundle (MCPB) file.'
-												) }
-											</Text>
-											<Text as="p" size="medium" variant="muted">
-												{ __( 'Installation steps:' ) }
-											</Text>
-											<ol style={ { color: '#757575', paddingLeft: '20px', margin: '0' } }>
-												<li>
-													<Text as="p" size="medium" variant="muted">
-														{ __( 'Click the download button' ) }
-													</Text>
-												</li>
-												<li>
-													<Text as="p" size="medium" variant="muted">
-														{ __( 'Double-click the downloaded file' ) }
-													</Text>
-												</li>
-												<li>
-													<Text as="p" size="medium" variant="muted">
-														{ __( "Follow Claude Desktop's setup instructions" ) }
-													</Text>
-												</li>
-											</ol>
-											<Button
-												variant="primary"
-												href="https://github.com/Automattic/wpcom-mcp-bundle/raw/refs/heads/trunk/wordpress-com-mcp.mcpb"
-												target="_blank"
-												style={ { alignSelf: 'flex-start' } }
-											>
-												{ __( 'Download MCPB File' ) }
-											</Button>
-										</VStack>
-									) }
-
-									{ /* Quick Setup for Cursor */ }
-									{ selectedMcpClient === 'cursor' && (
-										<VStack spacing={ 4 }>
-											<Text as="h1" size={ 16 } weight={ 600 }>
-												{ __( 'Quick Setup' ) }
-											</Text>
-											<Text as="p" size="medium" variant="muted">
-												{ __(
-													'For Cursor users, we provide a one-click setup option that will automatically configure the MCP server.'
-												) }
-											</Text>
-											<Button
-												variant="primary"
-												href="https://cursor.com/en/install-mcp?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBhdXRvbWF0dGljL21jcC13cGNvbS1yZW1vdGVAbGF0ZXN0Il19"
-												target="_blank"
-												style={ { alignSelf: 'flex-start' } }
-											>
-												{ __( 'Install in Cursor' ) }
-											</Button>
-										</VStack>
-									) }
-								</CardBody>
-							</Card>
-						</div>
-					) }
-
-					<div style={ { marginTop: '24px' } }>
-						<Card>
-							<CardBody>
-								<VStack spacing={ 4 }>
-									<Text as="h1" size="large" weight={ 500 }>
-										{ __( 'Manual Setup' ) }
-									</Text>
-
-									<VStack spacing={ 2 }>
-										<div
-											style={ {
-												display: 'flex',
-												justifyContent: 'space-between',
-												alignItems: 'center',
-											} }
-										>
-											{ clientDocumentation[ selectedMcpClient ] && (
-												<ExternalLink
-													href={ clientDocumentation[ selectedMcpClient ] }
-													target="_blank"
-													style={ { fontSize: 'inherit', textTransform: 'uppercase' } }
-												>
-													{ selectedMcpClient === 'default'
-														? __( 'View setup instructions for other MCP client' )
-														: sprintf(
-																/* translators: %s is the name of the MCP client */
-																__( 'View setup instructions for %s' ),
-																mcpClientOptions.find( ( opt ) => opt.value === selectedMcpClient )
-																	?.label || ''
-														  ) }
-												</ExternalLink>
-											) }
-											<Button
-												icon={ getCopyIcon() }
-												variant="tertiary"
-												size="small"
-												style={ {
-													color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
-												} }
-												onClick={ copyToClipboard }
-												aria-label={ __( 'Copy configuration to clipboard' ) }
-											/>
-										</div>
-										<TextareaControl
-											__nextHasNoMarginBottom
-											value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
-											onChange={ () => {} } // Required prop for read-only textarea
-											readOnly
-											help={ __(
-												"Copy this configuration and paste it into your MCP client's settings."
-											) }
-											style={ { minHeight: '240px' } }
-										/>
-										<ul style={ { listStyle: 'none', padding: '0', margin: '0' } }>
-											<li style={ { marginBottom: '4px' } }>
-												{ createInterpolateElement(
-													sprintf(
-														/* translators: %s is the server name identifier */
-														__(
-															'<code>%s</code> is a unique identifier for this WordPress.com account connection'
-														),
-														serverName
-													),
-													{
-														code: (
-															<code
-																key="server-name"
-																style={ {
-																	backgroundColor: '#f0f0f1',
-																	padding: '2px 6px',
-																	borderRadius: '3px',
-																	fontFamily: 'monospace',
-																	fontSize: '13px',
-																} }
-															>
-																{ serverName }
-															</code>
-														),
-													}
-												) }
-											</li>
-											<li>
-												{ createInterpolateElement(
-													sprintf(
-														/* translators: %s is the package name */
-														__(
-															'<code>%s</code> is the official WordPress.com MCP server package'
-														),
-														'@automattic/mcp-wpcom-remote'
-													),
-													{
-														code: (
-															<code
-																key="package-name"
-																style={ {
-																	backgroundColor: '#f0f0f1',
-																	padding: '2px 6px',
-																	borderRadius: '3px',
-																	fontFamily: 'monospace',
-																	fontSize: '13px',
-																} }
-															>
-																@automattic/mcp-wpcom-remote
-															</code>
-														),
-													}
-												) }
-											</li>
-										</ul>
-									</VStack>
-								</VStack>
-							</CardBody>
-						</Card>
-					</div>
-				</>
-			) }
+				</div>
+			</>
 		</PageLayout>
 	);
 }
