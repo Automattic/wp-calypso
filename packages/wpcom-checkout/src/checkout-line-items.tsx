@@ -122,8 +122,11 @@ const GiftBadge = styled.span`
 	font-size: small;
 `;
 
-const LineItemMeta = styled.div< { theme?: Theme } >`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
+const LineItemMeta = styled.div< { theme?: Theme; isRenewalPricingExperiment?: boolean } >`
+	color: ${ ( props ) =>
+		props.isRenewalPricingExperiment
+			? props.theme.colors.textColorDark
+			: props.theme.colors.textColorLight };
 	font-size: 14px;
 	overflow-wrap: anywhere;
 	width: 100%;
@@ -692,10 +695,12 @@ export function LineItemSublabelAndPrice( {
 	product,
 	shouldShowComparison,
 	compareToPrice,
+	isRenewalPricingExperiment,
 }: {
 	product: ResponseCartProduct;
 	shouldShowComparison?: boolean;
 	compareToPrice?: number;
+	isRenewalPricingExperiment?: boolean;
 } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
@@ -862,10 +867,27 @@ export function LineItemSublabelAndPrice( {
 		const showCrossedOutPrice =
 			product.item_original_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !==
 			compareToPrice;
+
+		// Renewal Pricing: Calculate actual monthly renewal price
+		const actualMonthlyPrice = formatCurrency(
+			product.item_original_subtotal_integer / ( product.months_per_bill_period ?? 1 ),
+			product.currency,
+			{
+				isSmallestUnit: true,
+				stripZeros: true,
+			}
+		);
+
 		if ( isMonthlyProduct( product ) ) {
 			return (
 				<>
-					<LineItemSublabelTitle>{ translate( 'Billed every month' ) }</LineItemSublabelTitle>
+					<LineItemSublabelTitle>
+						{ isRenewalPricingExperiment
+							? translate( 'Auto-renews at %(price)s/month. Billed every month', {
+									args: { price: actualMonthlyPrice },
+							  } )
+							: translate( 'Billed every month' ) }
+					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
 							{ monthlyPrice } { translate( '/month' ) }
@@ -878,7 +900,13 @@ export function LineItemSublabelAndPrice( {
 		if ( isYearly( product ) ) {
 			return (
 				<>
-					<LineItemSublabelTitle>{ translate( 'Billed every year' ) }</LineItemSublabelTitle>
+					<LineItemSublabelTitle>
+						{ isRenewalPricingExperiment
+							? translate( 'Auto-renews at %(price)s/month. Billed every 12 months', {
+									args: { price: actualMonthlyPrice },
+							  } )
+							: translate( 'Billed every year' ) }
+					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
 							{ monthlyPrice } { translate( '/month' ) }
@@ -891,7 +919,13 @@ export function LineItemSublabelAndPrice( {
 		if ( isBiennially( product ) ) {
 			return (
 				<>
-					<LineItemSublabelTitle>{ translate( 'Billed every 2 years' ) }</LineItemSublabelTitle>
+					<LineItemSublabelTitle>
+						{ isRenewalPricingExperiment
+							? translate( 'Auto-renews at %(price)s/month. Billed every 24 months', {
+									args: { price: actualMonthlyPrice },
+							  } )
+							: translate( 'Billed every 2 years' ) }
+					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
 							{ monthlyPrice } { translate( '/month' ) }
@@ -904,7 +938,13 @@ export function LineItemSublabelAndPrice( {
 		if ( isTriennially( product ) ) {
 			return (
 				<>
-					<LineItemSublabelTitle>{ translate( 'Billed every 3 years' ) }</LineItemSublabelTitle>
+					<LineItemSublabelTitle>
+						{ isRenewalPricingExperiment
+							? translate( 'Auto-renews at %(price)s/month. Billed every 36 months', {
+									args: { price: actualMonthlyPrice },
+							  } )
+							: translate( 'Billed every 3 years' ) }
+					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
 							{ monthlyPrice } { translate( '/month' ) }
@@ -1197,9 +1237,11 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 function IntroductoryOfferCallout( {
 	product,
 	shouldShowComparison,
+	isRenewalPricingExperiment,
 }: {
 	product: ResponseCartProduct;
 	shouldShowComparison?: boolean;
+	isRenewalPricingExperiment?: boolean;
 } ) {
 	const translate = useTranslate();
 	const introductoryOffer = getItemIntroductoryOfferDisplay(
@@ -1207,6 +1249,10 @@ function IntroductoryOfferCallout( {
 		product,
 		shouldShowComparison
 	);
+
+	if ( isRenewalPricingExperiment ) {
+		return null;
+	}
 
 	if ( ! introductoryOffer ) {
 		return null;
@@ -1336,6 +1382,7 @@ function CheckoutLineItem( {
 	isAkPro500Cart,
 	shouldShowComparison,
 	compareToPrice,
+	isRenewalPricingExperiment,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1355,6 +1402,7 @@ function CheckoutLineItem( {
 	shouldShowBillingInterval?: boolean;
 	shouldShowComparison?: boolean;
 	compareToPrice?: number;
+	isRenewalPricingExperiment?: boolean;
 } > ) {
 	const translate = useTranslate();
 	const hasBundledDomainsInCart = responseCart.products.some(
@@ -1509,7 +1557,11 @@ function CheckoutLineItem( {
 					<>
 						<LineItemPrice
 							actualAmount={ monthlyAmountDisplay }
-							crossedOutAmount={ isDiscounted ? originalMonthlyAmountDisplay : undefined }
+							crossedOutAmount={
+								isDiscounted && ! isRenewalPricingExperiment
+									? originalMonthlyAmountDisplay
+									: undefined
+							}
 						/>{ ' ' }
 						{ translate( '/month' ) }
 					</>
@@ -1529,16 +1581,18 @@ function CheckoutLineItem( {
 						<UpgradeCreditInformationLineItem>
 							<UpgradeCreditInformation product={ product } />
 						</UpgradeCreditInformationLineItem>
-						<LineItemMeta>
+						<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
 							<LineItemSublabelAndPrice
 								product={ product }
 								shouldShowComparison={ shouldShowComparison }
 								compareToPrice={ compareToPrice }
+								isRenewalPricingExperiment={ isRenewalPricingExperiment }
 							/>
 							<DomainDiscountCallout product={ product } />
 							<IntroductoryOfferCallout
 								product={ product }
 								shouldShowComparison={ shouldShowComparison }
+								isRenewalPricingExperiment={ isRenewalPricingExperiment }
 							/>
 							<JetpackAkismetSaleCouponCallout product={ product } />
 						</LineItemMeta>
@@ -1547,8 +1601,11 @@ function CheckoutLineItem( {
 			) }
 
 			{ containsPartnerCoupon && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice product={ product } />
+				<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
+					<LineItemSublabelAndPrice
+						product={ product }
+						isRenewalPricingExperiment={ isRenewalPricingExperiment }
+					/>
 				</LineItemMeta>
 			) }
 
@@ -1557,6 +1614,21 @@ function CheckoutLineItem( {
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
 
 			{ children }
+
+			{ isRenewalPricingExperiment && isDomainRegistration( product ) && (
+				<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
+					<div style={ { marginBottom: '8px' } }>
+						{ translate( 'Auto-renews at %(price)s/year.', {
+							args: {
+								price: formatCurrency( product.item_original_cost_integer, product.currency, {
+									isSmallestUnit: true,
+									stripZeros: true,
+								} ),
+							},
+						} ) }
+					</div>
+				</LineItemMeta>
+			) }
 
 			{ hasDeleteButton && removeProductFromCart && (
 				<>

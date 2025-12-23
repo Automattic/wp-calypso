@@ -50,7 +50,7 @@ export interface Site {
 	};
 	plan?: SitePlan;
 	capabilities: SiteCapabilities;
-	subscribers_count?: number; // Can be undefined if query cache is prefilled from old Calypso Redux store.
+	subscribers_count: number;
 	options?: SiteOptions; // Can be undefined for deleted sites.
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;

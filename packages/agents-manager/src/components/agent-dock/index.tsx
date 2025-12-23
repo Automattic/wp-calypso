@@ -2,7 +2,6 @@ import {
 	getAgentManager,
 	useAgentChat,
 	type UseAgentChatConfig,
-	type SubmitOptions,
 } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
@@ -24,17 +23,11 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
+import type {
+	NavigationContinuationHook,
+	AbilitiesSetupHook,
+} from '../../utils/load-external-providers';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
-
-/**
- * Navigation continuation hook type
- */
-type NavigationContinuationHook = ( props: {
-	isProcessing: boolean;
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
-	sessionId: string;
-	agentId: string;
-} ) => void;
 
 interface AgentDockProps {
 	/** The selected site object. */
@@ -53,6 +46,8 @@ interface AgentDockProps {
 	markdownExtensions?: MarkdownExtensions;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
+	/** Setup hook to register hook-dependent abilities. */
+	useAbilitiesSetup?: AbilitiesSetupHook;
 }
 
 export default function AgentDock( {
@@ -64,6 +59,7 @@ export default function AgentDock( {
 	markdownComponents = {},
 	markdownExtensions = {},
 	useNavigationContinuation,
+	useAbilitiesSetup,
 }: AgentDockProps ) {
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const { hasLoaded: isStoreReady, isOpen = false } = useSelect( ( select ) => {
@@ -129,6 +125,10 @@ export default function AgentDock( {
 		setIsOpen,
 		navigate,
 	} );
+
+	// Call setup hook to register hook-dependent abilities
+	// The hook is stable after loadedProviders is set (AgentDock only renders after providers load)
+	useAbilitiesSetup?.();
 
 	const handleNewChat = () => {
 		navigate( '/' );

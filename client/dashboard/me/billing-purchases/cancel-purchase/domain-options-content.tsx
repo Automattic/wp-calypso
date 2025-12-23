@@ -47,7 +47,7 @@ export default function DomainOptionsContent( {
 				onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 				isLoading={ false }
 			/>
-			<ButtonStack>
+			<ButtonStack justify="flex-start">
 				<CancelButton
 					purchase={ purchase }
 					includedDomainPurchase={ includedDomainPurchase }
