@@ -345,10 +345,10 @@ function McpComponent() {
 					title={ __( 'MCP' ) }
 					description={ createInterpolateElement(
 						__(
-							'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. <link>Learn more.</link>'
+							'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. <learnMoreLink/>'
 						),
 						{
-							link: <InlineSupportLink supportContext="mcp" />,
+							learnMoreLink: <InlineSupportLink supportContext="mcp" />,
 						}
 					) }
 				/>
