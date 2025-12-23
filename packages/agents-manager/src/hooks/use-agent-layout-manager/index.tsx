@@ -54,8 +54,8 @@ export default function useAgentLayoutManager( {
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
 	const defaultUndockedRef = useRef( defaultUndocked );
-	defaultUndockedRef.current = defaultUndocked;
 	const defaultOpenRef = useRef( defaultOpen );
+	defaultUndockedRef.current = defaultUndocked;
 	defaultOpenRef.current = defaultOpen;
 
 	// Store callback refs to avoid stale closures and prevent unnecessary re-renders
