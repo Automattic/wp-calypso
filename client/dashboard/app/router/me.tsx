@@ -805,14 +805,14 @@ export const mcpRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'mcp',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
 } );
 
 export const mcpIndexRoute = createRoute( {
 	getParentRoute: () => mcpRoute,
 	path: '/',
-	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
-	},
 } ).lazy( () =>
 	import( '../../me/mcp' ).then( ( d ) =>
 		createLazyRoute( 'mcp' )( {
@@ -825,15 +825,12 @@ export const mcpSetupRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'MCP Setup' ),
+				title: __( 'MCP Client Setup' ),
 			},
 		],
 	} ),
 	getParentRoute: () => mcpRoute,
 	path: 'setup',
-	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
-	},
 } ).lazy( () =>
 	import( '../../me/mcp/setup' ).then( ( d ) =>
 		createLazyRoute( 'mcp-setup' )( {
@@ -911,12 +908,12 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		meRoutes.push( blockedSitesRoute );
 	}
 
-	if ( config.supports.me.apps ) {
-		meRoutes.push( appsRoute );
-	}
-
 	if ( isEnabled( 'mcp-settings' ) ) {
 		meRoutes.push( mcpRoute.addChildren( [ mcpIndexRoute, mcpSetupRoute ] ) );
+	}
+
+	if ( config.supports.me.apps ) {
+		meRoutes.push( appsRoute );
 	}
 
 	return [ meRoute.addChildren( meRoutes ) ];
