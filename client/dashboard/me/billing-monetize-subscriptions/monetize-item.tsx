@@ -20,6 +20,16 @@ export const MonetizeSubscriptionTerms = ( {
 		return <>{ __( 'Never expires' ) }</>;
 	}
 
+	// Check if end_date is in the past
+	const endDate = new Date( subscription.end_date );
+	const isExpired = endDate < new Date();
+
+	// Show "Expired" for past dates
+	if ( isExpired ) {
+		return <>{ __( 'Expired' ) }</>;
+	}
+
+	// Show renewal or expiry for future dates
 	return (
 		<>
 			{ subscription.renew_interval === null
@@ -29,7 +39,7 @@ export const MonetizeSubscriptionTerms = ( {
 							dateStyle: 'long',
 						} ),
 				  } )
-				: // translators: %(siteUrl)s is the URL of the site. %(date)s is the date the subscription renews. . Format is LL (e.g. January 1, 2020).
+				: // translators: %(amount)s is the renewal price, %(date)s is the date the subscription renews. Format is LL (e.g. January 1, 2020).
 				  sprintf( __( 'Renews at %(amount)s on %(date)s' ), {
 						amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
 						date: formatDate( new Date( Date.parse( subscription?.end_date ?? '' ) ), locale, {

@@ -16,18 +16,26 @@ export const MembershipTerms = ( { subscription }: { subscription: MembershipSub
 		return <>{ translate( 'Never expires' ) }</>;
 	}
 
+	// Check if expired
+	const endDate = moment( subscription.end_date );
+	const isExpired = endDate.isBefore( moment() );
+
+	if ( isExpired ) {
+		return <>{ translate( 'Expired' ) }</>;
+	}
+
 	return (
 		<>
 			{ subscription.renew_interval === null
 				? translate( 'Expires on %(date)s', {
 						args: {
-							date: moment( subscription.end_date ).format( 'LL' ),
+							date: endDate.format( 'LL' ),
 						},
 				  } )
 				: translate( 'Renews at %(amount)s on %(date)s', {
 						args: {
 							amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-							date: moment( subscription.end_date ).format( 'LL' ),
+							date: endDate.format( 'LL' ),
 						},
 				  } ) }
 		</>
