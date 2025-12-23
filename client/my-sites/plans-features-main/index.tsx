@@ -83,6 +83,7 @@ import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-interv
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
@@ -237,6 +238,9 @@ const PlansFeaturesMain = ( {
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
+
+	const [ isRenewalPricingExperimentLoading, renewalPricingVariation ] =
+		useRenewalPricingExperiment( flowName );
 
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -408,6 +412,10 @@ const PlansFeaturesMain = ( {
 		isLaunchPage,
 		showModalAndExit,
 		coupon,
+		useCheckPlanAvailabilityForPurchase,
+		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
+		enableCategorisedFeatures: showSimplifiedFeatures,
+		reflectStorageSelectionInPlanPrices: true,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
@@ -678,7 +686,10 @@ const PlansFeaturesMain = ( {
 			! gridPlansForComparisonGrid
 	);
 
-	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
+	const isPlansGridReady =
+		! isLoadingGridPlans &&
+		! resolvedSubdomainName.isLoading &&
+		! isRenewalPricingExperimentLoading;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
@@ -901,6 +912,7 @@ const PlansFeaturesMain = ( {
 										}
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
+										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -960,6 +972,7 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
+													showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }

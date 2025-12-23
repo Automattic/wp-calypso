@@ -8,6 +8,7 @@ import {
 import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useSelect } from '@wordpress/data';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
@@ -29,6 +30,7 @@ type ActionButtonProps = {
 	showMonthlyPrice: boolean;
 	isStuck: boolean;
 	visibleGridPlans: GridPlan[];
+	showPostButtonText?: boolean;
 };
 
 const ActionButton = ( {
@@ -39,12 +41,14 @@ const ActionButton = ( {
 	isStuck,
 	isInSignup,
 	isMonthlyPlan,
+	showPostButtonText = true,
 }: ActionButtonProps ) => {
 	const translate = useTranslate();
 	const {
 		gridPlansIndex,
 		siteId,
 		helpers: { useAction },
+		showBillingDescriptionForIncreasedRenewalPrice,
 	} = usePlansGridContext();
 	const {
 		current,
@@ -94,6 +98,8 @@ const ActionButton = ( {
 		cartItemForPlan,
 		currentPlanBillingPeriod,
 		selectedStorageAddOn,
+		pricing: gridPlansIndex[ planSlug ]?.pricing,
+		isMonthlyPlan,
 	} );
 	const {
 		primary: { callback: freeTrialCallback, text: freeTrialText },
@@ -109,6 +115,8 @@ const ActionButton = ( {
 		cartItemForPlan: { product_slug: freeTrialPlanSlug ?? PLAN_FREE },
 		currentPlanBillingPeriod,
 		selectedStorageAddOn,
+		pricing: gridPlansIndex[ freeTrialPlanSlug ?? PLAN_FREE ]?.pricing,
+		isMonthlyPlan,
 	} );
 
 	const busy = status === 'blocked';
@@ -197,8 +205,14 @@ const ActionButton = ( {
 					>
 						{ text }
 					</PlanButton>
-					{ postButtonText && (
-						<span className="plans-grid-next-action-button__label">{ postButtonText }</span>
+					{ showPostButtonText && postButtonText && (
+						<span
+							className={ clsx( 'plans-grid-next-action-button__label', {
+								'is-left-aligned': showBillingDescriptionForIncreasedRenewalPrice,
+							} ) }
+						>
+							{ postButtonText }
+						</span>
 					) }
 				</>
 			);
