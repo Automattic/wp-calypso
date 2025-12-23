@@ -108,7 +108,7 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		// Handle state changes after initial setup
+		// Handle dock/undock state changes
 		if ( shouldRenderSidebar ) {
 			container.classList.add( 'agents-manager-sidebar-container' );
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );
