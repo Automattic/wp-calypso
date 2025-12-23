@@ -78,7 +78,7 @@
 		"mailchimp": false,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
-		"marketplace-redesign": false,
+		"marketplace-redesign": true,
 		"marketplace-reviews-notification": false,
 		"marketplace-test": false,
 		"me/account/color-scheme-picker": true,
