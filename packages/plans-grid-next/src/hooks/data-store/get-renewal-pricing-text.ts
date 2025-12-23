@@ -25,8 +25,9 @@ export function getRenewalPricingText( {
 	const { currencyCode, discountedPrice, originalPrice, billingPeriod, introOffer } = pricing;
 
 	const monthlyPrice = originalPrice?.monthly;
+	// Use the discounted price before the intro offer price since the discount is applied on top of it.
 	const currentFullPrice =
-		introOffer?.rawPrice?.full || discountedPrice?.full || originalPrice?.full;
+		discountedPrice?.full || introOffer?.rawPrice?.full || originalPrice?.full;
 
 	if ( ! monthlyPrice || ! currencyCode || ! currentFullPrice ) {
 		return null;
