@@ -22,13 +22,16 @@ const requiresPlanUpgrade = ( site: Site ) => {
 };
 
 const useDomainSuggestion = ( site: Site ) => {
-	const search = site.slug.split( '.' )[ 0 ];
-	const { data: allDomainSuggestions } = useQuery(
-		domainSuggestionsQuery( search, {
-			vendor: 'domain-upsell',
-			include_wordpressdotcom: false,
-		} )
-	);
+	const search = site.slug?.split( '.' )[ 0 ] ?? '';
+	const domainSuggestionQueryOptions = domainSuggestionsQuery( search, {
+		vendor: 'domain-upsell',
+		include_wordpressdotcom: false,
+	} );
+
+	const { data: allDomainSuggestions } = useQuery( {
+		...domainSuggestionQueryOptions,
+		enabled: !! search,
+	} );
 
 	return {
 		search,
@@ -51,6 +54,10 @@ const DomainUpsellCardContent = ( {
 } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
+
+	if ( ! suggestedDomain ) {
+		return null;
+	}
 
 	const backUrl = redirectToDashboardLink( { supportBackport: true } );
 	const handleUpsell = async () => {
