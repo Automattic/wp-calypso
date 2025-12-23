@@ -65,8 +65,12 @@ const HelpCenter: React.FC< Container > = ( {
 		}
 
 		return () => {
-			if ( portalParentRef.current?.parentNode ) {
-				document.body.removeChild( portalParentRef.current );
+			const portalNode = portalParentRef.current;
+			const parentNode = portalNode?.parentNode;
+
+			if ( portalNode && parentNode ) {
+				parentNode.removeChild( portalNode );
+				portalParentRef.current = undefined;
 			}
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
