@@ -115,7 +115,7 @@ function McpComponent() {
 		const grouped: Record< string, Array< [ string, McpAbility ] > > = {};
 
 		tools.forEach( ( [ toolId, tool ] ) => {
-			const displayCategory = getDisplayCategory( toolId, tool.category || '' );
+			const displayCategory = getDisplayCategory( toolId );
 			if ( ! grouped[ displayCategory ] ) {
 				grouped[ displayCategory ] = [];
 			}

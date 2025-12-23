@@ -31,63 +31,45 @@ export const CATEGORY_ORDER = [
 /**
  * Get the display category for a tool based on its ID and API category
  * @param toolId - The tool ID (e.g., 'wpcom-mcp/user-profile')
- * @param apiCategory - The category from the API (e.g., 'user', 'content', 'site')
  * @returns The display category name
  */
-export function getDisplayCategory( toolId: string, apiCategory: string ): string {
+export function getDisplayCategory( toolId: string ): string {
 	// Extract the tool name from the full ID (e.g., 'user-profile' from 'wpcom-mcp/user-profile')
 	const toolName = toolId.replace( 'wpcom-mcp/', '' );
 
-	// Sites & Content
-	if (
-		toolName === 'user-sites-resource' ||
-		toolName === 'user-sites' ||
-		toolName === 'site-users' ||
-		toolName === 'posts-search' ||
-		toolName === 'post-get' ||
-		toolName === 'site-comments-search'
-	) {
-		return DISPLAY_CATEGORIES.SITES_CONTENT;
-	}
+	const TOOL_CATEGORY_MAP: Record< string, string > = {
+		// Sites & Content
+		'user-sites-resource': DISPLAY_CATEGORIES.SITES_CONTENT,
+		'user-sites': DISPLAY_CATEGORIES.SITES_CONTENT,
+		'site-users': DISPLAY_CATEGORIES.SITES_CONTENT,
+		'posts-search': DISPLAY_CATEGORIES.SITES_CONTENT,
+		'post-get': DISPLAY_CATEGORIES.SITES_CONTENT,
+		'site-comments-search': DISPLAY_CATEGORIES.SITES_CONTENT,
 
-	// Account
-	if (
-		toolName === 'user-profile' ||
-		toolName === 'user-security' ||
-		toolName === 'user-achievements'
-	) {
-		return DISPLAY_CATEGORIES.ACCOUNT;
-	}
+		// Account
+		'user-profile': DISPLAY_CATEGORIES.ACCOUNT,
+		'user-security': DISPLAY_CATEGORIES.ACCOUNT,
+		'user-achievements': DISPLAY_CATEGORIES.ACCOUNT,
 
-	// Billing
-	if ( toolName === 'user-subscriptions' ) {
-		return DISPLAY_CATEGORIES.BILLING;
-	}
+		// Billing
+		'user-subscriptions': DISPLAY_CATEGORIES.BILLING,
 
-	// Notifications
-	if ( toolName === 'user-notifications' || toolName === 'user-notifications-inbox' ) {
-		return DISPLAY_CATEGORIES.NOTIFICATIONS;
-	}
+		// Notifications
+		'user-notifications': DISPLAY_CATEGORIES.NOTIFICATIONS,
+		'user-notifications-inbox': DISPLAY_CATEGORIES.NOTIFICATIONS,
 
-	// Domains & Integrations
-	if ( toolName === 'user-domains' || toolName === 'user-connections' ) {
-		return DISPLAY_CATEGORIES.DOMAINS_INTEGRATIONS;
-	}
+		// Domains & Integrations
+		'user-domains': DISPLAY_CATEGORIES.DOMAINS_INTEGRATIONS,
+		'user-connections': DISPLAY_CATEGORIES.DOMAINS_INTEGRATIONS,
 
-	// Site Configuration
-	if (
-		toolName === 'site-plugins' ||
-		toolName === 'site-settings' ||
-		toolName === 'site-statistics'
-	) {
-		return DISPLAY_CATEGORIES.SITE_CONFIGURATION;
-	}
+		// Site Configuration
+		'site-plugins': DISPLAY_CATEGORIES.SITE_CONFIGURATION,
+		'site-settings': DISPLAY_CATEGORIES.SITE_CONFIGURATION,
+		'site-statistics': DISPLAY_CATEGORIES.SITE_CONFIGURATION,
 
-	// Developer & Testing
-	if ( toolName === 'sample-prompt' ) {
-		return DISPLAY_CATEGORIES.DEVELOPER_TESTING;
-	}
+		// Developer & Testing
+		'sample-prompt': DISPLAY_CATEGORIES.DEVELOPER_TESTING,
+	};
 
-	// Default to either the API category or uncategorized
-	return apiCategory || DISPLAY_CATEGORIES.UNCATEGORIZED;
+	return TOOL_CATEGORY_MAP[ toolName ] || DISPLAY_CATEGORIES.UNCATEGORIZED;
 }
