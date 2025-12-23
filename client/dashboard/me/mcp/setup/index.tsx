@@ -20,7 +20,7 @@ import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { SectionHeader } from '../../components/section-header';
+import { SectionHeader } from '../../../components/section-header';
 
 function McpSetupComponent() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -134,6 +134,7 @@ function McpSetupComponent() {
 					<PageHeader
 						title={ __( 'MCP Client Setup' ) }
 						description={ __( 'Configure your MCP client to connect to WordPress.com.' ) }
+						prefix={ <Breadcrumbs length={ 2 } /> }
 					/>
 				}
 			>
@@ -142,12 +143,12 @@ function McpSetupComponent() {
 					<CardBody>
 						<SectionHeader level={ 3 } title={ __( 'Setup Required' ) } />
 						<VStack spacing={ 4 }>
-							<Text as="p" size="medium">
-								{ __( 'No MCP tools are currently enabled for your account.' ) }
+							<Text as="p" size="medium" variant="muted">
+								{ __( 'No MCP access is currently enabled for your account.' ) }
 							</Text>
-							<Text as="p" size="medium">
+							<Text as="p" size="medium" variant="muted">
 								{ __(
-									'MCP tools define what actions and data your MCP client can access on your account. You need to enable at least one tool in the main MCP settings before configuring your client.'
+									'MCP access defines what actions and data your MCP client can access on your account. You need to enable MCP access in the main MCP settings before configuring your client.'
 								) }
 							</Text>
 							<Link to="/me/mcp">
@@ -306,8 +307,12 @@ function McpSetupComponent() {
 
 				<Card>
 					<CardBody>
-						<SectionHeader level={ 3 } title={ __( 'Manual Setup' ) } />
-						<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Manual Setup' ) }
+							style={ { marginBottom: '4px' } }
+						/>
+						<VStack spacing={ 2 }>
 							<HStack justify="space-between" alignment="center">
 								{ clientDocumentation[ selectedMcpClient ] && (
 									<ExternalLink
@@ -345,8 +350,8 @@ function McpSetupComponent() {
 								) }
 								style={ { minHeight: '240px' } }
 							/>
-							<ul style={ { listStyle: 'none', padding: '0', margin: '0' } }>
-								<li style={ { marginBottom: '4px' } }>
+							<VStack spacing={ 2 }>
+								<Text as="p" size="small">
 									{ createInterpolateElement(
 										sprintf(
 											/* translators: %s is the server name identifier */
@@ -372,8 +377,8 @@ function McpSetupComponent() {
 											),
 										}
 									) }
-								</li>
-								<li>
+								</Text>
+								<Text as="p" size="small">
 									{ createInterpolateElement(
 										sprintf(
 											/* translators: %s is the package name */
@@ -397,8 +402,8 @@ function McpSetupComponent() {
 											),
 										}
 									) }
-								</li>
-							</ul>
+								</Text>
+							</VStack>
 						</VStack>
 					</CardBody>
 				</Card>
