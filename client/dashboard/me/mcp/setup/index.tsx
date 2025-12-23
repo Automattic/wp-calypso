@@ -307,11 +307,7 @@ function McpSetupComponent() {
 
 				<Card>
 					<CardBody>
-						<SectionHeader
-							level={ 3 }
-							title={ __( 'Manual Setup' ) }
-							style={ { marginBottom: '4px' } }
-						/>
+						<SectionHeader level={ 3 } title={ __( 'Manual Setup' ) } />
 						<VStack spacing={ 2 }>
 							<HStack justify="space-between" alignment="center">
 								{ clientDocumentation[ selectedMcpClient ] && (
