@@ -113,7 +113,7 @@ The hook accepts a single options object. All properties are optional.
 
 - **`sidebarContainer`** (`HTMLElement` | `string`, default: `'body'`) - The container element where the sidebar will be rendered. This should be the parent of both the main section (e.g., the editor) and the sidebar itself. Can be either a DOM element or a CSS selector string.
 
-- **`enabled`** (`boolean`, default: `true`) - Controls whether the layout manager is active. When `false`, all functions (`dock`, `undock`, `openSidebar`, `closeSidebar`) become no-ops and the portal setup is skipped. Useful for conditionally disabling the layout manager without unmounting the component.
+- **`enabled`** (`boolean`, default: `true`) - Controls whether the layout manager is active. When `false`, all functions (`dock`, `undock`, `openSidebar`, `closeSidebar`) become no-ops and the portal setup is skipped. Useful for async persisted states loaded, allowing the hook to wait until state is ready before activating the layout manager.
 
 - **`defaultUndocked`** (`boolean`, default: `false`) - Sets the initial docked state. If `true`, the chat starts in floating (undocked) mode. If `false`, it starts docked (on desktop only). After initialization, the state can be changed via `dock()` and `undock()` methods.
 
