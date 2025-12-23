@@ -40,7 +40,7 @@ interface McpSite {
 function McpComponent() {
 	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
-	const { data: sites = [] } = useQuery(
+	const { data: sites = [], isLoading: isLoadingSites } = useQuery(
 		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	) as {
 		data: Site[];
@@ -116,6 +116,10 @@ function McpComponent() {
 		} );
 
 		return grouped;
+	};
+
+	const handleSiteDropdownChange = ( value: string | null | undefined ) => {
+		setSelectedSiteId( value ? Number( value ) : null );
 	};
 
 	const handleSiteToggle = ( siteId: number, enabled: boolean ) => {
@@ -299,11 +303,9 @@ function McpComponent() {
 								<PreferencesLoginSiteDropdown
 									sites={ sites }
 									value={ selectedSiteId !== null ? String( selectedSiteId ) : '' }
-									onChange={ ( value: string | null ) =>
-										setSelectedSiteId( value ? Number( value ) : null )
-									}
+									onChange={ handleSiteDropdownChange }
 									label={ __( 'Select a site to disable AI access' ) }
-									isLoading={ false }
+									isLoading={ isLoadingSites }
 								/>
 
 								{ selectedSiteId !== null && anyToolsEnabled && (
