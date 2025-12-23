@@ -113,7 +113,7 @@ The hook accepts a single options object. All properties are optional.
 
 - **`sidebarContainer`** (`HTMLElement` | `string`, default: `'body'`) - The container element where the sidebar will be rendered. This should be the parent of both the main section (e.g., the editor) and the sidebar itself. Can be either a DOM element or a CSS selector string.
 
-- **`enabled`** (`boolean`, default: `true`) - Controls whether the layout manager is active. When `false`, all functions (`dock`, `undock`, `openSidebar`, `closeSidebar`) become no-ops and the portal setup is skipped. Useful for async persisted states loaded, allowing the hook to wait until state is ready before activating the layout manager.
+- **`isReady`** (`boolean`, default: `true`) - Controls whether the layout manager is active. When `false`, all functions (`dock`, `undock`, `openSidebar`, `closeSidebar`) become no-ops and the portal setup is skipped. Useful for async persisted states loaded, allowing the hook to wait until state is ready before activating the layout manager.
 
 - **`defaultUndocked`** (`boolean`, default: `false`) - Sets the initial docked state. If `true`, the chat starts in floating (undocked) mode. If `false`, it starts docked (on desktop only). After initialization, the state can be changed via `dock()` and `undock()` methods.
 
@@ -137,12 +137,12 @@ The hook returns an object with the following properties:
 
 - **`isDesktop`** (`boolean`) - `true` when the viewport matches the desktop media query.
 
-- **`dock`** (`() => void`) - Switches to sidebar mode. When on desktop, this enables the docked layout and automatically opens the sidebar. No-op when `enabled` is `false` or `sidebarContainer` is not found.
+- **`dock`** (`() => void`) - Switches to sidebar mode. When on desktop, this enables the docked layout and automatically opens the sidebar. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 
-- **`undock`** (`() => void`) - Switches to floating mode. This disables the docked layout. No-op when `enabled` is `false` or `sidebarContainer` is not found.
+- **`undock`** (`() => void`) - Switches to floating mode. This disables the docked layout. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 
-- **`openSidebar`** (`() => void`) - Opens the sidebar. Only works when docked on desktop. No-op when `enabled` is `false` or `sidebarContainer` is not found.
+- **`openSidebar`** (`() => void`) - Opens the sidebar. Only works when docked on desktop. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 
-- **`closeSidebar`** (`() => void`) - Closes the sidebar. Only works when docked on desktop. No-op when `enabled` is `false` or `sidebarContainer` is not found.
+- **`closeSidebar`** (`() => void`) - Closes the sidebar. Only works when docked on desktop. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 
 - **`createAgentPortal`** (`(children: React.ReactNode) => React.ReactNode | React.ReactPortal`) - Creates a React Portal for the chat UI. When docked, wraps children in a portal rendered inside the sidebar element and adds a FAB (floating action button) to reopen the sidebar when closed. When undocked, returns children in a portal without the FAB. Returns `null` if the portal element is not yet created (first render only).

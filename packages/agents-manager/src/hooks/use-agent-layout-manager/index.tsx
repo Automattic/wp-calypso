@@ -14,7 +14,7 @@ import './style.scss';
 
 interface Options {
 	sidebarContainer?: string | HTMLElement;
-	enabled?: boolean;
+	isReady?: boolean;
 	defaultUndocked?: boolean;
 	defaultOpen?: boolean;
 	desktopMediaQuery?: string;
@@ -36,7 +36,7 @@ interface ReturnValue {
 
 export default function useAgentLayoutManager( {
 	sidebarContainer = 'body',
-	enabled = true,
+	isReady = true,
 	defaultUndocked = false,
 	defaultOpen = false,
 	desktopMediaQuery = '(min-width: 1200px)',
@@ -78,7 +78,7 @@ export default function useAgentLayoutManager( {
 	// Initialize docked state, setup portal element, and handle dock/undock changes
 	// Use `useLayoutEffect` to prevent flickering
 	useLayoutEffect( () => {
-		if ( ! enabled || ! container ) {
+		if ( ! isReady || ! container ) {
 			return;
 		}
 
@@ -125,7 +125,7 @@ export default function useAgentLayoutManager( {
 
 			onUndockRef.current();
 		}
-	}, [ container, isDocked, shouldRenderSidebar, enabled ] );
+	}, [ container, isDocked, shouldRenderSidebar, isReady ] );
 
 	// Cleanup on unmount
 	// Use `useLayoutEffect` to prevent flickering
@@ -151,27 +151,27 @@ export default function useAgentLayoutManager( {
 	);
 
 	const handleOpenSidebar = useCallback( () => {
-		if ( ! enabled || ! container ) {
+		if ( ! isReady || ! container ) {
 			return;
 		}
 
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 
 		onOpenSidebarRef.current();
-	}, [ container, enabled ] );
+	}, [ container, isReady ] );
 
 	const handleCloseSidebar = useCallback( () => {
-		if ( ! enabled || ! container ) {
+		if ( ! isReady || ! container ) {
 			return;
 		}
 
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 
 		onCloseSidebarRef.current();
-	}, [ container, enabled ] );
+	}, [ container, isReady ] );
 
 	const dock = useCallback( () => {
-		if ( ! enabled || ! container ) {
+		if ( ! isReady || ! container ) {
 			return;
 		}
 
@@ -182,16 +182,16 @@ export default function useAgentLayoutManager( {
 			// Wait for DOM update to complete before opening the sidebar
 			openSidebarTimeoutRef.current = setTimeout( handleOpenSidebar, 100 );
 		}
-	}, [ container, enabled, handleOpenSidebar, isDesktop ] );
+	}, [ container, isReady, handleOpenSidebar, isDesktop ] );
 
 	const undock = useCallback( () => {
-		if ( ! enabled || ! container ) {
+		if ( ! isReady || ! container ) {
 			return;
 		}
 
 		clearTimeout( openSidebarTimeoutRef.current );
 		setIsDocked( false );
-	}, [ container, enabled ] );
+	}, [ container, isReady ] );
 
 	const createAgentPortal = useCallback(
 		( children: React.ReactNode ) => {

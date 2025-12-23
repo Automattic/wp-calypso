@@ -78,7 +78,7 @@ export default function AgentDock( {
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
-			enabled: isStoreReady,
+			isReady: isStoreReady,
 			defaultUndocked: ! isPersistedDocked,
 			defaultOpen: isPersistedOpen,
 			onOpenSidebar: () => setIsOpen( true ),
