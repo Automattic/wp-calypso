@@ -1,15 +1,22 @@
-import { AgentsManagerSelect } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { createPortal, useCallback, useLayoutEffect, useRef, useMemo } from '@wordpress/element';
+import {
+	createPortal,
+	useCallback,
+	useLayoutEffect,
+	useRef,
+	useState,
+	useMemo,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
-import { AGENTS_MANAGER_STORE } from '../../stores';
 import './style.scss';
 
 interface Options {
 	sidebarContainer?: string | HTMLElement;
+	enabled?: boolean;
+	defaultUndocked?: boolean;
+	defaultOpen?: boolean;
 	desktopMediaQuery?: string;
 	onOpenSidebar?: () => void;
 	onCloseSidebar?: () => void;
@@ -29,22 +36,26 @@ interface ReturnValue {
 
 export default function useAgentLayoutManager( {
 	sidebarContainer = 'body',
+	enabled = true,
+	defaultUndocked = false,
+	defaultOpen = false,
 	desktopMediaQuery = '(min-width: 1200px)',
 	onOpenSidebar = () => {},
 	onCloseSidebar = () => {},
 	onDock = () => {},
 	onUndock = () => {},
 }: Options = {} ): ReturnValue {
-	const { setIsDocked, setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
-	const { isDocked, isOpen } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
-
 	const portalRef = useRef< HTMLDivElement >();
 	const isDesktop = useMediaQuery( desktopMediaQuery );
+	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
 	const shouldRenderSidebar = isDesktop && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
+
+	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
+	const defaultUndockedRef = useRef( defaultUndocked );
+	defaultUndockedRef.current = defaultUndocked;
+	const defaultOpenRef = useRef( defaultOpen );
+	defaultOpenRef.current = defaultOpen;
 
 	// Store callback refs to avoid stale closures and prevent unnecessary re-renders
 	const onDockRef = useRef( onDock );
@@ -64,11 +75,16 @@ export default function useAgentLayoutManager( {
 		[ sidebarContainer ]
 	);
 
-	// Setup portal and handle dock / undock changes
+	// Initialize docked state, setup portal element, and handle dock/undock changes
 	// Use `useLayoutEffect` to prevent flickering
 	useLayoutEffect( () => {
-		if ( ! container ) {
+		if ( ! enabled || ! container ) {
 			return;
+		}
+
+		// Set initial docked state
+		if ( isDocked === null ) {
+			return setIsDocked( ! defaultUndockedRef.current );
 		}
 
 		// Create portal element if it doesn't exist
@@ -76,17 +92,27 @@ export default function useAgentLayoutManager( {
 			portalRef.current = document.createElement( 'div' );
 			portalRef.current.className = 'agents-manager-chat';
 			container.appendChild( portalRef.current );
+
+			// Apply initial classes
+			if ( shouldRenderSidebar ) {
+				container.classList.add( 'agents-manager-sidebar-container' );
+				portalRef.current.classList.add( 'agents-manager-chat--docked' );
+
+				if ( defaultOpenRef.current ) {
+					container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
+				}
+			} else {
+				portalRef.current.classList.add( 'agents-manager-chat--undocked' );
+			}
+
+			return;
 		}
 
-		// Handle dock/undock state changes
+		// Handle state changes after initial setup
 		if ( shouldRenderSidebar ) {
 			container.classList.add( 'agents-manager-sidebar-container' );
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--undocked' );
-
-			if ( isOpen ) {
-				container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
-			}
 
 			onDockRef.current();
 		} else {
@@ -99,14 +125,14 @@ export default function useAgentLayoutManager( {
 
 			onUndockRef.current();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- defaultOpen should only apply on initial mount
-	}, [ container, shouldRenderSidebar, isOpen ] );
+	}, [ container, isDocked, shouldRenderSidebar, enabled ] );
 
 	// Cleanup on unmount
 	// Use `useLayoutEffect` to prevent flickering
 	useLayoutEffect(
 		() => () => {
 			clearTimeout( openSidebarTimeoutRef.current );
+			setIsDocked( null );
 
 			if ( container ) {
 				container.classList.remove(
@@ -125,28 +151,30 @@ export default function useAgentLayoutManager( {
 	);
 
 	const handleOpenSidebar = useCallback( () => {
-		if ( ! container ) {
+		if ( ! enabled || ! container ) {
 			return;
 		}
 
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 
-		setIsOpen( true );
 		onOpenSidebarRef.current();
-	}, [ container, setIsOpen ] );
+	}, [ container, enabled ] );
 
 	const handleCloseSidebar = useCallback( () => {
-		if ( ! container ) {
+		if ( ! enabled || ! container ) {
 			return;
 		}
 
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 
-		setIsOpen( false );
 		onCloseSidebarRef.current();
-	}, [ container, setIsOpen ] );
+	}, [ container, enabled ] );
 
 	const dock = useCallback( () => {
+		if ( ! enabled || ! container ) {
+			return;
+		}
+
 		clearTimeout( openSidebarTimeoutRef.current );
 		setIsDocked( true );
 
@@ -154,12 +182,16 @@ export default function useAgentLayoutManager( {
 			// Wait for DOM update to complete before opening the sidebar
 			openSidebarTimeoutRef.current = setTimeout( handleOpenSidebar, 100 );
 		}
-	}, [ setIsDocked, isDesktop, handleOpenSidebar ] );
+	}, [ container, enabled, handleOpenSidebar, isDesktop ] );
 
 	const undock = useCallback( () => {
+		if ( ! enabled || ! container ) {
+			return;
+		}
+
 		clearTimeout( openSidebarTimeoutRef.current );
 		setIsDocked( false );
-	}, [ setIsDocked ] );
+	}, [ container, enabled ] );
 
 	const createAgentPortal = useCallback(
 		( children: React.ReactNode ) => {
