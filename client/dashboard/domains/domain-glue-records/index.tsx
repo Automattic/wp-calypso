@@ -3,21 +3,12 @@ import { isMobile } from '@automattic/viewport';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
-import Breadcrumbs from '../../app/breadcrumbs';
-import {
-	domainRoute,
-	domainGlueRecordsAddRoute,
-	domainGlueRecordsEditRoute,
-} from '../../app/router/domains';
+import { domainRoute, domainGlueRecordsEditRoute } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews';
-import InlineSupportLink from '../../components/inline-support-link';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
 import DomainGlueRecordDeleteModal from './delete-modal';
+import { DomainGlueRecordsLayout } from './layout';
 import type { DomainGlueRecord } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
@@ -120,30 +111,7 @@ function DomainGlueRecords() {
 	);
 
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
-					description={ createInterpolateElement(
-						__( 'Edit your private name server records. <learnMoreLink />' ),
-						{
-							learnMoreLink: <InlineSupportLink supportContext="domain-glue-records" />,
-						}
-					) }
-					actions={
-						<RouterLinkButton
-							to={ domainGlueRecordsAddRoute.fullPath }
-							params={ { domainName } }
-							variant="primary"
-							__next40pxDefaultSize
-						>
-							{ __( 'Add glue record' ) }
-						</RouterLinkButton>
-					}
-				/>
-			}
-		>
+		<DomainGlueRecordsLayout>
 			<DataViewsCard>
 				<DataViews< DomainGlueRecord >
 					data={ filteredData || [] }
@@ -165,7 +133,7 @@ function DomainGlueRecords() {
 					}
 				/>
 			</DataViewsCard>
-		</PageLayout>
+		</DomainGlueRecordsLayout>
 	);
 }
 

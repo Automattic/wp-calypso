@@ -1193,16 +1193,13 @@ export default function CancelPurchase() {
 				<PageHeader
 					title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
 					prefix={ <Breadcrumbs length={ 4 } /> }
-					description={ __(
-						'Before you go, please answer a few quick questions to help us improve.'
-					) }
 				/>
 			}
 			notices={ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
 		>
-			<VStack>
-				<Card>
-					<CardBody>
+			<Card>
+				<CardBody>
+					<VStack spacing={ 6 }>
 						<CancelPurchaseForm
 							atomicRevertCheckOne={ state.atomicRevertCheckOne }
 							atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
@@ -1292,9 +1289,9 @@ export default function CancelPurchase() {
 								sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
 							/>
 						) }
-					</CardBody>
-				</Card>
-			</VStack>
+					</VStack>
+				</CardBody>
+			</Card>
 		</PageLayout>
 	);
 }

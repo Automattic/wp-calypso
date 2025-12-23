@@ -30,6 +30,7 @@ import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selecto
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
 import useGenerateActionCallback from './use-generate-action-callback';
+import useRenewalPricingPostButtonText from './use-renewal-pricing-post-button-text';
 import type {
 	GridAction,
 	PlansIntent,
@@ -57,6 +58,8 @@ type UseActionHookProps = {
 	 * We can safely derive `planTitle` from one of the data-store or calypso-products hooks/selectors.
 	 */
 	planTitle?: TranslateResult;
+	pricing?: Plans.PricingMetaForGridPlan | null;
+	isMonthlyPlan?: boolean;
 };
 
 export default function useGenerateActionHook( {
@@ -68,6 +71,10 @@ export default function useGenerateActionHook( {
 	isLaunchPage,
 	showModalAndExit,
 	coupon,
+	useCheckPlanAvailabilityForPurchase,
+	showBillingDescriptionForIncreasedRenewalPrice,
+	enableCategorisedFeatures,
+	reflectStorageSelectionInPlanPrices,
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -77,6 +84,10 @@ export default function useGenerateActionHook( {
 	isLaunchPage: boolean | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	coupon?: string;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
+	enableCategorisedFeatures?: boolean;
+	reflectStorageSelectionInPlanPrices?: boolean;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -121,7 +132,21 @@ export default function useGenerateActionHook( {
 		billingPeriod,
 		currentPlanBillingPeriod,
 		planTitle,
+		pricing,
+		isMonthlyPlan,
 	}: UseActionHookProps ): GridAction => {
+		// Get renewal pricing text - this will be used as postButtonText if available
+		const renewalPricingText = useRenewalPricingPostButtonText( {
+			planSlug,
+			pricing,
+			isMonthlyPlan,
+			coupon,
+			siteId,
+			useCheckPlanAvailabilityForPurchase,
+			showBillingDescriptionForIncreasedRenewalPrice,
+			enableCategorisedFeatures,
+			reflectStorageSelectionInPlanPrices,
+		} );
 		/**
 		 * 1. Enterprise Plan actions
 		 */
@@ -157,7 +182,7 @@ export default function useGenerateActionHook( {
 		 * 3. Onboarding actions
 		 */
 		if ( isInSignup ) {
-			return getSignupAction( {
+			const action = getSignupAction( {
 				getActionCallback,
 				planSlug,
 				cartItemForPlan,
@@ -171,12 +196,16 @@ export default function useGenerateActionHook( {
 				eligibleForFreeHostingTrial,
 				plansIntent,
 			} );
+			return {
+				...action,
+				postButtonText: action.postButtonText || renewalPricingText || undefined,
+			};
 		}
 
 		/**
 		 * 4. Logged-In (Admin) Plans actions
 		 */
-		return getLoggedInPlansAction( {
+		const action = getLoggedInPlansAction( {
 			getActionCallback,
 			planSlug,
 			cartItemForPlan,
@@ -197,6 +226,10 @@ export default function useGenerateActionHook( {
 			isLoading,
 			plansIntent,
 		} );
+		return {
+			...action,
+			postButtonText: renewalPricingText || action.postButtonText || undefined,
+		};
 	};
 
 	return useActionHook;

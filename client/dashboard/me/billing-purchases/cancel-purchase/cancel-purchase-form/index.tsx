@@ -3,6 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import { ButtonStack } from '../../../../components/button-stack';
+import { SectionHeader } from '../../../../components/section-header';
 import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
@@ -26,8 +27,6 @@ import type {
 	PlanProduct,
 	Purchase,
 } from '@automattic/api-core';
-
-import './style.scss';
 
 interface CancelPurchaseFormProps {
 	atomicRevertCheckOne?: boolean;
@@ -354,10 +353,10 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 		if ( ! isLastStep ) {
 			return (
 				<ButtonStack justify="flex-start">
-					<Button variant="secondary" disabled={ ! canGoNext() } onClick={ clickNext }>
+					<Button variant="primary" disabled={ ! canGoNext() } onClick={ clickNext }>
 						{ __( 'Continue' ) }
 					</Button>
-					<Button variant="link" onClick={ onSubmit }>
+					<Button variant="tertiary" onClick={ onSubmit }>
 						{ __( 'Skip' ) }
 					</Button>
 				</ButtonStack>
@@ -366,7 +365,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 
 		if ( surveyStep === REMOVE_PLAN_STEP ) {
 			return (
-				<ButtonStack>
+				<ButtonStack justify="flex-start">
 					<Button
 						className="cancel-purchase-form__remove-plan-button"
 						disabled={ ! canGoNext() }
@@ -374,7 +373,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 						onClick={ onSubmit }
 						variant="primary"
 					>
-						{ __( 'Submit' ) }
+						{ __( 'Continue' ) }
 					</Button>
 					<Button
 						disabled={ ! canGoNext() }
@@ -390,7 +389,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 
 		if ( surveyStep === CANCELLATION_OFFER_STEP ) {
 			return (
-				<ButtonStack>
+				<ButtonStack justify="flex-start">
 					<Button
 						disabled={
 							! canGoNext() || disableButtons /* || disableContinuation || applyingOffer*/
@@ -429,7 +428,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 					{ __( 'Submit' ) }
 				</Button>
 				{ ! canGoNext() && ! isCancelling && (
-					<Button variant="link" onClick={ onSubmit }>
+					<Button variant="tertiary" onClick={ onSubmit }>
 						{ __( 'Skip' ) }
 					</Button>
 				) }
@@ -439,9 +438,12 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 
 	return (
 		props.isVisible && (
-			<VStack spacing={ 4 }>
+			<VStack spacing={ 6 }>
+				<SectionHeader
+					title={ __( 'Before you go, please answer a few quick questions to help us improve.' ) }
+					level={ 3 }
+				/>
 				{ surveyContent() }
-
 				{ renderStepButtons() }
 			</VStack>
 		)

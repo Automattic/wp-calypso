@@ -383,7 +383,7 @@ const ComparisonGridHeaderCell = ( {
 	showRefundPeriod,
 	isStuck,
 }: ComparisonGridHeaderCellProps ) => {
-	const { gridPlansIndex } = usePlansGridContext();
+	const { gridPlansIndex, showBillingDescriptionForIncreasedRenewalPrice } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		renderedGridPlans: visibleGridPlans,
@@ -476,6 +476,7 @@ const ComparisonGridHeaderCell = ( {
 				showMonthlyPrice={ false }
 				isStuck={ false }
 				visibleGridPlans={ visibleGridPlans }
+				showPostButtonText={ showBillingDescriptionForIncreasedRenewalPrice ? false : true }
 			/>
 		</Cell>
 	);
@@ -1158,6 +1159,7 @@ const WrappedComparisonGrid = ( {
 	enableTermSavingsPriceDisplay,
 	reflectStorageSelectionInPlanPrices,
 	showSimplifiedBillingDescription,
+	showBillingDescriptionForIncreasedRenewalPrice,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -1207,6 +1209,9 @@ const WrappedComparisonGrid = ( {
 				enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 				reflectStorageSelectionInPlanPrices={ reflectStorageSelectionInPlanPrices }
 				showSimplifiedBillingDescription={ showSimplifiedBillingDescription }
+				showBillingDescriptionForIncreasedRenewalPrice={
+					showBillingDescriptionForIncreasedRenewalPrice
+				}
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }

@@ -76,7 +76,7 @@ export default function DomainRemovalConfirmationStep( {
 					setFormData( ( data ) => ( { ...data, ...edits } ) );
 				} }
 			/>
-			<ButtonStack justify="flex-end">
+			<ButtonStack justify="flex-start">
 				<Button
 					__next40pxDefaultSize
 					variant="tertiary"
