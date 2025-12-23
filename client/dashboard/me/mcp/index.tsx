@@ -255,9 +255,9 @@ function McpComponent() {
 							<HStack justify="space-between" alignment="top">
 								<SectionHeader
 									level={ 3 }
-									title={ __( 'MCP Tool Access' ) }
+									title={ __( 'AI Access' ) }
 									description={ __(
-										'Control which MCP tools can access your WordPress.com account and sites.'
+										'Control what AI assistants can access your WordPress.com account and sites.'
 									) }
 								/>
 								{ anyToolsEnabled && (
@@ -275,9 +275,7 @@ function McpComponent() {
 								onChange={ handleMasterToggle }
 								label={
 									<Text>
-										{ anyToolsEnabled
-											? __( 'Disable MCP Tool Access' )
-											: __( 'Enable MCP Tool Access' ) }
+										{ anyToolsEnabled ? __( 'Disable AI Access' ) : __( 'Enable AI Access' ) }
 									</Text>
 								}
 							/>
@@ -294,7 +292,7 @@ function McpComponent() {
 									level={ 3 }
 									title={ __( 'Site-specific MCP settings' ) }
 									description={ __(
-										'Choose a site to block all MCP tools for all users on that site. This overrides your account settings.'
+										'Choose a site to block AI access for all users on that site. This overrides your account settings.'
 									) }
 								/>
 
@@ -304,7 +302,7 @@ function McpComponent() {
 									onChange={ ( value: string | null ) =>
 										setSelectedSiteId( value ? Number( value ) : null )
 									}
-									label={ __( 'Select a site to disable MCP access' ) }
+									label={ __( 'Select a site to disable AI access' ) }
 									isLoading={ false }
 								/>
 
@@ -317,8 +315,8 @@ function McpComponent() {
 										label={
 											<Text>
 												{ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId )
-													? __( 'Disable MCP access for this site' )
-													: __( 'Enable MCP access for this site' ) }
+													? __( 'Disable AI access for this site' )
+													: __( 'Enable AI access for this site' ) }
 											</Text>
 										}
 									/>
