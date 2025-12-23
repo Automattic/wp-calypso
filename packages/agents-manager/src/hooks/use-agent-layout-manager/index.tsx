@@ -195,7 +195,7 @@ export default function useAgentLayoutManager( {
 
 	const createAgentPortal = useCallback(
 		( children: React.ReactNode ) => {
-			if ( ! portalRef.current ) {
+			if ( ! isReady || ! portalRef.current ) {
 				return null;
 			}
 
@@ -216,7 +216,7 @@ export default function useAgentLayoutManager( {
 				portalRef.current
 			);
 		},
-		[ handleOpenSidebar, shouldRenderSidebar ]
+		[ handleOpenSidebar, isReady, shouldRenderSidebar ]
 	);
 
 	return {
