@@ -55,7 +55,7 @@ const DomainUpsellCardContent = ( {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
 
-	if ( ! suggestedDomain ) {
+	if ( ! search && ! suggestedDomain ) {
 		return null;
 	}
 
