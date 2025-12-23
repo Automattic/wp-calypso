@@ -7,6 +7,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	ToggleControl,
+	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -212,7 +213,12 @@ function McpComponent() {
 
 								return (
 									<VStack key={ categoryName } spacing={ 4 }>
-										<Text as="h4" size={ 14 } weight={ 600 }>
+										<Text
+											as="h4"
+											size="x-small"
+											weight={ 500 }
+											style={ { textTransform: 'uppercase' } }
+										>
 											{ categoryName }
 										</Text>
 										<VStack spacing={ 4 }>
@@ -248,13 +254,7 @@ function McpComponent() {
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
-							<div
-								style={ {
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-								} }
-							>
+							<HStack justify="space-between" alignment="center">
 								<SectionHeader
 									level={ 3 }
 									title={ __( 'MCP Tool Access' ) }
@@ -267,7 +267,7 @@ function McpComponent() {
 										<Button variant="secondary">{ __( 'Configure MCP Client' ) }</Button>
 									</Link>
 								) }
-							</div>
+							</HStack>
 
 							<ToggleControl
 								__nextHasNoMarginBottom
