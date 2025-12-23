@@ -114,8 +114,10 @@ const LayoutLoggedOut = ( {
 		! isWooOAuth2Client( oauth2Client );
 
 	const loadHelpCenter =
-		// Load for all logged out users, but for some logged in users.
-		( isLoggedIn === false && isEnabled( 'help-center/logged-out' ) ) ||
+		// Load for all logged out users only on the devdocs page.
+		( isLoggedIn === false &&
+			isEnabled( 'help-center/logged-out' ) &&
+			'devdocs' === sectionName ) ||
 		( isLoggedIn &&
 			// we want to show only the Help center in my home and the help section (but not the FAB)
 			( [ 'home', 'help' ].includes( sectionName ) ||
