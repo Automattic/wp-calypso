@@ -48,7 +48,7 @@ function McpComponent() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	// Site selector state for disabling MCP access on specific sites
-	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
+	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( null );
 
 	// Use the standard userSettingsMutation with snackbar notifications
 	const mutation = useMutation( {
@@ -118,14 +118,12 @@ function McpComponent() {
 		return grouped;
 	};
 
-	const handleSiteToggle = ( siteId: string, enabled: boolean ) => {
+	const handleSiteToggle = ( siteId: number, enabled: boolean ) => {
 		// Get current sites array from nested structure
 		const currentSites = ( userSettings?.mcp_abilities?.sites as McpSite[] | undefined ) || [];
 
 		// Find existing site entry
-		const siteIndex = currentSites.findIndex(
-			( site: McpSite ) => site.blog_id === parseInt( siteId, 10 )
-		);
+		const siteIndex = currentSites.findIndex( ( site: McpSite ) => site.blog_id === siteId );
 
 		let newSites;
 		if ( enabled ) {
@@ -149,7 +147,7 @@ function McpComponent() {
 			newSites = [
 				...currentSites,
 				{
-					blog_id: parseInt( siteId ),
+					blog_id: siteId,
 					account_tools_enabled: false,
 					abilities: {},
 				},
@@ -162,13 +160,13 @@ function McpComponent() {
 		if ( enabled ) {
 			// Enabling: send the site with account_tools_enabled: true
 			sitesPayload.push( {
-				blog_id: parseInt( siteId ),
+				blog_id: siteId,
 				account_tools_enabled: true,
 			} );
 		} else {
 			// Disabling: send the site with account_tools_enabled: false
 			sitesPayload.push( {
-				blog_id: parseInt( siteId ),
+				blog_id: siteId,
 				account_tools_enabled: false,
 			} );
 		}
@@ -254,7 +252,7 @@ function McpComponent() {
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
-							<HStack justify="space-between" alignment="center">
+							<HStack justify="space-between" alignment="top">
 								<SectionHeader
 									level={ 3 }
 									title={ __( 'MCP Tool Access' ) }
@@ -263,9 +261,11 @@ function McpComponent() {
 									) }
 								/>
 								{ anyToolsEnabled && (
-									<Link to="/me/mcp/setup">
-										<Button variant="secondary">{ __( 'Configure MCP Client' ) }</Button>
-									</Link>
+									<VStack style={ { flexShrink: 0 } }>
+										<Link to="/me/mcp/setup">
+											<Button variant="secondary">{ __( 'Configure MCP Client' ) }</Button>
+										</Link>
+									</VStack>
 								) }
 							</HStack>
 
@@ -274,7 +274,7 @@ function McpComponent() {
 								checked={ anyToolsEnabled }
 								onChange={ handleMasterToggle }
 								label={
-									<Text weight="bold">
+									<Text>
 										{ anyToolsEnabled
 											? __( 'Disable MCP Tool Access' )
 											: __( 'Enable MCP Tool Access' ) }
@@ -300,20 +300,22 @@ function McpComponent() {
 
 								<PreferencesLoginSiteDropdown
 									sites={ sites }
-									value={ selectedSiteId }
-									onChange={ ( value ) => setSelectedSiteId( value || '' ) }
+									value={ selectedSiteId !== null ? String( selectedSiteId ) : '' }
+									onChange={ ( value: string | null ) =>
+										setSelectedSiteId( value ? Number( value ) : null )
+									}
 									label={ __( 'Select a site to disable MCP access' ) }
 									isLoading={ false }
 								/>
 
-								{ selectedSiteId && anyToolsEnabled && (
+								{ selectedSiteId !== null && anyToolsEnabled && (
 									<ToggleControl
 										__nextHasNoMarginBottom
 										checked={ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId ) }
 										disabled={ mutation.isPending }
 										onChange={ ( enabled ) => handleSiteToggle( selectedSiteId, enabled ) }
 										label={
-											<Text weight="bold">
+											<Text>
 												{ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId )
 													? __( 'Disable MCP access for this site' )
 													: __( 'Enable MCP access for this site' ) }
