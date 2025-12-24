@@ -2,7 +2,7 @@ import { userPreferenceQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../button-stack';
 import { Notice } from '../notice';
@@ -45,7 +45,11 @@ function dismissSurvey() {
 	}
 }
 
-function checkEligible( welcomeNoticeDismissedAt: string ) {
+function checkEligible( welcomeNoticeDismissedAt: string | null ) {
+	if ( ! welcomeNoticeDismissedAt ) {
+		return false;
+	}
+
 	const { dismissedAt, dismissedCount } = getSurveyDismissal();
 
 	if ( dismissedCount >= MAX_DISMISSES ) {
@@ -59,21 +63,12 @@ function checkEligible( welcomeNoticeDismissedAt: string ) {
 export default function OptInSurvey() {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isDismissed, setIsDismissed ] = useState( false );
-	const [ isEligible, setIsEligible ] = useState( false );
 
 	const { data: welcomeNoticeDismissedAt } = useSuspenseQuery(
 		userPreferenceQuery( 'hosting-dashboard-welcome-notice-dismissed' )
 	);
 
-	useEffect( () => {
-		if ( ! welcomeNoticeDismissedAt ) {
-			return;
-		}
-
-		if ( checkEligible( welcomeNoticeDismissedAt ) ) {
-			setIsEligible( true );
-		}
-	}, [ welcomeNoticeDismissedAt ] );
+	const [ isEligible ] = useState( () => checkEligible( welcomeNoticeDismissedAt ) );
 
 	if ( ! isEligible || isDismissed ) {
 		return null;
