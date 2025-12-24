@@ -144,24 +144,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				{ chat.messages?.length > 0 && <MessagesClusterizer messages={ chat.messages } /> }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
-				{ chat.provider === 'odie' && chat.status === 'sending' && (
-					<div
-						className="odie-chatbox__action-message"
-						ref={ ( div ) => div?.scrollIntoView( { behavior: 'smooth', block: 'end' } ) }
-					>
-						<ThinkingPlaceholder />
-					</div>
-				) }
+				{ chat.provider === 'odie' && chat.status === 'sending' && <ThinkingPlaceholder /> }
 				{ chat.provider === 'odie' && chat.status === 'transfer' && (
-					<div
-						className="odie-chatbox__action-message"
-						ref={ ( div ) => div?.scrollIntoView( { behavior: 'smooth', block: 'end' } ) }
-					>
-						<div className="odie-chatbox__action-message-content" aria-live="polite">
-							<Spinner />
-							<span>{ __( 'Connecting to a live agent…', __i18n_text_domain__ ) }</span>
-						</div>
-					</div>
+					<ThinkingPlaceholder
+						content={ __( 'Connecting to a live agent…', __i18n_text_domain__ ) }
+					/>
 				) }
 				{ chat.provider.startsWith( 'zendesk' ) && (
 					<ZendeskTypingIndicator conversationId={ chat.conversationId } />
