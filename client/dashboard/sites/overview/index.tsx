@@ -16,6 +16,7 @@ import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guid
 import OptInSurvey from '../../components/opt-in-survey';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
 import { canViewSiteVisibilitySettings } from '../features';
@@ -226,7 +227,7 @@ function SiteOverview( {
 					actions={ renderActions() }
 				/>
 			}
-			notices={ <OptInSurvey /> }
+			notices={ ! isDashboardBackport() && <OptInSurvey /> }
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<StorageWarningBanner site={ site } />

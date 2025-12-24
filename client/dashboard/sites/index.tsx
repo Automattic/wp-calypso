@@ -384,7 +384,7 @@ export default function Sites() {
 				notices={
 					<>
 						<SitesNotices />
-						<OptInSurvey />
+						{ ! isDashboardBackport() && <OptInSurvey /> }
 					</>
 				}
 			>
