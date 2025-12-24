@@ -73,10 +73,7 @@ const getFetchSitesOptions = (
 	return {
 		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
-		// Temporarily set the default value to all as people may set some of blogs to invisible and
-		// we should consider whether it makes senses to display visible sites by default.
-		site_visibility:
-			view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : /* 'visible' */ 'all',
+		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
 	};
 };
