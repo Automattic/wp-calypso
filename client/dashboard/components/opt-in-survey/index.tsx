@@ -1,9 +1,10 @@
 import { userPreferenceQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalHStack as HStack, Button } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { ButtonStack } from '../button-stack';
 import { Notice } from '../notice';
 
 const DISMISSED_AT_KEY = 'dashboard-opt-in-survey-dismissed-at';
@@ -78,8 +79,6 @@ export default function OptInSurvey() {
 		return null;
 	}
 
-	const calloutTitle = __( 'We’d love to hear your thoughts.' );
-
 	const setDismissedNow = () => {
 		setIsDismissed( true );
 		dismissSurvey();
@@ -97,12 +96,13 @@ export default function OptInSurvey() {
 
 	return (
 		<Notice
-			title={ calloutTitle }
+			title={ __( 'How’s your experience with the new Hosting Dashboard?' ) }
 			onClose={ dismiss }
 			actions={
-				<HStack spacing="3" justify="flex-start" expanded={ false }>
+				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
+						size="compact"
 						href="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
 						target="_blank"
 						rel="noopener noreferrer"
@@ -110,10 +110,10 @@ export default function OptInSurvey() {
 					>
 						{ __( 'Take the survey' ) }
 					</Button>
-					<Button variant="secondary" onClick={ dismiss }>
+					<Button variant="secondary" size="compact" onClick={ dismiss }>
 						{ __( 'Dismiss' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			}
 		>
 			{ __( 'Fill out this quick survey to help us improve.' ) }
