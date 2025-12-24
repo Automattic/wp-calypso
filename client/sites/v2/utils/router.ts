@@ -14,6 +14,10 @@ export function getRouterOptions( config: AppConfig ) {
 			config,
 		},
 		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+			if ( ( error as any ).error === 'reauthorization_error' ) {
+				return;
+			}
+
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: error.message,
