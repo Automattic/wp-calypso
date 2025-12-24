@@ -447,7 +447,9 @@ export const InteractiveGrid: StoryObj< typeof Grid > = {
 							<Card
 								key={ item.key }
 								color={ colors[ colorIndex ] }
-								actionableArea={ <WidgetActions onClose={ () => removeTile( item.key ) } /> }
+								actionableArea={
+									editMode ? <WidgetActions onClose={ () => removeTile( item.key ) } /> : undefined
+								}
 							>
 								{ item.key }
 							</Card>
