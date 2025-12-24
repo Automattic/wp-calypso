@@ -5,9 +5,9 @@ import { TextareaControl, __experimentalVStack as VStack, Button } from '@wordpr
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
-import { NavigationBlocker } from '../../components/navigation-blocker';
 import { SectionHeader } from '../../components/section-header';
 import { hasJetpackModule } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';

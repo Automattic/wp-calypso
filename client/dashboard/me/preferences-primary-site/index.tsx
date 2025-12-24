@@ -8,9 +8,9 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack/';
 import { Card, CardBody } from '../../components/card';
-import { NavigationBlocker } from '../../components/navigation-blocker';
 import { SectionHeader } from '../../components/section-header';
 import PreferencesLoginSiteDropdown from './site-dropdown';
 

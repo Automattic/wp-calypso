@@ -3,13 +3,13 @@ import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
 import { Suspense, lazy, useEffect, useState, useMemo, useSyncExternalStore } from 'react';
 import { LoadingLine } from '../../components/loading-line';
-import { NavigationBlockerRegistry } from '../../components/navigation-blocker';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
 import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Snackbars from '../snackbars';
 import './style.scss';
 

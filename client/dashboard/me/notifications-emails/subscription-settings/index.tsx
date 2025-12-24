@@ -12,8 +12,8 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { NavigationBlocker } from '../../../app/navigation-blocker';
 import { Card, CardBody } from '../../../components/card';
-import { NavigationBlocker } from '../../../components/navigation-blocker';
 import { getSettings, getSettingsKeys, SubscriptionSettingsForm, type SettingsData } from './form';
 
 const isDirty = ( dataState: SettingsData, originalSettings: SettingsData ) => {
