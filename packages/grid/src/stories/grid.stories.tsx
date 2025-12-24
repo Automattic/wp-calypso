@@ -314,17 +314,11 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 };
 
 /**
- * Demonstrates the bug where Grid tiles don't re-render when layout prop changes dynamically.
- * This story shows the issue described in ARC-1330.
- *
- * BUG: When you add, remove, or switch layouts, the Grid doesn't update properly.
- * Expected: Tiles should appear/disappear/change immediately
- * Actual: Grid retains old tile instances
- *
- * Current workaround: Use a `key` prop on Grid to force re-mount when layout changes
+ * Interactive grid example showing dynamic layout changes.
+ * Add, remove, and switch layouts on the fly. Enable edit mode to drag and resize tiles.
  */
-export const DynamicLayoutChange: StoryObj< typeof Grid > = {
-	render: function DynamicLayoutChange() {
+export const InteractiveGrid: StoryObj< typeof Grid > = {
+	render: function InteractiveGrid() {
 		const colors = [
 			'#f44336',
 			'#2196f3',
@@ -352,6 +346,7 @@ export const DynamicLayoutChange: StoryObj< typeof Grid > = {
 		const [ layout, setLayout ] = useState< GridLayoutItem[] >( layoutA );
 		const [ currentLayoutName, setCurrentLayoutName ] = useState( 'A' );
 		const [ nextTileId, setNextTileId ] = useState( 4 );
+		const [ editMode, setEditMode ] = useState( false );
 
 		const addTile = () => {
 			const newLayout = [ ...layout, { key: `tile-${ nextTileId }`, width: 2, height: 1 } ];
@@ -359,19 +354,19 @@ export const DynamicLayoutChange: StoryObj< typeof Grid > = {
 			setNextTileId( nextTileId + 1 );
 		};
 
-		const removeLastTile = () => {
-			if ( layout.length > 0 ) {
-				setLayout( layout.slice( 0, -1 ) );
-			}
+		const removeTile = ( key: string ) => {
+			setLayout( layout.filter( ( item ) => item.key !== key ) );
 		};
 
 		const switchLayout = () => {
 			if ( currentLayoutName === 'A' ) {
 				setLayout( layoutB );
 				setCurrentLayoutName( 'B' );
+				setNextTileId( 4 );
 			} else {
 				setLayout( layoutA );
 				setCurrentLayoutName( 'A' );
+				setNextTileId( 4 );
 			}
 		};
 
@@ -390,7 +385,7 @@ export const DynamicLayoutChange: StoryObj< typeof Grid > = {
 						borderRadius: '4px',
 					} }
 				>
-					<h3 style={ { marginTop: 0 } }>Layout Controls</h3>
+					<h3 style={ { marginTop: 0 } }>Grid Controls</h3>
 					<div style={ { display: 'flex', gap: '10px', marginBottom: '15px' } }>
 						<button
 							onClick={ addTile }
@@ -406,20 +401,6 @@ export const DynamicLayoutChange: StoryObj< typeof Grid > = {
 							Add Tile
 						</button>
 						<button
-							onClick={ removeLastTile }
-							disabled={ layout.length === 0 }
-							style={ {
-								padding: '8px 16px',
-								background: layout.length === 0 ? '#ccc' : '#f44336',
-								color: 'white',
-								border: 'none',
-								borderRadius: '4px',
-								cursor: layout.length === 0 ? 'not-allowed' : 'pointer',
-							} }
-						>
-							Remove Last Tile
-						</button>
-						<button
 							onClick={ switchLayout }
 							style={ {
 								padding: '8px 16px',
@@ -432,30 +413,42 @@ export const DynamicLayoutChange: StoryObj< typeof Grid > = {
 						>
 							Switch to Layout { currentLayoutName === 'A' ? 'B' : 'A' }
 						</button>
+						<button
+							onClick={ () => setEditMode( ! editMode ) }
+							style={ {
+								padding: '8px 16px',
+								background: editMode ? '#ff9800' : '#666',
+								color: 'white',
+								border: 'none',
+								borderRadius: '4px',
+								cursor: 'pointer',
+							} }
+						>
+							{ editMode ? 'Disable' : 'Enable' } Edit Mode
+						</button>
 					</div>
 					<div style={ { fontSize: '14px', color: '#666' } }>
-						<strong>Current Layout:</strong> { currentLayoutName } | <strong>Tiles:</strong>{ ' ' }
-						{ layout.length }
-					</div>
-					<div
-						style={ {
-							marginTop: '10px',
-							padding: '10px',
-							background: '#fff3cd',
-							borderRadius: '4px',
-							fontSize: '13px',
-						} }
-					>
-						<strong>BUG:</strong> When you add/remove tiles or switch layouts, the Grid doesn't
-						update properly. The tiles remain from the previous layout state.
+						<strong>Layout:</strong> { currentLayoutName } | <strong>Tiles:</strong>{ ' ' }
+						{ layout.length } | <strong>Edit Mode:</strong> { editMode ? 'ON' : 'OFF' }
 					</div>
 				</div>
-				<Grid layout={ layout } minColumnWidth={ 160 } rowHeight={ 100 } spacing={ 2 }>
+				<Grid
+					layout={ layout }
+					minColumnWidth={ 160 }
+					rowHeight={ 100 }
+					spacing={ 2 }
+					editMode={ editMode }
+					onChangeLayout={ setLayout }
+				>
 					{ layout.map( ( item ) => {
 						const tileNum = getTileNumber( item.key );
 						const colorIndex = tileNum % colors.length;
 						return (
-							<Card key={ item.key } color={ colors[ colorIndex ] }>
+							<Card
+								key={ item.key }
+								color={ colors[ colorIndex ] }
+								actionableArea={ <WidgetActions onClose={ () => removeTile( item.key ) } /> }
+							>
 								{ item.key }
 							</Card>
 						);
@@ -468,7 +461,7 @@ export const DynamicLayoutChange: StoryObj< typeof Grid > = {
 		docs: {
 			description: {
 				story:
-					"This story demonstrates the bug where Grid tiles don't re-render when the layout prop changes dynamically. Try adding tiles, removing tiles, or switching between layouts - you'll see that the Grid doesn't update correctly. This is the issue described in ARC-1330.",
+					'Interactive example showing dynamic layout management. Add tiles, switch between predefined layouts, and enable edit mode to drag and resize tiles. Each tile has a close button to remove it individually.',
 			},
 		},
 		layout: '',
