@@ -17,11 +17,9 @@ export function Grid( {
 	editMode = false,
 	onChangeLayout,
 }: GridProps ) {
-	// Temporary layout to avoid updaing the layout while dragging
-	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >(
-		layout
-	);
-	const activeLayout = temporaryLayout || layout;
+	// Temporary layout to avoid updating the layout while dragging
+	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >();
+	const activeLayout = temporaryLayout ?? layout;
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const resizeObserverRef = useResizeObserver( ( [ { contentRect } ] ) => {
 		setContainerWidth( contentRect.width );
