@@ -1,15 +1,11 @@
 import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
-import {
-	getOdieOnErrorTransferMessage,
-	getOdieTransferMessage,
-	getErrorTryAgainLaterMessage,
-} from '../constants';
+import { getErrorTryAgainLaterMessage } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
-import type { OdieAllBotSlugs } from '../types';
+import type { Message } from '../types';
 
 export const useCreateZendeskConversation = () => {
 	const {
@@ -94,14 +90,8 @@ export const useCreateZendeskConversation = () => {
 			} );
 		};
 
-		// Get transfer messages to identify and remove them on error
-		const transferMessages = isFromError
-			? getOdieOnErrorTransferMessage()
-			: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs );
-
 		setChat( ( prevChat ) => ( {
 			...prevChat,
-			messages: [ ...prevChat.messages, ...transferMessages ],
 			status: 'transfer',
 		} ) );
 
@@ -183,9 +173,32 @@ export const useCreateZendeskConversation = () => {
 			// We need to load the conversation to get typing events. Load simply means "focus on"..
 			Smooch.loadConversation( conversationId );
 
+			const transitionToSupportMessage: Message = {
+				content: null,
+				role: 'bot',
+				type: 'meta',
+				internal_message_id: 'zendesk-chat-started',
+				context: {
+					site_id: selectedSiteId ?? null,
+					flags: {
+						hide_disclaimer_content: true,
+						show_contact_support_msg: true,
+						show_ai_avatar: false,
+					},
+				},
+				metadata: {
+					local_timestamp: Date.now(),
+				},
+			};
+
 			setChat( ( prevChat ) => ( {
 				...prevChat,
 				conversationId: conversationId,
+				messages: prevChat.messages.some(
+					( message ) => !! message?.context?.flags?.show_contact_support_msg
+				)
+					? prevChat.messages
+					: [ ...prevChat.messages, transitionToSupportMessage ],
 				provider: 'zendesk',
 				status: 'loaded',
 			} ) );

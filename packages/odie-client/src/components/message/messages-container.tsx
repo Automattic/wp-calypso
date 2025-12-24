@@ -1,4 +1,5 @@
 import { Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
@@ -149,6 +150,17 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						ref={ ( div ) => div?.scrollIntoView( { behavior: 'smooth', block: 'end' } ) }
 					>
 						<ThinkingPlaceholder />
+					</div>
+				) }
+				{ chat.provider === 'odie' && chat.status === 'transfer' && (
+					<div
+						className="odie-chatbox__action-message"
+						ref={ ( div ) => div?.scrollIntoView( { behavior: 'smooth', block: 'end' } ) }
+					>
+						<div className="odie-chatbox__action-message-content" aria-live="polite">
+							<Spinner />
+							<span>{ __( 'Connecting to a live agent…', __i18n_text_domain__ ) }</span>
+						</div>
 					</div>
 				) }
 				{ chat.provider.startsWith( 'zendesk' ) && (
