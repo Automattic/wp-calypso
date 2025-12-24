@@ -14,7 +14,8 @@ export function getRouterOptions( config: AppConfig ) {
 			config,
 		},
 		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
-			if ( ( error as any ).error === 'reauthorization_error' ) {
+			const code = ( error as any ).error;
+			if ( code === 'authorization_required' || code === 'reauthorization_required' ) {
 				return;
 			}
 
