@@ -68,10 +68,9 @@ export const getRouter = ( config: AppConfig ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: error.message,
-				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
+				severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
 				tags: [ 'dashboard' ],
 				properties: {
-					dashboard_backport: false,
 					env: calypsoConfig( 'env_id' ),
 					message: error.message,
 					stack: errorInfo.componentStack,
