@@ -10,6 +10,7 @@ import {
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
@@ -87,13 +88,24 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
+		const isAuthError = ( { statusCode, error = '' }: WPError ) => {
+			if ( [ 'reauthorization_required', 'authorization_required' ].includes( error ) ) {
+				return true;
+			}
+
+			if ( statusCode === 401 && error === 'rest_forbidden' ) {
+				return true;
+			}
+
+			return false;
+		};
+
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
 			if (
 				event.type === 'updated' &&
 				event.action.type === 'error' &&
 				isWpError( event.action.error ) &&
-				event.action.error.statusCode === 401 &&
-				[ 'rest_forbidden', 'authorization_required' ].includes( event.action.error.error ?? '' )
+				isAuthError( event.action.error )
 			) {
 				handleAuthError();
 			}
