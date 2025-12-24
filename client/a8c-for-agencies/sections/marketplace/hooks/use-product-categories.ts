@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { isProductType } from '../lib/product-filter';
 import {
 	SECURITY_PRODUCT_SLUGS,
@@ -16,6 +15,7 @@ import {
 	STORE_CONTENT_PRODUCT_SLUGS,
 	STORE_MANAGEMENT_PRODUCT_SLUGS,
 } from '../lib/product-slugs';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 type CategoryConfig = {
 	slugs: string[];
@@ -24,7 +24,7 @@ type CategoryConfig = {
 
 export function useProductCategories( product: APIProductFamilyProduct ): string[] {
 	const translate = useTranslate();
-	const { family_slug } = product;
+	const { family_slug, slug } = product;
 
 	return useMemo( () => {
 		// Add e-commerce category for WooCommerce products
@@ -49,7 +49,7 @@ export function useProductCategories( product: APIProductFamilyProduct ): string
 		// Add regular categories
 		categories.push(
 			...CATEGORIES.reduce( ( acc: string[], { slugs, label } ) => {
-				if ( slugs.includes( family_slug ) ) {
+				if ( slugs.includes( slug ) ) {
 					acc.push( label );
 				}
 				return acc;
@@ -68,5 +68,5 @@ export function useProductCategories( product: APIProductFamilyProduct ): string
 		}
 
 		return categories;
-	}, [ family_slug, translate ] );
+	}, [ family_slug, translate, slug ] );
 }

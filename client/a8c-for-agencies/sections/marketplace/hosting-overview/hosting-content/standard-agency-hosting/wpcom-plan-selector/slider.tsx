@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-options';
-import { APIProductFamily } from 'calypso/state/partner-portal/types';
+import type { APIProductFamily } from 'calypso/a8c-for-agencies/types/products';
 
 type Props = {
 	ownedPlans: number;
@@ -14,7 +14,7 @@ type Props = {
 export default function WPCOMPlanSlider( { quantity, ownedPlans, onChange }: Props ) {
 	const translate = useTranslate();
 
-	const { data } = useProductsQuery( false, true );
+	const { data } = useProductsQuery( true );
 
 	const wpcomProducts = data
 		? ( data.find(
