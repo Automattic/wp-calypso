@@ -2,7 +2,6 @@ import {
 	isWooCommerceProduct,
 	isWpcomHostingProduct,
 } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import {
 	PRODUCT_BRAND_FILTER_ALL,
 	PRODUCT_CATEGORY_CONVERSION,
@@ -51,6 +50,7 @@ import {
 	STORE_CONTENT_PRODUCT_SLUGS,
 	STORE_MANAGEMENT_PRODUCT_SLUGS,
 } from './product-slugs';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 export type SelectedFilters = {
 	[ PRODUCT_FILTER_KEY_BRAND ]: string;

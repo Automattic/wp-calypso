@@ -66,8 +66,7 @@ export function SitesDashboard() {
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
-	// FIXME: We should switch to a new A4A-specific endpoint when it becomes available, instead of using the public-facing endpoint for A4A
-	const { data: products } = useProductsQuery( true );
+	const { data: products } = useProductsQuery();
 
 	const {
 		data: verifiedContacts,

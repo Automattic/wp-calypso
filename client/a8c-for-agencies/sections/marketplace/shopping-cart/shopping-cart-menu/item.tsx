@@ -1,25 +1,26 @@
-import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { useGetProductPricingInfo } from '../../hooks/use-total-invoice-value';
-import type { ShoppingCartItem } from '../../types';
+import type { ShoppingCartItem, TermPricingType } from '../../types';
 
 import './style.scss';
 
 type ItemProps = {
 	item: ShoppingCartItem;
 	onRemoveItem?: ( item: ShoppingCartItem ) => void;
+	termPricing?: TermPricingType;
 };
 
-export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps ) {
+export default function ShoppingCartMenuItem( { item, onRemoveItem, termPricing }: ItemProps ) {
 	const translate = useTranslate();
 	const userProducts = useSelector( getProductsList );
 
-	const { getProductPricingInfo } = useGetProductPricingInfo();
-	const { actualCost, discountedCost } = getProductPricingInfo( userProducts, item, item.quantity );
+	const { getProductPricingInfo } = useGetProductPricingInfo( termPricing, item.currency );
+	const { showActualCost, termPricingText, discountedCostFormatted, actualCostFormatted, isFree } =
+		getProductPricingInfo( userProducts, item, item.quantity );
 	// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
 	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
 	const productDisplayName =
@@ -30,7 +31,6 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 					args: { productName: productDisplayName, quantity: item.quantity },
 			  } )
 			: productDisplayName;
-	const isFree = actualCost === 0;
 
 	return (
 		<li className="shopping-cart__menu-list-item">
@@ -43,18 +43,14 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 					) : (
 						<>
 							<span className="shopping-cart__menu-list-item-price-discounted">
-								{ formatCurrency( discountedCost, item.currency ) }
+								{ discountedCostFormatted }
 							</span>
-							{ actualCost > discountedCost && (
+							{ showActualCost && (
 								<span className="shopping-cart__menu-list-item-price-actual">
-									{ formatCurrency( actualCost, item.currency ) }
+									{ actualCostFormatted }
 								</span>
 							) }
-							<span>
-								{ translate( '/mo', {
-									comment: 'Abbreviation for per month',
-								} ) }
-							</span>
+							<span>{ termPricingText }</span>
 						</>
 					) }
 				</div>

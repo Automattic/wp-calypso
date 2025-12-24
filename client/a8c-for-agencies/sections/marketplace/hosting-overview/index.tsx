@@ -23,7 +23,6 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import ReferralToggle from '../common/referral-toggle';
 import TermPricingToggle from '../common/term-pricing-toggle';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
@@ -32,6 +31,7 @@ import ShoppingCart from '../shopping-cart';
 import HeroSection from './hero-section';
 import useCompactOnScroll from './hooks/use-compact-on-scroll';
 import { HostingContent } from './hosting-content';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
@@ -101,6 +101,8 @@ function HostingOverview( { section }: SectionProps ) {
 		}, 300 );
 	}, [ sidebarRef ] );
 
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
+
 	return (
 		<Layout
 			className="hosting-overview"
@@ -127,7 +129,7 @@ function HostingOverview( { section }: SectionProps ) {
 						hideOnMobile
 					/>
 					<Actions>
-						{ isEnabled( 'a4a-bd-term-pricing' ) && (
+						{ isTermPricingEnabled && (
 							<div className="a4a-marketplace__header-actions">
 								<TermPricingToggle />
 							</div>

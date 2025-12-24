@@ -1,16 +1,26 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
 import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-options';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-values-utils';
 import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/woocommerce-product-slug-mapping';
-import { SelectedLicenseProp } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/types';
-import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { MarketplaceTypeContext } from '../context';
+import type { TermPricingType } from '../types';
+import type {
+	APIProductFamily,
+	APIProductFamilyProduct,
+	SelectedLicenseProp,
+} from 'calypso/a8c-for-agencies/types/products';
+import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
-export const useGetProductPricingInfo = () => {
-	const { data } = useProductsQuery( false, true );
+const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
+
+export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currency?: string ) => {
+	const translate = useTranslate();
+	const { data } = useProductsQuery( true );
 	const wpcomProducts = data?.find(
 		( product ) => product.slug === 'wpcom-hosting'
 	) as unknown as APIProductFamily;
@@ -34,13 +44,49 @@ export const useGetProductPricingInfo = () => {
 		product: SelectedLicenseProp | APIProductFamilyProduct,
 		quantity: number
 	) => {
+		const termPrice =
+			termPricing === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
+		const productPrice = isTermPricingEnabled ? termPrice : Number( product.amount );
+
+		const termPricingText =
+			isTermPricingEnabled && termPricing === 'yearly' ? translate( '/yr' ) : translate( '/mo' );
+
+		const productBundlePrice = productPrice * quantity;
+
 		if ( product.family_slug === 'wpcom-hosting' ) {
 			const tier = calculateTier( options, quantity + ownedPlans );
-			const actualCost = Number( product.amount ) * quantity;
+			const discountedCost = productBundlePrice * ( 1 - tier.discount );
+			return {
+				actualCost: productBundlePrice,
+				discountedCost,
+				discountPercentage: tier.discount,
+				showActualCost: productBundlePrice > discountedCost,
+				termPricingText,
+				discountedCostFormatted: formatCurrency( discountedCost, currency ?? 'USD' ),
+				actualCostFormatted: formatCurrency( productBundlePrice, currency ?? 'USD' ),
+				isFree: productBundlePrice === 0,
+			};
+		}
+
+		if ( isTermPricingEnabled ) {
+			// TODO: When we enable BD for all the agencies, we will only keep this logic for all the products, remove the rest of the logic.
+			const isDailyPricing = product.price_interval === 'day';
+			const actualCost = isDailyPricing ? productBundlePrice / 365 : productBundlePrice;
+			const discountedCost = productPrice || 0;
+
+			const discountPercentage = discountedCost
+				? Math.round( ( ( actualCost - discountedCost ) / actualCost ) * 100 )
+				: 100;
+
 			return {
 				actualCost,
-				discountedCost: actualCost * ( 1 - tier.discount ),
-				discountPercentage: tier.discount,
+				discountedCost,
+				discountPercentage,
+				discountedCostFormatted: formatCurrency( discountedCost, currency ?? 'USD' ),
+				actualCostFormatted: formatCurrency( actualCost, currency ?? 'USD' ),
+				showActualCost: actualCost > discountedCost,
+				termPricingText,
+				isFree: actualCost === 0,
 			};
 		}
 
@@ -51,6 +97,11 @@ export const useGetProductPricingInfo = () => {
 				actualCost,
 				discountedCost: actualCost,
 				discountPercentage: 0,
+				discountedCostFormatted: formatCurrency( actualCost, currency ?? 'USD' ),
+				actualCostFormatted: formatCurrency( actualCost, currency ?? 'USD' ),
+				showActualCost: false,
+				termPricingText,
+				isFree: actualCost === 0,
 			};
 		}
 
@@ -105,20 +156,32 @@ export const useGetProductPricingInfo = () => {
 				discountInfo.actualCost = actualCost;
 			}
 		}
-		return discountInfo;
+
+		return {
+			actualCost: discountInfo.actualCost,
+			discountedCost: discountInfo.discountedCost,
+			discountPercentage: discountInfo.discountPercentage,
+			discountedCostFormatted: formatCurrency( discountInfo.discountedCost, currency ?? 'USD' ),
+			actualCostFormatted: formatCurrency( discountInfo.actualCost, currency ?? 'USD' ),
+			showActualCost: discountInfo.actualCost > discountInfo.discountedCost,
+			termPricingText,
+			isFree: discountInfo.actualCost === 0,
+		};
 	};
 	return { getProductPricingInfo };
 };
 
-export const useTotalInvoiceValue = () => {
-	const { getProductPricingInfo } = useGetProductPricingInfo();
+export const useTotalInvoiceValue = ( termPricing?: TermPricingType, currency?: string ) => {
+	const translate = useTranslate();
+
+	const { getProductPricingInfo } = useGetProductPricingInfo( termPricing, currency );
 
 	const getTotalInvoiceValue = (
 		userProducts: Record< string, ProductListItem >,
 		selectedLicenses: SelectedLicenseProp[]
 	) => {
 		// Use the reduce function to calculate the total invoice value
-		return selectedLicenses.reduce(
+		const totalInvoiceValue = selectedLicenses.reduce(
 			( acc, license ) => {
 				// Get the pricing information for the current license
 				const { actualCost, discountedCost, discountPercentage } = getProductPricingInfo(
@@ -139,6 +202,24 @@ export const useTotalInvoiceValue = () => {
 				discountPercentage: 0,
 			}
 		);
+
+		const totalDiscountedCostFormatted =
+			isTermPricingEnabled && termPricing === 'yearly'
+				? translate( '%(total)s/yr', {
+						args: {
+							total: formatCurrency( totalInvoiceValue.discountedCost, currency ?? 'USD' ),
+						},
+				  } )
+				: translate( '%(total)s/mo', {
+						args: {
+							total: formatCurrency( totalInvoiceValue.discountedCost, currency ?? 'USD' ),
+						},
+				  } );
+
+		return {
+			...totalInvoiceValue,
+			totalDiscountedCostFormatted,
+		};
 	};
 
 	return { getTotalInvoiceValue };

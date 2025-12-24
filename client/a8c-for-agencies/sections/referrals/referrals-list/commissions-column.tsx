@@ -10,7 +10,7 @@ import type { Referral } from '../types';
 
 export default function CommissionsColumn( { referral }: { referral: Referral } ) {
 	const translate = useTranslate();
-	const { data, isFetching } = useProductsQuery( false, false, true );
+	const { data, isFetching } = useProductsQuery( false, true );
 	const tooltipRef = useRef< HTMLSpanElement >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
 

@@ -9,31 +9,36 @@ import { getVendorInfo } from '../lib/get-vendor-info';
 import WooCustomFooter from '../product-card/woo-custom-footer';
 import WooPaymentsCustomDescription from '../product-card/woopayments-custom-description';
 import WooPaymentsRevenueShareNotice from '../product-card/woopayments-revenue-share-notice';
+import type { TermPricingType } from '../../types';
+import type { APIProductFamilyProduct as APIProductFamilyProductA4A } from 'calypso/a8c-for-agencies/types/products';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 export type WithProductLightboxProps = {
-	products: APIProductFamilyProduct[];
+	products: APIProductFamilyProductA4A[];
 	isSelected?: boolean;
 	quantity?: number;
 	onSelectProduct: (
-		value: APIProductFamilyProduct,
-		replace?: APIProductFamilyProduct
+		value: APIProductFamilyProductA4A,
+		replace?: APIProductFamilyProductA4A
 	) => void | null;
 	asReferral?: boolean;
+	termPricing: TermPricingType;
 	isDisabled?: boolean;
 	customCTALabel?: string;
 };
 
 export type ProductLightboxActivatorProps = {
-	currentProduct: APIProductFamilyProduct;
-	setCurrentProduct: ( product: APIProductFamilyProduct ) => void;
+	currentProduct: APIProductFamilyProductA4A;
+	setCurrentProduct: ( product: APIProductFamilyProductA4A ) => void;
 	onShowLightbox: ( e: React.MouseEvent< HTMLElement > ) => void;
 };
 
 function withProductLightbox< T >(
 	WrappedComponent: ComponentType< T & WithProductLightboxProps & ProductLightboxActivatorProps >
 ): ComponentType< T & WithProductLightboxProps > {
-	return ( props ) => {
+	const WithProductLightboxComponent = (
+		props: T & WithProductLightboxProps & ProductLightboxActivatorProps
+	) => {
 		const {
 			isSelected,
 			quantity,
@@ -42,6 +47,7 @@ function withProductLightbox< T >(
 			isDisabled,
 			products,
 			customCTALabel,
+			termPricing,
 		} = props;
 
 		const translate = useTranslate();
@@ -122,6 +128,13 @@ function withProductLightbox< T >(
 
 		const vendor = getVendorInfo( currentProduct.slug );
 
+		const handleActivate = useCallback(
+			( product: APIProductFamilyProduct | APIProductFamilyProductA4A ): void => {
+				onSelectProduct( product as APIProductFamilyProductA4A );
+			},
+			[ onSelectProduct ]
+		);
+
 		return (
 			<>
 				<WrappedComponent
@@ -138,16 +151,23 @@ function withProductLightbox< T >(
 						ctaLabel={ customCTALabel ?? ( ctaLightboxLabel as string ) }
 						isCTAPrimary={ ! isSelected }
 						isDisabled={ isDisabled }
-						onActivate={ onSelectProduct }
+						onActivate={ handleActivate }
 						onClose={ onHideLightbox }
 						customDescription={ customDescription }
 						customFooter={ customFooter }
 						extraAsideContent={ extraAsideContent }
+						termPricing={ termPricing }
 					/>
 				) }
 			</>
 		);
 	};
+
+	const wrappedComponentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
+	WithProductLightboxComponent.displayName = `WithProductLightbox(${ wrappedComponentName })`;
+
+	// Explicitly cast the return so TS knows it conforms to ComponentType<T & WithProductLightboxProps>
+	return WithProductLightboxComponent as React.ComponentType< T & WithProductLightboxProps >;
 }
 
 export default withProductLightbox;

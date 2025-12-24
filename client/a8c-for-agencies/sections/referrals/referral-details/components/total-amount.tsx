@@ -2,8 +2,8 @@ import { Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ReferralPurchase } from '../../types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 type Props = {
 	purchase: ReferralPurchase;

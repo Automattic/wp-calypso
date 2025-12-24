@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
@@ -7,8 +8,9 @@ import A4ANumberInputV2 from 'calypso/a8c-for-agencies/components/a4a-number-inp
 import useWPCOMPlanDescription from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-wpcom-plan-description';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-values-utils';
 import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import useWPCOMDiscountTiers from '../../../hooks/use-wpcom-discount-tiers';
+import type { TermPricingType } from 'calypso/a8c-for-agencies/sections/marketplace/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 type Props = {
 	plan: APIProductFamilyProduct;
@@ -17,6 +19,7 @@ type Props = {
 	isReferralMode?: boolean;
 	quantity: number;
 	setQuantity: ( quantity: number ) => void;
+	termPricing: TermPricingType;
 };
 
 function Placeholder() {
@@ -40,8 +43,11 @@ export default function WPCOMPlanSelector( {
 	isReferralMode,
 	quantity,
 	setQuantity,
+	termPricing,
 }: Props ) {
 	const translate = useTranslate();
+
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
 	const discountTiers = useWPCOMDiscountTiers();
 
@@ -55,7 +61,10 @@ export default function WPCOMPlanSelector( {
 		return calculateTier( discountTiers, quantity + ownedPlans ).discount;
 	}, [ discountTiers, ownedPlans, quantity, isReferralMode ] );
 
-	const originalPrice = Number( plan?.amount ?? 0 ) * quantity;
+	const termPrice = termPricing === 'yearly' ? plan.yearly_price ?? 0 : plan.monthly_price ?? 0;
+	const productPrice = isTermPricingEnabled ? termPrice : Number( plan?.amount ?? 0 );
+
+	const originalPrice = Number( productPrice ) * quantity;
 	const actualPrice = originalPrice - originalPrice * discount;
 
 	const { name: planName } = useWPCOMPlanDescription( plan?.slug ?? '' );
@@ -93,6 +102,19 @@ export default function WPCOMPlanSelector( {
 		};
 	}, [ containerRef ] );
 
+	const priceInterval = () => {
+		if ( isTermPricingEnabled ) {
+			return termPricing === 'yearly' ? translate( 'per year' ) : translate( 'per month' );
+		}
+		if ( plan.price_interval === 'day' ) {
+			return translate( 'per day, billed monthly' );
+		}
+		if ( plan.price_interval === 'month' ) {
+			return translate( 'per month, billed monthly' );
+		}
+		return '';
+	};
+
 	return (
 		<div
 			className={ clsx( 'wpcom-plan-selector__details', { 'is-compact': isCompact } ) }
@@ -114,7 +136,6 @@ export default function WPCOMPlanSelector( {
 				<div className="wpcom-plan-selector__plan-name">
 					<img src={ WPCOMLogo } alt="WPCOM" />
 				</div>
-
 				<div className="wpcom-plan-selector__price">
 					<b className="wpcom-plan-selector__price-actual-value">
 						{ formatCurrency( actualPrice, plan.currency ) }
@@ -135,10 +156,7 @@ export default function WPCOMPlanSelector( {
 							</span>
 						</>
 					) }
-					<div className="wpcom-plan-selector__price-interval">
-						{ plan.price_interval === 'day' && translate( 'per day, billed monthly' ) }
-						{ plan.price_interval === 'month' && translate( 'per month, billed monthly' ) }
-					</div>
+					<div className="wpcom-plan-selector__price-interval">{ priceInterval() }</div>
 				</div>
 			</div>
 			<div className="wpcom-plan-selector__cta">

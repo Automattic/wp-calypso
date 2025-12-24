@@ -19,9 +19,9 @@ import useSubmitForm from '../hooks/use-submit-form';
 import ProductCard from '../product-card';
 import ProductListingEmpty from './empty';
 import ProductListingSection from './section';
-import type { ShoppingCartItem } from '../../types';
+import type { ShoppingCartItem, TermPricingType } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
@@ -34,6 +34,7 @@ interface ProductListingProps {
 	selectedBundleSize: number;
 	selectedFilters: SelectedFilters;
 	stickyHeadingTopOffset?: number;
+	termPricing: TermPricingType;
 }
 
 export default function ProductListing( {
@@ -44,6 +45,7 @@ export default function ProductListing( {
 	selectedBundleSize,
 	selectedFilters,
 	stickyHeadingTopOffset,
+	termPricing,
 }: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -264,6 +266,7 @@ export default function ProductListing( {
 			return (
 				<ProductCard
 					asReferral={ isReferralMode }
+					termPricing={ termPricing }
 					key={ options.map( ( { slug } ) => slug ).join( ',' ) }
 					products={ options }
 					onSelectProduct={ onSelectOrReplaceProduct }

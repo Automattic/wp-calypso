@@ -10,8 +10,8 @@ import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/s
 import { useSubscriptionDetails } from 'calypso/a8c-for-agencies/hooks/use-subscription-details';
 import { isWPCOMHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ReferralPurchase } from '../../types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 type Props = {
 	purchase: ReferralPurchase;
