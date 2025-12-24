@@ -1,3 +1,4 @@
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clx from 'classnames';
@@ -28,6 +29,7 @@ interface ChatMessagesProps {
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
+	const isTestMode = isTestModeEnvironment();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const navigate = useNavigate();
@@ -147,7 +149,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				{ chat.provider === 'odie' && chat.status === 'sending' && <ThinkingPlaceholder /> }
 				{ chat.provider === 'odie' && chat.status === 'transfer' && (
 					<ThinkingPlaceholder
-						content={ __( 'Connecting to a live agent…', __i18n_text_domain__ ) }
+						content={
+							__( 'Connecting to a live agent…', __i18n_text_domain__ ) +
+							( isTestMode ? ' (ZENDESK STAGING)' : '' )
+						}
 					/>
 				) }
 				{ chat.provider.startsWith( 'zendesk' ) && (
