@@ -20,9 +20,9 @@ import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
+import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import Survey from '../components/survey';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import AddNewSite from './add-new-site';
 import {
@@ -387,10 +387,7 @@ export default function Sites() {
 				notices={
 					<>
 						<SitesNotices />
-						<Survey
-							surveyUrl="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
-							eventName="theme-showcase-december-2025"
-						/>
+						<OptInSurvey />
 					</>
 				}
 			>
