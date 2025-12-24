@@ -83,6 +83,7 @@
 			margin: unset;
 			border-top: 1px solid var(--studio-gray-5);
 		}
+
 		.eligibility-warnings__message:last-of-type {
 			padding-bottom: 0;
 		}
@@ -118,7 +119,7 @@
 	font-weight: 400;
 }
 
-.eligibility-warnings__primary-text {	
+.eligibility-warnings__primary-text {
 	font-size: 1rem;
 	margin-top: 16px;
 }
@@ -137,6 +138,7 @@
 		color: var(--color-neutral-0);
 		background-color: var(--color-neutral-0);
 	}
+
 	.eligibility-warnings__message {
 		height: 24px;
 	}
@@ -154,6 +156,7 @@
 
 .eligibility-warnings .banner {
 	margin-bottom: 16px;
+
 	.banner__icon-circle {
 		line-height: 32px;
 		padding: 4px;
@@ -173,11 +176,11 @@
 }
 
 .eligibility-warnings__hold .gridicon {
-	color: var(--color-neutral-10);
+	color: currentColor;
 }
 
 .eligibility-warnings__warning .gridicon {
-	color: var(--color-warning-10);
+	color: currentColor;
 }
 
 .eligibility-warnings__message {
@@ -185,6 +188,7 @@
 	line-height: 24px;
 	padding: 0;
 	margin-bottom: 10px;
+	font-size: 13px;
 }
 
 .eligibility-warnings__inline-link {
@@ -194,9 +198,11 @@
 .eligibility-warnings__action a,
 .eligibility-warnings__hold-action a {
 	text-wrap: nowrap;
+
 	.gridicons-help-outline {
 		color: var(--color-neutral-light);
 	}
+
 	&:hover .gridicons-help-outline {
 		color: var(--color-primary);
 	}
@@ -210,9 +216,10 @@
 	align-items: center;
 	display: flex;
 
-	.gridicon {		
+	.gridicon {
 		flex-shrink: 0;
 	}
+
 	span {
 		display: block;
 		flex-grow: 1;
