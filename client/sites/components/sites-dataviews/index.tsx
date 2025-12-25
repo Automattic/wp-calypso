@@ -5,10 +5,15 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo } from 'react';
 import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { Text } from 'calypso/dashboard/components/text';
 import { DEFAULT_CONFIG } from 'calypso/dashboard/sites/dataviews';
 import { navigate } from 'calypso/lib/navigate';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
-import { isSitePreviewPaneEligible } from 'calypso/sites-dashboard/utils';
+import {
+	isSitePreviewPaneEligible,
+	getSiteDisplayUrl,
+	getSiteDisplayName,
+} from 'calypso/sites-dashboard/utils';
 import { useSelector, useStore } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -126,12 +131,23 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'site-title',
 				label: __( 'Site' ),
-				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
+				getValue: ( { item } ) => getSiteDisplayName( item ),
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return <SiteField site={ item } sitePreviewPane={ sitePreviewPane } />;
 				},
 				enableHiding: false,
 				enableSorting: true,
+			},
+			{
+				id: 'URL',
+				label: __( 'URL' ),
+				enableGlobalSearch: true,
+				getValue: ( { item } ) => getSiteDisplayUrl( item ),
+				render: ( { field, item } ) => (
+					<Text variant="muted" truncate numberOfLines={ 1 } style={ { marginInlineEnd: '24px' } }>
+						{ field.getValue( { item } ) }
+					</Text>
+				),
 			},
 			{
 				id: 'plan',
