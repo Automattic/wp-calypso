@@ -90,7 +90,6 @@ export function withScope( ...args: Parameters< typeof SentryApi.withScope > ) {
 export function setUser( ...args: Parameters< typeof SentryApi.setUser > ) {
 	dispatchSentryMethodCall( 'setUser', args );
 }
-
 export function defaultStackParser( ...args: Parameters< typeof SentryApi.defaultStackParser > ) {
 	return dispatchSentryMethodCall( 'defaultStackParser', args );
 }

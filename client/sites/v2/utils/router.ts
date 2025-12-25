@@ -1,37 +1,14 @@
-import calypsoConfig from '@automattic/calypso-config';
 import pagejs from '@automattic/calypso-router';
 import { createMemoryHistory } from '@tanstack/react-router';
-import { logToLogstash } from 'calypso/lib/logstash';
 import UnknownError from '../components/500';
 import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
 import type { AppConfig } from 'calypso/dashboard/app/context';
-import type { ErrorInfo } from 'react';
 
 export function getRouterOptions( config: AppConfig ) {
 	return {
 		basepath: config.basePath,
 		context: {
 			config,
-		},
-		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
-			const code = ( error as any ).error;
-			if ( code === 'authorization_required' || code === 'reauthorization_required' ) {
-				return;
-			}
-
-			logToLogstash( {
-				feature: 'calypso_client',
-				message: error.message,
-				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
-				tags: [ 'dashboard' ],
-				properties: {
-					dashboard_backport: true,
-					env: calypsoConfig( 'env_id' ),
-					message: error.message,
-					stack: errorInfo.componentStack,
-					path: window.location.href,
-				},
-			} );
 		},
 		defaultPreload: 'intent' as const,
 		defaultPreloadStaleTime: 0,
