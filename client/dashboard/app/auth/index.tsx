@@ -1,7 +1,6 @@
 import { fetchUser, isWpError, User } from '@automattic/api-core';
 import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { setUser } from '@automattic/calypso-sentry';
 import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import {
@@ -118,12 +117,6 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			unsubQueryCache();
 		};
 	}, [ queryClient, handleAuthError ] );
-
-	useEffect( () => {
-		if ( user?.ID ) {
-			setUser( { id: user.ID.toString() } );
-		}
-	}, [ user ] );
 
 	// Handles _all_ errors fetching the user object, regardless of whether they are
 	// `authorization_required` errors or not.
