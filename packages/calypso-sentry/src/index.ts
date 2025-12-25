@@ -25,8 +25,7 @@ type SupportedMethods =
 	| 'captureMessage'
 	| 'configureScope'
 	| 'withScope'
-	| 'setUser'
-	| 'defaultStackParser';
+	| 'setUser';
 
 interface QueueDataMethod< Method extends SupportedMethods > {
 	f: Method;
@@ -62,7 +61,8 @@ function dispatchSentryMethodCall< Method extends SupportedMethods >(
 	const { state: status } = state;
 	if ( status === 'loaded' ) {
 		// @ts-expect-error We have a union of tuples and TypeScript wants a Tuple. It's OK.
-		return state.sentry[ method ]( ...args );
+		state.sentry[ method ]( ...args );
+		return;
 	}
 	if ( status === 'error' || status === 'disabled' ) {
 		return;
@@ -89,9 +89,6 @@ export function withScope( ...args: Parameters< typeof SentryApi.withScope > ) {
 }
 export function setUser( ...args: Parameters< typeof SentryApi.setUser > ) {
 	dispatchSentryMethodCall( 'setUser', args );
-}
-export function defaultStackParser( ...args: Parameters< typeof SentryApi.defaultStackParser > ) {
-	return dispatchSentryMethodCall( 'defaultStackParser', args );
 }
 
 // Replays all calls to the Sentry API

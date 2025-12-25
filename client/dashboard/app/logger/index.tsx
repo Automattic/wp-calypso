@@ -1,5 +1,5 @@
 import calypsoConfig from '@automattic/calypso-config';
-import { captureException, defaultStackParser } from '@automattic/calypso-sentry';
+import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
 import type { AnyRouter } from '@tanstack/react-router';
@@ -20,7 +20,6 @@ export const handleOnCatch = (
 		return;
 	}
 
-	const frames = defaultStackParser( errorInfo.componentStack ?? '' );
 	const lastMatch = router.state.matches[ router.state.matches.length - 1 ];
 	const routeParams = Object.fromEntries(
 		Object.entries( lastMatch.params ?? {} ).map( ( [ key, value ] ) => [
@@ -39,7 +38,6 @@ export const handleOnCatch = (
 			env: calypsoConfig( 'env_id' ),
 			message: error.message,
 			stack: errorInfo.componentStack,
-			frame: Array.isArray( frames ) ? frames[ frames.length - 1 ] : undefined,
 			path: window.location.href,
 			params: routeParams,
 		},
