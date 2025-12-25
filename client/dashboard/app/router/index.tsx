@@ -1,4 +1,5 @@
 import calypsoConfig from '@automattic/calypso-config';
+import { captureException } from '@automattic/calypso-sentry';
 import { Router, createRoute, redirect } from '@tanstack/react-router';
 import { logToLogstash } from 'calypso/lib/logstash';
 import NotFound from '../404';
@@ -80,6 +81,12 @@ export const getRouter = ( config: AppConfig ) => {
 					message: error.message,
 					stack: errorInfo.componentStack,
 					path: window.location.href,
+				},
+			} );
+
+			captureException( error, {
+				tags: {
+					calypso_section: 'dashboard',
 				},
 			} );
 		},
