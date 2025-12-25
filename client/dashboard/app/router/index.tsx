@@ -1,5 +1,5 @@
 import calypsoConfig from '@automattic/calypso-config';
-import { captureException } from '@automattic/calypso-sentry';
+import { captureException, defaultStackParser } from '@automattic/calypso-sentry';
 import { Router, createRoute, redirect } from '@tanstack/react-router';
 import { logToLogstash } from 'calypso/lib/logstash';
 import NotFound from '../404';
@@ -71,6 +71,8 @@ export const getRouter = ( config: AppConfig ) => {
 				return;
 			}
 
+			const frames = defaultStackParser( errorInfo.componentStack ?? '' );
+
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: error.message,
@@ -80,6 +82,7 @@ export const getRouter = ( config: AppConfig ) => {
 					env: calypsoConfig( 'env_id' ),
 					message: error.message,
 					stack: errorInfo.componentStack,
+					frame: Array.isArray( frames ) ? frames[ frames.length - 1 ] : undefined,
 					path: window.location.href,
 				},
 			} );
