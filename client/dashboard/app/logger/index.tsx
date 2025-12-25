@@ -43,10 +43,13 @@ export const handleOnCatch = (
 		},
 	} );
 
-	captureException( error, {
-		tags: {
-			calypso_section: options.calypso_section,
-			...routeParams,
-		},
-	} );
+	// Dashboard backport has its mechanism to send error log to sentry.
+	if ( ! options.dashboard_backport ) {
+		captureException( error, {
+			tags: {
+				calypso_section: options.calypso_section,
+				...routeParams,
+			},
+		} );
+	}
 };
