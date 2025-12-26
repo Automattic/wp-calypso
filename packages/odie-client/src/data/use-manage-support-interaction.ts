@@ -80,6 +80,7 @@ export const useManageSupportInteraction = () => {
 			];
 			// Update the interaction with the new events.
 			queryClient.setQueryData( queryKey, interaction );
+			debugger;
 			// The support history relies on the list of interactions to have fresh events.
 			queryClient.setQueryData(
 				[ 'support-interactions', 'get-interactions', isTestMode ],
