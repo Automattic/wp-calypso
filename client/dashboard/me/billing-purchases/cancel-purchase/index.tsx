@@ -31,7 +31,6 @@ import { intlFormat } from 'date-fns';
 import { useCallback, useEffect, useRef, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -132,7 +131,6 @@ const getDowngradePlanForPurchase = (
 export default function CancelPurchase() {
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
-	const locale = useLocale();
 	const [ state, setState ] = useState< CancelPurchaseState >( {
 		questionOneOrder: [],
 		initialized: false,
@@ -153,7 +151,7 @@ export default function CancelPurchase() {
 	const { data: siteFeatures, isPending: siteFeaturesQueryIsPending } = useSuspenseQuery(
 		siteFeaturesQuery( purchase.blog_id )
 	);
-	const { data: plans } = useSuspenseQuery( plansQuery( '', locale ) );
+	const { data: plans } = useSuspenseQuery( plansQuery() );
 	const { data: purchaseCancelFeatures } = useQuery( purchaseCancelFeaturesQuery( purchaseId ) );
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
