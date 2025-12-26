@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WordPressWordmark, WordPressLogo } from '@automattic/components';
 import {
 	isDefaultLocale,
@@ -112,23 +111,6 @@ class MasterbarLoggedOut extends Component {
 					comment: 'Should be shorter than ~12 chars',
 				} ) }
 			</Item>
-		);
-	}
-
-	renderHelpCenter() {
-		if ( ! isEnabled( 'help-center/logged-out' ) ) {
-			return null;
-		}
-
-		const { siteId, translate } = this.props;
-
-		return (
-			<AsyncLoad
-				require="./masterbar-help-center"
-				siteId={ siteId }
-				tooltip={ translate( 'Help' ) }
-				placeholder={ null }
-			/>
 		);
 	}
 
@@ -261,7 +243,6 @@ class MasterbarLoggedOut extends Component {
 				) }
 				{ sectionName !== 'reader' && (
 					<div className="masterbar__login-links">
-						{ this.renderHelpCenter() }
 						{ this.renderLoginItem() }
 						{ this.renderSignupItem() }
 					</div>
