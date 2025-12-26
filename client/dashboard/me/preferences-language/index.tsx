@@ -2,6 +2,7 @@ import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries
 import config from '@automattic/calypso-config';
 import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	Notice,
 	Button,
@@ -36,6 +37,7 @@ export default function PreferencesLanguageForm() {
 	} );
 	const [ formData, setFormData ] = useState< Partial< UserSettings > | undefined >();
 	const mutation = useMutation( userSettingsMutation() );
+	const router = useRouter();
 
 	/**
 	 * When we save the language, in case we're using a locale_variant (a language without an official locale)
@@ -67,6 +69,7 @@ export default function PreferencesLanguageForm() {
 		const mutationData = formData;
 		mutation.mutate( mutationData, {
 			onSuccess: () => {
+				router.history.destroy(); // Ignore any navigation blocker
 				reloadWithFlashMessage( 'language' );
 			},
 			onError: ( error ) => {
