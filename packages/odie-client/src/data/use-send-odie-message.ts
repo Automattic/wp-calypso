@@ -1,8 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import wpcomRequest, {
+	canAccessWpcomApis,
+	getCrossOriginStorageItem,
+	setCrossOriginStorageItem,
+} from 'wpcom-proxy-request';
 import getMostRecentOpenLiveInteraction from '../components/notices/get-most-recent-open-live-interaction';
 import {
 	getOdieRateLimitMessage,
@@ -19,6 +23,48 @@ import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
+
+function useManagedLoggedOutSession() {
+	const queryClient = useQueryClient();
+
+	const session = useQuery( {
+		queryKey: [ 'odie-logged-out-chat-session' ],
+		queryFn: async () => {
+			const sessionId = await getCrossOriginStorageItem( 'odieChatSessionId' );
+			const chatId = await getCrossOriginStorageItem( 'odieChatId' );
+
+			debugger
+
+			if ( ! sessionId || ! chatId ) {
+				return null;
+			}
+
+			return {
+				sessionId: getCrossOriginStorageItem( 'odieChatSessionId' ),
+				chatId: getCrossOriginStorageItem( 'odieChatId' ),
+			};
+		},
+	} );
+
+	const createNewSession = useMutation( {
+		mutationFn: ( { chatId, sessionId }: { chatId: number; sessionId: string } ) => {
+			return Promise.all( [
+				setCrossOriginStorageItem( 'odieChatSessionId', sessionId ),
+				setCrossOriginStorageItem( 'odieChatId', chatId.toString() ),
+			] );
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'odie-logged-out-chat-session' ],
+			} );
+		},
+	} );
+
+	return {
+		session: session.data,
+		createNewLoggedOutSession: createNewSession.mutateAsync,
+	};
+}
 
 function getBotSlug(
 	supportInteraction: SupportInteraction | undefined,
@@ -63,7 +109,15 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
  */
 export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
-	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
+	const { session: loggedOutSession, createNewLoggedOutSession } = useManagedLoggedOutSession();
+	const { currentUser } = useOdieAssistantContext();
+	const location = useLocation();
+	const isLoggedIn = !! currentUser?.ID;
+	const loggedOutOdieChatId = loggedOutSession?.chatId;
+
+	const odieId = isLoggedIn
+		? getOdieIdFromInteraction( currentSupportInteraction )
+		: loggedOutOdieChatId;
 
 	const { addEventToInteraction, startNewInteraction } = useManageSupportInteraction();
 	const createZendeskConversation = useCreateZendeskConversation();
@@ -71,7 +125,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const location = useLocation();
 	const [ shouldCreateConversation, setShouldCreateConversation ] = useState< {
 		createdFrom?: string;
 		isFromError?: boolean;
@@ -264,12 +317,12 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			let supportInteraction = currentSupportInteraction;
 
 			try {
-				if ( ! supportInteraction && chatId ) {
+				if ( ! supportInteraction && chatId && isLoggedIn ) {
 					supportInteraction = await startNewInteraction( {
 						event_external_id: chatId.toString(),
 						event_source: 'odie',
 					} );
-				} else if ( supportInteraction && ! odieId && chatId ) {
+				} else if ( supportInteraction && ! odieId && chatId && isLoggedIn ) {
 					supportInteraction = await addEventToInteraction( {
 						interactionId: supportInteraction.uuid,
 						eventData: {
@@ -277,6 +330,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							event_source: 'odie',
 						},
 					} );
+				} else if ( ! isLoggedIn ) {
+					// If the user is not logged in, we don't need to create a new support interaction.
+					createNewLoggedOutSession( { chatId, sessionId: returnedChat.session_id } );
 				}
 			} catch ( error ) {
 				trackEvent( 'error_updating_support_interaction', {
@@ -313,6 +369,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			} );
 		},
 		onError: ( error ) => {
+			debugger
 			if ( error instanceof Event && error.type === 'abort' ) {
 				return;
 			}
