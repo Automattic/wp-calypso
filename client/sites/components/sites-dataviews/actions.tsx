@@ -23,7 +23,8 @@ import type { Action, RenderModalProps } from '@wordpress/dataviews';
 
 type Capabilities = Record< string, Record< string, boolean > >;
 
-const isActionEligible = (
+// Export this function for testing purposes.
+export const isActionEligible = (
 	id: string,
 	capabilities: Capabilities
 ): ( ( site: SiteExcerptData ) => boolean ) => {
