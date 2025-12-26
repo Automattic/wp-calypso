@@ -18,6 +18,10 @@ import {
 	connectedApplicationsQuery,
 	siteBySlugQuery,
 	siteMediaStorageQuery,
+	sitePurchasesQuery,
+	siteFeaturesQuery,
+	productsQuery,
+	plansQuery,
 	userNotificationsDevicesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
@@ -321,6 +325,18 @@ export const cancelPurchaseRoute = createRoute( {
 	} ),
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
+	loader: async ( { parentMatchPromise } ) => {
+		const parentMatch = await parentMatchPromise;
+		const { purchase } = parentMatch.loaderData ?? {};
+		if ( purchase ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+				queryClient.ensureQueryData( productsQuery() ),
+				queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
+				queryClient.ensureQueryData( plansQuery() ),
+			] );
+		}
+	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
 		createLazyRoute( 'cancel-purchase' )( {

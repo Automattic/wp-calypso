@@ -1,6 +1,6 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { formatDistanceToNow, intervalToDuration } from 'date-fns';
+import { intlFormat, isToday, isBefore } from 'date-fns';
 import Notice from '../../../components/notice';
 import { isPartnerPurchase } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
@@ -9,16 +9,12 @@ interface TimeRemainingNoticeProps {
 	purchase: Purchase;
 }
 
-const getTimeRemainingForSubscription = ( purchase: Purchase ) => {
-	const purchaseExpiryDate = new Date( purchase.expiry_date );
-	return intervalToDuration( { start: new Date(), end: purchaseExpiryDate } );
-};
-
 export default function TimeRemainingNotice( { purchase }: TimeRemainingNoticeProps ) {
 	// returns early if there's no product or accounting for the edge case that the plan expires today (or somehow already expired)
 	// in this case, do not show the time remaining for the plan
-	const timeRemaining = getTimeRemainingForSubscription( purchase );
-	if ( timeRemaining && ( timeRemaining?.days ?? 0 ) <= 1 ) {
+	const purchaseExpiryDate = new Date( purchase.expiry_date );
+	const now = new Date();
+	if ( isToday( purchaseExpiryDate ) || isBefore( purchaseExpiryDate, now ) ) {
 		return null;
 	}
 
@@ -45,10 +41,10 @@ export default function TimeRemainingNotice( { purchase }: TimeRemainingNoticePr
 	return (
 		<Notice>
 			{ sprintf(
-				/* translators: 'timeRemaining' is localized string like "2 months" or "1 year". */
-				__( 'Your plan features will be available for another %(timeRemaining)s.' ),
+				/* translators: %(expire)s is the date the product will expire */
+				__( 'Your plan features will be available until %(expiry)s.' ),
 				{
-					timeRemaining: formatDistanceToNow( new Date( purchase.expiry_date ) ),
+					expiry: intlFormat( purchase.expiry_date, { dateStyle: 'medium' }, { locale: 'en-US' } ),
 					productName: purchase.product_name,
 				}
 			) }

@@ -15,6 +15,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
@@ -241,6 +242,7 @@ export default function PreferencesLanguageForm() {
 							title={ __( 'Language' ) }
 							description={ __( 'Use this to set the display language for WordPress.com.' ) }
 						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< UserSettings >
 							data={ data }
 							fields={ languageFields }

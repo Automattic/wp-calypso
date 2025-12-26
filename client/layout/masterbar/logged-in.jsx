@@ -655,8 +655,12 @@ class MasterbarLoggedIn extends Component {
 							size={ 64 }
 						/>
 						<div className="masterbar__item-howdy-account-details">
-							<span className="display-name">{ user.display_name }</span>
-							<span className="username">{ user.username }</span>
+							<span className="display-name" title={ user.display_name }>
+								{ user.display_name }
+							</span>
+							<span className="username" title={ user.username }>
+								{ user.username }
+							</span>
 							<span className="display-name edit-profile">
 								{ isGlobalSidebarVisible ? translate( 'My Profile' ) : translate( 'Edit Profile' ) }
 							</span>

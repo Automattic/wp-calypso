@@ -1,6 +1,7 @@
 import { fetchUser, isWpError, User } from '@automattic/api-core';
 import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { setUser } from '@automattic/calypso-sentry';
 import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import {
@@ -10,6 +11,7 @@ import {
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
@@ -87,13 +89,24 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
+		const isAuthError = ( { statusCode, error = '' }: WPError ) => {
+			if ( [ 'reauthorization_required', 'authorization_required' ].includes( error ) ) {
+				return true;
+			}
+
+			if ( statusCode === 401 && error === 'rest_forbidden' ) {
+				return true;
+			}
+
+			return false;
+		};
+
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
 			if (
 				event.type === 'updated' &&
 				event.action.type === 'error' &&
 				isWpError( event.action.error ) &&
-				event.action.error.statusCode === 401 &&
-				[ 'rest_forbidden', 'authorization_required' ].includes( event.action.error.error ?? '' )
+				isAuthError( event.action.error )
 			) {
 				handleAuthError();
 			}
@@ -105,6 +118,12 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			unsubQueryCache();
 		};
 	}, [ queryClient, handleAuthError ] );
+
+	useEffect( () => {
+		if ( user?.ID ) {
+			setUser( { id: user.ID.toString() } );
+		}
+	}, [ user ] );
 
 	// Handles _all_ errors fetching the user object, regardless of whether they are
 	// `authorization_required` errors or not.
