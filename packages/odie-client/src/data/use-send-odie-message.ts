@@ -335,6 +335,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					createNewLoggedOutSession( { chatId, sessionId: returnedChat.session_id } );
 				}
 			} catch ( error ) {
+				debugger
 				trackEvent( 'error_updating_support_interaction', {
 					error_message:
 						error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',

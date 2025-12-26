@@ -35,6 +35,7 @@ export const useManageSupportInteraction = () => {
 			queryClient.setQueryData(
 				[ 'support-interactions', 'get-interactions', isTestMode ],
 				( oldData: SupportInteraction[] ) => {
+					debugger;
 					const newData = [ ...oldData ];
 					const index = newData.findIndex( ( i ) => i.uuid === interaction.uuid );
 					if ( index !== -1 ) {
