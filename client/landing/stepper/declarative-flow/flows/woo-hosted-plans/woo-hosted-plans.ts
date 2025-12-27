@@ -121,7 +121,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 					}
 
 					// If no cart items, something went wrong - redirect to sites
-					window.location.assign( '/sites' );
+					window.location.assign( dashboardLink( '/ciab/sites' ) );
 					break;
 				}
 			}
