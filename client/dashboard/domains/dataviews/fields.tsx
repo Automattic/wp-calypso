@@ -200,7 +200,7 @@ export const useFields = ( {
 					{ value: DomainStatus.PENDING_REGISTRATION, label: __( 'Pending registration' ) },
 					{ value: DomainStatus.PENDING_TRANSFER, label: __( 'Outgoing transfer pending' ) },
 					{ value: DomainStatus.IN_PROGRESS, label: __( 'Incoming transfer in progress' ) },
-					{ value: DomainStatus.TRANSFER_COMPLETED, label: __( 'Incoming trnasfer completed' ) },
+					{ value: DomainStatus.TRANSFER_COMPLETED, label: __( 'Incoming transfer completed' ) },
 					{ value: DomainStatus.TRANSFER_ERROR, label: __( 'Incoming transfer failed' ) },
 					{ value: DomainStatus.TRANSFER_PENDING, label: __( 'Incoming transfer pending' ) },
 					{ value: DomainStatus.CONNECTION_ERROR, label: __( 'Connection error' ) },
