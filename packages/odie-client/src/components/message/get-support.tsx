@@ -68,7 +68,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		const buttons: ButtonConfig[] = [];
 
 		if ( isPaidUser ) {
-			if ( isEmailForced || ! isChatLoaded ) {
+			if ( isEmailForced || ( ! isChatLoaded && ! forceAIConversation ) ) {
 				buttons.push( {
 					text: __( 'Send an email', __i18n_text_domain__ ),
 					action: async () => {
@@ -111,13 +111,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 						},
 					} );
 				} else if ( hasZendeskAccess ) {
-					const startNewConversationText = translationExists( 'No, connect me with someone new' )
-						? __( 'No, connect me with someone new', __i18n_text_domain__ )
-						: __( 'No thanks, let’s keep it here', __i18n_text_domain__ );
-
 					buttons.push( {
 						text: supportInteraction
-							? startNewConversationText
+							? __( 'No, connect me with someone new', __i18n_text_domain__ )
 							: __( 'Get support', __i18n_text_domain__ ),
 						action: async () => {
 							onClickAdditionalEvent?.( 'chat' );
