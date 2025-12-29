@@ -1,4 +1,4 @@
-import { DashboardDataError } from '@automattic/api-core';
+import { DashboardDataError, INACCESSIBLE_JETPACK_ERROR_CODE } from '@automattic/api-core';
 import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import UnknownError from '../../app/500';
@@ -10,7 +10,7 @@ import RouterLinkButton from '../../components/router-link-button';
 
 export default function Error( { error }: { error: Error } ) {
 	switch ( error instanceof DashboardDataError && error.code ) {
-		case 'inaccessible_jetpack':
+		case INACCESSIBLE_JETPACK_ERROR_CODE:
 			return <InaccessibleJetpackError error={ error } />;
 		default:
 			return <UnknownError error={ error } />;

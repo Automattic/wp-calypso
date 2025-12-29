@@ -1,6 +1,7 @@
 import {
 	isWpError,
 	DashboardDataError,
+	INACCESSIBLE_JETPACK_ERROR_CODE,
 	fetchSite,
 	deleteSite,
 	launchSite,
@@ -45,7 +46,7 @@ export function siteBySlugQuery( siteSlug: string ) {
 			}
 		},
 		retry: ( failureCount, e: { data?: string } ) => {
-			if ( e instanceof DashboardDataError && e.code === 'inaccessible_jetpack' ) {
+			if ( e instanceof DashboardDataError && e.code === INACCESSIBLE_JETPACK_ERROR_CODE ) {
 				return false;
 			}
 
@@ -92,7 +93,7 @@ export function siteByIdQuery( siteId: number ) {
 			}
 		},
 		retry: ( failureCount, e: { data?: string } ) => {
-			if ( e instanceof DashboardDataError && e.code === 'inaccessible_jetpack' ) {
+			if ( e instanceof DashboardDataError && e.code === INACCESSIBLE_JETPACK_ERROR_CODE ) {
 				return false;
 			}
 
