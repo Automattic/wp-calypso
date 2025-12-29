@@ -67,7 +67,6 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 				{ sftpEnabled && hasSshFeature && (
 					<SshCard
 						siteId={ site.ID }
-						siteSlug={ site.slug }
 						sftpUsers={ sftpUsers }
 						sshEnabled={ sshAccessStatus?.setting === 'ssh' }
 					/>

@@ -88,7 +88,7 @@ const SshKeyCard = ( {
 	);
 };
 
-const AddSshKeyButton = ( { siteSlug }: { siteSlug: string } ) => {
+const AddSshKeyButton = () => {
 	if ( isDashboardBackport() ) {
 		return (
 			<Button variant="secondary" target="_blank" href="/me/security/ssh-key" rel="noreferrer">
@@ -100,7 +100,6 @@ const AddSshKeyButton = ( { siteSlug }: { siteSlug: string } ) => {
 	return (
 		<RouterLinkButton
 			to={ securitySshKeyRoute.fullPath }
-			params={ { siteSlug } }
 			search={ { back_to: 'site-settings-sftp-ssh' } }
 			variant="secondary"
 		>
@@ -111,12 +110,10 @@ const AddSshKeyButton = ( { siteSlug }: { siteSlug: string } ) => {
 
 export default function SshCard( {
 	siteId,
-	siteSlug,
 	sftpUsers,
 	sshEnabled,
 }: {
 	siteId: number;
-	siteSlug: string;
 	sftpUsers: SftpUser[];
 	sshEnabled: boolean;
 } ) {
@@ -355,7 +352,7 @@ export default function SshCard( {
 							>
 								{ __( 'Attach SSH key to site' ) }
 							</Button>
-							<AddSshKeyButton siteSlug={ siteSlug } />
+							<AddSshKeyButton />
 						</ButtonStack>
 					) }
 				</VStack>
