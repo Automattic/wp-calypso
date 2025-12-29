@@ -4,7 +4,7 @@ import Smooch from 'smooch';
 import {
 	getOdieOnErrorTransferMessage,
 	getOdieTransferMessage,
-	getOdieZendeskConnectionErrorMessage,
+	getErrorTryAgainLaterMessage,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
@@ -81,7 +81,7 @@ export const useCreateZendeskConversation = () => {
 				active_interaction_id: activeInteractionId || null,
 				is_chat_loaded: isChatLoaded,
 			} );
-			const errorMessageObj = getOdieZendeskConnectionErrorMessage();
+			const errorMessageObj = getErrorTryAgainLaterMessage();
 
 			setChat( {
 				messages: [ ...previousMessages, errorMessageObj ],
