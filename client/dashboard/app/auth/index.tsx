@@ -90,7 +90,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
 		const isAuthError = ( { statusCode, error = '' }: WPError ) => {
-			if ( [ 'reauthorization_required', 'authorization_required' ].includes( error ) ) {
+			if ( [ 'authorization_required' ].includes( error ) ) {
 				return true;
 			}
 
