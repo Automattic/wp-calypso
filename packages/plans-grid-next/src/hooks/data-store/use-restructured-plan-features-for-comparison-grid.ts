@@ -23,6 +23,9 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isSummerSpecial,
+	useLongSetFeatures,
+	useLongSetStackedFeatures,
+	useShortSetStackedFeatures,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -31,6 +34,9 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isSummerSpecial?: boolean;
+	useLongSetFeatures?: boolean;
+	useLongSetStackedFeatures?: boolean;
+	useShortSetStackedFeatures?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -42,6 +48,9 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		selectedFeature,
 		showLegacyStorageFeature,
 		isSummerSpecial,
+		useLongSetFeatures,
+		useLongSetStackedFeatures,
+		useShortSetStackedFeatures,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -64,8 +73,31 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				let wpcomFeatures;
 
-				// Check if there's a specific override for comparison
-				if (
+				// Plans Differentiators Experiment: map variant flags to their feature methods
+				const experimentFeatureMethodMap = [
+					{
+						flag: useShortSetStackedFeatures,
+						method: 'getShortSetStackedSignupWpcomFeatures' as const,
+					},
+					{
+						flag: useLongSetStackedFeatures,
+						method: 'getLongSetStackedSignupWpcomFeatures' as const,
+					},
+					{ flag: useLongSetFeatures, method: 'getLongSetSignupWpcomFeatures' as const },
+				];
+
+				const experimentFeatureMethod =
+					experimentFeatureMethodMap.find( ( { flag } ) => flag )?.method ?? null;
+
+				// Use the experiment feature set if available, otherwise fall back to default
+				if ( experimentFeatureMethod && planConstantObj[ experimentFeatureMethod ]?.().length ) {
+					wpcomFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj[ experimentFeatureMethod ]().slice(),
+						true // isExperimentVariant - use alternative copy for experiment
+					);
+				} else if (
+					// Check if there's a specific override for comparison
 					planConstantObj.get2023PlanComparisonFeatureOverride?.( {
 						isSummerSpecial,
 					} ).length
@@ -192,6 +224,9 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			hasRedeemedDomainCredit,
 			isSummerSpecial,
+			useLongSetFeatures,
+			useLongSetStackedFeatures,
+			useShortSetStackedFeatures,
 		] );
 	};
 

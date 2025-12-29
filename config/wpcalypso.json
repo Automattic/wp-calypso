@@ -32,7 +32,6 @@
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/checkout-version": true,
-		"help-center/logged-out": true,
 		"ciab/allow-domain-features": true,
 		"checkout/razorpay": true,
 		"checkout/vgs-ebanx": true,

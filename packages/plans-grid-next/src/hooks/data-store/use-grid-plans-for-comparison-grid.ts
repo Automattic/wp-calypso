@@ -30,6 +30,9 @@ const useGridPlansForComparisonGrid = ( {
 	useFreeTrialPlanSlugs,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
+	useLongSetFeatures,
+	useLongSetStackedFeatures,
+	useShortSetStackedFeatures,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -61,6 +64,9 @@ const useGridPlansForComparisonGrid = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 		isSummerSpecial,
+		useLongSetFeatures,
+		useLongSetStackedFeatures,
+		useShortSetStackedFeatures,
 	} );
 
 	return useMemo( () => {

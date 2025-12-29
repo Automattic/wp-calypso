@@ -22,7 +22,7 @@ export type MessageIndicators = {
 	isLastMessage: boolean;
 };
 
-const ChatMessage = ( { message, header }: ChatMessageProps ) => {
+const ChatMessage = ( { message, currentUser, header }: ChatMessageProps ) => {
 	const { botName } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 
@@ -34,7 +34,7 @@ const ChatMessage = ( { message, header }: ChatMessageProps ) => {
 		event.stopPropagation();
 	};
 
-	if ( ! botName ) {
+	if ( ! currentUser || ! botName ) {
 		return null;
 	}
 

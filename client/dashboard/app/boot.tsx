@@ -1,5 +1,6 @@
 import { persistQueryClientPromise } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { initSentry } from '@automattic/calypso-sentry';
 import {
 	isSupportSession,
 	maybeInitializeSupportSession,
@@ -26,6 +27,7 @@ function boot( config: AppConfig ) {
 	loadDevHelpers();
 	loadPreferencesHelper();
 	limitTotalSnackbars();
+	initSentry();
 
 	const rootElement = document.getElementById( 'wpcom' );
 	if ( rootElement === null ) {

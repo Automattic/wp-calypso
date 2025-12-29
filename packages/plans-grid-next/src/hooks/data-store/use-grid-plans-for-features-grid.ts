@@ -26,6 +26,9 @@ const useGridPlansForFeaturesGrid = ( {
 	highlightLabelOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
+	useLongSetFeatures,
+	useLongSetStackedFeatures,
+	useShortSetStackedFeatures,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -60,6 +63,9 @@ const useGridPlansForFeaturesGrid = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 		isSummerSpecial,
+		useLongSetFeatures,
+		useLongSetStackedFeatures,
+		useShortSetStackedFeatures,
 	} );
 
 	return useMemo( () => {

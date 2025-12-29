@@ -6,6 +6,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -186,6 +187,7 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 				<CardBody>
 					<form onSubmit={ handleSubmit } className="dashboard-site-settings-privacy-form">
 						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
 							<DataForm< PrivacyFormData >
 								data={ formData }
 								fields={ visibilityFields }

@@ -15,7 +15,6 @@ import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
@@ -92,10 +91,9 @@ const playNotificationSound = () => {
 
 const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } ) => {
 	const { isEligibleForChat } = useChatStatus();
-	const { currentUser } = useHelpCenterContext();
 	const queryClient = useQueryClient();
 	const smoochRef = useRef< HTMLDivElement >( null );
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const {
 		isHelpCenterShown,
 		isChatLoaded,

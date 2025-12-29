@@ -56,7 +56,7 @@ export type CurrentUser = {
 	display_name: string;
 	avatar_URL?: string;
 	email?: string;
-	ID?: number;
+	id?: number;
 };
 
 export type Source = {

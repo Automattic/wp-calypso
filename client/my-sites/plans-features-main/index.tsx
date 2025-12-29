@@ -64,6 +64,7 @@ import {
 	ensureCompatibleIntervalType,
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
+import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
@@ -378,6 +379,14 @@ const PlansFeaturesMain = ( {
 		intent && [ 'plans-newsletter', 'plans-blog-onboarding' ].includes( intent )
 	);
 
+	const {
+		isLoading: isLoadingDifferentiatorsExperiment,
+		isStacked,
+		isLongSet,
+		isShortSet,
+		showDifferentiatorHeader,
+	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
+
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	// TODO: We should move the modal logic into a data store
@@ -451,6 +460,9 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
+		useLongSetFeatures: isLongSet && ! isStacked,
+		useLongSetStackedFeatures: isLongSet && isStacked,
+		useShortSetStackedFeatures: ! isLongSet && isStacked,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -474,6 +486,9 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
+		useLongSetFeatures: isLongSet && ! isStacked,
+		useLongSetStackedFeatures: isLongSet && isStacked,
+		useShortSetStackedFeatures: ! isLongSet && isStacked,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -689,7 +704,8 @@ const PlansFeaturesMain = ( {
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
-		! isRenewalPricingExperimentLoading;
+		! isRenewalPricingExperimentLoading &&
+		! isLoadingDifferentiatorsExperiment;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
@@ -724,6 +740,13 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
+	} else if ( isLongSet || isShortSet ) {
+		// Experiment: stacked variants should render a single, ordered list (no grouping),
+		// otherwise features get scattered across groups causing gaps and can be filtered out.
+		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid( { isSummerSpecial } );
+		featureGroupMapForFeaturesGrid = Object.fromEntries(
+			Object.entries( featureGroups ).reverse()
+		);
 	} else if ( showSimplifiedFeatures ) {
 		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
 			isSummerSpecial,
@@ -848,6 +871,7 @@ const PlansFeaturesMain = ( {
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
+					showDifferentiatorHeader={ showDifferentiatorHeader }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -875,7 +899,9 @@ const PlansFeaturesMain = ( {
 								{ gridPlansForFeaturesGrid && (
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
-										className="plans-features-main__features-grid"
+										className={ `plans-features-main__features-grid${
+											isLongSet || isShortSet ? ' is-plan-differentiators-experiment' : ''
+										}` }
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
