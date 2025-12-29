@@ -376,6 +376,11 @@
 
 body.is-section-plugins .hosting-dashboard-layout,
 .is-section-jetpack-cloud-plugin-management .hosting-dashboard-layout {
+
+	.hosting-dashboard-layout__top-wrapper:not( .preview-hidden ) {
+		padding-inline: 24px;
+	}
+
 	.hosting-dashboard-layout-with-columns__container {
 		background-color: var( --color-main-background );
 	}
