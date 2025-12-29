@@ -15,7 +15,7 @@ import './style.scss';
 interface Options {
 	sidebarContainer?: string | HTMLElement;
 	isReady?: boolean;
-	defaultUndocked?: boolean;
+	defaultDocked?: boolean;
 	defaultOpen?: boolean;
 	desktopMediaQuery?: string;
 	onOpenSidebar?: () => void;
@@ -37,7 +37,7 @@ interface ReturnValue {
 export default function useAgentLayoutManager( {
 	sidebarContainer = 'body',
 	isReady = true,
-	defaultUndocked = false,
+	defaultDocked = true,
 	defaultOpen = false,
 	desktopMediaQuery = '(min-width: 1200px)',
 	onOpenSidebar = () => {},
@@ -53,9 +53,9 @@ export default function useAgentLayoutManager( {
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
-	const defaultUndockedRef = useRef( defaultUndocked );
+	const defaultDockedRef = useRef( defaultDocked );
 	const defaultOpenRef = useRef( defaultOpen );
-	defaultUndockedRef.current = defaultUndocked;
+	defaultDockedRef.current = defaultDocked;
 	defaultOpenRef.current = defaultOpen;
 
 	// Store callback refs to avoid stale closures and prevent unnecessary re-renders
@@ -85,7 +85,7 @@ export default function useAgentLayoutManager( {
 
 		// Set initial docked state
 		if ( isDocked === null ) {
-			return setIsDocked( ! defaultUndockedRef.current );
+			return setIsDocked( defaultDockedRef.current );
 		}
 
 		// Create portal element if it doesn't exist

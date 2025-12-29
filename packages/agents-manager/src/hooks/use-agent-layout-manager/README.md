@@ -116,9 +116,9 @@ The hook accepts a single options object. All properties are optional.
 
 - **`isReady`** (`boolean`, default: `true`) - Controls whether the layout manager is active. When `false`, all functions (`dock`, `undock`, `openSidebar`, `closeSidebar`) become no-ops and the portal setup is skipped. Useful for async persisted states loaded, allowing the hook to wait until state is ready before activating the layout manager.
 
-- **`defaultUndocked`** (`boolean`, default: `false`) - Sets the initial docked state. If `true`, the chat starts in floating (undocked) mode. If `false`, it starts docked (on desktop only). After initialization, the state can be changed via `dock()` and `undock()` methods.
+- **`defaultDocked`** (`boolean`, default: `true`) - Sets the initial docked state. If `true`, the chat starts docked (on desktop only). If `false`, it starts in floating (undocked) mode. After initialization, the state can be changed via `dock()` and `undock()` methods.
 
-- **`defaultOpen`** (`boolean`, default: `false`) - Sets whether the sidebar is initially open. Only applies on first mount when the chat is docked on desktop (i.e., when `defaultUndocked` is `false` and viewport matches `desktopMediaQuery`).
+- **`defaultOpen`** (`boolean`, default: `false`) - Sets whether the sidebar is initially open. Only applies on first mount when the chat is docked on desktop (i.e., when `defaultDocked` is `true` and viewport matches `desktopMediaQuery`).
 
 - **`desktopMediaQuery`** (`string`, default: `'(min-width: 1200px)'`) - Media query string to determine desktop layout.
 
