@@ -1,7 +1,7 @@
 import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useResizeObserver, useDebounce, useEvent } from '@wordpress/compose';
-import { useMemo, Children, isValidElement, useState, useEffect } from 'react';
+import { useMemo, Children, isValidElement, useState } from 'react';
 import { GridItem } from './grid-item';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
@@ -23,14 +23,6 @@ export function Grid( {
 	 */
 	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >();
 	const activeLayout = temporaryLayout ?? layout;
-
-	/*
-	 * Clear temporary state when parent updates layout e.g., switching pages,
-	 * loading data to avoid showing stale pending changes from previous layouts
-	 */
-	useEffect( () => {
-		setTemporaryLayout( undefined );
-	}, [ layout ] );
 
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const resizeObserverRef = useResizeObserver( ( [ { contentRect } ] ) => {
