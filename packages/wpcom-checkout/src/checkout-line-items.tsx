@@ -883,7 +883,7 @@ export function LineItemSublabelAndPrice( {
 				<>
 					<LineItemSublabelTitle>
 						{ isRenewalPricingExperiment
-							? translate( 'Auto-renews at %(price)s/month. Billed every month', {
+							? translate( 'Auto-renews at %(price)s/month. Billed every month.', {
 									args: { price: actualMonthlyPrice },
 							  } )
 							: translate( 'Billed every month' ) }
@@ -902,7 +902,7 @@ export function LineItemSublabelAndPrice( {
 				<>
 					<LineItemSublabelTitle>
 						{ isRenewalPricingExperiment
-							? translate( 'Auto-renews at %(price)s/month. Billed every 12 months', {
+							? translate( 'Auto-renews at %(price)s/month. Billed every 12 months.', {
 									args: { price: actualMonthlyPrice },
 							  } )
 							: translate( 'Billed every year' ) }
@@ -921,7 +921,7 @@ export function LineItemSublabelAndPrice( {
 				<>
 					<LineItemSublabelTitle>
 						{ isRenewalPricingExperiment
-							? translate( 'Auto-renews at %(price)s/month. Billed every 24 months', {
+							? translate( 'Auto-renews at %(price)s/month. Billed every 24 months.', {
 									args: { price: actualMonthlyPrice },
 							  } )
 							: translate( 'Billed every 2 years' ) }
@@ -940,7 +940,7 @@ export function LineItemSublabelAndPrice( {
 				<>
 					<LineItemSublabelTitle>
 						{ isRenewalPricingExperiment
-							? translate( 'Auto-renews at %(price)s/month. Billed every 36 months', {
+							? translate( 'Auto-renews at %(price)s/month. Billed every 36 months.', {
 									args: { price: actualMonthlyPrice },
 							  } )
 							: translate( 'Billed every 3 years' ) }
