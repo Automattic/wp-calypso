@@ -1250,7 +1250,8 @@ function IntroductoryOfferCallout( {
 		shouldShowComparison
 	);
 
-	if ( isRenewalPricingExperiment ) {
+	const planSlug = product.product_slug;
+	if ( isRenewalPricingExperiment && isWpComPlan( planSlug ) ) {
 		return null;
 	}
 
