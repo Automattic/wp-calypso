@@ -589,6 +589,11 @@ export const securitySshKeyRoute = createRoute( {
 		] );
 	},
 	path: '/ssh-key',
+	validateSearch: ( search ): { back_to?: 'site-settings-sftp-ssh' } => {
+		return {
+			back_to: search.back_to === 'site-settings-sftp-ssh' ? 'site-settings-sftp-ssh' : undefined,
+		};
+	},
 } ).lazy( () =>
 	import( '../../me/security-ssh-key' ).then( ( d ) =>
 		createLazyRoute( 'security-ssh-key' )( {

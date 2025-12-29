@@ -7,7 +7,7 @@ import { ReactNode } from 'react';
 import './style.scss';
 
 export function getSnackbarBackButtonText(
-	to: 'site-overview' | 'site-domains' | 'site-deployments'
+	to: 'site-overview' | 'site-domains' | 'site-deployments' | 'site-settings-sftp-ssh'
 ) {
 	switch ( to ) {
 		case 'site-overview':
@@ -16,6 +16,8 @@ export function getSnackbarBackButtonText(
 			return __( 'Back to Site Deployments' );
 		case 'site-domains':
 			return __( 'Back to Site Domain Names' );
+		case 'site-settings-sftp-ssh':
+			return __( 'Back to SFTP/SSH settings' );
 		default:
 			return null;
 	}

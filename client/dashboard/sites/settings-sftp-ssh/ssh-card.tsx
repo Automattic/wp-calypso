@@ -27,11 +27,14 @@ import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { securitySshKeyRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
+import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
 import type { SftpUser, SiteSshKey, UserSshKey } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
@@ -85,12 +88,35 @@ const SshKeyCard = ( {
 	);
 };
 
+const AddSshKeyButton = ( { siteSlug }: { siteSlug: string } ) => {
+	if ( isDashboardBackport() ) {
+		return (
+			<Button variant="secondary" target="_blank" href="/me/security/ssh-key" rel="noreferrer">
+				{ __( 'Add new SSH key ↗' ) }
+			</Button>
+		);
+	}
+
+	return (
+		<RouterLinkButton
+			to={ securitySshKeyRoute.fullPath }
+			params={ { siteSlug } }
+			search={ { back_to: 'site-settings-sftp-ssh' } }
+			variant="secondary"
+		>
+			{ __( 'Add new SSH key' ) }
+		</RouterLinkButton>
+	);
+};
+
 export default function SshCard( {
 	siteId,
+	siteSlug,
 	sftpUsers,
 	sshEnabled,
 }: {
 	siteId: number;
+	siteSlug: string;
 	sftpUsers: SftpUser[];
 	sshEnabled: boolean;
 } ) {
@@ -329,14 +355,7 @@ export default function SshCard( {
 							>
 								{ __( 'Attach SSH key to site' ) }
 							</Button>
-							<Button
-								variant="secondary"
-								target="_blank"
-								href="/me/security/ssh-key"
-								rel="noreferrer"
-							>
-								{ __( 'Add new SSH key ↗' ) }
-							</Button>
+							<AddSshKeyButton siteSlug={ siteSlug } />
 						</ButtonStack>
 					) }
 				</VStack>
