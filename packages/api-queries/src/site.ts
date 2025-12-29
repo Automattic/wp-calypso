@@ -1,5 +1,6 @@
 import {
 	isWpError,
+	DashboardDataError,
 	fetchSite,
 	deleteSite,
 	launchSite,
@@ -44,6 +45,10 @@ export function siteBySlugQuery( siteSlug: string ) {
 			}
 		},
 		retry: ( failureCount, e: { data?: string } ) => {
+			if ( e instanceof DashboardDataError && e.code === 'inaccessible_jetpack' ) {
+				return false;
+			}
+
 			if ( e.data && KNOWN_ERRORS.includes( e.data ) ) {
 				return false;
 			}
@@ -87,6 +92,10 @@ export function siteByIdQuery( siteId: number ) {
 			}
 		},
 		retry: ( failureCount, e: { data?: string } ) => {
+			if ( e instanceof DashboardDataError && e.code === 'inaccessible_jetpack' ) {
+				return false;
+			}
+
 			if ( e.data && KNOWN_ERRORS.includes( e.data ) ) {
 				return false;
 			}
