@@ -1,7 +1,7 @@
 import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useResizeObserver, useDebounce, useEvent } from '@wordpress/compose';
-import { useMemo, Children, isValidElement, useState } from 'react';
+import { useMemo, Children, isValidElement, useState, useEffect } from 'react';
 import { GridItem } from './grid-item';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
@@ -17,9 +17,21 @@ export function Grid( {
 	editMode = false,
 	onChangeLayout,
 }: GridProps ) {
-	// Temporary layout to avoid updating the layout while dragging
+	/*
+	 * Temporary layout holds pending changes during drag/resize
+	 * to show preview without triggering parent re-renders
+	 */
 	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >();
 	const activeLayout = temporaryLayout ?? layout;
+
+	/*
+	 * Clear temporary state when parent updates layout e.g., switching pages,
+	 * loading data to avoid showing stale pending changes from previous layouts
+	 */
+	useEffect( () => {
+		setTemporaryLayout( undefined );
+	}, [ layout ] );
+
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const resizeObserverRef = useResizeObserver( ( [ { contentRect } ] ) => {
 		setContainerWidth( contentRect.width );
@@ -107,6 +119,10 @@ export function Grid( {
 	} );
 	const debouncedHandleDragOver = useDebounce( handleDragOver, 100 );
 
+	/*
+	 * Commit temporary changes to parent and clear local state
+	 * Called when user finishes drag/resize on mouse up
+	 */
 	function persistTemporaryLayout() {
 		if ( ! onChangeLayout || ! temporaryLayout ) {
 			return;
