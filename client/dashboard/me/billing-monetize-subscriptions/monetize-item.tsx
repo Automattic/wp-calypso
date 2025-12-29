@@ -7,7 +7,8 @@ import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import SiteIcon from '../../components/site-icon';
-import { formatDate } from '../../utils/datetime';
+import { Text } from '../../components/text';
+import { formatDate, isWithinLast, getRelativeTimeString } from '../../utils/datetime';
 
 export const MonetizeSubscriptionTerms = ( {
 	subscription,
@@ -26,7 +27,14 @@ export const MonetizeSubscriptionTerms = ( {
 
 	// Show "Expired" for past dates
 	if ( isExpired ) {
-		return <>{ __( 'Expired' ) }</>;
+		const isExpiredToday = isWithinLast( endDate, 24, 'hours' );
+		const expiredTodayText = __( 'Expired today' );
+		// translators: timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"
+		const expiredFromNowText = sprintf( __( 'Expired %(timeSinceExpiry)s' ), {
+			timeSinceExpiry: getRelativeTimeString( endDate ),
+		} );
+
+		return <Text intent="error">{ isExpiredToday ? expiredTodayText : expiredFromNowText }</Text>;
 	}
 
 	// Show renewal or expiry for future dates

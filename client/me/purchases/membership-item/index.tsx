@@ -21,7 +21,21 @@ export const MembershipTerms = ( { subscription }: { subscription: MembershipSub
 	const isExpired = endDate.isBefore( moment() );
 
 	if ( isExpired ) {
-		return <>{ translate( 'Expired' ) }</>;
+		const isExpiredToday = moment().diff( endDate, 'hours' ) < 24;
+
+		return (
+			<span className="purchase-item__is-error">
+				{ isExpiredToday
+					? translate( 'Expired today' )
+					: translate( 'Expired %(timeSinceExpiry)s', {
+							args: {
+								timeSinceExpiry: endDate.fromNow(),
+							},
+							context:
+								'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+					  } ) }
+			</span>
+		);
 	}
 
 	return (
