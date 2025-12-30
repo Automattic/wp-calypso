@@ -114,11 +114,15 @@ const LayoutLoggedOut = ( {
 		! isWooOAuth2Client( oauth2Client );
 
 	const loadHelpCenter =
-		isLoggedIn &&
-		// we want to show only the Help center in my home and the help section (but not the FAB)
-		( [ 'home', 'help' ].includes( sectionName ) ||
-			currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
-		userAllowedToHelpCenter;
+		// Load for all logged out users only on the devdocs page.
+		( isLoggedIn === false &&
+			isEnabled( 'help-center/logged-out' ) &&
+			'devdocs' === sectionName ) ||
+		( isLoggedIn &&
+			// we want to show only the Help center in my home and the help section (but not the FAB)
+			( [ 'home', 'help' ].includes( sectionName ) ||
+				currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
+			userAllowedToHelpCenter );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
