@@ -4,7 +4,7 @@ import Smooch from 'smooch';
 import {
 	getOdieOnErrorTransferMessage,
 	getOdieTransferMessage,
-	getOdieZendeskConnectionErrorMessage,
+	getErrorTryAgainLaterMessage,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
@@ -30,6 +30,9 @@ export const useCreateZendeskConversation = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
+	const getErrorMessage = ( error: unknown ) =>
+		error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
+
 	const createConversation = async ( {
 		createdFrom = '',
 		isFromError = false,
@@ -43,7 +46,7 @@ export const useCreateZendeskConversation = () => {
 	} ) => {
 		let activeInteractionId = currentSupportInteraction?.uuid;
 
-		trackEvent( 'create_zendesk_conversation', {
+		trackEvent( 'creating_zendesk_conversation', {
 			is_submitting_zendesk_user_fields: isSubmittingZendeskUserFields,
 			chat_conversation_id: chat.conversationId,
 			chat_status: chat.status,
@@ -69,6 +72,27 @@ export const useCreateZendeskConversation = () => {
 		const previousMessages = [ ...chat.messages ];
 		const previousProvider = chat.provider;
 		const previousConversationId = chat.conversationId;
+
+		const handleErrorCreatingZendeskConversation = ( errorType: string, error?: unknown ) => {
+			trackEvent( errorType, {
+				error_message: getErrorMessage( error ),
+				created_from: createdFrom,
+				escalation_on_second_attempt: escalationOnSecondAttempt,
+				active_interaction_id: activeInteractionId || null,
+				is_chat_loaded: isChatLoaded,
+			} );
+			const errorMessageObj = getErrorTryAgainLaterMessage();
+
+			setChat( {
+				messages: [ ...previousMessages, errorMessageObj ],
+				status: 'loaded',
+				provider: previousProvider,
+				conversationId: previousConversationId,
+				odieId: chat.odieId,
+				wpcomUserId: chat.wpcomUserId,
+				clientId: chat.clientId,
+			} );
+		};
 
 		// Get transfer messages to identify and remove them on error
 		const transferMessages = isFromError
@@ -102,10 +126,8 @@ export const useCreateZendeskConversation = () => {
 
 			trackEvent( 'submitted_zendesk_user_fields' );
 		} catch ( error ) {
-			trackEvent( 'error_submitting_zendesk_user_fields', {
-				error_message:
-					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
-			} );
+			handleErrorCreatingZendeskConversation( 'error_submitting_zendesk_user_fields', error );
+			return;
 		}
 
 		let conversation: ZendeskConversation | null = null;
@@ -119,7 +141,12 @@ export const useCreateZendeskConversation = () => {
 					...( chatId ? { odieChatId: chatId } : {} ),
 				},
 			} );
+		} catch ( error ) {
+			handleErrorCreatingZendeskConversation( 'error_creating_zendesk_conversation', error );
+			return;
+		}
 
+		try {
 			if ( activeInteractionId ) {
 				interaction = await addEventToInteraction( {
 					interactionId: activeInteractionId,
@@ -131,7 +158,12 @@ export const useCreateZendeskConversation = () => {
 					event_external_id: conversation.id,
 				} );
 			}
+		} catch ( error ) {
+			handleErrorCreatingZendeskConversation( 'error_updating_interaction', error );
+			return;
+		}
 
+		try {
 			if ( interaction.uuid !== activeInteractionId ) {
 				await Smooch.updateConversation( conversation.id, {
 					metadata: {
@@ -177,33 +209,8 @@ export const useCreateZendeskConversation = () => {
 
 			return conversationId;
 		} catch ( error ) {
-			const errorMessage =
-				error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
-
-			// Track error event
-			trackEvent( 'error_creating_zendesk_conversation', {
-				error_message: errorMessage,
-				error_type: conversation ? 'interaction_update_failed' : 'conversation_creation_failed',
-				created_from: createdFrom,
-				escalation_on_second_attempt: escalationOnSecondAttempt,
-				active_interaction_id: activeInteractionId || null,
-				conversation_id: conversation?.id || null,
-				is_chat_loaded: isChatLoaded,
-			} );
-
-			// Add error message to inform user and show GetSupport button
-			const errorMessageObj = getOdieZendeskConnectionErrorMessage();
-
-			// Restore previous chat state and add error message
-			setChat( {
-				messages: [ ...previousMessages, errorMessageObj ],
-				status: 'loaded',
-				provider: previousProvider,
-				conversationId: previousConversationId,
-				odieId: chat.odieId,
-				wpcomUserId: chat.wpcomUserId,
-				clientId: chat.clientId,
-			} );
+			handleErrorCreatingZendeskConversation( 'error_finalizing_zendesk_conversation', error );
+			return;
 		}
 	};
 

@@ -75,6 +75,7 @@ export default function useGenerateActionHook( {
 	showBillingDescriptionForIncreasedRenewalPrice,
 	enableCategorisedFeatures,
 	reflectStorageSelectionInPlanPrices,
+	isGatingBusinessQ1,
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -88,6 +89,11 @@ export default function useGenerateActionHook( {
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 	enableCategorisedFeatures?: boolean;
 	reflectStorageSelectionInPlanPrices?: boolean;
+	/**
+	 * When true, adds `is_gating_business_q1` to the plan cart item extra data.
+	 * Used for the pricing differentiation experiment (calypso_plans_differentiators_20251210).
+	 */
+	isGatingBusinessQ1?: boolean;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -118,6 +124,7 @@ export default function useGenerateActionHook( {
 		sitePlanSlug,
 		siteId,
 		coupon,
+		isGatingBusinessQ1,
 	} );
 
 	const useActionHook = ( {
