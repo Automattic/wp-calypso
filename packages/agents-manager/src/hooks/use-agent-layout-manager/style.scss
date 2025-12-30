@@ -501,8 +501,6 @@ body.post-php.agents-manager-sidebar-container {
 					.edit-site-global-styles-variations_item-preview {
 						outline: 1px solid $gray-400;
 						outline-offset: 1px;
-						outline-color: #ccc;
-						outline-width: -wp-admin-border-width-focus;
 					}
 				}
 
@@ -513,7 +511,7 @@ body.post-php.agents-manager-sidebar-container {
 				}
 
 				.edit-site-global-styles-variations_item-preview {
-					outline-color: #545454;
+					outline: 1px solid #545454;
 					overflow: hidden;
 				}
 			}
@@ -691,4 +689,23 @@ body.post-php.agents-manager-sidebar-container {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
+
+	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
+		&.is-active,
+		&:focus-visible {
+			.edit-site-global-styles-variations_item-preview {
+				outline: 1px solid #0000001a;
+			}
+		}
+
+		&:not( .is-active ):hover {
+			.edit-site-global-styles-variations_item-preview {
+				outline-color: #00000080;
+			}
+		}
+
+		.edit-site-global-styles-variations_item-preview {
+			outline: 1px solid #0000004d;
+		}
+	}
 }
