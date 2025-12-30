@@ -27,6 +27,7 @@ import {
 	notFound,
 	redirect,
 	lazyRouteComponent,
+	Outlet,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
@@ -434,7 +435,7 @@ export const domainGlueRecordsRoute = createRoute( {
 	path: 'glue-records',
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
-	component: lazyRouteComponent( () => import( '../../domains/domain-glue-records' ) ),
+	component: Outlet,
 	errorComponent: lazyRouteComponent( () => import( '../../domains/domain-glue-records/error' ) ),
 } );
 
