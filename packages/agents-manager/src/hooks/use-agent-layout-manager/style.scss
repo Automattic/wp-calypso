@@ -66,8 +66,8 @@ $agents-manager-z-index-docked: 999999;
 }
 
 // Reposition the editor's template save confirmation panel
-@mixin editor-save-panel-open( $save-panel-selector ) {
-	#{$save-panel-selector} {
+@mixin editor-save-panel-open() {
+	.admin-ui-navigable-region.interface-interface-skeleton__actions {
 		margin: $layout-spacing 0;
 		right: $sidebar-width;
 		overflow: hidden;
@@ -259,9 +259,7 @@ body.next-admin.agents-manager-sidebar-container {
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.next-admin-layout__canvas.is-full-canvas' );
-		@include editor-save-panel-open(
-			'.admin-ui-navigable-region.interface-interface-skeleton__actions'
-		);
+		@include editor-save-panel-open();
 	}
 }
 
@@ -276,9 +274,7 @@ body.site-editor-php.agents-manager-sidebar-container {
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-site-layout__canvas' );
-		@include editor-save-panel-open(
-			'.interface-navigable-region.interface-interface-skeleton__actions'
-		);
+		@include editor-save-panel-open();
 
 		// Override canvas styles when the site editor navigation menu is open
 		.edit-site-layout:not( .is-full-canvas ) .edit-site-layout__canvas {
@@ -298,9 +294,7 @@ body.post-php.agents-manager-sidebar-container {
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-post-layout' );
-		@include editor-save-panel-open(
-			'.interface-navigable-region.interface-interface-skeleton__actions'
-		);
+		@include editor-save-panel-open();
 	}
 }
 
