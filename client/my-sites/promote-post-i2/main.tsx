@@ -130,17 +130,21 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 			return '';
 		}
 
-		const firstItem = history[ 0 ];
+		const sortedHistory = [ ...history ].sort( ( a, b ) =>
+			moment( a.expires ).diff( moment( b.expires ) )
+		);
+
+		const firstItem = sortedHistory[ 0 ];
 		const firstDate = moment( firstItem.expires ).format( 'LL' );
 
-		if ( history.length === 1 ) {
+		if ( sortedHistory.length === 1 ) {
 			return translate( 'Your credits will expire on %(date)s', {
 				args: { date: firstDate },
 			} );
 		}
 
 		const firstAmount = '$' + formatNumber( firstItem.amount / 100, { decimals: 2 } );
-		const lastItem = history[ history.length - 1 ];
+		const lastItem = sortedHistory[ sortedHistory.length - 1 ];
 		const lastDate = moment( lastItem.expires ).format( 'LL' );
 
 		return (
