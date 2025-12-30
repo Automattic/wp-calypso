@@ -10,6 +10,7 @@ import {
 } from '@automattic/agenttic-ui';
 import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -65,6 +66,7 @@ export default function AgentDock( {
 	useAbilitiesSetup,
 	registerCustomActions,
 }: AgentDockProps ) {
+	const [ isThinking, setIsThinking ] = useState( false );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const {
 		hasLoaded: isStoreReady,
@@ -104,6 +106,7 @@ export default function AgentDock( {
 	registerCustomActions?.( {
 		addMessage,
 		getAgentManager,
+		setIsThinking,
 	} );
 
 	const {
@@ -207,7 +210,7 @@ export default function AgentDock( {
 		<AgentChat
 			messages={ messages }
 			suggestions={ suggestions }
-			isProcessing={ isProcessing }
+			isProcessing={ isProcessing || isThinking }
 			error={ error }
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }

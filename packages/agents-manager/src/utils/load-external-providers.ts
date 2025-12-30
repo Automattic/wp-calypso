@@ -49,6 +49,7 @@ export type AbilitiesSetupHook = () => void;
 export type RegisterCustomActions = ( actions: {
 	addMessage: UseAgentChatReturn[ 'addMessage' ];
 	getAgentManager: typeof getAgentManager;
+	setIsThinking: ( isThinking: boolean ) => void;
 } ) => void;
 
 export interface LoadedProviders {
