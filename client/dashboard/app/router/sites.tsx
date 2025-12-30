@@ -66,12 +66,10 @@ export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async ( { context } ) => {
-		// Preload the default sites list response without blocking.
-		if ( ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
-			queryClient.prefetchQuery( context.config.queries.sitesQuery() );
-		}
-
 		await Promise.all( [
+			! isEnabled( 'dashboard/v2/es-site-list' )
+				? queryClient.ensureQueryData( context.config.queries.sitesQuery() )
+				: Promise.resolve(),
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );

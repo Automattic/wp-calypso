@@ -20,6 +20,7 @@ import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
+import EmptyData from '../components/empty-data';
 import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -295,6 +296,12 @@ export default function Sites() {
 
 	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
 
+	const esSiteListEnabled = isEnabled( 'dashboard/v2/es-site-list' );
+
+	const hasSites = esSiteListEnabled
+		? !! sites__ES && sites__ES.length > 0
+		: !! sites && sites.length > 0;
+
 	let emptyDescription = __( 'Get started by creating a new site.' );
 	if ( view.search ) {
 		emptyDescription = sprintf(
@@ -388,47 +395,57 @@ export default function Sites() {
 					</>
 				}
 			>
-				{ isEnabled( 'dashboard/v2/es-site-list' ) ? (
-					<SitesDataViews< DashboardSiteListSite >
-						getItemId={ ( item ) => '' + item.blog_id?.toString() + item.url?.value }
-						view={ view }
-						sites={ filteredData__ES }
-						fields={ fields__ES }
-						// TODO: actions={ actions }
-						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-						empty={ emptyState }
-						paginationInfo={ paginationInfo__ES }
-						renderItemLink={ ( { item, ...props } ) => (
-							<SiteLink__ES
-								{ ...props }
-								site={ item }
-								onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
-							/>
+				{ ! isLoadingSites && ! hasSites && (
+					<EmptyData
+						title={ __( 'You don’t have any sites yet' ) }
+						description={ __(
+							'Start a site and begin creating, coding, or exploring what WordPress can do.'
 						) }
-						onChangeView={ handleViewChange }
-						onResetView={ resetView }
-					/>
-				) : (
-					<SitesDataViews< Site >
-						getItemId={ ( item ) => item.ID.toString() }
-						view={ view }
-						sites={ filteredData }
-						fields={ fields }
-						actions={ actions }
-						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-						empty={ emptyState }
-						paginationInfo={ paginationInfo }
-						onChangeView={ handleViewChange }
-						onResetView={ resetView }
-						renderItemLink={ ( { item, ...props } ) => (
-							<SiteLink
-								{ ...props }
-								site={ item }
-								onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
-							/>
-						) }
+						actions={ <div>These are the actions</div> }
 					/>
 				) }
+				{ ( isLoadingSites || hasSites ) &&
+					( esSiteListEnabled ? (
+						<SitesDataViews< DashboardSiteListSite >
+							getItemId={ ( item ) => '' + item.blog_id?.toString() + item.url?.value }
+							view={ view }
+							sites={ filteredData__ES }
+							fields={ fields__ES }
+							// TODO: actions={ actions }
+							isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+							empty={ emptyState }
+							paginationInfo={ paginationInfo__ES }
+							renderItemLink={ ( { item, ...props } ) => (
+								<SiteLink__ES
+									{ ...props }
+									site={ item }
+									onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
+								/>
+							) }
+							onChangeView={ handleViewChange }
+							onResetView={ resetView }
+						/>
+					) : (
+						<SitesDataViews< Site >
+							getItemId={ ( item ) => item.ID.toString() }
+							view={ view }
+							sites={ filteredData }
+							fields={ fields }
+							actions={ actions }
+							isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+							empty={ emptyState }
+							paginationInfo={ paginationInfo }
+							onChangeView={ handleViewChange }
+							onResetView={ resetView }
+							renderItemLink={ ( { item, ...props } ) => (
+								<SiteLink
+									{ ...props }
+									site={ item }
+									onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
+								/>
+							) }
+						/>
+					) ) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
 			 *
