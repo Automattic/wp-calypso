@@ -14,6 +14,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
@@ -181,13 +182,6 @@ export default function AgentDock( {
 			icon: login,
 			title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
 			onClick: () => {
-				// TODO: Persist floating chat position...
-				try {
-					window.localStorage?.setItem( 'agenttic-chat-position', 'right' );
-				} catch ( err ) {
-					// Ignore errors
-				}
-
 				undock();
 				setIsDocked( false );
 			},
@@ -212,8 +206,12 @@ export default function AgentDock( {
 		return options;
 	};
 
-	// Filter out deleted messages for display
-	const visibleMessages = messages.filter( ( message ) => ! deletedMessageIds.has( message.id ) );
+	// Filter out deleted messages and local tool running messages
+	const visibleMessages = messages.filter(
+		( message ) =>
+			! deletedMessageIds.has( message.id ) &&
+			! message.content.some( ( content ) => content.text === LOCAL_TOOL_RUNNING_MESSAGE )
+	);
 
 	const Chat = (
 		<AgentChat
