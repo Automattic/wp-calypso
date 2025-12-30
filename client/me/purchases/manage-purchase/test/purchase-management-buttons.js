@@ -165,8 +165,8 @@ describe( 'Purchase Management Buttons', () => {
 				</ReduxProvider>
 			</QueryClientProvider>
 		);
-		expect( await screen.findByText( /removed/ ) ).toBeInTheDocument();
-		expect( screen.findByText( /Cancel/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /remove/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders a cancel button with remove language when auto-renew is OFF and the purchase is an Akismet purchase attached to an akismet siteless holding site', async () => {
@@ -194,8 +194,8 @@ describe( 'Purchase Management Buttons', () => {
 			</QueryClientProvider>
 		);
 
-		expect( await screen.findByText( /removed/ ) ).toBeInTheDocument();
-		expect( screen.findByText( /Cancel/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /remove/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
 	} );
 
 	it( "does't render renew buttons for domain with pending registration at registry", async () => {
