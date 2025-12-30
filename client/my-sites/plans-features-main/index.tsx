@@ -385,6 +385,7 @@ const PlansFeaturesMain = ( {
 		isLongSet,
 		isShortSet,
 		showDifferentiatorHeader,
+		variant: differentiatorsVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
@@ -425,6 +426,7 @@ const PlansFeaturesMain = ( {
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		reflectStorageSelectionInPlanPrices: true,
+		isGatingBusinessQ1: !! differentiatorsVariant,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>

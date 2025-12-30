@@ -1825,7 +1825,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SECURITY_BRUTE_FORCE,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Spam, brutforce, DDoS protection and mitigation' )
+				? i18n.translate( 'Spam, brute-force, DDoS protection and mitigation' )
 				: i18n.translate( 'Brute-force protection' ),
 		getDescription: () =>
 			i18n.translate( 'Stay protected from brute-force attacks on your account password.' ),
