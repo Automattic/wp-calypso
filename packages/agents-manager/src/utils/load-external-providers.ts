@@ -5,8 +5,9 @@
  * PHP filter. Each provider module should export toolProvider and/or contextProvider.
  */
 
+import { getAgentManager } from '@automattic/agenttic-client';
 import type { ToolProvider, ContextProvider, Suggestion } from '../types';
-import type { SubmitOptions } from '@automattic/agenttic-client';
+import type { SubmitOptions, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
 /**
@@ -45,7 +46,10 @@ export type AbilitiesSetupHook = () => void;
 /**
  * Registers custom actions to Big Sky's AI store.
  */
-export type RegisterCustomActions = ( actions: Record< string, any > ) => void;
+export type RegisterCustomActions = ( actions: {
+	addMessage: UseAgentChatReturn[ 'addMessage' ];
+	getAgentManager: typeof getAgentManager;
+} ) => void;
 
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;

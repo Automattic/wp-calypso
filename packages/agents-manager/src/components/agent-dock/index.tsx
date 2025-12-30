@@ -101,7 +101,10 @@ export default function AgentDock( {
 	} = useAgentChat( agentConfig );
 
 	// Register custom actions to Big Sky's AI store before all the relevant abilities
-	registerCustomActions?.( { addMessage } );
+	registerCustomActions?.( {
+		addMessage,
+		getAgentManager,
+	} );
 
 	const {
 		messages: odieMessages,
