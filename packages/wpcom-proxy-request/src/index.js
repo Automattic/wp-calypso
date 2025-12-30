@@ -449,7 +449,7 @@ function onmessage( e ) {
 	const { params } = xhr;
 
 	const body = data[ 0 ];
-	let statusCode = data[ 1 ];
+	const statusCode = data[ 1 ];
 	const headers = data[ 2 ];
 
 	// We don't want to delete requests while we're processing stream messages
@@ -464,8 +464,6 @@ function onmessage( e ) {
 
 	if ( ! params.metaAPI ) {
 		debug( 'got %o status code for URL: %o', statusCode, params.path );
-	} else {
-		statusCode = body === 'metaAPIupdated' ? 200 : 500;
 	}
 
 	if ( typeof headers === 'object' ) {

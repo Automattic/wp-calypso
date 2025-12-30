@@ -4,9 +4,10 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
+import { useLocation } from 'react-router-dom';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
 import { getOdieTransferMessage } from '../constants';
-import { emptyChat } from '../context';
+import { emptyChat, useOdieAssistantContext } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import {
@@ -47,7 +48,20 @@ export const useGetCombinedChat = (
 ) => {
 	const { data: currentSupportInteraction, isLoading: isLoadingCurrentSupportInteraction } =
 		useCurrentSupportInteraction();
-	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
+
+	const { currentUser } = useOdieAssistantContext();
+
+	const location = useLocation();
+	const isLoggedIn = !! currentUser?.ID;
+	const params = new URLSearchParams( location.search );
+	const loggedOutOdieChatId = params.get( 'chatId' );
+	const loggedOutOdieSessionId = params.get( 'sessionId' );
+
+	const odieId = isLoggedIn
+		? getOdieIdFromInteraction( currentSupportInteraction )
+		: loggedOutOdieChatId;
+
+	const sessionId = isLoggedIn ? undefined : loggedOutOdieSessionId;
 
 	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -63,7 +77,10 @@ export const useGetCombinedChat = (
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
-	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
+	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat(
+		Number( odieId ),
+		sessionId
+	);
 	const { startNewInteraction } = useManageSupportInteraction();
 	const isUploadingUnsentMessages = useIsMutating( {
 		mutationKey: [ 'send-zendesk-messages' ],
