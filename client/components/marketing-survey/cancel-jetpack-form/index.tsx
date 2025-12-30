@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Dialog } from '@automattic/components';
 import { BaseButton } from '@automattic/components/dist/types/dialog/button-bar';
@@ -53,7 +52,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	flowType,
 	...props
 } ) => {
-	const shouldProvideCancellationOffer = config.isEnabled( 'cancellation-offers' );
+	const shouldProvideCancellationOffer = true;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const initialCancellationStep = useMemo( () => {

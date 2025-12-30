@@ -27,7 +27,6 @@
 		"akismet/checkout-quantity-dropdown": true,
 		"calypso/all-domain-management": true,
 		"calypso/domains-dataviews": true,
-		"cancellation-offers": true,
 		"catch-js-errors": false,
 		"checkout/checkout-version": false,
 		"checkout/ebanx-pix": true,
