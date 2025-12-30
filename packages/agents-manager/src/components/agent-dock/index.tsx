@@ -67,6 +67,7 @@ export default function AgentDock( {
 	registerCustomActions,
 }: AgentDockProps ) {
 	const [ isThinking, setIsThinking ] = useState( false );
+	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const {
 		hasLoaded: isStoreReady,
@@ -102,11 +103,16 @@ export default function AgentDock( {
 		abortCurrentRequest,
 	} = useAgentChat( agentConfig );
 
-	// Register custom actions to Big Sky's AI store before all the relevant abilities
+	// Register custom actions before abilities setup
 	registerCustomActions?.( {
 		addMessage,
 		getAgentManager,
 		setIsThinking,
+		deleteMarkedMessages: ( msgs ) => {
+			setDeletedMessageIds(
+				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
+			);
+		},
 	} );
 
 	const {
@@ -206,9 +212,12 @@ export default function AgentDock( {
 		return options;
 	};
 
+	// Filter out deleted messages for display
+	const visibleMessages = messages.filter( ( message ) => ! deletedMessageIds.has( message.id ) );
+
 	const Chat = (
 		<AgentChat
-			messages={ messages }
+			messages={ visibleMessages }
 			suggestions={ suggestions }
 			isProcessing={ isProcessing || isThinking }
 			error={ error }

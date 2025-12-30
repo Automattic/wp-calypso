@@ -50,6 +50,7 @@ export type RegisterCustomActions = ( actions: {
 	addMessage: UseAgentChatReturn[ 'addMessage' ];
 	getAgentManager: typeof getAgentManager;
 	setIsThinking: ( isThinking: boolean ) => void;
+	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
 } ) => void;
 
 export interface LoadedProviders {
