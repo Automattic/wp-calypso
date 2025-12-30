@@ -14,7 +14,6 @@ import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agentti
  *
  * This is used on wp-admin environments (Atomic, Garden, Simple sites) where
  * the flag is injected server-side by Jetpack's Agents Manager.
- *
  * @returns The useUnifiedExperience value, or undefined if not available.
  */
 export function getUseUnifiedExperienceFromInlineData(): boolean | undefined {
@@ -43,6 +42,11 @@ export type NavigationContinuationHook = ( props: {
  */
 export type AbilitiesSetupHook = () => void;
 
+/**
+ * Registers custom actions to Big Sky's AI store.
+ */
+export type RegisterCustomActions = ( actions: Record< string, any > ) => void;
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -51,6 +55,7 @@ export interface LoadedProviders {
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	registerCustomActions?: RegisterCustomActions;
 }
 
 /**
@@ -75,6 +80,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
+	let mergedRegisterCustomActions: RegisterCustomActions | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -103,6 +109,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useAbilitiesSetup ) {
 				mergedAbilitiesSetup = module.useAbilitiesSetup;
 			}
+			if ( module.registerCustomActions ) {
+				mergedRegisterCustomActions = module.registerCustomActions;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
@@ -120,5 +129,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
+		registerCustomActions: mergedRegisterCustomActions,
 	};
 }

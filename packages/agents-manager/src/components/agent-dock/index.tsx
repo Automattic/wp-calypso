@@ -26,6 +26,7 @@ import SupportGuides from '../support-guides';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
+	RegisterCustomActions,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 
@@ -48,6 +49,8 @@ interface AgentDockProps {
 	useNavigationContinuation?: NavigationContinuationHook;
 	/** Setup hook to register hook-dependent abilities. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** Register custom actions to Big Sky's AI store. */
+	registerCustomActions?: RegisterCustomActions;
 }
 
 export default function AgentDock( {
@@ -60,6 +63,7 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useNavigationContinuation,
 	useAbilitiesSetup,
+	registerCustomActions,
 }: AgentDockProps ) {
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const {
@@ -86,6 +90,7 @@ export default function AgentDock( {
 		} );
 
 	const {
+		addMessage,
 		messages,
 		suggestions,
 		isProcessing,
@@ -94,6 +99,9 @@ export default function AgentDock( {
 		onSubmit,
 		abortCurrentRequest,
 	} = useAgentChat( agentConfig );
+
+	// Register custom actions to Big Sky's AI store before all the relevant abilities
+	registerCustomActions?.( { addMessage } );
 
 	const {
 		messages: odieMessages,

@@ -233,6 +233,7 @@ function AgentSetup( {
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }
 			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
 			useAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+			registerCustomActions={ loadedProviders.registerCustomActions }
 		/>
 	);
 }
