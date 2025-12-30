@@ -165,7 +165,7 @@ describe( 'Purchase Management Buttons', () => {
 				</ReduxProvider>
 			</QueryClientProvider>
 		);
-		expect( await screen.findByText( /remove/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /and be removed/ ) ).toBeInTheDocument();
 		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
 	} );
 
