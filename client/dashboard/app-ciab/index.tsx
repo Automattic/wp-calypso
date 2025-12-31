@@ -45,6 +45,12 @@ boot( {
 		help: true,
 		notifications: false,
 		me: {
+			billing: {
+				monetizeSubscriptions: false,
+			},
+			security: {
+				sshKey: false,
+			},
 			privacy: false,
 			apps: false,
 		},
