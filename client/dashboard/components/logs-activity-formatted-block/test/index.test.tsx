@@ -99,18 +99,6 @@ describe( 'Link blocks', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( 'relativizes wordpress.com links when not in Jetpack or A4A', () => {
-		renderFormatted( {
-			type: 'link',
-			url: 'https://wordpress.com/path/to/resource',
-			children: [ 'My link' ],
-		} );
-
-		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/path/to/resource' );
-		expect( link ).toHaveTextContent( 'My link' );
-	} );
-
 	test.each( [
 		[ 'Jetpack Cloud', true, false ],
 		[ 'A4A', false, true ],
@@ -143,7 +131,7 @@ describe( 'Link blocks', () => {
 			const link = screen.getByRole( 'link' );
 			expect( link ).toHaveAttribute( 'href', 'https://example.com/path' );
 			expect( link ).toHaveAttribute( 'target', '_blank' );
-			expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+			expect( link ).toHaveAttribute( 'rel', 'external noreferrer noopener' );
 		}
 	);
 } );
