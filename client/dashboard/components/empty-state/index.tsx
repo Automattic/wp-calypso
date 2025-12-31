@@ -1,16 +1,20 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { Card, CardBody } from '../card';
 import { Text } from '../text';
+import EmptyStateActionItem from './empty-state-action-item';
+import EmptyStateActionList from './empty-state-action-list';
 import type { ReactNode } from 'react';
 
-export default function EmptyState( {
+function EmptyState( {
 	title,
 	description,
 	children,
+	suffix,
 }: {
 	title: string;
 	description: string;
 	children?: ReactNode;
+	suffix?: ReactNode;
 } ) {
 	return (
 		<Card>
@@ -24,9 +28,19 @@ export default function EmptyState( {
 							{ description }
 						</Text>
 					</VStack>
-					<div style={ { maxWidth: '660px' } }>{ children }</div>
+					<VStack spacing={ 6 } style={ { maxWidth: '660px' } }>
+						{ children }
+						{ suffix }
+					</VStack>
 				</VStack>
 			</CardBody>
 		</Card>
 	);
 }
+
+const EmptyStateWithStatics = Object.assign( EmptyState, {
+	ActionList: EmptyStateActionList,
+	ActionItem: EmptyStateActionItem,
+} );
+
+export default EmptyStateWithStatics;

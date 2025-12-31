@@ -7,7 +7,7 @@ import type { ActionListProps } from './types';
 import './style.scss';
 
 function UnforwardedActionList(
-	{ title, description, children, isBorderless }: ActionListProps,
+	{ title, description, children }: ActionListProps,
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	// Hide component if there are no children
@@ -16,7 +16,7 @@ function UnforwardedActionList(
 	}
 
 	return (
-		<Card className="action-list" ref={ ref } isBorderless={ isBorderless }>
+		<Card className="action-list" ref={ ref }>
 			<CardBody>
 				{ ( title || description ) && (
 					<VStack className="action-list__heading" spacing={ 2 }>

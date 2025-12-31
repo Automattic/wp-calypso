@@ -14,8 +14,4 @@ export interface ActionListProps extends IconListProps {
 	 * component.
 	 */
 	children: React.ReactNode;
-	/**
-	 * Whether to render the action list with a border.
-	 */
-	isBorderless: boolean;
 }
