@@ -236,7 +236,7 @@ describe( 'ActivityEvent', () => {
 		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Akismet' } );
-		expect( link.getAttribute( 'href' ) ).toBe( '/plugins/akismet/example.com' );
+		expect( link.getAttribute( 'href' ) ).toBe( '/plugins/manage/akismet' );
 	} );
 
 	it( 'renders theme links when themes originate from WordPress.com', () => {

@@ -154,7 +154,7 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 
 	return (
 		<a
-			href={ `/plugins/${ pluginSlug }/${ siteSlug }` }
+			href={ `/plugins/manage/${ pluginSlug }` }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'plugins' }
