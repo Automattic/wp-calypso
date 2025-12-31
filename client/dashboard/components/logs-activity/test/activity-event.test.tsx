@@ -88,7 +88,7 @@ describe( 'ActivityEvent', () => {
 
 		const link = screen.getByRole( 'link', { name: 'View' } );
 		expect( link ).toBeInTheDocument();
-		expect( link.getAttribute( 'href' ) ).toBe( '/post/example' );
+		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/post/example' );
 	} );
 
 	it( 'renders strong ranges as bold text', () => {
@@ -213,7 +213,7 @@ describe( 'ActivityEvent', () => {
 		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Comment' } );
-		expect( link.getAttribute( 'href' ) ).toBe( '/comment/2/1' );
+		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/comment/2/1' );
 	} );
 
 	it( 'renders plugin links for plugin ranges', () => {

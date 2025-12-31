@@ -41,6 +41,9 @@ const Emphasis = ( { children }: { children: ReactNode } ) => <em>{ children }</
 
 const Preformatted = ( { children }: { children: ReactNode } ) => <pre>{ children }</pre>;
 
+const isWordPressDotComUrl = ( url?: string | null ) =>
+	!! url && url.startsWith( 'https://wordpress.com/' ); // we want the extra slash at the end because other subdomains could be used to trick this check (e.g. wordpress.com.malicious-site.com)
+
 const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	const { url, activity, section, intent } = content;
 
@@ -48,7 +51,7 @@ const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		return <Fragment>{ children }</Fragment>;
 	}
 
-	if ( isJetpackCloud() || isA8CForAgencies() ) {
+	if ( isWordPressDotComUrl( url ) && ( isJetpackCloud() || isA8CForAgencies() ) ) {
 		return <Fragment>{ children }</Fragment>;
 	}
 
