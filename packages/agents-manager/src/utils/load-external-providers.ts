@@ -37,16 +37,11 @@ export type NavigationContinuationHook = ( props: {
 } ) => void;
 
 /**
- * Abilities setup hook type - provided by environments that need to register
- * hook-dependent abilities (abilities that require React context to work).
- * Called from AgentDock component to provide React context.
+ * Abilities setup hook type - for registering hook-based abilities that utilize React
+ * context. Invoked after custom actions registration with Big Sky's AI store. Receives
+ * action handlers that will be used for agent and chat interaction.
  */
-export type AbilitiesSetupHook = () => void;
-
-/**
- * Registers custom actions to Big Sky's AI store.
- */
-export type RegisterCustomActions = ( actions: {
+export type AbilitiesSetupHook = ( actions: {
 	addMessage: UseAgentChatReturn[ 'addMessage' ];
 	getAgentManager: typeof getAgentManager;
 	setIsThinking: ( isThinking: boolean ) => void;
@@ -61,7 +56,6 @@ export interface LoadedProviders {
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
 	useAbilitiesSetup?: AbilitiesSetupHook;
-	registerCustomActions?: RegisterCustomActions;
 }
 
 /**
@@ -86,7 +80,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
-	let mergedRegisterCustomActions: RegisterCustomActions | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -115,9 +108,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useAbilitiesSetup ) {
 				mergedAbilitiesSetup = module.useAbilitiesSetup;
 			}
-			if ( module.registerCustomActions ) {
-				mergedRegisterCustomActions = module.registerCustomActions;
-			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
@@ -135,6 +125,5 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
-		registerCustomActions: mergedRegisterCustomActions,
 	};
 }

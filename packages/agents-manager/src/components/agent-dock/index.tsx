@@ -28,7 +28,6 @@ import SupportGuides from '../support-guides';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
-	RegisterCustomActions,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 
@@ -49,10 +48,8 @@ interface AgentDockProps {
 	markdownExtensions?: MarkdownExtensions;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** Setup hook to register hook-dependent abilities. */
+	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
-	/** Register custom actions to Big Sky's AI store. */
-	registerCustomActions?: RegisterCustomActions;
 }
 
 export default function AgentDock( {
@@ -65,7 +62,6 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useNavigationContinuation,
 	useAbilitiesSetup,
-	registerCustomActions,
 }: AgentDockProps ) {
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
@@ -103,18 +99,6 @@ export default function AgentDock( {
 		onSubmit,
 		abortCurrentRequest,
 	} = useAgentChat( agentConfig );
-
-	// Register custom actions before abilities setup
-	registerCustomActions?.( {
-		addMessage,
-		getAgentManager,
-		setIsThinking,
-		deleteMarkedMessages: ( msgs ) => {
-			setDeletedMessageIds(
-				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
-			);
-		},
-	} );
 
 	const {
 		messages: odieMessages,
@@ -157,9 +141,20 @@ export default function AgentDock( {
 		navigate,
 	} );
 
-	// Call setup hook to register hook-dependent abilities
-	// The hook is stable after loadedProviders is set (AgentDock only renders after providers load)
-	useAbilitiesSetup?.();
+	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
+	// Provides custom action handlers that will be used within Big Sky's AI store for agent and
+	// chat interaction. The hook is stable as `AgentDock` only renders after external providers have
+	// been loaded.
+	useAbilitiesSetup?.( {
+		addMessage,
+		getAgentManager,
+		setIsThinking,
+		deleteMarkedMessages: ( msgs ) => {
+			setDeletedMessageIds(
+				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
+			);
+		},
+	} );
 
 	const handleNewChat = () => {
 		navigate( '/' );
