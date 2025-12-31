@@ -17,16 +17,16 @@ function EmptyState( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack style={ { minHeight: '676px' } } spacing={ 8 } alignment="center">
+				<VStack style={ { minHeight: 'max(60vh, 676px)' } } spacing={ 8 } alignment="center">
 					<VStack spacing={ 2 }>
 						<Text as="h2" size="20px" weight={ 500 } align="center">
 							{ title }
 						</Text>
-						<Text style={ { maxWidth: '351px' } } variant="muted" align="center">
+						<Text style={ { width: 'min(100%, 351px)' } } variant="muted" align="center">
 							{ description }
 						</Text>
 					</VStack>
-					<VStack spacing={ 6 } style={ { maxWidth: '660px' } }>
+					<VStack spacing={ 6 } style={ { width: 'min(100%, 660px)' } }>
 						{ children }
 					</VStack>
 				</VStack>

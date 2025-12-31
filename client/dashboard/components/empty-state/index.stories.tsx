@@ -7,7 +7,7 @@ const meta: Meta< typeof EmptyState > = {
 	title: 'client/dashboard/EmptyState',
 	component: EmptyState,
 	parameters: {
-		layout: 'centered',
+		layout: 'padded',
 	},
 	tags: [ 'autodocs' ],
 };
