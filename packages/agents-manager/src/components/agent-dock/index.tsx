@@ -10,7 +10,7 @@ import {
 } from '@automattic/agenttic-ui';
 import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -201,10 +201,14 @@ export default function AgentDock( {
 	};
 
 	// Filter out deleted messages and local tool running messages
-	const visibleMessages = messages.filter(
-		( message ) =>
-			! deletedMessageIds.has( message.id ) &&
-			! message.content.some( ( content ) => content.text === LOCAL_TOOL_RUNNING_MESSAGE )
+	const visibleMessages = useMemo(
+		() =>
+			messages.filter(
+				( message ) =>
+					! deletedMessageIds.has( message.id ) &&
+					! message.content.some( ( content ) => content.text === LOCAL_TOOL_RUNNING_MESSAGE )
+			),
+		[ messages, deletedMessageIds ]
 	);
 
 	const Chat = (
