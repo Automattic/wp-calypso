@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
+import { cog, layout, page } from '@wordpress/icons';
 import EmptyState from './index';
 
 const meta: Meta< typeof EmptyState > = {
@@ -85,6 +86,47 @@ export const WithContentBelowActions: Story = {
 					You can always change this later in your settings.
 				</p>
 			</>
+		),
+	},
+};
+
+export const WithIconsInActions: Story = {
+	args: {
+		title: 'Set up your site',
+		description: 'Choose an option below to start customizing your site.',
+		children: (
+			<EmptyState.ActionList>
+				<EmptyState.ActionItem
+					title="Pick a design"
+					description="Browse themes and layouts that fit your brand."
+					decoration={ <Icon icon={ layout } /> }
+					actions={
+						<Button variant="secondary" size="compact">
+							Browse designs
+						</Button>
+					}
+				/>
+				<EmptyState.ActionItem
+					title="Create a page"
+					description="Start with a new page and add your content."
+					decoration={ <Icon icon={ page } /> }
+					actions={
+						<Button variant="secondary" size="compact">
+							New page
+						</Button>
+					}
+				/>
+				<EmptyState.ActionItem
+					title="Fine‑tune settings"
+					description="Adjust advanced options as your site grows."
+					decoration={ <Icon icon={ cog } /> }
+					actions={
+						<Button variant="secondary" size="compact">
+							Open settings
+						</Button>
+					}
+				/>
+			</EmptyState.ActionList>
 		),
 	},
 };
