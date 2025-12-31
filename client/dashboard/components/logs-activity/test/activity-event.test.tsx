@@ -86,7 +86,7 @@ describe( 'ActivityEvent', () => {
 
 		render( <ActivityEvent activity={ activity } /> );
 
-		const link = screen.getByRole( 'link', { name: 'View' } );
+		const link = screen.getByRole( 'link', { name: 'View (opens in a new tab)' } );
 		expect( link ).toBeInTheDocument();
 		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/post/example' );
 	} );
@@ -212,7 +212,7 @@ describe( 'ActivityEvent', () => {
 
 		render( <ActivityEvent activity={ activity } /> );
 
-		const link = screen.getByRole( 'link', { name: 'Comment' } );
+		const link = screen.getByRole( 'link', { name: 'Comment (opens in a new tab)' } );
 		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/comment/2/1' );
 	} );
 
