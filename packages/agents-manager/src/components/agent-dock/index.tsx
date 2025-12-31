@@ -142,9 +142,8 @@ export default function AgentDock( {
 	} );
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
-	// Provides custom action handlers that will be used within Big Sky's AI store for agent and
-	// chat interaction. The hook is stable as `AgentDock` only renders after external providers have
-	// been loaded.
+	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
+	// The hook is stable as `AgentDock` only renders after external providers have been loaded.
 	useAbilitiesSetup?.( {
 		addMessage,
 		getAgentManager,
