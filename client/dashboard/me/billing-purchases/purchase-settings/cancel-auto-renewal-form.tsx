@@ -1,21 +1,26 @@
 import { RadioControl, __experimentalConfirmDialog as ConfirmDialog } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { SectionHeader } from '../../../components/section-header';
 import { shuffleArray } from '../../../utils/collection';
-import enrichedSurveyData from '../cancel-purchase-form/enriched-survey-data';
-// import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
-// import { submitSurvey } from 'calypso/lib/purchases/actions';
+import enrichedSurveyData from '../cancel-purchase/enriched-survey-data';
+import PrecancellationChatButton from './precancellation-chat-button';
+import type { MarketingSurveyResponses, Purchase } from '@automattic/api-core';
+// import { submitSurvey } from 'calypso/lib/purchases/actions'; //TODO: port submitSurvey to mutation
 
-class CancelAutoRenewalForm extends Component {
-	static propTypes = {
-		purchase: PropTypes.object.isRequired,
-		selectedSiteId: PropTypes.number.isRequired,
-		isVisible: PropTypes.bool,
-		onClose: PropTypes.func.isRequired,
-	};
+interface CancelAutoRenewFormProps {
+	purchase: Purchase;
+	selectedSiteId: number;
+	isVisible: boolean;
+	onClose: () => void;
+	submitSurvey: (
+		survey: string,
+		selectedSiteId: number,
+		surveyData: Omit< MarketingSurveyResponses, 'purchaseId' | 'purchase' >
+	) => void;
+}
 
+class CancelAutoRenewalForm extends Component< CancelAutoRenewFormProps > {
 	state = {
 		response: '',
 	};
@@ -38,7 +43,7 @@ class CancelAutoRenewalForm extends Component {
 		return __( 'subscription' );
 	};
 
-	constructor( props ) {
+	constructor( props: CancelAutoRenewFormProps ) {
 		super( props );
 
 		const productType = this.getProductTypeString();
@@ -47,16 +52,16 @@ class CancelAutoRenewalForm extends Component {
 			{
 				value: 'let-it-expire',
 				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
-				label: __( "I'm going to let this %(productType)s expire.", {
-					args: { productType },
+				label: sprintf( __( "I'm going to let this %(productType)s expire." ), {
+					productType,
 				} ),
 			},
 
 			{
 				value: 'manual-renew',
 				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
-				label: __( "I'm going to renew the %(productType)s, but will do it manually.", {
-					args: { productType },
+				label: sprintf( __( "I'm going to renew the %(productType)s, but will do it manually." ), {
+					productType,
 				} ),
 			},
 			{
@@ -83,45 +88,14 @@ class CancelAutoRenewalForm extends Component {
 		this.props.onClose();
 	};
 
-	onRadioChange = ( value ) => {
+	onRadioChange = ( value: string ) => {
 		this.setState( {
 			response: value,
 		} );
 	};
 
-	// renderButtons = () => {
-	// 	const { purchase, onClose } = this.props;
-	// 	const { response } = this.state;
-	// 	const disableSubmit = ! response;
-
-	// 	const skip = {
-	// 		action: 'skip',
-	// 		disabled: false,
-	// 		label: __( 'Skip' ),
-	// 		onClick: onClose,
-	// 	};
-
-	// 	const submit = {
-	// 		action: 'submit',
-	// 		isPrimary: true,
-	// 		disabled: disableSubmit,
-	// 		label: __( 'Submit' ),
-	// 		onClick: this.onSubmit,
-	// 	};
-
-	// 	const chat = (
-	// 		<PrecancellationChatButton
-	// 			purchase={ purchase }
-	// 			onClick={ onClose }
-	// 			className="cancel-auto-renewal-form__chat-button"
-	// 		/>
-	// 	);
-
-	// 	return [ skip, submit, chat ];
-	// };
-
 	render() {
-		const { isVisible, onClose } = this.props;
+		const { isVisible, onClose, purchase } = this.props;
 
 		const productType = this.getProductTypeString();
 
@@ -139,7 +113,7 @@ class CancelAutoRenewalForm extends Component {
 				<SectionHeader
 					title={ __( 'Help us improve' ) }
 					description={
-						<fieldset role="group" class="cancel-auto-renewal-form__form-fieldset">
+						<fieldset role="group" className="cancel-auto-renewal-form__form-fieldset">
 							<p>{ __( "You've turned off auto-renewal." ) }</p>
 							<p>
 								{ sprintf(
@@ -160,13 +134,13 @@ class CancelAutoRenewalForm extends Component {
 							/>
 						</fieldset>
 					}
-					// actions={
-					// 	<PrecancellationChatButton
-					// 		purchase={ purchase }
-					// 		onClick={ onClose }
-					// 		className="cancel-auto-renewal-form__chat-button"
-					// 	/>
-					// }
+					actions={
+						<PrecancellationChatButton
+							purchase={ purchase }
+							onClick={ onClose }
+							className="cancel-auto-renewal-form__chat-button"
+						/>
+					}
 				/>
 			</ConfirmDialog>
 		);
