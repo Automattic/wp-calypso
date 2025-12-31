@@ -20,7 +20,6 @@ import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
-import EmptyData from '../components/empty-data';
 import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -34,6 +33,7 @@ import {
 	getDefaultView,
 	recordViewChanges,
 } from './dataviews';
+import EmptySitesState from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
@@ -378,13 +378,15 @@ export default function Sites() {
 					<PageHeader
 						title={ __( 'Sites' ) }
 						actions={
-							<Button
-								variant="primary"
-								onClick={ () => setIsModalOpen( true ) }
-								__next40pxDefaultSize
-							>
-								{ __( 'Add new site' ) }
-							</Button>
+							! hasSites ? null : (
+								<Button
+									variant="primary"
+									onClick={ () => setIsModalOpen( true ) }
+									__next40pxDefaultSize
+								>
+									{ __( 'Add new site' ) }
+								</Button>
+							)
 						}
 					/>
 				}
@@ -395,15 +397,7 @@ export default function Sites() {
 					</>
 				}
 			>
-				{ ! isLoadingSites && ! hasSites && (
-					<EmptyData
-						title={ __( 'You don’t have any sites yet' ) }
-						description={ __(
-							'Start a site and begin creating, coding, or exploring what WordPress can do.'
-						) }
-						actions={ <div>These are the actions</div> }
-					/>
-				) }
+				{ ! isLoadingSites && ! hasSites && <EmptySitesState /> }
 				{ ( isLoadingSites || hasSites ) &&
 					( esSiteListEnabled ? (
 						<SitesDataViews< DashboardSiteListSite >
