@@ -9,12 +9,10 @@ function EmptyState( {
 	title,
 	description,
 	children,
-	suffix,
 }: {
 	title: string;
 	description: string;
 	children?: ReactNode;
-	suffix?: ReactNode;
 } ) {
 	return (
 		<Card>
@@ -30,7 +28,6 @@ function EmptyState( {
 					</VStack>
 					<VStack spacing={ 6 } style={ { maxWidth: '660px' } }>
 						{ children }
-						{ suffix }
 					</VStack>
 				</VStack>
 			</CardBody>

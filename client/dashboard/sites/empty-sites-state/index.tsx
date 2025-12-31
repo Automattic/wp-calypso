@@ -87,7 +87,78 @@ export default function EmptySitesState() {
 			description={ __(
 				'Start a site and begin creating, coding, or exploring what WordPress can do.'
 			) }
-			suffix={
+		>
+			<>
+				<EmptyState.ActionList>
+					<EmptyState.ActionItem
+						title="Create it yourself"
+						description={ __( 'Start with a clean WordPress site and make it yours.' ) }
+						decoration={
+							<WordPressLogo
+								className="dashboard-empty-state-icon" /* Dummy class. We don't want the default classes' margin */
+							/>
+						}
+						actions={
+							<Button
+								variant="primary"
+								href={ createItYourselfHref.toString() }
+								onClick={ handleCreateSiteClick }
+								size="compact"
+								__next40pxDefaultSize
+							>
+								{ __( 'Create a site' ) }
+							</Button>
+						}
+					/>
+					<EmptyState.ActionItem
+						title={ __( 'Build with AI' ) }
+						description={ __( 'Describe your idea and let AI help you refine your site.' ) }
+						decoration={ <BigSkyLogo.Mark /> }
+						actions={
+							<Button
+								variant="primary"
+								href={ createWithAiHref.toString() }
+								onClick={ handleBuildWithAiClick }
+								__next40pxDefaultSize
+								size="compact"
+							>
+								{ __( 'Build with AI' ) }
+							</Button>
+						}
+					/>
+					<EmptyState.ActionItem
+						title={ __( 'Migrate' ) }
+						description={ __( 'Bring your site to the world’s best WordPress host.' ) }
+						decoration={ reusableBlock }
+						actions={
+							<Button
+								variant="secondary"
+								href={ migrateHref }
+								onClick={ handleMigrateClick }
+								size="compact"
+								__next40pxDefaultSize
+							>
+								{ __( 'Start migration' ) }
+							</Button>
+						}
+					/>
+					<EmptyState.ActionItem
+						title={ __( 'Via the Jetpack plugin' ) }
+						description={ __( 'Install the Jetpack plugin on an existing site.' ) }
+						decoration={ <JetpackLogo /> }
+						actions={
+							<Button
+								variant="secondary"
+								href={ jetpackHref }
+								onClick={ handleJetpackClick }
+								size="compact"
+								__next40pxDefaultSize
+							>
+								{ __( 'Migrate via Jetpack' ) }
+							</Button>
+						}
+					/>
+				</EmptyState.ActionList>
 				<Card isBorderless variant="secondary">
 					<CardBody>
 						<HStack
@@ -130,78 +201,7 @@ export default function EmptySitesState() {
 						</HStack>
 					</CardBody>
 				</Card>
-			}
-		>
-			<EmptyState.ActionList>
-				<EmptyState.ActionItem
-					title="Create it yourself"
-					description={ __( 'Start with a clean WordPress site and make it yours.' ) }
-					decoration={
-						<WordPressLogo
-							className="dashboard-empty-state-icon" /* Dummy class. We don't want the default classes' margin */
-						/>
-					}
-					actions={
-						<Button
-							variant="primary"
-							href={ createItYourselfHref.toString() }
-							onClick={ handleCreateSiteClick }
-							size="compact"
-							__next40pxDefaultSize
-						>
-							{ __( 'Create a site' ) }
-						</Button>
-					}
-				/>
-				<EmptyState.ActionItem
-					title={ __( 'Build with AI' ) }
-					description={ __( 'Describe your idea and let AI help you refine your site.' ) }
-					decoration={ <BigSkyLogo.Mark /> }
-					actions={
-						<Button
-							variant="primary"
-							href={ createWithAiHref.toString() }
-							onClick={ handleBuildWithAiClick }
-							__next40pxDefaultSize
-							size="compact"
-						>
-							{ __( 'Build with AI' ) }
-						</Button>
-					}
-				/>
-				<EmptyState.ActionItem
-					title={ __( 'Migrate' ) }
-					description={ __( 'Bring your site to the world’s best WordPress host.' ) }
-					decoration={ reusableBlock }
-					actions={
-						<Button
-							variant="secondary"
-							href={ migrateHref }
-							onClick={ handleMigrateClick }
-							size="compact"
-							__next40pxDefaultSize
-						>
-							{ __( 'Start migration' ) }
-						</Button>
-					}
-				/>
-				<EmptyState.ActionItem
-					title={ __( 'Via the Jetpack plugin' ) }
-					description={ __( 'Install the Jetpack plugin on an existing site.' ) }
-					decoration={ <JetpackLogo /> }
-					actions={
-						<Button
-							variant="secondary"
-							href={ jetpackHref }
-							onClick={ handleJetpackClick }
-							size="compact"
-							__next40pxDefaultSize
-						>
-							{ __( 'Migrate via Jetpack' ) }
-						</Button>
-					}
-				/>
-			</EmptyState.ActionList>
+			</>
 		</EmptyState>
 	);
 }
