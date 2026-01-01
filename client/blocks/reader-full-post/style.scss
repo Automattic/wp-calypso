@@ -808,6 +808,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.reader-full-post__header-title-link:hover {
 		color: var( --color-neutral-70 );
 	}
+
+	.recent-feed__post-column & {
+		margin-bottom: 0;
+	}
 }
 
 .reader-full-post__header-meta {
