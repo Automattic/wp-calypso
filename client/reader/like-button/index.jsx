@@ -106,6 +106,7 @@ class ReaderLikeButton extends Component {
 					icon={ likeIcon }
 					onMouseEnter={ this.showLikesPopover }
 					onMouseLeave={ this.hideLikesPopover }
+					showTooltip={ likeCount === 0 }
 				/>
 				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
 					<PostLikesPopover
