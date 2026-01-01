@@ -43,6 +43,7 @@ export type NavigationContinuationHook = ( props: {
  */
 export type AbilitiesSetupHook = ( actions: {
 	addMessage: UseAgentChatReturn[ 'addMessage' ];
+	clearSuggestions: UseAgentChatReturn[ 'clearSuggestions' ];
 	getAgentManager: typeof getAgentManager;
 	setIsThinking: ( isThinking: boolean ) => void;
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;

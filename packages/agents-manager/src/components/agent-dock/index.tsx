@@ -98,6 +98,7 @@ export default function AgentDock( {
 		loadMessages,
 		onSubmit,
 		abortCurrentRequest,
+		clearSuggestions,
 	} = useAgentChat( agentConfig );
 
 	const {
@@ -146,6 +147,7 @@ export default function AgentDock( {
 	// The hook is stable as `AgentDock` only renders after external providers have been loaded.
 	useAbilitiesSetup?.( {
 		addMessage,
+		clearSuggestions,
 		getAgentManager,
 		setIsThinking,
 		deleteMarkedMessages: ( msgs ) => {
