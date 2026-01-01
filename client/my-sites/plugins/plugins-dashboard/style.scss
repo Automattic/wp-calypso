@@ -376,15 +376,6 @@
 
 body.is-section-plugins .hosting-dashboard-layout,
 .is-section-jetpack-cloud-plugin-management .hosting-dashboard-layout {
-
-	.hosting-dashboard-layout__top-wrapper:not( .preview-hidden ) {
-		padding-inline: 24px;
-	}
-
-	&:has( .dataviews-view-table ) .hosting-dashboard-layout__top-wrapper:not( .preview-hidden ) {
-		padding-inline: 48px;
-	}
-
 	.hosting-dashboard-layout-with-columns__container {
 		background-color: var( --color-main-background );
 	}
@@ -415,5 +406,15 @@ body.is-section-plugins .hosting-dashboard-layout,
 		padding: 0;
 		text-align: start;
 		height: auto;
+	}
+}
+
+.is-section-jetpack-cloud-plugin-management .hosting-dashboard-layout {
+	.hosting-dashboard-layout__top-wrapper:not( .preview-hidden ) {
+		padding-inline: 24px;
+	}
+
+	&:has( .dataviews-view-table ) .hosting-dashboard-layout__top-wrapper:not( .preview-hidden ) {
+		padding-inline: 48px;
 	}
 }
