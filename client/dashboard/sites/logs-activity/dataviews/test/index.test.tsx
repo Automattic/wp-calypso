@@ -228,6 +228,6 @@ test( 'data is properly displayed', async () => {
 	// check the link
 	expect( screen.getByRole( 'link', { name: 'Jetpack 15.1' } ) ).toHaveAttribute(
 		'href',
-		'/plugins/manage/jetpack'
+		'/plugins/jetpack/testsite-slug'
 	);
 } );

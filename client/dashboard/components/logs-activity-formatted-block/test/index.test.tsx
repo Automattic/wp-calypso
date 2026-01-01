@@ -285,7 +285,7 @@ describe( 'Plugin blocks', () => {
 		} );
 
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/plugins/manage/plugin-slug' );
+		expect( link ).toHaveAttribute( 'href', '/plugins/plugin-slug/site-slug' );
 	} );
 
 	test.each( [
