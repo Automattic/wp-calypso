@@ -4,7 +4,6 @@ import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import { renderFormattedContent } from '../logs-activity-formatted-block';
 import type { Activity } from './types';
 import './activity-event.scss';
-
 export function ActivityEvent( { activity }: { activity: Activity } ) {
 	const { activityDescription, activityIcon, activityTitle } = activity;
 	const formattedContent = activityDescription.items.length
