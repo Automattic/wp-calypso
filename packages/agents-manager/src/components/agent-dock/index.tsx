@@ -215,6 +215,7 @@ export default function AgentDock( {
 		<AgentChat
 			messages={ visibleMessages }
 			suggestions={ suggestions }
+			emptyViewSuggestions={ suggestions.length ? suggestions : emptyViewSuggestions }
 			isProcessing={ isProcessing || isThinking }
 			error={ error }
 			onSubmit={ onSubmit }
@@ -227,7 +228,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			emptyViewSuggestions={ emptyViewSuggestions }
 		/>
 	);
 
