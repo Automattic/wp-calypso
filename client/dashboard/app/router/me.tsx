@@ -805,10 +805,14 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		billingRoute.addChildren( [
 			billingIndexRoute,
 			billingHistoryRoute.addChildren( [ billingHistoryIndexRoute, receiptRoute ] ),
-			monetizeSubscriptionsRoute.addChildren( [
-				monetizeSubscriptionsIndexRoute,
-				monetizeSubscriptionRoute,
-			] ),
+			...( config.supports.me.billing && config.supports.me.billing.monetizeSubscriptions
+				? [
+						monetizeSubscriptionsRoute.addChildren( [
+							monetizeSubscriptionsIndexRoute,
+							monetizeSubscriptionRoute,
+						] ),
+				  ]
+				: [] ),
 			purchasesRoute.addChildren( [
 				purchasesIndexRoute,
 				purchaseSettingsRoute.addChildren( [
@@ -833,7 +837,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				securityTwoStepAuthSMSRoute,
 				securityTwoStepAuthBackupCodesRoute,
 			] ),
-			securitySshKeyRoute,
+			...( config.supports.me.security && config.supports.me.security.sshKey
+				? [ securitySshKeyRoute ]
+				: [] ),
 			securityConnectedAppsRoute,
 			securitySocialLoginsRoute,
 		] )
