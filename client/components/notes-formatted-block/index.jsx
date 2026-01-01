@@ -11,7 +11,14 @@ const FormattedBlock = ( { content, onClick = null, meta = {} } ) => {
 	}
 
 	const items = Array.isArray( content ) ? content : [ content ];
-	const rendered = renderFormattedContent( { items, onClick, meta } );
+	const rendered = renderFormattedContent( {
+		items,
+		onClick,
+		meta: {
+			...meta,
+			fromWPAdminDashboard: true,
+		},
+	} );
 
 	return <>{ rendered }</>;
 };

@@ -152,9 +152,15 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		return <Fragment>{ children }</Fragment>;
 	}
 
+	// This component is also used in the WP Admin dashboard, so we need to link to the plugin details in Calypso.
+	const href =
+		meta.fromWPAdminDashboard === true
+			? `/plugins/${ pluginSlug }/${ siteSlug }`
+			: `/plugins/manage/${ pluginSlug }`;
+
 	return (
 		<a
-			href={ `/plugins/manage/${ pluginSlug }` }
+			href={ href }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'plugins' }

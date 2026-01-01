@@ -276,7 +276,26 @@ describe( 'Plugin blocks', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( 'links to the plugin details on Calypso', () => {
+	test( 'links to the plugin details on Calypso when fromWPAdminDashboard is true', () => {
+		renderFormatted(
+			{
+				type: 'plugin',
+				pluginSlug: 'plugin-slug',
+				siteSlug: 'site-slug',
+				children: [ 'A plugin' ],
+			},
+			{
+				meta: {
+					fromWPAdminDashboard: true,
+				},
+			}
+		);
+
+		const link = screen.getByRole( 'link' );
+		expect( link ).toHaveAttribute( 'href', '/plugins/plugin-slug/site-slug' );
+	} );
+
+	test( 'links to the plugin details in the multi-site dashboard', () => {
 		renderFormatted( {
 			type: 'plugin',
 			pluginSlug: 'plugin-slug',
