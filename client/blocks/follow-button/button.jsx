@@ -83,7 +83,6 @@ class FollowButton extends Component {
 		const attributes = {
 			onClick: this.toggleFollow,
 			className: menuClasses.join( ' ' ),
-			title: label,
 		};
 
 		if ( this.props.following ) {
