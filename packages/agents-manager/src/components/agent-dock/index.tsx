@@ -208,7 +208,7 @@ export default function AgentDock( {
 			messages.filter(
 				( message ) =>
 					! deletedMessageIds.has( message.id ) &&
-					! message.content.some( ( content ) => content.text === LOCAL_TOOL_RUNNING_MESSAGE )
+					! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 			),
 		[ messages, deletedMessageIds ]
 	);
