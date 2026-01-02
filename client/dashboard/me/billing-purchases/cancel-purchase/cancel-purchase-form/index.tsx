@@ -339,7 +339,7 @@ function StepButtons( {
 		return (
 			<ButtonStack justify="flex-start">
 				<Button
-					disabled={ ! canGoNext || disableButtons /* || disableContinuation || applyingOffer*/ }
+					disabled={ ! canGoNext || disableButtons }
 					isBusy={ isCancelling }
 					onClick={ onSubmit }
 					variant="primary"
