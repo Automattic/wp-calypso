@@ -348,7 +348,7 @@ function StepButtons( {
 				</Button>
 				<Button
 					className="jetpack-cancellation-offer__accept-cta"
-					disabled={ isApplyingOffer ?? ( false || Boolean( offerApplyError ) ) ?? false }
+					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
 					isBusy={ isApplyingOffer ?? false }
 					onClick={ () => {
 						onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
