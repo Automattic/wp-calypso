@@ -28,6 +28,8 @@ export function register(): typeof STORE_KEY {
 				'userDeclaredSite',
 				'userDeclaredSiteUrl',
 				'subject',
+				'loggedOutOdieChat',
+				// TODO: only persist these if the user is logged out
 				'helpCenterRouterHistory',
 				'helpCenterMinimized',
 				'showHelpCenter',

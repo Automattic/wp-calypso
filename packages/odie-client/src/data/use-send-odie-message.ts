@@ -1,5 +1,7 @@
+import { HelpCenter } from '@automattic/data-stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
@@ -19,6 +21,8 @@ import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 function getBotSlug(
 	supportInteraction: SupportInteraction | undefined,
@@ -63,6 +67,7 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
  */
 export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const { setLoggedOutOdieChat } = useDispatch( HELP_CENTER_STORE );
 	const { currentUser } = useOdieAssistantContext();
 	const location = useLocation();
 	const isLoggedIn = !! currentUser?.ID;
@@ -129,8 +134,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			params.set( 'chatId', chatId );
 			params.set( 'sessionId', sessionId );
 			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+			setLoggedOutOdieChat( { odieId: chatId, sessionId } );
 		},
-		[ location.pathname, location.search, navigate ]
+		[ location.pathname, location.search, navigate, setLoggedOutOdieChat ]
 	);
 
 	const hasBeenWarnedAboutExistingConversation = chat?.messages?.some(

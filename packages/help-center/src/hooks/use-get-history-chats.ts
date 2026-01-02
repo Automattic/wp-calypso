@@ -1,6 +1,8 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { convertOdieChatToOdieConversation } from '@automattic/odie-client';
 import { useGetOdieConversations } from '@automattic/odie-client/src/data/use-get-odie-conversations';
+import { useOdieChat } from '@automattic/odie-client/src/data/use-odie-chat';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import {
@@ -129,13 +131,25 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
 
-	const { isChatLoaded } = useSelect( ( select ) => {
+	const { isChatLoaded, loggedOutOdieChat } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
 		return {
 			isChatLoaded: store.getIsChatLoaded(),
+			loggedOutOdieChat: store.getLoggedOutOdieChat(),
 		};
 	}, [] );
+
+	const loggedOutChat = useOdieChat(
+		loggedOutOdieChat ? loggedOutOdieChat.odieId : null,
+		loggedOutOdieChat ? loggedOutOdieChat.sessionId : null
+	);
+
+	useEffect( () => {
+		if ( loggedOutChat.data ) {
+			setRecentConversations( [ convertOdieChatToOdieConversation( loggedOutChat.data ) ] );
+		}
+	}, [ loggedOutChat.data ] );
 
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk' );
