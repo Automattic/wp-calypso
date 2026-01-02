@@ -131,25 +131,27 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
 
-	const { isChatLoaded, loggedOutOdieChat } = useSelect( ( select ) => {
+	const { isChatLoaded, loggedOutSession } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
 		return {
 			isChatLoaded: store.getIsChatLoaded(),
-			loggedOutOdieChat: store.getLoggedOutOdieChat(),
+			loggedOutSession: store.getLoggedOutOdieChat(),
 		};
 	}, [] );
 
 	const loggedOutChat = useOdieChat(
-		loggedOutOdieChat ? loggedOutOdieChat.odieId : null,
-		loggedOutOdieChat ? loggedOutOdieChat.sessionId : null
+		loggedOutSession ? loggedOutSession.odieId : null,
+		loggedOutSession ? loggedOutSession.sessionId : null
 	);
 
 	useEffect( () => {
 		if ( loggedOutChat.data ) {
-			setRecentConversations( [ convertOdieChatToOdieConversation( loggedOutChat.data ) ] );
+			setRecentConversations( [
+				convertOdieChatToOdieConversation( loggedOutChat.data, loggedOutSession?.sessionId || '' ),
+			] );
 		}
-	}, [ loggedOutChat.data ] );
+	}, [ loggedOutChat.data, loggedOutSession?.sessionId ] );
 
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk' );
@@ -182,6 +184,14 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 				odieConversations,
 				odieSupportInteractions || []
 			),
+			...( loggedOutSession && loggedOutChat.data
+				? [
+						convertOdieChatToOdieConversation(
+							loggedOutChat.data,
+							loggedOutSession?.sessionId || ''
+						),
+				  ]
+				: [] ),
 		]
 			.filter( ( conversation ) => isValidLastMessageContent( conversation ) )
 			.sort( ( a, b ) => getLastMessageReceived( b ) - getLastMessageReceived( a ) );
@@ -192,6 +202,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	}, [
 		isChatLoaded,
 		isLoadingInteractions,
+		loggedOutSession,
+		loggedOutChat.data,
 		odieSupportInteractions,
 		otherSupportInteractions,
 		odieConversations,
