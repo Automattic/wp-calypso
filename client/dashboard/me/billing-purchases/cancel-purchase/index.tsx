@@ -660,19 +660,7 @@ export default function CancelPurchase() {
 	};
 
 	const clickNext = () => {
-		changeSurveyStep(
-			nextStep(
-				state.surveyStep ?? '',
-				getAllSurveySteps( {
-					purchase,
-					upsell: state.upsell,
-					cancellationOffer,
-					hasQuestionTwo: Boolean( questionTwoOrder.length ),
-					plans,
-					userHasCompletedCancelSurveyForPurchase,
-				} )
-			)
-		);
+		changeSurveyStep( nextStep( state.surveyStep ?? '', allSteps ) );
 	};
 
 	const closeDialog = () => {
