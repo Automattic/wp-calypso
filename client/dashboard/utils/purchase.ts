@@ -306,7 +306,13 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 	}
 
 	if ( purchase.is_plan ) {
-		return __( 'Site Plan' );
+		return sprintf(
+			// translators: site is the domain of the site the plan applies to.
+			__( 'Site plan for %(site)s' ),
+			{
+				site: purchase.site_slug || purchase.domain,
+			}
+		);
 	}
 
 	if ( purchase.is_domain_registration ) {
