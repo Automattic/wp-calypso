@@ -408,3 +408,13 @@ body.is-section-plugins .hosting-dashboard-layout,
 		height: auto;
 	}
 }
+
+.is-section-jetpack-cloud-plugin-management .hosting-dashboard-layout {
+	.hosting-dashboard-layout__top-wrapper:not( .preview-hidden ) {
+		padding-inline: 24px;
+	}
+
+	&:has( .dataviews-view-table ) .hosting-dashboard-layout__top-wrapper:not( .preview-hidden ) {
+		padding-inline: 48px;
+	}
+}
