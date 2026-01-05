@@ -23,7 +23,7 @@ import {
 	DASHBOARD_SECTION_DEFINITION,
 	DASHBOARD_CIAB_SECTION_DEFINITION,
 } from 'calypso/dashboard/section';
-import isDashboard from 'calypso/dashboard/utils/is-dashboard';
+import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -1048,7 +1048,7 @@ export default function pages() {
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );
 
-	if ( ! ( isJetpackCloud() || isA8CForAgencies() || isDashboard() ) ) {
+	if ( ! ( isJetpackCloud() || isA8CForAgencies() || isDashboardEnv() ) ) {
 		wpcomPages( app );
 	}
 
@@ -1185,7 +1185,7 @@ export default function pages() {
 
 	// Multi-site Dashboard routing for my.wordpress.com.
 	// Return earlier since we don't need to set up any other routes.
-	if ( isDashboard() ) {
+	if ( isDashboardEnv() ) {
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom' );
 		} );
