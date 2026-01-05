@@ -83,6 +83,9 @@ class FollowButton extends Component {
 		const attributes = {
 			onClick: this.toggleFollow,
 			className: menuClasses.join( ' ' ),
+			'aria-label': this.props.following
+				? this.props.translate( 'Unsubscribe' )
+				: this.props.translate( 'Subscribe' ),
 		};
 
 		if ( this.props.following ) {

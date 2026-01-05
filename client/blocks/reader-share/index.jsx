@@ -136,6 +136,11 @@ class ReaderShare extends Component {
 						this.toggle();
 					} }
 					ref={ this.shareButton }
+					aria-label={
+						this.props.isReblogSelection
+							? translate( 'Repost with your thoughts' )
+							: translate( 'Share' )
+					}
 					data-tooltip={
 						this.props.isReblogSelection
 							? translate( 'Repost with your thoughts' )

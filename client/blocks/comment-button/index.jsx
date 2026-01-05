@@ -29,6 +29,7 @@ function CommentButton( {
 			className={ clsx( 'comment-button', {
 				tooltip: showTooltip,
 			} ) }
+			aria-label={ translate( 'Comment' ) }
 			data-tooltip={ showTooltip ? translate( 'Comment' ) : undefined }
 			onClick={ onClick }
 			href={ 'a' === TagName ? href : undefined }

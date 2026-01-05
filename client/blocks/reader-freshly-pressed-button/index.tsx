@@ -112,11 +112,11 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 				'freshly-pressed',
 				`freshly-pressed--is-status-${ eligibility?.status ?? 'loading' }`
 			) }
-			aria-label={ config?.label }
 			aria-busy={ isLoading }
 		>
 			<button
 				{ ...( config?.tooltip && { 'data-tooltip': config.tooltip } ) }
+				aria-label={ config?.label }
 				onClick={ handleClick }
 				disabled={ ! isEligible || isLoading || isSuggestionSuccess }
 				className={ clsx( 'freshly-pressed__button', {
