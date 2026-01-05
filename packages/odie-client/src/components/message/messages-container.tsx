@@ -150,8 +150,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				{ chat.provider === 'odie' && chat.status === 'transfer' && (
 					<ThinkingPlaceholder
 						content={
-							__( 'Connecting to the support team…', __i18n_text_domain__ ) +
-							( isTestMode ? ' (ZENDESK STAGING)' : '' )
+							__( 'Connecting to the support team', __i18n_text_domain__ ) +
+							( isTestMode ? '… (ZENDESK STAGING)' : '…' )
 						}
 					/>
 				) }
