@@ -5,14 +5,12 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	getPlan,
 } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
-import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text';
 import { useSelector } from 'calypso/state';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
@@ -128,10 +126,11 @@ export const PlanUSPS: React.FC< Props > = ( {
 	const isPreInstalledPlugin = ! isJetpack && PREINSTALLED_PLUGINS.includes( pluginSlug );
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
-	const supportText = usePluginsSupportText();
 	const requiredPlan = useRequiredPlan( shouldUpgrade );
 	const planDisplayCost = useSelector( ( state ) => {
-		return getProductDisplayCost( state, requiredPlan || '' );
+		// Always use Personal plan for the "starting at" price
+		const personalPlan = isAnnualPeriod ? PLAN_PERSONAL : PLAN_PERSONAL_MONTHLY;
+		return getProductDisplayCost( state, personalPlan );
 	} );
 	const monthlyLabel = translate( 'month' );
 	const annualLabel = translate( 'year' );
@@ -142,36 +141,15 @@ export const PlanUSPS: React.FC< Props > = ( {
 	}
 
 	let planText;
-	switch ( requiredPlan ) {
-		case PLAN_PERSONAL:
-		case PLAN_PERSONAL_MONTHLY:
-			planText = translate(
-				'Included in the %(personalPlanName)s plan (%(cost)s/%(periodicity)s):',
-				{
-					args: {
-						personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() as string,
-						cost: planDisplayCost as string,
-						periodicity: periodicityLabel,
-					},
-				}
-			);
-			break;
-		case PLAN_BUSINESS:
-		case PLAN_BUSINESS_MONTHLY:
-			planText = translate(
-				'Included in the %(businessPlanName)s plan (%(cost)s/%(periodicity)s):',
-				{
-					args: {
-						businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() as string,
-						cost: planDisplayCost as string,
-						periodicity: periodicityLabel,
-					},
-				}
-			);
-			break;
-		case PLAN_ECOMMERCE_TRIAL_MONTHLY:
-			planText = translate( 'Included in ecommerce plans:' );
-			break;
+	if ( requiredPlan === PLAN_ECOMMERCE_TRIAL_MONTHLY ) {
+		planText = translate( 'Included in ecommerce plans:' );
+	} else {
+		planText = translate( 'Included on all paid plans (starting at %(cost)s/%(periodicity)s):', {
+			args: {
+				cost: planDisplayCost as string,
+				periodicity: periodicityLabel,
+			},
+		} );
 	}
 
 	const preInstalledPluginUSPS = [
@@ -187,7 +165,8 @@ export const PlanUSPS: React.FC< Props > = ( {
 	const filteredUSPS = [
 		...( isFreePlan && isAnnualPeriod ? [ translate( 'Free domain for one year' ) ] : [] ),
 		translate( 'Best-in-class hosting' ),
-		supportText,
+		translate( 'Access to thousands of plugins' ),
+		translate( 'Expert support' ),
 		...( isPreInstalledPlugin ? preInstalledPluginUSPS : [] ),
 		...( requiredPlan === PLAN_ECOMMERCE_TRIAL_MONTHLY
 			? [ translate( 'Tools for store management and growth' ) ]
