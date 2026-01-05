@@ -26,7 +26,7 @@ Solution:
 
 ```
 cd <repo_root>test/e2e
-find . -name 'node_modules' -type d -prune
+find . -name 'node_modules' type -d -prune
 rm -rf node_modules
 ```
 
