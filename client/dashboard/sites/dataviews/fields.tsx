@@ -216,6 +216,19 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			},
 			render: ( { field, item } ) => field.getValue( { item } ),
 		},
+		{
+			id: 'is_deleted',
+			type: 'boolean',
+			label: __( 'Deleted' ),
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			enableHiding: false,
+		},
 	];
 }
 
@@ -425,6 +438,19 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			},
 			render: ( { field, item } ) => field.getValue( { item } ),
 			enableSorting: false,
+		},
+		{
+			id: 'is_deleted',
+			type: 'boolean',
+			label: __( 'Deleted' ),
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			enableHiding: false,
 		},
 	];
 }
