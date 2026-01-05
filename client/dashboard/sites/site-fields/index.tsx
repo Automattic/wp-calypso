@@ -29,7 +29,7 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
-import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
+import { getSiteStatus, getSiteStatusLabel, getSiteVisibilityLabel } from '../../utils/site-status';
 import { isP2 } from '../../utils/site-types';
 import { getSiteFormattedUrl } from '../../utils/site-url';
 import { canManageSite, canManageSite__ES } from '../features';
@@ -547,6 +547,15 @@ export function Status( { site, isOwner }: { site: Site; isOwner?: boolean } ) {
 	}
 
 	return renderBasicStatus();
+}
+
+export function Visibility( { site }: { site: Site } ) {
+	return (
+		<VStack spacing={ 1 }>
+			<span>{ getSiteVisibilityLabel( site ) }</span>
+			{ site.launch_status === 'unlaunched' && <SiteLaunchNag site={ site } /> }
+		</VStack>
+	);
 }
 
 export function Plan( {

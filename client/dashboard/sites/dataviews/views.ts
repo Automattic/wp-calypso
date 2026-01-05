@@ -40,7 +40,7 @@ const DEFAULT_VIEW: Partial< View > = {
 	perPage: DEFAULT_PER_PAGE,
 	fields: isEnabled( 'dashboard/v2/es-site-list' )
 		? [ 'visitors', 'subscribers_count', 'plan' ]
-		: [ 'status', 'visitors', 'subscribers_count', 'plan' ],
+		: [ 'visibility', 'visitors', 'subscribers_count', 'plan' ],
 	sort: {
 		field: isEnabled( 'dashboard/v2/es-site-list' ) ? 'URL' : 'name',
 		direction: 'asc' as SortDirection,

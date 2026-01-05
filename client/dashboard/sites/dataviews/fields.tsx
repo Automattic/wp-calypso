@@ -9,7 +9,12 @@ import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { getSiteStatus, getStatusLabels } from '../../utils/site-status';
+import {
+	getSiteStatus,
+	getStatusLabels,
+	getSiteVisibility,
+	getVisibilityLabels,
+} from '../../utils/site-status';
 import {
 	isSelfHostedJetpackConnected,
 	isSelfHostedJetpackConnected__ES,
@@ -32,6 +37,7 @@ import {
 	URL,
 	Uptime,
 	URLRenderer,
+	Visibility,
 } from '../site-fields';
 import type { AppConfig } from '../../app/context';
 import type { Site, DashboardSiteListSite } from '@automattic/api-core';
@@ -39,6 +45,7 @@ import type { Field, Operator } from '@wordpress/dataviews';
 
 function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 	const statusLabels = getStatusLabels();
+	const visibilityLabels = getVisibilityLabels();
 	return [
 		{
 			id: 'name',
@@ -123,6 +130,19 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 				const { user } = useAuth();
 				return <Status site={ item } isOwner={ item.site_owner === user.ID } />;
 			},
+		},
+		{
+			id: 'visibility',
+			label: __( 'Visibility' ),
+			getValue: ( { item } ) => getSiteVisibility( item ),
+			elements: Object.entries( visibilityLabels ).map( ( [ value, label ] ) => ( {
+				value,
+				label,
+			} ) ),
+			filterBy: {
+				operators: [ 'isAny' as Operator ],
+			},
+			render: ( { item } ) => <Visibility site={ item } />,
 		},
 		{
 			id: 'wp_version',

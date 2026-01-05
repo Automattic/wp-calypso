@@ -23,5 +23,14 @@ export function sanitizeView( view: View, fields: Field< any >[] ) {
 		}
 	}
 
+	view.fields = view.fields?.map( ( field ) => {
+		// Replace the `Status` column with `Visibility` column.
+		if ( field === 'status' ) {
+			return 'visibility';
+		}
+
+		return field;
+	} );
+
 	return sanitized;
 }

@@ -21,6 +21,14 @@ export function getStatusLabels() {
 	};
 }
 
+export function getVisibilityLabels() {
+	return {
+		public: _x( 'Public', 'site' ),
+		private: _x( 'Private', 'site' ),
+		coming_soon: _x( 'Coming soon', 'site' ),
+	};
+}
+
 export function getSiteStatus( item: Site ) {
 	if ( item.is_deleted ) {
 		return 'deleted';
@@ -41,6 +49,10 @@ export function getSiteStatus( item: Site ) {
 		return 'difm_lite_in_progress';
 	}
 
+	return getSiteVisibility( item );
+}
+
+export function getSiteVisibility( item: Site ) {
 	if ( item.is_coming_soon || ( item.is_private && item.launch_status === 'unlaunched' ) ) {
 		return 'coming_soon';
 	}
@@ -86,4 +98,9 @@ export function isSiteMigrationInProgress( item: Site ) {
 export function getSiteStatusLabel( item: Site ) {
 	const statusLabels = getStatusLabels();
 	return statusLabels[ getSiteStatus( item ) ];
+}
+
+export function getSiteVisibilityLabel( item: Site ) {
+	const visibilityLabels = getVisibilityLabels();
+	return visibilityLabels[ getSiteVisibility( item ) ];
 }
