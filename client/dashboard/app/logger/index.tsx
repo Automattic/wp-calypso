@@ -27,7 +27,7 @@ function isBenignError( error: Error ) {
 		switch ( error.name ) {
 			case 'AbortError':
 			case 'InvalidStateError':
-				return error.stack?.includes( 'startViewTransition' );
+				return error.message.includes( 'transition' );
 		}
 	}
 
