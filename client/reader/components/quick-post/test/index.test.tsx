@@ -120,7 +120,7 @@ describe( 'QuickPost', () => {
 				content: 'Test post',
 				status: 'publish',
 			} )
-			.reply( 200, { id: 123 } );
+			.reply( 200, { ID: 123, URL: 'https://example.com/test-post' } );
 
 		renderWithProvider( <QuickPost /> );
 		await userEvent.type(
@@ -130,8 +130,14 @@ describe( 'QuickPost', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Post' } ) );
 
 		await waitFor( async () => {
-			expect( nock.isDone() ).toBe( true );
-			expect( successNotice ).toHaveBeenCalledTimes( 1 );
+			expect( successNotice ).toHaveBeenCalledWith(
+				'Post successful! Your post will appear in the feed soon.',
+				{
+					button: 'View Post.',
+					href: 'https://example.com/test-post',
+					onClick: expect.any( Function ),
+				}
+			);
 		} );
 	} );
 
@@ -144,7 +150,7 @@ describe( 'QuickPost', () => {
 				content: 'Test post',
 				status: 'publish',
 			} )
-			.reply( 200, { id: 123 } );
+			.reply( 200, { ID: 1234, URL: 'https://example.com/test-post' } );
 
 		renderWithProvider( <QuickPost /> );
 		await userEvent.type(
@@ -154,7 +160,11 @@ describe( 'QuickPost', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Post' } ) );
 
 		await waitFor( async () => {
-			expect( mockTrackEvent ).toHaveBeenCalledTimes( 1 );
+			expect( mockTrackEvent ).toHaveBeenCalledWith( 'calypso_reader_quick_post_submitted', {
+				post_id: 1234,
+				post_url: 'https://example.com/test-post',
+				site_id: 123,
+			} );
 		} );
 	} );
 
@@ -168,6 +178,7 @@ describe( 'QuickPost', () => {
 			.reply( 500, { error: 'Internal Server Error' } );
 
 		renderWithProvider( <QuickPost /> );
+
 		await userEvent.type(
 			screen.getByRole( 'textbox', { name: 'Quick post editor' } ),
 			'Test post'
@@ -175,7 +186,12 @@ describe( 'QuickPost', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Post' } ) );
 
 		await waitFor( async () => {
-			expect( errorNotice ).toHaveBeenCalledTimes( 1 );
+			expect( errorNotice ).toHaveBeenCalledWith(
+				'Sorry, something went wrong. Please try again.',
+				{
+					duration: 5000,
+				}
+			);
 		} );
 	} );
 
@@ -183,7 +199,7 @@ describe( 'QuickPost', () => {
 		const mockTrackEvent = jest.fn();
 		( useRecordReaderTracksEvent as jest.Mock ).mockReturnValue( mockTrackEvent );
 
-		const saveDraft = nock( 'https://public-api.wordpress.com:443' )
+		nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/sites/123/posts/new', {
 				title: 'Test post...',
 				content: 'Test post',
@@ -192,6 +208,7 @@ describe( 'QuickPost', () => {
 			.reply( 200, { ID: 1234 } );
 
 		renderWithProvider( <QuickPost /> );
+
 		await userEvent.type(
 			screen.getByRole( 'textbox', { name: 'Quick post editor' } ),
 			'Test post'
@@ -201,7 +218,6 @@ describe( 'QuickPost', () => {
 		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'Open Full Editor' } ) );
 
 		await waitFor( async () => {
-			expect( saveDraft.isDone() ).toBe( true );
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				'https://example.com/wp-admin/post.php?post=1234&action=edit'
 			);
