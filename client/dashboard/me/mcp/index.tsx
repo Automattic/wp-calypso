@@ -176,13 +176,13 @@ function McpComponent() {
 					newSites = newSites.filter( ( _site: McpSite, index: number ) => index !== siteIndex );
 				}
 			} else if ( siteIndex >= 0 ) {
-				// Update existing site entry
+				// Disabling: update existing site entry
 				newSites[ siteIndex ] = {
 					...newSites[ siteIndex ],
 					account_tools_enabled: false,
 				};
 			} else {
-				// Add new site entry with override
+				// Disabling: add new site entry with override
 				newSites.push( {
 					blog_id: siteId,
 					account_tools_enabled: false,
@@ -246,7 +246,7 @@ function McpComponent() {
 									<VStack key={ categoryName } spacing={ 4 }>
 										<Text
 											as="h4"
-											size="x-small"
+											size="11px"
 											weight={ 500 }
 											style={ { textTransform: 'uppercase' } }
 										>
