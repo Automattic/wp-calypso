@@ -1,3 +1,4 @@
+import { DashboardDataError, INACCESSIBLE_JETPACK_ERROR_CODE } from '@automattic/api-core';
 import calypsoConfig from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
@@ -5,7 +6,35 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
-export const handleOnCatch = (
+function isBenignError( error: Error ) {
+	// Ignore errors related to missing auth tokens.
+	// The user will get redirected to the login page / second auth factor.
+	switch ( error.name ) {
+		case 'AuthorizationRequiredError':
+		case 'ReauthorizationRequiredError':
+			return true;
+	}
+
+	// Ignore errors related to inaccessible Jetpack sites.
+	// The user is expected to debug their Jetpack sites.
+	if ( error instanceof DashboardDataError ) {
+		return error.code === INACCESSIBLE_JETPACK_ERROR_CODE;
+	}
+
+	// Ignore errors related to view transitions.
+	// Those are triggered by the browser when the user tries to navigate away from a page that is still transitioning.
+	if ( error instanceof DOMException ) {
+		switch ( error.name ) {
+			case 'AbortError':
+			case 'InvalidStateError':
+				return error.stack?.includes( 'startViewTransition' );
+		}
+	}
+
+	return false;
+}
+
+export function handleOnCatch(
 	error: Error,
 	errorInfo: ErrorInfo,
 	router: AnyRouter,
@@ -14,9 +43,8 @@ export const handleOnCatch = (
 		dashboard_backport?: boolean;
 		calypso_section?: string;
 	}
-) => {
-	const code = ( error as any ).error;
-	if ( code === 'authorization_required' || code === 'reauthorization_required' ) {
+) {
+	if ( isBenignError( error ) ) {
 		return;
 	}
 
@@ -52,4 +80,4 @@ export const handleOnCatch = (
 			},
 		} );
 	}
-};
+}
