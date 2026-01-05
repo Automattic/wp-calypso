@@ -49,7 +49,7 @@ interface CancelPurchaseFormProps {
 	downgradePlanToPersonalPrice?: number;
 	flowType?: string;
 	freeMonthOfferClick?: () => void;
-	getAllSurveySteps?: () => string[];
+	allSteps: string[];
 	hasBackupsFeature?: boolean;
 	importQuestionRadio?: string;
 	includedDomainPurchase?: Purchase;
@@ -92,350 +92,349 @@ interface CancelPurchaseFormProps {
 	willAtomicSiteRevert?: boolean;
 }
 
-export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
-	const { purchase, siteSlug } = props;
-	/**
-	 * Get possible steps for the survey
-	 */
-	const surveyContent = () => {
-		const {
-			atomicRevertCheckOne,
-			atomicRevertCheckTwo,
-			atomicRevertOnClickCheckOne,
-			atomicRevertOnClickCheckTwo,
-			atomicTransfer,
-			cancellationOffer,
-			clickNext,
-			closeDialog,
-			downgradeClick,
-			downgradePlan,
-			flowType,
-			freeMonthOfferClick,
-			getAllSurveySteps,
-			hasBackupsFeature,
-			isImport,
-			offerDiscountBasedFromPurchasePrice,
-			onGetCancellationOffer,
-			onImportRadioChange,
-			onNextAdventureValidationChange,
-			onRadioOneChange,
-			onRadioTwoChange,
-			onSubmit,
-			onTextOneChange,
-			onTextThreeChange,
-			onTextTwoChange,
-			plans,
-			purchase,
-			questionOneOrder,
-			questionOneText,
-			questionTwoOrder,
-			refundAmount,
-			surveyStep,
-			upsell,
-		} = props;
-		const { product_name: productName } = purchase;
-		if ( surveyStep === FEEDBACK_STEP ) {
+function SurveyContent( {
+	atomicRevertCheckOne,
+	atomicRevertCheckTwo,
+	atomicRevertOnClickCheckOne,
+	atomicRevertOnClickCheckTwo,
+	atomicTransfer,
+	cancellationOffer,
+	clickNext,
+	closeDialog,
+	downgradeClick,
+	downgradePlan,
+	flowType,
+	freeMonthOfferClick,
+	allSteps,
+	hasBackupsFeature,
+	isImport,
+	offerDiscountBasedFromPurchasePrice,
+	onGetCancellationOffer,
+	onImportRadioChange,
+	onNextAdventureValidationChange,
+	onRadioOneChange,
+	onRadioTwoChange,
+	onSubmit,
+	onTextOneChange,
+	onTextThreeChange,
+	onTextTwoChange,
+	plans,
+	purchase,
+	questionOneOrder,
+	questionOneText,
+	questionTwoOrder,
+	refundAmount,
+	surveyStep,
+	upsell,
+	siteSlug,
+	cancelBundledDomain,
+	cancellationInProgress,
+	includedDomainPurchase,
+	isAkismet,
+}: CancelPurchaseFormProps ) {
+	const { product_name: productName } = purchase;
+	if ( surveyStep === FEEDBACK_STEP ) {
+		return (
+			<FeedbackStep
+				cancellationReasonCodes={ questionOneOrder }
+				isImport={ isImport ?? false }
+				onChangeCancellationReason={ onRadioOneChange }
+				onChangeCancellationReasonDetails={ onTextOneChange }
+				onChangeImportFeedback={ onImportRadioChange }
+				plans={ plans }
+				purchase={ purchase }
+			/>
+		);
+	}
+
+	if ( surveyStep === UPSELL_STEP ) {
+		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
+
+		if ( upsell?.startsWith( 'education:' ) ) {
 			return (
-				<FeedbackStep
-					cancellationReasonCodes={ questionOneOrder }
-					isImport={ isImport ?? false }
-					onChangeCancellationReason={ onRadioOneChange }
-					onChangeCancellationReasonDetails={ onTextOneChange }
-					onChangeImportFeedback={ onImportRadioChange }
-					plans={ plans }
-					purchase={ purchase }
-				/>
-			);
-		}
-
-		if ( surveyStep === UPSELL_STEP ) {
-			const allSteps = getAllSurveySteps && getAllSurveySteps();
-			const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
-
-			if ( upsell?.startsWith( 'education:' ) ) {
-				return (
-					<EducationContentStep
-						cancellationReason={ questionOneText }
-						onDecline={ isLastStep ? onSubmit : clickNext }
-						siteSlug={ siteSlug }
-						type={ upsell }
-					/>
-				);
-			}
-
-			return (
-				<UpsellStep
-					cancelBundledDomain={ props.cancelBundledDomain }
-					cancellationInProgress={ props.cancellationInProgress }
+				<EducationContentStep
 					cancellationReason={ questionOneText }
-					closeDialog={ closeDialog }
-					currencyCode={ purchase.currency_code }
-					downgradePlan={ downgradePlan }
-					includedDomainPurchase={ props.includedDomainPurchase }
-					onClickDowngrade={ downgradeClick }
-					onClickFreeMonthOffer={ freeMonthOfferClick }
-					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
-					plans={ plans }
-					purchase={ purchase }
-					refundAmount={ refundAmount }
-					upsell={ upsell ?? '' }
-				/>
-			);
-		}
-
-		if ( surveyStep === NEXT_ADVENTURE_STEP ) {
-			return (
-				<NextAdventureStep
-					adventureOptions={ questionTwoOrder ?? [] }
-					isPlan={ purchase.is_plan }
-					onChangeNextAdventureDetails={ onTextTwoChange }
-					onChangeText={ onTextThreeChange }
-					onSelectNextAdventure={ onRadioTwoChange }
-					onValidationChange={ onNextAdventureValidationChange }
-				/>
-			);
-		}
-
-		if ( surveyStep === ATOMIC_REVERT_STEP ) {
-			return (
-				<AtomicRevertStep
-					atomicRevertCheckOne={ atomicRevertCheckOne ?? false }
-					atomicRevertCheckTwo={ atomicRevertCheckTwo ?? false }
-					atomicTransfer={ atomicTransfer }
-					hasBackupsFeature={ hasBackupsFeature ?? false }
-					isRemovePlan={ flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_plan }
-					onClickCheckOne={ atomicRevertOnClickCheckOne }
-					onClickCheckTwo={ atomicRevertOnClickCheckTwo }
-					purchase={ purchase }
+					onDecline={ isLastStep ? onSubmit : clickNext }
 					siteSlug={ siteSlug }
+					type={ upsell }
 				/>
 			);
 		}
 
-		if ( surveyStep === REMOVE_PLAN_STEP ) {
-			return (
-				<>
-					<span className="cancel-purchase-form__remove-plan-text">
-						{ sprintf(
-							/* Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business" */
+		return (
+			<UpsellStep
+				cancelBundledDomain={ cancelBundledDomain }
+				cancellationInProgress={ cancellationInProgress }
+				cancellationReason={ questionOneText }
+				closeDialog={ closeDialog }
+				currencyCode={ purchase.currency_code }
+				downgradePlan={ downgradePlan }
+				includedDomainPurchase={ includedDomainPurchase }
+				onClickDowngrade={ downgradeClick }
+				onClickFreeMonthOffer={ freeMonthOfferClick }
+				onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
+				plans={ plans }
+				purchase={ purchase }
+				refundAmount={ refundAmount }
+				upsell={ upsell ?? '' }
+			/>
+		);
+	}
+
+	if ( surveyStep === NEXT_ADVENTURE_STEP ) {
+		return (
+			<NextAdventureStep
+				adventureOptions={ questionTwoOrder ?? [] }
+				isPlan={ purchase.is_plan }
+				onChangeNextAdventureDetails={ onTextTwoChange }
+				onChangeText={ onTextThreeChange }
+				onSelectNextAdventure={ onRadioTwoChange }
+				onValidationChange={ onNextAdventureValidationChange }
+			/>
+		);
+	}
+
+	if ( surveyStep === ATOMIC_REVERT_STEP ) {
+		return (
+			<AtomicRevertStep
+				atomicRevertCheckOne={ atomicRevertCheckOne ?? false }
+				atomicRevertCheckTwo={ atomicRevertCheckTwo ?? false }
+				atomicTransfer={ atomicTransfer }
+				hasBackupsFeature={ hasBackupsFeature ?? false }
+				isRemovePlan={ flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_plan }
+				onClickCheckOne={ atomicRevertOnClickCheckOne }
+				onClickCheckTwo={ atomicRevertOnClickCheckTwo }
+				purchase={ purchase }
+				siteSlug={ siteSlug }
+			/>
+		);
+	}
+
+	if ( surveyStep === REMOVE_PLAN_STEP ) {
+		return (
+			<>
+				<span className="cancel-purchase-form__remove-plan-text">
+					{ sprintf(
+						/* Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business" */
+						__(
+							'If you remove your plan, you will lose access to the features of the %(planName)s plan.'
+						),
+						{
+							planName: productName,
+						}
+					) }
+				</span>
+				<span className="cancel-purchase-form__remove-plan-text">
+					{ createInterpolateElement(
+						sprintf(
+							/* Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022" */
 							__(
-								'If you remove your plan, you will lose access to the features of the %(planName)s plan.'
+								'If you keep your plan, you will be able to continue using your %(planName)s plan features until <strong>%(purchaseRenewalDate)s</strong>.'
 							),
 							{
 								planName: productName,
+								purchaseRenewalDate: intlFormat( purchase.expiry_date, {
+									dateStyle: 'medium',
+								} ),
 							}
-						) }
-					</span>
-					<span className="cancel-purchase-form__remove-plan-text">
-						{ createInterpolateElement(
-							sprintf(
-								/* Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022" */
-								__(
-									'If you keep your plan, you will be able to continue using your %(planName)s plan features until <strong>%(purchaseRenewalDate)s</strong>.'
-								),
-								{
-									planName: productName,
-									purchaseRenewalDate: intlFormat( purchase.expiry_date, {
-										dateStyle: 'medium',
-									} ),
-								}
-							),
-							{
-								strong: <strong className="is-highlighted" />,
-							}
-						) }
-					</span>
-				</>
-			);
-		}
-		// Step 3: Offer
-		// This step is only made available after offers are checked for/ loaded.
-		if ( surveyStep === CANCELLATION_OFFER_STEP && cancellationOffer ) {
-			// Show an offer, the user can accept it or go ahead with the cancellation.
-			return (
-				<JetpackCancellationOfferStep
-					isAkismet={ props?.isAkismet }
-					offer={ cancellationOffer }
-					onGetCancellationOffer={ onGetCancellationOffer }
-					percentDiscount={ offerDiscountBasedFromPurchasePrice }
-					purchase={ purchase }
-				/>
-			);
-		}
-
-		// Step 4: Offer Accepted
-		if ( surveyStep === OFFER_ACCEPTED_STEP ) {
-			// Show after an offer discount has been accepted
-			return (
-				<JetpackCancellationOfferAcceptedStep
-					isAkismet={ props?.isAkismet }
-					percentDiscount={ offerDiscountBasedFromPurchasePrice }
-					productName={ productName }
-				/>
-			);
-		}
-	};
-
-	const canGoNext = () => {
-		const {
-			atomicRevertCheckOne,
-			atomicRevertCheckTwo,
-			disableButtons,
-			importQuestionRadio,
-			isImport,
-			isNextAdventureValid,
-			isSubmitting,
-			questionOneRadio,
-			questionOneText,
-			questionTwoRadio,
-			questionTwoText,
-			surveyStep,
-		} = props;
-
-		if ( disableButtons || isSubmitting ) {
-			return false;
-		}
-
-		if ( surveyStep === FEEDBACK_STEP ) {
-			if ( isImport && ! importQuestionRadio ) {
-				return false;
-			}
-
-			return Boolean(
-				questionOneRadio &&
-					( purchase.is_jetpack_plan_or_product || ! purchase.is_plan || questionOneText )
-			);
-		}
-
-		if ( surveyStep === ATOMIC_REVERT_STEP ) {
-			return Boolean( atomicRevertCheckOne && atomicRevertCheckTwo );
-		}
-
-		if ( surveyStep === NEXT_ADVENTURE_STEP ) {
-			if ( questionTwoRadio === 'anotherReasonTwo' && ! questionTwoText ) {
-				return false;
-			}
-
-			// For plan cancellations, require a valid selection from the adventure dropdown
-			if ( purchase.is_plan && ! isNextAdventureValid ) {
-				return false;
-			}
-
-			return true;
-		}
-
-		return ! disableButtons && ! isSubmitting;
-	};
-
-	const renderStepButtons = () => {
-		const {
-			clickNext,
-			closeDialog,
-			disableButtons,
-			getAllSurveySteps,
-			isApplyingOffer,
-			isSubmitting,
-			offerApplyError,
-			onClickAcceptForCancellationOffer,
-			onSubmit,
-			solution,
-			surveyStep,
-		} = props;
-		const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
-
-		const allSteps = getAllSurveySteps && getAllSurveySteps();
-		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
-
-		if ( surveyStep === UPSELL_STEP ) {
-			return null;
-		}
-
-		if ( ! isLastStep ) {
-			return (
-				<ButtonStack justify="flex-start">
-					<Button variant="primary" disabled={ ! canGoNext() } onClick={ clickNext }>
-						{ __( 'Continue' ) }
-					</Button>
-					<Button variant="tertiary" onClick={ onSubmit }>
-						{ __( 'Skip' ) }
-					</Button>
-				</ButtonStack>
-			);
-		}
-
-		if ( surveyStep === REMOVE_PLAN_STEP ) {
-			return (
-				<ButtonStack justify="flex-start">
-					<Button
-						className="cancel-purchase-form__remove-plan-button"
-						disabled={ ! canGoNext() }
-						isBusy={ isCancelling }
-						onClick={ onSubmit }
-						variant="primary"
-					>
-						{ __( 'Continue' ) }
-					</Button>
-					<Button
-						disabled={ ! canGoNext() }
-						isBusy={ isCancelling }
-						onClick={ closeDialog }
-						variant="secondary"
-					>
-						{ __( 'Keep plan' ) }
-					</Button>
-				</ButtonStack>
-			);
-		}
-
-		if ( surveyStep === CANCELLATION_OFFER_STEP ) {
-			return (
-				<ButtonStack justify="flex-start">
-					<Button
-						disabled={
-							! canGoNext() || disableButtons /* || disableContinuation || applyingOffer*/
+						),
+						{
+							strong: <strong className="is-highlighted" />,
 						}
-						isBusy={ isCancelling }
-						onClick={ onSubmit }
-						variant="primary"
-					>
-						{ __( 'No, thanks' ) }
-					</Button>
-					<Button
-						className="jetpack-cancellation-offer__accept-cta"
-						disabled={ isApplyingOffer ?? ( false || Boolean( offerApplyError ) ) ?? false }
-						isBusy={ isApplyingOffer ?? false }
-						onClick={ () => {
-							onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
-						} }
-						variant="primary"
-					>
-						{ isApplyingOffer ? __( 'Getting Discount' ) : __( 'Get discount' ) }
-					</Button>
-				</ButtonStack>
-			);
-		}
+					) }
+				</span>
+			</>
+		);
+	}
+	// Step 3: Offer
+	// This step is only made available after offers are checked for/ loaded.
+	if ( surveyStep === CANCELLATION_OFFER_STEP && cancellationOffer ) {
+		// Show an offer, the user can accept it or go ahead with the cancellation.
+		return (
+			<JetpackCancellationOfferStep
+				isAkismet={ isAkismet }
+				offer={ cancellationOffer }
+				onGetCancellationOffer={ onGetCancellationOffer }
+				percentDiscount={ offerDiscountBasedFromPurchasePrice }
+				purchase={ purchase }
+			/>
+		);
+	}
 
-		const variant = surveyStep !== UPSELL_STEP ? 'primary' : 'secondary';
+	// Step 4: Offer Accepted
+	if ( surveyStep === OFFER_ACCEPTED_STEP ) {
+		// Show after an offer discount has been accepted
+		return (
+			<JetpackCancellationOfferAcceptedStep
+				isAkismet={ isAkismet }
+				percentDiscount={ offerDiscountBasedFromPurchasePrice }
+				productName={ productName }
+			/>
+		);
+	}
 
+	return null;
+}
+
+function StepButtons( {
+	canGoNext,
+	clickNext,
+	closeDialog,
+	disableButtons,
+	isApplyingOffer,
+	isSubmitting,
+	offerApplyError,
+	onClickAcceptForCancellationOffer,
+	onSubmit,
+	solution,
+	surveyStep,
+	allSteps,
+}: {
+	canGoNext: boolean;
+} & CancelPurchaseFormProps ) {
+	const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
+
+	const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
+
+	if ( surveyStep === UPSELL_STEP ) {
+		return null;
+	}
+
+	if ( ! isLastStep ) {
+		return (
+			<ButtonStack justify="flex-start">
+				<Button variant="primary" disabled={ ! canGoNext } onClick={ clickNext }>
+					{ __( 'Continue' ) }
+				</Button>
+				<Button variant="tertiary" onClick={ onSubmit }>
+					{ __( 'Skip' ) }
+				</Button>
+			</ButtonStack>
+		);
+	}
+
+	if ( surveyStep === REMOVE_PLAN_STEP ) {
 		return (
 			<ButtonStack justify="flex-start">
 				<Button
-					disabled={ ! canGoNext() }
+					className="cancel-purchase-form__remove-plan-button"
+					disabled={ ! canGoNext }
 					isBusy={ isCancelling }
 					onClick={ onSubmit }
-					variant={ variant }
+					variant="primary"
 				>
-					{ __( 'Submit' ) }
+					{ __( 'Continue' ) }
 				</Button>
-				{ ! canGoNext() && ! isCancelling && (
-					<Button variant="tertiary" onClick={ onSubmit }>
-						{ __( 'Skip' ) }
-					</Button>
-				) }
+				<Button
+					disabled={ ! canGoNext }
+					isBusy={ isCancelling }
+					onClick={ closeDialog }
+					variant="secondary"
+				>
+					{ __( 'Keep plan' ) }
+				</Button>
 			</ButtonStack>
 		);
-	};
+	}
 
+	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
+		return (
+			<ButtonStack justify="flex-start">
+				<Button
+					disabled={ ! canGoNext || disableButtons }
+					isBusy={ isCancelling }
+					onClick={ onSubmit }
+					variant="primary"
+				>
+					{ __( 'No, thanks' ) }
+				</Button>
+				<Button
+					className="jetpack-cancellation-offer__accept-cta"
+					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
+					isBusy={ isApplyingOffer ?? false }
+					onClick={ () => {
+						onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
+					} }
+					variant="primary"
+				>
+					{ isApplyingOffer ? __( 'Getting Discount' ) : __( 'Get discount' ) }
+				</Button>
+			</ButtonStack>
+		);
+	}
+
+	const variant = surveyStep !== UPSELL_STEP ? 'primary' : 'secondary';
+
+	return (
+		<ButtonStack justify="flex-start">
+			<Button
+				disabled={ ! canGoNext }
+				isBusy={ isCancelling }
+				onClick={ onSubmit }
+				variant={ variant }
+			>
+				{ __( 'Submit' ) }
+			</Button>
+			{ ! canGoNext && ! isCancelling && (
+				<Button variant="tertiary" onClick={ onSubmit }>
+					{ __( 'Skip' ) }
+				</Button>
+			) }
+		</ButtonStack>
+	);
+}
+
+function canGoToNextStep( {
+	atomicRevertCheckOne,
+	atomicRevertCheckTwo,
+	disableButtons,
+	importQuestionRadio,
+	isImport,
+	isNextAdventureValid,
+	isSubmitting,
+	questionOneRadio,
+	questionOneText,
+	questionTwoRadio,
+	questionTwoText,
+	surveyStep,
+	purchase,
+}: CancelPurchaseFormProps ): boolean {
+	if ( disableButtons || isSubmitting ) {
+		return false;
+	}
+
+	if ( surveyStep === FEEDBACK_STEP ) {
+		if ( isImport && ! importQuestionRadio ) {
+			return false;
+		}
+
+		return Boolean(
+			questionOneRadio &&
+				( purchase.is_jetpack_plan_or_product || ! purchase.is_plan || questionOneText )
+		);
+	}
+
+	if ( surveyStep === ATOMIC_REVERT_STEP ) {
+		return Boolean( atomicRevertCheckOne && atomicRevertCheckTwo );
+	}
+
+	if ( surveyStep === NEXT_ADVENTURE_STEP ) {
+		if ( questionTwoRadio === 'anotherReasonTwo' && ! questionTwoText ) {
+			return false;
+		}
+
+		// For plan cancellations, require a valid selection from the adventure dropdown
+		if ( purchase.is_plan && ! isNextAdventureValid ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	return ! disableButtons && ! isSubmitting;
+}
+
+export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 	return (
 		props.isVisible && (
 			<VStack spacing={ 6 }>
@@ -443,8 +442,8 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 					title={ __( 'Before you go, please answer a few quick questions to help us improve.' ) }
 					level={ 3 }
 				/>
-				{ surveyContent() }
-				{ renderStepButtons() }
+				<SurveyContent { ...props } />
+				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } />
 			</VStack>
 		)
 	);
