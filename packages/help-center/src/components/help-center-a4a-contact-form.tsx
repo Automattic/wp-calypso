@@ -101,7 +101,7 @@ export const HelpCenterA4AContactForm = () => {
 									label={ field.label }
 									value={ getValue( { item: data } ) }
 									onChange={ ( value ) => {
-										return onChange( { [ id ]: value ?? '' } );
+										return onChange( { [ id ]: value ? Number( value ) : '' } );
 									} }
 								/>
 							);
