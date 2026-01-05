@@ -55,7 +55,7 @@ export default function CIABSites() {
 	} );
 
 	const { sites, sites__ES, isLoadingSites, isPlaceholderData, hasNoData, totalItems } =
-		useSiteListQuery( view, isRestoringAccount );
+		useSiteListQuery( view, { isRestoringAccount, isAutomattician } );
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const fields__ES = useFields__ES( { isAutomattician, viewType: view.type } );

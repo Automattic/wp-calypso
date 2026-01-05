@@ -96,7 +96,10 @@ function loadCSS(
 			setTimeout( () => resolve( link ), 500 );
 		}
 
-		document.head.insertBefore( link, currentLink ? currentLink.nextSibling : null );
+		document.head.insertBefore(
+			link,
+			currentLink?.nextSibling?.parentElement === document.head ? currentLink.nextSibling : null
+		);
 	} );
 }
 
@@ -124,7 +127,9 @@ async function switchWebpackCSS( isRTL: boolean ) {
 
 		if ( newLink ) {
 			newLink.setAttribute( 'data-webpack', 'true' );
-			currentLink.parentElement?.removeChild( currentLink );
+			if ( currentLink.isConnected ) {
+				currentLink.parentElement?.removeChild( currentLink );
+			}
 		}
 	}
 }

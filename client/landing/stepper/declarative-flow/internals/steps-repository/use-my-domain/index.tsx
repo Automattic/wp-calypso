@@ -3,6 +3,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import {
@@ -10,12 +11,17 @@ import {
 	UseMyDomainInputMode,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
+import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
+import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { useQuery } from '../../../../hooks/use-query';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 
@@ -50,6 +56,9 @@ const UseMyDomain: StepType< {
 	const { goNext, goBack, submit } = navigation;
 	const location = useLocation();
 	const { site } = useSiteData();
+	const backTo = useQuery().get( 'back_to' ) ?? '';
+	const userSiteCount = useSelector( getCurrentUserSiteCount );
+	const dashboardOptIn = useSelector( hasDashboardOptIn );
 
 	const [ useMyDomainMode, setUseMyDomainMode ] = useState< UseMyDomainInputMode >(
 		inputMode.domainInput
@@ -182,17 +191,39 @@ const UseMyDomain: StepType< {
 			subText = __( 'Make your domain name part of something bigger.' );
 		}
 
+		const getTopBarLeftElement = () => {
+			if ( shouldHideButtons ) {
+				return undefined;
+			}
+
+			if ( goBack ) {
+				return <Step.BackButton onClick={ handleGoBack } />;
+			}
+
+			const isSafeBackTo =
+				isRelativeUrl( backTo ) ||
+				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+
+			if ( isSafeBackTo ) {
+				return <Step.BackButton href={ backTo } />;
+			}
+
+			if ( userSiteCount && userSiteCount > 1 ) {
+				return (
+					<Step.BackButton href={ dashboardOptIn ? dashboardLink( '/sites' ) : '/sites' }>
+						{ __( 'Back to sites' ) }
+					</Step.BackButton>
+				);
+			}
+
+			return <Step.BackButton href="/home">{ __( 'Back to My Home' ) }</Step.BackButton>;
+		};
+
 		return (
 			<>
 				<QueryProductsList />
 				<Step.CenteredColumnLayout
-					topBar={
-						<Step.TopBar
-							leftElement={
-								shouldHideButtons ? undefined : <Step.BackButton onClick={ handleGoBack } />
-							}
-						/>
-					}
+					topBar={ <Step.TopBar leftElement={ getTopBarLeftElement() } /> }
 					columnWidth={ columnWidth }
 					heading={ <Step.Heading text={ headingText } subText={ subText } /> }
 					verticalAlign="center"

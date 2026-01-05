@@ -3,6 +3,8 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
+import { isMigrationInProgress } from 'calypso/data/site-migration';
 import type { SiteExcerptData, SiteExcerptNetworkData } from '@automattic/sites';
 
 export const TRACK_SOURCE_NAME = 'sites-dashboard';
@@ -21,6 +23,21 @@ export const getPluginsUrl = ( slug: string ) => {
 
 export const getManagePluginsUrl = ( slug: string ) => {
 	return `/plugins/manage/${ slug }`;
+};
+
+export const getSiteDisplayUrl = ( site: SiteExcerptData ) => {
+	if ( site.options?.is_redirect ) {
+		return site.slug;
+	}
+	return site.URL.replace( 'https://', '' ).replace( 'http://', '' );
+};
+
+export const getSiteDisplayName = ( site: SiteExcerptData ) => {
+	if ( isMigrationInProgress( site ) ) {
+		return translate( 'Incoming Migration' );
+	}
+
+	return site.name || getSiteDisplayUrl( site );
 };
 
 export const displaySiteUrl = ( siteUrl: string ) => {

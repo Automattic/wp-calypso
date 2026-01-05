@@ -135,7 +135,7 @@ export default function PreferencesOptInForm() {
 								{
 									surveyLink: (
 										<ExternalLink
-											href="https://automattic.survey.fm/new-hosting-dashboard-opt-out-survey"
+											href="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
 											onClick={ () =>
 												recordTracksEvent(
 													'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'

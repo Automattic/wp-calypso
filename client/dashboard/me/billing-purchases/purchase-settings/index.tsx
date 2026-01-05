@@ -206,16 +206,6 @@ function upgradePurchase( upgradeUrl: string ): void {
 }
 
 function ProductLink( { purchase }: { purchase: Purchase } ) {
-	if ( purchase.is_plan && purchase.site_slug ) {
-		const url = wpcomLink( '/plans/my-plan/' + purchase.site_slug );
-		const text = __( 'Plan features' );
-		return (
-			<MetadataItem>
-				<a href={ url }>{ text }</a>
-			</MetadataItem>
-		);
-	}
-
 	if (
 		( purchase.is_domain || purchase.product_slug === OFFSITE_REDIRECT ) &&
 		purchase.site_slug &&
@@ -296,11 +286,12 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.is_cancelable ) {
 		return (
 			<ActionList.ActionItem
-				title={ __( 'Downgrade or cancel your subscription' ) }
+				title={ __( 'Cancel subscription' ) }
 				description={ __( 'We’ll be sorry to see you go!' ) }
 				actions={
 					<Button
 						variant="secondary"
+						isDestructive
 						size="compact"
 						onClick={ () =>
 							navigate( {
@@ -309,7 +300,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Downgrade or cancel' ) }
+						{ __( 'Cancel' ) }
 					</Button>
 				}
 			/>
@@ -323,6 +314,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 				actions={
 					<Button
 						variant="secondary"
+						isDestructive
 						size="compact"
 						onClick={ () =>
 							navigate( {
@@ -331,7 +323,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Remove subscription' ) }
+						{ __( 'Remove' ) }
 					</Button>
 				}
 			/>
@@ -365,7 +357,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 						upgradePurchase( upgradeUrl );
 					} }
 				>
-					{ __( 'Upgrade subscription' ) }
+					{ __( 'Upgrade' ) }
 				</Button>
 			}
 		/>

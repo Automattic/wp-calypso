@@ -4,7 +4,13 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import type { Domain } from '@automattic/api-core';
 import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
 
-export default function DomainContactDetailsSettingsSummary( { domain }: { domain: Domain } ) {
+export default function DomainContactDetailsSettingsSummary( {
+	domain,
+	isDisabled,
+}: {
+	domain: Domain;
+	isDisabled?: boolean;
+} ) {
 	const badges: SummaryButtonBadgeProps[] = [];
 	if ( domain.private_domain ) {
 		badges.push( { text: __( 'Privacy protection on' ), intent: 'success' as const } );
@@ -22,6 +28,7 @@ export default function DomainContactDetailsSettingsSummary( { domain }: { domai
 			title={ __( 'Contact details & privacy' ) }
 			badges={ badges }
 			density={ 'medium' as const }
+			disabled={ isDisabled }
 		/>
 	);
 }

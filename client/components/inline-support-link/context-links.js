@@ -646,6 +646,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/incoming-domain-transfer/#step-3-log-into-your-domain-provider-s-account',
 		post_id: 137759,
 	},
+	'transfer-domain-name-to-wordpress-com': {
+		link: 'https://wordpress.com/support/domains/incoming-domain-transfer/',
+		post_id: 137759,
+	},
 	'domain-registrations-and-privacy': {
 		link: 'https://wordpress.com/support/domains/private-domain-registration/#what-is-privacy-protection',
 		post_id: 365563,

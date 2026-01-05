@@ -30,7 +30,7 @@ export default function PlanProductRevertContent( {
 	onCancelClick,
 }: PlanProductRevertContentProps ) {
 	return (
-		<VStack spacing={ 4 }>
+		<VStack spacing={ 6 }>
 			{ ! includedDomainPurchase && (
 				<Text>
 					<CancellationFullText
@@ -51,7 +51,7 @@ export default function PlanProductRevertContent( {
 				/>
 			) }
 
-			<ButtonStack>
+			<ButtonStack justify="flex-start">
 				<CancelButton
 					purchase={ purchase }
 					includedDomainPurchase={ includedDomainPurchase }

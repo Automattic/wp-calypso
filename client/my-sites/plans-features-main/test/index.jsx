@@ -21,6 +21,9 @@ jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( 
 	wpcomFreeDomainSuggestion: { isLoading: false, result: { domain_name: 'suggestion.com' } },
 	invalidateDomainSuggestionCache: () => {},
 } ) );
+jest.mock( '../hooks/use-renewal-price-experiment', () => ( {
+	useRenewalPricingExperiment: jest.fn( () => [ false, null ] ),
+} ) );
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );

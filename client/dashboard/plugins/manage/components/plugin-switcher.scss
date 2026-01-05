@@ -32,7 +32,8 @@
 }
 
 .plugin-switcher-search {
-	padding: calc(4px * 4) calc(4px * 6);
+	flex: 1 1 auto;
+	padding: calc(4px * 4) calc(4px * 1) calc(4px * 4) calc(4px * 6);
 	width: fit-content;
 }
 

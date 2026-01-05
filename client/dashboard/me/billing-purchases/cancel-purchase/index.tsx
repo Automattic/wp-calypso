@@ -31,7 +31,6 @@ import { intlFormat } from 'date-fns';
 import { useCallback, useEffect, useRef, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -132,7 +131,6 @@ const getDowngradePlanForPurchase = (
 export default function CancelPurchase() {
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
-	const locale = useLocale();
 	const [ state, setState ] = useState< CancelPurchaseState >( {
 		questionOneOrder: [],
 		initialized: false,
@@ -153,7 +151,7 @@ export default function CancelPurchase() {
 	const { data: siteFeatures, isPending: siteFeaturesQueryIsPending } = useSuspenseQuery(
 		siteFeaturesQuery( purchase.blog_id )
 	);
-	const { data: plans } = useSuspenseQuery( plansQuery( '', locale ) );
+	const { data: plans } = useSuspenseQuery( plansQuery() );
 	const { data: purchaseCancelFeatures } = useQuery( purchaseCancelFeaturesQuery( purchaseId ) );
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
@@ -1193,16 +1191,13 @@ export default function CancelPurchase() {
 				<PageHeader
 					title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
 					prefix={ <Breadcrumbs length={ 4 } /> }
-					description={ __(
-						'Before you go, please answer a few quick questions to help us improve.'
-					) }
 				/>
 			}
 			notices={ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
 		>
-			<VStack>
-				<Card>
-					<CardBody>
+			<Card>
+				<CardBody>
+					<VStack spacing={ 6 }>
 						<CancelPurchaseForm
 							atomicRevertCheckOne={ state.atomicRevertCheckOne }
 							atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
@@ -1292,9 +1287,9 @@ export default function CancelPurchase() {
 								sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
 							/>
 						) }
-					</CardBody>
-				</Card>
-			</VStack>
+					</VStack>
+				</CardBody>
+			</Card>
 		</PageLayout>
 	);
 }

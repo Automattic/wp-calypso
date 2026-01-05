@@ -24,6 +24,7 @@
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/razorpay": true,
+		"checkout/vgs-ebanx": true,
 		"cookie-banner": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
@@ -99,8 +100,8 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
-		"reader/quick-post": true,
 		"reader/discover/freshly-pressed": true,
+		"reader/msd-enabled": true,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"safari-idb-mitigation": true,
@@ -149,6 +150,5 @@
 	"boom_analytics_key": "horizon",
 	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
-	"survicate_enabled": true,
-	"survicate_enabled_at_help_center": true
+	"survicate_enabled": true
 }

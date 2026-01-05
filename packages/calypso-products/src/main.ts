@@ -971,11 +971,31 @@ export function getFeaturesList(): FeatureList {
 	return FEATURES_LIST;
 }
 
-export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {
+type FeatureMethodParams = { domainName?: string; isExperimentVariant?: boolean };
+
+export const getPlanFeaturesObject = (
+	planFeaturesList?: Array< string >,
+	isExperimentVariant?: boolean
+) => {
 	if ( ! planFeaturesList ) {
 		return [];
 	}
-	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
+	return planFeaturesList.map( ( featuresConst ) => {
+		const feature = FEATURES_LIST[ featuresConst ];
+		if ( ! feature || ! isExperimentVariant ) {
+			return feature;
+		}
+		// Wrap feature methods to pass isExperimentVariant parameter
+		return {
+			...feature,
+			getTitle: ( params?: FeatureMethodParams ) =>
+				feature.getTitle( { ...params, isExperimentVariant } ),
+			...( feature.getDescription && {
+				getDescription: ( params?: FeatureMethodParams ) =>
+					feature.getDescription!( { ...params, isExperimentVariant } ),
+			} ),
+		};
+	} );
 };
 
 export function isValidFeatureKey( feature: string ) {

@@ -20,9 +20,11 @@ import NameServersSettingsSummary from '../name-servers/summary';
 export default function DomainOverviewSettings( {
 	domain,
 	domainDiagnostics,
+	isDisabled,
 }: {
 	domain: Domain;
 	domainDiagnostics: DomainDiagnostics | undefined;
+	isDisabled?: boolean;
 } ) {
 	const buttonListItems = [];
 
@@ -36,7 +38,9 @@ export default function DomainOverviewSettings( {
 		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
 		! domain.is_gravatar_restricted_domain // TODO: should we show some notice for gravatar domains instead of just hiding the button?
 	) {
-		buttonListItems.push( <NameServersSettingsSummary key="name-servers" domain={ domain } /> );
+		buttonListItems.push(
+			<NameServersSettingsSummary key="name-servers" domain={ domain } isDisabled={ isDisabled } />
+		);
 	}
 
 	if (
@@ -84,7 +88,11 @@ export default function DomainOverviewSettings( {
 		! domain.expired
 	) {
 		buttonListItems.push(
-			<DomainContactDetailsSettingsSummary key="contact-details" domain={ domain } />
+			<DomainContactDetailsSettingsSummary
+				key="contact-details"
+				domain={ domain }
+				isDisabled={ isDisabled }
+			/>
 		);
 	}
 
@@ -98,7 +106,9 @@ export default function DomainOverviewSettings( {
 			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
 		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC
 	) {
-		buttonListItems.push( <DomainSecuritySettingsSummary key="security" domain={ domain } /> );
+		buttonListItems.push(
+			<DomainSecuritySettingsSummary key="security" domain={ domain } isDisabled={ isDisabled } />
+		);
 	}
 
 	if (
@@ -108,7 +118,11 @@ export default function DomainOverviewSettings( {
 		// TODO: Add property that shows or hides this option depending on the availability of the feature
 	) {
 		buttonListItems.push(
-			<DomainGlueRecordsSettingsSummary key="glue-records" domainName={ domain.domain } />
+			<DomainGlueRecordsSettingsSummary
+				key="glue-records"
+				domainName={ domain.domain }
+				isDisabled={ isDisabled }
+			/>
 		);
 	}
 

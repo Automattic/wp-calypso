@@ -635,6 +635,16 @@ export const gardenPartnerName: Reducer< string | null, OnboardAction > = (
 	return state;
 };
 
+export const blueprint: Reducer< string | null, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_BLUEPRINT' ) {
+		return action.blueprint;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
@@ -685,6 +695,7 @@ const reducer = combineReducers( {
 	signupDomainOrigin,
 	gardenName,
 	gardenPartnerName,
+	blueprint,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -479,6 +479,7 @@ describe( 'survicate', () => {
 } );
 
 describe( 'HelpCenterMoreResources', () => {
+	let showHelpCenterFeedbackSurvey;
 	const renderComponent = ( contextValue = {} ) =>
 		render(
 			<HelpCenterRequiredContextProvider
@@ -494,6 +495,11 @@ describe( 'HelpCenterMoreResources', () => {
 	beforeEach( () => {
 		delete window._sva;
 		recordTracksEvent.mockClear();
+		// Set up fresh module imports
+		jest.isolateModules( () => {
+			const survicateModule = require( 'calypso/lib/analytics/survicate' );
+			showHelpCenterFeedbackSurvey = survicateModule.showHelpCenterFeedbackSurvey;
+		} );
 	} );
 
 	afterEach( () => {
@@ -544,5 +550,56 @@ describe( 'HelpCenterMoreResources', () => {
 				section: 'test-section',
 			} )
 		);
+	} );
+
+	test( 'invokes Survicate event and wires overlay click to destroy visitor', () => {
+		const overlay = document.createElement( 'div' );
+		overlay.className = 'sv__overlay sv__overlay--dark';
+
+		const overlayAddEventListener = jest.fn();
+
+		overlay.addEventListener = overlayAddEventListener;
+		document.body.appendChild( overlay );
+
+		let surveyDisplayedHandler;
+		const invokeEvent = jest.fn();
+		const destroyVisitor = jest.fn();
+		const removeEventListener = jest.fn();
+		const addEventListener = jest.fn( ( event, handler ) => {
+			if ( event === 'survey_displayed' ) {
+				surveyDisplayedHandler = handler;
+			}
+		} );
+
+		document.querySelector = jest.fn( () => overlay );
+		window._sva = {
+			addEventListener,
+			removeEventListener,
+			invokeEvent,
+			destroyVisitor,
+		};
+
+		showHelpCenterFeedbackSurvey();
+
+		expect( addEventListener ).toHaveBeenCalled();
+		expect( typeof surveyDisplayedHandler ).toBe( 'function' );
+		expect( invokeEvent ).toHaveBeenCalledWith( 'showFeedbackSurveyFromHelpCenter' );
+
+		// Simulate Survicate emitting the survey display event
+		surveyDisplayedHandler?.();
+
+		expect( overlayAddEventListener ).toHaveBeenCalled();
+		const [ overlayCall ] = overlayAddEventListener.mock.calls;
+		expect( overlayCall?.[ 0 ] ).toBe( 'click' );
+		expect( typeof overlayCall?.[ 1 ] ).toBe( 'function' );
+		expect( overlayCall?.[ 2 ] ).toEqual( { once: true } );
+
+		overlayCall?.[ 1 ]?.();
+
+		expect( destroyVisitor ).toHaveBeenCalled();
+		expect( removeEventListener ).toHaveBeenCalled();
+		const [ removeCall ] = removeEventListener.mock.calls;
+		expect( removeCall?.[ 0 ] ).toBe( 'survey_displayed' );
+		expect( removeCall?.[ 1 ] ).toBe( surveyDisplayedHandler );
 	} );
 } );

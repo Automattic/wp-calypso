@@ -10,6 +10,7 @@
 	"wpcom_url": "https://wordpress.com",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
+		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
 		"cookie-banner": false,
 		"dashboard/v2": false,

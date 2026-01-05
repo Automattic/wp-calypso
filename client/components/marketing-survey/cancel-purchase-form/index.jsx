@@ -3,6 +3,7 @@ import {
 	isPlan,
 	isWpComMonthlyPlan,
 	WPCOM_FEATURES_BACKUPS,
+	isDomainRegistration,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { Button as GutenbergButton } from '@wordpress/components';
@@ -16,7 +17,14 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { isAgencyPartnerType, isPartnerPurchase, isRefundable } from 'calypso/lib/purchases';
+import {
+	isAgencyPartnerType,
+	isPartnerPurchase,
+	isRefundable,
+	hasAmountAvailableToRefund,
+	isOneTimePurchase,
+	isSubscription,
+} from 'calypso/lib/purchases';
 import { cancelPurchaseSurveyCompleted, submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
@@ -678,9 +686,29 @@ class CancelPurchaseForm extends Component {
 			return translate( 'Remove product' );
 		}
 
-		if ( isPlan( purchase ) ) {
-			return translate( 'Cancel plan' );
+		if ( hasAmountAvailableToRefund( purchase ) ) {
+			if ( isDomainRegistration( purchase ) ) {
+				return translate( 'Cancel domain and refund' );
+			}
+			if ( isPlan( purchase ) ) {
+				return translate( 'Cancel plan and refund' );
+			}
+			if ( isSubscription( purchase ) ) {
+				return translate( 'Cancel subscription and refund' );
+			}
+			if ( isOneTimePurchase( purchase ) ) {
+				return translate( 'Cancel and refund' );
+			}
 		}
+
+		if ( isDomainRegistration( purchase ) ) {
+			return translate( 'Cancel domain subscription' );
+		}
+
+		if ( isSubscription( purchase ) ) {
+			return translate( 'Cancel subscription' );
+		}
+
 		return translate( 'Cancel product' );
 	}
 

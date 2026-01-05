@@ -380,3 +380,7 @@ export function isGoogleWorkspaceSupportedDomain( domain: Domain ) {
 
 	return ! domain.domain.endsWith( '.wpcomstaging.com' );
 }
+
+export function isTldInMaintenance( domain: Domain ) {
+	return domain.tld_maintenance_end_time > 0;
+}

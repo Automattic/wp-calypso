@@ -35,8 +35,18 @@ export type SiteFeatureSupports = {
 	settings: SiteSettingsSupports | false;
 };
 
+export type MeBillingSupports = {
+	monetizeSubscriptions: boolean;
+};
+
+export type MeSecuritySupports = {
+	sshKey: boolean;
+};
+
 export type MeSupports = {
+	billing: MeBillingSupports | false;
 	privacy: boolean;
+	security: MeSecuritySupports | false;
 	apps: boolean;
 };
 

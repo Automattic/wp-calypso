@@ -92,7 +92,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					</SummaryButtonList>
 				</VStack>
 			) }
-			{ config.isEnabled( 'wordpress-ai-assistant' ) && (
+			{ supportsSettings.experimental && config.isEnabled( 'wordpress-ai-assistant' ) && (
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'Experimental (Staging)' ) } level={ 3 } />
 					<SummaryButtonList>
