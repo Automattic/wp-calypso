@@ -1,4 +1,3 @@
-import { _x } from '@wordpress/i18n';
 import { isSitePlanTrial } from '../sites/plans';
 import { isP2 } from './site-types';
 import type { Site } from '@automattic/api-core';
@@ -10,18 +9,6 @@ export interface MigrationStatus {
 
 const MIGRATION_STATUSES: MigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
 const MIGRATION_TYPES: MigrationStatus[ 'type' ][] = [ 'difm', 'diy', 'ssh' ];
-
-export function getStatusLabels() {
-	return {
-		public: _x( 'Public', 'site' ),
-		private: _x( 'Private', 'site' ),
-		coming_soon: _x( 'Coming soon', 'site' ),
-		deleted: _x( 'Deleted', 'site' ),
-		difm_lite_in_progress: _x( 'Express service', 'site' ),
-		migration_pending: _x( 'Migration pending', 'site' ),
-		migration_started: _x( 'Migration started', 'site' ),
-	};
-}
 
 export function getSiteStatus( item: Site ) {
 	if ( item.is_deleted ) {
@@ -43,19 +30,7 @@ export function getSiteStatus( item: Site ) {
 		return 'difm_lite_in_progress';
 	}
 
-	return getSiteVisibility( item );
-}
-
-export function getSiteVisibility( item: Site ) {
-	if ( item.is_coming_soon || ( item.is_private && item.launch_status === 'unlaunched' ) ) {
-		return 'coming_soon';
-	}
-
-	if ( item.is_private ) {
-		return 'private';
-	}
-
-	return 'public';
+	return '';
 }
 
 export function getSiteMigrationState( item: Site ): MigrationStatus | null {
@@ -87,11 +62,6 @@ export function isSiteMigrationInProgress( item: Site ) {
 	}
 
 	return [ 'pending', 'started' ].includes( status );
-}
-
-export function getSiteStatusLabel( item: Site ) {
-	const statusLabels = getStatusLabels();
-	return statusLabels[ getSiteStatus( item ) ];
 }
 
 export function getSiteStatusBadge( site: Site ) {

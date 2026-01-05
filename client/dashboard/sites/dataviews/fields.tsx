@@ -9,13 +9,12 @@ import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { getSiteStatus, getStatusLabels, getSiteVisibility } from '../../utils/site-status';
 import {
 	isSelfHostedJetpackConnected,
 	isSelfHostedJetpackConnected__ES,
 } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
-import { getVisibilityLabels } from '../../utils/site-visibility';
+import { getSiteVisibility, getVisibilityLabels } from '../../utils/site-visibility';
 import { getFormattedWordPressVersion, formatWordPressVersion } from '../../utils/wp-version';
 import {
 	AsyncEngagementStat,
@@ -29,7 +28,6 @@ import {
 	Plan,
 	Preview,
 	Preview__ES,
-	Status,
 	URL,
 	Uptime,
 	URLRenderer,
@@ -40,7 +38,6 @@ import type { Site, DashboardSiteListSite } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
-	const statusLabels = getStatusLabels();
 	const visibilityLabels = getVisibilityLabels();
 	return [
 		{
@@ -112,19 +109,6 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 				const planB = getSitePlanDisplayName( b ) ?? '';
 
 				return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
-			},
-		},
-		{
-			id: 'status',
-			label: __( 'Status' ),
-			getValue: ( { item } ) => getSiteStatus( item ),
-			elements: Object.entries( statusLabels ).map( ( [ value, label ] ) => ( { value, label } ) ),
-			filterBy: {
-				operators: [ 'isAny' as Operator ],
-			},
-			render: function StatusField( { item } ) {
-				const { user } = useAuth();
-				return <Status site={ item } isOwner={ item.site_owner === user.ID } />;
 			},
 		},
 		{

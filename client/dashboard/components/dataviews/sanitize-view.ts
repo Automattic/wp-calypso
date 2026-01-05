@@ -32,5 +32,8 @@ export function sanitizeView( view: View, fields: Field< any >[] ) {
 		return field;
 	} );
 
+	const fieldsSet = new Set( fields.map( ( field ) => field.id ) );
+	view.filters = view.filters?.filter( ( filter ) => fieldsSet.has( filter.field ) );
+
 	return sanitized;
 }

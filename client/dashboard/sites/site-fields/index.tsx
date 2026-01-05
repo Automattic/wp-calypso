@@ -1,6 +1,5 @@
-import { DotcomFeatures, HostingFeatures, JetpackModules } from '@automattic/api-core';
+import { HostingFeatures, JetpackModules } from '@automattic/api-core';
 import {
-	siteLatestAtomicTransferQuery,
 	siteLastBackupQuery,
 	siteMediaStorageQuery,
 	sitePHPVersionQuery,
@@ -27,16 +26,15 @@ import TimeSince from '../../components/time-since';
 import { addTransientViewPropertiesToQueryParams } from '../../utils/dashboard-v1-sync';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
-import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
-import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
-import { getSiteStatus, getSiteStatusLabel, getSiteStatusBadge } from '../../utils/site-status';
+import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
+import { getSiteStatusBadge } from '../../utils/site-status';
 import { getSiteFormattedUrl } from '../../utils/site-url';
 import { getSiteVisibilityLabel } from '../../utils/site-visibility';
 import { canManageSite, canManageSite__ES } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { AtomicTransferStatus, DashboardSiteListSite, Site } from '@automattic/api-core';
+import type { DashboardSiteListSite, Site } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -475,83 +473,6 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 			</ExternalLink>
 		</>
 	);
-}
-
-function WithHostingFeaturesQuery( {
-	site,
-	children,
-}: {
-	site: Site;
-	children: ( transferStatus?: AtomicTransferStatus ) => React.ReactNode;
-} ) {
-	const { ref, inView } = useInView( {
-		triggerOnce: true,
-		fallbackInView: true,
-	} );
-
-	const { data } = useQuery( {
-		...siteLatestAtomicTransferQuery( site.ID ),
-		enabled: inView,
-	} );
-
-	return <span ref={ ref }>{ children( data?.status ) }</span>;
-}
-
-export function Status( { site, isOwner }: { site: Site; isOwner?: boolean } ) {
-	const status = getSiteStatus( site );
-	const label = getSiteStatusLabel( site );
-
-	if ( status === 'deleted' ) {
-		return <Text intent="error">{ label }</Text>;
-	}
-
-	if ( status === 'difm_lite_in_progress' ) {
-		return <Badge>{ label }</Badge>;
-	}
-
-	if ( status === 'migration_pending' ) {
-		return <Badge intent="warning">{ label }</Badge>;
-	}
-
-	if ( status === 'migration_started' ) {
-		return <Badge intent="info">{ label }</Badge>;
-	}
-
-	if ( site.plan?.expired ) {
-		return (
-			<VStack spacing={ 1 }>
-				<Text intent="error">{ __( 'Plan expired' ) }</Text>
-				{ isOwner && <PlanRenewNag site={ site } source="status" /> }
-			</VStack>
-		);
-	}
-
-	const renderBasicStatus = () => {
-		if ( site.launch_status === 'unlaunched' ) {
-			return <SiteLaunchNag site={ site } />;
-		}
-		return label;
-	};
-
-	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) && ! site.is_wpcom_atomic ) {
-		return (
-			<WithHostingFeaturesQuery site={ site }>
-				{ ( transferStatus ) => {
-					if ( transferStatus ) {
-						if ( transferStatus === 'error' ) {
-							return __( 'Error activating hosting features' );
-						}
-						if ( isAtomicTransferInProgress( transferStatus ) ) {
-							return __( 'Activating hosting features…' );
-						}
-					}
-					return renderBasicStatus();
-				} }
-			</WithHostingFeaturesQuery>
-		);
-	}
-
-	return renderBasicStatus();
 }
 
 export function Visibility( { site }: { site: Site } ) {
