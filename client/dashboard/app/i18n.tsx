@@ -96,10 +96,16 @@ function loadCSS(
 			setTimeout( () => resolve( link ), 500 );
 		}
 
-		document.head.insertBefore(
-			link,
-			currentLink?.nextSibling?.parentElement === document.head ? currentLink.nextSibling : null
-		);
+		try {
+			const beforeNode = currentLink?.nextSibling;
+			if ( beforeNode?.parentElement === document.head ) {
+				document.head.insertBefore( link, beforeNode );
+			} else {
+				document.head.appendChild( link );
+			}
+		} catch {
+			document.head.appendChild( link );
+		}
 	} );
 }
 
