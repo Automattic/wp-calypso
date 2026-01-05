@@ -4,7 +4,7 @@ import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import akismetLogo from 'calypso/assets/images/icons/akismet-logo.svg';
 import crowdsignalLogo from 'calypso/assets/images/icons/crowdsignal.svg';
 import gravatarLogo from 'calypso/assets/images/icons/gravatar.svg';
-import passportLogo from 'calypso/assets/images/icons/passport-icon.svg';
+import passportLogo from 'calypso/assets/images/icons/passport-icon-rounded.svg';
 import studioAppLogo from 'calypso/assets/images/icons/studio-app-logo.svg';
 import wpJobManagerLogo from 'calypso/assets/images/icons/wp-job-manager.png';
 import JetpackLogo from 'calypso/components/jetpack-logo';

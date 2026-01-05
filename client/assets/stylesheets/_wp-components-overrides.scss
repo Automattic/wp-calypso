@@ -122,6 +122,9 @@
 			--wp-components-color-accent-darker-10: var(--color-passport-base);
 			--wp-components-color-accent-darker-20: var(--color-passport-base);
 			--wp-components-color-accent-inverted: var(--color-passport-contrast);
+			&:hover {
+				color: var(--color-passport-accent);
+			}
 		}	
 	
 		.components-button.is-link {
