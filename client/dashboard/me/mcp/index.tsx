@@ -1,9 +1,7 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import {
-	Button,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	ToggleControl,
@@ -19,6 +17,7 @@ import ComponentViewTracker from '../../components/component-view-tracker';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import PreferencesLoginSiteDropdown from '../preferences-primary-site/site-dropdown';
 import { CATEGORY_ORDER, getDisplayCategory } from './categories';
@@ -265,11 +264,13 @@ function McpComponent() {
 									) }
 								/>
 								<VStack style={ { flexShrink: 0 } }>
-									<Link to="/me/mcp/setup">
-										<Button variant="secondary" disabled={ ! anyToolsEnabled }>
-											{ __( 'Configure MCP Client' ) }
-										</Button>
-									</Link>
+									<RouterLinkButton
+										to="/me/mcp/setup"
+										variant="secondary"
+										disabled={ ! anyToolsEnabled }
+									>
+										{ __( 'Configure MCP Client' ) }
+									</RouterLinkButton>
 								</VStack>
 							</HStack>
 
