@@ -1,13 +1,12 @@
 import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
-import { Fragment } from 'react';
 import ChatMessage from '..';
 import { useOdieAssistantContext } from '../../../context';
 import { isCSATMessage } from '../../../utils';
 import {
 	hasFeedbackForm,
 	isAttachment,
-	isTransitionToSupportMessage,
+	isZendeskChatStartedMessage,
 	isZendeskIntroMessage,
 } from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
@@ -112,8 +111,26 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 	const { currentUser } = useOdieAssistantContext();
 
 	return groups.map( ( group ) => {
-		const startingHumanSupport = group.messages.some( isTransitionToSupportMessage );
+		const startingHumanSupport = group.messages.some( isZendeskChatStartedMessage );
 		const endingHumanSupport = group.messages.some( isCSATMessage );
+
+		if ( startingHumanSupport ) {
+			return (
+				<ChatWithSupportLabel
+					labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
+					key={ group.id }
+				/>
+			);
+		}
+
+		if ( endingHumanSupport ) {
+			return (
+				<ChatWithSupportLabel
+					labelText={ __( 'Chat with support team ended', __i18n_text_domain__ ) }
+					key={ group.id }
+				/>
+			);
+		}
 
 		const messageHeader = () => {
 			// Only business messages have a header.
@@ -128,28 +145,19 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 		};
 
 		return (
-			<Fragment key={ group.id }>
-				{ endingHumanSupport && (
-					<ChatWithSupportLabel
-						labelText={ __( 'Chat with support team ended', __i18n_text_domain__ ) }
+			<div
+				className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }
+				key={ group.id }
+			>
+				{ group.messages.map( ( message, index ) => (
+					<ChatMessage
+						key={ getMessageUniqueIdentifier( message, `${ group.id }-${ index }` ) }
+						message={ message }
+						currentUser={ currentUser }
+						header={ index === 0 ? messageHeader() : undefined }
 					/>
-				) }
-				<div className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }>
-					{ group.messages.map( ( message, index ) => (
-						<ChatMessage
-							key={ getMessageUniqueIdentifier( message, `${ group.id }-${ index }` ) }
-							message={ message }
-							currentUser={ currentUser }
-							header={ index === 0 ? messageHeader() : undefined }
-						/>
-					) ) }
-				</div>
-				{ startingHumanSupport && (
-					<ChatWithSupportLabel
-						labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
-					/>
-				) }
-			</Fragment>
+				) ) }
+			</div>
 		);
 	} );
 }
