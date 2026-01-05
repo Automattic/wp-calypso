@@ -1050,7 +1050,6 @@ function PurchaseSecondSubtitle( { purchase }: { purchase: Purchase } ) {
 
 function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 	const subtitle = getSubtitleForDisplay( purchase );
-
 	if ( ! subtitle ) {
 		return null;
 	}
