@@ -136,7 +136,7 @@ export function NameRenderer( {
 			case 'p2':
 				return <Badge>{ __( 'P2' ) }</Badge>;
 			case 'deleted':
-				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
+				return <Text intent="error">{ __( 'Deleted' ) }</Text>;
 			case 'difm':
 				return <Badge>{ __( 'Express service' ) }</Badge>;
 			case 'migration_pending':
