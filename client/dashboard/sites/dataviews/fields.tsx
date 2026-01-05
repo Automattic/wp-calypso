@@ -9,17 +9,13 @@ import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import {
-	getSiteStatus,
-	getStatusLabels,
-	getSiteVisibility,
-	getVisibilityLabels,
-} from '../../utils/site-status';
+import { getSiteStatus, getStatusLabels, getSiteVisibility } from '../../utils/site-status';
 import {
 	isSelfHostedJetpackConnected,
 	isSelfHostedJetpackConnected__ES,
 } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
+import { getVisibilityLabels } from '../../utils/site-visibility';
 import { getFormattedWordPressVersion, formatWordPressVersion } from '../../utils/wp-version';
 import {
 	AsyncEngagementStat,

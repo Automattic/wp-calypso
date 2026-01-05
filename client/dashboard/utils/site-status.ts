@@ -1,4 +1,6 @@
 import { _x } from '@wordpress/i18n';
+import { isSitePlanTrial } from '../sites/plans';
+import { isP2 } from './site-types';
 import type { Site } from '@automattic/api-core';
 
 export interface MigrationStatus {
@@ -18,14 +20,6 @@ export function getStatusLabels() {
 		difm_lite_in_progress: _x( 'Express service', 'site' ),
 		migration_pending: _x( 'Migration pending', 'site' ),
 		migration_started: _x( 'Migration started', 'site' ),
-	};
-}
-
-export function getVisibilityLabels() {
-	return {
-		public: _x( 'Public', 'site' ),
-		private: _x( 'Private', 'site' ),
-		coming_soon: _x( 'Coming soon', 'site' ),
 	};
 }
 
@@ -100,7 +94,33 @@ export function getSiteStatusLabel( item: Site ) {
 	return statusLabels[ getSiteStatus( item ) ];
 }
 
-export function getSiteVisibilityLabel( item: Site ) {
-	const visibilityLabels = getVisibilityLabels();
-	return visibilityLabels[ getSiteVisibility( item ) ];
+export function getSiteStatusBadge( site: Site ) {
+	const status = getSiteStatus( site );
+	if ( status === 'deleted' ) {
+		return 'deleted';
+	}
+
+	if ( status === 'difm_lite_in_progress' ) {
+		return 'difm';
+	}
+
+	if ( status === 'migration_pending' ) {
+		return 'migration_pending';
+	}
+
+	if ( status === 'migration_started' ) {
+		return 'migration_started';
+	}
+
+	if ( site.is_wpcom_staging_site ) {
+		return 'staging';
+	}
+	if ( isSitePlanTrial( site ) ) {
+		return 'trial';
+	}
+	if ( isP2( site ) ) {
+		return 'p2';
+	}
+
+	return null;
 }

@@ -29,9 +29,9 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
-import { getSiteStatus, getSiteStatusLabel, getSiteVisibilityLabel } from '../../utils/site-status';
-import { isP2 } from '../../utils/site-types';
+import { getSiteStatus, getSiteStatusLabel, getSiteStatusBadge } from '../../utils/site-status';
 import { getSiteFormattedUrl } from '../../utils/site-url';
+import { getSiteVisibilityLabel } from '../../utils/site-visibility';
 import { canManageSite, canManageSite__ES } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
@@ -107,20 +107,9 @@ export function SiteLink__ES( {
 }
 
 export function Name( { site, value }: { site: Site; value: string } ) {
-	const getBadgeType = () => {
-		if ( site.is_wpcom_staging_site ) {
-			return 'staging';
-		}
-		if ( isSitePlanTrial( site ) ) {
-			return 'trial';
-		}
-		if ( isP2( site ) ) {
-			return 'p2';
-		}
-		return null;
-	};
-
-	return <NameRenderer badge={ getBadgeType() } muted={ site.is_deleted } value={ value } />;
+	return (
+		<NameRenderer badge={ getSiteStatusBadge( site ) } muted={ site.is_deleted } value={ value } />
+	);
 }
 
 export function NameRenderer( {
@@ -128,7 +117,15 @@ export function NameRenderer( {
 	muted,
 	value,
 }: {
-	badge: null | 'staging' | 'trial' | 'p2';
+	badge:
+		| null
+		| 'staging'
+		| 'trial'
+		| 'p2'
+		| 'deleted'
+		| 'difm'
+		| 'migration_pending'
+		| 'migration_started';
 	muted: boolean;
 	value: string;
 } ) {
@@ -140,6 +137,14 @@ export function NameRenderer( {
 				return <Badge>{ __( 'Trial' ) }</Badge>;
 			case 'p2':
 				return <Badge>{ __( 'P2' ) }</Badge>;
+			case 'deleted':
+				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
+			case 'difm':
+				return <Badge>{ __( 'Express service' ) }</Badge>;
+			case 'migration_pending':
+				return <Badge intent="warning">{ __( 'Migration pending' ) }</Badge>;
+			case 'migration_started':
+				return <Badge intent="info">{ __( 'Migration started' ) }</Badge>;
 			default:
 				break;
 		}
