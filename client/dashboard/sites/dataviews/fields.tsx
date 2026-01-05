@@ -221,6 +221,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 
 // Use the site returned by siteBySlugQuery to render async fields (e.g. Backup) so the structure remains consistent.
 function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< DashboardSiteListSite >[] {
+	const visibilityLabels = getVisibilityLabels();
 	return [
 		{
 			id: 'name',
@@ -309,6 +310,34 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			},
 			filterBy: {
 				operators: [ 'isAny' ],
+			},
+			enableSorting: false,
+		},
+		{
+			id: 'visibility',
+			label: __( 'Visibility' ),
+			getValue: ( { item } ) => {
+				// TODO: Handle `unlaunched` status
+				if ( item.wpcom_status?.is_coming_soon ) {
+					return 'coming_soon';
+				}
+
+				if ( item.private ) {
+					return 'private';
+				}
+
+				return 'public';
+			},
+			elements: Object.entries( visibilityLabels ).map( ( [ value, label ] ) => ( {
+				value,
+				label,
+			} ) ),
+			filterBy: {
+				operators: [ 'isAny' as Operator ],
+			},
+			render: ( { item, field } ) => {
+				const value = field.getValue( { item } );
+				return visibilityLabels[ value as keyof typeof visibilityLabels ];
 			},
 			enableSorting: false,
 		},
