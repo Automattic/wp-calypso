@@ -180,6 +180,9 @@ describe( 'QuickPost', () => {
 	} );
 
 	it( 'redirects to the full editor when the post is saved', async () => {
+		const mockTrackEvent = jest.fn();
+		( useRecordReaderTracksEvent as jest.Mock ).mockReturnValue( mockTrackEvent );
+
 		const saveDraft = nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/sites/123/posts/new', {
 				title: 'Test post...',
@@ -201,6 +204,9 @@ describe( 'QuickPost', () => {
 			expect( saveDraft.isDone() ).toBe( true );
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				'https://example.com/wp-admin/post.php?post=1234&action=edit'
+			);
+			expect( mockTrackEvent ).toHaveBeenCalledWith(
+				'calypso_reader_quick_post_full_editor_opened'
 			);
 		} );
 	} );
