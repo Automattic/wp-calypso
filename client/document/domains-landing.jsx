@@ -103,7 +103,11 @@ function DomainsLanding( {
 						__html: `
 							if ('serviceWorker' in navigator) {
 								window.addEventListener('load', function() {
-									navigator.serviceWorker.register('/service-worker.js');
+									try {
+										navigator.serviceWorker.register('/service-worker.js');
+									} catch ( err ) {
+										console.error( 'Error registering service worker', err );
+									}
 								});
 							}
 						 `,
