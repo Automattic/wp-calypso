@@ -1,6 +1,8 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { HELP_CENTER_STORE } from '../stores';
 
 /**
  * Add your conditions here to open the Help Center automatically when they're met.
@@ -9,6 +11,20 @@ export const useActionHooks = () => {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute, setNewMessagingChat } =
 		useDispatch( 'automattic/help-center' );
 	const queryParams = new URLSearchParams( window.location.search );
+
+	const helpCenterRouterHistory = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getHelpCenterRouterHistory(),
+		[]
+	);
+
+	// Wait until the Help Center persisted state is loaded.
+	const isResolving = useSelect(
+		( select ) =>
+			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isResolving( 'isHelpCenterShown' ),
+		[]
+	);
+
+	const areDependenciesLoading = isResolving;
 
 	const actionHooks = [
 		/**
@@ -47,8 +63,13 @@ export const useActionHooks = () => {
 				return queryParams.get( 'help-center' ) === 'wapuu';
 			},
 			async action() {
-				setNavigateToRoute( '/odie' );
-				setShowHelpCenter( true );
+				const { entries, index } = helpCenterRouterHistory ?? { entries: [], index: 0 };
+				const lastEntry = entries[ index ];
+				// Don't override the user persisted history if they're already on the Odie page.
+				if ( lastEntry?.pathname !== '/odie' ) {
+					setNavigateToRoute( '/odie' );
+					setShowHelpCenter( true );
+				}
 			},
 		},
 
@@ -70,6 +91,9 @@ export const useActionHooks = () => {
 	];
 
 	useEffect( () => {
+		if ( areDependenciesLoading ) {
+			return;
+		}
 		const timeout = setTimeout( () => {
 			actionHooks.forEach( ( actionHook ) => {
 				if ( actionHook.condition() ) {
@@ -80,5 +104,5 @@ export const useActionHooks = () => {
 		return () => clearTimeout( timeout );
 		// Only want to run this once
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ areDependenciesLoading ] );
 };
