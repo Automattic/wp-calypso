@@ -416,6 +416,8 @@ export default function CancelPurchase() {
 
 		const [ firstStep ] = allSteps;
 
+		const hasExpired = purchase.expiry_status === 'expired';
+
 		const newState: CancelPurchaseState = {
 			...initialSurveyState(),
 			atomicRevertCheckOne: false,
