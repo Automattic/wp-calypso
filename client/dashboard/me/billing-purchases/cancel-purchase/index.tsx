@@ -199,6 +199,7 @@ function getBasicSurveySteps( {
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, upsell );
 	const isDowngradePlan = [ 'downgrade-monthly', 'downgrade-personal' ].includes( upsell ?? '' );
+	const hasExpired = purchase.expiry_status === 'expired';
 
 	if (
 		isPartnerPurchase( purchase ) &&
@@ -216,11 +217,11 @@ function getBasicSurveySteps( {
 	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) && ! purchase.is_plan ) {
 		return [ NEXT_ADVENTURE_STEP ];
 	}
-	if ( upsell && ! isDowngradePlan ) {
+	if ( upsell && ! hasExpired && ! isDowngradePlan ) {
 		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 	}
 	// NOTE: downgradePlan only ever exists if upsell is true (see getDowngradePlanForPurchase).
-	if ( upsell && downgradePlan ) {
+	if ( upsell && ! hasExpired && downgradePlan ) {
 		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 	}
 	if ( hasQuestionTwo ) {
