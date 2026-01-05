@@ -619,9 +619,7 @@ export default connect(
 		isFromAkismet: isAkismetRedirect(
 			new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 		),
-		isFromPassport: isPassportRedirect(
-			new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
-		),
+		isFromPassport: isPassportRedirect( getRedirectToOriginal( state ) ),
 
 		isFromAutomatticForAgenciesPlugin:
 			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
