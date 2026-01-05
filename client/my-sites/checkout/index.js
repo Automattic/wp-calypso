@@ -131,7 +131,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/:productSlug/:intentId`,
+		`/checkout/marketplace/:productSlug`,
 		setLocaleMiddleware(),
 		noSite,
 		checkoutMarketplaceSiteless,
@@ -140,7 +140,27 @@ export default function () {
 	);
 
 	page(
-		`/checkout/:productSlug/:intentId/renew/:purchaseId`,
+		`/checkout/:marketplace/:productSlug/renew/:purchaseId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// Passport Marketplace checkout custom URLs
+	page(
+		`/checkout/passport/:productSlug`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/passport/:productSlug/renew/:purchaseId`,
 		setLocaleMiddleware(),
 		redirectLoggedOut,
 		noSite,
