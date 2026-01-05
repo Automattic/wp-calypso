@@ -212,8 +212,6 @@ export default function QuickPost() {
 							onClose={ closeMenu }
 							position="bottom"
 							className="quick-post-input__popover"
-							aria-label={ translate( 'Quick post actions' ) }
-							id="quick-post-actions-menu"
 						>
 							<PopoverMenuItem
 								aria-label={ translate( 'Open Full Editor' ) }
