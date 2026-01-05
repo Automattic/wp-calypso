@@ -102,9 +102,9 @@ function DomainsLanding( {
 					dangerouslySetInnerHTML={ {
 						__html: `
 							if ('serviceWorker' in navigator) {
-								window.addEventListener('load', function() {
+								window.addEventListener('load', async function() {
 									try {
-										navigator.serviceWorker.register('/service-worker.js');
+										await navigator.serviceWorker.register('/service-worker.js');
 									} catch ( err ) {
 										console.error( 'Error registering service worker', err );
 									}
