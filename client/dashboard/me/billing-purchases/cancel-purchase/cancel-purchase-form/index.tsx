@@ -296,6 +296,11 @@ function StepButtons( {
 
 	const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
+	// Check if ANY step in the flow is a warning/confirmation step
+	// If so, we should not show Skip button at all to avoid bypassing warnings
+	const hasWarningStep =
+		allSteps?.includes( ATOMIC_REVERT_STEP ) || allSteps?.includes( REMOVE_PLAN_STEP );
+
 	if ( surveyStep === UPSELL_STEP ) {
 		return null;
 	}
@@ -306,9 +311,11 @@ function StepButtons( {
 				<Button variant="primary" disabled={ ! canGoNext } onClick={ clickNext }>
 					{ __( 'Continue' ) }
 				</Button>
-				<Button variant="tertiary" onClick={ onSubmit }>
-					{ __( 'Skip' ) }
-				</Button>
+				{ ! hasWarningStep && (
+					<Button variant="tertiary" onClick={ onSubmit }>
+						{ __( 'Skip' ) }
+					</Button>
+				) }
 			</ButtonStack>
 		);
 	}
@@ -375,7 +382,7 @@ function StepButtons( {
 			>
 				{ __( 'Submit' ) }
 			</Button>
-			{ ! canGoNext && ! isCancelling && (
+			{ ! canGoNext && ! isCancelling && ! hasWarningStep && (
 				<Button variant="tertiary" onClick={ onSubmit }>
 					{ __( 'Skip' ) }
 				</Button>
