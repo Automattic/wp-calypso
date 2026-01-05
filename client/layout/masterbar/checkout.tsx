@@ -58,9 +58,7 @@ const CheckoutMasterbar = ( {
 			return 'a4a';
 		}
 
-		// Temporary workaround to test the branding for Passport checkout page.
-		// TODO: Remove this once we have a better way to identify Passport checkout pages.
-		if ( window.location.href.includes( 'passport' ) ) {
+		if ( window.location.pathname.startsWith( '/checkout/passport' ) ) {
 			return 'passport';
 		}
 
