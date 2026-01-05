@@ -15,11 +15,6 @@
 		--wp-admin-theme-color: var(--color-akismet);
 	}
 
-	/* Passport */
-	.is-passport &:not(.is-error, .is-valid) {
-		--wp-admin-theme-color: var(--color-passport);
-	}
-
 	/* Jetpack Cloud */
 	.jetpack-cloud &:not(.is-error, .is-valid) {
 		--wp-admin-theme-color: var(--studio-jetpack-green-50);
