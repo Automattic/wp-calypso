@@ -27,5 +27,4 @@ export interface ActivityBlockMeta {
 	intent?: string;
 	section?: string;
 	published?: number | string;
-	fromWPAdminDashboard?: boolean;
 }

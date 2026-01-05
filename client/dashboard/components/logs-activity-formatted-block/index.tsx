@@ -17,6 +17,7 @@ import { ExternalLink } from '@wordpress/components';
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
+import isDashboard from '../../utils/is-dashboard';
 import { wpcomLink } from '../../utils/link';
 import type { ActivityBlockContent, ActivityBlockNode, ActivityBlockMeta } from './types';
 
@@ -152,14 +153,11 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		return <Fragment>{ children }</Fragment>;
 	}
 
-	// This component is also used in the WP Admin dashboard, so we need to link to the plugin details in Calypso.
-	const href =
-		meta.fromWPAdminDashboard === true
-			? `/plugins/${ pluginSlug }/${ siteSlug }`
-			: `/plugins/manage/${ pluginSlug }`;
+	const href = wpcomLink( `/plugins/${ pluginSlug }/${ siteSlug }` );
+	const Component = isDashboard() ? ExternalLink : 'a';
 
 	return (
-		<a
+		<Component
 			href={ href }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
@@ -167,7 +165,7 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 			data-intent={ intent ?? meta.intent ?? 'view' }
 		>
 			{ children }
-		</a>
+		</Component>
 	);
 };
 

@@ -276,26 +276,7 @@ describe( 'Plugin blocks', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( 'links to the plugin details on Calypso when fromWPAdminDashboard is true', () => {
-		renderFormatted(
-			{
-				type: 'plugin',
-				pluginSlug: 'plugin-slug',
-				siteSlug: 'site-slug',
-				children: [ 'A plugin' ],
-			},
-			{
-				meta: {
-					fromWPAdminDashboard: true,
-				},
-			}
-		);
-
-		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/plugins/plugin-slug/site-slug' );
-	} );
-
-	test( 'links to the plugin details in the multi-site dashboard', () => {
+	test( 'links to the plugin details on WordPress.com when siteSlug is present', () => {
 		renderFormatted( {
 			type: 'plugin',
 			pluginSlug: 'plugin-slug',
@@ -304,7 +285,18 @@ describe( 'Plugin blocks', () => {
 		} );
 
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/plugins/manage/plugin-slug' );
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/plugins/plugin-slug/site-slug' );
+	} );
+
+	test( 'renders plain text when siteSlug is missing', () => {
+		renderFormatted( {
+			type: 'plugin',
+			pluginSlug: 'plugin-slug',
+			children: [ 'A plugin' ],
+		} );
+
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'A plugin' ) ).toBeInTheDocument();
 	} );
 
 	test.each( [

@@ -7,7 +7,15 @@ import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { ActivityEvent } from '../activity-event';
 import type { Activity, ActivityDescription } from '../types';
 
-jest.mock( '@automattic/calypso-config', () => jest.fn( () => '' ) );
+jest.mock( '@automattic/calypso-config', () =>
+	jest.fn( ( key: string ) => {
+		if ( key === 'wpcom_url' ) {
+			return 'https://wordpress.com';
+		}
+
+		return '';
+	} )
+);
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn( () => false ) );
 jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn( () => false ) );
 
@@ -236,7 +244,9 @@ describe( 'ActivityEvent', () => {
 		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Akismet' } );
-		expect( link.getAttribute( 'href' ) ).toBe( '/plugins/manage/akismet' );
+		expect( link.getAttribute( 'href' ) ).toBe(
+			'https://wordpress.com/plugins/akismet/example.com'
+		);
 	} );
 
 	it( 'renders theme links when themes originate from WordPress.com', () => {
