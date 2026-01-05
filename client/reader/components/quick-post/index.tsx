@@ -80,7 +80,7 @@ export default function QuickPost() {
 		}
 	}, [ postContent ] );
 
-	const handleSubmit = () => {
+	const handlePublish = () => {
 		if ( ! siteId ) {
 			dispatch( warningNotice( translate( 'Please select a site.' ) ) );
 			return;
@@ -97,6 +97,12 @@ export default function QuickPost() {
 			{
 				onSuccess: ( data ) => {
 					clearEditor();
+					recordReaderTracksEvent( 'calypso_reader_quick_post_submitted', {
+						post_id: data.ID,
+						post_url: data.URL,
+						site_id: siteId,
+					} );
+
 					dispatch(
 						successNotice(
 							translate( 'Post successful! Your post will appear in the feed soon.' ),
@@ -198,6 +204,7 @@ export default function QuickPost() {
 							onClick={ toggleMenu }
 							aria-expanded={ isMenuVisible }
 							className="quick-post-input__actions-toggle"
+							aria-label={ translate( 'Quick post actions' ) }
 						/>
 						<PopoverMenu
 							context={ popoverButtonRef.current }
@@ -205,8 +212,15 @@ export default function QuickPost() {
 							onClose={ closeMenu }
 							position="bottom"
 							className="quick-post-input__popover"
+							aria-label={ translate( 'Quick post actions' ) }
+							id="quick-post-actions-menu"
 						>
-							<PopoverMenuItem target="_blank" rel="noreferrer" onClick={ handleFullEditorClick }>
+							<PopoverMenuItem
+								aria-label={ translate( 'Open Full Editor' ) }
+								target="_blank"
+								rel="noreferrer"
+								onClick={ handleFullEditorClick }
+							>
 								{ translate( 'Open Full Editor' ) }
 							</PopoverMenuItem>
 						</PopoverMenu>
@@ -228,7 +242,7 @@ export default function QuickPost() {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<Button variant="primary" onClick={ handleSubmit } isBusy={ isSaving }>
+				<Button variant="primary" onClick={ handlePublish } isBusy={ isSaving }>
 					{ getButtonText() }
 				</Button>
 			</div>
