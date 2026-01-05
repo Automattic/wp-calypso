@@ -77,10 +77,9 @@ export const useCreateZendeskConversation = () => {
 				active_interaction_id: activeInteractionId || null,
 				is_chat_loaded: isChatLoaded,
 			} );
-			const errorMessageObj = getErrorTryAgainLaterMessage();
 
 			setChat( {
-				messages: [ ...previousMessages, errorMessageObj ],
+				messages: [ ...previousMessages, getErrorTryAgainLaterMessage() ],
 				status: 'loaded',
 				provider: previousProvider,
 				conversationId: previousConversationId,
