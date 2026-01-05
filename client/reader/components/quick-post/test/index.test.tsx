@@ -179,8 +179,8 @@ describe( 'QuickPost', () => {
 		} );
 	} );
 
-	it( 'save the post as a draft when the post is saved', async () => {
-		nock( 'https://public-api.wordpress.com:443' )
+	it( 'redirects to the full editor when the post is saved', async () => {
+		const saveDraft = nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/sites/123/posts/new', {
 				title: 'Test post...',
 				content: 'Test post',
@@ -198,7 +198,7 @@ describe( 'QuickPost', () => {
 		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'Open Full Editor' } ) );
 
 		await waitFor( async () => {
-			expect( nock.isDone() ).toBe( true );
+			expect( saveDraft.isDone() ).toBe( true );
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				'https://example.com/wp-admin/post.php?post=1234&action=edit'
 			);
