@@ -219,7 +219,8 @@ function getBasicSurveySteps( {
 	if ( upsell && ! isDowngradePlan ) {
 		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 	}
-	if ( downgradePlan ) {
+	// NOTE: downgradePlan only ever exists if upsell is true (see getDowngradePlanForPurchase).
+	if ( upsell && downgradePlan ) {
 		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 	}
 	if ( hasQuestionTwo ) {
