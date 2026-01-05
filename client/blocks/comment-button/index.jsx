@@ -21,7 +21,7 @@ function CommentButton( {
 	const translate = useTranslate();
 	const showLabel = commentCount > 0 || defaultLabel;
 	const label = commentCount || defaultLabel;
-	// Show a tooltip only when we are showing the number of existing comments.
+	// Show a tooltip when there are existing comments, or when explicitly requested.
 	const showTooltip = commentCount > 0 || alwaysShowTooltip;
 
 	return (
