@@ -1050,11 +1050,29 @@ function PurchaseSecondSubtitle( { purchase }: { purchase: Purchase } ) {
 
 function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 	const subtitle = getSubtitleForDisplay( purchase );
+
 	if ( ! subtitle ) {
 		return null;
 	}
 
-	return <MetadataItem title={ subtitle } />;
+	let title = subtitle;
+
+	if ( purchase.is_plan ) {
+		const siteLabel = purchase.site_slug || purchase.domain;
+
+		if ( siteLabel ) {
+			title = sprintf(
+				// translators: subtitle is the type of purchase (e.g. "Site plan"), site is the domain or slug of the site the plan applies to.
+				__( '%(subtitle)s for %(site)s.' ),
+				{
+					subtitle,
+					site: siteLabel,
+				}
+			);
+		}
+	}
+
+	return <MetadataItem title={ title } />;
 }
 
 export default function PurchaseSettings() {
