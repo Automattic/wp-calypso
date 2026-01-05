@@ -272,6 +272,8 @@ function SurveyContent( {
 			/>
 		);
 	}
+
+	return null;
 }
 
 function StepButtons( {
