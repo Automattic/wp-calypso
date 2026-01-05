@@ -560,7 +560,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 // Action buttons in full-post
 .reader-full-post .reader-post-actions {
 	clear: both;
-	margin-bottom: 20px;
+	margin: 20px 0;
 
 	.comment-button svg,
 	.like-button svg,
