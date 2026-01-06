@@ -7,7 +7,7 @@ import { Visibility } from '../index';
 import type { Site } from '@automattic/api-core';
 
 describe( '<Visibility>', () => {
-	test( 'for unlaunched sites, it renders the "Coming soon" with a "Finish setup" link', () => {
+	test( 'for unlaunched sites, it renders "Coming soon" with a "Finish setup" link', () => {
 		const site = {
 			slug: 'test.wordpress.com',
 			site_migration: {},
@@ -22,7 +22,7 @@ describe( '<Visibility>', () => {
 		);
 	} );
 
-	test( 'for coming soon sites, it renders the "Coming soon"', () => {
+	test( 'for coming soon sites, it renders "Coming soon"', () => {
 		const site = {
 			site_migration: {},
 			is_coming_soon: true,
@@ -31,7 +31,7 @@ describe( '<Visibility>', () => {
 		expect( container.textContent ).toBe( 'Coming soon' );
 	} );
 
-	test( 'for private sites, it renders the "Private"', () => {
+	test( 'for private sites, it renders "Private"', () => {
 		const site = {
 			site_migration: {},
 			is_private: true,
@@ -40,7 +40,7 @@ describe( '<Visibility>', () => {
 		expect( container.textContent ).toBe( 'Private' );
 	} );
 
-	test( 'for public sites, it renders the "Public"', () => {
+	test( 'for public sites, it renders "Public"', () => {
 		const site = {
 			site_migration: {},
 			is_private: false,
