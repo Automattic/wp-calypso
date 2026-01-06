@@ -16,7 +16,7 @@ export interface UnifiedAIAgentProps {
 	/** The current route path. */
 	currentRoute?: string;
 	/** Indicates if the user is eligible for chat. */
-	isEligibleForChat?: boolean;
+	isEligibleForChat: boolean;
 	/** The name of the current section (e.g., 'posts', 'pages'). */
 	sectionName: string;
 	/** The selected site object. */
@@ -77,7 +77,7 @@ function AgentSetup( {
 	currentRoute,
 	site = null,
 	sectionName,
-	isEligibleForChat = false,
+	isEligibleForChat,
 }: UnifiedAIAgentProps ) {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
