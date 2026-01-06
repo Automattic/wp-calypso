@@ -1,8 +1,8 @@
-import isDashboard from './is-dashboard';
+import isDashboardEnv from './is-dashboard-env';
 
 export function isDashboardBackport() {
 	// No need to check for backport if it's a dashboard Calypso environment.
-	if ( isDashboard() ) {
+	if ( isDashboardEnv() ) {
 		return false;
 	}
 
