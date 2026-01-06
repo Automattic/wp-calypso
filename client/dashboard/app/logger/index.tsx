@@ -1,4 +1,4 @@
-import { INACCESSIBLE_JETPACK_ERROR_CODE } from '@automattic/api-core';
+import { DashboardDataError, INACCESSIBLE_JETPACK_ERROR_CODE } from '@automattic/api-core';
 import calypsoConfig from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
@@ -7,26 +7,10 @@ import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
 function isBenignError( error: Error ) {
-	// Ignore errors related to missing auth tokens.
-	// The user will get redirected to the login page / second auth factor.
-	switch ( error.name ) {
-		case 'AuthorizationRequiredError':
-		case 'ReauthorizationRequiredError':
-			return true;
-	}
-
 	// Ignore errors related to inaccessible Jetpack sites.
 	// The user is expected to debug their Jetpack sites.
-	if ( 'code' in error && error.code === INACCESSIBLE_JETPACK_ERROR_CODE ) {
+	if ( error instanceof DashboardDataError && error.code === INACCESSIBLE_JETPACK_ERROR_CODE ) {
 		return true;
-	}
-
-	// Ignore errors related to view transitions.
-	// Those are triggered by the browser when the user tries to navigate away from a page that is still transitioning.
-	switch ( error.name ) {
-		case 'AbortError':
-		case 'InvalidStateError':
-			return error.message.includes( 'transition' );
 	}
 
 	return false;
