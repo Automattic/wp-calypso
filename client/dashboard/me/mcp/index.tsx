@@ -1,6 +1,6 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -38,7 +38,6 @@ interface McpSite {
 }
 
 function McpComponent() {
-	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
 	const sitesQueryResult = useQuery(
 		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
@@ -57,10 +56,6 @@ function McpComponent() {
 				success: __( 'MCP settings saved.' ),
 				error: __( 'Failed to save MCP settings.' ),
 			},
-		},
-		onSuccess: ( newData: any ) => {
-			// Update the cache with the new data from the API response
-			queryClient.setQueryData( userSettingsQuery().queryKey, newData as any );
 		},
 	} );
 
