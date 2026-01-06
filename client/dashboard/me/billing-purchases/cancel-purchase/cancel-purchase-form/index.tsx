@@ -442,11 +442,11 @@ function canGoToNextStep( {
 }
 
 function getSurveyTitle( surveyStep: string ) {
-	if ( surveyStep !== UPSELL_STEP ) {
-		return __( 'Before you go, please answer a few quick questions to help us improve.' );
+	if ( surveyStep === UPSELL_STEP ) {
+		return __( 'Here is an idea' );
 	}
 
-	return __( 'Here is an idea' );
+	return __( 'Before you go, please answer a few quick questions to help us improve.' );
 }
 
 export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
