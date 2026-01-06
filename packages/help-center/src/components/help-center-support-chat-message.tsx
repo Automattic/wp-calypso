@@ -129,9 +129,14 @@ export const HelpCenterSupportChatMessage = ( {
 		);
 	}
 
+	const chatLink =
+		conversation.metadata && 'sessionId' in conversation.metadata
+			? `/odie?chatId=${ conversation.id }&sessionId=${ conversation.metadata?.sessionId }&botSlug=${ conversation.metadata?.botSlug }`
+			: `/odie?id=${ conversation.metadata?.supportInteractionId }`;
+
 	return (
 		<Link
-			to={ `/odie?id=${ supportInteraction?.uuid }` }
+			to={ chatLink }
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
 			} }

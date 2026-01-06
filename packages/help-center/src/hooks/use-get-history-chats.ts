@@ -149,10 +149,14 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	useEffect( () => {
 		if ( loggedOutChat.data ) {
 			setRecentConversations( [
-				convertOdieChatToOdieConversation( loggedOutChat.data, loggedOutSession?.sessionId || '' ),
+				convertOdieChatToOdieConversation(
+					loggedOutChat.data,
+					loggedOutSession?.sessionId || '',
+					loggedOutSession?.botSlug || ''
+				),
 			] );
 		}
-	}, [ loggedOutChat.data, loggedOutSession?.sessionId ] );
+	}, [ loggedOutChat.data, loggedOutSession?.sessionId, loggedOutSession?.botSlug ] );
 
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk' );
@@ -189,7 +193,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 				? [
 						convertOdieChatToOdieConversation(
 							loggedOutChat.data,
-							loggedOutSession?.sessionId || ''
+							loggedOutSession?.sessionId || '',
+							loggedOutSession?.botSlug || ''
 						),
 				  ]
 				: [] ),

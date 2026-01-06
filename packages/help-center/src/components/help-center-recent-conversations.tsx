@@ -46,7 +46,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 
 	const chatLink =
 		recentConversation.metadata && 'sessionId' in recentConversation.metadata
-			? `/odie?chatId=${ recentConversation.id }&sessionId=${ recentConversation.metadata?.sessionId }`
+			? `/odie?chatId=${ recentConversation.id }&sessionId=${ recentConversation.metadata?.sessionId }&botSlug=${ recentConversation.metadata?.botSlug }`
 			: `/odie?id=${ recentConversation.metadata?.supportInteractionId }`;
 
 	return (
