@@ -1,28 +1,33 @@
 import { fetchTwoStep } from '@automattic/api-core';
 import {
-	userSettingsQuery,
-	userPurchasesQuery,
-	userTransferredPurchasesQuery,
-	userPaymentMethodsQuery,
-	allSitesQuery,
-	userReceiptsQuery,
-	purchaseQuery,
-	receiptQuery,
-	queryClient,
 	accountRecoveryQuery,
-	smsCountryCodesQuery,
-	twoStepAuthAppSetupQuery,
-	sshKeysQuery,
-	userNotificationsSettingsQuery,
-	rawUserPreferencesQuery,
+	allowedPaymentMethodsQuery,
+	allSitesQuery,
 	connectedApplicationsQuery,
+	countryListQuery,
+	geoLocationQuery,
+	monetizeSubscriptionsQuery,
+	plansQuery,
+	productsQuery,
+	purchaseQuery,
+	queryClient,
+	rawUserPreferencesQuery,
+	receiptQuery,
 	siteBySlugQuery,
+	siteFeaturesQuery,
 	siteMediaStorageQuery,
 	sitePurchasesQuery,
-	siteFeaturesQuery,
-	productsQuery,
-	plansQuery,
+	smsCountryCodesQuery,
+	sshKeysQuery,
+	twoStepAuthAppSetupQuery,
 	userNotificationsDevicesQuery,
+	userNotificationsSettingsQuery,
+	userPaymentMethodsQuery,
+	userPurchasesQuery,
+	userReceiptsQuery,
+	userSettingsQuery,
+	userTaxDetailsQuery,
+	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -135,15 +140,15 @@ export const billingHistoryRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => billingRoute,
-	loader: async () => {
-		await queryClient.ensureQueryData( userReceiptsQuery() );
-	},
 	path: '/history',
 } );
 
 export const billingHistoryIndexRoute = createRoute( {
 	getParentRoute: () => billingHistoryRoute,
 	path: '/',
+	loader: () => {
+		queryClient.prefetchQuery( userReceiptsQuery() );
+	},
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
@@ -162,10 +167,10 @@ export const receiptRoute = createRoute( {
 	} ),
 	getParentRoute: () => billingHistoryRoute,
 	loader: async ( { params: { receiptId } } ) => {
-		const receipt = await queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) );
-		return {
-			receipt,
-		};
+		await Promise.all( [
+			queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) ),
+			queryClient.ensureQueryData( userTaxDetailsQuery() ),
+		] );
 	},
 	path: '$receiptId',
 } ).lazy( () =>
@@ -266,6 +271,10 @@ export const changePaymentMethodRoute = createRoute( {
 	} ),
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'payment-method/change',
+	loader: () => {
+		queryClient.prefetchQuery( allowedPaymentMethodsQuery() );
+		queryClient.prefetchQuery( userPaymentMethodsQuery( { type: 'card' } ) );
+	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings-change-payment-method' )( {
@@ -289,6 +298,13 @@ export const paymentMethodsRoute = createRoute( {
 export const paymentMethodsIndexRoute = createRoute( {
 	getParentRoute: () => paymentMethodsRoute,
 	path: '/',
+	loader: () => {
+		queryClient.prefetchQuery(
+			userPaymentMethodsQuery( {
+				expired: true,
+			} )
+		);
+	},
 } ).lazy( () =>
 	import( '../../me/billing-payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
@@ -360,6 +376,9 @@ export const monetizeSubscriptionsRoute = createRoute( {
 export const monetizeSubscriptionsIndexRoute = createRoute( {
 	getParentRoute: () => monetizeSubscriptionsRoute,
 	path: '/',
+	loader: () => {
+		queryClient.prefetchQuery( monetizeSubscriptionsQuery() );
+	},
 } ).lazy( () =>
 	import( '../../me/billing-monetize-subscriptions' ).then( ( d ) =>
 		createLazyRoute( 'monetize-subscriptions' )( {
@@ -396,6 +415,13 @@ export const taxDetailsRoute = createRoute( {
 	} ),
 	getParentRoute: () => billingRoute,
 	path: '/tax-details',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( geoLocationQuery() ),
+			queryClient.ensureQueryData( countryListQuery() ),
+			queryClient.ensureQueryData( userTaxDetailsQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../me/billing-tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
