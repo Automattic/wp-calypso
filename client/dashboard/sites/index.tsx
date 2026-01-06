@@ -125,27 +125,33 @@ function getFetchSiteListParams(
 		'is_vip',
 	];
 
-	if ( view.showTitle && view.titleField ) {
-		fields.push( mappedFields[ view.titleField ] );
-	}
-
-	if ( view.showMedia && view.mediaField ) {
-		fields.push( mappedFields[ view.mediaField ] );
-	}
-
-	if ( view.showDescription && view.descriptionField ) {
-		fields.push( mappedFields[ view.descriptionField ] );
-	}
-
-	view.fields?.forEach( ( field ) => {
-		const mappedField = mappedFields[ field ];
-		if ( mappedField ) {
-			fields.push( mappedField );
+	const getMappedFields = ( field: string ): ( keyof DashboardSiteListSite )[] => {
+		const result: ( keyof DashboardSiteListSite )[] = [];
+		if ( mappedFields[ field ] ) {
+			result.push( mappedFields[ field ] );
 		}
 
 		if ( additionalMappedFields[ field ] ) {
 			fields.push( ...additionalMappedFields[ field ] );
 		}
+
+		return result;
+	};
+
+	if ( view.showTitle && view.titleField ) {
+		fields.push( ...getMappedFields( view.titleField ) );
+	}
+
+	if ( view.showMedia && view.mediaField ) {
+		fields.push( ...getMappedFields( view.mediaField ) );
+	}
+
+	if ( view.showDescription && view.descriptionField ) {
+		fields.push( ...getMappedFields( view.descriptionField ) );
+	}
+
+	view.fields?.forEach( ( field ) => {
+		fields.push( ...getMappedFields( field ) );
 	} );
 
 	const planSlugsByName = siteFilters.plan?.reduce(
