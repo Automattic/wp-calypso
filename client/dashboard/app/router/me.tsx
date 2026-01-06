@@ -18,6 +18,10 @@ import {
 	connectedApplicationsQuery,
 	siteBySlugQuery,
 	siteMediaStorageQuery,
+	sitePurchasesQuery,
+	siteFeaturesQuery,
+	productsQuery,
+	plansQuery,
 	userNotificationsDevicesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
@@ -321,6 +325,18 @@ export const cancelPurchaseRoute = createRoute( {
 	} ),
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
+	loader: async ( { parentMatchPromise } ) => {
+		const parentMatch = await parentMatchPromise;
+		const { purchase } = parentMatch.loaderData ?? {};
+		if ( purchase ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+				queryClient.ensureQueryData( productsQuery() ),
+				queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
+				queryClient.ensureQueryData( plansQuery() ),
+			] );
+		}
+	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
 		createLazyRoute( 'cancel-purchase' )( {
@@ -573,6 +589,11 @@ export const securitySshKeyRoute = createRoute( {
 		] );
 	},
 	path: '/ssh-key',
+	validateSearch: ( search ): { back_to?: 'site-settings-sftp-ssh' } => {
+		return {
+			back_to: search.back_to === 'site-settings-sftp-ssh' ? 'site-settings-sftp-ssh' : undefined,
+		};
+	},
 } ).lazy( () =>
 	import( '../../me/security-ssh-key' ).then( ( d ) =>
 		createLazyRoute( 'security-ssh-key' )( {
@@ -784,10 +805,14 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		billingRoute.addChildren( [
 			billingIndexRoute,
 			billingHistoryRoute.addChildren( [ billingHistoryIndexRoute, receiptRoute ] ),
-			monetizeSubscriptionsRoute.addChildren( [
-				monetizeSubscriptionsIndexRoute,
-				monetizeSubscriptionRoute,
-			] ),
+			...( config.supports.me.billing && config.supports.me.billing.monetizeSubscriptions
+				? [
+						monetizeSubscriptionsRoute.addChildren( [
+							monetizeSubscriptionsIndexRoute,
+							monetizeSubscriptionRoute,
+						] ),
+				  ]
+				: [] ),
 			purchasesRoute.addChildren( [
 				purchasesIndexRoute,
 				purchaseSettingsRoute.addChildren( [
@@ -812,7 +837,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				securityTwoStepAuthSMSRoute,
 				securityTwoStepAuthBackupCodesRoute,
 			] ),
-			securitySshKeyRoute,
+			...( config.supports.me.security && config.supports.me.security.sshKey
+				? [ securitySshKeyRoute ]
+				: [] ),
 			securityConnectedAppsRoute,
 			securitySocialLoginsRoute,
 		] )

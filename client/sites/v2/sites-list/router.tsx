@@ -1,11 +1,14 @@
+import calypsoConfig from '@automattic/calypso-config';
 import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
+import { handleOnCatch } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute } from '../router';
 import siteOverviewRouter from '../site-overview/router';
 import siteSettingsRouter from '../site-settings/router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 import type { AppConfig } from 'calypso/dashboard/app/context';
+import type { ErrorInfo } from 'react';
 
 // Keep the loading state active to prevent displaying a white screen during the redirection.
 const infiniteLoader = () => new Promise( () => {} );
@@ -79,6 +82,12 @@ export const getRouter = ( config: AppConfig ) => {
 	const router = createRouter( {
 		...getRouterOptions( config ),
 		routeTree,
+		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+			handleOnCatch( error, errorInfo, router, {
+				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
+				dashboard_backport: true,
+			} );
+		},
 	} );
 
 	return router;

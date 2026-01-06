@@ -16,7 +16,7 @@ import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datet
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { encodeProductForUrl } from './wpcom-checkout';
-import type { Product, Purchase, Site } from '@automattic/api-core';
+import type { Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
 	REMOVE: 'remove',
@@ -611,59 +611,3 @@ export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: stri
 			// SaaS products are also considered marketplace products
 			( product_type.startsWith( 'marketplace' ) || product_type === 'saas_plugin' )
 	);
-
-/**
- * Whether a purchase will trigger an Atomic revert when it is canceled or removed.
- * The backend has the final say on if this actually happens, see:
- * revert_atomic_site_on_subscription_removal() and deactivate_product().
- * This is a helper for UI elements only, it does not control actual revert decisions.
- */
-export const willAtomicSiteRevertAfterPurchaseDeactivation = (
-	purchase: Purchase,
-	sitePurchases: Purchase[],
-	site: Site | undefined,
-	productsList: Product[],
-	linkedPurchases: Purchase[]
-) => {
-	if ( ! purchase || ! site ) {
-		return false;
-	}
-
-	// Bail if the site not Atomic.
-	if ( ! site?.is_wpcom_atomic ) {
-		return false;
-	}
-
-	const isAtomicSupportedProduct = ( productSlug: string ) => {
-		if ( hasMarketplaceProduct( productsList ?? [], productSlug ) ) {
-			return true;
-		}
-
-		return site?.is_wpcom_atomic;
-	};
-
-	if ( ! Array.isArray( linkedPurchases ) ) {
-		linkedPurchases = [];
-	}
-
-	// Bail if none of the purchases to deactivate supports Atomic.
-	if (
-		! isAtomicSupportedProduct( purchase.product_slug ) &&
-		linkedPurchases.every(
-			( linkedPurchase ) => ! isAtomicSupportedProduct( linkedPurchase.product_slug )
-		)
-	) {
-		return false;
-	}
-
-	const remainingPurchases = sitePurchases.filter(
-		( sitePurchase: Purchase ) =>
-			sitePurchase.ID !== purchase.ID &&
-			linkedPurchases.every( ( linkedPurchase ) => sitePurchase.ID !== linkedPurchase.ID )
-	);
-
-	// If there is at least one remaining Atomic supported purchase, the site will be kept in the Atomic infra.
-	return ! remainingPurchases.some( ( sitePurchase ) =>
-		isAtomicSupportedProduct( sitePurchase.product_slug )
-	);
-};

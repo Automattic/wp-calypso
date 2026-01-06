@@ -20,6 +20,7 @@ import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
+import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
@@ -380,7 +381,12 @@ export default function Sites() {
 						}
 					/>
 				}
-				notices={ <SitesNotices /> }
+				notices={
+					<>
+						<SitesNotices />
+						{ ! isDashboardBackport() && <OptInSurvey /> }
+					</>
+				}
 			>
 				{ isEnabled( 'dashboard/v2/es-site-list' ) ? (
 					<SitesDataViews< DashboardSiteListSite >

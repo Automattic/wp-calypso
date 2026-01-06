@@ -1,6 +1,13 @@
 .inline-help__search {
 	.summary-button-title {
 		text-align: left;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		line-clamp: 3;
+		word-break: break-word;
 	}
 
 	button.summary-button.components-button {

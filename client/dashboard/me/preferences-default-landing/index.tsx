@@ -6,6 +6,7 @@ import { DataForm, Field } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack/';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
@@ -100,6 +101,7 @@ export default function PreferencesDefaultLanding() {
 							description={ __( 'Choose what you see after logging into WordPress.com' ) }
 						/>
 
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< DefaultLandingPreferencesFormData >
 							data={ formData }
 							fields={ fields }
