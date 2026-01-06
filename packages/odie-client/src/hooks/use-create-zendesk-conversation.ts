@@ -1,7 +1,11 @@
 import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
-import { getErrorTryAgainLaterMessage, getZendeskChatStartedMetaMessage } from '../constants';
+import {
+	getErrorTryAgainLaterMessage,
+	getOdieTransferMessages,
+	getZendeskChatStartedMetaMessage,
+} from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -171,16 +175,14 @@ export const useCreateZendeskConversation = () => {
 			// We need to load the conversation to get typing events. Load simply means "focus on"..
 			Smooch.loadConversation( conversationId );
 
-			const transitionToSupportMessage = getZendeskChatStartedMetaMessage();
-
 			setChat( ( prevChat ) => ( {
 				...prevChat,
 				conversationId: conversationId,
-				messages: prevChat.messages.some(
-					( message ) => !! message?.context?.flags?.show_contact_support_msg
-				)
-					? prevChat.messages
-					: [ ...prevChat.messages, transitionToSupportMessage ],
+				messages: [
+					...prevChat.messages,
+					...getOdieTransferMessages( currentSupportInteraction?.bot_slug ),
+					getZendeskChatStartedMetaMessage(),
+				],
 				provider: 'zendesk',
 				status: 'loaded',
 			} ) );

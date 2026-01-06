@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
+import { Fragment } from 'react';
 import ChatMessage from '..';
 import { useOdieAssistantContext } from '../../../context';
 import { isCSATMessage } from '../../../utils';
@@ -114,24 +115,6 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 		const startingHumanSupport = group.messages.some( isZendeskChatStartedMessage );
 		const endingHumanSupport = group.messages.some( isCSATMessage );
 
-		if ( startingHumanSupport ) {
-			return (
-				<ChatWithSupportLabel
-					labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
-					key={ group.id }
-				/>
-			);
-		}
-
-		if ( endingHumanSupport ) {
-			return (
-				<ChatWithSupportLabel
-					labelText={ __( 'Chat with support team ended', __i18n_text_domain__ ) }
-					key={ group.id }
-				/>
-			);
-		}
-
 		const messageHeader = () => {
 			// Only business messages have a header.
 			if ( group.role === 'business' ) {
@@ -145,19 +128,28 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 		};
 
 		return (
-			<div
-				className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }
-				key={ group.id }
-			>
-				{ group.messages.map( ( message, index ) => (
-					<ChatMessage
-						key={ getMessageUniqueIdentifier( message, `${ group.id }-${ index }` ) }
-						message={ message }
-						currentUser={ currentUser }
-						header={ index === 0 ? messageHeader() : undefined }
+			<Fragment key={ group.id }>
+				{ endingHumanSupport && (
+					<ChatWithSupportLabel
+						labelText={ __( 'Chat with support team ended', __i18n_text_domain__ ) }
 					/>
-				) ) }
-			</div>
+				) }
+				<div className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }>
+					{ group.messages.map( ( message, index ) => (
+						<ChatMessage
+							key={ getMessageUniqueIdentifier( message, `${ group.id }-${ index }` ) }
+							message={ message }
+							currentUser={ currentUser }
+							header={ index === 0 ? messageHeader() : undefined }
+						/>
+					) ) }
+				</div>
+				{ startingHumanSupport && (
+					<ChatWithSupportLabel
+						labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
+					/>
+				) }
+			</Fragment>
 		);
 	} );
 }

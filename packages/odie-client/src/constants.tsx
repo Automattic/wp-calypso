@@ -1,3 +1,4 @@
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
 declare const __i18n_text_domain__: string;
@@ -53,6 +54,104 @@ export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
 	return 'wpcom';
 }
 
+export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] => {
+	const isTestMode = isTestModeEnvironment();
+	const flow = getFlowFromBotSlug( botSlug );
+
+	// Commerce garden has a simplified, single-message flow
+	if ( flow === 'commerce-garden' ) {
+		return [
+			{
+				content:
+					( isTestMode ? '(STAGING VERSION OF ZENDESK) ' : '' ) +
+					__(
+						"Yes, of course! A Happiness Engineer is jumping in to help you now. They can see your chat with our assistant, so feel free to share any extra details; we'll take it from there.",
+						__i18n_text_domain__
+					),
+				role: 'bot' as const,
+				type: 'message' as const,
+				context: {
+					flags: {
+						hide_disclaimer_content: true,
+						show_ai_avatar: false,
+					},
+					site_id: null,
+				},
+			},
+		];
+	}
+
+	const baseMessage = {
+		content:
+			__( 'No problem. Help is on the way!', __i18n_text_domain__ ) +
+			( isTestMode ? ' (staging)' : '' ),
+		role: 'bot' as const,
+		type: 'message' as const,
+		context: {
+			flags: {
+				hide_disclaimer_content: true,
+				show_ai_avatar: false,
+			},
+			site_id: null,
+		},
+	};
+
+	if ( isTestMode ) {
+		return [
+			baseMessage,
+			{
+				content: __(
+					'This is the Sandbox version of Zendesk. You will not be redirected to a support agent. If you want to test the real experience and be connected to a support agent, you need to be unproxied.',
+					__i18n_text_domain__
+				),
+				role: 'bot' as const,
+				type: 'message' as const,
+				context: {
+					flags: {
+						hide_disclaimer_content: true,
+						show_ai_avatar: false,
+					},
+					site_id: null,
+				},
+			},
+		];
+	}
+
+	return [
+		baseMessage,
+		{
+			content: __(
+				"We're connecting you with our support team. A Happiness Engineer will join the chat as soon as they're available.",
+				__i18n_text_domain__
+			),
+			role: 'bot' as const,
+			type: 'message' as const,
+			context: {
+				flags: {
+					hide_disclaimer_content: true,
+					show_ai_avatar: false,
+				},
+				site_id: null,
+			},
+		},
+		{
+			content: __(
+				'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+				__i18n_text_domain__
+			),
+			role: 'bot' as const,
+			type: 'message' as const,
+			context: {
+				flags: {
+					hide_disclaimer_content: true,
+					show_ai_avatar: false,
+				},
+				site_id: null,
+			},
+		},
+	];
+};
+
 export const getOdieThirdPartyMessageContent = (): string =>
 	`${ __(
 		'I’m happy to connect you to a human! However, it looks like 3rd party cookies are disabled in your browser. Please turn them on for our live chat to work properly. [Use our guide](https://wordpress.com/support/third-party-cookies/)',
@@ -83,7 +182,6 @@ export const getOdieEmailFallbackMessage = (): Message => ( {
 	type: 'message',
 	context: {
 		flags: {
-			show_contact_support_msg: false,
 			forward_to_human_support: true,
 		},
 		question_tags: {
@@ -219,7 +317,6 @@ export const getZendeskChatStartedMetaMessage = (): Message => ( {
 		site_id: null,
 		flags: {
 			hide_disclaimer_content: true,
-			show_contact_support_msg: true,
 			show_ai_avatar: false,
 		},
 	},
