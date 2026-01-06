@@ -153,7 +153,8 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		return <Fragment>{ children }</Fragment>;
 	}
 
-	const href = wpcomLink( `/plugins/${ pluginSlug }/${ siteSlug }` );
+	const url = `/plugins/${ pluginSlug }/${ siteSlug }`;
+	const href = isDashboardBackport() ? url : wpcomLink( url );
 	const Component = isDashboardBackport() ? 'a' : ExternalLink;
 
 	return (
