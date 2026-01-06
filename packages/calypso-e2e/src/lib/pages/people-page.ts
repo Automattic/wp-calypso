@@ -1,5 +1,14 @@
-import { Page, Locator, expect } from 'playwright/test';
+import { Page, Locator } from 'playwright';
 import { clickNavTab } from '../../element-helper';
+
+/**
+ * Dynamic import to avoid loading @playwright/test at module initialization time,
+ * which breaks legacy Jest-based tests that use this package.
+ */
+async function getExpect() {
+	const { expect } = await import( '@playwright/test' );
+	return expect;
+}
 
 export type PeoplePageTabs = 'Users' | 'Followers' | 'Email Followers' | 'Invites';
 
@@ -79,6 +88,7 @@ export class PeoplePage {
 	 * @param emailaddress Email address of the invited user.
 	 */
 	async expectInvitation( emailaddress: string ): Promise< void > {
+		const expect = await getExpect();
 		await this.clickViewAllIfAvailable();
 		await expect( async () => {
 			await this.page.reload();
@@ -99,6 +109,7 @@ export class PeoplePage {
 	 * Clear the invitation of a user from site.
 	 */
 	async clearUserInvitation(): Promise< void > {
+		const expect = await getExpect();
 		await this.clearUserButton.click();
 		await expect(
 			this.page.getByText( 'Invite deleted' ),
@@ -110,6 +121,7 @@ export class PeoplePage {
 	 * Removes a user from site.
 	 */
 	async removeUserFromSite( username: string ): Promise< void > {
+		const expect = await getExpect();
 		await this.page.getByRole( 'button', { name: `Remove ${ username }` } ).click();
 		await this.page.getByRole( 'button', { name: 'Remove', exact: true } ).click();
 		await expect(
@@ -136,6 +148,7 @@ export class PeoplePage {
 	 * Revokes the pending invite.
 	 */
 	async revokeInvite(): Promise< void > {
+		const expect = await getExpect();
 		await this.revokeInviteButton.click();
 		await expect(
 			this.page.getByText( 'Invite deleted' ),
@@ -154,6 +167,7 @@ export class PeoplePage {
 		siteURL: string,
 		username: string
 	): Promise< void > {
+		const expect = await getExpect();
 		expect( baseURL, 'Base URL should be defined' ).toBeDefined();
 		expect( siteURL, 'Site URL should be defined' ).toBeDefined();
 		expect( username, 'Username should be defined' ).toBeDefined();

@@ -14709,6 +14709,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"baseline-browser-mapping@npm:^2.9.11":
+  version: 2.9.11
+  resolution: "baseline-browser-mapping@npm:2.9.11"
+  bin:
+    baseline-browser-mapping: dist/cli.js
+  checksum: eba49fcc1b33ab994aeeb73a4848f2670e06a0886dd5b903689ae6f60d47e7f1bea9262dbb2548c48179e858f7eda2b82ddf941ae783b862f4dcc51085a246f2
+  languageName: node
+  linkType: hard
+
 "batch@npm:0.6.1":
   version: 0.6.1
   resolution: "batch@npm:0.6.1"
@@ -38581,6 +38590,7 @@ __metadata:
     "@wp-playground/client": "npm:^1.1.0"
     animate.css: "npm:^4.1.1"
     babel-loader: "npm:^8.2.3"
+    baseline-browser-mapping: "npm:^2.9.11"
     browserslist: "npm:^4.24.5"
     bunyan: "npm:^1.8.15"
     calypso: "workspace:^"
@@ -38689,6 +38699,7 @@ __metadata:
     asana-phrase: "npm:^0.0.8"
     babel-jest: "npm:^29.6.1"
     babel-plugin-dynamic-import-node: "npm:^2.3.0"
+    baseline-browser-mapping: "npm:^2.9.11"
     eslint: "npm:^8.34.0"
     eslint-plugin-jest: "npm:^25.3.0"
     esm: "npm:^3.2.25"

@@ -211,6 +211,8 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 					if ( attempt === MAX_ATTEMPTS ) {
 						throw err;
 					}
+					// Wait before retrying to give backend time to process
+					await page.waitForTimeout( 2000 );
 				}
 			}
 		} );
@@ -451,5 +453,17 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
+	} );
+
+	afterAll( async () => {
+		// Clean up the test post via REST API.
+		if ( newPostDetails?.ID ) {
+			await restAPIClient.deletePost(
+				testAccount.credentials.testSites?.primary.id as number,
+				newPostDetails.ID
+			);
+		}
+
+		await page.close();
 	} );
 } );
