@@ -6,9 +6,10 @@ import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { isToday } from 'date-fns';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
-import { formatDate, isWithinLast, getRelativeTimeString } from '../../utils/datetime';
+import { formatDate, getRelativeTimeString } from '../../utils/datetime';
 
 export const MonetizeSubscriptionTerms = ( {
 	subscription,
@@ -27,7 +28,7 @@ export const MonetizeSubscriptionTerms = ( {
 
 	// Show "Expired" for past dates
 	if ( isExpired ) {
-		const isExpiredToday = isWithinLast( endDate, 24, 'hours' );
+		const isExpiredToday = isToday( endDate );
 		const expiredTodayText = __( 'Expired today' );
 		// translators: timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"
 		const expiredFromNowText = sprintf( __( 'Expired %(timeSinceExpiry)s' ), {

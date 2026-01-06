@@ -21,7 +21,7 @@ export const MembershipTerms = ( { subscription }: { subscription: MembershipSub
 	const isExpired = endDate.isBefore( moment() );
 
 	if ( isExpired ) {
-		const isExpiredToday = moment().diff( endDate, 'hours' ) < 24;
+		const isExpiredToday = moment().isSame( endDate, 'day' );
 
 		return (
 			<span className="purchase-item__is-error">
