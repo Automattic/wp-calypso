@@ -128,7 +128,11 @@ export function NameRenderer( {
 			case 'p2':
 				return <Badge>{ __( 'P2' ) }</Badge>;
 			case 'deleted':
-				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
+				return (
+					<Badge intent="error" icon={ null }>
+						{ __( 'Deleted' ) }
+					</Badge>
+				);
 			case 'difm_lite_in_progress':
 				return <Badge>{ __( 'Express service' ) }</Badge>;
 			case 'migration_pending':
