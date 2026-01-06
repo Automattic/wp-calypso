@@ -38,7 +38,9 @@ export interface Dispatch {
 	dispatch: DispatchFromMap< typeof actions >;
 }
 
-export type HelpCenterSelect = SelectFromMap< typeof selectors >;
+export type HelpCenterSelect = SelectFromMap< typeof selectors > & {
+	isResolving: ( key: string ) => boolean;
+};
 
 export interface HelpCenterOptions {
 	hideBackButton?: boolean;
