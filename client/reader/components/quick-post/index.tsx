@@ -213,12 +213,7 @@ export default function QuickPost() {
 							position="bottom"
 							className="quick-post-input__popover"
 						>
-							<PopoverMenuItem
-								aria-label={ translate( 'Open Full Editor' ) }
-								target="_blank"
-								rel="noreferrer"
-								onClick={ handleFullEditorClick }
-							>
+							<PopoverMenuItem target="_blank" rel="noreferrer" onClick={ handleFullEditorClick }>
 								{ translate( 'Open Full Editor' ) }
 							</PopoverMenuItem>
 						</PopoverMenu>
