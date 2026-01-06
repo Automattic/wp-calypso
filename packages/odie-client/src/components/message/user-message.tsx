@@ -107,9 +107,7 @@ export const UserMessage = ( {
 				<MarkdownOrChildren
 					messageContent={ messageContent }
 					components={ {
-						a: ( props: React.ComponentProps< 'a' > ) => (
-							<CustomALink { ...props } target="_blank" />
-						),
+						a: ( props: React.ComponentProps< 'a' > ) => <CustomALink { ...props } />,
 					} }
 				/>
 			</div>

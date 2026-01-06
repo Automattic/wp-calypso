@@ -29,7 +29,6 @@
 		"calypso/all-domain-management": true,
 		"calypso/big-sky": true,
 		"calypso/domains-dataviews": true,
-		"cancellation-offers": true,
 		"catch-js-errors": true,
 		"checkout/checkout-version": false,
 		"ciab/allow-domain-features": true,
