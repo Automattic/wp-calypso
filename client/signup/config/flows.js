@@ -26,6 +26,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	const isOnboardingPmFlow = flowName === 'onboarding-pm';
 
 	const [ onboardingPmPostCheckoutDestination ] = getOnboardingPostCheckoutDestination( {
+		shouldRedirectToMultiSiteDashboard: dependencies.dashboardOptIn,
 		flowName,
 		locale: localeSlug,
 		siteSlug: dependencies.siteSlug,
