@@ -17,7 +17,7 @@ import { ExternalLink } from '@wordpress/components';
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
-import isDashboard from '../../utils/is-dashboard';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import type { ActivityBlockContent, ActivityBlockNode, ActivityBlockMeta } from './types';
 
@@ -154,7 +154,7 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	}
 
 	const href = wpcomLink( `/plugins/${ pluginSlug }/${ siteSlug }` );
-	const Component = isDashboard() ? ExternalLink : 'a';
+	const Component = isDashboardBackport() ? 'a' : ExternalLink;
 
 	return (
 		<Component
