@@ -7,6 +7,7 @@ import {
 import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
+import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
@@ -22,6 +23,13 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 
 	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );
+	const isOnboardingPmFlow = flowName === 'onboarding-pm';
+
+	const [ onboardingPmPostCheckoutDestination ] = getOnboardingPostCheckoutDestination( {
+		flowName,
+		locale: localeSlug,
+		siteSlug: dependencies.siteSlug,
+	} );
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
 	// Due to historical reason, `destination` can be either a path or a complete URL.
@@ -40,6 +48,8 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 		? addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, checkoutBackUrl )
 		: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl );
 
+	const redirectTo = isOnboardingPmFlow ? onboardingPmPostCheckoutDestination : destination;
+
 	return addQueryArgs(
 		{
 			signup: 1,
@@ -47,9 +57,11 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( isDomainOnly && { isDomainOnly: 1 } ),
 			...( isGravatarDomain && { isGravatarDomain: 1 } ),
-			checkoutBackUrl: finalCheckoutBackUrl,
+			checkoutBackUrl: isOnboardingPmFlow
+				? new URL( onboardingPmPostCheckoutDestination, window.location.origin )
+				: finalCheckoutBackUrl,
 			// Pass the final destination as redirect_to so checkout knows where to go after completion
-			...( destination && { redirect_to: destination } ),
+			...( redirectTo && { redirect_to: redirectTo } ),
 		},
 		checkoutURL
 	);
