@@ -146,18 +146,6 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		loggedOutSession ? loggedOutSession.botSlug : undefined
 	);
 
-	useEffect( () => {
-		if ( loggedOutChat.data ) {
-			setRecentConversations( [
-				convertOdieChatToOdieConversation(
-					loggedOutChat.data,
-					loggedOutSession?.sessionId || '',
-					loggedOutSession?.botSlug || ''
-				),
-			] );
-		}
-	}, [ loggedOutChat.data, loggedOutSession?.sessionId, loggedOutSession?.botSlug ] );
-
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk' );
 	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =

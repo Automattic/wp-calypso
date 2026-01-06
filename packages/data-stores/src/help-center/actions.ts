@@ -5,7 +5,7 @@ import { Location } from 'history';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
-import { isE2ETest, isLoggedIn } from '../utils';
+import { isE2ETest, isLoggedInHCUser } from '../utils';
 import { STORE_KEY } from './constants';
 import type { HelpCenterOptions, HelpCenterSelect, HelpCenterShowOptions } from './types';
 import type { APIFetchOptions } from '../shared-types';
@@ -16,7 +16,7 @@ import type { APIFetchOptions } from '../shared-types';
  * @param isMinimized - Whether the help center is minimized.
  */
 export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolean | undefined ) => {
-	if ( ! isLoggedIn() ) {
+	if ( ! isLoggedInHCUser() ) {
 		return null;
 	}
 

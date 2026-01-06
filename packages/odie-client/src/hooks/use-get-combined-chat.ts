@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { HelpCenterSelect } from '@automattic/data-stores';
+import { HelpCenterSelect, isLoggedInHCUser } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from '@wordpress/element';
 import { useLocation } from 'react-router-dom';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
 import { getOdieTransferMessage } from '../constants';
-import { emptyChat, useOdieAssistantContext } from '../context';
+import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import {
@@ -49,10 +49,8 @@ export const useGetCombinedChat = (
 	const { data: currentSupportInteraction, isLoading: isLoadingCurrentSupportInteraction } =
 		useCurrentSupportInteraction();
 
-	const { currentUser } = useOdieAssistantContext();
-
 	const location = useLocation();
-	const isLoggedIn = !! currentUser?.ID;
+	const isLoggedIn = isLoggedInHCUser();
 	const params = new URLSearchParams( location.search );
 	const loggedOutOdieChatId = params.get( 'chatId' );
 	const loggedOutOdieSessionId = params.get( 'sessionId' );
