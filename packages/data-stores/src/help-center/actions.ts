@@ -95,7 +95,7 @@ export const setIsMinimized = function* ( minimized: boolean ) {
 };
 
 export const setLoggedOutOdieChat = (
-	session: { odieId: number; sessionId: string } | undefined
+	session: { odieId: number; sessionId: string; botSlug: string } | undefined
 ) =>
 	( {
 		type: 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT',

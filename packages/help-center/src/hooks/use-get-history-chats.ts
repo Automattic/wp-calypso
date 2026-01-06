@@ -142,7 +142,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 
 	const loggedOutChat = useOdieChat(
 		loggedOutSession ? loggedOutSession.odieId : null,
-		loggedOutSession ? loggedOutSession.sessionId : null
+		loggedOutSession ? loggedOutSession.sessionId : null,
+		loggedOutSession ? loggedOutSession.botSlug : undefined
 	);
 
 	useEffect( () => {

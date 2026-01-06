@@ -11,16 +11,16 @@ import type { OdieChat, ReturnedChat } from '../types';
  * Get the ODIE chat and manage the cache to save on API calls.
  * @param chatId - The chat ID to fetch
  */
-export const useOdieChat = ( chatId: number | null, sessionId: string | undefined | null ) => {
-	const { version, currentUser } = useOdieAssistantContext();
+export const useOdieChat = (
+	chatId: number | null,
+	sessionId: string | undefined | null,
+	defaultBotSlug?: string | null
+) => {
+	const { version } = useOdieAssistantContext();
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 
 	// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
-	let botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
-
-	if ( ! currentUser?.ID ) {
-		botSlug = 'wpcom-chat-loggedout';
-	}
+	const botSlug = supportInteraction?.bot_slug || defaultBotSlug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
 
 	return useQuery< OdieChat, Error >( {
 		queryKey: [ 'odie-chat', botSlug, chatId, version, sessionId ],

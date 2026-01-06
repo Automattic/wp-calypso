@@ -56,12 +56,13 @@ export const useGetCombinedChat = (
 	const params = new URLSearchParams( location.search );
 	const loggedOutOdieChatId = params.get( 'chatId' );
 	const loggedOutOdieSessionId = params.get( 'sessionId' );
+	const loggedOutOdieBotSlug = params.get( 'botSlug' );
 
 	const odieId = isLoggedIn
 		? getOdieIdFromInteraction( currentSupportInteraction )
 		: loggedOutOdieChatId;
-
 	const sessionId = isLoggedIn ? undefined : loggedOutOdieSessionId;
+	const botSlug = isLoggedIn ? undefined : loggedOutOdieBotSlug;
 
 	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -79,7 +80,8 @@ export const useGetCombinedChat = (
 	const getZendeskConversation = useGetZendeskConversation();
 	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat(
 		Number( odieId ),
-		sessionId
+		sessionId,
+		botSlug
 	);
 	const { startNewInteraction } = useManageSupportInteraction();
 	const isUploadingUnsentMessages = useIsMutating( {

@@ -58,7 +58,7 @@ const helpCenterRouterHistory: Reducer<
 };
 
 const loggedOutOdieChat: Reducer<
-	{ odieId: number; sessionId: string } | undefined,
+	{ odieId: number; sessionId: string; botSlug: string } | undefined,
 	HelpCenterAction
 > = ( state = undefined, action ) => {
 	switch ( action.type ) {

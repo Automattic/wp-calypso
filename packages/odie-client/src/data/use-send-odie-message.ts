@@ -26,11 +26,16 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 function getBotSlug(
 	supportInteraction: SupportInteraction | undefined,
-	newInteractionsBotSlug: string
+	newInteractionsBotSlug: string,
+	currentUserId?: number
 ): string {
 	if ( supportInteraction ) {
 		// Legacy support interactions have their botSlug set to `''`. We need to use the legacy bot slug for them.
 		return supportInteraction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
+	}
+
+	if ( ! currentUserId ) {
+		return 'wpcom-chat-loggedout';
 	}
 
 	// When the interaction is undefined, it means we're sending the first message to Odie, which is done before the interaction is created.
@@ -129,12 +134,13 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	);
 
 	const updateLoggedOutSession = useCallback(
-		( chatId: string, sessionId: string ) => {
+		( chatId: string, sessionId: string, botSlug: string ) => {
 			const params = new URLSearchParams( location.search );
 			params.set( 'chatId', chatId );
 			params.set( 'sessionId', sessionId );
+			params.set( 'botSlug', botSlug );
 			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
-			setLoggedOutOdieChat( { odieId: chatId, sessionId } );
+			setLoggedOutOdieChat( { odieId: chatId, sessionId, botSlug } );
 		},
 		[ location.pathname, location.search, navigate, setLoggedOutOdieChat ]
 	);
@@ -224,7 +230,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
-			const botSlug = getBotSlug( currentSupportInteraction, newInteractionsBotSlug );
+			const botSlug = getBotSlug(
+				currentSupportInteraction,
+				newInteractionsBotSlug,
+				currentUser?.ID
+			);
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 			const session_id = sessionId;
 
@@ -308,8 +318,10 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						},
 					} );
 				} else if ( ! isLoggedIn ) {
+					const botSlug = getBotSlug( currentSupportInteraction, newInteractionsBotSlug );
+
 					// If the user is not logged in, we don't need to create a new support interaction.
-					updateLoggedOutSession( chatId.toString(), returnedChat.session_id );
+					updateLoggedOutSession( chatId.toString(), returnedChat.session_id, botSlug );
 				}
 			} catch ( error ) {
 				trackEvent( 'error_updating_support_interaction', {
