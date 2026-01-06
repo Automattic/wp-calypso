@@ -32,6 +32,7 @@ import {
 	useFields__ES,
 	getDefaultView,
 	recordViewChanges,
+	sanitizeFields,
 } from './dataviews';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
@@ -266,6 +267,7 @@ export default function Sites() {
 		slug: 'sites',
 		defaultView,
 		queryParams: currentSearchParams,
+		sanitizeFields,
 	} );
 
 	const { sites, sites__ES, isLoadingSites, isPlaceholderData, hasNoData, totalItems } =

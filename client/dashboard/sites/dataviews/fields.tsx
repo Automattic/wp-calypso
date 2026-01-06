@@ -35,7 +35,7 @@ import {
 } from '../site-fields';
 import type { AppConfig } from '../../app/context';
 import type { Site, DashboardSiteListSite } from '@automattic/api-core';
-import type { Field, Operator } from '@wordpress/dataviews';
+import type { Field, Operator, View } from '@wordpress/dataviews';
 
 function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 	const visibilityLabels = getVisibilityLabels();
@@ -495,4 +495,15 @@ export function useFields__ES( {
 			return true;
 		} );
 	}, [ isAutomattician, viewType, queries ] );
+}
+
+export function sanitizeFields( fields: View[ 'fields' ] ) {
+	return fields?.map( ( field ) => {
+		// Replace the `Status` column with `Visibility` column.
+		if ( field === 'status' ) {
+			return 'visibility';
+		}
+
+		return field;
+	} );
 }
