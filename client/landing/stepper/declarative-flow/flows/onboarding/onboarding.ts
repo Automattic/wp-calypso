@@ -11,7 +11,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
-import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -102,7 +101,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			if ( playgroundId && providedDependencies.siteSlug ) {
+			if ( playgroundId ) {
 				// Check if the user selected the free plan
 				const isFree =
 					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
@@ -139,20 +138,12 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			if ( await isSimplifiedOnboarding() ) {
-				return [
-					addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } ),
-					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
-						siteSlug: providedDependencies.siteSlug,
-					} ),
-				];
-			}
-
-			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
-				siteSlug: providedDependencies.siteSlug,
-			} );
-
-			return [ destination, addQueryArgs( destination, { skippedCheckout: 1 } ) ];
+			return [
+				addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } ),
+				addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
+					siteSlug: providedDependencies.siteSlug,
+				} ),
+			];
 		};
 
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
