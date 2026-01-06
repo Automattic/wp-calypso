@@ -7,15 +7,7 @@ import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { ActivityEvent } from '../activity-event';
 import type { Activity, ActivityDescription } from '../types';
 
-jest.mock( '@automattic/calypso-config', () =>
-	jest.fn( ( key: string ) => {
-		if ( key === 'wpcom_url' ) {
-			return 'https://wordpress.com';
-		}
-
-		return '';
-	} )
-);
+jest.mock( '@automattic/calypso-config', () => jest.fn( () => '' ) );
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn( () => false ) );
 jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn( () => false ) );
 
