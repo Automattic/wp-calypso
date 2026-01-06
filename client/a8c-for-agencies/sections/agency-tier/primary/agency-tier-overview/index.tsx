@@ -9,6 +9,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import DownloadBadges from '../../download-badges';
 import AgencyTierOverviewContent from '../../overview-content';
 
 import './style.scss';
@@ -24,6 +25,11 @@ export default function AgencyTierOverview() {
 	const totalInfluencedRevenue = agency?.influenced_revenue ?? 0;
 	const tierStatus = agency?.tier?.status ?? undefined;
 
+	// Show download badges button for Agency Partner, Pro Agency Partner, and Premier Partner tiers
+	const showDownloadBadges =
+		currentAgencyTierId &&
+		[ 'agency-partner', 'pro-agency-partner', 'premier-partner' ].includes( currentAgencyTierId );
+
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
@@ -31,6 +37,7 @@ export default function AgencyTierOverview() {
 					<Title>{ title }</Title>
 					<Actions>
 						<MobileSidebarNavigation />
+						{ showDownloadBadges && <DownloadBadges /> }
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
