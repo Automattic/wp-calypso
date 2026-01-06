@@ -32,3 +32,22 @@
 	bottom: 100%;
 	margin: 0;
 }
+
+.preferences-helper__object {
+	width: 100%;
+}
+
+.preferences-helper__property-row {
+	width: 100%;
+}
+
+.preferences-helper__property-label {
+	min-width: 100px;
+	font-weight: 500;
+	color: var( --color-neutral-60 );
+}
+
+.preferences-helper__nested-object {
+	padding-inline-start: $grid-unit-20;
+	border-inline-start: 2px solid var( --color-neutral-10 );
+}

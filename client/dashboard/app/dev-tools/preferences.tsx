@@ -14,15 +14,28 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
+import deepmerge from 'deepmerge';
 import { Fragment, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import { Text } from '../../components/text';
+import { buildPartialUpdate } from './helpers/deep-merge';
 import type { UserPreferences } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
+
 import './preferences.scss';
 
-type InputType = 'string' | 'number' | 'checkbox';
+type InputType = 'text' | 'number' | 'checkbox';
+
+function getInputType( value: unknown ): InputType {
+	if ( typeof value === 'boolean' ) {
+		return 'checkbox';
+	}
+	if ( typeof value === 'number' ) {
+		return 'number';
+	}
+	return 'text';
+}
 
 const formattedValue = ( inputType: InputType, value?: unknown ) => {
 	if ( inputType === 'number' ) {
@@ -38,7 +51,7 @@ const formattedValue = ( inputType: InputType, value?: unknown ) => {
 
 const renderPreference = ( name: string, value: unknown ) => {
 	if ( typeof value === 'string' ) {
-		return <EditablePreference inputType="string" name={ name } value={ value } />;
+		return <EditablePreference inputType="text" name={ name } value={ value } />;
 	}
 
 	if ( typeof value === 'boolean' ) {
@@ -53,6 +66,10 @@ const renderPreference = ( name: string, value: unknown ) => {
 		return <ArrayPreference value={ value } />;
 	}
 
+	if ( typeof value === 'object' && value !== null ) {
+		return <ObjectPreference name={ name } value={ value as Record< string, unknown > } />;
+	}
+
 	return null;
 };
 
@@ -63,6 +80,132 @@ function ArrayPreference( { value }: { value: unknown[] } ) {
 				<li key={ index }>{ JSON.stringify( preference ) }</li>
 			) ) }
 		</ul>
+	);
+}
+
+function ObjectPreference( { name, value }: { name: string; value: Record< string, unknown > } ) {
+	return (
+		<VStack spacing={ 2 } className="preferences-helper__object">
+			{ Object.entries( value ).map( ( [ propertyKey, propertyValue ] ) => (
+				<ObjectPropertyField
+					key={ propertyKey }
+					preferenceName={ name }
+					propertyPath={ [ propertyKey ] }
+					propertyKey={ propertyKey }
+					propertyValue={ propertyValue }
+				/>
+			) ) }
+		</VStack>
+	);
+}
+
+function ObjectPropertyField( {
+	preferenceName,
+	propertyPath,
+	propertyKey,
+	propertyValue,
+}: {
+	preferenceName: string;
+	propertyPath: string[];
+	propertyKey: string;
+	propertyValue: unknown;
+} ) {
+	const { mutate: savePreference, isPending } = useMutation(
+		userPreferenceMutation( preferenceName as keyof UserPreferences )
+	);
+	const [ localValue, setLocalValue ] = useState( propertyValue );
+
+	// Handle nested objects recursively
+	if (
+		typeof propertyValue === 'object' &&
+		propertyValue !== null &&
+		! Array.isArray( propertyValue )
+	) {
+		return (
+			<VStack spacing={ 1 } alignment="flex-start">
+				<Text className="preferences-helper__property-label">{ propertyKey }:</Text>
+				<div className="preferences-helper__nested-object">
+					{ Object.entries( propertyValue as Record< string, unknown > ).map(
+						( [ nestedKey, nestedValue ] ) => (
+							<ObjectPropertyField
+								key={ nestedKey }
+								preferenceName={ preferenceName }
+								propertyPath={ [ ...propertyPath, nestedKey ] }
+								propertyKey={ nestedKey }
+								propertyValue={ nestedValue }
+							/>
+						)
+					) }
+				</div>
+			</VStack>
+		);
+	}
+
+	const handleSave = () => {
+		const currentPreferences = queryClient.getQueryData< UserPreferences >(
+			rawUserPreferencesQuery().queryKey
+		);
+		const currentPreference = currentPreferences?.[ preferenceName as keyof UserPreferences ];
+		const partialUpdate = buildPartialUpdate( propertyPath, localValue );
+		const mergedPreference = currentPreference
+			? deepmerge( currentPreference as object, partialUpdate )
+			: partialUpdate;
+
+		// @ts-expect-error - mergedPreference type is dynamic
+		savePreference( mergedPreference );
+	};
+
+	const handleReset = () => {
+		setLocalValue( propertyValue );
+	};
+
+	const isDirty = localValue !== propertyValue;
+	const inputType = getInputType( propertyValue );
+
+	const handleChange = ( newValue: string | undefined ) => {
+		setLocalValue( formattedValue( inputType, newValue ) );
+	};
+
+	return (
+		<HStack spacing={ 2 } alignment="top" className="preferences-helper__property-row">
+			<Text className="preferences-helper__property-label">{ propertyKey }:</Text>
+			<VStack spacing={ 1 } expanded alignment="flex-start">
+				{ inputType === 'checkbox' ? (
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						checked={ localValue as boolean }
+						onChange={ setLocalValue }
+						disabled={ isPending }
+					/>
+				) : (
+					<InputControl
+						type={ inputType }
+						value={ String( localValue ?? '' ) }
+						size="small"
+						onChange={ handleChange }
+						disabled={ isPending }
+					/>
+				) }
+				<HStack justify="flex-start" spacing={ 1 }>
+					<Button
+						variant="primary"
+						size="small"
+						disabled={ ! isDirty || isPending }
+						onClick={ handleSave }
+					>
+						{ __( 'Save' ) }
+					</Button>
+					<Button
+						variant="secondary"
+						size="small"
+						disabled={ ! isDirty || isPending }
+						onClick={ handleReset }
+					>
+						{ __( 'Reset' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</HStack>
 	);
 }
 
