@@ -453,7 +453,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 	return (
 		props.isVisible && (
 			<VStack spacing={ 6 }>
-				<SectionHeader title={ getSurveyTitle( props.surveyStep ) } level={ 3 } />
+				<SectionHeader title={ getSurveyTitle( props.surveyStep ?? '' ) } level={ 3 } />
 				<SurveyContent { ...props } />
 				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } />
 			</VStack>
