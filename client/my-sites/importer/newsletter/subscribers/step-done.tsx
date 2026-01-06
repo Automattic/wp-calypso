@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { Notice } from '@wordpress/components';
-import { useCallback } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
@@ -30,45 +29,46 @@ export default function StepDone( {
 	const metaStatus = cardData?.meta?.status;
 	const isFailed = metaStatus === 'failed';
 
-	const handleStartOver = useCallback( () => {
+	const handleStartOver = () => {
 		if ( selectedSite?.ID ) {
 			resetPaidNewsletter( selectedSite.ID, engine, 'content' );
 		}
-	}, [ selectedSite?.ID, engine, resetPaidNewsletter ] );
+	};
 
 	return (
 		<Card>
 			<h2>{ __( 'Import your subscribers' ) }</h2>
 			{ isFailed ? (
-				<Notice status="warning" className="importer__notice" isDismissible={ false }>
-					{ __( 'The subscriber import failed. Please try again.' ) }
-				</Notice>
+				<>
+					<Notice status="warning" className="importer__notice" isDismissible={ false }>
+						{ __( 'The subscriber import failed. Please try again.' ) }
+					</Notice>
+					<ImporterActionButtonContainer noSpacing>
+						<ImporterActionButton
+							onClick={ handleStartOver }
+							primary
+							disabled={ isPending }
+							busy={ isPending }
+						>
+							{ __( 'Start over' ) }
+						</ImporterActionButton>
+					</ImporterActionButtonContainer>
+				</>
 			) : (
-				<Notice status="success" className="importer__notice" isDismissible={ false }>
-					{ sprintf(
-						// Translators: %d is number of subscribers.
-						_n(
-							'Success! %d subscriber has been added!',
-							'Success! %d subscribers have been added!',
+				<>
+					<Notice status="success" className="importer__notice" isDismissible={ false }>
+						{ sprintf(
+							// Translators: %d is number of subscribers.
+							_n(
+								'Success! %d subscriber has been added!',
+								'Success! %d subscribers have been added!',
+								subscribedCount
+							),
 							subscribedCount
-						),
-						subscribedCount
-					) }
-				</Notice>
-			) }
-			{ isFailed ? (
-				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton
-						onClick={ handleStartOver }
-						primary
-						disabled={ isPending }
-						busy={ isPending }
-					>
-						{ __( 'Start over' ) }
-					</ImporterActionButton>
-				</ImporterActionButtonContainer>
-			) : (
-				actionButton
+						) }
+					</Notice>
+					{ actionButton }
+				</>
 			) }
 		</Card>
 	);
