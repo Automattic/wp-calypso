@@ -27,6 +27,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("PROJECT", "desktop")
 		text("TEST_GROUP", "")
 		text("CALYPSO_BASE_URL", "")
+		text("DASHBOARD_BASE_URL", "")
 		text("DOCKER_IMAGE_BUILD_NUMBER", "")
 		param("IGNORE_TEST_GROUP_FOR_E2E_CHANGES", "false")
 	}
@@ -110,6 +111,48 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		}
 
 		bashNodeScript {
+			name = "Determine Dashboard URL"
+			id = "determine_dashboard_url"
+			scriptContent = """
+				# Only run if DASHBOARD_BASE_URL needs to be determined
+				if [[ -z "%DASHBOARD_BASE_URL%" && -z "%DOCKER_IMAGE_BUILD_NUMBER%" ]]; then
+					echo "DASHBOARD_BASE_URL not needed, skipping"
+					exit 0
+				fi
+
+				echo "Determining Dashboard URL"
+				FINAL_URL=""
+
+				# Check if both DOCKER_IMAGE_BUILD_NUMBER and DASHBOARD_BASE_URL are set
+				if [[ -n "%DOCKER_IMAGE_BUILD_NUMBER%" && -n "%DASHBOARD_BASE_URL%" ]]; then
+					echo "ERROR: Both DOCKER_IMAGE_BUILD_NUMBER and DASHBOARD_BASE_URL are set. Please set only one of them."
+					exit 1
+				fi
+
+				# If DOCKER_IMAGE_BUILD_NUMBER is set, use it to get the Dashboard URL
+				if [[ -n "%DOCKER_IMAGE_BUILD_NUMBER%" ]]; then
+					echo "Getting Dashboard url for build %DOCKER_IMAGE_BUILD_NUMBER%"
+					chmod +x ./bin/get-calypso-live-url.sh
+					FINAL_URL=${'$'}(./bin/get-calypso-live-url.sh %DOCKER_IMAGE_BUILD_NUMBER% dashboard)
+					if [[ ${'$'}? -ne 0 ]]; then
+						# Command failed. script result contains stderr
+						echo ${'$'}FINAL_URL
+						exit 1
+					fi
+				elif [[ -n "%DASHBOARD_BASE_URL%" ]]; then
+					# DASHBOARD_BASE_URL is already set, use it directly
+					echo "Using provided DASHBOARD_BASE_URL: %DASHBOARD_BASE_URL%"
+					FINAL_URL="%DASHBOARD_BASE_URL%"
+				fi
+
+				# Set the DASHBOARD_BASE_URL parameter for other steps to use
+				echo "DASHBOARD_BASE_URL: ${'$'}FINAL_URL"
+				echo "##teamcity[setParameter name='DASHBOARD_BASE_URL' value='${'$'}FINAL_URL']"
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
 			name = "Determine test group"
 			id = "determine_test_group"
 			scriptContent = """
@@ -149,6 +192,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				cd test/e2e
 				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
 				export CALYPSO_BASE_URL="%CALYPSO_BASE_URL%"
+				echo "DASHBOARD_BASE_URL=%DASHBOARD_BASE_URL%"
+				export DASHBOARD_BASE_URL="%DASHBOARD_BASE_URL%"
 				echo "Running Playwright tests for project: %PROJECT%"
 				yarn test:pw:%PROJECT% ${'$'}GREP_FLAG
 				"""
