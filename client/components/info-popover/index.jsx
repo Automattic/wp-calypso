@@ -12,7 +12,7 @@ export default class InfoPopover extends Component {
 		autoRtl: PropTypes.bool,
 		className: PropTypes.string,
 		gaEventCategory: PropTypes.string,
-		icon: PropTypes.string | PropTypes.element,
+		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		iconSize: PropTypes.number,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( {
