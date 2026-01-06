@@ -13,6 +13,24 @@ import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
 
+function getOnboardingPmUrls( dependencies, localeSlug, flowName ) {
+	const [ onboardingPmPostCheckoutDestination ] = getOnboardingPostCheckoutDestination( {
+		shouldRedirectToMultiSiteDashboard: dependencies.dashboardOptIn,
+		flowName,
+		locale: localeSlug,
+		siteSlug: dependencies.siteSlug,
+	} );
+
+	const onboardingPmPostCheckoutBackUrl = isURL( onboardingPmPostCheckoutDestination )
+		? onboardingPmPostCheckoutDestination
+		: new URL( onboardingPmPostCheckoutDestination, window.location.origin );
+
+	return {
+		redirectTo: onboardingPmPostCheckoutDestination,
+		checkoutBackUrl: onboardingPmPostCheckoutBackUrl,
+	};
+}
+
 function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
@@ -25,12 +43,10 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );
 	const isOnboardingPmFlow = flowName === 'onboarding-pm';
 
-	const [ onboardingPmPostCheckoutDestination ] = getOnboardingPostCheckoutDestination( {
-		shouldRedirectToMultiSiteDashboard: dependencies.dashboardOptIn,
-		flowName,
-		locale: localeSlug,
-		siteSlug: dependencies.siteSlug,
-	} );
+	// Calculate onboarding PM URLs only once if needed
+	const onboardingPmUrls = isOnboardingPmFlow
+		? getOnboardingPmUrls( dependencies, localeSlug, flowName )
+		: null;
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
 	// Due to historical reason, `destination` can be either a path or a complete URL.
@@ -49,7 +65,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 		? addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, checkoutBackUrl )
 		: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl );
 
-	const redirectTo = isOnboardingPmFlow ? onboardingPmPostCheckoutDestination : destination;
+	const redirectTo = onboardingPmUrls?.redirectTo ?? destination;
 
 	return addQueryArgs(
 		{
@@ -58,9 +74,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( isDomainOnly && { isDomainOnly: 1 } ),
 			...( isGravatarDomain && { isGravatarDomain: 1 } ),
-			checkoutBackUrl: isOnboardingPmFlow
-				? new URL( onboardingPmPostCheckoutDestination, window.location.origin )
-				: finalCheckoutBackUrl,
+			checkoutBackUrl: onboardingPmUrls?.checkoutBackUrl ?? finalCheckoutBackUrl,
 			// Pass the final destination as redirect_to so checkout knows where to go after completion
 			...( redirectTo && { redirect_to: redirectTo } ),
 		},
