@@ -140,7 +140,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/:marketplace/:productSlug/renew/:purchaseId`,
+		`/checkout/marketplace/:productSlug/renew/:purchaseId`,
 		setLocaleMiddleware(),
 		redirectLoggedOut,
 		noSite,
