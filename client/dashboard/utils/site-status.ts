@@ -1,16 +1,10 @@
-import { isSitePlanTrial } from '../sites/plans';
-import { isP2 } from './site-types';
+import type { SiteStatus, SiteMigrationStatus } from '../types';
 import type { Site } from '@automattic/api-core';
 
-export interface MigrationStatus {
-	status: 'pending' | 'started' | 'completed';
-	type: 'difm' | 'diy' | 'ssh';
-}
+const MIGRATION_STATUSES: SiteMigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
+const MIGRATION_TYPES: SiteMigrationStatus[ 'type' ][] = [ 'difm', 'diy', 'ssh' ];
 
-const MIGRATION_STATUSES: MigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
-const MIGRATION_TYPES: MigrationStatus[ 'type' ][] = [ 'difm', 'diy', 'ssh' ];
-
-export function getSiteStatus( item: Site ) {
+export function getSiteStatus( item: Site ): SiteStatus {
 	if ( item.is_deleted ) {
 		return 'deleted';
 	}
@@ -30,21 +24,21 @@ export function getSiteStatus( item: Site ) {
 		return 'difm_lite_in_progress';
 	}
 
-	return '';
+	return null;
 }
 
-export function getSiteMigrationState( item: Site ): MigrationStatus | null {
+export function getSiteMigrationState( item: Site ): SiteMigrationStatus | null {
 	const { migration_status } = item.site_migration;
 	if ( migration_status === 'migration-in-progress' ) {
 		return { status: 'started', type: 'difm' };
 	}
 
 	const [ , status, type ] = migration_status?.split( '-' ) ?? [];
-	if ( ! MIGRATION_STATUSES.includes( status as MigrationStatus[ 'status' ] ) ) {
+	if ( ! MIGRATION_STATUSES.includes( status as SiteMigrationStatus[ 'status' ] ) ) {
 		return null;
 	}
 
-	if ( ! MIGRATION_TYPES.includes( type as MigrationStatus[ 'type' ] ) ) {
+	if ( ! MIGRATION_TYPES.includes( type as SiteMigrationStatus[ 'type' ] ) ) {
 		return null;
 	}
 
@@ -52,7 +46,10 @@ export function getSiteMigrationState( item: Site ): MigrationStatus | null {
 		return null;
 	}
 
-	return { status: status as MigrationStatus[ 'status' ], type: type as MigrationStatus[ 'type' ] };
+	return {
+		status: status as SiteMigrationStatus[ 'status' ],
+		type: type as SiteMigrationStatus[ 'type' ],
+	};
 }
 
 export function isSiteMigrationInProgress( item: Site ) {
@@ -62,35 +59,4 @@ export function isSiteMigrationInProgress( item: Site ) {
 	}
 
 	return [ 'pending', 'started' ].includes( status );
-}
-
-export function getSiteStatusBadge( site: Site ) {
-	const status = getSiteStatus( site );
-	if ( status === 'deleted' ) {
-		return 'deleted';
-	}
-
-	if ( status === 'difm_lite_in_progress' ) {
-		return 'difm';
-	}
-
-	if ( status === 'migration_pending' ) {
-		return 'migration_pending';
-	}
-
-	if ( status === 'migration_started' ) {
-		return 'migration_started';
-	}
-
-	if ( site.is_wpcom_staging_site ) {
-		return 'staging';
-	}
-	if ( isSitePlanTrial( site ) ) {
-		return 'trial';
-	}
-	if ( isP2( site ) ) {
-		return 'p2';
-	}
-
-	return null;
 }

@@ -26,14 +26,16 @@ import TimeSince from '../../components/time-since';
 import { addTransientViewPropertiesToQueryParams } from '../../utils/dashboard-v1-sync';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
+import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSiteStatusBadge } from '../../utils/site-status';
+import { getSiteStatus } from '../../utils/site-status';
 import { getSiteFormattedUrl } from '../../utils/site-url';
 import { getSiteVisibilityLabel } from '../../utils/site-visibility';
 import { canManageSite, canManageSite__ES } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
+import type { SiteBadge } from '../../types';
 import type { DashboardSiteListSite, Site } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
@@ -105,9 +107,7 @@ export function SiteLink__ES( {
 }
 
 export function Name( { site, value }: { site: Site; value: string } ) {
-	return (
-		<NameRenderer badge={ getSiteStatusBadge( site ) } muted={ site.is_deleted } value={ value } />
-	);
+	return <NameRenderer badge={ getSiteBadge( site ) } muted={ site.is_deleted } value={ value } />;
 }
 
 export function NameRenderer( {
@@ -115,15 +115,7 @@ export function NameRenderer( {
 	muted,
 	value,
 }: {
-	badge:
-		| null
-		| 'staging'
-		| 'trial'
-		| 'p2'
-		| 'deleted'
-		| 'difm'
-		| 'migration_pending'
-		| 'migration_started';
+	badge: SiteBadge;
 	muted: boolean;
 	value: string;
 } ) {
@@ -136,15 +128,15 @@ export function NameRenderer( {
 			case 'p2':
 				return <Badge>{ __( 'P2' ) }</Badge>;
 			case 'deleted':
-				return <Text intent="error">{ __( 'Deleted' ) }</Text>;
-			case 'difm':
+				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
+			case 'difm_lite_in_progress':
 				return <Badge>{ __( 'Express service' ) }</Badge>;
 			case 'migration_pending':
 				return <Badge intent="warning">{ __( 'Migration pending' ) }</Badge>;
 			case 'migration_started':
 				return <Badge intent="info">{ __( 'Migration started' ) }</Badge>;
 			default:
-				break;
+				return null;
 		}
 	};
 
@@ -476,10 +468,12 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 }
 
 export function Visibility( { site }: { site: Site } ) {
+	const status = getSiteStatus( site );
 	return (
 		<VStack spacing={ 1 }>
 			<span>{ getSiteVisibilityLabel( site ) }</span>
-			{ site.launch_status === 'unlaunched' && <SiteLaunchNag site={ site } /> }
+			{ /* We don't want to show LaunchNag if there is any pending status. */ }
+			{ ! status && site.launch_status === 'unlaunched' && <SiteLaunchNag site={ site } /> }
 		</VStack>
 	);
 }

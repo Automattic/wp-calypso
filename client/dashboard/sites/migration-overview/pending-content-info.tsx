@@ -24,7 +24,7 @@ import { Text } from '../../components/text';
 import { wpcomLink } from '../../utils/link';
 import { getSiteMigrationState } from '../../utils/site-status';
 import { HostingCards } from './hosting-cards';
-import type { MigrationStatus } from '../../utils/site-status';
+import type { SiteMigrationStatus } from '../../types';
 import type { Site } from '@automattic/api-core';
 
 const getContinueMigrationUrl = ( site: Site, sshSourceSiteDomain?: string ): string | null => {
@@ -119,7 +119,7 @@ export function PendingContentInfo( {
 	type,
 }: {
 	site: Site;
-	type: MigrationStatus[ 'type' ];
+	type: SiteMigrationStatus[ 'type' ];
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice } = useDispatch( noticesStore );
