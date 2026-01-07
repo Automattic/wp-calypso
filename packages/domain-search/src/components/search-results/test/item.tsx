@@ -194,7 +194,7 @@ describe( 'SearchResultsItem', () => {
 
 			await waitFor( () => screen.getByTitle( 'test-add-to-cart.com' ) );
 
-			const cta = screen.getByRole( 'button', { name: 'Add to Cart' } );
+			const cta = screen.getByRole( 'button', { name: 'Add to cart' } );
 
 			expect( cta ).toBeInTheDocument();
 			expect( cta ).toHaveClass( 'is-secondary' );

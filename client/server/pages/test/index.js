@@ -94,6 +94,9 @@ jest.mock( 'calypso/server/lib/analytics', () => ( {
 	tracks: {
 		recordEvent: jest.fn(),
 	},
+	logstash: {
+		log: jest.fn(),
+	},
 } ) );
 
 jest.mock( 'calypso/lib/i18n-utils', () => ( {
@@ -1021,18 +1024,6 @@ describe( 'main app', () => {
 	} );
 
 	describe( 'Route /domains', () => {
-		it( 'redirects from /domains to /start/domain', async () => {
-			const { response } = await app.run( { request: { url: '/domains' } } );
-			expect( response.redirect ).toHaveBeenCalledWith( '/start/domain' );
-		} );
-
-		it( 'redirects from /domains to /start/domain with selected domain', async () => {
-			const { response } = await app.run( {
-				request: { url: '/domains', query: { new: 'my-domain.com' } },
-			} );
-			expect( response.redirect ).toHaveBeenCalledWith( '/start/domain?new=my-domain.com' );
-		} );
-
 		it( 'redirects from /start/domain-first to /start/domain', async () => {
 			const { response } = await app.run( { request: { url: '/start/domain-first' } } );
 			expect( response.redirect ).toHaveBeenCalledWith( '/start/domain' );

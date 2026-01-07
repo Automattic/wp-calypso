@@ -6,14 +6,21 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
-import { usePersistentView, DataViews } from '../../app/dataviews';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { AddDomainButton } from '../../domains/add-domain-button';
-import { useActions, useFields, DEFAULT_LAYOUTS, SITE_CONTEXT_VIEW } from '../../domains/dataviews';
+import {
+	useActions,
+	useFields,
+	DEFAULT_LAYOUTS,
+	SITE_CONTEXT_VIEW,
+	BulkActionsProgressNotice,
+} from '../../domains/dataviews';
+import { getDomainConnectionSetupTemplateUrl } from '../../utils/domain-url';
 import PrimaryDomainSelector from './primary-domain-selector';
 import type { DomainSummary } from '@automattic/api-core';
 
@@ -31,6 +38,7 @@ function SiteDomains() {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
 	} );
+
 	const { data: redirect, isLoading: isRedirectLoading } = useQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
 
@@ -55,7 +63,8 @@ function SiteDomains() {
 	);
 
 	const { basePath } = useAppContext();
-	const domainConnectionSetupUrl = `${ basePath }/domains/%s/domain-connection-setup`;
+	const domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
+	const redirectTo = `${ basePath }/sites/${ site.slug }/domains`;
 
 	return (
 		<PageLayout
@@ -66,10 +75,12 @@ function SiteDomains() {
 						<AddDomainButton
 							siteSlug={ site.slug }
 							domainConnectionSetupUrl={ domainConnectionSetupUrl }
+							redirectTo={ redirectTo }
 						/>
 					}
 				/>
 			}
+			notices={ <BulkActionsProgressNotice /> }
 		>
 			{ ! isLoading && ! isRedirectLoading && siteDomains && ! hasRedirect && (
 				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />

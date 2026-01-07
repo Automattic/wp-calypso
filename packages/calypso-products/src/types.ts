@@ -2,6 +2,7 @@ import {
 	type GROUP_JETPACK,
 	type GROUP_WPCOM,
 	type GROUP_P2,
+	type GROUP_A4A,
 	type WPCOM_PRODUCTS,
 	type WPCOM_PLANS,
 	type PLAN_JETPACK_FREE,
@@ -74,10 +75,13 @@ export type Feature = string;
 
 export type FeatureObject = {
 	getSlug: () => string;
-	getTitle: ( params?: { domainName?: string } ) => TranslateResult;
+	getTitle: ( params?: { domainName?: string; isExperimentVariant?: boolean } ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
 	getHeader?: () => TranslateResult;
-	getDescription?: ( params?: { domainName?: string } ) => TranslateResult;
+	getDescription?: ( params?: {
+		domainName?: string;
+		isExperimentVariant?: boolean;
+	} ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
 	getCompareSubtitle?: () => TranslateResult;
@@ -312,7 +316,7 @@ export type FeatureGroup = {
 export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 
 export type Plan = BillingTerm & {
-	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK | typeof GROUP_P2;
+	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK | typeof GROUP_P2 | typeof GROUP_A4A;
 	type: PlanType;
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
@@ -324,6 +328,24 @@ export type Plan = BillingTerm & {
 	 * Context - pdgrnI-26j
 	 */
 	get2023PricingGridSignupWpcomFeatures?: ( props?: { isSummerSpecial?: boolean } ) => Feature[];
+
+	/**
+	 * Comprehensive feature list for the long_set variant of the plans differentiators experiment.
+	 * Shows all features for each plan including base infrastructure features.
+	 */
+	getLongSetSignupWpcomFeatures?: () => Feature[];
+
+	/**
+	 * Incremental feature list for the long_set_stacked variant of the plans differentiators experiment.
+	 * Shows only features that are new compared to the previous plan tier, with "Everything in X, plus:" header.
+	 */
+	getLongSetStackedSignupWpcomFeatures?: () => Feature[];
+
+	/**
+	 * Incremental feature list for the short_set_stacked variant of the plans differentiators experiment.
+	 * Shows only features that are new compared to the previous plan tier, with "Everything in X, plus:" header.
+	 */
+	getShortSetStackedSignupWpcomFeatures?: () => Feature[];
 
 	/**
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.

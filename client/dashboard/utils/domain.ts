@@ -5,7 +5,6 @@ import {
 	DomainStatus,
 	DomainTypes,
 } from '@automattic/api-core';
-import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { getRenewalUrlFromPurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
@@ -26,12 +25,7 @@ export function getDomainSiteSlug( domain: DomainSummary ) {
 }
 
 export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase ) {
-	const siteSlug = getDomainSiteSlug( domain );
-	const backUrl = window.location.href.replace( window.location.origin, '' );
-	return addQueryArgs( getRenewalUrlFromPurchase( purchase, siteSlug ), {
-		cancel_to: backUrl,
-		redirect_to: backUrl,
-	} );
+	return getRenewalUrlFromPurchase( purchase, getDomainSiteSlug( domain ) );
 }
 
 export function isRegisteredDomain( domain: DomainSummary ) {
@@ -385,4 +379,8 @@ export function isGoogleWorkspaceSupportedDomain( domain: Domain ) {
 	}
 
 	return ! domain.domain.endsWith( '.wpcomstaging.com' );
+}
+
+export function isTldInMaintenance( domain: Domain ) {
+	return domain.tld_maintenance_end_time > 0;
 }

@@ -8,7 +8,7 @@ import {
 	CheckboxControl,
 	__experimentalDivider as Divider,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import type { DnsRecord } from '@automattic/api-core';
@@ -34,8 +34,9 @@ export default function DnsImportDialog( {
 		...domainDnsMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'DNS records saved.' ),
-				error: __( 'Failed to save DNS records.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'DNS records saved for %s.' ), domainName ),
+				error: { source: 'server' },
 			},
 		},
 	} );

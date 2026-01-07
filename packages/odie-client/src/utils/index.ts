@@ -1,5 +1,5 @@
 export { getTimestamp } from './get-timestamp';
-export { zendeskMessageConverter } from './zendesk-message-converter';
+export { zendeskMessageConverter } from '@automattic/zendesk-client';
 export { isOdieAllowedBot } from './is-odie-allowed-bot';
 export { generateUUID } from './generate-uuid';
 export {
@@ -13,6 +13,10 @@ import type { Chat, Message } from '../types';
 
 export const getIsRequestingHumanSupport = ( message: Message ) => {
 	return message.context?.flags?.forward_to_human_support ?? false;
+};
+
+export const getIsErrorMessage = ( message: Message ) => {
+	return message.context?.flags?.is_error_message ?? false;
 };
 
 export const getIsLastBotMessage = ( chat: Chat, message: Message ) => {

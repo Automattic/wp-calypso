@@ -3,11 +3,11 @@ import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Dashboard: Basic & Routing', { tag: [ tags.CALYPSO_PR ] }, () => {
 	test.skip(
-		DataHelper.isCalypsoProduction(),
-		'Skipping for WordPress.com as v2 dashboard is not enabled yet.'
+		! DataHelper.isCalypsoLocalDevelopment(),
+		'Skipping until we have separated Multi-site Dashboard tests from WordPress.com tests.'
 	);
 
-	test( 'As a WordPress.com user, I can see the new v2 dashboard page as a list of my sites', async ( {
+	test( 'As a WordPress.com user, I can see the new Multi-site Dashboard page as a list of my sites', async ( {
 		accountGivenByEnvironment,
 		page,
 		pageDashboard,
@@ -20,7 +20,7 @@ test.describe( 'Dashboard: Basic & Routing', { tag: [ tags.CALYPSO_PR ] }, () =>
 			await pageDashboard.visit();
 		} );
 
-		await test.step( 'Then I see the WordPress.com v2 dashboard page (list of sites)', async function () {
+		await test.step( 'Then I see the WordPress.com Multi-site Dashboard page (list of sites)', async function () {
 			expect( await pageDashboard.isLoaded() ).toBe( true );
 			expect( await pageDashboard.getHeadingText() ).toEqual( 'Sites' );
 		} );
@@ -36,7 +36,7 @@ test.describe( 'Dashboard: Basic & Routing', { tag: [ tags.CALYPSO_PR ] }, () =>
 		} );
 
 		await test.step( 'When I visit the dashboard page', async function () {
-			await pageDashboard.visitPath( 'non-existent-page' );
+			await pageDashboard.visitPath( 'me/non-existent-page' );
 		} );
 
 		await test.step( 'Then I see a 404 error page', async function () {

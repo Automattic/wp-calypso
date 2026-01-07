@@ -68,7 +68,7 @@ export const sitesRoute = createRoute( {
 	loader: async ( { context } ) => {
 		// Preload the default sites list response without blocking.
 		if ( ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
-			queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+			queryClient.prefetchQuery( context.config.queries.sitesQuery() );
 		}
 
 		await Promise.all( [
@@ -89,7 +89,13 @@ export const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
 	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		let site;
+		try {
+			site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		} catch ( e ) {
+			// Do nothing and propagate the error through the loader function.
+			return;
+		}
 
 		const overviewUrl = `/sites/${ siteSlug }`;
 		if ( isSelfHostedJetpackConnected( site ) && ! location.pathname.endsWith( overviewUrl ) ) {
@@ -146,19 +152,21 @@ export const siteOverviewRoute = createRoute( {
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
-			Promise.all( [
-				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),
-				queryClient.ensureQueryData( siteLastFiveActivityLogEntriesQuery( site.ID ) ),
-				hasHostingFeature( site, HostingFeatures.SCAN ) &&
-					queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
-				hasHostingFeature( site, HostingFeatures.BACKUPS ) &&
-					queryClient.ensureQueryData( siteLastBackupQuery( site.ID ) ),
-				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
-			] ).then( ( [ currentPlan ] ) => {
-				if ( currentPlan.id ) {
-					queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
-				}
-			} );
+			queryClient.prefetchQuery( siteLastFiveActivityLogEntriesQuery( site.ID ) );
+			if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+				queryClient.prefetchQuery( siteScanQuery( site.ID ) );
+			}
+			if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
+				queryClient.prefetchQuery( siteLastBackupQuery( site.ID ) );
+			}
+			if ( site.is_a4a_dev_site ) {
+				queryClient.prefetchQuery( sitePreviewLinksQuery( site.ID ) );
+			}
+
+			const currentPlan = await queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) );
+			if ( currentPlan.id ) {
+				queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
+			}
 		}
 		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
 		await Promise.all( [
@@ -203,7 +211,7 @@ export const siteDeploymentsListRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( codeDeploymentsQuery( site.ID ) );
+		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/deployments-list' ).then( ( d ) =>
@@ -345,6 +353,14 @@ export const siteScanRoute = createRoute( {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
+			hasHostingFeature( site, HostingFeatures.SCAN ) &&
+				queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
+		] );
+	},
 } );
 
 export const siteScanIndexRoute = createRoute( {
@@ -365,12 +381,6 @@ export const siteScanActiveThreatsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteScanRoute,
 	path: 'active',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
-			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/scan' ).then( ( d ) =>
 		createLazyRoute( 'site-scan-active-threats' )( {
@@ -389,12 +399,6 @@ export const siteScanHistoryRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteScanRoute,
 	path: 'history',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
-			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/scan' ).then( ( d ) =>
 		createLazyRoute( 'site-scan-history' )( {
@@ -423,9 +427,11 @@ export const siteBackupsRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries and group counts.
 		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
-			queryClient.ensureQueryData( siteBackupActivityLogGroupCountsQuery( site.ID ) );
+			queryClient.prefetchQuery( siteBackupActivityLogEntriesQuery( site.ID ) );
+			queryClient.prefetchQuery( siteBackupActivityLogGroupCountsQuery( site.ID ) );
 		}
+
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
@@ -565,7 +571,7 @@ export const siteSettingsRoute = createRoute( {
 	path: 'settings',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+		queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
 
 		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
 			// This impacts layout so we must wait for this to load
@@ -657,7 +663,7 @@ export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	path: 'subscription-gifting',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+		queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-subscription-gifting' ).then( ( d ) =>
@@ -906,12 +912,12 @@ export const siteSettingsSftpSshRoute = createRoute( {
 	path: 'sftp-ssh',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		return Promise.all( [
-			hasHostingFeature( site, HostingFeatures.SFTP ) &&
-				queryClient.ensureQueryData( siteSftpUsersQuery( site.ID ) ),
-			hasHostingFeature( site, HostingFeatures.SSH ) &&
-				queryClient.ensureQueryData( siteSshAccessStatusQuery( site.ID ) ),
-		] );
+		if ( hasHostingFeature( site, HostingFeatures.SFTP ) ) {
+			queryClient.prefetchQuery( siteSftpUsersQuery( site.ID ) );
+		}
+		if ( hasHostingFeature( site, HostingFeatures.SSH ) ) {
+			queryClient.prefetchQuery( siteSshAccessStatusQuery( site.ID ) );
+		}
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-sftp-ssh' ).then( ( d ) =>
@@ -1025,9 +1031,9 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'repositories',
-	validateSearch: ( search ): { back_to?: 'deployments' } => {
+	validateSearch: ( search ): { back_to?: 'site-deployments' } => {
 		return {
-			back_to: search.back_to === 'deployments' ? 'deployments' : undefined,
+			back_to: search.back_to === 'site-deployments' ? 'site-deployments' : undefined,
 		};
 	},
 } );
@@ -1036,9 +1042,9 @@ export const siteSettingsRepositoriesIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
+		queryClient.prefetchQuery( githubInstallationsQuery() );
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( codeDeploymentsQuery( site.ID ) );
-		queryClient.ensureQueryData( githubInstallationsQuery() );
+		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories' ).then( ( d ) =>
@@ -1059,7 +1065,7 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: 'connect',
 	loader: () => {
-		queryClient.ensureQueryData( githubInstallationsQuery() );
+		queryClient.prefetchQuery( githubInstallationsQuery() );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
@@ -1082,9 +1088,9 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
-	validateSearch: ( search ): { back_to?: 'deployments' } => {
+	validateSearch: ( search ): { back_to?: 'site-deployments' } => {
 		return {
-			back_to: search.back_to === 'deployments' ? 'deployments' : undefined,
+			back_to: search.back_to === 'site-deployments' ? 'site-deployments' : undefined,
 		};
 	},
 	loader: async ( { params: { siteSlug, deploymentId } } ) => {
@@ -1095,28 +1101,6 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-manage' )( {
 			component: d.default,
-		} )
-	)
-);
-
-export const siteSettingsHolidaySnowRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Holiday snow' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteSettingsRoute,
-	path: 'holiday-snow',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-holiday-snow' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-holiday-snow' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -1346,7 +1330,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 				siteSettingsSubscriptionGiftingRoute,
 				siteSettingsAgencyRoute,
 				siteSettingsHundredYearPlanRoute,
-				siteSettingsHolidaySnowRoute,
 			];
 
 			if ( config.supports.sites.settings.general.redirect ) {

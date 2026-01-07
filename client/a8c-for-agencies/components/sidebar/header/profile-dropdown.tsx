@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gravatar } from '@automattic/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -16,6 +17,7 @@ import {
 	EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE,
 	EXTERNAL_WPCOM_ACCOUNT_URL,
 } from '../../sidebar-menu/lib/constants';
+import SidebarHelpCenter from './help-center';
 
 import './style.scss';
 
@@ -113,11 +115,10 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 };
 
 type ProfileDropdownProps = {
-	compact?: boolean;
 	dropdownPosition?: 'up' | 'down';
 };
 
-const ProfileDropdown = ( { compact, dropdownPosition = 'down' }: ProfileDropdownProps ) => {
+const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const user = useSelector( getCurrentUser );
@@ -139,10 +140,14 @@ const ProfileDropdown = ( { compact, dropdownPosition = 'down' }: ProfileDropdow
 	const dropdownRef = useRef( null );
 	useOutsideClickCallback( dropdownRef, onCloseMenu );
 
+	const withHelpCenter = isEnabled( 'a4a-help-center' );
+
 	return (
 		<nav
 			ref={ dropdownRef }
-			className={ clsx( 'a4a-sidebar__profile-dropdown', `is-align-menu-${ dropdownPosition }` ) }
+			className={ clsx( 'a4a-sidebar__profile-dropdown', `is-align-menu-${ dropdownPosition }`, {
+				'with-help-center': withHelpCenter,
+			} ) }
 			aria-label={
 				translate( 'User menu', {
 					comment: 'Label used to differentiate navigation landmarks in screen readers',
@@ -163,7 +168,7 @@ const ProfileDropdown = ( { compact, dropdownPosition = 'down' }: ProfileDropdow
 					alt={ translate( 'My Profile', { textOnly: true } ) }
 				/>
 
-				{ ! compact && (
+				{ ! withHelpCenter && (
 					<div className="a4a-sidebar__profile-dropdown-button-label">
 						<span className="a4a-sidebar__profile-dropdown-button-label-text">
 							{ user?.display_name }
@@ -172,6 +177,8 @@ const ProfileDropdown = ( { compact, dropdownPosition = 'down' }: ProfileDropdow
 					</div>
 				) }
 			</Button>
+
+			{ withHelpCenter && <SidebarHelpCenter /> }
 			<DropdownMenu isExpanded={ isMenuExpanded } setMenuExpanded={ setMenuExpanded } />
 		</nav>
 	);

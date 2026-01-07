@@ -121,11 +121,21 @@ export function useFields(
 				},
 				enableHiding: false,
 				render: ( { item }: { item: Plugin } ) => {
+					const isMarketplaceProduct = item.isMarketplaceProduct;
+					const marketplaceVersion = item.version;
+
 					if (
 						item.status?.includes( PLUGINS_STATUS.UPDATE ) &&
-						item?.update?.new_version &&
+						( item?.update?.new_version || marketplaceVersion ) &&
 						! isListView
 					) {
+						let version = '';
+						if ( isMarketplaceProduct && marketplaceVersion ) {
+							version = marketplaceVersion;
+						} else if ( item?.update?.new_version ) {
+							version = item.update.new_version.split( '-' ).slice( 0, 2 ).join( '-' );
+						}
+
 						return (
 							<Button
 								variant="secondary"
@@ -141,9 +151,7 @@ export function useFields(
 							>
 								{ translate( 'Update to version %(version)s', {
 									args: {
-										version: item?.update?.new_version
-											? item.update.new_version.split( '-' ).slice( 0, 2 ).join( '-' )
-											: '',
+										version,
 									},
 								} ) }
 							</Button>

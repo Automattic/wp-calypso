@@ -15,7 +15,9 @@ import {
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { BackToDeploymentsButton } from './back-to-deployments-button';
+import SnackbarBackButton, {
+	getSnackbarBackButtonText,
+} from '../../components/snackbar-back-button';
 import { ConnectRepositoryForm } from './connect-repository-form';
 
 export default function ConfigureRepository() {
@@ -29,7 +31,7 @@ export default function ConfigureRepository() {
 		from: navigateFrom,
 	} );
 	const search = siteSettingsRepositoriesManageRoute.useSearch();
-	const showBackToDeployments = search?.back_to === 'deployments';
+	const snackbarBackButtonText = getSnackbarBackButtonText( search?.back_to );
 
 	const handleCancel = () => {
 		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
@@ -84,7 +86,9 @@ export default function ConfigureRepository() {
 					</CardBody>
 				</Card>
 			</PageLayout>
-			{ showBackToDeployments && <BackToDeploymentsButton /> }
+			{ snackbarBackButtonText && (
+				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
+			) }
 		</>
 	);
 }

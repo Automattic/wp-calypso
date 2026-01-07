@@ -19,6 +19,7 @@ interface LinkCardProps {
 	target?: string;
 	external?: boolean;
 	onClick?: ( ( event: React.MouseEvent< HTMLAnchorElement > ) => void ) | ( () => void );
+	image?: string;
 }
 
 const LinkCardContainer = styled.div< LinkCardContainerProps >`
@@ -64,6 +65,10 @@ const LinkCardCta = styled.div`
 	line-height: 1.25rem;
 `;
 
+const LinkCardImage = styled.div`
+	margin-bottom: 16px;
+`;
+
 const LinkCard = ( props: LinkCardProps ) => {
 	const {
 		label,
@@ -76,6 +81,7 @@ const LinkCard = ( props: LinkCardProps ) => {
 		external,
 		target,
 		onClick,
+		image,
 	} = props;
 
 	const Link = external ? ExternalLink : 'a';
@@ -83,6 +89,11 @@ const LinkCard = ( props: LinkCardProps ) => {
 	return (
 		<Link target={ target } href={ url } onClick={ onClick } className="card-block">
 			<LinkCardContainer background={ background } border={ border }>
+				{ image && (
+					<LinkCardImage>
+						<img src={ image } alt="" />
+					</LinkCardImage>
+				) }
 				{ label && <LinkCardLabel>{ label }</LinkCardLabel> }
 				{ title && <LinkCardTitle marginBottom={ titleMarginBottom }>{ title }</LinkCardTitle> }
 				{ cta && <LinkCardCta>{ cta }</LinkCardCta> }

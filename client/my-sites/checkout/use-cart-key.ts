@@ -1,4 +1,5 @@
 import { useDebugValue } from 'react';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -21,6 +22,10 @@ export default function useCartKey(): ReturnType< typeof getCartKey > {
 		currentUrlPath.includes( '/checkout/marketplace' ) && isLoggedOutCart;
 	const isUnifiedSitelessCheckout =
 		currentUrlPath.includes( '/checkout/unified' ) && isLoggedOutCart;
+	const isA4ASitelessCheckout =
+		isA8CForAgencies() &&
+		( currentUrlPath.includes( '/marketplace/checkout' ) ||
+			currentUrlPath.includes( '/client/checkout' ) );
 	const isNoSiteCart =
 		isJetpackCheckout ||
 		isAkismetSitelessCheckout ||
@@ -31,7 +36,7 @@ export default function useCartKey(): ReturnType< typeof getCartKey > {
 			'no-user' === searchParams.get( 'cart' ) );
 
 	const cartKey = getCartKey( {
-		selectedSite,
+		selectedSite: isA4ASitelessCheckout ? null : selectedSite,
 		isLoggedOutCart,
 		isNoSiteCart,
 	} );

@@ -1,14 +1,12 @@
-import config from '@automattic/calypso-config';
 import { FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
-import QuickPost from 'calypso/reader/components/quick-post';
+import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { focusEditor } from 'calypso/reader/components/quick-post/utils';
-import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -25,9 +23,34 @@ function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
+	const [ isResurrectedModalVisible, setIsResurrectedModalVisible ] = useState( false );
+	const [ shouldDelayReaderOnboarding, setShouldDelayReaderOnboarding ] = useState( false );
+	const [ readerOnboardingShouldShow, setReaderOnboardingShouldShow ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
+
+	const handleReaderOnboardingRender = useCallback(
+		( willRender: boolean ) => {
+			setReaderOnboardingShouldShow( willRender );
+			if ( willRender && isResurrectedModalVisible ) {
+				setShouldDelayReaderOnboarding( true );
+			}
+			if ( ! willRender ) {
+				setShouldDelayReaderOnboarding( false );
+			}
+		},
+		[ isResurrectedModalVisible ]
+	);
+
+	useEffect( () => {
+		if ( shouldDelayReaderOnboarding && ! isResurrectedModalVisible ) {
+			setShouldDelayReaderOnboarding( false );
+		}
+	}, [ shouldDelayReaderOnboarding, isResurrectedModalVisible ] );
+
+	const suppressReaderOnboarding =
+		readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding );
 
 	// Set the selected feed based on route param.
 	useEffect( () => {
@@ -49,7 +72,12 @@ function FollowingStream( { ...props } ) {
 						}
 					) }
 				</p>
-				<ReaderOnboarding forceShow />
+				<AsyncLoad
+					require="calypso/reader/onboarding"
+					forceShow
+					onRender={ handleReaderOnboardingRender }
+					isSuppressed={ suppressReaderOnboarding }
+				/>
 			</div>
 		);
 	}
@@ -72,30 +100,37 @@ function FollowingStream( { ...props } ) {
 					>
 						<ViewToggle />
 					</NavigationHeader>
-					{ config.isEnabled( 'reader/quick-post' ) && hasSites && (
-						<FoldableCard
-							header={ translate( 'Write a quick post' ) }
-							clickableHeader
-							compact
-							expanded={ false }
-							className="following-stream__quick-post-card"
-							smooth
-							contentExpandedStyle={ { maxHeight: '800px' } }
-							useInert
-							onOpen={ () => {
-								focusEditor();
-								recordReaderTracksEvent( 'calypso_reader_editor_card_opened' );
-							} }
-							onClose={ () => {
-								recordReaderTracksEvent( 'calypso_reader_editor_card_closed' );
-							} }
-						>
-							<QuickPost />
-						</FoldableCard>
+					{ hasSites && (
+						<div className="following-stream__quick-post-card-container">
+							<FoldableCard
+								header={ translate( 'Write a quick post' ) }
+								clickableHeader
+								compact
+								expanded={ false }
+								className="following-stream__quick-post-card"
+								smooth
+								contentExpandedStyle={ { maxHeight: '800px' } }
+								useInert
+								onOpen={ () => {
+									focusEditor();
+									recordReaderTracksEvent( 'calypso_reader_editor_card_opened' );
+								} }
+								onClose={ () => {
+									recordReaderTracksEvent( 'calypso_reader_editor_card_closed' );
+								} }
+							>
+								<AsyncLoad require="calypso/reader/components/quick-post" />
+							</FoldableCard>
+						</div>
 					) }
-					<ReaderOnboarding />
+					<AsyncLoad
+						require="calypso/reader/onboarding"
+						onRender={ handleReaderOnboardingRender }
+						isSuppressed={ suppressReaderOnboarding }
+					/>
 				</ReaderStream>
 			) }
+			<ResurrectedWelcomeModalGate onVisibilityChange={ setIsResurrectedModalVisible } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</>
 	);

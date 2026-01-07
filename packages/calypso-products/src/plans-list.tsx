@@ -145,6 +145,7 @@ import {
 	FEATURE_WOOCOMMERCE,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
+	GROUP_A4A,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_SECURITY_PLANS,
 	PLAN_BLOGGER,
@@ -152,6 +153,8 @@ import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
+	PLAN_A4A_BUSINESS,
+	PLAN_A4A_BUSINESS_MONTHLY,
 	PLAN_100_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE,
@@ -386,6 +389,7 @@ import {
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOO_HOSTED_BASIC,
 	TYPE_WOO_HOSTED_PRO,
+	TYPE_WOO_HOSTED_FREE_TRIAL,
 	FEATURE_PREMIUM_STORE_THEMES,
 	FEATURE_STORE_DESIGN,
 	FEATURE_UNLIMITED_PRODUCTS,
@@ -456,6 +460,16 @@ import {
 	FEATURE_JETPACK_SOCIAL_V1_MONTHLY,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
+	FEATURE_AI_WEBSITE_BUILDER,
+	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
+	FEATURE_AI_WRITER_DESIGNER,
+	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_EVERYTHING_IN_FREE_PLUS,
+	FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
+	FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
+	FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
+	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+	FEATURE_BLAZE_AD_CREDITS,
 	FEATURE_UPLOAD_VIDEO,
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
@@ -606,6 +620,32 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	get2023PricingGridSignupWpcomFeatures: () => {
 		return [ FEATURE_UNLIMITED_ENTITIES ];
 	},
+
+	getLongSetSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_BANDWIDTH,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_CDN,
+		FEATURE_FAST_DNS,
+	],
+
+	// Stacked variant: same as above for Free (no previous plan)
+	getLongSetStackedSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_BANDWIDTH,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_CDN,
+		FEATURE_FAST_DNS,
+	],
+
+	// Short set stacked: Free matches the long stacked base set (no previous plan)
+	getShortSetStackedSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_BANDWIDTH,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_CDN,
+		FEATURE_FAST_DNS,
+	],
 
 	get2023PlanComparisonFeatureOverride: () => {
 		return [
@@ -863,6 +903,42 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	get2023PricingGridSignupJetpackFeatures: () => {
 		return [];
 	},
+	getLongSetSignupWpcomFeatures: () => [
+		// Base features (from Free)
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_BANDWIDTH,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_CDN,
+		FEATURE_FAST_DNS,
+		// Personal-specific features
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_SUPPORT_FROM_EXPERTS,
+		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		FEATURE_STATS_BASIC_20250206,
+	],
+
+	// Stacked variant: only incremental features (matching screenshot order)
+	getLongSetStackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_FREE_PLUS,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PLUGINS_THEMES,
+		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		FEATURE_STATS_BASIC_20250206,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_SUPPORT_FROM_EXPERTS,
+	],
+
+	// Short set stacked: incremental features from Free
+	getShortSetStackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_FREE_PLUS,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_UPLOAD_PLUGINS,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_SUPPORT_FROM_EXPERTS,
+	],
+
 	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
@@ -1092,6 +1168,78 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 
 		return features;
 	},
+	getLongSetSignupWpcomFeatures: () => [
+		// Base features (from Free)
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_BANDWIDTH,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_CDN,
+		FEATURE_FAST_DNS,
+		// Personal features
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		// Premium features
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_VIDEO_UPLOADS,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS,
+		FEATURE_AI_WEBSITE_BUILDER,
+		FEATURE_AI_WRITER_DESIGNER,
+		// Business features
+		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+		FEATURE_EMAIL_MARKETING,
+		FEATURE_BLAZE_AD_CREDITS,
+		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_SITE_STAGING_SITES,
+		FEATURE_DEV_TOOLS,
+		// Commerce-specific features
+		FEATURE_WOOCOMMERCE_HOSTING,
+		FEATURE_LIST_UNLIMITED_PRODUCTS,
+		FEATURE_INVENTORY_MGMT,
+		FEATURE_STREAMLINED_CHECKOUT,
+		FEATURE_SELL_60_COUNTRIES,
+		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+		FEATURE_DYNAMIC_UPSELLS,
+		FEATURE_CUSTOM_MARKETING_AUTOMATION,
+		FEATURE_SHIPPING_INTEGRATIONS,
+	],
+
+	// Stacked variant: only incremental features (matching screenshot order)
+	getLongSetStackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
+		FEATURE_PREMIUM_STORE_THEMES,
+		FEATURE_WOOCOMMERCE_HOSTING,
+		FEATURE_LIST_UNLIMITED_PRODUCTS,
+		FEATURE_INVENTORY_MGMT,
+		FEATURE_STREAMLINED_CHECKOUT,
+		FEATURE_SELL_60_COUNTRIES,
+		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+		FEATURE_DYNAMIC_UPSELLS,
+		FEATURE_CUSTOM_MARKETING_AUTOMATION,
+		FEATURE_SHIPPING_INTEGRATIONS,
+	],
+
+	// Short set stacked: incremental features from Business
+	getShortSetStackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
+		FEATURE_PREMIUM_STORE_THEMES,
+		FEATURE_WOOCOMMERCE_HOSTING,
+		FEATURE_LIST_UNLIMITED_PRODUCTS,
+		FEATURE_INVENTORY_MGMT,
+		FEATURE_STREAMLINED_CHECKOUT,
+		FEATURE_SELL_60_COUNTRIES,
+		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+		FEATURE_DYNAMIC_UPSELLS,
+		FEATURE_CUSTOM_MARKETING_AUTOMATION,
+		FEATURE_SHIPPING_INTEGRATIONS,
+	],
+
 	get2023PlanComparisonFeatureOverride: () => {
 		return [
 			FEATURE_CUSTOM_DOMAIN,
@@ -1547,6 +1695,56 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 		return features;
 	},
+	getLongSetSignupWpcomFeatures: () => [
+		// Base features (from Free)
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_BANDWIDTH,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_CDN,
+		FEATURE_FAST_DNS,
+		// Personal features
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_SUPPORT_FROM_EXPERTS,
+		// Premium-specific features
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_UPLOAD_VIDEO,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS,
+		FEATURE_AI_WEBSITE_BUILDER_LIMITED,
+		FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	],
+
+	// Stacked variant: only incremental features (matching screenshot order)
+	getLongSetStackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
+		FEATURE_AI_WEBSITE_BUILDER_LIMITED,
+		FEATURE_AI_WRITER_DESIGNER_LIMITED,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_UPLOAD_VIDEO,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS,
+	],
+
+	// Short set stacked: incremental features from Personal
+	getShortSetStackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_UPLOAD_VIDEO,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS,
+	],
+
 	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
@@ -1592,6 +1790,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				numberFormatOptions: { style: 'percent' },
 			} ),
 			[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
+			// AI features show "(limited)" text for Premium plan
+			[ FEATURE_AI_WEBSITE_BUILDER_LIMITED ]: i18n.translate( 'Limited' ),
+			[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: i18n.translate( 'Limited' ),
 		};
 
 		return isStatsFeatureTranslated()
@@ -1628,6 +1829,17 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 } );
 
+const getPlanA4ABusinessDetails = (): IncompleteWPcomPlan => ( {
+	...getDotcomPlanDetails(),
+	group: GROUP_A4A,
+	type: TYPE_BUSINESS,
+	getTitle: getPlanBusinessTitle,
+	getDescription: () =>
+		i18n.translate(
+			'Power your business website with custom plugins and themes, storage, and the ability to remove WordPress.com branding.'
+		),
+} );
+
 const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -1640,11 +1852,15 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getPlanTagline: () => {
 		if (
 			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
-			i18n.hasTranslation( 'Unlock next-level WordPress with all custom plugins and themes.' )
+			i18n.hasTranslation(
+				'Unlock business tools, priority support, developer power with predictable costs.'
+			)
 		) {
-			return i18n.translate( 'Unlock next-level WordPress with all custom plugins and themes.' );
+			return i18n.translate(
+				'Unlock business tools, priority support, developer power with predictable costs.'
+			);
 		}
-		return i18n.translate( 'Unlock next-level WordPress with custom plugins and themes.' );
+		return i18n.translate( 'Unlock next-level WordPress with all custom plugins and themes.' );
 	},
 	getBlogOnboardingTagLine: () =>
 		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
@@ -1764,6 +1980,70 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 
 		return features;
 	},
+	getLongSetSignupWpcomFeatures: () => [
+		// Base features (from Free)
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_BANDWIDTH,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_CDN,
+		FEATURE_FAST_DNS,
+		// Personal features
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		// Premium features
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_VIDEO_UPLOADS,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS,
+		FEATURE_AI_WEBSITE_BUILDER,
+		FEATURE_AI_WRITER_DESIGNER,
+		// Business-specific features
+		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+		FEATURE_EMAIL_MARKETING,
+		FEATURE_BLAZE_AD_CREDITS,
+		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_SITE_STAGING_SITES,
+		FEATURE_DEV_TOOLS,
+	],
+
+	// Stacked variant: only incremental features (matching screenshot order)
+	getLongSetStackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
+		FEATURE_AI_WEBSITE_BUILDER,
+		FEATURE_AI_WRITER_DESIGNER,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+		FEATURE_EMAIL_MARKETING,
+		FEATURE_VIDEO_UPLOADS,
+		FEATURE_BLAZE_AD_CREDITS,
+		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_SITE_STAGING_SITES,
+		FEATURE_DEV_TOOLS,
+	],
+
+	// Short set stacked: incremental features from Premium
+	getShortSetStackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
+		FEATURE_AI_WEBSITE_BUILDER,
+		FEATURE_AI_WRITER_DESIGNER,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+		FEATURE_EMAIL_MARKETING,
+		FEATURE_VIDEO_UPLOADS,
+		FEATURE_BLAZE_AD_CREDITS,
+		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_SITE_STAGING_SITES,
+		FEATURE_DEV_TOOLS,
+	],
+
 	get2023PlanComparisonFeatureOverride: () => {
 		return [
 			FEATURE_CUSTOM_DOMAIN,
@@ -2968,6 +3248,25 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'business-3-years',
 	},
 
+	[ PLAN_A4A_BUSINESS ]: {
+		...getPlanA4ABusinessDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: () => false, // A4A plans not available through standard flows
+		getProductId: () => 3300,
+		getStoreSlug: () => PLAN_A4A_BUSINESS,
+		getPathSlug: () => 'a4a-business',
+	},
+
+	[ PLAN_A4A_BUSINESS_MONTHLY ]: {
+		...getPlanA4ABusinessDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: () => false, // A4A plans not available through standard flows
+		getProductId: () => 3301,
+		getStoreSlug: () => PLAN_A4A_BUSINESS_MONTHLY,
+		getPathSlug: () => 'a4a-business-monthly',
+	},
+
 	[ PLAN_100_YEARS ]: {
 		...getPlanBusinessDetails(),
 		term: TERM_CENTENNIALLY,
@@ -3165,6 +3464,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOO_HOSTED_FREE ]: {
 		...getPlanFreeDetails(),
 		...getAnnualTimeframe(),
+		type: isEnabled( 'ciab/allow-domain-features' ) ? TYPE_WOO_HOSTED_FREE_TRIAL : TYPE_FREE,
 		getTitle: () => i18n.translate( 'Free subscription' ),
 		getTagline: () => 'Learn more about everything included with Woo Free Trial.',
 		getProductId: () => 4005,
@@ -3175,6 +3475,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ]: {
 		...getPlanFreeDetails(),
 		...getMonthlyTimeframe(),
+		type: isEnabled( 'ciab/allow-domain-features' ) ? TYPE_WOO_HOSTED_FREE_TRIAL : TYPE_FREE,
 		getTitle: () => 'Free Trial',
 		getPlanTagline: () => "Get a taste of the world's most popular eCommerce software.",
 		getDescription: () =>

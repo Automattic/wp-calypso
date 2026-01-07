@@ -1,16 +1,14 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useViewportMatch } from '@wordpress/compose';
 import { ReactElement } from 'react';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { useGetCategoryUrl } from 'calypso/my-sites/plugins/categories/use-get-category-url';
+import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
-const COLLECTION_LIST_LENGTH = isEnabled( 'marketplace-redesign' ) ? 18 : 6;
 
 export default function CollectionListView( {
 	category,
@@ -29,18 +27,21 @@ export default function CollectionListView( {
 	const getCategoryUrl = useGetCategoryUrl();
 	const categories = useCategories( [ category ] );
 
-	const isUseCarousel = isEnabled( 'marketplace-redesign' );
-	const isLessThanLargeViewport = useViewportMatch( 'large', '<' );
-	const isLessThanWideViewport = useViewportMatch( 'wide', '<' );
+	const isUseCarousel = useIsMarketplaceRedesignEnabled();
+	const isLargeOrAbove = useViewportMatch( 'large' );
+	const isWideOrAbove = useViewportMatch( 'wide' );
+
+	// Use shorter list length when redesign is not enabled
+	const collectionListLength = isUseCarousel ? 18 : 6;
 
 	let carouselPageSize = 6;
-	if ( isLessThanLargeViewport ) {
-		carouselPageSize = 1;
-	} else if ( isLessThanWideViewport ) {
+	if ( ! isLargeOrAbove ) {
+		carouselPageSize = 2;
+	} else if ( ! isWideOrAbove ) {
 		carouselPageSize = 4;
 	}
 
-	const plugins = categories[ category ].preview.slice( 0, COLLECTION_LIST_LENGTH );
+	const plugins = categories[ category ].preview.slice( 0, collectionListLength );
 
 	if ( isJetpackSelfHosted ) {
 		return null;

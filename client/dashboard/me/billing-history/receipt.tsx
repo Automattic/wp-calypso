@@ -5,7 +5,7 @@ import {
 	userTaxDetailsQuery,
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
@@ -58,7 +58,7 @@ export interface LineItemCostOverrideForDisplay {
 
 export default function Receipt() {
 	const params = receiptRoute.useParams();
-	const receiptId = params.receiptId;
+	const receiptId = parseInt( params.receiptId );
 	const { data: receipt } = useSuspenseQuery( receiptQuery( receiptId ) );
 
 	const handlePrint = () => {
@@ -185,7 +185,7 @@ function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
 }
 
 function UserVatDetails( { receipt }: { receipt: Receipt } ) {
-	const { data: vatDetails, isLoading, error } = useQuery( userTaxDetailsQuery() );
+	const { data: vatDetails } = useSuspenseQuery( userTaxDetailsQuery() );
 	const sendEmailMutation = useMutation( {
 		...sendReceiptEmailMutation(),
 		meta: {
@@ -203,7 +203,7 @@ function UserVatDetails( { receipt }: { receipt: Receipt } ) {
 		sendEmailMutation.mutate( String( receipt.id ) );
 	};
 
-	if ( isLoading || error || ! vatDetails?.id ) {
+	if ( ! vatDetails.id ) {
 		return null;
 	}
 
@@ -439,19 +439,21 @@ function ReceiptItemDiscounts( { item, receiptDate }: { item: ReceiptItem; recei
 				) {
 					return (
 						<li key={ costOverride.humanReadableReason }>
-							<Text>{ costOverride.humanReadableReason }</Text>
-							{ item.introductory_offer_terms?.enabled && (
-								<Text>
-									{ sprintf(
-										/* translators: %s: formatted price */
-										__( 'Amount paid in transaction: %s' ),
-										formatCurrency( item.amount_integer, item.currency, {
-											isSmallestUnit: true,
-											stripZeros: true,
-										} )
-									) }
-								</Text>
-							) }
+							<Flex justify="space-between">
+								<Text>{ costOverride.humanReadableReason }</Text>
+								{ item.introductory_offer_terms?.enabled && (
+									<Text>
+										{ sprintf(
+											/* translators: %s: formatted price */
+											__( 'Amount paid in transaction: %s' ),
+											formatCurrency( item.amount_integer, item.currency, {
+												isSmallestUnit: true,
+												stripZeros: true,
+											} )
+										) }
+									</Text>
+								) }
+							</Flex>
 						</li>
 					);
 				}
@@ -459,8 +461,8 @@ function ReceiptItemDiscounts( { item, receiptDate }: { item: ReceiptItem; recei
 				return (
 					<li key={ costOverride.humanReadableReason }>
 						<Flex justify="space-between">
-							<span>{ costOverride.humanReadableReason }</span>
-							<span>{ formattedDiscountAmount }</span>
+							<Text>{ costOverride.humanReadableReason }</Text>
+							<Text>{ formattedDiscountAmount }</Text>
 						</Flex>
 					</li>
 				);

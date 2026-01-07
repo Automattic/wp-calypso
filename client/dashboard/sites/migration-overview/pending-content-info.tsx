@@ -1,6 +1,7 @@
 import {
 	deleteSiteMigrationPendingStatusQuery,
 	siteMigrationKeyQuery,
+	sshMigrationQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -20,14 +21,15 @@ import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
+import { wpcomLink } from '../../utils/link';
 import { getSiteMigrationState } from '../../utils/site-status';
 import { HostingCards } from './hosting-cards';
-import type { MigrationStatus } from '../../utils/site-status';
+import type { SiteMigrationStatus } from '../../types';
 import type { Site } from '@automattic/api-core';
 
-const getContinueMigrationUrl = ( site: Site ): string | null => {
+const getContinueMigrationUrl = ( site: Site, sshSourceSiteDomain?: string ): string | null => {
 	const migrationState = getSiteMigrationState( site );
-	const sourceSiteDomain = site.options?.migration_source_site_domain;
+	const sourceSiteDomain = sshSourceSiteDomain ?? site.options?.migration_source_site_domain;
 
 	const queryArgs = {
 		siteId: site.ID,
@@ -41,10 +43,20 @@ const getContinueMigrationUrl = ( site: Site ): string | null => {
 			return addQueryArgs( `${ url }wp-admin/admin.php`, { page: 'wpcom-migration' } );
 		}
 
-		return addQueryArgs( '/setup/site-migration/site-migration-instructions', queryArgs );
+		return addQueryArgs(
+			wpcomLink( '/setup/site-migration/site-migration-instructions' ),
+			queryArgs
+		);
 	}
 
-	return addQueryArgs( '/setup/site-migration/site-migration-credentials', queryArgs );
+	if ( migrationState?.type === 'ssh' ) {
+		return addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-ssh-verification' ), {
+			...queryArgs,
+			from: sourceSiteDomain || undefined,
+		} );
+	}
+
+	return addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-credentials' ), queryArgs );
 };
 
 function CancellationModal( { site, onClose }: { site: Site; onClose: () => void } ) {
@@ -107,15 +119,19 @@ export function PendingContentInfo( {
 	type,
 }: {
 	site: Site;
-	type: MigrationStatus[ 'type' ];
+	type: SiteMigrationStatus[ 'type' ];
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { data: migrationKey, isLoading } = useQuery( siteMigrationKeyQuery( site.ID ) );
+	const {
+		data: { migration_source_site_domain: sshSourceSiteDomain } = {},
+		isLoading: isSshSourceSiteDomainLoading,
+	} = useQuery( { ...sshMigrationQuery( site.ID ), enabled: type === 'ssh' } );
 	const [ isCancellationModalOpen, setIsCancellationModalOpen ] = useState( false );
-	const continueMigrationUrl = getContinueMigrationUrl( site );
+	const continueMigrationUrl = getContinueMigrationUrl( site, sshSourceSiteDomain );
 
-	if ( isLoading ) {
+	if ( isLoading || ( type === 'ssh' && isSshSourceSiteDomainLoading ) ) {
 		return null;
 	}
 

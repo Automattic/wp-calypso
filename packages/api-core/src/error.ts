@@ -12,7 +12,7 @@ export class DashboardDataError extends Error {
 	}
 }
 
-interface WPError extends Error {
+export interface WPError extends Error {
 	status: number;
 	statusCode: number;
 	error?: string;

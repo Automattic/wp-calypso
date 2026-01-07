@@ -4,7 +4,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { setHelpCenterRouterHistory, setIsMinimized } from './actions';
 import { STORE_KEY } from './constants';
-import type { APIFetchOptions } from './types';
+import type { APIFetchOptions } from '../shared-types';
 import type { Location } from 'history';
 
 type Preferences = {
@@ -20,7 +20,7 @@ type Preferences = {
 
 export function* isHelpCenterShown() {
 	try {
-		const { calypso_preferences: preferences }: Preferences = canAccessWpcomApis()
+		const allPreferences: Preferences | Preferences[ 'calypso_preferences' ] = canAccessWpcomApis()
 			? yield wpcomRequest( {
 					path: '/me/preferences',
 					apiNamespace: 'wpcom/v2',
@@ -29,6 +29,9 @@ export function* isHelpCenterShown() {
 					global: true,
 					path: '/help-center/open-state',
 			  } as APIFetchOptions );
+
+		const preferences =
+			'calypso_preferences' in allPreferences ? allPreferences.calypso_preferences : allPreferences;
 
 		const route: string | null | undefined = yield controls.select(
 			STORE_KEY,

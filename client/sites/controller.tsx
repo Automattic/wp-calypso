@@ -4,13 +4,19 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
+import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
+import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SitesDashboard from './components/sites-dashboard';
 import { areHostingFeaturesSupported } from './hosting/features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
+import type { CalypsoDispatch, IAppState } from 'calypso/state/types';
 
 const getStatusFilterValue = ( status?: string ) => {
 	return siteLaunchStatusGroupValues.find( ( value ) => value === status );
@@ -113,6 +119,7 @@ export function sitesDashboard( context: Context, next: () => void ) {
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
+			<ResurrectedWelcomeModalGate />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 			<SitesDashboard queryParams={ getQueryParams( context ) } />
 		</>
@@ -146,6 +153,43 @@ export function maybeRemoveCheckoutSuccessNotice( context: PageJSContext, next: 
 	}
 	next();
 }
+
+// Helper thunk that ensures that the user preferences has been fetched into Redux state before we
+// continue working with it.
+const waitForPrefs = () => async ( dispatch: CalypsoDispatch, getState: () => IAppState ) => {
+	if ( hasReceivedRemotePreferences( getState() ) ) {
+		return;
+	}
+
+	try {
+		await dispatch( fetchPreferences() );
+	} catch {
+		// if the fetching of preferences fails, return gracefully and proceed to the next landing page candidate
+	}
+};
+
+// The wp-admin admin bar does not know about user preferences and so may use the
+// origin_admin_bar query param to indicate that Calypso should take the user's
+// preference into account (without the query param, users can still navigate to
+// `/sites` manually, meaning the old dashboard is still accessible when the user
+// is specifically trying to go there).
+export const maybeRedirectToDashboard = ( context: PageJSContext, next: () => void ) => {
+	const originAdminBar = context.query[ 'origin_admin_bar' ];
+	if ( originAdminBar !== 'wpcom' ) {
+		return next();
+	}
+
+	const { dispatch, getState } = context.store;
+
+	dispatch( waitForPrefs() ).finally( () => {
+		if ( hasDashboardOptIn( getState() ) ) {
+			window.location.replace( dashboardLink( '/sites' ) );
+			return;
+		}
+		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_admin_bar' ) );
+		next();
+	} );
+};
 
 export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, next: () => void ) {
 	const state = context.store.getState();

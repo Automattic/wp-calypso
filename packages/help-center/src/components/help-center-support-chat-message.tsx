@@ -9,12 +9,8 @@ import clsx from 'clsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
-import type {
-	OdieConversation,
-	OdieMessage,
-	ZendeskConversation,
-	ZendeskMessage,
-} from '@automattic/odie-client';
+import type { OdieConversation, OdieMessage } from '@automattic/odie-client';
+import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 
 import './help-center-support-chat-message.scss';
 
@@ -59,7 +55,7 @@ export const HelpCenterSupportChatMessage = ( {
 	);
 
 	const messageDisplayName =
-		role === 'business'
+		'id' in message
 			? __( 'Happiness chat', __i18n_text_domain__ )
 			: __( 'Support assistant chat', __i18n_text_domain__ );
 

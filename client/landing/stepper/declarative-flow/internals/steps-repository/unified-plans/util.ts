@@ -15,7 +15,7 @@ export type SupportedIntervalTypes = Extract<
 	UrlFriendlyTermType,
 	'monthly' | 'yearly' | '2yearly' | '3yearly'
 >;
-const supportedIntervalTypes: SupportedIntervalTypes[] = [
+export const supportedIntervalTypes: SupportedIntervalTypes[] = [
 	'monthly',
 	'yearly',
 	'2yearly',

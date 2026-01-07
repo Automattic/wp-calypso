@@ -1,8 +1,8 @@
 import calypsoConfig from '@automattic/calypso-config';
-import { Router, createRoute, redirect } from '@tanstack/react-router';
-import { logToLogstash } from 'calypso/lib/logstash';
+import { createRouter, createRoute, redirect } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
+import { handleOnCatch } from '../logger';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
@@ -56,7 +56,7 @@ const createRouteTree = ( config: AppConfig ) => {
 
 export const getRouter = ( config: AppConfig ) => {
 	const routeTree = createRouteTree( config );
-	return new Router( {
+	const router = createRouter( {
 		routeTree,
 		basepath: config.basePath,
 		context: {
@@ -65,16 +65,9 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,
 		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
-			logToLogstash( {
-				feature: 'calypso_client',
-				message: 'Unknown error',
-				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
-				tags: [ 'dashboard' ],
-				properties: {
-					env: calypsoConfig( 'env_id' ),
-					message: error.message,
-					stack: errorInfo.componentStack,
-				},
+			handleOnCatch( error, errorInfo, router, {
+				severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
+				calypso_section: 'dashboard',
 			} );
 		},
 		defaultPreload: 'intent',
@@ -86,4 +79,6 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultViewTransition: true,
 		scrollRestoration: true,
 	} );
+
+	return router;
 };

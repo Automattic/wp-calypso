@@ -12,7 +12,7 @@ export interface WpcomRequestParams {
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	body?: object;
 	token?: string;
-	query?: string;
+	query?: string | Record< string, string | number >;
 	metaAPI?: {
 		accessAllUsersBlogs?: boolean;
 	};

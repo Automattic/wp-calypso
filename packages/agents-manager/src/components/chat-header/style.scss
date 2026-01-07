@@ -1,19 +1,38 @@
 .agents-manager-chat-header {
-	width: calc( 100% + 16px );
+	width: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: end;
 	height: 56px;
-	padding: 16px;
-	margin-top: -8px;
-	margin-left: -8px;
-}
+	padding: 4px 16px;
 
-.agents-manager-chat-header__actions {
-	display: flex;
-	gap: 8px;
-}
+	.agents-manager-chat-header__back-btn {
+		padding: 0;
+		padding-right: 4px;
+	}
 
-.agents-manager-chat-header__more-options {
-	line-height: initial;
+	&:has( .agents-manager-chat-header__title ) {
+		justify-content: space-between;
+	}
+
+	&__title {
+		font-size: 14px;
+		font-weight: 600;
+		color: #1f1f1f;
+		flex-grow: 1;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 4px;
+		align-items: center;
+	}
+
+	&__more-options,
+	&__history-btn,
+	&__close-btn {
+		svg {
+			fill: #1f1f1f;
+		}
+	}
 }

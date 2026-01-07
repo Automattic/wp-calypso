@@ -10,6 +10,7 @@ import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
+import { MARKETPLACE_TYPE_SESSION_STORAGE_KEY } from './hoc/with-marketplace-type';
 import HostingOverview from './hosting-overview';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
@@ -17,10 +18,37 @@ import { PLAN_CATEGORY_ENTERPRISE, PLAN_CATEGORY_PREMIUM } from './pressable-ove
 import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
 import ReferHosting from './refer-hosting';
+import type { MarketplaceType } from './types';
+
+type Props = {
+	title: string;
+	path: string;
+	properties?: Record< string, string | number | boolean >;
+};
+
+function MarketplacePageViewTracker( { title, path, properties }: Props ) {
+	const marketplaceType = sessionStorage.getItem(
+		MARKETPLACE_TYPE_SESSION_STORAGE_KEY
+	) as MarketplaceType;
+
+	return (
+		<PageViewTracker
+			title={ title }
+			path={ path }
+			properties={ {
+				...properties,
+				purchase_mode: marketplaceType,
+			} }
+		/>
+	);
+}
 
 export const marketplaceContext: Callback = ( context ) => {
 	const { purchase_type } = context.query;
-	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+	let purchaseType = undefined;
+	if ( purchase_type ) {
+		purchaseType = purchase_type === 'referral' ? 'referral' : 'regular';
+	}
 	const purchaseTypeURLQuery = purchaseType ? `?purchase_type=${ purchaseType }` : '';
 	page.redirect( A4A_MARKETPLACE_HOSTING_LINK + purchaseTypeURLQuery );
 };
@@ -34,7 +62,7 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 
 	context.primary = (
 		<>
-			<PageViewTracker title="Marketplace > Products" path={ context.path } />
+			<MarketplacePageViewTracker title="Marketplace > Products" path={ context.path } />
 			<ProductsOverview
 				siteId={ site_id }
 				suggestedProduct={ product_slug }
@@ -70,7 +98,7 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
-			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
+			<MarketplacePageViewTracker title="Marketplace > Hosting" path={ context.path } />
 			<HostingOverview section={ section } defaultMarketplaceType={ purchaseType } />
 		</>
 	);
@@ -109,7 +137,7 @@ export const checkoutContext: Callback = ( context, next ) => {
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
-			<PageViewTracker title="Marketplace > Checkout" path={ context.path } />
+			<MarketplacePageViewTracker title="Marketplace > Checkout" path={ context.path } />
 			<Checkout referralBlogId={ referralBlogId } />
 		</>
 	);

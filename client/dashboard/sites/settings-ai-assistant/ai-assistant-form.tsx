@@ -12,6 +12,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
@@ -23,13 +24,14 @@ interface AIAssistantFormData {
 	bigSkyEnabled: boolean;
 }
 
-type UseCaseOption = 'redesign' | 'content' | 'questions' | 'images' | 'other';
+type UseCaseOption = 'redesign' | 'content' | 'questions' | 'images' | 'block-notes' | 'other';
 
 const USE_CASE_OPTIONS: Array< { value: UseCaseOption; label: string } > = [
 	{ value: 'questions', label: __( 'General help and questions' ) },
 	{ value: 'content', label: __( 'Make changes to my site content' ) },
 	{ value: 'redesign', label: __( 'Redesign my site' ) },
 	{ value: 'images', label: __( 'Create and edit images' ) },
+	{ value: 'block-notes', label: __( 'Collaborate with the assistant using Block Notes' ) },
 	{ value: 'other', label: __( 'Other' ) },
 ];
 
@@ -37,7 +39,8 @@ const getUseCaseDescription = (
 	useCase: UseCaseOption,
 	siteEditorUrl: string,
 	siteSpecUrl: string,
-	mediaLibraryUrl: string
+	mediaLibraryUrl: string,
+	postEditorUrl: string
 ) => {
 	switch ( useCase ) {
 		case 'redesign':
@@ -69,6 +72,15 @@ const getUseCaseDescription = (
 					mediaLibraryLink: <ExternalLink href={ mediaLibraryUrl } children={ null } />,
 				}
 			);
+		case 'block-notes':
+			return createInterpolateElement(
+				__(
+					'Address the assistant in the <postEditorLink>post editor</postEditorLink> using the @ai mention.'
+				),
+				{
+					postEditorLink: <ExternalLink href={ postEditorUrl } children={ null } />,
+				}
+			);
 		case 'other':
 			return __( 'Explore AI features throughout your WordPress dashboard.' );
 	}
@@ -82,6 +94,7 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 	const [ showDisableConfirm, setShowDisableConfirm ] = useState( false );
 	const [ lastAction, setLastAction ] = useState< 'enable' | 'disable' | null >( null );
 
+	const { recordTracksEvent } = useAnalytics();
 	const { data: pluginStatus } = useQuery( bigSkyPluginQuery( site.ID ) );
 
 	const mutation = useMutation( {
@@ -116,6 +129,7 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 	const siteEditorUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit';
 	const siteSpecUrl = site?.URL + '/wp-admin/site-editor.php?canvas=edit&ai-step=spec';
 	const mediaLibraryUrl = site?.URL + '/wp-admin/upload.php';
+	const postEditorUrl = site?.URL + '/wp-admin/edit.php?post_type=post';
 
 	const hasSelection = selectedUseCases.size > 0;
 	const { isPending, isSuccess } = mutation;
@@ -124,6 +138,11 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 		e.preventDefault();
 
 		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: true } );
+
+		recordTracksEvent( 'calypso_dashboard_ai_assistant_enable_click', {
+			selected_use_cases: Array.from( selectedUseCases ).join( ',' ),
+			other_text: selectedUseCases.has( 'other' ) ? otherText : undefined,
+		} );
 
 		setLastAction( 'enable' );
 		mutation.mutate( pluginUpdate );
@@ -146,6 +165,8 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 
 	const performDisable = () => {
 		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: false } );
+
+		recordTracksEvent( 'calypso_dashboard_ai_assistant_disable_click' );
 
 		setLastAction( 'disable' );
 		mutation.mutate( pluginUpdate, {
@@ -187,7 +208,8 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 												option.value,
 												siteEditorUrl,
 												siteSpecUrl,
-												mediaLibraryUrl
+												mediaLibraryUrl,
+												postEditorUrl
 											) }
 										</p>
 									</div>

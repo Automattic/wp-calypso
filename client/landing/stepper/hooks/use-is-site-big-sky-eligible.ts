@@ -1,7 +1,7 @@
-import config from '@automattic/calypso-config';
-import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_AI_ASSISTANT, isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
-import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import { AI_SITE_BUILDER_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import userAgent from 'calypso/lib/user-agent';
 import { useIsSiteOwner } from '../hooks/use-is-site-owner';
@@ -11,7 +11,9 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 const { SiteGoal } = Onboard;
 
-const featureFlagEnabled = config.isEnabled( 'calypso/big-sky' );
+const featureFlagEnabled = isEnabled( 'calypso/big-sky' );
+const featurePostCheckoutAiStepEnabled = isEnabled( 'onboarding/post-checkout-ai-step' );
+
 const invalidGoals = [
 	SiteGoal.PaidSubscribers,
 	SiteGoal.Courses,
@@ -33,9 +35,23 @@ export function useIsBigSkyEligible( flowName?: string ) {
 
 	const isEligibleGoals = isGoalsBigSkyEligible( goals );
 	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
+	const siteHasAiAssistantFeature =
+		site?.plan?.features?.active?.includes( FEATURE_AI_ASSISTANT ) ?? false;
 
 	if ( flowName === AI_SITE_BUILDER_FLOW ) {
 		return { isEligible: true };
+	}
+
+	if ( flowName === SITE_SETUP_FLOW ) {
+		return {
+			isEligible:
+				featureFlagEnabled &&
+				featurePostCheckoutAiStepEnabled &&
+				!! isOwner &&
+				siteHasAiAssistantFeature &&
+				isEligibleGoals &&
+				onSupportedDevice,
+		};
 	}
 
 	return {

@@ -1,7 +1,11 @@
-import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
+import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
-import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
+import {
+	getOdieOnErrorTransferMessage,
+	getOdieTransferMessage,
+	getErrorTryAgainLaterMessage,
+} from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -16,6 +20,7 @@ export const useCreateZendeskConversation = () => {
 		setChat,
 		chat,
 		trackEvent,
+		isChatLoaded,
 	} = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
@@ -25,18 +30,23 @@ export const useCreateZendeskConversation = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
+	const getErrorMessage = ( error: unknown ) =>
+		error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
+
 	const createConversation = async ( {
 		createdFrom = '',
 		isFromError = false,
 		errorReason = '',
+		escalationOnSecondAttempt = false,
 	}: {
 		createdFrom?: string;
 		isFromError?: boolean;
 		errorReason?: string;
+		escalationOnSecondAttempt?: boolean;
 	} ) => {
 		let activeInteractionId = currentSupportInteraction?.uuid;
 
-		trackEvent( 'create_zendesk_conversation', {
+		trackEvent( 'creating_zendesk_conversation', {
 			is_submitting_zendesk_user_fields: isSubmittingZendeskUserFields,
 			chat_conversation_id: chat.conversationId,
 			chat_status: chat.status,
@@ -44,6 +54,8 @@ export const useCreateZendeskConversation = () => {
 			interaction_id: activeInteractionId,
 			created_from: createdFrom,
 			is_from_error: isFromError,
+			is_chat_loaded: isChatLoaded,
+			escalation_on_second_attempt: escalationOnSecondAttempt,
 			error_reason: isFromError ? errorReason ?? 'Unknown error' : '',
 		} );
 
@@ -56,14 +68,40 @@ export const useCreateZendeskConversation = () => {
 			return chat.conversationId || '';
 		}
 
+		// Store previous state to restore on error
+		const previousMessages = [ ...chat.messages ];
+		const previousProvider = chat.provider;
+		const previousConversationId = chat.conversationId;
+
+		const handleErrorCreatingZendeskConversation = ( errorType: string, error?: unknown ) => {
+			trackEvent( errorType, {
+				error_message: getErrorMessage( error ),
+				created_from: createdFrom,
+				escalation_on_second_attempt: escalationOnSecondAttempt,
+				active_interaction_id: activeInteractionId || null,
+				is_chat_loaded: isChatLoaded,
+			} );
+			const errorMessageObj = getErrorTryAgainLaterMessage();
+
+			setChat( {
+				messages: [ ...previousMessages, errorMessageObj ],
+				status: 'loaded',
+				provider: previousProvider,
+				conversationId: previousConversationId,
+				odieId: chat.odieId,
+				wpcomUserId: chat.wpcomUserId,
+				clientId: chat.clientId,
+			} );
+		};
+
+		// Get transfer messages to identify and remove them on error
+		const transferMessages = isFromError
+			? getOdieOnErrorTransferMessage()
+			: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs );
+
 		setChat( ( prevChat ) => ( {
 			...prevChat,
-			messages: [
-				...prevChat.messages,
-				...( isFromError
-					? getOdieOnErrorTransferMessage()
-					: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs ) ),
-			],
+			messages: [ ...prevChat.messages, ...transferMessages ],
 			status: 'transfer',
 		} ) );
 
@@ -88,25 +126,29 @@ export const useCreateZendeskConversation = () => {
 
 			trackEvent( 'submitted_zendesk_user_fields' );
 		} catch ( error ) {
-			trackEvent( 'error_submitting_zendesk_user_fields', {
-				error_message:
-					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
-			} );
+			handleErrorCreatingZendeskConversation( 'error_submitting_zendesk_user_fields', error );
+			return;
 		}
 
-		const conversation = await Smooch.createConversation( {
-			metadata: {
-				createdAt: Date.now(),
-				...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
-				...( chatId ? { odieChatId: chatId } : {} ),
-			},
-		} );
-
+		let conversation: ZendeskConversation | null = null;
 		let interaction = null;
 
 		try {
+			conversation = await Smooch.createConversation( {
+				metadata: {
+					createdAt: Date.now(),
+					...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
+					...( chatId ? { odieChatId: chatId } : {} ),
+				},
+			} );
+		} catch ( error ) {
+			handleErrorCreatingZendeskConversation( 'error_creating_zendesk_conversation', error );
+			return;
+		}
+
+		try {
 			if ( activeInteractionId ) {
-				interaction = await addEventToInteraction.mutateAsync( {
+				interaction = await addEventToInteraction( {
 					interactionId: activeInteractionId,
 					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 				} );
@@ -116,7 +158,12 @@ export const useCreateZendeskConversation = () => {
 					event_external_id: conversation.id,
 				} );
 			}
+		} catch ( error ) {
+			handleErrorCreatingZendeskConversation( 'error_updating_interaction', error );
+			return;
+		}
 
+		try {
 			if ( interaction.uuid !== activeInteractionId ) {
 				await Smooch.updateConversation( conversation.id, {
 					metadata: {
@@ -126,42 +173,45 @@ export const useCreateZendeskConversation = () => {
 				} );
 				activeInteractionId = interaction.uuid;
 			}
-		} catch ( error ) {
-			trackEvent( 'error_updating_interaction_and_smooch', {
-				error_message:
-					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
-				active_interaction_id: activeInteractionId || null,
-				conversation_id: conversation.id,
-			} );
-		}
 
-		trackEvent( 'new_zendesk_conversation', {
-			support_interaction: activeInteractionId || null,
-			created_from: createdFrom,
-			messaging_site_id: selectedSiteId || null,
-			messaging_url: selectedSiteURL || null,
-		} );
-
-		// We need to load the conversation to get typing events. Load simply means "focus on"..
-		Smooch.loadConversation( conversation.id );
-
-		setChat( ( prevChat ) => ( {
-			...prevChat,
-			conversationId: conversation.id,
-			provider: 'zendesk',
-			status: 'loaded',
-		} ) );
-
-		// If the interaction id has changed, update the URL.
-		if ( activeInteractionId && currentSupportInteraction?.uuid !== activeInteractionId ) {
-			const params = new URLSearchParams( location.search );
-			if ( params.get( 'id' ) !== activeInteractionId ) {
-				params.set( 'id', activeInteractionId );
-				navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+			if ( ! conversation?.id ) {
+				throw new Error( 'Failed to create conversation: conversation is null or missing id' );
 			}
-		}
 
-		return conversation.id;
+			const conversationId = conversation.id;
+
+			// We need to load the conversation to get typing events. Load simply means "focus on"..
+			Smooch.loadConversation( conversationId );
+
+			setChat( ( prevChat ) => ( {
+				...prevChat,
+				conversationId: conversationId,
+				provider: 'zendesk',
+				status: 'loaded',
+			} ) );
+
+			// Track success only if conversation was created
+			trackEvent( 'new_zendesk_conversation', {
+				support_interaction: activeInteractionId || null,
+				created_from: createdFrom,
+				messaging_site_id: selectedSiteId || null,
+				messaging_url: selectedSiteURL || null,
+			} );
+
+			// If the interaction id has changed, update the URL.
+			if ( activeInteractionId && currentSupportInteraction?.uuid !== activeInteractionId ) {
+				const params = new URLSearchParams( location.search );
+				if ( params.get( 'id' ) !== activeInteractionId ) {
+					params.set( 'id', activeInteractionId );
+					navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+				}
+			}
+
+			return conversationId;
+		} catch ( error ) {
+			handleErrorCreatingZendeskConversation( 'error_finalizing_zendesk_conversation', error );
+			return;
+		}
 	};
 
 	return createConversation;

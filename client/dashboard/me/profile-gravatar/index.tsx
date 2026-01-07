@@ -16,6 +16,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { isValidUrl } from '../../../lib/importer/url-validation';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import EditGravatar from './edit-gravatar';
@@ -165,6 +166,7 @@ export default function GravatarProfileSection( {
 							) }
 						/>
 
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< UserSettings >
 							data={ data }
 							fields={ fields }

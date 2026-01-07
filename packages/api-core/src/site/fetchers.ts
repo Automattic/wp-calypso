@@ -2,6 +2,8 @@ import { isWpError, DashboardDataError } from '../error';
 import { wpcom } from '../wpcom-fetcher';
 import type { Site } from './types';
 
+export const INACCESSIBLE_JETPACK_ERROR_CODE = 'inaccessible_jetpack' as const;
+
 export const SITE_FIELDS = [
 	'ID',
 	'slug',
@@ -27,6 +29,7 @@ export const SITE_FIELDS = [
 	'options',
 	'jetpack',
 	'jetpack_connection',
+	'jetpack_holiday_snow_enabled',
 	'jetpack_modules',
 	'was_ecommerce_trial',
 	'was_migration_trial',
@@ -68,8 +71,8 @@ export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site 
 			{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
 		);
 	} catch ( error ) {
-		if ( isWpError( error ) && error.error === 'parse_error' ) {
-			throw new DashboardDataError( 'inaccessible_jetpack', error );
+		if ( isWpError( error ) && error.message.startsWith( 'The Jetpack site is inaccessible' ) ) {
+			throw new DashboardDataError( INACCESSIBLE_JETPACK_ERROR_CODE, error );
 		}
 		throw error;
 	}

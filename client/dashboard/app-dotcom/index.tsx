@@ -16,7 +16,7 @@ import './style.scss';
 
 boot( {
 	name: 'WordPress.com',
-	basePath: '/v2',
+	basePath: '/',
 	mainRoute: '/sites',
 	Logo,
 	supports: {
@@ -45,6 +45,12 @@ boot( {
 		help: true,
 		notifications: true,
 		me: {
+			billing: {
+				monetizeSubscriptions: true,
+			},
+			security: {
+				sshKey: true,
+			},
 			privacy: true,
 			apps: true,
 		},

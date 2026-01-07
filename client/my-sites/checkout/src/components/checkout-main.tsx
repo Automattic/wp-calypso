@@ -432,6 +432,7 @@ export default function CheckoutMain( {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
 					new_product_slug: newProductSlug,
+					volume: newProductVolume,
 				} )
 			);
 
@@ -653,7 +654,6 @@ export default function CheckoutMain( {
 		storedCards,
 		productAliasFromUrl,
 		checkoutFlow,
-		isGiftPurchase,
 	} );
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(

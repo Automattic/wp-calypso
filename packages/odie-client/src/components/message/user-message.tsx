@@ -5,6 +5,7 @@ import {
 	getOdieEmailFallbackMessageContent,
 	getOdieErrorMessage,
 	getOdieErrorMessageNonEligible,
+	getOdieZendeskConnectionErrorMessageContent,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
@@ -12,7 +13,9 @@ import {
 	interactionHasZendeskEvent,
 	getIsRequestingHumanSupport,
 	getIsLastBotMessage,
+	getIsErrorMessage,
 } from '../../utils';
+import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
 import { GetSupport } from './get-support';
@@ -21,11 +24,13 @@ import Sources from './sources';
 import type { Message } from '../../types';
 
 const getDisplayMessage = (
+	userHasRecentOpenConversation: boolean,
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
 	forceEmailSupport?: boolean,
 	isChatRestricted?: boolean,
-	isErrorMessage?: boolean
+	isErrorMessage?: boolean,
+	isChatLoaded?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
 		return getOdieThirdPartyMessageContent();
@@ -40,10 +45,18 @@ const getDisplayMessage = (
 	}
 
 	const forwardMessage = isUserEligibleForPaidSupport
-		? getOdieForwardToZendeskMessage()
+		? getOdieForwardToZendeskMessage( userHasRecentOpenConversation )
 		: getOdieForwardToForumsMessage();
 
-	return isErrorMessage ? getOdieErrorMessage() : forwardMessage;
+	if ( isErrorMessage ) {
+		return getOdieErrorMessage();
+	}
+
+	if ( isUserEligibleForPaidSupport && ! isChatLoaded ) {
+		return getOdieZendeskConnectionErrorMessageContent();
+	}
+
+	return forwardMessage;
 };
 
 export const UserMessage = ( {
@@ -59,23 +72,32 @@ export const UserMessage = ( {
 		canConnectToZendesk,
 		forceEmailSupport,
 		isChatRestricted,
+		isChatLoaded,
 		chat,
 	} = useOdieAssistantContext();
 
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 	const isLastBotMessage = getIsLastBotMessage( chat, message );
-
+	const hasRecentOpenConversation = getMostRecentOpenLiveInteraction();
+	const isErrorMessage = getIsErrorMessage( message );
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
-	const messageContent = isRequestingHumanSupport
+	const showGetSupport = isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage );
+	const showActionButtons = ! isRequestingHumanSupport && ! isErrorMessage;
+
+	const shouldOverrideWithForwardMessage = isRequestingHumanSupport && chat.provider !== 'zendesk';
+
+	const messageContent = shouldOverrideWithForwardMessage
 		? getDisplayMessage(
+				!! hasRecentOpenConversation,
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
 				forceEmailSupport,
 				isChatRestricted,
-				message?.context?.flags?.is_error_message
+				message?.context?.flags?.is_error_message,
+				isChatLoaded
 		  )
 		: message.content;
 
@@ -85,15 +107,13 @@ export const UserMessage = ( {
 				<MarkdownOrChildren
 					messageContent={ messageContent }
 					components={ {
-						a: ( props: React.ComponentProps< 'a' > ) => (
-							<CustomALink { ...props } target="_blank" />
-						),
+						a: ( props: React.ComponentProps< 'a' > ) => <CustomALink { ...props } />,
 					} }
 				/>
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
-					{ isRequestingHumanSupport && isLastBotMessage && (
+					{ showGetSupport && (
 						<GetSupport
 							onClickAdditionalEvent={ ( destination ) => {
 								trackEvent( 'chat_get_support', {
@@ -103,7 +123,7 @@ export const UserMessage = ( {
 							} }
 						/>
 					) }{ ' ' }
-					{ ! isRequestingHumanSupport && (
+					{ showActionButtons && (
 						<>
 							{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
 								<BotMessageActions message={ message } />

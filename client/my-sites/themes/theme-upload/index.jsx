@@ -1,9 +1,11 @@
 import {
 	PLAN_PERSONAL,
+	PLAN_BUSINESS,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_PLUGINS,
 	PLAN_ECOMMERCE,
 	getPlan,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import { Card, ProgressBar, Button } from '@automattic/components';
 import debugFactory from 'debug';
@@ -195,7 +197,7 @@ class Upload extends Component {
 	};
 
 	renderUpgradeBanner() {
-		const { siteSlug, isCommerceTrial, translate } = this.props;
+		const { siteSlug, isCommerceTrial, needsBusinessPlanForUploadThemes, translate } = this.props;
 		const redirectTo = encodeURIComponent( `/themes/upload/${ siteSlug }` );
 
 		let upsellPlan = PLAN_PERSONAL;
@@ -206,7 +208,15 @@ class Upload extends Component {
 			} );
 		let upgradeUrl = `/checkout/${ siteSlug }/personal?redirect_to=${ redirectTo }`;
 
-		if ( isCommerceTrial ) {
+		if ( needsBusinessPlanForUploadThemes ) {
+			upsellPlan = PLAN_BUSINESS;
+			title =
+				/* translators: %(planName)s the short-hand version of the Business plan name */
+				translate( 'Upgrade to the %(planName)s plan to access the theme install features', {
+					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+				} );
+			upgradeUrl = `/checkout/${ siteSlug }/business?redirect_to=${ redirectTo }`;
+		} else if ( isCommerceTrial ) {
 			upsellPlan = PLAN_ECOMMERCE;
 			title = translate( 'Upgrade your plan to access the theme install features' );
 			upgradeUrl = `/plans/${ siteSlug }`;
@@ -386,13 +396,20 @@ const mapStateToProps = ( state ) => {
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
 
+	const selectedSite = getSelectedSite( state );
+	const hasUploadThemesFeature = siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES );
+	const isOnPaidPlan = selectedSite?.plan?.product_slug
+		? ! isFreePlan( selectedSite.plan.product_slug )
+		: false;
+
 	const showEligibility =
 		canUploadThemesOrPlugins && ! isAtomic && ( hasEligibilityMessages || ! isEligible );
 
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
-		selectedSite: getSelectedSite( state ),
+		selectedSite,
+		needsBusinessPlanForUploadThemes: isOnPaidPlan && ! hasUploadThemesFeature,
 		isAtomic,
 		isCommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 		isJetpack,

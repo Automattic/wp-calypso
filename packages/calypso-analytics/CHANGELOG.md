@@ -1,3 +1,7 @@
+## 1.1.4
+
+- Update CCPA state list to include Florida, Kentucky, Maryland, Minnesota, Nebraska, New Hampshire, and Rhode Island.
+
 ## 1.1.3
 
 - Add "Remote Data Blocks" in the list of allowed sources.

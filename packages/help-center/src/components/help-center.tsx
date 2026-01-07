@@ -7,7 +7,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
-import { createPortal, useEffect, useRef } from '@wordpress/element';
+import { createPortal, useEffect, useState } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
@@ -16,7 +16,7 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useShouldUseUnifiedAgent } from '../hooks';
+import { useChatStatus, useShouldUseUnifiedAgent } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -30,13 +30,14 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search + window.location.hash,
 } ) => {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
-	const portalParentRef = useRef< HTMLDivElement >();
+	const [ container, setContainer ] = useState< HTMLDivElement >();
 
 	const isHelpCenterShown = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
 	const { currentUser, site, sectionName } = useHelpCenterContext();
+	const { isEligibleForChat } = useChatStatus();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
@@ -53,19 +54,20 @@ const HelpCenter: React.FC< Container > = ( {
 
 	// Create portal container on mount, cleanup on unmount
 	useEffect( () => {
-		if ( ! shouldUseUnifiedAgent && ! portalParentRef.current ) {
-			const div = document.createElement( 'div' );
+		let div: HTMLDivElement | undefined;
+		if ( ! shouldUseUnifiedAgent ) {
+			div = document.createElement( 'div' );
 			div.classList.add( 'help-center' );
 			div.setAttribute( 'role', 'dialog' );
 			div.setAttribute( 'aria-modal', 'true' );
 			div.setAttribute( 'aria-labelledby', 'header-text' );
 			document.body.appendChild( div );
-			portalParentRef.current = div;
+			setContainer( div );
 		}
 
 		return () => {
-			if ( portalParentRef.current?.parentNode ) {
-				document.body.removeChild( portalParentRef.current );
+			if ( div ) {
+				document.body.removeChild( div );
 			}
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,6 +77,7 @@ const HelpCenter: React.FC< Container > = ( {
 	if ( shouldUseUnifiedAgent ) {
 		return (
 			<UnifiedAIAgent
+				isEligibleForChat={ isEligibleForChat }
 				currentUser={ currentUser }
 				site={ site }
 				sectionName={ sectionName }
@@ -83,7 +86,7 @@ const HelpCenter: React.FC< Container > = ( {
 		);
 	}
 
-	if ( ! portalParentRef.current ) {
+	if ( ! container ) {
 		return null;
 	}
 
@@ -99,7 +102,7 @@ const HelpCenter: React.FC< Container > = ( {
 				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
 			) }
 		</>,
-		portalParentRef.current
+		container
 	);
 };
 

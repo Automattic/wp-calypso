@@ -17,9 +17,17 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import { MenuItem, Dropdown, Notice, NavigableMenu } from '@wordpress/components';
+import {
+	MenuItem,
+	Dropdown,
+	Notice,
+	NavigableMenu,
+	ExternalLink,
+	privateApis,
+} from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { chevronDown, chevronUp, Icon, external } from '@wordpress/icons';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -44,6 +52,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
+import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -107,7 +116,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import ThemeDownloadCard from './theme-download-card';
@@ -117,6 +126,13 @@ import ThemeStyleVariations from './theme-style-variations';
 import ThemeSupportTab from './theme-support-tab';
 
 import './style.scss';
+
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+
+const { Badge } = unlock( privateApis );
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -396,8 +412,8 @@ class ThemeSheet extends Component {
 
 	shouldRenderForStaging() {
 		// isExternallyManagedTheme determines if a theme is paid or not
-		const { isExternallyManagedTheme, isWpcomStaging } = this.props;
-		return isExternallyManagedTheme && isWpcomStaging;
+		const { isExternallyManagedTheme, isMarketplaceThemeSubscribed, isWpcomStaging } = this.props;
+		return isExternallyManagedTheme && isWpcomStaging && ! isMarketplaceThemeSubscribed;
 	}
 
 	shouldRenderPreviewButton() {
@@ -654,9 +670,30 @@ class ThemeSheet extends Component {
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
 					</div>
+					{ this.renderDisclaimer() }
 				</div>
 				{ ! retired && this.renderStyleVariations() }
 			</div>
+		);
+	};
+
+	renderDisclaimer = () => {
+		const { is_commercial, external_support_url, translate } = this.props;
+		if ( ! is_commercial ) {
+			return null;
+		}
+
+		return (
+			<Badge style={ { width: '100%' } }>
+				{ /* Wrap the content in another <span> to prevent truncation. */ }
+				<span style={ { whiteSpace: 'pre-wrap' } }>
+					{ translate( 'This theme offers additional paid commercial upgrades or support.' ) }
+					&nbsp;
+					<ExternalLink href={ external_support_url } style={ { color: 'inherit' } }>
+						{ translate( 'View support' ) }
+					</ExternalLink>
+				</span>
+			</Badge>
 		);
 	};
 
@@ -1369,6 +1406,8 @@ const ThemeSheetWithOptions = ( props ) => {
 export default connect(
 	( state, { id } ) => {
 		const themeId = id;
+		const site = getSelectedSite( state );
+		const productionSiteId = site ? getProductionSiteId( site ) : null;
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, themeId );
@@ -1407,7 +1446,8 @@ export default connect(
 			( isExternallyManagedTheme && Object.values( getProductsList( state ) ).length === 0 );
 
 		const isMarketplaceThemeSubscribed =
-			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
+			isExternallyManagedTheme &&
+			getIsMarketplaceThemeSubscribed( state, theme?.id, productionSiteId || siteId );
 
 		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
 		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
@@ -1467,6 +1507,8 @@ export default connect(
 			isActivatingTheme: getIsActivatingTheme( state, siteId ),
 			isInstallingTheme: getIsInstallingTheme( state, themeId, siteId ),
 			hasActivatedTheme: getHasActivatedTheme( state, siteId ),
+			isThemeCommercial: !! theme?.is_commercial,
+			commercialThemeExternalSupportUrl: theme?.external_support_url || null,
 		};
 	},
 	{

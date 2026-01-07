@@ -7,8 +7,10 @@ import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data'
 import { useEffect, useCallback, useState } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
-const queryClient = new QueryClient();
+
 import './help-center.scss';
+
+const queryClient = new QueryClient();
 
 function AdminHelpCenterContent() {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
@@ -22,17 +24,18 @@ function AdminHelpCenterContent() {
 	);
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 
-	const button = document.getElementById( 'wp-admin-bar-help-center' );
+	// Check for agents-manager-masterbar first, then fall back to help-center
+	const button =
+		document.getElementById( 'wp-admin-bar-agents-manager' ) ||
+		document.getElementById( 'wp-admin-bar-help-center' );
 	const chatSupportButton = document.getElementById( 'wp-admin-bar-help-center-chat-support' );
 	const chatHistoryButton = document.getElementById( 'wp-admin-bar-help-center-chat-history' );
 	const supportGuidesButton = document.getElementById( 'wp-admin-bar-help-center-support-guides' );
 
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
 	const supportLinks = document.querySelectorAll( '[data-target="wpcom-help-center"]' );
-	const isMenuPanelExperimentEnabled = useMenuPanelExperiment(
-		'calypso_help_center_menu_popover_v2',
-		'menu_popover'
-	);
+	const { isInTreatment: isMenuPanelExperimentEnabled, isLoading: isLoadingExperimentAssignment } =
+		useMenuPanelExperiment( 'calypso_help_center_menu_popover_v2', 'menu_popover' );
 
 	const closeHelpCenterWhenNotificationsPanelIsOpened = useCallback( () => {
 		const helpCenterContainerIsVisible = document.querySelector( '.help-center__container' );
@@ -82,15 +85,13 @@ function AdminHelpCenterContent() {
 	);
 
 	const trackIconInteraction = useCallback( () => {
-		if ( isMenuPanelExperimentEnabled === undefined ) {
-			return;
-		}
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
+			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
-	}, [ isShown, isMenuPanelExperimentEnabled ] );
+	}, [ isShown, isMenuPanelExperimentEnabled, isLoadingExperimentAssignment ] );
 
 	const handleMenuPanelClick = () => {
 		trackIconInteraction();
@@ -168,6 +169,7 @@ function AdminHelpCenterContent() {
 		},
 		[ isShown, setNavigateToRoute, setHelpCenterPage, setShowHelpCenter, helpCenterPage ]
 	);
+
 	if ( chatSupportButton ) {
 		chatSupportButton.onclick = () => {
 			handleMenuClick( '/odie' );
@@ -228,7 +230,10 @@ function AdminHelpCenterContent() {
 	);
 }
 
-const target = document.getElementById( 'help-center-masterbar' );
+// Check for agents-manager-masterbar first, then fall back to help-center-masterbar
+const target =
+	document.getElementById( 'agents-manager-masterbar' ) ||
+	document.getElementById( 'help-center-masterbar' );
 if ( target ) {
 	createRoot( target ).render(
 		<QueryClientProvider client={ queryClient }>

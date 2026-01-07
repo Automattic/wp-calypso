@@ -811,8 +811,15 @@ export function generateSteps( {
 				'isLetUsChooseSelected',
 				'cartItem',
 				'siteSlug',
+				'siteId',
 			],
-			optionalDependencies: [ 'selectedDesign', 'isLetUsChooseSelected', 'cartItem', 'siteSlug' ],
+			optionalDependencies: [
+				'selectedDesign',
+				'isLetUsChooseSelected',
+				'cartItem',
+				'siteSlug',
+				'siteId',
+			],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
