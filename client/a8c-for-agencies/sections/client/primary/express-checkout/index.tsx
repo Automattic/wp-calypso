@@ -6,15 +6,16 @@ import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/st
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useClientCheckout from '../../hooks/use-client-checkout';
 
 function ClientExpressCheckoutContent() {
 	const translate = useTranslate();
+	const userLoggedIn = useSelector( isUserLoggedIn );
 
-	const { isReady, error } = useClientCheckout( { expressMode: true } );
+	const { isReady, error } = useClientCheckout( { expressMode: ! userLoggedIn } );
 
 	if ( ! isReady ) {
 		return <ClientCheckoutV2Placeholder />;
@@ -29,7 +30,7 @@ function ClientExpressCheckoutContent() {
 			sitelessCheckoutType="a4a"
 			redirectTo="https://agencies.automattic.com/client/subscriptions"
 			customizedPreviousPath="https://agencies.automattic.com/client/subscriptions"
-			isLoggedOutCart
+			isLoggedOutCart={ ! userLoggedIn }
 			siteSlug=""
 			siteId={ 0 }
 		/>
