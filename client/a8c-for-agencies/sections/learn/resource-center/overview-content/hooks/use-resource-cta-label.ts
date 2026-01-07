@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Custom hook to get the appropriate CTA label based on resource format
@@ -6,16 +6,14 @@ import { useTranslate } from 'i18n-calypso';
  * @returns Translated CTA label text
  */
 export function useResourceCtaLabel( format: string ): string {
-	const translate = useTranslate();
-
 	switch ( format ) {
 		case 'Video':
-			return translate( 'Watch now' );
+			return __( 'Watch now' );
 		case 'PDF':
-			return translate( 'Download Guide' );
+			return __( 'Download Guide' );
 		case 'Slide Deck':
-			return translate( 'View Deck' );
+			return __( 'View Deck' );
 		default:
-			return translate( 'Read more' );
+			return __( 'Read more' );
 	}
 }
