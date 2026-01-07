@@ -13,7 +13,6 @@ import AISiteAssistantSettingsSummary from '../settings-ai-assistant/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
-import HolidaySnowSummary from '../settings-holiday-snow/summary';
 import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
 import PHPSettingsSummary from '../settings-php/summary';
 import PlanSettingsSummary from '../settings-plan/summary';
@@ -62,7 +61,6 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 						<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
 						<AgencySettingsSummary site={ site } />
 						<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
-						<HolidaySnowSummary site={ site } settings={ settings } />
 						<PlanSettingsSummary site={ site } />
 					</SummaryButtonList>
 				</VStack>

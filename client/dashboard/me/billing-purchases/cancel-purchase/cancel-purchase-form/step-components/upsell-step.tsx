@@ -30,7 +30,6 @@ function Upsell( { ...props }: UpsellProps ) {
 	return (
 		<VStack spacing={ 6 }>
 			<VStack>
-				<div className="cancel-purchase-form__upsell-subheader">{ __( 'Here is an idea' ) }</div>
 				<Heading>{ props.title }</Heading>
 				<div className="cancel-purchase-form__upsell-text">{ props.children }</div>
 			</VStack>

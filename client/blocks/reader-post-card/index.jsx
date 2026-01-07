@@ -23,7 +23,7 @@ import { getReaderTeams } from 'calypso/state/teams/selectors';
 import PostByline from './byline';
 import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
-import PhotoPost from './photo';
+import PostPhoto from './photo';
 import PostCardComments from './post-card-comments';
 import StandardPost from './standard';
 import './style.scss';
@@ -156,7 +156,7 @@ class ReaderPostCard extends Component {
 		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
 			isSeen = post?.is_seen;
 		}
-		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
+		const isPostPhoto = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
@@ -171,7 +171,7 @@ class ReaderPostCard extends Component {
 
 		const classes = clsx( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
-			'is-photo': isPhotoPost,
+			'is-photo': isPostPhoto,
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
 			'is-seen': isSeen,
@@ -237,9 +237,9 @@ class ReaderPostCard extends Component {
 					{ readerPostActions }
 				</CompactPostCard>
 			);
-		} else if ( isPhotoPost ) {
+		} else if ( isPostPhoto ) {
 			readerPostCard = (
-				<PhotoPost
+				<PostPhoto
 					post={ post }
 					site={ site }
 					title={ title }
@@ -249,7 +249,7 @@ class ReaderPostCard extends Component {
 					postKey={ postKey }
 				>
 					{ readerPostActions }
-				</PhotoPost>
+				</PostPhoto>
 			);
 		} else if ( isGalleryPost ) {
 			readerPostCard = (
@@ -272,7 +272,7 @@ class ReaderPostCard extends Component {
 			);
 		}
 
-		const onClick = ! isPhotoPost ? this.handleCardClick : noop;
+		const onClick = ! isPostPhoto ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }

@@ -19,7 +19,7 @@ const ReaderPostActions = ( {
 	post,
 	site,
 	onCommentClick,
-	iconSize = 20,
+	iconSize = 24,
 	className,
 	fullPost,
 	commentsApiDisabled = false,
@@ -39,13 +39,7 @@ const ReaderPostActions = ( {
 		<ul className={ listClassnames }>
 			{ showShare && (
 				<li className="reader-post-actions__item">
-					<ShareButton
-						post={ post }
-						position="bottom"
-						tagName="div"
-						iconSize={ iconSize }
-						showLabel
-					/>
+					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
 				</li>
 			) }
 
@@ -57,7 +51,6 @@ const ReaderPostActions = ( {
 						tagName="div"
 						iconSize={ iconSize }
 						isReblogSelection
-						showLabel
 					/>
 				</li>
 			) }
@@ -74,6 +67,7 @@ const ReaderPostActions = ( {
 							viewBox: '0 -1 20 20',
 						} ) }
 						defaultLabel={ translate( 'Comment' ) }
+						alwaysShowTooltip
 					/>
 				</li>
 			) }

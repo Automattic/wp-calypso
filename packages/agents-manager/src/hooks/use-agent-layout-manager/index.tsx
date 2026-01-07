@@ -1,8 +1,10 @@
+import { useWindowDimensions } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import {
 	createPortal,
 	useCallback,
+	useEffect,
 	useLayoutEffect,
 	useRef,
 	useState,
@@ -48,8 +50,21 @@ export default function useAgentLayoutManager( {
 	const portalRef = useRef< HTMLDivElement >();
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
 	const isDesktop = useMediaQuery( desktopMediaQuery );
+	const { height } = useWindowDimensions();
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
-	const shouldRenderSidebar = isDesktop && isDocked;
+	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
+
+	useEffect( () => {
+		const adminMenu = document.getElementById( 'adminmenu' );
+		if ( adminMenu ) {
+			const menuHeight = adminMenu.offsetHeight;
+			const menuTopOffset = adminMenu.getBoundingClientRect().top + window.scrollY;
+			setAdminMenuHeight( menuHeight + menuTopOffset + 20 );
+		}
+	}, [ height ] );
+
+	const hasEnoughHeight = height >= adminMenuHeight;
+	const shouldRenderSidebar = isDesktop && hasEnoughHeight && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
