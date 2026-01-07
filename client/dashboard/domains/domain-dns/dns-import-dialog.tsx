@@ -168,7 +168,7 @@ export default function DnsImportDialog( {
 						</VStack>
 					</>
 				) : (
-					<Text>{ __( "We couldn't find valid DNS records in the selected BIND file." ) }</Text>
+					<Text>{ __( 'We couldn’t find valid DNS records in the selected BIND file.' ) }</Text>
 				) }
 
 				<ButtonStack justify="flex-end">
