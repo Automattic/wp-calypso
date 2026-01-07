@@ -91,7 +91,7 @@ describe( 'handleOnCatch', () => {
 		} );
 	} );
 
-	it( 'logs but does not capture when dashboard_backport is true', () => {
+	it( 'logs when dashboard_backport is true', () => {
 		const error = new Error( 'Backport-only error' );
 		const errorInfo = createErrorInfo();
 		const router = createRouter( { siteSlug: 'my-site' } );
@@ -103,6 +103,12 @@ describe( 'handleOnCatch', () => {
 		} );
 
 		expect( mockedLogToLogstash ).toHaveBeenCalledTimes( 1 );
-		expect( mockedCaptureException ).not.toHaveBeenCalled();
+		expect( mockedCaptureException ).toHaveBeenCalledWith( error, {
+			tags: {
+				calypso_section: 'dashboard',
+				dashboard_backport: true,
+				site_slug: 'my-site',
+			},
+		} );
 	} );
 } );
