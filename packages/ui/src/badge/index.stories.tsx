@@ -1,3 +1,4 @@
+import { starEmpty } from '@wordpress/icons';
 import { Badge } from '.';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -41,5 +42,13 @@ export const Error: Story = {
 	args: {
 		...Default.args,
 		intent: 'error',
+	},
+};
+
+export const CustomIcon: Story = {
+	args: {
+		...Default.args,
+		intent: 'success',
+		icon: starEmpty,
 	},
 };

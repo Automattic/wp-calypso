@@ -9,4 +9,8 @@ export type BadgeProps = {
 	 * Text to display inside the badge.
 	 */
 	children: string;
+	/**
+	 * Custom icon to display inside the badge. Use `null` to hide the icon.
+	 */
+	icon?: JSX.Element | null;
 };

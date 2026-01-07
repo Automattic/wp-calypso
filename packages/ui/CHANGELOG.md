@@ -1,5 +1,7 @@
 ## Unreleased
 
+- `Badge`: Support custom icon to display inside the badge ([107955](https://github.com/Automattic/wp-calypso/pull/107955)).
+
 ## 1.0.2
 
 ### Enhancements
