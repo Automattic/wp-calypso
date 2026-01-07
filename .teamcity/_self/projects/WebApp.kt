@@ -1048,7 +1048,7 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 object PlaywrightTestDashboardPRMatrix : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
 	id("calypso_WebApp_Dashboard_E2E_Playwright_Test_Matrix")
-	uuid = "d1a2b3c4-5678-90ab-cdef-123456789abc"
+	uuid = "7106156e-0ece-4e54-9716-a45516f0fd7e"
 	name = "Dashboard E2E Tests (PR)"
 	description = "Runs Dashboard e2e tests on pull requests using Playwright Test runner with build matrix"
 
@@ -1101,7 +1101,7 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 object PlaywrightTestDashboardPreReleaseMatrix : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
 	id("calypso_WebApp_Dashboard_E2E_Playwright_Pre_Release_Matrix")
-	uuid = "e2b3c4d5-6789-01bc-def1-23456789abcd"
+	uuid = "80904868-c163-4fec-817b-907611985c33"
 	name = "Dashboard Pre-Release E2E Tests"
 	description = "Runs Dashboard pre-release e2e tests using Playwright Test runner with build matrix"
 
