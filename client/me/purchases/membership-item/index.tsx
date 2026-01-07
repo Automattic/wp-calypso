@@ -16,8 +16,8 @@ export const MembershipTerms = ( { subscription }: { subscription: MembershipSub
 		return <>{ translate( 'Never expires' ) }</>;
 	}
 
-	// Check if expired
-	const endDate = moment( subscription.end_date );
+	// Check if expired (parse as UTC since end_date is stored in UTC, then convert to local for display)
+	const endDate = moment.utc( subscription.end_date ).local();
 	const isExpired = endDate.isBefore( moment() );
 
 	if ( isExpired ) {
