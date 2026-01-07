@@ -441,14 +441,19 @@ function canGoToNextStep( {
 	return ! disableButtons && ! isSubmitting;
 }
 
+function getSurveyTitle( surveyStep: string ) {
+	if ( surveyStep === UPSELL_STEP ) {
+		return __( 'Here is an idea' );
+	}
+
+	return __( 'Before you go, please answer a few quick questions to help us improve.' );
+}
+
 export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 	return (
 		props.isVisible && (
 			<VStack spacing={ 6 }>
-				<SectionHeader
-					title={ __( 'Before you go, please answer a few quick questions to help us improve.' ) }
-					level={ 3 }
-				/>
+				<SectionHeader title={ getSurveyTitle( props.surveyStep ?? '' ) } level={ 3 } />
 				<SurveyContent { ...props } />
 				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } />
 			</VStack>

@@ -99,7 +99,7 @@
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"migration-flow/introductory-offer": true,
-		"migration/ssh-migration": true,
+		"migration/ssh-migration": false,
 		"oauth/unified-experience": true,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
