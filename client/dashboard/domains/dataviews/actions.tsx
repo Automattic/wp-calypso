@@ -20,6 +20,7 @@ import {
 } from '../../app/router/domains';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
+import { isSimple } from '../../utils/site-types';
 import { AutoRenewModal } from './auto-renew-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -247,9 +248,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				callback: () => {},
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
-					return (
-						!! site && ! site?.is_wpcom_atomic && item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
-					);
+					return !! site && isSimple( site ) && item.subtype.id === DomainSubtype.DEFAULT_ADDRESS;
 				},
 				RenderModal: ( { items, closeModal = noop } ) => {
 					const site = sitesByBlogId[ items[ 0 ].blog_id ];
