@@ -46,6 +46,8 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	canAccessWpcomApis: jest.fn(),
 	reloadProxy: jest.fn(),
 	requestAllBlogsAccess: jest.fn(),
+	getCrossOriginStorageItem: jest.fn(),
+	setCrossOriginStorageItem: jest.fn(),
 } ) );
 
 jest.mock( 'smooch', () => ( {
