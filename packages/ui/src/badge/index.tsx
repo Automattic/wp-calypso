@@ -3,7 +3,6 @@
  *
  * - Converted styles to CSS module.
  * - Added theme color support to `info` variant.
- * - Supported the `icon` props to make it controllable.
  */
 
 import { info, caution, error, published } from '@wordpress/icons';
@@ -37,14 +36,14 @@ export function Badge( {
 	children,
 	...props
 }: BadgeProps & React.ComponentPropsWithoutRef< 'span' > ) {
-	const icon = typeof props.icon !== 'undefined' ? props.icon : contextBasedIcon( intent );
+	const icon = contextBasedIcon( intent );
 	const hasIcon = !! icon;
 
 	return (
 		<span
 			className={ clsx( styles[ 'badge' ], className, {
 				[ styles[ `is-${ intent }` ] ]: intent,
-				[ styles[ 'has-icon' ] ]: !! hasIcon,
+				[ styles[ 'has-icon' ] ]: hasIcon,
 			} ) }
 			{ ...props }
 		>
