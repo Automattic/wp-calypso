@@ -95,6 +95,12 @@ export const getNormalizedName = ( name: string, type: DnsRecordType, domainName
  * @returns
  */
 export const getProcessedRecord = ( record: DnsRecord ): DnsRecord => {
+	// Safety check: if record is undefined or null, return it as-is
+	// This can happen if a record is deleted while the page is loading
+	if ( ! record ) {
+		return record;
+	}
+
 	const isRootDomainRecord = record.name === `${ record.domain }.`;
 	if ( isRootDomainRecord ) {
 		record.name = '';
