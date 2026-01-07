@@ -7,6 +7,14 @@ import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
 function isBenignError( error: Error ) {
+	// Ignore errors related to missing auth tokens.
+	// The user will get redirected to the login page / second auth factor.
+	switch ( error.name ) {
+		case 'AuthorizationRequiredError':
+		case 'ReauthorizationRequiredError':
+			return true;
+	}
+
 	// Ignore errors related to inaccessible Jetpack sites.
 	// The user is expected to debug their Jetpack sites.
 	if ( error instanceof DashboardDataError && error.code === INACCESSIBLE_JETPACK_ERROR_CODE ) {
