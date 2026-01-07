@@ -6,8 +6,8 @@ import {
 } from '@wordpress/components';
 import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { formatAgencyResources } from 'calypso/a8c-for-agencies/data/learn/lib/format-agency-resources';
 import useFetchAgencyResources from 'calypso/a8c-for-agencies/data/learn/use-fetch-agency-resources';
+import { formatAgencyResources } from 'calypso/a8c-for-agencies/sections/learn/format-agency-resources';
 import ArtOfTheDeal from './art-of-the-deal';
 import BrowseAllResources from './browse-all-resources';
 import { useFilterResources } from './hooks/use-filter-resources';
