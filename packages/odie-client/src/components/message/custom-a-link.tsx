@@ -1,6 +1,6 @@
 import { isThisASupportArticleLink } from '@automattic/urls';
 import clsx from 'clsx';
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { uriTransformer } from './uri-transformer';
@@ -23,23 +23,9 @@ const CustomALink = ( {
 	target?: string;
 } ) => {
 	const { trackEvent } = useOdieAssistantContext();
-	const [ transformedHref, setTransformedHref ] = useState( '' );
 	const navigate = useNavigate();
 
-	useEffect( () => {
-		let urlHref = uriTransformer( href ?? '' );
-		try {
-			const url = new URL( urlHref, window.location.origin );
-
-			if ( url.hostname === 'wordpress.com' ) {
-				url.searchParams.set( 'help-center', 'wapuu' );
-			}
-
-			urlHref = url.toString();
-		} finally {
-			setTransformedHref( urlHref );
-		}
-	}, [ href ] );
+	const transformedHref = useMemo( () => uriTransformer( href ?? '' ), [ href ] );
 
 	const classNames = clsx( 'odie-sources', {
 		'odie-sources-inline': inline,
