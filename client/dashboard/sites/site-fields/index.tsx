@@ -1,5 +1,6 @@
-import { HostingFeatures, JetpackModules } from '@automattic/api-core';
+import { DotcomFeatures, HostingFeatures, JetpackModules } from '@automattic/api-core';
 import {
+	siteLatestAtomicTransferQuery,
 	siteLastBackupQuery,
 	siteMediaStorageQuery,
 	sitePHPVersionQuery,
@@ -26,17 +27,16 @@ import TimeSince from '../../components/time-since';
 import { addTransientViewPropertiesToQueryParams } from '../../utils/dashboard-v1-sync';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
-import { getSiteBadge } from '../../utils/site-badge';
-import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSiteStatus } from '../../utils/site-status';
+import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
+import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
+import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
+import { isP2 } from '../../utils/site-types';
 import { getSiteFormattedUrl } from '../../utils/site-url';
-import { getSiteVisibilityLabel } from '../../utils/site-visibility';
 import { canManageSite, canManageSite__ES } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { SiteBadge } from '../../types';
-import type { DashboardSiteListSite, Site } from '@automattic/api-core';
+import type { AtomicTransferStatus, DashboardSiteListSite, Site } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -107,7 +107,20 @@ export function SiteLink__ES( {
 }
 
 export function Name( { site, value }: { site: Site; value: string } ) {
-	return <NameRenderer badge={ getSiteBadge( site ) } muted={ site.is_deleted } value={ value } />;
+	const getBadgeType = () => {
+		if ( site.is_wpcom_staging_site ) {
+			return 'staging';
+		}
+		if ( isSitePlanTrial( site ) ) {
+			return 'trial';
+		}
+		if ( isP2( site ) ) {
+			return 'p2';
+		}
+		return null;
+	};
+
+	return <NameRenderer badge={ getBadgeType() } muted={ site.is_deleted } value={ value } />;
 }
 
 export function NameRenderer( {
@@ -115,7 +128,7 @@ export function NameRenderer( {
 	muted,
 	value,
 }: {
-	badge: SiteBadge;
+	badge: null | 'staging' | 'trial' | 'p2';
 	muted: boolean;
 	value: string;
 } ) {
@@ -127,16 +140,8 @@ export function NameRenderer( {
 				return <Badge>{ __( 'Trial' ) }</Badge>;
 			case 'p2':
 				return <Badge>{ __( 'P2' ) }</Badge>;
-			case 'deleted':
-				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
-			case 'difm_lite_in_progress':
-				return <Badge>{ __( 'Express service' ) }</Badge>;
-			case 'migration_pending':
-				return <Badge intent="warning">{ __( 'Migration pending' ) }</Badge>;
-			case 'migration_started':
-				return <Badge intent="info">{ __( 'Migration started' ) }</Badge>;
 			default:
-				return null;
+				break;
 		}
 	};
 
@@ -467,15 +472,81 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 	);
 }
 
-export function Visibility( { site }: { site: Site } ) {
+function WithHostingFeaturesQuery( {
+	site,
+	children,
+}: {
+	site: Site;
+	children: ( transferStatus?: AtomicTransferStatus ) => React.ReactNode;
+} ) {
+	const { ref, inView } = useInView( {
+		triggerOnce: true,
+		fallbackInView: true,
+	} );
+
+	const { data } = useQuery( {
+		...siteLatestAtomicTransferQuery( site.ID ),
+		enabled: inView,
+	} );
+
+	return <span ref={ ref }>{ children( data?.status ) }</span>;
+}
+
+export function Status( { site, isOwner }: { site: Site; isOwner?: boolean } ) {
 	const status = getSiteStatus( site );
-	return (
-		<VStack spacing={ 1 }>
-			<span>{ getSiteVisibilityLabel( site ) }</span>
-			{ /* We don't want to show LaunchNag if there is any pending status. */ }
-			{ ! status && site.launch_status === 'unlaunched' && <SiteLaunchNag site={ site } /> }
-		</VStack>
-	);
+	const label = getSiteStatusLabel( site );
+
+	if ( status === 'deleted' ) {
+		return <Text intent="error">{ label }</Text>;
+	}
+
+	if ( status === 'difm_lite_in_progress' ) {
+		return <Badge>{ label }</Badge>;
+	}
+
+	if ( status === 'migration_pending' ) {
+		return <Badge intent="warning">{ label }</Badge>;
+	}
+
+	if ( status === 'migration_started' ) {
+		return <Badge intent="info">{ label }</Badge>;
+	}
+
+	if ( site.plan?.expired ) {
+		return (
+			<VStack spacing={ 1 }>
+				<Text intent="error">{ __( 'Plan expired' ) }</Text>
+				{ isOwner && <PlanRenewNag site={ site } source="status" /> }
+			</VStack>
+		);
+	}
+
+	const renderBasicStatus = () => {
+		if ( site.launch_status === 'unlaunched' ) {
+			return <SiteLaunchNag site={ site } />;
+		}
+		return label;
+	};
+
+	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) && ! site.is_wpcom_atomic ) {
+		return (
+			<WithHostingFeaturesQuery site={ site }>
+				{ ( transferStatus ) => {
+					if ( transferStatus ) {
+						if ( transferStatus === 'error' ) {
+							return __( 'Error activating hosting features' );
+						}
+						if ( isAtomicTransferInProgress( transferStatus ) ) {
+							return __( 'Activating hosting features…' );
+						}
+					}
+					return renderBasicStatus();
+				} }
+			</WithHostingFeaturesQuery>
+		);
+	}
+
+	return renderBasicStatus();
 }
 
 export function Plan( {

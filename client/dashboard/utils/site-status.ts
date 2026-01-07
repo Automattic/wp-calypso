@@ -1,10 +1,27 @@
-import type { SiteStatus, SiteMigrationStatus } from '../types';
+import { _x } from '@wordpress/i18n';
 import type { Site } from '@automattic/api-core';
 
-const MIGRATION_STATUSES: SiteMigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
-const MIGRATION_TYPES: SiteMigrationStatus[ 'type' ][] = [ 'difm', 'diy', 'ssh' ];
+export interface MigrationStatus {
+	status: 'pending' | 'started' | 'completed';
+	type: 'difm' | 'diy' | 'ssh';
+}
 
-export function getSiteStatus( item: Site ): SiteStatus {
+const MIGRATION_STATUSES: MigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
+const MIGRATION_TYPES: MigrationStatus[ 'type' ][] = [ 'difm', 'diy', 'ssh' ];
+
+export function getStatusLabels() {
+	return {
+		public: _x( 'Public', 'site' ),
+		private: _x( 'Private', 'site' ),
+		coming_soon: _x( 'Coming soon', 'site' ),
+		deleted: _x( 'Deleted', 'site' ),
+		difm_lite_in_progress: _x( 'Express service', 'site' ),
+		migration_pending: _x( 'Migration pending', 'site' ),
+		migration_started: _x( 'Migration started', 'site' ),
+	};
+}
+
+export function getSiteStatus( item: Site ) {
 	if ( item.is_deleted ) {
 		return 'deleted';
 	}
@@ -24,21 +41,29 @@ export function getSiteStatus( item: Site ): SiteStatus {
 		return 'difm_lite_in_progress';
 	}
 
-	return null;
+	if ( item.is_coming_soon || ( item.is_private && item.launch_status === 'unlaunched' ) ) {
+		return 'coming_soon';
+	}
+
+	if ( item.is_private ) {
+		return 'private';
+	}
+
+	return 'public';
 }
 
-export function getSiteMigrationState( item: Site ): SiteMigrationStatus | null {
+export function getSiteMigrationState( item: Site ): MigrationStatus | null {
 	const { migration_status } = item.site_migration;
 	if ( migration_status === 'migration-in-progress' ) {
 		return { status: 'started', type: 'difm' };
 	}
 
 	const [ , status, type ] = migration_status?.split( '-' ) ?? [];
-	if ( ! MIGRATION_STATUSES.includes( status as SiteMigrationStatus[ 'status' ] ) ) {
+	if ( ! MIGRATION_STATUSES.includes( status as MigrationStatus[ 'status' ] ) ) {
 		return null;
 	}
 
-	if ( ! MIGRATION_TYPES.includes( type as SiteMigrationStatus[ 'type' ] ) ) {
+	if ( ! MIGRATION_TYPES.includes( type as MigrationStatus[ 'type' ] ) ) {
 		return null;
 	}
 
@@ -46,10 +71,7 @@ export function getSiteMigrationState( item: Site ): SiteMigrationStatus | null 
 		return null;
 	}
 
-	return {
-		status: status as SiteMigrationStatus[ 'status' ],
-		type: type as SiteMigrationStatus[ 'type' ],
-	};
+	return { status: status as MigrationStatus[ 'status' ], type: type as MigrationStatus[ 'type' ] };
 }
 
 export function isSiteMigrationInProgress( item: Site ) {
@@ -59,4 +81,9 @@ export function isSiteMigrationInProgress( item: Site ) {
 	}
 
 	return [ 'pending', 'started' ].includes( status );
+}
+
+export function getSiteStatusLabel( item: Site ) {
+	const statusLabels = getStatusLabels();
+	return statusLabels[ getSiteStatus( item ) ];
 }
