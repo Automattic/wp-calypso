@@ -68,6 +68,7 @@ export default function () {
 		);
 		page( '/devdocs/start', controller.pleaseLogIn, makeLayout, clientRender );
 		page( '/devdocs/welcome', controller.sidebar, controller.welcome, makeLayout, clientRender );
+		page( '/devdocs/agenttic', controller.sidebar, controller.agenttic, makeLayout, clientRender );
 		page( '/devdocs/:path*', controller.sidebar, controller.singleDoc, makeLayout, clientRender );
 	}
 }

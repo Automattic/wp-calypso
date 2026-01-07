@@ -1,0 +1,188 @@
+.agenttic-test {
+	display: flex;
+	height: calc( 100vh - 80px );
+	margin: 0;
+	padding: 0;
+	gap: 0;
+}
+
+.agenttic-test__sidebar {
+	width: 280px;
+	background: #fff;
+	padding: 24px;
+	border-inline-end: 1px solid #ddd;
+	overflow-y: auto;
+	flex-shrink: 0;
+
+	h3 {
+		margin: 0 0 24px;
+		font-size: 16px;
+		font-weight: 600;
+		color: #1e1e1e;
+	}
+
+	h4 {
+		margin: 0 0 8px;
+		font-size: 13px;
+		font-weight: 600;
+		color: #1e1e1e;
+	}
+}
+
+.agenttic-test__field {
+	margin-bottom: 16px;
+
+	label {
+		display: block;
+		font-size: 12px;
+		font-weight: 600;
+		margin-bottom: 6px;
+		color: #1e1e1e;
+
+		.required {
+			color: #d63638;
+		}
+	}
+
+	input[type="text"],
+	input[type="number"],
+	input[type="password"] {
+		width: 100%;
+		padding: 8px 12px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		font-size: 13px;
+		box-sizing: border-box;
+
+		&:focus {
+			outline: none;
+			border-color: #007cba;
+			box-shadow: 0 0 0 1px #007cba;
+		}
+	}
+
+}
+
+
+.agenttic-test__field-hint {
+	margin: 6px 0 0;
+	font-size: 11px;
+	color: #50575e;
+
+	&--error {
+		color: #d63638;
+	}
+}
+
+.agenttic-test__actions {
+	margin-top: 24px;
+	margin-bottom: 24px;
+}
+
+.agenttic-test__button {
+	width: 100%;
+	padding: 10px 16px;
+	background: #007cba;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.15s ease;
+
+	&:hover {
+		background: #005a87;
+	}
+
+	&:focus {
+		outline: 2px solid #007cba;
+		outline-offset: 2px;
+	}
+
+}
+
+.agenttic-test__info {
+	margin-top: 24px;
+	padding: 16px;
+	background: #f0f6fc;
+	border-radius: 4px;
+	border-inline-start: 3px solid #007cba;
+
+	p {
+		margin: 0;
+		font-size: 12px;
+		color: #50575e;
+		line-height: 1.5;
+	}
+}
+
+.agenttic-test__debug {
+	margin-top: 16px;
+	padding: 12px;
+	background: #f9f9f9;
+	border-radius: 4px;
+	border: 1px solid #ddd;
+	font-size: 11px;
+
+	h4 {
+		margin: 0 0 8px;
+		font-size: 11px;
+		font-weight: 600;
+		color: #757575;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	dl {
+		margin: 0;
+	}
+
+	dt {
+		font-weight: 600;
+		color: #50575e;
+		margin-top: 6px;
+
+		&:first-of-type {
+			margin-top: 0;
+		}
+	}
+
+	dd {
+		margin: 2px 0 0;
+		color: #757575;
+		word-break: break-all;
+
+		code {
+			background: #eee;
+			padding: 2px 4px;
+			border-radius: 2px;
+			font-size: 10px;
+		}
+	}
+}
+
+.agenttic-test__chat {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	background: #f6f7f7;
+	min-width: 0;
+
+	// AgentUI container fills the space
+	.agenttic {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+}
+
+// Override some agenttic-ui defaults to fit better in devdocs
+.agenttic-test .agenttic {
+	--color-background: #f6f7f7;
+	--color-foreground: #1e1e1e;
+	--color-primary: #007cba;
+	--color-primary-foreground: #fff;
+}
+

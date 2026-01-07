@@ -329,9 +329,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.31":
-  version: 0.1.31
-  resolution: "@automattic/agenttic-client@npm:0.1.31"
+"@automattic/agenttic-client@npm:^0.1.31, @automattic/agenttic-client@npm:^0.1.32":
+  version: 0.1.32
+  resolution: "@automattic/agenttic-client@npm:0.1.32"
   dependencies:
     "@types/react": "npm:^18.0.0"
     marked: "npm:^16.2.1"
@@ -345,13 +345,13 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: e1996db7be1370843d42b0cf721e8c0e9be0e2481103460c1baa81e6927a250352ac072873a807d6122d8b3584dc74a43140758e148609f18994267a40a98b9b
+  checksum: 7c79b8ab0fc0c0db64b16ec31e59f8a5fb46dfa4a86ef5f8dd1fc62e402ea17c59c8176d4bc47fb1b947319e43f04857a8c35689539a1327639bb0a90c97aea4
   languageName: node
   linkType: hard
 
 "@automattic/agenttic-ui@npm:^0.1.31":
-  version: 0.1.31
-  resolution: "@automattic/agenttic-ui@npm:0.1.31"
+  version: 0.1.32
+  resolution: "@automattic/agenttic-ui@npm:0.1.32"
   dependencies:
     "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
@@ -376,7 +376,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: e16ce9dcf6574d64ddc0ebf7e86261836fcee987d3aae3453dcf7e7dc4223e70922b0f9bcb0a6dfd692b52280831ec9d565a885d5637f499eb0ef4aa234fb7e0
+  checksum: a0bf5af5cc3d79a02bbe4e44bb0b4cf6bad4dce68c7515d1d1c8d845b436dc81d8462ce5d950a376d89498cb6cb5a60649b91fbbbc711e25f1afee3e24b0c8c7
   languageName: node
   linkType: hard
 
@@ -888,43 +888,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:>=0.14.0 <1.0.0, @automattic/charts@npm:^0.50.0":
-  version: 0.50.2
-  resolution: "@automattic/charts@npm:0.50.2"
-  dependencies:
-    "@automattic/number-formatters": "npm:^1.0.15"
-    "@babel/runtime": "npm:7.28.4"
-    "@react-spring/web": "npm:9.7.5"
-    "@visx/annotation": "npm:^3.12.0"
-    "@visx/axis": "npm:^3.12.0"
-    "@visx/curve": "npm:^3.12.0"
-    "@visx/event": "npm:^3.12.0"
-    "@visx/gradient": "npm:^3.12.0"
-    "@visx/grid": "npm:^3.12.0"
-    "@visx/group": "npm:^3.12.0"
-    "@visx/legend": "npm:^3.12.0"
-    "@visx/pattern": "npm:^3.12.0"
-    "@visx/responsive": "npm:^3.12.0"
-    "@visx/scale": "npm:^3.12.0"
-    "@visx/shape": "npm:^3.12.0"
-    "@visx/text": "npm:^3.12.0"
-    "@visx/tooltip": "npm:^3.12.0"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/i18n": "npm:^6.0.0"
-    clsx: "npm:2.1.1"
-    date-fns: "npm:^4.1.0"
-    deepmerge: "npm:4.3.1"
-    fast-deep-equal: "npm:3.1.3"
-    gridicons: "npm:3.4.2"
-    tslib: "npm:2.8.1"
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0
-    react-dom: ^17.0.0 || ^18.0.0
-  checksum: e0bdce896e10910973c422eb9626e86375731abd53223f06f77daa717da30fb04457d5ed71d54d51c323a037518c722d947d8b50b869cc65a3bcd4c0c690d76d
-  languageName: node
-  linkType: hard
-
-"@automattic/charts@npm:^0.46.1":
+"@automattic/charts@npm:>=0.14.0 <1.0.0, @automattic/charts@npm:^0.46.1":
   version: 0.46.1
   resolution: "@automattic/charts@npm:0.46.1"
   dependencies:
@@ -957,6 +921,42 @@ __metadata:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
   checksum: 0c986843d1ce366fe6bd0556f097ed278b39f6bdd1bd5e70ac665aac4ef4c3b5a5823f4ba9ecab6c277fe0e4ba5a6e6179664e05d933eb517fa91d24000f66bd
+  languageName: node
+  linkType: hard
+
+"@automattic/charts@npm:^0.50.0":
+  version: 0.50.2
+  resolution: "@automattic/charts@npm:0.50.2"
+  dependencies:
+    "@automattic/number-formatters": "npm:^1.0.15"
+    "@babel/runtime": "npm:7.28.4"
+    "@react-spring/web": "npm:9.7.5"
+    "@visx/annotation": "npm:^3.12.0"
+    "@visx/axis": "npm:^3.12.0"
+    "@visx/curve": "npm:^3.12.0"
+    "@visx/event": "npm:^3.12.0"
+    "@visx/gradient": "npm:^3.12.0"
+    "@visx/grid": "npm:^3.12.0"
+    "@visx/group": "npm:^3.12.0"
+    "@visx/legend": "npm:^3.12.0"
+    "@visx/pattern": "npm:^3.12.0"
+    "@visx/responsive": "npm:^3.12.0"
+    "@visx/scale": "npm:^3.12.0"
+    "@visx/shape": "npm:^3.12.0"
+    "@visx/text": "npm:^3.12.0"
+    "@visx/tooltip": "npm:^3.12.0"
+    "@visx/xychart": "npm:^3.12.0"
+    "@wordpress/i18n": "npm:^6.0.0"
+    clsx: "npm:2.1.1"
+    date-fns: "npm:^4.1.0"
+    deepmerge: "npm:4.3.1"
+    fast-deep-equal: "npm:3.1.3"
+    gridicons: "npm:3.4.2"
+    tslib: "npm:2.8.1"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  checksum: e0bdce896e10910973c422eb9626e86375731abd53223f06f77daa717da30fb04457d5ed71d54d51c323a037518c722d947d8b50b869cc65a3bcd4c0c690d76d
   languageName: node
   linkType: hard
 
@@ -1840,7 +1840,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.0.1, @automattic/number-formatters@npm:^1.0.14, @automattic/number-formatters@npm:^1.0.15":
+"@automattic/number-formatters@npm:^1.0.1, @automattic/number-formatters@npm:^1.0.14":
+  version: 1.0.14
+  resolution: "@automattic/number-formatters@npm:1.0.14"
+  dependencies:
+    "@wordpress/date": "npm:^5.19.0"
+    debug: "npm:^4.4.0"
+    tslib: "npm:^2.5.0"
+  checksum: 271214c5a2b5363a5e85b12f4773ec02d52fcd214d41e6877f780287684f279e8c194128c7f4a57e66fde51f37f4243579666216ef437a4ed4b69e2229abfe8b
+  languageName: node
+  linkType: hard
+
+"@automattic/number-formatters@npm:^1.0.15":
   version: 1.0.15
   resolution: "@automattic/number-formatters@npm:1.0.15"
   dependencies:
@@ -15305,6 +15316,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
+    "@automattic/agenttic-client": "npm:^0.1.32"
     "@automattic/agenttic-ui": "npm:^0.1.31"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"

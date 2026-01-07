@@ -10,6 +10,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 // `props.component`-aware placeholder. It still needs to be imported as
 // `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/HEAD/index.js#L12
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import AgentticTest from './agenttic-test';
 import AsyncLoad from './devdocs-async-load';
 import SingleDocComponent from './doc';
 import DocsComponent from './main';
@@ -153,6 +154,12 @@ const devdocs = {
 	// Welcome screen
 	welcome: function ( context, next ) {
 		context.primary = createElement( DevWelcome, {} );
+		next();
+	},
+
+	// Agenttic test
+	agenttic: function ( context, next ) {
+		context.primary = createElement( AgentticTest, {} );
 		next();
 	},
 };
