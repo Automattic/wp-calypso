@@ -17,6 +17,7 @@ interface CancelButtonProps {
 	disabled?: boolean;
 	isBusy?: boolean;
 	onClick?: () => void;
+	flowType: string;
 }
 
 export default function CancelButton( {
@@ -27,6 +28,7 @@ export default function CancelButton( {
 	disabled,
 	isBusy,
 	onClick,
+	flowType,
 }: CancelButtonProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 
@@ -46,6 +48,14 @@ export default function CancelButton( {
 	const cancelButtonText = ( () => {
 		if ( includedDomainPurchase ) {
 			return __( 'Continue with cancellation' );
+		}
+
+		if ( flowType === 'remove' && isNonDomainSubscription( purchase ) ) {
+			if ( purchase.is_plan ) {
+				return __( 'Remove plan' );
+			}
+
+			return __( 'Remove product' );
 		}
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {

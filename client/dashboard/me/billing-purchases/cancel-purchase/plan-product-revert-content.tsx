@@ -17,6 +17,7 @@ interface PlanProductRevertContentProps {
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
 	onKeepSubscriptionClick: () => void;
 	onCancelClick?: () => void;
+	flowType: string;
 }
 
 export default function PlanProductRevertContent( {
@@ -28,10 +29,11 @@ export default function PlanProductRevertContent( {
 	onCustomerConfirmedUnderstandingChange,
 	onKeepSubscriptionClick,
 	onCancelClick,
+	flowType,
 }: PlanProductRevertContentProps ) {
 	return (
 		<VStack spacing={ 6 }>
-			{ ! includedDomainPurchase && (
+			{ ! includedDomainPurchase && flowType !== 'remove' && (
 				<Text>
 					<CancellationFullText
 						purchase={ purchase }
@@ -48,6 +50,7 @@ export default function PlanProductRevertContent( {
 					state={ state }
 					onDomainConfirmationChange={ onDomainConfirmationChange }
 					onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
+					flowType={ flowType }
 				/>
 			) }
 
@@ -58,6 +61,7 @@ export default function PlanProductRevertContent( {
 					atomicTransfer={ atomicTransfer }
 					state={ state }
 					onClick={ onCancelClick }
+					flowType={ flowType }
 				/>
 				<KeepSubscriptionButton
 					purchase={ purchase }

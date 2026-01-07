@@ -27,6 +27,7 @@ interface CancellationMainContentProps {
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
 	onKeepSubscriptionClick: () => void;
 	onCancelClick?: () => void;
+	flowType: string;
 }
 
 // Helper function to determine if radio buttons will be shown
@@ -53,6 +54,7 @@ export default function CancellationMainContent( {
 	onCustomerConfirmedUnderstandingChange,
 	onKeepSubscriptionClick,
 	onCancelClick,
+	flowType,
 }: CancellationMainContentProps ) {
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 	const isAkismet = isAkismetProduct( purchase );
@@ -136,13 +138,16 @@ export default function CancellationMainContent( {
 				purchase={ purchase }
 				cancellationFeatures={ cancellationFeatures }
 				cancellationChanges={ cancellationChanges }
+				flowType={ flowType }
 			/>
 
-			<CancelPurchaseRefundInformation
-				purchase={ purchase }
-				isJetpackPurchase={ isJetpack }
-				selectedDomain={ selectedDomain }
-			/>
+			{ flowType !== 'remove' && (
+				<CancelPurchaseRefundInformation
+					purchase={ purchase }
+					isJetpackPurchase={ isJetpack }
+					selectedDomain={ selectedDomain }
+				/>
+			) }
 
 			<PlanProductRevertContent
 				purchase={ purchase }
@@ -153,6 +158,7 @@ export default function CancellationMainContent( {
 				onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
 				onKeepSubscriptionClick={ onKeepSubscriptionClick }
 				onCancelClick={ onCancelClick }
+				flowType={ flowType }
 			/>
 		</VStack>
 	);

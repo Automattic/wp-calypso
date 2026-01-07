@@ -23,6 +23,7 @@ interface CancellationPreSurveyContentProps {
 	onCancellationStart: () => void;
 	shouldHandleMarketplaceSubscriptions: () => boolean;
 	showMarketplaceDialog: () => void;
+	flowType: string;
 }
 
 export default function CancellationPreSurveyContent( {
@@ -40,6 +41,7 @@ export default function CancellationPreSurveyContent( {
 	onCancellationStart,
 	shouldHandleMarketplaceSubscriptions,
 	showMarketplaceDialog,
+	flowType,
 }: CancellationPreSurveyContentProps ) {
 	return state.showDomainOptionsStep ? (
 		<DomainOptionsContent
@@ -63,6 +65,7 @@ export default function CancellationPreSurveyContent( {
 			onDomainConfirmationChange={ onDomainConfirmationChange }
 			onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
 			onKeepSubscriptionClick={ onKeepSubscriptionClick }
+			flowType={ flowType }
 			onCancelClick={
 				shouldHandleMarketplaceSubscriptions() ? showMarketplaceDialog : onCancellationStart
 			}

@@ -15,6 +15,13 @@ export default function KeepSubscriptionButton( {
 }: KeepSubscriptionButtonProps ) {
 	const navigate = useNavigate();
 
+	const buttonCopy = ( () => {
+		if ( purchase.is_plan ) {
+			return __( 'Keep plan' );
+		}
+		return __( 'Keep product' );
+	} )();
+
 	return (
 		<Button
 			variant="secondary"
@@ -23,7 +30,7 @@ export default function KeepSubscriptionButton( {
 				onKeepSubscriptionClick();
 			} }
 		>
-			{ __( 'Keep plan' ) }
+			{ buttonCopy }
 		</Button>
 	);
 }

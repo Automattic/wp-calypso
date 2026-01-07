@@ -18,10 +18,12 @@ const CancelPurchaseFeatureList = ( {
 	purchase,
 	cancellationFeatures,
 	cancellationChanges,
+	flowType,
 }: {
 	purchase: Purchase;
 	cancellationFeatures: CancellationFeature[];
 	cancellationChanges: FeatureObject[];
+	flowType: string;
 } ) => {
 	if ( ! cancellationFeatures.length && ! cancellationChanges.length ) {
 		return;
@@ -29,18 +31,24 @@ const CancelPurchaseFeatureList = ( {
 
 	const { expiry_date: expiryDate } = purchase;
 	const expirationDate = intlFormat( expiryDate, { dateStyle: 'medium' }, { locale: 'en-US' } );
+
+	const introCopy = ( () => {
+		if ( flowType === 'remove' ) {
+			return __( 'When you remove your plan, you will lose access to:' );
+		}
+		return sprintf(
+			/* translators: %(expire)s is the date the product will expire */
+			__( 'Your plan will expire on %(expiry)s and you’ll lose access to:' ),
+			{
+				expiry: expirationDate,
+			}
+		);
+	} )();
+
 	return (
 		<VStack spacing={ 6 }>
 			<VStack spacing={ 2 }>
-				<Text as="p">
-					{ sprintf(
-						/* translators: %(expire)s is the date the product will expire */
-						__( 'Your plan will expire on %(expiry)s and you’ll lose access to:' ),
-						{
-							expiry: expirationDate,
-						}
-					) }
-				</Text>
+				<Text as="p">{ introCopy }</Text>
 				<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
 					{ cancellationFeatures.map( ( feature ) => {
 						if ( ! feature ) {
