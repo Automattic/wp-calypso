@@ -5,7 +5,7 @@ import {
 	getOdieEmailFallbackMessageContent,
 	getOdieErrorMessage,
 	getOdieErrorMessageNonEligible,
-	getOdieZendeskConnectionErrorMessage,
+	getOdieZendeskConnectionErrorMessageContent,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
@@ -53,7 +53,7 @@ const getDisplayMessage = (
 	}
 
 	if ( isUserEligibleForPaidSupport && ! isChatLoaded ) {
-		return getOdieZendeskConnectionErrorMessage().content;
+		return getOdieZendeskConnectionErrorMessageContent();
 	}
 
 	return forwardMessage;
@@ -107,9 +107,7 @@ export const UserMessage = ( {
 				<MarkdownOrChildren
 					messageContent={ messageContent }
 					components={ {
-						a: ( props: React.ComponentProps< 'a' > ) => (
-							<CustomALink { ...props } target="_blank" />
-						),
+						a: ( props: React.ComponentProps< 'a' > ) => <CustomALink { ...props } />,
 					} }
 				/>
 			</div>

@@ -96,8 +96,16 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					  ( currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && paidDomainName ) ||
 					  ! currentFeature.availableForCurrentPlan;
 
+				const featureSlug = currentFeature.getSlug();
+				const featuresWithMinHeight = [
+					'support-from-experts',
+					'priority-24-7-support',
+					'upload-video',
+				];
+
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
+					'has-min-height': featuresWithMinHeight.includes( featureSlug ),
 				} );
 				const spanClasses = clsx( 'plan-features-2023-grid__item-info', {
 					'is-annual-plan-feature': currentFeature.availableOnlyForAnnualPlans,
@@ -148,7 +156,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
 													<ul className="plan-features-2023-grid__item-sub-feature-list">
 														{ currentFeature.getSubFeatureObjects().map( ( subFeature ) => (
-															<li>{ subFeature?.getTitle() }</li>
+															<li key={ subFeature.getSlug() }>{ subFeature?.getTitle() }</li>
 														) ) }
 													</ul>
 												) : null }

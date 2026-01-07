@@ -9,6 +9,7 @@ import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Snackbars from '../snackbars';
 import './style.scss';
 
@@ -119,6 +120,7 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			<Snackbars />
 			<PageViewTracker />
+			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (
 				<Suspense fallback={ null }>
 					<WebpackBuildMonitor />

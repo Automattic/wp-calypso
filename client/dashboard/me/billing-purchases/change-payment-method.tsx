@@ -34,16 +34,15 @@ function ChangePaymentMethod() {
 	if ( isNaN( numericId ) ) {
 		throw new Error( 'Invalid purchase ID' );
 	}
-	const { data: purchase, isLoading: isLoadingPurchase } = useSuspenseQuery(
-		purchaseQuery( numericId )
-	);
+	const { data: purchase } = useSuspenseQuery( purchaseQuery( numericId ) );
+
 	const { isLoading: isLoadingStoredCards } = useQuery(
 		userPaymentMethodsQuery( { type: 'card' } )
 	);
 	const { isStripeLoading } = useStripe();
 
 	const paymentMethods = useCreateAssignablePaymentMethods( purchase );
-	const isDataLoading = isLoadingStoredCards || isStripeLoading || isLoadingPurchase;
+	const isDataLoading = isLoadingStoredCards || isStripeLoading;
 
 	useEffect( () => {
 		if ( ! isDataLoading && ! purchase ) {

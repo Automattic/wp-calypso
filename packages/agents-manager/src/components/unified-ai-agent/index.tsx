@@ -232,6 +232,7 @@ function AgentSetup( {
 			markdownComponents={ loadedProviders.markdownComponents || {} }
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }
 			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
+			useAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
 		/>
 	);
 }

@@ -14,6 +14,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { DataForm, Field, Form } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useCallback } from 'react';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
@@ -154,6 +155,8 @@ export default function PersonalDetailsSection( {
 
 						{ /* Email verification banner */ }
 						<EmailVerificationBanner userData={ userSettings } />
+
+						<NavigationBlocker shouldBlock={ isDirty } />
 
 						{ /* First & last name */ }
 						<DataForm< UserSettings >

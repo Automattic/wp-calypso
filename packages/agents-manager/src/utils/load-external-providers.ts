@@ -36,6 +36,13 @@ export type NavigationContinuationHook = ( props: {
 	agentId: string;
 } ) => void;
 
+/**
+ * Abilities setup hook type - provided by environments that need to register
+ * hook-dependent abilities (abilities that require React context to work).
+ * Called from AgentDock component to provide React context.
+ */
+export type AbilitiesSetupHook = () => void;
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -43,6 +50,7 @@ export interface LoadedProviders {
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
+	useAbilitiesSetup?: AbilitiesSetupHook;
 }
 
 /**
@@ -66,6 +74,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
+	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -91,6 +100,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useNavigationContinuation ) {
 				mergedNavigationContinuation = module.useNavigationContinuation;
 			}
+			if ( module.useAbilitiesSetup ) {
+				mergedAbilitiesSetup = module.useAbilitiesSetup;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
@@ -107,5 +119,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
+		useAbilitiesSetup: mergedAbilitiesSetup,
 	};
 }

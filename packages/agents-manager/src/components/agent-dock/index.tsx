@@ -2,7 +2,6 @@ import {
 	getAgentManager,
 	useAgentChat,
 	type UseAgentChatConfig,
-	type SubmitOptions,
 } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
@@ -24,17 +23,11 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
+import type {
+	NavigationContinuationHook,
+	AbilitiesSetupHook,
+} from '../../utils/load-external-providers';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
-
-/**
- * Navigation continuation hook type
- */
-type NavigationContinuationHook = ( props: {
-	isProcessing: boolean;
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
-	sessionId: string;
-	agentId: string;
-} ) => void;
 
 interface AgentDockProps {
 	/** The selected site object. */
@@ -53,6 +46,8 @@ interface AgentDockProps {
 	markdownExtensions?: MarkdownExtensions;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
+	/** Setup hook to register hook-dependent abilities. */
+	useAbilitiesSetup?: AbilitiesSetupHook;
 }
 
 export default function AgentDock( {
@@ -64,9 +59,14 @@ export default function AgentDock( {
 	markdownComponents = {},
 	markdownExtensions = {},
 	useNavigationContinuation,
+	useAbilitiesSetup,
 }: AgentDockProps ) {
-	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
-	const { hasLoaded: isStoreReady, isOpen = false } = useSelect( ( select ) => {
+	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
+	const {
+		hasLoaded: isStoreReady,
+		isOpen: isPersistedOpen = false,
+		isDocked: isPersistedDocked = false,
+	} = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
@@ -77,7 +77,13 @@ export default function AgentDock( {
 	const agentId = agentConfig.agentId;
 
 	const { isDocked, isDesktop, dock, undock, closeSidebar, createAgentPortal } =
-		useAgentLayoutManager();
+		useAgentLayoutManager( {
+			isReady: isStoreReady,
+			defaultDocked: isPersistedDocked,
+			defaultOpen: isPersistedOpen,
+			onOpenSidebar: () => setIsOpen( true ),
+			onCloseSidebar: () => setIsOpen( false ),
+		} );
 
 	const {
 		messages,
@@ -124,11 +130,15 @@ export default function AgentDock( {
 
 	// Handle WordPress admin bar integration
 	useAdminBarIntegration( {
-		isOpen,
+		isOpen: isPersistedOpen,
 		sectionName,
 		setIsOpen,
 		navigate,
 	} );
+
+	// Call setup hook to register hook-dependent abilities
+	// The hook is stable after loadedProviders is set (AgentDock only renders after providers load)
+	useAbilitiesSetup?.();
 
 	const handleNewChat = () => {
 		navigate( '/' );
@@ -159,12 +169,16 @@ export default function AgentDock( {
 				}
 
 				undock();
+				setIsDocked( false );
 			},
 		};
 		const dockMenuItem = {
 			icon: drawerRight,
 			title: __( 'Move to sidebar', '__i18n_text_domain__' ),
-			onClick: dock,
+			onClick: () => {
+				dock();
+				setIsDocked( true );
+			},
 		};
 
 		const options: ChatHeaderOptions = [ newChatMenuItem ];
@@ -188,7 +202,7 @@ export default function AgentDock( {
 			onAbort={ abortCurrentRequest }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
-			isOpen={ isOpen }
+			isOpen={ isPersistedOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
 			onExpand={ () => setIsOpen( true ) }
 			chatHeaderOptions={ getChatHeaderOptions() }
@@ -208,7 +222,7 @@ export default function AgentDock( {
 			onAbort={ () => {} }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
-			isOpen={ isOpen }
+			isOpen={ isPersistedOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
 			onExpand={ () => setIsOpen( true ) }
 			chatHeaderOptions={ getChatHeaderOptions() }
@@ -224,7 +238,7 @@ export default function AgentDock( {
 			authProvider={ agentConfig.authProvider }
 			chatHeaderOptions={ getChatHeaderOptions() }
 			isDocked={ isDocked }
-			isOpen={ isOpen }
+			isOpen={ isPersistedOpen }
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
@@ -239,7 +253,7 @@ export default function AgentDock( {
 			isEligibleForChat={ isEligibleForChat }
 			onAbort={ abortCurrentRequest }
 			onClose={ closeSidebar }
-			isOpen={ isOpen }
+			isOpen={ isPersistedOpen }
 			sectionName={ sectionName }
 			currentSiteDomain={ site?.domain }
 			chatHeaderOptions={ getChatHeaderOptions() }
@@ -251,15 +265,11 @@ export default function AgentDock( {
 		<SupportGuides
 			onAbort={ abortCurrentRequest }
 			onClose={ closeSidebar }
-			isOpen={ isOpen }
+			isOpen={ isPersistedOpen }
 			chatHeaderOptions={ getChatHeaderOptions() }
 			isChatDocked={ isDocked }
 		/>
 	);
-
-	if ( ! isStoreReady ) {
-		return null;
-	}
 
 	return createAgentPortal(
 		// NOTE: Use route state to pass data that needs to be accessed throughout the app.

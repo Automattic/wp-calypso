@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -112,6 +113,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
 							<DataForm< SiteSettings >
 								data={ formData }
 								fields={ fields }

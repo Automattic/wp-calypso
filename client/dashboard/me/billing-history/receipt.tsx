@@ -5,7 +5,7 @@ import {
 	userTaxDetailsQuery,
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
@@ -58,7 +58,7 @@ export interface LineItemCostOverrideForDisplay {
 
 export default function Receipt() {
 	const params = receiptRoute.useParams();
-	const receiptId = params.receiptId;
+	const receiptId = parseInt( params.receiptId );
 	const { data: receipt } = useSuspenseQuery( receiptQuery( receiptId ) );
 
 	const handlePrint = () => {
@@ -185,7 +185,7 @@ function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
 }
 
 function UserVatDetails( { receipt }: { receipt: Receipt } ) {
-	const { data: vatDetails, isLoading, error } = useQuery( userTaxDetailsQuery() );
+	const { data: vatDetails } = useSuspenseQuery( userTaxDetailsQuery() );
 	const sendEmailMutation = useMutation( {
 		...sendReceiptEmailMutation(),
 		meta: {
@@ -203,7 +203,7 @@ function UserVatDetails( { receipt }: { receipt: Receipt } ) {
 		sendEmailMutation.mutate( String( receipt.id ) );
 	};
 
-	if ( isLoading || error || ! vatDetails?.id ) {
+	if ( ! vatDetails.id ) {
 		return null;
 	}
 

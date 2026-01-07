@@ -13,6 +13,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 	Plans: {
 		useCurrentPlan: jest.fn(),
 		useCurrentPlanExpiryDate: jest.fn(),
+		usePricingMetaForGridPlans: jest.fn(),
 	},
 } ) );
 jest.mock( 'i18n-calypso', () => ( {
@@ -111,6 +112,7 @@ describe( 'useGenerateActionHook', () => {
 		);
 
 		( Plans.useCurrentPlan as jest.Mock ).mockImplementation( () => null );
+		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockImplementation( () => ( {} ) );
 	} );
 
 	it( 'should handle enterprise plans', () => {

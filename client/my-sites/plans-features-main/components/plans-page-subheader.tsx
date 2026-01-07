@@ -75,6 +75,11 @@ const HeaderContainer = styled( Subheader )`
 	font-weight: 500;
 	margin-bottom: 0;
 
+	&.plans-features-main__differentiator-header {
+		margin-top: -20px;
+		margin-bottom: 32px;
+	}
+
 	// TODO:
 	// This value is grabbed directly from https://github.com/Automattic/wp-calypso/blob/trunk/packages/plans-grid-next/src/index.tsx#L109
 	// Ideally there should be a shared constant that can be reused from the CSS side.
@@ -122,6 +127,53 @@ const PlanBenefitHeader = () => {
 	);
 };
 
+const DifferentiatorIconContainer = styled.span`
+	display: inline-flex;
+	align-items: flex-start;
+	margin-right: 24px;
+	text-align: left;
+
+	&:last-child {
+		margin-right: 0;
+	}
+
+	.gridicon {
+		margin-right: 8px;
+		margin-top: 2px;
+		color: var( --studio-gray-20 );
+	}
+
+	@media ( max-width: 740px ) {
+		margin-right: 0;
+		margin-bottom: 8px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+`;
+
+const DifferentiatorHeader = () => {
+	const translate = useTranslate();
+
+	return (
+		<HeaderContainer className="plans-features-main__differentiator-header">
+			<DifferentiatorIconContainer>
+				<Gridicon icon="sync" size={ 18 } />
+				{ translate( 'Unlimited traffic & bandwidth' ) }
+			</DifferentiatorIconContainer>
+			<DifferentiatorIconContainer>
+				<Gridicon icon="multiple-users" size={ 18 } />
+				{ translate( 'Unlimited collaborators' ) }
+			</DifferentiatorIconContainer>
+			<DifferentiatorIconContainer>
+				<Gridicon icon="plugins" size={ 18 } />
+				{ translate( 'Install plugins on all paid plans' ) }
+			</DifferentiatorIconContainer>
+		</HeaderContainer>
+	);
+};
+
 // TBD
 // It is actually questionable that we implement a subheader here instead of reusing the header mechanism
 // provided by the signup framework. How could we unify them?
@@ -135,6 +187,7 @@ const PlansPageSubheader = ( {
 	onFreePlanCTAClick,
 	selectedFeature,
 	intent,
+	showDifferentiatorHeader,
 }: {
 	siteSlug?: string | null;
 	isDisplayingPlansNeededForFeature: boolean;
@@ -145,6 +198,7 @@ const PlansPageSubheader = ( {
 	onFreePlanCTAClick: () => void;
 	selectedFeature: SelectedFeatureData | null;
 	intent?: string;
+	showDifferentiatorHeader?: boolean;
 } ) => {
 	const translate = useTranslate();
 
@@ -161,6 +215,11 @@ const PlansPageSubheader = ( {
 	};
 
 	const renderSubheader = () => {
+		// Differentiators experiment: show the differentiator header with 3 bullet points
+		if ( showDifferentiatorHeader ) {
+			return <DifferentiatorHeader />;
+		}
+
 		// Website Builder intent: use the new copy
 		if ( intent === 'plans-website-builder' ) {
 			if ( deemphasizeFreePlan && offeringFreePlan ) {

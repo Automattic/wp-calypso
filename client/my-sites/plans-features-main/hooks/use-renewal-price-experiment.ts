@@ -21,8 +21,13 @@ function isEligibleForExperiment( flowName?: string | null ): boolean {
 	const flowFromURL = getFlowFromURL(); // The flow for the Plans step
 	const flow = flowName || flowFromStorage || flowFromURL;
 
-	// onboarding-pm flow is ineligible for streamlined pricing. Akismet/Jetpack checkouts are excluded as well.
-	return flow !== 'onboarding-pm' && ! isAkismetCheckout() && ! isJetpackCheckout();
+	// onboarding-pm and onboarding-affiliate flows are ineligible for streamlined pricing. Akismet/Jetpack checkouts are excluded as well.
+	return (
+		flow !== 'onboarding-pm' &&
+		flow !== 'onboarding-affiliate' &&
+		! isAkismetCheckout() &&
+		! isJetpackCheckout()
+	);
 }
 
 export function isRenewalPricingTreatment( variationName?: string | null ) {

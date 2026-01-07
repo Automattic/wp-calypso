@@ -236,7 +236,7 @@ $theme-card-info-margin-top: 16px;
 	-webkit-font-smoothing: antialiased;
 
 	&-badge {
-		border-radius: 20px;  /* stylelint-disable-line scales/radii */
+		border-radius: 4px;
 		flex: 0 0 auto;
 		text-transform: none;
 		font-size: $font-body-extra-small;
