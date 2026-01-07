@@ -1,9 +1,9 @@
-import JetpackLogo from 'calypso/a8c-for-agencies/sections/learn/resource-center/overview-content/images/jetpack.svg';
-import PressableLogo from 'calypso/a8c-for-agencies/sections/learn/resource-center/overview-content/images/pressable.svg';
-import VIPLogo from 'calypso/a8c-for-agencies/sections/learn/resource-center/overview-content/images/vip.svg';
-import WooLogo from 'calypso/a8c-for-agencies/sections/learn/resource-center/overview-content/images/woo.svg';
-import WordPressDotComLogo from 'calypso/a8c-for-agencies/sections/learn/resource-center/overview-content/images/wordpressdotcom.svg';
-import type { APIAgencyResource } from '../types';
+import JetpackLogo from 'calypso/a8c-for-agencies/sections/exclusive-offers/overview-content/images/jetpack.svg';
+import PressableLogo from 'calypso/a8c-for-agencies/sections/exclusive-offers/overview-content/images/pressable.svg';
+import VIPLogo from 'calypso/a8c-for-agencies/sections/exclusive-offers/overview-content/images/vip.svg';
+import WooLogo from 'calypso/a8c-for-agencies/sections/exclusive-offers/overview-content/images/woo.svg';
+import WordPressDotComLogo from 'calypso/a8c-for-agencies/sections/exclusive-offers/overview-content/images/wordpressdotcom.svg';
+import type { APIAgencyResource } from 'calypso/a8c-for-agencies/data/learn/types';
 import type { ResourceItem } from 'calypso/a8c-for-agencies/sections/learn/resource-center/overview-content/types';
 
 /**
