@@ -7,8 +7,6 @@ import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import useReadFeedSearchQuery, { FeedSort } from '../use-read-feed-search-query';
 
-jest.mock( 'wpcom-proxy-request', () => jest.fn() );
-
 describe( 'useReadFeedSearchQuery', () => {
 	beforeEach( () => {
 		jest.mocked( wpcomRequest ).mockResolvedValue( {

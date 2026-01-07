@@ -7,8 +7,6 @@ import React from 'react';
 import request from 'wpcom-proxy-request';
 import { useNewsletterCategories } from '../index';
 
-jest.mock( 'wpcom-proxy-request', () => jest.fn() );
-
 describe( 'useNewsletterCategories', () => {
 	let queryClient: QueryClient;
 	let wrapper: React.FC< { children: React.ReactNode } >;
