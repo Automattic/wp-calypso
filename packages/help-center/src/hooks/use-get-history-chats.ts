@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetOdieConversations } from '@automattic/odie-client/src/data/use-get-odie-conversations';
-import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import {
@@ -9,6 +8,7 @@ import {
 	getLastMessage,
 	getZendeskConversations,
 } from '../components/utils';
+import { useGetSupportInteractions } from '../data/use-get-support-interactions';
 import { HELP_CENTER_STORE } from '../stores';
 import type {
 	Conversations,

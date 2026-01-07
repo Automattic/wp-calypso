@@ -1,6 +1,6 @@
+import { handleSupportInteractionsFetch } from '@automattic/odie-client/src/data/handle-support-interactions-fetch';
 import { isTestModeEnvironment, useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
-import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
 import type { SupportProvider } from '../types';
 
 /**

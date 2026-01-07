@@ -4,7 +4,6 @@
  */
 import UnifiedAIAgent from '@automattic/agents-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
@@ -16,6 +15,7 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
+import { useGetSupportInteractions } from '../data/use-get-support-interactions';
 import { useChatStatus, useShouldUseUnifiedAgent } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
