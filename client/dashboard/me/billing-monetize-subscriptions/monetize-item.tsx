@@ -9,7 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { isToday } from 'date-fns';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
-import { formatDate, getRelativeTimeString } from '../../utils/datetime';
+import { formatDate, getRelativeTimeString, parseDateAsUTC } from '../../utils/datetime';
 
 export const MonetizeSubscriptionTerms = ( {
 	subscription,
@@ -22,8 +22,8 @@ export const MonetizeSubscriptionTerms = ( {
 		return <>{ __( 'Never expires' ) }</>;
 	}
 
-	// Check if end_date is in the past (convert to ISO 8601 and append Z to parse as UTC)
-	const endDate = new Date( subscription.end_date.replace( ' ', 'T' ) + 'Z' );
+	// Check if end_date is in the past
+	const endDate = parseDateAsUTC( subscription.end_date );
 	const isExpired = endDate < new Date();
 
 	// Show "Expired" for past dates
@@ -44,14 +44,14 @@ export const MonetizeSubscriptionTerms = ( {
 			{ subscription.renew_interval === null
 				? // translators: %(date)s is the date the subscription expires. Format is LL (e.g. January 1, 2020).
 				  sprintf( __( 'Expires on %(date)s' ), {
-						date: formatDate( new Date( subscription.end_date.replace( ' ', 'T' ) + 'Z' ), locale, {
+						date: formatDate( endDate, locale, {
 							dateStyle: 'long',
 						} ),
 				  } )
 				: // translators: %(amount)s is the renewal price, %(date)s is the date the subscription renews. Format is LL (e.g. January 1, 2020).
 				  sprintf( __( 'Renews at %(amount)s on %(date)s' ), {
 						amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-						date: formatDate( new Date( subscription.end_date.replace( ' ', 'T' ) + 'Z' ), locale, {
+						date: formatDate( endDate, locale, {
 							dateStyle: 'long',
 						} ),
 				  } ) }
