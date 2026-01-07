@@ -78,7 +78,7 @@ export class AllFormFieldsFlow implements BlockFlow {
 		// And we just wrap up labeling the auto-added blocks.
 		const otherBlocksToLabel = isRefactor
 			? [
-					[ 'Button', 'Add text…' ],
+					[ 'Button', 'Button text' ],
 					[ 'Option', 'Add option…', 'Single choice (radio)' ],
 					[ 'Option', 'Add option…', 'Multiple choice (checkbox)' ],
 			  ]

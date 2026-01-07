@@ -12,6 +12,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
@@ -93,6 +94,7 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 	const [ showDisableConfirm, setShowDisableConfirm ] = useState( false );
 	const [ lastAction, setLastAction ] = useState< 'enable' | 'disable' | null >( null );
 
+	const { recordTracksEvent } = useAnalytics();
 	const { data: pluginStatus } = useQuery( bigSkyPluginQuery( site.ID ) );
 
 	const mutation = useMutation( {
@@ -137,6 +139,11 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 
 		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: true } );
 
+		recordTracksEvent( 'calypso_dashboard_ai_assistant_enable_click', {
+			selected_use_cases: Array.from( selectedUseCases ).join( ',' ),
+			other_text: selectedUseCases.has( 'other' ) ? otherText : undefined,
+		} );
+
 		setLastAction( 'enable' );
 		mutation.mutate( pluginUpdate );
 	};
@@ -158,6 +165,8 @@ export function AIAssistantForm( { site }: { site: Site } ) {
 
 	const performDisable = () => {
 		const pluginUpdate = toBigSkyPluginUpdate( { bigSkyEnabled: false } );
+
+		recordTracksEvent( 'calypso_dashboard_ai_assistant_disable_click' );
 
 		setLastAction( 'disable' );
 		mutation.mutate( pluginUpdate, {

@@ -199,6 +199,7 @@ function getBasicSurveySteps( {
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, upsell );
 	const isDowngradePlan = [ 'downgrade-monthly', 'downgrade-personal' ].includes( upsell ?? '' );
+	const hasExpired = purchase.expiry_status === 'expired';
 
 	if (
 		isPartnerPurchase( purchase ) &&
@@ -216,11 +217,11 @@ function getBasicSurveySteps( {
 	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) && ! purchase.is_plan ) {
 		return [ NEXT_ADVENTURE_STEP ];
 	}
-	if ( upsell && ! isDowngradePlan ) {
+	if ( upsell && ! hasExpired && ! isDowngradePlan ) {
 		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 	}
 	// NOTE: downgradePlan only ever exists if upsell is true (see getDowngradePlanForPurchase).
-	if ( upsell && downgradePlan ) {
+	if ( upsell && ! hasExpired && downgradePlan ) {
 		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 	}
 	if ( hasQuestionTwo ) {
@@ -416,6 +417,8 @@ export default function CancelPurchase() {
 
 		const [ firstStep ] = allSteps;
 
+		const hasExpired = purchase.expiry_status === 'expired';
+
 		const newState: CancelPurchaseState = {
 			...initialSurveyState(),
 			atomicRevertCheckOne: false,
@@ -426,7 +429,7 @@ export default function CancelPurchase() {
 			customerConfirmedUnderstanding: false,
 			domainConfirmationConfirmed: false,
 			initialized: true,
-			isLoading: REMOVE_PLAN_STEP !== firstStep,
+			isLoading: REMOVE_PLAN_STEP !== firstStep && ! hasExpired,
 			isNextAdventureValid: false,
 			isSubmitting: false,
 			questionOneOrder,
@@ -440,7 +443,7 @@ export default function CancelPurchase() {
 			showDomainOptionsStep: false,
 			siteId: undefined,
 			solution: '',
-			surveyShown: REMOVE_PLAN_STEP === firstStep,
+			surveyShown: REMOVE_PLAN_STEP === firstStep || hasExpired,
 			surveyStep: firstStep,
 			upsell: '',
 		};

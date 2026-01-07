@@ -1,9 +1,4 @@
-import {
-	siteBySlugQuery,
-	siteSettingsQuery,
-	queryClient,
-	persistQueryClientPromise,
-} from '@automattic/api-queries';
+import { siteSettingsQuery, queryClient, persistQueryClientPromise } from '@automattic/api-queries';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
@@ -76,12 +71,6 @@ export default function DashboardBackportSiteSettingsRenderer( {
 	useEffect( () => {
 		if ( user ) {
 			queryClient.setQueryData( AUTH_QUERY_KEY, user );
-		}
-
-		if ( site ) {
-			// The site type used by the Hosting Dashboard is slightly different, but _mostly_ compatible,
-			// so this is safe to copy in to the cache.
-			queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site as any ); // eslint-disable-line @typescript-eslint/no-explicit-any
 		}
 
 		if ( site && siteSettings ) {

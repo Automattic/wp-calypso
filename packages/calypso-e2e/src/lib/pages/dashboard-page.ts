@@ -30,11 +30,28 @@ export class DashboardPage {
 
 	/**
 	 * Visits the dashboard entry page.
+	 * Dismisses the welcome modal if it appears because it hides the "main" content.
 	 *
 	 * @returns Promise that resolves when navigation is complete.
 	 */
 	async visit(): Promise< void > {
 		await this.page.goto( getDashboardURL() );
+
+		try {
+			await this.page
+				.getByRole( 'heading', {
+					name: 'Meet the new WordPress.com Hosting Dashboard',
+				} )
+				.waitFor( { state: 'visible', timeout: 3000 } );
+			await this.page
+				.getByRole( 'button', {
+					name: 'Try it out',
+				} )
+				.click();
+		} catch {
+			// Modal didn't appear, continue
+		}
+
 		// Wait for the main content to be visible
 		await this.page.getByRole( 'main' ).waitFor();
 	}

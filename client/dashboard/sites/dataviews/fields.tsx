@@ -9,12 +9,12 @@ import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { getSiteStatus, getStatusLabels } from '../../utils/site-status';
 import {
 	isSelfHostedJetpackConnected,
 	isSelfHostedJetpackConnected__ES,
 } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
+import { getSiteVisibility, getVisibilityLabels } from '../../utils/site-visibility';
 import { getFormattedWordPressVersion, formatWordPressVersion } from '../../utils/wp-version';
 import {
 	AsyncEngagementStat,
@@ -28,17 +28,17 @@ import {
 	Plan,
 	Preview,
 	Preview__ES,
-	Status,
 	URL,
 	Uptime,
 	URLRenderer,
+	Visibility,
 } from '../site-fields';
 import type { AppConfig } from '../../app/context';
 import type { Site, DashboardSiteListSite } from '@automattic/api-core';
-import type { Field, Operator } from '@wordpress/dataviews';
+import type { Field, Operator, View } from '@wordpress/dataviews';
 
 function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
-	const statusLabels = getStatusLabels();
+	const visibilityLabels = getVisibilityLabels();
 	return [
 		{
 			id: 'name',
@@ -112,17 +112,17 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			},
 		},
 		{
-			id: 'status',
-			label: __( 'Status' ),
-			getValue: ( { item } ) => getSiteStatus( item ),
-			elements: Object.entries( statusLabels ).map( ( [ value, label ] ) => ( { value, label } ) ),
+			id: 'visibility',
+			label: __( 'Visibility' ),
+			getValue: ( { item } ) => getSiteVisibility( item ),
+			elements: Object.entries( visibilityLabels ).map( ( [ value, label ] ) => ( {
+				value,
+				label,
+			} ) ),
 			filterBy: {
 				operators: [ 'isAny' as Operator ],
 			},
-			render: function StatusField( { item } ) {
-				const { user } = useAuth();
-				return <Status site={ item } isOwner={ item.site_owner === user.ID } />;
-			},
+			render: ( { item } ) => <Visibility site={ item } />,
 		},
 		{
 			id: 'wp_version',
@@ -200,11 +200,25 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			},
 			render: ( { field, item } ) => field.getValue( { item } ),
 		},
+		{
+			id: 'is_deleted',
+			type: 'boolean',
+			label: __( 'Deleted' ),
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			enableHiding: false,
+		},
 	];
 }
 
 // Use the site returned by siteBySlugQuery to render async fields (e.g. Backup) so the structure remains consistent.
 function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< DashboardSiteListSite >[] {
+	const visibilityLabels = getVisibilityLabels();
 	return [
 		{
 			id: 'name',
@@ -297,6 +311,34 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			enableSorting: false,
 		},
 		{
+			id: 'visibility',
+			label: __( 'Visibility' ),
+			getValue: ( { item } ) => {
+				// TODO: Handle `unlaunched` status
+				if ( item.wpcom_status?.is_coming_soon ) {
+					return 'coming_soon';
+				}
+
+				if ( item.private ) {
+					return 'private';
+				}
+
+				return 'public';
+			},
+			elements: Object.entries( visibilityLabels ).map( ( [ value, label ] ) => ( {
+				value,
+				label,
+			} ) ),
+			filterBy: {
+				operators: [ 'isAny' as Operator ],
+			},
+			render: ( { item, field } ) => {
+				const value = field.getValue( { item } );
+				return visibilityLabels[ value as keyof typeof visibilityLabels ];
+			},
+			enableSorting: false,
+		},
+		{
 			id: 'wp_version',
 			label: __( 'WP version' ),
 			getValue: ( { item } ) => formatWordPressVersion( item.wordpress_version ?? '' ),
@@ -381,6 +423,19 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			render: ( { field, item } ) => field.getValue( { item } ),
 			enableSorting: false,
 		},
+		{
+			id: 'is_deleted',
+			type: 'boolean',
+			label: __( 'Deleted' ),
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			enableHiding: false,
+		},
 	];
 }
 
@@ -440,4 +495,15 @@ export function useFields__ES( {
 			return true;
 		} );
 	}, [ isAutomattician, viewType, queries ] );
+}
+
+export function sanitizeFields( fields: View[ 'fields' ] ) {
+	return fields?.map( ( field ) => {
+		// Replace the `Status` column with `Visibility` column.
+		if ( field === 'status' ) {
+			return 'visibility';
+		}
+
+		return field;
+	} );
 }
