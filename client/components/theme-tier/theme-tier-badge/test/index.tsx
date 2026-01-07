@@ -8,6 +8,8 @@ import ThemeTierBadge from '../index';
 import { PERSONAL_PLAN } from './helpers/fixtures';
 import { render } from './helpers/utils';
 
+jest.mock( 'wpcom-proxy-request', () => jest.fn() );
+
 describe( 'ThemeTierBadge', () => {
 	it( 'should render the free badge when seeing a free theme', () => {
 		render(

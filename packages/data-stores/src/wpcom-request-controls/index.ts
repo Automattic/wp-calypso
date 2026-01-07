@@ -1,8 +1,6 @@
 import wpcomProxyRequest, {
 	reloadProxy as triggerReloadProxy,
 	requestAllBlogsAccess as triggerRequestAllBlogsAccess,
-	getCrossOriginStorageItem as getCrossOriginStorageItemFromWpcomProxyRequest,
-	setCrossOriginStorageItem as setCrossOriginStorageItemFromWpcomProxyRequest,
 } from 'wpcom-proxy-request';
 
 type WpcomProxyRequestOptions = Parameters< typeof wpcomProxyRequest >[ 0 ];
@@ -11,17 +9,6 @@ export const wpcomRequest = (
 	request: WpcomProxyRequestOptions
 ): { type: 'WPCOM_REQUEST'; request: WpcomProxyRequestOptions } =>
 	( { type: 'WPCOM_REQUEST', request } ) as const;
-
-export const setCrossOriginStorageItem = (
-	key: string,
-	value: string
-): { type: 'SET_CROSS_ORIGIN_STORAGE_ITEM'; key: string; value: string } =>
-	( { type: 'SET_CROSS_ORIGIN_STORAGE_ITEM', key, value } ) as const;
-
-export const getCrossOriginStorageItem = (
-	key: string
-): { type: 'GET_CROSS_ORIGIN_STORAGE_ITEM'; key: string } =>
-	( { type: 'GET_CROSS_ORIGIN_STORAGE_ITEM', key } ) as const;
 
 /**
  * Action for performing a fetching using `window.fetch()` and parsing the response body.
@@ -54,8 +41,6 @@ export const wait = ( ms: number ) => ( { type: 'WAIT', ms } ) as const;
 
 export const controls = {
 	WPCOM_REQUEST: ( { request }: ReturnType< typeof wpcomRequest > ) => wpcomProxyRequest( request ),
-	SET_CROSS_ORIGIN_STORAGE_ITEM: setCrossOriginStorageItemFromWpcomProxyRequest,
-	GET_CROSS_ORIGIN_STORAGE_ITEM: getCrossOriginStorageItemFromWpcomProxyRequest,
 	FETCH_AND_PARSE: async ( { resource, options }: ReturnType< typeof fetchAndParse > ) => {
 		const response = await window.fetch( resource, options );
 

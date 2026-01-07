@@ -21,6 +21,7 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	},
 } ) );
 
+jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
 ( useSiteSlugParam as jest.Mock ).mockImplementation( () => 'site-url.wordpress.com' );

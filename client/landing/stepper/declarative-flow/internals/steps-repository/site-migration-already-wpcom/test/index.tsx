@@ -12,6 +12,7 @@ import SiteMigrationAlreadyWPCOM from '../';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers/index';
 
+jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 jest.mock( 'calypso/lib/logstash' );
 

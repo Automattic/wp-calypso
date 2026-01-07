@@ -20,6 +20,7 @@ const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions
 	);
 };
 
+jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
 const { getByRole, findByText, getByLabelText } = screen;

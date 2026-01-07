@@ -43,12 +43,9 @@ global.fetch = jest.fn( () =>
 // module because it accesses the `document` global.
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
 	canAccessWpcomApis: jest.fn(),
 	reloadProxy: jest.fn(),
 	requestAllBlogsAccess: jest.fn(),
-	getCrossOriginStorageItem: jest.fn(),
-	setCrossOriginStorageItem: jest.fn(),
 } ) );
 
 jest.mock( 'smooch', () => ( {
