@@ -11,11 +11,8 @@ import QueryReaderOrganizations from 'calypso/components/data/query-reader-organ
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
-import Sidebar from 'calypso/layout/sidebar';
-import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
-import SidebarRegion from 'calypso/layout/sidebar/region';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import AppTitle from 'calypso/reader/components/app-title';
 import ReaderA8cConversationsIcon from 'calypso/reader/components/icons/a8c-conversations-icon';
@@ -28,7 +25,6 @@ import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
@@ -45,7 +41,6 @@ import {
 } from 'calypso/state/reader-ui/sidebar/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSidebarHelper from './helper';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
@@ -307,50 +302,23 @@ export class ReaderSidebar extends Component {
 		);
 	}
 
-	renderGlobalSidebar() {
-		const props = {
-			path: this.props.path,
-			onClick: this.handleClick,
-			siteTitle: i18n.translate( 'Reader' ),
-		};
+	render() {
 		return (
-			<GlobalSidebar { ...props }>
+			<GlobalSidebar
+				path={ this.props.path }
+				onClick={ this.handleClick }
+				siteTitle={ i18n.translate( 'Reader' ) }
+			>
 				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
 			</GlobalSidebar>
 		);
 	}
-
-	renderSidebar() {
-		return (
-			<Sidebar onClick={ this.handleClick }>
-				<SidebarRegion>
-					<ReaderSidebarNudges />
-					{ this.renderSidebarMenu() }
-				</SidebarRegion>
-				<SidebarFooter />
-			</Sidebar>
-		);
-	}
-
-	render() {
-		if ( this.props.shouldShowGlobalSidebar ) {
-			return this.renderGlobalSidebar();
-		}
-		return this.renderSidebar();
-	}
 }
 
 export default withCurrentRoute(
 	connect(
-		( state, { currentSection } ) => {
-			const siteId = getSelectedSiteId( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( {
-				state,
-				siteId,
-				section: currentSection,
-			} );
-
+		( state ) => {
 			return {
 				isListsOpen: isListsOpen( state ),
 				isFollowingOpen: isFollowingOpen( state ),
@@ -358,7 +326,6 @@ export default withCurrentRoute(
 				subscribedLists: getSubscribedLists( state ),
 				teams: getReaderTeams( state ),
 				organizations: getReaderOrganizations( state ),
-				shouldShowGlobalSidebar,
 				isMSDEnabled: isReaderMSDEnabled( state ),
 			};
 		},
