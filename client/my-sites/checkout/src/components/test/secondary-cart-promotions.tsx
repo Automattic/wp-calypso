@@ -53,12 +53,21 @@ const mockProductsEndpointResponse: RawAPIProductsList = {
 // The useProducts hook is in an external package that uses
 // `wpcom-proxy-request` directly to fetch data, so using `nock` will not be
 // able to mock its request. Instead we have to mock the module directly.
-jest.mock( 'wpcom-proxy-request', () => async ( data: WpcomRequestParams ) => {
-	switch ( data.path ) {
-		case '/products':
-			return mockProductsEndpointResponse;
-	}
-} );
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+	default: async ( data: WpcomRequestParams ) => {
+		switch ( data.path ) {
+			case '/products':
+				return mockProductsEndpointResponse;
+		}
+	},
+	// These are imported by `@automattic/data-stores` (`wpcom-request-controls`).
+	canAccessWpcomApis: jest.fn(),
+	reloadProxy: jest.fn(),
+	requestAllBlogsAccess: jest.fn(),
+	getCrossOriginStorageItem: jest.fn(),
+	setCrossOriginStorageItem: jest.fn(),
+} ) );
 
 function TestWrapper( { children, initialCart } ) {
 	const [ reduxStore ] = useState( () => applyMiddleware( thunk )( createStore )( storeData ) );
