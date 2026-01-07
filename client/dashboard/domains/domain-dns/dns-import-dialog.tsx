@@ -140,7 +140,7 @@ export default function DnsImportDialog( {
 		const isSelected = selectedRecords.has( recordId );
 
 		return (
-			<div key={ index } style={ { marginBottom: '8px' } }>
+			<div key={ index } style={ { marginBottom: '8px', wordBreak: 'break-all' } }>
 				<CheckboxControl
 					__nextHasNoMarginBottom
 					checked={ isSelected }
