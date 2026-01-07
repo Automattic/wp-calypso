@@ -14,6 +14,8 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_CENTENNIALLY,
@@ -184,6 +186,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isEcommercePlan( planKey ) ) {
 		return 'is-ecommerce-plan';
+	}
+
+	if ( isWooHostedFreePlan( planKey ) ) {
+		return 'is-woo-hosted-trial';
 	}
 
 	if ( isWooHostedPlan( planKey ) ) {
@@ -418,6 +424,10 @@ export function isWooExpressSmallPlan( planSlug: string ): boolean {
 
 export function isWooExpressPlan( planSlug: string ): boolean {
 	return ( WOO_EXPRESS_PLANS as ReadonlyArray< string > ).includes( planSlug );
+}
+
+export function isWooHostedFreePlan( planSlug: string ): boolean {
+	return [ PLAN_WOO_HOSTED_FREE, PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ].includes( planSlug );
 }
 
 export function isWooHostedPlan( planSlug: string ): boolean {
