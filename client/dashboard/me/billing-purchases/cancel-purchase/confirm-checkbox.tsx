@@ -41,7 +41,6 @@ export default function ConfirmCheckbox( {
 			if ( purchase.is_plan ) {
 				return __( 'I understand my site will change when I remove my plan.' );
 			}
-
 			return __( 'I understand my site will change when I remove this product.' );
 		}
 		return __( 'I understand my site will change when my plan expires.' );
