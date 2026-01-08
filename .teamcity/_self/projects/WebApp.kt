@@ -27,7 +27,7 @@ object WebApp : Project({
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PlaywrightTestDashboardPRMatrix)
-	buildType(PlaywrightTestDashboardPreReleaseMatrix)
+	// buildType(PlaywrightTestDashboardPreReleaseMatrix)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
 	buildType(QuarantinedE2ETests)
