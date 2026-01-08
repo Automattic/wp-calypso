@@ -29,10 +29,9 @@ export function register(): typeof STORE_KEY {
 				'userDeclaredSiteUrl',
 				'subject',
 				'loggedOutOdieChat',
-				// TODO: only persist these if the user is logged out
-				'helpCenterRouterHistory',
-				'helpCenterMinimized',
-				'showHelpCenter',
+				...( ! isLoggedInHCUser()
+					? [ 'helpCenterRouterHistory', 'helpCenterMinimized', 'showHelpCenter' ]
+					: [] ),
 			],
 			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
 			resolvers: enabledPersistedOpenState ? { isHelpCenterShown } : undefined,
