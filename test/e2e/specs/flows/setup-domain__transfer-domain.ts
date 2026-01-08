@@ -53,7 +53,6 @@ describe( DataHelper.createSuiteTitle( 'Domain flow: Transfer a domain to a site
 
 	it( 'Click the transfer button', async function () {
 		const useADomainIOwnPage = new UseADomainIOwnPage( page );
-		await useADomainIOwnPage.clickContinue();
 		await useADomainIOwnPage.clickButtonToTransferDomain();
 	} );
 

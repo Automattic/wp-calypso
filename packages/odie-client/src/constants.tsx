@@ -54,7 +54,7 @@ export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
 	return 'wpcom';
 }
 
-export const getOdieTransferMessage = ( botSlug?: OdieAllBotSlugs ): Message[] => {
+export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] => {
 	const isTestMode = isTestModeEnvironment();
 	const flow = getFlowFromBotSlug( botSlug );
 
@@ -73,7 +73,6 @@ export const getOdieTransferMessage = ( botSlug?: OdieAllBotSlugs ): Message[] =
 				context: {
 					flags: {
 						hide_disclaimer_content: true,
-						show_contact_support_msg: true,
 						show_ai_avatar: false,
 					},
 					site_id: null,
@@ -91,7 +90,6 @@ export const getOdieTransferMessage = ( botSlug?: OdieAllBotSlugs ): Message[] =
 		context: {
 			flags: {
 				hide_disclaimer_content: true,
-				show_contact_support_msg: false,
 				show_ai_avatar: false,
 			},
 			site_id: null,
@@ -111,7 +109,6 @@ export const getOdieTransferMessage = ( botSlug?: OdieAllBotSlugs ): Message[] =
 				context: {
 					flags: {
 						hide_disclaimer_content: true,
-						show_contact_support_msg: true,
 						show_ai_avatar: false,
 					},
 					site_id: null,
@@ -132,7 +129,6 @@ export const getOdieTransferMessage = ( botSlug?: OdieAllBotSlugs ): Message[] =
 			context: {
 				flags: {
 					hide_disclaimer_content: true,
-					show_contact_support_msg: true,
 					show_ai_avatar: false,
 				},
 				site_id: null,
@@ -148,7 +144,6 @@ export const getOdieTransferMessage = ( botSlug?: OdieAllBotSlugs ): Message[] =
 			context: {
 				flags: {
 					hide_disclaimer_content: true,
-					show_contact_support_msg: true,
 					show_ai_avatar: false,
 				},
 				site_id: null,
@@ -156,22 +151,6 @@ export const getOdieTransferMessage = ( botSlug?: OdieAllBotSlugs ): Message[] =
 		},
 	];
 };
-
-export const getOdieOnErrorTransferMessage = (): Message[] => [
-	{
-		content: getOdieErrorMessage(),
-		role: 'bot',
-		type: 'message',
-		context: {
-			flags: {
-				hide_disclaimer_content: true,
-				show_contact_support_msg: false,
-				show_ai_avatar: true,
-			},
-			site_id: null,
-		},
-	},
-];
 
 export const getOdieThirdPartyMessageContent = (): string =>
 	`${ __(
@@ -203,7 +182,6 @@ export const getOdieEmailFallbackMessage = (): Message => ( {
 	type: 'message',
 	context: {
 		flags: {
-			show_contact_support_msg: false,
 			forward_to_human_support: true,
 		},
 		question_tags: {
@@ -329,6 +307,20 @@ export const getOdieZendeskConnectionErrorMessage = (): Message => {
 		},
 	};
 };
+
+export const getZendeskChatStartedMetaMessage = (): Message => ( {
+	content: null,
+	role: 'bot',
+	type: 'meta',
+	internal_message_id: 'zendesk-chat-started',
+	context: {
+		site_id: null,
+		flags: {
+			hide_disclaimer_content: true,
+			show_ai_avatar: false,
+		},
+	},
+} );
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;

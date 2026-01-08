@@ -5,7 +5,7 @@ import { Location } from 'history';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
-import { isE2ETest } from '../utils';
+import { isE2ETest, isLoggedInHCUser } from '../utils';
 import { STORE_KEY } from './constants';
 import type { HelpCenterOptions, HelpCenterSelect, HelpCenterShowOptions } from './types';
 import type { APIFetchOptions } from '../shared-types';
@@ -16,6 +16,10 @@ import type { APIFetchOptions } from '../shared-types';
  * @param isMinimized - Whether the help center is minimized.
  */
 export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolean | undefined ) => {
+	if ( ! isLoggedInHCUser() ) {
+		return null;
+	}
+
 	const saveState: Record< string, boolean | null > = {};
 
 	if ( typeof isShown === 'boolean' ) {
@@ -89,6 +93,14 @@ export const setIsMinimized = function* ( minimized: boolean ) {
 		minimized,
 	} as const;
 };
+
+export const setLoggedOutOdieChat = (
+	session: { odieId: number; sessionId: string; botSlug: string } | undefined
+) =>
+	( {
+		type: 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT',
+		session,
+	} ) as const;
 
 export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
 	( {
@@ -286,6 +298,7 @@ export type HelpCenterAction =
 			| typeof setSubject
 			| typeof resetStore
 			| typeof setMessage
+			| typeof setLoggedOutOdieChat
 			| typeof setContextTerm
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
@@ -294,6 +307,7 @@ export type HelpCenterAction =
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
+			| typeof setLoggedOutOdieChat
 			| typeof setSupportTypingStatus
 			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute

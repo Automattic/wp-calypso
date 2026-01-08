@@ -53,7 +53,6 @@ describe( DataHelper.createSuiteTitle( 'Domain flow: Connect a domain to a site'
 
 	it( 'Click the connect button', async function () {
 		const useADomainIOwnPage = new UseADomainIOwnPage( page );
-		await useADomainIOwnPage.clickContinue();
 		await useADomainIOwnPage.clickButtonToConnectDomain();
 	} );
 
