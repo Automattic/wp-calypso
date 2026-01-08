@@ -30,7 +30,7 @@ export default function KeepSubscriptionButton( {
 				onKeepSubscriptionClick();
 			} }
 		>
-			{ buttonCopy }
+			{ purchase.is_plan ? __( 'Keep plan' ) : __( 'Keep product' ) }
 		</Button>
 	);
 }
