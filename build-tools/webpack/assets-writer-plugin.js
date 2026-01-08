@@ -47,7 +47,7 @@ Object.assign( AssetsWriter.prototype, {
 			}
 
 			// Exclude hot update files (info.hotModuleReplacement) and source maps.
-			// Relying solely on `asset.info.development` is brittle across webpack versions,
+			// Relying solely on `asset.info.development` as we use hidden-source-map for production builds,
 			// so we also explicitly filter out any `.map` assets by filename.
 			function isDevelopmentAsset( name ) {
 				// Treat all source map files as development-only so they are never inlined into HTML.
