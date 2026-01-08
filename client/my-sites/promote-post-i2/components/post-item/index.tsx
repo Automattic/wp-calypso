@@ -134,11 +134,12 @@ export default function PostItem( {
 				</div>
 				<div className="post-item__post-data-row post-item__post-data-row-mobile">
 					<div className="post-item__stats-mobile">
-						{ sprintf(
-							// translators: %s is number of post's visitors
-							_n( '%s visitor', '%s visitors', viewCount ),
-							formatNumber( viewCount, true )
-						) }
+						{ viewCount &&
+							sprintf(
+								// translators: %s is number of post's visitors
+								_n( '%s visitor', '%s visitors', viewCount ),
+								formatNumber( viewCount, true )
+							) }
 						<div className="post-item__actions-mobile">
 							<a
 								href={ post.post_url }
