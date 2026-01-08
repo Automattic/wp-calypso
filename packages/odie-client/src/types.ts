@@ -56,7 +56,7 @@ export type CurrentUser = {
 	display_name: string;
 	avatar_URL?: string;
 	email?: string;
-	id?: number;
+	ID?: number;
 };
 
 export type Source = {
@@ -159,6 +159,7 @@ export type Message = {
 	created_at?: string;
 	feedbackOptions?: MessageAction[];
 	metadata?: Record< string, any >;
+	ts?: number;
 	payload?: string;
 	/**
 	 * Timestamp of the message.
@@ -215,6 +216,7 @@ type Metadata = {
 	createdAt: number;
 	supportInteractionId: string;
 	status: InteractionStatus;
+	botSlug?: string;
 };
 
 export type OdieConversation = {
@@ -224,13 +226,21 @@ export type OdieConversation = {
 	metadata?: Metadata;
 };
 
+export type LoggedOutOdieConversation = OdieConversation & {
+	metadata: {
+		sessionId: string;
+	} & Metadata;
+};
+
 export type SupportInteractionDraft = {
 	bot_slug: OdieAllowedBots;
 	event_external_id: string;
 	event_source: SupportProvider;
 };
 
-export type Conversations = Array< OdieConversation | ZendeskConversation >;
+export type Conversations = Array<
+	OdieConversation | LoggedOutOdieConversation | ZendeskConversation
+>;
 
 export type SupportInteractionUser = {
 	user_id: string;
