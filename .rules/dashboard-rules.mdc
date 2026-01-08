@@ -18,83 +18,43 @@ For detailed implementation guidance, refer to:
 - [Typography and Copy](mdc:client/dashboard/docs/typography-and-copy.md) - Capitalization, snackbar messages
 - [Testing](mdc:client/dashboard/docs/testing.md) - Testing strategies
 
-## Code Review Guidelines
+## Writing Guidelines
 
-When reviewing dashboard code, watch for these specific patterns and potential issues:
+When writing dashboard code, follow these patterns:
 
-### External Link Handling
+### External Links
 
-- All URLs linking to old WordPress.com/Calypso MUST use `wpcomLink()` function
-	- **Import**: Use `import { wpcomLink } from '@automattic/dashboard/utils/link'`
-	- **Purpose**: Ensures proper environment configuration (dev vs production hostnames)
-- Every link to `/checkout` must have `redirect_to` and `cancel_to` query param
-	- **Purpose**: Ensures correct behaviour when exiting the checkout screen
-- Every link to `/setup/plan-upgrade` must have a `cancel_to` query param
-	- **Purpose**: Ensures correct behaviour when exiting the upgrade screen
+Use `wpcomLink()` for all WordPress.com/Calypso URLs:
 
 ```typescript
-// ✅ Correct - wrapped with wpcomLink()
+import { wpcomLink } from '@automattic/dashboard/utils/link';
+
 <a href={ wpcomLink( '/me/security' ) }>Security Settings</a>
-
-// ❌ Incorrect - hardcoded WordPress.com URL
-<a href="https://wordpress.com/me/security">Security Settings</a>
-
-// ❌ Incorrect - relative URL to old dashboard
-<a href="/me/security">Security Settings</a>
 ```
 
-### Mutation Callback Handling
+- `/checkout` links: include `redirect_to` and `cancel_to` query params
+- `/setup/plan-upgrade` links: include `cancel_to` query param
 
-- **Component-specific Callbacks**: Attach `onSuccess`/`onError` to the `mutate()` call, not `useMutation()`
-- **Query Options**: Don't override callbacks defined in api-queries mutation options
-- **Cache Updates**: Query option callbacks handle cache invalidation and updates
+### Mutations
+
+Attach component-specific callbacks to `mutate()`, not `useMutation()`:
 
 ```typescript
-// ✅ Correct - callback on mutate call
 const { mutate: saveSetting } = useMutation( saveSettingMutation() );
 
-const handleSave = () => {
-  saveSetting( newValue, {
-    onSuccess: () => {
-      // Component-specific success handling
-      setShowSuccessMessage( true );
-    },
-    onError: ( error ) => {
-      // Component-specific error handling
-      setError( error.message );
-    },
-  } );
-};
-
-// ❌ Incorrect - overrides query option callbacks
-const { mutate: saveSetting } = useMutation( {
-  ...saveSettingMutation(),
-  onSuccess: () => setShowSuccessMessage( true ), // Breaks cache updates!
+saveSetting( newValue, {
+  onSuccess: () => setShowSuccessMessage( true ),
   onError: ( error ) => setError( error.message ),
 } );
 ```
 
-### Typography and Copy Compliance
+### Copy Standards
 
-- **Sentence Case**: Verify buttons, labels, and headings use sentence case (not title case)
-- **Periods**: Check sentences end with periods; buttons and labels do not
-- **Curly Quotes**: Ensure proper curly quotes (“like this”) and apostrophes (it’s) are used
-- **Product Names**: "Hosting Dashboard" should be capitalized as proper noun
-- **Snackbar Patterns**: Follow established patterns for success/error messages
+- Sentence case for buttons, labels, headings
+- Periods end sentences, not buttons/labels
+- Use curly quotes ("like this") and proper apostrophes (it's)
+- Snackbar format: `Action completed.` or `Failed to do action.`
 
-```typescript
-// ✅ Correct copy patterns
-<Button>Save changes</Button>  // No period, sentence case
-<p>Your settings have been saved.</p>  // Period, curly quotes if needed
+## Code Review
 
-// Snackbar messages
-`SSH access enabled.`
-`Failed to save PHP version.`
-
-// ❌ Incorrect patterns  
-<Button>Save Changes.</Button>  // Has period, title case
-<p>Your settings have been saved</p>  // Missing period
-`SSH Access Enabled`  // Title case, missing period
-```
-
-Remember: This dashboard represents modern React patterns. Prioritize performance, accessibility, and maintainability while leveraging the WordPress ecosystem.
+For detailed code review against dashboard standards, use the `/dashboard-review` command.
