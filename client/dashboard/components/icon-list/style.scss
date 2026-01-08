@@ -2,17 +2,6 @@
 @import "@wordpress/base-styles/variables";
 
 .icon-list {
-	.icon-list__heading {
-		padding-top: $grid-unit-10;
-		padding-bottom: $grid-unit-15;
-	}
-
-	.icon-list__heading ~ .icon-list__items {
-		margin: -$grid-unit-10 0;
-	}
-
-	.icon-list__items {
-		margin: -$grid-unit-20 0;
-	}
+	margin: -$grid-unit-20 0;
 }
 

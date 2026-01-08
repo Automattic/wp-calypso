@@ -10,13 +10,35 @@ import type { IconListItemProps } from './types';
 import './icon-list-item.scss';
 
 function UnforwardedIconListItem(
-	{ title, description, decoration, suffix, className }: IconListItemProps,
+	{
+		title,
+		description,
+		decoration,
+		suffix,
+		variant = 'default',
+		alignment = 'center',
+		className,
+	}: IconListItemProps,
 	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
+	const alignmentMap = {
+		top: 'flex-start',
+		center: 'center',
+		bottom: 'flex-end',
+	} as const;
+
 	return (
 		<VStack className={ clsx( 'icon-list-item', className ) } ref={ ref } as="span">
-			<HStack spacing={ 4 } justify="flex-start" alignment="center" as="span">
-				{ !! decoration && <span className="icon-list-item__decoration">{ decoration }</span> }
+			<HStack spacing={ 4 } justify="flex-start" alignment={ alignmentMap[ alignment ] } as="span">
+				{ !! decoration && (
+					<span
+						className={ clsx( 'icon-list-item__decoration', {
+							'icon-list-item__decoration--prominent': variant === 'prominent',
+						} ) }
+					>
+						{ decoration }
+					</span>
+				) }
 				<HStack spacing={ 3 } as="span">
 					<VStack spacing={ 1 } as="span">
 						<Text weight={ 500 } lineHeight="20px">
