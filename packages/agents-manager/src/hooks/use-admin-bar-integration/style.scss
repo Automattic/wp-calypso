@@ -1,7 +1,9 @@
+@import '../variables.scss';
+
 /**
  * WP-ADMIN Masterbar Styling
  */
- #wpadminbar #wp-toolbar {
+#wpadminbar #wp-toolbar {
 	#wp-admin-bar-agents-manager {
 		padding: 0;
 		width: 43px;
@@ -90,6 +92,7 @@
 	}
 
 	#wp-admin-bar-top-secondary {
+		border-top-right-radius: $main-border-radius;
 
 		@media (max-width: 782px) {
 
