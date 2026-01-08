@@ -6,7 +6,7 @@ import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { useLocation } from 'react-router-dom';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
-import { getOdieTransferMessage } from '../constants';
+import { getOdieTransferMessages, getZendeskChatStartedMetaMessage } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -15,7 +15,7 @@ import {
 	getOdieIdFromInteraction,
 	getIsRequestingHumanSupport,
 } from '../utils';
-import type { Chat, Message, OdieAllBotSlugs } from '../types';
+import type { Chat, Message } from '../types';
 
 function isEqual( message1: Message, message2: Message ) {
 	const message1Id = getMessageUniqueIdentifier( message1 );
@@ -159,9 +159,8 @@ export const useGetCombinedChat = (
 								conversationId: conversation.id,
 								messages: [
 									...( odieChat ? filteredOdieMessages : [] ),
-									...getOdieTransferMessage(
-										currentSupportInteraction?.bot_slug as OdieAllBotSlugs
-									),
+									...getOdieTransferMessages( currentSupportInteraction?.bot_slug ),
+									getZendeskChatStartedMetaMessage(),
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 										...( isSameConversation

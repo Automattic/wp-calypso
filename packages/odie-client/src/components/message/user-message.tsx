@@ -87,25 +87,31 @@ export const UserMessage = ( {
 	const showGetSupport = isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage );
 	const showActionButtons = ! isRequestingHumanSupport && ! isErrorMessage;
 
-	const shouldOverrideWithForwardMessage = isRequestingHumanSupport && chat.provider !== 'zendesk';
+	const messageContent = () => {
+		if ( ! isRequestingHumanSupport ) {
+			return message.content;
+		}
 
-	const messageContent = shouldOverrideWithForwardMessage
-		? getDisplayMessage(
-				!! hasRecentOpenConversation,
-				isUserEligibleForPaidSupport,
-				canConnectToZendesk,
-				forceEmailSupport,
-				isChatRestricted,
-				message?.context?.flags?.is_error_message,
-				isChatLoaded
-		  )
-		: message.content;
+		if ( chat.provider === 'zendesk' ) {
+			return '';
+		}
+
+		return getDisplayMessage(
+			!! hasRecentOpenConversation,
+			isUserEligibleForPaidSupport,
+			canConnectToZendesk,
+			forceEmailSupport,
+			isChatRestricted,
+			message?.context?.flags?.is_error_message,
+			isChatLoaded
+		);
+	};
 
 	return (
 		<>
 			<div className="odie-chatbox-message__content">
 				<MarkdownOrChildren
-					messageContent={ messageContent }
+					messageContent={ messageContent() }
 					components={ {
 						a: ( props: React.ComponentProps< 'a' > ) => <CustomALink { ...props } />,
 					} }

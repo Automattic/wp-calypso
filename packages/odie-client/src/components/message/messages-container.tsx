@@ -1,4 +1,6 @@
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
@@ -27,6 +29,7 @@ interface ChatMessagesProps {
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
+	const isTestMode = isTestModeEnvironment();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const navigate = useNavigate();
@@ -141,13 +144,14 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				{ chat.messages?.length > 0 && <MessagesClusterizer messages={ chat.messages } /> }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
-				{ chat.provider === 'odie' && chat.status === 'sending' && (
-					<div
-						className="odie-chatbox__action-message"
-						ref={ ( div ) => div?.scrollIntoView( { behavior: 'smooth', block: 'end' } ) }
-					>
-						<ThinkingPlaceholder />
-					</div>
+				{ chat.provider === 'odie' && chat.status === 'sending' && <ThinkingPlaceholder /> }
+				{ chat.provider === 'odie' && chat.status === 'transfer' && (
+					<ThinkingPlaceholder
+						content={
+							__( 'Requesting human support', __i18n_text_domain__ ) +
+							( isTestMode ? '… (ZENDESK STAGING)' : '…' )
+						}
+					/>
 				) }
 				{ chat.provider.startsWith( 'zendesk' ) && (
 					<ZendeskTypingIndicator conversationId={ chat.conversationId } />

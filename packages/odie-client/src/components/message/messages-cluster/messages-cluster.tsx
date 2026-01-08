@@ -6,7 +6,7 @@ import { isCSATMessage } from '../../../utils';
 import {
 	hasFeedbackForm,
 	isAttachment,
-	isTransitionToSupportMessage,
+	isZendeskChatStartedMessage,
 	isZendeskIntroMessage,
 } from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
@@ -110,7 +110,7 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 	const groups = clusterMessagesBySender( messages );
 
 	return groups.map( ( group ) => {
-		const startingHumanSupport = group.messages.some( isTransitionToSupportMessage );
+		const startingHumanSupport = group.messages.some( isZendeskChatStartedMessage );
 		const endingHumanSupport = group.messages.some( isCSATMessage );
 
 		const messageHeader = () => {

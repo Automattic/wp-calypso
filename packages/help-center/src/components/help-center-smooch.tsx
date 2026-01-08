@@ -94,6 +94,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const { isEligibleForChat } = useChatStatus();
 	const { currentUser } = useHelpCenterContext();
 	const queryClient = useQueryClient();
+	const { currentUser } = useHelpCenterContext();
 	const smoochRef = useRef< HTMLDivElement >( null );
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
 	const {
