@@ -21,17 +21,10 @@ export interface IconListItemProps {
 	suffix?: React.ReactNode;
 	/**
 	 * Visual density variant that controls the emphasis and styling of the item.
-	 * - 'default': Standard appearance without icon border or sizing constraints (default)
-	 * - 'prominent': Enhanced appearance with icon border, fixed sizing, and centering
+	 * - 'default': Standard appearance without icon border, top-aligned decoration (default)
+	 * - 'prominent': Enhanced appearance with icon border, fixed sizing, and center-aligned decoration
 	 */
 	variant?: 'default' | 'prominent';
-	/**
-	 * Vertical alignment of the decoration relative to the text content.
-	 * - 'top': Align decoration to the top of the text
-	 * - 'center': Align decoration to the middle of the text (default)
-	 * - 'bottom': Align decoration to the bottom of the text
-	 */
-	alignment?: 'top' | 'center' | 'bottom';
 	/**
 	 * Optional CSS class name(s) to apply to the item.
 	 */
