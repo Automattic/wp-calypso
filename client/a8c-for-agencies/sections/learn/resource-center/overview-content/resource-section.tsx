@@ -3,7 +3,6 @@ import {
 	CardBody,
 	CardMedia,
 	Button,
-	Spinner,
 	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
@@ -19,7 +18,6 @@ interface ResourceSectionProps {
 	title: string;
 	description?: string;
 	resources: ResourceItem[];
-	isLoading: boolean;
 	onOpenVideoModal: ( resource: ResourceItem ) => void;
 	maxResources?: number;
 	showLogo?: boolean;
@@ -92,7 +90,6 @@ export default function ResourceSection( {
 	title,
 	description,
 	resources,
-	isLoading,
 	onOpenVideoModal,
 	maxResources,
 	showLogo = false,
@@ -100,23 +97,6 @@ export default function ResourceSection( {
 	tracksEventName,
 }: ResourceSectionProps ) {
 	const marginBottom = description ? 6 : 4;
-
-	if ( isLoading ) {
-		return (
-			<>
-				<Spacer marginBottom={ marginBottom }>
-					<Heading level={ 2 } weight={ 500 } size={ 20 }>
-						{ title }
-					</Heading>
-					{ description && <Text size={ 15 }>{ description }</Text> }
-				</Spacer>
-				<div style={ { textAlign: 'center', padding: '40px 0' } }>
-					<Spinner />
-				</div>
-				<Spacer marginBottom={ 12 } />
-			</>
-		);
-	}
 
 	if ( resources.length === 0 ) {
 		return null;

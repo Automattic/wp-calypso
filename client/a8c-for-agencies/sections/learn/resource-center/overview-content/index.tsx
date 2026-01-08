@@ -6,18 +6,23 @@ import {
 } from '@wordpress/components';
 import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import useFetchAgencyResources from 'calypso/a8c-for-agencies/data/learn/use-fetch-agency-resources';
 import { formatAgencyResources } from 'calypso/a8c-for-agencies/sections/learn/format-agency-resources';
 import BrowseAllResources from './browse-all-resources';
 import { useFilterResources } from './hooks/use-filter-resources';
 import ResourceSection from './resource-section';
 import { getYouTubeEmbedUrl } from './utils/youtube-embed';
 import type { ResourceItem } from './types';
+import type { APIAgencyResourcesResponse } from 'calypso/a8c-for-agencies/data/learn/types';
 
 import './style.scss';
 
-export default function ResourceCenterOverviewContent() {
-	const { data, isLoading } = useFetchAgencyResources();
+interface ResourceCenterOverviewContentProps {
+	data: APIAgencyResourcesResponse | undefined;
+}
+
+export default function ResourceCenterOverviewContent( {
+	data,
+}: ResourceCenterOverviewContentProps ) {
 	const [ showVideoModal, setShowVideoModal ] = useState( false );
 	const [ selectedResource, setSelectedResource ] = useState< ResourceItem | null >( null );
 
@@ -53,7 +58,6 @@ export default function ResourceCenterOverviewContent() {
 			<ResourceSection
 				title={ __( 'Top resources' ) }
 				resources={ topResources }
-				isLoading={ isLoading }
 				onOpenVideoModal={ handleOpenVideoModal }
 				maxResources={ 3 }
 				showLogo
@@ -65,7 +69,6 @@ export default function ResourceCenterOverviewContent() {
 				title={ __( 'The art of the deal' ) }
 				description={ __( 'Learn tips from our world-class sales team to win clients!' ) }
 				resources={ artOfTheDealResources }
-				isLoading={ isLoading }
 				onOpenVideoModal={ handleOpenVideoModal }
 				maxResources={ 2 }
 				className="resource-center-art-of-deal"
@@ -74,7 +77,6 @@ export default function ResourceCenterOverviewContent() {
 
 			<BrowseAllResources
 				resources={ browseAllResources }
-				isLoading={ isLoading }
 				onOpenVideoModal={ handleOpenVideoModal }
 			/>
 

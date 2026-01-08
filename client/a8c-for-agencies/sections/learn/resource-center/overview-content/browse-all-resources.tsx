@@ -28,7 +28,6 @@ const initialView: View = {
 
 interface BrowseAllResourcesProps {
 	resources: ResourceItem[];
-	isLoading: boolean;
 	onOpenVideoModal: ( resource: ResourceItem ) => void;
 }
 
@@ -86,7 +85,6 @@ function ResourceItemCard( {
 
 export default function BrowseAllResources( {
 	resources,
-	isLoading,
 	onOpenVideoModal,
 }: BrowseAllResourcesProps ) {
 	const [ view, setView ] = useState< View >( initialView );
@@ -196,7 +194,6 @@ export default function BrowseAllResources( {
 				onChangeView={ setView }
 				paginationInfo={ paginationInfo }
 				defaultLayouts={ { list: {} } }
-				isLoading={ isLoading }
 				search
 			>
 				<HStack justify="start" style={ { paddingBlock: '16px' } }>
