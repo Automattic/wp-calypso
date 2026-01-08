@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, FormLabel } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -172,28 +173,30 @@ class Profile extends Component {
 							} ) }
 						</p>
 
-						<div className="profile__gravatar-profile-disclosure">
-							<div>
-								<h4 className="profile__gravatar-profile-title">
-									{ this.props.translate( 'Your WordPress.com profile is powered by Gravatar.' ) }
-								</h4>
-								<p className="profile__gravatar-profile-description">
-									{ this.props.translate(
-										'Updating your avatar, name, and about info here will also update it across all sites that use Gravatar profiles. {{a}}What is Gravatar?{{/a}}',
-										{
-											components: {
-												a: (
-													<ExternalLink href="https://support.gravatar.com/basic/what-is-gravatar/" />
-												),
-											},
-										}
-									) }
-								</p>
+						{ ! isEnabled( 'me/profile-gravatar-redesign' ) && (
+							<div className="profile__gravatar-profile-disclosure">
+								<div>
+									<h4 className="profile__gravatar-profile-title">
+										{ this.props.translate( 'Your WordPress.com profile is powered by Gravatar.' ) }
+									</h4>
+									<p className="profile__gravatar-profile-description">
+										{ this.props.translate(
+											'Updating your avatar, name, and about info here will also update it across all sites that use Gravatar profiles. {{a}}What is Gravatar?{{/a}}',
+											{
+												components: {
+													a: (
+														<ExternalLink href="https://support.gravatar.com/basic/what-is-gravatar/" />
+													),
+												},
+											}
+										) }
+									</p>
+								</div>
+								<div>
+									<WPAndGravatarLogo />
+								</div>
 							</div>
-							<div>
-								<WPAndGravatarLogo />
-							</div>
-						</div>
+						) }
 
 						<p className="profile__submit-button-wrapper">
 							<FormButton

@@ -13,9 +13,16 @@ interface EditGravatarProps {
 	userEmail: string;
 	/** Whether the user's email is verified */
 	isEmailVerified?: boolean;
+	/** Whether to show the avatar preview (default: true) */
+	showAvatarPreview?: boolean;
 }
 
-const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGravatarProps ) => {
+const EditGravatar = ( {
+	isEmailVerified = true,
+	avatarUrl,
+	userEmail,
+	showAvatarPreview = true,
+}: EditGravatarProps ) => {
 	const [ tempImage, setTempImage ] = useState< string | null >( null );
 	const [ showEmailVerificationNotice, setShowEmailVerificationNotice ] =
 		useState< boolean >( false );
@@ -120,6 +127,34 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 			quickEditorRef.current?.open?.();
 		}
 	};
+
+	// Button-only mode (no avatar preview)
+	if ( ! showAvatarPreview ) {
+		return (
+			<>
+				<Button variant="secondary" onClick={ openGravatarEditor }>
+					{ __( 'Update avatar' ) }
+				</Button>
+				{ showEmailVerificationNotice && (
+					<div
+						style={ {
+							backgroundColor: '#fff8e5',
+							padding: 12,
+							margin: '8px 0',
+							borderLeft: '3px solid #f0b849',
+						} }
+					>
+						<p style={ { marginBottom: 8 } }>
+							{ __( 'Please verify your email address to change your profile photo.' ) }
+						</p>
+						<Button onClick={ closeVerifyEmailDialog } variant="secondary">
+							{ __( 'Close' ) }
+						</Button>
+					</div>
+				) }
+			</>
+		);
+	}
 
 	return (
 		<VStack spacing={ 4 }>

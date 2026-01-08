@@ -1,4 +1,5 @@
 import { userSettingsMutation } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -23,6 +24,8 @@ import EditGravatar from './edit-gravatar';
 import GravatarLogo from './gravatar-logo';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
+
+import './style.scss';
 
 interface GravatarProfileSectionProps {
 	profile: UserSettings;
@@ -93,6 +96,11 @@ const form: Form = {
 	fields: [ 'avatar_URL', 'display_name', 'user_URL', 'description' ],
 };
 
+const formRedesign: Form = {
+	layout: { type: 'regular' as const, labelPosition: 'top' as const },
+	fields: [ 'display_name', 'user_URL', 'description' ],
+};
+
 // Derive controlled keys from fields, excluding avatar_URL since it's not editable
 const controlledKeys = fields
 	.filter( ( field ) => field.id !== 'avatar_URL' )
@@ -141,37 +149,86 @@ export default function GravatarProfileSection( {
 		} );
 	};
 
+	const isRedesignEnabled = isEnabled( 'me/profile-gravatar-redesign' );
+
+	const sectionDescription = isRedesignEnabled
+		? createInterpolateElement(
+				__(
+					'Your avatar is powered by Gravatar and appears across the web. <link>What is Gravatar?</link>'
+				),
+				{
+					// @ts-expect-error children prop is injected by createInterpolateElement
+					link: <ExternalLink href="https://support.gravatar.com/basic/what-is-gravatar/" />,
+				}
+		  )
+		: createInterpolateElement(
+				sprintf(
+					/* translators: %1$s: User email */
+					__(
+						'Your WordPress profile is linked to Gravatar, making your Gravatar public by default. It might appear on other sites using Gravatar when logged in with <strong>%s</strong>. Manage your Gravatar settings on your <external>Gravatar profile</external>'
+					),
+					data.user_email
+				),
+				{
+					strong: <strong />,
+					// @ts-expect-error children prop is injected by createInterpolateElement
+					external: <ExternalLink href="https://gravatar.com/profile" />,
+				}
+		  );
+
 	return (
 		<form onSubmit={ handleSubmit }>
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<SectionHeader
-							decoration={ <GravatarLogo /> }
-							level={ 3 }
-							title={ __( 'Public Gravatar profile' ) }
-							description={ createInterpolateElement(
-								sprintf(
-									/* translators: %1$s: User email */
-									__(
-										'Your WordPress profile is linked to Gravatar, making your Gravatar public by default. It might appear on other sites using Gravatar when logged in with <strong>%s</strong>. Manage your Gravatar settings on your <external>Gravatar profile</external>'
-									),
-									data.user_email
-								),
-								{
-									strong: <strong />,
-									// @ts-expect-error children prop is injected by createInterpolateElement
-									external: <ExternalLink href="https://gravatar.com/profile" />,
-								}
-							) }
-						/>
+						{ ! isRedesignEnabled && (
+							<SectionHeader
+								decoration={ <GravatarLogo /> }
+								level={ 3 }
+								title={ __( 'Public Gravatar profile' ) }
+								description={ sectionDescription }
+							/>
+						) }
+
+						{ isRedesignEnabled && (
+							<div className="gravatar-profile-redesign">
+								<div className="gravatar-profile-redesign__content">
+									<div className="gravatar-profile-redesign__avatar-wrapper">
+										<img
+											className="gravatar-profile-redesign__avatar"
+											src={ data.avatar_URL }
+											alt=""
+										/>
+										<div className="gravatar-profile-redesign__logo-badge">
+											<GravatarLogo size={ 16 } />
+										</div>
+									</div>
+									<div className="gravatar-profile-redesign__text">
+										<p className="gravatar-profile-redesign__description">
+											{ __( 'Your avatar is powered by Gravatar and appears across the web.' ) }
+										</p>
+										<ExternalLink
+											className="gravatar-profile-redesign__learn-more"
+											href="https://support.gravatar.com/basic/what-is-gravatar/"
+										>
+											{ __( 'What is Gravatar?' ) }
+										</ExternalLink>
+									</div>
+								</div>
+								<EditGravatar
+									avatarUrl={ data.avatar_URL }
+									userEmail={ data.user_email }
+									showAvatarPreview={ false }
+								/>
+							</div>
+						) }
 
 						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< UserSettings >
 							data={ data }
 							fields={ fields }
 							validity={ validity }
-							form={ form }
+							form={ isRedesignEnabled ? formRedesign : form }
 							onChange={ onChange }
 						/>
 

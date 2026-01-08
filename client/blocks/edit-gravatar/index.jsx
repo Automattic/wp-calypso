@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon, ExternalLink } from '@automattic/components';
 import { GravatarQuickEditorCore } from '@gravatar-com/quick-editor';
 import { Icon, Button } from '@wordpress/components';
@@ -21,6 +22,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { receiveGravatarDetails } from 'calypso/state/gravatar-status/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import GravatarLogo from './gravatar-logo';
 
 import './style.scss';
 
@@ -139,10 +141,13 @@ export class EditGravatar extends Component {
 			return this.renderGravatarProfileHidden();
 		}
 
+		const isRedesignEnabled = isEnabled( 'me/profile-gravatar-redesign' );
+
 		return (
 			<div
 				className={ clsx( 'edit-gravatar', {
 					'edit-gravatar--is-unverified': ! user.email_verified,
+					'edit-gravatar--redesign': isRedesignEnabled,
 				} ) }
 			>
 				{ this.state.showEmailVerificationNotice && (
@@ -158,6 +163,16 @@ export class EditGravatar extends Component {
 						</div>
 					) }
 				</div>
+
+				{ isRedesignEnabled && (
+					<div className="edit-gravatar__branding">
+						<GravatarLogo size={ 20 } />
+						<span className="edit-gravatar__branding-text">
+							{ translate( 'Powered by Gravatar' ) }
+						</span>
+					</div>
+				) }
+
 				<div className="edit-gravatar__explanation-container">
 					{ user.email_verified ? (
 						<Button
@@ -184,6 +199,15 @@ export class EditGravatar extends Component {
 						</Button>
 					) }
 				</div>
+
+				{ isRedesignEnabled && (
+					<ExternalLink
+						className="edit-gravatar__learn-more"
+						href="https://support.gravatar.com/basic/what-is-gravatar/"
+					>
+						{ translate( 'What is Gravatar?' ) }
+					</ExternalLink>
+				) }
 			</div>
 		);
 	}
