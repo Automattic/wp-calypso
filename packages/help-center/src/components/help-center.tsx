@@ -38,7 +38,7 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [] );
 	const { currentUser, site, sectionName } = useHelpCenterContext();
 	const { isEligibleForChat } = useChatStatus();
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
 	const hasOpenZendeskConversations =
