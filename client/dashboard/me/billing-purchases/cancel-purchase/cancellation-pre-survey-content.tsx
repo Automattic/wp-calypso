@@ -52,6 +52,7 @@ export default function CancellationPreSurveyContent( {
 			onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 			onKeepSubscriptionClick={ onKeepSubscriptionClick }
 			onCancellationComplete={ onCancellationComplete }
+			flowType={ flowType }
 		/>
 	) : (
 		<CancellationMainContent
