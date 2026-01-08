@@ -15,8 +15,8 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useGetSupportInteractions } from '../data/use-get-support-interactions';
 import { useChatStatus, useShouldUseUnifiedAgent } from '../hooks';
+import { useGetSupportInteractions } from '../hooks/use-get-support-interactions';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
