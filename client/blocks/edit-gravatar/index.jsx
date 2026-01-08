@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon, ExternalLink } from '@automattic/components';
+import { GravatarLogo } from '@automattic/components/src/logos/gravatar-logo';
 import { GravatarQuickEditorCore } from '@gravatar-com/quick-editor';
 import { Icon, Button } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
@@ -22,7 +23,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { receiveGravatarDetails } from 'calypso/state/gravatar-status/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import GravatarLogo from './gravatar-logo';
 
 import './style.scss';
 
@@ -166,7 +166,7 @@ export class EditGravatar extends Component {
 
 				{ isRedesignEnabled && (
 					<div className="edit-gravatar__branding">
-						<GravatarLogo size={ 20 } />
+						<GravatarLogo className="edit-gravatar__gravatar-logo" size={ 20 } />
 						<span className="edit-gravatar__branding-text">
 							{ translate( 'Powered by Gravatar' ) }
 						</span>

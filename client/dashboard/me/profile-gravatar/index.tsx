@@ -1,5 +1,6 @@
 import { userSettingsMutation } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { GravatarLogo } from '@automattic/components/src/logos/gravatar-logo';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -21,7 +22,6 @@ import { NavigationBlocker } from '../../app/navigation-blocker';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import EditGravatar from './edit-gravatar';
-import GravatarLogo from './gravatar-logo';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
@@ -183,7 +183,7 @@ export default function GravatarProfileSection( {
 					<VStack spacing={ 4 }>
 						{ ! isRedesignEnabled && (
 							<SectionHeader
-								decoration={ <GravatarLogo /> }
+								decoration={ <GravatarLogo fill="#3858E9" /> }
 								level={ 3 }
 								title={ __( 'Public Gravatar profile' ) }
 								description={ sectionDescription }
@@ -200,7 +200,7 @@ export default function GravatarProfileSection( {
 											alt=""
 										/>
 										<div className="gravatar-profile-redesign__logo-badge">
-											<GravatarLogo size={ 16 } />
+											<GravatarLogo fill="#3858E9" size={ 16 } />
 										</div>
 									</div>
 									<div className="gravatar-profile-redesign__text">
