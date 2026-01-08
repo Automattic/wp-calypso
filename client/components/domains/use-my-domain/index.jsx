@@ -440,11 +440,11 @@ function UseMyDomain( props ) {
 		}
 
 		initialValidation.current = true;
-		initialQuery &&
-			! initialMode &&
-			! getDomainNameValidationErrorMessage( initialQuery ) &&
+		// Auto-submit if there's an initial query, we're in domain input mode, and validation passes
+		if ( mode === inputMode.domainInput && ! getDomainNameValidationErrorMessage( initialQuery ) ) {
 			onNext();
-	}, [ initialMode, initialQuery, onNext ] );
+		}
+	}, [ mode, initialQuery, onNext ] );
 
 	useEffect( () => {
 		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode ) {

@@ -74,8 +74,8 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'plan',
 			label: __( 'Plan' ),
-			getValue: ( { item } ) => getSitePlanDisplayName( item ) ?? '',
-			render: function PlanField( { field, item } ) {
+			getValue: ( { item } ) => item.plan?.product_name_en ?? '',
+			render: function PlanField( { item } ) {
 				const { user } = useAuth();
 				return (
 					<Plan
@@ -83,7 +83,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
 						isJetpack={ item.jetpack }
 						isOwner={ item.site_owner === user.ID }
-						value={ field.getValue( { item } ) }
+						value={ getSitePlanDisplayName( item ) ?? '' }
 					/>
 				);
 			},
@@ -95,10 +95,18 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 
 				// A plan may have different product_slugs due to the period.
 				// However, a filter can only represent one value.
-				// As a result, it seems better to use the name as value for filters.
-				return Array.from( new Set( plan.map( ( plan ) => plan.name ) ) ).map( ( name ) => ( {
-					label: name,
-					value: name,
+				// As a result, it seems better to use the untranslated name as value for filters.
+				const elements = plan.reduce(
+					( acc, current ) => ( {
+						...acc,
+						[ current.name ]: current.name_en,
+					} ),
+					{}
+				);
+
+				return Object.entries( elements ).map( ( [ label, value ] ) => ( {
+					label,
+					value,
 				} ) );
 			},
 			filterBy: {
@@ -299,10 +307,18 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 
 				// A plan may have different product_slugs due to the period.
 				// However, a filter can only represent one value.
-				// As a result, it seems better to use the name as value for filters.
-				return Array.from( new Set( plan.map( ( plan ) => plan.name ) ) ).map( ( name ) => ( {
-					label: name,
-					value: name,
+				// As a result, it seems better to use the untranslated name as value for filters.
+				const elements = plan.reduce(
+					( acc, current ) => ( {
+						...acc,
+						[ current.name ]: current.name_en,
+					} ),
+					{}
+				);
+
+				return Object.entries( elements ).map( ( [ label, value ] ) => ( {
+					label,
+					value,
 				} ) );
 			},
 			filterBy: {

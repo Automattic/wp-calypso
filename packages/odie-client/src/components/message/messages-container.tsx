@@ -136,8 +136,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							currentUser?.display_name
 						) }
 						key={ 0 }
-						currentUser={ currentUser }
-						displayChatWithSupportLabel={ false }
 					/>
 				) }
 				{ chat.messages?.length > 0 && <MessagesClusterizer messages={ chat.messages } /> }
