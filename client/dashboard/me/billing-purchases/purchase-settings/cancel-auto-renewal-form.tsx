@@ -23,10 +23,6 @@ const CancelAutoRenewalForm: FC< CancelAutoRenewFormProps > = ( {
 	isVisible,
 	onClose,
 } ) => {
-	const [ state, setState ] = useState( {
-		response: '',
-	} );
-
 	const getProductTypeString = () => {
 		if ( purchase.is_domain_registration ) {
 			/* translators: as in "domain name"*/
@@ -43,26 +39,31 @@ const CancelAutoRenewalForm: FC< CancelAutoRenewFormProps > = ( {
 
 	const productType = getProductTypeString();
 
-	const radioButtons = shuffleArray( [
-		{
-			value: 'let-it-expire',
-			/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
-			label: sprintf( __( "I'm going to let this %(productType)s expire." ), {
-				productType,
-			} ),
-		},
-		{
-			value: 'manual-renew',
-			/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
-			label: sprintf( __( "I'm going to renew the %(productType)s, but will do it manually." ), {
-				productType,
-			} ),
-		},
-		{
-			value: 'not-sure',
-			label: __( "I'm not sure." ),
-		},
-	] );
+	const [ state, setState ] = useState( {
+		response: '',
+		radioButtons: shuffleArray( [
+			{
+				value: 'let-it-expire',
+				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
+				label: sprintf( __( "I'm going to let this %(productType)s expire." ), {
+					productType,
+				} ),
+			},
+			{
+				value: 'manual-renew',
+				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
+				label: sprintf( __( "I'm going to renew the %(productType)s, but will do it manually." ), {
+					productType,
+				} ),
+			},
+			{
+				value: 'not-sure',
+				label: __( "I'm not sure." ),
+			},
+		] ),
+	} );
+
+	const { radioButtons } = state;
 
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
 	const submitMarketingSurvey = ( surveyDetails: MarketingSurveyDetails ) =>

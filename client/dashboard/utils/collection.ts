@@ -10,6 +10,7 @@ export function shuffleArray< T >( collection: T[] ): T[] {
 		newArray[ randomPointer ] = newArray[ pointer ];
 		newArray[ pointer ] = valueAtRandomPointer;
 	} );
+	collection = collection.filter( ( val ) => val );
 	return newArray;
 }
 

@@ -41,6 +41,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { moreVertical, calendar, currencyDollar, commentAuthorAvatar } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -85,6 +86,7 @@ import {
 } from '../../../utils/purchase';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
+import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -528,9 +530,15 @@ function WPComResourceMeters( { purchase, site }: { purchase: Purchase; site: Si
 function getFields( {
 	isMutationPending,
 	user,
+	showAutoRenewDisablingDialog,
+	openAutoRenewDisablingDialog,
+	closeAutoRenewDisablingDialog,
 }: {
 	isMutationPending?: boolean;
 	user: User;
+	showAutoRenewDisablingDialog: boolean;
+	openAutoRenewDisablingDialog: () => void;
+	closeAutoRenewDisablingDialog: () => void;
 } ): Field< Purchase >[] {
 	return [
 		{
@@ -566,19 +574,45 @@ function getFields( {
 					return undefined;
 				} )();
 				return (
-					<ToggleControl
-						__nextHasNoMarginBottom
-						className="purchase-settings__toggle-control"
-						label={
-							shouldAllowExpiredAutoRenewToggle( purchase )
-								? __( 'Re-activate subscription' )
-								: field.label
-						}
-						checked={ getValue( { item: purchase } ) }
-						disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
-						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
-						help={ helpText }
-					/>
+					<>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							className="purchase-settings__toggle-control"
+							label={
+								shouldAllowExpiredAutoRenewToggle( purchase )
+									? __( 'Re-activate subscription' )
+									: field.label
+							}
+							checked={ getValue( { item: purchase } ) }
+							disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
+							onChange={ ( enabled: boolean ) => {
+								if ( enabled ) {
+									if ( showAutoRenewDisablingDialog ) {
+										closeAutoRenewDisablingDialog();
+									}
+									onChange( { is_auto_renew_enabled: enabled } );
+									return;
+								}
+								if ( ! enabled && ! showAutoRenewDisablingDialog ) {
+									openAutoRenewDisablingDialog();
+								}
+							} }
+							// onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
+							help={ helpText }
+						/>
+						<AutoRenewDisablingDialog
+							isVisible={ showAutoRenewDisablingDialog }
+							planName={ purchase.product_name }
+							purchase={ purchase }
+							siteDomain={ purchase.site_slug }
+							isAtomicSite={ false }
+							locale={ locale }
+							onClose={ closeAutoRenewDisablingDialog }
+							onConfirm={ () => {
+								onChange( { is_auto_renew_enabled: false } );
+							} }
+						/>
+					</>
 				);
 			},
 		},
@@ -611,12 +645,26 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		isPending: isMutationPending,
 	} = useMutation( userPurchaseSetAutoRenewQuery() );
 	const { user } = useAuth();
+	const [ state, setState ] = useState( { showAutoRenewDisablingDialog: false } );
+	const { showAutoRenewDisablingDialog } = state;
+	const openAutoRenewDisablingDialog = () => {
+		setState( { showAutoRenewDisablingDialog: true } );
+	};
+	const closeAutoRenewDisablingDialog = () => {
+		setState( { showAutoRenewDisablingDialog: false } );
+	};
 	return (
 		<Card>
 			<CardBody>
 				<DataForm< Purchase >
 					data={ purchase }
-					fields={ getFields( { isMutationPending, user } ) }
+					fields={ getFields( {
+						isMutationPending,
+						user,
+						showAutoRenewDisablingDialog,
+						openAutoRenewDisablingDialog,
+						closeAutoRenewDisablingDialog,
+					} ) }
 					form={ form }
 					onChange={ ( newData ) => {
 						if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
