@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { Icon } from '@wordpress/components';
 import { cog, page, layout } from '@wordpress/icons';
-import { Card, CardBody } from '../card';
 import IconList from './index';
 
 const meta: Meta< typeof IconList > = {
@@ -14,23 +13,23 @@ export default meta;
 
 type Story = StoryObj< typeof IconList >;
 
-export const Standalone: Story = {
+export const Default: Story = {
 	args: {
 		children: (
 			<>
 				<IconList.Item
-					title="Settings"
-					description="Manage your site settings"
+					title="First item"
+					description="First item description"
 					decoration={ <Icon icon={ cog } /> }
 				/>
 				<IconList.Item
-					title="Pages"
-					description="Create and manage pages"
+					title="Second item"
+					description="Second item description"
 					decoration={ <Icon icon={ page } /> }
 				/>
 				<IconList.Item
-					title="Layout"
-					description="Customize your site layout"
+					title="Third item"
+					description="Third item description"
 					decoration={ <Icon icon={ layout } /> }
 				/>
 			</>
@@ -38,28 +37,61 @@ export const Standalone: Story = {
 	},
 };
 
-export const InCard: Story = {
-	render: () => (
-		<Card>
-			<CardBody>
-				<IconList>
-					<IconList.Item
-						title="Settings"
-						description="Manage your site settings"
-						decoration={ <Icon icon={ cog } /> }
-					/>
-					<IconList.Item
-						title="Pages"
-						description="Create and manage pages"
-						decoration={ <Icon icon={ page } /> }
-					/>
-					<IconList.Item
-						title="Layout"
-						description="Customize your site layout"
-						decoration={ <Icon icon={ layout } /> }
-					/>
-				</IconList>
-			</CardBody>
-		</Card>
-	),
+export const WithTitle: Story = {
+	args: {
+		title: 'Icon List Title',
+		children: (
+			<>
+				<IconList.Item
+					title="First item"
+					description="First item description"
+					decoration={ <Icon icon={ cog } /> }
+				/>
+				<IconList.Item
+					title="Second item"
+					description="Second item description"
+					decoration={ <Icon icon={ page } /> }
+				/>
+			</>
+		),
+	},
+};
+
+export const WithTitleAndDescription: Story = {
+	args: {
+		title: 'Icon List Title',
+		description: 'This is a description of the icon list',
+		children: (
+			<>
+				<IconList.Item
+					title="First item"
+					description="First item description"
+					decoration={ <Icon icon={ cog } /> }
+				/>
+				<IconList.Item
+					title="Second item"
+					description="Second item description"
+					decoration={ <Icon icon={ page } /> }
+				/>
+				<IconList.Item
+					title="Third item"
+					description="Third item description"
+					decoration={ <Icon icon={ layout } /> }
+				/>
+			</>
+		),
+	},
+};
+
+export const WithoutIcons: Story = {
+	args: {
+		title: 'Simple List',
+		children: (
+			<>
+				<IconList.Item title="First item" description="First item description" />
+				<IconList.Item title="Second item" description="Second item description" />
+				<IconList.Item title="Third item" description="Third item description" />
+			</>
+		),
+	},
 };
