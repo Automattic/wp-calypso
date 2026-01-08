@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 
 interface FlashMessageProps {
 	id: string;
+	refreshKey?: string;
 	message: string;
 	type?: 'success' | 'error';
 }
@@ -20,7 +21,12 @@ export function reloadWithFlashMessage( messageId: string ) {
  * Allows a snackbar to be shown on page load based on a query parameter.
  * Clears the query parameter when done.
  */
-export default function FlashMessage( { id, message, type = 'success' }: FlashMessageProps ) {
+export default function FlashMessage( {
+	id,
+	refreshKey = id,
+	message,
+	type = 'success',
+}: FlashMessageProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {
@@ -45,9 +51,9 @@ export default function FlashMessage( { id, message, type = 'success' }: FlashMe
 		}
 
 		// This effect has side effects, like editing the URL. We only ever
-		// want to run it once on mount.
+		// want to run it once on mount or when the `refreshKey` prop changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ refreshKey ] );
 
 	return null;
 }
