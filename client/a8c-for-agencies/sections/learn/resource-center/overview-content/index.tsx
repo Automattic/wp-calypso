@@ -8,10 +8,9 @@ import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import useFetchAgencyResources from 'calypso/a8c-for-agencies/data/learn/use-fetch-agency-resources';
 import { formatAgencyResources } from 'calypso/a8c-for-agencies/sections/learn/format-agency-resources';
-import ArtOfTheDeal from './art-of-the-deal';
 import BrowseAllResources from './browse-all-resources';
 import { useFilterResources } from './hooks/use-filter-resources';
-import TopResources from './top-resources';
+import ResourceSection from './resource-section';
 import { getYouTubeEmbedUrl } from './utils/youtube-embed';
 import type { ResourceItem } from './types';
 
@@ -51,16 +50,26 @@ export default function ResourceCenterOverviewContent() {
 				</Text>
 			</Spacer>
 
-			<TopResources
+			<ResourceSection
+				title={ __( 'Top resources' ) }
 				resources={ topResources }
 				isLoading={ isLoading }
 				onOpenVideoModal={ handleOpenVideoModal }
+				maxResources={ 3 }
+				showLogo
+				className="resource-center-top-resources"
+				tracksEventName="calypso_a4a_resource_center_top_resource_click"
 			/>
 
-			<ArtOfTheDeal
+			<ResourceSection
+				title={ __( 'The art of the deal' ) }
+				description={ __( 'Learn tips from our world-class sales team to win clients!' ) }
 				resources={ artOfTheDealResources }
 				isLoading={ isLoading }
 				onOpenVideoModal={ handleOpenVideoModal }
+				maxResources={ 2 }
+				className="resource-center-art-of-deal"
+				tracksEventName="calypso_a4a_resource_center_art_of_deal_click"
 			/>
 
 			<BrowseAllResources
