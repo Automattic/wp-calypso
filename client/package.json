@@ -258,7 +258,7 @@
 		"html-loader": "^0.5.5",
 		"ignore-loader": "^0.1.2",
 		"pkg-dir": "^5.0.0",
-		"react-router": "^6.23.1",
+		"react-router": "^6.30.2",
 		"react-test-renderer": "^18.3.1",
 		"redux-mock-store": "^1.5.5",
 		"storybook": "^8.6.14",
