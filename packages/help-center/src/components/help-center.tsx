@@ -36,7 +36,7 @@ const HelpCenter: React.FC< Container > = ( {
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
 	const { currentUser } = useHelpCenterContext();
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
 	const hasOpenZendeskConversations =
