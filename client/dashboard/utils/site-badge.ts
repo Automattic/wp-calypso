@@ -22,3 +22,14 @@ export function getSiteBadge( site: Site ): SiteBadge {
 
 	return null;
 }
+
+export function isSiteStatusBadge( badge: SiteBadge ): boolean {
+	const statusBadges = [
+		'deleted',
+		'migration_pending',
+		'migration_started',
+		'difm_lite_in_progress',
+	];
+
+	return statusBadges.includes( badge ?? '' );
+}
