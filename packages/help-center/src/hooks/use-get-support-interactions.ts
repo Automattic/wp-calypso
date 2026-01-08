@@ -1,6 +1,7 @@
 import { handleSupportInteractionsFetch } from '@automattic/odie-client/src/data/handle-support-interactions-fetch';
 import { isTestModeEnvironment, useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import type { SupportProvider } from '../types';
 
 /**
@@ -12,8 +13,10 @@ export const useGetSupportInteractions = (
 	enabled = true
 ) => {
 	const isTestMode = isTestModeEnvironment();
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( enabled );
-	let shouldFetch = enabled;
+	const { currentUser } = useHelpCenterContext();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
+
+	let shouldFetch = enabled && !! currentUser?.ID;
 	// Only fetch Zendesk interactions if the user can connect to Zendesk.
 	if ( ( provider === 'zendesk' || provider === 'zendesk-staging' ) && ! canConnectToZendesk ) {
 		shouldFetch = false;
