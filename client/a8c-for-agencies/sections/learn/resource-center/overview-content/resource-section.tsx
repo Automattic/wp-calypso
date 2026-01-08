@@ -1,17 +1,9 @@
 import {
-	Card,
-	CardBody,
-	CardMedia,
-	Button,
 	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useResourceCtaLabel } from './hooks/use-resource-cta-label';
+import ResourceCard from './resource-card';
 import type { ResourceItem } from './types';
 
 interface ResourceSectionProps {
@@ -23,67 +15,6 @@ interface ResourceSectionProps {
 	showLogo?: boolean;
 	className?: string;
 	tracksEventName: string;
-}
-
-function ResourceCard( {
-	resource,
-	onOpenVideoModal,
-	showLogo = false,
-	tracksEventName,
-}: {
-	resource: ResourceItem;
-	onOpenVideoModal: ( resource: ResourceItem ) => void;
-	showLogo?: boolean;
-	tracksEventName: string;
-} ) {
-	const dispatch = useDispatch();
-	const ctaLabel = useResourceCtaLabel( resource.format );
-	const isVideo = resource.format === 'Video';
-
-	const handleClick = ( e: React.MouseEvent ) => {
-		if ( isVideo ) {
-			e.preventDefault();
-			onOpenVideoModal( resource );
-		}
-
-		dispatch(
-			recordTracksEvent( tracksEventName, {
-				resource_id: resource.id,
-				resource_name: resource.name,
-			} )
-		);
-	};
-
-	return (
-		<Card isBorderless size="none">
-			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-					{ resource.previewImage && (
-						<CardMedia style={ { borderRadius: '4px' } }>
-							<img src={ resource.previewImage } alt={ resource.name } />
-						</CardMedia>
-					) }
-					{ showLogo && <HStack>{ resource.logo }</HStack> }
-					<VStack spacing={ 1 }>
-						<Text size={ 13 } weight={ 500 }>
-							{ resource.name }
-						</Text>
-						<Text variant="muted" size={ 12 }>
-							{ resource.description }
-						</Text>
-					</VStack>
-				</VStack>
-				<Button
-					variant="secondary"
-					{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
-					onClick={ handleClick }
-					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
-				>
-					{ ctaLabel }
-				</Button>
-			</CardBody>
-		</Card>
-	);
 }
 
 export default function ResourceSection( {
@@ -120,7 +51,9 @@ export default function ResourceSection( {
 						resource={ resource }
 						onOpenVideoModal={ onOpenVideoModal }
 						showLogo={ showLogo }
+						showPreviewImage
 						tracksEventName={ tracksEventName }
+						isBorderless
 					/>
 				) ) }
 			</div>

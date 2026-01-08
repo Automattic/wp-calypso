@@ -1,19 +1,12 @@
 import {
-	Card,
-	CardBody,
-	Button,
-	__experimentalText as Text,
 	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
-	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useResourceCtaLabel } from './hooks/use-resource-cta-label';
+import ResourceCard from './resource-card';
 import type { ResourceItem } from './types';
 import type { View, Field } from '@wordpress/dataviews';
 
@@ -29,58 +22,6 @@ const initialView: View = {
 interface BrowseAllResourcesProps {
 	resources: ResourceItem[];
 	onOpenVideoModal: ( resource: ResourceItem ) => void;
-}
-
-function ResourceItemCard( {
-	item,
-	onOpenVideoModal,
-}: {
-	item: ResourceItem;
-	onOpenVideoModal: ( resource: ResourceItem ) => void;
-} ) {
-	const dispatch = useDispatch();
-	const ctaLabel = useResourceCtaLabel( item.format );
-	const isVideo = item.format === 'Video';
-
-	const handleCTAClick = ( e: React.MouseEvent ) => {
-		if ( isVideo ) {
-			e.preventDefault();
-			onOpenVideoModal( item );
-		}
-
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_resource_center_browse_cta_click', {
-				resource_id: item.id,
-				resource_name: item.name,
-			} )
-		);
-	};
-
-	return (
-		<Card>
-			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-					<HStack>{ item.logo }</HStack>
-					<VStack spacing={ 1 }>
-						<Text size={ 13 } weight={ 500 }>
-							{ item.name }
-						</Text>
-						<Text variant="muted" size={ 12 }>
-							{ item.description }
-						</Text>
-					</VStack>
-				</VStack>
-				<Button
-					variant="secondary"
-					{ ...( ! isVideo && { href: item.externalUrl, target: '_blank' } ) }
-					onClick={ handleCTAClick }
-					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
-				>
-					{ ctaLabel }
-				</Button>
-			</CardBody>
-		</Card>
-	);
 }
 
 export default function BrowseAllResources( {
@@ -204,7 +145,13 @@ export default function BrowseAllResources( {
 			</DataViews>
 			<div className="resource-center-cards resource-center-browse-all-resources">
 				{ filteredData.map( ( item ) => (
-					<ResourceItemCard key={ item.id } item={ item } onOpenVideoModal={ onOpenVideoModal } />
+					<ResourceCard
+						key={ item.id }
+						resource={ item }
+						onOpenVideoModal={ onOpenVideoModal }
+						showLogo
+						tracksEventName="calypso_a4a_resource_center_browse_cta_click"
+					/>
 				) ) }
 			</div>
 		</>
