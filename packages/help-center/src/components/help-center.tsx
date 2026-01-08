@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
@@ -16,6 +15,7 @@ import {
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
 import { useShouldUseUnifiedAgent } from '../hooks';
+import { useGetSupportInteractions } from '../hooks/use-get-support-interactions';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';

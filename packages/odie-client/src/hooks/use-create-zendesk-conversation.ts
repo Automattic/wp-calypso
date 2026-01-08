@@ -2,14 +2,13 @@ import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automatti
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
 import {
-	getOdieOnErrorTransferMessage,
-	getOdieTransferMessage,
 	getErrorTryAgainLaterMessage,
+	getOdieTransferMessages,
+	getZendeskChatStartedMetaMessage,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
-import type { OdieAllBotSlugs } from '../types';
 
 export const useCreateZendeskConversation = () => {
 	const {
@@ -81,10 +80,9 @@ export const useCreateZendeskConversation = () => {
 				active_interaction_id: activeInteractionId || null,
 				is_chat_loaded: isChatLoaded,
 			} );
-			const errorMessageObj = getErrorTryAgainLaterMessage();
 
 			setChat( {
-				messages: [ ...previousMessages, errorMessageObj ],
+				messages: [ ...previousMessages, getErrorTryAgainLaterMessage() ],
 				status: 'loaded',
 				provider: previousProvider,
 				conversationId: previousConversationId,
@@ -94,14 +92,8 @@ export const useCreateZendeskConversation = () => {
 			} );
 		};
 
-		// Get transfer messages to identify and remove them on error
-		const transferMessages = isFromError
-			? getOdieOnErrorTransferMessage()
-			: getOdieTransferMessage( currentSupportInteraction?.bot_slug as OdieAllBotSlugs );
-
 		setChat( ( prevChat ) => ( {
 			...prevChat,
-			messages: [ ...prevChat.messages, ...transferMessages ],
 			status: 'transfer',
 		} ) );
 
@@ -186,6 +178,11 @@ export const useCreateZendeskConversation = () => {
 			setChat( ( prevChat ) => ( {
 				...prevChat,
 				conversationId: conversationId,
+				messages: [
+					...prevChat.messages,
+					...getOdieTransferMessages( currentSupportInteraction?.bot_slug ),
+					getZendeskChatStartedMetaMessage(),
+				],
 				provider: 'zendesk',
 				status: 'loaded',
 			} ) );

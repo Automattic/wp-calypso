@@ -83,7 +83,7 @@
 		"marketplace-test": false,
 		"me/account/color-scheme-picker": true,
 		"migration-flow/introductory-offer": true,
-		"migration/ssh-migration": true,
+		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
 		"onboarding/post-checkout-ai-step": false,

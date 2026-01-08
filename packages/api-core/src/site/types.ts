@@ -3,6 +3,7 @@ interface SitePlan {
 	product_slug: string;
 	product_name?: string;
 	product_name_short: string;
+	product_name_en: string;
 	expired: boolean;
 	is_free: boolean;
 	license_key?: string;

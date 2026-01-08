@@ -1,4 +1,5 @@
 import { domainQuery } from '@automattic/api-queries';
+import { getTld } from '@automattic/domain-search';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
@@ -14,7 +15,7 @@ export const TLDMaintenanceNotice = ( { showGoBackLink = true }: { showGoBackLin
 
 	return (
 		<Notice
-			variant="error"
+			variant="warning"
 			actions={
 				showGoBackLink ? (
 					<Link to={ domainRoute.fullPath } params={ { domainName } }>
@@ -24,11 +25,12 @@ export const TLDMaintenanceNotice = ( { showGoBackLink = true }: { showGoBackLin
 			}
 		>
 			{ sprintf(
-				/* translators: %(maintenanceEnd)s is the maintenance end time */
+				/* translators: %(tld)s is the domain's TLD, %(maintenanceEnd)s is the maintenance end time */
 				__(
-					'The domain registrar is undergoing maintenance. Please try again %(maintenanceEnd)s.'
+					'The .%(tld)s TLD is under scheduled maintenance. Your domain continues to work normally, but changes to name servers, DNSSEC, contacts, or registration settings are unavailable until maintenance ends (estimated: %(maintenanceEnd)s).'
 				),
 				{
+					tld: getTld( domain.domain ),
 					maintenanceEnd: formatDistanceToNowStrict(
 						new Date( domain.tld_maintenance_end_time * 1000 ),
 						{

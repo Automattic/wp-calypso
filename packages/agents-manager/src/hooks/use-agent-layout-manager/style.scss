@@ -66,8 +66,8 @@ $agents-manager-z-index-docked: 999999;
 }
 
 // Reposition the editor's template save confirmation panel
-@mixin editor-save-panel-open( $save-panel-selector ) {
-	#{$save-panel-selector} {
+@mixin editor-save-panel-open() {
+	.admin-ui-navigable-region.interface-interface-skeleton__actions {
 		margin: $layout-spacing 0;
 		right: $sidebar-width;
 		overflow: hidden;
@@ -258,9 +258,7 @@ body.next-admin.agents-manager-sidebar-container {
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.next-admin-layout__canvas.is-full-canvas' );
-		@include editor-save-panel-open(
-			'.admin-ui-navigable-region.interface-interface-skeleton__actions'
-		);
+		@include editor-save-panel-open();
 	}
 }
 
@@ -275,9 +273,7 @@ body.site-editor-php.agents-manager-sidebar-container {
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-site-layout__canvas' );
-		@include editor-save-panel-open(
-			'.interface-navigable-region.interface-interface-skeleton__actions'
-		);
+		@include editor-save-panel-open();
 
 		// Override canvas styles when the site editor navigation menu is open
 		.edit-site-layout:not( .is-full-canvas ) .edit-site-layout__canvas {
@@ -297,9 +293,7 @@ body.post-php.agents-manager-sidebar-container {
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-post-layout' );
-		@include editor-save-panel-open(
-			'.interface-navigable-region.interface-interface-skeleton__actions'
-		);
+		@include editor-save-panel-open();
 	}
 }
 
@@ -506,8 +500,6 @@ body.post-php.agents-manager-sidebar-container {
 					.edit-site-global-styles-variations_item-preview {
 						outline: 1px solid $gray-400;
 						outline-offset: 1px;
-						outline-color: #ccc;
-						outline-width: -wp-admin-border-width-focus;
 					}
 				}
 
@@ -518,7 +510,7 @@ body.post-php.agents-manager-sidebar-container {
 				}
 
 				.edit-site-global-styles-variations_item-preview {
-					outline-color: #545454;
+					outline: 1px solid #545454;
 					overflow: hidden;
 				}
 			}
@@ -696,4 +688,24 @@ body.post-php.agents-manager-sidebar-container {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
+
+	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
+		&.is-active,
+		&:focus-visible {
+			.edit-site-global-styles-variations_item-preview {
+				outline: 1px solid #0000001a;
+			}
+		}
+
+		&:not( .is-active ):hover {
+			.edit-site-global-styles-variations_item-preview {
+				outline-color: #00000080;
+			}
+		}
+
+		.edit-site-global-styles-variations_item-preview {
+			outline: 1px solid #0000004d;
+			overflow: hidden;
+		}
+	}
 }

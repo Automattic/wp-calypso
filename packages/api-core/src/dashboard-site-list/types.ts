@@ -13,6 +13,7 @@ export interface DashboardSiteListSite {
 		product_id: number;
 		product_slug: string;
 		product_name_short: string;
+		product_name_en: string;
 		expired: boolean;
 		is_free: boolean;
 		features: {
@@ -69,5 +70,5 @@ export interface FetchDashboardSiteFiltersParams {
 }
 
 export interface DashboardFilters {
-	plan?: Array< { name: string; value: string } >;
+	plan?: Array< { name: string; value: string; name_en: string } >;
 }

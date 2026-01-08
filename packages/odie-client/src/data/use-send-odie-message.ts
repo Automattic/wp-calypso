@@ -48,7 +48,6 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
 			flags: {
 				forward_to_human_support: true,
 				hide_disclaimer_content: false,
-				show_contact_support_msg: true,
 				show_ai_avatar: true,
 				is_error_message: true,
 			},

@@ -157,7 +157,7 @@ function getFetchSiteListParams(
 	const planSlugsByName = siteFilters.plan?.reduce(
 		( acc, current ) => ( {
 			...acc,
-			[ current.name ]: [ ...( acc[ current.name ] || [] ), current.value ],
+			[ current.name_en ]: [ ...( acc[ current.name_en ] || [] ), current.value ],
 		} ),
 		{} as Record< string, string[] >
 	);
