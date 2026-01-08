@@ -1,4 +1,5 @@
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
+import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
@@ -6,6 +7,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
+import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
@@ -13,6 +15,7 @@ import usePrepareProductsForCart from 'calypso/my-sites/checkout/src/hooks/use-p
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ClientCheckoutError from './checkout-error';
@@ -44,6 +47,7 @@ function BillingDragonCheckoutContent( {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
 	const site = useSelector( ( state ) => ( siteSlug ? getSite( state, siteSlug ) : undefined ) );
+	const sitesLoaded = useSelector( hasLoadedSites );
 	const siteId = site?.ID;
 	const isPlanCheckout = !! planSlug;
 
@@ -82,6 +86,13 @@ function BillingDragonCheckoutContent( {
 			return;
 		}
 
+		// Check if user has access to the site when siteSlug is provided
+		if ( siteSlug && sitesLoaded && ! site ) {
+			debug( '[A4A Checkout] User does not have access to site:', siteSlug );
+			page( A4A_MARKETPLACE_LINK );
+			return;
+		}
+
 		if ( ! agency ) {
 			debug( '[A4A Checkout] Agency not loaded yet, waiting (plan checkout)...' );
 			return;
@@ -117,6 +128,9 @@ function BillingDragonCheckoutContent( {
 		productsError,
 		productsForCart,
 		replaceProductsInCart,
+		site,
+		siteSlug,
+		sitesLoaded,
 	] );
 
 	// Cart Items Flow: This flow is used when cartItems are provided via props (the traditional A4A cart flow).
