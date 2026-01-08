@@ -1,17 +1,14 @@
 import type { Site } from '@automattic/api-core';
 
 export const DEFAULT_PROVIDER_NAME = 'WordPress.com';
-
 export function getSiteProviderName( site: Pick< Site, 'hosting_provider_guess' > ) {
-	const provider = site.hosting_provider_guess;
-	let providerName;
-	if ( provider === 'jurassic_ninja' ) {
-		providerName = 'Jurassic Ninja';
-	} else if ( provider === 'pressable' ) {
-		providerName = 'Pressable';
-	} else if ( provider === 'automattic' ) {
-		providerName = 'WordPress.com';
-	}
+	const providerNameMap: Record< string, string > = {
+		automattic: 'WordPress.com',
+		dreamhost: 'DreamHost',
+		jurassic_ninja: 'Jurassic Ninja',
+		digitalocean: 'DigitalOcean',
+		pressable: 'Pressable',
+	};
 
-	return providerName;
+	return providerNameMap[ site.hosting_provider_guess ?? '' ] ?? site.hosting_provider_guess;
 }

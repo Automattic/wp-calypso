@@ -97,6 +97,8 @@ export function useCreateCreditCard( {
 			} ),
 		[ initialUseForAllSubscriptions, allowUseForAllSubscriptions ]
 	);
+	const shouldUseVgs = isEnabled( 'checkout/vgs-ebanx' ) && shouldUseEbanx;
+
 	const stripeMethod = useMemo(
 		() =>
 			shouldLoadStripeMethod
@@ -104,6 +106,7 @@ export function useCreateCreditCard( {
 						currency,
 						store: stripePaymentMethodStore,
 						shouldUseEbanx,
+						shouldUseVgs,
 						shouldShowTaxFields,
 						submitButtonContent,
 						allowUseForAllSubscriptions,
@@ -115,6 +118,7 @@ export function useCreateCreditCard( {
 			shouldLoadStripeMethod,
 			stripePaymentMethodStore,
 			shouldUseEbanx,
+			shouldUseVgs,
 			shouldShowTaxFields,
 			submitButtonContent,
 			allowUseForAllSubscriptions,
@@ -520,9 +524,9 @@ export default function useCreatePaymentMethods( {
 	// `filterAppropriatePaymentMethods()`.
 	let paymentMethods = [
 		...existingCardMethods,
-		stripeMethod,
 		applePayMethod,
 		googlePayMethod,
+		stripeMethod,
 		freePaymentMethod,
 		paypalExpressMethod,
 		paypalPPCPMethod,
@@ -543,11 +547,11 @@ export default function useCreatePaymentMethods( {
 	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
 		paymentMethods = [
 			...existingCardMethods,
+			applePayMethod,
+			googlePayMethod,
 			paypalExpressMethod,
 			paypalPPCPMethod,
 			stripeMethod,
-			applePayMethod,
-			googlePayMethod,
 			freePaymentMethod,
 			idealMethod,
 			sofortMethod,

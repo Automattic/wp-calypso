@@ -161,8 +161,10 @@ export const createWordPressStudioConfig = (
 		id: 'wordpress-studio',
 		logo: StudioAppLogo,
 		logoName: 'studio-app-logo',
-		title: translate( 'Studio by WordPress.com' ),
-		subtitle: translate( 'A fast, free way to develop locally with WordPress.' ),
+		title: translate( 'WordPress Studio' ),
+		subtitle: translate(
+			'A fast, free way to develop locally with WordPress. Share your local sites with clients or colleagues and keep your local development process smooth and simple.'
+		),
 		link: translate( 'Visit {{a}}developer.wordpress.com/studio{{/a}} on your desktop.', {
 			components: {
 				a: <a href="https://developer.wordpress.com/studio/" />,

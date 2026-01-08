@@ -1,7 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { CheckboxControl } from '@wordpress/components';
+import {
+	CheckboxControl,
+	__experimentalDivider as Divider,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Text } from '../../../components/text';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
@@ -23,30 +28,30 @@ export default function ConfirmCheckbox( {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 
 	return (
-		<>
-			<b>{ __( 'Have a question before cancelling?' ) }</b>
-			<p>
-				{ createInterpolateElement(
-					__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
-					{
-						contactLink: <a href={ localizeUrl( 'https://wordpress.com/support' ) } />,
-					}
-				) }
-			</p>
+		<VStack spacing={ 4 }>
+			<VStack spacing={ 1 }>
+				<Text weight="bold">{ __( 'Have a question before cancelling?' ) }</Text>
+				<Text>
+					{ createInterpolateElement(
+						__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
+						{
+							contactLink: <a href={ localizeUrl( 'https://wordpress.com/support' ) } />,
+						}
+					) }
+				</Text>
+			</VStack>
 
-			<hr />
+			<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
 
-			{ isDomainRegistrationPurchase && ! state.surveyShown && (
-				<div>
+			<VStack spacing={ 1 }>
+				{ isDomainRegistrationPurchase && ! state.surveyShown && (
 					<CheckboxControl
 						label={ __( 'I understand that canceling means that I may lose this domain forever.' ) }
 						checked={ state.domainConfirmationConfirmed }
 						onChange={ onDomainConfirmationChange }
 					/>
-				</div>
-			) }
+				) }
 
-			<div>
 				<CheckboxControl
 					label={ __( 'I understand my site will change when my plan expires.' ) }
 					checked={ state.customerConfirmedUnderstanding }
@@ -59,7 +64,7 @@ export default function ConfirmCheckbox( {
 						onCustomerConfirmedUnderstandingChange( checked );
 					} }
 				/>
-			</div>
-		</>
+			</VStack>
+		</VStack>
 	);
 }

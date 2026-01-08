@@ -18,11 +18,3 @@ export type PluginListRow = {
 	siteIds: number[]; // list of site IDs where this plugin exists
 	isManaged: boolean;
 };
-
-export type SitePluginAction =
-	| 'activate'
-	| 'deactivate'
-	| 'update'
-	| 'enable-autoupdate'
-	| 'disable-autoupdate'
-	| 'remove';

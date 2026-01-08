@@ -2,14 +2,16 @@ import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { wpcomLink } from '../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../utils/link';
 
 export function AddDomainButton( {
 	siteSlug,
 	domainConnectionSetupUrl,
+	redirectTo,
 }: {
 	siteSlug?: string;
 	domainConnectionSetupUrl?: string;
+	redirectTo?: string;
 } ) {
 	const buildQueryArgs = () => {
 		const queryArgs: Record< string, string > = {};
@@ -19,6 +21,11 @@ export function AddDomainButton( {
 		if ( domainConnectionSetupUrl ) {
 			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
 		}
+		if ( redirectTo ) {
+			queryArgs.redirect_to = redirectTo;
+		}
+
+		queryArgs.back_to = redirectToDashboardLink();
 		return queryArgs;
 	};
 

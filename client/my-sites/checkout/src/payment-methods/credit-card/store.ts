@@ -39,6 +39,9 @@ export const actions = {
 	touchAllFields(): CardStoreAction {
 		return { type: 'TOUCH_ALL_FIELDS' };
 	},
+	setFormSubmitAttempted( payload: boolean ): CardStoreAction {
+		return { type: 'FORM_SUBMIT_ATTEMPTED_SET', payload };
+	},
 	resetFields(): CardStoreAction {
 		return { type: 'RESET_FIELDS' };
 	},
@@ -64,6 +67,9 @@ export const selectors = {
 	},
 	useForBusiness( state: CardStoreState ) {
 		return state.useForBusiness;
+	},
+	formSubmitAttempted( state: CardStoreState ) {
+		return state.formSubmitAttempted || false;
 	},
 };
 
@@ -176,6 +182,15 @@ export function createCreditCardPaymentMethodStore( {
 		}
 	}
 
+	function formSubmitAttemptedReducer( state: boolean = false, action?: CardStoreAction ) {
+		switch ( action?.type ) {
+			case 'FORM_SUBMIT_ATTEMPTED_SET':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	function getInitialUseForAllSubscriptionsValue() {
 		if ( ! allowUseForAllSubscriptions ) {
 			return false;
@@ -196,6 +211,7 @@ export function createCreditCardPaymentMethodStore( {
 					brand: brandReducer(),
 					useForAllSubscriptions: getInitialUseForAllSubscriptionsValue(),
 					useForBusiness: forBusinessReducer( undefined ),
+					formSubmitAttempted: formSubmitAttemptedReducer(),
 				},
 				action: AnyAction
 			) {
@@ -211,6 +227,10 @@ export function createCreditCardPaymentMethodStore( {
 						? allSubscriptionsReducer( state.useForAllSubscriptions, action as CardStoreAction )
 						: false,
 					useForBusiness: forBusinessReducer( state.useForBusiness, action as CardStoreAction ),
+					formSubmitAttempted: formSubmitAttemptedReducer(
+						state.formSubmitAttempted,
+						action as CardStoreAction
+					),
 				};
 			},
 			actions,

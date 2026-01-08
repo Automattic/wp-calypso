@@ -312,3 +312,160 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 		layout: '',
 	},
 };
+
+/**
+ * Interactive grid example showing dynamic layout changes.
+ * Add, remove, and switch layouts on the fly. Enable edit mode to drag and resize tiles.
+ */
+export const InteractiveGrid: StoryObj< typeof Grid > = {
+	render: function InteractiveGrid() {
+		const colors = [
+			'#f44336',
+			'#2196f3',
+			'#4caf50',
+			'#ff9800',
+			'#9c27b0',
+			'#607d8b',
+			'#3f51b5',
+			'#8bc34a',
+			'#cddc39',
+			'#ffeb3b',
+		];
+
+		const layoutA: GridLayoutItem[] = [
+			{ key: 'tile-1', width: 2, height: 1 },
+			{ key: 'tile-2', width: 2, height: 1 },
+			{ key: 'tile-3', width: 2, height: 1 },
+		];
+
+		const layoutB: GridLayoutItem[] = [
+			{ key: 'tile-a', width: 3, height: 1 },
+			{ key: 'tile-b', width: 3, height: 1 },
+		];
+
+		const [ layout, setLayout ] = useState< GridLayoutItem[] >( layoutA );
+		const [ currentLayoutName, setCurrentLayoutName ] = useState( 'A' );
+		const [ nextTileId, setNextTileId ] = useState( 4 );
+		const [ editMode, setEditMode ] = useState( false );
+
+		const addTile = () => {
+			const newLayout = [ ...layout, { key: `tile-${ nextTileId }`, width: 2, height: 1 } ];
+			setLayout( newLayout );
+			setNextTileId( nextTileId + 1 );
+		};
+
+		const removeTile = ( key: string ) => {
+			setLayout( layout.filter( ( item ) => item.key !== key ) );
+		};
+
+		const switchLayout = () => {
+			if ( currentLayoutName === 'A' ) {
+				setLayout( layoutB );
+				setCurrentLayoutName( 'B' );
+				setNextTileId( 4 );
+			} else {
+				setLayout( layoutA );
+				setCurrentLayoutName( 'A' );
+				setNextTileId( 4 );
+			}
+		};
+
+		const getTileNumber = ( key: string ) => {
+			const match = key.match( /\d+/ );
+			return match ? parseInt( match[ 0 ], 10 ) : key.charCodeAt( key.length - 1 ) - 96;
+		};
+
+		return (
+			<div style={ { width: '800px' } }>
+				<div
+					style={ {
+						marginBottom: '20px',
+						padding: '20px',
+						background: '#f5f5f5',
+						borderRadius: '4px',
+					} }
+				>
+					<h3 style={ { marginTop: 0 } }>Grid Controls</h3>
+					<div style={ { display: 'flex', gap: '10px', marginBottom: '15px' } }>
+						<button
+							onClick={ addTile }
+							style={ {
+								padding: '8px 16px',
+								background: '#2196f3',
+								color: 'white',
+								border: 'none',
+								borderRadius: '4px',
+								cursor: 'pointer',
+							} }
+						>
+							Add Tile
+						</button>
+						<button
+							onClick={ switchLayout }
+							style={ {
+								padding: '8px 16px',
+								background: '#4caf50',
+								color: 'white',
+								border: 'none',
+								borderRadius: '4px',
+								cursor: 'pointer',
+							} }
+						>
+							Switch to Layout { currentLayoutName === 'A' ? 'B' : 'A' }
+						</button>
+						<button
+							onClick={ () => setEditMode( ! editMode ) }
+							style={ {
+								padding: '8px 16px',
+								background: editMode ? '#ff9800' : '#666',
+								color: 'white',
+								border: 'none',
+								borderRadius: '4px',
+								cursor: 'pointer',
+							} }
+						>
+							{ editMode ? 'Disable' : 'Enable' } Edit Mode
+						</button>
+					</div>
+					<div style={ { fontSize: '14px', color: '#666' } }>
+						<strong>Layout:</strong> { currentLayoutName } | <strong>Tiles:</strong>{ ' ' }
+						{ layout.length } | <strong>Edit Mode:</strong> { editMode ? 'ON' : 'OFF' }
+					</div>
+				</div>
+				<Grid
+					layout={ layout }
+					minColumnWidth={ 160 }
+					rowHeight={ 100 }
+					spacing={ 2 }
+					editMode={ editMode }
+					onChangeLayout={ setLayout }
+				>
+					{ layout.map( ( item ) => {
+						const tileNum = getTileNumber( item.key );
+						const colorIndex = tileNum % colors.length;
+						return (
+							<Card
+								key={ item.key }
+								color={ colors[ colorIndex ] }
+								actionableArea={
+									editMode ? <WidgetActions onClose={ () => removeTile( item.key ) } /> : undefined
+								}
+							>
+								{ item.key }
+							</Card>
+						);
+					} ) }
+				</Grid>
+			</div>
+		);
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Interactive example showing dynamic layout management. Add tiles, switch between predefined layouts, and enable edit mode to drag and resize tiles. Each tile has a close button to remove it individually.',
+			},
+		},
+		layout: '',
+	},
+};

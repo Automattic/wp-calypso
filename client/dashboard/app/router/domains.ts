@@ -1,5 +1,6 @@
 import { DomainSubtype, DomainTransferStatus } from '@automattic/api-core';
 import {
+	domainDiagnosticsQuery,
 	domainQuery,
 	domainDnsQuery,
 	domainForwardingQuery,
@@ -16,6 +17,8 @@ import {
 	rawUserPreferencesQuery,
 	domainAvailabilityQuery,
 	domainInboundTransferStatusQuery,
+	purchaseQuery,
+	siteUsersWpcomQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
@@ -24,6 +27,7 @@ import {
 	notFound,
 	redirect,
 	lazyRouteComponent,
+	Outlet,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
@@ -166,6 +170,9 @@ export const domainOverviewRoute = createRoute( {
 
 		queryClient.prefetchQuery( siteByIdQuery( domain.blog_id ) );
 		queryClient.prefetchQuery( mailboxesQuery( domain.blog_id ) );
+		await queryClient.ensureQueryData(
+			purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
+		);
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>
@@ -250,6 +257,27 @@ export const domainDnsEditRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains/dns/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-edit' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainDiagnosticsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Diagnostics' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'diagnostics',
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainDiagnosticsQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-diagnostics' ).then( ( d ) =>
+		createLazyRoute( 'domain-diagnostics' )( {
 			component: d.default,
 		} )
 	)
@@ -349,13 +377,11 @@ export const domainContactInfoRoute = createRoute( {
 			queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
 		] );
 	},
-} ).lazy( () =>
-	import( '../../domains/domain-contact-details' ).then( ( d ) =>
-		createLazyRoute( 'domain-contact-info' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: lazyRouteComponent( () => import( '../../domains/domain-contact-details' ) ),
+	errorComponent: lazyRouteComponent(
+		() => import( '../../domains/domain-contact-details/error' )
+	),
+} );
 
 export const domainContactVerificationRoute = createRoute( {
 	head: () => ( {
@@ -409,6 +435,8 @@ export const domainGlueRecordsRoute = createRoute( {
 	path: 'glue-records',
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
+	component: Outlet,
+	errorComponent: lazyRouteComponent( () => import( '../../domains/domain-glue-records/error' ) ),
 } );
 
 export const domainGlueRecordsIndexRoute = createRoute( {
@@ -511,7 +539,7 @@ export const domainTransferSetupRoute = createRoute( {
 	},
 } ).lazy( () =>
 	config.isEnabled( 'domain-transfer-redesign' )
-		? import( '../../domains/domain-connection-setup/new-transfer-setup' ).then( ( d ) =>
+		? import( '../../domains/domain-connection-setup/transfer-setup' ).then( ( d ) =>
 				createLazyRoute( 'domain-transfer-setup' )( {
 					component: d.default,
 				} )
@@ -606,7 +634,10 @@ export const domainTransferToOtherUserRoute = createRoute( {
 	path: 'other-user',
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
-		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) ),
+			queryClient.ensureQueryData( siteUsersWpcomQuery( domain.blog_id, 'administrator' ) ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-transfer/transfer-domain-to-other-user' ).then( ( d ) =>
@@ -667,17 +698,11 @@ export const domainConnectionSetupRoute = createRoute( {
 		};
 	},
 } ).lazy( () =>
-	config.isEnabled( 'domain-connection-redesign' )
-		? import( '../../domains/domain-connection-setup' ).then( ( d ) =>
-				createLazyRoute( 'domain-connection-setup' )( {
-					component: d.default,
-				} )
-		  )
-		: import( '../../domains/domain-connection-setup/legacy-connection-flow' ).then( ( d ) =>
-				createLazyRoute( 'domain-connection-setup' )( {
-					component: d.default,
-				} )
-		  )
+	import( '../../domains/domain-connection-setup' ).then( ( d ) =>
+		createLazyRoute( 'domain-connection-setup' )( {
+			component: d.default,
+		} )
+	)
 );
 
 export const createDomainsRoutes = () => {
@@ -686,6 +711,7 @@ export const createDomainsRoutes = () => {
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
+			domainDiagnosticsRoute,
 			domainConnectionSetupRoute,
 			domainTransferSetupRoute,
 			domainForwardingRoute.addChildren( [

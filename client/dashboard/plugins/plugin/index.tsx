@@ -1,19 +1,12 @@
-import { type PluginItem, Site } from '@automattic/api-core';
-import { __experimentalVStack as VStack, privateApis } from '@wordpress/components';
+import { MarketplacePlugin, type PluginItem, Site, WpOrgPlugin } from '@automattic/api-core';
+import { privateApis } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useMemo, useState } from 'react';
-import Breadcrumbs from '../../app/breadcrumbs';
-import { pluginRoute } from '../../app/router/plugins';
-import { DataViewsCard } from '../../components/dataviews';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
-import { Text } from '../../components/text';
-import { TextBlur } from '../../components/text-blur';
 import { SitesWithThisPlugin } from './sites-with-this-plugin';
 import { SitesWithoutThisPlugin } from './sites-without-this-plugin';
-import { SiteWithPluginData, usePlugin } from './use-plugin';
+import { SiteWithPluginData } from './use-plugin';
 
 import './style.scss';
 
@@ -29,12 +22,12 @@ type PluginTabsProps = {
 	isLoading: boolean;
 	sitesWithThisPlugin: SiteWithPluginData[];
 	sitesWithoutThisPlugin: Site[];
-	plugin: PluginItem | undefined;
+	plugin: PluginItem | MarketplacePlugin | WpOrgPlugin | undefined;
 	pluginName?: string;
 	pluginBySiteId: Map< number, PluginItem >;
 };
 
-function PluginTabs( {
+export function PluginTabs( {
 	pluginSlug,
 	isLoading,
 	sitesWithThisPlugin,
@@ -44,118 +37,74 @@ function PluginTabs( {
 	pluginBySiteId,
 }: PluginTabsProps ) {
 	const [ activeTab, setActiveTab ] = useState< 'installed' | 'available' >( 'installed' );
-
-	return (
-		<VStack spacing={ 6 }>
-			<Tabs
-				selectedTabId={ activeTab }
-				onSelect={ ( tabId: 'installed' | 'available' ) => setActiveTab( tabId ) }
-			>
-				<Tabs.TabList>
-					<Tabs.Tab tabId="installed">
-						<SectionHeader
-							level={ 3 }
-							title={ sprintf(
-								// translators: %(count) is the number of sites the plugin is installed on.
-								_n(
-									'Installed on %(count)d site',
-									'Installed on %(count)d sites',
-									sitesWithThisPlugin.length
-								),
-								{ count: sitesWithThisPlugin.length }
-							) }
-						/>
-					</Tabs.Tab>
-					<Tabs.Tab tabId="available">
-						<SectionHeader level={ 3 } title={ __( 'Available on' ) } />
-					</Tabs.Tab>
-				</Tabs.TabList>
-
-				<Tabs.TabPanel tabId="installed">
-					<VStack spacing={ 6 }>
-						<DataViewsCard>
-							<SitesWithThisPlugin
-								pluginSlug={ pluginSlug }
-								isLoading={ isLoading }
-								plugin={ plugin }
-								pluginBySiteId={ pluginBySiteId }
-								sitesWithThisPlugin={ sitesWithThisPlugin }
-							/>
-						</DataViewsCard>
-					</VStack>
-				</Tabs.TabPanel>
-
-				<Tabs.TabPanel tabId="available">
-					<VStack spacing={ 6 }>
-						<DataViewsCard>
-							<SitesWithoutThisPlugin
-								pluginSlug={ pluginSlug }
-								pluginName={ pluginName }
-								isLoading={ isLoading }
-								sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
-							/>
-						</DataViewsCard>
-					</VStack>
-				</Tabs.TabPanel>
-			</Tabs>
-		</VStack>
+	const [ optimisticDelete, setOptimisticDelete ] = useState< Record< number, boolean > >( {} );
+	const prevSiteIds = useRef< Set< number > >(
+		new Set( sitesWithThisPlugin.map( ( site ) => site.ID ) )
 	);
-}
 
-export default function Plugin() {
-	const { pluginId: pluginSlug } = pluginRoute.useParams();
-	const { icon, isLoading, plugin, pluginBySiteId, sitesWithThisPlugin, sitesWithoutThisPlugin } =
-		usePlugin( pluginSlug );
+	useEffect( () => {
+		const currentSiteIds = new Set( sitesWithThisPlugin.map( ( site ) => site.ID ) );
 
-	const decoration = useMemo( () => {
-		if ( icon ) {
-			return <img src={ icon } alt={ plugin?.name } />;
-		} else if ( isLoading ) {
-			return <div className="plugin-icon-placeholder" aria-hidden="true" />;
+		const siteIdsChanged =
+			currentSiteIds.size !== prevSiteIds.current.size ||
+			Array.from( currentSiteIds ).some( ( id ) => ! prevSiteIds.current.has( id ) );
+
+		if ( siteIdsChanged ) {
+			setOptimisticDelete( {} );
+			prevSiteIds.current = currentSiteIds;
 		}
-	}, [ icon, isLoading, plugin?.name ] );
+	}, [ sitesWithThisPlugin ] );
 
-	if ( ! isLoading && ! plugin ) {
-		return (
-			<PageLayout
-				size="large"
-				header={
-					<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Plugin not found' ) } />
-				}
-			/>
-		);
-	}
+	const sitesWithThisPluginExcludingDeleted = useMemo(
+		() => sitesWithThisPlugin.filter( ( item ) => ! optimisticDelete[ item.ID ] ),
+		[ sitesWithThisPlugin, optimisticDelete ]
+	);
 
 	return (
-		<PageLayout
-			size="large"
-			header={
-				<VStack spacing={ 2 }>
-					<PageHeader
-						prefix={ <Breadcrumbs length={ 2 } /> }
-						decoration={ decoration }
-						title={
-							plugin ? (
-								// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-								<Text dangerouslySetInnerHTML={ { __html: plugin.name } } />
-							) : (
-								<TextBlur>{ pluginSlug }</TextBlur>
-							)
-						}
-						description={ __( 'View plugin details and manage installation across your sites.' ) }
-					/>
-				</VStack>
-			}
+		<Tabs
+			selectedTabId={ activeTab }
+			onSelect={ ( tabId: 'installed' | 'available' ) => setActiveTab( tabId ) }
 		>
-			<PluginTabs
-				pluginSlug={ pluginSlug }
-				isLoading={ isLoading }
-				plugin={ plugin }
-				pluginName={ plugin?.name }
-				pluginBySiteId={ pluginBySiteId }
-				sitesWithThisPlugin={ sitesWithThisPlugin }
-				sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
-			/>
-		</PageLayout>
+			<Tabs.TabList className="plugin-tabs-list">
+				<Tabs.Tab tabId="installed">
+					<SectionHeader
+						level={ 3 }
+						title={ sprintf(
+							// translators: %(count) is the number of sites the plugin is installed on.
+							_n(
+								'Installed on %(count)d site',
+								'Installed on %(count)d sites',
+								sitesWithThisPluginExcludingDeleted.length
+							),
+							{ count: sitesWithThisPluginExcludingDeleted.length }
+						) }
+					/>
+				</Tabs.Tab>
+				<Tabs.Tab tabId="available">
+					<SectionHeader level={ 3 } title={ __( 'Available on' ) } />
+				</Tabs.Tab>
+			</Tabs.TabList>
+
+			<Tabs.TabPanel className="plugin-tabs-panel" tabId="installed">
+				<SitesWithThisPlugin
+					pluginSlug={ pluginSlug }
+					isLoading={ isLoading }
+					// plugin will only be MarketplacePlugin | WpOrgPlugin when there are no sites with it installed
+					plugin={ plugin as PluginItem | undefined }
+					pluginBySiteId={ pluginBySiteId }
+					setOptimisticDelete={ setOptimisticDelete }
+					sitesWithThisPlugin={ sitesWithThisPluginExcludingDeleted }
+				/>
+			</Tabs.TabPanel>
+
+			<Tabs.TabPanel className="plugin-tabs-panel" tabId="available">
+				<SitesWithoutThisPlugin
+					pluginSlug={ pluginSlug }
+					pluginName={ pluginName }
+					isLoading={ isLoading }
+					sitesWithoutThisPlugin={ sitesWithoutThisPlugin }
+				/>
+			</Tabs.TabPanel>
+		</Tabs>
 	);
 }

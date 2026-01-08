@@ -55,6 +55,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 import { CustomerCouncilBanner } from './customer-council-banner';
 import EmptyContent from './empty';
+import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 
@@ -166,6 +167,10 @@ class ReaderStream extends Component {
 			} );
 		}
 	}
+	tryAgain = () => {
+		this.props.clearStream( { streamKey: this.props.streamKey } );
+		this.fetchNextPage( {} );
+	};
 
 	focusSelectedPost = ( selectedPostKey ) => {
 		const postRefKey = this.getPostRef( selectedPostKey );
@@ -647,7 +652,7 @@ class ReaderStream extends Component {
 			isRequesting = true;
 		}
 
-		const hasNoPosts = this.isMounted && items.length === 0 && ! isRequesting;
+		const hasNoPosts = this.isMounted && items.length === 0 && ! isRequesting && ! this.props.error;
 
 		const streamType = getStreamType( streamKey );
 
@@ -753,6 +758,16 @@ class ReaderStream extends Component {
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 
+		if ( this.props.error ) {
+			body = (
+				<StreamError
+					onTryAgain={ this.tryAgain }
+					streamKey={ streamKey }
+					context={ this.state.selectedTab }
+				/>
+			);
+		}
+
 		return (
 			<TopLevel className={ baseClassnames }>
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
@@ -812,6 +827,7 @@ export default connect(
 			selectedPost,
 			lastPage: stream.lastPage,
 			isRequesting: stream.isRequesting,
+			error: stream.error,
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),

@@ -43,7 +43,7 @@
 		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
 		"upgrades/redirect-payments": true,
-		"tiers-revamp": true
+		"a4a-bd-term-pricing": true
 	},
 	"enable_all_sections": false,
 	"sections": {

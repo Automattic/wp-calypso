@@ -1,5 +1,4 @@
 import { queryClient, siteBySlugQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -10,12 +9,12 @@ import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { getSiteStatus, getStatusLabels } from '../../utils/site-status';
 import {
 	isSelfHostedJetpackConnected,
 	isSelfHostedJetpackConnected__ES,
 } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
+import { getSiteVisibility, getVisibilityLabels } from '../../utils/site-visibility';
 import { getFormattedWordPressVersion, formatWordPressVersion } from '../../utils/wp-version';
 import {
 	AsyncEngagementStat,
@@ -29,17 +28,17 @@ import {
 	Plan,
 	Preview,
 	Preview__ES,
-	Status,
 	URL,
 	Uptime,
 	URLRenderer,
+	Visibility,
 } from '../site-fields';
 import type { AppConfig } from '../../app/context';
 import type { Site, DashboardSiteListSite } from '@automattic/api-core';
-import type { Field, Operator } from '@wordpress/dataviews';
+import type { Field, Operator, View } from '@wordpress/dataviews';
 
 function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
-	const statusLabels = getStatusLabels();
+	const visibilityLabels = getVisibilityLabels();
 	return [
 		{
 			id: 'name',
@@ -48,7 +47,6 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayName( item ),
 			render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
-			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{
 			id: 'URL',
@@ -76,8 +74,8 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 		{
 			id: 'plan',
 			label: __( 'Plan' ),
-			getValue: ( { item } ) => getSitePlanDisplayName( item ) ?? '',
-			render: function PlanField( { field, item } ) {
+			getValue: ( { item } ) => item.plan?.product_name_en ?? '',
+			render: function PlanField( { item } ) {
 				const { user } = useAuth();
 				return (
 					<Plan
@@ -85,7 +83,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
 						isJetpack={ item.jetpack }
 						isOwner={ item.site_owner === user.ID }
-						value={ field.getValue( { item } ) }
+						value={ getSitePlanDisplayName( item ) ?? '' }
 					/>
 				);
 			},
@@ -97,10 +95,18 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 
 				// A plan may have different product_slugs due to the period.
 				// However, a filter can only represent one value.
-				// As a result, it seems better to use the name as value for filters.
-				return Array.from( new Set( plan.map( ( plan ) => plan.name ) ) ).map( ( name ) => ( {
-					label: name,
-					value: name,
+				// As a result, it seems better to use the untranslated name as value for filters.
+				const elements = plan.reduce(
+					( acc, current ) => ( {
+						...acc,
+						[ current.name ]: current.name_en,
+					} ),
+					{}
+				);
+
+				return Object.entries( elements ).map( ( [ label, value ] ) => ( {
+					label,
+					value,
 				} ) );
 			},
 			filterBy: {
@@ -114,18 +120,17 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			},
 		},
 		{
-			id: 'status',
-			label: __( 'Status' ),
-			getValue: ( { item } ) => getSiteStatus( item ),
-			elements: Object.entries( statusLabels ).map( ( [ value, label ] ) => ( { value, label } ) ),
+			id: 'visibility',
+			label: __( 'Visibility' ),
+			getValue: ( { item } ) => getSiteVisibility( item ),
+			elements: Object.entries( visibilityLabels ).map( ( [ value, label ] ) => ( {
+				value,
+				label,
+			} ) ),
 			filterBy: {
 				operators: [ 'isAny' as Operator ],
 			},
-			render: function StatusField( { item } ) {
-				const { user } = useAuth();
-				return <Status site={ item } isOwner={ item.site_owner === user.ID } />;
-			},
-			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
+			render: ( { item } ) => <Visibility site={ item } />,
 		},
 		{
 			id: 'wp_version',
@@ -203,11 +208,25 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			},
 			render: ( { field, item } ) => field.getValue( { item } ),
 		},
+		{
+			id: 'is_deleted',
+			type: 'boolean',
+			label: __( 'Deleted' ),
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			enableHiding: false,
+		},
 	];
 }
 
 // Use the site returned by siteBySlugQuery to render async fields (e.g. Backup) so the structure remains consistent.
 function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< DashboardSiteListSite >[] {
+	const visibilityLabels = getVisibilityLabels();
 	return [
 		{
 			id: 'name',
@@ -288,26 +307,58 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 
 				// A plan may have different product_slugs due to the period.
 				// However, a filter can only represent one value.
-				// As a result, it seems better to use the name as value for filters.
-				return Array.from( new Set( plan.map( ( plan ) => plan.name ) ) ).map( ( name ) => ( {
-					label: name,
-					value: name,
+				// As a result, it seems better to use the untranslated name as value for filters.
+				const elements = plan.reduce(
+					( acc, current ) => ( {
+						...acc,
+						[ current.name ]: current.name_en,
+					} ),
+					{}
+				);
+
+				return Object.entries( elements ).map( ( [ label, value ] ) => ( {
+					label,
+					value,
 				} ) );
 			},
 			filterBy: {
 				operators: [ 'isAny' ],
 			},
-			sort: ( a, b, direction ) => {
-				const planA = getSitePlanDisplayName__ES( a ) ?? '';
-				const planB = getSitePlanDisplayName__ES( b ) ?? '';
+			enableSorting: false,
+		},
+		{
+			id: 'visibility',
+			label: __( 'Visibility' ),
+			getValue: ( { item } ) => {
+				// TODO: Handle `unlaunched` status
+				if ( item.wpcom_status?.is_coming_soon ) {
+					return 'coming_soon';
+				}
 
-				return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
+				if ( item.private ) {
+					return 'private';
+				}
+
+				return 'public';
 			},
+			elements: Object.entries( visibilityLabels ).map( ( [ value, label ] ) => ( {
+				value,
+				label,
+			} ) ),
+			filterBy: {
+				operators: [ 'isAny' as Operator ],
+			},
+			render: ( { item, field } ) => {
+				const value = field.getValue( { item } );
+				return visibilityLabels[ value as keyof typeof visibilityLabels ];
+			},
+			enableSorting: false,
 		},
 		{
 			id: 'wp_version',
 			label: __( 'WP version' ),
 			getValue: ( { item } ) => formatWordPressVersion( item.wordpress_version ?? '' ),
+			enableSorting: false,
 		},
 		{
 			id: 'is_a8c',
@@ -321,6 +372,7 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				operators: [ 'is' as Operator ],
 			},
 			render: ( { item } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
+			enableSorting: false,
 		},
 		{
 			id: 'preview',
@@ -349,13 +401,11 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			id: 'visitors',
 			label: __( '7-day visitors' ),
 			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
-			enableSorting: false,
 		},
 		{
 			id: 'views',
 			label: __( '7-day views' ),
 			render: ( { item, field } ) => <EngagementStat value={ field.getValue( { item } ) } />,
-			enableSorting: false,
 		},
 		{
 			id: 'likes',
@@ -370,7 +420,6 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			id: 'php_version',
 			label: __( 'PHP version' ),
 			render: ( { item }: { item: DashboardSiteListSite } ) => <PHPVersion__ES site={ item } />,
-			enableSorting: false,
 		},
 		{
 			id: 'storage',
@@ -388,6 +437,20 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				return getSiteProviderName( item ) ?? DEFAULT_PROVIDER_NAME;
 			},
 			render: ( { field, item } ) => field.getValue( { item } ),
+			enableSorting: false,
+		},
+		{
+			id: 'is_deleted',
+			type: 'boolean',
+			label: __( 'Deleted' ),
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			enableHiding: false,
 		},
 	];
 }
@@ -448,4 +511,15 @@ export function useFields__ES( {
 			return true;
 		} );
 	}, [ isAutomattician, viewType, queries ] );
+}
+
+export function sanitizeFields( fields: View[ 'fields' ] ) {
+	return fields?.map( ( field ) => {
+		// Replace the `Status` column with `Visibility` column.
+		if ( field === 'status' ) {
+			return 'visibility';
+		}
+
+		return field;
+	} );
 }

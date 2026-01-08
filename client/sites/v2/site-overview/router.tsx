@@ -1,13 +1,16 @@
+import calypsoConfig from '@automattic/calypso-config';
 import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
+import { handleOnCatch } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import siteSettingsRouter from '../site-settings/router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 import type { AppConfig } from 'calypso/dashboard/app/context';
+import type { ErrorInfo } from 'react';
 
 const siteOverviewRoute = createRoute( {
 	...appRouterSites.siteOverviewRoute.options,
@@ -56,6 +59,12 @@ export const getRouter = ( config: AppConfig ) => {
 	const router = createRouter( {
 		...getRouterOptions( config ),
 		routeTree,
+		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+			handleOnCatch( error, errorInfo, router, {
+				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
+				dashboard_backport: true,
+			} );
+		},
 	} );
 
 	return router;

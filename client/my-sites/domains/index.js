@@ -194,6 +194,7 @@ export default function () {
 
 	page(
 		paths.domainManagementRoot(),
+		domainsController.maybeRedirectToDashboard,
 		noSite,
 		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
 		domainManagementController.domainManagementListAllSites,

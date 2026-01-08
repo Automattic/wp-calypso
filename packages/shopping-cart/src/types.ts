@@ -976,6 +976,13 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 *
 	 */
 	hosting_intent?: string;
+
+	/**
+	 * Indicates the user was in a treatment variation of the pricing
+	 * differentiation experiment (calypso_plans_differentiators_20251210).
+	 * Used to add the `gating-business-q1` blog sticker on purchase.
+	 */
+	is_gating_business_q1?: boolean;
 }
 
 export interface GSuiteProductUser {

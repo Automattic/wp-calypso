@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { useShouldUseUnifiedAgent } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -52,6 +53,7 @@ function Help() {
 	const { isLoading, isShown, setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const [ helpCenterPage, setHelpCenterPage ] = useState( '' );
+	const isUnifiedAgentEnabled = useShouldUseUnifiedAgent();
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_help_center_menu_popover_v2'
@@ -227,7 +229,7 @@ function Help() {
 				onClick={ handleToggleHelpCenter }
 			/>
 			<Suspense fallback={ null }>
-				{ isShown && (
+				{ ( isShown || isUnifiedAgentEnabled ) && (
 					<AsyncHelpCenterApp
 						currentUser={ user }
 						handleClose={ handleCloseHelpCenterApp }
@@ -297,8 +299,12 @@ function UserProfile() {
 			/>
 			<Menu.Popover style={ { minWidth: '250px' } }>
 				<VStack style={ { gridColumn: '1 / -1', padding: '8px 12px' } } spacing={ 1 }>
-					<Text>{ user.display_name }</Text>
-					<Text variant="muted">@{ user.username }</Text>
+					<Text truncate numberOfLines={ 1 } title={ user.display_name }>
+						{ user.display_name }
+					</Text>
+					<Text truncate numberOfLines={ 1 } title={ user.username } variant="muted">
+						@{ user.username }
+					</Text>
 				</VStack>
 				<Menu.Separator />
 				<Menu.Group>

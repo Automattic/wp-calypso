@@ -24,6 +24,7 @@ import {
 	getDefaultView,
 	recordViewChanges,
 	useFields__ES,
+	sanitizeFields,
 } from '../sites/dataviews';
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
 import { SitesNotices } from '../sites/notices';
@@ -52,10 +53,11 @@ export default function CIABSites() {
 		slug: 'sites-ciab',
 		defaultView,
 		queryParams: currentSearchParams,
+		sanitizeFields,
 	} );
 
 	const { sites, sites__ES, isLoadingSites, isPlaceholderData, hasNoData, totalItems } =
-		useSiteListQuery( view, isRestoringAccount );
+		useSiteListQuery( view, { isRestoringAccount, isAutomattician } );
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const fields__ES = useFields__ES( { isAutomattician, viewType: view.type } );

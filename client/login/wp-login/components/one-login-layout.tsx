@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { useLoginContext } from 'calypso/login/login-context';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -12,6 +12,18 @@ import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-qu
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import HeadingLogo from './heading-logo';
 import './one-login-layout.scss';
+
+export const ensureHeadingProvided = (
+	heading: TranslateResult | null | undefined
+): TranslateResult | null => {
+	if ( process.env.NODE_ENV !== 'production' && ( heading === undefined || heading === null ) ) {
+		throw new Error(
+			'OneLoginLayout rendered without heading text. Seed LoginContextProvider before render.'
+		);
+	}
+
+	return heading ?? null;
+};
 
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
@@ -28,6 +40,10 @@ interface OneLoginLayoutProps {
 	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
 	 */
 	columnWidth?: 4 | 5 | 6 | 8 | 10;
+	/**
+	 * Optional flag to control whether the heading logo should be displayed. Defaults to true.
+	 */
+	showLogo?: boolean;
 }
 
 const OneLoginLayout = ( {
@@ -39,6 +55,7 @@ const OneLoginLayout = ( {
 	isLostPasswordView,
 	noThanksRedirectUrl,
 	columnWidth,
+	showLogo = true,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const urlLocale = useLocale();
@@ -51,6 +68,7 @@ const OneLoginLayout = ( {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const dispatch = useDispatch();
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
+	const validatedHeadingText = ensureHeadingProvided( headingText );
 
 	const SignUpLink = () => {
 		// use '?signup_url' if explicitly passed as URL query param
@@ -131,9 +149,13 @@ const OneLoginLayout = ( {
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
 				<div className="wp-login__one-login-layout-heading">
-					<HeadingLogo isJetpack={ isJetpack } />
+					{ showLogo && <HeadingLogo isJetpack={ isJetpack } /> }
 					<Step.Heading
-						text={ <div className="wp-login__one-login-layout-heading-text">{ headingText }</div> }
+						text={
+							<div className="wp-login__one-login-layout-heading-text">
+								{ validatedHeadingText }
+							</div>
+						}
 					/>
 					<div className="wp-login__one-login-layout-heading-subtext-wrapper">
 						<h2 className="wp-login__one-login-layout-heading-subtext">{ subHeadingText }</h2>

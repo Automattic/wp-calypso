@@ -1168,13 +1168,16 @@ export function CheckoutStepGroup( {
 	);
 }
 
-export function PaymentMethodStep( props: Partial< CheckoutStepProps > ) {
+export function PaymentMethodStep(
+	props: Partial< CheckoutStepProps > & { waitForPaymentMethodIds?: string[] }
+) {
 	const paymentMethodStepProps = useMemo(
 		() =>
 			getDefaultPaymentMethodStep( {
 				onPageLoadError: props.onPageLoadError,
+				waitForPaymentMethodIds: props.waitForPaymentMethodIds,
 			} ),
-		[ props.onPageLoadError ]
+		[ props.onPageLoadError, props.waitForPaymentMethodIds ]
 	);
 	return <CheckoutStep { ...{ ...paymentMethodStepProps, ...props } } />;
 }

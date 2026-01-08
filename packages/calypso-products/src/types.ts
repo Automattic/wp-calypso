@@ -75,10 +75,13 @@ export type Feature = string;
 
 export type FeatureObject = {
 	getSlug: () => string;
-	getTitle: ( params?: { domainName?: string } ) => TranslateResult;
+	getTitle: ( params?: { domainName?: string; isExperimentVariant?: boolean } ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
 	getHeader?: () => TranslateResult;
-	getDescription?: ( params?: { domainName?: string } ) => TranslateResult;
+	getDescription?: ( params?: {
+		domainName?: string;
+		isExperimentVariant?: boolean;
+	} ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
 	getCompareSubtitle?: () => TranslateResult;
@@ -325,6 +328,24 @@ export type Plan = BillingTerm & {
 	 * Context - pdgrnI-26j
 	 */
 	get2023PricingGridSignupWpcomFeatures?: ( props?: { isSummerSpecial?: boolean } ) => Feature[];
+
+	/**
+	 * Comprehensive feature list for the long_set variant of the plans differentiators experiment.
+	 * Shows all features for each plan including base infrastructure features.
+	 */
+	getLongSetSignupWpcomFeatures?: () => Feature[];
+
+	/**
+	 * Incremental feature list for the long_set_stacked variant of the plans differentiators experiment.
+	 * Shows only features that are new compared to the previous plan tier, with "Everything in X, plus:" header.
+	 */
+	getLongSetStackedSignupWpcomFeatures?: () => Feature[];
+
+	/**
+	 * Incremental feature list for the short_set_stacked variant of the plans differentiators experiment.
+	 * Shows only features that are new compared to the previous plan tier, with "Everything in X, plus:" header.
+	 */
+	getShortSetStackedSignupWpcomFeatures?: () => Feature[];
 
 	/**
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.

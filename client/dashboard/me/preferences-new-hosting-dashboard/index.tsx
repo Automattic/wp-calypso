@@ -16,7 +16,6 @@ import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
 import { Notice } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
-import { Text } from '../../components/text';
 import { wpcomLink } from '../../utils/link';
 import type { Field } from '@wordpress/dataviews';
 
@@ -103,13 +102,14 @@ export default function PreferencesOptInForm() {
 		<Card>
 			<FlashMessage id="dashboard" message={ __( 'New Hosting Dashboard enabled.' ) } />
 			<CardBody>
-				<VStack as="form" onSubmit={ handleSubmit } spacing={ 3 } alignment="flex-start">
-					<SectionHeader title={ __( 'Try the new Hosting Dashboard' ) } level={ 3 } />
-					<Text as="p" variant="muted">
-						{ __(
+				<VStack as="form" onSubmit={ handleSubmit } spacing={ 4 } alignment="flex-start">
+					<SectionHeader
+						title={ __( 'Try the new Hosting Dashboard' ) }
+						description={ __(
 							'We’ve recently updated the dashboard with a modern design and smarter tools for managing your hosting.'
 						) }
-					</Text>
+						level={ 3 }
+					/>
 					<DataForm< OptInFormData >
 						data={ formData }
 						fields={ fields }
@@ -135,7 +135,7 @@ export default function PreferencesOptInForm() {
 								{
 									surveyLink: (
 										<ExternalLink
-											href="https://automattic.survey.fm/new-hosting-dashboard-opt-out-survey"
+											href="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
 											onClick={ () =>
 												recordTracksEvent(
 													'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'

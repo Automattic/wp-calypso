@@ -13,7 +13,7 @@ import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
-import { isRelativeUrl } from '../../utils/url';
+import { isOnboardingUrl, isRelativeUrl } from '../../utils/url';
 import ComponentViewTracker from '../component-view-tracker';
 import { Text } from '../text';
 import { TextSkeleton } from '../text-skeleton';
@@ -91,7 +91,7 @@ export default function OverviewCard( {
 		return <>&nbsp;</>;
 	};
 
-	const isRelativeLink = link && isRelativeUrl( link );
+	const isRelativeLink = link && ( isRelativeUrl( link ) || isOnboardingUrl( link ) );
 
 	let relativeLink: string | undefined = undefined;
 	let externalLink: string | undefined = undefined;

@@ -33,11 +33,11 @@ export const DomainSuggestionErrorCTA = ( {
 					isDestructive
 					variant="primary"
 					__next40pxDefaultSize
-					label={ __( 'Add to Cart' ) }
+					label={ __( 'Add to cart' ) }
 					onClick={ callback }
 					icon={ warning }
 				>
-					{ listContext.isFeatured ? __( 'Add to Cart' ) : undefined }
+					{ listContext.isFeatured ? __( 'Add to cart' ) : undefined }
 				</Button>
 			</Tooltip>
 		</div>

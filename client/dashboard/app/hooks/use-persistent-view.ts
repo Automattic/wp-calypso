@@ -29,6 +29,11 @@ interface UseViewOptions {
 	 * The returned view's `filters` will be merged with the transient filters.
 	 */
 	queryParamFilterFields?: string[];
+
+	/**
+	 * Sanitize the field by removing any invalid or malformed entries and migrating deprecated fields.
+	 */
+	sanitizeFields?: ( fields: View[ 'fields' ] ) => View[ 'fields' ];
 }
 
 /**
@@ -41,6 +46,7 @@ export function usePersistentView( {
 	defaultView,
 	queryParams,
 	queryParamFilterFields = [],
+	sanitizeFields,
 }: UseViewOptions ): {
 	view: View;
 	updateView: ( newView: View ) => void;
@@ -103,8 +109,8 @@ export function usePersistentView( {
 	}, [ matches, transientProperties, transientFilters, queryParams ] );
 
 	// Merge transient properties and filters from query params into the view.
-	const view: View = useMemo(
-		() => ( {
+	const view: View = useMemo( () => {
+		const mergedView = {
 			...baseView,
 			...transientProperties,
 			...( transientFilters.length > 0 && {
@@ -115,9 +121,14 @@ export function usePersistentView( {
 					...transientFilters,
 				],
 			} ),
-		} ),
-		[ baseView, transientProperties, transientFilterFields, transientFilters ]
-	);
+		};
+
+		if ( sanitizeFields ) {
+			mergedView.fields = sanitizeFields( mergedView.fields );
+		}
+
+		return mergedView;
+	}, [ baseView, transientProperties, transientFilterFields, transientFilters, sanitizeFields ] );
 
 	const updateView = useCallback(
 		( newView: View ) => {
@@ -125,7 +136,8 @@ export function usePersistentView( {
 				( field ) =>
 					newView.filters?.some(
 						( filter ) =>
-							filter.field === field && fastDeepEqual( filter.value, [ queryParams[ field ] ] )
+							filter.field === field &&
+							fastDeepEqual( filter.value, [ String( queryParams[ field ] ) ] )
 					)
 			);
 
@@ -177,7 +189,11 @@ export function usePersistentView( {
 
 	const resetView = useCallback( () => {
 		persistView( undefined );
-	}, [ persistView ] );
+		navigate( {
+			search: mergeQueryParamsWithTransientProperties( queryParams, { page: 1, search: '' } ),
+			replace: true,
+		} );
+	}, [ persistView, navigate, queryParams ] );
 
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
 }

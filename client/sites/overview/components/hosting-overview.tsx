@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
+import PlanNoticeUpgradeCredit from 'calypso/my-sites/plans-features-main/components/plan-notice-upgrade-credit';
 import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -10,7 +11,6 @@ import MigrationOverview from './migration-overview';
 import { MigrationSSHComplete } from './migration-overview/components/migration-ssh-complete';
 import { MigrationSSHFailed } from './migration-overview/components/migration-ssh-failed';
 import PlanCard from './plan-card';
-import PlanCreditNotice from './plan-credit-notice';
 import QuickActionsCard from './quick-actions-card';
 import SiteBackupCard from './site-backup-card';
 import SupportCard from './support-card';
@@ -48,7 +48,12 @@ const HostingOverview: FC = () => {
 				title={ translate( 'Overview' ) }
 				subtitle={ subtitle }
 			/>
-			<PlanCreditNotice />
+			{ site?.ID && (
+				<PlanNoticeUpgradeCredit
+					className="hosting-overview__upgrade-credit-notice"
+					siteId={ site.ID }
+				/>
+			) }
 			<PlanCard />
 			<QuickActionsCard />
 			<ActiveDomainsCard />

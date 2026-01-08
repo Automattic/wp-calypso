@@ -38,6 +38,14 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 		reseller: null,
 	} );
 
+	const createSubdomainSetupInfo = ( rootDomain = 'example.com' ) => {
+		return {
+			...createMockDomainConnectionSetupInfo(),
+			is_subdomain: true,
+			root_domain: rootDomain,
+		};
+	};
+
 	test( 'renders 3 rows when current nameservers match target nameservers exactly', async () => {
 		const domainMappingStatus = createMockDomainMappingStatus( [
 			'ns1.wordpress.com',
@@ -185,6 +193,7 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 		// Check for column headers
 		expect( await screen.findByText( 'Current values' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Update to' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Name' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'handles empty current nameservers array', async () => {
@@ -253,7 +262,7 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 		// Check row structure
 		const dataRows = rows.slice( 1 ); // Skip header row
 
-		// Row 1: ns1.wordpress.com -> ns1.wordpress.com (MATCHED!)
+		// Row 1: ns1.wordpress.com -> ns1.wordpress.com (MATCHED!) (no Name column for root)
 		const row1Cells = within( dataRows[ 0 ] ).getAllByRole( 'cell' );
 		expect( within( row1Cells[ 0 ] ).getByText( 'ns1.wordpress.com' ) ).toBeInTheDocument();
 		expect( within( row1Cells[ 2 ] ).getByText( 'ns1.wordpress.com' ) ).toBeInTheDocument();
@@ -269,13 +278,13 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 		expect( within( row3Cells[ 2 ] ).getByText( 'ns3.wordpress.com' ) ).toBeInTheDocument();
 	} );
 
-	test( 'renders only 3 columns in suggested mode (no type/name columns)', async () => {
+	test( 'renders name column in suggested mode for subdomains and hides type', async () => {
 		const domainMappingStatus = createMockDomainMappingStatus( [ 'ns1.wordpress.com' ] );
-		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
+		const domainConnectionSetupInfo = createSubdomainSetupInfo();
 
 		render(
 			<DNSRecordsDataView
-				domainName="example.com"
+				domainName="blog.example.com"
 				domainMappingStatus={ domainMappingStatus }
 				domainConnectionSetupInfo={ domainConnectionSetupInfo }
 				mode={ DomainConnectionSetupMode.SUGGESTED }
@@ -285,9 +294,11 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 		// Wait for DataViews to render
 		const table = await screen.findByRole( 'table' );
 
-		// Should NOT have Type or Name columns in suggested mode
+		// Should NOT have Type column in suggested mode
 		expect( screen.queryByText( 'Type' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Name' ) ).not.toBeInTheDocument();
+
+		// Should include Name column for subdomains
+		expect( screen.getByText( 'Name' ) ).toBeInTheDocument();
 
 		// Should have the basic columns
 		expect( screen.getByText( 'Current values' ) ).toBeInTheDocument();
@@ -296,8 +307,55 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 		// Verify column count in header row
 		const rows = within( table ).getAllByRole( 'row' );
 		const headerCells = within( rows[ 0 ] ).getAllByRole( 'columnheader' );
-		// Should have 3 columns: Current values, arrow (empty header), Update to
-		expect( headerCells ).toHaveLength( 3 );
+		// Should have 4 columns: Name, Current values, arrow (empty header), Update to
+		expect( headerCells ).toHaveLength( 4 );
+	} );
+
+	test( 'shows subdomain name in name column when connecting a subdomain', async () => {
+		const domainMappingStatus = createMockDomainMappingStatus( [ 'ns1.other.com' ] );
+		const domainConnectionSetupInfo = createSubdomainSetupInfo();
+
+		render(
+			<DNSRecordsDataView
+				domainName="blog.example.com"
+				domainMappingStatus={ domainMappingStatus }
+				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				mode={ DomainConnectionSetupMode.SUGGESTED }
+			/>
+		);
+
+		const table = await screen.findByRole( 'table' );
+		const rows = within( table ).getAllByRole( 'row' );
+		const dataRows = rows.slice( 1 );
+
+		const firstRowCells = within( dataRows[ 0 ] ).getAllByRole( 'cell' );
+		expect( within( firstRowCells[ 0 ] ).getByText( 'blog' ) ).toBeInTheDocument();
+	} );
+
+	test( 'shows name column only when connecting a subdomain', async () => {
+		const domainMappingStatus = createMockDomainMappingStatus( [ 'ns1.other.com' ] );
+
+		render(
+			<DNSRecordsDataView
+				domainName="example.com"
+				domainMappingStatus={ domainMappingStatus }
+				domainConnectionSetupInfo={ createMockDomainConnectionSetupInfo() }
+				mode={ DomainConnectionSetupMode.SUGGESTED }
+			/>
+		);
+
+		expect( screen.queryByText( 'Name' ) ).not.toBeInTheDocument();
+
+		render(
+			<DNSRecordsDataView
+				domainName="blog.example.com"
+				domainMappingStatus={ domainMappingStatus }
+				domainConnectionSetupInfo={ createSubdomainSetupInfo() }
+				mode={ DomainConnectionSetupMode.SUGGESTED }
+			/>
+		);
+
+		expect( await screen.findByText( 'Name' ) ).toBeInTheDocument();
 	} );
 } );
 
@@ -332,6 +390,14 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 			registrar_iana_id: null,
 			reseller: null,
 		} as DomainMappingSetupInfo;
+	};
+
+	const createSubdomainSetupInfo = (): DomainMappingSetupInfo => {
+		return {
+			...createMockDomainConnectionSetupInfo(),
+			is_subdomain: true,
+			root_domain: 'example.com',
+		};
 	};
 
 	test( 'renders A records when current IPs match target IPs exactly', async () => {
@@ -375,6 +441,33 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 		expect( within( row3Cells[ 0 ] ).getByText( 'CNAME' ) ).toBeInTheDocument();
 		expect( within( row3Cells[ 1 ] ).getByText( 'www' ) ).toBeInTheDocument();
 		expect( within( row3Cells[ 2 ] ).getByText( '-' ) ).toBeInTheDocument();
+	} );
+
+	test( 'uses subdomain names for A and CNAME records in advanced mode', async () => {
+		const domainMappingStatus = createMockDomainMappingStatus(
+			[ '192.0.78.24' ],
+			'initial.winxdns.net'
+		);
+		const domainConnectionSetupInfo = createSubdomainSetupInfo();
+
+		render(
+			<DNSRecordsDataView
+				domainName="blog.example.com"
+				domainMappingStatus={ domainMappingStatus }
+				domainConnectionSetupInfo={ domainConnectionSetupInfo }
+				mode={ DomainConnectionSetupMode.ADVANCED }
+			/>
+		);
+
+		const table = await screen.findByRole( 'table' );
+		const rows = within( table ).getAllByRole( 'row' );
+		const dataRows = rows.slice( 1 );
+
+		const aRecordCells = within( dataRows[ 0 ] ).getAllByRole( 'cell' );
+		expect( within( aRecordCells[ 1 ] ).getByText( 'blog' ) ).toBeInTheDocument();
+
+		const cnameCells = within( dataRows[ 2 ] ).getAllByRole( 'cell' );
+		expect( within( cnameCells[ 1 ] ).getByText( 'www.blog' ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders A records with - when only 1 current IP exists', async () => {

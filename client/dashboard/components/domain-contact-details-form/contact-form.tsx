@@ -21,6 +21,7 @@ import { RegionAddressFieldsLayout } from './region-address-fieldsets';
 import type { UseMutateAsyncFunction } from '@tanstack/react-query';
 interface ContactFormProps {
 	initialData?: DomainContactDetails;
+	beforeFormCard?: React.ReactNode;
 	beforeForm?: React.ReactNode;
 	isSubmitting: boolean;
 	onSubmit: ( normalizedFormData: DomainContactDetails ) => void;
@@ -30,6 +31,7 @@ interface ContactFormProps {
 export default function ContactForm( {
 	initialData,
 	isSubmitting,
+	beforeFormCard,
 	beforeForm,
 	onSubmit,
 	validate,
@@ -147,34 +149,26 @@ export default function ContactForm( {
 							),
 							{
 								external: (
-									<Button
-										variant="link"
-										target="_blank"
-										href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
-									>
+									<ExternalLink href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en">
 										ICANN
-									</Button>
+									</ExternalLink>
 								),
 							}
 						) }
 					</Text>
 					<Text as="p">
 						{ __( 'Domain privacy service is included for free on applicable domains.' ) }{ ' ' }
-						<ExternalLink
-							// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-							href="https://wordpress.com/support/domains/private-domain-registration/#what-is-privacy-protection"
-						>
-							{ __( 'Learn more' ) }
-						</ExternalLink>
+						<InlineSupportLink supportContext="domain-registrations-and-privacy" />
 					</Text>
 				</VStack>
 			</Notice>
 
-			{ beforeForm }
+			{ beforeFormCard }
 
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
+						{ beforeForm }
 						<DataForm< DomainContactDetails >
 							data={ normalizedFormData }
 							fields={ fields }

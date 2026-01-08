@@ -1,5 +1,5 @@
 import { DotcomFeatures } from '@automattic/api-core';
-import { isDomainMapping } from '@automattic/calypso-products';
+import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	DOMAIN_FLOW,
@@ -11,6 +11,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
@@ -90,7 +91,7 @@ const domain: FlowV2< typeof initialize > = {
 		);
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
-		const defaultRedirect = `/v2/sites/${ siteSlug }/domains`;
+		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
 
 		const goToCheckout = ( siteSlug: string ) => {
 			// Check if cart contains only one domain product and it's a domain connection
@@ -99,13 +100,25 @@ const domain: FlowV2< typeof initialize > = {
 			// domains page to guide users through the connection process.
 			const hasOnlyDomainConnection =
 				domainCartItems && domainCartItems.length === 1 && isDomainMapping( domainCartItems[ 0 ] );
+			const hasOnlyDomainTransfer =
+				domainCartItems && domainCartItems.length === 1 && isDomainTransfer( domainCartItems[ 0 ] );
 
-			let destination = `/v2/sites/${ siteSlug }/domains`;
+			// Use the redirect_to query param if provided, otherwise fall back to v2 domains
+			let destination = redirectTo || dashboardLink( `/sites/${ siteSlug }/domains` );
 
-			if ( hasOnlyDomainConnection ) {
+			// But send domain-only connects to domain-connection-setup.
+			if ( ! redirectTo && hasOnlyDomainConnection ) {
 				const domain = domainCartItems[ 0 ].meta;
 				if ( domain ) {
-					destination = `/v2/domains/${ domain }/domain-connection-setup`;
+					destination = dashboardLink( `/domains/${ domain }/domain-connection-setup` );
+				}
+			}
+
+			// Send single domain transfers to domain-transfer-setup.
+			if ( hasOnlyDomainTransfer ) {
+				const domain = domainCartItems[ 0 ].meta;
+				if ( domain ) {
+					destination = dashboardLink( `/domains/${ domain }/domain-transfer-setup` );
 				}
 			}
 
@@ -114,8 +127,10 @@ const domain: FlowV2< typeof initialize > = {
 				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 					redirect_to: destination,
 					signup: 1,
-					cancel_to: new URL( addQueryArgs( '/setup/domain', { siteSlug } ), window.location.href )
-						.href,
+					cancel_to: new URL(
+						addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
+						window.location.href
+					).href,
 				} )
 			);
 		};
@@ -281,7 +296,7 @@ const domain: FlowV2< typeof initialize > = {
 					if ( providedDependencies.newExistingSiteChoice === 'domain' ) {
 						return window.location.assign(
 							addQueryArgs( '/checkout/no-site', {
-								redirect_to: '/v2/domains',
+								redirect_to: dashboardLink( '/domains' ),
 								signup: 0,
 								isDomainOnly: 1,
 								cancel_to: new URL(
@@ -325,7 +340,7 @@ const domain: FlowV2< typeof initialize > = {
 								);
 
 								return {
-									redirectTo: `/v2/domains/${ domain }/domain-connection-setup`,
+									redirectTo: dashboardLink( `/domains/${ domain }/domain-connection-setup` ),
 								};
 							}
 
@@ -401,7 +416,9 @@ const domain: FlowV2< typeof initialize > = {
 							return window.location.replace( providedDependencies.redirectTo );
 						}
 
-						const destination = `/v2/sites/${ providedDependencies.siteSlug }/domains`;
+						const destination = dashboardLink(
+							`/sites/${ providedDependencies.siteSlug }/domains`
+						);
 
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( this.name );

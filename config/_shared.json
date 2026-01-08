@@ -11,6 +11,7 @@
 	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,
 	"survicate_enabled": false,
+	"survicate_enabled_at_help_center": true,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",
@@ -212,7 +213,7 @@
 	"100_year_plan_calendly_id": "wpcom-100-years/30min",
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"site_spec": {
-		"script_url": "https://widgets.wp.com/site-spec/v1.3.5/index.js",
-		"css_url": "https://widgets.wp.com/site-spec/v1.3.5/style.css"
+		"script_url": "https://widgets.wp.com/site-spec/v1.3.6/index.js",
+		"css_url": "https://widgets.wp.com/site-spec/v1.3.6/style.css"
 	}
 }

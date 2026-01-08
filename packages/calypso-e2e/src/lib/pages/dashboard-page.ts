@@ -5,13 +5,13 @@ import { Page } from 'playwright';
 /**
  * Internal dependencies
  */
-import { getCalypsoURL } from '../../data-helper';
+import { getDashboardURL } from '../../data-helper';
 
 /**
  * Dashboard page class for the new Multi-site Dashboard.
  *
  * This Page Object represents the new dashboard implementation
- * accessible under the /v2 path.
+ * accessible at my.wordpress.com.
  */
 export class DashboardPage {
 	/**
@@ -30,11 +30,28 @@ export class DashboardPage {
 
 	/**
 	 * Visits the dashboard entry page.
+	 * Dismisses the welcome modal if it appears because it hides the "main" content.
 	 *
 	 * @returns Promise that resolves when navigation is complete.
 	 */
 	async visit(): Promise< void > {
-		await this.page.goto( getCalypsoURL( 'v2' ) );
+		await this.page.goto( getDashboardURL() );
+
+		try {
+			await this.page
+				.getByRole( 'heading', {
+					name: 'Meet the new WordPress.com Hosting Dashboard',
+				} )
+				.waitFor( { state: 'visible', timeout: 3000 } );
+			await this.page
+				.getByRole( 'button', {
+					name: 'Try it out',
+				} )
+				.click();
+		} catch {
+			// Modal didn't appear, continue
+		}
+
 		// Wait for the main content to be visible
 		await this.page.getByRole( 'main' ).waitFor();
 	}
@@ -46,7 +63,7 @@ export class DashboardPage {
 	 */
 	async isLoaded(): Promise< boolean > {
 		const isMainContentVisible = await this.page.getByRole( 'main' ).isVisible();
-		const hasCorrectUrl = this.page.url().includes( '/v2' );
+		const hasCorrectUrl = this.page.url().includes( getDashboardURL() );
 		return isMainContentVisible && hasCorrectUrl;
 	}
 
@@ -76,12 +93,11 @@ export class DashboardPage {
 	/**
 	 * Visits a specific subpath within the dashboard.
 	 *
-	 * @param subpath - The subpath to visit under /v2.
+	 * @param path - The path to visit in the dashboard.
 	 * @returns Promise that resolves when navigation is complete.
 	 */
-	async visitPath( subpath: string ): Promise< void > {
-		const path = subpath.startsWith( '/' ) ? subpath : `/${ subpath }`;
-		await this.page.goto( getCalypsoURL( `v2${ path }` ) );
+	async visitPath( path: string ): Promise< void > {
+		await this.page.goto( getDashboardURL( path ) );
 	}
 
 	/**

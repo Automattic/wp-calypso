@@ -11,7 +11,7 @@
 	&:focus,
 	&:active {
 
-		.gridicon {
+		svg {
 			fill: var(--color-accent);
 		}
 
@@ -20,7 +20,7 @@
 		}
 	}
 
-	.gridicon {
+	svg {
 		fill: var(--color-neutral-light);
 	}
 

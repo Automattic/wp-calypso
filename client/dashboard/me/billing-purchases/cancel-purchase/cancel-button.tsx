@@ -71,10 +71,10 @@ export default function CancelButton( {
 
 	return (
 		<Button
-			className="cancel-purchase__button"
 			disabled={ isDisabled }
 			isBusy={ isBusy ?? state.isLoading ?? false }
 			onClick={ onClick }
+			isDestructive
 			variant="primary"
 		>
 			{ cancelButtonText }

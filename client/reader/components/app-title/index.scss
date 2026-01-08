@@ -1,0 +1,14 @@
+.app-title {
+	width: min-content;
+	text-decoration: none;
+	padding-inline: 0;
+	height: fit-content;
+
+	.app-title__heading {
+		color: var(--color-sidebar-submenu-text);
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 32px;
+		font-weight: 400;
+		line-height: 1.375;
+	}
+}
