@@ -25,7 +25,6 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
@@ -74,7 +73,6 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const dashboardOptIn = useSelector( hasDashboardOptIn );
 		const { signupDomainOrigin, planCartItem } = useSelect(
 			( select ) => ( {
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
@@ -120,7 +118,6 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 
 			return getOnboardingPostCheckoutDestination( {
-				shouldRedirectToMultiSiteDashboard: dashboardOptIn,
 				flowName,
 				locale,
 				siteSlug: providedDependencies.siteSlug as string,

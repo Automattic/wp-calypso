@@ -15,7 +15,6 @@ import stepConfig from './steps';
 
 function getOnboardingPmUrls( dependencies, localeSlug, flowName ) {
 	const [ onboardingPmPostCheckoutDestination ] = getOnboardingPostCheckoutDestination( {
-		shouldRedirectToMultiSiteDashboard: dependencies.dashboardOptIn,
 		flowName,
 		locale: localeSlug,
 		siteSlug: dependencies.siteSlug,

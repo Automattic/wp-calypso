@@ -13,8 +13,6 @@ import {
 	persistSignupDestination,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
-import { useSelector } from 'calypso/state';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../../../stores';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
@@ -52,7 +50,6 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 		const locale = useFlowLocale();
 		const { setSignupDomainOrigin } = dispatch( ONBOARD_STORE ) as OnboardActions;
 		const { setShouldShowNotification } = usePurchasePlanNotification();
-		const dashboardOptIn = useSelector( hasDashboardOptIn );
 		/**
 		 * Handle step submissions for the onboarding unified flow
 		 */
@@ -144,7 +141,6 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 					) {
 						// Handle final redirect after site setup is complete
 						const [ destination ] = getOnboardingPostCheckoutDestination( {
-							shouldRedirectToMultiSiteDashboard: dashboardOptIn,
 							flowName,
 							locale,
 							siteSlug: providedDependencies.siteSlug,
