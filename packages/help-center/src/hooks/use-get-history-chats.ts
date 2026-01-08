@@ -8,8 +8,8 @@ import {
 	getLastMessage,
 	getZendeskConversations,
 } from '../components/utils';
-import { useGetSupportInteractions } from '../data/use-get-support-interactions';
 import { HELP_CENTER_STORE } from '../stores';
+import { useGetSupportInteractions } from './use-get-support-interactions';
 import type {
 	Conversations,
 	OdieConversation,
