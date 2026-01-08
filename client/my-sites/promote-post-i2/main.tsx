@@ -8,7 +8,6 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
@@ -122,48 +121,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
 	);
 
-	const { data: { balance: creditBalance = '0.00', history: creditsHistory = [] } = {} } =
-		useCreditBalanceQuery();
-
-	const getExpirationText = ( history: Array< { amount: number; expires: string } > ) => {
-		if ( ! history || history.length === 0 ) {
-			return '';
-		}
-
-		const sortedHistory = [ ...history ].sort( ( a, b ) =>
-			moment( a.expires ).diff( moment( b.expires ) )
-		);
-
-		const firstItem = sortedHistory[ 0 ];
-		const firstDate = moment( firstItem.expires ).format( 'LL' );
-
-		if ( sortedHistory.length === 1 ) {
-			return translate( 'Your credits will expire on %(date)s', {
-				args: { date: firstDate },
-			} );
-		}
-
-		const firstAmount = '$' + formatNumber( firstItem.amount / 100, { decimals: 2 } );
-		const lastItem = sortedHistory[ sortedHistory.length - 1 ];
-		const lastDate = moment( lastItem.expires ).format( 'LL' );
-
-		return (
-			<>
-				{ translate( 'You have %(amount)s in credits expiring on %(firstDate)s.', {
-					args: {
-						amount: firstAmount,
-						firstDate,
-					},
-				} ) }
-				<br />
-				{ translate( 'Your remaining credits will expire on %(lastDate)s', {
-					args: {
-						lastDate,
-					},
-				} ) }
-			</>
-		);
-	};
+	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
@@ -428,9 +386,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 						</div>
 						<div className="blaze-credits-container__result">
 							{ '$' + formatNumber( parseFloat( creditBalance ), { decimals: 2 } ) }
-						</div>
-						<div className="blaze-credits-container__credits-notice">
-							{ getExpirationText( creditsHistory ) }
 						</div>
 					</div>
 				</div>
