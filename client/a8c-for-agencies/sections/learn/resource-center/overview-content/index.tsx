@@ -74,7 +74,6 @@ export default function ResourceCenterOverviewContent() {
 
 			<BrowseAllResources
 				resources={ browseAllResources }
-				isLoading={ isLoading }
 				onOpenVideoModal={ handleOpenVideoModal }
 			/>
 

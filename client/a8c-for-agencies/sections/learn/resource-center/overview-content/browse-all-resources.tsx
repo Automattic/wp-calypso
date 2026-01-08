@@ -2,7 +2,6 @@ import {
 	Card,
 	CardBody,
 	Button,
-	Spinner,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
@@ -29,7 +28,6 @@ const initialView: View = {
 
 interface BrowseAllResourcesProps {
 	resources: ResourceItem[];
-	isLoading: boolean;
 	onOpenVideoModal: ( resource: ResourceItem ) => void;
 }
 
@@ -87,7 +85,6 @@ function ResourceItemCard( {
 
 export default function BrowseAllResources( {
 	resources,
-	isLoading,
 	onOpenVideoModal,
 }: BrowseAllResourcesProps ) {
 	const [ view, setView ] = useState< View >( initialView );
@@ -182,34 +179,6 @@ export default function BrowseAllResources( {
 		() => filterSortAndPaginate( resources, view, fields ),
 		[ resources, view, fields ]
 	);
-
-	if ( isLoading ) {
-		return (
-			<>
-				<Spacer marginBottom={ 2 }>
-					<Heading level={ 2 } weight={ 500 } size={ 20 }>
-						{ __( 'Browse all resources' ) }
-					</Heading>
-				</Spacer>
-				<div style={ { textAlign: 'center', padding: '40px 0' } }>
-					<Spinner />
-				</div>
-			</>
-		);
-	}
-
-	if ( resources.length === 0 ) {
-		return (
-			<>
-				<Spacer marginBottom={ 2 }>
-					<Heading level={ 2 } weight={ 500 } size={ 20 }>
-						{ __( 'Browse all resources' ) }
-					</Heading>
-				</Spacer>
-				<Text variant="muted">{ __( 'No resources available at this time.' ) }</Text>
-			</>
-		);
-	}
 
 	return (
 		<>
