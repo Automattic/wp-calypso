@@ -14,6 +14,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { Plan } from '../../sites/site-fields';
+import { wpcomLink } from '../../utils/link';
 import { hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
@@ -247,7 +248,7 @@ export const SitesWithoutThisPlugin = ( {
 					}
 
 					if ( site.slug ) {
-						window.open( `https://wordpress.com/plans/${ site.slug }`, '_blank' );
+						window.open( wpcomLink( `/plans/${ site.slug }` ), '_blank' );
 					}
 				},
 				isEligible: ( item: Site ) => ! hasPlanFeature( item, DotcomFeatures.INSTALL_PLUGINS ),
