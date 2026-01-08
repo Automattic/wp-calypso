@@ -1,12 +1,13 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { Children, forwardRef } from 'react';
+import { Card, CardBody } from '../card';
 import IconListItem from './icon-list-item';
 import type { IconListProps } from './types';
 
 import './style.scss';
 
 function UnforwardedIconList(
-	{ children }: IconListProps,
+	{ title, description, children }: IconListProps,
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	// Hide component if there are no children
@@ -15,9 +16,27 @@ function UnforwardedIconList(
 	}
 
 	return (
-		<VStack className="icon-list" spacing={ 0 } justify="flex-start" ref={ ref }>
-			{ children }
-		</VStack>
+		<Card className="icon-list" ref={ ref }>
+			<CardBody>
+				{ ( title || description ) && (
+					<VStack className="icon-list__heading" spacing={ 2 }>
+						{ title && (
+							<Text size="15px" weight={ 500 } lineHeight="20px">
+								{ title }
+							</Text>
+						) }
+						{ description && (
+							<Text variant="muted" lineHeight="20px">
+								{ description }
+							</Text>
+						) }
+					</VStack>
+				) }
+				<VStack className="icon-list__items" spacing={ 0 }>
+					{ children }
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
 
