@@ -4,9 +4,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useRef } from 'react';
 import { LeftColumn, RightColumn } from 'calypso/my-sites/checkout/src/components/ie-fallback';
 import Spinner from 'calypso/my-sites/checkout/src/components/spinner';
+import { logStashEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AssignToAllPaymentMethods from './assign-to-all-payment-methods';
@@ -48,6 +49,8 @@ export default function CreditCardFields( {
 	const theme = useTheme();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const [ vgsFormError, setVgsFormError ] = useState< string | null >( null );
+	const stripeLoadTimeoutRef = useRef< NodeJS.Timeout | null >( null );
+	const hasLoggedStripeLoadTimeoutRef = useRef( false );
 
 	// Check if VGS form should be used
 	const isVgsEbanxEnabled = isEnabled( 'checkout/vgs-ebanx' );
@@ -142,6 +145,44 @@ export default function CreditCardFields( {
 	};
 
 	const isLoaded = shouldShowContactFields ? true : isStripeFullyLoaded;
+
+	// Set up a timeout to detect if Stripe elements fail to load
+	useEffect( () => {
+		// Only monitor for Stripe loading if not using VGS or Ebanx
+		if ( shouldUseVgsForm || shouldUseEbanx || shouldShowContactFields ) {
+			return;
+		}
+
+		// Set a 10 second timeout to detect if Stripe elements never load
+		stripeLoadTimeoutRef.current = setTimeout( () => {
+			if ( ! isStripeFullyLoaded && ! hasLoggedStripeLoadTimeoutRef.current ) {
+				hasLoggedStripeLoadTimeoutRef.current = true;
+				logStashEvent(
+					'calypso_checkout_stripe_element_load_timeout',
+					{
+						error_type: 'stripe_element_load_timeout',
+						error_message: 'Stripe CardNumber element did not fire onReady within timeout period',
+						user_agent: navigator.userAgent,
+						is_mobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+							navigator.userAgent
+						)
+							? 'true'
+							: 'false',
+						tags: [ 'checkout', 'stripe-elements', 'stripe-timeout' ],
+					},
+					'error'
+				).catch( () => {
+					// Silently fail if logstash logging fails
+				} );
+			}
+		}, 10000 );
+
+		return () => {
+			if ( stripeLoadTimeoutRef.current ) {
+				clearTimeout( stripeLoadTimeoutRef.current );
+			}
+		};
+	}, [ isStripeFullyLoaded, shouldUseVgsForm, shouldUseEbanx, shouldShowContactFields ] );
 
 	// Render VGS form if enabled (let VgsCreditCardFields handle its own loading state)
 	if ( shouldUseVgsForm && ! vgsFormError ) {

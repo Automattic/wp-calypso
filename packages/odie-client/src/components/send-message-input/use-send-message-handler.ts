@@ -1,6 +1,7 @@
 import { useCallback } from '@wordpress/element';
 import Smooch from 'smooch';
 import { Message, Chat } from '../../types';
+import { MAX_MESSAGE_LENGTH } from '../notices/use-message-size-error-notice';
 
 interface UseSendMessageHandlerProps {
 	inputValue: string;
@@ -26,7 +27,7 @@ export function useSendMessageHandler( {
 	sendMessage,
 }: UseSendMessageHandlerProps ) {
 	return useCallback( async () => {
-		const message = inputValue.trim().substring( 0, 4096 );
+		const message = inputValue.trim().substring( 0, MAX_MESSAGE_LENGTH );
 
 		// Allow submission if there's either a message or attachments
 		if ( ( message === '' && ! hasAttachments ) || isChatBusy ) {

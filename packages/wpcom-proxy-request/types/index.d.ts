@@ -15,6 +15,8 @@ export interface WpcomRequestParams {
 	query?: string | Record< string, string | number >;
 	metaAPI?: {
 		accessAllUsersBlogs?: boolean;
+		setCrossOriginStorageItem?: { key: string; value: string };
+		getCrossOriginStorageItem?: { key: string };
 	};
 	signal?: AbortSignal;
 	apiNamespace?: string;
@@ -26,6 +28,13 @@ export function reloadProxy(): void;
 export function canAccessWpcomApis(): boolean;
 
 export function requestAllBlogsAccess(): ReturnType< typeof request >;
+
+export function setCrossOriginStorageItem(
+	key: string,
+	value: string
+): ReturnType< typeof request >;
+
+export function getCrossOriginStorageItem( key: string ): ReturnType< typeof request >;
 
 export default function request(
 	params: WpcomRequestParams,

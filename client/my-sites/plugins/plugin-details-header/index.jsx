@@ -96,6 +96,13 @@ const PluginDetailsHeader = ( {
 		);
 	};
 
+	// Determine version display: marketplace products use plugin.version, others use installed versions
+	const versionDisplay = isMarketplaceProduct
+		? plugin.version
+		: `${ currentVersionsRange?.min || plugin.version }${
+				currentVersionsRange?.max ? ` - ${ currentVersionsRange.max }` : ''
+		  }`;
+
 	return (
 		<div className="plugin-details-header__container">
 			<div className="plugin-details-header__main-info">
@@ -158,11 +165,7 @@ const PluginDetailsHeader = ( {
 				) }
 				<div className="plugin-details-header__info is-version">
 					<div className="plugin-details-header__info-title">{ translate( 'Version' ) }</div>
-					<div className="plugin-details-header__info-value">
-						{ /* Show the default version if plugin is not installed */ }
-						{ currentVersionsRange?.min || plugin.version }
-						{ currentVersionsRange?.max && ` - ${ currentVersionsRange.max }` }
-					</div>
+					<div className="plugin-details-header__info-value">{ versionDisplay }</div>
 				</div>
 				{ Boolean( plugin.active_installs ) && (
 					<div className="plugin-details-header__info is-installs">

@@ -1,5 +1,5 @@
 import { userReceiptsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -24,8 +24,7 @@ import type { Receipt } from '@automattic/api-core';
 const emptyReceipts: Receipt[] = [];
 
 export default function BillingHistory() {
-	const { data } = useSuspenseQuery( userReceiptsQuery() );
-	const receipts = data ?? emptyReceipts;
+	const { data: receipts = emptyReceipts, isLoading } = useQuery( userReceiptsQuery() );
 
 	const searchParams = billingHistoryRoute.useSearch();
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
@@ -83,6 +82,7 @@ export default function BillingHistory() {
 						actions={ actions }
 						getItemId={ getItemId }
 						paginationInfo={ paginationInfo }
+						isLoading={ isLoading }
 					/>
 				</DataViewsCard>
 			</div>

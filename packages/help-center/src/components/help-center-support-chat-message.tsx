@@ -55,7 +55,7 @@ export const HelpCenterSupportChatMessage = ( {
 	);
 
 	const messageDisplayName =
-		role === 'business'
+		'id' in message
 			? __( 'Happiness chat', __i18n_text_domain__ )
 			: __( 'Support assistant chat', __i18n_text_domain__ );
 

@@ -38,7 +38,16 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
-	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
+
+	const setPrimaryDomainMutation = useMutation( {
+		...siteSetPrimaryDomainMutation(),
+		meta: {
+			snackbar: {
+				error: { source: 'server' },
+			},
+		},
+	} );
+
 	const sitesByBlogId: Record< number, Site > = useMemo( () => {
 		if ( ! sites ) {
 			return {};
@@ -186,13 +195,6 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 									origin: 'dataviews_actions',
 									error_message: error.message,
 								} );
-
-								createErrorNotice(
-									__( 'Something went wrong and we couldn’t change your primary domain.' ),
-									{
-										type: 'snackbar',
-									}
-								);
 							},
 						}
 					);

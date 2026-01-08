@@ -16,6 +16,7 @@
 	}
 	.action-item {
 		border-bottom: 1px solid $gray-100;
+		padding: $grid-unit-20 0;
 		&:last-child {
 			border-bottom: none;
 		}

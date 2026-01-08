@@ -3,14 +3,23 @@ import { formatNumberCompact } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import AutoDirection from 'calypso/components/auto-direction';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import { recordPermalinkClick } from 'calypso/reader/stats';
+import ReaderFullPostHeaderMeta from './header-meta';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
-const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => {
+const ReaderFullPostHeader = ( {
+	post,
+	layout = 'default',
+	author,
+	siteName,
+	followCount,
+	feedId,
+	siteId,
+	tags,
+} ) => {
 	const handlePermalinkClick = () => {
 		recordPermalinkClick( 'full_post_title', post );
 	};
@@ -31,11 +40,9 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 		return <ReaderFullPostHeaderPlaceholder />;
 	}
 
-	// Rather than pass in additional props for the `recent` layout, we extract the props we need from authorProfile.
-	const { props: { siteName, followCount } = {} } = authorProfile || {};
-
 	const isDefaultLayout = layout === 'default';
 	const iconSrc = getPostIcon( post );
+	const displaySiteName = siteName;
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
@@ -49,7 +56,11 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 						post={ post }
 					>
 						{ iconSrc ? (
-							<img src={ iconSrc } alt={ siteName } className="reader-full-post__site-icon" />
+							<img
+								src={ iconSrc }
+								alt={ displaySiteName }
+								className="reader-full-post__site-icon"
+							/>
 						) : (
 							<Gridicon
 								icon="globe"
@@ -74,49 +85,57 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 					</h1>
 				</AutoDirection>
 			) : null }
-			{ isDefaultLayout && <div className="reader-full-post__author-block">{ authorProfile }</div> }
-			<div className="reader-full-post__header-meta">
-				{ layout === 'recent' && (
-					<>
-						{ siteName && (
-							<span className="reader-full-post__header-site-name">
-								<ReaderSiteStreamLink
-									className="reader-full-post__header-site-name-link"
-									feedId={ post.feed_ID }
-									siteId={ post.blog_ID }
-									post={ post }
-								>
-									{ siteName }
-								</ReaderSiteStreamLink>
-							</span>
-						) }
-						{ followCount && (
-							<span className="reader-full-post__header-follow-count">
-								{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
-									count: followCount,
-									args: {
-										followCount: formatNumberCompact( followCount ),
-									},
-								} ) }
-							</span>
-						) }
-					</>
-				) }
-				{ post.date ? (
-					<span className="reader-full-post__header-date">
-						<a
-							className="reader-full-post__header-date-link"
-							onClick={ recordDateClick }
-							href={ post.URL }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							<TimeSince date={ post.date } />
-						</a>
-					</span>
-				) : null }
-			</div>
-			{ isDefaultLayout && <TagsList post={ post } tagsToShow={ 5 } /> }
+			{ isDefaultLayout && (
+				<div className="reader-full-post__header-meta-and-tags">
+					<ReaderFullPostHeaderMeta
+						post={ post }
+						author={ author }
+						siteName={ siteName }
+						feedId={ feedId }
+						siteId={ siteId }
+					/>
+					{ tags && <div className="reader-full-post__header-tags">{ tags }</div> }
+				</div>
+			) }
+			{ layout === 'recent' && (
+				<div className="reader-full-post__header-meta">
+					{ displaySiteName && (
+						<span className="reader-full-post__header-site-name">
+							<ReaderSiteStreamLink
+								className="reader-full-post__header-site-name-link"
+								feedId={ post.feed_ID }
+								siteId={ post.blog_ID }
+								post={ post }
+							>
+								{ displaySiteName }
+							</ReaderSiteStreamLink>
+						</span>
+					) }
+					{ followCount && (
+						<span className="reader-full-post__header-follow-count">
+							{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
+								count: followCount,
+								args: {
+									followCount: formatNumberCompact( followCount ),
+								},
+							} ) }
+						</span>
+					) }
+					{ post.date && (
+						<span className="reader-full-post__header-date">
+							<a
+								className="reader-full-post__header-date-link"
+								onClick={ recordDateClick }
+								href={ post.URL }
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<TimeSince date={ post.date } />
+							</a>
+						</span>
+					) }
+				</div>
+			) }
 		</div>
 	);
 	/* eslint-enable react/jsx-no-target-blank */
@@ -126,6 +145,12 @@ ReaderFullPostHeader.propTypes = {
 	post: PropTypes.object.isRequired,
 	children: PropTypes.node,
 	layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
+	author: PropTypes.object,
+	siteName: PropTypes.string,
+	followCount: PropTypes.number,
+	feedId: PropTypes.number,
+	siteId: PropTypes.number,
+	tags: PropTypes.node,
 };
 
 export default ReaderFullPostHeader;

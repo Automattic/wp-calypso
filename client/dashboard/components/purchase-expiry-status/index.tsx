@@ -1,8 +1,9 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
-import { ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import {
@@ -46,6 +47,7 @@ export function PurchaseExpiryStatus( {
 	isDisconnectedSite?: boolean;
 } ) {
 	const locale = useLocale();
+	const { setShowHelpCenter } = useHelpCenter();
 
 	// @todo: There isn't currently a way to get the taxName based on the
 	// country. The country is not included in the purchase information
@@ -101,11 +103,18 @@ export function PurchaseExpiryStatus( {
 		return (
 			<span>
 				{ createInterpolateElement(
-					__(
-						'You no longer have access to this site and its purchases. <button>Contact support</button>'
-					),
+					__( 'You no longer have access to this site and its purchases. <contactSupportLink/>' ),
 					{
-						button: <a href="/help/contact" />,
+						contactSupportLink: (
+							<Button
+								variant="link"
+								onClick={ () => {
+									setShowHelpCenter( true );
+								} }
+							>
+								{ __( 'Contact support' ) }
+							</Button>
+						),
 					}
 				) }
 			</span>

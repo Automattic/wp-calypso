@@ -60,7 +60,7 @@ const MarketPlaceSubscriptionsWarning = ( {
 								activeSubscriptions.length
 							) }
 					</p>
-					<ButtonStack justify="flex-end">
+					<ButtonStack justify="flex-start">
 						<Button
 							__next40pxDefaultSize
 							variant="tertiary"
@@ -72,6 +72,7 @@ const MarketPlaceSubscriptionsWarning = ( {
 						<Button
 							__next40pxDefaultSize
 							variant="primary"
+							isDestructive
 							isBusy={ /*updateDnsMutation.isPending*/ false }
 							onClick={ removePlan }
 							disabled={ false /*numberOfSelectedRecords === 0 || updateDnsMutation.isPending*/ }

@@ -43,6 +43,7 @@ module.exports = {
 							'!@automattic/api-queries',
 							'!@automattic/calypso-analytics',
 							'!@automattic/calypso-config',
+							'!@automattic/calypso-sentry',
 							'!@automattic/calypso-support-session',
 							'!@automattic/charts',
 							'!@automattic/components',
@@ -69,6 +70,7 @@ module.exports = {
 							'!@automattic/shopping-cart',
 							'!@automattic/ui',
 							'!@automattic/urls',
+							'!@automattic/js-utils',
 							'!@automattic/viewport',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.

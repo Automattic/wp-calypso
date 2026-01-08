@@ -149,4 +149,24 @@ describe( 'PluginDetailsHeader', () => {
 			`https://wordpress.org/support/plugin/${ props.plugin.slug }/reviews`
 		);
 	} );
+
+	test( 'should show plugin.version for marketplace products, not installed versions', () => {
+		const props = {
+			...mockedProps,
+			isMarketplaceProduct: true,
+			plugin: { ...mockedProps.plugin, version: '6.2.0' },
+		};
+		render( <PluginDetailsHeader { ...props } /> );
+		expect( screen.getByText( '6.2.0' ) ).toBeInTheDocument();
+	} );
+
+	test( 'should show installed versions range for non-marketplace products', () => {
+		const props = {
+			...mockedProps,
+			isMarketplaceProduct: false,
+			plugin: { ...mockedProps.plugin, version: '6.2.0' },
+		};
+		render( <PluginDetailsHeader { ...props } /> );
+		expect( screen.getByText( '1.0.0' ) ).toBeInTheDocument();
+	} );
 } );

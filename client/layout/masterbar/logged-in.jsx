@@ -22,7 +22,9 @@ import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -53,7 +55,6 @@ import {
 } from 'calypso/state/sites/selectors';
 import canCurrentUserManageSiteOptions from 'calypso/state/sites/selectors/can-current-user-manage-site-options';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -78,7 +79,8 @@ class MasterbarLoggedIn extends Component {
 		loadHelpCenterIcon: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
-		hostingDashboardOptIn: PropTypes.bool,
+		dashboardOptIn: PropTypes.bool,
+		useUnifiedAgent: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -228,13 +230,13 @@ class MasterbarLoggedIn extends Component {
 			currentRoute,
 			isGlobalSidebarVisible,
 			siteAdminUrl,
-			hostingDashboardOptIn,
+			dashboardOptIn,
 		} = this.props;
 
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
-		if ( hostingDashboardOptIn ) {
+		if ( dashboardOptIn ) {
 			mySitesUrl = domainOnlySite ? dashboardLink( '/domains' ) : dashboardLink( '/sites' );
 		}
 		const icon = this.wordpressIcon();
@@ -250,11 +252,11 @@ class MasterbarLoggedIn extends Component {
 					[
 						{
 							label: translate( 'Sites' ),
-							url: hostingDashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
+							url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
 						},
 						{
 							label: translate( 'Domains' ),
-							url: hostingDashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
+							url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
 						},
 					],
 					...( this.props.isSimpleSite
@@ -655,8 +657,12 @@ class MasterbarLoggedIn extends Component {
 							size={ 64 }
 						/>
 						<div className="masterbar__item-howdy-account-details">
-							<span className="display-name">{ user.display_name }</span>
-							<span className="username">{ user.username }</span>
+							<span className="display-name" title={ user.display_name }>
+								{ user.display_name }
+							</span>
+							<span className="username" title={ user.username }>
+								{ user.username }
+							</span>
 							<span className="display-name edit-profile">
 								{ isGlobalSidebarVisible ? translate( 'My Profile' ) : translate( 'Edit Profile' ) }
 							</span>
@@ -782,7 +788,18 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderHelpCenter() {
-		const { siteId, translate } = this.props;
+		const { siteId, translate, useUnifiedAgent } = this.props;
+
+		if ( useUnifiedAgent ) {
+			return (
+				<AsyncLoad
+					require="./masterbar-agents-manager"
+					siteId={ siteId }
+					tooltip={ translate( 'Help' ) }
+					placeholder={ null }
+				/>
+			);
+		}
 
 		return (
 			<AsyncLoad
@@ -879,7 +896,8 @@ export default connect(
 				isAtomicSite( state, siteId ) &&
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
-			hostingDashboardOptIn: hasHostingDashboardOptIn( state ),
+			dashboardOptIn: hasDashboardOptIn( state ),
+			useUnifiedAgent: getPreference( state, 'unified_ai_chat' ) ?? false,
 		};
 	},
 	{

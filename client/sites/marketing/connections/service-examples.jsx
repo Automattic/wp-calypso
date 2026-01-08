@@ -270,9 +270,9 @@ class SharingServiceExamples extends Component {
 							link: (
 								<InlineSupportLink
 									showIcon={ false }
-									supportPostId={ 77589 }
+									supportPostId={ 421832 }
 									supportLink={ localizeUrl(
-										'https://wordpress.com/support/instagram/#embed-a-feed-of-instagram-posts'
+										'https://wordpress.com/support/latest-instagram-posts/'
 									) }
 								/>
 							),

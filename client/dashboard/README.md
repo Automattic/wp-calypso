@@ -19,7 +19,7 @@ Build a new Hosting Dashboard for WordPress.com based on the new design. The sam
 
 ## Dashboard Design Documentation
 
-This `docs` directory contains comprehensive design documentation for the `/client/dashboard` prototype, a new Hosting Dashboard for WordPress.com based on modern design principles.
+This `docs` directory contains comprehensive design documentation for the `/client/dashboard`, a new Hosting Dashboard for WordPress.com based on modern design principles.
 
 - [Router and Routes](./docs/router.md) - Documentation for the routing system based on @tanstack/react-router
 - [Data Library and Layer](./docs/data-library.md) - Documentation for the data fetching and state management approach
@@ -48,10 +48,6 @@ We're using Calypso's existing infrastructure, which separates the actual tests 
 - packages/calypso-e2e/src/lib/pages/dashboard-page.ts
 
 The setup itself lacks centralised documentation, IMO, particularly around decrypting the secrets necessary to letting Playwright run Calypso. What we get in return is a system that has already solved many problems (user authentication, etc.).
-
-### Caveat / question
-
-Why must Jest be passed an environment variable so that it tests on localhost and not wordpress.com? Right now we need to call `CALYPSO_BASE_URL=http://calypso.localhost:3000 yarn workspace wp-e2e-tests test -- test/e2e/specs/dashboard/`. Why is that not the default?
 
 ### Sharing components with the hosting dashboard v1
 

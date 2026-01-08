@@ -12,11 +12,17 @@ export default function CancelHeaderTitle( { flowType, purchase }: CancelHeaderT
 		if ( purchase.is_plan ) {
 			return __( 'Remove plan' );
 		}
+		if ( purchase.is_domain_registration ) {
+			return __( 'Remove domain' );
+		}
 		return __( 'Remove product' );
 	}
 
 	if ( purchase.is_plan ) {
 		return __( 'Cancel plan' );
+	}
+	if ( purchase.is_domain_registration ) {
+		return __( 'Cancel domain' );
 	}
 	return __( 'Cancel product' );
 }

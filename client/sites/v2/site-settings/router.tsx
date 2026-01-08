@@ -1,9 +1,12 @@
+import calypsoConfig from '@automattic/calypso-config';
 import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
+import { handleOnCatch } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 import type { AppConfig } from 'calypso/dashboard/app/context';
+import type { ErrorInfo } from 'react';
 
 const settingsRoute = createRoute( {
 	...appRouterSites.siteSettingsRoute.options,
@@ -38,17 +41,6 @@ const subscriptionGiftingRoute = createRoute( {
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'subscription-gifting' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
-
-const holidaySnowRoute = createRoute( {
-	...appRouterSites.siteSettingsHolidaySnowRoute.options,
-	getParentRoute: () => settingsRoute,
-} ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-holiday-snow' ).then( ( d ) =>
-		createLazyRoute( 'holiday-snow' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -217,7 +209,6 @@ const createRouteTree = () =>
 				settingsIndexRoute,
 				siteVisibilityRoute,
 				subscriptionGiftingRoute,
-				holidaySnowRoute,
 				wordpressRoute,
 				phpRoute,
 				databaseRoute,
@@ -245,6 +236,12 @@ export const getRouter = ( config: AppConfig ) => {
 	const router = new Router( {
 		...getRouterOptions( config ),
 		routeTree,
+		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+			handleOnCatch( error, errorInfo, router, {
+				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
+				dashboard_backport: true,
+			} );
+		},
 	} );
 
 	return router;

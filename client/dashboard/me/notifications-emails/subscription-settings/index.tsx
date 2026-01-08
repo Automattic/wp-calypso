@@ -4,7 +4,6 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { useBlocker } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -13,6 +12,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { NavigationBlocker } from '../../../app/navigation-blocker';
 import { Card, CardBody } from '../../../components/card';
 import { getSettings, getSettingsKeys, SubscriptionSettingsForm, type SettingsData } from './form';
 
@@ -58,21 +58,6 @@ export const SubscriptionSettings = () => {
 		[ dataState, originalSettings ]
 	);
 
-	useBlocker( {
-		enableBeforeUnload: isDataStateDirty,
-		shouldBlockFn: () => {
-			if ( ! isDataStateDirty ) {
-				return false;
-			}
-
-			const shouldLeave = confirm(
-				__( 'You have unsaved changes. Are you sure you want to leave?' )
-			);
-
-			return ! shouldLeave;
-		},
-	} );
-
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
@@ -104,6 +89,7 @@ export const SubscriptionSettings = () => {
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
 					<VStack spacing={ 4 }>
+						<NavigationBlocker shouldBlock={ isDataStateDirty } />
 						<SubscriptionSettingsForm
 							data={ dataState }
 							isAutomattician={ isAutomattician }

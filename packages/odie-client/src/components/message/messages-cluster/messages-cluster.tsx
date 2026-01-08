@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
 import { Fragment } from 'react';
 import ChatMessage from '..';
-import { useOdieAssistantContext } from '../../../context';
 import { isCSATMessage } from '../../../utils';
 import {
 	hasFeedbackForm,
@@ -109,7 +108,6 @@ function clusterMessagesBySender( messages: Message[] ) {
 
 export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 	const groups = clusterMessagesBySender( messages );
-	const { currentUser } = useOdieAssistantContext();
 
 	return groups.map( ( group ) => {
 		const startingHumanSupport = group.messages.some( isTransitionToSupportMessage );
@@ -139,7 +137,6 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 						<ChatMessage
 							key={ getMessageUniqueIdentifier( message, `${ group.id }-${ index }` ) }
 							message={ message }
-							currentUser={ currentUser }
 							header={ index === 0 ? messageHeader() : undefined }
 						/>
 					) ) }

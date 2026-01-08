@@ -39,7 +39,7 @@ const RetentionConfirmationDialog: React.FC< RetentionConfirmationDialogProps > 
 							{ retentionDays: retentionSelected }
 						) }
 					</p>
-					<ButtonStack>
+					<ButtonStack justify="flex-start">
 						<Button __next40pxDefaultSize variant="tertiary" key="cancel" onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
@@ -48,6 +48,7 @@ const RetentionConfirmationDialog: React.FC< RetentionConfirmationDialogProps > 
 							key="confirm"
 							onClick={ onConfirmation }
 							variant="primary"
+							isDestructive
 							disabled={ disableFormSubmission }
 						>
 							{ updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ? (

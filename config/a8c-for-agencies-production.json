@@ -27,7 +27,7 @@
 	],
 	"oauth_client_id": 95932,
 	"features": {
-		"a4a-help-center": false,
+		"a4a-help-center": true,
 		"ad-tracking": true,
 		"a8c-for-agencies": true,
 		"cookie-banner": true,
@@ -42,7 +42,8 @@
 		"a4a-bd-checkout": false,
 		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
-		"upgrades/redirect-payments": true
+		"upgrades/redirect-payments": true,
+		"a4a-bd-term-pricing": false
 	},
 	"enable_all_sections": false,
 	"sections": {

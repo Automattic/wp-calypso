@@ -1,0 +1,29 @@
+.plugin-switcher__updates-filter-wrapper {
+	flex: 0 0 auto;
+	padding-inline-end: calc(4px * 6);
+
+	.dataviews-filters__summary-chip {
+		padding-inline-end: calc(4px * 3);
+	}
+}
+
+// taken from .dataviews-filters__summary-chip-remove but customized for our use case
+.plugin-switcher__updates-filter-remove {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	border: 0;
+	padding: 0;
+	background: transparent;
+	cursor: pointer;
+}
+
+.plugin-switcher__updates-filter-btn {
+	padding-inline-start: calc(4px * 2);
+	padding-inline-end: calc(4px * 2);
+
+	&:focus {
+		box-shadow: none !important;
+		outline: none !important;
+	}
+}

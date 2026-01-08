@@ -39,7 +39,6 @@ export const MessageContent = ( {
 		message.role === 'bot' &&
 		! (
 			message.context?.flags?.hide_disclaimer_content ||
-			message.context?.flags?.failed_zendesk_connection ||
 			message.context?.question_tags?.inquiry_type === 'user-is-greeting'
 		);
 
@@ -54,7 +53,7 @@ export const MessageContent = ( {
 	};
 
 	const shouldParseMessage = () => {
-		return message.type === 'message' && message.role !== 'bot';
+		return ( message.type === 'message' || message.message_id ) && message.role === 'user';
 	};
 
 	// message type === message are messages being sent from users to zendesk.

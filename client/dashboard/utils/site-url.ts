@@ -52,10 +52,10 @@ export function getSiteEditUrl( site: Site, isSiteUsingBlockTheme?: boolean ) {
 /**
  * Returns the URL for the site visibility settings page.
  */
-export function getSiteVisibilityURL( site: Site ) {
+export function getSiteVisibilityURL( site: Site, queryArgs?: { back_to: 'site-overview' } ) {
 	if ( isSelfHostedJetpackConnected( site ) ) {
 		return undefined;
 	}
 
-	return `/sites/${ site.slug }/settings/site-visibility`;
+	return addQueryArgs( `/sites/${ site.slug }/settings/site-visibility`, queryArgs );
 }

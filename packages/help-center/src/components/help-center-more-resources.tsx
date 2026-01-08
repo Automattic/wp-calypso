@@ -2,16 +2,17 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { backup, chevronRight, external, Icon, rss, video } from '@wordpress/icons';
+import { backup, chevronRight, external, Icon, rss, thumbsUp, video } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useNavigate } from 'react-router-dom';
+import { showHelpCenterFeedbackSurvey } from 'calypso/lib/analytics/survicate';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 
 import './help-center-more-resources.scss';
 
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
-	const { sectionName } = useHelpCenterContext();
+	const { sectionName, disableChatSupport, haveSurvicateEnabled } = useHelpCenterContext();
 	const navigate = useNavigate();
 
 	const trackMoreResourcesButtonClick = ( resource: string ) => {
@@ -38,22 +39,44 @@ export const HelpCenterMoreResources = () => {
 				{ __( 'More resources', __i18n_text_domain__ ) }
 			</h3>
 			<ul aria-labelledby="help-center-more-resources__resources">
-				<li className="help-center-more-resources__resource-item help-center-link__item">
-					<div className="help-center-more-resources__resource-cell help-center-link__cell">
-						<button
-							type="button"
-							onClick={ () => {
-								trackMoreResourcesButtonClick( 'support-history' );
-								navigate( '/chat-history' );
-							} }
-							className="help-center-more-resources__support-history"
-						>
-							<Icon icon={ backup } size={ 24 } />
-							<span>{ __( 'Support history', __i18n_text_domain__ ) }</span>
-							<Icon icon={ chevronRight } size={ 20 } />
-						</button>
-					</div>
-				</li>
+				{ ! disableChatSupport && (
+					<li className="help-center-more-resources__resource-item help-center-link__item">
+						<div className="help-center-more-resources__resource-cell help-center-link__cell">
+							<button
+								type="button"
+								onClick={ () => {
+									trackMoreResourcesButtonClick( 'support-history' );
+									navigate( '/chat-history' );
+								} }
+								className="help-center-more-resources__support-history"
+							>
+								<Icon icon={ backup } size={ 24 } />
+								<span>{ __( 'Support history', __i18n_text_domain__ ) }</span>
+								<Icon icon={ chevronRight } size={ 20 } />
+							</button>
+						</div>
+					</li>
+				) }
+				{ haveSurvicateEnabled &&
+					typeof window._sva !== 'undefined' &&
+					window._sva?.invokeEvent && (
+						<li className="help-center-more-resources__resource-item help-center-link__item">
+							<div className="help-center-more-resources__resource-cell help-center-link__cell">
+								<button
+									type="button"
+									onClick={ () => {
+										trackMoreResourcesButtonClick( 'feedback-survey' );
+										showHelpCenterFeedbackSurvey();
+									} }
+									className="help-center-more-resources__survicate"
+								>
+									<Icon icon={ thumbsUp } size={ 24 } />
+									<span>{ __( 'Share feedback', __i18n_text_domain__ ) }</span>
+									<Icon icon={ chevronRight } size={ 20 } />
+								</button>
+							</div>
+						</li>
+					) }
 				<li className="help-center-more-resources__resource-item help-center-link__item">
 					<div className="help-center-more-resources__resource-cell help-center-link__cell">
 						<a

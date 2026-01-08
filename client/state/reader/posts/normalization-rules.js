@@ -86,15 +86,15 @@ export function classifyPost( post ) {
 	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
 		displayType ^= DISPLAY_TYPES.GALLERY;
 	} else if (
-		post.canonical_media &&
-		post.canonical_media.mediaType === 'image' &&
-		post.canonical_media.width >= PHOTO_ONLY_MIN_WIDTH &&
+		post.content_images?.length === 1 &&
+		post.canonical_media?.mediaType === 'image' &&
+		post.canonical_media?.width >= PHOTO_ONLY_MIN_WIDTH &&
 		hasShortContent( post )
 	) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
 	}
 
-	if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
+	if ( post.canonical_media?.mediaType === 'video' ) {
 		displayType ^= DISPLAY_TYPES.FEATURED_VIDEO;
 	}
 

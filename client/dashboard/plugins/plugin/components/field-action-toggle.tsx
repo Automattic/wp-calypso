@@ -5,6 +5,8 @@ import { store as noticesStore } from '@wordpress/notices';
 import { ComponentProps } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 
+import './field-action-toggle.scss';
+
 export type FieldActionToggleProps = {
 	label: ComponentProps< typeof ToggleControl >[ 'label' ];
 	checked: boolean;

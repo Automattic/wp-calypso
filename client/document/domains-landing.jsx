@@ -102,8 +102,12 @@ function DomainsLanding( {
 					dangerouslySetInnerHTML={ {
 						__html: `
 							if ('serviceWorker' in navigator) {
-								window.addEventListener('load', function() {
-									navigator.serviceWorker.register('/service-worker.js');
+								window.addEventListener('load', async function() {
+									try {
+										await navigator.serviceWorker.register('/service-worker.js');
+									} catch ( err ) {
+										console.error( 'Error registering service worker', err );
+									}
 								});
 							}
 						 `,

@@ -6,9 +6,13 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { securitySshKeyRoute } from '../../app/router/me';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import SnackbarBackButton, {
+	getSnackbarBackButtonText,
+} from '../../components/snackbar-back-button';
 import SshKey from './ssh-key';
 import SshKeyForm from './ssh-key-form';
 
@@ -54,27 +58,35 @@ export default function SecuritySshKey() {
 		);
 	}
 
+	const search = securitySshKeyRoute.useSearch();
+	const snackbarBackButtonText = getSnackbarBackButtonText( search?.back_to );
+
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
-					title={ isEditing ? __( 'Update SSH key' ) : __( 'SSH key' ) }
-					description={ description }
-				/>
-			}
-		>
-			{ sshKey && ! isEditing ? (
-				<SshKey sshKey={ sshKey } setIsEditing={ setIsEditing } username={ username } />
-			) : (
-				<SshKeyForm
-					sshKey={ sshKey }
-					isEditing={ isEditing }
-					setIsEditing={ setIsEditing }
-					username={ username }
-				/>
+		<>
+			<PageLayout
+				size="small"
+				header={
+					<PageHeader
+						prefix={ <Breadcrumbs length={ 2 } /> }
+						title={ isEditing ? __( 'Update SSH key' ) : __( 'SSH key' ) }
+						description={ description }
+					/>
+				}
+			>
+				{ sshKey && ! isEditing ? (
+					<SshKey sshKey={ sshKey } setIsEditing={ setIsEditing } username={ username } />
+				) : (
+					<SshKeyForm
+						sshKey={ sshKey }
+						isEditing={ isEditing }
+						setIsEditing={ setIsEditing }
+						username={ username }
+					/>
+				) }
+			</PageLayout>
+			{ snackbarBackButtonText && (
+				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
 			) }
-		</PageLayout>
+		</>
 	);
 }

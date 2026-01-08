@@ -93,3 +93,56 @@ export type BulkDomainsAction =
 			transfer_lock: boolean;
 			whois: Record< string, string | undefined >;
 	  };
+
+export interface BulkDomainUpdateStatus {
+	results: {
+		[ key: string ]: '' | 'success' | 'failed';
+	};
+	action: 'set_auto_renew' | 'update_contact_info';
+	created_at: number;
+	auto_renew?: boolean;
+	whois?: unknown;
+	transfer_lock?: boolean;
+}
+
+export interface BulkDomainUpdateStatusQueryFnData {
+	[ key: string ]: BulkDomainUpdateStatus;
+}
+
+export interface JobStatus {
+	id: string;
+	action: 'set_auto_renew' | 'update_contact_info';
+	created_at: number;
+	success: string[];
+	failed: string[];
+	pending: string[];
+	complete: boolean;
+	params: {
+		auto_renew?: boolean;
+		whois?: unknown;
+		transfer_lock?: boolean;
+	};
+}
+
+interface DomainUpdateRemoteStatus {
+	status: '' | 'success' | 'failed';
+	action: 'set_auto_renew' | 'update_contact_info';
+	created_at: number;
+	auto_renew?: boolean;
+	whois?: unknown;
+	transfer_lock?: boolean;
+}
+
+interface DomainUpdateDerivedStatus {
+	status: '';
+	message: string;
+	created_at: number;
+}
+
+export type DomainUpdateStatus = DomainUpdateRemoteStatus | DomainUpdateDerivedStatus;
+
+export interface BulkDomainUpdateStatusResult {
+	domainResults: Map< string, DomainUpdateStatus[] >;
+	completedJobs: JobStatus[];
+	allJobs: JobStatus[];
+}

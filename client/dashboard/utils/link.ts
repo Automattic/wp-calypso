@@ -18,16 +18,18 @@ export function dashboardOrigins(): string[] {
  * so that the link points to the local Calypso dev server.
  */
 export function wpcomLink( path: string ) {
-	return `${ config( 'wpcom_url' ) }${ path }`;
+	return new URL( path, config( 'wpcom_url' ) ).href;
 }
 
 /**
  * This function returns the link to the dashboard.
  */
 export function dashboardLink( path: string = '' ) {
-	return config( 'env' ) === 'development'
-		? `http://my.localhost:3000${ path }`
-		: `https://my.wordpress.com${ path }`;
+	if ( config( 'env' ) === 'development' ) {
+		return new URL( path, 'http://my.localhost:3000' ).href;
+	}
+
+	return new URL( path, 'https://my.wordpress.com' ).href;
 }
 
 /**
@@ -45,13 +47,11 @@ export function dashboardLinkWithBackport( path: string = '' ) {
  * This function returns the redirect link back to the dashboard.
  */
 export function redirectToDashboardLink( {
-	backUrl,
 	supportBackport,
 }: {
-	backUrl?: string;
 	supportBackport?: boolean;
 } = {} ) {
-	const url = backUrl ? backUrl : window.location.href.replace( window.location.origin, '' );
+	const url = window.location.href.replace( window.location.origin, '' );
 	return supportBackport ? dashboardLinkWithBackport( url ) : dashboardLink( url );
 }
 

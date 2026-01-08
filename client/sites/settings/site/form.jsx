@@ -3,7 +3,6 @@ import { DIFMUpsell } from '../components/difm-upsell-banner';
 import { A4AFullyManagedSiteForm } from './agency';
 import EnhancedOwnershipForm from './enhanced-ownership';
 import FooterCredit from './footer-credit';
-import HolidaySnow from './holiday-snow';
 import PrivacyForm from './privacy';
 import SubscriptionGiftingForm from './subscription-gifting';
 import ToolbarForm from './toolbar';
@@ -12,7 +11,6 @@ import LaunchSite from './visibility';
 export default function SiteSettingsForm( {
 	site,
 	siteIsJetpack,
-	siteIsWpcom,
 	isUnlaunchedSite,
 	isAtomicAndEditingToolkitDeactivated,
 	isWpcomStagingSite,
@@ -72,16 +70,6 @@ export default function SiteSettingsForm( {
 				isUnlaunchedSite={ isUnlaunchedSite }
 				urlRef="unlaunched-settings"
 			/>
-
-			{ siteIsWpcom && (
-				<HolidaySnow
-					fields={ fields }
-					handleToggle={ handleToggle }
-					isSaving={ isSavingSettings }
-					onSave={ handleSubmitForm }
-					disabled={ isRequestingSettings || isSavingSettings }
-				/>
-			) }
 
 			<SubscriptionGiftingForm
 				fields={ fields }

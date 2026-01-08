@@ -16,11 +16,14 @@ export type HelpCenterRequiredInformation = {
 	onboardingUrl: string;
 	isCommerceGarden: boolean;
 	source: '' | 'wpcom' | 'a4a';
+	disableChatSupport: boolean;
+	hideMoreResources: boolean;
 	// This is specific to A4A
 	agency: {
 		id: number;
 		pressableId?: number;
 	} | null;
+	haveSurvicateEnabled: boolean;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -70,7 +73,10 @@ const defaultContext: HelpCenterRequiredInformation = {
 	onboardingUrl: '',
 	isCommerceGarden: false,
 	source: 'wpcom',
+	disableChatSupport: false,
+	hideMoreResources: false,
 	agency: null,
+	haveSurvicateEnabled: false,
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );

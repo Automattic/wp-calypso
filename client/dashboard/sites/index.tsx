@@ -20,8 +20,10 @@ import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
+import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import AddNewSite from './add-new-site';
 import {
 	SitesDataViews,
@@ -30,10 +32,13 @@ import {
 	useFields__ES,
 	getDefaultView,
 	recordViewChanges,
+	sanitizeFields,
 } from './dataviews';
+import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
 import { SiteLink, SiteLink__ES } from './site-fields';
+import { OptInWelcomeModal } from './welcome-modal';
 import type {
 	FetchSitesOptions,
 	Site,
@@ -43,15 +48,23 @@ import type {
 } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
-const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {
+type SiteListQueryOptions = {
+	isRestoringAccount: boolean;
+	isAutomattician: boolean;
+};
+
+const getFetchSitesOptions = (
+	view: View,
+	{ isRestoringAccount, isAutomattician }: SiteListQueryOptions
+): FetchSitesOptions => {
 	const filters = view.filters ?? [];
 
 	// Include A8C sites unless explicitly excluded from the filter.
-	const shouldIncludeA8COwned = ! filters.some(
-		( item: Filter ) => item.field === 'is_a8c' && item.value === false
-	);
+	const shouldIncludeA8COwned =
+		isAutomattician &&
+		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
 
-	if ( filters.find( ( item: Filter ) => item.field === 'status' && item.value === 'deleted' ) ) {
+	if ( filters.find( ( item: Filter ) => item.field === 'deleted' && item.value === true ) ) {
 		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
 	}
 
@@ -93,9 +106,9 @@ function getFetchSiteListParams(
 	const additionalMappedFields: Record< string, ( keyof DashboardSiteListSite )[] > = {
 		likes: [ 'enabled_modules' ],
 		name: [ 'badge' ],
-		status: [ 'wpcom_status', 'private', 'deleted' ],
 		plan: [ 'owner_id' ],
-		preview: [ 'name', 'icon', 'url', 'private', 'deleted' ],
+		preview: [ 'name', 'icon', 'url', 'private' ],
+		visibility: [ 'wpcom_status', 'private' ],
 	};
 
 	// Always include ID and slug (for navigation), deleted (for styling), is_a8c (for included a8c owned) and other (for vip & self hosted jetpack)
@@ -112,33 +125,39 @@ function getFetchSiteListParams(
 		'is_vip',
 	];
 
-	if ( view.showTitle && view.titleField ) {
-		fields.push( mappedFields[ view.titleField ] );
-	}
-
-	if ( view.showMedia && view.mediaField ) {
-		fields.push( mappedFields[ view.mediaField ] );
-	}
-
-	if ( view.showDescription && view.descriptionField ) {
-		fields.push( mappedFields[ view.descriptionField ] );
-	}
-
-	view.fields?.forEach( ( field ) => {
-		const mappedField = mappedFields[ field ];
-		if ( mappedField ) {
-			fields.push( mappedField );
+	const getMappedFields = ( field: string ): ( keyof DashboardSiteListSite )[] => {
+		const result: ( keyof DashboardSiteListSite )[] = [];
+		if ( mappedFields[ field ] ) {
+			result.push( mappedFields[ field ] );
 		}
 
 		if ( additionalMappedFields[ field ] ) {
 			fields.push( ...additionalMappedFields[ field ] );
 		}
+
+		return result;
+	};
+
+	if ( view.showTitle && view.titleField ) {
+		fields.push( ...getMappedFields( view.titleField ) );
+	}
+
+	if ( view.showMedia && view.mediaField ) {
+		fields.push( ...getMappedFields( view.mediaField ) );
+	}
+
+	if ( view.showDescription && view.descriptionField ) {
+		fields.push( ...getMappedFields( view.descriptionField ) );
+	}
+
+	view.fields?.forEach( ( field ) => {
+		fields.push( ...getMappedFields( field ) );
 	} );
 
 	const planSlugsByName = siteFilters.plan?.reduce(
 		( acc, current ) => ( {
 			...acc,
-			[ current.name ]: [ ...( acc[ current.name ] || [] ), current.value ],
+			[ current.name_en ]: [ ...( acc[ current.name_en ] || [] ), current.value ],
 		} ),
 		{} as Record< string, string[] >
 	);
@@ -169,7 +188,7 @@ function getFetchSiteListParams(
 /**
  * Enables the correct site query based on the dataviews/v2/es-site-list feature flag.
  */
-export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
+export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 	const { queries } = useAppContext();
 
 	const { data: siteFilters } = useQuery( {
@@ -190,7 +209,7 @@ export function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 	} );
 
 	const sitesQueryResult = useQuery( {
-		...queries.sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
+		...queries.sitesQuery( getFetchSitesOptions( view, options ) ),
 		placeholderData: keepPreviousData,
 		enabled: ! isEnabled( 'dashboard/v2/es-site-list' ),
 	} );
@@ -254,10 +273,11 @@ export default function Sites() {
 		slug: 'sites',
 		defaultView,
 		queryParams: currentSearchParams,
+		sanitizeFields,
 	} );
 
 	const { sites, sites__ES, isLoadingSites, isPlaceholderData, hasNoData, totalItems } =
-		useSiteListQuery( view, isRestoringAccount );
+		useSiteListQuery( view, { isRestoringAccount, isAutomattician } );
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const fields__ES = useFields__ES( { isAutomattician, viewType: view.type } );
@@ -343,6 +363,8 @@ export default function Sites() {
 
 	return (
 		<>
+			{ ! isDashboardBackport() && <OptInWelcomeModal /> }
+			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
 					<AddNewSite context="sites-dashboard" />
@@ -363,7 +385,12 @@ export default function Sites() {
 						}
 					/>
 				}
-				notices={ <SitesNotices /> }
+				notices={
+					<>
+						<SitesNotices />
+						{ ! isDashboardBackport() && <OptInSurvey /> }
+					</>
+				}
 			>
 				{ isEnabled( 'dashboard/v2/es-site-list' ) ? (
 					<SitesDataViews< DashboardSiteListSite >

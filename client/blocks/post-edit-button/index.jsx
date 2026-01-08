@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, edit } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { getEditURL } from 'calypso/state/posts/utils';
@@ -16,7 +16,7 @@ const PostEditButton = ( { post, site, iconSize = 24, onClick } ) => {
 			onClick={ onClick }
 			data-tooltip={ translate( 'Edit post' ) }
 		>
-			<Gridicon icon="pencil" size={ iconSize } className="post-edit-button__icon" />
+			<Icon icon={ edit } size={ iconSize } className="post-edit-button__icon" />
 			<span className="post-edit-button__label">{ translate( 'Edit' ) }</span>
 		</a>
 	);

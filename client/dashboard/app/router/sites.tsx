@@ -353,6 +353,14 @@ export const siteScanRoute = createRoute( {
 			throw redirect( { to: `/sites/${ siteSlug }` } );
 		}
 	},
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
+			hasHostingFeature( site, HostingFeatures.SCAN ) &&
+				queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
+		] );
+	},
 } );
 
 export const siteScanIndexRoute = createRoute( {
@@ -373,12 +381,6 @@ export const siteScanActiveThreatsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteScanRoute,
 	path: 'active',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
-			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/scan' ).then( ( d ) =>
 		createLazyRoute( 'site-scan-active-threats' )( {
@@ -397,12 +399,6 @@ export const siteScanHistoryRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteScanRoute,
 	path: 'history',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
-			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/scan' ).then( ( d ) =>
 		createLazyRoute( 'site-scan-history' )( {
@@ -434,6 +430,8 @@ export const siteBackupsRoute = createRoute( {
 			queryClient.prefetchQuery( siteBackupActivityLogEntriesQuery( site.ID ) );
 			queryClient.prefetchQuery( siteBackupActivityLogGroupCountsQuery( site.ID ) );
 		}
+
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
@@ -1033,9 +1031,9 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'repositories',
-	validateSearch: ( search ): { back_to?: 'deployments' } => {
+	validateSearch: ( search ): { back_to?: 'site-deployments' } => {
 		return {
-			back_to: search.back_to === 'deployments' ? 'deployments' : undefined,
+			back_to: search.back_to === 'site-deployments' ? 'site-deployments' : undefined,
 		};
 	},
 } );
@@ -1090,9 +1088,9 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
-	validateSearch: ( search ): { back_to?: 'deployments' } => {
+	validateSearch: ( search ): { back_to?: 'site-deployments' } => {
 		return {
-			back_to: search.back_to === 'deployments' ? 'deployments' : undefined,
+			back_to: search.back_to === 'site-deployments' ? 'site-deployments' : undefined,
 		};
 	},
 	loader: async ( { params: { siteSlug, deploymentId } } ) => {
@@ -1103,28 +1101,6 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-manage' )( {
 			component: d.default,
-		} )
-	)
-);
-
-export const siteSettingsHolidaySnowRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Holiday snow' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteSettingsRoute,
-	path: 'holiday-snow',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-holiday-snow' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-holiday-snow' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -1354,7 +1330,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 				siteSettingsSubscriptionGiftingRoute,
 				siteSettingsAgencyRoute,
 				siteSettingsHundredYearPlanRoute,
-				siteSettingsHolidaySnowRoute,
 			];
 
 			if ( config.supports.sites.settings.general.redirect ) {
