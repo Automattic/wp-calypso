@@ -13,7 +13,7 @@ import type { OdieChat, ReturnedChat } from '../types';
  */
 export const useOdieChat = (
 	chatId: number | null,
-	sessionId: string | undefined | null,
+	sessionId?: string | null,
 	defaultBotSlug?: string | null
 ) => {
 	const { version } = useOdieAssistantContext();
