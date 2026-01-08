@@ -33,6 +33,15 @@ export interface IconListItemProps {
 
 export interface IconListProps {
 	/**
+	 * The main label that identifies the list.
+	 */
+	title?: string;
+	/**
+	 * Optional supporting text that provides additional context or
+	 * detail about the list.
+	 */
+	description?: string;
+	/**
 	 * The elements, which should include one instance of the `IconList.Item`
 	 * component.
 	 */
