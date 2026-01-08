@@ -170,6 +170,7 @@ export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfe
 
 export type ReturnedChat = {
 	chat_id: number;
+	session_id: string;
 	messages: Message[];
 	wpcom_user_id: number;
 	experiment_name: string | undefined | null;

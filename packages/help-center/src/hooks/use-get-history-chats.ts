@@ -1,6 +1,8 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { convertOdieChatToOdieConversation } from '@automattic/odie-client';
 import { useGetOdieConversations } from '@automattic/odie-client/src/data/use-get-odie-conversations';
+import { useOdieChat } from '@automattic/odie-client/src/data/use-odie-chat';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import {
@@ -129,13 +131,20 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
 
-	const { isChatLoaded } = useSelect( ( select ) => {
+	const { isChatLoaded, loggedOutSession } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
 		return {
 			isChatLoaded: store.getIsChatLoaded(),
+			loggedOutSession: store.getLoggedOutOdieChat(),
 		};
 	}, [] );
+
+	const loggedOutChat = useOdieChat(
+		loggedOutSession ? loggedOutSession.odieId : null,
+		loggedOutSession ? loggedOutSession.sessionId : null,
+		loggedOutSession ? loggedOutSession.botSlug : undefined
+	);
 
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk' );
@@ -168,6 +177,15 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 				odieConversations,
 				odieSupportInteractions || []
 			),
+			...( loggedOutSession && loggedOutChat.data
+				? [
+						convertOdieChatToOdieConversation(
+							loggedOutChat.data,
+							loggedOutSession?.sessionId || '',
+							loggedOutSession?.botSlug || ''
+						),
+				  ]
+				: [] ),
 		]
 			.filter( ( conversation ) => isValidLastMessageContent( conversation ) )
 			.sort( ( a, b ) => getLastMessageReceived( b ) - getLastMessageReceived( a ) );
@@ -178,6 +196,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	}, [
 		isChatLoaded,
 		isLoadingInteractions,
+		loggedOutSession,
+		loggedOutChat.data,
 		odieSupportInteractions,
 		otherSupportInteractions,
 		odieConversations,
