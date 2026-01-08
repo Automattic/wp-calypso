@@ -1,9 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import {
-	Icon,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { cog, page, layout } from '@wordpress/icons';
 import { Card, CardBody } from '../card';
 import IconList from './index';
@@ -63,37 +59,6 @@ export const InCard: Story = {
 						decoration={ <Icon icon={ layout } /> }
 					/>
 				</IconList>
-			</CardBody>
-		</Card>
-	),
-};
-
-export const WithHeading: Story = {
-	render: () => (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 6 }>
-					<VStack spacing={ 0 }>
-						<Text size="15px" weight={ 500 } lineHeight="20px">
-							Site management
-						</Text>
-						<Text variant="muted" lineHeight="20px">
-							Manage your site with these tools
-						</Text>
-					</VStack>
-					<IconList>
-						<IconList.Item
-							title="Settings"
-							description="Configure site preferences"
-							decoration={ <Icon icon={ cog } /> }
-						/>
-						<IconList.Item
-							title="Pages"
-							description="Create and edit pages"
-							decoration={ <Icon icon={ page } /> }
-						/>
-					</IconList>
-				</VStack>
 			</CardBody>
 		</Card>
 	),
