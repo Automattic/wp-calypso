@@ -6,6 +6,7 @@
 
 	.icon-list-item__decoration {
 		flex-shrink: 0;
+		display: inline-flex;
 
 		svg {
 			width: $grid-unit-30;
@@ -15,7 +16,6 @@
 		}
 
 		&.icon-list-item__decoration--prominent {
-			display: inline-flex;
 			align-items: center;
 			justify-content: center;
 			width: $grid-unit-50;
