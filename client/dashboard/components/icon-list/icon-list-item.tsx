@@ -13,11 +13,13 @@ function UnforwardedIconListItem(
 	{ title, description, decoration, suffix, variant = 'default', className }: IconListItemProps,
 	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
-	const alignment = variant === 'prominent' ? 'center' : 'flex-start';
+	const isProminent = variant === 'prominent';
+	const alignment = isProminent ? 'center' : 'flex-start';
+	const spacing = isProminent ? 4 : 2;
 
 	return (
 		<VStack className={ clsx( 'icon-list-item', className ) } ref={ ref } as="span">
-			<HStack spacing={ 4 } justify="flex-start" alignment={ alignment } as="span">
+			<HStack spacing={ spacing } justify="flex-start" alignment={ alignment } as="span">
 				{ !! decoration && (
 					<span
 						className={ clsx( 'icon-list-item__decoration', {
