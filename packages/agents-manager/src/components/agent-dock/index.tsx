@@ -10,9 +10,11 @@ import {
 } from '@automattic/agenttic-ui';
 import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
@@ -46,7 +48,7 @@ interface AgentDockProps {
 	markdownExtensions?: MarkdownExtensions;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** Setup hook to register hook-dependent abilities. */
+	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
 }
 
@@ -61,6 +63,8 @@ export default function AgentDock( {
 	useNavigationContinuation,
 	useAbilitiesSetup,
 }: AgentDockProps ) {
+	const [ isThinking, setIsThinking ] = useState( false );
+	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const {
 		hasLoaded: isStoreReady,
@@ -86,6 +90,7 @@ export default function AgentDock( {
 		} );
 
 	const {
+		addMessage,
 		messages,
 		suggestions,
 		isProcessing,
@@ -93,6 +98,7 @@ export default function AgentDock( {
 		loadMessages,
 		onSubmit,
 		abortCurrentRequest,
+		clearSuggestions,
 	} = useAgentChat( agentConfig );
 
 	const {
@@ -136,9 +142,20 @@ export default function AgentDock( {
 		navigate,
 	} );
 
-	// Call setup hook to register hook-dependent abilities
-	// The hook is stable after loadedProviders is set (AgentDock only renders after providers load)
-	useAbilitiesSetup?.();
+	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
+	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
+	// The hook is stable as `AgentDock` only renders after external providers have been loaded.
+	useAbilitiesSetup?.( {
+		addMessage,
+		clearSuggestions,
+		getAgentManager,
+		setIsThinking,
+		deleteMarkedMessages: ( msgs ) => {
+			setDeletedMessageIds(
+				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
+			);
+		},
+	} );
 
 	const handleNewChat = () => {
 		navigate( '/' );
@@ -161,13 +178,6 @@ export default function AgentDock( {
 			icon: login,
 			title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
 			onClick: () => {
-				// TODO: Persist floating chat position...
-				try {
-					window.localStorage?.setItem( 'agenttic-chat-position', 'right' );
-				} catch ( err ) {
-					// Ignore errors
-				}
-
 				undock();
 				setIsDocked( false );
 			},
@@ -192,11 +202,23 @@ export default function AgentDock( {
 		return options;
 	};
 
+	// Filter out deleted messages and local tool running messages
+	const visibleMessages = useMemo(
+		() =>
+			messages.filter(
+				( message ) =>
+					! deletedMessageIds.has( message.id ) &&
+					! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
+			),
+		[ messages, deletedMessageIds ]
+	);
+
 	const Chat = (
 		<AgentChat
-			messages={ messages }
+			messages={ visibleMessages }
 			suggestions={ suggestions }
-			isProcessing={ isProcessing }
+			emptyViewSuggestions={ suggestions.length ? suggestions : emptyViewSuggestions }
+			isProcessing={ isProcessing || isThinking }
 			error={ error }
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }
@@ -208,7 +230,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			emptyViewSuggestions={ emptyViewSuggestions }
 		/>
 	);
 

@@ -43,22 +43,18 @@ export default function BlazeSetup( { setupInfo } ) {
 				title="Advertising > Setup"
 			/>
 
-			<div className="promote-post-i2__top-bar">
-				<GenericHeader
-					brandFont
-					className="advertising__page-header advertising__page-header_has-banner"
-					headerText={ headerTitle }
-					align="left"
-				/>
-			</div>
-
-			<div className="promote-post-i2__outer-wrapper">
-				<div className="promote-post-i2__aux-wrapper">
-					<div className="empty-promotion-list__container promote-post-i2__setup-container">
-						{ renderSetupComponent( setupInfo ) }
-					</div>
+			<div className="promote-post-i2__top-bar-container">
+				<div className="promote-post-i2__top-bar">
+					<GenericHeader
+						brandFont
+						className="advertising__page-header advertising__page-header_has-banner"
+						headerText={ headerTitle }
+						align="left"
+					/>
 				</div>
 			</div>
+
+			<div className="promote-post-i2__outer-wrapper">{ renderSetupComponent( setupInfo ) }</div>
 		</MainWrapper>
 	);
 }

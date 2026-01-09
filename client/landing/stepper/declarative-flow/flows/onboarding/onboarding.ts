@@ -10,8 +10,6 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
-import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -34,15 +32,13 @@ import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
+import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
+import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
-
-const withLocale = ( url: string, locale: string ) => {
-	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
-};
 
 function initialize() {
 	const steps = [
@@ -77,7 +73,6 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-
 		const { signupDomainOrigin, planCartItem } = useSelect(
 			( select ) => ( {
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
@@ -102,7 +97,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			if ( playgroundId && providedDependencies.siteSlug ) {
+			if ( playgroundId ) {
 				// Check if the user selected the free plan
 				const isFree =
 					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
@@ -122,37 +117,11 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			/**
-			 * If the dashboard/v2/onboarding feature flag is enabled, we'll redirect the user to the new Multi-site Dashboard.
-			 * We aren't using the dashboard/v2 FF because it's enabled by default on wpcalypso.json which would break e2e tests.
-			 * Since we're aiming to remove steps after the isMvpOnboarding experiment ends,
-			 * we'll redirect the user to the new Dashboard here.
-			 */
-			if ( isEnabled( 'dashboard/v2/onboarding' ) ) {
-				return [
-					addQueryArgs( dashboardLink( `/sites/${ providedDependencies.siteSlug }` ), {
-						ref: flowName,
-					} ),
-					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
-						siteSlug: providedDependencies.siteSlug,
-					} ),
-				];
-			}
-
-			if ( await isSimplifiedOnboarding() ) {
-				return [
-					addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } ),
-					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
-						siteSlug: providedDependencies.siteSlug,
-					} ),
-				];
-			}
-
-			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
-				siteSlug: providedDependencies.siteSlug,
+			return getOnboardingPostCheckoutDestination( {
+				flowName,
+				locale,
+				siteSlug: providedDependencies.siteSlug as string,
 			} );
-
-			return [ destination, addQueryArgs( destination, { skippedCheckout: 1 } ) ];
 		};
 
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {

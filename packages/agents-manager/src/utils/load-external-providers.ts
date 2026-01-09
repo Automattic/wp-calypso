@@ -5,8 +5,9 @@
  * PHP filter. Each provider module should export toolProvider and/or contextProvider.
  */
 
+import { getAgentManager } from '@automattic/agenttic-client';
 import type { ToolProvider, ContextProvider, Suggestion } from '../types';
-import type { SubmitOptions } from '@automattic/agenttic-client';
+import type { SubmitOptions, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
 /**
@@ -14,7 +15,6 @@ import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agentti
  *
  * This is used on wp-admin environments (Atomic, Garden, Simple sites) where
  * the flag is injected server-side by Jetpack's Agents Manager.
- *
  * @returns The useUnifiedExperience value, or undefined if not available.
  */
 export function getUseUnifiedExperienceFromInlineData(): boolean | undefined {
@@ -37,11 +37,17 @@ export type NavigationContinuationHook = ( props: {
 } ) => void;
 
 /**
- * Abilities setup hook type - provided by environments that need to register
- * hook-dependent abilities (abilities that require React context to work).
- * Called from AgentDock component to provide React context.
+ * Abilities setup hook type - for registering hook-based abilities that utilize React
+ * context. Invoked after custom actions registration with Big Sky's AI store. Receives
+ * action handlers that will be used for agent and chat interaction.
  */
-export type AbilitiesSetupHook = () => void;
+export type AbilitiesSetupHook = ( actions: {
+	addMessage: UseAgentChatReturn[ 'addMessage' ];
+	clearSuggestions: UseAgentChatReturn[ 'clearSuggestions' ];
+	getAgentManager: typeof getAgentManager;
+	setIsThinking: ( isThinking: boolean ) => void;
+	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
+} ) => void;
 
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;

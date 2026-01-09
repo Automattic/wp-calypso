@@ -2,9 +2,7 @@
 /**
  * External Dependencies
  */
-import UnifiedAIAgent from '@automattic/agents-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
@@ -16,7 +14,8 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useChatStatus, useShouldUseUnifiedAgent } from '../hooks';
+import { useShouldUseUnifiedAgent } from '../hooks';
+import { useGetSupportInteractions } from '../hooks/use-get-support-interactions';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -36,9 +35,8 @@ const HelpCenter: React.FC< Container > = ( {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
-	const { currentUser, site, sectionName } = useHelpCenterContext();
-	const { isEligibleForChat } = useChatStatus();
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+	const { currentUser } = useHelpCenterContext();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
 	const hasOpenZendeskConversations =
@@ -73,20 +71,8 @@ const HelpCenter: React.FC< Container > = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	// Render unified agent if flag is enabled
-	if ( shouldUseUnifiedAgent ) {
-		return (
-			<UnifiedAIAgent
-				isEligibleForChat={ isEligibleForChat }
-				currentUser={ currentUser }
-				site={ site }
-				sectionName={ sectionName }
-				handleClose={ handleClose }
-			/>
-		);
-	}
-
-	if ( ! container ) {
+	// If unified agent flag is enabled, things will be handled by agents-manager app
+	if ( ! container || shouldUseUnifiedAgent ) {
 		return null;
 	}
 

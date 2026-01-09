@@ -6,6 +6,7 @@ import {
 	connectedApplicationsQuery,
 	countryListQuery,
 	geoLocationQuery,
+	isAutomatticianQuery,
 	monetizeSubscriptionsQuery,
 	plansQuery,
 	productsQuery,
@@ -30,7 +31,7 @@ import {
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import { reauthRequiredLink } from '../../utils/link';
@@ -67,6 +68,15 @@ export const meRoute = createRoute( {
 		} )
 	)
 );
+
+export const meIndexRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: '/',
+	beforeLoad: () => {
+		throw redirect( { to: '/me/profile' } );
+	},
+} );
+
 export const profileRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -77,6 +87,12 @@ export const profileRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'profile',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../me/profile' ).then( ( d ) =>
 		createLazyRoute( 'profile' )( {
@@ -870,7 +886,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const meRoutes: AnyRoute[] = [ profileRoute, preferencesRoute ];
+	const meRoutes: AnyRoute[] = [ meIndexRoute, profileRoute, preferencesRoute ];
 
 	meRoutes.push(
 		billingRoute.addChildren( [

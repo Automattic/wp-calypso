@@ -187,6 +187,11 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 
 			.select-dropdown__header {
 				background: transparent;
+				padding: 0 20px;
+
+				&:first-of-type {
+					padding-left: 0;
+				}
 
 				&-text {
 					margin-right: 12px;

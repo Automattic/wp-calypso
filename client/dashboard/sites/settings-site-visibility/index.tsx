@@ -1,5 +1,5 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -17,14 +17,10 @@ import { ShareSiteForm } from './share-site-form';
 
 export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data: settings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const { back_to } = useSearch( {
 		from: siteSettingsSiteVisibilityRoute.fullPath,
 	} );
-
-	if ( ! settings ) {
-		return null;
-	}
 
 	const renderContent = () => {
 		if ( site.launch_status === 'unlaunched' ) {

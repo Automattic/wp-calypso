@@ -31,6 +31,18 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 }
 
 .promote-post-i2__table {
+	display: block;
+
+	@media (max-width: 1054px) {
+		&.campaigns-list__table {
+			tbody,
+			.post-item__row {
+				width: 100%;
+				display: block;
+			}
+		}
+	}
+
 	th {
 		@include promote-post-i2-font;
 		padding-bottom: 8px;
@@ -117,14 +129,14 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	}
 
 	td {
-		border-top: 1px solid #eee;
+		border-top: 1px solid var(--studio-gray-5);
 		color: $studio-gray-60;
 		font-size: 0.875rem;
 		letter-spacing: -0.15px;
 		line-height: 1.43; /* #EEEEEE if bg is white */
-		padding-bottom: 16px;
+		padding-bottom: 8px;
 		padding-right: 16px;
-		padding-top: 16px;
+		padding-top: 8px;
 		vertical-align: middle;
 		text-align: left;
 	}
@@ -163,10 +175,10 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			border: 1px solid #eee;
 			border-radius: 4px;
 			display: block;
-			height: 78px;
+			height: 60px;
 			margin-right: 16px;
-			min-width: 108px;
-			width: 108px; // TODO: adjust height and width for mobile devices as well.
+			min-width: 80px;
+			width: 80px;
 		}
 
 		img{
