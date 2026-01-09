@@ -28,14 +28,6 @@ export const WithIcon: Story = {
 	},
 };
 
-export const WithImage: Story = {
-	args: {
-		title: 'Icon list item title',
-		description: 'Icon list item description',
-		decoration: <Icon icon={ <img src="https://placecats.com/300/200" alt="Cat" /> } />,
-	},
-};
-
 export const WithoutDescription: Story = {
 	args: {
 		title: 'Icon list item title',

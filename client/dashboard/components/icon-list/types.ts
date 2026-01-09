@@ -23,6 +23,11 @@ export interface IconListItemProps {
 	 * Optional CSS class name(s) to apply to the item.
 	 */
 	className?: string;
+	/**
+	 * Controls the spacing between the icon and the content.
+	 * @default 'medium'
+	 */
+	density?: 'low' | 'medium' | 'high';
 }
 
 export interface IconListProps {
