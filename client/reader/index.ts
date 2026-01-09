@@ -3,7 +3,6 @@ import page, { Context } from '@automattic/calypso-router';
 import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18n-utils';
 import { addMiddleware } from 'redux-dynamic-middlewares';
 import {
-	makeLayout,
 	redirectLoggedOut,
 	redirectLoggedOutToSignup,
 	render as clientRender,
@@ -28,6 +27,7 @@ import {
 	setupReadRoutes,
 	setBeforePrimary,
 } from './controller';
+import { makeLayout } from './middleware';
 import { userProfile } from './user-profile/controller';
 
 import './style.scss';
