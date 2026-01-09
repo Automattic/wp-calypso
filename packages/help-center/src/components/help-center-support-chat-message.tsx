@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
+import { getChatLinkFromConversation } from './utils';
 import type { OdieConversation, OdieMessage } from '@automattic/odie-client';
 import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 
@@ -129,10 +130,7 @@ export const HelpCenterSupportChatMessage = ( {
 		);
 	}
 
-	const chatLink =
-		conversation.metadata && 'sessionId' in conversation.metadata
-			? `/odie?chatId=${ conversation.id }&sessionId=${ conversation.metadata?.sessionId }&botSlug=${ conversation.metadata?.botSlug }`
-			: `/odie?id=${ conversation.metadata?.supportInteractionId }`;
+	const chatLink = getChatLinkFromConversation( conversation );
 
 	return (
 		<Link

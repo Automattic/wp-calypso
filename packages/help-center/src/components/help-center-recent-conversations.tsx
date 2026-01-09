@@ -7,7 +7,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
-import { getLastMessage } from './utils';
+import { getChatLinkFromConversation, getLastMessage } from './utils';
 import './help-center-recent-conversations.scss';
 
 const trackContactButtonClicked = ( sectionName: string ) => {
@@ -44,10 +44,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 		! lastMessage.received ? new Date() : new Date( lastMessage.received * 1000 )
 	).toISOString();
 
-	const chatLink =
-		recentConversation.metadata && 'sessionId' in recentConversation.metadata
-			? `/odie?chatId=${ recentConversation.id }&sessionId=${ recentConversation.metadata?.sessionId }&botSlug=${ recentConversation.metadata?.botSlug }`
-			: `/odie?id=${ recentConversation.metadata?.supportInteractionId }`;
+	const chatLink = getChatLinkFromConversation( recentConversation );
 
 	return (
 		<SummaryButton
