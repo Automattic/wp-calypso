@@ -3,6 +3,7 @@ import { createInterpolateElement, Component } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { SectionHeader } from '../../../components/section-header';
 import { formatDate } from '../../../utils/datetime';
+import { wpcomLink } from '../../../utils/link';
 import { isAkismetTemporarySitePurchase } from '../../../utils/purchase';
 import CancelAutoRenewalForm from './cancel-auto-renewal-form';
 import type { Purchase } from '@automattic/api-core';
@@ -222,7 +223,7 @@ class AutoRenewDisablingDialog extends Component<
 
 	renderAtomicFollowUpDialog = () => {
 		const { isVisible, siteDomain } = this.props;
-		const exportPath = '/backup/' + siteDomain;
+		const exportPath = wpcomLink( `/backup/${ siteDomain }` );
 
 		if ( ! isVisible ) {
 			return null;
