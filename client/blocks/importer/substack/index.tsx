@@ -221,6 +221,9 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 							selectedSite={ selectedSite }
 							fromSite={ fromSite }
 							onViewSummaryClick={ () => setStep( nextStepSlug ) }
+							onReset={ () => {
+								setStep( stepSlugs[ 0 ] );
+							} }
 							skipNextStep={ () => {
 								setStep( nextStepSlug );
 								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );

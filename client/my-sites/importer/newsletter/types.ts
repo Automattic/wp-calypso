@@ -13,6 +13,7 @@ export interface SubscribersStepProps {
 	fromSite: string;
 	nextStepUrl?: string;
 	onViewSummaryClick?: () => void;
+	onReset?: () => void;
 	selectedSite: SiteDetails;
 	setAutoFetchData: Dispatch< SetStateAction< boolean > >;
 	siteSlug: string;

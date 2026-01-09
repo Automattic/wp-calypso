@@ -18,11 +18,17 @@ export default function StepDone( {
 	engine,
 	siteSlug,
 	actionButton,
+	onReset,
 }: StepDoneProps ) {
 	const { __, _n } = useI18n();
 	const { resetPaidNewsletter, isPending } = useResetMutation( {
 		onSuccess: () => {
-			page.redirect( `/import/newsletter/${ engine }/${ siteSlug }/content` );
+			if ( onReset ) {
+				onReset();
+			} else {
+				// Fallback for traditional flow
+				page.redirect( `/import/newsletter/${ engine }/${ siteSlug }/content` );
+			}
 		},
 	} );
 	const subscribedCount = parseInt( cardData?.meta?.email_count || '0' );
