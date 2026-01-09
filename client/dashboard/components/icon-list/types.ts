@@ -24,7 +24,11 @@ export interface IconListItemProps {
 	 */
 	className?: string;
 	/**
-	 * Controls the spacing between the icon and the content.
+	 * Controls the overall visual density of the item, including spacing
+	 * between the decoration/icon and the content, as well as the spacing
+	 * between the title and description text. When set to `'low'`, it also
+	 * adjusts the title typography (e.g., a smaller title font size) to
+	 * match the denser layout.
 	 * @default 'medium'
 	 */
 	density?: 'low' | 'medium' | 'high';
