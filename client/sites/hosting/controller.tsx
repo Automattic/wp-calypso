@@ -22,7 +22,7 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 
 	let content;
 	if ( site ) {
-		const hasAtomicFeature = ! site.plan?.expired && hasPlanFeature( site, DotcomFeatures.ATOMIC );
+		const hasAtomicFeature = hasPlanFeature( site, DotcomFeatures.ATOMIC );
 		const shouldShowActivationCallout = ! site.is_wpcom_atomic && hasAtomicFeature;
 
 		let redirectUrl = context.query.redirect_to;
