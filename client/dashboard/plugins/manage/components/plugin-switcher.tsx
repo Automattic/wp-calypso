@@ -14,8 +14,8 @@ import { PluginUpdatesFilter } from './plugin-updates-filter';
 
 import './plugin-switcher.scss';
 
-const ICON_SIZE = 52;
-const FALLBACK_ICON_SIZE = 39;
+const ICON_SIZE = 48;
+const FALLBACK_ICON_SIZE = 36;
 
 export const PluginSwitcher = ( {
 	pluginsWithIcon,

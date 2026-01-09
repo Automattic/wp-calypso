@@ -1,8 +1,8 @@
 @import './variables.scss';
 
 .plugin-icon-placeholder {
-	width: 32px;
-	height: 32px;
+	width: 48px;
+	height: 48px;
 	background-color: var(--color-neutral-10, #c3c4c7);
 	border-radius: 4px;
 	animation: pulse 1.4s ease-in-out infinite;
@@ -10,8 +10,8 @@
 }
 
 img.plugin-icon {
-	width: 32px;
-	height: 32px;
+	width: 48px;
+	height: 48px;
 }
 
 .plugin-sites-card-body {
@@ -26,8 +26,8 @@ img.plugin-icon {
 	padding-inline-start: 20px;
 
 	.dashboard-section-header__decoration {
-		width: 32px;
-		height: 32px;
+		width: 48px;
+		height: 48px;
 	}
 }
 
