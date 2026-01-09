@@ -34,3 +34,30 @@ export const WithoutDescription: Story = {
 		decoration: <Icon icon={ cog } />,
 	},
 };
+
+export const DensityLow: Story = {
+	args: {
+		title: 'Low density item',
+		description: 'More spacing between elements',
+		decoration: <Icon icon={ cog } />,
+		density: 'low',
+	},
+};
+
+export const DensityMedium: Story = {
+	args: {
+		title: 'Medium density item',
+		description: 'Default spacing between elements',
+		decoration: <Icon icon={ cog } />,
+		density: 'medium',
+	},
+};
+
+export const DensityHigh: Story = {
+	args: {
+		title: 'High density item',
+		description: 'Tighter spacing between elements',
+		decoration: <Icon icon={ cog } />,
+		density: 'high',
+	},
+};
