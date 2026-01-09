@@ -1,12 +1,11 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gravatar, TimeSince, WordPressLogo } from '@automattic/components';
-import SummaryButton from '@automattic/components/src/summary-button';
 import { WapuuAvatar } from '@automattic/odie-client/src/assets';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
 import type { OdieConversation, OdieMessage } from '@automattic/odie-client';
@@ -27,7 +26,6 @@ export const HelpCenterSupportChatMessage = ( {
 	sectionName,
 	conversation,
 	numberOfUnreadMessages = 0,
-	homePageVersion = false,
 }: {
 	message: OdieMessage | ZendeskMessage;
 	sectionName?: string;
@@ -38,7 +36,6 @@ export const HelpCenterSupportChatMessage = ( {
 	const { __ } = useI18n();
 	const { currentUser } = useHelpCenterContext();
 	const { received, role, text, altText } = message;
-	const navigate = useNavigate();
 	const messageText =
 		'metadata' in message && message.metadata?.type === 'csat'
 			? __(
@@ -132,46 +129,14 @@ export const HelpCenterSupportChatMessage = ( {
 		);
 	}
 
-	if ( homePageVersion ) {
-		return (
-			<SummaryButton
-				strapline={ __( 'Recent Conversation', __i18n_text_domain__ ) }
-				title={ messageText || altText || '' }
-				description={
-					<div className="help-center-support-chat__conversation-sub-information">
-						<span className="help-center-support-chat__conversation-information-name">
-							{ messageDisplayName }
-						</span>
-						<Icon
-							size={ 2 }
-							icon={
-								<svg
-									width="2"
-									height="2"
-									viewBox="0 0 2 2"
-									fill="none"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<circle cx="1" cy="1" r="1" fill="#787C82" />
-								</svg>
-							}
-						/>
-						<span className="help-center-support-chat__conversation-information-time">
-							<TimeSince date={ receivedDateISO } dateFormat="lll" />
-						</span>
-					</div>
-				}
-				onClick={ () => {
-					trackContactButtonClicked( sectionName || helpCenterContextSectionName );
-					navigate( `/odie?id=${ supportInteraction?.uuid }` );
-				} }
-			/>
-		);
-	}
+	const chatLink =
+		conversation.metadata && 'sessionId' in conversation.metadata
+			? `/odie?chatId=${ conversation.id }&sessionId=${ conversation.metadata?.sessionId }&botSlug=${ conversation.metadata?.botSlug }`
+			: `/odie?id=${ conversation.metadata?.supportInteractionId }`;
 
 	return (
 		<Link
-			to={ `/odie?id=${ supportInteraction?.uuid }` }
+			to={ chatLink }
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
 			} }
