@@ -44,6 +44,11 @@ export default function CancelButton( {
 		! ( state?.customerConfirmedUnderstanding || false );
 
 	const cancelButtonText = ( () => {
+		// Show special text for atomic revert step
+		if ( state.surveyStep === ATOMIC_REVERT_STEP && needsAtomicRevertConfirmation ) {
+			return __( 'Remove plan and backup' );
+		}
+
 		if ( includedDomainPurchase ) {
 			return __( 'Continue with cancellation' );
 		}
