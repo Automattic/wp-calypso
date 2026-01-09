@@ -54,8 +54,12 @@ function BillingDragonCheckoutContent( {
 	useEffect( () => {
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
+		} else if ( ! isPlanCheckout ) {
+			// Clear selected site when navigating to siteless cart checkout
+			// This ensures the cart system uses the 'no-site' cart key
+			dispatch( setSelectedSiteId( null ) );
 		}
-	}, [ dispatch, siteId ] );
+	}, [ dispatch, siteId, isPlanCheckout ] );
 
 	// Use site's cart key when site exists, otherwise use 'no-site' for siteless checkout
 	const cartKey = siteId || 'no-site';
@@ -73,8 +77,6 @@ function BillingDragonCheckoutContent( {
 		siteSlug,
 		sitelessCheckoutType: 'a4a',
 	} );
-
-	debug( '[A4A Checkout] Cart items: ', cartItems );
 
 	// Plan Checkout Flow: This flow is used when a planSlug is provided in the URL (e.g., /checkout/:siteSlug/:planSlug).
 	// It handles direct plan purchases by:
