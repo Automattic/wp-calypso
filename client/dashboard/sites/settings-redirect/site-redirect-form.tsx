@@ -66,8 +66,8 @@ export default function SiteRedirectForm( {
 	};
 
 	const { isValid: isFormValid } = useFormValidity( formData, fields, form );
-	const isUnchanged = disableWhenUnchanged && formData.redirect === initialValue;
-	const isDisabled = isSubmitting || ! isFormValid || isUnchanged;
+	const isUnchanged = formData.redirect === initialValue;
+	const isDisabled = isSubmitting || ! isFormValid || ( isUnchanged && disableWhenUnchanged );
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();

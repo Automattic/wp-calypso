@@ -1,5 +1,6 @@
 import { productsQuery, domainCanRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -18,6 +19,7 @@ export default function CreateSiteRedirect( {
 	siteSlug: string;
 	siteId: number;
 } ) {
+	const router = useRouter();
 	const { data: products } = useSuspenseQuery( productsQuery() );
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const offsetRedirect = products?.offsite_redirect;
@@ -55,6 +57,7 @@ export default function CreateSiteRedirect( {
 				meta: formData.redirect,
 			},
 		] );
+		router.history.destroy(); // Ignore any navigation blocker
 		window.location.href = addQueryArgs( wpcomLink( `/checkout/${ siteSlug }` ), {
 			cancel_to: backUrl,
 			redirect_to: backUrl,
