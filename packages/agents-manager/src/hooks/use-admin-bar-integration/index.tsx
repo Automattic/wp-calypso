@@ -4,7 +4,7 @@ import './style.scss';
 
 // Admin bar element selectors
 const ADMIN_BAR_BUTTON_ID = 'wp-admin-bar-agents-manager';
-const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-menu-panel-chat';
+const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-chat-support';
 const ADMIN_BAR_HISTORY_ITEM_ID = 'wp-admin-bar-agents-manager-chat-history';
 const ADMIN_BAR_GUIDES_ITEM_ID = 'wp-admin-bar-agents-manager-support-guides';
 

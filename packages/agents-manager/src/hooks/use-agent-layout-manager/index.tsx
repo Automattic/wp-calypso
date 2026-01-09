@@ -4,7 +4,6 @@ import { useMediaQuery } from '@wordpress/compose';
 import {
 	createPortal,
 	useCallback,
-	useEffect,
 	useLayoutEffect,
 	useRef,
 	useState,
@@ -54,15 +53,6 @@ export default function useAgentLayoutManager( {
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
 	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
 
-	useEffect( () => {
-		const adminMenu = document.getElementById( 'adminmenu' );
-		if ( adminMenu ) {
-			const menuHeight = adminMenu.offsetHeight;
-			const menuTopOffset = adminMenu.getBoundingClientRect().top + window.scrollY;
-			setAdminMenuHeight( menuHeight + menuTopOffset + 20 );
-		}
-	}, [ height ] );
-
 	const hasEnoughHeight = height >= adminMenuHeight;
 	const shouldRenderSidebar = isDesktop && hasEnoughHeight && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
@@ -96,6 +86,14 @@ export default function useAgentLayoutManager( {
 	useLayoutEffect( () => {
 		if ( ! isReady || ! container ) {
 			return;
+		}
+
+		// Calculate admin menu height
+		const adminMenu = document.getElementById( 'adminmenu' );
+		if ( adminMenu ) {
+			const menuHeight = adminMenu.offsetHeight;
+			const menuTopOffset = adminMenu.getBoundingClientRect().top + window.scrollY;
+			setAdminMenuHeight( menuHeight + menuTopOffset + 20 );
 		}
 
 		// Set initial docked state

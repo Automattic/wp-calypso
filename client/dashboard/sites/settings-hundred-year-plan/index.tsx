@@ -1,5 +1,5 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -11,11 +11,7 @@ import LockedModeForm from './locked-mode-form';
 
 export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
-
-	if ( ! site || ! settings ) {
-		return null;
-	}
+	const { data: settings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 
 	if ( ! canViewHundredYearPlanSettings( site ) ) {
 		throw notFound();
