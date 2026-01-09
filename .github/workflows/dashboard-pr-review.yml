@@ -1,4 +1,4 @@
-name: Claude Code Review
+name: Dashboard PR Review
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - 'client/dashboard/**'
 
 concurrency:
-  group: claude-review-${{ github.event.pull_request.number }}
+  group: dashboard-pr-review-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 permissions:
@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Claude Code Review
+      - name: Run Dashboard PR Review
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
