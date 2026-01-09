@@ -208,6 +208,9 @@ class AutoRenewDisablingDialog extends Component<
 	};
 
 	closeAndCleanup = () => {
+		if ( this.state.surveyHasShown ) {
+			this.props.onConfirm();
+		}
 		this.props.onClose();
 
 		// It is intentional that we don't reset `surveyHasShown` flag here.
@@ -251,8 +254,6 @@ class AutoRenewDisablingDialog extends Component<
 			return;
 		}
 
-		this.props.onConfirm();
-
 		if ( this.state.surveyHasShown ) {
 			return this.closeAndCleanup();
 		}
@@ -275,6 +276,7 @@ class AutoRenewDisablingDialog extends Component<
 			<ConfirmDialog
 				onCancel={ this.closeAndCleanup }
 				onConfirm={ this.onClickGeneralConfirm }
+				size="large"
 				cancelButtonText={ __( 'Keep auto-renew on' ) }
 				confirmButtonText={ __( 'Turn off auto-renew' ) }
 			>

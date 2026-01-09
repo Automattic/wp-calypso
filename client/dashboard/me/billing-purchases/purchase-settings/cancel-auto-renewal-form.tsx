@@ -99,9 +99,10 @@ const CancelAutoRenewalForm: FC< CancelAutoRenewFormProps > = ( {
 	};
 
 	const onRadioChange = ( value: string ) => {
-		setState( {
+		setState( ( state ) => ( {
+			...state,
 			response: value,
-		} );
+		} ) );
 	};
 
 	// render
@@ -119,26 +120,28 @@ const CancelAutoRenewalForm: FC< CancelAutoRenewFormProps > = ( {
 			<SectionHeader
 				title={ __( 'Help us improve' ) }
 				description={
-					<fieldset role="group" className="cancel-auto-renewal-form__form-fieldset">
-						<p>{ __( "You've turned off auto-renewal." ) }</p>
-						<p>
-							{ sprintf(
-								/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
-								__(
-									"Before you go, we'd love to know: " +
-										"are you letting this %(productType)s expire completely, or do you think you'll renew it manually?"
-								),
-								{ productType }
-							) }
-						</p>
-						<RadioControl
-							className="cancel-auto-renewal-form__radio-control"
-							hideLabelFromVision
-							options={ radioButtons }
-							selected={ state.response }
-							onChange={ onRadioChange }
-						/>
-					</fieldset>
+					<>
+						<fieldset role="group" style={ { border: 0 } }>
+							<p>{ __( "You've turned off auto-renewal." ) }</p>
+							<p>
+								{ sprintf(
+									/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
+									__(
+										"Before you go, we'd love to know: " +
+											"are you letting this %(productType)s expire completely, or do you think you'll renew it manually?"
+									),
+									{ productType }
+								) }
+							</p>
+							<RadioControl
+								className="cancel-auto-renewal-form__radio-control"
+								hideLabelFromVision
+								options={ radioButtons }
+								selected={ state.response }
+								onChange={ onRadioChange }
+							/>
+						</fieldset>
+					</>
 				}
 				actions={
 					<PrecancellationChatButton

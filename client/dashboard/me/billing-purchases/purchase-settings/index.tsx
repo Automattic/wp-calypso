@@ -587,17 +587,13 @@ function getFields( {
 							disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
 							onChange={ ( enabled: boolean ) => {
 								if ( enabled ) {
-									if ( showAutoRenewDisablingDialog ) {
-										closeAutoRenewDisablingDialog();
-									}
 									onChange( { is_auto_renew_enabled: enabled } );
 									return;
 								}
-								if ( ! enabled && ! showAutoRenewDisablingDialog ) {
+								if ( ! enabled ) {
 									openAutoRenewDisablingDialog();
 								}
 							} }
-							// onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
 							help={ helpText }
 						/>
 						<AutoRenewDisablingDialog
@@ -647,12 +643,8 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const [ state, setState ] = useState( { showAutoRenewDisablingDialog: false } );
 	const { showAutoRenewDisablingDialog } = state;
-	const openAutoRenewDisablingDialog = () => {
-		setState( { showAutoRenewDisablingDialog: true } );
-	};
-	const closeAutoRenewDisablingDialog = () => {
-		setState( { showAutoRenewDisablingDialog: false } );
-	};
+	const openAutoRenewDisablingDialog = () => setState( { showAutoRenewDisablingDialog: true } );
+	const closeAutoRenewDisablingDialog = () => setState( { showAutoRenewDisablingDialog: false } );
 	return (
 		<Card>
 			<CardBody>
