@@ -114,13 +114,15 @@ export function AtomicRevertStep( props: Props ) {
 
 	return (
 		<VStack spacing={ 4 }>
-			<SectionHeader level={ 3 } title={ __( 'Proceed with caution' ) } />
+			<SectionHeader level={ 3 } title={ __( 'Confirm Removal' ) } />
 			<Text as="p">
 				<Text as="span" highlightWords={ highlightWords }>
 					{ subHeaderText }
 				</Text>
-				{ ! isDowngradePlan && createInfoPopover }
 			</Text>
+			{ ! isDowngradePlan && (
+				<Text as="p">{ createInfoPopover }</Text>
+			) }
 			<Text as="p">
 				{ createInterpolateElement(
 					__(
