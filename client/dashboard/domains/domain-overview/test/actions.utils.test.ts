@@ -1,10 +1,3 @@
-/**
- * @jest-environment node
- */
-jest.mock( '@wordpress/i18n', () => ( {
-	__: ( text: string ) => text,
-} ) );
-
 import { DomainSubtype, type Domain } from '@automattic/api-core';
 import { shouldShowTransferAction } from '../actions.utils';
 
