@@ -2,7 +2,7 @@ const randomInt = ( lower: number, upper: number ): number =>
 	Math.floor( Math.random() * ( upper - lower + 1 ) );
 
 export function shuffleArray< T >( collection: T[] ): T[] {
-	const newArray = structuredClone( collection );
+export function shuffleArray< T >( collection: readonly T[] ): T[] {
 	let pointer = -1;
 	collection.forEach( () => {
 		const randomPointer = randomInt( ++pointer, collection.length - 1 );
