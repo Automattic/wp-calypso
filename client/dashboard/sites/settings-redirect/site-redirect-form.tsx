@@ -77,7 +77,7 @@ export default function SiteRedirectForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<NavigationBlocker shouldBlock={ ! isUnchanged } />
+				<NavigationBlocker shouldBlock={ ! isUnchanged && ! isSubmitting } />
 				<DataForm< SiteRedirectFormData >
 					data={ formData }
 					fields={ fields }
