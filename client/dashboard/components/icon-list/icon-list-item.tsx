@@ -21,6 +21,7 @@ function UnforwardedIconListItem(
 
 	const iconSpacing = densitySpacingMap[ density ];
 	const textSpacing = densitySpacingMap[ density ] / 2;
+	const suffixSpacing = densitySpacingMap[ density ];
 	const titleSize = density === 'low' ? '15px' : undefined;
 	const alignment = description ? 'flex-start' : 'center';
 
@@ -28,7 +29,7 @@ function UnforwardedIconListItem(
 		<VStack className={ clsx( 'icon-list-item', className ) } ref={ ref } as="span">
 			<HStack spacing={ iconSpacing } alignment={ alignment } as="span">
 				{ !! decoration && <span className="icon-list-item__decoration">{ decoration }</span> }
-				<HStack spacing={ 3 } as="span">
+				<HStack spacing={ suffixSpacing } as="span">
 					<VStack spacing={ textSpacing } as="span">
 						<Text weight={ 500 } lineHeight="24px" size={ titleSize }>
 							{ title }
