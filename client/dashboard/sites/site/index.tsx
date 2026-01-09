@@ -46,7 +46,7 @@ function Site() {
 			<Suspense fallback={ null }>
 				<FlashMessage
 					id="route-not-allowed"
-					refreshKey={ siteSlug }
+					key={ siteSlug }
 					type="error"
 					message={ __( 'Page not found or not allowed.' ) }
 				/>
