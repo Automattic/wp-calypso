@@ -30,7 +30,7 @@ function UnforwardedIconListItem(
 				{ !! decoration && <span className="icon-list-item__decoration">{ decoration }</span> }
 				<HStack spacing={ 3 } as="span">
 					<VStack spacing={ textSpacing } as="span">
-						<Text weight={ 500 } size={ titleSize }>
+						<Text weight={ 500 } lineHeight="24px" size={ titleSize }>
 							{ title }
 						</Text>
 						{ description && <Text variant="muted">{ description }</Text> }
