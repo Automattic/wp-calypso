@@ -1,5 +1,5 @@
 import { __experimentalConfirmDialog as ConfirmDialog } from '@wordpress/components';
-import { createInterpolateElement, Component } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { SectionHeader } from '../../../components/section-header';
 import { formatDate } from '../../../utils/datetime';
@@ -7,6 +7,7 @@ import { wpcomLink } from '../../../utils/link';
 import { isAkismetTemporarySitePurchase } from '../../../utils/purchase';
 import CancelAutoRenewalForm from './cancel-auto-renewal-form';
 import type { Purchase } from '@automattic/api-core';
+import type { FC } from 'react';
 
 const DIALOG = {
 	GENERAL: 'general',
@@ -15,10 +16,6 @@ const DIALOG = {
 } as const;
 
 type DialogType = typeof DIALOG.GENERAL | typeof DIALOG.ATOMIC | typeof DIALOG.SURVEY;
-
-interface AutoRenewDisablingDialogConnectedProps {
-	isAtomicSite: boolean;
-}
 
 interface AutoRenewDisablingDialogProps {
 	isVisible: boolean;
@@ -36,20 +33,22 @@ interface AutoRenewDisablingDialogState {
 	surveyHasShown: boolean;
 }
 
-type AutoRenewDisablingDialogAllProps = AutoRenewDisablingDialogProps &
-	AutoRenewDisablingDialogConnectedProps;
-
-class AutoRenewDisablingDialog extends Component<
-	AutoRenewDisablingDialogAllProps,
-	AutoRenewDisablingDialogState
-> {
-	state: AutoRenewDisablingDialogState = {
+const AutoRenewDisablingDialog: FC< AutoRenewDisablingDialogProps > = ( {
+	isVisible,
+	planName,
+	siteDomain,
+	purchase,
+	isAtomicSite,
+	locale,
+	onConfirm,
+	onClose,
+} ) => {
+	const [ state, setState ] = useState< AutoRenewDisablingDialogState >( {
 		dialogType: DIALOG.GENERAL,
 		surveyHasShown: false,
-	};
+	} );
 
-	getVariation() {
-		const { purchase, isAtomicSite } = this.props;
+	const getVariation = () => {
 		if ( purchase.is_domain_registration ) {
 			return 'domain';
 		}
@@ -71,10 +70,9 @@ class AutoRenewDisablingDialog extends Component<
 		}
 
 		return null;
-	}
+	};
 
-	getCopy( variation: string ) {
-		const { planName, siteDomain, purchase, locale } = this.props;
+	const getCopy = ( variation: string ) => {
 		const expiryDate = formatDate( new Date( purchase.expiry_date ), locale, {
 			year: 'numeric',
 			month: 'long',
@@ -198,31 +196,32 @@ class AutoRenewDisablingDialog extends Component<
 					}
 				);
 		}
-	}
-
-	onClickAtomicFollowUpConfirm = () => {
-		this.props.onConfirm();
-		this.setState( {
-			dialogType: DIALOG.SURVEY,
-		} );
 	};
 
-	closeAndCleanup = () => {
-		if ( this.state.surveyHasShown ) {
-			this.props.onConfirm();
+	const onClickAtomicFollowUpConfirm = () => {
+		onConfirm();
+		setState( ( previousState ) => ( {
+			...previousState,
+			dialogType: DIALOG.SURVEY,
+		} ) );
+	};
+
+	const closeAndCleanup = () => {
+		if ( state.surveyHasShown ) {
+			onConfirm();
 		}
-		this.props.onClose();
+		onClose();
 
 		// It is intentional that we don't reset `surveyHasShown` flag here.
 		// That state is for preventing the survey from showing excessively.
 		// The current behavior is that it won't show up until this component has been unmounted and then remounted.
-		this.setState( {
+		setState( ( previousState ) => ( {
+			...previousState,
 			dialogType: DIALOG.GENERAL,
-		} );
+		} ) );
 	};
 
-	renderAtomicFollowUpDialog = () => {
-		const { isVisible, siteDomain } = this.props;
+	const renderAtomicFollowUpDialog = () => {
 		const exportPath = wpcomLink( `/backup/${ siteDomain }` );
 
 		if ( ! isVisible ) {
@@ -232,7 +231,7 @@ class AutoRenewDisablingDialog extends Component<
 		return (
 			<ConfirmDialog
 				onCancel={ () => ( window.location.href = exportPath ) }
-				onConfirm={ this.onClickAtomicFollowUpConfirm }
+				onConfirm={ onClickAtomicFollowUpConfirm }
 				cancelButtonText={ __( 'Download content' ) }
 				confirmButtonText={ __( 'Turn off auto-renew' ) }
 			>
@@ -246,27 +245,27 @@ class AutoRenewDisablingDialog extends Component<
 		);
 	};
 
-	onClickGeneralConfirm = () => {
-		if ( 'atomic' === this.getVariation() ) {
-			this.setState( {
+	const onClickGeneralConfirm = () => {
+		if ( 'atomic' === getVariation() ) {
+			setState( ( previousState ) => ( {
+				...previousState,
 				dialogType: DIALOG.ATOMIC,
-			} );
+			} ) );
 			return;
 		}
 
-		if ( this.state.surveyHasShown ) {
-			return this.closeAndCleanup();
+		if ( state.surveyHasShown ) {
+			return closeAndCleanup();
 		}
 
-		this.setState( {
+		setState( {
 			dialogType: DIALOG.SURVEY,
 			surveyHasShown: true,
 		} );
 	};
 
-	renderGeneralDialog = () => {
-		const { isVisible } = this.props;
-		const description = this.getCopy( this.getVariation() ?? '' );
+	const renderGeneralDialog = () => {
+		const description = getCopy( getVariation() ?? '' );
 
 		if ( ! isVisible ) {
 			return null;
@@ -274,8 +273,8 @@ class AutoRenewDisablingDialog extends Component<
 
 		return (
 			<ConfirmDialog
-				onCancel={ this.closeAndCleanup }
-				onConfirm={ this.onClickGeneralConfirm }
+				onCancel={ closeAndCleanup }
+				onConfirm={ onClickGeneralConfirm }
 				size="large"
 				cancelButtonText={ __( 'Keep auto-renew on' ) }
 				confirmButtonText={ __( 'Turn off auto-renew' ) }
@@ -285,29 +284,25 @@ class AutoRenewDisablingDialog extends Component<
 		);
 	};
 
-	renderSurvey = () => {
-		const { purchase, isVisible } = this.props;
-
+	const renderSurvey = () => {
 		return (
 			<CancelAutoRenewalForm
 				purchase={ purchase }
 				selectedSiteId={ purchase.blog_id }
 				isVisible={ isVisible }
-				onClose={ this.closeAndCleanup }
+				onClose={ closeAndCleanup }
 			/>
 		);
 	};
 
-	render() {
-		switch ( this.state.dialogType ) {
-			case DIALOG.GENERAL:
-				return this.renderGeneralDialog();
-			case DIALOG.ATOMIC:
-				return this.renderAtomicFollowUpDialog();
-			case DIALOG.SURVEY:
-				return this.renderSurvey();
-		}
+	switch ( state.dialogType ) {
+		case DIALOG.GENERAL:
+			return renderGeneralDialog();
+		case DIALOG.ATOMIC:
+			return renderAtomicFollowUpDialog();
+		case DIALOG.SURVEY:
+			return renderSurvey();
 	}
-}
+};
 
 export default AutoRenewDisablingDialog;
