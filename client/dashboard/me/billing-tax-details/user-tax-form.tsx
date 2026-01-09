@@ -5,8 +5,8 @@ import {
 	userTaxDetailsQuery,
 	userTaxDetailsMutation,
 } from '@automattic/api-queries';
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
