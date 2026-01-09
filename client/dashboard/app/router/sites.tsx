@@ -102,14 +102,7 @@ export const siteRoute = createRoute( {
 			return;
 		}
 
-		let site;
-		try {
-			site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		} catch ( e ) {
-			// Do nothing and propagate the error through the loader function.
-			return;
-		}
-
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! canManageSite( site ) ) {
 			throw notFound();
 		}
