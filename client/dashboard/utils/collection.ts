@@ -2,15 +2,15 @@ const randomInt = ( lower: number, upper: number ): number =>
 	Math.floor( Math.random() * ( upper - lower + 1 ) );
 
 export function shuffleArray< T >( collection: T[] ): T[] {
-	const newArray = collection;
+	const newArray = structuredClone( collection );
 	let pointer = -1;
 	collection.forEach( () => {
-		const randomPointer = randomInt( ++pointer, collection.length );
+		const randomPointer = randomInt( ++pointer, collection.length - 1 );
 		const valueAtRandomPointer = newArray[ randomPointer ];
 		newArray[ randomPointer ] = newArray[ pointer ];
 		newArray[ pointer ] = valueAtRandomPointer;
 	} );
-	return newArray.filter( ( val ) => val );
+	return newArray;
 }
 
 export function mostCommonValueInArray< T >( arr: T[] ): T | undefined {

@@ -1,8 +1,8 @@
 import { marketingSurveyMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { RadioControl, __experimentalConfirmDialog as ConfirmDialog } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
 import { SectionHeader } from '../../../components/section-header';
 import { shuffleArray } from '../../../utils/collection';
 import enrichedSurveyData from '../cancel-purchase/enriched-survey-data';

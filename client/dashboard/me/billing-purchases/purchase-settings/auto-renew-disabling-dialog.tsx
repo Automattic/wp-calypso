@@ -1,7 +1,6 @@
 import { __experimentalConfirmDialog as ConfirmDialog } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, Component } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Component } from 'react';
 import { SectionHeader } from '../../../components/section-header';
 import { formatDate } from '../../../utils/datetime';
 import { isAkismetTemporarySitePurchase } from '../../../utils/purchase';
