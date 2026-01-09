@@ -21,6 +21,10 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
+import {
+	isRenewalPricingTreatment,
+	useRenewalPricingExperiment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-renewal-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -99,6 +103,7 @@ export function WPOrderReviewLineItems( {
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
+	const [ , renewalPricingVariation ] = useRenewalPricingExperiment();
 	const isBFref =
 		typeof window !== 'undefined' &&
 		getQueryArg( window.location.href, 'ref' ) === 'black-friday-2025-lp';
@@ -227,6 +232,7 @@ export function WPOrderReviewLineItems( {
 					onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
 					toggleAkQuantityDropdown={ handleAkQuantityToggle }
 					akQuantityOpenId={ akQuantityOpenId }
+					isRenewalPricingExperiment={ isRenewalPricingTreatment( renewalPricingVariation ) }
 				/>
 			) ) }
 			{ restorableProducts.map( ( product ) => (
@@ -288,6 +294,7 @@ function LineItemWrapper( {
 	onChangeAkProQuantity,
 	toggleAkQuantityDropdown,
 	akQuantityOpenId,
+	isRenewalPricingExperiment,
 }: {
 	product: ResponseCartProduct;
 	isSummary?: boolean;
@@ -309,6 +316,7 @@ function LineItemWrapper( {
 	onChangeAkProQuantity: OnChangeAkProQuantity;
 	toggleAkQuantityDropdown: ( key: string | null ) => void;
 	akQuantityOpenId: string | null;
+	isRenewalPricingExperiment: boolean;
 } ) {
 	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const isRenewal = isWpComProductRenewal( product );
@@ -440,6 +448,7 @@ function LineItemWrapper( {
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
 				shouldShowComparison={ shouldShowComparison }
 				compareToPrice={ compareToPrice }
+				isRenewalPricingExperiment={ isRenewalPricingExperiment }
 			>
 				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (

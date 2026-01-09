@@ -1,6 +1,7 @@
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, payment, receipt, institution, currencyDollar } from '@wordpress/icons';
+import { useAppContext } from '../../app/context';
 import {
 	purchasesRoute,
 	billingHistoryRoute,
@@ -14,6 +15,13 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import { getMonetizeSubscriptionsPageTitle } from '../billing-monetize-subscriptions/title';
 
 function Billing() {
+	const { supports } = useAppContext();
+	const supportsBilling = supports.me && supports.me.billing;
+
+	if ( ! supportsBilling ) {
+		return null;
+	}
+
 	return (
 		<PageLayout
 			size="small"
@@ -39,12 +47,14 @@ function Billing() {
 					decoration={ <Icon icon={ backup } /> }
 					to={ billingHistoryRoute.to }
 				/>
-				<RouterLinkSummaryButton
-					title={ getMonetizeSubscriptionsPageTitle() }
-					description={ __( 'Manage Monetize subscriptions.' ) }
-					decoration={ <Icon icon={ currencyDollar } /> }
-					to={ monetizeSubscriptionsRoute.to }
-				/>
+				{ supportsBilling.monetizeSubscriptions && (
+					<RouterLinkSummaryButton
+						title={ getMonetizeSubscriptionsPageTitle() }
+						description={ __( 'Manage Monetize subscriptions.' ) }
+						decoration={ <Icon icon={ currencyDollar } /> }
+						to={ monetizeSubscriptionsRoute.to }
+					/>
+				) }
 				<RouterLinkSummaryButton
 					title={ __( 'Payment methods' ) }
 					description={ __( 'Manage credit cards saved to your account.' ) }

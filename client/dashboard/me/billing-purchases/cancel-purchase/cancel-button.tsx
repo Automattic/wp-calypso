@@ -74,6 +74,7 @@ export default function CancelButton( {
 			disabled={ isDisabled }
 			isBusy={ isBusy ?? state.isLoading ?? false }
 			onClick={ onClick }
+			isDestructive
 			variant="primary"
 		>
 			{ cancelButtonText }

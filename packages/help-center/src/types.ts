@@ -1,6 +1,8 @@
 import type { HelpCenterSite, SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
+export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging';
+
 export interface Container {
 	handleClose: () => void;
 	defaultFooterContent?: ReactElement;

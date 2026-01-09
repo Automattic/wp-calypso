@@ -10,7 +10,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
-import { getSiteOption, isJetpackSite, isWpcomSite } from 'calypso/state/sites/selectors';
+import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SiteSettingsForm from './form';
 
@@ -29,13 +29,11 @@ export function SiteSettings( props: any ) {
 	);
 	const isAtomic = useSelectedSiteSelector( isAtomicSite );
 	const isAtomicAndEditingToolkitDeactivated = isAtomic && editingToolkitIsActive === false;
-	const siteIsWpcom = useSelectedSiteSelector( isWpcomSite );
 	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
 
 	const additionalProps = {
 		site,
 		siteIsJetpack,
-		siteIsWpcom,
 		isUnlaunchedSite,
 		isAtomicAndEditingToolkitDeactivated,
 		isWpcomStagingSite,
@@ -62,7 +60,6 @@ export function SiteSettings( props: any ) {
 const getFormSettings = ( settings: any ) => {
 	const defaultSettings = {
 		blog_public: '',
-		jetpack_holiday_snow_enabled: false,
 		wpcom_coming_soon: '',
 		wpcom_data_sharing_opt_out: false,
 		wpcom_legacy_contact: '',
@@ -79,7 +76,6 @@ const getFormSettings = ( settings: any ) => {
 
 	const formSettings = {
 		blog_public: settings.blog_public,
-		jetpack_holiday_snow_enabled: !! settings.jetpack_holiday_snow_enabled,
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,
 		wpcom_legacy_contact: settings.wpcom_legacy_contact,

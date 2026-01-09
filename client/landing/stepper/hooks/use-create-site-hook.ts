@@ -30,6 +30,7 @@ type Params = {
 	siteIntent?: string;
 	siteGoals?: SiteGoal[];
 	planCartItems?: MinimalRequestCartProduct[] | null;
+	blueprint?: string | null;
 };
 
 async function fillCart(
@@ -78,6 +79,7 @@ export const createSite = async ( {
 	sourceSlug,
 	siteIntent,
 	planCartItems,
+	blueprint = null,
 }: Params ) => {
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
@@ -91,6 +93,7 @@ export const createSite = async ( {
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		blueprint,
 	} );
 
 	const locale = getLocaleSlug();

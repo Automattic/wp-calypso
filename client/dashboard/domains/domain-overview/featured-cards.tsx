@@ -14,7 +14,7 @@ const SPACING = {
 	SMALL: 4,
 };
 
-export default function FeaturedCards() {
+export default function FeaturedCards( { isDisabled }: { isDisabled?: boolean } ) {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 
@@ -30,7 +30,7 @@ export default function FeaturedCards() {
 			<FeaturedCardSite domain={ domain } />
 			<FeaturedCardEmails domain={ domain } />
 			{ domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION && (
-				<FeaturedCardPrivacy domain={ domain } />
+				<FeaturedCardPrivacy domain={ domain } isDisabled={ isDisabled } />
 			) }
 		</Grid>
 	);

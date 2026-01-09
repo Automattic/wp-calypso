@@ -48,7 +48,6 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
 			flags: {
 				forward_to_human_support: true,
 				hide_disclaimer_content: false,
-				show_contact_support_msg: true,
 				show_ai_avatar: true,
 				is_error_message: true,
 			},
@@ -270,7 +269,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						event_source: 'odie',
 					} );
 				} else if ( supportInteraction && ! odieId && chatId ) {
-					supportInteraction = await addEventToInteraction.mutateAsync( {
+					supportInteraction = await addEventToInteraction( {
 						interactionId: supportInteraction.uuid,
 						eventData: {
 							event_external_id: chatId.toString(),

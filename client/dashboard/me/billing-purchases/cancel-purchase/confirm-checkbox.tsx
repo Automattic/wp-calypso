@@ -29,19 +29,21 @@ export default function ConfirmCheckbox( {
 
 	return (
 		<VStack spacing={ 4 }>
-			<Text weight="bold">{ __( 'Have a question before cancelling?' ) }</Text>
-			<Text>
-				{ createInterpolateElement(
-					__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
-					{
-						contactLink: <a href={ localizeUrl( 'https://wordpress.com/support' ) } />,
-					}
-				) }
-			</Text>
+			<VStack spacing={ 1 }>
+				<Text weight="bold">{ __( 'Have a question before cancelling?' ) }</Text>
+				<Text>
+					{ createInterpolateElement(
+						__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
+						{
+							contactLink: <a href={ localizeUrl( 'https://wordpress.com/support' ) } />,
+						}
+					) }
+				</Text>
+			</VStack>
 
-			<Divider />
+			<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
 
-			<div>
+			<VStack spacing={ 1 }>
 				{ isDomainRegistrationPurchase && ! state.surveyShown && (
 					<CheckboxControl
 						label={ __( 'I understand that canceling means that I may lose this domain forever.' ) }
@@ -62,7 +64,7 @@ export default function ConfirmCheckbox( {
 						onCustomerConfirmedUnderstandingChange( checked );
 					} }
 				/>
-			</div>
+			</VStack>
 		</VStack>
 	);
 }

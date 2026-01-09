@@ -11,14 +11,12 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
-import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { Card, CardBody } from '../../components/card';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
 import ContactFormPrivacy from '../../components/domain-contact-details-form/contact-form-privacy';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
 import { findRegistrantWhois } from '../../utils/domain';
+import { DomainContactDetailsLayout } from './layout';
 import type { DomainContactDetails } from '@automattic/api-core';
 
 export default function DomainContactInfo() {
@@ -135,15 +133,7 @@ export default function DomainContactInfo() {
 	};
 
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
-					description={ __( 'Update your domain’s contact information for registration.' ) }
-				/>
-			}
-		>
+		<DomainContactDetailsLayout>
 			<ContactForm
 				isSubmitting={ isSubmitting }
 				onSubmit={ handleSubmit }
@@ -165,6 +155,6 @@ export default function DomainContactInfo() {
 				initialData={ initialData }
 				validate={ validateMutation.mutateAsync }
 			/>
-		</PageLayout>
+		</DomainContactDetailsLayout>
 	);
 }

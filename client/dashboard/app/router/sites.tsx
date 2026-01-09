@@ -571,12 +571,13 @@ export const siteSettingsRoute = createRoute( {
 	path: 'settings',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
 
-		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
-			// This impacts layout so we must wait for this to load
-			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
-		}
+		queryClient.prefetchQuery( siteCurrentPlanQuery( site.ID ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
+			hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) &&
+				queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) ),
+		] );
 	},
 } );
 
@@ -663,7 +664,7 @@ export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	path: 'subscription-gifting',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-subscription-gifting' ).then( ( d ) =>
@@ -1105,28 +1106,6 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	)
 );
 
-export const siteSettingsHolidaySnowRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Holiday snow' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteSettingsRoute,
-	path: 'holiday-snow',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-holiday-snow' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-holiday-snow' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
-
 export const siteTrialEndedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1352,7 +1331,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 				siteSettingsSubscriptionGiftingRoute,
 				siteSettingsAgencyRoute,
 				siteSettingsHundredYearPlanRoute,
-				siteSettingsHolidaySnowRoute,
 			];
 
 			if ( config.supports.sites.settings.general.redirect ) {

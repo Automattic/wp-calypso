@@ -57,6 +57,17 @@ const helpCenterRouterHistory: Reducer<
 	return state;
 };
 
+const loggedOutOdieChat: Reducer<
+	{ odieId: number; sessionId: string; botSlug: string } | undefined,
+	HelpCenterAction
+> = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT':
+			return action.session;
+	}
+	return state;
+};
+
 const showMessagingWidget: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET':
@@ -216,6 +227,7 @@ const reducer = combineReducers( {
 	odieInitialPromptText,
 	odieBotNameSlug,
 	helpCenterRouterHistory,
+	loggedOutOdieChat,
 	hasPremiumSupport,
 	contextTerm,
 	helpCenterOptions,

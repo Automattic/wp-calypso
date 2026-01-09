@@ -1,26 +1,37 @@
 import { fetchTwoStep } from '@automattic/api-core';
 import {
-	userSettingsQuery,
-	userPurchasesQuery,
-	userTransferredPurchasesQuery,
-	userPaymentMethodsQuery,
-	allSitesQuery,
-	userReceiptsQuery,
-	purchaseQuery,
-	receiptQuery,
-	queryClient,
 	accountRecoveryQuery,
-	smsCountryCodesQuery,
-	twoStepAuthAppSetupQuery,
-	sshKeysQuery,
-	userNotificationsSettingsQuery,
-	rawUserPreferencesQuery,
+	allowedPaymentMethodsQuery,
+	allSitesQuery,
 	connectedApplicationsQuery,
+	countryListQuery,
+	geoLocationQuery,
+	isAutomatticianQuery,
+	monetizeSubscriptionsQuery,
+	plansQuery,
+	productsQuery,
+	purchaseQuery,
+	queryClient,
+	rawUserPreferencesQuery,
+	receiptQuery,
 	siteBySlugQuery,
+	siteFeaturesQuery,
 	siteMediaStorageQuery,
+	sitePurchasesQuery,
+	smsCountryCodesQuery,
+	sshKeysQuery,
+	twoStepAuthAppSetupQuery,
 	userNotificationsDevicesQuery,
+	userNotificationsSettingsQuery,
+	userPaymentMethodsQuery,
+	userPurchasesQuery,
+	userReceiptsQuery,
+	userSettingsQuery,
+	userTaxDetailsQuery,
+	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { isEnabled } from '@automattic/calypso-config';
+import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import { reauthRequiredLink } from '../../utils/link';
@@ -57,6 +68,15 @@ export const meRoute = createRoute( {
 		} )
 	)
 );
+
+export const meIndexRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: '/',
+	beforeLoad: () => {
+		throw redirect( { to: '/me/profile' } );
+	},
+} );
+
 export const profileRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -67,6 +87,12 @@ export const profileRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'profile',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../me/profile' ).then( ( d ) =>
 		createLazyRoute( 'profile' )( {
@@ -131,15 +157,15 @@ export const billingHistoryRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => billingRoute,
-	loader: async () => {
-		await queryClient.ensureQueryData( userReceiptsQuery() );
-	},
 	path: '/history',
 } );
 
 export const billingHistoryIndexRoute = createRoute( {
 	getParentRoute: () => billingHistoryRoute,
 	path: '/',
+	loader: () => {
+		queryClient.prefetchQuery( userReceiptsQuery() );
+	},
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
@@ -158,10 +184,10 @@ export const receiptRoute = createRoute( {
 	} ),
 	getParentRoute: () => billingHistoryRoute,
 	loader: async ( { params: { receiptId } } ) => {
-		const receipt = await queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) );
-		return {
-			receipt,
-		};
+		await Promise.all( [
+			queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) ),
+			queryClient.ensureQueryData( userTaxDetailsQuery() ),
+		] );
 	},
 	path: '$receiptId',
 } ).lazy( () =>
@@ -262,6 +288,10 @@ export const changePaymentMethodRoute = createRoute( {
 	} ),
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'payment-method/change',
+	loader: () => {
+		queryClient.prefetchQuery( allowedPaymentMethodsQuery() );
+		queryClient.prefetchQuery( userPaymentMethodsQuery( { type: 'card' } ) );
+	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings-change-payment-method' )( {
@@ -285,6 +315,13 @@ export const paymentMethodsRoute = createRoute( {
 export const paymentMethodsIndexRoute = createRoute( {
 	getParentRoute: () => paymentMethodsRoute,
 	path: '/',
+	loader: () => {
+		queryClient.prefetchQuery(
+			userPaymentMethodsQuery( {
+				expired: true,
+			} )
+		);
+	},
 } ).lazy( () =>
 	import( '../../me/billing-payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
@@ -321,6 +358,18 @@ export const cancelPurchaseRoute = createRoute( {
 	} ),
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
+	loader: async ( { parentMatchPromise } ) => {
+		const parentMatch = await parentMatchPromise;
+		const { purchase } = parentMatch.loaderData ?? {};
+		if ( purchase ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+				queryClient.ensureQueryData( productsQuery() ),
+				queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
+				queryClient.ensureQueryData( plansQuery() ),
+			] );
+		}
+	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
 		createLazyRoute( 'cancel-purchase' )( {
@@ -344,6 +393,9 @@ export const monetizeSubscriptionsRoute = createRoute( {
 export const monetizeSubscriptionsIndexRoute = createRoute( {
 	getParentRoute: () => monetizeSubscriptionsRoute,
 	path: '/',
+	loader: () => {
+		queryClient.prefetchQuery( monetizeSubscriptionsQuery() );
+	},
 } ).lazy( () =>
 	import( '../../me/billing-monetize-subscriptions' ).then( ( d ) =>
 		createLazyRoute( 'monetize-subscriptions' )( {
@@ -380,6 +432,13 @@ export const taxDetailsRoute = createRoute( {
 	} ),
 	getParentRoute: () => billingRoute,
 	path: '/tax-details',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( geoLocationQuery() ),
+			queryClient.ensureQueryData( countryListQuery() ),
+			queryClient.ensureQueryData( userTaxDetailsQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../me/billing-tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
@@ -573,6 +632,11 @@ export const securitySshKeyRoute = createRoute( {
 		] );
 	},
 	path: '/ssh-key',
+	validateSearch: ( search ): { back_to?: 'site-settings-sftp-ssh' } => {
+		return {
+			back_to: search.back_to === 'site-settings-sftp-ssh' ? 'site-settings-sftp-ssh' : undefined,
+		};
+	},
 } ).lazy( () =>
 	import( '../../me/security-ssh-key' ).then( ( d ) =>
 		createLazyRoute( 'security-ssh-key' )( {
@@ -773,21 +837,69 @@ export const appsRoute = createRoute( {
 	)
 );
 
+export const mcpRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'MCP Account Settings' ),
+			},
+		],
+	} ),
+	getParentRoute: () => meRoute,
+	path: 'mcp',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} );
+
+export const mcpIndexRoute = createRoute( {
+	getParentRoute: () => mcpRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../me/mcp' ).then( ( d ) =>
+		createLazyRoute( 'mcp' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpSetupRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'MCP Client Setup' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'setup',
+} ).lazy( () =>
+	import( '../../me/mcp/setup' ).then( ( d ) =>
+		createLazyRoute( 'mcp-setup' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createMeRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.me ) {
 		return [];
 	}
 
-	const meRoutes: AnyRoute[] = [ profileRoute, preferencesRoute ];
+	const meRoutes: AnyRoute[] = [ meIndexRoute, profileRoute, preferencesRoute ];
 
 	meRoutes.push(
 		billingRoute.addChildren( [
 			billingIndexRoute,
 			billingHistoryRoute.addChildren( [ billingHistoryIndexRoute, receiptRoute ] ),
-			monetizeSubscriptionsRoute.addChildren( [
-				monetizeSubscriptionsIndexRoute,
-				monetizeSubscriptionRoute,
-			] ),
+			...( config.supports.me.billing && config.supports.me.billing.monetizeSubscriptions
+				? [
+						monetizeSubscriptionsRoute.addChildren( [
+							monetizeSubscriptionsIndexRoute,
+							monetizeSubscriptionRoute,
+						] ),
+				  ]
+				: [] ),
 			purchasesRoute.addChildren( [
 				purchasesIndexRoute,
 				purchaseSettingsRoute.addChildren( [
@@ -812,7 +924,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				securityTwoStepAuthSMSRoute,
 				securityTwoStepAuthBackupCodesRoute,
 			] ),
-			securitySshKeyRoute,
+			...( config.supports.me.security && config.supports.me.security.sshKey
+				? [ securitySshKeyRoute ]
+				: [] ),
 			securityConnectedAppsRoute,
 			securitySocialLoginsRoute,
 		] )
@@ -834,6 +948,10 @@ export const createMeRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.reader ) {
 		meRoutes.push( blockedSitesRoute );
+	}
+
+	if ( isEnabled( 'mcp-settings' ) ) {
+		meRoutes.push( mcpRoute.addChildren( [ mcpIndexRoute, mcpSetupRoute ] ) );
 	}
 
 	if ( config.supports.me.apps ) {

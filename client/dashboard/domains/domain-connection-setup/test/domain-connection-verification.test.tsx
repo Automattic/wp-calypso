@@ -117,6 +117,7 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	last_transfer_error: '',
 	current_user_can_add_email: true,
 	whois_update_unmodifiable_fields: [],
+	tld_maintenance_end_time: 0,
 	...overrides,
 } );
 

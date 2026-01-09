@@ -1,15 +1,16 @@
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { throttle } from '@wordpress/compose';
 import { Field, View } from '@wordpress/dataviews';
-import { _n, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { pluginRoute } from '../../../app/router/plugins';
 import { Card, CardBody } from '../../../components/card';
 import SwitcherContent from '../../../components/switcher/switcher-content';
 import { Text } from '../../../components/text';
 import { PluginListRow } from '../types';
+import { PluginUpdatesFilter } from './plugin-updates-filter';
 
 import './plugin-switcher.scss';
 
@@ -130,6 +131,19 @@ export const PluginSwitcher = ( {
 		);
 	}, [] );
 
+	const updatesField = useMemo(
+		() => ( {
+			id: 'hasUpdates',
+			type: 'boolean' as const,
+			elements: [
+				{ value: true, label: __( 'Has updates' ) },
+				{ value: false, label: __( 'No updates' ) },
+			],
+			getValue: ( { item }: { item: PluginListRow } ) => item.sitesWithPluginUpdate.length > 0,
+		} ),
+		[]
+	);
+
 	return (
 		<Card>
 			<CardBody className="plugin-switcher-card-body" ref={ scrollRef }>
@@ -148,6 +162,18 @@ export const PluginSwitcher = ( {
 					searchableFields={ searchableFields }
 					onClose={ () => {} }
 					width="auto"
+					filter={
+						<PluginUpdatesFilter
+							siteCount={
+								pluginsWithIcon.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )
+									.length
+							}
+							updatesField={ updatesField }
+							view={ view }
+							onChangeView={ onChangeView }
+						/>
+					}
+					filterField={ updatesField }
 				/>
 			</CardBody>
 		</Card>

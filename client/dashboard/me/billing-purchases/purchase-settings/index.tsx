@@ -291,6 +291,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 				actions={
 					<Button
 						variant="secondary"
+						isDestructive
 						size="compact"
 						onClick={ () =>
 							navigate( {
@@ -313,6 +314,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 				actions={
 					<Button
 						variant="secondary"
+						isDestructive
 						size="compact"
 						onClick={ () =>
 							navigate( {

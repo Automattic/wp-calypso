@@ -31,6 +31,8 @@ export default function SwitcherContent< T >( {
 	children,
 	onClose,
 	onItemClick,
+	filter,
+	filterField,
 }: PropsWithChildren< {
 	itemAlignment?: string;
 	itemClassName?: string | ( ( item: T ) => string );
@@ -48,13 +50,24 @@ export default function SwitcherContent< T >( {
 	resetScroll?: boolean;
 	onClose: () => void;
 	onItemClick?: () => void;
+	filter?: JSX.Element;
+	filterField?: Field< T >;
 } > ) {
 	const fields = useMemo( () => {
-		return searchableFields.map( ( searchableField ) => ( {
+		const allFields = searchableFields.map( ( searchableField ) => ( {
 			...searchableField,
 			enableGlobalSearch: true,
 		} ) );
-	}, [ searchableFields ] );
+
+		if ( filterField ) {
+			allFields.push( {
+				...filterField,
+				enableGlobalSearch: false,
+			} );
+		}
+
+		return allFields;
+	}, [ searchableFields, filterField ] );
 
 	if ( ! items ) {
 		return __( 'Loading…' );
@@ -62,17 +75,28 @@ export default function SwitcherContent< T >( {
 
 	const { data: filteredData } = filterSortAndPaginate( items, view, fields );
 
+	const search = (
+		<SearchControl
+			className={ searchClassName }
+			label={ __( 'Search' ) }
+			value={ view.search }
+			onChange={ ( value ) => onChangeView( { ...view, search: value } ) }
+			size="compact"
+			__nextHasNoMarginBottom
+		/>
+	);
+
 	return (
 		<NavigableMenu style={ { width } }>
 			<MenuGroup>
-				<SearchControl
-					className={ searchClassName }
-					label={ __( 'Search' ) }
-					value={ view.search }
-					onChange={ ( value ) => onChangeView( { ...view, search: value } ) }
-					size="compact"
-					__nextHasNoMarginBottom
-				/>
+				{ filter ? (
+					<HStack justify="flex-start">
+						{ search }
+						{ filter }
+					</HStack>
+				) : (
+					search
+				) }
 			</MenuGroup>
 			<MenuGroup hideSeparator>
 				{ filteredData.map( ( item ) => {

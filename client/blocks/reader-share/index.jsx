@@ -111,7 +111,7 @@ class ReaderShare extends Component {
 			'reader-share__button': true,
 			'ignore-click': true,
 			'is-active': this.state.showingMenu,
-			tooltip: this.props.isReblogSelection,
+			tooltip: true,
 		} );
 
 		const popoverProps = {
@@ -122,39 +122,40 @@ class ReaderShare extends Component {
 			className: 'popover reader-share__popover',
 		};
 
-		// The event.preventDefault() on the wrapping div is needed to prevent the
+		// The event.preventDefault() is needed to prevent the
 		// full post opening when a share method is selected in the popover
 		return (
-			// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-			<div className="reader-share" onClick={ ( event ) => event.preventDefault() }>
+			<>
 				<Button
 					borderless
 					className={ buttonClasses }
 					compact={ this.props.iconSize === 18 }
 					key="button"
-					onClick={ this.toggle }
+					onClick={ ( event ) => {
+						event.preventDefault();
+						this.toggle();
+					} }
 					ref={ this.shareButton }
+					aria-label={
+						this.props.isReblogSelection
+							? translate( 'Repost with your thoughts' )
+							: translate( 'Share' )
+					}
 					data-tooltip={
-						this.props.isReblogSelection ? translate( 'Repost with your thoughts' ) : undefined
+						this.props.isReblogSelection
+							? translate( 'Repost with your thoughts' )
+							: translate( 'Share' )
 					}
 				>
-					{ ! this.props.isReblogSelection ? (
-						<>
-							{ ReaderShareIcon( {
+					{ ! this.props.isReblogSelection
+						? ReaderShareIcon( {
 								iconSize: this.props.iconSize,
-								viewBox: '0 -2 24 24',
-							} ) }
-							<span className="reader-share__label">{ translate( 'Share' ) }</span>
-						</>
-					) : (
-						<>
-							{ ReaderRepostIcon( {
+								viewBox: '-1 -1 24 24',
+						  } )
+						: ReaderRepostIcon( {
 								iconSize: this.props.iconSize,
-								viewBox: '0 -1 20 20',
-							} ) }
-							<span className="repost__label">{ translate( 'Repost' ) }</span>
-						</>
-					) }
+								viewBox: '0 0 20 20',
+						  } ) }
 				</Button>
 				{ this.state.showingMenu &&
 					( ! this.props.isReblogSelection ? (
@@ -171,7 +172,7 @@ class ReaderShare extends Component {
 							closeMenu={ this.closeMenu }
 						/>
 					) ) }
-			</div>
+			</>
 		);
 	}
 }

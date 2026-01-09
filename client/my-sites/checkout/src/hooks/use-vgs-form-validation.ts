@@ -5,6 +5,7 @@
 
 import { useVGSCollectFormInstance } from '@vgs/collect-js-react';
 import { useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import type { VGS } from '@vgs/collect-js';
 
 /**
@@ -53,28 +54,28 @@ export function getVgsFormValidationError( formData: VGS.FormData ): string | nu
 	if ( fieldName === 'card_number' || fieldName === 'card-number' ) {
 		switch ( errorCode ) {
 			case 1001:
-				return 'Card number is required.';
+				return __( 'Card number is required.', 'calypso' );
 			case 1011:
-				return 'Card number is invalid.';
+				return __( 'Card number is invalid.', 'calypso' );
 		}
 	} else if ( fieldName === 'card_exp' || fieldName === 'card-expiration-date' ) {
 		switch ( errorCode ) {
 			case 1001:
-				return 'Expiration date is required.';
+				return __( 'Expiration date is required.', 'calypso' );
 			case 1015:
-				return 'Expiration date is invalid.';
+				return __( 'Expiration date is invalid.', 'calypso' );
 		}
 	} else if ( fieldName === 'card_cvc' || fieldName === 'card-security-code' ) {
 		switch ( errorCode ) {
 			case 1001:
-				return 'Security code is required.';
+				return __( 'Security code is required.', 'calypso' );
 			case 1017:
-				return 'Security code is invalid.';
+				return __( 'Security code is invalid.', 'calypso' );
 		}
 	}
 
 	// Default error message
-	return error.message || 'Please check your card details.';
+	return error.message || __( 'Please check your card details.', 'calypso' );
 }
 
 /**
@@ -91,7 +92,10 @@ export function useVgsFormValidation() {
 		if ( ! form ) {
 			return {
 				isValid: false,
-				errorMessage: 'Payment form is not ready. Please wait for the form to load.',
+				errorMessage: __(
+					'Payment form is not ready. Please wait for the form to load.',
+					'calypso'
+				),
 			};
 		}
 
@@ -99,7 +103,7 @@ export function useVgsFormValidation() {
 		if ( ! formData ) {
 			return {
 				isValid: false,
-				errorMessage: 'Please enter your card details.',
+				errorMessage: __( 'Please enter your card details.', 'calypso' ),
 			};
 		}
 

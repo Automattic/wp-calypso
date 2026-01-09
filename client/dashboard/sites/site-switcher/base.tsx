@@ -10,6 +10,7 @@ import Switcher from '../../components/switcher';
 import { Text } from '../../components/text';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
+import { canManageSite } from '../features';
 import type { SwitcherProps } from '../../components/switcher';
 import type { Site } from '@automattic/api-core';
 
@@ -39,7 +40,12 @@ export const SiteSwitcherBase = ( props: Pick< SwitcherProps< Site >, 'children'
 			items={ sites }
 			value={ site }
 			searchableFields={ searchableFields }
-			getItemUrl={ ( site ) => buildCurrentRouteLink( { params: { siteSlug: site.slug } } ) }
+			getItemUrl={ ( site ) => {
+				if ( canManageSite( site ) ) {
+					return buildCurrentRouteLink( { params: { siteSlug: site.slug } } );
+				}
+				return site.options?.admin_url ?? '';
+			} }
 			renderItemMedia={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
 			renderItemTitle={ ( { item } ) => (
 				<span

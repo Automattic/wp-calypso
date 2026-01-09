@@ -1,6 +1,6 @@
 import { DotcomFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -47,16 +48,12 @@ const form = {
 export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
 	const [ formData, setFormData ] = useState( {
-		wpcom_gifting_subscription: data?.wpcom_gifting_subscription,
+		wpcom_gifting_subscription: data.wpcom_gifting_subscription,
 	} );
-
-	if ( ! data ) {
-		return null;
-	}
 
 	if ( ! hasPlanFeature( site, DotcomFeatures.SUBSCRIPTION_GIFTING ) ) {
 		throw notFound();
@@ -112,6 +109,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
 							<DataForm< SiteSettings >
 								data={ formData }
 								fields={ fields }

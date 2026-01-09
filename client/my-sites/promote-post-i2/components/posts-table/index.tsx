@@ -18,7 +18,7 @@ export default function PostsTable( props: Props ) {
 	const isRunningInWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	return (
-		<table className="promote-post-i2__table">
+		<table className="promote-post-i2__table posts-lists__table">
 			<PostsListHeader type={ isRunningInWooStore && type === 'product' ? type : 'post' } />
 			<tbody>
 				{ isLoading && ! isFetchingPageResults ? (

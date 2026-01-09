@@ -32,7 +32,8 @@
 }
 
 .plugin-switcher-search {
-	padding: calc(4px * 4) calc(4px * 6);
+	flex: 1 1 auto;
+	padding: calc(4px * 4) calc(4px * 1) calc(4px * 4) calc(4px * 6);
 	width: fit-content;
 }
 
@@ -43,6 +44,10 @@
 	&.is-selected {
 		background: rgba(var(--wp-admin-theme-color--rgb), 0.04);
 		border-top: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.12);
+
+		&:hover {
+			background: rgba(var(--wp-admin-theme-color--rgb), 0.08);
+		}
 
 		.plugin-switcher-item-site-count {
 			color: var(--wp-admin-theme-color);

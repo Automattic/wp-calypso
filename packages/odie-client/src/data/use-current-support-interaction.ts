@@ -20,7 +20,7 @@ export const useCurrentSupportInteraction = () => {
 		if ( id && query.status === 'error' ) {
 			navigate( '/odie' );
 		}
-	}, [ query, navigate, id ] );
+	}, [ query.status, navigate, id ] );
 
 	return query;
 };

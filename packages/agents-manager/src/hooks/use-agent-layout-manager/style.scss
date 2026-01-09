@@ -66,8 +66,8 @@ $agents-manager-z-index-docked: 999999;
 }
 
 // Reposition the editor's template save confirmation panel
-@mixin editor-save-panel-open( $save-panel-selector ) {
-	#{$save-panel-selector} {
+@mixin editor-save-panel-open() {
+	.admin-ui-navigable-region.interface-interface-skeleton__actions {
 		margin: $layout-spacing 0;
 		right: $sidebar-width;
 		overflow: hidden;
@@ -129,7 +129,6 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 		border-left: 1px solid $border-color;
 		border-bottom: 1px solid $border-color;
 		border-bottom-left-radius: $main-border-radius;
-		overflow: scroll;
 	}
 
 	#wpcontent {
@@ -200,11 +199,28 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			left: $layout-spacing;
 			right: $sidebar-width;
 			width: auto;
-			overflow: hidden;
 			border-radius: $main-border-radius $main-border-radius 0 0;
 			border: 1px solid $border-color;
 			border-bottom: none;
 			box-sizing: border-box;
+			height: calc( var(--masterbar-height) + 1px );
+
+			.masterbar__section.masterbar__section--left {
+				overflow: hidden;
+			}
+
+			.masterbar__item.masterbar__item-my-sites.is-active.has-global-border {
+				border-top-left-radius: $main-border-radius;
+			}
+
+			.masterbar__item.masterbar__item-howdy {
+				border-top-right-radius: $main-border-radius;
+			}
+
+			.masterbar__item:hover,
+			.masterbar__item.is-active {
+				cursor: pointer;
+			}
 		}
 
 		#content {
@@ -241,12 +257,12 @@ body.is-section-dashboard-dotcom.agents-manager-sidebar-container {
 	.dashboard-root__layout {
 		position: relative;
 		min-height: 100vh;
-		background-color: var(--dashboard__background-color, #fcfcfc) !important;
+		background-color: var( --dashboard__background-color, #fcfcfc ) !important;
 		margin: 0 !important;
 	}
 
 	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base('#wpcom .dashboard-root__layout');
+		@include sidebar-open-base( '#wpcom .dashboard-root__layout' );
 
 		.dashboard-root__layout {
 			height: calc( 100vh - ( $layout-spacing * 2 ) );
@@ -298,9 +314,7 @@ body.next-admin.agents-manager-sidebar-container {
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.next-admin-layout__canvas.is-full-canvas' );
-		@include editor-save-panel-open(
-			'.admin-ui-navigable-region.interface-interface-skeleton__actions'
-		);
+		@include editor-save-panel-open();
 	}
 }
 
@@ -315,9 +329,7 @@ body.site-editor-php.agents-manager-sidebar-container {
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-site-layout__canvas' );
-		@include editor-save-panel-open(
-			'.interface-navigable-region.interface-interface-skeleton__actions'
-		);
+		@include editor-save-panel-open();
 
 		// Override canvas styles when the site editor navigation menu is open
 		.edit-site-layout:not( .is-full-canvas ) .edit-site-layout__canvas {
@@ -337,9 +349,7 @@ body.post-php.agents-manager-sidebar-container {
 
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-post-layout' );
-		@include editor-save-panel-open(
-			'.interface-navigable-region.interface-interface-skeleton__actions'
-		);
+		@include editor-save-panel-open();
 	}
 }
 
@@ -485,8 +495,21 @@ body.post-php.agents-manager-sidebar-container {
 		}
 	}
 
-	.ChatFooter-module_container:has( .Suggestions-module_container ) {
-		margin-top: 48px;
+	.ChatFooter-module_container {
+		&:has( .Suggestions-module_container ) {
+			margin-top: 48px;
+		}
+
+		.Notice-module_container {
+			// Only override the default BG color
+			&:not( [class*='Notice-module_is'] ) {
+				background-color: #e9e9e9;
+			}
+
+			.Notice-module_content p {
+				margin: 0;
+			}
+		}
 	}
 }
 
@@ -533,8 +556,6 @@ body.post-php.agents-manager-sidebar-container {
 					.edit-site-global-styles-variations_item-preview {
 						outline: 1px solid $gray-400;
 						outline-offset: 1px;
-						outline-color: #ccc;
-						outline-width: -wp-admin-border-width-focus;
 					}
 				}
 
@@ -545,7 +566,7 @@ body.post-php.agents-manager-sidebar-container {
 				}
 
 				.edit-site-global-styles-variations_item-preview {
-					outline-color: #545454;
+					outline: 1px solid #545454;
 					overflow: hidden;
 				}
 			}
@@ -688,18 +709,6 @@ body.post-php.agents-manager-sidebar-container {
 			color: $gray-100;
 			background-color: #484848;
 		}
-
-		.Notice-module_container {
-			background-color: $gray-900;
-
-			.Notice-module_content {
-				color: $gray-100;
-
-				p {
-					margin: 0;
-				}
-			}
-		}
 	}
 
 	.Textarea-module_textarea {
@@ -735,4 +744,24 @@ body.post-php.agents-manager-sidebar-container {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
+
+	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
+		&.is-active,
+		&:focus-visible {
+			.edit-site-global-styles-variations_item-preview {
+				outline: 1px solid #0000001a;
+			}
+		}
+
+		&:not( .is-active ):hover {
+			.edit-site-global-styles-variations_item-preview {
+				outline-color: #00000080;
+			}
+		}
+
+		.edit-site-global-styles-variations_item-preview {
+			outline: 1px solid #0000004d;
+			overflow: hidden;
+		}
+	}
 }

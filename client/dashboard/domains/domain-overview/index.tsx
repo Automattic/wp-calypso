@@ -15,7 +15,8 @@ import SnackbarBackButton, {
 	getSnackbarBackButtonText,
 } from '../../components/snackbar-back-button';
 import { formatDate } from '../../utils/datetime';
-import { getDomainRenewalUrl } from '../../utils/domain';
+import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
+import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
 import IcannSuspensionNotice from './icann-suspension-notice';
@@ -91,6 +92,7 @@ export default function DomainOverview() {
 								<Button
 									variant="primary"
 									__next40pxDefaultSize
+									disabled={ isTldInMaintenance( domain ) }
 									href={ getDomainRenewalUrl( domain, purchase ) }
 								>
 									{
@@ -107,6 +109,9 @@ export default function DomainOverview() {
 						}
 					/>
 				}
+				notices={
+					isTldInMaintenance( domain ) && <TLDMaintenanceNotice showGoBackLink={ false } />
+				}
 			>
 				{ domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER && (
 					<TransferredDomainDetails domain={ domain } />
@@ -116,11 +121,15 @@ export default function DomainOverview() {
 				) }
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
-						<FeaturedCards />
-						<DomainOverviewSettings domain={ domain } domainDiagnostics={ diagnosticsData } />
+						<FeaturedCards isDisabled={ isTldInMaintenance( domain ) } />
+						<DomainOverviewSettings
+							isDisabled={ isTldInMaintenance( domain ) }
+							domain={ domain }
+							domainDiagnostics={ diagnosticsData }
+						/>
 					</>
 				) }
-				<Actions />
+				<Actions isDisabled={ isTldInMaintenance( domain ) } />
 			</PageLayout>
 			{ snackbarBackButtonText && (
 				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>

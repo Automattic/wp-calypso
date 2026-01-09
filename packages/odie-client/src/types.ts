@@ -56,7 +56,7 @@ export type CurrentUser = {
 	display_name: string;
 	avatar_URL?: string;
 	email?: string;
-	id?: number;
+	ID?: number;
 };
 
 export type Source = {
@@ -89,7 +89,7 @@ type InquiryType =
 	| 'unrelated-to-wordpress'
 	| 'request-for-human-support';
 
-type InteractionStatus = 'open' | 'closed' | 'resolved' | 'solved';
+type InteractionStatus = 'open' | 'closed' | 'solved';
 
 type ClassificationResults = {
 	inquiry_type?: InquiryType;
@@ -114,7 +114,6 @@ export type Context = {
 		failed_zendesk_connection?: boolean;
 		forward_to_human_support?: boolean;
 		hide_disclaimer_content?: boolean;
-		show_contact_support_msg?: boolean;
 		show_ai_avatar?: boolean;
 		is_error_message?: boolean;
 	};
@@ -159,6 +158,7 @@ export type Message = {
 	created_at?: string;
 	feedbackOptions?: MessageAction[];
 	metadata?: Record< string, any >;
+	ts?: number;
 	payload?: string;
 	/**
 	 * Timestamp of the message.
@@ -170,6 +170,7 @@ export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfe
 
 export type ReturnedChat = {
 	chat_id: number;
+	session_id: string;
 	messages: Message[];
 	wpcom_user_id: number;
 	experiment_name: string | undefined | null;
@@ -215,6 +216,7 @@ type Metadata = {
 	createdAt: number;
 	supportInteractionId: string;
 	status: InteractionStatus;
+	botSlug?: string;
 };
 
 export type OdieConversation = {
@@ -224,13 +226,21 @@ export type OdieConversation = {
 	metadata?: Metadata;
 };
 
+export type LoggedOutOdieConversation = OdieConversation & {
+	metadata: {
+		sessionId: string;
+	} & Metadata;
+};
+
 export type SupportInteractionDraft = {
 	bot_slug: OdieAllowedBots;
 	event_external_id: string;
 	event_source: SupportProvider;
 };
 
-export type Conversations = Array< OdieConversation | ZendeskConversation >;
+export type Conversations = Array<
+	OdieConversation | LoggedOutOdieConversation | ZendeskConversation
+>;
 
 export type SupportInteractionUser = {
 	user_id: string;

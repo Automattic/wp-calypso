@@ -64,6 +64,9 @@ const SubscribersHeaderPopover = ( {
 				ref={ buttonRef }
 				icon={ <Icon icon={ moreVertical } size={ 18 } /> }
 				size="compact"
+				aria-label={ translate( 'Subscriber actions menu' ) }
+				aria-expanded={ isVisible }
+				aria-haspopup="menu"
 			/>
 
 			<PopoverMenu

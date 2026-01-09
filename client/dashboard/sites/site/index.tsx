@@ -16,9 +16,13 @@ import EnvironmentSwitcher from './environment-switcher';
 
 function Site() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: site, isError, error } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { components } = useAppContext();
 	const SiteSwitcher = useMemo( () => lazy( components.siteSwitcher ), [ components ] );
+
+	if ( isError ) {
+		throw error;
+	}
 
 	if ( ! canManageSite( site ) ) {
 		throw notFound();

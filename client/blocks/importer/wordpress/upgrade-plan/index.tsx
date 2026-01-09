@@ -14,7 +14,7 @@ import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
-import PlanNoticePlanToHigherPlanCredit from 'calypso/my-sites/plans-features-main/components/plan-notice-plan-to-higher-plan-credit';
+import PlanNoticeUpgradeCredit from 'calypso/my-sites/plans-features-main/components/plan-notice-upgrade-credit';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
 import { Skeleton } from './skeleton';
@@ -203,7 +203,11 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 				</div>
 			) }
 
-			<PlanNoticePlanToHigherPlanCredit siteId={ site.ID } visiblePlans={ [ visiblePlan ] } />
+			<PlanNoticeUpgradeCredit
+				siteId={ site.ID }
+				visiblePlans={ [ visiblePlan ] }
+				intent="plans-upgrade"
+			/>
 			<UpgradePlanDetails
 				planSlugs={ planSlugs }
 				pricing={ pricing as { [ key: string ]: PricingMetaForGridPlan } }

@@ -821,15 +821,20 @@ body.is-mobile-app-view {
 
 			.masterbar__item-howdy-account-details {
 				flex-basis: auto;
-				flex-grow: 0;
-				flex-shrink: 0;
-				max-width: 50%;
+				flex-grow: 1;
 				display: flex;
 				flex-direction: column;
 				align-items: flex-start;
 				padding: 3px 5px;
 				margin: 0;
 				line-height: 18px;
+				overflow: hidden;
+
+				.display-name, .username {
+					width: 100%;
+					 overflow: hidden;
+					 text-overflow: ellipsis;
+				}
 
 				.username {
 					font-size: 11px;
