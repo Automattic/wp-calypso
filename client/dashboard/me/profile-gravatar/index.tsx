@@ -1,5 +1,5 @@
-import { userSettingsMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -23,10 +23,6 @@ import EditGravatar from './edit-gravatar';
 import GravatarLogo from './gravatar-logo';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
-
-interface GravatarProfileSectionProps {
-	profile: UserSettings;
-}
 
 const fields: Field< UserSettings >[] = [
 	{
@@ -98,16 +94,16 @@ const controlledKeys = fields
 	.filter( ( field ) => field.id !== 'avatar_URL' )
 	.map( ( field ) => field.id );
 
-export default function GravatarProfileSection( {
-	profile: serverProfile,
-}: GravatarProfileSectionProps ) {
+export default function GravatarProfileSection() {
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
-	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
+	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
 	const mutation = useMutation( userSettingsMutation() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const isSaving = mutation.isPending;
 	const isDirty = controlledKeys.some(
-		( key ) => data[ key as keyof UserSettings ] !== serverProfile[ key as keyof UserSettings ]
+		( key ) => data[ key as keyof UserSettings ] !== userSettings[ key as keyof UserSettings ]
 	);
 	const { validity, isValid } = useFormValidity( data, fields, form );
 

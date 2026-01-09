@@ -6,6 +6,7 @@ import {
 	connectedApplicationsQuery,
 	countryListQuery,
 	geoLocationQuery,
+	isAutomatticianQuery,
 	monetizeSubscriptionsQuery,
 	plansQuery,
 	productsQuery,
@@ -86,6 +87,12 @@ export const profileRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'profile',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../me/profile' ).then( ( d ) =>
 		createLazyRoute( 'profile' )( {

@@ -1,6 +1,7 @@
 import { domainDnsMutation, domainDnsQuery, domainQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { useCallback, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
@@ -31,17 +32,28 @@ export default function DomainEditDNS() {
 	} );
 
 	const { data: dnsRecords } = useSuspenseQuery( domainDnsQuery( domainName ) );
-	const recordToEdit = getProcessedRecord(
-		// This record's existence is checked in the `beforeLoad` function in the route
-		dnsRecords.records.find( ( record ) => record.id === recordId )!
-	);
 
-	const navigateToDNSOverviewPage = () => {
+	const navigateToDNSOverviewPage = useCallback( () => {
 		navigate( {
 			to: '/domains/$domainName/dns',
 			params: { domainName },
 		} );
-	};
+	}, [ navigate, domainName ] );
+
+	const record = dnsRecords.records.find( ( r ) => r.id === recordId );
+
+	useEffect( () => {
+		// Handle the case where the record no longer exists (e.g., after mutation invalidates the query)
+		if ( ! record ) {
+			navigateToDNSOverviewPage();
+		}
+	}, [ record, navigateToDNSOverviewPage ] );
+
+	if ( ! record ) {
+		return null;
+	}
+
+	const recordToEdit = getProcessedRecord( record );
 
 	const handleSubmit = ( typeFormData: DnsRecordTypeFormData, formData: DnsRecordFormData ) => {
 		const config = DNS_RECORD_CONFIGS[ typeFormData.type ];

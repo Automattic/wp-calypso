@@ -303,3 +303,17 @@ export function formatSiteYmd( date: Date ) {
 	const day = String( date.getDate() ).padStart( 2, '0' );
 	return `${ year }-${ month }-${ day }`;
 }
+
+/**
+ * Parse a date string as UTC, handling MySQL and ISO8601 formats.
+ */
+export function parseDateAsUTC( dateString: string ): Date {
+	// Handle datetime without timezone: "YYYY-MM-DD HH:MM:SS" or "YYYY-MM-DDTHH:MM:SS" (optional microseconds)
+	const match = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2}(?:\.\d+)?)$/.exec( dateString.trim() );
+	if ( match ) {
+		return new Date( `${ match[ 1 ] }T${ match[ 2 ] }Z` );
+	}
+
+	// Everything else - pass through unchanged
+	return new Date( dateString );
+}

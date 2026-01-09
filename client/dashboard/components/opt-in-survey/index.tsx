@@ -98,7 +98,7 @@ export default function OptInSurvey() {
 					<Button
 						variant="primary"
 						size="compact"
-						href="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
+						href="https://automattic.survey.fm/msd-survey-for-opt-in"
 						target="_blank"
 						rel="noopener noreferrer"
 						onClick={ confirm }
