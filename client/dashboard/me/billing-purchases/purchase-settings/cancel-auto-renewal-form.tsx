@@ -67,20 +67,7 @@ const CancelAutoRenewalForm: FC< CancelAutoRenewFormProps > = ( {
 
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
 	const submitMarketingSurvey = ( surveyDetails: MarketingSurveyDetails ) =>
-		marketingSurveyMutate.mutate( surveyDetails, {
-			onSuccess: () => {
-				setState( ( state ) => ( {
-					...state,
-					isSubmitting: false,
-				} ) );
-			},
-			onError: () => {
-				setState( ( state ) => ( {
-					...state,
-					isSubmitting: false,
-				} ) );
-			},
-		} );
+		marketingSurveyMutate.mutate( surveyDetails );
 
 	const onSubmit = () => {
 		const { response } = state;
