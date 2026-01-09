@@ -11,6 +11,8 @@ import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useClientCheckout from '../../hooks/use-client-checkout';
 
+const EXPRESS_CHECKOUT_REDIRECT_URL = 'https://agencies.automattic.com/client/subscriptions';
+
 function ClientExpressCheckoutContent() {
 	const translate = useTranslate();
 	const userLoggedIn = useSelector( isUserLoggedIn );
@@ -28,8 +30,8 @@ function ClientExpressCheckoutContent() {
 	return (
 		<CheckoutMain
 			sitelessCheckoutType="a4a"
-			redirectTo="https://agencies.automattic.com/client/subscriptions"
-			customizedPreviousPath="https://agencies.automattic.com/client/subscriptions"
+			redirectTo={ EXPRESS_CHECKOUT_REDIRECT_URL }
+			customizedPreviousPath={ EXPRESS_CHECKOUT_REDIRECT_URL }
 			isLoggedOutCart={ ! userLoggedIn }
 			siteSlug=""
 			siteId={ 0 }

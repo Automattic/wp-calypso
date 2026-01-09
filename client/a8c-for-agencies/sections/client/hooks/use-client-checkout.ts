@@ -1,6 +1,7 @@
 import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import useProductsById from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-products-by-id';
 import { getClientReferralQueryArgs } from 'calypso/a8c-for-agencies/sections/marketplace/lib/get-client-referral-query-args';
@@ -16,6 +17,7 @@ type Props = {
 };
 
 export default function useClientCheckout( { expressMode = false }: Props ) {
+	const translate = useTranslate();
 	const [ isReady, setIsReady ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
 
@@ -104,19 +106,19 @@ export default function useClientCheckout( { expressMode = false }: Props ) {
 		}
 	}, [ expressMode, referral?.client?.email, checkoutStoreDispatch ] );
 
-	// Debugging: Set a timeout to force showing the checkout after 10 seconds
+	// Debugging: Set a timeout after 30 seconds
 	useEffect( () => {
 		if ( isReady || error ) {
 			return;
 		}
 
 		const timeoutId = setTimeout( () => {
-			debug( '[A4A Checkout] Timeout reached, showing checkout anyway' );
-			setIsReady( true );
-		}, 10000 );
+			debug( '[A4A Checkout] Timeout reached' );
+			setError( translate( 'Unable to load shopping cart.' ) );
+		}, 30000 );
 
 		return () => clearTimeout( timeoutId );
-	}, [ isReady, error ] );
+	}, [ isReady, error, translate ] );
 
 	return {
 		isReady,

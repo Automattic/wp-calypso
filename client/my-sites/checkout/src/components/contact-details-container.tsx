@@ -147,10 +147,7 @@ export default function ContactDetailsContainer( {
 							disabled={ isDisabled || isEmailDisabledForA4A }
 							value={ contactDetails.email ?? '' }
 							onChange={ ( value ) => {
-								// Prevent updating email if it's disabled for A4A express checkout
-								if ( ! isEmailDisabledForA4A ) {
-									updateEmail( value );
-								}
+								updateEmail( value );
 							} }
 							autoComplete="email"
 							isError={ email?.isTouched && ! isValid( email ) }
