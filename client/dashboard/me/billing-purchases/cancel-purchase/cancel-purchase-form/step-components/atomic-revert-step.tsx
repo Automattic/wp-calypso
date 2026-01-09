@@ -113,14 +113,16 @@ export function AtomicRevertStep( props: Props ) {
 	}
 
 	return (
-		<VStack spacing={ 4 }>
-			<SectionHeader level={ 3 } title={ __( 'Proceed with caution' ) } />
-			<Text as="p">
-				<Text as="span" highlightWords={ highlightWords }>
-					{ subHeaderText }
+		<VStack spacing={ 6 }>
+			<SectionHeader level={ 3 } title={ __( 'Remove Atomic Backup' ) } />
+			<VStack spacing={ 3 }>
+				<Text as="p">
+					<Text as="span" highlightWords={ highlightWords }>
+						{ subHeaderText }
+					</Text>
 				</Text>
 				{ ! isDowngradePlan && createInfoPopover }
-			</Text>
+			</VStack>
 			<Text as="p">
 				{ createInterpolateElement(
 					__(

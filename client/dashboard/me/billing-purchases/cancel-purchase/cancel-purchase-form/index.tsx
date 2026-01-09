@@ -370,6 +370,22 @@ function StepButtons( {
 		);
 	}
 
+	if ( surveyStep === ATOMIC_REVERT_STEP ) {
+		return (
+			<ButtonStack justify="flex-start">
+				<Button
+					disabled={ ! canGoNext }
+					isBusy={ isCancelling }
+					onClick={ onSubmit }
+					variant="primary"
+					isDestructive
+				>
+					{ __( 'Remove Atomic Backup' ) }
+				</Button>
+			</ButtonStack>
+		);
+	}
+
 	const variant = surveyStep !== UPSELL_STEP ? 'primary' : 'secondary';
 
 	return (
