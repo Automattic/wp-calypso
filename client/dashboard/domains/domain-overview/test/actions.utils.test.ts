@@ -28,8 +28,8 @@ describe( 'shouldShowTransferAction', () => {
 
 	it( 'returns true when domain can be transferred to any user', () => {
 		const domain = createDomain( {
-			can_transfer_to_any_user: false,
-			can_transfer_to_other_site: true,
+			can_transfer_to_any_user: true,
+			can_transfer_to_other_site: false,
 		} );
 
 		expect( shouldShowTransferAction( domain ) ).toBe( true );
