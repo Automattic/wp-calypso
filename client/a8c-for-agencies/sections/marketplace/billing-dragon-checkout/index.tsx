@@ -78,6 +78,8 @@ function BillingDragonCheckoutContent( {
 		sitelessCheckoutType: 'a4a',
 	} );
 
+	debug( '[A4A Checkout] Cart items: ', cartItems );
+
 	// Plan Checkout Flow: This flow is used when a planSlug is provided in the URL (e.g., /checkout/:siteSlug/:planSlug).
 	// It handles direct plan purchases by:
 	// 1. Using usePrepareProductsForCart to convert the plan slug into products
