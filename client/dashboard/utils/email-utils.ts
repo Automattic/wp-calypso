@@ -1,4 +1,5 @@
 import { EmailAccount } from '@automattic/api-core';
+import { dashboardLink } from './link';
 
 export type EmailWarningType =
 	| 'google_pending_tos_acceptance'
@@ -65,7 +66,7 @@ export function buildGoogleManageWorkspaceLink( email: string, domainName: strin
 export function buildTitanMailboxLink( email: string ) {
 	const titanMailUrl = new URL( 'https://wp.titan.email/mail/' );
 	titanMailUrl.searchParams.append( 'email_account', email );
-	titanMailUrl.searchParams.append( 'topbar.redirect_url', 'https://wordpress.com/emails' );
+	titanMailUrl.searchParams.append( 'topbar.redirect_url', dashboardLink( '/emails' ) );
 
 	return titanMailUrl.href;
 }

@@ -45,6 +45,10 @@
 		background: rgba(var(--wp-admin-theme-color--rgb), 0.04);
 		border-top: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.12);
 
+		&:hover {
+			background: rgba(var(--wp-admin-theme-color--rgb), 0.08);
+		}
+
 		.plugin-switcher-item-site-count {
 			color: var(--wp-admin-theme-color);
 		}
