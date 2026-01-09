@@ -4,6 +4,8 @@
 
 **Key behavior**: On desktop (≥1200px), the chat can be docked as a sidebar or floating. On mobile/tablet, the chat is always floating.
 
+In order to prevent issues with the WP admin sidebar the hook will also use floating mode if the page height is less than that of the sidebar.
+
 ## Usage
 
 ### React Example

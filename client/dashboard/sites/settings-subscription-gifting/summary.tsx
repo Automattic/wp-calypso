@@ -13,19 +13,17 @@ export default function SubscriptionGiftingSettingsSummary( {
 	density,
 }: {
 	site: Site;
-	settings?: SiteSettings;
+	settings: SiteSettings;
 	density?: Density;
 } ) {
 	if ( ! hasPlanFeature( site, DotcomFeatures.SUBSCRIPTION_GIFTING ) ) {
 		return null;
 	}
 
-	let badges;
-	if ( settings ) {
-		badges = settings.wpcom_gifting_subscription
-			? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
-			: [ { text: __( 'Disabled' ) } ];
-	}
+	const badges = settings.wpcom_gifting_subscription
+		? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
+		: [ { text: __( 'Disabled' ) } ];
+
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/subscription-gifting` }

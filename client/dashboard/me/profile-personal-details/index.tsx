@@ -24,13 +24,7 @@ import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
-interface PersonalDetailsSectionProps {
-	profile: UserSettings;
-}
-
-export default function PersonalDetailsSection( {
-	profile: serverProfile,
-}: PersonalDetailsSectionProps ) {
+export default function PersonalDetailsSection() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const isMobile = useViewportMatch( 'small', '<' );
@@ -48,11 +42,11 @@ export default function PersonalDetailsSection( {
 		},
 	} );
 
-	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
+	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
 
-	const currentUsername = userSettings?.user_login || '';
-	const isEmailVerified = userSettings?.email_verified ?? true;
-	const canChangeUsername = userSettings?.user_login_can_be_changed ?? true;
+	const currentUsername = userSettings.user_login || '';
+	const isEmailVerified = userSettings.email_verified ?? true;
+	const canChangeUsername = userSettings.user_login_can_be_changed ?? true;
 
 	// Form event handlers
 	const handleFieldChange = ( partial: Partial< UserSettings > ) => {
@@ -88,7 +82,7 @@ export default function PersonalDetailsSection( {
 		if ( key === 'user_login' ) {
 			return false;
 		}
-		return data?.[ key as keyof UserSettings ] !== serverProfile?.[ key as keyof UserSettings ];
+		return data[ key as keyof UserSettings ] !== userSettings[ key as keyof UserSettings ];
 	} );
 
 	const isSaving = mutation.isPending;

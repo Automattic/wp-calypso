@@ -16,18 +16,40 @@ export const MembershipTerms = ( { subscription }: { subscription: MembershipSub
 		return <>{ translate( 'Never expires' ) }</>;
 	}
 
+	// Check if expired (parse as UTC since end_date is stored in UTC, then convert to local for display)
+	const endDate = moment.utc( subscription.end_date ).local();
+	const isExpired = endDate.isBefore( moment() );
+
+	if ( isExpired ) {
+		const isExpiredToday = moment().isSame( endDate, 'day' );
+
+		return (
+			<span className="purchase-item__is-error">
+				{ isExpiredToday
+					? translate( 'Expired today' )
+					: translate( 'Expired %(timeSinceExpiry)s', {
+							args: {
+								timeSinceExpiry: endDate.fromNow(),
+							},
+							context:
+								'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+					  } ) }
+			</span>
+		);
+	}
+
 	return (
 		<>
 			{ subscription.renew_interval === null
 				? translate( 'Expires on %(date)s', {
 						args: {
-							date: moment( subscription.end_date ).format( 'LL' ),
+							date: endDate.format( 'LL' ),
 						},
 				  } )
 				: translate( 'Renews at %(amount)s on %(date)s', {
 						args: {
 							amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-							date: moment( subscription.end_date ).format( 'LL' ),
+							date: endDate.format( 'LL' ),
 						},
 				  } ) }
 		</>

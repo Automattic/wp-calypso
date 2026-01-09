@@ -291,6 +291,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/agents-manager-app@workspace:apps/agents-manager":
+  version: 0.0.0-use.local
+  resolution: "@automattic/agents-manager-app@workspace:apps/agents-manager"
+  dependencies:
+    "@automattic/agents-manager": "workspace:^"
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@tanstack/react-query": "npm:^5.83.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
+    "@wordpress/plugins": "npm:^7.23.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
+    webpack: "npm:^5.99.8"
+  peerDependencies:
+    "@automattic/calypso-router": "workspace:^"
+    "@wordpress/data": ^10.23.0
+    "@wordpress/element": ^6.23.0
+    postcss: ^8.5.3
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    redux: ^5.0.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/agents-manager@workspace:^, @automattic/agents-manager@workspace:packages/agents-manager":
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
