@@ -26,6 +26,8 @@ object WebApp : Project({
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
+	buildType(PlaywrightTestDashboardPRMatrix)
+	// buildType(PlaywrightTestDashboardPreReleaseMatrix)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
 	buildType(QuarantinedE2ETests)
@@ -1038,6 +1040,108 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 			""".trimIndent()
 			triggerRules = """
 				-:**.md
+			""".trimIndent()
+		}
+	}
+})
+
+object PlaywrightTestDashboardPRMatrix : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("calypso_WebApp_Dashboard_E2E_Playwright_Test_Matrix")
+	uuid = "7106156e-0ece-4e54-9716-a45516f0fd7e"
+	name = "Dashboard E2E Tests (PR)"
+	description = "Runs Dashboard e2e tests on pull requests using Playwright Test runner with build matrix"
+
+	params {
+		param("TEST_GROUP", "@dashboard-pr")
+		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
+	}
+
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+				-:trunk
+			""".trimIndent()
+			triggerRules = """
+				-:**.md
+				+:client/dashboard/**
+				+:packages/**
+				+:test/e2e/specs/dashboard/**
+			""".trimIndent()
+		}
+	}
+
+	dependencies {
+		snapshot(BuildDockerImage) {
+			onDependencyFailure = FailureAction.FAIL_TO_START
+		}
+	}
+})
+
+object PlaywrightTestDashboardPreReleaseMatrix : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("calypso_WebApp_Dashboard_E2E_Playwright_Pre_Release_Matrix")
+	uuid = "80904868-c163-4fec-817b-907611985c33"
+	name = "Dashboard Pre-Release E2E Tests"
+	description = "Runs Dashboard pre-release e2e tests using Playwright Test runner with build matrix"
+
+	params {
+		param("TEST_GROUP", "@dashboard-release")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
+	}
+
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:<default>
+			""".trimIndent()
+			triggerRules = """
+				-:**.md
+				+:client/dashboard/**
+				+:test/e2e/specs/dashboard/**
 			""".trimIndent()
 		}
 	}

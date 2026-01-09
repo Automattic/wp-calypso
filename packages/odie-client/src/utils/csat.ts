@@ -12,8 +12,8 @@ export const isAttachment = ( message: Message ) =>
 export const isZendeskIntroMessage = ( message: Message | ZendeskMessage ) =>
 	'source' in message && message.source?.type === 'zd:answerBot';
 
-export const isTransitionToSupportMessage = ( message: Message ) =>
-	!! message?.context?.flags?.show_contact_support_msg;
+export const isZendeskChatStartedMessage = ( message: Message ) =>
+	message?.internal_message_id === 'zendesk-chat-started';
 
 export const hasCSATMessage = ( chat: Chat ) => {
 	return chat?.messages.some( isCSATMessage );

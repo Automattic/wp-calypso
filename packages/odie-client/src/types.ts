@@ -114,7 +114,6 @@ export type Context = {
 		failed_zendesk_connection?: boolean;
 		forward_to_human_support?: boolean;
 		hide_disclaimer_content?: boolean;
-		show_contact_support_msg?: boolean;
 		show_ai_avatar?: boolean;
 		is_error_message?: boolean;
 	};

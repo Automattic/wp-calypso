@@ -79,7 +79,7 @@ const renderWithUserData = ( userData = mockUserSettings ) => {
 		queryFn: () => Promise.resolve( userData.user_email?.includes( 'automattic.com' ) || false ),
 	} );
 
-	const result = render( <PersonalDetailsSection profile={ userData } /> );
+	const result = render( <PersonalDetailsSection /> );
 
 	return result;
 };

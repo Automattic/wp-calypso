@@ -1,6 +1,6 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
@@ -32,7 +32,7 @@ import type { SiteSettings } from '@automattic/api-core';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data: settings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const { supports } = useAppContext();
 	const supportsSettings = supports.sites && supports.sites.settings;
 
