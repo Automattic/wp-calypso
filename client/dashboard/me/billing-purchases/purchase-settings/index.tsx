@@ -640,7 +640,10 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		isPending: isMutationPending,
 	} = useMutation( userPurchaseSetAutoRenewQuery() );
 	const { user } = useAuth();
-	const [ state, setState ] = useState( { showAutoRenewDisablingDialog: false } );
+	const [ state, setState ] = useState( ( previousState ) => ( {
+		...previousState,
+		showAutoRenewDisablingDialog: false,
+	} ) );
 	const { showAutoRenewDisablingDialog } = state;
 	const openAutoRenewDisablingDialog = () => setState( { showAutoRenewDisablingDialog: true } );
 	const closeAutoRenewDisablingDialog = () => setState( { showAutoRenewDisablingDialog: false } );
