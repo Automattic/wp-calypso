@@ -439,7 +439,11 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( isCommerceGarden( site ) ) {
 			throw redirectAsNotAllowed( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
@@ -567,7 +571,11 @@ export const sitePerformanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( isCommerceGarden( site ) ) {
 			throw redirectAsNotAllowed( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
