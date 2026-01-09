@@ -48,7 +48,7 @@ function Site() {
 					id="route-not-allowed"
 					refreshKey={ siteSlug }
 					type="error"
-					message={ __( 'Route not found or not allowed.' ) }
+					message={ __( 'Page not found or not allowed.' ) }
 				/>
 				<Outlet />
 			</Suspense>
