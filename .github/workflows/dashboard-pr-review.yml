@@ -28,7 +28,8 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          track_progress: true
+          track_progress: false
+          update_comment: true
           prompt: |
             Read and follow the instructions in .github/prompts/dashboard-pr-review.md
           claude_args: |
