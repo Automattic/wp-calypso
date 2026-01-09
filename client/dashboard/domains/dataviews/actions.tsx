@@ -11,12 +11,10 @@ import { useAnalytics } from '../../app/analytics';
 import {
 	domainOverviewRoute,
 	domainDnsRoute,
-	domainContactInfoRoute,
 	domainConnectionSetupRoute,
 	domainTransferRoute,
 	domainTransferToAnyUserRoute,
 	domainTransferToOtherSiteRoute,
-	domainsContactInfoRoute,
 } from '../../app/router/domains';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
@@ -272,22 +270,6 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 					if ( domains.length === 0 ) {
 						return;
 					}
-
-					if ( domains.length === 1 ) {
-						return router.navigate( {
-							to: domainContactInfoRoute.fullPath,
-							params: {
-								domainName: domains[ 0 ].domain,
-							},
-						} );
-					}
-
-					return router.navigate( {
-						to: domainsContactInfoRoute.fullPath,
-						search: {
-							selected: domains.map( ( domain ) => domain.domain ).join( ',' ),
-						},
-					} );
 				},
 				isEligible: ( item ) => {
 					return (

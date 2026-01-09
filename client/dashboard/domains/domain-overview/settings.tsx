@@ -9,7 +9,6 @@ import { __ } from '@wordpress/i18n';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
-import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
 import DomainDiagnosticsSettingsSummary from '../domain-diagnostics/summary';
 import DnsSettingsSummary from '../domain-dns/summary';
 import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
@@ -75,25 +74,6 @@ export default function DomainOverviewSettings( {
 		domain.can_manage_dns_records
 	) {
 		buttonListItems.push( <DomainForwardingSettingsSummary key="forwarding" domain={ domain } /> );
-	}
-
-	/**
-	 * I simplified the condition heere because the original code seemed to have a logical redundancy.
-	 * see: https://github.com/Automattic/wp-calypso/blob/b1c63880294fcf63f95518a3c42779236f56f5b2/client/my-sites/domains/domain-management/settings/index.tsx#L515
-	 */
-	if (
-		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
-		domain.current_user_can_manage &&
-		! domain.pending_transfer &&
-		! domain.expired
-	) {
-		buttonListItems.push(
-			<DomainContactDetailsSettingsSummary
-				key="contact-details"
-				domain={ domain }
-				isDisabled={ isDisabled }
-			/>
-		);
 	}
 
 	/**

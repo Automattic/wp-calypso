@@ -12,7 +12,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainContactInfoRoute, domainRoute } from '../../app/router/domains';
+import { domainRoute } from '../../app/router/domains';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -129,13 +129,7 @@ export default function DomainContactVerification() {
 							'Please verify that the above information is correct and either <link>update</link> it or provide a photo of a document on which the above name and address are clearly visible. Some of the accepted documents are:'
 						),
 						{
-							link: (
-								<RouterLinkButton
-									variant="link"
-									to={ domainContactInfoRoute.fullPath }
-									params={ { domainName } }
-								/>
-							),
+							link: <RouterLinkButton variant="link" to="#" params={ { domainName } } />,
 						}
 					) }
 				</Text>
