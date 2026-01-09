@@ -1,8 +1,7 @@
 import { isSitePlanTrial } from '../sites/plans';
 import { getSiteStatus } from './site-status';
 import { isP2 } from './site-types';
-import type { SiteBadge } from '../types';
-import type { Site } from '@automattic/api-core';
+import type { Site, SiteBadge } from '@automattic/api-core';
 
 export function getSiteBadge( site: Site ): SiteBadge {
 	const status = getSiteStatus( site );
@@ -21,15 +20,4 @@ export function getSiteBadge( site: Site ): SiteBadge {
 	}
 
 	return null;
-}
-
-export function isSiteStatusBadge( badge: SiteBadge ): boolean {
-	const statusBadges = [
-		'deleted',
-		'migration_pending',
-		'migration_started',
-		'difm_lite_in_progress',
-	];
-
-	return statusBadges.includes( badge ?? '' );
 }

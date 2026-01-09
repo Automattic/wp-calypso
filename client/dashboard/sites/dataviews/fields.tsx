@@ -6,7 +6,6 @@ import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import SiteIcon, { SiteIconRenderer } from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
-import { isSiteStatusBadge } from '../../utils/site-badge';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
@@ -36,7 +35,6 @@ import {
 	Visibility,
 } from '../site-fields';
 import type { AppConfig } from '../../app/context';
-import type { SiteStatus } from '../../types';
 import type { Site, DashboardSiteListSite } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
 
@@ -361,15 +359,11 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				operators: [ 'isAny' as Operator ],
 			},
 			render: ( { item, field } ) => {
-				// Convert the badge to status.
-				const badge = item.badge ?? null;
-				const status = isSiteStatusBadge( badge ) ? badge : null;
-
 				return (
 					<Visibility
 						siteSlug={ item.slug }
 						visibility={ field.getValue( { item } ) }
-						status={ status as SiteStatus }
+						status={ item.status ?? null }
 						isLaunched={ item.wpcom_status?.is_launched == null || item.wpcom_status?.is_launched }
 					/>
 				);

@@ -34,8 +34,8 @@ import { canManageSite, canManageSite__ES } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { SiteBadge, SiteStatus, SiteVisibility } from '../../types';
-import type { DashboardSiteListSite, Site } from '@automattic/api-core';
+import type { SiteVisibility } from '../../types';
+import type { DashboardSiteListSite, Site, SiteBadge, SiteStatus } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
