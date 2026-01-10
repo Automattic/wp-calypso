@@ -363,6 +363,9 @@ export const domainContactDetailsRoute = createRoute( {
 			queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
 		] );
 	},
+	errorComponent: lazyRouteComponent(
+		() => import( '../../domains/domain-contact-details/error' )
+	),
 } ).lazy( () =>
 	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-details' )( {
