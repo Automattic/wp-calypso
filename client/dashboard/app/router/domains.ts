@@ -84,6 +84,7 @@ export const domainRoute = createRoute( {
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
 		const isTransferSubRoute = location.pathname.includes( '/transfer' );
 		const isContactInfoSubRoute = location.pathname.includes( '/contact-info' );
+		const isContactDetailsSubRoute = location.pathname.includes( '/contact-details' );
 		const isDnsSubRoute = location.pathname.includes( '/dns' );
 		const isContactVerificationSubRoute = location.pathname.includes( '/contact-verification' );
 
@@ -98,6 +99,10 @@ export const domainRoute = createRoute( {
 		}
 
 		if ( isContactInfoSubRoute ) {
+			checkDomainContactInfoPermissions( domain );
+		}
+
+		if ( isContactDetailsSubRoute ) {
 			checkDomainContactInfoPermissions( domain );
 		}
 
@@ -337,6 +342,30 @@ export const domainContactVerificationRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains/domain-contact-verification' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-verification' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainContactDetailsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Contact details & privacy' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'contact-details',
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainQuery( domainName ) ),
+			queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-contact-details' ).then( ( d ) =>
+		createLazyRoute( 'domain-contact-details' )( {
 			component: d.default,
 		} )
 	)
@@ -655,6 +684,7 @@ export const createDomainsRoutes = () => {
 				domainForwardingEditRoute,
 			] ),
 			domainContactVerificationRoute,
+			domainContactDetailsRoute,
 			domainNameServersRoute,
 			domainGlueRecordsRoute.addChildren( [
 				domainGlueRecordsIndexRoute,
