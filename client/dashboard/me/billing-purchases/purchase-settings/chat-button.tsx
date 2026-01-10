@@ -179,8 +179,8 @@ const ChatButton: FC< Props > = ( {
 	const handleClick = () => {
 		if ( canConnectToZendesk && initialMessage ) {
 			onClick?.();
-			// setNewMessagingChat( { initialMessage, section, siteUrl, siteId } );
 			setSubject( initialMessage );
+			setShowHelpCenter( true );
 		} else {
 			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
