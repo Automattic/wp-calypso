@@ -1,0 +1,9 @@
+# Authentication state (contains cookies)
+auth-state.json
+
+# Screenshots output
+screenshots/
+
+# Playwright output
+test-results/
+playwright-report/
