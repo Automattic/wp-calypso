@@ -1,6 +1,5 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
@@ -11,7 +10,6 @@ import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { canTransferSite } from '../features';
 import { ConfirmNewOwnerForm, ConfirmNewOwnerFormData } from './confirm-new-owner-form';
 import { EmailConfirmation } from './email-confirmation';
 import { InvitationEmailSent } from './invitation-email-sent';
@@ -72,10 +70,6 @@ export default function SettingsTransferSite( {
 	const handleStartSiteTransfer = () => {
 		handleForward();
 	};
-
-	if ( ! canTransferSite( site, user ) ) {
-		throw notFound();
-	}
 
 	if ( confirmationHash ) {
 		return (

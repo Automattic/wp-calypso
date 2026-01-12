@@ -64,7 +64,7 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'Then I can see the invite is pending', async function () {
-			await pagePeople.expectInvitation( testUser.email );
+			await pagePeople.expectInvitationAndAssert( testUser.email, expect );
 		} );
 
 		await test.step( 'When the invited user checks their email', async function () {
@@ -103,15 +103,16 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'Then I can see the invited user part of the team', async function () {
 			// Use direct navigation to avoid finding the user when there are over 100 team members piled up.
-			await pagePeople.visitTeamMemberUserDetails(
+			await pagePeople.visitTeamMemberUserDetailsAndAssert(
 				helperData.getCalypsoURL(),
 				accountPreRelease.credentials.testSites?.primary?.url as string,
-				signedUpUsername
+				signedUpUsername,
+				expect
 			);
 		} );
 
 		await test.step( 'Then I can remove the team member from the site', async function () {
-			await pagePeople.removeUserFromSite( signedUpUsername );
+			await pagePeople.removeUserFromSiteAndAssert( signedUpUsername, expect );
 		} );
 
 		await test.step( 'And the invited user closes their account', async function () {

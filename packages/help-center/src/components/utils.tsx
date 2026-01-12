@@ -40,6 +40,30 @@ export const getLastMessage = ( {
 	return filteredMessages.length > 0 ? filteredMessages[ filteredMessages.length - 1 ] : null;
 };
 
+export const getChatLinkFromConversation = (
+	conversation: OdieConversation | ZendeskConversation
+): string => {
+	const chatParams = new URLSearchParams();
+	const metadata = conversation.metadata;
+
+	if ( metadata ) {
+		// Logged out chats only have a sessionId and a botSlug (not support interaction id)
+		if ( 'sessionId' in metadata && metadata.sessionId ) {
+			chatParams.set( 'sessionId', metadata.sessionId.toString() );
+		}
+
+		if ( metadata.supportInteractionId ) {
+			chatParams.set( 'id', metadata.supportInteractionId.toString() );
+		}
+
+		if ( metadata.botSlug ) {
+			chatParams.set( 'botSlug', metadata.botSlug.toString() );
+		}
+	}
+
+	return `/odie?${ chatParams.toString() }`;
+};
+
 export const getZendeskConversations = () => {
 	try {
 		const conversations = Smooch?.getConversations?.() ?? [];
