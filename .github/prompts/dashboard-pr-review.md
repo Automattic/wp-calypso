@@ -22,6 +22,7 @@ Read `.cursor/rules/dashboard-rules.mdc` before reviewing.
 - Provide fix suggestions.
 - Focus on files changed in this PR.
 - Don't nitpick minor style issues unless they violate project guidelines.
+- Before suggesting alternative implementations, check if the PR description already addresses why that approach wasn't used.
 
 ## Output Format
 
