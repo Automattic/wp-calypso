@@ -90,7 +90,7 @@ export const WithContentBelowActions: Story = {
 	},
 };
 
-export const WithIconsInActions: Story = {
+export const WithIconsAndActions: Story = {
 	args: {
 		title: 'Set up your site',
 		description: 'Choose an option below to start customizing your site.',
