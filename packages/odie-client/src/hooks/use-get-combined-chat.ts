@@ -180,16 +180,13 @@ export const useGetCombinedChat = (
 		refreshingAfterReconnect,
 		isUploadingUnsentMessages,
 		isChatLoaded,
-		isLoadingCurrentSupportInteraction,
 		conversationId,
 		odieId,
-		odieChat,
 		currentSupportInteraction,
 		canConnectToZendesk,
 		getZendeskConversation,
 		startNewInteraction,
 		isLoadingCanConnectToZendesk,
-		mainChatState.messages.length,
 	] );
 
 	return { mainChatState, setMainChatState };
