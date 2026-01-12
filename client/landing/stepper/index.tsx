@@ -201,6 +201,11 @@ async function main() {
 							sectionName="stepper"
 						/>
 					) }
+					<AsyncLoad
+						require="calypso/layout/agents-manager-loader"
+						placeholder={ null }
+						sectionName={ flowName }
+					/>
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }
