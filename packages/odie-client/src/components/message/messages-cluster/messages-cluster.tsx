@@ -8,7 +8,7 @@ import {
 	isZendeskIntroMessage,
 	isAttachment,
 	hasFeedbackForm,
-	isChatWithSupportStartedLabelMessage,
+	isHappinessEngineerJoinedLabelMessage,
 } from '../../../utils';
 import ChatWithSupportLabel from '../../chat-with-support';
 import { getMessageUniqueIdentifier } from '../utils/get-message-unique-identifier';
@@ -146,7 +146,7 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 							);
 						}
 
-						if ( isChatWithSupportStartedLabelMessage( message ) ) {
+						if ( isHappinessEngineerJoinedLabelMessage( message ) ) {
 							return (
 								<ChatWithSupportLabel
 									key={ getMessageUniqueIdentifier( message, `${ group.id }-${ index }` ) }

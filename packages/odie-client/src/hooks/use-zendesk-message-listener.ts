@@ -74,9 +74,8 @@ export const useZendeskMessageListener = () => {
 			internal_message_id: internalMessageId,
 			context: {
 				flags: {
-					show_chat_with_support_started_label: true,
+					show_happiness_engineer_joined_label: true,
 					hide_disclaimer_content: true,
-					show_ai_avatar: false,
 				},
 				site_id: null,
 			},

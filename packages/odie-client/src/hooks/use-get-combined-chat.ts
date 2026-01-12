@@ -5,7 +5,7 @@ import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
-import { getOdieTransferedMessage, getZendeskChatStartedMetaMessage } from '../constants';
+import { getOdieTransferedMessage } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -146,7 +146,6 @@ export const useGetCombinedChat = (
 										conversationId: conversation.id,
 										conversationMessages: conversation.messages as Message[],
 									} ),
-									getZendeskChatStartedMetaMessage(),
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 										...( isSameConversation

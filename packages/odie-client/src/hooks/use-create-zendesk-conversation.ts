@@ -1,11 +1,7 @@
 import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
-import {
-	getErrorTryAgainLaterMessage,
-	getOdieTransferMessages,
-	getZendeskChatStartedMetaMessage,
-} from '../constants';
+import { getErrorTryAgainLaterMessage, getOdieTransferMessages } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -181,7 +177,6 @@ export const useCreateZendeskConversation = () => {
 				messages: [
 					...prevChat.messages,
 					...getOdieTransferMessages( currentSupportInteraction?.bot_slug ),
-					getZendeskChatStartedMetaMessage(),
 				],
 				provider: 'zendesk',
 				status: 'loaded',

@@ -15,8 +15,8 @@ export const isZendeskIntroMessage = ( message: Message | ZendeskMessage ) =>
 export const isWaitingForHumanLabelMessage = ( message: Message ) =>
 	!! message?.context?.flags?.show_waiting_for_human;
 
-export const isChatWithSupportStartedLabelMessage = ( message: Message ) =>
-	!! message?.context?.flags?.show_chat_with_support_started_label;
+export const isHappinessEngineerJoinedLabelMessage = ( message: Message ) =>
+	!! message?.context?.flags?.show_happiness_engineer_joined_label;
 
 export const hasCSATMessage = ( chat: Chat ) => {
 	return chat?.messages.some( isCSATMessage );

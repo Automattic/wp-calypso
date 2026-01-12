@@ -16,7 +16,7 @@ export {
 	isZendeskIntroMessage,
 	isAttachment,
 	hasFeedbackForm,
-	isChatWithSupportStartedLabelMessage,
+	isHappinessEngineerJoinedLabelMessage,
 } from './message-utils';
 import type { Chat, Message } from '../types';
 

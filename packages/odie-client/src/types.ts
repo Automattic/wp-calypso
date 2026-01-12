@@ -114,8 +114,7 @@ export type Context = {
 		forward_to_human_support?: boolean;
 		hide_disclaimer_content?: boolean;
 		show_waiting_for_human?: boolean;
-		show_chat_with_support_started_label?: boolean;
-		show_ai_avatar?: boolean;
+		show_happiness_engineer_joined_label?: boolean;
 		is_error_message?: boolean;
 	};
 };

@@ -8,6 +8,11 @@
 	display: flex;
 	gap: 8px;
 
+	.odie-chatbox-messages-cluster & {
+		padding: 0;
+		margin-bottom: 24px;
+	}
+
 	.chat-with-support__message {
 		border-radius: 4px;
 		color: base.$gray-700;

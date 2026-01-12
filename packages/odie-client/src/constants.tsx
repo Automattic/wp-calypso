@@ -73,7 +73,6 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 				context: {
 					flags: {
 						hide_disclaimer_content: true,
-						show_ai_avatar: false,
 					},
 					site_id: null,
 				},
@@ -91,7 +90,6 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 			context: {
 				flags: {
 					hide_disclaimer_content: true,
-					show_ai_avatar: false,
 				},
 				site_id: null,
 			},
@@ -117,7 +115,6 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 			context: {
 				flags: {
 					hide_disclaimer_content: true,
-					show_ai_avatar: false,
 				},
 				site_id: null,
 			},
@@ -132,7 +129,6 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 			context: {
 				flags: {
 					hide_disclaimer_content: true,
-					show_ai_avatar: false,
 				},
 				site_id: null,
 			},
@@ -162,7 +158,6 @@ export const getOdieTransferedMessage = ( {
 			context: {
 				flags: {
 					hide_disclaimer_content: true,
-					show_ai_avatar: false,
 				},
 				site_id: null,
 			},
@@ -177,14 +172,12 @@ export const getOdieTransferedMessage = ( {
 			context: {
 				flags: hasLiveChatMessages
 					? {
-							show_chat_with_support_started_label: true,
+							show_happiness_engineer_joined_label: true,
 							hide_disclaimer_content: true,
-							show_ai_avatar: false,
 					  }
 					: {
 							show_waiting_for_human: true,
 							hide_disclaimer_content: true,
-							show_ai_avatar: false,
 					  },
 				site_id: null,
 			},
@@ -290,7 +283,6 @@ export const getErrorMessageUnknownError = (): Message => {
 		context: {
 			site_id: null,
 			flags: {
-				show_ai_avatar: true,
 				is_error_message: true,
 				forward_to_human_support: false,
 			},
@@ -347,20 +339,6 @@ export const getOdieZendeskConnectionErrorMessage = (): Message => {
 		},
 	};
 };
-
-export const getZendeskChatStartedMetaMessage = (): Message => ( {
-	content: null,
-	role: 'bot',
-	type: 'meta',
-	internal_message_id: 'zendesk-chat-started',
-	context: {
-		site_id: null,
-		flags: {
-			hide_disclaimer_content: true,
-			show_ai_avatar: false,
-		},
-	},
-} );
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
