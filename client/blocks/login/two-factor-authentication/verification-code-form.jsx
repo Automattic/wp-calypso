@@ -118,6 +118,7 @@ class VerificationCodeForm extends Component {
 
 		if ( twoFactorAuthType === 'sms' ) {
 			helpText = translate( 'Enter the code from the text message we sent you.' );
+			labelText = translate( '7-Digit code' );
 		}
 
 		if ( twoFactorAuthType === 'backup' ) {
