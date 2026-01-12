@@ -17,7 +17,7 @@ Read `.cursor/rules/dashboard-rules.mdc` before reviewing.
 
 ## Method
 
-- Use `mcp__github_inline_comment__create_inline_comment` for line-specific issues.
+- Include all feedback in your response (it will be posted as a single PR comment).
 - Cite `file:line` for each issue.
 - Provide fix suggestions.
 - Focus on files changed in this PR.
