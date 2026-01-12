@@ -10,6 +10,9 @@
 
 	.odie-chatbox-messages-cluster & {
 		padding: 0;
+	}
+
+	.odie-chatbox-messages-cluster &:has( + .odie-chatbox-message ) {
 		margin-bottom: 24px;
 	}
 

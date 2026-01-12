@@ -145,7 +145,7 @@ export const getOdieTransferedMessage = ( {
 	conversationId: string;
 	conversationMessages: Message[];
 } ): Message[] => {
-	const hasLiveChatMessages = conversationMessages.some(
+	const hasLiveAgentMessages = conversationMessages.some(
 		( message ) => ( message as any )?.source?.type === 'zd:agentWorkspace'
 	);
 	return [
@@ -166,11 +166,11 @@ export const getOdieTransferedMessage = ( {
 			content: '',
 			role: 'bot',
 			type: 'meta',
-			internal_message_id: hasLiveChatMessages
+			internal_message_id: hasLiveAgentMessages
 				? `chat-with-support-started-${ conversationId }`
 				: `waiting-for-human-${ conversationId }`,
 			context: {
-				flags: hasLiveChatMessages
+				flags: hasLiveAgentMessages
 					? {
 							show_happiness_engineer_joined_label: true,
 							hide_disclaimer_content: true,
