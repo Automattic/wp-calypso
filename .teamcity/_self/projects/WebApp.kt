@@ -27,7 +27,7 @@ object WebApp : Project({
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PlaywrightTestDashboardPRMatrix)
-	// buildType(PlaywrightTestDashboardPreReleaseMatrix)
+	buildType(PlaywrightTestDashboardPreReleaseMatrix)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
 	buildType(QuarantinedE2ETests)
@@ -1107,6 +1107,7 @@ object PlaywrightTestDashboardPreReleaseMatrix : BuildType({
 
 	params {
 		param("TEST_GROUP", "@dashboard-release")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 	}
 
