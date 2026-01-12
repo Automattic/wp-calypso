@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '../constants';
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
-import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
+import { isOdieAllowedBot } from '../utils';
 import type {
 	Chat,
 	Message,
@@ -39,7 +39,6 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	clearChat: noop,
 	currentUser: { display_name: 'Me' },
 	experimentVariationName: null,
-	hasUserEverEscalatedToHumanSupport: false,
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
@@ -109,13 +108,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	const { mainChatState, setMainChatState } = useGetCombinedChat(
 		isUserEligibleForPaidSupport && canConnectToZendesk,
 		isLoadingCanConnectToZendesk
-	);
-
-	/**
-	 * Has the user ever escalated to get human support?
-	 */
-	const hasUserEverEscalatedToHumanSupport = mainChatState?.messages.some( ( message ) =>
-		getIsRequestingHumanSupport( message )
 	);
 
 	/**
@@ -199,7 +191,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
 				isLoadingCanConnectToZendesk,
-				hasUserEverEscalatedToHumanSupport,
 				odieBroadcastClientId,
 				selectedSiteId,
 				selectedSiteURL,

@@ -2,13 +2,14 @@ import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
 import { Fragment } from 'react';
 import ChatMessage from '..';
-import { isCSATMessage } from '../../../utils';
 import {
-	hasFeedbackForm,
-	isAttachment,
-	isZendeskChatStartedMessage,
+	isCSATMessage,
+	isWaitingForHumanLabelMessage,
 	isZendeskIntroMessage,
-} from '../../../utils/csat';
+	isAttachment,
+	hasFeedbackForm,
+	isChatWithSupportStartedLabelMessage,
+} from '../../../utils';
 import ChatWithSupportLabel from '../../chat-with-support';
 import { getMessageUniqueIdentifier } from '../utils/get-message-unique-identifier';
 import type { Message, MessageRole } from '../../../types';
@@ -87,7 +88,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 	const groups = [ currentGroup ];
 
 	for ( const message of sortMessagesByTimestamp( messages ) ) {
-		if ( EXCLUDED_MESSAGE_ROLES.includes( getPresentedRole( message ) as any ) ) {
+		if ( EXCLUDED_MESSAGE_ROLES.includes( getPresentedRole( message ) as 'zendesk-intro' ) ) {
 			continue;
 		}
 
@@ -110,8 +111,10 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 	const groups = clusterMessagesBySender( messages );
 
 	return groups.map( ( group ) => {
-		const startingHumanSupport = group.messages.some( isZendeskChatStartedMessage );
 		const endingHumanSupport = group.messages.some( isCSATMessage );
+		const firstNonWaitingLabelIndex = group.messages.findIndex(
+			( message ) => ! isWaitingForHumanLabelMessage( message )
+		);
 
 		const messageHeader = () => {
 			// Only business messages have a header.
@@ -133,19 +136,34 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 					/>
 				) }
 				<div className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }>
-					{ group.messages.map( ( message, index ) => (
-						<ChatMessage
-							key={ getMessageUniqueIdentifier( message, `${ group.id }-${ index }` ) }
-							message={ message }
-							header={ index === 0 ? messageHeader() : undefined }
-						/>
-					) ) }
+					{ group.messages.map( ( message, index ) => {
+						if ( isWaitingForHumanLabelMessage( message ) ) {
+							return (
+								<ChatWithSupportLabel
+									key={ getMessageUniqueIdentifier( message, `${ group.id }-${ index }` ) }
+									labelText={ __( 'WAITING FOR HUMAN', __i18n_text_domain__ ) }
+								/>
+							);
+						}
+
+						if ( isChatWithSupportStartedLabelMessage( message ) ) {
+							return (
+								<ChatWithSupportLabel
+									key={ getMessageUniqueIdentifier( message, `${ group.id }-${ index }` ) }
+									labelText={ __( 'HAPPINESS ENGINEER JOINED', __i18n_text_domain__ ) }
+								/>
+							);
+						}
+
+						return (
+							<ChatMessage
+								key={ getMessageUniqueIdentifier( message, `${ group.id }-${ index }` ) }
+								message={ message }
+								header={ index === firstNonWaitingLabelIndex ? messageHeader() : undefined }
+							/>
+						);
+					} ) }
 				</div>
-				{ startingHumanSupport && (
-					<ChatWithSupportLabel
-						labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
-					/>
-				) }
 			</Fragment>
 		);
 	} );

@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
-import { isZendeskIntroMessage } from '@automattic/odie-client/src/utils/csat';
+import { isZendeskIntroMessage } from '@automattic/odie-client/src/utils';
 import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,

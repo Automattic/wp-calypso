@@ -8,7 +8,16 @@ export {
 	getConversationIdFromInteraction,
 	getOdieIdFromInteraction,
 } from './support-interaction-utils';
-export { isCSATMessage, hasCSATMessage, hasSubmittedCSATRating } from './csat';
+export {
+	isCSATMessage,
+	hasCSATMessage,
+	hasSubmittedCSATRating,
+	isWaitingForHumanLabelMessage,
+	isZendeskIntroMessage,
+	isAttachment,
+	hasFeedbackForm,
+	isChatWithSupportStartedLabelMessage,
+} from './message-utils';
 import type { Chat, Message } from '../types';
 
 export const getIsRequestingHumanSupport = ( message: Message ) => {

@@ -2,22 +2,25 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { zendeskMessageConverter } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useEffect } from '@wordpress/element';
+import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { deduplicateZDMessages } from './use-get-combined-chat';
+import type { Message } from '../types';
 import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 /**
  * Listens for messages from Zendesk and converts them to Odie messages.
  */
 export const useZendeskMessageListener = () => {
-	const { setChat, chat } = useOdieAssistantContext();
+	const { setChat, chat, addMessage } = useOdieAssistantContext();
+	const hasAddedStartedLabelForConversation = useRef< string | null >( null );
 
-	const { isChatLoaded } = useSelect( ( select ) => {
+	const { isChatLoaded, typingStatus } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
 			isChatLoaded: helpCenterSelect.getIsChatLoaded(),
+			typingStatus: helpCenterSelect.getSupportTypingStatus( chat.conversationId ?? '' ),
 		};
 	}, [] );
 
@@ -45,6 +48,42 @@ export const useZendeskMessageListener = () => {
 		},
 		[ chat.conversationId, setChat ]
 	);
+
+	useEffect( () => {
+		if ( ! typingStatus || ! chat.conversationId ) {
+			return;
+		}
+
+		if ( hasAddedStartedLabelForConversation.current === chat.conversationId ) {
+			return;
+		}
+
+		const internalMessageId = `chat-with-support-started-${ chat.conversationId }`;
+		const alreadyAdded = chat.messages.some(
+			( message ) => message.internal_message_id === internalMessageId
+		);
+		if ( alreadyAdded ) {
+			hasAddedStartedLabelForConversation.current = chat.conversationId;
+			return;
+		}
+
+		const marker: Message = {
+			content: '',
+			role: 'bot' as const,
+			type: 'meta' as const,
+			internal_message_id: internalMessageId,
+			context: {
+				flags: {
+					show_chat_with_support_started_label: true,
+					hide_disclaimer_content: true,
+					show_ai_avatar: false,
+				},
+				site_id: null,
+			},
+		};
+		addMessage( marker );
+		hasAddedStartedLabelForConversation.current = chat.conversationId;
+	}, [ typingStatus, addMessage, chat.conversationId, chat.messages ] );
 
 	useEffect( () => {
 		if ( ! isChatLoaded ) {

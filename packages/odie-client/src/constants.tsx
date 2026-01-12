@@ -81,49 +81,37 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 		];
 	}
 
-	const baseMessage = {
-		content:
-			__( 'No problem. Help is on the way!', __i18n_text_domain__ ) +
-			( isTestMode ? ' (staging)' : '' ),
-		role: 'bot' as const,
-		type: 'message' as const,
-		context: {
-			flags: {
-				hide_disclaimer_content: true,
-				show_ai_avatar: false,
-			},
-			site_id: null,
-		},
-	};
-
-	if ( isTestMode ) {
-		return [
-			baseMessage,
-			{
-				content: __(
-					'This is the Sandbox version of Zendesk. You will not be redirected to a support agent. If you want to test the real experience and be connected to a support agent, you need to be unproxied.',
-					__i18n_text_domain__
-				),
-				role: 'bot' as const,
-				type: 'message' as const,
-				context: {
-					flags: {
-						hide_disclaimer_content: true,
-						show_ai_avatar: false,
-					},
-					site_id: null,
-				},
-			},
-		];
-	}
-
-	return [
-		baseMessage,
+	const messages: Message[] = [
 		{
-			content: __(
-				"We're connecting you with our support team. A Happiness Engineer will join the chat as soon as they're available.",
-				__i18n_text_domain__
-			),
+			content:
+				__( 'No problem. Help is on the way!', __i18n_text_domain__ ) +
+				( isTestMode ? ' (staging)' : '' ),
+			role: 'bot' as const,
+			type: 'message' as const,
+			context: {
+				flags: {
+					hide_disclaimer_content: true,
+					show_ai_avatar: false,
+				},
+				site_id: null,
+			},
+		},
+		{
+			content: '',
+			role: 'bot' as const,
+			type: 'meta' as const,
+			internal_message_id: 'waiting-for-human',
+			context: {
+				flags: {
+					show_waiting_for_human: true,
+				},
+				site_id: null,
+			},
+		},
+		{
+			content:
+				( isTestMode ? '(STAGING VERSION OF ZENDESK) ' : '' ) +
+				__( "I've asked for a Happiness Engineer to join this chat.", __i18n_text_domain__ ),
 			role: 'bot' as const,
 			type: 'message' as const,
 			context: {
@@ -136,7 +124,7 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 		},
 		{
 			content: __(
-				'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+				'They can see our chat history but please share any extra details while you wait so we can help you better.',
 				__i18n_text_domain__
 			),
 			role: 'bot' as const,
@@ -146,6 +134,58 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 					hide_disclaimer_content: true,
 					show_ai_avatar: false,
 				},
+				site_id: null,
+			},
+		},
+	];
+
+	return messages;
+};
+
+export const getOdieTransferedMessage = ( {
+	conversationId,
+	conversationMessages,
+}: {
+	conversationId: string;
+	conversationMessages: Message[];
+} ): Message[] => {
+	const hasLiveChatMessages = conversationMessages.some(
+		( message ) => ( message as any )?.source?.type === 'zd:agentWorkspace'
+	);
+	return [
+		{
+			content:
+				__( 'No problem. Help is on the way!', __i18n_text_domain__ ) +
+				( isTestModeEnvironment() ? ' (staging)' : '' ),
+			role: 'bot' as const,
+			type: 'message' as const,
+			context: {
+				flags: {
+					hide_disclaimer_content: true,
+					show_ai_avatar: false,
+				},
+				site_id: null,
+			},
+		},
+		{
+			content: '',
+			role: 'bot',
+			type: 'meta',
+			internal_message_id: hasLiveChatMessages
+				? `chat-with-support-started-${ conversationId }`
+				: `waiting-for-human-${ conversationId }`,
+			context: {
+				flags: hasLiveChatMessages
+					? {
+							show_chat_with_support_started_label: true,
+							hide_disclaimer_content: true,
+							show_ai_avatar: false,
+					  }
+					: {
+							show_waiting_for_human: true,
+							hide_disclaimer_content: true,
+							show_ai_avatar: false,
+					  },
 				site_id: null,
 			},
 		},

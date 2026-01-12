@@ -14,7 +14,6 @@ export type OdieAssistantContextInterface = {
 	clearChat: () => void;
 	currentUser: CurrentUser;
 	experimentVariationName: string | undefined | null;
-	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
 	odieBroadcastClientId: string;
@@ -114,6 +113,8 @@ export type Context = {
 		failed_zendesk_connection?: boolean;
 		forward_to_human_support?: boolean;
 		hide_disclaimer_content?: boolean;
+		show_waiting_for_human?: boolean;
+		show_chat_with_support_started_label?: boolean;
 		show_ai_avatar?: boolean;
 		is_error_message?: boolean;
 	};

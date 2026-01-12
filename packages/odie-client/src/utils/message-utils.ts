@@ -12,8 +12,11 @@ export const isAttachment = ( message: Message ) =>
 export const isZendeskIntroMessage = ( message: Message | ZendeskMessage ) =>
 	'source' in message && message.source?.type === 'zd:answerBot';
 
-export const isZendeskChatStartedMessage = ( message: Message ) =>
-	message?.internal_message_id === 'zendesk-chat-started';
+export const isWaitingForHumanLabelMessage = ( message: Message ) =>
+	!! message?.context?.flags?.show_waiting_for_human;
+
+export const isChatWithSupportStartedLabelMessage = ( message: Message ) =>
+	!! message?.context?.flags?.show_chat_with_support_started_label;
 
 export const hasCSATMessage = ( chat: Chat ) => {
 	return chat?.messages.some( isCSATMessage );
