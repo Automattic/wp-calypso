@@ -1,12 +1,13 @@
-import apiFetch, { default as apiFetchPromise } from '@wordpress/api-fetch';
-import { select } from '@wordpress/data';
+import { default as apiFetchPromise } from '@wordpress/api-fetch';
+import { controls, select } from '@wordpress/data';
+import { apiFetch } from '@wordpress/data-controls';
 import { addQueryArgs } from '@wordpress/url';
 import { Location } from 'history';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
-import { isE2ETest } from '../utils';
+import { isE2ETest, persistValueSafely } from '../utils';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
 import type { HelpCenterOptions, HelpCenterSelect, HelpCenterShowOptions } from './types';
@@ -54,26 +55,32 @@ export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolea
 export function* setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
 ) {
-	if ( canAccessWpcomApis() ) {
-		yield wpcomRequest( {
-			path: '/me/preferences',
-			apiNamespace: 'wpcom/v2',
-			method: 'PUT',
-			body: {
-				calypso_preferences: {
+	const currentUser: CurrentUser | undefined = yield controls.select( STORE_KEY, 'getCurrentUser' );
+	const isLoggedIn = !! currentUser?.ID;
+	if ( isLoggedIn ) {
+		if ( canAccessWpcomApis() ) {
+			yield wpcomRequest( {
+				path: '/me/preferences',
+				apiNamespace: 'wpcom/v2',
+				method: 'PUT',
+				body: {
+					calypso_preferences: {
+						help_center_router_history: history,
+					},
+				},
+			} );
+		} else {
+			yield apiFetch( {
+				global: true,
+				path: '/help-center/open-state',
+				method: 'PUT',
+				data: {
 					help_center_router_history: history,
 				},
-			},
-		} );
+			} as Parameters< typeof apiFetch >[ 0 ] );
+		}
 	} else {
-		apiFetch( {
-			global: true,
-			path: '/help-center/open-state',
-			method: 'PUT',
-			data: {
-				help_center_router_history: history,
-			},
-		} as Parameters< typeof apiFetch >[ 0 ] ).catch( () => {} );
+		persistValueSafely( 'help_center_router_history', history );
 	}
 
 	return {

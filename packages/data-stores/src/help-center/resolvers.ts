@@ -6,6 +6,8 @@ import { setHelpCenterRouterHistory, setIsMinimized } from './actions';
 import { STORE_KEY } from './constants';
 import type { APIFetchOptions } from '../shared-types';
 import type { Location } from 'history';
+import { CurrentUser } from '../user/types';
+import { retrieveValueSafely } from '../utils';
 
 type Preferences = {
 	calypso_preferences: {
@@ -20,15 +22,27 @@ type Preferences = {
 
 export function* isHelpCenterShown() {
 	try {
-		const allPreferences: Preferences | Preferences[ 'calypso_preferences' ] = canAccessWpcomApis()
-			? yield wpcomRequest( {
-					path: '/me/preferences',
-					apiNamespace: 'wpcom/v2',
-			  } )
-			: yield apiFetch( {
-					global: true,
-					path: '/help-center/open-state',
-			  } as APIFetchOptions );
+		const currentUser: CurrentUser | undefined = yield controls.select(
+			STORE_KEY,
+			'getCurrentUser'
+		);
+		const isLoggedIn = !! currentUser?.ID;
+		if ( isLoggedIn ) {
+			const allPreferences: Preferences | Preferences[ 'calypso_preferences' ] =
+				canAccessWpcomApis()
+					? yield wpcomRequest( {
+							path: '/me/preferences',
+							apiNamespace: 'wpcom/v2',
+					  } )
+					: yield apiFetch( {
+							global: true,
+							path: '/help-center/open-state',
+					  } as APIFetchOptions );
+		} else {
+			const history = retrieveValueSafely< { entries: Location[]; index: number } >(
+				'help_center_router_history'
+			);
+		}
 
 		const preferences =
 			'calypso_preferences' in allPreferences ? allPreferences.calypso_preferences : allPreferences;
