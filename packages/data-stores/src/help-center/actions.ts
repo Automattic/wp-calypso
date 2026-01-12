@@ -1,11 +1,12 @@
-import { default as apiFetchPromise } from '@wordpress/api-fetch';
+import apiFetch, { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { Location } from 'history';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
-import { isE2ETest, isLoggedInHCUser } from '../utils';
+import { isE2ETest } from '../utils';
+import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
 import type { HelpCenterOptions, HelpCenterSelect, HelpCenterShowOptions } from './types';
 import type { APIFetchOptions } from '../shared-types';
@@ -16,10 +17,6 @@ import type { APIFetchOptions } from '../shared-types';
  * @param isMinimized - Whether the help center is minimized.
  */
 export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolean | undefined ) => {
-	if ( ! isLoggedInHCUser() ) {
-		return null;
-	}
-
 	const saveState: Record< string, boolean | null > = {};
 
 	if ( typeof isShown === 'boolean' ) {
@@ -53,9 +50,31 @@ export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolea
 	}
 };
 
-export function setHelpCenterRouterHistory(
+export function* setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
 ) {
+	if ( canAccessWpcomApis() ) {
+		yield wpcomRequest( {
+			path: '/me/preferences',
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+			body: {
+				calypso_preferences: {
+					help_center_router_history: history,
+				},
+			},
+		} );
+	} else {
+		apiFetch( {
+			global: true,
+			path: '/help-center/open-state',
+			method: 'PUT',
+			data: {
+				help_center_router_history: history,
+			},
+		} as Parameters< typeof apiFetch >[ 0 ] ).catch( () => {} );
+	}
+
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
 		history,
@@ -303,7 +322,6 @@ export type HelpCenterAction =
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
-			| typeof setHelpCenterRouterHistory
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
@@ -317,4 +335,5 @@ export type HelpCenterAction =
 			| typeof setHelpCenterOptions
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >
+	| GeneratorReturnType< typeof setHelpCenterRouterHistory >
 	| GeneratorReturnType< typeof setIsMinimized >;

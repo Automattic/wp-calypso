@@ -61,6 +61,14 @@ export default function () {
 	);
 
 	page(
+		`${ A4A_MARKETPLACE_CHECKOUT_LINK }/:siteSlug/:planSlug`,
+		requireAccessContext,
+		checkoutContext,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		A4A_MARKETPLACE_CHECKOUT_LINK,
 		requireAccessContext,
 		checkoutContext,
