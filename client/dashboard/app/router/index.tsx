@@ -9,7 +9,7 @@ import { createMeRoutes } from './me';
 import { createPluginsRoutes } from './plugins';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
-import type { SiteTypeFeature } from '../../utils/site-type-route-supports';
+import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
 import type { ErrorInfo } from 'react';
 

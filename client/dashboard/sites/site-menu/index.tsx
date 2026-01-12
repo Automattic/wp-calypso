@@ -4,7 +4,7 @@ import { useAppContext } from '../../app/context';
 import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { getSiteTypeFeatureSupports } from '../../utils/site-type-route-supports';
+import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
 
