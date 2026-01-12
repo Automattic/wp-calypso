@@ -74,4 +74,4 @@ export type { StepperInternalSelect } from './stepper-internal';
 export type { SiteActions } from './site';
 export type { UserActions } from './user';
 export type { Member, UseQuery, UsersQuery } from './users/types';
-export { isE2ETest, isInSupportSession, isLoggedInHCUser } from './utils';
+export { isE2ETest, isInSupportSession } from './utils';

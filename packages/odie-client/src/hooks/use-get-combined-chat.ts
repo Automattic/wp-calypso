@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { HelpCenterSelect, isLoggedInHCUser } from '@automattic/data-stores';
+import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
@@ -50,8 +50,13 @@ export const useGetCombinedChat = (
 		useCurrentSupportInteraction();
 
 	const location = useLocation();
-	const isLoggedIn = isLoggedInHCUser();
+	const currentUser = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentUser(),
+		[]
+	);
+	const isLoggedIn = !! currentUser?.ID;
 	const params = new URLSearchParams( location.search );
+	// We use these values to identify the logged out chat, not the ones from the data store, to keep the router in charge of the state.
 	const loggedOutOdieChatId = params.get( 'chatId' );
 	const loggedOutOdieSessionId = params.get( 'sessionId' );
 	const loggedOutOdieBotSlug = params.get( 'botSlug' );

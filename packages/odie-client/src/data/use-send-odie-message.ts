@@ -1,7 +1,7 @@
 import { HelpCenter } from '@automattic/data-stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
@@ -21,6 +21,7 @@ import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -72,7 +73,10 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
 export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { setLoggedOutOdieChat } = useDispatch( HELP_CENTER_STORE );
-	const { currentUser } = useOdieAssistantContext();
+	const currentUser = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentUser(),
+		[]
+	);
 	const location = useLocation();
 	const isLoggedIn = !! currentUser?.ID;
 	const params = new URLSearchParams( location.search );
@@ -235,7 +239,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				currentUser?.ID
 			);
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
-			const session_id = sessionId;
 
 			const url = window.location.href;
 			const pathname = window.location.pathname;
@@ -251,7 +254,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						body: {
 							message: message.content,
 							...( version && { version } ),
-							...( session_id && { session_id } ),
+							...( sessionId && { session_id: sessionId } ),
 							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } )
@@ -262,7 +265,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						data: {
 							message: message.content,
 							...( version && { version } ),
-							...( session_id && { session_id } ),
+							...( sessionId && { session_id: sessionId } ),
 							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } );
