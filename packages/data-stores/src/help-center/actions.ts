@@ -322,7 +322,6 @@ export type HelpCenterAction =
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
-			| typeof setHelpCenterRouterHistory
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
@@ -336,4 +335,5 @@ export type HelpCenterAction =
 			| typeof setHelpCenterOptions
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >
+	| GeneratorReturnType< typeof setHelpCenterRouterHistory >
 	| GeneratorReturnType< typeof setIsMinimized >;
