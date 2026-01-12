@@ -110,6 +110,20 @@ const useMainMenuItems = ( path: string ) => {
 					menu_item: 'Automattic for Agencies / Exclusive offers',
 				},
 			},
+			...( isSectionNameEnabled( 'a8c-for-agencies-learn' )
+				? [
+						{
+							icon: pages,
+							path: A4A_LEARN_LINK,
+							link: A4A_LEARN_RESOURCE_CENTER_LINK,
+							title: translate( 'Learn' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Learn',
+							},
+							withChevron: true,
+						},
+				  ]
+				: [] ),
 			{
 				icon: category,
 				path: '/',
@@ -190,20 +204,6 @@ const useMainMenuItems = ( path: string ) => {
 				},
 				withChevron: true,
 			},
-			...( isSectionNameEnabled( 'a8c-for-agencies-learn' )
-				? [
-						{
-							icon: pages,
-							path: A4A_LEARN_LINK,
-							link: A4A_LEARN_RESOURCE_CENTER_LINK,
-							title: translate( 'Learn' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Learn',
-							},
-							withChevron: true,
-						},
-				  ]
-				: [] ),
 			...( isSectionNameEnabled( 'a8c-for-agencies-settings' )
 				? [
 						{

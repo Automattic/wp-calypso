@@ -54,6 +54,7 @@ import {
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
+import AgentsManagerLoader from './agents-manager-loader';
 import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
@@ -272,6 +273,7 @@ class Layout extends Component {
 					currentRoute={ this.props.currentRoute }
 					source={ isA8CForAgencies() ? 'a4a' : 'wpcom' }
 				/>
+				<AgentsManagerLoader sectionName={ this.props.sectionName } />
 				{ ! shouldDisableSidebarScrollSynchronizer && (
 					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				) }

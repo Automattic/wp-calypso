@@ -5,6 +5,7 @@ import {
 	userTaxDetailsQuery,
 	userTaxDetailsMutation,
 } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -263,8 +264,7 @@ export default function UserTaxForm() {
 	/* This is a call to action for contacting support */
 	const contactSupportLinkTitle = __( 'Contact Happiness Engineers' );
 
-	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-	const taxSupportPageURL = 'https://wordpress.com/support/vat-gst-other-taxes/'; // TODO: Replace with localized URL.
+	const taxSupportPageURL = localizeUrl( 'https://wordpress.com/support/vat-gst-other-taxes/' );
 
 	/* This is the title of the support page from https://wordpress.com/support/vat-gst-other-taxes/ */
 	const taxSupportPageLinkTitle = __( 'VAT, GST, and other taxes' );

@@ -198,11 +198,28 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			left: $layout-spacing;
 			right: $sidebar-width;
 			width: auto;
-			overflow: hidden;
 			border-radius: $main-border-radius $main-border-radius 0 0;
 			border: 1px solid $border-color;
 			border-bottom: none;
 			box-sizing: border-box;
+			height: calc( var(--masterbar-height) + 1px );
+
+			.masterbar__section.masterbar__section--left {
+				overflow: hidden;
+			}
+
+			.masterbar__item.masterbar__item-my-sites.is-active.has-global-border {
+				border-top-left-radius: $main-border-radius;
+			}
+
+			.masterbar__item.masterbar__item-howdy {
+				border-top-right-radius: $main-border-radius;
+			}
+
+			.masterbar__item:hover,
+			.masterbar__item.is-active {
+				cursor: pointer;
+			}
 		}
 
 		#content {

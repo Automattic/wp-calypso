@@ -11,21 +11,26 @@ import type { OdieChat, ReturnedChat } from '../types';
  * Get the ODIE chat and manage the cache to save on API calls.
  * @param chatId - The chat ID to fetch
  */
-export const useOdieChat = ( chatId: number | null ) => {
+export const useOdieChat = (
+	chatId: number | null,
+	sessionId?: string | null,
+	defaultBotSlug?: string | null
+) => {
 	const { version } = useOdieAssistantContext();
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 
 	// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
-	const botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
+	const botSlug = supportInteraction?.bot_slug || defaultBotSlug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
 
 	return useQuery< OdieChat, Error >( {
-		queryKey: [ 'odie-chat', botSlug, chatId, version ],
+		queryKey: [ 'odie-chat', botSlug, chatId, version, sessionId ],
 		queryFn: async (): Promise< OdieChat > => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
 				items_per_page: '30',
 				include_feedback: 'true',
 				...( version && { version } ),
+				...( sessionId && { session_id: sessionId } ),
 			} ).toString();
 
 			const data = (
@@ -52,7 +57,7 @@ export const useOdieChat = ( chatId: number | null ) => {
 		},
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,
-		enabled: !! chatId && !! supportInteraction,
+		enabled: !! chatId && ( !! supportInteraction || !! sessionId ),
 		staleTime: 3600, // 1 hour
 	} );
 };

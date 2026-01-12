@@ -25,7 +25,9 @@ export function HelpCenterChat( {
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
 	const { currentUser, site, isCommerceGarden, newInteractionsBotSlug, newInteractionsBotVersion } =
 		useHelpCenterContext();
-	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging();
+	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging(
+		!! currentUser?.ID
+	);
 	const { search } = useLocation();
 	const { data } = useSupportStatus( ! isCommerceGarden );
 	const params = new URLSearchParams( search );

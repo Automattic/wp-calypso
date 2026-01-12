@@ -1,7 +1,5 @@
-import { DotcomFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -16,7 +14,6 @@ import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { hasPlanFeature } from '../../utils/site-features';
 import type { SiteSettings } from '@automattic/api-core';
 import type { Field, FormField } from '@wordpress/dataviews';
 
@@ -48,20 +45,12 @@ const form = {
 export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
 	const [ formData, setFormData ] = useState( {
-		wpcom_gifting_subscription: data?.wpcom_gifting_subscription,
+		wpcom_gifting_subscription: data.wpcom_gifting_subscription,
 	} );
-
-	if ( ! data ) {
-		return null;
-	}
-
-	if ( ! hasPlanFeature( site, DotcomFeatures.SUBSCRIPTION_GIFTING ) ) {
-		throw notFound();
-	}
 
 	const isDirty = Object.entries( formData ).some(
 		( [ key, value ] ) => data[ key as keyof SiteSettings ] !== value
