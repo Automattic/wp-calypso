@@ -48,7 +48,6 @@ const DomainSearchSkipSuggestion = ( {
 			}
 		);
 	} else if ( freeSuggestion ) {
-		// Apply Variant B: paid domain area placement + free emphasis messaging
 		title = __( 'Start free with a WordPress.com subdomain' );
 		subtitle = __( 'Upgrade to a custom domain name anytime.' );
 		buttonText = __( 'Start Free' );
