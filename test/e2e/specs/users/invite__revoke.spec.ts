@@ -62,7 +62,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then I can see the invite is pending', async function () {
-				await pagePeople.expectInvitation( testEmailAddress );
+				await pagePeople.expectInvitationAndAssert( testEmailAddress, expect );
 			} );
 
 			await test.step( 'When I select the invited user', async function () {
@@ -70,7 +70,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I revoke the invite', async function () {
-				await pagePeople.revokeInvite();
+				await pagePeople.revokeInviteAndAssert( expect );
 			} );
 
 			await test.step( 'Then the invite link is no longer valid', async function () {
