@@ -10,6 +10,7 @@ export interface ImageData {
 }
 
 export interface ImageRendererProps {
+	selectedUrl: string | null;
 	images: ImageData[];
 	onSelect: ( image: ImageData | null ) => void;
 	header?: string | React.ReactNode;
@@ -17,12 +18,23 @@ export interface ImageRendererProps {
 }
 
 export const ImageRenderer: React.FC< ImageRendererProps > = ( {
+	selectedUrl: initialSelectedUrl,
 	images,
 	onSelect,
 	header,
 	disabled = false,
 } ) => {
-	const [ selectedUrl, setSelectedUrl ] = useState< string | null >( null );
+	const [ selectedUrl, setSelectedUrl ] = useState< string | null >(
+		initialSelectedUrl
+	);
+
+	useEffect( () => {
+		if ( images.find( ( image ) => image.url === initialSelectedUrl ) ) {
+			setSelectedUrl( initialSelectedUrl );
+		} else {
+			setSelectedUrl( null );
+		}
+	}, [ initialSelectedUrl, images ] );
 
 	const handleImageClick = ( image: ImageData ) => {
 		setSelectedUrl( image.url );
