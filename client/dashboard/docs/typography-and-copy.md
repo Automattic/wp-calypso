@@ -2,7 +2,7 @@
 
 ## General
 
-End sentences with a period. Even short ones. Button and form labels do not end in periods, and neither to headings.
+End sentences with a period. Even short ones. Button and form labels do not end in periods, and neither do headings.
 
 Use curly quotes and apostrophes.
 e.g. “like this” instead of "like this"

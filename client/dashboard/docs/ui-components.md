@@ -24,7 +24,7 @@ See this post on loaders: p58i-kIo-p2
 
 The dashboard relies heavily on two core components for data display and interaction:
 
-- **DataViews**: A component for displaying lists a tabular, grid or list format, allowing for sorting, filtering, and pagination.
+- **DataViews**: A component for displaying lists in a tabular, grid or list format, allowing for sorting, filtering, and pagination.
 - **DataForm**: A component for creating and editing data, providing a form-based interface for user input.
 
 These components are part of the design system, if changes are required to implement specific pages, consider checking with the design team first. The solution could be either to adapt the design or implement a generic solution at the component level.

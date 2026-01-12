@@ -27,7 +27,7 @@ object WebApp : Project({
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PlaywrightTestDashboardPRMatrix)
-	// buildType(PlaywrightTestDashboardPreReleaseMatrix)
+	buildType(PlaywrightTestDashboardPreReleaseMatrix)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
 	buildType(QuarantinedE2ETests)
@@ -1008,6 +1008,7 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 	params {
 		text("TEST_GROUP", "@calypso-release")
 		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 	}
 
 	features {
@@ -1107,6 +1108,7 @@ object PlaywrightTestDashboardPreReleaseMatrix : BuildType({
 
 	params {
 		param("TEST_GROUP", "@dashboard-release")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 	}
 
@@ -1140,8 +1142,6 @@ object PlaywrightTestDashboardPreReleaseMatrix : BuildType({
 			""".trimIndent()
 			triggerRules = """
 				-:**.md
-				+:client/dashboard/**
-				+:test/e2e/specs/dashboard/**
 			""".trimIndent()
 		}
 	}
@@ -1163,13 +1163,14 @@ object PreReleaseE2ETests : BuildType({
 		root(Settings.WpCalypso)
 		cleanCheckout = true
 	}
-	
+
 	params {
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")
 		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
+		param("end.DASHBOARD_BASE_URL", "https://my.wordpress.com")
 		param("env.ALLURE_RESULTS_PATH", "allure-results")
 	}
 
@@ -1303,6 +1304,7 @@ object AuthenticationE2ETests : BuildType({
 	params {
 		param("PROJECT", "authentication")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 	}
 
 	features {
@@ -1344,6 +1346,7 @@ object QuarantinedE2ETests: E2EBuildType(
 	buildParams = {
 		param("env.VIEWPORT_NAME", "desktop")
 		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
+		param("env.DASHBOARD_BASE_URL", "https://my.wordpress.com")
 	},
 	buildFeatures = {
 		notifications {

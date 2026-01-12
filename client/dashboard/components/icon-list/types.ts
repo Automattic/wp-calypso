@@ -23,6 +23,15 @@ export interface IconListItemProps {
 	 * Optional CSS class name(s) to apply to the item.
 	 */
 	className?: string;
+	/**
+	 * Controls the overall visual density of the item, including spacing
+	 * between the decoration/icon and the content, as well as the spacing
+	 * between the title and description text. When set to `'low'`, it also
+	 * adjusts the title typography (e.g., a smaller title font size) to
+	 * match the denser layout.
+	 * @default 'medium'
+	 */
+	density?: 'low' | 'medium' | 'high';
 }
 
 export interface IconListProps {

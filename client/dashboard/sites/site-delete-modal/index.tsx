@@ -33,7 +33,9 @@ type SiteDeleteFormData = {
 };
 
 const canDeleteSite = ( site: Site ) =>
-	( site.is_wpcom_atomic || ! site.jetpack ) && ! site.is_vip && ! site.options?.p2_hub_blog_id;
+	( site.is_garden || site.is_wpcom_atomic || ! site.jetpack ) &&
+	! site.is_vip &&
+	! site.options?.p2_hub_blog_id;
 
 const isTrialSite = ( site: Site ) =>
 	site.plan?.product_slug && ( TrialPlans as string[] ).includes( site.plan?.product_slug );
