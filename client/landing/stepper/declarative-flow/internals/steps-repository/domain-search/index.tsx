@@ -1,4 +1,3 @@
-import { useDomainSearchEscapeHatch } from '@automattic/domain-search';
 import {
 	isAIBuilderFlow,
 	isCopySiteFlow,
@@ -19,7 +18,6 @@ import { useSelector } from 'react-redux';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
-import { useWPCOMDomainSearchEvents } from 'calypso/components/domains/wpcom-domain-search/use-wpcom-domain-search-events';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
@@ -96,8 +94,6 @@ const DomainSearchStep: StepType< {
 		currentSiteUrl,
 	} );
 
-	const [ isLoadingExperiment, experimentVariation ] = useDomainSearchEscapeHatch();
-
 	const config = useMemo( () => {
 		const allowedTlds = tldQuery?.split( ',' ) ?? [];
 
@@ -130,13 +126,6 @@ const DomainSearchStep: StepType< {
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
 	}, [ flow, tldQuery, query ] );
-
-	const analyticsEvents = useWPCOMDomainSearchEvents( {
-		vendor: config.vendor,
-		flowName: flow,
-		analyticsSection: 'signup',
-		query: query,
-	} );
 
 	const { submit } = navigation;
 
@@ -209,16 +198,9 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 			onSkip: ( suggestion?: FreeDomainSuggestion ) => {
-				let signupDomainOrigin = suggestion
+				const signupDomainOrigin = suggestion
 					? SIGNUP_DOMAIN_ORIGIN.FREE
 					: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER;
-
-				if (
-					! isLoadingExperiment &&
-					experimentVariation === 'treatment_paid_domain_area_skip_emphasis'
-				) {
-					signupDomainOrigin = SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER;
-				}
 
 				submit( {
 					siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
@@ -229,7 +211,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery, clearQuery, flow, siteSlug, isLoadingExperiment, experimentVariation ] );
+	}, [ submit, setQuery, clearQuery, flow, siteSlug ] );
 
 	// For /setup flows, we want to show the free domain for a year discount for all flows
 	// except if we're in a site context or in the 100-year plan or domain flow
@@ -396,18 +378,6 @@ const DomainSearchStep: StepType< {
 							{ __( 'Use a domain I already own' ) }
 						</Step.LinkButton>
 					) }
-
-					{ ! isLoadingExperiment &&
-						experimentVariation === 'treatment_paid_domain_area_free_emphasis_extra_cta' && (
-							<Step.LinkButton
-								onClick={ () => {
-									analyticsEvents.onSkip?.();
-									events.onSkip();
-								} }
-							>
-								{ __( 'Skip this step' ) }
-							</Step.LinkButton>
-						) }
 				</>
 			);
 		};
