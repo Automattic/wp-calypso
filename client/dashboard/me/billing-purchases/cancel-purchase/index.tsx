@@ -1300,7 +1300,6 @@ export default function CancelPurchase() {
 								onCancellationStart={ onCancellationStart }
 								shouldHandleMarketplaceSubscriptions={ shouldHandleMarketplaceSubscriptions }
 								showMarketplaceDialog={ showMarketplaceDialog }
-								flowType={ flowType }
 							/>
 						) }
 						{ shouldHandleMarketplaceSubscriptions() && (

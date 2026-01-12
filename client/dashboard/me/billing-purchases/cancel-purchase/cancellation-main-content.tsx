@@ -1,6 +1,11 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
-import { isAkismetProduct, isGSuiteOrGoogleWorkspaceProductSlug } from '../../../utils/purchase';
+import {
+	isAkismetProduct,
+	isGSuiteOrGoogleWorkspaceProductSlug,
+	getPurchaseCancellationFlowType,
+	CANCEL_FLOW_TYPE,
+} from '../../../utils/purchase';
 import BackupRetentionOptionOnCancelPurchase from './backup-retention-management/retention-option-on-cancel-purchase';
 import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
@@ -27,7 +32,6 @@ interface CancellationMainContentProps {
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
 	onKeepSubscriptionClick: () => void;
 	onCancelClick?: () => void;
-	flowType: string;
 }
 
 // Helper function to determine if radio buttons will be shown
@@ -54,7 +58,6 @@ export default function CancellationMainContent( {
 	onCustomerConfirmedUnderstandingChange,
 	onKeepSubscriptionClick,
 	onCancelClick,
-	flowType,
 }: CancellationMainContentProps ) {
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 	const isAkismet = isAkismetProduct( purchase );
@@ -138,10 +141,9 @@ export default function CancellationMainContent( {
 				purchase={ purchase }
 				cancellationFeatures={ cancellationFeatures }
 				cancellationChanges={ cancellationChanges }
-				flowType={ flowType }
 			/>
 
-			{ flowType !== 'remove' && (
+			{ getPurchaseCancellationFlowType( purchase ) !== CANCEL_FLOW_TYPE.REMOVE && (
 				<CancelPurchaseRefundInformation
 					purchase={ purchase }
 					isJetpackPurchase={ isJetpack }
@@ -158,7 +160,6 @@ export default function CancellationMainContent( {
 				onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
 				onKeepSubscriptionClick={ onKeepSubscriptionClick }
 				onCancelClick={ onCancelClick }
-				flowType={ flowType }
 			/>
 		</VStack>
 	);

@@ -14,7 +14,6 @@ interface DomainOptionsContentProps {
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onKeepSubscriptionClick: () => void;
 	onCancellationComplete: () => void;
-	flowType: string;
 }
 
 export default function DomainOptionsContent( {
@@ -25,7 +24,6 @@ export default function DomainOptionsContent( {
 	onCancelConfirmationStateChange,
 	onKeepSubscriptionClick,
 	onCancellationComplete,
-	flowType,
 }: DomainOptionsContentProps ) {
 	const { cancelBundledDomain, confirmCancelBundledDomain } = state;
 
@@ -56,7 +54,6 @@ export default function DomainOptionsContent( {
 					atomicTransfer={ atomicTransfer }
 					state={ state }
 					disabled={ ! canContinue() }
-					flowType={ flowType }
 					onClick={ () => {
 						onCancellationComplete();
 					} }

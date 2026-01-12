@@ -7,6 +7,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../../components/text';
+import { getPurchaseCancellationFlowType, CANCEL_FLOW_TYPE } from '../../../utils/purchase';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
@@ -16,7 +17,6 @@ interface ConfirmCheckboxProps {
 	state: CancelPurchaseState;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
-	flowType: string;
 }
 
 export default function ConfirmCheckbox( {
@@ -25,19 +25,18 @@ export default function ConfirmCheckbox( {
 	state,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
-	flowType,
 }: ConfirmCheckboxProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 
 	const supportHeadingText = ( () => {
-		if ( flowType === 'remove' ) {
+		if ( getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE ) {
 			return __( 'Have a question before removing?' );
 		}
 		return __( 'Have a question before cancelling?' );
 	} )();
 
 	const planConfirmationLabel = ( () => {
-		if ( flowType === 'remove' ) {
+		if ( getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE ) {
 			if ( purchase.is_plan ) {
 				return __( 'I understand my site will change when I remove my plan.' );
 			}
