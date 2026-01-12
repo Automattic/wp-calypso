@@ -1142,8 +1142,6 @@ object PlaywrightTestDashboardPreReleaseMatrix : BuildType({
 			""".trimIndent()
 			triggerRules = """
 				-:**.md
-				+:client/dashboard/**
-				+:test/e2e/specs/dashboard/**
 			""".trimIndent()
 		}
 	}
