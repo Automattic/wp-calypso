@@ -25,17 +25,41 @@ export type SiteTypeFeatureSupports = Record< SiteTypeFeature, boolean >;
  * be used within routes to gate content, show upsells, etc.
  */
 export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupports {
-	const isHosted = ! isCommerceGarden( site ) && ! isSelfHostedJetpackConnected( site );
+	if ( isCommerceGarden( site ) ) {
+		return {
+			deployments: false,
+			performance: false,
+			monitoring: false,
+			logs: false,
+			backups: false,
+			scan: false,
+			domains: true,
+			emails: true,
+		};
+	}
+
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return {
+			deployments: false,
+			performance: false,
+			monitoring: false,
+			logs: false,
+			backups: false,
+			scan: false,
+			domains: true,
+			emails: false,
+		};
+	}
 
 	return {
-		deployments: isHosted,
-		performance: isHosted,
-		monitoring: isHosted,
-		logs: isHosted,
-		backups: isHosted,
-		scan: isHosted,
+		deployments: true,
+		performance: true,
+		monitoring: true,
+		logs: true,
+		backups: true,
+		scan: true,
 		domains: true,
-		emails: ! isSelfHostedJetpackConnected( site ),
+		emails: true,
 	};
 }
 
