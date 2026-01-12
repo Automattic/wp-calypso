@@ -8,13 +8,15 @@ import {
 import { useMutation } from '@tanstack/react-query';
 // @ts-expect-error - No declaration file for heading block.
 import * as heading from '@wordpress/block-library/build-module/heading';
-import { Button } from '@wordpress/components';
-import { moreVertical } from '@wordpress/icons';
+import {
+	Button,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
-import PopoverMenu from 'calypso/components/popover-menu';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -26,18 +28,20 @@ import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { savePostMutation } from './hooks/use-post-mutation';
-import './style.scss';
 
+import './style.scss';
 // Initialize the editor blocks and text formatting.
 loadBlocksWithCustomizations( [ heading ] );
 loadTextFormatting( [ heading.name ] );
+interface Props {
+	className?: string;
+}
 
 // Note: The post data we receive from the API response does
 // not match the type in the stream data, but we can insert
 // the post data there for now until we create a corresponding
 // structure for the newly created post in the stream.
-
-export default function QuickPost() {
+export default function QuickPost( { className }: Props ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -54,8 +58,6 @@ export default function QuickPost() {
 	const primarySiteId = useSelector( getPrimarySiteId );
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
-	const [ isMenuVisible, setIsMenuVisible ] = useState( false );
-	const popoverButtonRef = useRef< HTMLButtonElement >( null );
 	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId || undefined;
 	const siteAdminUrl = useSelector(
 		( state ) => ( siteId ? getSiteAdminUrl( state, siteId ) : null ),
@@ -135,18 +137,6 @@ export default function QuickPost() {
 		dispatch( setSelectedSiteId( siteId ) );
 	};
 
-	const getButtonText = () => {
-		if ( postVariables?.status === 'draft' && isSaving ) {
-			return translate( 'Saving…' );
-		}
-
-		if ( postVariables?.status === 'publish' && isSaving ) {
-			return translate( 'Posting…' );
-		}
-
-		return translate( 'Post' );
-	};
-
 	const handleFullEditorClick = () => {
 		const isEmpty = postContent.trim().length === 0;
 		recordReaderTracksEvent( 'calypso_reader_quick_post_full_editor_opened' );
@@ -173,9 +163,6 @@ export default function QuickPost() {
 		}
 	};
 
-	const toggleMenu = () => setIsMenuVisible( ! isMenuVisible );
-	const closeMenu = () => setIsMenuVisible( false );
-
 	if ( ! hasLoaded ) {
 		return (
 			<div className="quick-post-input quick-post-input--loading">
@@ -187,38 +174,17 @@ export default function QuickPost() {
 	if ( ! hasSites ) {
 		return null; // Don't show QuickPost if user has no sites.
 	}
+	const isPublishing = postVariables?.status === 'publish' && isSaving;
+	const isSavingDraft = postVariables?.status === 'draft' && isSaving;
 
 	return (
-		<div className="quick-post-input">
-			<div className="quick-post-input__fields">
-				<div className="quick-post-input__site-select-wrapper">
-					<SitesDropdown
-						selectedSiteId={ siteId }
-						onSiteSelect={ handleSiteSelect }
-						isPlaceholder={ ! hasLoaded }
-					/>
-					<div className="quick-post-input__actions-menu">
-						<Button
-							ref={ popoverButtonRef }
-							icon={ moreVertical }
-							onClick={ toggleMenu }
-							aria-expanded={ isMenuVisible }
-							className="quick-post-input__actions-toggle"
-							aria-label={ translate( 'Quick post actions' ) }
-						/>
-						<PopoverMenu
-							context={ popoverButtonRef.current }
-							isVisible={ isMenuVisible }
-							onClose={ closeMenu }
-							position="bottom"
-							className="quick-post-input__popover"
-						>
-							<PopoverMenuItem target="_blank" rel="noreferrer" onClick={ handleFullEditorClick }>
-								{ translate( 'Open Full Editor' ) }
-							</PopoverMenuItem>
-						</PopoverMenu>
-					</div>
-				</div>
+		<div className={ clsx( 'quick-post-input', className ) }>
+			<VStack spacing={ 4 }>
+				<SitesDropdown
+					selectedSiteId={ siteId }
+					onSiteSelect={ handleSiteSelect }
+					isPlaceholder={ ! hasLoaded }
+				/>
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor
 						key={ editorKey }
@@ -233,12 +199,29 @@ export default function QuickPost() {
 						` }
 					/>
 				</div>
-			</div>
-			<div className="quick-post-input__actions">
-				<Button variant="primary" onClick={ handlePublish } isBusy={ isSaving }>
-					{ getButtonText() }
-				</Button>
-			</div>
+				<HStack justify="flex-end">
+					<Button
+						variant="tertiary"
+						onClick={ handleFullEditorClick }
+						title={ translate( 'Edit using the full editor.' ) }
+						disabled={ isPublishing }
+						isBusy={ isSavingDraft }
+					>
+						<HStack spacing={ 2 }>
+							<span>{ isSavingDraft ? translate( 'Saving…' ) : translate( 'Edit' ) }</span>{ ' ' }
+							<span>{ isLocaleRtl( locale ) ? '\u2196' : '\u2197' }</span>
+						</HStack>
+					</Button>
+					<Button
+						variant="primary"
+						onClick={ handlePublish }
+						disabled={ isPublishing || isSavingDraft }
+						isBusy={ isPublishing }
+					>
+						{ isPublishing ? translate( 'Posting…' ) : translate( 'Post' ) }
+					</Button>
+				</HStack>
+			</VStack>
 		</div>
 	);
 }

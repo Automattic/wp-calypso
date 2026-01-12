@@ -214,8 +214,9 @@ describe( 'QuickPost', () => {
 			'Test post'
 		);
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Quick post actions' } ) );
-		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'Open Full Editor' } ) );
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Edit using the full editor.' } )
+		);
 
 		await waitFor( async () => {
 			expect( window.location.assign ).toHaveBeenCalledWith(

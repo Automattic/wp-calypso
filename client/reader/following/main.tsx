@@ -1,4 +1,4 @@
-import { FoldableCard } from '@automattic/components';
+import { Card, CardBody } from '@wordpress/components';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
@@ -6,12 +6,10 @@ import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
-import { focusEditor } from 'calypso/reader/components/quick-post/utils';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
 import { useSiteSubscriptions } from './use-site-subscriptions';
@@ -27,7 +25,6 @@ function FollowingStream( { ...props } ) {
 	const [ shouldDelayReaderOnboarding, setShouldDelayReaderOnboarding ] = useState( false );
 	const [ readerOnboardingShouldShow, setReaderOnboardingShouldShow ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
-	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 
 	const handleReaderOnboardingRender = useCallback(
@@ -101,27 +98,11 @@ function FollowingStream( { ...props } ) {
 						<ViewToggle />
 					</NavigationHeader>
 					{ hasSites && (
-						<div className="following-stream__quick-post-card-container">
-							<FoldableCard
-								header={ translate( 'Write a quick post' ) }
-								clickableHeader
-								compact
-								expanded={ false }
-								className="following-stream__quick-post-card"
-								smooth
-								contentExpandedStyle={ { maxHeight: '800px' } }
-								useInert
-								onOpen={ () => {
-									focusEditor();
-									recordReaderTracksEvent( 'calypso_reader_editor_card_opened' );
-								} }
-								onClose={ () => {
-									recordReaderTracksEvent( 'calypso_reader_editor_card_closed' );
-								} }
-							>
+						<Card className="following-stream__quick-post-card">
+							<CardBody>
 								<AsyncLoad require="calypso/reader/components/quick-post" />
-							</FoldableCard>
-						</div>
+							</CardBody>
+						</Card>
 					) }
 					<AsyncLoad
 						require="calypso/reader/onboarding"

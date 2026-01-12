@@ -70,39 +70,5 @@
 }
 
 .following-stream__quick-post-card {
-	.following-stream__quick-post-card-container {
-		padding: 16px;
-
-		@include break-small {
-			padding: 0;
-		}
-	}
-
-	&.card {
-		.accessible-focus & .foldable-card__action:focus {
-			outline: none;
-			border-color: var(--color-primary);
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-			border-radius: 2px;
-		}
-
-		.foldable-card__content {
-			position: relative;
-		}
-
-		&.is-expanded {
-			.foldable-card__content {
-				overflow: visible;
-			}
-		}
-	}
-}
-
-.following-stream__quick-post-card.card.is-compact {
-	margin-bottom: 20px !important;
-	border-radius: 6px; /* stylelint-disable-line scales/radii */
-
-	.foldable-card__main {
-		font-weight: 600;
-	}
+	margin-block-end: 20px;
 }
