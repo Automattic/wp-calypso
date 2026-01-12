@@ -28,14 +28,14 @@ const HELP_CENTER_STORE = HelpCenter.register();
 function getBotSlug(
 	supportInteraction: SupportInteraction | undefined,
 	newInteractionsBotSlug: string,
-	currentUserId?: number
+	isLoggedIn: boolean
 ): string {
 	if ( supportInteraction ) {
 		// Legacy support interactions have their botSlug set to `''`. We need to use the legacy bot slug for them.
 		return supportInteraction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
 	}
 
-	if ( ! currentUserId ) {
+	if ( ! isLoggedIn ) {
 		return 'wpcom-chat-loggedout';
 	}
 
@@ -233,11 +233,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
-			const botSlug = getBotSlug(
-				currentSupportInteraction,
-				newInteractionsBotSlug,
-				currentUser?.ID
-			);
+			const botSlug = getBotSlug( currentSupportInteraction, newInteractionsBotSlug, isLoggedIn );
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 
 			const url = window.location.href;
@@ -320,7 +316,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						},
 					} );
 				} else if ( ! isLoggedIn ) {
-					const botSlug = getBotSlug( currentSupportInteraction, newInteractionsBotSlug );
+					const botSlug = getBotSlug( currentSupportInteraction, newInteractionsBotSlug, false );
 
 					// If the user is not logged in, we don't need to create a new support interaction.
 					updateLoggedOutSession( chatId.toString(), returnedChat.session_id, botSlug );
