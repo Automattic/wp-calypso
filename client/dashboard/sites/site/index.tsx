@@ -48,7 +48,7 @@ function Site() {
 					id="route-not-allowed"
 					key={ siteSlug }
 					type="error"
-					message={ __( 'Page not found or not allowed.' ) }
+					message={ __( 'You don’t have permission to view the page.' ) }
 				/>
 				<Outlet />
 			</Suspense>
