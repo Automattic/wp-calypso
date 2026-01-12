@@ -1,7 +1,9 @@
-import { Page, Locator, expect } from 'playwright/test';
+import { Page, Locator } from 'playwright';
 import { clickNavTab } from '../../element-helper';
 
 export type PeoplePageTabs = 'Users' | 'Followers' | 'Email Followers' | 'Invites';
+
+type PWExpect = ( typeof import('@playwright/test') )[ 'expect' ];
 
 /**
  * Represents the Users > All Users page.
@@ -77,8 +79,9 @@ export class PeoplePage {
 	/**
 	 * Waits for an invitation to appear in the pending invites list. Reloads the page until the invitation is found or the timeout is reached.
 	 * @param emailaddress Email address of the invited user.
+	 * @param expect Playwright expect function.
 	 */
-	async expectInvitation( emailaddress: string ): Promise< void > {
+	async expectInvitationAndAssert( emailaddress: string, expect: PWExpect ): Promise< void > {
 		await this.clickViewAllIfAvailable();
 		await expect( async () => {
 			await this.page.reload();
@@ -97,8 +100,9 @@ export class PeoplePage {
 
 	/**
 	 * Clear the invitation of a user from site.
+	 * @param expect Playwright expect function.
 	 */
-	async clearUserInvitation(): Promise< void > {
+	async clearUserInvitationAndAssert( expect: PWExpect ): Promise< void > {
 		await this.clearUserButton.click();
 		await expect(
 			this.page.getByText( 'Invite deleted' ),
@@ -108,8 +112,10 @@ export class PeoplePage {
 
 	/**
 	 * Removes a user from site.
+	 * @param username Username of the user to remove.
+	 * @param expect Playwright expect function.
 	 */
-	async removeUserFromSite( username: string ): Promise< void > {
+	async removeUserFromSiteAndAssert( username: string, expect: PWExpect ): Promise< void > {
 		await this.page.getByRole( 'button', { name: `Remove ${ username }` } ).click();
 		await this.page.getByRole( 'button', { name: 'Remove', exact: true } ).click();
 		await expect(
@@ -134,8 +140,9 @@ export class PeoplePage {
 
 	/**
 	 * Revokes the pending invite.
+	 * @param expect Playwright expect function.
 	 */
-	async revokeInvite(): Promise< void > {
+	async revokeInviteAndAssert( expect: PWExpect ): Promise< void > {
 		await this.revokeInviteButton.click();
 		await expect(
 			this.page.getByText( 'Invite deleted' ),
@@ -149,10 +156,11 @@ export class PeoplePage {
 	 * @param siteURL User's primary site URL.
 	 * @param username Username of the team member.
 	 */
-	async visitTeamMemberUserDetails(
+	async visitTeamMemberUserDetailsAndAssert(
 		baseURL: string,
 		siteURL: string,
-		username: string
+		username: string,
+		expect: PWExpect
 	): Promise< void > {
 		expect( baseURL, 'Base URL should be defined' ).toBeDefined();
 		expect( siteURL, 'Site URL should be defined' ).toBeDefined();
