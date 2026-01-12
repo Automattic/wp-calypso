@@ -1,4 +1,4 @@
-import { default as apiFetchPromise } from '@wordpress/api-fetch';
+import apiFetch, { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { Location } from 'history';
@@ -6,6 +6,7 @@ import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { isE2ETest, isLoggedInHCUser } from '../utils';
+import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
 import type { HelpCenterOptions, HelpCenterSelect, HelpCenterShowOptions } from './types';
 import type { APIFetchOptions } from '../shared-types';
@@ -53,9 +54,31 @@ export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolea
 	}
 };
 
-export function setHelpCenterRouterHistory(
+export function* setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
 ) {
+	if ( canAccessWpcomApis() ) {
+		yield wpcomRequest( {
+			path: '/me/preferences',
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+			body: {
+				calypso_preferences: {
+					help_center_router_history: history,
+				},
+			},
+		} );
+	} else {
+		apiFetch( {
+			global: true,
+			path: '/help-center/open-state',
+			method: 'PUT',
+			data: {
+				help_center_router_history: history,
+			},
+		} as Parameters< typeof apiFetch >[ 0 ] ).catch( () => {} );
+	}
+
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
 		history,

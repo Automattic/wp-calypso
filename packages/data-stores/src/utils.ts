@@ -34,7 +34,7 @@ export const isInSupportSession = () => {
 };
 
 /**
- * Check if the user is logged in in a synchronous way. Works in wp-admin and Calypso.
+ * [This only works in production] Check if the user is logged in in a synchronous way. Works in wp-admin and Calypso.
  * @returns True if the user is logged in, false otherwise.
  */
 export const isLoggedInHCUser = () => {
