@@ -7,7 +7,9 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { useDispatch } from 'calypso/state';
+import useRecordResourceEventMutation from 'calypso/a8c-for-agencies/data/learn/use-record-resource-event-mutation';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useResourceCtaLabel } from './hooks/use-resource-cta-label';
 import type { ResourceItem } from './types';
@@ -30,8 +32,10 @@ export default function ResourceCard( {
 	isBorderless = false,
 }: ResourceCardProps ) {
 	const dispatch = useDispatch();
+	const agencyId = useSelector( getActiveAgencyId );
 	const ctaLabel = useResourceCtaLabel( resource.format );
 	const isVideo = resource.format === 'Video';
+	const { mutate: recordResourceEvent } = useRecordResourceEventMutation();
 
 	const handleClick = ( e: React.MouseEvent ) => {
 		if ( isVideo ) {
@@ -39,12 +43,21 @@ export default function ResourceCard( {
 			onOpenVideoModal( resource );
 		}
 
+		// Track event in analytics
 		dispatch(
 			recordTracksEvent( tracksEventName, {
 				resource_id: resource.id,
 				resource_name: resource.name,
 			} )
 		);
+
+		// Record event in the API
+		if ( agencyId ) {
+			recordResourceEvent( {
+				resourceId: resource.id,
+				agencyId,
+			} );
+		}
 	};
 
 	return (
