@@ -2,7 +2,7 @@ import { TrialPlans } from '@automattic/api-core';
 import {
 	p2HubP2sQuery,
 	siteDeleteMutation,
-	siteHasCancelablePurchasesQuery,
+	siteDeletionPurchaseInfoQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -25,6 +25,7 @@ import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { isCommerceGarden } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -246,11 +247,17 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 
 export default function SiteDeleteModal( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const { user } = useAuth();
-	const { isLoading, data: hasPurchasesCancelable } = useQuery(
-		siteHasCancelablePurchasesQuery( site.ID, user.ID )
+	const { isLoading, data: purchaseInfo } = useQuery(
+		siteDeletionPurchaseInfoQuery( site.ID, user.ID )
 	);
 
-	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesCancelable;
+	// CIAB (commerce garden) sites can be deleted even if they have trial subscriptions.
+	// The backend will automatically cancel the trial during deletion.
+	const isCiabWithOnlyTrials =
+		isCommerceGarden( site ) && purchaseInfo?.hasOnlyTrialPurchases === true;
+
+	const canBeDeleted =
+		canDeleteSite( site ) && ( ! purchaseInfo?.hasCancelablePurchases || isCiabWithOnlyTrials );
 	const title = canBeDeleted ? __( 'Delete site' ) : __( 'Unable to delete site' );
 
 	if ( isLoading ) {
