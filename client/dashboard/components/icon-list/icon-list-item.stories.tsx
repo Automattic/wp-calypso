@@ -28,17 +28,36 @@ export const WithIcon: Story = {
 	},
 };
 
-export const WithImage: Story = {
-	args: {
-		title: 'Icon list item title',
-		description: 'Icon list item description',
-		decoration: <Icon icon={ <img src="https://placecats.com/300/200" alt="Cat" /> } />,
-	},
-};
-
 export const WithoutDescription: Story = {
 	args: {
 		title: 'Icon list item title',
 		decoration: <Icon icon={ cog } />,
+	},
+};
+
+export const DensityLow: Story = {
+	args: {
+		title: 'Low density item',
+		description: 'More spacing between elements',
+		decoration: <Icon icon={ cog } />,
+		density: 'low',
+	},
+};
+
+export const DensityMedium: Story = {
+	args: {
+		title: 'Medium density item',
+		description: 'Default spacing between elements',
+		decoration: <Icon icon={ cog } />,
+		density: 'medium',
+	},
+};
+
+export const DensityHigh: Story = {
+	args: {
+		title: 'High density item',
+		description: 'Tighter spacing between elements',
+		decoration: <Icon icon={ cog } />,
+		density: 'high',
 	},
 };

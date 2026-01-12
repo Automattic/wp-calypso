@@ -7,7 +7,6 @@ import { domainTransferToOtherSiteRoute } from '../../app/router/domains';
 import { siteRoute } from '../../app/router/sites';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
-import { Truncate } from '../../components/truncate';
 import type { DomainSummary } from '@automattic/api-core';
 
 export const DomainSiteField = ( { domain, value }: { domain: DomainSummary; value: string } ) => {
@@ -32,10 +31,14 @@ export const DomainSiteField = ( { domain, value }: { domain: DomainSummary; val
 				params={ { siteSlug: domain?.site_slug } }
 				style={ { textDecoration: 'none' } }
 			>
-				<Text>
-					<Truncate tooltip={ value } ellipsizeMode="tail" limit={ 32 }>
-						{ value }
-					</Truncate>
+				<Text
+					title={ value }
+					ellipsizeMode="tail"
+					limit={ 32 }
+					truncate
+					style={ { whiteSpace: 'nowrap' } }
+				>
+					{ value }
 				</Text>
 			</Link>
 		</HStack>

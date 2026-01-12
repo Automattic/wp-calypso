@@ -1,12 +1,6 @@
-import { DataHelper } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe( 'Dashboard: Authentication', { tag: [ tags.CALYPSO_PR ] }, () => {
-	test.skip(
-		! DataHelper.isCalypsoLocalDevelopment(),
-		'Skipping until we have separated Multi-site Dashboard tests from WordPress.com tests.'
-	);
-
+test.describe( 'Dashboard: Authentication', { tag: [ tags.DASHBOARD_PR ] }, () => {
 	test( 'As an anonymous user, I can not see the dashboard page unless I am authenticated', async ( {
 		pageDashboard,
 	} ) => {

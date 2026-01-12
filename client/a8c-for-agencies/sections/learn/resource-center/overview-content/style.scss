@@ -1,0 +1,43 @@
+@import '@wordpress/dataviews/build-style/style.css';
+
+.resource-center-cards {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 250px, 1fr ) );
+	gap: 32px;
+
+	@include break-mobile {
+		grid-template-columns: repeat( auto-fill, minmax( 270px, 1fr ) );
+	}
+
+	@include break-huge {
+		grid-template-columns: repeat( auto-fill, minmax( 300px, 1fr ) );
+	}
+}
+
+.resource-center-top-resources {
+	grid-template-columns: repeat( auto-fill, minmax( 250px, 1fr ) );
+
+	@include break-mobile {
+		grid-template-columns: repeat( auto-fill, minmax( 300px, 1fr ) );
+	}
+
+	@include break-huge {
+		grid-template-columns: repeat( auto-fill, minmax( 350px, 1fr ) );
+	}
+}
+
+.resource-center-art-of-deal {
+	grid-template-columns: repeat( auto-fill, minmax( 250px, 1fr ) );
+
+	@include break-mobile {
+		grid-template-columns: repeat( auto-fill, minmax( 350px, 1fr ) );
+	}
+
+	@include break-huge {
+		grid-template-columns: repeat( auto-fill, minmax( 450px, 1fr ) );
+	}
+}
+
+.resource-center-filters {
+	margin-bottom: 16px;
+}

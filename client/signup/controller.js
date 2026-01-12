@@ -11,7 +11,6 @@ import { sectionify } from 'calypso/lib/route';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
@@ -288,8 +287,6 @@ export default {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
-		const dashboardOptIn = hasDashboardOptIn( context.store.getState() );
-
 		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
 		const refParameter = query && query.ref;
 		// Set design parameters in signup depencency store so we can retrieve it in getChecklistThemeDestination().
@@ -317,7 +314,6 @@ export default {
 			...( screenParameter && { screenParameter } ),
 			...( pluginParameter && { pluginParameter } ),
 			...( pluginBillingPeriod && { pluginBillingPeriod } ),
-			dashboardOptIn,
 		};
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );

@@ -8,18 +8,24 @@ set -o pipefail
 
 # Sanitize parameters
 build="${1:-}"
+env="${2:-}"
 
 if [[ -z "$build" ]]; then
-	echo "Usage: ${0} <build-number>"
+	echo "Usage: ${0} <build-number> [environment]"
 	echo ""
 	echo "Example: ${0} 1234"
+	echo "Example: ${0} 1234 dashboard"
 	echo ""
-	echo "It will hit https://calypso.live?image=registry.a8c.com/calypso/app:build-<build-number> and get"
+	echo "It will hit https://calypso.live?image=registry.a8c.com/calypso/app:build-<build-number>[&env=<environment>] and get"
 	echo "and output the corresponding https://<container-name>.calypso.live URL".
 	exit 1
 fi
 
-IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${build}";
+if [[ -z "$env" ]]; then
+	IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${build}";
+else
+	IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${build}&env=${env}";
+fi
 MAX_LOOP=10
 COUNTER=0
 

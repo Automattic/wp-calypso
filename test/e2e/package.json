@@ -30,7 +30,9 @@
 		"test:pw:calypso-release": "yarn playwright test --project=chrome --grep @calypso-release",
 		"test:pw:authentication": "yarn playwright test --project=authentication --grep @authentication",
 		"test:pw:a8c-for-agencies": "yarn playwright test --project=chrome --grep @a8c-for-agencies",
-		"test:pw:i18n": "yarn playwright test --project=chrome --grep @i18n"
+		"test:pw:i18n": "yarn playwright test --project=chrome --grep @i18n",
+		"test:pw:dashboard-pr": "yarn playwright test --project=chrome --grep @dashboard-pr",
+		"test:pw:dashboard-release": "yarn playwright test --project=chrome --grep @dashboard-release"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",

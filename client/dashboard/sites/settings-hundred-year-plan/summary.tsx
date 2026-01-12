@@ -12,7 +12,7 @@ export default function HundredYearPlanSummary( {
 	density,
 }: {
 	site: Site;
-	settings?: SiteSettings;
+	settings: SiteSettings;
 	density?: Density;
 } ) {
 	if ( ! canViewHundredYearPlanSettings( site ) ) {
@@ -26,9 +26,7 @@ export default function HundredYearPlanSummary( {
 			density={ density }
 			decoration={ <Icon icon={ institution } /> }
 			badges={
-				settings?.wpcom_locked_mode
-					? [ { text: __( 'Site locked' ), intent: 'info' as const } ]
-					: []
+				settings.wpcom_locked_mode ? [ { text: __( 'Site locked' ), intent: 'info' as const } ] : []
 			}
 		/>
 	);

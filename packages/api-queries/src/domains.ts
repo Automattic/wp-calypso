@@ -38,12 +38,14 @@ export const freeSuggestionQuery = (
 	queryOptions( {
 		queryKey: [ 'free-suggestion', query, params ],
 		queryFn: () => fetchFreeDomainSuggestion( query, params ),
+		meta: { persist: false },
 	} );
 
 export const availableTldsQuery = ( query?: string, vendor?: string ) =>
 	queryOptions( {
 		queryKey: [ 'available-tlds', query, vendor ],
 		queryFn: () => fetchAvailableTlds( query, vendor ),
+		meta: { persist: false },
 	} );
 
 export const bulkDomainUpdateStatusQuery = () =>
