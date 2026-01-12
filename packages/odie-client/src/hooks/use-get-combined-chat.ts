@@ -82,8 +82,6 @@ export const useGetCombinedChat = (
 	useEffect( () => {
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
 		if (
-			// If the interaction changes while the ODIE chat payload is still loading, and we don't have a conversation id,
-			// we still want to clear the current UI to avoid showing a stale Zendesk thread under the new URL/header.
 			( isOdieChatLoading && ! interactionHasChanged ) ||
 			isLoadingCurrentSupportInteraction ||
 			isUploadingUnsentMessages ||
