@@ -1,4 +1,7 @@
-import { __ } from '@wordpress/i18n';
+import { ExternalLink } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
+import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
@@ -40,6 +43,31 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 		);
 	}, [ isLoadingPlugin, plugin, selectedPluginSlug ] );
 
+	const description = useMemo( () => {
+		if ( ( ! isLoadingPlugin && ! plugin ) || ! plugin?.author ) {
+			return null;
+		}
+
+		const authorUrl = 'author_url' in plugin ? plugin.author_url : null;
+
+		return authorUrl
+			? createInterpolateElement(
+					sprintf(
+						// translators: author is the plugin author.
+						__( 'By <link>%(author)s</link>' ),
+						{ author: decodeEntities( plugin.author ) }
+					),
+					{
+						link: <ExternalLink href={ authorUrl } children={ null } />,
+					}
+			  )
+			: sprintf(
+					// translators: author is the plugin author.
+					__( 'By %(author)s' ),
+					{ author: plugin.author }
+			  );
+	}, [ isLoadingPlugin, plugin ] );
+
 	return (
 		<Card>
 			<CardBody className="plugin-sites-card-body">
@@ -48,6 +76,7 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 					decoration={ decoration }
 					level={ 2 }
 					title={ title }
+					description={ description }
 				/>
 
 				<PluginTabs
