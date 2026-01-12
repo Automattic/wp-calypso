@@ -103,10 +103,11 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'Then I can see the invited user part of the team', async function () {
 			// Use direct navigation to avoid finding the user when there are over 100 team members piled up.
-			await pagePeople.visitTeamMemberUserDetails(
+			await pagePeople.visitTeamMemberUserDetailsAndAssert(
 				helperData.getCalypsoURL(),
 				accountPreRelease.credentials.testSites?.primary?.url as string,
-				signedUpUsername
+				signedUpUsername,
+				expect
 			);
 		} );
 
