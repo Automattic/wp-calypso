@@ -5,6 +5,7 @@ import { Location } from 'history';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
+import { CurrentUser } from '../user/types';
 import { isE2ETest } from '../utils';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
@@ -189,6 +190,18 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 	options,
 } );
 
+/**
+ * Set the current user in the help center store.
+ * This value is needed because the store makes decisions based on the logged in status.
+ * @param user - The current user to set.
+ * @returns The action object.
+ */
+export const setCurrentUser = ( user: CurrentUser | undefined ) =>
+	( {
+		type: 'HELP_CENTER_SET_CURRENT_USER',
+		user,
+	} ) as const;
+
 export const setShowHelpCenter = function* (
 	show: boolean,
 	options: HelpCenterShowOptions = {
@@ -333,6 +346,7 @@ export type HelpCenterAction =
 			| typeof setOdieBotNameSlug
 			| typeof setHasPremiumSupport
 			| typeof setHelpCenterOptions
+			| typeof setCurrentUser
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >
 	| GeneratorReturnType< typeof setHelpCenterRouterHistory >

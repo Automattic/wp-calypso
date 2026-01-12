@@ -1,6 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { Location } from 'history';
 import { SiteDetails } from '../site';
+import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions } from './types';
 import type { Reducer } from 'redux';
@@ -208,6 +209,13 @@ const helpCenterOptions: Reducer< HelpCenterOptions, HelpCenterAction > = (
 	return state;
 };
 
+const currentUser: Reducer< CurrentUser | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_CURRENT_USER' ) {
+		return action.user;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
 	showMessagingLauncher,
@@ -231,6 +239,7 @@ const reducer = combineReducers( {
 	hasPremiumSupport,
 	contextTerm,
 	helpCenterOptions,
+	currentUser,
 } );
 
 export type State = ReturnType< typeof reducer >;
