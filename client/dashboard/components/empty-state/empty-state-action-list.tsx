@@ -6,9 +6,5 @@ type EmptyStateActionListProps = {
 };
 
 export default function EmptyStateActionList( { children }: EmptyStateActionListProps ) {
-	if ( ! children ) {
-		return null;
-	}
-
 	return <ActionList>{ children }</ActionList>;
 }
