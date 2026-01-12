@@ -15,7 +15,15 @@ import {
 import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
 import type { Site } from '@automattic/api-core';
 
-export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksContext: string } ) {
+export function SiteLaunchButton( {
+	site,
+	tracksContext,
+	isBillingTypeBD = false,
+}: {
+	site: Site;
+	tracksContext: string;
+	isBillingTypeBD?: boolean;
+} ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: domains = [], isLoading } = useQuery( {
 		...domainsQuery(),
@@ -84,6 +92,20 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 	}
 
 	if ( site.is_a4a_dev_site ) {
+		// For BD billing, redirect to marketplace checkout instead of launching
+		if ( isBillingTypeBD ) {
+			return (
+				<Button
+					{ ...commonProps }
+					onClick={ () => {
+						handleTracksEvent();
+						window.location.href = `/marketplace/checkout/${ site.slug }/a4a_wp_bundle_business_yearly`;
+					} }
+				/>
+			);
+		}
+
+		// For legacy billing, show modal before launching
 		return (
 			<>
 				<Button

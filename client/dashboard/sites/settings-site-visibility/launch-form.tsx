@@ -14,9 +14,29 @@ import { SiteLaunchButton } from '../site-launch-button';
 import TrialUpsellNotice from './trial-upsell-notice';
 import type { AgencyBlog, Site } from '@automattic/api-core';
 
-function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryError: boolean ) {
+function getAgencyBillingMessage(
+	agency: AgencyBlog | undefined,
+	isAgencyQueryError: boolean,
+	isBillingTypeBD: boolean
+) {
 	if ( ! agency ) {
 		return undefined;
+	}
+
+	if ( isBillingTypeBD ) {
+		return createInterpolateElement(
+			__(
+				'During the site launch process, you will be charged for this site, with the ability to purchase on an annual or monthly term. <learnMoreLink>Learn more</learnMoreLink>'
+			),
+			{
+				learnMoreLink: (
+					<ExternalLink
+						href="https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/"
+						children={ null }
+					/>
+				),
+			}
+		);
 	}
 
 	const priceInfoIsDefined =
@@ -56,8 +76,8 @@ function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryE
 
 export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 	const { data, isError } = useQuery( siteAgencyBlogQuery( site.ID ) );
-
-	const billingMessage = getAgencyBillingMessage( data ?? undefined, isError );
+	const isBillingTypeBD = data?.billing_system === 'billingdragon';
+	const billingMessage = getAgencyBillingMessage( data ?? undefined, isError, isBillingTypeBD );
 	const isReferralStatusActive = data?.referral_status === 'active';
 	const shouldShowBillingMessage = ! isReferralStatusActive && !! billingMessage;
 	const shouldShowReferClientButton = ! isReferralStatusActive;
@@ -67,7 +87,11 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 			title={ __( 'Your site hasn’t been launched yet' ) }
 			actions={
 				<>
-					<SiteLaunchButton site={ site } tracksContext="agency_site_settings" />
+					<SiteLaunchButton
+						site={ site }
+						tracksContext="agency_site_settings"
+						isBillingTypeBD={ isBillingTypeBD }
+					/>
 					{ shouldShowReferClientButton && (
 						<Button
 							size="compact"
