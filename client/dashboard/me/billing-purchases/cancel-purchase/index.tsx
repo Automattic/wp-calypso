@@ -41,6 +41,7 @@ import PageLayout from '../../../components/page-layout';
 import { shuffleArray } from '../../../utils/collection';
 import {
 	CANCEL_FLOW_TYPE,
+	CancelFlowType,
 	getIncludedDomainPurchase,
 	getPurchaseCancellationFlowType,
 	hasAmountAvailableToRefund,
@@ -144,7 +145,7 @@ function getOfferDiscountBasedOnPurchasePrice(
 
 function availableJetpackSurveySteps(
 	purchase: Purchase,
-	flowType: string,
+	flowType: CancelFlowType,
 	cancellationOffer: CancellationOffer | undefined
 ): string[] {
 	const availableSteps = [];
