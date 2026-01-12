@@ -14,4 +14,4 @@ If you are not sure about something, ask the user to clarify.
 
 ## Creating Pull Requests
 
-Create PRs as draft. Follow the template in `.github/PULL_REQUEST_TEMPLATE.md`. Only check pre-merge checklist items that actually apply.
+Create PRs as draft. Follow the template in `.github/PULL_REQUEST_TEMPLATE.md`. Include all pre-merge checklist items, but only mark items as completed (`[x]`) if they actually apply to the PR; leave inapplicable items unchecked (`[ ]`).
