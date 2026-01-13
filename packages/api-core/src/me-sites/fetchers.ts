@@ -13,6 +13,7 @@ export type FetchSiteTypes = 'all' | FetchSiteType[];
 export interface FetchSitesOptions {
 	site_visibility: 'all' | 'visible' | 'hidden' | 'deleted';
 	include_a8c_owned: boolean;
+	include_staging?: boolean;
 }
 
 export interface FetchPaginatedSitesOptions extends FetchSitesOptions {
@@ -32,7 +33,7 @@ export interface FetchPaginatedSitesResponse {
 
 export async function fetchSites(
 	site_types: FetchSiteTypes,
-	{ site_visibility, include_a8c_owned }: FetchSitesOptions
+	{ site_visibility, include_a8c_owned, include_staging = false }: FetchSitesOptions
 ): Promise< Site[] > {
 	const { sites } = await wpcom.req.get(
 		{
@@ -46,6 +47,7 @@ export async function fetchSites(
 			site_visibility,
 			include_a8c_owned,
 			include_domain_only: false,
+			include_staging,
 			filters: site_types !== 'all' ? site_types.join( ',' ) : undefined,
 		}
 	);
