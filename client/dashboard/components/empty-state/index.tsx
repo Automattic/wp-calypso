@@ -1,4 +1,5 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { Card, CardBody } from '../card';
 import { Text } from '../text';
 import EmptyStateActionItem from './empty-state-action-item';
@@ -14,10 +15,16 @@ function EmptyState( {
 	description: ReactNode;
 	children?: ReactNode;
 } ) {
+	const isMobile = useViewportMatch( 'small', '<' );
 	return (
 		<Card>
 			<CardBody>
-				<VStack style={ { minHeight: 'min(70vh, 676px)' } } spacing={ 8 } alignment="center">
+				<VStack
+					style={ { minHeight: 'min(70vh, 676px)' } }
+					spacing={ 8 }
+					justify={ isMobile ? 'flex-start' : 'center' }
+					alignment="center"
+				>
 					<VStack spacing={ 2 } alignment="center">
 						<Text as="h2" size="20px" weight={ 500 } align="center">
 							{ title }
