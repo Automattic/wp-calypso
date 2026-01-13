@@ -3,7 +3,7 @@ import { Location } from 'history';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
-import type { HelpCenterOptions } from './types';
+import type { HelpCenterOptions, Preferences } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -21,6 +21,17 @@ const typingConversationStatus: Reducer<
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_TYPING_STATUS':
 			return { ...state, [ action.conversationId ]: action.isTyping };
+	}
+	return state;
+};
+
+const helpCenterPreferences: Reducer< Preferences[ 'calypso_preferences' ], HelpCenterAction > = (
+	state = {},
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_HELP_CENTER_PREFERENCES':
+			return action.preferences;
 	}
 	return state;
 };
@@ -222,6 +233,7 @@ const reducer = combineReducers( {
 	showMessagingWidget,
 	zendeskConnectionStatus,
 	subject,
+	helpCenterPreferences,
 	message,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
