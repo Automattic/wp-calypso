@@ -1,6 +1,5 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { controls, select } from '@wordpress/data';
-import { apiFetch } from '@wordpress/data-controls';
 import { addQueryArgs } from '@wordpress/url';
 import { Location } from 'history';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
@@ -8,7 +7,6 @@ import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import { isE2ETest, persistValueSafely, retrieveValueSafely } from '../utils';
-import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
 import type {
 	HelpCenterOptions,
@@ -19,37 +17,26 @@ import type {
 import type { APIFetchOptions } from '../shared-types';
 
 /**
- * Save the open state of the help center to the remote user preferences.
- * @param isShown - Whether the help center is shown.
- * @param isMinimized - Whether the help center is minimized.
+ * Save the open state of the help center to the remote user preferences or localStorage based on logged in status.
+ * @param key - The key to save.
+ * @param value - The value to save.
  * @yields The action object.
  */
-export function* persistHelpCenterUIState(
-	isShown: boolean | undefined,
-	isMinimized: boolean | undefined
+export function* persistHelpCenterField< T extends keyof Preferences[ 'calypso_preferences' ] >(
+	key: T,
+	value: Preferences[ 'calypso_preferences' ][ T ] | undefined
 ) {
-	const saveState: Record< string, boolean | null > = {};
+	const saveState: Preferences[ 'calypso_preferences' ] = {};
 	const currentUser: CurrentUser | undefined = yield controls.select( STORE_KEY, 'getCurrentUser' );
 	const isLoggedIn = !! currentUser?.ID;
+
+	saveState[ key ] = value;
 
 	if ( ! isLoggedIn ) {
 		// Retrieve the logged out help center preferences from localStorage to coalesce the state.
 		Object.assign( saveState, retrieveValueSafely( 'logged_out_help_center_preferences' ) ?? {} );
-	}
-
-	if ( typeof isShown === 'boolean' ) {
-		saveState.help_center_open = isShown;
-		if ( ! isShown ) {
-			// Delete the remote version of the navigation history when closing the help center
-			saveState.help_center_router_history = null;
-		}
-	}
-
-	if ( typeof isMinimized === 'boolean' ) {
-		saveState.help_center_minimized = isMinimized;
-	}
-
-	if ( isLoggedIn ) {
+		persistValueSafely( 'logged_out_help_center_preferences', saveState );
+	} else if ( isLoggedIn ) {
 		if ( canAccessWpcomApis() ) {
 			// Use the promise version to do that action without waiting for the result.
 			wpcomRequestPromise( {
@@ -67,43 +54,13 @@ export function* persistHelpCenterUIState(
 				data: saveState,
 			} as APIFetchOptions ).catch( () => {} );
 		}
-	} else {
-		persistValueSafely( 'logged_out_help_center_preferences', saveState );
 	}
 }
 
 export function* setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
 ) {
-	const currentUser: CurrentUser | undefined = yield controls.select( STORE_KEY, 'getCurrentUser' );
-	const isLoggedIn = !! currentUser?.ID;
-	if ( isLoggedIn ) {
-		if ( canAccessWpcomApis() ) {
-			yield wpcomRequest( {
-				path: '/me/preferences',
-				apiNamespace: 'wpcom/v2',
-				method: 'PUT',
-				body: {
-					calypso_preferences: {
-						help_center_router_history: history,
-					},
-				},
-			} );
-		} else {
-			yield apiFetch( {
-				global: true,
-				path: '/help-center/open-state',
-				method: 'PUT',
-				data: {
-					help_center_router_history: history,
-				},
-			} as Parameters< typeof apiFetch >[ 0 ] );
-		}
-	} else {
-		persistValueSafely( 'logged_out_help_center_preferences', {
-			help_center_router_history: history,
-		} );
-	}
+	yield persistHelpCenterField( 'help_center_router_history', history );
 
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
@@ -142,7 +99,7 @@ export const setOdieBotNameSlug = ( odieBotNameSlug: string ) =>
 	} ) as const;
 
 export const setIsMinimized = function* ( minimized: boolean ) {
-	yield persistHelpCenterUIState( undefined, minimized );
+	yield persistHelpCenterField( 'help_center_minimized', minimized );
 	return {
 		type: 'HELP_CENTER_SET_MINIMIZED',
 		minimized,
@@ -265,7 +222,7 @@ export const setShowHelpCenter = function* (
 	}
 
 	if ( ! isE2ETest() ) {
-		yield persistHelpCenterUIState( show, isMinimized );
+		yield persistHelpCenterField( 'help_center_open', show );
 	}
 
 	if ( ! show ) {
