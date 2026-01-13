@@ -12,17 +12,22 @@ import {
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
 } from '../plans';
-import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
 import type { Site } from '@automattic/api-core';
 
 export function SiteLaunchButton( {
 	site,
 	tracksContext,
-	isBillingTypeBD = false,
+	launchUrl,
+	LaunchModal,
 }: {
 	site: Site;
 	tracksContext: string;
-	isBillingTypeBD?: boolean;
+	launchUrl?: string;
+	LaunchModal?: React.ComponentType< {
+		isLaunching: boolean;
+		onClose: () => void;
+		onLaunch: () => void;
+	} >;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: domains = [], isLoading } = useQuery( {
@@ -38,8 +43,7 @@ export function SiteLaunchButton( {
 			},
 		},
 	} );
-	const [ isAgencyDevelopmentSiteLaunchModalOpen, setIsAgencyDevelopmentSiteLaunchModalOpen ] =
-		useState( false );
+	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
 
 	const handleTracksEvent = () => {
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
@@ -49,7 +53,7 @@ export function SiteLaunchButton( {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
 			onSettled: () => {
-				setIsAgencyDevelopmentSiteLaunchModalOpen( false );
+				setIsLaunchModalOpen( false );
 			},
 		} );
 	};
@@ -92,30 +96,21 @@ export function SiteLaunchButton( {
 	}
 
 	if ( site.is_a4a_dev_site ) {
-		// For BD billing, redirect to marketplace checkout instead of launching
-		if ( isBillingTypeBD ) {
-			return (
-				<Button
-					{ ...commonProps }
-					onClick={ () => {
-						handleTracksEvent();
-						window.location.href = `/marketplace/checkout/${ site.slug }/a4a_wp_bundle_business_yearly`;
-					} }
-				/>
-			);
+		if ( launchUrl ) {
+			return <Button { ...commonProps } onClick={ handleTracksEvent } href={ launchUrl } />;
 		}
 
-		// For legacy billing, show modal before launching
+		if ( ! LaunchModal ) {
+			return null;
+		}
+
 		return (
 			<>
-				<Button
-					{ ...commonProps }
-					onClick={ () => setIsAgencyDevelopmentSiteLaunchModalOpen( true ) }
-				/>
-				{ isAgencyDevelopmentSiteLaunchModalOpen && (
-					<AgencyDevelopmentSiteLaunchModal
+				<Button { ...commonProps } onClick={ () => setIsLaunchModalOpen( true ) } />
+				{ isLaunchModalOpen && (
+					<LaunchModal
 						isLaunching={ launchMutation.isPending }
-						onClose={ () => setIsAgencyDevelopmentSiteLaunchModalOpen( false ) }
+						onClose={ () => setIsLaunchModalOpen( false ) }
 						onLaunch={ handleLaunch }
 					/>
 				) }

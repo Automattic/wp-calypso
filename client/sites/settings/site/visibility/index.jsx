@@ -9,6 +9,7 @@ import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-f
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
+import { a4aLink } from 'calypso/dashboard/utils/link';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -155,9 +156,10 @@ const LaunchSite = () => {
 	const handleLaunchSiteClick = () => {
 		recordTracksEvent( 'calypso_site_settings_launch_site_click' );
 		if ( isDevelopmentSite && ! siteReferralActive ) {
-			// For BD billing, redirect to marketplace checkout instead of showing modal
 			if ( isBillingTypeBD ) {
-				window.location.href = `/marketplace/checkout/${ site.slug }/a4a_wp_bundle_business_yearly`;
+				window.location.href = a4aLink(
+					`/marketplace/checkout/${ site.slug }/a4a_wp_bundle_business_yearly`
+				);
 			} else {
 				openLaunchConfirmationModal();
 			}

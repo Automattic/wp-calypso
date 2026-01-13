@@ -10,7 +10,9 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import Notice from '../../components/notice';
+import { a4aLink } from '../../utils/link';
 import { SiteLaunchButton } from '../site-launch-button';
+import AgencyDevelopmentSiteLaunchModal from '../site-launch-button/agency-development-site-launch-modal';
 import TrialUpsellNotice from './trial-upsell-notice';
 import type { AgencyBlog, Site } from '@automattic/api-core';
 
@@ -90,7 +92,13 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 					<SiteLaunchButton
 						site={ site }
 						tracksContext="agency_site_settings"
-						isBillingTypeBD={ isBillingTypeBD }
+						{ ...( isBillingTypeBD
+							? {
+									launchUrl: a4aLink(
+										`/marketplace/checkout/${ site.slug }/a4a_wp_bundle_business_yearly`
+									),
+							  }
+							: { LaunchModal: AgencyDevelopmentSiteLaunchModal } ) }
 					/>
 					{ shouldShowReferClientButton && (
 						<Button
