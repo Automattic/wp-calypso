@@ -38,7 +38,10 @@ export default function DownloadBadges( {
 		dispatch( recordTracksEvent( 'calypso_a8c_agency_tier_badges_download_modal_open' ) );
 	};
 
-	if ( ! partnerDirectories.length || ! currentAgencyTier ) {
+	const isVIPAgencyTier =
+		currentAgencyTier === 'vip-pro-agency-partner' || currentAgencyTier === 'premier-partner';
+
+	if ( ( ! isVIPAgencyTier && ! partnerDirectories.length ) || ! currentAgencyTier ) {
 		return null;
 	}
 
@@ -85,6 +88,10 @@ export default function DownloadBadges( {
 									currentAgencyTier={ currentAgencyTier }
 								/>
 							) ) }
+
+							{ isVIPAgencyTier && (
+								<DownloadLink product="vip" currentAgencyTier={ currentAgencyTier } />
+							) }
 						</div>
 					</div>
 				</A4AThemedModal>
