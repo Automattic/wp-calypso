@@ -9,14 +9,14 @@ import './style.scss';
 export const MissingPaymentSettingsNotice = ( { isFullWidth }: { isFullWidth?: boolean } ) => {
 	const translate = useTranslate();
 
-	const { data: tipaltiData } = useGetTipaltiPayee();
+	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
 	const isPayable = tipaltiData?.IsPayable;
 
 	const { data: referrals } = useFetchReferrals();
 
 	const hasReferrals = !! referrals?.length;
 
-	if ( isPayable || ! hasReferrals ) {
+	if ( isFetching || isPayable || ! hasReferrals ) {
 		return null;
 	}
 
