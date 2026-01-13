@@ -20,12 +20,14 @@ $should_show_search_navigation = ! $is_front_page && ! $is_404_page;
 if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	function get_support_search_link_for_query( $query ) {
 		$blog_id = get_current_blog_id();
+		$base_url = localized_wpcom_url( 'https://wordpress.com/support/' );
 
 		return add_query_arg(
 			array(
 				'group_id' => "blog_id:{$blog_id}",
 				's'        => $query,
-			)
+			),
+			$base_url
 		);
 	}
 }
