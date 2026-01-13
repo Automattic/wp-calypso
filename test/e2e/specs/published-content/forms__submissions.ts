@@ -108,16 +108,16 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		it( 'Submit first form', async function () {
 			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).click();
 
-			await page.getByText( 'Thank you for your response. ✨' ).waitFor( { timeout: 20 * 1000 } );
+			await page.getByText( /Thank you for your response\./ ).waitFor( { timeout: 20 * 1000 } );
 		} );
 
-		it( 'Verify "Go back" link appears', async function () {
-			// The "Go back" can be either a link or button depending on the implementation
-			await page.getByText( 'Go back', { exact: true } ).waitFor();
+		it( 'Verify "← Back" link appears', async function () {
+			// The "← Back" can be either a link or button depending on the implementation
+			await page.getByRole( 'button', { name: /Back/ } ).waitFor();
 		} );
 
-		it( 'Click "Go back" to return to form', async function () {
-			await page.getByText( 'Go back', { exact: true } ).click();
+		it( 'Click "← Back" to return to form', async function () {
+			await page.getByRole( 'button', { name: /Back/ } ).click();
 			// Verify the form is visible again and the success message is hidden
 			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).waitFor();
 			// Wait for the success message to be hidden
@@ -153,9 +153,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).click();
 
 			// Wait for the success message to become visible (not just exist)
-			await page
-				.getByText( 'Your message has been sent' )
-				.waitFor( { state: 'visible', timeout: 20 * 1000 } );
+			await page.getByText( /Thank you for your response\./ ).waitFor( { timeout: 20 * 1000 } );
 		} );
 	} );
 
