@@ -17,5 +17,16 @@ export function isWpError( error: unknown ): error is WPError {
 }
 
 export function isInaccessibleJetpackError( error: unknown ): boolean {
-	return error instanceof Error && error.message.startsWith( 'The Jetpack site is inaccessible' );
+	if ( error instanceof Error ) {
+		if ( error.message.startsWith( 'The Jetpack site is inaccessible' ) ) {
+			return true;
+		}
+		if (
+			error.name === 'UnauthorizedError' &&
+			error.message.startsWith( 'API calls to this blog have been disabled' )
+		) {
+			return true;
+		}
+	}
+	return false;
 }
