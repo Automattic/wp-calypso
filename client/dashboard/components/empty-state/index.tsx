@@ -11,7 +11,7 @@ function EmptyState( {
 	children,
 }: {
 	title: string;
-	description: string;
+	description: ReactNode;
 	children?: ReactNode;
 } ) {
 	return (
