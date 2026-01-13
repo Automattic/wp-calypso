@@ -1,6 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { useRef } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SectionNav from 'calypso/components/section-nav';
@@ -38,7 +39,60 @@ function CreditBalanceContent( { formattedBalance }: { formattedBalance: string 
 
 export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
+	const translate = useTranslate();
+
+	const { data: { balance: creditBalance = '0.00', history: creditsHistory = [] } = {} } =
+		useCreditBalanceQuery();
+
+	const getExpirationText = (
+		history: Array< { amount: number; expires: string } >,
+		shortVersion: boolean
+	) => {
+		if ( ! history || history.length === 0 ) {
+			return '';
+		}
+
+		const sortedHistory = [ ...history ].sort( ( a, b ) =>
+			moment( a.expires ).diff( moment( b.expires ) )
+		);
+
+		const firstItem = sortedHistory[ 0 ];
+		const firstDate = moment( firstItem.expires ).format( shortVersion ? 'L' : 'LL' );
+
+		// Si solo hay 1 item, no hay versión corta diferente
+		if ( sortedHistory.length === 1 ) {
+			if ( shortVersion ) {
+				return translate( 'Expire on %(date)s', {
+					args: { date: firstDate },
+				} );
+			}
+			return translate( 'Your credits will expire on %(date)s', {
+				args: { date: firstDate },
+			} );
+		}
+
+		const firstAmount = '$' + formatNumber( firstItem.amount / 100, { decimals: 2 } );
+		const lastItem = sortedHistory[ sortedHistory.length - 1 ];
+		const lastDate = moment( lastItem.expires ).format( 'LL' );
+
+		if ( shortVersion ) {
+			return translate( 'You have credits expiring on %(firstDate)s and %(lastDate)s.', {
+				args: { firstDate, lastDate },
+			} );
+		}
+
+		return (
+			<>
+				{ translate( 'You have %(amount)s in credits expiring on %(firstDate)s.', {
+					args: { amount: firstAmount, firstDate },
+				} ) }
+				<br />
+				{ translate( 'Your remaining credits will expire on %(lastDate)s', {
+					args: { lastDate },
+				} ) }
+			</>
+		);
+	};
 
 	// Smooth horizontal scrolling on mobile views
 	const tabsRef = useRef< { [ key: string ]: HTMLSpanElement | null } >( {} );
@@ -52,6 +106,15 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 	const selectedLabel = tabs.find( ( tab ) => tab.id === selectedTab )?.name;
 	const formattedBalance = '$' + formatNumber( parseFloat( creditBalance ), { decimals: 2 } );
 	const mobileFormattedBalance = '$' + formatNumber( parseFloat( creditBalance ), { decimals: 0 } );
+
+	const creditExpiresSoon = creditsHistory?.some( ( { expires } ) => {
+		const exp = moment( expires );
+		return (
+			exp.isValid() &&
+			exp.isAfter( moment(), 'day' ) &&
+			exp.isSameOrBefore( moment().add( 1, 'month' ), 'day' )
+		);
+	} );
 
 	return (
 		<SectionNav selectedText={ selectedLabel }>
@@ -84,6 +147,11 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 						<div className="blaze-credits-container__label">
 							<CreditBalanceContent formattedBalance={ formattedBalance } />
 						</div>
+						{ creditExpiresSoon && (
+							<div className="blaze-credits-container__credits-notice">
+								{ getExpirationText( creditsHistory, false ) }
+							</div>
+						) }
 					</div>
 				) }
 			</NavTabs>
@@ -92,6 +160,11 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 					<div className="blaze-credits-container__label">
 						<CreditBalanceContent formattedBalance={ mobileFormattedBalance } />
 					</div>
+					{ creditExpiresSoon && (
+						<div className="blaze-credits-container__credits-notice">
+							{ getExpirationText( creditsHistory, true ) }
+						</div>
+					) }
 				</div>
 			) }
 		</SectionNav>

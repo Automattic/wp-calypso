@@ -846,6 +846,14 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 		cursor: pointer;
 		color: var(--color-neutral-30);
 	}
+
+	&__credits-notice {
+		font-size: 0.875rem;
+		color: $studio-gray-100;
+		font-family: $font-sf-pro-text;
+		font-weight: 500;
+	}
+
 }
 
 .blaze-credits-desktop-only {
@@ -853,17 +861,23 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 
 	@media (min-width: 460px) {
 		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
 	}
 }
 
 .blaze-credits-mobile-only {
 	margin: 0 0 0 auto;
 	font-size: 0.75rem;
-	display: block;
+	display: flex;
 	flex-grow: 0;
+	flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+	height: rem(48px);
+	text-align: right;
 
 	.blaze-credits-container__label {
-		line-height: rem(48px);
 		text-align: right;
 	}
 
