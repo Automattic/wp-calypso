@@ -313,13 +313,12 @@ async function getRoutesToScreenshot(): Promise< Route[] > {
 // ============================================================================
 
 test.describe( 'Dashboard Screenshots', () => {
-	const branch = process.env.SCREENSHOT_BRANCH || getCurrentBranch();
-	const outputDir = path.join( SCREENSHOT_DIR, branch );
-	const relOutputDir = `.claude/skills/dashboard-screenshots-diff/screenshots/${ branch }`;
+	const branch = ( process.env.SCREENSHOT_BRANCH || getCurrentBranch() ).replace( /\//g, '-' );
+	const relOutputDir = `.claude/skills/dashboard-screenshots-diff/screenshots`;
 
 	test.beforeAll( () => {
-		fs.mkdirSync( outputDir, { recursive: true } );
-		console.log( `\nScreenshots: ${ relOutputDir }\n` );
+		fs.mkdirSync( SCREENSHOT_DIR, { recursive: true } );
+		console.log( `\nScreenshots: ${ relOutputDir }/*_${ branch }.png\n` );
 	} );
 
 	test( 'Take screenshots', async ( { page } ) => {
@@ -340,7 +339,7 @@ test.describe( 'Dashboard Screenshots', () => {
 			}
 
 			const fullPath = substituteParams( route, params );
-			const filename = `${ pathToFilename( fullPath ) }.png`;
+			const filename = `${ pathToFilename( fullPath ) }_${ branch }.png`;
 			console.log( `Capturing: ${ fullPath }` );
 
 			try {
@@ -355,7 +354,7 @@ test.describe( 'Dashboard Screenshots', () => {
 				} catch {
 					/* ok */
 				}
-				await page.screenshot( { path: path.join( outputDir, filename ), fullPage: true } );
+				await page.screenshot( { path: path.join( SCREENSHOT_DIR, filename ), fullPage: true } );
 				captured.push( fullPath );
 				console.log( `  -> ${ filename }` );
 			} catch ( e ) {

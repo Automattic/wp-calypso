@@ -16,27 +16,27 @@ Take screenshots of Dashboard pages to compare visual differences between produc
    ```
    If missing or expired, run:
    ```bash
-   cd .claude/skills/dashboard-screenshots-diff && yarn playwright test save-session.spec.ts --headed
+   yarn workspace wp-e2e-tests playwright test -c .claude/skills/dashboard-screenshots-diff save-session.spec.ts --headed
    ```
    This opens a browser for manual login. After login, click "Resume" in the Playwright inspector.
 
 3. Take screenshots from **production** (baseline):
    ```bash
-   cd .claude/skills/dashboard-screenshots-diff && SCREENSHOT_BRANCH="production" yarn playwright test take-screenshots.spec.ts
+   SCREENSHOT_BRANCH="production" yarn workspace wp-e2e-tests playwright test -c .claude/skills/dashboard-screenshots-diff take-screenshots.spec.ts
    ```
 
 4. Take screenshots from **local branch** (current changes):
    ```bash
-   cd .claude/skills/dashboard-screenshots-diff && yarn playwright test take-screenshots.spec.ts
+   yarn workspace wp-e2e-tests playwright test -c .claude/skills/dashboard-screenshots-diff take-screenshots.spec.ts
    ```
 
    If affected routes include `/sites/$siteSlug/*`, ask the user for their site slug and add `SITE_SLUG="<slug>"` to the command.
 
 5. For headed mode (visible browser), add `--headed` to the command.
 
-6. Open both screenshot folders for comparison:
+6. Open the screenshots folder to compare `*_production.png` vs `*_{branch-name}.png`:
    ```bash
-   open .claude/skills/dashboard-screenshots-diff/screenshots/production .claude/skills/dashboard-screenshots-diff/screenshots/{branch-name}
+   open .claude/skills/dashboard-screenshots-diff/screenshots
    ```
 
 ## Environment Variables

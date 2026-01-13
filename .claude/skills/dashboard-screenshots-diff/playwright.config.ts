@@ -11,6 +11,7 @@ export default defineConfig( {
 		trace: 'off',
 		screenshot: 'off',
 		video: 'off',
+		channel: 'chrome', // Use system Chrome, no Chromium install needed
 	},
 	projects: [
 		{
