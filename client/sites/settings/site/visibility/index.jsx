@@ -52,7 +52,6 @@ const createAgencyBillingMessage = (
 				components: {
 					a: (
 						<a
-							className="site-settings__general-settings-launch-site-agency-learn-more"
 							href={ localizeUrl(
 								'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
 							) }
@@ -90,7 +89,6 @@ const createAgencyBillingMessage = (
 				strong: <strong />,
 				a: (
 					<a
-						className="site-settings__general-settings-launch-site-agency-learn-more"
 						href={ localizeUrl(
 							'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
 						) }

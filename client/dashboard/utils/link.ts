@@ -25,6 +25,10 @@ export function wpcomLink( path: string ) {
  * This function returns a link to the A4A (Automattic for Agencies) domain.
  */
 export function a4aLink( path: string ) {
+	if ( config( 'env' ) === 'development' ) {
+		return new URL( path, 'http://agencies.localhost:3000' ).href;
+	}
+
 	return new URL( path, 'https://agencies.automattic.com' ).href;
 }
 
