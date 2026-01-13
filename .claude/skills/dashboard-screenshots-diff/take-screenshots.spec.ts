@@ -310,7 +310,7 @@ async function getRoutesToScreenshot(): Promise< Route[] > {
 // ============================================================================
 
 test.describe( 'Dashboard Screenshots', () => {
-	const branch = IS_PRODUCTION ? 'trunk' : getCurrentBranch();
+	const branch = process.env.SCREENSHOT_BRANCH || getCurrentBranch();
 	const outputDir = path.join( SCREENSHOT_DIR, branch );
 	const relOutputDir = `.claude/skills/dashboard-screenshots-diff/screenshots/${ branch }`;
 
