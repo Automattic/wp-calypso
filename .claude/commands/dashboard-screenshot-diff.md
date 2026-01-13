@@ -16,18 +16,18 @@ Take screenshots of Dashboard pages to compare visual differences between produc
    ```
    If missing or expired, run:
    ```bash
-   yarn workspace wp-e2e-tests playwright test .claude/skills/dashboard-screenshots-diff/save-session.spec.ts --headed
+   cd .claude/skills/dashboard-screenshots-diff && yarn playwright test save-session.spec.ts --headed
    ```
    This opens a browser for manual login. After login, click "Resume" in the Playwright inspector.
 
 3. Take screenshots from **production** (baseline):
    ```bash
-   DASHBOARD_BASE_URL="https://my.wordpress.com" SCREENSHOT_BRANCH="production" yarn workspace wp-e2e-tests playwright test .claude/skills/dashboard-screenshots-diff/take-screenshots.spec.ts
+   cd .claude/skills/dashboard-screenshots-diff && SCREENSHOT_BRANCH="production" yarn playwright test take-screenshots.spec.ts
    ```
 
 4. Take screenshots from **local branch** (current changes):
    ```bash
-   yarn workspace wp-e2e-tests playwright test .claude/skills/dashboard-screenshots-diff/take-screenshots.spec.ts
+   cd .claude/skills/dashboard-screenshots-diff && yarn playwright test take-screenshots.spec.ts
    ```
 
    If affected routes include `/sites/$siteSlug/*`, ask the user for their site slug and add `SITE_SLUG="<slug>"` to the command.
@@ -46,5 +46,4 @@ Take screenshots of Dashboard pages to compare visual differences between produc
 | `SITE_SLUG` | - | Required only for `/sites/$siteSlug/*` routes |
 | `DOMAIN_NAME` | - | Required only for `/domains/$domainName/*` routes |
 | `SCREENSHOT_ROUTES` | (auto) | Override: comma-separated list of explicit routes |
-| `DASHBOARD_BASE_URL` | (local) | Base URL for screenshots (use `https://my.wordpress.com` for production) |
-| `SCREENSHOT_BRANCH` | (git branch) | Override the branch name used for screenshot folder |
+| `SCREENSHOT_BRANCH` | (git branch) | Override branch name; use `production` to screenshot my.wordpress.com |

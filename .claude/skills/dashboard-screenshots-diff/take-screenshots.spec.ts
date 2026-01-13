@@ -5,7 +5,10 @@ import { execSync } from 'child_process';
 
 const SCREENSHOT_DIR = path.join( __dirname, 'screenshots' );
 const AUTH_STATE_PATH = path.join( __dirname, 'auth-state.json' );
-const BASE_URL = process.env.DASHBOARD_BASE_URL || 'http://my.localhost:3000';
+const BASE_URL =
+	process.env.SCREENSHOT_BRANCH === 'production'
+		? 'https://my.wordpress.com'
+		: 'http://my.localhost:3000';
 const IS_PRODUCTION = BASE_URL.includes( 'wordpress.com' );
 
 test.use( {
