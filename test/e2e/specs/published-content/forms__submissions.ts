@@ -108,7 +108,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		it( 'Submit first form', async function () {
 			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).click();
 
-			await page.getByText( 'Your message has been sent' ).waitFor( { timeout: 20 * 1000 } );
+			await page.getByText( 'Thank you for your response. ✨' ).waitFor( { timeout: 20 * 1000 } );
 		} );
 
 		it( 'Verify "Go back" link appears', async function () {
