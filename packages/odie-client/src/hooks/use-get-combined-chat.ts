@@ -82,7 +82,7 @@ export const useGetCombinedChat = (
 	useEffect( () => {
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
 		if (
-			isOdieChatLoading ||
+			( isOdieChatLoading && ! interactionHasChanged ) ||
 			isLoadingCurrentSupportInteraction ||
 			isUploadingUnsentMessages ||
 			isLoadingCanConnectToZendesk ||
@@ -97,9 +97,9 @@ export const useGetCombinedChat = (
 
 		// We don't have a conversation id, so our chat is simply the odie chat
 		if ( ! conversationId ) {
-			// only load odie chat when we have the data, and status is either loading or the chat was empty
 			const shouldLoadOdieChat =
-				odieChat && ( chatStatus === 'loading' || ! mainChatState.messages.length );
+				odieChat &&
+				( chatStatus === 'loading' || interactionHasChanged || ! mainChatState.messages.length );
 
 			// set chat empty state or with messages
 			if ( ! currentSupportInteraction?.uuid || shouldLoadOdieChat ) {
