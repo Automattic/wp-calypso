@@ -20,8 +20,8 @@ function EmptyState( {
 		<Card>
 			<CardBody>
 				<VStack
-					style={ { minHeight: 'min(70vh, 676px)' } }
 					spacing={ 8 }
+					style={ { minHeight: ! isMobile ? 'min(70vh, 676px)' : 'auto' } }
 					justify={ isMobile ? 'flex-start' : 'center' }
 					alignment="center"
 				>
