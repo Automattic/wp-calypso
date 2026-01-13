@@ -1,12 +1,9 @@
-import { default as apiFetchPromise } from '@wordpress/api-fetch';
-import { controls, select } from '@wordpress/data';
+import { select } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { Location } from 'history';
-import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
-import { isE2ETest, persistValueSafely, retrieveValueSafely } from '../utils';
 import { STORE_KEY } from './constants';
 import type {
 	HelpCenterOptions,
@@ -14,58 +11,10 @@ import type {
 	HelpCenterShowOptions,
 	Preferences,
 } from './types';
-import type { APIFetchOptions } from '../shared-types';
 
-/**
- * Save the open state of the help center to the remote user preferences or localStorage based on logged in status.
- * @param key - The key to save.
- * @param value - The value to save.
- * @yields The action object.
- */
-export function* persistHelpCenterField< T extends keyof Preferences[ 'calypso_preferences' ] >(
-	key: T,
-	value: Preferences[ 'calypso_preferences' ][ T ]
-) {
-	if ( isE2ETest() ) {
-		return;
-	}
-
-	const saveState: Preferences[ 'calypso_preferences' ] = {};
-	const currentUser: CurrentUser | undefined = yield controls.select( STORE_KEY, 'getCurrentUser' );
-	const isLoggedIn = !! currentUser?.ID;
-
-	saveState[ key ] = value;
-
-	if ( ! isLoggedIn ) {
-		// Retrieve the logged out help center preferences from localStorage to coalesce the state.
-		Object.assign( saveState, retrieveValueSafely( 'logged_out_help_center_preferences' ) ?? {} );
-		persistValueSafely( 'logged_out_help_center_preferences', saveState );
-	} else if ( isLoggedIn ) {
-		if ( canAccessWpcomApis() ) {
-			// Use the promise version to do that action without waiting for the result.
-			wpcomRequestPromise( {
-				path: '/me/preferences',
-				apiNamespace: 'wpcom/v2',
-				method: 'PUT',
-				body: { calypso_preferences: saveState },
-			} ).catch( () => {} );
-		} else {
-			// Use the promise version to do that action without waiting for the result.
-			apiFetchPromise( {
-				global: true,
-				path: '/help-center/open-state',
-				method: 'PUT',
-				data: saveState,
-			} as APIFetchOptions ).catch( () => {} );
-		}
-	}
-}
-
-export function* setHelpCenterRouterHistory(
+export function setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
 ) {
-	yield persistHelpCenterField( 'help_center_router_history', history || null );
-
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
 		history,
@@ -102,8 +51,7 @@ export const setOdieBotNameSlug = ( odieBotNameSlug: string ) =>
 		odieBotNameSlug,
 	} ) as const;
 
-export const setIsMinimized = function* ( minimized: boolean ) {
-	yield persistHelpCenterField( 'help_center_minimized', minimized );
+export const setIsMinimized = function ( minimized: boolean ) {
 	return {
 		type: 'HELP_CENTER_SET_MINIMIZED',
 		minimized,
@@ -229,10 +177,13 @@ export const setShowHelpCenter = function* (
 		yield setNavigateToRoute( undefined );
 		// Reset the local navigation history when closing the help center.
 		yield setHelpCenterRouterHistory( undefined );
-	} else {
-		yield setShowMessagingWidget( false );
+		return {
+			type: 'HELP_CENTER_SET_SHOW',
+			show: false,
+		} as const;
 	}
 
+	yield setShowMessagingWidget( false );
 	yield setContextTerm( options?.contextTerm || '' );
 	yield setIsMinimized( false );
 
@@ -336,11 +287,11 @@ export type HelpCenterAction =
 			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
+			| typeof setHelpCenterRouterHistory
+			| typeof setIsMinimized
 			| typeof setOdieBotNameSlug
 			| typeof setHasPremiumSupport
 			| typeof setHelpCenterOptions
 			| typeof setCurrentUser
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter >
-	| GeneratorReturnType< typeof setHelpCenterRouterHistory >
-	| GeneratorReturnType< typeof setIsMinimized >;
+	| GeneratorReturnType< typeof setShowHelpCenter >;
