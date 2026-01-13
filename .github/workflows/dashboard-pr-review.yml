@@ -8,7 +8,7 @@ on:
         required: true
 
   pull_request:
-    types: [opened,ready_for_review, synchronize]
+    types: [opened, ready_for_review, synchronize]
     paths:
       - 'client/dashboard/**'
 
