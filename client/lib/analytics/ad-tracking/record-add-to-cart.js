@@ -138,5 +138,19 @@ export async function recordAddToCart( cartItem ) {
 		window.pintrk( ...params );
 	}
 
+	// TikTok
+
+	if ( mayWeTrackByTracker( 'tiktok' ) ) {
+		const params = {
+			content_type: 'product',
+			content_name: cartItem.product_name,
+			content_id: cartItem.product_slug,
+			value: cartItem.cost,
+			currency: cartItem.currency,
+		};
+		debug( 'recordAddToCart: [TikTok]', params );
+		window.ttq.track( 'AddToCart', params );
+	}
+
 	debug( 'recordAddToCart: dataLayer:', circularReferenceSafeJSONStringify( window.dataLayer, 2 ) );
 }

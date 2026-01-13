@@ -20,6 +20,8 @@ import {
 	WPCOM_CLARITY_URI,
 	REDDIT_TRACKING_SCRIPT_URL,
 	WPCOM_REDDIT_PIXEL_ID,
+	TIKTOK_TRACKING_SCRIPT_URL,
+	WPCOM_TIKTOK_PIXEL_ID,
 } from './constants';
 import { circularReferenceSafeJSONStringify } from './debug';
 import { setup } from './setup';
@@ -123,6 +125,10 @@ function getTrackingScriptsToLoad() {
 		scripts.push( REDDIT_TRACKING_SCRIPT_URL );
 	}
 
+	if ( mayWeTrackByTracker( 'tiktok' ) ) {
+		scripts.push( TIKTOK_TRACKING_SCRIPT_URL );
+	}
+
 	return scripts;
 }
 
@@ -173,6 +179,12 @@ function initLoadedTrackingScripts() {
 		};
 
 		window.rdt( 'init', WPCOM_REDDIT_PIXEL_ID, params );
+	}
+
+	// init TikTok
+	if ( mayWeTrackByTracker( 'tiktok' ) ) {
+		window.ttq.load( WPCOM_TIKTOK_PIXEL_ID );
+		window.ttq.page();
 	}
 
 	debug( 'loadTrackingScripts: init done' );

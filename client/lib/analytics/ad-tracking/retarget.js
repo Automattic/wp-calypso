@@ -85,6 +85,12 @@ export async function retarget( urlPath ) {
 		window.rdt( 'track', 'PageVisit' );
 	}
 
+	// TikTok
+	if ( mayWeTrackByTracker( 'tiktok' ) ) {
+		debug( 'retarget: [TikTok]' );
+		window.ttq.track( 'ViewContent' );
+	}
+
 	// Rate limited retargeting (secondary trackers)
 
 	const nowTimestamp = Date.now() / 1000;

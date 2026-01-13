@@ -75,6 +75,7 @@ export const TRACKING_IDS = {
 	wooGoogleTagManagerId: 'GTM-W64W8Q',
 	parselyTracker: 'wordpress.com',
 	wpcomLinkedinId: '7224796',
+	tiktokPixelId: 'TODO_ADD_TIKTOK_PIXEL_ID', // WordPress.com (ID: 7574127958324379664)
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
@@ -94,3 +95,5 @@ export const WPCOM_CLARITY_URI = 'https://www.clarity.ms/tag/j0cc1i1dba';
 
 export const REDDIT_TRACKING_SCRIPT_URL = 'https://www.redditstatic.com/ads/pixel.js';
 export const WPCOM_REDDIT_PIXEL_ID = 'a2_ehx23cq176s3';
+export const TIKTOK_TRACKING_SCRIPT_URL = 'https://analytics.tiktok.com/i18n/pixel/events.js';
+export const WPCOM_TIKTOK_PIXEL_ID = 'TODO_ADD_TIKTOK_PIXEL_ID'; // WordPress.com (ID: 7574127958324379664)

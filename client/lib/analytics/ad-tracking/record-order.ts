@@ -41,6 +41,11 @@ declare global {
 		_qevents: any[];
 		uetq: any[];
 		rdt: any[] & { ( ...args: any[] ): void };
+		ttq: {
+			load: ( pixelId: string ) => void;
+			page: () => void;
+			track: ( event: string, params?: Record< string, any > ) => void;
+		};
 	}
 }
 
@@ -83,6 +88,7 @@ export async function recordOrder(
 	recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGTM( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInReddit( orderId, wpcomJetpackCartInfo );
+	recordOrderInTikTok( cart, orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -784,4 +790,39 @@ function recordOrderInCriteo( cart: ResponseCart, orderId: number | null | undef
 	};
 	debug( 'recordOrderInCriteo:', 'trackTransaction', params );
 	recordInCriteo( 'trackTransaction', params );
+}
+
+/**
+ * Sends a purchase event to TikTok Ads for WPcom purchases.
+ */
+function recordOrderInTikTok(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
+	if ( ! mayWeTrackByTracker( 'tiktok' ) ) {
+		return;
+	}
+
+	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+		return;
+	}
+
+	const cartContents = wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => ( {
+		content_id: product.product_slug,
+		content_name: product.product_name,
+		content_type: 'product',
+		price: costToUSD( product.cost, product.currency ) ?? 0,
+		quantity: product.volume ?? 1,
+	} ) );
+
+	const params = {
+		contents: cartContents,
+		content_type: 'product',
+		value: wpcomJetpackCartInfo.wpcomCostUSD,
+		currency: 'USD',
+	};
+
+	debug( 'recordOrderInTikTok:', 'track', 'CompletePayment', params );
+	window.ttq.track( 'CompletePayment', params );
 }
