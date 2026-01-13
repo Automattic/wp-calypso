@@ -1,8 +1,14 @@
 name: Dashboard PR Review
 
 on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to review'
+        required: true
+
   pull_request:
-    types: [ready_for_review, synchronize]
+    types: [opened,ready_for_review, synchronize]
     paths:
       - 'client/dashboard/**'
 
@@ -18,6 +24,7 @@ permissions:
 jobs:
   review:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,7 +36,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           track_progress: true
-          update_comment: true
+          use_sticky_comment: true
           prompt: |
             Read and follow the instructions in .github/prompts/dashboard-pr-review.md
 
