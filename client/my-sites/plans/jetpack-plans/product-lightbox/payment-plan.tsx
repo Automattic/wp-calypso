@@ -1,4 +1,4 @@
-import { JETPACK_SOCIAL_ADVANCED_PRODUCTS } from '@automattic/calypso-products';
+import { JETPACK_SOCIAL_ADVANCED_PRODUCTS, TERM_MONTHLY } from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
@@ -52,7 +52,14 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 		} );
 
 	const getCurrentTierPrice = () => {
-		const originalCurrentTierPrice = currentTier && currentTier.minimum_price / 100 / 12;
+		const isMonthly = product.term === TERM_MONTHLY;
+		let originalCurrentTierPrice = currentTier && currentTier.minimum_price / 100;
+
+		// If the term is not monthly, we need to convert the price to monthly.
+		if ( ! isMonthly && originalCurrentTierPrice ) {
+			originalCurrentTierPrice = originalCurrentTierPrice / 12;
+		}
+
 		let currentTierPrice = originalCurrentTierPrice;
 		if ( saleCouponDiscount && currentTierPrice ) {
 			currentTierPrice = currentTierPrice * ( 1 - saleCouponDiscount );
