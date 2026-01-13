@@ -1,14 +1,8 @@
 name: Dashboard PR Review
 
 on:
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number to review'
-        required: true
-
   pull_request:
-    types: [opened, ready_for_review, synchronize]
+    types: [ready_for_review, synchronize]
     paths:
       - 'client/dashboard/**'
 
@@ -24,7 +18,6 @@ permissions:
 jobs:
   review:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,8 +28,11 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          use_sticky_comment: true
+          track_progress: true
+          update_comment: true
           prompt: |
             Read and follow the instructions in .github/prompts/dashboard-pr-review.md
+
+            Use `gh pr comment` for review.
           claude_args: |
             --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git show:*),Bash(git diff:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *)"
