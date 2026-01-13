@@ -86,7 +86,7 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 			) }
 			{ supports.sites &&
 				supports.sites.settings &&
-				site.capabilities.manage_options &&
+				site.capabilities?.manage_options &&
 				! isSelfHostedJetpackConnected( site ) && (
 					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
 						{ __( 'Settings' ) }
