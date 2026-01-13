@@ -13,7 +13,8 @@ export type SiteTypeFeature =
 	| 'backups'
 	| 'scan'
 	| 'domains'
-	| 'emails';
+	| 'emails'
+	| 'settings';
 
 export type SiteTypeFeatureSupports = Record< SiteTypeFeature, boolean >;
 
@@ -25,6 +26,20 @@ export type SiteTypeFeatureSupports = Record< SiteTypeFeature, boolean >;
  * be used within routes to gate content, show upsells, etc.
  */
 export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupports {
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return {
+			deployments: false,
+			performance: false,
+			monitoring: false,
+			logs: false,
+			backups: false,
+			scan: false,
+			domains: false,
+			emails: false,
+			settings: false,
+		};
+	}
+
 	if ( isCommerceGarden( site ) ) {
 		return {
 			deployments: false,
@@ -35,19 +50,7 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 			scan: false,
 			domains: true,
 			emails: true,
-		};
-	}
-
-	if ( isSelfHostedJetpackConnected( site ) ) {
-		return {
-			deployments: false,
-			performance: false,
-			monitoring: false,
-			logs: false,
-			backups: false,
-			scan: false,
-			domains: true,
-			emails: false,
+			settings: true,
 		};
 	}
 
@@ -60,6 +63,7 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 		scan: true,
 		domains: true,
 		emails: true,
+		settings: true,
 	};
 }
 

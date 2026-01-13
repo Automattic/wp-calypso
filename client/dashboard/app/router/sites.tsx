@@ -553,6 +553,7 @@ export const sitePerformanceRoute = createRoute( {
 );
 
 export const siteSettingsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settings' },
 	head: () => ( {
 		meta: [
 			{
