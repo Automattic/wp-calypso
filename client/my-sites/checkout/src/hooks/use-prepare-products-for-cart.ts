@@ -236,7 +236,7 @@ function chooseAddHandler( {
 
 	// A4A checkout handles products directly via replaceProductsInCart in the checkout component
 	// so we should not try to add products from localStorage or other sources
-	if ( sitelessCheckoutType === 'a4a' ) {
+	if ( sitelessCheckoutType === 'a4a' && isLoggedOutCart ) {
 		return 'doNotAdd';
 	}
 
