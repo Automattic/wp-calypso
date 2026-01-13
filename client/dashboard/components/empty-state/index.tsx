@@ -17,7 +17,7 @@ function EmptyState( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack style={ { minHeight: 'min(60vh, 676px)' } } spacing={ 8 } alignment="center">
+				<VStack style={ { minHeight: 'min(70vh, 676px)' } } spacing={ 8 } alignment="center">
 					<VStack spacing={ 2 }>
 						<Text as="h2" size="20px" weight={ 500 } align="center">
 							{ title }
