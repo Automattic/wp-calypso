@@ -53,6 +53,6 @@ export interface Preferences {
 		help_center_router_history?: {
 			entries: Location[];
 			index: number;
-		};
+		} | null;
 	};
 }

@@ -24,8 +24,12 @@ import type { APIFetchOptions } from '../shared-types';
  */
 export function* persistHelpCenterField< T extends keyof Preferences[ 'calypso_preferences' ] >(
 	key: T,
-	value: Preferences[ 'calypso_preferences' ][ T ] | undefined
+	value: Preferences[ 'calypso_preferences' ][ T ]
 ) {
+	if ( isE2ETest() ) {
+		return;
+	}
+
 	const saveState: Preferences[ 'calypso_preferences' ] = {};
 	const currentUser: CurrentUser | undefined = yield controls.select( STORE_KEY, 'getCurrentUser' );
 	const isLoggedIn = !! currentUser?.ID;
@@ -60,7 +64,7 @@ export function* persistHelpCenterField< T extends keyof Preferences[ 'calypso_p
 export function* setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
 ) {
-	yield persistHelpCenterField( 'help_center_router_history', history );
+	yield persistHelpCenterField( 'help_center_router_history', history || null );
 
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
@@ -219,10 +223,6 @@ export const setShowHelpCenter = function* (
 			type: 'HELP_CENTER_SET_SHOW',
 			show: true,
 		} as const;
-	}
-
-	if ( ! isE2ETest() ) {
-		yield persistHelpCenterField( 'help_center_open', show );
 	}
 
 	if ( ! show ) {

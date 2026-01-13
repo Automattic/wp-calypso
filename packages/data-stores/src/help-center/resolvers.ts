@@ -4,7 +4,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { CurrentUser } from '../user/types';
 import { retrieveValueSafely } from '../utils';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { setHelpCenterPreferences, setHelpCenterRouterHistory } from './actions';
+import { setHelpCenterPreferences } from './actions';
 import { STORE_KEY } from './constants';
 import { Preferences } from './types';
 import type { APIFetchOptions } from '../shared-types';
@@ -64,7 +64,10 @@ export function* getHelpCenterRouterHistory() {
 			'getHelpCenterPreferences'
 		);
 
-		yield setHelpCenterRouterHistory( preferences.help_center_router_history );
+		yield {
+			type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
+			history: preferences.help_center_router_history,
+		} as const;
 	}
 }
 
