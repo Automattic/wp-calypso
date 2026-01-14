@@ -238,7 +238,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			if ( isInSpam ) {
 				// Clear search first to show all responses
 				await feedbackInboxPage.clearSearch( true );
-				await feedbackInboxPage.clickFolderTab( /Inbox\s*[\d,.]*/ );
+				await feedbackInboxPage.clickFolderTab( 'Inbox' );
 				// Wait for folder change to complete and data to reload
 				await page.waitForTimeout( 2000 );
 				// Search again for the first response in Inbox
@@ -304,7 +304,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			if ( isInSpam ) {
 				// Clear search first to show all responses
 				await feedbackInboxPage.clearSearch( true );
-				await feedbackInboxPage.clickFolderTab( /Inbox\s*[\d,.]*/ );
+				await feedbackInboxPage.clickFolderTab( 'Inbox' );
 				// Wait for folder change to complete
 				await page.waitForTimeout( 1000 );
 				// Search again for the second response in Inbox
@@ -413,7 +413,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			// Use a retry loop since there can be a delay between the action completing
 			// and the item being available in the Spam folder
 			const verifyInSpam = async () => {
-				await feedbackInboxPage.clickFolderTab( /Spam\s*[\d,.]*/ );
+				await feedbackInboxPage.clickFolderTab( 'Spam' );
 				await feedbackInboxPage.searchResponses( formData1.email );
 				// Verify the response appears in search results by checking for a row with the name
 				await page
@@ -483,7 +483,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			// Use a retry loop since there can be a delay between the action completing
 			// and the item being available in the Trash folder
 			const verifyInTrash = async () => {
-				await feedbackInboxPage.clickFolderTab( /Trash\s*[\d,.]*/ );
+				await feedbackInboxPage.clickFolderTab( 'Trash' );
 				await feedbackInboxPage.searchResponses( formData1.email, true );
 				await page
 					.locator( '.dataviews-view-table__row' )
@@ -517,7 +517,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			// Use a retry loop since there can be a delay between the action completing
 			// and the item being available in the Inbox folder
 			const verifyRestoredInInbox = async () => {
-				await feedbackInboxPage.clickFolderTab( /Inbox\s*[\d,.]*/ );
+				await feedbackInboxPage.clickFolderTab( 'Inbox' );
 				await feedbackInboxPage.searchResponses( formData1.email, true );
 				await page
 					.locator( '.dataviews-view-table__row' )
