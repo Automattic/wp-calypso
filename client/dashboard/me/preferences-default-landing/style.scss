@@ -51,6 +51,10 @@
 .landing-page-option-card__title {
 	font-size: $font-size-small; // 13px
 	line-height: $font-line-height-small; // 16px
+
+	.is-selected & {
+		color: var( --wp-admin-theme-color );
+	}
 }
 
 .landing-page-option-card__description {
