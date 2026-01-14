@@ -1,11 +1,9 @@
-import { Card, FormLabel, ExternalLink } from '@automattic/components';
+import { Card, ExternalLink } from '@automattic/components';
+import { FormToggle } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import Banner from 'calypso/components/banner';
-import FormButton from 'calypso/components/forms/form-button';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import SectionHeader from 'calypso/components/section-header';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -15,143 +13,116 @@ import {
 	getPreference,
 	isSavingPreference,
 	isFetchingPreferences,
-	preferencesLastSaveError,
 } from 'calypso/state/preferences/selectors';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
+
+import './hosting-dashboard-opt-in-form.scss';
 
 export default function HostingDashboardOptInForm() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const toggleId = useId();
 
 	const savedPreference = useSelector(
 		( state ) => getPreference( state, 'hosting-dashboard-opt-in' ) as HostingDashboardOptIn | null
 	);
 	const isSaving = useSelector( isSavingPreference );
 	const isFetching = useSelector( isFetchingPreferences );
-	const lastSaveError = useSelector( preferencesLastSaveError );
-	const [ isRedirecting, setIsRedirecting ] = useState( false );
-	const [ enabled, setEnabled ] = useState( savedPreference?.value === 'opt-in' );
+
+	const isEnabled = savedPreference?.value === 'opt-in';
 
 	// We do not want the survey banner to disappear immediately after opting out
 	// is complete. This state is used to keep it around until the component is unmounted.
 	const [ optedOutThisMount, setOptedOutThisMount ] = useState( false );
 
-	const [ wasFetching, setWasFetching ] = useState( isFetching );
-	if ( isFetching !== wasFetching ) {
-		// Preferences have finished fetching
-		setEnabled( savedPreference?.value === 'opt-in' );
-		setWasFetching( isFetching );
-	}
-
-	const isDirty = enabled !== ( savedPreference?.value === 'opt-in' );
-
 	const showOptOutSurvey =
 		( isSaving && savedPreference?.value === 'opt-out' ) ||
 		( ! isSaving && savedPreference?.value === 'opt-out' && optedOutThisMount ) ||
-		( ! isSaving && ! enabled && savedPreference?.value === 'opt-in' );
+		( ! isSaving && ! isEnabled && savedPreference?.value === 'opt-in' );
 
-	const handleSubmit = async ( event: React.FormEvent ) => {
-		event.preventDefault();
+	const handleToggle = async () => {
+		const newValue = ! isEnabled;
 
 		dispatch(
-			recordTracksEvent( 'calypso_account_new_hosting_dashboard_submit', {
-				enabled,
+			recordTracksEvent( 'calypso_account_new_hosting_dashboard_toggle_click', {
+				enabled: newValue,
 			} )
 		);
 
 		const preference = {
-			value: enabled ? 'opt-in' : 'opt-out',
+			value: newValue ? 'opt-in' : 'opt-out',
 			updated_at: new Date().toISOString(),
 		} satisfies HostingDashboardOptIn;
 
-		await dispatch( savePreference( 'hosting-dashboard-opt-in', preference ) );
+		try {
+			await dispatch( savePreference( 'hosting-dashboard-opt-in', preference ) );
 
-		if ( lastSaveError ) {
-			dispatch(
-				errorNotice( translate( 'Failed to save preference.' ), {
-					duration: 5000,
-				} )
-			);
-		} else if ( enabled ) {
-			setIsRedirecting( true );
-			window.location.href = dashboardLink( '/me/preferences?flash=dashboard' );
-		} else {
-			dispatch(
-				successNotice( translate( 'Successfully saved preference.' ), {
-					duration: 5000,
-				} )
-			);
-			if ( ! enabled ) {
+			if ( newValue ) {
+				window.location.href = dashboardLink( '/me/preferences?flash=dashboard' );
+			} else {
+				dispatch(
+					successNotice( translate( 'New Hosting Dashboard disabled.' ), { duration: 5000 } )
+				);
 				setOptedOutThisMount( true );
 			}
+		} catch {
+			dispatch(
+				errorNotice(
+					newValue
+						? translate( 'Failed to enable new Hosting Dashboard.' )
+						: translate( 'Failed to disable new Hosting Dashboard.' ),
+					{ duration: 5000 }
+				)
+			);
 		}
 	};
 
 	return (
-		<>
-			<SectionHeader label={ translate( 'Try the new Hosting Dashboard' ) } />
-			<Card className="account__settings">
-				<form onSubmit={ handleSubmit }>
-					<p className="account__hosting-dashboard-description">
+		<Card className="account__settings hosting-dashboard-opt-in">
+			<div className="hosting-dashboard-opt-in__row">
+				<div className="hosting-dashboard-opt-in__content">
+					<label htmlFor={ toggleId } className="hosting-dashboard-opt-in__label">
+						{ translate( 'Try the new Hosting Dashboard' ) }
+					</label>
+					<p className="hosting-dashboard-opt-in__description">
 						{ translate(
-							'We’ve recently updated the dashboard with a modern design and smarter tools for managing your hosting.'
+							"We've recently updated the dashboard with a modern design and smarter tools for managing your hosting."
 						) }
 					</p>
-					<FormFieldset className="account__settings-admin-home">
-						<FormLabel>
-							<FormCheckbox
-								checked={ enabled }
-								disabled={ isFetching || isSaving }
-								onChange={ ( event ) => {
-									setEnabled( event.target.checked );
-									dispatch(
-										recordTracksEvent( 'calypso_account_new_hosting_dashboard_toggle_click', {
-											enabled: event.target.checked,
-										} )
-									);
-								} }
-							/>
-							<span>{ translate( 'I want to try the beta version.' ) }</span>
-						</FormLabel>
-					</FormFieldset>
-					{ showOptOutSurvey && (
-						<FormFieldset>
-							<Banner
-								title={ translate( 'Prefer the previous version?' ) }
-								showIcon={ false }
-								description={ translate(
-									'{{surveyLink}}Please complete this short survey{{/surveyLink}} to help us understand what didn’t work and how we can improve.',
-									{
-										components: {
-											surveyLink: (
-												<ExternalLink
-													href="https://automattic.survey.fm/msd-survey-for-opt-out"
-													icon
-													onClick={ () =>
-														dispatch(
-															recordTracksEvent(
-																'calypso_account_new_hosting_dashboard_survey_click'
-															)
-														)
-													}
-												/>
-											),
-										},
-									}
-								) }
-							/>
-						</FormFieldset>
-					) }
-					<FormButton
-						isSubmitting={ isSaving }
-						disabled={ isFetching || isSaving || ! isDirty }
-						busy={ isSaving || isRedirecting }
-						type="submit"
-					>
-						{ translate( 'Save' ) }
-					</FormButton>
-				</form>
-			</Card>
-		</>
+				</div>
+				<FormToggle
+					id={ toggleId }
+					checked={ isEnabled }
+					onChange={ handleToggle }
+					disabled={ isFetching || isSaving }
+				/>
+			</div>
+			{ showOptOutSurvey && (
+				<FormFieldset className="hosting-dashboard-opt-in__survey">
+					<Banner
+						title={ translate( 'Prefer the previous version?' ) }
+						showIcon={ false }
+						description={ translate(
+							"{{surveyLink}}Please complete this short survey{{/surveyLink}} to help us understand what didn't work and how we can improve.",
+							{
+								components: {
+									surveyLink: (
+										<ExternalLink
+											href="https://automattic.survey.fm/msd-survey-for-opt-out"
+											icon
+											onClick={ () =>
+												dispatch(
+													recordTracksEvent( 'calypso_account_new_hosting_dashboard_survey_click' )
+												)
+											}
+										/>
+									),
+								},
+							}
+						) }
+					/>
+				</FormFieldset>
+			) }
+		</Card>
 	);
 }

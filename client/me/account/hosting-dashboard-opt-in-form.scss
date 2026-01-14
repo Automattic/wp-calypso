@@ -1,0 +1,39 @@
+@import "@automattic/typography/styles/variables";
+
+.hosting-dashboard-opt-in {
+	&__row {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 16px;
+	}
+
+	&__content {
+		flex: 1;
+		min-width: 0;
+	}
+
+	&__label {
+		display: block;
+		font-size: 0.875rem;
+		font-weight: 600;
+		margin-bottom: 5px;
+		cursor: pointer;
+	}
+
+	&__description {
+		font-size: $font-body-small;
+		color: var(--color-text-subtle);
+		margin: 0;
+		font-style: italic;
+	}
+
+	&__survey {
+		margin-top: 24px;
+		margin-bottom: 0;
+	}
+
+	.components-form-toggle {
+		flex-shrink: 0;
+	}
+}
