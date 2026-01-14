@@ -9,8 +9,22 @@ import { createMeRoutes } from './me';
 import { createPluginsRoutes } from './plugins';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
+import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
 import type { ErrorInfo } from 'react';
+
+/**
+ * Module augmentation for TanStack router's staticData.
+ */
+declare module '@tanstack/react-router' {
+	interface StaticDataRouteOption {
+		/**
+		 * If set, the route is only accessible when the site type supports this feature.
+		 * The check is performed in siteRoute.beforeLoad against getSiteTypeFeatureSupports(site).
+		 */
+		requiresSiteTypeSupport?: SiteTypeFeature;
+	}
+}
 
 interface RouteContext {
 	config?: AppConfig;

@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { blaze } from '@automattic/components/src/icons';
+import { useLaunchpad } from '@automattic/data-stores';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -55,7 +56,7 @@ export const QuickLinks = ( {
 	trackManageAllDomainsAction,
 	trackManageEmailsAction,
 	trackExplorePluginsAction,
-	isExpanded,
+	isExpanded: externalIsExpanded,
 	updateHomeQuickLinksToggleStatus,
 	siteAdminUrl,
 	editHomePageUrl,
@@ -79,6 +80,10 @@ export const QuickLinks = ( {
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 	const [ isAILogoGeneratorOpen, setIsAILogoGeneratorOpen ] = useState( false );
 	const advertisingUrl = useAdvertisingUrl();
+
+	const { data } = useLaunchpad( site?.slug );
+
+	const isSiteLaunched = data?.checklist_statuses?.site_launched ?? false;
 
 	const addNewDomain = () => {
 		trackAddDomainAction();
@@ -284,7 +289,7 @@ export const QuickLinks = ( {
 			headerTagName="h2"
 			header={ translate( 'Quick links' ) }
 			clickableHeader
-			expanded={ isExpanded }
+			expanded={ isSiteLaunched ? externalIsExpanded : false }
 			onOpen={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'expanded' ) }
 			onClose={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'collapsed' ) }
 		>

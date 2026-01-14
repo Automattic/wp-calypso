@@ -1,6 +1,6 @@
 # Hosting Dashboard
 
-Build a new Hosting Dashboard for WordPress.com based on the new design. The same dashboard with different entry points is used for different products (WordPress.com, Jetpack Clound and a4a).
+Build a new Hosting Dashboard for WordPress.com based on the new design. The same dashboard with different entry points is used for different products (WordPress.com, Jetpack Cloud and a4a).
 
 ## Some principles
 

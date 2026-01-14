@@ -6,6 +6,7 @@ import { lazy, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { siteDomainsRoute } from '../../app/router/sites';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canManageSite, canLeaveSite, canRestoreSite } from '../features';
 import type { Site } from '@automattic/api-core';
@@ -57,7 +58,8 @@ export function useActions(): Action< Site >[] {
 
 				router.navigate( { to: siteDomainsRoute.fullPath, params: { siteSlug: site.slug } } );
 			},
-			isEligible: ( item: Site ) => ! isSelfHostedJetpackConnected( item ) && canManageSite( item ),
+			isEligible: ( item: Site ) =>
+				siteTypeSupportsFeature( item, 'domains' ) && canManageSite( item ),
 		},
 		{
 			id: 'jetpack-cloud',
@@ -92,7 +94,8 @@ export function useActions(): Action< Site >[] {
 				const site = sites[ 0 ];
 				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
 			},
-			isEligible: ( item: Site ) => ! isSelfHostedJetpackConnected( item ) && canManageSite( item ),
+			isEligible: ( item: Site ) =>
+				siteTypeSupportsFeature( item, 'settings' ) && canManageSite( item ),
 		},
 		{
 			id: 'restore',

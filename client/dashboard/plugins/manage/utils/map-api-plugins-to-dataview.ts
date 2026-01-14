@@ -60,14 +60,13 @@ export function mapApiPluginsToDataViewPlugins(
 
 			entry.count += 1;
 			entry.siteIds.push( siteId );
+
 			if ( p.active ) {
 				entry.activeSites.push( siteId );
 			} else {
 				entry.inactiveSites.push( siteId );
 			}
-			if ( p.update ) {
-				entry.updatableSites.push( siteId );
-			}
+
 			if ( p.is_managed ) {
 				entry.isManaged = true;
 			}
@@ -82,6 +81,10 @@ export function mapApiPluginsToDataViewPlugins(
 				entry.autoupdateAllowedCount += autoupdate ? 1 : 0;
 
 				if ( autoupdate ) {
+					if ( p.update ) {
+						entry.updatableSites.push( siteId );
+					}
+
 					if ( p.autoupdate ) {
 						entry.autoupdatedSites.push( siteId );
 					} else {

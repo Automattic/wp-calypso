@@ -1,4 +1,4 @@
-import { JetpackLogo } from '@automattic/components';
+import { JetpackLogo, VIPLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/pressable.svg';
@@ -89,6 +89,18 @@ function DownloadLink( {
 				name: translate( 'Pressable Premier Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2025/08/agency_tier_pressable_premier_partner.zip',
 				icon: <img src={ PressableLogo } alt="Pressable" />,
+			},
+		},
+		vip: {
+			'vip-pro-agency-partner': {
+				name: translate( 'Pro Agency Partner' ),
+				href: 'https://automattic.wordpress.com/wp-content/uploads/2026/01/agency_tier_vip_vip_pro_partner.zip',
+				icon: <VIPLogo width={ 57 } height={ 25 } />,
+			},
+			'premier-partner': {
+				name: translate( 'Premier Agency Partner' ),
+				href: 'https://automattic.wordpress.com/wp-content/uploads/2026/01/agency_tier_vip_premier_partner.zip',
+				icon: <VIPLogo width={ 57 } height={ 25 } />,
 			},
 		},
 	};

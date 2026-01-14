@@ -1,6 +1,11 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
-import { isAkismetProduct, isGSuiteOrGoogleWorkspaceProductSlug } from '../../../utils/purchase';
+import {
+	isAkismetProduct,
+	isGSuiteOrGoogleWorkspaceProductSlug,
+	getPurchaseCancellationFlowType,
+	CANCEL_FLOW_TYPE,
+} from '../../../utils/purchase';
 import BackupRetentionOptionOnCancelPurchase from './backup-retention-management/retention-option-on-cancel-purchase';
 import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
@@ -138,11 +143,13 @@ export default function CancellationMainContent( {
 				cancellationChanges={ cancellationChanges }
 			/>
 
-			<CancelPurchaseRefundInformation
-				purchase={ purchase }
-				isJetpackPurchase={ isJetpack }
-				selectedDomain={ selectedDomain }
-			/>
+			{ getPurchaseCancellationFlowType( purchase ) !== CANCEL_FLOW_TYPE.REMOVE && (
+				<CancelPurchaseRefundInformation
+					purchase={ purchase }
+					isJetpackPurchase={ isJetpack }
+					selectedDomain={ selectedDomain }
+				/>
+			) }
 
 			<PlanProductRevertContent
 				purchase={ purchase }

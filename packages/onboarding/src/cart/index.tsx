@@ -157,6 +157,7 @@ export const createSiteWithCart = async (
 	gardenName?: string | null,
 	gardenPartnerName?: string | null,
 	specId?: string | null,
+	triggerBackendBuild?: boolean | null,
 	blueprint?: string | null
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
@@ -218,6 +219,9 @@ export const createSiteWithCart = async (
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
 				...( refParam && { ref: refParam } ),
+				...( triggerBackendBuild && {
+					trigger_backend_build: true,
+				} ),
 			},
 		},
 	} );

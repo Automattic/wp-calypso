@@ -12,8 +12,10 @@ import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useState } from 'react';
 import { Plan } from '../../sites/site-fields';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
@@ -247,7 +249,11 @@ export const SitesWithoutThisPlugin = ( {
 					}
 
 					if ( site.slug ) {
-						window.open( `https://wordpress.com/plans/${ site.slug }`, '_blank' );
+						const backUrl = redirectToDashboardLink();
+						window.location.href = addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
+							siteSlug: site.slug,
+							cancel_to: backUrl,
+						} );
 					}
 				},
 				isEligible: ( item: Site ) => ! hasPlanFeature( item, DotcomFeatures.INSTALL_PLUGINS ),

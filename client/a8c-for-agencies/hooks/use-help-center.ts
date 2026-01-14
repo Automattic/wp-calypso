@@ -46,8 +46,13 @@ export default function useHelpCenter() {
 		// If it does, we need to set the show help center to true and set the navigate to route to the contact form.
 		const handleHashChange = () => {
 			if ( hasSupportFormHash && isEnabled( 'a4a-help-center' ) ) {
+				const isMigrationRequest =
+					window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
+
 				setShowHelpCenter( true );
-				setNavigateToRoute( '/contact-form' );
+				setNavigateToRoute(
+					isMigrationRequest ? '/contact-form?migration-request=1' : '/contact-form'
+				);
 				history.pushState( null, '', window.location.pathname + window.location.search );
 			}
 		};
