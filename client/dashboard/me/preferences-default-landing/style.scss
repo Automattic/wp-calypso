@@ -1,0 +1,75 @@
+.landing-page-options {
+	margin-block-start: 8px;
+	gap: 16px;
+}
+
+.landing-page-option-card {
+	flex: 1 1 0;
+	min-width: 0;
+	cursor: pointer;
+
+	&:focus {
+		outline: none;
+
+		.landing-page-option-card__illustration {
+			outline: 2px solid var( --wp-admin-theme-color );
+			outline-offset: 2px;
+		}
+	}
+
+	&.is-disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+}
+
+.landing-page-option-card__illustration {
+	position: relative;
+	margin-block-end: 8px;
+	border-radius: 8px;
+	overflow: hidden;
+
+	svg {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	.is-selected & {
+		outline: 2px solid var( --wp-admin-theme-color );
+		outline-offset: 2px;
+	}
+}
+
+
+.landing-page-option-card__title {
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.landing-page-option-card__description {
+	font-size: 12px;
+	line-height: 16px;
+}
+
+.landing-page-option-card__radio {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 20px;
+	height: 20px;
+	margin: 0;
+	cursor: pointer;
+	accent-color: var( --wp-admin-theme-color );
+
+	&:disabled {
+		cursor: not-allowed;
+	}
+}
+
+// Responsive: stack vertically on small screens
+@media ( max-width: 782px ) {
+	.landing-page-options {
+		flex-direction: column;
+	}
+}
