@@ -238,7 +238,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			if ( isInSpam ) {
 				// Clear search first to show all responses
 				await feedbackInboxPage.clearSearch( true );
-				await feedbackInboxPage.clickFolderTab( 'Inbox' );
+				await feedbackInboxPage.clickFolderTab( /Inbox\s*[\d,.]*/ );
 				// Wait for folder change to complete and data to reload
 				await page.waitForTimeout( 2000 );
 				// Search again for the first response in Inbox
@@ -304,7 +304,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			if ( isInSpam ) {
 				// Clear search first to show all responses
 				await feedbackInboxPage.clearSearch( true );
-				await feedbackInboxPage.clickFolderTab( 'Inbox' );
+				await feedbackInboxPage.clickFolderTab( /Inbox\s*[\d,.]*/ );
 				// Wait for folder change to complete
 				await page.waitForTimeout( 1000 );
 				// Search again for the second response in Inbox
@@ -409,12 +409,34 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.clickMarkAsSpamAction();
 		} );
 
-		it( 'Navigate to Spam folder', async function () {
-			await feedbackInboxPage.clickFolderTab( 'Spam' );
-		} );
-
 		it( 'Verify first response is in Spam', async function () {
-			await feedbackInboxPage.searchResponses( formData1.email );
+			// Use a retry loop since there can be a delay between the action completing
+			// and the item being available in the Spam folder
+			const verifyInSpam = async () => {
+				await feedbackInboxPage.clickFolderTab( /Spam\s*[\d,.]*/ );
+				await feedbackInboxPage.searchResponses( formData1.email );
+				// Verify the response appears in search results by checking for a row with the name
+				await page
+					.locator( '.dataviews-view-table__row' )
+					.filter( { hasText: formData1.name } )
+					.first()
+					.waitFor( { timeout: 3000 } );
+			};
+
+			const MAX_ATTEMPTS = 3;
+			for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
+				try {
+					await verifyInSpam();
+					break;
+				} catch ( err ) {
+					if ( attempt === MAX_ATTEMPTS ) {
+						throw err;
+					}
+					// Wait before retrying to give backend time to propagate
+					await page.waitForTimeout( 1000 );
+				}
+			}
+
 			await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
@@ -423,12 +445,32 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.clickNotSpamAction();
 		} );
 
-		it( 'Navigate back to Inbox', async function () {
-			await feedbackInboxPage.clickFolderTab( 'Inbox' );
-		} );
-
 		it( 'Verify first response is back in Inbox', async function () {
-			await feedbackInboxPage.searchResponses( formData1.email, true );
+			// Use a retry loop since there can be a delay between the action completing
+			// and the item being available in the Inbox folder
+			const verifyInInbox = async () => {
+				await feedbackInboxPage.clickFolderTab( /Inbox\s+[\d,.]*/ );
+				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await page
+					.locator( '.dataviews-view-table__row' )
+					.filter( { hasText: formData1.name } )
+					.first()
+					.waitFor( { timeout: 3000 } );
+			};
+
+			const MAX_ATTEMPTS = 3;
+			for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
+				try {
+					await verifyInInbox();
+					break;
+				} catch ( err ) {
+					if ( attempt === MAX_ATTEMPTS ) {
+						throw err;
+					}
+					await page.waitForTimeout( 1000 );
+				}
+			}
+
 			await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
@@ -437,12 +479,32 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.clickMoveToTrashAction();
 		} );
 
-		it( 'Navigate to Trash folder', async function () {
-			await feedbackInboxPage.clickFolderTab( 'Trash' );
-		} );
-
 		it( 'Verify first response is in Trash', async function () {
-			await feedbackInboxPage.searchResponses( formData1.email, true );
+			// Use a retry loop since there can be a delay between the action completing
+			// and the item being available in the Trash folder
+			const verifyInTrash = async () => {
+				await feedbackInboxPage.clickFolderTab( /Trash\s*[\d,.]*/ );
+				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await page
+					.locator( '.dataviews-view-table__row' )
+					.filter( { hasText: formData1.name } )
+					.first()
+					.waitFor( { timeout: 3000 } );
+			};
+
+			const MAX_ATTEMPTS = 3;
+			for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
+				try {
+					await verifyInTrash();
+					break;
+				} catch ( err ) {
+					if ( attempt === MAX_ATTEMPTS ) {
+						throw err;
+					}
+					await page.waitForTimeout( 1000 );
+				}
+			}
+
 			await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
@@ -451,12 +513,32 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.clickRestoreAction();
 		} );
 
-		it( 'Navigate back to Inbox to confirm', async function () {
-			await feedbackInboxPage.clickFolderTab( 'Inbox' );
-		} );
-
 		it( 'Verify first response is restored in Inbox', async function () {
-			await feedbackInboxPage.searchResponses( formData1.email, true );
+			// Use a retry loop since there can be a delay between the action completing
+			// and the item being available in the Inbox folder
+			const verifyRestoredInInbox = async () => {
+				await feedbackInboxPage.clickFolderTab( /Inbox\s*[\d,.]*/ );
+				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await page
+					.locator( '.dataviews-view-table__row' )
+					.filter( { hasText: formData1.name } )
+					.first()
+					.waitFor( { timeout: 3000 } );
+			};
+
+			const MAX_ATTEMPTS = 3;
+			for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
+				try {
+					await verifyRestoredInInbox();
+					break;
+				} catch ( err ) {
+					if ( attempt === MAX_ATTEMPTS ) {
+						throw err;
+					}
+					await page.waitForTimeout( 1000 );
+				}
+			}
+
 			await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );

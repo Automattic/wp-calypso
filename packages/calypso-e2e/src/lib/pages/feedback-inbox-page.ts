@@ -94,7 +94,7 @@ export class FeedbackInboxPage {
 				.or( this.page.getByRole( 'textbox', { name: 'Search responses' } ) )
 				.fill( search );
 			await this.page
-				.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } )
+				.getByRole( 'tab', { name: /Inbox\s+[\d,.]*/, exact: false, disabled: false } )
 				.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\([\d,]+\)$/ } ) )
 				.waitFor();
 			return;
@@ -110,7 +110,7 @@ export class FeedbackInboxPage {
 		await this.page.getByRole( 'searchbox', { name: 'Search' } ).fill( search );
 		await responseRequestPromise;
 		await this.page
-			.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } )
+			.getByRole( 'tab', { name: /Inbox\s+[\d,.]*/, exact: false, disabled: false } )
 			.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\([\d,]+\)$/ } ) )
 			.waitFor();
 	}
@@ -141,10 +141,12 @@ export class FeedbackInboxPage {
 
 	/**
 	 * Clicks on a folder tab (Inbox, Spam, or Trash).
+	 * State changes are handled client-side in the UI store, so we just need a small
+	 * buffer for the UI to update - no need to wait for API responses.
 	 *
-	 * @param {string} folderName The name of the folder to click (e.g., 'Inbox', 'Spam', 'Trash').
+	 * @param {string | RegExp} folderName The name of the folder to click (e.g., 'Inbox', 'Spam', 'Trash'). Can also be a regular expression.
 	 */
-	async clickFolderTab( folderName: string ): Promise< void > {
+	async clickFolderTab( folderName: string | RegExp ): Promise< void > {
 		const tablist = this.page.getByRole( 'tablist' );
 		await tablist.getByRole( 'tab', { name: folderName } ).click();
 		await this.page.waitForTimeout( 500 ); // Wait for the data to load
