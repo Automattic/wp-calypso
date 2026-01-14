@@ -1,3 +1,9 @@
+---
+name: dashboard-create-screen
+description: Create Dashboard Screen
+allowed-tools: Read, Glob, Grep, Edit, Write, AskUserQuestion
+---
+
 # Create Dashboard Screen
 
 Scaffold a new screen in the WordPress.com Dashboard (`client/dashboard`).
@@ -65,7 +71,7 @@ Build the full path for each route by tracing the `getParentRoute` chain. For ex
 Use `AskUserQuestion` with a multi-step selection:
 
 **First question - Select router file:**
-Present options based on the router files discovered in Step 2. Derive the section name from the filename (e.g., `sites.tsx` → "Sites", `me.tsx` → "Me").
+Present options based on the router files discovered in Step 2. Derive the section name from the filename (e.g., `sites.tsx` -> "Sites", `me.tsx` -> "Me").
 
 ```
 question: "Which section should the new screen be added to?"
@@ -131,9 +137,9 @@ Derive the component location dynamically from the parent route's lazy import pa
 2. The import path (e.g., `../../me/billing`) indicates the parent's component location relative to `client/dashboard/app/router/`
 
 3. Create your new screen as a sibling folder with a prefix matching the parent:
-   - Parent import: `../../me/billing` → New screen: `client/dashboard/me/billing-{screen-name}/index.tsx`
-   - Parent import: `../../sites/settings` → New screen: `client/dashboard/sites/settings-{screen-name}/index.tsx`
-   - Parent import: `../../domains` → New screen: `client/dashboard/domains/{screen-name}/index.tsx`
+   - Parent import: `../../me/billing` -> New screen: `client/dashboard/me/billing-{screen-name}/index.tsx`
+   - Parent import: `../../sites/settings` -> New screen: `client/dashboard/sites/settings-{screen-name}/index.tsx`
+   - Parent import: `../../domains` -> New screen: `client/dashboard/domains/{screen-name}/index.tsx`
 
 4. If the parent route has no `.lazy()` (it's just a grouping route), look at its children's import paths to determine the folder pattern.
 
