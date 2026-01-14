@@ -32,6 +32,10 @@ export interface IconListItemProps {
 	 * @default 'medium'
 	 */
 	density?: 'low' | 'medium' | 'high';
+	/**
+	 * Controls whether the item content should wrap when it exceeds the container width.
+	 */
+	wrap?: boolean;
 }
 
 export interface IconListProps {
