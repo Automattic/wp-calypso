@@ -13,6 +13,8 @@ export { AgentUISuggestions } from './components/composable/AgentUISuggestions';
 export { AgentUINotice } from './components/composable/AgentUINotice';
 export { AgentUIFooter } from './components/composable/AgentUIFooter';
 export { AgentUIConversationView } from './components/composable/AgentUIConversationView';
+export { AgentUIInputToolbar } from './components/composable/AgentUIInputToolbar';
+export type { AgentUIInputToolbarProps } from './components/composable/AgentUIInputToolbar';
 
 // Context for advanced usage
 export { AgentUIProvider } from './context/AgentUIContext';

@@ -6,13 +6,18 @@
 	display: flex;
 	align-items: center;
 	gap: var(--spacing-1);
-	padding: var(--spacing-1\.5) calc(var(--spacing) * 2.5);
+	padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 2.5);
 	background: var(--color-muted);
 	border-radius: calc(var(--radius) - 6px);
 	font-size: var(--text-sm);
 	font-family: inherit;
 	cursor: pointer;
 	border: none;
+}
+
+.button:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 1.5px;
 }
 
 .icon {
@@ -40,3 +45,7 @@
 	overflow: hidden;
 }
 
+.dropdown:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 1.5px;
+}
