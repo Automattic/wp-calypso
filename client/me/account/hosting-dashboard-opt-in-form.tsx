@@ -1,9 +1,7 @@
-import { Card, ExternalLink } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { FormToggle } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useId, useState } from 'react';
-import Banner from 'calypso/components/banner';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { useId } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -31,15 +29,6 @@ export default function HostingDashboardOptInForm() {
 
 	const isEnabled = savedPreference?.value === 'opt-in';
 
-	// We do not want the survey banner to disappear immediately after opting out
-	// is complete. This state is used to keep it around until the component is unmounted.
-	const [ optedOutThisMount, setOptedOutThisMount ] = useState( false );
-
-	const showOptOutSurvey =
-		( isSaving && savedPreference?.value === 'opt-out' ) ||
-		( ! isSaving && savedPreference?.value === 'opt-out' && optedOutThisMount ) ||
-		( ! isSaving && ! isEnabled && savedPreference?.value === 'opt-in' );
-
 	const handleToggle = async () => {
 		const newValue = ! isEnabled;
 
@@ -63,7 +52,6 @@ export default function HostingDashboardOptInForm() {
 				dispatch(
 					successNotice( translate( 'New Hosting Dashboard disabled.' ), { duration: 5000 } )
 				);
-				setOptedOutThisMount( true );
 			}
 		} catch {
 			dispatch(
@@ -79,17 +67,10 @@ export default function HostingDashboardOptInForm() {
 
 	return (
 		<Card className="account__settings hosting-dashboard-opt-in">
-			<div className="hosting-dashboard-opt-in__row">
-				<div className="hosting-dashboard-opt-in__content">
-					<label htmlFor={ toggleId } className="hosting-dashboard-opt-in__label">
-						{ translate( 'Try the new Hosting Dashboard' ) }
-					</label>
-					<p className="hosting-dashboard-opt-in__description">
-						{ translate(
-							"We've recently updated the dashboard with a modern design and smarter tools for managing your hosting."
-						) }
-					</p>
-				</div>
+			<div className="hosting-dashboard-opt-in__header">
+				<label htmlFor={ toggleId } className="hosting-dashboard-opt-in__label">
+					{ translate( 'Try the new Hosting Dashboard' ) }
+				</label>
 				<FormToggle
 					id={ toggleId }
 					checked={ isEnabled }
@@ -97,32 +78,11 @@ export default function HostingDashboardOptInForm() {
 					disabled={ isFetching || isSaving }
 				/>
 			</div>
-			{ showOptOutSurvey && (
-				<FormFieldset className="hosting-dashboard-opt-in__survey">
-					<Banner
-						title={ translate( 'Prefer the previous version?' ) }
-						showIcon={ false }
-						description={ translate(
-							"{{surveyLink}}Please complete this short survey{{/surveyLink}} to help us understand what didn't work and how we can improve.",
-							{
-								components: {
-									surveyLink: (
-										<ExternalLink
-											href="https://automattic.survey.fm/msd-survey-for-opt-out"
-											icon
-											onClick={ () =>
-												dispatch(
-													recordTracksEvent( 'calypso_account_new_hosting_dashboard_survey_click' )
-												)
-											}
-										/>
-									),
-								},
-							}
-						) }
-					/>
-				</FormFieldset>
-			) }
+			<p className="hosting-dashboard-opt-in__description">
+				{ translate(
+					"We've recently updated the dashboard with a modern design and smarter tools for managing your hosting."
+				) }
+			</p>
 		</Card>
 	);
 }
