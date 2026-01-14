@@ -86,9 +86,10 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const loggedOutOdieSessionId = params.get( 'sessionId' );
 	const loggedOutOdieBotSlug = params.get( 'botSlug' );
 
-	const isLoggedOutSession = Boolean(
-		loggedOutOdieChatId && loggedOutOdieSessionId && loggedOutOdieBotSlug
-	);
+	const isLoggedOutSession =
+		! isLoggedIn ||
+		// The user can be logged in but still wants to continue the logged out session.
+		Boolean( loggedOutOdieChatId && loggedOutOdieSessionId && loggedOutOdieBotSlug );
 
 	const odieId = isLoggedOutSession
 		? loggedOutOdieChatId
