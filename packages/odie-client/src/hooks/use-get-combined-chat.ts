@@ -50,22 +50,19 @@ export const useGetCombinedChat = (
 		useCurrentSupportInteraction();
 
 	const location = useLocation();
-	const currentUser = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentUser(),
-		[]
-	);
-	const isLoggedIn = !! currentUser?.ID;
 	const params = new URLSearchParams( location.search );
 	// We use these values to identify the logged out chat, not the ones from the data store, to keep the router in charge of the state.
 	const loggedOutOdieChatId = params.get( 'chatId' );
 	const loggedOutOdieSessionId = params.get( 'sessionId' );
 	const loggedOutOdieBotSlug = params.get( 'botSlug' );
 
-	const odieId = isLoggedIn
-		? getOdieIdFromInteraction( currentSupportInteraction )
-		: loggedOutOdieChatId;
-	const sessionId = isLoggedIn ? undefined : loggedOutOdieSessionId;
-	const botSlug = isLoggedIn ? undefined : loggedOutOdieBotSlug;
+	const isLoggedOutSession = loggedOutOdieChatId && loggedOutOdieSessionId && loggedOutOdieBotSlug;
+
+	const odieId = isLoggedOutSession
+		? loggedOutOdieChatId
+		: getOdieIdFromInteraction( currentSupportInteraction );
+	const sessionId = isLoggedOutSession ? loggedOutOdieSessionId : undefined;
+	const botSlug = isLoggedOutSession ? loggedOutOdieBotSlug : undefined;
 
 	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;

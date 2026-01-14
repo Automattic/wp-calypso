@@ -27,6 +27,8 @@ export function persistHelpCenterFields( preferences: Preferences[ 'calypso_pref
 		// Retrieve the logged out help center preferences from localStorage to coalesce the state.
 		persistValueSafely( 'logged_out_help_center_preferences', preferences );
 	} else if ( isLoggedIn ) {
+		// Delete local preferences when logged in to avoid conflicts.
+		persistValueSafely( 'logged_out_help_center_preferences', null );
 		if ( canAccessWpcomApis() ) {
 			// Use the promise version to do that action without waiting for the result.
 			wpcomRequestPromise( {

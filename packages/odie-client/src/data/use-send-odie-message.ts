@@ -1,4 +1,4 @@
-import { HelpCenter } from '@automattic/data-stores';
+import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -21,22 +21,22 @@ import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
-import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
 function getBotSlug(
 	supportInteraction: SupportInteraction | undefined,
 	newInteractionsBotSlug: string,
-	isLoggedIn: boolean
+	loggedOutOdieBotSlug = 'wpcom-chat-loggedout',
+	isLoggedOutSession: boolean
 ): string {
 	if ( supportInteraction ) {
 		// Legacy support interactions have their botSlug set to `''`. We need to use the legacy bot slug for them.
 		return supportInteraction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
 	}
 
-	if ( ! isLoggedIn ) {
-		return 'wpcom-chat-loggedout';
+	if ( isLoggedOutSession ) {
+		return loggedOutOdieBotSlug;
 	}
 
 	// When the interaction is undefined, it means we're sending the first message to Odie, which is done before the interaction is created.
@@ -73,21 +73,28 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
 export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { setLoggedOutOdieChat } = useDispatch( HELP_CENTER_STORE );
+	const location = useLocation();
+
 	const currentUser = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentUser(),
 		[]
 	);
-	const location = useLocation();
 	const isLoggedIn = !! currentUser?.ID;
+
 	const params = new URLSearchParams( location.search );
 	const loggedOutOdieChatId = params.get( 'chatId' );
 	const loggedOutOdieSessionId = params.get( 'sessionId' );
+	const loggedOutOdieBotSlug = params.get( 'botSlug' );
 
-	const odieId = isLoggedIn
-		? getOdieIdFromInteraction( currentSupportInteraction )
-		: loggedOutOdieChatId;
+	const isLoggedOutSession = Boolean(
+		loggedOutOdieChatId && loggedOutOdieSessionId && loggedOutOdieBotSlug
+	);
 
-	const sessionId = isLoggedIn ? undefined : loggedOutOdieSessionId;
+	const odieId = isLoggedOutSession
+		? loggedOutOdieChatId
+		: getOdieIdFromInteraction( currentSupportInteraction );
+
+	const sessionId = loggedOutOdieChatId ? loggedOutOdieSessionId : undefined;
 
 	const { addEventToInteraction, startNewInteraction } = useManageSupportInteraction();
 	const createZendeskConversation = useCreateZendeskConversation();
@@ -126,6 +133,14 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		trackEvent,
 		newInteractionsBotSlug,
 	} = useOdieAssistantContext();
+
+	const botSlug = getBotSlug(
+		currentSupportInteraction,
+		newInteractionsBotSlug,
+		loggedOutOdieBotSlug ?? undefined,
+		// The user can be logged in but still wants to continue the logged out session.
+		isLoggedOutSession || ! isLoggedIn
+	);
 
 	const updateInteractionContext = useCallback(
 		( interaction: SupportInteraction ) => {
@@ -233,7 +248,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
-			const botSlug = getBotSlug( currentSupportInteraction, newInteractionsBotSlug, isLoggedIn );
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 
 			const url = window.location.href;
@@ -302,12 +316,12 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			let supportInteraction = currentSupportInteraction;
 
 			try {
-				if ( ! supportInteraction && chatId && isLoggedIn ) {
+				if ( ! supportInteraction && chatId && ! isLoggedOutSession ) {
 					supportInteraction = await startNewInteraction( {
 						event_external_id: chatId.toString(),
 						event_source: 'odie',
 					} );
-				} else if ( supportInteraction && ! odieId && chatId && isLoggedIn ) {
+				} else if ( supportInteraction && ! odieId && chatId && ! isLoggedOutSession ) {
 					supportInteraction = await addEventToInteraction( {
 						interactionId: supportInteraction.uuid,
 						eventData: {
@@ -315,9 +329,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							event_source: 'odie',
 						},
 					} );
-				} else if ( ! isLoggedIn ) {
-					const botSlug = getBotSlug( currentSupportInteraction, newInteractionsBotSlug, false );
-
+				} else if ( isLoggedOutSession ) {
 					// If the user is not logged in, we don't need to create a new support interaction.
 					updateLoggedOutSession( chatId.toString(), returnedChat.session_id, botSlug );
 				}

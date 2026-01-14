@@ -15,6 +15,9 @@ import type { APIFetchOptions } from '../shared-types';
  */
 export function* getHelpCenterPreferences() {
 	const currentUser: CurrentUser | undefined = yield controls.select( STORE_KEY, 'getCurrentUser' );
+	const localPreferences = retrieveValueSafely< Preferences[ 'calypso_preferences' ] >(
+		'logged_out_help_center_preferences'
+	);
 	const isLoggedIn = !! currentUser?.ID;
 
 	if ( isLoggedIn ) {
@@ -28,6 +31,8 @@ export function* getHelpCenterPreferences() {
 				help_center_open: preferences.calypso_preferences.help_center_open,
 				help_center_minimized: preferences.calypso_preferences.help_center_minimized,
 				help_center_router_history: preferences.calypso_preferences.help_center_router_history,
+				// We want to keep local preferences if they exist to allow the user to continue their logged out conversations.
+				...localPreferences,
 			};
 			yield setHelpCenterPreferences( projectedPreferences );
 		} else {

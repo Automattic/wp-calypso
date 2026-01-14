@@ -33,12 +33,12 @@ export const setUnreadCount = ( count: number ) =>
 		count,
 	} ) as const;
 
-export const setHelpCenterPreferences = ( preferences: Preferences[ 'calypso_preferences' ] ) =>
-	( {
+export const setHelpCenterPreferences = ( preferences: Preferences[ 'calypso_preferences' ] ) => {
+	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_PREFERENCES',
 		preferences,
-	} ) as const;
-
+	} as const;
+};
 export const setOdieInitialPromptText = ( text: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_ODIE_INITIAL_PROMPT_TEXT',
