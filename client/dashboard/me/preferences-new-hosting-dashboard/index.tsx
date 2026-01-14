@@ -19,6 +19,8 @@ import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
 import { wpcomLink } from '../../utils/link';
 
+import './style.scss';
+
 export default function PreferencesOptInForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
@@ -93,26 +95,26 @@ export default function PreferencesOptInForm() {
 	return (
 		<>
 			<FlashMessage id="dashboard" message={ __( 'New Hosting Dashboard enabled.' ) } />
-			<Card>
+			<Card className="preferences-new-hosting-dashboard">
 				<CardBody>
-					<VStack spacing={ 2 }>
-						<HStack alignment="top" justify="space-between">
+					<HStack alignment="center" justify="space-between" spacing={ 4 }>
+						<VStack spacing={ 1 }>
 							<Text as="label" htmlFor={ toggleId } size="15px" weight={ 500 } lineHeight="20px">
-								{ __( 'Try the new Hosting Dashboard' ) }
+								{ __( 'New Hosting Dashboard' ) }
 							</Text>
-							<FormToggle
-								id={ toggleId }
-								checked={ isEnabled }
-								onChange={ handleToggle }
-								disabled={ isPending }
-							/>
-						</HStack>
-						<Text variant="muted" lineHeight="20px">
-							{ __(
-								"We've recently updated the dashboard with a modern design and smarter tools for managing your hosting."
-							) }
-						</Text>
-					</VStack>
+							<Text variant="muted" lineHeight="20px">
+								{ __(
+									"You're using the redesigned dashboard with a modern interface and smarter tools for managing your hosting. We're actively adding new features and improvements."
+								) }
+							</Text>
+						</VStack>
+						<FormToggle
+							id={ toggleId }
+							checked={ isEnabled }
+							onChange={ handleToggle }
+							disabled={ isPending }
+						/>
+					</HStack>
 				</CardBody>
 			</Card>
 
