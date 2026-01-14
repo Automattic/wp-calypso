@@ -1,5 +1,3 @@
-@import './variables.scss';
-
 .plugin-icon-wrapper {
 	border-radius: 4px;
 	overflow: clip;
@@ -26,9 +24,7 @@
 }
 
 .plugin-switcher-card-body {
-	max-height: $card-height;
 	padding: 8px 0 0;
-	overflow-y: auto;
 }
 
 .plugin-switcher-search {

@@ -1,5 +1,4 @@
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
-import { throttle } from '@wordpress/compose';
 import { Field, View } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { plugins as pluginIcon } from '@wordpress/icons';
@@ -32,47 +31,40 @@ export const PluginSwitcher = ( {
 	onChangeView: Dispatch< SetStateAction< View > >;
 	paginationInfo: { totalItems: number; totalPages: number };
 } ) => {
-	const scrollRef = useRef< HTMLDivElement >( null );
+	const sentinelRef = useRef< HTMLDivElement >( null );
 	const [ itemsPerPage ] = useState( view.perPage );
 
-	// Load next page when scrolling near bottom
+	// Load more items when sentinel becomes visible
 	const handleLoadMore = useCallback( () => {
-		if ( ! paginationInfo ) {
+		if ( ! paginationInfo || paginationInfo.totalPages <= 1 ) {
 			return;
 		}
 
-		if ( paginationInfo.totalPages > 1 ) {
-			onChangeView( ( currentView ) => ( {
-				...currentView,
-				// @ts-expect-error: perPage can't be undefined
-				perPage: currentView.perPage + itemsPerPage, // Accumulate items
-			} ) );
-		}
+		onChangeView( ( currentView ) => ( {
+			...currentView,
+			// @ts-expect-error: perPage can't be undefined
+			perPage: currentView.perPage + itemsPerPage,
+		} ) );
 	}, [ paginationInfo, onChangeView, itemsPerPage ] );
 
-	// Set up scroll listener
+	// Use Intersection Observer to detect when sentinel is visible
 	useEffect( () => {
-		const menuElement = scrollRef.current;
-
-		if ( ! menuElement || ! paginationInfo ) {
+		const sentinel = sentinelRef.current;
+		if ( ! sentinel || ! paginationInfo ) {
 			return;
 		}
 
-		const handleScroll = throttle( () => {
-			const scrollTop = menuElement.scrollTop;
-			const scrollHeight = menuElement.scrollHeight;
-			const clientHeight = menuElement.clientHeight;
-			// Load more when within 100px of bottom
-			if ( scrollTop + clientHeight >= scrollHeight - 100 ) {
-				handleLoadMore();
-			}
-		}, 100 );
+		const observer = new IntersectionObserver(
+			( entries ) => {
+				if ( entries[ 0 ].isIntersecting ) {
+					handleLoadMore();
+				}
+			},
+			{ rootMargin: '100px' } // Load more when within 100px of viewport
+		);
 
-		// Initial check in case content is shorter than container
-		handleScroll();
-
-		menuElement.addEventListener( 'scroll', handleScroll );
-		return () => menuElement.removeEventListener( 'scroll', handleScroll );
+		observer.observe( sentinel );
+		return () => observer.disconnect();
 	}, [ handleLoadMore, paginationInfo ] );
 
 	const itemClassName = useCallback(
@@ -146,7 +138,7 @@ export const PluginSwitcher = ( {
 
 	return (
 		<Card>
-			<CardBody className="plugin-switcher-card-body" ref={ scrollRef }>
+			<CardBody className="plugin-switcher-card-body">
 				<SwitcherContent
 					itemAlignment="start"
 					itemClassName={ itemClassName }
@@ -175,6 +167,8 @@ export const PluginSwitcher = ( {
 					}
 					filterField={ updatesField }
 				/>
+				{ /* Sentinel for infinite scroll - loads more when this becomes visible */ }
+				{ paginationInfo.totalPages > 1 && <div ref={ sentinelRef } aria-hidden="true" /> }
 			</CardBody>
 		</Card>
 	);

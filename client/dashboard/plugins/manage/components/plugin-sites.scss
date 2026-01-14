@@ -1,4 +1,4 @@
-@import './variables.scss';
+@import '@wordpress/base-styles/variables';
 
 .plugin-icon-placeholder {
 	width: 32px;
@@ -14,11 +14,22 @@ img.plugin-icon {
 	height: 32px;
 }
 
+.plugin-sites-card {
+	position: sticky;
+	// Position below both sticky headers (65px each) + page padding
+	top: calc(65px * 2 + #{$grid-unit-40});
+	// Max height to fit within viewport below both headers
+	max-height: calc(100vh - 65px * 2 - #{$grid-unit-40} * 2);
+	display: flex;
+	flex-direction: column;
+}
+
 .plugin-sites-card-body {
-	max-height: $card-height;
 	padding-inline-start: 0;
 	padding-inline-end: 0;
 	overflow-y: auto;
+	flex: 1;
+	min-height: 0; // Allow flex child to shrink below content size
 }
 
 .plugin-sites-card-header {

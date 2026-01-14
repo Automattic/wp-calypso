@@ -8,6 +8,9 @@ $component-icon-padding: 6px;
 
 .dashboard-header-bar {
 	box-sizing: border-box;
+	// Consistent height prevents gaps when stacking sticky headers
+	// padding (12px * 2) + content (40px) + border (1px) = 65px
+	min-height: calc(#{$grid-unit-15} * 2 + 40px + #{$border-width});
 	padding-block: $grid-unit-15;
 	padding-inline: calc(#{$grid-unit-20} - #{$component-icon-padding}); // Adjust for 6px padding on icons.
 	border-bottom: $border-width solid var( --dashboard-header__border-color );

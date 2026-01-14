@@ -41,7 +41,7 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 	}, [ isLoadingPlugin, plugin, selectedPluginSlug ] );
 
 	return (
-		<Card>
+		<Card className="plugin-sites-card">
 			<CardBody className="plugin-sites-card-body">
 				<SectionHeader
 					className="plugin-sites-card-header"
