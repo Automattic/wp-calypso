@@ -6,13 +6,12 @@ import { SearchNotice } from '../components/search-notice';
 import { SearchResults } from '../components/search-results';
 import { SkipSuggestion } from '../components/skip-suggestion';
 import { UnavailableSearchResult } from '../components/unavailable-search-result';
-import { getTld } from '../helpers/get-tld';
 import { useRequestTracking } from '../hooks/use-request-tracking';
 import { useSuggestionsList } from '../hooks/use-suggestions-list';
 import { useDomainSearch } from './context';
 
 export const ResultsPage = () => {
-	const { slots, config, query } = useDomainSearch();
+	const { slots, config } = useDomainSearch();
 
 	const {
 		isLoading: isLoadingSuggestions,
@@ -21,7 +20,6 @@ export const ResultsPage = () => {
 	} = useSuggestionsList();
 	const numberOfInitialVisibleSuggestions =
 		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
-	const isFqdnQuery = !! getTld( query );
 
 	useRequestTracking();
 
@@ -33,7 +31,7 @@ export const ResultsPage = () => {
 			</VStack>
 			{ slots?.BeforeResults && <slots.BeforeResults /> }
 			<VStack spacing={ 4 }>
-				{ config.skippable && ! isFqdnQuery && (
+				{ config.skippable && (
 					<>{ isLoadingSuggestions ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> }</>
 				) }
 				{ ! isLoadingSuggestions && <UnavailableSearchResult /> }

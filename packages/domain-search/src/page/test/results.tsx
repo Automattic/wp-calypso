@@ -682,33 +682,6 @@ describe( 'ResultsPage', () => {
 				await screen.findByLabelText( 'Skip purchase and continue with site.wordpress.com' )
 			).toBeInTheDocument();
 		} );
-
-		it( 'does not render the skip suggestion when searching for a FQDN', async () => {
-			mockGetSuggestionsQuery( {
-				params: { query: 'test.com' },
-				suggestions: [ buildSuggestion( { domain_name: 'test.com' } ) ],
-			} );
-
-			mockGetAvailabilityQuery( {
-				params: { domainName: 'test.com' },
-				availability: buildAvailability( {
-					domain_name: 'test.com',
-					status: DomainAvailabilityStatus.AVAILABLE,
-				} ),
-			} );
-
-			render(
-				<TestDomainSearch config={ { skippable: true } } query="test.com">
-					<ResultsPage />
-				</TestDomainSearch>
-			);
-
-			expect( await screen.findByTitle( 'test.com' ) ).toBeInTheDocument();
-			expect( screen.queryByLabelText( 'Loading free domain suggestion' ) ).not.toBeInTheDocument();
-			expect(
-				screen.queryByRole( 'button', { name: /Skip purchase and continue/i } )
-			).not.toBeInTheDocument();
-		} );
 	} );
 
 	describe( 'tracking', () => {
