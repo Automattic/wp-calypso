@@ -117,7 +117,7 @@ export const WithIconsAndActions: Story = {
 					}
 				/>
 				<EmptyState.ActionItem
-					title="Fine‑tune settings"
+					title="Settings"
 					description="Adjust advanced options as your site grows."
 					decoration={ <Icon icon={ cog } /> }
 					actions={
