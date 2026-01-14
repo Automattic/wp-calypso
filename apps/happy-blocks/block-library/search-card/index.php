@@ -17,6 +17,8 @@ $active_page                   = isset( $args['active_page'] ) ? $args['active_p
 $should_show_search_card       = ( $is_front_page || $is_404_page ) && 'forums' !== $active_page;
 $should_show_search_navigation = ! $is_front_page && ! $is_404_page;
 
+$enable_odie_answers = true;
+
 if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	function get_support_search_link_for_query( $query ) {
 		$blog_id = get_current_blog_id();
@@ -127,6 +129,9 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( "Let's help you find what you're looking for.", 'happy-blocks' ) ) . '</p>' : ''; ?>
 			<form id="support-search-form" class="" role="search" method="get" action="">
 				<div class="input-wrapper" dir="auto">
+					<?php if ( $enable_odie_answers ) : ?>
+						<input id="support-search-input" type="search" name="s" placeholder="<?php echo esc_html( __( 'Ask us anything', 'happy-blocks' ) ); ?>"/>
+					<?php else : ?>
 					<input id="support-search-input" type="search" name="s" placeholder="<?php echo esc_html( __( 'Search questions, guides, courses', 'happy-blocks' ) ); ?>"/>
 
 					<button type="submit" class="search-submit-button" aria-label="<?php echo esc_attr( __( 'Search', 'happy-blocks' ) ); ?>">
@@ -134,6 +139,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 							<path d="M13 5C9.7 5 7 7.7 7 11C7 12.4 7.5 13.7 8.3 14.7L4.5 18.5L5.6 19.6L9.4 15.8C10.4 16.6 11.7 17.1 13.1 17.1C16.4 17.1 19.1 14.4 19.1 11.1C19.1 7.8 16.3 5 13 5ZM13 15.5C10.5 15.5 8.5 13.5 8.5 11C8.5 8.5 10.5 6.5 13 6.5C15.5 6.5 17.5 8.5 17.5 11C17.5 13.5 15.5 15.5 13 15.5Z"/>
 						</svg>
 					</button>
+					<?php endif; ?>
 				</div>
 			</form>
 
