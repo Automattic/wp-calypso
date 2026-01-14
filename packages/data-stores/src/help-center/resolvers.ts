@@ -9,6 +9,10 @@ import { STORE_KEY } from './constants';
 import { Preferences } from './types';
 import type { APIFetchOptions } from '../shared-types';
 
+/**
+ * Retrieves the help center persisted preferences from the remote user preferences or localStorage based on logged in status.
+ * @yields {Preferences} The help center persisted preferences.
+ */
 export function* getHelpCenterPreferences() {
 	const currentUser: CurrentUser | undefined = yield controls.select( STORE_KEY, 'getCurrentUser' );
 	const isLoggedIn = !! currentUser?.ID;

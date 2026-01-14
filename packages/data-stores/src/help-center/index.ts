@@ -8,7 +8,7 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
-import { persistHelpCenterField } from './utils';
+import { subscribeToPersist } from './utils';
 export type { State };
 
 let isRegistered = false;
@@ -35,29 +35,7 @@ export function register(): typeof STORE_KEY {
 			resolvers: enabledPersistedOpenState ? resolvers : undefined,
 		} );
 		isRegistered = true;
-
-		/**
-		 * Customized persistence that supports both logged in and logged out users.
-		 */
-		store.subscribe( () => {
-			const state = store.getState() as State;
-			const preferences = state.helpCenterPreferences;
-			if ( state.showHelpCenter !== undefined ) {
-				// Only persist when the specific field actually changed
-				if ( state.showHelpCenter !== preferences.help_center_open ) {
-					persistHelpCenterField( 'help_center_open', state.showHelpCenter );
-				}
-				if (
-					state.helpCenterRouterHistory !== undefined &&
-					state.helpCenterRouterHistory !== preferences.help_center_router_history
-				) {
-					persistHelpCenterField( 'help_center_router_history', state.helpCenterRouterHistory );
-				}
-				if ( state.isMinimized !== preferences.help_center_minimized ) {
-					persistHelpCenterField( 'help_center_minimized', state.isMinimized );
-				}
-			}
-		} );
+		subscribeToPersist( store );
 	}
 
 	return STORE_KEY;
