@@ -112,7 +112,7 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 		return (
 			exp.isValid() &&
 			exp.isAfter( moment(), 'day' ) &&
-			exp.isSameOrBefore( moment().add( 100, 'month' ), 'day' )
+			exp.isSameOrBefore( moment().add( 1, 'month' ), 'day' )
 		);
 	} );
 
