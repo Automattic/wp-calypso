@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .dashboard-empty-state {
 	justify-content: flex-start;
@@ -8,6 +9,10 @@
 		justify-content: center;
 		min-height: min(70vh, 676px);
 	}
+}
+
+.dashboard-empty-state__title {
+	font-size: $font-size-x-large;
 }
 
 // Balanced wrapping works better for centered text

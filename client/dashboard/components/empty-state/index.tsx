@@ -21,7 +21,7 @@ function EmptyState( {
 			<CardBody>
 				<VStack spacing={ 8 } alignment="center" className="dashboard-empty-state">
 					<VStack spacing={ 2 } alignment="center">
-						<Text as="h2" size="20px" weight={ 500 } align="center">
+						<Text as="h2" align="center" className="dashboard-empty-state__title">
 							{ title }
 						</Text>
 						<Text variant="muted" align="center" className="dashboard-empty-state__description">
