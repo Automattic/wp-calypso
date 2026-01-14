@@ -15350,7 +15350,6 @@ __metadata:
     "@automattic/calypso-url": "workspace:^"
     "@automattic/charts": "npm:^0.46.1"
     "@automattic/color-studio": "npm:^4.1.0"
-    "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
