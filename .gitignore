@@ -131,6 +131,7 @@ packages/plans-grid-next/static/mockServiceWorker.js
 
 # Playwright
 playwright-report/
+.playwright-mcp/
 /cookies
 output/
 
