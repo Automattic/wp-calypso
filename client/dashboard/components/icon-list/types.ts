@@ -34,9 +34,6 @@ export interface IconListItemProps {
 	density?: 'low' | 'medium' | 'high';
 	/**
 	 * Controls whether the suffix element should wrap.
-	 */
-	/**
-	 * Controls whether the item content should wrap when it exceeds the container width.
 	 * @default false
 	 */
 	wrap?: boolean;
