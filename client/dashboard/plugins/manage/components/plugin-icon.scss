@@ -1,0 +1,26 @@
+.plugin-icon-wrapper {
+	border-radius: 4px;
+	overflow: clip;
+	position: relative;
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+
+	&.is-fallback {
+		background: #c3c4c7;
+		fill: #fff;
+
+		svg {
+			fill: var(--wp-components-color-foreground, #1e1e1e);
+			width: 36px;
+			height: 36px;
+		}
+	}
+}
+
+.plugin-icon-fallback {
+	position: absolute;
+	top: 50%;
+	inset-inline-start: 50%;
+	transform: translate(-50%, -50%);
+}
