@@ -1,6 +1,9 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/colors";
+
 .landing-page-options {
-	margin-block-start: 8px;
-	gap: 16px;
+	margin-block-start: $grid-unit-20; // 8px
+	gap: $grid-unit-40; // 16px
 }
 
 .landing-page-option-card {
@@ -24,9 +27,11 @@
 
 .landing-page-option-card__illustration {
 	position: relative;
-	margin-block-end: 8px;
-	border-radius: 8px;
+	margin-block-end: $grid-unit-40; // 16px
+	border-radius: $radius-medium;
 	overflow: hidden;
+	box-shadow: 0 0 0 1px transparent;
+	transition: box-shadow 0.1s ease-in-out;
 
 	svg {
 		display: block;
@@ -34,28 +39,31 @@
 		height: auto;
 	}
 
+	.landing-page-option-card:hover:not( .is-disabled ) & {
+		box-shadow: 0 0 0 1px $gray-300;
+	}
+
 	.is-selected & {
 		box-shadow: 0 0 0 2px var( --wp-admin-theme-color );
 	}
 }
 
-
 .landing-page-option-card__title {
-	font-size: 14px;
-	line-height: 20px;
+	font-size: $font-size-small; // 13px
+	line-height: $font-line-height-small; // 16px
 }
 
 .landing-page-option-card__description {
-	font-size: 12px;
-	line-height: 16px;
+	font-size: $font-size-small;
+	line-height: $font-line-height-small;
 }
 
 .landing-page-option-card__radio {
 	position: absolute;
-	top: 8px;
-	right: 8px;
-	width: 20px;
-	height: 20px;
+	top: $grid-unit-20; // 8px
+	inset-inline-end: $grid-unit-20; // 8px
+	width: $grid-unit-50; // 20px
+	height: $grid-unit-50; // 20px
 	margin: 0;
 	cursor: pointer;
 	accent-color: var( --wp-admin-theme-color );
@@ -66,7 +74,7 @@
 }
 
 // Responsive: stack vertically on small screens
-@media ( max-width: 782px ) {
+@media ( max-width: #{ $break-medium } ) {
 	.landing-page-options {
 		flex-direction: column;
 	}
