@@ -21,63 +21,93 @@ const AllSitesIllustration = () => (
 	<svg viewBox="0 0 280 180" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<rect width="280" height="180" rx="8" fill="#F6F7F7" />
 		{ /* Title */ }
-		<rect x="16" y="16" width="40" height="10" rx="2" fill="#1E1E1E" />
-		{ /* Site cards - 2x2 grid */ }
+		<rect x="12" y="12" width="40" height="8" rx="2" fill="#1E1E1E" />
+		{ /* Site cards - 3x2 grid */ }
+		{ /* Row 1 */ }
 		<rect
-			x="16"
-			y="40"
-			width="120"
-			height="60"
-			rx="6"
+			x="12"
+			y="28"
+			width="80"
+			height="68"
+			rx="4"
 			fill="white"
 			stroke="#DCDCDE"
 			strokeWidth="1"
 		/>
-		<rect x="22" y="46" width="108" height="30" rx="3" fill="#DCDCDE" />
-		<rect x="22" y="82" width="60" height="6" rx="1" fill="#1E1E1E" />
-		<rect x="22" y="92" width="80" height="4" rx="1" fill="#C3C4C7" />
+		<rect x="16" y="32" width="72" height="36" rx="2" fill="#DCDCDE" />
+		<rect x="16" y="74" width="40" height="5" rx="1" fill="#1E1E1E" />
+		<rect x="16" y="83" width="56" height="4" rx="1" fill="#C3C4C7" />
 
 		<rect
-			x="144"
-			y="40"
-			width="120"
-			height="60"
-			rx="6"
+			x="100"
+			y="28"
+			width="80"
+			height="68"
+			rx="4"
 			fill="white"
 			stroke="#DCDCDE"
 			strokeWidth="1"
 		/>
-		<rect x="150" y="46" width="108" height="30" rx="3" fill="#DCDCDE" />
-		<rect x="150" y="82" width="50" height="6" rx="1" fill="#1E1E1E" />
-		<rect x="150" y="92" width="70" height="4" rx="1" fill="#C3C4C7" />
+		<rect x="104" y="32" width="72" height="36" rx="2" fill="#DCDCDE" />
+		<rect x="104" y="74" width="36" height="5" rx="1" fill="#1E1E1E" />
+		<rect x="104" y="83" width="50" height="4" rx="1" fill="#C3C4C7" />
 
 		<rect
-			x="16"
-			y="108"
-			width="120"
-			height="60"
-			rx="6"
+			x="188"
+			y="28"
+			width="80"
+			height="68"
+			rx="4"
 			fill="white"
 			stroke="#DCDCDE"
 			strokeWidth="1"
 		/>
-		<rect x="22" y="114" width="108" height="30" rx="3" fill="#DCDCDE" />
-		<rect x="22" y="150" width="70" height="6" rx="1" fill="#1E1E1E" />
-		<rect x="22" y="160" width="90" height="4" rx="1" fill="#C3C4C7" />
+		<rect x="192" y="32" width="72" height="36" rx="2" fill="#DCDCDE" />
+		<rect x="192" y="74" width="44" height="5" rx="1" fill="#1E1E1E" />
+		<rect x="192" y="83" width="60" height="4" rx="1" fill="#C3C4C7" />
+
+		{ /* Row 2 */ }
+		<rect
+			x="12"
+			y="104"
+			width="80"
+			height="68"
+			rx="4"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<rect x="16" y="108" width="72" height="36" rx="2" fill="#DCDCDE" />
+		<rect x="16" y="150" width="48" height="5" rx="1" fill="#1E1E1E" />
+		<rect x="16" y="159" width="64" height="4" rx="1" fill="#C3C4C7" />
 
 		<rect
-			x="144"
-			y="108"
-			width="120"
-			height="60"
-			rx="6"
+			x="100"
+			y="104"
+			width="80"
+			height="68"
+			rx="4"
 			fill="white"
 			stroke="#DCDCDE"
 			strokeWidth="1"
 		/>
-		<rect x="150" y="114" width="108" height="30" rx="3" fill="#DCDCDE" />
-		<rect x="150" y="150" width="55" height="6" rx="1" fill="#1E1E1E" />
-		<rect x="150" y="160" width="75" height="4" rx="1" fill="#C3C4C7" />
+		<rect x="104" y="108" width="72" height="36" rx="2" fill="#DCDCDE" />
+		<rect x="104" y="150" width="32" height="5" rx="1" fill="#1E1E1E" />
+		<rect x="104" y="159" width="48" height="4" rx="1" fill="#C3C4C7" />
+
+		<rect
+			x="188"
+			y="104"
+			width="80"
+			height="68"
+			rx="4"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<rect x="192" y="108" width="72" height="36" rx="2" fill="#DCDCDE" />
+		<rect x="192" y="150" width="52" height="5" rx="1" fill="#1E1E1E" />
+		<rect x="192" y="159" width="68" height="4" rx="1" fill="#C3C4C7" />
 	</svg>
 );
 
@@ -85,65 +115,73 @@ const PrimarySiteIllustration = () => (
 	<svg viewBox="0 0 280 180" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<rect width="280" height="180" rx="8" fill="#F6F7F7" />
 		{ /* Title */ }
-		<rect x="16" y="16" width="80" height="12" rx="2" fill="#1E1E1E" />
-		<rect x="16" y="32" width="120" height="4" rx="1" fill="#C3C4C7" />
-		{ /* Site preview */ }
-		<rect x="16" y="48" width="80" height="120" rx="6" fill="#1E1E1E" />
-		<rect x="24" y="64" width="64" height="8" rx="1" fill="white" opacity="0.9" />
-		<rect x="24" y="78" width="48" height="4" rx="1" fill="white" opacity="0.5" />
-		<rect x="24" y="100" width="28" height="12" rx="3" fill="white" opacity="0.3" />
+		<rect x="16" y="16" width="80" height="10" rx="2" fill="#1E1E1E" />
+		<rect x="16" y="30" width="120" height="4" rx="1" fill="#C3C4C7" />
+		{ /* Site preview - simple white card */ }
+		<rect
+			x="16"
+			y="44"
+			width="80"
+			height="124"
+			rx="6"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<rect x="28" y="70" width="56" height="8" rx="1" fill="#DCDCDE" />
+		<rect x="28" y="86" width="40" height="4" rx="1" fill="#DCDCDE" />
 		{ /* Status cards - 2x2 grid */ }
 		<rect
 			x="108"
-			y="48"
+			y="44"
 			width="76"
-			height="54"
-			rx="6"
+			height="56"
+			rx="4"
 			fill="white"
 			stroke="#DCDCDE"
 			strokeWidth="1"
 		/>
-		<circle cx="124" cy="68" r="8" fill="#DCDCDE" />
-		<rect x="116" y="86" width="50" height="6" rx="1" fill="#1E1E1E" />
+		<circle cx="124" cy="64" r="8" fill="#DCDCDE" />
+		<rect x="116" y="84" width="50" height="5" rx="1" fill="#1E1E1E" />
 
 		<rect
 			x="192"
-			y="48"
+			y="44"
 			width="76"
-			height="54"
-			rx="6"
+			height="56"
+			rx="4"
 			fill="white"
 			stroke="#DCDCDE"
 			strokeWidth="1"
 		/>
-		<circle cx="208" cy="68" r="8" fill="#DCDCDE" />
-		<rect x="200" y="86" width="50" height="6" rx="1" fill="#1E1E1E" />
+		<circle cx="208" cy="64" r="8" fill="#DCDCDE" />
+		<rect x="200" y="84" width="50" height="5" rx="1" fill="#1E1E1E" />
 
 		<rect
 			x="108"
-			y="110"
+			y="108"
 			width="76"
-			height="54"
-			rx="6"
+			height="56"
+			rx="4"
 			fill="white"
 			stroke="#DCDCDE"
 			strokeWidth="1"
 		/>
-		<circle cx="124" cy="130" r="8" fill="#DCDCDE" />
-		<rect x="116" y="148" width="50" height="6" rx="1" fill="#1E1E1E" />
+		<circle cx="124" cy="128" r="8" fill="#DCDCDE" />
+		<rect x="116" y="148" width="50" height="5" rx="1" fill="#1E1E1E" />
 
 		<rect
 			x="192"
-			y="110"
+			y="108"
 			width="76"
-			height="54"
-			rx="6"
+			height="56"
+			rx="4"
 			fill="white"
 			stroke="#DCDCDE"
 			strokeWidth="1"
 		/>
-		<circle cx="208" cy="130" r="8" fill="#DCDCDE" />
-		<rect x="200" y="148" width="50" height="6" rx="1" fill="#1E1E1E" />
+		<circle cx="208" cy="128" r="8" fill="#DCDCDE" />
+		<rect x="200" y="148" width="50" height="5" rx="1" fill="#1E1E1E" />
 	</svg>
 );
 
