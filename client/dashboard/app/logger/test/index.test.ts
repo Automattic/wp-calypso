@@ -5,7 +5,6 @@
 import { captureException } from '@automattic/calypso-sentry';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { handleOnCatch } from '../index';
-import type { WPError } from '@automattic/api-core';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
@@ -37,10 +36,8 @@ describe( 'handleOnCatch', () => {
 	} );
 
 	it( 'does not log or capture benign inaccessible Jetpack error', () => {
-		const error = new Error( 'The Jetpack site is inaccessible or returned an error' ) as WPError;
+		const error = new Error( 'The Jetpack site is inaccessible or returned an error' );
 		error.name = 'ParseError';
-		error.status = 403;
-		error.statusCode = 403;
 
 		const errorInfo = createErrorInfo();
 		const router = createRouter( { siteSlug: 'my-site' } );

@@ -17,7 +17,7 @@ export function isWpError( error: unknown ): error is WPError {
 }
 
 export function isInaccessibleJetpackError( error: unknown ): boolean {
-	if ( isWpError( error ) ) {
+	if ( error instanceof Error ) {
 		if ( error.message.startsWith( 'The Jetpack site is inaccessible' ) ) {
 			return true;
 		}

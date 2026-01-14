@@ -1,5 +1,4 @@
 import {
-	isWpError,
 	isInaccessibleJetpackError,
 	fetchSite,
 	deleteSite,
@@ -16,7 +15,9 @@ import type { Site } from '@automattic/api-core';
 import type { Query } from '@tanstack/react-query';
 
 function isSiteNotFoundError( error: unknown ) {
-	return isWpError( error ) && [ 'UnknownBlogError', 'UnauthorizedError' ].includes( error.name );
+	return (
+		error instanceof Error && [ 'UnknownBlogError', 'UnauthorizedError' ].includes( error.name )
+	);
 }
 
 export function siteBySlugQuery( siteSlug: string ) {
