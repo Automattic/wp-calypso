@@ -63,6 +63,14 @@
 	}
 }
 
+@media ( prefers-reduced-motion: reduce ) {
+	@keyframes blink {
+		0%, 100% {
+			opacity: 1;
+		}
+	}
+}
+
 .components-button.telex-banner__cta {
 	width: fit-content;
 	font-size: $font-body;
