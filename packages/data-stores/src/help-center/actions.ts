@@ -13,7 +13,7 @@ import type {
 } from './types';
 
 export function setHelpCenterRouterHistory(
-	history: { entries: Location[]; index: number } | null
+	history: { entries: Location[]; index: number } | undefined
 ) {
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
@@ -33,12 +33,12 @@ export const setUnreadCount = ( count: number ) =>
 		count,
 	} ) as const;
 
-export const setHelpCenterPreferences = ( preferences: Preferences[ 'calypso_preferences' ] ) => {
-	return {
+export const setHelpCenterPreferences = ( preferences: Preferences[ 'calypso_preferences' ] ) =>
+	( {
 		type: 'HELP_CENTER_SET_HELP_CENTER_PREFERENCES',
 		preferences,
-	} as const;
-};
+	} ) as const;
+
 export const setOdieInitialPromptText = ( text: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_ODIE_INITIAL_PROMPT_TEXT',
@@ -176,7 +176,7 @@ export const setShowHelpCenter = function* (
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );
 		// Reset the local navigation history when closing the help center.
-		yield setHelpCenterRouterHistory( null );
+		yield setHelpCenterRouterHistory( undefined );
 		return {
 			type: 'HELP_CENTER_SET_SHOW',
 			show: false,
