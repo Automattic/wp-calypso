@@ -59,9 +59,9 @@ const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = 
 };
 
 const helpCenterRouterHistory: Reducer<
-	{ entries: Location[]; index: number } | undefined,
+	{ entries: Location[]; index: number } | null,
 	HelpCenterAction
-> = ( state, action ) => {
+> = ( state = null, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY':
 			return action.history;
