@@ -12,8 +12,7 @@
 		outline: none;
 
 		.landing-page-option-card__illustration {
-			outline: 2px solid var( --wp-admin-theme-color );
-			outline-offset: 2px;
+			box-shadow: 0 0 0 2px var( --wp-admin-theme-color );
 		}
 	}
 
@@ -36,8 +35,7 @@
 	}
 
 	.is-selected & {
-		outline: 2px solid var( --wp-admin-theme-color );
-		outline-offset: 2px;
+		box-shadow: 0 0 0 2px var( --wp-admin-theme-color );
 	}
 }
 
