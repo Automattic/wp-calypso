@@ -6,6 +6,7 @@ import { formatDate } from '../../../utils/datetime';
 import { wpcomLink } from '../../../utils/link';
 import { isAkismetTemporarySitePurchase } from '../../../utils/purchase';
 import CancelAutoRenewalForm from './cancel-auto-renewal-form';
+import PrecancellationChatButton from './precancellation-chat-button';
 import type { Purchase } from '@automattic/api-core';
 import type { FC } from 'react';
 
@@ -279,7 +280,17 @@ const AutoRenewDisablingDialog: FC< AutoRenewDisablingDialogProps > = ( {
 				cancelButtonText={ __( 'Keep auto-renew on' ) }
 				confirmButtonText={ __( 'Turn off auto-renew' ) }
 			>
-				<SectionHeader title={ __( 'Turn off auto-renew' ) } description={ description } />
+				<SectionHeader
+					title={ __( 'Turn off auto-renew' ) }
+					description={ description }
+					actions={
+						<PrecancellationChatButton
+							purchase={ purchase }
+							onClick={ onClose }
+							className="cancel-auto-renewal-form__chat-button"
+						/>
+					}
+				/>
 			</ConfirmDialog>
 		);
 	};

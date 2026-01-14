@@ -98,6 +98,7 @@ function useCanConnectToZendeskMessaging( enabled = true ) {
 		select: ( data ) => !! data,
 	} );
 
+	const sentTracksEvent = useRef< boolean >( false );
 	useEffect( () => {
 		// Leaving for backwards compatibility. This event is no longer needed. The one below is more general.
 		if ( ! query.data && query.status !== 'pending' ) {
@@ -107,12 +108,22 @@ function useCanConnectToZendeskMessaging( enabled = true ) {
 			} );
 		}
 
-		recordTracksEvent( 'calypso_helpcenter_zendesk_config_request', {
-			status: query.status,
-			status_text: query.error?.message,
-			failure_count: query.failureCount,
-		} );
-	}, [ recordTracksEvent, query.data, query.error?.message, query.status, query.failureCount ] );
+		if ( ! sentTracksEvent.current ) {
+			recordTracksEvent( 'calypso_helpcenter_zendesk_config_request', {
+				status: query.status,
+				status_text: query.error?.message,
+				failure_count: query.failureCount,
+			} );
+			sentTracksEvent.current = true;
+		}
+	}, [
+		sentTracksEvent,
+		recordTracksEvent,
+		query.data,
+		query.error?.message,
+		query.status,
+		query.failureCount,
+	] );
 
 	return query;
 }
