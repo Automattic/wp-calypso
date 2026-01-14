@@ -2,7 +2,7 @@
 
 .landing-page-options {
 	margin-block-start: 8px;
-	gap: 16px;
+	gap: 24px;
 }
 
 .landing-page-option-card {
@@ -29,7 +29,7 @@
 	margin-block-end: 8px;
 	border-radius: 8px;
 	overflow: hidden;
-	box-shadow: 0 0 0 1px transparent;
+	box-shadow: 0 0 0 1px $gray-200;
 	transition: box-shadow 0.1s ease-in-out;
 
 	svg {
@@ -39,7 +39,7 @@
 	}
 
 	.landing-page-option-card:hover:not( .is-disabled ):not( .is-selected ) & {
-		box-shadow: 0 0 0 1px $gray-300;
+		box-shadow: 0 0 0 1px $gray-400;
 	}
 
 	.is-selected & {
