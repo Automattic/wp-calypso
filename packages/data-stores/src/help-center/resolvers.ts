@@ -23,7 +23,13 @@ export function* getHelpCenterPreferences() {
 				path: '/me/preferences',
 				apiNamespace: 'wpcom/v2',
 			} );
-			yield setHelpCenterPreferences( preferences[ 'calypso_preferences' ] );
+			// project the preferences to the expected shape
+			const projectedPreferences = {
+				help_center_open: preferences.calypso_preferences.help_center_open,
+				help_center_minimized: preferences.calypso_preferences.help_center_minimized,
+				help_center_router_history: preferences.calypso_preferences.help_center_router_history,
+			};
+			yield setHelpCenterPreferences( projectedPreferences );
 		} else {
 			const preferences: Preferences[ 'calypso_preferences' ] = yield apiFetch( {
 				global: true,
