@@ -59,6 +59,10 @@ export const getChatLinkFromConversation = (
 		if ( metadata.botSlug ) {
 			chatParams.set( 'botSlug', metadata.botSlug.toString() );
 		}
+
+		if ( metadata.odieChatId ) {
+			chatParams.set( 'chatId', metadata.odieChatId.toString() );
+		}
 	}
 
 	return `/odie?${ chatParams.toString() }`;
