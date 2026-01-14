@@ -45,9 +45,13 @@ const HelpCenterRecentConversations: React.FC = () => {
 	).toISOString();
 
 	const chatLink = getChatLinkFromConversation( recentConversation );
+	const isUnread =
+		'participants' in recentConversation &&
+		( recentConversation.participants?.[ 0 ]?.unreadCount ?? 0 ) > 0;
 
 	return (
 		<SummaryButton
+			className={ isUnread ? 'has-unread-conversation' : '' }
 			strapline={ __( 'Recent Conversation', __i18n_text_domain__ ) }
 			title={ lastMessage.text || '' }
 			description={

@@ -15,3 +15,23 @@
 		margin-bottom: 8px;
 	}
 }
+
+// Dot indicator for unread conversations
+.summary-button.has-unread-conversation {
+	.summary-button-strapline {
+		position: relative;
+		padding-left: 12px;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			background-color: #e65054;
+		}
+	}
+}
