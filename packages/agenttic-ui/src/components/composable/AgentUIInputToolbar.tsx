@@ -4,12 +4,14 @@ import styles from './AgentUIInputToolbar.module.css';
 export interface AgentUIInputToolbarProps {
 	children?: React.ReactNode;
 	className?: string;
+	icon?: React.ReactNode;
 	label?: string;
 }
 
 export function AgentUIInputToolbar( {
 	children,
 	className,
+	icon,
 	label,
 }: AgentUIInputToolbarProps = {} ) {
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -107,6 +109,7 @@ export function AgentUIInputToolbar( {
 					aria-controls={ isOpen ? dropdownId : undefined }
 					aria-label={ toolbarLabel }
 				>
+					{ icon }
 					<span>{ toolbarLabel }</span>
 					<svg
 						width="16"
