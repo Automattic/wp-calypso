@@ -33,13 +33,13 @@ export const isInSupportSession = () => {
 	return false;
 };
 
-const memoryStore: { [ key: string ]: string } = {};
+const memoryStore: { [ key: string ]: unknown } = {};
 
 export function persistValueSafely< T >( key: string, value: T ): void {
 	try {
 		window.localStorage.setItem( key, JSON.stringify( value ) );
 	} catch ( error ) {
-		memoryStore[ key ] = JSON.stringify( value );
+		memoryStore[ key ] = value;
 	}
 }
 
@@ -48,8 +48,6 @@ export function retrieveValueSafely< T >( key: string ): T | undefined {
 		const value = window.localStorage.getItem( key );
 		return value ? JSON.parse( value ) : undefined;
 	} catch ( error ) {
-		const value = memoryStore[ key ];
-		return value ? JSON.parse( value ) : undefined;
-		return undefined;
+		return memoryStore[ key ] as T | undefined;
 	}
 }
