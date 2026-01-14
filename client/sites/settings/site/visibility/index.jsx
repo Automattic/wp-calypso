@@ -9,8 +9,10 @@ import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-f
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
+import { a4aLink } from 'calypso/dashboard/utils/link';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -32,9 +34,34 @@ import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 
 import './styles.scss';
 
-const createAgencyBillingMessage = ( agency, agencyLoading = false, agencyError = false ) => {
+const createAgencyBillingMessage = (
+	agency,
+	agencyLoading = false,
+	agencyError = false,
+	isBillingTypeBD = false
+) => {
 	if ( ! agency ) {
 		return undefined;
+	}
+
+	// For BD billing, show simplified message
+	if ( isBillingTypeBD ) {
+		return translate(
+			'During the site launch process, you will be charged for this site, with the ability to purchase on an annual or monthly term. {{a}}Learn more.{{/a}}',
+			{
+				components: {
+					a: (
+						<a
+							href={ localizeUrl(
+								'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
+							) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
+		);
 	}
 
 	const agencyPriceInfoIsDefined =
@@ -62,7 +89,6 @@ const createAgencyBillingMessage = ( agency, agencyLoading = false, agencyError 
 				strong: <strong />,
 				a: (
 					<a
-						className="site-settings__general-settings-launch-site-agency-learn-more"
 						href={ localizeUrl(
 							'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
 						) }
@@ -97,6 +123,7 @@ const LaunchSite = () => {
 	);
 	const isUnlaunchedSite = useSelector( ( state ) => getIsUnlaunchedSite( state, siteId ) );
 	const isLaunchInProgress = useSelector( ( state ) => getIsSiteLaunchInProgress( state, siteId ) );
+	const userBillingType = useSelector( getUserBillingType );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 
@@ -106,6 +133,7 @@ const LaunchSite = () => {
 	const btnText = translate( 'Launch site' );
 
 	const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
+	const isBillingTypeBD = userBillingType === 'billingdragon';
 
 	const dispatchSiteLaunch = () => {
 		dispatch( launchSite( site.ID ) );
@@ -126,7 +154,13 @@ const LaunchSite = () => {
 	const handleLaunchSiteClick = () => {
 		recordTracksEvent( 'calypso_site_settings_launch_site_click' );
 		if ( isDevelopmentSite && ! siteReferralActive ) {
-			openLaunchConfirmationModal();
+			if ( isBillingTypeBD ) {
+				window.location.href = a4aLink(
+					`/marketplace/checkout/${ site.slug }/a4a_wp_bundle_business_yearly`
+				);
+			} else {
+				openLaunchConfirmationModal();
+			}
 		} else {
 			dispatch(
 				launchSiteOrRedirectToLaunchSignupFlow( siteId, 'general-settings', site.title, 'yes' )
@@ -166,7 +200,12 @@ const LaunchSite = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
 
-	const agencyBillingMessage = createAgencyBillingMessage( agency, agencyLoading, agencyError );
+	const agencyBillingMessage = createAgencyBillingMessage(
+		agency,
+		agencyLoading,
+		agencyError,
+		isBillingTypeBD
+	);
 
 	const renderConfirmationModal = () => {
 		return (

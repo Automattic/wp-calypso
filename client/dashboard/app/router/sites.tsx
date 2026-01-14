@@ -57,7 +57,8 @@ import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { AUTH_QUERY_KEY } from '../auth';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -138,6 +139,15 @@ export const siteRoute = createRoute( {
 		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
 			throw redirectAsNotAllowed( { to: migrationUrl } );
 		}
+
+		// Check site type support for matched routes
+		const siteTypeSupports = getSiteTypeFeatureSupports( site );
+		for ( const match of matches ) {
+			const required = match.staticData?.requiresSiteTypeSupport;
+			if ( required && ! siteTypeSupports[ required ] ) {
+				throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }` } );
+			}
+		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
@@ -196,6 +206,7 @@ export const siteOverviewRoute = createRoute( {
 );
 
 export const siteDeploymentsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'deployments' },
 	head: () => ( {
 		meta: [
 			{
@@ -205,16 +216,6 @@ export const siteDeploymentsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirectAsNotAllowed( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
@@ -239,6 +240,7 @@ export const siteDeploymentsListRoute = createRoute( {
 );
 
 export const siteMonitoringRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'monitoring' },
 	head: () => ( {
 		meta: [
 			{
@@ -248,16 +250,6 @@ export const siteMonitoringRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'monitoring',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirectAsNotAllowed( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/monitoring' ).then( ( d ) =>
 		createLazyRoute( 'site-monitoring' )( {
@@ -267,6 +259,7 @@ export const siteMonitoringRoute = createRoute( {
 );
 
 export const siteLogsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'logs' },
 	head: () => ( {
 		meta: [
 			{
@@ -276,16 +269,6 @@ export const siteLogsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'logs',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirectAsNotAllowed( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 } );
 
 export const siteLogsIndexRoute = createRoute( {
@@ -363,6 +346,7 @@ export const siteLogsActivityRoute = createRoute( {
 );
 
 export const siteScanRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'scan' },
 	head: () => ( {
 		meta: [
 			{
@@ -372,16 +356,6 @@ export const siteScanRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'scan',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirectAsNotAllowed( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await Promise.all( [
@@ -437,6 +411,7 @@ export const siteScanHistoryRoute = createRoute( {
 );
 
 export const siteBackupsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'backups' },
 	head: () => ( {
 		meta: [
 			{
@@ -446,16 +421,6 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirectAsNotAllowed( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries and group counts.
@@ -569,6 +534,7 @@ export const siteDomainsRoute = createRoute( {
 );
 
 export const sitePerformanceRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'performance' },
 	head: () => ( {
 		meta: [
 			{
@@ -578,16 +544,6 @@ export const sitePerformanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirectAsNotAllowed( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
@@ -597,6 +553,7 @@ export const sitePerformanceRoute = createRoute( {
 );
 
 export const siteSettingsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settings' },
 	head: () => ( {
 		meta: [
 			{
@@ -1351,57 +1308,30 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteMigrationOverviewRoute,
 		siteSSHMigrationCompleteRoute,
 		siteSSHMigrationFailedRoute,
+		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
+		sitePerformanceRoute,
+		siteMonitoringRoute,
+		siteLogsRoute.addChildren( [
+			siteLogsIndexRoute,
+			siteLogsPhpRoute,
+			siteLogsServerRoute,
+			siteLogsActivityRoute,
+		] ),
+		siteBackupsRoute.addChildren( [
+			siteBackupsIndexRoute,
+			siteBackupDetailRoute.addChildren( [
+				siteBackupDetailIndexRoute,
+				siteBackupRestoreRoute,
+				siteBackupDownloadRoute,
+			] ),
+		] ),
+		siteScanRoute.addChildren( [
+			siteScanIndexRoute,
+			siteScanActiveThreatsRoute,
+			siteScanHistoryRoute,
+		] ),
+		siteDomainsRoute,
 	];
-
-	if ( config.supports.sites.deployments ) {
-		siteRoutes.push( siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ) );
-	}
-
-	if ( config.supports.sites.performance ) {
-		siteRoutes.push( sitePerformanceRoute );
-	}
-
-	if ( config.supports.sites.monitoring ) {
-		siteRoutes.push( siteMonitoringRoute );
-	}
-
-	if ( config.supports.sites.logs ) {
-		siteRoutes.push(
-			siteLogsRoute.addChildren( [
-				siteLogsIndexRoute,
-				siteLogsPhpRoute,
-				siteLogsServerRoute,
-				siteLogsActivityRoute,
-			] )
-		);
-	}
-
-	if ( config.supports.sites.backups ) {
-		siteRoutes.push(
-			siteBackupsRoute.addChildren( [
-				siteBackupsIndexRoute,
-				siteBackupDetailRoute.addChildren( [
-					siteBackupDetailIndexRoute,
-					siteBackupRestoreRoute,
-					siteBackupDownloadRoute,
-				] ),
-			] )
-		);
-	}
-
-	if ( config.supports.sites.scan ) {
-		siteRoutes.push(
-			siteScanRoute.addChildren( [
-				siteScanIndexRoute,
-				siteScanActiveThreatsRoute,
-				siteScanHistoryRoute,
-			] )
-		);
-	}
-
-	if ( config.supports.sites.domains ) {
-		siteRoutes.push( siteDomainsRoute );
-	}
 
 	if ( config.supports.sites.settings ) {
 		const settingsRoutes: AnyRoute[] = [ siteSettingsIndexRoute, siteSettingsTransferSiteRoute ];

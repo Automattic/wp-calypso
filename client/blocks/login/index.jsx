@@ -18,6 +18,7 @@ import {
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import GravPoweredLoginBlockHeader from 'calypso/login/wp-login/gravatar/grav-powered-login-block-header';
@@ -66,6 +67,7 @@ class Login extends Component {
 		isLinking: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
 		isFromAkismet: PropTypes.bool,
+		isFromPassport: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
@@ -519,6 +521,7 @@ class Login extends Component {
 				signupUrl={ signupUrl }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
+				isFromPassport={ this.props.isFromPassport }
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst } // TODO just not gravatar
 				isJetpack={ isJetpack }
@@ -539,6 +542,7 @@ class Login extends Component {
 	render() {
 		const {
 			isFromAkismet,
+			isFromPassport,
 			isJetpack,
 			oauth2Client,
 			locale,
@@ -561,6 +565,7 @@ class Login extends Component {
 				className={ clsx( 'login', {
 					'is-akismet': isFromAkismet,
 					'is-jetpack': isJetpack,
+					'is-passport': isFromPassport,
 					// TODO: Confirm if `is-jetpack-cloud` is needed
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
@@ -614,6 +619,8 @@ export default connect(
 		isFromAkismet: isAkismetRedirect(
 			new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 		),
+		isFromPassport: isPassportRedirect( getRedirectToOriginal( state ) ),
+
 		isFromAutomatticForAgenciesPlugin:
 			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 			'automattic-for-agencies-client' ===

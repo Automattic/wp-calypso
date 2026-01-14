@@ -17,18 +17,17 @@ Read `.cursor/rules/dashboard-rules.mdc` before reviewing.
 
 ## Method
 
-- Include all feedback in your response (it will be posted as a single PR comment).
-- Cite `file:line` for each issue.
-- Provide fix suggestions.
+- Use `mcp__github_inline_comment__create_inline_comment` to post feedback directly on specific lines.
+- One comment per issue, placed on the relevant line.
+- Provide fix suggestions in each comment.
 - Focus on files changed in this PR.
 - Don't nitpick minor style issues unless they violate project guidelines.
 - Before suggesting alternative implementations, check if the PR description already addresses why that approach wasn't used.
 
 ## Output Format
 
-- Be concise. Target 5-15 lines for most reviews.
+- Keep each inline comment concise (2-5 lines).
 - Do NOT use checkboxes, todo lists, or progress indicators.
-- Do NOT use emoji headers (e.g., `### ✅ Section`), horizontal rules (`---`), or decorative formatting.
-- Only mention issues; skip sections with nothing to report.
-- For Dashboard Guidelines compliance: one sentence if passing (e.g., "Dashboard guidelines followed."), details only if violations found.
-- For clean PRs: "LGTM - no issues found." with a brief explanation.
+- Do NOT use emoji headers or decorative formatting.
+- Only comment on issues; skip lines with nothing to report.
+- For clean PRs with no issues: do not create any comments.

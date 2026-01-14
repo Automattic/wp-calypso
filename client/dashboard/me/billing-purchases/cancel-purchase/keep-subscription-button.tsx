@@ -23,7 +23,7 @@ export default function KeepSubscriptionButton( {
 				onKeepSubscriptionClick();
 			} }
 		>
-			{ __( 'Keep plan' ) }
+			{ purchase.is_plan ? __( 'Keep plan' ) : __( 'Keep product' ) }
 		</Button>
 	);
 }

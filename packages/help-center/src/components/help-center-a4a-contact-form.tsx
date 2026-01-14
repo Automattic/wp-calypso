@@ -8,11 +8,12 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
 	Notice,
+	TextControl,
 } from '@wordpress/components';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useCallback, useMemo } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -28,123 +29,19 @@ type FormData = {
 	product: string;
 	message: string;
 	pressable_contact: string;
+	no_of_sites: number;
 };
 
 const FORM_CONFIG = {
 	layout: { type: 'regular' as const },
-	fields: [ 'name', 'email', 'site', 'product', 'pressable_contact', 'message' ],
+	fields: [ 'name', 'email', 'site', 'no_of_sites', 'product', 'pressable_contact', 'message' ],
 };
-
-const fields: Field< FormData >[] = [
-	{
-		id: 'name',
-		label: __( 'Name', __i18n_text_domain__ ),
-		type: 'text' as const,
-		placeholder: __( 'Your name', __i18n_text_domain__ ),
-		isValid: {
-			required: true,
-		},
-	},
-	{
-		id: 'email',
-		label: __( 'Email address', __i18n_text_domain__ ),
-		type: 'text' as const,
-		placeholder: __( 'Your email', __i18n_text_domain__ ),
-		isValid: {
-			required: true,
-		},
-	},
-	{
-		id: 'site',
-		label: __( 'Related site', __i18n_text_domain__ ),
-		type: 'text' as const,
-		placeholder: __( 'Add site if necessary', __i18n_text_domain__ ),
-	},
-	{
-		id: 'product',
-		label: __( 'What product would you like help with?', __i18n_text_domain__ ),
-		type: 'text' as const,
-		Edit: 'select',
-		elements: [
-			{
-				label: __( 'Choose a product', __i18n_text_domain__ ),
-				value: '',
-			},
-			{
-				label: __( 'Automattic for Agencies', __i18n_text_domain__ ),
-				value: 'a4a',
-			},
-			{
-				label: __( 'Woo', __i18n_text_domain__ ),
-				value: 'woo',
-			},
-			{
-				label: __( 'WordPress.com', __i18n_text_domain__ ),
-				value: 'wpcom',
-			},
-			{
-				label: __( 'Jetpack', __i18n_text_domain__ ),
-				value: 'jetpack',
-			},
-			{
-				label: __( 'Pressable', __i18n_text_domain__ ),
-				value: 'pressable',
-			},
-		],
-		isValid: {
-			required: true,
-		},
-	},
-	{
-		id: 'pressable_contact',
-		label: __( 'Would you like help with Pressable sales or support?', __i18n_text_domain__ ),
-		type: 'text' as const,
-		Edit: 'select',
-		elements: [
-			{
-				label: __( 'Sales', __i18n_text_domain__ ),
-				value: 'sales',
-			},
-			{
-				label: __( 'Support', __i18n_text_domain__ ),
-				value: 'support',
-			},
-		],
-		isVisible: ( item: FormData ) => item.product === 'pressable',
-	},
-	{
-		id: 'message',
-		label: __( 'How can we help?', __i18n_text_domain__ ),
-		type: 'text' as const,
-		Edit: ( { field, data, onChange } ) => {
-			const { id, getValue } = field;
-			const placeholder =
-				data.product === 'pressable'
-					? __(
-							"Please provide the team with a detailed explanation of the issue you're facing, including steps to reproduce the issue on our end and/or URLs. Providing these details will greatly help us with your support request.",
-							__i18n_text_domain__
-					  )
-					: __( 'Add your message here', __i18n_text_domain__ );
-			return (
-				<TextareaControl
-					__nextHasNoMarginBottom
-					label={ field.label }
-					placeholder={ placeholder }
-					value={ getValue( { item: data } ) }
-					onChange={ ( value ) => {
-						return onChange( { [ id ]: value ?? '' } );
-					} }
-				/>
-			);
-		},
-		isValid: {
-			required: true,
-		},
-	},
-];
 
 export const HelpCenterA4AContactForm = () => {
 	const { currentUser, agency } = useHelpCenterContext();
+	const [ searchParams ] = useSearchParams();
+	const isMigrationRequest = !! searchParams.get( 'migration-request' );
+
 	const navigate = useNavigate();
 
 	const [ formData, setFormData ] = useState< FormData >( {
@@ -152,7 +49,12 @@ export const HelpCenterA4AContactForm = () => {
 		email: currentUser?.email ?? '',
 		site: '',
 		product: '',
-		message: '',
+		message: isMigrationRequest
+			? __( "I'd like to chat more about the migration offer.", __i18n_text_domain__ ) +
+			  '\n\n' +
+			  __( '[your message here]', __i18n_text_domain__ )
+			: '',
+		no_of_sites: 1,
 		pressable_contact: 'sales',
 	} );
 
@@ -163,6 +65,163 @@ export const HelpCenterA4AContactForm = () => {
 	} = useSubmitA4ATicketMutation();
 
 	const isPressableSelected = formData.product === 'pressable';
+
+	const fields: Field< FormData >[] = useMemo(
+		() => [
+			{
+				id: 'name',
+				label: __( 'Name', __i18n_text_domain__ ),
+				type: 'text' as const,
+				placeholder: __( 'Your name', __i18n_text_domain__ ),
+				isValid: {
+					required: true,
+				},
+			},
+			{
+				id: 'email',
+				label: __( 'Email address', __i18n_text_domain__ ),
+				type: 'text' as const,
+				placeholder: __( 'Your email', __i18n_text_domain__ ),
+				isValid: {
+					required: true,
+				},
+			},
+			isMigrationRequest
+				? {
+						id: 'no_of_sites',
+						label: __( 'Number of sites', __i18n_text_domain__ ),
+						type: 'number' as const,
+						Edit: ( { field, data, onChange } ) => {
+							const { id, getValue } = field;
+							return (
+								<TextControl
+									__nextHasNoMarginBottom
+									type="number"
+									min="1"
+									label={ field.label }
+									value={ getValue( { item: data } ) }
+									onChange={ ( value ) => {
+										return onChange( { [ id ]: value ? Number( value ) : '' } );
+									} }
+								/>
+							);
+						},
+						placeholder: __( 'Add number of sites you plan to migrate', __i18n_text_domain__ ),
+						isValid: {
+							required: true,
+						},
+				  }
+				: {
+						id: 'site',
+						label: __( 'Related site', __i18n_text_domain__ ),
+						type: 'text' as const,
+						placeholder: __( 'Add site if necessary', __i18n_text_domain__ ),
+				  },
+			{
+				id: 'product',
+				label: isMigrationRequest
+					? __( 'What hosting product are you considering?', __i18n_text_domain__ )
+					: __( 'What product would you like help with?', __i18n_text_domain__ ),
+				type: 'text' as const,
+				Edit: 'select',
+				elements: isMigrationRequest
+					? [
+							{
+								label: __( 'Choose a product', __i18n_text_domain__ ),
+								value: '',
+							},
+							{
+								label: __( 'WordPress.com', __i18n_text_domain__ ),
+								value: 'wpcom',
+							},
+							{
+								label: __( 'Pressable', __i18n_text_domain__ ),
+								value: 'pressable',
+							},
+							{
+								label: __( "Don't know", __i18n_text_domain__ ),
+								value: 'dont-know',
+							},
+					  ]
+					: [
+							{
+								label: __( 'Choose a product', __i18n_text_domain__ ),
+								value: '',
+							},
+							{
+								label: __( 'Automattic for Agencies', __i18n_text_domain__ ),
+								value: 'a4a',
+							},
+							{
+								label: __( 'Woo', __i18n_text_domain__ ),
+								value: 'woo',
+							},
+							{
+								label: __( 'WordPress.com', __i18n_text_domain__ ),
+								value: 'wpcom',
+							},
+							{
+								label: __( 'Jetpack', __i18n_text_domain__ ),
+								value: 'jetpack',
+							},
+							{
+								label: __( 'Pressable', __i18n_text_domain__ ),
+								value: 'pressable',
+							},
+					  ],
+				isValid: {
+					required: true,
+				},
+			},
+			{
+				id: 'pressable_contact',
+				label: __( 'Would you like help with Pressable sales or support?', __i18n_text_domain__ ),
+				type: 'text' as const,
+				Edit: 'select',
+				elements: [
+					{
+						label: __( 'Sales', __i18n_text_domain__ ),
+						value: 'sales',
+					},
+					{
+						label: __( 'Support', __i18n_text_domain__ ),
+						value: 'support',
+					},
+				],
+				isVisible: ( item: FormData ) => item.product === 'pressable',
+			},
+			{
+				id: 'message',
+				label: __( 'How can we help?', __i18n_text_domain__ ),
+				type: 'text' as const,
+				Edit: ( { field, data, onChange } ) => {
+					const { id, getValue } = field;
+					const placeholder =
+						data.product === 'pressable'
+							? __(
+									"Please provide the team with a detailed explanation of the issue you're facing, including steps to reproduce the issue on our end and/or URLs. Providing these details will greatly help us with your support request.",
+									__i18n_text_domain__
+							  )
+							: __( 'Add your message here', __i18n_text_domain__ );
+					return (
+						<TextareaControl
+							__nextHasNoMarginBottom
+							label={ field.label }
+							placeholder={ placeholder }
+							value={ getValue( { item: data } ) }
+							onChange={ ( value ) => {
+								return onChange( { [ id ]: value ?? '' } );
+							} }
+						/>
+					);
+				},
+				isValid: {
+					required: true,
+				},
+			},
+		],
+		[ isMigrationRequest ]
+	);
 
 	const { validity } = useFormValidity( formData, fields, FORM_CONFIG );
 
@@ -182,7 +241,9 @@ export const HelpCenterA4AContactForm = () => {
 					agency_id: agency?.id,
 					pressable_id: agency?.pressableId,
 					site: formData.site || undefined,
+					no_of_sites: isMigrationRequest ? formData.no_of_sites : undefined,
 					contact_type: isPressableSelected ? formData.pressable_contact : undefined,
+					tags: isMigrationRequest ? [ 'a4a_form_dash_migration' ] : undefined,
 				},
 				{
 					onSuccess: () => {
@@ -191,7 +252,21 @@ export const HelpCenterA4AContactForm = () => {
 				}
 			);
 		},
-		[ formData, submitA4ATicket, agency?.id, agency?.pressableId, isPressableSelected, navigate ]
+		[
+			formData.message,
+			formData.name,
+			formData.email,
+			formData.product,
+			formData.site,
+			formData.no_of_sites,
+			formData.pressable_contact,
+			submitA4ATicket,
+			agency?.id,
+			agency?.pressableId,
+			isMigrationRequest,
+			isPressableSelected,
+			navigate,
+		]
 	);
 
 	const isValidForm = ! validity;

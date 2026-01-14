@@ -32,10 +32,7 @@ function getProductLogo( relatedProduct: string ): JSX.Element | null {
  */
 export function formatAgencyResource( resource: APIAgencyResource ): ResourceItem {
 	return {
-		// Generate a unique ID from the resource name and type
-		id: `${ resource.related_product }-${ resource.resource_type }-${ resource.name
-			.toLowerCase()
-			.replace( /\s+/g, '-' ) }`,
+		id: resource.id,
 		name: resource.name,
 		description: resource.description,
 		externalUrl: resource.external_url,
