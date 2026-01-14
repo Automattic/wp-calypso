@@ -1,0 +1,18 @@
+@import '@wordpress/base-styles/colors';
+
+$admin-bar-height: 32px;
+$layout-spacing: 16px;
+$sidebar-width: 350px;
+$chat-header-height: 38px;
+$main-border-radius: 8px;
+$transition-duration: 0.2s;
+$transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
+$agents-manager-z-index-docked: 999999;
+
+/* WP Admin */
+$admin-menu-width-unified: 272px;
+$admin-menu-width-classic: 160px;
+$admin-menu-width-folded: 37px;
+$admin-content-top: calc( $admin-bar-height + $layout-spacing );
+$admin-background-color: #f1f1f1;
+$border-color: #545454;

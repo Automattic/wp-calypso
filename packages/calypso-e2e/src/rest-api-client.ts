@@ -178,7 +178,13 @@ export class RestAPIClient {
 	 */
 	async sendRequest( url: URL, params: RequestParams | URLSearchParams ): Promise< any > {
 		const response = await fetch( url.toString(), params as RequestInit );
-		return response.json();
+		const responseBody = await response.text();
+		try {
+			return JSON.parse( responseBody.trim() );
+		} catch ( error ) {
+			console.error( 'Error parsing JSON:', error );
+			throw new Error( `Failed to parse JSON: ${ responseBody }` );
+		}
 	}
 
 	/* Sites */

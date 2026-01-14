@@ -21,14 +21,6 @@ boot( {
 	Logo,
 	supports: {
 		sites: {
-			deployments: true,
-			performance: true,
-			monitoring: true,
-			logs: true,
-			backups: true,
-			scan: true,
-			domains: true,
-			emails: true,
 			settings: {
 				general: {
 					redirect: true,

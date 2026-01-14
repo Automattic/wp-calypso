@@ -1,13 +1,4 @@
-@import '@wordpress/base-styles/colors';
-
-$admin-bar-height: 32px;
-$layout-spacing: 16px;
-$sidebar-width: 350px;
-$chat-header-height: 38px;
-$main-border-radius: 8px;
-$transition-duration: 0.2s;
-$transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
-$agents-manager-z-index-docked: 999999;
+@import '../variables.scss';
 
 @mixin sidebar-base( $main-container-selector ) {
 	background-color: $gray-900 !important;
@@ -81,14 +72,6 @@ $agents-manager-z-index-docked: 999999;
 	}
 }
 
-/* WP Admin */
-$admin-menu-width-unified: 272px;
-$admin-menu-width-classic: 160px;
-$admin-menu-width-folded: 37px;
-$admin-content-top: calc( $admin-bar-height + $layout-spacing );
-$admin-background-color: #f1f1f1;
-$border-color: #545454;
-
 // Mixin for wp-admin sidebar open styles
 @mixin wp-admin-sidebar-open-specific( $admin-menu-width ) {
 	#wpcontent {
@@ -116,8 +99,8 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 		border-radius: $main-border-radius $main-border-radius 0 0;
 		border: 1px solid $border-color;
 		border-bottom: none;
-		overflow: hidden;
 		box-sizing: border-box;
+		height: calc( var(--masterbar-height) + 1px );
 	}
 
 	#adminmenuback,

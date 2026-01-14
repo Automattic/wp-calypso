@@ -1,81 +1,20 @@
-import apiFetch, { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { Location } from 'history';
-import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
-import { isE2ETest } from '../utils';
-import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
-import type { HelpCenterOptions, HelpCenterSelect, HelpCenterShowOptions } from './types';
-import type { APIFetchOptions } from '../shared-types';
+import type {
+	HelpCenterOptions,
+	HelpCenterSelect,
+	HelpCenterShowOptions,
+	Preferences,
+} from './types';
 
-/**
- * Save the open state of the help center to the remote user preferences.
- * @param isShown - Whether the help center is shown.
- * @param isMinimized - Whether the help center is minimized.
- */
-export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolean | undefined ) => {
-	const saveState: Record< string, boolean | null > = {};
-
-	if ( typeof isShown === 'boolean' ) {
-		saveState.help_center_open = isShown;
-		if ( ! isShown ) {
-			// Delete the remote version of the navigation history when closing the help center
-			saveState.help_center_router_history = null;
-		}
-	}
-
-	if ( typeof isMinimized === 'boolean' ) {
-		saveState.help_center_minimized = isMinimized;
-	}
-
-	if ( canAccessWpcomApis() ) {
-		// Use the promise version to do that action without waiting for the result.
-		wpcomRequestPromise( {
-			path: '/me/preferences',
-			apiNamespace: 'wpcom/v2',
-			method: 'PUT',
-			body: { calypso_preferences: saveState },
-		} ).catch( () => {} );
-	} else {
-		// Use the promise version to do that action without waiting for the result.
-		apiFetchPromise( {
-			global: true,
-			path: '/help-center/open-state',
-			method: 'PUT',
-			data: saveState,
-		} as APIFetchOptions ).catch( () => {} );
-	}
-};
-
-export function* setHelpCenterRouterHistory(
+export function setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
 ) {
-	if ( canAccessWpcomApis() ) {
-		yield wpcomRequest( {
-			path: '/me/preferences',
-			apiNamespace: 'wpcom/v2',
-			method: 'PUT',
-			body: {
-				calypso_preferences: {
-					help_center_router_history: history,
-				},
-			},
-		} );
-	} else {
-		apiFetch( {
-			global: true,
-			path: '/help-center/open-state',
-			method: 'PUT',
-			data: {
-				help_center_router_history: history,
-			},
-		} as Parameters< typeof apiFetch >[ 0 ] ).catch( () => {} );
-	}
-
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
 		history,
@@ -94,6 +33,12 @@ export const setUnreadCount = ( count: number ) =>
 		count,
 	} ) as const;
 
+export const setHelpCenterPreferences = ( preferences: Preferences[ 'calypso_preferences' ] ) =>
+	( {
+		type: 'HELP_CENTER_SET_HELP_CENTER_PREFERENCES',
+		preferences,
+	} ) as const;
+
 export const setOdieInitialPromptText = ( text: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_ODIE_INITIAL_PROMPT_TEXT',
@@ -106,8 +51,7 @@ export const setOdieBotNameSlug = ( odieBotNameSlug: string ) =>
 		odieBotNameSlug,
 	} ) as const;
 
-export const setIsMinimized = function* ( minimized: boolean ) {
-	yield saveOpenState( undefined, minimized );
+export const setIsMinimized = function ( minimized: boolean ) {
 	return {
 		type: 'HELP_CENTER_SET_MINIMIZED',
 		minimized,
@@ -229,18 +173,17 @@ export const setShowHelpCenter = function* (
 		} as const;
 	}
 
-	if ( ! isE2ETest() ) {
-		saveOpenState( show, isMinimized );
-	}
-
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );
 		// Reset the local navigation history when closing the help center.
 		yield setHelpCenterRouterHistory( undefined );
-	} else {
-		yield setShowMessagingWidget( false );
+		return {
+			type: 'HELP_CENTER_SET_SHOW',
+			show: false,
+		} as const;
 	}
 
+	yield setShowMessagingWidget( false );
 	yield setContextTerm( options?.contextTerm || '' );
 	yield setIsMinimized( false );
 
@@ -329,6 +272,7 @@ export type HelpCenterAction =
 			| typeof setShowMessagingWidget
 			| typeof setSubject
 			| typeof resetStore
+			| typeof setHelpCenterPreferences
 			| typeof setMessage
 			| typeof setLoggedOutOdieChat
 			| typeof setContextTerm
@@ -343,11 +287,11 @@ export type HelpCenterAction =
 			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
+			| typeof setHelpCenterRouterHistory
+			| typeof setIsMinimized
 			| typeof setOdieBotNameSlug
 			| typeof setHasPremiumSupport
 			| typeof setHelpCenterOptions
 			| typeof setCurrentUser
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter >
-	| GeneratorReturnType< typeof setHelpCenterRouterHistory >
-	| GeneratorReturnType< typeof setIsMinimized >;
+	| GeneratorReturnType< typeof setShowHelpCenter >;

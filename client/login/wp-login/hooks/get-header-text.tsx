@@ -26,6 +26,7 @@ interface Props {
 	isWCCOM?: boolean;
 	isBlazePro?: boolean;
 	isFromAkismet?: boolean;
+	isFromPassport?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
 	isGravPoweredClient?: boolean;
 	isUserLoggedIn?: boolean;
@@ -67,6 +68,7 @@ export function getHeaderText( {
 	isWCCOM,
 	isBlazePro,
 	isFromAkismet,
+	isFromPassport,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
 	currentQuery,
@@ -93,6 +95,8 @@ export function getHeaderText( {
 		let clientName = oauth2Client?.name;
 		if ( isFromAkismet ) {
 			clientName = 'Akismet';
+		} else if ( isFromPassport ) {
+			clientName = 'Passport';
 		} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 			clientName = 'Blaze Pro';
 		} else if ( isA4AOAuth2Client( oauth2Client ) ) {

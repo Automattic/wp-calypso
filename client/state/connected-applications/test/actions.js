@@ -48,6 +48,7 @@ describe( 'actions', () => {
 						site_name: 'WordPress',
 					},
 					title: 'WordPress',
+					oauth_version: '2.0',
 				},
 			];
 			const action = receiveConnectedApplications( apps );

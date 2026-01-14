@@ -4,6 +4,7 @@ import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import akismetLogo from 'calypso/assets/images/icons/akismet-logo.svg';
 import crowdsignalLogo from 'calypso/assets/images/icons/crowdsignal.svg';
 import gravatarLogo from 'calypso/assets/images/icons/gravatar.svg';
+import passportLogo from 'calypso/assets/images/icons/passport-icon-rounded.svg';
 import studioAppLogo from 'calypso/assets/images/icons/studio-app-logo.svg';
 import wpJobManagerLogo from 'calypso/assets/images/icons/wp-job-manager.png';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -23,6 +24,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
+import getIsPassport from 'calypso/state/selectors/get-is-passport';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 interface Props {
@@ -33,6 +35,7 @@ const HeadingLogo = ( { isJetpack }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isAkismet = useSelector( getIsAkismet );
+	const isPassport = useSelector( getIsPassport );
 
 	let logo = null;
 	if ( isStudioAppOAuth2Client( oauth2Client ) ) {
@@ -41,6 +44,8 @@ const HeadingLogo = ( { isJetpack }: Props ) => {
 		logo = <img src={ crowdsignalLogo } alt="Crowdsignal Logo" />;
 	} else if ( isAkismet ) {
 		logo = <img src={ akismetLogo } alt="Akismet Logo" />;
+	} else if ( isPassport ) {
+		logo = <img src={ passportLogo } alt="Passport Logo" />;
 	} else if ( isWPJobManagerOAuth2Client( oauth2Client ) ) {
 		logo = <img src={ wpJobManagerLogo } alt="WP Job Manager Logo" />;
 	} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {

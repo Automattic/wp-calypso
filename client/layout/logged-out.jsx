@@ -41,6 +41,7 @@ import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsPassport from 'calypso/state/selectors/get-is-passport';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
@@ -54,6 +55,7 @@ import './style.scss';
 
 const LayoutLoggedOut = ( {
 	isAkismet,
+	isPassport,
 	isJetpackLogin,
 	isPopup,
 	isGravatar,
@@ -132,6 +134,7 @@ const LayoutLoggedOut = ( {
 		'has-no-sidebar': ! secondary,
 		'has-no-masterbar': masterbarIsHidden,
 		'is-akismet': isAkismet,
+		'is-passport': isPassport,
 		'is-jetpack-login': isJetpackLogin,
 		'is-jetpack-site': isJetpackCheckout,
 		'is-popup': isPopup,
@@ -334,6 +337,7 @@ export default withCurrentRoute(
 			const sectionName = currentSection?.name ?? null;
 			const sectionTitle = currentSection?.title ?? '';
 			const isAkismet = getIsAkismet( state );
+			const isPassport = getIsPassport( state );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
@@ -368,6 +372,7 @@ export default withCurrentRoute(
 
 			return {
 				isAkismet,
+				isPassport,
 				isJetpackLogin,
 				isPopup,
 				isGravatar,

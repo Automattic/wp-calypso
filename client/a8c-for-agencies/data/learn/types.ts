@@ -3,6 +3,7 @@
  */
 
 export interface APIAgencyResource {
+	id: number;
 	name: string;
 	description: string;
 	external_url: string;
