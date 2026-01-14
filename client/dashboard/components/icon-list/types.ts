@@ -35,6 +35,10 @@ export interface IconListItemProps {
 	/**
 	 * Controls whether the item content should wrap when it exceeds the container width.
 	 */
+	/**
+	 * Controls whether the item content should wrap when it exceeds the container width.
+	 * @default false
+	 */
 	wrap?: boolean;
 }
 
