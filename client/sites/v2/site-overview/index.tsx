@@ -1,10 +1,9 @@
-import { persistQueryClientPromise, siteBySlugQuery, queryClient } from '@automattic/api-queries';
+import { persistQueryClientPromise, queryClient } from '@automattic/api-queries';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
 import { useAnalyticsClient } from '../hooks/use-analytics-client';
 import Layout from './layout';
 import router from './router';
@@ -14,7 +13,6 @@ export default function DashboardBackportSiteOverview( { siteSlug }: { siteSlug?
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const user = useSelector( ( state ) => getCurrentUser( state ) );
-	const site = useSelector( ( state ) => getSite( state, siteSlug ) );
 	const analyticsClient = useAnalyticsClient( router );
 
 	// Initialize the root instance.
@@ -56,13 +54,7 @@ export default function DashboardBackportSiteOverview( { siteSlug }: { siteSlug?
 		if ( user ) {
 			queryClient.setQueryData( AUTH_QUERY_KEY, user );
 		}
-
-		if ( site ) {
-			// The site type used by the Hosting Dashboard is slightly different, but _mostly_ compatible,
-			// so this is safe to copy in to the cache.
-			queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site as any ); // eslint-disable-line @typescript-eslint/no-explicit-any
-		}
-	}, [ user, site ] );
+	}, [ user ] );
 
 	return <div className="dashboard-backport-site-overview" ref={ containerRef } />;
 }

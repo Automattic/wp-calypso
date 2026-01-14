@@ -7,6 +7,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../../components/text';
+import { getPurchaseCancellationFlowType, CANCEL_FLOW_TYPE } from '../../../utils/purchase';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
@@ -27,21 +28,40 @@ export default function ConfirmCheckbox( {
 }: ConfirmCheckboxProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 
+	const supportHeadingText = ( () => {
+		if ( getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE ) {
+			return __( 'Have a question before removing?' );
+		}
+		return __( 'Have a question before cancelling?' );
+	} )();
+
+	const planConfirmationLabel = ( () => {
+		if ( getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE ) {
+			if ( purchase.is_plan ) {
+				return __( 'I understand my site will change when I remove my plan.' );
+			}
+			return __( 'I understand my site will change when I remove this product.' );
+		}
+		return __( 'I understand my site will change when my plan expires.' );
+	} )();
+
 	return (
 		<VStack spacing={ 4 }>
-			<Text weight="bold">{ __( 'Have a question before cancelling?' ) }</Text>
-			<Text>
-				{ createInterpolateElement(
-					__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
-					{
-						contactLink: <a href={ localizeUrl( 'https://wordpress.com/support' ) } />,
-					}
-				) }
-			</Text>
+			<VStack spacing={ 1 }>
+				<Text weight="bold">{ supportHeadingText }</Text>
+				<Text>
+					{ createInterpolateElement(
+						__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
+						{
+							contactLink: <a href={ localizeUrl( 'https://wordpress.com/support' ) } />,
+						}
+					) }
+				</Text>
+			</VStack>
 
-			<Divider />
+			<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
 
-			<div>
+			<VStack spacing={ 1 }>
 				{ isDomainRegistrationPurchase && ! state.surveyShown && (
 					<CheckboxControl
 						label={ __( 'I understand that canceling means that I may lose this domain forever.' ) }
@@ -51,7 +71,7 @@ export default function ConfirmCheckbox( {
 				) }
 
 				<CheckboxControl
-					label={ __( 'I understand my site will change when my plan expires.' ) }
+					label={ planConfirmationLabel }
 					checked={ state.customerConfirmedUnderstanding }
 					onChange={ ( checked ) => {
 						if ( atomicTransfer?.created_at ) {
@@ -62,7 +82,7 @@ export default function ConfirmCheckbox( {
 						onCustomerConfirmedUnderstandingChange( checked );
 					} }
 				/>
-			</div>
+			</VStack>
 		</VStack>
 	);
 }

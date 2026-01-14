@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Dialog } from '@automattic/components';
 import { BaseButton } from '@automattic/components/dist/types/dialog/button-bar';
@@ -53,7 +52,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	flowType,
 	...props
 } ) => {
-	const shouldProvideCancellationOffer = config.isEnabled( 'cancellation-offers' );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const initialCancellationStep = useMemo( () => {
@@ -181,7 +179,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 		if (
 			CANCEL_FLOW_TYPE.REMOVE === flowType &&
-			shouldProvideCancellationOffer &&
 			cancellationOffer &&
 			isOfferPriceSameOrLowerThanPurchasePrice &&
 			offerDiscountBasedFromPurchasePrice >= 10
@@ -195,7 +192,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		purchase,
 		props.cancellationCompleted,
 		flowType,
-		shouldProvideCancellationOffer,
 		cancellationOffer,
 		isOfferPriceSameOrLowerThanPurchasePrice,
 		offerDiscountBasedFromPurchasePrice,
@@ -339,8 +335,8 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			}
 			return translate( 'Cancel subscription' );
 		};
-		const loadingOffers = shouldProvideCancellationOffer && fetchingCancellationOffers;
-		const applyingOffer = shouldProvideCancellationOffer && applyingCancellationOffer;
+		const loadingOffers = fetchingCancellationOffers;
+		const applyingOffer = applyingCancellationOffer;
 		const close = {
 			action: 'close',
 			disabled: disabled || applyingOffer,
@@ -532,7 +528,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	return (
 		<>
-			{ shouldProvideCancellationOffer && purchase.siteId && purchase.id && (
+			{ purchase.siteId && purchase.id && (
 				<QueryPurchaseCancellationOffers siteId={ purchase.siteId } purchaseId={ purchase.id } />
 			) }
 			<Dialog

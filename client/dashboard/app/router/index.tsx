@@ -1,16 +1,30 @@
 import calypsoConfig from '@automattic/calypso-config';
-import { Router, createRoute, redirect } from '@tanstack/react-router';
-import { logToLogstash } from 'calypso/lib/logstash';
+import { createRouter, createRoute, redirect } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
+import { handleOnCatch } from '../logger';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
 import { createPluginsRoutes } from './plugins';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
+import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
 import type { ErrorInfo } from 'react';
+
+/**
+ * Module augmentation for TanStack router's staticData.
+ */
+declare module '@tanstack/react-router' {
+	interface StaticDataRouteOption {
+		/**
+		 * If set, the route is only accessible when the site type supports this feature.
+		 * The check is performed in siteRoute.beforeLoad against getSiteTypeFeatureSupports(site).
+		 */
+		requiresSiteTypeSupport?: SiteTypeFeature;
+	}
+}
 
 interface RouteContext {
 	config?: AppConfig;
@@ -56,7 +70,7 @@ const createRouteTree = ( config: AppConfig ) => {
 
 export const getRouter = ( config: AppConfig ) => {
 	const routeTree = createRouteTree( config );
-	return new Router( {
+	const router = createRouter( {
 		routeTree,
 		basepath: config.basePath,
 		context: {
@@ -65,18 +79,9 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,
 		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
-			logToLogstash( {
-				feature: 'calypso_client',
-				message: error.message,
-				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
-				tags: [ 'dashboard' ],
-				properties: {
-					dashboard_backport: false,
-					env: calypsoConfig( 'env_id' ),
-					message: error.message,
-					stack: errorInfo.componentStack,
-					path: window.location.href,
-				},
+			handleOnCatch( error, errorInfo, router, {
+				severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
+				calypso_section: 'dashboard',
 			} );
 		},
 		defaultPreload: 'intent',
@@ -88,4 +93,6 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultViewTransition: true,
 		scrollRestoration: true,
 	} );
+
+	return router;
 };

@@ -1,6 +1,5 @@
-import { DotcomFeatures, HostingFeatures, JetpackModules } from '@automattic/api-core';
+import { HostingFeatures, JetpackModules } from '@automattic/api-core';
 import {
-	siteLatestAtomicTransferQuery,
 	siteLastBackupQuery,
 	siteMediaStorageQuery,
 	sitePHPVersionQuery,
@@ -27,16 +26,16 @@ import TimeSince from '../../components/time-since';
 import { addTransientViewPropertiesToQueryParams } from '../../utils/dashboard-v1-sync';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
-import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
-import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
-import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
-import { isP2 } from '../../utils/site-types';
+import { getSiteBadge } from '../../utils/site-badge';
+import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { getSiteFormattedUrl } from '../../utils/site-url';
+import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite, canManageSite__ES } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { AtomicTransferStatus, DashboardSiteListSite, Site } from '@automattic/api-core';
+import type { SiteVisibility } from '../../types';
+import type { DashboardSiteListSite, Site, SiteBadge, SiteStatus } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -107,20 +106,7 @@ export function SiteLink__ES( {
 }
 
 export function Name( { site, value }: { site: Site; value: string } ) {
-	const getBadgeType = () => {
-		if ( site.is_wpcom_staging_site ) {
-			return 'staging';
-		}
-		if ( isSitePlanTrial( site ) ) {
-			return 'trial';
-		}
-		if ( isP2( site ) ) {
-			return 'p2';
-		}
-		return null;
-	};
-
-	return <NameRenderer badge={ getBadgeType() } muted={ site.is_deleted } value={ value } />;
+	return <NameRenderer badge={ getSiteBadge( site ) } muted={ site.is_deleted } value={ value } />;
 }
 
 export function NameRenderer( {
@@ -128,7 +114,7 @@ export function NameRenderer( {
 	muted,
 	value,
 }: {
-	badge: null | 'staging' | 'trial' | 'p2';
+	badge: SiteBadge;
 	muted: boolean;
 	value: string;
 } ) {
@@ -140,8 +126,16 @@ export function NameRenderer( {
 				return <Badge>{ __( 'Trial' ) }</Badge>;
 			case 'p2':
 				return <Badge>{ __( 'P2' ) }</Badge>;
+			case 'deleted':
+				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
+			case 'difm_lite_in_progress':
+				return <Badge>{ __( 'Express service' ) }</Badge>;
+			case 'migration_pending':
+				return <Badge intent="warning">{ __( 'Migration pending' ) }</Badge>;
+			case 'migration_started':
+				return <Badge intent="info">{ __( 'Migration started' ) }</Badge>;
 			default:
-				break;
+				return null;
 		}
 	};
 
@@ -423,7 +417,7 @@ export function MediaStorage( { site }: { site?: Site } ) {
 	return <span ref={ ref }>{ renderContent() }</span>;
 }
 
-function SiteLaunchNag( { site }: { site: Site } ) {
+function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	// TODO: We have to fix the obscured focus ring issue as the dataview's field value container
@@ -432,7 +426,7 @@ function SiteLaunchNag( { site }: { site: Site } ) {
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_sites_site_launch_nag_impression" />
 			<ExternalLink
-				href={ wpcomLink( `/home/${ site.slug }` ) }
+				href={ wpcomLink( `/home/${ siteSlug }` ) }
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click' );
 				} }
@@ -472,81 +466,25 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 	);
 }
 
-function WithHostingFeaturesQuery( {
-	site,
-	children,
+export function Visibility( {
+	siteSlug,
+	visibility,
+	status,
+	isLaunched,
 }: {
-	site: Site;
-	children: ( transferStatus?: AtomicTransferStatus ) => React.ReactNode;
+	siteSlug: string;
+	visibility: SiteVisibility;
+	status: SiteStatus;
+	isLaunched?: boolean;
 } ) {
-	const { ref, inView } = useInView( {
-		triggerOnce: true,
-		fallbackInView: true,
-	} );
-
-	const { data } = useQuery( {
-		...siteLatestAtomicTransferQuery( site.ID ),
-		enabled: inView,
-	} );
-
-	return <span ref={ ref }>{ children( data?.status ) }</span>;
-}
-
-export function Status( { site, isOwner }: { site: Site; isOwner?: boolean } ) {
-	const status = getSiteStatus( site );
-	const label = getSiteStatusLabel( site );
-
-	if ( status === 'deleted' ) {
-		return <Text intent="error">{ label }</Text>;
-	}
-
-	if ( status === 'difm_lite_in_progress' ) {
-		return <Badge>{ label }</Badge>;
-	}
-
-	if ( status === 'migration_pending' ) {
-		return <Badge intent="warning">{ label }</Badge>;
-	}
-
-	if ( status === 'migration_started' ) {
-		return <Badge intent="info">{ label }</Badge>;
-	}
-
-	if ( site.plan?.expired ) {
-		return (
-			<VStack spacing={ 1 }>
-				<Text intent="error">{ __( 'Plan expired' ) }</Text>
-				{ isOwner && <PlanRenewNag site={ site } source="status" /> }
-			</VStack>
-		);
-	}
-
-	const renderBasicStatus = () => {
-		if ( site.launch_status === 'unlaunched' ) {
-			return <SiteLaunchNag site={ site } />;
-		}
-		return label;
-	};
-
-	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) && ! site.is_wpcom_atomic ) {
-		return (
-			<WithHostingFeaturesQuery site={ site }>
-				{ ( transferStatus ) => {
-					if ( transferStatus ) {
-						if ( transferStatus === 'error' ) {
-							return __( 'Error activating hosting features' );
-						}
-						if ( isAtomicTransferInProgress( transferStatus ) ) {
-							return __( 'Activating hosting features…' );
-						}
-					}
-					return renderBasicStatus();
-				} }
-			</WithHostingFeaturesQuery>
-		);
-	}
-
-	return renderBasicStatus();
+	const visibilityLabels = getVisibilityLabels();
+	return (
+		<VStack spacing={ 1 }>
+			<span>{ visibilityLabels[ visibility ] }</span>
+			{ /* We don't want to show LaunchNag if there is any pending status. */ }
+			{ ! status && ! isLaunched && <SiteLaunchNag siteSlug={ siteSlug } /> }
+		</VStack>
+	);
 }
 
 export function Plan( {

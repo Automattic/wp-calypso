@@ -140,7 +140,7 @@ export default function DnsImportDialog( {
 		const isSelected = selectedRecords.has( recordId );
 
 		return (
-			<div key={ index } style={ { marginBottom: '8px' } }>
+			<div key={ index } style={ { marginBottom: '8px', wordBreak: 'break-all' } }>
 				<CheckboxControl
 					__nextHasNoMarginBottom
 					checked={ isSelected }
@@ -154,40 +154,49 @@ export default function DnsImportDialog( {
 	return (
 		<Modal title={ __( 'Import DNS records' ) } onRequestClose={ onCancel }>
 			<VStack spacing={ 6 }>
-				<Text>
-					{ __(
-						'Select the DNS records you want to import. Please review them before confirming.'
-					) }
-				</Text>
-
 				{ records.length > 0 ? (
-					<VStack spacing={ 2 }>
-						{ renderHeader() }
-						<Divider />
-						{ records.map( ( record, index ) => renderRecordRow( record, index ) ) }
-					</VStack>
+					<>
+						<Text>
+							{ __(
+								'Select the DNS records you want to import. Please review them before confirming.'
+							) }
+						</Text>
+						<VStack spacing={ 2 }>
+							{ renderHeader() }
+							<Divider />
+							{ records.map( ( record, index ) => renderRecordRow( record, index ) ) }
+						</VStack>
+					</>
 				) : (
-					<Text>{ __( 'We couldn’t find valid DNS records to import.' ) }</Text>
+					<Text>{ __( 'We couldn’t find valid DNS records in the selected BIND file.' ) }</Text>
 				) }
 
 				<ButtonStack justify="flex-end">
-					<Button
-						__next40pxDefaultSize
-						variant="tertiary"
-						onClick={ onCancel }
-						disabled={ updateDnsMutation.isPending }
-					>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button
-						__next40pxDefaultSize
-						variant="primary"
-						isBusy={ updateDnsMutation.isPending }
-						onClick={ handleConfirm }
-						disabled={ numberOfSelectedRecords === 0 || updateDnsMutation.isPending }
-					>
-						{ __( 'Import selected records' ) }
-					</Button>
+					{ records.length > 0 ? (
+						<>
+							<Button
+								__next40pxDefaultSize
+								variant="tertiary"
+								onClick={ onCancel }
+								disabled={ updateDnsMutation.isPending }
+							>
+								{ __( 'Cancel' ) }
+							</Button>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								isBusy={ updateDnsMutation.isPending }
+								onClick={ handleConfirm }
+								disabled={ numberOfSelectedRecords === 0 || updateDnsMutation.isPending }
+							>
+								{ __( 'Import selected records' ) }
+							</Button>
+						</>
+					) : (
+						<Button __next40pxDefaultSize variant="primary" onClick={ onCancel }>
+							{ __( 'Ok' ) }
+						</Button>
+					) }
 				</ButtonStack>
 			</VStack>
 		</Modal>

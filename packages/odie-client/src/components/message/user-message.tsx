@@ -5,7 +5,7 @@ import {
 	getOdieEmailFallbackMessageContent,
 	getOdieErrorMessage,
 	getOdieErrorMessageNonEligible,
-	getOdieZendeskConnectionErrorMessage,
+	getOdieZendeskConnectionErrorMessageContent,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
@@ -53,7 +53,7 @@ const getDisplayMessage = (
 	}
 
 	if ( isUserEligibleForPaidSupport && ! isChatLoaded ) {
-		return getOdieZendeskConnectionErrorMessage().content;
+		return getOdieZendeskConnectionErrorMessageContent();
 	}
 
 	return forwardMessage;
@@ -87,29 +87,33 @@ export const UserMessage = ( {
 	const showGetSupport = isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage );
 	const showActionButtons = ! isRequestingHumanSupport && ! isErrorMessage;
 
-	const shouldOverrideWithForwardMessage = isRequestingHumanSupport && chat.provider !== 'zendesk';
+	const messageContent = () => {
+		if ( ! isRequestingHumanSupport ) {
+			return message.content;
+		}
 
-	const messageContent = shouldOverrideWithForwardMessage
-		? getDisplayMessage(
-				!! hasRecentOpenConversation,
-				isUserEligibleForPaidSupport,
-				canConnectToZendesk,
-				forceEmailSupport,
-				isChatRestricted,
-				message?.context?.flags?.is_error_message,
-				isChatLoaded
-		  )
-		: message.content;
+		if ( chat.provider === 'zendesk' ) {
+			return '';
+		}
+
+		return getDisplayMessage(
+			!! hasRecentOpenConversation,
+			isUserEligibleForPaidSupport,
+			canConnectToZendesk,
+			forceEmailSupport,
+			isChatRestricted,
+			message?.context?.flags?.is_error_message,
+			isChatLoaded
+		);
+	};
 
 	return (
 		<>
 			<div className="odie-chatbox-message__content">
 				<MarkdownOrChildren
-					messageContent={ messageContent }
+					messageContent={ messageContent() }
 					components={ {
-						a: ( props: React.ComponentProps< 'a' > ) => (
-							<CustomALink { ...props } target="_blank" />
-						),
+						a: ( props: React.ComponentProps< 'a' > ) => <CustomALink { ...props } />,
 					} }
 				/>
 			</div>

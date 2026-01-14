@@ -5,8 +5,9 @@
  * PHP filter. Each provider module should export toolProvider and/or contextProvider.
  */
 
+import { getAgentManager } from '@automattic/agenttic-client';
 import type { ToolProvider, ContextProvider, Suggestion } from '../types';
-import type { SubmitOptions } from '@automattic/agenttic-client';
+import type { SubmitOptions, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
 /**
@@ -14,7 +15,6 @@ import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agentti
  *
  * This is used on wp-admin environments (Atomic, Garden, Simple sites) where
  * the flag is injected server-side by Jetpack's Agents Manager.
- *
  * @returns The useUnifiedExperience value, or undefined if not available.
  */
 export function getUseUnifiedExperienceFromInlineData(): boolean | undefined {
@@ -36,6 +36,19 @@ export type NavigationContinuationHook = ( props: {
 	agentId: string;
 } ) => void;
 
+/**
+ * Abilities setup hook type - for registering hook-based abilities that utilize React
+ * context. Invoked after custom actions registration with Big Sky's AI store. Receives
+ * action handlers that will be used for agent and chat interaction.
+ */
+export type AbilitiesSetupHook = ( actions: {
+	addMessage: UseAgentChatReturn[ 'addMessage' ];
+	clearSuggestions: UseAgentChatReturn[ 'clearSuggestions' ];
+	getAgentManager: typeof getAgentManager;
+	setIsThinking: ( isThinking: boolean ) => void;
+	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
+} ) => void;
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -43,6 +56,7 @@ export interface LoadedProviders {
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
+	useAbilitiesSetup?: AbilitiesSetupHook;
 }
 
 /**
@@ -66,6 +80,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
+	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -91,6 +106,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useNavigationContinuation ) {
 				mergedNavigationContinuation = module.useNavigationContinuation;
 			}
+			if ( module.useAbilitiesSetup ) {
+				mergedAbilitiesSetup = module.useAbilitiesSetup;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
@@ -107,5 +125,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
+		useAbilitiesSetup: mergedAbilitiesSetup,
 	};
 }

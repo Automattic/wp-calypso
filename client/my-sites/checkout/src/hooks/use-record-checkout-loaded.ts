@@ -14,14 +14,12 @@ export default function useRecordCheckoutLoaded( {
 	storedCards,
 	productAliasFromUrl,
 	checkoutFlow,
-	isGiftPurchase,
 }: {
 	isLoading: boolean;
 	responseCart: ResponseCart;
 	storedCards: StoredPaymentMethod[];
 	productAliasFromUrl: string | undefined | null;
 	checkoutFlow: string;
-	isGiftPurchase?: boolean;
 } ): void {
 	const reduxDispatch = useDispatch();
 	const hasRecordedCheckoutLoad = useRef( false );
@@ -32,7 +30,7 @@ export default function useRecordCheckoutLoaded( {
 			recordTracksEvent( 'calypso_checkout_page_view', {
 				saved_cards: storedCards.length,
 				is_renewal: hasRenewalItem( responseCart ),
-				is_gift_purchase: isGiftPurchase,
+				is_gift_purchase: responseCart.is_gift_purchase,
 				product_slug: productAliasFromUrl,
 				is_composite: true,
 				checkout_flow: checkoutFlow,

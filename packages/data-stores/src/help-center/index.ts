@@ -23,7 +23,13 @@ export function register(): typeof STORE_KEY {
 			reducer,
 			controls: { ...controls, ...wpcomRequestControls },
 			selectors,
-			persist: [ 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
+			persist: [
+				'message',
+				'userDeclaredSite',
+				'userDeclaredSiteUrl',
+				'subject',
+				'loggedOutOdieChat',
+			],
 			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
 			resolvers: enabledPersistedOpenState ? { isHelpCenterShown } : undefined,
 		} );

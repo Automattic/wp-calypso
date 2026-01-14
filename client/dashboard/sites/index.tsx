@@ -20,6 +20,7 @@ import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
+import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
@@ -31,6 +32,7 @@ import {
 	useFields__ES,
 	getDefaultView,
 	recordViewChanges,
+	sanitizeFields,
 } from './dataviews';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
@@ -62,11 +64,7 @@ const getFetchSitesOptions = (
 		isAutomattician &&
 		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
 
-	if (
-		filters.find(
-			( item: Filter ) => item.field === 'status' && item.value?.includes?.( 'deleted' )
-		)
-	) {
+	if ( filters.find( ( item: Filter ) => item.field === 'deleted' && item.value === true ) ) {
 		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
 	}
 
@@ -108,9 +106,9 @@ function getFetchSiteListParams(
 	const additionalMappedFields: Record< string, ( keyof DashboardSiteListSite )[] > = {
 		likes: [ 'enabled_modules' ],
 		name: [ 'badge' ],
-		status: [ 'wpcom_status', 'private', 'deleted' ],
 		plan: [ 'owner_id' ],
-		preview: [ 'name', 'icon', 'url', 'private', 'deleted' ],
+		preview: [ 'name', 'icon', 'url', 'private' ],
+		visibility: [ 'wpcom_status', 'private', 'status' ],
 	};
 
 	// Always include ID and slug (for navigation), deleted (for styling), is_a8c (for included a8c owned) and other (for vip & self hosted jetpack)
@@ -127,33 +125,39 @@ function getFetchSiteListParams(
 		'is_vip',
 	];
 
-	if ( view.showTitle && view.titleField ) {
-		fields.push( mappedFields[ view.titleField ] );
-	}
-
-	if ( view.showMedia && view.mediaField ) {
-		fields.push( mappedFields[ view.mediaField ] );
-	}
-
-	if ( view.showDescription && view.descriptionField ) {
-		fields.push( mappedFields[ view.descriptionField ] );
-	}
-
-	view.fields?.forEach( ( field ) => {
-		const mappedField = mappedFields[ field ];
-		if ( mappedField ) {
-			fields.push( mappedField );
+	const getMappedFields = ( field: string ): ( keyof DashboardSiteListSite )[] => {
+		const result: ( keyof DashboardSiteListSite )[] = [];
+		if ( mappedFields[ field ] ) {
+			result.push( mappedFields[ field ] );
 		}
 
 		if ( additionalMappedFields[ field ] ) {
 			fields.push( ...additionalMappedFields[ field ] );
 		}
+
+		return result;
+	};
+
+	if ( view.showTitle && view.titleField ) {
+		fields.push( ...getMappedFields( view.titleField ) );
+	}
+
+	if ( view.showMedia && view.mediaField ) {
+		fields.push( ...getMappedFields( view.mediaField ) );
+	}
+
+	if ( view.showDescription && view.descriptionField ) {
+		fields.push( ...getMappedFields( view.descriptionField ) );
+	}
+
+	view.fields?.forEach( ( field ) => {
+		fields.push( ...getMappedFields( field ) );
 	} );
 
 	const planSlugsByName = siteFilters.plan?.reduce(
 		( acc, current ) => ( {
 			...acc,
-			[ current.name ]: [ ...( acc[ current.name ] || [] ), current.value ],
+			[ current.name_en ]: [ ...( acc[ current.name_en ] || [] ), current.value ],
 		} ),
 		{} as Record< string, string[] >
 	);
@@ -269,6 +273,7 @@ export default function Sites() {
 		slug: 'sites',
 		defaultView,
 		queryParams: currentSearchParams,
+		sanitizeFields,
 	} );
 
 	const { sites, sites__ES, isLoadingSites, isPlaceholderData, hasNoData, totalItems } =
@@ -380,7 +385,12 @@ export default function Sites() {
 						}
 					/>
 				}
-				notices={ <SitesNotices /> }
+				notices={
+					<>
+						<SitesNotices />
+						{ ! isDashboardBackport() && <OptInSurvey /> }
+					</>
+				}
 			>
 				{ isEnabled( 'dashboard/v2/es-site-list' ) ? (
 					<SitesDataViews< DashboardSiteListSite >

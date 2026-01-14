@@ -162,6 +162,7 @@ function StopSubscriptionButton( {
 			actions={
 				<Button
 					variant="secondary"
+					isDestructive
 					size="compact"
 					onClick={ () => {
 						stopSubscription( null, {

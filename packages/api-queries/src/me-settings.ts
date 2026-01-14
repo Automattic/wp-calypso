@@ -1,6 +1,6 @@
 import { fetchUserSettings, updateUserSettings } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { queryClient } from './query-client';
+import { queryClient, clearQueryClient } from './query-client';
 
 export const userSettingsQuery = () =>
 	queryOptions( {
@@ -11,7 +11,7 @@ export const userSettingsQuery = () =>
 export const userSettingsMutation = () =>
 	mutationOptions( {
 		mutationFn: updateUserSettings,
-		onSuccess: ( newData ) => {
+		onSuccess: ( newData, variables ) => {
 			queryClient.setQueryData(
 				userSettingsQuery().queryKey,
 				( oldData ) =>
@@ -20,6 +20,10 @@ export const userSettingsMutation = () =>
 						...newData,
 					}
 			);
+
+			if ( variables.language ) {
+				clearQueryClient();
+			}
 		},
 	} );
 

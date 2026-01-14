@@ -71,8 +71,8 @@ const ReaderHeader = () => {
 				</Button>
 				{ user && (
 					<>
-						<Notifications user={ user } className="dashboard-secondary-menu__item" />
 						<HelpCenter user={ user } />
+						<Notifications user={ user } className="dashboard-secondary-menu__item" />
 						<UserProfile user={ user } />
 					</>
 				) }

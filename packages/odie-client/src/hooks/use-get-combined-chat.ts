@@ -5,7 +5,7 @@ import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
-import { getOdieTransferMessage } from '../constants';
+import { getOdieTransferMessages, getZendeskChatStartedMetaMessage } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -14,7 +14,7 @@ import {
 	getOdieIdFromInteraction,
 	getIsRequestingHumanSupport,
 } from '../utils';
-import type { Chat, Message, OdieAllBotSlugs } from '../types';
+import type { Chat, Message } from '../types';
 
 function isEqual( message1: Message, message2: Message ) {
 	const message1Id = getMessageUniqueIdentifier( message1 );
@@ -82,7 +82,7 @@ export const useGetCombinedChat = (
 	useEffect( () => {
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
 		if (
-			isOdieChatLoading ||
+			( isOdieChatLoading && ! interactionHasChanged ) ||
 			isLoadingCurrentSupportInteraction ||
 			isUploadingUnsentMessages ||
 			isLoadingCanConnectToZendesk ||
@@ -97,9 +97,9 @@ export const useGetCombinedChat = (
 
 		// We don't have a conversation id, so our chat is simply the odie chat
 		if ( ! conversationId ) {
-			// only load odie chat when we have the data, and status is either loading or the chat was empty
 			const shouldLoadOdieChat =
-				odieChat && ( chatStatus === 'loading' || ! mainChatState.messages.length );
+				odieChat &&
+				( chatStatus === 'loading' || interactionHasChanged || ! mainChatState.messages.length );
 
 			// set chat empty state or with messages
 			if ( ! currentSupportInteraction?.uuid || shouldLoadOdieChat ) {
@@ -142,9 +142,8 @@ export const useGetCombinedChat = (
 								conversationId: conversation.id,
 								messages: [
 									...( odieChat ? filteredOdieMessages : [] ),
-									...getOdieTransferMessage(
-										currentSupportInteraction?.bot_slug as OdieAllBotSlugs
-									),
+									...getOdieTransferMessages( currentSupportInteraction?.bot_slug ),
+									getZendeskChatStartedMetaMessage(),
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 										...( isSameConversation

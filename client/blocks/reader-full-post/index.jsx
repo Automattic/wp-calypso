@@ -1,22 +1,20 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Gridicon, EmbedContainer, ExternalLink } from '@automattic/components';
+import { Gridicon, EmbedContainer } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
-import CommentButton from 'calypso/blocks/comment-button';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -31,12 +29,9 @@ import {
 } from 'calypso/components/related-posts';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
-import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import LikeButton from 'calypso/reader/like-button';
-import { shouldShowLikes } from 'calypso/reader/like-helper';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
@@ -52,7 +47,6 @@ import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import { userCan } from 'calypso/state/posts/utils';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	getReaderFollowForFeed,
@@ -79,6 +73,7 @@ import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
+import ReaderFullPostActionBar from './action-bar';
 import ContentProcessor from './content-processor';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
@@ -678,7 +673,9 @@ export class FullPostView extends Component {
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
 		const contentWidth = readerContentWidth();
-		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+		const feedUrl = get( post, 'feed_URL' );
+		const shouldShowMarkAsSeen =
+			isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && canBeMarkedAsSeen( { post } );
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -707,94 +704,37 @@ export class FullPostView extends Component {
 						forceShow={ this.props.layout === 'recent' }
 						aria-label={ translate( 'Return to the list of posts.' ) }
 					/>
-					<div className="reader-full-post__visit-site-container">
-						<ExternalLink
-							icon
-							href={ post.URL }
-							onClick={ this.handleVisitSiteClick }
-							target="_blank"
-						>
-							<span className="reader-full-post__visit-site-label">
-								{ translate( 'Visit Site' ) }
-							</span>
-						</ExternalLink>
-					</div>
 					<div className="reader-full-post__content">
-						{ isDefaultLayout && (
-							<div className="reader-full-post__sidebar">
-								{ isLoading && <AuthorCompactProfile author={ null } /> }
-								{ ! isLoading && (
-									<AuthorCompactProfile
-										author={ post.author }
-										siteIcon={ get( site, 'icon.img' ) }
-										feedIcon={ feedIcon }
-										siteName={ siteName }
-										siteUrl={ post.site_URL }
-										feedUrl={ get( post, 'feed_URL' ) }
-										followCount={ site && site.subscribers_count }
-										onFollowToggle={ this.openSuggestedFollowsModal }
-										feedId={ +post.feed_ID }
-										siteId={ +post.site_ID }
-										post={ post }
-									/>
-								) }
-								<div className="reader-full-post__sidebar-comment-like">
-									{ userCan( 'edit_post', post ) && (
-										<PostEditButton
-											post={ post }
-											site={ site }
-											iconSize={ 20 }
-											onClick={ this.onEditClick }
-										/>
-									) }
-
-									{ shouldShowComments( post ) && ! commentsApiDisabled && (
-										<CommentButton
-											key="comment-button"
-											commentCount={ commentCount }
-											onClick={ this.handleCommentClick }
-											tagName="div"
-											icon={ ReaderCommentIcon( { iconSize: 20 } ) }
-										/>
-									) }
-
-									{ shouldShowLikes( post ) && (
-										<LikeButton
-											siteId={ +post.site_ID }
-											postId={ +post.ID }
-											fullPost
-											tagName="div"
-											likeSource="reader"
-										/>
-									) }
-
-									{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
-										canBeMarkedAsSeen( { post } ) &&
-										this.renderMarkAsSenButton() }
-								</div>
-							</div>
-						) }
 						<article className="reader-full-post__story">
 							<ReaderFullPostHeader
 								post={ post }
 								referralPost={ referralPost }
 								layout={ this.props.layout }
-								authorProfile={
-									<AuthorCompactProfile
-										author={ post.author }
-										siteIcon={ get( site, 'icon.img' ) }
-										feedIcon={ feedIcon }
-										siteName={ siteName }
-										siteUrl={ post.site_URL }
-										feedUrl={ get( post, 'feed_URL' ) }
-										followCount={ site && site.subscribers_count }
-										onFollowToggle={ this.openSuggestedFollowsModal }
-										feedId={ +post.feed_ID }
-										siteId={ +post.site_ID }
-										post={ post }
-									/>
-								}
+								author={ post.author }
+								siteName={ siteName }
+								followCount={ site && site.subscribers_count }
+								feedId={ +post.feed_ID }
+								siteId={ +post.site_ID }
+								tags={ isDefaultLayout ? <TagsList post={ post } tagsToShow={ 5 } /> : null }
 							/>
+
+							{ isDefaultLayout && (
+								<ReaderFullPostActionBar
+									post={ post }
+									site={ site }
+									commentCount={ commentCount }
+									onCommentClick={ this.handleCommentClick }
+									onEditClick={ this.onEditClick }
+									commentsApiDisabled={ commentsApiDisabled }
+									showComments={ shouldShowComments( post ) }
+									renderMarkAsSeenButton={
+										shouldShowMarkAsSeen ? this.renderMarkAsSenButton : null
+									}
+									feedUrl={ feedUrl }
+									siteUrl={ post.site_URL }
+									onFollowToggle={ this.openSuggestedFollowsModal }
+								/>
+							) }
 
 							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
 								<ReaderFeaturedImage

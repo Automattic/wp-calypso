@@ -26,6 +26,7 @@ describe( 'getConnectedApplications()', () => {
 					site_name: 'WordPress',
 				},
 				title: 'WordPress',
+				oauth_version: '2.0',
 			},
 		];
 		const state = {

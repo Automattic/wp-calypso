@@ -1,6 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { Location } from 'history';
 import { SiteDetails } from '../site';
+import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions } from './types';
 import type { Reducer } from 'redux';
@@ -53,6 +54,17 @@ const helpCenterRouterHistory: Reducer<
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY':
 			return action.history;
+	}
+	return state;
+};
+
+const loggedOutOdieChat: Reducer<
+	{ odieId: number; sessionId: string; botSlug: string } | undefined,
+	HelpCenterAction
+> = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT':
+			return action.session;
 	}
 	return state;
 };
@@ -197,6 +209,13 @@ const helpCenterOptions: Reducer< HelpCenterOptions, HelpCenterAction > = (
 	return state;
 };
 
+const currentUser: Reducer< CurrentUser | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_CURRENT_USER' ) {
+		return action.user;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
 	showMessagingLauncher,
@@ -216,9 +235,11 @@ const reducer = combineReducers( {
 	odieInitialPromptText,
 	odieBotNameSlug,
 	helpCenterRouterHistory,
+	loggedOutOdieChat,
 	hasPremiumSupport,
 	contextTerm,
 	helpCenterOptions,
+	currentUser,
 } );
 
 export type State = ReturnType< typeof reducer >;

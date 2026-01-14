@@ -1,11 +1,13 @@
-import { default as apiFetchPromise } from '@wordpress/api-fetch';
+import apiFetch, { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { Location } from 'history';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
+import { CurrentUser } from '../user/types';
 import { isE2ETest } from '../utils';
+import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
 import type { HelpCenterOptions, HelpCenterSelect, HelpCenterShowOptions } from './types';
 import type { APIFetchOptions } from '../shared-types';
@@ -49,9 +51,31 @@ export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolea
 	}
 };
 
-export function setHelpCenterRouterHistory(
+export function* setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
 ) {
+	if ( canAccessWpcomApis() ) {
+		yield wpcomRequest( {
+			path: '/me/preferences',
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+			body: {
+				calypso_preferences: {
+					help_center_router_history: history,
+				},
+			},
+		} );
+	} else {
+		apiFetch( {
+			global: true,
+			path: '/help-center/open-state',
+			method: 'PUT',
+			data: {
+				help_center_router_history: history,
+			},
+		} as Parameters< typeof apiFetch >[ 0 ] ).catch( () => {} );
+	}
+
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
 		history,
@@ -89,6 +113,14 @@ export const setIsMinimized = function* ( minimized: boolean ) {
 		minimized,
 	} as const;
 };
+
+export const setLoggedOutOdieChat = (
+	session: { odieId: number; sessionId: string; botSlug: string } | undefined
+) =>
+	( {
+		type: 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT',
+		session,
+	} ) as const;
 
 export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
 	( {
@@ -157,6 +189,18 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 	type: 'HELP_CENTER_SET_OPTIONS' as const,
 	options,
 } );
+
+/**
+ * Set the current user in the help center store.
+ * This value is needed because the store makes decisions based on the logged in status.
+ * @param user - The current user to set.
+ * @returns The action object.
+ */
+export const setCurrentUser = ( user: CurrentUser | undefined ) =>
+	( {
+		type: 'HELP_CENTER_SET_CURRENT_USER',
+		user,
+	} ) as const;
 
 export const setShowHelpCenter = function* (
 	show: boolean,
@@ -286,14 +330,15 @@ export type HelpCenterAction =
 			| typeof setSubject
 			| typeof resetStore
 			| typeof setMessage
+			| typeof setLoggedOutOdieChat
 			| typeof setContextTerm
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
-			| typeof setHelpCenterRouterHistory
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
+			| typeof setLoggedOutOdieChat
 			| typeof setSupportTypingStatus
 			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute
@@ -301,6 +346,8 @@ export type HelpCenterAction =
 			| typeof setOdieBotNameSlug
 			| typeof setHasPremiumSupport
 			| typeof setHelpCenterOptions
+			| typeof setCurrentUser
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >
+	| GeneratorReturnType< typeof setHelpCenterRouterHistory >
 	| GeneratorReturnType< typeof setIsMinimized >;

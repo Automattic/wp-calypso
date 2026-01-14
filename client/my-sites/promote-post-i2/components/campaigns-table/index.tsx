@@ -89,8 +89,8 @@ export default function CampaignsTable( props: Props ) {
 	};
 
 	return (
-		<div>
-			<table className="promote-post-i2__table campaigns-list__table">
+		<div className="promote-post-i2__table campaigns-list__table">
+			<table>
 				<thead>
 					<tr>
 						{ getHeaderColumns().map( ( item, key ) => (

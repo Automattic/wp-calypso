@@ -3,6 +3,10 @@
 	font-size: 0.75rem;
 	display: block;
 	margin-top: 10px;
+
+	&.is-left-aligned {
+		text-align: left;
+	}
 }
 
 .plans-grid-next-action-button__multi {

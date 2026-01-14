@@ -46,6 +46,12 @@ export default function OptInWelcomeModal() {
 			shouldCloseOnClickOutside={ false }
 			isDismissible={ false }
 			__experimentalHideHeader
+			style={ {
+				...( ! isLargeViewport && {
+					height: 'fit-content',
+					marginTop: 'auto',
+				} ),
+			} }
 			onRequestClose={ handleDismiss }
 		>
 			<ComponentViewTracker eventName="calypso_dashboard_opt_in_welcome_modal_impression" />

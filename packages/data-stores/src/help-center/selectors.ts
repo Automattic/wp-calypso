@@ -11,6 +11,7 @@ export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getZendeskConnectionStatus = ( state: State ) => state.zendeskConnectionStatus;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getIsChatLoaded = ( state: State ) => state.isChatLoaded;
+export const getLoggedOutOdieChat = ( state: State ) => state.loggedOutOdieChat;
 export const getAreSoundNotificationsEnabled = ( state: State ) =>
 	state.areSoundNotificationsEnabled;
 export const getZendeskClientId = ( state: State ) => state.zendeskClientId;
@@ -23,3 +24,4 @@ export const getHelpCenterOptions = ( state: State ) => state.helpCenterOptions;
 export const getContextTerm = ( state: State ) => state.contextTerm;
 export const getSupportTypingStatus = ( state: State, conversationId: string ) =>
 	state.typingConversationStatus?.[ conversationId ];
+export const getCurrentUser = ( state: State ) => state.currentUser;

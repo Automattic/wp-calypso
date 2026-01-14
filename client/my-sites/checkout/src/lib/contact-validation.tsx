@@ -45,6 +45,7 @@ const getEmailTakenLoginRedirectMessage = (
 	const { href, pathname } = window.location;
 	const isJetpackCheckout = pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckout = pathname.includes( '/checkout/akismet' );
+	const isA4AExpressCheckout = pathname.includes( '/checkout/agency/referral' );
 	const isGiftingCheckout = pathname.includes( '/gift/' );
 
 	// Users with a WP.com account should return to the checkout page
@@ -52,7 +53,7 @@ const getEmailTakenLoginRedirectMessage = (
 	// checkout -> login -> checkout.
 	const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
 	const redirectTo =
-		isJetpackCheckout || isAkismetCheckout || isGiftingCheckout
+		isJetpackCheckout || isAkismetCheckout || isGiftingCheckout || isA4AExpressCheckout
 			? addQueryArgs( { ...currentURLQueryParameters, flow: 'coming_from_login' }, pathname )
 			: '/checkout/no-site?cart=no-user';
 

@@ -51,6 +51,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		siteId,
 		coupon,
 		helpers,
+		showBillingDescriptionForIncreasedRenewalPrice,
 	} = usePlansGridContext();
 	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
@@ -68,11 +69,12 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const isGridPlanOnIntroOffer = introOffer && ! introOffer.isOfferComplete;
 
 	const { prices } = usePlanPricingInfoFromGridPlans( { gridPlans: visibleGridPlans } );
-	const isLargeCurrency = useIsLargeCurrency( {
-		prices,
-		currencyCode: currencyCode || 'USD',
-		ignoreWhitespace: true,
-	} );
+	const isLargeCurrency =
+		useIsLargeCurrency( {
+			prices,
+			currencyCode: currencyCode || 'USD',
+			ignoreWhitespace: true,
+		} ) && ! showBillingDescriptionForIncreasedRenewalPrice?.includes( 'crossed_price' ); // a temporary fix to handle an issue with isLargeCurrency logic for intro offers
 
 	const termVariantPlanSlug = useTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
 	const termVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -86,7 +88,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const termVariantPrice =
 		termVariantPricing?.discountedPrice.monthly ?? termVariantPricing?.originalPrice.monthly ?? 0;
 	const planPrice = discountedPrice.monthly ?? originalPrice.monthly ?? 0;
-	const savings =
+	let savings =
 		termVariantPrice > planPrice
 			? Math.floor( ( ( termVariantPrice - planPrice ) / termVariantPrice ) * 100 )
 			: 0;
@@ -112,11 +114,32 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	}
 
 	if ( isGridPlanOnIntroOffer ) {
+		// Use the monthly plan price for renewal pricing, instead of the intro offer renewal price
+		const compareToMonthlyPrice =
+			( showBillingDescriptionForIncreasedRenewalPrice && termVariantPricing
+				? termVariantPricing.originalPrice.monthly
+				: originalPrice.monthly ) ?? 0;
+		const monthlyPrice =
+			typeof discountedPrice.monthly === 'number'
+				? discountedPrice.monthly
+				: introOffer.rawPrice.monthly;
+		if ( showBillingDescriptionForIncreasedRenewalPrice && compareToMonthlyPrice > monthlyPrice ) {
+			savings = Math.floor(
+				( ( compareToMonthlyPrice - monthlyPrice ) / compareToMonthlyPrice ) * 100
+			);
+		}
+		const hideCrossedPrice = showBillingDescriptionForIncreasedRenewalPrice === 'no_crossed_price';
+
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
 					<div className="plans-grid-next-header-price__badge">
-						{ translate( 'Special Offer' ) }
+						{ showBillingDescriptionForIncreasedRenewalPrice
+							? translate( 'Save %(savings)d%%', {
+									args: { savings },
+									comment: 'Example: Save 35%',
+							  } )
+							: translate( 'Special Offer' ) }
 					</div>
 				) }
 				<div
@@ -124,24 +147,22 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						'is-large-currency': isLargeCurrency,
 					} ) }
 				>
+					{ ! hideCrossedPrice && (
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ compareToMonthlyPrice }
+							displayPerMonthNotation={ false }
+							isLargeCurrency={ isLargeCurrency }
+							isSmallestUnit
+							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+							original
+						/>
+					) }
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ originalPrice.monthly }
+						rawPrice={ monthlyPrice }
 						displayPerMonthNotation={ false }
-						isLargeCurrency
-						isSmallestUnit
-						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={
-							typeof discountedPrice.monthly === 'number'
-								? discountedPrice.monthly
-								: introOffer.rawPrice.monthly
-						}
-						displayPerMonthNotation={ false }
-						isLargeCurrency
+						isLargeCurrency={ isLargeCurrency }
 						isSmallestUnit
 						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 						discounted

@@ -17,13 +17,13 @@
 		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,
 		"calypso/domains-dataviews": true,
-		"cancellation-offers": true,
 		"catch-js-errors": true,
 		"checkout/checkout-version": false,
 		"ciab/allow-domain-features": true,
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/razorpay": true,
+		"checkout/vgs-ebanx": true,
 		"cookie-banner": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
@@ -83,7 +83,7 @@
 		"marketplace-test": false,
 		"me/account/color-scheme-picker": true,
 		"migration-flow/introductory-offer": true,
-		"migration/ssh-migration": true,
+		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
 		"onboarding/post-checkout-ai-step": false,
@@ -149,6 +149,5 @@
 	"boom_analytics_key": "horizon",
 	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
-	"survicate_enabled": true,
-	"survicate_enabled_at_help_center": true
+	"survicate_enabled": true
 }

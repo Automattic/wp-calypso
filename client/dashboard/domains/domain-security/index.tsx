@@ -5,6 +5,8 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { isTldInMaintenance } from '../../utils/domain';
+import { TLDMaintenanceNotice } from '../maintenance-notice';
 import DnsSec from './dnssec';
 import SslCertificate from './ssl-certificate';
 
@@ -12,6 +14,8 @@ export default function DomainSecurity() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: sslDetails } = useSuspenseQuery( sslDetailsQuery( domainName ) );
+
+	const isInMaintenance = isTldInMaintenance( domain );
 
 	return (
 		<PageLayout
@@ -24,9 +28,14 @@ export default function DomainSecurity() {
 					) }
 				/>
 			}
+			notices={ isInMaintenance ? <TLDMaintenanceNotice showGoBackLink={ false } /> : undefined }
 		>
-			<SslCertificate domainName={ domainName } domain={ domain } sslDetails={ sslDetails } />
-			<DnsSec domainName={ domainName } domain={ domain } />
+			{ ! isInMaintenance && (
+				<>
+					<SslCertificate domainName={ domainName } domain={ domain } sslDetails={ sslDetails } />
+					<DnsSec domainName={ domainName } domain={ domain } />
+				</>
+			) }
 		</PageLayout>
 	);
 }

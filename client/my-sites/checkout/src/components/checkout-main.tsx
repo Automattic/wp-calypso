@@ -654,7 +654,6 @@ export default function CheckoutMain( {
 		storedCards,
 		productAliasFromUrl,
 		checkoutFlow,
-		isGiftPurchase,
 	} );
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(

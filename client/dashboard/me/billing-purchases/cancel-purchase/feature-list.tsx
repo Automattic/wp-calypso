@@ -7,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
 import { Text } from '../../../components/text';
+import { getPurchaseCancellationFlowType, CANCEL_FLOW_TYPE } from '../../../utils/purchase';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 type FeatureObject = {
@@ -29,48 +30,67 @@ const CancelPurchaseFeatureList = ( {
 
 	const { expiry_date: expiryDate } = purchase;
 	const expirationDate = intlFormat( expiryDate, { dateStyle: 'medium' }, { locale: 'en-US' } );
+
+	const introCopy = ( () => {
+		if ( getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE ) {
+			return __( 'When you remove your plan, you will lose access to:' );
+		}
+		return sprintf(
+			/* translators: %(expire)s is the date the product will expire */
+			__( 'Your plan will expire on %(expiry)s and you’ll lose access to:' ),
+			{
+				expiry: expirationDate,
+			}
+		);
+	} )();
+
 	return (
-		<VStack spacing={ 4 }>
-			<Text as="p">
-				{ sprintf(
-					/* translators: %(expire)s is the date the product will expire */
-					__( 'Your plan will expire on %(expiry)s and you’ll lose access to:' ),
-					{
-						expiry: expirationDate,
-					}
-				) }
-			</Text>
-			<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
-				{ cancellationFeatures.map( ( feature ) => {
-					if ( ! feature ) {
-						return null;
-					}
-					return (
-						<li key={ feature.feature_id }>
-							<HStack alignment="topLeft">
-								<Icon size={ 20 } icon={ close } style={ { flexShrink: 0 } } />
-								<span>{ feature.title }</span>
-							</HStack>
-						</li>
-					);
-				} ) }
+		<VStack spacing={ 6 }>
+			<VStack spacing={ 2 }>
+				<Text as="p">{ introCopy }</Text>
+				<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
+					{ cancellationFeatures.map( ( feature ) => {
+						if ( ! feature ) {
+							return null;
+						}
+						return (
+							<li key={ feature.feature_id }>
+								<HStack alignment="topLeft">
+									<Icon
+										size={ 20 }
+										icon={ close }
+										style={ { flexShrink: 0, fill: 'var( --dashboard__foreground-color-error )' } }
+									/>
+									<span>{ feature.title }</span>
+								</HStack>
+							</li>
+						);
+					} ) }
+				</VStack>
 			</VStack>
 			{ cancellationChanges.length > 0 && (
-				<>
+				<VStack spacing={ 2 }>
 					<Text as="p">{ __( 'We will also make these changes to your site:' ) }</Text>
 					<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
 						{ cancellationChanges.map( ( change ) => {
 							return (
 								<li key={ change.getSlug() }>
 									<HStack alignment="topLeft">
-										<Icon size={ 20 } icon={ info } style={ { flexShrink: 0 } } />
+										<Icon
+											size={ 20 }
+											icon={ info }
+											style={ {
+												flexShrink: 0,
+												fill: 'var( --dashboard__foreground-color-warning )',
+											} }
+										/>
 										<span>{ change.getTitle() }</span>
 									</HStack>
 								</li>
 							);
 						} ) }
 					</VStack>
-				</>
+				</VStack>
 			) }
 		</VStack>
 	);

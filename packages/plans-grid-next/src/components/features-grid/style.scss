@@ -239,6 +239,10 @@
 		font-weight: 600;
 	}
 
+	.is-plan-differentiators-experiment & .has-min-height {
+		min-height: 32px;
+	}
+
 	&.is-top-buttons {
 		padding: 0 20px;
 		@include plans-grid-medium-large {

@@ -238,8 +238,19 @@
 				}
 			}
 
-			.wp-block-image figure figcaption {
+			figure.wp-block-image {
+				border: 1px solid $gray-200;
+				border-radius: 4px;
+				padding: 16px;
+
+				img {
+					border-radius: 2px;
+				}
+			}
+
+			figure.wp-block-image figcaption {
 				display: block;
+				padding: 12px 0 0;
 			}
 
 			color: var( --color-neutral-70 );

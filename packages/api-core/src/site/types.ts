@@ -3,6 +3,7 @@ interface SitePlan {
 	product_slug: string;
 	product_name?: string;
 	product_name_short: string;
+	product_name_en: string;
 	expired: boolean;
 	is_free: boolean;
 	license_key?: string;
@@ -49,8 +50,8 @@ export interface Site {
 		ico: string;
 	};
 	plan?: SitePlan;
-	capabilities: SiteCapabilities;
-	subscribers_count?: number; // Can be undefined if query cache is prefilled from old Calypso Redux store.
+	capabilities?: SiteCapabilities;
+	subscribers_count: number;
 	options?: SiteOptions; // Can be undefined for deleted sites.
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;

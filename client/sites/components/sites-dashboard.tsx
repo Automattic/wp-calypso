@@ -210,6 +210,7 @@ const SitesDashboard = ( {
 					showTitle: true,
 					mediaField: 'icon',
 					showMedia: true,
+					descriptionField: 'URL',
 			  }
 			: {
 					type: 'table',
@@ -217,6 +218,7 @@ const SitesDashboard = ( {
 					showTitle: true,
 					mediaField: 'icon',
 					showMedia: true,
+					descriptionField: 'URL',
 					layout: {
 						styles: {
 							site: {

@@ -6,7 +6,6 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
-import Logo from './logo';
 import './translations';
 import type {
 	FetchSitesOptions,
@@ -19,17 +18,9 @@ boot( {
 	name: 'CIAB',
 	basePath: '/ciab',
 	mainRoute: '/sites',
-	Logo,
+	Logo: null,
 	supports: {
 		sites: {
-			deployments: false,
-			performance: false,
-			monitoring: false,
-			logs: false,
-			backups: false,
-			scan: false,
-			domains: true,
-			emails: false,
 			settings: {
 				general: {
 					redirect: false,
@@ -46,6 +37,12 @@ boot( {
 		help: true,
 		notifications: false,
 		me: {
+			billing: {
+				monetizeSubscriptions: false,
+			},
+			security: {
+				sshKey: false,
+			},
 			privacy: false,
 			apps: false,
 		},
