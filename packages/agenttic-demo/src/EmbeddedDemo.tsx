@@ -354,8 +354,13 @@ const EmbeddedDemo: React.FC = () => {
 					</button>
 					<button
 						onClick={ () => {
-							setManualThinkingMessage( 'Testing progress message...' );
-							setTimeout( () => setManualThinkingMessage( undefined ), 3000 );
+							setManualThinkingMessage(
+								'Testing progress message...'
+							);
+							setTimeout(
+								() => setManualThinkingMessage( undefined ),
+								3000
+							);
 						} }
 						style={ {
 							padding: '4px 8px',
@@ -396,6 +401,11 @@ const EmbeddedDemo: React.FC = () => {
 						<AgentUI.Footer>
 							<AgentUI.Notice />
 							<AgentUI.Input />
+							<AgentUI.InputToolbar label="Custom Toolbar">
+								<div>
+									<p>This is a custom input toolbar.</p>
+								</div>
+							</AgentUI.InputToolbar>
 						</AgentUI.Footer>
 						<AgentUI.Suggestions
 							onSelect={ handleSuggestionSelect }
