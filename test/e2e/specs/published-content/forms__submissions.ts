@@ -202,8 +202,8 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			// So we loop over a search attempt on the email, looking for a folder tab with a result in it!
 			const searchAndClickFolderWithResult = async () => {
 				await feedbackInboxPage.searchResponses( formData1.email );
-				const tabLocator = page
-					.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
+				const tabLocator = await page
+					.getByRole( 'tab', { name: /(Inbox|Spam)\s+1/ } )
 					.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) );
 				await tabLocator.click( { timeout: 4000 } );
 				// Check if we're in spam folder
@@ -449,7 +449,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			// Use a retry loop since there can be a delay between the action completing
 			// and the item being available in the Inbox folder
 			const verifyInInbox = async () => {
-				await feedbackInboxPage.clickFolderTab( /Inbox\s+[\d,.]*/ );
+				await feedbackInboxPage.clickFolderTab( 'Inbox' );
 				await feedbackInboxPage.searchResponses( formData1.email, true );
 				await page
 					.locator( '.dataviews-view-table__row' )
