@@ -16,337 +16,180 @@ import './style.scss';
 
 type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 
-// Inline SVG illustrations - matching actual UI screenshots
+// Inline SVG illustrations - simple and abstract
 const AllSitesIllustration = () => (
 	<svg viewBox="0 0 280 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-		{ /* Background */ }
 		<rect width="280" height="180" rx="8" fill="#F6F7F7" />
-		{ /* Header */ }
-		<rect x="12" y="12" width="32" height="12" rx="2" fill="#1E1E1E" />
-		<rect x="230" y="10" width="40" height="16" rx="4" fill="#1289DB" />
-		{ /* Search bar */ }
+		{ /* Title */ }
+		<rect x="16" y="16" width="40" height="10" rx="2" fill="#1E1E1E" />
+		{ /* Site cards - 2x2 grid */ }
 		<rect
-			x="12"
-			y="32"
-			width="80"
-			height="16"
-			rx="4"
+			x="16"
+			y="40"
+			width="120"
+			height="60"
+			rx="6"
 			fill="white"
 			stroke="#DCDCDE"
 			strokeWidth="1"
 		/>
-		{ /* Site Card 1 - Beach photo style */ }
-		<g>
-			<rect
-				x="12"
-				y="56"
-				width="60"
-				height="76"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			<rect x="14" y="58" width="56" height="36" rx="2" fill="#87CEEB" />
-			<rect x="14" y="78" width="56" height="16" fill="#C2B280" />
-			<rect x="16" y="98" width="36" height="5" rx="1" fill="#1E1E1E" />
-			<rect x="16" y="105" width="48" height="3" rx="1" fill="#A7AAAD" />
-			<rect x="16" y="112" width="24" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="16" y="118" width="20" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="16" y="124" width="28" height="3" rx="1" fill="#DCDCDE" />
-		</g>
-		{ /* Site Card 2 - P2 style */ }
-		<g>
-			<rect
-				x="78"
-				y="56"
-				width="60"
-				height="76"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			<rect x="80" y="58" width="56" height="36" rx="2" fill="#F7F7F7" />
-			<rect x="84" y="62" width="32" height="4" rx="1" fill="#1E1E1E" />
-			<rect x="120" y="62" width="12" height="6" rx="2" fill="#117AC9" />
-			<rect x="84" y="70" width="48" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="84" y="76" width="40" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="82" y="98" width="40" height="5" rx="1" fill="#1E1E1E" />
-			<rect x="82" y="105" width="52" height="3" rx="1" fill="#A7AAAD" />
-			<rect x="82" y="112" width="24" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="82" y="118" width="20" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="82" y="124" width="28" height="3" rx="1" fill="#DCDCDE" />
-		</g>
-		{ /* Site Card 3 - Block Art Museum style */ }
-		<g>
-			<rect
-				x="144"
-				y="56"
-				width="60"
-				height="76"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			<rect x="146" y="58" width="56" height="36" rx="2" fill="#FDF4F7" />
-			<rect x="150" y="64" width="28" height="10" rx="1" fill="#D4576B" />
-			<rect x="150" y="76" width="20" height="6" rx="1" fill="#D4576B" />
-			<circle cx="188" cy="80" r="10" fill="#FFD4E0" />
-			<rect x="148" y="98" width="36" height="5" rx="1" fill="#1E1E1E" />
-			<rect x="148" y="105" width="54" height="3" rx="1" fill="#A7AAAD" />
-			<rect x="148" y="112" width="24" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="148" y="118" width="20" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="148" y="124" width="28" height="3" rx="1" fill="#DCDCDE" />
-		</g>
-		{ /* Site Card 4 - Hello World style */ }
-		<g>
-			<rect
-				x="210"
-				y="56"
-				width="60"
-				height="76"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			<rect x="212" y="58" width="56" height="36" rx="2" fill="white" />
-			<rect x="216" y="66" width="32" height="6" rx="1" fill="#1289DB" />
-			<rect x="216" y="76" width="44" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="216" y="82" width="36" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="214" y="98" width="44" height="5" rx="1" fill="#1E1E1E" />
-			<rect x="214" y="105" width="52" height="3" rx="1" fill="#A7AAAD" />
-			<rect x="214" y="112" width="24" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="214" y="118" width="20" height="3" rx="1" fill="#DCDCDE" />
-			<rect x="214" y="124" width="28" height="3" rx="1" fill="#DCDCDE" />
-		</g>
+		<rect x="22" y="46" width="108" height="30" rx="3" fill="#DCDCDE" />
+		<rect x="22" y="82" width="60" height="6" rx="1" fill="#1E1E1E" />
+		<rect x="22" y="92" width="80" height="4" rx="1" fill="#C3C4C7" />
+
+		<rect
+			x="144"
+			y="40"
+			width="120"
+			height="60"
+			rx="6"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<rect x="150" y="46" width="108" height="30" rx="3" fill="#DCDCDE" />
+		<rect x="150" y="82" width="50" height="6" rx="1" fill="#1E1E1E" />
+		<rect x="150" y="92" width="70" height="4" rx="1" fill="#C3C4C7" />
+
+		<rect
+			x="16"
+			y="108"
+			width="120"
+			height="60"
+			rx="6"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<rect x="22" y="114" width="108" height="30" rx="3" fill="#DCDCDE" />
+		<rect x="22" y="150" width="70" height="6" rx="1" fill="#1E1E1E" />
+		<rect x="22" y="160" width="90" height="4" rx="1" fill="#C3C4C7" />
+
+		<rect
+			x="144"
+			y="108"
+			width="120"
+			height="60"
+			rx="6"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<rect x="150" y="114" width="108" height="30" rx="3" fill="#DCDCDE" />
+		<rect x="150" y="150" width="55" height="6" rx="1" fill="#1E1E1E" />
+		<rect x="150" y="160" width="75" height="4" rx="1" fill="#C3C4C7" />
 	</svg>
 );
 
 const PrimarySiteIllustration = () => (
 	<svg viewBox="0 0 280 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-		{ /* Background */ }
 		<rect width="280" height="180" rx="8" fill="#F6F7F7" />
-		{ /* Header with site name */ }
-		<rect x="12" y="8" width="100" height="14" rx="2" fill="#1E1E1E" />
-		<rect x="12" y="26" width="140" height="4" rx="1" fill="#A7AAAD" />
-		{ /* Site Preview - Dark blue theme */ }
-		<rect x="12" y="38" width="72" height="100" rx="6" fill="#0A4B78" />
-		<rect x="20" y="48" width="56" height="6" rx="1" fill="white" opacity="0.3" />
-		<rect x="20" y="62" width="40" height="8" rx="1" fill="white" opacity="0.9" />
-		<rect x="20" y="74" width="50" height="4" rx="1" fill="white" opacity="0.5" />
-		<rect x="20" y="100" width="22" height="10" rx="3" fill="#3858E9" />
-		<rect x="46" y="100" width="22" height="10" rx="3" fill="#50575E" />
-		<rect x="20" y="122" width="48" height="3" rx="1" fill="white" opacity="0.3" />
-		{ /* Status Card - Visibility (green check) */ }
-		<g>
-			<rect
-				x="92"
-				y="38"
-				width="56"
-				height="44"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			<circle cx="104" cy="52" r="6" fill="#00BA37" opacity="0.15" />
-			<path
-				d="M101 52L103 54L107 50"
-				stroke="#00BA37"
-				strokeWidth="2"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<rect x="98" y="64" width="36" height="4" rx="1" fill="#A7AAAD" />
-			<rect x="98" y="72" width="28" height="6" rx="1" fill="#1E1E1E" />
-		</g>
-		{ /* Status Card - Performance */ }
-		<g>
-			<rect
-				x="154"
-				y="38"
-				width="56"
-				height="44"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			<rect x="166" y="48" width="14" height="14" rx="2" fill="#E8F0FE" />
-			<rect x="168" y="56" width="4" height="6" rx="1" fill="#1289DB" />
-			<rect x="174" y="52" width="4" height="10" rx="1" fill="#1289DB" />
-			<rect x="160" y="64" width="40" height="4" rx="1" fill="#A7AAAD" />
-			<rect x="160" y="72" width="32" height="6" rx="1" fill="#1E1E1E" />
-		</g>
-		{ /* Status Card - Plan */ }
-		<g>
-			<rect
-				x="216"
-				y="38"
-				width="56"
-				height="44"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			<circle cx="228" cy="52" r="6" fill="#1289DB" opacity="0.15" />
-			<rect x="225" y="50" width="6" height="4" rx="1" fill="#1289DB" />
-			<rect x="222" y="64" width="36" height="4" rx="1" fill="#A7AAAD" />
-			<rect x="222" y="72" width="28" height="6" rx="1" fill="#1E1E1E" />
-		</g>
-		{ /* Status Card - Last Backup */ }
-		<g>
-			<rect
-				x="92"
-				y="90"
-				width="56"
-				height="44"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			<circle cx="104" cy="104" r="6" fill="#DCDCDE" />
-			<rect x="102" y="102" width="4" height="5" rx="1" fill="#50575E" />
-			<rect x="98" y="116" width="36" height="4" rx="1" fill="#A7AAAD" />
-			<rect x="98" y="124" width="28" height="6" rx="1" fill="#1E1E1E" />
-		</g>
-		{ /* Status Card - Last Scan (green check) */ }
-		<g>
-			<rect
-				x="154"
-				y="90"
-				width="56"
-				height="44"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			<circle cx="166" cy="104" r="6" fill="#00BA37" opacity="0.15" />
-			<path
-				d="M163 104L165 106L169 102"
-				stroke="#00BA37"
-				strokeWidth="2"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<rect x="160" y="116" width="40" height="4" rx="1" fill="#A7AAAD" />
-			<rect x="160" y="124" width="32" height="6" rx="1" fill="#1E1E1E" />
-		</g>
-		{ /* Status Card - Storage */ }
-		<g>
-			<rect
-				x="216"
-				y="90"
-				width="56"
-				height="44"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			<rect x="222" y="100" width="44" height="4" rx="2" fill="#DCDCDE" />
-			<rect x="222" y="100" width="16" height="4" rx="2" fill="#00BA37" />
-			<rect x="222" y="110" width="28" height="4" rx="1" fill="#A7AAAD" />
-			<rect x="222" y="118" width="20" height="6" rx="1" fill="#1E1E1E" />
-			<rect x="222" y="128" width="44" height="4" rx="2" fill="#DCDCDE" />
-			<rect x="222" y="128" width="4" height="4" rx="2" fill="#00BA37" />
-		</g>
+		{ /* Title */ }
+		<rect x="16" y="16" width="80" height="12" rx="2" fill="#1E1E1E" />
+		<rect x="16" y="32" width="120" height="4" rx="1" fill="#C3C4C7" />
+		{ /* Site preview */ }
+		<rect x="16" y="48" width="80" height="120" rx="6" fill="#1E1E1E" />
+		<rect x="24" y="64" width="64" height="8" rx="1" fill="white" opacity="0.9" />
+		<rect x="24" y="78" width="48" height="4" rx="1" fill="white" opacity="0.5" />
+		<rect x="24" y="100" width="28" height="12" rx="3" fill="white" opacity="0.3" />
+		{ /* Status cards - 2x2 grid */ }
+		<rect
+			x="108"
+			y="48"
+			width="76"
+			height="54"
+			rx="6"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<circle cx="124" cy="68" r="8" fill="#DCDCDE" />
+		<rect x="116" y="86" width="50" height="6" rx="1" fill="#1E1E1E" />
+
+		<rect
+			x="192"
+			y="48"
+			width="76"
+			height="54"
+			rx="6"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<circle cx="208" cy="68" r="8" fill="#DCDCDE" />
+		<rect x="200" y="86" width="50" height="6" rx="1" fill="#1E1E1E" />
+
+		<rect
+			x="108"
+			y="110"
+			width="76"
+			height="54"
+			rx="6"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<circle cx="124" cy="130" r="8" fill="#DCDCDE" />
+		<rect x="116" y="148" width="50" height="6" rx="1" fill="#1E1E1E" />
+
+		<rect
+			x="192"
+			y="110"
+			width="76"
+			height="54"
+			rx="6"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<circle cx="208" cy="130" r="8" fill="#DCDCDE" />
+		<rect x="200" y="148" width="50" height="6" rx="1" fill="#1E1E1E" />
 	</svg>
 );
 
 const ReaderIllustration = () => (
 	<svg viewBox="0 0 280 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-		{ /* Background */ }
 		<rect width="280" height="180" rx="8" fill="#F6F7F7" />
 		{ /* Sidebar */ }
-		<rect x="0" y="0" width="56" height="180" rx="8" fill="white" />
-		<rect width="48" height="180" fill="white" />
-		{ /* Reader title in sidebar */ }
-		<rect x="8" y="12" width="36" height="10" rx="2" fill="#1E1E1E" />
-		{ /* Sidebar nav items */ }
-		<rect x="8" y="32" width="40" height="8" rx="4" fill="#E8F0FE" />
-		<rect x="12" y="34" width="32" height="4" rx="1" fill="#1289DB" />
-		<rect x="8" y="46" width="28" height="5" rx="1" fill="#A7AAAD" />
-		<rect x="8" y="56" width="32" height="5" rx="1" fill="#A7AAAD" />
-		<rect x="8" y="66" width="24" height="5" rx="1" fill="#A7AAAD" />
-		<rect x="8" y="76" width="36" height="5" rx="1" fill="#A7AAAD" />
-		<rect x="8" y="86" width="20" height="5" rx="1" fill="#A7AAAD" />
-		<rect x="8" y="96" width="26" height="5" rx="1" fill="#A7AAAD" />
-		{ /* Main content area */ }
-		<rect x="64" y="12" width="40" height="8" rx="2" fill="#1E1E1E" />
-		<rect x="64" y="24" width="80" height="4" rx="1" fill="#A7AAAD" />
-		{ /* Write quick post bar */ }
+		<rect x="0" y="0" width="56" height="180" fill="white" />
+		<rect x="8" y="16" width="40" height="10" rx="2" fill="#1E1E1E" />
+		<rect x="8" y="36" width="36" height="6" rx="1" fill="#C3C4C7" />
+		<rect x="8" y="48" width="28" height="6" rx="1" fill="#C3C4C7" />
+		<rect x="8" y="60" width="32" height="6" rx="1" fill="#C3C4C7" />
+		<rect x="8" y="72" width="24" height="6" rx="1" fill="#C3C4C7" />
+		{ /* Main content */ }
+		<rect x="68" y="16" width="50" height="10" rx="2" fill="#1E1E1E" />
+		<rect x="68" y="32" width="80" height="4" rx="1" fill="#C3C4C7" />
+		{ /* Post card 1 */ }
 		<rect
-			x="64"
-			y="36"
-			width="204"
-			height="16"
-			rx="4"
+			x="68"
+			y="48"
+			width="200"
+			height="56"
+			rx="6"
 			fill="white"
 			stroke="#DCDCDE"
 			strokeWidth="1"
 		/>
-		<rect x="72" y="42" width="60" height="4" rx="1" fill="#A7AAAD" />
-		{ /* Post Card 1 - with photo avatar */ }
-		<g>
-			<rect
-				x="64"
-				y="58"
-				width="204"
-				height="54"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			{ /* Avatar - photo style */ }
-			<circle cx="82" cy="76" r="10" fill="#D4A574" />
-			<circle cx="82" cy="73" r="4" fill="#F5E6D3" />
-			<ellipse cx="82" cy="80" rx="5" ry="3" fill="#8B7355" />
-			{ /* Author info */ }
-			<rect x="98" y="68" width="50" height="5" rx="1" fill="#1E1E1E" />
-			<rect x="98" y="76" width="70" height="3" rx="1" fill="#A7AAAD" />
-			{ /* Post title */ }
-			<rect x="98" y="86" width="140" height="6" rx="1" fill="#1E1E1E" />
-			{ /* Excerpt */ }
-			<rect x="98" y="96" width="160" height="4" rx="1" fill="#A7AAAD" />
-			{ /* Action buttons */ }
-			<rect x="230" y="68" width="12" height="8" rx="2" fill="#DCDCDE" />
-			<rect x="246" y="68" width="12" height="8" rx="2" fill="#DCDCDE" />
-		</g>
-		{ /* Post Card 2 - with different avatar */ }
-		<g>
-			<rect
-				x="64"
-				y="118"
-				width="204"
-				height="54"
-				rx="4"
-				fill="white"
-				stroke="#DCDCDE"
-				strokeWidth="1"
-			/>
-			{ /* Avatar - blue tint */ }
-			<circle cx="82" cy="136" r="10" fill="#B8D4E8" />
-			<circle cx="82" cy="133" r="4" fill="#E8F4F8" />
-			<ellipse cx="82" cy="140" rx="5" ry="3" fill="#5B8FAD" />
-			{ /* Author info */ }
-			<rect x="98" y="128" width="40" height="5" rx="1" fill="#1E1E1E" />
-			<rect x="98" y="136" width="55" height="3" rx="1" fill="#A7AAAD" />
-			{ /* Post title */ }
-			<rect x="98" y="146" width="120" height="6" rx="1" fill="#1E1E1E" />
-			{ /* Excerpt */ }
-			<rect x="98" y="156" width="150" height="4" rx="1" fill="#A7AAAD" />
-			{ /* Action buttons */ }
-			<rect x="230" y="128" width="12" height="8" rx="2" fill="#DCDCDE" />
-			<rect x="246" y="128" width="12" height="8" rx="2" fill="#DCDCDE" />
-		</g>
+		<circle cx="88" cy="76" r="12" fill="#DCDCDE" />
+		<rect x="108" y="64" width="60" height="6" rx="1" fill="#1E1E1E" />
+		<rect x="108" y="76" width="140" height="8" rx="1" fill="#1E1E1E" />
+		<rect x="108" y="90" width="120" height="4" rx="1" fill="#C3C4C7" />
+		{ /* Post card 2 */ }
+		<rect
+			x="68"
+			y="112"
+			width="200"
+			height="56"
+			rx="6"
+			fill="white"
+			stroke="#DCDCDE"
+			strokeWidth="1"
+		/>
+		<circle cx="88" cy="140" r="12" fill="#DCDCDE" />
+		<rect x="108" y="128" width="50" height="6" rx="1" fill="#1E1E1E" />
+		<rect x="108" y="140" width="130" height="8" rx="1" fill="#1E1E1E" />
+		<rect x="108" y="154" width="100" height="4" rx="1" fill="#C3C4C7" />
 	</svg>
 );
 
