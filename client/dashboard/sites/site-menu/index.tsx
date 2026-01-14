@@ -4,43 +4,15 @@ import { useAppContext } from '../../app/context';
 import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
-import type { AppConfig, SiteFeatureSupports } from '../../app/context';
+import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
-
-const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof SiteFeatureSupports ) => {
-	return supports.sites && supports.sites[ feature ];
-};
 
 const SiteMenu = ( { site }: { site: Site } ) => {
 	const { supports } = useAppContext();
 	const siteSlug = site.slug;
 
-	if ( isSelfHostedJetpackConnected( site ) ) {
-		return (
-			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
-					{ __( 'Overview' ) }
-				</ResponsiveMenu.Item>
-			</ResponsiveMenu>
-		);
-	}
-
-	if ( isCommerceGarden( site ) ) {
-		return (
-			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
-					{ __( 'Overview' ) }
-				</ResponsiveMenu.Item>
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
-					{ __( 'Domains' ) }
-				</ResponsiveMenu.Item>
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
-					{ __( 'Settings' ) }
-				</ResponsiveMenu.Item>
-			</ResponsiveMenu>
-		);
-	}
+	const siteTypeSupports = getSiteTypeFeatureSupports( site );
 
 	if ( hasSiteTrialEnded( site ) ) {
 		return (
@@ -58,12 +30,12 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-building-in-progress` }>
 					{ __( 'Site building' ) }
 				</ResponsiveMenu.Item>
-				{ hasAppSupport( supports, 'domains' ) && (
+				{ siteTypeSupports.domains && (
 					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 						{ __( 'Domains' ) }
 					</ResponsiveMenu.Item>
 				) }
-				{ hasAppSupport( supports, 'emails' ) && (
+				{ siteTypeSupports.emails && (
 					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/emails` }>
 						{ __( 'Emails' ) }
 					</ResponsiveMenu.Item>
@@ -77,46 +49,49 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
 				{ __( 'Overview' ) }
 			</ResponsiveMenu.Item>
-			{ hasAppSupport( supports, 'deployments' ) && (
+			{ siteTypeSupports.deployments && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/deployments` }>
 					{ __( 'Deployments' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ hasAppSupport( supports, 'performance' ) && (
+			{ siteTypeSupports.performance && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
 					{ __( 'Performance' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ hasAppSupport( supports, 'monitoring' ) && (
+			{ siteTypeSupports.monitoring && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/monitoring` }>
 					{ __( 'Monitoring' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ hasAppSupport( supports, 'logs' ) && (
+			{ siteTypeSupports.logs && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/logs` }>
 					{ __( 'Logs' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ hasAppSupport( supports, 'scan' ) && (
+			{ siteTypeSupports.scan && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/scan` }>
 					{ __( 'Scan' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ hasAppSupport( supports, 'backups' ) && (
+			{ siteTypeSupports.backups && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
 					{ __( 'Backups' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ hasAppSupport( supports, 'domains' ) && (
+			{ siteTypeSupports.domains && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 					{ __( 'Domains' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ site.capabilities.manage_options && (
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
-					{ __( 'Settings' ) }
-				</ResponsiveMenu.Item>
-			) }
+			{ supports.sites &&
+				supports.sites.settings &&
+				site.capabilities?.manage_options &&
+				! isSelfHostedJetpackConnected( site ) && (
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
+						{ __( 'Settings' ) }
+					</ResponsiveMenu.Item>
+				) }
 		</ResponsiveMenu>
 	);
 };

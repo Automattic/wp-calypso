@@ -39,6 +39,7 @@ export default {
 				],
 			},
 			title: { type: 'string' },
+			oauth_version: { type: 'string' },
 		},
 		required: [ 'ID' ],
 		additionalProperties: false,

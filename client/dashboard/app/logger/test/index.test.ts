@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { DashboardDataError, INACCESSIBLE_JETPACK_ERROR_CODE } from '@automattic/api-core';
 import { captureException } from '@automattic/calypso-sentry';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { handleOnCatch } from '../index';
@@ -36,8 +35,10 @@ describe( 'handleOnCatch', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'does not log or capture benign DashboardDataError (inaccessible Jetpack site)', () => {
-		const error = new DashboardDataError( INACCESSIBLE_JETPACK_ERROR_CODE );
+	it( 'does not log or capture benign inaccessible Jetpack error', () => {
+		const error = new Error( 'The Jetpack site is inaccessible or returned an error' );
+		error.name = 'ParseError';
+
 		const errorInfo = createErrorInfo();
 		const router = createRouter( { siteSlug: 'my-site' } );
 
