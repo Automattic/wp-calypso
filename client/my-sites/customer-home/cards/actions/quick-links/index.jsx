@@ -287,7 +287,7 @@ export const QuickLinks = ( {
 		<FoldableCard
 			className="quick-links customer-home__card"
 			headerTagName="h2"
-			header={ translate( 'Quick links' ) }
+			header={ translate( 'Piña Colada' ) }
 			clickableHeader
 			expanded={ isSiteLaunched ? externalIsExpanded : false }
 			onOpen={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'expanded' ) }
