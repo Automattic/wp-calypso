@@ -32,6 +32,11 @@ export interface IconListItemProps {
 	 * @default 'medium'
 	 */
 	density?: 'low' | 'medium' | 'high';
+
+	/**
+	 * Whether to stack the suffix. Default is false.
+	 */
+	stackSuffix?: boolean;
 }
 
 export interface IconListProps {

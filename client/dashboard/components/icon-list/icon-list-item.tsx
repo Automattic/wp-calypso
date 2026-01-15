@@ -10,7 +10,15 @@ import type { IconListItemProps } from './types';
 import './icon-list-item.scss';
 
 function UnforwardedIconListItem(
-	{ title, description, decoration, suffix, className, density = 'medium' }: IconListItemProps,
+	{
+		title,
+		description,
+		decoration,
+		suffix,
+		className,
+		density = 'medium',
+		stackSuffix = false,
+	}: IconListItemProps,
 	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
 	const densitySpacingMap = {
@@ -23,13 +31,19 @@ function UnforwardedIconListItem(
 	const textSpacing = densitySpacingMap[ density ] / 2;
 	const suffixSpacing = densitySpacingMap[ density ];
 	const titleSize = density === 'low' ? '15px' : undefined;
-	const alignment = description ? 'flex-start' : 'center';
+	const alignment = description || stackSuffix ? 'flex-start' : 'center';
+	const InnerComponent = stackSuffix ? VStack : HStack;
 
 	return (
 		<VStack className={ clsx( 'icon-list-item', className ) } ref={ ref } as="span">
 			<HStack spacing={ iconSpacing } alignment={ alignment } as="span">
 				{ !! decoration && <span className="icon-list-item__decoration">{ decoration }</span> }
-				<HStack spacing={ suffixSpacing } as="span">
+				<InnerComponent
+					className={ stackSuffix ? 'icon-list-item__content--wrap' : undefined }
+					alignment={ stackSuffix ? 'flex-start' : undefined }
+					spacing={ suffixSpacing }
+					as="span"
+				>
 					<VStack spacing={ textSpacing } as="span">
 						<Text weight={ 500 } lineHeight="24px" size={ titleSize }>
 							{ title }
@@ -37,7 +51,7 @@ function UnforwardedIconListItem(
 						{ description && <Text variant="muted">{ description }</Text> }
 					</VStack>
 					{ suffix }
-				</HStack>
+				</InnerComponent>
 			</HStack>
 		</VStack>
 	);

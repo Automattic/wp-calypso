@@ -1,11 +1,17 @@
 import React from 'react';
 import type { IconListItemProps, IconListProps } from '../icon-list/types';
 
-export interface ActionItemProps extends Omit< IconListItemProps, 'suffix' > {
+export interface ActionItemProps
+	extends Omit< IconListItemProps, 'suffix' | 'stackSuffix' | 'density' > {
 	/**
 	 * Renders a button that invokes the related action.
 	 */
 	actions: React.ReactNode;
+
+	/**
+	 * Whether to stack the actions. Default is false.
+	 */
+	stackActions?: boolean;
 }
 
 export interface ActionListProps extends IconListProps {

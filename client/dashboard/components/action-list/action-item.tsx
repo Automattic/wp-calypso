@@ -7,7 +7,7 @@ import type { ActionItemProps } from './types';
 import './action-item.scss';
 
 function UnforwardedActionItem(
-	{ title, description, decoration, actions, className }: ActionItemProps,
+	{ title, description, decoration, actions, className, stackActions = false }: ActionItemProps,
 	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
 	return (
@@ -19,14 +19,15 @@ function UnforwardedActionItem(
 			suffix={
 				<ButtonStack
 					className="action-item__actions"
-					justify="flex-end"
-					expanded={ false }
+					justify={ stackActions ? 'flex-start' : 'flex-end' }
+					expanded={ stackActions }
 					as="span"
 				>
 					{ actions }
 				</ButtonStack>
 			}
 			ref={ ref }
+			stackSuffix={ stackActions }
 		/>
 	);
 }
