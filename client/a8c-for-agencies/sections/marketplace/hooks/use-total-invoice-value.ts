@@ -44,14 +44,13 @@ export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currenc
 		product: SelectedLicenseProp | APIProductFamilyProduct,
 		quantity: number
 	) => {
-		const termPrice =
-			termPricing === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
+		const termPrice = termPricing === 'yearly' ? product.yearly_price : product.monthly_price;
 		const productPrice = isTermPricingEnabled ? termPrice : Number( product.amount );
 
 		const termPricingText =
 			isTermPricingEnabled && termPricing === 'yearly' ? translate( '/yr' ) : translate( '/mo' );
 
-		const productBundlePrice = productPrice * quantity;
+		const productBundlePrice = productPrice ? productPrice * quantity : 0;
 
 		if ( product.family_slug === 'wpcom-hosting' ) {
 			const tier = calculateTier( options, quantity + ownedPlans );
@@ -64,7 +63,7 @@ export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currenc
 				termPricingText,
 				discountedCostFormatted: formatCurrency( discountedCost, currency ?? 'USD' ),
 				actualCostFormatted: formatCurrency( productBundlePrice, currency ?? 'USD' ),
-				isFree: productBundlePrice === 0,
+				isFree: productPrice === 0,
 			};
 		}
 
@@ -86,7 +85,7 @@ export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currenc
 				actualCostFormatted: formatCurrency( actualCost, currency ?? 'USD' ),
 				showActualCost: actualCost > discountedCost,
 				termPricingText,
-				isFree: actualCost === 0,
+				isFree: productPrice === 0,
 			};
 		}
 

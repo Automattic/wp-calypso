@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isWooCommerceProduct,
 	isWpcomHostingProduct,
@@ -54,6 +55,8 @@ import {
 	JETPACK_COMPLETE_PRODUCT_SLUG,
 } from './product-slugs';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
+
+const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
 export type SelectedFilters = {
 	[ PRODUCT_FILTER_KEY_BRAND ]: string;
@@ -176,6 +179,19 @@ function filterProductsAndPlansByTypes(
 }
 
 /*
+ * Get the price of a product.
+ *
+ * @param {APIProductFamilyProduct} product - Product.
+ * @return {number} Price.
+ */
+function getProductPrice( product: APIProductFamilyProduct ) {
+	if ( isTermPricingEnabled ) {
+		return product.yearly_price || product.monthly_price || 0;
+	}
+	return Number( product.amount );
+}
+
+/*
  * Filter products and plans by prices.
  *
  * @param {APIProductFamilyProduct[]} productsAndPlans - List of products and plans.
@@ -188,11 +204,11 @@ function filterProductsAndPlansByPrices(
 ) {
 	if ( prices.length === 1 ) {
 		if ( prices[ 0 ] === PRODUCT_PRICE_FREE ) {
-			return productsAndPlans.filter( ( { amount } ) => Number( amount ) === 0 );
+			return productsAndPlans.filter( ( product ) => getProductPrice( product ) === 0 );
 		}
 
 		if ( prices[ 0 ] === PRODUCT_PRICE_PAID ) {
-			return productsAndPlans.filter( ( { amount } ) => Number( amount ) > 0 );
+			return productsAndPlans.filter( ( product ) => getProductPrice( product ) > 0 );
 		}
 	}
 
