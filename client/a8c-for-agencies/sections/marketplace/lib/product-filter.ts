@@ -49,6 +49,9 @@ import {
 	MERCHANDISING_PRODUCT_SLUGS,
 	STORE_CONTENT_PRODUCT_SLUGS,
 	STORE_MANAGEMENT_PRODUCT_SLUGS,
+	BACKUP_STORAGE_FAMILY_SLUG,
+	JETPACK_PACKS_FAMILY_SLUG,
+	JETPACK_COMPLETE_PRODUCT_SLUG,
 } from './product-slugs';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
@@ -250,8 +253,8 @@ function filterProductsAndPlansByVendors(
 
 export const isProductType = ( family_slug: string ) => {
 	return (
-		family_slug !== 'jetpack-packs' &&
-		family_slug !== 'jetpack-backup-storage' &&
+		family_slug !== JETPACK_PACKS_FAMILY_SLUG &&
+		family_slug !== BACKUP_STORAGE_FAMILY_SLUG &&
 		! isWooCommerceProduct( family_slug ) &&
 		! isWpcomHostingProduct( family_slug ) &&
 		! isPressableHostingProduct( family_slug )
@@ -278,14 +281,16 @@ export function filterProductsAndPlansByType(
 		case PRODUCT_TYPE_JETPACK_PLAN:
 		case PRODUCT_TYPE_PLAN: // Right now this is the same as jetpack plan but once we have more non-jetpack plans we can separate them.
 			return (
-				allProductsAndPlans?.filter( ( { family_slug } ) => family_slug === 'jetpack-packs' ) || []
+				allProductsAndPlans?.filter(
+					( { family_slug } ) => family_slug === JETPACK_PACKS_FAMILY_SLUG
+				) || []
 			);
 
 		case PRODUCT_TYPE_JETPACK_BACKUP_ADDON:
 		case PRODUCT_TYPE_ADDON: // Right now this is the same as jetpack backup addons but once we have more non-jetpack addons we can separate them.
 			return (
 				allProductsAndPlans
-					?.filter( ( { family_slug } ) => family_slug === 'jetpack-backup-storage' )
+					?.filter( ( { family_slug } ) => family_slug === BACKUP_STORAGE_FAMILY_SLUG )
 					.sort( ( a, b ) => a.product_id - b.product_id ) || []
 			);
 
@@ -339,52 +344,50 @@ function filterProductsAndPlansByCategory(
 				[]
 			);
 		case PRODUCT_CATEGORY_SECURITY:
-			return allProductsAndPlans.filter(
-				( { slug, family_slug } ) =>
-					SECURITY_PRODUCT_SLUGS.includes( family_slug ) || slug === 'jetpack-complete'
-			);
+			return allProductsAndPlans.filter( ( { slug, family_slug } ) => {
+				const securitySlugs = [ ...SECURITY_PRODUCT_SLUGS, JETPACK_COMPLETE_PRODUCT_SLUG ];
+				return securitySlugs.includes( slug ) || family_slug === BACKUP_STORAGE_FAMILY_SLUG;
+			} );
 		case PRODUCT_CATEGORY_PERFORMANCE:
-			return allProductsAndPlans.filter(
-				( { slug, family_slug } ) =>
-					PERFORMANCE_PRODUCT_SLUGS.includes( family_slug ) || slug === 'jetpack-complete'
-			);
+			return allProductsAndPlans.filter( ( { slug } ) => {
+				const performanceSlugs = [ ...PERFORMANCE_PRODUCT_SLUGS, JETPACK_COMPLETE_PRODUCT_SLUG ];
+				return performanceSlugs.includes( slug );
+			} );
 		case PRODUCT_CATEGORY_SOCIAL:
-			return allProductsAndPlans.filter(
-				( { slug, family_slug } ) =>
-					SOCIAL_PRODUCT_SLUGS.includes( family_slug ) || slug === 'jetpack-complete'
-			);
+			return allProductsAndPlans.filter( ( { slug } ) => {
+				const socialSlugs = [ ...SOCIAL_PRODUCT_SLUGS, JETPACK_COMPLETE_PRODUCT_SLUG ];
+				return socialSlugs.includes( slug );
+			} );
 		case PRODUCT_CATEGORY_GROWTH:
-			return allProductsAndPlans.filter(
-				( { slug, family_slug } ) =>
-					GROWTH_PRODUCT_SLUGS.includes( family_slug ) || slug === 'jetpack-complete'
-			);
+			return allProductsAndPlans.filter( ( { slug } ) => {
+				const growthSlugs = [ ...GROWTH_PRODUCT_SLUGS, JETPACK_COMPLETE_PRODUCT_SLUG ];
+				return growthSlugs.includes( slug );
+			} );
 		case PRODUCT_CATEGORY_PAYMENTS:
-			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				PAYMENTS_PRODUCT_SLUGS.includes( family_slug )
-			);
+			return allProductsAndPlans.filter( ( { slug } ) => PAYMENTS_PRODUCT_SLUGS.includes( slug ) );
 		case PRODUCT_CATEGORY_SHIPPING_DELIVERY_FULFILLMENT:
-			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				SHIPPING_DELIVERY_FULFILLMENT_PRODUCT_SLUGS.includes( family_slug )
+			return allProductsAndPlans.filter( ( { slug } ) =>
+				SHIPPING_DELIVERY_FULFILLMENT_PRODUCT_SLUGS.includes( slug )
 			);
 		case PRODUCT_CATEGORY_CONVERSION:
-			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				CONVERSION_PRODUCT_SLUGS.includes( family_slug )
+			return allProductsAndPlans.filter( ( { slug } ) =>
+				CONVERSION_PRODUCT_SLUGS.includes( slug )
 			);
 		case PRODUCT_CATEGORY_CUSTOMER_SERVICE:
-			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				CUSTOMER_SERVICE_PRODUCT_SLUGS.includes( family_slug )
+			return allProductsAndPlans.filter( ( { slug } ) =>
+				CUSTOMER_SERVICE_PRODUCT_SLUGS.includes( slug )
 			);
 		case PRODUCT_CATEGORY_MERCHANDISING:
-			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				MERCHANDISING_PRODUCT_SLUGS.includes( family_slug )
+			return allProductsAndPlans.filter( ( { slug } ) =>
+				MERCHANDISING_PRODUCT_SLUGS.includes( slug )
 			);
 		case PRODUCT_CATEGORY_STORE_CONTENT:
-			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				STORE_CONTENT_PRODUCT_SLUGS.includes( family_slug )
+			return allProductsAndPlans.filter( ( { slug } ) =>
+				STORE_CONTENT_PRODUCT_SLUGS.includes( slug )
 			);
 		case PRODUCT_CATEGORY_STORE_MANAGEMENT:
-			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				STORE_MANAGEMENT_PRODUCT_SLUGS.includes( family_slug )
+			return allProductsAndPlans.filter( ( { slug } ) =>
+				STORE_MANAGEMENT_PRODUCT_SLUGS.includes( slug )
 			);
 	}
 
