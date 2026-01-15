@@ -16,6 +16,7 @@ import {
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
+import { useLoggedOutSession } from '../hooks/use-logged-out-session';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
@@ -75,27 +76,20 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const { setLoggedOutOdieChat } = useDispatch( HELP_CENTER_STORE );
 	const location = useLocation();
 
+	const {
+		isLoggedOutSession,
+		loggedOutOdieChatId,
+		sessionId,
+		botSlug: loggedOutOdieBotSlug,
+	} = useLoggedOutSession();
+
 	const currentUser = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentUser(),
 		[]
 	);
 	const isLoggedIn = !! currentUser?.ID;
 
-	const params = new URLSearchParams( location.search );
-	const loggedOutOdieChatId = params.get( 'chatId' );
-	const loggedOutOdieSessionId = params.get( 'sessionId' );
-	const loggedOutOdieBotSlug = params.get( 'botSlug' );
-
-	const isLoggedOutSession =
-		! isLoggedIn ||
-		// The user can be logged in but still wants to continue the logged out session.
-		Boolean( loggedOutOdieChatId && loggedOutOdieSessionId && loggedOutOdieBotSlug );
-
-	const odieId = isLoggedOutSession
-		? loggedOutOdieChatId
-		: getOdieIdFromInteraction( currentSupportInteraction );
-
-	const sessionId = loggedOutOdieChatId ? loggedOutOdieSessionId : undefined;
+	const odieId = loggedOutOdieChatId || getOdieIdFromInteraction( currentSupportInteraction );
 
 	const { addEventToInteraction, startNewInteraction } = useManageSupportInteraction();
 	const createZendeskConversation = useCreateZendeskConversation();

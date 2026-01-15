@@ -4,7 +4,6 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
-import { useLocation } from 'react-router-dom';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
 import { getOdieTransferMessages, getZendeskChatStartedMetaMessage } from '../constants';
 import { emptyChat } from '../context';
@@ -15,6 +14,7 @@ import {
 	getOdieIdFromInteraction,
 	getIsRequestingHumanSupport,
 } from '../utils';
+import { useLoggedOutSession } from './use-logged-out-session';
 import type { Chat, Message } from '../types';
 
 function isEqual( message1: Message, message2: Message ) {
@@ -49,20 +49,9 @@ export const useGetCombinedChat = (
 	const { data: currentSupportInteraction, isLoading: isLoadingCurrentSupportInteraction } =
 		useCurrentSupportInteraction();
 
-	const location = useLocation();
-	const params = new URLSearchParams( location.search );
-	// We use these values to identify the logged out chat, not the ones from the data store, to keep the router in charge of the state.
-	const loggedOutOdieChatId = params.get( 'chatId' );
-	const loggedOutOdieSessionId = params.get( 'sessionId' );
-	const loggedOutOdieBotSlug = params.get( 'botSlug' );
+	const { loggedOutOdieChatId, sessionId, botSlug } = useLoggedOutSession();
 
-	const isLoggedOutSession = loggedOutOdieChatId && loggedOutOdieSessionId && loggedOutOdieBotSlug;
-
-	const odieId = isLoggedOutSession
-		? loggedOutOdieChatId
-		: getOdieIdFromInteraction( currentSupportInteraction );
-	const sessionId = isLoggedOutSession ? loggedOutOdieSessionId : undefined;
-	const botSlug = isLoggedOutSession ? loggedOutOdieBotSlug : undefined;
+	const odieId = loggedOutOdieChatId || getOdieIdFromInteraction( currentSupportInteraction );
 
 	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -206,6 +195,11 @@ export const useGetCombinedChat = (
 		getZendeskConversation,
 		startNewInteraction,
 		isLoadingCanConnectToZendesk,
+		sessionId,
+		botSlug,
+		isLoadingCurrentSupportInteraction,
+		mainChatState?.messages?.length,
+		odieChat,
 	] );
 
 	return { mainChatState, setMainChatState };
