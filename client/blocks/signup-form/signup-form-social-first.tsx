@@ -5,6 +5,8 @@ import { useState, createInterpolateElement } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { FormDivider } from 'calypso/blocks/authentication';
+import InfoNotice from 'calypso/components/social-buttons/info-notice';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -107,12 +109,13 @@ const SignupFormSocialFirst = ( {
 				options
 			);
 		} else {
-			tosText = createInterpolateElement(
-				__(
-					'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-				),
-				options
-			);
+			// tosText = createInterpolateElement(
+			// 	__(
+			// 		'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+			// 	),
+			// 	options
+			// );
+			tosText = __( 'Sign up for free to start creating your site.' );
 		}
 
 		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
@@ -144,6 +147,37 @@ const SignupFormSocialFirst = ( {
 			<div className={ getVisibilityClassName( 'initial' ) }>
 				{ notice }
 				{ renderTermsOfService() }
+				<div className="signup-form-social-first-email">
+					<PasswordlessSignupForm
+						stepName={ stepName }
+						flowName={ flowName }
+						goToNextStep={ goToNextStep }
+						logInUrl={ logInUrl }
+						queryArgs={ queryArgs }
+						labelText={ emailLabelText ?? __( 'Your email' ) }
+						submitButtonLabel={ __( 'Continue' ) }
+						userEmail={ userEmail }
+						passDataToNextStep={ passDataToNextStep }
+						onCreateAccountError={ ( error: { error: string }, email: string ) => {
+							if ( isExistingAccountError( error.error ) ) {
+								window.location.assign(
+									addQueryArgs(
+										{
+											email_address: email,
+											is_signup_existing_account: true,
+											redirect_to: queryArgs?.redirect_to,
+										},
+										logInUrl
+									)
+								);
+							}
+						} }
+						onCreateAccountSuccess={ onCreateAccountSuccess }
+						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
+						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
+					/>
+				</div>
+				<FormDivider isHorizontal />
 				<SocialSignupForm
 					handleResponse={ handleSocialResponse }
 					setCurrentStep={ setCurrentStep }
@@ -153,6 +187,7 @@ const SignupFormSocialFirst = ( {
 					compact
 					isSocialFirst={ isSocialFirst }
 				/>
+				<InfoNotice>{ __( 'Join 472+ million websites worldwide' ) }</InfoNotice>
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">

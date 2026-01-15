@@ -6,3 +6,4 @@ export { default as GithubSocialButton } from './github';
 export { default as PayPalSocialButton } from './paypal';
 export { default as UsernameOrEmailButton } from './username-or-email';
 export { default as LastUsedSocialButton } from './last-used-method';
+export { default as InfoNotice } from './info-notice';

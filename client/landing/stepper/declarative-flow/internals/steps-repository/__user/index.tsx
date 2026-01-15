@@ -1,5 +1,7 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -118,7 +120,7 @@ const UserStepComponent: StepType = function UserStep( {
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading text={ translate( 'Create your account' ) } />
+				<Step.Heading text={ translate( 'Welcome to WordPress.com' ) } />
 			</>
 		);
 
@@ -133,6 +135,32 @@ const UserStepComponent: StepType = function UserStep( {
 			/>
 		);
 
+		const options = {
+			tosLink: (
+				<a
+					href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+					onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
+					target="_blank"
+					rel="noopener noreferrer"
+				/>
+			),
+			privacyLink: (
+				<a
+					href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+					onClick={ () => recordTracksEvent( 'calypso_signup_privacy_link_click' ) }
+					target="_blank"
+					rel="noopener noreferrer"
+				/>
+			),
+		};
+
+		const tosText = createInterpolateElement(
+			translate(
+				'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+			),
+			options
+		);
+
 		return (
 			<Step.CenteredColumnLayout
 				className="step-container-v2--user"
@@ -140,6 +168,7 @@ const UserStepComponent: StepType = function UserStep( {
 				columnWidth={ 4 }
 				heading={ heading }
 				topBar={ topBar }
+				stickyBottomBar={ () => tosText }
 			>
 				{ stepContent }
 			</Step.CenteredColumnLayout>
