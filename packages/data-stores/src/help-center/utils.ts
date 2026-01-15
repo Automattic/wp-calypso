@@ -59,6 +59,13 @@ export function subscribeToPersist( store: Store< State > ) {
 	 */
 	store.subscribe( () => {
 		const state = store.getState() as State;
+		const arePreferencesLoaded = select( STORE_KEY ).hasFinishedResolution(
+			'getHelpCenterPreferences',
+			[]
+		);
+		if ( ! arePreferencesLoaded ) {
+			return;
+		}
 		const preferences = { ...state.helpCenterPreferences };
 		let shouldUpdatePreferences = false;
 		if ( state.showHelpCenter !== undefined ) {
