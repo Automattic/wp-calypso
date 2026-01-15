@@ -587,6 +587,7 @@ export const siteSettingsIndexRoute = createRoute( {
 );
 
 export const siteSettingsSiteVisibilityRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
 	head: () => ( {
 		meta: [
 			{
@@ -626,6 +627,7 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 );
 
 export const siteSettingsRedirectRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneralRedirect' },
 	head: () => ( {
 		meta: [
 			{
@@ -651,6 +653,7 @@ export const siteSettingsRedirectRoute = createRoute( {
 );
 
 export const siteSettingsSubscriptionGiftingRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
 	head: () => ( {
 		meta: [
 			{
@@ -683,6 +686,7 @@ export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 );
 
 export const siteSettingsWordPressRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -707,6 +711,7 @@ export const siteSettingsWordPressRoute = createRoute( {
 );
 
 export const siteSettingsPHPRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -731,6 +736,7 @@ export const siteSettingsPHPRoute = createRoute( {
 );
 
 export const siteSettingsDatabaseRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -749,6 +755,7 @@ export const siteSettingsDatabaseRoute = createRoute( {
 );
 
 export const siteSettingsAgencyRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
 	head: () => ( {
 		meta: [
 			{
@@ -786,6 +793,7 @@ export const siteSettingsAgencyRoute = createRoute( {
 );
 
 export const siteSettingsHundredYearPlanRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
 	head: () => ( {
 		meta: [
 			{
@@ -818,6 +826,7 @@ export const siteSettingsHundredYearPlanRoute = createRoute( {
 );
 
 export const siteSettingsPrimaryDataCenterRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -857,6 +866,7 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 );
 
 export const siteSettingsStaticFile404Route = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -881,6 +891,7 @@ export const siteSettingsStaticFile404Route = createRoute( {
 );
 
 export const siteSettingsCachingRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -905,6 +916,7 @@ export const siteSettingsCachingRoute = createRoute( {
 );
 
 export const siteSettingsDefensiveModeRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsSecurity' },
 	head: () => ( {
 		meta: [
 			{
@@ -929,6 +941,7 @@ export const siteSettingsDefensiveModeRoute = createRoute( {
 );
 
 export const siteSettingsSftpSshRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -987,6 +1000,7 @@ export const siteSettingsTransferSiteRoute = createRoute( {
 );
 
 export const siteSettingsWebApplicationFirewallRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsSecurity' },
 	head: () => ( {
 		meta: [
 			{
@@ -1014,6 +1028,7 @@ export const siteSettingsWebApplicationFirewallRoute = createRoute( {
 );
 
 export const siteSettingsWpcomLoginRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsSecurity' },
 	head: () => ( {
 		meta: [
 			{
@@ -1041,6 +1056,7 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 );
 
 export const siteSettingsExperimentalRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsExperimental' },
 	head: () => ( {
 		meta: [
 			{
@@ -1061,6 +1077,7 @@ export const siteSettingsExperimentalRoute = createRoute( {
 	)
 );
 export const siteSettingsRepositoriesRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -1333,59 +1350,43 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteDomainsRoute,
 	];
 
-	if ( config.supports.sites.settings ) {
-		const settingsRoutes: AnyRoute[] = [ siteSettingsIndexRoute, siteSettingsTransferSiteRoute ];
+	const settingsRoutes: AnyRoute[] = [
+		siteSettingsIndexRoute,
+		siteSettingsTransferSiteRoute,
 
-		if ( config.supports.sites.settings.general ) {
-			const settingsGeneralRoutes: AnyRoute[] = [
-				siteSettingsSiteVisibilityRoute,
-				siteSettingsSubscriptionGiftingRoute,
-				siteSettingsAgencyRoute,
-				siteSettingsHundredYearPlanRoute,
-			];
+		// General
+		siteSettingsSiteVisibilityRoute,
+		siteSettingsSubscriptionGiftingRoute,
+		siteSettingsAgencyRoute,
+		siteSettingsHundredYearPlanRoute,
+		siteSettingsRedirectRoute,
 
-			if ( config.supports.sites.settings.general.redirect ) {
-				settingsGeneralRoutes.push( siteSettingsRedirectRoute );
-			}
+		// Server
+		siteSettingsWordPressRoute,
+		siteSettingsPHPRoute,
+		siteSettingsSftpSshRoute,
+		siteSettingsRepositoriesRoute.addChildren( [
+			siteSettingsRepositoriesIndexRoute,
+			siteSettingsRepositoriesConnectRoute,
+			siteSettingsRepositoriesManageRoute,
+		] ),
+		siteSettingsDatabaseRoute,
+		siteSettingsPrimaryDataCenterRoute,
+		siteSettingsStaticFile404Route,
+		siteSettingsCachingRoute,
 
-			settingsRoutes.push( ...settingsGeneralRoutes );
-		}
+		// Security
+		siteSettingsWebApplicationFirewallRoute,
+		siteSettingsWpcomLoginRoute,
+		siteSettingsDefensiveModeRoute,
+	];
 
-		if ( config.supports.sites.settings.server ) {
-			settingsRoutes.push(
-				...[
-					siteSettingsWordPressRoute,
-					siteSettingsPHPRoute,
-					siteSettingsSftpSshRoute,
-					siteSettingsRepositoriesRoute.addChildren( [
-						siteSettingsRepositoriesIndexRoute,
-						siteSettingsRepositoriesConnectRoute,
-						siteSettingsRepositoriesManageRoute,
-					] ),
-					siteSettingsDatabaseRoute,
-					siteSettingsPrimaryDataCenterRoute,
-					siteSettingsStaticFile404Route,
-					siteSettingsCachingRoute,
-				]
-			);
-		}
-
-		if ( config.supports.sites.settings.security ) {
-			settingsRoutes.push(
-				...[
-					siteSettingsWebApplicationFirewallRoute,
-					siteSettingsWpcomLoginRoute,
-					siteSettingsDefensiveModeRoute,
-				]
-			);
-		}
-
-		if ( config.supports.sites.settings.experimental && isEnabled( 'wordpress-ai-assistant' ) ) {
-			settingsRoutes.push( siteSettingsExperimentalRoute );
-		}
-
-		siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );
+	// Experimental
+	if ( isEnabled( 'wordpress-ai-assistant' ) ) {
+		settingsRoutes.push( siteSettingsExperimentalRoute );
 	}
+
+	siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );
 
 	return [
 		sitesRoute.lazy( () =>
