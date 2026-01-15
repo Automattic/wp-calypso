@@ -6,6 +6,7 @@ import { lazy, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { siteDomainsRoute } from '../../app/router/sites';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { getSiteStatus } from '../../utils/site-status';
 import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canManageSite, canLeaveSite, canRestoreSite } from '../features';
@@ -59,7 +60,9 @@ export function useActions(): Action< Site >[] {
 				router.navigate( { to: siteDomainsRoute.fullPath, params: { siteSlug: site.slug } } );
 			},
 			isEligible: ( item: Site ) =>
-				siteTypeSupportsFeature( item, 'domains' ) && canManageSite( item ),
+				siteTypeSupportsFeature( item, 'domains' ) &&
+				canManageSite( item ) &&
+				! getSiteStatus( item ),
 		},
 		{
 			id: 'jetpack-cloud',
@@ -84,6 +87,7 @@ export function useActions(): Action< Site >[] {
 			},
 			isEligible: ( item: Site ) =>
 				canManageSite( item ) &&
+				! getSiteStatus( item ) &&
 				! item.is_wpcom_staging_site &&
 				item.launch_status === 'unlaunched',
 		},
@@ -95,7 +99,9 @@ export function useActions(): Action< Site >[] {
 				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
 			},
 			isEligible: ( item: Site ) =>
-				siteTypeSupportsFeature( item, 'settings' ) && canManageSite( item ),
+				siteTypeSupportsFeature( item, 'settings' ) &&
+				canManageSite( item ) &&
+				! getSiteStatus( item ),
 		},
 		{
 			id: 'restore',
