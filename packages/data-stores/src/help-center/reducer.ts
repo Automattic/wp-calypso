@@ -2,6 +2,7 @@ import { combineReducers } from '@wordpress/data';
 import { Location } from 'history';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
+import { DEFAULT_PREFERENCES } from './constants';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions, Preferences } from './types';
 import type { Reducer } from 'redux';
@@ -26,7 +27,7 @@ const typingConversationStatus: Reducer<
 };
 
 const helpCenterPreferences: Reducer< Preferences[ 'calypso_preferences' ], HelpCenterAction > = (
-	state = {},
+	state = DEFAULT_PREFERENCES,
 	action
 ) => {
 	switch ( action.type ) {

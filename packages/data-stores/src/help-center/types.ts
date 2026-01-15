@@ -48,9 +48,9 @@ export interface HelpCenterOptions {
 
 export interface Preferences {
 	calypso_preferences: {
-		help_center_open?: boolean;
-		help_center_minimized?: boolean;
-		help_center_router_history?: {
+		help_center_open: boolean;
+		help_center_minimized: boolean;
+		help_center_router_history: {
 			entries: Location[];
 			index: number;
 		} | null;
