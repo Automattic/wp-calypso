@@ -33,6 +33,7 @@
 		"devdocs": false,
 		"domain-search-rewrite": true,
 		"domain-transfer-redesign": true,
+		"domains/suggestions-pp": true,
 		"global-styles/on-personal-plan": true,
 		"google-my-business": false,
 		"help": true,

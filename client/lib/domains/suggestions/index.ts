@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isDomainForGravatarFlow,
 	isHundredYearPlanFlow,
@@ -28,6 +29,8 @@ export const getSuggestionsVendor = ( {
 	isSignup,
 	isDomainOnly,
 }: DomainSuggestionsVendorOptions = {} ): DomainSuggestionQueryVendor => {
+	const isEnabledSuggestionsPP = isEnabled( 'domains/suggestions-pp' );
+
 	if ( isDomainForGravatarFlow( flowName ) ) {
 		return 'gravatar';
 	}
@@ -35,16 +38,16 @@ export const getSuggestionsVendor = ( {
 		return '100-year-domains';
 	}
 	if ( flowName === 'domains/add' ) {
-		return 'variation8_front';
+		return isEnabledSuggestionsPP ? 'wpcom_suggestions_premium' : 'variation8_front';
 	}
 	if ( isNewsletterFlow( flowName ) ) {
 		return 'newsletter';
 	}
 	if ( isSignup && ! isDomainOnly ) {
-		return 'variation4_front';
+		return isEnabledSuggestionsPP ? 'wpcom_suggestions_standard' : 'variation4_front';
 	}
 	if ( isPremium ) {
-		return 'variation8_front';
+		return isEnabledSuggestionsPP ? 'wpcom_suggestions_premium' : 'variation8_front';
 	}
 	return 'variation2_front';
 };

@@ -67,6 +67,7 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"domain-search-rewrite": true,
 		"domain-transfer-redesign": true,
+		"domains/suggestions-pp": true,
 		"email-accounts/enabled": true,
 		"global-styles/on-personal-plan": true,
 		"google-drive": true,
