@@ -14,11 +14,14 @@ import {
 	MERCHANDISING_PRODUCT_SLUGS,
 	STORE_CONTENT_PRODUCT_SLUGS,
 	STORE_MANAGEMENT_PRODUCT_SLUGS,
+	BACKUP_STORAGE_FAMILY_SLUG,
+	JETPACK_PACKS_FAMILY_SLUG,
 } from '../lib/product-slugs';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 type CategoryConfig = {
 	slugs: string[];
+	familySlugs?: string[];
 	label: string;
 };
 
@@ -33,7 +36,11 @@ export function useProductCategories( product: APIProductFamilyProduct ): string
 			: [];
 
 		const CATEGORIES: CategoryConfig[] = [
-			{ slugs: SECURITY_PRODUCT_SLUGS, label: translate( 'security' ) },
+			{
+				slugs: SECURITY_PRODUCT_SLUGS,
+				familySlugs: [ BACKUP_STORAGE_FAMILY_SLUG ],
+				label: translate( 'security' ),
+			},
 			{ slugs: PERFORMANCE_PRODUCT_SLUGS, label: translate( 'performance' ) },
 			{ slugs: SOCIAL_PRODUCT_SLUGS, label: translate( 'social' ) },
 			{ slugs: GROWTH_PRODUCT_SLUGS, label: translate( 'growth' ) },
@@ -48,8 +55,8 @@ export function useProductCategories( product: APIProductFamilyProduct ): string
 
 		// Add regular categories
 		categories.push(
-			...CATEGORIES.reduce( ( acc: string[], { slugs, label } ) => {
-				if ( slugs.includes( slug ) ) {
+			...CATEGORIES.reduce( ( acc: string[], { slugs, familySlugs, label } ) => {
+				if ( slugs.includes( slug ) || familySlugs?.includes( family_slug ) ) {
 					acc.push( label );
 				}
 				return acc;
@@ -57,9 +64,9 @@ export function useProductCategories( product: APIProductFamilyProduct ): string
 		);
 
 		// Add product type categories
-		if ( family_slug === 'jetpack-packs' ) {
+		if ( family_slug === JETPACK_PACKS_FAMILY_SLUG ) {
 			categories.push( translate( 'bundle' ), translate( 'plan' ) );
-		} else if ( family_slug === 'jetpack-backup-storage' ) {
+		} else if ( family_slug === BACKUP_STORAGE_FAMILY_SLUG ) {
 			categories.push( translate( 'add-on' ) );
 		} else if ( isProductType( family_slug ) ) {
 			categories.push( translate( 'product' ) );
