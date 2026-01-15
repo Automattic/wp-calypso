@@ -311,12 +311,15 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			let supportInteraction = currentSupportInteraction;
 
 			try {
-				if ( ! supportInteraction && chatId && ! isLoggedOutSession ) {
+				if ( isLoggedOutSession ) {
+					// If the user is not logged in, we don't need to create a new support interaction.
+					updateLoggedOutSession( chatId.toString(), returnedChat.session_id, botSlug );
+				} else if ( ! supportInteraction && chatId ) {
 					supportInteraction = await startNewInteraction( {
 						event_external_id: chatId.toString(),
 						event_source: 'odie',
 					} );
-				} else if ( supportInteraction && ! odieId && chatId && ! isLoggedOutSession ) {
+				} else if ( supportInteraction && ! odieId && chatId ) {
 					supportInteraction = await addEventToInteraction( {
 						interactionId: supportInteraction.uuid,
 						eventData: {
@@ -324,9 +327,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							event_source: 'odie',
 						},
 					} );
-				} else if ( isLoggedOutSession ) {
-					// If the user is not logged in, we don't need to create a new support interaction.
-					updateLoggedOutSession( chatId.toString(), returnedChat.session_id, botSlug );
 				}
 			} catch ( error ) {
 				trackEvent( 'error_updating_support_interaction', {
