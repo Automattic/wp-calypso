@@ -339,7 +339,7 @@ export default function PreferencesDefaultLanding() {
 		{
 			value: 'reader',
 			title: __( 'Reader' ),
-			description: __( 'View posts from sites you follow.' ),
+			description: __( 'Posts you follow.' ),
 			illustration: <ReaderIllustration />,
 		},
 	];
