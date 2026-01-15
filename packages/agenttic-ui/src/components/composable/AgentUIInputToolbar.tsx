@@ -6,6 +6,7 @@ export interface AgentUIInputToolbarProps {
 	className?: string;
 	icon?: React.ReactNode;
 	label?: string;
+	disabled?: boolean;
 }
 
 export function AgentUIInputToolbar( {
@@ -13,6 +14,7 @@ export function AgentUIInputToolbar( {
 	className,
 	icon,
 	label,
+	disabled,
 }: AgentUIInputToolbarProps = {} ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -108,6 +110,7 @@ export function AgentUIInputToolbar( {
 					aria-haspopup="true"
 					aria-controls={ isOpen ? dropdownId : undefined }
 					aria-label={ toolbarLabel }
+					disabled={ disabled }
 				>
 					{ icon }
 					<span>{ toolbarLabel }</span>
