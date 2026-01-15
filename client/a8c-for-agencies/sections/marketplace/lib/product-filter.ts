@@ -56,8 +56,6 @@ import {
 } from './product-slugs';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
-const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
-
 export type SelectedFilters = {
 	[ PRODUCT_FILTER_KEY_BRAND ]: string;
 	[ PRODUCT_FILTER_KEY_CATEGORIES ]: Record< string, boolean >;
@@ -185,6 +183,7 @@ function filterProductsAndPlansByTypes(
  * @return {number} Price.
  */
 function getProductPrice( product: APIProductFamilyProduct ) {
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 	if ( isTermPricingEnabled ) {
 		return product.yearly_price || product.monthly_price || 0;
 	}
