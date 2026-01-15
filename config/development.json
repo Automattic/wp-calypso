@@ -68,7 +68,7 @@
 		"domain-search-rewrite": true,
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
-		"global-styles/on-personal-plan": false,
+		"global-styles/on-personal-plan": true,
 		"google-drive": true,
 		"google-my-business": true,
 		"help": true,

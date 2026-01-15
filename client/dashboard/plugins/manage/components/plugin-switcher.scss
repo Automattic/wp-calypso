@@ -1,30 +1,5 @@
 @import './variables.scss';
 
-.plugin-icon-wrapper {
-	border-radius: 4px;
-	overflow: clip;
-	position: relative;
-	width: 52px;
-	height: 52px;
-	flex-shrink: 0;
-
-	&.is-fallback {
-		background: #c3c4c7;
-		fill: #fff;
-
-		svg {
-			fill: var(--wp-components-color-foreground, #1e1e1e);
-		}
-	}
-}
-
-.plugin-icon-fallback {
-	position: absolute;
-	top: 50%;
-	inset-inline-start: 50%;
-	transform: translate(-50%, -50%);
-}
-
 .plugin-switcher-card-body {
 	max-height: $card-height;
 	padding: 8px 0 0;

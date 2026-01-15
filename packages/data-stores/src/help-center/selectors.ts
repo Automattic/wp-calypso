@@ -20,6 +20,7 @@ export const getNavigateToRoute = ( state: State ) => state.navigateToRoute;
 export const getOdieInitialPromptText = ( state: State ) => state.odieInitialPromptText;
 export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;
 export const getHasPremiumSupport = ( state: State ) => state.hasPremiumSupport;
+export const getHelpCenterPreferences = ( state: State ) => state.helpCenterPreferences;
 export const getHelpCenterOptions = ( state: State ) => state.helpCenterOptions;
 export const getContextTerm = ( state: State ) => state.contextTerm;
 export const getSupportTypingStatus = ( state: State, conversationId: string ) =>
