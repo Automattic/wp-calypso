@@ -10,6 +10,8 @@ import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
@@ -35,20 +37,26 @@ const ProfessionalEmailPrice = ( {
 
 	const productSlug = getTitanProductSlug( intervalLength );
 	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = domain?.blogId ?? selectedSite?.ID;
+	const siteProduct = useSelector( ( state ) =>
+		getSiteAvailableProduct( state, siteId, productSlug )
+	);
 
 	if ( ! domain && ! isDomainInCart ) {
 		return null;
 	}
 
 	const isEligibleForFreeTrial =
-		isDomainInCart || isDomainEligibleForTitanFreeTrial( { domain, product } );
+		isDomainInCart ||
+		isDomainEligibleForTitanFreeTrial( { domain, product: siteProduct ?? product } );
 
 	const priceWithInterval = (
 		<PriceWithInterval
 			currencyCode={ currencyCode ?? '' }
 			intervalLength={ intervalLength }
 			isEligibleForIntroductoryOffer={ isEligibleForFreeTrial }
-			product={ product }
+			product={ siteProduct ?? product }
 		/>
 	);
 
@@ -65,7 +73,7 @@ const ProfessionalEmailPrice = ( {
 					<PriceInformation
 						domain={ domain }
 						isDomainInCart={ isDomainInCart }
-						product={ product }
+						product={ siteProduct ?? product }
 					/>
 				}
 				price={ priceWithInterval }
