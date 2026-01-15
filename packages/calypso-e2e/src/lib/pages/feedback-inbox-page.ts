@@ -44,7 +44,7 @@ export class FeedbackInboxPage {
 				el.classList.contains( 'is-selected' )
 			);
 			if ( ! isAlreadySelected ) {
-				await responseRowLocator.click();
+				await responseRowLocator.click( { position: { x: 1, y: 1 } } );
 			}
 			await this.page
 				.locator( '.dataviews-view-table__row.is-selected' )

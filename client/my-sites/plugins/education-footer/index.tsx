@@ -388,8 +388,10 @@ const EducationFooter = () => {
 
 function ReadMoreLink() {
 	const { __ } = useI18n();
+	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
+	const color = isMarketplaceRedesignEnabled ? 'var(--studio-gray-50)' : 'var(--studio-blue-50)';
 
-	return <CardText color="var(--studio-blue-50)">{ __( 'Learn more' ) }</CardText>;
+	return <CardText color={ color }>{ __( 'Learn more' ) }</CardText>;
 }
 
 export default EducationFooter;
