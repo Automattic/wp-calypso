@@ -1,4 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import {
 	ConsolidatedStatsCard,
@@ -6,6 +7,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/consolidated-stats-card';
 import { AGENCY_EARNINGS_LEARN_MORE_LINK } from 'calypso/a8c-for-agencies/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import useGetConsolidatedPayoutData from '../hooks/use-get-consolidated-payout-data';
 import PayoutCards from './payout-cards';
 import type { Referral } from '../types';
@@ -20,6 +22,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 	const { data: productsData, isFetching } = useProductsQuery( false, false, true );
 	const { previousQuarterExpectedCommission, pendingOrders, currentQuarterExpectedCommission } =
 		useGetConsolidatedPayoutData( referrals, productsData );
+	const { showSupportGuide } = useHelpCenter();
 
 	return (
 		<ConsolidatedStatsGroup className="consolidated-view">
@@ -30,14 +33,13 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 					popoverTitle={ translate( 'Total payouts' ) }
 					popoverContent={ translate(
 						'The exact amount your agency has been paid out for referrals.' +
-							'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
+							'{{br/}}{{br/}}{{a}}Learn more{{/a}}',
 						{
 							components: {
 								a: (
-									<a
-										href={ AGENCY_EARNINGS_LEARN_MORE_LINK }
-										target="_blank"
-										rel="noreferrer noopener"
+									<Button
+										variant="link"
+										onClick={ () => showSupportGuide( AGENCY_EARNINGS_LEARN_MORE_LINK ) }
 									/>
 								),
 								br: <br />,
@@ -57,14 +59,13 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 				popoverTitle={ translate( 'Pending orders' ) }
 				popoverContent={ translate(
 					'These are the number of pending referrals (unpaid carts). ' +
-						'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
+						'{{br/}}{{br/}}{{a}}Learn more{{/a}}',
 					{
 						components: {
 							a: (
-								<a
-									href={ AGENCY_EARNINGS_LEARN_MORE_LINK }
-									target="_blank"
-									rel="noreferrer noopener"
+								<Button
+									variant="link"
+									onClick={ () => showSupportGuide( AGENCY_EARNINGS_LEARN_MORE_LINK ) }
 								/>
 							),
 							br: <br />,
