@@ -1160,7 +1160,7 @@ object JestPreReleaseE2ETests : BuildType({
 		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")
 		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-		param("end.DASHBOARD_BASE_URL", "https://my.wordpress.com")
+		param("env.DASHBOARD_BASE_URL", "https://my.wordpress.com")
 		param("env.ALLURE_RESULTS_PATH", "allure-results")
 	}
 
