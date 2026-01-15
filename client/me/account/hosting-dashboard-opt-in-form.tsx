@@ -125,7 +125,7 @@ export default function HostingDashboardOptInForm() {
 										components: {
 											surveyLink: (
 												<ExternalLink
-													href="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
+													href="https://automattic.survey.fm/msd-survey-for-opt-out"
 													icon
 													onClick={ () =>
 														dispatch(

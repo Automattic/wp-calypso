@@ -1,10 +1,12 @@
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 
 import './style.scss';
 
 export default function WooPaymentsRevenueShareNotice() {
 	const translate = useTranslate();
+	const { showSupportGuide } = useHelpCenter();
 
 	return (
 		<div className="product-card__revenue-share-notice">
@@ -15,13 +17,15 @@ export default function WooPaymentsRevenueShareNotice() {
 					{
 						components: {
 							a: (
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
 								<a
-									href="https://agencieshelp.automattic.com/knowledge-base/the-automattic-for-agencies-client-plugin/"
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									A4A
-								</a>
+									onClick={ () =>
+										showSupportGuide(
+											'https://agencieshelp.automattic.com/knowledge-base/the-automattic-for-agencies-client-plugin/'
+										)
+									}
+									href="#"
+								/>
 							),
 						},
 					}

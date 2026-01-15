@@ -808,4 +808,36 @@ describe( 'CheckoutMain', () => {
 		} );
 		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
 	} );
+
+	it( 'Disables email field in A4A express checkout', async () => {
+		const cartChanges = {
+			products: [
+				{
+					...planWithoutDomain,
+					extra: { ...planWithoutDomain.extra, isA4ASitelessCheckout: true },
+				},
+			],
+		};
+
+		// For A4A, we supply email during pre-load.
+		dispatch( CHECKOUT_STORE ).updateEmail( 'test@example.com' );
+
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ {
+					sitelessCheckoutType: 'a4a' as SitelessCheckoutType,
+					isLoggedOutCart: true,
+					siteSlug: '',
+					siteId: 0,
+				} }
+			/>
+		);
+		await waitFor( () => {
+			const emailField = screen.getByLabelText( 'Email' );
+			expect( emailField ).toBeDisabled();
+		}, [] );
+	} );
 } );

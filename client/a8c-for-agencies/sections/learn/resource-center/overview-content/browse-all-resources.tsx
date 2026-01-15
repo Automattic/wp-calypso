@@ -135,6 +135,7 @@ export default function BrowseAllResources( {
 				onChangeView={ setView }
 				paginationInfo={ paginationInfo }
 				defaultLayouts={ { list: {} } }
+				getItemId={ ( item ) => String( item.id ) }
 				search
 			>
 				<HStack justify="start" style={ { paddingBlock: '16px' } }>

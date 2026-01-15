@@ -56,7 +56,11 @@ export function createTransactionEndpointCartFromResponseCart( {
 } ): RequestCart {
 	if (
 		responseCart.products.some( ( product ) => {
-			return product.extra.isJetpackCheckout || product.extra.isAkismetSitelessCheckout;
+			return (
+				product.extra.isJetpackCheckout ||
+				product.extra.isAkismetSitelessCheckout ||
+				product.extra.isA4ASitelessCheckout
+			);
 		} )
 	) {
 		const isUserLess = responseCart.cart_key === 'no-user';
