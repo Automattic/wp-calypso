@@ -51,9 +51,7 @@ export const HelpCenterA4AContactForm = () => {
 		site: '',
 		product: '',
 		message: isMigrationRequest
-			? __( "I'd like to chat more about the migration offer.", __i18n_text_domain__ ) +
-			  '\n\n' +
-			  __( '[your message here]', __i18n_text_domain__ )
+			? __( "I'd like to migrate from [insert your current host here].", __i18n_text_domain__ )
 			: '',
 		no_of_sites: 1,
 		pressable_contact: 'sales',
