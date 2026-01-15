@@ -1,7 +1,8 @@
+/* eslint-disable no-undef */
 import './style.scss';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
-// Wait until the Help Center is loaded then enable the form.
+// Logged out asynchronous variant: wait until the Help Center is available for loading then enable the form.
 document.addEventListener( 'help-center-ready-to-load', () => {
 	const input = document.getElementById( 'support-search-input' );
 	const formContainer = document.querySelector( '.support-search-form-container' );
@@ -14,6 +15,14 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	const submitButton = document.querySelector( '.search-submit-button' );
 	const form = document.getElementById( 'support-search-form' );
 	const input = document.getElementById( 'support-search-input' );
+	const formContainer = document.querySelector( '.support-search-form-container' );
+
+	// Wait until the Help Center is loaded then enable the form.
+	const unsubscribe = window.wp?.data?.subscribe( () => {
+		formContainer.removeAttribute( 'disabled' );
+		input.placeholder = input.dataset.postLoadingText;
+		unsubscribe();
+	}, 'automattic/help-center' );
 
 	links.forEach( ( link ) => {
 		link.addEventListener( 'click', function ( e ) {
@@ -49,23 +58,29 @@ document.addEventListener( 'DOMContentLoaded', function () {
 					query: input.value,
 					location: window.location.href,
 				} );
-				input.setAttribute( 'disabled', true );
+				const isLoggedOut = ! helpCenterData?.currentUser?.ID;
 
-				window.helpCenter?.loadHelpCenter().then( () => {
-					input.removeAttribute( 'disabled' );
-					if (
-						typeof window.wp !== 'undefined' &&
-						window.wp !== null &&
-						window.wp.data !== null &&
-						window.wp.data.dispatch !== null
-					) {
-						const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
-						helpCenterDispatch.setNavigateToRoute(
-							'/odie?query=' + encodeURIComponent( input.value )
-						);
-						helpCenterDispatch.setShowHelpCenter( true );
-					}
-				} );
+				if ( isLoggedOut ) {
+					// The Help Center Asynchronous variant needs loading.
+					input.setAttribute( 'disabled', true );
+					window.helpCenter?.loadHelpCenter().then( () => {
+						input.removeAttribute( 'disabled' );
+						if ( window.wp?.data?.dispatch ) {
+							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
+							helpCenterDispatch.setNavigateToRoute(
+								'/odie?query=' + encodeURIComponent( input.value )
+							);
+							helpCenterDispatch.setShowHelpCenter( true );
+						}
+					} );
+				} else if ( window.wp?.data?.dispatch ) {
+					// Logged in variant is already loaded.
+					const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
+					helpCenterDispatch.setNavigateToRoute(
+						'/odie?query=' + encodeURIComponent( input.value )
+					);
+					helpCenterDispatch.setShowHelpCenter( true );
+				}
 			},
 			true
 		);
