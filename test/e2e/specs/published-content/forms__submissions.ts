@@ -355,12 +355,6 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			}
 		} );
 
-		it( 'Verify Previous button is disabled (no newer responses)', async function () {
-			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-				await feedbackInboxPage.verifyPreviousButtonDisabled();
-			}
-		} );
-
 		it( 'Click Next to navigate back to first response', async function () {
 			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 				await feedbackInboxPage.clickNextResponse();

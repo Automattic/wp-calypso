@@ -55,6 +55,7 @@ export default function ResourceCard( {
 		if ( agencyId ) {
 			recordResourceEvent( {
 				resourceId: resource.id,
+				resourceName: resource.name,
 				agencyId,
 			} );
 		}

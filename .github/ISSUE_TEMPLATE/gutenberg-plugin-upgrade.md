@@ -2,7 +2,7 @@
 name: Gutenberg Plugin Upgrade
 about: Installing and activating a new version of the Gutenberg Plugin
 title: 'Gutenberg: [v#.#.#] plugin upgrade'
-labels: gutenberg-upgrade, [Type] Task
+labels: [ 'gutenberg-upgrade', 'Task' ]
 assignees: ''
 
 ---
