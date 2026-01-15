@@ -13,9 +13,8 @@ import type {
 	APIProductFamilyProduct,
 } from 'calypso/a8c-for-agencies/types/products';
 
-const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
-
 async function queryProducts( agencyId?: number ): Promise< APIProductFamily[] > {
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 	const productsAPIPath = isTermPricingEnabled
 		? '/agency/products'
 		: '/jetpack-licensing/partner/product-families';

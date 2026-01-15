@@ -16,8 +16,6 @@ import type {
 } from 'calypso/a8c-for-agencies/types/products';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
-const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
-
 export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currency?: string ) => {
 	const translate = useTranslate();
 	const { data } = useProductsQuery( true );
@@ -44,6 +42,8 @@ export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currenc
 		product: SelectedLicenseProp | APIProductFamilyProduct,
 		quantity: number
 	) => {
+		const isTermPricingEnabled =
+			isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 		const termPrice = termPricing === 'yearly' ? product.yearly_price : product.monthly_price;
 		const productPrice = isTermPricingEnabled ? termPrice : Number( product.amount );
 
@@ -201,6 +201,9 @@ export const useTotalInvoiceValue = ( termPricing?: TermPricingType, currency?: 
 				discountPercentage: 0,
 			}
 		);
+
+		const isTermPricingEnabled =
+			isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
 		const totalDiscountedCostFormatted =
 			isTermPricingEnabled && termPricing === 'yearly'
