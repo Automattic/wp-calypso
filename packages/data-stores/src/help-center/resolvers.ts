@@ -5,7 +5,7 @@ import { CurrentUser } from '../user/types';
 import { retrieveValueSafely } from '../utils';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { setHelpCenterPreferences } from './actions';
-import { STORE_KEY, DEFAULT_PREFERENCES } from './constants';
+import { STORE_KEY, DEFAULT_PREFERENCES, PREFERENCES_KEY } from './constants';
 import { Preferences } from './types';
 import type { APIFetchOptions } from '../shared-types';
 
@@ -15,9 +15,8 @@ import type { APIFetchOptions } from '../shared-types';
  */
 export function* getHelpCenterPreferences() {
 	const currentUser: CurrentUser | undefined = yield controls.select( STORE_KEY, 'getCurrentUser' );
-	const localPreferences = retrieveValueSafely< Preferences[ 'calypso_preferences' ] >(
-		'logged_out_help_center_preferences'
-	);
+	const localPreferences =
+		retrieveValueSafely< Preferences[ 'calypso_preferences' ] >( PREFERENCES_KEY );
 	const isLoggedIn = !! currentUser?.ID;
 
 	if ( isLoggedIn ) {
@@ -51,9 +50,8 @@ export function* getHelpCenterPreferences() {
 		}
 	} else {
 		yield setHelpCenterPreferences(
-			retrieveValueSafely< Preferences[ 'calypso_preferences' ] >(
-				'logged_out_help_center_preferences'
-			) ?? DEFAULT_PREFERENCES
+			retrieveValueSafely< Preferences[ 'calypso_preferences' ] >( PREFERENCES_KEY ) ??
+				DEFAULT_PREFERENCES
 		);
 	}
 }

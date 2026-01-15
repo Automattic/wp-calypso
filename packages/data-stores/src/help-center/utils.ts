@@ -5,7 +5,7 @@ import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-
 import { CurrentUser } from '../user/types';
 import { isE2ETest, persistValueSafely } from '../utils';
 import { setHelpCenterPreferences } from './actions';
-import { STORE_KEY } from './constants';
+import { STORE_KEY, PREFERENCES_KEY } from './constants';
 import { State } from './reducer';
 import type { HelpCenterSelect, Preferences } from './types';
 import type { APIFetchOptions } from '../shared-types';
@@ -25,10 +25,10 @@ export function persistHelpCenterFields( preferences: Preferences[ 'calypso_pref
 
 	if ( ! isLoggedIn ) {
 		// Retrieve the logged out help center preferences from localStorage to coalesce the state.
-		persistValueSafely( 'logged_out_help_center_preferences', preferences );
+		persistValueSafely( PREFERENCES_KEY, preferences );
 	} else if ( isLoggedIn ) {
 		// Delete local preferences when logged in to avoid conflicts.
-		persistValueSafely( 'logged_out_help_center_preferences', null );
+		persistValueSafely( PREFERENCES_KEY, null );
 		if ( canAccessWpcomApis() ) {
 			// Use the promise version to do that action without waiting for the result.
 			wpcomRequestPromise( {
