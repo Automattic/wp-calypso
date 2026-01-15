@@ -122,7 +122,7 @@ export const siteRoute = createRoute( {
 
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
 		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
-			throw redirectAsNotAllowed( { to: trialExpiredUrl } );
+			throw redirectAsNotAllowed( { to: trialExpiredUrl }, { silent: true } );
 		}
 
 		const difmUrl = `/sites/${ siteSlug }/site-building-in-progress`;
@@ -132,12 +132,12 @@ export const siteRoute = createRoute( {
 			! isSupportSession() &&
 			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
 		) {
-			throw redirectAsNotAllowed( { to: difmUrl } );
+			throw redirectAsNotAllowed( { to: difmUrl }, { silent: true } );
 		}
 
 		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
 		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
-			throw redirectAsNotAllowed( { to: migrationUrl } );
+			throw redirectAsNotAllowed( { to: migrationUrl }, { silent: true } );
 		}
 
 		// Check site type support for matched routes
@@ -1405,16 +1405,19 @@ function getDifmLiteAllowedRoutes() {
 	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id ];
 }
 
-function redirectAsNotAllowed( options: {
-	to: string;
-	params?: Record< string, string >;
-	search?: Record< string, unknown >;
-} ) {
+function redirectAsNotAllowed(
+	options: {
+		to: string;
+		params?: Record< string, string >;
+		search?: Record< string, unknown >;
+	},
+	{ silent }: { silent?: boolean } = {}
+) {
 	return redirect( {
 		...options,
 		search: {
 			...options.search,
-			flash: 'route-not-allowed',
+			flash: ! silent ? 'route-not-allowed' : undefined,
 		},
 	} );
 }
