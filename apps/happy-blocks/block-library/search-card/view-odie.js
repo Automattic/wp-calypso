@@ -1,15 +1,23 @@
 import './style.scss';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
-document.addEventListener( 'DOMContentLoaded', function () {
-	const links = document.querySelectorAll( 'a[data-search-query]' );
+// Wait until the Help Center is loaded then enable the form.
+document.addEventListener( 'help-center-ready-to-load', () => {
 	const input = document.getElementById( 'support-search-input' );
+	const formContainer = document.querySelector( '.support-search-form-container' );
+	formContainer.removeAttribute( 'disabled' );
+	input.placeholder = input.dataset.postLoadingText;
+} );
+
+document.addEventListener( 'DOMContentLoaded', function () {
+	const links = document.querySelectorAll( 'button[data-search-query]' );
 	const submitButton = document.querySelector( '.search-submit-button' );
 	const form = document.getElementById( 'support-search-form' );
+	const input = document.getElementById( 'support-search-input' );
 
 	links.forEach( ( link ) => {
 		link.addEventListener( 'click', function ( e ) {
-			const query = this.getAttribute( 'data-search-query' );
+			const query = this.dataset.searchQuery;
 			if ( ! input || ! query || ! submitButton ) {
 				return;
 			}
@@ -41,18 +49,23 @@ document.addEventListener( 'DOMContentLoaded', function () {
 					query: input.value,
 					location: window.location.href,
 				} );
-				if (
-					typeof window.wp !== 'undefined' &&
-					window.wp !== null &&
-					window.wp.data !== null &&
-					window.wp.data.dispatch !== null
-				) {
-					const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
-					helpCenterDispatch.setNavigateToRoute(
-						'/odie?query=' + encodeURIComponent( input.value )
-					);
-					helpCenterDispatch.setShowHelpCenter( true );
-				}
+				input.setAttribute( 'disabled', true );
+
+				window.helpCenter?.loadHelpCenter().then( () => {
+					input.removeAttribute( 'disabled' );
+					if (
+						typeof window.wp !== 'undefined' &&
+						window.wp !== null &&
+						window.wp.data !== null &&
+						window.wp.data.dispatch !== null
+					) {
+						const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
+						helpCenterDispatch.setNavigateToRoute(
+							'/odie?query=' + encodeURIComponent( input.value )
+						);
+						helpCenterDispatch.setShowHelpCenter( true );
+					}
+				} );
 			},
 			true
 		);
