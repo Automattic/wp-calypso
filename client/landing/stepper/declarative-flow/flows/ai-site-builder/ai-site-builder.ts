@@ -155,7 +155,8 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 							const source = queryParams.get( 'source' );
 							const specId = queryParams.get( 'spec_id' );
-							const triggerBackendBuild = queryParams.get( 'trigger_backend_build' ) === '1';
+							// Always trigger backend build by default
+							const triggerBackendBuild = true;
 							let sourceParam = '';
 							let specIdParam = '';
 
