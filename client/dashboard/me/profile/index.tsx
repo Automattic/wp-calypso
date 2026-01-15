@@ -1,5 +1,3 @@
-import { userSettingsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
@@ -9,12 +7,6 @@ import GravatarProfileSection from '../profile-gravatar';
 import PersonalDetailsSection from '../profile-personal-details';
 
 export default function Profile() {
-	const { data: serverData } = useQuery( userSettingsQuery() );
-
-	if ( ! serverData ) {
-		return null;
-	}
-
 	return (
 		<PageLayout
 			size="small"
@@ -30,10 +22,8 @@ export default function Profile() {
 				/>
 			}
 		>
-			<PersonalDetailsSection profile={ serverData } />
-
-			<GravatarProfileSection profile={ serverData } />
-
+			<PersonalDetailsSection />
+			<GravatarProfileSection />
 			<AccountDeletionSection />
 		</PageLayout>
 	);

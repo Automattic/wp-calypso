@@ -1,72 +1,29 @@
-import {
-	domainPrivacyDisableMutation,
-	domainPrivacyDiscloseMutation,
-	domainPrivacyEnableMutation,
-	domainPrivacyRedactMutation,
-	domainQuery,
-} from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { domainQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	ToggleControl,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import InlineSupportLink from '../inline-support-link';
 import { SectionHeader } from '../section-header';
 
 interface ContactFormPrivacyProps {
 	domainName: string;
+	isSubmitting: boolean;
+	onTogglePrivacyProtection: () => void;
+	onTogglePrivacyDisclosure: () => void;
 }
 
-export default function ContactFormPrivacy( { domainName }: ContactFormPrivacyProps ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: domain, isFetching: domainQueryIsFetching } = useSuspenseQuery(
-		domainQuery( domainName )
-	);
-	const enablePrivacyMutation = useMutation( domainPrivacyEnableMutation( domainName ) );
-	const disablePrivacyMutation = useMutation( domainPrivacyDisableMutation( domainName ) );
-	const disclosePrivacyMutation = useMutation( domainPrivacyDiscloseMutation( domainName ) );
-	const redactPrivacyMutation = useMutation( domainPrivacyRedactMutation( domainName ) );
-	const isUpdatingPrivacy =
-		enablePrivacyMutation.isPending ||
-		disablePrivacyMutation.isPending ||
-		disclosePrivacyMutation.isPending ||
-		redactPrivacyMutation.isPending ||
-		domainQueryIsFetching;
-
-	const togglePrivacyProtection = () => {
-		if ( domain.private_domain ) {
-			disablePrivacyMutation.mutate( undefined, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Privacy has been successfully disabled!' ), {
-						type: 'snackbar',
-					} );
-				},
-				onError: ( error: Error ) => {
-					createErrorNotice( error.message, {
-						type: 'snackbar',
-					} );
-				},
-			} );
-		} else {
-			enablePrivacyMutation.mutate( undefined, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Privacy has been successfully enabled!' ), {
-						type: 'snackbar',
-					} );
-				},
-				onError: ( error: Error ) => {
-					createErrorNotice( error.message, {
-						type: 'snackbar',
-					} );
-				},
-			} );
-		}
-	};
+export default function ContactFormPrivacy( {
+	domainName,
+	isSubmitting,
+	onTogglePrivacyProtection,
+	onTogglePrivacyDisclosure,
+}: ContactFormPrivacyProps ) {
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 
 	const renderPrivacyProtection = () => {
 		return (
@@ -74,8 +31,8 @@ export default function ContactFormPrivacy( { domainName }: ContactFormPrivacyPr
 				<ToggleControl
 					__nextHasNoMarginBottom
 					checked={ domain.private_domain }
-					disabled={ isUpdatingPrivacy || ! domain.privacy_available }
-					onChange={ togglePrivacyProtection }
+					disabled={ isSubmitting || ! domain.privacy_available }
+					onChange={ onTogglePrivacyProtection }
 					label={ __( 'Privacy protection' ) }
 				/>
 
@@ -101,36 +58,6 @@ export default function ContactFormPrivacy( { domainName }: ContactFormPrivacyPr
 		);
 	};
 
-	const togglePrivacyDisclosure = () => {
-		if ( domain.contact_info_disclosed ) {
-			redactPrivacyMutation.mutate( undefined, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Your contact information is now redacted!' ), {
-						type: 'snackbar',
-					} );
-				},
-				onError: ( error: Error ) => {
-					createErrorNotice( error.message, {
-						type: 'snackbar',
-					} );
-				},
-			} );
-		} else {
-			disclosePrivacyMutation.mutate( undefined, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Your contact information is now publicly visible!' ), {
-						type: 'snackbar',
-					} );
-				},
-				onError: ( error: Error ) => {
-					createErrorNotice( error.message, {
-						type: 'snackbar',
-					} );
-				},
-			} );
-		}
-	};
-
 	const renderPrivacyDisclosure = () => {
 		if (
 			! domain.privacy_available ||
@@ -146,8 +73,8 @@ export default function ContactFormPrivacy( { domainName }: ContactFormPrivacyPr
 				<ToggleControl
 					__nextHasNoMarginBottom
 					checked={ domain.contact_info_disclosed }
-					onChange={ togglePrivacyDisclosure }
-					disabled={ isUpdatingPrivacy || domain.is_pending_icann_verification }
+					onChange={ onTogglePrivacyDisclosure }
+					disabled={ isSubmitting || domain.is_pending_icann_verification }
 					label={ __( 'Display my contact information in public WHOIS' ) }
 				/>
 

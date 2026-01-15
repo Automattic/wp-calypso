@@ -17,6 +17,7 @@ import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banne
 import { useAnalytics } from '../../app/analytics';
 import { AuthContext } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
+import { wpcomLink } from '../../utils/link';
 import { userHasFlag } from '../../utils/user';
 import Column from './column';
 import MenuItem from './menu-item';
@@ -77,34 +78,32 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 								action: 'flex-site',
 							} );
 						} }
-						href={ `/setup/flex-site?source=${ context }&ref=new-site-popover` }
+						href={ wpcomLink( `/setup/flex-site?source=${ context }&ref=new-site-popover` ) }
 						aria-label={ __( 'Create a Flex site' ) }
 					/>
 				) }
 				<MenuItem
 					icon={ <WordPressLogo /> }
-					title="WordPress.com"
-					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
+					title="Create it yourself"
+					description={ __( 'Start with a clean WordPress site and make it yours.' ) }
 					onClick={ wordpressClick }
-					href={ addQueryArgs( '/start', {
+					href={ addQueryArgs( wpcomLink( '/start' ), {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }
-					aria-label={ __( 'Add WordPress.com site' ) }
+					aria-label={ __( 'Create a blank site on WordPress.com' ) }
 				/>
 				<MenuItem
 					icon={ <BigSkyLogo.Mark /> }
-					title={ __( 'Build with AI' ) }
-					description={ __(
-						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
-					) }
+					title={ __( 'Create with AI' ) }
+					description={ __( 'Describe your idea and let AI help you refine your site.' ) }
 					onClick={ () => {
 						setShowHelpCenter( false );
 						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 							action: 'big-sky',
 						} );
 					} }
-					href={ addQueryArgs( '/setup/ai-site-builder', {
+					href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }
@@ -114,10 +113,10 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 			<Column title={ __( 'Bring an existing site' ) }>
 				<MenuItem
 					icon={ reusableBlock }
-					title={ __( 'Migrate' ) }
+					title={ __( 'Migrate to WordPress.com' ) }
 					description={ __( 'Bring your site to the world’s best WordPress host.' ) }
 					onClick={ migrateClick }
-					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover` }
+					href={ wpcomLink( `/setup/site-migration?source=${ context }&ref=new-site-popover` ) }
 					aria-label={ __( 'Migrate an existing WordPress site' ) }
 				/>
 				<MenuItem
@@ -125,13 +124,13 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					title={ __( 'Via the Jetpack plugin' ) }
 					description={ __( 'Install the Jetpack plugin on an existing site.' ) }
 					onClick={ jetpackClick }
-					href={ `/jetpack/connect?cta_from=${ context }&cta_id=add-site` }
+					href={ wpcomLink( `/jetpack/connect?cta_from=${ context }&cta_id=add-site` ) }
 					aria-label={ __( 'Add site via the Jetpack plugin' ) }
 				/>
 			</Column>
 
 			<Button
-				href="https://wordpress.com/setup/onboarding"
+				href={ wpcomLink( '/setup/onboarding' ) }
 				onClick={ offerClick }
 				style={ {
 					display: 'block',

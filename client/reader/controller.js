@@ -5,6 +5,7 @@ import { createElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
+import { MobileHeader } from 'calypso/reader/components/mobile-header';
 import FeedError from 'calypso/reader/feed-error';
 import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -146,6 +147,11 @@ export function feedLookup( context ) {
 			page.redirect( `/reader` );
 		} );
 }
+
+export const setBeforePrimary = ( context, next ) => {
+	context.beforePrimary = createElement( MobileHeader );
+	next();
+};
 
 export function feedListing( context, next ) {
 	const feedId = context.params.feed_id;

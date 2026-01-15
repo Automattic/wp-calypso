@@ -90,15 +90,16 @@ describe( 'SkipSuggestion', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			expect( await screen.findByText( 'WordPress.com subdomain' ) ).toBeInTheDocument();
-			expect( screen.getByText( /is included/ ) ).toHaveTextContent(
-				'site.wordpress.com is included'
-			);
+			expect(
+				await screen.findByText( 'Start free with a WordPress.com subdomain' )
+			).toBeInTheDocument();
+			expect( screen.getByText( 'Upgrade to a custom domain name anytime.' ) ).toBeInTheDocument();
 
 			const skipButton = screen.getByRole( 'button', {
 				name: 'Skip purchase and continue with site.wordpress.com',
 			} );
 			expect( skipButton ).toBeInTheDocument();
+			expect( skipButton ).toHaveTextContent( 'Start Free' );
 
 			await userEvent.click( skipButton );
 
@@ -122,9 +123,10 @@ describe( 'SkipSuggestion', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			expect( await screen.findByText( /is included/ ) ).toHaveTextContent(
-				'site.blog is included'
-			);
+			expect(
+				await screen.findByText( 'Start free with a WordPress.com subdomain' )
+			).toBeInTheDocument();
+			expect( screen.getByText( 'Upgrade to a custom domain name anytime.' ) ).toBeInTheDocument();
 
 			expect( freeSuggestionQuery.isDone() ).toBe( true );
 		} );

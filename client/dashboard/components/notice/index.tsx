@@ -62,7 +62,7 @@ function UnforwardedNotice(
 					<VStack className="dashboard-notice__content" spacing={ 3 }>
 						<VStack className="dashboard-notice__heading" spacing={ 1 }>
 							{ title && <span className="dashboard-notice__title">{ title }</span> }
-							{ children && <span className="dashboard-notice__description">{ children }</span> }
+							{ children && <div className="dashboard-notice__description">{ children }</div> }
 						</VStack>
 						{ actions && (
 							<ButtonStack className="dashboard-notice__actions" justify="flex-start">

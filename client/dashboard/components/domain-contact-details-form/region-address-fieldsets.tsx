@@ -81,7 +81,7 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined, country
 export function RegionAddressFieldsets(
 	statesList: StatesListItem[] | undefined,
 	countryCode: string,
-	asyncValidator?: AsyncValidator
+	asyncValidator: AsyncValidator
 ): Field< DomainContactDetails >[] {
 	const StateFieldEdit = createStateFieldEdit( statesList, countryCode );
 
@@ -92,20 +92,16 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			isValid: {
 				required: true,
-				...( asyncValidator && {
-					custom: createFieldAsyncValidator( 'address1', asyncValidator ),
-				} ),
+				custom: createFieldAsyncValidator( 'address1', asyncValidator ),
 			},
 		},
 		{
 			id: 'address2',
 			label: __( 'Address line 2' ),
 			type: 'text',
-			...( asyncValidator && {
-				isValid: {
-					custom: createFieldAsyncValidator( 'address2', asyncValidator ),
-				},
-			} ),
+			isValid: {
+				custom: createFieldAsyncValidator( 'address2', asyncValidator ),
+			},
 		},
 		{
 			id: 'city',
@@ -113,9 +109,7 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			isValid: {
 				required: true,
-				...( asyncValidator && {
-					custom: createFieldAsyncValidator( 'city', asyncValidator ),
-				} ),
+				custom: createFieldAsyncValidator( 'city', asyncValidator ),
 			},
 		},
 		{
@@ -123,11 +117,9 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			getValue: ( { item }: { item: DomainContactDetails } ) => item.state ?? '',
 			Edit: StateFieldEdit,
-			...( asyncValidator && {
-				isValid: {
-					custom: createFieldAsyncValidator( 'state', asyncValidator ),
-				},
-			} ),
+			isValid: {
+				custom: createFieldAsyncValidator( 'state', asyncValidator ),
+			},
 		},
 		{
 			id: 'postalCode',
@@ -135,9 +127,7 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			isValid: {
 				required: true,
-				...( asyncValidator && {
-					custom: createFieldAsyncValidator( 'postalCode', asyncValidator ),
-				} ),
+				custom: createFieldAsyncValidator( 'postalCode', asyncValidator ),
 			},
 		},
 	];

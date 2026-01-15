@@ -93,5 +93,24 @@ const analytics = {
 			} );
 		},
 	},
+
+	logstash: {
+		/**
+		 * Log to Logstash via WordPress.com REST API
+		 * @param {Object} params - parameters to log
+		 */
+		log: function ( params: Record< string, unknown > ) {
+			const logstashUrl = 'https://public-api.wordpress.com/rest/v1.1/logstash';
+
+			superagent
+				.post( logstashUrl )
+				.send( { params: JSON.stringify( params ) } )
+				.end( ( err ) => {
+					if ( err ) {
+						console.error( 'Failed to send to logstash:', err );
+					}
+				} );
+		},
+	},
 };
 export default analytics;

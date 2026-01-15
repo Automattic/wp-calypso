@@ -35,6 +35,18 @@ export interface UseGridPlansParams {
 	 * calculating prices.
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
+	/**
+	 * When true, use the long/expanded feature set for the plans differentiators experiment.
+	 */
+	useLongSetFeatures?: boolean;
+	/**
+	 * When true, use the stacked (incremental) feature set for the long_set_stacked variant.
+	 */
+	useLongSetStackedFeatures?: boolean;
+	/**
+	 * When true, use the stacked (incremental) feature set for the short_set_stacked variant.
+	 */
+	useShortSetStackedFeatures?: boolean;
 }
 
 export type UseGridPlansType = (

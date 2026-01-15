@@ -191,10 +191,11 @@ function SiteActivityLogsDataViews( {
 		setView( ( next ) => ( { ...next, page: 1 } ) );
 	}, [ dateRangeVersion, setView ] );
 
+	const logData = activityLogData?.activityLogs || [];
 	return (
 		<>
 			<DataViews< Activity >
-				data={ activityLogData?.activityLogs || [] }
+				data={ logData }
 				isLoading={ isFetching }
 				paginationInfo={ paginationInfo }
 				fields={ fields as Field< Activity >[] }
@@ -212,7 +213,7 @@ function SiteActivityLogsDataViews( {
 				children={ hasActivityLogsAccess ? undefined : <DataViews.Layout /> } // showing only the layout when on the free plan.
 			/>
 
-			{ ! hasActivityLogsAccess && ! isFetching && (
+			{ ! hasActivityLogsAccess && ! isFetching && logData.length > 0 && (
 				<HStack alignment="center" className="site-logs-card--activity-callout">
 					<div className="site-logs-card--activity-callout-content">
 						<ActivityLogsCallout siteSlug={ site.slug } />

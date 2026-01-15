@@ -1838,10 +1838,16 @@ export function createTestReduxStore() {
 	return createStore( rootReducer, applyMiddleware( thunk ) );
 }
 
-export function mockGetSupportedCountriesEndpoint( response: CountryListItem[] ) {
-	nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.1/me/transactions/supported-countries' )
-		.reply( 200, response );
+export function mockGetSupportedCountriesEndpoint( response: CountryListItem[], locale?: string ) {
+	const interceptor = nock( 'https://public-api.wordpress.com' ).get(
+		'/rest/v1.1/me/transactions/supported-countries'
+	);
+
+	if ( locale ) {
+		interceptor.query( { locale } );
+	}
+
+	interceptor.reply( 200, response );
 }
 
 export function mockGetVatInfoEndpoint( response ) {

@@ -4,6 +4,7 @@ import { dispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
@@ -14,10 +15,11 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../../../stores';
+import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { FlowV2, SubmitHandler, ProvidedDependencies } from '../../internals/types';
+import type { FlowV2, SubmitHandler } from '../../internals/types';
 
 function initialize() {
 	const { setHidePlansFeatureComparison, setIntent } = dispatch( ONBOARD_STORE ) as OnboardActions;
@@ -45,25 +47,9 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 			[]
 		);
 		const query = useQuery();
-
+		const locale = useFlowLocale();
 		const { setSignupDomainOrigin } = dispatch( ONBOARD_STORE ) as OnboardActions;
 		const { setShouldShowNotification } = usePurchasePlanNotification();
-
-		/**
-		 * Get post-checkout destination for onboarding-unified flow
-		 */
-		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ): string => {
-			// For onboarding-unified, redirect to site-setup/goals like the old flows
-			if ( providedDependencies.siteSlug ) {
-				return addQueryArgs( '/setup/site-setup/goals', {
-					siteSlug: providedDependencies.siteSlug,
-					ref: flowName,
-				} );
-			}
-			// Fallback to generic home if no siteSlug
-			return '/';
-		};
-
 		/**
 		 * Handle step submissions for the onboarding unified flow
 		 */
@@ -149,9 +135,17 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 					return navigate( 'processing' );
 
 				case 'processing': {
-					// Handle final redirect after site setup is complete
-					const destination = getPostCheckoutDestination( providedDependencies );
-					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+					if (
+						providedDependencies.processingResult === ProcessingResult.SUCCESS &&
+						providedDependencies.siteSlug
+					) {
+						// Handle final redirect after site setup is complete
+						const [ destination ] = getOnboardingPostCheckoutDestination( {
+							flowName,
+							locale,
+							siteSlug: providedDependencies.siteSlug,
+						} );
+
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 

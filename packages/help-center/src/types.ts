@@ -1,6 +1,8 @@
 import type { HelpCenterSite, SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
+export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging';
+
 export interface Container {
 	handleClose: () => void;
 	defaultFooterContent?: ReactElement;
@@ -8,21 +10,6 @@ export interface Container {
 	hidden?: boolean;
 	currentRoute?: string;
 }
-
-export interface PostObject {
-	content: string;
-	title: string;
-	URL: string;
-	ID: number;
-	site_ID: number;
-	slug: string;
-}
-
-export interface ArticleContentProps {
-	post?: PostObject;
-	isLoading?: boolean;
-}
-
 export interface Header {
 	isMinimized?: boolean;
 	onMinimize?: () => void;

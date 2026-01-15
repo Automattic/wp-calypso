@@ -4,9 +4,7 @@ import {
 	createApplePayMethod,
 	createGooglePayMethod,
 	createBancontactMethod,
-	createBancontactPaymentMethodStore,
 	createP24Method,
-	createP24PaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 	createIdealMethod,
@@ -99,6 +97,8 @@ export function useCreateCreditCard( {
 			} ),
 		[ initialUseForAllSubscriptions, allowUseForAllSubscriptions ]
 	);
+	const shouldUseVgs = isEnabled( 'checkout/vgs-ebanx' ) && shouldUseEbanx;
+
 	const stripeMethod = useMemo(
 		() =>
 			shouldLoadStripeMethod
@@ -106,6 +106,7 @@ export function useCreateCreditCard( {
 						currency,
 						store: stripePaymentMethodStore,
 						shouldUseEbanx,
+						shouldUseVgs,
 						shouldShowTaxFields,
 						submitButtonContent,
 						allowUseForAllSubscriptions,
@@ -117,6 +118,7 @@ export function useCreateCreditCard( {
 			shouldLoadStripeMethod,
 			stripePaymentMethodStore,
 			shouldUseEbanx,
+			shouldUseVgs,
 			shouldShowTaxFields,
 			submitButtonContent,
 			allowUseForAllSubscriptions,
@@ -168,16 +170,14 @@ function useCreateP24( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createP24PaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createP24Method( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
 	);
 }
 
@@ -189,16 +189,14 @@ function useCreateBancontact( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createBancontactPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createBancontactMethod( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
 	);
 }
 
@@ -526,9 +524,9 @@ export default function useCreatePaymentMethods( {
 	// `filterAppropriatePaymentMethods()`.
 	let paymentMethods = [
 		...existingCardMethods,
-		stripeMethod,
 		applePayMethod,
 		googlePayMethod,
+		stripeMethod,
 		freePaymentMethod,
 		paypalExpressMethod,
 		paypalPPCPMethod,
@@ -549,11 +547,11 @@ export default function useCreatePaymentMethods( {
 	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
 		paymentMethods = [
 			...existingCardMethods,
+			applePayMethod,
+			googlePayMethod,
 			paypalExpressMethod,
 			paypalPPCPMethod,
 			stripeMethod,
-			applePayMethod,
-			googlePayMethod,
 			freePaymentMethod,
 			idealMethod,
 			sofortMethod,

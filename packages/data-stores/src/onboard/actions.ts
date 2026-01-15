@@ -373,6 +373,11 @@ export const setGardenPartnerName = ( gardenPartnerName: string | null ) => ( {
 	gardenPartnerName,
 } );
 
+export const setBlueprint = ( blueprint: string | null ) => ( {
+	type: 'SET_BLUEPRINT' as const,
+	blueprint,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -434,4 +439,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSignupDomainOrigin
 	| typeof setGardenName
 	| typeof setGardenPartnerName
+	| typeof setBlueprint
 >;

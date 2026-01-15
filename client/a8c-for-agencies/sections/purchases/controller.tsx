@@ -1,6 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
+import {
+	EXTERNAL_WPCOM_PAYMENT_METHODS_URL,
+	EXTERNAL_WPCOM_BILLING_HISTORY_URL,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PurchasesSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/purchases';
 import {
 	publicToInternalLicenseFilter,
@@ -55,6 +60,10 @@ export const licensesContext: Callback = ( context, next ) => {
 };
 
 export const billingContext: Callback = ( context, next ) => {
+	if ( isEnabled( 'a4a-bd-checkout' ) ) {
+		window.location.replace( EXTERNAL_WPCOM_BILLING_HISTORY_URL );
+		return;
+	}
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
 		<>
@@ -67,6 +76,10 @@ export const billingContext: Callback = ( context, next ) => {
 };
 
 export const invoicesContext: Callback = ( context, next ) => {
+	if ( isEnabled( 'a4a-bd-checkout' ) ) {
+		window.location.replace( EXTERNAL_WPCOM_BILLING_HISTORY_URL );
+		return;
+	}
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
 		<>
@@ -79,6 +92,10 @@ export const invoicesContext: Callback = ( context, next ) => {
 };
 
 export const paymentMethodsContext: Callback = ( context, next ) => {
+	if ( isEnabled( 'a4a-bd-checkout' ) ) {
+		window.location.replace( EXTERNAL_WPCOM_PAYMENT_METHODS_URL );
+		return;
+	}
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
 		<>
@@ -91,6 +108,10 @@ export const paymentMethodsContext: Callback = ( context, next ) => {
 };
 
 export const paymentMethodsAddContext: Callback = ( context, next ) => {
+	if ( isEnabled( 'a4a-bd-checkout' ) ) {
+		window.location.replace( EXTERNAL_WPCOM_PAYMENT_METHODS_URL );
+		return;
+	}
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
 		<>

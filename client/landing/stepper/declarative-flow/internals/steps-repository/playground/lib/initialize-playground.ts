@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
+	Blueprint,
 	type MountDescriptor,
 	type PlaygroundClient,
 	startPlaygroundWeb,
@@ -13,7 +14,7 @@ export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement,
 	recommendedPhpVersion: string,
 	setSearchParams: ( callback: ( prev: URLSearchParams ) => URLSearchParams ) => void
-): Promise< PlaygroundClient > {
+): Promise< { blueprint: Blueprint | null; client: PlaygroundClient } > {
 	let isWordPressInstalled = false;
 
 	const url = new URL( window.location.href );
@@ -44,10 +45,12 @@ export async function initializeWordPressPlayground(
 			initialSyncDirection: isWordPressInstalled ? 'opfs-to-memfs' : 'memfs-to-opfs',
 		};
 
+		const blueprint = await getBlueprint( isWordPressInstalled, recommendedPhpVersion );
+
 		const client = await startPlaygroundWeb( {
 			iframe,
 			remoteUrl: 'https://playground.wordpress.net/remote.html',
-			blueprint: await getBlueprint( isWordPressInstalled, recommendedPhpVersion ),
+			blueprint,
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
 		} );
@@ -57,7 +60,7 @@ export async function initializeWordPressPlayground(
 		}
 
 		await client.isReady();
-		return client;
+		return { blueprint, client };
 	} catch ( error ) {
 		logToLogstash( {
 			feature: 'calypso_client',

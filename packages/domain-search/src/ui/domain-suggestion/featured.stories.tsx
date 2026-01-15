@@ -33,7 +33,7 @@ export const Default = () => {
 				domain="example"
 				tld="com"
 				price={ <DomainSuggestionPrice salePrice="$97" price="$22" /> }
-				cta={ <DomainSuggestionPrimaryCTA>Add to Cart</DomainSuggestionPrimaryCTA> }
+				cta={ <DomainSuggestionPrimaryCTA>Add to cart</DomainSuggestionPrimaryCTA> }
 			/>
 		</StoryWrapper>
 	);
@@ -57,7 +57,7 @@ export const Highlighted = () => {
 				isHighlighted
 				matchReasons={ [ 'Exact match', '.com is the most common extension' ] }
 				price={ <DomainSuggestionPrice salePrice="$97" price="$22" /> }
-				cta={ <DomainSuggestionPrimaryCTA>Add to Cart</DomainSuggestionPrimaryCTA> }
+				cta={ <DomainSuggestionPrimaryCTA>Add to cart</DomainSuggestionPrimaryCTA> }
 			/>
 		</StoryWrapper>
 	);

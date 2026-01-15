@@ -24,7 +24,6 @@ type UpsellType =
 	| 'live-chat:domains'
 	| 'education:loading-time'
 	| 'education:seo'
-	| 'education:free-domain'
 	| 'education:domain-connection'
 	| 'upgrade-atomic';
 

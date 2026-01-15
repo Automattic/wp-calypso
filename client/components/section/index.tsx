@@ -80,11 +80,15 @@ const Section = ( props: SectionProps ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<SectionContainer dark={ dark }>
-			<SectionHeaderContainer>
-				<SectionHeader dark={ dark } className="wp-brand-font">
+			<SectionHeaderContainer className="section-header-container">
+				<SectionHeader dark={ dark } className="wp-brand-font section-header-container__header">
 					{ header }
 				</SectionHeader>
-				{ subheader && <SectionSubHeader>{ subheader }</SectionSubHeader> }
+				{ subheader && (
+					<SectionSubHeader className="section-header-container__subheader">
+						{ subheader }
+					</SectionSubHeader>
+				) }
 			</SectionHeaderContainer>
 			<SectionContent>{ children }</SectionContent>
 		</SectionContainer>

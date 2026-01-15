@@ -3,9 +3,6 @@
 @import "@wordpress/base-styles/variables";
 
 
-.layout__content {
-	overflow: visible;
-}
 .checkout-thank-you {
 	box-sizing: border-box;
 	position: static;
@@ -599,6 +596,7 @@
 
 .is-section-checkout-thank-you {
 	.layout__content {
+		overflow: visible;
 		padding-right: 0;
 		padding-left: 0;
 	}

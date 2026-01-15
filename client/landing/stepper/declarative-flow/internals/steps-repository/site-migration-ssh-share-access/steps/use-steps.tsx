@@ -38,12 +38,14 @@ interface StepsDataOptions {
 	onGenerateSSHKey: () => void;
 	onEditUsername: () => void;
 	onFindSSHDetailsSuccess: () => void;
+	onAskForHelp: () => void;
 	host?: string;
 	onNoSSHAccess: () => void;
 	isTransferring: boolean;
 	shouldGenerateKey: boolean;
 	isInputDisabled: boolean;
 	isProcessingNoSSH: boolean;
+	isProcessingAssistedMigration: boolean;
 }
 
 interface StepData {
@@ -78,10 +80,12 @@ interface UseStepsOptions {
 	siteName: string;
 	host?: string;
 	onNoSSHAccess: () => void;
+	onAskForHelp: () => void;
 	migrationStatus?: 'queued' | 'in-progress' | 'migrating' | 'completed' | 'failed';
 	isTransferring: boolean;
 	isInputDisabled: boolean;
 	isProcessingNoSSH?: boolean;
+	isProcessingAssistedMigration?: boolean;
 }
 
 interface SSHFormState {
@@ -164,6 +168,7 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					onPasswordChange={ options.onPasswordChange }
 					onGenerateSSHKey={ options.onGenerateSSHKey }
 					onEditUsername={ options.onEditUsername }
+					onAskForHelp={ options.onAskForHelp }
 					helpLink={
 						<HelpLink
 							supportLink={ supportDoc.url }
@@ -174,6 +179,7 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					isTransferring={ options.isTransferring }
 					shouldGenerateKey={ options.shouldGenerateKey }
 					isInputDisabled={ options.isInputDisabled }
+					isProcessingAssistedMigration={ options.isProcessingAssistedMigration }
 				/>
 			),
 		},
@@ -187,11 +193,13 @@ export const useSteps = ( {
 	siteId,
 	siteName,
 	onNoSSHAccess,
+	onAskForHelp,
 	host,
 	migrationStatus,
 	isTransferring,
 	isInputDisabled,
 	isProcessingNoSSH = false,
+	isProcessingAssistedMigration = false,
 }: UseStepsOptions ): StepsObject => {
 	const [ currentStep, setCurrentStep ] = useState( -1 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
@@ -349,12 +357,14 @@ export const useSteps = ( {
 		onGenerateSSHKey: handleGenerateSSHKey,
 		onEditUsername: handleEditUsername,
 		onFindSSHDetailsSuccess: handleFindSSHDetailsSuccess,
+		onAskForHelp,
 		onNoSSHAccess,
 		host,
 		isTransferring,
 		shouldGenerateKey,
 		isInputDisabled,
 		isProcessingNoSSH,
+		isProcessingAssistedMigration,
 	} );
 
 	const isComplete = ( stepKey: string ) => {

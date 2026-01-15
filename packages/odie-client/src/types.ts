@@ -1,4 +1,5 @@
 import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
+import type { ZendeskConversation } from '@automattic/zendesk-client';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
@@ -8,6 +9,7 @@ export type OdieAssistantContextInterface = {
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	newInteractionsBotSlug: string;
+	newInteractionsBotVersion?: string;
 	chat: Chat;
 	clearChat: () => void;
 	currentUser: CurrentUser;
@@ -32,6 +34,7 @@ export type OdieAssistantContextInterface = {
 
 export type OdieAssistantProviderProps = {
 	newInteractionsBotSlug: OdieAllowedBots;
+	newInteractionsBotVersion?: string;
 	canConnectToZendesk?: boolean;
 	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
@@ -53,7 +56,7 @@ export type CurrentUser = {
 	display_name: string;
 	avatar_URL?: string;
 	email?: string;
-	id?: number;
+	ID?: number;
 };
 
 export type Source = {
@@ -86,7 +89,7 @@ type InquiryType =
 	| 'unrelated-to-wordpress'
 	| 'request-for-human-support';
 
-type InteractionStatus = 'open' | 'closed' | 'resolved' | 'solved';
+type InteractionStatus = 'open' | 'closed' | 'solved';
 
 type ClassificationResults = {
 	inquiry_type?: InquiryType;
@@ -108,9 +111,9 @@ export type Context = {
 	classification_results?: ClassificationResults;
 	question_tags?: ClassificationResults;
 	flags?: {
+		failed_zendesk_connection?: boolean;
 		forward_to_human_support?: boolean;
 		hide_disclaimer_content?: boolean;
-		show_contact_support_msg?: boolean;
 		show_ai_avatar?: boolean;
 		is_error_message?: boolean;
 	};
@@ -155,6 +158,7 @@ export type Message = {
 	created_at?: string;
 	feedbackOptions?: MessageAction[];
 	metadata?: Record< string, any >;
+	ts?: number;
 	payload?: string;
 	/**
 	 * Timestamp of the message.
@@ -166,6 +170,7 @@ export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfe
 
 export type ReturnedChat = {
 	chat_id: number;
+	session_id: string;
 	messages: Message[];
 	wpcom_user_id: number;
 	experiment_name: string | undefined | null;
@@ -173,8 +178,8 @@ export type ReturnedChat = {
 
 export type OdieChat = {
 	messages: Message[];
-	odieId?: number | null | undefined;
-	wpcomUserId?: number | null | undefined;
+	odieId?: number | null;
+	wpcomUserId?: number | null;
 };
 
 export type Chat = OdieChat & {
@@ -189,19 +194,14 @@ export type OdieAllBotSlugs = ( typeof ODIE_ALL_BOT_SLUGS )[ number ];
 
 export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging' | 'help-center';
 
-interface ConversationParticipant {
-	id: string;
-	userId: string;
-	unreadCount: number;
-	lastRead: number;
-}
-
 export type MessageAction = {
 	id: string;
 	payload: boolean;
 	text: string;
 	type: string;
 	metadata: ChatFeedbackActions;
+	label: string;
+	onClick: () => void;
 };
 
 export type OdieMessage = {
@@ -211,38 +211,12 @@ export type OdieMessage = {
 	altText?: string;
 };
 
-export type ZendeskMessage = OdieMessage & {
-	avatarUrl?: string;
-	id: string;
-	actions?: MessageAction[];
-	source?: {
-		type: 'web' | 'slack' | 'zd:surveys' | 'zd:answerBot';
-		id: string;
-		integrationId: string;
-	};
-	type: ZendeskContentType;
-	mediaUrl?: string;
-	metadata?: Record< string, any >;
-	htmlText?: string;
-};
-
-export type ZendeskContentType =
-	| 'text'
-	| 'carousel'
-	| 'file'
-	| 'form'
-	| 'formResponse'
-	| 'image'
-	| 'image-placeholder'
-	| 'list'
-	| 'location'
-	| 'template';
-
 type Metadata = {
 	odieChatId: number;
 	createdAt: number;
 	supportInteractionId: string;
 	status: InteractionStatus;
+	botSlug?: string;
 };
 
 export type OdieConversation = {
@@ -252,17 +226,10 @@ export type OdieConversation = {
 	metadata?: Metadata;
 };
 
-export type ZendeskConversation = {
-	id: string;
-	lastUpdatedAt: number;
-	businessLastRead: number;
-	description: string;
-	displayName: string;
-	iconUrl: string;
-	type: 'sdkGroup' | string;
-	participants: ConversationParticipant[];
-	messages: ZendeskMessage[];
-	metadata: Metadata;
+export type LoggedOutOdieConversation = OdieConversation & {
+	metadata: {
+		sessionId: string;
+	} & Metadata;
 };
 
 export type SupportInteractionDraft = {
@@ -271,7 +238,9 @@ export type SupportInteractionDraft = {
 	event_source: SupportProvider;
 };
 
-export type Conversations = Array< OdieConversation | ZendeskConversation >;
+export type Conversations = Array<
+	OdieConversation | LoggedOutOdieConversation | ZendeskConversation
+>;
 
 export type SupportInteractionUser = {
 	user_id: string;

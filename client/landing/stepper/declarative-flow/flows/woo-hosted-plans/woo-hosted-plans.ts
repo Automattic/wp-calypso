@@ -2,6 +2,7 @@ import { WOO_HOSTED_PLANS_FLOW } from '@automattic/onboarding';
 import { resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { FlowV2, SubmitHandler } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -46,7 +47,7 @@ async function initialize() {
 	const hasAccess = await checkUserHasAccess();
 
 	if ( ! hasAccess ) {
-		window.location.assign( '/ciab/sites' );
+		window.location.assign( dashboardLink( '/ciab/sites' ) );
 		return false;
 	}
 
@@ -66,7 +67,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
 
 		// Validate back_to to prevent open redirect - must not be external
-		const safeBackTo = backTo && ! isExternal( backTo ) ? backTo : '/ciab/sites';
+		const safeBackTo = backTo && ! isExternal( backTo ) ? backTo : dashboardLink( '/ciab/sites' );
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
@@ -110,7 +111,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 							// Note: Not using goToCheckout utility because it hardcodes signup=1
 							// Checkout validates redirect_to to prevent open redirects
 							const finalUrl = addQueryArgs( checkoutUrl, {
-								redirect_to: redirectTo || '/ciab/sites',
+								redirect_to: redirectTo || dashboardLink( '/ciab/sites' ),
 								cancel_to: currentPath,
 							} );
 
@@ -120,7 +121,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 					}
 
 					// If no cart items, something went wrong - redirect to sites
-					window.location.assign( '/sites' );
+					window.location.assign( dashboardLink( '/ciab/sites' ) );
 					break;
 				}
 			}

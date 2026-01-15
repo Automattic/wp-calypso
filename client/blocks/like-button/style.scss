@@ -7,6 +7,11 @@
 	box-sizing: border-box;
 	height: 20px;
 	gap: 4px;
+
+	&.tooltip {
+		@include tooltip-base;
+		@include tooltip-top;
+	}
 }
 
 .like-button:hover {

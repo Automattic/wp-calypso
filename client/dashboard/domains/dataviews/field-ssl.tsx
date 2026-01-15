@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 export const DomainSslField = ( { domain }: { domain: DomainSummary } ) => {
 	const { data: sslDetails } = useQuery( {
 		...sslDetailsQuery( domain.domain ),
+		staleTime: 60_000,
 		enabled:
 			domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER &&
 			domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS,

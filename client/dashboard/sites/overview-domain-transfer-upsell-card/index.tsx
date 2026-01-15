@@ -2,6 +2,7 @@ import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
+import { wpcomLink } from '../../utils/link';
 import illustrationTransferDomainUrl from './upsell-illustration-transfer-domain.svg';
 
 export default function DomainTransferUpsellCard() {
@@ -20,7 +21,7 @@ export default function DomainTransferUpsellCard() {
 			imageVariant="full-bleed"
 			actions={
 				<UpsellCTAButton
-					href="/setup/domain-transfer"
+					href={ wpcomLink( '/setup/domain-transfer' ) }
 					text={ __( 'Transfer domain' ) }
 					size="compact"
 					upsellId="site-overview-transfer-domain"

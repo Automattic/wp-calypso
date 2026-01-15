@@ -12,6 +12,71 @@
 		}
 	}
 }
+:root:has(.is-reader-msd-enabled) {
+	.sidebar-menu-container {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		padding: 0 16px;
+	}
+
+	.sidebar-header {
+		display: flex;
+		justify-content: space-between;
+		@media only screen and (max-width: 781px) {
+			display: none;
+		}
+		h3 {
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			font-size: 32px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: normal;;
+		}
+		p {
+			display: none;
+		}
+	}
+}
+
+//TODO: Remove this once the new reader MSD is enabled for all users (reader/enable-msd)
+:root:not(:has(.is-reader-msd-enabled)) {
+	.sidebar-menu-container {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		padding: 0 16px;
+	}
+
+	.sidebar-header {
+		display: flex;
+
+		justify-content: space-between;
+		padding: 24px 8px;
+
+		h3 {
+			font-weight: 500;
+			font-size: 20px;
+			line-height: 26px;
+		}
+
+		p {
+			color: var(--studio-gray-50);
+			font-size: $font-body-small;
+			margin: 0;
+		}
+
+
+		.reader-search-icon {
+			padding-inline: 0;
+			height: 30px;
+		}
+
+		.sidebar_svg-search {
+			margin: 0;
+		}
+	}
+}
 
 body.is-section-reader {
 	&.rtl .layout__content {
@@ -64,12 +129,6 @@ body.is-section-reader {
 }
 
 :root .theme-default .is-section-reader .global-sidebar {
-	.sidebar-menu-container {
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-		padding: 0 16px;
-	}
 	.sidebar__menu {
 		.sidebar__expandable-content {
 			padding: 0;
@@ -122,32 +181,7 @@ body.is-section-reader {
 	.sidebar__menu-icon {
 		margin-right: 12px;
 	}
-	.sidebar-header {
-		display: flex;
-		justify-content: space-between;
-		padding: 24px 8px;
 
-		h3 {
-			font-weight: 500;
-			font-size: 20px;
-			line-height: 26px;
-		}
-
-		p {
-			color: var( --studio-gray-50 );
-			font-size: $font-body-small;
-			margin: 0;
-		}
-
-		.reader-search-icon {
-			padding-inline: 0;
-			height: 30px;
-		}
-
-		.sidebar_svg-search {
-			margin: 0;
-		}
-	}
 
 	.sidebar__menu-link-reader {
 		line-height: 1.8;

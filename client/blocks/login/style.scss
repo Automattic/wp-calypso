@@ -187,6 +187,8 @@ $breakpoint-mobile: 782px; //Mobile size.
 	color: var(--studio-gray-50, #646970);
 	font-weight: 400;
 	font-size: $font-body-small;
+	text-align: center;
+	display: block;
 
 	&:visited,
 	&:hover,

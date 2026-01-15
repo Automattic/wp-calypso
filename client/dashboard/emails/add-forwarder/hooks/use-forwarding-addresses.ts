@@ -1,4 +1,3 @@
-import { DomainSummary } from '@automattic/api-core';
 import { emailForwardersQuery } from '@automattic/api-queries';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -7,12 +6,12 @@ export const useForwardingAddresses = ( {
 	domains,
 	forwardingAddresses,
 }: {
-	domains: DomainSummary[];
+	domains: string[];
 	forwardingAddresses: string[];
 } ) => {
 	const emailForwardersQueries = useQueries( {
-		queries: domains.map( ( d ) => ( {
-			...emailForwardersQuery( d.domain ),
+		queries: domains.map( ( domain ) => ( {
+			...emailForwardersQuery( domain ),
 		} ) ),
 	} );
 
@@ -20,10 +19,10 @@ export const useForwardingAddresses = ( {
 	const forwards = emailForwardersQueries.flatMap( ( q ) => q.data?.forwards ?? [] );
 
 	const forwardsByMailbox = forwards.reduce( ( acc, f ) => {
-		acc.set( f.email, f.forward_address );
+		const forwards: string[] = acc.has( f.email ) ? acc.get( f.email )! : [];
+		acc.set( f.email, forwards.concat( f.forward_address ) );
 		return acc;
-	}, new Map< string, string >() );
-
+	}, new Map< string, string[] >() );
 	const uniqueEmailForwarders = useMemo(
 		() => Array.from( new Set( forwards.map( ( f ) => f.forward_address ) ) ),
 		[ forwards ]

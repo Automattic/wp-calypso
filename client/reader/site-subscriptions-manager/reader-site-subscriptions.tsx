@@ -69,6 +69,7 @@ const ReaderSiteSubscriptions = () => {
 	return (
 		<>
 			<SiteSubscriptionsListActionsBar />
+
 			<SiteSubscriptionsList notFoundComponent={ NotFoundSiteSubscriptions } />
 			{ ! searchTerm && <RecommendedSites /> }
 
@@ -88,7 +89,7 @@ const ReaderSiteSubscriptions = () => {
 	);
 };
 
-export default () => (
+const ReaderSiteSubscriptionsWrapper = () => (
 	<SubscriptionManager.SiteSubscriptionsQueryPropsProvider
 		initialSearchTermState={
 			getUrlQuerySearchTerm // Take the `?s=` url query param and set is as initial search term state.
@@ -99,3 +100,5 @@ export default () => (
 		</Reader.UnsubscribedFeedsSearchProvider>
 	</SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
 );
+
+export default ReaderSiteSubscriptionsWrapper;

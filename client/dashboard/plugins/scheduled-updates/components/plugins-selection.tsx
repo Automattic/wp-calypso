@@ -1,7 +1,7 @@
 import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
-import { DataViewsCard } from '../../../components/dataviews-card';
+import { DataViewsCard } from '../../../components/dataviews';
 import { useEligiblePlugins } from '../hooks/use-eligible-plugins';
 import type { CorePlugin } from '@automattic/api-core';
 

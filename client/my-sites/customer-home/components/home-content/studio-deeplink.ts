@@ -4,8 +4,13 @@ const STUDIO_URL_SCHEME = 'wp-studio';
 const STUDIO_URL_SCHEME_LEGACY = 'wpcom-local-dev';
 
 // Opens Studio sync URL with backward compatibility support.
-const openSyncUrlInStudio = ( studioSiteId: string, siteId: number ) => {
-	const path = `sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
+const openSyncUrlInStudio = ( studioSiteId: string, siteId: number, autoOpenPush?: boolean ) => {
+	let path = `sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
+
+	if ( autoOpenPush ) {
+		path += '&autoOpenPush=true';
+	}
+
 	const newSchemeUrl = `${ STUDIO_URL_SCHEME }://${ path }`;
 	const legacySchemeUrl = `${ STUDIO_URL_SCHEME_LEGACY }://${ path }`;
 

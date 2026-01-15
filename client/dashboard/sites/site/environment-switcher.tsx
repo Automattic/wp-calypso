@@ -139,7 +139,7 @@ const EnvironmentSwitcherDropdown = ( {
 						}
 						disabled={ isStagingSiteCreating || isStagingSiteDeleting }
 					>
-						<HStack justify="flex-start">
+						<HStack justify="flex-start" spacing={ 1 }>
 							<StagingSiteActionButton
 								isStagingSiteDeleting={ isStagingSiteDeleting }
 								isStagingSiteCreating={ isStagingSiteCreating }

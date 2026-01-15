@@ -1,10 +1,37 @@
 .inline-help__search {
 	.summary-button-title {
 		text-align: left;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		line-clamp: 3;
+		word-break: break-word;
 	}
 
 	button.summary-button.components-button {
 		padding: 16px;
 		margin-bottom: 8px;
+	}
+}
+
+// Dot indicator for unread conversations
+.summary-button.has-unread-conversation {
+	.summary-button-strapline {
+		position: relative;
+		padding-left: 12px;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			background-color: #e65054;
+		}
 	}
 }

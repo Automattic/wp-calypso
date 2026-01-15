@@ -5,6 +5,7 @@ import {
 	fetchMailboxes,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { userMailboxesQuery } from './me-mailboxes';
 import { queryClient } from './query-client';
 
 export const mailboxesQuery = ( siteId: number ) =>
@@ -39,7 +40,7 @@ export const createTitanMailboxMutation = () => {
 				passwordResetEmail: vars.passwordResetEmail,
 			} ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
+			queryClient.resetQueries( userMailboxesQuery() );
 		},
 	} );
 };
@@ -49,7 +50,7 @@ export const deleteTitanMailboxMutation = () => {
 		mutationFn: ( vars: { domainName: string; mailbox: string } ) =>
 			deleteTitanMailbox( vars.domainName, vars.mailbox ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
+			queryClient.resetQueries( userMailboxesQuery() );
 		},
 	} );
 };

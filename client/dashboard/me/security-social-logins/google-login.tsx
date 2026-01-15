@@ -9,7 +9,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
-import { getRedirectUri } from './utils';
+import { wpcomLink } from '../../utils/link';
 import type { SocialLoginButtonProps } from './types';
 
 // This component supports only Social Login from Google.
@@ -125,7 +125,7 @@ export default function GoogleLogin( {
 			client_id: config( 'google_oauth_client_id' ),
 			scope: 'openid profile email',
 			ux_mode: 'popup',
-			redirect_uri: getRedirectUri(),
+			redirect_uri: wpcomLink( '/start/user' ),
 			state: nonce,
 			callback: async ( response: { error: string; code: string; state: string } ) => {
 				if ( response.error ) {

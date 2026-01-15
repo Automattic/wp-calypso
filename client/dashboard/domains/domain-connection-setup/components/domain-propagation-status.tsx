@@ -40,7 +40,7 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 			</Text>
 			<Card>
 				<CardBody>
-					<Grid columns={ 3 } gap={ 4 }>
+					<Grid columns={ 4 } gap={ 4 }>
 						{ data.propagation_status.map( ( area ) => (
 							<HStack key={ area.area_code } spacing={ 2 } justify="flex-start">
 								<PropagationStatusIndicator propagated={ area.propagated } />

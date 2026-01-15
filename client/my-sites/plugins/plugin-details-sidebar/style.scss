@@ -26,6 +26,10 @@
 	.title {
 		color: var(--studio-gray-60);
 		font-size: $font-body-extra-small;
+
+		.full-width-section & {
+			text-transform: uppercase;
+		}
 	}
 
 	.value {

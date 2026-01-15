@@ -11,6 +11,8 @@ const defaultContext: PaymentMethodProviderContextInterface = {
 	setDisabledPaymentMethodIds: noop,
 	paymentMethodId: null,
 	setPaymentMethodId: noop,
+	loadingPaymentMethodIds: [],
+	setLoadingPaymentMethodIds: noop,
 };
 
 export const PaymentMethodProviderContext = createContext( defaultContext );

@@ -60,6 +60,7 @@ import {
 	isUserLoggedIn,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
@@ -83,7 +84,6 @@ import {
 	getSitePlanSlug,
 	getSiteSlug,
 } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -492,7 +492,13 @@ export function noSite( context, next ) {
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1' || ! siteFragment;
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
-	const isMarketplaceSitelessCheckoutFlow = context.pathname.includes( '/checkout/marketplace' );
+
+	// /checkout/marketplace/ is for standard siteless checkout, while
+	// /checkout/passport/ allows to use customized URL for Passport as well as custom branding.
+	const isMarketplaceSitelessCheckoutFlow = [ '/checkout/marketplace', '/checkout/passport' ].some(
+		( path ) => context.pathname.includes( path )
+	);
+
 	const isUnifiedCheckoutFlow = context.pathname.includes( '/checkout/unified' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
@@ -939,9 +945,9 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-	const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
+	const dashboardOptIn = hasDashboardOptIn( state );
 	const shouldShowNavigation =
-		config.isEnabled( 'themes/universal-header' ) && hostingDashboardOptIn
+		config.isEnabled( 'themes/universal-header' ) && dashboardOptIn
 			? selectedSite
 			: isUserLoggedIn( state );
 	if ( shouldShowNavigation ) {

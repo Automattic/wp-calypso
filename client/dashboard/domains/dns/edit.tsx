@@ -1,9 +1,8 @@
 import { domainDnsMutation, domainDnsQuery, domainQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
+import { useCallback, useEffect } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
@@ -18,24 +17,43 @@ import type { DnsRecord } from '@automattic/api-core';
 
 export default function DomainEditDNS() {
 	const navigate = useNavigate();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { recordId } = domainRoute.useSearch();
-	const mutation = useMutation( domainDnsMutation( domainName ) );
+	const mutation = useMutation( {
+		...domainDnsMutation( domainName ),
+		meta: {
+			snackbar: {
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'DNS record updated successfully for %s.' ), domainName ),
+				error: { source: 'server' },
+			},
+		},
+	} );
 
 	const { data: dnsRecords } = useSuspenseQuery( domainDnsQuery( domainName ) );
-	const recordToEdit = getProcessedRecord(
-		// This record's existence is checked in the `beforeLoad` function in the route
-		dnsRecords.records.find( ( record ) => record.id === recordId )!
-	);
 
-	const navigateToDNSOverviewPage = () => {
+	const navigateToDNSOverviewPage = useCallback( () => {
 		navigate( {
 			to: '/domains/$domainName/dns',
 			params: { domainName },
 		} );
-	};
+	}, [ navigate, domainName ] );
+
+	const record = dnsRecords.records.find( ( r ) => r.id === recordId );
+
+	useEffect( () => {
+		// Handle the case where the record no longer exists (e.g., after mutation invalidates the query)
+		if ( ! record ) {
+			navigateToDNSOverviewPage();
+		}
+	}, [ record, navigateToDNSOverviewPage ] );
+
+	if ( ! record ) {
+		return null;
+	}
+
+	const recordToEdit = getProcessedRecord( record );
 
 	const handleSubmit = ( typeFormData: DnsRecordTypeFormData, formData: DnsRecordFormData ) => {
 		const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
@@ -46,18 +64,7 @@ export default function DomainEditDNS() {
 
 		mutation.mutate(
 			{ recordsToAdd, recordsToRemove },
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'DNS record updated successfully.' ), { type: 'snackbar' } );
-					navigateToDNSOverviewPage();
-				},
-				onError: () => {
-					// TODO: Get DNS exception class and display correct error message
-					createErrorNotice( __( 'Failed to update DNS record.' ), {
-						type: 'snackbar',
-					} );
-				},
-			}
+			{ onSuccess: () => navigateToDNSOverviewPage() }
 		);
 	};
 

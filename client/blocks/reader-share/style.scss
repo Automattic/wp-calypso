@@ -1,52 +1,53 @@
-.reader-share {
-	.reader-share__button.button {
-		color: var(--color-text-subtle);
+.reader-share__button.button {
+	display: flex;
+	align-items: center;
+	padding: 0;
+	font-size: $font-body-small;
+	font-weight: 400;
+	gap: 4px;
+	line-height: normal;
+
+	svg {
 		fill: var(--color-text-subtle);
-		display: flex;
-		align-items: center;
-		padding: 0;
-		font-size: $font-body-small;
-		font-weight: 400;
-		gap: 4px;
-		line-height: normal;
+		opacity: 0.6;
+	}
 
-		&:hover,
-		&:active {
-			color: var(--color-primary);
-			fill: var(--color-primary);
-		}
+	&:hover svg,
+	&:active svg {
+		fill: var(--color-link);
+		opacity: 1;
+	}
 
-		&:focus {
-			outline: thin dotted;
-		}
+	&:focus {
+		outline: thin dotted;
+	}
 
-		&.is-borderless {
-			.gridicon {
-				margin-right: 0;
-				margin-top: 0;
-			}
+	&.is-borderless {
+		.gridicon {
+			margin-right: 0;
+			margin-top: 0;
 		}
+	}
+
+	.gridicon {
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+
+	.gridicons-reblog {
+		top: 0;
+	}
+
+	&.is-active {
+		color: var(--color-primary);
 
 		.gridicon {
-			transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			fill: var(--color-primary);
 		}
+	}
 
-		.gridicons-reblog {
-			top: 0;
-		}
-
-		&.is-active {
-			color: var(--color-primary);
-
-			.gridicon {
-				fill: var(--color-primary);
-			}
-		}
-
-		&.tooltip {
-			@include tooltip-base;
-			@include tooltip-top;
-		}
+	&.tooltip {
+		@include tooltip-base;
+		@include tooltip-top;
 	}
 }
 

@@ -108,16 +108,23 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		it( 'Submit first form', async function () {
 			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).click();
 
-			await page.getByText( 'Your message has been sent' ).waitFor( { timeout: 20 * 1000 } );
+			await page
+				// TODO: "Thank you for your response" changed to "Your message has been sent" in the latest version of the plugin.
+				// Eventually we can remove the "Thank you for your response" option and just use "Your message has been sent" (we don't check for emojis).
+				.getByText( /Thank you for your response\.|Your message has been sent/ )
+				.waitFor( { timeout: 20 * 1000 } );
 		} );
 
-		it( 'Verify "Go back" link appears', async function () {
-			// The "Go back" can be either a link or button depending on the implementation
-			await page.getByText( 'Go back', { exact: true } ).waitFor();
+		it( 'Verify "← Back" link appears', async function () {
+			// TODO: "back" link changed from "Go back" to "← Back" in the latest version of the plugin.
+			// Eventually we can remove the "Go back" option and just use "Back" (we don't check for emojis).
+			await page.getByRole( 'button', { name: /Back|Go back/ } ).waitFor();
 		} );
 
-		it( 'Click "Go back" to return to form', async function () {
-			await page.getByText( 'Go back', { exact: true } ).click();
+		it( 'Click "← Back" to return to form', async function () {
+			// TODO: "back" link changed from "Go back" to "← Back" in the latest version of the plugin.
+			// Eventually we can remove the "Go back" option and just use "Back" (we don't check for emojis).
+			await page.getByRole( 'button', { name: /Back|Go back/ } ).click();
 			// Verify the form is visible again and the success message is hidden
 			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).waitFor();
 			// Wait for the success message to be hidden
@@ -154,8 +161,10 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 			// Wait for the success message to become visible (not just exist)
 			await page
-				.getByText( 'Your message has been sent' )
-				.waitFor( { state: 'visible', timeout: 20 * 1000 } );
+				// TODO: "Thank you for your response" changed to "Your message has been sent" in the latest version of the plugin.
+				// Eventually we can remove the "Thank you for your response" option and just use "Your message has been sent" (we don't check for emojis).
+				.getByText( /Thank you for your response\.|Your message has been sent/ )
+				.waitFor( { timeout: 20 * 1000 } );
 		} );
 	} );
 

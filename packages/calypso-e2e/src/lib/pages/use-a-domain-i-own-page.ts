@@ -1,10 +1,10 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 
 const selectors = {
 	ownedDomainInput: '.use-my-domain__domain-input-fieldset input',
 	continueButton: 'button:text("Continue")',
-	connectDomainButton: '.domain-transfer-or-connect__content button:nth-child(2)',
-	transferDomainButton: '.domain-transfer-or-connect__content button:nth-child(1)',
+	connectDomainButton: 'button span:text("Connect your site address")',
+	transferDomainButton: 'button span:text("Transfer your domain name")',
 };
 
 /**
@@ -12,14 +12,26 @@ const selectors = {
  */
 export class UseADomainIOwnPage {
 	private page: Page;
+	private container?: Locator;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
+	 * @param {Locator} container The container locator.
 	 */
-	constructor( page: Page ) {
+	constructor( page: Page, container?: Locator ) {
 		this.page = page;
+		this.container = container;
+	}
+
+	/**
+	 * Gets the container locator.
+	 *
+	 * @returns {Locator} The container locator.
+	 */
+	private getContainer(): Page | Locator {
+		return this.container ?? this.page;
 	}
 
 	/**
@@ -67,5 +79,50 @@ export class UseADomainIOwnPage {
 	 */
 	async clickButtonToTransferDomain(): Promise< void > {
 		await this.page.click( selectors.transferDomainButton );
+	}
+
+	/**
+	 * Fills the "Use a domain I own" input and waits for the `is-available` response
+	 *
+	 * @param domainName Domain name to fill in the input
+	 */
+	async fillUseDomainIOwnInput( domainName: string ): Promise< void > {
+		const searchAndPressEnter = async () => {
+			const input = this.getContainer().locator( '.use-my-domain__domain-input input' );
+			await input.fill( domainName );
+			await input.press( 'Enter' );
+		};
+
+		const [ response ] = await Promise.all( [
+			this.page.waitForResponse( /is-available\?/ ),
+			searchAndPressEnter(),
+		] );
+
+		if ( ! response ) {
+			const errorText = await this.page.getByRole( 'status', { name: 'Notice' } ).innerText();
+			throw new Error(
+				`Encountered error while trying to check availability of domain.\nOriginal error: ${ errorText }`
+			);
+		}
+	}
+
+	/**
+	 * Click on the "Transfer your domain" option in the "Transfer or Connect" page
+	 */
+	async selectTransferYourDomain(): Promise< void > {
+		const button = this.getContainer()
+			.locator( '.domain-transfer-or-connect__content button' )
+			.nth( 0 );
+		await button.waitFor();
+		await button.click();
+	}
+
+	/**
+	 * Click on the "Connect your domain" option in the "Transfer or Connect" page
+	 */
+	async selectConnectYourDomain(): Promise< void > {
+		const button = this.getContainer().getByRole( 'button', { name: 'Select' } ).nth( 1 );
+		await button.waitFor();
+		await button.click();
 	}
 }

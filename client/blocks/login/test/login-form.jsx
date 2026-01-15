@@ -156,6 +156,18 @@ describe( 'LoginForm', () => {
 		expect( label ).toBeInTheDocument();
 	} );
 
+	test( 'shows the default "Continue" button text for Jetpack logins', async () => {
+		render( <LoginForm isJetpack />, {
+			initialState: {
+				login: { socialAccountLink: { isLinking: false } },
+				route: { query: { current: {}, initial: {} } },
+			},
+		} );
+
+		const btn = screen.getByRole( 'button', { name: /^Continue$/i } );
+		expect( btn ).toBeInTheDocument();
+	} );
+
 	test( 'shows the username-only label when query flag is set', async () => {
 		render( <LoginForm />, {
 			initialState: {

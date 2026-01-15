@@ -6,6 +6,10 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequiredComponent from 'calypso/me/reauth-required';
 import './style.scss';
 
+// Only allow redirects to production environments,
+// as two-step authentication is only available on production environments.
+const ALLOWED_ORIGINS = [ 'https://my.wordpress.com' ];
+
 export default function ReauthRequired() {
 	useEffect( () => {
 		const handleSuccess = () => {
@@ -19,7 +23,11 @@ export default function ReauthRequired() {
 				try {
 					// Use window.location.origin as the base URL for relative paths
 					const url = new URL( redirectTo, window.location.origin );
-					if ( url.origin === window.location.origin || redirectTo.startsWith( '/' ) ) {
+					if (
+						url.origin === window.location.origin ||
+						redirectTo.startsWith( '/' ) ||
+						ALLOWED_ORIGINS.includes( url.origin )
+					) {
 						// Use the resolved URL's href to ensure correct navigation for pathnames
 						window.location.href = url.href;
 					} else {

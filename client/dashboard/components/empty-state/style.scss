@@ -1,0 +1,28 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.dashboard-empty-state {
+	justify-content: flex-start;
+
+	@include break-small {
+		justify-content: center;
+		min-height: min(70vh, 676px);
+	}
+}
+
+.dashboard-empty-state__title {
+	font-size: $font-size-x-large;
+	font-weight: 500;
+}
+
+// Balanced wrapping works better for centered text
+// Extra specificity to override <Text> component styles
+.dashboard-empty-state__description.dashboard-empty-state__description  {
+	width: min(100%, 432px);
+	text-wrap: balance;
+}
+
+.dashboard-empty-state__content {
+	width: min(100%, 660px);   
+}

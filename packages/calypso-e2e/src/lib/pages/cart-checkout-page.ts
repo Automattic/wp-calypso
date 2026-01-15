@@ -66,7 +66,6 @@ const selectors = {
 		envVariables.VIEWPORT_NAME === 'mobile'
 			? '.wp-checkout__total-price'
 			: '.wp-checkout-order-summary__total-price',
-	purchaseButton: '.checkout-submit-button button:has-text("Pay")',
 	thirdPartyDeveloperCheckboxLabel:
 		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.',
 
@@ -331,10 +330,10 @@ export class CartCheckoutPage {
 	/**
 	 * Complete the purchase by clicking on the 'Pay' button.
 	 */
-	async purchase( { timeout }: { timeout?: number } = {} ): Promise< void > {
+	async purchase( { timeout }: { timeout: number } = { timeout: 60000 } ): Promise< void > {
 		await Promise.all( [
 			this.page.waitForResponse( /.*me\/transactions.*/, { timeout: timeout } ),
-			this.page.click( selectors.purchaseButton ),
+			this.page.getByRole( 'button', { name: 'Pay now' } ).click(),
 		] );
 	}
 

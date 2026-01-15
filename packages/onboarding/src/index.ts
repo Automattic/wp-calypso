@@ -25,6 +25,7 @@ export { default as MShotsImage } from './mshots-image';
 export { useStepPersistedState, clearStepPersistedState } from './hooks/use-persisted-state';
 export * from './navigator';
 export { default as SelectCardCheckbox } from './select-card-checkbox';
+export { default as SelectCardCheckboxV2 } from './select-card-checkbox-v2';
 export * from './utils';
 export type { SelectItem } from './select-items';
 export type { SelectItemAlt } from './select-items-alt';

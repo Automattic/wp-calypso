@@ -39,12 +39,30 @@ $header-compact-height-mobile: 128px;
 	}
 
 	.hosting-dashboard-layout__header-actions {
-		background-color: var( --color-surface );
-		border-radius: 8px;
-		padding: 8px 24px 8px 20px;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-direction: column-reverse;
 
 		.shopping-cart {
 			margin: 0;
+		}
+
+		.a4a-marketplace__header-actions {
+			background-color: var( --color-surface );
+			border-radius: 8px;
+			padding: 8px 24px 8px 20px;
+			min-height: 40px;
+			width: calc(100% - 44px); // 44px is the padding of the actions container
+		}
+
+		@include break-large {
+			flex-direction: row;
+
+			.a4a-marketplace__header-actions {
+				height: 40px;
+				width: auto;
+			}
 		}
 	}
 

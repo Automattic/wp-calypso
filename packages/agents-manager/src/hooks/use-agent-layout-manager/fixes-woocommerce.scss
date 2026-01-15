@@ -1,0 +1,60 @@
+$woo-border-width-fix: 1px;
+
+// These are various fixes for the WooCommerce layout when the sidebar is open
+body.wp-admin.woocommerce-admin-page.agents-manager-sidebar-container--sidebar-open {
+	#wpbody {
+		padding-left: 0 !important;
+		margin-top: 60px !important;
+		height: calc(100vh - 32px - 92px) !important;
+	}
+
+	#wpcontent {
+		min-height: calc(100vh - 48px) !important;
+		border-radius: 0 $main-border-radius $main-border-radius 0 !important;
+	}
+
+	// Reduce the WooCommerce layout header width to account for the sidebar
+	.woocommerce-layout__header {
+		margin-top: 17px;
+		width: calc(100% - $admin-menu-width-classic - $sidebar-width - $layout-spacing - $woo-border-width-fix) !important;
+	}
+
+	// Reduce the WooCommerce layout header width to account for the sidebar in classic mode
+	&.is-nav-unification .woocommerce-layout__header {
+		width: calc(100% - $admin-menu-width-unified - $sidebar-width - $layout-spacing - $woo-border-width-fix) !important;
+	}
+
+	// Reduce the WooCommerce layout header width to account for the sidebar in folded mode
+	&.folded .woocommerce-layout__header {
+		width: calc(100% - $admin-menu-width-folded - $sidebar-width - $layout-spacing - $woo-border-width-fix) !important;
+	}
+
+	// We need to hide the activity panel when the sidebar is open otherwise the color shows through
+	.woocommerce-layout__activity-panel-wrapper {
+		opacity: 0;
+
+		// But make it visible when the activity panel is open
+		&.is-open {
+			opacity: 1;
+		}
+	}
+
+	// This brings the sidebar to the top so it's clickable.
+	.agents-manager-chat--docked {
+		z-index: $agents-manager-z-index-docked !important;
+	}
+}
+
+// The payments page is special
+body.wp-admin.woocommerce_page_wc-settings.agents-manager-sidebar-container--sidebar-open {
+	#wpbody {
+		background-color: #fff;
+		margin-top: 88px !important;
+		height: calc(100vh - 32px - 120px) !important;
+		border-right: none !important;
+	}
+
+	#wpfooter {
+		background-color: #fff;
+	}
+}

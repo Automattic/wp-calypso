@@ -21,6 +21,17 @@ $profile-dropdown-menu-height: 250px;
 	position: relative;
 }
 
+.a4a-sidebar__profile-dropdown.with-help-center {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px;
+
+	border-block-start: 1px solid var(--color-neutral-70);
+	margin: 0 -16px -16px;
+}
+
 .a4a-sidebar__profile-dropdown-button {
 	position: relative;
 	z-index: 1;

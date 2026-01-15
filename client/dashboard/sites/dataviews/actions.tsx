@@ -6,8 +6,9 @@ import { lazy, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { siteDomainsRoute } from '../../app/router/sites';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { isP2, isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { canManageSite } from '../features';
+import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { canManageSite, canLeaveSite, canRestoreSite } from '../features';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
@@ -57,7 +58,8 @@ export function useActions(): Action< Site >[] {
 
 				router.navigate( { to: siteDomainsRoute.fullPath, params: { siteSlug: site.slug } } );
 			},
-			isEligible: ( item: Site ) => ! isSelfHostedJetpackConnected( item ) && canManageSite( item ),
+			isEligible: ( item: Site ) =>
+				siteTypeSupportsFeature( item, 'domains' ) && canManageSite( item ),
 		},
 		{
 			id: 'jetpack-cloud',
@@ -92,15 +94,15 @@ export function useActions(): Action< Site >[] {
 				const site = sites[ 0 ];
 				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
 			},
-			isEligible: ( item: Site ) => ! isSelfHostedJetpackConnected( item ) && canManageSite( item ),
+			isEligible: ( item: Site ) =>
+				siteTypeSupportsFeature( item, 'settings' ) && canManageSite( item ),
 		},
 		{
 			id: 'restore',
 			isPrimary: true,
 			icon: backup,
 			label: __( 'Restore site' ),
-			isEligible: ( item: Site ) =>
-				item.is_deleted && ! isP2( item ) && ! isSelfHostedJetpackConnected( item ),
+			isEligible: ( item: Site ) => canRestoreSite( item ),
 			RenderModal: ( { items, closeModal } ) => (
 				<Suspense fallback={ null }>
 					<SiteRestoreContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
@@ -110,7 +112,7 @@ export function useActions(): Action< Site >[] {
 		{
 			id: 'leave',
 			label: __( 'Leave site' ),
-			isEligible: ( item: Site ) => ! item.is_deleted && ! isP2( item ),
+			isEligible: ( item: Site ) => canLeaveSite( item ),
 			RenderModal: ( { items, closeModal } ) => (
 				<Suspense fallback={ null }>
 					<SiteLeaveContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />

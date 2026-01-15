@@ -1,6 +1,7 @@
 import {
 	userPaymentMethodsQuery,
 	userPurchasesQuery,
+	allSitesQuery,
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
@@ -9,10 +10,9 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useAppContext } from '../../app/context';
-import { DataViews, usePersistentView } from '../../app/dataviews';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { purchasesRoute } from '../../app/router/me';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
@@ -27,13 +27,13 @@ import {
 } from './dataviews';
 
 export default function PurchasesList() {
-	const { queries } = useAppContext();
 	const currentSearchParams = purchasesRoute.useSearch();
-	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
-	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
+	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
+	const { data: transferredPurchases = [], isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
-	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
+	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
+	const isLoading = isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites;
 
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
 	const { view, updateView, resetView } = usePersistentView( {
@@ -56,24 +56,24 @@ export default function PurchasesList() {
 		}
 	} );
 
-	const { data: paymentMethods } = useQuery( userPaymentMethodsQuery( {} ) );
+	const { data: paymentMethods = [] } = useQuery( userPaymentMethodsQuery( {} ) );
 	const purchasesDataFields = getFields( {
-		sites: sites ?? [],
-		paymentMethods: paymentMethods ?? [],
-		transferredPurchases: transferredPurchases ?? [],
+		sites,
+		paymentMethods,
+		transferredPurchases,
 		siteFilter: currentSearchParams.site,
 	} );
 
 	const allSubscriptions = useMemo( () => {
-		return [ ...( purchases ?? [] ), ...( transferredPurchases ?? [] ) ];
-	}, [ purchases, transferredPurchases ] );
+		return isLoading ? [] : [ ...purchases, ...transferredPurchases ];
+	}, [ isLoading, purchases, transferredPurchases ] );
 
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( allSubscriptions, view, purchasesDataFields );
 	}, [ allSubscriptions, view, purchasesDataFields ] );
 
 	const actions = usePurchasesListActions( {
-		transferredPurchases: transferredPurchases ?? [],
+		transferredPurchases,
 	} );
 
 	return (
@@ -90,8 +90,8 @@ export default function PurchasesList() {
 			<div ref={ ref }>
 				<DataViewsCard className="purchases-list__wrapper">
 					<DataViews
-						isLoading={ isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites }
-						data={ filteredSubscriptions ?? [] }
+						isLoading={ isLoading }
+						data={ filteredSubscriptions }
 						fields={ purchasesDataFields }
 						view={ view }
 						onChangeView={ updateView }

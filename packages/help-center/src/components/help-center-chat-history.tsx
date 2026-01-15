@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { translationExists } from '@automattic/i18n-utils';
-import { calculateUnread } from '@automattic/odie-client/src/data/use-get-unread-conversations';
+import { calculateUnread } from '@automattic/zendesk-client';
 import {
 	Spinner,
 	__experimentalText as Text,

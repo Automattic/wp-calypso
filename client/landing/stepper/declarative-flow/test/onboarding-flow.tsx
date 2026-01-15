@@ -3,7 +3,6 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
-import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -98,9 +97,7 @@ describe( 'Onboarding Flow', () => {
 			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 			expect( window.location.replace ).toHaveBeenCalledWith(
-				addQueryArgs( '/setup/site-setup', {
-					siteSlug: 'test-site.wordpress.com',
-				} )
+				'/home/test-site.wordpress.com?ref=onboarding'
 			);
 		} );
 

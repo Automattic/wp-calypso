@@ -185,7 +185,7 @@ class PreviewToolbar extends Component {
 					{ showEditHeaderLink && canUserEditThemeOptions && isLivePreviewSupported && (
 						<Button
 							borderless
-							aria-label={ translate( 'Try and customize' ) }
+							aria-label={ translate( 'Preview with your content' ) }
 							className={
 								this.state.isRedirecting
 									? 'web-preview__loading-spinner'
@@ -197,7 +197,7 @@ class PreviewToolbar extends Component {
 							{ this.state.isRedirecting ? (
 								<Spinner size={ 16 } />
 							) : (
-								translate( 'Try and customize' )
+								translate( 'Preview with your content' )
 							) }
 						</Button>
 					) }

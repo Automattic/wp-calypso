@@ -1,0 +1,90 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.plugins-faq {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	margin-block: 40px;
+
+	@include break-large {
+		flex-direction: row;
+		gap: 64px;
+	}
+
+	a, a:hover, a:active, a:visited {
+		color: inherit;
+	}
+}
+
+.plugins-faq__header {
+	flex: 0.85;
+
+	@include break-large {
+		width: 200px;
+	}
+}
+
+.plugins-faq__title {
+	font-family: $brand-serif;
+	font-size: rem(40px);
+	font-weight: 400;
+	line-height: 1.2;
+	color: var(--studio-white);
+	margin: 0;
+
+	@include break-large {
+		font-size: rem(50px);
+	}
+}
+
+.plugins-faq__list {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	gap: 16px;
+
+	.foldable-faq {
+		padding: 0;
+		background-color: var(--studio-gray-90);
+		border-radius: 4px;
+	}
+
+	.foldable-faq.is-expanded .foldable-faq__question .gridicon {
+		fill: var(--studio-gray-90);
+		background-color: var(--studio-white);
+		transform: rotate(0);
+	}
+
+	.foldable-faq__question {
+		width: 100%;
+		padding: 20px;
+
+		.gridicon {
+			fill: var(--studio-white);
+			order: 1;
+			margin-inline-start: auto;
+			border: 1px solid var(--studio-white);
+			border-radius: 50%;
+			padding: 2px;
+			box-sizing: content-box;
+			transform: rotate(-45deg);
+			transition: transform 0.2s ease-in-out, fill 0.2s ease-in-out, background-color 0.2s ease-in-out;
+		}
+	}
+
+	.foldable-faq__question-text {
+		padding-inline-start: 0;
+		font-size: rem(16px);
+		font-weight: 400;
+		color: var(--studio-white);
+	}
+
+	.foldable-faq__answer {
+		border-bottom: none;
+		color: var(--studio-gray-20);
+		font-size: rem(14px);
+		line-height: 1.6;
+		padding-inline: 20px;
+	}
+}

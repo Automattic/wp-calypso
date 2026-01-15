@@ -22,7 +22,10 @@ export default function AccountDeletionSection() {
 			},
 		},
 	} );
-	const { data: purchases, isLoading: isFetchingPurchases } = useQuery( userPurchasesQuery() );
+	const { data: purchases, isLoading: isFetchingPurchases } = useQuery( {
+		...userPurchasesQuery(),
+		enabled: showConfirmModal,
+	} );
 
 	const handleConfirmDelete = () => {
 		mutation.mutate( void 0, {
@@ -64,14 +67,14 @@ export default function AccountDeletionSection() {
 				/>
 			</ActionList>
 
-			{ showConfirmModal && (
+			{ showConfirmModal && purchases && (
 				<AccountDeletionConfirmModal
 					onClose={ handleCloseModal }
 					onConfirm={ handleConfirmDelete }
 					username={ user.username }
 					isDeleting={ mutation.isPending }
 					siteCount={ user.site_count || 0 }
-					purchases={ purchases || [] }
+					purchases={ purchases }
 				/>
 			) }
 		</>

@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import ResponsiveMenu from '../../components/responsive-menu';
+import { wpcomLink } from '../../utils/link';
 import { useAppContext } from '../context';
 
 function PrimaryMenu() {
@@ -18,7 +19,11 @@ function PrimaryMenu() {
 				<ResponsiveMenu.Item to="/plugins/manage">{ __( 'Plugins' ) }</ResponsiveMenu.Item>
 			) }
 			{ supports.themes && (
-				<ResponsiveMenu.Item href="/themes" target="_blank" rel="noopener noreferrer">
+				<ResponsiveMenu.Item
+					href={ wpcomLink( '/themes' ) }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					{ __( 'Themes' ) }
 				</ResponsiveMenu.Item>
 			) }

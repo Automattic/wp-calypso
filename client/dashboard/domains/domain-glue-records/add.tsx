@@ -2,7 +2,7 @@ import { DomainGlueRecord } from '@automattic/api-core';
 import { domainGlueRecordCreateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router/domains';
@@ -17,7 +17,8 @@ export default function AddDomainGlueRecords() {
 		...domainGlueRecordCreateMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Glue record saved.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Glue record for %s saved.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},

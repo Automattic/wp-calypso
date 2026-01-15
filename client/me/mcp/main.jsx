@@ -21,7 +21,7 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
-import PreferencesLoginSiteDropdown from '../../dashboard/me/preferences-login/site-dropdown';
+import PreferencesLoginSiteDropdown from '../../dashboard/me/preferences-primary-site/site-dropdown';
 import { getAccountMcpAbilities, getSiteAccountToolsEnabled } from './utils';
 
 function McpComponent( { path } ) {

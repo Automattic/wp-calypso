@@ -25,6 +25,7 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
 import type { Header } from '../types';
@@ -207,6 +208,8 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 		};
 	}, [] );
 
+	const { disableChatSupport } = useHelpCenterContext();
+
 	const classNames = clsx(
 		'help-center__container-header',
 		location?.pathname?.replace( /^\//, '' ),
@@ -248,7 +251,18 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 			<Flex>
 				{ shouldShowBackButton ? <BackButton /> : null }
 				<HeaderText />
-				<EllipsisMenu />
+				{ disableChatSupport ? (
+					<Button
+						label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
+						tooltipPosition="top left"
+						icon={ lineSolid }
+						onClick={ () => setIsMinimized( true ) }
+					/>
+				) : (
+					// We only show the ellipsis menu if chat support is enabled
+					<EllipsisMenu />
+				) }
+
 				<Button
 					className="help-center-header__close"
 					label={ __( 'Close Help Center', __i18n_text_domain__ ) }

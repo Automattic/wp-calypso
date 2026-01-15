@@ -11,7 +11,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/incompatible-products';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { ShoppingCartContext } from '../../context';
+import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { SelectedFilters } from '../../lib/product-filter';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
@@ -49,6 +49,7 @@ export default function ProductListing( {
 	const dispatch = useDispatch();
 
 	const { selectedCartItems, setSelectedCartItems } = useContext( ShoppingCartContext );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
 
 	const quantity = useMemo(
 		() => ( isReferralMode ? 1 : selectedBundleSize ),
@@ -140,6 +141,7 @@ export default function ProductListing( {
 					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_select_product', {
 						product: product.slug,
 						quantity,
+						purchase_mode: marketplaceType,
 					} )
 				);
 			} else {
@@ -149,11 +151,12 @@ export default function ProductListing( {
 					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_unselect_product', {
 						product: product.slug,
 						quantity,
+						purchase_mode: marketplaceType,
 					} )
 				);
 			}
 		},
-		[ dispatch, quantity, selectedCartItems, setSelectedCartItems ]
+		[ dispatch, marketplaceType, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
 	const onSelectOrReplaceProduct = useCallback(
@@ -174,6 +177,7 @@ export default function ProductListing( {
 					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_unselect_product', {
 						product: replace.slug,
 						quantity,
+						purchase_mode: marketplaceType,
 					} )
 				);
 
@@ -181,13 +185,21 @@ export default function ProductListing( {
 					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_select_product', {
 						product: product.slug,
 						quantity,
+						purchase_mode: marketplaceType,
 					} )
 				);
 			} else {
 				handleSelectBundleLicense( product );
 			}
 		},
-		[ dispatch, handleSelectBundleLicense, quantity, selectedCartItems, setSelectedCartItems ]
+		[
+			dispatch,
+			handleSelectBundleLicense,
+			quantity,
+			selectedCartItems,
+			setSelectedCartItems,
+			marketplaceType,
+		]
 	);
 
 	const { isReady } = useSubmitForm( { selectedSite, suggestedProductSlugs } );

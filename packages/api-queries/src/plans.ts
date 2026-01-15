@@ -1,13 +1,12 @@
 import { fetchPlans, fetchPlansDetails } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
-export const plansQuery = ( coupon: string, locale: string ) => {
+export const plansQuery = ( coupon: string = '' ) => {
 	const params = new URLSearchParams();
 	coupon && params.append( 'coupon_code', coupon );
-	params.append( 'locale', locale );
 
 	return queryOptions( {
-		queryKey: [ 'plans', locale, coupon, params ],
+		queryKey: [ 'plans', coupon, params ],
 		queryFn: () => fetchPlans( params ),
 	} );
 };

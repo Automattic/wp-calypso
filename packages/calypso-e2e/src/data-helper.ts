@@ -140,6 +140,28 @@ export function getCalypsoURL(
 }
 
 /**
+ * Assembles and returns the URL to a specific route/asset/query in the Multi-site Dashboard.
+ *
+ * @param {string} route Additional state or page to build into the returned URL.
+ * @param {Object} queryStrings Key/value pair of additional query to build into into the returned URL.
+ * @returns {string} String representation of the constructed URL object.
+ */
+export function getDashboardURL(
+	route = '',
+	queryStrings: { [ key: string ]: string } = {}
+): string {
+	const base = envVariables.DASHBOARD_BASE_URL;
+
+	const url = new URL( route, base );
+
+	Object.entries( queryStrings ).forEach( ( [ key, value ] ) =>
+		url.searchParams.append( key, value )
+	);
+
+	return url.toString();
+}
+
+/**
  * Returns whether the current Calypso environment is production
  * (i.e. https://wordpress.com).
  *
@@ -147,6 +169,16 @@ export function getCalypsoURL(
  */
 export function isCalypsoProduction(): boolean {
 	return envVariables.CALYPSO_BASE_URL === 'https://wordpress.com';
+}
+
+/**
+ * Returns whether the current Calypso environment is a local dev build
+ * (i.e. http://calypso.localhost:3000).
+ *
+ * @returns {boolean} True if the current Calypso environment is production; false otherwise.
+ */
+export function isCalypsoLocalDevelopment(): boolean {
+	return envVariables.CALYPSO_BASE_URL === 'http://calypso.localhost:3000';
 }
 
 /**

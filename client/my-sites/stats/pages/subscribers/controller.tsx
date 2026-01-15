@@ -1,6 +1,6 @@
 import { find } from 'lodash';
-import moment from 'moment';
 import AsyncLoad from 'calypso/components/async-load';
+import { getMomentSiteZone } from '../../hooks/use-moment-site-zone';
 import { getSiteFilters, rangeOfPeriod, type SiteFilterType } from '../shared/helpers';
 import PageLoading from '../shared/page-loading';
 import type { Context } from '@automattic/calypso-router';
@@ -18,7 +18,8 @@ function subscribers( context: Context, next: () => void ) {
 	} ) as SiteFilterType;
 
 	// moment and rangeOfPeriod format needed for summary page link for email mdule
-	const date = moment().locale( 'en' );
+	const momentSiteZone = getMomentSiteZone( context.store.getState(), givenSiteId );
+	const date = momentSiteZone().locale( 'en' );
 
 	context.primary = (
 		<AsyncLoad

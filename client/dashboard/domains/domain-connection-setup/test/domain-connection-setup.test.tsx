@@ -161,7 +161,7 @@ describe( 'DomainConnectionSetup', () => {
 			expect(
 				screen.getByText( 'This domain name can be automatically connected.' )
 			).toBeVisible();
-			expect( screen.getByRole( 'button', { name: 'Use domain connect' } ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Use Domain Connect' } ) ).toBeVisible();
 		} );
 
 		test( 'calls onVerifyConnection with DC mode when "Start setup" is clicked', async () => {
@@ -264,7 +264,7 @@ describe( 'DomainConnectionSetup', () => {
 	} );
 
 	describe( 'Mode Switching', () => {
-		test( 'switches from manual to Domain Connect when "Use domain connect" is clicked', async () => {
+		test( 'switches from manual to Domain Connect when "Use Domain Connect" is clicked', async () => {
 			const user = userEvent.setup();
 			const domainMappingStatus = createMockDomainMappingStatus( {
 				mode: null,
@@ -291,7 +291,7 @@ describe( 'DomainConnectionSetup', () => {
 
 			// Switch back to DC
 			const useDomainConnectButton = screen.getByRole( 'button', {
-				name: 'Use domain connect',
+				name: 'Use Domain Connect',
 			} );
 			await user.click( useDomainConnectButton );
 

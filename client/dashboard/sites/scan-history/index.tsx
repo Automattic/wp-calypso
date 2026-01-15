@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
+import { DataViewsEmptyState } from '../../components/dataviews';
 import noThreatsIllustration from '../scan-active/no-threats-illustration.svg';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';

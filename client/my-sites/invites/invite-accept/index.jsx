@@ -16,6 +16,7 @@ import LoggedOut from 'calypso/my-sites/invites/invite-accept-logged-out';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { successNotice, infoNotice } from 'calypso/state/notices/actions';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import normalizeInvite from './utils/normalize-invite';
@@ -152,7 +153,7 @@ class InviteAccept extends Component {
 
 		const props = {
 			invite,
-			redirectTo: getRedirectAfterAccept( invite ),
+			redirectTo: getRedirectAfterAccept( invite, this.props.hasDashboardOptIn ),
 			decline: this.decline,
 			signInLink: this.signInLink(),
 			forceMatchingEmail: this.isMatchEmailError(),
@@ -289,9 +290,12 @@ class InviteAccept extends Component {
 	}
 }
 
-export default connect( ( state ) => ( { user: getCurrentUser( state ) } ), {
-	successNotice,
-	infoNotice,
-	hideMasterbar,
-	redirectToLogout,
-} )( localize( InviteAccept ) );
+export default connect(
+	( state ) => ( { user: getCurrentUser( state ), hasDashboardOptIn: hasDashboardOptIn( state ) } ),
+	{
+		successNotice,
+		infoNotice,
+		hideMasterbar,
+		redirectToLogout,
+	}
+)( localize( InviteAccept ) );

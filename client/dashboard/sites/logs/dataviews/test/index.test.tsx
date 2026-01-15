@@ -18,14 +18,6 @@ jest.mock( '../../../../app/auth', () => ( {
 	useAuth: () => ( { user: { id: 'test-user' } } ),
 } ) );
 
-const mockRecordTracksEvent = jest.fn();
-
-jest.mock( '../../../../app/analytics', () => ( {
-	useAnalytics: jest.fn( () => ( {
-		recordTracksEvent: mockRecordTracksEvent,
-	} ) ),
-} ) );
-
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
@@ -54,7 +46,11 @@ const mockSite: DeepPartial< Site > = {
 };
 
 function mockPhpLogsOnce() {
-	return nock( API_BASE )
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.reply( 200, { calypso_preferences: {} } );
+
+	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/error-logs` )
 		.query( true )
 		.reply( 200, {
@@ -79,7 +75,11 @@ function mockPhpLogsOnce() {
 }
 
 function mockServerLogsOnce() {
-	return nock( API_BASE )
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.reply( 200, { calypso_preferences: {} } );
+
+	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/logs` )
 		.query( true )
 		.reply( 200, {
@@ -186,7 +186,7 @@ describe( 'SiteLogsDataViews', () => {
 		const user = userEvent.setup();
 		const autoRefresh = jest.fn();
 
-		render(
+		const { recordTracksEvent } = render(
 			<SiteLogsDataViews
 				gmtOffset={ -8 }
 				timezoneString="America/Los_Angeles"
@@ -202,7 +202,7 @@ describe( 'SiteLogsDataViews', () => {
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		const toggle = screen.getByRole( 'checkbox', { name: 'Auto-refresh' } );
 		await user.click( toggle );
-		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 		expect( autoRefresh ).not.toHaveBeenCalled();
 	} );
 

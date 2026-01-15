@@ -94,6 +94,8 @@ export interface PaymentMethodProviderContextInterface {
 	paymentMethodId: string | null | undefined;
 	setPaymentMethodId: ( id: string ) => void;
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
+	loadingPaymentMethodIds: string[];
+	setLoadingPaymentMethodIds: ( methods: string[] ) => void;
 }
 
 export type ReactStandardAction< T = string, P = unknown > = P extends void

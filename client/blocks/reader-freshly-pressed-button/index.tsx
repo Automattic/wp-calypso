@@ -59,7 +59,7 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 			case 'eligible':
 			case 'not-eligible':
 				return {
-					label: isMobile ? translate( 'Suggest' ) : translate( 'Suggest for Freshly Pressed' ),
+					label: isMobile ? translate( 'Suggest' ) : translate( 'Suggest: Freshly Pressed' ),
 					tooltip: eligibility?.details?.reason,
 				};
 			default:
@@ -112,20 +112,20 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 				'freshly-pressed',
 				`freshly-pressed--is-status-${ eligibility?.status ?? 'loading' }`
 			) }
-			aria-label={ config?.label }
 			aria-busy={ isLoading }
 		>
 			<button
 				{ ...( config?.tooltip && { 'data-tooltip': config.tooltip } ) }
+				aria-label={ config?.label }
 				onClick={ handleClick }
 				disabled={ ! isEligible || isLoading || isSuggestionSuccess }
 				className={ clsx( 'freshly-pressed__button', {
 					'freshly-pressed__button--has-tooltip': config?.tooltip,
 				} ) }
 			>
-				{ statusIcon && <Icon size={ 20 } icon={ statusIcon } /> }
+				{ statusIcon && <Icon size={ 24 } icon={ statusIcon } /> }
 				{ isLoading && <Spinner className="freshly-pressed__spinner" /> }
-				{ config?.label }
+				<span className="freshly-pressed__button-label">{ config?.label }</span>
 			</button>
 		</div>
 	);

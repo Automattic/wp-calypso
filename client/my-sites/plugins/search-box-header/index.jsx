@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import styled from '@emotion/styled';
 import { SearchControl } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
@@ -10,7 +11,18 @@ import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useTermsSuggestions } from '../use-terms-suggestions';
+
 import './style.scss';
+
+const StyledSearchControl = styled( SearchControl )`
+	.full-width-section & {
+		input[type='search'],
+		input[type='search']::placeholder {
+			font-size: 16px;
+			color: var( --studio-gray-90 );
+		}
+	}
+`;
 
 const SearchBoxHeader = ( props ) => {
 	const {
@@ -46,7 +58,7 @@ const SearchBoxHeader = ( props ) => {
 			{ ! renderTitleInH1 && <div className="search-box-header__header">{ title }</div> }
 			{ subtitle && <p className="search-box-header__subtitle">{ subtitle }</p> }
 			<div className="search-box-header__search">
-				<SearchControl
+				<StyledSearchControl
 					__nextHasNoMarginBottom
 					value={ searchTerm }
 					className={ clsx( 'search-box-header__searchbox', {

@@ -30,11 +30,11 @@ export default function AddOnsModal( { isOpen, onClose }: AddOnsModalProps ) {
 			quantity,
 		} );
 
-		page.redirect( `${ checkoutLink( site?.ID ?? null, addOnSlug, quantity ) }` );
+		page.show( `${ checkoutLink( site?.ID ?? null, addOnSlug, quantity ) }` );
 	};
 
 	const handleActionSecondary = () => {
-		page.redirect( `/purchases/subscriptions/${ site?.slug }` );
+		page.show( `/purchases/subscriptions/${ site?.slug }` );
 	};
 
 	if ( ! isOpen ) {

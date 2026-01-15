@@ -5,6 +5,8 @@ import {
 	GROUP_P2,
 	GROUP_WPCOM,
 	JETPACK_RESET_PLANS,
+	PLAN_A4A_BUSINESS,
+	PLAN_A4A_BUSINESS_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
@@ -12,6 +14,8 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_CENTENNIALLY,
@@ -182,6 +186,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isEcommercePlan( planKey ) ) {
 		return 'is-ecommerce-plan';
+	}
+
+	if ( isWooHostedFreePlan( planKey ) ) {
+		return 'is-woo-hosted-trial';
 	}
 
 	if ( isWooHostedPlan( planKey ) ) {
@@ -418,6 +426,10 @@ export function isWooExpressPlan( planSlug: string ): boolean {
 	return ( WOO_EXPRESS_PLANS as ReadonlyArray< string > ).includes( planSlug );
 }
 
+export function isWooHostedFreePlan( planSlug: string ): boolean {
+	return [ PLAN_WOO_HOSTED_FREE, PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ].includes( planSlug );
+}
+
 export function isWooHostedPlan( planSlug: string ): boolean {
 	return ( WOO_HOSTED_PLANS as ReadonlyArray< string > ).includes( planSlug );
 }
@@ -551,6 +563,8 @@ export function findFirstSimilarPlanKey(
  * [PLAN_BUSINESS_2_YEARS]
  * > findSimilarPlansKeys( TYPE_JETPACK_BUSINESS_MONTHLY, { type: TYPE_ANNUALLY } );
  * [TYPE_JETPACK_BUSINESS]
+ *
+ * Note: A4A plans are excluded from similar plan lookups.
  */
 export function findSimilarPlansKeys(
 	planKey: string | Plan,
@@ -561,12 +575,18 @@ export function findSimilarPlansKeys(
 	if ( ! plan ) {
 		return [];
 	}
-	return findPlansKeys( {
+
+	const similarPlans = findPlansKeys( {
 		type: plan.type,
 		group: plan.group,
 		term: plan.term,
 		...diff,
 	} );
+
+	// Filter out A4A plans
+	return similarPlans.filter(
+		( slug ) => slug !== PLAN_A4A_BUSINESS && slug !== PLAN_A4A_BUSINESS_MONTHLY
+	);
 }
 
 /**
@@ -961,11 +981,31 @@ export function getFeaturesList(): FeatureList {
 	return FEATURES_LIST;
 }
 
-export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {
+type FeatureMethodParams = { domainName?: string; isExperimentVariant?: boolean };
+
+export const getPlanFeaturesObject = (
+	planFeaturesList?: Array< string >,
+	isExperimentVariant?: boolean
+) => {
 	if ( ! planFeaturesList ) {
 		return [];
 	}
-	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
+	return planFeaturesList.map( ( featuresConst ) => {
+		const feature = FEATURES_LIST[ featuresConst ];
+		if ( ! feature || ! isExperimentVariant ) {
+			return feature;
+		}
+		// Wrap feature methods to pass isExperimentVariant parameter
+		return {
+			...feature,
+			getTitle: ( params?: FeatureMethodParams ) =>
+				feature.getTitle( { ...params, isExperimentVariant } ),
+			...( feature.getDescription && {
+				getDescription: ( params?: FeatureMethodParams ) =>
+					feature.getDescription!( { ...params, isExperimentVariant } ),
+			} ),
+		};
+	} );
 };
 
 export function isValidFeatureKey( feature: string ) {

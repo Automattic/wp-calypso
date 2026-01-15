@@ -24,7 +24,9 @@ type SupportedMethods =
 	| 'captureException'
 	| 'captureMessage'
 	| 'configureScope'
-	| 'withScope';
+	| 'withScope'
+	| 'setUser';
+
 interface QueueDataMethod< Method extends SupportedMethods > {
 	f: Method;
 	a: Parameters< ( typeof SentryApi )[ Method ] >;
@@ -84,6 +86,9 @@ export function configureScope( ...args: Parameters< typeof SentryApi.configureS
 }
 export function withScope( ...args: Parameters< typeof SentryApi.withScope > ) {
 	dispatchSentryMethodCall( 'withScope', args );
+}
+export function setUser( ...args: Parameters< typeof SentryApi.setUser > ) {
+	dispatchSentryMethodCall( 'setUser', args );
 }
 
 // Replays all calls to the Sentry API
@@ -199,10 +204,9 @@ export async function initSentry( parameters?: SentryOptions ) {
 			// release we need to track. Horizon is just a different flavor of trunk,
 			// so it can be mapped to a trunk release.
 			const environment = config< string >( 'env_id' );
-			const release =
-				environment === 'production' || environment === 'horizon'
-					? `calypso_${ window.COMMIT_SHA }`
-					: undefined;
+			const release = [ 'production', 'dashboard-production', 'horizon' ].includes( environment )
+				? `calypso_${ window.COMMIT_SHA }`
+				: undefined;
 
 			// Remove our handlers when we're loaded and ready to init
 			window.removeEventListener( 'error', errorHandler );

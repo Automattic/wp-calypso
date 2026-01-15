@@ -54,6 +54,7 @@ class FollowButton extends Component {
 
 		if ( this.props.following ) {
 			menuClasses.push( 'is-following' );
+			menuClasses.push( 'tooltip' );
 			label = this.props.followingLabel
 				? this.props.followingLabel
 				: this.props.translate( 'Subscribed' );
@@ -79,15 +80,23 @@ class FollowButton extends Component {
 			</span>
 		);
 
-		return createElement(
-			this.props.tagName,
-			{
-				onClick: this.toggleFollow,
-				className: menuClasses.join( ' ' ),
-				title: label,
-			},
-			[ followingIcon, followIcon, followLabelElement ]
-		);
+		const attributes = {
+			onClick: this.toggleFollow,
+			className: menuClasses.join( ' ' ),
+			'aria-label': this.props.following
+				? this.props.translate( 'Unsubscribe' )
+				: this.props.translate( 'Subscribe' ),
+		};
+
+		if ( this.props.following ) {
+			attributes[ 'data-tooltip' ] = this.props.translate( 'Unsubscribe' );
+		}
+
+		return createElement( this.props.tagName, attributes, [
+			followingIcon,
+			followIcon,
+			followLabelElement,
+		] );
 	}
 }
 

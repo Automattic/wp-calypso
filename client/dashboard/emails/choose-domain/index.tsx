@@ -14,12 +14,12 @@ import { isRTL, __ } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { chooseEmailSolutionRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
-import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 
 import './styles.css';
 
@@ -65,7 +65,7 @@ export default function ChooseDomain() {
 		<PageLayout
 			header={
 				<PageHeader
-					prefix={ <BackToEmailsPrefix /> }
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					description={ __( 'Select a domain to set up email for.' ) }
 				/>
 			}

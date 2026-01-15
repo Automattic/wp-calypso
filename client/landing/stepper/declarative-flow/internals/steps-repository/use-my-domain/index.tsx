@@ -1,9 +1,9 @@
-import config from '@automattic/calypso-config';
 import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import {
@@ -11,12 +11,17 @@ import {
 	UseMyDomainInputMode,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
+import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
+import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { useQuery } from '../../../../hooks/use-query';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 
@@ -50,8 +55,10 @@ const UseMyDomain: StepType< {
 	const { __ } = useI18n();
 	const { goNext, goBack, submit } = navigation;
 	const location = useLocation();
-	const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
 	const { site } = useSiteData();
+	const backTo = useQuery().get( 'back_to' ) ?? '';
+	const userSiteCount = useSelector( getCurrentUserSiteCount );
+	const dashboardOptIn = useSelector( hasDashboardOptIn );
 
 	const [ useMyDomainMode, setUseMyDomainMode ] = useState< UseMyDomainInputMode >(
 		inputMode.domainInput
@@ -176,43 +183,51 @@ const UseMyDomain: StepType< {
 
 		if ( useMyDomainMode === 'domain-input' ) {
 			columnWidth = 4 as const;
-
-			if ( isDomainConnectionRedesign ) {
-				headingText = __( 'Your domain name' );
-				subText = __( 'Enter the domain name your visitors already know.' );
-			} else {
-				headingText = __( 'Use a domain I own' );
-			}
-		} else if ( isDomainConnectionRedesign ) {
+			headingText = __( 'Your domain name' );
+			subText = __( 'Enter the domain name your visitors already know.' );
+		} else {
 			columnWidth = 6 as const;
 			headingText = __( 'Use a domain name I own' );
 			subText = __( 'Make your domain name part of something bigger.' );
-		} else {
-			columnWidth = 10 as const;
-			headingText = (
-				<>
-					{ __( 'Use a domain I own' ) }
-					<br />
-					{ getInitialQuery() }
-				</>
-			);
 		}
+
+		const getTopBarLeftElement = () => {
+			if ( shouldHideButtons ) {
+				return undefined;
+			}
+
+			if ( goBack ) {
+				return <Step.BackButton onClick={ handleGoBack } />;
+			}
+
+			const isSafeBackTo =
+				isRelativeUrl( backTo ) ||
+				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+
+			if ( isSafeBackTo ) {
+				return <Step.BackButton href={ backTo } />;
+			}
+
+			if ( userSiteCount && userSiteCount > 1 ) {
+				return (
+					<Step.BackButton href={ dashboardOptIn ? dashboardLink( '/sites' ) : '/sites' }>
+						{ __( 'Back to sites' ) }
+					</Step.BackButton>
+				);
+			}
+
+			return <Step.BackButton href="/home">{ __( 'Back to My Home' ) }</Step.BackButton>;
+		};
 
 		return (
 			<>
 				<QueryProductsList />
 				<Step.CenteredColumnLayout
-					topBar={
-						<Step.TopBar
-							leftElement={
-								shouldHideButtons ? undefined : <Step.BackButton onClick={ handleGoBack } />
-							}
-						/>
-					}
+					topBar={ <Step.TopBar leftElement={ getTopBarLeftElement() } /> }
 					columnWidth={ columnWidth }
 					heading={ <Step.Heading text={ headingText } subText={ subText } /> }
-					verticalAlign={ isDomainConnectionRedesign ? 'center' : undefined }
-					className={ isDomainConnectionRedesign ? 'use-my-domain--redesign' : undefined }
+					verticalAlign="center"
+					className="use-my-domain--redesign"
 				>
 					{ getBlogOnboardingFlowStepContent() }
 				</Step.CenteredColumnLayout>

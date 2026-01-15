@@ -10,6 +10,7 @@ jest.mock( '@wordpress/data', () => ( {
 	createReduxStore: jest.fn(),
 	createSelector: jest.fn(),
 	register: jest.fn(),
+	registerStore: jest.fn(),
 	useDispatch: jest.fn(),
 } ) );
 jest.mock( '@wordpress/element', () => ( {
@@ -25,6 +26,10 @@ jest.mock( '@automattic/data-stores', () => ( {
 	},
 	Purchases: {
 		useSitePurchasesByProductSlug: jest.fn(),
+	},
+	Plans: {
+		...jest.requireActual( '@automattic/data-stores' ).Plans,
+		usePricingMetaForGridPlans: jest.fn(),
 	},
 } ) );
 jest.mock( 'i18n-calypso', () => ( {

@@ -5,50 +5,66 @@ import {
 	pluginsQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { useParams } from '@tanstack/react-router';
+import { __experimentalGrid as Grid } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
-import { useAppContext } from '../../app/context';
-import { DataViews, usePersistentView } from '../../app/dataviews';
-import { pluginsManageRoute } from '../../app/router/plugins';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { useMemo, useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { getActions } from './actions';
-import { fields } from './fields';
+import { PluginSites } from './components/plugin-sites';
+import { PluginSwitcher } from './components/plugin-switcher';
+import { useSitesById } from './hooks/use-sites-by-id';
 import { mapApiPluginsToDataViewPlugins } from './utils';
-import { defaultView } from './views';
 import type { PluginListRow } from './types';
 
-import './style.scss';
+const DEFAULT_VIEW: View = {
+	type: 'list',
+	page: 1,
+	perPage: 100,
+	sort: { field: 'name', direction: 'asc' },
+};
+const searchableFields = [
+	{
+		id: 'name',
+		getValue: ( { item }: { item: PluginListRow } ) => item.name,
+	},
+	{
+		id: 'slug',
+		getValue: ( { item }: { item: PluginListRow } ) => item.slug,
+	},
+];
 
 export default function PluginsList() {
-	const { queries } = useAppContext();
-	const { data: sitesPlugins, isLoading: isLoadingPlugins } = useQuery( pluginsQuery() );
-	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
-	const searchParams = pluginsManageRoute.useSearch();
-	const actions = getActions();
-	const { view, updateView, resetView } = usePersistentView( {
-		slug: 'plugins-manage',
-		defaultView,
-		queryParams: searchParams,
-	} );
-	const data = useMemo(
-		() => mapApiPluginsToDataViewPlugins( sites, sitesPlugins ),
-		[ sites, sitesPlugins ]
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const { data: sitesPlugins } = useQuery( pluginsQuery() );
+	const { sitesById } = useSitesById();
+	const { pluginId: pluginSlug } = useParams( { strict: false } );
+	const fields = useMemo( () => {
+		return searchableFields.map( ( searchableField ) => ( {
+			...searchableField,
+			enableGlobalSearch: true,
+		} ) );
+	}, [] );
+	const { data: plugins, paginationInfo } = useMemo(
+		() =>
+			filterSortAndPaginate(
+				mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
+				view,
+				fields
+			),
+		[ fields, sitesById, sitesPlugins, view ]
 	);
-
-	const { data: filteredPlugins, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( data, view, fields );
-	}, [ data, view ] );
-	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
-		marketplacePluginsQuery()
-	);
-	const { data: marketplaceSearch, isLoading: isLoadingMarketplaceSearch } = useQuery(
+	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
+	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
+	const { data: marketplaceSearch } = useQuery(
 		marketplaceSearchQuery( {
-			perPage: Number( view.perPage ),
-			slugs: filteredPlugins.map( ( plugin ) => plugin.slug ),
+			perPage: plugins.length,
+			slugs: plugins.map( ( plugin ) => plugin.slug ),
 		} )
 	);
 
@@ -63,7 +79,7 @@ export default function PluginsList() {
 			new Map< string, MarketplaceSearchResult[ 'fields' ] >()
 		);
 
-		return filteredPlugins.reduce( ( acc, { slug } ) => {
+		return plugins.reduce( ( acc, { slug } ) => {
 			let icon;
 			if ( marketplacePluginsBySlug.has( slug ) ) {
 				icon = marketplacePluginsBySlug.get( slug )?.icons;
@@ -75,16 +91,46 @@ export default function PluginsList() {
 
 			return acc;
 		}, new Map< string, PluginListRow[ 'icon' ] >() );
-	}, [ filteredPlugins, marketplacePlugins, marketplaceSearch ] );
+	}, [ plugins, marketplacePlugins, marketplaceSearch ] );
 
-	const filteredPluginsWithIcon = useMemo( () => {
-		return filteredPlugins.map( ( plugin ) => {
+	const pluginsWithIcon = useMemo( () => {
+		return plugins.map( ( plugin ) => {
 			return {
 				...plugin,
 				icon: iconBySlug?.get( plugin.slug ),
 			};
 		} );
-	}, [ filteredPlugins, iconBySlug ] );
+	}, [ plugins, iconBySlug ] );
+
+	if ( isSmallViewport ) {
+		return (
+			<PageLayout
+				size="large"
+				header={
+					<PageHeader
+						title={ pluginSlug ? __( 'Plugin details' ) : __( 'Manage plugins' ) }
+						description={
+							pluginSlug ? null : __( 'Install, activate, and manage plugins across your sites.' )
+						}
+						prefix={ pluginSlug ? <Breadcrumbs length={ 2 } /> : null }
+					/>
+				}
+				notices={ <OptInWelcome tracksContext="plugins" /> }
+			>
+				{ pluginSlug ? (
+					<PluginSites selectedPluginSlug={ selectedPluginSlug } />
+				) : (
+					<PluginSwitcher
+						pluginsWithIcon={ pluginsWithIcon }
+						searchableFields={ searchableFields }
+						view={ view }
+						onChangeView={ setView }
+						paginationInfo={ paginationInfo }
+					/>
+				) }
+			</PageLayout>
+		);
+	}
 
 	return (
 		<PageLayout
@@ -97,25 +143,18 @@ export default function PluginsList() {
 			}
 			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
-			<DataViewsCard>
-				<DataViews
-					isLoading={
-						isLoadingPlugins ||
-						isLoadingMarketplacePlugins ||
-						isLoadingMarketplaceSearch ||
-						isLoadingSites
-					}
-					data={ filteredPluginsWithIcon ?? [] }
-					fields={ fields }
+			<Grid columns={ 2 } gap={ 3 } templateColumns="392px 1fr">
+				<PluginSwitcher
+					pluginsWithIcon={ pluginsWithIcon }
+					searchableFields={ searchableFields }
+					selectedPluginSlug={ selectedPluginSlug }
 					view={ view }
-					onChangeView={ updateView }
-					onResetView={ resetView }
-					defaultLayouts={ { table: {} } }
-					actions={ actions }
-					getItemId={ ( item: PluginListRow ) => item.id }
+					onChangeView={ setView }
 					paginationInfo={ paginationInfo }
 				/>
-			</DataViewsCard>
+
+				<PluginSites selectedPluginSlug={ selectedPluginSlug } />
+			</Grid>
 		</PageLayout>
 	);
 }

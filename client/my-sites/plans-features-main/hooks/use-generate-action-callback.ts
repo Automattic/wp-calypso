@@ -154,6 +154,7 @@ function useGenerateActionCallback( {
 	sitePlanSlug,
 	siteId,
 	coupon,
+	isGatingBusinessQ1,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
@@ -164,6 +165,11 @@ function useGenerateActionCallback( {
 	sitePlanSlug?: PlanSlug | null;
 	siteId?: number | null;
 	coupon?: string;
+	/**
+	 * When true, adds `is_gating_business_q1` to the plan cart item extra data.
+	 * Used for the pricing differentiation experiment (calypso_plans_differentiators_20251210).
+	 */
+	isGatingBusinessQ1?: boolean;
 } ): UseActionCallback {
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const siteUrl = useSelector( ( state: IAppState ) => siteId && getSiteUrl( state, siteId ) );
@@ -258,8 +264,22 @@ function useGenerateActionCallback( {
 					saw_free_trial_offer: !! freeTrialPlanSlug,
 				} );
 			}
+
+			// Augment the cart item with pricing differentiation experiment data if applicable.
+			let augmentedCartItemForPlan = cartItemForPlan;
+
+			if ( cartItemForPlan && isGatingBusinessQ1 ) {
+				augmentedCartItemForPlan = {
+					...cartItemForPlan,
+					extra: {
+						...cartItemForPlan.extra,
+						is_gating_business_q1: true,
+					},
+				};
+			}
+
 			handleUpgradeClick( {
-				cartItemForPlan,
+				cartItemForPlan: augmentedCartItemForPlan,
 				selectedStorageAddOn,
 			} );
 			return;

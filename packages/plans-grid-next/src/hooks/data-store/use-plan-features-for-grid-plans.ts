@@ -24,6 +24,9 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	isInSignup,
 	isSummerSpecial,
+	useLongSetFeatures,
+	useLongSetStackedFeatures,
+	useShortSetStackedFeatures,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -33,6 +36,9 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
 	isSummerSpecial?: boolean;
+	useLongSetFeatures?: boolean;
+	useLongSetStackedFeatures?: boolean;
+	useShortSetStackedFeatures?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -49,6 +55,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	isInSignup,
 	isSummerSpecial,
+	useLongSetFeatures,
+	useLongSetStackedFeatures,
+	useShortSetStackedFeatures,
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
@@ -61,7 +70,59 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				let wpcomFeatures: FeatureObject[] = [];
 				let jetpackFeatures: FeatureObject[] = [];
 
-				if ( 'plans-newsletter' === intent ) {
+				if ( useShortSetStackedFeatures ) {
+					// Use the stacked features (incremental) for short_set_stacked variant
+					wpcomFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj?.getShortSetStackedSignupWpcomFeatures?.() ??
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+								isSummerSpecial,
+							} ) ??
+							[],
+						true // isExperimentVariant
+					);
+
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
+						true // isExperimentVariant
+					);
+				} else if ( useLongSetStackedFeatures ) {
+					// Use the stacked features (incremental) for long_set_stacked variant
+					wpcomFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj?.getLongSetStackedSignupWpcomFeatures?.() ??
+							planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+								isSummerSpecial,
+							} ) ??
+							[],
+						true // isExperimentVariant
+					);
+
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
+						true // isExperimentVariant
+					);
+				} else if ( useLongSetFeatures ) {
+					// Use the long set features for the differentiators experiment
+					wpcomFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+								isSummerSpecial,
+							} ) ??
+							[],
+						true // isExperimentVariant
+					);
+
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
+						true // isExperimentVariant
+					);
+				} else if ( 'plans-newsletter' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getNewsletterSignupFeatures?.() ?? []
@@ -214,10 +275,16 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							feature.getSlug()
 						);
 
+						// Highlight "Everything in X, plus:" features for stacked variants
+						const isEverythingInPlusFeature = feature
+							.getSlug()
+							.startsWith( 'feature-everything-in' );
+
 						wpcomFeaturesTransformed.push( {
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+							...( isEverythingInPlusFeature && { isHighlighted: true } ),
 						} );
 					} );
 				}
@@ -249,6 +316,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		allFeaturesList,
 		hasRedeemedDomainCredit,
 		isSummerSpecial,
+		useLongSetFeatures,
+		useLongSetStackedFeatures,
+		useShortSetStackedFeatures,
 	] );
 };
 

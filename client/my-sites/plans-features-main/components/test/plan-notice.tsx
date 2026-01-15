@@ -15,10 +15,10 @@ import { useMarketingMessage } from 'calypso/components/marketing-message/use-ma
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
-import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
+import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import {
 	isCurrentUserCurrentPlanOwner,
 	isRequestingSitePlans,
@@ -27,6 +27,7 @@ import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
 jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
 	isProPlan: jest.fn(),
 	isStarterPlan: jest.fn(),
 } ) );
@@ -49,18 +50,9 @@ jest.mock( 'calypso/components/marketing-message/use-marketing-message', () => (
 jest.mock( 'calypso/lib/discounts', () => ( {
 	getDiscountByName: jest.fn(),
 } ) );
-jest.mock(
-	'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable',
-	() => ( {
-		usePlanUpgradeCreditsApplicable: jest.fn(),
-	} )
-);
-jest.mock(
-	'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable',
-	() => ( {
-		useDomainToPlanCreditsApplicable: jest.fn(),
-	} )
-);
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice', () => ( {
+	useUpgradeCreditsNoticeData: jest.fn(),
+} ) );
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
 	useMaxPlanUpgradeCredits: jest.fn(),
 } ) );
@@ -68,6 +60,14 @@ jest.mock( 'calypso/state/currency-code/selectors', () => ( {
 	getCurrentUserCurrencyCode: jest.fn(),
 } ) );
 jest.mock( '@automattic/calypso-config' );
+jest.mock( 'calypso/state/purchases/selectors/get-site-purchases', () => ( {
+	getSitePurchases: jest.fn(),
+} ) );
+jest.mock( 'calypso/components/data/query-site-purchases', () => {
+	return function MockQuerySitePurchases() {
+		return null;
+	};
+} );
 
 const plansList: PlanSlug[] = [
 	PLAN_FREE,
@@ -93,17 +93,16 @@ describe( '<PlanNotice /> Tests', () => {
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
 		jest.mocked( isRequestingSitePlans ).mockReturnValue( true );
 		jest.mocked( getCurrentUserCurrencyCode ).mockReturnValue( 'USD' );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
-		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( 100 );
+		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( { credits: 100, source: 'plan' } );
 		jest.mocked( getByPurchaseId ).mockReturnValue( {
 			isInAppPurchase: false,
 		} as Purchase );
+		jest.mocked( getSitePurchases ).mockReturnValue( [] );
 		jest.mocked( isProPlan ).mockReturnValue( false );
 	} );
 
 	test( 'A contact site owner <PlanNotice /> should be shown no matter what other conditions are met, when the current site owner is not logged in, and the site plan is paid', () => {
 		jest.mocked( getDiscountByName ).mockReturnValue( discount );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
 		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( false );
 
@@ -124,7 +123,6 @@ describe( '<PlanNotice /> Tests', () => {
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
 		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
 		jest.mocked( getDiscountByName ).mockReturnValue( discount );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
 
 		renderWithProvider(
 			<PlanNotice
@@ -141,8 +139,7 @@ describe( '<PlanNotice /> Tests', () => {
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
 		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
 		jest.mocked( getDiscountByName ).mockReturnValue( false );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( null );
-		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
+		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( null );
 		jest
 			.mocked( useMarketingMessage )
 			.mockReturnValue( [
@@ -166,7 +163,7 @@ describe( '<PlanNotice /> Tests', () => {
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
 		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
 		jest.mocked( getDiscountByName ).mockReturnValue( false );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( null );
+		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( null );
 		jest
 			.mocked( useMarketingMessage )
 			.mockReturnValue( [
@@ -215,6 +212,53 @@ describe( '<PlanNotice /> Tests', () => {
 		);
 		expect( screen.getByRole( 'status' ).textContent ).toBe(
 			'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress app.'
+		);
+	} );
+
+	test( 'Shows "domain and other upgrades" copy when source is domain and the site has other upgrades purchased', () => {
+		jest
+			.mocked( useUpgradeCreditsNoticeData )
+			.mockReturnValue( { credits: 4600, source: 'domain' } );
+		jest.mocked( getSitePurchases ).mockReturnValue( [
+			{
+				productSlug: 'premium_theme',
+			},
+		] as unknown as Purchase[] );
+
+		renderWithProvider(
+			<PlanNotice visiblePlans={ plansList } isInSignup={ false } siteId={ 32234 } />
+		);
+
+		expect( screen.getByRole( 'status' ).textContent ).toContain(
+			'available from your current domain and other upgrades'
+		);
+	} );
+
+	test( 'Shows "other upgrades" copy when source is other-upgrades', () => {
+		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( {
+			credits: 4600,
+			source: 'other-upgrades',
+		} );
+
+		renderWithProvider(
+			<PlanNotice visiblePlans={ plansList } isInSignup={ false } siteId={ 32234 } />
+		);
+
+		expect( screen.getByRole( 'status' ).textContent ).toContain( 'available from other upgrades' );
+	} );
+
+	test( 'Shows "domain and other upgrades" copy when source is domain-and-other-upgrades', () => {
+		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( {
+			credits: 4600,
+			source: 'domain-and-other-upgrades',
+		} );
+
+		renderWithProvider(
+			<PlanNotice visiblePlans={ plansList } isInSignup={ false } siteId={ 32234 } />
+		);
+
+		expect( screen.getByRole( 'status' ).textContent ).toContain(
+			'available from your current domain and other upgrades'
 		);
 	} );
 } );

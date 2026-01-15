@@ -5,6 +5,7 @@
 $plugin-details-header-padding: 100px;
 $mobile-icon-height: 175px;
 $block-spacing: 24px;
+$rating-star-color: #ffb514;
 
 .plugin-details-header__container {
 	display: block;
@@ -37,6 +38,20 @@ $block-spacing: 24px;
 		height: $mobile-icon-height;
 		flex-shrink: 0;
 	}
+
+	.full-width-section & {
+		flex-wrap: nowrap;
+		.plugin-details-header__icon {
+			width: 80px;
+			height: 80px;
+		}
+		@media screen and ( max-width: 600px ) {
+			.plugin-details-header__icon {
+				width: 72px;
+				height: 72px;
+			}
+		}
+	}
 }
 
 .plugin-details-header__title-container {
@@ -44,6 +59,12 @@ $block-spacing: 24px;
 
 	@include break-mobile {
 		margin-top: 0;
+	}
+
+	.full-width-section & {
+		padding-top: 5px;
+		margin-top: 0;
+		text-align: left;
 	}
 }
 
@@ -61,11 +82,24 @@ $block-spacing: 24px;
 	overflow-wrap: anywhere;
 	line-height: 40px;
 	color: var(--studio-gray-100);
+
+	.full-width-section & {
+		font-size: rem(40px);
+		@media screen and ( max-width: 600px ) {
+			font-size: rem(32px);
+		}
+	}
 }
 
 .plugin-details-header__author {
 	font-size: $font-body;
 	color: var(--studio-gray-60);
+
+	.full-width-section & {
+		a {
+			text-decoration: none;
+		}
+	}
 }
 
 .plugin-details-header__subtitle-separator {
@@ -78,6 +112,10 @@ $block-spacing: 24px;
 	font-size: $font-title-small;
 	color: var(--studio-gray-80);
 	padding: 24px 0;
+
+	.full-width-section & {
+		font-size: $font-title-medium;
+	}
 }
 
 .plugin-details-header__additional-info {
@@ -88,6 +126,7 @@ $block-spacing: 24px;
 		width: 25%;
 		box-sizing: border-box;
 		padding: 0;
+
 
 		.plugin-details-header__number-reviews-link {
 			font-size: $font-body-small;
@@ -103,11 +142,51 @@ $block-spacing: 24px;
 		font-size: $font-body-extra-small;
 		font-weight: 400;
 		color: var(--studio-gray-60);
+
+		.full-width-section & {
+			text-transform: uppercase;
+			margin-bottom: 5px;
+		}
 	}
 
 	.plugin-details-header__info-value {
 		font-size: $font-body-small;
 		color: var(--studio-gray-90);
+	}
+
+	.full-width-section & {
+		column-gap: 48px;
+		row-gap: 12px;
+
+		.plugin-details-header__info {
+			width: auto;
+
+			&.is-updated {
+				order: 1;
+			}
+
+			&.is-version {
+				order: 2;
+			}
+
+			&.is-installs {
+				order: 3;
+			}
+		}
+	}
+}
+
+.plugin-details-header__rating {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	.rating .gridicon {
+		fill: $rating-star-color;
+	}
+
+	.full-width-section & {
+		font-size: $font-body;
 	}
 }
 

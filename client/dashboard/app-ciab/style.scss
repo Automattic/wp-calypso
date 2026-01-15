@@ -1,4 +1,5 @@
 @import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
 
 /**
  * DotCom theme variables for dashboard
@@ -15,7 +16,7 @@
 	--wp-admin-border-width-focus: 2px;
 
 	// Layout
-	--dashboard__background-color: #fcfcfc;
+	--dashboard__background-color: #{$gray-100};
 	--dashboard__background-color-success: #3ca758;
 	--dashboard__background-color-warning: #d47608;
 	--dashboard__background-color-error: #{$alert-red};
@@ -25,11 +26,11 @@
 	--dashboard__text-color: #{$gray-900};
 
 	// Header bar
-	--dashboard-header__background-color: rgba(252, 252, 252, 0.90);
+	--dashboard-header__background-color: #{$gray-100};
 	--dashboard-header__support-background-color: rgba(252, 165, 0, 0.5);
 	--dashboard-header__color: #{$gray-900};
-	--dashboard-header__border-color: #{$gray-100};
-	--dashboard-header__divider-color: #{$gray-200};
+	--dashboard-header__border-color: #{$gray-600};
+	--dashboard-header__divider-color: #{$gray-900};
 
 	// Menu
 	--dashboard-menu-item__color: #{$gray-700};
@@ -42,7 +43,7 @@
 	--dashboard-h1__font-size: 40px;
 	--dashboard-h1__font-weight: 400;
 	--dashboard-h1__line-height: normal;
-	--dashboard-h1__font-family: Recoleta, sans-serif;
+	--dashboard-h1__font-family: #{$default-font};
 
 	// Overview
 	--dashboard-overview__divider-color: #{$gray-100};

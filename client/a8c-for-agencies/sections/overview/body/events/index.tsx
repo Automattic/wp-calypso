@@ -21,9 +21,9 @@ const OverviewBodyEvents = () => {
 
 	return (
 		<Offering
-			title={ translate( 'Upcoming events' ) }
+			title={ translate( 'News and updates' ) }
 			description={ translate(
-				'Grow your business and level up by joining exclusive Automattic for Agencies events.'
+				'Stay informed with important announcements, events, and opportunities from Automattic for Agencies.'
 			) }
 		>
 			<div className="a4a-events">{ upcomingEvents.map( renderEvent ) }</div>

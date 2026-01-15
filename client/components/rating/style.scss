@@ -1,3 +1,5 @@
+$rating-star-color: #ffb514;
+
 .rating {
 	position: relative;
 
@@ -14,6 +16,15 @@
 
 		.is-empty {
 			fill: var(--color-neutral-10);
+		}
+	}
+	.full-width-section & {
+		.rating__overlay,
+		.rating__star-outline {
+			.is-empty,
+			.gridicon {
+				fill: $rating-star-color;
+			}
 		}
 	}
 }

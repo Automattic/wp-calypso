@@ -338,14 +338,14 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'jetpack',
 					slug: 'jetpack-activity-log',
-					title: translate( 'Activity Log' ),
+					title: 'Activity Log',
 					type: 'submenu-item',
 					url: `/activity-log/${ siteDomain }`,
 				},
 				{
 					parent: 'jetpack',
 					slug: 'jetpack-backup',
-					title: translate( 'VaultPress Backup' ),
+					title: 'VaultPress Backup',
 					type: 'submenu-item',
 					url: `/backup/${ siteDomain }`,
 				},

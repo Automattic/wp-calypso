@@ -1,6 +1,6 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
@@ -13,7 +13,6 @@ import AISiteAssistantSettingsSummary from '../settings-ai-assistant/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
-import HolidaySnowSummary from '../settings-holiday-snow/summary';
 import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
 import PHPSettingsSummary from '../settings-php/summary';
 import PlanSettingsSummary from '../settings-plan/summary';
@@ -33,7 +32,7 @@ import type { SiteSettings } from '@automattic/api-core';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data: settings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const { supports } = useAppContext();
 	const supportsSettings = supports.sites && supports.sites.settings;
 
@@ -62,7 +61,6 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 						<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
 						<AgencySettingsSummary site={ site } />
 						<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
-						<HolidaySnowSummary site={ site } settings={ settings } />
 						<PlanSettingsSummary site={ site } />
 					</SummaryButtonList>
 				</VStack>
@@ -92,7 +90,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					</SummaryButtonList>
 				</VStack>
 			) }
-			{ config.isEnabled( 'wordpress-ai-assistant' ) && (
+			{ supportsSettings.experimental && config.isEnabled( 'wordpress-ai-assistant' ) && (
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'Experimental (Staging)' ) } level={ 3 } />
 					<SummaryButtonList>

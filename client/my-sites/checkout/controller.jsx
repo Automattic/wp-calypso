@@ -2,6 +2,7 @@ import { isJetpackLegacyItem, isJetpackLegacyTermUpgrade } from '@automattic/cal
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
+import ClientExpressCheckout from 'calypso/a8c-for-agencies/sections/client/primary/express-checkout';
 import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
@@ -119,6 +120,23 @@ function sitelessCheckout( context, next, extraProps ) {
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
 				{ ...extraProps }
 			/>
+		</>
+	);
+
+	next();
+}
+
+export function checkoutA4ASiteless( context, next ) {
+	const CheckoutSitelessDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Checkout' ) } />;
+	};
+
+	context.primary = (
+		<>
+			<CheckoutSitelessDocumentTitle />
+
+			<ClientExpressCheckout />
 		</>
 	);
 
@@ -610,6 +628,7 @@ function getRememberedCoupon() {
 		'TXAM',
 		'WC',
 		'grad25',
+		'hirocode35ai',
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

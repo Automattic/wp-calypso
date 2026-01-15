@@ -182,9 +182,7 @@ export default function DomainConnection() {
 			header={
 				<PageHeader
 					title={
-						isVerificationStep
-							? __( 'Domain connection verification' )
-							: __( 'Connect your domain name' )
+						isVerificationStep ? __( 'Connection verification' ) : __( 'Connect your domain name' )
 					}
 					description={
 						isVerificationStep

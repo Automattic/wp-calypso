@@ -220,11 +220,11 @@ test( 'data is properly displayed', async () => {
 	// actor
 	expect( screen.getByText( 'Server' ) ).toBeInTheDocument();
 
-	// actor avatar
-	expect( screen.getByAltText( 'Server' ) ).toHaveAttribute(
-		'src',
-		'https://secure.gravatar.com/avatar/bb916f3b04845914b0ab60201e5e440bbf6fa99465af2f0beccec7a52e234559?s=96&d=identicon&r=g'
+	// actor avatar for server should be the icon, not the gravatar image
+	expect( screen.getByText( 'Server' ).previousSibling ).toHaveClass(
+		'site-activity-logs__actor-icon-server'
 	);
+
 	// check the link
 	expect( screen.getByRole( 'link', { name: 'Jetpack 15.1' } ) ).toHaveAttribute(
 		'href',

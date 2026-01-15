@@ -1,0 +1,55 @@
+@import "@wordpress/base-styles/colors";
+
+.agents-manager-selected-block {
+	max-width: 150px;
+	display: flex;
+	align-items: center;
+	align-self: start;
+	gap: 4px;
+	border: 1px solid rgba($black, 0.1);
+	border-radius: 8px;
+	padding: 4px;
+	margin-top: 4px;
+	margin-left: 4px;
+	color: $gray-900;
+
+	.block-editor-block-icon {
+		flex-shrink: 0;
+		width: 20px;
+		height: 20px;
+
+		svg {
+			width: 100%;
+			height: 100%;
+			fill: currentColor;
+		}
+	}
+
+	&__name {
+		font-size: 11px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	&__divider {
+		height: 16px;
+		border: none;
+		border-left: 1px solid rgba($black, 0.1);
+		margin: 0;
+	}
+
+	&__remove {
+		&.components-button {
+			min-width: unset;
+			height: auto;
+			color: $gray-900;
+			padding: 0;
+
+			&:hover {
+				color: currentColor;
+			}
+		}
+	}
+}
+

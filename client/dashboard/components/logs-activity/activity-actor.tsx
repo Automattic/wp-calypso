@@ -43,6 +43,9 @@ function getActorPresentation( actor?: ActivityActorDetails ) {
 					label: name,
 				};
 			}
+			break;
+		}
+		case 'Person': {
 			if ( name === 'Server' ) {
 				return {
 					icon: (

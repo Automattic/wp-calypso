@@ -66,6 +66,10 @@
 
 		.magic-login__successfully-jetpack {
 			padding: 0 24px 0 24px;
+			// Matches .form-fieldset default margin overwritten in Jetpack view
+			margin-bottom: rem( 20px );
+			// Matches .card.logged-out-form padding-bottom overridden by Jetpack styles
+			padding-bottom: rem( 16px );
 		}
 
 		&__loading-spinner--jetpack {
@@ -89,32 +93,6 @@
 		border-color: var( --studio-jetpack-green-60 );
 	}
 }
-.magic-login__successfully-jetpack-actions {
-	color: var( --studio-jetpack-grey-50, #646970 );
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 20px;
-	word-wrap: break-word;
-
-	text-align: center;
-
-	margin-top: 45px;
-	margin-bottom: 45px;
-
-	.magic-login__resend-button {
-		font-size: 100%;
-		color: var( --studio-jetpack-green-60, #007117 );
-
-		&:hover {
-			color: var( --studio-jetpack-green-60, #007117 );
-		}
-	}
-
-	.magic-login__log-in-link {
-		color: var( --studio-jetpack-green-60, #007117 );
-	}
-}
-
 .layout.is-wpcom-magic-login {
 	.magic-login__form-header-icon {
 		text-align: center;
@@ -128,12 +106,6 @@
 		line-height: 120%;
 		@include break-mobile {
 			font-size: $font-title-large;
-		}
-	}
-
-	.logged-out-form {
-		.form-label {
-			font-weight: 400;
 		}
 	}
 
@@ -289,12 +261,6 @@
 
 		@include break-mobile {
 			@include onboarding-heading-text;
-		}
-	}
-
-	.logged-out-form {
-		.form-label {
-			color: var( --studio-gray-60 );
 		}
 	}
 

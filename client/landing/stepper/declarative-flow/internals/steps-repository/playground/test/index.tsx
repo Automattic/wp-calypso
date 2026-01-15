@@ -37,7 +37,10 @@ describe( 'Playground', () => {
 		mockPlaygroundClientInstance = {
 			run: jest.fn().mockImplementation( () => Promise.resolve( { text: 'plans-playground' } ) ),
 		};
-		initializeWordPressPlayground.mockResolvedValue( mockPlaygroundClientInstance );
+		initializeWordPressPlayground.mockResolvedValue( {
+			blueprint: null,
+			client: mockPlaygroundClientInstance,
+		} );
 	} );
 
 	describe( 'step', () => {

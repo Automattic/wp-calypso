@@ -1,4 +1,3 @@
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -6,11 +5,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
-import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useCountryList, { isVatSupported } from '../../hooks/use-country-list';
 import { CHECKOUT_STORE } from '../../lib/wpcom-store';
+import { useGetVatFormString } from './use-get-string';
 
 import './style.scss';
 
@@ -30,9 +27,9 @@ export function VatForm( {
 } ) {
 	const countries = useCountryList();
 	const translate = useTranslate();
+	const getVatFormString = useGetVatFormString( countryCode );
 	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
 	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
-	const taxName = useTaxName( countryCode ?? 'GB' );
 	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;
 	const { vatDetails: vatDetailsFromServer, isLoading: isLoadingVatDetails } = useVatDetails();
 	const [ isFormActive, setIsFormActive ] = useState< boolean >( false );
@@ -110,8 +107,6 @@ export function VatForm( {
 		isLoadingVatDetails,
 	] );
 
-	const reduxDispatch = useReduxDispatch();
-
 	if (
 		! setVatDetailsInForm ||
 		! countryCode ||
@@ -154,20 +149,6 @@ export function VatForm( {
 		}
 	};
 
-	const clickSupport = () => {
-		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
-	};
-
-	const genericTaxName =
-		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
-		translate( 'tax (VAT/GST/CT)' );
-	const fallbackTaxName = genericTaxName;
-	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-	const addVatText = translate( 'Add %s details', {
-		textOnly: true,
-		args: [ taxName ?? fallbackTaxName ],
-	} );
-
 	if ( ! isFormActive ) {
 		return (
 			<div className="vat-form__row">
@@ -175,7 +156,7 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={ addVatText }
+					label={ getVatFormString( 'addVatCheckboxLabel' ) }
 					disabled={ isDisabled }
 				/>
 			</div>
@@ -189,7 +170,7 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={ addVatText }
+					label={ getVatFormString( 'addVatCheckboxLabel' ) }
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 				/>
 				{ countryCode === 'GB' && (
@@ -197,13 +178,9 @@ export function VatForm( {
 						className="vat-form__expand-button"
 						checked={ vatDetailsInForm.country === 'XI' }
 						onChange={ toggleNorthernIreland }
-						label={
-							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-							translate( 'Is %s for Northern Ireland?', {
-								textOnly: true,
-								args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
-							} )
-						}
+						label={ translate( 'Is VAT for Northern Ireland?', {
+							textOnly: true,
+						} ) }
 						disabled={ isDisabled }
 					/>
 				) }
@@ -212,13 +189,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-organization' }
 					type="text"
-					label={
-						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( 'Organization for %s', {
-							textOnly: true,
-							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
-						} )
-					}
+					label={ getVatFormString( 'organizationFieldLabel' ) }
 					value={ vatDetailsInForm.name ?? '' }
 					disabled={ isDisabled }
 					onChange={ ( newValue: string ) => {
@@ -231,13 +202,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-id' }
 					type="text"
-					label={
-						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( '%s ID', {
-							textOnly: true,
-							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
-						} )
-					}
+					label={ getVatFormString( 'vatIdFieldLabel' ) }
 					value={ vatDetailsInForm.id ?? '' }
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 					onChange={ ( newValue: string ) => {
@@ -253,13 +218,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-address' }
 					type="text"
-					label={
-						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( 'Address for %s', {
-							textOnly: true,
-							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
-						} )
-					}
+					label={ getVatFormString( 'vatAddressFieldLabel' ) }
 					value={ vatDetailsInForm.address ?? '' }
 					autoComplete={ `section-${ section } street-address` }
 					disabled={ isDisabled }
@@ -274,23 +233,7 @@ export function VatForm( {
 			{ vatDetailsFromServer.id && (
 				<div>
 					<FormSettingExplanation>
-						{ translate(
-							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-							'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
-							{
-								args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
-								components: {
-									contactSupportLink: (
-										<a
-											target="_blank"
-											href={ CALYPSO_CONTACT }
-											rel="noreferrer"
-											onClick={ clickSupport }
-										/>
-									),
-								},
-							}
-						) }
+						{ getVatFormString( 'vatIdChangeExplanation' ) }
 					</FormSettingExplanation>
 				</div>
 			) }

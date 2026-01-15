@@ -4,7 +4,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { FormDivider } from 'calypso/blocks/authentication';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
@@ -12,7 +11,6 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/stat
 import { sendSmsCode } from 'calypso/state/login/actions';
 import { isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 import './two-factor-actions.scss';
 
@@ -22,7 +20,6 @@ class TwoFactorActions extends Component {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSecurityKeySupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
-		isWoo: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
 		switchTwoFactorAuthType: PropTypes.func.isRequired,
@@ -72,7 +69,6 @@ class TwoFactorActions extends Component {
 			isBackupCodeSupported,
 			isSecurityKeySupported,
 			isSmsSupported,
-			isWoo,
 			translate,
 			twoFactorAuthType,
 		} = this.props;
@@ -95,7 +91,6 @@ class TwoFactorActions extends Component {
 
 		return (
 			<Fragment>
-				{ isWoo && twoFactorAuthType !== 'push' && <FormDivider /> }
 				<Card className="two-factor-authentication__actions">
 					{ isSecurityKeyAvailable && (
 						<Button
@@ -159,7 +154,6 @@ export default connect(
 			isBackupCodeSupported: isTwoFactorAuthTypeSupported( state, 'backup' ),
 			isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 			isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
-			isWoo: getIsWoo( state ),
 		};
 	},
 	{

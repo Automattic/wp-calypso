@@ -26,6 +26,7 @@ import {
 	commentSubscriptionsManager,
 	pendingSubscriptionsManager,
 	setupReadRoutes,
+	setBeforePrimary,
 } from './controller';
 import { userProfile } from './user-profile/controller';
 
@@ -55,6 +56,7 @@ export default async function (): Promise< void > {
 			[ '/reader', '/reader/recent/:feed_id' ],
 			redirectLoggedOutToDiscover,
 			sidebar,
+			setBeforePrimary,
 			setSelectedSiteIdByOrigin,
 			following,
 			makeLayout,
@@ -67,6 +69,7 @@ export default async function (): Promise< void > {
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			sidebar,
+			setBeforePrimary,
 			feedDiscovery,
 			feedListing,
 			makeLayout,
@@ -78,6 +81,8 @@ export default async function (): Promise< void > {
 			'/reader/blogs/:blog_id',
 			redirectLoggedOutToSignup,
 			sidebar,
+			setBeforePrimary,
+			setSelectedSiteIdByOrigin,
 			blogListing,
 			makeLayout,
 			clientRender
@@ -89,6 +94,7 @@ export default async function (): Promise< void > {
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			sidebar,
+			setBeforePrimary,
 			userProfile,
 			makeLayout,
 			clientRender
@@ -98,6 +104,7 @@ export default async function (): Promise< void > {
 			[ '/reader/users/:user_login', '/reader/users/:user_login/:view' ],
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
+			setBeforePrimary,
 			sidebar,
 			userProfile,
 			makeLayout,
@@ -113,6 +120,7 @@ export default async function (): Promise< void > {
 	page(
 		'/reader/a8c',
 		redirectLoggedOut,
+		setBeforePrimary,
 		sidebar,
 		forceTeamA8C,
 		readA8C,
@@ -121,13 +129,22 @@ export default async function (): Promise< void > {
 	);
 
 	// new P2 Posts
-	page( '/reader/p2', redirectLoggedOut, sidebar, readFollowingP2, makeLayout, clientRender );
+	page(
+		'/reader/p2',
+		redirectLoggedOut,
+		sidebar,
+		setBeforePrimary,
+		readFollowingP2,
+		makeLayout,
+		clientRender
+	);
 
 	// Sites subscription management
 	page(
 		'/reader/subscriptions',
 		redirectLoggedOut,
 		sidebar,
+		setBeforePrimary,
 		siteSubscriptionsManager,
 		makeLayout,
 		clientRender
@@ -136,6 +153,7 @@ export default async function (): Promise< void > {
 		'/reader/subscriptions/comments',
 		redirectLoggedOut,
 		sidebar,
+		setBeforePrimary,
 		commentSubscriptionsManager,
 		makeLayout,
 		clientRender
@@ -144,6 +162,7 @@ export default async function (): Promise< void > {
 		'/reader/subscriptions/pending',
 		redirectLoggedOut,
 		sidebar,
+		setBeforePrimary,
 		pendingSubscriptionsManager,
 		makeLayout,
 		clientRender
@@ -152,6 +171,7 @@ export default async function (): Promise< void > {
 		'/reader/subscriptions/:subscription_id',
 		redirectLoggedOut,
 		sidebar,
+		setBeforePrimary,
 		siteSubscription,
 		makeLayout,
 		clientRender
@@ -160,6 +180,7 @@ export default async function (): Promise< void > {
 		'/reader/site/subscription/:blog_id',
 		redirectLoggedOut,
 		sidebar,
+		setBeforePrimary,
 		siteSubscription,
 		makeLayout,
 		clientRender

@@ -6,6 +6,7 @@ import {
 	deleteEmailForward,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { userMailboxesQuery } from './me-mailboxes';
 import { queryClient } from './query-client';
 
 export const domainQuery = ( domainName: string ) =>
@@ -39,7 +40,7 @@ export const deleteEmailForwardMutation = () => {
 		mutationFn: ( vars: { domainName: string; mailbox: string; destination: string } ) =>
 			deleteEmailForward( vars.domainName, vars.mailbox, vars.destination ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
+			queryClient.resetQueries( userMailboxesQuery() );
 		},
 	} );
 };

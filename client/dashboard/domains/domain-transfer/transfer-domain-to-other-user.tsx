@@ -1,5 +1,9 @@
-import { DomainSubtype, type SiteUser } from '@automattic/api-core';
-import { domainQuery, domainTransferToUserMutation, siteUsersQuery } from '@automattic/api-queries';
+import { DomainSubtype, type WpcomSiteUser } from '@automattic/api-core';
+import {
+	domainQuery,
+	domainTransferToUserMutation,
+	siteUsersWpcomQuery,
+} from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -26,13 +30,22 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import { wpcomLink } from '../../utils/link';
 import type { Field } from '@wordpress/dataviews';
 
 export type TransferFormData = {
 	user: string;
 };
 
-const createFields = ( users: SiteUser[] ): Field< TransferFormData >[] => [
+const getWpcomUserId = ( user: WpcomSiteUser ) => user.linked_user_ID ?? user.ID;
+
+const getUserDisplayName = ( user: WpcomSiteUser ) => {
+	const { name, nice_name, email } = user;
+
+	return name || nice_name || email;
+};
+
+const createFields = ( users: WpcomSiteUser[] ): Field< TransferFormData >[] => [
 	{
 		id: 'user',
 		label: __( 'New owner' ),
@@ -41,8 +54,8 @@ const createFields = ( users: SiteUser[] ): Field< TransferFormData >[] => [
 				? [
 						{ value: '', label: __( 'Choose an administrator on this site' ) },
 						...users.map( ( user ) => ( {
-							value: user.id,
-							label: user.name,
+							value: getWpcomUserId( user ),
+							label: getUserDisplayName( user ),
 						} ) ),
 				  ]
 				: [ { value: '', label: '--' + __( 'Site has no other administrators' ) + '--' } ],
@@ -60,7 +73,9 @@ const form = {
 export default function TransferDomainToOtherUser() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: users } = useSuspenseQuery( siteUsersQuery( domain.blog_id ) );
+	const { data: users } = useSuspenseQuery(
+		siteUsersWpcomQuery( domain.blog_id, 'administrator' )
+	);
 	const { user: currentUser } = useAuth();
 	const { mutate: domainTransferToOtherUser, isPending: isDomainTransferringToOtherUser } =
 		useMutation( domainTransferToUserMutation( domainName, domain.blog_id ) );
@@ -72,13 +87,21 @@ export default function TransferDomainToOtherUser() {
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 
 	const availableUsers = useMemo( () => {
-		return users.filter( ( user: SiteUser ) => {
-			return user.id !== currentUser.ID;
+		return users.filter( ( user: WpcomSiteUser ) => {
+			return getWpcomUserId( user ) !== currentUser.ID;
 		} );
 	}, [ users, currentUser.ID ] );
 	const fields = useMemo( () => {
 		return createFields( availableUsers );
 	}, [ availableUsers ] );
+	const selectedUser = useMemo( () => {
+		if ( ! formData.user ) {
+			return undefined;
+		}
+		return availableUsers.find(
+			( user ) => getWpcomUserId( user ) === parseInt( formData.user, 10 )
+		);
+	}, [ availableUsers, formData.user ] );
 
 	const isMapping = domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION;
 
@@ -88,16 +111,18 @@ export default function TransferDomainToOtherUser() {
 	};
 
 	const onConfirm = () => {
-		const selectedUser = availableUsers.find(
-			( user ) => ( user.id as unknown as string ) === formData.user
-		);
 		domainTransferToOtherUser( formData.user, {
 			onSuccess: () => {
 				createSuccessNotice(
 					sprintf(
 						/* Translators: %s: domainName is the domain name, %s: selectedUserDisplay is the selected user display */
 						__( '%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s' ),
-						{ args: { selectedDomainName: domainName, selectedUserDisplay: selectedUser?.name } }
+						{
+							args: {
+								selectedDomainName: domainName,
+								selectedUserDisplay: selectedUser ? getUserDisplayName( selectedUser ) : '',
+							},
+						}
 					)
 				);
 				setIsDialogOpen( false );
@@ -155,7 +180,7 @@ export default function TransferDomainToOtherUser() {
 							'You can transfer this domain to any administrator on this site. If the user you want to transfer is not currently an administrator, please <link>add them to the site first</link>.'
 						),
 						{
-							link: <a href={ `/people/new/${ domain.site_slug }` } />,
+							link: <a href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
 						}
 					) }
 				</Text>
@@ -179,7 +204,7 @@ export default function TransferDomainToOtherUser() {
 							'You can transfer this domain connection to any administrator on this site. If the user you want to transfer is not currently an administrator, please <link>add them to the site first</link>.'
 						),
 						{
-							link: <a href={ `/people/new/${ domain.site_slug }` } />,
+							link: <a href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
 						}
 					) }
 				</Text>
@@ -188,8 +213,6 @@ export default function TransferDomainToOtherUser() {
 	};
 
 	const renderConfirmationDialog = () => {
-		const selectedUser = availableUsers.find( ( user ) => user.id.toString() === formData.user );
-
 		return (
 			<Modal title={ __( 'Confirm transfer' ) } onRequestClose={ () => setIsDialogOpen( false ) }>
 				<VStack spacing={ 6 }>
@@ -204,7 +227,9 @@ export default function TransferDomainToOtherUser() {
 								  ),
 							{
 								domainName: <strong>{ domainName }</strong>,
-								selectedUserDisplay: <strong>{ selectedUser?.name }</strong>,
+								selectedUserDisplay: (
+									<strong>{ selectedUser ? getUserDisplayName( selectedUser ) : '' }</strong>
+								),
 							}
 						) }
 					</Text>

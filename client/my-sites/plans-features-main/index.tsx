@@ -61,8 +61,10 @@ import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-not
 import {
 	shouldForceDefaultPlansBasedOnIntent,
 	hideEscapeHatchForIntent,
+	ensureCompatibleIntervalType,
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
+import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
@@ -82,6 +84,7 @@ import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-interv
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
@@ -237,6 +240,9 @@ const PlansFeaturesMain = ( {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 
+	const [ isRenewalPricingExperimentLoading, renewalPricingVariation ] =
+		useRenewalPricingExperiment( flowName );
+
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
@@ -292,8 +298,18 @@ const PlansFeaturesMain = ( {
 		paidDomainName,
 	} );
 
+	// Ensure intervalType is compatible with the current plan's term
+	// Users can only select interval types that are equal to or longer than their current plan's interval
+	// Only apply this fix in the plan-upgrade flow to avoid breaking other flows
+	const currentPlanTerm =
+		isStepperUpgradeFlow && sitePlanSlug ? getPlan( sitePlanSlug )?.term : null;
+	const compatibleIntervalType = useMemo(
+		() => ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
+		[ currentPlanTerm, intervalType ]
+	);
+
 	const term = usePlanBillingPeriod( {
-		intervalType,
+		intervalType: compatibleIntervalType,
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
@@ -363,6 +379,15 @@ const PlansFeaturesMain = ( {
 		intent && [ 'plans-newsletter', 'plans-blog-onboarding' ].includes( intent )
 	);
 
+	const {
+		isLoading: isLoadingDifferentiatorsExperiment,
+		isStacked,
+		isLongSet,
+		isShortSet,
+		showDifferentiatorHeader,
+		variant: differentiatorsVariant,
+	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
+
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	// TODO: We should move the modal logic into a data store
@@ -397,6 +422,11 @@ const PlansFeaturesMain = ( {
 		isLaunchPage,
 		showModalAndExit,
 		coupon,
+		useCheckPlanAvailabilityForPurchase,
+		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
+		enableCategorisedFeatures: showSimplifiedFeatures,
+		reflectStorageSelectionInPlanPrices: true,
+		isGatingBusinessQ1: !! differentiatorsVariant,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
@@ -432,6 +462,9 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
+		useLongSetFeatures: isLongSet && ! isStacked,
+		useLongSetStackedFeatures: isLongSet && isStacked,
+		useShortSetStackedFeatures: ! isLongSet && isStacked,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -455,6 +488,9 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
+		useLongSetFeatures: isLongSet && ! isStacked,
+		useLongSetStackedFeatures: isLongSet && isStacked,
+		useShortSetStackedFeatures: ! isLongSet && isStacked,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -505,7 +541,7 @@ const PlansFeaturesMain = ( {
 			isStepperUpgradeFlow,
 			isInSignup,
 			eligibleForWpcomMonthlyPlans,
-			intervalType,
+			intervalType: compatibleIntervalType,
 			customerType: _customerType,
 			siteSlug,
 			selectedPlan,
@@ -554,7 +590,7 @@ const PlansFeaturesMain = ( {
 		isStepperUpgradeFlow,
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
-		intervalType,
+		compatibleIntervalType,
 		_customerType,
 		siteSlug,
 		selectedPlan,
@@ -667,7 +703,11 @@ const PlansFeaturesMain = ( {
 			! gridPlansForComparisonGrid
 	);
 
-	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
+	const isPlansGridReady =
+		! isLoadingGridPlans &&
+		! resolvedSubdomainName.isLoading &&
+		! isRenewalPricingExperimentLoading &&
+		! isLoadingDifferentiatorsExperiment;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
@@ -702,6 +742,13 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
+	} else if ( isLongSet || isShortSet ) {
+		// Experiment: stacked variants should render a single, ordered list (no grouping),
+		// otherwise features get scattered across groups causing gaps and can be filtered out.
+		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid( { isSummerSpecial } );
+		featureGroupMapForFeaturesGrid = Object.fromEntries(
+			Object.entries( featureGroups ).reverse()
+		);
 	} else if ( showSimplifiedFeatures ) {
 		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
 			isSummerSpecial,
@@ -826,6 +873,7 @@ const PlansFeaturesMain = ( {
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
+					showDifferentiatorHeader={ showDifferentiatorHeader }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -853,7 +901,9 @@ const PlansFeaturesMain = ( {
 								{ gridPlansForFeaturesGrid && (
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
-										className="plans-features-main__features-grid"
+										className={ `plans-features-main__features-grid${
+											isLongSet || isShortSet ? ' is-plan-differentiators-experiment' : ''
+										}` }
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
@@ -890,6 +940,7 @@ const PlansFeaturesMain = ( {
 										}
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
+										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -927,7 +978,7 @@ const PlansFeaturesMain = ( {
 													gridPlans={ gridPlansForComparisonGrid }
 													hideUnavailableFeatures={ hideUnavailableFeatures }
 													intent={ intent }
-													intervalType={ intervalType }
+													intervalType={ compatibleIntervalType }
 													isInAdmin={ ! isInSignup }
 													isInSiteDashboard={ isInSiteDashboard }
 													isInSignup={ isInSignup }
@@ -949,6 +1000,7 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
+													showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }

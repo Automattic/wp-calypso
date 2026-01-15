@@ -1,3 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+
 /**
  * Get reader last path selected
  * @param state redux state
@@ -31,4 +34,12 @@ export function getPersistedLastActionPriorToLogin( state ) {
 		return null;
 	}
 	return state.readerUi?.persistedLastActionPriorToLogin;
+}
+
+/**
+ * Selector to check if the reader multi-site version of the reader dashboard is enabled
+ * @returns {boolean} Whether the user is enabled for the reader multi-site dashboard
+ */
+export function isReaderMSDEnabled( state ) {
+	return isEnabled( 'reader/msd-enabled' ) && hasDashboardOptIn( state );
 }

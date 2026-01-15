@@ -8,9 +8,10 @@ interface SSHMigrationStatusParams {
 
 /**
  * Response from the SSH migration status endpoint
- * @property success - Indicates if the status request was successful
- * @property status - High-level migration status (in-progress, migrating, completed, or failed)
- * @property step - Detailed migration step indicating current progress through the migration process
+ * @property {boolean} success - Indicates if the status request was successful
+ * @property {string} status - High-level migration status (in-progress, migrating, completed, or failed)
+ * @property {string} step - Detailed migration step indicating current progress through the migration process
+ * @property {string} [error_code] - Optional error code when migration fails (e.g., 'credential_failure')
  */
 interface SSHMigrationStatusResponse {
 	success: boolean;
@@ -30,6 +31,7 @@ interface SSHMigrationStatusResponse {
 		| 'migration-starting'
 		| 'migration-running'
 		| 'completed';
+	error_code?: 'credential_failure';
 }
 
 /**

@@ -1,11 +1,15 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
+import {
+	clearStepPersistedState,
+	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
+	SITE_SETUP_FLOW,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -22,19 +26,19 @@ import {
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
+import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
+import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
+import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
-
-const withLocale = ( url: string, locale: string ) => {
-	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
-};
 
 function initialize() {
 	const steps = [
@@ -44,6 +48,7 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
+		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
 	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
@@ -68,10 +73,10 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-
-		const { signupDomainOrigin } = useSelect(
+		const { signupDomainOrigin, planCartItem } = useSelect(
 			( select ) => ( {
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			} ),
 			[]
 		);
@@ -85,13 +90,23 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
 		const getPostCheckoutDestination = async (
-			providedDependencies: ProvidedDependencies
+			providedDependencies: ProvidedDependencies,
+			planCartItem: MinimalRequestCartProduct | null
 		): Promise< [ string, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			if ( playgroundId && providedDependencies.siteSlug ) {
+			if ( playgroundId ) {
+				// Check if the user selected the free plan
+				const isFree =
+					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
+
+				if ( isFree ) {
+					// Redirect free plan users to a home page
+					return [ `/home/${ providedDependencies.siteSlug }`, null ];
+				}
+
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 						siteSlug: providedDependencies.siteSlug,
@@ -102,35 +117,11 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			/**
-			 * If the dashboard/v2/onboarding feature flag is enabled, we'll redirect the user to the new Hosting Dashboard.
-			 * We aren't using the dashboard/v2 FF because it's enabled by default on wpcalypso.json which would break e2e tests.
-			 * Since we're aiming to remove steps after the isMvpOnboarding experiment ends,
-			 * we'll redirect the user to the new Dashboard here.
-			 */
-			if ( isEnabled( 'dashboard/v2/onboarding' ) ) {
-				return [
-					addQueryArgs( `/v2/sites/${ providedDependencies.siteSlug }`, { ref: flowName } ),
-					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
-						siteSlug: providedDependencies.siteSlug,
-					} ),
-				];
-			}
-
-			if ( await isSimplifiedOnboarding() ) {
-				return [
-					addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } ),
-					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
-						siteSlug: providedDependencies.siteSlug,
-					} ),
-				];
-			}
-
-			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
-				siteSlug: providedDependencies.siteSlug,
+			return getOnboardingPostCheckoutDestination( {
+				flowName,
+				locale,
+				siteSlug: providedDependencies.siteSlug as string,
 			} );
-
-			return [ destination, addQueryArgs( destination, { skippedCheckout: 1 } ) ];
 		};
 
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
@@ -210,10 +201,54 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding':
 					setShouldShowNotification( providedDependencies?.siteId as number );
+
+					/*
+					 * If the post-checkout ai step feature flag is enabled,
+					 * redirect the user to the relevant step.
+					 */
+					if ( isEnabled( 'onboarding/post-checkout-ai-step' ) ) {
+						return navigate( 'setup-your-site-ai' );
+					}
+
 					return navigate( 'processing' );
+				case 'setup-your-site-ai': {
+					const setupChoice = providedDependencies?.setupChoice;
+					const siteSlug = providedDependencies?.siteSlug as string;
+					const siteId = providedDependencies?.siteId as number | string | undefined;
+
+					switch ( setupChoice ) {
+						case 'build-with-ai':
+							window.location.assign(
+								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
+									siteSlug,
+									siteId,
+									fromPostCheckoutSetupSite: '1',
+								} )
+							);
+							return;
+						case 'blank-site':
+							window.location.replace( `/sites/${ siteSlug }` );
+							return;
+						case 'migrate':
+							window.location.assign(
+								addQueryArgs(
+									`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
+									{
+										siteSlug,
+										siteId,
+									}
+								)
+							);
+							return;
+						default:
+							return;
+					}
+				}
 				case 'processing': {
-					const [ destination, backDestination ] =
-						await getPostCheckoutDestination( providedDependencies );
+					const [ destination, backDestination ] = await getPostCheckoutDestination(
+						providedDependencies,
+						planCartItem
+					);
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );
@@ -227,18 +262,20 @@ const onboarding: FlowV2< typeof initialize > = {
 							 * redirect the user back to Playground to start the import.
 							 */
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
-							const redirectTo: string = playgroundId
-								? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
-										siteSlug,
-										siteId: providedDependencies.siteId,
-										playground: playgroundId,
-								  } )
-								: addQueryArgs(
-										withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
-										{
+							const redirectTo: string =
+								playgroundId &&
+								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
+									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 											siteSlug,
-										}
-								  );
+											siteId: providedDependencies.siteId,
+											playground: playgroundId,
+									  } )
+									: addQueryArgs(
+											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
+											{
+												siteSlug,
+											}
+									  );
 
 							// replace the location to delete processing step from history.
 							window.location.replace(

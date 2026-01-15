@@ -37,10 +37,11 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 );
 
 type HostingFeaturesProps = {
+	path?: string;
 	showAsTools?: boolean;
 };
 
-const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
+const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
 	const siteId = useSelector( getSelectedSiteId );
@@ -204,7 +205,7 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 	} else if ( showActivationButton ) {
 		title = showAsTools ? activateTitleAsTools : activateTitle;
 		description = showAsTools ? activateDescriptionAsTools : activateDescription;
-		buttons = <HostingActivationButton redirectUrl={ redirectUrl } />;
+		buttons = <HostingActivationButton path={ path } redirectUrl={ redirectUrl } />;
 	} else {
 		title = showAsTools ? unlockTitleAsTools : unlockTitle;
 		description = showAsTools ? unlockDescriptionAsTools : unlockDescription;

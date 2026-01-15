@@ -13,9 +13,12 @@
  * });
  * // Renders: Updated <a href="/reader/blogs/123/posts/456">Hello World</a>
  */
+import { ExternalLink } from '@wordpress/components';
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { wpcomLink } from '../../utils/link';
 import type { ActivityBlockContent, ActivityBlockNode, ActivityBlockMeta } from './types';
 
 type BlockClickHandler = ( event: MouseEvent< HTMLAnchorElement > ) => void;
@@ -42,45 +45,27 @@ const Preformatted = ( { children }: { children: ReactNode } ) => <pre>{ childre
 const isWordPressDotComUrl = ( url?: string | null ) =>
 	!! url && url.startsWith( 'https://wordpress.com/' ); // we want the extra slash at the end because other subdomains could be used to trick this check (e.g. wordpress.com.malicious-site.com)
 
-const relativizeWordPressUrl = ( url: string ) => url.replace( /^https:\/\/wordpress\.com/, '' );
-
 const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
-	const { url: originalUrl, activity, section, intent } = content;
+	const { url, activity, section, intent } = content;
 
-	if ( ! originalUrl ) {
+	if ( ! url ) {
 		return <Fragment>{ children }</Fragment>;
 	}
 
-	if ( isWordPressDotComUrl( originalUrl ) ) {
-		if ( isJetpackCloud() || isA8CForAgencies() ) {
-			return <Fragment>{ children }</Fragment>;
-		}
-
-		return (
-			<a
-				href={ relativizeWordPressUrl( originalUrl ) }
-				onClick={ onClick }
-				data-activity={ activity ?? meta.activity }
-				data-section={ section ?? meta.section }
-				data-intent={ intent ?? meta.intent }
-			>
-				{ children }
-			</a>
-		);
+	if ( isWordPressDotComUrl( url ) && ( isJetpackCloud() || isA8CForAgencies() ) ) {
+		return <Fragment>{ children }</Fragment>;
 	}
 
 	return (
-		<a
-			href={ originalUrl }
+		<ExternalLink
+			href={ url }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section }
 			data-intent={ intent ?? meta.intent }
-			target="_blank"
-			rel="noopener noreferrer"
 		>
 			{ children }
-		</a>
+		</ExternalLink>
 	);
 };
 
@@ -146,7 +131,7 @@ const Person: BlockRenderer = ( { content, children, onClick, meta } ) => {
 
 	return (
 		<a
-			href={ `/people/edit/${ siteId }/${ name }` }
+			href={ wpcomLink( `/people/edit/${ siteId }/${ name }` ) }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'users' }
@@ -168,16 +153,20 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		return <Fragment>{ children }</Fragment>;
 	}
 
+	const url = `/plugins/${ pluginSlug }/${ siteSlug }`;
+	const href = isDashboardBackport() ? url : wpcomLink( url );
+	const Component = isDashboardBackport() ? 'a' : ExternalLink;
+
 	return (
-		<a
-			href={ `/plugins/${ pluginSlug }/${ siteSlug }` }
+		<Component
+			href={ href }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'plugins' }
 			data-intent={ intent ?? meta.intent ?? 'view' }
 		>
 			{ children }
-		</a>
+		</Component>
 	);
 };
 

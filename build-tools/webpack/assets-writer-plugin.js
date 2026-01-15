@@ -46,8 +46,15 @@ Object.assign( AssetsWriter.prototype, {
 				return path.join( stats.publicPath, f );
 			}
 
-			// Exclude hot update files (info.hotModuleReplacement) and source maps (info.development)
+			// Exclude hot update files (info.hotModuleReplacement) and source maps.
+			// `asset.info.development` is false when using hidden-source-map,
+			// so we also explicitly filter out any `.map` assets by filename.
 			function isDevelopmentAsset( name ) {
+				// Treat all source map files as development-only so they are never inlined into HTML.
+				if ( name.endsWith( '.map' ) ) {
+					return true;
+				}
+
 				const asset = stats.assets.find( ( a ) => a.name === name );
 				if ( ! asset ) {
 					return false;

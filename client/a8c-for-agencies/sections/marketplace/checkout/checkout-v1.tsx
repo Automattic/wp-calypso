@@ -24,7 +24,8 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import useFetchClientReferral from '../../client/hooks/use-fetch-client-referral';
 import { MarketplaceTypeContext } from '../context';
-import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
+import withMarketplaceProviders from '../hoc/with-marketplace-providers';
+import { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
 import useProductsById from '../hooks/use-products-by-id';
 import useProductsBySlug from '../hooks/use-products-by-slug';
 import useReferralDevSite from '../hooks/use-referral-dev-site';
@@ -319,4 +320,4 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 	);
 }
 
-export default withMarketplaceType( CheckoutV1 );
+export default withMarketplaceProviders( CheckoutV1 );

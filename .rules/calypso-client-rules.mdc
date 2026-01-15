@@ -47,6 +47,7 @@ Before responding to any request, follow these steps:
 - Implement proper WordPress hooks system.
 - Structure components using WordPress conventions.
 - Carrefully follow [.eslintrc.js](mdc:.eslintrc.js) coding standarts.
+- **CRITICAL: After creating or modifying ANY JavaScript/TypeScript file, you MUST run `yarn eslint --fix` on that specific file individually. This is mandatory for every single file change.**
 
 ### Naming Conventions
 

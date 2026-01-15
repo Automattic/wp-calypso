@@ -21,7 +21,7 @@ interface Props {
 export default function ConfirmModal( {
 	__experimentalHideHeader = true,
 	title,
-	size = 'large',
+	size = 'small',
 	cancelButtonText,
 	confirmButtonProps,
 	children,

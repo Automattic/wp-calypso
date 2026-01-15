@@ -13,6 +13,7 @@ import {
 	READER_STREAMS_CLEAR,
 	READER_STREAMS_NEW_POST_RECEIVE,
 	READER_STREAMS_REMOVE_ITEM,
+	READER_STREAMS_ERROR,
 } from 'calypso/state/reader/action-types';
 import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import { combineXPosts } from './utils';
@@ -311,6 +312,19 @@ export const pagination = ( state = { totalItems: 0, totalPages: 0 }, action ) =
 	}
 };
 
+export const error = ( state = null, action ) => {
+	switch ( action.type ) {
+		case READER_STREAMS_ERROR:
+			return action.payload.error;
+		case READER_STREAMS_CLEAR:
+		case READER_STREAMS_PAGE_REQUEST:
+		case READER_STREAMS_PAGINATED_REQUEST:
+			return null;
+		default:
+			return state;
+	}
+};
+
 const streamReducer = combineReducers( {
 	items,
 	pendingItems,
@@ -319,6 +333,7 @@ const streamReducer = combineReducers( {
 	isRequesting,
 	pageHandle,
 	pagination,
+	error,
 } );
 
 export default keyedReducer( 'payload.streamKey', streamReducer );

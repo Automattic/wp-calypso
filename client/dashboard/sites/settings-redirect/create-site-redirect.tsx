@@ -8,6 +8,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { Card, CardBody } from '../../components/card';
 import { Notice } from '../../components/notice';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import SiteRedirectForm, { SiteRedirectFormData } from './site-redirect-form';
 
 export default function CreateSiteRedirect( {
@@ -37,7 +38,8 @@ export default function CreateSiteRedirect( {
 
 	const handleSubmit = async ( formData: SiteRedirectFormData ) => {
 		setIsSubmitting( true );
-		const backUrl = window.location.href.replace( window.location.origin, '' );
+
+		const backUrl = redirectToDashboardLink( { supportBackport: true } );
 		const { shoppingCartManagerClient } = await import(
 			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
 		);
@@ -53,7 +55,7 @@ export default function CreateSiteRedirect( {
 				meta: formData.redirect,
 			},
 		] );
-		window.location.href = addQueryArgs( `/checkout/${ siteSlug }`, {
+		window.location.href = addQueryArgs( wpcomLink( `/checkout/${ siteSlug }` ), {
 			cancel_to: backUrl,
 			redirect_to: backUrl,
 		} );

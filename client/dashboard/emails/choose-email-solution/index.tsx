@@ -12,6 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { addMailboxRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -24,7 +25,6 @@ import {
 	hasTitanMailWithUs,
 	isGoogleWorkspaceSupportedDomain,
 } from '../../utils/domain';
-import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
@@ -161,7 +161,7 @@ export default function ChooseEmailSolution() {
 		<PageLayout
 			header={
 				<PageHeader
-					prefix={ <BackToEmailsPrefix /> }
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					description={ __(
 						'Choose between Professional Email and Google Workspace for your domain.'
 					) }

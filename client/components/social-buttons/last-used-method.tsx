@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import {
 	AppleLoginButton,
 	GoogleSocialButton,
 	GithubSocialButton,
+	PayPalSocialButton,
 	MagicLoginButton,
 	QrCodeLoginButton,
 } from './';
@@ -50,6 +52,19 @@ const LastUsedSocialButton = ( {
 			return (
 				handleLogin && (
 					<GithubSocialButton
+						socialServiceResponse={ socialServiceResponse }
+						responseHandler={ handleLogin }
+						onClick={ onClick }
+						isLogin
+					/>
+				)
+			);
+
+		case 'paypal':
+			return (
+				handleLogin &&
+				config.isEnabled( 'sign-in-with-paypal' ) && (
+					<PayPalSocialButton
 						socialServiceResponse={ socialServiceResponse }
 						responseHandler={ handleLogin }
 						onClick={ onClick }

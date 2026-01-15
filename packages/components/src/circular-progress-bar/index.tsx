@@ -39,7 +39,7 @@ const CircularProgressBar = ( {
 				'desktop-scaling': enableDesktopScaling,
 				'is-success': variant === 'success',
 			} ) }
-			style={ { width: SIZE, height: SIZE } }
+			style={ { width: SIZE, height: SIZE, flex: `0 0 ${ SIZE }px` } }
 		>
 			<svg
 				viewBox={ `0 0 ${ SIZE } ${ SIZE }` }

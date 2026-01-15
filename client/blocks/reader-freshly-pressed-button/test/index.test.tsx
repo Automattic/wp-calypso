@@ -83,9 +83,7 @@ describe( 'ReaderFreshlyPressedButton', () => {
 		it( 'disables the button', () => {
 			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-			expect(
-				screen.getByRole( 'button', { name: 'Suggest for Freshly Pressed' } )
-			).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Suggest: Freshly Pressed' } ) ).toBeDisabled();
 		} );
 
 		it( 'shows the reason why the post is not eligible', () => {
@@ -116,7 +114,7 @@ describe( 'ReaderFreshlyPressedButton', () => {
 		it( 'enables the button', () => {
 			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-			expect( screen.getByRole( 'button', { name: 'Suggest for Freshly Pressed' } ) ).toBeEnabled();
+			expect( screen.getByRole( 'button', { name: 'Suggest: Freshly Pressed' } ) ).toBeEnabled();
 		} );
 
 		it( 'sends a suggestion', async () => {
@@ -132,9 +130,7 @@ describe( 'ReaderFreshlyPressedButton', () => {
 				wrapper: Wrapper,
 			} );
 
-			await userEvent.click(
-				screen.getByRole( 'button', { name: 'Suggest for Freshly Pressed' } )
-			);
+			await userEvent.click( screen.getByRole( 'button', { name: 'Suggest: Freshly Pressed' } ) );
 
 			expect( mutate ).toHaveBeenCalled();
 		} );
@@ -155,9 +151,7 @@ describe( 'ReaderFreshlyPressedButton', () => {
 		it( 'disables the button', () => {
 			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-			expect(
-				screen.getByRole( 'button', { name: 'Suggest for Freshly Pressed' } )
-			).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Suggest: Freshly Pressed' } ) ).toBeDisabled();
 		} );
 
 		it( 'shows a short version on mobile', () => {

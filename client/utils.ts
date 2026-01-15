@@ -59,7 +59,7 @@ export function getRouteFromContext( context: Context ) {
 			route = route.replace( value, ':' + key );
 		}
 	}
-	return route;
+	return route.split( '?' )[ 0 ];
 }
 
 export interface RedirectRouteList {

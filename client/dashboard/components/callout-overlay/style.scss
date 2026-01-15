@@ -1,4 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
 
 .dashboard-callout-overlay {
 	position: absolute;

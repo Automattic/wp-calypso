@@ -9,27 +9,14 @@ import { isSubdomain } from '../../utils/domain';
 import {
 	StepType,
 	StepName,
-	StepTypeValue,
 	StepNameValue,
-	DomainConnectionStepsMap,
 	ProgressStepList,
 	DomainTransferStepsMap,
 } from './types';
 
-export const getStepName = (
-	mode: DomainConnectionSetupModeValue,
-	step: StepTypeValue,
-	stepsDefinition: DomainConnectionStepsMap
-) => {
-	const matchingEntry = Object.entries( stepsDefinition ).find( ( [ , pageDefinition ] ) => {
-		return pageDefinition.mode === mode && pageDefinition.stepType === step;
-	} );
-	return matchingEntry?.[ 0 ] as StepNameValue | undefined;
-};
-
 export const getProgressStepList = (
 	mode: DomainConnectionSetupModeValue,
-	stepsDefinition: DomainConnectionStepsMap | DomainTransferStepsMap
+	stepsDefinition: DomainTransferStepsMap
 ): ProgressStepList => {
 	const modeSteps = Object.fromEntries(
 		Object.entries( stepsDefinition ).filter(

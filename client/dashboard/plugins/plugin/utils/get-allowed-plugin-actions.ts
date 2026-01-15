@@ -12,5 +12,6 @@ export const getAllowedPluginActions = ( site: SiteWithPluginData, pluginSlug: s
 
 	return {
 		autoupdate: ! isManagedPlugin && canManagePlugins,
+		isManagedPlugin,
 	};
 };

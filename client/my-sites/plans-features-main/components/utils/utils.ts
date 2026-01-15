@@ -1,3 +1,4 @@
+import { getIntervalTypeForTerm } from '@automattic/calypso-products';
 import {
 	PERSONAL_THEME,
 	PREMIUM_THEME,
@@ -6,6 +7,8 @@ import {
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import { PlansIntent } from '@automattic/plans-grid-next';
+import { supportedIntervalTypes } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
+import type { SupportedUrlFriendlyTermType } from '@automattic/plans-grid-next';
 
 /* For Guided Signup intents we want to force the default plans for the comparison table. See: pdDR7T-1xi-p2 */
 export const shouldForceDefaultPlansBasedOnIntent = ( intent: PlansIntent | undefined ) => {
@@ -55,4 +58,33 @@ export const getHidePlanPropsBasedOnThemeType = ( themeType: string ) => {
 	}
 
 	return {};
+};
+
+/**
+ * Ensures that the requested intervalType is compatible with the current plan's term.
+ * Users can only select interval types that are equal to or longer than their current plan's interval.
+ */
+export const ensureCompatibleIntervalType = (
+	currentPlanTerm: string | null | undefined,
+	requestedIntervalType: SupportedUrlFriendlyTermType
+): SupportedUrlFriendlyTermType => {
+	if ( ! currentPlanTerm ) {
+		return requestedIntervalType;
+	}
+
+	const currentPlanIntervalType = getIntervalTypeForTerm( currentPlanTerm );
+	if ( ! currentPlanIntervalType ) {
+		return requestedIntervalType;
+	}
+
+	const currentIndex = supportedIntervalTypes.indexOf(
+		currentPlanIntervalType as SupportedUrlFriendlyTermType
+	);
+	const requestedIndex = supportedIntervalTypes.indexOf( requestedIntervalType );
+
+	if ( currentIndex === -1 || requestedIndex === -1 || requestedIndex >= currentIndex ) {
+		return requestedIntervalType;
+	}
+
+	return currentPlanIntervalType as SupportedUrlFriendlyTermType;
 };

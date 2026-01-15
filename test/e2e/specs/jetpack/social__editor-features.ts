@@ -104,8 +104,8 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await socialConnectionsManager.clearIntercepts();
 			} );
 
-			test( 'Should verify that auto-sharing is available for new posts', async function () {
-				await socialConnectionsManager.interceptRequests();
+			it( 'Should verify that auto-sharing is available for new posts', async function () {
+				await socialConnectionsManager.mockSocialConnections();
 
 				await Promise.all( [
 					// Open the Jetpack sidebar.
@@ -115,7 +115,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				] );
 
 				// Expand the Publicize panel.
-				const section = await editorPage.expandSection( 'Share to Social Media' );
+				const section = await editorPage.expandSection( 'Share to social media' );
 
 				// Verify that the toggle is enabled.
 				const toggle = section.getByLabel( 'Auto-share post' );
@@ -130,11 +130,11 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				expect( await mediaButton.isVisible() ).toBe( features.mediaSharing );
 			} );
 
-			test( `Should verify that resharing ${
+			it( `Should verify that resharing ${
 				features.resharing ? 'IS' : 'is NOT'
 			} available`, async function () {
 				let connectionTestPromise = Promise.resolve();
-				await socialConnectionsManager.interceptRequests();
+				await socialConnectionsManager.mockSocialConnections();
 
 				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 
@@ -144,7 +144,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await connectionTestPromise;
 
 				// Expand the Publicize panel.
-				let section = await editorPage.expandSection( 'Share to Social Media' );
+				let section = await editorPage.expandSection( 'Share to social media' );
 
 				// Verify that resharing button is not visible on new posts in the share modal
 				let sharePostModalButton = section.getByRole( 'button', {
@@ -178,7 +178,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await connectionTestPromise;
 
 				// Expand the Publicize panel.
-				section = await editorPage.expandSection( 'Share to Social Media' );
+				section = await editorPage.expandSection( 'Share to social media' );
 
 				// Verify whether the auto-share toggle is no longer visible.
 				const toggle = section.getByLabel( 'Auto-share post' );
@@ -214,10 +214,9 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 
 				// Verify whether the upgrade nudge/link is visible.
 				if ( ! features.resharing ) {
-					const upgradeLink = section.getByRole( 'link', { name: 'Upgrade now' } );
-					// The upgrade CTA is a button instead of a link until some API call finishes to get the checkout URL, which makes it a link.
-					// So, we need to wait for the link to appear.
-					await upgradeLink.waitFor();
+					const upgradeButton = section.getByRole( 'button', { name: 'Upgrade now' } );
+					// Wait for the upgrade button to appear.
+					await upgradeButton.waitFor();
 				}
 
 				const content = await section.textContent();
@@ -227,14 +226,14 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				expect( content?.includes( message ) ).toBe( ! features.resharing );
 			} );
 
-			test( `Should verify that manual sharing ${
+			it( `Should verify that manual sharing ${
 				features.manualSharing ? 'IS' : 'is NOT'
 			} available`, async function () {
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
 
 				// Expand the Publicize panel.
-				let section = await editorPage.expandSection( 'Share to Social Media' );
+				let section = await editorPage.expandSection( 'Share to social media' );
 
 				// Verify that manual sharing is NOT available before publishing.
 				let manualSharing = section.getByRole( 'paragraph', { name: 'Manual sharing' } );
@@ -261,21 +260,27 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await editorPage.openSettings( 'Jetpack' );
 
 				// Expand the Publicize panel.
-				section = await editorPage.expandSection( 'Share to Social Media' );
+				section = await editorPage.expandSection( 'Share to social media' );
 
 				// Verify whether manual sharing is available in the Jetpack sidebar.
 				manualSharing = section.getByText( 'Manual sharing' );
 				expect( await manualSharing.isVisible() ).toBe( features.manualSharing );
 			} );
 
-			test( `Should verify that Social Image Generator ${
+			it( `Should verify that Social Image Generator ${
 				features.socialImageGenerator ? 'IS' : 'is NOT'
 			} available`, async function () {
+				await socialConnectionsManager.mockSocialConnections();
+
+				const connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
+
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
 
+				await connectionTestPromise;
+
 				// Expand the Publicize panel.
-				const section = await editorPage.expandSection( 'Share to Social Media' );
+				const section = await editorPage.expandSection( 'Share to social media' );
 
 				const toggle = section.getByLabel( 'Enable Social Image' );
 

@@ -11,6 +11,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -98,6 +99,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 					<CardBody>
 						<form onSubmit={ handleSubmit }>
 							<VStack spacing={ 4 }>
+								<NavigationBlocker shouldBlock={ isDirty } />
 								<DataForm< { version: string } >
 									data={ formData }
 									fields={ fields }

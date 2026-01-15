@@ -1,12 +1,7 @@
 import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
+import { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 import Smooch from 'smooch';
-import type {
-	OdieConversation,
-	OdieMessage,
-	SupportInteraction,
-	ZendeskConversation,
-	ZendeskMessage,
-} from '@automattic/odie-client';
+import type { OdieConversation, OdieMessage, SupportInteraction } from '@automattic/odie-client';
 
 const isMatchingInteraction = (
 	supportInteraction: SupportInteraction,
@@ -21,7 +16,7 @@ const filterConversationsBySupportInteractions = (
 ): ZendeskConversation[] => {
 	return conversations.filter( ( conversation ) =>
 		supportInteractions.some( ( interaction ) =>
-			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId as string )
 		)
 	);
 };
@@ -43,6 +38,30 @@ export const getLastMessage = ( {
 		'type' in message ? message.type !== 'form' : true
 	);
 	return filteredMessages.length > 0 ? filteredMessages[ filteredMessages.length - 1 ] : null;
+};
+
+export const getChatLinkFromConversation = (
+	conversation: OdieConversation | ZendeskConversation
+): string => {
+	const chatParams = new URLSearchParams();
+	const metadata = conversation.metadata;
+
+	if ( metadata ) {
+		// Logged out chats only have a sessionId and a botSlug (not support interaction id)
+		if ( 'sessionId' in metadata && metadata.sessionId ) {
+			chatParams.set( 'sessionId', metadata.sessionId.toString() );
+		}
+
+		if ( metadata.supportInteractionId ) {
+			chatParams.set( 'id', metadata.supportInteractionId.toString() );
+		}
+
+		if ( metadata.botSlug ) {
+			chatParams.set( 'botSlug', metadata.botSlug.toString() );
+		}
+	}
+
+	return `/odie?${ chatParams.toString() }`;
 };
 
 export const getZendeskConversations = () => {
@@ -85,7 +104,7 @@ export const filterAndUpdateConversationsWithStatus = (
 
 	const conversationsWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
 		const supportInteraction = supportInteractions.find( ( interaction ) =>
-			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId as string )
 		);
 
 		if ( ! supportInteraction ) {

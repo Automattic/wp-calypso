@@ -526,6 +526,7 @@ function SyncModal( {
 							 */ }
 							<div className={ isFileBrowserVisible ? '' : 'hidden' }>
 								<FileBrowser
+									key={ rewindId }
 									rewindId={ rewindId }
 									siteId={ querySiteId }
 									siteSlug={ querySiteSlug }

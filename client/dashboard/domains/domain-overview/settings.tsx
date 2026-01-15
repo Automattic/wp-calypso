@@ -1,17 +1,31 @@
-import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
+import {
+	DomainSubtype,
+	DomainTransferStatus,
+	type Domain,
+	DomainDiagnostics,
+} from '@automattic/api-core';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
 import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
+import DomainDiagnosticsSettingsSummary from '../domain-diagnostics/summary';
 import DnsSettingsSummary from '../domain-dns/summary';
 import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
 import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
 
-export default function DomainOverviewSettings( { domain }: { domain: Domain } ) {
+export default function DomainOverviewSettings( {
+	domain,
+	domainDiagnostics,
+	isDisabled,
+}: {
+	domain: Domain;
+	domainDiagnostics: DomainDiagnostics | undefined;
+	isDisabled?: boolean;
+} ) {
 	const buttonListItems = [];
 
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
@@ -24,7 +38,9 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
 		! domain.is_gravatar_restricted_domain // TODO: should we show some notice for gravatar domains instead of just hiding the button?
 	) {
-		buttonListItems.push( <NameServersSettingsSummary key="name-servers" domain={ domain } /> );
+		buttonListItems.push(
+			<NameServersSettingsSummary key="name-servers" domain={ domain } isDisabled={ isDisabled } />
+		);
 	}
 
 	if (
@@ -35,6 +51,29 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		domain.can_manage_dns_records
 	) {
 		buttonListItems.push( <DnsSettingsSummary key="dns" domain={ domain } /> );
+	}
+
+	if (
+		domain.is_mapped_to_atomic_site &&
+		domain.primary_domain &&
+		domainDiagnostics !== undefined
+	) {
+		buttonListItems.push(
+			<DomainDiagnosticsSettingsSummary
+				key="diagnostics"
+				domain={ domain }
+				domainDiagnostics={ domainDiagnostics }
+			/>
+		);
+	}
+
+	if (
+		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
+		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
+		domain.can_manage_dns_records
+	) {
 		buttonListItems.push( <DomainForwardingSettingsSummary key="forwarding" domain={ domain } /> );
 	}
 
@@ -49,7 +88,11 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		! domain.expired
 	) {
 		buttonListItems.push(
-			<DomainContactDetailsSettingsSummary key="contact-details" domain={ domain } />
+			<DomainContactDetailsSettingsSummary
+				key="contact-details"
+				domain={ domain }
+				isDisabled={ isDisabled }
+			/>
 		);
 	}
 
@@ -63,7 +106,9 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
 		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC
 	) {
-		buttonListItems.push( <DomainSecuritySettingsSummary key="security" domain={ domain } /> );
+		buttonListItems.push(
+			<DomainSecuritySettingsSummary key="security" domain={ domain } isDisabled={ isDisabled } />
+		);
 	}
 
 	if (
@@ -73,7 +118,11 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		// TODO: Add property that shows or hides this option depending on the availability of the feature
 	) {
 		buttonListItems.push(
-			<DomainGlueRecordsSettingsSummary key="glue-records" domainName={ domain.domain } />
+			<DomainGlueRecordsSettingsSummary
+				key="glue-records"
+				domainName={ domain.domain }
+				isDisabled={ isDisabled }
+			/>
 		);
 	}
 

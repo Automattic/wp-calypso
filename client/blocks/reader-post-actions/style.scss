@@ -2,33 +2,81 @@
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	gap: 4px;
+	gap: 12px;
 	list-style: none;
 	margin: 0;
-	padding-top: 20px;
-	justify-content: space-between;
-
-	@include break-medium {
-		justify-content: flex-start;
-		gap: 24px;
-	}
+	padding: 16px 0;
+	border-top: 1px solid var( --color-neutral-5 );
+	border-bottom: 1px solid var( --color-neutral-5 );
 
 	.reader-post-actions__item {
 		display: flex;
 		align-items: center;
-		justify-content: flex-start;
-		gap: 10px;
-		flex-direction: column;
 
 		button {
+			margin: 0;
+			padding: 8px 16px;
+			background: var( --color-surface );
+			border: 1px solid var( --color-neutral-10 );
+			border-radius: 4px;
+			transition: all 0.2s ease;
+			cursor: pointer;
 			display: flex;
-			flex-direction: column;
+			flex-direction: row;
+			align-items: center;
+			gap: 8px;
 			height: auto;
-			min-width: 60px;
-			@include break-medium {
-				min-width: unset;
-				flex-direction: row;
+			min-height: 40px;
+			color: var( --color-text-subtle );
+
+			&:hover {
+				border-color: var( --color-neutral-20 );
+			}
+
+			svg {
+				flex-shrink: 0;
+				display: block;
+				opacity: 0.6;
+			}
+
+			&:hover svg {
+				opacity: 1;
 			}
 		}
+
+		// Override freshly-pressed button CSS custom property for consistent styling
+		.freshly-pressed {
+			--color-foreground: var( --color-text-subtle );
+
+			svg {
+				fill: var( --color-text-subtle );
+				opacity: 0.6;
+			}
+		}
+
+		// Hide label on smaller screens
+		.freshly-pressed__button-label {
+			display: none;
+
+			@include break-medium {
+				display: inline;
+			}
+		}
+
+		// Hover states
+		.freshly-pressed:hover {
+			color: var( --color-link );
+			--color-foreground: var( --color-link );
+
+			svg {
+				fill: var( --color-link );
+				opacity: 1;
+			}
+		}
+	}
+
+	// Float freshly-pressed button to the right
+	.reader-post-actions__item:has(.freshly-pressed) {
+		margin-inline-start: auto;
 	}
 }

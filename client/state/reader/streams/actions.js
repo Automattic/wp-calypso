@@ -11,6 +11,7 @@ import {
 	READER_STREAMS_NEW_POST_RECEIVE,
 	READER_STREAMS_CLEAR,
 	READER_STREAMS_REMOVE_ITEM,
+	READER_STREAMS_ERROR,
 } from 'calypso/state/reader/action-types';
 import { getStream } from 'calypso/state/reader/streams/selectors';
 import 'calypso/state/data-layer/wpcom/read/streams';
@@ -153,5 +154,19 @@ export function requestPaginatedStream( { streamKey, page = 1, perPage = 10, loc
 			perPage,
 			localeSlug,
 		},
+	};
+}
+
+/**
+ * Returns an action object to signal that an error was encountered
+ * when following a URL.
+ * @param  {Object} action Original action object
+ * @param  {Object} error Error object
+ * @returns {Object} Action
+ */
+export function receiveStreamError( action, error ) {
+	return {
+		type: READER_STREAMS_ERROR,
+		payload: { streamKey: action.payload.streamKey, error },
 	};
 }

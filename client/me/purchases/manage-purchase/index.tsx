@@ -54,6 +54,7 @@ import {
 import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
+import { hasTranslation } from '@wordpress/i18n';
 import {
 	column,
 	download,
@@ -66,7 +67,8 @@ import {
 } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Component, Fragment } from 'react';
+import moment from 'moment';
+import { Component, ComponentProps, Fragment, ReactElement } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
@@ -694,7 +696,7 @@ class ManagePurchase extends Component<
 		);
 	}
 
-	renderRefundText() {
+	renderActionDetails( nonRefundableTranslatedActionDetails?: string ) {
 		const { purchase, translate } = this.props;
 
 		if ( ! purchase ) {
@@ -703,12 +705,24 @@ class ManagePurchase extends Component<
 
 		// Hide if refund window has lapsed.
 		if ( ! hasAmountAvailableToRefund( purchase ) || ! purchase?.mostRecentRenewDate ) {
-			return;
+			if ( ! nonRefundableTranslatedActionDetails ) {
+				return null;
+			}
+			return this.renderActionDetailsText( nonRefundableTranslatedActionDetails, {
+				className: 'manage-purchase__refund-text',
+			} );
 		}
 
-		return (
-			<span className="manage-purchase__refund-text">{ translate( 'Refund available' ) }</span>
-		);
+		return this.renderActionDetailsText( translate( 'Refund available' ), {
+			className: 'manage-purchase__refund-text',
+		} );
+	}
+
+	renderActionDetailsText(
+		translatedActionDetails: string,
+		props?: ComponentProps< 'span' >
+	): ReactElement {
+		return <span { ...props }>{ translatedActionDetails }</span>;
 	}
 
 	renderRemovePurchaseNavItem() {
@@ -731,16 +745,16 @@ class ManagePurchase extends Component<
 		}
 
 		const isPlanPurchase = isPlan( purchase );
-		let text = translate( 'Remove subscription' );
+		let text = translate( 'Cancel subscription' );
 
 		if ( isPlanPurchase ) {
-			text = translate( 'Remove plan' );
+			text = translate( 'Cancel plan' );
 		} else if ( isDomainRegistration( purchase ) ) {
 			// 100-year domains cannot be removed by the user
 			if ( this.isHundredYearDomain( purchase ) ) {
 				return null;
 			}
-			text = translate( 'Remove domain' );
+			text = translate( 'Cancel domain subscription' );
 		}
 
 		return (
@@ -759,7 +773,13 @@ class ManagePurchase extends Component<
 			>
 				<Icon icon={ trash } className="card__icon" />
 				{ text }
-				{ this.renderRefundText() }
+				{ this.renderActionDetails(
+					String(
+						purchase.expiryStatus === 'expired'
+							? translate( 'Expired purchase will be removed.' )
+							: translate( 'Will expire immediately and be removed' )
+					)
+				) }
 			</RemovePurchase>
 		);
 	}
@@ -968,7 +988,13 @@ class ManagePurchase extends Component<
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				<Icon icon={ trash } className="card__icon" />
 				{ getCancelPurchaseNavText( purchase, translate ) }
-				{ this.renderRefundText() }
+				{ this.renderActionDetails(
+					String(
+						translate( 'Will remain active until %(expiryDate)s', {
+							args: { expiryDate: moment( purchase.expiryDate ).format( 'LL' ) },
+						} )
+					)
+				) }
 			</CompactCard>
 		);
 	}
@@ -992,7 +1018,7 @@ class ManagePurchase extends Component<
 			<CompactCard href={ link }>
 				<Icon icon={ download } className="card__icon" />
 				{ translate( 'Downgrade plan' ) }
-				{ this.renderRefundText() }
+				{ this.renderActionDetails() }
 			</CompactCard>
 		);
 	}
@@ -1817,16 +1843,17 @@ function getCancelPurchaseNavText(
 	purchase: Purchase,
 	translate: LocalizeProps[ 'translate' ]
 ): string {
-	let text = '';
-
 	if ( isDomainRegistration( purchase ) ) {
-		text = translate( 'Cancel domain' );
+		if ( hasTranslation( 'Cancel domain subscription' ) ) {
+			return translate( 'Cancel domain subscription' );
+		}
+		return translate( 'Cancel domain' );
 	} else if ( isPlan( purchase ) ) {
-		text = translate( 'Cancel plan' );
+		return translate( 'Cancel plan' );
 	} else if ( isSubscription( purchase ) ) {
-		text = translate( 'Cancel subscription' );
+		return translate( 'Cancel subscription' );
 	} else if ( isOneTimePurchase( purchase ) ) {
-		text = translate( 'Cancel' );
+		return translate( 'Cancel' );
 	}
-	return text;
+	return '';
 }

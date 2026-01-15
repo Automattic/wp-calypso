@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { useContext, useMemo } from 'react';
+import { useContext, useMemo, useEffect } from 'react';
 import { PaymentMethodProviderContext } from '../payment-method-provider-context';
 import type { PaymentMethod, TogglePaymentMethod } from '../../types';
 
@@ -80,4 +80,36 @@ export function useTogglePaymentMethod(): TogglePaymentMethod {
 			setDisabledPaymentMethodIds( [ ...disabledPaymentMethodIds, paymentMethodId ] );
 		}
 	};
+}
+
+export function useRegisterPaymentMethodLoading(
+	paymentMethodId: string,
+	isLoading: boolean
+): void {
+	const { loadingPaymentMethodIds, setLoadingPaymentMethodIds } = useContext(
+		PaymentMethodProviderContext
+	);
+
+	useEffect( () => {
+		if ( isLoading && ! loadingPaymentMethodIds.includes( paymentMethodId ) ) {
+			debug( 'Registering loading payment method', paymentMethodId );
+			setLoadingPaymentMethodIds( [ ...loadingPaymentMethodIds, paymentMethodId ] );
+		}
+
+		if ( ! isLoading && loadingPaymentMethodIds.includes( paymentMethodId ) ) {
+			debug( 'Unregistering loading payment method', paymentMethodId );
+			setLoadingPaymentMethodIds(
+				loadingPaymentMethodIds.filter( ( id ) => id !== paymentMethodId )
+			);
+		}
+	}, [ isLoading, paymentMethodId, loadingPaymentMethodIds, setLoadingPaymentMethodIds ] );
+}
+
+export function useArePaymentMethodsLoading( paymentMethodIds: string[] ): boolean {
+	const { loadingPaymentMethodIds } = useContext( PaymentMethodProviderContext );
+	const areMethodsLoading = paymentMethodIds.some( ( id ) =>
+		loadingPaymentMethodIds.includes( id )
+	);
+	debug( 'Checking if payment methods are loading', paymentMethodIds, areMethodsLoading );
+	return areMethodsLoading;
 }

@@ -3,9 +3,12 @@ import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg
 import PurchaseDetail from 'calypso/components/purchase-detail';
 
 export default localize( ( { selectedSite, translate } ) => {
-	const adSettingsUrl = selectedSite.jetpack
-		? '/marketing/traffic/' + selectedSite.slug
-		: '/earn/ads-settings/' + selectedSite.slug;
+	const isAtomic = selectedSite?.is_wpcom_atomic ?? false;
+	const isJetpack = selectedSite?.jetpack ?? false;
+	const adSettingsUrl =
+		! isJetpack || isAtomic
+			? '/earn/ads-earnings/' + selectedSite.slug
+			: '/marketing/traffic/' + selectedSite.slug;
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail

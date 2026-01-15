@@ -69,6 +69,8 @@ const SelectedNewPostDeliveryMethods = ( {
 
 type SiteRowProps = Reader.SiteSubscriptionsResponseItem & {
 	layout?: 'full' | 'compact';
+	style?: React.CSSProperties;
+	forwardedRef?: React.Ref< HTMLDivElement >;
 };
 
 const scrollToFirstRow = () => {
@@ -93,10 +95,11 @@ const SiteSubscriptionRow = ( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	is_gift,
-	isDeleted,
 	is_rss,
 	resubscribed,
 	layout = 'full',
+	style,
+	forwardedRef,
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -281,9 +284,15 @@ const SiteSubscriptionRow = ( {
 		recordRecommendToggle( newRecommendedState, { blog_id } );
 	};
 
-	return ! isDeleted ? (
-		<HStack as="li" alignment="center" className="row site-subscription-row" role="row">
-			<span className="title-cell" role="cell">
+	return (
+		<HStack
+			style={ style }
+			ref={ forwardedRef }
+			alignment="center"
+			className="row site-subscription-row"
+			role="row"
+		>
+			<div className="title-cell" role="cell">
 				<Link
 					className="title-icon"
 					href={ siteTitleUrl }
@@ -291,9 +300,9 @@ const SiteSubscriptionRow = ( {
 						recordSiteIconClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 					} }
 				>
-					<SiteIcon iconUrl={ site_icon } size={ 40 } alt={ name } />
+					<SiteIcon lazy iconUrl={ site_icon } size={ 40 } alt={ name } />
 				</Link>
-				<span className="title-column">
+				<div className="title-column">
 					<Link
 						className="title-name"
 						href={ siteTitleUrl }
@@ -332,16 +341,16 @@ const SiteSubscriptionRow = ( {
 					>
 						{ hostname }
 					</ExternalLink>
-				</span>
-			</span>
-			<span className="date-cell" role="cell">
+				</div>
+			</div>
+			<div className="date-cell" role="cell">
 				<TimeSince
 					date={
 						( date_subscribed.valueOf() ? date_subscribed : new Date( 0 ) ).toISOString?.() ??
 						date_subscribed
 					}
 				/>
-			</span>
+			</div>
 			{ isLoggedIn && ! isCompactLayout && (
 				<span className="new-posts-cell" role="cell">
 					<SelectedNewPostDeliveryMethods
@@ -351,7 +360,7 @@ const SiteSubscriptionRow = ( {
 				</span>
 			) }
 			{ isLoggedIn && ! isCompactLayout && (
-				<span className="new-comments-cell" role="cell">
+				<div className="new-comments-cell" role="cell">
 					<InfoPopover
 						position="top"
 						icon={ ! delivery_methods.email?.send_comments ? 'cross' : 'checkmark' }
@@ -365,13 +374,13 @@ const SiteSubscriptionRow = ( {
 									"You won't receive email notifications for new comments on this site."
 							  ) }
 					</InfoPopover>
-				</span>
+				</div>
 			) }
 			<span className="email-frequency-cell" role="cell">
 				{ deliveryFrequencyLabel }
 			</span>
 			{ isLoggedIn && ! isCompactLayout && (
-				<span className="recommend-cell" role="cell">
+				<div className="recommend-cell" role="cell">
 					<FormToggle
 						aria-label={ translate( 'Recommend this site to other users.' ) }
 						id={ `recommend-toggle-${ blog_id }` }
@@ -379,14 +388,14 @@ const SiteSubscriptionRow = ( {
 						onChange={ handleRecommendToggle }
 						disabled={ ! currentUserName || typeof currentUserName !== 'string' }
 					/>
-				</span>
+				</div>
 			) }
-			<span className="unsubscribe-action-cell" role="cell">
+			<div className="unsubscribe-action-cell" role="cell">
 				<Button variant="secondary" onClick={ onUnsubscribe }>
 					{ translate( 'Unsubscribe' ) }
 				</Button>
-			</span>
-			<span className="actions-cell" role="cell">
+			</div>
+			<div className="actions-cell" role="cell">
 				<SiteSettingsPopover
 					// NotifyMeOfNewPosts
 					notifyMeOfNewPosts={ !! delivery_methods.notification?.send_posts }
@@ -413,9 +422,9 @@ const SiteSubscriptionRow = ( {
 					feedId={ Number( feed_id ) }
 					subscriptionId={ Number( subscriptionId ) }
 				/>
-			</span>
+			</div>
 		</HStack>
-	) : null;
+	);
 };
 
 export default SiteSubscriptionRow;

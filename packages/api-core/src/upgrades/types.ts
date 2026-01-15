@@ -364,6 +364,14 @@ export interface Purchase {
 	 * a product directly to the cart, also set `upgrade_product_slug`.
 	 */
 	is_upgradable: boolean;
+
+	/**
+	 * True if deactivating this subscription will cause the site to be reverted
+	 * from an Atomic site to a Simple site. This is only true if the site is
+	 * currently on the Atomic architecture and removing this subscription would
+	 * leave the site with no other products that provide the ATOMIC feature.
+	 */
+	will_atomic_revert_after_removal: boolean;
 }
 
 export type RawPurchase = Purchase & {

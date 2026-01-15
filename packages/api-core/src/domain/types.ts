@@ -68,6 +68,7 @@ export interface Domain extends DomainSummary {
 	is_gravatar_domain: boolean;
 	is_gravatar_restricted_domain: boolean;
 	is_locked: boolean;
+	is_mapped_to_atomic_site: boolean;
 	is_pending_whois_update: boolean;
 	is_root_domain_registered_with_automattic: boolean;
 	is_redeemable: boolean;
@@ -102,4 +103,5 @@ export interface Domain extends DomainSummary {
 	transfer_start_date?: string;
 	last_transfer_error: string;
 	current_user_can_add_email: boolean;
+	tld_maintenance_end_time: number;
 }

@@ -48,6 +48,10 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	requestAllBlogsAccess: jest.fn(),
 } ) );
 
+jest.mock( 'smooch', () => ( {
+	__esModule: true,
+} ) );
+
 // Mock @automattic/agenttic-client to resolve dependency issues
 jest.mock(
 	'@automattic/agenttic-client',

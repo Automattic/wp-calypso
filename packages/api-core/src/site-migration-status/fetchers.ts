@@ -17,3 +17,16 @@ export async function fetchSiteMigrationZendeskTicket( siteId: number ): Promise
 
 	return ticket_id;
 }
+
+export interface SSHMigrationData {
+	migration_source_site_domain?: string;
+}
+
+export async function fetchSSHMigration( siteId: number ): Promise< SSHMigrationData > {
+	const response = await wpcom.req.get( {
+		path: `/sites/${ siteId }/ssh-migration`,
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	return response;
+}

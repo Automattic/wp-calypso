@@ -333,7 +333,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
-				page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
+				const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+					this.props.siteSlug,
+					this.props.purchaseId
+				);
+				const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
+				page.redirect( managePurchaseUrl ?? backupRedirect );
 			} else {
 				this.props.errorNotice( result.error );
 			}
@@ -679,15 +684,15 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					cancellationFeatures={ cancellationFeatures }
 				/>
 
-				{ ! cancellationFeatures.length
-					? this.renderProductRevertContent()
-					: this.renderPlanRevertContent() }
+				{ cancellationFeatures.length
+					? this.renderPlanRevertContent()
+					: this.renderProductRevertContent() }
 			</>
 		);
 	};
 
 	renderProductRevertContent = () => {
-		const { purchase, isDomainRegistrationPurchase } = this.props;
+		const { purchase, isDomainRegistrationPurchase, atomicTransfer } = this.props;
 		const purchaseName = getName( purchase );
 		const plan = getPlan( purchase?.productSlug );
 		const planDescription = plan?.getPlanCancellationDescription?.();
@@ -701,6 +706,16 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						<div className="cancel-purchase__plan-description">{ planDescription }</div>
 					) }
 					<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
+
+					<AtomicRevertChanges
+						atomicTransfer={ atomicTransfer }
+						purchase={ purchase }
+						onConfirmationChange={ this.onAtomicRevertConfirmationChange }
+						needsAtomicRevertConfirmation={ Boolean(
+							atomicTransfer?.created_at && ! isRefundable( purchase )
+						) }
+						isLoading={ this.state.isLoading }
+					/>
 				</CompactCard>
 
 				<CompactCard className="cancel-purchase__footer">

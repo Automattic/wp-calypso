@@ -100,7 +100,11 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 						</HStack>
 					</HStack>
 					<Tabs selectedTabId={ filterName } onSelect={ handleSelect }>
-						<Tabs.TabList>
+						<Tabs.TabList
+							style={ {
+								maxWidth: '100%',
+							} }
+						>
 							{ NOTIFICATION_TABS.map( ( { name, title } ) => (
 								<Tabs.Tab
 									key={ name }

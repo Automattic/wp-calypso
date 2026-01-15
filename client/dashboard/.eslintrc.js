@@ -43,6 +43,7 @@ module.exports = {
 							'!@automattic/api-queries',
 							'!@automattic/calypso-analytics',
 							'!@automattic/calypso-config',
+							'!@automattic/calypso-sentry',
 							'!@automattic/calypso-support-session',
 							'!@automattic/charts',
 							'!@automattic/components',
@@ -54,6 +55,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							'!@automattic/domain-search',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/generate-password',
@@ -69,6 +71,7 @@ module.exports = {
 							'!@automattic/shopping-cart',
 							'!@automattic/ui',
 							'!@automattic/urls',
+							'!@automattic/js-utils',
 							'!@automattic/viewport',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.

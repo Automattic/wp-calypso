@@ -5,6 +5,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
@@ -67,6 +68,7 @@ export default function ContactForm( { site, settings }: { site: Site; settings:
 							) }
 							level={ 3 }
 						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< SiteSettings >
 							data={ formData }
 							fields={ fields }

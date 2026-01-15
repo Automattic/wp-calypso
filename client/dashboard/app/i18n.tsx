@@ -96,7 +96,16 @@ function loadCSS(
 			setTimeout( () => resolve( link ), 500 );
 		}
 
-		document.head.insertBefore( link, currentLink ? currentLink.nextSibling : null );
+		try {
+			const beforeNode = currentLink?.nextSibling;
+			if ( beforeNode?.parentElement === document.head ) {
+				document.head.insertBefore( link, beforeNode );
+			} else {
+				document.head.appendChild( link );
+			}
+		} catch {
+			document.head.appendChild( link );
+		}
 	} );
 }
 
@@ -124,7 +133,9 @@ async function switchWebpackCSS( isRTL: boolean ) {
 
 		if ( newLink ) {
 			newLink.setAttribute( 'data-webpack', 'true' );
-			currentLink.parentElement?.removeChild( currentLink );
+			if ( currentLink.isConnected ) {
+				currentLink.parentElement?.removeChild( currentLink );
+			}
 		}
 	}
 }

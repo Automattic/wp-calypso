@@ -21,6 +21,7 @@ class LikeButton extends PureComponent {
 		slug: PropTypes.string,
 		icon: PropTypes.object,
 		defaultLabel: PropTypes.string,
+		showTooltip: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -34,6 +35,7 @@ class LikeButton extends PureComponent {
 		slug: null,
 		icon: null,
 		defaultLabel: '',
+		showTooltip: false,
 	};
 
 	constructor( props ) {
@@ -62,6 +64,7 @@ class LikeButton extends PureComponent {
 			onMouseLeave,
 			icon,
 			defaultLabel,
+			showTooltip,
 		} = this.props;
 		const showLikeCount = likeCount > 0 || showZeroCount;
 		const isLink = containerTag === 'a';
@@ -72,6 +75,7 @@ class LikeButton extends PureComponent {
 			'is-animated': this.props.animateLike,
 			'has-count': showLikeCount,
 			'has-label': this.props.showLabel,
+			tooltip: showTooltip,
 		};
 
 		if ( this.props.liked ) {
@@ -98,6 +102,7 @@ class LikeButton extends PureComponent {
 					onMouseEnter,
 					onMouseLeave,
 					'aria-label': this.props.liked ? translate( 'Liked' ) : translate( 'Like' ),
+					'data-tooltip': showTooltip ? translate( 'Like' ) : undefined,
 				},
 				( prop ) => prop === null
 			),

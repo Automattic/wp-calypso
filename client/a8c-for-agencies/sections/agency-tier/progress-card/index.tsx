@@ -16,15 +16,16 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentAgencyTier from '../lib/get-current-agency-tier';
 import InfluencedRevenue from '../overview-content/influenced-revenue';
 import type { AgencyTierType } from '../overview-content/types';
+import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 
 export default function AgencyTierProgressCard( {
 	currentAgencyTierId,
 	influencedRevenue,
-	isEarlyAccess,
+	tierStatus,
 }: {
 	currentAgencyTierId?: AgencyTierType;
 	influencedRevenue: number;
-	isEarlyAccess: boolean;
+	tierStatus?: AgencyTierStatus;
 } ) {
 	const dispatch = useDispatch();
 
@@ -50,19 +51,26 @@ export default function AgencyTierProgressCard( {
 						<Heading level={ 4 } weight={ 500 }>
 							{ __( 'Your agency tier and benefits' ) }
 						</Heading>
-						<VStack spacing={ 3 }>
-							{ isEarlyAccess && (
+						<VStack spacing={ 1 }>
+							{ tierStatus === 'early_access' && (
 								<Badge
-									style={ { width: 'fit-content' } }
+									style={ { width: 'fit-content', marginBottom: '4px' } }
 									intent="default"
 									children={ __( 'Early access' ) }
+								/>
+							) }
+							{ tierStatus === 'tier_protected' && (
+								<Badge
+									style={ { width: 'fit-content', marginBottom: '4px' } }
+									intent="default"
+									children={ __( 'Tier-level protected' ) }
 								/>
 							) }
 							<Heading level={ 3 } weight={ 500 }>
 								{ currentTier.name }
 							</Heading>
 							<Text color="#757575">
-								{ isEarlyAccess
+								{ tierStatus === 'early_access'
 									? sprintf(
 											/* translators: %s is the tier name */
 											'You’ve been given early access to %s tier benefits. Keep up the great work!',
@@ -70,20 +78,20 @@ export default function AgencyTierProgressCard( {
 									  )
 									: currentTier.progressCardDescription }
 							</Text>
-							<InfluencedRevenue
-								currentAgencyTierId={ currentAgencyTierId }
-								totalInfluencedRevenue={ influencedRevenue }
-							/>
-							<ButtonStack justify="flex-start">
-								<Button
-									onClick={ handleExploreTiersAndBenefits }
-									href={ A4A_AGENCY_TIER_LINK }
-									variant="secondary"
-								>
-									{ __( 'Explore Tiers and benefits' ) }
-								</Button>
-							</ButtonStack>
 						</VStack>
+						<InfluencedRevenue
+							currentAgencyTierId={ currentAgencyTierId }
+							totalInfluencedRevenue={ influencedRevenue }
+						/>
+						<ButtonStack justify="flex-start">
+							<Button
+								onClick={ handleExploreTiersAndBenefits }
+								href={ A4A_AGENCY_TIER_LINK }
+								variant="secondary"
+							>
+								{ __( 'Explore Tiers and benefits' ) }
+							</Button>
+						</ButtonStack>
 					</VStack>
 				</CardBody>
 			</Card>

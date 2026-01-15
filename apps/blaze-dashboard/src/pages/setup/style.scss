@@ -39,7 +39,6 @@
 		margin-top: 30px;
 		min-height: calc(100vh - 180px); // the size of the top bar and footer
 
-
 		.promote-post-i2__setup-icon {
 			margin: 95px 0 30px;
 
@@ -103,6 +102,7 @@
 					font-weight: 700;
 					margin: 5px 0 9px;
 				}
+
 				button {
 					margin-bottom: 1.5rem;
 				}
@@ -120,6 +120,322 @@
 				width: 32px;
 			}
 
+		}
+	}
+}
+
+.blaze-disconnected-site {
+	width: 100%;
+	max-width: 1040px;
+	margin: 32px auto 0;
+	padding: 0;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+
+	.blaze-disconnected-site__section {
+		background-color: var(--studio-white);
+		color: var(--color-text);
+		position: relative;
+		border-radius: 8px;
+		padding: 32px 0;
+		margin-top: 32px;
+
+		@media (max-width: 768px) {
+			padding: 24px;
+		}
+
+		.blaze-disconnected-site__features-list {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 16px 32px;
+			list-style: none;
+			margin: 0 0 24px;
+			max-width: 520px;
+			padding: 0;
+			font-family: Recoleta, Georgia, 'Times New Roman', serif;
+			font-size: 1rem;
+
+			@media (max-width: 640px) {
+				grid-template-columns: 1fr;
+				gap: 12px;
+
+				li {
+					margin: 0 auto 12px;
+				}
+			}
+
+			li {
+				font-weight: 600;
+				text-align: start;
+				position: relative;
+				padding-inline-start: 20px;
+
+				&::before {
+					content: '•';
+					color: #f47f1b;
+					position: absolute;
+					inset-inline-start: 0;
+					font-weight: 700;
+				}
+			}
+		}
+
+		.blaze-disconnected-site__features-description {
+			color: var(--studio-gray-80);
+			font-size: 15px;
+			line-height: 1.7;
+			max-width: 600px;
+		}
+
+		.blaze-disconnected-site__section-title {
+			font-size: 1.5rem;
+			font-weight: 400;
+			margin: 0 0 16px;
+			text-wrap: balance;
+			font-family: Recoleta, Georgia, 'Times New Roman', serif;
+		}
+
+		.blaze-disconnected-site__section-description {
+			color: var(--studio-gray-80);
+			font-size: 15px;
+			line-height: 1.7;
+			margin: 0 auto;
+			max-width: 600px;
+
+			a {
+				color: var(--color-link);
+				text-decoration: underline;
+
+				&:hover {
+
+					text-decoration: none;
+				}
+			}
+		}
+	}
+
+	.is-primary {
+		background-color: var(--studio-black);
+		border-color: var(--studio-black);
+		color: var(--studio-white);
+
+		&:hover,
+		&:focus,
+		&:active {
+			background-color: var(--studio-black);
+			border-color: var(--studio-black);
+			color: var(--studio-white);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--studio-black);
+			outline-offset: 2px;
+		}
+	}
+
+	.blaze-disconnected-site__hero {
+		background-color: #f4ede7;
+		padding: 64px 48px;
+		border-radius: 0;
+		margin-top: 0;
+
+		.blaze-disconnected-site__hero-content {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			align-items: flex-start;
+			text-align: left;
+			max-width: 1060px;
+			margin: 0 auto;
+		}
+
+		.blaze-disconnected-site__hero-body {
+			max-width: 900px;
+		}
+
+		.blaze-disconnected-site__title {
+			font-family: Recoleta, Georgia, 'Times New Roman', serif;
+			font-size: 3.375rem;
+			line-height: 1.2;
+			font-style: normal;
+			font-weight: 400;
+			margin: 0 0 24px;
+			text-wrap: balance;
+
+			@media (max-width: 768px) {
+				font-size: 40px;
+				line-height: 46px;
+			}
+		}
+
+		// Inline fire logo inside the H1
+		.blaze-title-logo {
+			display: inline-flex;
+			vertical-align: middle;
+			margin-left: 8px;
+		}
+
+		.blaze-title-logo__icon {
+			height: 36px;
+			width: 36px;
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		.blaze-disconnected-site__description {
+			font-size: 15px;
+			line-height: 1.7;
+			margin-bottom: 16px;
+		}
+
+		.is-primary {
+			margin-top: 8px; // spacing specific to hero section
+			font-size: rem(18px);
+			padding: 4px 16px;
+		}
+	}
+
+	.blaze-disconnected-site__connect {
+		padding: 32px;
+
+		.blaze-disconnected-site__connect-content {
+			display: flex;
+			flex-direction: row;
+			gap: 20px;
+			align-items: center;
+			text-align: start;
+
+			@media (max-width: 640px) {
+				flex-direction: column;
+				text-align: center;
+			}
+		}
+
+		.blaze-disconnected-site__connect-icon {
+			flex: 0 0 150px;
+			min-width: 150px;
+
+			@media (max-width: 640px) {
+				margin: 0 auto; // center icon in stacked layout
+			}
+
+			svg,
+			img {
+				width: 100%;
+				height: auto;
+				max-width: 150px;
+			}
+		}
+
+		.blaze-disconnected-site__connect-text {
+			flex: 1;
+		}
+
+		.blaze-disconnected-site__connect-title {
+			font-size: 1.5rem;
+			font-weight: 400;
+			margin: 0 0 9px;
+			font-family: Recoleta, Georgia, 'Times New Roman', serif;
+		}
+
+		.blaze-disconnected-site__connect-description {
+			font-size: 15px;
+			line-height: 1.7;
+			margin: 0 0 16px;
+		}
+
+		.is-primary {
+			margin-bottom: 0; // spacing specific to connect section
+		}
+	}
+
+	// Features section: image left, content right
+	.blaze-disconnected-site__features {
+		display: flex;
+		flex-direction: row;
+		gap: 24px;
+		align-items: center;
+		text-align: start;
+		margin-top: 0;
+		border-radius: 0 0 8px 8px;
+
+		@media (max-width: 840px) {
+			flex-direction: column;
+			text-align: center;
+		}
+
+		.blaze-disconnected-site__features-graphic {
+			flex: 1 1 40%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			img {
+				width: 100%;
+				height: auto;
+				max-width: 360px;
+			}
+		}
+
+		.blaze-disconnected-site__features-body {
+			margin-inline: 0;
+		}
+	}
+
+	// Steps section (three cards on grey background)
+	.blaze-disconnected-site__steps {
+		border-radius: 0;
+		padding: 0;
+
+		.blaze-disconnected-site__steps-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 24px;
+			max-width: 1060px;
+			margin: 0 auto;
+
+			@media (max-width: 980px) {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		.blaze-disconnected-site__step-card {
+			background: var(--studio-white);
+			border-radius: 8px;
+			padding: 28px;
+			text-align: left;
+		}
+
+		.blaze-disconnected-site__step-card-number {
+			width: 22px;
+			height: 22px;
+			border-radius: 50%;
+			border: 2px solid var(--studio-gray-100);
+			color: var(--studio-gray-100);
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 600;
+			line-height: 1;
+			margin-bottom: 20px;
+			font-size: rem(12px)
+		}
+
+		.blaze-disconnected-site__step-card-title {
+			font-family: Recoleta, Georgia, 'Times New Roman', serif;
+			font-size: 1.5rem;
+			font-weight: 400;
+			color: var(--studio-gray-100);
+			margin: 0 0 10px;
+		}
+
+		.blaze-disconnected-site__step-card-text {
+			color: var(--studio-gray-80);
+			font-size: 15px;
+			line-height: 1.7;
+			margin: 0;
 		}
 	}
 }

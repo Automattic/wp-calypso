@@ -10,6 +10,9 @@ type SelectCardCheckboxProps = {
 	checked: boolean;
 };
 
+/**
+ * @deprecated Use SelectCardCheckboxV2 instead because it triggers onChange event twice and has accessibility issues
+ */
 const SelectCardCheckbox = ( {
 	children,
 	className,

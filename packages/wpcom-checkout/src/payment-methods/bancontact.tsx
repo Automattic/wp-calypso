@@ -1,119 +1,76 @@
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode } from 'react';
+import { useEffect, useState, Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
-import type {
-	PaymentMethodStore,
-	StoreSelectors,
-	StoreSelectorsWithState,
-	StoreActions,
-	StoreState,
-} from '../payment-method-store';
-import type { AnyAction } from '../types';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'wpcom-checkout:bancontact-payment-method' );
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
+interface BancontactPaymentMethodStateShape {
+	customerName: string;
+}
 
-type NounsInStore = 'customerName';
-type BancontactStore = PaymentMethodStore< NounsInStore >;
+type StateSubscriber = () => void;
 
-const actions: StoreActions< NounsInStore > = {
-	changeCustomerName( payload ) {
-		return { type: 'CUSTOMER_NAME_SET', payload };
-	},
-};
+class BancontactPaymentMethodState {
+	data: BancontactPaymentMethodStateShape = {
+		customerName: '',
+	};
 
-const selectors: StoreSelectorsWithState< NounsInStore > = {
-	getCustomerName( state ) {
-		return state.customerName;
-	},
-};
+	subscribers: StateSubscriber[] = [];
 
-export function createBancontactPaymentMethodStore(): BancontactStore {
-	debug( 'creating a new bancontact payment method store' );
-	const store = registerStore( 'bancontact', {
-		reducer(
-			state: StoreState< NounsInStore > = {
-				customerName: { value: '', isTouched: false },
-			},
-			action: AnyAction
-		): StoreState< NounsInStore > {
-			switch ( action.type ) {
-				case 'CUSTOMER_NAME_SET':
-					return { ...state, customerName: { value: action.payload, isTouched: true } };
-			}
-			return state;
-		},
-		actions,
-		selectors,
-	} );
+	isTouched: boolean = false;
 
-	return store;
+	change = ( value: string ): void => {
+		this.data.customerName = value;
+		this.isTouched = true;
+		this.notifySubscribers();
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
+	};
 }
 
 export function createBancontactMethod( {
-	store,
 	submitButtonContent,
 }: {
-	store: BancontactStore;
 	submitButtonContent: ReactNode;
 } ): PaymentMethod {
+	const state = new BancontactPaymentMethodState();
+
 	return {
 		id: 'bancontact',
 		hasRequiredFields: true,
 		paymentProcessorId: 'bancontact',
 		label: <BancontactLabel />,
-		activeContent: <BancontactFields />,
-		inactiveContent: <BancontactSummary />,
+		activeContent: <BancontactFields state={ state } />,
+		inactiveContent: <BancontactSummary state={ state } />,
 		submitButton: (
-			<BancontactPayButton store={ store } submitButtonContent={ submitButtonContent } />
+			<BancontactPayButton state={ state } submitButtonContent={ submitButtonContent } />
 		),
 		getAriaLabel: () => 'Bancontact',
 	};
 }
 
-function useCustomerName() {
-	const { customerName } = useSelect( ( select ) => {
-		const store = select( 'bancontact' ) as StoreSelectors< NounsInStore >;
-		return {
-			customerName: store.getCustomerName(),
-		};
-	}, [] );
-
-	return customerName;
-}
-
-function BancontactFields() {
-	const { __ } = useI18n();
-
-	const customerName = useCustomerName();
-	const { changeCustomerName } = useDispatch( 'bancontact' );
-	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== FormStatus.READY;
-
-	return (
-		<BancontactFormWrapper>
-			<BancontactField
-				id="bancontact-cardholder-name"
-				type="Text"
-				autoComplete="cc-name"
-				label={ __( 'Your name' ) }
-				value={ customerName.value }
-				onChange={ changeCustomerName }
-				isError={ customerName.isTouched && customerName.value.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
-			/>
-		</BancontactFormWrapper>
-	);
+function useSubscribeToEventEmitter( state: BancontactPaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
 }
 
 const BancontactFormWrapper = styled.div`
@@ -145,19 +102,45 @@ const BancontactField = styled( Field )`
 	}
 `;
 
+function BancontactFields( { state }: { state: BancontactPaymentMethodState } ) {
+	const { __ } = useI18n();
+	useSubscribeToEventEmitter( state );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+
+	return (
+		<BancontactFormWrapper>
+			<BancontactField
+				id="bancontact-cardholder-name"
+				type="Text"
+				autoComplete="cc-name"
+				label={ __( 'Your name' ) }
+				value={ state.data.customerName }
+				onChange={ state.change }
+				isError={ state.isTouched && state.data.customerName.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+		</BancontactFormWrapper>
+	);
+}
+
 function BancontactPayButton( {
 	disabled,
 	onClick,
-	store,
+	state,
 	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
-	store: BancontactStore;
+	state: BancontactPaymentMethodState;
 	submitButtonContent: ReactNode;
 } ) {
 	const { formStatus } = useFormStatus();
-	const customerName = useCustomerName();
+
+	// This must be typed as optional because it's injected by cloning the
+	// element in CheckoutSubmitButton, but the uncloned element does not have
+	// this prop yet.
 	if ( ! onClick ) {
 		throw new Error(
 			'Missing onClick prop; BancontactPayButton must be used as a payment button in CheckoutSubmitButton'
@@ -168,10 +151,10 @@ function BancontactPayButton( {
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isFormValid( store ) ) {
+				if ( isFormValid( state ) ) {
 					debug( 'submitting bancontact payment' );
 					onClick( {
-						name: customerName.value,
+						name: state.data.customerName,
 					} );
 				}
 			} }
@@ -184,12 +167,10 @@ function BancontactPayButton( {
 	);
 }
 
-function isFormValid( store: BancontactStore ) {
-	const customerName = selectors.getCustomerName( store.getState() );
-
-	if ( ! customerName.value.length ) {
+function isFormValid( state: BancontactPaymentMethodState ) {
+	if ( ! state.data.customerName.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( actions.changeCustomerName( '' ) );
+		state.change( '' );
 		return false;
 	}
 	return true;
@@ -225,12 +206,12 @@ function BancontactLogo() {
 	);
 }
 
-function BancontactSummary() {
-	const customerName = useCustomerName();
+function BancontactSummary( { state }: { state: BancontactPaymentMethodState } ) {
+	useSubscribeToEventEmitter( state );
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName.value }</SummaryLine>
+			<SummaryLine>{ state.data.customerName }</SummaryLine>
 		</SummaryDetails>
 	);
 }

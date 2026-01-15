@@ -24,6 +24,7 @@ export interface CardStoreState {
 	cardDataComplete: CardDataCompleteState;
 	useForAllSubscriptions: boolean;
 	useForBusiness: boolean | undefined;
+	formSubmitAttempted: boolean;
 }
 
 export type CardStoreType = CardStore< CardStoreState, CardStoreAction >;
@@ -42,6 +43,7 @@ export type CardStoreAction =
 	| { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET'; payload: boolean }
 	| { type: 'USE_FOR_BUSINESS_SET'; payload: boolean }
 	| { type: 'TOUCH_ALL_FIELDS' }
+	| { type: 'FORM_SUBMIT_ATTEMPTED_SET'; payload: boolean }
 	| { type: 'RESET_FIELDS' };
 
 export type StripeFieldChangeInput =

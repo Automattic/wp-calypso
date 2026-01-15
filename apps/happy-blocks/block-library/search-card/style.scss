@@ -241,6 +241,25 @@ $breakpoint-desktop: 1440px; //Desktop size.
 
 		}
 
+		&.is-404-page {
+			padding-bottom: 120px;
+
+			@media ( max-width: $breakpoint-mobile ) {
+				padding-bottom: 52px;
+			}
+
+			h2 {
+				margin-bottom: 4px;
+			}
+
+			.subheading {
+				margin-top: 0;
+				margin-bottom: 24px;
+				color: #646970;
+				line-height: 20px;
+			}
+		}
+
 		.input-wrapper {
 			width: 570px;
 			position: relative;

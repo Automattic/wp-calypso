@@ -180,6 +180,8 @@ export type UseAction = ( {
 	planTitle,
 	priceString,
 	selectedStorageAddOn,
+	pricing,
+	isMonthlyPlan,
 }: {
 	availableForPurchase?: boolean;
 	billingPeriod?: PlanPricing[ 'billPeriod' ];
@@ -192,6 +194,8 @@ export type UseAction = ( {
 	planTitle?: TranslateResult;
 	priceString?: string;
 	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+	pricing?: Plans.PricingMetaForGridPlan | null;
+	isMonthlyPlan?: boolean;
 } ) => GridAction;
 
 export type GridContextProps = {
@@ -252,6 +256,10 @@ export type GridContextProps = {
 	 * Enable simplified billing description
 	 */
 	showSimplifiedBillingDescription?: boolean;
+	/**
+	 * If, and how to present increased renewal pricing (null, 'crossed_price', 'no_crossed_price')
+	 */
+	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 };
 
 export type ComparisonGridExternalProps = Omit<

@@ -18,3 +18,16 @@ declare global {
 		_currentSiteId: number;
 	}
 }
+
+export type Location = {
+	pathname: string;
+	search?: string;
+	hash?: string;
+	state?: unknown;
+	key?: string;
+};
+
+export interface APIFetchOptions {
+	global: boolean;
+	path: string;
+}

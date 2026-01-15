@@ -17,6 +17,7 @@ class EnvVariables implements SupportedEnvVariables {
 		CALYPSO_BASE_URL: 'http://calypso.localhost:3000',
 		COBLOCKS_EDGE: false,
 		COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
+		DASHBOARD_BASE_URL: 'http://my.localhost:3000',
 		GUTENBERG_EDGE: false,
 		GUTENBERG_NIGHTLY: false,
 		HEADLESS: false,
@@ -217,10 +218,18 @@ class EnvVariables implements SupportedEnvVariables {
 
 	/**
 	 * Returns the Calypso base URL.
-	 * @example 'http://localhost:3000'
+	 * @example 'http://calypso.localhost:3000'
 	 */
 	get CALYPSO_BASE_URL(): string {
 		return this.getValidatedUrlEnvVar( 'CALYPSO_BASE_URL' );
+	}
+
+	/**
+	 * Returns the Dashboard base URL.
+	 * @example 'http://my.localhost:3000'
+	 */
+	get DASHBOARD_BASE_URL(): string {
+		return this.getValidatedUrlEnvVar( 'DASHBOARD_BASE_URL' );
 	}
 
 	/**

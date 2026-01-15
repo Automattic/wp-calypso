@@ -518,3 +518,19 @@ export const FEATURE_CONNECT_ANALYTICS = 'feature-connect-analytics';
 export const FEATURE_LIMITED_SITE_ACTIVITY_LOG = 'feature-limited-site-activity-log';
 export const FEATURE_BIG_SKY_WEBSITE_BUILDER = 'feature-big-sky-website-builder';
 export const FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT = 'feature-big-sky-website-builder-checkout';
+
+// AI features for plan differentiators experiment
+export const FEATURE_AI_WEBSITE_BUILDER = 'feature-ai-website-builder';
+export const FEATURE_AI_WEBSITE_BUILDER_LIMITED = 'feature-ai-website-builder-limited';
+export const FEATURE_AI_WRITER_DESIGNER = 'feature-ai-writer-designer';
+export const FEATURE_AI_WRITER_DESIGNER_LIMITED = 'feature-ai-writer-designer-limited';
+
+// "Everything in X, plus:" features for stacked variants
+export const FEATURE_EVERYTHING_IN_FREE_PLUS = 'feature-everything-in-free-plus';
+export const FEATURE_EVERYTHING_IN_PERSONAL_PLUS = 'feature-everything-in-personal-plus';
+export const FEATURE_EVERYTHING_IN_PREMIUM_PLUS = 'feature-everything-in-premium-plus';
+export const FEATURE_EVERYTHING_IN_BUSINESS_PLUS = 'feature-everything-in-business-plus';
+
+// Additional features for plan differentiators experiment
+export const FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR = 'feature-professional-email-free-year';
+export const FEATURE_BLAZE_AD_CREDITS = 'feature-blaze-ad-credits';

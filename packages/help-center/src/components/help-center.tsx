@@ -2,12 +2,10 @@
 /**
  * External Dependencies
  */
-import UnifiedAIAgent from '@automattic/agents-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
-import { createPortal, useEffect, useRef } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { createPortal, useEffect, useState } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
@@ -17,6 +15,7 @@ import {
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
 import { useShouldUseUnifiedAgent } from '../hooks';
+import { useGetSupportInteractions } from '../hooks/use-get-support-interactions';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -29,27 +28,16 @@ const HelpCenter: React.FC< Container > = ( {
 	hidden,
 	currentRoute = window.location.pathname + window.location.search + window.location.hash,
 } ) => {
-	// Create portal parent and append to DOM immediately (only once)
-	const portalParentRef = useRef< HTMLDivElement >();
-	if ( ! portalParentRef.current ) {
-		const div = document.createElement( 'div' );
-		div.classList.add( 'help-center' );
-		div.setAttribute( 'role', 'dialog' );
-		div.setAttribute( 'aria-modal', 'true' );
-		div.setAttribute( 'aria-labelledby', 'header-text' );
-		document.body.appendChild( div );
-		portalParentRef.current = div;
-	}
-	const portalParent = portalParentRef.current;
-
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+	const [ container, setContainer ] = useState< HTMLDivElement >();
 
 	const isHelpCenterShown = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
-	const { currentUser, site, sectionName } = useHelpCenterContext();
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+	const { currentUser } = useHelpCenterContext();
+	const { setCurrentUser } = useDispatch( HELP_CENTER_STORE );
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
 	const hasOpenZendeskConversations =
@@ -60,31 +48,34 @@ const HelpCenter: React.FC< Container > = ( {
 	useEffect( () => {
 		if ( currentUser ) {
 			initializeAnalytics( currentUser, null );
+			setCurrentUser( currentUser );
 		}
-	}, [ currentUser ] );
+	}, [ currentUser, setCurrentUser ] );
 
-	// Cleanup: remove portal parent when component unmounts
+	// Create portal container on mount, cleanup on unmount
 	useEffect( () => {
+		let div: HTMLDivElement | undefined;
+		if ( ! shouldUseUnifiedAgent ) {
+			div = document.createElement( 'div' );
+			div.classList.add( 'help-center' );
+			div.setAttribute( 'role', 'dialog' );
+			div.setAttribute( 'aria-modal', 'true' );
+			div.setAttribute( 'aria-labelledby', 'header-text' );
+			document.body.appendChild( div );
+			setContainer( div );
+		}
+
 		return () => {
-			if ( portalParent && portalParent.parentNode ) {
-				document.body.removeChild( portalParent );
+			if ( div ) {
+				document.body.removeChild( div );
 			}
 		};
-	}, [ portalParent ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
-	// Render unified agent if flag is enabled
-	if ( shouldUseUnifiedAgent ) {
-		return createPortal(
-			<UnifiedAIAgent
-				containerSelector=".help-center"
-				currentUser={ currentUser }
-				site={ site }
-				sectionName={ sectionName }
-				handleClose={ handleClose }
-				defaultOpen
-			/>,
-			portalParent
-		);
+	// If unified agent flag is enabled, things will be handled by agents-manager app
+	if ( ! container || shouldUseUnifiedAgent ) {
+		return null;
 	}
 
 	// Default: render traditional help center
@@ -99,7 +90,7 @@ const HelpCenter: React.FC< Container > = ( {
 				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
 			) }
 		</>,
-		portalParent
+		container
 	);
 };
 

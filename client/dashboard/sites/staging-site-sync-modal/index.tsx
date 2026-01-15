@@ -405,7 +405,11 @@ function StagingSiteSyncModalInner( {
 						a: <ExternalLink href={ `/activity-log/${ targetSiteSlug }` } children={ null } />,
 					} ) }
 				</Text>
-				<HStack spacing={ 4 } alignment="left" style={ { height: '40px' } }>
+				<HStack
+					spacing={ 4 }
+					alignment="left"
+					style={ { height: '40px', marginInlineStart: '-3px' } }
+				>
 					<EnvironmentLabel environmentType={ sourceEnvironment } siteTitle={ sourceSiteTitle } />
 					<DirectionArrow />
 					<EnvironmentLabel environmentType={ targetEnvironment } siteTitle={ targetSiteTitle } />
@@ -490,6 +494,7 @@ function StagingSiteSyncModalInner( {
 								<VStack spacing={ 4 }>
 									<HStack>
 										<FileBrowser
+											key={ rewindId }
 											rewindId={ rewindId }
 											siteId={ querySiteId }
 											siteSlug={ querySiteSlug as string }

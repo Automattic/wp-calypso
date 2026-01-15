@@ -12,9 +12,7 @@ export const StudioCard = () => {
 	return (
 		<Card className="developer-features-list__item">
 			<div className="developer-features-list__item-tag">{ translate( 'New' ) }</div>
-			<div className="developer-features-list__item-title">
-				{ translate( 'Studio by WordPress.com' ) }
-			</div>
+			<div className="developer-features-list__item-title">{ translate( 'WordPress Studio' ) }</div>
 			<div className="developer-features-list__item-description">
 				{ translate(
 					'A fast, free way to develop locally with WordPress. Share your local sites with clients or colleagues and keep your local development process smooth and simple.'

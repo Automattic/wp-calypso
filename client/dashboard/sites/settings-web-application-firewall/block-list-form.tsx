@@ -5,6 +5,7 @@ import { TextareaControl, __experimentalVStack as VStack, Button } from '@wordpr
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
@@ -100,6 +101,7 @@ export default function BlockListForm( { site }: { site: Site } ) {
 							) }
 							level={ 3 }
 						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< JetpackSettings >
 							data={ formData }
 							fields={ fields }

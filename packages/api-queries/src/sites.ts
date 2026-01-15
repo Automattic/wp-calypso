@@ -12,3 +12,5 @@ export const sitesQuery = (
 		queryKey: [ ...sitesQueryKey, siteFilters, fetchSitesOptions ],
 		queryFn: () => fetchSites( siteFilters, fetchSitesOptions ),
 	} );
+
+export const allSitesQuery = () => sitesQuery( 'all' );

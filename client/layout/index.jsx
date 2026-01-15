@@ -36,16 +36,17 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -53,9 +54,9 @@ import {
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
+import AgentsManagerLoader from './agents-manager-loader';
 import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
-import GlobalNotifications from './global-notifications';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
@@ -127,6 +128,7 @@ class Layout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
+		beforePrimary: PropTypes.element,
 		focus: PropTypes.object,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
@@ -176,6 +178,10 @@ class Layout extends Component {
 
 		if ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) {
 			return null;
+		}
+
+		if ( this.props.isMSDEnabledForReader ) {
+			return <AsyncLoad require="calypso/reader/components/header" placeholder={ null } />;
 		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
@@ -231,6 +237,7 @@ class Layout extends Component {
 			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 			'is-domain-for-gravatar': this.props.isGravatarDomain,
+			'is-reader-msd-enabled': this.props.isMSDEnabledForReader,
 		} );
 
 		const optionalBodyProps = () => {
@@ -264,7 +271,9 @@ class Layout extends Component {
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
+					source={ isA8CForAgencies() ? 'a4a' : 'wpcom' }
 				/>
+				<AgentsManagerLoader sectionName={ this.props.sectionName } />
 				{ ! shouldDisableSidebarScrollSynchronizer && (
 					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				) }
@@ -318,6 +327,7 @@ class Layout extends Component {
 							<div id="secondary" className="layout__secondary" role="navigation">
 								{ this.props.secondary }
 							</div>
+							{ this.props.beforePrimary }
 							<div id="primary" className="layout__primary">
 								{ this.props.primary }
 							</div>
@@ -343,7 +353,10 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'layout/global-notifications' ) && <GlobalNotifications /> }
+
+				{ ! this.props.isMSDEnabledForReader && (
+					<AsyncLoad require="calypso/layout/global-notifications" placeholder={ null } />
+				) }
 				{ shouldEnableCommandPalette && (
 					<AsyncLoad require="calypso/layout/command-palette" placeholder={ null } />
 				) }
@@ -365,6 +378,7 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
+		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled( state );
 
 		const sidebarType = getSidebarType( {
 			state,
@@ -426,11 +440,13 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
-		const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
+		const dashboardOptIn = hasDashboardOptIn( state );
 
 		const isEnabledThemeUniversalHeader =
 			config.isEnabled( 'themes/universal-header' ) &&
 			[ 'themes', 'theme' ].includes( sectionName );
+
+		const isLoggedIn = isUserLoggedIn( state );
 
 		const isEnabledPluginsUniversalHeader =
 			config.isEnabled( 'plugins/universal-header' ) &&
@@ -438,10 +454,12 @@ export default withCurrentRoute(
 			! (
 				currentRoute.startsWith( '/plugins/manage' ) ||
 				currentRoute.startsWith( '/plugins/scheduled-updates' )
-			);
+			) &&
+			// When marketplace-redesign is enabled, only show universal header for logged out users.
+			( ! config.isEnabled( 'marketplace-redesign' ) || ! isLoggedIn );
 
 		const hasUniversalHeader =
-			hostingDashboardOptIn &&
+			dashboardOptIn &&
 			! siteId &&
 			( isEnabledThemeUniversalHeader || isEnabledPluginsUniversalHeader );
 
@@ -455,9 +473,10 @@ export default withCurrentRoute(
 			isFromAutomatticForAgenciesPlugin,
 			isEligibleForJITM,
 			isBlazePro,
+			isMSDEnabledForReader,
 			oauth2Client,
 			wccomFrom,
-			isLoggedIn: isUserLoggedIn( state ),
+			isLoggedIn,
 			isSupportSession: isSupportSession( state ),
 			sectionGroup,
 			sectionName,

@@ -1,7 +1,7 @@
 import { sprintf, __ } from '@wordpress/i18n';
 import { error, Icon } from '@wordpress/icons';
 
-const MAX_MESSAGE_LENGTH = 4096;
+export const MAX_MESSAGE_LENGTH = 1000;
 
 export default function useMessageSizeErrorNotice( messageLength: number ) {
 	const isMessageTooLong = messageLength > MAX_MESSAGE_LENGTH;

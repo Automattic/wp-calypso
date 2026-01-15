@@ -8,7 +8,16 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => jest.fn() );
+jest.mock( '@automattic/calypso-config', () => {
+	const config = jest.fn();
+
+	return Object.assign( config, {
+		__esModule: true,
+		default: config,
+		isEnabled: config,
+		config,
+	} );
+} );
 
 jest.mock( '@automattic/viewport', () => ( {
 	isMobile: jest.fn(),
@@ -18,12 +27,31 @@ jest.mock( 'calypso/lib/i18n-utils', () => ( {
 	getLocaleSlug: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/i18n-utils', () => ( {
+	localizeUrl: ( url ) => url,
+} ) );
+
 jest.mock( 'debug', () => () => jest.fn() );
+
+jest.mock( '@wordpress/react-i18n', () => ( {
+	useI18n: () => ( {
+		__: ( text ) => text,
+	} ),
+} ) );
+
+jest.mock( 'react-router-dom', () => ( {
+	useNavigate: () => jest.fn(),
+} ) );
 
 import { getCurrentUser, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { isMobile } from '@automattic/viewport';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { HelpCenterMoreResources } from '../../../../packages/help-center/src/components/help-center-more-resources';
+import { HelpCenterRequiredContextProvider } from '../../../../packages/help-center/src/contexts/HelpCenterContext';
 
 describe( 'survicate', () => {
 	let mockScript;
@@ -447,5 +475,131 @@ describe( 'survicate', () => {
 				email: 'test@example.com',
 			} );
 		} );
+	} );
+} );
+
+describe( 'HelpCenterMoreResources', () => {
+	let showHelpCenterFeedbackSurvey;
+	const renderComponent = ( contextValue = {} ) =>
+		render(
+			<HelpCenterRequiredContextProvider
+				value={ {
+					sectionName: 'test-section',
+					...contextValue,
+				} }
+			>
+				<HelpCenterMoreResources />
+			</HelpCenterRequiredContextProvider>
+		);
+
+	beforeEach( () => {
+		delete window._sva;
+		recordTracksEvent.mockClear();
+		// Set up fresh module imports
+		jest.isolateModules( () => {
+			const survicateModule = require( 'calypso/lib/analytics/survicate' );
+			showHelpCenterFeedbackSurvey = survicateModule.showHelpCenterFeedbackSurvey;
+		} );
+	} );
+
+	afterEach( () => {
+		delete window._sva;
+	} );
+
+	test( 'does not render feedback button when survicate is disabled', () => {
+		const { queryByRole } = renderComponent( { haveSurvicateEnabled: false } );
+
+		expect(
+			queryByRole( 'button', {
+				name: 'Share feedback',
+			} )
+		).toBeNull();
+	} );
+
+	test( 'does not render feedback button when survicate widget is unavailable', () => {
+		const { queryByRole } = renderComponent( { haveSurvicateEnabled: true } );
+
+		expect(
+			queryByRole( 'button', {
+				name: 'Share feedback',
+			} )
+		).toBeNull();
+	} );
+
+	test( 'renders feedback button and triggers survicate event when available', async () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
+
+		const { queryByRole } = renderComponent( { haveSurvicateEnabled: true } );
+		const button = queryByRole( 'button', {
+			name: 'Share feedback',
+		} );
+
+		expect( button ).not.toBeNull();
+
+		const user = userEvent.setup();
+		if ( button ) {
+			await user.click( button );
+		}
+
+		expect( invokeEvent ).toHaveBeenCalledWith( 'showFeedbackSurveyFromHelpCenter' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_help_moreresources_click',
+			expect.objectContaining( {
+				resource: 'feedback-survey',
+				section: 'test-section',
+			} )
+		);
+	} );
+
+	test( 'invokes Survicate event and wires overlay click to destroy visitor', () => {
+		const overlay = document.createElement( 'div' );
+		overlay.className = 'sv__overlay sv__overlay--dark';
+
+		const overlayAddEventListener = jest.fn();
+
+		overlay.addEventListener = overlayAddEventListener;
+		document.body.appendChild( overlay );
+
+		let surveyDisplayedHandler;
+		const invokeEvent = jest.fn();
+		const destroyVisitor = jest.fn();
+		const removeEventListener = jest.fn();
+		const addEventListener = jest.fn( ( event, handler ) => {
+			if ( event === 'survey_displayed' ) {
+				surveyDisplayedHandler = handler;
+			}
+		} );
+
+		document.querySelector = jest.fn( () => overlay );
+		window._sva = {
+			addEventListener,
+			removeEventListener,
+			invokeEvent,
+			destroyVisitor,
+		};
+
+		showHelpCenterFeedbackSurvey();
+
+		expect( addEventListener ).toHaveBeenCalled();
+		expect( typeof surveyDisplayedHandler ).toBe( 'function' );
+		expect( invokeEvent ).toHaveBeenCalledWith( 'showFeedbackSurveyFromHelpCenter' );
+
+		// Simulate Survicate emitting the survey display event
+		surveyDisplayedHandler?.();
+
+		expect( overlayAddEventListener ).toHaveBeenCalled();
+		const [ overlayCall ] = overlayAddEventListener.mock.calls;
+		expect( overlayCall?.[ 0 ] ).toBe( 'click' );
+		expect( typeof overlayCall?.[ 1 ] ).toBe( 'function' );
+		expect( overlayCall?.[ 2 ] ).toEqual( { once: true } );
+
+		overlayCall?.[ 1 ]?.();
+
+		expect( destroyVisitor ).toHaveBeenCalled();
+		expect( removeEventListener ).toHaveBeenCalled();
+		const [ removeCall ] = removeEventListener.mock.calls;
+		expect( removeCall?.[ 0 ] ).toBe( 'survey_displayed' );
+		expect( removeCall?.[ 1 ] ).toBe( surveyDisplayedHandler );
 	} );
 } );

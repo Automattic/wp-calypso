@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useMemo } from 'react';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming-event/types';
-import avalaraLogo from 'calypso/assets/images/a8c-for-agencies/events/avalara-logo.svg';
-import pressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
+import WooLogo from 'calypso/assets/images/a8c-for-agencies/events/woo-logo.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 export const useUpcomingEvents = () => {
@@ -13,50 +13,47 @@ export const useUpcomingEvents = () => {
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
 			{
-				id: 'pressable-webinar-2025-11-06',
+				id: 'a4a-woo-2025-12-22',
 				date: {
-					from: moment( '2025-11-06' ),
-					to: moment( '2025-11-06' ),
+					from: moment( '2025-12-22' ),
+					to: moment( '2026-01-05' ),
 				},
-				displayDate: translate( 'Thursday, November 6, 9:00-10:00 AM PT (4:00-5:00 PM UTC)' ),
-				title: translate( 'The Pressable advantage for Automattic for Agencies partners' ),
-				subtitle: translate( 'Automattic for Agencies and Pressable' ),
+				displayDate: translate( 'Update as soon as possible' ),
+				title: translate( 'Action Needed: Critical WooCommerce Update Available' ),
+				subtitle: translate( 'WooCommerce' ),
 				descriptions: [
 					translate(
-						"Ready to scale your agency without stretching your team thin? Join us for an exclusive live session where we'll reveal how top-performing agencies are using Pressable and Automattic for Agencies to drive faster client growth, increase recurring revenue, and hit year-end goals effortlessly."
+						'A Store API vulnerability has been identified in WooCommerce versions 8.1 through 10.4.2, and a patch is now available. Client sites hosted with Automattic have been automatically patched. Please update WooCommerce on all client sites to the latest version (10.4.3) as soon as possible. We currently have no evidence of the vulnerability being used or exploited outside of our own security testing program.'
 					),
 				],
 				cta: {
-					label: translate( 'Reserve your spot ↗' ),
-					url: 'https://us06web.zoom.us/webinar/register/WN_fUSevVhfRDOP-j7f-L-V2g',
+					label: translate( 'Read the announcement and FAQ ↗' ),
+					url: 'https://developer.woocommerce.com/2025/12/22/store-api-vulnerability-patched-in-woocommerce-8-1/',
 				},
-				logoUrl: pressableLogo,
-				trackEventName: 'calypso_a4a_overview_events_pressable_webinar_2025_11_06_click',
-				dateClassName: 'a4a-event__date--neutral',
+				logoUrl: WooLogo,
+				trackEventName: 'calypso_a4a_overview_events_a4a_woo_2025_12_22_click',
+				dateClassName: 'a4a-event__date--critical',
 			},
 			{
-				id: 'avalara-webinar-2025-11-12',
+				id: 'a4a-partner-survey-2025-12-03',
 				date: {
-					from: moment( '2025-11-12' ),
-					to: moment( '2025-11-12' ),
+					from: moment( '2026-01-01' ),
+					to: moment( '2026-01-01' ),
 				},
-				displayDate: translate( 'Wednesday, November 12, 9:00-10:00 AM PT (4:00-5:00 PM UTC)' ),
-				title: translate(
-					'Global Trade & Tariff Shifts: Empowering Agencies to Navigate Compliance for WooCommerce Merchants'
-				),
-				subtitle: translate( 'Automattic for Agencies and our trusted partner, Avalara' ),
+				displayDate: translate( 'Open until January 1, 2026' ),
+				title: translate( 'Automattic for Agencies Partner Survey' ),
+				subtitle: translate( 'Automattic for Agencies' ),
 				descriptions: [
 					translate(
-						'Is your agency ready to guide WooCommerce merchants through the evolving maze of international trade taxes and tariffs? Recent regulatory shifts are creating compliance headaches for global ecommerce sellers. Without expert insights, your clients risk costly fines, delays, and lost revenue.'
+						'We invite you to share your input in our short Automattic for Agencies Partner Survey. Your feedback will help us better understand your experience with Automattic for Agencies and the products you use across our ecosystem. The survey is anonymous, and your insights will guide how we shape next year’s incentives, tools, and product improvements to create more value for your agency and clients.'
 					),
-					translate( 'Join our exclusive webinar to gain a competitive edge.' ),
 				],
 				cta: {
-					label: translate( 'Register for the webinar ↗' ),
-					url: 'https://event.on24.com/wcc/r/5101931/BB47ACD15628777E39129D43586D1C96',
+					label: translate( 'Take the survey now! ↗' ),
+					url: 'https://usabi.li/do/b8fc6strv3hm/tnzgph',
 				},
-				logoUrl: avalaraLogo,
-				trackEventName: 'calso_a4a_overview_events_avalara_webinar_2025_11_12_click',
+				logoElement: <A4ALogo size={ 64 } />,
+				trackEventName: 'calypso_a4a_overview_events_a4a_partner_survey_2025_12_03_click',
 				dateClassName: 'a4a-event__date--neutral',
 			},
 		];

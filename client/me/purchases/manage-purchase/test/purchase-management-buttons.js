@@ -147,7 +147,7 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Remove/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders a remove button when auto-renew is OFF', async () => {
+	it( 'renders a cancel button with remove language when auto-renew is OFF', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
@@ -165,11 +165,11 @@ describe( 'Purchase Management Buttons', () => {
 				</ReduxProvider>
 			</QueryClientProvider>
 		);
-		expect( await screen.findByText( /Remove/ ) ).toBeInTheDocument();
-		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
+		expect( await screen.findByText( /and be removed/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders a remove button when auto-renew is OFF and the purchase is an Akismet purchase attached to an akismet siteless holding site', async () => {
+	it( 'renders a cancel button with remove language when auto-renew is OFF and the purchase is an Akismet purchase attached to an akismet siteless holding site', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
 			.reply( 200 );
@@ -194,8 +194,8 @@ describe( 'Purchase Management Buttons', () => {
 			</QueryClientProvider>
 		);
 
-		expect( await screen.findByText( /Remove/ ) ).toBeInTheDocument();
-		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
+		expect( await screen.findByText( /remove/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
 	} );
 
 	it( "does't render renew buttons for domain with pending registration at registry", async () => {

@@ -22,7 +22,6 @@ const INSTALLATION_URL = 'https://public-api.wordpress.com/wpcom/v2/hosting/gith
 export const useLiveInstallations = () => {
 	const {
 		data: installations,
-		error: installationsError,
 		refetch,
 		isLoading: isLoadingInstallations,
 	} = useGithubInstallationsQuery();
@@ -56,7 +55,7 @@ export const useLiveInstallations = () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_github_app_open_auth_popup_requested' ) );
 
 		const openedPopup = openPopup( {
-			url: installationsError?.name === 'UnauthorizedError' ? AUTHORIZATION_URL : INSTALLATION_URL,
+			url: AUTHORIZATION_URL,
 			onMessage: async ( data, popup ) => {
 				if ( 'github-app-authorized' === data.type ) {
 					dispatch( recordTracksEvent( 'calypso_hosting_github_app_authorised_success' ) );

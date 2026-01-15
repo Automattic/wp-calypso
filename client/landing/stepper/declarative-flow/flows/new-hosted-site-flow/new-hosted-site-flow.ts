@@ -118,6 +118,7 @@ const hosting: FlowV2< typeof initialize > = {
 
 		const utmSource = query.get( 'utm_source' );
 		const studioSiteId = query.get( 'studioSiteId' );
+		const autoOpenPush = query.get( 'autoOpenPush' );
 
 		const flowName = this.name;
 		const showDomainStep = query.has( 'showDomainStep' );
@@ -204,6 +205,7 @@ const hosting: FlowV2< typeof initialize > = {
 						if ( studioSiteId ) {
 							destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
 								studioSiteId,
+								...( autoOpenPush === 'true' && { autoOpenPush: 'true' } ),
 							} );
 						} else if ( isWooPartner ) {
 							// For partners, we'll redirect to the WooCommerce admin page
@@ -251,15 +253,16 @@ const hosting: FlowV2< typeof initialize > = {
 	},
 	useSideEffect( currentStepSlug ) {
 		const studioSiteId = useQuery().get( 'studioSiteId' );
-
+		const autoOpenPush = useQuery().get( 'autoOpenPush' );
 		useEffect( () => {
 			if ( studioSiteId ) {
 				recordTracksEvent( 'calypso_studio_sync_step', {
 					flow: NEW_HOSTED_SITE_FLOW,
 					step: currentStepSlug,
+					auto_open_push: autoOpenPush === 'true',
 				} );
 			}
-		}, [ currentStepSlug, studioSiteId ] );
+		}, [ currentStepSlug, studioSiteId, autoOpenPush ] );
 	},
 };
 

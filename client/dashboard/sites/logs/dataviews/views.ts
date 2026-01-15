@@ -1,14 +1,24 @@
 import { LogType, FilterType } from '@automattic/api-core';
-import { useState } from '@wordpress/element';
 import type { View } from '@wordpress/dataviews';
 
-const phpLogsViewConfig = {
-	sortField: 'timestamp',
-	titleField: 'severity',
-	primaryField: 'severity',
-	visibleFields: [ 'timestamp', 'message' ],
-	allowedFilters: [ 'severity' ],
+export const DEFAULT_PER_PAGE = 50;
+
+const DEFAULT_VIEW = {
+	type: 'table',
+	perPage: DEFAULT_PER_PAGE,
+	infiniteScrollEnabled: true,
+	showLevels: false,
+} satisfies Partial< View >;
+
+export const DEFAULT_PHP_LOGS_VIEW: View = {
+	...DEFAULT_VIEW,
+	sort: {
+		field: 'timestamp',
+		direction: 'desc',
+	},
+	fields: [ 'severity', 'timestamp', 'message' ],
 	layout: {
+		density: 'balanced',
 		styles: {
 			timestamp: { maxWidth: '300px', minWidth: '140px' },
 			name: { maxWidth: '200px', minWidth: '75px' },
@@ -18,13 +28,15 @@ const phpLogsViewConfig = {
 	},
 };
 
-const serverLogsViewConfig = {
-	sortField: 'date',
-	titleField: 'status',
-	primaryField: 'severity',
-	visibleFields: [ 'date', 'request_type', 'request_url' ],
-	allowedFilters: [ 'cached', 'request_type', 'status', 'renderer' ],
+export const DEFAULT_SERVER_LOGS_VIEW: View = {
+	...DEFAULT_VIEW,
+	fields: [ 'status', 'date', 'request_type', 'request_url' ],
+	sort: {
+		field: 'date',
+		direction: 'desc',
+	},
 	layout: {
+		density: 'balanced',
 		styles: {
 			date: { maxWidth: '300px', minWidth: '140px' },
 			request_url: { minWidth: '300px' },
@@ -62,29 +74,4 @@ export function toFilterParams( { view, logType }: { view: View; logType: LogTyp
 	}
 
 	return getFilterParamsFromView( view, [ 'cached', 'request_type', 'status', 'renderer' ] );
-}
-
-export function useView( {
-	logType,
-	initialFilters,
-}: {
-	logType: Omit< LogType, 'activity' >;
-	initialFilters?: View[ 'filters' ];
-} ) {
-	const config = logType === LogType.PHP ? phpLogsViewConfig : serverLogsViewConfig;
-	return useState< View >( () => ( {
-		type: 'table',
-		page: 1,
-		perPage: 50,
-		sort: {
-			field: config.sortField,
-			direction: 'desc',
-		},
-		filters: initialFilters ?? [],
-		titleField: config.titleField,
-		primaryField: config.primaryField,
-		fields: config.visibleFields,
-		layout: config.layout,
-		infiniteScrollEnabled: true,
-	} ) );
 }

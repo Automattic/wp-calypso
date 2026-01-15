@@ -8,6 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
 import { addMailboxRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
@@ -15,7 +16,6 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
-import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
@@ -38,8 +38,7 @@ const AddProfessionalEmail = () => {
 	const { isPending } = useMutation( createTitanMailboxMutation() );
 	const locale = useLocale();
 
-	// @ts-expect-error -- 'path' does ineed exist on route options
-	const isAddMailboxRoute = match.fullPath === `/${ addMailboxRoute.options.path }`;
+	const isAddMailboxRoute = match.routeId === addMailboxRoute.id;
 
 	const { provider, interval } = useParams( { shouldThrow: false, strict: false } );
 
@@ -162,8 +161,9 @@ const AddProfessionalEmail = () => {
 			header={
 				<PageHeader
 					prefix={
-						<BackToEmailsPrefix
-							onClick={ () => {
+						<Breadcrumbs
+							length={ 2 }
+							onItemClick={ () => {
 								recordTracksEvent(
 									isAddMailboxRoute
 										? 'calypso_dashboard_emails_add_mailbox_back_to_emails_click'

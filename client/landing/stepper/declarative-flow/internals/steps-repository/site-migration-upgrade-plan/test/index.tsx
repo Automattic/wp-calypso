@@ -23,6 +23,11 @@ import { mockStepProps, renderStep } from '../../test/helpers';
 
 const planSlug = PLAN_MIGRATION_TRIAL_MONTHLY;
 
+jest.mock( 'calypso/my-sites/plans-features-main/components/plan-notice-upgrade-credit', () => ( {
+	__esModule: true,
+	default: () => null,
+} ) );
+
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
 jest.mock( 'calypso/data/hosting/use-add-hosting-trial-mutation' );
 jest.mock(

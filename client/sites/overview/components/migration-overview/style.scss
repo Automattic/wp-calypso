@@ -79,6 +79,11 @@
 				color: var(--studio-gray-80);
 			}
 		}
+		.migration-started-difm__checklist {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 1rem;
+		}
 	}
 
 	.migration-ssh-failed {

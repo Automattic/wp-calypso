@@ -3,9 +3,9 @@ import { domainsQuery, userMailboxesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
-import { usePersistentView, DataViews } from '../app/dataviews';
+import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { emailsRoute } from '../app/router/emails';
-import { DataViewsCard } from '../components/dataviews-card';
+import { DataViews, DataViewsCard } from '../components/dataviews';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
@@ -17,14 +17,13 @@ import type { Email } from './types';
 import './style.scss';
 
 function Emails() {
+	const { data: allEmailAccounts, isLoading: isLoadingEmailAccounts } = useQuery(
+		userMailboxesQuery()
+	);
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
 	const { data: allDomains, isLoading: isLoadingDomains } = useQuery( domainsQuery() );
 	const domains = ( allDomains ?? [] ).filter(
 		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
-	);
-
-	const { data: allEmailAccounts, isLoading: isLoadingEmailAccounts } = useQuery(
-		userMailboxesQuery()
 	);
 
 	// Aggregate all domains into a single array
@@ -109,7 +108,7 @@ function Emails() {
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
-					isLoading={ isLoadingDomains || isLoadingEmailAccounts }
+					isLoading={ isLoadingEmailAccounts }
 					fields={ emailFields }
 					view={ view }
 					onChangeView={ updateView }

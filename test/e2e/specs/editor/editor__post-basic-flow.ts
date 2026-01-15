@@ -115,13 +115,13 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			}
 		);
 
-		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Link Preview', function () {
-			it( 'Open social preview', async function () {
-				await editorPage.expandSection( 'Link Preview' );
-				await editorPage.clickSidebarButton( 'Open Link Preview' );
+		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Link preview', function () {
+			it( 'Open link preview', async function () {
+				await editorPage.expandSection( 'Link preview' );
+				await editorPage.clickSidebarButton( 'Open link preview' );
 			} );
 
-			it( 'Show social preview for Tumblr', async function () {
+			it( 'Show link preview for Tumblr', async function () {
 				// Action implemented as "raw" calls for now (2023-09).
 				const editorParent = await editorPage.getEditorParent();
 				const dialog = editorParent.getByRole( 'dialog' );
@@ -138,7 +138,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 					.waitFor();
 			} );
 
-			it( 'Dismiss social preview', async function () {
+			it( 'Dismiss link preview', async function () {
 				await page.keyboard.press( 'Escape' );
 			} );
 		} );

@@ -4,9 +4,8 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
-import Smooch from 'smooch';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
-import { getOdieTransferMessage } from '../constants';
+import { getOdieTransferMessages, getZendeskChatStartedMetaMessage } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -15,7 +14,7 @@ import {
 	getOdieIdFromInteraction,
 	getIsRequestingHumanSupport,
 } from '../utils';
-import type { Chat, Message, OdieAllBotSlugs } from '../types';
+import type { Chat, Message } from '../types';
 
 function isEqual( message1: Message, message2: Message ) {
 	const message1Id = getMessageUniqueIdentifier( message1 );
@@ -46,7 +45,8 @@ export const useGetCombinedChat = (
 	canConnectToZendesk: boolean,
 	isLoadingCanConnectToZendesk: boolean
 ) => {
-	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const { data: currentSupportInteraction, isLoading: isLoadingCurrentSupportInteraction } =
+		useCurrentSupportInteraction();
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
 	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
@@ -82,7 +82,8 @@ export const useGetCombinedChat = (
 	useEffect( () => {
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
 		if (
-			isOdieChatLoading ||
+			( isOdieChatLoading && ! interactionHasChanged ) ||
+			isLoadingCurrentSupportInteraction ||
 			isUploadingUnsentMessages ||
 			isLoadingCanConnectToZendesk ||
 			( chatStatus !== 'loading' && ! interactionHasChanged )
@@ -96,12 +97,19 @@ export const useGetCombinedChat = (
 
 		// We don't have a conversation id, so our chat is simply the odie chat
 		if ( ! conversationId ) {
-			setMainChatState( {
-				...( odieChat ? odieChat : emptyChat ),
-				conversationId: null,
-				status: 'loaded',
-				provider: 'odie',
-			} );
+			const shouldLoadOdieChat =
+				odieChat &&
+				( chatStatus === 'loading' || interactionHasChanged || ! mainChatState.messages.length );
+
+			// set chat empty state or with messages
+			if ( ! currentSupportInteraction?.uuid || shouldLoadOdieChat ) {
+				setMainChatState( {
+					...( shouldLoadOdieChat ? odieChat : emptyChat ),
+					conversationId: null,
+					status: 'loaded',
+					provider: 'odie',
+				} );
+			}
 			return;
 		}
 
@@ -119,15 +127,10 @@ export const useGetCombinedChat = (
 			return;
 		}
 
-		if ( isChatLoaded || refreshingAfterReconnect ) {
-			try {
-				getZendeskConversation( {
-					chatId: odieChat?.odieId,
-					conversationId: conversationId?.toString(),
-				} )?.then( ( conversation ) => {
+		if ( conversationId && ( isChatLoaded || refreshingAfterReconnect ) ) {
+			getZendeskConversation( conversationId )
+				?.then( ( conversation ) => {
 					if ( conversation ) {
-						// We need to load the conversation to get typing events. Load simply means "focus on".
-						Smooch.loadConversation( conversation.id );
 						setMainChatState( ( prevChat ) => {
 							const isSameConversation =
 								prevChat.odieId?.toString() === odieId?.toString() &&
@@ -139,9 +142,8 @@ export const useGetCombinedChat = (
 								conversationId: conversation.id,
 								messages: [
 									...( odieChat ? filteredOdieMessages : [] ),
-									...getOdieTransferMessage(
-										currentSupportInteraction?.bot_slug as OdieAllBotSlugs
-									),
+									...getOdieTransferMessages( currentSupportInteraction?.bot_slug ),
+									getZendeskChatStartedMetaMessage(),
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 										...( isSameConversation
@@ -155,21 +157,22 @@ export const useGetCombinedChat = (
 							};
 						} );
 					}
-				} );
-			} catch ( error ) {
-				recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
-					conversation_id: conversationId,
-					odie_id: odieId,
-					error: error instanceof Error ? error.message : String( error ),
-				} );
+				} )
+				.catch( ( error ) => {
+					recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
+						conversation_id: conversationId,
+						odie_id: odieId,
+						error: error instanceof Error ? error.message : String( error ),
+					} );
 
-				startNewInteraction( {
-					event_source: 'odie',
-					event_external_id: crypto.randomUUID(),
+					startNewInteraction( {
+						event_source: 'odie',
+						event_external_id: crypto.randomUUID(),
+					} );
+				} )
+				.finally( () => {
+					setRefreshingAfterReconnect( false );
 				} );
-			} finally {
-				setRefreshingAfterReconnect( false );
-			}
 		}
 	}, [
 		isOdieChatLoading,
@@ -177,7 +180,6 @@ export const useGetCombinedChat = (
 		refreshingAfterReconnect,
 		isUploadingUnsentMessages,
 		isChatLoaded,
-		odieChat,
 		conversationId,
 		odieId,
 		currentSupportInteraction,
