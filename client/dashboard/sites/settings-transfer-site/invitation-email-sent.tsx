@@ -51,7 +51,7 @@ export function InvitationEmailSent( {
 					setNewOwnerEmail( new_owner_email );
 				},
 				onError: ( error: Error ) => {
-					setError( error.message || __( 'There was an error confirming the site transfer.' ) );
+					setError( error.message );
 					logToLogstash( {
 						feature: 'calypso_client',
 						message: error.message,
@@ -69,11 +69,11 @@ export function InvitationEmailSent( {
 
 	if ( error ) {
 		return (
-			<Notice variant="error">
-				{ error }
-				&nbsp;
+			<Notice variant="error" title={ error }>
 				{ createInterpolateElement(
-					__( 'Please <link>contact our support team</link> for help.' ),
+					__(
+						'There was an error confirming the site transfer. Please <link>contact our support team</link> for help.'
+					),
 					{
 						link: (
 							// @ts-expect-error children prop is injected by createInterpolateElement
