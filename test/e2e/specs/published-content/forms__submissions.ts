@@ -224,12 +224,9 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			}
 		} );
 
-		it( 'Click first response row', async () => {
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
-		} );
-
 		it( 'If in Spam, mark as not spam', async function () {
 			if ( isInSpam ) {
+				await feedbackInboxPage.clickResponseRowByText( formData1.name );
 				await feedbackInboxPage.clickNotSpamAction();
 			}
 		} );
