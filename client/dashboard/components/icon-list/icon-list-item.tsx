@@ -39,7 +39,7 @@ function UnforwardedIconListItem(
 			<HStack spacing={ iconSpacing } alignment={ alignment } as="span">
 				{ !! decoration && <span className="icon-list-item__decoration">{ decoration }</span> }
 				<InnerComponent
-					className={ stackSuffix ? 'icon-list-item__content--wrap' : undefined }
+					className={ clsx( stackSuffix && 'icon-list-item__content--wrap' ) }
 					alignment={ stackSuffix ? 'flex-start' : undefined }
 					spacing={ suffixSpacing }
 					as="span"
