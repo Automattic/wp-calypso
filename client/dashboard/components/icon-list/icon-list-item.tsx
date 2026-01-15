@@ -5,9 +5,30 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
-import type { IconListItemProps } from './types';
+import type { IconListItemProps, ItemLayout } from './types';
 
 import './icon-list-item.scss';
+
+const LAYOUT_CONFIG: Record<
+	ItemLayout,
+	{
+		Component: typeof HStack | typeof VStack;
+		outerAlignment: string; // For decoration/content alignment
+		innerAlignment: string | undefined; // For suffix alignment within content
+		className?: string;
+	}
+> = {
+	inline: {
+		Component: HStack,
+		innerAlignment: undefined, // Let HStack use default
+		className: undefined,
+	},
+	stacked: {
+		Component: VStack,
+		innerAlignment: 'flex-start',
+		className: 'icon-list-item__content--wrap',
+	},
+};
 
 function UnforwardedIconListItem(
 	{
@@ -17,7 +38,7 @@ function UnforwardedIconListItem(
 		suffix,
 		className,
 		density = 'medium',
-		stackSuffix = false,
+		layout = 'inline',
 	}: IconListItemProps,
 	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
@@ -31,16 +52,20 @@ function UnforwardedIconListItem(
 	const textSpacing = densitySpacingMap[ density ] / 2;
 	const suffixSpacing = densitySpacingMap[ density ];
 	const titleSize = density === 'low' ? '15px' : undefined;
-	const alignment = description || stackSuffix ? 'flex-start' : 'center';
-	const InnerComponent = stackSuffix ? VStack : HStack;
+
+	const layoutConfig = LAYOUT_CONFIG[ layout ];
+	const { Component: LayoutComponent } = layoutConfig;
+
+	// Description forces top alignment regardless of layout
+	const outerAlignment = description ? 'flex-start' : 'center';
 
 	return (
 		<VStack className={ clsx( 'icon-list-item', className ) } ref={ ref } as="span">
-			<HStack spacing={ iconSpacing } alignment={ alignment } as="span">
+			<HStack spacing={ iconSpacing } alignment={ outerAlignment } as="span">
 				{ !! decoration && <span className="icon-list-item__decoration">{ decoration }</span> }
-				<InnerComponent
-					className={ clsx( stackSuffix && 'icon-list-item__content--wrap' ) }
-					alignment={ stackSuffix ? 'flex-start' : undefined }
+				<LayoutComponent
+					className={ layoutConfig.className }
+					alignment={ layoutConfig.innerAlignment }
 					spacing={ suffixSpacing }
 					as="span"
 				>
@@ -51,7 +76,7 @@ function UnforwardedIconListItem(
 						{ description && <Text variant="muted">{ description }</Text> }
 					</VStack>
 					{ suffix }
-				</InnerComponent>
+				</LayoutComponent>
 			</HStack>
 		</VStack>
 	);
