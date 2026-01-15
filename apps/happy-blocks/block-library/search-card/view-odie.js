@@ -37,7 +37,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				e.preventDefault();
 				e.stopPropagation();
 
-				recordTracksEvent( 'calypso_happyblocks_support_custom_search', {
+				recordTracksEvent( 'calypso_happyblocks_support_ask_odie', {
 					query: input.value,
 					location: window.location.href,
 				} );

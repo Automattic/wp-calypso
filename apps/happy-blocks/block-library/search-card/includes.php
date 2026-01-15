@@ -7,7 +7,7 @@
  * @package happy-blocks
  */
 
-$enable_odie_answers = true;
+$enable_odie_answers = get_option( 'happy_blocks_enable_odie_answers', false );
 
 if ( ! function_exists( 'happy_blocks_get_search_card_asset' ) ) {
 	/**
