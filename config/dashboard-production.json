@@ -14,7 +14,8 @@
 		"ciab/allow-domain-features": true,
 		"cookie-banner": true,
 		"dashboard/v2": false,
-		"domain-transfer-redesign": true
+		"domain-transfer-redesign": true,
+		"marketplace-redesign": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],

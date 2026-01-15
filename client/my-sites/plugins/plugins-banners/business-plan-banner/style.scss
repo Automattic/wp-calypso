@@ -79,6 +79,10 @@
 		}
 	}
 
+	.full-width-section & li {
+		margin-bottom: 0;
+	}
+
 	@media ( min-width: $break-small ) {
 		font-size: $font-body-large;
 	}

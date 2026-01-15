@@ -180,7 +180,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		top: 0;
 		left: 50%;
 		width: 50%;
-		min-width: 848px;
+		min-width: 700px;
 		height: 100%;
 		background-image: url(/calypso/images/plugins/plugins_hero_2.svg);
 		background-position: right bottom;
@@ -192,6 +192,9 @@ body.is-section-plugins #primary .main.is-logged-out {
 			left: 0;
 			min-width: 0;
 			width: 100%;
+		}
+		@media screen and ( max-width: $break-large ) {
+			min-width: 848px;
 		}
 	}
 
@@ -237,4 +240,14 @@ body.is-section-plugins #primary .main.is-logged-out {
 }
 .plugins-discovery-page__business-plan-banner {
 	padding-bottom: 2px;
+}
+
+// Swap hover states for education footer cards (marketplace-redesign)
+// Default is lighter, hover increases contrast
+.full-width-section .plugin-how-to-guides .card-block > div {
+	filter: brightness(102%);
+
+	&:hover {
+		filter: brightness(100%);
+	}
 }

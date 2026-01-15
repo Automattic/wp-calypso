@@ -3,7 +3,7 @@ import { select } from '@wordpress/data';
 import { Store } from 'redux';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { CurrentUser } from '../user/types';
-import { isE2ETest, persistValueSafely, retrieveValueSafely } from '../utils';
+import { isE2ETest, persistValueSafely } from '../utils';
 import { setHelpCenterPreferences } from './actions';
 import { STORE_KEY } from './constants';
 import { State } from './reducer';
@@ -12,28 +12,20 @@ import type { APIFetchOptions } from '../shared-types';
 
 /**
  * Save the open state of the help center to the remote user preferences or localStorage based on logged in status.
- * @param key - The key to save.
- * @param value - The value to save.
+ * @param preferences - The preferences to save.
  */
-export function persistHelpCenterField< T extends keyof Preferences[ 'calypso_preferences' ] >(
-	key: T,
-	value: Preferences[ 'calypso_preferences' ][ T ]
-) {
+export function persistHelpCenterFields( preferences: Preferences[ 'calypso_preferences' ] ) {
 	if ( isE2ETest() ) {
 		return;
 	}
 
-	const saveState: Preferences[ 'calypso_preferences' ] = {};
 	const helpCenterSelect = select( STORE_KEY ) as HelpCenterSelect;
 	const currentUser: CurrentUser | undefined = helpCenterSelect.getCurrentUser();
 	const isLoggedIn = !! currentUser?.ID;
 
-	saveState[ key ] = value;
-
 	if ( ! isLoggedIn ) {
 		// Retrieve the logged out help center preferences from localStorage to coalesce the state.
-		Object.assign( saveState, retrieveValueSafely( 'logged_out_help_center_preferences' ) ?? {} );
-		persistValueSafely( 'logged_out_help_center_preferences', saveState );
+		persistValueSafely( 'logged_out_help_center_preferences', preferences );
 	} else if ( isLoggedIn ) {
 		if ( canAccessWpcomApis() ) {
 			// Use the promise version to do that action without waiting for the result.
@@ -41,7 +33,7 @@ export function persistHelpCenterField< T extends keyof Preferences[ 'calypso_pr
 				path: '/me/preferences',
 				apiNamespace: 'wpcom/v2',
 				method: 'PUT',
-				body: { calypso_preferences: saveState },
+				body: { calypso_preferences: preferences },
 			} ).catch( () => {} );
 		} else {
 			// Use the promise version to do that action without waiting for the result.
@@ -49,7 +41,7 @@ export function persistHelpCenterField< T extends keyof Preferences[ 'calypso_pr
 				global: true,
 				path: '/help-center/open-state',
 				method: 'PUT',
-				data: saveState,
+				data: preferences,
 			} as APIFetchOptions ).catch( () => {} );
 		}
 	}
@@ -66,29 +58,27 @@ export function subscribeToPersist( store: Store< State > ) {
 	store.subscribe( () => {
 		const state = store.getState() as State;
 		const preferences = { ...state.helpCenterPreferences };
-		let shouldUpdateLocalPreferences = false;
+		let shouldUpdatePreferences = false;
 		if ( state.showHelpCenter !== undefined ) {
 			// Only persist when the specific field actually changed
 			if ( state.showHelpCenter !== preferences.help_center_open ) {
-				persistHelpCenterField( 'help_center_open', state.showHelpCenter );
 				preferences.help_center_open = state.showHelpCenter;
-				shouldUpdateLocalPreferences = true;
+				shouldUpdatePreferences = true;
 			}
 			if (
 				state.helpCenterRouterHistory !== undefined &&
 				state.helpCenterRouterHistory !== preferences.help_center_router_history
 			) {
-				persistHelpCenterField( 'help_center_router_history', state.helpCenterRouterHistory );
 				preferences.help_center_router_history = state.helpCenterRouterHistory;
-				shouldUpdateLocalPreferences = true;
+				shouldUpdatePreferences = true;
 			}
 			if ( state.isMinimized !== preferences.help_center_minimized ) {
-				persistHelpCenterField( 'help_center_minimized', state.isMinimized );
 				preferences.help_center_minimized = state.isMinimized;
-				shouldUpdateLocalPreferences = true;
+				shouldUpdatePreferences = true;
 			}
-			if ( shouldUpdateLocalPreferences ) {
+			if ( shouldUpdatePreferences ) {
 				store.dispatch( setHelpCenterPreferences( preferences ) );
+				persistHelpCenterFields( preferences );
 			}
 		}
 	} );

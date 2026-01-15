@@ -26,6 +26,11 @@
 			fill: #e0e0e0;
 		}
 	}
+
+	svg circle {
+		transform: translate(-1px, 3px);
+		stroke: #fff;
+	}
 }
 
 // If the help center is shipped in core, we hide the black fab button

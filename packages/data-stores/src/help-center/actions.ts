@@ -13,7 +13,7 @@ import type {
 } from './types';
 
 export function setHelpCenterRouterHistory(
-	history: { entries: Location[]; index: number } | undefined
+	history: { entries: Location[]; index: number } | null
 ) {
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
@@ -176,7 +176,7 @@ export const setShowHelpCenter = function* (
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );
 		// Reset the local navigation history when closing the help center.
-		yield setHelpCenterRouterHistory( undefined );
+		yield setHelpCenterRouterHistory( null );
 		return {
 			type: 'HELP_CENTER_SET_SHOW',
 			show: false,

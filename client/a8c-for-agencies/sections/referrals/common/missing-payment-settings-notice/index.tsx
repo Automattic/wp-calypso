@@ -9,40 +9,40 @@ import './style.scss';
 export const MissingPaymentSettingsNotice = ( { isFullWidth }: { isFullWidth?: boolean } ) => {
 	const translate = useTranslate();
 
-	const { data: tipaltiData } = useGetTipaltiPayee();
+	const { data: tipaltiData, isSuccess: isDataReady } = useGetTipaltiPayee();
 	const isPayable = tipaltiData?.IsPayable;
 
 	const { data: referrals } = useFetchReferrals();
 
 	const hasReferrals = !! referrals?.length;
 
-	if ( isPayable || ! hasReferrals ) {
-		return null;
+	if ( isDataReady && ! isPayable && hasReferrals ) {
+		return (
+			<LayoutBanner
+				isFullWidth={ isFullWidth }
+				level="warning"
+				title={ translate( 'Add your payment information to get paid' ) }
+				className="missing-payment-settings-notice"
+				allowTemporaryDismissal
+				preferenceName="missing-payment-settings-notice-dismissed"
+				hideCloseButton
+			>
+				<div>
+					{ translate(
+						"You've successfully made a client referral and will be due future commissions. Add your payment details to get paid."
+					) }
+				</div>
+				<Button
+					className="missing-payment-settings-notice__button is-dark"
+					href="/referrals/payment-settings"
+				>
+					{ translate( 'Add your payment information' ) }
+				</Button>
+			</LayoutBanner>
+		);
 	}
 
-	return (
-		<LayoutBanner
-			isFullWidth={ isFullWidth }
-			level="warning"
-			title={ translate( 'Add your payment information to get paid' ) }
-			className="missing-payment-settings-notice"
-			allowTemporaryDismissal
-			preferenceName="missing-payment-settings-notice-dismissed"
-			hideCloseButton
-		>
-			<div>
-				{ translate(
-					"You've successfully made a client referral and will be due future commissions. Add your payment details to get paid."
-				) }
-			</div>
-			<Button
-				className="missing-payment-settings-notice__button is-dark"
-				href="/referrals/payment-settings"
-			>
-				{ translate( 'Add your payment information' ) }
-			</Button>
-		</LayoutBanner>
-	);
+	return null;
 };
 
 export default MissingPaymentSettingsNotice;

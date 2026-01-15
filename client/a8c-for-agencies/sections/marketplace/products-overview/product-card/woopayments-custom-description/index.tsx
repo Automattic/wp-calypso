@@ -1,6 +1,7 @@
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -9,6 +10,7 @@ import './style.scss';
 export default function WooPaymentsCustomDescription() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const onLearnMoreClick = useCallback( () => {
 		dispatch(
@@ -16,7 +18,10 @@ export default function WooPaymentsCustomDescription() {
 				'calypso_marketplace_products_overview_woopayments_learn_more_revenue_share_click'
 			)
 		);
-	}, [ dispatch ] );
+		showSupportGuide(
+			'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/'
+		);
+	}, [ dispatch, showSupportGuide ] );
 
 	const onViewFullTermsClick = useCallback( () => {
 		dispatch(
@@ -41,14 +46,8 @@ export default function WooPaymentsCustomDescription() {
 						'To qualify for revenue sharing, you must install and connect the Automattic for Agencies plugin and WooPayments extension on your client sites. We recommend using this marketplace to install WooPayments after adding the Automattic for Agencies plugin for easier license and client site management. {{a}}Learn more{{/a}}',
 						{
 							components: {
-								a: (
-									<a
-										href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={ onLearnMoreClick }
-									></a>
-								),
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
+								a: <a onClick={ onLearnMoreClick } href="#" />,
 							},
 						}
 					) }
