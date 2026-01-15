@@ -75,7 +75,7 @@ export function subscribeToPersist( store: Store< State > ) {
 				shouldUpdatePreferences = true;
 			}
 			if (
-				state.helpCenterRouterHistory !== undefined &&
+				state.helpCenterRouterHistory !== null &&
 				state.helpCenterRouterHistory !== preferences.help_center_router_history
 			) {
 				preferences.help_center_router_history = state.helpCenterRouterHistory;
