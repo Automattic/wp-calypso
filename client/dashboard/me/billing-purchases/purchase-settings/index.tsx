@@ -16,6 +16,7 @@ import {
 	siteJetpackKeysQuery,
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
+	siteLatestAtomicTransferQuery,
 } from '@automattic/api-queries';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -532,12 +533,16 @@ function getFields( {
 	showAutoRenewDisablingDialog,
 	openAutoRenewDisablingDialog,
 	closeAutoRenewDisablingDialog,
+	isAtomicSite,
+	dialogSize,
 }: {
 	isMutationPending?: boolean;
 	user: User;
 	showAutoRenewDisablingDialog: boolean;
 	openAutoRenewDisablingDialog: () => void;
 	closeAutoRenewDisablingDialog: () => void;
+	isAtomicSite: boolean;
+	dialogSize: string;
 } ): Field< Purchase >[] {
 	return [
 		{
@@ -600,7 +605,8 @@ function getFields( {
 							planName={ purchase.product_name }
 							purchase={ purchase }
 							siteDomain={ purchase.site_slug }
-							isAtomicSite={ false }
+							isAtomicSite={ isAtomicSite }
+							dialogSize={ dialogSize }
 							locale={ locale }
 							onClose={ closeAutoRenewDisablingDialog }
 							onConfirm={ () => {
@@ -633,7 +639,15 @@ const form = {
 	],
 };
 
-function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
+function ManageSubscriptionCard( {
+	purchase,
+	isAtomicSite,
+	dialogSize,
+}: {
+	purchase: Purchase;
+	isAtomicSite: boolean;
+	dialogSize: string;
+} ) {
 	const {
 		mutate: setAutoRenew,
 		error,
@@ -644,8 +658,12 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		showAutoRenewDisablingDialog: false,
 	} );
 	const { showAutoRenewDisablingDialog } = state;
-	const openAutoRenewDisablingDialog = () => setState( { showAutoRenewDisablingDialog: true } );
-	const closeAutoRenewDisablingDialog = () => setState( { showAutoRenewDisablingDialog: false } );
+	const openAutoRenewDisablingDialog = () => {
+		setState( { showAutoRenewDisablingDialog: true } );
+	};
+	const closeAutoRenewDisablingDialog = () => {
+		setState( { showAutoRenewDisablingDialog: false } );
+	};
 	return (
 		<Card>
 			<CardBody>
@@ -657,6 +675,8 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 						showAutoRenewDisablingDialog,
 						openAutoRenewDisablingDialog,
 						closeAutoRenewDisablingDialog,
+						isAtomicSite,
+						dialogSize,
 					} ) }
 					form={ form }
 					onChange={ ( newData ) => {
@@ -1107,6 +1127,8 @@ export default function PurchaseSettings() {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
 		enabled: Boolean( purchase.site_slug ) && ! isTemporarySitePurchase( purchase ),
 	} );
+	const { data: atomicTransfer } = useQuery( siteLatestAtomicTransferQuery( purchase.blog_id ) );
+	const isAtomicSite = atomicTransfer?.created_at;
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const upgradeUrl = getUpgradeUrl( purchase );
@@ -1129,6 +1151,7 @@ export default function PurchaseSettings() {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const dialogSize = isSmallViewport ? 'medium' : 'large';
 
 	return (
 		<PageLayout
@@ -1241,7 +1264,11 @@ export default function PurchaseSettings() {
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
 				{ ! purchase.is_trial_plan && purchase.subscription_status === 'active' && (
-					<ManageSubscriptionCard purchase={ purchase } />
+					<ManageSubscriptionCard
+						purchase={ purchase }
+						isAtomicSite={ isAtomicSite }
+						dialogSize={ dialogSize }
+					/>
 				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

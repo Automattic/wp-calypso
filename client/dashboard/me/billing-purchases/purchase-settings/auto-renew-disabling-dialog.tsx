@@ -3,7 +3,7 @@ import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { SectionHeader } from '../../../components/section-header';
 import { formatDate } from '../../../utils/datetime';
-import { wpcomLink } from '../../../utils/link';
+import { dashboardLink } from '../../../utils/link';
 import { isAkismetTemporarySitePurchase } from '../../../utils/purchase';
 import CancelAutoRenewalForm from './cancel-auto-renewal-form';
 import PrecancellationChatButton from './precancellation-chat-button';
@@ -24,6 +24,7 @@ interface AutoRenewDisablingDialogProps {
 	siteDomain: string;
 	purchase: Purchase;
 	isAtomicSite: boolean;
+	dialogSize: string;
 	locale: string;
 	onConfirm: () => void;
 	onClose: () => void;
@@ -40,6 +41,7 @@ const AutoRenewDisablingDialog: FC< AutoRenewDisablingDialogProps > = ( {
 	siteDomain,
 	purchase,
 	isAtomicSite,
+	dialogSize,
 	locale,
 	onConfirm,
 	onClose,
@@ -200,10 +202,10 @@ const AutoRenewDisablingDialog: FC< AutoRenewDisablingDialogProps > = ( {
 	};
 
 	const onClickAtomicFollowUpConfirm = () => {
-		onConfirm();
 		setState( ( previousState ) => ( {
 			...previousState,
 			dialogType: DIALOG.SURVEY,
+			surveyHasShown: true,
 		} ) );
 	};
 
@@ -223,26 +225,31 @@ const AutoRenewDisablingDialog: FC< AutoRenewDisablingDialogProps > = ( {
 	};
 
 	const renderAtomicFollowUpDialog = () => {
-		const exportPath = wpcomLink( `/backup/${ siteDomain }` );
+		const exportPath = dashboardLink( `/sites/${ siteDomain }/backups` );
 
 		if ( ! isVisible ) {
 			return null;
 		}
 
 		return (
-			<ConfirmDialog
-				onCancel={ () => ( window.location.href = exportPath ) }
-				onConfirm={ onClickAtomicFollowUpConfirm }
-				cancelButtonText={ __( 'Download content' ) }
-				confirmButtonText={ __( 'Turn off auto-renew' ) }
-			>
-				<SectionHeader
-					title={ __( 'Download your content' ) }
-					description={ __(
-						'Before you continue, we recommend downloading a backup of your site—that way, you’ll have your content to use on any future websites.'
-					) }
-				/>
-			</ConfirmDialog>
+			<>
+				<span>{ /* TODO: remove this workaround and fix the underlying issue */ }</span>
+				<ConfirmDialog
+					onCancel={ closeAndCleanup }
+					onConfirm={ onClickAtomicFollowUpConfirm }
+					size={ dialogSize }
+					cancelButtonText={ __( 'Keep auto-renew on' ) }
+					confirmButtonText={ __( 'Turn off auto-renew' ) }
+				>
+					<SectionHeader
+						title={ __( 'Download your content' ) }
+						description={ __(
+							'Before you continue, we recommend downloading a backup of your site—that way, you’ll have your content to use on any future websites.'
+						) }
+						actions={ <a href={ exportPath }>{ __( 'Download content' ) }</a> }
+					/>
+				</ConfirmDialog>
+			</>
 		);
 	};
 
@@ -276,7 +283,7 @@ const AutoRenewDisablingDialog: FC< AutoRenewDisablingDialogProps > = ( {
 			<ConfirmDialog
 				onCancel={ closeAndCleanup }
 				onConfirm={ onClickGeneralConfirm }
-				size="large"
+				size={ dialogSize }
 				cancelButtonText={ __( 'Keep auto-renew on' ) }
 				confirmButtonText={ __( 'Turn off auto-renew' ) }
 			>
