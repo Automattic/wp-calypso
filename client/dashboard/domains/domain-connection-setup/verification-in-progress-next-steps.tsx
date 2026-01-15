@@ -49,6 +49,7 @@ export default function VerificationInProgressNextSteps() {
 					title={ item.title }
 					description={ item.description }
 					decoration={ <Icon icon={ item.icon } /> }
+					density="medium"
 				/>
 			) ) }
 		</CollapsibleCard>

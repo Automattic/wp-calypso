@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import type { SiteVisibility } from '../types/site';
 import type { Site } from '@automattic/api-core';
 
 export function getVisibilityLabels() {
@@ -9,7 +10,7 @@ export function getVisibilityLabels() {
 	};
 }
 
-export function getSiteVisibility( item: Site ) {
+export function getSiteVisibility( item: Site ): SiteVisibility {
 	if ( item.is_coming_soon || ( item.is_private && item.launch_status === 'unlaunched' ) ) {
 		return 'coming_soon';
 	}

@@ -24,14 +24,6 @@ export type SiteSettingsSupports = {
 };
 
 export type SiteFeatureSupports = {
-	deployments: boolean;
-	performance: boolean;
-	monitoring: boolean;
-	logs: boolean;
-	backups: boolean;
-	scan: boolean;
-	domains: boolean;
-	emails: boolean;
 	settings: SiteSettingsSupports | false;
 };
 

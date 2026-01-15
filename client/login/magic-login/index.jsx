@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { useSelector, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
 import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-code';
 import GlobalNotices from 'calypso/components/global-notices';
@@ -48,15 +48,15 @@ import {
 } from './utils/heading-utils';
 import './style.scss';
 
-export const MagicLoginLocaleSuggestions = ( { path, showCheckYourEmail } ) => {
-	const locale = useSelector( getCurrentLocaleSlug );
-
+const MagicLoginLocaleSuggestionsBase = ( { locale, path, showCheckYourEmail } ) => {
 	if ( showCheckYourEmail ) {
 		return null;
 	}
 
 	return <LocaleSuggestions locale={ locale } path={ path } />;
 };
+
+export const MagicLoginLocaleSuggestions = localize( MagicLoginLocaleSuggestionsBase );
 
 export const buildEnterPasswordLoginParameters = (
 	{

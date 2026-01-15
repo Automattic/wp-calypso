@@ -50,8 +50,25 @@
 	font-size: $font-body-large;
 	line-height: 1.5;
 	margin-bottom: 24px;
-	color: var( --studio-gray-80 );
+	color: var( --studio-gray-90 );
 	max-width: 400px;
+}
+
+@keyframes blink {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	@keyframes blink {
+		0%, 100% {
+			opacity: 1;
+		}
+	}
 }
 
 .components-button.telex-banner__cta {
@@ -66,10 +83,10 @@
 	&::after {
 		content: "|";
 		margin-left: 5px;
-		opacity: 0.6;
 		vertical-align: text-bottom;
 		font-size: 115%;
 		margin-top: -4px;
+		animation: blink 1s step-end infinite;
 	}
 
 	@media ( min-width: $break-small ) {

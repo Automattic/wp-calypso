@@ -28,15 +28,14 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSiteStatus } from '../../utils/site-status';
 import { getSiteFormattedUrl } from '../../utils/site-url';
-import { getSiteVisibilityLabel } from '../../utils/site-visibility';
+import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite, canManageSite__ES } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { SiteBadge } from '../../types';
-import type { DashboardSiteListSite, Site } from '@automattic/api-core';
+import type { SiteVisibility } from '../../types';
+import type { DashboardSiteListSite, Site, SiteBadge, SiteStatus } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -418,7 +417,7 @@ export function MediaStorage( { site }: { site?: Site } ) {
 	return <span ref={ ref }>{ renderContent() }</span>;
 }
 
-function SiteLaunchNag( { site }: { site: Site } ) {
+function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	// TODO: We have to fix the obscured focus ring issue as the dataview's field value container
@@ -427,7 +426,7 @@ function SiteLaunchNag( { site }: { site: Site } ) {
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_sites_site_launch_nag_impression" />
 			<ExternalLink
-				href={ wpcomLink( `/home/${ site.slug }` ) }
+				href={ wpcomLink( `/home/${ siteSlug }` ) }
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click' );
 				} }
@@ -467,13 +466,23 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 	);
 }
 
-export function Visibility( { site }: { site: Site } ) {
-	const status = getSiteStatus( site );
+export function Visibility( {
+	siteSlug,
+	visibility,
+	status,
+	isLaunched,
+}: {
+	siteSlug: string;
+	visibility: SiteVisibility;
+	status: SiteStatus;
+	isLaunched?: boolean;
+} ) {
+	const visibilityLabels = getVisibilityLabels();
 	return (
 		<VStack spacing={ 1 }>
-			<span>{ getSiteVisibilityLabel( site ) }</span>
+			<span>{ visibilityLabels[ visibility ] }</span>
 			{ /* We don't want to show LaunchNag if there is any pending status. */ }
-			{ ! status && site.launch_status === 'unlaunched' && <SiteLaunchNag site={ site } /> }
+			{ ! status && ! isLaunched && <SiteLaunchNag siteSlug={ siteSlug } /> }
 		</VStack>
 	);
 }

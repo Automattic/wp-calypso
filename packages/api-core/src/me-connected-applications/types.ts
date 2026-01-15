@@ -17,6 +17,7 @@ export interface ConnectedApplication {
 		  }
 		| boolean;
 	title: string;
+	oauth_version: string;
 }
 
 export interface ConnectedApplicationSuccess {

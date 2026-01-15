@@ -25,7 +25,8 @@ export const CANCEL_FLOW_TYPE = {
 	// When users effectively cancelling the auto-renewal by
 	// cancelling a subscription out of the refund window
 	CANCEL_AUTORENEW: 'cancel_autorenew',
-};
+} as const;
+export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
 export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { domain } = purchase;
@@ -580,7 +581,7 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 /**
  * Returns the purchase cancellation flow.
  */
-export function getPurchaseCancellationFlowType( purchase: Purchase ): string {
+export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 

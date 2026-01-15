@@ -39,7 +39,7 @@ const defaultView = {
 function Domains() {
 	const { user } = useAuth();
 	const { queries } = useAppContext();
-	const fields = useFields();
+	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useQuery( queries.sitesQuery() );
 	const actions = useActions( { user, sites } );
 	const searchParams = domainsIndexRoute.useSearch();

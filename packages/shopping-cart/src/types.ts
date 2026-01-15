@@ -885,6 +885,7 @@ export interface ResponseCartProductExtra {
 	isAkismetSitelessCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
 	isA4ASitelessCheckout?: boolean;
+	isA4ADevSiteCheckout?: boolean;
 	referral_id?: number;
 	agency_id?: number;
 

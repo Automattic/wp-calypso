@@ -91,6 +91,18 @@ export default function ContactDetailsContainer( {
 		updateDomainContactFields( details );
 	};
 
+	// Check if we're in A4A express checkout (siteless checkout with logged out cart)
+	const isA4AExpressCheckout =
+		isLoggedOutCart &&
+		responseCart.products.some( ( product ) => product.extra?.isA4ASitelessCheckout );
+
+	// Disable email field if we're in A4A express checkout and email is already set (from referral)
+	const isEmailDisabledForA4A = !! (
+		isA4AExpressCheckout &&
+		contactDetails.email &&
+		contactDetails.email.trim() !== ''
+	);
+
 	switch ( contactDetailsType ) {
 		case 'domain':
 			return (
@@ -132,7 +144,7 @@ export default function ContactDetailsContainer( {
 							id="email"
 							type="email"
 							label={ String( translate( 'Email' ) ) }
-							disabled={ isDisabled }
+							disabled={ isDisabled || isEmailDisabledForA4A }
 							value={ contactDetails.email ?? '' }
 							onChange={ ( value ) => {
 								updateEmail( value );

@@ -6,6 +6,7 @@ import { Text } from '../../../components/text';
 import { TextBlur } from '../../../components/text-blur';
 import { PluginTabs } from '../../plugin';
 import { usePlugin } from '../../plugin/use-plugin';
+import { PluginIcon } from './plugin-icon';
 
 import './plugin-sites.scss';
 
@@ -25,6 +26,8 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 		} else if ( isLoadingPlugin ) {
 			return <div className="plugin-icon-placeholder" aria-hidden="true" />;
 		}
+
+		return <PluginIcon />;
 	}, [ icon, isLoadingPlugin, plugin?.name ] );
 
 	const title = useMemo( () => {

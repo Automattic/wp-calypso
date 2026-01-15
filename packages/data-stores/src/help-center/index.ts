@@ -1,24 +1,25 @@
 import { registerStore } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
 import { registerPlugins } from '../plugins';
-import { isE2ETest, isInSupportSession, isLoggedInHCUser } from '../utils';
+import { isE2ETest, isInSupportSession } from '../utils';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
-import { isHelpCenterShown } from './resolvers';
+import * as resolvers from './resolvers';
 import * as selectors from './selectors';
+import { subscribeToPersist } from './utils';
 export type { State };
 
 let isRegistered = false;
 
 export function register(): typeof STORE_KEY {
-	const enabledPersistedOpenState = ! isE2ETest() && ! isInSupportSession() && isLoggedInHCUser();
+	const enabledPersistedOpenState = ! isE2ETest() && ! isInSupportSession();
 
 	registerPlugins();
 
 	if ( ! isRegistered ) {
-		registerStore( STORE_KEY, {
+		const store = registerStore( STORE_KEY, {
 			actions,
 			reducer,
 			controls: { ...controls, ...wpcomRequestControls },
@@ -29,14 +30,12 @@ export function register(): typeof STORE_KEY {
 				'userDeclaredSiteUrl',
 				'subject',
 				'loggedOutOdieChat',
-				...( ! isLoggedInHCUser()
-					? [ 'helpCenterRouterHistory', 'helpCenterMinimized', 'showHelpCenter' ]
-					: [] ),
 			],
 			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
-			resolvers: enabledPersistedOpenState ? { isHelpCenterShown } : undefined,
+			resolvers: enabledPersistedOpenState ? resolvers : undefined,
 		} );
 		isRegistered = true;
+		subscribeToPersist( store );
 	}
 
 	return STORE_KEY;

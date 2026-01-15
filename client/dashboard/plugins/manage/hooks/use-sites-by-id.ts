@@ -13,7 +13,7 @@ export const useSitesById = () => {
 	}
 
 	const sitesById = sites
-		.filter( ( site ) => site.capabilities.update_plugins )
+		.filter( ( site ) => site.capabilities?.update_plugins )
 		.reduce( ( acc, site ) => {
 			acc.set( site.ID, site );
 			return acc;

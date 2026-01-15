@@ -50,7 +50,7 @@ export interface Site {
 		ico: string;
 	};
 	plan?: SitePlan;
-	capabilities: SiteCapabilities;
+	capabilities?: SiteCapabilities;
 	subscribers_count: number;
 	options?: SiteOptions; // Can be undefined for deleted sites.
 	is_a4a_dev_site: boolean;

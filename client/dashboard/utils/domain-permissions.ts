@@ -29,6 +29,12 @@ const checkNotAftermarketAuction: DomainCheckFunction = ( domain: Domain ) =>
 const checkCanTransferToAnyUser: DomainCheckFunction = ( domain: Domain ) =>
 	!! domain.can_transfer_to_any_user;
 
+const checkCanTransferToOtherSite: DomainCheckFunction = ( domain: Domain ) =>
+	!! domain.can_transfer_to_other_site;
+
+const checkCanTransfer: DomainCheckFunction = ( domain: Domain ) =>
+	checkCanTransferToAnyUser( domain ) || checkCanTransferToOtherSite( domain );
+
 const checkCanManageNameServers: DomainCheckFunction = ( domain: Domain ) =>
 	!! domain.can_manage_name_servers;
 
@@ -123,7 +129,7 @@ const DOMAIN_PERMISSION_CHECKS = {
 				),
 		},
 		{
-			check: checkCanTransferToAnyUser,
+			check: checkCanTransfer,
 			getErrorMessage: () => __( 'You do not have permission to transfer this domain.' ),
 		},
 	],
