@@ -34,6 +34,7 @@ const allAdTrackers = [
 	'parsely',
 	'clarity',
 	'reddit',
+	'tiktok',
 ] as const;
 
 const sessionAdTrackers = [ 'hotjar', 'logrocket' ];
@@ -63,6 +64,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	facebook: Bucket.ADVERTISING,
 	reddit: Bucket.ADVERTISING,
 	linkedin: Bucket.ADVERTISING,
+	tiktok: Bucket.ADVERTISING,
 
 	// Disabled trackers:
 	quantcast: null,
@@ -101,6 +103,7 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	adroll: () => 'adRoll' in window,
 	clarity: () => 'clarity' in window,
 	reddit: () => 'rdt' in window,
+	tiktok: () => 'ttq' in window,
 };
 
 const isTrackerIntialized = ( tracker: AdTracker ): boolean => {
