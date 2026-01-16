@@ -1,8 +1,8 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { ActionList } from '../action-list';
 import { Card, CardBody } from '../card';
 import { Text } from '../text';
-import EmptyStateActionItem from './empty-state-action-item';
-import EmptyStateActionList from './empty-state-action-list';
+import type { ActionItemProps } from '../action-list/types';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -49,6 +49,14 @@ function EmptyStateContent( { children }: { children: ReactNode } ) {
 			{ children }
 		</VStack>
 	);
+}
+
+function EmptyStateActionList( { children }: { children?: ReactNode } ) {
+	return <ActionList>{ children }</ActionList>;
+}
+
+function EmptyStateActionItem( props: ActionItemProps ) {
+	return <ActionList.ActionItem { ...props } />;
 }
 
 const EmptyStateWithStatics = Object.assign( EmptyState, {
