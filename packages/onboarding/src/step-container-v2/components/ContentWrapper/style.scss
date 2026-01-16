@@ -47,9 +47,11 @@
 	);
 
 	&.center-aligned {
-		justify-content: center;
-		padding-bottom: calc(
-			var( --step-container-v2-content-block-padding ) + var( --step-container-v2-top-bar-height )
-		);
+		@include break-small {
+			justify-content: center;
+			padding-bottom: calc(
+				var( --step-container-v2-content-block-padding ) + var( --step-container-v2-top-bar-height )
+			);
+		}
 	}
 }

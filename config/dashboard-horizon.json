@@ -17,7 +17,8 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
-		"domain-transfer-redesign": true
+		"domain-transfer-redesign": true,
+		"marketplace-redesign": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],

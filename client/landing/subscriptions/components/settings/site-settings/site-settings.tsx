@@ -1,10 +1,9 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
-import { Icon, seen } from '@wordpress/icons';
+import { Icon, published, seen } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
-import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import { getFeedUrl } from 'calypso/reader/route';
 import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
 import DeliveryFrequencyInput from './delivery-frequency-input';
@@ -116,10 +115,7 @@ export const SiteSettingsPopover = ( {
 							'is-loading': unsubscribing,
 						} ) }
 						disabled={ unsubscribing }
-						icon={ ReaderFollowingConversationIcon( {
-							iconSize: 24,
-							className: 'subscriptions-ellipsis-menu__item-icon',
-						} ) }
+						icon={ <Icon className="subscriptions-ellipsis-menu__item-icon" icon={ published } /> }
 						onClick={ () => {
 							onUnsubscribe();
 							close();

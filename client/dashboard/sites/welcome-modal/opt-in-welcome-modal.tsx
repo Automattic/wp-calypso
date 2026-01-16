@@ -1,4 +1,5 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -22,6 +23,7 @@ const preferenceName = 'hosting-dashboard-opt-in-welcome-modal-dismissed' as con
 
 export default function OptInWelcomeModal() {
 	const { recordTracksEvent } = useAnalytics();
+	const hasEnTranslation = useHasEnTranslation();
 	const isLargeViewport = useViewportMatch( 'small', '>=' );
 	const { data: isDismissedPersisted } = useSuspenseQuery( userPreferenceQuery( preferenceName ) );
 	const { mutate: updateDismissed, isPending: isDismissing } = useMutation(
@@ -70,7 +72,9 @@ export default function OptInWelcomeModal() {
 							recordTracksEvent( 'calypso_dashboard_opt_in_welcome_modal_tutorial_link_click' );
 						} }
 					>
-						{ __( 'Take a quick walkthrough' ) }
+						{ hasEnTranslation( 'Take a video walkthrough' )
+							? __( 'Take a video walkthrough' )
+							: __( 'Take a quick walkthrough' ) }
 					</ExternalLink>
 					<Spacer marginBottom={ 4 } />
 					<Button variant="primary" style={ { marginTop: 'auto' } } onClick={ handleDismiss }>
