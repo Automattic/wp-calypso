@@ -146,15 +146,6 @@ class RequestLoginEmailForm extends Component {
 		if ( ! prevProps.showCheckYourEmail && this.props.showCheckYourEmail ) {
 			this.setCheckYourEmailHeaders();
 		}
-
-		// Update headers when locale changes
-		if ( prevProps.locale !== this.props.locale ) {
-			if ( this.props.showCheckYourEmail ) {
-				this.setCheckYourEmailHeaders();
-			} else {
-				this.setRequestLoginHeaders();
-			}
-		}
 	}
 
 	onUsernameOrEmailFieldChange = ( event ) => {
