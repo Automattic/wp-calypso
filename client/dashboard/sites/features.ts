@@ -3,6 +3,7 @@ import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSiteMigrationInProgress } from '../utils/site-status';
 import {
+	isCommerceGarden,
 	isSelfHostedJetpackConnected,
 	isSelfHostedJetpackConnected__ES,
 	isP2,
@@ -86,7 +87,7 @@ export function canLeaveSite( site: Site ) {
 }
 
 export function canResetSite( site: Site ) {
-	return ! site.is_wpcom_staging_site;
+	return ! site.is_wpcom_staging_site && ! isCommerceGarden( site );
 }
 
 export function canRestoreSite( site: Site ) {
