@@ -1054,7 +1054,20 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	return <MetadataItem title={ subtitle } />;
+	let title = subtitle;
+
+	if ( purchase.is_plan ) {
+		title = sprintf(
+			// translators: subtitle is the type of purchase (e.g. "Site plan"), site is the slug of the site the plan applies to.
+			__( '%(subtitle)s for %(site)s.' ),
+			{
+				subtitle,
+				site: purchase.site_slug,
+			}
+		);
+	}
+
+	return <MetadataItem title={ title } />;
 }
 
 export default function PurchaseSettings() {

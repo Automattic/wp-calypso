@@ -70,3 +70,16 @@ export const WithImage: Story = {
 		),
 	},
 };
+
+export const Stacked: Story = {
+	args: {
+		title: 'Action item title',
+		description: 'Action item description',
+		actions: (
+			<Button variant="secondary" size="compact">
+				Action
+			</Button>
+		),
+		layout: 'stacked',
+	},
+};
