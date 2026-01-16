@@ -9,7 +9,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useUpdateTagsForSitesMutation from '../../../hooks/use-update-tags-for-sites';
 import { A4A_MIGRATED_SITE_TAG } from '../lib/constants';
-import MigrationsAddSitesTable, { SiteItem } from './add-sites-table';
+import MigrationsAddSitesTable from './add-sites-table';
+import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
 import type { TaggedSite } from '../types';
 
 import './style.scss';

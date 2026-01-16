@@ -1,6 +1,5 @@
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { __ } from '@wordpress/i18n';
-import { useAppContext } from '../../app/context';
 import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
@@ -9,7 +8,6 @@ import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
 
 const SiteMenu = ( { site }: { site: Site } ) => {
-	const { supports } = useAppContext();
 	const siteSlug = site.slug;
 
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
@@ -84,8 +82,7 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 					{ __( 'Domains' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ supports.sites &&
-				supports.sites.settings &&
+			{ siteTypeSupports.settings &&
 				site.capabilities?.manage_options &&
 				! isSelfHostedJetpackConnected( site ) && (
 					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>

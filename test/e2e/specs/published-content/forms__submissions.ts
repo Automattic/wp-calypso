@@ -224,30 +224,23 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			}
 		} );
 
-		it( 'Click first response row', async () => {
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
-		} );
-
 		it( 'If in Spam, mark as not spam', async function () {
 			if ( isInSpam ) {
+				await feedbackInboxPage.clickResponseRowByText( formData1.name );
 				await feedbackInboxPage.clickNotSpamAction();
 			}
 		} );
 
-		it( 'Navigate to Inbox tab', async function () {
+		it( 'Navigate to Inbox tab if needed', async function () {
+			// if it's not in spam, we should already be in the inbox tab as per
+			// find and click on the search test above.
 			if ( isInSpam ) {
-				// Clear search first to show all responses
-				await feedbackInboxPage.clearSearch( true );
 				await feedbackInboxPage.clickFolderTab( 'Inbox' );
-				// Wait for folder change to complete and data to reload
-				await page.waitForTimeout( 2000 );
-				// Search again for the first response in Inbox
-				await feedbackInboxPage.searchResponses( formData1.name );
-				await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			}
 		} );
 
 		it( 'Validate first response data', async () => {
+			await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.email );
 			await feedbackInboxPage.validateTextInSubmission( formData1.phone );
