@@ -647,13 +647,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	],
 
 	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
-	getVar5StackedSignupWpcomFeatures: () => [
-		FEATURE_UNLIMITED_ENTITIES,
-		FEATURE_BANDWIDTH,
-		FEATURE_SECURITY_BRUTE_FORCE,
-		FEATURE_CDN,
-		FEATURE_FAST_DNS,
-	],
+	getVar5StackedSignupWpcomFeatures: () => [ FEATURE_UNLIMITED_ENTITIES ],
 
 	get2023PlanComparisonFeatureOverride: () => {
 		return [
@@ -945,11 +939,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
 	getVar5StackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_FREE_PLUS,
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UPLOAD_PLUGINS,
-		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_AI_WEBSITE_BUILDER_LIMITED,
+		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
+		FEATURE_STATS_BASIC_20250206,
+		FEATURE_UPLOAD_PLUGINS,
 	],
 
 	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
@@ -1231,9 +1225,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_INVENTORY_MGMT,
 		FEATURE_STREAMLINED_CHECKOUT,
 		FEATURE_SELL_60_COUNTRIES,
-		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
-		FEATURE_DYNAMIC_UPSELLS,
-		FEATURE_CUSTOM_MARKETING_AUTOMATION,
 		FEATURE_SHIPPING_INTEGRATIONS,
 	],
 
@@ -1727,10 +1718,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_UPLOAD_VIDEO,
 		FEATURE_ADVANCED_SEO_TOOLS,
 		FEATURE_SIMPLE_PAYMENTS,
-		FEATURE_WORDADS,
-		FEATURE_UPLOAD_VIDEO,
 	],
 
 	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
@@ -2014,20 +2004,13 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
 	getVar5StackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
-		FEATURE_AI_WEBSITE_BUILDER,
-		FEATURE_AI_WRITER_DESIGNER,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		FEATURE_EMAIL_MARKETING,
-		FEATURE_ADVANCED_JETPACK_FORMS,
-		FEATURE_VIDEO_UPLOADS,
 		FEATURE_BLAZE_AD_CREDITS,
-
-		FEATURE_SITE_ACTIVITY_LOG_JP,
-		FEATURE_SITE_STAGING_SITES,
+		FEATURE_VIDEO_UPLOADS,
+		FEATURE_REALTIME_BACKUPS_JP,
 		FEATURE_DEV_TOOLS,
-		FEATURE_WORDPRESS_STUDIO_SYNC,
-		FEATURE_EARLY_ONBOARDING_CALLS,
 	],
 
 	get2023PlanComparisonFeatureOverride: () => {
