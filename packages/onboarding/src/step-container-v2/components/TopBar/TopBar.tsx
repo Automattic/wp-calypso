@@ -1,6 +1,6 @@
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
 import clsx from 'clsx';
-import { ReactNode } from 'react';
+import { isValidElement, type ReactElement, type ReactNode } from 'react';
 
 import './style.scss';
 
@@ -67,4 +67,8 @@ export const TopBar = ( {
 			) }
 		</div>
 	);
+};
+
+export const isTopBar = ( element?: ReactNode ): element is ReactElement< TopBarProps > => {
+	return isValidElement( element ) && element.type === TopBar;
 };
