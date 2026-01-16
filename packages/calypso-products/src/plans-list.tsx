@@ -1851,7 +1851,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for developers and business owners:{{/strong}} Use powerful developer and business tools, without the overhead.'
+			'{{strong}}Best for developers and business owners:{{/strong}} Use powerful developer and business tools, without the overhead.',
+			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate( 'Use powerful developer and business tools, without the overhead.' ),
