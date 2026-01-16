@@ -407,17 +407,19 @@ private object I18NTests : BuildType({
 	}
 })
 
-object P2E2ETests : E2EBuildType(
-	buildId = "WPComTests_p2",
-	buildUuid = "086ed775-eee4-4cc0-abc4-bb497979ef48",
-	buildName = "P2 E2E Tests",
-	buildDescription = "Runs end-to-end tests against P2.",
-	testGroup = "p2",
-	buildParams = {
-		param("env.VIEWPORT_NAME", "desktop")
-		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-	},
-	buildFeatures = {
+private object P2E2ETests : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("WPComTests_p2")
+	uuid = "086ed775-eee4-4cc0-abc4-bb497979ef48"
+	name = "P2 E2E Tests"
+	description = "Runs end-to-end tests against P2 using Playwright Test"
+
+	params {
+		param("PROJECT", "p2")
+		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
+	}
+
+	features {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -439,8 +441,9 @@ object P2E2ETests : E2EBuildType(
 			branchFilter = "trunk"
 			buildFailed = true
 		}
-	},
-	buildTriggers = {
+	}
+
+	triggers {
 		schedule {
 			schedulingPolicy = cron {
 				hours = "*/3"
@@ -451,4 +454,4 @@ object P2E2ETests : E2EBuildType(
 			withPendingChangesOnly = false
 		}
 	}
-)
+})

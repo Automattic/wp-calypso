@@ -105,6 +105,10 @@ export const test = base.extend< {
 	 */
 	accountSMS: TestAccount;
 	/**
+	 * Test account used for P2 tests.
+	 */
+	accountP2: TestAccount;
+	/**
 	 * Client for interacting with emails during tests.
 	 */
 	clientEmail: EmailClient;
@@ -308,6 +312,10 @@ export const test = base.extend< {
 	},
 	accountSMS: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'smsUser' );
+		await use( testAccount );
+	},
+	accountP2: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'p2User' );
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
