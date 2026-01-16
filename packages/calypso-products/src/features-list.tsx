@@ -2827,7 +2827,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_AI_WEBSITE_BUILDER_LIMITED ]: {
 		getSlug: () => FEATURE_AI_WEBSITE_BUILDER_LIMITED,
-		getTitle: () => i18n.translate( 'AI Website Builder (limited)' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'AI website builder (usage limits apply)' )
+				: i18n.translate( 'AI Website Builder (limited)' ),
 		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 	[ FEATURE_AI_WRITER_DESIGNER ]: {
@@ -2841,7 +2844,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER_LIMITED,
-		getTitle: () => i18n.translate( 'AI Writer & Designer (limited)' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'AI assistant and tools (usage limits apply)' )
+				: i18n.translate( 'AI Writer & Designer (limited)' ),
 		getDescription: () =>
 			i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
 	},
