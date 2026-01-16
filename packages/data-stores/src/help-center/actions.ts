@@ -1,4 +1,4 @@
-import { select } from '@wordpress/data';
+import { controls } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { Location } from 'history';
 import { GeneratorReturnType } from '../mapped-types';
@@ -6,7 +6,7 @@ import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import { STORE_KEY } from './constants';
 import { persistPreference } from './utils';
-import type { HelpCenterOptions, HelpCenterSelect, HelpCenterShowOptions } from './types';
+import type { HelpCenterOptions, HelpCenterShowOptions } from './types';
 
 export function setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | null
@@ -138,6 +138,14 @@ export const setCurrentUser = ( user: CurrentUser | undefined ) =>
 		user,
 	} ) as const;
 
+export const showHelpCenter = function ( show: boolean ) {
+	persistPreference( 'help_center_open', show );
+	return {
+		type: 'HELP_CENTER_SET_SHOW',
+		show,
+	} as const;
+};
+
 export const setShowHelpCenter = function* (
 	show: boolean,
 	options: HelpCenterShowOptions = {
@@ -151,31 +159,20 @@ export const setShowHelpCenter = function* (
 	 * `forceClose` listens to the show value always. Which the (x) button sets to true.
 	 */
 	forceClose = false
-): Generator< unknown, { type: 'HELP_CENTER_SET_SHOW'; show: boolean }, unknown > {
-	let isMinimized = ( select( STORE_KEY ) as HelpCenterSelect ).getIsMinimized();
+) {
+	const isMinimized: boolean = yield controls.resolveSelect( STORE_KEY, 'getIsMinimized' );
 
 	// Opening or closing the Help Center should reset the minimized state.
 	if ( ! show && ! forceClose && isMinimized ) {
 		yield setIsMinimized( false );
-		isMinimized = false;
-
-		persistPreference( 'help_center_minimized', false );
-		persistPreference( 'help_center_open', true );
-		return {
-			type: 'HELP_CENTER_SET_SHOW',
-			show: true,
-		} as const;
+		return showHelpCenter( true );
 	}
 
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );
 		// Reset the local navigation history when closing the help center.
 		yield setHelpCenterRouterHistory( null );
-		persistPreference( 'help_center_open', false );
-		return {
-			type: 'HELP_CENTER_SET_SHOW',
-			show: false,
-		} as const;
+		yield showHelpCenter( false );
 	}
 
 	yield setShowMessagingWidget( false );
@@ -193,12 +190,7 @@ export const setShowHelpCenter = function* (
 		yield setHelpCenterOptions( options );
 	}
 
-	persistPreference( 'help_center_open', true );
-
-	return {
-		type: 'HELP_CENTER_SET_SHOW',
-		show: true,
-	} as const;
+	return showHelpCenter( true );
 };
 
 export const setSubject = ( subject: string ) =>

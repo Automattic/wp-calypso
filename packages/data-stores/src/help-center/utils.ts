@@ -11,7 +11,7 @@ import type { APIFetchOptions } from '../shared-types';
  */
 let cachedPreferencesPromise: Promise< Preferences[ 'calypso_preferences' ] > | undefined;
 
-function getCalypsoPreference(): Promise< Preferences[ 'calypso_preferences' ] > {
+function getCalypsoPreferences(): Promise< Preferences[ 'calypso_preferences' ] > {
 	// Caching the promise instead of the result allows parallel requests to queue and wait for one result.
 	if ( cachedPreferencesPromise ) {
 		return cachedPreferencesPromise;
@@ -36,7 +36,7 @@ export async function getPersistedPreference<
 	const isLoggedIn = ( select( STORE_KEY ) as HelpCenterSelect ).getIsLoggedIn();
 
 	if ( isLoggedIn ) {
-		const preferences = await getCalypsoPreference();
+		const preferences = await getCalypsoPreferences();
 		return preferences[ key ];
 	}
 
