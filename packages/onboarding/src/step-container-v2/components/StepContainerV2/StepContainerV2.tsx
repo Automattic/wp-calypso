@@ -3,11 +3,17 @@ import { useMemo, useState } from 'react';
 import { ContentProp, StepContainerV2Context } from './context';
 import './style.scss';
 
-export const StepContainerV2 = ( { children }: { children: ContentProp } ) => {
+export const StepContainerV2 = ( {
+	children,
+	initialTopBarHeight,
+}: {
+	children: ContentProp;
+	initialTopBarHeight?: string;
+} ) => {
 	const isSmallViewport = useViewportMatch( 'small', '>=' );
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
-	const [ topBarHeight, setTopBarHeight ] = useState( 0 );
+	const [ topBarHeight, setTopBarHeight ] = useState( initialTopBarHeight ?? '0px' );
 	const [ stickyBottomBarHeight, setStickyBottomBarHeight ] = useState( 0 );
 
 	const stepContainerContextValue = useMemo(
@@ -37,7 +43,7 @@ export const StepContainerV2 = ( { children }: { children: ContentProp } ) => {
 				className="step-container-v2"
 				style={
 					{
-						'--step-container-v2-top-bar-height': `${ topBarHeight }px`,
+						'--step-container-v2-top-bar-height': topBarHeight,
 						'--step-container-v2-sticky-bottom-bar-height': `${ stickyBottomBarHeight }px`,
 					} as React.CSSProperties
 				}

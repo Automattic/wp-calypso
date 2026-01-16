@@ -70,7 +70,7 @@
 		"mcp-settings": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
-		"marketplace-redesign": false,
+		"marketplace-redesign": true,
 		"me/account-close": true,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,

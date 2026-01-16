@@ -320,9 +320,11 @@ export class FeedbackInboxPage {
 		await menu.waitFor();
 
 		// Verify the specified action exists in the dropdown menu
-		await this.page.getByRole( 'menuitem', { name: actionName } ).waitFor();
+		const menuItem = this.page.getByRole( 'menuitem', { name: actionName } );
+		await menuItem.waitFor( { state: 'visible' } );
 
 		// Close the menu by pressing Escape key (trying to click the "Dismiss popup" button didn't work)
 		await this.page.keyboard.press( 'Escape' );
+		await menuItem.waitFor( { state: 'detached' } );
 	}
 }
