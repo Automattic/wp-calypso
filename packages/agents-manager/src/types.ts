@@ -5,6 +5,8 @@ import type Smooch from 'smooch';
  * Common types used across the agents-manager package.
  */
 
+import type { getAgentManager } from '@automattic/agenttic-client';
+
 export type {
 	Ability,
 	ToolProvider,
@@ -23,3 +25,13 @@ export type LocalConversationListItem = Omit< ServerConversationListItem, 'chat_
 	conversation_id?: string;
 	is_zendesk?: true;
 };
+
+/**
+ * Extend Window interface for cross-bundle access to agentManager.
+ * Used by components like Image Studio that need to access the shared agent.
+ */
+declare global {
+	interface Window {
+		__agentManager?: ReturnType< typeof getAgentManager >;
+	}
+}
