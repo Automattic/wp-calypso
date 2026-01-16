@@ -5,16 +5,13 @@ import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import { STORE_KEY } from './constants';
-import type {
-	HelpCenterOptions,
-	HelpCenterSelect,
-	HelpCenterShowOptions,
-	Preferences,
-} from './types';
+import { persistPreference } from './utils';
+import type { HelpCenterOptions, HelpCenterSelect, HelpCenterShowOptions } from './types';
 
 export function setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | null
 ) {
+	persistPreference( 'help_center_router_history', history );
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
 		history,
@@ -33,9 +30,6 @@ export const setUnreadCount = ( count: number ) =>
 		count,
 	} ) as const;
 
-export const setHelpCenterPreferences = ( preferences: Preferences[ 'calypso_preferences' ] ) =>
-	( { type: 'HELP_CENTER_SET_HELP_CENTER_PREFERENCES', preferences } ) as const;
-
 export const setOdieInitialPromptText = ( text: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_ODIE_INITIAL_PROMPT_TEXT',
@@ -49,6 +43,7 @@ export const setOdieBotNameSlug = ( odieBotNameSlug: string ) =>
 	} ) as const;
 
 export const setIsMinimized = function ( minimized: boolean ) {
+	persistPreference( 'help_center_minimized', minimized );
 	return {
 		type: 'HELP_CENTER_SET_MINIMIZED',
 		minimized,
@@ -164,6 +159,8 @@ export const setShowHelpCenter = function* (
 		yield setIsMinimized( false );
 		isMinimized = false;
 
+		persistPreference( 'help_center_minimized', false );
+		persistPreference( 'help_center_open', true );
 		return {
 			type: 'HELP_CENTER_SET_SHOW',
 			show: true,
@@ -174,6 +171,7 @@ export const setShowHelpCenter = function* (
 		yield setNavigateToRoute( undefined );
 		// Reset the local navigation history when closing the help center.
 		yield setHelpCenterRouterHistory( null );
+		persistPreference( 'help_center_open', false );
 		return {
 			type: 'HELP_CENTER_SET_SHOW',
 			show: false,
@@ -182,7 +180,10 @@ export const setShowHelpCenter = function* (
 
 	yield setShowMessagingWidget( false );
 	yield setContextTerm( options?.contextTerm || '' );
-	yield setIsMinimized( false );
+
+	if ( isMinimized ) {
+		yield setIsMinimized( false );
+	}
 
 	if ( options?.hasPremiumSupport ) {
 		yield setHasPremiumSupport( true );
@@ -192,9 +193,11 @@ export const setShowHelpCenter = function* (
 		yield setHelpCenterOptions( options );
 	}
 
+	persistPreference( 'help_center_open', true );
+
 	return {
 		type: 'HELP_CENTER_SET_SHOW',
-		show,
+		show: true,
 	} as const;
 };
 
@@ -269,7 +272,6 @@ export type HelpCenterAction =
 			| typeof setShowMessagingWidget
 			| typeof setSubject
 			| typeof resetStore
-			| typeof setHelpCenterPreferences
 			| typeof setMessage
 			| typeof setLoggedOutOdieChat
 			| typeof setContextTerm

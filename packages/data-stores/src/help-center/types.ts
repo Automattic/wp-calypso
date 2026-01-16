@@ -1,6 +1,7 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import type { HelpCenterAction } from './actions';
 import type { Location } from 'history';
 export interface HelpCenterShowOptions {
 	hasPremiumSupport: boolean;
@@ -40,6 +41,13 @@ export interface Dispatch {
 
 export type HelpCenterSelect = SelectFromMap< typeof selectors > & {
 	isResolving: ( key: string ) => boolean;
+};
+
+export type HelpCenterThunkDispatch = ( action: HelpCenterAction ) => void;
+
+export type HelpCenterThunkProps = {
+	dispatch: HelpCenterThunkDispatch;
+	select: HelpCenterSelect;
 };
 
 export interface HelpCenterOptions {

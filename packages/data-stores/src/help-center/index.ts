@@ -8,7 +8,6 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
-import { subscribeToPersist } from './utils';
 export type { State };
 
 let isRegistered = false;
@@ -19,7 +18,7 @@ export function register(): typeof STORE_KEY {
 	registerPlugins();
 
 	if ( ! isRegistered ) {
-		const store = registerStore( STORE_KEY, {
+		registerStore( STORE_KEY, {
 			actions,
 			reducer,
 			controls: { ...controls, ...wpcomRequestControls },
@@ -35,7 +34,6 @@ export function register(): typeof STORE_KEY {
 			resolvers: enabledPersistedOpenState ? resolvers : undefined,
 		} );
 		isRegistered = true;
-		subscribeToPersist( store );
 	}
 
 	return STORE_KEY;
