@@ -107,15 +107,6 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 		initializeAgent();
 	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
 
-	// Expose agentManager on window for cross-bundle access (e.g., Image Studio)
-	useEffect( () => {
-		if ( agentConfig ) {
-			window.__agentManager = getAgentManager();
-			// eslint-disable-next-line no-console
-			console.log( '[UnifiedAIAgent] Exposed agentManager on window' );
-		}
-	}, [ agentConfig ] );
-
 	const loadedProviders = loadedProvidersRef.current;
 
 	// Load empty view suggestions (handles Big Sky's theme-dependent suggestions)
