@@ -209,6 +209,11 @@ body.is-section-promote-post-i2 {
 					width: auto;
 				}
 
+				.promote-post-i2__aux-wrapper.promote-post-credits__notice-container {
+					padding: 0;
+					border: none;
+				}
+
 
 				.promote-post-i2__search-bar-wrapper {
 					display: flex;
@@ -294,7 +299,6 @@ body.is-section-promote-post-i2 {
 				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 			}
 		}
-
 	}
 
 	&__payment-blocked-notice {
@@ -846,11 +850,6 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 		cursor: pointer;
 		color: var(--color-neutral-30);
 	}
-
-	&__credits-notice {
-		font-size: 0.875rem;
-	}
-
 }
 
 .blaze-credits-desktop-only {

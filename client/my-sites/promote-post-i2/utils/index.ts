@@ -1,6 +1,9 @@
 import config from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
-import { getCurrencyObject } from '@automattic/number-formatters';
+import {
+	formatNumber as formatNumberWithDecimals,
+	getCurrencyObject,
+} from '@automattic/number-formatters';
 import { InfiniteData } from '@tanstack/react-query';
 import { __, _x } from '@wordpress/i18n';
 import moment from 'moment';
@@ -449,4 +452,72 @@ export const getPaymentStatus = ( status?: string ) => {
 		default:
 			return status;
 	}
+};
+
+export type CreditExpirationInfo = {
+	hasExpiringCredits: boolean;
+	sortedHistory: Array< { amount: number; expires: string } >;
+};
+
+/**
+ * Check if any credits expire within a month and return sorted history
+ */
+export const getCreditExpirationInfo = (
+	history: Array< { amount: number; expires: string } > = []
+): CreditExpirationInfo => {
+	const sortedHistory = [ ...history ].sort( ( a, b ) =>
+		moment( a.expires ).diff( moment( b.expires ) )
+	);
+
+	const hasExpiringCredits = sortedHistory.some( ( { expires } ) => {
+		const exp = moment( expires );
+		return (
+			exp.isValid() &&
+			exp.isAfter( moment(), 'day' ) &&
+			exp.isSameOrBefore( moment().add( 1, 'month' ), 'day' )
+		);
+	} );
+
+	return {
+		hasExpiringCredits,
+		sortedHistory,
+	};
+};
+
+/**
+ * Get formatted expiration lines for credits
+ * @param sortedHistory - Array of credit history items sorted by expiration
+ * @param translate - Translation function
+ */
+export const getCreditExpirationLines = (
+	sortedHistory: Array< { amount: number; expires: string } >,
+	translate: ( text: string, options?: any ) => string
+): string[] | null => {
+	if ( ! sortedHistory || sortedHistory.length === 0 ) {
+		return null;
+	}
+
+	const firstItem = sortedHistory[ 0 ];
+	const firstDate = moment( firstItem.expires ).format( 'LL' );
+
+	if ( sortedHistory.length === 1 ) {
+		return [
+			translate( 'Your credits will expire on %(date)s', {
+				args: { date: firstDate },
+			} ),
+		];
+	}
+
+	const firstAmount = '$' + formatNumberWithDecimals( firstItem.amount / 100, { decimals: 2 } );
+	const lastItem = sortedHistory[ sortedHistory.length - 1 ];
+	const lastDate = moment( lastItem.expires ).format( 'LL' );
+
+	return [
+		translate( 'You have %(amount)s in credits expiring on %(firstDate)s.', {
+			args: { amount: firstAmount, firstDate },
+		} ),
+		translate( 'Your remaining credits will expire on %(lastDate)s', {
+			args: { lastDate },
+		} ),
+	];
 };

@@ -1,8 +1,8 @@
+import { Popover } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
-import { useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -11,7 +11,11 @@ import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-cr
 import { TabOption, TabType } from 'calypso/my-sites/promote-post-i2/main';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getAdvertisingDashboardPath } from '../../utils';
+import {
+	getAdvertisingDashboardPath,
+	getCreditExpirationInfo,
+	getCreditExpirationLines,
+} from '../../utils';
 
 type Props = {
 	tabs: TabOption[];
@@ -20,79 +24,64 @@ type Props = {
 
 function CreditBalanceContent( { formattedBalance }: { formattedBalance: string } ) {
 	const translate = useTranslate();
+	const { data: { history: creditsHistory = [] } = {} } = useCreditBalanceQuery();
+	const anchorRef = useRef< HTMLSpanElement >( null );
+	const [ isVisible, setIsVisible ] = useState( false );
+
+	// Get all credits sorted by expiration (not just those expiring soon)
+	const { sortedHistory } = useMemo(
+		() => getCreditExpirationInfo( creditsHistory ),
+		[ creditsHistory ]
+	);
+
+	const expirationLines = useMemo(
+		() => getCreditExpirationLines( sortedHistory, translate ),
+		[ sortedHistory, translate ]
+	);
 
 	return (
 		<>
 			{ translate( 'Credits: ' ) }
 			{ formattedBalance }
-			<InlineSupportLink
-				showIcon
-				className="credits-inline-support-link"
-				iconSize={ 16 }
-				showText={ false }
-				supportPostId={ 240330 }
-				supportLink={ localizeUrl( 'https://wordpress.com/support/promote-a-post/blaze-credits/' ) }
-			/>
+			<span
+				ref={ anchorRef }
+				onMouseEnter={ () => setIsVisible( true ) }
+				onMouseLeave={ () => setIsVisible( false ) }
+				style={ { display: 'inline-block', lineHeight: 0 } }
+			>
+				<InlineSupportLink
+					showIcon
+					className="credits-inline-support-link"
+					iconSize={ 16 }
+					showText={ false }
+					supportPostId={ 240330 }
+					supportLink={ localizeUrl(
+						'https://wordpress.com/support/promote-a-post/blaze-credits/'
+					) }
+				/>
+			</span>
+			{ isVisible && expirationLines && anchorRef.current && (
+				<Popover
+					context={ anchorRef.current }
+					isVisible
+					position="right"
+					onClose={ () => setIsVisible( false ) }
+				>
+					<div style={ { padding: '8px 12px', maxWidth: '250px', textAlign: 'left' } }>
+						{ expirationLines.map( ( line: string, index: number ) => (
+							<div key={ index }>{ line }</div>
+						) ) }
+					</div>
+				</Popover>
+			) }
 		</>
 	);
 }
 
 export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const translate = useTranslate();
 
-	const { data: { balance: creditBalance = '0.00', history: creditsHistory = [] } = {} } =
-		useCreditBalanceQuery();
-
-	const getExpirationText = (
-		history: Array< { amount: number; expires: string } >,
-		shortVersion: boolean
-	) => {
-		if ( ! history || history.length === 0 ) {
-			return '';
-		}
-
-		const sortedHistory = [ ...history ].sort( ( a, b ) =>
-			moment( a.expires ).diff( moment( b.expires ) )
-		);
-
-		const firstItem = sortedHistory[ 0 ];
-		const firstDate = moment( firstItem.expires ).format( shortVersion ? 'L' : 'LL' );
-
-		// Si solo hay 1 item, no hay versión corta diferente
-		if ( sortedHistory.length === 1 ) {
-			if ( shortVersion ) {
-				return translate( 'Expire on %(date)s', {
-					args: { date: firstDate },
-				} );
-			}
-			return translate( 'Your credits will expire on %(date)s', {
-				args: { date: firstDate },
-			} );
-		}
-
-		const firstAmount = '$' + formatNumber( firstItem.amount / 100, { decimals: 2 } );
-		const lastItem = sortedHistory[ sortedHistory.length - 1 ];
-		const lastDate = moment( lastItem.expires ).format( 'LL' );
-
-		if ( shortVersion ) {
-			return translate( 'You have credits expiring on %(firstDate)s and %(lastDate)s.', {
-				args: { firstDate, lastDate },
-			} );
-		}
-
-		return (
-			<>
-				{ translate( 'You have %(amount)s in credits expiring on %(firstDate)s.', {
-					args: { amount: firstAmount, firstDate },
-				} ) }
-				<br />
-				{ translate( 'Your remaining credits will expire on %(lastDate)s', {
-					args: { lastDate },
-				} ) }
-			</>
-		);
-	};
+	const { data: { balance: creditBalance = '0.00' } = {} } = useCreditBalanceQuery();
 
 	// Smooth horizontal scrolling on mobile views
 	const tabsRef = useRef< { [ key: string ]: HTMLSpanElement | null } >( {} );
@@ -106,15 +95,6 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 	const selectedLabel = tabs.find( ( tab ) => tab.id === selectedTab )?.name;
 	const formattedBalance = '$' + formatNumber( parseFloat( creditBalance ), { decimals: 2 } );
 	const mobileFormattedBalance = '$' + formatNumber( parseFloat( creditBalance ), { decimals: 0 } );
-
-	const creditExpiresSoon = creditsHistory?.some( ( { expires } ) => {
-		const exp = moment( expires );
-		return (
-			exp.isValid() &&
-			exp.isAfter( moment(), 'day' ) &&
-			exp.isSameOrBefore( moment().add( 1, 'month' ), 'day' )
-		);
-	} );
 
 	return (
 		<SectionNav selectedText={ selectedLabel }>
@@ -147,11 +127,6 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 						<div className="blaze-credits-container__label">
 							<CreditBalanceContent formattedBalance={ formattedBalance } />
 						</div>
-						{ creditExpiresSoon && (
-							<div className="blaze-credits-container__credits-notice">
-								{ getExpirationText( creditsHistory, false ) }
-							</div>
-						) }
 					</div>
 				) }
 			</NavTabs>
@@ -160,11 +135,6 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 					<div className="blaze-credits-container__label">
 						<CreditBalanceContent formattedBalance={ mobileFormattedBalance } />
 					</div>
-					{ creditExpiresSoon && (
-						<div className="blaze-credits-container__credits-notice">
-							{ getExpirationText( creditsHistory, true ) }
-						</div>
-					) }
 				</div>
 			) }
 		</SectionNav>
