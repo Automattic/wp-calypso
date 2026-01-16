@@ -18,7 +18,7 @@ export function PlaygroundIframe( {
 	playgroundClient: PlaygroundClient | null;
 	setPlaygroundClient: ( client: PlaygroundClient ) => void;
 } ) {
-	const siteId = useSelector( getSelectedSiteId );
+const siteId = useSelector( getSelectedSiteId ) ?? 0;
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const recommendedPHPVersion = getPHPVersions( siteId ).recommendedValue;
 	const [ searchParams, setSearchParams ] = useSearchParams();
