@@ -307,7 +307,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 	}
 
 	if ( purchase.is_plan ) {
-		return __( 'Site Plan' );
+		return __( 'Site plan' );
 	}
 
 	if ( purchase.is_domain_registration ) {

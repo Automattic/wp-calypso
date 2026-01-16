@@ -799,10 +799,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
 	getTitle: getPlanPersonalTitle,
-	getAudience: () => i18n.translate( 'Best for personal use' ),
-	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
-	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
+	getAudience: () => i18n.translate( 'Best for personal projects' ),
+	getBlogAudience: () => i18n.translate( 'Best for personal projects' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for personal projects' ),
+	getStoreAudience: () => i18n.translate( 'Best for personal projects' ),
 	getPlanTagline: () => i18n.translate( 'Make your mark with a custom domain.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
@@ -812,16 +812,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for personal use:{{/strong}} Boost your' +
-				' website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Unlock unlimited, expert customer support via email.',
+			'{{strong}}Best for personal projects:{{/strong}} Show credibility with your own domain name and an ad-free experience.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
-		i18n.translate(
-			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Unlock unlimited, expert customer support via email.'
-		),
+		i18n.translate( 'Show credibility with your own domain name and an ad-free experience.' ),
 	getPlanCompareFeatures: () =>
 		compact(
 			[
@@ -1051,18 +1046,12 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate( 'Grow your online store with commerce-optimized extensions.' ),
 	getDescription: () => {
 		return i18n.translate(
-			'{{strong}}Best for online stores:{{/strong}} Sell products or services with this powerful, ' +
-				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
-				'so it’ll grow with you as your business grows.',
+			'{{strong}}Best for online stores:{{/strong}} Sell confidently with zero transaction fees and full flexibility.',
 			plansDescriptionHeadingComponent
 		);
 	},
 	getShortDescription: () =>
-		i18n.translate(
-			'Sell products or services with this powerful, ' +
-				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
-				'so it’ll grow with you as your business grows.'
-		),
+		i18n.translate( 'Sell confidently with zero transaction fees and full flexibility.' ),
 	getTagline: function () {
 		return i18n.translate(
 			'Learn more about everything included with %(planName)s and take advantage of its powerful marketplace features.',
@@ -1543,10 +1532,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
 	getTitle: getPlanPremiumTitle,
-	getAudience: () => i18n.translate( 'Best for freelancers' ),
-	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
-	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
+	getAudience: () => i18n.translate( 'Best for professionals and creators' ),
+	getBlogAudience: () => i18n.translate( 'Best for professionals and creators' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for professionals and creators' ),
+	getStoreAudience: () => i18n.translate( 'Best for professionals and creators' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Step up site customization with premium design features.' ),
 	getNewsletterTagLine: () =>
@@ -1557,16 +1546,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
-				' Google Analytics support,' +
-				' and the ability to monetize your site with ads.',
+			'{{strong}}Best for professionals and creators:{{/strong}} Grow your online presence and generate income with a professional-looking website — no developer required.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
-			'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
-				' Google Analytics support,' +
-				' and the ability to monetize your site with ads.'
+			'Grow your online presence and generate income with a professional-looking website — no developer required.'
 		),
 	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
@@ -1845,9 +1830,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_BUSINESS,
 	getTitle: getPlanBusinessTitle,
-	getAudience: () => i18n.translate( 'Best for small businesses' ),
-	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
+	getAudience: () => i18n.translate( 'Best for developers and business owners' ),
+	getBlogAudience: () => i18n.translate( 'Best for developers and business owners' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for developers and business owners' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getPlanTagline: () => {
 		if (
@@ -1866,22 +1851,10 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for small businesses:{{/strong}} Power your' +
-				' business website with custom plugins and themes,' +
-				' %(nmOfGB)s GB storage, and the ability to remove WordPress.com branding.',
-			{
-				...plansDescriptionHeadingComponent,
-				args: {
-					nmOfGB: isEnabled( 'plans/updated-storage-labels' ) ? '50' : '200',
-				},
-			}
+			'{{strong}}Best for developers and business owners:{{/strong}} Use powerful developer and business tools, without the overhead.'
 		),
 	getShortDescription: () =>
-		i18n.translate(
-			'Power your business website with custom plugins and themes,' +
-				' %(nmOfGB)s GB storage, and the ability to remove WordPress.com branding.',
-			{ args: { nmOfGB: isEnabled( 'plans/updated-storage-labels' ) ? '50' : '200' } }
-		),
+		i18n.translate( 'Use powerful developer and business tools, without the overhead.' ),
 	getTagline: function () {
 		return i18n.translate(
 			'Learn more about everything included with %(planName)s and take advantage of its powerful marketplace features.',

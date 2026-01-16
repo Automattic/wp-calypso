@@ -35,6 +35,11 @@ export default function useHelpCenter() {
 		}
 	};
 
+	const showSupportGuide = ( link: string ) => {
+		setShowHelpCenter( true );
+		setNavigateToRoute( '/post?link=' + encodeURIComponent( link ) );
+	};
+
 	const hasSupportFormHash =
 		window.location.hash === CONTACT_URL_HASH_FRAGMENT ||
 		window.location.hash === CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT ||
@@ -65,6 +70,7 @@ export default function useHelpCenter() {
 
 	return {
 		toggleHelpCenter: handleToggleHelpCenter,
+		showSupportGuide,
 		show,
 	};
 }

@@ -1,5 +1,10 @@
 import React from 'react';
 
+/**
+ * Layout configuration for action/suffix positioning
+ */
+export type ItemLayout = 'inline' | 'stacked';
+
 export interface IconListItemProps {
 	/**
 	 * The main label that identifies the item.
@@ -32,6 +37,14 @@ export interface IconListItemProps {
 	 * @default 'medium'
 	 */
 	density?: 'low' | 'medium' | 'high';
+
+	/**
+	 * Controls the layout of the suffix relative to content.
+	 * - 'inline': Suffix appears horizontally next to content (default)
+	 * - 'stacked': Suffix appears below content in a vertical stack
+	 * @default 'inline'
+	 */
+	layout?: ItemLayout;
 }
 
 export interface IconListProps {
