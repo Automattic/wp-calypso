@@ -172,7 +172,7 @@ export const setShowHelpCenter = function* (
 		yield setNavigateToRoute( undefined );
 		// Reset the local navigation history when closing the help center.
 		yield setHelpCenterRouterHistory( null );
-		yield showHelpCenter( false );
+		return showHelpCenter( false );
 	}
 
 	yield setShowMessagingWidget( false );
