@@ -13,7 +13,6 @@ export const DotcomPlans = {
 	ECOMMERCE_TRIAL_MONTHLY: 'ecommerce-trial-bundle-monthly',
 	FREE_PLAN: 'free_plan',
 	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
-	JETPACK_FREE: 'jetpack_free',
 	MIGRATION_TRIAL_MONTHLY: 'wp_bundle_migration_trial_monthly',
 	PREMIUM: 'value_bundle',
 	PREMIUM_MONTHLY: 'value_bundle_monthly',

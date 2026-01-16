@@ -1,4 +1,4 @@
-import { DotcomPlans, JetpackFeatures } from '@automattic/api-core';
+import { JetpackPlans, JetpackFeatures } from '@automattic/api-core';
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
@@ -90,7 +90,7 @@ export function getSitePlanDisplayName( site: Site ) {
 		return '';
 	}
 
-	if ( plan.product_slug === DotcomPlans.JETPACK_FREE ) {
+	if ( plan.product_slug === JetpackPlans.PLAN_JETPACK_FREE ) {
 		const products = getJetpackProductsForSite( site );
 		if ( products.length === 1 ) {
 			return products[ 0 ].label;
