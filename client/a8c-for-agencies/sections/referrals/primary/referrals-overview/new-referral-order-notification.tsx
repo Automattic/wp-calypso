@@ -67,13 +67,32 @@ export default function NewReferralOrderNotification( {
 						? translate( 'Referral sent to %(referralEmail)s', {
 								args: { referralEmail: referralOrderEmail },
 						  } )
-						: translate( 'Order link copied to your clipboard' ) ) as string
+						: translate( 'The referral link has been copied to your clipboard!' ) ) as string
 				}
 			>
 				<div className="new-referral-order-notification">
-					{ translate(
-						'The referral order link is valid for 14 days, so be sure to share it with your client and have them complete the payment before it expires.'
-					) }
+					<ul>
+						<li>
+							{ translate(
+								'This link is {{b}}valid for 14 days{{/b}}. Please ensure your client makes this purchase before it expires.',
+								{
+									components: {
+										b: <b />,
+									},
+								}
+							) }
+						</li>
+						<li>
+							{ translate(
+								'During checkout, your client will create a WordPress.com account and will be emailed a receipt.'
+							) }
+						</li>
+						<li>
+							{ translate(
+								'After purchase, you can immediately set up the hosting or any products referred.'
+							) }
+						</li>
+					</ul>
 
 					<Button
 						variant="secondary"

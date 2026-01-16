@@ -12,7 +12,7 @@ export default class InfoPopover extends Component {
 		autoRtl: PropTypes.bool,
 		className: PropTypes.string,
 		gaEventCategory: PropTypes.string,
-		icon: PropTypes.string,
+		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		iconSize: PropTypes.number,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( {
@@ -135,7 +135,11 @@ export default class InfoPopover extends Component {
 						'is-active': this.state.showPopover,
 					} ) }
 				>
-					<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
+					{ typeof this.props.icon === 'string' ? (
+						<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
+					) : (
+						this.props.icon
+					) }
 				</button>
 				{ this.state.showPopover && (
 					<Popover

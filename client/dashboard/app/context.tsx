@@ -12,21 +12,6 @@ import type {
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
 
-export type SiteSettingsGeneralSupports = {
-	redirect: boolean;
-};
-
-export type SiteSettingsSupports = {
-	general: SiteSettingsGeneralSupports;
-	server: boolean;
-	security: boolean;
-	experimental: boolean;
-};
-
-export type SiteFeatureSupports = {
-	settings: SiteSettingsSupports | false;
-};
-
 export type MeBillingSupports = {
 	monetizeSubscriptions: boolean;
 };
@@ -49,7 +34,7 @@ export type AppConfig = {
 	Logo: React.FC | null;
 	LoadingLogo?: React.FC;
 	supports: {
-		sites: SiteFeatureSupports | false;
+		sites: boolean;
 		plugins: boolean;
 		domains: boolean;
 		emails: boolean;

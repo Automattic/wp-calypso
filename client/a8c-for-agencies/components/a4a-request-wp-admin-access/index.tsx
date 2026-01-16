@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import illustration from 'calypso/assets/images/a8c-for-agencies/request-wp-admin-access-illustration.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -9,13 +10,14 @@ import './style.scss';
 export function A4ARequestWPAdminAccess() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const onLearnMoreClick = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_wp_admin_access_click' ) );
+		showSupportGuide(
+			'https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#allowing-team-members-to-access-wp-admin'
+		);
 	};
-
-	const kbArticleUrl =
-		'https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#allowing-team-members-to-access-wp-admin';
 
 	return (
 		<div className="a4a-request-wp-admin-access">
@@ -31,11 +33,9 @@ export function A4ARequestWPAdminAccess() {
 				<Button
 					variant="link"
 					className="a4a-request-wp-admin-access__learn-more-button"
-					href={ kbArticleUrl }
 					onClick={ onLearnMoreClick }
-					target="_blank"
 				>
-					{ translate( 'Learn more about team member permissions ↗' ) }
+					{ translate( 'Learn more about team member permissions' ) }
 				</Button>
 			</div>
 			<div className="a4a-request-wp-admin-access__illustration">
