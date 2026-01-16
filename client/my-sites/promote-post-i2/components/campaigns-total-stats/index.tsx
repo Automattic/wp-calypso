@@ -1,5 +1,5 @@
+import { formatNumberCompact } from '@automattic/number-formatters';
 import { translate } from 'i18n-calypso';
-import { formatLargeNumber } from '../../utils';
 import './style.scss';
 
 type Props = {
@@ -25,13 +25,13 @@ export default function CampaignsTotalStats( {
 							{ translate( 'Total people reached' ) }
 						</div>
 						<div className="campaigns-total-stats__result">
-							{ formatLargeNumber( totalImpressions || 0 ) }
+							{ formatNumberCompact( totalImpressions || 0 ) }
 						</div>
 					</div>
 					<div className="campaigns-total-stats__item">
 						<div className="campaigns-total-stats__label">{ translate( 'Total clicks' ) }</div>
 						<div className="campaigns-total-stats__result">
-							{ formatLargeNumber( totalClicks || 0 ) }
+							{ formatNumberCompact( totalClicks || 0 ) }
 						</div>
 					</div>
 				</div>
