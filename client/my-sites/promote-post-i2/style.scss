@@ -857,21 +857,13 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 
 	@media (min-width: 460px) {
 		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
 	}
 }
 
 .blaze-credits-mobile-only {
 	margin: 0 0 0 auto;
 	font-size: 0.75rem;
-	display: flex;
 	flex-grow: 0;
-	flex-direction: column;
-    justify-content: center;
-    align-items: flex-end;
-	height: rem(48px);
-	text-align: right;
 
 	.blaze-credits-container__label {
 		text-align: right;
