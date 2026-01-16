@@ -454,6 +454,7 @@ export const FEATURE_FAST_SUPPORT_FROM_EXPERTS = 'fast-support-from-experts';
 export const FEATURE_PRIORITY_24_7_SUPPORT = 'priority-24-7-support';
 export const FEATURE_SUPPORT = 'support';
 export const FEATURE_SUPPORT_FROM_EXPERTS = 'support-from-experts';
+export const FEATURE_FREE_FAST_SUPPORT = 'free-fast-support';
 export const FEATURE_UPLOAD_VIDEO = 'upload-video';
 export const FEATURE_STATS_BASIC_20250206 = 'stats-basic-20250206';
 export const FEATURE_STATS_ADVANCED_20250206 = 'stats-advanced-20250206';

@@ -353,6 +353,7 @@ import {
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_FREE_FAST_SUPPORT,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
 	FEATURE_GROUP_WORDADS,
@@ -2566,6 +2567,12 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Fast support from our expert\u00A0team' ),
 		getDescription: () =>
 			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
+	},
+	[ FEATURE_FREE_FAST_SUPPORT ]: {
+		getSlug: () => FEATURE_FREE_FAST_SUPPORT,
+		getTitle: () => i18n.translate( 'Free support with faster response times' ),
+		getDescription: () =>
+			i18n.translate( 'Prompt support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
