@@ -27,14 +27,6 @@ export function receiveUpdateProduct( siteId, product ) {
 	};
 }
 
-export function receiveDeleteProduct( siteId, productId ) {
-	return {
-		siteId,
-		productId,
-		type: 'MEMBERSHIPS_PRODUCT_DELETE',
-	};
-}
-
 export const requestAddProduct = ( siteId, product, noticeText ) => {
 	return ( dispatch ) => {
 		dispatch( {

@@ -158,25 +158,3 @@ export function getMessagePathForJITM( path: URLString, siteFragment?: SiteSlug 
 
 	return messagePath.replace( /\//g, '-' );
 }
-
-// TODO: Add status enum (see `client/my-sites/pages/main.jsx`).
-/**
- * Post status in our routes mapped to valid API values
- * @param status  Status param from route
- * @returns        mapped status value
- */
-export function mapPostStatus( status: string ): string {
-	switch ( status ) {
-		// Drafts
-		case 'drafts':
-			return 'draft,pending';
-		// Posts scheduled in the future
-		case 'scheduled':
-			return 'future';
-		// Trashed posts
-		case 'trashed':
-			return 'trash';
-		default:
-			return 'publish,private';
-	}
-}

@@ -4,7 +4,6 @@ import {
 	GROUP_JETPACK,
 	GROUP_P2,
 	GROUP_WPCOM,
-	JETPACK_RESET_PLANS,
 	PLAN_A4A_BUSINESS,
 	PLAN_A4A_BUSINESS_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -58,7 +57,6 @@ import {
 } from './feature-group-plan-map';
 import { FEATURES_LIST } from './features-list';
 import { PLANS_LIST } from './plans-list';
-import { isBusiness, isEcommerce, isEnterprise, isJetpackBusiness, isPro, isVipPlan } from '.';
 import type {
 	FeatureGroupMap,
 	FeatureList,
@@ -66,8 +64,6 @@ import type {
 	Plan,
 	PlanMatchesQuery,
 	PlanSlug,
-	WithCamelCaseSlug,
-	WithSnakeCaseSlug,
 	WPComPlan,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -509,10 +505,6 @@ export function isJetpackFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
 }
 
-export function isJetpackOfferResetPlan( planSlug: string ): boolean {
-	return ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( planSlug );
-}
-
 export function isP2FreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_P2 } );
 }
@@ -888,23 +880,6 @@ export const chooseDefaultCustomerType = ( {
 export const planHasJetpackSearch = ( planSlug: string ): boolean =>
 	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH ) ||
 	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH_MONTHLY );
-
-/**
- * Determines if a plan includes Jetpack Search Classic by checking available plans.
- */
-export function planHasJetpackClassicSearch(
-	plan: WithCamelCaseSlug | WithSnakeCaseSlug
-): boolean {
-	return (
-		plan &&
-		( isJetpackBusiness( plan ) ||
-			isBusiness( plan ) ||
-			isEnterprise( plan ) ||
-			isEcommerce( plan ) ||
-			isPro( plan ) ||
-			isVipPlan( plan ) )
-	);
-}
 
 export function getFeaturesList(): FeatureList {
 	return FEATURES_LIST;

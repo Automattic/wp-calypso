@@ -894,16 +894,6 @@ export function selectSiteIfNotDeleted( context, next ) {
 	return next();
 }
 
-export function selectSiteIfLoggedIn( context, next ) {
-	const state = context.store.getState();
-	if ( ! isUserLoggedIn( state ) ) {
-		next();
-		return;
-	}
-
-	selectSite( context );
-}
-
 /**
  * If the section has an "all sites" view to delay the site selection,
  * only handle the site selection with 0 or 1 sites.

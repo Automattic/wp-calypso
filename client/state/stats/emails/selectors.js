@@ -42,25 +42,6 @@ export function isRequestingEmailStats( state, siteId, postId, period, statType,
 }
 
 /**
- * Returns true if current requesting all time email stat for the specified site ID,
- * email ID, period and stat key, or * false otherwise.
- * @param  {Object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {number}  postId Post Id
- * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
- * @returns {boolean}        Whether email stat is being requested
- */
-export function isRequestingAlltimeEmailStats( state, siteId, postId, statType ) {
-	return state.stats.emails
-		? get(
-				state.stats.emails.requests,
-				[ ...getDataPath( siteId, postId, PERIOD_ALL_TIME, statType ), 'requesting' ],
-				false
-		  )
-		: false;
-}
-
-/**
  * Returns true if we should show a loading indicator
  * Returns false if we have data or if we are requesting data
  * @param  {Object}  state  Global state tree

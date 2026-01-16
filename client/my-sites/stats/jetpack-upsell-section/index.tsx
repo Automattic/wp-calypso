@@ -11,9 +11,7 @@ import {
 	Product,
 } from './upsell-card/available-upsells';
 
-// TODO: Delete use-purchased-products.tsx
 // TODO: Check usage of hasBusinessPlan, hasCompletePlan, hasSecurityPlan or delete
-
 const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 const CHECKOUT_URL_PREFIX = 'https://wordpress.com';

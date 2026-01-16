@@ -15,9 +15,3 @@ export function removeTrailingSlash( str: string ) {
 export function removeLeadingSlash( str: string ) {
 	return str.replace( /^\/+/, '' );
 }
-
-export function getSiteIdParam( urlQueryParams: URLSearchParams ): number | undefined {
-	const siteId = urlQueryParams.get( 'siteId' );
-	const parsedId = parseInt( siteId ?? '', 10 );
-	return isNaN( parsedId ) ? undefined : parsedId;
-}
