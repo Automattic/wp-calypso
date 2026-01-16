@@ -6,6 +6,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
+import { QuickPostSkeleton } from 'calypso/reader/components/quick-post/skeleton';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -100,7 +101,10 @@ function FollowingStream( { ...props } ) {
 					{ hasSites && (
 						<Card className="following-stream__quick-post-card">
 							<CardBody>
-								<AsyncLoad require="calypso/reader/components/quick-post" />
+								<AsyncLoad
+									require="calypso/reader/components/quick-post"
+									placeholder={ <QuickPostSkeleton /> }
+								/>
 							</CardBody>
 						</Card>
 					) }
