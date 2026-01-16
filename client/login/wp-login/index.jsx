@@ -21,6 +21,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login } from 'calypso/lib/paths';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
@@ -110,6 +111,7 @@ export class Login extends Component {
 			'isWCCOM',
 			'isBlazePro',
 			'isFromAkismet',
+			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
 			'isGravPoweredClient',
 			'currentQuery',
@@ -381,6 +383,7 @@ function getInitialHeadingState( props, translate ) {
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
+		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
 		isGravPoweredClient,
 		currentQuery,
@@ -402,6 +405,7 @@ function getInitialHeadingState( props, translate ) {
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
+		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
 		isGravPoweredClient,
 		currentQuery,
@@ -464,6 +468,7 @@ export default connect(
 			isFromAkismet: isAkismetRedirect(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			),
+			isFromPassport: isPassportRedirect( getRedirectToOriginal( state ) ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),

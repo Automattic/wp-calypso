@@ -4,6 +4,7 @@ import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.*
+import _self.CalypsoE2ETestsBuildTemplate
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
@@ -364,30 +365,19 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 }
 
 
-private object I18NTests : E2EBuildType(
-	buildId = "WPComTests_i18n",
-	buildUuid = "2698576f-6ae4-4f05-ae9a-55ce07c9b42f",
-	buildName = "I18N Tests",
-	buildDescription = "Runs tests related to i18n",
-	testGroup = "i18n",
-	buildParams = {
-		text(
-			name = "env.CALYPSO_BASE_URL",
-			value = "https://wordpress.com",
-			label = "Test URL",
-			description = "URL to test against",
-			allowEmpty = false
-		)
-		text(
-			name = "env.LOCALES",
-			value = "en,es,pt-br,de,fr,he,ja,it,nl,ru,tr,id,zh-cn,zh-tw,ko,ar,sv",
-			label = "Locales to use",
-			description = "Locales to use, separated by comma",
-			allowEmpty = false
-		)
-		param("env.VIEWPORT_NAME", "desktop")
-	},
-	buildFeatures = {
+private object I18NTests : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("WPComTests_i18n")
+	uuid = "2698576f-6ae4-4f05-ae9a-55ce07c9b42f"
+	name = "I18N Tests"
+	description = "Runs tests related to i18n using Playwright Test"
+
+	params {
+		param("PROJECT", "i18n")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
+	}
+
+	features {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -401,8 +391,9 @@ private object I18NTests : E2EBuildType(
 			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
 		}
-	},
-	buildTriggers = {
+	}
+
+	triggers {
 		schedule {
 			schedulingPolicy = daily {
 				hour = 3
@@ -414,7 +405,7 @@ private object I18NTests : E2EBuildType(
 			withPendingChangesOnly = false
 		}
 	}
-)
+})
 
 object P2E2ETests : E2EBuildType(
 	buildId = "WPComTests_p2",

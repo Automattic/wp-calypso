@@ -688,10 +688,14 @@ class ThemeSheet extends Component {
 				{ /* Wrap the content in another <span> to prevent truncation. */ }
 				<span style={ { whiteSpace: 'pre-wrap' } }>
 					{ translate( 'This theme offers additional paid commercial upgrades or support.' ) }
-					&nbsp;
-					<ExternalLink href={ external_support_url } style={ { color: 'inherit' } }>
-						{ translate( 'View support' ) }
-					</ExternalLink>
+					{ external_support_url && (
+						<>
+							&nbsp;
+							<ExternalLink href={ external_support_url } style={ { color: 'inherit' } }>
+								{ translate( 'View support' ) }
+							</ExternalLink>
+						</>
+					) }
 				</span>
 			</Badge>
 		);

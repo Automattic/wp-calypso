@@ -221,4 +221,8 @@ $data-view-border-color: #f1f1f1;
 	flex-direction: column;
 	gap: 20px;
 	align-items: flex-start;
+
+	ul {
+		margin: 16px;
+	}
 }

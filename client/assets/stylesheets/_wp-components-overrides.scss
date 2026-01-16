@@ -111,6 +111,28 @@
 	}
 }
 
+/* Passport */
+.is-passport {
+	.login,
+	.magic-login,
+	.signup-form,
+	.auth-form__social {
+		.components-button:not(.is-destructive) {
+			--wp-components-color-accent: var(--color-passport-base);
+			--wp-components-color-accent-darker-10: var(--color-passport-base);
+			--wp-components-color-accent-darker-20: var(--color-passport-base);
+			--wp-components-color-accent-inverted: var(--color-passport-contrast);
+			&:hover {
+				color: var(--color-passport-accent);
+			}
+		}	
+	
+		.components-button.is-link {
+			color: var(--color-passport-base);
+		}
+	}
+}
+
 /* Crowdsignal */
 .signup.is-crowdsignal {
 	.components-button:not(.is-destructive) {

@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
-import { CANCEL_FLOW_TYPE } from '../../../utils/purchase';
+import { CANCEL_FLOW_TYPE, CancelFlowType } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 interface CancelHeaderTitleProps {
-	flowType: string;
+	flowType: CancelFlowType;
 	purchase: Purchase;
 }
 

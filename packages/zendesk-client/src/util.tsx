@@ -11,6 +11,7 @@ const PRODUCTION_ENVIRONMENTS = [
 	'wpcalypso',
 	'jetpack-cloud-production',
 	'a8c-for-agencies-production',
+	'dashboard-production',
 ];
 
 export const isTestModeEnvironment = () => {

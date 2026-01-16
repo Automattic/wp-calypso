@@ -95,7 +95,7 @@ export const usePlugin = ( pluginSlug: string ) => {
 
 	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ]: [ SiteWithPluginData[], Site[] ] = sites
 		? sites
-				.filter( ( site ) => site.capabilities.update_plugins )
+				.filter( ( site ) => site.capabilities?.update_plugins )
 				.reduce(
 					( acc, site ) => {
 						if ( siteIdsWithThisPlugin.includes( site.ID ) ) {

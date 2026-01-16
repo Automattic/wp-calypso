@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
 import { A4A_MIGRATIONS_PAYMENT_SETTINGS } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
@@ -13,6 +14,7 @@ import './style.scss';
 export default function MigrationsFAQs() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const onFaqToggle = useCallback(
 		( faqArgs: { id: string; buttonId: string; isExpanded: boolean; height: number } ) => {
@@ -147,13 +149,15 @@ export default function MigrationsFAQs() {
 				{
 					components: {
 						PayoutKBLink: (
+							// eslint-disable-next-line jsx-a11y/anchor-is-valid
 							<a
-								href="https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/"
-								target="_blank"
-								rel="noreferrer"
-								onClick={ () =>
-									dispatch( recordTracksEvent( 'calypso_a4a_migrations_payout_kb_link_click' ) )
-								}
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_migrations_payout_kb_link_click' ) );
+									showSupportGuide(
+										'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/'
+									);
+								} }
+								href="#"
 							/>
 						),
 						PaymentSettingLink: (

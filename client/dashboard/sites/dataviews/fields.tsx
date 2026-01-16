@@ -9,6 +9,7 @@ import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
+import { getSiteStatus } from '../../utils/site-status';
 import {
 	isSelfHostedJetpackConnected,
 	isSelfHostedJetpackConnected__ES,
@@ -130,7 +131,14 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			filterBy: {
 				operators: [ 'isAny' as Operator ],
 			},
-			render: ( { item } ) => <Visibility site={ item } />,
+			render: ( { item, field } ) => (
+				<Visibility
+					siteSlug={ item.slug }
+					visibility={ field.getValue( { item } ) }
+					status={ getSiteStatus( item ) }
+					isLaunched={ item.launch_status === 'launched' || item.launch_status === false }
+				/>
+			),
 		},
 		{
 			id: 'wp_version',
@@ -330,8 +338,10 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 			id: 'visibility',
 			label: __( 'Visibility' ),
 			getValue: ( { item } ) => {
-				// TODO: Handle `unlaunched` status
-				if ( item.wpcom_status?.is_coming_soon ) {
+				if (
+					item.wpcom_status?.is_coming_soon ||
+					( item.private && ! item.wpcom_status?.is_launched )
+				) {
 					return 'coming_soon';
 				}
 
@@ -349,8 +359,14 @@ function getDefaultFields__ES( queries: AppConfig[ 'queries' ] ): Field< Dashboa
 				operators: [ 'isAny' as Operator ],
 			},
 			render: ( { item, field } ) => {
-				const value = field.getValue( { item } );
-				return visibilityLabels[ value as keyof typeof visibilityLabels ];
+				return (
+					<Visibility
+						siteSlug={ item.slug }
+						visibility={ field.getValue( { item } ) }
+						status={ item.status ?? null }
+						isLaunched={ item.wpcom_status?.is_launched == null || item.wpcom_status?.is_launched }
+					/>
+				);
 			},
 			enableSorting: false,
 		},

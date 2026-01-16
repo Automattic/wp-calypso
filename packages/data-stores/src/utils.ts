@@ -1,7 +1,6 @@
 /**
  * Utility functions shared across data stores
  */
-
 declare const helpCenterData:
 	| { isProxied: boolean; isSU: boolean; isSSP: boolean; currentUser: { ID: number } }
 	| undefined;

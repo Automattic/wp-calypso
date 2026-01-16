@@ -6,7 +6,7 @@ import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
-import { isHelpCenterShown } from './resolvers';
+import * as resolvers from './resolvers';
 import * as selectors from './selectors';
 export type { State };
 
@@ -31,7 +31,7 @@ export function register(): typeof STORE_KEY {
 				'loggedOutOdieChat',
 			],
 			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
-			resolvers: enabledPersistedOpenState ? { isHelpCenterShown } : undefined,
+			resolvers: enabledPersistedOpenState ? resolvers : undefined,
 		} );
 		isRegistered = true;
 	}

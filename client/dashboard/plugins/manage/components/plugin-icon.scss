@@ -1,0 +1,26 @@
+.plugin-icon-wrapper {
+	border-radius: 4px;
+	overflow: clip;
+	position: relative;
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+
+	&.is-fallback {
+		border: 1px solid rgba(0, 0, 0, 0.10);
+		background: #F0F0F0;
+
+		svg {
+			fill: #949494;
+			width: 32px;
+			height: 32px;
+		}
+	}
+}
+
+.plugin-icon-fallback {
+	position: absolute;
+	top: 50%;
+	inset-inline-start: 50%;
+	transform: translate(-50%, -50%);
+}

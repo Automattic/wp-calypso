@@ -1,7 +1,5 @@
 import {
-	isWpError,
-	DashboardDataError,
-	INACCESSIBLE_JETPACK_ERROR_CODE,
+	isInaccessibleJetpackError,
 	fetchSite,
 	deleteSite,
 	launchSite,
@@ -16,7 +14,11 @@ import { queryClient } from './query-client';
 import type { Site } from '@automattic/api-core';
 import type { Query } from '@tanstack/react-query';
 
-const KNOWN_ERRORS = [ 'unknown_blog', 'unauthorized' ];
+function isSiteNotFoundError( error: unknown ) {
+	return (
+		error instanceof Error && [ 'UnknownBlogError', 'UnauthorizedError' ].includes( error.name )
+	);
+}
 
 export function siteBySlugQuery( siteSlug: string ) {
 	// Used to find an existing Site object which is already in the `site-by-id` cache.
@@ -39,18 +41,14 @@ export function siteBySlugQuery( siteSlug: string ) {
 			try {
 				return await fetchSite( siteSlug );
 			} catch ( e ) {
-				if ( isWpError( e ) && e.error && KNOWN_ERRORS.includes( e.error ) ) {
-					throw notFound( { data: e.error } );
+				if ( isSiteNotFoundError( e ) && ! isInaccessibleJetpackError( e ) ) {
+					throw notFound();
 				}
 				throw e;
 			}
 		},
-		retry: ( failureCount, e: { data?: string } ) => {
-			if ( e instanceof DashboardDataError && e.code === INACCESSIBLE_JETPACK_ERROR_CODE ) {
-				return false;
-			}
-
-			if ( e.data && KNOWN_ERRORS.includes( e.data ) ) {
+		retry: ( failureCount, e: { isNotFound?: boolean } ) => {
+			if ( e.isNotFound || isInaccessibleJetpackError( e ) ) {
 				return false;
 			}
 			return failureCount < 3; // default retry count
@@ -86,18 +84,14 @@ export function siteByIdQuery( siteId: number ) {
 			try {
 				return await fetchSite( siteId );
 			} catch ( e ) {
-				if ( isWpError( e ) && e.error && KNOWN_ERRORS.includes( e.error ) ) {
-					throw notFound( { data: e.error } );
+				if ( isSiteNotFoundError( e ) && ! isInaccessibleJetpackError( e ) ) {
+					throw notFound();
 				}
 				throw e;
 			}
 		},
-		retry: ( failureCount, e: { data?: string } ) => {
-			if ( e instanceof DashboardDataError && e.code === INACCESSIBLE_JETPACK_ERROR_CODE ) {
-				return false;
-			}
-
-			if ( e.data && KNOWN_ERRORS.includes( e.data ) ) {
+		retry: ( failureCount, e: { isNotFound?: boolean } ) => {
+			if ( e.isNotFound || isInaccessibleJetpackError( e ) ) {
 				return false;
 			}
 			return failureCount < 3; // default retry count

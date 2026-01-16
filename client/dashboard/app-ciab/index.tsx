@@ -20,24 +20,7 @@ boot( {
 	mainRoute: '/sites',
 	Logo: null,
 	supports: {
-		sites: {
-			deployments: false,
-			performance: false,
-			monitoring: false,
-			logs: false,
-			backups: false,
-			scan: false,
-			domains: true,
-			emails: false,
-			settings: {
-				general: {
-					redirect: false,
-				},
-				server: false,
-				security: false,
-				experimental: false,
-			},
-		},
+		sites: true,
 		domains: true,
 		emails: true,
 		themes: false,
