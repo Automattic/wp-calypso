@@ -2,7 +2,6 @@ import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
@@ -23,7 +22,7 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 		sitesWithoutThisPlugin,
 	} = usePlugin( selectedPluginSlug );
 
-	const decoration = useMemo( () => {
+	const decoration = () => {
 		if ( icon ) {
 			return <img className="plugin-icon" src={ icon } alt={ plugin?.name } />;
 		} else if ( isLoadingPlugin ) {
@@ -31,9 +30,9 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 		}
 
 		return <PluginIcon />;
-	}, [ icon, isLoadingPlugin, plugin?.name ] );
+	};
 
-	const title = useMemo( () => {
+	const title = () => {
 		if ( ! isLoadingPlugin && ! plugin ) {
 			return __( 'Plugin not found' );
 		}
@@ -44,9 +43,9 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 		) : (
 			<TextBlur>{ selectedPluginSlug }</TextBlur>
 		);
-	}, [ isLoadingPlugin, plugin, selectedPluginSlug ] );
+	};
 
-	const description = useMemo( () => {
+	const description = () => {
 		if ( ( ! isLoadingPlugin && ! plugin ) || ! plugin?.author ) {
 			return null;
 		}
@@ -69,17 +68,17 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 					__( 'By %(author)s' ),
 					{ author: decodeEntities( plugin.author ) }
 			  );
-	}, [ isLoadingPlugin, plugin ] );
+	};
 
 	return (
 		<Card>
 			<CardBody className="plugin-sites-card-body">
 				<SectionHeader
 					className="plugin-sites-card-header"
-					decoration={ decoration }
+					decoration={ decoration() }
 					level={ 2 }
-					title={ title }
-					description={ description }
+					title={ title() }
+					description={ description() }
 				/>
 
 				<PluginTabs
