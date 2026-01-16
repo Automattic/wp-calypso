@@ -209,6 +209,7 @@ import {
 	FEATURE_ADVANCED_JETPACK_FORMS,
 	FEATURE_WORDPRESS_STUDIO_SYNC,
 	FEATURE_EARLY_ONBOARDING_CALLS,
+	FEATURE_BASIC_FORMS,
 	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
 	FEATURE_MARKETING_AUTOMATION,
@@ -1876,7 +1877,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Custom CSS' )
+				? i18n.translate( 'Use custom CSS' )
 				: i18n.translate( 'Customize fonts and colors sitewide' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
@@ -2100,6 +2101,12 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_EARLY_ONBOARDING_CALLS ]: {
 		getSlug: () => FEATURE_EARLY_ONBOARDING_CALLS,
 		getTitle: () => i18n.translate( 'Early onboarding calls for site setup' ),
+	},
+	[ FEATURE_BASIC_FORMS ]: {
+		getSlug: () => FEATURE_BASIC_FORMS,
+		getTitle: () => i18n.translate( 'Basic forms' ),
+		getDescription: () =>
+			i18n.translate( 'Use the Form block to add a contact form to your site.' ),
 	},
 	[ FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION ]: {
 		getSlug: () => FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
@@ -2580,7 +2587,8 @@ const FEATURES_LIST: FeatureList = {
 	// For the copy request dated 20250207 in pcNC1U-1vN-p2
 	[ FEATURE_STATS_BASIC_20250206 ]: {
 		getSlug: () => FEATURE_STATS_BASIC_20250206,
-		getTitle: () => i18n.translate( 'Stats' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant ? i18n.translate( 'Access to stats' ) : i18n.translate( 'Stats' ),
 		getDescription: () =>
 			i18n.translate( 'Access full traffic history, filter by date, and see peak traffic times.' ),
 	},
