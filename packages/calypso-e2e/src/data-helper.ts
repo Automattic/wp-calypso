@@ -337,15 +337,6 @@ export function getTestDomainRegistrarDetails( email: string ): RegistrarDetails
 }
 
 /**
- * Returns the hostname for Jetpack.
- *
- * @returns {string} Hostname to be used. Returns value of JETPACKHOST environment variable if set; WPCOM otherwise.
- */
-export function getJetpackHost(): string {
-	return process.env.JETPACKHOST || 'WPCOM';
-}
-
-/**
  * Given either a string or array of strings, returns a single string with each word in TitleCase.
  *
  * @param {string[]|string} words Either string or array of strings to be converted to TitleCase.

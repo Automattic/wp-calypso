@@ -58,15 +58,7 @@ import {
 } from './feature-group-plan-map';
 import { FEATURES_LIST } from './features-list';
 import { PLANS_LIST } from './plans-list';
-import {
-	getProductFromSlug,
-	isBusiness,
-	isEcommerce,
-	isEnterprise,
-	isJetpackBusiness,
-	isPro,
-	isVipPlan,
-} from '.';
+import { isBusiness, isEcommerce, isEnterprise, isJetpackBusiness, isPro, isVipPlan } from '.';
 import type {
 	FeatureGroupMap,
 	FeatureList,
@@ -74,7 +66,6 @@ import type {
 	Plan,
 	PlanMatchesQuery,
 	PlanSlug,
-	Product,
 	WithCamelCaseSlug,
 	WithSnakeCaseSlug,
 	WPComPlan,
@@ -332,22 +323,6 @@ export function getYearlyPlanByMonthly( planSlug: string ): string {
 		return plan.getAnnualSlug();
 	}
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_ANNUALLY } ) || '';
-}
-
-/**
- * Returns the biennial slug which corresponds to the provided slug or "" if the slug is
- * not a recognized or cannot be converted.
- */
-export function getBiennialPlan( planSlug: string ): string {
-	return findFirstSimilarPlanKey( planSlug, { term: TERM_BIENNIALLY } ) || '';
-}
-
-/**
- * Returns the triennial slug which corresponds to the provided slug or "" if the slug is
- * not recognized or cannot be converted.
- */
-export function getTriennialPlan( planSlug: string ): string {
-	return findFirstSimilarPlanKey( planSlug, { term: TERM_TRIENNIALLY } ) || '';
 }
 
 /**
@@ -681,21 +656,6 @@ export function getBillingMonthsForTerm( term: string ): number {
 	throw new Error( `Unknown term: ${ term }` );
 }
 
-export function getBillingYearsForTerm( term: string ): number {
-	if ( term === TERM_MONTHLY ) {
-		return 0;
-	} else if ( term === TERM_ANNUALLY ) {
-		return 1;
-	} else if ( term === TERM_BIENNIALLY ) {
-		return 2;
-	} else if ( term === TERM_TRIENNIALLY ) {
-		return 3;
-	} else if ( term === TERM_CENTENNIALLY ) {
-		return 100;
-	}
-	throw new Error( `Unknown term: ${ term }` );
-}
-
 export function getBillingTermForMonths( term: number ): string {
 	if ( term === 1 ) {
 		return TERM_MONTHLY;
@@ -793,37 +753,6 @@ export function applyTestFiltersToPlansList(
 	return {
 		...filteredPlanConstantObj,
 		getPlanCompareFeatures: () => filteredPlanFeaturesConstantList,
-	};
-}
-
-export function applyTestFiltersToProductsList(
-	productName: string
-): Product & Pick< WPComPlan, 'getPlanCompareFeatures' > {
-	const product = getProductFromSlug( productName );
-	if ( typeof product === 'string' ) {
-		throw new Error( `Unknown product ${ productName } ` );
-	}
-	const filteredProductConstantObj = { ...product };
-
-	/* eslint-disable @typescript-eslint/no-empty-function */
-
-	// these becomes no-ops when we removed some of the abtest overrides, but
-	// we're leaving the code in place for future tests
-	const removeDisabledFeatures = () => {};
-
-	const updatePlanDescriptions = () => {};
-
-	const updatePlanFeatures = () => {};
-
-	/* eslint-enable */
-
-	removeDisabledFeatures();
-	updatePlanDescriptions();
-	updatePlanFeatures();
-
-	return {
-		...filteredProductConstantObj,
-		getPlanCompareFeatures: () => [],
 	};
 }
 

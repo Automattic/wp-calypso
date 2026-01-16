@@ -86,17 +86,6 @@ export function shouldShowLoadingIndicator( state, siteId, postId, period, statT
 }
 
 /**
- * Returns the stats for the specified site ID, postId
- * @param  {Object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {number}  postId Email Id
- * @returns {Object}         Stats
- */
-export function getEmailStats( state, siteId, postId ) {
-	return state.stats.emails ? get( state.stats.emails.items, [ siteId, postId ], null ) : [];
-}
-
-/**
  * Returns an array of emails objects by site ID.
  * @param   {Object} state  Global state tree
  * @param   {number} siteId Site ID
@@ -181,18 +170,4 @@ export function getEmailStatsNormalizedData( state, siteId, postId, period, stat
 				null
 		  )
 		: null;
-}
-
-/**
- * Returns the email stats for the specified site ID, post ID
- * This is for alltime stats
- * @param  {Object}  state   Global state tree
- * @param  {number}  siteId  Site ID
- * @param  {number}  postId  Email Id
- * @param  {string} statType Stat type
- */
-export function getAlltimeStats( state, siteId, postId, statType ) {
-	return state.stats.emails.items
-		? get( state.stats.emails.items, [ siteId, postId, PERIOD_ALL_TIME, statType ], null )
-		: {};
 }

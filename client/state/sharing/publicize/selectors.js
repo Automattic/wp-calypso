@@ -110,17 +110,3 @@ export function hasFetchedConnections( state, siteId ) {
 export function isFetchingConnections( state, siteId ) {
 	return get( state.sharing.publicize.fetchingConnections, [ siteId ], false );
 }
-
-export function isRequestingSharePost( state, siteId, postId ) {
-	return get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'requesting' ], false );
-}
-
-export function sharePostSuccessMessage( state, siteId, postId ) {
-	return get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'success' ], false );
-}
-
-export function sharePostFailure( state, siteId, postId ) {
-	return (
-		get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'error' ], false ) === true
-	);
-}
