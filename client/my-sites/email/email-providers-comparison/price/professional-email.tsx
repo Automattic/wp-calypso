@@ -13,6 +13,7 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 import './style.scss';
 
@@ -20,6 +21,24 @@ const getTitanProductSlug = ( intervalLength: IntervalLength ): string => {
 	return intervalLength === IntervalLength.MONTHLY
 		? TITAN_MAIL_MONTHLY_SLUG
 		: TITAN_MAIL_YEARLY_SLUG;
+};
+
+const getTitanFreeTrialMonths = ( product: ProductListItem | null ): number | null => {
+	const offer = product?.introductory_offer;
+
+	if ( ! offer?.interval_count || ! offer?.interval_unit ) {
+		return null;
+	}
+
+	if ( offer.interval_unit === 'year' ) {
+		return offer.interval_count * 12;
+	}
+
+	if ( offer.interval_unit === 'month' ) {
+		return offer.interval_count;
+	}
+
+	return null;
 };
 
 type ProfessionalEmailPriceProps = {
@@ -50,6 +69,13 @@ const ProfessionalEmailPrice = ( {
 	const isEligibleForFreeTrial =
 		isDomainInCart ||
 		isDomainEligibleForTitanFreeTrial( { domain, product: siteProduct ?? product } );
+	const offerMonths = getTitanFreeTrialMonths( siteProduct ?? product );
+	const freeTrialLabel = translate( '%(months)d months free', {
+		args: {
+			months: offerMonths ?? 3,
+		},
+		comment: '%(months)d is the number of free trial months',
+	} );
 
 	const priceWithInterval = (
 		<PriceWithInterval
@@ -64,7 +90,7 @@ const ProfessionalEmailPrice = ( {
 		<>
 			{ isEligibleForFreeTrial && (
 				<div className="professional-email-price__trial-badge badge badge--info-green">
-					{ translate( '3 months free' ) }
+					{ freeTrialLabel }
 				</div>
 			) }
 
