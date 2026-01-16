@@ -1,8 +1,7 @@
-import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { throttle } from '@wordpress/compose';
 import { Field, View } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { pluginRoute } from '../../../app/router/plugins';
@@ -10,12 +9,10 @@ import { Card, CardBody } from '../../../components/card';
 import SwitcherContent from '../../../components/switcher/switcher-content';
 import { Text } from '../../../components/text';
 import { PluginListRow } from '../types';
+import { PluginIcon } from './plugin-icon';
 import { PluginUpdatesFilter } from './plugin-updates-filter';
 
 import './plugin-switcher.scss';
-
-const ICON_SIZE = 52;
-const FALLBACK_ICON_SIZE = 39;
 
 export const PluginSwitcher = ( {
 	pluginsWithIcon,
@@ -84,17 +81,7 @@ export const PluginSwitcher = ( {
 	);
 
 	const renderItemMedia = useCallback( ( { item }: { item: PluginListRow } ) => {
-		const icon = item.icon ? (
-			<img src={ item.icon } alt={ item.name } width={ ICON_SIZE } height={ ICON_SIZE } />
-		) : (
-			<Icon icon={ pluginIcon } size={ FALLBACK_ICON_SIZE } className="plugin-icon-fallback" />
-		);
-
-		return (
-			<div className={ clsx( 'plugin-icon-wrapper', { 'is-fallback': ! item.icon } ) }>
-				{ icon }
-			</div>
-		);
+		return <PluginIcon item={ item } />;
 	}, [] );
 
 	const renderItemTitle = useCallback( ( { item }: { item: PluginListRow } ) => {

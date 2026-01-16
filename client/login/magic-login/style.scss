@@ -305,7 +305,8 @@
 		margin: 0;
 
 		.app-promo__qr-code-canvas {
-			flex: 0 0 100px;
+			width: 100px;
+			height: 100px;
 			order: 1;
 		}
 

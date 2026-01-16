@@ -18,16 +18,12 @@ Read `.cursor/rules/dashboard-rules.mdc` before reviewing.
 ## Method
 
 - Use `mcp__github_inline_comment__create_inline_comment` to post feedback directly on specific lines.
-- One comment per issue, placed on the relevant line.
 - Provide fix suggestions in each comment.
-- Focus on files changed in this PR.
 - Don't nitpick minor style issues unless they violate project guidelines.
 - Before suggesting alternative implementations, check if the PR description already addresses why that approach wasn't used.
 
 ## Output Format
 
-- Keep each inline comment concise (2-5 lines).
+- Be concise.
 - Do NOT use checkboxes, todo lists, or progress indicators.
-- Do NOT use emoji headers or decorative formatting.
-- Only comment on issues; skip lines with nothing to report.
-- For clean PRs with no issues: do not create any comments.
+- Only comment if there are issues worth addressing.

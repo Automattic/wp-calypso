@@ -3,6 +3,7 @@ import wpcom from 'calypso/lib/wp';
 
 interface RecordResourceEventParams {
 	resourceId: number;
+	resourceName: string;
 	agencyId: number;
 }
 
@@ -21,6 +22,7 @@ function mutationRecordResourceEvent( params: RecordResourceEventParams ): Promi
 		path: '/agency/resources/record-event',
 		body: {
 			resource_id: params.resourceId,
+			resource_name: params.resourceName,
 			agency_id: params.agencyId,
 		},
 	} );
