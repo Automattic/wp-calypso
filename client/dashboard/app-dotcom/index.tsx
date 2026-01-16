@@ -20,16 +20,7 @@ boot( {
 	mainRoute: '/sites',
 	Logo,
 	supports: {
-		sites: {
-			settings: {
-				general: {
-					redirect: true,
-				},
-				server: true,
-				security: true,
-				experimental: true,
-			},
-		},
+		sites: true,
 		domains: true,
 		emails: true,
 		themes: true,

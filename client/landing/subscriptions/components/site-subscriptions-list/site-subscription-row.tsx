@@ -1,7 +1,8 @@
-import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
+import { ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { __experimentalHStack as HStack, Button, FormToggle } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack, FormToggle } from '@wordpress/components';
+import { closeSmall, Icon, trash, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -56,7 +57,7 @@ const SelectedNewPostDeliveryMethods = ( {
 	const translate = useTranslate();
 
 	if ( ! isEmailMeNewPostsSelected && ! isNotifyMeOfNewPostsSelected ) {
-		return <Gridicon icon="cross" size={ 16 } className="red" />;
+		return <Icon className="red" icon={ closeSmall } />;
 	}
 
 	const emailDelivery = isEmailMeNewPostsSelected ? translate( 'Email' ) : null;
@@ -363,8 +364,13 @@ const SiteSubscriptionRow = ( {
 				<div className="new-comments-cell" role="cell">
 					<InfoPopover
 						position="top"
-						icon={ ! delivery_methods.email?.send_comments ? 'cross' : 'checkmark' }
-						iconSize={ 16 }
+						icon={
+							! delivery_methods.email?.send_comments ? (
+								<Icon icon={ closeSmall } />
+							) : (
+								<Icon icon={ check } />
+							)
+						}
 						className={ ! delivery_methods.email?.send_comments ? 'red' : 'green' }
 						showOnHover
 					>
@@ -391,8 +397,8 @@ const SiteSubscriptionRow = ( {
 				</div>
 			) }
 			<div className="unsubscribe-action-cell" role="cell">
-				<Button variant="secondary" onClick={ onUnsubscribe }>
-					{ translate( 'Unsubscribe' ) }
+				<Button variant="tertiary" onClick={ onUnsubscribe } title={ translate( 'Unsubscribe' ) }>
+					<Icon icon={ trash } css={ { fill: 'var(--studio-gray-60) !important;' } } />
 				</Button>
 			</div>
 			<div className="actions-cell" role="cell">

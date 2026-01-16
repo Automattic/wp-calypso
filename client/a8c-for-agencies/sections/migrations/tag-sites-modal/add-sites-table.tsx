@@ -9,14 +9,11 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useFetchAllManagedSites } from '../hooks/use-fetch-all-managed-sites';
+import {
+	useFetchAllManagedSitesForCommission,
+	type SiteItem,
+} from '../hooks/use-fetch-all-managed-sites-for-commission';
 import { TaggedSite } from '../types';
-
-export type SiteItem = {
-	id: number;
-	site: string;
-	date: string;
-};
 
 export default function MigrationsAddSitesTable( {
 	selectedSites,
@@ -31,7 +28,7 @@ export default function MigrationsAddSitesTable( {
 	const isDesktop = useDesktopBreakpoint();
 	const dispatch = useDispatch();
 
-	const { items, isLoading } = useFetchAllManagedSites();
+	const { items, isLoading } = useFetchAllManagedSitesForCommission();
 
 	const taggedSitesIds = useMemo(
 		() => taggedSites?.map( ( site ) => site.id ) || [],
@@ -118,7 +115,8 @@ export default function MigrationsAddSitesTable( {
 			id: 'date',
 			label: translate( 'Date Added' ).toUpperCase(),
 			getValue: () => '-',
-			render: ( { item }: { item: SiteItem } ) => new Date( item.date ).toLocaleDateString(),
+			render: ( { item }: { item: SiteItem } ) =>
+				item.date ? new Date( item.date ).toLocaleDateString() : '-',
 			enableHiding: false,
 			enableSorting: false,
 		};
