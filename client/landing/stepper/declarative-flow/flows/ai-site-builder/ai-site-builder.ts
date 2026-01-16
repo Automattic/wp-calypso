@@ -155,7 +155,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 							const source = queryParams.get( 'source' );
 							const specId = queryParams.get( 'spec_id' );
-							const triggerBackendBuild = queryParams.get( 'trigger_backend_build' ) === '1';
 							let sourceParam = '';
 							let specIdParam = '';
 
@@ -232,13 +231,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
 							}
 
-							if ( triggerBackendBuild ) {
-								window.location.replace( `${ siteURL }/wp-admin/` );
-							} else {
-								window.location.replace(
-									`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
-								);
-							}
+							window.location.replace(
+								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
+							);
 						} else if ( providedDependencies.isLaunched ) {
 							const site = await resolveSelect( SITE_STORE ).getSite(
 								providedDependencies.siteSlug
