@@ -646,6 +646,15 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_FAST_DNS,
 	],
 
+	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
+	getVar5StackedSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_BANDWIDTH,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_CDN,
+		FEATURE_FAST_DNS,
+	],
+
 	get2023PlanComparisonFeatureOverride: () => {
 		return [
 			FEATURE_AI_ASSISTANT,
@@ -933,6 +942,16 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SUPPORT_FROM_EXPERTS,
 	],
 
+	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
+	getVar5StackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_FREE_PLUS,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_UPLOAD_PLUGINS,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_SUPPORT_FROM_EXPERTS,
+	],
+
 	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
@@ -1190,6 +1209,21 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 
 	// Short set stacked: incremental features from Business
 	getShortSetStackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
+		FEATURE_PREMIUM_STORE_THEMES,
+		FEATURE_WOOCOMMERCE_HOSTING,
+		FEATURE_LIST_UNLIMITED_PRODUCTS,
+		FEATURE_INVENTORY_MGMT,
+		FEATURE_STREAMLINED_CHECKOUT,
+		FEATURE_SELL_60_COUNTRIES,
+		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+		FEATURE_DYNAMIC_UPSELLS,
+		FEATURE_CUSTOM_MARKETING_AUTOMATION,
+		FEATURE_SHIPPING_INTEGRATIONS,
+	],
+
+	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
+	getVar5StackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
 		FEATURE_PREMIUM_STORE_THEMES,
 		FEATURE_WOOCOMMERCE_HOSTING,
@@ -1688,6 +1722,17 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_VIDEO,
 	],
 
+	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
+	getVar5StackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS,
+		FEATURE_UPLOAD_VIDEO,
+	],
+
 	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
@@ -1949,6 +1994,25 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 
 	// Short set stacked: incremental features from Premium
 	getShortSetStackedSignupWpcomFeatures: () => [
+		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
+		FEATURE_AI_WEBSITE_BUILDER,
+		FEATURE_AI_WRITER_DESIGNER,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+		FEATURE_EMAIL_MARKETING,
+		FEATURE_ADVANCED_JETPACK_FORMS,
+		FEATURE_VIDEO_UPLOADS,
+		FEATURE_BLAZE_AD_CREDITS,
+
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_SITE_STAGING_SITES,
+		FEATURE_DEV_TOOLS,
+		FEATURE_WORDPRESS_STUDIO_SYNC,
+		FEATURE_EARLY_ONBOARDING_CALLS,
+	],
+
+	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
+	getVar5StackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
 		FEATURE_AI_WEBSITE_BUILDER,
 		FEATURE_AI_WRITER_DESIGNER,

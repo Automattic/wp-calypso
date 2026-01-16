@@ -167,7 +167,7 @@ function useGenerateActionCallback( {
 	coupon?: string;
 	/**
 	 * When true, adds `is_gating_business_q1` to the plan cart item extra data.
-	 * Used for the pricing differentiation experiment (calypso_plans_differentiators_20251210).
+	 * Used for the pricing differentiation experiment (calypso_plans_differentiators_20260117).
 	 */
 	isGatingBusinessQ1?: boolean;
 } ): UseActionCallback {
