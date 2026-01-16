@@ -59,7 +59,7 @@ export function persistValueSafely< T extends keyof Preferences[ 'calypso_prefer
 	value: Preferences[ 'calypso_preferences' ][ T ]
 ): void {
 	try {
-		window.localStorage.setItem( key, JSON.stringify( value ) );
+		window.localStorage.setItem( PREFERENCES_KEY + key, JSON.stringify( value ) );
 	} catch ( error ) {
 		memoryStore[ key ] = value;
 	}
