@@ -67,7 +67,7 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 			: sprintf(
 					// translators: author is the plugin author.
 					__( 'By %(author)s' ),
-					{ author: plugin.author }
+					{ author: decodeEntities( plugin.author ) }
 			  );
 	}, [ isLoadingPlugin, plugin ] );
 
