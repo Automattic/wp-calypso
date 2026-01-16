@@ -32,7 +32,7 @@ export function AgentUIInputToolbar( {
 
 	// Handle click outside to close dropdown
 	useEffect( () => {
-		const handleClickOutside = ( event: MouseEvent | TouchEvent ) => {
+		const handleClickOutside = ( event: MouseEvent ) => {
 			if (
 				containerRef.current &&
 				! containerRef.current.contains( event.target as Node )
@@ -44,13 +44,8 @@ export function AgentUIInputToolbar( {
 		if ( isOpen ) {
 			// Use both mousedown and click to handle all cases
 			document.addEventListener( 'mousedown', handleClickOutside );
-			document.addEventListener( 'touchstart', handleClickOutside );
 			return () => {
 				document.removeEventListener( 'mousedown', handleClickOutside );
-				document.removeEventListener(
-					'touchstart',
-					handleClickOutside
-				);
 			};
 		}
 	}, [ isOpen ] );
