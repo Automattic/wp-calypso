@@ -18,7 +18,7 @@ export function PlaygroundIframe( {
 	playgroundClient: PlaygroundClient | null;
 	setPlaygroundClient: ( client: PlaygroundClient ) => void;
 } ) {
-const siteId = useSelector( getSelectedSiteId ) ?? 0;
+	const siteId = useSelector( getSelectedSiteId ) ?? 0;
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const recommendedPHPVersion = getPHPVersions( siteId ).recommendedValue;
 	const [ searchParams, setSearchParams ] = useSearchParams();
@@ -54,7 +54,7 @@ const siteId = useSelector( getSelectedSiteId ) ?? 0;
 				}
 			} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ playgroundError, recommendedPHPVersion, setPlaygroundClient ] );
+	}, [ playgroundError, recommendedPHPVersion ] );
 
 	if ( playgroundError === 'PLAYGROUND_NOT_FOUND' ) {
 		return <PlaygroundError createNewPlayground={ createNewPlayground } />;
