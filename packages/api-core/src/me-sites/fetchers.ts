@@ -11,13 +11,14 @@ export type FetchSiteType = 'atomic' | 'jetpack' | 'wpcom' | 'jetpack-full' | 'c
 export type FetchSiteTypes = 'all' | FetchSiteType[];
 
 export interface FetchSitesOptions {
-	include_a8c_owned: boolean;
+	include_a8c_owned?: boolean;
+	include_domain_only?: boolean;
 	site_visibility: 'all' | 'visible' | 'hidden' | 'deleted';
 }
 
 export async function fetchSites(
 	site_types: FetchSiteTypes,
-	{ include_a8c_owned, site_visibility }: FetchSitesOptions
+	{ include_a8c_owned, include_domain_only = false, site_visibility }: FetchSitesOptions
 ): Promise< Site[] > {
 	const { sites } = await wpcom.req.get(
 		{
@@ -26,7 +27,7 @@ export async function fetchSites(
 		},
 		{
 			include_a8c_owned,
-			include_domain_only: false,
+			include_domain_only,
 			site_activity: 'active',
 			site_visibility,
 			fields: JOINED_SITE_FIELDS,

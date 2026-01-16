@@ -6,7 +6,11 @@ export const sitesQueryKey = [ 'sites', SITE_FIELDS, SITE_OPTIONS ];
 
 export const sitesQuery = (
 	siteFilters: FetchSiteTypes,
-	fetchSitesOptions: FetchSitesOptions = { site_visibility: 'visible', include_a8c_owned: false }
+	fetchSitesOptions: FetchSitesOptions = {
+		site_visibility: 'visible',
+		include_a8c_owned: false,
+		include_domain_only: false,
+	}
 ) =>
 	queryOptions( {
 		queryKey: [ ...sitesQueryKey, siteFilters, fetchSitesOptions ],
