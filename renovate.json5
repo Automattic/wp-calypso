@@ -127,7 +127,7 @@
 	rebaseWhen: 'conflicted',
 
 	// --- Metadata settings for git ---
-	labels: [ 'Framework', '[Type] Task', 'dependencies' ],
+	labels: [ 'Framework', 'Task', 'dependencies' ],
 	reviewers: [ 'team:@automattic/calypso-dependency-updates' ],
 	branchPrefix: 'renovate/',
 	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',

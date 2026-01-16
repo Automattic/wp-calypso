@@ -59,16 +59,7 @@ function Layout( {
 	const APP_CONFIG = {
 		...APP_CONTEXT_DEFAULT_CONFIG,
 		supports: {
-			sites: {
-				settings: {
-					general: {
-						redirect: true,
-					},
-					server: true,
-					security: true,
-					experimental: true,
-				},
-			},
+			sites: true,
 		},
 	};
 
