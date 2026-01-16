@@ -35,13 +35,26 @@ function EmptyStateDescription( { children }: { children: ReactNode } ) {
 	);
 }
 
+function EmptyStateHeader( { children }: { children: ReactNode } ) {
+	return (
+		<VStack spacing={ 2 } alignment="center">
+			{ children }
+		</VStack>
+	);
+}
+
 function EmptyStateContent( { children }: { children: ReactNode } ) {
-	return <div className="dashboard-empty-state__content">{ children }</div>;
+	return (
+		<VStack spacing={ 6 } className="dashboard-empty-state__content">
+			{ children }
+		</VStack>
+	);
 }
 
 const EmptyStateWithStatics = Object.assign( EmptyState, {
 	Title: EmptyStateTitle,
 	Description: EmptyStateDescription,
+	Header: EmptyStateHeader,
 	Content: EmptyStateContent,
 	ActionList: EmptyStateActionList,
 	ActionItem: EmptyStateActionItem,
