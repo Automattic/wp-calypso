@@ -1,10 +1,6 @@
 /**
  * Utility functions shared across data stores
  */
-
-import { PREFERENCES_KEY } from './help-center/constants';
-import type { Preferences } from './help-center/types';
-
 declare const helpCenterData:
 	| { isProxied: boolean; isSU: boolean; isSSP: boolean; currentUser: { ID: number } }
 	| undefined;
@@ -35,43 +31,3 @@ export const isInSupportSession = () => {
 	}
 	return false;
 };
-
-const memoryStore: Preferences[ 'calypso_preferences' ] = {
-	help_center_open: undefined,
-	help_center_minimized: false,
-	help_center_router_history: null,
-};
-
-export function deleteValuesSafely(): void {
-	try {
-		window.localStorage.removeItem( PREFERENCES_KEY + 'help_center_open' );
-		window.localStorage.removeItem( PREFERENCES_KEY + 'help_center_minimized' );
-		window.localStorage.removeItem( PREFERENCES_KEY + 'help_center_router_history' );
-	} catch ( error ) {
-		memoryStore.help_center_open = undefined;
-		memoryStore.help_center_minimized = false;
-		memoryStore.help_center_router_history = null;
-	}
-}
-
-export function persistValueSafely< T extends keyof Preferences[ 'calypso_preferences' ] >(
-	key: T,
-	value: Preferences[ 'calypso_preferences' ][ T ]
-): void {
-	try {
-		window.localStorage.setItem( PREFERENCES_KEY + key, JSON.stringify( value ) );
-	} catch ( error ) {
-		memoryStore[ key ] = value;
-	}
-}
-
-export function retrieveValueSafely< T extends keyof Preferences[ 'calypso_preferences' ] >(
-	key: T
-): Preferences[ 'calypso_preferences' ][ T ] | undefined {
-	try {
-		const value = window.localStorage.getItem( PREFERENCES_KEY + key );
-		return value ? JSON.parse( value ) : undefined;
-	} catch ( error ) {
-		return memoryStore[ key ];
-	}
-}
