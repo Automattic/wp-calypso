@@ -388,6 +388,9 @@ export const FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN = 'automated-backups-securi
 export const FEATURE_INTEGRATED_SHIPMENT_TRACKING = 'integrated-shipment-tracking';
 export const FEATURE_SELL_EGIFTS_AND_VOUCHERS = 'sell-e-gifts-and-vouchers';
 export const FEATURE_EMAIL_MARKETING = 'email-marketing';
+export const FEATURE_ADVANCED_JETPACK_FORMS = 'advanced-jetpack-forms';
+export const FEATURE_WORDPRESS_STUDIO_SYNC = 'wordpress-studio-sync';
+export const FEATURE_EARLY_ONBOARDING_CALLS = 'early-onboarding-calls';
 export const FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION =
 	'marketplace-sync-social-media-integration';
 export const FEATURE_BACK_IN_STOCK_NOTIFICATIONS = 'back-in-stock-notifications';
