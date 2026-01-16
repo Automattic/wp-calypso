@@ -206,7 +206,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"user-management-revamp": true,
 		"wordpress-ai-assistant": true,
-		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true
+		"wpcom-user-bootstrap": false
 	}
 }
