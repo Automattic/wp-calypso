@@ -52,6 +52,10 @@ async function queryProducts( agencyId?: number ): Promise< APIProductFamily[] >
 							.map( ( product ) => ( {
 								...product,
 								family_slug: family.slug,
+								alternative_product_id:
+									product.alternative_product_id ||
+									product.monthly_alternative_product_id ||
+									product.yearly_alternative_product_id,
 							} ) ),
 					};
 				} )
