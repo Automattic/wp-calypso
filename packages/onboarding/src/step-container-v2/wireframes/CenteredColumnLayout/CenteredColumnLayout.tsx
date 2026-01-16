@@ -9,22 +9,28 @@ import { renderTopBar, TopBarRenderer } from '../../components/TopBar/TopBarRend
 
 interface CenteredColumnLayoutProps {
 	topBar?: ContentProp;
+	bottomBar?: ContentProp;
 	heading?: ReactNode;
 	className?: string;
 	children?: ContentProp;
 	stickyBottomBar?: ContentProp;
 	columnWidth: 4 | 5 | 6 | 8 | 10;
 	verticalAlign?: 'center';
+	noTopPadding?: boolean;
+	noBottomPadding?: boolean;
 }
 
 export const CenteredColumnLayout = ( {
 	columnWidth,
 	topBar,
+	bottomBar,
 	heading,
 	className,
 	children,
 	stickyBottomBar,
 	verticalAlign,
+	noTopPadding = false,
+	noBottomPadding = false,
 }: CenteredColumnLayoutProps ) => {
 	return (
 		<StepContainerV2
@@ -43,16 +49,24 @@ export const CenteredColumnLayout = ( {
 		>
 			{ ( context ) => {
 				const content = typeof children === 'function' ? children( context ) : children;
+				const bottomBarContent = typeof bottomBar === 'function' ? bottomBar( context ) : bottomBar;
 
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper centerAligned={ verticalAlign === 'center' }>
+						<ContentWrapper
+							centerAligned={ verticalAlign === 'center' }
+							noTopPadding={ noTopPadding }
+							noBottomPadding={ noBottomPadding }
+						>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow columns={ columnWidth } className={ className }>
 								{ content }
 							</ContentRow>
 						</ContentWrapper>
+						{ bottomBarContent && (
+							<div className="step-container-v2__bottom-bar-wrapper">{ bottomBarContent }</div>
+						) }
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>
 				);

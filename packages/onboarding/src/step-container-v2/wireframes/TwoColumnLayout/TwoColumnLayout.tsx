@@ -17,7 +17,9 @@ interface TwoColumnLayoutProps {
 	stickyBottomBar?: ContentProp;
 	firstColumnWidth: number;
 	secondColumnWidth: number;
+	noTopPadding?: boolean;
 	noBottomPadding?: boolean;
+	columns?: number;
 }
 
 export const TwoColumnLayout = ( {
@@ -29,7 +31,9 @@ export const TwoColumnLayout = ( {
 	className,
 	footer,
 	stickyBottomBar,
+	noTopPadding = false,
 	noBottomPadding = false,
+	columns = 10,
 }: TwoColumnLayoutProps ) => {
 	const getChildFlexGrow = ( index: number ) => {
 		switch ( index ) {
@@ -61,10 +65,10 @@ export const TwoColumnLayout = ( {
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper noBottomPadding={ noBottomPadding }>
+						<ContentWrapper noTopPadding={ noTopPadding } noBottomPadding={ noBottomPadding }>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow
-								columns={ 10 }
+								columns={ columns }
 								className={ clsx( 'step-container-v2__content-row--two-column-layout', className ) }
 							>
 								{ childElements }

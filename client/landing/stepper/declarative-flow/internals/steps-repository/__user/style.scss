@@ -256,4 +256,82 @@ $breakpoint-mobile: 660px;
 	.signup-form-social-first__email-tos-link {
 		margin-top: 3rem;
 	}
+
+	.user-step-carousel {
+		box-sizing: border-box;
+		max-width: 420px;
+		margin: 0 auto;
+		height: 100%;
+		min-height: 0;
+		padding: 20px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.user-step-carousel-column {
+		flex-grow: 1;
+		height: 100vh;
+		box-sizing: border-box;
+		padding: 20px 0;
+		min-height: 0;
+	}
+
+	.user-step-carousel-column-inner {
+		background: red;
+		border-radius: 20px;
+		height: 100%;
+	}
+
+	.user-step-carousel .dot-pager__pages {
+		flex: 1;
+		display: flex;
+		align-items: center;
+	}
+
+	.user-step-carousel .dot-pager__controls {
+		order: 2;
+		justify-content: center;
+		column-gap: 8px;
+	}
+
+	.user-step-carousel .dot-pager__controls li {
+		display: contents;
+	}
+
+	.user-step-carousel .dot-pager__controls .dot-pager__controls-spacer {
+		display: none;
+	}
+
+	.user-step-carousel .dot-pager__control-prev,
+	.user-step-carousel .dot-pager__control-next {
+		display: none;
+	}
+
+	.user-step-carousel .dot-pager__control-choose-page {
+		grid-row: 2;
+	}
+
+	.user-step-carousel-slide {
+		padding-inline: 24px;
+		text-align: center;
+	}
+
+	.user-step-carousel-title {
+		color: $gray-100;
+		font-size: 1.25rem;
+		font-weight: 600;
+		// margin: 0;
+		margin-block-end: 8px;
+	}
+
+	.user-step-carousel-description {
+		color: $gray-60;
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		// margin: 0;
+	}
+
+	.swipeable__container {
+		min-height: 100%;
+	}
 }

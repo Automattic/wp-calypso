@@ -1,9 +1,9 @@
+import { DotPager } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
@@ -69,6 +69,23 @@ const UserStepComponent: StepType = function UserStep( {
 	} );
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
+
+	const carouselSlides = [
+		{
+			title: translate( 'Launch faster with guided setup' ),
+			description: translate(
+				'Answer a few questions and we will tailor your site to your goals.'
+			),
+		},
+		{
+			title: translate( 'Bring your content with you' ),
+			description: translate( 'Import posts, pages, and media in just a couple of clicks.' ),
+		},
+		{
+			title: translate( 'Grow with built-in tools' ),
+			description: translate( 'SEO, newsletters, and analytics are ready when you are.' ),
+		},
+	];
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
 		if ( 'ID' in data ) {
@@ -162,16 +179,41 @@ const UserStepComponent: StepType = function UserStep( {
 		);
 
 		return (
-			<Step.CenteredColumnLayout
+			<Step.TwoColumnLayout
 				className="step-container-v2--user"
-				verticalAlign="center"
-				columnWidth={ 4 }
-				heading={ heading }
-				topBar={ topBar }
-				stickyBottomBar={ () => tosText }
+				firstColumnWidth={ 6 }
+				secondColumnWidth={ 6 }
+				columns={ 12 }
+				noTopPadding
+				noBottomPadding
+				// heading={ heading }
+				// topBar={ topBar }
+				// stickyBottomBar={ tosText }
 			>
-				{ stepContent }
-			</Step.CenteredColumnLayout>
+				<Step.CenteredColumnLayout
+					verticalAlign="center"
+					columnWidth={ 4 }
+					heading={ heading }
+					topBar={ topBar }
+					stickyBottomBar={ tosText }
+					noTopPadding
+					noBottomPadding
+				>
+					{ stepContent }
+				</Step.CenteredColumnLayout>
+				<div className="user-step-carousel-column">
+					<div className="user-step-carousel-column-inner">
+						<DotPager className="user-step-carousel" hasDynamicHeight={ false }>
+							{ carouselSlides.map( ( slide ) => (
+								<div key={ slide.title } className="user-step-carousel-slide">
+									<p className="user-step-carousel-title">{ slide.title }</p>
+									<p className="user-step-carousel-description">{ slide.description }</p>
+								</div>
+							) ) }
+						</DotPager>
+					</div>
+				</div>
+			</Step.TwoColumnLayout>
 		);
 	}
 
