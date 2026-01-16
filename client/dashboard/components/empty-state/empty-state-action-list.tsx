@@ -6,9 +6,5 @@ type EmptyStateActionListProps = {
 };
 
 export default function EmptyStateActionList( { children }: EmptyStateActionListProps ) {
-	return (
-		<div className="dashboard-empty-state__content">
-			<ActionList>{ children }</ActionList>
-		</div>
-	);
+	return <ActionList>{ children }</ActionList>;
 }
