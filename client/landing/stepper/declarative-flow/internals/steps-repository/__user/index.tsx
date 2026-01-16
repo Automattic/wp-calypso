@@ -72,18 +72,28 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const carouselSlides = [
 		{
-			title: translate( 'Launch faster with guided setup' ),
-			description: translate(
-				'Answer a few questions and we will tailor your site to your goals.'
+			key: 'join-472-million-websites-worldwide',
+			content: (
+				<p className="user-step-carousel-title">
+					{ translate( 'Join 472+ million websites worldwide' ) }
+				</p>
 			),
 		},
 		{
-			title: translate( 'Bring your content with you' ),
-			description: translate( 'Import posts, pages, and media in just a couple of clicks.' ),
-		},
-		{
-			title: translate( 'Grow with built-in tools' ),
-			description: translate( 'SEO, newsletters, and analytics are ready when you are.' ),
+			key: 'bring-your-content-with-you',
+			content: (
+				<>
+					<p className="user-step-carousel-testimonial">
+						{ translate(
+							'WordPress.com has made it easy to manage multiple news sites and blogs, letting me focus on the content rather than the technical aspects.'
+						) }
+					</p>
+					<p className="user-step-carousel-testimonial-author">{ translate( 'Brett S.' ) }</p>
+					<p className="user-step-carousel-testimonial-title">
+						{ translate( 'Founder/Blogger in Chief' ) }
+					</p>
+				</>
+			),
 		},
 	];
 
@@ -186,9 +196,6 @@ const UserStepComponent: StepType = function UserStep( {
 				columns={ 12 }
 				noTopPadding
 				noBottomPadding
-				// heading={ heading }
-				// topBar={ topBar }
-				// stickyBottomBar={ tosText }
 			>
 				<Step.CenteredColumnLayout
 					verticalAlign="center"
@@ -205,9 +212,8 @@ const UserStepComponent: StepType = function UserStep( {
 					<div className="user-step-carousel-column-inner">
 						<DotPager className="user-step-carousel" hasDynamicHeight={ false }>
 							{ carouselSlides.map( ( slide ) => (
-								<div key={ slide.title } className="user-step-carousel-slide">
-									<p className="user-step-carousel-title">{ slide.title }</p>
-									<p className="user-step-carousel-description">{ slide.description }</p>
+								<div key={ slide.key } className="user-step-carousel-slide">
+									{ slide.content }
 								</div>
 							) ) }
 						</DotPager>

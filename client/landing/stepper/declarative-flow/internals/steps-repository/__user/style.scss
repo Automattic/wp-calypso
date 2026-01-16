@@ -259,11 +259,11 @@ $breakpoint-mobile: 660px;
 
 	.user-step-carousel {
 		box-sizing: border-box;
-		max-width: 420px;
+		max-width: 480px;
 		margin: 0 auto;
 		height: 100%;
 		min-height: 0;
-		padding: 20px;
+		padding: 70px 20px;
 		display: flex;
 		flex-direction: column;
 	}
@@ -277,38 +277,32 @@ $breakpoint-mobile: 660px;
 	}
 
 	.user-step-carousel-column-inner {
-		background: red;
+		background: linear-gradient(
+			135deg,
+			var(--studio-wordpress-blue-10),
+			#183AD6
+		);
 		border-radius: 20px;
 		height: 100%;
 	}
-
+	
 	.user-step-carousel .dot-pager__pages {
 		flex: 1;
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
 	}
 
 	.user-step-carousel .dot-pager__controls {
 		order: 2;
 		justify-content: center;
 		column-gap: 8px;
+		margin-bottom: 0;
 	}
 
-	.user-step-carousel .dot-pager__controls li {
-		display: contents;
-	}
-
-	.user-step-carousel .dot-pager__controls .dot-pager__controls-spacer {
-		display: none;
-	}
-
+	.user-step-carousel .dot-pager__controls .dot-pager__controls-spacer,
 	.user-step-carousel .dot-pager__control-prev,
 	.user-step-carousel .dot-pager__control-next {
 		display: none;
-	}
-
-	.user-step-carousel .dot-pager__control-choose-page {
-		grid-row: 2;
 	}
 
 	.user-step-carousel-slide {
@@ -317,18 +311,18 @@ $breakpoint-mobile: 660px;
 	}
 
 	.user-step-carousel-title {
-		color: $gray-100;
-		font-size: 1.25rem;
+		color: white;
+		font-size: 2.5rem;
 		font-weight: 600;
-		// margin: 0;
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		margin-block-end: 8px;
+		margin-bottom: 40px;
 	}
 
 	.user-step-carousel-description {
 		color: $gray-60;
 		font-size: 0.9375rem;
 		line-height: 1.5;
-		// margin: 0;
 	}
 
 	.swipeable__container {
