@@ -35,10 +35,6 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: settings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
 
-	if ( ! siteTypeSupports.settings ) {
-		return null;
-	}
-
 	return (
 		<PageLayout
 			size="small"
