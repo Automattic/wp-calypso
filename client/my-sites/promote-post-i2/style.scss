@@ -863,9 +863,11 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 .blaze-credits-mobile-only {
 	margin: 0 0 0 auto;
 	font-size: 0.75rem;
+	display: block;
 	flex-grow: 0;
 
 	.blaze-credits-container__label {
+		line-height: rem(48px);
 		text-align: right;
 	}
 
