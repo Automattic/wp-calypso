@@ -1,5 +1,7 @@
 /* stylelint-disable scales/radii */
 .quick-post-input {
+    min-height: 240px;
+
 	&--loading {
 		text-align: center;
 		padding: 24px;

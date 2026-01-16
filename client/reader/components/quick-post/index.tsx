@@ -1,13 +1,14 @@
-import { Spinner } from '@automattic/components';
+import { sitesQuery } from '@automattic/api-queries';
 import { isLocaleRtl, useLocale } from '@automattic/i18n-utils';
 import {
 	Editor,
 	loadBlocksWithCustomizations,
 	loadTextFormatting,
 } from '@automattic/verbum-block-editor';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 // @ts-expect-error - No declaration file for heading block.
 import * as heading from '@wordpress/block-library/build-module/heading';
+import { createBlock, parse, serialize } from '@wordpress/blocks';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -15,21 +16,17 @@ import {
 } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
-import SitesDropdown from 'calypso/components/sites-dropdown';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { savePostMutation } from './hooks/use-post-mutation';
-
+import { SiteSelector } from './site-selector';
+import { focusEditor } from './utils';
+import type { Site } from '@automattic/api-core';
 import './style.scss';
+
 // Initialize the editor blocks and text formatting.
 loadBlocksWithCustomizations( [ heading ] );
 loadTextFormatting( [ heading.name ] );
@@ -37,42 +34,56 @@ interface Props {
 	className?: string;
 }
 
-// Note: The post data we receive from the API response does
-// not match the type in the stream data, but we can insert
-// the post data there for now until we create a corresponding
-// structure for the newly created post in the stream.
+const STORAGE_KEY = 'reader_quick_post_content';
+
+const isEmptyContent = ( content: string ) => {
+	const parsedContent = parse( content );
+	return (
+		parsedContent.length === 1 &&
+		parsedContent[ 0 ].name === 'core/paragraph' &&
+		parsedContent[ 0 ].attributes.content.trim().length === 0
+	);
+};
+
+const createInitialPostContent = () => {
+	return serialize( [
+		createBlock( 'core/paragraph', { placeholder: translate( 'Write your post here…' ) } ),
+	] );
+};
+
 export default function QuickPost( { className }: Props ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
-	const STORAGE_KEY = 'reader_quick_post_content';
 	const [ postContent, setPostContent ] = useState( () => {
-		return localStorage.getItem( STORAGE_KEY ) || '';
+		return localStorage.getItem( STORAGE_KEY ) || createInitialPostContent();
 	} );
+
+	const { data: sites, isLoading: isLoadingSites } = useSuspenseQuery(
+		sitesQuery( 'all', {
+			include_a8c_owned: false,
+			include_domain_only: false,
+			site_visibility: 'visible',
+		} )
+	);
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const editorRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
-	const currentUser = useSelector( getCurrentUser );
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const mostRecentlySelectedSiteId = useSelector( getMostRecentlySelectedSiteId );
-	const primarySiteId = useSelector( getPrimarySiteId );
-	const hasLoaded = useSelector( hasLoadedSites );
-	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
-	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId || undefined;
-	const siteAdminUrl = useSelector(
-		( state ) => ( siteId ? getSiteAdminUrl( state, siteId ) : null ),
-		( siteId ) => !! siteId
-	);
-
+	const [ selectedSite, setSelectedSite ] = useState< Site | null >( sites?.[ 0 ] ?? null );
 	const {
 		mutate: save,
 		isPending: isSaving,
 		variables: postVariables,
-	} = useMutation( savePostMutation( { siteId } ) );
+	} = useMutation( savePostMutation( { siteId: selectedSite?.ID } ) );
+
+	const isPublishing = postVariables?.status === 'publish' && isSaving;
+	const isSavingDraft = postVariables?.status === 'draft' && isSaving;
+	const hasSites = Array.isArray( sites ) && sites.length > 0 && ! isLoadingSites;
+	const siteAdminUrl = selectedSite ? selectedSite?.options?.admin_url : null;
 
 	const clearEditor = () => {
 		localStorage.removeItem( STORAGE_KEY );
-		setPostContent( '' );
+		setPostContent( createInitialPostContent() );
 		setEditorKey( ( key ) => key + 1 );
 	};
 
@@ -82,27 +93,32 @@ export default function QuickPost( { className }: Props ) {
 		}
 	}, [ postContent ] );
 
+	useEffect( () => {
+		if ( editorRef.current ) {
+			focusEditor();
+		}
+	}, [ editorRef.current ] );
+
 	const handlePublish = () => {
-		if ( ! siteId ) {
+		if ( ! selectedSite ) {
 			dispatch( warningNotice( translate( 'Please select a site.' ) ) );
 			return;
 		}
 
-		if ( postContent.trim().length === 0 ) {
+		if ( isEmptyContent( postContent ) ) {
 			dispatch( warningNotice( translate( 'Please fill in the post content.' ) ) );
 			return;
 		}
 
-		clearEditor();
 		save(
-			{ siteId, postContent, status: 'publish' },
+			{ siteId: selectedSite?.ID, postContent, status: 'publish' },
 			{
 				onSuccess: ( data ) => {
 					clearEditor();
 					recordReaderTracksEvent( 'calypso_reader_quick_post_submitted', {
 						post_id: data.ID,
 						post_url: data.URL,
-						site_id: siteId,
+						site_id: selectedSite.ID,
 					} );
 
 					dispatch(
@@ -110,7 +126,6 @@ export default function QuickPost( { className }: Props ) {
 							translate( 'Post successful! Your post will appear in the feed soon.' ),
 							{
 								button: translate( 'View Post.' ),
-								href: data.URL,
 								onClick: () => {
 									window.open( data.URL, '_blank' );
 								},
@@ -133,17 +148,21 @@ export default function QuickPost( { className }: Props ) {
 		);
 	};
 
-	const handleSiteSelect = ( siteId: number ) => {
-		dispatch( setSelectedSiteId( siteId ) );
+	const handleSiteSelect = ( site: Site | null ) => {
+		if ( ! site ) {
+			return;
+		}
+		setSelectedSite( site );
 	};
 
 	const handleFullEditorClick = () => {
-		const isEmpty = postContent.trim().length === 0;
+		const isEmpty = isEmptyContent( postContent );
+
 		recordReaderTracksEvent( 'calypso_reader_quick_post_full_editor_opened' );
 
-		if ( ! isEmpty && siteId ) {
+		if ( ! isEmpty && selectedSite ) {
 			save(
-				{ siteId, postContent, status: 'draft' },
+				{ siteId: selectedSite.ID, postContent, status: 'draft' },
 				{
 					onSuccess: ( data ) => {
 						clearEditor();
@@ -163,28 +182,15 @@ export default function QuickPost( { className }: Props ) {
 		}
 	};
 
-	if ( ! hasLoaded ) {
-		return (
-			<div className="quick-post-input quick-post-input--loading">
-				<Spinner />
-			</div>
-		);
-	}
-
 	if ( ! hasSites ) {
-		return null; // Don't show QuickPost if user has no sites.
+		return null;
 	}
-	const isPublishing = postVariables?.status === 'publish' && isSaving;
-	const isSavingDraft = postVariables?.status === 'draft' && isSaving;
 
 	return (
 		<div className={ clsx( 'quick-post-input', className ) }>
 			<VStack spacing={ 4 }>
-				<SitesDropdown
-					selectedSiteId={ siteId }
-					onSiteSelect={ handleSiteSelect }
-					isPlaceholder={ ! hasLoaded }
-				/>
+				<SiteSelector onChange={ handleSiteSelect } value={ selectedSite } sites={ sites } />
+
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor
 						key={ editorKey }

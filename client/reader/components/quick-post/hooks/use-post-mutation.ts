@@ -40,9 +40,12 @@ const request = async ( { postContent, status, siteId }: PostMutationVariables )
 	);
 };
 
-export const savePostMutation = ( { siteId }: { siteId?: number } ) => {
+export const savePostMutation = ( { siteId }: { siteId?: number | null } ) => {
 	return mutationOptions< PostItem, Error, PostMutationVariables >( {
 		mutationKey: [ 'save-post', siteId ],
-		mutationFn: ( { postContent, status } ) => request( { postContent, status, siteId } ),
+		mutationFn: ( { postContent, status } ) =>
+			siteId
+				? request( { postContent, status, siteId } )
+				: Promise.reject( new Error( 'Site ID is required' ) ),
 	} );
 };
