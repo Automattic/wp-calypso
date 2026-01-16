@@ -92,9 +92,14 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 
 	const handleRequestPayment = useCallback(
 		( flowType: ReferralOrderFlowType ) => {
-			if ( ! hasCompletedForm ) {
+			if ( flowType === 'send' && ! hasCompletedForm ) {
 				return;
 			}
+
+			if ( flowType === 'copy' && ! email ) {
+				return;
+			}
+
 			if ( ! emailValidator.validate( email ) ) {
 				setValidationError( { email: translate( 'Please provide correct email address' ) } );
 				return;
@@ -242,7 +247,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				<Button
 					primary
 					onClick={ () => handleRequestPayment( 'copy' ) }
-					disabled={ ! hasCompletedForm || isUserUnverified }
+					disabled={ ! email || isUserUnverified }
 					busy={ isPending }
 				>
 					<Icon icon={ customLink } />
