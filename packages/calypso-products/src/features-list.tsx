@@ -2084,10 +2084,18 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_ADVANCED_JETPACK_FORMS ]: {
 		getSlug: () => FEATURE_ADVANCED_JETPACK_FORMS,
 		getTitle: () => i18n.translate( 'Advanced Jetpack Forms' ),
+		getDescription: () =>
+			i18n.translate(
+				'Build powerful forms with advanced features like multi-step forms, file uploads, webhooks, and seamless integrations.'
+			),
 	},
 	[ FEATURE_WORDPRESS_STUDIO_SYNC ]: {
 		getSlug: () => FEATURE_WORDPRESS_STUDIO_SYNC,
 		getTitle: () => i18n.translate( 'WordPress Studio sync' ),
+		getDescription: () =>
+			i18n.translate(
+				'Sync a production or staging site with your local Studio site in either direction.'
+			),
 	},
 	[ FEATURE_EARLY_ONBOARDING_CALLS ]: {
 		getSlug: () => FEATURE_EARLY_ONBOARDING_CALLS,
