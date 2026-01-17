@@ -307,6 +307,7 @@ export const WPCOM_FEATURES_SCAN = 'scan';
 export const WPCOM_FEATURES_SCHEDULED_UPDATES = 'scheduled-updates';
 export const WPCOM_FEATURES_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const WPCOM_FEATURES_SUBSCRIPTION_GIFTING = 'subscription-gifting';
+export const WPCOM_FEATURES_TITAN_MAIL_1YEAR_TRIAL = 'titan_mail_1year_trial';
 export const WPCOM_FEATURES_LOCKED_MODE = 'locked-mode';
 export const WPCOM_FEATURES_LEGACY_CONTACT = 'legacy-contact';
 export const WPCOM_FEATURES_UPLOAD_AUDIO_FILES = 'upload-audio-files';
