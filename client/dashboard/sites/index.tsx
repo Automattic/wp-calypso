@@ -400,6 +400,7 @@ export default function Sites() {
 						fields={ fields__ES }
 						// TODO: actions={ actions }
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+						isPlaceholderData={ isPlaceholderData }
 						empty={ emptyState }
 						paginationInfo={ paginationInfo__ES }
 						renderItemLink={ ( { item, ...props } ) => (
@@ -420,6 +421,7 @@ export default function Sites() {
 						fields={ fields }
 						actions={ actions }
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+						isPlaceholderData={ isPlaceholderData }
 						empty={ emptyState }
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }
