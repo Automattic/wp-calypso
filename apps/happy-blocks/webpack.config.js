@@ -28,6 +28,7 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 		return {
 			index: path.join( blockPath, 'index' ),
 			view: path.join( blockPath, 'view' ),
+			'view-odie': path.join( blockPath, 'view-odie' ),
 		};
 	};
 
