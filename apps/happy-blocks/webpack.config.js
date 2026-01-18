@@ -25,10 +25,16 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 	}
 
 	const entry = () => {
+		if ( existsSync( path.join( blockPath, 'view-odie.js' ) ) ) {
+			return {
+				index: path.join( blockPath, 'index' ),
+				view: path.join( blockPath, 'view' ),
+				'view-odie': path.join( blockPath, 'view-odie' ),
+			};
+		}
 		return {
 			index: path.join( blockPath, 'index' ),
 			view: path.join( blockPath, 'view' ),
-			'view-odie': path.join( blockPath, 'view-odie' ),
 		};
 	};
 
