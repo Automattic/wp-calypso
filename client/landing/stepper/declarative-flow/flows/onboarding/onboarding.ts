@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	clearStepPersistedState,
@@ -39,11 +40,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-const withLocale = ( url: string, locale: string ) => {
-	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
-};
-
-const POST_CHECKOUT_SETUP_YOUR_SITE_EXPERIMENT_SLUG = 'calypso_post_checkout_setup_your_site_step';
+const POST_CHECKOUT_SETUP_YOUR_SITE_EXPERIMENT_SLUG = 'calyso_post_onboarding_big_sky_202601_v1';
 
 function initialize() {
 	const steps = [
@@ -70,9 +67,10 @@ const onboarding: FlowV2< typeof initialize > = {
 		const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
 			POST_CHECKOUT_SETUP_YOUR_SITE_EXPERIMENT_SLUG
 		);
-		const shouldShowNewStep =
-			! isLoadingExperiment && experimentAssignment?.variationName === 'treatment';
-
+		const shouldShowNewPostCheckoutStep =
+			isEnabled( 'onboarding/post-checkout-ai-step' ) &&
+			! isLoadingExperiment &&
+			experimentAssignment?.variationName === 'big_sky';
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -217,7 +215,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					 * If the post-checkout ai step should be shown,
 					 * redirect the user to the relevant step.
 					 */
-					if ( shouldShowNewStep ) {
+					if ( shouldShowNewPostCheckoutStep ) {
 						return navigate( 'setup-your-site-ai' );
 					}
 
