@@ -1,7 +1,8 @@
-import { ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -10,6 +11,7 @@ import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 const WooPaymentsDashboardEmptyState = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	return (
 		<div className="woopayments-dashboard-empty-state__content">
@@ -35,16 +37,19 @@ const WooPaymentsDashboardEmptyState = () => {
 				</StepSectionItem>
 			</StepSection>
 			<StepSection heading={ translate( 'Learn more about the program' ) }>
-				<ExternalLink
+				<Button
+					variant="link"
 					onClick={ () => {
 						dispatch(
 							recordTracksEvent( 'calypso_a4a_woopayments_learn_more_about_program_click' )
 						);
+						showSupportGuide(
+							'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/'
+						);
 					} }
-					href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
 				>
 					{ translate( 'Check out the full details in the Knowledge Base' ) }
-				</ExternalLink>
+				</Button>
 			</StepSection>
 		</div>
 	);

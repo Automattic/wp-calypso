@@ -122,7 +122,7 @@ export const siteRoute = createRoute( {
 
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
 		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
-			throw redirectAsNotAllowed( { to: trialExpiredUrl } );
+			throw redirect( { to: trialExpiredUrl } );
 		}
 
 		const difmUrl = `/sites/${ siteSlug }/site-building-in-progress`;
@@ -132,12 +132,12 @@ export const siteRoute = createRoute( {
 			! isSupportSession() &&
 			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
 		) {
-			throw redirectAsNotAllowed( { to: difmUrl } );
+			throw redirect( { to: difmUrl } );
 		}
 
 		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
 		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
-			throw redirectAsNotAllowed( { to: migrationUrl } );
+			throw redirect( { to: migrationUrl } );
 		}
 
 		// Check site type support for matched routes

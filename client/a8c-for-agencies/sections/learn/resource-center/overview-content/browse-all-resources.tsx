@@ -2,6 +2,8 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
@@ -144,17 +146,30 @@ export default function BrowseAllResources( {
 				</HStack>
 				<DataViews.FiltersToggled className="resource-center-filters" />
 			</DataViews>
-			<div className="resource-center-cards resource-center-browse-all-resources">
-				{ filteredData.map( ( item ) => (
-					<ResourceCard
-						key={ item.id }
-						resource={ item }
-						onOpenVideoModal={ onOpenVideoModal }
-						showLogo
-						tracksEventName="calypso_a4a_resource_center_browse_cta_click"
-					/>
-				) ) }
-			</div>
+			{ filteredData.length > 0 ? (
+				<div className="resource-center-cards resource-center-browse-all-resources">
+					{ filteredData.map( ( item ) => (
+						<ResourceCard
+							key={ item.id }
+							resource={ item }
+							onOpenVideoModal={ onOpenVideoModal }
+							showLogo
+							tracksEventName="calypso_a4a_resource_center_browse_cta_click"
+						/>
+					) ) }
+				</div>
+			) : (
+				<Spacer marginTop={ 2 } marginBottom={ 4 }>
+					<VStack className="resource-center-empty-results" spacing={ 2 }>
+						<Text weight={ 500 }>{ __( "We couldn't find any resources related to that." ) }</Text>
+						<Text>
+							{ __(
+								'Try adjusting your search or exploring other resources to help your agency grow.'
+							) }
+						</Text>
+					</VStack>
+				</Spacer>
+			) }
 		</>
 	);
 }
