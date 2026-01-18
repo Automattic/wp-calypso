@@ -41,6 +41,7 @@ import { SiteLink, SiteLink__ES } from './site-fields';
 import { OptInWelcomeModal } from './welcome-modal';
 import type {
 	FetchSitesOptions,
+	FetchPaginatedSitesOptions,
 	Site,
 	FetchDashboardSiteListParams,
 	DashboardSiteListSite,
@@ -64,7 +65,7 @@ const getFetchSitesOptions = (
 		isAutomattician &&
 		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
 
-	if ( filters.find( ( item: Filter ) => item.field === 'deleted' && item.value === true ) ) {
+	if ( filters.find( ( item: Filter ) => item.field === 'is_deleted' && item.value === true ) ) {
 		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
 	}
 
@@ -74,6 +75,52 @@ const getFetchSitesOptions = (
 		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
 	};
+};
+
+const getFetchPaginatedSitesOptions = (
+	view: View,
+	{ isRestoringAccount, isAutomattician }: SiteListQueryOptions,
+	siteFilters: DashboardFilters = {}
+): FetchPaginatedSitesOptions => {
+	const filters = view.filters ?? [];
+
+	// Include A8C sites unless explicitly excluded from the filter.
+	const shouldIncludeA8COwned =
+		isAutomattician &&
+		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
+
+	const options: FetchPaginatedSitesOptions = {
+		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
+		// See: https://github.com/Automattic/wp-calypso/pull/104220.
+		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
+		include_a8c_owned: shouldIncludeA8COwned,
+		search: view.search,
+		sort_field: view.sort?.field,
+		sort_direction: view.sort?.direction,
+		page: view.page,
+		per_page: view.perPage,
+	};
+
+	if ( filters.find( ( item: Filter ) => item.field === 'is_deleted' && item.value === true ) ) {
+		options.site_visibility = 'deleted';
+	}
+
+	view.filters?.forEach( ( filter ) => {
+		if ( filter.field === 'plan' && filter.value ) {
+			const planSlugsByName = siteFilters.plan?.reduce(
+				( acc, current ) => ( {
+					...acc,
+					[ current.name_en ]: [ ...( acc[ current.name_en ] || [] ), current.value ],
+				} ),
+				{} as Record< string, string[] >
+			);
+			options.plan = filter.value.map( ( v: string ) => planSlugsByName?.[ v ] ).flat();
+		} else if ( filter.field === 'visibility' && filter.value ) {
+			options.visibility = filter.value;
+		}
+	} );
+
+	return options;
 };
 
 function getFetchSiteListParams(
@@ -211,7 +258,18 @@ export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 	const sitesQueryResult = useQuery( {
 		...queries.sitesQuery( getFetchSitesOptions( view, options ) ),
 		placeholderData: keepPreviousData,
-		enabled: ! isEnabled( 'dashboard/v2/es-site-list' ),
+		enabled:
+			! isEnabled( 'dashboard/v2/es-site-list' ) &&
+			! isEnabled( 'dashboard/v2/paginated-site-list' ),
+	} );
+
+	const paginatedSitesQueryResult = useQuery( {
+		...queries.paginatedSitesQuery( getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
+		placeholderData: keepPreviousData,
+		enabled: isEnabled( 'dashboard/v2/paginated-site-list' ),
+		meta: {
+			fullPageLoader: true,
+		},
 	} );
 
 	if ( isEnabled( 'dashboard/v2/es-site-list' ) ) {
@@ -222,6 +280,17 @@ export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 			isLoadingSites: siteProfilesQueryResult.isLoading,
 			isPlaceholderData: siteProfilesQueryResult.isPlaceholderData,
 			totalItems: siteProfilesQueryResult.data?.total,
+		};
+	}
+
+	if ( isEnabled( 'dashboard/v2/paginated-site-list' ) ) {
+		return {
+			sites: paginatedSitesQueryResult.data?.sites,
+			sites__ES: [],
+			hasNoData: paginatedSitesQueryResult.data?.sites.length === 0,
+			isLoadingSites: paginatedSitesQueryResult.isLoading,
+			isPlaceholderData: paginatedSitesQueryResult.isPlaceholderData,
+			totalItems: paginatedSitesQueryResult.data?.total,
 		};
 	}
 
@@ -244,6 +313,16 @@ export function filterSortAndPaginate__ES(
 	view: View,
 	totalItems: number
 ) {
+	return {
+		data: sites,
+		paginationInfo: {
+			totalItems,
+			totalPages: view.perPage ? Math.ceil( totalItems / view.perPage ) : 1,
+		},
+	};
+}
+
+function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: number ) {
 	return {
 		data: sites,
 		paginationInfo: {
@@ -322,7 +401,9 @@ export default function Sites() {
 		}
 	}, [ sites, queryClient ] );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
+	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/paginated-site-list' )
+		? filterSortAndPaginateSites( sites ?? [], view, totalItems ?? 0 )
+		: filterSortAndPaginate( sites ?? [], view, fields );
 
 	const { data: filteredData__ES, paginationInfo: paginationInfo__ES } = filterSortAndPaginate__ES(
 		sites__ES ?? [],
