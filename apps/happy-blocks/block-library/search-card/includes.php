@@ -7,7 +7,11 @@
  * @package happy-blocks
  */
 
-$enable_odie_answers = get_option( 'dotcom_support_enable_odie_answers', false ) && IS_DEFINED( 'A8C_PROXIED_REQUEST' );
+$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] )
+	? true
+	: defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
+
+$enable_odie_answers = get_option( 'dotcom_support_enable_odie_answers', false ) && $is_proxied;
 
 if ( ! function_exists( 'happy_blocks_get_search_card_asset' ) ) {
 	/**

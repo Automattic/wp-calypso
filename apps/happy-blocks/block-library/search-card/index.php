@@ -17,7 +17,11 @@ $active_page                   = isset( $args['active_page'] ) ? $args['active_p
 $should_show_search_card       = ( $is_front_page || $is_404_page ) && 'forums' !== $active_page;
 $should_show_search_navigation = ! $is_front_page && ! $is_404_page;
 
-$enable_odie_answers = get_option( 'dotcom_support_enable_odie_answers', false ) && IS_DEFINED( 'A8C_PROXIED_REQUEST' );
+$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] )
+		? true
+		: defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
+
+$enable_odie_answers = get_option( 'dotcom_support_enable_odie_answers', false ) && $is_proxied;
 
 if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	function get_support_search_link_for_query( $query ) {
