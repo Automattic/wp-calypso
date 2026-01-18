@@ -20,11 +20,10 @@ function shouldAutoLoadHelpCenter() {
 }
 
 window.addEventListener( 'DOMContentLoaded', () => {
-	shouldAutoLoadHelpCenter().then( ( shouldAutoLoad ) => {
-		if ( shouldAutoLoad ) {
-			loadHelpCenter();
-		}
-	} );
+	const shouldAutoLoad = shouldAutoLoadHelpCenter();
+	if ( shouldAutoLoad ) {
+		loadHelpCenter();
+	}
 } );
 
 document.dispatchEvent( new Event( 'help-center-ready-to-load' ) );
