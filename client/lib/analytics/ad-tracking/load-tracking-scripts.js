@@ -123,7 +123,7 @@ function getTrackingScriptsToLoad() {
 	if ( mayWeTrackByTracker( 'reddit' ) ) {
 		scripts.push( REDDIT_TRACKING_SCRIPT_URL );
 	}
-
+	// The pixel must be loaded with the ID in the URL.
 	if ( mayWeTrackByTracker( 'tiktok' ) ) {
 		scripts.push( TIKTOK_SCRIPT_URL + TRACKING_IDS.tiktokPixelId );
 	}

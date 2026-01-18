@@ -38,6 +38,7 @@ export const QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js';
 export const OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js';
 export const PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js';
 export const PARSLEY_SCRIPT_URL = 'https://cdn.parsely.com/keys/wordpress.com/p.js?ver=3.3.2';
+// We're storing the pixel ID separately to reuse it, but it needs to be passed in the URL.
 export const TIKTOK_SCRIPT_URL = 'https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=';
 export const TRACKING_IDS = {
 	bingInit: '4074038',

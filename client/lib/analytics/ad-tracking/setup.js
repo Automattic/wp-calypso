@@ -249,7 +249,9 @@ function setupRedditGlobal() {
 
 	window.rdt.callQueue = [];
 }
-
+/**
+ * Sets up the TikTok advertising pixel based on the obfuscated code provided by TikTok.
+ */
 function setupTikTokGlobal() {
 	if ( window.ttq ) {
 		return;
