@@ -27,9 +27,11 @@ import {
 	AppleLoginPage,
 	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
+	CartCheckoutPage,
 	DashboardPage,
 	DashboardVisibilitySettingsPage,
 	DataHelper,
+	DomainSearchComponent,
 	EditorPage,
 	EmailClient,
 	envToFeatureKey,
@@ -61,6 +63,7 @@ import {
 	SecretsManager,
 	SidebarComponent,
 	SiteSelectComponent,
+	SignupPickPlanPage,
 	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
@@ -105,6 +108,10 @@ export const test = base.extend< {
 	 */
 	accountSMS: TestAccount;
 	/**
+	 * Test account used for P2 tests.
+	 */
+	accountP2: TestAccount;
+	/**
 	 * Client for interacting with emails during tests.
 	 */
 	clientEmail: EmailClient;
@@ -128,6 +135,10 @@ export const test = base.extend< {
 	 * Component for interacting with the site selection functionality.
 	 */
 	componentSiteSelect: SiteSelectComponent;
+	/**
+	 * Component for searching/selecting domains during signup flows.
+	 */
+	componentDomainSearch: DomainSearchComponent;
 	/**
 	 * Environment variables for the tests.
 	 */
@@ -165,6 +176,10 @@ export const test = base.extend< {
 	 */
 	pageDashboard: DashboardPage;
 	/**
+	 * Page object representing the cart checkout page.
+	 */
+	pageCartCheckout: CartCheckoutPage;
+	/**
 	 * Page object representing the WordPress.com dashboard visibility settings page.
 	 */
 	pageDashboardVisibilitySettings: DashboardVisibilitySettingsPage;
@@ -172,6 +187,10 @@ export const test = base.extend< {
 	 * Page object representing the WordPress editor page.
 	 */
 	pageEditor: EditorPage;
+	/**
+	 * Page object representing the signup plan picker page.
+	 */
+	pageSignupPickPlan: SignupPickPlanPage;
 	/**
 	 * Page object representing the Github login page.
 	 */
@@ -310,6 +329,10 @@ export const test = base.extend< {
 		const testAccount = await getAccount( page, 'smsUser' );
 		await use( testAccount );
 	},
+	accountP2: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'p2User' );
+		await use( testAccount );
+	},
 	clientEmail: async ( {}, use ) => {
 		const emailClient = new EmailClient();
 		await use( emailClient );
@@ -333,6 +356,10 @@ export const test = base.extend< {
 	componentSiteSelect: async ( { page }, use ) => {
 		const siteSelectComponent = new SiteSelectComponent( page );
 		await use( siteSelectComponent );
+	},
+	componentDomainSearch: async ( { page }, use ) => {
+		const domainSearchComponent = new DomainSearchComponent( page );
+		await use( domainSearchComponent );
 	},
 	environment: async ( {}, use ) => {
 		await use( envVariables );
@@ -367,6 +394,10 @@ export const test = base.extend< {
 		const dashboardPage = new DashboardPage( page );
 		await use( dashboardPage );
 	},
+	pageCartCheckout: async ( { page }, use ) => {
+		const cartCheckoutPage = new CartCheckoutPage( page );
+		await use( cartCheckoutPage );
+	},
 	pageDashboardVisibilitySettings: async ( { page }, use ) => {
 		const dashboardVisibilitySettingsPage = new DashboardVisibilitySettingsPage( page );
 		await use( dashboardVisibilitySettingsPage );
@@ -374,6 +405,10 @@ export const test = base.extend< {
 	pageEditor: async ( { page }, use ) => {
 		const editorPage = new EditorPage( page );
 		await use( editorPage );
+	},
+	pageSignupPickPlan: async ( { page }, use ) => {
+		const signupPickPlanPage = new SignupPickPlanPage( page );
+		await use( signupPickPlanPage );
 	},
 	pageGitHubLogin: async ( { page }, use ) => {
 		const gitHubLoginPage = new GitHubLoginPage( page );
