@@ -17,6 +17,12 @@ $active_page                   = isset( $args['active_page'] ) ? $args['active_p
 $should_show_search_card       = ( $is_front_page || $is_404_page ) && 'forums' !== $active_page;
 $should_show_search_navigation = ! $is_front_page && ! $is_404_page;
 
+$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] )
+		? true
+		: defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
+
+$enable_odie_answers = get_option( 'dotcom_support_enable_odie_answers', false ) && $is_proxied;
+
 if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	function get_support_search_link_for_query( $query ) {
 		$blog_id = get_current_blog_id();
@@ -125,24 +131,32 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	<div class="<?php echo esc_attr( implode( ' ', $content_classes ) ); ?>">
 			<h2><?php echo esc_html( $is_404_page ? __( "This page doesn't exist", 'happy-blocks' ) : __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
 			<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( "Let's help you find what you're looking for.", 'happy-blocks' ) ) . '</p>' : ''; ?>
-			<form id="support-search-form" class="" role="search" method="get" action="">
-				<div class="input-wrapper" dir="auto">
-					<input id="support-search-input" type="search" name="s" placeholder="<?php echo esc_html( __( 'Search questions, guides, courses', 'happy-blocks' ) ); ?>"/>
+			<fieldset class="support-search-form-container" <?php echo $enable_odie_answers ? 'disabled="disabled"' : ''; ?>>
+				<form id="support-search-form" class="" role="search" method="get" action="">
+					<div class="input-wrapper" dir="auto">
+						<?php if ( $enable_odie_answers ) : ?>
+							<input id="support-search-input" type="input" data-post-loading-text="<?php echo esc_html( __( 'Ask us anything', 'happy-blocks' ) ); ?>" name="odie-query" placeholder="<?php echo esc_html( __( 'Loading...', 'happy-blocks' ) ); ?>"/>
+							<button type="submit" class="search-submit-button" aria-label="<?php echo esc_attr( __( 'Search', 'happy-blocks' ) ); ?>">
+								✨
+							</button>
+						<?php else : ?>
+							<input id="support-search-input" type="search" name="s" placeholder="<?php echo esc_html( __( 'Search questions, guides, courses', 'happy-blocks' ) ); ?>"/>
+							<button type="submit" class="search-submit-button" aria-label="<?php echo esc_attr( __( 'Search', 'happy-blocks' ) ); ?>">
+								<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+									<path d="M13 5C9.7 5 7 7.7 7 11C7 12.4 7.5 13.7 8.3 14.7L4.5 18.5L5.6 19.6L9.4 15.8C10.4 16.6 11.7 17.1 13.1 17.1C16.4 17.1 19.1 14.4 19.1 11.1C19.1 7.8 16.3 5 13 5ZM13 15.5C10.5 15.5 8.5 13.5 8.5 11C8.5 8.5 10.5 6.5 13 6.5C15.5 6.5 17.5 8.5 17.5 11C17.5 13.5 15.5 15.5 13 15.5Z"/>
+								</svg>
+							</button>
+						<?php endif; ?>
+					</div>
+				</form>
 
-					<button type="submit" class="search-submit-button" aria-label="<?php echo esc_attr( __( 'Search', 'happy-blocks' ) ); ?>">
-						<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-							<path d="M13 5C9.7 5 7 7.7 7 11C7 12.4 7.5 13.7 8.3 14.7L4.5 18.5L5.6 19.6L9.4 15.8C10.4 16.6 11.7 17.1 13.1 17.1C16.4 17.1 19.1 14.4 19.1 11.1C19.1 7.8 16.3 5 13 5ZM13 15.5C10.5 15.5 8.5 13.5 8.5 11C8.5 8.5 10.5 6.5 13 6.5C15.5 6.5 17.5 8.5 17.5 11C17.5 13.5 15.5 15.5 13 15.5Z"/>
-						</svg>
-					</button>
-				</div>
-			</form>
-
-			<ul class="search-terms">
-				<li><a data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain' ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></a></li>
-				<li><a data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan' ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></a></li>
-				<li><a data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'add email' ) ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></a></li>
-				<li><a data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password' ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></a></li>
-			</ul>
+				<ul class="search-terms">
+					<li><button data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain' ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan' ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'add email' ) ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password' ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></button></li>
+				</ul>
+			</fieldset>
 	</div>
 	<?php endif; ?>
 </div>

@@ -26,6 +26,8 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	useLongSetFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
+	useVar5Features,
+	isExperimentVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -37,6 +39,8 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	useLongSetFeatures?: boolean;
 	useLongSetStackedFeatures?: boolean;
 	useShortSetStackedFeatures?: boolean;
+	useVar5Features?: boolean;
+	isExperimentVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -51,6 +55,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		useLongSetFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,
+		useVar5Features,
+		isExperimentVariant,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -59,6 +65,11 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			selectedFeature,
 			showLegacyStorageFeature,
 			isSummerSpecial,
+			useLongSetFeatures,
+			useLongSetStackedFeatures,
+			useShortSetStackedFeatures,
+			useVar5Features,
+			isExperimentVariant,
 		} );
 
 		return useMemo( () => {
@@ -75,6 +86,10 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				// Plans Differentiators Experiment: map variant flags to their feature methods
 				const experimentFeatureMethodMap = [
+					{
+						flag: useVar5Features,
+						method: 'getVar5StackedSignupWpcomFeatures' as const,
+					},
 					{
 						flag: useShortSetStackedFeatures,
 						method: 'getShortSetStackedSignupWpcomFeatures' as const,
@@ -94,7 +109,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj[ experimentFeatureMethod ]().slice(),
-						true // isExperimentVariant - use alternative copy for experiment
+						isExperimentVariant ?? true // isExperimentVariant - use alternative copy for experiment
 					);
 				} else if (
 					// Check if there's a specific override for comparison
@@ -227,6 +242,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			useLongSetFeatures,
 			useLongSetStackedFeatures,
 			useShortSetStackedFeatures,
+			useVar5Features,
+			isExperimentVariant,
 		] );
 	};
 
