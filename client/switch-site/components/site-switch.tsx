@@ -108,7 +108,7 @@ const Switcher = ( { redirectTo }: { redirectTo: string } ) => {
 				{ filteredSites.length ? (
 					filteredSites.map( ( site, index ) => (
 						<div
-							key={ site.name }
+							key={ site.ID }
 							className="switch-site__site"
 							role="option"
 							aria-selected={ index === selectedIndex }
