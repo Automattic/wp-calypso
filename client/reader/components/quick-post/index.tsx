@@ -8,7 +8,7 @@ import {
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 // @ts-expect-error - No declaration file for heading block.
 import * as heading from '@wordpress/block-library/build-module/heading';
-import { createBlock, parse, serialize } from '@wordpress/blocks';
+import { createBlock, parse, serialize, unregisterBlockType } from '@wordpress/blocks';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -30,6 +30,7 @@ import './style.scss';
 // Initialize the editor blocks and text formatting.
 loadBlocksWithCustomizations( [ heading ] );
 loadTextFormatting( [ heading.name ] );
+unregisterBlockType( 'core/embed' );
 interface Props {
 	className?: string;
 }
