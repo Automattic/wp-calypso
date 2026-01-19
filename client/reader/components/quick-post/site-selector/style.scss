@@ -1,5 +1,8 @@
 .components-button.components-menu-item__button.site-menu-item {
 	padding: 6px 12px;
-}
 
+	&:hover .site-option__name, &:focus-within .site-option__name {
+		color: var(--color-primary);
+	}
+}
 
