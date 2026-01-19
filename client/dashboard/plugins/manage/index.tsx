@@ -65,26 +65,35 @@ export default function PluginsList() {
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 
 	// Batch plugin slugs into chunks of BATCH_SIZE to comply with API limit
-	const pluginSlugs = useMemo( () => plugins.map( ( plugin ) => plugin.slug ), [ plugins ] );
 	const slugBatches = useMemo( () => {
+		const pluginSlugs = plugins.map( ( plugin ) => plugin.slug );
 		const batches: string[][] = [];
 		for ( let i = 0; i < pluginSlugs.length; i += BATCH_SIZE ) {
 			batches.push( pluginSlugs.slice( i, i + BATCH_SIZE ) );
 		}
 		return batches;
-	}, [ pluginSlugs ] );
+	}, [ plugins ] );
 
 	const marketplaceSearchResults = useQueries( {
-		queries: slugBatches.map( ( slugs ) =>
-			marketplaceSearchQuery( {
-				perPage: BATCH_SIZE,
-				slugs,
-				groupId: 'wporg',
-			} )
-		),
+		queries:
+			slugBatches.length > 0
+				? slugBatches.map( ( slugs ) =>
+						marketplaceSearchQuery( {
+							perPage: BATCH_SIZE,
+							slugs,
+							groupId: 'wporg',
+						} )
+				  )
+				: [],
 	} );
 
 	const iconBySlug = useMemo( () => {
+		// Only recalculate once all queries have data
+		const allQueriesLoaded = marketplaceSearchResults.every( ( result ) => result.isSuccess );
+		if ( ! allQueriesLoaded ) {
+			return new Map< string, PluginListRow[ 'icon' ] >();
+		}
+
 		const marketplacePluginsBySlug = new Map( Object.entries( marketplacePlugins?.results || {} ) );
 
 		const marketplaceSearchBySlug = marketplaceSearchResults

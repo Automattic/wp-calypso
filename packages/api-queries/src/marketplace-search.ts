@@ -13,7 +13,11 @@ export const marketplaceSearchQuery = ( {
 	groupId?: string;
 } ) =>
 	queryOptions( {
-		queryKey: [ 'marketplace-search', groupId, ...slugs, perPage ],
+		queryKey: [
+			'marketplace-search',
+			groupId,
+			{ slugs: slugs.slice( 0, MAX_PAGE_SIZE ), perPage },
+		],
 		queryFn: () =>
 			fetchMarketplaceSearch( {
 				category: 'all',
