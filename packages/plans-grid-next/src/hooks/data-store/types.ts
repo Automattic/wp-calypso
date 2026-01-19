@@ -47,6 +47,14 @@ export interface UseGridPlansParams {
 	 * When true, use the stacked (incremental) feature set for the short_set_stacked variant.
 	 */
 	useShortSetStackedFeatures?: boolean;
+	/**
+	 * When true, use the var5 feature set (getVar5StackedSignupWpcomFeatures).
+	 */
+	useVar5Features?: boolean;
+	/**
+	 * When true, the user is in an experiment variant (not control).
+	 */
+	isExperimentVariant?: boolean;
 }
 
 export type UseGridPlansType = (
