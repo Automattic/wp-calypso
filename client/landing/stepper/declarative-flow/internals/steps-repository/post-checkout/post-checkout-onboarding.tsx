@@ -129,6 +129,7 @@ const PostCheckoutOnboarding: StepType< {
 				siteSlug,
 				hasExternalTheme,
 				hasPluginByGoal,
+				postCheckoutBigSky: experimentAssignment?.variationName === 'big_sky',
 			};
 
 			if ( isJetpackOrAtomic ) {
@@ -148,7 +149,6 @@ const PostCheckoutOnboarding: StepType< {
 		submit?.( {
 			siteId: site.ID,
 			siteSlug,
-			postCheckoutBigSky: experimentAssignment?.variationName === 'big_sky',
 		} );
 	}, [
 		site,

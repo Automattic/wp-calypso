@@ -199,11 +199,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
-
-					if ( providedDependencies?.postCheckoutBigSky ) {
-						return navigate( 'setup-your-site-ai' );
-					}
-
 					return navigate( 'processing' );
 				}
 				case 'setup-your-site-ai': {
@@ -281,6 +276,8 @@ const onboarding: FlowV2< typeof initialize > = {
 									coupon,
 								} )
 							);
+						} else if ( providedDependencies?.postCheckoutBigSky ) {
+							return navigate( 'setup-your-site-ai' );
 						} else {
 							// replace the location to delete processing step from history.
 							window.location.replace( destination );
