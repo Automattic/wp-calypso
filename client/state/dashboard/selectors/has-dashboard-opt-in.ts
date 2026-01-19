@@ -14,3 +14,11 @@ export const hasDashboardOptIn = ( state: AppState ): boolean => {
 
 	return preference?.value === 'opt-in';
 };
+
+export const hasDashboardForcedOptIn = ( state: AppState ): boolean => {
+	const preference = getPreference( state, 'hosting-dashboard-opt-in' ) as
+		| HostingDashboardOptIn
+		| undefined;
+
+	return preference?.value === 'forced-opt-in';
+};
