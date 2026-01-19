@@ -17,15 +17,12 @@ $active_page                   = isset( $args['active_page'] ) ? $args['active_p
 $should_show_search_card       = ( $is_front_page || $is_404_page ) && 'forums' !== $active_page;
 $should_show_search_navigation = ! $is_front_page && ! $is_404_page;
 
-$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] )
-		? true
-		: defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
-
-$enable_odie_answers = get_option( 'dotcom_support_enable_odie_answers', false ) && $is_proxied;
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- We are not processing any data here.
+$enable_odie_answers = get_option( 'dotcom_support_enable_odie_answers', false ) || ( isset( $_GET['dotcom_support_enable_odie_answers'] ) && $_GET['dotcom_support_enable_odie_answers'] === 'true' );
 
 if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	function get_support_search_link_for_query( $query ) {
-		$blog_id = get_current_blog_id();
+		$blog_id  = get_current_blog_id();
 		$base_url = localized_wpcom_url( 'https://wordpress.com/support/' );
 
 		return add_query_arg(
