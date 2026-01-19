@@ -428,6 +428,16 @@
 	}
 }
 
+// var1d experiment: 24px bottom margin after last feature
+.plan-features-2023-grid__table-item .is-var1d-last-feature {
+	margin-block-end: 24px;
+}
+
+// Other experiment variants (var1, var3, var4, var5): 37px bottom margin after last feature
+.plan-features-2023-grid__table-item .is-experiment-last-feature {
+	margin-block-end: 37px;
+}
+
 .plan-features-2023-grid__row:last-of-type .plan-features-2023-grid__table-item {
 	border-bottom: solid 1px var(--color-neutral-5);
 

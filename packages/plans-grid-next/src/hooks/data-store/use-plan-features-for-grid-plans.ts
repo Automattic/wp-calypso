@@ -334,6 +334,16 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							...( shouldMarkAsDifferentiator && { isDifferentiatorFeature: true } ),
 						} );
 					} );
+
+					// Mark the last feature with variant-specific styling for bottom margin
+					if ( wpcomFeaturesTransformed.length > 0 ) {
+						const lastIndex = wpcomFeaturesTransformed.length - 1;
+						if ( isVar1dVariant ) {
+							wpcomFeaturesTransformed[ lastIndex ].isVar1dLastFeature = true;
+						} else if ( isExperimentVariant ) {
+							wpcomFeaturesTransformed[ lastIndex ].isExperimentLastFeature = true;
+						}
+					}
 				}
 
 				const storageFeature = planConstantObj.getStorageFeature?.(

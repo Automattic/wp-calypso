@@ -29,6 +29,14 @@ export type TransformedFeatureObject = FeatureObject & {
 	 * Used for var1d styling with 26px margin after the header.
 	 */
 	isHeaderFeature?: boolean;
+	/**
+	 * When true, this is the last feature in var1d variant (24px bottom margin).
+	 */
+	isVar1dLastFeature?: boolean;
+	/**
+	 * When true, this is the last feature in a non-var1d experiment variant (37px bottom margin).
+	 */
+	isExperimentLastFeature?: boolean;
 };
 
 export interface PlanFeaturesForGridPlan {
