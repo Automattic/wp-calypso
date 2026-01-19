@@ -10,8 +10,10 @@ import './style.scss';
 function EmptyStateContainer( { children }: { children: ReactNode } ) {
 	return (
 		<Card>
-			<CardBody className="dashboard-empty-state">
-				<VStack alignment="center">{ children }</VStack>
+			<CardBody>
+				<VStack alignment="center" className="dashboard-empty-state">
+					{ children }
+				</VStack>
 			</CardBody>
 		</Card>
 	);
