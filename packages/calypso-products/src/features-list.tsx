@@ -206,6 +206,10 @@ import {
 	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
 	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
 	FEATURE_EMAIL_MARKETING,
+	FEATURE_ADVANCED_JETPACK_FORMS,
+	FEATURE_WORDPRESS_STUDIO_SYNC,
+	FEATURE_EARLY_ONBOARDING_CALLS,
+	FEATURE_BASIC_FORMS,
 	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
 	FEATURE_MARKETING_AUTOMATION,
@@ -349,6 +353,7 @@ import {
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_FREE_FAST_SUPPORT,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
 	FEATURE_GROUP_WORDADS,
@@ -716,7 +721,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_VIDEO_UPLOADS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Video hosting with VideoPress (250GB video storage)' )
+				? i18n.translate( 'Use VideoPress with 250GB dedicated storage' )
 				: i18n.translate( 'VideoPress support' ),
 		getDescription: () =>
 			i18n.translate(
@@ -784,7 +789,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SIMPLE_PAYMENTS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Payment buttons' )
+				? i18n.translate( 'Add payment buttons' )
 				: i18n.translate( 'PayPal Payment Buttons' ),
 		getDescription: () => i18n.translate( 'Sell anything with a simple PayPal button.' ),
 	},
@@ -809,7 +814,7 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_UPLOAD_PLUGINS ]: {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS,
-		getTitle: () => i18n.translate( 'Install plugins' ),
+		getTitle: () => i18n.translate( 'Install WordPress plugins' ),
 		getDescription: () =>
 			i18n.translate(
 				'Plugins extend the functionality of your site and ' +
@@ -1644,7 +1649,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_AD_FREE_EXPERIENCE ]: {
 		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,
-		getTitle: () => i18n.translate( 'Ad-free browsing experience for your visitors' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Turn off WordPress.com ads' )
+				: i18n.translate( 'Ad-free browsing experience for your visitors' ),
 		getDescription: () =>
 			i18n.translate( 'Unlock a clean, ad-free browsing experience for your visitors.' ),
 	},
@@ -1870,7 +1878,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Custom CSS' )
+				? i18n.translate( 'Use custom CSS' )
 				: i18n.translate( 'Customize fonts and colors sitewide' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
@@ -2072,8 +2080,34 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_EMAIL_MARKETING,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Email Marketing (powered by Mailpoet incl. 500 subscribers)' )
+				? i18n.translate( 'Email marketing automation' )
 				: i18n.translate( 'Email marketing built-in' ),
+	},
+	[ FEATURE_ADVANCED_JETPACK_FORMS ]: {
+		getSlug: () => FEATURE_ADVANCED_JETPACK_FORMS,
+		getTitle: () => i18n.translate( 'Advanced Jetpack Forms' ),
+		getDescription: () =>
+			i18n.translate(
+				'Build powerful forms with advanced features like multi-step forms, file uploads, webhooks, and seamless integrations.'
+			),
+	},
+	[ FEATURE_WORDPRESS_STUDIO_SYNC ]: {
+		getSlug: () => FEATURE_WORDPRESS_STUDIO_SYNC,
+		getTitle: () => i18n.translate( 'WordPress Studio sync' ),
+		getDescription: () =>
+			i18n.translate(
+				'Sync a production or staging site with your local Studio site in either direction.'
+			),
+	},
+	[ FEATURE_EARLY_ONBOARDING_CALLS ]: {
+		getSlug: () => FEATURE_EARLY_ONBOARDING_CALLS,
+		getTitle: () => i18n.translate( 'Early onboarding calls for site setup' ),
+	},
+	[ FEATURE_BASIC_FORMS ]: {
+		getSlug: () => FEATURE_BASIC_FORMS,
+		getTitle: () => i18n.translate( 'Basic forms' ),
+		getDescription: () =>
+			i18n.translate( 'Use the Form block to add a contact form to your site.' ),
 	},
 	[ FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION ]: {
 		getSlug: () => FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
@@ -2082,7 +2116,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
 		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
-		getTitle: () => i18n.translate( 'Back in stock emails' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Back-in-store notifications' )
+				: i18n.translate( 'Back in stock emails' ),
 		getDescription: () =>
 			i18n.translate( 'Notify customers when an out-of-stock item is back in stock.' ),
 	},
@@ -2319,7 +2356,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_REALTIME_BACKUPS_JP,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Real-time backups & one-click restores' )
+				? i18n.translate( 'Real-time backups and one-click restores' )
 				: i18n.translate( 'Real-time backups' ),
 		getDescription: () =>
 			i18n.translate( 'Count on multi-redundancy, real-time backups of all your data.' ),
@@ -2521,7 +2558,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SUPPORT_FROM_EXPERTS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Support 24/7' )
+				? i18n.translate( 'Free support' )
 				: i18n.translate( 'Support from our expert\u00A0team' ),
 		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
 	},
@@ -2531,11 +2568,17 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
 	},
+	[ FEATURE_FREE_FAST_SUPPORT ]: {
+		getSlug: () => FEATURE_FREE_FAST_SUPPORT,
+		getTitle: () => i18n.translate( 'Free support with faster response times' ),
+		getDescription: () =>
+			i18n.translate( 'Prompt support from our expert, friendly Happiness team.' ),
+	},
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( '24/7 free priority support from our expert team' )
+				? i18n.translate( 'Free 24/7 expert support with priority response times' )
 				: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
 		getDescription: () =>
 			i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' ),
@@ -2551,7 +2594,8 @@ const FEATURES_LIST: FeatureList = {
 	// For the copy request dated 20250207 in pcNC1U-1vN-p2
 	[ FEATURE_STATS_BASIC_20250206 ]: {
 		getSlug: () => FEATURE_STATS_BASIC_20250206,
-		getTitle: () => i18n.translate( 'Stats' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant ? i18n.translate( 'Access to stats' ) : i18n.translate( 'Stats' ),
 		getDescription: () =>
 			i18n.translate( 'Access full traffic history, filter by date, and see peak traffic times.' ),
 	},
@@ -2559,7 +2603,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STATS_ADVANCED_20250206,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Premium stats & analytics' )
+				? i18n.translate( 'Premium stats and analytics' )
 				: i18n.translate( 'Premium stats' ),
 		getDescription: () =>
 			i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
@@ -2790,23 +2834,35 @@ const FEATURES_LIST: FeatureList = {
 	// AI features for plan differentiators experiment
 	[ FEATURE_AI_WEBSITE_BUILDER ]: {
 		getSlug: () => FEATURE_AI_WEBSITE_BUILDER,
-		getTitle: () => i18n.translate( 'AI Website Builder' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Enhanced AI Website Builder' )
+				: i18n.translate( 'AI Website Builder' ),
 		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 	[ FEATURE_AI_WEBSITE_BUILDER_LIMITED ]: {
 		getSlug: () => FEATURE_AI_WEBSITE_BUILDER_LIMITED,
-		getTitle: () => i18n.translate( 'AI Website Builder (limited)' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'AI website builder (usage limits apply)' )
+				: i18n.translate( 'AI Website Builder (limited)' ),
 		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 	[ FEATURE_AI_WRITER_DESIGNER ]: {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER,
-		getTitle: () => i18n.translate( 'AI Writer & Designer' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Enhanced AI assistant and tools' )
+				: i18n.translate( 'AI Writer & Designer' ),
 		getDescription: () =>
 			i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
 	},
 	[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER_LIMITED,
-		getTitle: () => i18n.translate( 'AI Writer & Designer (limited)' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'AI assistant and tools (usage limits apply)' )
+				: i18n.translate( 'AI Writer & Designer (limited)' ),
 		getDescription: () =>
 			i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
 	},
@@ -2834,7 +2890,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Professional email Inbox free for 1 year' )
+				? i18n.translate( 'Free business email account for one year' )
 				: i18n.translate( 'Professional email Inbox free for 1 year' ),
 		getDescription: () =>
 			i18n.translate( 'Get a professional email address with your domain, free for one year.' ),
@@ -2843,7 +2899,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_BLAZE_AD_CREDITS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Blaze - Free ad credits ($200)' )
+				? i18n.translate( 'Free advertising credits worth $200' )
 				: i18n.translate( 'Blaze - Free ad credits ($200)' ),
 		getDescription: () =>
 			i18n.translate(

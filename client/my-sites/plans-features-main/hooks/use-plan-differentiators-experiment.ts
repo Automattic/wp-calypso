@@ -1,35 +1,54 @@
 import { useExperiment } from 'calypso/lib/explat';
 
-type PlanDifferentiatorsExperimentVariant =
-	| 'long_set'
-	| 'long_set_diff'
-	| 'long_set_stacked'
-	| 'short_set_stacked'
-	| 'short_set_stacked_diff';
+type PlanDifferentiatorsExperimentVariant = 'control' | 'var1' | 'var1d' | 'var3' | 'var4' | 'var5';
 
 type PlanDifferentiatorsExperimentResult = {
 	isLoading: boolean;
 	variant?: PlanDifferentiatorsExperimentVariant;
 	/**
 	 * When true, show "Everything in X, plus:" with incremental features.
-	 * Applies to: long_set_stacked, short_set_stacked, short_set_stacked_diff
+	 * Applies to: var1, var1d, var3, var5
 	 */
 	isStacked: boolean;
 	/**
 	 * When true, use the long/full feature set instead of simplified.
-	 * Applies to: long_set, long_set_diff, long_set_stacked
+	 * Applies to: var3, var4
 	 */
 	isLongSet: boolean;
 	/**
 	 * When true, use the short/simplified feature set instead of simplified.
-	 * Applies to: short_set_stacked, short_set_stacked_diff
+	 * Applies to: var1, var1d, var5
 	 */
 	isShortSet: boolean;
 	/**
 	 * When true, show the differentiator header (3 bullet points).
-	 * Applies to: long_set_diff, short_set_stacked_diff
+	 * Applies to: var1d
 	 */
 	showDifferentiatorHeader: boolean;
+	/**
+	 * When true, use var5 feature set (getVar5StackedSignupWpcomFeatures).
+	 * Applies to: var5
+	 */
+	useVar5Features: boolean;
+	/**
+	 * When true, use var4 feature set (getLongSetSignupWpcomFeatures).
+	 * Applies to: var4
+	 */
+	useVar4Features: boolean;
+	/**
+	 * When true, use var3 feature set (getLongSetStackedSignupWpcomFeatures).
+	 * Applies to: var3
+	 */
+	useVar3Features: boolean;
+	/**
+	 * When true, use var1/var1d feature set (getShortSetStackedSignupWpcomFeatures).
+	 * Applies to: var1, var1d
+	 */
+	useVar1Features: boolean;
+	/**
+	 * When true, the user is in an experiment variant (not control).
+	 */
+	isExperimentVariant: boolean;
 };
 
 interface UsePlanDifferentiatorsExperimentParams {
@@ -49,7 +68,7 @@ function usePlanDifferentiatorsExperiment( {
 	const isEligible =
 		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
 
-	const [ isLoading, assignment ] = useExperiment( 'calypso_plans_differentiators_20251210', {
+	const [ isLoading, assignment ] = useExperiment( 'calypso_plans_differentiators_20260117', {
 		isEligible,
 	} );
 
@@ -57,13 +76,27 @@ function usePlanDifferentiatorsExperiment( {
 		| PlanDifferentiatorsExperimentVariant
 		| undefined;
 
+	const isExperimentVariant = variant !== undefined && variant !== 'control';
+
+	// Map variants to feature sets:
+	// var4 -> getLongSetSignupWpcomFeatures
+	// var1, var1d -> getShortSetStackedSignupWpcomFeatures
+	// var3 -> getLongSetStackedSignupWpcomFeatures
+	// var5 -> getVar5StackedSignupWpcomFeatures
+
 	return {
 		isLoading,
 		variant,
-		isStacked: variant?.includes( 'stacked' ) ?? false,
-		isLongSet: variant?.includes( 'long_set' ) ?? false,
-		isShortSet: variant?.includes( 'short_set' ) ?? false,
-		showDifferentiatorHeader: variant?.includes( 'diff' ) ?? false,
+		isStacked:
+			variant === 'var1' || variant === 'var1d' || variant === 'var3' || variant === 'var5',
+		isLongSet: variant === 'var3' || variant === 'var4',
+		isShortSet: variant === 'var1' || variant === 'var1d' || variant === 'var5',
+		showDifferentiatorHeader: variant === 'var1d',
+		useVar5Features: variant === 'var5',
+		useVar4Features: variant === 'var4',
+		useVar3Features: variant === 'var3',
+		useVar1Features: variant === 'var1' || variant === 'var1d',
+		isExperimentVariant,
 	};
 }
 

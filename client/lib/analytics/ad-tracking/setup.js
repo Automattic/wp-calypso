@@ -7,6 +7,7 @@ import {
 	ADROLL_PAGEVIEW_PIXEL_URL_2,
 	ADROLL_PURCHASE_PIXEL_URL_1,
 	ADROLL_PURCHASE_PIXEL_URL_2,
+	TIKTOK_SCRIPT_URL,
 	TRACKING_IDS,
 } from './constants';
 
@@ -105,6 +106,10 @@ export function setup() {
 		// Reddit
 		if ( mayWeInitTracker( 'reddit' ) ) {
 			setupRedditGlobal();
+		}
+
+		if ( mayWeInitTracker( 'tiktok' ) ) {
+			setupTikTokGlobal();
 		}
 	}
 }
@@ -243,6 +248,49 @@ function setupRedditGlobal() {
 		};
 
 	window.rdt.callQueue = [];
+}
+/**
+ * Sets up the TikTok advertising pixel based on the obfuscated code provided by TikTok.
+ */
+function setupTikTokGlobal() {
+	if ( window.ttq ) {
+		return;
+	}
+	// This is usually set when calling load, but we load the script through a separate mechanism.
+	window.TiktokAnalyticsObject = 'ttq';
+	window.ttq = Object.assign( [], {
+		_i: {
+			[ TRACKING_IDS.tiktokPixelId ]: {
+				_u: TIKTOK_SCRIPT_URL,
+			},
+		},
+		_t: {
+			[ TRACKING_IDS.tiktokPixelId ]: +new Date(),
+		},
+	} );
+	const methods = [
+		'page',
+		'track',
+		'identify',
+		'instances',
+		'debug',
+		'on',
+		'off',
+		'once',
+		'ready',
+		'alias',
+		'group',
+		'enableCookie',
+		'disableCookie',
+		'holdConsent',
+		'revokeConsent',
+		'grantConsent',
+	];
+	methods.forEach( function ( value ) {
+		window.ttq[ value ] = function () {
+			window.ttq.push( [ value ].concat( Array.prototype.slice.call( arguments, 0 ) ) );
+		};
+	} );
 }
 
 function setupGtag() {

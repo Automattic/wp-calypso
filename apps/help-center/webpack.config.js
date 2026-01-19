@@ -86,6 +86,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'help-center-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-customizer' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-gutenberg-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'help-center-logged-out' } ),
 		getIndividualConfig( {
 			env,
 			argv,

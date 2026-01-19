@@ -1,17 +1,20 @@
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { useEffect, useRef } from 'react';
 import { sanitizeView } from './sanitize-view';
 import type { ComponentProps } from 'react';
 
 type WPDataViewsProps< Item > = ComponentProps< typeof WPDataViews< Item > >;
 
 export type DataViewsProps< Item > = WPDataViewsProps< Item > & {
+	isPlaceholderData?: boolean;
 	onResetView?: () => void;
 };
 
 export function DataViews< Item >( {
 	view,
+	isPlaceholderData,
 	onResetView,
 	header,
 	search = true,
@@ -19,6 +22,19 @@ export function DataViews< Item >( {
 	children,
 	...props
 }: DataViewsProps< Item > ) {
+	const previousPage = useRef( view.page );
+
+	// Scroll to top only after pagination data loads.
+	useEffect( () => {
+		if ( isPlaceholderData ) {
+			return;
+		}
+		if ( previousPage.current !== view.page ) {
+			window.scrollTo( { top: 0, behavior: 'instant' } );
+			previousPage.current = view.page;
+		}
+	}, [ view.page, isPlaceholderData ] );
+
 	const sanitizedView = sanitizeView( view, props.fields );
 
 	const resetViewAction = onResetView && (

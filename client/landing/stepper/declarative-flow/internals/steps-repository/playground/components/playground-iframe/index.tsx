@@ -1,8 +1,10 @@
 import { useDispatch } from '@wordpress/data';
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
 import { PlaygroundError } from '../playground-error';
 import type { PlaygroundClient } from '@wp-playground/client';
@@ -16,8 +18,9 @@ export function PlaygroundIframe( {
 	playgroundClient: PlaygroundClient | null;
 	setPlaygroundClient: ( client: PlaygroundClient ) => void;
 } ) {
+	const siteId = useSelector( getSelectedSiteId ) ?? 0;
 	const iframeRef = useRef< HTMLIFrameElement >( null );
-	const recommendedPHPVersion = getPHPVersions().recommendedValue;
+	const recommendedPHPVersion = getPHPVersions( siteId ).recommendedValue;
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const [ playgroundError, setPlaygroundError ] = useState< string | null >( null );
 	const { setBlueprint } = useDispatch( ONBOARD_STORE );
@@ -51,7 +54,7 @@ export function PlaygroundIframe( {
 				}
 			} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ playgroundError ] );
+	}, [ playgroundError, recommendedPHPVersion ] );
 
 	if ( playgroundError === 'PLAYGROUND_NOT_FOUND' ) {
 		return <PlaygroundError createNewPlayground={ createNewPlayground } />;

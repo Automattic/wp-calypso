@@ -2,9 +2,13 @@ $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
 $breakpoint-desktop: 1440px; //Desktop size.
 
+.support-search-form-container {
+	border: none;
+	padding: 0;
+}
+
 .happy-blocks-search-card {
-	background:
-		#F7F8FE url(./assets/hero-bg.png) no-repeat bottom right;
+	background: #f7f8fe url( ./assets/hero-bg.png ) no-repeat bottom right;
 	background-size: contain;
 	flex-shrink: 0;
 	padding: 0;
@@ -17,7 +21,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		z-index: 1;
 	}
 
-	&:not(.navigation-only) .navigation-header {
+	&:not( .navigation-only ) .navigation-header {
 		background: #f7f8ff;
 		position: sticky;
 		top: 0;
@@ -31,7 +35,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 
 		.happy-blocks_navigation_search {
 			margin-bottom: 0;
-			
+
 			.jetpack-search-filter__link {
 				color: #1e1e1e;
 				font-size: 13px;
@@ -82,12 +86,12 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			line-height: 20px;
 			cursor: pointer;
 
-			&:hover:not(.separator) {
+			&:hover:not( .separator ) {
 				color: #000;
 			}
 
 			&.separator::before {
-				content: "|";
+				content: '|';
 				color: #ddd;
 				font-weight: 400;
 			}
@@ -95,7 +99,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			a {
 				color: inherit;
 				text-decoration: none;
-				
+
 				&:hover {
 					color: #000;
 				}
@@ -117,7 +121,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 
 	.mobile-nav-dropdown {
 		flex: 1;
-		
+
 		.dropdown-trigger {
 			display: flex;
 			align-items: center;
@@ -126,8 +130,8 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			background: transparent;
 			border: none;
 
-			&[aria-expanded="true"] .dropdown-arrow {
-				transform: rotate(180deg);
+			&[aria-expanded='true'] .dropdown-arrow {
+				transform: rotate( 180deg );
 			}
 
 			.dropdown-current {
@@ -143,7 +147,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 				}
 
 				.separator {
-					color: var(--gray-200, #E0E0E0);
+					color: var( --gray-200, #e0e0e0 );
 					font-weight: 400;
 				}
 
@@ -169,14 +173,14 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			padding: 8px 16px;
 			opacity: 0;
 			visibility: hidden;
-			transform: translateY(-10px);
+			transform: translateY( -10px );
 			transition: all 0.2s ease;
 			z-index: 1000;
 
 			&.show {
 				opacity: 1;
 				visibility: visible;
-				transform: translateY(0);
+				transform: translateY( 0 );
 			}
 
 			li {
@@ -184,17 +188,17 @@ $breakpoint-desktop: 1440px; //Desktop size.
 
 				a {
 					display: block;
-					color: var(--gray-90, #1D2327);
+					color: var( --gray-90, #1d2327 );
 					line-height: 20px;
 					text-decoration: none;
 
 					&.active {
-						color: var(--blue-50, #3858E9);
+						color: var( --blue-50, #3858e9 );
 						font-weight: 600;
 						margin-left: -12px;
 
 						&::before {
-							content: "•";
+							content: '•';
 							display: inline-block;
 							margin-right: 4px;
 						}
@@ -208,7 +212,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 	&.mobile-dropdown-open {
 		@media ( max-width: $breakpoint-mobile ) {
 			.support-search-content {
-				filter: blur(10px);
+				filter: blur( 10px );
 				pointer-events: none;
 				transition: filter 0.2s ease;
 			}
@@ -238,7 +242,6 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			@media ( max-width: $breakpoint-mobile ) {
 				font-size: 44px;
 			}
-
 		}
 
 		&.is-404-page {
@@ -268,7 +271,6 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			@media ( max-width: $breakpoint-mobile ) {
 				width: 100%;
 			}
-
 		}
 
 		.input-wrapper input {
@@ -278,7 +280,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			padding-inline-end: 52px;
 			border-radius: 4px;
 			border: none;
-			box-shadow: 0 0 4px 0 rgba(56, 88, 233, 0.12);
+			box-shadow: 0 0 4px 0 rgba( 56, 88, 233, 0.12 );
 			font-size: 16px;
 
 			&::-webkit-search-cancel-button {
@@ -291,7 +293,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		.input-wrapper button {
 			position: absolute;
 			inset-block-start: 50%;
-			transform: translateY(-50%);
+			transform: translateY( -50% );
 			inset-inline-end: 20px;
 			background: none;
 			border: none;
@@ -302,11 +304,11 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			justify-content: center;
 
 			svg {
-				fill: #2C3338;
+				fill: #2c3338;
 			}
 
 			&:hover svg {
-				fill: #3858E9;
+				fill: #3858e9;
 			}
 		}
 
@@ -326,7 +328,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 				display: none;
 			}
 
-			width: calc(100% + 32px);
+			max-width: calc(100vw - 32px);
 			margin-left: -16px !important;
 			padding-left: 16px;
 			padding-right: 16px;
@@ -336,29 +338,19 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			}
 
 			li {
-				box-sizing: border-box;
-				border-radius: 4px;
-				background: #EDF1FF;
-				padding: 2px;
-				flex-direction: column;
-				justify-content: center;
-				display: flex;
-
-				a {
+				button {
+					border-radius: 4px;
+					background: #edf1ff;
+					border: none;
 					padding: 6px 14px;
-					color: #2C3338;
+					color: #2c3338;
 					font-size: 12px;
-					font-style: normal;
 					font-weight: 400;
 					line-height: 20px;
-					text-decoration: none;
-				}
 
-				&:hover {
-					background: #3858E9;
-					cursor: pointer;
-
-					a {
+					&:not(:disabled):hover {
+						background: #3858e9;
+						cursor: pointer;
 						color: #fff;
 					}
 				}
@@ -383,12 +375,12 @@ $breakpoint-desktop: 1440px; //Desktop size.
 body.mobile-nav-open {
 	@media ( max-width: 782px ) {
 		// Blur everything except the mobile dropdown and global nav
-		> *:not(.x-wpcom-global-nav):not(.happy-blocks-search-card):not(.site-header) {
-			filter: blur(4px);
+		> *:not( .x-wpcom-global-nav ):not( .happy-blocks-search-card ):not( .site-header ) {
+			filter: blur( 4px );
 			pointer-events: none;
 			transition: filter 0.2s ease;
 		}
-		
+
 		// Ensure global nav stays visible and interactive
 		.x-wpcom-global-nav {
 			filter: none !important;
