@@ -21,9 +21,7 @@ export default function CampaignsTotalStats( {
 				</div>
 				<div className="campaigns-total-stats__items">
 					<div className="campaigns-total-stats__item">
-						<div className="campaigns-total-stats__label">
-							{ translate( 'Total people reached' ) }
-						</div>
+						<div className="campaigns-total-stats__label">{ translate( 'Total ad views' ) }</div>
 						<div className="campaigns-total-stats__result">
 							{ formatNumberCompact( totalImpressions || 0 ) }
 						</div>
