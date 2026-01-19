@@ -29,6 +29,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useShortSetStackedFeatures,
 	useVar5Features,
 	isExperimentVariant,
+	isVar1dVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -43,6 +44,11 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useShortSetStackedFeatures?: boolean;
 	useVar5Features?: boolean;
 	isExperimentVariant?: boolean;
+	/**
+	 * When true, mark features after "Everything in X, plus:" header as differentiator features.
+	 * Used for var1d experiment variant styling.
+	 */
+	isVar1dVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -64,6 +70,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	useShortSetStackedFeatures,
 	useVar5Features,
 	isExperimentVariant,
+	isVar1dVariant,
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
@@ -284,6 +291,15 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				}
 
 				if ( annualPlansOnlyFeatures.length > 0 ) {
+					// For var1d: check if plan has "Everything in X, plus:" header
+					// Free plan doesn't have this header, so all its features should be differentiators
+					const hasEverythingInHeader = wpcomFeatures.some( ( feature ) =>
+						feature.getSlug().startsWith( 'feature-everything-in' )
+					);
+
+					// Track whether we've passed the "Everything in X, plus:" header for var1d styling
+					let passedEverythingInHeader = false;
+
 					wpcomFeatures.forEach( ( feature ) => {
 						// topFeature and highlightedFeatures are already added to the list above
 						const isHighlightedFeature =
@@ -304,11 +320,25 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							.getSlug()
 							.startsWith( 'feature-everything-in' );
 
+						// For var1d: mark features as differentiators if:
+						// - Plan has no "Everything in X" header (like Free): all features are differentiators
+						// - Plan has the header: features after the header are differentiators
+						const shouldMarkAsDifferentiator =
+							isVar1dVariant &&
+							! isEverythingInPlusFeature &&
+							( ! hasEverythingInHeader || passedEverythingInHeader );
+
+						// After we see the "Everything in X" header, subsequent features are differentiators
+						if ( isEverythingInPlusFeature ) {
+							passedEverythingInHeader = true;
+						}
+
 						wpcomFeaturesTransformed.push( {
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 							...( isEverythingInPlusFeature && { isHighlighted: true } ),
+							...( shouldMarkAsDifferentiator && { isDifferentiatorFeature: true } ),
 						} );
 					} );
 				}
@@ -345,6 +375,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		useShortSetStackedFeatures,
 		useVar5Features,
 		isExperimentVariant,
+		isVar1dVariant,
 	] );
 };
 

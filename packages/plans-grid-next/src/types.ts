@@ -18,6 +18,12 @@ export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
 	availableOnlyForAnnualPlans: boolean;
 	isHighlighted?: boolean;
+	/**
+	 * When true, the feature should receive differentiator styling (var1d experiment).
+	 * Applied to features below the "Everything in X, plus:" header.
+	 * A CSS class will be added based on this flag to allow future customizations (badges, etc.).
+	 */
+	isDifferentiatorFeature?: boolean;
 };
 
 export interface PlanFeaturesForGridPlan {

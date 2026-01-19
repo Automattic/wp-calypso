@@ -372,6 +372,22 @@
 			font-weight: 600;
 		}
 
+		// var1d experiment: differentiator feature styling
+		// Features below "Everything in X, plus:" get distinctive underline treatment
+		&.is-differentiator-feature {
+			color: var(--studio-gray-90);
+			font-size: $font-body-extra-small;
+			font-weight: 400;
+			line-height: 16px;
+			text-decoration-line: underline;
+			text-decoration-style: dotted;
+			text-decoration-skip-ink: none;
+			text-decoration-color: #00ba37;
+			text-decoration-thickness: 9%;
+			text-underline-offset: auto;
+			text-underline-position: from-font;
+		}
+
 		@include plans-grid-medium-large {
 			font-size: $font-body-extra-small;
 			line-height: 16px;
@@ -391,6 +407,17 @@
 		& > li {
 			margin-top: 8px;
 		}
+	}
+}
+
+// var1d experiment: 16px vertical margin between differentiator features
+.plan-features-2023-grid__table-item .is-differentiator-feature {
+	.plan-features-2023-grid__item {
+		padding-block-end: 16px;
+	}
+
+	&.is-last-feature .plan-features-2023-grid__item {
+		padding-block-end: 0;
 	}
 }
 

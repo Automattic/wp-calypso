@@ -55,6 +55,11 @@ export interface UseGridPlansParams {
 	 * When true, the user is in an experiment variant (not control).
 	 */
 	isExperimentVariant?: boolean;
+	/**
+	 * When true, mark features after "Everything in X, plus:" header as differentiator features.
+	 * Used for var1d experiment variant styling.
+	 */
+	isVar1dVariant?: boolean;
 }
 
 export type UseGridPlansType = (

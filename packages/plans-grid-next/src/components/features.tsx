@@ -106,6 +106,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 					'has-min-height': featuresWithMinHeight.includes( featureSlug ),
+					'is-differentiator-feature': currentFeature.isDifferentiatorFeature,
 				} );
 				const spanClasses = clsx( 'plan-features-2023-grid__item-info', {
 					'is-annual-plan-feature': currentFeature.availableOnlyForAnnualPlans,
@@ -114,6 +115,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				} );
 				const itemTitleClasses = clsx( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
+					'is-differentiator-feature': currentFeature.isDifferentiatorFeature,
 				} );
 
 				return (
