@@ -23,8 +23,8 @@ const ReaderFullPostActionBar = ( {
 	const canEdit = site && userCan( 'edit_post', post );
 	const showLikes = shouldShowLikes( post );
 	const followUrl = feedUrl || siteUrl;
-	const feedId = Number( post.feed_ID );
-	const siteId = Number( post.site_ID );
+	const feedId = post.feed_ID ? Number( post.feed_ID ) : undefined;
+	const siteId = post.site_ID ? Number( post.site_ID ) : undefined;
 
 	return (
 		<div className="reader-full-post__action-bar">
