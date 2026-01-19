@@ -95,6 +95,15 @@ const UserStepComponent: StepType = function UserStep( {
 				</div>
 			</div>
 		</div>,
+		<div className="user-step-carousel-column" key="slide-3">
+			<div className="user-step-carousel-column-inner">
+				<div className="user-step-carousel-slide">
+					<p className="user-step-carousel-title">
+						{ translate( 'AI builds the site — you make it yours' ) }
+					</p>
+				</div>
+			</div>
+		</div>,
 	];
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
