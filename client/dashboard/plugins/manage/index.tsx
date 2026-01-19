@@ -4,7 +4,7 @@ import {
 	marketplaceSearchQuery,
 	pluginsQuery,
 } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -20,6 +20,8 @@ import { PluginSwitcher } from './components/plugin-switcher';
 import { useSitesById } from './hooks/use-sites-by-id';
 import { mapApiPluginsToDataViewPlugins } from './utils';
 import type { PluginListRow } from './types';
+
+const BATCH_SIZE = 20;
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -61,23 +63,36 @@ export default function PluginsList() {
 	);
 	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
-	const { data: marketplaceSearch } = useQuery(
-		marketplaceSearchQuery( {
-			perPage: plugins.length,
-			slugs: plugins.map( ( plugin ) => plugin.slug ),
-		} )
-	);
+
+	// Batch plugin slugs into chunks of BATCH_SIZE to comply with API limit
+	const pluginSlugs = useMemo( () => plugins.map( ( plugin ) => plugin.slug ), [ plugins ] );
+	const slugBatches = useMemo( () => {
+		const batches: string[][] = [];
+		for ( let i = 0; i < pluginSlugs.length; i += BATCH_SIZE ) {
+			batches.push( pluginSlugs.slice( i, i + BATCH_SIZE ) );
+		}
+		return batches;
+	}, [ pluginSlugs ] );
+
+	const marketplaceSearchResults = useQueries( {
+		queries: slugBatches.map( ( slugs ) =>
+			marketplaceSearchQuery( {
+				perPage: BATCH_SIZE,
+				slugs,
+				groupId: 'wporg',
+			} )
+		),
+	} );
 
 	const iconBySlug = useMemo( () => {
 		const marketplacePluginsBySlug = new Map( Object.entries( marketplacePlugins?.results || {} ) );
 
-		const marketplaceSearchBySlug = ( marketplaceSearch?.data.results || [] ).reduce(
-			( acc, { fields } ) => {
+		const marketplaceSearchBySlug = marketplaceSearchResults
+			.flatMap( ( result ) => result.data?.data.results || [] )
+			.reduce( ( acc, { fields } ) => {
 				acc.set( fields.slug, fields );
 				return acc;
-			},
-			new Map< string, MarketplaceSearchResult[ 'fields' ] >()
-		);
+			}, new Map< string, MarketplaceSearchResult[ 'fields' ] >() );
 
 		return plugins.reduce( ( acc, { slug } ) => {
 			let icon;
@@ -91,7 +106,7 @@ export default function PluginsList() {
 
 			return acc;
 		}, new Map< string, PluginListRow[ 'icon' ] >() );
-	}, [ plugins, marketplacePlugins, marketplaceSearch ] );
+	}, [ plugins, marketplacePlugins, marketplaceSearchResults ] );
 
 	const pluginsWithIcon = useMemo( () => {
 		return plugins.map( ( plugin ) => {
