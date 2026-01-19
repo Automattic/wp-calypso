@@ -66,7 +66,9 @@ const CompactPost = ( props ) => {
 		<div className="reader-post-card__post-options">
 			{ shouldShowFollowButton() && (
 				<ReaderFollowButton
+					siteId={ Number( post.site_ID ) }
 					siteUrl={ post.feed_URL || post.site_URL }
+					feedId={ Number( post.feed_ID ) }
 					followSource={ READER_DISCOVER }
 					iconSize={ 20 }
 					followingLabel={ translate( 'Subscribed' ) }

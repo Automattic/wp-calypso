@@ -29,7 +29,9 @@ interface FollowButtonContainerProps {
 function FollowButtonContainer( props: FollowButtonContainerProps ): JSX.Element {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const following = useSelector( ( state ) => isFollowing( state, { feedUrl: props.siteUrl } ) );
+	const following = useSelector( ( state ) =>
+		isFollowing( state, { feedUrl: props.siteUrl, feedId: props.feedId, blogId: props.siteId } )
+	);
 
 	const dispatch = useDispatch();
 	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
