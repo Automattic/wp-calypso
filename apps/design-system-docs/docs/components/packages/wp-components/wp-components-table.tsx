@@ -1,10 +1,10 @@
 import useIsBrowser from '@docusaurus/useIsBrowser';
-import { DataViews, filterSortAndPaginate, type Field, type View } from '@wordpress/dataviews';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { data, statuses, type ComponentData } from './data';
 import { IconLink } from './icon-link';
 import { StatusIndicator } from './status-indicator';
 import styles from './wp-components-table.module.scss';
+import type { Field, View } from '@wordpress/dataviews';
 
 const FIELDS: Field< ComponentData >[] = [
 	{
@@ -53,6 +53,8 @@ const FIELDS: Field< ComponentData >[] = [
 
 export function WPComponentsTable() {
 	const isBrowser = useIsBrowser();
+	const [ DataViewsComponent, setDataViewsComponent ] = useState< any >( null );
+	const [ filterSortAndPaginateFn, setFilterSortAndPaginateFn ] = useState< any >( null );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
@@ -65,15 +67,25 @@ export function WPComponentsTable() {
 		fields: [ 'status', 'whereUsed', 'docs', 'notes' ],
 	} );
 
-	// DataViews includes Emotion components, and thus cannot be rendered on the server.
-	if ( ! isBrowser ) {
+	useEffect( () => {
+		// DataViews includes Emotion components, and thus cannot be rendered on the server.
+		// Dynamically import it only on the client side.
+		if ( isBrowser ) {
+			import( '@wordpress/dataviews' ).then( ( module ) => {
+				setDataViewsComponent( () => module.DataViews );
+				setFilterSortAndPaginateFn( () => module.filterSortAndPaginate );
+			} );
+		}
+	}, [ isBrowser ] );
+
+	if ( ! isBrowser || ! DataViewsComponent || ! filterSortAndPaginateFn ) {
 		return null;
 	}
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( data, view, FIELDS );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateFn( data, view, FIELDS );
 
 	return (
-		<DataViews
+		<DataViewsComponent
 			data={ filteredData ?? [] }
 			fields={ FIELDS }
 			view={ view }
