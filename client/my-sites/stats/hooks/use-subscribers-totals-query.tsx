@@ -117,10 +117,6 @@ const selectPaidSubscribers = ( payload: {
 	};
 };
 
-export function useSubscribersTotalsWithoutAdminQueries( siteId: number | null ) {
-	return useSubscribersTotalsQueries( siteId, true );
-}
-
 function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boolean ) {
 	const results = useQueries( {
 		queries: [

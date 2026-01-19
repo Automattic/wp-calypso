@@ -12,6 +12,7 @@ import {
 	isTailoredSignupFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isAnyHostingFlow,
+	AI_SITE_BUILDER_FLOW,
 } from '../';
 import cartManagerClient from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
@@ -157,7 +158,6 @@ export const createSiteWithCart = async (
 	gardenName?: string | null,
 	gardenPartnerName?: string | null,
 	specId?: string | null,
-	triggerBackendBuild?: boolean | null,
 	blueprint?: string | null
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
@@ -219,9 +219,12 @@ export const createSiteWithCart = async (
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
 				...( refParam && { ref: refParam } ),
-				...( triggerBackendBuild && {
-					trigger_backend_build: true,
-				} ),
+				// Trigger backend build for ai-site-builder flow with commerce garden and spec_id
+				...( flowName === AI_SITE_BUILDER_FLOW &&
+					gardenName === 'commerce' &&
+					specId && {
+						trigger_backend_build: true,
+					} ),
 			},
 		},
 	} );

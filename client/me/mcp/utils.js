@@ -36,29 +36,6 @@ export function getAccountMcpAbilities( userSettings ) {
 }
 
 /**
- * Create API payload for account-level MCP settings
- * @param {Object} userSettings - The user settings object
- * @param {Object} abilities - The account-level abilities object
- * @returns {Object} The API payload
- */
-export function createAccountApiPayload( userSettings, abilities ) {
-	// Convert abilities to the format expected by the API (boolean values)
-	const accountAbilities = {};
-	Object.entries( abilities ).forEach( ( [ toolId, tool ] ) => {
-		// Handle both old structure (tool.enabled) and new structure (tool is just boolean)
-		const enabled = typeof tool === 'object' ? tool.enabled : tool === true;
-		accountAbilities[ toolId ] = enabled;
-	} );
-
-	// Send nested structure with just boolean values
-	return {
-		mcp_abilities: {
-			account: accountAbilities,
-		},
-	};
-}
-
-/**
  * Check if any account-level tools are enabled
  * @param {Object} userSettings - The user settings object
  * @returns {boolean} True if any account-level tools are enabled
