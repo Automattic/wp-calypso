@@ -660,14 +660,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 								( msg ): msg is UIMessage => msg !== null
 							);
 
-						// Find UI-only messages (component messages not in client history)
+						// Find UI-only messages (messages not in client history, e.g. injected by tools)
+						// Exclude user messages since they'll come back from server with different IDs
 						const clientMessageIds = new Set(
 							updatedClientHistory.map( ( msg ) => msg.messageId )
 						);
 						const uiOnlyMessages = filteredMessages.filter(
 							( msg ) =>
 								! clientMessageIds.has( msg.id ) &&
-								msg.content[ 0 ]?.type === 'component'
+								msg.role !== 'user'
 						);
 
 						// Merge client-based messages with UI-only component messages and sort by timestamp
@@ -748,14 +749,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			// Re-transform all messages with current registrations
 			const updatedUIMessages = transformMessages( prev.clientMessages );
 
-			// Find UI-only messages
+			// Find UI-only messages (messages not in client history, e.g. injected by tools)
+			// Exclude user messages since they'll come back from server with different IDs
 			const clientMessageIds = new Set(
 				prev.clientMessages.map( ( msg ) => msg.messageId )
 			);
 			const uiOnlyMessages = prev.uiMessages.filter(
 				( msg ) =>
-					! clientMessageIds.has( msg.id ) &&
-					msg.content[ 0 ]?.type === 'component'
+					! clientMessageIds.has( msg.id ) && msg.role !== 'user'
 			);
 
 			return {
