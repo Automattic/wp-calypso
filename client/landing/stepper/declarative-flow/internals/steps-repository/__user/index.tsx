@@ -71,18 +71,18 @@ const UserStepComponent: StepType = function UserStep( {
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
 	const carouselSlides = [
-		{
-			key: 'join-472-million-websites-worldwide',
-			content: (
-				<p className="user-step-carousel-title">
-					{ translate( 'Join 472+ million websites worldwide' ) }
-				</p>
-			),
-		},
-		{
-			key: 'bring-your-content-with-you',
-			content: (
-				<>
+		<div className="user-step-carousel-column" key="slide-1">
+			<div className="user-step-carousel-column-inner">
+				<div className="user-step-carousel-slide">
+					<p className="user-step-carousel-title">
+						{ translate( 'Join 472+ million websites worldwide' ) }
+					</p>
+				</div>
+			</div>
+		</div>,
+		<div className="user-step-carousel-column-2" key="slide-2">
+			<div className="user-step-carousel-column-inner">
+				<div className="user-step-carousel-slide">
 					<p className="user-step-carousel-testimonial">
 						{ translate(
 							'WordPress.com has made it easy to manage multiple news sites and blogs, letting me focus on the content rather than the technical aspects.'
@@ -92,9 +92,9 @@ const UserStepComponent: StepType = function UserStep( {
 					<p className="user-step-carousel-testimonial-title">
 						{ translate( 'Founder/Blogger in Chief' ) }
 					</p>
-				</>
-			),
-		},
+				</div>
+			</div>
+		</div>,
 	];
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
@@ -209,17 +209,9 @@ const UserStepComponent: StepType = function UserStep( {
 				>
 					{ stepContent }
 				</Step.CenteredColumnLayout>
-				<div className="user-step-carousel-column">
-					<div className="user-step-carousel-column-inner">
-						<DotPager className="user-step-carousel" hasDynamicHeight={ false }>
-							{ carouselSlides.map( ( slide ) => (
-								<div key={ slide.key } className="user-step-carousel-slide">
-									{ slide.content }
-								</div>
-							) ) }
-						</DotPager>
-					</div>
-				</div>
+				<DotPager className="user-step-carousel" hasDynamicHeight={ false }>
+					{ carouselSlides }
+				</DotPager>
 			</Step.TwoColumnLayout>
 		);
 	}

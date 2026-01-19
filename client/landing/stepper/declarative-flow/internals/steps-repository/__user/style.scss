@@ -259,21 +259,28 @@ $breakpoint-mobile: 660px;
 
 	.user-step-carousel {
 		box-sizing: border-box;
-		max-width: 480px;
-		margin: 0 auto;
 		height: 100%;
-		min-height: 0;
-		padding: 70px 20px;
+		margin: 0;
+		padding: 0;
 		display: flex;
+		width: 100%;
 		flex-direction: column;
+		position: relative;
 	}
 
-	.user-step-carousel-column {
+	.user-step-carousel-column, .user-step-carousel-column-2 {
 		flex-grow: 1;
 		height: 100vh;
 		box-sizing: border-box;
 		padding: 20px 0;
 		min-height: 0;
+	}
+
+	.user-step-carousel-column-2 .user-step-carousel-column-inner {
+		background: url( file:///Users/leo/Desktop/Vertical.jpg );
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center;
 	}
 
 	.user-step-carousel-column-inner {
@@ -282,8 +289,10 @@ $breakpoint-mobile: 660px;
 			var(--studio-wordpress-blue-10),
 			#183AD6
 		);
-		border-radius: 20px;
+		border-radius: 16px;
 		height: 100%;
+		display: flex;
+		align-items: flex-end;
 	}
 	
 	.user-step-carousel .dot-pager__pages {
@@ -293,10 +302,13 @@ $breakpoint-mobile: 660px;
 	}
 
 	.user-step-carousel .dot-pager__controls {
-		order: 2;
 		justify-content: center;
 		column-gap: 8px;
-		margin-bottom: 0;
+		position: absolute;
+		bottom: 40px;
+		left: 50%;
+		transform: translateX( -50% );
+		z-index: 1;
 	}
 
 	.user-step-carousel .dot-pager__controls .dot-pager__controls-spacer,
@@ -306,14 +318,15 @@ $breakpoint-mobile: 660px;
 	}
 
 	.user-step-carousel-slide {
-		padding-inline: 24px;
+		padding-inline: 50px;
+		padding-bottom: 80px;
 		text-align: center;
+		width: 100%;
 	}
 
 	.user-step-carousel-title {
-		color: white;
-		font-size: 2.5rem;
-		font-weight: 600;
+		color: #FFF;
+		font-size: 3.375rem;
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		margin-block-end: 8px;
 		margin-bottom: 40px;
@@ -321,11 +334,59 @@ $breakpoint-mobile: 660px;
 
 	.user-step-carousel-description {
 		color: $gray-60;
-		font-size: 0.9375rem;
+		font-size: 1rem;
 		line-height: 1.5;
 	}
 
 	.swipeable__container {
 		min-height: 100%;
+		overflow: hidden;
 	}
+
+	// Disable the opacity fade transition to prevent white overlay flash between slides
+	.user-step-carousel .dot-pager__page {
+		transition: none;
+		opacity: 1;
+		visibility: visible;
+
+		&.is-prev,
+		&.is-next {
+			opacity: 1;
+			visibility: visible;
+		}
+	}
+
+	.user-step-carousel-testimonial {
+		color: #FFF;
+		// font-size: 1.5rem;
+		font-size: 28px;
+		line-height: 32px;
+		letter-spacing: 0;
+		font-weight: 400;
+		font-family: "SF Pro Display", "SF Pro Text", "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		margin-bottom: 24px;
+		text-align: left;
+	}
+
+	.user-step-carousel-testimonial-author {
+		color: #FFF;
+		font-size: 1.25rem;
+		font-weight: 500;
+		font-family: "SF Pro Display", "SF Pro Text", Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		margin-bottom: 4px;
+		text-align: left;
+	}
+
+	.user-step-carousel-testimonial-title {
+		color: #FFF;
+		font-size: 1rem;
+		font-weight: 400;
+		font-family: "SF Pro Display", "SF Pro Text", Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		margin-bottom: 0;
+		text-align: left;
+	}
+}
+
+.step-container-v2__content-row--two-column-layout > div:has(.user-step-carousel) {
+	min-width: 0;
 }
