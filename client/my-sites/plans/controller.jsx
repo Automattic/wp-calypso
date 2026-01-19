@@ -14,7 +14,9 @@ function showJetpackPlans( context ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const isWpcom = isSiteWpcom( state, siteId );
-	return ! isWpcom;
+	const site = getSelectedSite( state );
+	const isCommerce = site?.is_garden && site.garden_name === 'commerce';
+	return ! isWpcom && ! isCommerce;
 }
 
 function is100YearPlanUser( context ) {

@@ -28,6 +28,7 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
+import { isCommerceGarden } from '../../utils/site-types';
 import { getSiteFormattedUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
@@ -343,6 +344,9 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; source: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const isTrial = isSitePlanTrial( site );
+	const upgradeLink = isCommerceGarden( site )
+		? wpcomLink( `/setup/woo-hosted-plans/${ site.slug }` )
+		: wpcomLink( `/plans/${ site.slug }` );
 
 	return (
 		<>
@@ -353,7 +357,7 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 			<ExternalLink
 				href={
 					isTrial
-						? wpcomLink( `/plans/${ site.slug }` )
+						? upgradeLink
 						: wpcomLink( `/checkout/${ site.slug }/${ site.plan?.product_slug }` )
 				}
 				onClick={ () => {
