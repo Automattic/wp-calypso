@@ -18,6 +18,7 @@ interface CenteredColumnLayoutProps {
 	verticalAlign?: 'center';
 	noTopPadding?: boolean;
 	noBottomPadding?: boolean;
+	isFullWidth?: boolean;
 }
 
 export const CenteredColumnLayout = ( {
@@ -31,6 +32,7 @@ export const CenteredColumnLayout = ( {
 	verticalAlign,
 	noTopPadding = false,
 	noBottomPadding = false,
+	isFullWidth = false,
 }: CenteredColumnLayoutProps ) => {
 	return (
 		<StepContainerV2
@@ -58,6 +60,7 @@ export const CenteredColumnLayout = ( {
 							centerAligned={ verticalAlign === 'center' }
 							noTopPadding={ noTopPadding }
 							noBottomPadding={ noBottomPadding }
+							isFullWidth={ isFullWidth }
 						>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow columns={ columnWidth } className={ className }>

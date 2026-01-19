@@ -54,4 +54,9 @@
 			);
 		}
 	}
+
+	&.is-full-width {
+		--step-container-v2-content-max-width: 100%;
+		max-width: 100%;
+	}
 }
