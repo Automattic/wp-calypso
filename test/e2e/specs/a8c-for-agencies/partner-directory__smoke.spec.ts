@@ -6,7 +6,7 @@ import { test, tags } from '../../lib/pw-base';
  */
 test.describe(
 	'Automattic For Agencies: Partner Directory',
-	{ tag: [ tags.A8C_FOR_AGENCIES ] },
+	{ tag: [ tags.A8C_FOR_AGENCIES, tags.GUTENBERG ] },
 	() => {
 		test( 'As a user, I can filter partners and view a partner details page', async ( {
 			environment,
