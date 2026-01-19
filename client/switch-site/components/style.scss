@@ -1,10 +1,50 @@
-.is-section-switch-site {
-	.commands-command-menu__overlay {
-		background-color: transparent;
+@import '@wordpress/base-styles/variables';
+
+.switch-site__modal-overlay {
+	background-color: transparent;
+}
+
+.switch-site__modal {
+	box-shadow: none;
+	border: 1px solid var( --color-neutral-10 );
+	width: min( 100% - 32px, 640px );
+	max-width: 640px;
+
+	.components-modal__content {
+		margin: 0;
+		padding: 0;
+	}
+}
+
+.switch-site__header {
+	display: flex;
+	align-items: center;
+	padding: 0 $grid-unit-20;
+
+	.components-base-control__field {
+		margin: 0;
 	}
 
-	.commands-command-menu {
-		box-shadow: none;
-		border: 1px solid var(--color-neutral-10);
+	.switch-site__search {
+		width: 100%;
+		padding: $grid-unit-20 $grid-unit-05;
+
+		.components-text-control__input {
+			border: none;
+			outline: none;
+			padding: 0;
+			color: $gray-900;
+			font-size: 15px;
+			line-height: 28px;
+
+			&::placeholder {
+				color: $gray-700;
+			}
+
+			&:focus {
+				box-shadow: none;
+				outline: none;
+			}
+		}
 	}
 }
