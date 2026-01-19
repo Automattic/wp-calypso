@@ -27,7 +27,7 @@ const SiteOption = ( { site, icon }: { site: Site; icon?: IconType } ) => {
 		<HStack justify="flex-start" alignment="left" className="site-option">
 			<SiteIcon site={ site } size={ 36 } />
 			<VStack spacing={ 0 } justify="flex-start" alignment="left">
-				<HStack spacing={ 1 } justify="flex-start" alignment="left">
+				<HStack spacing={ 1 } justify="flex-start" alignment="left" style={ { height: '18px' } }>
 					<Text truncate numberOfLines={ 1 } weight={ 500 } className="site-option__name">
 						{ site.name }
 					</Text>
