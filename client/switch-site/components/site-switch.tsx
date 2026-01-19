@@ -7,7 +7,6 @@ import {
 } from '@wordpress/components';
 import { chevronLeft as backIcon, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
@@ -18,9 +17,6 @@ import './style.scss';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
-	'.commands-command-menu__container [cmdk-item] & svg': {
-		fill: '#fff',
-	},
 } );
 
 const SiteIcon = styled.img( {
@@ -133,7 +129,8 @@ const Switcher = ( { redirectTo }: { redirectTo: string } ) => {
 					__next40pxDefaultSize
 				/>
 			</div>
-			<div>
+
+			<div className="switch-site__list">
 				{ filteredSites.length ? (
 					filteredSites.map( ( site ) => (
 						<div
@@ -149,14 +146,8 @@ const Switcher = ( { redirectTo }: { redirectTo: string } ) => {
 									handleSiteSelect( site );
 								}
 							} }
-							style={ { cursor: 'pointer' } }
 						>
-							<HStack
-								alignment="left"
-								className={ clsx( 'commands-command-menu__item', {
-									'has-icon': site.icon,
-								} ) }
-							>
+							<HStack alignment="left" className="commands-command-menu__item">
 								<FillDefaultIconWhite>
 									{ site.icon?.img ? (
 										<SiteIcon src={ site.icon.img } alt="" />
