@@ -41,7 +41,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		version: currentVersion ?? '',
 	} );
 
-	const { phpVersions } = getPHPVersions();
+	const { phpVersions } = getPHPVersions( site.ID );
 
 	const fields: Field< { version: string } >[] = [
 		{

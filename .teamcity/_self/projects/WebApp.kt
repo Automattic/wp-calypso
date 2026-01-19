@@ -28,6 +28,7 @@ object WebApp : Project({
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PlaywrightTestDashboardPRMatrix)
 	buildType(PlaywrightTestDashboardPreReleaseMatrix)
+	buildType(JestPreReleaseE2ETests)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
 	buildType(QuarantinedE2ETests)
@@ -1033,17 +1034,6 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 			buildProbablyHanging = true
 		}
 	}
-
-	triggers {
-		vcs {
-			branchFilter = """
-				+:<default>
-			""".trimIndent()
-			triggerRules = """
-				-:**.md
-			""".trimIndent()
-		}
-	}
 })
 
 object PlaywrightTestDashboardPRMatrix : BuildType({
@@ -1147,11 +1137,11 @@ object PlaywrightTestDashboardPreReleaseMatrix : BuildType({
 	}
 })
 
-object PreReleaseE2ETests : BuildType({
-	id("calypso_WebApp_Calypso_E2E_Pre_Release")
-	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
-	name = "Pre-Release E2E Tests"
-	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+object JestPreReleaseE2ETests : BuildType({
+	id("calypso_WebApp_Calypso_E2E_Jest_Pre_Release")
+	uuid = "f8e2a4b6-3c91-4d57-8e6f-2a1b9c0d5e7f"
+	name = "Pre-Release E2E Tests (Jest)"
+	description = "Runs Calypso pre-release legacy e2e tests using Jest runner with a build matrix"
 	artifactRules = """
 		logs => logs.tgz
 		screenshots => screenshots
@@ -1290,6 +1280,55 @@ object PreReleaseE2ETests : BuildType({
 			compareTo = build {
 				buildRule = lastSuccessful()
 			}
+		}
+	}
+})
+
+object PreReleaseE2ETests : BuildType({
+	id("calypso_WebApp_Calypso_E2E_Pre_Release")
+	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
+	name = "Pre-Release E2E Tests"
+	description = "Aggregator build that runs pre-release suites of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	dependencies {
+		snapshot(PlaywrightTestPreReleaseMatrix) {
+			onDependencyFailure = FailureAction.ADD_PROBLEM
+		}
+		snapshot(JestPreReleaseE2ETests) {
+			onDependencyFailure = FailureAction.ADD_PROBLEM
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
 		}
 	}
 })

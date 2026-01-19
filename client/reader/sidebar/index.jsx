@@ -11,11 +11,8 @@ import QueryReaderOrganizations from 'calypso/components/data/query-reader-organ
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
-import Sidebar from 'calypso/layout/sidebar';
-import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
-import SidebarRegion from 'calypso/layout/sidebar/region';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import AppTitle from 'calypso/reader/components/app-title';
 import ReaderA8cConversationsIcon from 'calypso/reader/components/icons/a8c-conversations-icon';
@@ -28,7 +25,6 @@ import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
@@ -45,7 +41,6 @@ import {
 } from 'calypso/state/reader-ui/sidebar/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSidebarHelper from './helper';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
@@ -75,6 +70,39 @@ const DeprecatedReaderSidebarHeader = ( { onSearchClicked } ) => {
 			</Button>
 		</div>
 	);
+};
+
+const TrackingKeys = {
+	conversations: {
+		action: 'clicked_reader_sidebar_conversations',
+		gaEvent: 'Clicked Reader Sidebar Conversations',
+		tracksEvent: 'calypso_reader_sidebar_conversations_clicked',
+	},
+	a8cConversations: {
+		action: 'clicked_reader_sidebar_a8c_conversations',
+		gaEvent: 'Clicked Reader Sidebar A8C Conversations',
+		tracksEvent: 'calypso_reader_sidebar_automattic_conversations_clicked',
+	},
+	discover: {
+		action: 'clicked_reader_sidebar_discover',
+		gaEvent: 'Clicked Reader Sidebar Discover',
+		tracksEvent: 'calypso_reader_sidebar_discover_clicked',
+	},
+	search: {
+		action: 'clicked_reader_sidebar_search',
+		gaEvent: 'Clicked Reader Sidebar Search',
+		tracksEvent: 'calypso_reader_sidebar_search_clicked',
+	},
+	likeActivity: {
+		action: 'clicked_reader_sidebar_like_activity',
+		gaEvent: 'Clicked Reader Sidebar Like Activity',
+		tracksEvent: 'calypso_reader_sidebar_like_activity_clicked',
+	},
+	manageSubscriptions: {
+		action: 'clicked_reader_sidebar_manage_subscriptions',
+		gaEvent: 'Clicked Reader Sidebar Manage Subscriptions',
+		tracksEvent: 'calypso_reader_sidebar_manage_subscriptions_clicked',
+	},
 };
 
 export class ReaderSidebar extends Component {
@@ -129,56 +157,20 @@ export class ReaderSidebar extends Component {
 	};
 
 	handleGlobalSidebarMenuItemClick = ( path ) => {
-		if ( ! this.props.shouldShowGlobalSidebar ) {
-			return;
-		}
-
 		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
 			section: 'read',
 			path,
 		} );
 	};
 
-	handleReaderSidebarConversationsClicked = ( event, path ) => {
-		recordAction( 'clicked_reader_sidebar_conversations' );
-		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_conversations_clicked' );
-		this.handleGlobalSidebarMenuItemClick( path );
-	};
-
-	handleReaderSidebarA8cConversationsClicked = ( event, path ) => {
-		recordAction( 'clicked_reader_sidebar_a8c_conversations' );
-		recordGaEvent( 'Clicked Reader Sidebar A8C Conversations' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_automattic_conversations_clicked' );
-		this.handleGlobalSidebarMenuItemClick( path );
-	};
-
-	handleReaderSidebarDiscoverClicked = ( event, path ) => {
-		recordAction( 'clicked_reader_sidebar_discover' );
-		recordGaEvent( 'Clicked Reader Sidebar Discover' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_discover_clicked' );
-		this.handleGlobalSidebarMenuItemClick( path );
-	};
-
-	handleReaderSidebarSearchClicked = ( event, path ) => {
-		recordAction( 'clicked_reader_sidebar_search' );
-		recordGaEvent( 'Clicked Reader Sidebar Search' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_search_clicked' );
-		this.handleGlobalSidebarMenuItemClick( path );
-	};
-
-	handleReaderSidebarLikeActivityClicked = ( event, path ) => {
-		recordAction( 'clicked_reader_sidebar_like_activity' );
-		recordGaEvent( 'Clicked Reader Sidebar Like Activity' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_like_activity_clicked' );
-		this.handleGlobalSidebarMenuItemClick( path );
-	};
-
-	handleReaderSidebarManageSubscriptionsClicked = ( event, path ) => {
-		recordAction( 'clicked_reader_sidebar_manage_subscriptions' );
-		recordGaEvent( 'Clicked Reader Sidebar Manage Subscriptions' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_manage_subscriptions_clicked' );
-		this.handleGlobalSidebarMenuItemClick( path );
+	handleSidebarMenuClick = ( key ) => ( event, path ) => {
+		const handler = TrackingKeys[ key ];
+		if ( handler ) {
+			recordAction( handler.action );
+			recordGaEvent( handler.gaEvent );
+			this.props.recordReaderTracksEvent( handler.tracksEvent );
+			this.handleGlobalSidebarMenuItemClick( path );
+		}
 	};
 
 	renderSidebarMenu() {
@@ -188,7 +180,7 @@ export class ReaderSidebar extends Component {
 			<div className="sidebar-menu-container">
 				{ ! this.props.isMSDEnabled && (
 					<DeprecatedReaderSidebarHeader
-						onSearchClicked={ this.handleReaderSidebarSearchClicked }
+						onSearchClicked={ this.handleSidebarMenuClick( TrackingKeys.search ) }
 					/>
 				) }
 				{ this.props.isMSDEnabled && <AppTitle /> }
@@ -210,7 +202,7 @@ export class ReaderSidebar extends Component {
 							selected: path.startsWith( '/reader/search' ),
 						} ) }
 						label={ translate( 'Search' ) }
-						onNavigate={ this.handleReaderSidebarSearchClicked }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.search ) }
 						customIcon={ <ReaderSearchIcon /> }
 						link="/reader/search"
 					/>
@@ -219,14 +211,14 @@ export class ReaderSidebar extends Component {
 							selected: path.startsWith( '/discover' ),
 						} ) }
 						label={ translate( 'Discover' ) }
-						onNavigate={ this.handleReaderSidebarDiscoverClicked }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.discover ) }
 						customIcon={ <ReaderDiscoverIcon viewBox="0 0 24 24" /> }
 						link="/discover"
 					/>
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }
-						onNavigate={ this.handleReaderSidebarLikeActivityClicked }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.likeActivity ) }
 						customIcon={ <ReaderLikesIcon viewBox="0 0 24 24" /> }
 						link="/activities/likes"
 						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
@@ -239,7 +231,7 @@ export class ReaderSidebar extends Component {
 							'sidebar-streams__conversations': true,
 						} ) }
 						label={ translate( 'Conversations' ) }
-						onNavigate={ this.handleReaderSidebarConversationsClicked }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversations ) }
 						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/conversations"
 					/>
@@ -278,7 +270,7 @@ export class ReaderSidebar extends Component {
 								'sidebar-streams__conversations': true,
 							} ) }
 							label="A8C Conversations"
-							onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
+							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.a8cConversations ) }
 							link="/reader/conversations/a8c"
 							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
 						/>
@@ -291,7 +283,7 @@ export class ReaderSidebar extends Component {
 							'sidebar-streams__manage-subscriptions': true,
 						} ) }
 						label={ translate( 'Manage Subscriptions' ) }
-						onNavigate={ this.handleReaderSidebarManageSubscriptionsClicked }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.manageSubscriptions ) }
 						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/subscriptions"
 					/>
@@ -307,50 +299,23 @@ export class ReaderSidebar extends Component {
 		);
 	}
 
-	renderGlobalSidebar() {
-		const props = {
-			path: this.props.path,
-			onClick: this.handleClick,
-			siteTitle: i18n.translate( 'Reader' ),
-		};
+	render() {
 		return (
-			<GlobalSidebar { ...props }>
+			<GlobalSidebar
+				path={ this.props.path }
+				onClick={ this.handleClick }
+				siteTitle={ i18n.translate( 'Reader' ) }
+			>
 				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
 			</GlobalSidebar>
 		);
 	}
-
-	renderSidebar() {
-		return (
-			<Sidebar onClick={ this.handleClick }>
-				<SidebarRegion>
-					<ReaderSidebarNudges />
-					{ this.renderSidebarMenu() }
-				</SidebarRegion>
-				<SidebarFooter />
-			</Sidebar>
-		);
-	}
-
-	render() {
-		if ( this.props.shouldShowGlobalSidebar ) {
-			return this.renderGlobalSidebar();
-		}
-		return this.renderSidebar();
-	}
 }
 
 export default withCurrentRoute(
 	connect(
-		( state, { currentSection } ) => {
-			const siteId = getSelectedSiteId( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( {
-				state,
-				siteId,
-				section: currentSection,
-			} );
-
+		( state ) => {
 			return {
 				isListsOpen: isListsOpen( state ),
 				isFollowingOpen: isFollowingOpen( state ),
@@ -358,7 +323,6 @@ export default withCurrentRoute(
 				subscribedLists: getSubscribedLists( state ),
 				teams: getReaderTeams( state ),
 				organizations: getReaderOrganizations( state ),
-				shouldShowGlobalSidebar,
 				isMSDEnabled: isReaderMSDEnabled( state ),
 			};
 		},

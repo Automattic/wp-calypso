@@ -6,7 +6,7 @@ import { PluginListRow } from '../types';
 import './plugin-icon.scss';
 
 const ICON_SIZE = 48;
-const FALLBACK_ICON_SIZE = 36;
+const FALLBACK_ICON_SIZE = 32;
 
 export const PluginIcon = ( { item }: { item?: PluginListRow } ) => {
 	const icon = item?.icon ? (
