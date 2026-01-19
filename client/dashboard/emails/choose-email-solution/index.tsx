@@ -44,10 +44,18 @@ export default function ChooseEmailSolution() {
 		IntervalLength.Annually
 	);
 
-	const { bestAnnualSavings } = useAnnualSavings();
+	const { bestAnnualSavings } = useAnnualSavings( domain );
 
-	const { product: googleProduct } = useEmailProduct( MailboxProvider.Google, billingInterval );
-	const { product: titanProduct } = useEmailProduct( MailboxProvider.Titan, billingInterval );
+	const { product: googleProduct } = useEmailProduct(
+		MailboxProvider.Google,
+		billingInterval,
+		domain
+	);
+	const { product: titanProduct } = useEmailProduct(
+		MailboxProvider.Titan,
+		billingInterval,
+		domain
+	);
 
 	const canAddEmail = domain.current_user_can_add_email;
 
@@ -63,6 +71,9 @@ export default function ChooseEmailSolution() {
 		product: titanProduct,
 	} );
 	const hasFreeTrial = hasGoogleFreeTrial || hasTitanFreeTrial;
+	const getTrialMonths = ( product?: {
+		introductory_offer?: { interval_unit?: string | null };
+	} ) => ( product?.introductory_offer?.interval_unit === 'year' ? 12 : 3 );
 
 	const isTitanAvailable = canAddEmail && ! hasGSuiteWithUs( domain );
 
@@ -130,6 +141,7 @@ export default function ChooseEmailSolution() {
 			product: titanProduct,
 			hasFreeTrial: hasTitanFreeTrial,
 			available: isTitanAvailable,
+			trialMonths: getTrialMonths( titanProduct ),
 		},
 		[ MailboxProvider.Google ]: {
 			logo: <img src={ GoogleLogo } alt="" />,
@@ -154,6 +166,7 @@ export default function ChooseEmailSolution() {
 				product: googleProduct,
 			} ),
 			available: isGoogleAvailable,
+			trialMonths: getTrialMonths( googleProduct ),
 		},
 	};
 
@@ -230,7 +243,13 @@ export default function ChooseEmailSolution() {
 											: __( 'per month, per mailbox, excl. taxes.' ) }
 									</Text>
 									{ provider.hasFreeTrial && (
-										<div className="email-provider-trial">{ __( '3 month free trial' ) }</div>
+										<div className="email-provider-trial">
+											{ sprintf(
+												/* translators: %d is the number of free trial months. */
+												__( '%d month free trial' ),
+												provider.trialMonths
+											) }
+										</div>
 									) }
 								</>
 							) : (

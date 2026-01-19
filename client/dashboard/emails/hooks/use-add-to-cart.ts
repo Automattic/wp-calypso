@@ -19,7 +19,7 @@ export const useAddToCart = () => {
 	const { provider, interval } = useParams( { strict: false } );
 	const { domain, domainName, site } = useDomainFromUrlParam();
 
-	const emailProduct = useEmailProduct( provider, interval );
+	const emailProduct = useEmailProduct( provider, interval, domain );
 	const router = useRouter();
 
 	const addToCart = async ( {
