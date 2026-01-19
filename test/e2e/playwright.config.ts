@@ -1,5 +1,13 @@
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
-import { tags } from './lib/pw-base';
+import { tags, type CustomOptions } from './lib/pw-base';
+
+/**
+ * Creates a use config object with custom options.
+ * This helper exists to provide type safety for our custom Playwright options.
+ */
+function withCustomOptions< T extends object >( config: T & Partial< CustomOptions > ): T {
+	return config as T;
+}
 
 const outputPath = './output';
 const reporter: ReporterDescription[] = [
@@ -76,47 +84,53 @@ export default defineConfig( {
 	projects: [
 		{
 			name: 'chrome',
-			use: {
+			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
-			},
+				viewportName: 'desktop',
+			} ),
 		},
 		{
 			name: 'firefox',
-			use: {
+			use: withCustomOptions( {
 				...devices[ 'Desktop Firefox' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Firefox' ].userAgent ),
-			},
+				viewportName: 'desktop',
+			} ),
 		},
 		{
 			name: 'webkit',
-			use: {
+			use: withCustomOptions( {
 				...devices[ 'Desktop Safari' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Safari' ].userAgent ),
-			},
+				viewportName: 'desktop',
+			} ),
 		},
 		{
 			name: 'pixel',
-			use: {
+			use: withCustomOptions( {
 				...devices[ 'Pixel 7' ],
 				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
-			},
+				viewportName: 'mobile',
+			} ),
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'galaxy',
-			use: {
+			use: withCustomOptions( {
 				...devices[ 'Galaxy S24' ],
 				userAgent: appendE2EUserAgent( devices[ 'Galaxy S24' ].userAgent ),
-			},
+				viewportName: 'mobile',
+			} ),
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'iphone',
-			use: {
+			use: withCustomOptions( {
 				...devices[ 'iPhone 15 Pro' ],
 				userAgent: appendE2EUserAgent( devices[ 'iPhone 15 Pro' ].userAgent ),
-			},
+				viewportName: 'mobile',
+			} ),
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
