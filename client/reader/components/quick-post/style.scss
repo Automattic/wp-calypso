@@ -27,6 +27,12 @@
 			border-width: 1px;
 			border-top-width: 0;
 			margin-bottom: 0;
+
+			.components-popover__content {
+				.components-button {
+					justify-content: flex-start;
+				}
+			}
 		}
 	}
 
