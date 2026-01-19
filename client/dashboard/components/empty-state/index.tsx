@@ -10,7 +10,9 @@ import './style.scss';
 function EmptyStateContainer( { children }: { children: ReactNode } ) {
 	return (
 		<Card>
-			<CardBody className="dashboard-empty-state">{ children }</CardBody>
+			<CardBody className="dashboard-empty-state">
+				<VStack alignment="center">{ children }</VStack>
+			</CardBody>
 		</Card>
 	);
 }
@@ -25,7 +27,7 @@ function EmptyState( {
 	children?: ReactNode;
 } ) {
 	return (
-		<VStack spacing={ 8 } alignment="center" className="dashboard-empty-state">
+		<VStack spacing={ 8 } alignment="center">
 			<VStack spacing={ 2 } alignment="center">
 				<Text as="h2" align="center" className="dashboard-empty-state__title">
 					{ title }
