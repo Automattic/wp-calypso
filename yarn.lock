@@ -12933,12 +12933,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/is-shallow-equal@npm:^5.23.0":
-  version: 5.23.0
-  resolution: "@wordpress/is-shallow-equal@npm:5.23.0"
-  dependencies:
-    "@babel/runtime": "npm:7.25.7"
-  checksum: f73366f5042890bb870f2bc64382e84e1e4fe037fe5cdd8600afb61ccc880d088633b3eea007ea7f0aca3f39e4c7b5ddbc0184f871f2cfad086f1210a4310146
+"@wordpress/is-shallow-equal@npm:^5.38.0":
+  version: 5.38.0
+  resolution: "@wordpress/is-shallow-equal@npm:5.38.0"
+  checksum: e701128e94f0fe85e36418455b60c1c1256740a8eae110230e859b77db1ce1636a2e952aeaf42b7dd9f36031864b19bfbe503390b319658e4ee0ad51e3bfdc86
   languageName: node
   linkType: hard
 
@@ -38716,7 +38714,7 @@ __metadata:
     "@wordpress/hooks": "npm:^4.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/is-shallow-equal": "npm:^5.23.0"
+    "@wordpress/is-shallow-equal": "npm:^5.38.0"
     "@wordpress/keyboard-shortcuts": "npm:^5.23.0"
     "@wordpress/keycodes": "npm:^4.23.0"
     "@wordpress/prettier-config": "npm:^4.23.0"
