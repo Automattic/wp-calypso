@@ -21,7 +21,13 @@ function CreditsNotice() {
 		return null;
 	}
 
-	return <DashboardNotice variant="warning">{ expirationLines.join( ' ' ) }</DashboardNotice>;
+	return (
+		<DashboardNotice variant="warning">
+			{ expirationLines.map( ( line, index ) => (
+				<div key={ index }>{ line }</div>
+			) ) }
+		</DashboardNotice>
+	);
 }
 
 export default CreditsNotice;

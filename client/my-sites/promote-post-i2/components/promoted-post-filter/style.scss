@@ -1,0 +1,18 @@
+.promote-post-i2__filter-credits-popover {
+	padding: 12px 16px;
+	max-width: 280px;
+	text-align: left;
+
+	div {
+		margin-bottom: 4px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	div:first-child {
+		font-weight: 600;
+		margin-bottom: 8px;
+	}
+}

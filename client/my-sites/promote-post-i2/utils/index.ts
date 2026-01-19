@@ -494,27 +494,26 @@ export const getCreditExpirationLines = (
 		return null;
 	}
 
-	const firstItem = sortedHistory[ 0 ];
-	const firstDate = moment( firstItem.expires ).format( 'LL' );
-
 	if ( sortedHistory.length === 1 ) {
+		const firstItem = sortedHistory[ 0 ];
+		const firstDate = moment( firstItem.expires ).format( 'LL' );
+		const firstAmount = formatCurrency( firstItem.amount, 'USD', { isSmallestUnit: true } );
+
 		return [
-			translate( 'Your credits will expire on %(date)s', {
-				args: { date: firstDate },
+			translate( 'You have %(amount)s in credits expiring on %(firstDate)s.', {
+				args: { amount: firstAmount, firstDate },
 			} ),
 		];
 	}
 
-	const firstAmount = formatCurrency( firstItem.amount, 'USD', { isSmallestUnit: true } );
-	const lastItem = sortedHistory[ sortedHistory.length - 1 ];
-	const lastDate = moment( lastItem.expires ).format( 'LL' );
+	const header = translate( 'You got several credit assignations:' );
+	const items = sortedHistory.map( ( item ) => {
+		const amount = formatCurrency( item.amount, 'USD', { isSmallestUnit: true } );
+		const date = moment( item.expires ).format( 'LL' );
+		return translate( '- %(amount)s in credits expiring on %(date)s', {
+			args: { amount, date },
+		} );
+	} );
 
-	return [
-		translate( 'You have %(amount)s in credits expiring on %(firstDate)s.', {
-			args: { amount: firstAmount, firstDate },
-		} ),
-		translate( 'Your remaining credits will expire on %(lastDate)s', {
-			args: { lastDate },
-		} ),
-	];
+	return [ header, ...items ];
 };

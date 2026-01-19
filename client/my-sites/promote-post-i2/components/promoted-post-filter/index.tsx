@@ -17,6 +17,8 @@ import {
 	getCreditExpirationLines,
 } from '../../utils';
 
+import './style.scss';
+
 type Props = {
 	tabs: TabOption[];
 	selectedTab: TabType;
@@ -25,7 +27,7 @@ type Props = {
 function CreditBalanceContent( { formattedBalance }: { formattedBalance: string } ) {
 	const translate = useTranslate();
 	const { data: { history: creditsHistory = [] } = {} } = useCreditBalanceQuery();
-	const anchorRef = useRef< HTMLSpanElement >( null );
+	const infoIconRef = useRef< HTMLSpanElement >( null );
 	const [ isVisible, setIsVisible ] = useState( false );
 
 	// Get all credits sorted by expiration (not just those expiring soon)
@@ -44,10 +46,9 @@ function CreditBalanceContent( { formattedBalance }: { formattedBalance: string 
 			{ translate( 'Credits: ' ) }
 			{ formattedBalance }
 			<span
-				ref={ anchorRef }
+				ref={ infoIconRef }
 				onMouseEnter={ () => setIsVisible( true ) }
 				onMouseLeave={ () => setIsVisible( false ) }
-				style={ { display: 'inline-block', lineHeight: 0 } }
 			>
 				<InlineSupportLink
 					showIcon
@@ -60,14 +61,14 @@ function CreditBalanceContent( { formattedBalance }: { formattedBalance: string 
 					) }
 				/>
 			</span>
-			{ isVisible && expirationLines && anchorRef.current && (
+			{ isVisible && expirationLines && infoIconRef.current && (
 				<Popover
-					context={ anchorRef.current }
+					context={ infoIconRef.current }
 					isVisible
 					position="right"
 					onClose={ () => setIsVisible( false ) }
 				>
-					<div style={ { padding: '8px 12px', maxWidth: '250px', textAlign: 'left' } }>
+					<div className="promote-post-i2__filter-credits-popover">
 						{ expirationLines.map( ( line: string, index: number ) => (
 							<div key={ index }>{ line }</div>
 						) ) }
