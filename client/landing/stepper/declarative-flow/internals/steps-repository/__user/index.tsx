@@ -95,7 +95,7 @@ const UserStepComponent: StepType = function UserStep( {
 				</div>
 			</div>
 		</div>,
-		<div className="user-step-carousel-column" key="slide-3">
+		<div className="user-step-carousel-column-3" key="slide-3">
 			<div className="user-step-carousel-column-inner">
 				<div className="user-step-carousel-slide">
 					<p className="user-step-carousel-title">
@@ -190,11 +190,15 @@ const UserStepComponent: StepType = function UserStep( {
 			),
 		};
 
-		const tosText = createInterpolateElement(
-			translate(
-				'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-			),
-			options
+		const tosText = (
+			<div className="bottom-bar-text">
+				{ createInterpolateElement(
+					translate(
+						'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+				) }
+			</div>
 		);
 
 		return (
@@ -212,7 +216,9 @@ const UserStepComponent: StepType = function UserStep( {
 					columnWidth={ 4 }
 					heading={ heading }
 					topBar={ topBar }
-					stickyBottomBar={ tosText }
+					stickyBottomBar={ () => (
+						<Step.StickyBottomBar className="user-step-tos-bottom-bar" centerElement={ tosText } />
+					) }
 					noTopPadding
 					noBottomPadding
 				>

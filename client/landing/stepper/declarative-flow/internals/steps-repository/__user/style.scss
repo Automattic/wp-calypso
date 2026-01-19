@@ -268,7 +268,9 @@ $breakpoint-mobile: 660px;
 		position: relative;
 	}
 
-	.user-step-carousel-column, .user-step-carousel-column-2 {
+	.user-step-carousel-column,
+	.user-step-carousel-column-2,
+	.user-step-carousel-column-3 {
 		flex-grow: 1;
 		height: 100vh;
 		box-sizing: border-box;
@@ -276,23 +278,30 @@ $breakpoint-mobile: 660px;
 		min-height: 0;
 	}
 
+	.user-step-carousel-column-inner {
+		background-color: #183AD6;
+		background-image: url( ./images/slide1.svg );
+		background-repeat: no-repeat;
+		background-position: top center;
+		background-size: contain;
+		border-radius: 16px;
+		height: 100%;
+		display: flex;
+		align-items: flex-end;
+	}
+
 	.user-step-carousel-column-2 .user-step-carousel-column-inner {
-		background: url( file:///Users/leo/Desktop/Vertical.jpg );
+		background: url( ./images/slide2.jpg );
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
 	}
 
-	.user-step-carousel-column-inner {
-		background: linear-gradient(
-			135deg,
-			#657DEE,
-			#183AD6
-		);
-		border-radius: 16px;
-		height: 100%;
-		display: flex;
-		align-items: flex-end;
+	.user-step-carousel-column-3 .user-step-carousel-column-inner {
+		background: url( ./images/slide3.svg );
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center;
 	}
 	
 	.user-step-carousel .dot-pager__pages {
@@ -388,4 +397,18 @@ $breakpoint-mobile: 660px;
 
 .step-container-v2__content-row--two-column-layout > div:has(.user-step-carousel) {
 	min-width: 0;
+}
+
+.bottom-bar-text {
+	font-size: 0.875rem;
+}
+
+.step-container-v2__sticky-bottom-bar.user-step-tos-bottom-bar {
+	box-shadow: none;
+}
+
+.user-step-tos-bottom-bar .step-container-v2__sticky-bottom-bar-center-element {
+	margin-inline: 0;
+	width: 100%;
+	text-align: center;
 }
