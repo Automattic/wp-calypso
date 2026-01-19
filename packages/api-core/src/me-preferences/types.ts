@@ -1,7 +1,7 @@
 import type { View } from '@wordpress/dataviews';
 
 export interface HostingDashboardOptIn {
-	value: 'unset' | 'opt-in' | 'opt-out';
+	value: 'unset' | 'opt-in' | 'opt-out' | 'forced-opt-in';
 	updated_at: string; // ISO date string
 }
 
