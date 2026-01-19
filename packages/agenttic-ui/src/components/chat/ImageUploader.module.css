@@ -202,3 +202,33 @@
 	color: var(--agent-ui-error, #d32f2f);
 	font-size: 14px;
 }
+
+.expandedDropOverlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	border: 2px dashed var(--agent-ui-border, #d0d0d0);
+	border-radius: 12px;
+	background-color: var(--agent-ui-background-secondary, #f0f0f0);
+	cursor: pointer;
+}
+
+.expandedDropOverlay.draggingOver {
+	border-color: var(--agent-ui-primary, #0675c4);
+	background-color: var(--agent-ui-background-secondary, #f0f0f0);
+}
+
+.expandedDropOverlay p {
+	margin: 0;
+	color: var(--agent-ui-text-secondary, #757575);
+	font-size: 15px;
+	line-height: 1.6;
+	text-align: center;
+}

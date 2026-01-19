@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAgentUIContext } from '../../context/AgentUIContext';
 import styles from './ImageUploader.module.css';
@@ -52,6 +53,9 @@ export interface ImageUploaderProps {
 
 	// Visibility
 	visible?: boolean;
+
+	// Drop zone expansion, ref to container for expanded drop zone overlay
+	dropZoneRef?: React.RefObject< HTMLElement >;
 }
 
 interface ImagePreviewItemProps {
@@ -143,6 +147,7 @@ export function ImageUploader( {
 	allowDragToInsert = true,
 	onError,
 	visible = true,
+	dropZoneRef,
 }: ImageUploaderProps ) {
 	const { textareaRef } = useAgentUIContext();
 	const [ isDraggingOver, setIsDraggingOver ] = useState( false );
@@ -425,11 +430,38 @@ export function ImageUploader( {
 			.join( ' or ' )
 	);
 
+	// Expanded drop overlay for portal rendering
+	const expandedDropOverlay = showDropMessage && dropZoneRef?.current && (
+		<div
+			className={ `${ styles.expandedDropOverlay } ${
+				isDraggingOver ? styles.draggingOver : ''
+			}` }
+			onDragOver={ handleDragOver }
+			onDragLeave={ handleDragLeave }
+			onDrop={ handleDrop }
+		>
+			<p>
+				<strong>
+					{ __( 'Drop files here to use', 'a8c-agenttic' ) }
+				</strong>
+				<br />
+				{ maxFileSize && fileSizeMessage }
+			</p>
+		</div>
+	);
+
 	return (
 		<div
 			className={ `${ styles.container } ${ className }` }
 			data-slot="image-uploader"
 		>
+			{ /* Render expanded drop overlay via portal when dropZoneRef is provided */ }
+			{ expandedDropOverlay &&
+				dropZoneRef?.current &&
+				ReactDOM.createPortal(
+					expandedDropOverlay,
+					dropZoneRef.current
+				) }
 			<div
 				className={ `${ styles.uploader } ${
 					isUploading ? styles.uploading : ''
@@ -464,7 +496,8 @@ export function ImageUploader( {
 									'a8c-agenttic'
 								) }
 							>
-								{ showDropMessage && (
+								{ /* Show inline drop message only when no dropZoneRef */ }
+								{ showDropMessage && ! dropZoneRef?.current && (
 									<div className={ styles.draggingMessage }>
 										<p>
 											<strong>
