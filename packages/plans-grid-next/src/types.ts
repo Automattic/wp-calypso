@@ -24,6 +24,11 @@ export type TransformedFeatureObject = FeatureObject & {
 	 * A CSS class will be added based on this flag to allow future customizations (badges, etc.).
 	 */
 	isDifferentiatorFeature?: boolean;
+	/**
+	 * When true, the feature is a header feature ("Included in plan:" or "Everything in X, plus:").
+	 * Used for var1d styling with 26px margin after the header.
+	 */
+	isHeaderFeature?: boolean;
 };
 
 export interface PlanFeaturesForGridPlan {

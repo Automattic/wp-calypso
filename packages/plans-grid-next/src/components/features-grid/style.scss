@@ -410,6 +410,13 @@
 	}
 }
 
+// var1d experiment: 26px margin after header features ("Included in plan:" / "Everything in X, plus:")
+.plan-features-2023-grid__table-item .is-header-feature {
+	.plan-features-2023-grid__item {
+		padding-block-end: 26px;
+	}
+}
+
 // var1d experiment: 16px vertical margin between differentiator features
 .plan-features-2023-grid__table-item .is-differentiator-feature {
 	.plan-features-2023-grid__item {

@@ -107,6 +107,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					'is-last-feature': featureIndex + 1 === features.length,
 					'has-min-height': featuresWithMinHeight.includes( featureSlug ),
 					'is-differentiator-feature': currentFeature.isDifferentiatorFeature,
+					'is-header-feature': currentFeature.isHeaderFeature,
 				} );
 				const spanClasses = clsx( 'plan-features-2023-grid__item-info', {
 					'is-annual-plan-feature': currentFeature.availableOnlyForAnnualPlans,

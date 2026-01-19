@@ -330,6 +330,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 							...( isHeaderFeature && { isHighlighted: true } ),
+							...( isHeaderFeature && isVar1dVariant && { isHeaderFeature: true } ),
 							...( shouldMarkAsDifferentiator && { isDifferentiatorFeature: true } ),
 						} );
 					} );
