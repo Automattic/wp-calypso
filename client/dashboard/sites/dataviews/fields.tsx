@@ -157,7 +157,6 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 				operators: [ 'is' as Operator ],
 			},
 			render: ( { item } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
-			enableSorting: false,
 		},
 		{
 			id: 'preview',
@@ -229,7 +228,6 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 				operators: [ 'is' as Operator ],
 			},
 			enableHiding: false,
-			enableSorting: false,
 		},
 	];
 }
