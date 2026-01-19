@@ -99,7 +99,7 @@ export const SiteSelector = ( { onChange, value, sites }: Props ) => {
 				</Button>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<NavigableMenu style={ { maxWidth: isDesktop ? '30vw' : '100%' } }>
+				<NavigableMenu style={ { maxWidth: isDesktop ? '30vw' : '70vw' } }>
 					<ScrollLock />
 					<MenuGroup hideSeparator>
 						<SearchControl
