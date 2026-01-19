@@ -7,6 +7,14 @@ import type { ReactNode } from 'react';
 
 import './style.scss';
 
+function EmptyStateContainer( { children }: { children: ReactNode } ) {
+	return (
+		<Card>
+			<CardBody className="dashboard-empty-state">{ children }</CardBody>
+		</Card>
+	);
+}
+
 function EmptyState( {
 	title,
 	description,
@@ -17,27 +25,24 @@ function EmptyState( {
 	children?: ReactNode;
 } ) {
 	return (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 8 } alignment="center" className="dashboard-empty-state">
-					<VStack spacing={ 2 } alignment="center">
-						<Text as="h2" align="center" className="dashboard-empty-state__title">
-							{ title }
-						</Text>
-						<Text variant="muted" align="center" className="dashboard-empty-state__description">
-							{ description }
-						</Text>
-					</VStack>
-					<VStack spacing={ 6 } className="dashboard-empty-state__content">
-						{ children }
-					</VStack>
-				</VStack>
-			</CardBody>
-		</Card>
+		<VStack spacing={ 8 } alignment="center" className="dashboard-empty-state">
+			<VStack spacing={ 2 } alignment="center">
+				<Text as="h2" align="center" className="dashboard-empty-state__title">
+					{ title }
+				</Text>
+				<Text variant="muted" align="center" className="dashboard-empty-state__description">
+					{ description }
+				</Text>
+			</VStack>
+			<VStack spacing={ 6 } className="dashboard-empty-state__content">
+				{ children }
+			</VStack>
+		</VStack>
 	);
 }
 
 const EmptyStateWithStatics = Object.assign( EmptyState, {
+	Container: EmptyStateContainer,
 	ActionList: EmptyStateActionList,
 	ActionItem: EmptyStateActionItem,
 } );

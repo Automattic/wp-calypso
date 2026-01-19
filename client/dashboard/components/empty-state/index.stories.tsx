@@ -36,6 +36,31 @@ export const Default: Story = {
 	},
 };
 
+export const WithContainer: Story = {
+	render: ( args ) => (
+		<EmptyState.Container>
+			<EmptyState { ...args } />
+		</EmptyState.Container>
+	),
+	args: {
+		title: 'No items yet',
+		description: 'Get started by creating your first item.',
+		children: (
+			<EmptyState.ActionList>
+				<EmptyState.ActionItem
+					title="Create item"
+					description="Set up a new item to see it appear here."
+					actions={
+						<Button __next40pxDefaultSize variant="primary">
+							Create item
+						</Button>
+					}
+				/>
+			</EmptyState.ActionList>
+		),
+	},
+};
+
 export const WithMultipleActions: Story = {
 	args: {
 		title: 'Nothing here yet',
