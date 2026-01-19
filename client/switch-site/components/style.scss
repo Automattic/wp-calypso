@@ -71,13 +71,14 @@
 		}
 	}
 
-	&[aria-disabled='true'] {
-		color: $gray-600;
-		cursor: not-allowed;
-	}
-
 	svg {
 		fill: #fff;
+	}
+
+	mark {
+		background: unset;
+		color: inherit;
+		font-weight: 600;
 	}
 
 	> div {

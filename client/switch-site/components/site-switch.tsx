@@ -58,7 +58,7 @@ const Label = styled.div( {
 	'.switch-site__site': {
 		color: 'var(--studio-gray-100)',
 	},
-	'.commands-command-menu__container [cmdk-item][aria-selected=true] &': {
+	'.switch-site__list [aria-selected=true] &': {
 		color: 'var(--studio-white)',
 	},
 	'.switch-site__site mark': {
@@ -67,11 +67,9 @@ const Label = styled.div( {
 } );
 
 const SubLabel = styled( Label )( {
+	color: 'var(--studio-gray-60)',
 	opacity: 0.7,
 	fontSize: '0.9em',
-	'.commands-command-menu__container [cmdk-item] &': {
-		color: 'var(--studio-gray-60)',
-	},
 } );
 
 const Switcher = ( { redirectTo }: { redirectTo: string } ) => {
