@@ -2,13 +2,21 @@
 
 .switch-site__modal-overlay {
 	background-color: transparent;
+	display: block;
 }
 
 .switch-site__modal {
 	box-shadow: none;
 	border: 1px solid var( --color-neutral-10 );
+	margin: auto;
 	width: min( 100% - 32px, 640px );
 	max-width: 640px;
+	position: relative;
+	top: calc( 5% + #{$header-height} );
+
+	@include break-small() {
+		top: calc( 10% + #{$header-height} );
+	}
 
 	.components-modal__content {
 		margin: 0;
@@ -55,6 +63,8 @@
 
 .switch-site__list {
 	padding: 0 $grid-unit-10 $grid-unit-10;
+	max-height: 368px;
+	overflow: auto;
 }
 
 .switch-site__empty {
