@@ -24,21 +24,7 @@ const getTitanProductSlug = ( intervalLength: IntervalLength ): string => {
 };
 
 const getTitanFreeTrialMonths = ( product: ProductListItem | null ): number | null => {
-	const offer = product?.introductory_offer;
-
-	if ( ! offer?.interval_count || ! offer?.interval_unit ) {
-		return null;
-	}
-
-	if ( offer.interval_unit === 'year' ) {
-		return offer.interval_count * 12;
-	}
-
-	if ( offer.interval_unit === 'month' ) {
-		return offer.interval_count;
-	}
-
-	return null;
+	return product?.introductory_offer?.interval_unit === 'year' ? 12 : 3;
 };
 
 type ProfessionalEmailPriceProps = {
@@ -72,7 +58,7 @@ const ProfessionalEmailPrice = ( {
 	const offerMonths = getTitanFreeTrialMonths( siteProduct ?? product );
 	const freeTrialLabel = translate( '%(months)d months free', {
 		args: {
-			months: offerMonths ?? 3,
+			months: offerMonths,
 		},
 		comment: '%(months)d is the number of free trial months',
 	} );
