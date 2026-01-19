@@ -19,7 +19,7 @@
   font-weight: 400;
   line-height: 1.5;
   text-align: center;
-  color: var(--color-text);
+  color: var(--color-foreground);
   margin: 0;
   max-width: 400px;
 }

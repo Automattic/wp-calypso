@@ -15,6 +15,8 @@ const App: React.FC = () => {
 		return 'embedded';
 	} );
 
+	const [ currentTheme, setCurrentTheme ] = useState<'light' | 'dark'>( 'light' );
+
 	// Save to localStorage whenever demo changes
 	useEffect( () => {
 		localStorage.setItem( 'selectedDemo', currentDemo );
@@ -81,10 +83,52 @@ const App: React.FC = () => {
 				>
 					Compact
 				</button>
+				<div style={ { marginLeft: '30px' } }>
+					<button
+						onClick={ () => setCurrentTheme( 'dark' ) }
+						style={ {
+							padding: '8px 10px',
+							background:
+								currentTheme === 'dark'
+									? '#000'
+									: 'white',
+							color:
+								currentTheme === 'dark'
+									? 'white'
+									: '#000',
+							cursor: 'pointer',
+							fontSize: '12px',
+							fontFamily: 'monospace',
+							textTransform: 'uppercase',
+						} }
+					>
+						DARK THEME
+					</button>
+					<button
+						onClick={ () => setCurrentTheme( 'light' ) }
+						style={ {
+							padding: '8px 10px',
+							background:
+								currentTheme === 'light'
+									? '#000'
+									: 'white',
+							color:
+								currentTheme === 'light'
+									? 'white'
+									: '#000',
+							cursor: 'pointer',
+							fontSize: '12px',
+							fontFamily: 'monospace',
+							textTransform: 'uppercase',
+						} }
+					>
+						LIGHT THEME
+					</button>
+				</div>
 			</div>
-			{ currentDemo === 'embedded' && <EmbeddedDemo /> }
-			{ currentDemo === 'floating' && <FloatingDemo /> }
-			{ currentDemo === 'floating-compact' && <FloatingCompactDemo /> }
+			{ currentDemo === 'embedded' && <EmbeddedDemo currentTheme={ currentTheme } /> }
+			{ currentDemo === 'floating' && <FloatingDemo currentTheme={ currentTheme }  /> }
+			{ currentDemo === 'floating-compact' && <FloatingCompactDemo currentTheme={ currentTheme } /> }
 		</>
 	);
 };
