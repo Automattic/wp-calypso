@@ -7,7 +7,7 @@ import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../../commissions-info';
 import { MarketplaceTypeContext, TermPricingContext } from '../../context';
-import { useTotalInvoiceValue } from '../../hooks/use-total-invoice-value';
+import { useTotalInvoiceValue } from '../../hooks/use-marketplace';
 import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
 
@@ -31,7 +31,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 		termPricing,
 		items[ 0 ]?.currency ?? 'USD'
 	);
-	const { totalDiscountedCostFormatted } = getTotalInvoiceValue( userProducts, items );
+	const { totalDiscountedCostFormattedText } = getTotalInvoiceValue( userProducts, items );
 
 	return (
 		<Popover
@@ -74,7 +74,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 								: translate( 'Total your client will pay:' ) }
 						</span>
 
-						<span>{ totalDiscountedCostFormatted }</span>
+						<span>{ totalDiscountedCostFormattedText }</span>
 					</div>
 
 					{ marketplaceType === 'referral' && (

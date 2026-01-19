@@ -1,9 +1,14 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { useGetProductPricingInfo } from '../../hooks/use-total-invoice-value';
+import {
+	checkProductTermAvailability,
+	useGetProductPricingInfo,
+	useTermPricingText,
+} from '../../hooks/use-marketplace';
 import type { ShoppingCartItem, TermPricingType } from '../../types';
 
 import './style.scss';
@@ -18,9 +23,12 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem, termPricing 
 	const translate = useTranslate();
 	const userProducts = useSelector( getProductsList );
 
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
+
 	const { getProductPricingInfo } = useGetProductPricingInfo( termPricing, item.currency );
-	const { showActualCost, termPricingText, discountedCostFormatted, actualCostFormatted, isFree } =
+	const { showActualCost, discountedCostFormatted, actualCostFormatted, isFree } =
 		getProductPricingInfo( userProducts, item, item.quantity );
+	const termPricingText = useTermPricingText( termPricing );
 	// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
 	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
 	const productDisplayName =
@@ -31,6 +39,11 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem, termPricing 
 					args: { productName: productDisplayName, quantity: item.quantity },
 			  } )
 			: productDisplayName;
+
+	const { isMissingMonthlyId, isMissingYearlyId } = checkProductTermAvailability(
+		item,
+		termPricing
+	);
 
 	return (
 		<li className="shopping-cart__menu-list-item">
@@ -51,6 +64,13 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem, termPricing 
 								</span>
 							) }
 							<span>{ termPricingText }</span>
+							&nbsp;
+							{ isTermPricingEnabled && isMissingMonthlyId && (
+								<span>({ translate( 'billed yearly' ) })</span>
+							) }
+							{ isTermPricingEnabled && isMissingYearlyId && (
+								<span>({ translate( 'billed monthly' ) })</span>
+							) }
 						</>
 					) }
 				</div>
