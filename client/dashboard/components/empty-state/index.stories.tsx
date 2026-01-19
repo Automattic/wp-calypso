@@ -111,11 +111,6 @@ export const WithContentBelowActions: Story = {
 };
 
 export const WithIconsAndActions: Story = {
-	render: ( args ) => (
-		<EmptyState.Wrapper>
-			<EmptyState { ...args } />
-		</EmptyState.Wrapper>
-	),
 	args: {
 		children: (
 			<>
