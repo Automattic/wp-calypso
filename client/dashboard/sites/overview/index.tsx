@@ -129,10 +129,7 @@ function SiteOverviewSecondaryCards( {
 } ) {
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
 	const showFlexUsageCard = site.is_wpcom_flex;
-
-	if ( isCommerceGarden( site ) ) {
-		return null;
-	}
+	const isCommerceGardenSite = isCommerceGarden( site );
 
 	return (
 		<>
@@ -147,16 +144,22 @@ function SiteOverviewSecondaryCards( {
 				spacing={ spacing }
 				alignment="flex-start"
 			>
-				<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-				<VStack spacing={ spacing } justify="start">
-					{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
-					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
-						<>
-							<DIFMUpsellCard site={ site } />
-							<DomainsCard site={ site } />
-						</>
-					) }
-				</VStack>
+				{ isCommerceGardenSite ? (
+					<DomainsCard site={ site } />
+				) : (
+					<>
+						<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+						<VStack spacing={ spacing } justify="start">
+							{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
+							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
+								<>
+									<DIFMUpsellCard site={ site } />
+									<DomainsCard site={ site } />
+								</>
+							) }
+						</VStack>
+					</>
+				) }
 			</HStack>
 		</>
 	);
