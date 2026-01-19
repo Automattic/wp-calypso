@@ -291,14 +291,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				}
 
 				if ( annualPlansOnlyFeatures.length > 0 ) {
-					// For var1d: check if plan has "Everything in X, plus:" header
-					// Free plan doesn't have this header, so all its features should be differentiators
-					const hasEverythingInHeader = wpcomFeatures.some( ( feature ) =>
-						feature.getSlug().startsWith( 'feature-everything-in' )
-					);
-
-					// Track whether we've passed the "Everything in X, plus:" header for var1d styling
-					let passedEverythingInHeader = false;
+					// Track whether we've passed a header feature for var1d styling
+					let passedHeaderFeature = false;
 
 					wpcomFeatures.forEach( ( feature ) => {
 						// topFeature and highlightedFeatures are already added to the list above
@@ -315,29 +309,27 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							feature.getSlug()
 						);
 
-						// Highlight "Everything in X, plus:" features for stacked variants
-						const isEverythingInPlusFeature = feature
-							.getSlug()
-							.startsWith( 'feature-everything-in' );
+						const featureSlug = feature.getSlug();
 
-						// For var1d: mark features as differentiators if:
-						// - Plan has no "Everything in X" header (like Free): all features are differentiators
-						// - Plan has the header: features after the header are differentiators
+						// Header features: "Everything in X, plus:" and "Included in plan:"
+						const isEverythingInPlusFeature = featureSlug.startsWith( 'feature-everything-in' );
+						const isIncludedInPlanFeature = featureSlug === 'feature-included-in-plan';
+						const isHeaderFeature = isEverythingInPlusFeature || isIncludedInPlanFeature;
+
+						// For var1d: mark features after header as differentiators
 						const shouldMarkAsDifferentiator =
-							isVar1dVariant &&
-							! isEverythingInPlusFeature &&
-							( ! hasEverythingInHeader || passedEverythingInHeader );
+							isVar1dVariant && ! isHeaderFeature && passedHeaderFeature;
 
-						// After we see the "Everything in X" header, subsequent features are differentiators
-						if ( isEverythingInPlusFeature ) {
-							passedEverythingInHeader = true;
+						// After we see a header feature, subsequent features are differentiators
+						if ( isHeaderFeature ) {
+							passedHeaderFeature = true;
 						}
 
 						wpcomFeaturesTransformed.push( {
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-							...( isEverythingInPlusFeature && { isHighlighted: true } ),
+							...( isHeaderFeature && { isHighlighted: true } ),
 							...( shouldMarkAsDifferentiator && { isDifferentiatorFeature: true } ),
 						} );
 					} );
