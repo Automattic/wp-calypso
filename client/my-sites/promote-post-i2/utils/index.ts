@@ -1,9 +1,6 @@
 import config from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
-import {
-	formatNumber as formatNumberWithDecimals,
-	getCurrencyObject,
-} from '@automattic/number-formatters';
+import { formatCurrency, getCurrencyObject } from '@automattic/number-formatters';
 import { InfiniteData } from '@tanstack/react-query';
 import { __, _x } from '@wordpress/i18n';
 import moment from 'moment';
@@ -508,7 +505,7 @@ export const getCreditExpirationLines = (
 		];
 	}
 
-	const firstAmount = '$' + formatNumberWithDecimals( firstItem.amount / 100, { decimals: 2 } );
+	const firstAmount = formatCurrency( firstItem.amount, 'USD', { isSmallestUnit: true } );
 	const lastItem = sortedHistory[ sortedHistory.length - 1 ];
 	const lastDate = moment( lastItem.expires ).format( 'LL' );
 

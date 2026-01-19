@@ -1,6 +1,6 @@
 import { Popover } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { formatNumber } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -93,8 +93,10 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 		} );
 	};
 	const selectedLabel = tabs.find( ( tab ) => tab.id === selectedTab )?.name;
-	const formattedBalance = '$' + formatNumber( parseFloat( creditBalance ), { decimals: 2 } );
-	const mobileFormattedBalance = '$' + formatNumber( parseFloat( creditBalance ), { decimals: 0 } );
+	const formattedBalance = formatCurrency( parseFloat( creditBalance ), 'USD' );
+	const mobileFormattedBalance = formatCurrency( parseFloat( creditBalance ), 'USD', {
+		stripZeros: true,
+	} );
 
 	return (
 		<SectionNav selectedText={ selectedLabel }>
