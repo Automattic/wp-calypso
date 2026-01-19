@@ -77,8 +77,10 @@ const SubLabel = styled( Label )( {
 const Switcher = ( { redirectTo }: { redirectTo: string } ) => {
 	const { __ } = useI18n();
 	const [ search, setSearch ] = useState( '' );
+	const [ selectedIndex, setSelectedIndex ] = useState( 0 );
 	const siteExcerpts = useSiteExcerptsSorted();
 	const input = useRef< HTMLInputElement >( null );
+	const listRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
 		input.current?.focus();
@@ -99,6 +101,36 @@ const Switcher = ( { redirectTo }: { redirectTo: string } ) => {
 			.toLowerCase()
 			.includes( search.toLowerCase() );
 	} );
+
+	// Reset selected index when filtered sites change
+	useEffect( () => {
+		setSelectedIndex( 0 );
+	}, [ filteredSites.length ] );
+
+	// Scroll selected item into view
+	useEffect( () => {
+		if ( listRef.current ) {
+			const selectedElement = listRef.current.querySelector(
+				'[aria-selected="true"]'
+			) as HTMLElement;
+			if ( selectedElement ) {
+				selectedElement.scrollIntoView( { block: 'nearest', behavior: 'smooth' } );
+			}
+		}
+	}, [ selectedIndex ] );
+
+	const handleKeyDown = ( e: React.KeyboardEvent ) => {
+		if ( e.key === 'ArrowDown' ) {
+			e.preventDefault();
+			setSelectedIndex( ( prev ) => Math.min( prev + 1, filteredSites.length - 1 ) );
+		} else if ( e.key === 'ArrowUp' ) {
+			e.preventDefault();
+			setSelectedIndex( ( prev ) => Math.max( prev - 1, 0 ) );
+		} else if ( e.key === 'Enter' && filteredSites[ selectedIndex ] ) {
+			e.preventDefault();
+			handleSiteSelect( filteredSites[ selectedIndex ] );
+		}
+	};
 
 	return (
 		<Modal
@@ -125,19 +157,20 @@ const Switcher = ( { redirectTo }: { redirectTo: string } ) => {
 					onChange={ ( value?: string ) => {
 						setSearch( value ?? '' );
 					} }
+					onKeyDown={ handleKeyDown }
 					placeholder={ __( 'Select site to switch to' ) }
 					__next40pxDefaultSize
 				/>
 			</div>
 
-			<div className="switch-site__list">
+			<div className="switch-site__list" ref={ listRef }>
 				{ filteredSites.length ? (
-					filteredSites.map( ( site ) => (
+					filteredSites.map( ( site, index ) => (
 						<div
 							key={ site.name }
 							className="switch-site__site"
 							role="option"
-							aria-selected="false"
+							aria-selected={ index === selectedIndex }
 							tabIndex={ 0 }
 							onClick={ () => handleSiteSelect( site ) }
 							onKeyDown={ ( e ) => {
