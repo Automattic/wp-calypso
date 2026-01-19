@@ -36,6 +36,8 @@ import { isMonthlyEmailProduct } from '../utils/is-monthly-email-product';
 import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 
 import './style.scss';
+const getTrialMonths = ( product?: { introductory_offer?: { interval_unit?: string | null } } ) =>
+	product?.introductory_offer?.interval_unit === 'year' ? 12 : 3;
 
 export default function ChooseEmailSolution() {
 	const { domain, domainName } = useDomainFromUrlParam();
@@ -71,9 +73,6 @@ export default function ChooseEmailSolution() {
 		product: titanProduct,
 	} );
 	const hasFreeTrial = hasGoogleFreeTrial || hasTitanFreeTrial;
-	const getTrialMonths = ( product?: {
-		introductory_offer?: { interval_unit?: string | null };
-	} ) => ( product?.introductory_offer?.interval_unit === 'year' ? 12 : 3 );
 
 	const isTitanAvailable = canAddEmail && ! hasGSuiteWithUs( domain );
 
