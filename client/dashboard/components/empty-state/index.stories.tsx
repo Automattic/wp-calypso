@@ -159,16 +159,6 @@ export const WithIconsAndActions: Story = {
 	},
 };
 
-export const BackgroundOnly: Story = {
-	args: {
-		children: (
-			<p style={ { textAlign: 'center', margin: 0 } }>
-				Custom content without title or description.
-			</p>
-		),
-	},
-};
-
 /**
  * Without `EmptyState.Content`, the ActionList collapses to its intrinsic width.
  * Use `EmptyState.Content` to constrain the width to `min(100%, 660px)`.
@@ -199,7 +189,12 @@ export const WithoutContentWrapper: Story = {
 	},
 };
 
-export const WithUpsellCallout: Story = {
+export const withContainerAndCallout: Story = {
+	render: ( args ) => (
+		<EmptyState.Wrapper>
+			<EmptyState { ...args } />
+		</EmptyState.Wrapper>
+	),
 	args: {
 		children: (
 			<EmptyState.Content>

@@ -9,9 +9,17 @@ import './style.scss';
 
 function EmptyState( { children }: { children?: ReactNode } ) {
 	return (
-		<Card>
+		<VStack spacing={ 8 } alignment="center">
+			{ children }
+		</VStack>
+	);
+}
+
+function EmptyStateWrapper( { children }: { children: ReactNode } ) {
+	return (
+		<Card className="dashboard-empty-state__wrapper">
 			<CardBody>
-				<VStack spacing={ 8 } alignment="center" className="dashboard-empty-state">
+				<VStack spacing={ 8 } alignment="center">
 					{ children }
 				</VStack>
 			</CardBody>
@@ -60,6 +68,7 @@ function EmptyStateActionItem( props: ActionItemProps ) {
 }
 
 const EmptyStateWithStatics = Object.assign( EmptyState, {
+	Wrapper: EmptyStateWrapper,
 	Title: EmptyStateTitle,
 	Description: EmptyStateDescription,
 	Header: EmptyStateHeader,

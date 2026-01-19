@@ -2,12 +2,19 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
-.dashboard-empty-state {
+.dashboard-empty-state__wrapper {
+	display: flex;
+	flex-direction: column;
 	justify-content: flex-start;
+	width: 100%;
 
 	@include break-small {
 		justify-content: center;
 		min-height: min(70vh, 676px);
+	}
+
+	> * {
+		height: auto;
 	}
 }
 
