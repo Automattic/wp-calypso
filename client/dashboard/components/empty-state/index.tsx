@@ -9,7 +9,7 @@ import './style.scss';
 
 function EmptyState( { children }: { children?: ReactNode } ) {
 	return (
-		<VStack spacing={ 8 } alignment="center">
+		<VStack spacing={ 8 } alignment="center" className="dashboard-empty-state">
 			{ children }
 		</VStack>
 	);
