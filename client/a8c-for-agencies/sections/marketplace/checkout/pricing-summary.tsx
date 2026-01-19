@@ -1,17 +1,17 @@
-import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../commissions-info';
-import { useTotalInvoiceValue } from '../hooks/use-total-invoice-value';
+import { useTotalInvoiceValue, useTermPricingText } from '../hooks/use-marketplace';
 import ShoppingCartMenuItem from '../shopping-cart/shopping-cart-menu/item';
-import type { ShoppingCartItem } from '../types';
+import type { ShoppingCartItem, TermPricingType } from '../types';
 
 type Props = {
 	items: ShoppingCartItem[];
 	isAutomatedReferrals?: boolean;
 	onRemoveItem?: ( item: ShoppingCartItem ) => void;
 	isClient?: boolean;
+	termPricing?: TermPricingType;
 };
 
 export default function PricingSummary( {
@@ -19,19 +19,36 @@ export default function PricingSummary( {
 	onRemoveItem,
 	isAutomatedReferrals,
 	isClient,
+	termPricing,
 }: Props ) {
 	const translate = useTranslate();
 
 	const userProducts = useSelector( getProductsList );
 
-	const { getTotalInvoiceValue } = useTotalInvoiceValue();
+	const { getTotalInvoiceValue } = useTotalInvoiceValue(
+		termPricing,
+		items[ 0 ]?.currency ?? 'USD'
+	);
 
-	const { discountedCost, actualCost } = getTotalInvoiceValue( userProducts, items );
+	const {
+		actualCost,
+		discountedCost,
+		totalActualCostFormatted,
+		totalDiscountedCostFormatted,
+		totalActualCostFormattedText,
+		totalDiscountedCostFormattedText,
+	} = getTotalInvoiceValue( userProducts, items );
 
-	const currency = items[ 0 ]?.currency ?? 'USD'; // FIXME: Fix if multiple currencies are supported
+	const termPricingText = useTermPricingText( termPricing, false );
 
 	// Show actual cost if the agency is referring a client
 	const totalCost = isAutomatedReferrals ? actualCost : discountedCost;
+	const totalCostFormatted = isAutomatedReferrals
+		? totalActualCostFormatted
+		: totalDiscountedCostFormatted;
+	const totalCostFormattedText = isAutomatedReferrals
+		? totalActualCostFormattedText
+		: totalDiscountedCostFormattedText;
 
 	// Agency checkout is when the user is not purchasing automated referrals and not a client
 	const isAgencyCheckout = ! isAutomatedReferrals && ! isClient;
@@ -41,18 +58,14 @@ export default function PricingSummary( {
 	return (
 		<div className="checkout__summary">
 			<div className="checkout__summary-pricing">
-				<span className="checkout__summary-pricing-discounted">
-					{ formatCurrency( totalCost, currency ) }
-				</span>
+				<span className="checkout__summary-pricing-discounted">{ totalCostFormatted }</span>
 				{
 					// Show the discounted price only if it is agency checkout
 					showOriginalPrice && (
-						<span className="checkout__summary-pricing-original">
-							{ formatCurrency( actualCost, currency ) }
-						</span>
+						<span className="checkout__summary-pricing-original">{ totalActualCostFormatted }</span>
 					)
 				}
-				<div className="checkout__summary-pricing-interval">{ translate( '/month' ) }</div>
+				<div className="checkout__summary-pricing-interval">{ termPricingText }</div>
 			</div>
 			<ul className="checkout__summary-items">
 				{ items.map( ( item ) => (
@@ -60,6 +73,7 @@ export default function PricingSummary( {
 						key={ `shopping-cart-item-${ item.product_id }-${ item.quantity }` }
 						item={ item }
 						onRemoveItem={ onRemoveItem }
+						termPricing={ termPricing }
 					/>
 				) ) }
 			</ul>
@@ -70,13 +84,9 @@ export default function PricingSummary( {
 						? translate( 'Total your client will pay:' )
 						: translate( 'Total:' ) }
 				</span>
-				<span>
-					{ translate( '%(total)s/mo', {
-						args: { total: formatCurrency( totalCost, currency ) },
-					} ) }
-				</span>
+				<span>{ totalCostFormattedText }</span>
 			</div>
-			{ isAutomatedReferrals && <CommissionsInfo items={ items } /> }
+			{ isAutomatedReferrals && <CommissionsInfo items={ items } termPricing={ termPricing } /> }
 		</div>
 	);
 }

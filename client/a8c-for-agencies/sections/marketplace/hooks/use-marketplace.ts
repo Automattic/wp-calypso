@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
 import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-options';
@@ -16,8 +16,81 @@ import type {
 } from 'calypso/a8c-for-agencies/types/products';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
-export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currency?: string ) => {
+export const checkProductTermAvailability = (
+	product: APIProductFamilyProduct,
+	termPricing?: TermPricingType
+) => {
+	const monthlyProductId = product?.monthly_product_id;
+	const yearlyProductId = product?.yearly_product_id;
+	const isMonthlyTerm = termPricing === 'monthly';
+	const isYearlyTerm = termPricing === 'yearly';
+	const isMissingMonthlyId = isMonthlyTerm && ! monthlyProductId;
+	const isMissingYearlyId = isYearlyTerm && ! yearlyProductId;
+	return { isMissingMonthlyId, isMissingYearlyId };
+};
+
+export const useProductTermAvailabilityTooltip = ( termPricing: TermPricingType ) => {
 	const translate = useTranslate();
+
+	const termAvailabilityTooltip = useCallback(
+		( product: APIProductFamilyProduct ) => {
+			const { isMissingMonthlyId, isMissingYearlyId } = checkProductTermAvailability(
+				product,
+				termPricing
+			);
+
+			if ( isMissingMonthlyId ) {
+				return translate(
+					'This product is not available for monthly billing. We will bill you yearly instead.'
+				);
+			}
+
+			if ( isMissingYearlyId ) {
+				return translate(
+					'This product is not available for yearly billing. We will bill you monthly instead.'
+				);
+			}
+
+			return undefined;
+		},
+		[ termPricing, translate ]
+	);
+
+	return termAvailabilityTooltip;
+};
+
+export const useTermPricingText = ( termPricing?: TermPricingType, short = true ) => {
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
+	const translate = useTranslate();
+	const yearlyText = short ? translate( '/yr' ) : translate( '/year' );
+	const monthlyText = short ? translate( '/mo' ) : translate( '/month' );
+	return isTermPricingEnabled && termPricing === 'yearly' ? yearlyText : monthlyText;
+};
+
+export const useGetProductPricingInfo = (
+	termPricing?: TermPricingType,
+	currency?: string
+): {
+	getProductPricingInfo: (
+		userProducts: Record< string, ProductListItem >,
+		product: SelectedLicenseProp | APIProductFamilyProduct,
+		quantity: number
+	) => {
+		actualCost: number;
+		discountedCost: number;
+		discountPercentage: number;
+		discountedCostFormatted: string;
+		actualCostFormatted: string;
+		showActualCost: boolean;
+		isFree: boolean;
+	};
+	termPricingPriceInfo: ( product: APIProductFamilyProduct ) => {
+		priceInterval: string;
+		termPrice: number | undefined;
+	};
+} => {
+	const translate = useTranslate();
+
 	const { data } = useProductsQuery( true );
 	const wpcomProducts = data?.find(
 		( product ) => product.slug === 'wpcom-hosting'
@@ -37,6 +110,26 @@ export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currenc
 		return count;
 	}, [ count, marketplaceType ] );
 
+	const termPricingPriceInfo = ( product: APIProductFamilyProduct ) => {
+		const { isMissingMonthlyId, isMissingYearlyId } = checkProductTermAvailability(
+			product,
+			termPricing
+		);
+		let priceInterval =
+			termPricing === 'yearly' ? translate( 'per year' ) : translate( 'per month' );
+		let termPrice = termPricing === 'yearly' ? product.yearly_price : product.monthly_price;
+		if ( isMissingMonthlyId ) {
+			// We manually calculate the monthly price based on the yearly price
+			termPrice = ( product.yearly_price || 0 ) / 12;
+			priceInterval = translate( 'per month, billed yearly' );
+		} else if ( isMissingYearlyId ) {
+			// We manually calculate the yearly price based on the monthly price
+			termPrice = ( product.monthly_price || 0 ) * 12;
+			priceInterval = translate( 'per year, billed monthly' );
+		}
+		return { priceInterval, termPrice };
+	};
+
 	const getProductPricingInfo = (
 		userProducts: Record< string, ProductListItem >,
 		product: SelectedLicenseProp | APIProductFamilyProduct,
@@ -44,11 +137,8 @@ export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currenc
 	) => {
 		const isTermPricingEnabled =
 			isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
-		const termPrice = termPricing === 'yearly' ? product.yearly_price : product.monthly_price;
+		const { termPrice } = termPricingPriceInfo( product );
 		const productPrice = isTermPricingEnabled ? termPrice : Number( product.amount );
-
-		const termPricingText =
-			isTermPricingEnabled && termPricing === 'yearly' ? translate( '/yr' ) : translate( '/mo' );
 
 		const productBundlePrice = productPrice ? productPrice * quantity : 0;
 
@@ -60,7 +150,6 @@ export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currenc
 				discountedCost,
 				discountPercentage: tier.discount,
 				showActualCost: productBundlePrice > discountedCost,
-				termPricingText,
 				discountedCostFormatted: formatCurrency( discountedCost, currency ?? 'USD' ),
 				actualCostFormatted: formatCurrency( productBundlePrice, currency ?? 'USD' ),
 				isFree: productPrice === 0,
@@ -84,7 +173,6 @@ export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currenc
 				discountedCostFormatted: formatCurrency( discountedCost, currency ?? 'USD' ),
 				actualCostFormatted: formatCurrency( actualCost, currency ?? 'USD' ),
 				showActualCost: actualCost > discountedCost,
-				termPricingText,
 				isFree: productPrice === 0,
 			};
 		}
@@ -99,7 +187,6 @@ export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currenc
 				discountedCostFormatted: formatCurrency( actualCost, currency ?? 'USD' ),
 				actualCostFormatted: formatCurrency( actualCost, currency ?? 'USD' ),
 				showActualCost: false,
-				termPricingText,
 				isFree: actualCost === 0,
 			};
 		}
@@ -163,11 +250,11 @@ export const useGetProductPricingInfo = ( termPricing?: TermPricingType, currenc
 			discountedCostFormatted: formatCurrency( discountInfo.discountedCost, currency ?? 'USD' ),
 			actualCostFormatted: formatCurrency( discountInfo.actualCost, currency ?? 'USD' ),
 			showActualCost: discountInfo.actualCost > discountInfo.discountedCost,
-			termPricingText,
 			isFree: discountInfo.actualCost === 0,
 		};
 	};
-	return { getProductPricingInfo };
+
+	return { getProductPricingInfo, termPricingPriceInfo };
 };
 
 export const useTotalInvoiceValue = ( termPricing?: TermPricingType, currency?: string ) => {
@@ -205,22 +292,25 @@ export const useTotalInvoiceValue = ( termPricing?: TermPricingType, currency?: 
 		const isTermPricingEnabled =
 			isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
-		const totalDiscountedCostFormatted =
-			isTermPricingEnabled && termPricing === 'yearly'
+		const totalCostFormattedText = ( cost: number ) => {
+			return isTermPricingEnabled && termPricing === 'yearly'
 				? translate( '%(total)s/yr', {
-						args: {
-							total: formatCurrency( totalInvoiceValue.discountedCost, currency ?? 'USD' ),
-						},
+						args: { total: formatCurrency( cost, currency ?? 'USD' ) },
 				  } )
 				: translate( '%(total)s/mo', {
-						args: {
-							total: formatCurrency( totalInvoiceValue.discountedCost, currency ?? 'USD' ),
-						},
+						args: { total: formatCurrency( cost, currency ?? 'USD' ) },
 				  } );
+		};
 
 		return {
 			...totalInvoiceValue,
-			totalDiscountedCostFormatted,
+			totalDiscountedCostFormatted: formatCurrency(
+				totalInvoiceValue.discountedCost,
+				currency ?? 'USD'
+			),
+			totalActualCostFormatted: formatCurrency( totalInvoiceValue.actualCost, currency ?? 'USD' ),
+			totalDiscountedCostFormattedText: totalCostFormattedText( totalInvoiceValue.discountedCost ),
+			totalActualCostFormattedText: totalCostFormattedText( totalInvoiceValue.actualCost ),
 		};
 	};
 

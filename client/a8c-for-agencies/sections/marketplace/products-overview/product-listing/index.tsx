@@ -12,6 +12,7 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
+import { useProductTermAvailabilityTooltip } from '../../hooks/use-marketplace';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { SelectedFilters } from '../../lib/product-filter';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
@@ -52,6 +53,8 @@ export default function ProductListing( {
 
 	const { selectedCartItems, setSelectedCartItems } = useContext( ShoppingCartContext );
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	const termAvailabilityTooltip = useProductTermAvailabilityTooltip( termPricing );
 
 	const quantity = useMemo(
 		() => ( isReferralMode ? 1 : selectedBundleSize ),
@@ -263,6 +266,14 @@ export default function ProductListing( {
 						)
 				);
 
+			const termAvailabilityTooltipMessage = termAvailabilityTooltip( productOption );
+
+			const tooltip =
+				termAvailabilityTooltipMessage ||
+				( productDoNotHaveSupportedBundles
+					? translate( 'This product does not offer volume discounts.' )
+					: undefined );
+
 			return (
 				<ProductCard
 					asReferral={ isReferralMode }
@@ -282,11 +293,7 @@ export default function ProductListing( {
 					suggestedProduct={ suggestedProduct }
 					quantity={ productDoNotHaveSupportedBundles ? 1 : quantity }
 					withCustomCard={ withCustomCard }
-					tooltip={
-						productDoNotHaveSupportedBundles
-							? translate( 'This product does not offer volume discounts.' )
-							: undefined
-					}
+					tooltip={ tooltip }
 					tooltipPosition="bottom"
 				/>
 			);

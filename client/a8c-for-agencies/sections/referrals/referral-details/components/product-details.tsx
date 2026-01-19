@@ -9,7 +9,11 @@ type Props = {
 };
 
 const ProductDetails = ( { purchase, data, isFetching }: Props ) => {
-	const product = data?.find( ( product ) => product.product_id === purchase.product_id );
+	const product = data?.find( ( product ) =>
+		[ product.monthly_product_id, product.yearly_product_id, product.product_id ].includes(
+			purchase.product_id
+		)
+	);
 
 	if ( isFetching ) {
 		return <TextPlaceholder />;

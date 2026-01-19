@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import withMarketplaceProviders from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-providers';
-import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-total-invoice-value';
+import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-marketplace';
 import { useSelector } from 'calypso/state';
 import { isProductsListFetching, getProductsList } from 'calypso/state/products-list/selectors';
 import type { TermPricingType } from 'calypso/a8c-for-agencies/sections/marketplace/types';
@@ -34,10 +34,15 @@ function ProductPriceWithDiscount( {
 
 	const isBundle = quantity > 1;
 
-	const { getProductPricingInfo } = useGetProductPricingInfo( termPricing, product.currency );
+	const { getProductPricingInfo, termPricingPriceInfo } = useGetProductPricingInfo(
+		termPricing,
+		product.currency
+	);
 
 	const { discountedCostFormatted, actualCostFormatted, discountPercentage, isFree } =
 		getProductPricingInfo( userProducts, product, quantity );
+
+	const { priceInterval: termPriceInterval } = termPricingPriceInfo( product );
 
 	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
@@ -55,7 +60,7 @@ function ProductPriceWithDiscount( {
 
 	const priceInterval = () => {
 		if ( isTermPricingEnabled ) {
-			return termPricing === 'yearly' ? translate( 'per year' ) : translate( 'per month' );
+			return termPriceInterval;
 		}
 		if ( isDailyPricing ) {
 			return isBundle ? translate( 'per bundle per day' ) : translate( 'per license per day' );
