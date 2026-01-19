@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	clearStepPersistedState,
@@ -12,7 +11,7 @@ import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
-import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
@@ -40,8 +39,6 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-const POST_CHECKOUT_SETUP_YOUR_SITE_EXPERIMENT_SLUG = 'calyso_post_onboarding_big_sky_202601_v1';
-
 function initialize() {
 	const steps = [
 		STEPS.DOMAIN_SEARCH,
@@ -63,14 +60,6 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
-
-		const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-			POST_CHECKOUT_SETUP_YOUR_SITE_EXPERIMENT_SLUG
-		);
-		const shouldShowNewPostCheckoutStep =
-			isEnabled( 'onboarding/post-checkout-ai-step' ) &&
-			! isLoadingExperiment &&
-			experimentAssignment?.variationName === 'big_sky';
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -208,18 +197,15 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
-				case 'post-checkout-onboarding':
+				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
 
-					/*
-					 * If the post-checkout ai step should be shown,
-					 * redirect the user to the relevant step.
-					 */
-					if ( shouldShowNewPostCheckoutStep ) {
+					if ( providedDependencies?.postCheckoutBigSky ) {
 						return navigate( 'setup-your-site-ai' );
 					}
 
 					return navigate( 'processing' );
+				}
 				case 'setup-your-site-ai': {
 					const setupChoice = providedDependencies?.setupChoice;
 					const siteSlug = providedDependencies?.siteSlug as string;
@@ -352,7 +338,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		// Preload experiments
 		useEffect( () => {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
-			loadExperimentAssignment( POST_CHECKOUT_SETUP_YOUR_SITE_EXPERIMENT_SLUG );
 		}, [] );
 	},
 };
