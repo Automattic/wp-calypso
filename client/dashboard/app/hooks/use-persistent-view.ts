@@ -199,13 +199,10 @@ export function usePersistentView( {
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
 }
 
-function removeTransientPropertiesFromView( view: View ): Omit< View, 'page' | 'search' > {
-	const viewToPersist = { ...view };
-
-	delete viewToPersist.page;
-	delete viewToPersist.search;
-
-	return viewToPersist;
+function removeTransientPropertiesFromView( view: View ): View {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { page, search, ...viewWithoutTransients } = view;
+	return viewWithoutTransients as View;
 }
 
 function removeTransientFiltersFromView( view: View, transientFilterFields: string[] ): View {
