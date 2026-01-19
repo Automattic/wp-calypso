@@ -44,10 +44,6 @@ export function sidebar( context, next ) {
 	next();
 }
 
-export function unmountSidebar( context, next ) {
-	next();
-}
-
 export function following( context, next ) {
 	const basePath = sectionify( context.path );
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';

@@ -1,24 +1,4 @@
-import { useMemo } from 'react';
 import type { Purchases } from '@automattic/data-stores';
-
-/**
- * Custom hook to determine if a purchase has transferred ownership.
- * Uses a Set for O(1) lookup performance instead of array.some() O(n) search.
- * @param purchaseId - The ID of the purchase to check
- * @param transferredOwnershipPurchases - Array of purchases with transferred ownership
- * @returns boolean indicating if the purchase has transferred ownership
- */
-export function useIsTransferredOwnership(
-	purchaseId: number,
-	transferredOwnershipPurchases: Purchases.Purchase[] = []
-): boolean {
-	return useMemo( () => {
-		const transferredOwnershipIds = new Set(
-			transferredOwnershipPurchases.map( ( transferredPurchase ) => transferredPurchase.id )
-		);
-		return transferredOwnershipIds.has( purchaseId );
-	}, [ purchaseId, transferredOwnershipPurchases ] );
-}
 
 /**
  * Utility function to determine if a purchase has transferred ownership.
