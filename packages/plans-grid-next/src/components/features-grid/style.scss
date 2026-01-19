@@ -375,17 +375,23 @@
 		// var1d experiment: differentiator feature styling
 		// Features below "Everything in X, plus:" get distinctive underline treatment
 		&.is-differentiator-feature {
+			display: flex;
+			align-items: flex-start;
 			color: var(--studio-gray-90);
 			font-size: $font-body-extra-small;
 			font-weight: 400;
 			line-height: 16px;
-			text-decoration-line: underline;
-			text-decoration-style: dotted;
-			text-decoration-skip-ink: none;
-			text-decoration-color: #00ba37;
-			text-decoration-thickness: 9%;
-			text-underline-offset: auto;
-			text-underline-position: from-font;
+
+			// Apply underline styling only to the text, not the icon
+			> span {
+				text-decoration-line: underline;
+				text-decoration-style: dotted;
+				text-decoration-skip-ink: none;
+				text-decoration-color: #00ba37;
+				text-decoration-thickness: 9%;
+				text-underline-offset: auto;
+				text-underline-position: from-font;
+			}
 		}
 
 		@include plans-grid-medium-large {
