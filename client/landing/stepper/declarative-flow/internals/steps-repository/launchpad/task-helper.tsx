@@ -1,7 +1,6 @@
 import { type SiteDetails, type ChecklistStatuses } from '@automattic/data-stores';
 import { isStartWritingFlow, isReadymadeFlow } from '@automattic/onboarding';
-import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, Task } from './types';
+import { LaunchpadChecklist } from './types';
 
 export function isDomainUpsellCompleted(
 	site: SiteDetails | null,
@@ -19,30 +18,6 @@ export const getSiteIdOrSlug = (
 		? { siteId: site?.ID }
 		: { siteSlug };
 };
-// Returns list of tasks/checklist items for a specific flow
-export function getArrayOfFilteredTasks(
-	tasks: Task[],
-	flow: string | null,
-	isEmailVerified: boolean
-) {
-	let currentFlowTasksIds = flow ? launchpadFlowTasks[ flow ] : null;
-
-	if ( isEmailVerified && currentFlowTasksIds ) {
-		currentFlowTasksIds = currentFlowTasksIds.filter( ( task ) => task !== 'verify_email' );
-	}
-
-	return (
-		currentFlowTasksIds &&
-		currentFlowTasksIds.reduce( ( accumulator, currentTaskId ) => {
-			tasks.find( ( task ) => {
-				if ( task.id === currentTaskId ) {
-					accumulator.push( task );
-				}
-			} );
-			return accumulator;
-		}, [] as Task[] )
-	);
-}
 
 /*
  * Confirms if final task for a given site_intent is completed.

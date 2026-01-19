@@ -239,7 +239,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			gardenName,
 			gardenPartnerName,
 			urlQueryParams.get( 'spec_id' ),
-			urlQueryParams.get( 'trigger_backend_build' ) === '1',
 			blueprint
 		);
 

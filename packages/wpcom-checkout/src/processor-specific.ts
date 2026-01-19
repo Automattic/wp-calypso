@@ -2,33 +2,6 @@ import { isValid as isValidCnpj } from '@fnando/cnpj';
 import { isValid as isValidCpf } from '@fnando/cpf';
 import i18n from 'i18n-calypso';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from './payment-processor-countries-fields';
-import {
-	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-	isPaymentMethodEnabled,
-} from './index';
-import type { WPCOMPaymentMethod } from './types';
-import type { ResponseCart } from '@automattic/shopping-cart';
-
-/**
- * Returns whether we should Ebanx credit card processing for a particular country
- * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
- * @param {import('@automattic/shopping-cart').ResponseCart} cart - The shopping cart
- * @returns {boolean} Whether the country code requires ebanx payment processing
- */
-export function isEbanxCreditCardProcessingEnabledForCountry(
-	countryCode: string,
-	cart: ResponseCart
-): boolean {
-	return (
-		typeof PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ] !== 'undefined' &&
-		isPaymentMethodEnabled(
-			'ebanx',
-			cart.allowed_payment_methods?.map( ( method ) =>
-				translateWpcomPaymentMethodToCheckoutPaymentMethod( method as WPCOMPaymentMethod )
-			)
-		)
-	);
-}
 
 /**
  * CPF number (Cadastrado de Pessoas Físicas) is the Brazilian tax identification number.

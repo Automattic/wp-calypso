@@ -1,4 +1,3 @@
-import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/ui/init';
@@ -11,20 +10,6 @@ import 'calypso/state/ui/init';
  */
 export function getPreviewUrl( state ) {
 	return state.ui.preview.currentPreviewUrl;
-}
-
-/**
- * Returns the site object for the current site set for SitePreview.
- * @param  {Object}  state  Global state tree
- * @returns {?Object}        Selected site
- */
-export function getPreviewSite( state ) {
-	const siteId = getPreviewSiteId( state );
-	if ( ! siteId ) {
-		return null;
-	}
-
-	return getSite( state, siteId );
 }
 
 /**

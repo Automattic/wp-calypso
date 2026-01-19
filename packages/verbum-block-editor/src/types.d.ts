@@ -5,14 +5,6 @@ declare module '@wordpress/format-library/build-module/default-formats' {
 
 	export default formats;
 }
-
-declare module '@verbum/block-editor' {
-	export function addGutenberg(
-		textarea: HTMLTextAreaElement,
-		setComment: ( newValue: string ) => void
-	): void;
-}
-
 declare module '!!css-loader!sass-loader!./inline-iframe-style.scss' {
 	const css: Array< [ string, string ] >;
 

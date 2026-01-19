@@ -19,10 +19,6 @@ export function isSimple( site: Site ) {
 	return ! site.jetpack && ! site.is_wpcom_atomic && ! site.is_garden;
 }
 
-export function isGarden( site: Site ) {
-	return site.is_garden;
-}
-
 export function isCommerceGarden( site: Site ) {
 	return site.is_garden && site.garden_name === 'commerce';
 }
