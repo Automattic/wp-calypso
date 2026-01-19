@@ -89,12 +89,11 @@ export const SiteSelector = ( { onChange, value, sites }: Props ) => {
 
 	return (
 		<Dropdown
-			expandOnMobile
 			renderToggle={ ( { onToggle } ) => (
 				<Button
 					onClick={ onToggle }
 					label={ translate( 'Select a site' ) }
-					style={ { height: 'fit-content', paddingLeft: '0' } }
+					style={ { height: 'fit-content', padding: '0' } }
 				>
 					<SiteOption site={ value } icon={ chevronDownSmall } />
 				</Button>
