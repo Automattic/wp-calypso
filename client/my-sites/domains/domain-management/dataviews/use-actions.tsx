@@ -27,7 +27,7 @@ import { AutoRenewDiolog } from './components/auto-renew-dialog';
 import { useDomainsDataViewsContext } from './use-context';
 
 export function useActions(
-	viewType: 'table' | 'list' | 'grid' | 'pickerGrid' | 'pickerTable',
+	viewType: 'table' | 'list' | 'grid' | 'pickerGrid' | 'pickerTable' | 'activity',
 	onClose?: () => void
 ) {
 	const translate = useTranslate();

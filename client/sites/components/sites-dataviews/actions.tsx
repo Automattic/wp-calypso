@@ -131,7 +131,7 @@ export const isActionEligible = (
 export function useActions( {
 	viewType,
 }: {
-	viewType: 'list' | 'table' | 'grid' | 'pickerGrid' | 'pickerTable';
+	viewType: 'list' | 'table' | 'grid' | 'pickerGrid' | 'pickerTable' | 'activity';
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
