@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { follow, unfollow } from 'calypso/state/reader/follows/actions';
@@ -9,7 +9,24 @@ import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions
 import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
 import FollowButton from './button';
 
-function FollowButtonContainer( props ) {
+interface FollowButtonContainerProps {
+	siteUrl: string;
+	feedId?: number;
+	siteId?: number;
+	iconSize?: number;
+	tagName?: string;
+	disabled?: boolean;
+	followLabel?: string;
+	followingLabel?: string;
+	className?: string;
+	followIcon?: JSX.Element;
+	followingIcon?: JSX.Element;
+	hasButtonStyle?: boolean;
+	isButtonOnly?: boolean;
+	onFollowToggle: ( following: boolean ) => void;
+}
+
+function FollowButtonContainer( props: FollowButtonContainerProps ): JSX.Element {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const following = useSelector( ( state ) => isFollowing( state, { feedUrl: props.siteUrl } ) );
@@ -18,7 +35,7 @@ function FollowButtonContainer( props ) {
 	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
 	const translate = useTranslate();
 
-	const handleFollowToggle = ( followingSite ) => {
+	const handleFollowToggle = ( followingSite: boolean ) => {
 		const followData = omitBy(
 			{
 				feed_ID: props.feedId,
@@ -50,7 +67,7 @@ function FollowButtonContainer( props ) {
 		}
 
 		if ( followingSite ) {
-			dispatch( follow( props.siteUrl, followData ) );
+			dispatch( follow( props.siteUrl, followData, null ) );
 		} else {
 			dispatch( unfollow( props.siteUrl ) );
 		}
