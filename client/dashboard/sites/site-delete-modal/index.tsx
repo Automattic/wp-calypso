@@ -1,9 +1,5 @@
 import { TrialPlans } from '@automattic/api-core';
-import {
-	p2HubP2sQuery,
-	siteDeleteMutation,
-	siteDeletionPurchaseInfoQuery,
-} from '@automattic/api-queries';
+import { p2HubP2sQuery, siteDeleteMutation, sitePurchasesQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -25,7 +21,7 @@ import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { isCommerceGarden } from '../../utils/site-types';
+import { getSiteDeletionPurchaseInfo } from '../../utils/purchase';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -247,17 +243,15 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 
 export default function SiteDeleteModal( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const { user } = useAuth();
-	const { isLoading, data: purchaseInfo } = useQuery(
-		siteDeletionPurchaseInfoQuery( site.ID, user.ID )
-	);
+	const { isLoading, data: purchases } = useQuery( sitePurchasesQuery( site.ID ) );
 
-	// CIAB (commerce garden) sites can be deleted even if they have trial subscriptions.
+	const purchaseInfo = purchases ? getSiteDeletionPurchaseInfo( purchases, user.ID ) : null;
+
+	// Sites can be deleted even if they only have trial subscriptions.
 	// The backend will automatically cancel the trial during deletion.
-	const isCiabWithOnlyTrials =
-		isCommerceGarden( site ) && purchaseInfo?.hasOnlyTrialPurchases === true;
-
 	const canBeDeleted =
-		canDeleteSite( site ) && ( ! purchaseInfo?.hasCancelablePurchases || isCiabWithOnlyTrials );
+		canDeleteSite( site ) &&
+		( ! purchaseInfo?.hasCancelablePurchases || purchaseInfo?.hasOnlyTrialPurchases );
 	const title = canBeDeleted ? __( 'Delete site' ) : __( 'Unable to delete site' );
 
 	if ( isLoading ) {

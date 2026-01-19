@@ -18,6 +18,49 @@ import { redirectToDashboardLink, wpcomLink } from './link';
 import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase } from '@automattic/api-core';
 
+export interface SiteDeletionPurchaseInfo {
+	/** Whether the site has any cancelable purchases */
+	hasCancelablePurchases: boolean;
+	/** Whether all cancelable purchases are trial plans (only meaningful if hasCancelablePurchases is true) */
+	hasOnlyTrialPurchases: boolean;
+}
+
+/**
+ * Filters purchases to find cancelable ones for a specific user.
+ * A purchase is cancelable if it's refundable or not a legacy premium theme.
+ */
+export function getCancelablePurchases( purchases: Purchase[], userId: number ): Purchase[] {
+	return purchases
+		.filter( ( purchase ) => {
+			if ( purchase.is_refundable ) {
+				return true;
+			}
+
+			// Exclude legacy premium theme purchases.
+			return purchase.product_slug !== 'premium_theme';
+		} )
+		.filter( ( purchase ) => purchase.user_id === userId );
+}
+
+/**
+ * Get purchase information relevant to site deletion.
+ * Returns whether the site has cancelable purchases and whether they are all trials.
+ */
+export function getSiteDeletionPurchaseInfo(
+	purchases: Purchase[],
+	userId: number
+): SiteDeletionPurchaseInfo {
+	const cancelables = getCancelablePurchases( purchases, userId );
+	const hasCancelablePurchases = cancelables.length > 0;
+	const hasOnlyTrialPurchases =
+		hasCancelablePurchases && cancelables.every( ( purchase ) => purchase.is_trial_plan );
+
+	return {
+		hasCancelablePurchases,
+		hasOnlyTrialPurchases,
+	};
+}
+
 export const CANCEL_FLOW_TYPE = {
 	REMOVE: 'remove',
 	CANCEL_WITH_REFUND: 'cancel_with_refund',
