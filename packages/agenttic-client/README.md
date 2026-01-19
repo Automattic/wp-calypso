@@ -1,6 +1,8 @@
 # @automattic/agenttic-client
 
-A TypeScript client library for Agent2Agent (A2A) protocol communication with React hooks and component integration. Built for seamless AI agent integration in both browser and Node.js environments.
+A TypeScript client library for connecting to the Automattic agent framework with React hooks and component integration.
+
+Original based on the A2A (Agent2Agent), but it has morphed to meet our internal needs so there is no longer a direct relationship to that protocol.
 
 ## Installation
 
@@ -133,12 +135,14 @@ function WordPressChat() {
 You can also combine regular tools with abilities using `useClientToolsWithAbilities`:
 
 ```typescript
-const toolProvider = useClientToolsWithAbilities({
-  getClientTools: async () => myCustomTools,
-  executeTool: async (toolId, args) => { /* execute custom tools */ },
-  abilities,
-  executeAbility
-});
+const toolProvider = useClientToolsWithAbilities( {
+	getClientTools: async () => myCustomTools,
+	executeTool: async ( toolId, args ) => {
+		/* execute custom tools */
+	},
+	abilities,
+	executeAbility,
+} );
 ```
 
 ## Core APIs
@@ -240,8 +244,9 @@ const toolProvider = useClientAbilities( abilities, executeAbility );
 ```
 
 WordPress Abilities can be:
-- **Server-side**: Executed via REST API (no `callback` property)
-- **Client-side**: Executed in browser (has `callback` function)
+
+-   **Server-side**: Executed via REST API (no `callback` property)
+-   **Client-side**: Executed in browser (has `callback` function)
 
 The API handles both types automatically, routing execution appropriately.
 
@@ -256,7 +261,7 @@ const abilities = await getAbilities();
 const toolProvider = useClientToolsWithAbilities( {
 	getClientTools: async () => [
 		// Your regular tools
-		{ id: 'calculator', name: 'Calculator', /* ... */ },
+		{ id: 'calculator', name: 'Calculator' /* ... */ },
 	],
 	executeTool: async ( toolId, args ) => {
 		// Handle regular tool execution
@@ -268,7 +273,7 @@ const toolProvider = useClientToolsWithAbilities( {
 
 ### createClient Function
 
-Low-level client for direct A2A communication without React.
+Low-level client for direct communication without React.
 
 ```typescript
 import { createClient } from '@automattic/agenttic-client';
@@ -346,38 +351,41 @@ await manager.resetConversation( 'my-agent' );
 Cancel in-flight requests using the built-in abort functionality:
 
 ```typescript
-const { abortCurrentRequest, isProcessing } = useAgentChat(config);
+const { abortCurrentRequest, isProcessing } = useAgentChat( config );
 
 // Cancel current request
-if (isProcessing) {
-  abortCurrentRequest();
+if ( isProcessing ) {
+	abortCurrentRequest();
 }
 ```
 
 For low-level client usage, use `AbortController`:
 
 ```typescript
-import { createClient, createAbortController } from '@automattic/agenttic-client';
+import {
+	createClient,
+	createAbortController,
+} from '@automattic/agenttic-client';
 
-const client = createClient(config);
+const client = createClient( config );
 const abortController = createAbortController();
 
 // Start a request with abort signal
-const requestPromise = client.sendMessage({
-  message: createTextMessage('Hello'),
-  abortSignal: abortController.signal
-});
+const requestPromise = client.sendMessage( {
+	message: createTextMessage( 'Hello' ),
+	abortSignal: abortController.signal,
+} );
 
 // Cancel the request
 abortController.abort();
 
 // Handle cancellation
 try {
-  await requestPromise;
-} catch (error) {
-  if (error.name === 'AbortError') {
-    console.log('Request was cancelled');
-  }
+	await requestPromise;
+} catch ( error ) {
+	if ( error.name === 'AbortError' ) {
+		console.log( 'Request was cancelled' );
+	}
 }
 ```
 

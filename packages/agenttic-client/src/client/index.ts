@@ -317,7 +317,7 @@ async function executeToolCallBatch(
 /**
  * Extract conversation history from a message's data parts
  *
- * @param message - The A2A message to extract conversation history from
+ * @param message - The message to extract conversation history from
  * @return Array of conversation messages reconstructed from data parts
  */
 export function extractConversationHistory( message: Message ): Message[] {
@@ -472,7 +472,7 @@ async function continueTaskStreamed(
 	const continueParams = {
 		message,
 		taskId,
-		sessionId: undefined, // Use task's session
+		sessionId, // Use the provided sessionId to maintain conversation continuity
 	};
 
 	// Use same options as original request, defaulting to streaming-only if not provided
@@ -537,6 +537,12 @@ async function* processAgentResponseStream(
 	requestOptions?: RequestOptions
 ): AsyncIterable< TaskUpdate > {
 	for await ( const update of stream ) {
+		// Capture sessionId from server response for fresh chats
+		// This ensures continuations use the sessionId assigned by the server
+		if ( update.sessionId && ! sessionId ) {
+			sessionId = update.sessionId;
+		}
+
 		yield update;
 
 		// Handle running state tool calls (async execution without blocking)

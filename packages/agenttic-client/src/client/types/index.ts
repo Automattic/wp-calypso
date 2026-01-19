@@ -1,5 +1,5 @@
-// A2A Protocol Type Definitions
-// Based on https://google.github.io/A2A/specification/
+// Protocol Type Definitions
+// Originally based on https://google.github.io/A2A/specification/ but no longer tied to that protocol.
 
 export type JsonRpcId = string | number;
 
@@ -49,7 +49,7 @@ export interface FilePart {
 	type: 'file';
 	file: {
 		name: string;
-		mimeType: string;
+		mimeType?: string; // Required for base64 bytes, optional when uri is provided
 		bytes?: string; // Base64 encoded
 		uri?: string;
 	};
@@ -102,6 +102,20 @@ export interface ConversationHistoryPart extends DataPart {
 		text: string;
 	};
 }
+
+export type ProgressDataPart =
+	| ( DataPart & {
+			data: {
+				summary: string;
+			};
+	  } )
+	| {
+			type: 'progress';
+			data: {
+				summary: string;
+			};
+			metadata?: Record< string, unknown >;
+	  };
 
 /**
  * WordPress Ability interface
@@ -181,7 +195,7 @@ export interface Ability {
 }
 
 /**
- * AbilityDataPart - A2A protocol data part for WordPress Abilities.
+ * AbilityDataPart - protocol data part for WordPress Abilities.
  * This transmits the full ability structure (minus client-side callbacks) over the wire.
  */
 export interface AbilityDataPart extends DataPart {
@@ -196,7 +210,8 @@ export type Part =
 	| ToolCallDataPart
 	| ToolResultDataPart
 	| ContextDataPart
-	| AbilityDataPart;
+	| AbilityDataPart
+	| ProgressDataPart;
 
 export interface Message {
 	role: 'user' | 'agent';
@@ -254,7 +269,7 @@ export interface TaskArtifactUpdateEvent {
 	artifact: Artifact;
 }
 
-export enum A2AErrorCodes {
+export enum ErrorCodes {
 	PARSE_ERROR = -32700,
 	INVALID_REQUEST = -32600,
 	METHOD_NOT_FOUND = -32601,
@@ -278,6 +293,13 @@ export interface ClientConfig {
 	contextProvider?: ContextProvider;
 	conversationStorageKey?: string;
 	enableStreaming?: boolean; // Enable token-by-token streaming (requires server support)
+	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage via WordPress.com public API.
+}
+
+// Image data with optional metadata (e.g., WordPress attachment ID)
+export interface ImageData {
+	url: string;
+	metadata?: Record< string, unknown >;
 }
 
 export interface SendMessageParams {
@@ -288,30 +310,35 @@ export interface SendMessageParams {
 	withHistory?: boolean; // Default: true - whether to include conversation history
 	abortSignal?: AbortSignal; // Optional: abort signal for canceling inflight requests
 	enableStreaming?: boolean; // Override client's default streaming setting for this request
+	imageUrls?: ( string | ImageData )[]; // Optional: array of image URLs or image objects with metadata
 }
 
 export interface TaskUpdate {
 	id: string;
+	sessionId?: string; // Session ID from server
 	status: TaskStatus;
 	final?: boolean;
 	artifact?: Artifact;
 	text: string; // Extracted text from status.message
 	agentMessage?: Message; // Optional separate agent message for when returnToAgent is false
+	progressMessage?: string; // Optional progress message extracted from progress parts
 }
 
 export interface Client {
-	sendMessage( params: SendMessageParams ): Promise< TaskUpdate >;
-	sendMessageStream( params: SendMessageParams ): AsyncIterable< TaskUpdate >;
+	sendMessage: ( params: SendMessageParams ) => Promise< TaskUpdate >;
+	sendMessageStream: (
+		params: SendMessageParams
+	) => AsyncIterable< TaskUpdate >;
 
 	// Continue an existing task (useful for human input after input-required state)
-	continueTask(
+	continueTask: (
 		taskId: string,
 		userInput: string,
 		sessionId?: string
-	): Promise< TaskUpdate >;
+	) => Promise< TaskUpdate >;
 
-	getTask( taskId: string ): Promise< Task >;
-	cancelTask( taskId: string ): Promise< void >;
+	getTask: ( taskId: string ) => Promise< Task >;
+	cancelTask: ( taskId: string ) => Promise< void >;
 }
 
 // Tool system types
@@ -333,13 +360,13 @@ export interface ToolExecutionResult {
 }
 
 export interface ToolProvider {
-	getAvailableTools?(): Promise< Tool[] >;
-	executeTool?(
+	getAvailableTools?: () => Promise< Tool[] >;
+	executeTool?: (
 		toolId: string,
 		args: any,
 		messageId?: string,
 		toolCallId?: string
-	): Promise< any | ToolExecutionResult >;
+	) => Promise< any | ToolExecutionResult >;
 	getAbilities?: () => Promise< Ability[] >;
 	executeAbility?: ( name: string, args: any ) => Promise< any >;
 }
@@ -363,5 +390,5 @@ export type ExecuteAbilityFunction = (
 export type ClientContext = Record< string, unknown >;
 
 export interface ContextProvider {
-	getClientContext(): ClientContext;
+	getClientContext: () => ClientContext;
 }

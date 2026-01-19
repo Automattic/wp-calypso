@@ -1,7 +1,6 @@
 import React from 'react';
 import type { AgentUIProps } from '../types';
 import { cn } from '../utils/classNames';
-import { Chat } from './chat/Chat';
 import { AgentUIContainer } from './AgentUIContainer';
 import { AgentUIHeader } from './composable/AgentUIHeader';
 import { AgentUIMessages } from './composable/AgentUIMessages';
@@ -10,6 +9,7 @@ import { AgentUISuggestions } from './composable/AgentUISuggestions';
 import { AgentUINotice } from './composable/AgentUINotice';
 import { AgentUIFooter } from './composable/AgentUIFooter';
 import { AgentUIConversationView } from './composable/AgentUIConversationView';
+import { AgentUIInputToolbar } from './composable/AgentUIInputToolbar';
 
 /**
  * AgentUI - Pure UI component for chat interface
@@ -82,6 +82,7 @@ const AgentUINamespace = {
 	Input: AgentUIInput,
 	Suggestions: AgentUISuggestions,
 	Notice: AgentUINotice,
+	InputToolbar: AgentUIInputToolbar,
 
 	// Convenience wrappers
 	Footer: AgentUIFooter,

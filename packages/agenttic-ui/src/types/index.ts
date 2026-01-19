@@ -1,5 +1,6 @@
 // UI package should not import agent communication types
 import type { ComponentType } from 'react';
+import type { ChatPosition } from '../utils/chatStorage';
 
 // Define UI-specific types locally
 export interface Suggestion {
@@ -13,9 +14,8 @@ export interface Message {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component' | 'context';
+		type: 'text' | 'component' | 'context';
 		text?: string;
-		image_url?: string;
 		component?: React.ComponentType;
 		componentProps?: any;
 	} >;
@@ -83,6 +83,13 @@ export interface AgentUIProps {
 	// Input validation
 	maxInputLength?: number; // Maximum character limit for input (defaults to 600)
 	onInputLimitExceeded?: () => void; // Callback when input exceeds max length
+
+	// Thinking message customization
+	thinkingMessage?: string; // Custom text to display when the agent is processing (defaults to "Thinking…")
+
+	// Chat position props
+	initialChatPosition?: ChatPosition;
+	onChatPositionChange?: ( position: ChatPosition ) => void;
 }
 
 export interface NoticeConfig {

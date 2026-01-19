@@ -5,6 +5,10 @@
     color: var(--color-foreground);
 }
 
+.message.user {
+    padding-right: var(--spacing-4);
+}
+
 .message.user .bubble {
     background-color: var(--color-muted);
     max-width: 85%;

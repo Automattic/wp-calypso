@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Message } from '../types';
 
 /**
@@ -24,23 +25,26 @@ export const getMessageText = ( message: Message ): string => {
 };
 
 /**
- * Check if a message has image content
- * @param message
+ * Create an image component for display in messages
+ * @param url      - The image URL
+ * @param maxWidth - Maximum width (defaults to 40% so 2 images fit in a row)
  */
-export const hasImageContent = ( message: Message ): boolean => {
-	return message.content.some( ( content ) => content.type === 'image_url' );
-};
-
-/**
- * Get image URLs from a message
- * @param message
- */
-export const getImageUrls = ( message: Message ): string[] => {
-	return message.content
-		.filter( ( content ) => content.type === 'image_url' )
-		.map( ( content ) => content.image_url )
-		.filter( Boolean ) as string[];
-};
+export const createImageComponent = ( url: string, maxWidth = '40%' ) => ( {
+	type: 'component' as const,
+	component: () =>
+		React.createElement( 'img', {
+			src: url,
+			alt: 'Uploaded image',
+			style: {
+				maxWidth,
+				height: 'auto',
+				borderRadius: '8px',
+				marginTop: '8px',
+				marginRight: '8px',
+				display: 'inline-block',
+			},
+		} ),
+} );
 
 /**
  * Check if a message has component content
@@ -82,7 +86,7 @@ export const isCompletedPlanMessage = ( message: Message ): boolean => {
 /**
  * Create a user message
  * @param text
- * @param imageUrls
+ * @param imageUrls - Optional image URLs (will be converted to component parts)
  */
 export const createUserMessage = (
 	text: string,
@@ -93,10 +97,7 @@ export const createUserMessage = (
 		role: 'user',
 		content: [
 			{ type: 'text', text },
-			...imageUrls.map( ( url ) => ( {
-				type: 'image_url' as const,
-				image_url: url,
-			} ) ),
+			...imageUrls.map( ( url ) => createImageComponent( url ) ),
 		],
 		timestamp: Date.now(),
 		archived: false,

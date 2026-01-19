@@ -26,7 +26,7 @@ export {
 
 // All type exports (safe to expose)
 export type {
-	// Core A2A types
+	// Core types
 	JsonRpcId,
 	JsonRpcRequest,
 	JsonRpcResponse,
@@ -81,7 +81,7 @@ export type {
 } from './react/useAgentChat';
 
 // Constants
-export { A2AErrorCodes } from './client/types/index';
+export { ErrorCodes } from './client/types/index';
 
 // Client creation function
 export { createClient } from './client/index';
@@ -106,3 +106,23 @@ export {
 	convertAbilitiesToTools,
 	isWordPressAbility,
 } from './utils/wordpressAbilities';
+
+export {
+	listConversationsFromServer,
+	loadChatFromServer,
+	loadAllMessagesFromServer,
+} from './react/odieService';
+export type { OdieServiceConfig } from './react/odieService';
+export type {
+	ServerLoadResult,
+	PaginationMeta,
+	ServerConversationListItem,
+} from './react/serverTypes';
+
+// Odie bot configuration utilities
+export {
+	createOdieBotId,
+	parseOdieBotId,
+	isOdieBotId,
+} from './react/odieConfig';
+export type { OdieBotConfig } from './react/odieConfig';

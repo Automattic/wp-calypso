@@ -7,8 +7,14 @@ export interface AgentUIMessagesProps {
 }
 
 export function AgentUIMessages( { className }: AgentUIMessagesProps = {} ) {
-	const { messages, isProcessing, error, emptyView, messageRenderer } =
-		useAgentUIContext();
+	const {
+		messages,
+		isProcessing,
+		error,
+		emptyView,
+		messageRenderer,
+		thinkingMessage,
+	} = useAgentUIContext();
 
 	return (
 		<Messages
@@ -17,6 +23,7 @@ export function AgentUIMessages( { className }: AgentUIMessagesProps = {} ) {
 			error={ error }
 			emptyView={ emptyView }
 			messageRenderer={ messageRenderer }
+			thinkingMessage={ thinkingMessage }
 			className={ className }
 		/>
 	);

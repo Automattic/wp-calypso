@@ -4,6 +4,7 @@ export { Chat } from './Chat';
 // Individual component exports
 export { Message as ChatMessage } from './Message';
 export { Messages } from './Messages';
+export { MessageDivider } from './MessageDivider';
 export { ThinkingMessage } from './ThinkingMessage';
 export { ChatInput, type ActionButton } from './ChatInput';
 export {

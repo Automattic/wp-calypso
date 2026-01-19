@@ -1,13 +1,37 @@
 import type {
+	AuthProvider,
 	ContentType,
 	DataPart,
+	FilePart,
 	Message,
 	TextPart,
 } from '../client/types/index';
 import { logger } from '../client/utils/logger';
 import { generateMessageId } from '../client/utils/core';
+import {
+	DEFAULT_API_BASE_URL,
+	loadChatFromServer,
+	type OdieServiceConfig,
+} from './odieService';
+import type { PaginationMeta } from './serverTypes';
 
 const STORAGE_KEY = 'a8c_agenttic_conversation_history';
+
+/**
+ * Configuration for conversation storage
+ */
+export interface ConversationStorageConfig {
+	odieBotId?: string; // Odie bot ID for server-based storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
+	authProvider?: AuthProvider;
+}
+
+/**
+ * Result from loading conversation with pagination info
+ */
+export interface ConversationLoadResult {
+	messages: Message[];
+	pagination?: PaginationMeta;
+}
 
 /**
  * Simplified stored message format for efficient serialization
@@ -18,6 +42,11 @@ interface StoredMessage {
 	contentType?: ContentType;
 	timestamp: number;
 	archived?: boolean;
+	files?: Array< {
+		name: string;
+		mimeType?: string;
+		uri?: string;
+	} >;
 	toolCalls?: Array< {
 		toolCallId: string;
 		toolId: string;
@@ -86,6 +115,15 @@ function extractStorableContent( message: Message ): StoredMessage {
 			error: part.data.error as string | undefined,
 		} ) );
 
+	// Extract file parts (images, etc.)
+	const files = message.parts
+		.filter( ( part ): part is FilePart => part.type === 'file' )
+		.map( ( part ) => ( {
+			name: part.file.name,
+			mimeType: part.file.mimeType,
+			uri: part.file.uri,
+		} ) );
+
 	// Determine the role - if this message contains tool interactions, store as "agent"
 	// regardless of the original message role
 	const hasToolInteractions = toolCalls.length > 0 || toolResults.length > 0;
@@ -103,6 +141,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 		timestamp,
 		...( archived !== undefined && { archived } ),
 		...( contentType && { contentType } ),
+		...( files.length > 0 && { files } ),
 		...( toolCalls.length > 0 && { toolCalls } ),
 		...( toolResults.length > 0 && { toolResults } ),
 	};
@@ -126,6 +165,20 @@ function restoreMessage( stored: StoredMessage ): Message {
 				},
 			} ),
 		} );
+	}
+
+	// Add file parts (images, etc.)
+	if ( stored.files ) {
+		for ( const file of stored.files ) {
+			parts.push( {
+				type: 'file',
+				file: {
+					name: file.name,
+					mimeType: file.mimeType,
+					uri: file.uri,
+				},
+			} );
+		}
 	}
 
 	// Add tool call parts
@@ -234,24 +287,100 @@ export async function storeConversation(
  * Load conversation messages for a session
  * @param sessionId              - The session ID to load messages for
  * @param conversationStorageKey - Optional custom storage key, defaults to sessionId
+ * @param config                 - Optional storage configuration for server-based loading
  */
 export async function loadConversation(
 	sessionId: string,
+	conversationStorageKey?: string,
+	config?: ConversationStorageConfig
+): Promise< ConversationLoadResult > {
+	// Branch: Server storage mode (enabled when odieBotId is provided)
+	if ( config?.odieBotId ) {
+		return loadConversationFromServer( sessionId, config );
+	}
+
+	// Branch: Local sessionStorage mode (default)
+	return loadConversationFromSessionStorage(
+		sessionId,
+		conversationStorageKey
+	);
+}
+
+/**
+ * Load conversation from server
+ * @param sessionId - The session/chat ID to load
+ * @param config    - Server storage configuration
+ */
+async function loadConversationFromServer(
+	sessionId: string,
+	config: ConversationStorageConfig
+): Promise< ConversationLoadResult > {
+	const { odieBotId, authProvider } = config;
+
+	if ( ! odieBotId ) {
+		throw new Error( 'odieBotId is required for server storage' );
+	}
+
+	// Always use WordPress.com public API for Odie conversations
+	const apiBaseUrl = DEFAULT_API_BASE_URL;
+
+	try {
+		const serviceConfig: OdieServiceConfig = {
+			botId: odieBotId,
+			apiBaseUrl,
+			authProvider,
+		};
+
+		// Load first page of messages from server
+		const result = await loadChatFromServer(
+			sessionId,
+			serviceConfig,
+			1,
+			50
+		);
+
+		logger(
+			'Loaded conversation from server: %s (%d messages, page %d/%d)',
+			sessionId,
+			result.messages.length,
+			result.pagination.currentPage,
+			result.pagination.totalPages
+		);
+
+		return {
+			messages: result.messages,
+			pagination: result.pagination,
+		};
+	} catch ( error ) {
+		logger( 'Failed to load conversation from server: %O', error );
+		throw error;
+	}
+}
+
+/**
+ * Load conversation from sessionStorage (default behavior)
+ * @param sessionId              - The session ID to load messages for
+ * @param conversationStorageKey - Optional custom storage key, defaults to sessionId
+ */
+async function loadConversationFromSessionStorage(
+	sessionId: string,
 	conversationStorageKey?: string
-): Promise< Message[] > {
+): Promise< ConversationLoadResult > {
 	// Determine effective storage key
 	const currentStorageKey = conversationStorageKey || sessionId;
 
 	// Check in-memory cache first
 	if ( conversationCache.has( currentStorageKey ) ) {
-		return [ ...conversationCache.get( currentStorageKey )! ];
+		return {
+			messages: [ ...conversationCache.get( currentStorageKey )! ],
+		};
 	}
 
 	// Fallback to sessionStorage
 	// @ts-ignore
 	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
-		return [];
+		return { messages: [] };
 	}
 
 	try {
@@ -266,7 +395,7 @@ export async function loadConversation(
 			// Cache for future access
 			conversationCache.set( currentStorageKey, messages );
 
-			return [ ...messages ];
+			return { messages: [ ...messages ] };
 		}
 	} catch ( error ) {
 		logger(
@@ -276,7 +405,71 @@ export async function loadConversation(
 		);
 	}
 
-	return [];
+	return { messages: [] };
+}
+
+/**
+ * Load more messages from server (pagination support)
+ * Only works with server storage mode
+ *
+ * Note: The caller should check pagination.hasMore from the previous load
+ * before calling this function to avoid unnecessary API calls.
+ *
+ * @param sessionId - The session/chat ID to load
+ * @param page      - Page number to load (should be validated by caller against pagination data)
+ * @param config    - Server storage configuration
+ * @example
+ * const { messages, pagination } = await loadConversation(sessionId, undefined, config);
+ * if (pagination?.hasMore) {
+ *   const moreMessages = await loadMoreMessages(sessionId, pagination.currentPage + 1, config);
+ * }
+ */
+export async function loadMoreMessages(
+	sessionId: string,
+	page: number,
+	config: ConversationStorageConfig
+): Promise< ConversationLoadResult > {
+	if ( ! config?.odieBotId ) {
+		throw new Error(
+			'loadMoreMessages only works with server storage enabled (odieBotId required)'
+		);
+	}
+
+	const { odieBotId, authProvider } = config;
+
+	// Always use WordPress.com public API for Odie conversations
+	const apiBaseUrl = DEFAULT_API_BASE_URL;
+
+	try {
+		const serviceConfig: OdieServiceConfig = {
+			botId: odieBotId,
+			apiBaseUrl,
+			authProvider,
+		};
+
+		// Load specific page from server
+		const result = await loadChatFromServer(
+			sessionId,
+			serviceConfig,
+			page,
+			50
+		);
+
+		logger(
+			'Loaded more messages from server: %s (page %d, %d messages)',
+			sessionId,
+			page,
+			result.messages.length
+		);
+
+		return {
+			messages: result.messages,
+			pagination: result.pagination,
+		};
+	} catch ( error ) {
+		logger( 'Failed to load more messages from server: %O', error );
+		throw error;
+	}
 }
 
 /**

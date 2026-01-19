@@ -51,7 +51,9 @@ export function validateJsonRpcResponse< T >(
 	operation: string = 'request'
 ): T {
 	if ( data.error ) {
-		throw new Error( `A2A ${ operation } error: ${ data.error.message }` );
+		throw new Error(
+			`Protocol ${ operation } error: ${ data.error.message }`
+		);
 	}
 
 	if ( ! data.result ) {

@@ -1,6 +1,6 @@
 .container {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--spacing);
     padding: 0 var(--spacing-2);
     color: var(--color-muted-foreground);

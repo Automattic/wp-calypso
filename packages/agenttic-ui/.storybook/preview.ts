@@ -35,6 +35,7 @@ const preview: Preview = {
     options: {
       storySort: {
         order: ['Docs', '*'],
+        method: 'alphabetical',
       },
     },
   },
