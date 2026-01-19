@@ -31,6 +31,13 @@ const E2E_USER_AGENT_SUFFIX = 'wp-e2e-tests';
 
 const appendE2EUserAgent = ( userAgent: string ) => `${ userAgent } ${ E2E_USER_AGENT_SUFFIX }`;
 
+function getWorkers(): number | string {
+	if ( process.env.PW_WORKERS ) {
+		return parseInt( process.env.PW_WORKERS, 10 );
+	}
+	return process.env.CI ? '50%' : '100%';
+}
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -42,8 +49,7 @@ export default defineConfig( {
 	forbidOnly: !! process.env.CI,
 	/* Retry on CI only */
 	retries: process.env.CI ? 2 : 0,
-	/* Workers should use what is available locally, and half on CI*/
-	workers: process.env.CI ? '50%' : '100%',
+	workers: getWorkers(),
 	/* Global timeout for each test */
 	timeout: 120000, // 2 minutes
 	expect: {
